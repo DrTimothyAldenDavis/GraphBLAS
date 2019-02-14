@@ -2,14 +2,14 @@
 // GB_calloc_memory: wrapper for calloc (used via the GB_CALLOC_MEMORY macro)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // A wrapper for calloc.  Space is set to zero.
 
-// This function is called via the GB_CALLOC_MEMORY(p,n,s) macro.
+// This function is called via the GB_CALLOC_MEMORY(p,n,s,Context) macro.
 
 // Parameters are the same as the POSIX calloc, except that asking to allocate
 // a block of zero size causes a block of size 1 to be allocated instead.  This
@@ -20,12 +20,16 @@
 // mexFunction, it is mxCalloc.  It can also be defined at compile time with
 // -DGB_CALLOC=mycallocfunc.
 
+// PARALLEL: it may be worth doing a malloc instead, then setting the array to
+// zero with multiple threads.
+
 #include "GB.h"
 
 void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
-    size_t size_of_item     // sizeof each item
+    size_t size_of_item,    // sizeof each item
+    GB_Context Context      // for # of threads.  Use one thread if NULL
 )
 {
 
@@ -46,6 +50,9 @@ void *GB_calloc_memory      // pointer to allocated block of memory
     }
     else
     { 
+
+        // determine the number of threads to use
+        GB_GET_NTHREADS (nthreads, Context) ;
 
         #ifdef GB_MALLOC_TRACKING
         {

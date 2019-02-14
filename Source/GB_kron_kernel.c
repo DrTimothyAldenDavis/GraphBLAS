@@ -2,7 +2,7 @@
 // GB_kron_kernel: Kronecker product, C = kron (A,B)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,9 @@
 // A and B are compatible with the x and y inputs of z=op(x,y), but can be
 // different.  The type of C is the type of z.  C is hypersparse if either A
 // or B are hypersparse.
+
+// PARALLEL: simple parallelism, but need to handle combinations of
+// hyper/non-hyper cases in doubly-nested loops.
 
 #include "GB.h"
 
@@ -35,6 +38,12 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
     ASSERT_OK (GB_check (op, "op for kron (A,B)", GB0)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -73,7 +82,7 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GB_CREATE (&C, op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_calloc,
         C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio,
-        A->nvec_nonempty * B->nvec_nonempty, cnzmax, true) ;
+        A->nvec_nonempty * B->nvec_nonempty, cnzmax, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

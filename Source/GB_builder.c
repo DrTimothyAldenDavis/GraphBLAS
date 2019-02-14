@@ -2,7 +2,7 @@
 // GB_builder: build a matrix from tuples
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -15,6 +15,13 @@
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
 // or GrB_Vector_build, and by GB_wait to build a matrix T from the list of
 // pending tuples.
+
+// PARALLEL: first does qsort, so need to parallelize GB_qsort_*.  Then passes
+// over the tuples to find duplicates, which has some dependencies but could be
+// done in bulk parallel.  After sorting, a thread owns a chunk of tuples.  It
+// can mark all its own duplicates, fully in parallel, but not across to tuples
+// owned by another thread.  When done with this first phase, a 2nd pass could
+// find any duplicates across the thread boundaries.
 
 #include "GB.h"
 
@@ -70,6 +77,12 @@ GrB_Info GB_builder
     // one or zero vectors (jwork_handle is always non-NULL however).
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // sort the tuples in ascending order (just the pattern, not the values)
     //--------------------------------------------------------------------------
 
@@ -85,7 +98,7 @@ GrB_Info GB_builder
             // out of memory
             GB_FREE_MEMORY (*iwork_handle, ijlen, sizeof (int64_t)) ;
             GB_FREE_MEMORY (*jwork_handle, ijlen, sizeof (int64_t)) ;
-            return (GB_OUT_OF_MEMORY (GBYTES (len, sizeof (int64_t)))) ;
+            return (GB_OUT_OF_MEMORY) ;
         }
 
         // The k part of each tuple (i,k) or (j,i,k) records the original
@@ -104,12 +117,12 @@ GrB_Info GB_builder
         if (jwork != NULL)
         { 
             // sort a set of (j,i,k) tuples
-            GB_qsort_3 (jwork, iwork, kwork, len) ;
+            GB_qsort_3 (jwork, iwork, kwork, len, Context) ;
         }
         else
         { 
             // sort a set of (i,k) tuples
-            GB_qsort_2b (iwork, kwork, len) ;
+            GB_qsort_2b (iwork, kwork, len, Context) ;
         }
 
     }
@@ -178,7 +191,7 @@ GrB_Info GB_builder
     GrB_Info info ;
     GrB_Matrix T = NULL ;           // allocate a new header for T
     GB_NEW (&T, ttype, vlen, vdim, GB_Ap_malloc, is_csc, GB_FORCE_HYPER,
-        GB_ALWAYS_HYPER, tnvec) ;
+        GB_ALWAYS_HYPER, tnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

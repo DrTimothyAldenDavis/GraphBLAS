@@ -2,10 +2,12 @@
 // GxB_Global_Option_get: get a global default option for all future matrices
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 
@@ -112,6 +114,19 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             GB_RETURN_IF_NULL (threading) ;
             (*threading) = GxB_THREAD_NONE ;
+            break ;
+
+        //----------------------------------------------------------------------
+        // default number of threads
+        //----------------------------------------------------------------------
+
+        case GxB_METHOD_NTHREADS :      // same as GxB_NTHREADS
+
+            va_start (ap, field) ;
+            int *nthreads_max = va_arg (ap, int *) ;
+            va_end (ap) ;
+            GB_RETURN_IF_NULL (nthreads_max) ;
+            (*nthreads_max) = GB_Global.nthreads_max ;
             break ;
 
         //----------------------------------------------------------------------

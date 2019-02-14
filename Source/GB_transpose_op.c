@@ -2,7 +2,7 @@
 // GB_transpose_op: transpose and apply an operator to a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -22,6 +22,10 @@
 
 // Compare with GB_transpose_ix.c and GB_apply_op.c
 
+// PARALLEL: the bucket transpose will not be simple to parallelize.  The qsort
+// method of transpose would be more parallel.  This method might remain mostly
+// sequential.
+
 #include "GB.h"
 
 void GB_transpose_op        // transpose and apply an operator to a matrix
@@ -30,7 +34,8 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
     int64_t *Ri,            // size cnz, output column indices
     GB_void *Rx,            // size cnz, output values, type op->ztype
     const GrB_UnaryOp op,   // operator to apply, NULL if no operator
-    const GrB_Matrix A      // input matrix
+    const GrB_Matrix A,     // input matrix
+    GB_Context Context
 )
 {
 
@@ -45,6 +50,12 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
     ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
     ASSERT (GB_IMPLIES (op->opcode < GB_USER_C_opcode, op->xtype == op->ztype));
     ASSERT (!GB_ZOMBIES (A)) ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // get the input matrix

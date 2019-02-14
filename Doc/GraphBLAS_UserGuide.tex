@@ -333,7 +333,7 @@ Consider element-wise multiplication, \verb'C=A.*B' in MATLAB.  The operator
 (multiply in this case) is applied to entries in the set intersection, and the
 pattern of \verb'C' just this set intersection.  Entries in \verb'A' but not
 \verb'B', or visa-versa, do not appear in \verb'C'.  In GraphBLAS, any binary
-operator can be used in this manner, not must scalar multiplication.  The
+operator can be used in this manner, not just scalar multiplication.  The
 difference between element-wise ``add'' and ``multiply'' is not the operators,
 but whether or not the pattern of the result is the set union or the set
 intersection.  In both cases, the operator is only applied to the set
@@ -342,7 +342,7 @@ intersection.
 Finally, GraphBLAS includes a {\em non-blocking} mode where operations can be
 left pending, and saved for later.  This is very useful for submatrix
 assignment (\verb'C(I,J)=A' where \verb'I' and \verb'J' are integer vectors),
-or or scalar assignment (\verb'C(i,j)=x' where \verb'i' and \verb'j' are scalar
+or scalar assignment (\verb'C(i,j)=x' where \verb'i' and \verb'j' are scalar
 integers).  Because of how MATLAB stores its matrices, adding and deleting
 individual entries is very costly.  For example, this is very slow in MATLAB,
 taking $O(nz^2)$ time:
@@ -2354,7 +2354,7 @@ methods for the \verb'GrB_Semiring' object:
 \hline
 \verb'GrB_Semiring_new'       & create a semiring \\
 \verb'GxB_Semiring_add'       & return the additive monoid of a semiring \\
-\verb'GxB_Semiring_multipliy' & return the binary operator of a semiring \\
+\verb'GxB_Semiring_multiply'  & return the binary operator of a semiring \\
 \verb'GrB_Semiring_free'      & free a semiring \\
 \hline
 \end{tabular}
@@ -2872,18 +2872,6 @@ GrB_Info GxB_Vector_resize      // change the size of a vector
 
 \verb'GxB_Vector_resize' changes the size of a vector.  If the dimension
 decreases, entries that fall outside the resized vector are deleted.
-
-\verb'GxB_Vector_resize' also frees the workspace kept in the vector \verb'u'
-if Gustavson's method is used in \verb'GrB_mxv' or \verb'GrB_vxm' to compute
-the vector \verb'u'.  It frees this space, even if the size does not change:
-
-{\footnotesize
-\begin{verbatim}
-    GrB_Index nrows ;
-    GrB_Vector_size (&nrows, v) ;
-    GxB_Vector_resize (v, nrows) ; \end{verbatim} }
-
-See Section~\ref{guswork} for more details.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -3415,19 +3403,6 @@ GrB_Info GxB_Matrix_resize      // change the size of a matrix
 \verb'GxB_Matrix_resize' changes the size of a matrix.
 If the dimensions decrease, entries that fall outside the resized 
 matrix are deleted.
-
-\verb'GxB_Matrix_resize' also frees the workspace kept in the matrix \verb'C'
-if Gustavson's method is used in \verb'GrB_mxm' to compute the matrix \verb'C'.
-It frees this space, even if the size does not change:
-
-{\footnotesize
-\begin{verbatim}
-    GrB_Index nrows, ncols ;
-    GrB_Matrix_nrows (&nrows, C) ;
-    GrB_Matrix_ncols (&ncols, C) ;
-    GxB_Matrix_resize (C, nrows, nrows) ; \end{verbatim} }
-
-See Section~\ref{guswork} for more details.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -5291,8 +5266,6 @@ The breadth-first search presented in Section~\ref{bfs} of this User Guide uses
 SuiteSparse:GraphBLAS is \verb'GxB_BY_ROW'.  If the matrix is stored by column,
 then use \verb'GrB_mxv' instead.
 
-See Section~\ref{guswork} on the workspace kept in the output vector \verb'w'.
-
 \newpage
 %===============================================================================
 \subsection{{\sf GrB\_mxv:} matrix-vector multiply} %===========================
@@ -5339,58 +5312,6 @@ default descriptor is used, and when the matrix is \verb'GxB_BY_COL'.  When
 \verb'GxB_BY_COL' format.  If an application needs to perform \verb"A'*u"
 repeatedly where \verb'u' is very sparse, then use the \verb'GxB_BY_ROW' format
 for \verb'A' instead.
-
-See Section~\ref{guswork} on the workspace kept in the output vector \verb'w'.
-
-\newpage
-%===============================================================================
-\subsection{Workspace for Gustavson's method for
-{\sf GrB\_mxm}, {\sf GrB\_vxm}, and {\sf GrB\_mxv} }
-%===============================================================================
-\label{guswork}
-
-Gustavon's method for multiplying two sparse matrices or a sparse matrix and a
-sparse vector invovles a tradeoff between workspace and time.  If a
-pre-initialized workspace is kept for repeated multiplications, the time can be
-significantly reduced.  This is very important for methods such as
-\verb'GrB_vxm' when used in a very sparse computation such as breadth-first
-search.
-
-The workspace required by Gustavson's method is size $O(n)$ for the CSR format,
-or $O(m)$ for CSC, if the output matrix \verb'C' is $m$-by-$n$, or $O(n)$ for a
-vector \verb'w' of length $n$.  This space is reused for repeated used by
-\verb'GrB_mxm', \verb'GrB_mxv', and \verb'GrB_vxm'.  To free this space, use
-\verb'GxB_Matrix_resize' or \verb'GxB_Vector_resize', and simply keep the size
-the same:
-
-{\footnotesize
-\begin{verbatim}
-    GrB_Index nrows, ncols ;
-    GrB_Matrix_nrows (&nrows, C) ;
-    GrB_Matrix_ncols (&ncols, C) ;
-    GxB_Matrix_resize (C, nrows, nrows) ;
-
-    GrB_Vector_size (&nrows, w) ;
-    GxB_Vector_resize (w, nrows) ; \end{verbatim} }
-
-This has no effect on the matrix \verb'C' or vector \verb'w', other than to
-free the workspace kept for Gustavson's method.  If the workspace is not
-allocated inside the output matrix \verb'C' or vector \verb'w', or for the the
-first call to \verb'GrB_mxm(C,...)' (or \verb'GrB_vxm(w,...)'), the time taken
-is $O(m+n+f)$, where $f$ is the number of numerical operations that must be
-performed.
-
-Assuming the workspace held internally in \verb'C' or \verb'w' is not freed,
-subsequent uses of Gustavson's method in \verb'GrB_mxm' to compute \verb'C'
-takes only $O(n+f)$ time for a CSC matrix, or $O(m+f)$ for a CSR matrix, and
-subsequent uses of \verb'GrB_mxv' and \verb'GrB_vxm' with the same output
-vector \verb'w' takes only $O(f)$ time.
-
-The \verb'GxB_print' function will report if the workspace for Gustavson's
-method is present, called the \verb'Sauna' (short-hand for the SParse
-Accumulator, or SPA, as this workspace is called in the sparse matrix
-library used internally in MATLAB \cite{GilbertMolerSchreiber92}).  See
-Section~\ref{fprint}.
 
 \newpage
 %===============================================================================
@@ -7883,12 +7804,6 @@ prints a list of the {\em pending tuples}, which are the entries not yet
 inserted into the primary data structure.  It can also print out entries that
 remain in the data structure but are awaiting deletion; these are called {\em
 zombies} in the output report.
-
-The \verb'GxB_print' function will report if the workspace for Gustavson's
-method is present, called the \verb'Sauna' (short-hand for the SParse
-Accumulator, or SPA, as this workspace is called in the sparse matrix
-library used internally in MATLAB \cite{GilbertMolerSchreiber92}).  See
-Section~\ref{guswork}.
 
 Most of the rest of the report is self-explanatory. 
 

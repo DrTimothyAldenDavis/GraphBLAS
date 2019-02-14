@@ -2,7 +2,7 @@
 // GrB_Vector_assign_[SCALAR]: assign scalar to vector, via scalar expansion
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -12,6 +12,8 @@
 // with each entry in u equal to x.
 
 // The actual work is done in GB_assign_scalar.c.
+
+// parallel: not here; see GB_assign
 
 #include "GB.h"
 

@@ -2,12 +2,14 @@
 // GrB_Row_assign:    C<mask'>(row,Cols) = accum (C(row,Cols),u')
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // Compare with GxB_Row_subassign, which uses Mask and C_replace differently
+
+// parallel: not here, but in GB_assign
 
 #include "GB.h"
 

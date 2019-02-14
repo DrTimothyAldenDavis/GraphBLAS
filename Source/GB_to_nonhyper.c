@@ -2,7 +2,7 @@
 // GB_to_nonhyper: convert a matrix to non-hypersparse form
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -18,6 +18,8 @@
 // A->nvec_nonempty does not change.
 
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
+
+// PARALLEL: a few simple loops, no synchronization or reduction needed
 
 #include "GB.h"
 
@@ -41,6 +43,12 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     ASSERT_OK_OR_JUMBLED (GB_check (A, "A being converted to nonhyper", GB0)) ;
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // convert A to non-hypersparse form
     //--------------------------------------------------------------------------
 
@@ -55,8 +63,8 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         { 
             // out of memory
             A->is_hyper = false ;    // A is non-hypersparse, but invalid
-            GB_CONTENT_FREE (A) ;
-            return (GB_OUT_OF_MEMORY (GBYTES (vdim+1, sizeof (int64_t)))) ;
+            GB_PHIX_FREE (A) ;
+            return (GB_OUT_OF_MEMORY) ;
         }
 
         // get the old hyperlist

@@ -2,7 +2,7 @@
 // GrB_mxv: matrix-vector multiply
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,8 @@
 
 // The input matrix A is optionally transposed, as determined by the
 // Descriptor desc.
+
+// parallel: not here, see GB_AxB_parallel
 
 #include "GB.h"
 

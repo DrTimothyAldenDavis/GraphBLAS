@@ -2,7 +2,7 @@
 // GB_eWise: C<M> = accum (C, A+B) or A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -13,6 +13,8 @@
 
 // Not user-callable.  Does the work for all user-callable functions of
 // the form GrB_eWiseAdd_* and GrB_eWiseMult_*
+
+// parallel: not here, but in GB_add, GB_emult, GB_transpose, ...
 
 #include "GB.h"
 
@@ -110,7 +112,7 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_WAIT (C) ;
+    // GB_WAIT (C) ;
     GB_WAIT (M) ;
     GB_WAIT (A) ;
     GB_WAIT (B) ;

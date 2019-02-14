@@ -2,13 +2,15 @@
 // GB_compatible: check input and operators for type compatibility
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // Check if the types for C<Mask> = accum (C,T) are all compatible,
 // and (if present) make sure the size of C and Mask match.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 

@@ -2,7 +2,7 @@
 // GB_create: create a matrix and allocate space
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -32,6 +32,8 @@
 // To see where these options are used in SuiteSparse:GraphBLAS:
 // grep "allocate a new header"
 // which shows all uses of GB_new and GB_create
+
+// parallel: not here but perhaps in GB_new (the calloc of Ap, only).
 
 #include "GB.h"
 

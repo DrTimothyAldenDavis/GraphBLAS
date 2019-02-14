@@ -2,14 +2,14 @@
 // GB_Descriptor_get: get the status of a descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // A descriptor modifies the behavoir of a GraphBLAS operation.
 
-// This function is called via the GB_DESCRIPTOR_GET_(...) macro.
+// This function is called via the GB_GET_DESCRIPTOR(...) macro.
 
 //  Descriptor field:           Descriptor value:
 
@@ -56,13 +56,19 @@
 
 //  desc->axb                   see GraphBLAS.h; can be:
 
-//      GrB_DEFAULT         automatic selection
+//      GxB_DEFAULT = 0         automatic selection
 
-//      GxB_AxB_GUSTAVSON   gather-scatter saxpy method
+//      GxB_AxB_GUSTAVSON       gather-scatter saxpy method
 
-//      GxB_AxB_HEAP        heap-based saxpy method
+//      GxB_AxB_HEAP            heap-based saxpy method
 
-//      GxB_AxB_DOT         dot product
+//      GxB_AxB_DOT             dot product
+
+//  desc->nthreads              number of threads to use (auto select if <= 0)
+
+//      This is copied from the GrB_Descriptor into the Context.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 
@@ -84,6 +90,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 
     // desc may be null, but if not NULL it must be initialized
     GB_RETURN_IF_FAULTY (desc) ;
+    ASSERT (Context != NULL) ;  // Context is always present
 
     //--------------------------------------------------------------------------
     // get the contents of the descriptor
@@ -95,6 +102,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     GrB_Desc_Value In0_desc  = GxB_DEFAULT ;
     GrB_Desc_Value In1_desc  = GxB_DEFAULT ;
     GrB_Desc_Value AxB_desc  = GxB_DEFAULT ;
+    int nthreads_desc        = GxB_DEFAULT ;
 
     // non-defaults descriptors
     if (desc != NULL)
@@ -105,6 +113,12 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         In0_desc  = desc->in0 ;   // DEFAULT or TRAN
         In1_desc  = desc->in1 ;   // DEFAULT or TRAN
         AxB_desc  = desc->axb ;   // DEFAULT, GUSTAVSON, HEAP, or DOT
+
+        // default is zero.  if descriptor->nthreads <= 0, GraphBLAS selects
+        // automatically: any value between 1 and GB_Global.nthreads_max.  If
+        // descriptor->nthreads > 0, then that defines the exact number of
+        // threads to use in the current GraphBLAS operation.
+        nthreads_desc  = desc->nthreads ;
     }
 
     // check for valid values of each descriptor field
@@ -138,6 +152,10 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     { 
         *AxB_method = AxB_desc ;
     }
+
+    // The number of threads is copied from the descriptor into the Context, so
+    // it is available to any internal function that needs it.
+    Context->nthreads = nthreads_desc ;
 
     return (GrB_SUCCESS) ;
 }

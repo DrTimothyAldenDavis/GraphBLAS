@@ -2,7 +2,7 @@
 // GB_emult: element-wise "multiplication" of two matrices
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -30,6 +30,10 @@
 // out-of-memory conditions.
 
 // FUTURE: this could be faster with built-in operators and types.
+
+// PARALLEL: use 1D parallelism.  Either do the work in symbolic/numeric phases
+// (one to compute nnz in each column, one to fill the output), or compute
+// submatrices and then concatenate them.  See also GB_add.
 
 #include "GB.h"
 
@@ -85,11 +89,17 @@ GrB_Info GB_emult           // C = A.*B
     ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
     ASSERT (GB_Type_compatible (B->type, op->ytype)) ;
 
-    (*Chandle) = NULL ;
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
     //--------------------------------------------------------------------------
+
+    (*Chandle) = NULL ;
 
     // C is hypersparse if A or B are hypersparse (contrast with GB_add)
     bool C_is_hyper = (A->is_hyper || B->is_hyper) && (A->vdim > 1) ;
@@ -101,7 +111,7 @@ GrB_Info GB_emult           // C = A.*B
     GB_CREATE (&C, ctype, A->vlen, A->vdim, GB_Ap_malloc, C_is_csc,
         GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio,
         GB_IMIN (A->nvec_nonempty, B->nvec_nonempty),
-        GB_IMIN (GB_NNZ (A), GB_NNZ (B)), true) ;
+        GB_IMIN (GB_NNZ (A), GB_NNZ (B)), true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         return (info) ;

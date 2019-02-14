@@ -2,7 +2,7 @@
 # GraphBLAS/CMakeLists.txt:  cmake script for GraphBLAS
 #-------------------------------------------------------------------------------
 
-# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+# SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 # http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 # CMakeLists.txt: instructions for cmake to build GraphBLAS.
@@ -55,10 +55,10 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 30, 2018" )
+set ( GraphBLAS_DATE "TODO, 2019" )
 set ( GraphBLAS_VERSION_MAJOR 2 )
-set ( GraphBLAS_VERSION_MINOR 2 )
-set ( GraphBLAS_VERSION_SUB   3 )
+set ( GraphBLAS_VERSION_MINOR 3 )
+set ( GraphBLAS_VERSION_SUB   0 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "May 18, 2018" )
@@ -369,6 +369,7 @@ add_executable ( complex_demo  "Demo/Program/complex_demo.c" )
 add_executable ( kron_demo     "Demo/Program/kron_demo.c" )
 add_executable ( simple_demo   "Demo/Program/simple_demo.c" )
 add_executable ( wildtype_demo "Demo/Program/wildtype_demo.c" )
+add_executable ( import_demo   "Demo/Program/import_demo.c" )
 
 # Libraries required for Demo programs
 target_link_libraries ( pagerank_demo graphblas graphblasdemo )
@@ -381,3 +382,5 @@ target_link_libraries ( complex_demo  graphblas graphblasdemo )
 target_link_libraries ( kron_demo     graphblas graphblasdemo )
 target_link_libraries ( simple_demo   graphblasdemo )
 target_link_libraries ( wildtype_demo graphblas )
+target_link_libraries ( import_demo   graphblas graphblasdemo )
+

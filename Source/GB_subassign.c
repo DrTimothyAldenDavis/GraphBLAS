@@ -2,7 +2,7 @@
 // GB_subassign: C(Rows,Cols)<M> = accum (C(Rows,Cols),A) or A'
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -19,6 +19,8 @@
 // instead.
 
 // Compare with GB_assign, which uses M and C_replace differently
+
+// parallel: not here, but in GB_subassign_kernel
 
 #include "GB.h"
 
@@ -277,6 +279,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // performance implications, but it is the only reasonable method.  If C is
     // aliased to A, then the assignment is a large one and copying the whole
     // matrix will not add much time.
+
+    // TODO alias OK if I and J are both GrB_ALL ?
 
     GrB_Matrix Z ;
     bool aliased = GB_ALIASED (C, A) || GB_ALIASED (C, M) ;

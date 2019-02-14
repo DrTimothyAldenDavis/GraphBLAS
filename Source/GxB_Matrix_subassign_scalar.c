@@ -2,7 +2,7 @@
 // GxB_Matrix_subassign_[SCALAR]: assign to submatrix, via scalar expansion
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -18,6 +18,8 @@
 // which uses Mask and C_Replace differently.
 
 // The actual work is done in GB_subassign_scalar.c.
+
+// parallel: not here; see GB_subassign_kernel
 
 #include "GB.h"
 

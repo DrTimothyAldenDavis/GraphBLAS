@@ -2,7 +2,7 @@
 // GB_BinaryOp_new: create a new binary operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -12,6 +12,8 @@
 // recast its input and output arguments internally as needed.
 
 // This function is not directly user-callable.  Use GrB_BinaryOp_new instead.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 
@@ -43,10 +45,11 @@ GrB_Info GB_BinaryOp_new
     //--------------------------------------------------------------------------
 
     // allocate the binary operator
-    GB_CALLOC_MEMORY (*binaryop, 1, sizeof (struct GB_BinaryOp_opaque)) ;
+    GB_CALLOC_MEMORY (*binaryop, 1, sizeof (struct GB_BinaryOp_opaque), NULL) ;
     if (*binaryop == NULL)
     { 
-        return (GB_NO_MEMORY) ;
+        // out of memory
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     // initialize the binary operator

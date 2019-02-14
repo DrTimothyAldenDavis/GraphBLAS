@@ -2,10 +2,12 @@
 // GrB_Vector_extract: w<mask> = accum (w, u(I))
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// parallel: not here, but in GB_subref_numeric.
 
 #include "GB.h"
 

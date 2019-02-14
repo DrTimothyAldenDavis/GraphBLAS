@@ -2,13 +2,15 @@
 // GB_builtin.c: built-in types, functions, operators, and other externs
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // This file defines the predefined built-in objects: 11 types, 45 unary
 // operators, 256 binary operators, 44 monoids, and 960 semirings.
+
+// not parallel: this function has no executable code, just definitions.
 
 #include "GB.h"
 
@@ -234,7 +236,7 @@ const GxB_Format_Value GxB_FORMAT_DEFAULT = GB_FORMAT_DEFAULT ;
 // predefined built-in monoids
 //------------------------------------------------------------------------------
 
-// helper macro to define built-in monoids
+// helper macro to define built-in monoids (no terminal value)
 #define GB_MONOID_DEFINE(PREFIX,OP,CTYPE,IDENTITY)                          \
 CTYPE GB_opaque_identity_ ## OP = IDENTITY ;                                \
 struct GB_Monoid_opaque GB_opaque_GxB_ ## OP ## _MONOID =                   \
@@ -243,63 +245,79 @@ struct GB_Monoid_opaque GB_opaque_GxB_ ## OP ## _MONOID =                   \
     & GB_opaque_ ## PREFIX ## OP,                                           \
     & GB_opaque_identity_ ## OP,                                            \
     sizeof (CTYPE),                                                         \
-    GB_BUILTIN                                                              \
+    GB_BUILTIN,                                                             \
+    NULL                                                                    \
+} ;                                                                         \
+GrB_Monoid GxB_ ## OP ## _MONOID = & GB_opaque_GxB_ ## OP ## _MONOID ;
+
+// helper macro to define built-in monoids (with terminal value)
+#define GB_MONOID_DEFINE_TERM(PREFIX,OP,CTYPE,IDENTITY,TERMINAL)            \
+CTYPE GB_opaque_identity_ ## OP = IDENTITY ;                                \
+CTYPE GB_opaque_terminal_ ## OP = TERMINAL ;                                \
+struct GB_Monoid_opaque GB_opaque_GxB_ ## OP ## _MONOID =                   \
+{                                                                           \
+    GB_MAGIC,                                                               \
+    & GB_opaque_ ## PREFIX ## OP,                                           \
+    & GB_opaque_identity_ ## OP,                                            \
+    sizeof (CTYPE),                                                         \
+    GB_BUILTIN,                                                             \
+    & GB_opaque_terminal_ ## OP                                             \
 } ;                                                                         \
 GrB_Monoid GxB_ ## OP ## _MONOID = & GB_opaque_GxB_ ## OP ## _MONOID ;
 
 // MIN monoids:
-GB_MONOID_DEFINE ( GrB_, MIN_INT8     , int8_t   , INT8_MAX   )
-GB_MONOID_DEFINE ( GrB_, MIN_UINT8    , uint8_t  , UINT8_MAX  )
-GB_MONOID_DEFINE ( GrB_, MIN_INT16    , int16_t  , INT16_MAX  )
-GB_MONOID_DEFINE ( GrB_, MIN_UINT16   , uint16_t , UINT16_MAX )
-GB_MONOID_DEFINE ( GrB_, MIN_INT32    , int32_t  , INT32_MAX  )
-GB_MONOID_DEFINE ( GrB_, MIN_UINT32   , uint32_t , UINT32_MAX )
-GB_MONOID_DEFINE ( GrB_, MIN_INT64    , int64_t  , INT64_MAX  )
-GB_MONOID_DEFINE ( GrB_, MIN_UINT64   , uint64_t , UINT64_MAX )
-GB_MONOID_DEFINE ( GrB_, MIN_FP32     , float    , INFINITY   )
-GB_MONOID_DEFINE ( GrB_, MIN_FP64     , double   , INFINITY   )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_INT8     , int8_t   , INT8_MAX   , INT8_MIN  )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_INT16    , int16_t  , INT16_MAX  , INT16_MIN )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_INT32    , int32_t  , INT32_MAX  , INT32_MIN )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_INT64    , int64_t  , INT64_MAX  , INT64_MIN )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_UINT8    , uint8_t  , UINT8_MAX  , 0         )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_UINT16   , uint16_t , UINT16_MAX , 0         )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_UINT32   , uint32_t , UINT32_MAX , 0         )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_UINT64   , uint64_t , UINT64_MAX , 0         )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_FP32     , float    , INFINITY   , -INFINITY )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_FP64     , double   , INFINITY   , -INFINITY )
 
 // MAX monoids:
-GB_MONOID_DEFINE ( GrB_, MAX_INT8     , int8_t   , INT8_MIN   )
-GB_MONOID_DEFINE ( GrB_, MAX_UINT8    , uint8_t  , 0          )
-GB_MONOID_DEFINE ( GrB_, MAX_INT16    , int16_t  , INT16_MIN  )
-GB_MONOID_DEFINE ( GrB_, MAX_UINT16   , uint16_t , 0          )
-GB_MONOID_DEFINE ( GrB_, MAX_INT32    , int32_t  , INT32_MIN  )
-GB_MONOID_DEFINE ( GrB_, MAX_UINT32   , uint32_t , 0          )
-GB_MONOID_DEFINE ( GrB_, MAX_INT64    , int64_t  , INT64_MIN  )
-GB_MONOID_DEFINE ( GrB_, MAX_UINT64   , uint64_t , 0          )
-GB_MONOID_DEFINE ( GrB_, MAX_FP32     , float    , -INFINITY  )
-GB_MONOID_DEFINE ( GrB_, MAX_FP64     , double   , -INFINITY  )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_INT8     , int8_t   , INT8_MIN   , INT8_MAX  )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_INT16    , int16_t  , INT16_MIN  , INT16_MAX )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_INT32    , int32_t  , INT32_MIN  , INT32_MAX )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_INT64    , int64_t  , INT64_MIN  , INT64_MAX )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_UINT8    , uint8_t  , 0          , UINT8_MAX )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_UINT16   , uint16_t , 0          , UINT16_MAX)
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_UINT32   , uint32_t , 0          , UINT32_MAX)
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_UINT64   , uint64_t , 0          , UINT64_MAX)
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_FP32     , float    , -INFINITY  , INFINITY  )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_FP64     , double   , -INFINITY  , INFINITY  )
 
 // PLUS monoids:
-GB_MONOID_DEFINE ( GrB_, PLUS_INT8    , int8_t   , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_UINT8   , uint8_t  , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_INT16   , int16_t  , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_UINT16  , uint16_t , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_INT32   , int32_t  , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_UINT32  , uint32_t , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_INT64   , int64_t  , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_UINT64  , uint64_t , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_FP32    , float    , 0          )
-GB_MONOID_DEFINE ( GrB_, PLUS_FP64    , double   , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_INT8    , int8_t   , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_INT16   , int16_t  , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_INT32   , int32_t  , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_INT64   , int64_t  , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_UINT8   , uint8_t  , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_UINT16  , uint16_t , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_UINT32  , uint32_t , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_UINT64  , uint64_t , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_FP32    , float    , 0          )
+GB_MONOID_DEFINE      ( GrB_, PLUS_FP64    , double   , 0          )
 
 // TIMES monoids:
-GB_MONOID_DEFINE ( GrB_, TIMES_INT8   , int8_t   , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_UINT8  , uint8_t  , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_INT16  , int16_t  , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_UINT16 , uint16_t , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_INT32  , int32_t  , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_UINT32 , uint32_t , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_INT64  , int64_t  , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_UINT64 , uint64_t , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_FP32   , float    , 1          )
-GB_MONOID_DEFINE ( GrB_, TIMES_FP64   , double   , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_INT8   , int8_t   , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_INT16  , int16_t  , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_INT32  , int32_t  , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_INT64  , int64_t  , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_UINT8  , uint8_t  , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_UINT16 , uint16_t , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_UINT32 , uint32_t , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_UINT64 , uint64_t , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_FP32   , float    , 1          )
+GB_MONOID_DEFINE      ( GrB_, TIMES_FP64   , double   , 1          )
 
 // Boolean monoids:
-GB_MONOID_DEFINE ( GxB_, LOR_BOOL     , bool     , false      )
-GB_MONOID_DEFINE ( GxB_, LAND_BOOL    , bool     , true       )
-GB_MONOID_DEFINE ( GxB_, LXOR_BOOL    , bool     , false      )
-GB_MONOID_DEFINE ( GrB_, EQ_BOOL      , bool     , true       )
+GB_MONOID_DEFINE_TERM ( GxB_, LOR_BOOL     , bool     , false      , true )
+GB_MONOID_DEFINE_TERM ( GxB_, LAND_BOOL    , bool     , true       , false)
+GB_MONOID_DEFINE      ( GxB_, LXOR_BOOL    , bool     , false      )
+GB_MONOID_DEFINE      ( GrB_, EQ_BOOL      , bool     , true       )
 
 //------------------------------------------------------------------------------
 // predefined built-in semirings

@@ -2,23 +2,27 @@
 // GB_reduce_to_column: reduce a matrix to a column using a binary op
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
-// w<mask> = accum (w,reduce(A)) where w is n-by-1
+// C<mask> = accum (C,reduce(A)) where C is n-by-1
+
+// PARALLEL: use a parallel reduction method
+
+// TODO: add early exit;  pass in terminal (NULL if none)
 
 #include "GB.h"
 
-GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
+GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
 (
-    GrB_Matrix w,                   // input/output for results, size n-by-1
-    const GrB_Matrix mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp reduce,      // reduce operator for t=reduce(A)
+    GrB_Matrix C,                   // input/output for results, size n-by-1
+    const GrB_Matrix mask,          // optional mask for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(C,T)
+    const GrB_BinaryOp reduce,      // reduce operator for T=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Descriptor desc,      // descriptor for w, mask, and A
+    const GrB_Descriptor desc,      // descriptor for C, mask, and A
     GB_Context Context
 )
 {
@@ -27,15 +31,15 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK2 (w, mask, A)) ;
+    ASSERT (GB_ALIAS_OK2 (C, mask, A)) ;
 
-    GB_RETURN_IF_NULL_OR_FAULTY (w) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (mask) ;
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
-    ASSERT_OK (GB_check (w, "w input for reduce_BinaryOp", GB0)) ;
+    ASSERT_OK (GB_check (C, "C input for reduce_BinaryOp", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (mask, "mask for reduce_BinaryOp", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (accum, "accum for reduce_BinaryOp", GB0)) ;
     ASSERT_OK (GB_check (reduce, "reduce for reduce_BinaryOp", GB0)) ;
@@ -45,13 +49,13 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
 
-    // w and mask are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
-    ASSERT (GB_VECTOR_OK (w)) ;
+    // C and mask are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
+    ASSERT (GB_VECTOR_OK (C)) ;
     ASSERT (GB_IMPLIES (mask != NULL, GB_VECTOR_OK (mask))) ;
 
-    // check domains and dimensions for w<mask> = accum (w,T)
+    // check domains and dimensions for C<mask> = accum (C,T)
     GrB_Type ttype = reduce->ztype ;
-    info = GB_compatible (w->type, w, mask, accum, ttype, Context) ;
+    info = GB_compatible (C->type, C, mask, accum, ttype, Context) ;
     if (info != GrB_SUCCESS)
     { 
         return (info) ;
@@ -79,7 +83,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
     }
 
     // check the dimensions
-    int64_t wlen = GB_NROWS (w) ;
+    int64_t wlen = GB_NROWS (C) ;
     if (A_transpose)
     {
         if (wlen != GB_NCOLS (A))
@@ -102,10 +106,19 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
     }
 
     // quick return if an empty mask is complemented
-    GB_RETURN_IF_QUICK_MASK (w, C_replace, mask, Mask_comp) ;
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, mask, Mask_comp) ;
 
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
-    GB_WAIT (w) ;
+    //--------------------------------------------------------------------------
+
+    // GB_WAIT (C) ;
     GB_WAIT (mask) ;
     GB_WAIT (A) ;
 
@@ -184,7 +197,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
 
         // nnz(T) = # of non-empty columns of A
         tnz = A->nvec_nonempty ;
-        ASSERT (tnz == GB_nvec_nonempty (A)) ;
+        ASSERT (tnz == GB_nvec_nonempty (A, Context)) ;
 
         //----------------------------------------------------------------------
         // allocate T
@@ -193,7 +206,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
         // since T is a GrB_Vector, it is CSC and not hypersparse
         T = NULL ;                  // allocate a new header for T
         GB_CREATE (&T, ttype, wlen, 1, GB_Ap_calloc, true,
-            GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, tnz, true) ;
+            GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, tnz, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             return (info) ;
@@ -210,6 +223,13 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
         // sum down each sparse vector: T (j) = reduce (A (:,j))
         //----------------------------------------------------------------------
 
+        // TODO reduction down each sparse vector can be done in parallel.
+        // Need to first check A for empty vectors, and compute Ti first.
+        // then compute Tx.
+        // TODO: Each column reduction can exploit early exit as well,
+        // but 'reduce' is a binary op, not a monoid.  Pass in the terminal
+        // value.
+
         bool done = false ;
 
         tnz = 0 ;
@@ -221,21 +241,21 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
             type *tx = (type *) Tx ;                                        \
             GB_for_each_vector (A)                                          \
             {                                                               \
-                /* w = reduce (A (:,j)) */                                  \
-                type w ;                                                    \
+                /* tj = reduce (A (:,j)) */                                 \
+                type tj ;                                                   \
                 int64_t GBI1_initj (Iter, j, p, pend) ;                     \
                 if (p >= pend) continue ;   /* skip vector j if empty */    \
-                /* w = Ax [p], the first entry in vector j */               \
-                w = ax [p] ;                                                \
+                /* tj = Ax [p], the first entry in vector j */              \
+                tj = ax [p] ;                                               \
                 /* subsequent entries in vector j */                        \
-                /* FUTURE: some operators can terminate this loop early */  \
+                /* TODO: early exit here */                                 \
                 for (p++ ; p < pend ; p++)                                  \
                 {                                                           \
-                    /* w "+=" ax [p] ; */                                   \
-                    GB_DUP (w, ax [p]) ;                                    \
+                    /* tj "+=" ax [p] ; */                                  \
+                    GB_DUP (tj, ax [p]) ;                                   \
                 }                                                           \
                 Ti [tnz] = j ;                                              \
-                tx [tnz] = w ;                                              \
+                tx [tnz] = tj ;                                             \
                 tnz++ ;                                                     \
             }                                                               \
             done = true ;                                                   \
@@ -278,6 +298,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
                 // zwork = (ztype) Ax [p], the first entry in vector j
                 cast_A_to_Z (zwork, Ax +(p*asize), zsize) ;
                 // subsequent entries in vector j
+                // TODO: early exit
                 for (p++ ; p < pend ; p++)
                 { 
                     // awork = (ztype) Ax [p]
@@ -330,7 +351,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
             // since T is a GrB_Vector, it is not hypersparse
             T = NULL ;                  // allocate a new header for T
             GB_NEW (&T, ttype, wlen, 1, GB_Ap_null, true, GB_FORCE_NONHYPER,
-                GB_HYPER_DEFAULT, 1) ;
+                GB_HYPER_DEFAULT, 1, Context) ;
             if (info != GrB_SUCCESS)
             { 
                 // out of memory
@@ -345,7 +366,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
                 GB_MATRIX_FREE (&T) ;
                 return (info) ;
             }
-            ASSERT (T->nvec_nonempty == GB_nvec_nonempty (T)) ;
+            ASSERT (T->nvec_nonempty == GB_nvec_nonempty (T, Context)) ;
 
         }
         else
@@ -359,8 +380,11 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
             // costly if A is hypersparse, but it is only used if anz >= wlen,
             // so the time and memory usage are OK.
 
+            // Early exit cannot be exploited, and this method is not
+            // easily parallelizable.
+
             bool *restrict mark = NULL ;
-            GB_CALLOC_MEMORY (mark, wlen + 1, sizeof (bool)) ;
+            GB_CALLOC_MEMORY (mark, wlen + 1, sizeof (bool), Context) ;
 
             GB_void *restrict work = NULL ;
             GB_MALLOC_MEMORY (work, wlen + 1, zsize) ;
@@ -375,8 +399,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
             { 
                 // out of memory
                 GB_REDUCE_FREE_WORK ;
-                double memory = GBYTES (wlen + 1, sizeof (bool) + zsize) ;
-                return (GB_OUT_OF_MEMORY (memory)) ;
+                return (GB_OUT_OF_MEMORY) ;
             }
 
             //------------------------------------------------------------------
@@ -471,7 +494,7 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
             // since T is a GrB_Vector, it is CSC and not hypersparse
             T = NULL ;                  // allocate a new header for T
             GB_CREATE (&T, ttype, wlen, 1, GB_Ap_calloc, true,
-                GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, tnz, !tdense) ;
+                GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, tnz, !tdense, Context) ;
             if (info != GrB_SUCCESS)
             { 
                 // out of memory
@@ -532,10 +555,10 @@ GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
     ASSERT_OK (GB_check (T, "T output for T = reduce (A)", GB0)) ;
 
     //--------------------------------------------------------------------------
-    // w<mask> = accum (w,T): accumulate the results into w via the mask
+    // C<mask> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
-    return (GB_accum_mask (w, mask, NULL, accum, &T, C_replace, Mask_comp,
+    return (GB_accum_mask (C, mask, NULL, accum, &T, C_replace, Mask_comp,
         Context)) ;
 }
 

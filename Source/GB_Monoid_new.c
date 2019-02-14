@@ -2,10 +2,12 @@
 // GB_Monoid_new: create a Monoid with a specific type of identity
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 
@@ -67,10 +69,11 @@ GrB_Info GB_Monoid_new          // create a monoid
     //--------------------------------------------------------------------------
 
     // allocate the monoid
-    GB_CALLOC_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque)) ;
+    GB_CALLOC_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque), NULL) ;
     if (*monoid == NULL)
     { 
-        return (GB_NO_MEMORY) ;
+        // out of memory
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     // initialize the monoid
@@ -78,16 +81,94 @@ GrB_Info GB_Monoid_new          // create a monoid
     mon->magic = GB_MAGIC ;
     mon->op = op ;
     mon->object_kind = GB_USER_RUNTIME ;
-    mon->op_ztype_size = op->ztype->size ;
-    GB_CALLOC_MEMORY (mon->identity, 1, op->ztype->size) ;
+    size_t zsize = op->ztype->size ;
+    mon->op_ztype_size = zsize ;
+    GB_CALLOC_MEMORY (mon->identity, 1, zsize, NULL) ;
     if (mon->identity == NULL)
     { 
+        // out of memory
         GB_FREE_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque)) ;
-        return (GB_NO_MEMORY) ;
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     // copy the identity into the monoid.  No typecasting needed.
-    memcpy (mon->identity, identity, op->ztype->size) ;
+    memcpy (mon->identity, identity, zsize) ;
+
+    //--------------------------------------------------------------------------
+    // set the terminal value
+    //--------------------------------------------------------------------------
+
+    // TODO allow user-defined monoids based on user-defined ops to terminal
+    // TODO: move this switch into its own routine, so it can be used
+    // by GB_reduce.
+
+    mon->terminal = NULL ;
+
+    #define SET_TERMINAL(ctype,value)                                       \
+    {                                                                       \
+        GB_CALLOC_MEMORY (mon->terminal, 1, zsize, NULL) ;                  \
+        if (mon->terminal == NULL)                                          \
+        {                                                                   \
+            /* out of memory */                                             \
+            GB_FREE_MEMORY (mon->identity, 1, zsize) ;                      \
+            GB_FREE_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque)) ; \
+            return (GB_OUT_OF_MEMORY) ;                                     \
+        }                                                                   \
+        ctype *terminal = mon->terminal ;                                   \
+        (*terminal) = value ;                                               \
+    }                                                                       \
+    break ;
+
+    // set the terminal value for built-in operators
+    switch (op->opcode)
+    {
+        case GB_MIN_opcode :
+
+            switch (zcode)
+            {
+                case GB_INT8_code   : SET_TERMINAL (int8_t  , INT8_MIN  )
+                case GB_INT16_code  : SET_TERMINAL (int16_t , INT16_MIN )
+                case GB_INT32_code  : SET_TERMINAL (int32_t , INT32_MIN )
+                case GB_INT64_code  : SET_TERMINAL (int64_t , INT64_MIN )
+                case GB_UINT8_code  : SET_TERMINAL (uint8_t , 0         )
+                case GB_UINT16_code : SET_TERMINAL (uint16_t, 0         )
+                case GB_UINT32_code : SET_TERMINAL (uint32_t, 0         )
+                case GB_UINT64_code : SET_TERMINAL (uint64_t, 0         )
+                case GB_FP32_code   : SET_TERMINAL (float   , -INFINITY )
+                case GB_FP64_code   : SET_TERMINAL (double  , -INFINITY )
+                default : ;
+            }
+            break ;
+
+        case GB_MAX_opcode :
+
+            switch (zcode)
+            {
+                case GB_INT8_code   : SET_TERMINAL (int8_t  , INT8_MAX  )
+                case GB_INT16_code  : SET_TERMINAL (int16_t , INT16_MAX )
+                case GB_INT32_code  : SET_TERMINAL (int32_t , INT32_MAX )
+                case GB_INT64_code  : SET_TERMINAL (int64_t , INT64_MAX )
+                case GB_UINT8_code  : SET_TERMINAL (uint8_t , UINT8_MAX )
+                case GB_UINT16_code : SET_TERMINAL (uint16_t, UINT16_MAX)
+                case GB_UINT32_code : SET_TERMINAL (uint32_t, UINT32_MAX)
+                case GB_UINT64_code : SET_TERMINAL (uint64_t, UINT64_MAX)
+                case GB_FP32_code   : SET_TERMINAL (float   , INFINITY  )
+                case GB_FP64_code   : SET_TERMINAL (double  , INFINITY  )
+                default : ;
+            }
+            break ;
+
+        case GB_LOR_opcode :
+
+            if (zcode == GB_BOOL_code) SET_TERMINAL (bool, true)
+
+        case GB_LAND_opcode :
+
+            if (zcode == GB_BOOL_code) SET_TERMINAL (bool, false)
+
+        default :
+            ;
+    }
 
     ASSERT_OK (GB_check (mon, "new monoid", GB0)) ;
     return (GrB_SUCCESS) ;

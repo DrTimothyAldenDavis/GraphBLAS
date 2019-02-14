@@ -2,12 +2,14 @@
 // GrB_Col_assign:    C<mask>(Rows,col) = accum (C(Rows,col),u)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // Compare with GxB_Col_subassign, which uses the mask and C_replace differently
+
+// parallel: not here; see GB_assign
 
 #include "GB.h"
 

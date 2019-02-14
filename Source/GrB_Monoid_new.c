@@ -2,7 +2,7 @@
 // GrB_Monoid_new:  create a new monoid
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -10,6 +10,8 @@
 // Create a new monoid with binary operator, z=op(x.y).  The three types of x,
 // y, and z must all be the same, and the identity value must also have the
 // same type.  No typecasting is done for the identity value.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 

@@ -2,7 +2,7 @@
 // GB_nvec_nonempty: count the number of non-empty vectors
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -12,11 +12,14 @@
 // which is checked in GB_matvec_check.  However, when GB_resize needs to
 // recount A->nvec_nonempty, it uses this function.
 
+// PARALLEL: simple parallel reduction
+
 #include "GB.h"
 
 int64_t GB_nvec_nonempty        // return # of non-empty vectors
 (
-    const GrB_Matrix A          // input matrix to examine
+    const GrB_Matrix A,         // input matrix to examine
+    GB_Context Context
 )
 {
 
@@ -25,6 +28,12 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // trivial case

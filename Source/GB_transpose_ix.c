@@ -2,7 +2,7 @@
 // GB_transpose_ix: transpose the values and pattern of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -19,6 +19,10 @@
 
 // Compare with GB_transpose_op.c
 
+// PARALLEL: the bucket transpose will not be simple to parallelize.  The qsort
+// method of transpose would be more parallel.  This method might remain mostly
+// sequential.
+
 #include "GB.h"
 
 void GB_transpose_ix        // transpose the pattern and values of a matrix
@@ -27,7 +31,8 @@ void GB_transpose_ix        // transpose the pattern and values of a matrix
     int64_t *Ri,            // size cnz, output column indices
     GB_void *Rx,            // size cnz, output numerical values, type R_type
     const GrB_Type R_type,  // type of output R (do typecasting into R)
-    const GrB_Matrix A      // input matrix
+    const GrB_Matrix A,     // input matrix
+    GB_Context Context
 )
 {
 
@@ -40,6 +45,12 @@ void GB_transpose_ix        // transpose the pattern and values of a matrix
     ASSERT (Rp != NULL && Ri != NULL && Rx != NULL) ;
     ASSERT (GB_Type_compatible (A->type, R_type)) ;
     ASSERT (!GB_ZOMBIES (A)) ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // get the input matrix

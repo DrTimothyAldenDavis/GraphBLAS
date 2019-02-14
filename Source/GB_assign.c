@@ -2,7 +2,7 @@
 // GB_assign: submatrix assignment: C<M>(Rows,Cols) = accum (C(Rows,Cols),A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -23,6 +23,9 @@
 // If row_assign is true, this function does the work for GrB_Row_assign.
 
 // Compare with GB_subassign, which uses M and C_replace differently
+
+// PARALLEL: some C_replace_phase here, mainly in GB_subassign_kernel and
+// GB_subref_numeric.
 
 #include "GB.h"
 
@@ -225,6 +228,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // quick return if an empty mask is complemented
     //--------------------------------------------------------------------------
 
@@ -338,7 +347,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     // C_replace_phase is true if a final pass over all of C is required
     // to delete entries outside the C(I,J) submatrix.
-    bool C_replace_phase = (C_replace && M != NULL && !whole_matrix) ;
+    bool C_replace_phase = (C_replace && !Mask_is_same) ;
+    ASSERT (!Mask_is_same == (M != NULL && !whole_matrix)) ;
 
     //--------------------------------------------------------------------------
     // apply pending updates to A and M
@@ -396,14 +406,20 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (C_is_csc)
     { 
         // C is in CSC format
-        I = Rows ; ni = nRows_in ; Ikind = RowsKind ; nI = nRows ; Icolon = RowColon ;
-        J = Cols ; nj = nCols_in ; Jkind = ColsKind ; nJ = nCols ; Jcolon = ColColon ;
+        I      = Rows     ;     J      = Cols     ;
+        ni     = nRows_in ;     nj     = nCols_in ;
+        Ikind  = RowsKind ;     Jkind  = ColsKind ;
+        nI     = nRows    ;     nJ     = nCols    ;
+        Icolon = RowColon ;     Jcolon = ColColon ;
     }
     else
     { 
         // C is in CSR format
-        I = Cols ; ni = nCols_in ; Ikind = ColsKind ; nI = nCols ; Icolon = ColColon ;
-        J = Rows ; nj = nRows_in ; Jkind = RowsKind ; nJ = nRows ; Jcolon = RowColon ;
+        I       = Cols     ;    J       = Rows     ;
+        ni      = nCols_in ;    nj      = nRows_in ;
+        Ikind   = ColsKind ;    Jkind   = RowsKind ;
+        nI      = nCols    ;    nJ      = nRows    ;
+        Icolon  = ColColon ;    Jcolon  = RowColon ;
     }
 
     // C has C->vdim vectors, each of length C->nvec.

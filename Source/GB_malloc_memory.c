@@ -2,7 +2,7 @@
 // GB_malloc_memory: wrapper for malloc (used via the GB_MALLOC_MEMORY macro)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -19,6 +19,8 @@
 // By default, GB_MALLOC is defined in GB.h as malloc.  For a MATLAB
 // mexFunction, it is mxMalloc.  It can also be defined at compile time with
 // -DGB_MALLOC=mymallocfunc.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 

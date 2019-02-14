@@ -2,7 +2,7 @@
 // GB_select: apply a select operator; optionally transpose a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -10,6 +10,8 @@
 // C<M> = accum (C, select(A,k)) or select(A,k)').  This function is not
 // user-callable.  It does the work for GxB_*_select.
 // Compare this function with GrB_apply.
+
+// PARALLEL: do in parallel, but using an extra move of the data.
 
 #include "GB.h"
 
@@ -94,8 +96,17 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     // quick return if an empty mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
-    GB_WAIT (C) ;
+    //--------------------------------------------------------------------------
+
+    // GB_WAIT (C) ;
     GB_WAIT (M) ;
     GB_WAIT (A) ;
 
@@ -166,7 +177,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GrB_Matrix T = NULL ;           // allocate a new header for T
     GB_CREATE (&T, A->type, A->vlen, A->vdim, GB_Ap_malloc, A_csc,
         GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, A->nvec_nonempty,
-        tnzmax, true) ;
+        tnzmax, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory

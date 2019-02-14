@@ -2,7 +2,7 @@
 // GB_subassign_kernel: C(I,J)<M> = accum (C(I,J), A)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -49,6 +49,16 @@
 // can be changed by turning an entry into a zombie, or by bringing a zombie
 // back to life, but no entry in C->i moves in position.
 
+// PARALLEL: the pattern of C is not changing, except that zombies are
+// introduced.  Pending tuples are added, but they could be added in any order.
+// Each thread could keep its own list of pending tuples.  To parallelize this
+// function, partition the list J, and call this function for each partition.
+// Assuming that pending tuples are first added to a thread's private list, and
+// then merged into C when done, C can be modified safely in parallel.  Also
+// relies on GB_subref_symbolic, which can be done in parallel (but if J is
+// partitioned, GB_subref_symbolic would be called independently for each
+// partition).
+
 #include "GB.h"
 
 GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
@@ -74,7 +84,25 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_NOT_ALIASED_2 (C, M, A)) ;
+    if (I == GrB_ALL && J == GrB_ALL)
+    {
+        // C(:,:)<C> = ... is valid
+        ASSERT (GB_ALIAS_OK (C, M)) ;
+    }
+    else
+    {
+        // C(I,J)<M> = ... requires C and M to not be aliased
+        ASSERT (GB_NOT_ALIASED (C, M)) ;
+    }
+
+    // TODO: can this be OK if I and J are both ":"?  I think so.
+    ASSERT (GB_NOT_ALIASED (C, A)) ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // check empty mask conditions
@@ -119,7 +147,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     // complemented.
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // determine the length and kind of I and J
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
@@ -141,25 +169,39 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     // transposed in the caller.  Thus C(I,J), A, and M (if present) all
     // have the same size: length(I)-by-length(J)
 
+    //--------------------------------------------------------------------------
+    // deterimine the type and nnz of A (from a scalar or matrix)
+    //--------------------------------------------------------------------------
+
+    // also determines if A is dense.  The scalar is always dense.
+
+    // mn = nI * nJ; valid only if mn_ok is true.
     GrB_Index mn ;
     bool mn_ok = GB_Index_multiply (&mn, nI, nJ) ;
-    bool is_dense ;
-    int64_t anz ;
-    GrB_Type atype ;
-    GB_Type_code acode ;
+    bool is_dense ;     // true if A is dense (or scalar expansion)
+    int64_t anz ;       // nnz(A), or mn for scalar expansion
+    bool anz_ok ;       // true if anz is OK
+    GrB_Type atype ;    // the type of A or the scalar
 
     if (scalar_expansion)
     { 
-        // The input is a scalar; the matrix A is not present
+        // The input is a scalar; the matrix A is not present.  Scalar
+        // expansion results in an implicit dense matrix A whose type is
+        // defined by the scalar_code.
         ASSERT (A == NULL) ;
         ASSERT (scalar != NULL) ;
         anz = mn ;
+        anz_ok = mn_ok ;
         is_dense = true ;
-        // a user-defined scalar is assumed to have the same type as
-        // C->type which is also user-defined (or else it would not be
-        // compatible)
+        // a run-time or compile-time user-defined scalar is assumed to have
+        // the same type as C->type which is also user-defined (or else it
+        // would not be compatible).  Compatibility has already been checked in
+        // the caller.  The type of scalar for built-in types is determined by
+        // scalar_code, instead, since it can differ from C (in which case it
+        // is typecasted into C->type).  User-defined scalars cannot be
+        // typecasted.
         atype = GB_code_type (scalar_code, C->type) ;
-        acode = scalar_code ;
+        ASSERT_OK (GB_check (atype, "atype for scalar expansion", GB0)) ;
     }
     else
     { 
@@ -169,14 +211,20 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         ASSERT (!GB_PENDING (A)) ;   ASSERT (!GB_ZOMBIES (A)) ;
         ASSERT (scalar == NULL) ;
         anz = GB_NNZ (A) ;
+        anz_ok = true ;
         is_dense = (mn_ok && anz == (int64_t) mn) ;
         atype = A->type ;
-        acode = atype->code ;
     }
 
     // the size of the entries of the matrix A, or the scalar
     size_t asize = atype->size ;
-    ASSERT (acode == atype->code) ;
+    GB_Type_code acode = atype->code ;
+
+    //--------------------------------------------------------------------------
+    // check the size of the mask
+    //--------------------------------------------------------------------------
+
+    // For subassignment, the mask must be |I|-by-|J|
 
     if (M != NULL)
     { 
@@ -383,6 +431,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     // C may be standard sparse, or hypersparse
+    // time: O(1) if standard, O(log(cnvec)) if hyper
 
     #define GB_jC_LOOKUP                                                    \
         /* lookup jC in C */                                                \
@@ -1186,6 +1235,16 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     bool C_Mask_scalar = (scalar_expansion && !C_replace &&
         M != NULL && !Mask_comp) ;
 
+    int64_t cnz = GB_NNZ (C) ;      // includes zombies but not pending tuples
+
+    /*
+    bool C_empty = (cnz == 0 && C->n_pending == 0) ;
+    if (C_empty)
+    {
+        fprintf (stderr, "C(:)= is empty\n") ;
+    }
+    */
+
     if (C_Mask_scalar)
     { 
         // C(I,J)<M>=scalar or +=scalar, mask present and not complemented,
@@ -1198,17 +1257,16 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         // need to be examined.  Not all entries in C(I,J) and M need to be
         // examined.  As a result, computing S=C(I,J) can dominate the time and
         // memory required for the S_Extraction method.
-        int64_t cnz = GB_NNZ (C) ;
         if (nI == 1 || nJ == 1 || cnz == 0)
         { 
             // No need to form S if it has just a single row or column.  If C
             // is empty so is S, so don't bother computing it.
             S_Extraction = false ;
         }
-        else if (mn_ok && cnz + nzMask > anz)
+        else if (anz_ok && cnz + nzMask > anz)
         {
             // If C and M are very dense, then do not extract S
-            int64_t cnz = nzMask ;
+            int64_t cnz_to_scan = nzMask ;
             for (int64_t j = 0 ; S_Extraction && j < nJ ; j++)
             {
                 // jC = J [j] ; or J is a colon expression
@@ -1220,8 +1278,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 }
                 // get the C(:,jC) vector where jC = J [j]
                 GB_jC_LOOKUP ;
-                cnz += pC_end - pC_start ;
-                if (cnz/8 > anz)
+                cnz_to_scan += pC_end - pC_start ;
+                if (cnz_to_scan/8 > anz)
                 { 
                     // nnz(C) + nnz(M) is much larger than nnz(A).  Do not
                     // construct S=C(I,J).  Instead, scan through all of A and
@@ -1230,7 +1288,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     S_Extraction = false ;
                 }
             }
-            if (cnz == 0)
+            if (cnz_to_scan == 0)
             { 
                 // C(:,J) and M(:,J) are empty; no need to compute S
                 S_Extraction = false ;
@@ -1496,6 +1554,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             // METHOD 1a (no accum): C(I,J)<M> = scalar
             //------------------------------------------------------------------
 
+            // time:  O(nnz(M)*log(c)) if c = avg nnz(C(:,j)) C not hyper or
+            // dense. O(nnz(M)) if C is dense, for dense columns of C.
+            // +O(mnvec*log(cnvec)) if C is hypersparse
+
             GB_for_each_vector (M)
             {
                 int64_t GBI1_initj (Iter, j, pM, pM_end) ;
@@ -1593,6 +1655,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             //------------------------------------------------------------------
             // METHOD 1b (accum): C(I,J)<M> += scalar
             //------------------------------------------------------------------
+
+            // time:  same as METHOD 1b
 
             GB_for_each_vector (M)
             {
@@ -1712,6 +1776,9 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 // METHOD 2a: C(I,J) += scalar, not using S
                 //--------------------------------------------------------------
 
+                // time: O(nI*nJ*log(c)) if C standard.  O(nI*nJ) if C dense.
+                // +O(nJ*log(cnvec)) if C hypersparse.
+
                 for (int64_t j = 0 ; j < nJ ; j++)
                 {
                     // get the C(:,jC) vector where jC = J [j]
@@ -1786,6 +1853,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 2b: C(I,J)<!M> += scalar, not using S
                 //--------------------------------------------------------------
+
+                // time: same as METHOD 2a
 
                 // C(I,J)<M> += scalar, not using S, and C_replace false
                 // already handled by the C_Mask_scalar case
@@ -1935,6 +2004,11 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 // METHOD 2c: C(I,J) += A, not using S
                 //--------------------------------------------------------------
 
+                // time: O(nnz(A)*log(c)) if C standard. O(nnz(A)) if C dense.
+                // +O(anvec*log(cnvec)) if C hyper.
+
+                // GB_accum_mask case: C(:,:) = accum (C(:,:),T)
+
                 GB_for_each_vector (A)
                 {
 
@@ -2024,6 +2098,12 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 // METHOD 2d: C(I,J)<M> += A, not using S
                 //--------------------------------------------------------------
 
+                // time: O(nnz(A)*(log(c)+log(md))+mnvec) if C standard and not
+                //dense, where md = avg nnz M(:,j).  O(nnz(A)*(log(md))+mnvec)
+                // if C dense.  +O(anvec*log(cnvec)) if C hyper.
+
+                // GB_accum_mask case: C(:,:)<M> = accum (C(:,:),T)
+
                 GB_for_each_vector2 (A, M)
                 {
 
@@ -2050,6 +2130,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                             //--------------------------------------------------
                             // find M(iA,j)
                             //--------------------------------------------------
+
+                            // TODO skip binary search if M(:,j) dense
 
                             bool mij = true ;
                             int64_t pM     = pM_start ;
@@ -2113,6 +2195,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                             //--------------------------------------------------
                             // find M(iA,j)
                             //--------------------------------------------------
+
+                            // TODO skip binary search if M(:,j) dense
 
                             bool mij = true ;
                             int64_t pM     = pM_start ;
@@ -2202,6 +2286,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 // METHOD 3a (no accum): C(I,J) = scalar, using S
                 //--------------------------------------------------------------
 
+                // time: O(nI*nJ)
+
                 GB_for_each_vector2s (S /*, scalar */)
                 {
 
@@ -2248,6 +2334,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 3a (with accum): C(I,J) += scalar, using S
                 //--------------------------------------------------------------
+
+                // time: O(nI*nJ)
 
                 GB_for_each_vector2s (S /*, scalar */)
                 {
@@ -2302,6 +2390,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 3b (no accum): C(I,J) = A, using S
                 //--------------------------------------------------------------
+
+                // time:  O(nnz(S)+nnz(A)+nvec(S+A))
 
                 GB_for_each_vector2 (S, A)
                 {
@@ -2387,6 +2477,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 3b (with accum): C(I,J) += A, using S
                 //--------------------------------------------------------------
+
+                // time:  same as METHOD 3b (without accum)
 
                 GB_for_each_vector2 (S, A)
                 {
@@ -2493,6 +2585,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 4a (no accum): C(I,J)<M> = scalar, using S
                 //--------------------------------------------------------------
+
+                // time:  O(nI*nJ)
 
                 GB_for_each_vector3s (S, M /* scalar */)
                 {
@@ -2632,6 +2726,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 4a (with accum): C(I,J)<M> += scalar, using S
                 //--------------------------------------------------------------
+
+                // time:  O(nI*nJ)
 
                 GB_for_each_vector3s (S, M /* scalar */)
                 {
@@ -2793,6 +2889,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 4b (no accum): C(I,J)<M> = A, using S
                 //--------------------------------------------------------------
+
+                // time: O(nnz(S)+nnz(M)+nnz(A)+nvec(S+M+A))
+
+                // GB_accum_mask case: C(:,:)<M> = A
 
                 GB_for_each_vector3 (S, M, A)
                 {
@@ -2965,6 +3065,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
                 // METHOD 4b (with accum): C(I,J)<M> += A, using S
                 //--------------------------------------------------------------
+
+                // time: same as METHOD 4b (without accum)
+
+                // GB_accum_mask case: C(:,:)<M> = A
 
                 GB_for_each_vector3 (S, M, A)
                 {
@@ -3144,6 +3248,11 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         // can bring zombies back to life, and the zombie count can go to zero.
         // In that case, C must be removed from the queue.  The removal does
         // nothing if C is already not in the queue.
+
+        // TODO: this might cause thrashing if lots of assigns or setElements
+        // are done in parallel.  Instead, leave the matrix in the queue, and
+        // allow matrices to be in the queue even if they have no unfinished
+        // computations.  See also GB_setElement.
         GB_CRITICAL (GB_queue_remove (C)) ;
     }
     else

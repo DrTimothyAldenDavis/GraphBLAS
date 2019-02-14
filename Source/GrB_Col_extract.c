@@ -2,7 +2,7 @@
 // GrB_Col_extract: w<mask> = accum (w, A(I,j)) or A(j,I)'
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,8 @@
 // GraphBLAS spec, row and column vectors are indistinguishable.  In this
 // implementation, both are the same as an n-by-1 GrB_Matrix, except with
 // restrictions on the matrix operations that can be performed on them.
+
+// parallel: not here; see GB_extract.
 
 #include "GB.h"
 
@@ -41,11 +43,13 @@ GrB_Info GrB_Col_extract        // w<mask> = accum (w, A(I,j)) or (A(j,I))'
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
 
+    // TODO use a consist error message; see
+    // TODO: GB_ijproperties, GB_ICHECK, setElement, extractElement
     GrB_Index ancols = (A_transpose ? GB_NROWS (A) : GB_NCOLS (A)) ;
     if (j >= ancols)
     { 
         return (GB_ERROR (GrB_INVALID_INDEX, (GB_LOG,
-            "Column index j "GBu" out of range; must be < "GBu, j, ancols))) ;
+            "Column index j="GBu" out of bounds; must be < "GBu, j, ancols))) ;
     }
 
     //--------------------------------------------------------------------------

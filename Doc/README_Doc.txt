@@ -105,7 +105,7 @@ make
 
 or for a faster build on a 4-core system:
 
-make -j4
+make JOBS=4
 
 To test it, go to SuiteSparse/GraphBLAS/  and type
 

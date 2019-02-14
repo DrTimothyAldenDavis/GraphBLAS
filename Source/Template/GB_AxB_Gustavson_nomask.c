@@ -2,7 +2,7 @@
 // GB_AxB_Gustavson_nomask:  C=A*B using Gustavson method, precomputed pattern
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -13,6 +13,10 @@
 // The pattern of C has already been computed in the symbolic phase of
 // GB_AxB_Gustavson.  This is Gustavson's method, extended to handle
 // hypersparse matrices and arbitrary semirings.
+
+// parallel: this could be done in parallel, but the parallelism will be
+// handled outside this code, in GB_AxB_parallel.  This work is done by a
+// single thread.
 
 {
 
@@ -67,16 +71,16 @@
         //----------------------------------------------------------------------
 
         #ifdef GB_HYPER_CASE
-        int64_t GBI2_initj (Iter, j, pB_start, pB_end, pC_start, pC_end) ;
+        int64_t GBI2_initj (Iter, j, pB, pB_end, pC_start, pC_end) ;
         #else
-        int64_t pB_start = Bp [j] ;
+        int64_t pB       = Bp [j] ;
         int64_t pB_end   = Bp [j+1] ;
         int64_t pC_start = Cp [j] ;
         int64_t pC_end   = Cp [j+1] ;
         #endif
 
         if (pC_end == pC_start) continue ;
-        int64_t bjnz = pB_end - pB_start ;
+        int64_t bjnz = pB_end - pB ;
         ASSERT (bjnz > 0) ;
 
         //----------------------------------------------------------------------
@@ -104,7 +108,7 @@
         // C(:,j) = A * B(:,j)
         //----------------------------------------------------------------------
 
-        for (int64_t pB = pB_start ; pB < pB_end ; pB++)
+        for ( ; pB < pB_end ; pB++)
         {
 
             //------------------------------------------------------------------
@@ -115,25 +119,26 @@
             int64_t k = Bi [pB] ;
 
             // find A(:,k), reusing pleft since Bi [...] is sorted
-            int64_t pA_start, pA_end ;
+            int64_t pA, pA_end ;
             #ifdef GB_HYPER_CASE
-            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k,
-                &pA_start, &pA_end) ;
+            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA, &pA_end) ;
             #else
-            pA_start = Ap [k] ;
-            pA_end   = Ap [k+1] ;
+            pA     = Ap [k] ;
+            pA_end = Ap [k+1] ;
             #endif
 
-            if (pA_start == pA_end) continue ;
+            // skip if A(:,k) is empty
+            if (pA == pA_end) continue ;
 
             // get the value of B(k,j)
+            // bkj = Bx [pB]
             GB_COPY_ARRAY_TO_SCALAR (bkj, Bx, pB, bsize) ;
 
             //------------------------------------------------------------------
             // Sauna_Work += A(:,k) * B(k,j)
             //------------------------------------------------------------------
 
-            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+            for ( ; pA < pA_end ; pA++)
             { 
                 // Sauna_Work [i] += A(i,k) * B(k,j)
                 int64_t i = Ai [pA] ;

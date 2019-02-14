@@ -2,7 +2,7 @@
 // GB_thread_local_access: get pointer to thread-local storage
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -10,6 +10,8 @@
 // This implementation is complete for user threading with POSIX threads,
 // OpenMP, and no user threads.  Windows and ANSI C11 threads are not yet
 // supported.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 

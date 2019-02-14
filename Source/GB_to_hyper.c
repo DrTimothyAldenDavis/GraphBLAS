@@ -2,7 +2,7 @@
 // GB_to_hyper: convert a matrix to hyperspasre
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -18,6 +18,8 @@
 // A->nvec_nonempty does not change.
 
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
+
+// PARALLEL: a reduction loop
 
 #include "GB.h"
 
@@ -43,6 +45,12 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     #ifndef NDEBUG
     GrB_Info info ;
     #endif
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // convert A to hypersparse form
@@ -77,8 +85,8 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
             A->is_hyper = true ;    // A is hypersparse, but otherwise invalid
             GB_FREE_MEMORY (Ap_new, nvec_new+1, sizeof (int64_t)) ;
             GB_FREE_MEMORY (Ah_new, nvec_new,   sizeof (int64_t)) ;
-            GB_CONTENT_FREE (A) ;
-            return (GB_OUT_OF_MEMORY (GBYTES (2*nvec_new+1, sizeof (int64_t))));
+            GB_PHIX_FREE (A) ;
+            return (GB_OUT_OF_MEMORY) ;
         }
 
         //----------------------------------------------------------------------

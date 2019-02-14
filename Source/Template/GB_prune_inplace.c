@@ -2,7 +2,7 @@
 // GB_prune_inplace: prune a matrix in place
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -14,6 +14,8 @@
 
 // This code is used by GB_wait to delete zombies, and by GB_resize to delete
 // entries outside the resized dimensions, if A->vlen decreases.
+
+// PARALLEL: requires a reduction-style parallelism
 
 {
 
@@ -132,6 +134,6 @@
 
     // entries have now been removed; update count of non-empty vectors
     A->nvec_nonempty = anvec_new ;
-    ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A)) ;
+    ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, NULL)) ;
 }
 

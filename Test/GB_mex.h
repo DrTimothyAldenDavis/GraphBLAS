@@ -259,6 +259,8 @@ bool GB_mx_isequal  // true if A and B are exactly the same
     GrB_Matrix B
 ) ;
 
+int GB_mx_Sauna_nmalloc ( ) ;  // return # of mallocs in Saunas in use
+
 //------------------------------------------------------------------------------
 
 #ifdef GB_PRINT_MALLOC
@@ -316,6 +318,7 @@ bool GB_mx_isequal  // true if A and B are exactly the same
         TIC ;                                                               \
         GrB_Info info = GRAPHBLAS_OPERATION ;                               \
         TOC ;                                                               \
+        if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;                    \
         if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                \
         {                                                                   \
             FREE_ALL ;                                                      \
@@ -326,6 +329,7 @@ bool GB_mx_isequal  // true if A and B are exactly the same
     {                                                                       \
         /* brutal malloc debug */                                           \
         int nmalloc_start = (int) GB_Global.nmalloc ;                       \
+        int nmalloc_Sauna_start = GB_mx_Sauna_nmalloc ( ) ;                 \
         for (int tries = 0 ; ; tries++)                                     \
         {                                                                   \
             /* give GraphBLAS the ability to do a # of mallocs, */          \
@@ -353,11 +357,20 @@ bool GB_mx_isequal  // true if A and B are exactly the same
                 FREE_DEEP_COPY ;                                            \
                 GET_DEEP_COPY ;                                             \
                 int nmalloc_end = (int) GB_Global.nmalloc ;                 \
-                if (nmalloc_end > nmalloc_start)                            \
+                int nmalloc_Sauna_end = GB_mx_Sauna_nmalloc ( ) ;           \
+                int nleak = ((nmalloc_end   - nmalloc_Sauna_end  ) -        \
+                             (nmalloc_start - nmalloc_Sauna_start)) ;       \
+                if (nleak > 0)                                              \
                 {                                                           \
                     /* memory leak */                                       \
-                    printf ("Leak! tries %d : %d %d\nmethod: %s\n",         \
-                        tries, nmalloc_end, nmalloc_start,                  \
+                    printf ("Leak! tries %d : nleak %d\n"                   \
+                        "nmalloc_end:        %d\n"                          \
+                        "nmalloc_Sauna_end   %d\n"                          \
+                        "nmalloc_start:      %d\n"                          \
+                        "nmalloc_Sauna_start %d\n"                          \
+                        "method [%s]\n",                                    \
+                        tries, nleak, nmalloc_end, nmalloc_Sauna_end,       \
+                        nmalloc_start, nmalloc_Sauna_start,                 \
                         GB_STR (GRAPHBLAS_OPERATION)) ;                     \
                     mexWarnMsgIdAndTxt ("GB:leak", GrB_error ( )) ;         \
                     FREE_ALL ;                                              \
@@ -370,6 +383,7 @@ bool GB_mx_isequal  // true if A and B are exactly the same
                 printf ("an error: %s line %d\n%s\n", __FILE__, __LINE__,   \
                     GrB_error ()) ;                                         \
                 FREE_ALL ;                                                  \
+                if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;            \
                 mexErrMsgTxt (GrB_error ( )) ;                              \
             }                                                               \
         }                                                                   \

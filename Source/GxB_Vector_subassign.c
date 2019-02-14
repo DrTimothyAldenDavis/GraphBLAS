@@ -2,12 +2,14 @@
 // GxB_Vector_subassign: w(Rows)<mask> = accum (w(Rows),u)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // Compare with GrB_Vector_assign, which uses mask and C_replace differently
+
+// parallel: not here; see GB_subassign_kernel
 
 #include "GB.h"
 

@@ -2,10 +2,15 @@
 // GB_AxB_alloc: estimate nnz(C) and allocate C for C=A*B or C=A'*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// parallel: this function will remain sequential.
+// parallelism will be done in GB_AxB_parallel.
+
+// Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
 #include "GB.h"
 
@@ -19,8 +24,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     const GrB_Matrix A,         // input matrix A (transposed for dot product)
     const GrB_Matrix B,         // input matrix B
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
-    const int64_t rough_guess,  // rough estimate of nnz(C)
-    GB_Context Context
+    const int64_t rough_guess   // rough estimate of nnz(C)
 )
 {
 
@@ -28,6 +32,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     // check inputs
     //--------------------------------------------------------------------------
 
+    GB_Context Context = NULL ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for alloc C=A*B", GB0)) ;
@@ -85,7 +90,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
 
     GB_CREATE (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio, B->nvec_nonempty,
-        cnz_guess, numeric) ;
+        cnz_guess, numeric, NULL) ;
 
     return (info) ;
 }

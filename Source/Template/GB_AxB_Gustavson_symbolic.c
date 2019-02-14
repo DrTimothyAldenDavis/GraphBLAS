@@ -2,10 +2,14 @@
 // GB_AxB_Gustavson_symbolic: C=A*B symbolic analysis
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// parallel: this could be done in parallel, but the parallelism will be
+// handled outside this code, in GB_AxB_parallel.  This work is done by a
+// single thread.
 
 {
 
@@ -46,10 +50,10 @@
     {
 
         #ifdef GB_HYPER_CASE
-        int64_t GBI1_initj (Iter, j, pB_start, pB_end) ;
+        int64_t GBI1_initj (Iter, j, pB, pB_end) ;
         #else
-        int64_t pB_start = Bp [j] ;
-        int64_t pB_end   = Bp [j+1] ;
+        int64_t pB     = Bp [j] ;
+        int64_t pB_end = Bp [j+1] ;
         #endif
 
         //----------------------------------------------------------------------
@@ -61,7 +65,7 @@
         int64_t cmax = cnz + cvlen ;
         if (cmax > C->nzmax)
         { 
-            GB_OK (GB_ix_realloc (C, 4*(C->nzmax + cvlen), false, Context)) ;
+            GB_OK (GB_ix_realloc (C, 4*(C->nzmax + cvlen), false, NULL)) ;
             Ci = C->i ;
         }
 
@@ -69,7 +73,7 @@
         // C(:,j) = set union of all A(:,k) for each nonzero B(k,j) ;
         //----------------------------------------------------------------------
 
-        int64_t bjnz = pB_end - pB_start ;
+        int64_t bjnz = pB_end - pB ;
 
         #ifdef GB_HYPER_CASE
         int64_t pleft = 0 ;
@@ -96,19 +100,18 @@
             //------------------------------------------------------------------
 
             // C(:,j) = A(:,k)
-            int64_t k = Bi [pB_start] ;
+            int64_t k = Bi [pB] ;
 
             // find A(:,k)
-            int64_t pA_start, pA_end ;
+            int64_t pA, pA_end ;
             #ifdef GB_HYPER_CASE
-            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k,
-                &pA_start, &pA_end) ;
+            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA, &pA_end) ;
             #else
-            pA_start = Ap [k] ;
-            pA_end   = Ap [k+1] ;
+            pA     = Ap [k] ;
+            pA_end = Ap [k+1] ;
             #endif
 
-            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+            for ( ; pA < pA_end ; pA++)
             { 
                 int64_t i = Ai [pA] ;
                 // C(i,j) is nonzero
@@ -123,19 +126,17 @@
             // 2-way merge of A (:,k1) and A (:,k2)
             //------------------------------------------------------------------
 
-            int64_t k1 = Bi [pB_start] ;
-            int64_t k2 = Bi [pB_start+1] ;
+            int64_t k1 = Bi [pB] ;
+            int64_t k2 = Bi [pB+1] ;
             ASSERT (k1 < k2) ;
 
             int64_t p1, p1_end, p2, p2_end ;
 
             // find A(:,k1) and A(:,k2)
             #ifdef GB_HYPER_CASE
-            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k1,
-                &p1, &p1_end) ;
+            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k1, &p1, &p1_end) ;
             // Use pleft of k1 to trim the search for k2 since k1 < k2
-            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k2,
-                &p2, &p2_end) ;
+            GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k2, &p2, &p2_end) ;
             #else
             p1     = Ap [k1] ;
             p1_end = Ap [k1+1] ;
@@ -189,7 +190,7 @@
             }
             #endif
 
-            for (int64_t pB = pB_start ; pB < pB_end ; pB++)
+            for ( ; pB < pB_end ; pB++)
             {
                 // if C(:,j) now completely full, no need to continue
                 if (cnz == cmax) break ;
@@ -198,16 +199,15 @@
                 int64_t k = Bi [pB] ;
 
                 // find A(:,k), reusing pleft since Bi [...] is sorted
-                int64_t pA_start, pA_end ;
+                int64_t pA, pA_end ;
                 #ifdef GB_HYPER_CASE
-                GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k,
-                    &pA_start, &pA_end) ;
+                GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA, &pA_end);
                 #else
-                pA_start = Ap [k] ;
-                pA_end   = Ap [k+1] ;
+                pA     = Ap [k] ;
+                pA_end = Ap [k+1] ;
                 #endif
 
-                for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                for ( ; pA < pA_end ; pA++)
                 {
                     int64_t i = Ai [pA] ;
                     // C(i,j) is nonzero
@@ -236,7 +236,7 @@
             else
             { 
                 // sort the nonzero indices in C(:,j)
-                GB_qsort_1 (Ci + cnz_last, len) ;
+                GB_qsort_1 (Ci + cnz_last, len, NULL) ;
             }
         }
 
@@ -247,7 +247,7 @@
         #ifdef GB_HYPER_CASE
         // this cannot fail since C->plen is the upper bound: the number
         // of non-empty columns of B.
-        info = GB_jappend (C, j, &jlast, cnz, &cnz_last, Context) ;
+        info = GB_jappend (C, j, &jlast, cnz, &cnz_last, NULL) ;
         ASSERT (info == GrB_SUCCESS) ;
         // if it could fail:
         // GB_OK (info) ;              // check result and return on error
@@ -278,8 +278,8 @@
     // reduce the size of C->i to hold just the required space
     //--------------------------------------------------------------------------
 
-    info = GB_ix_realloc (C, cnz, false, Context) ;
+    info = GB_ix_realloc (C, cnz, false, NULL) ;
     ASSERT (info == GrB_SUCCESS) ;
-    ASSERT_OK (GB_check (C, "C symbolic Gustavson C=A*B", GB0)) ;
+    // ASSERT_OK (GB_check (C, "C symbolic Gustavson C=A*B", GB0)) ;
 }
 

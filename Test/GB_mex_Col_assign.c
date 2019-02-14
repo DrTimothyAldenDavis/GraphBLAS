@@ -61,6 +61,8 @@ GrB_Info info = GrB_SUCCESS ;
 
 GrB_Info assign ( )
 {
+    GB_WHERE ("assign") ;
+
     bool at = (desc != NULL && desc->in0 == GrB_TRAN) ;
     GrB_Info info ;
 
@@ -257,6 +259,7 @@ GrB_Info many_assign
     const mxArray *pargin [ ]
 )
 {
+    GB_WHERE ("many_assign") ;
 
     GrB_Info info = GrB_SUCCESS ;
 

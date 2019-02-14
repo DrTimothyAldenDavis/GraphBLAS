@@ -2,7 +2,7 @@
 // GB_pending_add:  add an entry A(i,j) to the list of pending tuples
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -41,6 +41,9 @@
 // CSC, i is a row index and j is a column index.  For CSR, i is a column index
 // and j is a row index.  This function also does not need to know if A is
 // hypersparse or not.
+
+// parallel: unless realloc occurs, this function does O(1) work and is already
+// thread-safe.  The realloc could be parallel; see GB_realloc_memory.
 
 #include "GB.h"
 
@@ -120,27 +123,24 @@ GrB_Info GB_pending_add             // add a pending tuple A(i,j) to a matrix
         // if A->max_n_pending is zero, these calls to GB_REALLOC_MEMORY
         // allocate new space.
 
-        double memory = GBYTES (newsize, sizeof (int64_t)) ;
         GB_REALLOC_MEMORY (A->i_pending, newsize, A->max_n_pending,
-            sizeof (int64_t), &ok1) ;
+            sizeof (int64_t), &ok1, Context) ;
 
         if (A->vdim > 1)
         { 
             // do not allocate A->j_pending if A has just one column
-            memory += GBYTES (newsize, sizeof (int64_t)) ;
             GB_REALLOC_MEMORY (A->j_pending, newsize, A->max_n_pending,
-                sizeof (int64_t), &ok2) ;
+                sizeof (int64_t), &ok2, Context) ;
         }
 
-        memory += GBYTES (newsize, ssize) ;
         GB_REALLOC_MEMORY (A->s_pending, newsize, A->max_n_pending,
-            ssize, &ok3) ;
+            ssize, &ok3, Context) ;
 
         if (!ok1 || !ok2 || !ok3)
         { 
             // out of memory
-            GB_CONTENT_FREE (A) ;
-            return (GB_OUT_OF_MEMORY (memory)) ;
+            GB_PHIX_FREE (A) ;
+            return (GB_OUT_OF_MEMORY) ;
         }
 
         A->max_n_pending = newsize ;

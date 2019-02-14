@@ -2,7 +2,7 @@
 // GrB_vxm: vector-matrix multiply
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -12,6 +12,8 @@
 // Rows w', u', and mask' are simply columns w, u, and mask.  Thus:
 // w<mask> = accum (w,t) where t = A'*u or A*u, but with the multiply operator
 // flipped.  The input descriptor for A, inp1, is also negated.
+
+// parallel: not here, see GB_AxB_parallel
 
 #include "GB.h"
 

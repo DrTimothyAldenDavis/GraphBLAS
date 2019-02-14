@@ -2,7 +2,7 @@
 // GB_apply_op:  apply a unary operator to an array
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -10,6 +10,9 @@
 // Cx = op ((xtype) Ax)
 
 // Compare with GB_transpose_op.c
+
+// PARALLEL: do it here, but it is easy.  Might want to split into separate
+// files like Generated/*AxB*, so worker is not in a macro but in a function.
 
 #include "GB.h"
 
@@ -19,7 +22,8 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     const GrB_UnaryOp op,   // operator to apply
     const GB_void *Ax,      // input array, of type atype
     const GrB_Type atype,   // type of Ax
-    const int64_t anz       // size of Ax and Cx
+    const int64_t anz,      // size of Ax and Cx
+    GB_Context Context
 )
 {
 
@@ -32,6 +36,12 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     ASSERT (anz >= 0) ;
     ASSERT (atype != NULL) ;
     ASSERT (op != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory

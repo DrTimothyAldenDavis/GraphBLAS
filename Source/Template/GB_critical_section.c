@@ -2,7 +2,7 @@
 // Source/Template/GB_critical_section: execute code in a critical section
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -16,6 +16,8 @@
 
 // Critical sections for Windows threads and ANSI C11 threads are listed below
 // as drafts, but these threading models are not yet supported.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 {
 

@@ -2,7 +2,7 @@
 // GB_build: build a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -74,6 +74,13 @@
 
 // If nvals == 0, I_in, J_in, and S may be NULL.
 
+// PARALLEL: this function passes over the tuples to see if they are sorted,
+// which could be done as a parallel reduction.  The copy into jwork is fully
+// parallel.  The check for indices out-of-bounds is also like a parallel
+// reduction, but it could stop as soon as a single thread finds one index
+// out of bounds.  This function then calls GB_builder, which does the sort
+// of the tuples and constructs the hypersparse CSR/CSC matrix C.
+
 #include "GB.h"
 
 GrB_Info GB_build               // build matrix
@@ -98,6 +105,12 @@ GrB_Info GB_build               // build matrix
     ASSERT (C != NULL) ;
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // get C
     //--------------------------------------------------------------------------
 
@@ -109,7 +122,7 @@ GrB_Info GB_build               // build matrix
     int64_t ncols = GB_NCOLS (C) ;
 
     //--------------------------------------------------------------------------
-    // free all content of C, but keep the C->Sauna
+    // free all content of C
     //--------------------------------------------------------------------------
 
     // the type, dimensions, and hyper ratio are still preserved in C.
@@ -160,13 +173,11 @@ GrB_Info GB_build               // build matrix
     int64_t len = (int64_t) nvals ;
 
     GB_MALLOC_MEMORY (int64_t *iwork, len, sizeof (int64_t)) ;
-    double memory = GBYTES (len, sizeof (int64_t)) ;
     bool ok = (iwork != NULL) ;
     int64_t *jwork = NULL ;
     if (vdim > 1)
     { 
         GB_MALLOC_MEMORY (jwork, len, sizeof (int64_t)) ;
-        memory += GBYTES (len, sizeof (int64_t)) ;
         ok = ok && (jwork != NULL) ;
     }
 
@@ -175,7 +186,7 @@ GrB_Info GB_build               // build matrix
         // out of memory
         GB_FREE_MEMORY (iwork, len, sizeof (int64_t)) ;
         GB_FREE_MEMORY (jwork, len, sizeof (int64_t)) ;
-        return (GB_OUT_OF_MEMORY (memory)) ;
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -294,7 +305,7 @@ GrB_Info GB_build               // build matrix
             // GB_reduce_to_column: do not check I, assume not sorted
             //------------------------------------------------------------------
 
-            memcpy (iwork, I, len * sizeof (int64_t)) ;
+            memcpy (iwork, I, len * sizeof (int64_t)) ; // do parallel
             sorted = false ;
         }
     }

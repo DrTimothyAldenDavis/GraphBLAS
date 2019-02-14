@@ -2,10 +2,16 @@
 // GB_assoc_template.c: switch factory for associative operators
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// TODO: write Generator/GB_assoc.c, and use it to create 66 files:
+// Generator/GB_assoc__[operator]_[type].  Each file has 4 functions for the
+// kernels for GB_reduce_to_scalar, GB_build_factory, and GB_reduce_to_column
+// (2 kernels).  (but 22 files with FIRST and SECOND just have one kernel for
+// GB_build_factory).
 
 // This is a generic body of code for creating hard-coded versions of code for
 // 44 combinations of associative operators and built-in types: 10 types (all
@@ -15,6 +21,8 @@
 // If GB_INCLUDE_SECOND_OPERATOR is defined then an additional 11 built-in
 // workers for the SECOND operator are also created, and 11 for FIRST, for
 // GB_build_factory.
+
+// parallel: not here
 
 if (typecode != GB_BOOL_code)
 {

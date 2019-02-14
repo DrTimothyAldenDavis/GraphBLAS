@@ -2,14 +2,14 @@
 // GB_realloc_memory: wrapper for realloc (used via the GB_REALLOC_MEMORY macro)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // A wrapper for realloc.
 
-// This function is called via the GB_REALLOC_MEMORY(p,nnew,nold,s,ok) macro.
+// This function is called via the GB_REALLOC_MEMORY macro.
 
 // If p is non-NULL on input, it points to a previously allocated object of
 // size nitems_old * size_of_item.  The object is reallocated to be of size
@@ -20,7 +20,7 @@
 
 // Usage:
 
-//      p = GB_realloc_memory (nnew, nold, size, p, &ok)
+//      p = GB_realloc_memory (nnew, nold, size, p, &ok, Context)
 
 //      if (ok)
 
@@ -37,6 +37,11 @@
 // mexFunction, it is mxRealloc.  It can also be defined at compile time with
 // -DGB_REALLOC=myreallocfunc.
 
+// PARALLEL: the realloc could be parallel, if data needs to be moved from
+// the old space to the new space.  It could realloc an entire matrix, so
+// this could be a lot of work.  If done in parallel, a malloc could be used,
+// followed by a parallel memcpy.
+
 #include "GB.h"
 
 void *GB_realloc_memory     // pointer to reallocated block of memory, or
@@ -46,7 +51,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_t nitems_old,      // old number of items in the object
     size_t size_of_item,    // sizeof each item
     void *p,                // old object to reallocate
-    bool *ok                // true if successful, false otherwise
+    bool *ok,               // true if successful, false otherwise
+    GB_Context Context      // for # of threads.  Use one thread if NULL
 )
 {
 
@@ -80,6 +86,9 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     { 
         // change the size of the object from nitems_old to nitems_new
         void *pnew ;
+
+        // determine the number of threads to use
+        GB_GET_NTHREADS (nthreads, Context) ;
 
         #ifdef GB_MALLOC_TRACKING
         bool pretend_to_fail = false ;
@@ -133,7 +142,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
         #ifdef GB_MALLOC_TRACKING
         #ifdef GB_PRINT_MALLOC
-        printf ("realloc: %14p %3d %1d n "GBd" -> "GBd" size "GBd"\n",
+        printf ("realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
             pnew, GB_Global.nmalloc, GB_Global.malloc_debug,
             (int64_t) nitems_old, (int64_t) nitems_new,
             (int64_t) size_of_item) ;

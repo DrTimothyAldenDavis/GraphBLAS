@@ -2,7 +2,7 @@
 // GB_2type_template.c: 2-type switch factory
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -20,6 +20,8 @@
 // apply unary operators.  Those functions #define GB_BOP(x) for the boolean
 // unary operator, GB_IOP(x) for integers, and GB_FOP(x) for floating-point.
 // The selection of these operators is controlled by code1.
+
+// parallel: not here.
 
 switch (code1)
 {

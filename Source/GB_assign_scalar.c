@@ -2,7 +2,7 @@
 // GB_assign_scalar:    C<Mask>(Rows,Cols) = accum (C(Rows,Cols),x)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -16,6 +16,8 @@
 // type-generic macro suffix, "_UDT".
 
 // Compare with GB_subassign_scalar, which uses Mask and C_replace differently
+
+// parallel: not here; see GB_assign
 
 #include "GB.h"
 

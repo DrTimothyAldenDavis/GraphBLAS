@@ -2,7 +2,7 @@
 // GB_reduce_to_scalar: reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -15,6 +15,11 @@
 
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
+
+// TODO: add early exit
+
+// PARALLEL: a parallel reduction method.  All entries of the matrix
+// must be reduce to a single scalar.
 
 #include "GB.h"
 
@@ -74,6 +79,12 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
             "cannot be typecast to reduction operator of type [%s]",
             reduce->op->name, A->type->name, reduce->op->ztype->name))) ;
     }
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // scalar workspace

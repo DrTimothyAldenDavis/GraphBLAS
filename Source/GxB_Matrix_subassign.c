@@ -2,12 +2,14 @@
 // GxB_Matrix_subassign: C(Rows,Cols)<Mask> = accum (C(Rows,Cols),A) or A'
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // Compare with GrB_Matrix_assign, which uses Mask and C_replace differently
+
+// parallel: not here; see GB_subassign_kernel
 
 #include "GB.h"
 

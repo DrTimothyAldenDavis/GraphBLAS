@@ -2,12 +2,14 @@
 // GrB_eWiseAdd_Vector: vector element-wise operations, set union
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // w<mask> = accum (w,u+v)
+
+// parallel: not here but in GB_add
 
 #include "GB.h"
 

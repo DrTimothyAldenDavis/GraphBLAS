@@ -2,7 +2,7 @@
 // GB_shallow_cast: create a shallow copy of a matrix, optionally typecasted
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -23,6 +23,7 @@
 
 // Compare this function with GB_shallow_op.c
 
+// parallel: not here, but in GB_cast_array
 
 #include "GB.h"
 
@@ -58,7 +59,7 @@ GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GB_NEW (&C, ctype, A->vlen, A->vdim, GB_Ap_null, C_is_csc,
-        GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, 0) ;
+        GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -128,16 +129,15 @@ GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
     if (C->x == NULL)
     { 
         // out of memory
-        double memory = GBYTES (C->nzmax, C->type->size) ;
         GB_MATRIX_FREE (&C) ;
-        return (GB_OUT_OF_MEMORY (memory)) ;
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
     // copy the values from A into C and cast from A->type to C->type
     //--------------------------------------------------------------------------
 
-    GB_cast_array (C->x, C->type->code, A->x, A->type->code, anz) ;
+    GB_cast_array (C->x, C->type->code, A->x, A->type->code, anz, Context) ;
 
     // C->i always shallow, and is of size at least A->nzmax.  The array C->x
     // is either of size A->nzmax if C->x is and not typecasted, or

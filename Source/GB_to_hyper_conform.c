@@ -2,7 +2,7 @@
 // GB_to_hyper_conform: conform a matrix to its desired hypersparse format
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -10,6 +10,8 @@
 // The input matrix can have shallow A->p and/or A->h components.  If the
 // hypersparsity is changed, these components are no longer shallow.  If the
 // method fails and the matrix is shallow, all content is removed or freed.
+
+// parallel: not here
 
 #include "GB.h"
 

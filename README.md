@@ -1,9 +1,9 @@
 # SuiteSparse:GraphBLAS
 
-SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-VERSION 2.2.3, Dec 30, 2018
+VERSION 2.3.0, TODO, 2019
 
 SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -13,14 +13,14 @@ to computations on graphs.  GraphBLAS provides a powerful and expressive
 framework for creating graph algorithms based on the elegant mathematics of
 sparse matrix operations on a semiring.
 
-See the user guide in Doc/GraphBLAS_UserGuide.pdf for documentation on the
+See the user guide in `Doc/GraphBLAS_UserGuide.pdf` for documentation on the
 SuiteSparse implementation of GraphBLAS, and how to use it in your
 applications.  The doxygen documentation at Doc/html/index.html gives details
 on the internals of SuiteSparse:GraphBLAS (use "make dox" first, to create
 the doxygen documentation).
 
 See http://graphblas.org for more information on GraphBLAS, including the
-GraphBLAS C API (also in Doc/GraphBLAS_API_C.pdf).
+GraphBLAS C API (also in `Doc/GraphBLAS_API_C.pdf`).
 
 QUICK START: To compile, run several demos, and install, do these commands in
 this directory:
@@ -35,7 +35,7 @@ See the User Guide PDF in Doc/ for directions on how to use another compiler.
 For faster compilation, do this instead of just "make", which uses 32
 parallel threads to compile the package:
 
-    JOBS=32 make
+    make JOBS=32
 
 The output of the demo programs will be compared with their expected output.
 

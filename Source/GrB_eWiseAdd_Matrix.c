@@ -2,12 +2,14 @@
 // GrB_eWiseAdd_Matrix: matrix element-wise operations, set union
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // C<Mask> = accum (C,A+B) and variations.
+
+// parallel: not here but in GB_add
 
 #include "GB.h"
 

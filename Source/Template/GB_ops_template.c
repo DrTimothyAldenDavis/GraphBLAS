@@ -2,7 +2,7 @@
 // GB_ops_template.c: built-in unary and binary functions and operators
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,8 @@
 // and binary operators.  In that file, GB_TYPE is a built-in C type (bool,
 // int8_t, uint64_t, double, etc), and GB(x) is the corresponding macro that
 // creates the function name (GB_*_BOOL, GB_*_INT8, etc).
+
+// parallel: not here; no executable code
 
 #define GB_Z_X_ARGS       GB_TYPE *z, const GB_TYPE *x
 #define GB_Z_X_Y_ARGS     GB_TYPE *z, const GB_TYPE *x, const GB_TYPE *y

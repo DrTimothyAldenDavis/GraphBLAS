@@ -2,10 +2,21 @@
 // GrB_reduce_to_column: reduce a matrix to a column
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// parallel: not here, see GB_reduce_to_column
+
+// TODO: If reduce is a binary operator that corresponds to a built-in Monoid,
+// then look up the Monoid->terminal.  Otherwise pass NULL to
+// GB_reduce_to_column as the terminal value.
+
+// For the monoid case, extract the Monoid->terminal and pass it to
+// GB_reduce_to_column.
+
+// in both cases, GB_reduce_to_column
 
 #include "GB.h"
 

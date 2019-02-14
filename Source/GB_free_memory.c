@@ -2,7 +2,7 @@
 // GB_free_memory: wrapper for free (used via the GB_FREE_MEMORY macro)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -14,6 +14,8 @@
 // By default, GB_FREE is defined in GB.h as free.  For a MATLAB mexFunction,
 // it is mxFree.  It can also be defined at compile time with
 // -DGB_FREE=myfreefunc.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 

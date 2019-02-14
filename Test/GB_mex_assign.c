@@ -65,6 +65,7 @@ int kind = 0 ;
 
 GrB_Info assign ( )
 {
+    GB_WHERE ("assign") ;
     bool at = (desc != NULL && desc->in0 == GrB_TRAN) ;
     GrB_Info info ;
 
@@ -282,6 +283,7 @@ GrB_Info many_assign
     const mxArray *pargin [ ]
 )
 {
+    GB_WHERE ("many_assign") ;
     GrB_Info info = GrB_SUCCESS ;
 
     for (int64_t k = 0 ; k < nwork ; k++)

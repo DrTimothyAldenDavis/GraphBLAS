@@ -2,7 +2,7 @@
 // GrB_init: initialize GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -31,6 +31,8 @@
 // finish a pending operation.  To avoid this, call GrB_wait before modifying
 // any global variables relied upon by user-defined operators and before
 // freeing any user-defined types, operators, monoids, or semirings.
+
+// not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 
@@ -80,9 +82,16 @@ GB_Global_struct GB_Global =
     // initialization flag
     .GrB_init_called = false,   // GrB_init has not yet been called
 
+    // max number of threads
+    .nthreads_max = 1,          // max number of threads
+
     // default format
     .hyper_ratio = GB_HYPER_DEFAULT,
-    .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW)     // default is GxB_BY_ROW
+    .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
+
+    // Sauna workspace for Gustavson's method (one per thread)
+    .Saunas [0] = NULL,
+    .Sauna_in_use [0] = false
 
     #ifdef GB_MALLOC_TRACKING
     // malloc tracking, for testing, statistics, and debugging only
@@ -114,6 +123,22 @@ GrB_Info GrB_init           // start up GraphBLAS
     GB_WHERE ("GrB_init (mode)") ;
 
     //--------------------------------------------------------------------------
+    // max number of threads
+    //--------------------------------------------------------------------------
+
+    // Maximum number of threads for internal parallelization.
+    // SuiteSparse:GraphBLAS requires OpenMP to use parallelization within
+    // calls to GraphBLAS.  The user application may also call GraphBLAS in
+    // parallel, from multiple user threads.  The user threads can use OpenMP,
+    // or POSIX pthreads.
+
+    #if defined ( _OPENMP )
+    GB_Global.nthreads_max = omp_get_max_threads ( ) ;
+    #else
+    GB_Global.nthreads_max = 1 ;
+    #endif
+
+    //--------------------------------------------------------------------------
     // create the global queue and thread-local storage
     //--------------------------------------------------------------------------
 
@@ -143,6 +168,16 @@ GrB_Info GrB_init           // start up GraphBLAS
     { 
         return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
             "GrB_init must not be called twice"))) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // clear Sauna workspaces
+    //--------------------------------------------------------------------------
+
+    for (int t = 0 ; t < GxB_NTHREADS_MAX ; t++)
+    {
+        GB_Global.Saunas [t] = NULL ;
+        GB_Global.Sauna_in_use [t] = false ;
     }
 
     //--------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // GB_build_factory: build a matrix from sorted tuples
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -44,6 +44,11 @@
 
 // The time and memory taken by this function is O(t) if t=len is the number
 // of tuples.
+
+// PARALLEL: the tuples have already been sorted, and duplicates tagged.  need
+// to parallelize the summation of duplicate tuples.  Each unique tuple could
+// be done only by the thread the owns it.  It is unlikely that there will be
+// many duplicates, but possible.  So consider a parallel reduction.
 
 #include "GB.h"
 
@@ -137,6 +142,12 @@ GrB_Info GB_build_factory           // build a matrix
     }
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // allocate the result
     //--------------------------------------------------------------------------
 
@@ -170,11 +181,10 @@ GrB_Info GB_build_factory           // build a matrix
     if (T->x == NULL)
     { 
         // out of memory
-        double memory = GBYTES (T->nzmax, tsize) ;
         GB_MATRIX_FREE (Thandle) ;
         GB_FREE_MEMORY (*kwork_handle, len, sizeof (int64_t)) ;
         GB_FREE_MEMORY (*iwork_handle, ijlen, sizeof (int64_t)) ;
-        return (GB_OUT_OF_MEMORY (memory)) ;
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     GB_void *restrict Tx = T->x ;
@@ -436,7 +446,8 @@ GrB_Info GB_build_factory           // build a matrix
     { 
         // this cannot fail since the size is shrinking.
         bool ok ;
-        GB_REALLOC_MEMORY (iwork, T->nzmax, ijlen, sizeof (int64_t), &ok) ;
+        GB_REALLOC_MEMORY (iwork, T->nzmax, ijlen, sizeof (int64_t), &ok,
+            Context) ;
         ASSERT (ok) ;
     }
     T->i = iwork ;

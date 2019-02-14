@@ -2,7 +2,7 @@
 // GB_matrix.h: definitions for GrB_Matrix and GrB_Vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -32,7 +32,7 @@
 int64_t magic ;         // for detecting uninitialized objects
 GrB_Type type ;         // the type of each numerical entry
 size_t type_size ;      // type->size, copied here since the type could be
-                        //user-defined, and freed before the matrix or vector
+                        // user-defined, and freed before the matrix or vector
 
 //------------------------------------------------------------------------------
 // compressed sparse vector data structure
@@ -61,7 +61,7 @@ size_t type_size ;      // type->size, copied here since the type could be
 // A->is_hyper is false: standard format.
 // --------------------------------------
 
-    // Ah is NULL,
+    // Ah is NULL, is_slice is false
     // A->nvec == A->plen == A->vdim
 
     // --------------------------------------
@@ -71,9 +71,9 @@ size_t type_size ;      // type->size, copied here since the type could be
         // Ap, Ai, and Ax store a sparse matrix in the a very similar style
         // as MATLAB and CSparse, as a collection of sparse column vectors.
 
-        // Column A(:,j) is held in two parts: the row indices are in Ai [Ap
-        // [j]...Ap [j+1]-1], and the numerical values are in the same
-        // positions in Ax.
+        // Column A(:,j) is held in two parts: the row indices are in
+        // Ai [Ap [j]...Ap [j+1]-1], and the numerical values are in the
+        // same positions in Ax.
 
         // A is m-by-n: where A->vdim = n, and A->vlen = m
 
@@ -84,9 +84,9 @@ size_t type_size ;      // type->size, copied here since the type could be
         // Ap, Ai, and Ax store a sparse matrix in CSR format, as a collection
         // of sparse row vectors.
 
-        // Row A(i,:) is held in two parts: the column indices are in Ai [Ap
-        // [i]...Ap [i+1]-1], and the numerical values are in the same
-        // positions in Ax.
+        // Row A(i,:) is held in two parts: the column indices are in
+        // Ai [Ap [i]...Ap [i+1]-1], and the numerical values are in the
+        // same positions in Ax.
 
         // A is m-by-n: where A->vdim = m, and A->vlen = n
 
@@ -96,6 +96,7 @@ size_t type_size ;      // type->size, copied here since the type could be
 
     // Ah is non-NULL and has size A->plen; it is always kept sorted,
     // A->nvec <= A->plen <= A->vdim
+    // is_slice is false
 
     // --------------------------------------
     // A->is_csc is true: hypersparse CSC format
@@ -129,6 +130,28 @@ size_t type_size ;      // type->size, copied here since the type could be
 
         // A is m-by-n: where A->vdim = n, and A->vlen = m
 
+// --------------------------------------
+// a slice or hyperslice
+// --------------------------------------
+
+        // is_slice is true
+
+        // Same as the hypersparse format, except that Ah may be NULL.
+        // All Ah, Ap, Ai, Ax content of the slice is shallow.
+        // Ap [0] == 0 only for the leftmost slice; it is normally >= 0.
+
+        // slice: A->is_hyper is false
+
+            // Ah is NULL: Ah [0..A->nvec-1] is implicitly the contiguous list:
+            // [A->hfirst ... A->hfirst + A->nvec - 1].  The original matrix is
+            // not hypersparse.  A->plen gives the size of Ap, as above.  Ap
+            // points into an offset of p of the original matrix.
+
+        // hyperslice: A->is_hyper is true
+
+            // Ah is not-NULL.  The original matrix is hypersparse.  Ah points
+            // to an offset inside the h of the original matrix.  A->hfirst is
+            // zero, and not used.
 
 // Like MATLAB, the indices in a GraphBLAS matrix (as implemented here) are
 // "always" kept sorted.  There is one temporary exception to this rule.
@@ -182,6 +205,11 @@ int64_t *p ;            // array of size plen+1
 int64_t *i ;            // array of size nzmax
 void *x ;               // size nzmax; each entry of size A->type->size
 int64_t nzmax ;         // size of i and x arrays
+
+int64_t hfirst ;        // if A->is_hyper is true, A->h can be NULL.
+                        // This defines an implicit list of size A->nvec,
+                        // where Ah [k] == A->hfirst + k.  It is only used
+                        // to create purely shallow slices of another matrix.
 
 // The hyper_ratio determines how the matrix is converted between the
 // hypersparse and non-hypersparse formats.  Let n = A->vdim and let k be the
@@ -315,18 +343,6 @@ GrB_BinaryOp operator_pending ; // operator to assemble pending tuples
 int64_t nzombies ;      // number of zombies marked for deletion
 
 //------------------------------------------------------------------------------
-// Sauna: the sparse accumulator
-//------------------------------------------------------------------------------
-
-// The Sauna is an initialized workspace of size O(vlen) used for sparse matrix
-// multiplication.  Each matrix/vector can have its own Sauna, so that user
-// threads can independently compute C=A*B on different matrices C, where each
-// output matrix C has its own Sauna.  For most matrices, the Sauna is NULL.
-// The Sauna is built only when C=A*B is computed using Gustavson's method.
-
-GB_Sauna Sauna ;
-
-//------------------------------------------------------------------------------
 // statistics
 //------------------------------------------------------------------------------
 
@@ -365,7 +381,7 @@ bool enqueued ;         // true if the matrix is in the queue
 // CSparse doesn't exploit shallow matrices; any data structure feature here
 // and below does not appear in CSparse.  MATLAB's internal data structure is
 // not published, but GraphBLAS handles shallow matries with the following
-// three boolean flags.
+// boolean flags.
 
 // If the following are true, then the corresponding component of the
 // object is a pointer into components of another object.  They must not
@@ -385,3 +401,4 @@ bool x_shallow ;        // true if x is a shallow copy
 bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
 bool sorted_pending ;   // true if pending tuples are in sorted order
+bool is_slice ;         // true if the matrix is a slice

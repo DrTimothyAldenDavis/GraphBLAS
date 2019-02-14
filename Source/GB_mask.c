@@ -2,7 +2,7 @@
 // GB_mask: apply a mask: C<M> = Z
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -21,6 +21,8 @@
 // i in the jth vector, and likewise for M, Z, and R.  If the matrices are all
 // CSC, then this is row i and column j.  If the matrices are all CSR, then it
 // is row j and column i.
+
+// PARALLEL: similar method as GB_add
 
 #include "GB.h"
 
@@ -174,6 +176,12 @@ GrB_Info GB_mask                // C<M> = Z
     GrB_Info info = GrB_SUCCESS ;
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
     // apply the mask
     //--------------------------------------------------------------------------
 
@@ -185,7 +193,7 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
 
         if (!Mask_complement)
-        {
+        { 
 
             //------------------------------------------------------------------
             // Mask is not complemented: this is the default
@@ -219,7 +227,7 @@ GrB_Info GB_mask                // C<M> = Z
 
             if (C_replace)
             { 
-                // C_result = 0, but keep C->Sauna
+                // C_result = 0
                 return (GB_clear (C_result, Context)) ;
             }
             else
@@ -262,12 +270,12 @@ GrB_Info GB_mask                // C<M> = Z
                 C_cleared = NULL;   // allocate a new header for C_cleared
                 GB_CREATE (&C_cleared, C_result->type, vlen, vdim,
                     GB_Ap_calloc, C_result_is_csc, GB_AUTO_HYPER,
-                    C_result->hyper_ratio, 0, 0, true) ;
+                    C_result->hyper_ratio, 0, 0, true, Context) ;
                 C = C_cleared ;
             }
             else
             { 
-                // Clear all entries from C_result, but keep C->Sauna
+                // Clear all entries from C_result
                 info = GB_clear (C_result, Context) ;
                 C = C_result ;
             }
@@ -304,7 +312,7 @@ GrB_Info GB_mask                // C<M> = Z
         GB_CREATE (&R, C->type, vlen, vdim, GB_Ap_malloc, C_result_is_csc,
             GB_SAME_HYPER_AS (C->is_hyper && Z->is_hyper), C->hyper_ratio,
             GB_IMIN (vdim, C->nvec_nonempty + Z->nvec_nonempty),
-            GB_NNZ (C) + GB_NNZ (Z), true) ;
+            GB_NNZ (C) + GB_NNZ (Z), true, Context) ;
 
         if (info != GrB_SUCCESS)
         { 

@@ -8,8 +8,8 @@
 #define GxB_USER_INCLUDE
 #endif
 
-#ifndef GB_USER_H
-#define GB_USER_H
+#ifndef GxB_USER_H
+#define GxB_USER_H
 m4_define(`GxB_Type_define',     `extern GrB_Type $1')
 m4_define(`GxB_UnaryOp_define',  `extern GrB_UnaryOp $1')
 m4_define(`GxB_BinaryOp_define', `extern GrB_BinaryOp $1')

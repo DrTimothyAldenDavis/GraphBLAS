@@ -40,6 +40,7 @@ end
 fprintf ('\nCompiling GraphBLAS tests\nplease wait [') ;
 
 if (nargin < 2)
+    % flags = '-g' ;
     flags = '-O' ;
 end
 

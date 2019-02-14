@@ -2,12 +2,14 @@
 // GrB_transpose: transpose a sparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // C<M> = accum (C,A') or accum (C,A)
+
+// parallel: not here; see GB_transpose and GB_shallow_cast
 
 #include "GB.h"
 
@@ -65,7 +67,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     // delete any lingering zombies and assemble any pending tuples
-    GB_WAIT (C) ;
+    // GB_WAIT (C) ;
     GB_WAIT (M) ;
     GB_WAIT (A) ;
 
@@ -128,12 +130,12 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     }
 
     ASSERT (T->is_csc == C->is_csc) ;
+    ASSERT_OK (GB_check (T, "T for GrB_transpose", GB0)) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask M
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (T, "T for GrB_transpose", GB0)) ;
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
         Context)) ;
 }

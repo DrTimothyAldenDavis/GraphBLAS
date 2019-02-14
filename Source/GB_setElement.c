@@ -2,7 +2,7 @@
 // GB_setElement: C(row,col) = scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -24,6 +24,8 @@
 // effectively false (since transposing a scalar has no effect).
 
 // Compare this function with GB_extractElement.
+
+// not parallel: this function does O(log(..)) work and is already thread-safe.
 
 #include "GB.h"
 
@@ -145,17 +147,20 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         else
         { 
             // typecast scalar into C
-            GB_cast_array (Cx +(pleft*csize), ccode, scalar, scalar_code, 1) ;
+            GB_cast_array (Cx +(pleft*csize), ccode, scalar, scalar_code, 1,
+                Context) ;
         }
 
         if (is_zombie)
         {
             // bring the zombie back to life
+            ASSERT (C->enqueued) ;
             C->i [pleft] = i ;
             C->nzombies-- ;
             if (C->nzombies == 0 && C->n_pending == 0)
             { 
                 // remove from queue if zombies goes to 0 and n_pending is zero
+                // TODO may thrash.  See TODO in GB_subassign_kernel.
                 GB_CRITICAL (GB_queue_remove (C)) ;
             }
         }

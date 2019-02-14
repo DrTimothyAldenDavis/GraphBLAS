@@ -40,6 +40,8 @@ void GB_mx_put_global
     // finalize GraphBLAS
     //--------------------------------------------------------------------------
 
+    GrB_finalize ( ) ;
+
     if (GB_Global.nmalloc != 0)
     {
         printf ("GraphBLAS nmalloc "GBd"! inuse "GBd" maxused "GBd"\n",

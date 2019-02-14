@@ -18,7 +18,6 @@ default:
 
 # just build the static and dynamic libraries; do not run the demo
 library:
-	echo $(JOBS)
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
 
 # just run cmake; do not compile
@@ -37,7 +36,8 @@ install:
 docs:
 	( cd Doc ; $(MAKE) )
 
-# create the doxygen documentation in Doc/html
+# create the doxygen documentation in Doc/html (first run Doc/dox_headers
+# in MATLAB if you have editted the code)
 dox:
 	doxygen
 
