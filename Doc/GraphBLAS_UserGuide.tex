@@ -2559,6 +2559,10 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 \verb'GrB_Vector_extractTuples'  & get all entries from a vector \\
 \verb'GxB_Vector_resize'         & resize a vector \\
 \verb'GrB_Vector_free'           & free a vector \\
+\verb'GxB_Vector_import'         & import a vector
+                                    (see Section~\ref{import_export})\\
+\verb'GxB_Vector_export'         & export a vector
+                                    (see Section~\ref{import_export})\\
 \hline
 \end{tabular}
 }
@@ -2901,6 +2905,7 @@ frees the vector \verb'v' and sets \verb'v' to \verb'NULL'.  It safely does
 nothing if passed a \verb'NULL' handle, or if \verb'v == NULL' on input.
 In SuiteSparse:GraphBLAS, any pending updates to the vector are abandoned.
 
+
 \newpage
 %===============================================================================
 \subsection{GraphBLAS matrices: {\sf GrB\_Matrix}} %============================
@@ -2927,6 +2932,23 @@ and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 \verb'GrB_Matrix_extractTuples' & get all entries from a matrix \\
 \verb'GxB_Matrix_resize'        & resize a matrix \\
 \verb'GrB_Matrix_free'          & free a matrix \\
+\hline
+\verb'GxB_Matrix_import_CSC'            & import a matrix in CSC form
+                                          (see Section~\ref{import_export})\\
+\verb'GxB_Matrix_import_CSR'            & import a matrix in CSR form
+                                          (see Section~\ref{import_export})\\
+\verb'GxB_Matrix_import_HyperCSC'       & import a matrix in HyperCSC form
+                                          (see Section~\ref{import_export})\\
+\verb'GxB_Matrix_import_HyperCSR'       & import a matrix in HyperCSR form
+                                          (see Section~\ref{import_export})\\
+\verb'GxB_Matrix_export_CSC'            & export a matrix in CSC form
+                                          (see Section~\ref{import_export})\\
+\verb'GxB_Matrix_export_CSR'            & export a matrix in CSR form
+                                          (see Section~\ref{import_export})\\
+\verb'GxB_Matrix_export_HyperCSC'       & export a matrix in HyperCSC form
+                                          (see Section~\ref{import_export})\\
+\verb'GxB_Matrix_export_HyperCSR'       & export a matrix in HyperCSR form
+                                          (see Section~\ref{import_export})\\
 \hline
 \end{tabular}
 }
@@ -3430,6 +3452,232 @@ GrB_Info GrB_free           // free a matrix
 frees the matrix \verb'A' and sets \verb'A' to \verb'NULL'.  It safely does
 nothing if passed a \verb'NULL' handle, or if \verb'A == NULL' on input.
 In SuiteSparse:GraphBLAS, any pending updates to the matrix are abandoned.
+
+
+
+
+\newpage
+%===============================================================================
+\subsection{GraphBLAS matrix and vector import/export} %========================
+%===============================================================================
+\label{import_export}
+
+The import/export functions allow the user application to create a
+\verb'GrB_Matrix' or \verb'GrB_Vector' object, and to extract its contents,
+faster and with less memory overhead than the \verb'GrB_*_build' and
+\verb'GrB_*_extractTuples' functions.
+
+The semantics of import/export are the same as the {\em move constructor} in
+C++.  On import, the user provides a set of arrays that have been previously
+allocated via the ANSI C \verb'malloc' function.  The arrays define the content
+of the matrix or vector.  Unlike \verb'GrB_*_build', the GraphBLAS library then
+takes ownership of the user's input arrays and may either:
+
+\begin{enumerate}
+\item incorporate them
+into its internal data structure for the new \verb'GrB_Matrix' or
+\verb'GrB_Vector', potentially creating the \verb'GrB_Matrix' or
+\verb'GrB_Vector' in constant time with no memory copying performed, or
+\item if
+the library does not support the import format directly, then it may convert
+the input to its internal format, and then free the user's input arrays.
+\item A
+GraphBLAS implementation may also choose to use a mix of the two strategies.
+\end{enumerate}
+
+SuiteSparse:GraphBLAS takes the first approach, and so the import functions
+always take $O(1)$ time, and require $O(1)$ memory space to be allocated.
+
+Regardless of the method chosen, as listed above, the input arrays are no
+longer owned by the user application.  If \verb'A' is a \verb'GrB_Matrix'
+created by an import, the user input arrays are freed no later than
+\verb'GrB_free(&A)', and may be freed earlier, at the discretion of the
+GraphBLAS library.  The data structure of the \verb'GrB_Matrix' and
+\verb'GrB_Vector' remain opaque.
+
+The export of a \verb'GrB_Matrix' or \verb'GrB_Vector' is symmetric with the
+import operation.  The export changes the ownership of the arrays, where the
+\verb'GrB_Matrix' or \verb'GrB_Vector' no longer exists when the export
+completes, and instead the user is returned several arrays that contain the
+matrix or vector in the requested format.  Ownership of these arrays is given
+to the user application, which is then responsible for freeing them via the
+ANSI C \verb'free' function (or they can be re-imported into a
+\verb'GrB_Matrix' or \verb'GrB_Vector'.
+
+For a matrix export, if the output format matches the current internal format
+of the matrix then these arrays are returned to the user application in $O(1)$
+time and with no memory copying performed.  Otherwise, the \verb'GrB_Matrix' is
+first converted into the requested format, and then exported.
+
+The vector import/export methods use a single format for a \verb'GrB_Vector'.
+Four different formats are provided for the import/export of a
+\verb'GrB_Matrix'.  For each format, the \verb'Ax' array has a C type
+corresponding to one of the 11 built-in types in GraphBLAS (\verb'bool',
+\verb'int*_t', \verb'uint*_t', \verb'float', and \verb'double'), or that
+corresponds with the user-defined type.  No typecasting is done on import or
+export.
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_import:}        import a vector}
+%-------------------------------------------------------------------------------
+\label{vector_import}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_import  // import a vector in CSC format
+(
+    GrB_Vector *v,     ,    // vector to create
+    const GrB_Type type,    // type of vector to create
+    GrB_Index n,            // vector length
+    GrB_Index nvals,        // number of entries in the vector
+    GrB_Index **vi,         // indices, size nvals (in sorted order)
+    void      **vx,         // values, size nvals
+    const GrB_Descriptor desc       // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+The \verb'GxB_Vector_import' function is a fast way to construct a
+\verb'GrB_Vector', taking as little as $O(1)$ time.  \verb'GxB_Vector_import'
+is identical to
+\verb'GxB_Matrix_import_CSC (A, type, n, 1, nvals, &Ap, &i, &x, desc)',
+except that the latter creates an \verb'n'-by-1 matrix instead.  For
+the vector import, described here , the first argument is a \verb'GrB_Vector',
+\verb'vi' and \verb'vx' take the place of \verb'Ai' and \verb'Ax', and the
+\verb'Ap' array for the matrix import is not required for a vector import.
+Refer to the description of \verb'GxB_Matrix_import_CSC' for details.
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Vector_import' function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Vector\_export:}        export a vector}
+%-------------------------------------------------------------------------------
+\label{vector_export}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Vector_export  // export and free a vector
+(
+    GrB_Vector *v,     ,    // vector to export and free
+    GrB_Type *type,         // type of matrix exported
+    GrB_Index *n,           // length of the vector
+    GrB_Index *nvals,       // number of entries in the vector
+    // CSR/CSC format:
+    GrB_Index **vi,         // indices, size nvals
+    void      **vx,         // values, size nvals
+    const GrB_Descriptor desc       // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+The \verb'GxB_Vector_export' function is a fast way to extract the contents of
+a \verb'GrB_Vector', taking as little as $O(1)$ time.  \verb'GxB_Vector_export'
+is identical to
+\verb'GxB_Matrix_export_CSC (&A, &type, &n, &one, &nvals, &Ap, &Ai, &Ax, desc)',
+except that the latter exports an \verb'n'-by-1 matrix instead.  For
+the vector export, described here, the first argument is a \verb'GrB_Vector',
+\verb'vi' and \verb'vx' take the place of \verb'Ai' and \verb'Ax', and the
+\verb'Ap' array for the matrix export is not required for a vector export.
+Refer to the description of \verb'GxB_Matrix_export_CSC' for details.
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Vector_export' function is an extension to the spec.
+\end{spec}
+
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_import\_CSC:} import a CSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_import_csc}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_import_CSC'
+function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_import\_CSR:} import a CSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_import_csr}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_import_CSR'
+function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_import\_HyperCSC:} import a HyperCSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_import_hypercsc}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_import_HyperCSC'
+function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_import\_HyperCSR:} import a HyperCSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_import_hypercsr}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_import_HyperCSR'
+function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_export\_CSC:} export a CSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_export_csc}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_export_CSC'
+function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_export\_CSR:} export a CSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_export_csr}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_export_CSR'
+function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_export\_HyperCSC:} export a HyperCSC matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_export_hypercsc}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_export_HyperCSC'
+function is an extension to the spec.
+\end{spec}
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Matrix\_export\_HyperCSR:} export a HyperCSR matrix}
+%-------------------------------------------------------------------------------
+\label{matrix_export_hypercsr}
+
+\begin{spec}
+{\bf SPEC:} The \verb'GxB_Matrix_export_HyperCSR'
+function is an extension to the spec.
+\end{spec}
 
 \newpage
 %===============================================================================
@@ -9481,4 +9729,3 @@ MIT Lincoln Lab and NSF grant 1514406.
 \bibliography{GraphBLAS_UserGuide.bib}
 }
 \end{document}
-

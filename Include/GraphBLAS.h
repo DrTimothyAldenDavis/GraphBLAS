@@ -7,14 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////// NOTE: do not edit GraphBLAS/Include/GraphBLAS.h.  It is constructed /////
-////// by CMake from GraphBLAS/Config/GraphBLAS.h.in.  CMake populates     /////
-////// Include/GraphBLAS.h with the date and version number.               /////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
 // SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
 // which defines a set of sparse matrix operations on an extended algebra of
 // semirings, using an almost unlimited variety of operators and types.  When
@@ -78,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "TODO, 2019"
+#define GxB_DATE "Feb 15, 2019"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -2592,8 +2584,6 @@ GrB_Info GrB_Matrix_free    // free a matrix
 //          present, very sparse, and not complemented, or when C is tiny.
 //          It is impossibly slow if C is large and the mask is not present,
 //          since it takes Omega(m*n) time if C is m-by-n.
-//
-//  GxB_AxB_SLICE: how to slice A' and or B when computing C=A*B or A'*B.
 
 // GxB_NTHREADS is an enumerated value in both the GrB_Desc_Field and the
 // GxB_Option_Field.  It is defined with the same integer value for
@@ -2649,17 +2639,7 @@ typedef enum
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
-    GxB_AxB_DOT       = 1003,   // dot product
-    GxB_AxB_HASH      = 1004,   // hash-based saxpy method (TODO)
-
-    // for GxB_AxB_SLICE only:
-    GxB_SLICE_ATROW       = 2001,   // each slice of A' has same # of rows
-    GxB_SLICE_ATNZ        = 2002,   // each slice of A' has same # of nonzeros
-    GxB_SLICE_BCOL        = 2003,   // each slice of B has same # of columnns
-    GxB_SLICE_BNZ         = 2004,   // each slice of B has same # of nonzeros
-    GxB_SLICE_BFLOPS      = 2005    // each slice of B has same # of flops
-//  , GxB_SLICE_BNZFINE     = 2006, // like BNZ but split cols of B (TODO)
-//  , GxB_SLICE_BFLOPSFINE  = 2007  // like BFLOPS but split cols of B (TODO)
+    GxB_AxB_DOT       = 1003    // dot product
 
 }
 GrB_Desc_Value ;

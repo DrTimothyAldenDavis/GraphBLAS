@@ -1,22 +1,21 @@
-Version 2.3.0, DRAFT Feb 14, 2019
+Version 2.3.0, Feb 15, 2019
 
-    * NOTE: THIS IS A DRAFT VERSION.  It passes all tests, but contains many TODOs.
-    * OpenMP: PARALLEL comments added to most files (all upper case) where
-        parallelism will be added.
-
-    * early exit: for min, max, and, or monoids
-    * Demo/bfs*: much faster
-    * now using GrB_assign for accum/mask step: faster, zombies and pending tuples
-        exploited by C<M>=accum(C,T) for any GraphBLAS method, where either the
+    * simplified GBI_*_iterators
+    * towards OpenMP: PARALLEL comments added to most files (all upper case)
+        where parallelism will be added in the future.
+    * early exit: for monoids: MIN, MAX, AND, OR
+    * Demo/bfs*: much faster (prior versions had performance bug)
+    * GrB_assign for accum/mask step: faster, zombies and pending tuples
+        exploited by C<M>=accum(C,T) for any GraphBLAS method, when either the
         mask M or accum are present.
     * moved persistent thread-workspace from the matrix to a global array
     * added isequal function to Demos/
     * added import/export method
     * added nthreads: to descriptor, the matrix, and a global nthreads
         for GrB_wait, and added Context as parameter in many internal
-        functions, to pass in Context->nthreads
-    * defined all enum constants explicitly (no change to their values,
-        this just ensures they remain fixed in future versions).
+        functions, to pass in Context->nthreads for future parallelism
+    * defined all enum constants explicitly: no change to their values,
+        this just ensures they remain fixed in future versions
 
 Version 2.2.3, Dec 30, 2018
 
