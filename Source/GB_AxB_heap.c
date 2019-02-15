@@ -10,7 +10,7 @@
 // parallel: this function will remain sequential.
 // parallelism will be done in GB_AxB_parallel.
 
-// TODO reduce compiled code size by changing GB_heap.h to GB_heap.c;
+// FUTURE: reduce compiled code size by changing GB_heap.h to GB_heap.c;
 // check any performance impact
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.

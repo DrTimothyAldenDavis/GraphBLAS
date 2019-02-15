@@ -280,7 +280,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // aliased to A, then the assignment is a large one and copying the whole
     // matrix will not add much time.
 
-    // TODO alias OK if I and J are both GrB_ALL ?
+    // TODO alias OK if I and J are both GrB_ALL
 
     GrB_Matrix Z ;
     bool aliased = GB_ALIASED (C, A) || GB_ALIASED (C, M) ;

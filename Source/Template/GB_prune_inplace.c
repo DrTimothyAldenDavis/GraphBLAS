@@ -51,7 +51,7 @@
         // GB_for_each_vector (A): but where A->p and A->h are changing:
         for (int64_t k = 0 ; k < nvec ; k++)
         {
-            // GB_for_each_entry (j, p, pend)) but A->p is changing:
+            // GB_for_each_entry (j, p, pend) but A->p is changing:
             int64_t j = Ah [k] ;
             int64_t pend = Ap [k+1] ;
             for ( ; p < pend ; p++)

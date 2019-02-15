@@ -11,7 +11,7 @@
 
 // PARALLEL: use a parallel reduction method
 
-// TODO: add early exit;  pass in terminal (NULL if none)
+// FUTURE:: add early exit;  pass in terminal (NULL if none)
 
 #include "GB.h"
 
@@ -223,10 +223,11 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
         // sum down each sparse vector: T (j) = reduce (A (:,j))
         //----------------------------------------------------------------------
 
-        // TODO reduction down each sparse vector can be done in parallel.
+        // FUTURE:: reduction down each sparse vector can be done in parallel.
         // Need to first check A for empty vectors, and compute Ti first.
         // then compute Tx.
-        // TODO: Each column reduction can exploit early exit as well,
+
+        // FUTURE:: Each column reduction can exploit early exit as well,
         // but 'reduce' is a binary op, not a monoid.  Pass in the terminal
         // value.
 
@@ -242,13 +243,13 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
             GB_for_each_vector (A)                                          \
             {                                                               \
                 /* tj = reduce (A (:,j)) */                                 \
+                GBI1_initj (Iter, j, p, pend) ;                             \
                 type tj ;                                                   \
-                int64_t GBI1_initj (Iter, j, p, pend) ;                     \
                 if (p >= pend) continue ;   /* skip vector j if empty */    \
                 /* tj = Ax [p], the first entry in vector j */              \
                 tj = ax [p] ;                                               \
                 /* subsequent entries in vector j */                        \
-                /* TODO: early exit here */                                 \
+                /* FUTURE:: early exit here */                              \
                 for (p++ ; p < pend ; p++)                                  \
                 {                                                           \
                     /* tj "+=" ax [p] ; */                                  \
@@ -293,12 +294,12 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
             GB_for_each_vector (A)
             {
                 // zwork = reduce (A (:,j))
-                int64_t GBI1_initj (Iter, j, p, pend) ;
+                GBI1_initj (Iter, j, p, pend) ;
                 if (p >= pend) continue ;   // skip vector j if empty
                 // zwork = (ztype) Ax [p], the first entry in vector j
                 cast_A_to_Z (zwork, Ax +(p*asize), zsize) ;
                 // subsequent entries in vector j
-                // TODO: early exit
+                // FUTURE:: early exit
                 for (p++ ; p < pend ; p++)
                 { 
                     // awork = (ztype) Ax [p]

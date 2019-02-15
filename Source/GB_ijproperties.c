@@ -15,7 +15,7 @@
 
 #include "GB.h"
 
-// TODO: if limit=0, print a different message.  see also setEl, extractEl.
+// FUTURE:: if limit=0, print a different message.  see also setEl, extractEl.
 #define GB_ICHECK(i,limit)                                              \
 {                                                                       \
     if ((i) < 0 || (i) >= (limit))                                      \

@@ -240,10 +240,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // C(:,:)<M> = accum (C(:,:),T) via GB_subassign
         //----------------------------------------------------------------------
 
-        // TODO note that C and M can be aliased; make sure this is OK
-        // in GB_subassign_kernel.  Check if A and C can also alias.
-
-        // fprintf (stderr, "accum/mask via subassign\n") ;
         info = GB_subassign_kernel (C, C_replace, M, Mask_complement, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, 0, Context) ;
 
@@ -263,7 +259,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         GrB_Matrix Z = NULL ;
 
-        // TODO:  postpone this until required by GB_add or GB_mask.  It
+        // FUTURE::  postpone this until required by GB_add or GB_mask.  It
         // can be skipped if there is no accum and C is cleared or if no M.
         // GB_WAIT (C) ;
         info = GB_wait (C, Context) ;

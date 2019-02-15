@@ -21,17 +21,25 @@
     {
 
         //----------------------------------------------------------------------
-        // C(:,j)<!M(:,j)> = A'*B(:,j)
+        // get B(:,j)
         //----------------------------------------------------------------------
 
-        int64_t GBI1_initj (Iter, j, pB_start, pB_end) ;
+        GBI1_initj (Iter, j, pB_start, pB_end) ;
         int64_t bjnz = pB_end - pB_start ;
         // no work to do if B(:,j) is empty
         if (bjnz == 0) continue ;
 
+        //----------------------------------------------------------------------
+        // get M(:,j)
+        //----------------------------------------------------------------------
+
         // find vector j in M
         int64_t pM, pM_end ;
         GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
+
+        //----------------------------------------------------------------------
+        // C(:,j)<!M(:,j)> = A'*B(:,j)
+        //----------------------------------------------------------------------
 
         // get the first and last index in B(:,j)
         int64_t ib_first = Bi [pB_start] ;
@@ -52,7 +60,7 @@
                 // get M(i,j), if present
                 bool mij = false ;
 
-                // TODO: if nnz(M(:,j)) >> anvec, do a binary search for M(i,j) 
+                // FUTURE:: if nnz(M(:,j)) >> anvec: binary search for M(i,j) 
 
                 while (pM < pM_end && Mi [pM] < i)
                 { 

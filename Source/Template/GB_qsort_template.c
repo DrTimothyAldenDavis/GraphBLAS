@@ -143,7 +143,7 @@ static void GB_quicksort_main   // sort A [0:n-1]
 
     GB_GET_NTHREADS (nthreads, Context) ;
 
-    nthreads = 1 ;  // TODO: hack for now
+    nthreads = 1 ;  // FUTURE:: do this in parallel
 
     //--------------------------------------------------------------------------
     // do the quicksort in parallel
@@ -157,7 +157,7 @@ static void GB_quicksort_main   // sort A [0:n-1]
     else
     {
         // sort A [0:n-1] with multiple threads
-        // TODO : quicksort in parallel
+        // FUTURE:: quicksort in parallel
         ;
     }
 }

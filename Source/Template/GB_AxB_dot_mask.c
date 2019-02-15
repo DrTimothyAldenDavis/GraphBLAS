@@ -34,19 +34,27 @@
     {
 
         //----------------------------------------------------------------------
-        // C(:,j)<M(:,j)> = A'*B(:,j)
+        // get B(:,j)
         //----------------------------------------------------------------------
 
-        int64_t GBI1_initj (Iter, j, pB_start, pB_end) ;
+        GBI1_initj (Iter, j, pB_start, pB_end) ;
         int64_t bjnz = pB_end - pB_start ;
         // no work to do if B(:,j) is empty
         if (bjnz == 0) continue ;
+
+        //----------------------------------------------------------------------
+        // get M(:,j)
+        //----------------------------------------------------------------------
 
         // find vector j in M
         int64_t pM, pM_end ;
         GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
         // no work to do if M(:,j) is empty
         if (pM == pM_end) continue ;
+
+        //----------------------------------------------------------------------
+        // C(:,j)<M(:,j)> = A'*B(:,j)
+        //----------------------------------------------------------------------
 
         // get the first and last index in B(:,j)
         int64_t ib_first = Bi [pB_start] ;
@@ -66,7 +74,7 @@
             // no work to do if the intersection of A->h and M(:,j) is empty
             if (ia_last < im_first || im_last < ia_first) continue ;
 
-            // TODO:  if Ah is small and nnz(M(:,j)) is large, then iterate
+            // FUTURE::  if Ah is small and nnz(M(:,j)) is large, then iterate
             // through Ah and use a binary search into M(:,j).  Likewise,
             // if the reverse is true, iterate through M(:,j); if M(i,j)
             // is true, then use GB_lookup to find A(:,i), and then do

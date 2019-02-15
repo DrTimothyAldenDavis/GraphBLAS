@@ -70,7 +70,7 @@ void GB_AxB_select                  // select method for A*B or A'*B
         int64_t b = 0 ;
         GB_for_each_vector (B)
         { 
-            int64_t GBI1_initj (Iter, j, pB_start, pB_end) ;
+            GBI1_initj (Iter, j, pB_start, pB_end) ;
             int64_t bjnz = pB_end - pB_start ;
             b = GB_IMAX (b, bjnz) ;
         }

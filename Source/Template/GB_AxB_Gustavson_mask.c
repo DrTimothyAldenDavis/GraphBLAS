@@ -82,6 +82,7 @@
     //--------------------------------------------------------------------------
 
     int64_t *restrict Ci = C->i ;
+    int64_t *restrict Cp = C->p ;
 
     int64_t jlast, cnz, cnz_last ;
     GB_jstartup (C, &jlast, &cnz, &cnz_last) ;
@@ -90,26 +91,18 @@
     // C<M>=A*B using the Gustavson method, pattern of C is a subset of M
     //--------------------------------------------------------------------------
 
-    #ifdef GB_HYPER_CASE
     GB_for_each_vector (B)
-    #else
-    int64_t *restrict Bp = B->p ;
-    int64_t *restrict Cp = C->p ;
-    int64_t n = C->vdim ;
-    for (int64_t j = 0 ; j < n ; j++)
-    #endif
     {
 
         //----------------------------------------------------------------------
-        // get B(:,j) and M(:,j)
+        // get B(:,j)
         //----------------------------------------------------------------------
 
-        #ifdef GB_HYPER_CASE
-        int64_t GBI1_initj (Iter, j, pB, pB_end) ;
-        #else
-        int64_t pB     = Bp [j] ;
-        int64_t pB_end = Bp [j+1] ;
-        #endif
+        GBI1_initj (Iter, j, pB, pB_end) ;
+
+        //----------------------------------------------------------------------
+        // get M(:,j)
+        //----------------------------------------------------------------------
 
         // find vector j in M
         int64_t pM_start, pM_end ;

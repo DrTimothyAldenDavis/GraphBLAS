@@ -346,7 +346,7 @@ GrB_Info GB_mask                // C<M> = Z
             // get the next vector j of C, Z, and M, and their lengths
             //------------------------------------------------------------------
 
-            int64_t GBI3_initj (Iter, j, pC, pC_end, pZ, pZ_end, pM, pM_end) ;
+            GBI3_initj (Iter, j, pC, pC_end, pZ, pZ_end, pM, pM_end) ;
             int64_t jC_nnz = pC_end - pC ;
             int64_t jZ_nnz = pZ_end - pZ ;
             int64_t jM_nnz = pM_end - pM ;

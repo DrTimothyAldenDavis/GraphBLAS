@@ -216,7 +216,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         {
             GB_for_each_vector (A)
             {
-                int64_t GBI1_initj (Iter, j, p, pend) ;
+                GBI1_initj (Iter, j, p, pend) ;
                 // an entry is kept if (j-i) <= kk, so smallest i is j-kk.
                 int64_t ifirst = j - kk ;
                 if (ifirst < vlen)
@@ -265,7 +265,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             {
                 // use binary search to find the entry on the kk-th diagonal:
                 // look for entry A(i,j) with index i = j-kk
-                int64_t GBI1_initj (Iter, j, p, pend) ;
+                GBI1_initj (Iter, j, p, pend) ;
                 int64_t i = j-kk ;
                 if (i < 0 || i >= vlen) continue ;
                 bool found ;

@@ -160,7 +160,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             if (C->nzombies == 0 && C->n_pending == 0)
             { 
                 // remove from queue if zombies goes to 0 and n_pending is zero
-                // TODO may thrash.  See TODO in GB_subassign_kernel.
+                // FUTURE:: may thrash.  See FUTURE: in GB_subassign_kernel.
                 GB_CRITICAL (GB_queue_remove (C)) ;
             }
         }

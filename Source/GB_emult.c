@@ -171,7 +171,7 @@ GrB_Info GB_emult           // C = A.*B
         // get the next column, A (:,j) and B (:j)
         //----------------------------------------------------------------------
 
-        int64_t GBI2_initj (Iter, j, pa, pa_end, pb, pb_end) ;
+        GBI2_initj (Iter, j, pa, pa_end, pb, pb_end) ;
         int64_t ajnz = pa_end - pa ;
         int64_t bjnz = pb_end - pb ;
 

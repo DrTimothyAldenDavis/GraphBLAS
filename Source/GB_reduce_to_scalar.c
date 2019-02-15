@@ -16,7 +16,7 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-// TODO: add early exit
+// FUTURE:: add early exit
 
 // PARALLEL: a parallel reduction method.  All entries of the matrix
 // must be reduce to a single scalar.

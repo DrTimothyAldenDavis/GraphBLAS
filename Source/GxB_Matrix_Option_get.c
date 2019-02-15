@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: add an option to query if a matrix is hypersparse or not
+// FUTURE:: add an option to query if a matrix is hypersparse or not
 
 // not parallel: this function does O(1) work and is already thread-safe.
 

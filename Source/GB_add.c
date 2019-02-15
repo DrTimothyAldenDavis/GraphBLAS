@@ -159,7 +159,7 @@ GrB_Info GB_add             // C = A+B
             // get the next column, A (:,j) and B (:j)
             //------------------------------------------------------------------
 
-            int64_t GBI2_initj (Iter, j, pa, pa_end, pb, pb_end) ;
+            GBI2_initj (Iter, j, pa, pa_end, pb, pb_end) ;
 
             //------------------------------------------------------------------
             // merge A (:,j) and B (:,j) while both have entries
@@ -277,7 +277,7 @@ GrB_Info GB_add             // C = A+B
             // get the next column, A (:,j) and B (:j)
             //------------------------------------------------------------------
 
-            int64_t GBI2_initj (Iter, j, pa, pa_end, pb, pb_end) ;
+            GBI2_initj (Iter, j, pa, pa_end, pb, pb_end) ;
 
             //------------------------------------------------------------------
             // merge A (:,j) and B (:,j) while both have entries

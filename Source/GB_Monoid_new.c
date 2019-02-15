@@ -98,8 +98,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     // set the terminal value
     //--------------------------------------------------------------------------
 
-    // TODO allow user-defined monoids based on user-defined ops to terminal
-    // TODO: move this switch into its own routine, so it can be used
+    // FUTURE:: allow user-defined monoids based on user-defined ops to terminal
+    // FUTURE:: move this switch into its own routine, so it can be used
     // by GB_reduce.
 
     mon->terminal = NULL ;

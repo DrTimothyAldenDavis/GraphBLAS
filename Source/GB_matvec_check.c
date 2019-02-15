@@ -92,32 +92,30 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check vector structure
     //--------------------------------------------------------------------------
 
+#if 0
+    // FUTURE:: check a slice or hyperslice
     if (A->is_slice)
     {
         if (A->is_hyper)
         {
             // A is a hyperslice of a hypersparse matrix
             if (pr > 0) GBPR ("hyperslice\n") ;
-            if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
-            {
-                if (pr > 0) GBPR ("invalid hyperslice %s structure\n", kind) ;
-                return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                    "invalid hyperslice %s structure [%s]", kind, GB_NAME))) ;
-            }
         }
         else
         {
             // A is a slice of a standard matrix
             if (pr > 0) GBPR ("slice\n") ;
-            if (! (A->nvec == A->plen && A->plen == A->vdim))
-            {
-                if (pr > 0) GBPR ("invalid slice %s structure\n", kind) ;
-                return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                    "invalid slice %s structure [%s]", kind, GB_NAME))) ;
-            }
+        }
+        if (! (A->nvec <= A->vdim))
+        {
+            if (pr > 0) GBPR ("invalid slice %s structure\n", kind) ;
+            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
+                "invalid slice %s structure [%s]", kind, GB_NAME))) ;
         }
     }
     else
+#endif
+
     {
         if (A->is_hyper)
         {
@@ -216,6 +214,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check h
     //--------------------------------------------------------------------------
 
+#if 0
+    // FUTURE:: check a slice or hyperslice
     if (A->is_slice)
     {
         if (A->is_hyper)
@@ -226,14 +226,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 if (pr > 0) GBPR ("->h NULL, invalid hyperslice %s\n", kind) ;
                 return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                     "hypersparse %s contains a NULL A->h pointer: [%s]",
-                    kind, GB_NAME))) ;
-            }
-            if (!A->h_shallow || !A->p_shallow ||
-                !A->i_shallow || !A->x_shallow)
-            { 
-                if (pr > 0) GBPR ("invalid non-shallow hyperslice %s\n", kind);
-                return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                    "non-shallow: invalid hyperslice %s [%s]\n",
                     kind, GB_NAME))) ;
             }
         }
@@ -248,17 +240,18 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                     "slice %s contains a non-NULL A->h pointer: [%s]",
                     kind, GB_NAME))) ;
             }
-
-            if ( A->h_shallow || !A->p_shallow ||
-                !A->i_shallow || !A->x_shallow)
-            { 
-                if (pr > 0) GBPR ("invalid non-shallow slice %s\n", kind) ;
-                return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                    "non-shallow: invalid slice %s [%s\n", kind, GB_NAME))) ;
-            }
+        }
+        // a slice or hyperslice has all shallow content
+        if ( A->h_shallow || !A->p_shallow || !A->i_shallow || !A->x_shallow)
+        { 
+            if (pr > 0) GBPR ("invalid non-shallow slice %s\n", kind) ;
+            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
+                "non-shallow: invalid slice %s [%s\n", kind, GB_NAME))) ;
         }
     }
     else
+#endif
+
     {
         if (A->is_hyper)
         {
@@ -289,6 +282,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check hfirst
     //--------------------------------------------------------------------------
 
+#if 0
+    // FUTURE:: check a slice or hyperslice
     if (A->is_slice && !A->is_hyper)
     {
         // hfirst is the first vector in a slice of a standard sparse matrix
@@ -309,6 +304,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 "hfirst: invalid slice %s [%s]\n", kind, GB_NAME))) ;
         }
     }
+#endif
 
     //--------------------------------------------------------------------------
     // check an empty matrix
@@ -319,6 +315,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A_empty)
     {
         // A->x and A->i pointers must be NULL and shallow must be false
+
+#if 0
+        // FUTURE:: check a slice or hyperslice
         if (A->is_slice)
         { 
             // a slice or hyperslice cannot be made of an empty matrix
@@ -326,6 +325,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "%s is an invalid empty slice: [%s]", kind, GB_NAME))) ;
         }
+#endif
+
         if (A->i != NULL || A->i_shallow || A->x_shallow)
         { 
             if (pr > 0) GBPR ("invalid empty %s\n", kind) ;
@@ -361,7 +362,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the content of p
     //--------------------------------------------------------------------------
 
-    if (A->is_slice ? (A->p [0] < 0) : (A->p [0] != 0))
+    if (/* A->is_slice ? (A->p [0] < 0) : */ (A->p [0] != 0))
     { 
         if (pr > 0) GBPR ("->p [0] = "GBd" invalid\n", A->p [0]) ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
@@ -416,12 +417,15 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     { 
         if (pr > 0) GBPR ("pending tuples: "GBd" max pending: "GBd
             " zombies: "GBd"\n", A->n_pending, A->max_n_pending, A->nzombies) ;
+        #if 0
+        // FUTURE:: check a slice or hyperslice
         if (A->is_slice)
         {
             if (pr > 0) GBPR ("slice %s invalid: unfinished\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "slice %s invalid: unfinished [%s]", kind, GB_NAME))) ;
         }
+        #endif
     }
 
     if (A->nzombies < 0 || A->nzombies > anz)
@@ -725,7 +729,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // return result
     //--------------------------------------------------------------------------
 
-    if (!A->is_slice)
+    // FUTURE:: if (!A->is_slice)
     {
         int64_t actual = GB_nvec_nonempty (A, Context) ;
         if (A->nvec_nonempty != actual)

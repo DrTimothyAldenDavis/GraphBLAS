@@ -112,9 +112,9 @@ GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
     // in I.  inew = Inext [inew] traverses this list, until inew is -1.
 
     // to traverse all entries in bucket i, do:
-    // GB_for_each_entry_in_bucket (inew,i)) { ... }
+    // GB_for_each_index_in_bucket (inew,i)) { ... }
 
-    #define GB_for_each_entry_in_bucket(inew,i) \
+    #define GB_for_each_index_in_bucket(inew,i) \
         for (int64_t inew = Mark[i]-flag ; inew >= 0 ; inew = Inext [inew])
 
     // If Mark [i] < flag, then the ith bucket is empty and i is not in I.
@@ -125,7 +125,7 @@ GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
     // calloc of Inext and this debug test
     for (int64_t i = 0 ; i < avlen ; i++)
     {
-        GB_for_each_entry_in_bucket (inew, i)
+        GB_for_each_index_in_bucket (inew, i)
         {
             ASSERT (inew >= 0 && inew < nI) ;
             ASSERT (i == I [inew]) ;

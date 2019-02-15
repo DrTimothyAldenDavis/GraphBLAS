@@ -401,4 +401,6 @@ bool x_shallow ;        // true if x is a shallow copy
 bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
 bool sorted_pending ;   // true if pending tuples are in sorted order
-bool is_slice ;         // true if the matrix is a slice
+
+// FUTURE:: A->is_slice
+// bool is_slice ;      // true if the matrix is a slice

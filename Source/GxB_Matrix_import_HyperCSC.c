@@ -86,7 +86,7 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
         (*A)->x = (*Ax) ;
         (*Ai) = NULL ;
         (*Ax) = NULL ;
-        // TODO: compute nvec_nonempty when needed
+        // FUTURE:: compute nvec_nonempty when needed
         (*A)->nvec_nonempty = GB_nvec_nonempty (*A, Context) ;
     }
 

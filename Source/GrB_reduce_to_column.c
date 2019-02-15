@@ -9,8 +9,8 @@
 
 // parallel: not here, see GB_reduce_to_column
 
-// TODO: If reduce is a binary operator that corresponds to a built-in Monoid,
-// then look up the Monoid->terminal.  Otherwise pass NULL to
+// FUTURE:: If reduce is a binary operator that corresponds to a built-in
+// Monoid, then look up the Monoid->terminal.  Otherwise pass NULL to
 // GB_reduce_to_column as the terminal value.
 
 // For the monoid case, extract the Monoid->terminal and pass it to

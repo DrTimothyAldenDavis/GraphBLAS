@@ -41,20 +41,14 @@
     // symbolic pattern of C = A*B
     //--------------------------------------------------------------------------
 
-    #ifdef GB_HYPER_CASE
     GB_for_each_vector (B)
-    #else
-    int64_t n = C->vdim ;
-    for (int64_t j = 0 ; j < n ; j++)
-    #endif
     {
 
-        #ifdef GB_HYPER_CASE
-        int64_t GBI1_initj (Iter, j, pB, pB_end) ;
-        #else
-        int64_t pB     = Bp [j] ;
-        int64_t pB_end = Bp [j+1] ;
-        #endif
+        //----------------------------------------------------------------------
+        // get B(:,j)
+        //----------------------------------------------------------------------
+
+        GBI1_initj (Iter, j, pB, pB_end) ;
 
         //----------------------------------------------------------------------
         // reallocate C if necessary

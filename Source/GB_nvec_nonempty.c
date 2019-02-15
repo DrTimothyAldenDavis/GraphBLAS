@@ -52,7 +52,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
 
     GB_for_each_vector (A)
     { 
-        int64_t GBI1_initj (Iter, j, p, pend) ;
+        GBI1_initj (Iter, j, p, pend) ;
         int64_t ajnz = pend - p ;
         if (ajnz > 0) nvec_nonempty++ ;
     }

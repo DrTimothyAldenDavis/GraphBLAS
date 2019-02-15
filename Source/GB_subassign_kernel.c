@@ -95,7 +95,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         ASSERT (GB_NOT_ALIASED (C, M)) ;
     }
 
-    // TODO: can this be OK if I and J are both ":"?  I think so.
+    // TODO:: allow this when I and J are both GrB_ALL
     ASSERT (GB_NOT_ALIASED (C, A)) ;
 
     //--------------------------------------------------------------------------
@@ -1343,7 +1343,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         GB_for_each_vector (S)
         {
             // prepare to iterate over the entries of vector S(:,jnew)
-            int64_t GBI1_initj (Iter, jnew, pS_start, pS_end) ;
+            GBI1_initj (Iter, jnew, pS_start, pS_end) ;
             // S (inew,jnew) corresponds to C (iC, jC) ;
             // jC = J [j] ; or J is a colon expression
             int64_t jC = GB_ijlist (J, jnew, Jkind, Jcolon) ;
@@ -1560,7 +1560,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
             GB_for_each_vector (M)
             {
-                int64_t GBI1_initj (Iter, j, pM, pM_end) ;
+                GBI1_initj (Iter, j, pM, pM_end) ;
 
                 // get the C(:,jC) vector where jC = J [j]
                 int64_t GB_jC_LOOKUP ;
@@ -1660,7 +1660,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
             GB_for_each_vector (M)
             {
-                int64_t GBI1_initj (Iter, j, pM, pM_end) ;
+                GBI1_initj (Iter, j, pM, pM_end) ;
 
                 // get the C(:,jC) vector where jC = J [j]
                 int64_t GB_jC_LOOKUP ;
@@ -1861,10 +1861,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 ASSERT (Mask_comp) ;
                 ASSERT (!C_replace) ;
 
-                GB_for_each_vector2s (M /*, scalar */)
+                GB_for_each_vector2s (M, scalar)
                 {
 
-                    int64_t GBI1_initj (Iter, j, pM, pM_end) ;
+                    GBI1_initj (Iter, j, pM, pM_end) ;
                     // get the C(:,jC) vector where jC = J [j]
                     int64_t GB_jC_LOOKUP ;
 
@@ -2012,7 +2012,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 GB_for_each_vector (A)
                 {
 
-                    int64_t GBI1_initj (Iter, j, pA, pA_end) ;
+                    GBI1_initj (Iter, j, pA, pA_end) ;
                     // get the C(:,jC) vector where jC = J [j]
                     int64_t GB_jC_LOOKUP ;
 
@@ -2107,7 +2107,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 GB_for_each_vector2 (A, M)
                 {
 
-                    int64_t GBI2_initj (Iter, j, pA, pA_end, pM_start, pM_end) ;
+                    GBI2_initj (Iter, j, pA, pA_end, pM_start, pM_end) ;
                     // get the C(:,jC) vector where jC = J [j]
                     int64_t GB_jC_LOOKUP ;
 
@@ -2131,7 +2131,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                             // find M(iA,j)
                             //--------------------------------------------------
 
-                            // TODO skip binary search if M(:,j) dense
+                            // FUTURE:: skip binary search if M(:,j) dense
 
                             bool mij = true ;
                             int64_t pM     = pM_start ;
@@ -2196,7 +2196,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                             // find M(iA,j)
                             //--------------------------------------------------
 
-                            // TODO skip binary search if M(:,j) dense
+                            // FUTURE:: skip binary search if M(:,j) dense
 
                             bool mij = true ;
                             int64_t pM     = pM_start ;
@@ -2288,14 +2288,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
                 // time: O(nI*nJ)
 
-                GB_for_each_vector2s (S /*, scalar */)
+                GB_for_each_vector2s (S, scalar)
                 {
 
                     //----------------------------------------------------------
                     // do a 2-way merge of S(:,j) and the scalar
                     //----------------------------------------------------------
 
-                    int64_t GBI1_initj (Iter, j, pS, pS_end) ;
+                    GBI1_initj (Iter, j, pS, pS_end) ;
 
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
@@ -2337,14 +2337,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
                 // time: O(nI*nJ)
 
-                GB_for_each_vector2s (S /*, scalar */)
+                GB_for_each_vector2s (S, scalar)
                 {
 
                     //----------------------------------------------------------
                     // do a 2-way merge of S(:,j) and the scalar
                     //----------------------------------------------------------
 
-                    int64_t GBI1_initj (Iter, j, pS, pS_end) ;
+                    GBI1_initj (Iter, j, pS, pS_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
@@ -2400,7 +2400,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     // do a 2-way merge of S(:,j) and A(:,j)
                     //----------------------------------------------------------
 
-                    int64_t GBI2_initj (Iter, j, pS, pS_end, pA, pA_end) ;
+                    GBI2_initj (Iter, j, pS, pS_end, pA, pA_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
@@ -2487,7 +2487,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     // do a 2-way merge of S(:,j) and A(:,j)
                     //----------------------------------------------------------
 
-                    int64_t GBI2_initj (Iter, j, pS, pS_end, pA, pA_end) ;
+                    GBI2_initj (Iter, j, pS, pS_end, pA, pA_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
@@ -2588,14 +2588,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
                 // time:  O(nI*nJ)
 
-                GB_for_each_vector3s (S, M /* scalar */)
+                GB_for_each_vector3s (S, M, scalar)
                 {
 
                     //----------------------------------------------------------
                     // do a 3-way merge of S(:,j), M(:,j), and the scalar
                     //----------------------------------------------------------
 
-                    int64_t GBI2_initj (Iter, j, pS, pS_end, pM, pM_end) ;
+                    GBI2_initj (Iter, j, pS, pS_end, pM, pM_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
@@ -2729,14 +2729,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
                 // time:  O(nI*nJ)
 
-                GB_for_each_vector3s (S, M /* scalar */)
+                GB_for_each_vector3s (S, M, scalar)
                 {
 
                     //----------------------------------------------------------
                     // do a 3-way merge of S(:,j), M(:,j), and the scalar
                     //----------------------------------------------------------
 
-                    int64_t GBI2_initj (Iter, j, pS, pS_end, pM, pM_end) ;
+                    GBI2_initj (Iter, j, pS, pS_end, pM, pM_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
@@ -2901,7 +2901,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     // do a 3-way merge of S(:,j), M(:,j), and A(:,j)
                     //----------------------------------------------------------
 
-                    int64_t GBI3_initj (Iter,j,pS,pS_end,pM,pM_end,pA,pA_end) ;
+                    GBI3_initj (Iter, j, pS, pS_end, pM, pM_end, pA, pA_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
@@ -3077,7 +3077,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     // do a 3-way merge of S(:,j), M(:,j), and A(:,j)
                     //----------------------------------------------------------
 
-                    int64_t GBI3_initj (Iter,j, pS,pS_end,pM,pM_end,pA,pA_end) ;
+                    GBI3_initj (Iter, j, pS, pS_end, pM, pM_end, pA, pA_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
@@ -3249,10 +3249,11 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         // In that case, C must be removed from the queue.  The removal does
         // nothing if C is already not in the queue.
 
-        // TODO: this might cause thrashing if lots of assigns or setElements
-        // are done in parallel.  Instead, leave the matrix in the queue, and
-        // allow matrices to be in the queue even if they have no unfinished
-        // computations.  See also GB_setElement.
+        // FUTURE:: this might cause thrashing if lots of assigns or
+        // setElements are done in parallel.  Instead, leave the matrix in the
+        // queue, and allow matrices to be in the queue even if they have no
+        // unfinished computations.  See also GB_setElement.
+
         GB_CRITICAL (GB_queue_remove (C)) ;
     }
     else

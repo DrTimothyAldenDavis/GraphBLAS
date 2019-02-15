@@ -76,10 +76,14 @@
         // get B(:,j)
         //----------------------------------------------------------------------
 
-        int64_t GBI1_initj (Iter, j, pB_start, pB_end) ;
+        GBI1_initj (Iter, j, pB_start, pB_end) ;
         int64_t bjnz = pB_end - pB_start ;
         // no work to do if B(:,j) is empty
         if (bjnz == 0) continue ;
+
+        //----------------------------------------------------------------------
+        // get M(:,j)
+        //----------------------------------------------------------------------
 
         #ifdef GB_MASK_CASE
         // find vector j in M

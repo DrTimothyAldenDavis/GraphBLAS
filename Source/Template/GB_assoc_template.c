@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: write Generator/GB_assoc.c, and use it to create 66 files:
+// FUTURE:: write Generator/GB_assoc.c, and use it to create 66 files:
 // Generator/GB_assoc__[operator]_[type].  Each file has 4 functions for the
 // kernels for GB_reduce_to_scalar, GB_build_factory, and GB_reduce_to_column
 // (2 kernels).  (but 22 files with FIRST and SECOND just have one kernel for

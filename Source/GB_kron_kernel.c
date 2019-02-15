@@ -115,18 +115,18 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
     int64_t cnz, cnz_last, cj_last ;
     GB_jstartup (C, &cj_last, &cnz, &cnz_last) ;
 
-    GBI_iterator A_iter ;
+    GBI_single_iterator A_iter ;
     for (GB_each_vector (A_iter, A))
     {
 
-        int64_t GBI1_initj (A_iter, aj, pA_start, pA_end) ;
+        GBI1_initj (A_iter, aj, pA_start, pA_end) ;
         int64_t ajblock = aj * bvdim ;
 
-        GBI_iterator B_iter ;
+        GBI_single_iterator B_iter ;
         for (GB_each_vector (B_iter, B))
         {
 
-            int64_t GBI1_initj (B_iter, bj, pB_start, pB_end) ;
+            GBI1_initj (B_iter, bj, pB_start, pB_end) ;
             int64_t cj = ajblock + bj ;
 
             for (int64_t pa = pA_start ; pa < pA_end ; pa++)

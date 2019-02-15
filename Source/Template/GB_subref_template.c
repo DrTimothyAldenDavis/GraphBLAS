@@ -1232,7 +1232,7 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
             ASSERT (Inext != NULL) ;
 
             // to iterate across all entries in a bucket:
-            #define GB_for_each_entry_in_bucket(inew,i) \
+            #define GB_for_each_index_in_bucket(inew,i) \
                 for (int64_t inew = Mark[i]-flag ; inew >= 0 ; \
                     inew = Inext [inew])
 
@@ -1268,7 +1268,7 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
                     }
                     // traverse bucket i for all indices inew where
                     // i == I [inew] or where i is from a colon expression
-                    GB_for_each_entry_in_bucket (inew, i)
+                    GB_for_each_index_in_bucket (inew, i)
                     { 
                         GB_C_REALLOC (cnz + cjnz) ;
                         ASSERT (inew >= 0 && inew < nI) ;
@@ -1332,7 +1332,7 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
                         break ;
                     }
                     // traverse bucket i for all indices inew where i == I[inew]
-                    GB_for_each_entry_in_bucket (inew, i)
+                    GB_for_each_index_in_bucket (inew, i)
                     {
                         ASSERT (inew >= 0 && inew < nI) ;
                         ASSERT (i == GB_ijlist (I, inew, Ikind, Icolon)) ;
@@ -1361,7 +1361,7 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
                 // Case 11: I not contiguous, no duplicates.  No qsort needed.
                 //--------------------------------------------------------------
 
-                // Identical to Case 10, except GB_for_each_entry_in_bucket
+                // Identical to Case 10, except GB_for_each_index_in_bucket
                 // (...) just needs to iterate 0 or 1 times.  Works well when I
                 // has many entries and A(:,j) has few entries.  Time taken is
                 // O(ajnz3)

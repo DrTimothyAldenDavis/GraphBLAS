@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// TODO allow the user to pass in malloc, calloc, ... functions
+// FUTURE:: allow the user to pass in malloc, calloc, ... functions
 
 // not parallel: this function does O(1) work and is already thread-safe.
 

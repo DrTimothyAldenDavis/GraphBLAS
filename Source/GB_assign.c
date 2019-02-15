@@ -283,7 +283,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                     GB_for_each_vector (C)
                     {
                         // find C(i,j) if it exists
-                        int64_t GBI1_initj (Iter, j, p, pend) ;
+                        GBI1_initj (Iter, j, p, pend) ;
                         int64_t pright = pend-1 ;
                         bool found, is_zombie ;
                         GB_BINARY_ZOMBIE (i, Ci, p, pright, found, C->nzombies,
@@ -906,7 +906,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
             GB_for_each_vector2 (Z, M)
             {
-                int64_t GBI2_initj (Iter, j, pZ, pZ_end, pM, pM_end) ;
+                GBI2_initj (Iter, j, pZ, pZ_end, pM, pM_end) ;
 
                 // j_outside is true if column j is outside the Z(I,J) submatrix
                 bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
@@ -958,7 +958,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
             GB_for_each_vector2 (Z, M)
             {
-                int64_t GBI2_initj (Iter, j, pZ, pZ_end, pM, pM_end) ;
+                GBI2_initj (Iter, j, pZ, pZ_end, pM, pM_end) ;
 
                 // j_outside is true if column j is outside the Z(I,J) submatrix
                 bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
