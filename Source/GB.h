@@ -96,7 +96,7 @@
 // These flags are used for code development.  Uncomment them as needed.
 
 // to turn on debugging, uncomment this line:
-#undef NDEBUG
+// #undef NDEBUG
 
 // to turn on malloc tracking (for testing only), uncomment this line:
 // #define GB_MALLOC_TRACKING
@@ -744,7 +744,8 @@ typedef GB_Context_struct *GB_Context ;
 #define GB_WHERE(where_string)                      \
     GB_Context_struct Context_struct ;              \
     GB_Context Context = &Context_struct ;          \
-    Context->where = where_string ;
+    Context->where = where_string ;                 \
+    Context->nthreads = GB_Global.nthreads_max ;
 
 // GB_GET_NTHREADS:  determine number of threads for OpenMP parallelism.
 //
@@ -3475,8 +3476,9 @@ typedef struct
     int64_t nvec ;              // A->nvec: number of vectors in A
     const int64_t *h ;          // A->h: hyperlist of vectors in A
     int64_t k ;                 // current index into hyperlist h
-    bool is_slice ;             // true if A [0] is a slice
-    int64_t hfirst ;            // A->hfirst: first vector in slice A
+//  FUTURE:: slice
+//  bool is_slice ;             // true if A [0] is a slice
+//  int64_t hfirst ;            // A->hfirst: first vector in slice A
 
 } GBI_single_iterator ;
 
@@ -3494,9 +3496,9 @@ static inline void GBI1_init
     Iter->is_hyper = A->is_hyper ;
     Iter->p = A->p ;
     Iter->h = A->h ;
-    Iter->is_slice = false ; // A->is_slice ;
-    Iter->hfirst = A->hfirst ;
     Iter->nvec = A->nvec ;
+//  Iter->is_slice = A->is_slice ;          // FUTURE::
+//  Iter->hfirst = A->hfirst ;
 
     // start the iteration
     Iter->k = 0 ;
@@ -3530,9 +3532,6 @@ static inline void GBI1_start
             // A is a slice of a standard matrix
             (*j) = (Iter->hfirst) + Iter->k ;
         }
-        // get the start and end of the next vector of A
-        (*pstart) = Iter->p [Iter->k  ] ;
-        (*pend)   = Iter->p [Iter->k+1] ;
     }
     else
 #endif
@@ -3542,20 +3541,18 @@ static inline void GBI1_start
             // A is a hypersparse matrix
             // get next vector from A
             (*j) = Iter->h [Iter->k] ;
-            // get the start and end of the next vector of A
-            (*pstart) = Iter->p [Iter->k  ] ;
-            (*pend)   = Iter->p [Iter->k+1] ;
         }
         else
         { 
             // A is a standard matrix
             // get next vector from A
             (*j) = Iter->k ;
-            // get the start and end of the jth vector of A
-            (*pstart) = Iter->p [(*j)  ] ;
-            (*pend)   = Iter->p [(*j)+1] ;
         }
     }
+
+    // get the start and end of the next vector of A
+    (*pstart) = Iter->p [Iter->k  ] ;
+    (*pend)   = Iter->p [Iter->k+1] ;
 }
 
 // get the column at the current iteration, and the start/end pointers
@@ -3564,14 +3561,15 @@ static inline void GBI1_start
     int64_t j0, pstart0, pend0 ;                                       \
     GBI1_start (&Iter, &j0, &pstart0, &pend0) ;
 
-// content of for (...) 
-#define GB_each_vector(Iter,A)                                         \
-    GBI1_init (&Iter,A) ; Iter.k < Iter.nvec ; Iter.k++
+// iterate over one matrix A (sparse, hypersparse, slice, or hyperslice)
+// with a named iterator
+#define GB_for_each_vector_with_iter(Iter,A)                           \
+    GBI_single_iterator Iter ;                                         \
+    for (GBI1_init (&Iter,A) ; Iter.k < Iter.nvec ; Iter.k++)
 
 // iterate over one matrix A (sparse, hypersparse, slice, or hyperslice)
-#define GB_for_each_vector(A)                                          \
-    GBI_single_iterator Iter ;                                         \
-    for (GB_each_vector (Iter, A))
+// with the iterator named "Iter"
+#define GB_for_each_vector(A) GB_for_each_vector_with_iter (Iter,A)
 
 // iterate over a vector of a single matrix
 #define GB_for_each_entry(j,p,pend)                                    \
@@ -4121,43 +4119,37 @@ static inline void GBI2s_next
     pstart1 = Iter.pstart [1],                                         \
     pend1   = Iter.pend   [1]
 
+#define GBI2s_initj(Iter,j_,pstart0,pend0)                             \
+    int64_t                                                            \
+    j_      = Iter.j,                                                  \
+    pstart0 = Iter.pstart [0],                                         \
+    pend0   = Iter.pend   [0]                                          \
+
 //------------------------------------------------------------------------------
 // for-loop control: iterate over the vectors and entries of 1, 2, or 3 matrices
 //------------------------------------------------------------------------------
 
-// iterate the union of two matrices A and B
-#define GB_each_vector2(Iter,A,B)                                              \
-    GBI2_init (&Iter,A,B)   ; GBI2_while (&Iter)  ; GBI2_next (&Iter)
-
+// iterate over the vectors in the union of two matrices A and B
 #define GB_for_each_vector2(A,B)                                               \
     GBI_multi_iterator Iter ;                                                  \
-    for (GB_each_vector2 (Iter, A, B))
+    for (GBI2_init (&Iter,A,B) ; GBI2_while (&Iter) ; GBI2_next (&Iter))
 
-// iterate the union of three matrices A, B, and C
-#define GB_each_vector3(Iter,A,B,C)                                            \
-    GBI3_init (&Iter,A,B,C) ; GBI3_while (&Iter)  ; GBI3_next (&Iter)
-
+// iterate over the vectors in the union of three matrices A, B, and C
 #define GB_for_each_vector3(A,B,C)                                             \
     GBI_multi_iterator Iter ;                                                  \
-    for (GB_each_vector3 (Iter, A, B, C))
+    for (GBI3_init (&Iter,A,B,C) ; GBI3_while (&Iter) ; GBI3_next (&Iter))
 
-// iterate over a matrix A and an implicit expanded scalar
-#define GB_each_vector2s(Iter,A)                                               \
-    GBI2s_init (&Iter,A)    ; GBI2s_while (&Iter) ; GBI2s_next (&Iter)
-
+// iterate over the vectors of a matrix A and an expanded scalar
 // (note the scalar arg is not used; it is for code readability only):
 #define GB_for_each_vector2s(A,scalar)                                         \
     GBI_multi_iterator Iter ;                                                  \
-    for (GB_each_vector2s (Iter, A))
+    for (GBI2s_init (&Iter,A) ; GBI2s_while (&Iter) ; GBI2s_next (&Iter))
 
-// iterate over two matrices A and B, and an implicit expanded scalar
-#define GB_each_vector3s(Iter,A,B)                                             \
-    GBI3s_init (&Iter,A,B)  ; GBI3s_while (&Iter) ; GBI3s_next (&Iter)
-
+// iterate over the vectors of two matrices A and B, and an expanded scalar
 // (note the scalar arg is not used; it is for code readability only):
 #define GB_for_each_vector3s(A,B,scalar)                                       \
     GBI_multi_iterator Iter ;                                                  \
-    for (GB_each_vector3s (Iter, A, B))
+    for (GBI3s_init (&Iter,A,B) ; GBI3s_while (&Iter) ; GBI3s_next (&Iter))
 
 //------------------------------------------------------------------------------
 // GB_jstartup:  start the formation of a matrix

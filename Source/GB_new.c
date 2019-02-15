@@ -136,7 +136,8 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     }
     A->p = NULL ;
     A->h = NULL ;
-    A->hfirst = 0 ;
+    // A->hfirst = 0 ;          // FUTURE:: for slice and hyperslice
+    // A->is_slice = false ;
     A->p_shallow = false ;
     A->h_shallow = false ;
     A->nvec_nonempty = 0 ;      // all vectors are emtpy

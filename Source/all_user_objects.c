@@ -29,6 +29,208 @@
 
 
 //------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_band.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined functions for GxB_select, to choose entries within a band
+
+#ifdef GxB_USER_INCLUDE
+
+    #define MY_BAND
+
+    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
+        GrB_Index ncols, const void *x, const void *thunk)
+    {
+        int64_t *lohi = (int64_t *) thunk ;
+        int64_t i2 = (int64_t) i ;
+        int64_t j2 = (int64_t) j ;
+        return ((lohi [0] <= (j2-i2)) && ((j2-i2) <= lohi [1])) ;
+    }
+
+#endif
+
+// Select operator to compute C = tril (triu (A, k1), k2)
+
+    #define GB_DEF_My_band_function myband
+    extern bool myband
+    (
+        GrB_Index i,
+        GrB_Index j,
+        GrB_Index nrows,
+        GrB_Index ncols,
+        const void *x,
+        const void *thunk
+    ) ;
+    struct GB_SelectOp_opaque GB_opaque_My_band =
+    {
+        GB_MAGIC,           // object is defined
+        NULL,  // x not used
+        myband,                 // pointer to the C function
+        "myband",
+        GB_USER_SELECT_C_opcode // user-defined at compile-time
+    } ;
+    GxB_SelectOp My_band = & GB_opaque_My_band ;
+
+//------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_complex.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined functions for a double complex type
+
+#ifdef GxB_USER_INCLUDE
+
+    // Get the complex.h definitions, but remove "I" since it is used elsewhere
+    // in GraphBLAS.
+    #include <complex.h>
+    #undef I
+
+    // Not all complex.h definitions include the CMPLX macro
+    #ifndef CMPLX
+    #define CMPLX(real,imag) \
+        ( \
+        (double complex)((double)(real)) + \
+        (double complex)((double)(imag) * _Complex_I) \
+        )
+    #endif
+
+    // define a token so a user application can check for existence 
+    #define MY_COMPLEX
+
+    static inline void my_complex_plus
+    (
+        double complex *z,
+        const double complex *x,
+        const double complex *y
+    )
+    {
+        (*z) = (*x) + (*y) ;
+    }
+
+    static inline void my_complex_times
+    (
+        double complex *z,
+        const double complex *x,
+        const double complex *y
+    )
+    {
+        (*z) = (*x) * (*y) ;
+    }
+
+#endif
+
+// GraphBLAS does not have a complex type; this defines one:
+
+    #define GB_DEF_My_Complex_type double complex
+    struct GB_Type_opaque GB_opaque_My_Complex =
+    {
+        GB_MAGIC,           // object is defined
+        sizeof (double complex),        // size of the type
+        GB_UCT_code,        // user-defined at compile-time
+        "double complex"
+    } ;
+    GrB_Type My_Complex = & GB_opaque_My_Complex ;
+
+// The two operators, complex add and multiply:
+
+    #define GB_DEF_My_Complex_plus_function my_complex_plus
+    #define GB_DEF_My_Complex_plus_ztype GB_DEF_My_Complex_type
+    #define GB_DEF_My_Complex_plus_xtype GB_DEF_My_Complex_type
+    #define GB_DEF_My_Complex_plus_ytype GB_DEF_My_Complex_type
+    extern void my_complex_plus
+    (
+        GB_DEF_My_Complex_plus_ztype *z,
+        const GB_DEF_My_Complex_plus_xtype *x,
+        const GB_DEF_My_Complex_plus_ytype *y
+    ) ;
+    struct GB_BinaryOp_opaque GB_opaque_My_Complex_plus =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_My_Complex,     // type of x
+        & GB_opaque_My_Complex,     // type of y
+        & GB_opaque_My_Complex,     // type of z
+        my_complex_plus,                 // pointer to the C function
+        "my_complex_plus",
+        GB_USER_C_opcode    // user-defined at compile-time
+    } ;
+    GrB_BinaryOp My_Complex_plus = & GB_opaque_My_Complex_plus ;
+
+
+    #define GB_DEF_My_Complex_times_function my_complex_times
+    #define GB_DEF_My_Complex_times_ztype GB_DEF_My_Complex_type
+    #define GB_DEF_My_Complex_times_xtype GB_DEF_My_Complex_type
+    #define GB_DEF_My_Complex_times_ytype GB_DEF_My_Complex_type
+    extern void my_complex_times
+    (
+        GB_DEF_My_Complex_times_ztype *z,
+        const GB_DEF_My_Complex_times_xtype *x,
+        const GB_DEF_My_Complex_times_ytype *y
+    ) ;
+    struct GB_BinaryOp_opaque GB_opaque_My_Complex_times =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_My_Complex,     // type of x
+        & GB_opaque_My_Complex,     // type of y
+        & GB_opaque_My_Complex,     // type of z
+        my_complex_times,                 // pointer to the C function
+        "my_complex_times",
+        GB_USER_C_opcode    // user-defined at compile-time
+    } ;
+    GrB_BinaryOp My_Complex_times = & GB_opaque_My_Complex_times ;
+
+// The plus monoid:
+
+    #define GB_DEF_My_Complex_plus_monoid_add GB_DEF_My_Complex_plus_function
+    GB_DEF_My_Complex_plus_ztype GB_DEF_My_Complex_plus_monoid_identity = CMPLX(0,0) ;
+    struct GB_Monoid_opaque GB_opaque_My_Complex_plus_monoid =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_My_Complex_plus,     // binary operator
+        & GB_DEF_My_Complex_plus_monoid_identity,   // identity value
+        sizeof (GB_DEF_My_Complex_plus_ztype),   // identity size
+        GB_USER_COMPILED,   // user-defined at compile-time
+        NULL                // no terminal value
+    } ;
+    GrB_Monoid My_Complex_plus_monoid = & GB_opaque_My_Complex_plus_monoid ;
+
+// the conventional plus-times semiring for C=A*B for the complex case
+ 
+    #define GB_AgusB    GB_AxB_user_gus_My_Complex_plus_times
+    #define GB_AdotB    GB_AxB_user_dot_My_Complex_plus_times
+    #define GB_AheapB   GB_AxB_user_heap_My_Complex_plus_times
+    #define GB_identity    GB_DEF_My_Complex_plus_monoid_identity
+    #define GB_ADD(z,y)    GB_DEF_My_Complex_plus_monoid_add (&(z), &(z), &(y))
+    #ifdef  GB_DEF_My_Complex_plus_monoid_terminal
+    #define GB_terminal if ((z) == GB_DEF_My_Complex_plus_monoid_terminal) break ;
+    #else
+    #define GB_terminal ;
+    #endif
+    #define GB_MULT(z,x,y) GB_DEF_My_Complex_times_function (&(z), &(x), &(y))
+    #define GB_ztype       GB_DEF_My_Complex_times_ztype
+    #define GB_xtype       GB_DEF_My_Complex_times_xtype
+    #define GB_ytype       GB_DEF_My_Complex_times_ytype
+    #define GB_handle_flipxy 1
+    #undef GBCOMPACT
+    #include "GB_AxB.c"
+    #undef GB_identity
+    #undef GB_terminal
+    #undef GB_ADD
+    #undef GB_xtype
+    #undef GB_ytype
+    #undef GB_ztype
+    #undef GB_MULT
+    #undef GB_AgusB
+    #undef GB_AdotB
+    #undef GB_AheapB
+    struct GB_Semiring_opaque GB_opaque_My_Complex_plus_times =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_My_Complex_plus_monoid,     // add monoid
+        & GB_opaque_My_Complex_times,     // multiply operator
+        GB_USER_COMPILED    // user-defined at compile-time
+    } ;
+    GrB_Semiring My_Complex_plus_times = & GB_opaque_My_Complex_plus_times ;
+
+//------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_pagerank.m4: PageRank semiring
 //------------------------------------------------------------------------------
 
@@ -445,79 +647,6 @@ double pagerank_damping, pagerank_teleport, pagerank_rdiff,
     GrB_BinaryOp PageRank_diff = & GB_opaque_PageRank_diff ;
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_scale.m4: example user built-in objects
-//------------------------------------------------------------------------------
-
-// user-defined unary operator: z = f(x) = my_scalar*x and its global scalar
-
-#ifdef GxB_USER_INCLUDE
-
-    //--------------------------------------------------------------------------
-    // declarations: for GraphBLAS.h
-    //--------------------------------------------------------------------------
-
-    // The following are declarations that are enabled in GraphBLAS.h and
-    // appear in all user codes that #include "GraphBLAS.h", and also in all
-    // internal GraphBLAS codes.  All user declarations (not definitions)
-    // should appear here.
-
-    #define MY_SCALE
-
-    extern double my_scalar ;
-    // for thread safety if the user application uses OpenMP
-    #pragma omp threadprivate(my_scalar)
-
-    static inline void my_scale
-    (
-        double *z,
-        const double *x
-    )
-    {
-        (*z) = my_scalar * (*x) ;
-    }
-
-#else
-
-    //--------------------------------------------------------------------------
-    // definitions: code appears just once, in Source/all_user_objects.c
-    //--------------------------------------------------------------------------
-
-    // The following defintions are enabled in only a single place:
-    // SuiteSparse/GraphBLAS/Source/all_user_objects.c.  This is the place
-    // where all user-defined global variables should be defined.
-
-    double my_scalar = 0 ;
-
-#endif
-
-
-//------------------------------------------------------------------------------
-// define/declare the GrB_UnaryOp My_scale
-//------------------------------------------------------------------------------
-
-// Unary operator to compute z = my_scalar*x
-
-
-    #define GB_DEF_My_scale_function my_scale
-    #define GB_DEF_My_scale_ztype GB_DEF_GrB_FP64_type
-    #define GB_DEF_My_scale_xtype GB_DEF_GrB_FP64_type
-    extern void my_scale
-    (
-        GB_DEF_My_scale_ztype *z,
-        const GB_DEF_My_scale_xtype *x
-    ) ;
-    struct GB_UnaryOp_opaque GB_opaque_My_scale =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_GrB_FP64,     // type of x
-        & GB_opaque_GrB_FP64,     // type of z
-        my_scale,                 // pointer to the C function
-        "my_scale",
-        GB_USER_C_opcode    // user-defined at compile-time
-    } ;
-    GrB_UnaryOp My_scale = & GB_opaque_My_scale ;
-
-//------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_plus_rdiv.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
@@ -685,206 +814,77 @@ double pagerank_damping, pagerank_teleport, pagerank_rdiff,
     GrB_Semiring My_plus_rdiv2 = & GB_opaque_My_plus_rdiv2 ;
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_complex.m4: example user built-in objects
+// GraphBLAS/User/Example/my_scale.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
-// user-defined functions for a double complex type
+// user-defined unary operator: z = f(x) = my_scalar*x and its global scalar
 
 #ifdef GxB_USER_INCLUDE
 
-    // Get the complex.h definitions, but remove "I" since it is used elsewhere
-    // in GraphBLAS.
-    #include <complex.h>
-    #undef I
+    //--------------------------------------------------------------------------
+    // declarations: for GraphBLAS.h
+    //--------------------------------------------------------------------------
 
-    // Not all complex.h definitions include the CMPLX macro
-    #ifndef CMPLX
-    #define CMPLX(real,imag) \
-        ( \
-        (double complex)((double)(real)) + \
-        (double complex)((double)(imag) * _Complex_I) \
-        )
-    #endif
+    // The following are declarations that are enabled in GraphBLAS.h and
+    // appear in all user codes that #include "GraphBLAS.h", and also in all
+    // internal GraphBLAS codes.  All user declarations (not definitions)
+    // should appear here.
 
-    // define a token so a user application can check for existence 
-    #define MY_COMPLEX
+    #define MY_SCALE
 
-    static inline void my_complex_plus
+    extern double my_scalar ;
+    // for thread safety if the user application uses OpenMP
+    #pragma omp threadprivate(my_scalar)
+
+    static inline void my_scale
     (
-        double complex *z,
-        const double complex *x,
-        const double complex *y
+        double *z,
+        const double *x
     )
     {
-        (*z) = (*x) + (*y) ;
+        (*z) = my_scalar * (*x) ;
     }
 
-    static inline void my_complex_times
-    (
-        double complex *z,
-        const double complex *x,
-        const double complex *y
-    )
-    {
-        (*z) = (*x) * (*y) ;
-    }
+#else
+
+    //--------------------------------------------------------------------------
+    // definitions: code appears just once, in Source/all_user_objects.c
+    //--------------------------------------------------------------------------
+
+    // The following defintions are enabled in only a single place:
+    // SuiteSparse/GraphBLAS/Source/all_user_objects.c.  This is the place
+    // where all user-defined global variables should be defined.
+
+    double my_scalar = 0 ;
 
 #endif
 
-// GraphBLAS does not have a complex type; this defines one:
-
-    #define GB_DEF_My_Complex_type double complex
-    struct GB_Type_opaque GB_opaque_My_Complex =
-    {
-        GB_MAGIC,           // object is defined
-        sizeof (double complex),        // size of the type
-        GB_UCT_code,        // user-defined at compile-time
-        "double complex"
-    } ;
-    GrB_Type My_Complex = & GB_opaque_My_Complex ;
-
-// The two operators, complex add and multiply:
-
-    #define GB_DEF_My_Complex_plus_function my_complex_plus
-    #define GB_DEF_My_Complex_plus_ztype GB_DEF_My_Complex_type
-    #define GB_DEF_My_Complex_plus_xtype GB_DEF_My_Complex_type
-    #define GB_DEF_My_Complex_plus_ytype GB_DEF_My_Complex_type
-    extern void my_complex_plus
-    (
-        GB_DEF_My_Complex_plus_ztype *z,
-        const GB_DEF_My_Complex_plus_xtype *x,
-        const GB_DEF_My_Complex_plus_ytype *y
-    ) ;
-    struct GB_BinaryOp_opaque GB_opaque_My_Complex_plus =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_My_Complex,     // type of x
-        & GB_opaque_My_Complex,     // type of y
-        & GB_opaque_My_Complex,     // type of z
-        my_complex_plus,                 // pointer to the C function
-        "my_complex_plus",
-        GB_USER_C_opcode    // user-defined at compile-time
-    } ;
-    GrB_BinaryOp My_Complex_plus = & GB_opaque_My_Complex_plus ;
-
-
-    #define GB_DEF_My_Complex_times_function my_complex_times
-    #define GB_DEF_My_Complex_times_ztype GB_DEF_My_Complex_type
-    #define GB_DEF_My_Complex_times_xtype GB_DEF_My_Complex_type
-    #define GB_DEF_My_Complex_times_ytype GB_DEF_My_Complex_type
-    extern void my_complex_times
-    (
-        GB_DEF_My_Complex_times_ztype *z,
-        const GB_DEF_My_Complex_times_xtype *x,
-        const GB_DEF_My_Complex_times_ytype *y
-    ) ;
-    struct GB_BinaryOp_opaque GB_opaque_My_Complex_times =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_My_Complex,     // type of x
-        & GB_opaque_My_Complex,     // type of y
-        & GB_opaque_My_Complex,     // type of z
-        my_complex_times,                 // pointer to the C function
-        "my_complex_times",
-        GB_USER_C_opcode    // user-defined at compile-time
-    } ;
-    GrB_BinaryOp My_Complex_times = & GB_opaque_My_Complex_times ;
-
-// The plus monoid:
-
-    #define GB_DEF_My_Complex_plus_monoid_add GB_DEF_My_Complex_plus_function
-    GB_DEF_My_Complex_plus_ztype GB_DEF_My_Complex_plus_monoid_identity = CMPLX(0,0) ;
-    struct GB_Monoid_opaque GB_opaque_My_Complex_plus_monoid =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_My_Complex_plus,     // binary operator
-        & GB_DEF_My_Complex_plus_monoid_identity,   // identity value
-        sizeof (GB_DEF_My_Complex_plus_ztype),   // identity size
-        GB_USER_COMPILED,   // user-defined at compile-time
-        NULL                // no terminal value
-    } ;
-    GrB_Monoid My_Complex_plus_monoid = & GB_opaque_My_Complex_plus_monoid ;
-
-// the conventional plus-times semiring for C=A*B for the complex case
- 
-    #define GB_AgusB    GB_AxB_user_gus_My_Complex_plus_times
-    #define GB_AdotB    GB_AxB_user_dot_My_Complex_plus_times
-    #define GB_AheapB   GB_AxB_user_heap_My_Complex_plus_times
-    #define GB_identity    GB_DEF_My_Complex_plus_monoid_identity
-    #define GB_ADD(z,y)    GB_DEF_My_Complex_plus_monoid_add (&(z), &(z), &(y))
-    #ifdef  GB_DEF_My_Complex_plus_monoid_terminal
-    #define GB_terminal if ((z) == GB_DEF_My_Complex_plus_monoid_terminal) break ;
-    #else
-    #define GB_terminal ;
-    #endif
-    #define GB_MULT(z,x,y) GB_DEF_My_Complex_times_function (&(z), &(x), &(y))
-    #define GB_ztype       GB_DEF_My_Complex_times_ztype
-    #define GB_xtype       GB_DEF_My_Complex_times_xtype
-    #define GB_ytype       GB_DEF_My_Complex_times_ytype
-    #define GB_handle_flipxy 1
-    #undef GBCOMPACT
-    #include "GB_AxB.c"
-    #undef GB_identity
-    #undef GB_terminal
-    #undef GB_ADD
-    #undef GB_xtype
-    #undef GB_ytype
-    #undef GB_ztype
-    #undef GB_MULT
-    #undef GB_AgusB
-    #undef GB_AdotB
-    #undef GB_AheapB
-    struct GB_Semiring_opaque GB_opaque_My_Complex_plus_times =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_My_Complex_plus_monoid,     // add monoid
-        & GB_opaque_My_Complex_times,     // multiply operator
-        GB_USER_COMPILED    // user-defined at compile-time
-    } ;
-    GrB_Semiring My_Complex_plus_times = & GB_opaque_My_Complex_plus_times ;
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_band.m4: example user built-in objects
+// define/declare the GrB_UnaryOp My_scale
 //------------------------------------------------------------------------------
 
-// user-defined functions for GxB_select, to choose entries within a band
+// Unary operator to compute z = my_scalar*x
 
-#ifdef GxB_USER_INCLUDE
 
-    #define MY_BAND
-
-    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
-        GrB_Index ncols, const void *x, const void *thunk)
-    {
-        int64_t *lohi = (int64_t *) thunk ;
-        int64_t i2 = (int64_t) i ;
-        int64_t j2 = (int64_t) j ;
-        return ((lohi [0] <= (j2-i2)) && ((j2-i2) <= lohi [1])) ;
-    }
-
-#endif
-
-// Select operator to compute C = tril (triu (A, k1), k2)
-
-    #define GB_DEF_My_band_function myband
-    extern bool myband
+    #define GB_DEF_My_scale_function my_scale
+    #define GB_DEF_My_scale_ztype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_scale_xtype GB_DEF_GrB_FP64_type
+    extern void my_scale
     (
-        GrB_Index i,
-        GrB_Index j,
-        GrB_Index nrows,
-        GrB_Index ncols,
-        const void *x,
-        const void *thunk
+        GB_DEF_My_scale_ztype *z,
+        const GB_DEF_My_scale_xtype *x
     ) ;
-    struct GB_SelectOp_opaque GB_opaque_My_band =
+    struct GB_UnaryOp_opaque GB_opaque_My_scale =
     {
         GB_MAGIC,           // object is defined
-        NULL,  // x not used
-        myband,                 // pointer to the C function
-        "myband",
-        GB_USER_SELECT_C_opcode // user-defined at compile-time
+        & GB_opaque_GrB_FP64,     // type of x
+        & GB_opaque_GrB_FP64,     // type of z
+        my_scale,                 // pointer to the C function
+        "my_scale",
+        GB_USER_C_opcode    // user-defined at compile-time
     } ;
-    GxB_SelectOp My_band = & GB_opaque_My_band ;
+    GrB_UnaryOp My_scale = & GB_opaque_My_scale ;
 
 //------------------------------------------------------------------------------
 // SuiteSparse/GraphBLAS/Config/user_def2.m4: code to call user semirings
@@ -919,6 +919,25 @@ GrB_Info GB_AxB_user
     {
         ;
     }
+    else if (GB_s == My_Complex_plus_times)
+    {
+        if (GB_AxB_method == GxB_AxB_GUSTAVSON)
+        { 
+            GB_info = GB_AxB_user_gus_My_Complex_plus_times
+                (*GB_Chandle, GB_M, GB_A, GB_B, GB_flipxy, GB_C_Sauna) ;
+        }
+        else if (GB_AxB_method == GxB_AxB_DOT)
+        { 
+            GB_info = GB_AxB_user_dot_My_Complex_plus_times
+                (GB_Chandle, GB_M, GB_mask_comp, GB_A, GB_B, GB_flipxy) ;
+        }
+        else // (GB_AxB_method == GxB_AxB_HEAP)
+        { 
+            GB_info = GB_AxB_user_heap_My_Complex_plus_times
+                (GB_Chandle, GB_M, GB_A, GB_B, GB_flipxy,
+                GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+        }
+    } 
     else if (GB_s == PageRank_semiring)
     {
         if (GB_AxB_method == GxB_AxB_GUSTAVSON)
@@ -972,25 +991,6 @@ GrB_Info GB_AxB_user
         else // (GB_AxB_method == GxB_AxB_HEAP)
         { 
             GB_info = GB_AxB_user_heap_My_plus_rdiv2
-                (GB_Chandle, GB_M, GB_A, GB_B, GB_flipxy,
-                GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
-        }
-    } 
-    else if (GB_s == My_Complex_plus_times)
-    {
-        if (GB_AxB_method == GxB_AxB_GUSTAVSON)
-        { 
-            GB_info = GB_AxB_user_gus_My_Complex_plus_times
-                (*GB_Chandle, GB_M, GB_A, GB_B, GB_flipxy, GB_C_Sauna) ;
-        }
-        else if (GB_AxB_method == GxB_AxB_DOT)
-        { 
-            GB_info = GB_AxB_user_dot_My_Complex_plus_times
-                (GB_Chandle, GB_M, GB_mask_comp, GB_A, GB_B, GB_flipxy) ;
-        }
-        else // (GB_AxB_method == GxB_AxB_HEAP)
-        { 
-            GB_info = GB_AxB_user_heap_My_Complex_plus_times
                 (GB_Chandle, GB_M, GB_A, GB_B, GB_flipxy,
                 GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
         }

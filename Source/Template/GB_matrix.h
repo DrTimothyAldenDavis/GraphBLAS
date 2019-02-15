@@ -206,7 +206,8 @@ int64_t *i ;            // array of size nzmax
 void *x ;               // size nzmax; each entry of size A->type->size
 int64_t nzmax ;         // size of i and x arrays
 
-int64_t hfirst ;        // if A->is_hyper is true, A->h can be NULL.
+// FUTURE:: hfirst, for a slice
+// int64_t hfirst ;     // if A->is_hyper is true, A->h can be NULL.
                         // This defines an implicit list of size A->nvec,
                         // where Ah [k] == A->hfirst + k.  It is only used
                         // to create purely shallow slices of another matrix.
@@ -402,5 +403,5 @@ bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
 bool sorted_pending ;   // true if pending tuples are in sorted order
 
-// FUTURE:: A->is_slice
+// FUTURE:: A->is_slice is currently always false
 // bool is_slice ;      // true if the matrix is a slice

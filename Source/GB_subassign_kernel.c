@@ -1864,8 +1864,16 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 GB_for_each_vector2s (M, scalar)
                 {
 
-                    GBI1_initj (Iter, j, pM, pM_end) ;
+                    //----------------------------------------------------------
+                    // get M(:,j)
+                    //----------------------------------------------------------
+
+                    GBI2s_initj (Iter, j, pM, pM_end) ;
+
+                    //----------------------------------------------------------
                     // get the C(:,jC) vector where jC = J [j]
+                    //----------------------------------------------------------
+
                     int64_t GB_jC_LOOKUP ;
 
                     if (pC_end - pC_start == cvlen)
@@ -2292,10 +2300,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 {
 
                     //----------------------------------------------------------
-                    // do a 2-way merge of S(:,j) and the scalar
+                    // get S(:,j)
                     //----------------------------------------------------------
 
-                    GBI1_initj (Iter, j, pS, pS_end) ;
+                    GBI2s_initj (Iter, j, pS, pS_end) ;
+
+                    //----------------------------------------------------------
+                    // do a 2-way merge of S(:,j) and the scalar
+                    //----------------------------------------------------------
 
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
@@ -2341,10 +2353,15 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 {
 
                     //----------------------------------------------------------
+                    // get S(:,j)
+                    //----------------------------------------------------------
+
+                    GBI2s_initj (Iter, j, pS, pS_end) ;
+
+                    //----------------------------------------------------------
                     // do a 2-way merge of S(:,j) and the scalar
                     //----------------------------------------------------------
 
-                    GBI1_initj (Iter, j, pS, pS_end) ;
                     // jC = J [j] ; or J is a colon expression
                     int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 

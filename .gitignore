@@ -47,6 +47,7 @@ Demo/tri_demo.out
 Demo/wildtype_demo.out
 Demo/*.log
 Demo/complex_demo_out.m
+Demo/import_export.out
 
 Test/*.log
 Test/errlog.txt
