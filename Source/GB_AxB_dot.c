@@ -295,17 +295,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         // save the value of C(i,j) by advancing cij pointer to next value
         #define GB_DOT_SAVE    cij += csize ;
 
-        #define GB_DOT_WORK_TYPE GB_void
-
-        #define GB_DOT_WORK(k) (Work +((k)*bkj_size))
-
-        // Work [k] = (btype) B (k,j)
-        #define GB_DOT_SCATTER                                          \
-        {                                                               \
-            /* Work [k] = B(k,j), located in Bx [p] */                  \
-            cast_B (GB_DOT_WORK (k), Bx +((pB)*bsize), bsize) ;         \
-        }
-
         #define GB_HANDLE_FLIPXY true
         #define GB_XTYPE GB_void
         #define GB_YTYPE GB_void
