@@ -222,16 +222,24 @@ GrB_Info GB_mask                // C<M> = Z
             // apply the mask immediately, and then return to its caller.
             // This done by the GB_RETURN_IF_QUICK_MASK macro.
 
+            // NOTE: in the current version, this work is done by the
+            // GB_RETURN_IF_QUICK_MASK macro, and GB_mask is no longer called
+            // with an empty complemented mask.  The following is thus dead
+            // code.  It is kept here in case this function is called to handle
+            // this case in a future version.
+
+            ASSERT (GB_DEAD_CODE) ;    // the following is no longer used
+
             // free Z if it exists (this is OK if Zhandle is NULL)
             GB_MATRIX_FREE (Zhandle) ;
 
             if (C_replace)
-            { 
+            {
                 // C_result = 0
                 return (GB_clear (C_result, Context)) ;
             }
             else
-            { 
+            {
                 // nothing happens
                 return (GrB_SUCCESS) ;
             }

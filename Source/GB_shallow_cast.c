@@ -35,7 +35,7 @@ GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
     const GrB_Matrix A,     // input matrix to typecast
     GB_Context Context
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -122,12 +122,24 @@ GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
         return (GrB_SUCCESS) ;
     }
 
+    //--------------------------------------------------------------------------
+    // allocate new space for the typecasted numerical values of C
+    //--------------------------------------------------------------------------
+
+    // NOTE: in prior versions, the following case was used by matrix-multiply,
+    // to typecast the input matrices to the types required by the
+    // multiplicative operator.  That typecasting has been removed in the
+    // current version.  However, this code is kept in case it is required for
+    // a future version.
+
+    ASSERT (GB_DEAD_CODE) ;    // the following is no longer used
+
     // allocate new space for the numerical values of C
     C->nzmax = GB_IMAX (anz,1) ;
     GB_MALLOC_MEMORY (C->x, C->nzmax, C->type->size) ;
     C->x_shallow = false ;          // free C->x when freeing C
     if (C->x == NULL)
-    { 
+    {
         // out of memory
         GB_MATRIX_FREE (&C) ;
         return (GB_OUT_OF_MEMORY) ;

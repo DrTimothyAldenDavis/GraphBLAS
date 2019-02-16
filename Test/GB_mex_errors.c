@@ -4237,7 +4237,13 @@ void mexFunction
     printf ("error expected:%s\n", GrB_error ( )) ;
 
     expected = GrB_INVALID_VALUE ;
+    ERR (GxB_set (GxB_FORMAT, 9999)) ;
+    printf ("error expected:%s\n", GrB_error ( )) ;
+
     ERR (GxB_get (A, 999, GxB_BY_ROW)) ;
+    printf ("error expected:%s\n", GrB_error ( )) ;
+
+    ERR (GxB_get (A, GxB_FORMAT, 909090)) ;
     printf ("error expected:%s\n", GrB_error ( )) ;
 
     CHECK (A->is_csc) ;

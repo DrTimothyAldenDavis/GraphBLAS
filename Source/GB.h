@@ -423,6 +423,12 @@ mexErrMsgTxt ("gotcha: " __FILE__ " line: " GB_XSTR(__LINE__)) ;
 
 #define GB_HERE printf (" Here: %s line: %d\n",  __FILE__, __LINE__) ;
 
+// ASSERT (GB_DEAD_CODE) marks code that is intentionally dead, leftover from
+// prior versions of SuiteSparse:GraphBLAS but no longer used in the current
+// version.  The code is kept in case it is required for future versions (in
+// which case, the ASSERT (GB_DEAD_CODE) statement would be removed).
+#define GB_DEAD_CODE 0
+
 //------------------------------------------------------------------------------
 // aliased objects
 //------------------------------------------------------------------------------
@@ -3523,12 +3529,12 @@ static inline void GBI1_start
     {
         // get next vector from A
         if (Iter->is_hyper)
-        { 
+        {
             // A is a hyperslice of a hypersparse matrix
             (*j) = Iter->h [Iter->k] ;
         }
         else
-        { 
+        {
             // A is a slice of a standard matrix
             (*j) = (Iter->hfirst) + Iter->k ;
         }

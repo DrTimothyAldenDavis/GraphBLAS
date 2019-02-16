@@ -222,7 +222,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         {
             // A is a hyperslice
             if (A->h == NULL)
-            { 
+            {
                 if (pr > 0) GBPR ("->h NULL, invalid hyperslice %s\n", kind) ;
                 return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                     "hypersparse %s contains a NULL A->h pointer: [%s]",
@@ -233,7 +233,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         {
             // A is a slice
             if (A->h != NULL)
-            { 
+            {
                 if (pr > 0) GBPR ("->h is not NULL, invalid slice %s\n",
                     kind) ;
                 return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
@@ -243,7 +243,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
         // a slice or hyperslice has all shallow content
         if ( A->h_shallow || !A->p_shallow || !A->i_shallow || !A->x_shallow)
-        { 
+        {
             if (pr > 0) GBPR ("invalid non-shallow slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "non-shallow: invalid slice %s [%s\n", kind, GB_NAME))) ;
@@ -288,7 +288,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         // hfirst is the first vector in a slice of a standard sparse matrix
         if (A->hfirst < 0 || A->hfirst + A->nvec >= A->vdim)
-        { 
+        {
             if (pr > 0) GBPR ("hfirst: invalid slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "hfirst: invalid slice %s [%s]\n", kind, GB_NAME))) ;
@@ -298,7 +298,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         // only a standard slice can have a nonzero hfirst
         if (A->hfirst != 0)
-        { 
+        {
             if (pr > 0) GBPR ("hfirst: invalid slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "hfirst: invalid slice %s [%s]\n", kind, GB_NAME))) ;
@@ -319,7 +319,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 #if 0
         // FUTURE:: check a slice or hyperslice
         if (A->is_slice)
-        { 
+        {
             // a slice or hyperslice cannot be made of an empty matrix
             if (pr > 0) GBPR ("invalid empty slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
