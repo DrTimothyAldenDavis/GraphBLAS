@@ -75,6 +75,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     C->is_hyper = A->is_hyper ;
     C->vlen = A->vlen ;
     C->vdim = A->vdim ;
+    ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
+            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
     C->nvec_nonempty = A->nvec_nonempty ;
 
     // C->hyper_ratio is not modified by the transplant

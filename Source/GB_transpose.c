@@ -727,9 +727,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // A.  This array becomes the permanent T->i on output.  This phase
             // must be done before Chandle is created below, since that step
             // destroys A.  See also GB_extractTuples, where J is extracted.
-            GB_for_each_vector (A)
+            GBI_for_each_vector (A)
             {
-                GB_for_each_entry (j, p, pend)
+                GBI_for_each_entry (j, p, pend)
                 { 
                     Ti [p] = j ;
                 }

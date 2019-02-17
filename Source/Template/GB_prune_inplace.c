@@ -19,7 +19,6 @@
 
 {
 
-    // GB_for_each_* cannot be used since A->p is changing
     int64_t *restrict Ah = A->h ;
     int64_t *restrict Ap = A->p ;
     int64_t *restrict Ai = A->i ;
@@ -48,10 +47,10 @@
         int64_t nvec = A->nvec ;    // current nvec
         A->nvec = 0 ;               // nvec after pruning empty vectors
 
-        // GB_for_each_vector (A): but where A->p and A->h are changing:
+        // GBI_for_each_vector (A): but where A->p and A->h are changing:
         for (int64_t k = 0 ; k < nvec ; k++)
         {
-            // GB_for_each_entry (j, p, pend) but A->p is changing:
+            // GBI_for_each_entry (j, p, pend) but A->p is changing:
             int64_t j = Ah [k] ;
             int64_t pend = Ap [k+1] ;
             for ( ; p < pend ; p++)
@@ -98,10 +97,10 @@
         // prune entries from a standard matrix
         //----------------------------------------------------------------------
 
-        // GB_for_each_vector (A): but where A->p is changing:
+        // GBI_for_each_vector (A): but where A->p is changing:
         for (int64_t j = 0 ; j < vdim ; j++)
         {
-            // GB_for_each_entry (j, p, pend)) but A->p is changing:
+            // GBI_for_each_entry (j, p, pend)) but A->p is changing:
             int64_t pend = Ap [j+1] ;
             for ( ; p < pend ; p++)
             {

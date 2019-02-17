@@ -112,9 +112,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (J != NULL)
     {
-        GB_for_each_vector (A)
+        GBI_for_each_vector (A)
         {
-            GB_for_each_entry (j, p, pend)
+            GBI_for_each_entry (j, p, pend)
             { 
                 J [p] = j ;
             }

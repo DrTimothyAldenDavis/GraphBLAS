@@ -122,7 +122,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         rowcount [Ai [p]]++ ;
     }
 
-    // compute the vector pointers for C; also C->nvec_nonempty
+    // compute the vector pointers for C; also compute C->nvec_nonempty
     GB_cumsum (rowcount, A->vlen, &(C->nvec_nonempty), Context) ;
 
     // copy the result into C->p

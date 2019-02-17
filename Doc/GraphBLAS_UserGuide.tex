@@ -103,23 +103,27 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \subsection{Release Notes:}
 
 \begin{itemize}
+
+\item Version 2.3 (Feb 2019) improves the performance of many GraphBLAS
+operations, including an early-exit for built-in monoids.  These changes have a
+significant impact on the breadth-first-search demos ( performance bug was also
+fixed in these two \verb'Demo' codes).  The matrix and vector import/export
+functions are added (Section~\ref{import_export}), in support of the new
+LAGraph project (\url{https://github.com/GraphBLAS/LAGraph}, see also
+Section~\ref{lagraph}).  LAGraph includes a faster BFS based on GraphBLAS.
+
 \item
 Version 2.2 (Nov 2018)
 adds user-defined objects at compile-time, via user \verb'*.m4' files placed in
 \verb'GraphBLAS/User', which use the \verb'GxB_*_define' macros described in
 Section~\ref{precompile}.  The default matrix format is now \verb'GxB_BY_ROW'.
-If you want the default format to be by column (the default in Version 2.1 and
-earlier), just compile with \verb'-DBYCOL', or add the following after calling
-\verb'GrB_init':
-
-    {\footnotesize
-    \begin{verbatim}
-    GxB_set (GxB_FORMAT, GxB_BY_COL) ; \end{verbatim}}
-
+% If you want the default format to be by column (the default in Version 2.1 and
+% earlier), just compile with \verb'-DBYCOL', or add \newline
+% \verb'GxB_set (GxB_FORMAT, GxB_BY_COL) ;'
+% after calling \verb'GrB_init'.
 Also added are the \verb'GxB_*print' methods for printing the contents of each
 GraphBLAS object (Section~\ref{fprint}).   PageRank demos have been added to
 the \verb'Demos' folder.
-
 Prior versions required GraphBLAS to be compiled with OpenMP, for it to be
 thread-safe.  It can now be compiled with POSIX pthreads.  The \verb'cmake'
 script automatically detects if OpenMP and/or POSIX pthreads are available.
@@ -134,7 +138,6 @@ a major update with support for new matrix formats
 naturally expressed with matrices stored by row, and this version includes the
 new \verb'GxB_BY_ROW' format.  The default format in Version 2.1 and
 prior versions is by column.
-
 New extensions to GraphBLAS in this version include \verb'GxB_get',
 \verb'GxB_set', and \verb'GxB_AxB_METHOD', \verb'GxB_RANGE', \verb'GxB_STRIDE',
 and \verb'GxB_BACKWARDS', and their related definitions, described in
@@ -3166,7 +3169,7 @@ Any duplicate entries with identical indices are assembled using the binary
 \verb'dup' operator provided on input.  All three types (\verb'x', \verb'y',
 \verb'z' for \verb'z=dup(x,y)') must be identical.  The types of \verb'dup',
 \verb'C' and \verb'X' must all be compatible.  See Section~\ref{typecasting}
-regarding typecasting and compatibility).  The values in \verb'X' are
+regarding typecasting and compatibility.  The values in \verb'X' are
 typecasted, if needed, into the type of \verb'dup'.  Duplicates are then
 assembled into a matrix \verb'T' of the same type as \verb'dup', using
 \verb'T(i,j) = dup (T (i,j), X (k))'.  After \verb'T' is constructed, it is
@@ -3629,7 +3632,7 @@ If not successful, \verb'v' is returned as \verb'NULL' and \verb'vi' and
 \verb'vx' are not modified.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Vector_import' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Vector_import' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -3668,7 +3671,7 @@ is analogous to:
 {\footnotesize
 \begin{verbatim}
     GxB_Matrix_export_CSC (&A, &type, &n, &one, &nvals, &Ap, &Ai, &Ax, desc)
-\end{verbatim}
+\end{verbatim}}
 
 \noindent
 if \verb'A' were an \verb'n'-by-1 matrix.  For the vector export, described
@@ -3691,7 +3694,7 @@ If not successful, \verb'v' is unmodified and \verb'vi' and \verb'vx' are
 not modified.  
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Vector_export' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Vector_export' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -3720,9 +3723,9 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 } \end{mdframed}
 
 \verb'GxB_Matrix_import_CSR' imports a matrix from 3 user arrays in CSR format.
-The \verb'CSR' format is a matrix with a format (\verb'GxB_FORMAT') of
-\verb'GxB_BY_ROW', in standard for instead of hypersparse form (See
-Section~\ref{hypersparse}).
+In the resulting \verb'GrB_Matrix A', the \verb'CSR' format is a matrix with a
+format (\verb'GxB_FORMAT') of \verb'GxB_BY_ROW', in standard for instead of
+hypersparse form (See Section~\ref{hypersparse}).
 
 The first four arguments of \verb'GxB_Matrix_import_CSR' are the same as
 all four arguments of \verb'GrB_Matrix_new', because this function is similar.
@@ -3736,9 +3739,11 @@ function.  These arrays define the pattern and values of the new matrix
 \verb'A':
 
 \begin{itemize}
-\item \verb'GrB_Index Ap [nrows+1] ;'  The \verb'Ap' array defines where
-the column indices and values appear in \verb'Aj' and \verb'Ax', for 
-each row.
+\item \verb'GrB_Index Ap [nrows+1] ;'  The \verb'Ap' array is the row
+``pointer'' array.  It does not actual contain pointers.  More precisely, it is
+an integer array that defines where the column indices and values appear in
+\verb'Aj' and \verb'Ax', for each row.  The number of entries in row \verb'i'
+is given by the expression \verb'Ap [i+1] - Ap [i]'.
 
 \item \verb'GrB_Index Aj [nvals] ;'  The \verb'Aj' array defines the
 column indices of entries in each row.
@@ -3746,7 +3751,7 @@ column indices of entries in each row.
 \item \verb'ctype Aj [nvals] ;'  The \verb'Ax' array defines the values of
 entries in each row.  It is passed in as a \verb'(void *)' pointer, but it must
 point to an array of size \verb'nvals' values, each of size
-\verb'sizeof(ctype)', where \verb'ctype' is the exact type in C that correponds
+\verb'sizeof(ctype)', where \verb'ctype' is the exact type in C that corresponds
 to the \verb'GrB_Type type' parameter.  That is, if \verb'type' is
 \verb'GrB_INT32', then \verb'ctype' is \verb'int32_t'.  User types
 may be used, just the same as built-in types.
@@ -3757,16 +3762,68 @@ specific.  This content is not checked, since this function takes only
 $O(1)$ time.  Results are undefined if the following specification is not
 followed exactly.
 
-The column indices of entries in the ith row of the matrix are held in \verb'Aj
-[Ap [i] ... Ap[i+1]]', and the corresponding values are held in the same
-positions in \verb'Ax'.  Column indices must be in the range 0 to
+The column indices of entries in the ith row of the matrix are held in
+\verb'Aj [Ap [i] ... Ap[i+1]]', and the corresponding values are held in the
+same positions in \verb'Ax'.  Column indices must be in the range 0 to
 \verb'ncols'-1, and must appear in sorted order within each row.  No duplicate
 column indices may appear in any row.  \verb'Ap [0]' must equal zero, and
 \verb'Ap [nrows]' must equal nvals.  The \verb'Ap' array must be of size
 \verb'nrows'+1 (or larger), and the \verb'Aj' and \verb'Ax' arrays must have
-size at least \verb'nvals'.  If nvals is zero, then the content of the
-\verb'Aj' and \verb'Ax' arrays is not accessed and they may be \verb'NULL' on
-input (if not \verb'NULL', they are still freed and returned as \verb'NULL').
+size at least \verb'nvals'.
+
+If \verb'nvals' is zero, then the content of the \verb'Aj' and \verb'Ax' arrays
+is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
+are still freed and returned as \verb'NULL', if the method is successful).
+
+An example of the CSR format is shown below.  Consider the following
+matrix with 10 nonzero entries, and suppose the zeros are not stored.
+
+    \begin{equation}
+    \label{eqn:Aexample}
+    A = \left[
+    \begin{array}{cccc}
+    4.5 &   0 & 3.2 &   0 \\
+    3.1 & 2.9 &  0  & 0.9 \\
+     0  & 1.7 & 3.0 &   0 \\
+    3.5 & 0.4 &  0  & 1.0 \\
+    \end{array}
+    \right]
+    \end{equation}
+
+The \verb'Ap' array has length 5, since the matrix is 4-by-4.  The first entry
+must always zero, and \verb'Ap [5] = 10' is the number of entries.
+The content of the arrays is shown below:
+
+{\footnotesize
+\begin{verbatim}
+    int64_t Ap [ ] = { 0,        2,             5,        7,            10 } ;
+    int64_t Aj [ ] = { 0,   2,   0,   1,   3,   1,   2,   0,   1,   3   } ;
+    double  Ax [ ] = { 4.5, 3.2, 3.1, 2.9, 0.9, 1.7, 3.0, 3.5, 0.4, 1.0 } ; \end{verbatim} }
+
+Spaces have been added to the \verb'Ap' array, just for illustration.  Row zero
+is in \verb'Aj [0..1]' (column indices) and \verb'Ax [0..1]' (values), starting
+at \verb'Ap [0] = 0' and ending at \verb'Ap [0+1]-1 = 1'.  The list of column
+indices of row one is at \verb'Aj [2..4]' and row two is in \verb'Aj [5..6]'.
+The last row (three) appears \verb'Aj [7..9]', because \verb'Ap [3] = 7' and
+\verb'Ap [4]-1 = 10-1 = 9'.  The corresponding numerical values appear in the
+same positions in \verb'Ax'.
+
+To iterate over the rows and entries of this matrix, the following code can be
+used:
+
+    {\footnotesize
+    \begin{verbatim}
+    int64_t nvals = Ap [nrows] ;
+    for (int64_t i = 0 ; i < nrows ; i++)
+    {
+        // get A(i,:)
+        for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
+        {
+            // get A(i,j)
+            int64_t  j = Aj [p] ;           // column index
+            double aij = Ax [p] ;           // numerical value
+        }
+    } \end{verbatim}}
 
 On successful creation of \verb'A', the three pointers \verb'Ap', \verb'Aj',
 and \verb'Ax' are set to \verb'NULL' on output.  This denotes to the user
@@ -3779,7 +3836,7 @@ changes.
 If the matrix \verb'A' is later exported in CSR form, and GraphBLAS has not yet
 reallocated these arrays, then these same three arrays are returned to the user
 by \verb'GxB_Matrix_export_CSR' (see Section~\ref{matrix_export_csr}).  If an
-exported is performed, then freeing these three arrays then becomes the
+export is performed, the freeing of these three arrays again becomes the
 responsibility of the user application.
 
 The \verb'GxB_Matrix_import_CSR' function will rarely fail, since it allocates
@@ -3789,87 +3846,493 @@ the user application, which is eventually responsible for freeing them with
 \verb'free(Ap)', etc.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_import_CSC'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_import_CSR' is an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_import\_CSC:} import a CSC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_import_csc}
 
-HERE
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    const GrB_Type type,    // type of matrix to create
+    GrB_Index nrows,        // matrix dimension is nrows-by-ncols
+    GrB_Index ncols,
+    GrB_Index nvals,        // number of entries in the matrix
+    GrB_Index **Ap,         // column pointers, size ncols+1
+    GrB_Index **Ai,         // row indices, size nvals
+    void      **Ax,         // values, size nvals
+    const GrB_Descriptor desc       // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_import_CSC' imports a matrix from 3 user arrays in CSC format.
+The \verb'GrB_Matrix A' is created in the \verb'CSC' format, which is a
+\verb'GxB_FORMAT' of \verb'GxB_BY_COL'.  The arguments are identical to
+\verb'GxB_Matrix_import_CSR', except for how the 3 user arrays are
+interpreted.  The column ``pointer'' array has size \verb'ncols+1'.  The row
+indices of the columns are in \verb'Ai', and must appear in ascending order in
+each column.  The corresponding numerical values are held in \verb'Ax'.  The
+row indices of column \verb'j' are held in \verb'Ai [Ap [j]...Ap [j+1]-1',
+and the corresponding numerical values are in the same locations in \verb'Ax'.
+
+The same matrix from Equation~\ref{eqn:Aexample}in
+the last section (repeated here):
+
+    \begin{equation}
+    A = \left[
+    \begin{array}{cccc}
+    4.5 &   0 & 3.2 &   0 \\
+    3.1 & 2.9 &  0  & 0.9 \\
+     0  & 1.7 & 3.0 &   0 \\
+    3.5 & 0.4 &  0  & 1.0 \\
+    \end{array}
+    \right]
+    \end{equation}
+
+is held in CSC form as follows:
+
+{\footnotesize
+\begin{verbatim}
+    int64_t Ap [ ] = { 0,             3,             6,        8,       10 } ;
+    int64_t Ai [ ] = { 0,   1,   3,   1,   2,   3,   0,   2,   1,   3   } ;
+    double  Ax [ ] = { 4.5, 3.1, 3.5, 2.9, 1.7, 0.4, 3.2, 3.0, 0.9, 1.0 } ; \end{verbatim} }
+
+That is, the row indices of column 1 (the second column) are in
+\verb'Ai [3..5]', and the values in the same place in \verb'Ax',
+since \verb'Ap [1] = 3' and \verb'Ap [2]-1 = 5'.
+
+To iterate over the columns and entries of this matrix, the following code can
+be used:
+
+    {\footnotesize
+    \begin{verbatim}
+    int64_t nvals = Ap [ncols] ;
+    for (int64_t j = 0 ; j < ncols ; j++)
+    {
+        // get A(:,j)
+        for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
+        {
+            // get A(i,j)
+            int64_t  i = Ai [p] ;           // row index
+            double aij = Ax [p] ;           // numerical value
+        }
+    } \end{verbatim}}
+
+The method is identical to \verb'GxB_Matrix_import_CSR'; just the format is
+different.  That is, if the method is successful, the 3 user arrays are
+imported into the new \verb'GrB_Matrix A', with the given type and dimensions,
+and returned as \verb'NULL' pointers to the user application.
+
+If \verb'nvals' is zero, then the content of the \verb'Ai' and \verb'Ax' arrays
+is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
+are still freed and returned as \verb'NULL', if the method is successful).
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_import_CSC'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_import_CSC' is an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_import\_HyperCSR:} import a HyperCSR matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_import_hypercsr}
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    const GrB_Type type,    // type of matrix to create
+    GrB_Index nrows,        // matrix dimension is nrows-by-ncols
+    GrB_Index ncols,
+    GrB_Index nvals,        // number of entries in the matrix
+    GrB_Index nvec,         // number of non-empty rows
+    GrB_Index **Ah,         // list of non-empty rows, size nvec
+    GrB_Index **Ap,         // row pointers, size nvec+1
+    GrB_Index **Aj,         // column indices, size nvals
+    void      **Ax,         // values, size nvals
+    const GrB_Descriptor desc       // descriptor for # of threads to use
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_import_HyperCSR' imports a matrix in hypersparse CSR format in
+$O(1)$ time.  In the hypersparse format, the \verb'Ap' array itself becomes
+sparse, if the matrix has rows that are completely empty.  An array \verb'Ah'
+of size \verb'nvec' provides a list of rows that appear in the data structure.
+For example, consider Equation~\ref{eqn:Ahyper}, which is a sparser version of
+the matrix in Equation~\ref{eqn:Aexample}.  Row 2 and column 1 of this matrix
+are all zero.
+
+    \begin{equation}
+    \label{eqn:Ahyper}
+    A = \left[
+    \begin{array}{cccc}
+    4.5 &   0 & 3.2 &   0 \\
+    3.1 &   0 &  0  & 0.9 \\
+     0  &   0 &  0  &   0 \\
+    3.5 &   0 &  0  & 1.0 \\
+    \end{array}
+    \right]
+    \end{equation}
+
+The conventional CSR format would appear as follows.  Since the third row (row
+2) is all zero, accessing \verb'Ai [Ap [2] ... Ap [3]-1]' gives an empty set
+(\verb'[2..1]'), and the number of entries in this row is
+\verb'Ap [i+1] - Ap [i]' \verb'= Ap [3] - Ap [2] = 0'.
+
+{\footnotesize
+\begin{verbatim}
+    int64_t Ap [ ] = { 0,        2,2,      4,       5 } ;
+    int64_t Aj [ ] = { 0,   2,   0,   3,   0    3   }
+    double  Ax [ ] = { 4.5, 3.2, 3.1, 0.9, 3.5, 1.0 } ; \end{verbatim} }
+
+A hypersparse CSR format for this same matrix would discard
+these duplicate integers in \verb'Ap'.  Doing so requires
+another array, \verb'Ah', that keeps track of the rows that appear
+in the data structure.
+
+\newpage
+{\footnotesize
+\begin{verbatim}
+    int64_t nvec = 3 ;
+    int64_t Ah [ ] = { 0,        1,        3        } ;
+    int64_t Ap [ ] = { 0,        2,        4,       5 } ;
+    int64_t Aj [ ] = { 0,   2,   0,   3,   0    3   }
+    double  Ax [ ] = { 4.5, 3.2, 3.1, 0.9, 3.5, 1.0 } ; \end{verbatim} }
+
+Note that the \verb'Aj' and \verb'Ax' arrays are the same in the standard and
+hypersparse CSR formats.  The row indices in \verb'Ah' must appear in ascending
+order, and no duplicates can appear.  To iterate over this data structure:
+
+    {\footnotesize
+    \begin{verbatim}
+    int64_t nvals = Ap [nvec] ;
+    for (int64_t k = 0 ; k < nvec ; k++)
+    {
+        int64_t i = Ah [k] ;                // row index
+        // get A(i,:)
+        for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
+        {
+            // get A(i,j)
+            int64_t  j = Aj [p] ;           // column index
+            double aij = Ax [p] ;           // numerical value
+        }
+    } \end{verbatim}}
+
+This data structure is more complex that the standard CSR format, but it has
+the advantage of requiring at most $O(e)$ space, where $A$ is $m$-by-$n$ with
+$e$ = \verb'nvals' entries.  The standard CSR format requires $O(m+e)$ space.
+If $e << m$, then the size $m+1$ of \verb'Ap' can dominate the memory required.
+In the hypersparse form, \verb'Ap' takes on size \verb'nvec+1', and \verb'Ah'
+has size \verb'nvec', where \verb'nvec' is the number of rows that appear in
+the data structure.  There is no requirement that all empty rows be removed
+from the \verb'Ap' and \verb'Ah' arrays.
+
+The standard CSR format can be viewed as a dense array (of size \verb'nrows')
+of sparse row vectors.   By contrast, the hypersparse CSR format is a sparse
+array (of size \verb'nvec') of sparse row vectors.
+
+The import takes $O(1)$ time.  If successful, the four arrays \verb'Ah',
+\verb'Ap', \verb'Aj', and \verb'Ax' are returned as \verb'NULL', and the
+hypersparse \verb'GrB_Matrix A' is created.
+
+If \verb'nvals' is zero, then the content of the \verb'Aj' and \verb'Ax' arrays
+is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
+are still freed and returned as \verb'NULL', if the method is successful).
+
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_import_HyperCSR'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_import_HyperCSR' is an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_import\_HyperCSC:} import a HyperCSC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_import_hypercsc}
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
+(
+    GrB_Matrix *A,          // handle of matrix to create
+    const GrB_Type type,    // type of matrix to create
+    GrB_Index nrows,        // matrix dimension is nrows-by-ncols
+    GrB_Index ncols,
+    GrB_Index nvals,        // number of entries in the matrix
+    GrB_Index nvec,         // number of non-empty columns
+    GrB_Index **Ah,         // list of non-empty columns, size nvec
+    GrB_Index **Ap,         // column pointers, size nvec+1
+    GrB_Index **Ai,         // row indices, size nvals
+    void      **Ax,         // values, size nvals
+    const GrB_Descriptor desc       // descriptor for # of threads to use
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_import_HyperCSC' imports a matrix in hypersparse CSC format in
+$O(1)$ time.  It is identical to \verb'GxB_Matrix_import_HyperCSR', except for
+the data structure defined by the four arrays \verb'Ah', \verb'Ap', \verb'Ai',
+and \verb'Ax'.  It is a sparse array of size \verb'nvec' of sparse column
+vectors.  The column indices in \verb'Ah' must appear in ascending order, and
+no duplicates can appear.  The following code can be used to iterate over the
+columns of the matrix, and each entry within each column.
+
+    {\footnotesize
+    \begin{verbatim}
+    int64_t nvals = Ap [nvec] ;
+    for (int64_t k = 0 ; k < nvec ; k++)
+    {
+        int64_t j = Ah [k] ;                // column index
+        // get A(:,j)
+        for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
+        {
+            // get A(i,j)
+            int64_t  i = Ai [p] ;           // row index
+            double aij = Ax [p] ;           // numerical value
+        }
+    } \end{verbatim}}
+
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_import_HyperCSC'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_import_HyperCSC' is an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_CSR:} export a CSR matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_csr}
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
+(
+    GrB_Matrix *A,          // handle of matrix to export and free
+    GrB_Type *type,         // type of matrix exported
+    GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
+    GrB_Index *nrols,
+    GrB_Index *nvals,       // number of entries in the matrix
+    GrB_Index **Ap,         // row pointers, size nrows+1
+    GrB_Index **Aj,         // column indices, size nvals
+    void      **Ax,         // values, size nvals
+    const GrB_Descriptor desc       // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_export_CSR' exports a matrix in CSR form:
+
+{\footnotesize
+\begin{verbatim}
+GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, &nvals, &Ap, &Aj, &Ax, desc) ;
+\end{verbatim}}
+
+On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
+returned as \verb'NULL'.  Its type is returned in the \verb'type' parameter,
+its dimensions in \verb'nrows' and \verb'ncols', its number of entries in
+\verb'nvals', and the CSR format is in the three arrays \verb'Ap', \verb'Aj',
+and \verb'Ax'.  If \verb'nvals' is zero, the \verb'Aj' and \verb'Ax' arrays are
+returned as \verb'NULL'; this is not an error, and \verb'GxB_Matrix_import_CSR'
+also allows these two arrays to be \verb'NULL' on input when \verb'nvals' is
+zero.  After a successful export, the user application is responsible for
+freeing these three arrays via the ANSI C \verb'free'.  The CSR format is
+described in Section~\ref{matrix_import_csr}.
+
+This method takes $O(1)$ time if the matrix is already in standard
+(non-hypersparse) CSR format internally.  If it is in hypersparse CSR form, the
+export must first convert the matrix to standard CSR form, taking $O(m)$ time
+and memory, where $m$ = \verb'nrows'.  If the matrix is in CSC format, it is
+first transposed to convert it to CSR format, and then exported.  This takes
+$O(m+n+e)$ or $O(m+e \log e)$ time and memory, whichever is less, where $n=$
+\verb'ncols' and $e=$ \verb'nvals'.
+
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_export_CSR'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_export_CSR' is an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_CSC:} export a CSC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_csc}
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
+(
+    GrB_Matrix *A,          // handle of matrix to export and free
+    GrB_Type *type,         // type of matrix exported
+    GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
+    GrB_Index *nrols,
+    GrB_Index *nvals,       // number of entries in the matrix
+    GrB_Index **Ap,         // column pointers, size ncols+1
+    GrB_Index **Ai,         // row indices, size nvals
+    void      **Ax,         // values, size nvals
+    const GrB_Descriptor desc       // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_export_CSC' exports a matrix in CSC form:
+
+{\footnotesize
+\begin{verbatim}
+GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols, &nvals, &Ap, &Ai, &Ax, desc) ;
+\end{verbatim}}
+
+On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
+returned as \verb'NULL'.  Its type is returned in the \verb'type' parameter,
+its dimensions in \verb'nrows' and \verb'ncols', its number of entries in
+\verb'nvals', and the CSC format is in the three arrays \verb'Ap', \verb'Ai',
+and \verb'Ax'.  If \verb'nvals' is zero, the \verb'Ai' and \verb'Ax' arrays are
+returned as \verb'NULL'; this is not an error, and \verb'GxB_Matrix_import_CSC'
+also allows these two arrays to be \verb'NULL' on input when \verb'nvals' is
+zero.  After a successful export, the user application is responsible for
+freeing these three arrays via the ANSI C \verb'free'.  The CSC format is
+described in Section~\ref{matrix_import_csc}.
+
+This method takes $O(1)$ time if the matrix is already in standard
+(non-hypersparse) CSC format internally.  If it is in hypersparse CSC form, the
+export must first convert the matrix to standard CSC form, taking $O(n)$ time
+and memory, where $n$ = \verb'ncols'.  If the matrix is in CSR
+format, it is first transposed to convert it to CSC format, and then exported.
+This takes $O(m+n+e)$ or $O(n+e \log e)$ time and memory, whichever is less,
+where $m=$ \verb'nrows' and $e=$ \verb'nvals'.
+
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_export_CSC'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_export_CSC' is an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_HyperCSR:} export a HyperCSR matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_hypercsr}
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
+(
+    GrB_Matrix *A,          // handle of matrix to export and free
+    GrB_Type *type,         // type of matrix exported
+    GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
+    GrB_Index *nrols,
+    GrB_Index *nvals,       // number of entries in the matrix
+    GrB_Index *nvec,        // number of non-empty rows
+    GrB_Index **Ah,         // list of non-empty rows, size nvec
+    GrB_Index **Ap,         // row pointers, size nvec+1
+    GrB_Index **Aj,         // column indices, size nvals
+    void      **Ax,         // values, size nvals
+    const GrB_Descriptor desc       // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_export_HyperCSR' exports a matrix in CSR form:
+
+{\footnotesize
+\begin{verbatim}
+GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols, &nvals, &nvec,
+        &Ah, &Ap, &Aj, &Ax, desc) ;
+\end{verbatim}}
+
+On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
+returned as \verb'NULL'.  Its type is returned in the \verb'type' parameter,
+its dimensions in \verb'nrows' and \verb'ncols', its number of entries in
+\verb'nvals', and the number of non-empty rows in \verb'nvec'.  The hypersparse
+CSR format is in the four arrays \verb'Ah', \verb'Ap', \verb'Aj', and
+\verb'Ax'.  If \verb'nvals' is zero, the \verb'Aj' and \verb'Ax' arrays are
+returned as \verb'NULL'; this is not an error, and
+\verb'GxB_Matrix_import_HyperCSR' also allows these two arrays to be
+\verb'NULL' on input when \verb'nvals' is zero.  After a successful export, the
+user application is responsible for freeing these three arrays via the ANSI C
+\verb'free'.  The hypersparse CSR format is described in
+Section~\ref{matrix_import_hypercsr}.
+
+This method takes $O(1)$ time if the matrix is already in hypersparse CSR
+format internally.  If it is in standard CSR form, the export must first
+convert the matrix to hypersparse CSR form, taking $O(m)$ time and memory,
+where $m$ = \verb'nrows'.  If the matrix is in CSC format, it is first
+transposed to convert it to hypersparse CSR format, and then exported.  If in
+standard CSC form, the transpose takes $O(m+n+e)$ or $O(n + e \log e)$ time and
+memory, whichever is less.  If in hypersparse CSC format, it takes $O(e \log
+e)$ time.
+
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_export_HyperCSR'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_export_HyperCSR' is an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_export\_HyperCSC:} export a HyperCSC matrix}
 %-------------------------------------------------------------------------------
 \label{matrix_export_hypercsc}
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
+(
+    GrB_Matrix *A,          // handle of matrix to export and free
+    GrB_Type *type,         // type of matrix exported
+    GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
+    GrB_Index *nrols,
+    GrB_Index *nvals,       // number of entries in the matrix
+    GrB_Index *nvec,        // number of non-empty columns
+    GrB_Index **Ah,         // list of non-empty columns, size nvec
+    GrB_Index **Ap,         // columns pointers, size nvec+1
+    GrB_Index **Ai,         // row indices, size nvals
+    void      **Ax,         // values, size nvals
+    const GrB_Descriptor desc       // currently unused
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Matrix_export_HyperCSC' exports a matrix in CSC form:
+
+{\footnotesize
+\begin{verbatim}
+GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, &nvals, &nvec,
+        &Ah, &Ap, &Ai, &Ax, desc) ;
+\end{verbatim}}
+
+On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
+returned as \verb'NULL'.  Its type is returned in the \verb'type' parameter,
+its dimensions in \verb'nrows' and \verb'ncols', its number of entries in
+\verb'nvals', and the number of non-empty rows in \verb'nvec'.  The hypersparse
+CSC format is in the four arrays \verb'Ah', \verb'Ap', \verb'Ai', and
+\verb'Ax'.  If \verb'nvals' is zero, the \verb'Ai' and \verb'Ax' arrays are
+returned as \verb'NULL'; this is not an error, and
+\verb'GxB_Matrix_import_HyperCSC' also allows these two arrays to be
+\verb'NULL' on input when \verb'nvals' is zero.  After a successful export, the
+user application is responsible for freeing these three arrays via the ANSI C
+\verb'free'.  The hypersparse CSC format is described in
+Section~\ref{matrix_import_hypercsc}.
+
+This method takes $O(1)$ time if the matrix is already in hypersparse CSR
+format internally.  If it is in standard CSR form, the export must first
+convert the matrix to hypersparse CSR form, taking $O(m)$ time and memory,
+where $m$ = \verb'nrows'.  If the matrix is in CSC format, it is first
+transposed to convert it to hypersparse CSR format, and then exported.  If in
+standard CSC form, the transpose takes $O(m+n+e)$ or $O(n + e \log e)$ time and
+memory, whichever is less.  If in hypersparse CSC format, it takes $O(e \log
+e)$ time.
+
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_export_HyperCSC'
-function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_export_HyperCSC' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -4905,7 +5368,7 @@ To set/get a descriptor field:
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_SCMP) ;
 
     GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
-    GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN ;
+    GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN) ;
 
     GxB_set (GrB_Descriptor d, GrB_INP1, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN);
@@ -8721,17 +9184,88 @@ GxB_Semiring_define(GrB_Semiring semiring, GrB_Monoid add, GrB_BinaryOp mult) ;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-Six examples of how to use GraphBLAS are described below:
-(1) performing a breadth-first search,
-(2) finding a maximal independent set,
-(3) creating a random matrix,
-(4) creating a finite-element matrix,
-(5) reading a matrix from a file,
-and
-(6) complex numbers as a user-defined type.
-The complete set of programs appears in the
-\verb'Demo' directory in SuiteSparse:GraphBLAS.
+Six examples of how to use GraphBLAS are described below.  They all
+appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
 
+\begin{enumerate}
+\item performing a breadth-first search,
+\item finding a maximal independent set,
+\item creating a random matrix,
+\item creating a finite-element matrix,
+\item reading a matrix from a file, and
+\item complex numbers as a user-defined type.
+\end{enumerate}
+
+Additional examples appear in the newly created LAGraph project, currently in
+progress.  Finally, the \verb'Extras' folder includes triangle counting and
+k-truss algorithms in GraphBLAS, and methods that do not GraphBLAS (both simple
+sequential methods, and methods that use OpenMP).
+
+%-------------------------------------------------------------------------------
+\subsection{LAGraph}
+%-------------------------------------------------------------------------------
+\label{lagraph}
+
+The LAGraph project is a community-wide effort to create graph algorithms based
+on GraphBLAS (any implementation of the API, not just SuiteSparse: GraphBLAS).
+As of Feb.~2019, the library includes the following algorithms and utilities.
+Many additional algorithms are planned, such as betweenness centrality,
+PageRank, single-source shortest path (via delta stepping), minimum spanning
+trees, connected components, and many more.  Refer to
+\url{https://github.com/GraphBLAS/LAGraph} for a current list of algorithms
+(the one below will soon be out of date).  All of the functions in the
+\verb'Demo/' and the \verb'Extras' folder in SuiteSparse:GraphBLAS will
+eventually be translated into algorithms or utilities for LAGraph.
+
+To use LAGraph with SuiteSparse:GraphBLAS, place the two folders
+\verb'LAGraph' and \verb'GraphBLAS' in the same parent directory.
+This allows the \verb'cmake' script in LAGraph to find the copy of
+GraphBLAS.  Alternatively, the GraphBLAS source could be placed anywhere,
+as long as \verb'sudo make install' is performed.
+
+Build \verb'GraphBLAS' first, then the \verb'LAGraph' library, and then the
+tests in \verb'LAGraph/Test'.
+
+{\small
+\begin{tabular}{ll}
+\hline
+\hline
+Algorithms & description \\
+\hline
+\hline
+\verb'LAGraph_bfs_pushpull' & a direction-optimized BFS
+                                \cite{Beamer:2012:DOB,Yang:2018:IPE}, \\
+                            & typically 2x faster than \verb'bfs5m' \\
+\verb'LAGraph_bfs_simple'   & a simple BFS (about the same as \verb'bfs5m') \\ 
+\hline
+\hline
+Utilities & description \\
+\hline
+\hline
+\verb'LAGraph_Vector_isall'     & tests 2 vectors with a binary operator \\
+\verb'LAGraph_Vector_isequal'   & tests if 2 vectors are equal \\
+\verb'LAGraph_Vector_to_dense'  & converts a vector to dense \\
+\verb'LAGraph_alloc_global'     & types, operators, monoids, and semirings \\
+\verb'LAGraph_finalize'         & ends LAGraph \\
+\verb'LAGraph_free'             & wrapper for \verb'free' \\
+\verb'LAGraph_free_global'      & frees objects created by \verb'_alloc_global'\\
+\verb'LAGraph_init'             & starts LAGraph \\
+\verb'LAGraph_isall'            & tests 2 matrices with a binary operator \\
+\verb'LAGraph_isequal'          & tests if 2 matrices are equal \\
+\verb'LAGraph_ispattern'        & tests if all entries in a matrix are 1 \\
+\verb'LAGraph_malloc'           & wrapper for \verb'malloc' \\
+\verb'LAGraph_mmread'           & read a Matrix Market file \\
+\verb'LAGraph_mmwrite'          & write a Matrix Market file \\
+\verb'LAGraph_pattern'          & extracts the pattern of a matrix \\
+\verb'LAGraph_rand'             & simple random number generator \\
+\verb'LAGraph_rand64'           & \verb'int64_t' random number generator \\
+\verb'LAGraph_random'           & random matrix generator \\
+\verb'LAGraph_randx'            & \verb'double' random number generator \\
+\verb'LAGraph_tic'              & start a timer \\
+\verb'LAGraph_toc'              & end a timer \\
+\end{tabular}}
+
+\newpage
 %-------------------------------------------------------------------------------
 \subsection{Breadth-first search}
 %-------------------------------------------------------------------------------
@@ -8835,7 +9369,6 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     GrB_Index s             // starting node of the BFS
 )
 {
-    GrB_Info info ;
     GrB_Index n ;                          // # of nodes in the graph
     GrB_Vector q = NULL ;                  // nodes visited at each level
     GrB_Vector v = NULL ;                  // result vector
@@ -8844,6 +9377,7 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     GrB_Descriptor desc = NULL ;           // Descriptor for vxm
     GrB_Matrix_nrows (&n, A) ;             // n = # of rows of A
     GrB_Vector_new (&v, GrB_INT32, n) ;    // Vector<int32_t> v(n) = 0
+    GrB_assign (v, NULL, NULL, 0, GrB_ALL, n, NULL) ;   // make v dense
     GrB_Vector_new (&q, GrB_BOOL, n) ;     // Vector<bool> q(n) = false
     GrB_Vector_setElement (q, true, s) ;   // q[s] = true, false elsewhere
     GrB_Monoid_new (&Lor, GrB_LOR, (bool) false) ;
@@ -8857,17 +9391,18 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     {
         // v<q> = level, using vector assign with q as the mask
         GrB_assign (v, q, NULL, level, GrB_ALL, n, NULL) ;
-
         // q<!v> = q ||.&& A ; finds all the unvisited successors from current
         // q, using !v as the mask
         GrB_vxm (q, v, NULL, Boolean, q, A, desc) ;
-
         // successor = ||(q)
         GrB_reduce (&successor, NULL, Lor, q, NULL) ;
     }
+
+    GrB_Descriptor_set (desc, GrB_MASK, GxB_DEFAULT) ;  // mask not inverted
+    GrB_assign (v, v, NULL, v, GrB_ALL, n, desc) ;      // make v sparse
     *v_output = v ;         // return result
-    GrB_free (&q) ;         // free workspace
-    GrB_free (&Lor) ; GrB_free (&Boolean) ; GrB_free (&desc) ;
+    // free workspace
+    GrB_free (&q) ; GrB_free (&Lor) ; GrB_free (&Boolean) ; GrB_free (&desc) ;
     return (GrB_SUCCESS) ;
 } \end{verbatim}} 
 \end{mdframed}
@@ -9287,6 +9822,9 @@ uses GraphBLAS to implement the two methods above, and two additional ones.
 %-------------------------------------------------------------------------------
 \label{read}
 
+{\bf NOTE:} see also \verb'LAGraph_mmread' and \verb'LAGraph_mmwrite', which
+can read and write any matrix in Matrix Market format.
+
 The \verb'read_matrix' function in the \verb'Demo' reads in a triplet matrix
 from a file, one line per entry, and then uses \verb'GrB_Matrix_build' to
 create the matrix.  It creates a second copy with \verb'GrB_Matrix_setElement',
@@ -9299,12 +9837,12 @@ unsymmetric.  If an input parameter is set to make the matrix symmetric,
 \verb'read_matrix' computes \verb"A=(A+A')/2" if \verb'A' is square (turning
 all directed edges into undirected ones.  If \verb'A' is rectangular, it
 creates a bipartite graph, which is the same as the augmented matrix,
-\verb"A = [0 A ; A' 0]" in pseudo-MATLAB notation.
-
+\verb"A = [0 A ; A' 0]".
 If \verb'C' is an \verb'n'-by-\verb'n' matrix, then \verb"C=(C+C')/2" can be
 computed as follows in GraphBLAS, (the \verb'scale2' function divides an entry
 by 2):
 
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     GrB_Descriptor_new (&dt2) ;
@@ -9334,7 +9872,7 @@ indices first, \verb'I=[10, 11' \verb'...' \verb'20]'.
 Thus, to compute the MATLAB equivalent of \verb"A = [0 A ; A' 0]", index lists
 \verb'I' and \verb'J' must first be constructed:
 
-    \newpage
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     int64_t n = nrows + ncols ;
@@ -9354,6 +9892,7 @@ Thus, to compute the MATLAB equivalent of \verb"A = [0 A ; A' 0]", index lists
 Once the index lists are generated, however, the resulting GraphBLAS operations
 are fairly straightforward, computing \verb"A=[0 C ; C' 0]".
 
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     GrB_Descriptor_new (&dt1) ;
@@ -9380,6 +9919,7 @@ SuiteSparse:GraphBLAS also adds a \verb'GxB_RANGE' mechanism that mimics
 the MATLAB colon notation.  This speeds up the method and simplifies the
 code the user needs to write to compute \verb"A=[0 C ; C' 0]":
 
+    \vspace{-0.05in}
     {\footnotesize
     \begin{verbatim}
     int64_t n = nrows + ncols ;
@@ -9419,14 +9959,18 @@ compute a fixed number of iterations.  The third example is more extensive
 (\verb'dpagerank2.c'), and serves as an example of the power and flexibility of
 user-defined types, operators, monoids, and semirings.  It creates a semiring
 for the entire PageRank computation.  It terminates if the 2-norm of the change
-in the rank vector \verb'r' is below a threshold.  This is computed in one of
-two ways.  If \verb'PAGERANK_UNSAFE' is defined at compile-time, the change in
-\verb'r' is computed during the accumulator step of \verb'GrB_vxm', as a
-side-effect of a user-defined operator.  This works in the current version of
-SuiteSparse:GraphBLAS, but is unsafe since it assumes the accumulator operator
-is computed sequentially.  If computed in parallel, a race condition would
-occur.  If \verb'PAGERANK_UNSAFE' is not defined, then a safe method is used
-instead.  If \verb'my_pagerank.m4' is placed in \verb'GraphBLAS/User/', then
+in the rank vector \verb'r' is below a threshold.
+
+% This is computed in one of
+% two ways.  If \verb'PAGERANK_UNSAFE' is defined at compile-time, the change in
+% \verb'r' is computed during the accumulator step of \verb'GrB_vxm', as a
+% side-effect of a user-defined operator.  This works in the current version of
+% SuiteSparse:GraphBLAS, but is unsafe since it assumes the accumulator operator
+% is computed sequentially.  If computed in parallel, a race condition would
+% occur.  If \verb'PAGERANK_UNSAFE' is not defined, then a safe method is used
+% instead.
+
+If \verb'my_pagerank.m4' is placed in \verb'GraphBLAS/User/', then
 the user objects are created at compile-time instead of at run-time, which
 leads to faster execution.
 
@@ -9493,9 +10037,9 @@ Sandia2  & \verb"sum(sum((L*L).*L))"
 In general, the Sandia methods are the fastest of the 6 methods when
 implemented in GraphBLAS.  For full details on the triangle counting and
 $k$-truss algorithms, and performance results, see \cite{Davis18b}, a copy of
-which appears in the \verb'SuiteSparse/GraphBLAS/Doc' folder.  That paper uses
-an earlier version of SuiteSparse:GraphBLAS in which all matrices are stored by
-column.
+which appears in the \verb'SuiteSparse/GraphBLAS/Doc' folder.  The code appears
+in \verb'Extras'.  That paper uses an earlier version of SuiteSparse:GraphBLAS
+in which all matrices are stored by column.
 
 \newpage
 %-------------------------------------------------------------------------------

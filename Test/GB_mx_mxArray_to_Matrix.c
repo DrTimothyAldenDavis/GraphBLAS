@@ -339,10 +339,10 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
     }
 
     //--------------------------------------------------------------------------
-    // count the # of non-empty vectors in A
+    // compute the # of non-empty vectors in A only when needed
     //--------------------------------------------------------------------------
 
-    A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+    A->nvec_nonempty = -1 ; // compute when needed; see also GxB_Matrix_import
 
     ASSERT_OK (GB_check (A, "got natural A from MATLAB", GB0)) ;
     ASSERT (!A->is_hyper) ;

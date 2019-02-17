@@ -103,14 +103,31 @@ GrB_Info GB_emult           // C = A.*B
 
     // C is hypersparse if A or B are hypersparse (contrast with GB_add)
     bool C_is_hyper = (A->is_hyper || B->is_hyper) && (A->vdim > 1) ;
+    int64_t cplen = -1 ;
+
+    if (C_is_hyper)
+    {
+        // FUTURE:: if one matrix has many fewer non-empty vectors than the
+        // other, then only the sparser one needs to be traversed.  In that
+        // case, computing these values can dominate the time.  Could use
+        // min (A->nvec, B->nvec) instead.
+        if (A->nvec_nonempty < 0)
+        { 
+            A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+        }
+        if (B->nvec_nonempty < 0)
+        { 
+            B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
+        }
+        cplen = GB_IMIN (A->nvec_nonempty, B->nvec_nonempty) ;
+    }
 
     // [ allocate the result C; C->p is malloc'd
     // worst case nnz (C) is min (nnz (A), nnz (B))
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GB_CREATE (&C, ctype, A->vlen, A->vdim, GB_Ap_malloc, C_is_csc,
-        GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio,
-        GB_IMIN (A->nvec_nonempty, B->nvec_nonempty),
+        GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio, cplen,
         GB_IMIN (GB_NNZ (A), GB_NNZ (B)), true, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -152,7 +169,7 @@ GrB_Info GB_emult           // C = A.*B
     char zwork [nocasting ? 1 : zsize] ;
 
     //--------------------------------------------------------------------------
-    // C = A .* B, where .*+ is defined by z=fmult(x,y)
+    // C = A .* B, where .* is defined by z=fmult(x,y)
     //--------------------------------------------------------------------------
 
     int64_t *Ci = C->i ;
@@ -164,14 +181,17 @@ GrB_Info GB_emult           // C = A.*B
     const int64_t *Ai = A->i, *Bi = B->i ;
     const GB_void *Ax = A->x, *Bx = B->x ;
 
-    GB_for_each_vector2 (A, B)
+    // FUTURE: this traverses all vectors in both A and B, but only the
+    // intersection is needed.  If they differ greatly, traverse just the
+    // smaller one, and search for vectors in the other.
+    GBI2_for_each_vector (A, B)
     {
 
         //----------------------------------------------------------------------
         // get the next column, A (:,j) and B (:j)
         //----------------------------------------------------------------------
 
-        GBI2_initj (Iter, j, pa, pa_end, pb, pb_end) ;
+        GBI2_jth_iteration (Iter, j, pa, pa_end, pb, pb_end) ;
         int64_t ajnz = pa_end - pa ;
         int64_t bjnz = pb_end - pb ;
 

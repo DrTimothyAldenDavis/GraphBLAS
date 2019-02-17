@@ -69,6 +69,11 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     // C = A
     //--------------------------------------------------------------------------
 
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+    }
+
     (*Chandle) = NULL ;
 
     // [ create C; malloc C->p and do not initialize it

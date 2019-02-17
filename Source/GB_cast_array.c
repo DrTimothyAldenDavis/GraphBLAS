@@ -11,7 +11,7 @@
 // Does not handle user-defined types.
 
 // PARALLEL: easy.  May want to put the workers in functions, like
-// Generated/*AxB*, instead of in a macro.
+// Generated/GB_AxB*, instead of in a macro.
 
 #include "GB.h"
 

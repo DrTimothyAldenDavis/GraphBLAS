@@ -84,12 +84,28 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     // allocate C
     //--------------------------------------------------------------------------
 
-    // Use CSC format but this is ignored for now.  If hypersparse, assume C
-    // has as many non-empty columns as B.  C->p and C->h are allocated but not
-    // initialized.
+    // Use CSC format but this is ignored for now.  If hypersparse, assume C or
+    // as many non-empty columns of B (compute it if it has not already been
+    // computed).  This is an upper bound.  If nnz(B(:,j)) is zero, this
+    // implies nnz(C(:,j)) will be zero, but not the other way around.  That
+    // is, nnz(B(:,j)) can be > 0, but if nnz(A(k,j)) == 0 for all k for
+    // entries B(k,j), then nnz(C(:,j)) will be zero.
+
+    // C->p and C->h are allocated but not initialized.
+
+    int64_t cplen = -1 ;
+
+    if (C_is_hyper)
+    {
+        if (B->nvec_nonempty < 0)
+        { 
+            B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
+        }
+        cplen = B->nvec_nonempty ;
+    }
 
     GB_CREATE (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio, B->nvec_nonempty,
+        GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio, cplen,
         cnz_guess, numeric, NULL) ;
 
     return (info) ;

@@ -117,7 +117,7 @@ GrB_Info GB_wait                // finish all pending computations
         ASSERT (GB_PENDING_OK (A)) ;
 
         // A->nvec_nonempty has been updated
-        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
+        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, NULL)) ;
     }
 
     ASSERT (anz == GB_NNZ (A)) ;
@@ -389,6 +389,10 @@ GrB_Info GB_wait                // finish all pending computations
 
     // count the number of non-empty vectors (again, if hypersparse, but for
     // the first time if non-hypersparse)
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+    }
     anvec_new = A->nvec_nonempty ;
 
     // while T has non-empty vectors

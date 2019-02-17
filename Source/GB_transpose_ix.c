@@ -67,9 +67,9 @@ void GB_transpose_ix        // transpose the pattern and values of a matrix
     {                                                           \
         rtype *rx = (rtype *) Rx ;                              \
         atype *ax = (atype *) Ax ;                              \
-        GB_for_each_vector (A)                                  \
+        GBI_for_each_vector (A)                                 \
         {                                                       \
-            GB_for_each_entry (j, p, pend)                      \
+            GBI_for_each_entry (j, p, pend)                     \
             {                                                   \
                 int64_t q = Rp [Ai [p]]++ ;                     \
                 Ri [q] = j ;                                    \
@@ -105,9 +105,9 @@ void GB_transpose_ix        // transpose the pattern and values of a matrix
     ASSERT (A->type == R_type && A->type->code > GB_FP64_code) ;
 
     int64_t asize = A->type->size ;
-    GB_for_each_vector (A)
+    GBI_for_each_vector (A)
     {
-        GB_for_each_entry (j, p, pend)
+        GBI_for_each_entry (j, p, pend)
         { 
             int64_t q = Rp [Ai [p]]++ ;
             Ri [q] = j ;

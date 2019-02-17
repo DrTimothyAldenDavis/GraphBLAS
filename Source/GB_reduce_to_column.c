@@ -196,8 +196,14 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
         //----------------------------------------------------------------------
 
         // nnz(T) = # of non-empty columns of A
+
+        if (A->nvec_nonempty < 0)
+        { 
+            A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+        }
+
         tnz = A->nvec_nonempty ;
-        ASSERT (tnz == GB_nvec_nonempty (A, Context)) ;
+        ASSERT (tnz == GB_nvec_nonempty (A, NULL)) ;
 
         //----------------------------------------------------------------------
         // allocate T
@@ -240,10 +246,10 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
         {                                                                   \
             const type *ax = (type *) Ax ;                                  \
             type *tx = (type *) Tx ;                                        \
-            GB_for_each_vector (A)                                          \
+            GBI_for_each_vector (A)                                         \
             {                                                               \
                 /* tj = reduce (A (:,j)) */                                 \
-                GBI1_initj (Iter, j, p, pend) ;                             \
+                GBI_jth_iteration (j, p, pend) ;                            \
                 type tj ;                                                   \
                 if (p >= pend) continue ;   /* skip vector j if empty */    \
                 /* tj = Ax [p], the first entry in vector j */              \
@@ -291,10 +297,10 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
 
         if (!done)
         {
-            GB_for_each_vector (A)
+            GBI_for_each_vector (A)
             {
                 // zwork = reduce (A (:,j))
-                GBI1_initj (Iter, j, p, pend) ;
+                GBI_jth_iteration (j, p, pend) ;
                 if (p >= pend) continue ;   // skip vector j if empty
                 // zwork = (ztype) Ax [p], the first entry in vector j
                 cast_A_to_Z (zwork, Ax +(p*asize), zsize) ;
@@ -367,7 +373,7 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
                 GB_MATRIX_FREE (&T) ;
                 return (info) ;
             }
-            ASSERT (T->nvec_nonempty == GB_nvec_nonempty (T, Context)) ;
+            ASSERT (T->nvec_nonempty == GB_nvec_nonempty (T, NULL)) ;
 
         }
         else

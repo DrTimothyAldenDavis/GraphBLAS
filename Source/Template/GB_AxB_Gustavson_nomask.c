@@ -56,9 +56,9 @@
     // C=A*B using the Gustavson's saxpy-based method; precomputed pattern of C
     //--------------------------------------------------------------------------
 
-    // FUTURE:: must use GB_for_each_vector (B) here, for parallel case
+    // FUTURE:: use GBI_for_each_vector (B) here
     #ifdef GB_HYPER_CASE
-    GB_for_each_vector2 (B, C)
+    GBI2_for_each_vector (B, C)
     #else
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Cp = C->p ;
@@ -72,7 +72,7 @@
         //----------------------------------------------------------------------
 
         #ifdef GB_HYPER_CASE
-        GBI2_initj (Iter, j, pB, pB_end, pC_start, pC_end) ;
+        GBI2_jth_iteration (Iter, j, pB, pB_end, pC_start, pC_end) ;
         #else
         int64_t pB       = Bp [j] ;
         int64_t pB_end   = Bp [j+1] ;

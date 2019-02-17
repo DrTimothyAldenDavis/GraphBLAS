@@ -17,14 +17,14 @@
     // C=A'*B via dot products
     //--------------------------------------------------------------------------
 
-    GB_for_each_vector (B)
+    GBI_for_each_vector (B)
     {
 
         //----------------------------------------------------------------------
         // get B(:,j)
         //----------------------------------------------------------------------
 
-        GBI1_initj (Iter, j, pB_start, pB_end) ;
+        GBI_jth_iteration (j, pB_start, pB_end) ;
         int64_t bjnz = pB_end - pB_start ;
         // no work to do if B(:,j) is empty
         if (bjnz == 0) continue ;

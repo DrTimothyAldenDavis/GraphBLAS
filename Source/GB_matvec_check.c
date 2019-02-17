@@ -68,9 +68,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR ("format: %s %s",
             A->is_hyper ? "hypersparse" : "standard",
             A->is_csc ?   "CSC" : "CSR") ;
-        GBPR (" vlen: "GBd" nvec_nonempty: "GBd" nvec: "GBd" plen: "
-            GBd " vdim: "GBd"\n",
-            A->vlen, A->nvec_nonempty, A->nvec, A->plen, A->vdim) ;
+        GBPR (" vlen: "GBd, A->vlen) ;
+        if (A->nvec_nonempty != -1)
+        { 
+            GBPR (" nvec_nonempty: "GBd, A->nvec_nonempty) ;
+        }
+        GBPR (" nvec: "GBd" plen: "GBd " vdim: "GBd"\n",
+            A->nvec, A->plen, A->vdim) ;
         GBPR ("hyper_ratio %g\n", A->hyper_ratio) ;
     }
 
@@ -115,13 +119,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
     else
 #endif
-
     {
         if (A->is_hyper)
         {
             // A is hypersparse
-            if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim &&
-                   A->nvec == A->nvec_nonempty))
+            if (! (A->nvec >= 0 && A->nvec <= A->plen && A->plen <= A->vdim))
             { 
                 if (pr > 0) GBPR ("invalid hypersparse %s structure\n", kind) ;
                 return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
@@ -333,6 +335,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "%s is an invalid empty object: [%s]", kind, GB_NAME))) ;
         }
+
         // check the vector pointers
         for (int64_t j = 0 ; j <= A->nvec ; j++)
         {
@@ -449,10 +452,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     int64_t nzombies = 0 ;
     int64_t jcount = 0 ;
 
-    GB_for_each_vector (A)
+    GBI_for_each_vector (A)
     {
         int64_t ilast = -1 ;
-        GB_for_each_entry (j, p, pend)
+        GBI_for_each_entry (j, p, pend)
         {
             bool prcol = ((pr > 1 && jcount < GB_NBRIEF) || pr > 2) ;
             if (ilast == -1)
@@ -726,21 +729,29 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (pr == 3) GBPR ("\n") ;
 
     //--------------------------------------------------------------------------
-    // return result
+    // check nvec_nonempty
     //--------------------------------------------------------------------------
 
-    // FUTURE:: if (!A->is_slice)
-    {
-        int64_t actual = GB_nvec_nonempty (A, Context) ;
-        if (A->nvec_nonempty != actual)
-        { 
-            if (pr > 0) GBPR ("invalid count of non-empty vectors"
-                "A->nvec_nonempty = "GBd" actual "GBd"\n",
-                A->nvec_nonempty, actual) ;
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "%s invalid count of nonempty-vectors [%s]", kind, GB_NAME))) ;
-        }
+    // A->nvec_nonempty == -1 denotes that the value has not been computed.
+    // This is valid, and can occur for matrices imported with
+    // GxB_Matrix_import*, and in other cases when its computation is postponed
+    // or not needed.  If not -1, however, the value must be correct.
+
+    int64_t actual_nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+
+    if (! ((A->nvec_nonempty == actual_nvec_nonempty) ||
+           (A->nvec_nonempty == -1)))
+    { 
+        if (pr > 0) GBPR ("invalid count of non-empty vectors\n"
+            "A->nvec_nonempty = "GBd" actual "GBd"\n",
+            A->nvec_nonempty, actual_nvec_nonempty) ;
+        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
+            "%s invalid count of nonempty-vectors [%s]", kind, GB_NAME))) ;
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
 
     // Returns GrB_INVALID_OBJECT if a row or column index is out of bounds,
     // since this indicates the object is corrupted.  No valid matrix is ever

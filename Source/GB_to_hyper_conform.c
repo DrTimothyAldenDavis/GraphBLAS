@@ -42,6 +42,11 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
 
     GrB_Info info = GrB_SUCCESS ;
 
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+    }
+
     if (GB_to_hyper_test (A, A->nvec_nonempty, A->vdim))
     { 
         info = GB_to_hyper (A, Context) ;

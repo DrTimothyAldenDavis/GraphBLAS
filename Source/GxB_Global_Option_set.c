@@ -54,7 +54,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                         "unsupported format [%d], must be one of:\n"
                         "GxB_BY_ROW [%d] or GxB_BY_COL [%d]",
-                        (int) format, (int) GxB_BY_ROW, (int) GxB_BY_ROW))) ;
+                        (int) format, (int) GxB_BY_ROW, (int) GxB_BY_COL))) ;
             }
 
             GB_Global.is_csc = (format != GxB_BY_ROW) ; 

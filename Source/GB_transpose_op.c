@@ -77,9 +77,9 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
     {                                                           \
         ztype *rx = (ztype *) Rx ;                              \
         atype *ax = (atype *) Ax ;                              \
-        GB_for_each_vector (A)                                  \
+        GBI_for_each_vector (A)                                 \
         {                                                       \
-            GB_for_each_entry (j, p, pend)                      \
+            GBI_for_each_entry (j, p, pend)                     \
             {                                                   \
                 int64_t q = Rp [Ai [p]]++ ;                     \
                 Ri [q] = j ;                                    \
@@ -187,9 +187,9 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
     // scalar workspace
     char xwork [op->xtype->size] ;
 
-    GB_for_each_vector (A)
+    GBI_for_each_vector (A)
     {
-        GB_for_each_entry (j, p, pend)
+        GBI_for_each_entry (j, p, pend)
         { 
             int64_t q = Rp [Ai [p]]++ ;
             Ri [q] = j ;

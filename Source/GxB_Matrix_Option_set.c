@@ -66,7 +66,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                         "unsupported format [%d], must be one of:\n"
                         "GxB_BY_ROW [%d] or GxB_BY_COL [%d]",
-                        (int) format, (int) GxB_BY_ROW, (int) GxB_BY_ROW))) ;
+                        (int) format, (int) GxB_BY_ROW, (int) GxB_BY_COL))) ;
             }
 
             // the value is normally GxB_BY_ROW (0) or GxB_BY_COL (1), but

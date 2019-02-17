@@ -53,9 +53,10 @@ size_t type_size ;      // type->size, copied here since the type could be
 // indices and values in each sparse vector.  The total number of entries in
 // the matrix is Ap [nvec] <= A->nzmax.
 
-// For both hypersparse and non-hypersparse matrices, A->nvec_nonempty is the
-// number of vectors that contain at least one entry, where
-// 0 <= A->nvec_nonempty <= A->nvec always holds.
+// For both hypersparse and non-hypersparse matrices, if A->nvec_nonempty is
+// computed, it is the number of vectors that contain at least one entry, where
+// 0 <= A->nvec_nonempty <= A->nvec always holds.  If not computed,
+// A->nvec_nonempty is equal to -1.
 
 // --------------------------------------
 // A->is_hyper is false: standard format.

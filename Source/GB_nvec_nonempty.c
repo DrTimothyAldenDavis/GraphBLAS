@@ -8,9 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Pending tuples are ignored.  If a vector has all zombies it is still
-// counted as non-empty.  The value computed is normally A->nvec_nonempty,
-// which is checked in GB_matvec_check.  However, when GB_resize needs to
-// recount A->nvec_nonempty, it uses this function.
+// counted as non-empty.
 
 // PARALLEL: simple parallel reduction
 
@@ -50,9 +48,9 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
 
     int64_t nvec_nonempty = 0 ;
 
-    GB_for_each_vector (A)
+    GBI_for_each_vector (A)
     { 
-        GBI1_initj (Iter, j, p, pend) ;
+        GBI_jth_iteration (j, p, pend) ;
         int64_t ajnz = pend - p ;
         if (ajnz > 0) nvec_nonempty++ ;
     }

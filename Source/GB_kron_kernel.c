@@ -78,11 +78,25 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
 
     // C is hypersparse if either A or B are hypersparse
     bool C_is_hyper = (cvdim > 1) && (A->is_hyper || B->is_hyper) ;
+    int64_t cplen = -1 ;
+
+    if (C_is_hyper)
+    {
+        if (A->nvec_nonempty < 0)
+        { 
+            A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+        }
+        if (B->nvec_nonempty < 0)
+        { 
+            B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
+        }
+        cplen = A->nvec_nonempty * B->nvec_nonempty ;
+    }
 
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GB_CREATE (&C, op->ztype, (int64_t) cvlen, (int64_t) cvdim, GB_Ap_calloc,
-        C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio,
-        A->nvec_nonempty * B->nvec_nonempty, cnzmax, true, Context) ;
+        C_is_csc, GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio, cplen,
+        cnzmax, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -115,25 +129,25 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
     int64_t cnz, cnz_last, cj_last ;
     GB_jstartup (C, &cj_last, &cnz, &cnz_last) ;
 
-    GB_for_each_vector_with_iter (A_iter, A)
+    GBI_for_each_vector_with_iter (A_iter, A)
     {
 
         //----------------------------------------------------------------------
         // get A(:,aj)
         //----------------------------------------------------------------------
 
-        GBI1_initj (A_iter, aj, pA_start, pA_end) ;
+        GBI_jth_iteration_with_iter (A_iter, aj, pA_start, pA_end) ;
 
         int64_t ajblock = aj * bvdim ;
 
-        GB_for_each_vector_with_iter (B_iter, B)
+        GBI_for_each_vector_with_iter (B_iter, B)
         {
 
             //------------------------------------------------------------------
             // get B(:,bj)
             //------------------------------------------------------------------
 
-            GBI1_initj (B_iter, bj, pB_start, pB_end) ;
+            GBI_jth_iteration_with_iter (B_iter, bj, pB_start, pB_end) ;
 
             int64_t cj = ajblock + bj ;
 

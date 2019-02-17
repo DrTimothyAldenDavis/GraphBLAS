@@ -3368,9 +3368,9 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 //      parallelizable if the iterations are independent, or for
 //      reduction-style loops via the appropriate #pragmas.
 
-// GBI_multi_iterator:
+// GBIk_multi_iterator:
 
-//      The GBI_multi_iterator controls the interation over 2 or 3 objects, one
+//      The GBIk_multi_iterator controls the interation over 2 or 3 objects, one
 //      of which may be an expanded scalar, and the others are standard or
 //      hypersparse matrices, in any combination.  It iterates over the set
 //      union of 2 or more objects, and is not suitable for a parallel for
@@ -3381,22 +3381,22 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 // GBI_single_iterator: iterate over the vectors of a matrix
 //------------------------------------------------------------------------------
 
-// The Iter->* content of a GBI_multi_iterator or GBI_single_iterator is
+// The Iter->* content of a GBIk_multi_iterator or GBI_single_iterator is
 // accessed only in this file.  All typedefs, functions, and macros that
 // operate on the SuiteSparse:GraphBLAS iterator have names that start with the
 // GBI prefix.  For both kinds of iterators, the A->h and A->p components of
 // the matrices may not change during the iteration.
 
-// The single-matrix iterator, GB_for_each_vector (A) can handle any of the
+// The single-matrix iterator, GBI_for_each_vector (A) can handle any of the
 // four cases: standard, hypersparse, slice, or hyperslice.  The comments below
 // assume A is in CSC format.
 
 #ifdef for_comments_only    // only so vim will add color to the code below:
 
-    // The GB_for_each_vector (A) macro, which uses the GBI_single_iterator and
-    // the two functions GBI1_init and GBI1_start, can do any one of the 4
-    // following for loops, depending on whether A is standard, hypersparse,
-    // a slice, or a hyperslice.
+    // The GBI_for_each_vector (A) macro, which uses the GBI_single_iterator,
+    // the two functions GBI1_init and GBI1_start, and the macro
+    // GBI_jth_iteration can do any one of the 4 following for loops, depending
+    // on whether A is standard, hypersparse, a slice, or a hyperslice.
 
     // A->vdim: the vector dimension of A (ncols(A))
     // A->nvec: # of vectors that appear in A.  For the hypersparse case,
@@ -3411,7 +3411,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         {
             j = k ;
             // operate on column A(:,j)
-            for (p = Ap [j] ; p < Ap [j+1] ; p)
+            for (p = Ap [j] ; p < Ap [j+1] ; p++)
             {
                 // A(i,j) has row i = Ai [p], value aij = Ax [p]
             }
@@ -3425,7 +3425,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         {
             j = A->h [k]
             // operate on column A(:,j)
-            for (p = Ap [k] ; p < Ap [k+1] ; p)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
                 // A(i,j) has row i = Ai [p], value aij = Ax [p]
             }
@@ -3442,7 +3442,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
             j = A->hfirst + k ;
             ASSERT (S->p [j] == Ap [k]) ;
             // operate on column A(:,j), which is also S (:,j)
-            for (p = Ap [k] ; p < Ap [k+1] ; p)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
                 // A(i,j) has row i = Ai [p], value aij = Ax [p]
                 // This is identical to S(i,j)
@@ -3460,10 +3460,26 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         {
             j = A->h [k] ;
             // operate on column A(:,j), which is also S (:,j)
-            for (p = Ap [k] ; p < Ap [k+1] ; p)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
                 // A(i,j) has row i = Ai [p], value aij = Ax [p].
                 // This is identical to S(i,j)
+            }
+        }
+
+    //--------------------
+    // all of the above: via GBI_for_each_vector (A)
+                        // are done with a single iterator that selects
+                        // the iteration method based on the format of A.
+
+        GBI_for_each_vector (A)
+        {
+            // get A(:,j)
+            GBI_jth_iteration (j, pstart, pend)
+            // operate on column A(:,j)
+            for (p = pstart ; p < pend ; p++)
+            {
+                // A(i,j) has row i = Ai [p], value aij = Ax [p].
             }
         }
 
@@ -3477,11 +3493,10 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 
 typedef struct
 {
-    bool is_hyper ;             // true if A  is hypersparse
-    const int64_t *p ;          // vector pointer A->p of A
+    const int64_t *restrict p ; // vector pointer A->p of A
+    const int64_t *restrict h ; // A->h: hyperlist of vectors in A
     int64_t nvec ;              // A->nvec: number of vectors in A
-    const int64_t *h ;          // A->h: hyperlist of vectors in A
-    int64_t k ;                 // current index into hyperlist h
+    bool is_hyper ;             // true if A  is hypersparse
 //  FUTURE:: slice
 //  bool is_slice ;             // true if A [0] is a slice
 //  int64_t hfirst ;            // A->hfirst: first vector in slice A
@@ -3505,9 +3520,6 @@ static inline void GBI1_init
     Iter->nvec = A->nvec ;
 //  Iter->is_slice = A->is_slice ;          // FUTURE::
 //  Iter->hfirst = A->hfirst ;
-
-    // start the iteration
-    Iter->k = 0 ;
 }
 
 //----------------------------------------
@@ -3516,6 +3528,7 @@ static inline void GBI1_init
 
 static inline void GBI1_start
 (
+    int64_t Iter_k,
     GBI_single_iterator *Iter,
     int64_t *j,
     int64_t *pstart,
@@ -3531,12 +3544,12 @@ static inline void GBI1_start
         if (Iter->is_hyper)
         {
             // A is a hyperslice of a hypersparse matrix
-            (*j) = Iter->h [Iter->k] ;
+            (*j) = Iter->h [Iter_k] ;
         }
         else
         {
             // A is a slice of a standard matrix
-            (*j) = (Iter->hfirst) + Iter->k ;
+            (*j) = (Iter->hfirst) + Iter_k ;
         }
     }
     else
@@ -3546,44 +3559,48 @@ static inline void GBI1_start
         { 
             // A is a hypersparse matrix
             // get next vector from A
-            (*j) = Iter->h [Iter->k] ;
+            (*j) = Iter->h [Iter_k] ;
         }
         else
         { 
             // A is a standard matrix
             // get next vector from A
-            (*j) = Iter->k ;
+            (*j) = Iter_k ;
         }
     }
 
     // get the start and end of the next vector of A
-    (*pstart) = Iter->p [Iter->k  ] ;
-    (*pend)   = Iter->p [Iter->k+1] ;
+    (*pstart) = Iter->p [Iter_k  ] ;
+    (*pend)   = Iter->p [Iter_k+1] ;
 }
-
-// get the column at the current iteration, and the start/end pointers
-// of column j in the matrix A
-#define GBI1_initj(Iter,j0,pstart0,pend0)                              \
-    int64_t j0, pstart0, pend0 ;                                       \
-    GBI1_start (&Iter, &j0, &pstart0, &pend0) ;
 
 // iterate over one matrix A (sparse, hypersparse, slice, or hyperslice)
 // with a named iterator
-#define GB_for_each_vector_with_iter(Iter,A)                           \
-    GBI_single_iterator Iter ;                                         \
-    for (GBI1_init (&Iter,A) ; Iter.k < Iter.nvec ; Iter.k++)
+#define GBI_for_each_vector_with_iter(Iter,A)                               \
+    GBI_single_iterator Iter ;                                              \
+    GBI1_init (&Iter, A) ;                                                  \
+    for (int64_t Iter ## _k = 0 ; Iter ## _k < Iter.nvec ; Iter ## _k++)
 
 // iterate over one matrix A (sparse, hypersparse, slice, or hyperslice)
 // with the iterator named "Iter"
-#define GB_for_each_vector(A) GB_for_each_vector_with_iter (Iter,A)
+#define GBI_for_each_vector(A) GBI_for_each_vector_with_iter (Iter,A)
+
+// get the column at the current iteration, and the start/end pointers
+// of column j in the matrix A
+#define GBI_jth_iteration_with_iter(Iter,j0,pstart0,pend0)                  \
+    int64_t j0, pstart0, pend0 ;                                            \
+    GBI1_start (Iter ## _k, &Iter, &j0, &pstart0, &pend0) ;
+
+#define GBI_jth_iteration(j0,pstart0,pend0)                                 \
+    GBI_jth_iteration_with_iter(Iter,j0,pstart0,pend0)
 
 // iterate over a vector of a single matrix
-#define GB_for_each_entry(j,p,pend)                                    \
-    GBI1_initj (Iter, j, p, pend) ;                                    \
+#define GBI_for_each_entry(j,p,pend)                                        \
+    GBI_jth_iteration (j, p, pend) ;                                        \
     for ( ; (p) < (pend) ; (p)++)
 
 //------------------------------------------------------------------------------
-// GBI_multi_iterator: iterate over vectors of multiple matrices
+// GBIk_multi_iterator: iterate over vectors of multiple matrices
 //------------------------------------------------------------------------------
 
 // Any of the matrices may be standard sparse or hypersparse.  None can be a
@@ -3606,7 +3623,7 @@ typedef struct
     int64_t k [3] ;             // current index into hyperlist h [0..2]
     int64_t jj [3] ;            // current vector jj [.] = h [k [.]]
 
-} GBI_multi_iterator ;
+} GBIk_multi_iterator ;
 
 //------------------------------------------------------------------------------
 // GBI#_init
@@ -3614,7 +3631,7 @@ typedef struct
 
 // Initialize an iterator for two or three matrices (one of which may be an
 // expanded scalar).  Extracts the vector content (is_hyper, vdim, p, h, and
-// nvec) of A, B, and/or C and caches them in the GBI_multi_iterator Iter, and
+// nvec) of A, B, and/or C and caches them in the GBIk_multi_iterator Iter, and
 // initializes the counters Iter->j and Iter->k [0..2].  The GBI#_init
 // functions are the only inline functions that directly access the matrix
 // content A->(...) for A, B, and/or C.  All other iterator functions and
@@ -3622,7 +3639,7 @@ typedef struct
 
 static inline void GBI3_init
 (
-    GBI_multi_iterator *Iter,
+    GBIk_multi_iterator *Iter,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_Matrix C
@@ -3632,7 +3649,7 @@ static inline void GBI3_init
     ASSERT (A->vdim == B->vdim) ;
     ASSERT (A->vdim == C->vdim) ;
 
-    // GB_for_each_vector3 (A,B,C) is not used if any matrix is a slice
+    // GBI3_for_each_vector (A,B,C) is not used if any matrix is a slice
     // ASSERT (!A->is_slice && !B->is_slice && !C->is_slice) ;
 
     Iter->any_hyper = (A->is_hyper || B->is_hyper || C->is_hyper) ;
@@ -3675,7 +3692,7 @@ static inline void GBI3_init
 
 static inline void GBI2_init
 (
-    GBI_multi_iterator *Iter,
+    GBIk_multi_iterator *Iter,
     const GrB_Matrix A,
     const GrB_Matrix B
 )
@@ -3683,7 +3700,7 @@ static inline void GBI2_init
     // A and B must have the same vdim.  vlen can vary
     ASSERT (A->vdim == B->vdim) ;
 
-    // GB_for_each_vector2 (A,B) is not used if any matrix is a slice
+    // GBI2_for_each_vector (A,B) is not used if any matrix is a slice
     // ASSERT (!A->is_slice && !B->is_slice) ;
 
     Iter->any_hyper = (A->is_hyper || B->is_hyper) ;
@@ -3726,7 +3743,7 @@ static inline void GBI2_init
 
 static inline void GBI3s_init
 (
-    GBI_multi_iterator *Iter,
+    GBIk_multi_iterator *Iter,
     const GrB_Matrix A,
     const GrB_Matrix B
 )
@@ -3736,12 +3753,12 @@ static inline void GBI3s_init
 
 static inline void GBI2s_init
 (
-    GBI_multi_iterator *Iter,
+    GBIk_multi_iterator *Iter,
     const GrB_Matrix A
 )
 { 
 
-    // GB_for_each_vector2s (A,scalar) is not used if the matrix is a slice
+    // GBI2s_for_each_vector (A,scalar) is not used if the matrix is a slice
     // ASSERT (!A->is_slice)
 
     Iter->any_hyper = (A->is_hyper) ;
@@ -3783,7 +3800,7 @@ static inline void GBI2s_init
 }
 
 //------------------------------------------------------------------------------
-// GBI#_while for GBI_multi_iterator
+// GBI#_while for GBIk_multi_iterator
 //------------------------------------------------------------------------------
 
 // The GBI#_while functions test the condition for a loop over one (plus an
@@ -3792,7 +3809,7 @@ static inline void GBI2s_init
 // macros.  These macros are not used for iterating over slices.
 
 // get the index of the next vector in a given matrix
-#define GBI_jjget(Iter,matrix)                                              \
+#define GBIk_jjget(Iter,matrix)                                              \
 {                                                                           \
     if (!(Iter->is_hyper [matrix]))                                         \
     {                                                                       \
@@ -3814,17 +3831,17 @@ static inline void GBI2s_init
 // Get the pointers to the next vector A [matrix] (:,j), sparse or hypersparse.
 // The vector appears in Ai and Ax [Iter->pstart [matrix]...Iter->pend
 // [matrix]-1].
-#define GBI_phget(Iter,matrix)                                              \
+#define GBIk_phget(Iter,matrix)                                              \
 {                                                                           \
     if (!(Iter->is_hyper [matrix]))                                         \
     {                                                                       \
         /* A (:,j) is the jth vector in the non-hypersparse matrix */       \
-        GBI_pget (Iter, matrix) ;                                           \
+        GBIk_pget (Iter, matrix) ;                                           \
     }                                                                       \
     else if (Iter->j == Iter->jj [matrix])                                  \
     {                                                                       \
         /* A (:,j) is the kth vector in the hypersparse matrix */           \
-        GBI_pget_hyper (Iter, matrix) ;                                     \
+        GBIk_pget_hyper (Iter, matrix) ;                                     \
     }                                                                       \
     else                                                                    \
     {                                                                       \
@@ -3839,14 +3856,14 @@ static inline void GBI2s_init
 //----------------------------------------
 
 // get the pointers to the next vector A (:,j), not hypersparse
-#define GBI_pget(Iter,matrix)                                               \
+#define GBIk_pget(Iter,matrix)                                               \
 {                                                                           \
     Iter->pstart [matrix] = (Iter->p [matrix]) [Iter->j  ] ;                \
     Iter->pend   [matrix] = (Iter->p [matrix]) [Iter->j+1] ;                \
 }
 
 // get the pointers to the kth vector A (:,j), hypersparse
-#define GBI_pget_hyper(Iter,matrix)                                         \
+#define GBIk_pget_hyper(Iter,matrix)                                         \
 {                                                                           \
     Iter->pstart [matrix] = (Iter->p [matrix]) [Iter->k [matrix]  ] ;       \
     Iter->pend   [matrix] = (Iter->p [matrix]) [Iter->k [matrix]+1] ;       \
@@ -3862,16 +3879,16 @@ static inline void GBI2s_init
 
 static inline bool GBI3_while
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
 
     if (Iter->any_hyper)
     { 
         // get next vector from A, B and/or C
-        GBI_jjget (Iter, 0) ;
-        GBI_jjget (Iter, 1) ;
-        GBI_jjget (Iter, 2) ;
+        GBIk_jjget (Iter, 0) ;
+        GBIk_jjget (Iter, 1) ;
+        GBIk_jjget (Iter, 2) ;
         Iter->j = GB_IMIN (Iter->jj [0], Iter->jj [1]) ;
         Iter->j = GB_IMIN (Iter->j     , Iter->jj [2]) ;
 
@@ -3879,9 +3896,9 @@ static inline bool GBI3_while
         if (Iter->j >= Iter->vdim) return (false) ;
 
         // get the start and end of each vector of A, B, and C
-        GBI_phget (Iter, 0) ;
-        GBI_phget (Iter, 1) ;
-        GBI_phget (Iter, 2) ;
+        GBIk_phget (Iter, 0) ;
+        GBIk_phget (Iter, 1) ;
+        GBIk_phget (Iter, 2) ;
     }
     else
     { 
@@ -3889,9 +3906,9 @@ static inline bool GBI3_while
         if (Iter->j >= Iter->vdim) return (false) ;
 
         // get the start and end of the jth vector of A, B, and C
-        GBI_pget (Iter, 0) ;
-        GBI_pget (Iter, 1) ;
-        GBI_pget (Iter, 2) ;
+        GBIk_pget (Iter, 0) ;
+        GBIk_pget (Iter, 1) ;
+        GBIk_pget (Iter, 2) ;
     }
 
     // end of matrix has not yet been reached
@@ -3904,7 +3921,7 @@ static inline bool GBI3_while
 
 static inline bool GBI3s_while
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
 
@@ -3914,16 +3931,16 @@ static inline bool GBI3s_while
     if (Iter->any_hyper)
     { 
         // get next vector from A and/or B
-        GBI_jjget (Iter, 0) ;
-        GBI_jjget (Iter, 1) ;
-        GBI_phget (Iter, 0) ;
-        GBI_phget (Iter, 1) ;
+        GBIk_jjget (Iter, 0) ;
+        GBIk_jjget (Iter, 1) ;
+        GBIk_phget (Iter, 0) ;
+        GBIk_phget (Iter, 1) ;
     }
     else
     { 
         // get the start and end of the jth vector of A and B
-        GBI_pget (Iter, 0) ;
-        GBI_pget (Iter, 1) ;
+        GBIk_pget (Iter, 0) ;
+        GBIk_pget (Iter, 1) ;
     }
 
     // end of matrix has not yet been reached
@@ -3936,23 +3953,23 @@ static inline bool GBI3s_while
 
 static inline bool GBI2_while
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
 
     if (Iter->any_hyper)
     { 
         // get next vector from A and/or B
-        GBI_jjget (Iter, 0) ;
-        GBI_jjget (Iter, 1) ;
+        GBIk_jjget (Iter, 0) ;
+        GBIk_jjget (Iter, 1) ;
         Iter->j = GB_IMIN (Iter->jj [0], Iter->jj [1]) ;
 
         // test if the end of the matrix has been reached
         if (Iter->j >= Iter->vdim) return (false) ;
 
         // get the start and end of each vector of A and B
-        GBI_phget (Iter, 0) ;
-        GBI_phget (Iter, 1) ;
+        GBIk_phget (Iter, 0) ;
+        GBIk_phget (Iter, 1) ;
     }
     else
     { 
@@ -3960,8 +3977,8 @@ static inline bool GBI2_while
         if (Iter->j >= Iter->vdim) return (false) ;
 
         // get the start and end of the jth vector of A and B
-        GBI_pget (Iter, 0) ;
-        GBI_pget (Iter, 1) ;
+        GBIk_pget (Iter, 0) ;
+        GBIk_pget (Iter, 1) ;
     }
 
     // end of matrix has not yet been reached
@@ -3974,7 +3991,7 @@ static inline bool GBI2_while
 
 static inline bool GBI2s_while
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
 
@@ -3984,13 +4001,13 @@ static inline bool GBI2s_while
     if (Iter->any_hyper)
     { 
         // get next vector from A
-        GBI_jjget (Iter, 0) ;
-        GBI_phget (Iter, 0) ;
+        GBIk_jjget (Iter, 0) ;
+        GBIk_phget (Iter, 0) ;
     }
     else
     { 
         // get the start and end of the jth vector of A and B
-        GBI_pget (Iter, 0) ;
+        GBIk_pget (Iter, 0) ;
     }
 
     // end of matrix has not yet been reached
@@ -4001,10 +4018,10 @@ static inline bool GBI2s_while
 // only used by GBI#_while:
 //----------------------------------------
 
-#undef GBI_jjget
-#undef GBI_phget
-#undef GBI_pget
-#undef GBI_pget_hyper
+#undef GBIk_jjget
+#undef GBIk_phget
+#undef GBIk_pget
+#undef GBIk_pget_hyper
 
 //------------------------------------------------------------------------------
 // GBI#_next
@@ -4013,7 +4030,7 @@ static inline bool GBI2s_while
 // Advance to the next vector of one, two, or three matrices.  The inline
 // GBI#_next functions are only used in the GB_*each* macros.
 
-#define GBI_jnext(Iter,matrix)                                                \
+#define GBIk_jnext(Iter,matrix)                                                \
 {                                                                             \
     if (!(Iter->is_hyper [matrix]))                                           \
     {                                                                         \
@@ -4030,15 +4047,15 @@ static inline bool GBI2s_while
 
 static inline void GBI3_next
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
     if (Iter->any_hyper)
     { 
         // advance to the next vector of A, B, and/or C
-        GBI_jnext (Iter, 0) ;
-        GBI_jnext (Iter, 1) ;
-        GBI_jnext (Iter, 2) ;
+        GBIk_jnext (Iter, 0) ;
+        GBIk_jnext (Iter, 1) ;
+        GBIk_jnext (Iter, 2) ;
     }
     else
     { 
@@ -4049,14 +4066,14 @@ static inline void GBI3_next
 
 static inline void GBI3s_next
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
     if (Iter->any_hyper)
     { 
         // advance to the next vector of A, and/or B
-        GBI_jnext (Iter, 0) ;
-        GBI_jnext (Iter, 1) ;
+        GBIk_jnext (Iter, 0) ;
+        GBIk_jnext (Iter, 1) ;
     }
     // C is an expanded scalar, so it always advances
     Iter->j++ ;
@@ -4064,14 +4081,14 @@ static inline void GBI3s_next
 
 static inline void GBI2_next
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
     if (Iter->any_hyper)
     { 
         // advance to the next vector of A and/or B
-        GBI_jnext (Iter, 0) ;
-        GBI_jnext (Iter, 1) ;
+        GBIk_jnext (Iter, 0) ;
+        GBIk_jnext (Iter, 1) ;
     }
     else
     { 
@@ -4082,29 +4099,28 @@ static inline void GBI2_next
 
 static inline void GBI2s_next
 (
-    GBI_multi_iterator *Iter
+    GBIk_multi_iterator *Iter
 )
 {
     if (Iter->any_hyper)
     { 
         // advance to the next vector of A
-        GBI_jnext (Iter, 0) ;
+        GBIk_jnext (Iter, 0) ;
     }
     // B is an expanded scalar, so it always advances
     Iter->j++ ;
 }
 
-// the GBI_jnext* macros are only used in the GBI#_next functions above.
-#undef GBI_jnext
+// the GBIk_jnext* macros are only used in the GBI#_next functions above.
+#undef GBIk_jnext
 
 //------------------------------------------------------------------------------
-// GBI#_initj
+// GBI#_jth_iteration
 //------------------------------------------------------------------------------
 
 // Get the column at the current iteration, and the start/end pointers
 // of column j in the three matrices A, B, and C.
-
-#define GBI3_initj(Iter,j_,pstart0,pend0,pstart1,pend1,pstart2,pend2)  \
+#define GBI3_jth_iteration(Iter,j_,pstart0,pend0,pstart1,pend1,pstart2,pend2)  \
     int64_t                                                            \
     j_      = Iter.j,                                                  \
     pstart0 = Iter.pstart [0],                                         \
@@ -4116,8 +4132,7 @@ static inline void GBI2s_next
 
 // get the column at the current iteration, and the start/end pointers
 // of column j in the two matrices A and B
-
-#define GBI2_initj(Iter,j_,pstart0,pend0,pstart1,pend1)                \
+#define GBI2_jth_iteration(Iter,j_,pstart0,pend0,pstart1,pend1)        \
     int64_t                                                            \
     j_      = Iter.j,                                                  \
     pstart0 = Iter.pstart [0],                                         \
@@ -4125,7 +4140,11 @@ static inline void GBI2s_next
     pstart1 = Iter.pstart [1],                                         \
     pend1   = Iter.pend   [1]
 
-#define GBI2s_initj(Iter,j_,pstart0,pend0)                             \
+// these are the same:
+#define GBI3s_jth_iteration(Iter,j_,pstart0,pend0,pstart1,pend1)       \
+         GBI2_jth_iteration(Iter,j_,pstart0,pend0,pstart1,pend1)
+
+#define GBI2s_jth_iteration(Iter,j_,pstart0,pend0)                     \
     int64_t                                                            \
     j_      = Iter.j,                                                  \
     pstart0 = Iter.pstart [0],                                         \
@@ -4136,25 +4155,25 @@ static inline void GBI2s_next
 //------------------------------------------------------------------------------
 
 // iterate over the vectors in the union of two matrices A and B
-#define GB_for_each_vector2(A,B)                                               \
-    GBI_multi_iterator Iter ;                                                  \
+#define GBI2_for_each_vector(A,B)                                              \
+    GBIk_multi_iterator Iter ;                                                  \
     for (GBI2_init (&Iter,A,B) ; GBI2_while (&Iter) ; GBI2_next (&Iter))
 
 // iterate over the vectors in the union of three matrices A, B, and C
-#define GB_for_each_vector3(A,B,C)                                             \
-    GBI_multi_iterator Iter ;                                                  \
+#define GBI3_for_each_vector(A,B,C)                                            \
+    GBIk_multi_iterator Iter ;                                                  \
     for (GBI3_init (&Iter,A,B,C) ; GBI3_while (&Iter) ; GBI3_next (&Iter))
 
 // iterate over the vectors of a matrix A and an expanded scalar
 // (note the scalar arg is not used; it is for code readability only):
-#define GB_for_each_vector2s(A,scalar)                                         \
-    GBI_multi_iterator Iter ;                                                  \
+#define GBI2s_for_each_vector(A,scalar)                                        \
+    GBIk_multi_iterator Iter ;                                                  \
     for (GBI2s_init (&Iter,A) ; GBI2s_while (&Iter) ; GBI2s_next (&Iter))
 
 // iterate over the vectors of two matrices A and B, and an expanded scalar
 // (note the scalar arg is not used; it is for code readability only):
-#define GB_for_each_vector3s(A,B,scalar)                                       \
-    GBI_multi_iterator Iter ;                                                  \
+#define GBI3s_for_each_vector(A,B,scalar)                                      \
+    GBIk_multi_iterator Iter ;                                                  \
     for (GBI3s_init (&Iter,A,B) ; GBI3s_while (&Iter) ; GBI3s_next (&Iter))
 
 //------------------------------------------------------------------------------

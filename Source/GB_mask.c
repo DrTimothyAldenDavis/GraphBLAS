@@ -312,14 +312,29 @@ GrB_Info GB_mask                // C<M> = Z
         ASSERT (M->type->code <= GB_FP64_code) ;
         ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
 
+        bool R_is_hyper = (C->is_hyper && Z->is_hyper) ;
+        int64_t rplen = -1 ;
+
+        if (R_is_hyper)
+        {
+            if (C->nvec_nonempty < 0)
+            { 
+                C->nvec_nonempty = GB_nvec_nonempty (C, Context) ;
+            }
+            if (Z->nvec_nonempty < 0)
+            { 
+                Z->nvec_nonempty = GB_nvec_nonempty (Z, Context) ;
+            }
+            rplen = GB_IMIN (vdim, C->nvec_nonempty + Z->nvec_nonempty) ;
+        }
+
         // [ R->p is malloc'd
         // R is hypersparse if C and Z are hypersparse
         // R->plen is the upper bound: sum of # non-empty columns of C and Z,
         // or C->vdim, whichever is smaller.
         GrB_Matrix R = NULL ;       // allocate a new header for R
         GB_CREATE (&R, C->type, vlen, vdim, GB_Ap_malloc, C_result_is_csc,
-            GB_SAME_HYPER_AS (C->is_hyper && Z->is_hyper), C->hyper_ratio,
-            GB_IMIN (vdim, C->nvec_nonempty + Z->nvec_nonempty),
+            GB_SAME_HYPER_AS (R_is_hyper), C->hyper_ratio, rplen,
             GB_NNZ (C) + GB_NNZ (Z), true, Context) ;
 
         if (info != GrB_SUCCESS)
@@ -347,14 +362,14 @@ GrB_Info GB_mask                // C<M> = Z
         const int64_t *Ci = C->i, *Zi = Z->i, *Mi = M->i ;
         const GB_void *Cx = C->x, *Zx = Z->x, *Mx = M->x ;
 
-        GB_for_each_vector3 (C, Z, M)
+        GBI3_for_each_vector (C, Z, M)
         {
 
             //------------------------------------------------------------------
             // get the next vector j of C, Z, and M, and their lengths
             //------------------------------------------------------------------
 
-            GBI3_initj (Iter, j, pC, pC_end, pZ, pZ_end, pM, pM_end) ;
+            GBI3_jth_iteration (Iter, j, pC, pC_end, pZ, pZ_end, pM, pM_end) ;
             int64_t jC_nnz = pC_end - pC ;
             int64_t jZ_nnz = pZ_end - pZ ;
             int64_t jM_nnz = pM_end - pM ;

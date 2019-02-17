@@ -140,7 +140,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     // A->is_slice = false ;
     A->p_shallow = false ;
     A->h_shallow = false ;
-    A->nvec_nonempty = 0 ;      // all vectors are emtpy
+    A->nvec_nonempty = 0 ;      // all vectors are empty
 
     // content that is freed or reset in GB_ix_free
     // (GB_ix_free then calls GB_pending_free and GB_queue_remove):

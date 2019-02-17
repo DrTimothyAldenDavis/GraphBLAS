@@ -4159,6 +4159,13 @@ void mexFunction
     OK (GxB_set (A, GxB_HYPER, GxB_ALWAYS_HYPER)) ;
     CHECK (A->is_hyper) ;
 
+    // make sure A->nvec_nonempty is valid
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+    }
+
+    // now make invalid.  GB_check requires it to be -1, or the correct value
     expected = GrB_INVALID_OBJECT ;
     isave = A->p [1] ;
     A->p [1] = 0 ;
@@ -4240,12 +4247,13 @@ void mexFunction
     ERR (GxB_set (GxB_FORMAT, 9999)) ;
     printf ("error expected:%s\n", GrB_error ( )) ;
 
-    ERR (GxB_get (A, 999, GxB_BY_ROW)) ;
+    ERR (GxB_set (A, 999, GxB_BY_ROW)) ;
     printf ("error expected:%s\n", GrB_error ( )) ;
 
-    ERR (GxB_get (A, GxB_FORMAT, 909090)) ;
+    ERR (GxB_set (A, GxB_FORMAT, 909090)) ;
     printf ("error expected:%s\n", GrB_error ( )) ;
 
+    CHECK (A != NULL) ;
     CHECK (A->is_csc) ;
 
     // #undef FREE_DEEP_COPY

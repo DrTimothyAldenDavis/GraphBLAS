@@ -1,4 +1,4 @@
-Version 2.3.0, Feb 15, 2019
+Version 2.3.0 (BETA1), Feb 16, 2019
 
     * simplified GBI_*_iterators
     * towards OpenMP: PARALLEL comments added to most files (all upper case)

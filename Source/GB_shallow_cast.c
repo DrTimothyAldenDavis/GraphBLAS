@@ -77,6 +77,8 @@ GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
     C->h = A->h ;                   // C->h is of size A->plen
     C->plen = A->plen ;             // C and A have the same hyperlist sizes
     C->nvec = A->nvec ;
+    ASSERT (A->nvec_nonempty == -1 ||   // can be postponed
+            A->nvec_nonempty == GB_nvec_nonempty (A, Context)) ;
     C->nvec_nonempty = A->nvec_nonempty ;
     C->magic = GB_MAGIC ;           // C is now initialized ]
 

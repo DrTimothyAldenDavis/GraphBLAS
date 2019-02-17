@@ -68,6 +68,11 @@ GrB_Info GB_resize              // change the size of a matrix
 
     GrB_Info info = GrB_SUCCESS ;
 
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+    }
+
     if (GB_to_hyper_test (A, A->nvec_nonempty, vdim_new))
     { 
         info = GB_to_hyper (A, Context) ;
@@ -112,7 +117,6 @@ GrB_Info GB_resize              // change the size of a matrix
         bool found ;
         GB_BINARY_SPLIT_SEARCH (vdim_new, Ah, pleft, pright, found) ;
         A->nvec = pleft ;
-        A->nvec_nonempty = A->nvec ;
 
     }
     else
@@ -147,13 +151,14 @@ GrB_Info GB_resize              // change the size of a matrix
             }
             // A->nvec_nonempty does not change
         }
-        else
-        { 
-            // number of vectors is decreasing, need to count the new number of
-            // non-empty vectors, unless it is done during pruning, just below.
-            recount = true ;
-        }
         A->nvec = vdim_new ;
+    }
+
+    if (vdim_new < vdim_old)
+    { 
+        // number of vectors is decreasing, need to count the new number of
+        // non-empty vectors, unless it is done during pruning, just below.
+        A->nvec_nonempty = -1 ;         // compute when needed
     }
 
     //--------------------------------------------------------------------------
@@ -169,19 +174,12 @@ GrB_Info GB_resize              // change the size of a matrix
         int64_t anz ;
         #define GB_PRUNE if (i >= vlen_new) break ;
         #include "GB_prune_inplace.c"
-        recount = false ;
     }
 
     //--------------------------------------------------------------------------
-    // explicit count of non-empty vectors may be required
-    //--------------------------------------------------------------------------
-
-    if (recount)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
-    }
-
     // vlen has been resized
+    //--------------------------------------------------------------------------
+
     A->vlen = vlen_new ;
     ASSERT_OK (GB_check (A, "A vlen resized", GB0)) ;
 

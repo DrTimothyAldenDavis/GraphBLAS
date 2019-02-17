@@ -97,8 +97,8 @@ constructed by dox_headers.m
  The complemented mask is not handled, so the flops for C\<!M\>=A*B is not
  computed.
 \par
- Bflops has size (B-\>nvec)+1, for both standard and hypersparse B.  Let n =
- B-\>vdim be the column dimension of B (that is, B is m-by-n).
+ If present, Bflops has size (B-\>nvec)+1, for both standard and hypersparse
+ B.  Let n = B-\>vdim be the column dimension of B (that is, B is m-by-n).
 \par
  If B is a standard CSC matrix then Bflops has size n+1 == B-\>nvec+1, and on
  output, Bflops [j] is the \# of flops required to compute C (:, 0:j-1).  B-\>h
@@ -136,6 +136,9 @@ constructed by dox_headers.m
 \par
  parallel: this function will remain sequential.
  parallelism will be done in GB_AxB_parallel.
+\par
+ FUTURE: reduce compiled code size by changing GB_heap.h to GB_heap.c;
+ check any performance impact
 \par
  Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 */
@@ -194,7 +197,7 @@ constructed by dox_headers.m
       GxB_AxB_GUSTAVSON:  Gustavson's method for A*B
       GxB_AxB_HEAP:       heap method for A*B
       GxB_AxB_DOT:        dot method for A'*B
-      GxB_AxB_HASH:       hash method for A*B (TODO)
+      GxB_AxB_HASH:       hash method for A*B (FUTURE)
 
  AxB_method_used reports the method actually chosen.  This is for
  informational purposes only, so if a parallel C=A*B splits the work into
@@ -878,9 +881,10 @@ constructed by dox_headers.m
  The time and memory taken by this function is O(t) if t=len is the number
  of tuples.
 \par
- PARALLEL: the tuples have already been sorted, and duplicates tagged.
- need to parallelize the summation of duplicate tuples.  Each unique
- tuple could be done only by the thread the owns it.
+ PARALLEL: the tuples have already been sorted, and duplicates tagged.  need
+ to parallelize the summation of duplicate tuples.  Each unique tuple could
+ be done only by the thread the owns it.  It is unlikely that there will be
+ many duplicates, but possible.  So consider a parallel reduction.
 */
 
 
@@ -936,7 +940,7 @@ constructed by dox_headers.m
  Does not handle user-defined types.
 \par
  PARALLEL: easy.  May want to put the workers in functions, like
- Generated/*AxB*, instead of in a macro.
+ Generated/GB_AxB*, instead of in a macro.
 */
 
 
@@ -1093,8 +1097,8 @@ constructed by dox_headers.m
  GB_transpose_bucket uses this function to compute row and column pointers.
  On input, count [j] is the number of nonzeros in column j of a matrix, and
  count [n] should be zero (it only affects the result k, however).  On
- output, count [0..n] contains the column pointers of the matrix, and k is
- the number of nonzeros in count [0:n], which becomes nvec_nonempty for
+ output, count [0..n] contains the column pointers of the matrix, and kresult
+ is the number of nonzeros in count [0:n], which becomes nvec_nonempty for
  the resulting matrix.
 \par
  GB_AxB_flopcount uses this to compute the cumulative sum of the flop
@@ -1301,22 +1305,6 @@ constructed by dox_headers.m
  -DGB_FREE=myfreefunc.
 \par
  not parallel: this function does O(1) work and is already thread-safe.
-*/
-
-
-/** \file GB_free_slice.c
-\brief  GB_free_slice: free a set of slices
-
-*/
-
-
-/** \file GB_hcat_slice.c
-\brief  GB_hcat_slice: horizontal concatenation of the slices of C
-
-\par
- Horizontal concatenation of slices into the matrix C.
-\par
- PARALLEL: trivial
 */
 
 
@@ -1563,9 +1551,7 @@ constructed by dox_headers.m
 
 \par
  Pending tuples are ignored.  If a vector has all zombies it is still
- counted as non-empty.  The value computed is normally A-\>nvec_nonempty,
- which is checked in GB_matvec_check.  However, when GB_resize needs to
- recount A-\>nvec_nonempty, it uses this function.
+ counted as non-empty.
 \par
  PARALLEL: simple parallel reduction
 */
@@ -1828,9 +1814,11 @@ constructed by dox_headers.m
 \brief  GB_reduce_to_column: reduce a matrix to a column using a binary op
 
 \par
- w\<mask\> = accum (w,reduce(A)) where w is n-by-1
+ C\<mask\> = accum (C,reduce(A)) where C is n-by-1
 \par
  PARALLEL: use a parallel reduction method
+\par
+ FUTURE:: add early exit;  pass in terminal (NULL if none)
 */
 
 
@@ -1847,7 +1835,10 @@ constructed by dox_headers.m
  This function does not need to know if A is hypersparse or not, and its
  result is the same if A is in CSR or CSC format.
 \par
- PARALLEL: use a parallel reduction method
+ FUTURE:: add early exit
+\par
+ PARALLEL: a parallel reduction method.  All entries of the matrix
+ must be reduce to a single scalar.
 */
 
 
@@ -1965,28 +1956,6 @@ constructed by dox_headers.m
  c = a*b but check for overflow
 \par
  not parallel: this function does O(1) work and is already thread-safe.
-*/
-
-
-/** \file GB_slice.c
-\brief  GB_slice: create hypersparse shallow slices of a matrix B
-
-\par
- For each thread t, create Bslice [t] as a purely hypersparse shallow slice
- of B.  The i and x arrays are the same as B.  The p array is an offset into
- Bp (that is, Bp + Slice [t]), which means that p [0] will not be zero
- (except for Bslice [0]).  If B is hypersparse, the h array is also an offset
- into B-\>h.  If B is standard, then Bslice [t] becomes an implicit
- hypersparse matrix.  Its h array is NULL, and the h list is implicit:
- h[0..nvec-1] is implicitly [hfirst, hfirst+1, ...  hfirst+nvec-1], where
- nvec = Slice [t+1] - Slice [t].
-\par
- The matrix dimensions of each slice are the same as B.  All slices have
- vector length B-\>vlen and vector dimension B-\>vdim.   The slices are subsets
- of the vectors of B, as defined by the Slice array.  The Bslice [t] consists
- of the vectors Slice [t] to Slice [t+1]-1.
-\par
- This function does only O(nthreads) work and allocates O(nthreads) space.
 */
 
 
@@ -2137,8 +2106,6 @@ constructed by dox_headers.m
  input). The A-\>x and A-\>i content is not changed; it remains in whatever
  shallow/non-shallow state that it had on input).
 \par
- A-\>nvec_nonempty does not change.
-\par
  If an out-of-memory condition occurs, all content of the matrix is cleared.
 \par
  PARALLEL: a reduction loop
@@ -2179,8 +2146,6 @@ constructed by dox_headers.m
  changed (and in that case A-\>p remains shallow on output if shallow on
  input). The A-\>x and A-\>i content is not changed; it remains in whatever
  shallow/non-shallow state that it had on input).
-\par
- A-\>nvec_nonempty does not change.
 \par
  If an out-of-memory condition occurs, all content of the matrix is cleared.
 \par
@@ -3063,6 +3028,15 @@ constructed by dox_headers.m
 
 \par
  parallel: not here, see GB_reduce_to_column
+\par
+ FUTURE:: If reduce is a binary operator that corresponds to a built-in
+ Monoid, then look up the Monoid-\>terminal.  Otherwise pass NULL to
+ GB_reduce_to_column as the terminal value.
+\par
+ For the monoid case, extract the Monoid-\>terminal and pass it to
+ GB_reduce_to_column.
+\par
+ in both cases, GB_reduce_to_column
 */
 
 
@@ -3220,7 +3194,7 @@ constructed by dox_headers.m
 \brief  GxB_Global_Option_set: set a global default option for all future matrices
 
 \par
- TODO allow the user to pass in malloc, calloc, ... functions
+ FUTURE:: allow the user to pass in malloc, calloc, ... functions
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */
@@ -3230,7 +3204,7 @@ constructed by dox_headers.m
 \brief  GxB_Matrix_option_get: get an option in a matrix
 
 \par
- TODO: add an option to query if a matrix is hypersparse or not
+ FUTURE:: add an option to query if a matrix is hypersparse or not
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */
@@ -3680,6 +3654,12 @@ constructed by dox_headers.m
  method, extended to handle hypersparse matrices, arbitrary semirings, and a
  mask matrix M.
 \par
+ The mask is present in this case (see GB_AxB_Gustavson_nomask otherwise).
+ This method takes Omega(nnz(M)) time when exploiting the mask, so a very
+ dense mask can be costly to exploit.  Thus, this method is not used, and
+ GB_AxB_Gustavson_nomask is used instead, if the total flop count is less
+ than nnz(M).
+\par
  parallel: this could be done in parallel, but the parallelism will be
  handled outside this code, in GB_AxB_parallel.  This work is done by a
  single thread.
@@ -3835,7 +3815,10 @@ constructed by dox_headers.m
  This file is \#include'd in GB_AxB_heap_meta.c.
 \par
  if GB_MASK_CASE is defined, then the mask matrix M is present.  Otherwise it
- is not present.
+ is not present.  However, this method takes Omega(nnz(M)) time when
+ exploiting the mask, so a very dense mask can be costly to exploit.  Thus,
+ the mask is not passed to the heap method if the total flop count is less
+ than nnz(M).
 \par
  parallel: this could be done in parallel, but the parallelism will be
  handled outside this code, in GB_AxB_parallel.  This work is done by a
@@ -3879,6 +3862,12 @@ constructed by dox_headers.m
 /** \file GB_assoc_template.c
 \brief  GB_assoc_template.c: switch factory for associative operators
 
+\par
+ FUTURE:: write Generator/GB_assoc.c, and use it to create 66 files:
+ Generator/GB_assoc__[operator]_[type].  Each file has 4 functions for the
+ kernels for GB_reduce_to_scalar, GB_build_factory, and GB_reduce_to_column
+ (2 kernels).  (but 22 files with FIRST and SECOND just have one kernel for
+ GB_build_factory).
 \par
  This is a generic body of code for creating hard-coded versions of code for
  44 combinations of associative operators and built-in types: 10 types (all

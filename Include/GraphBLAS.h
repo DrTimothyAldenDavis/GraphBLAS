@@ -70,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Feb 15, 2019"
+#define GxB_DATE "Feb 16, 2019 (BETA1)"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -5894,91 +5894,6 @@ GrB_Info GxB_Vector_export  // export and free a vector
 
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_band.m4: example user built-in objects
-//------------------------------------------------------------------------------
-
-// user-defined functions for GxB_select, to choose entries within a band
-
-#ifdef GxB_USER_INCLUDE
-
-    #define MY_BAND
-
-    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
-        GrB_Index ncols, const void *x, const void *thunk)
-    {
-        int64_t *lohi = (int64_t *) thunk ;
-        int64_t i2 = (int64_t) i ;
-        int64_t j2 = (int64_t) j ;
-        return ((lohi [0] <= (j2-i2)) && ((j2-i2) <= lohi [1])) ;
-    }
-
-#endif
-
-// Select operator to compute C = tril (triu (A, k1), k2)
-extern GxB_SelectOp My_band ;
-
-//------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_complex.m4: example user built-in objects
-//------------------------------------------------------------------------------
-
-// user-defined functions for a double complex type
-
-#ifdef GxB_USER_INCLUDE
-
-    // Get the complex.h definitions, but remove "I" since it is used elsewhere
-    // in GraphBLAS.
-    #include <complex.h>
-    #undef I
-
-    // Not all complex.h definitions include the CMPLX macro
-    #ifndef CMPLX
-    #define CMPLX(real,imag) \
-        ( \
-        (double complex)((double)(real)) + \
-        (double complex)((double)(imag) * _Complex_I) \
-        )
-    #endif
-
-    // define a token so a user application can check for existence 
-    #define MY_COMPLEX
-
-    static inline void my_complex_plus
-    (
-        double complex *z,
-        const double complex *x,
-        const double complex *y
-    )
-    {
-        (*z) = (*x) + (*y) ;
-    }
-
-    static inline void my_complex_times
-    (
-        double complex *z,
-        const double complex *x,
-        const double complex *y
-    )
-    {
-        (*z) = (*x) * (*y) ;
-    }
-
-#endif
-
-// GraphBLAS does not have a complex type; this defines one:
-extern GrB_Type My_Complex ;
-
-// The two operators, complex add and multiply:
-extern GrB_BinaryOp My_Complex_plus ;
-
-extern GrB_BinaryOp My_Complex_times ;
-
-// The plus monoid:
-extern GrB_Monoid My_Complex_plus_monoid ;
-
-// the conventional plus-times semiring for C=A*B for the complex case
-extern GrB_Semiring My_Complex_plus_times ;
-
-//------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_pagerank.m4: PageRank semiring
 //------------------------------------------------------------------------------
 
@@ -6201,6 +6116,61 @@ extern GrB_UnaryOp PageRank_div ;
 extern GrB_BinaryOp PageRank_diff ;
 
 //------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_scale.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined unary operator: z = f(x) = my_scalar*x and its global scalar
+
+#ifdef GxB_USER_INCLUDE
+
+    //--------------------------------------------------------------------------
+    // declarations: for GraphBLAS.h
+    //--------------------------------------------------------------------------
+
+    // The following are declarations that are enabled in GraphBLAS.h and
+    // appear in all user codes that #include "GraphBLAS.h", and also in all
+    // internal GraphBLAS codes.  All user declarations (not definitions)
+    // should appear here.
+
+    #define MY_SCALE
+
+    extern double my_scalar ;
+    // for thread safety if the user application uses OpenMP
+    #pragma omp threadprivate(my_scalar)
+
+    static inline void my_scale
+    (
+        double *z,
+        const double *x
+    )
+    {
+        (*z) = my_scalar * (*x) ;
+    }
+
+#else
+
+    //--------------------------------------------------------------------------
+    // definitions: code appears just once, in Source/all_user_objects.c
+    //--------------------------------------------------------------------------
+
+    // The following defintions are enabled in only a single place:
+    // SuiteSparse/GraphBLAS/Source/all_user_objects.c.  This is the place
+    // where all user-defined global variables should be defined.
+
+    double my_scalar = 0 ;
+
+#endif
+
+
+//------------------------------------------------------------------------------
+// define/declare the GrB_UnaryOp My_scale
+//------------------------------------------------------------------------------
+
+// Unary operator to compute z = my_scalar*x
+
+extern GrB_UnaryOp My_scale ;
+
+//------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_plus_rdiv.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
@@ -6256,59 +6226,89 @@ extern GrB_BinaryOp My_rdiv2 ;
 extern GrB_Semiring My_plus_rdiv2 ;
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_scale.m4: example user built-in objects
+// GraphBLAS/User/Example/my_complex.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
-// user-defined unary operator: z = f(x) = my_scalar*x and its global scalar
+// user-defined functions for a double complex type
 
 #ifdef GxB_USER_INCLUDE
 
-    //--------------------------------------------------------------------------
-    // declarations: for GraphBLAS.h
-    //--------------------------------------------------------------------------
+    // Get the complex.h definitions, but remove "I" since it is used elsewhere
+    // in GraphBLAS.
+    #include <complex.h>
+    #undef I
 
-    // The following are declarations that are enabled in GraphBLAS.h and
-    // appear in all user codes that #include "GraphBLAS.h", and also in all
-    // internal GraphBLAS codes.  All user declarations (not definitions)
-    // should appear here.
+    // Not all complex.h definitions include the CMPLX macro
+    #ifndef CMPLX
+    #define CMPLX(real,imag) \
+        ( \
+        (double complex)((double)(real)) + \
+        (double complex)((double)(imag) * _Complex_I) \
+        )
+    #endif
 
-    #define MY_SCALE
+    // define a token so a user application can check for existence 
+    #define MY_COMPLEX
 
-    extern double my_scalar ;
-    // for thread safety if the user application uses OpenMP
-    #pragma omp threadprivate(my_scalar)
-
-    static inline void my_scale
+    static inline void my_complex_plus
     (
-        double *z,
-        const double *x
+        double complex *z,
+        const double complex *x,
+        const double complex *y
     )
     {
-        (*z) = my_scalar * (*x) ;
+        (*z) = (*x) + (*y) ;
     }
 
-#else
-
-    //--------------------------------------------------------------------------
-    // definitions: code appears just once, in Source/all_user_objects.c
-    //--------------------------------------------------------------------------
-
-    // The following defintions are enabled in only a single place:
-    // SuiteSparse/GraphBLAS/Source/all_user_objects.c.  This is the place
-    // where all user-defined global variables should be defined.
-
-    double my_scalar = 0 ;
+    static inline void my_complex_times
+    (
+        double complex *z,
+        const double complex *x,
+        const double complex *y
+    )
+    {
+        (*z) = (*x) * (*y) ;
+    }
 
 #endif
 
+// GraphBLAS does not have a complex type; this defines one:
+extern GrB_Type My_Complex ;
+
+// The two operators, complex add and multiply:
+extern GrB_BinaryOp My_Complex_plus ;
+
+extern GrB_BinaryOp My_Complex_times ;
+
+// The plus monoid:
+extern GrB_Monoid My_Complex_plus_monoid ;
+
+// the conventional plus-times semiring for C=A*B for the complex case
+extern GrB_Semiring My_Complex_plus_times ;
 
 //------------------------------------------------------------------------------
-// define/declare the GrB_UnaryOp My_scale
+// GraphBLAS/User/Example/my_band.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
-// Unary operator to compute z = my_scalar*x
+// user-defined functions for GxB_select, to choose entries within a band
 
-extern GrB_UnaryOp My_scale ;
+#ifdef GxB_USER_INCLUDE
+
+    #define MY_BAND
+
+    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
+        GrB_Index ncols, const void *x, const void *thunk)
+    {
+        int64_t *lohi = (int64_t *) thunk ;
+        int64_t i2 = (int64_t) i ;
+        int64_t j2 = (int64_t) j ;
+        return ((lohi [0] <= (j2-i2)) && ((j2-i2) <= lohi [1])) ;
+    }
+
+#endif
+
+// Select operator to compute C = tril (triu (A, k1), k2)
+extern GxB_SelectOp My_band ;
 
 #endif
 

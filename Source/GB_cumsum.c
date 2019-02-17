@@ -20,8 +20,8 @@
 // GB_transpose_bucket uses this function to compute row and column pointers.
 // On input, count [j] is the number of nonzeros in column j of a matrix, and
 // count [n] should be zero (it only affects the result k, however).  On
-// output, count [0..n] contains the column pointers of the matrix, and k is
-// the number of nonzeros in count [0:n], which becomes nvec_nonempty for
+// output, count [0..n] contains the column pointers of the matrix, and kresult
+// is the number of nonzeros in count [0:n], which becomes nvec_nonempty for
 // the resulting matrix.
 
 // GB_AxB_flopcount uses this to compute the cumulative sum of the flop

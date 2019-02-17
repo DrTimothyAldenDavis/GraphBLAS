@@ -15,8 +15,6 @@
 // input). The A->x and A->i content is not changed; it remains in whatever
 // shallow/non-shallow state that it had on input).
 
-// A->nvec_nonempty does not change.
-
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
 
 // PARALLEL: a few simple loops, no synchronization or reduction needed
@@ -73,7 +71,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         bool Ap_old_shallow = A->p_shallow ;
         bool Ah_old_shallow = A->h_shallow ;
         int64_t nvec = A->nvec ;
-        ASSERT (A->nvec_nonempty == nvec) ;
+        int64_t nvec_nonempty = 0 ;
 
         // construct the new vector pointers
         int64_t jlast = -1 ;
@@ -86,6 +84,9 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
             int64_t j = Ah_old [k] ;
             ASSERT (j > jlast && j < vdim) ;
             int64_t p = Ap_old [k] ;
+            int64_t pend = Ap_old [k+1] ;
+            int64_t ajnz = pend - p ;
+            if (ajnz > 0) nvec_nonempty++ ;
             for (int64_t jprior = jlast+1 ; jprior <= j ; jprior++)
             { 
                 // mark the start of vectors jlast+1 to j
@@ -111,7 +112,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         A->h = NULL ;
         A->is_hyper = false ;
         A->nvec = vdim ;
-        A->nvec_nonempty = nvec ;
+        A->nvec_nonempty = nvec_nonempty ;
         A->plen = vdim ;
         A->p_shallow = false ;
         A->h_shallow = false ;

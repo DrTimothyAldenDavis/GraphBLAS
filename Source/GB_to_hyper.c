@@ -15,8 +15,6 @@
 // input). The A->x and A->i content is not changed; it remains in whatever
 // shallow/non-shallow state that it had on input).
 
-// A->nvec_nonempty does not change.
-
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
 
 // PARALLEL: a reduction loop
@@ -69,6 +67,12 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
         bool Ap_old_shallow = A->p_shallow ;
 
         int64_t n = A->vdim ;
+
+        if (A->nvec_nonempty < 0)
+        { 
+            A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
+        }
+
         int64_t nvec_new = A->nvec_nonempty ;
 
         //----------------------------------------------------------------------
