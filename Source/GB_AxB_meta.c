@@ -18,6 +18,7 @@
 // (Gustavson), a heap-based saxpy method, or a dot product method.
 
 // FUTURE: an outer-product method for C=A*B'
+// FUTURE: a hash-based method for C=A*B
 
 // parallel: this function will remain sequential.
 // parallelism will be done in GB_AxB_parallel and GB_transpose.

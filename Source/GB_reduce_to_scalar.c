@@ -16,7 +16,7 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-// FUTURE:: add early exit
+// TODO:: add early exit
 
 // PARALLEL: a parallel reduction method.  All entries of the matrix
 // must be reduce to a single scalar.
@@ -122,7 +122,7 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
         // hard-coded below via a switch factory.  If the case is not handled
         // by the switch factory, 'done' remains false.
 
-        // FUTURE: some operators can terminate early
+        // TODO: some operators can terminate early
 
         bool done = false ;
 

@@ -1,7 +1,7 @@
 function test102
 %TEST102 test GB_AxB_flopcount
 
-fprintf ('test102: testing GB_AxB_flopcount\n') ;
+fprintf ('\ntest102: testing GB_AxB_flopcount\n') ;
 
 rng ('default') ;
 
@@ -56,5 +56,5 @@ for m = [0 1 10 100]
     end
 end
 
-fprintf ('test102: all tests passed\n') ;
+fprintf ('\ntest102: all tests passed\n') ;
 

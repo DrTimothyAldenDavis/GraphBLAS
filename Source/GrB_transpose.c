@@ -102,8 +102,8 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
             // If the accum operator is present, entries in the intersection of
             // T and C are typecasted into the accum->ytype, while entries in T
             // but not C are typecasted directly into C->type.  Thus, the
-            // typecast of T (if any) must wait, and be done in call to
-            // GB_add in GB_accum_mask.
+            // typecast of T (if any) must wait, and be done in call to GB_add
+            // in GB_accum_mask.
             // transpose: no typecast, no op, not in place
             info = GB_transpose (&T, A->type, C_is_csc, A, NULL, Context) ;
         }
@@ -131,6 +131,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
     ASSERT (T->is_csc == C->is_csc) ;
     ASSERT_OK (GB_check (T, "T for GrB_transpose", GB0)) ;
+    ASSERT_OK (GB_check (C, "C for GrB_transpose", GB0)) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask M

@@ -19,7 +19,7 @@
 
 // GrB_setElement is the same as GrB_*assign with an implied SECOND accum
 // operator whose ztype, xtype, and ytype are the same as C, with I=i, J=1, a
-// 1-by-1 dense matrix A (where nnz (A) == 1), no Mask, Mask not complemented,
+// 1-by-1 dense matrix A (where nnz (A) == 1), no mask, mask not complemented,
 // C_replace effectively false (its value is ignored), and A transpose
 // effectively false (since transposing a scalar has no effect).
 

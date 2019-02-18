@@ -4237,6 +4237,9 @@ void mexFunction
     ERR (GxB_get (-1, NULL)) ;
     printf ("error expected (bad field):%s\n", GrB_error ( )) ;
 
+    ERR (GxB_get (A, 999, NULL)) ;
+    printf ("error expected (bad field):%s\n", GrB_error ( )) ;
+
     ERR (GxB_set (A, 999, GxB_BY_ROW)) ;
     printf ("error expected:%s\n", GrB_error ( )) ;
 

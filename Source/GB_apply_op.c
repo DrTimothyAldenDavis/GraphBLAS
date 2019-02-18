@@ -12,7 +12,7 @@
 // Compare with GB_transpose_op.c
 
 // PARALLEL: do it here, but it is easy.  Might want to split into separate
-// files like Generated/*AxB*, so worker is not in a macro but in a function.
+// files like Generated/GB_AxB*, so worker is not in a macro but in a function.
 
 #include "GB.h"
 

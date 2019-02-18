@@ -154,7 +154,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (T)) ; ASSERT (!GB_ZOMBIES (T)) ;
 
-    ASSERT (GB_NOT_ALIASED_2 (T, C, M)) ;    // T is not aliased with anything
+//  ASSERT (GB_NOT_ALIASED_2 (T, C, M)) ;    // T is not aliased with anything
 
     //--------------------------------------------------------------------------
     // ensure M and T have the same CSR/CSC format as C
@@ -231,14 +231,17 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // then it would be better to finish the work now, and leave C completed.
     // In this case, GB_transplant (if no accum) or GB_add (with accum),
     // and GB_mask are used for the accum/mask step.  If there is no mask M,
-    // and no accum, then C=T is fast with GB_
+    // and no accum, then C=T is fast with GB_accum_mask.
 
-    if ((M != NULL || accum != NULL) && tnz + cnpending < cnz)
-    {
+    if ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz))
+    { 
 
         //----------------------------------------------------------------------
-        // C(:,:)<M> = accum (C(:,:),T) via GB_subassign
+        // C(:,:)<M> = accum (C(:,:),T) via GB_subassign_kernel
         //----------------------------------------------------------------------
+
+        // Since I == GrB_ALL and J = GrB_ALL, C can be safely aliased with M
+        // or T, or any content of M or T.
 
         info = GB_subassign_kernel (C, C_replace, M, Mask_complement, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, 0, Context) ;
@@ -262,15 +265,17 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // FUTURE::  postpone this until required by GB_add or GB_mask.  It
         // can be skipped if there is no accum and C is cleared or if no M.
         // GB_WAIT (C) ;
-        info = GB_wait (C, Context) ;
-        if (info != GrB_SUCCESS)
+        if (GB_PENDING (C) || GB_ZOMBIES (C))
         {
-            // out of memory
-            GB_MATRIX_FREE (Thandle) ;
-            GB_MATRIX_FREE (&MT) ;
-            return (info) ;
+            info = GB_wait (C, Context) ;
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory
+                GB_MATRIX_FREE (Thandle) ;
+                GB_MATRIX_FREE (&MT) ;
+                return (info) ;
+            }
         }
-
         ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
 
         if (accum == NULL)
@@ -297,8 +302,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Transplant T into Z, typecasting if needed, and free T.  This
             // may need to do a deep copy if T is shallow.  T is always freed
             // by GB_transplant.
-
-            // FUTURE: use GB_shallow_cast and free Thandle later
 
             // Z and T have same vlen, vdim, is_csc, is_hyper
             info = GB_transplant (Z, C->type, Thandle, Context) ;

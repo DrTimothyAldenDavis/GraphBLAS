@@ -6,7 +6,7 @@ function test100
 
 rng ('default') ;
 
-fprintf ('test100: GB_mex_isequal\n') ;
+fprintf ('\ntest100: GB_mex_isequal\n') ;
 
 n = 5 ;
 m = 6 ;

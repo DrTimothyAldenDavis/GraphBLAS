@@ -107,7 +107,7 @@ GrB_Info GB_emult           // C = A.*B
 
     if (C_is_hyper)
     {
-        // FUTURE:: if one matrix has many fewer non-empty vectors than the
+        // FUTURE: if one matrix has many fewer non-empty vectors than the
         // other, then only the sparser one needs to be traversed.  In that
         // case, computing these values can dominate the time.  Could use
         // min (A->nvec, B->nvec) instead.

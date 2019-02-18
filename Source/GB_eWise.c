@@ -144,6 +144,9 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
     // T = A+B, A'+B, A+B', or A'+B'
     //--------------------------------------------------------------------------
 
+    // FUTURE: exploit the mask when computing the result, to reduce
+    // work and memory usage
+
     GrB_Matrix T ;
 
     if (A_transpose)

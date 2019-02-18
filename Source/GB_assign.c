@@ -164,7 +164,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         if (!GB_Type_compatible (M->type, GrB_BOOL))
         { 
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "Mask of type [%s] cannot be typecast to boolean",
+                "M of type [%s] cannot be typecast to boolean",
                 M->type->name))) ;
         }
         // check the mask: size depends on the method
@@ -620,22 +620,46 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // Z = C
     //--------------------------------------------------------------------------
 
-    // GB_subassign_kernel modifies C efficiently in place, but it can only do
-    // so if C is not aliased with A or the mask M.  If C is aliased a copy
-    // must be made.  GB_subassign_kernel operates on the copy, Z, which is
-    // then transplanted back into C when done.  This is costly, and can have
-    // performance implications, but it is the only reasonable method.  If C is
-    // aliased to A, then the assignment is a large one and copying the whole
-    // matrix will not add much time.
+    // GB_subassign_kernel modifies C efficiently in place, but there are cases
+    // when C is aliased with M or A that require the work to not be done in
+    // place.
+
+    // If both I == GrB_ALL and J == GrB_ALL, then C can be safely aliased with
+    // M or A, or both.  In addition, M and/or A may also have shallow
+    // components that refer back to components of C.
+
+    // Otherwise, if I is not GrB_ALL or J is not GrB_ALL, then C cannot be
+    // aliased with M or A.  Nor can any shallow component of M or A refer to
+    // any component of C.  This is an unsafe alias.
+
+    // If C is unsafely aliased a copy must be made.  GB_subassign_kernel
+    // operates on the copy, Z, which is then transplanted back into C when
+    // done.  This is costly, and can have performance implications, but it is
+    // the only reasonable method.  If a copy of C must be made, then it is as
+    // large as M or A, so copying the whole matrix will not add much time.
 
     GrB_Matrix Z ;
-    bool aliased = GB_ALIASED (C, A) || GB_ALIASED (C, M) ;
+
+    bool unsafely_aliased ;
+    if (I == GrB_ALL && J == GrB_ALL)
+    { 
+        // any alias is OK (unless C_replace_phase is true, below)
+        unsafely_aliased = false ; 
+    }
+    else
+    { 
+        unsafely_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
+    }
+
+    // GB_assign cannot tolerate any alias with the input mask,
+    // if the C_replace phase will be performed.
     if (C_replace_phase)
     { 
         // the C_replace_phase requires C and M_in not to be aliased
-        aliased = aliased || GB_ALIASED (C, M_in) ;
+        unsafely_aliased = unsafely_aliased || GB_aliased (C, M_in) ;
     }
-    if (aliased)
+
+    if (unsafely_aliased)
     {
         // Z = duplicate of C
         ASSERT (!GB_ZOMBIES (C)) ;
@@ -675,7 +699,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        if (aliased) GB_MATRIX_FREE (&Z) ;
+        if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
         GB_FREE_ALL ;
         return (info) ;
     }
@@ -712,7 +736,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
         M = M_in ;
         ASSERT (M != NULL) ;
-        ASSERT (GB_NOT_ALIASED (Z, M)) ;
+        ASSERT (!GB_aliased (Z, M)) ;
 
         ASSERT_OK (GB_check (Z, "Z for C-replace-phase", GB0)) ;
         ASSERT_OK (GB_check (M, "M for C-replace-phase", GB0)) ;
@@ -727,7 +751,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (info != GrB_SUCCESS)
             { 
                 // out of memory
-                if (aliased) GB_MATRIX_FREE (&Z) ;
+                if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
                 GB_FREE_ALL ;
                 return (info) ;
             }
@@ -750,7 +774,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (info != GrB_SUCCESS)
             { 
                 // out of memory
-                if (aliased) GB_MATRIX_FREE (&Z) ;
+                if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
                 GB_FREE_ALL ;
                 return (info) ;
             }
@@ -1027,7 +1051,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     // Z and C have the same dimensions, CSR/CSC format, and hypersparsity
 
-    if (aliased)
+    if (unsafely_aliased)
     {
         // zombies can be transplanted into C but pending tuples cannot
         if (GB_PENDING (Z))

@@ -69,7 +69,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             A->is_hyper ? "hypersparse" : "standard",
             A->is_csc ?   "CSC" : "CSR") ;
         GBPR (" vlen: "GBd, A->vlen) ;
-        if (A->nvec_nonempty != -1)
+//        if (A->nvec_nonempty != -1)
         { 
             GBPR (" nvec_nonempty: "GBd, A->nvec_nonempty) ;
         }
@@ -156,10 +156,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         (A->j_pending != NULL) +                // A->j_pending if tuples
         (A->s_pending != NULL) ;                // A->s_pending if tuples
 
-    #ifdef GB_DEVELOPER
+//    #ifdef GB_DEVELOPER
     if (pr > 1) GBPR ("A %p magic "GBd"\n", A, A->magic) ;
     if (pr > 1) GBPR ("number of memory blocks: "GBd"\n", nallocs) ;
-    #endif
+//    #endif
 
     //--------------------------------------------------------------------------
     // check the type
@@ -194,12 +194,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // report shallow structure
     //--------------------------------------------------------------------------
 
-    #ifdef GB_DEVELOPER
+//    #ifdef GB_DEVELOPER
     if (pr > 1) GBPR ("->h: %p shallow: %d\n", A->h, A->h_shallow) ;
     if (pr > 1) GBPR ("->p: %p shallow: %d\n", A->p, A->p_shallow) ;
     if (pr > 1) GBPR ("->i: %p shallow: %d\n", A->i, A->i_shallow) ;
     if (pr > 1) GBPR ("->x: %p shallow: %d\n", A->x, A->x_shallow) ;
-    #endif
+//    #endif
 
     //--------------------------------------------------------------------------
     // check p
@@ -557,11 +557,11 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             kind, A->n_pending, A->max_n_pending, GB_NAME))) ;
     }
 
-    #ifdef GB_DEVELOPER
+//    #ifdef GB_DEVELOPER
     if (pr > 1) GBPR ("->i_pending %p\n", A->i_pending) ;
     if (pr > 1) GBPR ("->j_pending %p\n", A->j_pending) ;
     if (pr > 1) GBPR ("->s_pending %p\n", A->s_pending) ;
-    #endif
+//    #endif
 
     if (A->n_pending == 0)
     {
@@ -679,12 +679,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         GB_CRITICAL (GB_queue_status (A, &head, &prev, &next, &enqd)) ;
 
-        #ifdef GB_DEVELOPER
+//        #ifdef GB_DEVELOPER
         if (pr > 1) GBPR ("queue head  %p\n", head) ;
         if (pr > 1) GBPR ("queue prev  %p\n", prev) ;
         if (pr > 1) GBPR ("queue next  %p\n", next) ;
         if (pr > 1) GBPR ("is in queue %d\n", enqd) ;
-        #endif
+//        #endif
 
         #define GB_IS_NOT_IN_QUEUE(A) (prev == NULL && head != A)
         #define GB_IS_IN_QUEUE(A) (! GB_IS_NOT_IN_QUEUE(A))

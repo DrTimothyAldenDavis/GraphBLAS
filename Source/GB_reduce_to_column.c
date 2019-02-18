@@ -7,22 +7,22 @@
 
 //------------------------------------------------------------------------------
 
-// C<mask> = accum (C,reduce(A)) where C is n-by-1
+// C<M> = accum (C,reduce(A)) where C is n-by-1
 
 // PARALLEL: use a parallel reduction method
 
-// FUTURE:: add early exit;  pass in terminal (NULL if none)
+// TODO:: add early exit;  pass in terminal (NULL if none)
 
 #include "GB.h"
 
-GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
+GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
 (
     GrB_Matrix C,                   // input/output for results, size n-by-1
-    const GrB_Matrix mask,          // optional mask for C, unused if NULL
+    const GrB_Matrix M,             // optional M for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(C,T)
     const GrB_BinaryOp reduce,      // reduce operator for T=reduce(A)
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Descriptor desc,      // descriptor for C, mask, and A
+    const GrB_Descriptor desc,      // descriptor for C, M, and A
     GB_Context Context
 )
 {
@@ -31,16 +31,16 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK2 (C, mask, A)) ;
+    ASSERT (GB_ALIAS_OK2 (C, M, A)) ;
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (mask) ;
+    GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
     ASSERT_OK (GB_check (C, "C input for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (mask, "mask for reduce_BinaryOp", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (M, "M for reduce_BinaryOp", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (accum, "accum for reduce_BinaryOp", GB0)) ;
     ASSERT_OK (GB_check (reduce, "reduce for reduce_BinaryOp", GB0)) ;
     ASSERT_OK (GB_check (A, "A input for reduce_BinaryOp", GB0)) ;
@@ -49,13 +49,13 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
 
-    // C and mask are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
+    // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
     ASSERT (GB_VECTOR_OK (C)) ;
-    ASSERT (GB_IMPLIES (mask != NULL, GB_VECTOR_OK (mask))) ;
+    ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;
 
-    // check domains and dimensions for C<mask> = accum (C,T)
+    // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type ttype = reduce->ztype ;
-    info = GB_compatible (C->type, C, mask, accum, ttype, Context) ;
+    info = GB_compatible (C->type, C, M, accum, ttype, Context) ;
     if (info != GrB_SUCCESS)
     { 
         return (info) ;
@@ -106,7 +106,7 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
     }
 
     // quick return if an empty mask is complemented
-    GB_RETURN_IF_QUICK_MASK (C, C_replace, mask, Mask_comp) ;
+    GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -119,7 +119,7 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
     //--------------------------------------------------------------------------
 
     // GB_WAIT (C) ;
-    GB_WAIT (mask) ;
+    GB_WAIT (M) ;
     GB_WAIT (A) ;
 
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
@@ -233,7 +233,7 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
         // Need to first check A for empty vectors, and compute Ti first.
         // then compute Tx.
 
-        // FUTURE:: Each column reduction can exploit early exit as well,
+        // TODO:: Each column reduction can exploit early exit as well,
         // but 'reduce' is a binary op, not a monoid.  Pass in the terminal
         // value.
 
@@ -255,7 +255,7 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
                 /* tj = Ax [p], the first entry in vector j */              \
                 tj = ax [p] ;                                               \
                 /* subsequent entries in vector j */                        \
-                /* FUTURE:: early exit here */                              \
+                /* TODO:: early exit here */                                \
                 for (p++ ; p < pend ; p++)                                  \
                 {                                                           \
                     /* tj "+=" ax [p] ; */                                  \
@@ -305,7 +305,7 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
                 // zwork = (ztype) Ax [p], the first entry in vector j
                 cast_A_to_Z (zwork, Ax +(p*asize), zsize) ;
                 // subsequent entries in vector j
-                // FUTURE:: early exit
+                // TODO:: early exit
                 for (p++ ; p < pend ; p++)
                 { 
                     // awork = (ztype) Ax [p]
@@ -562,10 +562,10 @@ GrB_Info GB_reduce_to_column        // C<mask> = accum (C,reduce(A))
     ASSERT_OK (GB_check (T, "T output for T = reduce (A)", GB0)) ;
 
     //--------------------------------------------------------------------------
-    // C<mask> = accum (C,T): accumulate the results into C via the mask
+    // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
-    return (GB_accum_mask (C, mask, NULL, accum, &T, C_replace, Mask_comp,
+    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
         Context)) ;
 }
 

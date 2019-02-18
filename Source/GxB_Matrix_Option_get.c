@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_option_get: get an option in a matrix
+// GxB_Matrix_Option_get: get an option in a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// FUTURE:: add an option to query if a matrix is hypersparse or not
+// TODO:: add an option to query if a matrix is hypersparse or not
 
 // not parallel: this function does O(1) work and is already thread-safe.
 

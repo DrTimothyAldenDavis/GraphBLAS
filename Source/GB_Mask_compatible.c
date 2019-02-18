@@ -15,36 +15,44 @@
 
 GrB_Info GB_Mask_compatible     // check type and dimensions of mask
 (
-    const GrB_Matrix Mask,      // mask to check
-    const GrB_Matrix C,         // C<Mask>= ...
+    const GrB_Matrix M,         // mask to check
+    const GrB_Matrix C,         // C<M>= ...
     const GrB_Index nrows,      // size of output if C is NULL (see GB*assign)
     const GrB_Index ncols,
     GB_Context Context
 )
 { 
 
-    ASSERT (GB_ALIAS_OK (C, Mask)) ;
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
 
-    if (Mask != NULL)
+    ASSERT (GB_ALIAS_OK (C, M)) ;
+
+    //--------------------------------------------------------------------------
+    // check the mask M
+    //--------------------------------------------------------------------------
+
+    if (M != NULL)
     { 
 
-        // Mask is typecast to boolean
-        if (!GB_Type_compatible (Mask->type, GrB_BOOL))
+        // M  is typecast to boolean
+        if (!GB_Type_compatible (M->type, GrB_BOOL))
         { 
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
-                "Mask of type [%s] cannot be typecast to boolean",
-                Mask->type->name))) ;
+                "M of type [%s] cannot be typecast to boolean",
+                M->type->name))) ;
         }
 
-        // check the Mask dimensions
+        // check the mask dimensions
         GrB_Index cnrows = (C == NULL) ? nrows : GB_NROWS (C) ;
         GrB_Index cncols = (C == NULL) ? ncols : GB_NCOLS (C) ;
-        if (GB_NROWS (Mask) != cnrows || GB_NCOLS (Mask) != cncols)
+        if (GB_NROWS (M) != cnrows || GB_NCOLS (M) != cncols)
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "Mask is "GBd"-by-"GBd"; "
+                "M is "GBd"-by-"GBd"; "
                 "does not match output dimensions ("GBu"-by-"GBu")",
-                GB_NROWS (Mask), GB_NCOLS (Mask), cnrows, cncols))) ;
+                GB_NROWS (M), GB_NCOLS (M), cnrows, cncols))) ;
         }
     }
 

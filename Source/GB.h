@@ -96,7 +96,8 @@
 // These flags are used for code development.  Uncomment them as needed.
 
 // to turn on debugging, uncomment this line:
-// #undef NDEBUG
+//  TODO
+#undef NDEBUG
 
 // to turn on malloc tracking (for testing only), uncomment this line:
 // #define GB_MALLOC_TRACKING
@@ -434,24 +435,31 @@ mexErrMsgTxt ("gotcha: " __FILE__ " line: " GB_XSTR(__LINE__)) ;
 //------------------------------------------------------------------------------
 
 // GraphBLAS allows all inputs to all user-accessible objects to be aliased, as
-// in GrB_mxm (C, C, C, C, ...), which is valid.  Internal routines are more
-// restrictive.
+// in GrB_mxm (C, C, accum, C, C, ...), which is valid.  Internal routines are
+// more restrictive.
 
-// true if C and X are aliased and not NULL
-#define GB_ALIASED(C,X)            ((C) == (X) && (C) != NULL)
+// true if pointers p1 and p2 are aliased and not NULL
+#define GB_POINTER_ALIASED(p1,p2)   ((p1) == (p2) && (p1) != NULL)
 
 // C may not be aliased with X, Y, or Z.  But X, Y and/or Z may be aliased
 // with each other.
-#define GB_NOT_ALIASED(C,X)        (!GB_ALIASED (C,X))
+#define GB_NOT_ALIASED(C,X)        (!GB_aliased (C,X))
 #define GB_NOT_ALIASED_2(C,X,Y)    \
     (GB_NOT_ALIASED (C,X) && GB_NOT_ALIASED  (C,Y))
 #define GB_NOT_ALIASED_3(C,X,Y,Z)  \
     (GB_NOT_ALIASED (C,X) && GB_NOT_ALIASED_2 (C,Y,Z))
 
 // these macros are always true but are used just for commenting the code
-#define GB_ALIAS_OK(C,X)           (GB_ALIASED (C,X) || GB_NOT_ALIASED (C,X))
+#define GB_ALIAS_OK(C,X)           (GB_aliased (C,X) || GB_NOT_ALIASED (C,X))
 #define GB_ALIAS_OK2(C,X,Y)        (GB_ALIAS_OK (C,X) && GB_ALIAS_OK  (C,Y))
 #define GB_ALIAS_OK3(C,X,Y,Z)      (GB_ALIAS_OK (C,X) && GB_ALIAS_OK2 (C,Y,Z))
+
+// GB_aliased also checks the content of A and B
+bool GB_aliased             // determine if A and B are aliased
+(
+    GrB_Matrix A,           // input A matrix
+    GrB_Matrix B            // input B matrix
+) ;
 
 //------------------------------------------------------------------------------
 // GraphBLAS memory manager
@@ -1663,7 +1671,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
 GrB_Info GB_mask                // C<M> = Z
 (
     GrB_Matrix C_result,        // both input C and result matrix
-    const GrB_Matrix M,         // optional Mask matrix, can be NULL
+    const GrB_Matrix M,         // optional mask matrix, can be NULL
     GrB_Matrix *Zhandle,        // Z = results of computation, might be shallow
                                 // or can even be NULL if M is empty and
                                 // complemented.  Z is freed when done.
@@ -1687,8 +1695,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 (
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
-    bool *C_replace,            // if true replace C before C<Mask>=Z
-    bool *Mask_comp,            // if true use logical negation of Mask
+    bool *C_replace,            // if true replace C before C<M>=Z
+    bool *Mask_comp,            // if true use logical negation of M
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
@@ -1699,16 +1707,16 @@ GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise
 (
     const GrB_Type ctype,       // the type of C (matrix or scalar)
     const GrB_Matrix C,         // the output matrix C; NULL if C is a scalar
-    const GrB_Matrix Mask,      // optional Mask, NULL if no mask
-    const GrB_BinaryOp accum,   // C<Mask> = accum(C,T) is computed
+    const GrB_Matrix M,         // optional mask, NULL if no mask
+    const GrB_BinaryOp accum,   // C<M> = accum(C,T) is computed
     const GrB_Type ttype,       // type of T
     GB_Context Context
 ) ;
 
 GrB_Info GB_Mask_compatible     // check type and dimensions of mask
 (
-    const GrB_Matrix Mask,      // mask to check
-    const GrB_Matrix C,         // C<Mask>= ...
+    const GrB_Matrix M,         // mask to check
+    const GrB_Matrix C,         // C<M>= ...
     const GrB_Index nrows,      // size of output if C is NULL (see GB*assign)
     const GrB_Index ncols,
     GB_Context Context
@@ -2107,10 +2115,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     GB_Context Context
 ) ;
 
-GrB_Info GB_subassign_scalar        // C(Rows,Cols)<Mask> += x
+GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // mask for C(Rows,Cols), unused if NULL
+    const GrB_Matrix M,             // mask for C(Rows,Cols), unused if NULL
     const GrB_BinaryOp accum,       // accum for Z=accum(C(Rows,Cols),T)
     const void *scalar,             // scalar to assign to C(Rows,Cols)
     const GB_Type_code scalar_code, // type code of scalar to assign
@@ -2118,14 +2126,14 @@ GrB_Info GB_subassign_scalar        // C(Rows,Cols)<Mask> += x
     const GrB_Index nRows,          // number of row indices
     const GrB_Index *Cols,          // column indices
     const GrB_Index nCols,          // number of column indices
-    const GrB_Descriptor desc,      // descriptor for C(Rows,Cols) and Mask
+    const GrB_Descriptor desc,      // descriptor for C(Rows,Cols) and M
     GB_Context Context
 ) ;
 
-GrB_Info GB_assign_scalar           // C<Mask>(Rows,Cols) += x
+GrB_Info GB_assign_scalar           // C<M>(Rows,Cols) += x
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // mask for C(Rows,Cols), unused if NULL
+    const GrB_Matrix M,             // mask for C(Rows,Cols), unused if NULL
     const GrB_BinaryOp accum,       // accum for Z=accum(C(Rows,Cols),T)
     const void *scalar,             // scalar to assign to C(Rows,Cols)
     const GB_Type_code scalar_code, // type code of scalar to assign
@@ -2133,7 +2141,7 @@ GrB_Info GB_assign_scalar           // C<Mask>(Rows,Cols) += x
     const GrB_Index nRows,          // number of row indices
     const GrB_Index *Cols,          // column indices
     const GrB_Index nCols,          // number of column indices
-    const GrB_Descriptor desc,      // descriptor for C and Mask
+    const GrB_Descriptor desc,      // descriptor for C and M
     GB_Context Context
 ) ;
 
@@ -2463,10 +2471,10 @@ char *GB_thread_local_access ( ) ;
         return (info) ;                                                      \
     }
 
-// C<Mask>=Z ignores Z if an empty Mask is complemented, so return from
+// C<M>=Z ignores Z if an empty mask is complemented, so return from
 // the method without computing anything.  But do apply the mask.
-#define GB_RETURN_IF_QUICK_MASK(C, C_replace, Mask, Mask_comp)          \
-    if (Mask_comp && Mask == NULL)                                      \
+#define GB_RETURN_IF_QUICK_MASK(C, C_replace, M, Mask_comp)             \
+    if (Mask_comp && M == NULL)                                         \
     {                                                                   \
         /* C<~NULL>=NULL since result does not depend on computing Z */ \
         return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;      \

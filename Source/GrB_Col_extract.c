@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Col_extract: w<mask> = accum (w, A(I,j)) or A(j,I)'
+// GrB_Col_extract: w<M> = accum (w, A(I,j)) or A(j,I)'
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -16,16 +16,16 @@
 
 #include "GB.h"
 
-GrB_Info GrB_Col_extract        // w<mask> = accum (w, A(I,j)) or (A(j,I))'
+GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
 (
     GrB_Vector w,               // input/output vector for results
-    const GrB_Vector mask,      // optional mask for w, unused if NULL
+    const GrB_Vector M,         // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,   // optional accum for z=accum(w,t)
     const GrB_Matrix A,         // first input:  matrix A
     const GrB_Index *I,         // row indices
     GrB_Index ni,               // number of row indices
     GrB_Index j,                // column index
-    const GrB_Descriptor desc   // descriptor for w, mask, and A
+    const GrB_Descriptor desc   // descriptor for w, M, and A
 )
 {
 
@@ -33,12 +33,12 @@ GrB_Info GrB_Col_extract        // w<mask> = accum (w, A(I,j)) or (A(j,I))'
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Col_extract (w, mask, accum, A, I, ni, j, desc)") ;
+    GB_WHERE ("GrB_Col_extract (w, M, accum, A, I, ni, j, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
-    GB_RETURN_IF_FAULTY (mask) ;
+    GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     ASSERT (GB_VECTOR_OK (w)) ;
-    ASSERT (GB_IMPLIES (mask != NULL, GB_VECTOR_OK (mask))) ;
+    ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
@@ -66,7 +66,7 @@ GrB_Info GrB_Col_extract        // w<mask> = accum (w, A(I,j)) or (A(j,I))'
 
     return (GB_extract (
         (GrB_Matrix) w,    C_replace,   // w as a matrix, and descriptor
-        (GrB_Matrix) mask, Mask_comp,   // mask a matrix, and its descriptor
+        (GrB_Matrix) M,    Mask_comp,   // mask a matrix, and its descriptor
         accum,                          // optional accum for z=accum(w,t)
         A,                 A_transpose, // A and its descriptor
         I, ni,                          // row indices I and length ni

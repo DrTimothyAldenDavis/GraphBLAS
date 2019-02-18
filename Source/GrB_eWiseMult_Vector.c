@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// w<mask> = accum (w,u.*v)
+// w<M> = accum (w,u.*v)
 
 // parallel: not here but in GB_emult
 
@@ -19,17 +19,17 @@
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                       \
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;                                       \
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;                                       \
-    GB_RETURN_IF_FAULTY (mask) ;                                            \
+    GB_RETURN_IF_FAULTY (M) ;                                               \
     ASSERT (GB_VECTOR_OK (w)) ;                                             \
     ASSERT (GB_VECTOR_OK (u)) ;                                             \
     ASSERT (GB_VECTOR_OK (v)) ;                                             \
-    ASSERT (mask == NULL || GB_VECTOR_OK (mask)) ;                          \
+    ASSERT (M == NULL || GB_VECTOR_OK (M)) ;                                \
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, xx1, xx2, xx3) ;   \
-    /* C<mask> = accum (C,T) where T = A.*B, A'.*B, A.*B', or A'.*B' */     \
+    /* C<M> = accum (C,T) where T = A.*B, A'.*B, A.*B', or A'.*B' */        \
     return (GB_eWise (                                                      \
         (GrB_Matrix) w,    C_replace,   /* w and its descriptor         */  \
-        (GrB_Matrix) mask, Mask_comp,   /* mask and its descriptor      */  \
+        (GrB_Matrix) M,    Mask_comp,   /* mask and its descriptor      */  \
         accum,                          /* for accum (w,t)              */  \
         op,                             /* operator that defines t=u.*v */  \
         (GrB_Matrix) u,    false,       /* u, never transposed          */  \
@@ -42,15 +42,15 @@
 // GrB_eWiseMult_Vector_BinaryOp: vector element-wise multiplication
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_eWiseMult_Vector_BinaryOp       // w<mask> = accum (w, u.*v)
+GrB_Info GrB_eWiseMult_Vector_BinaryOp       // w<M> = accum (w, u.*v)
 (
     GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_Vector M,             // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_BinaryOp mult,        // defines '.*' for t=u.*v
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector v,             // second input: vector v
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
 
@@ -58,8 +58,7 @@ GrB_Info GrB_eWiseMult_Vector_BinaryOp       // w<mask> = accum (w, u.*v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_eWiseMult_Vector_BinaryOp (w, mask, accum, mult, u, v,"
-        " desc)") ;
+    GB_WHERE ("GrB_eWiseMult_Vector_BinaryOp (w, M, accum, mult, u, v, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (mult) ;
 
     //--------------------------------------------------------------------------
@@ -73,15 +72,15 @@ GrB_Info GrB_eWiseMult_Vector_BinaryOp       // w<mask> = accum (w, u.*v)
 // GrB_eWiseMult_Vector_Monoid: vector element-wise multiplication
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_eWiseMult_Vector_Monoid         // w<mask> = accum (w, u.*v)
+GrB_Info GrB_eWiseMult_Vector_Monoid         // w<M> = accum (w, u.*v)
 (
     GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_Vector M,             // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Monoid monoid,        // defines '.*' for t=u.*v
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector v,             // second input: vector v
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
 
@@ -89,8 +88,7 @@ GrB_Info GrB_eWiseMult_Vector_Monoid         // w<mask> = accum (w, u.*v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_eWiseMult_Vector_Monoid (w, mask, accum, monoid, u, v,"
-        " desc)") ;
+    GB_WHERE ("GrB_eWiseMult_Vector_Monoid (w, M, accum, monoid, u, v, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
     //--------------------------------------------------------------------------
@@ -104,15 +102,15 @@ GrB_Info GrB_eWiseMult_Vector_Monoid         // w<mask> = accum (w, u.*v)
 // GrB_eWiseMult_Vector_Semiring: vector element-wise multiplication
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_eWiseMult_Vector_Semiring       // w<Mask> = accum (w, u.*v)
+GrB_Info GrB_eWiseMult_Vector_Semiring       // w<M> = accum (w, u.*v)
 (
     GrB_Vector w,                   // input/output vector for results
-    const GrB_Vector mask,          // optional mask for w, unused if NULL
+    const GrB_Vector M,             // optional mask for w, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GrB_Semiring semiring,    // defines '.*' for t=u.*v
     const GrB_Vector u,             // first input:  vector u
     const GrB_Vector v,             // second input: vector v
-    const GrB_Descriptor desc       // descriptor for w and mask
+    const GrB_Descriptor desc       // descriptor for w and M
 )
 { 
 
@@ -120,7 +118,7 @@ GrB_Info GrB_eWiseMult_Vector_Semiring       // w<Mask> = accum (w, u.*v)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_eWiseMult_Vector_Semiring (w, mask, accum, semiring, u, v,"
+    GB_WHERE ("GrB_eWiseMult_Vector_Semiring (w, M, accum, semiring, u, v,"
         " desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 

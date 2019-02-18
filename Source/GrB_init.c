@@ -34,6 +34,8 @@
 
 // not parallel: this function does O(1) work and is already thread-safe.
 
+// TODO: add GxB_init (mode, malloc, calloc, realloc, free, abort)
+
 #include "GB.h"
 
 //------------------------------------------------------------------------------

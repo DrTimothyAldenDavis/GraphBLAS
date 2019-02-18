@@ -1,4 +1,4 @@
-% function test101
+function test101
 %TEST101 test import/export
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -6,7 +6,7 @@
 
 rng ('default') ;
 
-fprintf ('test101: GB_mex_export\n') ;
+fprintf ('\ntest101: GB_mex_export\n') ;
 
 for n = 1:5
     for m = 1:5

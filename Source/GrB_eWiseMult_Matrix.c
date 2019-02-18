@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C<Mask> = accum (C,A.*B) and variations.
+// C<M> = accum (C,A.*B) and variations.
 
 // parallel: not here but in GB_emult
 
@@ -19,13 +19,13 @@
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                       \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                       \
     GB_RETURN_IF_NULL_OR_FAULTY (B) ;                                       \
-    GB_RETURN_IF_FAULTY (Mask) ;                                            \
+    GB_RETURN_IF_FAULTY (M) ;                                               \
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_tran, B_tran, xx) ; \
-    /* C<Mask> = accum (C,T) where T = A.*B, A'.*B, A.*B', or A'.*B' */     \
+    /* C<M> = accum (C,T) where T = A.*B, A'.*B, A.*B', or A'.*B' */     \
     return (GB_eWise (                                                      \
         C,          C_replace,      /* C matrix and its descriptor      */  \
-        Mask,       Mask_comp,      /* Mask matrix and its descriptor   */  \
+        M,          Mask_comp,      /* mask matrix and its descriptor   */  \
         accum,                      /* for accum (C,T)                  */  \
         op,                         /* operator that defines T=A.*B     */  \
         A,          A_tran,         /* A matrix and its descriptor      */  \
@@ -38,15 +38,15 @@
 // GrB_eWiseMult_Matrix_BinaryOp: matrix element-wise multiplication
 //------------------------------------------------------------------------------
 
-GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
+GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<M> = accum (C, A.*B)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp mult,        // defines '.*' for T=A.*B
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
 
@@ -54,7 +54,7 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_eWiseMult_Matrix_BinaryOp (C, Mask, accum, mult, A, B,"
+    GB_WHERE ("GrB_eWiseMult_Matrix_BinaryOp (C, M, accum, mult, A, B,"
         " desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (mult) ;
 
@@ -69,17 +69,17 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
 // GrB_eWiseMult_Matrix_Monoid: matrix element-wise multiplication
 //------------------------------------------------------------------------------
 
-// C<Mask> = accum (C,A.*B) and variations.
+// C<M> = accum (C,A.*B) and variations.
 
-GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<Mask> = accum (C, A.*B)
+GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<M> = accum (C, A.*B)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Monoid monoid,        // defines '.*' for T=A.*B
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
 
@@ -87,8 +87,7 @@ GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<Mask> = accum (C, A.*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_eWiseMult_Matrix_Monoid (C, Mask, accum, monoid, A, B,"
-        " desc)") ;
+    GB_WHERE ("GrB_eWiseMult_Matrix_Monoid (C, M, accum, monoid, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
     //--------------------------------------------------------------------------
@@ -102,17 +101,17 @@ GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<Mask> = accum (C, A.*B)
 // GrB_eWiseMult_Matrix_Semiring: matrix element-wise multiplication
 //------------------------------------------------------------------------------
 
-// C<Mask> = accum (C,A.*B) and variations.
+// C<M> = accum (C,A.*B) and variations.
 
-GrB_Info GrB_eWiseMult_Matrix_Semiring       // C<Mask> = accum (C, A.*B)
+GrB_Info GrB_eWiseMult_Matrix_Semiring       // C<M> = accum (C, A.*B)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Semiring semiring,    // defines '.*' for T=A.*B
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B
 )
 { 
 
@@ -120,7 +119,7 @@ GrB_Info GrB_eWiseMult_Matrix_Semiring       // C<Mask> = accum (C, A.*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_eWiseMult_Matrix_Semiring (C, Mask, accum, semiring, A, B,"
+    GB_WHERE ("GrB_eWiseMult_Matrix_Semiring (C, M, accum, semiring, A, B,"
         " desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 

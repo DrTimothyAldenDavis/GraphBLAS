@@ -84,19 +84,71 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT (C != NULL) ;
+
     if (I == GrB_ALL && J == GrB_ALL)
-    {
-        // C(:,:)<C> = ... is valid
+    { 
+        // C(:,:)<C> = C ;  // valid.
+        // This case can be used by GB_assign and GB_subassign, which do the
+        // work for the user-callable GrB_assign and GxB_subassign.  It can
+        // also occur for GB_accum_mask, which only calls this function with
+        // I == GrB_ALL and J == GrB_ALL.
         ASSERT (GB_ALIAS_OK (C, M)) ;
+        ASSERT (GB_ALIAS_OK (C, A)) ;
+
+        if (GB_aliased (C, M))
+        { 
+            // printf ("C and M aliased: (%d):", C == M) ;
+            if (GB_POINTER_ALIASED (C->h, M->h))
+            { 
+                ; // printf (" h") ;
+            }
+            if (GB_POINTER_ALIASED (C->p, M->p))
+            { 
+                ; // printf (" p") ;
+            }
+            if (GB_POINTER_ALIASED (C->i, M->i))
+            { 
+                ; // printf (" i") ;
+            }
+            if (GB_POINTER_ALIASED (C->x, M->x))
+            { 
+                ; // printf (" x") ;
+            }
+            // printf ("\n") ;
+        }
+
+        if (GB_aliased (C, A))
+        { 
+            // printf ("C and A aliased: (%d):", C == A) ;
+            if (GB_POINTER_ALIASED (C->h, A->h))
+            { 
+                ; // printf (" h") ;
+            }
+            if (GB_POINTER_ALIASED (C->p, A->p))
+            { 
+                ; // printf (" p") ;
+            }
+            if (GB_POINTER_ALIASED (C->i, A->i))
+            { 
+                ; // printf (" i") ;
+            }
+            if (GB_POINTER_ALIASED (C->x, A->x))
+            { 
+                ; // printf (" x") ;
+            }
+            // printf ("\n") ;
+        }
+
     }
     else
-    {
-        // C(I,J)<M> = ... requires C and M to not be aliased
-        ASSERT (GB_NOT_ALIASED (C, M)) ;
+    { 
+        // C(I,J)<M> = A ;  // requires C not to be aliased with M or A.
+        // This case can be used by GB_assign and GB_subassign.  GB_accum_mask
+        // does not use this case.
+        ASSERT (!GB_aliased (C, M)) ;
+        ASSERT (!GB_aliased (C, A)) ;
     }
-
-    // TODO:: allow this when I and J are both GrB_ALL
-    ASSERT (GB_NOT_ALIASED (C, A)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -170,7 +222,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     // have the same size: length(I)-by-length(J)
 
     //--------------------------------------------------------------------------
-    // deterimine the type and nnz of A (from a scalar or matrix)
+    // determine the type and nnz of A (from a scalar or matrix)
     //--------------------------------------------------------------------------
 
     // also determines if A is dense.  The scalar is always dense.
@@ -448,6 +500,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         int64_t pC = pC_start ;                                                \
         int64_t pright = pC_end - 1 ;                                          \
         bool found, is_zombie ;                                                \
+        /* PARALLEL: always check for zombies */                               \
         GB_BINARY_ZOMBIE (iC, Ci, pC, pright, found, C->nzombies, is_zombie) ;
 
     //--------------------------------------------------------------------------
@@ -494,7 +547,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     #define GB_DELETE                                                   \
     {                                                                   \
         /* turn C(iC,jC) into a zombie */                               \
-        C->nzombies++ ;                                                 \
+        C->nzombies++ ;  /* PARALLEL: thread private; reduce when done*/\
         Ci [pC] = GB_FLIP (iC) ;                                        \
     }
 
@@ -503,7 +556,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         /* bring a zombie C(iC,jC) back to life;                 */     \
         /* the value of C(iC,jC) must also be assigned.          */     \
         Ci [pC] = iC ;                                                  \
-        C->nzombies-- ;                                                 \
+        C->nzombies-- ;  /* PARALLEL: thread private; reduce when done*/\
     }
 
     #define GB_INSERT(aij)                                              \
@@ -1236,14 +1289,6 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         M != NULL && !Mask_comp) ;
 
     int64_t cnz = GB_NNZ (C) ;      // includes zombies but not pending tuples
-
-    /*
-    bool C_empty = (cnz == 0 && C->n_pending == 0) ;
-    if (C_empty)
-    {
-        fprintf (stderr, "C(:)= is empty\n") ;
-    }
-    */
 
     if (C_Mask_scalar)
     { 
@@ -2059,7 +2104,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                         //------------------------------------------------------
 
                         for ( ; pA < pA_end ; pA++)
-                        {
+                        { 
 
                             //--------------------------------------------------
                             // consider the entry A(iA,j)
@@ -2201,7 +2246,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                             //--------------------------------------------------
 
                             if (mij)
-                            {
+                            { 
 
                                 //----------------------------------------------
                                 // C(iC,jC) += A(iA,j)
@@ -3314,6 +3359,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
     // insert C in the queue if it has work to do and isn't already queued
     //--------------------------------------------------------------------------
+
+    // PARALLEL: all threads need to sum up their local changes first
 
     if (C->nzombies == 0 && C->n_pending == 0)
     { 

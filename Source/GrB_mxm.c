@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// C<Mask> = accum (C,A*B) and variations.
+// C<M> = accum (C,A*B) and variations.
 
 // The input matrices A and B are optionally transposed, as determined by the
 // Descriptor desc.
@@ -16,15 +16,15 @@
 
 #include "GB.h"
 
-GrB_Info GrB_mxm                    // C<Mask> = accum (C, A*B)
+GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const GrB_Matrix Mask,          // optional mask for C, unused if NULL
+    const GrB_Matrix M,             // optional mask for C, unused if NULL
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Semiring semiring,    // defines '+' and '*' for T=A*B
     const GrB_Matrix A,             // first input:  matrix A
     const GrB_Matrix B,             // second input: matrix B
-    const GrB_Descriptor desc       // descriptor for C, Mask, A, and B,
+    const GrB_Descriptor desc       // descriptor for C, M, A, and B,
                                     // and method used for C=A*B
 )
 { 
@@ -33,9 +33,9 @@ GrB_Info GrB_mxm                    // C<Mask> = accum (C, A*B)
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_mxm (C, Mask, accum, semiring, A, B, desc)") ;
+    GB_WHERE ("GrB_mxm (C, M, accum, semiring, A, B, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
-    GB_RETURN_IF_FAULTY (Mask) ;
+    GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (B) ;
 
@@ -44,13 +44,13 @@ GrB_Info GrB_mxm                    // C<Mask> = accum (C, A*B)
         B_transpose, AxB_method) ;
 
     //--------------------------------------------------------------------------
-    // C<Mask> = accum (C,A*B) and variations, using the mxm kernel
+    // C<M> = accum (C,A*B) and variations, using the mxm kernel
     //--------------------------------------------------------------------------
 
-    // C<Mask> = accum (C,T) where T = A*B, A'*B, A*B', or A'*B'
+    // C<M> = accum (C,T) where T = A*B, A'*B, A*B', or A'*B'
     return (GB_mxm (
         C,          C_replace,      // C matrix and its descriptor
-        Mask,       Mask_comp,      // Mask matrix and its descriptor
+        M,          Mask_comp,      // mask matrix and its descriptor
         accum,                      // for accum (C,T)
         semiring,                   // semiring that defines T=A*B
         A,          A_transpose,    // A matrix and its descriptor

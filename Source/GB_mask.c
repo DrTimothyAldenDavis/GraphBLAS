@@ -9,7 +9,7 @@
 
 // C<M> = Z
 
-// Nearly all GraphBLAS operations take a Mask, which controls how the result
+// Nearly all GraphBLAS operations take a mask, which controls how the result
 // of the computations, Z, are copied into the result matrix C.  The following
 // working MATLAB script, GB_spec_mask, defines how this is done.
 
@@ -131,7 +131,7 @@
 GrB_Info GB_mask                // C<M> = Z
 (
     GrB_Matrix C_result,        // both input C and result matrix
-    const GrB_Matrix M,         // optional Mask matrix, can be NULL
+    const GrB_Matrix M,         // optional mask matrix, can be NULL
     GrB_Matrix *Zhandle,        // Z = results of computation, might be shallow
                                 // or can even be NULL if M is empty and
                                 // complemented.  Z is freed when done.
@@ -189,14 +189,14 @@ GrB_Info GB_mask                // C<M> = Z
     {
 
         //----------------------------------------------------------------------
-        // there is no Mask (implicitly M(i,j)=1 for all i and j)
+        // there is no mask (implicitly M(i,j)=1 for all i and j)
         //----------------------------------------------------------------------
 
         if (!Mask_complement)
         { 
 
             //------------------------------------------------------------------
-            // Mask is not complemented: this is the default
+            // mask is not complemented: this is the default
             //------------------------------------------------------------------
 
             // C_result = Z, but make sure a deep copy is made as needed.  It is
@@ -214,7 +214,7 @@ GrB_Info GB_mask                // C<M> = Z
         {
 
             //------------------------------------------------------------------
-            // an empty Mask is complemented: Z is ignored
+            // an empty mask is complemented: Z is ignored
             //------------------------------------------------------------------
 
             // Z is ignored, and can even be NULL.  The method that calls
@@ -250,7 +250,7 @@ GrB_Info GB_mask                // C<M> = Z
     {
 
         //----------------------------------------------------------------------
-        // the Mask is present
+        // the mask is present
         //----------------------------------------------------------------------
 
         GrB_Matrix C ;
@@ -265,7 +265,7 @@ GrB_Info GB_mask                // C<M> = Z
 
         if (C_replace)
         {
-            if (GB_ALIASED (C_result, M))
+            if (GB_aliased (C_result, M))
             { 
                 // C_result and M are aliased.  This is OK, unless C_replace is
                 // true.  In this case, M must be left unchanged but C_result
@@ -439,8 +439,8 @@ GrB_Info GB_mask                // C<M> = Z
                     //----------------------------------------------------------
 
                     // Given one or both C(i,j), Z(i,j):
-                    // R = Z .* M + C .* (~M) ;   Mask not complemented
-                    // R = Z .* (~M) + C .* M ;   Mask complemented
+                    // R = Z .* M + C .* (~M) ;   mask not complemented
+                    // R = Z .* (~M) + C .* M ;   mask complemented
 
                     if (i == iC)
                     {
@@ -551,8 +551,8 @@ GrB_Info GB_mask                // C<M> = Z
                     //----------------------------------------------------------
 
                     // Given one or both C(i,j), Z(i,j):
-                    // R = Z .* M + C .* (~M) ;   Mask not complemented
-                    // R = Z .* (~M) + C .* M ;   Mask complemented
+                    // R = Z .* M + C .* (~M) ;   mask not complemented
+                    // R = Z .* (~M) + C .* M ;   mask complemented
 
                     if (i == iC)
                     {
@@ -671,8 +671,8 @@ GrB_Info GB_mask                // C<M> = Z
                     //----------------------------------------------------------
 
                     // Given one, two, or all three of C(i,j), Z(i,j), M(i,j)
-                    // R = Z .* M + C .* (~M) ;   Mask not complemented
-                    // R = Z .* (~M) + C .* M ;   Mask complemented
+                    // R = Z .* M + C .* (~M) ;   mask not complemented
+                    // R = Z .* (~M) + C .* M ;   mask complemented
 
                     if (i == iC)
                     {

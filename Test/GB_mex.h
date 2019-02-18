@@ -261,6 +261,16 @@ bool GB_mx_isequal  // true if A and B are exactly the same
 
 int GB_mx_Sauna_nmalloc ( ) ;  // return # of mallocs in Saunas in use
 
+GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
+(
+    char *arg_name,         // name of the output matrix
+    mxArray *arg,           // string to select the alias
+    char *arg1_name,        // name of first possible alias
+    GrB_Matrix arg1,        // first possible alias
+    char *arg2_name,        // name of 2nd possible alias
+    GrB_Matrix arg2         // second possible alias
+) ;
+
 //------------------------------------------------------------------------------
 
 #ifdef GB_PRINT_MALLOC
