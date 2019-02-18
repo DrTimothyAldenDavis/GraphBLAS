@@ -96,8 +96,7 @@
 // These flags are used for code development.  Uncomment them as needed.
 
 // to turn on debugging, uncomment this line:
-//  TODO
-#undef NDEBUG
+// #undef NDEBUG
 
 // to turn on malloc tracking (for testing only), uncomment this line:
 // #define GB_MALLOC_TRACKING
@@ -1837,14 +1836,15 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
     GB_Context Context
 ) ;
 
-GrB_Info GB_reduce_to_column        // w<mask> = accum (w,reduce(A))
+GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
 (
-    GrB_Matrix w,                   // input/output for results, size n-by-1
-    const GrB_Matrix mask,          // optional mask for w, unused if NULL
-    const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
-    const GrB_BinaryOp reduce,      // reduce operator for t=reduce(A)
+    GrB_Matrix C,                   // input/output for results, size n-by-1
+    const GrB_Matrix M,             // optional M for C, unused if NULL
+    const GrB_BinaryOp accum,       // optional accum for z=accum(C,T)
+    const GrB_BinaryOp reduce,      // reduce operator for T=reduce(A)
+    const GB_void *terminal,        // for early exit (NULL if none)
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Descriptor desc,      // descriptor for w, mask, and A
+    const GrB_Descriptor desc,      // descriptor for C, M, and A
     GB_Context Context
 ) ;
 

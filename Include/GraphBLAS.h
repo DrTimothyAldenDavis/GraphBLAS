@@ -2,7 +2,7 @@
 // GraphBLAS.h: definitions for the GraphBLAS package
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -86,13 +86,13 @@
 
 // The 'about' string the describes this particular implementation of GraphBLAS:
 #define GxB_ABOUT \
-"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, "                   \
+"SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, "                   \
 "All Rights Reserved.\n"                                                     \
 "http://suitesparse.com  Dept of Computer Sci. & Eng, Texas A&M University\n"
 
 // The GraphBLAS license for this particular implementation of GraphBLAS:
 #define GxB_LICENSE \
-"SuiteSparse:GraphBLAS, Copyright 2017-2018, Timothy A. Davis\n"             \
+"SuiteSparse:GraphBLAS, Copyright 2017-2019, Timothy A. Davis\n"             \
 "\n"                                                                         \
 "Licensed under the Apache License, Version 2.0 (the \"License\");\n"        \
 "you may not use SuiteSparse:GraphBLAS except in compliance with the\n"      \

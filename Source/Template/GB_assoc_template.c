@@ -33,23 +33,29 @@ if (typecode != GB_BOOL_code)
 
     switch (opcode)
     {
+
+        // MAX and MIN monoids have terminal values
+        #undef  GB_HAS_TERMINAL
+        #define GB_HAS_TERMINAL true
+
         case GB_MIN_opcode   :
 
             switch (typecode)
             {
                 #define GB_DUP(w,t) w = GB_IMIN (w,t)
-                case GB_INT8_code   : GB_WORKER (int8_t)   ; break ;
-                case GB_UINT8_code  : GB_WORKER (uint8_t)  ; break ;
-                case GB_INT16_code  : GB_WORKER (int16_t)  ; break ;
-                case GB_UINT16_code : GB_WORKER (uint16_t) ; break ;
-                case GB_INT32_code  : GB_WORKER (int32_t)  ; break ;
-                case GB_UINT32_code : GB_WORKER (uint32_t) ; break ;
-                case GB_INT64_code  : GB_WORKER (int64_t)  ; break ;
-                case GB_UINT64_code : GB_WORKER (uint64_t) ; break ;
+                case GB_INT8_code   : GB_ASSOC_WORKER (int8_t  , INT8_MIN  )
+                case GB_INT16_code  : GB_ASSOC_WORKER (int16_t , INT16_MIN )
+                case GB_INT32_code  : GB_ASSOC_WORKER (int32_t , INT32_MIN )
+                case GB_INT64_code  : GB_ASSOC_WORKER (int64_t , INT64_MIN )
+
+                case GB_UINT8_code  : GB_ASSOC_WORKER (uint8_t , 0         )
+                case GB_UINT16_code : GB_ASSOC_WORKER (uint16_t, 0         )
+                case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, 0         )
+                case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, 0         )
                 #undef  GB_DUP
                 #define GB_DUP(w,t) w = GB_FMIN (w,t)
-                case GB_FP32_code   : GB_WORKER (float)    ; break ;
-                case GB_FP64_code   : GB_WORKER (double)   ; break ;
+                case GB_FP32_code   : GB_ASSOC_WORKER (float   , -INFINITY )
+                case GB_FP64_code   : GB_ASSOC_WORKER (double  , -INFINITY )
                 #undef  GB_DUP
                 default: ;
             }
@@ -60,38 +66,42 @@ if (typecode != GB_BOOL_code)
             switch (typecode)
             {
                 #define GB_DUP(w,t) w = GB_IMAX (w,t)
-                case GB_INT8_code   : GB_WORKER (int8_t)   ; break ;
-                case GB_UINT8_code  : GB_WORKER (uint8_t)  ; break ;
-                case GB_INT16_code  : GB_WORKER (int16_t)  ; break ;
-                case GB_UINT16_code : GB_WORKER (uint16_t) ; break ;
-                case GB_INT32_code  : GB_WORKER (int32_t)  ; break ;
-                case GB_UINT32_code : GB_WORKER (uint32_t) ; break ;
-                case GB_INT64_code  : GB_WORKER (int64_t)  ; break ;
-                case GB_UINT64_code : GB_WORKER (uint64_t) ; break ;
+                case GB_INT8_code   : GB_ASSOC_WORKER (int8_t  , INT8_MAX  )
+                case GB_INT16_code  : GB_ASSOC_WORKER (int16_t , INT16_MAX )
+                case GB_INT32_code  : GB_ASSOC_WORKER (int32_t , INT32_MAX )
+                case GB_INT64_code  : GB_ASSOC_WORKER (int64_t , INT64_MAX )
+                case GB_UINT8_code  : GB_ASSOC_WORKER (uint8_t , UINT8_MAX )
+                case GB_UINT16_code : GB_ASSOC_WORKER (uint16_t, UINT16_MAX)
+                case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, UINT32_MAX)
+                case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, UINT64_MAX)
                 #undef  GB_DUP
                 #define GB_DUP(w,t) w = GB_FMAX (w,t)
-                case GB_FP32_code   : GB_WORKER (float)    ; break ;
-                case GB_FP64_code   : GB_WORKER (double)   ; break ;
+                case GB_FP32_code   : GB_ASSOC_WORKER (float   , INFINITY  )
+                case GB_FP64_code   : GB_ASSOC_WORKER (double  , INFINITY  )
                 #undef  GB_DUP
                 default: ;
             }
             break ;
+
+        // PLUS and TIMES monoids do not have terminal values
+        #undef  GB_HAS_TERMINAL
+        #define GB_HAS_TERMINAL false
 
         case GB_PLUS_opcode  :
 
             #define GB_DUP(w,t) w += t
             switch (typecode)
             {
-                case GB_INT8_code   : GB_WORKER (int8_t)   ; break ;
-                case GB_UINT8_code  : GB_WORKER (uint8_t)  ; break ;
-                case GB_INT16_code  : GB_WORKER (int16_t)  ; break ;
-                case GB_UINT16_code : GB_WORKER (uint16_t) ; break ;
-                case GB_INT32_code  : GB_WORKER (int32_t)  ; break ;
-                case GB_UINT32_code : GB_WORKER (uint32_t) ; break ;
-                case GB_INT64_code  : GB_WORKER (int64_t)  ; break ;
-                case GB_UINT64_code : GB_WORKER (uint64_t) ; break ;
-                case GB_FP32_code   : GB_WORKER (float)    ; break ;
-                case GB_FP64_code   : GB_WORKER (double)   ; break ;
+                case GB_INT8_code   : GB_ASSOC_WORKER (int8_t  , 0)
+                case GB_INT16_code  : GB_ASSOC_WORKER (int16_t , 0)
+                case GB_INT32_code  : GB_ASSOC_WORKER (int32_t , 0)
+                case GB_INT64_code  : GB_ASSOC_WORKER (int64_t , 0)
+                case GB_UINT8_code  : GB_ASSOC_WORKER (uint8_t , 0)
+                case GB_UINT16_code : GB_ASSOC_WORKER (uint16_t, 0)
+                case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, 0)
+                case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, 0)
+                case GB_FP32_code   : GB_ASSOC_WORKER (float   , 0)
+                case GB_FP64_code   : GB_ASSOC_WORKER (double  , 0)
                 default: ;
             }
             break ;
@@ -102,16 +112,16 @@ if (typecode != GB_BOOL_code)
             #define GB_DUP(w,t) w *= t
             switch (typecode)
             {
-                case GB_INT8_code   : GB_WORKER (int8_t)   ; break ;
-                case GB_UINT8_code  : GB_WORKER (uint8_t)  ; break ;
-                case GB_INT16_code  : GB_WORKER (int16_t)  ; break ;
-                case GB_UINT16_code : GB_WORKER (uint16_t) ; break ;
-                case GB_INT32_code  : GB_WORKER (int32_t)  ; break ;
-                case GB_UINT32_code : GB_WORKER (uint32_t) ; break ;
-                case GB_INT64_code  : GB_WORKER (int64_t)  ; break ;
-                case GB_UINT64_code : GB_WORKER (uint64_t) ; break ;
-                case GB_FP32_code   : GB_WORKER (float)    ; break ;
-                case GB_FP64_code   : GB_WORKER (double)   ; break ;
+                case GB_INT8_code   : GB_ASSOC_WORKER (int8_t  , 0)
+                case GB_INT16_code  : GB_ASSOC_WORKER (int16_t , 0)
+                case GB_INT32_code  : GB_ASSOC_WORKER (int32_t , 0)
+                case GB_INT64_code  : GB_ASSOC_WORKER (int64_t , 0)
+                case GB_UINT8_code  : GB_ASSOC_WORKER (uint8_t , 0)
+                case GB_UINT16_code : GB_ASSOC_WORKER (uint16_t, 0)
+                case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, 0)
+                case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, 0)
+                case GB_FP32_code   : GB_ASSOC_WORKER (float   , 0)
+                case GB_FP64_code   : GB_ASSOC_WORKER (double  , 0)
                 default: ;
             }
             break ;
@@ -121,6 +131,8 @@ if (typecode != GB_BOOL_code)
         // FIRST and SECOND for GB_build_factory
         //----------------------------------------------------------------------
 
+        // GB_build does not terminate early
+
         #ifdef GB_INCLUDE_SECOND_OPERATOR
 
         case GB_FIRST_opcode :
@@ -128,16 +140,16 @@ if (typecode != GB_BOOL_code)
             #define GB_DUP(w,t) ;      // do nothing; keep the first tuple
             switch (typecode)
             {
-                case GB_INT8_code   : GB_WORKER (int8_t)   ; break ;
-                case GB_UINT8_code  : GB_WORKER (uint8_t)  ; break ;
-                case GB_INT16_code  : GB_WORKER (int16_t)  ; break ;
-                case GB_UINT16_code : GB_WORKER (uint16_t) ; break ;
-                case GB_INT32_code  : GB_WORKER (int32_t)  ; break ;
-                case GB_UINT32_code : GB_WORKER (uint32_t) ; break ;
-                case GB_INT64_code  : GB_WORKER (int64_t)  ; break ;
-                case GB_UINT64_code : GB_WORKER (uint64_t) ; break ;
-                case GB_FP32_code   : GB_WORKER (float)    ; break ;
-                case GB_FP64_code   : GB_WORKER (double)   ; break ;
+                case GB_INT8_code   : GB_ASSOC_WORKER (int8_t  , 0)
+                case GB_INT16_code  : GB_ASSOC_WORKER (int16_t , 0)
+                case GB_INT32_code  : GB_ASSOC_WORKER (int32_t , 0)
+                case GB_INT64_code  : GB_ASSOC_WORKER (int64_t , 0)
+                case GB_UINT8_code  : GB_ASSOC_WORKER (uint8_t , 0)
+                case GB_UINT16_code : GB_ASSOC_WORKER (uint16_t, 0)
+                case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, 0)
+                case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, 0)
+                case GB_FP32_code   : GB_ASSOC_WORKER (float   , 0)
+                case GB_FP64_code   : GB_ASSOC_WORKER (double  , 0)
                 default: ;
             }
             break ;
@@ -148,16 +160,16 @@ if (typecode != GB_BOOL_code)
             #define GB_DUP(w,t) w = t  // replace with the 2nd tuple
             switch (typecode)
             {
-                case GB_INT8_code   : GB_WORKER (int8_t)   ; break ;
-                case GB_UINT8_code  : GB_WORKER (uint8_t)  ; break ;
-                case GB_INT16_code  : GB_WORKER (int16_t)  ; break ;
-                case GB_UINT16_code : GB_WORKER (uint16_t) ; break ;
-                case GB_INT32_code  : GB_WORKER (int32_t)  ; break ;
-                case GB_UINT32_code : GB_WORKER (uint32_t) ; break ;
-                case GB_INT64_code  : GB_WORKER (int64_t)  ; break ;
-                case GB_UINT64_code : GB_WORKER (uint64_t) ; break ;
-                case GB_FP32_code   : GB_WORKER (float)    ; break ;
-                case GB_FP64_code   : GB_WORKER (double)   ; break ;
+                case GB_INT8_code   : GB_ASSOC_WORKER (int8_t  , 0)
+                case GB_INT16_code  : GB_ASSOC_WORKER (int16_t , 0)
+                case GB_INT32_code  : GB_ASSOC_WORKER (int32_t , 0)
+                case GB_INT64_code  : GB_ASSOC_WORKER (int64_t , 0)
+                case GB_UINT8_code  : GB_ASSOC_WORKER (uint8_t , 0)
+                case GB_UINT16_code : GB_ASSOC_WORKER (uint16_t, 0)
+                case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, 0)
+                case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, 0)
+                case GB_FP32_code   : GB_ASSOC_WORKER (float   , 0)
+                case GB_FP64_code   : GB_ASSOC_WORKER (double  , 0)
                 default: ;
             }
             break ;
@@ -184,41 +196,47 @@ else
     switch (GB_boolean_rename (opcode))
     {
 
+        // LOR and LAND monoids have terminal values
+        #undef  GB_HAS_TERMINAL
+        #define GB_HAS_TERMINAL true
+
         case GB_LOR_opcode : 
 
             // OR == MAX == PLUS
             #define GB_DUP(w,t) w = (w || t)
-            GB_WORKER (bool) ;
-            break ;
+            GB_ASSOC_WORKER (bool, true)
             #undef  GB_DUP
 
         case GB_LAND_opcode : 
 
             // AND == MIN == TIMES
             #define GB_DUP(w,t) w = (w && t)
-            GB_WORKER (bool) ;
-            break ;
+            GB_ASSOC_WORKER (bool, false)
             #undef  GB_DUP
+
+        // LXOR and EQ monoids do not have terminal values
+        #undef  GB_HAS_TERMINAL
+        #define GB_HAS_TERMINAL false
 
         case GB_LXOR_opcode : 
 
             // XOR == NE == MINUS == ISNE
             #define GB_DUP(w,t) w = (w != t)
-            GB_WORKER (bool) ;
-            break ;
+            GB_ASSOC_WORKER (bool, 0)
             #undef  GB_DUP
 
         case GB_EQ_opcode : 
 
             // EQ == ISEQ
             #define GB_DUP(w,t) w = (w == t)
-            GB_WORKER (bool) ;
-            break ;
+            GB_ASSOC_WORKER (bool, 0)
             #undef  GB_DUP
 
         //----------------------------------------------------------------------
         // FIRST and SECOND for GB_build_factory
         //----------------------------------------------------------------------
+
+        // GB_build does not terminate early
 
         #ifdef GB_INCLUDE_SECOND_OPERATOR
 
@@ -226,16 +244,14 @@ else
 
             // FIRST == DIV
             #define GB_DUP(w,t) ;      // do nothing; keep the first tuple
-            GB_WORKER (bool) ;
-            break ;
+            GB_ASSOC_WORKER (bool, 0)
             #undef  GB_DUP
 
         case GB_SECOND_opcode : 
 
             // SECOND
             #define GB_DUP(w,t) w = t  // replace with the 2nd tuple
-            GB_WORKER (bool) ;
-            break ;
+            GB_ASSOC_WORKER (bool, 0)
             #undef  GB_DUP
 
         #endif

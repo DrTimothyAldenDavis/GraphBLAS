@@ -16,8 +16,6 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-// TODO:: add early exit
-
 // PARALLEL: a parallel reduction method.  All entries of the matrix
 // must be reduce to a single scalar.
 
@@ -106,6 +104,9 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
     // twork = 0
     memcpy (twork, reduce->identity, zsize) ;
 
+    // get terminal value, if any
+    GB_void *restrict terminal = reduce->terminal ;
+
     // reduce all the entries in the matrix, but skip any zombies
 
     if (A->type == ztype)
@@ -122,12 +123,10 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
         // hard-coded below via a switch factory.  If the case is not handled
         // by the switch factory, 'done' remains false.
 
-        // TODO: some operators can terminate early
-
         bool done = false ;
 
         // define the worker for the switch factory
-        #define GB_WORKER(type)                                             \
+        #define GB_ASSOC_WORKER(type,terminal)                              \
         {                                                                   \
             const type *restrict Ax = (type *) A->x ;                       \
             type s ;                                                        \
@@ -139,6 +138,8 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
                     /* s += A(i,j) */                                       \
                     ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;                    \
                     GB_DUP (s, Ax [p]) ;                                    \
+                    /* check for early exit */                              \
+                    if (GB_HAS_TERMINAL && (s == terminal)) break ;         \
                 }                                                           \
             }                                                               \
             else                                                            \
@@ -146,12 +147,18 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
                 for (int64_t p = 0 ; p < anz ; p++)                         \
                 {                                                           \
                     /* s += A(i,j) if the entry is not a zombie */          \
-                    if (GB_IS_NOT_ZOMBIE (Ai [p])) GB_DUP (s, Ax [p]) ;     \
+                    if (GB_IS_NOT_ZOMBIE (Ai [p]))                          \
+                    {                                                       \
+                        GB_DUP (s, Ax [p]) ;                                \
+                        /* check for early exit */                          \
+                        if (GB_HAS_TERMINAL && (s == terminal)) break ;     \
+                    }                                                       \
                 }                                                           \
             }                                                               \
             memcpy (twork, &s, zsize) ;                                     \
             done = true ;                                                   \
-        }
+        }                                                                   \
+        break ;
 
         //----------------------------------------------------------------------
         // launch the switch factory
@@ -188,6 +195,11 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
                     ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
                     // twork += Ax [p]
                     freduce (twork, twork, Ax +(p*asize)) ; // (z x alias)
+                    if (terminal != NULL)
+                    {
+                        // check for early exit
+                        if (memcmp (twork, terminal, zsize) == 0) break ;
+                    }
                 }
             }
             else
@@ -199,6 +211,11 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
                     { 
                         // twork += Ax [p]
                         freduce (twork, twork, Ax +(p*asize)) ; // (z x alias)
+                        if (terminal != NULL)
+                        {
+                            // check for early exit
+                            if (memcmp (twork, terminal, zsize) == 0) break ;
+                        }
                     }
                 }
             }
@@ -226,6 +243,12 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
                 cast_A_to_Z (awork, Ax +(p*asize), zsize) ;
                 // twork += awork
                 freduce (twork, twork, awork) ; // (z x alias)
+                if (terminal != NULL)
+                {
+                    // check for early exit
+                    if (memcmp (twork, terminal, zsize) == 0) break ;
+                }
+
             }
         }
         else
@@ -237,9 +260,13 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
                 { 
                     // awork = (ztype) Ax [p]
                     cast_A_to_Z (awork, Ax +(p*asize), zsize) ;
-
                     // twork += awork
                     freduce (twork, twork, awork) ;     // (z x alias)
+                    if (terminal != NULL)
+                    {
+                        // check for early exit
+                        if (memcmp (twork, terminal, zsize) == 0) break ;
+                    }
                 }
             }
         }

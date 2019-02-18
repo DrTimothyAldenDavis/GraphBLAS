@@ -220,12 +220,14 @@ GrB_Info GB_build_factory           // build a matrix
         // GB_INCLUDE_SECOND_OPERATOR definition, so they do not appear in
         // GB_reduce_to_* where the FIRST and SECOND operators are not needed.
 
+        // Early exit cannot be exploited, so the terminal value is ignored.
+
         #define GB_INCLUDE_SECOND_OPERATOR
 
         bool done = false ;
 
         // define the worker for the switch factory
-        #define GB_WORKER(type)                                             \
+        #define GB_ASSOC_WORKER(type,ignore)                                \
         {                                                                   \
             const type *restrict sx = (type *) S ;                          \
             type *restrict tx = (type *) Tx ;                               \
@@ -249,7 +251,8 @@ GrB_Info GB_build_factory           // build a matrix
                 }                                                           \
             }                                                               \
             done = true ;                                                   \
-        }
+        }                                                                   \
+        break ;
 
         //----------------------------------------------------------------------
         // launch the switch factory
