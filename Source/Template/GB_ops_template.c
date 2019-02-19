@@ -110,17 +110,17 @@ GB_BINARY_BOOL_OP_DEFINE (GrB_, LE, "le")
 // unary typecast operators, used in GB_cast_factory.c
 //------------------------------------------------------------------------------
 
-extern void GB_CAST_NAME (bool    ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int8_t  ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint8_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int16_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint16_t) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int32_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint32_t) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (int64_t ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (uint64_t) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (float   ) (void *z, const void *x, size_t s) ;
-extern void GB_CAST_NAME (double  ) (void *z, const void *x, size_t s) ;
+extern void GB_CAST_NAME (bool    ) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (int8_t  ) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (uint8_t ) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (int16_t ) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (uint16_t) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (int32_t ) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (uint32_t) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (int64_t ) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (uint64_t) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (float   ) (void *z, void *x, size_t s) ;
+extern void GB_CAST_NAME (double  ) (void *z, void *x, size_t s) ;
 
 //------------------------------------------------------------------------------
 // clear macros for next use of this file

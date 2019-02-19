@@ -17,27 +17,44 @@
 
 #define USAGE "C = GB_mex_export_import (A, format_matrix, format_export)"
 
+#define FREE_WORK                       \
+{                                       \
+    GB_FREE_MEMORY (Cp, nvec+1, sizeof (GrB_Index)) ; \
+    GB_FREE_MEMORY (Ch, nvec  , sizeof (GrB_Index)) ; \
+    GB_FREE_MEMORY (Ci, nvals , sizeof (GrB_Index)) ; \
+    GB_FREE_MEMORY (Cx, nvals , csize) ; \
+    GB_MATRIX_FREE (&C) ;               \
+}
+
 #define FREE_ALL                        \
 {                                       \
-    if (Ap) { mxFree (Ap) ; Ap = NULL ; } \
-    if (Ah) { mxFree (Ah) ; Ah = NULL ; } \
-    if (Ai) { mxFree (Ai) ; Ai = NULL ; } \
-    if (Ax) { mxFree (Ax) ; Ax = NULL ; } \
+    FREE_WORK ;                         \
     GB_MATRIX_FREE (&A) ;               \
-    GB_MATRIX_FREE (&C) ;               \
     GB_mx_put_global (true, 0) ;        \
 }
 
 #define OK(method)                              \
 {                                               \
     info = method ;                             \
-    if (info != GrB_SUCCESS) return (info) ;    \
+    if (info != GrB_SUCCESS)                    \
+    {                                           \
+        FREE_WORK ;                             \
+        printf ("line %d\n", __LINE__) ;        \
+        return (info) ;                         \
+    }                                           \
 }
 
 GrB_Matrix A = NULL ;
 GrB_Matrix C = NULL ;
-GrB_Index *Ap = NULL, *Ah = NULL, *Ai = NULL ;
-void *Ax = NULL ;
+GrB_Index *Cp = NULL, *Ch = NULL, *Ci = NULL ;
+void *Cx = NULL ;
+GB_Context Context = NULL ;
+size_t csize = 0 ;
+GrB_Index nvec = 0, nvals = 0, nrows = 0, ncols = 0 ;
+GrB_Type type = NULL, atype = NULL;
+GrB_Info info = GrB_SUCCESS ;
+
+//------------------------------------------------------------------------------
 
 GrB_Info export_import
 (
@@ -46,9 +63,8 @@ GrB_Info export_import
 )
 {
 
-    GrB_Type type ;
-    GrB_Index nrows, ncols, nvals, nvec ;
-    GrB_Info info = GrB_SUCCESS ;
+    GxB_Matrix_type (&atype, A) ;
+    GxB_Type_size (&csize, atype) ;
 
     OK (GrB_Matrix_dup (&C, A)) ;
 
@@ -104,11 +120,14 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nvals,
-                &Ap, &Ai, &Ax, NULL)) ;
+                &Cp, &Ci, &Cx, NULL)) ;
+            nvec = nrows ;
+
+            GB_check (C, "C here std csr", 3) ;
+            printf ("%p %p %p\n", Cp, Ci, Cx) ;
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nvals,
-                &Ap, &Ai, &Ax, NULL)) ;
-
+                &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -116,11 +135,11 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nvals,
-                &Ap, &Ai, &Ax, NULL)) ;
+                &Cp, &Ci, &Cx, NULL)) ;
+            nvec = ncols ;
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, nvals,
-                &Ap, &Ai, &Ax, NULL)) ;
-
+                &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -128,11 +147,10 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nvals,
-                &nvec, &Ah, &Ap, &Ai, &Ax, NULL)) ;
+                &nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nvals,
-                nvec, &Ah, &Ap, &Ai, &Ax, NULL)) ;
-
+                nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -140,17 +158,18 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nvals,
-                &nvec, &Ah, &Ap, &Ai, &Ax, NULL)) ;
+                &nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nvals,
-                nvec, &Ah, &Ap, &Ai, &Ax, NULL)) ;
-
+                nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
     }
 
     return (GrB_SUCCESS) ;
 }
+
+//------------------------------------------------------------------------------
 
 void mexFunction
 (

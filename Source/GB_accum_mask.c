@@ -266,10 +266,12 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // can be skipped if there is no accum and C is cleared or if no M.
         // GB_WAIT (C) ;
         if (GB_PENDING (C) || GB_ZOMBIES (C))
-        {
+        { 
+            GB_GOTCHA ;
             info = GB_wait (C, Context) ;
             if (info != GrB_SUCCESS)
             { 
+                GB_GOTCHA ;
                 // out of memory
                 GB_MATRIX_FREE (Thandle) ;
                 GB_MATRIX_FREE (&MT) ;

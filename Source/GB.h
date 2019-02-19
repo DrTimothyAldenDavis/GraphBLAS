@@ -131,7 +131,7 @@ extern int GB_cover_max ;
 
 typedef unsigned char GB_void ;
 
-typedef void (*GB_cast_function)   (void *, const void *, size_t) ;
+typedef void (*GB_cast_function)   (void *, void *, size_t) ;
 
 #define GB_LEN 128
 
@@ -4426,7 +4426,7 @@ static inline void GB_jwrapup
 #define GB_CAST_NAME(x)     GB_cast_double_ ## x
 #include "GB_ops_template.h"
 
-inline void GB_copy_user_user (void *z, const void *x, size_t s)
+inline void GB_copy_user_user (void *z, void *x, size_t s)
 { 
     memcpy (z, x, s) ;
 }

@@ -36,6 +36,6 @@ GB_REDUCE (BinaryOp, reduce    , NULL)
 
 // Built-in monoids ignore the terminal parameter, and use the terminal value
 // defined in GB_assoc_template.c (for MIN, MAX, LOR, and LAND).
-// User-defined monoids can be created with a non-NULL terminal value (TODO).
+// User-defined monoids can be created with a non-NULL terminal value.
 GB_REDUCE (Monoid  , reduce->op, reduce->terminal)
 

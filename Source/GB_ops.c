@@ -20,31 +20,31 @@
 
 // extern predefined type objects but opaque to the user
 struct GB_Type_opaque
-GB_opaque_GrB_BOOL   = { GB_MAGIC, sizeof (bool),     GB_BOOL_code   , "bool"    },
-GB_opaque_GrB_INT8   = { GB_MAGIC, sizeof (int8_t),   GB_INT8_code   , "int8_t"  },
-GB_opaque_GrB_UINT8  = { GB_MAGIC, sizeof (uint8_t),  GB_UINT8_code  , "uint8_t" },
-GB_opaque_GrB_INT16  = { GB_MAGIC, sizeof (int16_t),  GB_INT16_code  , "int16_t" },
-GB_opaque_GrB_UINT16 = { GB_MAGIC, sizeof (uint16_t), GB_UINT16_code , "uint16_t"},
-GB_opaque_GrB_INT32  = { GB_MAGIC, sizeof (int32_t),  GB_INT32_code  , "int32_t" },
-GB_opaque_GrB_UINT32 = { GB_MAGIC, sizeof (uint32_t), GB_UINT32_code , "uint32_t"},
-GB_opaque_GrB_INT64  = { GB_MAGIC, sizeof (int64_t),  GB_INT64_code  , "int64_t" },
-GB_opaque_GrB_UINT64 = { GB_MAGIC, sizeof (uint64_t), GB_UINT64_code , "uint64_t"},
-GB_opaque_GrB_FP32   = { GB_MAGIC, sizeof (float),    GB_FP32_code   , "float"   },
-GB_opaque_GrB_FP64   = { GB_MAGIC, sizeof (double),   GB_FP64_code   , "double"  };
+GB_opaque_GrB_BOOL   = {GB_MAGIC, sizeof(bool),     GB_BOOL_code  , "bool"    },
+GB_opaque_GrB_INT8   = {GB_MAGIC, sizeof(int8_t),   GB_INT8_code  , "int8_t"  },
+GB_opaque_GrB_UINT8  = {GB_MAGIC, sizeof(uint8_t),  GB_UINT8_code , "uint8_t" },
+GB_opaque_GrB_INT16  = {GB_MAGIC, sizeof(int16_t),  GB_INT16_code , "int16_t" },
+GB_opaque_GrB_UINT16 = {GB_MAGIC, sizeof(uint16_t), GB_UINT16_code, "uint16_t"},
+GB_opaque_GrB_INT32  = {GB_MAGIC, sizeof(int32_t),  GB_INT32_code , "int32_t" },
+GB_opaque_GrB_UINT32 = {GB_MAGIC, sizeof(uint32_t), GB_UINT32_code, "uint32_t"},
+GB_opaque_GrB_INT64  = {GB_MAGIC, sizeof(int64_t),  GB_INT64_code , "int64_t" },
+GB_opaque_GrB_UINT64 = {GB_MAGIC, sizeof(uint64_t), GB_UINT64_code, "uint64_t"},
+GB_opaque_GrB_FP32   = {GB_MAGIC, sizeof(float),    GB_FP32_code  , "float"   },
+GB_opaque_GrB_FP64   = {GB_MAGIC, sizeof(double),   GB_FP64_code  , "double"  };
 
 // extern predefined types (handles to opaque types)
 GrB_Type
-    GrB_BOOL   = & GB_opaque_GrB_BOOL,
-    GrB_INT8   = & GB_opaque_GrB_INT8,
-    GrB_UINT8  = & GB_opaque_GrB_UINT8,
-    GrB_INT16  = & GB_opaque_GrB_INT16,
-    GrB_UINT16 = & GB_opaque_GrB_UINT16,
-    GrB_INT32  = & GB_opaque_GrB_INT32,
-    GrB_UINT32 = & GB_opaque_GrB_UINT32,
-    GrB_INT64  = & GB_opaque_GrB_INT64,
-    GrB_UINT64 = & GB_opaque_GrB_UINT64,
-    GrB_FP32   = & GB_opaque_GrB_FP32,
-    GrB_FP64   = & GB_opaque_GrB_FP64 ;
+    GrB_BOOL   = & GB_opaque_GrB_BOOL   ,
+    GrB_INT8   = & GB_opaque_GrB_INT8   ,
+    GrB_UINT8  = & GB_opaque_GrB_UINT8  ,
+    GrB_INT16  = & GB_opaque_GrB_INT16  ,
+    GrB_UINT16 = & GB_opaque_GrB_UINT16 ,
+    GrB_INT32  = & GB_opaque_GrB_INT32  ,
+    GrB_UINT32 = & GB_opaque_GrB_UINT32 ,
+    GrB_INT64  = & GB_opaque_GrB_INT64  ,
+    GrB_UINT64 = & GB_opaque_GrB_UINT64 ,
+    GrB_FP32   = & GB_opaque_GrB_FP32   ,
+    GrB_FP64   = & GB_opaque_GrB_FP64   ;
 
 //------------------------------------------------------------------------------
 // built-in unary and binary operators
@@ -168,7 +168,7 @@ GrB_BinaryOp GrB_NAME (PREFIX,OPERATOR) = & GB (opaque_ ## PREFIX ## OPERATOR) ;
 // special cases for functions and operators
 //------------------------------------------------------------------------------
 
-extern void GB_copy_user_user (void *z, const void *x, size_t s) ;
+extern void GB_copy_user_user (void *z, void *x, size_t s) ;
 
 // 4 special cases:
 // purely boolean operators: these do not have _BOOL in their name

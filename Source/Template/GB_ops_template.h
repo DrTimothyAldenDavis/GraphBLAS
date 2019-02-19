@@ -177,12 +177,15 @@ extern struct GB_BinaryOp_opaque
 #define GB_CAST_FUNCTION(xtype)                                             \
     (                                                                       \
         void *z,            /* typecasted output, of type ztype */          \
-        const void *x,      /* input value to typecast, of type xtype */    \
+        void *x,            /* input value to typecast, of type xtype */    \
         size_t s            /* size of type, for GB_copy_user_user only */  \
     )                                                                       \
     {                                                                       \
         /* the types of z and x are known at compile time */                \
-        GB_CAST ((*((GB_TYPE *) z)) , (*((const xtype *) x))) ;             \
+        GB_TYPE zz ;                                                        \
+        xtype xx = (*((xtype *) x)) ;                                       \
+        GB_CAST (zz, xx) ;                                                  \
+        (*((GB_TYPE *) z)) = zz ;                                           \
     }
 
 inline void GB_CAST_NAME (bool    ) GB_CAST_FUNCTION (bool    )

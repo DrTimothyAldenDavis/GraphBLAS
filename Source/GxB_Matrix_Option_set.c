@@ -82,8 +82,6 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
                 ASSERT (GB_IMPLIES (info == GrB_SUCCESS,
                     A->is_csc == new_csc)) ;
             }
-    
-            GB_check (A, "A set", GB0) ;
 
             break ;
 

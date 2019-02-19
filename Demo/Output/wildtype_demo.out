@@ -400,7 +400,7 @@ The matrix D is not wild enough to print.
 
 This supposed to fail, as a demo of GrB_error:
 GraphBLAS error: GrB_DOMAIN_MISMATCH
-function: GrB_eWiseAdd_Matrix_BinaryOp (C, Mask, accum, add, A, B, desc)
+function: GrB_eWiseAdd_Matrix_BinaryOp (C, M, accum, add, A, B, desc)
 incompatible type for z=wildtype_add(x,y):
 second input of type [float]
 cannot be typecast to y input of type [wildtype]
