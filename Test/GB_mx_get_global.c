@@ -14,7 +14,8 @@
 
 bool GB_mx_get_global      // true if doing malloc_debug
 (
-    bool cover
+    bool cover,
+    bool use_grb_init       // if true, use GrB_init, else GxB_init
 )
 {
 
@@ -63,7 +64,24 @@ bool GB_mx_get_global      // true if doing malloc_debug
     //--------------------------------------------------------------------------
 
     GB_Global.GrB_init_called = false ;
-    GrB_init (GrB_NONBLOCKING) ;
+
+    // either option works the same; just test either function
+    if (use_grb_init)
+    {
+        // test GrB_init
+        GrB_init (GrB_NONBLOCKING) ;
+        GB_Global.malloc_function  = mxMalloc  ;
+        GB_Global.calloc_function  = mxCalloc  ;
+        GB_Global.realloc_function = mxRealloc ;
+        GB_Global.free_function    = mxFree    ;
+    }
+    else
+    {
+        // test GxB_init
+        GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
+    }
+
+    GB_Global.abort_function = GB_mx_abort ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
     ASSERT (GB_Global.nmalloc == 0) ;
     Complex_init ( ) ;

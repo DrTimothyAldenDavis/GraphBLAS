@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_realloc_memory: wrapper for realloc (used via the GB_REALLOC_MEMORY macro)
+// GB_realloc_memory: wrapper for realloc_function
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// A wrapper for realloc.
+// A wrapper for realloc_function.
 
 // This function is called via the GB_REALLOC_MEMORY macro.
 
@@ -33,14 +33,7 @@
 //          p points to the old space of size nold*size, which is left
 //          unchanged.  This case never occurs if nnew < nold.
 
-// By default, GB_REALLOC is defined in GB.h as realloc.  For a MATLAB
-// mexFunction, it is mxRealloc.  It can also be defined at compile time with
-// -DGB_REALLOC=myreallocfunc.
-
-// PARALLEL: the realloc could be parallel, if data needs to be moved from
-// the old space to the new space.  It could realloc an entire matrix, so
-// this could be a lot of work.  If done in parallel, a malloc could be used,
-// followed by a parallel memcpy.
+// PARALLEL: move the data in parallel?
 
 #include "GB.h"
 
@@ -94,22 +87,22 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         bool pretend_to_fail = false ;
         if (GB_Global.malloc_debug)
         {
-            // brutal malloc debug; pretend to fail if the count <= 0
+            // brutal memory usage debug; pretend to fail if the count <= 0
             pretend_to_fail = (GB_Global.malloc_debug_count-- <= 0) ;
         }
         if (pretend_to_fail)
         {
-            // brutal malloc debug; pretend to fail if the count <= 0,
+            // brutal memory usage debug; pretend to fail if the count <= 0,
             #ifdef GB_PRINT_MALLOC
-            printf ("pretend to fail: realloc\n") ;
+            printf ("pretend to fail\n") ;
             #endif
             pnew = NULL ;
         }
         else
         #endif
         {
-            // realloc the space
-            pnew = (void *) GB_REALLOC (p, size) ;
+            // reallocate the space
+            pnew = (void *) GB_Global.realloc_function (p, size) ;
         }
 
         if (pnew == NULL)
@@ -142,7 +135,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
         #ifdef GB_MALLOC_TRACKING
         #ifdef GB_PRINT_MALLOC
-        printf ("realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
+        printf ("Realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
             pnew, GB_Global.nmalloc, GB_Global.malloc_debug,
             (int64_t) nitems_old, (int64_t) nitems_new,
             (int64_t) size_of_item) ;

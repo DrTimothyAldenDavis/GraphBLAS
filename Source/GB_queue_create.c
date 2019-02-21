@@ -24,9 +24,11 @@ bool GB_queue_create ( )        // create the queue and thread-local storage
     {
         // initialize the critical section for POSIX pthreads
         ok = pthread_mutex_init (&(GB_Global.sync), NULL) == 0 ;
-        // initialize the key for thread-local storage, using GB_CALLOC to
-        // allocate it (in GB_thread_local_access) and GB_FREE to free it.
-        ok = ok & (pthread_key_create (&GB_thread_local_report, GB_FREE) == 0) ;
+        // initialize the key for thread-local storage, allocated in
+        // in GB_thread_local_access via GB_Global.calloc_function,
+        // and freed by GB_Global.free_function.
+        ok = ok & (pthread_key_create
+            (&GB_thread_local_report, GB_Global.free_function) == 0) ;
     }
 
     #elif defined (USER_WINDOWS_THREADS)

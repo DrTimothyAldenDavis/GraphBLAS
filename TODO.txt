@@ -1,0 +1,2 @@
+TODO: test GxB_Monoid_terminal_define with min operator and terminal 0.
+TODO: test GxB_Monoid_terminal_new with min operator and terminal 0

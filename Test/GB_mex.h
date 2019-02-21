@@ -38,6 +38,8 @@ void GB_mx_clear_time ( ) ;             // clear the time and start the tic
 #define TIC { GB_mx_clear_time ( ) ; }
 #define TOC { gbtime = simple_toc (tic) ; }
 
+void GB_mx_abort ( ) ;                  // assertion failure
+
 bool GB_mx_mxArray_to_BinaryOp          // true if successful, false otherwise
 (
     GrB_BinaryOp *handle,               // the binary op
@@ -211,7 +213,11 @@ bool GB_mx_Monoid               // true if successful, false otherwise
     const bool malloc_debug     // true if malloc debug should be done
 ) ;
 
-bool GB_mx_get_global (bool cover) ;
+bool GB_mx_get_global      // true if doing malloc_debug
+(
+    bool cover,
+    bool use_grb_init       // if true, use GrB_init, else GxB_init
+) ;
 
 void GB_mx_put_global
 (   

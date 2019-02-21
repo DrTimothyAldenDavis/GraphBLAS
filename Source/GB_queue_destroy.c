@@ -21,8 +21,8 @@ bool GB_queue_destroy ( )       // destroy the queue
         // delete the critical section for POSIX pthreads
         ok = (pthread_mutex_destroy (&(GB_Global.sync)) == 0) ;
         // thread-local storage will be deleted when the user thread
-        // terminates, using the destructor function (GB_FREE) passed to
-        // pthread_key_create in GrB_init.
+        // terminates, using the destructor function (GB_Global.free_function)
+        // passed to pthread_key_create in GB_queue_create.
     }
 
     #elif defined (USER_WINDOWS_THREADS)

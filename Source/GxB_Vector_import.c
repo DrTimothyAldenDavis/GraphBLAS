@@ -60,7 +60,7 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
 
     GrB_Info info ;
 
-    // allocate the header of the vector, and calloc v->p of size 2
+    // allocate the header of the vector; allocate v->p of size 2 and clear it
     GB_NEW ((GrB_Matrix *) v, type, (int64_t) n, 1, GB_Ap_calloc, true,
         GB_AUTO_HYPER, GB_HYPER_DEFAULT, 1, Context) ;
     if (info != GrB_SUCCESS)

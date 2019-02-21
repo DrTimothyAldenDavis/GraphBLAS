@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_malloc_memory: wrapper for malloc (used via the GB_MALLOC_MEMORY macro)
+// GB_malloc_memory: wrapper for malloc_function
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,18 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// A wrapper for malloc.  Space is not initialized.
+// A wrapper for malloc_function.  Space is not initialized.
 
 // This function is called via the GB_MALLOC_MEMORY(p,n,s) macro.
 
-// Parameters are the same as the POSIX malloc, except that asking to allocate
-// a block of zero size causes a block of size 1 to be allocated instead.  This
-// allows the return pointer p to be checked for the out-of-memory condition,
-// even when allocating an object of size zero.
-
-// By default, GB_MALLOC is defined in GB.h as malloc.  For a MATLAB
-// mexFunction, it is mxMalloc.  It can also be defined at compile time with
-// -DGB_MALLOC=mymallocfunc.
+// Asking to allocate a block of zero size causes a block of size 1 to be
+// allocated instead.  This allows the return pointer p to be checked for the
+// out-of-memory condition, even when allocating an object of size zero.
 
 // not parallel: this function does O(1) work and is already thread-safe.
 
@@ -51,11 +46,11 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 
         #ifdef GB_MALLOC_TRACKING
         {
-            // for malloc testing only
+            // for memory usage testing only
             bool pretend_to_fail = false ;
             if (GB_Global.malloc_debug)
             {
-                // brutal malloc debug; pretend to fail if the count <= 0
+                // brutal memory usage debug; pretend to fail if the count <= 0
                 pretend_to_fail = (GB_Global.malloc_debug_count-- <= 0) ;
             }
             if (pretend_to_fail)
@@ -67,7 +62,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
             }
             else
             {
-                p = (void *) GB_MALLOC (size) ;
+                p = (void *) GB_Global.malloc_function (size) ;
             }
             if (p != NULL)
             {
@@ -76,7 +71,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
                 GB_Global.maxused =
                     GB_IMAX (GB_Global.maxused, GB_Global.inuse) ;
                 #ifdef GB_PRINT_MALLOC
-                printf ("calloc:  %14p %3d %1d n "GBd" size "GBd"\n",
+                printf ("Malloc:  %14p %3d %1d n "GBd" size "GBd"\n",
                     p, nmalloc, GB_Global.malloc_debug,
                     (int64_t) nitems, (int64_t) size_of_item) ;
                 #endif
@@ -85,7 +80,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
         #else
         {
             // normal use, in production
-            p = (void *) GB_MALLOC (size) ;
+            p = (void *) GB_Global.malloc_function (size) ;
         }
         #endif
 

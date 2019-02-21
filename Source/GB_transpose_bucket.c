@@ -88,7 +88,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     int64_t anz = GB_NNZ (A) ;
 
-    // [ C->p is malloc'd but not initialized.  It is NON-hypersparse.
+    // [ C->p is allocated but not initialized.  It is NON-hypersparse.
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
     GB_CREATE (&C, ctype, A->vdim, A->vlen, GB_Ap_malloc, C_is_csc,

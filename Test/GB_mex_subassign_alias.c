@@ -27,7 +27,7 @@ void mexFunction
 )
 {
 
-    bool malloc_debug = GB_mx_get_global (true) ;
+    bool malloc_debug = GB_mx_get_global (true, false) ;
     GrB_Matrix C = NULL ;
     GrB_Descriptor desc = NULL ;
 

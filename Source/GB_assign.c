@@ -431,8 +431,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // scalar expansion: sort I and J and remove duplicates
     //--------------------------------------------------------------------------
 
-    // NOTE: gcc with -Wunused-but-set-variable may complain about I2_size
-    // and J2_size, but this is spurious.  The values are used when malloc
+    // NOTE: gcc with -Wunused-but-set-variable may complain about I2_size and
+    // J2_size, but this is spurious.  The values are used when memory usage
     // tracking is enabled (see GB_FREE_ALL defined above).  Ignore the
     // spurious gcc warnings.
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"

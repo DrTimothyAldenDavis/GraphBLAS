@@ -16,12 +16,7 @@
 // allows the return pointer p to be checked for the out-of-memory condition,
 // even when allocating an object of size zero.
 
-// By default, GB_CALLOC is defined in GB.h as calloc.  For a MATLAB
-// mexFunction, it is mxCalloc.  It can also be defined at compile time with
-// -DGB_CALLOC=mycallocfunc.
-
-// PARALLEL: it may be worth doing a malloc instead, then setting the array to
-// zero with multiple threads.
+// PARALLEL: clear the array in parallel?
 
 #include "GB.h"
 
@@ -56,11 +51,11 @@ void *GB_calloc_memory      // pointer to allocated block of memory
 
         #ifdef GB_MALLOC_TRACKING
         {
-            // for malloc testing only
+            // for memory usage testing only
             bool pretend_to_fail = false ;
             if (GB_Global.malloc_debug)
             {
-                // brutal malloc debug; pretend to fail if the count <= 0
+                // brutal memory usage debug; pretend to fail if the count <= 0
                 pretend_to_fail = (GB_Global.malloc_debug_count-- <= 0) ;
             }
             if (pretend_to_fail)
@@ -72,7 +67,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
             }
             else
             {
-                p = (void *) GB_CALLOC (nitems, size_of_item) ;
+                p = (void *) GB_Global.calloc_function (nitems, size_of_item) ;
             }
             if (p != NULL)
             {
@@ -81,7 +76,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
                 GB_Global.maxused =
                     GB_IMAX (GB_Global.maxused, GB_Global.inuse) ;
                 #ifdef GB_PRINT_MALLOC
-                printf ("calloc:  %14p %3d %1d n "GBd" size "GBd"\n",
+                printf ("Calloc:  %14p %3d %1d n "GBd" size "GBd"\n",
                     p, nmalloc, GB_Global.malloc_debug,
                     (int64_t) nitems, (int64_t) size_of_item) ;
                 #endif
@@ -90,7 +85,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         #else
         {
             // normal use, in production
-            p = (void *) GB_CALLOC (nitems, size_of_item) ;
+            p = (void *) GB_Global.calloc_function (nitems, size_of_item) ;
         }
         #endif
 

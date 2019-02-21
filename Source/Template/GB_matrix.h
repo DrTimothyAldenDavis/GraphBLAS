@@ -376,15 +376,6 @@ bool enqueued ;         // true if the matrix is in the queue
 // application.  They could be in the future, since the GraphBLAS objects are
 // opaque to the user application.
 
-// MATLAB allows for shallow matrices (try timing C=A in MATLAB for a large
-// sparse matrix A).  MATLAB breaks the shallow links if A or C are then
-// modified.  This is one reason why a MATLAB mexFunction is not supposed to
-// modify its inputs; it may be unknowingly modifying multiply matrices.
-// CSparse doesn't exploit shallow matrices; any data structure feature here
-// and below does not appear in CSparse.  MATLAB's internal data structure is
-// not published, but GraphBLAS handles shallow matries with the following
-// boolean flags.
-
 // If the following are true, then the corresponding component of the
 // object is a pointer into components of another object.  They must not
 // be freed when freeing this object.

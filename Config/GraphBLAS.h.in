@@ -278,6 +278,9 @@ GrB_Info ;
 // the user application.  With non-blocking mode, operations can be left
 // pending, and are computed only when needed.
 
+// The extension GxB_init does the work of GrB_init, but it also defines the
+// memory management functions that SuiteSparse:GraphBLAS will use internally.
+
 // The GrB_wait ( ) function forces all pending operations to complete.
 // Blocking mode is as if GrB_wait is called whenever a GraphBLAS method or
 // operation returns to the user.
@@ -314,6 +317,26 @@ GrB_Mode ;
 GrB_Info GrB_init           // start up GraphBLAS
 (
     const GrB_Mode mode     // blocking or non-blocking mode
+) ;
+
+// SPEC: GxB_init is an extension to the spec.  It does the same thing as
+// GrB_init, but it also defines the memory management functions that GraphBLAS
+// will use internally.  The functions can only be defined once, in GxB_init.
+// The GxB_*import* and GxB_*export* functions require that the user
+// application and the GraphBLAS library agree on the same
+// malloc/calloc/realloc/free functions to use, thus GxB_init is a required
+// so the user application can define them for SuiteSparse:GraphBLAS.
+
+GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
+(
+    const GrB_Mode mode,    // blocking or non-blocking mode
+
+    // pointers to memory management functions.  If any are NULL, use the
+    // built-in ANSI C11 functions.
+    void * (* user_malloc_function  ) (size_t),
+    void * (* user_calloc_function  ) (size_t, size_t),
+    void * (* user_realloc_function ) (void *, size_t),
+    void   (* user_free_function    ) (void *)
 ) ;
 
 // In non-blocking mode, GraphBLAS operations need not complete until their
@@ -1096,8 +1119,155 @@ GrB_Info GrB_Monoid_new             // create a monoid
     )                                               \
     (monoid, op, identity) ;
 
-// SPEC: GxB_Monoid_operator is an extension to the spec
+// GxB_Monoid_terminal_new is identical to GrB_Monoid_new, except that a
+// terminal value can be specified.  The terminal may be NULL, which indicates
+// no terminal value (and in this case, it is identical to GrB_Monoid_new).
+// The terminal value, if not NULL, must have the same type as the identity.
 
+GrB_Info GxB_Monoid_terminal_new_BOOL        // create a new boolean monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const bool identity,            // identity value of the monoid
+    const bool terminal             // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_INT8        // create a new int8 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const int8_t identity,          // identity value of the monoid
+    const int8_t terminal           // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_UINT8       // create a new uint8 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const uint8_t identity,         // identity value of the monoid
+    const uint8_t terminal          // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_INT16       // create a new int16 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const int16_t identity,         // identity value of the monoid
+    const int16_t terminal          // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_UINT16      // create a new uint16 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const uint16_t identity,        // identity value of the monoid
+    const uint16_t terminal         // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_INT32       // create a new int32 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const int32_t identity,         // identity value of the monoid
+    const int32_t terminal          // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_UINT32      // create a new uint32 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const uint32_t identity,        // identity value of the monoid
+    const uint32_t terminal         // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_INT64       // create a new int64 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const int64_t identity,         // identity value of the monoid
+    const int64_t terminal          // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_UINT64      // create a new uint64 monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const uint64_t identity,        // identity value of the monoid
+    const uint64_t terminal         // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_FP32        // create a new float monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const float identity,           // identity value of the monoid
+    const float terminal            // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_FP64        // create a new double monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const double identity,          // identity value of the monoid
+    const double terminal           // terminal value of the monoid
+) ;
+
+GrB_Info GxB_Monoid_terminal_new_UDT    // create a monoid with a user type
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const void *identity,           // identity value of the monoid
+    const void *terminal            // terminal value of the monoid
+) ;
+
+// Type-generic method for creating a new monoid with a terminal value:
+
+/*
+
+GrB_Info GxB_Monoid_terminal_new             // create a monoid
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const <type> identity,          // identity value of the monoid
+    const <type> terminal           // terminal value of the monoid
+) ;
+
+*/
+
+#define GxB_Monoid_terminal_new(monoid,op,identity,terminal)    \
+    _Generic                                                    \
+    (                                                           \
+        (identity),                                             \
+        const bool     : GxB_Monoid_terminal_new_BOOL   ,       \
+              bool     : GxB_Monoid_terminal_new_BOOL   ,       \
+        const int8_t   : GxB_Monoid_terminal_new_INT8   ,       \
+              int8_t   : GxB_Monoid_terminal_new_INT8   ,       \
+        const uint8_t  : GxB_Monoid_terminal_new_UINT8  ,       \
+              uint8_t  : GxB_Monoid_terminal_new_UINT8  ,       \
+        const int16_t  : GxB_Monoid_terminal_new_INT16  ,       \
+              int16_t  : GxB_Monoid_terminal_new_INT16  ,       \
+        const uint16_t : GxB_Monoid_terminal_new_UINT16 ,       \
+              uint16_t : GxB_Monoid_terminal_new_UINT16 ,       \
+        const int32_t  : GxB_Monoid_terminal_new_INT32  ,       \
+              int32_t  : GxB_Monoid_terminal_new_INT32  ,       \
+        const uint32_t : GxB_Monoid_terminal_new_UINT32 ,       \
+              uint32_t : GxB_Monoid_terminal_new_UINT32 ,       \
+        const int64_t  : GxB_Monoid_terminal_new_INT64  ,       \
+              int64_t  : GxB_Monoid_terminal_new_INT64  ,       \
+        const uint64_t : GxB_Monoid_terminal_new_UINT64 ,       \
+              uint64_t : GxB_Monoid_terminal_new_UINT64 ,       \
+        const float    : GxB_Monoid_terminal_new_FP32   ,       \
+              float    : GxB_Monoid_terminal_new_FP32   ,       \
+        const double   : GxB_Monoid_terminal_new_FP64   ,       \
+              double   : GxB_Monoid_terminal_new_FP64   ,       \
+        const void *   : GxB_Monoid_terminal_new_UDT    ,       \
+              void *   : GxB_Monoid_terminal_new_UDT            \
+    )                                                           \
+    (monoid, op, identity, terminal) ;
+
+// SPEC: GxB_Monoid_terminal_new is an extension to the spec
+
+// SPEC: GxB_Monoid_operator is an extension to the spec
 GrB_Info GxB_Monoid_operator        // return the monoid operator
 (
     GrB_BinaryOp *op,               // returns the binary op of the monoid
@@ -1105,10 +1275,18 @@ GrB_Info GxB_Monoid_operator        // return the monoid operator
 ) ;
 
 // SPEC: GxB_Monoid_identity is an extension to the spec
-
 GrB_Info GxB_Monoid_identity        // return the monoid identity
 (
     void *identity,                 // returns the identity of the monoid
+    const GrB_Monoid monoid         // monoid to query
+) ;
+
+// SPEC: GxB_Monoid_terminal is an extension to the spec
+GrB_Info GxB_Monoid_terminal        // return the monoid terminal
+(
+    bool *has_terminal,             // true if the monoid has a terminal value
+    void *terminal,                 // returns the terminal of the monoid,
+                                    // unmodified if has_terminal is false
     const GrB_Monoid monoid         // monoid to query
 ) ;
 

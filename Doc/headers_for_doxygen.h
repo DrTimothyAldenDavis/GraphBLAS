@@ -159,6 +159,7 @@ constructed by dox_headers.m
  (Gustavson), a heap-based saxpy method, or a dot product method.
 \par
  FUTURE: an outer-product method for C=A*B'
+ FUTURE: a hash-based method for C=A*B
 \par
  parallel: this function will remain sequential.
  parallelism will be done in GB_AxB_parallel and GB_transpose.
@@ -302,32 +303,32 @@ constructed by dox_headers.m
   desc-\>out                   GxB_DEFAULT or GrB_REPLACE
 \par
       GrB_REPLACE means that the output matrix C is cleared just
-      prior to writing results back into it, via C\<Mask\> = results.  This
+      prior to writing results back into it, via C\<M\> = results.  This
       descriptor does not affect how C is used to compute the results.  If
-      GxB_DEFAULT, then C is not cleared before doing C\<Mask\>=results.
+      GxB_DEFAULT, then C is not cleared before doing C\<M\>=results.
 \par
   desc-\>mask                  GxB_DEFAULT or GrB_SCMP
 \par
       An optional 'write mask' defines how the results are to be written back
-      into C.  The boolean Mask matrix has the same size as C (Mask is
-      typecasted to boolean if it has another type).  If the Mask input to
-      the GraphBLAS method is NULL, then implicitly Mask(i,j)=1 for all i and
+      into C.  The boolean mask matrix M has the same size as C (M is
+      typecasted to boolean if it has another type).  If the M input to
+      the GraphBLAS method is NULL, then implicitly M(i,j)=1 for all i and
       j.  Let Z be the results to be written into C (the same dimension as
-      C).  If desc-\>mask is GxB_DEFAULT, and Mask(i,j)=1, then C(i,j) is
-      over-written with Z(i,j).  Otherwise, if Mask(i,j)=0 C(i,j) is left
+      C).  If desc-\>mask is GxB_DEFAULT, and M(i,j)=1, then C(i,j) is
+      over-written with Z(i,j).  Otherwise, if M(i,j)=0 C(i,j) is left
       unmodified (it remains an implicit zero if it is so, or its value is
       unchanged if it has one).  If desc-\>mask is GrB_SCMP, then the use of
-      Mask is negated: Mask(i,j)=0 means that C(i,j) is overwritten with
-      Z(i,j), and Mask(i,j)=1 means that C(i,j) is left unchanged.
+      M is negated: M(i,j)=0 means that C(i,j) is overwritten with
+      Z(i,j), and M(i,j)=1 means that C(i,j) is left unchanged.
 \par
-      Writing results Z into C via the Mask is written as C\<Mask\>=Z in
+      Writing results Z into C via the mask M is written as C\<M\>=Z in
       GraphBLAS notation.
 \par
-      Note that it is the value of Mask(i,j) that determines how C(i,j) is
-      overwritten.  If the (i,j) entry is present in the Mask matrix data
+      Note that it is the value of M(i,j) that determines how C(i,j) is
+      overwritten.  If the (i,j) entry is present in the M matrix data
       structure but has a numerical value of zero, then it is the same as if
-      (i,j) is not present and thus implicitly zero.  Both mean 'Mask(i,j)=0'
-      in the description above of how the Mask works.
+      (i,j) is not present and thus implicitly zero.  Both mean 'M(i,j)=0'
+      in the description above of how the mask M works.
 \par
   desc-\>in0 and desc-\>in1     GxB_DEFAULT or GrB_TRAN
 \par
@@ -658,6 +659,19 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_aliased.c
+\brief  GB_aliased: determine if two matrices are aliased
+
+\par
+ Returns true if A == B (and not NULL), or if any component A and B are
+ aliased to each other.  In the latter case, that component of A and B will
+ always be shallow, in either A or B, or both.  NULL pointers are not
+ aliased.
+\par
+ not parallel: takes O(1) time
+*/
+
+
 /** \file GB_apply.c
 \brief  GB_apply: apply a unary operator; optionally transpose a matrix
 
@@ -679,7 +693,7 @@ constructed by dox_headers.m
  Compare with GB_transpose_op.c
 \par
  PARALLEL: do it here, but it is easy.  Might want to split into separate
- files like Generated/*AxB*, so worker is not in a macro but in a function.
+ files like Generated/GB_AxB*, so worker is not in a macro but in a function.
 */
 
 
@@ -710,18 +724,18 @@ constructed by dox_headers.m
 
 
 /** \file GB_assign_scalar.c
-\brief  GB_assign_scalar:    C\<Mask\>(Rows,Cols) = accum (C(Rows,Cols),x)
+\brief  GB_assign_scalar:    C\<M\>(Rows,Cols) = accum (C(Rows,Cols),x)
 
 \par
  Assigns a single scalar to a submatrix:
 \par
- C\<Mask\>(Rows,Cols) = accum (C(Rows,Cols),x)
+ C\<M\>(Rows,Cols) = accum (C(Rows,Cols),x)
 \par
  This function does the work for GrB_Matrix_assign_TYPE and
  GrB_Vector_assign_[type], where [type] is one of the 11 types, or the
  type-generic macro suffix, \"_UDT\".
 \par
- Compare with GB_subassign_scalar, which uses Mask and C_replace differently
+ Compare with GB_subassign_scalar, which uses M and C_replace differently
 \par
  parallel: not here; see GB_assign
 */
@@ -923,12 +937,7 @@ constructed by dox_headers.m
  allows the return pointer p to be checked for the out-of-memory condition,
  even when allocating an object of size zero.
 \par
- By default, GB_CALLOC is defined in GB.h as calloc.  For a MATLAB
- mexFunction, it is mxCalloc.  It can also be defined at compile time with
- -DGB_CALLOC=mycallocfunc.
-\par
- PARALLEL: it may be worth doing a malloc instead, then setting the array to
- zero with multiple threads.
+ PARALLEL: clear the array in parallel?
 */
 
 
@@ -973,7 +982,7 @@ constructed by dox_headers.m
  the matrix A is left in an invalid state (A-\>magic == GB_MAGIC2).  Only the
  header is left.
 \par
- parallel: not here, but perhaps in calloc.
+ parallel: not here, but perhaps in GB_calloc_memory.
 */
 
 
@@ -1039,8 +1048,8 @@ constructed by dox_headers.m
 \brief  GB_compatible: check input and operators for type compatibility
 
 \par
- Check if the types for C\<Mask\> = accum (C,T) are all compatible,
- and (if present) make sure the size of C and Mask match.
+ Check if the types for C\<M\> = accum (C,T) are all compatible,
+ and (if present) make sure the size of C and M match.
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */
@@ -1076,7 +1085,7 @@ constructed by dox_headers.m
  grep \"allocate a new header\"
  which shows all uses of GB_new and GB_create
 \par
- parallel: not here but perhaps in GB_new (the calloc of Ap, only).
+ parallel: not here but perhaps in GB_new
 */
 
 
@@ -1300,10 +1309,6 @@ constructed by dox_headers.m
 \par
  This function is called via the GB_FREE_MEMORY(p,n,s) macro.
 \par
- By default, GB_FREE is defined in GB.h as free.  For a MATLAB mexFunction,
- it is mxFree.  It can also be defined at compile time with
- -DGB_FREE=myfreefunc.
-\par
  not parallel: this function does O(1) work and is already thread-safe.
 */
 
@@ -1315,8 +1320,7 @@ constructed by dox_headers.m
  Change the size of the A-\>h and A-\>p hyperlist.
  No change is made if A is not hypersparse.
 \par
- parallel: not here, but perhaps realloc could be done in parallel (the copy
- from the old to new space).
+ parallel: not here, but perhaps in GB_realloc_memory
 */
 
 
@@ -1350,6 +1354,27 @@ constructed by dox_headers.m
  PARALLEL: deletes duplicates, see also GB_builder.  This is only used in
  GB_assign, for scalar expansion and for the C_replace_phase, and only when I
  and/or J are lists (not GrB_ALL, nor lo:inc:hi).
+*/
+
+
+/** \file GB_init.c
+\brief  GB_init: initialize GraphBLAS
+
+\par
+ GrB_init (or GxB_init) must called before any other GraphBLAS operation;
+ both rely on this internal function.
+\par
+ GrB_finalize must be called as the last GraphBLAS operation.
+\par
+ GrB_init or GxB_init define the mode that GraphBLAS will use:  blocking or
+ non-blocking.  With blocking mode, all operations finish before returning to
+ the user application.  With non-blocking mode, operations can be left
+ pending, and are computed only when needed.
+\par
+ GxB_init is the same as GrB_init except that it also defines the
+ malloc/calloc/realloc/free functions to use.
+\par
+ not parallel: this function does O(1) work and is already thread-safe.
 */
 
 
@@ -1437,21 +1462,16 @@ constructed by dox_headers.m
 
 
 /** \file GB_malloc_memory.c
-\brief  GB_malloc_memory: wrapper for malloc (used via the GB_MALLOC_MEMORY macro)
+\brief  GB_malloc_memory: wrapper for malloc_function
 
 \par
- A wrapper for malloc.  Space is not initialized.
+ A wrapper for malloc_function.  Space is not initialized.
 \par
  This function is called via the GB_MALLOC_MEMORY(p,n,s) macro.
 \par
- Parameters are the same as the POSIX malloc, except that asking to allocate
- a block of zero size causes a block of size 1 to be allocated instead.  This
- allows the return pointer p to be checked for the out-of-memory condition,
- even when allocating an object of size zero.
-\par
- By default, GB_MALLOC is defined in GB.h as malloc.  For a MATLAB
- mexFunction, it is mxMalloc.  It can also be defined at compile time with
- -DGB_MALLOC=mymallocfunc.
+ Asking to allocate a block of zero size causes a block of size 1 to be
+ allocated instead.  This allows the return pointer p to be checked for the
+ out-of-memory condition, even when allocating an object of size zero.
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */
@@ -1463,7 +1483,7 @@ constructed by dox_headers.m
 \par
  C\<M\> = Z
 \par
- Nearly all GraphBLAS operations take a Mask, which controls how the result
+ Nearly all GraphBLAS operations take a mask, which controls how the result
  of the computations, Z, are copied into the result matrix C.  The following
  working MATLAB script, GB_spec_mask, defines how this is done.
 \par
@@ -1534,7 +1554,7 @@ constructed by dox_headers.m
  grep \"allocate a new header\"
  which shows all uses of GB_new and GB_create
 \par
- parallel: not here; see calloc of Ap
+ parallel: not here; see GB_calloc_memory
 */
 
 
@@ -1614,8 +1634,9 @@ constructed by dox_headers.m
  and j is a row index.  This function also does not need to know if A is
  hypersparse or not.
 \par
- parallel: unless realloc occurs, this function does O(1) work and is already
- thread-safe.  The realloc could be parallel; see GB_realloc_memory.
+ parallel: unless reallocation occurs, this function does O(1) work and is
+ already thread-safe.  The reallocation could be parallel; see
+ GB_realloc_memory.
 */
 
 
@@ -1770,10 +1791,10 @@ constructed by dox_headers.m
 
 
 /** \file GB_realloc_memory.c
-\brief  GB_realloc_memory: wrapper for realloc (used via the GB_REALLOC_MEMORY macro)
+\brief  GB_realloc_memory: wrapper for realloc_function
 
 \par
- A wrapper for realloc.
+ A wrapper for realloc_function.
 \par
  This function is called via the GB_REALLOC_MEMORY macro.
 \par
@@ -1799,14 +1820,7 @@ constructed by dox_headers.m
           p points to the old space of size nold*size, which is left
           unchanged.  This case never occurs if nnew \< nold.
 \par
- By default, GB_REALLOC is defined in GB.h as realloc.  For a MATLAB
- mexFunction, it is mxRealloc.  It can also be defined at compile time with
- -DGB_REALLOC=myreallocfunc.
-\par
- PARALLEL: the realloc could be parallel, if data needs to be moved from
- the old space to the new space.  It could realloc an entire matrix, so
- this could be a lot of work.  If done in parallel, a malloc could be used,
- followed by a parallel memcpy.
+ PARALLEL: move the data in parallel?
 */
 
 
@@ -1814,11 +1828,9 @@ constructed by dox_headers.m
 \brief  GB_reduce_to_column: reduce a matrix to a column using a binary op
 
 \par
- C\<mask\> = accum (C,reduce(A)) where C is n-by-1
+ C\<M\> = accum (C,reduce(A)) where C is n-by-1
 \par
  PARALLEL: use a parallel reduction method
-\par
- FUTURE:: add early exit;  pass in terminal (NULL if none)
 */
 
 
@@ -1834,8 +1846,6 @@ constructed by dox_headers.m
 \par
  This function does not need to know if A is hypersparse or not, and its
  result is the same if A is in CSR or CSC format.
-\par
- FUTURE:: add early exit
 \par
  PARALLEL: a parallel reduction method.  All entries of the matrix
  must be reduce to a single scalar.
@@ -1890,7 +1900,7 @@ constructed by dox_headers.m
 \par
  GrB_setElement is the same as GrB_*assign with an implied SECOND accum
  operator whose ztype, xtype, and ytype are the same as C, with I=i, J=1, a
- 1-by-1 dense matrix A (where nnz (A) == 1), no Mask, Mask not complemented,
+ 1-by-1 dense matrix A (where nnz (A) == 1), no mask, mask not complemented,
  C_replace effectively false (its value is ignored), and A transpose
  effectively false (since transposing a scalar has no effect).
 \par
@@ -2049,18 +2059,18 @@ constructed by dox_headers.m
 
 
 /** \file GB_subassign_scalar.c
-\brief  GB_subassign_scalar: C(Rows,Cols)\<Mask\> = accum (C(Rows,Cols),x)
+\brief  GB_subassign_scalar: C(Rows,Cols)\<M\> = accum (C(Rows,Cols),x)
 
 \par
  Assigns a single scalar to a submatrix:
 \par
- C(Rows,Cols)\<Mask\> = accum (C(Rows,Cols),x)
+ C(Rows,Cols)\<M\> = accum (C(Rows,Cols),x)
 \par
  This function does the work for GxB_Matrix_subassign_TYPE and
  GxB_Vector_subassign_[type], where [type] is one of the 11 types, or the
  type-generic macro suffix, \"_UDT\".
 \par
- Compare with GB_assign_scalar, which uses Mask and C_replace differently
+ Compare with GB_assign_scalar, which uses M and C_replace differently
 \par
  parallel: not here; see GB_subassign
 */
@@ -2390,17 +2400,17 @@ constructed by dox_headers.m
 
 
 /** \file GrB_Col_assign.c
-\brief  GrB_Col_assign:    C\<mask\>(Rows,col) = accum (C(Rows,col),u)
+\brief  GrB_Col_assign:    C\<M\>(Rows,col) = accum (C(Rows,col),u)
 
 \par
- Compare with GxB_Col_subassign, which uses the mask and C_replace differently
+ Compare with GxB_Col_subassign, which uses the M and C_replace differently
 \par
  parallel: not here; see GB_assign
 */
 
 
 /** \file GrB_Col_extract.c
-\brief  GrB_Col_extract: w\<mask\> = accum (w, A(I,j)) or A(j,I)'
+\brief  GrB_Col_extract: w\<M\> = accum (w, A(I,j)) or A(j,I)'
 
 \par
  Extract a single row or column from a matrix.  Note that in the
@@ -2442,14 +2452,14 @@ constructed by dox_headers.m
 \brief  GrB_Matrix_apply: apply a unary operator to a matrix
 
 \par
- C\<Mask\> = accum(C,op(A)) or accum(C,op(A'))
+ C\<M\> = accum(C,op(A)) or accum(C,op(A'))
 \par
  parallel: not here; see GB_apply
 */
 
 
 /** \file GrB_Matrix_assign.c
-\brief  GrB_Matrix_assign:    C\<Mask\>(Rows,Cols) = accum (C(Rows,Cols),A) or A'
+\brief  GrB_Matrix_assign:    C\<M\>(Rows,Cols) = accum (C(Rows,Cols),A) or A'
 
 \par
  parallel: not here; see GB_assign
@@ -2462,13 +2472,13 @@ constructed by dox_headers.m
 \par
  Assigns a single scalar to a matrix:
 \par
- C\<Mask\>(Rows,Cols) = accum(C(Rows,Cols),x)
+ C\<M\>(Rows,Cols) = accum(C(Rows,Cols),x)
 \par
  The scalar x is implicitly expanded into a matrix A of size nRows-by-nCols,
  with each entry in A equal to x.
 \par
  Compare with GxB_Matrix_subassign_scalar,
- which uses Mask and C_Replace differently.
+ which uses M and C_Replace differently.
 \par
  The actual work is done in GB_assign_scalar.c.
 \par
@@ -2507,7 +2517,7 @@ constructed by dox_headers.m
 
 
 /** \file GrB_Matrix_extract.c
-\brief  GrB_Matrix_extract: C\<Mask\> = accum (C, A(I,J)) or A(J,I)'
+\brief  GrB_Matrix_extract: C\<M\> = accum (C, A(I,J)) or A(J,I)'
 
 \par
  parallel: not here, but in GB_subref_numeric.
@@ -2645,10 +2655,10 @@ constructed by dox_headers.m
 
 
 /** \file GrB_Row_assign.c
-\brief  GrB_Row_assign:    C\<mask'\>(row,Cols) = accum (C(row,Cols),u')
+\brief  GrB_Row_assign:    C\<M'\>(row,Cols) = accum (C(row,Cols),u')
 
 \par
- Compare with GxB_Row_subassign, which uses Mask and C_replace differently
+ Compare with GxB_Row_subassign, which uses M and C_replace differently
 \par
  parallel: not here, but in GB_assign
 */
@@ -2746,10 +2756,10 @@ constructed by dox_headers.m
 
 
 /** \file GrB_Vector_assign.c
-\brief  GrB_Vector_assign:    w\<mask\>(Rows) = accum (w(Rows),u)
+\brief  GrB_Vector_assign:    w\<M\>(Rows) = accum (w(Rows),u)
 
 \par
- Compare with GxB_Vector_subassign, which uses mask and C_replace differently
+ Compare with GxB_Vector_subassign, which uses M and C_replace differently
 \par
  parallel: not here; see GB_assign
 */
@@ -2759,7 +2769,7 @@ constructed by dox_headers.m
 \brief  GrB_Vector_assign_[SCALAR]: assign scalar to vector, via scalar expansion
 
 \par
- Assigns a single scalar to a vector, w\<mask\>(Rows) = accum(w(Rows),x)
+ Assigns a single scalar to a vector, w\<M\>(Rows) = accum(w(Rows),x)
  The scalar x is implicitly expanded into a vector u of size nRows-by-1,
  with each entry in u equal to x.
 \par
@@ -2796,7 +2806,7 @@ constructed by dox_headers.m
 
 
 /** \file GrB_Vector_extract.c
-\brief  GrB_Vector_extract: w\<mask\> = accum (w, u(I))
+\brief  GrB_Vector_extract: w\<M\> = accum (w, u(I))
 
 \par
  parallel: not here, but in GB_subref_numeric.
@@ -2909,7 +2919,7 @@ constructed by dox_headers.m
 \brief  GrB_eWiseAdd_Matrix: matrix element-wise operations, set union
 
 \par
- C\<Mask\> = accum (C,A+B) and variations.
+ C\<M\> = accum (C,A+B) and variations.
 \par
  parallel: not here but in GB_add
 */
@@ -2919,7 +2929,7 @@ constructed by dox_headers.m
 \brief  GrB_eWiseAdd_Vector: vector element-wise operations, set union
 
 \par
- w\<mask\> = accum (w,u+v)
+ w\<M\> = accum (w,u+v)
 \par
  parallel: not here but in GB_add
 */
@@ -2929,7 +2939,7 @@ constructed by dox_headers.m
 \brief  GrB_eWiseMult_Matrix: matrix element-wise operations, using set intersection
 
 \par
- C\<Mask\> = accum (C,A.*B) and variations.
+ C\<M\> = accum (C,A.*B) and variations.
 \par
  parallel: not here but in GB_emult
 */
@@ -2939,7 +2949,7 @@ constructed by dox_headers.m
 \brief  GrB_eWiseMult_Vector: vector element-wise multiplication
 
 \par
- w\<mask\> = accum (w,u.*v)
+ w\<M\> = accum (w,u.*v)
 \par
  parallel: not here but in GB_emult
 */
@@ -2968,30 +2978,8 @@ constructed by dox_headers.m
 \brief  GrB_init: initialize GraphBLAS
 
 \par
- GrB_init must called before any other GraphBLAS operation.  GrB_finalize
- must be called as the last GraphBLAS operation.
-\par
- GrB_init defines the mode that GraphBLAS will use:  blocking or
- non-blocking.  With blocking mode, all operations finish before returning to
- the user application.  With non-blocking mode, operations can be left
- pending, and are computed only when needed.
-\par
- The GrB_wait function forces all pending operations to complete.  Blocking
- mode is as if the GrB_wait operation is called whenever a GraphBLAS
- operation returns to the user.
-\par
- The non-blocking mode can have side effects if user-defined functions have
- side effects or if they rely on global variables, which are not under the
- control of GraphBLAS.  Suppose the user creates a user-defined operator that
- accesses a global variable.  That operator is then used in a GraphBLAS
- operation, which is left pending.  If the user then changes the global
- variable, the pending operations will be eventually computed with this
- different value.
-\par
- Worse yet, a user-defined operator can be freed before it is needed to
- finish a pending operation.  To avoid this, call GrB_wait before modifying
- any global variables relied upon by user-defined operators and before
- freeing any user-defined types, operators, monoids, or semirings.
+ GrB_init (or GxB_init) must called before any other GraphBLAS operation.
+ GrB_finalize must be called as the last GraphBLAS operation.
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */
@@ -3001,7 +2989,7 @@ constructed by dox_headers.m
 \brief  GrB_mxm: matrix-matrix multiply
 
 \par
- C\<Mask\> = accum (C,A*B) and variations.
+ C\<M\> = accum (C,A*B) and variations.
 \par
  The input matrices A and B are optionally transposed, as determined by the
  Descriptor desc.
@@ -3014,7 +3002,7 @@ constructed by dox_headers.m
 \brief  GrB_mxv: matrix-vector multiply
 
 \par
- w\<mask\> = accum (w,t) where t = A*u or A'*u (u is never transposed)
+ w\<M\> = accum (w,t) where t = A*u or A'*u (u is never transposed)
 \par
  The input matrix A is optionally transposed, as determined by the
  Descriptor desc.
@@ -3028,15 +3016,6 @@ constructed by dox_headers.m
 
 \par
  parallel: not here, see GB_reduce_to_column
-\par
- FUTURE:: If reduce is a binary operator that corresponds to a built-in
- Monoid, then look up the Monoid-\>terminal.  Otherwise pass NULL to
- GB_reduce_to_column as the terminal value.
-\par
- For the monoid case, extract the Monoid-\>terminal and pass it to
- GB_reduce_to_column.
-\par
- in both cases, GB_reduce_to_column
 */
 
 
@@ -3054,10 +3033,10 @@ constructed by dox_headers.m
 \brief  GrB_vxm: vector-matrix multiply
 
 \par
- w'\<mask'\> = accum (w',t) where t = u'*A or u'*A'
+ w'\<M'\> = accum (w',t) where t = u'*A or u'*A'
 \par
- Rows w', u', and mask' are simply columns w, u, and mask.  Thus:
- w\<mask\> = accum (w,t) where t = A'*u or A*u, but with the multiply operator
+ Rows w', u', and M' are simply columns w, u, and M.  Thus:
+ w\<M\> = accum (w,t) where t = A'*u or A*u, but with the multiply operator
  flipped.  The input descriptor for A, inp1, is also negated.
 \par
  parallel: not here, see GB_AxB_parallel
@@ -3130,10 +3109,10 @@ constructed by dox_headers.m
 
 
 /** \file GxB_Col_subassign.c
-\brief  GxB_Col_subassign: C(Rows,col)\<mask\> = accum (C(Rows,col),u)
+\brief  GxB_Col_subassign: C(Rows,col)\<M\> = accum (C(Rows,col),u)
 
 \par
- Compare with GrB_Col_assign, which uses the mask and C_replace differently
+ Compare with GrB_Col_assign, which uses M and C_replace differently
 \par
  parallel: not here; see GB_subassign_kernel
 */
@@ -3194,17 +3173,15 @@ constructed by dox_headers.m
 \brief  GxB_Global_Option_set: set a global default option for all future matrices
 
 \par
- FUTURE:: allow the user to pass in malloc, calloc, ... functions
-\par
  not parallel: this function does O(1) work and is already thread-safe.
 */
 
 
 /** \file GxB_Matrix_Option_get.c
-\brief  GxB_Matrix_option_get: get an option in a matrix
+\brief  GxB_Matrix_Option_get: get an option in a matrix
 
 \par
- FUTURE:: add an option to query if a matrix is hypersparse or not
+ TODO:: add an option to query if a matrix is hypersparse or not
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */
@@ -3302,17 +3279,17 @@ constructed by dox_headers.m
 \brief  GxB_Matrix_select: select entries from a matrix
 
 \par
- C\<Mask\> = accum(C,select(A,k)) or accum(C,select(A',))
+ C\<M\> = accum(C,select(A,k)) or accum(C,select(A',))
 \par
  parallel: not here; see GB_select
 */
 
 
 /** \file GxB_Matrix_subassign.c
-\brief  GxB_Matrix_subassign: C(Rows,Cols)\<Mask\> = accum (C(Rows,Cols),A) or A'
+\brief  GxB_Matrix_subassign: C(Rows,Cols)\<M\> = accum (C(Rows,Cols),A) or A'
 
 \par
- Compare with GrB_Matrix_assign, which uses Mask and C_replace differently
+ Compare with GrB_Matrix_assign, which uses M and C_replace differently
 \par
  parallel: not here; see GB_subassign_kernel
 */
@@ -3324,13 +3301,13 @@ constructed by dox_headers.m
 \par
  Assigns a single scalar to a submatrix:
 \par
- C(Rows,Cols)\<Mask\> = accum(C(Rows,Cols),x)
+ C(Rows,Cols)\<M\> = accum(C(Rows,Cols),x)
 \par
  The scalar x is implicitly expanded into a matrix A of size nRows-by-nCols,
  with each entry in A equal to x.
 \par
  Compare with GrB_Matrix_assign_scalar,
- which uses Mask and C_Replace differently.
+ which uses M and C_Replace differently.
 \par
  The actual work is done in GB_subassign_scalar.c.
 \par
@@ -3371,10 +3348,10 @@ constructed by dox_headers.m
 
 
 /** \file GxB_Row_subassign.c
-\brief  GxB_Row_subassign: C(row,Cols)\<mask'\> = accum (C(row,Cols),u')
+\brief  GxB_Row_subassign: C(row,Cols)\<M'\> = accum (C(row,Cols),u')
 
 \par
- Compare with GrB_Row_assign, which uses the mask and C_replace differently
+ Compare with GrB_Row_assign, which uses the M and C_replace differently
 \par
  parallel: not here, see GB_subassign_kernel
 */
@@ -3525,10 +3502,10 @@ constructed by dox_headers.m
 
 
 /** \file GxB_Vector_subassign.c
-\brief  GxB_Vector_subassign: w(Rows)\<mask\> = accum (w(Rows),u)
+\brief  GxB_Vector_subassign: w(Rows)\<M\> = accum (w(Rows),u)
 
 \par
- Compare with GrB_Vector_assign, which uses mask and C_replace differently
+ Compare with GrB_Vector_assign, which uses M and C_replace differently
 \par
  parallel: not here; see GB_subassign_kernel
 */
@@ -3538,7 +3515,7 @@ constructed by dox_headers.m
 \brief  GxB_Vector_subassign_[SCALAR]: assign scalar to vector, via scalar expansion
 
 \par
- Assigns a single scalar to a subvector, w(Rows)\<mask\> = accum(w(Rows),x)
+ Assigns a single scalar to a subvector, w(Rows)\<M\> = accum(w(Rows),x)
  The scalar x is implicitly expanded into a vector u of size nRows-by-1,
  with each entry in u equal to x.
 \par
@@ -3553,6 +3530,22 @@ constructed by dox_headers.m
 
 \par
  not parallel: this function does O(1) work and is already thread-safe.
+*/
+
+
+/** \file GxB_init.c
+\brief  GxB_init: initialize GraphBLAS and declare malloc/calloc/realloc/free to use
+
+\par
+ GrB_init (or GxB_init) must called before any other GraphBLAS operation.
+ GrB_finalize must be called as the last GraphBLAS operation.  GxB_init is
+ identical to GrB_init, except that it allows the user application to define
+ the malloc/calloc/realloc/free functions that SuiteSparse:GraphBLAS will
+ use.  The functions cannot be modified once GraphBLAS starts.
+\par
+ not parallel: this function does O(1) work and is already thread-safe.
+\par
+ Examples:
 */
 
 

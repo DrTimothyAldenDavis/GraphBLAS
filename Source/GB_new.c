@@ -35,7 +35,7 @@
 // grep "allocate a new header"
 // which shows all uses of GB_new and GB_create
 
-// parallel: not here; see calloc of Ap
+// parallel: not here; see GB_calloc_memory
 
 #include "GB.h"
 
@@ -45,7 +45,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // calloc/malloc A->p and A->h, or leave NULL
+    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
     const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto
     const double hyper_ratio,   // A->hyper_ratio, unless auto
@@ -183,7 +183,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         ok = (A->p != NULL) ;
         if (is_hyper)
         { 
-            // since nvec is zero, there is never any need to calloc A->h
+            // since nvec is zero, there is never any need to initialize A->h
             GB_MALLOC_MEMORY (A->h, A->plen, sizeof (int64_t)) ;
             ok = ok && (A->h != NULL) ;
         }

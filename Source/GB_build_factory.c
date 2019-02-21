@@ -168,7 +168,7 @@ GrB_Info GB_build_factory           // build a matrix
     size_t ssize = GB_code_size (scode, tsize) ;
 
     // T->x is allocated fresh but iwork is transplanted in T->i, when done.
-    // This malloc is typically free since jwork has just been freed in the
+    // This allocation is typically free since jwork has just been freed in the
     // caller, GB_builder.  T->x has size tnz*tsize and jwork is size
     // ijlen*sizeof(int64_t).  tnz <= ijlen always holds, and tsize <=
     // size(int64_t) holds for all built-in types.

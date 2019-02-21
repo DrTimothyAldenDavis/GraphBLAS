@@ -96,33 +96,27 @@
 // These flags are used for code development.  Uncomment them as needed.
 
 // to turn on debugging, uncomment this line:
-// #undef NDEBUG
+// TODO
+#undef NDEBUG
 
-// to turn on malloc tracking (for testing only), uncomment this line:
-// #define GB_MALLOC_TRACKING
+// to turn on memory usage tracking (for testing only), uncomment this line:
+// #define GB_MALLOC_TRACKING 1
 
-// to turn on malloc debug printing, uncomment this line:
-// #define GB_PRINT_MALLOC
+// to turn on memory usage debug printing, uncomment this line:
+// #define GB_PRINT_MALLOC 1
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower:
-// #define GBCOMPACT
+// #define GBCOMPACT 1
 
 // uncomment this for code development (additional diagnostics are printed):
-// #define GB_DEVELOPER
+// #define GB_DEVELOPER 1
 
 // for coverage tests
 #ifdef GBCOVER
 #define GBCOVER_MAX 10000
 extern int64_t GB_cov [GBCOVER_MAX] ;
 extern int GB_cover_max ;
-#endif
-
-// always turn on malloc tracking when testing GraphBLAS via MATLAB
-#if defined(MATLAB_MEX_FILE) || defined(GB_PRINT_MALLOC)
-#ifndef GB_MALLOC_TRACKING
-#define GB_MALLOC_TRACKING
-#endif
 #endif
 
 //------------------------------------------------------------------------------
@@ -321,19 +315,12 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 
 // The largest valid dimension permitted in this implementation is 2^60.
 // Matrices with that many rows and/or columns can be actually be easily
-// created, particulary if they are hypersparse since in that case O(nrows) or
+// created, particularly if they are hypersparse since in that case O(nrows) or
 // O(ncols) memory is not needed.  For the standard formats, O(ncols) space is
-// needed for CSC and O(nrows) space is needed for CSR.
+// needed for CSC and O(nrows) space is needed for CSR.  For hypersparse
+// matrices, the time complexity does not depend on O(nrows) or O(ncols).
 
-// The time complexity of many operations does not depend nrows or ncols at
-// all.  Even some forms of matrix multiply can be performed: C=A'*B and
-// w=u'*A, for example, without a time or memory complexity depending on nrows,
-// for the CSC format.
-
-// MATLAB has a limit of 2^48-1
-#ifdef MATLAB_MEX_FILE
-#define GB_INDEX_MAX ((GrB_Index) ((1ULL << 48)-1))
-#else
+#ifndef GB_INDEX_MAX
 #define GB_INDEX_MAX ((GrB_Index) (1ULL << 60))
 #endif
 
@@ -345,25 +332,6 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 // debugging definitions
 //------------------------------------------------------------------------------
 
-#ifdef MATLAB_MEX_FILE
-// compiling GraphBLAS in a MATLAB mexFunction.  Use mxMalloc, mxFree, etc.
-#include "mex.h"
-#include "matrix.h"
-
-#undef GB_MALLOC
-#undef GB_FREE
-#undef GB_CALLOC
-#undef GB_REALLOC
-#define GB_MALLOC  mxMalloc
-#define GB_FREE    mxFree
-#define GB_CALLOC  mxCalloc
-#define GB_REALLOC mxRealloc
-#define malloc  mxMalloc
-#define free    mxFree
-#define calloc  mxCalloc
-#define realloc mxRealloc
-#endif
-
 #undef ASSERT
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
@@ -371,29 +339,27 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 
 #ifndef NDEBUG
 
-    // debugging enabled
-    #ifdef MATLAB_MEX_FILE
-    #define ASSERT(x) \
+    #define ASSERT(x)                                                       \
     {                                                                       \
         if (!(x))                                                           \
         {                                                                   \
-            mexErrMsgTxt ("failure: " __FILE__ " line: " GB_XSTR(__LINE__)) ; \
+            printf ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
+            GB_Global.abort_function ( ) ;                                  \
         }                                                                   \
     }
-    #else
-    #include <assert.h>
-    #define ASSERT(x) assert (x) ;
-    #endif
+
     #define ASSERT_OK(X)                                                    \
     {                                                                       \
         GrB_Info Info = X ;                                                 \
         ASSERT (Info == GrB_SUCCESS) ;                                      \
     }
+
     #define ASSERT_OK_OR_NULL(X)                                            \
     {                                                                       \
         GrB_Info Info = X ;                                                 \
         ASSERT (Info == GrB_SUCCESS || Info == GrB_NULL_POINTER) ;          \
     }
+
     #define ASSERT_OK_OR_JUMBLED(X)                                         \
     {                                                                       \
         GrB_Info Info = X ;                                                 \
@@ -413,15 +379,13 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 #define GB_IMPLIES(p,q) (!(p) || (q))
 
 // for finding tests that trigger statement coverage
-#ifdef MATLAB_MEX_FILE
-#define GB_GOTCHA \
-mexErrMsgTxt ("gotcha: " __FILE__ " line: " GB_XSTR(__LINE__)) ;
-#else
-#define GB_GOTCHA \
-{ printf ("gotcha: " __FILE__ " line: " GB_XSTR(__LINE__)"\n") ; abort () ; }
-#endif
+#define GB_GOTCHA                                           \
+{                                                           \
+    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
+    GB_Global.abort_function ( ) ;                          \
+}
 
-#define GB_HERE printf (" Here: %s line: %d\n",  __FILE__, __LINE__) ;
+#define GB_HERE printf (" Here: " __FILE__ " line: %d\n",  __LINE__) ;
 
 // ASSERT (GB_DEAD_CODE) marks code that is intentionally dead, leftover from
 // prior versions of SuiteSparse:GraphBLAS but no longer used in the current
@@ -463,25 +427,6 @@ bool GB_aliased             // determine if A and B are aliased
 //------------------------------------------------------------------------------
 // GraphBLAS memory manager
 //------------------------------------------------------------------------------
-
-// GraphBLAS can be compiled with -DMALLOC=mymallocfunc to redefine
-// the malloc function and other memory management functions.
-// By default, these are simply the system malloc, free, etc, routines.
-#ifndef GB_MALLOC
-#define GB_MALLOC malloc
-#endif
-
-#ifndef GB_CALLOC
-#define GB_CALLOC calloc
-#endif
-
-#ifndef GB_REALLOC
-#define GB_REALLOC realloc
-#endif
-
-#ifndef GB_FREE
-#define GB_FREE free
-#endif
 
 #define GBYTES(n,s)  ((((double) (n)) * ((double) (s))) / 1e9)
 
@@ -1026,6 +971,19 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
 // internal GraphBLAS functions
 //------------------------------------------------------------------------------
 
+GrB_Info GB_init            // start up GraphBLAS
+(
+    const GrB_Mode mode,    // blocking or non-blocking mode
+
+    // pointers to memory management functions.  Must be non-NULL.
+    void * (* malloc_function  ) (size_t),
+    void * (* calloc_function  ) (size_t, size_t),
+    void * (* realloc_function ) (void *, size_t),
+    void   (* free_function    ) (void *),
+
+    GB_Context Context      // from GrB_init or GxB_init
+) ;
+
 typedef enum                    // input parameter to GB_new and GB_create
 {
     GB_Ap_calloc,               // 0: calloc A->p, malloc A->h if hypersparse
@@ -1040,7 +998,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     const GrB_Type type,        // matrix type
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // calloc/malloc A->p and A->h, or leave NULL
+    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
     const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto
     const double hyper_ratio,   // A->hyper_ratio, unless auto
@@ -1055,7 +1013,7 @@ GrB_Info GB_create              // create a new matrix, including A->i and A->x
     const GrB_Type type,        // type of output matrix
     const int64_t vlen,         // length of each vector
     const int64_t vdim,         // number of vectors
-    const GB_Ap_code Ap_option, // calloc/malloc A->p and A->h, or leave NULL
+    const GB_Ap_code Ap_option, // allocate A->p and A->h, or leave NULL
     const bool is_csc,          // true if CSC, false if CSR
     const int hyper_option,     // 1:hyper, 0:nonhyper, -1:auto
     const double hyper_ratio,   // A->hyper_ratio, unless auto
@@ -1386,14 +1344,14 @@ void GB_free_memory
 }
 
 #define GB_CALLOC_MEMORY(p,n,s,Context)                                        \
-    printf ("\ncalloc:                       "                                \
+    printf ("\nCalloc:                       "                                \
     "%s = calloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
     p = GB_calloc_memory (n, s, Context) ;
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
-    printf ("\nmalloc:                       "                                \
+    printf ("\nMalloc:                       "                                \
     "%s = malloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
@@ -1401,7 +1359,7 @@ void GB_free_memory
 
 #define GB_REALLOC_MEMORY(p,nnew,nold,s,ok,Context)                            \
 {                                                                             \
-    printf ("\nrealloc: %14p       "                                          \
+    printf ("\nRealloc: %14p       "                                          \
     "%s = realloc (%s = "GBd", %s = "GBd", %s = "GBd") line %d file %s\n",    \
     p, GB_STR(p), GB_STR(nnew), (int64_t) nnew, GB_STR(nold), (int64_t) nold, \
     GB_STR(s), (int64_t) s, __LINE__,__FILE__) ;                              \
@@ -1411,7 +1369,7 @@ void GB_free_memory
 #define GB_FREE_MEMORY(p,n,s)                                                 \
 {                                                                             \
     if (p)                                                                    \
-    printf ("\nfree:               "                                          \
+    printf ("\nFree:               "                                          \
     "(%s, %s = "GBd", %s = "GBd") line %d file %s\n",                         \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
@@ -1450,14 +1408,14 @@ void GB_free_memory
     p = GB_realloc_memory (nnew, nold, s, p, ok, Context) ;
 
 #ifdef GB_MALLOC_TRACKING
-    // free memory, with malloc tracking
+    // free memory, with memory usage tracking
     #define GB_FREE_MEMORY(p,n,s)                                             \
     {                                                                         \
         GB_free_memory (p, n, s) ;                                            \
         (p) = NULL ;                                                          \
     }
 #else
-    // free memory, no malloc tracking
+    // free memory, no memory usage tracking
     #define GB_FREE_MEMORY(p,n,s)                                             \
     {                                                                         \
         GB_free_memory (p) ;                                                  \
@@ -1901,9 +1859,10 @@ GrB_Info GB_extractElement      // extract a single entry, x = A(row,col)
 GrB_Info GB_Monoid_new          // create a monoid
 (
     GrB_Monoid *monoid,         // handle of monoid to create
-    const GrB_BinaryOp op,      // binary operator of the monoid
+    GrB_BinaryOp op,            // binary operator of the monoid
     const void *identity,       // identity value
-    const GB_Type_code idcode,  // identity code
+    const void *terminal,       // terminal value, if any (may be NULL)
+    const GB_Type_code idcode,  // identity and terminal type code
     GB_Context Context
 ) ;
 
@@ -2339,7 +2298,25 @@ typedef struct
     bool is_csc ;               // default CSR/CSC format for new matrices
 
     //--------------------------------------------------------------------------
-    // malloc tracking: for testing and debugging only
+    // abort function: only used for debugging
+    //--------------------------------------------------------------------------
+
+    void (* abort_function ) (void) ;
+
+    //--------------------------------------------------------------------------
+    // malloc/calloc/realloc/free: memory management functions
+    //--------------------------------------------------------------------------
+
+    // All threads must use the same malloc/calloc/realloc/free functions.
+    // They default to the ANSI C11 functions, but can be defined by GxB_init.
+
+    void * (* malloc_function  ) (size_t)         ;
+    void * (* calloc_function  ) (size_t, size_t) ;
+    void * (* realloc_function ) (void *, size_t) ;
+    void   (* free_function    ) (void *)         ;
+
+    //--------------------------------------------------------------------------
+    // memory usage tracking: for testing and debugging only
     //--------------------------------------------------------------------------
 
     #ifdef GB_MALLOC_TRACKING
@@ -2347,11 +2324,11 @@ typedef struct
     // NOTE: these statistics are not thread-safe, and used only for testing.
 
     // nmalloc:  To aid in searching for memory leaks, GraphBLAS keeps track of
-    // the number of blocks of allocated by malloc, calloc, or realloc that
-    // have not yet been freed.  The count starts at zero.  malloc and calloc
-    // increment this count, and free (of a non-NULL pointer) decrements it.
-    // realloc increments the count it if is allocating a new block, but it
-    // does this by calling GB_malloc_memory.
+    // the number of blocks of allocated that have not yet been freed.  The
+    // count starts at zero.  GB_malloc_memory and GB_calloc_memory increment
+    // this count, and free (of a non-NULL pointer) decrements it.  realloc
+    // increments the count it if is allocating a new block, but it does this
+    // by calling GB_malloc_memory.
 
     // inuse: the # of bytes currently in use by all threads
 

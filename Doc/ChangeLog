@@ -1,9 +1,21 @@
+Version 2.3.0 (BETA2), Feb TODO, 2019
+
+    * terminal values for user monoids: added GxB_Monoid_terminal_new and
+        GxB_Monoid_terminal_define
+    * added GxB_init: GrB_init with malloc/calloc/realloc/free redefinition
+    * _Generic: compilers differ on _Generic(x,int:,const int:). gcc, clang,
+        icc 18.0.0 treat int and const int the same; icc 18.0.3 treats them
+        as different.  This is a result of an ambiguity in the ANSI C11
+        specification.  Minor update so that the use of _Generic(...) is
+        compatible with all compilers.
+    * early exit: for GrB_reduce
+
 Version 2.3.0 (BETA1), Feb 16, 2019
 
     * simplified GBI_*_iterators
     * towards OpenMP: PARALLEL comments added to most files (all upper case)
         where parallelism will be added in the future.
-    * early exit: for monoids: MIN, MAX, AND, OR
+    * early exit: for monoids: MIN, MAX, AND, OR, based on terminal values
     * Demo/bfs*: much faster (prior versions had performance bug)
     * GrB_assign for accum/mask step: faster, zombies and pending tuples
         exploited by C<M>=accum(C,T) for any GraphBLAS method, when either the

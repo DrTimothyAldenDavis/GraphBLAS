@@ -143,10 +143,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     //--------------------------------------------------------------------------
-    // count the malloc'd blocks
+    // count the allocated blocks
     //--------------------------------------------------------------------------
 
-    // a matrix contains 1 to 8 different malloc'd blocks
+    // a matrix contains 1 to 8 different allocated blocks
     int64_t nallocs = 1 +                       // header
         (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow

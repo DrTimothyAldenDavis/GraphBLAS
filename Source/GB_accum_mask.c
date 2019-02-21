@@ -267,11 +267,11 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // GB_WAIT (C) ;
         if (GB_PENDING (C) || GB_ZOMBIES (C))
         { 
-            GB_GOTCHA ;
+GB_GOTCHA ; // TODO
             info = GB_wait (C, Context) ;
             if (info != GrB_SUCCESS)
             { 
-                GB_GOTCHA ;
+GB_GOTCHA ; // TODO
                 // out of memory
                 GB_MATRIX_FREE (Thandle) ;
                 GB_MATRIX_FREE (&MT) ;

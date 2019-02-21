@@ -10,8 +10,7 @@
 // Change the size of the A->h and A->p hyperlist.
 // No change is made if A is not hypersparse.
 
-// parallel: not here, but perhaps realloc could be done in parallel (the copy
-// from the old to new space).
+// parallel: not here, but perhaps in GB_realloc_memory
 
 #include "GB.h"
 

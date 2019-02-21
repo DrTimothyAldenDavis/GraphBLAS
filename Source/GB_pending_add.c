@@ -42,8 +42,9 @@
 // and j is a row index.  This function also does not need to know if A is
 // hypersparse or not.
 
-// parallel: unless realloc occurs, this function does O(1) work and is already
-// thread-safe.  The realloc could be parallel; see GB_realloc_memory.
+// parallel: unless reallocation occurs, this function does O(1) work and is
+// already thread-safe.  The reallocation could be parallel; see
+// GB_realloc_memory.
 
 #include "GB.h"
 

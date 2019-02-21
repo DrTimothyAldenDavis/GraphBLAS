@@ -186,7 +186,7 @@ GrB_Info GB_builder
     // allocate T; always hypersparse
     //--------------------------------------------------------------------------
 
-    // [ allocate T; malloc T->p and T->h but do not initialize them
+    // [ allocate T; allocate T->p and T->h but do not initialize them
     // T is always hypersparse.
     GrB_Info info ;
     GrB_Matrix T = NULL ;           // allocate a new header for T
@@ -298,14 +298,14 @@ GrB_Info GB_builder
     // step because for all built-in types, jwork is at least as big as T->x,
     // which has not yet been allocated.  jwork is as big as the number of
     // tuples (len, or nvals), whereas T->x will have size tnz.  Thus, if the
-    // matrix is really big the malloc/free memory manager should be able to
-    // allocate T->x in place of the freed jwork array as a cheap malloc.  This
-    // is design, and it helps to speed up the build process.
+    // matrix is really big the memory manager should be able to allocate T->x
+    // in place of the freed jwork array as a cheap allocation.  This is
+    // design, and it helps to speed up the build process.
 
     // During testing on a Macbook Pro and clang 8.0.0 it was observed that the
     // jwork and T->x pointers were typically identical for large problems (for
     // T->x double precision, where sizeof (double) == sizeof (int64_t) = 8).
-    // Thus, malloc is detecting this condition and exploiting it.
+    // Thus, the memory manager is detecting this condition and exploiting it.
 
     // jwork may already be NULL.  It is only required when T has more than
     // one vector.  But the jwork_handle itself is always non-NULL.

@@ -76,7 +76,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 
     (*Chandle) = NULL ;
 
-    // [ create C; malloc C->p and do not initialize it
+    // [ create C; allocate C->p and do not initialize it
     // C has the exact same hypersparsity as A.
     GrB_Info info ;
     int64_t anz = GB_NNZ (A) ;

@@ -33,7 +33,7 @@ void mexFunction
     GrB_Info info = GrB_SUCCESS ;
     GrB_Matrix A = NULL ;
     iPageRank *P = NULL ;
-    bool malloc_debug = GB_mx_get_global (true) ;
+    bool malloc_debug = GB_mx_get_global (true, false) ;
 
     GB_WHERE (USAGE) ;
 

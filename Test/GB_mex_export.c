@@ -252,7 +252,7 @@ void mexFunction
 )
 {
 
-    bool malloc_debug = GB_mx_get_global (true) ;
+    bool malloc_debug = GB_mx_get_global (true, false) ;
 
     // printf ("start, nmalloc %d\n", GB_Global.nmalloc) ;
 

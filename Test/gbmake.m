@@ -27,6 +27,9 @@ function gbmake (what, flags, mexfunctions, cfiles, hfiles, inc)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+% TODO write 'make.m' that links against dynamic -lgraphblas and
+% -lgraphblasdemo in ../build.
+
 if (~isempty (strfind (pwd, 'Tcov')) && nargin ~= 6)
     % if the directory is Tcov, and if so assert nargin == 6
     error ('gbmake should not be used in Tcov directory; use testcov instead') ;
@@ -45,6 +48,12 @@ if (nargin < 2)
 end
 
 flags = [flags ' -largeArrayDims'] ;
+
+% always turn on memory usage tracking when testing GraphBLAS via MATLAB
+flags = [flags ' -DGB_MALLOC_TRACKING'] ;
+
+% MATLAB has a limit of 2^48-1
+% flags = [flags ' -DGB_INDEX_MAX=281474976710655'] ;
 
 try
     if (strncmp (computer, 'GLNX', 4))

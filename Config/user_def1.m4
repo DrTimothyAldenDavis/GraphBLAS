@@ -70,6 +70,21 @@ m4_define(`GxB_Monoid_define', `
     } ;
     GrB_Monoid $1 = & GB_opaque_$1')
 
+m4_define(`GxB_Monoid_terminal_define', `
+    #define GB_DEF_$1_add GB_DEF_$2_function
+    GB_DEF_$2_ztype GB_DEF_$1_identity = $3 ;
+    GB_DEF_$2_ztype GB_DEF_$1_terminal = $4 ;
+    struct GB_Monoid_opaque GB_opaque_$1 =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_$2,     // binary operator
+        & GB_DEF_$1_identity,   // identity value
+        sizeof (GB_DEF_$2_ztype),   // identity and terminal size
+        GB_USER_COMPILED,   // user-defined at compile-time
+        & GB_DEF_$1_terminal        // terminal value
+    } ;
+    GrB_Monoid $1 = & GB_opaque_$1')
+
 m4_define(`GB_semirings', `if (0)
     {
         ;

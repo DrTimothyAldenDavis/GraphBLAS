@@ -121,8 +121,6 @@ GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
     // Otherise, the first index in bucket i is (Mark [i] - flag).
 
     #ifndef NDEBUG
-    // no part of this code takes O(avlen) time, except for the
-    // calloc of Inext and this debug test
     for (int64_t i = 0 ; i < avlen ; i++)
     {
         GB_for_each_index_in_bucket (inew, i)

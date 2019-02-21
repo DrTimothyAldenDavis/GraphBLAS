@@ -29,12 +29,12 @@ char *GB_thread_local_access ( )    // return pointer to thread-local storage
         bool ok = true ;
         if (p == NULL)
         {
-            // first time:  calloc the space for the report
-            p = (void *) GB_CALLOC ((GB_RLEN+1), sizeof (char)) ;
+            // first time:  allocate the space for the report
+            p = (void *) GB_Global.calloc_function ((GB_RLEN+1), sizeof (char));
             ok = (p != NULL) ;
             ok = ok && (pthread_setspecific (GB_thread_local_report, p) == 0) ;
         }
-        // do not attempt to recover from a failure to calloc the space
+        // do not attempt to recover from a failure to allocate the space
         return (p) ;
     }
 

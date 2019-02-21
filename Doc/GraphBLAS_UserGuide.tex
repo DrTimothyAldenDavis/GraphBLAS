@@ -105,12 +105,14 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \begin{itemize}
 
 \item Version 2.3 (Feb 2019) improves the performance of many GraphBLAS
-operations, including an early-exit for built-in monoids.  These changes have a
-significant impact on the breadth-first-search demos ( performance bug was also
-fixed in these two \verb'Demo' codes).  The matrix and vector import/export
-functions are added (Section~\ref{import_export}), in support of the new
-LAGraph project (\url{https://github.com/GraphBLAS/LAGraph}, see also
-Section~\ref{lagraph}).  LAGraph includes a faster BFS based on GraphBLAS.
+operations, including an early-exit for monoids.  These changes have a
+significant impact on breadth-first-search (a performance bug was also fixed in
+the two BFS \verb'Demo' codes).  The matrix and vector import/export functions
+were added (Section~\ref{import_export}), in support of the new LAGraph project
+(\url{https://github.com/GraphBLAS/LAGraph}, see also Section~\ref{lagraph}).
+LAGraph includes a push-pull BFS in GraphBLAS that is faster than two versions
+in the \verb'Demo' folder.  \verb'GxB_init' was added to allow the memory
+manager functions (\verb'malloc', etc) to be specified.
 
 \item
 Version 2.2 (Nov 2018)
@@ -858,6 +860,8 @@ dealing with errors:
 GraphBLAS function   & purpose                                      & Section \\
 \hline
 \verb'GrB_init'      & start up GraphBLAS                           & \ref{init} \\
+\verb'GxB_init'      & start up GraphBLAS with different \verb'malloc'
+                                                                & \ref{xinit} \\
 \verb'GrB_wait'      & force completion of pending operations       & \ref{wait}\\
 \verb'GrB_Info'      & status code returned by GraphBLAS functions  & \ref{info} \\
 \verb'GrB_error'     & get more details on the last error           & \ref{error} \\
@@ -947,6 +951,71 @@ You can query the mode of a GraphBLAS session with the following
 \begin{verbatim}
     GrB_mode mode ;
     GxB_get (GxB_MODE, &mode) ; \end{verbatim} }
+
+%===============================================================================
+\subsection{{\sf GxB\_init:} initialize GraphBLAS with alternate malloc} %======
+%===============================================================================
+\label{xinit}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
+(
+    const GrB_Mode mode,    // blocking or non-blocking mode
+
+    // pointers to memory management functions.
+    void * (* user_malloc_function  ) (size_t),
+    void * (* user_calloc_function  ) (size_t, size_t),
+    void * (* user_realloc_function ) (void *, size_t),
+    void   (* user_free_function    ) (void *)
+)
+\end{verbatim}
+}\end{mdframed}
+
+\verb'GxB_init' is identical to \verb'GrB_init', except that it also redefines
+the memory management functions that SuiteSparse:GraphBLAS will use.  Giving
+the user application control over this is particularly important when using the
+\verb'GxB_*import' and \verb'GxB_*export' functions described in
+Section~\ref{import_export}, since they require the user application and
+GraphBLAS to use the same memory manager.
+
+These
+functions can only be set once, when GraphBLAS starts.   Either \verb'GrB_init'
+or \verb'GxB_init' must be called before any other GraphBLAS operation, but
+not both.
+
+The following usage is identical to \verb'GrB_init(mode)':
+
+    {\footnotesize
+    \begin{verbatim}
+    GxB_init (mode, malloc, calloc, realloc, free) ; \end{verbatim}}
+
+SuiteSparse:GraphBLAS can be compiled as normal (outside of MATLAB) and then
+linked into a MATLAB \verb'mexFunction'.  However, a \verb'mexFunction' should
+use the MATLAB memory managers.  To do this, use the following instead of
+\verb'GrB_init(mode)' in a MATLAB \verb'mexFunction'.
+
+    {\footnotesize
+    \begin{verbatim}
+    #include "mex.h"
+    #include "GraphBLAS.h"
+    ...
+    GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree) ; \end{verbatim}}
+
+As another example, the scalable TBB memory manager can be used:
+
+    {\footnotesize
+    \begin{verbatim}
+    #include "tbb/scalable_allocator.h"
+    #include "GraphBLAS.h"
+    ...
+    GxB_init (mode, scalable_malloc, scalable_calloc, scalable_realloc,
+        scalable_free) ; \end{verbatim}}
+
+\begin{spec}
+{\bf SPEC:} \verb'GxB_init' is an extension to the spec.
+\end{spec}
 
 \newpage
 %===============================================================================
@@ -1211,7 +1280,8 @@ examine the content of the object directly; instead, they can pass the handle
 back to GraphBLAS which will do the work.  Assigning one handle to another
 is valid but it does not make a copy of the underlying object.
 
-GraphBLAS provides 11 built-in types and 256 built-in operators.  With these,
+GraphBLAS provides 11 built-in types and 157 built-in operators;
+SuiteSparse:GraphBLAS adds 99 additional built-in operators.  With these,
 44 unique monoids and 960 unique semirings can be constructed.
 
 \begin{spec}
@@ -1398,7 +1468,7 @@ example \verb'GxB_Type_size (&s, GrB_INT32)' sets \verb's' to 4, the same as
 \verb'sizeof(int32_t)'. 
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Type_size' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Type_size' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -1596,7 +1666,7 @@ GrB_Info GxB_UnaryOp_ztype          // return the type of z
 is the type of $z$ in the function $z=f(x)$.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_UnaryOp_ztype' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_UnaryOp_ztype' is an extension to the spec.
 \end{spec}
 
 %-------------------------------------------------------------------------------
@@ -1619,7 +1689,7 @@ GrB_Info GxB_UnaryOp_xtype          // return the type of x
 is the type of $x$ in the function $z=f(x)$.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_UnaryOp_xtype' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_UnaryOp_xtype' is an extension to the spec.
 \end{spec}
 
 % \newpage
@@ -1896,7 +1966,7 @@ returns the \verb'ztype' of the binary operator, which is the
 type of $z$ in the function $z=f(x,y)$.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_BinaryOp_ztype' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_BinaryOp_ztype' is an extension to the spec.
 \end{spec}
 
 %-------------------------------------------------------------------------------
@@ -1920,7 +1990,7 @@ returns the \verb'xtype' of the binary operator, which is the
 type of $x$ in the function $z=f(x,y)$.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_BinaryOp_xtype' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_BinaryOp_xtype' is an extension to the spec.
 \end{spec}
 
 %-------------------------------------------------------------------------------
@@ -1944,7 +2014,7 @@ returns the \verb'ytype' of the binary operator, which is the
 type of $y$ in the function $z=f(x,y)$.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_BinaryOp_ytype' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_BinaryOp_ytype' is an extension to the spec.
 \end{spec}
 
 % \newpage
@@ -2216,8 +2286,10 @@ object:
 \begin{tabular}{ll}
 \hline
 \verb'GrB_Monoid_new'       & create a monoid \\
+\verb'GxB_Monoid_terminal_new'  & create a monoid that has a terminal value\\
 \verb'GxB_Monoid_operator'  & return the monoid operator \\
 \verb'GxB_Monoid_identity'  & return the monoid identity value \\
+\verb'GxB_Monoid_terminal'  & return the monoid terminal value (if any) \\
 \verb'GrB_Monoid_free'      & free a monoid \\
 \hline
 \end{tabular}
@@ -2258,7 +2330,80 @@ user-defined types, \verb'<type>' is \verb'void *', and thus \verb'identity' is
 a not a scalar itself but a \verb'void *' pointer to a memory location
 containing the identity value of the user-defined operator, \verb'op'.
 
+If \verb'op' is a built-in operator with a known identity value, then the
+\verb'identity' parameter is ignored, and its known identity value is used
+instead.
+
 % \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Monoid\_terminal\_new:} create a monoid with terminal}
+%-------------------------------------------------------------------------------
+\label{monoid_terminal_new}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Monoid_terminal_new    // create a monoid that has a terminal value
+(
+    GrB_Monoid *monoid,             // handle of monoid to create
+    const GrB_BinaryOp op,          // binary operator of the monoid
+    const <type> identity,          // identity value of the monoid
+    const <type> terminal           // terminal value of the monoid
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Monoid_terminal_new' is identical to \verb'GrB_Monoid_new', except
+that it allows for the specification of a {\em terminal value}.  The
+\verb'<type>' of the terminal value is the same as the \verb'identity'
+parameter; see Section~\ref{monoid_new} for details.
+
+The terminal value of a monoid is the value $z$ for which $z=f(z,y)$ for any
+$y$, where $z=f(x,y)$ is the binary operator of the monoid.  This is also
+called the {\em annihilator}, but the term {\em terminal value} is used here.
+This is because all annihilators are terminal values, but a terminal value need
+not be an annihilator, as described in the \verb'MIN' example below.
+
+If the terminal value is encountered during computation, the rest of the
+computations can be skipped.  This can greatly improve the performance of
+\verb'GrB_reduce', and matrix multiply in specific cases (when a dot product
+method is used).  For example, using \verb'GrB_reduce' to compute the sum of
+all entries in a \verb'GrB_FP32' matrix with $e$ entries takes $O(e)$ time,
+since a monoid based on \verb'GrB_PLUS_FP32' has no terminal value.  By
+contrast, a reduction using \verb'GrB_LOR' on a \verb'GrB_BOOL' matrix can take
+as little as $O(1)$ time, if a \verb'true' value is found in the matrix very
+early.
+
+Monoids based on the built-in \verb'GrB_MIN_*' and \verb'GrB_MAX_*' operators
+(for any type), the boolean \verb'GrB_LOR', and the boolean \verb'GrB_LAND'
+operators all have terminal values.  For example, the identity value of
+\verb'GrB_LOR' is \verb'false', and its terminal value is \verb'true'.  When
+computing a reduction of a set of boolean values to a single value, once a
+\verb'true' is seen, the computation can exit early since the result is now
+known.
+
+If \verb'op' is a built-in operator with known identity and terminal values,
+then the \verb'identity' and \verb'terminal' parameters are ignored, and its
+known identity and terminal values are used instead.
+
+There may be cases in which the user application needs to use a non-standard
+terminal value for a built-in operator.  For example, suppose the matrix has
+type \verb'GrB_FP32', but all values in the matrix are known to be
+non-negative.  The annihilator value of \verb'MIN' is \verb'-INFINITY', but
+this will never be seen.  However, the computation could could terminate when
+finding the value zero.  This is an example of using a terminal value that is
+not actually an annihilator, but it functions like one since the monoid will
+operate stricly on non-negative values.  In this case, a monoid created with
+\verb'GrB_MIN_FP32' will not terminate early.  To create a monoid that can
+terminate early, create a user-defined operator that computes the same thing as
+\verb'GrB_MIN_FP32', and then create a monoid based on this user-defined
+operator with a terminal value of zero and an identity of \verb'+INFINITY'.
+
+\begin{spec}
+{\bf SPEC:} \verb'GxB_Monoid_terminal_new' is an extension to the spec.
+\end{spec}
+
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Monoid\_operator:} return the monoid operator}
 %-------------------------------------------------------------------------------
@@ -2278,10 +2423,10 @@ GrB_Info GxB_Monoid_operator        // return the monoid operator
 \verb'GxB_Monoid_operator' returns the binary operator of the monoid.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Monoid_operator' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Monoid_operator' is an extension to the spec.
 \end{spec}
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Monoid\_identity:} return the monoid identity}
 %-------------------------------------------------------------------------------
@@ -2305,7 +2450,40 @@ return the monoid additive operator, then \verb'GxB_BinaryOp_ztype' to obtain
 the \verb'ztype', followed by \verb'GxB_Type_size' to get its size.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Monoid_identity' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Monoid_identity' is an extension to the spec.
+\end{spec}
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Monoid\_terminal:} return the monoid terminal value}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Monoid_terminal        // return the monoid terminal
+(
+    bool *has_terminal,             // true if the monoid has a terminal value
+    void *terminal,                 // returns the terminal of the monoid
+    const GrB_Monoid monoid         // monoid to query
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Monoid_terminal' returns the terminal value of the monoid (if any).
+The \verb'void *' pointer, \verb'terminal', must be non-\verb'NULL' and must
+point to a memory space of size at least equal to the size of the type of the
+\verb'monoid'.  The type size can be obtained via \verb'GxB_Monoid_operator' to
+return the monoid additive operator, then \verb'GxB_BinaryOp_ztype' to obtain
+the \verb'ztype', followed by \verb'GxB_Type_size' to get its size.
+
+If the monoid has a terminal value, then \verb'has_terminal' is \verb'true',
+and its value is returned in the \verb'terminal' parameter.  If it has no
+terminal value, then \verb'has_terminal' is \verb'false', and the
+\verb'terminal' parameter is not modified.
+
+\begin{spec}
+{\bf SPEC:} \verb'GxB_Monoid_terminal' is an extension to the spec.
 \end{spec}
 
 % \newpage
@@ -2456,7 +2634,7 @@ GrB_Info GxB_Semiring_add           // return the add monoid of a semiring
 \verb'GxB_Semiring_add' returns the additive monoid of a semiring.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Semiring_add' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Semiring_add' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -2480,7 +2658,7 @@ GrB_Info GxB_Semiring_multiply      // return multiply operator of a semiring
 semiring.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Semiring_multiply' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Semiring_multiply' is an extension to the spec.
 \end{spec}
 
 
@@ -2539,9 +2717,6 @@ memory required to construct a matrix that large does not depend on $n$, since
 SuiteSparse:GraphBLAS can represent ${\bf A}$ in hypersparse form (see
 Section~\ref{hypersparse}).  The largest \verb'GrB_Vector' that can be
 constructed is $2^{60}$-by-1.
-
-If compiled for use in MATLAB, this maximum size is reduced to match the
-MATLAB maximum index size, which is $2^{48}-1$.
 
 This section describes a set of methods that create, modify, query,
 and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
@@ -2740,7 +2915,7 @@ GrB_Info GxB_Vector_type    // get the type of a vector
 \verb'type = class (v)' in MATLAB.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Vector_type' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Vector_type' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -3129,7 +3304,7 @@ GrB_Info GxB_Matrix_type    // get the type of a matrix
 in MATLAB.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Matrix_type' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Matrix_type' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -3560,14 +3735,15 @@ method & purpose & Section \\
 they have been implemented in SuiteSparse:GraphBLAS at the request of the
 GraphBLAS C API Committee, as a prototype for future consideration for
 inclusion in a future specification.  Their calling sequence may change if
-these functions are added to the specification.  A GraphBLAS library need not
-implement these methods in constant time and memory.  On import, a library may
-choose to copy the content of the user arrays into its internal data
-structure and then \verb'free' the user arrays.  On export, it may chose to
-\verb'malloc' the output arrays, fill them with the requested data, and then
-\verb'GrB_free' the GraphBLAS object being exported.  The semantics of these
-options are the same as a move constructor; they just take more time and
-memory.
+these functions are added to the specification as \verb'GrB_*' functions.  A
+GraphBLAS library need not implement these methods in constant time and memory.
+On import, a library may choose to copy the content of the user arrays into its
+internal data structure and then \verb'free' the user arrays.  On export, it
+may chose to \verb'malloc' the output arrays, fill them with the requested
+data, and then \verb'GrB_free' the GraphBLAS object being exported.  The
+semantics of these options are the same as a move constructor; they just take
+more time and memory.  The choice is up to the GraphBLAS implementation since
+the internal data structure is opaque to the user application.
 \end{spec}
 
 \newpage
@@ -4650,7 +4826,7 @@ the third parameter, depending on the field.  For a simpler-to-use alternative,
 see \verb'GxB_set' described in Section~\ref{options}.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Desc_set' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Desc_set' is an extension to the spec.
 \end{spec}
 
 %-------------------------------------------------------------------------------
@@ -4677,7 +4853,7 @@ type \verb'GrB_Desc_Value'.  For a simpler-to-use alternative, see
 \verb'GxB_get' described in Section~\ref{options}.
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_Desc_get' function is an extension to the spec.
+{\bf SPEC:} \verb'GxB_Desc_get' is an extension to the spec.
 \end{spec}
 
 \newpage
@@ -9003,6 +9179,9 @@ The next sections describe the following 6 macros:
 \verb'GxB_BinaryOp_define'  & define a \verb'GrB_BinaryOp' at compile-time \\
 \verb'GxB_SelectOp_define'  & define a \verb'GxB_SelectOp' at compile-time \\
 \verb'GxB_Monoid_define'    & define a \verb'GrB_Monoid' at compile-time \\
+\verb'GxB_Monoid_terminal_define'
+    & define a \verb'GrB_Monoid' at compile-time \\
+    & (with a terminal value) \\
 \verb'GxB_Semiring_define'  & define a \verb'GrB_Semiring' at compile-time \\
 \hline
 \end{tabular}
@@ -9157,6 +9336,23 @@ comma in the \verb'identity' argument as the start of a fourth argument:
 // This will fail:
 GxB_Monoid_define(PageRank_monoid, PageRank_add, {0,0}) ;
 \end{verbatim} }
+
+%-------------------------------------------------------------------------------
+\subsection{{\sf GxB\_Monoid\_terminal\_define:}
+define a {\sf GrB\_Monoid} at compile time, with a terminal value}
+%-------------------------------------------------------------------------------
+\label{monoid_terminal_define}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GxB_Monoid_terminal_define(GrB_Monoid monoid, GrB_BinaryOp op, identity, terminal) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Monoid_terminal_define' is identical to \verb'GxB_Monoid_define',
+except that it allows the specification of a terminal value.  See
+Section~\ref{monoid_terminal_new} for a description of the terminal value of
+a monoid.
 
 %-------------------------------------------------------------------------------
 \subsection{{\sf GxB\_Semiring\_define:}
@@ -10336,7 +10532,8 @@ query the global option (see also Sections~\ref{gxbset} and \ref{gxbget}):
 The above options can also be combined.  For example, to use the \verb'gcc'
 compiler, to change the default format \verb'GxB_FORMAT_DEFAULT' to
 \verb'GxB_BY_COL', and to use a POSIX mutex inside GraphBLAS to synchronize
-user threads, use the following \verb'cmake' command:
+user threads, use the following \verb'cmake' command while in the
+\verb'GraphBLAS/build' directory:
 
     {\small
     \begin{verbatim}

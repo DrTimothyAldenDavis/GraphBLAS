@@ -382,7 +382,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    malloc_debug = GB_mx_get_global (true) ;
+    malloc_debug = GB_mx_get_global (true, false) ;
     A = NULL ;
     C = NULL ;
     Mask = NULL ;

@@ -20,7 +20,8 @@ void mexFunction
 )
 {
     GB_WHERE (USAGE) ;
-    GrB_init (GrB_NONBLOCKING) ;
+    GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
+    GB_Global.abort_function = GB_mx_abort ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
 }
 

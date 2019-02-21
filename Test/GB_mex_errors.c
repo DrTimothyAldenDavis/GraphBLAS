@@ -135,6 +135,11 @@ void mexFunction
     GrB_Info info, expected  ;
     GB_Global.GrB_init_called = false ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
+    OK (GrB_finalize ( )) ;
+
+    GB_Global.GrB_init_called = false ;
+    OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
+    GB_Global.abort_function = GB_mx_abort ;
 
     fprintf (f,"\n========================================================\n") ;
     fprintf (f,"=== GB_mex_errors : testing error handling =============\n") ;
@@ -150,7 +155,7 @@ void mexFunction
     nmalloc = GB_Global.nmalloc ;
 
     printf ("nmalloc %d at start\n", nmalloc) ;
-    bool malloc_debug = GB_mx_get_global (true) ;
+    bool malloc_debug = GB_mx_get_global (true,true) ;
     nmalloc = GB_Global.nmalloc ;
     printf ("nmalloc %d after complex init\n", nmalloc) ;
 
@@ -221,12 +226,18 @@ void mexFunction
     expected = GrB_INVALID_VALUE ;
 
     // can't call it twiace
-    ERR (GrB_init (GrB_NONBLOCKING)) ;
+    ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
     printf ("%s\n", GrB_error ()) ;
 
     // invalid mode
-    ERR (GrB_init (42)) ;
+    ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
     OK (GrB_finalize ( )) ;
+
+    expected = GrB_NULL_POINTER ;
+    ERR (GxB_init (42, NULL    , mxCalloc, mxRealloc, mxFree)) ;
+    ERR (GxB_init (42, mxMalloc, NULL    , mxRealloc, mxFree)) ;
+    ERR (GxB_init (42, mxMalloc, mxCalloc, NULL     , mxFree)) ;
+    ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, NULL  )) ;
 
     //--------------------------------------------------------------------------
     // Sauna
@@ -587,12 +598,15 @@ void mexFunction
     ERR (GrB_Monoid_new_FP32    (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
     ERR (GrB_Monoid_new_FP64    (&monoid, op2gunk, 0)) ; CHECK (monoid == NULL);
 
+    expected = GrB_NULL_POINTER ;
     ERR (GrB_Monoid_new_UDT (&monoid, op2gunk, NULL)) ; CHECK (monoid == NULL) ;
     ERR (GrB_Monoid_new     (&monoid, op2gunk, NULL)) ; CHECK (monoid == NULL) ;
-    ERR (GrB_Monoid_new     (&monoid, op2gunk, 0)) ;    CHECK (monoid == NULL) ;
+
+    expected = GrB_UNINITIALIZED_OBJECT ;
+    ERR (GrB_Monoid_new     (&monoid, op2gunk, 0)) ;
+    CHECK (monoid == NULL) ;
 
     expected = GrB_NULL_POINTER ;
-
     ERR (GrB_Monoid_new_UDT (&monoid, GrB_PLUS_FP64, NULL)) ;
     CHECK (monoid == NULL) ;
 

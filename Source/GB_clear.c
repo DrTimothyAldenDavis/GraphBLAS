@@ -20,7 +20,7 @@
 // the matrix A is left in an invalid state (A->magic == GB_MAGIC2).  Only the
 // header is left.
 
-// parallel: not here, but perhaps in calloc.
+// parallel: not here, but perhaps in GB_calloc_memory.
 
 #include "GB.h"
 

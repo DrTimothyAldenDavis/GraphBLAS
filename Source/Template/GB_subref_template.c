@@ -326,7 +326,7 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
         return (info) ;
     }
 
-    // be careful, C is not fully initialized; C->p is merely malloc'd
+    // be careful, C->p is allocated but not yet initialized
     ASSERT (C->magic == GB_MAGIC2) ;
 
     //--------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Monoid_new:  create a new monoid
+// GxB_Monoid_terminal_new:  create a new monoid with a terminal value
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,25 +7,28 @@
 
 //------------------------------------------------------------------------------
 
-// Create a new monoid with binary operator, z=op(x.y).  The three types of x,
-// y, and z must all be the same, and the identity value must also have the
-// same type.  No typecasting is done for the identity value.
+// Identical to GrB_Monoid_new, except that a terminal value is specified.  No
+// typecasting is done for the terminal value.  Its type must match the
+// identity value.
 
 // not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
 
 #define GB_MONOID_NEW(type,T)                                               \
-GrB_Info GrB_Monoid_new_ ## T       /* create a new monoid */               \
+GrB_Info GxB_Monoid_terminal_new_ ## T   /* create a new monoid */          \
 (                                                                           \
     GrB_Monoid *monoid,             /* handle of monoid to create    */     \
     const GrB_BinaryOp op,          /* binary operator of the monoid */     \
-    const type identity             /* identity value of the monoid  */     \
+    const type identity,            /* identity value of the monoid  */     \
+    const type terminal             /* terminal value of the monoid  */     \
 )                                                                           \
 {                                                                           \
-    GB_WHERE ("GrB_Monoid_new_" GB_STR(T) " (&monoid, op, identity)") ;     \
+    GB_WHERE ("GxB_Monoid_terminal_new" GB_STR(T)                           \
+        " (&monoid, op, identity, terminal)") ;                             \
     type id = identity ;                                                    \
-    return (GB_Monoid_new (monoid, op, &id, NULL, GB_ ## T ## _code, Context));\
+    type tr = terminal ;                                                    \
+    return (GB_Monoid_new (monoid, op, &id, &tr, GB_ ## T ## _code, Context)) ;\
 }
 
 GB_MONOID_NEW (bool     , BOOL   )
@@ -40,15 +43,18 @@ GB_MONOID_NEW (uint64_t , UINT64 )
 GB_MONOID_NEW (float    , FP32   )
 GB_MONOID_NEW (double   , FP64   )
 
-GrB_Info GrB_Monoid_new_UDT         // create a monoid with a user-defined type
+GrB_Info GxB_Monoid_terminal_new_UDT        // create a monoid with a user type
 (
     GrB_Monoid *monoid,             // handle of monoid to create
     const GrB_BinaryOp op,          // binary operator of the monoid
-    const void *identity            // identity value of the monoid
+    const void *identity,           // identity value of the monoid
+    const void *terminal            // terminal value of the monoid
 )
 { 
-    GB_WHERE ("GrB_Monoid_new_UDT (&monoid, op, identity)") ;
+    GB_WHERE ("GxB_Monoid_terminal_new_UDT (&monoid, op, identity, terminal)") ;
     GB_RETURN_IF_NULL (identity) ;
-    return (GB_Monoid_new (monoid, op, identity, NULL, GB_UDT_code, Context)) ;
+    GB_RETURN_IF_NULL (terminal) ;
+    return (GB_Monoid_new (monoid, op, identity, terminal, GB_UDT_code,
+        Context)) ;
 }
 

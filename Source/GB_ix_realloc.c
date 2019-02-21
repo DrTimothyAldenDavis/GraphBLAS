@@ -73,9 +73,8 @@ GrB_Info GB_ix_realloc      // reallocate space in a matrix
         A->nzmax = nzmax1 ;
     }
 
-    // The matrix is always left in a valid state.  If realloc fails it just
-    // won't have the requested size (and ok is false in this case).
-
+    // The matrix is always left in a valid state.  If the reallocation fails
+    // it just won't have the requested size (and ok is false in this case).
     if (!ok)
     { 
         return (GB_OUT_OF_MEMORY) ;

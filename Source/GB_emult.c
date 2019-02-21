@@ -122,7 +122,7 @@ GrB_Info GB_emult           // C = A.*B
         cplen = GB_IMIN (A->nvec_nonempty, B->nvec_nonempty) ;
     }
 
-    // [ allocate the result C; C->p is malloc'd
+    // [ allocate the result C
     // worst case nnz (C) is min (nnz (A), nnz (B))
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C

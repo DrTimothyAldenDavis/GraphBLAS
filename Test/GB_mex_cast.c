@@ -26,7 +26,7 @@ void mexFunction
 
     // do not get coverage counts unless the 3rd arg is present
     bool do_cover = (nargin == 3) ;
-    bool malloc_debug = GB_mx_get_global (do_cover) ;
+    bool malloc_debug = GB_mx_get_global (do_cover, false) ;
 
     // check inputs
     GB_WHERE (USAGE) ;

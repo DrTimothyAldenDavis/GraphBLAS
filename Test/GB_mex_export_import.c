@@ -39,7 +39,7 @@
     if (info != GrB_SUCCESS)                    \
     {                                           \
         FREE_WORK ;                             \
-        printf ("line %d\n", __LINE__) ;        \
+        /* printf ("line %d\n", __LINE__) ; */  \
         return (info) ;                         \
     }                                           \
 }
@@ -123,8 +123,8 @@ GrB_Info export_import
                 &Cp, &Ci, &Cx, NULL)) ;
             nvec = nrows ;
 
-            GB_check (C, "C here std csr", 3) ;
-            printf ("%p %p %p\n", Cp, Ci, Cx) ;
+//          GB_check (C, "C here std csr", 3) ;
+//          printf ("%p %p %p\n", Cp, Ci, Cx) ;
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nvals,
                 &Cp, &Ci, &Cx, NULL)) ;
@@ -180,7 +180,7 @@ void mexFunction
 )
 {
 
-    bool malloc_debug = GB_mx_get_global (true) ;
+    bool malloc_debug = GB_mx_get_global (true, true) ;
 
     // check inputs
     GB_WHERE (USAGE) ;

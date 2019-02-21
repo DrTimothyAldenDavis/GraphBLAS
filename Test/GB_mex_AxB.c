@@ -187,7 +187,7 @@ void mexFunction
 {
 
     info = GrB_SUCCESS ;
-    malloc_debug = GB_mx_get_global (true) ;
+    malloc_debug = GB_mx_get_global (true, false) ;
     ignore = false ;
     A = NULL ;
     B = NULL ;

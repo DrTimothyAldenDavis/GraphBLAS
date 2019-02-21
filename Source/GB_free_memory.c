@@ -11,10 +11,6 @@
 
 // This function is called via the GB_FREE_MEMORY(p,n,s) macro.
 
-// By default, GB_FREE is defined in GB.h as free.  For a MATLAB mexFunction,
-// it is mxFree.  It can also be defined at compile time with
-// -DGB_FREE=myfreefunc.
-
 // not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
@@ -38,7 +34,7 @@ void GB_free_memory
             int nmalloc = --GB_Global.nmalloc ;
             GB_Global.inuse -= nitems * size_of_item ;
             #ifdef GB_PRINT_MALLOC
-            printf ("free:    %14p %3d %1d n "GBd" size "GBd"\n",
+            printf ("Free:    %14p %3d %1d n "GBd" size "GBd"\n",
                 p, nmalloc, GB_Global.malloc_debug,
                 (int64_t) nitems, (int64_t) size_of_item) ;
             if (nmalloc < 0)
@@ -50,7 +46,7 @@ void GB_free_memory
         }
         #endif
 
-        GB_FREE (p) ;
+        GB_Global.free_function (p) ;
     }
 }
 

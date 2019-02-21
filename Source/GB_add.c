@@ -116,7 +116,7 @@ GrB_Info GB_add             // C = A+B
         cplen = A->nvec_nonempty + B->nvec_nonempty ;
     }
 
-    // [ allocate the result C; C->p is malloc'd
+    // [ allocate the result C; C->p is allocated but not initialized
     // worst case nnz (C) is nnz (A) + nnz (B)
     GrB_Info info ;
     GrB_Matrix C = NULL ;           // allocate a new header for C
