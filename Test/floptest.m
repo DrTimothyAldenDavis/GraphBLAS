@@ -1,5 +1,5 @@
 function floptest (M, A, B, floplimit, mflops)
-%FLOPTEST
+%FLOPTEST compare flopcount with GB_mex_mxm_flops
 % floptest (M, A, B, floplimit, mflops)
 %
 % compares the results of

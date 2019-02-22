@@ -1,4 +1,4 @@
-% DOX_HEADERS:  run this script in MATLAB before running 'make dox'
+%DOX_HEADERS: run this script in MATLAB before running 'make dox'
 % This script creates Doc/headers_for_doxygen.h, which contains
 % comment blocks for each file that are then parsed by doxygen.
 

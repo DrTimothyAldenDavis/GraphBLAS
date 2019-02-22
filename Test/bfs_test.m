@@ -1,4 +1,5 @@
 function v = bfs_test (A, s)
+%BFS_TEST compares bfs_matlab and GB_mex_bfs
 
 if (nargin < 2)
     s = 1 ;
@@ -44,4 +45,5 @@ fprintf ('GraphBLAS time: %g (Demo/bfs5m)\n', t2) ;
 assert (isequal (full (v), full (v2))) ;
 
 fprintf ('bfs_test: all tests passed\n') ;
+
 

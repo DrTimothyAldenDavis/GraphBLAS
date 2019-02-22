@@ -1,5 +1,5 @@
 function make (what)
-%MAKE compiles the MATLAB interface to GraphBLAS (for testing only),
+%MAKE compiles the MATLAB interface to GraphBLAS (for testing only)
 % and dynamically links it with the libraries in ../build/libgraphblas.
 %
 % This MATLAB interface to GraphBLAS is meant for testing and development,
@@ -168,4 +168,5 @@ for k = 1:length (mexfunctions)
         end
     end
 end
+
 
