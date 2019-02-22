@@ -193,7 +193,7 @@ void mexFunction
 {
 
     GrB_Info info ;
-    malloc_debug = GB_mx_get_global (true, false) ;
+    malloc_debug = GB_mx_get_global (true) ;
     GrB_Index *I = NULL, ni = 0, I_range [3] ;
     GrB_Index *J = NULL, nj = 0, J_range [3] ;
     bool is_list ; 
