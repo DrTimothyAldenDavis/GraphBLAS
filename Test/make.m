@@ -81,8 +81,8 @@ if (ismac)
     % Mac (do 'make install' for GraphBLAS first)
     libraries = '-L/usr/local/lib -lgraphblas' ;
 else
-    % Linux TODO
-    libraries = '-l../build/libgraphblas.so' ;
+    % Linux
+    libraries = '-L../build -lgraphblas' ;
 end
 
 %-------------------------------------------------------------------------------
