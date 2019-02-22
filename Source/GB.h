@@ -71,6 +71,7 @@
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wtype-limits"
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 
 // enable these warnings as errors
 #pragma GCC diagnostic error "-Wmisleading-indentation"
@@ -2387,7 +2388,6 @@ _Thread_local
 #else
 // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
 // This is the default.
-#pragma omp threadprivate (GB_thread_local_report)
 
 #endif
 
