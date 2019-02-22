@@ -8,13 +8,15 @@ rng ('default') ;
 
 fprintf ('\ntest101: GB_mex_export\n') ;
 
+dump = 0 ;
+
 for n = 1:5
     for m = 1:5
         A = sprand (m, n, 0.1) ;
         for f = 0:3
             for hyper = 0:1
                 for csc = 0:1
-                    C = GB_mex_export (A, f, hyper, csc) ;
+                    C = GB_mex_export (A, f, hyper, csc, dump) ;
                     assert (isequal (A, C)) ;
                 end
             end

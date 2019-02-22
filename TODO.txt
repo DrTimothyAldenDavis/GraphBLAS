@@ -1,10 +1,8 @@
 TODO: test GxB_Monoid_terminal_define with min operator and terminal 0.
 TODO: test GxB_Monoid_terminal_new with min operator and terminal 0
-TODO: add nvec_nonempty to import/export; if < 0  on import, then unknown
-TODO: Tcov tests, Test/ with malloc debug on
+TODO: test import/export nonempty parameter
 TODO: full statement coverage (see GOTCHAs)
 TODO: test on backslash; also -lgraphblas in Test/make.m (see TODO)
 TODO: */Contents.m, help report for *.m
-TODO: refresh Demo/Output (random number generator changed)
 TODO: move *.m4 files to User/Example before public release
 TODO: change -g to -O in Test/make.m

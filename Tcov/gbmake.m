@@ -27,27 +27,19 @@ function gbmake (what, flags, mexfunctions, cfiles, hfiles, inc)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (~isempty (strfind (pwd, 'Tcov')) && nargin ~= 6)
+if (isempty (strfind (pwd, 'Tcov')))
     % if the directory is Tcov, and if so assert nargin == 6
-    error ('gbmake should not be used in Tcov directory; use testcov instead') ;
-end
-
-if (isempty (strfind (pwd, 'Test')) && nargin == 0)
-    % gbmake with no arguments should only be done in GraphBLAS/Test
-    error ('gbmake (with no arguments) should be used in Test directory only') ;
+    error ('gbmake should only be used in the Tcov directory') ;
 end
 
 fprintf ('\nCompiling GraphBLAS tests\nplease wait [') ;
 
 if (nargin < 2)
-    % flags = '-g' ;
-    flags = '-O' ;
+    flags = '-g' ;
+    % flags = '-O' ;
 end
 
 flags = [flags ' -largeArrayDims'] ;
-
-% MATLAB has a limit of 2^48-1
-% flags = [flags ' -DGB_INDEX_MAX=281474976710655'] ;
 
 try
     if (strncmp (computer, 'GLNX', 4))

@@ -19,7 +19,9 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
     // CSC format:
-    GrB_Index **Ap,         // column pointers, size ncols+1
+    int64_t nonempty,       // number of columns with at least one entry:
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index **Ap,         // column "pointers", size ncols+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -31,7 +33,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Matrix_import_CSC (&A, type, nrows, ncols, nvals,"
-        "&Ap, &Ai, &Ax, desc)") ;
+        " nonempty, &Ap, &Ai, &Ax, desc)") ;
     GB_IMPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ap) ;
@@ -77,8 +79,11 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
         (*A)->x = (*Ax) ;
         (*Ai) = NULL ;
         (*Ax) = NULL ;
-        (*A)->nvec_nonempty = -1 ;      // compute nvec_nonempty when needed
     }
+
+    // < 0:  compute nvec_nonempty when needed
+    // >= 0: nvec_nonempty must be exact
+    (*A)->nvec_nonempty = (nonempty < 0) ? (-1) : nonempty ;
 
     //--------------------------------------------------------------------------
     // import is successful

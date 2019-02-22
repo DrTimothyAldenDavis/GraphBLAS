@@ -21,9 +21,10 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
     // hypersparse CSR format:
-    GrB_Index *nvec,        // number of non-empty rows
-    GrB_Index **Ah,         // list of non-empty rows, size nvec
-    GrB_Index **Ap,         // row pointers, size nvec+1
+    int64_t *nonempty,      // number of rows in Ah with at least one entry
+    GrB_Index *nvec,        // number of rows in Ah list
+    GrB_Index **Ah,         // list of size nvec of rows that appear in A
+    GrB_Index **Ap,         // row "pointers", size nvec+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -35,7 +36,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols, &nvals,"
-        "&nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
+        " &nonempty, &nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
     GB_EXPORT_CHECK ;
 
     GB_RETURN_IF_NULL (nvec) ;
@@ -70,6 +71,13 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     ASSERT_OK (GB_check ((*A), "A export: hyper CSR", GB0)) ;
     ASSERT (!((*A)->is_csc)) ;
     ASSERT ((*A)->is_hyper) ;
+
+    if ((*A)->nvec_nonempty < 0)
+    { 
+        // count # of non-empty vectors
+        (*A)->nvec_nonempty = GB_nvec_nonempty (*A, Context) ;
+    }
+    (*nonempty) = (*A)->nvec_nonempty ;
 
     // export the content and remove it from A
     (*nvec) = (*A)->nvec ;

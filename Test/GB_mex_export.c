@@ -42,6 +42,7 @@ GrB_Index nrows = 0 ;
 GrB_Index ncols = 0 ;
 GrB_Index nvals = 0 ;
 GrB_Index nvec = 0 ;
+int64_t nonempty = -1 ;
 char *Ax = NULL ;
 int format = 0 ;
 bool is_hyper = false ;
@@ -56,6 +57,9 @@ size_t asize = 0 ;
 
 GrB_Info import_export (GB_Context Context)
 {
+
+    OK (GB_check (C, "C to export", GB0)) ;
+    // printf ("format: %d\n", format) ;
 
     //--------------------------------------------------------------------------
     // export/import a vector
@@ -100,14 +104,15 @@ GrB_Info import_export (GB_Context Context)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nvals,
-                    &Ap, &Aj, &Ax, desc)) ;
+                    &nonempty, &Ap, &Aj, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
             nvec = nrows ;
 
             if (dump)
             {
-                printf ("export standard CSR: %llu-by-%llu, nvals %llu:\n",
+                printf ("\nexport standard CSR: %llu-by-%llu, nvals %llu:\n",
                     nrows, ncols, nvals) ;
+                printf ("nonempty: %" PRId64"\n", nonempty) ;
                 OK (GB_check (type, "type", GxB_SUMMARY)) ;
                 GB_Type_code code = type->code ;
 
@@ -124,7 +129,7 @@ GrB_Info import_export (GB_Context Context)
             }
 
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nvals,
-                &Ap, &Aj, &Ax, desc)) ;
+                nonempty, &Ap, &Aj, &Ax, desc)) ;
 
             OK (GB_check (C, "C reimported", dump ? GxB_COMPLETE : GxB_SILENT));
             break ;
@@ -134,13 +139,13 @@ GrB_Info import_export (GB_Context Context)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nvals,
-                &Ap, &Ai, &Ax, desc)) ;
+                &nonempty, &Ap, &Ai, &Ax, desc)) ;
             nvec = ncols ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
-                printf ("export standard CSC: %llu-by-%llu, nvals %llu:\n",
+                printf ("\nexport standard CSC: %llu-by-%llu, nvals %llu:\n",
                     nrows, ncols, nvals) ;
                 OK (GB_check (type, "type", GxB_SUMMARY)) ;
                 GB_Type_code code = type->code ;
@@ -159,7 +164,7 @@ GrB_Info import_export (GB_Context Context)
             }
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, nvals,
-                &Ap, &Ai, &Ax, desc)) ;
+                nonempty, &Ap, &Ai, &Ax, desc)) ;
 
             OK (GB_check (C, "C reimported", dump ? GxB_COMPLETE : GxB_SILENT));
             break ;
@@ -169,13 +174,13 @@ GrB_Info import_export (GB_Context Context)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nvals,
-                &nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
+                &nonempty, &nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
-                printf ("export hyper CSR: %llu-by-%llu, nvals %llu, r %llu:\n",
-                    nrows, ncols, nvals, nvec) ;
+                printf ("\nexport hyper CSR: %llu-by-%llu, nvals %llu, "
+                    "nvec %llu:\n", nrows, ncols, nvals, nvec) ;
                 OK (GB_check (type, "type", GxB_SUMMARY)) ;
                 GB_Type_code code = type->code ;
 
@@ -193,7 +198,7 @@ GrB_Info import_export (GB_Context Context)
             }
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nvals,
-                nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
+                nonempty, nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
 
             OK (GB_check (C, "C reimported", dump ? GxB_COMPLETE : GxB_SILENT));
             break ;
@@ -203,7 +208,7 @@ GrB_Info import_export (GB_Context Context)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nvals,
-                &nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
+                &nonempty, &nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
             OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
@@ -227,7 +232,7 @@ GrB_Info import_export (GB_Context Context)
             }
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nvals,
-                nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
+                nonempty, nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
 
             OK (GB_check (C, "C reimported", dump ? GxB_COMPLETE : GxB_SILENT));
             break ;
@@ -271,6 +276,9 @@ void mexFunction
     // get csc flag 
     GET_SCALAR (3, bool, is_csc, true) ;
 
+    // get dump flag 
+    GET_SCALAR (4, bool, dump, false) ;
+
     // get C (make a deep copy)
     #define GET_DEEP_COPY \
     {                                                                       \
@@ -295,15 +303,12 @@ void mexFunction
     }
     mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
-    // C<Mask> = op(C,A') or op(C,A)
+    // import/export
     METHOD (import_export (Context)) ;
 
     // return C to MATLAB
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C export/import", false) ;
 
-    // printf ("put matrix to MATLAB, C %p Ap %p Ah %p Ai %p Aj %p Ax %p\n",
-    //     C, Ap, Ah, Ai, Aj, Ax) ;
     FREE_ALL ;
-
 }
 

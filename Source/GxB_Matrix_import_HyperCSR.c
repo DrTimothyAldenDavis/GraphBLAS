@@ -19,9 +19,11 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
     // hypersparse CSR format:
-    GrB_Index nvec,         // number of non-empty rows
-    GrB_Index **Ah,         // list of non-empty rows, size nvec
-    GrB_Index **Ap,         // row pointers, size nvec+1
+    int64_t nonempty,       // number of rows in Ah with at least one entry,
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index nvec,         // number of rows in Ah list
+    GrB_Index **Ah,         // list of size nvec of rows that appear in A
+    GrB_Index **Ap,         // row "pointers", size nvec+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -33,7 +35,7 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols, nvals,"
-        "nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
+        " nonempty, nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
     GB_IMPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ah) ;
@@ -86,8 +88,11 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
         (*A)->x = (*Ax) ;
         (*Aj) = NULL ;
         (*Ax) = NULL ;
-        (*A)->nvec_nonempty = -1 ;      // compute nvec_nonempty when needed
     }
+
+    // < 0:  compute nvec_nonempty when needed
+    // >= 0: nvec_nonempty must be exact
+    (*A)->nvec_nonempty = (nonempty < 0) ? (-1) : nonempty ;
 
     //--------------------------------------------------------------------------
     // import is successful

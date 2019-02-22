@@ -21,7 +21,8 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
     // CSR format:
-    GrB_Index **Ap,         // row pointers, size nrows+1
+    int64_t *nonempty,      // number of rows with at least one entry
+    GrB_Index **Ap,         // row "pointers", size nrows+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -33,7 +34,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, &nvals,"
-        "&Ap, &Aj, &Ax, desc)") ;
+        " &nonempty, &Ap, &Aj, &Ax, desc)") ;
     GB_EXPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ap) ;
@@ -60,6 +61,13 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     ASSERT_OK (GB_check ((*A), "A export: standard CSR", GB0)) ;
     ASSERT (!((*A)->is_csc)) ;
     ASSERT (!((*A)->is_hyper)) ;
+
+    if ((*A)->nvec_nonempty < 0)
+    { 
+        // count # of non-empty vectors
+        (*A)->nvec_nonempty = GB_nvec_nonempty (*A, Context) ;
+    }
+    (*nonempty) = (*A)->nvec_nonempty ;
 
     // export the content and remove it from A
     (*Ap) = (GrB_Index *) (*A)->p ;

@@ -3647,9 +3647,11 @@ faster and with less memory overhead than the \verb'GrB_*_build' and
 
 The semantics of import/export are the same as the {\em move constructor} in
 C++.  On import, the user provides a set of arrays that have been previously
-allocated via the ANSI C \verb'malloc' function.  The arrays define the content
-of the matrix or vector.  Unlike \verb'GrB_*_build', the GraphBLAS library then
-takes ownership of the user's input arrays and may either:
+allocated via the ANSI C \verb'malloc', \verb'calloc', or \verb'realloc'
+functions (by default), or by the corresponding functions passed to
+\verb'GxB_init'.  The arrays define the content of the matrix or vector.
+Unlike \verb'GrB_*_build', the GraphBLAS library then takes ownership of the
+user's input arrays and may either:
 
 \begin{enumerate}
 \item incorporate them
@@ -3679,8 +3681,10 @@ import operation.  The export changes the ownership of the arrays, where the
 completes, and instead the user is returned several arrays that contain the
 matrix or vector in the requested format.  Ownership of these arrays is given
 to the user application, which is then responsible for freeing them via the
-ANSI C \verb'free' function (or they can be re-imported into a
-\verb'GrB_Matrix' or \verb'GrB_Vector').
+ANSI C \verb'free' function (by default), or by the \verb'free_function' that
+was passed in to \verb'GxB_init'.  Alternatively, these arrays can be
+re-imported into a \verb'GrB_Matrix' or \verb'GrB_Vector', at which point they
+again become the responsibility of GraphBLAS.
 
 For a matrix export, if the output format matches the current internal format
 of the matrix then these arrays are returned to the user application in $O(1)$
@@ -3782,7 +3786,7 @@ is identical to the following:
 \begin{verbatim}
     int64_t *Ap = calloc (2, sizeof (int64_t)) ;
     Ap [1] = nvals ;
-    GxB_Matrix_import_CSC (&A, type, n, 1, nvals, &Ap, &vi, &vx, desc) ;
+    GxB_Matrix_import_CSC (&A, type, n, 1, nvals, -1, &Ap, &vi, &vx, desc) ;
 \end{verbatim}}
 
 \noindent
@@ -3845,7 +3849,8 @@ is analogous to:
 
 {\footnotesize
 \begin{verbatim}
-    GxB_Matrix_export_CSC (&A, &type, &n, &one, &nvals, &Ap, &Ai, &Ax, desc)
+    GxB_Matrix_export_CSC (&A, &type, &n, &one, &nvals, &nonempty,
+        &Ap, &Ai, &Ax, desc)
 \end{verbatim}}
 
 \noindent
@@ -3889,10 +3894,12 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
     // CSR format:
-    GrB_Index **Ap,         // row pointers, size nrows+1
+    int64_t nonempty,       // number of rows with at least one entry:
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index **Ap,         // row "pointers", size nrows+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
-    const GrB_Descriptor desc       // descriptor for # of threads to use
+    const GrB_Descriptor desc       // currently unused
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -3909,9 +3916,11 @@ The \verb'GrB_Matrix A' does not exist on input.
 
 Unlike \verb'GrB_Matrix_new', this function also populates the new matrix
 \verb'A' with the three arrays \verb'Ap', \verb'Aj' and \verb'Ax', provided by
-the user, all of which must have been created with the ANSI C \verb'malloc'
-function.  These arrays define the pattern and values of the new matrix
-\verb'A':
+the user, all of which must have been created with the ANSI C \verb'malloc',
+\verb'calloc', or \verb'realloc' functions (by default), or by the
+corresponding \verb'malloc_function', \verb'calloc_function', or
+\verb'realloc_function' provided to \verb'GxB_init'.  These arrays define the
+pattern and values of the new matrix \verb'A':
 
 \begin{itemize}
 \item \verb'GrB_Index Ap [nrows+1] ;'  The \verb'Ap' array is the row
@@ -3949,6 +3958,10 @@ size at least \verb'nvals'.
 If \verb'nvals' is zero, then the content of the \verb'Aj' and \verb'Ax' arrays
 is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
 are still freed and returned as \verb'NULL', if the method is successful).
+
+The \verb'nonempty' parameter is optional.  It states the number of rows
+that have at least one entry: if not known, use -1;
+if $\ge 0$, it must be exact.
 
 An example of the CSR format is shown below.  Consider the following
 matrix with 10 nonzero entries, and suppose the zeros are not stored.
@@ -4040,7 +4053,10 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
-    GrB_Index **Ap,         // column pointers, size ncols+1
+    // CSC format:
+    int64_t nonempty,       // number of columns with at least one entry:
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index **Ap,         // column "pointers", size ncols+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // currently unused
@@ -4057,6 +4073,10 @@ indices of the columns are in \verb'Ai', and must appear in ascending order in
 each column.  The corresponding numerical values are held in \verb'Ax'.  The
 row indices of column \verb'j' are held in \verb'Ai [Ap [j]...Ap [j+1]-1',
 and the corresponding numerical values are in the same locations in \verb'Ax'.
+
+The \verb'nonempty' parameter is optional.  It states the number of columns
+that have at least one entry: if not known, use -1;
+if $\ge 0$, it must be exact.
 
 The same matrix from Equation~\ref{eqn:Aexample}in
 the last section (repeated here):
@@ -4130,12 +4150,15 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
-    GrB_Index nvec,         // number of non-empty rows
-    GrB_Index **Ah,         // list of non-empty rows, size nvec
-    GrB_Index **Ap,         // row pointers, size nvec+1
+    // hypersparse CSR format:
+    int64_t nonempty,       // number of rows in Ah with at least one entry,
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index nvec,         // number of rows in Ah list
+    GrB_Index **Ah,         // list of size nvec of rows that appear in A
+    GrB_Index **Ap,         // row "pointers", size nvec+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
-    const GrB_Descriptor desc       // descriptor for # of threads to use
+    const GrB_Descriptor desc       // currently unused
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -4204,15 +4227,13 @@ order, and no duplicates can appear.  To iterate over this data structure:
         }
     } \end{verbatim}}
 
-This data structure is more complex that the standard CSR format, but it has
-the advantage of requiring at most $O(e)$ space, where $A$ is $m$-by-$n$ with
-$e$ = \verb'nvals' entries.  The standard CSR format requires $O(m+e)$ space.
-If $e << m$, then the size $m+1$ of \verb'Ap' can dominate the memory required.
-In the hypersparse form, \verb'Ap' takes on size \verb'nvec+1', and \verb'Ah'
-has size \verb'nvec', where \verb'nvec' is the number of rows that appear in
-the data structure.  There is no requirement that all empty rows be removed
-from the \verb'Ap' and \verb'Ah' arrays.
-
+\vspace{-0.05in}
+This is more complex than the standard CSR format, but it requires at most
+$O(e)$ space, where $A$ is $m$-by-$n$ with $e$ = \verb'nvals' entries.  The
+standard CSR format requires $O(m+e)$ space.  If $e << m$, then the size $m+1$
+of \verb'Ap' can dominate the memory required.  In the hypersparse form,
+\verb'Ap' takes on size \verb'nvec+1', and \verb'Ah' has size \verb'nvec',
+where \verb'nvec' is the number of rows that appear in the data structure.
 The standard CSR format can be viewed as a dense array (of size \verb'nrows')
 of sparse row vectors.   By contrast, the hypersparse CSR format is a sparse
 array (of size \verb'nvec') of sparse row vectors.
@@ -4224,6 +4245,9 @@ hypersparse \verb'GrB_Matrix A' is created.
 If \verb'nvals' is zero, then the content of the \verb'Aj' and \verb'Ax' arrays
 is not accessed and they may be \verb'NULL' on input (if not \verb'NULL', they
 are still freed and returned as \verb'NULL', if the method is successful).
+The \verb'nonempty' parameter is optional.  It states the number of rows
+that have at least one entry: if not known, use -1;
+if $\ge 0$, it must be exact.
 
 \begin{spec}
 {\bf SPEC:} \verb'GxB_Matrix_import_HyperCSR' is an extension to the spec.
@@ -4245,12 +4269,15 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
-    GrB_Index nvec,         // number of non-empty columns
-    GrB_Index **Ah,         // list of non-empty columns, size nvec
-    GrB_Index **Ap,         // column pointers, size nvec+1
+    // hypersparse CSC format:
+    int64_t nonempty,       // number of columns in Ah with at least one entry,
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index nvec,         // number of columns in Ah list
+    GrB_Index **Ah,         // list of size nvec of columns that appear in A
+    GrB_Index **Ap,         // column "pointers", size nvec+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
-    const GrB_Descriptor desc       // descriptor for # of threads to use
+    const GrB_Descriptor desc       // currently unused
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -4259,10 +4286,9 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
 $O(1)$ time.  It is identical to \verb'GxB_Matrix_import_HyperCSR', except for
 the data structure defined by the four arrays \verb'Ah', \verb'Ap', \verb'Ai',
 and \verb'Ax'.  It is a sparse array of size \verb'nvec' of sparse column
-vectors.  The column indices in \verb'Ah' must appear in ascending order, and
-no duplicates can appear.  The following code can be used to iterate over the
-columns of the matrix, and each entry within each column.
+vectors.  The following code iterates over the matrix:
 
+    \vspace{-0.10in}
     {\footnotesize
     \begin{verbatim}
     int64_t nvals = Ap [nvec] ;
@@ -4277,6 +4303,11 @@ columns of the matrix, and each entry within each column.
             double aij = Ax [p] ;           // numerical value
         }
     } \end{verbatim}}
+
+\vspace{-0.12in}
+The \verb'nonempty' parameter is optional.  It states the number of columns
+that have at least one entry: if not known, use -1;
+if $\ge 0$, it must be exact.
 
 \begin{spec}
 {\bf SPEC:} \verb'GxB_Matrix_import_HyperCSC' is an extension to the spec.
@@ -4296,9 +4327,11 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
-    GrB_Index **Ap,         // row pointers, size nrows+1
+    // CSR format:
+    int64_t *nonempty,      // number of rows with at least one entry
+    GrB_Index **Ap,         // row "pointers", size nrows+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // currently unused
@@ -4310,7 +4343,8 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
 
 {\footnotesize
 \begin{verbatim}
-GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, &nvals, &Ap, &Aj, &Ax, desc) ;
+GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, &nvals, &nonempty,
+                       &Ap, &Aj, &Ax, desc) ;
 \end{verbatim}}
 
 On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
@@ -4350,9 +4384,11 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
-    GrB_Index **Ap,         // column pointers, size ncols+1
+    // CSC format:
+    int64_t *nonempty,      // number of columns with at least one entry
+    GrB_Index **Ap,         // column "pointers", size ncols+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // currently unused
@@ -4364,7 +4400,8 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
 
 {\footnotesize
 \begin{verbatim}
-GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols, &nvals, &Ap, &Ai, &Ax, desc) ;
+GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols, &nvals, &nonempty,
+                       &Ap, &Ai, &Ax, desc) ;
 \end{verbatim}}
 
 On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
@@ -4404,11 +4441,13 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
-    GrB_Index *nvec,        // number of non-empty rows
-    GrB_Index **Ah,         // list of non-empty rows, size nvec
-    GrB_Index **Ap,         // row pointers, size nvec+1
+    // hypersparse CSR format:
+    int64_t *nonempty,      // number of rows in Ah with at least one entry
+    GrB_Index *nvec,        // number of rows in Ah list
+    GrB_Index **Ah,         // list of size nvec of rows that appear in A
+    GrB_Index **Ap,         // row "pointers", size nvec+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // currently unused
@@ -4418,21 +4457,20 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
 
 \verb'GxB_Matrix_export_HyperCSR' exports a matrix in CSR form:
 
+\vspace{-0.05in}
 {\footnotesize
 \begin{verbatim}
-GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols, &nvals, &nvec,
-        &Ah, &Ap, &Aj, &Ax, desc) ;
-\end{verbatim}}
+GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols, &nvals, &nonempty,
+                            &nvec, &Ah, &Ap, &Aj, &Ax, desc) ; \end{verbatim}}
 
+\vspace{-0.10in}
 On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
 returned as \verb'NULL'.  Its type is returned in the \verb'type' parameter,
 its dimensions in \verb'nrows' and \verb'ncols', its number of entries in
 \verb'nvals', and the number of non-empty rows in \verb'nvec'.  The hypersparse
 CSR format is in the four arrays \verb'Ah', \verb'Ap', \verb'Aj', and
 \verb'Ax'.  If \verb'nvals' is zero, the \verb'Aj' and \verb'Ax' arrays are
-returned as \verb'NULL'; this is not an error, and
-\verb'GxB_Matrix_import_HyperCSR' also allows these two arrays to be
-\verb'NULL' on input when \verb'nvals' is zero.  After a successful export, the
+returned as \verb'NULL'; this is not an error.  After a successful export, the
 user application is responsible for freeing these three arrays via the ANSI C
 \verb'free'.  The hypersparse CSR format is described in
 Section~\ref{matrix_import_hypercsr}.
@@ -4464,11 +4502,13 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
-    GrB_Index *nvec,        // number of non-empty columns
-    GrB_Index **Ah,         // list of non-empty columns, size nvec
-    GrB_Index **Ap,         // columns pointers, size nvec+1
+    // hypersparse CSC format:
+    int64_t *nonempty,      // number of columns in Ah with at least one entry
+    GrB_Index *nvec,        // number of columns in Ah list
+    GrB_Index **Ah,         // list of size nvec of columns that appear in A
+    GrB_Index **Ap,         // columns "pointers", size nvec+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // currently unused
@@ -4480,8 +4520,8 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 
 {\footnotesize
 \begin{verbatim}
-GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, &nvals, &nvec,
-        &Ah, &Ap, &Ai, &Ax, desc) ;
+GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, &nvals, &nonempty,
+                            &nvec, &Ah, &Ap, &Ai, &Ax, desc) ;
 \end{verbatim}}
 
 On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is

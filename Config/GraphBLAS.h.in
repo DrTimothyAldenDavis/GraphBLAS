@@ -2789,8 +2789,8 @@ typedef enum
     GrB_INP1 = 3,   // descriptor for the second input of a method
 
     GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,   // number of threads to use.
-                    // If <= GxB_DEFAULT, then GraphBLAS selects the number of
-                    // threads automatically.
+                        // If <= GxB_DEFAULT, then GraphBLAS selects the number
+                        // of threads automatically.
 
     // SuiteSparse:GraphBLAS extensions are given large values so they do not
     // conflict with future enum values added to the spec:
@@ -2927,11 +2927,9 @@ typedef enum            // for global options or matrix options
 
     GxB_THREADING = 4,  // thread library used for internal GraphBLAS threads
 
-    GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // number of threads to use for
-                        // GrB_Matrix and GrB_Vector methods that do not use a
-                        // GrB_Descriptor (GrB_wait, GrB_*_dup, GrB_*_build,
-                        // GxB_*_resize, GrB_*_clear, GrB_*_nvals, and
-                        // GrB_*_exportTuples).
+    GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
+                        // If <= GxB_DEFAULT, then GraphBLAS selects the number
+                        // of threads automatically.
 
     GxB_IS_HYPER = 6    // query a matrix to see if it hypersparse or not
                         // (GxB_Matrix_Option_get only)
@@ -5762,7 +5760,9 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
     // CSR format:
-    GrB_Index **Ap,         // row pointers, size nrows+1
+    int64_t nonempty,       // number of rows with at least one entry:
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index **Ap,         // row "pointers", size nrows+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -5783,6 +5783,10 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     //      at least nvals.  If nvals is zero, then the Aj and Ax arrays need
     //      not be present and can be NULL.
 
+    //      The nonempty parameter is optional.  It states the number of rows
+    //      that have at least one entry: if not known, use -1;
+    //      if nonempty >= 0 the value must be exact.
+
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
@@ -5793,7 +5797,9 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
     // CSC format:
-    GrB_Index **Ap,         // column pointers, size ncols+1
+    int64_t nonempty,       // number of columns with at least one entry:
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index **Ap,         // column "pointers", size ncols+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -5814,6 +5820,10 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     //      at least nvals.  If nvals is zero, then the Ai and Ax arrays need
     //      not be present and can be NULL.
 
+    //      The nonempty parameter is optional.  It states the number of
+    //      columns that have at least one entry: if not known, use -1;
+    //      if nonempty >= 0 the value must be exact.
+
 //------------------------------------------------------------------------------
 
 GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
@@ -5824,16 +5834,18 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
     // hypersparse CSR format:
-    GrB_Index nvec,         // number of non-empty rows
-    GrB_Index **Ah,         // list of non-empty rows, size nvec
-    GrB_Index **Ap,         // row pointers, size nvec+1
+    int64_t nonempty,       // number of rows in Ah with at least one entry,
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index nvec,         // number of rows in Ah list
+    GrB_Index **Ah,         // list of size nvec of rows that appear in A
+    GrB_Index **Ap,         // row "pointers", size nvec+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
 ) ;
 
-    // HYPER_CSR: an nrows-by-ncols matrix with nvals entries and nvec non-empty
-    // rows in HYPER_CSR format consists of 4 arrays:
+    // HYPER_CSR: an nrows-by-ncols matrix with nvals entries and nvec
+    // rows that may have entries in HYPER_CSR format consists of 4 arrays:
     //
     //          GrB_Index Ah [nvec], Ap [nvec+1], Aj [nvals] ;
     //          <type> Ax [nvals] ;
@@ -5841,9 +5853,10 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     //      The Aj and Ax arrays are the same for a matrix in CSR or HYPER_CSR
     //      format.  Only Ap and Ah differ.
     //
-    //      The Ah array is a list of the row indices of non-empty rows.  It
+    //      The Ah array is a list of the row indices of rows that appear in
+    //      the matrix.  It
     //      must appear in sorted order, and no duplicates may appear.  If i =
-    //      Ah [k] is the kth non-empty row, then the column indices of the ith
+    //      Ah [k] is the kth row, then the column indices of the ith
     //      row appear in Aj [Ap [k] ... Ap [k+1]], and the corresponding
     //      values appear in the same locations in Ax.  Column indices must be
     //      in the range 0 to ncols-1, and must appear in sorted order within
@@ -5852,6 +5865,12 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     //      be of size at least nvec, Ap must be of size at least nvec+1, and
     //      Aj and Ax must be at least of size nvals.  If nvals is zero, then
     //      the Aj and Ax arrays need not be present and can be NULL.
+
+    //      The nonempty parameter is optional.  Row indices that do not appear
+    //      in the Ah list have no entries.  Row indices that do appear in Ah
+    //      have >= 0 entries.  The nonempty parameter states the number of
+    //      rows in the Ah list that have at least one entry: if not known, use
+    //      -1.  If nonempty >= 0 the value must be exact.
 
 //------------------------------------------------------------------------------
 
@@ -5863,16 +5882,18 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
     // hypersparse CSC format:
-    GrB_Index nvec,         // number of non-empty columns
-    GrB_Index **Ah,         // list of non-empty columns, size nvec
-    GrB_Index **Ap,         // column pointers, size nvec+1
+    int64_t nonempty,       // number of columns in Ah with at least one entry,
+                            // either < 0 if not known, or >= 0 if exact
+    GrB_Index nvec,         // number of columns in Ah list
+    GrB_Index **Ah,         // list of size nvec of columns that appear in A
+    GrB_Index **Ap,         // column "pointers", size nvec+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
 ) ;
 
     // HYPER_CSC: an nrows-by-ncols matrix with nvals entries and nvec
-    // non-empty columns in HYPER_CSC format consists of 4 arrays:
+    // columns that may have entries in HYPER_CSC format consists of 4 arrays:
     //
     //
     //          GrB_Index Ah [nvec], Ap [nvec+1], Ai [nvals] ;
@@ -5893,6 +5914,12 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
     //      size at least nvec+1, and Ai and Ax must be at least of size nvals.
     //      If nvals is zero, then the Ai and Ax arrays need not be present and
     //      can be NULL.
+
+    //      The nonempty parameter is optional.  Column indices that do not
+    //      appear in the Ah list have no entries.  Column indices that do
+    //      appear in Ah have >= 0 entries.  The nonempty parameter states the
+    //      number of columns in the Ah list that have at least one entry: if
+    //      not known, use -1.  If nonempty >= 0 the value must be exact.
 
 //------------------------------------------------------------------------------
 
@@ -5974,10 +6001,11 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
     // CSR format:
-    GrB_Index **Ap,         // row pointers, size nrows+1
+    int64_t *nonempty,      // number of rows with at least one entry
+    GrB_Index **Ap,         // row "pointers", size nrows+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -5988,10 +6016,11 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
     // CSC format:
-    GrB_Index **Ap,         // column pointers, size ncols+1
+    int64_t *nonempty,      // number of columns with at least one entry
+    GrB_Index **Ap,         // column "pointers", size ncols+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -6002,12 +6031,13 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
     // hypersparse CSR format:
-    GrB_Index *nvec,        // number of non-empty rows
-    GrB_Index **Ah,         // list of non-empty rows, size nvec
-    GrB_Index **Ap,         // row pointers, size nvec+1
+    int64_t *nonempty,      // number of rows in Ah with at least one entry
+    GrB_Index *nvec,        // number of rows in Ah list
+    GrB_Index **Ah,         // list of size nvec of rows that appear in A
+    GrB_Index **Ap,         // row "pointers", size nvec+1
     GrB_Index **Aj,         // column indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use
@@ -6018,12 +6048,13 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     GrB_Matrix *A,          // handle of matrix to export and free
     GrB_Type *type,         // type of matrix exported
     GrB_Index *nrows,       // matrix dimension is nrows-by-ncols
-    GrB_Index *nrols,
+    GrB_Index *ncols,
     GrB_Index *nvals,       // number of entries in the matrix
     // hypersparse CSC format:
-    GrB_Index *nvec,        // number of non-empty columns
-    GrB_Index **Ah,         // list of non-empty columns, size nvec
-    GrB_Index **Ap,         // columns pointers, size nvec+1
+    int64_t *nonempty,      // number of columns in Ah with at least one entry
+    GrB_Index *nvec,        // number of columns in Ah list
+    GrB_Index **Ah,         // list of size nvec of columns that appear in A
+    GrB_Index **Ap,         // columns "pointers", size nvec+1
     GrB_Index **Ai,         // row indices, size nvals
     void      **Ax,         // values, size nvals
     const GrB_Descriptor desc       // descriptor for # of threads to use

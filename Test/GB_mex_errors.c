@@ -4912,7 +4912,8 @@ void mexFunction
     GrB_Index *Ap, *Ai, *Aj, *Ah, nrows, ncols, nvecs ;
     double *Ax ;
     GrB_Type atype ;
-    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals,
+    int64_t nonempty = -1 ;
+    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
     OK (GxB_Type_fprint (atype, "type of A", GxB_COMPLETE, stdout)) ;
     printf ("nvals %llu\n", nvals) ;
@@ -4924,223 +4925,231 @@ void mexFunction
             printf ("   col %lld value %g\n", Aj [p], Ax [p]) ;
         }
     }
-    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals,
+    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
     OK (GxB_Matrix_fprint (A, "A imported", GxB_COMPLETE, stdout)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    ERR (GxB_Matrix_export_CSR (NULL, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSR (NULL, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, NULL, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSR (&A, NULL, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, NULL, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSR (&A, &atype, NULL, &ncols, &nvals, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, NULL, &nvals,
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, NULL, &nvals, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, NULL,
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, NULL, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals, NULL,
+        &Ap, &Aj, &Ax, desc)) ;
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         NULL, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Aj, NULL, desc)) ;
 
-    ERR (GxB_Matrix_export_CSC (NULL, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSC (NULL, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, NULL, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSC (&A, NULL, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, NULL, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSC (&A, &atype, NULL, &ncols, &nvals, &nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, NULL, &nvals,
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, NULL, &nvals, &nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, NULL,
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, NULL, &nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals, NULL,
+        &Ap, &Ai, &Ax, desc)) ;
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals,
+    ERR (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Ai, NULL, desc)) ;
 
     ERR (GxB_Matrix_export_HyperCSR (NULL, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, NULL, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, NULL, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, NULL, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, NULL,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
-        NULL, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        NULL, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, NULL, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, NULL, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, NULL, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, NULL, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, NULL, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, NULL, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
+    ERR (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, NULL, desc)) ;
 
     ERR (GxB_Matrix_export_HyperCSC (NULL, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, NULL, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, NULL, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, NULL, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, NULL,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
-        NULL, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        NULL, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, NULL, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, NULL, &Ah, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, NULL, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, NULL, &Ap, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, NULL, &Ai, &Ax, desc)) ;
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, NULL, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
+    ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, NULL, desc)) ;
 
     OK (GB_check (A, "A still OK", GB1)) ;
 
-    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals,
+    OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
 
-    ERR (GxB_Matrix_import_CSR (NULL, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSR (NULL, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, NULL, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSR (&A, NULL, nrows, ncols, nvals, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals, nonempty,
         NULL, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Aj, NULL, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_CSR (&A, atype, INT64_MAX, ncols, nvals,
+    ERR (GxB_Matrix_import_CSR (&A, atype, INT64_MAX, ncols, nvals, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, INT64_MAX, nvals,
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, INT64_MAX, nvals, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, INT64_MAX,
+    ERR (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, INT64_MAX, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals,
+    OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
 
     OK (GB_check (A, "A still OK", GB1)) ;
 
-    OK (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals,
+    OK (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Ai, &Ax, desc)) ;
 
-    ERR (GxB_Matrix_import_CSC (NULL, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSC (NULL, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals, nonempty,
         NULL, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, NULL, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals,
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Ai, NULL, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
-    ERR (GxB_Matrix_import_CSC (&A, atype, INT64_MAX, ncols, nvals,
+    ERR (GxB_Matrix_import_CSC (&A, atype, INT64_MAX, ncols, nvals, nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, INT64_MAX, nvals,
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, INT64_MAX, nvals, nonempty,
         &Ap, &Ai, &Ax, desc)) ;
-    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, INT64_MAX,
+    ERR (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, INT64_MAX, nonempty,
         &Ap, &Ai, &Ax, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
-    OK (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals,
+    OK (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Ai, &Ax, desc)) ;
 
     OK (GB_check (A, "A still OK", GB1)) ;
 
     OK (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
 
     ERR (GxB_Matrix_import_HyperCSR (NULL, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, NULL, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nvals,
-        nvecs, NULL, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, NULL, &Ap, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, NULL, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, NULL, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Aj, NULL, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Aj, NULL, desc)) ;
 
     expected = GrB_INVALID_VALUE ;
 
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, INT64_MAX, ncols, nvals,
-        nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, INT64_MAX, nvals,
-        nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, INT64_MAX,
-        nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
     ERR (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nvals,
-        2*nrows, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, 2*nrows, &Ah, &Ap, &Aj, &Ax, desc)) ;
 
     expected = GrB_NULL_POINTER ;
 
     OK (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
 
     OK (GB_check (A, "A still OK", GB1)) ;
 
     OK (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
-        &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
 
     ERR (GxB_Matrix_import_HyperCSC (NULL, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, NULL, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nvals,
-        nvecs, NULL, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, NULL, &Ap, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, NULL, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, NULL, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, NULL, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Ai, NULL, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Ai, NULL, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
 
     expected = GrB_INVALID_VALUE ;
 
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, INT64_MAX, ncols, nvals,
-        nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, INT64_MAX, nvals,
-        nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, INT64_MAX,
-        nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
     ERR (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nvals,
-        2*ncols, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, 2*ncols, &Ah, &Ap, &Ai, &Ax, desc)) ;
     printf ("expected error: %s\n", GrB_error ( )) ;
 
     expected = GrB_NULL_POINTER ;
 
     OK (GxB_Matrix_import_HyperCSC (&A, atype, nrows, ncols, nvals,
-        nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
+        nonempty, nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;
 
     OK (GB_check (A, "A still OK", GB1)) ;
 

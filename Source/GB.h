@@ -6329,6 +6329,7 @@ static inline int64_t GB_Sauna_reset
     GB_RETURN_IF_NULL (nrows) ;                                 \
     GB_RETURN_IF_NULL (ncols) ;                                 \
     GB_RETURN_IF_NULL (nvals) ;                                 \
+    GB_RETURN_IF_NULL (nonempty) ;                              \
     /* get the descriptor */                                    \
     GB_GET_DESCRIPTOR (info, desc, xx1, xx2, xx3, xx4, xx5) ;   \
     /* export basic attributes */                               \

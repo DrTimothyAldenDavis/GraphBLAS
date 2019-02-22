@@ -3193,8 +3193,6 @@ constructed by dox_headers.m
 \brief  GxB_Matrix_export_CSC: export a matrix in CSC format
 
 \par
- TODO add nvec to all import/export
-\par
  parallel: not here
 */
 

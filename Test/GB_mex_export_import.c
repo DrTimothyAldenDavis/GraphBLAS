@@ -39,7 +39,6 @@
     if (info != GrB_SUCCESS)                    \
     {                                           \
         FREE_WORK ;                             \
-        /* printf ("line %d\n", __LINE__) ; */  \
         return (info) ;                         \
     }                                           \
 }
@@ -51,6 +50,7 @@ void *Cx = NULL ;
 GB_Context Context = NULL ;
 size_t csize = 0 ;
 GrB_Index nvec = 0, nvals = 0, nrows = 0, ncols = 0 ;
+int64_t nonempty = -1 ;
 GrB_Type type = NULL, atype = NULL;
 GrB_Info info = GrB_SUCCESS ;
 
@@ -120,14 +120,11 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nvals,
-                &Cp, &Ci, &Cx, NULL)) ;
+                &nonempty, &Cp, &Ci, &Cx, NULL)) ;
             nvec = nrows ;
 
-//          GB_check (C, "C here std csr", 3) ;
-//          printf ("%p %p %p\n", Cp, Ci, Cx) ;
-
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nvals,
-                &Cp, &Ci, &Cx, NULL)) ;
+                nonempty, &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -135,11 +132,11 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nvals,
-                &Cp, &Ci, &Cx, NULL)) ;
+                &nonempty, &Cp, &Ci, &Cx, NULL)) ;
             nvec = ncols ;
 
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, nvals,
-                &Cp, &Ci, &Cx, NULL)) ;
+                nonempty, &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -147,10 +144,10 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nvals,
-                &nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
+                &nonempty, &nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nvals,
-                nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
+                nonempty, nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
         //----------------------------------------------------------------------
@@ -158,10 +155,10 @@ GrB_Info export_import
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nvals,
-                &nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
+                &nonempty, &nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nvals,
-                nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
+                nonempty, nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
     }
