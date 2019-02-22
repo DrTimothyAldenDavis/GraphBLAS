@@ -17,7 +17,7 @@ int GB_mx_Sauna_nmalloc ( )   // return # of mallocs in Saunas in use
     for (int Sauna_id = 0 ; Sauna_id < GxB_NTHREADS_MAX ; Sauna_id++)
     {
 
-        GB_Sauna Sauna = GB_Global.Saunas [Sauna_id] ;
+        GB_Sauna Sauna = GB_Global_Saunas_get (Sauna_id) ;
         if (Sauna != NULL)
         { 
             nmallocs_in_use++ ;             // the Sauna header

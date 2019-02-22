@@ -13,7 +13,16 @@
 #define GB_PANIC mexErrMsgTxt ("panic") ;
 
 #include "GB.h"
+
 #include "demos.h"
+
+// demos.h use mxMalloc, etc, and so do the MATLAB Test/* mexFunctions,
+// but the tests here need to distinguish between mxMalloc and malloc.
+#undef malloc
+#undef calloc
+#undef realloc
+#undef free
+
 #undef OK
 #include "usercomplex.h"
 #include "mex.h"
@@ -213,10 +222,9 @@ bool GB_mx_Monoid               // true if successful, false otherwise
     const bool malloc_debug     // true if malloc debug should be done
 ) ;
 
-bool GB_mx_get_global      // true if doing malloc_debug
+bool GB_mx_get_global       // true if doing malloc_debug
 (
-    bool cover,
-    bool use_grb_init       // if true, use GrB_init, else GxB_init
+    bool cover              // true if doing statement coverage
 ) ;
 
 void GB_mx_put_global
@@ -281,22 +289,22 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
 
 #ifdef GB_PRINT_MALLOC
 
-#define AS_IF_FREE(p)           \
-{                               \
-    GB_Global.nmalloc-- ;       \
+#define AS_IF_FREE(p)                   \
+{                                       \
+    GB_Global_nmalloc_decrement ( ) ;   \
     printf ("\nfree:                         to MATLAB (%s) line %d file %s\n",\
-        GB_STR(p), __LINE__,__FILE__); \
-    printf ("free:    %14p %3d %1d\n", \
-        p, GB_Global.nmalloc, GB_Global.malloc_debug) ; \
-    (p) = NULL ;                \
+        GB_STR(p), __LINE__,__FILE__);  \
+    printf ("free:    %14p %3d %1d\n",  \
+        p, GB_Global_nmalloc_get ( ) GB_Global_malloc_debug_get ( )) ; \
+    (p) = NULL ;                        \
 }
 
 #else
 
-#define AS_IF_FREE(p)           \
-{                               \
-    GB_Global.nmalloc-- ;       \
-    (p) = NULL ;                \
+#define AS_IF_FREE(p)                   \
+{                                       \
+    GB_Global_nmalloc_decrement ( ) ;   \
+    (p) = NULL ;                        \
 }
 
 #endif
@@ -305,7 +313,7 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
 
 #define METHOD_START(OP) \
     printf ("\n================================================================================\n") ; \
-    printf ("method: [%s] start: %d\n", #OP, GB_Global.nmalloc) ; \
+    printf ("method: [%s] start: "GBd"\n", #OP, GB_Global_nmalloc_get ( )) ; \
     printf ("================================================================================\n") ;
 
 #define METHOD_TRY \
@@ -344,20 +352,20 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
     else                                                                    \
     {                                                                       \
         /* brutal malloc debug */                                           \
-        int nmalloc_start = (int) GB_Global.nmalloc ;                       \
+        int nmalloc_start = (int) GB_Global_nmalloc_get ( ) ;               \
         int nmalloc_Sauna_start = GB_mx_Sauna_nmalloc ( ) ;                 \
         for (int tries = 0 ; ; tries++)                                     \
         {                                                                   \
             /* give GraphBLAS the ability to do a # of mallocs, */          \
             /* callocs, and reallocs of larger size, equal to tries */      \
-            GB_Global.malloc_debug_count = tries ;                          \
+            GB_Global_malloc_debug_count_set (tries) ;                      \
             METHOD_TRY ;                                                    \
             /* call the method with malloc debug enabled */                 \
-            GB_Global.malloc_debug = true ;                                 \
+            GB_Global_malloc_debug_set (true) ;                             \
             TIC ;                                                           \
             GrB_Info info = GRAPHBLAS_OPERATION ;                           \
             TOC ;                                                           \
-            GB_Global.malloc_debug = false ;                                \
+            GB_Global_malloc_debug_set (false) ;                            \
             if (tries > 1000000) mexErrMsgTxt ("infinite loop!") ;          \
             if (info == GrB_SUCCESS || info == GrB_NO_VALUE)                \
             {                                                               \
@@ -372,7 +380,7 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
                 /* but turn off malloc debugging to get the copy */         \
                 FREE_DEEP_COPY ;                                            \
                 GET_DEEP_COPY ;                                             \
-                int nmalloc_end = (int) GB_Global.nmalloc ;                 \
+                int nmalloc_end = (int) GB_Global_nmalloc_get ( ) ;         \
                 int nmalloc_Sauna_end = GB_mx_Sauna_nmalloc ( ) ;           \
                 int nleak = ((nmalloc_end   - nmalloc_Sauna_end  ) -        \
                              (nmalloc_start - nmalloc_Sauna_start)) ;       \

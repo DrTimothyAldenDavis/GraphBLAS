@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 20, 2019 (BETA2)" )
+set ( GraphBLAS_DATE "Feb 21, 2019 (BETA2)" )
 set ( GraphBLAS_VERSION_MAJOR 2 )
 set ( GraphBLAS_VERSION_MINOR 3 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -79,7 +79,7 @@ endif ( )
 
 include ( GNUInstallDirs )
 
-# For development only, not for end-users:
+# Uncomment this line for for development only, not for end-users:
 # set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
@@ -329,15 +329,6 @@ endif ( )
 message ( STATUS "CMAKE C flags: " ${CMAKE_C_FLAGS} )
 
 #-------------------------------------------------------------------------------
-# graphblas installation location
-#-------------------------------------------------------------------------------
-
-install ( TARGETS graphblas graphblas_static
-    LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-
-#-------------------------------------------------------------------------------
 # Demo library
 #-------------------------------------------------------------------------------
 
@@ -384,3 +375,11 @@ target_link_libraries ( simple_demo   graphblasdemo )
 target_link_libraries ( wildtype_demo graphblas )
 target_link_libraries ( import_demo   graphblas graphblasdemo )
 
+#-------------------------------------------------------------------------------
+# graphblas installation location
+#-------------------------------------------------------------------------------
+
+install ( TARGETS graphblas graphblas_static
+    LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )

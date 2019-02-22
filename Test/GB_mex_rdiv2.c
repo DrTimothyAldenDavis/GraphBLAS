@@ -110,7 +110,7 @@ void mexFunction
 {
 
     info = GrB_SUCCESS ;
-    malloc_debug = GB_mx_get_global (true,false) ;
+    malloc_debug = GB_mx_get_global (true) ;
     ignore = false ;
     A = NULL ;
     B = NULL ;
@@ -198,6 +198,5 @@ void mexFunction
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AxB result", false) ;
 
     FREE_ALL ;
-    GrB_finalize ( ) ;
 }
 

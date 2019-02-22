@@ -8,7 +8,11 @@
 //------------------------------------------------------------------------------
 
 // GrB_init (or GxB_init) must called before any other GraphBLAS operation;
-// both rely on this internal function.
+// both rely on this internal function.  If GraphBLAS is used by multiple user
+// threads, only one can call GrB_init or GxB_init.
+
+// Result are undefined in multiple user threads simultaneously
+// call GrB_init (or GxB_init).
 
 // GrB_finalize must be called as the last GraphBLAS operation.
 
@@ -20,9 +24,34 @@
 // GxB_init is the same as GrB_init except that it also defines the
 // malloc/calloc/realloc/free functions to use.
 
-// not parallel: this function does O(1) work and is already thread-safe.
+// not parallel: this function does O(1) work.
 
 #include "GB.h"
+
+//------------------------------------------------------------------------------
+// critical section for user threads
+//------------------------------------------------------------------------------
+
+// User-level threads may call GraphBLAS in parallel, so the access to the
+// global queue for GrB_wait must be protected by a critical section.  The
+// critical section method should match the user threading model.
+
+#if defined (USER_POSIX_THREADS)
+// for user applications that use POSIX pthreads
+pthread_mutex_t GB_sync ;
+
+#elif defined (USER_WINDOWS_THREADS)
+// for user applications that use Windows threads (not yet supported)
+CRITICAL_SECTION GB_sync ; 
+
+#elif defined (USER_ANSI_THREADS)
+// for user applications that use ANSI C11 threads (not yet supported)
+mtx_t GB_sync ;
+
+#else // USER_OPENMP_THREADS, or USER_NO_THREADS
+// nothing to do for OpenMP, or for no user threading
+
+#endif
 
 //------------------------------------------------------------------------------
 // Thread local storage
@@ -34,7 +63,7 @@
 
 #if defined (USER_POSIX_THREADS)
 // thread-local storage for POSIX THREADS
-pthread_key_t GB_thread_local_report ;
+pthread_key_t GB_thread_local_key ;
 
 #elif defined (USER_WINDOWS_THREADS)
 // for user applications that use Windows threads:
@@ -43,70 +72,18 @@ pthread_key_t GB_thread_local_report ;
 #elif defined (USER_ANSI_THREADS)
 // for user applications that use ANSI C11 threads:
 // (this should work per the ANSI C11 specification but is not yet supported)
-_Thread_local char GB_thread_local_report [GB_RLEN+1] = "" ;
+_Thread_local
 
 #else // USER_OPENMP_THREADS, or USER_NO_THREADS
 // OpenMP user threads, or no user threads: this is the default
 #pragma omp threadprivate (GB_thread_local_report)
-char GB_thread_local_report [GB_RLEN+1] = "" ;
 #endif
 
-//------------------------------------------------------------------------------
-// All Global storage is declared and initialized here
-//------------------------------------------------------------------------------
-
-// If the user creates threads that work on GraphBLAS matrices, then all of
-// those threads must share the same matrix queue, and the same mode.
-
-GB_Global_struct GB_Global =
-{
-
-    // queued matrices with work to do
-    .queue_head = NULL,         // pointer to first queued matrix
-
-    // GraphBLAS mode
-    .mode = GrB_NONBLOCKING,    // default is nonblocking
-
-    // initialization flag
-    .GrB_init_called = false,   // GrB_init has not yet been called
-
-    // max number of threads
-    .nthreads_max = 1,          // max number of threads
-
-    // default format
-    .hyper_ratio = GB_HYPER_DEFAULT,
-    .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
-
-    // Sauna workspace for Gustavson's method (one per thread)
-    .Saunas [0] = NULL,
-    .Sauna_in_use [0] = false,
-
-    // abort function for debugging only
-    .abort_function   = abort,
-
-    // malloc/calloc/realloc/free functions: default to ANSI C11 functions
-    .malloc_function  = malloc,
-    .calloc_function  = calloc,
-    .realloc_function = realloc,
-    .free_function    = free
-
-    #ifdef GB_MALLOC_TRACKING
-    // malloc tracking, for testing, statistics, and debugging only
-    , .nmalloc = 0                // memory block counter
-    , .malloc_debug = false       // do not test memory handling
-    , .malloc_debug_count = 0     // counter for testing memory handling
-    , .inuse = 0                  // memory space current in use
-    , .maxused = 0                // high water memory usage
-    #endif
-
-} ;
+char GB_thread_local_report [GB_RLEN+1] = "" ;
 
 //------------------------------------------------------------------------------
 // GB_init
 //------------------------------------------------------------------------------
-
-// If GraphBLAS is used by multiple user threads, only one can call GrB_init
-// or GxB_init.
 
 GrB_Info GB_init            // start up GraphBLAS
 (
@@ -121,6 +98,27 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Context Context      // from GrB_init or GxB_init
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (GB_Global.GrB_init_called)
+    { 
+        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
+            "GrB_init must not be called twice"))) ;
+    }
+
+    if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
+    { 
+        // mode is invalid; also report the error for GrB_error.
+        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
+            "Unknown mode: %d; must be %d (GrB_NONBLOCKING) or %d"
+            " (GrB_BLOCKING)", (int) mode, (int) GrB_NONBLOCKING,
+            (int) GrB_BLOCKING))) ;
+    }
+
+    GB_Global.GrB_init_called = true ;
 
     //--------------------------------------------------------------------------
     // establish malloc/calloc/realloc/free
@@ -150,36 +148,66 @@ GrB_Info GB_init            // start up GraphBLAS
     #endif
 
     //--------------------------------------------------------------------------
-    // create the global queue and thread-local storage
+    // create the mutex for the critical section, and thread-local storage
     //--------------------------------------------------------------------------
 
-    GB_CRITICAL (GB_queue_create ( )) ;
+    if (GB_Global.user_multithreaded)
+    {
+
+        bool ok = true ;
+
+        #if defined (USER_POSIX_THREADS)
+        {
+            // initialize the critical section for POSIX pthreads
+            int result = pthread_mutex_init (&GB_sync, NULL) ;
+            bool ok = (result == 0) ;
+            // initialize the key for thread-local storage, allocated in
+            // in GB_thread_local_access via GB_Global.calloc_function,
+            // and freed by GB_Global.free_function.
+            result = pthread_key_create (&GB_thread_local_key, free_function) ;
+            ok = ok && (result == 0) ;
+        }
+
+        #elif defined (USER_WINDOWS_THREADS)
+        {
+            // initialize the critical section for Microsoft Windows.
+            // This is not yet supported.  See:
+            // https://docs.microsoft.com/en-us/windows/desktop/sync
+            //  /using-critical-section-objects
+            ok = InitializeCriticalSectionAndSpinCount (&GB_sync, 0x00000400) ;
+            // also do whatever Windows needs for thread-local-storage
+        }
+
+        #elif defined (USER_ANSI_THREADS)
+        {
+            // initialize the critical section for ANSI C11 threads
+            // This should work but is not yet supported.
+            ok = (mtx_init (&GB_sync, mtx_plain) == thrd_success) ;
+        }
+
+        #else // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
+        {
+            // no need to initialize anything for OpenMP
+        }
+        #endif
+
+        if (!ok) GB_PANIC ;
+    }
+
+    GB_thread_local_report [0] = '\0' ;
 
     //--------------------------------------------------------------------------
     // initialize the global queue
     //--------------------------------------------------------------------------
 
-    // Only one thread should initialize these settings.  If multiple threads
-    // call GrB_init, only the first thread does this work.
+    // clear the queue of matrices for nonblocking mode and set the mode.  The
+    // queue must be protected and can be initialized only once by any thread.
 
-    if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
-    { 
-        // mode is invalid; also report the error for GrB_error.
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "Unknown mode: %d; must be %d (GrB_NONBLOCKING) or %d"
-            " (GrB_BLOCKING)", (int) mode, (int) GrB_NONBLOCKING,
-            (int) GrB_BLOCKING))) ;
-    }
+    // clear the queue
+    GB_Global.queue_head = NULL ;
 
-    bool I_was_first ;
-
-    GB_CRITICAL (GB_queue_init (mode, &I_was_first)) ;
-
-    if (! I_was_first)
-    { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "GrB_init must not be called twice"))) ;
-    }
+    // set the mode: blocking or nonblocking
+    GB_Global.mode = mode ;
 
     //--------------------------------------------------------------------------
     // clear Sauna workspaces
@@ -205,15 +233,11 @@ GrB_Info GB_init            // start up GraphBLAS
     // initialize malloc tracking (testing and debugging only)
     //--------------------------------------------------------------------------
 
-    #ifdef GB_MALLOC_TRACKING
-    {
-        GB_Global.nmalloc = 0 ;
-        GB_Global.malloc_debug = false ;
-        GB_Global.malloc_debug_count = 0 ;
-        GB_Global.inuse = 0 ;
-        GB_Global.maxused = 0 ;
-    }
-    #endif
+    GB_Global_malloc_tracking_set (false) ;
+    GB_Global_nmalloc_clear ( ) ;
+    GB_Global.malloc_debug = false ;
+    GB_Global_malloc_debug_count_set (0) ;
+    GB_Global_inuse_clear ( ) ;
 
     //--------------------------------------------------------------------------
     // return result

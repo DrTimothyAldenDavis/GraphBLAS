@@ -30,7 +30,6 @@ hfiles = [ dir('tmp_include/*.c') ; ...
 inc = ...
 '-Itmp_include -I../Include -I../Test -I../Test/Template -I../Demo/Include' ;
 
-% gbmake is in ../Test
 addpath ../Test
 addpath ../Test/spok
 

@@ -104,7 +104,7 @@ GrB_Info mis_check              // compute a maximal independent set
     const GrB_Matrix A          // symmetric Boolean matrix
 ) ;
 
-void mis_score (float *result, uint32_t *degree) ;
+void mis_score (double *result, uint32_t *degree) ;
 
 extern int32_t level ;
 #pragma omp threadprivate(level)

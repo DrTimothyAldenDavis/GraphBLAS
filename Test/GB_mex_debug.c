@@ -19,7 +19,7 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    bool malloc_debug = GB_mx_get_global (false, true) ;
+    bool malloc_debug = GB_mx_get_global (false) ;
 
     // check inputs
     GB_WHERE (USAGE) ;

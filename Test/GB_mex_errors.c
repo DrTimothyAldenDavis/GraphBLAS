@@ -90,8 +90,8 @@
     info = method ;                                         \
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))    \
     {                                                       \
-        fprintf (f,">>>>>>>>%s\n", GrB_error ( )) ;         \
-        printf ("%s\n", GrB_error ( )) ;                    \
+        fprintf (f,"[%d] >>>>>>>>%s\n", info, GrB_error ( )) ;         \
+        printf ("[%d] %s\n", info, GrB_error ( )) ;                    \
         FAIL (method) ;                                     \
     }                                                       \
 }
@@ -129,17 +129,21 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
+
     FILE *f = fopen ("errlog.txt", "w") ;
     FILE *ff = fopen ("fprint.txt", "w") ;
 
     GrB_Info info, expected  ;
-    GB_Global.GrB_init_called = false ;
+
+    GB_Global_user_multithreaded_set (false) ;
+    GB_Global_GrB_init_called_set (false) ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     OK (GrB_finalize ( )) ;
 
-    GB_Global.GrB_init_called = false ;
+    GB_Global_GrB_init_called_set (false) ;
     OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
-    GB_Global.abort_function = GB_mx_abort ;
+    GB_Global_abort_function_set (GB_mx_abort) ;
+    GB_Global_malloc_tracking_set (true) ;
 
     fprintf (f,"\n========================================================\n") ;
     fprintf (f,"=== GB_mex_errors : testing error handling =============\n") ;
@@ -152,11 +156,11 @@ void mexFunction
     fprintf (ff, "GrB_error for testing failed I/O:\n%s\n", GrB_error ( )) ;
 
     int64_t nmalloc ;
-    nmalloc = GB_Global.nmalloc ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
 
     printf ("nmalloc %d at start\n", nmalloc) ;
-    bool malloc_debug = GB_mx_get_global (true,true) ;
-    nmalloc = GB_Global.nmalloc ;
+    bool malloc_debug = GB_mx_get_global (true) ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d after complex init\n", nmalloc) ;
 
     GrB_Matrix A = NULL, B = NULL, C = NULL, Z = NULL, Agunk = NULL,
@@ -231,7 +235,11 @@ void mexFunction
 
     // invalid mode
     ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
+    /*
     OK (GrB_finalize ( )) ;
+    GB_Global_GrB_init_called_set (false) ;
+    OK (GrB_init (GrB_NONBLOCKING)) ;
+    */
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_init (42, NULL    , mxCalloc, mxRealloc, mxFree)) ;
@@ -248,7 +256,7 @@ void mexFunction
     CHECK (GB_mx_Sauna_nmalloc ( ) == 0) ;
     CHECK (GB_Sauna_alloc (0, 8, 8) == GrB_SUCCESS) ;
     CHECK (GB_mx_Sauna_nmalloc ( ) == 3) ;
-    Sauna = GB_Global.Saunas [0] ;
+    Sauna = GB_Global_Saunas_get (0) ;
     GB_Sauna_reset (Sauna, INT64_MAX/2, 0) ;
     GB_Sauna_reset (Sauna, INT64_MAX/2, 0) ;
     GB_Sauna_reset (Sauna, INT64_MAX/2, 0) ;
@@ -3904,7 +3912,7 @@ void mexFunction
     CHECK (A == NULL) ;
 
     OK (GrB_wait ( )) ;
-    CHECK (GB_Global.queue_head == NULL) ;
+    CHECK (GB_Global_queue_head_get ( ) == NULL) ;
 
     Context->where = "GB_Matrix_check" ;
 
@@ -4081,12 +4089,12 @@ void mexFunction
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", GB0, NULL,
         Context)) ;
 
-    CHECK (GB_Global.queue_head == A) ;
-    GB_Global.queue_head = NULL ;
+    CHECK (GB_Global_queue_head_get ( ) == A) ;
+    GB_Global_queue_head_set (NULL) ;
     ERR (GB_Matrix_check (A, "inconsistent queue", GB3, NULL, Context)) ;
     A->enqueued = false ;
     ERR (GB_Matrix_check (A, "missing from queue", GB3, NULL, Context)) ;
-    GB_Global.queue_head = A ;
+    GB_Global_queue_head_set (A) ;
     A->enqueued = true ;
     OK (GB_Matrix_check (A, "valid pending [pi 7.1 11.4]", GB0, NULL,
         Context)) ;
@@ -4151,12 +4159,12 @@ void mexFunction
 
     expected = GrB_INVALID_OBJECT ;
 
-    CHECK (GB_Global.queue_head == NULL) ;
-    GB_Global.queue_head = A ;
+    CHECK (GB_Global_queue_head_get ( ) == NULL) ;
+    GB_Global_queue_head_set (A) ;
     A->enqueued = true ;
     ERR (GB_Matrix_check (A, "should not be in queue", GB3, NULL, Context)) ;
     OK  (GB_Matrix_check (A, "ignore queue", GB_FLIP (GB3), NULL, Context)) ;
-    GB_Global.queue_head = NULL ;
+    GB_Global_queue_head_set (NULL) ;
     A->enqueued = false ;
     OK (GB_Matrix_check (A, "valid, no pending", GB3, NULL, Context)) ;
 
@@ -4169,9 +4177,14 @@ void mexFunction
 
     OK (GxB_set (A, GxB_HYPER, GxB_NEVER_HYPER)) ;
     CHECK (!A->is_hyper) ;
+    bool A_is_hyper ;
+    OK (GxB_get (A, GxB_IS_HYPER, &A_is_hyper)) ;
+    CHECK (!A_is_hyper) ;
 
     OK (GxB_set (A, GxB_HYPER, GxB_ALWAYS_HYPER)) ;
     CHECK (A->is_hyper) ;
+    OK (GxB_get (A, GxB_IS_HYPER, &A_is_hyper)) ;
+    CHECK (A_is_hyper) ;
 
     // make sure A->nvec_nonempty is valid
     if (A->nvec_nonempty < 0)
@@ -4347,17 +4360,17 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     OK (GrB_wait ( )) ;
-    CHECK (GB_Global.queue_head == NULL) ;
+    CHECK (GB_Global_queue_head_get ( ) == NULL) ;
     OK (GrB_Matrix_setElement (A, 32.4, 3, 2)) ;
     OK (GB_Matrix_check (A, "A with one pending", GB3, NULL, Context)) ;
     CHECK (A->n_pending == 1 && A->nzombies == 0) ;
-    GB_Global.mode = GrB_BLOCKING ;
+    GB_Global_mode_set (GrB_BLOCKING) ;
     OK (GB_block (A, Context)) ;
     OK (GB_Matrix_check (A, "A with no pending", GB3, NULL, Context)) ;
     CHECK (A->n_pending == 0 && A->nzombies == 0) ;
     OK (GrB_Matrix_setElement (A, 99.4, 3, 3)) ;
     OK (GB_Matrix_check (A, "A blocking mode", GB3, NULL, Context)) ;
-    GB_Global.mode = GrB_NONBLOCKING ;
+    GB_Global_mode_set (GrB_NONBLOCKING) ;
     CHECK (A->n_pending == 0 && A->nzombies == 0) ;
 
     printf ("\nAll blocking/nonblocking mode tests passed\n") ;
@@ -5193,7 +5206,7 @@ void mexFunction
     // this is also done by FREE_ALL, but the list here is meant to be
     // accurate, so nmalloc should be zero at the check below
 
-    nmalloc = GB_Global.nmalloc ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("\n\nfree all: nmalloc %d\n", nmalloc) ;
 
     GrB_free (&Empty1) ;       CHECK (Empty1       == NULL) ;
@@ -5235,20 +5248,20 @@ void mexFunction
     GrB_free (&selectop) ;     CHECK (selectop     == NULL) ;
     GrB_free (&selectopgunk) ; CHECK (selectopgunk == NULL) ;
 
-    nmalloc = GB_Global.nmalloc ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d before complex_finalize\n", nmalloc) ;
     Complex_finalize ( ) ;
-    nmalloc = GB_Global.nmalloc ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d done\n", nmalloc) ;
     GrB_finalize ( ) ;
-    nmalloc = GB_Global.nmalloc ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d all freed\n", nmalloc) ;
 
     FREE_ALL ;
-    nmalloc = GB_Global.nmalloc ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d all freed\n", nmalloc) ;
     GrB_finalize ( ) ;
-    nmalloc = GB_Global.nmalloc ;
+    nmalloc = GB_Global_nmalloc_get ( ) ;
     printf ("nmalloc %d after finalize\n", nmalloc) ;
     CHECK (nmalloc == 0) ;
 

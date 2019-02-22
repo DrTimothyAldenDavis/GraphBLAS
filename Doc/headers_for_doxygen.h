@@ -359,6 +359,12 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_Global.c
+\brief  GB_Global: global values in GraphBLAS
+
+*/
+
+
 /** \file GB_I_inverse.c
 \brief  GB_I_inverse: invert an index list
 
@@ -412,8 +418,16 @@ constructed by dox_headers.m
 
 
 /** \file GB_Monoid_new.c
-\brief  GB_Monoid_new: create a Monoid with a specific type of identity
+\brief  GB_Monoid_new: create a GrB_Monoid
 
+\par
+ Create a user-defined monoid with an operator, identity value, and
+ (optionally) a terminal value.  If using a built-in operator, a duplicate
+ boolean operators is first replaced with its unique equivalent.  If the
+ operator is built-in and corresponds to a known monoid, then the identity
+ value and terminal value provided on input are ignored, and the known values
+ are used instead.  This is to allow the use of the hard-coded functions for
+ built-in monoids.
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */
@@ -1362,7 +1376,11 @@ constructed by dox_headers.m
 
 \par
  GrB_init (or GxB_init) must called before any other GraphBLAS operation;
- both rely on this internal function.
+ both rely on this internal function.  If GraphBLAS is used by multiple user
+ threads, only one can call GrB_init or GxB_init.
+\par
+ Result are undefined in multiple user threads simultaneously
+ call GrB_init (or GxB_init).
 \par
  GrB_finalize must be called as the last GraphBLAS operation.
 \par
@@ -1374,7 +1392,7 @@ constructed by dox_headers.m
  GxB_init is the same as GrB_init except that it also defines the
  malloc/calloc/realloc/free functions to use.
 \par
- not parallel: this function does O(1) work and is already thread-safe.
+ not parallel: this function does O(1) work.
 */
 
 
@@ -1727,30 +1745,6 @@ constructed by dox_headers.m
  may appear in multiple tuples, but the value k is unique across all tuples.
 \par
  parallel: not here, see Template/GB_qsort_template.c
-*/
-
-
-/** \file GB_queue_create.c
-\brief  GB_queue_create:  create the global matrix queue and thread-local storage
-
-\par
- not parallel: this function does O(1) work and is already thread-safe.
-*/
-
-
-/** \file GB_queue_destroy.c
-\brief  GB_queue_destroy: destroy the global matrix queue
-
-\par
- not parallel: this function does O(1) work and is already thread-safe.
-*/
-
-
-/** \file GB_queue_init.c
-\brief  GB_queue_init:  initialize the global matrix queue
-
-\par
- not parallel: this function does O(1) work and is already thread-safe.
 */
 
 
@@ -2968,9 +2962,11 @@ constructed by dox_headers.m
 
 \par
  GrB_finalize must be called as the last GraphBLAS function, per the
- GraphBLAS C API Specification.  
+ GraphBLAS C API Specification.  Only one user thread can call this
+ function.  Results are undefined if more than one thread calls this
+ function at the same time.
 \par
- not parallel: this function does O(1) work and is already thread-safe.
+ not parallel: this function does O(1) work
 */
 
 
@@ -3181,8 +3177,6 @@ constructed by dox_headers.m
 \brief  GxB_Matrix_Option_get: get an option in a matrix
 
 \par
- TODO:: add an option to query if a matrix is hypersparse or not
-\par
  not parallel: this function does O(1) work and is already thread-safe.
 */
 
@@ -3198,6 +3192,8 @@ constructed by dox_headers.m
 /** \file GxB_Matrix_export_CSC.c
 \brief  GxB_Matrix_export_CSC: export a matrix in CSC format
 
+\par
+ TODO add nvec to all import/export
 \par
  parallel: not here
 */
@@ -3342,6 +3338,26 @@ constructed by dox_headers.m
 /** \file GxB_Monoid_operator.c
 \brief  GxB_Monoid_operator: return the op of a monoid
 
+\par
+ not parallel: this function does O(1) work and is already thread-safe.
+*/
+
+
+/** \file GxB_Monoid_terminal.c
+\brief  GxB_Monoid_terminal: return the terminal of a monoid (if any)
+
+\par
+ not parallel: this function does O(1) work and is already thread-safe.
+*/
+
+
+/** \file GxB_Monoid_terminal_new.c
+\brief  GxB_Monoid_terminal_new:  create a new monoid with a terminal value
+
+\par
+ Identical to GrB_Monoid_new, except that a terminal value is specified.  No
+ typecasting is done for the terminal value.  Its type must match the
+ identity value.
 \par
  not parallel: this function does O(1) work and is already thread-safe.
 */

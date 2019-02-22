@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO:: add an option to query if a matrix is hypersparse or not
-
 // not parallel: this function does O(1) work and is already thread-safe.
 
 #include "GB.h"
@@ -34,12 +32,9 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
     //--------------------------------------------------------------------------
 
     va_list ap ;
-    double *hyper_ratio, hyper ;
+    double *hyper_ratio ;
     GxB_Format_Value *format ;
-    bool is_csc ;
-
-    hyper  = A->hyper_ratio ;
-    is_csc = A->is_csc ;
+    bool *is_hyper ;
 
     switch (field)
     {
@@ -51,7 +46,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
             va_end (ap) ;
 
             GB_RETURN_IF_NULL (hyper_ratio) ;
-            (*hyper_ratio) = hyper ;
+            (*hyper_ratio) = A->hyper_ratio ;
             break ;
 
         case GxB_FORMAT : 
@@ -61,15 +56,26 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
             va_end (ap) ;
 
             GB_RETURN_IF_NULL (format) ;
-            (*format) = (is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
+            (*format) = (A->is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
+            break ;
+
+        case GxB_IS_HYPER : 
+
+            va_start (ap, field) ;
+            is_hyper = va_arg (ap, bool *) ;
+            va_end (ap) ;
+
+            GB_RETURN_IF_NULL (is_hyper) ;
+            (*is_hyper) = A->is_hyper ;
             break ;
 
         default : 
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                     "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d] or GxB_FORMAT [%d]",
-                    (int) field, (int) GxB_HYPER, (int) GxB_FORMAT))) ;
+                    "GxB_HYPER [%d], GxB_FORMAT [%d], or GxB_IS_HYPER [%d]",
+                    (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
+                    (int) GxB_IS_HYPER))) ;
 
     }
     return (GrB_SUCCESS) ;

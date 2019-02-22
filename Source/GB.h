@@ -96,11 +96,7 @@
 // These flags are used for code development.  Uncomment them as needed.
 
 // to turn on debugging, uncomment this line:
-// TODO
-#undef NDEBUG
-
-// to turn on memory usage tracking (for testing only), uncomment this line:
-// #define GB_MALLOC_TRACKING 1
+// #undef NDEBUG
 
 // to turn on memory usage debug printing, uncomment this line:
 // #define GB_PRINT_MALLOC 1
@@ -344,7 +340,8 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
         if (!(x))                                                           \
         {                                                                   \
             printf ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
-            GB_Global.abort_function ( ) ;                                  \
+            printf ("[%s]\n", GB_STR (x)) ;                                 \
+            GB_Global_abort_function_call ( ) ;                             \
         }                                                                   \
     }
 
@@ -382,7 +379,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 #define GB_GOTCHA                                           \
 {                                                           \
     printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
-    GB_Global.abort_function ( ) ;                          \
+    GB_Global_abort_function_call ( ) ;                     \
 }
 
 #define GB_HERE printf (" Here: " __FILE__ " line: %d\n",  __LINE__) ;
@@ -664,15 +661,14 @@ extern struct GB_SelectOp_opaque
 // is normally determined from the user's descriptor, with a default of
 // nthreads = GxB_DEFAULT (that is, zero).  The default rule is to let
 // GraphBLAS determine the number of threads automatically by selecting a
-// number of threads between 1 and GB_Global.nthreads_max.  GrB_init
-// initializes GB_Global.nthreads_max to omp_get_max_threads ( ).  Both the
-// global value and the value in a descriptor can set/queried by GxB_set /
-// GxB_get.
+// number of threads between 1 and nthreads_max.  GrB_init initializes
+// nthreads_max to omp_get_max_threads ( ).  Both the global value and the
+// value in a descriptor can set/queried by GxB_set / GxB_get.
 
 // Some GrB_Matrix and GrB_Vector methods do not take a descriptor, however
 // (GrB_*_dup, _build, _exportTuples, _clear, _nvals, _wait, and GxB_*_resize).
 // For those methods the default rule is always used (nthreads = GxB_DEFAULT),
-// which then relies on the GB_Global.nthreads_max.
+// which then relies on the global nthreads_max.
 
 #define GB_RLEN 384
 #define GB_DLEN 256
@@ -703,7 +699,7 @@ typedef GB_Context_struct *GB_Context ;
     GB_Context_struct Context_struct ;              \
     GB_Context Context = &Context_struct ;          \
     Context->where = where_string ;                 \
-    Context->nthreads = GB_Global.nthreads_max ;
+    Context->nthreads = GB_Global_nthreads_max_get ( ) ;
 
 // GB_GET_NTHREADS:  determine number of threads for OpenMP parallelism.
 //
@@ -712,16 +708,15 @@ typedef GB_Context_struct *GB_Context ;
 //      for GB_qsort_*, calloc, and realloc, for problems that are small or
 //      where the calling function is already being done by one thread in a
 //      larger parallel construct).  If Context->nthreads is <= GxB_DEFAULT,
-//      then select automatically: between 1 and GB_Global.nthreads_max,
-//      depending on the problem size.  Below is the default rule.  Any
-//      function can use its own rule instead, based on Context,
-//      GB_Global.nthreads_max, and the problem size.  No rule can exceed
-//      GB_Global.nthreads_max.
+//      then select automatically: between 1 and nthreads_max, depending on the
+//      problem size.  Below is the default rule.  Any function can use its own
+//      rule instead, based on Context, nthreads_max, and the problem size.  No
+//      rule can exceed nthreads_max.
 
 #if defined ( _OPENMP )
     #define GB_GET_NTHREADS(nthreads,Context)                               \
         int nthreads = (Context == NULL) ? 1 : Context->nthreads ;          \
-        if (nthreads <= GxB_DEFAULT) nthreads = GB_Global.nthreads_max ;
+        if (nthreads <= GxB_DEFAULT) nthreads = GB_Global_nthreads_max_get ( ) ;
 #else
     // OpenMP is not available; SuiteSparse:GraphBLAS is sequential.
     #define GB_GET_NTHREADS(nthreads,Context)                               \
@@ -1081,7 +1076,7 @@ GrB_Info GB_ix_resize           // resize a matrix
 ) ;
 
 #ifndef GB_PANIC
-#define GB_PANIC return (GrB_PANIC)
+#define GB_PANIC { printf ("panic %s %d\n", __FILE__, __LINE__) ; return (GrB_PANIC) ; }
 #endif
 
 // free A->i and A->x and return if critical section fails
@@ -1289,11 +1284,9 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
 
 void GB_free_memory
 (
-    void *p                 // pointer to allocated block of memory to free
-    #ifdef GB_MALLOC_TRACKING
-    , size_t nitems         // number of items to free
-    , size_t size_of_item   // sizeof each item
-    #endif
+    void *p,                // pointer to allocated block of memory to free
+    size_t nitems,          // number of items to free
+    size_t size_of_item     // sizeof each item
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1407,21 +1400,11 @@ void GB_free_memory
 #define GB_REALLOC_MEMORY(p,nnew,nold,s,ok,Context)                           \
     p = GB_realloc_memory (nnew, nold, s, p, ok, Context) ;
 
-#ifdef GB_MALLOC_TRACKING
-    // free memory, with memory usage tracking
-    #define GB_FREE_MEMORY(p,n,s)                                             \
-    {                                                                         \
-        GB_free_memory (p, n, s) ;                                            \
-        (p) = NULL ;                                                          \
-    }
-#else
-    // free memory, no memory usage tracking
-    #define GB_FREE_MEMORY(p,n,s)                                             \
-    {                                                                         \
-        GB_free_memory (p) ;                                                  \
-        (p) = NULL ;                                                          \
-    }
-#endif
+#define GB_FREE_MEMORY(p,n,s)                                                 \
+{                                                                             \
+    GB_free_memory (p, n, s) ;                                                \
+    (p) = NULL ;                                                              \
+}
 
 #endif
 
@@ -1962,14 +1945,6 @@ void GB_pending_free            // free all pending tuples
 // GB_CRITICAL: GB_queue_* inside a critical section, which 'cannot' fail
 #define GB_CRITICAL(op) if (!(op)) GB_PANIC ;
 
-bool GB_queue_create ( ) ;      // create the queue and thread-local storage
-
-bool GB_queue_init              // initialize the queue
-(
-    const GrB_Mode mode,        // blocking or non-blocking mode
-    bool *I_was_first           // true if this is the first time
-) ;
-
 bool GB_queue_remove            // remove matrix from queue
 (
     GrB_Matrix A                // matrix to remove
@@ -1993,8 +1968,6 @@ bool GB_queue_status            // get the queue status of a matrix
     GrB_Matrix *p_next,         // next after A
     bool *p_enqd                // true if A is in the queue
 ) ;
-
-bool GB_queue_destroy ( ) ;     // destroy the queue
 
 //------------------------------------------------------------------------------
 
@@ -2250,6 +2223,8 @@ typedef struct
     // The access of these variables must be protected in a critical section,
     // if the user application is multithreaded.
 
+    bool user_multithreaded ;   // true if user application may be multithreaded
+
     void *queue_head ;          // head pointer to matrix queue
 
     GrB_Mode mode ;             // GrB_NONBLOCKING or GrB_BLOCKING
@@ -2264,27 +2239,6 @@ typedef struct
 
     GB_Sauna Saunas   [GxB_NTHREADS_MAX] ;
     bool Sauna_in_use [GxB_NTHREADS_MAX] ;
-
-    //--------------------------------------------------------------------------
-    // critical section for user threads
-    //--------------------------------------------------------------------------
-
-    // User-level threads may call GraphBLAS in parallel, so the access to
-    // the global queue for GrB_wait must be protected by a critical section.
-    // The critical section method should match the user threading model.
-
-    #if defined (USER_POSIX_THREADS)
-    // for user applications that use POSIX pthreads
-    pthread_mutex_t sync ;
-    #elif defined (USER_WINDOWS_THREADS)
-    // for user applications that use Windows threads (not yet supported)
-    CRITICAL_SECTION sync ; 
-    #elif defined (USER_ANSI_THREADS)
-    // for user applications that use ANSI C11 threads (not yet supported)
-    mtx_t sync ;
-    #else // USER_OPENMP_THREADS, or USER_NO_THREADS
-    // nothing to do for OpenMP, or for no user threading
-    #endif
 
     //--------------------------------------------------------------------------
     // hypersparsity and CSR/CSC format control
@@ -2319,9 +2273,11 @@ typedef struct
     // memory usage tracking: for testing and debugging only
     //--------------------------------------------------------------------------
 
-    #ifdef GB_MALLOC_TRACKING
-
     // NOTE: these statistics are not thread-safe, and used only for testing.
+
+    // malloc_tracking:  default is false.  There is no user-accessible API for
+    // setting this to true.  If true, the following statistics are computed.
+    // If false, all of the following are unused.
 
     // nmalloc:  To aid in searching for memory leaks, GraphBLAS keeps track of
     // the number of blocks of allocated that have not yet been freed.  The
@@ -2341,18 +2297,70 @@ typedef struct
     // 0, the GB_*_memory routines pretend to fail; returning NULL and not
     // allocating anything.
 
+    bool malloc_tracking ;          // true if allocations are being tracked
     int64_t nmalloc ;               // number of blocks allocated but not freed
-    bool malloc_debug ;             // if true, test memory hanlding
+    bool malloc_debug ;             // if true, test memory handling
     int64_t malloc_debug_count ;    // for testing memory handling
     int64_t inuse ;                 // memory space current in use
     int64_t maxused ;               // high water memory usage
-
-    #endif
 
 }
 GB_Global_struct ;
 
 extern GB_Global_struct GB_Global ;
+
+//------------------------------------------------------------------------------
+// GB_Global access functions
+//------------------------------------------------------------------------------
+
+int      GB_Global_nthreads_max_get ( ) ;
+int64_t  GB_Global_nmalloc_get ( ) ;
+void     GB_Global_nmalloc_clear ( ) ;
+int64_t  GB_Global_nmalloc_decrement ( ) ;
+int64_t  GB_Global_nmalloc_increment ( ) ;
+void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
+void     GB_Global_abort_function_call ( ) ;
+void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
+bool     GB_Global_malloc_tracking_get ( ) ;
+void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
+void     GB_Global_malloc_debug_set (bool malloc_debug) ;
+bool     GB_Global_malloc_debug_get ( ) ;
+void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
+int64_t  GB_Global_inuse_get ( ) ;
+void     GB_Global_inuse_clear ( ) ;
+void     GB_Global_inuse_increment (int64_t s) ;
+void     GB_Global_inuse_decrement (int64_t s) ;
+int64_t  GB_Global_maxused_get ( ) ;
+void  *  GB_Global_queue_head_get ( ) ;
+void     GB_Global_queue_head_set (void *p) ;
+void     GB_Global_mode_set (GrB_Mode mode) ;
+GB_Sauna GB_Global_Saunas_get (int id) ;
+void     GB_Global_user_multithreaded_set (bool user_multithreaded) ;
+
+//------------------------------------------------------------------------------
+// critical section for user threads
+//------------------------------------------------------------------------------
+
+// User-level threads may call GraphBLAS in parallel, so the access to the
+// global queue for GrB_wait must be protected by a critical section.  The
+// critical section method should match the user threading model.
+
+#if defined (USER_POSIX_THREADS)
+// for user applications that use POSIX pthreads
+extern pthread_mutex_t GB_sync ;
+
+#elif defined (USER_WINDOWS_THREADS)
+// for user applications that use Windows threads (not yet supported)
+extern CRITICAL_SECTION GB_sync ; 
+
+#elif defined (USER_ANSI_THREADS)
+// for user applications that use ANSI C11 threads (not yet supported)
+extern mtx_t GB_sync ;
+
+#else // USER_OPENMP_THREADS, or USER_NO_THREADS
+// nothing to do for OpenMP, or for no user threading
+
+#endif
 
 //------------------------------------------------------------------------------
 // Thread local storage
@@ -2365,7 +2373,7 @@ extern GB_Global_struct GB_Global ;
 
 #if defined (USER_POSIX_THREADS)
 // thread-local storage for POSIX THREADS
-extern pthread_key_t GB_thread_local_report ;
+extern pthread_key_t GB_thread_local_key ;
 
 #elif defined (USER_WINDOWS_THREADS)
 // for user applications that use Windows threads:
@@ -2374,14 +2382,16 @@ extern pthread_key_t GB_thread_local_report ;
 #elif defined (USER_ANSI_THREADS)
 // for user applications that use ANSI C11 threads:
 // (this should work per the ANSI C11 specification but is not yet supported)
-_Thread_local extern char GB_thread_local_report [GB_RLEN+1] ;
+_Thread_local
 
 #else
 // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
 // This is the default.
-extern char GB_thread_local_report [GB_RLEN+1] ;
 #pragma omp threadprivate (GB_thread_local_report)
+
 #endif
+
+extern char GB_thread_local_report [GB_RLEN+1] ;
 
 // return pointer to thread-local storage
 char *GB_thread_local_access ( ) ;

@@ -36,7 +36,7 @@ void mexFunction
 )
 {
 
-    bool malloc_debug = GB_mx_get_global (true, false) ;
+    bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL, E = NULL, L = NULL, U = NULL ;
 
     // check inputs
@@ -73,6 +73,5 @@ void mexFunction
     }
 
     FREE_ALL ;
-    GrB_finalize ( ) ;
 }
 

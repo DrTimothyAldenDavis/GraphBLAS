@@ -49,7 +49,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         // determine the number of threads to use
         GB_GET_NTHREADS (nthreads, Context) ;
 
-        #ifdef GB_MALLOC_TRACKING
+        if (GB_Global_malloc_tracking_get ( ))
         {
             // for memory usage testing only
             bool pretend_to_fail = false ;
@@ -71,10 +71,8 @@ void *GB_calloc_memory      // pointer to allocated block of memory
             }
             if (p != NULL)
             {
-                int nmalloc = ++GB_Global.nmalloc ;
-                GB_Global.inuse += nitems * size_of_item ;
-                GB_Global.maxused =
-                    GB_IMAX (GB_Global.maxused, GB_Global.inuse) ;
+                int nmalloc = GB_Global_nmalloc_increment ( ) ;
+                GB_Global_inuse_increment (nitems * size_of_item) ;
                 #ifdef GB_PRINT_MALLOC
                 printf ("Calloc:  %14p %3d %1d n "GBd" size "GBd"\n",
                     p, nmalloc, GB_Global.malloc_debug,
@@ -82,12 +80,11 @@ void *GB_calloc_memory      // pointer to allocated block of memory
                 #endif
             }
         }
-        #else
+        else
         {
             // normal use, in production
             p = (void *) GB_Global.calloc_function (nitems, size_of_item) ;
         }
-        #endif
 
     }
     return (p) ;

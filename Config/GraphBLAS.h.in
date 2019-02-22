@@ -2927,11 +2927,14 @@ typedef enum            // for global options or matrix options
 
     GxB_THREADING = 4,  // thread library used for internal GraphBLAS threads
 
-    GxB_METHOD_NTHREADS = GxB_NTHREADS   // number of threads to use for
+    GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // number of threads to use for
                         // GrB_Matrix and GrB_Vector methods that do not use a
                         // GrB_Descriptor (GrB_wait, GrB_*_dup, GrB_*_build,
                         // GxB_*_resize, GrB_*_clear, GrB_*_nvals, and
                         // GrB_*_exportTuples).
+
+    GxB_IS_HYPER = 6    // query a matrix to see if it hypersparse or not
+                        // (GxB_Matrix_Option_get only)
 
 } GxB_Option_Field ;
 
@@ -3063,6 +3066,10 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_ROW) ;
 //      GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
 //      GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ;
+
+// To get a matrix status (modified with GxB_HYPER, double h parameter):
+//
+//      GxB_get (GrB_Matrix A, GxB_IS_HYPER, bool *is_hyper) ;
 
 // To set/get a descriptor field:
 //

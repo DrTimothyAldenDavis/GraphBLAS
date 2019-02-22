@@ -14,11 +14,11 @@
 #define FREE_ALL                        \
 {                                       \
     GB_MATRIX_FREE (&C) ;               \
-    if (Ap != NULL) { GB_Global.nmalloc-- ; mxFree (Ap) ; Ap = NULL ; }     \
-    if (Ah != NULL) { GB_Global.nmalloc-- ; mxFree (Ah) ; Ah = NULL ; }     \
-    if (Ai != NULL) { GB_Global.nmalloc-- ; mxFree (Ai) ; Ai = NULL ; }     \
-    if (Aj != NULL) { GB_Global.nmalloc-- ; mxFree (Aj) ; Aj = NULL ; }     \
-    if (Ax != NULL) { GB_Global.nmalloc-- ; mxFree (Ax) ; Ax = NULL ; }     \
+    GB_FREE_MEMORY (Ap, nvec+1, sizeof (int64_t)) ;     \
+    GB_FREE_MEMORY (Ah, nvec  , sizeof (int64_t)) ;     \
+    GB_FREE_MEMORY (Ai, nvals , sizeof (int64_t)) ;     \
+    GB_FREE_MEMORY (Aj, nvals , sizeof (int64_t)) ;     \
+    GB_FREE_MEMORY (Ax, nvals , asize) ; \
     GB_mx_put_global (true, 0) ;        \
 }
 
@@ -41,6 +41,7 @@ GrB_Index *Aj = NULL ;
 GrB_Index nrows = 0 ;
 GrB_Index ncols = 0 ;
 GrB_Index nvals = 0 ;
+GrB_Index nvec = 0 ;
 char *Ax = NULL ;
 int format = 0 ;
 bool is_hyper = false ;
@@ -49,14 +50,12 @@ GrB_Info info = GrB_SUCCESS ;
 GrB_Descriptor desc = NULL ;
 bool dump = false ;
 GrB_Type type = NULL ;
+size_t asize = 0 ;
 
 //------------------------------------------------------------------------------
 
 GrB_Info import_export (GB_Context Context)
 {
-    GrB_Index r = 0 ;
-    GrB_Index c = 0  ;
-    size_t s = 0 ;
 
     //--------------------------------------------------------------------------
     // export/import a vector
@@ -66,19 +65,19 @@ GrB_Info import_export (GB_Context Context)
     {
         OK (GxB_Vector_export ((GrB_Vector *) (&C), &type, &nrows, &nvals,
             &Ai, &Ax, desc)) ;
+        OK (GxB_Type_size (&asize, type)) ;
 
         if (dump)
         {
             printf ("export standard CSC vector: %llu-by-1, nvals %llu:\n",
                 nrows, nvals) ;
             OK (GB_check (type, "type", GxB_SUMMARY)) ;
-            OK (GxB_Type_size (&s, type)) ;
             GB_Type_code code = type->code ;
 
             for (int64_t p = 0 ; p < nvals ; p++)
             {
                 printf ("  row %llu value ", Ai [p]) ;
-                GB_code_check (code, Ax + p * s, stdout, Context) ;
+                GB_code_check (code, Ax + p * asize, stdout, Context) ;
                 printf ("\n") ;
             }
         }
@@ -102,13 +101,14 @@ GrB_Info import_export (GB_Context Context)
 
             OK (GxB_Matrix_export_CSR (&C, &type, &nrows, &ncols, &nvals,
                     &Ap, &Aj, &Ax, desc)) ;
+            OK (GxB_Type_size (&asize, type)) ;
+            nvec = nrows ;
 
             if (dump)
             {
                 printf ("export standard CSR: %llu-by-%llu, nvals %llu:\n",
                     nrows, ncols, nvals) ;
                 OK (GB_check (type, "type", GxB_SUMMARY)) ;
-                OK (GxB_Type_size (&s, type)) ;
                 GB_Type_code code = type->code ;
 
                 for (int64_t i = 0 ; i < nrows ; i++)
@@ -117,7 +117,7 @@ GrB_Info import_export (GB_Context Context)
                     for (int64_t p = Ap [i] ; p < Ap [i+1] ; p++)
                     {
                         printf ("  col %llu value ", Aj [p]) ;
-                        GB_code_check (code, Ax + p * s, stdout, Context) ;
+                        GB_code_check (code, Ax + p * asize, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
@@ -135,13 +135,14 @@ GrB_Info import_export (GB_Context Context)
 
             OK (GxB_Matrix_export_CSC (&C, &type, &nrows, &ncols, &nvals,
                 &Ap, &Ai, &Ax, desc)) ;
+            nvec = ncols ;
+            OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
                 printf ("export standard CSC: %llu-by-%llu, nvals %llu:\n",
                     nrows, ncols, nvals) ;
                 OK (GB_check (type, "type", GxB_SUMMARY)) ;
-                OK (GxB_Type_size (&s, type)) ;
                 GB_Type_code code = type->code ;
 
                 for (int64_t j = 0 ; j < ncols ; j++)
@@ -150,7 +151,7 @@ GrB_Info import_export (GB_Context Context)
                     for (int64_t p = Ap [j] ; p < Ap [j+1] ; p++)
                     {
                         printf ("  row %llu value ", Ai [p]) ;
-                        GB_code_check (code, Ax + p + s, stdout, Context) ;
+                        GB_code_check (code, Ax + p + asize, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
@@ -168,31 +169,31 @@ GrB_Info import_export (GB_Context Context)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSR (&C, &type, &nrows, &ncols, &nvals,
-                &r, &Ah, &Ap, &Aj, &Ax, desc)) ;
+                &nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
+            OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
                 printf ("export hyper CSR: %llu-by-%llu, nvals %llu, r %llu:\n",
-                    nrows, ncols, nvals, r) ;
+                    nrows, ncols, nvals, nvec) ;
                 OK (GB_check (type, "type", GxB_SUMMARY)) ;
-                OK (GxB_Type_size (&s, type)) ;
                 GB_Type_code code = type->code ;
 
-                for (int64_t k = 0 ; k < r ; k++)
+                for (int64_t k = 0 ; k < nvec ; k++)
                 {
                     int64_t i = Ah [k] ;
                     printf ("Row %lld\n", i) ;
                     for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
                     {
                         printf ("  col %llu value ", Aj [p]) ;
-                        GB_code_check (code, Ax + p * s, stdout, Context) ;
+                        GB_code_check (code, Ax + p * asize, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
             }
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nvals,
-                r, &Ah, &Ap, &Aj, &Ax, desc)) ;
+                nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
 
             OK (GB_check (C, "C reimported", dump ? GxB_COMPLETE : GxB_SILENT));
             break ;
@@ -202,31 +203,31 @@ GrB_Info import_export (GB_Context Context)
         //----------------------------------------------------------------------
 
             OK (GxB_Matrix_export_HyperCSC (&C, &type, &nrows, &ncols, &nvals,
-                &c, &Ah, &Ap, &Ai, &Ax, desc)) ;
+                &nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
+            OK (GxB_Type_size (&asize, type)) ;
 
             if (dump)
             {
                 printf ("export hyper CSC: %llu-by-%llu, nvals %llu, c %llu:\n",
-                    nrows, ncols, nvals, c) ;
+                    nrows, ncols, nvals, nvec) ;
                 OK (GB_check (type, "type", GxB_SUMMARY)) ;
-                OK (GxB_Type_size (&s, type)) ;
                 GB_Type_code code = type->code ;
 
-                for (int64_t k = 0 ; k < c ; k++)
+                for (int64_t k = 0 ; k < nvec ; k++)
                 {
                     int64_t j = Ah [k] ;
                     printf ("Col %lld\n", j) ;
                     for (int64_t p = Ap [k] ; p < Ap [k+1] ; p++)
                     {
                         printf ("  row %llu value ", Ai [p]) ;
-                        GB_code_check (code, Ax + p * s, stdout, Context) ;
+                        GB_code_check (code, Ax + p * asize, stdout, Context) ;
                         printf ("\n") ;
                     }
                 }
             }
 
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nvals,
-                c, &Ah, &Ap, &Ai, &Ax, desc)) ;
+                nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
 
             OK (GB_check (C, "C reimported", dump ? GxB_COMPLETE : GxB_SILENT));
             break ;
@@ -252,9 +253,7 @@ void mexFunction
 )
 {
 
-    bool malloc_debug = GB_mx_get_global (true, false) ;
-
-    // printf ("start, nmalloc %d\n", GB_Global.nmalloc) ;
+    bool malloc_debug = GB_mx_get_global (true) ;
 
     // check inputs
     GB_WHERE (USAGE) ;
@@ -296,12 +295,8 @@ void mexFunction
     }
     mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
-    // printf ("here, nmalloc %d\n", GB_Global.nmalloc) ;
-
     // C<Mask> = op(C,A') or op(C,A)
     METHOD (import_export (Context)) ;
-
-    // printf ("finish, nmalloc %d\n", GB_Global.nmalloc) ;
 
     // return C to MATLAB
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C export/import", false) ;
@@ -310,7 +305,5 @@ void mexFunction
     //     C, Ap, Ah, Ai, Aj, Ax) ;
     FREE_ALL ;
 
-    // printf ("free all, nmalloc %d\n", GB_Global.nmalloc) ;
-    GrB_finalize ( ) ;
 }
 

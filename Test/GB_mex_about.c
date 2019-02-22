@@ -30,7 +30,7 @@ void mexFunction
 )
 {
 
-    bool malloc_debug = GB_mx_get_global (true, false) ;
+    bool malloc_debug = GB_mx_get_global (true) ;
 
     GB_WHERE (USAGE) ;
 
@@ -283,8 +283,11 @@ void mexFunction
 
     #endif
 
-    printf ("hyper_ratio %g csc %d\n",
-        GB_Global.hyper_ratio, GB_Global.is_csc) ;
+    double h ;
+    GxB_Format_Value ff ;
+    GxB_get (GxB_HYPER, &h) ;
+    GxB_get (GxB_FORMAT, &ff) ;
+    printf ("hyper_ratio %g csc %d\n", h, (ff == GxB_BY_COL)) ;
 
     printf ("built-in types:\n") ;
     GB_check (GrB_BOOL, "bool", GxB_COMPLETE) ;

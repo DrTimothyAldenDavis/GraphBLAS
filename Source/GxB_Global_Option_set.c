@@ -58,7 +58,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             GB_Global.is_csc = (format != GxB_BY_ROW) ; 
             break ;
 
-        case GxB_METHOD_NTHREADS :      // same as GxB_NTHREADS
+        case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
 
             va_start (ap, field) ;
             int nthreads_max_new = va_arg (ap, int) ;

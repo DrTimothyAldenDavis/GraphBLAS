@@ -44,7 +44,7 @@ void mexFunction
     size_t Y_size = 1 ;
 
     bool do_cover = (nargin == 4) ;
-    bool malloc_debug = GB_mx_get_global (do_cover, false) ;
+    bool malloc_debug = GB_mx_get_global (do_cover) ;
 
     // if Y is char and cover present, treat as if nargin == 2
     if (do_cover)

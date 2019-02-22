@@ -15,6 +15,10 @@
 
 #include "GB.h"
 
+//------------------------------------------------------------------------------
+// GB_thread_local_access
+//------------------------------------------------------------------------------
+
 char *GB_thread_local_access ( )    // return pointer to thread-local storage
 { 
 
@@ -24,33 +28,32 @@ char *GB_thread_local_access ( )    // return pointer to thread-local storage
 
     #if defined (USER_POSIX_THREADS)
     {
-        // thread-local storage for POSIX
-        char *p = pthread_getspecific (GB_thread_local_report) ;
-        bool ok = true ;
-        if (p == NULL)
+        if (GB_Global.user_multithreaded)
         {
-            // first time:  allocate the space for the report
-            p = (void *) GB_Global.calloc_function ((GB_RLEN+1), sizeof (char));
-            ok = (p != NULL) ;
-            ok = ok && (pthread_setspecific (GB_thread_local_report, p) == 0) ;
+            // thread-local storage for POSIX
+            char *p = pthread_getspecific (GB_thread_local_key) ;
+            bool ok = true ;
+            if (p == NULL)
+            {
+                // first time:  allocate the space for the report
+                p = (void *) GB_Global.calloc_function ((GB_RLEN+1), sizeof (char));
+                ok = (p != NULL) ;
+                ok = ok && (pthread_setspecific (GB_thread_local_key, p) == 0) ;
+            }
+            // do not attempt to recover from a failure to allocate the space
+            return (p) ;
         }
-        // do not attempt to recover from a failure to allocate the space
-        return (p) ;
     }
-
     #elif defined (USER_WINDOWS_THREADS)
     {
         // for user applications that use Windows threads:
         #error "Windows threads not yet supported"
         return (NULL) ;
     }
-
-    #else // USER_OPENMP_THREADS, USER_NO_THREADS, or USER_ANSI_THREADS
-    {
-        return (GB_thread_local_report) ;
-    }
-
     #endif
 
+    // USER_OPENMP_THREADS, USER_NO_THREADS, USER_ANSI_THREADS,
+    // or USER_POSIX_THREADS but with GB_Global.user_multithreaded false.
+    return (GB_thread_local_report) ;
 }
 

@@ -83,23 +83,31 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         // determine the number of threads to use
         GB_GET_NTHREADS (nthreads, Context) ;
 
-        #ifdef GB_MALLOC_TRACKING
-        bool pretend_to_fail = false ;
-        if (GB_Global.malloc_debug)
+        bool malloc_tracking = GB_Global_malloc_tracking_get ( ) ;
+
+        if (malloc_tracking)
         {
-            // brutal memory usage debug; pretend to fail if the count <= 0
-            pretend_to_fail = (GB_Global.malloc_debug_count-- <= 0) ;
-        }
-        if (pretend_to_fail)
-        {
-            // brutal memory usage debug; pretend to fail if the count <= 0,
-            #ifdef GB_PRINT_MALLOC
-            printf ("pretend to fail\n") ;
-            #endif
-            pnew = NULL ;
+            bool pretend_to_fail = false ;
+            if (GB_Global.malloc_debug)
+            {
+                // brutal memory usage debug; pretend to fail if the count <= 0
+                pretend_to_fail = (GB_Global.malloc_debug_count-- <= 0) ;
+            }
+            if (pretend_to_fail)
+            {
+                // brutal memory usage debug; pretend to fail if the count <= 0,
+                #ifdef GB_PRINT_MALLOC
+                printf ("pretend to fail\n") ;
+                #endif
+                pnew = NULL ;
+            }
+            else
+            {
+                // reallocate the space
+                pnew = (void *) GB_Global.realloc_function (p, size) ;
+            }
         }
         else
-        #endif
         {
             // reallocate the space
             pnew = (void *) GB_Global.realloc_function (p, size) ;
@@ -112,9 +120,10 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 // the attempt to reduce the size of the block failed, but
                 // the old block is unchanged.  So pretend to succeed.
                 (*ok) = true ;
-                #ifdef GB_MALLOC_TRACKING
-                GB_Global.inuse -= (nitems_old - nitems_new) * size_of_item;
-                #endif
+                if (malloc_tracking)
+                {
+                    GB_Global_inuse_decrement ((nitems_old - nitems_new) * size_of_item) ;
+                }
             }
             else
             {
@@ -127,19 +136,20 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             // success
             p = pnew ;
             (*ok) = true ;
-            #ifdef GB_MALLOC_TRACKING
-            GB_Global.inuse += (nitems_new - nitems_old) * size_of_item ;
-            GB_Global.maxused = GB_IMAX (GB_Global.maxused, GB_Global.inuse) ;
-            #endif
+            if (malloc_tracking)
+            {
+                GB_Global_inuse_increment ((nitems_new - nitems_old) * size_of_item) ;
+            }
         }
 
-        #ifdef GB_MALLOC_TRACKING
         #ifdef GB_PRINT_MALLOC
-        printf ("Realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
-            pnew, GB_Global.nmalloc, GB_Global.malloc_debug,
-            (int64_t) nitems_old, (int64_t) nitems_new,
-            (int64_t) size_of_item) ;
-        #endif
+        if (malloc_tracking)
+        {
+            printf ("Realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
+                pnew, GB_Global_nmalloc_get ( ), GB_Global.malloc_debug,
+                (int64_t) nitems_old, (int64_t) nitems_new,
+                (int64_t) size_of_item) ;
+        }
         #endif
 
     }

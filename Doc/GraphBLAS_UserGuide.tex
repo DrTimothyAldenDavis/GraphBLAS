@@ -3605,7 +3605,6 @@ GrB_Info GxB_Matrix_resize      // change the size of a matrix
 If the dimensions decrease, entries that fall outside the resized 
 matrix are deleted.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Matrix\_free:} free a matrix}
 %-------------------------------------------------------------------------------
@@ -4537,13 +4536,15 @@ by two \verb'enum' types, \verb'GrB_Desc_Field' and \verb'GrB_Desc_Value':
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
+#define GxB_NTHREADS 5  // for both GrB_Desc_field and GxB_Option_field
 typedef enum
 {
-    GrB_OUTP,       // descriptor for output of a method
-    GrB_MASK,       // descriptor for the mask input of a method
-    GrB_INP0,       // descriptor for the first input of a method
-    GrB_INP1,       // descriptor for the second input of a method
-    GxB_AxB_METHOD  // descriptor for selecting C=A*B algorithm
+    GrB_OUTP = 0,   // descriptor for output of a method
+    GrB_MASK = 1,   // descriptor for the mask input of a method
+    GrB_INP0 = 2,   // descriptor for the first input of a method
+    GrB_INP1 = 3,   // descriptor for the second input of a method
+    GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,   // number of threads to use
+    GxB_AxB_METHOD = 1000, // descriptor for selecting C=A*B algorithm
 }
 GrB_Desc_Field ;
 \end{verbatim} } \end{mdframed}
@@ -4555,13 +4556,10 @@ typedef enum
 {
     // for all GrB_Descriptor fields:
     GxB_DEFAULT,        // default behavior of the method
-
     // for GrB_OUTP only:
     GrB_REPLACE,        // clear the output before assigning new values to it
-
     // for GrB_MASK only:
     GrB_SCMP,           // use the structural complement of the input
-
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN,           // use the transpose of the input
 
@@ -5154,11 +5152,14 @@ for setting global options or matrix options.
 \begin{verbatim}
 typedef enum
 {
-    GxB_HYPER,      // defines switch to hypersparse format (a double value)
-    GxB_FORMAT      // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
-    GxB_MODE,           // mode passed to GrB_init (blocking or non-blocking)
-    GxB_THREAD_SAFETY,  // thread library for thread safety
-    GxB_THREADING       // current none
+    GxB_HYPER = 0,      // defines switch to hypersparse format (double value)
+    GxB_FORMAT = 1,     // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
+    GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
+    GxB_THREAD_SAFETY = 3,  // thread library for thread safety
+    GxB_THREADING = 4,      // currently none (in progress)
+    GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
+    GxB_IS_HYPER = 6     // query a matrix to see if it hypersparse or not
+                         // (GxB_Matrix_Option_get only)
 }
 GxB_Option_Field ;
 \end{verbatim} }
@@ -5170,8 +5171,9 @@ with the type \verb'GxB_Format_Value':
 \begin{verbatim}
 typedef enum
 {
-    GxB_BY_ROW,         // CSR: compressed sparse row format
-    GxB_BY_COL          // CSC: compressed sparse column format
+    GxB_BY_ROW = 0,     // CSR: compressed sparse row format
+    GxB_BY_COL = 1,     // CSC: compressed sparse column format
+    GxB_BY_EITHER = 2   // (reserved for future extension)
 }
 GxB_Format_Value ;
 \end{verbatim} }
@@ -5246,6 +5248,14 @@ future.  Any prior options no longer needed in future versions of
 SuiteSparse:GraphBLAS will be silently ignored, so the use these options is
 safe for future updates.
 
+The hypersparse status of a matrix can be queried with the following usage:
+
+{\footnotesize
+\begin{verbatim}
+    bool is_hyper ;
+    GxB_get (A, GxB_IS_HYPER, &is_hyper) ;
+    printf (is_hyper ? "A is hypersparse" : "A is standard sparse") ; \end{verbatim}}
+
 %-------------------------------------------------------------------------------
 \subsection{Other global options}
 %-------------------------------------------------------------------------------
@@ -5261,13 +5271,12 @@ following options:
     typedef enum
     {
         GxB_THREAD_NONE = 0,    // no threading
-        GxB_THREAD_OPENMP,      // OpenMP
-        GxB_THREAD_POSIX,       // POSIX pthreads
-        GxB_THREAD_WINDOWS,     // Windows threads
-        GxB_THREAD_ANSI         // ANSI C11 threads
+        GxB_THREAD_OPENMP = 1,  // OpenMP
+        GxB_THREAD_POSIX = 2,   // POSIX pthreads
+        GxB_THREAD_WINDOWS = 3, // Windows threads
+        GxB_THREAD_ANSI = 4     // ANSI C11 threads
     }
-    GxB_Thread_Model ;
-\end{verbatim} }
+    GxB_Thread_Model ; \end{verbatim} }
 
 SuiteSparse:GraphBLAS is not yet multi-threaded, but it is thread-safe if it is
 compiled with OpenMP or POSIX pthreads, and if the user application threads do
@@ -5311,6 +5320,7 @@ blocking mode determined by \verb'GrB_init', and the threading options.
 Specific format and hypersparsity parameters of each matrix are specific to
 that matrix and can be independently changed.
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_set:} set a global option}
 %===============================================================================
@@ -5338,7 +5348,6 @@ No existing matrices are changed.
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
 \end{verbatim} }
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_set:} set a matrix option}
 %===============================================================================
@@ -5373,6 +5382,7 @@ For performance, the matrix option should be set as soon as it is created with
     GxB_set (A, GxB_FORMAT, GxB_BY_COL) ;
 \end{verbatim} }
 
+\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Desc\_set:} set a {\sf GrB\_Descriptor} value}
 %===============================================================================
@@ -5395,7 +5405,6 @@ consistent with the other usages of this generic function.  Unlike
 for different types for the third parameter.  Refer to
 Sections~\ref{descriptor_set}~and~\ref{desc_set} for details.
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_get:} retrieve a global option}
 %===============================================================================
@@ -5435,8 +5444,7 @@ example:
     // see Demo/Program/pthread_demo.c and openmp_demo.c for examples:
     GxB_Threading_Model thread_safety, threading ;
     GxB_get (GxB_THREAD_SAFETY, &thread_safey) ;
-    GxB_get (GxB_THREADING, &threading) ;
-    \end{verbatim} }
+    GxB_get (GxB_THREADING, &threading) ; \end{verbatim} }
 
 \newpage
 %===============================================================================
@@ -5531,6 +5539,13 @@ To set/get a matrix option:
     GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GrB_Matrix A, GxB_FORMAT, GxB_BY_COL) ;
     GxB_get (GrB_Matrix A, GxB_FORMAT, GxB_Format_Value *s) ; \end{verbatim} }
+
+\noindent
+To get the hypersparse status of a matrix:
+
+    {\footnotesize
+    \begin{verbatim}
+    GxB_get (GrB_Matrix A, GxB_IS_HYPER, bool *is_hyper) ; \end{verbatim} }
 
 \noindent
 To set/get a descriptor field:

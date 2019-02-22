@@ -120,7 +120,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         // default number of threads
         //----------------------------------------------------------------------
 
-        case GxB_METHOD_NTHREADS :      // same as GxB_NTHREADS
+        case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
 
             va_start (ap, field) ;
             int *nthreads_max = va_arg (ap, int *) ;
@@ -137,11 +137,12 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                     "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_MODE [%d],"
-                    "GxB_THREAD_SAFETY [%d], or GxB_THREADING [%d]",
+                    "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_MODE [%d],\n"
+                    "GxB_THREAD_SAFETY [%d], GxB_THREADING [%d]"
+                    "or GxB_NTHREADS [%d]",
                     (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
                     (int) GxB_MODE, (int) GxB_THREAD_SAFETY,
-                    (int) GxB_THREADING))) ;
+                    (int) GxB_THREADING, (int) GxB_NTHREADS))) ;
 
     }
 

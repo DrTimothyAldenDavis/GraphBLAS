@@ -275,8 +275,8 @@ GrB_Info many_assign
         mxArray *p ;
 
         // [ turn off malloc debugging
-        bool save = GB_Global.malloc_debug ;
-        GB_Global.malloc_debug = false ;
+        bool save = GB_Global_malloc_debug_get ( ) ;
+        GB_Global_malloc_debug_set (false) ;
 
         // get Mask (shallow copy)
         Mask = NULL ;
@@ -341,8 +341,9 @@ GrB_Info many_assign
                 mexErrMsgTxt ("desc failed") ;
             }
         }
+
         // restore malloc debugging to test the method
-        GB_Global.malloc_debug = save ;   // ]
+        GB_Global_malloc_debug_set (save) ; // ]
 
         //----------------------------------------------------------------------
         // C<Mask>(I,J) = A
@@ -382,7 +383,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    malloc_debug = GB_mx_get_global (true, false) ;
+    malloc_debug = GB_mx_get_global (true) ;
     A = NULL ;
     C = NULL ;
     Mask = NULL ;

@@ -34,7 +34,7 @@ void mexFunction
     // double tic2 [2] ;
     // simple_tic (tic2) ;
 
-    bool malloc_debug = GB_mx_get_global (true, false) ;
+    bool malloc_debug = GB_mx_get_global (true) ;
     GrB_Matrix A = NULL ;
     GrB_Matrix B = NULL ;
     GrB_Matrix C = NULL ;

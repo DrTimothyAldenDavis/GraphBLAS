@@ -12,10 +12,9 @@
 
 #include "GB_mex.h"
 
-bool GB_mx_get_global      // true if doing malloc_debug
+bool GB_mx_get_global       // true if doing malloc_debug
 (
-    bool cover,
-    bool use_grb_init       // if true, use GrB_init, else GxB_init
+    bool cover              // true if doing statement coverage
 )
 {
 
@@ -63,34 +62,19 @@ bool GB_mx_get_global      // true if doing malloc_debug
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
-    GB_Global.GrB_init_called = false ;
-
-    // either option works the same; just test either function
-    if (use_grb_init)
-    {
-        // test GrB_init
-        GrB_init (GrB_NONBLOCKING) ;
-        GB_Global.malloc_function  = mxMalloc  ;
-        GB_Global.calloc_function  = mxCalloc  ;
-        GB_Global.realloc_function = mxRealloc ;
-        GB_Global.free_function    = mxFree    ;
-    }
-    else
-    {
-        // test GxB_init
-        GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
-    }
-
-    GB_Global.abort_function = GB_mx_abort ;
+    GB_Global_user_multithreaded_set (false) ;
+    GB_Global_GrB_init_called_set (false) ;
+    GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
+    ASSERT (GB_Global_nmalloc_get ( ) == 0) ;
+    GB_Global_abort_function_set (GB_mx_abort) ;
+    GB_Global_malloc_tracking_set (true) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
-    ASSERT (GB_Global.nmalloc == 0) ;
     Complex_init ( ) ;
 
     //--------------------------------------------------------------------------
     // return malloc debug status
     //--------------------------------------------------------------------------
 
-    // the caller will set GB_Global.malloc_debug, not done here
     return (malloc_debug) ;
 }
 

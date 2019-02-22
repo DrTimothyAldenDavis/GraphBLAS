@@ -117,7 +117,7 @@ void mexFunction
 )
 {
 
-    bool malloc_debug = GB_mx_get_global (true,false) ;
+    bool malloc_debug = GB_mx_get_global (true) ;
 
     GB_WHERE (USAGE) ;
 
