@@ -186,6 +186,11 @@ static void GB_quicksort_main   // sort A [0:n-1]
     // do the quicksort in parallel
     //--------------------------------------------------------------------------
 
+    #ifdef _OPENMP
+    double t ;
+    if (n > 1000000) t = omp_get_wtime ( ) ;
+    #endif
+
     if (nthreads == 1)
     {
         // sort A [0:n-1] with a single thread
@@ -194,7 +199,6 @@ static void GB_quicksort_main   // sort A [0:n-1]
     else
     {
         // sort A [0:n-1] with multiple threads
-        printf ("qsort with %d threads\n", nthreads) ;
         #pragma omp parallel num_threads(nthreads)
         {
              #pragma omp single
@@ -203,5 +207,13 @@ static void GB_quicksort_main   // sort A [0:n-1]
              }
         }
     }
+
+    #ifdef _OPENMP
+    if (n > 1000000)
+    {
+        t = omp_get_wtime ( ) - t ;
+        printf ("qsort with %d threads : %g sec\n", nthreads, t) ;
+    }
+    #endif
 }
 
