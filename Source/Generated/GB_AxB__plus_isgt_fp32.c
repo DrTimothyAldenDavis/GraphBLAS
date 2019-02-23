@@ -142,15 +142,6 @@ GrB_Info GB_AgusB__plus_isgt_fp32
 #define GB_DOT_SAVE            \
     Cx [cnz] = cij ;
 
-#define GB_DOT_WORK_TYPE \
-    GB_btype
-
-#define GB_DOT_WORK(k) Work [k]
-
-// Work [k] = Bx [pB]
-#define GB_DOT_SCATTER \
-    Work [k] = Bx [pB] ;
-
 GrB_Info GB_AdotB__plus_isgt_fp32
 (
     GrB_Matrix *Chandle,

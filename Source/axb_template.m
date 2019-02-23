@@ -33,7 +33,6 @@ axb_method ('min', multop, add, imult, 'uint8_t' , 'uint8_t' , 'UINT8_MAX' , '0'
 axb_method ('min', multop, add, imult, 'uint16_t', 'uint16_t', 'UINT16_MAX', '0'         , handle_flipxy) ;
 axb_method ('min', multop, add, imult, 'uint32_t', 'uint32_t', 'UINT32_MAX', '0'         , handle_flipxy) ;
 axb_method ('min', multop, add, imult, 'uint64_t', 'uint64_t', 'UINT64_MAX', '0'         , handle_flipxy) ;
-% add = 'w = GB_FMIN (w,t)' ;
 add = 'w = fminf (w,t)' ;
 axb_method ('min', multop, add, fmult, 'float'   , 'float'   , 'INFINITY'  , '-INFINITY' , handle_flipxy) ;
 add = 'w = fmin (w,t)' ;
@@ -49,7 +48,6 @@ axb_method ('max', multop, add, imult, 'uint8_t' , 'uint8_t' , '0'         , 'UI
 axb_method ('max', multop, add, imult, 'uint16_t', 'uint16_t', '0'         , 'UINT16_MAX', handle_flipxy) ;
 axb_method ('max', multop, add, imult, 'uint32_t', 'uint32_t', '0'         , 'UINT32_MAX', handle_flipxy) ;
 axb_method ('max', multop, add, imult, 'uint64_t', 'uint64_t', '0'         , 'UINT64_MAX', handle_flipxy) ;
-% add = 'w = GB_FMAX (w,t)' ;
 add = 'w = fmaxf (w,t)' ;
 axb_method ('max', multop, add, fmult, 'float'   , 'float'   , '-INFINITY' , 'INFINITY'  , handle_flipxy) ;
 add = 'w = fmax (w,t)' ;

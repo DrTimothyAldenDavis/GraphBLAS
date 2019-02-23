@@ -22,9 +22,9 @@
 // X type:   float (the type of x for z=mult(x,y))
 // Y type:   float (the type of y for z=mult(x,y))
 // handle flipxy: 1 (0 if mult(x,y) is commutative, 1 otherwise)
-// Identity: INFINITY (where cij = GB_FMIN (cij,identity) does not change cij)
+// Identity: INFINITY (where cij = fminf (cij,identity) does not change cij)
 // Multiply: z = x / y
-// Add:      cij = GB_FMIN (cij,z)
+// Add:      cij = fminf (cij,z)
 // Terminal: if (z == -INFINITY) break ;
 
 #define GB_XTYPE \
@@ -66,7 +66,7 @@
     GB_atype aik = Ax [pA] ;                \
     float t ;                            \
     GB_MULTIPLY (t, aik, bkj) ;             \
-    Sauna_Work [i] = GB_FMIN (Sauna_Work [i],t) ;             \
+    Sauna_Work [i] = fminf (Sauna_Work [i],t) ;             \
 }
 
 // mult-add operation (with mask)
@@ -85,7 +85,7 @@
     else                                    \
     {                                       \
         /* C(i,j) seen before, update it */ \
-        Sauna_Work [i] = GB_FMIN (Sauna_Work [i],t) ;         \
+        Sauna_Work [i] = fminf (Sauna_Work [i],t) ;         \
     }                                       \
 }
 
@@ -125,7 +125,7 @@ GrB_Info GB_AgusB__min_div_fp32
 
 // cij += t
 #define GB_DOT_ADD             \
-    cij = GB_FMIN (cij,t) ;
+    cij = fminf (cij,t) ;
 
 // cij = t
 #define GB_DOT_COPY            \
@@ -141,15 +141,6 @@ GrB_Info GB_AgusB__min_div_fp32
 // save the value of C(i,j)
 #define GB_DOT_SAVE            \
     Cx [cnz] = cij ;
-
-#define GB_DOT_WORK_TYPE \
-    GB_btype
-
-#define GB_DOT_WORK(k) Work [k]
-
-// Work [k] = Bx [pB]
-#define GB_DOT_SCATTER \
-    Work [k] = Bx [pB] ;
 
 GrB_Info GB_AdotB__min_div_fp32
 (
@@ -193,7 +184,7 @@ GrB_Info GB_AdotB__min_div_fp32
     GB_btype bkj = Bx [pB] ;       \
     float t ;                   \
     GB_MULTIPLY (t, aik, bkj) ;    \
-    cij = GB_FMIN (cij,t) ;               \
+    cij = fminf (cij,t) ;               \
 }
 
 // cij is not a pointer but a scalar; nothing to do

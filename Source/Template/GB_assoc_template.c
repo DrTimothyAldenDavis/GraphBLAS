@@ -53,8 +53,10 @@ if (typecode != GB_BOOL_code)
                 case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, 0         )
                 case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, 0         )
                 #undef  GB_DUP
-                #define GB_DUP(w,t) w = GB_FMIN (w,t)
+                #define GB_DUP(w,t) w = fminf (w,t)
                 case GB_FP32_code   : GB_ASSOC_WORKER (float   , -INFINITY )
+                #undef  GB_DUP
+                #define GB_DUP(w,t) w = fmin (w,t)
                 case GB_FP64_code   : GB_ASSOC_WORKER (double  , -INFINITY )
                 #undef  GB_DUP
                 default: ;
@@ -75,8 +77,10 @@ if (typecode != GB_BOOL_code)
                 case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, UINT32_MAX)
                 case GB_UINT64_code : GB_ASSOC_WORKER (uint64_t, UINT64_MAX)
                 #undef  GB_DUP
-                #define GB_DUP(w,t) w = GB_FMAX (w,t)
+                #define GB_DUP(w,t) w = fmaxf (w,t)
                 case GB_FP32_code   : GB_ASSOC_WORKER (float   , INFINITY  )
+                #undef  GB_DUP
+                #define GB_DUP(w,t) w = fmax (w,t)
                 case GB_FP64_code   : GB_ASSOC_WORKER (double  , INFINITY  )
                 #undef  GB_DUP
                 default: ;

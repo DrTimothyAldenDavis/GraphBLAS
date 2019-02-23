@@ -85,7 +85,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
         ASSERT (code2 <= GB_UDT_code) ;
 
         // GB_BOP(x) is for boolean x, GB_IOP(x) for integer (int* and uint*),
-        // and GB_FOP(x) is for floating-point
+        // and GB_FOP(x) is for float, and GB_DOP(x) is for double.
 
         // NOTE: some of these operators z=f(x) do not depend on x, like z=1.
         // x is read anyway, but the compiler can remove that as dead code if
@@ -101,6 +101,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
                 #define GB_BOP(x) true
                 #define GB_IOP(x) 1
                 #define GB_FOP(x) 1
+                #define GB_DOP(x) 1
                 #include "GB_2type_template.c"
                 break ;
 
@@ -109,6 +110,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
                 #define GB_BOP(x) x
                 #define GB_IOP(x) x
                 #define GB_FOP(x) x
+                #define GB_DOP(x) x
                 #include "GB_2type_template.c"
                 break ;
 
@@ -117,14 +119,16 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
                 #define GB_BOP(x)  x
                 #define GB_IOP(x) -x
                 #define GB_FOP(x) -x
+                #define GB_DOP(x) -x
                 #include "GB_2type_template.c"
                 break ;
 
             case GB_ABS_opcode :       // z = abs(x)
 
-                #define GB_BOP(x)  x
-                #define GB_IOP(x)  GB_IABS(x)
-                #define GB_FOP(x)  GB_FABS(x)
+                #define GB_BOP(x) x
+                #define GB_IOP(x) GB_IABS(x)
+                #define GB_FOP(x) fabsf(x)
+                #define GB_DOP(x) fabs(x)
                 #include "GB_2type_template.c"
                 break ;
 
@@ -134,6 +138,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
                 #define GB_BOP(x) true
                 #define GB_IOP(x) GB_IMINV(x)
                 #define GB_FOP(x) 1./x
+                #define GB_DOP(x) 1./x
                 #include "GB_2type_template.c"
                 break ;
 
@@ -142,6 +147,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
                 #define GB_BOP(x) !x
                 #define GB_IOP(x) (!(x != 0))
                 #define GB_FOP(x) (!(x != 0))
+                #define GB_DOP(x) (!(x != 0))
                 #include "GB_2type_template.c"
                 break ;
 

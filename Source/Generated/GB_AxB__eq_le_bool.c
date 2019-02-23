@@ -142,15 +142,6 @@ GrB_Info GB_AgusB__eq_le_bool
 #define GB_DOT_SAVE            \
     Cx [cnz] = cij ;
 
-#define GB_DOT_WORK_TYPE \
-    GB_btype
-
-#define GB_DOT_WORK(k) Work [k]
-
-// Work [k] = Bx [pB]
-#define GB_DOT_SCATTER \
-    Work [k] = Bx [pB] ;
-
 GrB_Info GB_AdotB__eq_le_bool
 (
     GrB_Matrix *Chandle,

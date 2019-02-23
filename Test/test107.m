@@ -21,6 +21,8 @@ c = GB_mex_reduce_terminal (A, 2) ;
 assert (c == s) ;
 clear A
 
+ntrials = 10 ;
+
 %-------------------------------------------------------------------------------
 % big matrix ...
 fprintf ('\nbig matrix, no early exit\n') ;
@@ -28,28 +30,28 @@ n = 6000 ;
 A = sparse (rand (n)) ;
 
 tic
-for ntrials = 1:100
-s = full (max (max (A))) ;      % fastest
+for trial = 1:ntrials
+    s = full (max (max (A))) ;      % fastest
 end
 toc
 
 tic
-for ntrials = 1:100
-c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
+for trial = 1:ntrials
+    c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
 end
 toc
 
 % FUTURE: faster GrB_reduce for pre-compilled user-defined objects
 
 tic
-for ntrials = 1:100
-c2 = GB_mex_reduce_terminal (A, 1) ;
+for trial = 1:ntrials
+    c2 = GB_mex_reduce_terminal (A, 1) ;
 end
 toc
 
 tic
-for ntrials = 1:100
-c3 = GB_mex_reduce_terminal (A, 2) ;
+for trial = 1:ntrials
+    c3 = GB_mex_reduce_terminal (A, 2) ;
 end
 toc
 
@@ -63,20 +65,20 @@ fprintf ('\nbig matrix, with early exit\n') ;
 A (n,1) = 1 ;
 
 tic
-for ntrials = 1:100
-s = full (max (max (A))) ;
+for trial = 1:ntrials
+    s = full (max (max (A))) ;
 end
 toc
 
 tic
-for ntrials = 1:100
-c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
+for trial = 1:ntrials
+    c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
 end
 toc
 
 tic
-for ntrials = 1:100
-c2 = GB_mex_reduce_terminal (A, 1) ;  % fastest
+for trial = 1:ntrials
+    c2 = GB_mex_reduce_terminal (A, 1) ;  % fastest
 end
 toc
 
@@ -89,20 +91,20 @@ fprintf ('\nbig matrix, with inf \n') ;
 A (n,1) = inf ;
 
 tic
-for ntrials = 1:100
-s = full (max (max (A))) ;
+for trial = 1:ntrials
+    s = full (max (max (A))) ;
 end
 toc
 
 tic
-for ntrials = 1:100
-c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;   % fastest
+for trial = 1:ntrials
+    c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;   % fastest
 end
 toc
 
 tic
-for ntrials = 1:100
-c2 = GB_mex_reduce_terminal (A, inf) ;              % fastest
+for trial = 1:ntrials
+    c2 = GB_mex_reduce_terminal (A, inf) ;              % fastest
 end
 toc
 
@@ -116,20 +118,20 @@ fprintf ('\nbig matrix, with 2 \n') ;
 A (n,1) = 2 ;
 
 tic
-for ntrials = 1:100
-s = full (max (max (A))) ;
+for trial = 1:ntrials
+    s = full (max (max (A))) ;
 end
 toc
 
 tic
-for ntrials = 1:100
-c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
+for trial = 1:ntrials
+    c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
 end
 toc
 
 tic
-for ntrials = 1:100
-c2 = GB_mex_reduce_terminal (A, 2) ;                % fastest
+for trial = 1:ntrials
+    c2 = GB_mex_reduce_terminal (A, 2) ;                % fastest
 end
 toc
 
@@ -137,16 +139,37 @@ assert (s == c1) ;
 assert (s == c2) ;
 
 %-------------------------------------------------------------------------------
-fprintf ('\nsum\n') ;
+fprintf ('\nbig matrix, with nan\n') ;
+
+A (n,1) = nan ;
 
 tic
-for ntrials = 1:100
+for trial = 1:ntrials
+    s = full (max (max (A))) ;
+end
+toc
+
+tic
+for trial = 1:ntrials
+    c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
+end
+toc
+
+assert (s == c1) ;
+
+%-------------------------------------------------------------------------------
+fprintf ('\nsum\n') ;
+
+A (n,1) = 1 ;
+
+tic
+for trial = 1:ntrials
     ss = full (sum (sum (A))) ;
 end
 toc
 
 tic
-for ntrials = 1:100
+for trial = 1:ntrials
     cc = GB_mex_reduce_to_scalar (0, [ ], 'plus', A) ;
 end
 toc

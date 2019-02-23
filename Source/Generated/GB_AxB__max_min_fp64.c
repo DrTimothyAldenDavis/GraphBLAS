@@ -22,9 +22,9 @@
 // X type:   double (the type of x for z=mult(x,y))
 // Y type:   double (the type of y for z=mult(x,y))
 // handle flipxy: 0 (0 if mult(x,y) is commutative, 1 otherwise)
-// Identity: -INFINITY (where cij = GB_FMAX (cij,identity) does not change cij)
-// Multiply: z = GB_FMIN(x,y)
-// Add:      cij = GB_FMAX (cij,z)
+// Identity: -INFINITY (where cij = fmax (cij,identity) does not change cij)
+// Multiply: z = fmin(x,y)
+// Add:      cij = fmax (cij,z)
 // Terminal: if (z == INFINITY) break ;
 
 #define GB_XTYPE \
@@ -38,7 +38,7 @@
     if (z == INFINITY) break ;
 
 #define GB_MULTOP(z,x,y) \
-    z = GB_FMIN(x,y)
+    z = fmin(x,y)
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
@@ -66,7 +66,7 @@
     GB_atype aik = Ax [pA] ;                \
     double t ;                            \
     GB_MULTIPLY (t, aik, bkj) ;             \
-    Sauna_Work [i] = GB_FMAX (Sauna_Work [i],t) ;             \
+    Sauna_Work [i] = fmax (Sauna_Work [i],t) ;             \
 }
 
 // mult-add operation (with mask)
@@ -85,7 +85,7 @@
     else                                    \
     {                                       \
         /* C(i,j) seen before, update it */ \
-        Sauna_Work [i] = GB_FMAX (Sauna_Work [i],t) ;         \
+        Sauna_Work [i] = fmax (Sauna_Work [i],t) ;         \
     }                                       \
 }
 
@@ -125,7 +125,7 @@ GrB_Info GB_AgusB__max_min_fp64
 
 // cij += t
 #define GB_DOT_ADD             \
-    cij = GB_FMAX (cij,t) ;
+    cij = fmax (cij,t) ;
 
 // cij = t
 #define GB_DOT_COPY            \
@@ -141,15 +141,6 @@ GrB_Info GB_AgusB__max_min_fp64
 // save the value of C(i,j)
 #define GB_DOT_SAVE            \
     Cx [cnz] = cij ;
-
-#define GB_DOT_WORK_TYPE \
-    GB_btype
-
-#define GB_DOT_WORK(k) Work [k]
-
-// Work [k] = Bx [pB]
-#define GB_DOT_SCATTER \
-    Work [k] = Bx [pB] ;
 
 GrB_Info GB_AdotB__max_min_fp64
 (
@@ -193,7 +184,7 @@ GrB_Info GB_AdotB__max_min_fp64
     GB_btype bkj = Bx [pB] ;       \
     double t ;                   \
     GB_MULTIPLY (t, aik, bkj) ;    \
-    cij = GB_FMAX (cij,t) ;               \
+    cij = fmax (cij,t) ;               \
 }
 
 // cij is not a pointer but a scalar; nothing to do

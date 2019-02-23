@@ -65,13 +65,13 @@ fclose (f) ;
 % type control.m4
 
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail +12 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +12 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('%s\n', cmd) ;
 system (cmd) ;
 
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail +12 >> Generated/GB_AxB__semirings.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +12 >> Generated/GB_AxB__semirings.h') ;
 % fprintf ('%s\n', cmd) ;
 system (cmd) ;
 

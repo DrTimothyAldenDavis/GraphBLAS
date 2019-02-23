@@ -23,7 +23,7 @@
 // Y type:   double (the type of y for z=mult(x,y))
 // handle flipxy: 0 (0 if mult(x,y) is commutative, 1 otherwise)
 // Identity: 1 (where cij *= identity does not change cij)
-// Multiply: z = GB_FMAX(x,y)
+// Multiply: z = fmax(x,y)
 // Add:      cij *= z
 // Terminal: ;
 
@@ -38,7 +38,7 @@
     ;
 
 #define GB_MULTOP(z,x,y) \
-    z = GB_FMAX(x,y)
+    z = fmax(x,y)
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
@@ -141,15 +141,6 @@ GrB_Info GB_AgusB__times_max_fp64
 // save the value of C(i,j)
 #define GB_DOT_SAVE            \
     Cx [cnz] = cij ;
-
-#define GB_DOT_WORK_TYPE \
-    GB_btype
-
-#define GB_DOT_WORK(k) Work [k]
-
-// Work [k] = Bx [pB]
-#define GB_DOT_SCATTER \
-    Work [k] = Bx [pB] ;
 
 GrB_Info GB_AdotB__times_max_fp64
 (

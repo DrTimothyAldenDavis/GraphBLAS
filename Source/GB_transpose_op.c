@@ -118,6 +118,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
                 #define GB_BOP(x) true
                 #define GB_IOP(x) 1
                 #define GB_FOP(x) 1
+                #define GB_DOP(x) 1
                 #include "GB_2type_template.c"
                 break ;
 
@@ -126,6 +127,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
                 #define GB_BOP(x) x
                 #define GB_IOP(x) x
                 #define GB_FOP(x) x
+                #define GB_DOP(x) x
                 #include "GB_2type_template.c"
                 break ;
 
@@ -134,14 +136,16 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
                 #define GB_BOP(x)  x
                 #define GB_IOP(x) -x
                 #define GB_FOP(x) -x
+                #define GB_DOP(x) -x
                 #include "GB_2type_template.c"
                 break ;
 
             case GB_ABS_opcode :       // z = abs(x)
 
-                #define GB_BOP(x)  x
-                #define GB_IOP(x)  GB_IABS(x)
-                #define GB_FOP(x)  GB_FABS(x)
+                #define GB_BOP(x) x
+                #define GB_IOP(x) GB_IABS(x)
+                #define GB_FOP(x) fabsf(x)
+                #define GB_DOP(x) fabs(x)
                 #include "GB_2type_template.c"
                 break ;
 
@@ -151,6 +155,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
                 #define GB_BOP(x) true
                 #define GB_IOP(x) GB_IMINV(x)
                 #define GB_FOP(x) 1./x
+                #define GB_DOP(x) 1./x
                 #include "GB_2type_template.c"
                 break ;
 
@@ -159,6 +164,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
                 #define GB_BOP(x) !x
                 #define GB_IOP(x) (!(x != 0))
                 #define GB_FOP(x) (!(x != 0))
+                #define GB_DOP(x) (!(x != 0))
                 #include "GB_2type_template.c"
                 break ;
 

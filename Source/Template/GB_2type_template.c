@@ -45,10 +45,10 @@ switch (code1)
             default: ;
         }
         break ;
-        #undef  GB_OP
 
     case GB_INT8_code   :
 
+        #undef  GB_OP
         #define GB_OP(x) GB_IOP(x)
         switch (code2)
         {
@@ -207,10 +207,10 @@ switch (code1)
             default: ;
         }
         break ;
-        #undef  GB_OP
 
     case GB_FP32_code   :
 
+        #undef  GB_OP
         #define GB_OP(x) GB_FOP(x)
         switch (code2)
         {
@@ -232,6 +232,8 @@ switch (code1)
 
     case GB_FP64_code   :
 
+        #undef  GB_OP
+        #define GB_OP(x) GB_DOP(x)
         switch (code2)
         {
             //                            code1   code2
@@ -249,13 +251,13 @@ switch (code1)
             default: ;
         }
         break ;
-        #undef  GB_OP
 
     default: ;
 }
 
 #undef GB_OP
+#undef GB_BOP
 #undef GB_IOP
 #undef GB_FOP
-#undef GB_BOP
+#undef GB_DOP
 

@@ -3285,59 +3285,38 @@ static inline void GB_bracket
 // As of version 2.3 and later, they are 'omitnan', to facilitate the terminal
 // exit of the MIN and MAX monoids for floating-point values.
 
+// The ANSI C11 fmin, fminf, fmax, and fmaxf functions have the 'omitnan'
+// behavior.  These are used in SuiteSparse:GraphBLAS v2.3.0 and later.
+
 // Below is a complete comparison of MATLAB and GraphBLAS.  Both tables are the
 // results for both min and max (they return the same results in these cases):
 
-//   x    y  MATLAB    MATLAB   (x<y)?x:y   SuiteSparse:    SuiteSparse:
-//           omitnan includenan             GraphBLAS       GraphBLAS
+//   x    y  MATLAB    MATLAB   (x<y)?x:y   SuiteSparse:    SuiteSparse:    ANSI
+//           omitnan includenan             GraphBLAS       GraphBLAS       fmin
 //                                          v 2.2.x         this version
 //
-//   3    3     3        3          3        3              3
-//   3   NaN    3       NaN        NaN      NaN             3
-//  NaN   3     3       NaN         3       NaN             3
-//  NaN  NaN   NaN      NaN        NaN      NaN             NaN
+//   3    3     3        3          3        3              3               3
+//   3   NaN    3       NaN        NaN      NaN             3               3
+//  NaN   3     3       NaN         3       NaN             3               3
+//  NaN  NaN   NaN      NaN        NaN      NaN             NaN             NaN
 
-// suitable for all types, but given unique names to match GB_IMIN, GB_FMIN:
+// for integers only:
 #define GB_IABS(x) (((x) >= 0) ? (x) : (-(x)))
-#define GB_FABS(x) (((x) >= 0) ? (x) : (-(x)))
+
+// for floating point:
+// #define GB_FABS(x) (((x) >= 0) ? (x) : (-(x)))
 
 // suitable for integers, and non-NaN floating point:
 #define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
 
+// for floating-point, same as min(x,y,'includenan') and max(...) in MATLAB
+// #define GB_FMIN(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMIN (x,y))
+// #define GB_FMAX(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMAX (x,y))
+
 // for floating-point, same as min(x,y,'omitnan') and max(...) in MATLAB
-
-/*
-#define GB_FMAX(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMAX (x,y)))
-#define GB_FMIN(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMIN (x,y)))
-*/
-#define GB_FMAX(x,y) (isnan (x) ? (y) : (((x) < (y)) ? (y) : (x)))
-#define GB_FMIN(x,y) (isnan (x) ? (y) : (((x) > (y)) ? (y) : (x)))
-
-/*
-
-    (
-        isnan (x) ? (y) :
-
-        x < y ? y : x
-
-        x is not nan:
-        x < nan         always false:   result is x
-        x < y           if true:        result is y
-        x < y           if false:       result is x
-
-    )
-
-        isnan (x) ? (y) :
-
-        x > y ? y : x
-
-        x is not nan:
-        x > nan         always false:   result is y
-        x > y           if true:        result is y
-        x > y           if false:       result is x
-
-*/
+// #define GB_FMAX(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMAX(x,y)))
+// #define GB_FMIN(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMIN(x,y)))
 
 //------------------------------------------------------------------------------
 // GB_lookup: find k so that j == Ah [k]
@@ -4453,6 +4432,7 @@ static inline void GB_jwrapup
 
 #define GB_TYPE             double
 #define GB_FLOATING_POINT
+#define GB_FLOATING_POINT_DOUBLE
 #define GB(x)               GB_ ## x ## _FP64
 #define GB_CAST_NAME(x)     GB_cast_double_ ## x
 #include "GB_ops_template.h"
