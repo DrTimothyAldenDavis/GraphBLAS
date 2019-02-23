@@ -39,6 +39,7 @@ logstat ('test103') ; % GrB_transpose aliases
 logstat ('test104') ; % export/import
 logstat ('test105') ; % eWiseAdd for hypersparse
 logstat ('test106') ; % GxB_subassign with alias
+logstat ('test107') ; % monoids with terminal values
 logstat ('test98') ;  % GB_mex_mxm, typecast on the fly
 logstat ('test92') ;  % GB_subref_symbolic
 logstat ('test97') ;  % GB_mex_assign, scalar expansion and zombies

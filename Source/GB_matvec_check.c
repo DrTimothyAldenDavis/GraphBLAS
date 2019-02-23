@@ -146,6 +146,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // count the allocated blocks
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEVELOPER
+
     // a matrix contains 1 to 8 different allocated blocks
     int64_t nallocs = 1 +                       // header
         (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
@@ -156,9 +158,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         (A->j_pending != NULL) +                // A->j_pending if tuples
         (A->s_pending != NULL) ;                // A->s_pending if tuples
 
-    #ifdef GB_DEVELOPER
-    if (pr > 1) GBPR ("A %p magic "GBd"\n", A, A->magic) ;
-    if (pr > 1) GBPR ("number of memory blocks: "GBd"\n", nallocs) ;
+    if (pr > 1) GBPR ("A %p number of memory blocks: "GBd"\n", A, nallocs) ;
+
     #endif
 
     //--------------------------------------------------------------------------

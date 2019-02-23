@@ -170,6 +170,7 @@
 %   test104  - export/import
 %   test105  - eWiseAdd with hypersparse matrices
 %   test106  - GxB_subassign with alias
+%   test107  - user-defined terminal monoid
 
 %   testc1   - test complex operators
 %   testc2   - test complex A*B, A'*B, A*B', A'*B', A+B

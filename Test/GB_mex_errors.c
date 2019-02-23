@@ -678,6 +678,21 @@ void mexFunction
     OK (GxB_Monoid_identity (&x_double, GxB_TIMES_FP64_MONOID)) ;
     CHECK (x_double == 1.0) ;
 
+    bool has_terminal = true ;
+    x_double = 42.0 ;
+    OK (GxB_Monoid_terminal (&has_terminal, &x_double, GxB_TIMES_FP64_MONOID)) ;
+    CHECK (!has_terminal) ;
+    CHECK (x_double == 42.0) ;
+
+    OK (GxB_Monoid_terminal (&has_terminal, &x_double, GxB_MAX_FP64_MONOID)) ;
+    CHECK (has_terminal) ;
+    CHECK (x_double == INFINITY) ;
+
+    ERR (GxB_Monoid_terminal (NULL, NULL, GxB_MAX_FP64_MONOID)) ;
+    ERR (GxB_Monoid_terminal (&has_terminal, NULL, GxB_MAX_FP64_MONOID)) ;
+    ERR (GxB_Monoid_terminal (NULL, &x_double, GxB_MAX_FP64_MONOID)) ;
+    ERR (GxB_Monoid_terminal (&has_terminal, &x_double, NULL)) ;
+
     monoid_gunk = monoid ;
     monoid_gunk->magic = 8080 ;
     monoid = NULL ;

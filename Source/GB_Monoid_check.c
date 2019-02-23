@@ -43,19 +43,19 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
 
     switch (monoid->object_kind)
     {
-        case GB_BUILTIN:
+        case GB_BUILTIN :
             if (pr > 0) GBPR ("(built-in)") ;
             break ;
 
-        case GB_USER_COMPILED:
+        case GB_USER_COMPILED :
             if (pr > 0) GBPR ("(user-defined at compile-time)") ;
             break ;
 
-        case GB_USER_RUNTIME:
+        case GB_USER_RUNTIME :
             if (pr > 0) GBPR ("(user-defined at run-time)") ;
             break ;
 
-        default:
+        default :
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "Monoid->object_kind is invalid: [%s]", GB_NAME))) ;
     }
@@ -85,7 +85,17 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
         info = GB_entry_check (monoid->op->ztype, monoid->identity, f,  
             Context) ;
         if (info != GrB_SUCCESS) return (info) ;
-        GBPR (" ]\n") ;
+        GBPR (" ] ") ;
+        // print the terminal value, if present
+        if (monoid->terminal != NULL)
+        { 
+            GBPR ("terminal: [ ") ;
+            info = GB_entry_check (monoid->op->ztype, monoid->terminal, f,  
+                Context) ;
+            if (info != GrB_SUCCESS) return (info) ;
+            GBPR (" ]") ;
+        }
+        GBPR ("\n") ;
     }
 
     return (GrB_SUCCESS) ;

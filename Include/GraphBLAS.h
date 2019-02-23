@@ -6109,6 +6109,7 @@ GrB_Info GxB_Vector_export  // export and free a vector
  
 
 
+
 //------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_pagerank.m4: PageRank semiring
 //------------------------------------------------------------------------------
@@ -6525,6 +6526,36 @@ extern GrB_Semiring My_Complex_plus_times ;
 
 // Select operator to compute C = tril (triu (A, k1), k2)
 extern GxB_SelectOp My_band ;
+
+//------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_max.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined MAX functions for GxB_Monoid_terminal_new, to choose a
+// non-default terminal value
+
+#ifdef GxB_USER_INCLUDE
+
+    #define MY_MAX
+
+    static inline void my_maxdouble
+    (
+        double *z,
+        const double *x,
+        const double *y
+    )
+    {
+        // this is not safe with NaNs
+        (*z) = ((*x) > (*y)) ? (*x) : (*y) ;
+    }
+
+#endif
+
+// max operator
+extern GrB_BinaryOp My_Max ;
+
+// The max monoid, with terminal value of 1
+extern GrB_Monoid My_Max_Terminal1 ;
 
 #endif
 

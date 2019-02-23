@@ -106,6 +106,8 @@ GrB_Info export_import
             OK (GxB_set (C, GxB_HYPER,  GxB_ALWAYS_HYPER)) ;
             OK (GxB_set (C, GxB_FORMAT, GxB_BY_COL)) ;
             break ;
+
+        default : mexErrMsgTxt ("invalid format") ;
     }
 
     //--------------------------------------------------------------------------
@@ -161,6 +163,7 @@ GrB_Info export_import
                 nonempty, nvec, &Ch, &Cp, &Ci, &Cx, NULL)) ;
             break ;
 
+        default : mexErrMsgTxt ("invalid format") ;
     }
 
     return (GrB_SUCCESS) ;
@@ -198,11 +201,9 @@ void mexFunction
 
     // get matrix format (0 to 3)
     int GET_SCALAR (1, int, format_matrix, 0) ;
-    if (format_matrix < 0 || format_matrix > 3) mexErrMsgTxt ("bad format") ;
 
     // get export/import format (0 to 3)
     int GET_SCALAR (2, int, format_export, 0) ;
-    if (format_export < 0 || format_export > 3) mexErrMsgTxt ("bad format") ;
 
     #define GET_DEEP_COPY ;
     #define FREE_DEEP_COPY ;

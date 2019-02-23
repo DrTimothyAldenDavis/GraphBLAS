@@ -107,7 +107,7 @@
 // #define GBCOMPACT 1
 
 // uncomment this for code development (additional diagnostics are printed):
-// #define GB_DEVELOPER 1
+#define GB_DEVELOPER 1
 
 // for coverage tests
 #ifdef GBCOVER
@@ -434,16 +434,16 @@ bool GB_aliased             // determine if A and B are aliased
 
 // GB_MAGIC is an arbitrary number that is placed inside each object when it is
 // initialized, as a way of detecting uninitialized objects.
-#define GB_MAGIC  0x00981B0787374E72
+#define GB_MAGIC  0x72657473786f62ULL
 
 // The magic number is set to GB_FREED when the object is freed, as a way of
 // helping to detect dangling pointers.
-#define GB_FREED  0x0911911911911911
+#define GB_FREED  0x6c6c756e786f62ULL
 
 // The value is set to GB_MAGIC2 when the object has been allocated but cannot
 // yet be used in most methods and operations.  Currently this is used only for
 // when A->p array is allocated but not initialized.
-#define GB_MAGIC2 0x10981B0787374E72
+#define GB_MAGIC2 0x7265745f786f62ULL
 
 typedef enum
 {
@@ -791,6 +791,17 @@ GrB_Info GB_error           // log an error in thread-local-storage
     }                                                                       \
 }
 
+// check object->magic code
+#ifdef GB_DEVELOPER
+#define GBPR_MAGIC(pcode)                                               \
+{                                                                       \
+    char *p = (char *) &(pcode) ;                                       \
+    if (pr > 0) GBPR (" magic: [ %d1 %s ] ", p [0], p) ;                \
+}
+#else
+#define GBPR_MAGIC(pcode) ;
+#endif
+
 // check object->magic and print an error if invalid 
 #define GB_CHECK_MAGIC(object,kind)                                     \
 {                                                                       \
@@ -798,16 +809,19 @@ GrB_Info GB_error           // log an error in thread-local-storage
     {                                                                   \
         case GB_MAGIC :                                                 \
             /* the object is valid */                                   \
+            GBPR_MAGIC (object->magic) ;                                \
             break ;                                                     \
                                                                         \
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
+            GBPR_MAGIC (object->magic) ;                                \
             if (pr > 0) GBPR ("already freed!\n") ;                     \
             return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
                 "%s is freed: [%s]", kind, name))) ;                    \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
+            GBPR_MAGIC (object->magic) ;                                \
             if (pr > 0) GBPR ("invalid\n") ;                            \
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
                 "%s is invalid: [%s]", kind, name))) ;                  \

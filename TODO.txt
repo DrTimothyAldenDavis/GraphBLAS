@@ -1,4 +1,2 @@
-TODO: test GxB_Monoid_terminal_define with min operator and terminal 0.
-TODO: test GxB_Monoid_terminal_new with min operator and terminal 0
 TODO: full statement coverage (see GOTCHAs)
 TODO: move *.m4 files to User/Example before public release

@@ -889,6 +889,70 @@ double pagerank_damping, pagerank_teleport, pagerank_rdiff,
     GxB_SelectOp My_band = & GB_opaque_My_band ;
 
 //------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_max.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined MAX functions for GxB_Monoid_terminal_new, to choose a
+// non-default terminal value
+
+#ifdef GxB_USER_INCLUDE
+
+    #define MY_MAX
+
+    static inline void my_maxdouble
+    (
+        double *z,
+        const double *x,
+        const double *y
+    )
+    {
+        // this is not safe with NaNs
+        (*z) = ((*x) > (*y)) ? (*x) : (*y) ;
+    }
+
+#endif
+
+// max operator
+
+    #define GB_DEF_My_Max_function my_maxdouble
+    #define GB_DEF_My_Max_ztype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_Max_xtype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_Max_ytype GB_DEF_GrB_FP64_type
+    extern void my_maxdouble
+    (
+        GB_DEF_My_Max_ztype *z,
+        const GB_DEF_My_Max_xtype *x,
+        const GB_DEF_My_Max_ytype *y
+    ) ;
+    struct GB_BinaryOp_opaque GB_opaque_My_Max =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_GrB_FP64,     // type of x
+        & GB_opaque_GrB_FP64,     // type of y
+        & GB_opaque_GrB_FP64,     // type of z
+        my_maxdouble,                 // pointer to the C function
+        "my_maxdouble",
+        GB_USER_C_opcode    // user-defined at compile-time
+    } ;
+    GrB_BinaryOp My_Max = & GB_opaque_My_Max ;
+
+// The max monoid, with terminal value of 1
+
+    #define GB_DEF_My_Max_Terminal1_add GB_DEF_My_Max_function
+    GB_DEF_My_Max_ztype GB_DEF_My_Max_Terminal1_identity = (-INFINITY) ;
+    GB_DEF_My_Max_ztype GB_DEF_My_Max_Terminal1_terminal = 1 ;
+    struct GB_Monoid_opaque GB_opaque_My_Max_Terminal1 =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_My_Max,     // binary operator
+        & GB_DEF_My_Max_Terminal1_identity,   // identity value
+        sizeof (GB_DEF_My_Max_ztype),   // identity and terminal size
+        GB_USER_COMPILED,   // user-defined at compile-time
+        & GB_DEF_My_Max_Terminal1_terminal        // terminal value
+    } ;
+    GrB_Monoid My_Max_Terminal1 = & GB_opaque_My_Max_Terminal1 ;
+
+//------------------------------------------------------------------------------
 // SuiteSparse/GraphBLAS/Config/user_def2.m4: code to call user semirings
 //------------------------------------------------------------------------------
 

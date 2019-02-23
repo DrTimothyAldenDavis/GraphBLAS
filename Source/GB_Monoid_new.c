@@ -239,7 +239,7 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IT (uint64_t, UINT64_MAX, 0         )
                 case GB_FP32_code   : GB_IT (float   , INFINITY  , -INFINITY )
                 case GB_FP64_code   : GB_IT (double  , INFINITY  , -INFINITY )
-                default : ;
+                default: ;
             }
             break ;
 
@@ -258,7 +258,7 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IT (uint64_t, 0         , UINT64_MAX)
                 case GB_FP32_code   : GB_IT (float   , -INFINITY , INFINITY  )
                 case GB_FP64_code   : GB_IT (double  , -INFINITY , INFINITY  )
-                default : ;
+                default: ;
             }
             break ;
 
@@ -277,7 +277,7 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IN (uint64_t, 0 )
                 case GB_FP32_code   : GB_IN (float   , 0 )
                 case GB_FP64_code   : GB_IN (double  , 0 )
-                default : ;
+                default: ;
             }
             break ;
 
@@ -296,7 +296,7 @@ GrB_Info GB_Monoid_new          // create a monoid
                 case GB_UINT64_code : GB_IN (uint64_t, 1 )
                 case GB_FP32_code   : GB_IN (float   , 1 )
                 case GB_FP64_code   : GB_IN (double  , 1 )
-                default : ;
+                default: ;
             }
             break ;
 
