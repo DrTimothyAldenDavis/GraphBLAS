@@ -25,7 +25,7 @@
 // Identity: UINT32_MAX (where cij = GB_IMIN (cij,identity) does not change cij)
 // Multiply: z = x > y
 // Add:      cij = GB_IMIN (cij,z)
-// Terminal: if (z == 0) break ;
+// Terminal: if (cij == 0) break ;
 
 #define GB_XTYPE \
     uint32_t
@@ -34,8 +34,8 @@
 #define GB_HANDLE_FLIPXY \
     0
 
-#define GB_DOT_TERMINAL(z) \
-    if (z == 0) break ;
+#define GB_DOT_TERMINAL(cij) \
+    if (cij == 0) break ;
 
 #define GB_MULTOP(z,x,y) \
     z = x > y

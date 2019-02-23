@@ -43,7 +43,7 @@ fprintf (f, 'define(`GB_ytype'', `%s'')\n', xytype) ;
 fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 
 if (~isempty (terminal))
-    fprintf (f, 'define(`GB_terminal'', `if (z == %s) break ;'')\n', ...
+    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', ...
         terminal) ;
 else
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;

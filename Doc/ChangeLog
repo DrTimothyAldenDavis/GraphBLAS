@@ -1,5 +1,7 @@
-Version 2.3.0 (BETA2), Feb 21, 2019
+Version 2.3.0 (BETA2), Feb 23, 2019
 
+    * early exit: for integer TIMES monoids (terminal value is 0);
+        cannot use zero for floating-point, to preserve NaN behavior
     * GrB_assign / GxB_subassign: further exploit of aliased inputs
     * Test/: MATLAB mexFunctions now link against the dynamic -lgraphblas
     * bug fix for Demo/mis*: random number generator could create

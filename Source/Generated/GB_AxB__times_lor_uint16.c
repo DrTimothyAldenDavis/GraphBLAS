@@ -25,7 +25,7 @@
 // Identity: 1 (where cij *= identity does not change cij)
 // Multiply: z = (x != 0) || (y != 0)
 // Add:      cij *= z
-// Terminal: ;
+// Terminal: if (cij == 0) break ;
 
 #define GB_XTYPE \
     uint16_t
@@ -34,8 +34,8 @@
 #define GB_HANDLE_FLIPXY \
     0
 
-#define GB_DOT_TERMINAL(z) \
-    ;
+#define GB_DOT_TERMINAL(cij) \
+    if (cij == 0) break ;
 
 #define GB_MULTOP(z,x,y) \
     z = (x != 0) || (y != 0)

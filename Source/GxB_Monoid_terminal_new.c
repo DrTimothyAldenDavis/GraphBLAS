@@ -15,7 +15,7 @@
 
 #include "GB.h"
 
-#define GB_MONOID_NEW(type,T)                                               \
+#define GB_MONOID_TERMINAL_NEW(type,T)                                      \
 GrB_Info GxB_Monoid_terminal_new_ ## T   /* create a new monoid */          \
 (                                                                           \
     GrB_Monoid *monoid,             /* handle of monoid to create    */     \
@@ -31,17 +31,17 @@ GrB_Info GxB_Monoid_terminal_new_ ## T   /* create a new monoid */          \
     return (GB_Monoid_new (monoid, op, &id, &tr, GB_ ## T ## _code, Context)) ;\
 }
 
-GB_MONOID_NEW (bool     , BOOL   )
-GB_MONOID_NEW (int8_t   , INT8   )
-GB_MONOID_NEW (uint8_t  , UINT8  )
-GB_MONOID_NEW (int16_t  , INT16  )
-GB_MONOID_NEW (uint16_t , UINT16 )
-GB_MONOID_NEW (int32_t  , INT32  )
-GB_MONOID_NEW (uint32_t , UINT32 )
-GB_MONOID_NEW (int64_t  , INT64  )
-GB_MONOID_NEW (uint64_t , UINT64 )
-GB_MONOID_NEW (float    , FP32   )
-GB_MONOID_NEW (double   , FP64   )
+GB_MONOID_TERMINAL_NEW (bool     , BOOL   )
+GB_MONOID_TERMINAL_NEW (int8_t   , INT8   )
+GB_MONOID_TERMINAL_NEW (uint8_t  , UINT8  )
+GB_MONOID_TERMINAL_NEW (int16_t  , INT16  )
+GB_MONOID_TERMINAL_NEW (uint16_t , UINT16 )
+GB_MONOID_TERMINAL_NEW (int32_t  , INT32  )
+GB_MONOID_TERMINAL_NEW (uint32_t , UINT32 )
+GB_MONOID_TERMINAL_NEW (int64_t  , INT64  )
+GB_MONOID_TERMINAL_NEW (uint64_t , UINT64 )
+GB_MONOID_TERMINAL_NEW (float    , FP32   )
+GB_MONOID_TERMINAL_NEW (double   , FP64   )
 
 GrB_Info GxB_Monoid_terminal_new_UDT        // create a monoid with a user type
 (
@@ -51,6 +51,7 @@ GrB_Info GxB_Monoid_terminal_new_UDT        // create a monoid with a user type
     const void *terminal            // terminal value of the monoid
 )
 { 
+// GB_GOTCHA ; // TODO
     GB_WHERE ("GxB_Monoid_terminal_new_UDT (&monoid, op, identity, terminal)") ;
     GB_RETURN_IF_NULL (identity) ;
     GB_RETURN_IF_NULL (terminal) ;

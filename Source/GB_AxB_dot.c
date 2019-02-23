@@ -274,10 +274,13 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
             fadd (cij, cij, zwork) ;  /* (z x alias) */                 \
         }
 
-        // break if z reaches the terminal value
-        #define GB_DOT_TERMINAL(z)                                      \
+        // break if cij reaches the terminal value
+        #define GB_DOT_TERMINAL(cij)                                    \
         {                                                               \
-            if (terminal != NULL && memcmp (z, terminal, csize) == 0) break ; \
+            if (terminal != NULL && memcmp (cij, terminal, csize) == 0) \
+            {                                                           \
+                break ;                                                 \
+            }                                                           \
         }
 
         // cij = zwork

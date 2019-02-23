@@ -103,17 +103,19 @@ GrB_Info GB_init            // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
+    // Don't log the error for GrB_error, since it might not be initialized.
+
     if (GB_Global.GrB_init_called)
     { 
-        // if GrB_init or GxB_init have already been called, then the
-        // thread local workspace for the error string has already been
-        // initialized.
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "GrB_init must not be called twice"))) ;
+        // GrB_init can only be called once
+        return (GrB_INVALID_VALUE) ;
     }
 
-    // check the mode later, since the thread local space for GrB_error
-    // has not yet been initialized.
+    if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
+    { 
+        // invalid mode
+        return (GrB_INVALID_VALUE) ;
+    }
 
     GB_Global.GrB_init_called = true ;
 
@@ -192,20 +194,6 @@ GrB_Info GB_init            // start up GraphBLAS
     }
 
     GB_thread_local_report [0] = '\0' ;
-
-    //--------------------------------------------------------------------------
-    // check the mode
-    //--------------------------------------------------------------------------
-
-    // The GB_thread_local_report string is now ready to use:  check the mode
-
-    if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
-    { 
-        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-            "Unknown mode: %d; must be %d (GrB_NONBLOCKING) or %d"
-            " (GrB_BLOCKING)", (int) mode, (int) GrB_NONBLOCKING,
-            (int) GrB_BLOCKING))) ;
-    }
 
     //--------------------------------------------------------------------------
     // initialize the global queue

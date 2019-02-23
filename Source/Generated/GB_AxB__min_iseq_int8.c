@@ -25,7 +25,7 @@
 // Identity: INT8_MAX (where cij = GB_IMIN (cij,identity) does not change cij)
 // Multiply: z = x == y
 // Add:      cij = GB_IMIN (cij,z)
-// Terminal: if (z == INT8_MIN) break ;
+// Terminal: if (cij == INT8_MIN) break ;
 
 #define GB_XTYPE \
     int8_t
@@ -34,8 +34,8 @@
 #define GB_HANDLE_FLIPXY \
     0
 
-#define GB_DOT_TERMINAL(z) \
-    if (z == INT8_MIN) break ;
+#define GB_DOT_TERMINAL(cij) \
+    if (cij == INT8_MIN) break ;
 
 #define GB_MULTOP(z,x,y) \
     z = x == y

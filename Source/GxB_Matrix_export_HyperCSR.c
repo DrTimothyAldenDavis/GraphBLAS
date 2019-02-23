@@ -74,6 +74,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
 
     if ((*A)->nvec_nonempty < 0)
     { 
+// GB_GOTCHA ; // TODO
         // count # of non-empty vectors
         (*A)->nvec_nonempty = GB_nvec_nonempty (*A, Context) ;
     }

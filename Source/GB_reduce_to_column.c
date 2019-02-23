@@ -414,6 +414,8 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             // sum across each index: work [i] = reduce (A (i,:))
             //------------------------------------------------------------------
 
+            // Early exit cannot be exploited; ignore the terminal value
+
             bool done = false ;
 
             // define the worker for the switch factory

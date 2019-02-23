@@ -6201,14 +6201,14 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 // no #define GB_DEF_GxB_PLUS_FP32_MONOID_terminal
 // no #define GB_DEF_GxB_PLUS_FP64_MONOID_terminal
 
-// no #define GB_DEF_GxB_TIMES_INT8_MONOID_terminal
-// no #define GB_DEF_GxB_TIMES_UINT8_MONOID_terminal
-// no #define GB_DEF_GxB_TIMES_INT16_MONOID_terminal
-// no #define GB_DEF_GxB_TIMES_UINT16_MONOID_terminal
-// no #define GB_DEF_GxB_TIMES_INT32_MONOID_terminal
-// no #define GB_DEF_GxB_TIMES_UINT32_MONOID_terminal
-// no #define GB_DEF_GxB_TIMES_INT64_MONOID_terminal
-// no #define GB_DEF_GxB_TIMES_UINT64_MONOID_terminal
+#define GB_DEF_GxB_TIMES_INT8_MONOID_terminal   0
+#define GB_DEF_GxB_TIMES_UINT8_MONOID_terminal  0
+#define GB_DEF_GxB_TIMES_INT16_MONOID_terminal  0
+#define GB_DEF_GxB_TIMES_UINT16_MONOID_terminal 0
+#define GB_DEF_GxB_TIMES_INT32_MONOID_terminal  0
+#define GB_DEF_GxB_TIMES_UINT32_MONOID_terminal 0
+#define GB_DEF_GxB_TIMES_INT64_MONOID_terminal  0
+#define GB_DEF_GxB_TIMES_UINT64_MONOID_terminal 0
 // no #define GB_DEF_GxB_TIMES_FP32_MONOID_terminal
 // no #define GB_DEF_GxB_TIMES_FP64_MONOID_terminal
 

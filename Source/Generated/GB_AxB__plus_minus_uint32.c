@@ -34,7 +34,7 @@
 #define GB_HANDLE_FLIPXY \
     1
 
-#define GB_DOT_TERMINAL(z) \
+#define GB_DOT_TERMINAL(cij) \
     ;
 
 #define GB_MULTOP(z,x,y) \

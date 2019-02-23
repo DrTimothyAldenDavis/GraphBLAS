@@ -25,7 +25,7 @@
 // Identity: true (where cij = (cij && identity) does not change cij)
 // Multiply: z = x <= y
 // Add:      cij = (cij && z)
-// Terminal: if (z == false) break ;
+// Terminal: if (cij == false) break ;
 
 #define GB_XTYPE \
     int64_t
@@ -34,8 +34,8 @@
 #define GB_HANDLE_FLIPXY \
     0
 
-#define GB_DOT_TERMINAL(z) \
-    if (z == false) break ;
+#define GB_DOT_TERMINAL(cij) \
+    if (cij == false) break ;
 
 #define GB_MULTOP(z,x,y) \
     z = x <= y

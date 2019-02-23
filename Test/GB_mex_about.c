@@ -30,6 +30,11 @@ void mexFunction
 )
 {
 
+    // test GrB_init with invalid mode
+    GrB_Info info = GrB_init (911) ;
+    printf ("expected error: [%d]\n", info) ;
+    mxAssert (info == GrB_INVALID_VALUE, "error must be 'invalid value'") ;
+
     bool malloc_debug = GB_mx_get_global (true) ;
 
     GB_WHERE (USAGE) ;
@@ -73,7 +78,7 @@ void mexFunction
     printf ("sizeof (struct GB_Descriptor_opaque) %d\n",
              sizeof (struct GB_Descriptor_opaque)) ;
 
-    GrB_Info info = GB_ERROR (GrB_PANIC, (GB_LOG,
+    info = GB_ERROR (GrB_PANIC, (GB_LOG,
         "just testing the error log ... not really a panic\n"
         "hello world, the answer is %d", 42)) ;
 

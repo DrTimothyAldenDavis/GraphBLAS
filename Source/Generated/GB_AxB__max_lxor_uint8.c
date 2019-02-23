@@ -25,7 +25,7 @@
 // Identity: 0 (where cij = GB_IMAX (cij,identity) does not change cij)
 // Multiply: z = (x != 0) != (y != 0)
 // Add:      cij = GB_IMAX (cij,z)
-// Terminal: if (z == UINT8_MAX) break ;
+// Terminal: if (cij == UINT8_MAX) break ;
 
 #define GB_XTYPE \
     uint8_t
@@ -34,8 +34,8 @@
 #define GB_HANDLE_FLIPXY \
     0
 
-#define GB_DOT_TERMINAL(z) \
-    if (z == UINT8_MAX) break ;
+#define GB_DOT_TERMINAL(cij) \
+    if (cij == UINT8_MAX) break ;
 
 #define GB_MULTOP(z,x,y) \
     z = (x != 0) != (y != 0)

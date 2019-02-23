@@ -25,7 +25,7 @@
 // Identity: -INFINITY (where cij = fmax (cij,identity) does not change cij)
 // Multiply: z = y
 // Add:      cij = fmax (cij,z)
-// Terminal: if (z == INFINITY) break ;
+// Terminal: if (cij == INFINITY) break ;
 
 #define GB_XTYPE \
     double
@@ -34,8 +34,8 @@
 #define GB_HANDLE_FLIPXY \
     0
 
-#define GB_DOT_TERMINAL(z) \
-    if (z == INFINITY) break ;
+#define GB_DOT_TERMINAL(cij) \
+    if (cij == INFINITY) break ;
 
 #define GB_MULTOP(z,x,y) \
     z = y
