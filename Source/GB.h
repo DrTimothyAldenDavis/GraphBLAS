@@ -107,7 +107,7 @@
 // #define GBCOMPACT 1
 
 // uncomment this for code development (additional diagnostics are printed):
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 // for coverage tests
 #ifdef GBCOVER
