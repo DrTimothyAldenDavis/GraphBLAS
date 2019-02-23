@@ -1,15 +1,25 @@
-function axb_template (multop, do_boolean, imult, fmult, handle_flipxy)
+function axb_template (multop, do_boolean, imult, fmult, dmult, handle_flipxy)
 %AXB_TEMPLATE create a function for a semiring with a TxT->T multiplier
+
+% TODO TIMES monoids with ints are terminal
 
 if (nargin < 4)
     fmult = [ ] ;
+end
+
+if (nargin < 5)
+    dmult = [ ] ;
 end
 
 if (isempty (fmult))
     fmult = imult ;
 end
 
-if (nargin < 5)
+if (isempty (dmult))
+    dmult = fmult ;
+end
+
+if (nargin < 6)
     handle_flipxy = 0 ;
 end
 
@@ -23,9 +33,11 @@ axb_method ('min', multop, add, imult, 'uint8_t' , 'uint8_t' , 'UINT8_MAX' , '0'
 axb_method ('min', multop, add, imult, 'uint16_t', 'uint16_t', 'UINT16_MAX', '0'         , handle_flipxy) ;
 axb_method ('min', multop, add, imult, 'uint32_t', 'uint32_t', 'UINT32_MAX', '0'         , handle_flipxy) ;
 axb_method ('min', multop, add, imult, 'uint64_t', 'uint64_t', 'UINT64_MAX', '0'         , handle_flipxy) ;
-add = 'w = GB_FMIN (w,t)' ;
+% add = 'w = GB_FMIN (w,t)' ;
+add = 'w = fminf (w,t)' ;
 axb_method ('min', multop, add, fmult, 'float'   , 'float'   , 'INFINITY'  , '-INFINITY' , handle_flipxy) ;
-axb_method ('min', multop, add, fmult, 'double'  , 'double'  , 'INFINITY'  , '-INFINITY' , handle_flipxy) ;
+add = 'w = fmin (w,t)' ;
+axb_method ('min', multop, add, dmult, 'double'  , 'double'  , 'INFINITY'  , '-INFINITY' , handle_flipxy) ;
 
 % max monoid
 add = 'w = GB_IMAX (w,t)' ;
@@ -37,9 +49,11 @@ axb_method ('max', multop, add, imult, 'uint8_t' , 'uint8_t' , '0'         , 'UI
 axb_method ('max', multop, add, imult, 'uint16_t', 'uint16_t', '0'         , 'UINT16_MAX', handle_flipxy) ;
 axb_method ('max', multop, add, imult, 'uint32_t', 'uint32_t', '0'         , 'UINT32_MAX', handle_flipxy) ;
 axb_method ('max', multop, add, imult, 'uint64_t', 'uint64_t', '0'         , 'UINT64_MAX', handle_flipxy) ;
-add = 'w = GB_FMAX (w,t)' ;
+% add = 'w = GB_FMAX (w,t)' ;
+add = 'w = fmaxf (w,t)' ;
 axb_method ('max', multop, add, fmult, 'float'   , 'float'   , '-INFINITY' , 'INFINITY'  , handle_flipxy) ;
-axb_method ('max', multop, add, fmult, 'double'  , 'double'  , '-INFINITY' , 'INFINITY'  , handle_flipxy) ;
+add = 'w = fmax (w,t)' ;
+axb_method ('max', multop, add, dmult, 'double'  , 'double'  , '-INFINITY' , 'INFINITY'  , handle_flipxy) ;
 
 % plus monoid
 add = 'w += t' ;
@@ -52,7 +66,7 @@ axb_method ('plus', multop, add, imult, 'uint32_t', 'uint32_t', '0', [ ], handle
 axb_method ('plus', multop, add, imult, 'int64_t' , 'int64_t' , '0', [ ], handle_flipxy) ;
 axb_method ('plus', multop, add, imult, 'uint64_t', 'uint64_t', '0', [ ], handle_flipxy) ;
 axb_method ('plus', multop, add, fmult, 'float'   , 'float'   , '0', [ ], handle_flipxy) ;
-axb_method ('plus', multop, add, fmult, 'double'  , 'double'  , '0', [ ], handle_flipxy) ;
+axb_method ('plus', multop, add, dmult, 'double'  , 'double'  , '0', [ ], handle_flipxy) ;
 
 % times monoid
 add = 'w *= t' ;
@@ -65,7 +79,7 @@ axb_method ('times', multop, add, imult, 'uint32_t', 'uint32_t', '1', [ ], handl
 axb_method ('times', multop, add, imult, 'int64_t' , 'int64_t' , '1', [ ], handle_flipxy) ;
 axb_method ('times', multop, add, imult, 'uint64_t', 'uint64_t', '1', [ ], handle_flipxy) ;
 axb_method ('times', multop, add, fmult, 'float'   , 'float'   , '1', [ ], handle_flipxy) ;
-axb_method ('times', multop, add, fmult, 'double'  , 'double'  , '1', [ ], handle_flipxy) ;
+axb_method ('times', multop, add, dmult, 'double'  , 'double'  , '1', [ ], handle_flipxy) ;
 
 % boolean monoids
 if (do_boolean)

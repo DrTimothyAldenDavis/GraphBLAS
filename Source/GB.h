@@ -3306,8 +3306,38 @@ static inline void GB_bracket
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
 
 // for floating-point, same as min(x,y,'omitnan') and max(...) in MATLAB
-#define GB_FMIN(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMIN (x,y)))
+
+/*
 #define GB_FMAX(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMAX (x,y)))
+#define GB_FMIN(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMIN (x,y)))
+*/
+#define GB_FMAX(x,y) (isnan (x) ? (y) : (((x) < (y)) ? (y) : (x)))
+#define GB_FMIN(x,y) (isnan (x) ? (y) : (((x) > (y)) ? (y) : (x)))
+
+/*
+
+    (
+        isnan (x) ? (y) :
+
+        x < y ? y : x
+
+        x is not nan:
+        x < nan         always false:   result is x
+        x < y           if true:        result is y
+        x < y           if false:       result is x
+
+    )
+
+        isnan (x) ? (y) :
+
+        x > y ? y : x
+
+        x is not nan:
+        x > nan         always false:   result is y
+        x > y           if true:        result is y
+        x > y           if false:       result is x
+
+*/
 
 //------------------------------------------------------------------------------
 // GB_lookup: find k so that j == Ah [k]

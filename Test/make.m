@@ -83,6 +83,9 @@ if (ismac)
 else
     % Linux
     libraries = '-L../build -lgraphblas' ;
+    flags = [ flags ' CFLAGS="$CXXFLAGS -fopenmp -fPIC" '] ;
+    flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC" '] ;
+    flags = [ flags ' LDFLAGS="$LDFLAGS -fopenmp -fPIC" '] ;
 end
 
 %-------------------------------------------------------------------------------

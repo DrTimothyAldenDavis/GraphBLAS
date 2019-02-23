@@ -18,24 +18,25 @@ fclose (f) ;
 
 axb_template ('first',  1, 'x') ;
 axb_template ('second', 1, 'y') ;
-axb_template ('min',    0, 'GB_IMIN(x,y)', 'GB_FMIN(x,y)') ;
-axb_template ('max',    0, 'GB_IMAX(x,y)', 'GB_FMAX(x,y)') ;
-axb_template ('plus',   0, 'x + y') ;
-axb_template ('minus',  0, 'x - y', [ ], 1) ;
-axb_template ('times',  0, 'x * y') ;
-axb_template ('div',    0, 'GB_IDIV(x,y)', 'x / y', 1) ;
+
+axb_template ('min',    0, 'GB_IMIN(x,y)', 'fminf(x,y)', 'fmin(x,y)'      ) ;
+axb_template ('max',    0, 'GB_IMAX(x,y)', 'fmaxf(x,y)', 'fmax(x,y)'      ) ;
+axb_template ('plus',   0, 'x + y'                                        ) ;
+axb_template ('minus',  0, 'x - y'       ,  [ ]        , [ ]        , true) ;
+axb_template ('times',  0, 'x * y'                                        ) ;
+axb_template ('div',    0, 'GB_IDIV(x,y)', 'x / y'     , [ ]        , true) ;
 
 axb_template ('iseq',   0, 'x == y') ;
 axb_template ('isne',   0, 'x != y') ;
-axb_template ('isgt',   0, 'x > y') ;
-axb_template ('islt',   0, 'x < y') ;
+axb_template ('isgt',   0, 'x > y' ) ;
+axb_template ('islt',   0, 'x < y' ) ;
 axb_template ('isge',   0, 'x >= y') ;
 axb_template ('isle',   0, 'x <= y') ;
 
 axb_compare_template ('eq',     1, 'x == y') ;
 axb_compare_template ('ne',     0, 'x != y') ;
-axb_compare_template ('gt',     1, 'x > y') ;
-axb_compare_template ('lt',     1, 'x < y') ;
+axb_compare_template ('gt',     1, 'x > y' ) ;
+axb_compare_template ('lt',     1, 'x < y' ) ;
 axb_compare_template ('ge',     1, 'x >= y') ;
 axb_compare_template ('le',     1, 'x <= y') ;
 
