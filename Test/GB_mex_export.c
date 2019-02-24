@@ -258,6 +258,14 @@ GrB_Info import_export (GB_Context Context)
 
 //------------------------------------------------------------------------------
 
+GrB_Info import_export2 (GB_Context Context)
+{
+    OK (import_export (Context)) ;
+    OK (import_export (Context)) ;
+}
+
+//------------------------------------------------------------------------------
+
 void mexFunction
 (
     int nargout,
@@ -316,10 +324,7 @@ void mexFunction
     mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
 
     // import/export
-    METHOD (import_export (Context)) ;
-
-    // repeat it to test clear_nvec
-    if (clear_nvec) METHOD (import_export (Context)) ;
+    METHOD (import_export2 (Context)) ;
 
     // return C to MATLAB
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C export/import", false) ;
