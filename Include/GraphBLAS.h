@@ -70,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Feb 22, 2019 (TODO BETA2)"
+#define GxB_DATE "Feb 25, 2019"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -2940,11 +2940,7 @@ typedef enum            // for global options or matrix options
 typedef enum
 {
     GxB_BY_ROW = 0,     // CSR: compressed sparse row format
-    GxB_BY_COL = 1,     // CSC: compressed sparse column format
-    GxB_BY_EITHER = 3   // A is held in both CSR and CSC formats, and accessing
-                        // the row A(i,:) is just as efficient as accessing
-                        // A(:,j).  This is not yet implemented in SuiteSparse,
-                        // but the enum value is defined here for future use.
+    GxB_BY_COL = 1      // CSC: compressed sparse column format
 }
 GxB_Format_Value ;
 
@@ -5111,56 +5107,56 @@ GrB_Info GrB_transpose              // C<Mask> = accum (C, A')
 extern GrB_Monoid
 
     // MIN monoids:
-    GxB_MIN_INT8_MONOID,          // identity: INT8_MAX
-    GxB_MIN_UINT8_MONOID,         // identity: UINT8_MAX
-    GxB_MIN_INT16_MONOID,         // identity: INT16_MAX
-    GxB_MIN_UINT16_MONOID,        // identity: UINT16_MAX
-    GxB_MIN_INT32_MONOID,         // identity: INT32_MAX
-    GxB_MIN_UINT32_MONOID,        // identity: UINT32_MAX
-    GxB_MIN_INT64_MONOID,         // identity: INT64_MAX
-    GxB_MIN_UINT64_MONOID,        // identity: UINT64_MAX
-    GxB_MIN_FP32_MONOID,          // identity: INFINITY
-    GxB_MIN_FP64_MONOID,          // identity: INFINITY
+    GxB_MIN_INT8_MONOID,          // identity: INT8_MAX     terminal: INT8_MIN
+    GxB_MIN_INT16_MONOID,         // identity: INT16_MAX    terminal: INT16_MIN
+    GxB_MIN_INT32_MONOID,         // identity: INT32_MAX    terminal: INT32_MIN
+    GxB_MIN_INT64_MONOID,         // identity: INT64_MAX    terminal: INT32_MIN
+    GxB_MIN_UINT8_MONOID,         // identity: UINT8_MAX    terminal: 0
+    GxB_MIN_UINT16_MONOID,        // identity: UINT16_MAX   terminal: 0
+    GxB_MIN_UINT32_MONOID,        // identity: UINT32_MAX   terminal: 0
+    GxB_MIN_UINT64_MONOID,        // identity: UINT64_MAX   terminal: 0
+    GxB_MIN_FP32_MONOID,          // identity: INFINITY     terminal: -INFINITY
+    GxB_MIN_FP64_MONOID,          // identity: INFINITY     terminal: -INFINITY
 
     // MAX monoids:
-    GxB_MAX_INT8_MONOID,          // identity: INT8_MIN
-    GxB_MAX_UINT8_MONOID,         // identity: 0
-    GxB_MAX_INT16_MONOID,         // identity: INT16_MIN
-    GxB_MAX_UINT16_MONOID,        // identity: 0
-    GxB_MAX_INT32_MONOID,         // identity: INT32_MIN
-    GxB_MAX_UINT32_MONOID,        // identity: 0
-    GxB_MAX_INT64_MONOID,         // identity: INT64_MIN
-    GxB_MAX_UINT64_MONOID,        // identity: 0
-    GxB_MAX_FP32_MONOID,          // identity: -INFINITY
-    GxB_MAX_FP64_MONOID,          // identity: -INFINITY
+    GxB_MAX_INT8_MONOID,          // identity: INT8_MIN     terminal: INT8_MAX
+    GxB_MAX_INT16_MONOID,         // identity: INT16_MIN    terminal: INT16_MAX
+    GxB_MAX_INT32_MONOID,         // identity: INT32_MIN    terminal: INT32_MAX
+    GxB_MAX_INT64_MONOID,         // identity: INT64_MIN    terminal: INT64_MAX
+    GxB_MAX_UINT8_MONOID,         // identity: 0            terminal: UINT8_MAX
+    GxB_MAX_UINT16_MONOID,        // identity: 0            terminal: UINT16_MAX
+    GxB_MAX_UINT32_MONOID,        // identity: 0            terminal: UINT32_MAX
+    GxB_MAX_UINT64_MONOID,        // identity: 0            terminal: UINT64_MAX
+    GxB_MAX_FP32_MONOID,          // identity: -INFINITY    terminal: INFINITY
+    GxB_MAX_FP64_MONOID,          // identity: -INFINITY    terminal: INFINITY
 
     // PLUS monoids:
-    GxB_PLUS_INT8_MONOID,         // identity: 0
-    GxB_PLUS_UINT8_MONOID,        // identity: 0
-    GxB_PLUS_INT16_MONOID,        // identity: 0
-    GxB_PLUS_UINT16_MONOID,       // identity: 0
-    GxB_PLUS_INT32_MONOID,        // identity: 0
-    GxB_PLUS_UINT32_MONOID,       // identity: 0
-    GxB_PLUS_INT64_MONOID,        // identity: 0
-    GxB_PLUS_UINT64_MONOID,       // identity: 0
-    GxB_PLUS_FP32_MONOID,         // identity: 0
-    GxB_PLUS_FP64_MONOID,         // identity: 0
+    GxB_PLUS_INT8_MONOID,         // identity: 0            terminal: none
+    GxB_PLUS_INT16_MONOID,        // identity: 0            terminal: none
+    GxB_PLUS_INT32_MONOID,        // identity: 0            terminal: none
+    GxB_PLUS_INT64_MONOID,        // identity: 0            terminal: none
+    GxB_PLUS_UINT8_MONOID,        // identity: 0            terminal: none
+    GxB_PLUS_UINT16_MONOID,       // identity: 0            terminal: none
+    GxB_PLUS_UINT32_MONOID,       // identity: 0            terminal: none
+    GxB_PLUS_UINT64_MONOID,       // identity: 0            terminal: none
+    GxB_PLUS_FP32_MONOID,         // identity: 0            terminal: none
+    GxB_PLUS_FP64_MONOID,         // identity: 0            terminal: none
 
     // TIMES monoids:
-    GxB_TIMES_INT8_MONOID,        // identity: 1
-    GxB_TIMES_UINT8_MONOID,       // identity: 1
-    GxB_TIMES_INT16_MONOID,       // identity: 1
-    GxB_TIMES_UINT16_MONOID,      // identity: 1
-    GxB_TIMES_INT32_MONOID,       // identity: 1
-    GxB_TIMES_UINT32_MONOID,      // identity: 1
-    GxB_TIMES_INT64_MONOID,       // identity: 1
-    GxB_TIMES_UINT64_MONOID,      // identity: 1
-    GxB_TIMES_FP32_MONOID,        // identity: 1
-    GxB_TIMES_FP64_MONOID,        // identity: 1
+    GxB_TIMES_INT8_MONOID,        // identity: 1            terminal: 0
+    GxB_TIMES_INT16_MONOID,       // identity: 1            terminal: 0
+    GxB_TIMES_INT32_MONOID,       // identity: 1            terminal: 0
+    GxB_TIMES_INT64_MONOID,       // identity: 1            terminal: 0
+    GxB_TIMES_UINT8_MONOID,       // identity: 1            terminal: 0
+    GxB_TIMES_UINT16_MONOID,      // identity: 1            terminal: 0
+    GxB_TIMES_UINT32_MONOID,      // identity: 1            terminal: 0
+    GxB_TIMES_UINT64_MONOID,      // identity: 1            terminal: 0
+    GxB_TIMES_FP32_MONOID,        // identity: 1            terminal: none
+    GxB_TIMES_FP64_MONOID,        // identity: 1            terminal: none
 
     // Boolean monoids:
-    GxB_LOR_BOOL_MONOID,          // identity: false
-    GxB_LAND_BOOL_MONOID,         // identity: true
+    GxB_LOR_BOOL_MONOID,          // identity: false        terminal: true
+    GxB_LAND_BOOL_MONOID,         // identity: true         terminal: false
     GxB_LXOR_BOOL_MONOID,         // identity: false
     GxB_EQ_BOOL_MONOID ;          // identity: true
 

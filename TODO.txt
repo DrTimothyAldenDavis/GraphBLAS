@@ -1,3 +1,2 @@
-TODO: full statement coverage (see GOTCHAs)
 TODO: move *.m4 files to User/Example before public release
-TODO: switch back to sequential qsort for v2.3.0
+    (then redo 'make cmake' to build Include/GraphBLAS.h)

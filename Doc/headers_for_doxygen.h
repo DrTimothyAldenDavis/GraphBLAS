@@ -2086,18 +2086,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_thread_local_access.c
-\brief  GB_thread_local_access: get pointer to thread-local storage
-
-\par
- This implementation is complete for user threading with POSIX threads,
- OpenMP, and no user threads.  Windows and ANSI C11 threads are not yet
- supported.
-\par
- not parallel: this function does O(1) work and is already thread-safe.
-*/
-
-
 /** \file GB_to_hyper.c
 \brief  GB_to_hyper: convert a matrix to hyperspasre
 

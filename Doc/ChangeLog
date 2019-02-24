@@ -1,4 +1,4 @@
-Version 2.3.0 (BETA2), Feb 23, 2019  TODO
+Version 2.3.0, Feb 25, 2019
 
     * early exit: for integer TIMES monoids (terminal value is 0);
         cannot use zero for floating-point, to preserve NaN behavior

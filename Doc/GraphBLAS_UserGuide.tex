@@ -881,8 +881,8 @@ GraphBLAS function   & purpose                                      & Section \\
 \begin{verbatim}
 typedef enum
 {
-    GrB_NONBLOCKING,    // methods may return with pending computations
-    GrB_BLOCKING        // no computations are ever left pending
+    GrB_NONBLOCKING = 0,    // methods may return with pending computations
+    GrB_BLOCKING = 1        // no computations are ever left pending
 }
 GrB_Mode ;
 \end{verbatim}
@@ -1123,43 +1123,41 @@ are error codes.
 \vspace{0.2in}
 \noindent
 {\small
-\begin{tabular}{lp{3in}}
+\begin{tabular}{llp{2.8in}}
 \hline
-\verb'GrB_SUCCESS'              & the method or operation was successful \\
-\verb'GrB_NO_VALUE'             & \verb'A(i,j)' requested but not there.
+\verb'GrB_SUCCESS'              & 0 & the method or operation was successful \\
+\verb'GrB_NO_VALUE'             & 1 & \verb'A(i,j)' requested but not there.
                                   Its value is implicit. \\
 \hline
-\verb'GrB_UNINITIALIZED_OBJECT' & object has not been initialized \\
-\verb'GrB_INVALID_OBJECT'       & object is corrupted \\
-\verb'GrB_NULL_POINTER'         & input pointer is \verb'NULL' \\
-\verb'GrB_INVALID_VALUE'        & generic error code; some value is bad \\
-\verb'GrB_INVALID_INDEX'        & a row or column index is out of bounds; for
-                                  indices passed as scalars, not in a list. \\
-\verb'GrB_DOMAIN_MISMATCH'      & object domains are not compatible \\
-\verb'GrB_DIMENSION_MISMATCH'   & matrix dimensions do not match \\
-\verb'GrB_OUTPUT_NOT_EMPTY'     & output matrix already has values in it \\
+\verb'GrB_UNINITIALIZED_OBJECT' & 2 & object has not been initialized \\
+\verb'GrB_INVALID_OBJECT'       & 3 & object is corrupted \\
+\verb'GrB_NULL_POINTER'         & 4 & input pointer is \verb'NULL' \\
+\verb'GrB_INVALID_VALUE'        & 5 & generic error code; some value is bad \\
+\verb'GrB_INVALID_INDEX'        & 6 & a row or column index is out of bounds;
+                                for indices passed as scalars, not in a list. \\
+\verb'GrB_DOMAIN_MISMATCH'      & 7 & object domains are not compatible \\
+\verb'GrB_DIMENSION_MISMATCH'   & 8 & matrix dimensions do not match \\
+\verb'GrB_OUTPUT_NOT_EMPTY'     & 9 & output matrix already has values in it \\
 \hline
-\verb'GrB_OUT_OF_MEMORY'        & out of memory \\
-\verb'GrB_INSUFFICIENT_SPACE'   & output array not large enough \\
-\verb'GrB_INDEX_OUT_OF_BOUNDS'  & a row or column index is out of bounds;
+\verb'GrB_OUT_OF_MEMORY'        & 10 & out of memory \\
+\verb'GrB_INSUFFICIENT_SPACE'   & 11 & output array not large enough \\
+\verb'GrB_INDEX_OUT_OF_BOUNDS'  & 12 & a row or column index is out of bounds;
                                   for indices in a list of indices. \\
 \hline
-\verb'GrB_PANIC'                & unrecoverable error.
+\verb'GrB_PANIC'                & 13 & unrecoverable error.
 \\
 \hline
 \end{tabular}
 \vspace{0.2in}
 }
 
-Not all GraphBLAS methods or operations can return all status codes.
-% According to the GraphBLAS specification, 
-Any GraphBLAS method or operation can return an
-out-of-memory condition, \verb'GrB_OUT_OF_MEMORY', or a panic,
-\verb'GrB_PANIC'.  These two errors, and the \verb'GrB_INDEX_OUT_OF_BOUNDS'
-error, are called {\em execution errors}.  The other errors are called {\em
-API} errors.  An API error is detecting immediately, regardless of the blocking
-mode.  The detection of an execution error may be deferred until the pending
-operations complete.
+Not all GraphBLAS methods or operations can return all status codes.  Any
+GraphBLAS method or operation can return an out-of-memory condition,
+\verb'GrB_OUT_OF_MEMORY', or a panic, \verb'GrB_PANIC'.  These two errors, and
+the \verb'GrB_INDEX_OUT_OF_BOUNDS' error, are called {\em execution errors}.
+The other errors are called {\em API} errors.  An API error is detecting
+immediately, regardless of the blocking mode.  The detection of an execution
+error may be deferred until the pending operations complete.
 
 In the discussions of each method and operation in this User Guide, most of the
 obvious error code returns are not discussed.  For example, if a required input
@@ -1191,24 +1189,33 @@ The simplest way to use it is just to print it out, such as:
     {\footnotesize
     \begin{verbatim}
     info = GrB_some_method_here (...) ;
-    if (info != GrB_SUCCESS)
+    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
     {
-        printf ("%s\n", GrB_error ( )) ;
+        printf ("info: %d error: %s\n", info, GrB_error ( )) ;
     } \end{verbatim}}
 
-SuiteSparse:GraphBLAS reports many helpful details.  For example, if a row or
-column index is out of bounds, the report will state what those bounds are.  If
-a matrix dimension is incorrect, the mismatching dimensions will be provided.
-\verb'GrB_BinaryOp_new', \verb'GrB_UnaryOp_new', and \verb'GxB_SelectOp_new'
-record the name the function passed to them, and \verb'GrB_Type_new' records
-the name of its type parameter, and these are printed if the user-defined types
-and operators are used incorrectly.  Refer to the output of the example
-programs in the \verb'Demo' folder, which intentionally generate errors to
-illustrate the use of \verb'GrB_error'.  Successful GraphBLAS methods do not
-modify this error message.  If a GraphBLAS method fails and then
-subsequent GraphBLAS method succeeds, the error message is not modified from
-the last failure.  Only a subsequent failure will cause \verb'GrB_error' to
-return a different error message.
+SuiteSparse:GraphBLAS reports many helpful details via \verb'GrB_error'.  For
+example, if a row or column index is out of bounds, the report will state what
+those bounds are.  If a matrix dimension is incorrect, the mismatching
+dimensions will be provided.  \verb'GrB_BinaryOp_new', \verb'GrB_UnaryOp_new',
+and \verb'GxB_SelectOp_new' record the name the function passed to them, and
+\verb'GrB_Type_new' records the name of its type parameter, and these are
+printed if the user-defined types and operators are used incorrectly.  Refer to
+the output of the example programs in the \verb'Demo' folder, which
+intentionally generate errors to illustrate the use of \verb'GrB_error'.
+
+Successful GraphBLAS methods do not modify the last error message recorded.  If
+a GraphBLAS method fails and then subsequent GraphBLAS method succeeds, the
+error message is not modified from the last failure.  Only a subsequent failure
+will cause \verb'GrB_error' to return a different error message.
+
+Note that \verb'GrB_NO_VALUE' is an not error, but an informational status.
+\verb'GrB_*_extractElment(&x,A,i,j)', which does \verb'x=A(i,j)', returns this
+value to indicate that \verb'A(i,j)' is not present in the matrix.
+
+In SuiteSparse:GraphBLAS, some failures cannot be safely recorded for
+\verb'GrB_error' to print.  These include \verb'GrB_PANIC' and errors in
+\verb'GrB_init' and \verb'GxB_init'.
 
 \newpage
 %===============================================================================
@@ -2256,28 +2263,55 @@ monoid.
 
 \vspace{0.2in}
 {\footnotesize
-\begin{tabular}{llll}
+\begin{tabular}{lllll}
 \hline
-GraphBLAS             & types (domains)            & expression      & identity \\
-name                  &                            & $z=f(x,y)$      & \\
+GraphBLAS             & types (domains)            & expression      & identity  & terminal \\
+operator              &                            & $z=f(x,y)$      &           & \\
 \hline
 % 8 numeric TxT->T
-\verb'GrB_MIN_'$T$    & $T \times T \rightarrow T$ & $z = \min(x,y)$ & $+\infty$ \\
-\verb'GrB_MAX_'$T$    & $T \times T \rightarrow T$ & $z = \max(x,y)$ & $-\infty$ \\
-\verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & 0 \\
-\verb'GrB_TIMES_'$T$  & $T \times T \rightarrow T$ & $z = xy$        & 1 \\
+\verb'GrB_MIN_'$T$    & $T \times T \rightarrow T$ & $z = \min(x,y)$ & $+\infty$ & $-\infty$ \\
+\verb'GrB_MAX_'$T$    & $T \times T \rightarrow T$ & $z = \max(x,y)$ & $-\infty$ & $+\infty$ \\
+\verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & 0         & none \\
+\verb'GrB_TIMES_'$T$  & $T \times T \rightarrow T$ & $z = xy$        & 1         & 0 (not fp) \\
 \hline
 % 4 bool x bool -> bool
-\verb'GrB_LOR', \verb'GxB_LOR_BOOL'      & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \vee    y $ & false \\
-\verb'GrB_LAND', \verb'GxB_LAND_BOOL'    & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \wedge  y $ & true \\
-\verb'GrB_LXOR', \verb'GxB_LXOR_BOOL'    & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \veebar y $ & false \\
-\verb'GrB_EQ_BOOL', \verb'GxB_ISEQ_BOOL' & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z =(x ==      y)$ & true  \\
+\verb'GrB_LOR'        & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \vee    y $ & false & true  \\
+\verb'GrB_LAND'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \wedge  y $ & true  & false \\
+\verb'GrB_LXOR'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \veebar y $ & false & none \\
+\verb'GrB_EQ_BOOL'    & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z =(x ==      y)$ & true  & none \\
 \hline
 \end{tabular}
 }
 \vspace{0.2in}
 
-\noindent
+The above table lists the GraphBLAS operator, its type, expression, identity
+value, and {\em terminal} value (if any).  For these built-in operators, the
+terminal values are the {\em annihilators} of the function, which is the value
+$z$ so that $z=f(z,y)$ regardless of the value of $y$.  For example
+$\min(-\infty,y) = -\infty$ for any $y$.  For integer domains, $+\infty$ and
+$-\infty$ are the largest and smallest integer in their range.  With unsigned
+integers, the smallest value is zero, and thus \verb'GrB_MIN_UINT8' has an
+identity of 255 and a terminal value of 0.
+
+When computing with a monoid, the computation can terminate early if the
+terminal value arises.  No further work is needed since the result will not
+change.  This value is called the terminal value instead of the annihilator,
+since a user-defined operator can be created with a terminal value that is not
+an annihilator.  See Section~\ref{monoid_terminal_new} for an example.
+
+The \verb'GrB_TIMES_FP*' operators do not have a terminal value of zero, since
+they comply with the IEEE 754 standard, and \verb'0*NaN' is not zero, but
+\verb'NaN'.  Technically, their terminal value is \verb'NaN', but this value is
+rare in practice and thus the terminal condition is not worth checking.
+
+SuiteSparse:GraphBLAS predefines each of the 44 unique monoids that can be
+constructed with built-in types and operators, with the naming convention
+\verb'GxB_op_type_MONOID'.  For the first 40, \verb'op' is \verb'MIN',
+\verb'MAX', \verb'PLUS', or \verb'TIMES', and \verb'type' is all but
+\verb'BOOL'.  The four Booolean monoids are \verb'GxB_LOR_BOOL_MONOID',
+\verb'GxB_LAND_BOOL_MONOID', \verb'GxB_LXOR_BOOL_MONOID', and
+\verb'GxB_EQ_BOOL_MONOID'.
+
 The next sections define the following methods for the \verb'GrB_Monoid'
 object:
 
@@ -2403,7 +2437,7 @@ operator with a terminal value of zero and an identity of \verb'+INFINITY'.
 {\bf SPEC:} \verb'GxB_Monoid_terminal_new' is an extension to the spec.
 \end{spec}
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Monoid\_operator:} return the monoid operator}
 %-------------------------------------------------------------------------------
@@ -2453,7 +2487,7 @@ the \verb'ztype', followed by \verb'GxB_Type_size' to get its size.
 {\bf SPEC:} \verb'GxB_Monoid_identity' is an extension to the spec.
 \end{spec}
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Monoid\_terminal:} return the monoid terminal value}
 %-------------------------------------------------------------------------------
@@ -2540,7 +2574,6 @@ methods for the \verb'GrB_Semiring' object:
 \hline
 \end{tabular}
 }
-\vspace{0.2in}
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -2564,17 +2597,18 @@ GrB_Info GrB_Semiring_new           // create a semiring
 additive monoid and \verb'multiply' being the binary ``multiply'' operator.  In
 addition to the standard error cases, the function returns
 \verb'GrB_DOMAIN_MISMATCH' if the output (\verb'ztype') domain of
-\verb'multiply' does not match the domain of the \verb'add' monoid.
+\verb'multiply' does not match the domain of the \verb'add' monoid.  Using
+built-in types and operators, 960 unique semirings can be built.  This count
+excludes redundant Boolean operators (for example \verb'GrB_TIMES_BOOL' and
+\verb'GrB_LAND' are different operators but they are redundant since they
+always return the same result).
 
-Using built-in types and operators, 960 unique semirings can be built.  This
-count excludes redundant Boolean operators (for example \verb'GrB_TIMES_BOOL'
-and \verb'GxB_LAND_BOOL' are different operators but they are redundant since
-they always return the same result).
-
+\vspace{-0.05in}
 \begin{itemize}
 \item 680 semirings with a multiplier $T \times T \rightarrow T$ where $T$ is
     non-Boolean, from the complete cross product of:
 
+    \vspace{-0.05in}
     \begin{itemize}
     \item 4 add monoids (\verb'MIN', \verb'MAX', \verb'PLUS', \verb'TIMES')
     \item 17 multiply operators
@@ -2582,13 +2616,14 @@ they always return the same result).
     \verb'PLUS', \verb'MINUS', \verb'TIMES', \verb'DIV',
     \verb'ISEQ', \verb'ISNE', \verb'ISGT',
     \verb'ISLT', \verb'ISGE', \verb'ISLE',
-    \verb'LOR', \verb'LAND', \verb'LXOR')
+    \verb'LOR', \verb'LAND', \verb'LXOR').
     \item 10 non-Boolean types, $T$
     \end{itemize}
 
 \item 240 semirings with a comparison operator $T \times T \rightarrow$
     \verb'bool', where $T$ is non-Boolean, from the complete cross product of:
 
+    \vspace{-0.05in}
     \begin{itemize}
     \item 4 Boolean add monoids
     (\verb'LAND', \verb'LOR', \verb'LXOR', \verb'EQ')
@@ -2600,6 +2635,7 @@ they always return the same result).
 \item 40 semirings with purely Boolean types, \verb'bool' $\times$ \verb'bool'
     $\rightarrow$ \verb'bool', from the complete cross product of:
 
+    \vspace{-0.05in}
     \begin{itemize}
     \item 4 Boolean add monoids
     (\verb'LAND', \verb'LOR', \verb'LXOR', \verb'EQ')
@@ -2610,11 +2646,22 @@ they always return the same result).
 
 \end{itemize}
 
+\vspace{-0.05in}
+SuiteSparse:GraphBLAS pre-defines all 960 unique semirings that can be
+constructed from built-in types and operators, as an extension to the spec.
+The naming convention is \verb'GxB_add_mult_type', where \verb'add' is the
+operator of the addititive monoid, \verb'mult' is the multiply operator, and
+\verb'type' is the type of inputs to the multiply operator.  The name of the
+domain for the addititve monoid does not appear, since it always matches the
+type of the output of the \verb'mult' operator.  For example
+\verb'GxB_LAND_EQ_FP32' uses the \verb'GxB_LAND_BOOL_MONOID' as its additive
+monoid, and the \verb'GrB_EQ_FP32' as the binary multiplicative operator.
+
 \begin{spec}
-{\bf SPEC:} SuiteSparse:GraphBLAS pre-defines all 960 semirings that can be constructed from built-in types and operators, as an extension to the spec.
+{\bf SPEC:} Predefined semirings are an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Semiring\_add:} return the additive monoid of a semiring}
 %-------------------------------------------------------------------------------
@@ -2637,7 +2684,7 @@ GrB_Info GxB_Semiring_add           // return the add monoid of a semiring
 {\bf SPEC:} \verb'GxB_Semiring_add' is an extension to the spec.
 \end{spec}
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Semiring\_multiply:} return multiply operator of a semiring}
 %-------------------------------------------------------------------------------
@@ -2875,7 +2922,7 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
 \verb'GrB_Vector_nvals' returns the number of entries in a vector.  Roughly
 analogous to \verb'nvals = nnz(v)' in MATLAB, except that the implicit value in
 GraphBLAS need not be zero and \verb'nnz' (short for ``number of nonzeros'') in
-MATLAB is better described as ``number of explicit entries'' in GraphBLAS.
+MATLAB is better described as ``number of entries'' in GraphBLAS.
 
 \paragraph{Forced completion:}
 All computations for the vector \verb'v' are guaranteed to be finished when
@@ -3274,17 +3321,20 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
 ) ;
 \end{verbatim} } \end{mdframed}
 
-\verb'GrB_Matrix_nvals' returns the number of entries in a matrix, like
-\verb'nnz(A)' in MATLAB.
+\verb'GrB_Matrix_nvals' returns the number of entries in a matrix.  Roughly
+analogous to \verb'nvals = nnz(A)' in MATLAB, except that the implicit value in
+GraphBLAS need not be zero and \verb'nnz' (short for ``number of nonzeros'') in
+MATLAB is better described as ``number of entries'' in GraphBLAS.
 
 \paragraph{Forced completion:}
-All computations for the matrix \verb'A' are guaranteed to be finished when the
-method returns.  That is, it acts like an object-specific \verb'GrB_wait' for
-just this particular matrix \verb'A'.  Other pending computations for other
-objects may remain.  To ensure that all pending computations are complete for
-all GraphBLAS objects, used \verb'GrB_wait' instead.
+All computations for the matrix \verb'A' are guaranteed to be finished when
+\verb'GrB_Matrix_nvals' returns.  That is, it acts like an object-specific
+\verb'GrB_wait' for just this particular matrix \verb'A'.  Other pending
+computations for other objects may remain.  To ensure that all pending
+computations are complete for all GraphBLAS objects, used \verb'GrB_wait'
+instead.
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_type:}         return the type of a matrix}
 %-------------------------------------------------------------------------------
@@ -4355,7 +4405,7 @@ and \verb'Ax'.  If \verb'nvals' is zero, the \verb'Aj' and \verb'Ax' arrays are
 returned as \verb'NULL'; this is not an error, and \verb'GxB_Matrix_import_CSR'
 also allows these two arrays to be \verb'NULL' on input when \verb'nvals' is
 zero.  After a successful export, the user application is responsible for
-freeing these three arrays via the ANSI C \verb'free'.  The CSR format is
+freeing these three arrays via \verb'free' (or the \verb'free' function passed to \verb'GxB_init').  The CSR format is
 described in Section~\ref{matrix_import_csr}.
 
 This method takes $O(1)$ time if the matrix is already in standard
@@ -4412,7 +4462,7 @@ and \verb'Ax'.  If \verb'nvals' is zero, the \verb'Ai' and \verb'Ax' arrays are
 returned as \verb'NULL'; this is not an error, and \verb'GxB_Matrix_import_CSC'
 also allows these two arrays to be \verb'NULL' on input when \verb'nvals' is
 zero.  After a successful export, the user application is responsible for
-freeing these three arrays via the ANSI C \verb'free'.  The CSC format is
+freeing these three arrays via \verb'free' (or the \verb'free' function passed to \verb'GxB_init').  The CSC format is
 described in Section~\ref{matrix_import_csc}.
 
 This method takes $O(1)$ time if the matrix is already in standard
@@ -4471,8 +4521,8 @@ its dimensions in \verb'nrows' and \verb'ncols', its number of entries in
 CSR format is in the four arrays \verb'Ah', \verb'Ap', \verb'Aj', and
 \verb'Ax'.  If \verb'nvals' is zero, the \verb'Aj' and \verb'Ax' arrays are
 returned as \verb'NULL'; this is not an error.  After a successful export, the
-user application is responsible for freeing these three arrays via the ANSI C
-\verb'free'.  The hypersparse CSR format is described in
+user application is responsible for freeing these three arrays via
+\verb'free' (or the \verb'free' function passed to \verb'GxB_init').  The hypersparse CSR format is described in
 Section~\ref{matrix_import_hypercsr}.
 
 This method takes $O(1)$ time if the matrix is already in hypersparse CSR
@@ -4521,20 +4571,18 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 {\footnotesize
 \begin{verbatim}
 GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, &nvals, &nonempty,
-                            &nvec, &Ah, &Ap, &Ai, &Ax, desc) ;
-\end{verbatim}}
+                            &nvec, &Ah, &Ap, &Ai, &Ax, desc) ; \end{verbatim}}
 
+\vspace{-0.05in}
 On successful output, the \verb'GrB_Matrix A' is freed, and \verb'A' is
 returned as \verb'NULL'.  Its type is returned in the \verb'type' parameter,
 its dimensions in \verb'nrows' and \verb'ncols', its number of entries in
 \verb'nvals', and the number of non-empty rows in \verb'nvec'.  The hypersparse
 CSC format is in the four arrays \verb'Ah', \verb'Ap', \verb'Ai', and
 \verb'Ax'.  If \verb'nvals' is zero, the \verb'Ai' and \verb'Ax' arrays are
-returned as \verb'NULL'; this is not an error, and
-\verb'GxB_Matrix_import_HyperCSC' also allows these two arrays to be
-\verb'NULL' on input when \verb'nvals' is zero.  After a successful export, the
-user application is responsible for freeing these three arrays via the ANSI C
-\verb'free'.  The hypersparse CSC format is described in
+returned as \verb'NULL'; this is not an error.  After a successful export, the
+user application is responsible for freeing these three arrays via
+\verb'free' (or the \verb'free' function passed to \verb'GxB_init').  The hypersparse CSC format is described in
 Section~\ref{matrix_import_hypercsc}.
 
 This method takes $O(1)$ time if the matrix is already in hypersparse CSR
@@ -4566,7 +4614,7 @@ If the descriptor is \verb'GrB_NULL', defaults are used.
 % neither are any unary or binary operators.
 
 \begin{spec}
-{\bf SPEC:} \verb'GxB_DEFAULT', \verb'GxB_AxB_METHOD', and \verb'GxB_AxB_*'
+{\bf SPEC:} \verb'GxB_DEFAULT', \verb'GxB_NTHRADS', \verb'GxB_AxB_METHOD', and \verb'GxB_AxB_*'
 are extensions to the spec.
 \end{spec}
 
@@ -4595,18 +4643,18 @@ GrB_Desc_Field ;
 typedef enum
 {
     // for all GrB_Descriptor fields:
-    GxB_DEFAULT,        // default behavior of the method
+    GxB_DEFAULT = 0,    // default behavior of the method
     // for GrB_OUTP only:
-    GrB_REPLACE,        // clear the output before assigning new values to it
+    GrB_REPLACE = 1,    // clear the output before assigning new values to it
     // for GrB_MASK only:
-    GrB_SCMP,           // use the structural complement of the input
+    GrB_SCMP = 2,       // use the structural complement of the input
     // for GrB_INP0 and GrB_INP1 only:
-    GrB_TRAN,           // use the transpose of the input
+    GrB_TRAN = 3,       // use the transpose of the input
 
     // for GxB_AxB_METHOD only:
-    GxB_AxB_GUSTAVSON,  // gather-scatter saxpy method
-    GxB_AxB_HEAP,       // heap-based saxpy method
-    GxB_AxB_DOT         // dot product
+    GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
+    GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
+    GxB_AxB_DOT       = 1003    // dot product
 }
 GrB_Desc_Value ;
 \end{verbatim} } \end{mdframed}
@@ -5212,8 +5260,7 @@ with the type \verb'GxB_Format_Value':
 typedef enum
 {
     GxB_BY_ROW = 0,     // CSR: compressed sparse row format
-    GxB_BY_COL = 1,     // CSC: compressed sparse column format
-    GxB_BY_EITHER = 2   // (reserved for future extension)
+    GxB_BY_COL = 1      // CSC: compressed sparse column format
 }
 GxB_Format_Value ;
 \end{verbatim} }
@@ -9459,24 +9506,25 @@ sequential methods, and methods that use OpenMP).
 
 The LAGraph project is a community-wide effort to create graph algorithms based
 on GraphBLAS (any implementation of the API, not just SuiteSparse: GraphBLAS).
-As of Feb.~2019, the library includes the following algorithms and utilities.
-Many additional algorithms are planned, such as betweenness centrality,
-PageRank, single-source shortest path (via delta stepping), minimum spanning
-trees, connected components, and many more.  Refer to
+As of Feb.~2019, the library includes the algorithms and utilities listed in
+the table below.  Many additional algorithms are planned, such as betweenness
+centrality, PageRank, single-source shortest path (via delta stepping), minimum
+spanning trees, connected components, and many more.  Refer to
 \url{https://github.com/GraphBLAS/LAGraph} for a current list of algorithms
-(the one below will soon be out of date).  All of the functions in the
+(the one below will soon be out of date).  Most of the functions in the
 \verb'Demo/' and the \verb'Extras' folder in SuiteSparse:GraphBLAS will
 eventually be translated into algorithms or utilities for LAGraph.
 
-To use LAGraph with SuiteSparse:GraphBLAS, place the two folders
-\verb'LAGraph' and \verb'GraphBLAS' in the same parent directory.
-This allows the \verb'cmake' script in LAGraph to find the copy of
-GraphBLAS.  Alternatively, the GraphBLAS source could be placed anywhere,
-as long as \verb'sudo make install' is performed.
+To use LAGraph with SuiteSparse:GraphBLAS, place the two folders \verb'LAGraph'
+and \verb'GraphBLAS' in the same parent directory.  This allows the
+\verb'cmake' script in LAGraph to find the copy of GraphBLAS.  Alternatively,
+the GraphBLAS source could be placed anywhere, as long as
+\verb'sudo make install' is performed.
 
 Build \verb'GraphBLAS' first, then the \verb'LAGraph' library, and then the
 tests in \verb'LAGraph/Test'.
 
+\vspace{0.1in}
 {\small
 \begin{tabular}{ll}
 \hline
@@ -10684,6 +10732,9 @@ National Laboratory), Timothy G. Mattson (Intel Corporation) Scott McMillan
 specification and for patiently answering my many questions while I was
 implementing it.
 
+I would like to thank Tim Mattson and Henry Gabb, Intel, Inc., for their
+collaboration and for the support of Intel.
+
 I would like to thank John Gilbert (UC Santa Barbara) for our many discussions
 on GraphBLAS, and for our decades-long conversation and collaboration on sparse
 matrix computations, and sparse matrices in MATLAB in particular.
@@ -10706,7 +10757,7 @@ database module for Redis.  Based on SuiteSparse:GraphBLAS, RedisGraph is up
 \url{https://redislabs.com/blog/new-redisgraph-1-0-achieves-600x-faster-performance-graph-databases/}}).
 
 SuiteSparse:GraphBLAS was developed with support from
-MIT Lincoln Lab and NSF grant 1514406.
+MIT Lincoln Lab, Intel, and NSF grant 1514406.
 
 \newpage
 %-------------------------------------------------------------------------------

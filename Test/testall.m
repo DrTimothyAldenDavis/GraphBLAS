@@ -42,6 +42,7 @@ logstat ('test106') ; % GxB_subassign with alias
 logstat ('test107') ; % monoids with terminal values
 logstat ('test108') ; % boolean monoids
 logstat ('test109') ; % terminal monoid with user-defined type
+logstat ('test110') ; % binary search of M(:,j) in accum/mask
 logstat ('test98') ;  % GB_mex_mxm, typecast on the fly
 logstat ('test92') ;  % GB_subref_symbolic
 logstat ('test97') ;  % GB_mex_assign, scalar expansion and zombies
