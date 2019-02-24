@@ -1,2 +1,0 @@
-TODO: move *.m4 files to User/Example before public release
-    (then redo 'make cmake' to build Include/GraphBLAS.h)
