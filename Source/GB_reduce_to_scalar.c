@@ -220,6 +220,7 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
                 }
             }
         }
+
     }
     else
     {

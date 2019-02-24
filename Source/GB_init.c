@@ -112,7 +112,7 @@ GrB_Info GB_init            // start up GraphBLAS
     }
 
     if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
-    { 
+    {
         // invalid mode
         return (GrB_INVALID_VALUE) ;
     }
@@ -213,7 +213,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     for (int t = 0 ; t < GxB_NTHREADS_MAX ; t++)
-    {
+    { 
         GB_Global.Saunas [t] = NULL ;
         GB_Global.Sauna_in_use [t] = false ;
     }
@@ -272,7 +272,8 @@ char *GB_thread_local_access ( )    // return pointer to thread-local storage
             if (p == NULL)
             {
                 // first time:  allocate the space for the report
-                p = (void *) GB_Global.calloc_function ((GB_RLEN+1), sizeof (char));
+                p = (void *) GB_Global.calloc_function ((GB_RLEN+1),
+                    sizeof (char)) ;
                 ok = (p != NULL) ;
                 ok = ok && (pthread_setspecific (GB_thread_local_key, p) == 0) ;
             }

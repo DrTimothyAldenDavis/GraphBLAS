@@ -79,13 +79,16 @@ inc = '-ITemplate -I../Include -I../Source -I../Source/Template -I../Demo/Includ
 
 if (ismac)
     % Mac (do 'make install' for GraphBLAS first)
-    libraries = '-L/usr/local/lib -lgraphblas' ;
+    libraries = '-L/usr/local/lib -lgraphblas' ; % -lomp' ;
+%   flags = [ flags   ' CFLAGS="$CXXFLAGS -Xpreprocessor -fopenmp" ' ] ;
+%   flags = [ flags ' CXXFLAGS="$CXXFLAGS -Xpreprocessor -fopenmp" ' ] ;
+%   flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp"' ] ;
 else
     % Linux
     libraries = '-L../build -lgraphblas' ;
-    flags = [ flags ' CFLAGS="$CXXFLAGS -fopenmp -fPIC" '] ;
+    flags = [ flags   ' CFLAGS="$CXXFLAGS -fopenmp -fPIC" '] ;
     flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC" '] ;
-    flags = [ flags ' LDFLAGS="$LDFLAGS -fopenmp -fPIC" '] ;
+    flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
 
 %-------------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_export (C, format, hyper, csc, dump)"
+#define USAGE "C = GB_mex_export (C, format, hyper, csc, dump, clear_nvec)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -46,6 +46,7 @@ int64_t nonempty = -1 ;
 char *Ax = NULL ;
 int format = 0 ;
 bool is_hyper = false ;
+bool clear_nvec = false ;
 bool is_csc = true ;
 GrB_Info info = GrB_SUCCESS ;
 GrB_Descriptor desc = NULL ;
@@ -128,6 +129,8 @@ GrB_Info import_export (GB_Context Context)
                 }
             }
 
+            if (clear_nvec) nonempty = -1 ;     // for testing
+
             OK (GxB_Matrix_import_CSR (&C, type, nrows, ncols, nvals,
                 nonempty, &Ap, &Aj, &Ax, desc)) ;
 
@@ -163,6 +166,8 @@ GrB_Info import_export (GB_Context Context)
 
             }
 
+            if (clear_nvec) nonempty = -1 ;     // for testing
+
             OK (GxB_Matrix_import_CSC (&C, type, nrows, ncols, nvals,
                 nonempty, &Ap, &Ai, &Ax, desc)) ;
 
@@ -196,6 +201,8 @@ GrB_Info import_export (GB_Context Context)
                     }
                 }
             }
+
+            if (clear_nvec) nonempty = -1 ;     // for testing
 
             OK (GxB_Matrix_import_HyperCSR (&C, type, nrows, ncols, nvals,
                 nonempty, nvec, &Ah, &Ap, &Aj, &Ax, desc)) ;
@@ -231,6 +238,8 @@ GrB_Info import_export (GB_Context Context)
                 }
             }
 
+            if (clear_nvec) nonempty = -1 ;     // for testing
+
             OK (GxB_Matrix_import_HyperCSC (&C, type, nrows, ncols, nvals,
                 nonempty, nvec, &Ah, &Ap, &Ai, &Ax, desc)) ;
 
@@ -262,7 +271,7 @@ void mexFunction
 
     // check inputs
     GB_WHERE (USAGE) ;
-    if (nargout > 1 || nargin < 1 || nargin > 5)
+    if (nargout > 1 || nargin < 1 || nargin > 6)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -278,6 +287,9 @@ void mexFunction
 
     // get dump flag 
     GET_SCALAR (4, bool, dump, false) ;
+
+    // get clear_nvec flag 
+    GET_SCALAR (5, bool, clear_nvec, false) ;
 
     // get C (make a deep copy)
     #define GET_DEEP_COPY \
@@ -305,6 +317,9 @@ void mexFunction
 
     // import/export
     METHOD (import_export (Context)) ;
+
+    // repeat it to test clear_nvec
+    if (clear_nvec) METHOD (import_export (Context)) ;
 
     // return C to MATLAB
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C export/import", false) ;

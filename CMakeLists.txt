@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 22, 2019 (BETA2)" )
+set ( GraphBLAS_DATE "Feb 22, 2019 (TODO BETA2)" )
 set ( GraphBLAS_VERSION_MAJOR 2 )
 set ( GraphBLAS_VERSION_MINOR 3 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -279,7 +279,10 @@ else ( )
     endif ( )
 endif ( )
 
+#-------------------------------------------------------------------------------
 # add the threading library
+#-------------------------------------------------------------------------------
+
 if ( USE_OPENMP )
     # use OpenMP
     message ( STATUS "Using OpenMP to synchronize user threads" )

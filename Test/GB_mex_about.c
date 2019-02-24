@@ -31,6 +31,7 @@ void mexFunction
 {
 
     // test GrB_init with invalid mode
+    GB_Global_GrB_init_called_set (false) ;
     GrB_Info info = GrB_init (911) ;
     printf ("expected error: [%d]\n", info) ;
     mxAssert (info == GrB_INVALID_VALUE, "error must be 'invalid value'") ;

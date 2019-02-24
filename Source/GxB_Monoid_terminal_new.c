@@ -51,7 +51,6 @@ GrB_Info GxB_Monoid_terminal_new_UDT        // create a monoid with a user type
     const void *terminal            // terminal value of the monoid
 )
 { 
-// GB_GOTCHA ; // TODO
     GB_WHERE ("GxB_Monoid_terminal_new_UDT (&monoid, op, identity, terminal)") ;
     GB_RETURN_IF_NULL (identity) ;
     GB_RETURN_IF_NULL (terminal) ;

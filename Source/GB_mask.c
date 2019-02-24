@@ -561,12 +561,12 @@ GrB_Info GB_mask                // C<M> = Z
                             // C(i,j) and Z(i,j) both present
                             if (mij)
                             { 
-// GB_GOTCHA ; // TODO
+GB_GOTCHA ; // TODO
                                 GB_COPY (Z) ;
                             }
                             else
                             { 
-// GB_GOTCHA ; // TODO
+GB_GOTCHA ; // TODO
                                 GB_COPY (C) ;
                             }
                             GB_NEXT (C) ;

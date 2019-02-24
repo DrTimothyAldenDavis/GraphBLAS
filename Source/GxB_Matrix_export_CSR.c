@@ -64,7 +64,6 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
 
     if ((*A)->nvec_nonempty < 0)
     { 
-// GB_GOTCHA ; // TODO
         // count # of non-empty vectors
         (*A)->nvec_nonempty = GB_nvec_nonempty (*A, Context) ;
     }
