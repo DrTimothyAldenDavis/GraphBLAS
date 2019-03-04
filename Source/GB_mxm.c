@@ -21,7 +21,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_replace,           // if true, clear C before writing to it
     const GrB_Matrix M,             // optional mask for C, unused if NULL
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Semiring semiring,    // defines '+' and '*' for C=A*B
     const GrB_Matrix A,             // input matrix

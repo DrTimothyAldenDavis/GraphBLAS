@@ -25,7 +25,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M_in,          // mask matrix for C<M>=A*B
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B

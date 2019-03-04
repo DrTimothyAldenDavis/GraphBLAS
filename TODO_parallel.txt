@@ -41,23 +41,25 @@ the loop is to be parallelized.
 
 ----------------------------------------------------------------------
 
-GB_AxB_parallel.c:
-    This is where we do C=A*B, for GrB_mxm, GrB_mxv, and GrB_vxm.  It will do
-    all methods: Gustavson, Heap, and Dot.  But needs a code to partition B,
-    and another to combine the C submatrices into the single C output matrix.
-    I have work to do to create these partitions, which I'm calling slices
-    (if B is standard) or hyperslice (if B is hypersparse).  Grep the code
-    for 'slice' and you'll see my work done so far.
+GB_AxB_parallel.c: IN PROGRESS: mxm nicely parallel for large matrices.
+    This is where we do C=A*B, for GrB_mxm, GrB_mxv, and GrB_vxm.
+    It is partially completed, and can parallelize mxm but not vxm or mxv.
+    The latter require the GxB_SLICE_*FINE methods.  Also not yet
+    implemented are the GxB_SLICE_A* methods (for dot product only),
+    since that requires GB_vcat_slice to be written.  Also needed is a rule
+    to set nthreads to be lower than the max, for small matrices.
 
-GB_AxB_flopcount.c:
-    for C=A*B for the parallel case, simple for all loop.  Note however the
-    early exit, but this is done only when nthreads == 1.
+GB_AxB_flopcount.c: IN PROGRESS: reasonably implemented but needs a little work.
+    Used by C=A*B for the parallel case, simple for all loop.  Note however the
+    early exit, but this is done only when nthreads == 1.  Currently, one
+    thread has a 'continue' statement but it could break early.
 
-Template/GB_qsort_template.c:
-    Does lots of work, everywhere, for many GraphBLAS operations.  A parallel
-    in-place quicksort. Should be easy to parallelize as-is since it's a
-    standard kind of quicksort.  I have it templatized for four variants;
-    see Source/GB_qsort*.c
+GB_hcat_slice.c: DONE
+    easy; a simple for-all loop
+
+Template/GB_qsort_template.c: IN PROGRESSS
+    Needs a way to set a larger leaf task size.
+    Does lots of work, everywhere, for many GraphBLAS operations.
 
 GB_transplant.c:
     utility function used by almost all of GraphBLAS.  Easy to parallelize.

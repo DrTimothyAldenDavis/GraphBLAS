@@ -75,6 +75,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                     nthreads_max_new, GxB_NTHREADS_MAX, nthreads_max_new))) ;
             }
             GB_Global.nthreads_max = nthreads_max_new ;
+            // printf ("global nthreads %d\n", GB_Global.nthreads_max) ;
             break ;
 
         default : 

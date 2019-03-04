@@ -78,8 +78,6 @@
 // allows the function to return early, once the total_flops exceeds the
 // threshold.
 
-// PARALLEL: easy, one simple for-all loop, no dependencies
-
 #include "GB.h"
 
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
@@ -112,7 +110,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     GB_GET_NTHREADS (nthreads, Context) ;
     if (Bflops == NULL)
     {
-        // a single thread is testing if (total_flops <= floplimit)
+        // a single thread is testing the condition (total_flops <= floplimit)
         ASSERT (Context == NULL) ;
         ASSERT (nthreads == 1) ;
     }
@@ -133,8 +131,6 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         Mi = M->i ;
         mnvec = M->nvec ;
     }
-    int64_t mpleft = 0 ;            // mpleft is modified below
-    int64_t mpright = mnvec - 1 ;
 
     //--------------------------------------------------------------------------
     // get A and B
@@ -156,19 +152,27 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     // compute flop counts for C<M> = A*B
     //--------------------------------------------------------------------------
 
-    // for each column of B:
-    // PARALLEL: no dependencies in this loop
-    // mpleft is threadprivate
-
     // total_flops is only needed if Bflops is NULL, and in that case,
     // nthreads is 1.
     int64_t total_flops = 0 ;
+    bool quick_return = false ;
 
+    #pragma omp parallel for num_threads (nthreads) \
+        reduction (+:total_flops)                   \
+        firstprivate (quick_return)
     for (int64_t kk = 0 ; kk < bnvec ; kk++)
     {
 
         // The (kk)th iteration of this loop computes Bflops [kk], if not NULL.
         // All iterations are completely independent.
+
+        if (quick_return)
+        {
+            // TODO: if quick_return is true, then Bflops is NULL and the
+            // computations are being done by a single thread, and the thread
+            // can terminate.  But a break statement cannot be used here.
+            continue ;
+        }
 
         //----------------------------------------------------------------------
         // get B(:,j)
@@ -196,13 +200,15 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         int64_t im_first = -1, im_last = -1 ;
         if (M != NULL)
         {
-            // reuse mpleft from the last binary search of M->h, to speed up
-            // the search.  This is just a heuristic, and resetting mpleft to
-            // zero here would be work too (just more of M->h would be
-            // searched; the results would be the same), as in:
-            // int64_t mpleft = 0 ;     // this works too
+            // TODO: can reuse mpleft from the last binary search of M->h, to
+            // speed up the search when M is hypersparse.  This is just a
+            // heuristic, and resetting mpleft to zero here would work too
+            // (just more of M->h would be searched; the results would be the
+            // same), as in:
+            int64_t mpleft = 0 ;     // this works too
             // To reuse mpleft from its prior iteration, each thread needs its
-            // own private mpleft.
+            // own threadprivate mpleft, to use in all its iterations
+            int64_t mpright = mnvec - 1 ;
             int64_t pM, pM_end ;
             GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
             int64_t mjnz = pM_end - pM ;
@@ -276,6 +282,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
             if (Bflops == NULL)
             {
                 // the work is being done by a single thread
+                ASSERT (nthreads == 1) ;
                 total_flops += aknz ;
                 if (total_flops > floplimit)
                 { 
@@ -283,7 +290,8 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
                     // total_flops is not returned since it is only partially
                     // computed.  However, it does not exceed the floplimit
                     // threshold, so the result is false.
-                    return (false) ;
+                    quick_return = true ;
+                    break ;
                 }
             }
         }

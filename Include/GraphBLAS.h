@@ -2794,9 +2794,12 @@ typedef enum
 
     // SuiteSparse:GraphBLAS extensions are given large values so they do not
     // conflict with future enum values added to the spec:
-    GxB_AxB_METHOD = 1000 // descriptor for selecting C=A*B algorithm
+    GxB_AxB_METHOD = 1000,  // descriptor for selecting C=A*B algorithm
+
+    GxB_AxB_SLICE = 1001    // how to slice A' and or B for C=A*B or A'*B.
 }
 GrB_Desc_Field ;
+
 
 // SPEC: GxB_DEFAULT, and GxB_AxB_* are extensions to the spec
 
@@ -2817,8 +2820,17 @@ typedef enum
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
-    GxB_AxB_DOT       = 1003    // dot product
+    GxB_AxB_DOT       = 1003,   // dot product
+//  GxB_AxB_HASH      = 1004,   // hash-based saxpy method (FUTURE)
 
+    // for GxB_AxB_SLICE only:
+    GxB_SLICE_ATROW       = 2001,   // each slice of A' has same # of rows
+    GxB_SLICE_ATNZ        = 2002,   // each slice of A' has same # of nonzeros
+    GxB_SLICE_BCOL        = 2003,   // each slice of B has same # of columnns
+    GxB_SLICE_BNZ         = 2004,   // each slice of B has same # of nonzeros
+    GxB_SLICE_BFLOPS      = 2005    // each slice of B has same # of flops
+//  GxB_SLICE_BNZFINE     = 2006    // like BNZ but split cols of B (FUTURE)
+//  GxB_SLICE_BFLOPSFINE  = 2007    // like BFLOPS but split cols of B (FUTURE)
 }
 GrB_Desc_Value ;
 

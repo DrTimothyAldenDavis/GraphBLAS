@@ -347,8 +347,7 @@ GrB_Info GB_mask                // C<M> = Z
 
         // get the function pointer for casting M(i,j) from its current
         // type into boolean
-        GB_cast_function cast_Mask_to_bool =
-            GB_cast_factory (GB_BOOL_code, M->type->code) ;
+        GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
 
         size_t csize = C->type->size ;
         size_t msize = M->type->size ;
@@ -425,10 +424,9 @@ GrB_Info GB_mask                // C<M> = Z
                     // get M(i,j) using a simple lookup
                     //----------------------------------------------------------
 
-                    // mij = (bool) M [pM + i]
                     bool mij ;
                     ASSERT (Mi [pM+i] == i) ;
-                    cast_Mask_to_bool (&mij, Mx +((pM+i)*msize), 0) ;
+                    cast_M (&mij, Mx +((pM+i)*msize), 0) ;
                     if (Mask_complement)
                     { 
                         mij = !mij ;
@@ -538,8 +536,7 @@ GrB_Info GB_mask                // C<M> = Z
                     GB_BINARY_SEARCH (i, Mi, pleft, pright, found) ;
                     if (found)
                     { 
-                        // found it
-                        cast_Mask_to_bool (&mij, Mx +(pleft*msize), 0) ;
+                        cast_M (&mij, Mx +(pleft*msize), 0) ;
                     }
                     if (Mask_complement)
                     { 
@@ -652,8 +649,7 @@ GrB_Info GB_mask                // C<M> = Z
                     bool mij ;
                     if (i == iM)
                     { 
-                        // mij = (bool) M [pM]
-                        cast_Mask_to_bool (&mij, Mx +(pM*msize), 0) ;
+                        cast_M (&mij, Mx +(pM*msize), 0) ;
                         GB_NEXT (M) ;
                     }
                     else

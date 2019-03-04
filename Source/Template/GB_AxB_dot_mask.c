@@ -14,16 +14,31 @@
 {
 
     //--------------------------------------------------------------------------
-    // get first and last non-empty vector of A, if A is hypersparse
+    // get first and last non-empty vector of A
     //--------------------------------------------------------------------------
 
-    int64_t ia_first = -1 ;
-    int64_t ia_last  = -1 ;
-    if (A_is_hyper && anvec > 0)
+    int64_t ia_first, ia_last ;
+    if (A_is_hyper)
+    {
+        // A is hypersparse or hyperslice
+        if (anvec > 0)
+        { 
+            ia_first = Ah [0] ;
+            ia_last  = Ah [anvec-1] ;
+        }
+        else
+        { 
+            ia_first = -1 ;
+            ia_last  = -1 ;
+        }
+    }
+    else
     { 
-        // get first and last non-empty vector in A
-        ia_first = Ah [0] ;
-        ia_last  = Ah [anvec-1] ;
+        // A is standard sparse, or a slice.  For a standard matrix, A->hfirst
+        // is zero and A->nvec = A->vdim, so ia_first and ia_last include the
+        // whole matrix.
+        ia_first = A->hfirst ;
+        ia_last  = A->hfirst + anvec - 1 ;
     }
 
     //--------------------------------------------------------------------------
@@ -50,7 +65,8 @@
         int64_t pM, pM_end ;
         GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
         // no work to do if M(:,j) is empty
-        if (pM == pM_end) continue ;
+        int64_t mjnz = pM_end - pM ;
+        if (mjnz == 0) continue ;
 
         //----------------------------------------------------------------------
         // C(:,j)<M(:,j)> = A'*B(:,j)
@@ -64,60 +80,71 @@
         int64_t im_first = Mi [pM] ;
         int64_t im_last  = Mi [pM_end-1] ;
 
-        if (A_is_hyper)
+        // no work to do if M(:,j) does not include any vectors in A
+        if (ia_last < im_first || im_last < ia_first) continue ;
+
+        if (mjnz <= anvec)
         {
 
             //------------------------------------------------------------------
-            // A is hypersparse
+            // M(:,j) is sparser than the vectors of A 
             //------------------------------------------------------------------
 
-            // no work to do if the intersection of A->h and M(:,j) is empty
-            if (ia_last < im_first || im_last < ia_first) continue ;
-
-            // FUTURE::  if Ah is small and nnz(M(:,j)) is large, then iterate
-            // through Ah and use a binary search into M(:,j).  Likewise,
-            // if the reverse is true, iterate through M(:,j); if M(i,j)
-            // is true, then use GB_lookup to find A(:,i), and then do
-            // the dot product.
-
-            // iterate over intersection of vectors of A and pattern of M(:,j)
-            for (int64_t ka = 0 ; pM < pM_end && ka < anvec ; )
+            // advance pM to the first vector of A
+            if (im_first < ia_first)
             {
+                // search M(:,j) for the first vector of A
+                int64_t pright = pM_end - 1 ;
+                GB_BINARY_TRIM_SEARCH (ia_first, Mi, pM, pright) ;
+            }
+
+            int64_t pleft = 0 ;
+            int64_t pright = anvec-1 ;
+
+            // iterate over all entries in M(:,j)
+            for ( ; pM < pM_end ; pM++)
+            {
+
                 // get the next entry M(i,j)
                 int64_t i = Mi [pM] ;
-
-                // get the next vector A(:,iA)
-                int64_t iA = Ah [ka] ;
-                if (i < iA)
-                { 
-                    // M(i,j) is present but A(:,iA) is empty
-                    // C(i,j) cannot be present
-                    pM++ ;
-                    continue ;
-                }
-                else if (i > iA)
-                { 
-                    // A(:,i) is non-empty but M(i,j) is not present
-                    // C(i,j) cannot be present
-                    ka++ ;
-                    continue ;
+                if (i > ia_last)
+                {
+                    // i is past last vector of A so the remainder of
+                    // M(:,j) can be ignored
+                    break ;
                 }
 
-                // C(i,j) might be present; M(i,j) is present and both
-                // A(:,i) and B(:,j) are not empty. check M(i,j).
+                // the binary_trim_search of M(:,j), above, has trimmed the
+                // leading part of M(:,j), so i >= ia_first must hold here.
+                // The break statement above ensures that i <= ia_last holds
+                // here.  So M(i,j) exists, and i is in the range of the
+                // vectors of A
+                ASSERT (i >= ia_first && i <= ia_last) ;
+
+                // get the value of M(i,j) and skip if false
                 bool mij ;
                 cast_M (&mij, Mx +(pM*msize), 0) ;
-                if (mij)
-                { 
-                    // C(i,j) = A(:,i)'*B(:,j)
-                    int64_t pA     = Ap [ka] ;
-                    int64_t pA_end = Ap [ka+1] ;
-                    #include "GB_AxB_dot_cij.c"
+                if (!mij) continue ;
+
+                // get A(:,i), if it exists
+                int64_t pA, pA_end ;
+                if (A->is_slice && !A_is_hyper)
+                {
+                    // A is a slice
+                    int64_t ka = i - ia_first ;
+                    ASSERT (ka >= 0 && ka < anvec) ;
+                    pA     = Ap [ka] ;
+                    pA_end = Ap [ka+1] ;
+                }
+                else
+                {
+                    // A is sparse, hypersparse, or hyperslice
+                    GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, i,
+                        &pA, &pA_end) ;
                 }
 
-                ASSERT (Mi [pM] == Ah [ka]) ;
-                ka++ ;  // advance to next non empty vector of A
-                pM++ ;  // advance to the next index in M(:,j)
+                // C(i,j) = A(:,i)'*B(:,j)
+                #include "GB_AxB_dot_cij.c"
             }
 
         }
@@ -125,24 +152,27 @@
         {
 
             //------------------------------------------------------------------
-            // A is non-hypersparse
+            // M(:,j) is denser than the vectors of A 
             //------------------------------------------------------------------
 
-            // No binary search is needed since every vector is present in A.
-
-            // iterate over all entries in M(:,j)
-            for ( ; pM < pM_end ; pM++)
+            // for each vector A(:,i):
+            GBI_for_each_vector_with_iter (Iter_A, A)
             {
-                
-                // get the next entry M(i,j)
-                int64_t i = Mi [pM] ;
-                bool mij ;
-                cast_M (&mij, Mx +(pM*msize), 0) ;
+                GBI_jth_iteration_with_iter (Iter_A, i, pA, pA_end) ;
+
+                // A(:,i) and B(:,j) are both present.  Check M(i,j).
+                // TODO: skip binary search if mask is dense.
+                bool mij = false ;
+                bool found ;
+                int64_t pright = pM_end - 1 ;
+                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                if (found)
+                {
+                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                }
                 if (mij)
                 { 
                     // C(i,j) = A(:,i)'*B(:,j)
-                    int64_t pA     = Ap [i] ;
-                    int64_t pA_end = Ap [i+1] ;
                     #include "GB_AxB_dot_cij.c"
                 }
             }

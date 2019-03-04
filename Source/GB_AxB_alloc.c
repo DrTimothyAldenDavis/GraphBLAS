@@ -38,6 +38,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     ASSERT_OK_OR_NULL (GB_check (M, "M for alloc C=A*B", GB0)) ;
     ASSERT_OK (GB_check (A, "A for alloc C=A*B", GB0)) ;
     ASSERT_OK (GB_check (B, "B for alloc C=A*B", GB0)) ;
+    ASSERT (M == NULL || !M->is_slice) ;
 
     GrB_Info info ;
 
@@ -46,34 +47,32 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     //--------------------------------------------------------------------------
 
     // C is hypersparse if any of A, B, and/or M are hypersparse
+    // or if A or B are slice or hyperslice.  M is never a slice or hyperslice
     bool C_is_hyper = (cvdim > 1) &&
         (A->is_hyper || B->is_hyper || (M != NULL && M->is_hyper)) ;
+    C_is_hyper = C_is_hyper || (A->is_slice || B->is_slice) ;
 
     //--------------------------------------------------------------------------
     // estimate nnz(C)
     //--------------------------------------------------------------------------
 
-    int64_t cnz_guess ;
+    // estimate the number of nonzeros for C=A*B (or C=A'*B for dot
+    // product method)
 
-    if (M == NULL)
-    { 
-        // estimate the number of nonzeros for C=A*B (or C=A'*B for dot
-        // product method)
+    int64_t cnz_guess = rough_guess ;
 
-        cnz_guess = rough_guess ;
-
-        // abnzmax = cvlen * cvdim, but check for overflow
-        GrB_Index abnzmax ;
-        if (GB_Index_multiply (&abnzmax, cvlen, cvdim))
-        {
-            // only do this if cvlen * cvdim does not overflow
-            cnz_guess = GB_IMIN (cnz_guess, abnzmax) ;
-        }
+    // abnzmax = cvlen * cvdim, but check for overflow
+    GrB_Index abnzmax ;
+    if (GB_Index_multiply (&abnzmax, cvlen, cvdim))
+    {
+        // only do this if cvlen * cvdim does not overflow
+        cnz_guess = GB_IMIN (cnz_guess, abnzmax) ;
     }
-    else
+
+    if (M != NULL)
     { 
         // the pattern of C is a subset of the mask
-        cnz_guess = GB_NNZ (M) ;
+        cnz_guess = GB_IMIN (cnz_guess, GB_NNZ (M)) ;
     }
 
     // add one to ensure cnz_guess > 0, and (cnz < C->nzmax) will always hold

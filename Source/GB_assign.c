@@ -301,7 +301,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             }
             else
             { 
-                // C<~NULL>=NULL since result does not depend on computing Z.
+                // C<!NULL>=NULL since result does not depend on computing Z.
                 // Since C_replace is true, all of C is cleared.  This is the
                 // same as the GB_RETURN_IF_QUICK_MASK macro, except that C may
                 // have zombies and pending tuples.

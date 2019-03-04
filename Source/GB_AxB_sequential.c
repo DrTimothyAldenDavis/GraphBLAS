@@ -21,13 +21,14 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix M,                   // optional mask matrix
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// already chosen
     const int64_t bjnz_max,         // for heap method only
+    const bool check_for_dense_mask,// if true, check floplimit for mask 
     bool *mask_applied,             // if true, mask was applied
     const int Sauna_id              // Sauna to use, for Gustavson method only
 )
@@ -74,12 +75,12 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
         if (M != NULL)
         {
             if (Mask_comp)
-            {
+            { 
                 // the saxpy methods cannot handle a complemented mask at all.
                 // Discard the mask; mask_applied will be false.
                 M = NULL ;
             }
-            else
+            else if (check_for_dense_mask)
             {
                 // The saxpy methods can handle any mask that's not
                 // complemented, but they will examine each entry in the mask.
@@ -89,7 +90,7 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
                 // method.
                 int64_t floplimit = GB_NNZ (M) ;
                 if (GB_AxB_flopcount (NULL, M, A, B, floplimit, NULL))
-                {
+                { 
                     // total_flops < nnz(M), so the mask is too dense to use.
                     // Discard the mask; mask_applied will be false.
                     M = NULL ;
@@ -115,3 +116,4 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
         }
     }
 }
+

@@ -793,13 +793,13 @@ GrB_Info GB_error           // log an error in thread-local-storage
 
 // check object->magic code
 #ifdef GB_DEVELOPER
-#define GBPR_MAGIC(pcode)                                               \
+#define GBPR_MAGIC(pkind,pcode)                                         \
 {                                                                       \
     char *p = (char *) &(pcode) ;                                       \
-    if (pr > 0) GBPR (" magic: [ %d1 %s ] ", p [0], p) ;                \
+    if (pr > 0) GBPR (" %s: [ %d1 %s ] ", pkind, p [0], p) ;            \
 }
 #else
-#define GBPR_MAGIC(pcode) ;
+#define GBPR_MAGIC(pkind,pcode) ;
 #endif
 
 // check object->magic and print an error if invalid 
@@ -809,19 +809,19 @@ GrB_Info GB_error           // log an error in thread-local-storage
     {                                                                   \
         case GB_MAGIC :                                                 \
             /* the object is valid */                                   \
-            GBPR_MAGIC (object->magic) ;                                \
+            GBPR_MAGIC ("valid object", object->magic) ;                \
             break ;                                                     \
                                                                         \
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
-            GBPR_MAGIC (object->magic) ;                                \
+            GBPR_MAGIC ("freed object", object->magic) ;                \
             if (pr > 0) GBPR ("already freed!\n") ;                     \
             return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
                 "%s is freed: [%s]", kind, name))) ;                    \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
-            GBPR_MAGIC (object->magic) ;                                \
+            GBPR_MAGIC ("uninitialized object", object->magic) ;        \
             if (pr > 0) GBPR ("invalid\n") ;                            \
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
                 "%s is invalid: [%s]", kind, name))) ;                  \
@@ -1448,7 +1448,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M_in,          // optional matrix
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -1478,7 +1478,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M_in,          // mask matrix for C<M>=A*B
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -1505,7 +1505,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     const bool C_is_csc,            // desired CSR/CSC format of C
     GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
     const GrB_Matrix M_in,          // mask for C<M> (not complemented)
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A_in,          // input matrix
     const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -1522,16 +1522,33 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix M,                   // optional mask matrix
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const bool do_adotb,            // if true, do A'*B via dot products
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
-//  const GrB_Desc_Value AxB_slice, // how to slice B or A'
+    GrB_Desc_Value AxB_slice,       // how to slice B or A'
     GrB_Desc_Value *AxB_method_used,// method selected
     bool *mask_applied,             // if true, mask was applied
+    GB_Context Context
+) ;
+
+GrB_Info GB_slice       // slice B into nthreads slices
+(
+    GrB_Matrix B,       // matrix to slice
+    int nthreads,       // # of slices to create
+    int64_t *Slice,     // array of size nthreads+1 that defines the slice
+    GrB_Matrix *Bslice, // array of output slices, of size nthreads
+    GB_Context Context
+) ;
+
+GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
+(
+    GrB_Matrix *Chandle,    // output matrix C to create
+    int nthreads,           // # of slices to concatenate
+    GrB_Matrix *Cslice,     // array of slices of size nthreads
     GB_Context Context
 ) ;
 
@@ -1539,13 +1556,14 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix M,                   // optional mask matrix
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// already chosen
     const int64_t bjnz_max,         // for heap method only
+    const bool check_for_dense_mask,// if true, check floplimit for mask 
     bool *mask_applied,             // if true, mask was applied
     const int Sauna_id              // Sauna to use, for Gustavson method only
 ) ;
@@ -1579,8 +1597,8 @@ GrB_Info GB_AxB_Gustavson_builtin
 GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M_in,          // mask matrix for C<M>=A'*B
-    const bool Mask_comp,           // if true, use ~M
+    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -1603,7 +1621,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_replace,           // if true, clear C before writing to it
     const GrB_Matrix M,             // optional mask for C, unused if NULL
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Semiring semiring,    // defines '+' and '*' for C=A*B
     const GrB_Matrix A,             // input matrix
@@ -2119,7 +2137,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_replace,           // if true, clear C before writing to it
     const GrB_Matrix M,             // optional mask for C, unused if NULL
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // defines '*' for kron(A,B)
     const GrB_Matrix A,             // input matrix
@@ -2477,7 +2495,7 @@ char *GB_thread_local_access ( ) ;
 #define GB_RETURN_IF_QUICK_MASK(C, C_replace, M, Mask_comp)             \
     if (Mask_comp && M == NULL)                                         \
     {                                                                   \
-        /* C<~NULL>=NULL since result does not depend on computing Z */ \
+        /* C<!NULL>=NULL since result does not depend on computing Z */ \
         return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;      \
     }
 
@@ -3322,9 +3340,10 @@ static inline void GB_bracket
 // GB_lookup: find k so that j == Ah [k]
 //------------------------------------------------------------------------------
 
-// Given a standard or hypersparse matrix, find k so that j == Ah [k], if it
-// appears in the list.  k is not needed by the caller, just the variables
-// pstart, pend, pleft, and found.
+// Given a sparse, hypersparse, or hyperslice matrix, find k so that j == Ah
+// [k], if it appears in the list.  k is not needed by the caller, just the
+// variables pstart, pend, pleft, and found.  GB_lookup cannot be used if
+// A is a slice (it could be extended to handle this case).
 
 static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 (
@@ -3423,13 +3442,13 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 
     //--------------------
     // (1) standard     // A->is_hyper == false, A->is_slice == false
-                        // A->nvec == A->vdim
+                        // A->nvec == A->vdim, A->hfirst == 0
 
         for (k = 0 ; k < A->nvec ; k++)
         {
             j = k ;
             // operate on column A(:,j)
-            for (p = Ap [j] ; p < Ap [j+1] ; p++)
+            for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
                 // A(i,j) has row i = Ai [p], value aij = Ax [p]
             }
@@ -3437,7 +3456,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 
     //--------------------
     // (2) hypersparse  // A->is_hyper == true, A->is_slice == false
-                        // A->nvec <= A->dim
+                        // A->nvec <= A->dim, A->hfirst == 0 (ignored)
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -3450,7 +3469,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         }
 
     //--------------------
-    // (3) slice, of another standard matrix S. (FUTURE)
+    // (3) slice, of another standard matrix S.
                         // A->i == S->i, A->x == S->x
                         // A->p = S->p + A->hfirst, A->h is NULL
                         // A->nvec <= A->vdim == S->vdim
@@ -3458,7 +3477,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         for (k = 0 ; k < A->nvec ; k++)
         {
             j = A->hfirst + k ;
-            ASSERT (S->p [j] == Ap [k]) ;
             // operate on column A(:,j), which is also S (:,j)
             for (p = Ap [k] ; p < Ap [k+1] ; p++)
             {
@@ -3468,11 +3486,12 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         }
 
     //--------------------
-    // (4) hyperslice, of another hypersparse matrix S (FUTURE)
+    // (4) hyperslice, of another hypersparse matrix S
                         // A->i == S->i, A->x == S->x, A->p = S->p + kfirst,
                         // A->h == S->h + kfirst where A(:,0) is the same
                         // column as S->h [kfirst].  kfirst is not kept.
                         // A->nvec <= A->vdim == S->vdim
+                        // A->hfirst == 0 (ignored)
 
         for (k = 0 ; k < A->nvec ; k++)
         {
@@ -3493,7 +3512,7 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         GBI_for_each_vector (A)
         {
             // get A(:,j)
-            GBI_jth_iteration (j, pstart, pend)
+            GBI_jth_iteration (j, pstart, pend) ;
             // operate on column A(:,j)
             for (p = pstart ; p < pend ; p++)
             {
@@ -3507,17 +3526,16 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 // GBI_single_iterator: iterate over the vectors of a single matrix
 //------------------------------------------------------------------------------
 
-// The matrix may be standard sparse, hypersparse, slice, or hyperslice.
+// The matrix may be sparse, hypersparse, slice, or hyperslice.
 
 typedef struct
 {
     const int64_t *restrict p ; // vector pointer A->p of A
     const int64_t *restrict h ; // A->h: hyperlist of vectors in A
     int64_t nvec ;              // A->nvec: number of vectors in A
-    bool is_hyper ;             // true if A  is hypersparse
-//  FUTURE:: slice
-//  bool is_slice ;             // true if A [0] is a slice
-//  int64_t hfirst ;            // A->hfirst: first vector in slice A
+    int64_t hfirst ;            // A->hfirst: first vector in slice A
+    bool is_hyper ;             // true if A is hypersparse
+    bool is_slice ;             // true if A is a slice or hyperslice
 
 } GBI_single_iterator ;
 
@@ -3536,8 +3554,8 @@ static inline void GBI1_init
     Iter->p = A->p ;
     Iter->h = A->h ;
     Iter->nvec = A->nvec ;
-//  Iter->is_slice = A->is_slice ;          // FUTURE::
-//  Iter->hfirst = A->hfirst ;
+    Iter->is_slice = A->is_slice ;
+    Iter->hfirst = A->hfirst ;
 }
 
 //----------------------------------------
@@ -3554,11 +3572,9 @@ static inline void GBI1_start
 )
 {
 
-#if 0
-    // FUTURE:: slice and hyperslice
+    // get j: next vector from A
     if (Iter->is_slice)
     {
-        // get next vector from A
         if (Iter->is_hyper)
         {
             // A is a hyperslice of a hypersparse matrix
@@ -3571,18 +3587,15 @@ static inline void GBI1_start
         }
     }
     else
-#endif
     {
         if (Iter->is_hyper)
         { 
             // A is a hypersparse matrix
-            // get next vector from A
             (*j) = Iter->h [Iter_k] ;
         }
         else
         { 
             // A is a standard matrix
-            // get next vector from A
             (*j) = Iter_k ;
         }
     }
@@ -3621,8 +3634,7 @@ static inline void GBI1_start
 // GBIk_multi_iterator: iterate over vectors of multiple matrices
 //------------------------------------------------------------------------------
 
-// Any of the matrices may be standard sparse or hypersparse.  None can be a
-// slice or hyperslice.
+// Any matrix may be sparse or hypersparse.  None can be slice or hyperslice.
 
 typedef struct
 {
@@ -3668,7 +3680,7 @@ static inline void GBI3_init
     ASSERT (A->vdim == C->vdim) ;
 
     // GBI3_for_each_vector (A,B,C) is not used if any matrix is a slice
-    // ASSERT (!A->is_slice && !B->is_slice && !C->is_slice) ;
+    ASSERT (!A->is_slice && !B->is_slice && !C->is_slice) ;
 
     Iter->any_hyper = (A->is_hyper || B->is_hyper || C->is_hyper) ;
     Iter->j = 0 ;
@@ -3719,7 +3731,7 @@ static inline void GBI2_init
     ASSERT (A->vdim == B->vdim) ;
 
     // GBI2_for_each_vector (A,B) is not used if any matrix is a slice
-    // ASSERT (!A->is_slice && !B->is_slice) ;
+    ASSERT (!A->is_slice && !B->is_slice) ;
 
     Iter->any_hyper = (A->is_hyper || B->is_hyper) ;
     Iter->j = 0 ;
@@ -3777,7 +3789,7 @@ static inline void GBI2s_init
 { 
 
     // GBI2s_for_each_vector (A,scalar) is not used if the matrix is a slice
-    // ASSERT (!A->is_slice)
+    ASSERT (!A->is_slice)
 
     Iter->any_hyper = (A->is_hyper) ;
     Iter->j = 0 ;

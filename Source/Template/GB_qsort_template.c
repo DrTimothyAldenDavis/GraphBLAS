@@ -16,7 +16,7 @@
 // variant of GB_qsort*, with the same names.  They are called only by the
 // GB_qsort* function in the #include'ing file.
  
-// PARALLEL: need a task-based parallel quicksort
+// PARALLEL: TODO: use a larger leaf task size
 
 //------------------------------------------------------------------------------
 // GB_partition: use a pivot to partition an array
@@ -153,9 +153,9 @@ static void GB_quicksort_par    // sort A [0:n-1]
 
         // sort each partition
         #pragma omp task firstprivate(k)
-               GB_quicksort (GB_arg (A), k, seed) ;                // sort A [0:k-1]
+        GB_quicksort (GB_arg (A), k, seed) ;                // sort A [0:k-1]
         #pragma omp task firstprivate(k)
-               GB_quicksort (GB_arg_offset (A, k), n-k, seed) ;    // sort A [k+1:n-1]
+        GB_quicksort (GB_arg_offset (A, k), n-k, seed) ;    // sort A [k+1:n-1]
         #pragma omp taskwait
     }
 }
@@ -201,10 +201,10 @@ static void GB_quicksort_main   // sort A [0:n-1]
         // sort A [0:n-1] with multiple threads
         #pragma omp parallel num_threads(nthreads)
         {
-             #pragma omp single
-             {
-                      GB_quicksort_par (GB_arg (A), n, seed) ;
-             }
+            #pragma omp single
+            {
+                GB_quicksort_par (GB_arg (A), n, seed) ;
+            }
         }
     }
 
@@ -212,7 +212,7 @@ static void GB_quicksort_main   // sort A [0:n-1]
     if (n > 1000000)
     {
         t = omp_get_wtime ( ) - t ;
-        printf ("qsort with %d threads : %g sec\n", nthreads, t) ;
+        // printf ("qsort with %d threads : %g sec\n", nthreads, t) ;
     }
     #endif
 }

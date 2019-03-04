@@ -39,7 +39,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     const bool C_is_csc,            // desired CSR/CSC format of C
     GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
     const GrB_Matrix M_in,          // mask for C<M> (not complemented)
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A_in,          // input matrix
     const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -302,16 +302,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         { 
             // C<M> = A'*B via dot product method
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, true, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+                flipxy, true, AxB_method, GxB_DEFAULT, AxB_method_used,
+                mask_applied, Context)) ;
         }
         else
         { 
             // C<M> = A'*B via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, B, semiring,
-                flipxy, false, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+                flipxy, false, AxB_method, GxB_DEFAULT, AxB_method_used,
+                mask_applied, Context)) ;
         }
 
     }
@@ -328,16 +328,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
-                flipxy, true, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+                flipxy, true, AxB_method, GxB_DEFAULT, AxB_method_used,
+                mask_applied, Context)) ;
         }
         else
         { 
             // C<M> = A*B' via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, BT, semiring,
-                flipxy, false, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+                flipxy, false, AxB_method, GxB_DEFAULT, AxB_method_used,
+                mask_applied, Context)) ;
 
         }
 
@@ -354,15 +354,15 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C<M> = A*B via dot product
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, B, semiring,
-                flipxy, true, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+                flipxy, true, AxB_method, GxB_DEFAULT, AxB_method_used,
+                mask_applied, Context)) ;
         }
         else
         { 
             // C<M> = A*B via saxpy: Gustavson or heap method
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, false, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+                flipxy, false, AxB_method, GxB_DEFAULT, AxB_method_used,
+                mask_applied, Context)) ;
         }
     }
 

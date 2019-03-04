@@ -50,17 +50,11 @@ GrB_Info GB_Sauna_alloc             // create a Sauna
     Sauna->Sauna_n = Sauna_n ;
     Sauna->Sauna_size = Sauna_size ;
 
+    // note that Sauna_Work does not need to be initialized
     GB_CALLOC_MEMORY (Sauna->Sauna_Mark, Sauna_n+1, sizeof (int64_t), NULL) ;
-    bool ok = (Sauna->Sauna_Mark != NULL) ;
+    GB_MALLOC_MEMORY (Sauna->Sauna_Work, Sauna_n+1, Sauna_size) ;
 
-    if (ok && Sauna_size > 0)
-    { 
-        // Sauna_Work is not allocated if Sauna_size is zero
-        GB_MALLOC_MEMORY (Sauna->Sauna_Work, Sauna_n+1, Sauna_size) ;
-        ok = ok && (Sauna->Sauna_Work != NULL) ;
-    }
-
-    if (!ok)
+    if (Sauna->Sauna_Mark == NULL || Sauna->Sauna_Work == NULL)
     {
         // out of memory
         GB_Sauna_free (Sauna_id) ;

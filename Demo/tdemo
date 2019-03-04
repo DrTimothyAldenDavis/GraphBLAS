@@ -1,0 +1,4 @@
+#!/bin/sh
+
+../build/tri_demo < Matrix/bcsstk01
+../build/tri_demo 0 100000 100000 10000000 1

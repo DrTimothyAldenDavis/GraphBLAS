@@ -37,39 +37,12 @@
         int64_t ib_first = Bi [pB_start] ;
         int64_t ib_last  = Bi [pB_end-1] ;
 
-        if (A_is_hyper)
+        // for each vector A(:,i):
+        GBI_for_each_vector_with_iter (Iter_A, A)
         {
-
-            //------------------------------------------------------------------
-            // A is hypersparse
-            //------------------------------------------------------------------
-
-            // iterate over all non-empty vectors of A
-            for (int64_t ka = 0 ; ka < anvec ; ka++)
-            { 
-                // get the next vector A(:,i)
-                int64_t i = Ah [ka] ;
-                // C(i,j) = A(:,i)'*B(:,j)
-                int64_t pA     = Ap [ka] ;
-                int64_t pA_end = Ap [ka+1] ;
-                #include "GB_AxB_dot_cij.c"
-            }
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // A is non-hypersparse
-            //------------------------------------------------------------------
-
-            // iterate over all vectors of A
-            for (int64_t i = 0 ; i < anvec ; i++)
-            { 
-                // C(i,j) = A(:,i)'*B(:,j)
-                int64_t pA     = Ap [i] ;
-                int64_t pA_end = Ap [i+1] ;
-                #include "GB_AxB_dot_cij.c"
-            }
+            GBI_jth_iteration_with_iter (Iter_A, i, pA, pA_end) ;
+            // C(i,j) = A(:,i)'*B(:,j)
+            #include "GB_AxB_dot_cij.c"
         }
 
         //----------------------------------------------------------------------

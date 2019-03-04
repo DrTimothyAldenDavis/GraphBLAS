@@ -14,8 +14,9 @@
     const GB_btype *restrict Bx = B->x ;
 
     bool A_is_hyper = GB_IS_HYPER (A) ;
+    bool C_is_hyper = GB_IS_HYPER (C) ;
     bool M_is_hyper = GB_IS_HYPER (M) ;
-    if (A_is_hyper || GB_IS_HYPER (B) || GB_IS_HYPER (C) || M_is_hyper)
+    if (A_is_hyper || GB_IS_HYPER (B) || C_is_hyper || M_is_hyper)
     {
         #define GB_HYPER_CASE
         if (M != NULL)

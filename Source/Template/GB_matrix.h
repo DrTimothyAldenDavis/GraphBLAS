@@ -38,7 +38,7 @@ size_t type_size ;      // type->size, copied here since the type could be
 // compressed sparse vector data structure
 //------------------------------------------------------------------------------
 
-// The matrix can be held in one of 4 formats, each one consisting of a set of
+// The matrix can be held in one of 6 formats, each one consisting of a set of
 // sparse vectors.  The vector "names" are in the range 0 to A->vdim-1.  Each
 // vector has length A->vlen.  These two values define the dimension of the
 // matrix, where A is m-by-n.  The m and n dimenions are vlen and vdim for the
@@ -58,11 +58,17 @@ size_t type_size ;      // type->size, copied here since the type could be
 // 0 <= A->nvec_nonempty <= A->nvec always holds.  If not computed,
 // A->nvec_nonempty is equal to -1.
 
+//------------------------------------------------------------------------------
+// The Primary 4 formats:  (standard or hypersparse) * (CSR or CSC)
+//------------------------------------------------------------------------------
+
+// A->is_slice is false.  These are the only matrices returned to the user.
+
 // --------------------------------------
 // A->is_hyper is false: standard format.
 // --------------------------------------
 
-    // Ah is NULL, is_slice is false
+    // Ah is NULL
     // A->nvec == A->plen == A->vdim
 
     // --------------------------------------
@@ -97,7 +103,6 @@ size_t type_size ;      // type->size, copied here since the type could be
 
     // Ah is non-NULL and has size A->plen; it is always kept sorted,
     // A->nvec <= A->plen <= A->vdim
-    // is_slice is false
 
     // --------------------------------------
     // A->is_csc is true: hypersparse CSC format
@@ -131,28 +136,31 @@ size_t type_size ;      // type->size, copied here since the type could be
 
         // A is m-by-n: where A->vdim = n, and A->vlen = m
 
-// --------------------------------------
-// a slice or hyperslice
-// --------------------------------------
+//------------------------------------------------------------------------------
+// Internal formats: a slice or hyperslice (either CSR or CSC)
+//------------------------------------------------------------------------------
 
-        // is_slice is true
+    // A->is_slice is true.  This format is only used inside GraphBLAS, for
+    // internal slices or hyperslices of another matrix.
 
-        // Same as the hypersparse format, except that Ah may be NULL.
-        // All Ah, Ap, Ai, Ax content of the slice is shallow.
-        // Ap [0] == 0 only for the leftmost slice; it is normally >= 0.
+    // It is the same as the hypersparse format, except that Ah may be NULL.
+    // All Ah, Ap, Ai, Ax content of the slice is shallow.
+    // Ap [0] == 0 only for the leftmost slice; it is normally >= 0.
 
-        // slice: A->is_hyper is false
+    // slice: A->is_hyper is false
 
             // Ah is NULL: Ah [0..A->nvec-1] is implicitly the contiguous list:
             // [A->hfirst ... A->hfirst + A->nvec - 1].  The original matrix is
             // not hypersparse.  A->plen gives the size of Ap, as above.  Ap
             // points into an offset of p of the original matrix.
 
-        // hyperslice: A->is_hyper is true
+   // hyperslice: A->is_hyper is true
 
             // Ah is not-NULL.  The original matrix is hypersparse.  Ah points
             // to an offset inside the h of the original matrix.  A->hfirst is
             // zero, and not used.
+
+//------------------------------------------------------------------------------
 
 // Like MATLAB, the indices in a GraphBLAS matrix (as implemented here) are
 // "always" kept sorted.  There is one temporary exception to this rule.
@@ -207,11 +215,12 @@ int64_t *i ;            // array of size nzmax
 void *x ;               // size nzmax; each entry of size A->type->size
 int64_t nzmax ;         // size of i and x arrays
 
-// FUTURE:: hfirst, for a slice
-// int64_t hfirst ;     // if A->is_hyper is true, A->h can be NULL.
-                        // This defines an implicit list of size A->nvec,
-                        // where Ah [k] == A->hfirst + k.  It is only used
-                        // to create purely shallow slices of another matrix.
+int64_t hfirst ;        // if A->is_hyper is false but A->is_slice is true,
+                        // then A->h is NULL, and the matrix A is a slice
+                        // of another standard matrix S.  The vectors in
+                        // A are the contiguous list:
+                        // [A->hfirst ... A->hfirst+A->nvec-1].
+                        // Otherwise, A->hfirst is zero.
 
 // The hyper_ratio determines how the matrix is converted between the
 // hypersparse and non-hypersparse formats.  Let n = A->vdim and let k be the
@@ -394,6 +403,5 @@ bool x_shallow ;        // true if x is a shallow copy
 bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
 bool sorted_pending ;   // true if pending tuples are in sorted order
+bool is_slice ;         // true if the matrix is a slice or hyperslice
 
-// FUTURE:: A->is_slice is currently always false
-// bool is_slice ;      // true if the matrix is a slice

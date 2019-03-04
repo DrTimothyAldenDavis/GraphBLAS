@@ -34,7 +34,7 @@
 // The next step is C<M> = Z.
 
 // This denotes how the matrix Z is written into C, under the control of the
-// mask (or ~M if Mask_complement is true), and the C_replace flag (which
+// mask (or !M if Mask_complement is true), and the C_replace flag (which
 // indicates that C should be set to zero first.  This is C<M>=Z in
 // GraphBLAS notation.  See GB_mask.c, or GB_spec_mask.m for a MATLAB script
 // that describes this step.

@@ -45,73 +45,25 @@
         int64_t ib_first = Bi [pB_start] ;
         int64_t ib_last  = Bi [pB_end-1] ;
 
-        if (A_is_hyper)
+        // for each vector A(:,i):
+        GBI_for_each_vector_with_iter (Iter_A, A)
         {
+            GBI_jth_iteration_with_iter (Iter_A, i, pA, pA_end) ;
 
-            //------------------------------------------------------------------
-            // A is hypersparse
-            //------------------------------------------------------------------
-
-            // iterate over all non-empty vectors of A
-            for (int64_t ka = 0 ; ka < anvec ; ka++)
+            // A(:,i) and B(:,j) are both present.  Check M(i,j).
+            // TODO: skip binary search if mask is dense.
+            bool mij = false ;
+            bool found ;
+            int64_t pright = pM_end - 1 ;
+            GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+            if (found)
             {
-                // get the next vector A(:,i)
-                int64_t i = Ah [ka] ;
-                // get M(i,j), if present
-                bool mij = false ;
-
-                // FUTURE:: if nnz(M(:,j)) >> anvec: binary search for M(i,j) 
-
-                while (pM < pM_end && Mi [pM] < i)
-                { 
-                    // skip through M(:,j) until 
-                    pM++ ;
-                }
-                if (pM < pM_end && Mi [pM] == i)
-                { 
-                    // M(i,j) is present, get its value
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                    pM++ ;
-                }
-
-                if (!mij)
-                { 
-                    // C(i,j) = A(:,i)'*B(:,j)
-                    int64_t pA     = Ap [ka] ;
-                    int64_t pA_end = Ap [ka+1] ;
-                    #include "GB_AxB_dot_cij.c"
-                }
+                cast_M (&mij, Mx +(pM*msize), 0) ;
             }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // A is non-hypersparse
-            //------------------------------------------------------------------
-
-            // A->nvec == M->vlen, and the time is Omega(A->nvec).  Thus a
-            // dense column M(:,j) does not add a lot of extra cost.
-
-            // iterate over all vectors of A
-            for (int64_t i = 0 ; i < anvec ; i++)
-            {
-                // get M(i,j), if present
-                bool mij = false ;
-                if (pM < pM_end && i == Mi [pM])
-                { 
-                    // M(i,j) is present, get its value
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                    pM++ ;
-                }
-                if (!mij)
-                { 
-                    // C(i,j) = A(:,i)'*B(:,j)
-                    int64_t pA     = Ap [i] ;
-                    int64_t pA_end = Ap [i+1] ;
-                    #include "GB_AxB_dot_cij.c"
-                }
+            if (!mij)
+            { 
+                // C(i,j) = A(:,i)'*B(:,j)
+                #include "GB_AxB_dot_cij.c"
             }
         }
 

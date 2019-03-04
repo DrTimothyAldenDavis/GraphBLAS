@@ -59,23 +59,27 @@ void GB_AxB_select                  // select method for A*B or A'*B
         // C<M>=A*B), and both use the saxpy method.  They differ in the
         // workspace they use.  GB_AxB_heap uses a heap of size O(b), while
         // GB_AxB_Gustavson uses a Sauna (gather/scatter workspace) of size
-        // O(C->vlen).
+        // O(m) where m = C->vlen = A->vlen.
 
         // Let b = max (nnz (B (:,j))), for all j; the maximum number of
         // entries in any column of B.
 
         // GB_AxB_heap uses workspace of 5 * (b+1) * sizeof (int64_t).
 
-        // find the densest column of B
+        // find the densest column of B, also recount B->nvec_nonempty, since
+        // it may not yet be known.
         int64_t b = 0 ;
+        int64_t nvec_nonempty = 0 ;
         GBI_for_each_vector (B)
         { 
             GBI_jth_iteration (j, pB_start, pB_end) ;
             int64_t bjnz = pB_end - pB_start ;
             b = GB_IMAX (b, bjnz) ;
+            if (bjnz > 0) nvec_nonempty++ ;
         }
 
         (*bjnz_max) = b ;
+        B->nvec_nonempty = nvec_nonempty ;
 
         double heap_memory = GBYTES (b+1, 5 * sizeof (int64_t)) ;
 

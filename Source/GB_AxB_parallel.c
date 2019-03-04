@@ -49,8 +49,6 @@
 // C, M, A, and B are CSR/CSC agnostic.  For this discussion, suppose they
 // are CSC, with vlen = # of rows, and vdim = # of columns.
 
-// PARALLEL: A' or B is sliced, and the slices of C are concatenated.
-
 // FUTURE: The result of this function is the T matrix in GB_mxm.  It may be
 // transplanted directly into the user's matrix, or it may be passed through
 // GB_accum_mask.  See GB_mxm.  For the latter case, it would be better to
@@ -64,15 +62,15 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix M,                   // optional mask matrix
-    const bool Mask_comp,           // if true, use ~M
+    const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const bool do_adotb,            // if true, do A'*B via dot products
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
-//  const GrB_Desc_Value AxB_slice, // how to slice B or A'
-    GrB_Desc_Value *AxB_method_used,// method selected
+    GrB_Desc_Value AxB_slice,       // how to slice B or A'
+    GrB_Desc_Value *AxB_method_used,// method selected by thread zero
     bool *mask_applied,             // if true, mask was applied
     GB_Context Context
 )
@@ -100,7 +98,14 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
-    nthreads = 1 ;      // FUTURE:: add parallel phase
+
+    // TODO: this is just to test
+    // nthreads = GB_IMIN (4, B->nvec) ;
+    nthreads = (Context == NULL) ? 1 : Context->nthreads ;
+    if (nthreads <= GxB_DEFAULT) nthreads = GB_Global.nthreads_max ;
+    printf ("C=A*B: nthreads %d of %d\n", nthreads, GB_Global.nthreads_max) ;
+
+    bool check_for_dense_mask = true ;
 
     //==========================================================================
     // sequential C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B
@@ -108,48 +113,557 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     #define GB_FREE_ALL ;
 
-    // if (nthreads == 1)
+    if (nthreads == 1)
     {
 
         // do the entire computation with a single thread
 
         // select the method
-        // printf ("select the method %d\n", AxB_method) ;
         int64_t bjnz_max ;
         GB_AxB_select (A, B, semiring, do_adotb, AxB_method,
             AxB_method_used, &bjnz_max) ;
-
-        // printf ("selected method %d\n", *AxB_method_used) ;
 
         // acquire a Sauna if Gustavson's method is being used
         int Sauna_id = -2 ;
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
         {
-            // printf ("get sauna\n") ;
             GB_OK (GB_Sauna_acquire (1, &Sauna_id, AxB_method_used, Context)) ;
-            // printf ("got sauna %d\n", Sauna_id) ;
         }
 
         // C<M>=A*B or A'*B
         GrB_Info thread_info = GB_AxB_sequential (Chandle, M, Mask_comp,
-            A, B, semiring, flipxy, *AxB_method_used, bjnz_max, mask_applied,
-            Sauna_id) ;
-
-        // printf ("info from GB_AxB_sequential is %d\n", thread_info) ;
+            A, B, semiring, flipxy, *AxB_method_used, bjnz_max,
+            check_for_dense_mask, mask_applied, Sauna_id) ;
 
         // release the Sauna for Gustavson's method
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
         {
-            // printf ("release sauna\n") ;
             GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
-            // printf ("released sauna\n") ;
         }
 
         info = thread_info ;
-        // printf ("thread_info now is %d\n", info) ;
 
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
     }
 
+    //==========================================================================
+    // parallel C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B
+    //==========================================================================
+
+    int64_t Slice [nthreads+1] ;
+    GrB_Matrix Cslice [nthreads] ;
+    GrB_Matrix Bslice [nthreads] ;
+    GrB_Matrix Aslice [nthreads] ;
+
+    for (int t = 0 ; t < nthreads ; t++)
+    {
+        Slice [t] = 0 ;
+        Cslice [t] = NULL ;
+        Bslice [t] = NULL ;
+        Aslice [t] = NULL ;
+    }
+    Slice [nthreads] = 0 ;
+
+    #undef  GB_FREE_ALL
+    #define GB_FREE_ALL                         \
+    {                                           \
+        for (int t = 0 ; t < nthreads ; t++)    \
+        {                                       \
+            GB_MATRIX_FREE (& (Cslice [t])) ;   \
+            GB_MATRIX_FREE (& (Bslice [t])) ;   \
+            GB_MATRIX_FREE (& (Aslice [t])) ;   \
+        }                                       \
+    }
+
+    //--------------------------------------------------------------------------
+    // select the method for slicing B or A'
+    //--------------------------------------------------------------------------
+
+    int64_t anvec = A->nvec ;
+    int64_t avdim = A->vdim ;
+    int64_t avlen = A->vlen ;
+
+    int64_t bnvec = B->nvec ;
+    int64_t bvdim = B->vdim ;
+    int64_t bvlen = B->vlen ;
+
+    bool slice_A ;      // true if slicing A', false if slicing B
+
+    if (do_adotb)
+    { 
+
+        //----------------------------------------------------------------------
+        // select slicing method for A'*B
+        //----------------------------------------------------------------------
+
+        // C<M>=A'*B:  either slice the columns of B or rows of A'.  The dot
+        // product method will be used.  Slicing the columns of B is the same
+        // as for A*B, except that the flopcounts for each column of A*B are
+        // not simple to compute.  The *FINE methods would likely be overkill
+        // for the dot product.  Thus, the available methods are:
+
+        // GxB_SLICE_ATROW:      each slice of A' has same # of rows
+        // GxB_SLICE_ATNZ:       each slice of A' has same # of nonzeros
+        // GxB_SLICE_BCOL:       each slice of B has same # of columns
+        // GxB_SLICE_BNZ:        each slice of B has same # of nonzeros
+
+        // Note that the GxB_SLICE_BCOL and GxB_SLICE_BNZ methods can be used
+        // for both A'*B and A*B.
+
+        if (AxB_slice < GxB_SLICE_ATROW || AxB_slice > GxB_SLICE_BNZ)
+        { 
+            // invalid method, so use default rule instead
+            AxB_slice = GxB_DEFAULT ;
+        }
+
+        if (AxB_slice == GxB_DEFAULT)
+        { 
+            // select the method automatically for A'*B
+            // AxB_slice = GxB_SLICE_ATNZ ;
+            AxB_slice = GxB_SLICE_BNZ ;
+        }
+
+        // can slice A or B when computing A'*B
+        slice_A = (AxB_slice == GxB_SLICE_ATROW) ||
+                  (AxB_slice == GxB_SLICE_ATNZ) ;
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // select slicing method for A*B
+        //----------------------------------------------------------------------
+
+        // C<M>=A*B is being computed, with C, A, and B all in the same format
+        // (the comments here assume they are all CSC, but the methods are
+        // CSR/CSC agnostic).  When computing A*B, the matrix A cannot be
+        // sliced easily, but the flop counts for each column B(:,j) or even
+        // each entry B(k,j) can be computed.
+
+        // GxB_SLICE_BCOL:       each slice of B has same # of columns
+        // GxB_SLICE_BNZ:        each slice of B has same # of nonzeros
+        // GxB_SLICE_BFLOPS:     each slice of B has same # of flops
+
+        // FUTURE: GxB_SLICE_B*FINE not yet implemented
+        // GxB_SLICE_BNZFINE:    like BNZ but split inside columns of B
+        // GxB_SLICE_BFLOPSFINE: like BFLOPS but split inside columns of B
+
+        if (AxB_slice < GxB_SLICE_BCOL || AxB_slice > GxB_SLICE_BFLOPS)
+        { 
+            // invalid method, so use default rule instead
+            AxB_slice = GxB_DEFAULT ;
+        }
+
+        if (AxB_slice == GxB_DEFAULT)
+        { 
+            // select the method automatically for A*B
+            AxB_slice = GxB_SLICE_BFLOPS ;
+        }
+
+        // can only slice B when doing A*B
+        slice_A = false ;
+    }
+
+    //--------------------------------------------------------------------------
+    // find where to slice and compute C=A'*B or A*B accordingly.
+    //--------------------------------------------------------------------------
+
+    if (slice_A)
+    { 
+
+        //----------------------------------------------------------------------
+        // slice A' for C=A'*B
+        //----------------------------------------------------------------------
+
+
+        // thread t will do rows Slice [t] to Slice [t+1]-1 of A'
+        Slice [nthreads] = anvec ;
+
+        if (AxB_slice == GxB_SLICE_ATROW)
+        {
+
+            //------------------------------------------------------------------
+            // GxB_SLICE_ATROW:  slice A' by row
+            //------------------------------------------------------------------
+
+            // GxB_SLICE_ATROW:  slice A' so that each slice has a balanced # of
+            // rows per thread.  Each thread gets roughly anvec/nthreads rows.
+
+            for (int t = 1 ; t < nthreads ; t++)
+            { 
+                Slice [t] = ((t * (double) anvec) / (double) nthreads) ;
+            }
+
+        }
+        else // if (AxB_slice == GxB_SLICE_ATNZ)
+        {
+
+            //------------------------------------------------------------------
+            // GxB_SLICE_ATNZ: slice A' by nz
+            //------------------------------------------------------------------
+
+            // GxB_SLICE_ATNZ: slice A' so that each slice has a balanced # of
+            // entries per thread.  Each thread gets enough rows of A so that
+            // it has roughly anz/nthreads entries in its slice.  Do not split
+            // any row of A'.  Cheap, and likely better than GxB_SLICE_ATROW
+            // for most matrices.  This method will work well for GrB_mxv when
+            // A is stored by row and v is dense.
+
+            int64_t anz = GB_NNZ (A) ;
+            int64_t *Ap = A->p ;
+            int64_t pleft = 0 ;
+            for (int t = 1 ; t < nthreads ; t++)
+            { 
+                // binary search to find k so that Ap [k] == (t * anz) /
+                // nthreads.  The exact value will not typically not be found;
+                // just pick what the binary search comes up with.
+                int64_t nz = ((t * (double) anz) / (double) nthreads) ;
+                int64_t pright = anvec ;
+                GB_BINARY_TRIM_SEARCH (nz, Ap, pleft, pright) ;
+                Slice [t] = pleft ;
+            }
+        }
+
+        //----------------------------------------------------------------------
+        // construct each slice of A'
+        //----------------------------------------------------------------------
+
+        GB_OK (GB_slice (A, nthreads, Slice, Aslice, Context)) ;
+
+        //----------------------------------------------------------------------
+        // compute each slice of C = A'*B, with optional mask M
+        //----------------------------------------------------------------------
+
+        // only GxB_AxB_dot can be used here
+        (*AxB_method_used) = GxB_AxB_DOT ;
+
+        // for all threads in parallel, with no synchronization except
+        // for boolean reductions
+        bool ok = true ;
+        bool panic = false ;
+        bool allmask = true ;
+
+        #pragma omp parallel for num_threads(nthreads) \
+            reduction(&&:ok,allmask) reduction(||:panic)
+        for (int t = 0 ; t < nthreads ; t++)
+        { 
+            bool thread_mask_applied = false ;
+            GrB_Info thread_info = GB_AxB_dot (&(Cslice [t]), M, Mask_comp,
+                Aslice [t], B, semiring, flipxy, &thread_mask_applied) ;
+
+            // collect all thread-specific info 
+            ok      = ok      && (thread_info == GrB_SUCCESS) ;
+            allmask = allmask && (thread_mask_applied) ;
+            panic   = panic   || (thread_info == GrB_PANIC) ;
+        }
+
+        if (!ok)
+        { 
+            // out of memory, or panic if a critical section fails
+            return (panic ? GrB_PANIC : GB_OUT_OF_MEMORY) ;
+        }
+
+        // if all threads applied the mask to their slices, then GB_accum_mask
+        // does not need to apply it to the concatenated C in GB_AxB_meta.  If
+        // just some of them did, then GB_accum_mask needs to apply the mask
+        // again.  Currently, GB_AxB_dot always applies the mask if it is
+        // present, so the reduction is not needed (allmask == (M != NULL)),
+        // but the reduction is more flexible if this changes in the future.
+        (*mask_applied) = allmask ;
+
+        //----------------------------------------------------------------------
+        // concatenate the slices of C
+        //----------------------------------------------------------------------
+
+        // C = [Cslice(0) ; Cslice(1) ; ... ; Cslice(nthreads-1)] concatenated
+        // vertically.  Each slice Cslice(t) has the same dimensions as C, but
+        // each one contains entries that appear in a unique and contiguous
+        // subset of the rows of C.  C is stored by column.
+
+#if 0
+
+        /*
+        GB_OK (GB_vcat_slice (Chandle, nthreads, Cslice, Context)) ;
+        */
+#endif
+
+        printf ("TODO in progress\n") ;
+        fprintf (stderr, "TODO in progress\n") ;
+        // TODO ... this draft is incomplete
+        ASSERT (0) ;
+        abort ( ) ;
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // slice B for A*B or A'*B
+        //----------------------------------------------------------------------
+
+        // thread t will do columns Slice [t] to Slice [t+1]-1
+        Slice [nthreads] = bnvec ;
+
+        if (AxB_slice == GxB_SLICE_BCOL)
+        {
+
+            //------------------------------------------------------------------
+            // GxB_SLICE_BCOL: slice B by column
+            //------------------------------------------------------------------
+
+            // GxB_SLICE_BCOL:  slice B so that each slice has a balanced # of
+            // columns per thread.  Each thread gets roughly bnvec/nthreads
+            // columns.  Do not split any column.  Very cheap but not likely to
+            // perform well unless the matrices A and B have uniform nonzero
+            // pattern.
+
+            for (int t = 1 ; t < nthreads ; t++)
+            { 
+                Slice [t] = ((t * (double) bnvec) / (double) nthreads) ;
+            }
+
+        }
+        else if (AxB_slice == GxB_SLICE_BNZ)
+        { 
+
+            //------------------------------------------------------------------
+            // GxB_SLICE_BCOL: slice B by nz
+            //------------------------------------------------------------------
+
+            // GxB_SLICE_BNZ: slice B so that each slice has a balanced # of
+            // entries per thread.  Each thread gets enough columns of B so
+            // that it has roughly bnz/nthreads entries in its slice.  Do not
+            // split any column of B.  Cheap, and likely better than
+            // GxB_SLICE_BCOL for most matrices.
+
+            int64_t bnz = GB_NNZ (B) ;
+            int64_t *Bp = B->p ;
+            int64_t pleft = 0 ;
+            for (int t = 1 ; t < nthreads ; t++)
+            {
+                // binary search to find k so that Bp [k] == (t * bnz) /
+                // nthreads.  The exact value will not typically not be found;
+                // just pick what the binary search comes up with.
+                int64_t nz = ((t * (double) bnz) / (double) nthreads) ;
+                int64_t pright = bnvec ;
+                GB_BINARY_TRIM_SEARCH (nz, Bp, pleft, pright) ;
+                Slice [t] = pleft ;
+            }
+
+        }
+        else // if (AxB_slice == GxB_SLICE_BFLOPS)
+        { 
+
+            //------------------------------------------------------------------
+            // GxB_SLICE_BFLOPS: slice B by flops
+            //------------------------------------------------------------------
+
+            // GxB_SLICE_BFLOPS: slice B so that each slice has a balanced
+            // amount of flops, to compute its slice of C.  Each thread gets
+            // enough columns of B so that it has roughly total_flops /
+            // nthreads work to do.  This should give a very good load balance,
+            // but at the cost of a more expensive symbolic analysis, taking
+            // O(bnz) time.  The analysis is itself fully parallel, however.
+            // This can only be done when computing A*B, not A'*B.
+
+            int64_t *Bflops ;
+            GB_MALLOC_MEMORY (Bflops, bnvec+1, sizeof (int64_t)) ;
+            if (Bflops == NULL)
+            { 
+                // out of memory
+                GB_FREE_ALL ;
+                return (GB_OUT_OF_MEMORY) ;
+            }
+            GB_AxB_flopcount (Bflops, (Mask_comp) ? NULL : M, A, B, 0, Context);
+            int64_t total_flops = Bflops [bnvec] ;
+            int64_t pleft = 0 ;
+            for (int t = 1 ; t < nthreads ; t++)
+            { 
+                // binary search to find k so that Bflops [k] == f.
+                // The exact value will not typically not be found;
+                // just pick what the binary search comes up with.
+                int64_t f = ((t * (double) total_flops) / (double) nthreads) ;
+                int64_t pright = bnvec ;
+                GB_BINARY_TRIM_SEARCH (f, Bflops, pleft, pright) ;
+                Slice [t] = pleft ;
+            }
+            if (M != NULL && total_flops < GB_NNZ (M))
+            { 
+                // Discard the mask, it is too costly to use.
+                // mask_applied will be false.
+                M = NULL ;
+            }
+            // the condition flops < nnz(M) has already been checked
+            check_for_dense_mask = false ;
+            GB_FREE_MEMORY (Bflops, bnvec+1, sizeof (int64_t)) ;
+
+        }
+
+        #if 0
+        else if (AxB_slice == GxB_SLICE_BNZFINE)
+        {
+
+            //------------------------------------------------------------------
+            // GxB_SLICE_BNZFINE:  slice B by nz (split columns of B)
+            //------------------------------------------------------------------
+
+            // GxB_SLICE_BNZFINE:  slice B so that each slice has nearly
+            // exactly balanced number of entries.  Individual columns of B may
+            // need to be sliced inside, and shared between different threads,
+            // so the last column of Bslice[t] and the first column of
+            // Bslice[t+1] might be the same column.  If shared between just
+            // two threads, then some first low-numbered row indices would be
+            // owned by thread t, and the higher-numbered ones would be owned
+            // by thread t+1.  The resulting Cslices must be summed, not
+            // concatenated.  This method will work well when B is a single
+            // column, which will be important for sparse matrix times sparse
+            // vector (as in BFS): vxm when the matrix is CSR, or mxv when the
+            // matrix is CSC (in both cases where the matrix is not transposed
+            // with the descriptor).  In both cases, v is the matrix B, here.
+
+            // FUTURE not yet implemented
+
+        }
+        else if (AxB_slice == GxB_SLICE_BFLOPSFINE)
+        {
+
+            //------------------------------------------------------------------
+            // GxB_SLICE_BFLOPSFINE:  slice B by flops (split columns of B)
+            //------------------------------------------------------------------
+
+            // GxB_SLICE_BFLOPSFINE:  slice B so that each slice has nearly
+            // exactly balanced amount of flops to compute its slice of C.
+            // Each thread gets exactly the number of entries so that it does
+            // total_flops/nthreads work (rounded to the nearest number of
+            // entries in B).  Otherwise, the same as GxB_SLICE_BNZFINE.  This
+            // method may be overkill.  GxB_SLICE_BNZFINE might be enough.
+
+            // FUTURE not yet implemented (perhaps never)
+
+        }
+        #endif
+
+        //----------------------------------------------------------------------
+        // construct each slice of B
+        //----------------------------------------------------------------------
+
+        GB_OK (GB_slice (B, nthreads, Slice, Bslice, Context)) ;
+
+        //----------------------------------------------------------------------
+        // select the method for each slice
+        //----------------------------------------------------------------------
+
+        GrB_Desc_Value AxB_methods_used [nthreads] ;
+        int64_t bjnz_max [nthreads] ;
+        int Sauna_ids [nthreads] ;
+
+        bool any_Gustavson = false ;
+        #pragma omp parallel for num_threads(nthreads) \
+            reduction(||:any_Gustavson)
+        for (int t = 0 ; t < nthreads ; t++)
+        { 
+            GrB_Desc_Value thread_method_to_use = 0 ;
+            GB_AxB_select (A, Bslice [t], semiring, false, AxB_method,
+                &thread_method_to_use, &(bjnz_max [t])) ;
+            AxB_methods_used [t] = thread_method_to_use ;
+
+            // collect all thread-specific info
+            any_Gustavson = any_Gustavson ||
+                (thread_method_to_use == GxB_AxB_GUSTAVSON) ;
+        }
+
+        (*AxB_method_used) = AxB_methods_used [0] ;
+
+        //----------------------------------------------------------------------
+        // acquire the Saunas for each thread that needs it
+        //----------------------------------------------------------------------
+
+        if (any_Gustavson)
+        { 
+            // at least one thread needs a Sauna
+            GB_OK (GB_Sauna_acquire (nthreads, Sauna_ids, AxB_methods_used,
+                Context)) ;
+        }
+        else
+        {
+            // no thread needs a Sauna
+            for (int t = 0 ; t < nthreads ; t++)
+            { 
+                Sauna_ids [t] = -2 ;
+            }
+        }
+
+        //----------------------------------------------------------------------
+        // compute each slice of C = A*B or A'*B, with optional mask M
+        //----------------------------------------------------------------------
+
+        // for all threads in parallel, with no synchronization except
+        // for these boolean reductions:
+        bool ok = true ;
+        bool panic = false ;
+        bool allmask = true ;
+
+        #pragma omp parallel for num_threads(nthreads) \
+            reduction(&&:ok,allmask) reduction(||:panic)
+        for (int t = 0 ; t < nthreads ; t++)
+        { 
+            bool thread_mask_applied = false ;
+            GrB_Info thread_info = GB_AxB_sequential (&(Cslice [t]), M,
+                Mask_comp, A, Bslice [t], semiring, flipxy,
+                AxB_methods_used [t], bjnz_max [t], check_for_dense_mask,
+                &thread_mask_applied, Sauna_ids [t]) ;
+
+            // collect all thread-specific info
+            ok      = ok      && (thread_info == GrB_SUCCESS) ;
+            allmask = allmask && (thread_mask_applied) ;
+            panic   = panic   || (thread_info == GrB_PANIC) ;
+        }
+
+        // panic if a critical section fails
+        if (panic) return (GrB_PANIC) ;
+
+        // if all threads applied the mask to their slices, then GB_accum_mask
+        // does not need to apply it to the concatenated C in GB_AxB_meta.  If
+        // just some of them did, then GB_accum_mask needs to apply the mask
+        // again.
+        (*mask_applied) = allmask ;
+
+        //----------------------------------------------------------------------
+        // release the Saunas, if any
+        //----------------------------------------------------------------------
+
+        if (any_Gustavson)
+        { 
+            // at least one thread used a Sauna; release all Sauna workspaces
+            GB_OK (GB_Sauna_release (nthreads, Sauna_ids)) ;
+        }
+
+        // check the return info from all the threads
+        if (!ok)
+        { 
+            // out of memory
+            return (GB_OUT_OF_MEMORY) ;
+        }
+
+        //----------------------------------------------------------------------
+        // concatenate the slices of C
+        //----------------------------------------------------------------------
+
+        // C = [Cslice(0) Cslice(1) ... Cslice(nthreads-1)] concatenatied
+        // horizontally.  Each slice Cslice(t) has the same dimensions as C,
+        // but each one contains entries that appear in a unique and contiguous
+        // subset of the columns of C.  C is stored by column.
+
+        GB_OK (GB_hcat_slice (Chandle, nthreads, Cslice, Context)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_ALL ;
+    ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
+    return (GrB_SUCCESS) ;
 }
 

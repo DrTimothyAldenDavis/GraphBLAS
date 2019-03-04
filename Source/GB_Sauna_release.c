@@ -7,6 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+// A set of threads has finished computing C=A*B, and can now release their
+// thread-specific Sauna workspaces.  This does not need to be done in a
+// critical section, but doing so keeps the Sauna acquire/release in a single
+// batch, for each group of threads.  Another user thread can start C=A*B just
+// as these Saunas are being released, which would lead to an intermingled set
+// of Saunas.  It would work just fine, but might not be optimal.  The critical
+// section is very short.
+
 #include "GB.h"
 
 GrB_Info GB_Sauna_release
