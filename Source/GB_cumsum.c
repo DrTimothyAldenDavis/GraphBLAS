@@ -59,9 +59,11 @@ void GB_cumsum                  // compute the cumulative sum of an array
     // count = cumsum ([0 count[0:n-1]]) ;
     //--------------------------------------------------------------------------
 
+    // both loops must be done in parallel
+
     if (kresult == NULL)
     { 
-        // do not compute k.  This loop is essential to parallelize.
+        // do not compute k
         int64_t s = 0 ;
         for (int64_t i = 0 ; i <= n ; i++)
         { 
@@ -72,9 +74,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
     }
     else
     { 
-        // also compute k as the # of nonzeros in count [0:n].  Note that
-        // the bucket transpose need not be parallel, so it is not essential
-        // to parallelize the following code.
+        // also compute k as the # of nonzeros in count [0:n]
         int64_t k = 0 ;
         int64_t s = 0 ;
         for (int64_t i = 0 ; i <= n ; i++)
