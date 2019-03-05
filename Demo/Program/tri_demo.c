@@ -97,7 +97,7 @@ int main (int argc, char **argv)
     printf ("L=tril(A) time:  %14.6f sec\n", t_L) ;
     OK (GrB_free (&A)) ;
 
-    #define NTHREADS 4
+    #define NTHREADS 24
     int64_t ntri2 [NTHREADS+1] ;
     double t1 ;
 

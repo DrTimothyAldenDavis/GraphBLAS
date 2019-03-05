@@ -318,6 +318,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         Bflops [bnvec] = 0 ;
         GB_cumsum (Bflops, bnvec, NULL, Context) ;
         // Bflops [bnvec] is now the total flop count
+        printf ("flop count %g\n", (double) Bflops [bnvec]) ;
         return (Bflops [bnvec] <= floplimit) ;
     }
 }
