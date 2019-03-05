@@ -94,6 +94,7 @@ GrB_Info tricount           // count # of triangles
     GrB_UnaryOp Two = NULL ;
     GrB_Matrix S = NULL, C = NULL ;
     GrB_Descriptor d = NULL ;
+    OK (GrB_Descriptor_new (&d)) ;
 
     switch (method)
     {
@@ -103,7 +104,8 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_ncols (&ne, E)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, ne)) ;
             // mxm:  outer product method, no mask
-            OK (GrB_mxm (C, NULL, NULL, GxB_PLUS_TIMES_UINT32, A, E, NULL));
+            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GrB_mxm (C, NULL, NULL, GxB_PLUS_TIMES_UINT32, A, E, d)) ;
             t [0] = simple_toc (tic) ;
 
             simple_tic (tic) ;
@@ -119,7 +121,8 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, A)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             // mxm:  outer product method, with mask
-            OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, A, A, NULL)) ;
+            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, A, A, d)) ;
             t [0] = simple_toc (tic) ;
 
             simple_tic (tic) ;
@@ -132,7 +135,8 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, A)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             // mxm:  outer product method, with mask
-            OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, L, U, NULL)) ;
+            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, L, U, d)) ;
             t [0] = simple_toc (tic) ;
 
             simple_tic (tic) ;
@@ -144,6 +148,7 @@ GrB_Info tricount           // count # of triangles
 
             OK (GrB_Matrix_nrows (&n, L)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
+            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
             OK (GrB_mxm (C, L, NULL, GxB_PLUS_TIMES_UINT32, L, L, d)) ;
             t [0] = simple_toc (tic) ;
 
@@ -156,7 +161,8 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, U)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             // mxm:  outer product method, with mask
-            OK (GrB_mxm (C, U, NULL, GxB_PLUS_TIMES_UINT32, U, U, NULL)) ;
+            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GrB_mxm (C, U, NULL, GxB_PLUS_TIMES_UINT32, U, U, d)) ;
             t [0] = simple_toc (tic) ;
 
             simple_tic (tic) ;
@@ -170,6 +176,7 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Descriptor_new (&d)) ;
             OK (GxB_set (d, GrB_INP1, GrB_TRAN)) ;
             // mxm:  dot product method, with mask
+            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
             OK (GrB_mxm (C, L, NULL, GxB_PLUS_TIMES_UINT32, L, U, d)) ;
             t [0] = simple_toc (tic) ;
 

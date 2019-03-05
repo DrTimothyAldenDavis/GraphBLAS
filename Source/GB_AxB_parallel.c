@@ -90,6 +90,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_OK (GB_check (semiring, "semiring for parallel A*B", GB0)) ;
     ASSERT (AxB_method_used != NULL) ;
+    printf ("AxB_method, descriptor: %d\n", AxB_method) ;
 
     GrB_Info info ;
 
@@ -122,6 +123,8 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         int64_t bjnz_max ;
         GB_AxB_select (A, B, semiring, do_adotb, AxB_method,
             AxB_method_used, &bjnz_max) ;
+
+        printf ("one thread, method %d\n", *AxB_method_used) ;
 
         // acquire a Sauna if Gustavson's method is being used
         int Sauna_id = -2 ;
@@ -564,7 +567,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         for (int t = 0 ; t < nthreads ; t++)
         { 
             GrB_Desc_Value thread_method_to_use = 0 ;
-            GB_AxB_select (A, Bslice [t], semiring, false, AxB_method,
+            GB_AxB_select (A, Bslice [t], semiring, do_adotb, AxB_method,
                 &thread_method_to_use, &(bjnz_max [t])) ;
             AxB_methods_used [t] = thread_method_to_use ;
 
@@ -574,6 +577,11 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         }
 
         (*AxB_method_used) = AxB_methods_used [0] ;
+
+        for (int t = 0 ; t < nthreads ; t++)
+        {
+            printf ("thread %d method %d\n", t, AxB_methods_used [t]) ;
+        }
 
         //----------------------------------------------------------------------
         // acquire the Saunas for each thread that needs it
