@@ -142,7 +142,7 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     }
 
     //--------------------------------------------------------------------------
-    // finalize the matrix, free workspace and return
+    // finalize the matrix
     //--------------------------------------------------------------------------
 
     C->magic = GB_MAGIC ;
