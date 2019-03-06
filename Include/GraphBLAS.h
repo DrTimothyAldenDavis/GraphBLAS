@@ -70,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Feb 25, 2019"
+#define GxB_DATE "Mar 5c, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 3
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3099,10 +3099,10 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
     _Generic                                            \
     (                                                   \
         (arg1),                                         \
-            int              : GxB_Global_Option_set ,  \
-            GxB_Option_Field : GxB_Global_Option_set ,  \
-            GrB_Matrix       : GxB_Matrix_Option_set ,  \
-            GrB_Descriptor   : GxB_Desc_set             \
+              int              : GxB_Global_Option_set ,  \
+              GxB_Option_Field : GxB_Global_Option_set ,  \
+              GrB_Matrix       : GxB_Matrix_Option_set ,  \
+              GrB_Descriptor   : GxB_Desc_set          ,  \
     )                                                   \
     (arg1, __VA_ARGS__)
 
@@ -3110,10 +3110,14 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
     _Generic                                            \
     (                                                   \
         (arg1),                                         \
-            int              : GxB_Global_Option_get ,  \
-            GxB_Option_Field : GxB_Global_Option_get ,  \
-            GrB_Matrix       : GxB_Matrix_Option_get ,  \
-            GrB_Descriptor   : GxB_Desc_get             \
+        const int              : GxB_Global_Option_get ,  \
+              int              : GxB_Global_Option_get ,  \
+        const GxB_Option_Field : GxB_Global_Option_get ,  \
+              GxB_Option_Field : GxB_Global_Option_get ,  \
+        const GrB_Matrix       : GxB_Matrix_Option_get ,  \
+              GrB_Matrix       : GxB_Matrix_Option_get ,  \
+        const GrB_Descriptor   : GxB_Desc_get          ,  \
+              GrB_Descriptor   : GxB_Desc_get             \
     )                                                   \
     (arg1, __VA_ARGS__)
 

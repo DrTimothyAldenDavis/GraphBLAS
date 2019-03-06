@@ -11,7 +11,7 @@
 
 #include "GB.h"
 
-GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
+GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
 (
     GrB_Matrix *Chandle,    // output matrix C to create
     int nthreads,           // # of slices to concatenate
@@ -19,9 +19,6 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
     GB_Context Context
 )
 {
-    abort ( ) ; // TODO
-
-#if 0
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -38,7 +35,7 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
         ASSERT (!GB_ZOMBIES (Cslice [t])) ;
         ASSERT ((Cslice [t])->is_hyper) ;
         // each Cslice [t] is constructed as its own matrix, with Cslice [t] =
-        // A * Bslice [t].  It is not a slice of an other matrix, so Cslice
+        // Aslice [t] * B.  It is not a slice of an other matrix, so Cslice
         // [t]->is_slice is false.
         ASSERT (!(Cslice [t])->is_slice) ;
         ASSERT ((Cslice [t])->type == (Cslice [0])->type) ;
@@ -56,8 +53,8 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
     int64_t  cvdim = (Cslice [0])->vdim ;
     size_t   csize = ctype->size ;
 
-    int64_t cnz = 0 ;
-    int64_t cnvec = 0 ;             // max # of vectors, not total
+    int64_t cnz = 0 ;               // sum of nnz (Cslice [0..nthreads-1])
+    int64_t cnvec = 0 ;             // sum of # vectors in Cslices, not in C
     int64_t cnvec_nonempty = 0 ;    // computed later
 
     for (int t = 0 ; t < nthreads ; t++)
@@ -71,9 +68,14 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
     // merge the vectors of C
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
+    // TODO: do hypersparse case.  The standard sparse case will work for all
+    // cases, but it can take too much time if C and the Cslices are very
+    // hypersparse.
 
-    if (cnvec >= cvlen/16)
+    GrB_Info info ;
+    GrB_Matrix C = NULL ;
+
+    // if (cnvec >= cvlen/8)
     {
 
         //----------------------------------------------------------------------
@@ -90,12 +92,14 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
             return (GB_OUT_OF_MEMORY) ;
         }
 
+        C = (*Chandle) ;
+
         //----------------------------------------------------------------------
         // allocate workspace
         //----------------------------------------------------------------------
 
         int64_t *restrict Tp = NULL ;
-        GB_MALLOC_MEMORY (Tp, n, sizeof (int64_t)) ;
+        GB_MALLOC_MEMORY (Tp, cvdim+1, sizeof (int64_t)) ;
         if (Tp == NULL)
         {
             // out of memory
@@ -108,56 +112,59 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
         GB_void *restrict Cx = C->x ;
 
         //----------------------------------------------------------------------
-        // count the entries in each column of C
+        // 1st phase: count the entries in each column of C
         //----------------------------------------------------------------------
+
+        // Note the parallelism is in the inner loop, not the outer one,
+        // because of the reduction on Cp [j].  Also in the 2nd phase below.
 
         for (int t = 0 ; t < nthreads ; t++)
         {
-            int64_t *restrict Csliceh = (Cslice [t])->h ;
-            int64_t *restrict Cslicep = (Cslice [t])->p ;
+            int64_t *restrict Cslice_h = (Cslice [t])->h ;
+            int64_t *restrict Cslice_p = (Cslice [t])->p ;
             int64_t cslice_nvec = (Cslice [t])->nvec ;
 
             #pragma omp parallel for
             for (int64_t k = 0 ; k < cslice_nvec ; k++)
             {
                 // sum up the number of entries in C(:,j)
-                int64_t j = Csliceh [k] ;
-                int64_t csjnz = Cslicep [k+1] - Cslicep [k] ;
+                int64_t j = Cslice_h [k] ;
+                int64_t csjnz = Cslice_p [k+1] - Cslice_p [k] ;
                 Cp [j] += csjnz ;
             }
         }
 
         //----------------------------------------------------------------------
-        // Tp = Cp = cumsum (Cp)
+        // Tp = Cp = cumsum (Cp), and also compute C->nvec_nonempty
         //----------------------------------------------------------------------
 
         GB_cumsum (Cp, cvdim, &cnvec_nonempty, Context) ;
         C->nvec_nonempty = cnvec_nonempty ;
-        memcpy (Tp, Cp, n * sizeof (int64_t)) ;
+        memcpy (Tp, Cp, (cvdim+1) * sizeof (int64_t)) ;
 
         //----------------------------------------------------------------------
-        // copy each slice into C
+        // 2nd phase: copy each slice into C
         //----------------------------------------------------------------------
 
         for (int t = 0 ; t < nthreads ; t++)
         {
-            int64_t *restrict Csliceh = (Cslice [t])->h ;
-            int64_t *restrict Cslicep = (Cslice [t])->p ;
-            int64_t *restrict Cslicei = (Cslice [t])->i ;
-            GB_void *restrict Cslicex = (Cslice [t])->x ;
+            int64_t *restrict Cslice_h = (Cslice [t])->h ;
+            int64_t *restrict Cslice_p = (Cslice [t])->p ;
+            int64_t *restrict Cslice_i = (Cslice [t])->i ;
+            GB_void *restrict Cslice_x = (Cslice [t])->x ;
             int64_t cslice_nvec = (Cslice [t])->nvec ;
 
             #pragma omp parallel for
             for (int64_t k = 0 ; k < cslice_nvec ; k++)
             {
                 // copy the entries into C(:,j)
-                int64_t j = Csliceh [k] ;
-                int64_t pslice = Cslicep [k] ;
-                int64_t csjnz = Cslicep [k+1] - pslice ;
+                int64_t j = Cslice_h [k] ;
+                int64_t pslice = Cslice_p [k] ;
+                int64_t csjnz = Cslice_p [k+1] - pslice ;
                 int64_t p = Tp [j] ;
+                memcpy (Ci + p, Cslice_i + pslice, csjnz * sizeof (int64_t)) ;
+                memcpy (Cx + p*csize, Cslice_x + pslice*csize, csjnz * csize) ;
                 Tp [j] += csjnz ;
-                memcpy (Ci + p, Cslicei + pslice, csjnz * sizeof (int64_t)) ;
-                memcpy (Cx + p*csize, Cslicex + pslice*csize, csjnz * csize) ;
             }
         }
 
@@ -165,9 +172,10 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
         // free workspace
         //----------------------------------------------------------------------
 
-        GB_FREE_MEMORY (Tp, n, sizeof (int64_t)) ;
-
+        GB_FREE_MEMORY (Tp, cvdim+1, sizeof (int64_t)) ;
     }
+
+    #if 0
     else
     {
 
@@ -184,15 +192,14 @@ GrB_Info GB_vcat_slice      // horizontal concatenation of the slices of C
         ASSERT (0) ;
         abort ( ) ;
     }
+    #endif
 
     //--------------------------------------------------------------------------
-    // finalize the matrix, free workspace and return
+    // finalize the matrix
     //--------------------------------------------------------------------------
 
     C->magic = GB_MAGIC ;
     ASSERT_OK (GB_check (C, "C from horizontal concatenation", GB0)) ;
-#endif
-
     return (GrB_SUCCESS) ;
 }
 

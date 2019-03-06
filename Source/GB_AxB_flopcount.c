@@ -50,7 +50,7 @@
 
 /*
     [m n] = size (B) ;
-    Bflops = zeros (1,n+1) ;
+    Bflops = zeros (1,n+1) ;        % (set to zero in the caller)
     for each column j in B:
         if (B (:,j) is empty) continue ;
         if (M is present and M (:,j) is empty) continue ;
@@ -82,7 +82,7 @@
 
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 (
-    int64_t *Bflops,            // size B->nvec+1, if present
+    int64_t *Bflops,            // size B->nvec+1 and all zero, if present
     const GrB_Matrix M,         // optional mask matrix
     const GrB_Matrix A,
     const GrB_Matrix B,
@@ -108,12 +108,20 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+
+    #ifndef NDEBUG
     if (Bflops == NULL)
     {
         // a single thread is testing the condition (total_flops <= floplimit)
         ASSERT (Context == NULL) ;
         ASSERT (nthreads == 1) ;
     }
+    else
+    {
+        // Bflops is set to zero in the calller
+        for (int64_t kk = 0 ; kk <= bnvec ; kk++) ASSERT (Bflops [kk] == 0) ;
+    }
+    #endif
 
     //--------------------------------------------------------------------------
     // get the mask, if present
@@ -184,14 +192,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
         // C(:,j) is empty if B(:,j) is empty
         int64_t bjnz = pB_end - pB ;
-        if (bjnz == 0)
-        {
-            if (Bflops != NULL)
-            { 
-                Bflops [kk] = 0 ;
-            }
-            continue ;
-        }
+        if (bjnz == 0) continue ;           // Bflops [kk] already zero
 
         //----------------------------------------------------------------------
         // see if M(:,j) is present and non-empty
@@ -212,15 +213,8 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
             int64_t pM, pM_end ;
             GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
             int64_t mjnz = pM_end - pM ;
-            if (mjnz == 0)
-            {
-                // C(:,j) is empty if M(:,j) is empty
-                if (Bflops != NULL)
-                { 
-                    Bflops [kk] = 0 ;
-                }
-                continue ;
-            }
+            // C(:,j) is empty if M(:,j) is empty
+            if (mjnz == 0) continue ;       // Bflops [kk] already zero
             // M(:,j) has at least one entry; get 1st and last index in M(:,j)
             im_first = Mi [pM] ;
             im_last  = Mi [pM_end-1] ;
@@ -274,9 +268,11 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
                 if (ahi < im_first || alo > im_last) continue ;
             }
 
-            // increment by flops to compute the saxpy operation
+            // increment by flops for the single entry B(k,j)
             // C(:,j)<M(:,j)> += A(:,k)*B(k,j).
             bjflops += aknz ;
+
+            // FUTURE: Bflops_per_entry [pB] = aknz ; // flops for B(k,j)
 
             // check for a quick return
             if (Bflops == NULL)
@@ -315,7 +311,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     else
     {
         // Bflops = cumsum ([0 Bflops]) ;
-        Bflops [bnvec] = 0 ;
+        ASSERT (Bflops [bnvec] == 0) ;
         GB_cumsum (Bflops, bnvec, NULL, Context) ;
         // Bflops [bnvec] is now the total flop count
         printf ("flop count %g\n", (double) Bflops [bnvec]) ;

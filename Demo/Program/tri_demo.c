@@ -97,11 +97,15 @@ int main (int argc, char **argv)
     printf ("L=tril(A) time:  %14.6f sec\n", t_L) ;
     OK (GrB_free (&A)) ;
 
-    #define NTHREADS 24
-    int64_t ntri2 [NTHREADS+1] ;
+    int nthreads_max = 1 ;
+    #if defined ( _OPENMP )
+    nthreads_max = omp_get_max_threads ( ) ;
+    #endif
+
+    int64_t ntri2 [nthreads_max+1] ;
     double t1 ;
 
-    for (int nthreads = 1 ; nthreads <= NTHREADS ; nthreads++)
+    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads++)
     {
         GxB_set (GxB_NTHREADS, nthreads) ;
 
@@ -148,9 +152,9 @@ int main (int argc, char **argv)
 
     printf ("\n----------------------------------- saxpy method:\n") ;
 
-    int64_t ntri1 [NTHREADS+1] ;
+    int64_t ntri1 [nthreads_max+1] ;
 
-    for (int nthreads = 1 ; nthreads <= NTHREADS ; nthreads++)
+    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads++)
     {
         GxB_set (GxB_NTHREADS, nthreads) ;
 

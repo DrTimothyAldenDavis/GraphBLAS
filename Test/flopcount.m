@@ -7,7 +7,7 @@ function flops = flopcount (M,A,B) ;
 % flopcount, if B is m-by-n.
 %
 % Each 'flop' counted is actually a multiply-add pair.  M can be [ ].  This
-% function returns the same thing as GB_AxB_flopcounts.
+% function returns the same thing as GB_AxB_flopcount.
 
 n = size (B,2) ;
 flops = zeros (1,n) ;

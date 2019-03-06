@@ -90,7 +90,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_OK (GB_check (semiring, "semiring for parallel A*B", GB0)) ;
     ASSERT (AxB_method_used != NULL) ;
-    printf ("AxB_method, descriptor: %d\n", AxB_method) ;
+    // printf ("AxB_method, descriptor: %d\n", AxB_method) ;
 
     GrB_Info info ;
 
@@ -100,19 +100,122 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GB_GET_NTHREADS (nthreads, Context) ;
 
-    // TODO: this is just to test
-    // nthreads = GB_IMIN (4, B->nvec) ;
-    nthreads = (Context == NULL) ? 1 : Context->nthreads ;
-    if (nthreads <= GxB_DEFAULT) nthreads = GB_Global.nthreads_max ;
-    printf ("C=A*B: nthreads %d of %d\n", nthreads, GB_Global.nthreads_max) ;
+    //--------------------------------------------------------------------------
+    // select the method for slicing B or A'
+    //--------------------------------------------------------------------------
 
-    bool check_for_dense_mask = true ;
+    int64_t anvec = A->nvec ;
+    int64_t avdim = A->vdim ;
+    int64_t avlen = A->vlen ;
+
+    int64_t bnvec = B->nvec ;
+    int64_t bvdim = B->vdim ;
+    int64_t bvlen = B->vlen ;
+
+    bool slice_A ;      // true if slicing A', false if slicing B
+
+    if (do_adotb)
+    { 
+
+        //----------------------------------------------------------------------
+        // select slicing method for A'*B
+        //----------------------------------------------------------------------
+
+        // C<M>=A'*B:  either slice the columns of B or rows of A'.  The dot
+        // product method will be used.  Slicing the columns of B is the same
+        // as for A*B, except that the flopcounts for each column of A*B are
+        // not simple to compute.  The *FINE methods would likely be overkill
+        // for the dot product.  Thus, the available methods are:
+
+        // GxB_SLICE_ATROW:      each slice of A' has same # of rows
+        // GxB_SLICE_ATNZ:       each slice of A' has same # of nonzeros
+        // GxB_SLICE_BCOL:       each slice of B has same # of columns
+        // GxB_SLICE_BNZ:        each slice of B has same # of nonzeros
+
+        // Note that the GxB_SLICE_BCOL and GxB_SLICE_BNZ methods can be used
+        // for both A'*B and A*B.
+
+        if (AxB_slice < GxB_SLICE_ATROW || AxB_slice > GxB_SLICE_BNZ)
+        { 
+            // invalid method, so use default rule instead
+            AxB_slice = GxB_DEFAULT ;
+        }
+
+        if (AxB_slice == GxB_DEFAULT)
+        { 
+            // select the method automatically for A'*B
+            AxB_slice = GxB_SLICE_ATNZ ;
+        }
+
+        // can slice A or B when computing A'*B
+        slice_A = (AxB_slice == GxB_SLICE_ATROW) ||
+                  (AxB_slice == GxB_SLICE_ATNZ) ;
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // select slicing method for A*B
+        //----------------------------------------------------------------------
+
+        // C<M>=A*B is being computed, with C, A, and B all in the same format
+        // (the comments here assume they are all CSC, but the methods are
+        // CSR/CSC agnostic).  When computing A*B, the matrix A cannot be
+        // sliced easily, but the flop counts for each column B(:,j) or even
+        // each entry B(k,j) can be computed.
+
+        // GxB_SLICE_BCOL:       each slice of B has same # of columns
+        // GxB_SLICE_BNZ:        each slice of B has same # of nonzeros
+        // GxB_SLICE_BFLOPS:     each slice of B has same # of flops
+
+        // FUTURE: GxB_SLICE_B*FINE not yet implemented
+        // GxB_SLICE_BNZFINE:    like BNZ but split inside columns of B
+        // GxB_SLICE_BFLOPSFINE: like BFLOPS but split inside columns of B
+
+        if (AxB_slice < GxB_SLICE_BCOL || AxB_slice > GxB_SLICE_BFLOPS)
+        { 
+            // invalid method, so use default rule instead
+            AxB_slice = GxB_DEFAULT ;
+        }
+
+        if (AxB_slice == GxB_DEFAULT)
+        { 
+            // select the method automatically for A*B
+            AxB_slice = GxB_SLICE_BFLOPS ;
+        }
+
+        // can only slice B when doing A*B
+        slice_A = false ;
+    }
+
+    //--------------------------------------------------------------------------
+    // reduce # of threads as needed
+    //--------------------------------------------------------------------------
+
+    // If the matrix is too small to slice, reduce the # of threads.
+
+    if (slice_A)
+    {
+        // if (nthreads > anvec) printf ("Aslice: using %d threads\n", anvec) ;
+        nthreads = GB_IMIN (nthreads, anvec) ;
+    }
+    else
+    {
+        // if (nthreads > bnvec) printf ("Bslice: using %d threads\n", bnvec) ;
+        nthreads = GB_IMIN (nthreads, bnvec) ;
+    }
+
+    // printf ("C=A*B: nthreads %d\n", nthreads) ;
 
     //==========================================================================
     // sequential C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B
     //==========================================================================
 
     #define GB_FREE_ALL ;
+
+    // GB_AxB_select needs to check (flopcount < nnz (M)) condition
+    bool check_for_dense_mask = true ;
 
     if (nthreads == 1)
     {
@@ -124,7 +227,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         GB_AxB_select (A, B, semiring, do_adotb, AxB_method,
             AxB_method_used, &bjnz_max) ;
 
-        printf ("one thread, method %d\n", *AxB_method_used) ;
+        // printf ("one thread, method %d\n", *AxB_method_used) ;
 
         // acquire a Sauna if Gustavson's method is being used
         int Sauna_id = -2 ;
@@ -176,96 +279,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             GB_MATRIX_FREE (& (Bslice [t])) ;   \
             GB_MATRIX_FREE (& (Aslice [t])) ;   \
         }                                       \
-    }
-
-    //--------------------------------------------------------------------------
-    // select the method for slicing B or A'
-    //--------------------------------------------------------------------------
-
-    int64_t anvec = A->nvec ;
-    int64_t avdim = A->vdim ;
-    int64_t avlen = A->vlen ;
-
-    int64_t bnvec = B->nvec ;
-    int64_t bvdim = B->vdim ;
-    int64_t bvlen = B->vlen ;
-
-    bool slice_A ;      // true if slicing A', false if slicing B
-
-    if (do_adotb)
-    { 
-
-        //----------------------------------------------------------------------
-        // select slicing method for A'*B
-        //----------------------------------------------------------------------
-
-        // C<M>=A'*B:  either slice the columns of B or rows of A'.  The dot
-        // product method will be used.  Slicing the columns of B is the same
-        // as for A*B, except that the flopcounts for each column of A*B are
-        // not simple to compute.  The *FINE methods would likely be overkill
-        // for the dot product.  Thus, the available methods are:
-
-        // GxB_SLICE_ATROW:      each slice of A' has same # of rows
-        // GxB_SLICE_ATNZ:       each slice of A' has same # of nonzeros
-        // GxB_SLICE_BCOL:       each slice of B has same # of columns
-        // GxB_SLICE_BNZ:        each slice of B has same # of nonzeros
-
-        // Note that the GxB_SLICE_BCOL and GxB_SLICE_BNZ methods can be used
-        // for both A'*B and A*B.
-
-        if (AxB_slice < GxB_SLICE_ATROW || AxB_slice > GxB_SLICE_BNZ)
-        { 
-            // invalid method, so use default rule instead
-            AxB_slice = GxB_DEFAULT ;
-        }
-
-        if (AxB_slice == GxB_DEFAULT)
-        { 
-            // select the method automatically for A'*B
-            // AxB_slice = GxB_SLICE_ATNZ ;
-            AxB_slice = GxB_SLICE_BNZ ;
-        }
-
-        // can slice A or B when computing A'*B
-        slice_A = (AxB_slice == GxB_SLICE_ATROW) ||
-                  (AxB_slice == GxB_SLICE_ATNZ) ;
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // select slicing method for A*B
-        //----------------------------------------------------------------------
-
-        // C<M>=A*B is being computed, with C, A, and B all in the same format
-        // (the comments here assume they are all CSC, but the methods are
-        // CSR/CSC agnostic).  When computing A*B, the matrix A cannot be
-        // sliced easily, but the flop counts for each column B(:,j) or even
-        // each entry B(k,j) can be computed.
-
-        // GxB_SLICE_BCOL:       each slice of B has same # of columns
-        // GxB_SLICE_BNZ:        each slice of B has same # of nonzeros
-        // GxB_SLICE_BFLOPS:     each slice of B has same # of flops
-
-        // FUTURE: GxB_SLICE_B*FINE not yet implemented
-        // GxB_SLICE_BNZFINE:    like BNZ but split inside columns of B
-        // GxB_SLICE_BFLOPSFINE: like BFLOPS but split inside columns of B
-
-        if (AxB_slice < GxB_SLICE_BCOL || AxB_slice > GxB_SLICE_BFLOPS)
-        { 
-            // invalid method, so use default rule instead
-            AxB_slice = GxB_DEFAULT ;
-        }
-
-        if (AxB_slice == GxB_DEFAULT)
-        { 
-            // select the method automatically for A*B
-            AxB_slice = GxB_SLICE_BFLOPS ;
-        }
-
-        // can only slice B when doing A*B
-        slice_A = false ;
     }
 
     //--------------------------------------------------------------------------
@@ -384,18 +397,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         // each one contains entries that appear in a unique and contiguous
         // subset of the rows of C.  C is stored by column.
 
-#if 0
-
-        /*
         GB_OK (GB_vcat_slice (Chandle, nthreads, Cslice, Context)) ;
-        */
-#endif
-
-        printf ("TODO in progress\n") ;
-        fprintf (stderr, "TODO in progress\n") ;
-        // TODO ... this draft is incomplete
-        ASSERT (0) ;
-        abort ( ) ;
 
     }
     else
@@ -470,8 +472,9 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // O(bnz) time.  The analysis is itself fully parallel, however.
             // This can only be done when computing A*B, not A'*B.
 
+            // note that Bflops is initialized to zero
             int64_t *Bflops ;
-            GB_MALLOC_MEMORY (Bflops, bnvec+1, sizeof (int64_t)) ;
+            GB_CALLOC_MEMORY (Bflops, bnvec+1, sizeof (int64_t), Context) ;
             if (Bflops == NULL)
             { 
                 // out of memory
@@ -497,7 +500,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
                 // mask_applied will be false.
                 M = NULL ;
             }
-            // the condition flops < nnz(M) has already been checked
+            // the condition (flopcount < nnz(M)) has already been checked
             check_for_dense_mask = false ;
             GB_FREE_MEMORY (Bflops, bnvec+1, sizeof (int64_t)) ;
 
@@ -519,11 +522,12 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // two threads, then some first low-numbered row indices would be
             // owned by thread t, and the higher-numbered ones would be owned
             // by thread t+1.  The resulting Cslices must be summed, not
-            // concatenated.  This method will work well when B is a single
-            // column, which will be important for sparse matrix times sparse
-            // vector (as in BFS): vxm when the matrix is CSR, or mxv when the
-            // matrix is CSC (in both cases where the matrix is not transposed
-            // with the descriptor).  In both cases, v is the matrix B, here.
+            // concatenated via GB_hcat_slice.  This method will work well when
+            // B is a single column, which will be important for sparse matrix
+            // times sparse vector (as in BFS): vxm when the matrix is CSR, or
+            // mxv when the matrix is CSC (in both cases where the matrix is
+            // not transposed with the descriptor).  In both cases, v is the
+            // matrix B, here.
 
             // FUTURE not yet implemented
 
@@ -543,6 +547,11 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // method may be overkill.  GxB_SLICE_BNZFINE might be enough.
 
             // FUTURE not yet implemented (perhaps never)
+            // GB_AxB_flopcount will not work as-is.  Instead, it needs
+            // to compute Bflops of size nnz(B), one flop count per B(k,j)
+            // entry.  The function could be modified so that Bflops has 
+            // size nnz(B), or another parameter Bflops_per_entry could be
+            // added.
 
         }
         #endif
@@ -578,10 +587,10 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
         (*AxB_method_used) = AxB_methods_used [0] ;
 
-        for (int t = 0 ; t < nthreads ; t++)
-        {
-            printf ("thread %d method %d\n", t, AxB_methods_used [t]) ;
-        }
+//      for (int t = 0 ; t < nthreads ; t++)
+//      {
+//          printf ("thread %d method %d\n", t, AxB_methods_used [t]) ;
+//      }
 
         //----------------------------------------------------------------------
         // acquire the Saunas for each thread that needs it

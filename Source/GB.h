@@ -1553,6 +1553,14 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     GB_Context Context
 ) ;
 
+GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
+(
+    GrB_Matrix *Chandle,    // output matrix C to create
+    int nthreads,           // # of slices to concatenate
+    GrB_Matrix *Cslice,     // array of slices of size nthreads
+    GB_Context Context
+) ;
+
 GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
