@@ -128,6 +128,49 @@ a wildtype scalar:  [here is B(7,5)]
       -2.5       -1.5       -0.5        0.5 
 
 ============= that was the WildType matrix input B
+flop count 5
+
+a wildtype scalar: x for multiply: [this is A(3,7)]
+       0.0        1.0        2.0        3.0 
+     100.0      101.0      102.0      103.0 
+     200.0      201.0      202.0      909.0 
+     300.0      301.0      302.0      303.0 
+
+a wildtype scalar: y for multiply: [this is B(7,2)]
+       0.5        1.5        2.5        3.5 
+      -0.5        0.5        1.5        2.5 
+      -1.5       -0.5        0.5        1.5 
+      -2.5       -1.5       -0.5        0.5 
+
+do the multiply:
+   [this was multiplied] = [this is A(3,7)] * [this is B(7,2)]
+
+a wildtype scalar: z = x*y: [this was multiplied]
+     -11.0       -5.0        1.0        7.0 
+    -411.0       -5.0      401.0      807.0 
+   -2576.0    -1064.0      448.0     1960.0 
+   -1211.0       -5.0     1201.0     2407.0 
+
+a wildtype scalar: x for multiply: [this is A(3,7)]
+       0.0        1.0        2.0        3.0 
+     100.0      101.0      102.0      103.0 
+     200.0      201.0      202.0      909.0 
+     300.0      301.0      302.0      303.0 
+
+a wildtype scalar: y for multiply: [here is B(7,5)]
+      -1.0        1.5        2.5        3.5 
+      -0.5        0.5        1.5        2.5 
+      -1.5       -0.5        0.5        1.5 
+      -2.5       -1.5       -0.5        0.5 
+
+do the multiply:
+   [this was multiplied] = [this is A(3,7)] * [here is B(7,5)]
+
+a wildtype scalar: z = x*y: [this was multiplied]
+     -11.0       -5.0        1.0        7.0 
+    -561.0       -5.0      401.0      807.0 
+   -2876.0    -1064.0      448.0     1960.0 
+   -1661.0       -5.0     1201.0     2407.0 
 
 a wildtype scalar: x for multiply: [this is A(2,7)]
        0.0        1.0        2.0        3.0 
@@ -232,48 +275,6 @@ a wildtype scalar: z = x*y: [this was multiplied]
      -11.0       -5.0        1.0        7.0 
     -561.0       -5.0      401.0      807.0 
    -1111.0       -5.0      801.0     1607.0 
-   -1661.0       -5.0     1201.0     2407.0 
-
-a wildtype scalar: x for multiply: [this is A(3,7)]
-       0.0        1.0        2.0        3.0 
-     100.0      101.0      102.0      103.0 
-     200.0      201.0      202.0      909.0 
-     300.0      301.0      302.0      303.0 
-
-a wildtype scalar: y for multiply: [this is B(7,2)]
-       0.5        1.5        2.5        3.5 
-      -0.5        0.5        1.5        2.5 
-      -1.5       -0.5        0.5        1.5 
-      -2.5       -1.5       -0.5        0.5 
-
-do the multiply:
-   [this was multiplied] = [this is A(3,7)] * [this is B(7,2)]
-
-a wildtype scalar: z = x*y: [this was multiplied]
-     -11.0       -5.0        1.0        7.0 
-    -411.0       -5.0      401.0      807.0 
-   -2576.0    -1064.0      448.0     1960.0 
-   -1211.0       -5.0     1201.0     2407.0 
-
-a wildtype scalar: x for multiply: [this is A(3,7)]
-       0.0        1.0        2.0        3.0 
-     100.0      101.0      102.0      103.0 
-     200.0      201.0      202.0      909.0 
-     300.0      301.0      302.0      303.0 
-
-a wildtype scalar: y for multiply: [here is B(7,5)]
-      -1.0        1.5        2.5        3.5 
-      -0.5        0.5        1.5        2.5 
-      -1.5       -0.5        0.5        1.5 
-      -2.5       -1.5       -0.5        0.5 
-
-do the multiply:
-   [this was multiplied] = [this is A(3,7)] * [here is B(7,5)]
-
-a wildtype scalar: z = x*y: [this was multiplied]
-     -11.0       -5.0        1.0        7.0 
-    -561.0       -5.0      401.0      807.0 
-   -2876.0    -1064.0      448.0     1960.0 
    -1661.0       -5.0     1201.0     2407.0 
 
 Printing the matrix with GxB_Matrix_fprint:

@@ -1,5 +1,5 @@
 Demo: ../build/pthread_demo:
-GraphBLAS is using a POSIX pthread mutex
+GraphBLAS is using an OpenMP critical section
 to synchronize user threads.
 User threads in this program are POSIX pthreads.
 
@@ -7,13 +7,15 @@ User threads in this program are POSIX pthreads.
 
 ================= worker 1 starts:
 
+================= worker 2 starts:
+
+================= worker 3 starts:
+
 ----------------- worker 0 intentional error:
 GraphBLAS error: GrB_INVALID_INDEX
 function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1000 out of range; must be < 6
 
-
-================= worker 2 starts:
 
 ----------------- worker 2 intentional error:
 GraphBLAS error: GrB_INVALID_INDEX
@@ -21,13 +23,13 @@ function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1002 out of range; must be < 6
 
 
------------------ worker 1 intentional error:
-GraphBLAS error: GrB_INVALID_INDEX
-function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1001 out of range; must be < 6
+================= worker 5 starts:
 
+================= worker 6 starts:
 
 ----------------- worker 0 is done:
+
+================= worker 7 starts:
 
 GraphBLAS matrix: A 
 nrows: 6 ncols: 6 max # entries: 36
@@ -52,17 +54,7 @@ row: 1 : 6 entries [6:11]
 row: 2 : 6 entries [12:17]
     column 0: double 301000
     column 1: double 302000
-    column 2: 
-================= worker 5 starts:
-
-================= worker 6 starts:
-
-================= worker 7 starts:
-
-================= worker 3 starts:
-
-================= worker 4 starts:
-double 303000
+    column 2: double 303000
     column 3: double 304000
     column 4: double 305000
     column 5: double 306000
@@ -88,6 +80,8 @@ GraphBLAS error: GrB_INVALID_INDEX
 function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1000 out of range; must be < 6
 
+
+================= worker 4 starts:
 
 ----------------- worker 2 is done:
 
@@ -141,22 +135,10 @@ function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1002 out of range; must be < 6
 
 
------------------ worker 6 intentional error:
+----------------- worker 1 intentional error:
 GraphBLAS error: GrB_INVALID_INDEX
 function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1006 out of range; must be < 6
-
-
------------------ worker 7 intentional error:
-GraphBLAS error: GrB_INVALID_INDEX
-function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1007 out of range; must be < 6
-
-
------------------ worker 5 intentional error:
-GraphBLAS error: GrB_INVALID_INDEX
-function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1005 out of range; must be < 6
+Row index 1001 out of range; must be < 6
 
 
 ----------------- worker 3 intentional error:
@@ -165,7 +147,7 @@ function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1003 out of range; must be < 6
 
 
------------------ worker 5 is done:
+----------------- worker 1 is done:
 
 GraphBLAS matrix: A 
 nrows: 6 ncols: 6 max # entries: 36
@@ -174,99 +156,53 @@ hyper_ratio 0.0625
 GraphBLAS type:  double size: 8
 number of entries: 36 
 row: 0 : 6 entries [0:5]
-    column 0: double 101005
-    column 1: double 102005
-    column 2: double 103005
-    column 3: double 104005
-    column 4: double 105005
-    column 5: double 106005
+    column 0: double 101001
+    column 1: double 102001
+    column 2: double 103001
+    column 3: double 104001
+    column 4: double 105001
+    column 5: double 106001
 row: 1 : 6 entries [6:11]
-    column 0: double 201005
-    column 1: double 202005
-    column 2: double 203005
-    column 3: double 204005
-    column 4: double 205005
-    column 5: double 206005
+    column 0: double 201001
+    column 1: double 202001
+    column 2: double 203001
+    column 3: double 204001
+    column 4: double 205001
+    column 5: double 206001
 row: 2 : 6 entries [12:17]
-    column 0: double 301005
-    column 1: double 302005
-    column 2: double 303005
-    column 3: double 304005
-    column 4: double 305005
-    column 5: double 306005
+    column 0: double 301001
+    column 1: double 302001
+    column 2: double 303001
+    column 3: double 304001
+    column 4: double 305001
+    column 5: double 306001
 row: 3 : 6 entries [18:23]
-    column 0: double 401005
-    column 1: double 402005
-    column 2: double 403005
-    column 3: double 404005
-    column 4: double 405005
-    column 5: double 406005
+    column 0: double 401001
+    column 1: double 402001
+    column 2: double 403001
+    column 3: double 404001
+    column 4: double 405001
+    column 5: double 406001
 row: 4 : 6 entries [24:29]
-    column 0: double 501005
-    column 1: double 502005
-    column 2: double 503005
-    column 3: double 504005
-    column 4: double 505005
-    column 5: double 506005
+    column 0: double 501001
+    column 1: double 502001
+    column 2: double 503001
+    column 3: double 504001
+    column 4: double 505001
+    column 5: double 506001
 row: 5 : 6 entries [30:35]
     ...
 
------------------ worker 5 error should be same:
+----------------- worker 1 error should be same:
 GraphBLAS error: GrB_INVALID_INDEX
 function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1005 out of range; must be < 6
+Row index 1001 out of range; must be < 6
 
 
------------------ worker 6 is done:
-
-GraphBLAS matrix: A 
-nrows: 6 ncols: 6 max # entries: 36
-format: standard CSR vlen: 6 nvec_nonempty: 6 nvec: 6 plen: 6 vdim: 6
-hyper_ratio 0.0625
-GraphBLAS type:  double size: 8
-number of entries: 36 
-row: 0 : 6 entries [0:5]
-    column 0: double 101006
-    column 1: double 102006
-    column 2: double 103006
-    column 3: double 104006
-    column 4: double 105006
-    column 5: double 106006
-row: 1 : 6 entries [6:11]
-    column 0: double 201006
-    column 1: double 202006
-    column 2: double 203006
-    column 3: double 204006
-    column 4: double 205006
-    column 5: double 206006
-row: 2 : 6 entries [12:17]
-    column 0: double 301006
-    column 1: double 302006
-    column 2: double 303006
-    column 3: double 304006
-    column 4: double 305006
-    column 5: double 306006
-row: 3 : 6 entries [18:23]
-    column 0: double 401006
-    column 1: double 402006
-    column 2: double 403006
-    column 3: double 404006
-    column 4: double 405006
-    column 5: double 406006
-row: 4 : 6 entries [24:29]
-    column 0: double 501006
-    column 1: double 502006
-    column 2: double 503006
-    column 3: double 504006
-    column 4: double 505006
-    column 5: double 506006
-row: 5 : 6 entries [30:35]
-    ...
-
------------------ worker 6 error should be same:
+----------------- worker 7 intentional error:
 GraphBLAS error: GrB_INVALID_INDEX
 function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1006 out of range; must be < 6
+Row index 1007 out of range; must be < 6
 
 
 ----------------- worker 7 is done:
@@ -321,12 +257,6 @@ function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1007 out of range; must be < 6
 
 
------------------ worker 4 intentional error:
-GraphBLAS error: GrB_INVALID_INDEX
-function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1004 out of range; must be < 6
-
-
 ----------------- worker 3 is done:
 
 GraphBLAS matrix: A 
@@ -377,6 +307,76 @@ row: 5 : 6 entries [30:35]
 GraphBLAS error: GrB_INVALID_INDEX
 function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1003 out of range; must be < 6
+
+
+----------------- worker 6 intentional error:
+GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_setElement_INT32 (C, row, col, x)
+Row index 1006 out of range; must be < 6
+
+
+----------------- worker 6 is done:
+
+GraphBLAS matrix: A 
+nrows: 6 ncols: 6 max # entries: 36
+format: standard CSR vlen: 6 nvec_nonempty: 6 nvec: 6 plen: 6 vdim: 6
+hyper_ratio 0.0625
+GraphBLAS type:  double size: 8
+number of entries: 36 
+row: 0 : 6 entries [0:5]
+    column 0: double 101006
+    column 1: double 102006
+    column 2: double 103006
+    column 3: double 104006
+    column 4: double 105006
+    column 5: double 106006
+row: 1 : 6 entries [6:11]
+    column 0: double 201006
+    column 1: double 202006
+    column 2: double 203006
+    column 3: double 204006
+    column 4: double 205006
+    column 5: double 206006
+row: 2 : 6 entries [12:17]
+    column 0: double 301006
+    column 1: double 302006
+    column 2: double 303006
+    column 3: double 304006
+    column 4: double 305006
+    column 5: double 306006
+row: 3 : 6 entries [18:23]
+    column 0: double 401006
+    column 1: double 402006
+    column 2: double 403006
+    column 3: double 404006
+    column 4: double 405006
+    column 5: double 406006
+row: 4 : 6 entries [24:29]
+    column 0: double 501006
+    column 1: double 502006
+    column 2: double 503006
+    column 3: double 504006
+    column 4: double 505006
+    column 5: double 506006
+row: 5 : 6 entries [30:35]
+    ...
+
+----------------- worker 6 error should be same:
+GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_setElement_INT32 (C, row, col, x)
+Row index 1006 out of range; must be < 6
+
+
+----------------- worker 4 intentional error:
+GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_setElement_INT32 (C, row, col, x)
+Row index 1004 out of range; must be < 6
+
+
+----------------- worker 5 intentional error:
+GraphBLAS error: GrB_INVALID_INDEX
+function: GrB_Matrix_setElement_INT32 (C, row, col, x)
+Row index 1005 out of range; must be < 6
 
 
 ----------------- worker 4 is done:
@@ -431,7 +431,7 @@ function: GrB_Matrix_setElement_INT32 (C, row, col, x)
 Row index 1004 out of range; must be < 6
 
 
------------------ worker 1 is done:
+----------------- worker 5 is done:
 
 GraphBLAS matrix: A 
 nrows: 6 ncols: 6 max # entries: 36
@@ -440,47 +440,47 @@ hyper_ratio 0.0625
 GraphBLAS type:  double size: 8
 number of entries: 36 
 row: 0 : 6 entries [0:5]
-    column 0: double 101001
-    column 1: double 102001
-    column 2: double 103001
-    column 3: double 104001
-    column 4: double 105001
-    column 5: double 106001
+    column 0: double 101005
+    column 1: double 102005
+    column 2: double 103005
+    column 3: double 104005
+    column 4: double 105005
+    column 5: double 106005
 row: 1 : 6 entries [6:11]
-    column 0: double 201001
-    column 1: double 202001
-    column 2: double 203001
-    column 3: double 204001
-    column 4: double 205001
-    column 5: double 206001
+    column 0: double 201005
+    column 1: double 202005
+    column 2: double 203005
+    column 3: double 204005
+    column 4: double 205005
+    column 5: double 206005
 row: 2 : 6 entries [12:17]
-    column 0: double 301001
-    column 1: double 302001
-    column 2: double 303001
-    column 3: double 304001
-    column 4: double 305001
-    column 5: double 306001
+    column 0: double 301005
+    column 1: double 302005
+    column 2: double 303005
+    column 3: double 304005
+    column 4: double 305005
+    column 5: double 306005
 row: 3 : 6 entries [18:23]
-    column 0: double 401001
-    column 1: double 402001
-    column 2: double 403001
-    column 3: double 404001
-    column 4: double 405001
-    column 5: double 406001
+    column 0: double 401005
+    column 1: double 402005
+    column 2: double 403005
+    column 3: double 404005
+    column 4: double 405005
+    column 5: double 406005
 row: 4 : 6 entries [24:29]
-    column 0: double 501001
-    column 1: double 502001
-    column 2: double 503001
-    column 3: double 504001
-    column 4: double 505001
-    column 5: double 506001
+    column 0: double 501005
+    column 1: double 502005
+    column 2: double 503005
+    column 3: double 504005
+    column 4: double 505005
+    column 5: double 506005
 row: 5 : 6 entries [30:35]
     ...
 
------------------ worker 1 error should be same:
+----------------- worker 5 error should be same:
 GraphBLAS error: GrB_INVALID_INDEX
 function: GrB_Matrix_setElement_INT32 (C, row, col, x)
-Row index 1001 out of range; must be < 6
+Row index 1005 out of range; must be < 6
 
 
 ---- Master prints matrix 0

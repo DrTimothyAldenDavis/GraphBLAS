@@ -2,8 +2,8 @@
 pagerank_demo:
 ntuples: 3
 nrows 3 ncols 3
-time to prune self-edges:     0.000014
-time to build the graph with GrB_Matrix_build:     0.000077
+time to prune self-edges:     0.000000
+time to build the graph with GrB_Matrix_build:     0.000070
 leave A as-is
 
 Matrix from file:
@@ -20,10 +20,12 @@ row: 1 : 1 entries [1:1]
     column 1: bool 1
 row: 2 : 1 entries [2:2]
     column 2: bool 1
-n 3 edges 3  dpagerank time :       0.000271 iters: 20
-n 3 edges 3  ipagerank time :       0.000585 iters: 20
-dpagerank2: pagerank objects defined at compile-time
-n 3 edges 3  dpagerank time :       0.000265 iters: 1
+flop count 3
+n 3 edges 3  dpagerank time :       0.009268 iters: 20
+flop count 3
+n 3 edges 3  ipagerank time :       0.000271 iters: 20
+dpagerank2: pagerank objects defined at run-time
+n 3 edges 3  dpagerank time :       0.000082 iters: 1
 Top 3 nodes:
     0 d:[     1 :   3.43536876e-01] i:[     1 :   1.62660004e+08] x:[     0 :   3.33333333e-01]mismatch
     1 d:[     2 :   3.36048258e-01] i:[     2 :   1.59114246e+08] x:[     1 :   3.33333333e-01]mismatch
@@ -32,8 +34,8 @@ Top 3 nodes:
 pagerank_demo:
 ntuples: 8
 nrows 4 ncols 4
-time to prune self-edges:     0.000013
-time to build the graph with GrB_Matrix_build:     0.000077
+time to prune self-edges:     0.000000
+time to build the graph with GrB_Matrix_build:     0.000286
 leave A as-is
 
 Matrix from file:
@@ -56,10 +58,12 @@ row: 2 : 2 entries [4:5]
 row: 3 : 2 entries [6:7]
     column 2: bool 1
     column 3: bool 1
-n 4 edges 8  dpagerank time :       0.000268 iters: 20
-n 4 edges 8  ipagerank time :       0.000241 iters: 20
-dpagerank2: pagerank objects defined at compile-time
-n 4 edges 8  dpagerank time :       0.000062 iters: 1
+flop count 8
+n 4 edges 8  dpagerank time :       0.000467 iters: 20
+flop count 8
+n 4 edges 8  ipagerank time :       0.000272 iters: 20
+dpagerank2: pagerank objects defined at run-time
+n 4 edges 8  dpagerank time :       0.000083 iters: 1
 Top 4 nodes:
     0 d:[     2 :   2.52317658e-01] i:[     2 :   1.87371606e+08] x:[     0 :   2.50000000e-01]mismatch
     1 d:[     3 :   2.52317658e-01] i:[     3 :   1.87371606e+08] x:[     1 :   2.50000000e-01]mismatch
@@ -69,8 +73,8 @@ Top 4 nodes:
 pagerank_demo:
 ntuples: 10
 nrows 4 ncols 4
-time to prune self-edges:     0.000014
-time to build the graph with GrB_Matrix_build:     0.000128
+time to prune self-edges:     0.000000
+time to build the graph with GrB_Matrix_build:     0.002816
 leave A as-is
 
 Matrix from file:
@@ -95,10 +99,12 @@ row: 3 : 3 entries [7:9]
     column 0: bool 1
     column 1: bool 1
     column 3: bool 1
-n 4 edges 10  dpagerank time :       0.000265 iters: 20
-n 4 edges 10  ipagerank time :       0.000211 iters: 20
-dpagerank2: pagerank objects defined at compile-time
-n 4 edges 10  dpagerank time :       0.000113 iters: 12
+flop count 10
+n 4 edges 10  dpagerank time :       0.000523 iters: 20
+flop count 10
+n 4 edges 10  ipagerank time :       0.000392 iters: 20
+dpagerank2: pagerank objects defined at run-time
+n 4 edges 10  dpagerank time :       0.000147 iters: 12
 Top 4 nodes:
     0 d:[     0 :   2.83169317e-01] i:[     0 :   2.10282109e+08] x:[     0 :   2.83169438e-01]
     1 d:[     1 :   2.79491856e-01] i:[     1 :   2.07551220e+08] x:[     1 :   2.79491122e-01]
@@ -108,8 +114,8 @@ Top 4 nodes:
 pagerank_demo:
 ntuples: 224
 nrows 48 ncols 48
-time to prune self-edges:     0.000018
-time to build the graph with GrB_Matrix_build:     0.000116
+time to prune self-edges:     0.000000
+time to build the graph with GrB_Matrix_build:     0.000319
 leave A as-is
 
 Matrix from file:
@@ -152,10 +158,12 @@ row: 8 : 2 entries [18:19]
 row: 9 : 5 entries [20:24]
     column 1: bool 1
 ...
-n 48 edges 224  dpagerank time :       0.000331 iters: 20
-n 48 edges 224  ipagerank time :       0.000414 iters: 20
-dpagerank2: pagerank objects defined at compile-time
-n 48 edges 224  dpagerank time :       0.000180 iters: 16
+flop count 224
+n 48 edges 224  dpagerank time :       0.000550 iters: 20
+flop count 224
+n 48 edges 224  ipagerank time :       0.000357 iters: 20
+dpagerank2: pagerank objects defined at run-time
+n 48 edges 224  dpagerank time :       0.000266 iters: 16
 Top 48 nodes:
     0 d:[     2 :   2.01321299e-01] i:[     2 :   2.05208622e+08] x:[     2 :   2.01807617e-01]
     1 d:[     0 :   1.92670034e-01] i:[     0 :   1.96390309e+08] x:[     0 :   1.92211713e-01]
@@ -209,8 +217,8 @@ Top 48 nodes:
 pagerank_demo:
 ntuples: 147631
 nrows 4884 ncols 4884
-time to prune self-edges:     0.000013
-time to build the graph with GrB_Matrix_build:     0.017407
+time to prune self-edges:     0.000000
+time to build the graph with GrB_Matrix_build:     0.012943
 leave A as-is
 
 Matrix from file:
@@ -257,10 +265,12 @@ row: 8 : 1 entries [23:23]
 row: 9 : 5 entries [24:28]
     column 3: bool 1
 ...
-n 4884 edges 147631  dpagerank time :       0.016602 iters: 20
-n 4884 edges 147631  ipagerank time :       0.012623 iters: 20
-dpagerank2: pagerank objects defined at compile-time
-n 4884 edges 147631  dpagerank time :       0.023806 iters: 46
+flop count 147631
+n 4884 edges 147631  dpagerank time :       0.017124 iters: 20
+flop count 147631
+n 4884 edges 147631  ipagerank time :       0.017342 iters: 20
+dpagerank2: pagerank objects defined at run-time
+n 4884 edges 147631  dpagerank time :       0.067211 iters: 46
 Top 4884 nodes:
     0 d:[     0 :   2.94577327e-02] i:[     0 :   3.13472590e+07] x:[     0 :   3.32228314e-02]
     1 d:[     1 :   5.01366807e-03] i:[     1 :   5.33513900e+06] x:[     1 :   4.99132478e-03]
@@ -5150,8 +5160,8 @@ Top 4884 nodes:
 pagerank_demo:
 ntuples: 1069
 nrows 183 ncols 183
-time to prune self-edges:     0.000013
-time to build the graph with GrB_Matrix_build:     0.000159
+time to prune self-edges:     0.000000
+time to build the graph with GrB_Matrix_build:     0.000528
 leave A as-is
 
 Matrix from file:
@@ -5213,10 +5223,12 @@ row: 8 : 3 entries [160:162]
 row: 9 : 2 entries [163:164]
     ...
 ...
-n 183 edges 1069  dpagerank time :       0.000409 iters: 20
-n 183 edges 1069  ipagerank time :       0.000343 iters: 20
-dpagerank2: pagerank objects defined at compile-time
-n 183 edges 1069  dpagerank time :       0.000351 iters: 37
+flop count 1069
+n 183 edges 1069  dpagerank time :       0.000758 iters: 20
+flop count 1069
+n 183 edges 1069  ipagerank time :       0.000684 iters: 20
+dpagerank2: pagerank objects defined at run-time
+n 183 edges 1069  dpagerank time :       0.001142 iters: 37
 Top 183 nodes:
     0 d:[   136 :   1.44417299e-01] i:[   136 :   1.54974807e+08] x:[   136 :   1.44252744e-01]
     1 d:[     0 :   6.91790584e-02] i:[     0 :   7.42363140e+07] x:[     0 :   6.91214864e-02]
@@ -5405,8 +5417,8 @@ Top 183 nodes:
 pagerank_demo:
 ntuples: 299
 nrows 67 ncols 67
-time to prune self-edges:     0.000012
-time to build the graph with GrB_Matrix_build:     0.000101
+time to prune self-edges:     0.000000
+time to build the graph with GrB_Matrix_build:     0.010387
 leave A as-is
 
 Matrix from file:
@@ -5461,10 +5473,12 @@ row: 8 : 5 entries [32:36]
 row: 9 : 6 entries [37:42]
     ...
 ...
-n 67 edges 294  dpagerank time :       0.000324 iters: 20
-n 67 edges 294  ipagerank time :       0.000245 iters: 20
-dpagerank2: pagerank objects defined at compile-time
-n 67 edges 294  dpagerank time :       0.000123 iters: 11
+flop count 294
+n 67 edges 294  dpagerank time :       0.000916 iters: 20
+flop count 294
+n 67 edges 294  ipagerank time :       0.000359 iters: 20
+dpagerank2: pagerank objects defined at run-time
+n 67 edges 294  dpagerank time :       0.000218 iters: 11
 Top 67 nodes:
     0 d:[    19 :   3.94517117e-02] i:[    19 :   4.32121520e+07] x:[    19 :   3.94480927e-02]
     1 d:[    30 :   3.14483557e-02] i:[    30 :   3.44459360e+07] x:[    30 :   3.14475525e-02]
