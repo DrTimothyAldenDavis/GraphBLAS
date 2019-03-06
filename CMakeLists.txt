@@ -55,9 +55,9 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Mar 5c, 2019 (DRAFT)" )
+set ( GraphBLAS_DATE "Mar 6a, 2019 (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 2 )
-set ( GraphBLAS_VERSION_MINOR 3 )
+set ( GraphBLAS_VERSION_MINOR 4 )
 set ( GraphBLAS_VERSION_SUB   0 )
 
 # GraphBLAS C API Specification version, at graphblas.org
