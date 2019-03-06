@@ -3095,30 +3095,30 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_get (GrB_Descriptor d, GrB_Desc_Field f, GrB_Desc_Value *v) ;
 
-#define GxB_set(arg1,...)                               \
-    _Generic                                            \
-    (                                                   \
-        (arg1),                                         \
-              int              : GxB_Global_Option_set ,  \
-              GxB_Option_Field : GxB_Global_Option_set ,  \
-              GrB_Matrix       : GxB_Matrix_Option_set ,  \
-              GrB_Descriptor   : GxB_Desc_set          ,  \
-    )                                                   \
+#define GxB_set(arg1,...)                                   \
+    _Generic                                                \
+    (                                                       \
+        (arg1),                                             \
+              int              : GxB_Global_Option_set ,    \
+              GxB_Option_Field : GxB_Global_Option_set ,    \
+              GrB_Matrix       : GxB_Matrix_Option_set ,    \
+              GrB_Descriptor   : GxB_Desc_set               \
+    )                                                       \
     (arg1, __VA_ARGS__)
 
-#define GxB_get(arg1,...)                               \
-    _Generic                                            \
-    (                                                   \
-        (arg1),                                         \
-        const int              : GxB_Global_Option_get ,  \
-              int              : GxB_Global_Option_get ,  \
-        const GxB_Option_Field : GxB_Global_Option_get ,  \
-              GxB_Option_Field : GxB_Global_Option_get ,  \
-        const GrB_Matrix       : GxB_Matrix_Option_get ,  \
-              GrB_Matrix       : GxB_Matrix_Option_get ,  \
-        const GrB_Descriptor   : GxB_Desc_get          ,  \
-              GrB_Descriptor   : GxB_Desc_get             \
-    )                                                   \
+#define GxB_get(arg1,...)                                   \
+    _Generic                                                \
+    (                                                       \
+        (arg1),                                             \
+        const int              : GxB_Global_Option_get ,    \
+              int              : GxB_Global_Option_get ,    \
+        const GxB_Option_Field : GxB_Global_Option_get ,    \
+              GxB_Option_Field : GxB_Global_Option_get ,    \
+        const GrB_Matrix       : GxB_Matrix_Option_get ,    \
+              GrB_Matrix       : GxB_Matrix_Option_get ,    \
+        const GrB_Descriptor   : GxB_Desc_get          ,    \
+              GrB_Descriptor   : GxB_Desc_get               \
+    )                                                       \
     (arg1, __VA_ARGS__)
 
 
