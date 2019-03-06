@@ -54,10 +54,11 @@
 //  1599: shadow
 //  2259: typecasting
 //  2282: unrecognized pragma
+//  2330: const incompatible
 //  2557: sign compare
 //  2547: remark about include files
 //  3280: shadow
-#pragma warning (disable: 58 167 144 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2557 2547 3280 )
+#pragma warning (disable: 58 167 144 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2330 2557 2547 3280 )
 
 #elif defined __GNUC__
 
@@ -2611,17 +2612,28 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     _Generic                      \
     (                             \
         (type),                   \
-        bool     : true         , \
-        int8_t   : INT8_MAX     , \
-        uint8_t  : UINT8_MAX    , \
-        int16_t  : INT16_MAX    , \
-        uint16_t : UINT16_MAX   , \
-        int32_t  : INT32_MAX    , \
-        uint32_t : UINT32_MAX   , \
-        int64_t  : INT64_MAX    , \
-        uint64_t : UINT64_MAX   , \
-        float    : INFINITY     , \
-        double   : INFINITY       \
+        const bool     : true         , \
+              bool     : true         , \
+        const int8_t   : INT8_MAX     , \
+              int8_t   : INT8_MAX     , \
+        const uint8_t  : UINT8_MAX    , \
+              uint8_t  : UINT8_MAX    , \
+        const int16_t  : INT16_MAX    , \
+              int16_t  : INT16_MAX    , \
+        const uint16_t : UINT16_MAX   , \
+              uint16_t : UINT16_MAX   , \
+        const int32_t  : INT32_MAX    , \
+              int32_t  : INT32_MAX    , \
+        const uint32_t : UINT32_MAX   , \
+              uint32_t : UINT32_MAX   , \
+        const int64_t  : INT64_MAX    , \
+              int64_t  : INT64_MAX    , \
+        const uint64_t : UINT64_MAX   , \
+              uint64_t : UINT64_MAX   , \
+        const float    : INFINITY     , \
+              float    : INFINITY     , \
+        const double   : INFINITY     , \
+              double   : INFINITY       \
     )
 
 // returns the smallest possible value for a given type
@@ -2629,17 +2641,28 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     _Generic                      \
     (                             \
         (type),                   \
-        bool     : false        , \
-        int8_t   : INT8_MIN     , \
-        uint8_t  : 0            , \
-        int16_t  : INT16_MIN    , \
-        uint16_t : 0            , \
-        int32_t  : INT32_MIN    , \
-        uint32_t : 0            , \
-        int64_t  : INT64_MIN    , \
-        uint64_t : 0            , \
-        float    : -INFINITY    , \
-        double   : -INFINITY      \
+        const bool     : false        , \
+              bool     : false        , \
+        const int8_t   : INT8_MIN     , \
+              int8_t   : INT8_MIN     , \
+        const uint8_t  : 0            , \
+              uint8_t  : 0            , \
+        const int16_t  : INT16_MIN    , \
+              int16_t  : INT16_MIN    , \
+        const uint16_t : 0            , \
+              uint16_t : 0            , \
+        const int32_t  : INT32_MIN    , \
+              int32_t  : INT32_MIN    , \
+        const uint32_t : 0            , \
+              uint32_t : 0            , \
+        const int64_t  : INT64_MIN    , \
+              int64_t  : INT64_MIN    , \
+        const uint64_t : 0            , \
+              uint64_t : 0            , \
+        const float    : -INFINITY    , \
+              float    : -INFINITY    , \
+        const double   : -INFINITY    , \
+              double   : -INFINITY      \
     )
 
 // true if the type is signed
@@ -2647,17 +2670,28 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     _Generic                      \
     (                             \
         (type),                   \
-        bool     : false        , \
-        int8_t   : true         , \
-        uint8_t  : false        , \
-        int16_t  : true         , \
-        uint16_t : false        , \
-        int32_t  : true         , \
-        uint32_t : false        , \
-        int64_t  : true         , \
-        uint64_t : false        , \
-        float    : true         , \
-        double   : true           \
+        const bool     : false        , \
+              bool     : false        , \
+        const int8_t   : true         , \
+              int8_t   : true         , \
+        const uint8_t  : false        , \
+              uint8_t  : false        , \
+        const int16_t  : true         , \
+              int16_t  : true         , \
+        const uint16_t : false        , \
+              uint16_t : false        , \
+        const int32_t  : true         , \
+              int32_t  : true         , \
+        const uint32_t : false        , \
+              uint32_t : false        , \
+        const int64_t  : true         , \
+              int64_t  : true         , \
+        const uint64_t : false        , \
+              uint64_t : false        , \
+        const float    : true         , \
+              float    : true         , \
+        const double   : true         , \
+              double   : true           \
     )
 
 // true if the type is integer (boolean is not integer)
@@ -2665,17 +2699,28 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     _Generic                      \
     (                             \
         (type),                   \
-        bool     : false        , \
-        int8_t   : true         , \
-        uint8_t  : true         , \
-        int16_t  : true         , \
-        uint16_t : true         , \
-        int32_t  : true         , \
-        uint32_t : true         , \
-        int64_t  : true         , \
-        uint64_t : true         , \
-        float    : false        , \
-        double   : false          \
+        const bool     : false        , \
+              bool     : false        , \
+        const int8_t   : true         , \
+              int8_t   : true         , \
+        const uint8_t  : true         , \
+              uint8_t  : true         , \
+        const int16_t  : true         , \
+              int16_t  : true         , \
+        const uint16_t : true         , \
+              uint16_t : true         , \
+        const int32_t  : true         , \
+              int32_t  : true         , \
+        const uint32_t : true         , \
+              uint32_t : true         , \
+        const int64_t  : true         , \
+              int64_t  : true         , \
+        const uint64_t : true         , \
+              uint64_t : true         , \
+        const float    : false        , \
+              float    : false        , \
+        const double   : false        , \
+              double   : false          \
     )
 
 // true if the type is boolean
@@ -2683,17 +2728,28 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     _Generic                      \
     (                             \
         (type),                   \
-        bool     : true         , \
-        int8_t   : false        , \
-        uint8_t  : false        , \
-        int16_t  : false        , \
-        uint16_t : false        , \
-        int32_t  : false        , \
-        uint32_t : false        , \
-        int64_t  : false        , \
-        uint64_t : false        , \
-        float    : false        , \
-        double   : false          \
+        const bool     : true         , \
+              bool     : true         , \
+        const int8_t   : false        , \
+              int8_t   : false        , \
+        const uint8_t  : false        , \
+              uint8_t  : false        , \
+        const int16_t  : false        , \
+              int16_t  : false        , \
+        const uint16_t : false        , \
+              uint16_t : false        , \
+        const int32_t  : false        , \
+              int32_t  : false        , \
+        const uint32_t : false        , \
+              uint32_t : false        , \
+        const int64_t  : false        , \
+              int64_t  : false        , \
+        const uint64_t : false        , \
+              uint64_t : false        , \
+        const float    : false        , \
+              float    : false        , \
+        const double   : false        , \
+              double   : false          \
     )
 
 // true if the type is float or double
@@ -2701,17 +2757,28 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     _Generic                      \
     (                             \
         (type),                   \
-        bool     : false        , \
-        int8_t   : false        , \
-        uint8_t  : false        , \
-        int16_t  : false        , \
-        uint16_t : false        , \
-        int32_t  : false        , \
-        uint32_t : false        , \
-        int64_t  : false        , \
-        uint64_t : false        , \
-        float    : true         , \
-        double   : true           \
+        const bool     : false        , \
+              bool     : false        , \
+        const int8_t   : false        , \
+              int8_t   : false        , \
+        const uint8_t  : false        , \
+              uint8_t  : false        , \
+        const int16_t  : false        , \
+              int16_t  : false        , \
+        const uint16_t : false        , \
+              uint16_t : false        , \
+        const int32_t  : false        , \
+              int32_t  : false        , \
+        const uint32_t : false        , \
+              uint32_t : false        , \
+        const int64_t  : false        , \
+              int64_t  : false        , \
+        const uint64_t : false        , \
+              uint64_t : false        , \
+        const float    : true         , \
+              float    : true         , \
+        const double   : true         , \
+              double   : true           \
     )
 
 //------------------------------------------------------------------------------
