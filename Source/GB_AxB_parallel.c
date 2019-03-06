@@ -197,16 +197,16 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     if (slice_A)
     {
-        // if (nthreads > anvec) printf ("Aslice: using %d threads\n", anvec) ;
         nthreads = GB_IMIN (nthreads, anvec) ;
+        if (nthreads > 1) fprintf (stderr, "slice A: C=%s, nthreads: %d\n",
+            (do_adotb) ? "A'*B" : " A*B", nthreads) ;
     }
     else
     {
-        // if (nthreads > bnvec) printf ("Bslice: using %d threads\n", bnvec) ;
         nthreads = GB_IMIN (nthreads, bnvec) ;
+        if (nthreads > 1) fprintf (stderr, "slice B: C=%s, nthreads: %d\n",
+            (do_adotb) ? "A'*B" : " A*B", nthreads) ;
     }
-
-    // printf ("C=A*B: nthreads %d\n", nthreads) ;
 
     //==========================================================================
     // sequential C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B

@@ -9,6 +9,10 @@
 
 #include "demos.h"
 
+#if defined __INTEL_COMPILER
+#pragma warning (disable: 556)
+#endif
+
 #define FREE_ALL                    \
 {                                   \
     GrB_free (C_handle) ;           \
