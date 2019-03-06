@@ -94,6 +94,10 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GrB_Info info ;
 
+    #if defined ( _OPENMP )
+    double t = omp_get_wtime ( ) ;
+    #endif
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
@@ -198,14 +202,10 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     if (slice_A)
     {
         nthreads = GB_IMIN (nthreads, anvec) ;
-        if (nthreads > 1) fprintf (stderr, "slice A: C=%s, nthreads: %d\n",
-            (do_adotb) ? "A'*B" : " A*B", nthreads) ;
     }
     else
     {
         nthreads = GB_IMIN (nthreads, bnvec) ;
-        if (nthreads > 1) fprintf (stderr, "slice B: C=%s, nthreads: %d\n",
-            (do_adotb) ? "A'*B" : " A*B", nthreads) ;
     }
 
     //==========================================================================
@@ -248,6 +248,15 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         }
 
         info = thread_info ;
+
+        #if defined ( _OPENMP )
+        t = omp_get_wtime ( ) - t ;
+        if (avlen > 1000 && slice_A)
+        {
+            fprintf (stderr, "slice %s: C=%s, nthreads: %2d : %g sec\n",
+            (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
+        }
+        #endif
 
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
     }
@@ -680,6 +689,16 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
+
+    #if defined ( _OPENMP )
+    t = omp_get_wtime ( ) - t ;
+    if (avlen > 1000 && slice_A)
+    {
+        fprintf (stderr, "slice %s: C=%s, nthreads: %2d : %g sec\n",
+        (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
+    }
+    #endif
+
     ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
     return (GrB_SUCCESS) ;
 }
