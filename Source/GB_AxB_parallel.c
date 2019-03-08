@@ -121,8 +121,10 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GrB_Info info ;
 
+    #if 0
     #if defined ( _OPENMP )
     double t = omp_get_wtime ( ) ;
+    #endif
     #endif
 
     //--------------------------------------------------------------------------
@@ -212,13 +214,13 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         if (AxB_slice == GxB_DEFAULT)
         { 
             // select the method automatically for A*B
-            if (nthreads < B->nvec)
+            if (nthreads <= bnvec)
             {
-                AxB_slice = GxB_SLICE_BFLOPSFINE ;
+                AxB_slice = GxB_SLICE_BFLOPS ;
             }
             else
             {
-                AxB_slice = GxB_SLICE_BFLOPS ;
+                AxB_slice = GxB_SLICE_BFLOPSFINE ;
             }
         }
 
@@ -289,6 +291,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
         info = thread_info ;
 
+        #if 0
         #if defined ( _OPENMP )
         t = omp_get_wtime ( ) - t ;
         if (avlen > 1000)
@@ -296,6 +299,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             fprintf (stderr, "slice %s: C=%s, nthreads: %2d : %g sec\n",
             (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
         }
+        #endif
         #endif
 
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
@@ -815,6 +819,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GB_FREE_ALL ;
 
+    #if 0
     #if defined ( _OPENMP )
     t = omp_get_wtime ( ) - t ;
     if (avlen > 1000)
@@ -822,6 +827,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         fprintf (stderr, "slice %s: C=%s, nthreads: %2d : %g sec\n",
         (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
     }
+    #endif
     #endif
 
     ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
