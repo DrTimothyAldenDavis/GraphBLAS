@@ -70,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Mar 6a, 2019 (DRAFT)"
+#define GxB_DATE "Mar 7, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0
@@ -2828,9 +2828,9 @@ typedef enum
     GxB_SLICE_ATNZ        = 2002,   // each slice of A' has same # of nonzeros
     GxB_SLICE_BCOL        = 2003,   // each slice of B has same # of columnns
     GxB_SLICE_BNZ         = 2004,   // each slice of B has same # of nonzeros
-    GxB_SLICE_BFLOPS      = 2005    // each slice of B has same # of flops
-//  GxB_SLICE_BNZFINE     = 2006    // like BNZ but split cols of B (FUTURE)
-//  GxB_SLICE_BFLOPSFINE  = 2007    // like BFLOPS but split cols of B (FUTURE)
+    GxB_SLICE_BFLOPS      = 2005,   // each slice of B has same # of flops
+    GxB_SLICE_BNZFINE     = 2006,   // like BNZ but split cols of B
+    GxB_SLICE_BFLOPSFINE  = 2007    // like BFLOPS but split cols of B
 }
 GrB_Desc_Value ;
 

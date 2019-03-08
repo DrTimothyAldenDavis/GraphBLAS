@@ -89,7 +89,7 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
                 // caller (GB_AxB_parallel), with the GxB_SLICE_BFLOPS
                 // method.
                 int64_t floplimit = GB_NNZ (M) ;
-                if (GB_AxB_flopcount (NULL, M, A, B, floplimit, NULL))
+                if (GB_AxB_flopcount (NULL, NULL, M, A, B, floplimit, NULL))
                 { 
                     // total_flops < nnz(M), so the mask is too dense to use.
                     // Discard the mask; mask_applied will be false.

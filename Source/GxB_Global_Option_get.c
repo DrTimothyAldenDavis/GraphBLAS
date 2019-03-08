@@ -44,7 +44,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             va_end (ap) ;
 
             GB_RETURN_IF_NULL (hyper_ratio) ;
-            (*hyper_ratio) = GB_Global.hyper_ratio ;
+            (*hyper_ratio) = GB_Global_hyper_ratio_get ( ) ;
             break ;
 
         //----------------------------------------------------------------------

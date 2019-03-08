@@ -13,9 +13,6 @@
 // All Global storage is declared and initialized here
 //------------------------------------------------------------------------------
 
-// If the user creates threads that work on GraphBLAS matrices, then all of
-// those threads must share the same matrix queue, and the same mode.
-
 GB_Global_struct GB_Global =
 {
 
@@ -69,29 +66,44 @@ GB_Global_struct GB_Global =
 // GB_Global access functions
 //------------------------------------------------------------------------------
 
+void GB_Global_user_multithreaded_set (bool user_multithreaded)
+{
+    GB_Global.user_multithreaded = user_multithreaded ;
+}
+
+void GB_Global_queue_head_set (void *p)
+{
+    GB_Global.queue_head = p ;
+}
+
+void *GB_Global_queue_head_get ( )
+{
+    return (GB_Global.queue_head) ;
+}
+
+void GB_Global_mode_set (GrB_Mode mode)
+{
+    GB_Global.mode = mode ;
+}
+
+void GB_Global_GrB_init_called_set (bool GrB_init_called)
+{
+    GB_Global.GrB_init_called = GrB_init_called ;
+}
+
 int GB_Global_nthreads_max_get ( )
 {
     return (GB_Global.nthreads_max) ;
 }
 
-int64_t GB_Global_nmalloc_get ( )
+double GB_Global_hyper_ratio_get ( )
 {
-    return (GB_Global.nmalloc) ;
+    return (GB_Global.hyper_ratio) ;
 }
 
-void GB_Global_nmalloc_clear ( )
+GB_Sauna GB_Global_Saunas_get (int id)
 {
-    GB_Global.nmalloc = 0 ;
-}
-
-int64_t GB_Global_nmalloc_decrement ( )
-{
-    return (--(GB_Global.nmalloc)) ;
-}
-
-int64_t GB_Global_nmalloc_increment ( )
-{
-    return (++(GB_Global.nmalloc)) ;
+    return (GB_Global.Saunas [id]) ;
 }
 
 void GB_Global_abort_function_set (void (* abort_function) (void))
@@ -104,11 +116,6 @@ void GB_Global_abort_function_call ( )
     GB_Global.abort_function ( ) ;
 }
 
-void GB_Global_GrB_init_called_set (bool GrB_init_called)
-{
-    GB_Global.GrB_init_called = GrB_init_called ;
-}
-
 void GB_Global_malloc_tracking_set (bool malloc_tracking)
 {
     GB_Global.malloc_tracking = malloc_tracking ;
@@ -117,6 +124,26 @@ void GB_Global_malloc_tracking_set (bool malloc_tracking)
 bool GB_Global_malloc_tracking_get ( )
 {
     return (GB_Global.malloc_tracking) ;
+}
+
+void GB_Global_nmalloc_clear ( )
+{
+    GB_Global.nmalloc = 0 ;
+}
+
+int64_t GB_Global_nmalloc_get ( )
+{
+    return (GB_Global.nmalloc) ;
+}
+
+int64_t GB_Global_nmalloc_increment ( )
+{
+    return (++(GB_Global.nmalloc)) ;
+}
+
+int64_t GB_Global_nmalloc_decrement ( )
+{
+    return (--(GB_Global.nmalloc)) ;
 }
 
 void GB_Global_malloc_debug_set (bool malloc_debug)
@@ -134,15 +161,15 @@ void GB_Global_malloc_debug_count_set (int64_t malloc_debug_count)
     GB_Global.malloc_debug_count = malloc_debug_count ;
 }
 
-int64_t GB_Global_inuse_get ( )
-{
-    return (GB_Global.inuse) ;
-}
-
 void GB_Global_inuse_clear ( )
 {
     GB_Global.inuse = 0 ;
     GB_Global.maxused = 0 ;
+}
+
+int64_t GB_Global_inuse_get ( )
+{
+    return (GB_Global.inuse) ;
 }
 
 void GB_Global_inuse_increment (int64_t s)
@@ -159,30 +186,5 @@ void GB_Global_inuse_decrement (int64_t s)
 int64_t GB_Global_maxused_get ( )
 {
     return (GB_Global.maxused) ;
-}
-
-void *GB_Global_queue_head_get ( )
-{
-    return (GB_Global.queue_head) ;
-}
-
-void GB_Global_queue_head_set (void *p)
-{
-    GB_Global.queue_head = p ;
-}
-
-void GB_Global_mode_set (GrB_Mode mode)
-{
-    GB_Global.mode = mode ;
-}
-
-GB_Sauna GB_Global_Saunas_get (int id)
-{
-    return (GB_Global.Saunas [id]) ;
-}
-
-void GB_Global_user_multithreaded_set (bool user_multithreaded)
-{
-    GB_Global.user_multithreaded = user_multithreaded ;
 }
 

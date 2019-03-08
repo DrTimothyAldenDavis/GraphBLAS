@@ -50,7 +50,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
     //--------------------------------------------------------------------------
 
     // ensure the matrix is in hypersparse CSC format
-    (*A)->hyper_ratio = GxB_ALWAYS_HYPER ;
+    (*A)->hyper_ratio = GB_ALWAYS_HYPER ;
     if (!((*A)->is_hyper))
     { 
         // convert A from standard to hypersparse format

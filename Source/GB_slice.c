@@ -7,27 +7,27 @@
 
 //------------------------------------------------------------------------------
 
-// For each thread t, create Bslice [t] as a purely hypersparse shallow slice
-// of B.  The i and x arrays are the same as B.  The p array is an offset into
-// Bp (that is, Bp + Slice [t]), which means that p [0] will not be zero
-// (except for Bslice [0]).  If B is hypersparse, the h array is also an offset
-// into B->h.  If B is standard, then Bslice [t] becomes an implicit
-// hypersparse matrix.  Its h array is NULL, and the h list is implicit:
-// h[0..nvec-1] is implicitly [hfirst, hfirst+1, ...  hfirst+nvec-1], where
-// nvec = Slice [t+1] - Slice [t].
+// For each thread t, create Bslice [t] as a slice or hyperslice
+// of B.  The i and x arrays are the same as B.
+
+// The p array is an offset into Bp (that is, Bp + Slice [t]), which means that
+// p [0] will not be zero (except for Bslice [0]).  If B is hypersparse, the h
+// array is also an offset into B->h.  If B is standard, then Bslice [t]
+// becomes an implicit hypersparse matrix.  Its h array is NULL, and the h list
+// is implicit: h[0..nvec-1] is implicitly [hfirst, hfirst+1, ...
+// hfirst+nvec-1], where nvec = Slice [t+1] - Slice [t].
 
 // The matrix dimensions of each slice are the same as B.  All slices have
 // vector length B->vlen and vector dimension B->vdim.   The slices are subsets
 // of the vectors of B, as defined by the Slice array.  The Bslice [t] consists
 // of the vectors Slice [t] to Slice [t+1]-1.
 
-// This function does only O(nthreads) work and allocates O(nthreads) space,
-// so it does not need to be parallel.  If done in parallel, the out-of-memory
-// condition needs to be handled with a reduction.
+// This function does only O(nthreads) work and allocates O(nthreads) space, so
+// it does not need to be parallel.
 
 #include "GB.h"
 
-GrB_Info GB_slice       // slice B into nthreads slices
+GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
 (
     GrB_Matrix B,       // matrix to slice
     int nthreads,       // # of slices to create
@@ -49,10 +49,8 @@ GrB_Info GB_slice       // slice B into nthreads slices
     ASSERT (Slice [nthreads] == B->nvec) ;
     for (int t = 0 ; t < nthreads ; t++)
     {
-        // printf ("Slice [%d] = "GBd"\n", t, Slice [t]) ;
         ASSERT (Slice [t] <= Slice [t+1]) ;
     }
-    // printf ("Slice [%d] = "GBd"\n", nthreads, Slice [nthreads]) ;
 
     GrB_Info info ;
 

@@ -40,8 +40,7 @@ GrB_Info GrB_finalize ( )
             // delete the critical section for POSIX pthreads
             pthread_mutex_destroy (&GB_sync) ;
             // thread-local storage will be deleted when the user thread
-            // terminates, using GB_Global.free_function passed to
-            // pthread_key_create in GB_init.
+            // terminates, using the free_function passed to GB_init.
         }
 
         #elif defined (USER_WINDOWS_THREADS)

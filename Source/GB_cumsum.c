@@ -17,18 +17,6 @@
 // That is, count [j] on input is overwritten with the value of
 // sum (count [0..j-1]).
 
-// GB_transpose_bucket uses this function to compute row and column pointers.
-// On input, count [j] is the number of nonzeros in column j of a matrix, and
-// count [n] should be zero (it only affects the result k, however).  On
-// output, count [0..n] contains the column pointers of the matrix, and kresult
-// is the number of nonzeros in count [0:n], which becomes nvec_nonempty for
-// the resulting matrix.
-
-// GB_AxB_flopcount uses this to compute the cumulative sum of the flop
-// counts for C<M>=A*B, for each column of B.  In this case, n is the
-// number of vectors in B.  It does not need the value k, so it is not
-// computed.
-
 // PARALLEL: a parallel cumsum
 
 #include "GB.h"

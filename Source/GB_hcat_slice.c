@@ -54,9 +54,9 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     // Cnzs   [t] = sum of cnz_slice   [0:t-1]
     // Cnvecs [t] = sum of cnvec_slice [0:t-1]
 
-    // both arrays are size nthreads+1.  Thus, both Cnzs [0] and Cnvecs [0]
-    // are zero, and their last entries are the total # entries and vectors
-    // in C, respectively.
+    // both arrays are size nthreads+1.  Thus, both Cnzs [0] and Cnvecs [0] are
+    // zero, and their last entries are the total # entries and vectors in C,
+    // respectively.
 
     int64_t Cnzs   [nthreads+1] ;
     int64_t Cnvecs [nthreads+1] ;
@@ -91,7 +91,8 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
 
     GrB_Info info ;
     GB_CREATE (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_FORCE_HYPER, GB_Global.hyper_ratio, cnvec, cnz, true, Context) ;
+        GB_FORCE_HYPER, GB_Global_hyper_ratio_get ( ), cnvec, cnz, true,
+        Context) ;
     if (info != GrB_SUCCESS)
     {
         // out of memory
@@ -137,7 +138,7 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
         // construct the column pointers of C (shift upwards by cnz)
         for (int64_t k = 0 ; k < cnvec_slice ; k++)
         {
-            Cp [k + cnvec] = Cslicep [k] + cnz ;
+            Cp [cnvec + k] = Cslicep [k] + cnz ;
         }
     }
 

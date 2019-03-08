@@ -14,13 +14,12 @@
 
 #include "GB.h"
 
-// The time spent in the critical section is typically O(nthreads) or
-// O(GB_Global.nthreads_max), unless the user calls GraphBLAS simultaneously
-// from multiple user threads.  In that case, (if try_again is true) the time
-// could be O(GxB_NTHREADS_MAX), which is 2048 by default.  If it becomes a
-// performance bottleneck, doubly-linked list of available Sauna ids could be
-// kept.  The downside of a doubly-linked list is that threads would tend not
-// to acquire their native Saunas.
+// The time spent in the critical section is typically O(nthreads) or, unless
+// the user calls GraphBLAS simultaneously from multiple user threads.  In that
+// case, (if try_again is true) the time could be O(GxB_NTHREADS_MAX), which is
+// 2048 by default.  If it becomes a performance bottleneck, doubly-linked list
+// of available Sauna ids could be kept.  The downside of a doubly-linked list
+// is that threads would tend not to acquire their native Saunas.
 
 GrB_Info GB_Sauna_acquire
 (

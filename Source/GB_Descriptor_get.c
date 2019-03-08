@@ -115,7 +115,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         AxB_desc  = desc->axb ;   // DEFAULT, GUSTAVSON, HEAP, or DOT
 
         // default is zero.  if descriptor->nthreads <= 0, GraphBLAS selects
-        // automatically: any value between 1 and GB_Global.nthreads_max.  If
+        // automatically: any value between 1 and the global nthreads_max.  If
         // descriptor->nthreads > 0, then that defines the exact number of
         // threads to use in the current GraphBLAS operation.
         nthreads_desc  = desc->nthreads ;

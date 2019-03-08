@@ -49,7 +49,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 
     // allocate just the header of the matrix, not the content
     GB_NEW (A, type, ncols, nrows, GB_Ap_null, false,
-        GB_FORCE_NONHYPER, GB_Global.hyper_ratio, 0, Context) ;
+        GB_FORCE_NONHYPER, GB_Global_hyper_ratio_get ( ), 0, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory for matrix header (size O(1))

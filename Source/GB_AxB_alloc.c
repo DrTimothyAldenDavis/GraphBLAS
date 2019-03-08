@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // parallel: this function will remain sequential.
-// parallelism will be done in GB_AxB_parallel.
+// parallelism is handled in GB_AxB_parallel.
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
@@ -47,7 +47,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     //--------------------------------------------------------------------------
 
     // C is hypersparse if any of A, B, and/or M are hypersparse
-    // or if A or B are slice or hyperslice.  M is never a slice or hyperslice
+    // or if A or B are slice or hyperslice.  M is never a slice or hyperslice.
     bool C_is_hyper = (cvdim > 1) &&
         (A->is_hyper || B->is_hyper || (M != NULL && M->is_hyper)) ;
     C_is_hyper = C_is_hyper || (A->is_slice || B->is_slice) ;

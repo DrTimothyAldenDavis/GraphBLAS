@@ -84,7 +84,7 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
 
         // allocate the result C
         GB_CREATE (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
-            GB_FORCE_NONHYPER, GB_Global.hyper_ratio, cvlen, cnz, true,
+            GB_FORCE_NONHYPER, GB_Global_hyper_ratio_get ( ), cvlen, cnz, true,
             Context) ;
         if (info != GrB_SUCCESS)
         {
@@ -187,10 +187,7 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
         // of each slice.
 
         // TODO
-        printf ("TODO\n") ;
-        fprintf (stderr, "TODO\n") ;
-        ASSERT (0) ;
-        abort ( ) ;
+        // fprintf (stderr, "TODO\n") ; ASSERT (0) ; abort ( ) ;
     }
     #endif
 

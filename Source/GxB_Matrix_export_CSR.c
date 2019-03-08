@@ -46,7 +46,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
     //--------------------------------------------------------------------------
 
     // ensure the matrix is in standard CSR format
-    (*A)->hyper_ratio = GxB_NEVER_HYPER ;
+    (*A)->hyper_ratio = GB_NEVER_HYPER ;
     if ((*A)->is_csc)
     { 
         // A = A', done in place, to put A in CSR format

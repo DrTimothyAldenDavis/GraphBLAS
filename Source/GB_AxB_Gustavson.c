@@ -108,8 +108,8 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // allocate the Sauna
     //--------------------------------------------------------------------------
 
+    // TODO: put this in a function:
     GB_Sauna Sauna = GB_Global.Saunas [Sauna_id] ;
-
     if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size < zsize)
     { 
         // get a new Sauna: the Sauna either does not exist, or is too small

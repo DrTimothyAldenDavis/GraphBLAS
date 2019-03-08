@@ -122,7 +122,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 (*ok) = true ;
                 if (malloc_tracking)
                 {
-                    GB_Global_inuse_decrement ((nitems_old - nitems_new) * size_of_item) ;
+                    GB_Global_inuse_decrement ((nitems_old - nitems_new) *
+                        size_of_item) ;
                 }
             }
             else
@@ -138,7 +139,8 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             (*ok) = true ;
             if (malloc_tracking)
             {
-                GB_Global_inuse_increment ((nitems_new - nitems_old) * size_of_item) ;
+                GB_Global_inuse_increment ((nitems_new - nitems_old) *
+                    size_of_item) ;
             }
         }
 

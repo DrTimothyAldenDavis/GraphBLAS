@@ -112,7 +112,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
         // if the global hyper_ratio is negative.  This is only used by
         // GrB_Matrix_new, and in a special case in GB_mask.
         ASSERT (hyper_option == GB_AUTO_HYPER) ;
-        double hyper_ratio = GB_Global.hyper_ratio ;
+        double hyper_ratio = GB_Global_hyper_ratio_get ( ) ;
         A->hyper_ratio = hyper_ratio ;
         is_hyper = !(vdim <= 1 || 0 > hyper_ratio) ;
     }

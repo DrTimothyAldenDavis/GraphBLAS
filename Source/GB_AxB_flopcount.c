@@ -67,6 +67,7 @@
             % numerical phase will compute: C(:,j)<M(:,j)> += A(:,k)*B(k,j),
             % which takes aknz flops, so:
             Bflops (j) += aknz
+            Bflops_per_entry (k,j) = aknz
         end
     end
 */ 
@@ -83,6 +84,7 @@
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 (
     int64_t *Bflops,            // size B->nvec+1 and all zero, if present
+    int64_t *Bflops_per_entry,  // size nnz(B)+1 and all zero, if present
     const GrB_Matrix M,         // optional mask matrix
     const GrB_Matrix A,
     const GrB_Matrix B,
@@ -103,23 +105,39 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (A->vdim == B->vlen) ;
 
+    int64_t bnz = GB_NNZ (B) ;
+    int64_t bnvec = B->nvec ;
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
 
+    bool check_quick_return = (Bflops == NULL) && (Bflops_per_entry == NULL) ;
+
     #ifndef NDEBUG
-    if (Bflops == NULL)
+    if (check_quick_return)
     {
         // a single thread is testing the condition (total_flops <= floplimit)
         ASSERT (Context == NULL) ;
         ASSERT (nthreads == 1) ;
     }
-    else
+    if (Bflops != NULL)
     {
         // Bflops is set to zero in the calller
-        for (int64_t kk = 0 ; kk <= bnvec ; kk++) ASSERT (Bflops [kk] == 0) ;
+        for (int64_t kk = 0 ; kk <= bnvec ; kk++)
+        {
+            ASSERT (Bflops [kk] == 0) ;
+        }
+    }
+    if (Bflops_per_entry != NULL)
+    {
+        // Bflops_per_entry is set to zero in the calller
+        for (int64_t pB = 0 ; pB <= bnz ; pB++)
+        {
+            ASSERT (Bflops_per_entry [pB] == 0) ;
+        }
     }
     #endif
 
@@ -133,7 +151,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     int64_t mnvec = 0 ;
     bool M_is_hyper = GB_IS_HYPER (M) ;
     if (M != NULL)
-    {
+    { 
         Mh = M->h ;
         Mp = M->p ;
         Mi = M->i ;
@@ -153,15 +171,12 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     const int64_t *restrict Bh = B->h ;
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bi = B->i ;
-    int64_t bnvec = B->nvec ;
     bool B_is_hyper = GB_IS_HYPER (B) ;
 
     //--------------------------------------------------------------------------
     // compute flop counts for C<M> = A*B
     //--------------------------------------------------------------------------
 
-    // total_flops is only needed if Bflops is NULL, and in that case,
-    // nthreads is 1.
     int64_t total_flops = 0 ;
     bool quick_return = false ;
 
@@ -175,7 +190,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         // All iterations are completely independent.
 
         if (quick_return)
-        {
+        { 
             // TODO: if quick_return is true, then Bflops is NULL and the
             // computations are being done by a single thread, and the thread
             // can terminate.  But a break statement cannot be used here.
@@ -192,7 +207,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
         // C(:,j) is empty if B(:,j) is empty
         int64_t bjnz = pB_end - pB ;
-        if (bjnz == 0) continue ;           // Bflops [kk] already zero
+        if (bjnz == 0) continue ;
 
         //----------------------------------------------------------------------
         // see if M(:,j) is present and non-empty
@@ -200,7 +215,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
         int64_t im_first = -1, im_last = -1 ;
         if (M != NULL)
-        {
+        { 
             // TODO: can reuse mpleft from the last binary search of M->h, to
             // speed up the search when M is hypersparse.  This is just a
             // heuristic, and resetting mpleft to zero here would work too
@@ -214,7 +229,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
             GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
             int64_t mjnz = pM_end - pM ;
             // C(:,j) is empty if M(:,j) is empty
-            if (mjnz == 0) continue ;       // Bflops [kk] already zero
+            if (mjnz == 0) continue ;
             // M(:,j) has at least one entry; get 1st and last index in M(:,j)
             im_first = Mi [pM] ;
             im_last  = Mi [pM_end-1] ;
@@ -246,6 +261,15 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
         int64_t bjflops = 0 ;
 
+        // TODO: the following for loop could also be parallel.  pleft would
+        // need to be set to zero before each call to GB_lookup, or private for
+        // each thread.  It is currently updated after each search to reduce
+        // the work in subsequent binary searches.  The break statement would
+        // need to be removed.  Doing the following loop in parallel would be
+        // important if B is a single dense vector, for example.  In that case,
+        // the outer loop is a single iteration, with bnvec == 1.
+
+        // reduction (+:bjflops, +:total_flops)
         for ( ; pB < pB_end ; pB++)
         {
             // B(k,j) is nonzero
@@ -272,10 +296,14 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
             // C(:,j)<M(:,j)> += A(:,k)*B(k,j).
             bjflops += aknz ;
 
-            // FUTURE: Bflops_per_entry [pB] = aknz ; // flops for B(k,j)
+            if (Bflops_per_entry != NULL)
+            { 
+                // flops for the single entry, B(k,j)
+                Bflops_per_entry [pB] = aknz ;
+            }
 
             // check for a quick return
-            if (Bflops == NULL)
+            if (check_quick_return)
             {
                 // the work is being done by a single thread
                 ASSERT (nthreads == 1) ;
@@ -299,23 +327,33 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // cumulative sum of Bflops and Bflops_per_entry
     //--------------------------------------------------------------------------
 
-    if (Bflops == NULL)
+    if (Bflops != NULL)
     { 
-        // total_flops has been fullly computed, but Bflops has not.  Just
-        // return the result of the test with the floplimit.
-        return (total_flops <= floplimit) ;
-    }
-    else
-    {
         // Bflops = cumsum ([0 Bflops]) ;
         ASSERT (Bflops [bnvec] == 0) ;
         GB_cumsum (Bflops, bnvec, NULL, Context) ;
         // Bflops [bnvec] is now the total flop count
-        printf ("flop count %g\n", (double) Bflops [bnvec]) ;
-        return (Bflops [bnvec] <= floplimit) ;
+        printf ("flop count %g (per col)\n", (double) Bflops [bnvec]) ;
+        total_flops = Bflops [bnvec] ;
     }
+
+    if (Bflops_per_entry != NULL)
+    { 
+        // Bflops_per_entry = cumsum ([0 Bflops_per_entry]) ;
+        ASSERT (Bflops_per_entry [bnz] == 0) ;
+        GB_cumsum (Bflops_per_entry, bnz, NULL, Context) ;
+        // Bflops_per_entry [bnz] is now the total flop count
+        printf ("flop count %g (per entry)\n", (double) Bflops_per_entry [bnz]);
+        total_flops = Bflops_per_entry [bnz] ;
+    }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    return (total_flops <= floplimit) ;
 }
 

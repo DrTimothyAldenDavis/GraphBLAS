@@ -206,8 +206,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (A->is_slice)
     {
-        // a slice or hyperslice must have all shallow content
-        if (!A->h_shallow || !A->p_shallow || !A->i_shallow || !A->x_shallow)
+        // a slice or hyperslice must have shallow i and x content
+        if (!A->i_shallow || !A->x_shallow)
         { 
             if (pr > 0) GBPR ("invalid non-shallow slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
@@ -380,15 +380,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     { 
         if (pr > 0) GBPR ("pending tuples: "GBd" max pending: "GBd
             " zombies: "GBd"\n", A->n_pending, A->max_n_pending, A->nzombies) ;
-        #if 0
-        // FUTURE:: check a slice or hyperslice
         if (A->is_slice)
-        {
+        { 
+            // a slice or hyperslice cannot have pending work
             if (pr > 0) GBPR ("slice %s invalid: unfinished\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "slice %s invalid: unfinished [%s]", kind, GB_NAME))) ;
         }
-        #endif
     }
 
     if (A->nzombies < 0 || A->nzombies > anz)

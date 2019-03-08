@@ -1536,7 +1536,16 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     GB_Context Context
 ) ;
 
-GrB_Info GB_slice       // slice B into nthreads slices
+GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
+(
+    GrB_Matrix B,       // matrix to slice
+    int nthreads,       // # of slices to create
+    int64_t *Slice,     // array of size nthreads+1 that defines the slice
+    GrB_Matrix *Bslice, // array of output slices, of size nthreads
+    GB_Context Context
+) ;
+
+GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
 (
     GrB_Matrix B,       // matrix to slice
     int nthreads,       // # of slices to create
@@ -1558,6 +1567,17 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
     GrB_Matrix *Chandle,    // output matrix C to create
     int nthreads,           // # of slices to concatenate
     GrB_Matrix *Cslice,     // array of slices of size nthreads
+    GB_Context Context
+) ;
+
+GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
+(
+    GrB_Matrix *Chandle,    // output matrix C to create
+    int nthreads,           // # of slices to concatenate
+    GrB_Matrix *Cslice,     // array of slices of size nthreads
+    GrB_Monoid add,         // monoid to use to sum up the entries
+    bool any_Gustavson,     // true if any thread used Gustavson's method
+    int *Sauna_ids,         // size nthreads, Sauna id's of each thread
     GB_Context Context
 ) ;
 
@@ -1617,11 +1637,12 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 (
-    int64_t *Bflops,            // size B->nvec+1, if present
-    GrB_Matrix M,               // optional mask matrix
-    GrB_Matrix A,
-    GrB_Matrix B,
-    int64_t floplimit,          // maximumm flops to compute if Bflops NULL
+    int64_t *Bflops,            // size B->nvec+1 and all zero, if present
+    int64_t *Bflops_per_entry,  // size nnz(B)+1 and all zero, if present
+    const GrB_Matrix M,         // optional mask matrix
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    int64_t floplimit,          // maximum flops to compute if Bflops NULL
     GB_Context Context
 ) ;
 
@@ -2355,29 +2376,32 @@ extern GB_Global_struct GB_Global ;
 // GB_Global access functions
 //------------------------------------------------------------------------------
 
+// TODO: add more GB_Global_* functions here
+
+void     GB_Global_user_multithreaded_set (bool user_multithreaded) ;
+void     GB_Global_queue_head_set (void *p) ;
+void  *  GB_Global_queue_head_get ( ) ;
+void     GB_Global_mode_set (GrB_Mode mode) ;
+void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
 int      GB_Global_nthreads_max_get ( ) ;
-int64_t  GB_Global_nmalloc_get ( ) ;
-void     GB_Global_nmalloc_clear ( ) ;
-int64_t  GB_Global_nmalloc_decrement ( ) ;
-int64_t  GB_Global_nmalloc_increment ( ) ;
+double   GB_Global_hyper_ratio_get ( ) ;
+GB_Sauna GB_Global_Saunas_get (int id) ;
 void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
 void     GB_Global_abort_function_call ( ) ;
-void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
-bool     GB_Global_malloc_tracking_get ( ) ;
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
+bool     GB_Global_malloc_tracking_get ( ) ;
+void     GB_Global_nmalloc_clear ( ) ;
+int64_t  GB_Global_nmalloc_get ( ) ;
+int64_t  GB_Global_nmalloc_increment ( ) ;
+int64_t  GB_Global_nmalloc_decrement ( ) ;
 void     GB_Global_malloc_debug_set (bool malloc_debug) ;
 bool     GB_Global_malloc_debug_get ( ) ;
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
-int64_t  GB_Global_inuse_get ( ) ;
 void     GB_Global_inuse_clear ( ) ;
+int64_t  GB_Global_inuse_get ( ) ;
 void     GB_Global_inuse_increment (int64_t s) ;
 void     GB_Global_inuse_decrement (int64_t s) ;
 int64_t  GB_Global_maxused_get ( ) ;
-void  *  GB_Global_queue_head_get ( ) ;
-void     GB_Global_queue_head_set (void *p) ;
-void     GB_Global_mode_set (GrB_Mode mode) ;
-GB_Sauna GB_Global_Saunas_get (int id) ;
-void     GB_Global_user_multithreaded_set (bool user_multithreaded) ;
 
 //------------------------------------------------------------------------------
 // critical section for user threads
