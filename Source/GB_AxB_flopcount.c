@@ -336,7 +336,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         ASSERT (Bflops [bnvec] == 0) ;
         GB_cumsum (Bflops, bnvec, NULL, Context) ;
         // Bflops [bnvec] is now the total flop count
-        printf ("flop count %g (per col)\n", (double) Bflops [bnvec]) ;
+        // printf ("flop count %g (per col)\n", (double) Bflops [bnvec]) ;
         total_flops = Bflops [bnvec] ;
     }
 
@@ -346,7 +346,8 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         ASSERT (Bflops_per_entry [bnz] == 0) ;
         GB_cumsum (Bflops_per_entry, bnz, NULL, Context) ;
         // Bflops_per_entry [bnz] is now the total flop count
-        printf ("flop count %g (per entry)\n", (double) Bflops_per_entry [bnz]);
+        // printf ("flop count %g (per entry)\n",
+        // (double) Bflops_per_entry [bnz]);
         total_flops = Bflops_per_entry [bnz] ;
     }
 
