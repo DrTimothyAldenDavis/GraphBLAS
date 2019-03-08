@@ -549,8 +549,13 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             GB_AxB_flopcount (Bflops, NULL, (Mask_comp) ? NULL : M,
                 A, B, 0, Context) ;
 
-            // binary search to find where to slice B by column
+            // reduce # of threads, based on flop count (ensure
+            // each thread does at least a lower bound # of flops.
+            // TODO make this a parameter
             int64_t total_flops = Bflops [bnvec] ;
+            nthreads = GB_IMIN (nthreads, 1 + (int) (total_flops / 1e6)) ;
+
+            // binary search to find where to slice B by column
             int64_t pleft = 0 ;
             for (int t = 1 ; t < nthreads ; t++)
             { 
@@ -599,6 +604,11 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
             // thread t will do entries Slice [t] to Slice [t+1]-1
 
+            // reduce # of threads, based on bnz (ensure
+            // each thread does at least a lower bound # of bnz.
+            // TODO make this a parameter
+            nthreads = GB_IMIN (nthreads, 1 + (int) (bnz / 1e6)) ;
+
             for (int t = 1 ; t < nthreads ; t++)
             { 
                 Slice [t] = ((t * (double) bnz) / (double) nthreads) ;
@@ -636,8 +646,13 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             GB_AxB_flopcount (NULL, Bflops_per_entry, (Mask_comp) ? NULL : M,
                 A, B, 0, Context) ;
 
-            // binary search to find where to slice B by entry
+            // reduce # of threads, based on flop count (ensure
+            // each thread does at least a lower bound # of flops.
+            // TODO make this a parameter
             int64_t total_flops = Bflops_per_entry [bnz] ;
+            nthreads = GB_IMIN (nthreads, 1 + (int) (total_flops / 1e6)) ;
+
+            // binary search to find where to slice B by entry
             int64_t pleft = 0 ;
             for (int t = 1 ; t < nthreads ; t++)
             { 
@@ -667,13 +682,16 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         // construct each slice of B
         //----------------------------------------------------------------------
 
-        if (fine_slice)
-        { 
-            GB_OK (GB_fine_slice (B, nthreads, Slice, Bslice, Context)) ;
-        }
-        else
-        { 
-            GB_OK (GB_slice (B, nthreads, Slice, Bslice, Context)) ;
+        if (nthreads > 1)
+        {
+            if (fine_slice)
+            { 
+                GB_OK (GB_fine_slice (B, nthreads, Slice, Bslice, Context)) ;
+            }
+            else
+            { 
+                GB_OK (GB_slice (B, nthreads, Slice, Bslice, Context)) ;
+            }
         }
 
         //----------------------------------------------------------------------
@@ -690,8 +708,8 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         for (int t = 0 ; t < nthreads ; t++)
         { 
             GrB_Desc_Value thread_method_to_use = 0 ;
-            GB_AxB_select (A, Bslice [t], semiring, do_adotb, AxB_method,
-                &thread_method_to_use, &(bjnz_max [t])) ;
+            GB_AxB_select (A, (nthreads == 1) ? B : Bslice [t], semiring,
+                do_adotb, AxB_method, &thread_method_to_use, &(bjnz_max [t])) ;
             AxB_methods_used [t] = thread_method_to_use ;
 
             // collect all thread-specific info
@@ -736,9 +754,9 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         { 
             bool thread_mask_applied = false ;
             GrB_Info thread_info = GB_AxB_sequential (&(Cslice [t]), M,
-                Mask_comp, A, Bslice [t], semiring, flipxy,
-                AxB_methods_used [t], bjnz_max [t], check_for_dense_mask,
-                &thread_mask_applied, Sauna_ids [t]) ;
+                Mask_comp, A, (nthreads == 1) ? B : Bslice [t], semiring,
+                flipxy, AxB_methods_used [t], bjnz_max [t],
+                check_for_dense_mask, &thread_mask_applied, Sauna_ids [t]) ;
 
             // collect all thread-specific info
             ok      = ok      && (thread_info == GrB_SUCCESS) ;
@@ -791,7 +809,13 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         // Each slice Cslice [t] has the same dimensions and type as C.  C is
         // stored by column.
 
-        if (fine_slice)
+        if (nthreads == 1)
+        {
+            // one thread, so only one slice: just copy Cslice[0] to C
+            (*Chandle) = Cslice [0] ;
+            Cslice [0] = NULL ;
+        }
+        else if (fine_slice)
         { 
             // C = sum (Cslice [0..nthreads-1]).  Adjacent slices of C can
             // share columns, which must be summed.  Columns in the middle of
