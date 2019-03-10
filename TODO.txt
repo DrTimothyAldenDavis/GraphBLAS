@@ -1,3 +1,6 @@
 
 TODO: add a test to all methods see if GrB_init has been called?
 
+TODO: do not require inputs to be typecasted for FIRST and SECOND
+    operators, for the parameter that is not used.
+
