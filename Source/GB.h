@@ -4557,6 +4557,11 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 // definitions of built-in types and functions, used by user-defined objects
 //------------------------------------------------------------------------------
 
+#define GB_opaque_GrB_LNOT GB_opaque_GxB_LNOT_BOOL
+#define GB_opaque_GrB_LOR  GB_opaque_GxB_LOR_BOOL
+#define GB_opaque_GrB_LAND GB_opaque_GxB_LAND_BOOL
+#define GB_opaque_GrB_LXOR GB_opaque_GxB_LXOR_BOOL
+
 //------------------------------------------------------
 // built-in types
 //------------------------------------------------------
@@ -4713,6 +4718,10 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 #define GB_DEF_GrB_MINV_FP64_xtype double
 
 // op: LNOT
+#define GB_DEF_GrB_LNOT_function GB_LNOT_f_BOOL
+#define GB_DEF_GrB_LNOT_ztype bool
+#define GB_DEF_GrB_LNOT_xtype bool
+
 #define GB_DEF_GxB_LNOT_BOOL_function GB_LNOT_f_BOOL
 #define GB_DEF_GxB_LNOT_BOOL_ztype bool
 #define GB_DEF_GxB_LNOT_BOOL_xtype bool
@@ -5640,6 +5649,11 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 #define GB_DEF_GxB_ISLE_FP64_ytype double
 
 // op: LOR
+#define GB_DEF_GrB_LOR_function GB_LOR_f_BOOL
+#define GB_DEF_GrB_LOR_ztype bool
+#define GB_DEF_GrB_LOR_xtype bool
+#define GB_DEF_GrB_LOR_ytype bool
+
 #define GB_DEF_GxB_LOR_BOOL_function GB_LOR_f_BOOL
 #define GB_DEF_GxB_LOR_BOOL_ztype bool
 #define GB_DEF_GxB_LOR_BOOL_xtype bool
@@ -5696,6 +5710,11 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 #define GB_DEF_GxB_LOR_FP64_ytype double
 
 // op: LAND
+#define GB_DEF_GrB_LAND_function GB_LAND_f_BOOL
+#define GB_DEF_GrB_LAND_ztype bool
+#define GB_DEF_GrB_LAND_xtype bool
+#define GB_DEF_GrB_LAND_ytype bool
+
 #define GB_DEF_GxB_LAND_BOOL_function GB_LAND_f_BOOL
 #define GB_DEF_GxB_LAND_BOOL_ztype bool
 #define GB_DEF_GxB_LAND_BOOL_xtype bool
@@ -5752,6 +5771,11 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 #define GB_DEF_GxB_LAND_FP64_ytype double
 
 // op: LXOR
+#define GB_DEF_GrB_LXOR_function GB_LXOR_f_BOOL
+#define GB_DEF_GrB_LXOR_ztype bool
+#define GB_DEF_GrB_LXOR_xtype bool
+#define GB_DEF_GrB_LXOR_ytype bool
+
 #define GB_DEF_GxB_LXOR_BOOL_function GB_LXOR_f_BOOL
 #define GB_DEF_GxB_LXOR_BOOL_ztype bool
 #define GB_DEF_GxB_LXOR_BOOL_xtype bool
