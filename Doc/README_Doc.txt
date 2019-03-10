@@ -43,8 +43,16 @@ Mac instead, try these instructions.
 
 To use OpenMP in GraphBLAS on the Mac:
 
+If you have the Intel compiler and OpenMP library, then use the following
+in the GraphBLAS/ folder.  OpenMP will be found automatically:
+
+    make CC=icc CXX=icc
+
+Otherwise, you can use gcc-8 and the OpenMP library in the Mac HomeBrew,
+as follows.
+
 The following process was done on a MacBook Pro (Retina, 13-inch, Late 2013)
-with macOS Mojavae 10.14.1, on Nov 26, 2018::
+with macOS Mojavae 10.14.1, on Nov 26, 2018:
 
 First, install Xcode 10.1 from the Apple App Store, and the Command Line Tools
 for macOS 10.14 for Xcode 10.1 from https://developer.apple.com/download/more/

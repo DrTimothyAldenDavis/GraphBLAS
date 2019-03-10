@@ -70,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Mar 7, 2019 (DRAFT)"
+#define GxB_DATE "Mar 10, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0
@@ -906,8 +906,8 @@ typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 // built-in select operators
 //------------------------------------------------------------------------------
 
-// GxB_select (C, Mask, accum, op, A, thunk, desc) always returns a matrix C of the
-// same size as A (or A' if GrB_TRAN is in the descriptor).
+// GxB_select (C, Mask, accum, op, A, thunk, desc) always returns a matrix C of
+// the same size as A (or A' if GrB_TRAN is in the descriptor).
 
 extern GxB_SelectOp
     GxB_TRIL,       // C=tril(A,thunk):   returns true if ((j-i) <= thunk)

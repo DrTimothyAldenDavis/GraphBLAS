@@ -5,9 +5,11 @@
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-// parallel: not here.
-
 //------------------------------------------------------------------------------
+
+// parallel: not here
+
+{
 
     #if GB_HANDLE_FLIPXY
     if (flipxy)
@@ -35,4 +37,5 @@
         #undef GB_atype
         #undef GB_btype
     }
+}
 

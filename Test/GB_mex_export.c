@@ -262,6 +262,7 @@ GrB_Info import_export2 (GB_Context Context)
 {
     OK (import_export (Context)) ;
     OK (import_export (Context)) ;
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

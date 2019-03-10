@@ -58,13 +58,14 @@ m4_define(`GxB_BinaryOp_define', `
 
 m4_define(`GxB_Monoid_define', `
     #define GB_DEF_$1_add GB_DEF_$2_function
+    #define GB_DEF_$1_zsize sizeof (GB_DEF_$2_ztype)
     GB_DEF_$2_ztype GB_DEF_$1_identity = $3 ;
     struct GB_Monoid_opaque GB_opaque_$1 =
     {
         GB_MAGIC,           // object is defined
         & GB_opaque_$2,     // binary operator
         & GB_DEF_$1_identity,   // identity value
-        sizeof (GB_DEF_$2_ztype),   // identity size
+        GB_DEF_$1_zsize,    // identity size
         GB_USER_COMPILED,   // user-defined at compile-time
         NULL                // no terminal value
     } ;
@@ -72,16 +73,18 @@ m4_define(`GxB_Monoid_define', `
 
 m4_define(`GxB_Monoid_terminal_define', `
     #define GB_DEF_$1_add GB_DEF_$2_function
+    #define GB_DEF_$1_zsize sizeof (GB_DEF_$2_ztype)
+    #define GB_DEF_$1_is_user_terminal
     GB_DEF_$2_ztype GB_DEF_$1_identity = $3 ;
-    GB_DEF_$2_ztype GB_DEF_$1_terminal = $4 ;
+    GB_DEF_$2_ztype GB_DEF_$1_user_terminal = $4 ;
     struct GB_Monoid_opaque GB_opaque_$1 =
     {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_$2,     // binary operator
-        & GB_DEF_$1_identity,   // identity value
-        sizeof (GB_DEF_$2_ztype),   // identity and terminal size
-        GB_USER_COMPILED,   // user-defined at compile-time
-        & GB_DEF_$1_terminal        // terminal value
+        GB_MAGIC,                   // object is defined
+        & GB_opaque_$2,             // binary operator
+        & GB_DEF_$1_identity,       // identity value
+        GB_DEF_$1_zsize,            // identity and terminal size
+        GB_USER_COMPILED,           // user-defined at compile-time
+        & GB_DEF_$1_user_terminal   // terminal value
     } ;
     GrB_Monoid $1 = & GB_opaque_$1')
 
@@ -117,10 +120,12 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #define GB_AheapB   GB_AxB_user_heap_$1
     #define GB_identity    GB_DEF_$2_identity
     #define GB_ADD(z,y)    GB_DEF_$2_add (&(z), &(z), &(y))
-    #ifdef  GB_DEF_$2_terminal
-    #define GB_terminal if ((z) == GB_DEF_$2_terminal) break ;
+    #if defined ( GB_DEF_$2_is_user_terminal )
+        #define GB_terminal if (memcmp (&cij, &GB_DEF_$2_user_terminal, GB_DEF_$2_zsize) == 0) break ;
+    #elif defined ( GB_DEF_$2_terminal )
+        #define GB_terminal if (cij == GB_DEF_$2_terminal) break ;
     #else
-    #define GB_terminal ;
+        #define GB_terminal ;
     #endif
     #define GB_MULT(z,x,y) GB_DEF_$3_function (&(z), &(x), &(y))
     #define GB_ztype       GB_DEF_$3_ztype

@@ -13,10 +13,8 @@ mexFunctions in the GraphBLAS/Test directory, but that could be a hassle.
 Better would be to use the algorithms and main programs in LAGraph (BFS for
 now), GraphBLAS/Demo (BFS, MIS, PageRank, triangle counting) and
 GraphBLAS/Extras (triangle counting, k-truss, and all-k-truss).  The k-truss
-and all-k-truss do lots of matrix-matrix multiplies.  BFS and PageRank will
-initially not be parallel since they use mxv and vxm, which will need more work
-beyond the current 'slice' strategy (the commented out "*FINE" methods in
-GB_AxB_parallel.c).
+and all-k-truss do lots of matrix-matrix multiplies.  Pagerank is a good
+test for mxv via "*FINE" slice methods.
 
 We should probably write some unit tests for simpler functions like sorting and
 transpose and such.  LAGraph would be the thing to use since it has a nice
@@ -28,11 +26,7 @@ The GB_AxB_parallel will use bulk parallelism with for loops that do
 loop that then do not need to be parallel inside.  For other functions, we will
 want to do parallel for loops for the GBI_for_each_vector(A) iterator.  I have
 simplified this macro in this latest (Feb 16, 2019) version.  See the
-GBI_* definitions in GB.h.
-
-Ignore the iteration over the "slice" and "hyperslice" for now (those will
-appear only inside the sequential workers for C=A*B and thus need not be
-parallel).   See the #ifdef for_comments_only in GB.h.
+GBI_* definitions in GB.h, and the #ifdef for_comments_only block.
 
 The more complex iterators (GBI2, GBI2s, GBI3, GBI3s) can be ignored for now;
 they iterate over a set union of 2 or more lists.  They are currently not
@@ -43,11 +37,7 @@ the loop is to be parallelized.
 
 GB_AxB_parallel.c: IN PROGRESS: mxm nicely parallel for large matrices.
     This is where we do C=A*B, for GrB_mxm, GrB_mxv, and GrB_vxm.
-    It is partially completed, and can parallelize mxm but not vxm or mxv.
-    The latter require the GxB_SLICE_*FINE methods.  Also not yet
-    implemented are the GxB_SLICE_A* methods (for dot product only),
-    since that requires GB_vcat_slice to be written.  Also needed is a rule
-    to set nthreads to be lower than the max, for small matrices.
+    *FINE slice methods written but need tuning.
 
 GB_AxB_flopcount.c: IN PROGRESS: reasonably implemented but needs a little work.
     Used by C=A*B for the parallel case, simple for all loop.  Note however the

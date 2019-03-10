@@ -12,13 +12,19 @@
 
 JOBS ?= 1
 
-# build the GraphBLAS library (static and dynamic) and run a quick test
-default:
-	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) ; cd ../Demo ; ./demo )
+default: library
 
 # just build the static and dynamic libraries; do not run the demo
 library:
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
+
+# just run the demos: assumes the library is already compiled
+run:
+	( cd ../Demo ; ./demo )
+
+# just do 'make' in build; do not rerun the cmake script
+remake:
+	( cd build ; $(MAKE) --jobs=$(JOBS) )
 
 # just run cmake; do not compile
 cmake:

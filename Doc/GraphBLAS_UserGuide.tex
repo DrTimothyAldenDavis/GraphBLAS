@@ -9506,7 +9506,7 @@ sequential methods, and methods that use OpenMP).
 
 The LAGraph project is a community-wide effort to create graph algorithms based
 on GraphBLAS (any implementation of the API, not just SuiteSparse: GraphBLAS).
-As of Feb.~2019, the library includes the algorithms and utilities listed in
+As of March 10, 2019, the library includes the algorithms and utilities listed in
 the table below.  Many additional algorithms are planned, such as betweenness
 centrality, PageRank, single-source shortest path (via delta stepping), minimum
 spanning trees, connected components, and many more.  Refer to
@@ -9536,6 +9536,8 @@ Algorithms & description \\
                                 \cite{Beamer:2012:DOB,Yang:2018:IPE}, \\
                             & typically 2x faster than \verb'bfs5m' \\
 \verb'LAGraph_bfs_simple'   & a simple BFS (about the same as \verb'bfs5m') \\ 
+\verb'LACC_GraphBLAS.c'     & connected components \\
+\verb'LAGraph_BF_*.c'       & two variants of Bellman-Ford \\
 \hline
 \hline
 Utilities & description \\
@@ -10482,8 +10484,15 @@ although earlier versions of \verb'Xcode' may work as well.  For the GNU
 later of \verb'cmake' is required; version 3.0.0 is preferred.
 
 To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'
-in the main GraphBLAS folder, which compiles the library and runs several
-demos.
+in the main GraphBLAS folder, which compiles the library.  To use a
+non-default compiler:
+
+    {\small
+    \begin{verbatim}
+    make CC=icc CXX=icc JOBS=4 \end{verbatim} }
+
+After compiling the library, you can run the demos by typing \verb'./demo'
+in the Demo folder.
 
 If \verb'cmake' or \verb'make' fail, it might be that your default compiler
 does not support ANSI C11.  Try another compiler.  For example, try one of

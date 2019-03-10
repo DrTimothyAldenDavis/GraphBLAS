@@ -9,6 +9,8 @@
 
 // parallel: not here
 
+{
+
     #if GB_HANDLE_FLIPXY
     if (flipxy)
     { 
@@ -35,4 +37,5 @@
         #undef GB_atype
         #undef GB_btype
     }
+}
 
