@@ -87,13 +87,48 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     // estimate nnz(C) and allocate C
     //--------------------------------------------------------------------------
 
+        if (B->nvec_nonempty < 0)
+        { 
+            B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
+        }
+
+        if (A->nvec_nonempty < 0)
+        { 
+            A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+        }
+
+    // GxB_fprint (A, 2, stderr) ;
+    // GxB_fprint (B, 2, stderr) ;
+
+    bool Adense = false, Bdense = false ;
+    GrB_Index anzmax, bnzmax ;
+    if (GB_Index_multiply (&anzmax, A->nvec_nonempty, A->vlen))
+    {
+        Adense = (anzmax == GB_NNZ (A)) ;
+    }
+
+    if (GB_Index_multiply (&bnzmax, B->nvec_nonempty, B->vlen))
+    {
+        Bdense = (bnzmax == GB_NNZ (B)) ;
+    }
+
+    // if (Adense) fprintf (stderr, "all vectors in A are dense\n") ;
+    // if (Bdense) fprintf (stderr, "all vectors in B are dense\n") ;
+
+    int64_t cnz_guess = 15 + GB_NNZ (A) + GB_NNZ (B) ;
+    if (Adense || Bdense)
+    {
+        // this is exact
+        cnz_guess = A->nvec_nonempty * B->nvec_nonempty ;
+    }
+
     GrB_Info info ;
     GrB_Type ctype = semiring->add->op->ztype ;
     int64_t cvlen = A->vdim ;
     int64_t cvdim = B->vdim ;
 
     info = GB_AxB_alloc (Chandle, ctype, cvlen, cvdim, (Mask_comp ? NULL : M),
-        A, B, true, 15 + GB_NNZ (A) + GB_NNZ (B)) ;
+        A, B, true, cnz_guess) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -102,6 +137,11 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     }
 
     GrB_Matrix C = (*Chandle) ;
+
+    // fprintf (stderr, "C->nzmax " GBd "\n", C->nzmax) ;
+    fprintf (stderr, "A %p %p %p %p\n", A->h, A->p, A->i, A->x) ;
+    fprintf (stderr, "B %p %p %p %p\n", B->h, B->p, B->i, B->x) ;
+    fprintf (stderr, "C %p %p %p %p\n", C->h, C->p, C->i, C->x) ;
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, via builtin semiring
@@ -132,11 +172,16 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xycode, zcode ;
 
+    double t = omp_get_wtime ( ) ;
+
     if (GB_semiring_builtin (A, B, semiring, flipxy,
         &mult_opcode, &add_opcode, &xycode, &zcode))
     { 
         #include "GB_AxB_factory.c"
     }
+
+    t = omp_get_wtime ( ) - t ;
+    fprintf (stderr, "built in dot %g sec\n", t) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -192,6 +237,8 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, B, C, and M
         //----------------------------------------------------------------------
+
+        // fprintf (stderr, "generic\n") ;
 
         // get the semiring operators
         GrB_BinaryOp multiply = semiring->multiply ;
@@ -311,6 +358,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     info = GB_ix_realloc (C, GB_NNZ (C), true, NULL) ;
     ASSERT (info == GrB_SUCCESS) ;
     ASSERT_OK (GB_check (C, "dot: C = A'*B output", GB0)) ;
+    // GxB_fprint (C, 2, stderr) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
     return (GrB_SUCCESS) ;

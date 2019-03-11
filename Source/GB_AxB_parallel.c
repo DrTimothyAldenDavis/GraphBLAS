@@ -121,11 +121,11 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GrB_Info info ;
 
-    #if 0
+    /*
     #if defined ( _OPENMP )
     double t = omp_get_wtime ( ) ;
     #endif
-    #endif
+    */
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -278,10 +278,21 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             GB_OK (GB_Sauna_acquire (1, &Sauna_id, AxB_method_used, Context)) ;
         }
 
+
+        #if defined ( _OPENMP )
+        double t2 = omp_get_wtime ( ) ;
+        #endif
+
         // C<M>=A*B or A'*B
         GrB_Info thread_info = GB_AxB_sequential (Chandle, M, Mask_comp,
             A, B, semiring, flipxy, *AxB_method_used, bjnz_max,
             check_for_dense_mask, mask_applied, Sauna_id) ;
+
+        #if defined ( _OPENMP )
+        t2 = omp_get_wtime ( ) - t2 ;
+        fprintf (stderr, "just one thread: %g method %d\n", t2,
+            *AxB_method_used) ;
+        #endif
 
         // release the Sauna for Gustavson's method
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
@@ -291,16 +302,16 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
         info = thread_info ;
 
-        #if 0
+        /*
         #if defined ( _OPENMP )
         t = omp_get_wtime ( ) - t ;
         if (avlen > 1000)
         {
-            fprintf (stderr, "slice %s: C=%s, nthreads: %2d : %g sec\n",
-            (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
+            fprintf (stderr, "slice %s: C=%s, nthreads one: %g sec\n",
+            (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", t) ;
         }
         #endif
-        #endif
+        */
 
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
     }
@@ -414,8 +425,12 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         bool panic = false ;
         bool allmask = true ;
 
-        #pragma omp parallel for num_threads(nthreads) \
-            reduction(&&:ok,allmask) reduction(||:panic)
+        #if defined ( _OPENMP )
+        double t1 = omp_get_wtime ( ) ;
+        #endif
+
+//      #pragma omp parallel for num_threads(nthreads) \
+//          reduction(&&:ok,allmask) reduction(||:panic)
         for (int t = 0 ; t < nthreads ; t++)
         { 
             bool thread_mask_applied = false ;
@@ -427,6 +442,14 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             allmask = allmask && (thread_mask_applied) ;
             panic   = panic   || (thread_info == GrB_PANIC) ;
         }
+
+        #if defined ( _OPENMP )
+        t1 = omp_get_wtime ( ) - t1 ;
+        if (avlen > 1000)
+        {
+            fprintf (stderr, "just the slice Ck=A'*Bk: %g sec\n", t1) ;
+        }
+        #endif
 
         if (!ok)
         { 
@@ -748,6 +771,12 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         bool panic = false ;
         bool allmask = true ;
 
+        /*
+        #if defined ( _OPENMP )
+        double t1 = omp_get_wtime ( ) ;
+        #endif
+        */
+
         #pragma omp parallel for num_threads(nthreads) \
             reduction(&&:ok,allmask) reduction(||:panic)
         for (int t = 0 ; t < nthreads ; t++)
@@ -763,6 +792,16 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             allmask = allmask && (thread_mask_applied) ;
             panic   = panic   || (thread_info == GrB_PANIC) ;
         }
+
+        /*
+        #if defined ( _OPENMP )
+        t1 = omp_get_wtime ( ) - t1 ;
+        if (avlen > 1000)
+        {
+            fprintf (stderr, "just the slice Ck=A*Bk: %g sec\n", t1) ;
+        }
+        #endif
+        */
 
         //----------------------------------------------------------------------
         // check error conditions
@@ -843,16 +882,17 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GB_FREE_ALL ;
 
-    #if 0
+    /*
     #if defined ( _OPENMP )
     t = omp_get_wtime ( ) - t ;
     if (avlen > 1000)
     {
-        fprintf (stderr, "slice %s: C=%s, nthreads: %2d : %g sec\n",
-        (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
+        fprintf (stderr, "slice %s (%d): C=%s, nthreads: %2d : %g sec\n",
+        (slice_A) ? "A" : "B", AxB_slice,
+        (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
     }
     #endif
-    #endif
+    */
 
     ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
     return (GrB_SUCCESS) ;
