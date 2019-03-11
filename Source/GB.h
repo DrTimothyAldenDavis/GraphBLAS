@@ -24,8 +24,8 @@
 // #define USER_NO_THREADS
 
 // These are in draft status, and not yet implemented:
-// #define USER_WINDOWS_THREADS         not yet supported
-// #define USER_ANSI_THREADS            not yet supported
+// #define USER_WINDOWS_THREADS         // not yet supported
+// #define USER_ANSI_THREADS            // not yet supported
 
 //------------------------------------------------------------------------------
 // manage compiler warnings

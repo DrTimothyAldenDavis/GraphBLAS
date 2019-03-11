@@ -128,7 +128,14 @@ void GB_AxB_select                  // select method for A*B or A'*B
 
                 // use_heap = (4*log(b)*40b < 9*m) or roughly (16*b*log(b)<m).
 
-                use_heap = (4 * log2 ((double) b) * heap_memory < gs_memory) ;
+                int log2b = 0 ;
+                while (b > 0)
+                {
+                    b = b / 2 ;
+                    log2b++ ;
+                }
+
+                use_heap = (4 * log2b * heap_memory < gs_memory) ;
             }
             else
             { 
