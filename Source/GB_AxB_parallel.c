@@ -121,11 +121,9 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GrB_Info info ;
 
-    /*
-    #if defined ( _OPENMP )
-    double t = omp_get_wtime ( ) ;
-    #endif
-    */
+//  #if defined ( _OPENMP )
+//  double t = omp_get_wtime ( ) ;
+//  #endif
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -185,6 +183,26 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         slice_A = (AxB_slice == GxB_SLICE_ATROW) ||
                   (AxB_slice == GxB_SLICE_ATNZ) ;
 
+        // TODO: if the output C matrix is dense in the space of
+        // A->nvec_nonempty * B->nvec_nonempty, then the pattern of C can be
+        // determined easily.  Each slice of the output C could be computed in
+        // place, with no need for a subsequent call to GB_vcat_slice.  Better
+        // yet, just make one call to GB_AxB_dot, preconstruct the pattern of C
+        // (in parallel), and then do all dot products in parallel.
+
+        // TODO: if the mask M is present, and not complemented, then assume
+        // all entries in M are true.  Then give C the pattern of M, and
+        // compute all entries in parallel.  If an entry in C does not actually
+        // appear (M(i,j) is zero, or the dot product finds that C(i,j) is not
+        // an entry, then make it a zombie.
+
+        // TODO: the above ideas can be merged.  They share the same method:
+        // (1) precompute the pattern (either C is dense, or the pattern is the
+        // same as M).  And then (2) compute all entries in C in parallel,
+        // placing zombies if needed.
+
+        // In this case, slice_A and slice_B are both false.
+
     }
     else
     { 
@@ -238,7 +256,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     {
         nthreads = GB_IMIN (nthreads, anvec) ;
     }
-    else
+    else // if slice_B
     {
         if (AxB_slice <= GxB_SLICE_BFLOPS)
         {
@@ -278,21 +296,20 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             GB_OK (GB_Sauna_acquire (1, &Sauna_id, AxB_method_used, Context)) ;
         }
 
-
-        #if defined ( _OPENMP )
-        double t2 = omp_get_wtime ( ) ;
-        #endif
+//      #if defined ( _OPENMP )
+//      double t2 = omp_get_wtime ( ) ;
+//      #endif
 
         // C<M>=A*B or A'*B
         GrB_Info thread_info = GB_AxB_sequential (Chandle, M, Mask_comp,
             A, B, semiring, flipxy, *AxB_method_used, bjnz_max,
             check_for_dense_mask, mask_applied, Sauna_id) ;
 
-        #if defined ( _OPENMP )
-        t2 = omp_get_wtime ( ) - t2 ;
-        fprintf (stderr, "just one thread: %g method %d\n", t2,
-            *AxB_method_used) ;
-        #endif
+//      #if defined ( _OPENMP )
+//      t2 = omp_get_wtime ( ) - t2 ;
+//      fprintf (stderr, "just one thread: %g method %d\n", t2,
+//          *AxB_method_used) ;
+//      #endif
 
         // release the Sauna for Gustavson's method
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
@@ -302,16 +319,14 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
         info = thread_info ;
 
-        /*
-        #if defined ( _OPENMP )
-        t = omp_get_wtime ( ) - t ;
-        if (avlen > 1000)
-        {
-            fprintf (stderr, "slice %s: C=%s, nthreads one: %g sec\n",
-            (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", t) ;
-        }
-        #endif
-        */
+//      #if defined ( _OPENMP )
+//      t = omp_get_wtime ( ) - t ;
+//      if (avlen > 1000)
+//      {
+//          fprintf (stderr, "slice %s: C=%s, nthreads one: %g sec\n",
+//          (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", t) ;
+//      }
+//      #endif
 
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
     }
@@ -425,12 +440,12 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         bool panic = false ;
         bool allmask = true ;
 
-        #if defined ( _OPENMP )
-        double t1 = omp_get_wtime ( ) ;
-        #endif
+//      #if defined ( _OPENMP )
+//      double t1 = omp_get_wtime ( ) ;
+//      #endif
 
-//      #pragma omp parallel for num_threads(nthreads) \
-//          reduction(&&:ok,allmask) reduction(||:panic)
+        #pragma omp parallel for num_threads(nthreads) \
+            reduction(&&:ok,allmask) reduction(||:panic)
         for (int t = 0 ; t < nthreads ; t++)
         { 
             bool thread_mask_applied = false ;
@@ -443,13 +458,13 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             panic   = panic   || (thread_info == GrB_PANIC) ;
         }
 
-        #if defined ( _OPENMP )
-        t1 = omp_get_wtime ( ) - t1 ;
-        if (avlen > 1000)
-        {
-            fprintf (stderr, "just the slice Ck=A'*Bk: %g sec\n", t1) ;
-        }
-        #endif
+//      #if defined ( _OPENMP )
+//      t1 = omp_get_wtime ( ) - t1 ;
+//      if (avlen > 1000)
+//      {
+//          fprintf (stderr, "just the slice Ck=A'*Bk: %g sec\n", t1) ;
+//      }
+//      #endif
 
         if (!ok)
         { 
@@ -882,17 +897,15 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GB_FREE_ALL ;
 
-    /*
-    #if defined ( _OPENMP )
-    t = omp_get_wtime ( ) - t ;
-    if (avlen > 1000)
-    {
-        fprintf (stderr, "slice %s (%d): C=%s, nthreads: %2d : %g sec\n",
-        (slice_A) ? "A" : "B", AxB_slice,
-        (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
-    }
-    #endif
-    */
+//  #if defined ( _OPENMP )
+//  t = omp_get_wtime ( ) - t ;
+//  if (avlen > 1000)
+//  {
+//      fprintf (stderr, "slice %s (%d): C=%s, nthreads: %2d : %g sec\n",
+//      (slice_A) ? "A" : "B", AxB_slice,
+//      (do_adotb) ? "A'*B" : " A*B", nthreads, t) ;
+//  }
+//  #endif
 
     ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
     return (GrB_SUCCESS) ;
