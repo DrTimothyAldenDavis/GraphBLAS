@@ -786,11 +786,9 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         bool panic = false ;
         bool allmask = true ;
 
-        /*
-        #if defined ( _OPENMP )
-        double t1 = omp_get_wtime ( ) ;
-        #endif
-        */
+//      #if defined ( _OPENMP )
+//      double t1 = omp_get_wtime ( ) ;
+//      #endif
 
         #pragma omp parallel for num_threads(nthreads) \
             reduction(&&:ok,allmask) reduction(||:panic)
@@ -808,15 +806,13 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             panic   = panic   || (thread_info == GrB_PANIC) ;
         }
 
-        /*
-        #if defined ( _OPENMP )
-        t1 = omp_get_wtime ( ) - t1 ;
-        if (avlen > 1000)
-        {
-            fprintf (stderr, "just the slice Ck=A*Bk: %g sec\n", t1) ;
-        }
-        #endif
-        */
+//      #if defined ( _OPENMP )
+//      t1 = omp_get_wtime ( ) - t1 ;
+//      if (avlen > 1000)
+//      {
+//          fprintf (stderr, "just the slice Ck=A*Bk: %g sec\n", t1) ;
+//      }
+//      #endif
 
         //----------------------------------------------------------------------
         // check error conditions

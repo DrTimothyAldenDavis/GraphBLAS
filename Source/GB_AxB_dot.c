@@ -87,15 +87,15 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     // estimate nnz(C) and allocate C
     //--------------------------------------------------------------------------
 
-        if (B->nvec_nonempty < 0)
-        { 
-            B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
-        }
+    if (B->nvec_nonempty < 0)
+    { 
+        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
+    }
 
-        if (A->nvec_nonempty < 0)
-        { 
-            A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
-        }
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+    }
 
     // GxB_fprint (A, 2, stderr) ;
     // GxB_fprint (B, 2, stderr) ;
@@ -139,9 +139,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     GrB_Matrix C = (*Chandle) ;
 
     // fprintf (stderr, "C->nzmax " GBd "\n", C->nzmax) ;
-    fprintf (stderr, "A %p %p %p %p\n", A->h, A->p, A->i, A->x) ;
-    fprintf (stderr, "B %p %p %p %p\n", B->h, B->p, B->i, B->x) ;
-    fprintf (stderr, "C %p %p %p %p\n", C->h, C->p, C->i, C->x) ;
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, via builtin semiring
@@ -172,7 +169,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xycode, zcode ;
 
-    double t = omp_get_wtime ( ) ;
+    // double t = omp_get_wtime ( ) ;
 
     if (GB_semiring_builtin (A, B, semiring, flipxy,
         &mult_opcode, &add_opcode, &xycode, &zcode))
@@ -180,8 +177,8 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         #include "GB_AxB_factory.c"
     }
 
-    t = omp_get_wtime ( ) - t ;
-    fprintf (stderr, "built in dot %g sec\n", t) ;
+    // t = omp_get_wtime ( ) - t ;
+    // fprintf (stderr, "built in dot %g sec\n", t) ;
 
     if (info != GrB_SUCCESS)
     { 
