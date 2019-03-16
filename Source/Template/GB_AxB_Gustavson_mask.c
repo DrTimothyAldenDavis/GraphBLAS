@@ -208,7 +208,7 @@
             // get the value of B(k,j)
             //------------------------------------------------------------------
 
-            GB_COPY_ARRAY_TO_SCALAR (bkj, Bx, pB, bsize) ;
+            GB_GETB (bkj, Bx, pB, bsize) ;
 
             //------------------------------------------------------------------
             // Sauna += (A(:,k) * B(k,j)) .* M(:,j)
@@ -221,6 +221,7 @@
                 int64_t mark = Sauna_Mark [i] ;
                 if (mark < hiwater) continue ;
                 // M(i,j) == 1 so do the work
+                GB_GETA (aik, Ax, pA, asize) ;
                 GB_MULTADD_WITH_MASK ;
             }
 
@@ -260,7 +261,7 @@
                 { 
                     // C(i,j) is a live entry, gather its row and value
                     // Cx [cnz] = Sauna_Work [i] ;
-                    GB_COPY_ARRAY_TO_ARRAY (Cx, cnz, Sauna_Work, i, zsize) ;
+                    GB_GATHERC (Cx, cnz, Sauna_Work, i, zsize) ;
                     Ci [cnz++] = i ;
                 }
             }

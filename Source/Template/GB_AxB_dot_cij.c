@@ -16,32 +16,32 @@
 #undef GB_DOT_MERGE
 
 // cij += A(k,i) * B(k,j)
-#define GB_DOT_MULTADD(pA,pB)                                   \
-{                                                               \
-    GB_DOT_GETA (pA) ;         /* aki = A(k,i) */               \
-    GB_DOT_GETB (pB) ;         /* bkj = B(k,j) */               \
-    GB_DOT_MULT (bkj) ;        /* t = aki * bkj */              \
-    GB_DOT_ADD ;               /* cij += t */                   \
-    GB_DOT_TERMINAL (cij) ;    /* break if cij == terminal */   \
+#define GB_DOT_MULTADD(pA,pB)                                       \
+{                                                                   \
+    GB_GETA (aki, Ax, pA, asize) ;  /* aki = A(k,i) */              \
+    GB_GETB (bkj, Bx, pB, bsize) ;  /* bjk = B(k,j) */              \
+    GB_DOT_MULT (aki, bkj) ;        /* t = aki * bkj */             \
+    GB_DOT_ADD ;                    /* cij += t */                  \
+    GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */  \
 }
 
 // cij += A(k,i) * B(k,j), for merge operation
-#define GB_DOT_MERGE                                            \
-{                                                               \
-    GB_DOT_GETA (pA++) ;       /* aki = A(k,i) */               \
-    GB_DOT_GETB (pB++) ;       /* bkj = B(k,j) */               \
-    GB_DOT_MULT (bkj) ;        /* t = aki * bkj */              \
-    if (cij_exists)                                             \
-    {                                                           \
-        GB_DOT_ADD ;           /* cij += t */                   \
-    }                                                           \
-    else                                                        \
-    {                                                           \
-        /* cij = A(k,i) * B(k,j), and add to the pattern */     \
-        cij_exists = true ;                                     \
-        GB_DOT_COPY ;          /* cij = t */                    \
-    }                                                           \
-    GB_DOT_TERMINAL (cij) ;    /* break if cij == terminal */   \
+#define GB_DOT_MERGE                                                \
+{                                                                   \
+    GB_GETA (aki, Ax, pA, asize) ;  /* aki = A(k,i) */              \
+    GB_GETB (bkj, Bx, pB, bsize) ;  /* bjk = B(k,j) */              \
+    GB_DOT_MULT (aki, bkj) ;        /* t = aki * bkj */             \
+    if (cij_exists)                                                 \
+    {                                                               \
+        GB_DOT_ADD ;                /* cij += t */                  \
+    }                                                               \
+    else                                                            \
+    {                                                               \
+        /* cij = A(k,i) * B(k,j), and add to the pattern */         \
+        cij_exists = true ;                                         \
+        GB_DOT_COPY ;               /* cij = t */                   \
+    }                                                               \
+    GB_DOT_TERMINAL (cij) ;         /* break if cij == terminal */  \
 }
 
 {
@@ -176,6 +176,8 @@
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
                 GB_DOT_MERGE ;
+                pA++ ;
+                pB++ ;
             }
         }
 
@@ -210,6 +212,8 @@
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
                 GB_DOT_MERGE ;
+                pA++ ;
+                pB++ ;
             }
         }
 
@@ -239,6 +243,8 @@
             { 
                 // A(k,i) and B(k,j) are the next entries to merge
                 GB_DOT_MERGE ;
+                pA++ ;
+                pB++ ;
             }
         }
     }

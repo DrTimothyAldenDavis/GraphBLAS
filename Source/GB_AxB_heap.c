@@ -234,8 +234,6 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         char bkj [flipxy ? xsize : ysize] ;
         char zwork [csize] ;
 
-        const GB_void *restrict Ax = A->x ;
-        const GB_void *restrict Bx = B->x ;
         GB_void *restrict Cx = C->x ;
         GB_void *cij = Cx ;        // advances through each entry of C
 
@@ -259,30 +257,19 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         // C = A*B via the heap, function pointers, and typecasting
         //----------------------------------------------------------------------
 
-        // bkj = B(k,j), located in Bx [pB]
-        #define GB_CIJ_GETB(pB)                                         \
-        {                                                               \
-            cast_B (bkj, Bx +((pB)*bsize), bsize) ;                     \
-        }
+        // aik = A(i,k), of size asize
+        #define GB_GETA(aik,Ax,pA,asize)                                    \
+            cast_A (aik, Ax +((pA)*asize), asize) ;  // SKIP if A pattern
+
+        // bkj = B(k,j), of size bsize
+        #define GB_GETB(bkj,Bx,pB,bsize)                                    \
+            cast_B (bkj, Bx +((pB)*bsize), bsize) ;  // SKIP if B pattern
 
         #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
 
-        // C(i,j) = A(i,k) * bkj
-        #define GB_CIJ_MULT(pA)                                         \
-        {                                                               \
-            /* aik = A(i,k), located in Ax [pA] */                      \
-            cast_A (aik, Ax +((pA)*asize), asize) ;                     \
-            /* cij = aik*bkj, reversing them if flipxy is true */       \
-            GB_MULTIPLY (cij, aik, bkj) ;                               \
-        }
-
         // C(i,j) += A(i,k) * B(k,j)
-        #define GB_CIJ_MULTADD(pA,pB)                                   \
+        #define GB_CIJ_MULTADD(cij, aik, bkj)                           \
         {                                                               \
-            /* aik = A(i,k), located in Ax [pA] */                      \
-            cast_A (aik, Ax +((pA)*asize), asize) ;                     \
-            /* bkj = B(k,j), located in Bx [pB] */                      \
-            GB_CIJ_GETB (pB) ;                                          \
             /* zwork = aik*bkj, reversing them if flipxy is true */     \
             GB_MULTIPLY (zwork, aik, bkj) ;                             \
             /* cij = cij + zwork */                                     \

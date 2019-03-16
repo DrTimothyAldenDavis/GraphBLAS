@@ -40,6 +40,14 @@
 #define GB_MULTOP(z,x,y) \
     z = GB_IDIV(x,y)
 
+// aik = Ax [pA]
+#define GB_GETA(aik,Ax,pA,asize)     \
+    GB_atype aik = Ax [pA] ;     // SKIP if A pattern
+
+// bkj = Bx [pB]
+#define GB_GETB(bkj,Bx,pB,bsize)     \
+    GB_btype bkj = Bx [pB] ;     // SKIP if B pattern
+
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
 //------------------------------------------------------------------------------
@@ -47,23 +55,18 @@
 #define GB_IDENTITY \
     0
 
-// x [i] = y
-#define GB_COPY_SCALAR_TO_ARRAY(x,i,y,s)    \
-    x [i] = y ;
+// Sauna_Work [i] = identity
+#define GB_CLEARW(Sauna_Work,i,identity,zsize)  \
+    Sauna_Work [i] = identity ;
 
-// x = y [i]
-#define GB_COPY_ARRAY_TO_SCALAR(x,y,i,s)    \
-    GB_btype x = y [i] ;
-
-// x [i] = y [i]
-#define GB_COPY_ARRAY_TO_ARRAY(x,i,y,j,s)   \
-    x [i] = y [j] ;
+// Cx [p] = Sauna_Work [i]
+#define GB_GATHERC(Cx,p,Sauna_Work,i,zsize) \
+    Cx [p] = Sauna_Work [i] ;
 
 // mult-add operation (no mask)
 #define GB_MULTADD_NOMASK                   \
 {                                           \
     /* Sauna_Work [i] += A(i,k) * B(k,j) */ \
-    GB_atype aik = Ax [pA] ;                \
     uint16_t t ;                            \
     GB_MULTIPLY (t, aik, bkj) ;             \
     Sauna_Work [i] = GB_IMAX (Sauna_Work [i],t) ;             \
@@ -72,20 +75,18 @@
 // mult-add operation (with mask)
 #define GB_MULTADD_WITH_MASK                \
 {                                           \
-    /* Sauna_Work [i] += A(i,k) * B(k,j) */ \
-    GB_atype aik = Ax [pA] ;                \
-    uint16_t t ;                            \
-    GB_MULTIPLY (t, aik, bkj) ;             \
     if (mark == hiwater)                    \
     {                                       \
         /* first time C(i,j) seen */        \
+        /* Sauna_Work [i] = A(i,k) * B(k,j) */      \
+        GB_MULTIPLY (Sauna_Work [i], aik, bkj) ;    \
         Sauna_Mark [i] = hiwater + 1 ;      \
-        Sauna_Work [i] = t ;                \
     }                                       \
     else                                    \
     {                                       \
         /* C(i,j) seen before, update it */ \
-        Sauna_Work [i] = GB_IMAX (Sauna_Work [i],t) ;         \
+        /* Sauna_Work [i] += A(i,k) * B(k,j) */     \
+        GB_MULTADD_NOMASK ;                 \
     }                                       \
 }
 
@@ -110,16 +111,8 @@ GrB_Info GB_AgusB__max_div_uint16
 // C<M>=A'*B, C<!M>=A'*B or C=A'*B: dot product
 //------------------------------------------------------------------------------
 
-// get A(k,i)
-#define GB_DOT_GETA(pA)        \
-    GB_atype aki = Ax [pA] ;
-
-// get B(k,j)
-#define GB_DOT_GETB(pB)        \
-    GB_btype bkj = Bx [pB] ;
-
 // t = aki*bkj
-#define GB_DOT_MULT(bkj)       \
+#define GB_DOT_MULT(aki,bkj)   \
     uint16_t t ;               \
     GB_MULTIPLY (t, aki, bkj) ;
 
@@ -167,21 +160,9 @@ GrB_Info GB_AdotB__max_div_uint16
 
 #include "GB_heap.h"
 
-#define GB_CIJ_GETB(pB) \
-    GB_btype bkj = Bx [pB] ;
-
-// C(i,j) = A(i,k) * bkj
-#define GB_CIJ_MULT(pA)            \
-{                                  \
-    GB_atype aik = Ax [pA] ;       \
-    GB_MULTIPLY (cij, aik, bkj) ;  \
-}
-
 // C(i,j) += A(i,k) * B(k,j)
-#define GB_CIJ_MULTADD(pA,pB)      \
+#define GB_CIJ_MULTADD(cij, aik, bkj) \
 {                                  \
-    GB_atype aik = Ax [pA] ;       \
-    GB_btype bkj = Bx [pB] ;       \
     uint16_t t ;                   \
     GB_MULTIPLY (t, aik, bkj) ;    \
     cij = GB_IMAX (cij,t) ;               \

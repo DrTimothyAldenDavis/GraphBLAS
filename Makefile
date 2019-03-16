@@ -20,7 +20,7 @@ library:
 
 # just run the demos: assumes the library is already compiled
 run:
-	( cd ../Demo ; ./demo )
+	( cd Demo ; ./demo )
 
 # just do 'make' in build; do not rerun the cmake script
 remake:

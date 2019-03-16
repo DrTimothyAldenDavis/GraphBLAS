@@ -315,7 +315,9 @@
                 #endif
                 {
                     // cij += A(i,k) * B(k,j)
-                    GB_CIJ_MULTADD (pA, pB_start + kk) ;
+                    GB_GETA (aik, Ax, pA, asize) ;
+                    GB_GETB (bkj, Bx, pB_start + kk, bsize) ;
+                    GB_CIJ_MULTADD (cij, aik, bkj) ;
                 }
 
                 //--------------------------------------------------------------
@@ -467,8 +469,8 @@
                 GB_CIJ_REACQUIRE ;
             }
 
-            // bkj = Bx [] ;
-            GB_CIJ_GETB (pB_start + kk) ;
+            // bkj = Bx [ ] ;
+            GB_GETB (bkj, Bx, pB_start + kk, bsize) ;
 
             // C(ilast:end,j) = A (ilast:end,k) * B (k,j)
             for ( ; pA < pA_end ; pA++)
@@ -477,7 +479,8 @@
                 int64_t i = Ai [pA] ;
 
                 // cij = A(i,k) * B(k,j)
-                GB_CIJ_MULT (pA) ;
+                GB_GETA (aik, Ax, pA, asize) ;
+                GB_MULTIPLY (cij, aik, bkj) ;
 
                 Ci [cnz] = i ;
                 // Cx [cnz] = cij ;

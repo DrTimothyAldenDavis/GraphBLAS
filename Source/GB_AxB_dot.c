@@ -263,8 +263,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 
         char zwork [csize] ;
 
-        const GB_void *restrict Ax = A->x ;
-        const GB_void *restrict Bx = B->x ;
         GB_void *restrict Cx = C->x ;
         GB_void *restrict cij = Cx ;        // advances through each entry of C
 
@@ -289,24 +287,18 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         // C = A'*B via dot products, function pointers, and typecasting
         //----------------------------------------------------------------------
 
-        // get A(k,i)
-        #define GB_DOT_GETA(pA)                                         \
-        {                                                               \
-            /* aki = A(k,i), located in Ax [pA] */                      \
-            cast_A (aki, Ax +((pA)*asize), asize) ;                     \
-        }
+        // aki = A(k,i), located in Ax [pA]
+        #define GB_GETA(aki,Ax,pA,asize)                                \
+            cast_A (aki, Ax +((pA)*asize), asize) ; // SKIP if A pattern
 
-        // get B(k,j)
-        #define GB_DOT_GETB(pB)                                         \
-        {                                                               \
-            /* bkj = B(k,j), located in Bx [pB] */                      \
-            cast_B (bkj, Bx +((pB)*bsize), bsize) ;                     \
-        }
+        // bkj = B(k,j), located in Bx [pB]
+        #define GB_GETB(bkj,Bx,pB,bsize)                                \
+            cast_B (bkj, Bx +((pB)*bsize), bsize) ; // SKIP if B pattern
 
         #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
 
         // multiply aki*bkj
-        #define GB_DOT_MULT(bkj)                                        \
+        #define GB_DOT_MULT(aki,bkj)                                    \
         {                                                               \
             GB_MULTIPLY (zwork, aki, bkj) ;                             \
         }
