@@ -78,23 +78,28 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
     GrB_BinaryOp mult = semiring->multiply ;
     GrB_Monoid add = semiring->add ;
+    ASSERT (mult->ztype == add->op->ztype) ;
 
-    // flipxy: if true, then compute z = fmult (B(k,j), A(i,k)) instead of the
-    // usual z = fmult (A(i,k), B(k,j)), since A and B have been swapped on
-    // input.
+    bool op_is_first  = semiring->multiply->opcode == GB_FIRST_opcode ;
+    bool op_is_second = semiring->multiply->opcode == GB_SECOND_opcode ;
+    bool A_is_pattern = false ;
+    bool B_is_pattern = false ;
 
-    // these conditions have already been checked in the caller
     if (flipxy)
     { 
         // z = fmult (b,a) will be computed
-        ASSERT (GB_Type_compatible (A->type, mult->ytype)) ;
-        ASSERT (GB_Type_compatible (B->type, mult->xtype)) ;
+        A_is_pattern = op_is_first  ;
+        B_is_pattern = op_is_second ;
+        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->ytype)) ;
+        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->xtype)) ;
     }
     else
     { 
         // z = fmult (a,b) will be computed
-        ASSERT (GB_Type_compatible (A->type, mult->xtype)) ;
-        ASSERT (GB_Type_compatible (B->type, mult->ytype)) ;
+        A_is_pattern = op_is_second ;
+        B_is_pattern = op_is_first  ;
+        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->xtype)) ;
+        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->ytype)) ;
     }
 
     // these asserts hold for any valid semiring:
@@ -196,73 +201,64 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     }
 
     //--------------------------------------------------------------------------
-    // determine the required types of A and B, for typecasting
-    //--------------------------------------------------------------------------
-
-    GrB_Type atype_required, btype_required ;
-
-    if (flipxy)
-    { 
-        // A is passed as y, and B as x, in z = mult(x,y)
-        atype_required = mult->ytype ;
-        btype_required = mult->xtype ;
-    }
-    else
-    { 
-        // A is passed as x, and B as y, in z = mult(x,y)
-        atype_required = mult->xtype ;
-        btype_required = mult->ytype ;
-    }
-
-    bool no_typecasting = (A->type == atype_required)
-                       && (B->type == btype_required) ;
-
-    //--------------------------------------------------------------------------
     // compute C = A*B for built-in types and operators
     //--------------------------------------------------------------------------
 
-    if (no_typecasting)
-    { 
-
-        ASSERT_OK (GB_check (A->type, "A type for Gustavson builtin", GB0)) ;
-        ASSERT_OK (GB_check (B->type, "B type for Gustavson builtin", GB0)) ;
-        ASSERT_OK (GB_check (C->type, "C type for Gustavson builtin", GB0)) ;
+    ASSERT_OK (GB_check (A->type, "A type for Gustavson builtin", GB0)) ;
+    ASSERT_OK (GB_check (B->type, "B type for Gustavson builtin", GB0)) ;
+    ASSERT_OK (GB_check (C->type, "C type for Gustavson builtin", GB0)) ;
 
 #ifndef GBCOMPACT
 
-        // If the GB_AxB_Gustavson_builtin function has a worker for the
-        // particular semiring, then it does the computation and returns done =
-        // true.  Otherwise, it returns done as false, and the generic worker
-        // below does the work.
+    // If the GB_AxB_Gustavson_builtin function has a worker for the
+    // particular semiring, then it does the computation and returns done =
+    // true.  Otherwise, it returns done as false, and the generic worker
+    // below does the work.
 
-        // If GBCOMPACT is enabled at compile-time, then no built-in workers
-        // are created, and this function is not used.  All C=A*B computations
-        // are done with the generic worker below.
+    // If GBCOMPACT is enabled at compile-time, then no built-in workers
+    // are created, and this function is not used.  All C=A*B computations
+    // are done with the generic worker below.
 
-        bool done = false ;
-        info = GB_AxB_Gustavson_builtin (C, M, A, B, semiring, flipxy, &done,
-            Sauna) ;
-        ASSERT (info == GrB_SUCCESS) ;
-        if (done)
-        { 
-            // C = A*B has been done via a hard-coded case
-            ASSERT_OK (GB_check (C, "C hard-coded for Gustavson C=A*B", GB0)) ;
-            ASSERT (*Chandle == C) ;
-            ASSERT_SAUNA_IS_RESET ;
-            (*mask_applied) = (M != NULL) ;
-            return (GrB_SUCCESS) ;
-        }
+    bool done = false ;
+    info = GB_AxB_Gustavson_builtin (C, M, A, A_is_pattern,
+        B, B_is_pattern, semiring, flipxy, &done, Sauna) ;
+    ASSERT (info == GrB_SUCCESS) ;
+    if (done)
+    { 
+        // C = A*B has been done via a hard-coded case
+        ASSERT_OK (GB_check (C, "C hard-coded for Gustavson C=A*B", GB0)) ;
+        ASSERT (*Chandle == C) ;
+        ASSERT_SAUNA_IS_RESET ;
+        (*mask_applied) = (M != NULL) ;
+        return (GrB_SUCCESS) ;
+    }
 
 #endif
 
-        //----------------------------------------------------------------------
-        // user semirings created at compile time
-        //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // user semirings created at compile time
+    //--------------------------------------------------------------------------
 
-        // A precompiled function for C=A*B with user-defined semiring is
-        // called only if no typecasting is needed.
+    if (semiring->object_kind == GB_USER_COMPILED)
+    {
 
-        if (semiring->object_kind == GB_USER_COMPILED)
+        // determine the required type of A and B for the user semiring
+        GrB_Type atype_required, btype_required ;
+
+        if (flipxy)
+        { 
+            // A is passed as y, and B as x, in z = mult(x,y)
+            atype_required = mult->ytype ;
+            btype_required = mult->xtype ;
+        }
+        else
+        { 
+            // A is passed as x, and B as y, in z = mult(x,y)
+            atype_required = mult->xtype ;
+            btype_required = mult->ytype ;
+        }
+
+        if (A->type == atype_required && B->type == btype_required)
         { 
             info = GB_AxB_user (GxB_AxB_GUSTAVSON, semiring, Chandle, M, A, B,
                 flipxy, false, NULL, NULL, NULL, 0, Sauna) ;
@@ -270,6 +266,26 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
             return (info) ;
         }
     }
+
+    //--------------------------------------------------------------------------
+    // determine the required types of A and B, for typecasting
+    //--------------------------------------------------------------------------
+
+    GrB_Type atype_required, btype_required ;
+    if (flipxy)
+    { 
+        // A is passed as y, and B as x, in z = mult(x,y)
+        atype_required = A_is_pattern ? A->type : mult->ytype ;
+        btype_required = B_is_pattern ? B->type : mult->xtype ;
+    }
+    else
+    { 
+        // A is passed as x, and B as y, in z = mult(x,y)
+        atype_required = A_is_pattern ? A->type : mult->xtype ;
+        btype_required = B_is_pattern ? B->type : mult->ytype ;
+    }
+    bool no_typecasting = (A->type == atype_required)
+                       && (B->type == btype_required) ;
 
     //--------------------------------------------------------------------------
     // generic Gustavson, any semiring, with or without typecasting
@@ -292,8 +308,8 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // z = x*y
     #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
 
-    size_t asize = A->type->size ;
-    size_t bsize = B->type->size ;
+    size_t asize = A_is_pattern ? 0 : A->type->size ;
+    size_t bsize = B_is_pattern ? 0 : B->type->size ;
 
     size_t xsize = mult->xtype->size ;
     size_t ysize = mult->ytype->size ;
@@ -321,11 +337,11 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
         // aik = &A(i,k), of size asize
         #define GB_GETA(aik,Ax,pA,asize)                                    \
-            GB_void *aik = Ax +(pA*asize) ;         // SKIP if A pattern
+            GB_void *aik = A_is_pattern ? NULL : (Ax +(pA*asize)) ;
 
         // bkj = B(k,j), of size bsize
         #define GB_GETB(bkj,Bx,pB,bsize)                                    \
-            memcpy (bkj, Bx +((pB)*bsize), bsize) ; // SKIP if B pattern
+            if (!B_is_pattern) memcpy (bkj, Bx +((pB)*bsize), bsize) ;
 
         // generic multiply-add operation (with no mask).  fadd: (z x alias)
         #define GB_MULTADD_NOMASK                                           \
@@ -369,25 +385,29 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         if (flipxy)
         { 
             // A is typecasted to y, and B is typecasted to x
-            cast_A = GB_cast_factory (mult->ytype->code, A->type->code) ;
-            cast_B = GB_cast_factory (mult->xtype->code, B->type->code) ;
+            cast_A = A_is_pattern ? NULL : 
+                     GB_cast_factory (mult->ytype->code, A->type->code) ;
+            cast_B = B_is_pattern ? NULL : 
+                     GB_cast_factory (mult->xtype->code, B->type->code) ;
         }
         else
         { 
             // A is typecasted to x, and B is typecasted to y
-            cast_A = GB_cast_factory (mult->xtype->code, A->type->code) ;
-            cast_B = GB_cast_factory (mult->ytype->code, B->type->code) ;
+            cast_A = A_is_pattern ? NULL :
+                     GB_cast_factory (mult->xtype->code, A->type->code) ;
+            cast_B = B_is_pattern ? NULL :
+                     GB_cast_factory (mult->ytype->code, B->type->code) ;
         }
 
         // aik = A(i,k), of size asize
         #undef  GB_GETA
         #define GB_GETA(aik,Ax,pA,asize)                                    \
-            cast_A (aik, Ax +((pA)*asize), asize) ;  // SKIP if A pattern
+            if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), of size bsize
         #undef  GB_GETB
         #define GB_GETB(bkj,Bx,pB,bsize)                                    \
-            cast_B (bkj, Bx +((pB)*bsize), bsize) ;  // SKIP if B pattern
+            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         // generic multiply-add operation (with no mask).  fadd: (z x alias)
         #undef  GB_MULTADD_NOMASK

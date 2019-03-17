@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_semiring_builtin:  determine if semiring is built-in
+// GB_AxB_semiring_builtin:  determine if semiring is built-in
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -16,11 +16,13 @@
 
 #ifndef GBCOMPACT
 
-bool GB_semiring_builtin            // true if semiring is builtin
+bool GB_AxB_semiring_builtin        // true if semiring is builtin
 (
     // inputs:
     const GrB_Matrix A,
+    const bool A_is_pattern,        // true if only the pattern of A is used
     const GrB_Matrix B,
+    const bool B_is_pattern,        // true if only the pattern of B is used
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // true if z=fmult(y,x), flipping x and y
     // outputs, unused by caller if this function returns false
@@ -56,22 +58,36 @@ bool GB_semiring_builtin            // true if semiring is builtin
     // This function requires A and B to have the same built-in type, and they
     // must match the types x,y for fmult.  If this condition doesn't hold,
     // punt to the generic C=A*B:
-    if ((A->type != (flipxy ? mult->ytype : mult->xtype)) ||
-        (B->type != (flipxy ? mult->xtype : mult->ytype)) ||
-        (A->type != B->type) || (A->type->code >= GB_UCT_code) ||
-        (*add_opcode >= GB_USER_C_opcode) || (*mult_opcode >= GB_USER_C_opcode))
+    if (!A_is_pattern)
+    {
+        if ((A->type != (flipxy ? mult->ytype : mult->xtype)) ||
+            (A->type->code >= GB_UCT_code))
+        { 
+            return (false) ;
+        }
+    }
+
+    if (!B_is_pattern)
+    {
+        if ((B->type != (flipxy ? mult->xtype : mult->ytype)) ||
+            (B->type->code >= GB_UCT_code))
+        { 
+            return (false) ;
+        }
+    }
+
+    if (!A_is_pattern && !B_is_pattern)
+    {
+        if (A->type != B->type)
+        { 
+            return (false) ;
+        }
+    }
+
+    if ((*add_opcode >= GB_USER_C_opcode) || (*mult_opcode >= GB_USER_C_opcode))
     { 
         return (false) ;
     }
-
-    // this condition is true for all built-in operators, but not required for
-    // user-defined operators
-    ASSERT (mult->xtype == mult->ytype) ;
-
-    // all the inputs to mult(x,y) are now the same, with no casting
-    ASSERT (A->type == B->type) ;
-    ASSERT (A->type == mult->xtype) ;
-    ASSERT (A->type == mult->ytype) ;
 
     //--------------------------------------------------------------------------
     // rename redundant boolean multiply operators

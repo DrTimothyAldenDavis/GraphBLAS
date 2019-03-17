@@ -49,6 +49,18 @@ else
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
 end
 
+if (isequal (multop, 'second'))
+    fprintf (f, 'define(`GB_geta'', `;'')\n') ;
+else
+    fprintf (f, 'define(`GB_geta'', `GB_atype aik = Ax [pA] ;'')\n') ;
+end
+
+if (isequal (multop, 'first'))
+    fprintf (f, 'define(`GB_getb'', `;'')\n') ;
+else
+    fprintf (f, 'define(`GB_getb'', `GB_btype bkj = Bx [pB] ;'')\n') ;
+end
+
 % if handle_flipxy is true, then mult(x,y) is not commutative,
 % and the types of x and y may also differ
 fprintf (f, 'define(`GB_handle_flipxy'', %d)\n', handle_flipxy) ;

@@ -1597,11 +1597,13 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
     const int Sauna_id              // Sauna to use, for Gustavson method only
 ) ;
 
-bool GB_semiring_builtin            // true if semiring is builtin
+bool GB_AxB_semiring_builtin        // true if semiring is builtin
 (
     // inputs:
     const GrB_Matrix A,
+    const bool A_is_pattern,        // true if only the pattern of A is used
     const GrB_Matrix B,
+    const bool B_is_pattern,        // true if only the pattern of B is used
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // true if z=fmult(y,x), flipping x and y
     // outputs, unused by caller if this function returns false
@@ -1616,7 +1618,9 @@ GrB_Info GB_AxB_Gustavson_builtin
     GrB_Matrix C,                   // output matrix
     const GrB_Matrix M,             // M matrix for C<M> (not complemented)
     const GrB_Matrix A,             // input matrix
+    const bool A_is_pattern,        // true if only the pattern of A is used
     const GrB_Matrix B,             // input matrix
+    const bool B_is_pattern,        // true if only the pattern of B is used
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done,                     // true if C=A*B has been computed

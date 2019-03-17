@@ -16,8 +16,8 @@
 
 {
 
-    const GB_atype *restrict Ax = A->x ;    // SKIP if A pattern
-    const GB_btype *restrict Bx = B->x ;    // SKIP if B pattern
+    const GB_atype *restrict Ax = A_is_pattern ? NULL : A->x ;
+    const GB_btype *restrict Bx = B_is_pattern ? NULL : B->x ;
 
     //--------------------------------------------------------------------------
     // check inputs

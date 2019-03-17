@@ -99,17 +99,21 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
         if (GB_AxB_method == GxB_AxB_GUSTAVSON)
         { 
             GB_info = GB_AxB_user_gus_$1
-                (*GB_Chandle, GB_M, GB_A, GB_B, GB_flipxy, GB_C_Sauna) ;
+                (*GB_Chandle, GB_M,
+                GB_A, false, GB_B, false, GB_flipxy,
+                GB_C_Sauna) ;
         }
         else if (GB_AxB_method == GxB_AxB_DOT)
         { 
             GB_info = GB_AxB_user_dot_$1
-                (GB_Chandle, GB_M, GB_mask_comp, GB_A, GB_B, GB_flipxy) ;
+                (GB_Chandle, GB_M, GB_mask_comp,
+                GB_A, false, GB_B, false, GB_flipxy) ;
         }
         else // (GB_AxB_method == GxB_AxB_HEAP)
         { 
             GB_info = GB_AxB_user_heap_$1
-                (GB_Chandle, GB_M, GB_A, GB_B, GB_flipxy,
+                (GB_Chandle, GB_M,
+                GB_A, false, GB_B, false, GB_flipxy,
                 GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
         }
     } ) $2')

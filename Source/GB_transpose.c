@@ -35,6 +35,8 @@
 
 #include "GB.h"
 
+// TODO: add option for creating a pattern-only matrix C = pattern(A')
+
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 (
     GrB_Matrix *Chandle,        // output matrix C, possibly modified in place

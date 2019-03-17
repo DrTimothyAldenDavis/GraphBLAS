@@ -181,7 +181,7 @@ static void GB_quicksort_main   // sort A [0:n-1]
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
-
+nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
     //--------------------------------------------------------------------------
     // do the quicksort in parallel
     //--------------------------------------------------------------------------

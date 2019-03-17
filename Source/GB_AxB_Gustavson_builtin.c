@@ -206,7 +206,9 @@ GrB_Info GB_AxB_Gustavson_builtin
     GrB_Matrix C,                   // output matrix
     const GrB_Matrix M,             // M matrix for C<M> (not complemented)
     const GrB_Matrix A,             // input matrix
+    const bool A_is_pattern,        // true if only the pattern of A is used
     const GrB_Matrix B,             // input matrix
+    const bool B_is_pattern,        // true if only the pattern of B is used
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *done,                     // true if C=A*B has been computed
@@ -241,8 +243,8 @@ GrB_Info GB_AxB_Gustavson_builtin
     (*done) = false ;
 
     // check if the semiring is builtin, and if so, get opcodes and type codes
-    if (!GB_semiring_builtin (A, B, semiring, flipxy,
-        &mult_opcode, &add_opcode, &xycode, &zcode))
+    if (!GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
+        flipxy, &mult_opcode, &add_opcode, &xycode, &zcode))
     { 
         // no error condition, just not a built-in semiring.  done is false.
         return (GrB_SUCCESS) ;
@@ -254,11 +256,12 @@ GrB_Info GB_AxB_Gustavson_builtin
 
     #define GB_AXB(add,mult,xyname) GB_AgusB_ ## add ## mult ## xyname
 
-    #define GB_AxB_WORKER(add,mult,xyname)                                     \
-    {                                                                          \
-        info = GB_AXB (add,mult,xyname) (C, M, A, B, flipxy, Sauna) ;          \
-        (*done) = true ;                                                       \
-    }                                                                          \
+    #define GB_AxB_WORKER(add,mult,xyname)                      \
+    {                                                           \
+        info = GB_AXB (add,mult,xyname) (C, M,                  \
+            A, A_is_pattern, B, B_is_pattern, flipxy, Sauna) ;  \
+        (*done) = true ;                                        \
+    }                                                           \
     break ;
 
     //--------------------------------------------------------------------------

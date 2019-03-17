@@ -65,19 +65,35 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
 
+    //--------------------------------------------------------------------------
+    // get the semiring operators
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp mult = semiring->multiply ;
+    GrB_Monoid add = semiring->add ;
+    ASSERT (mult->ztype == add->op->ztype) ;
+
+    bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
+    bool op_is_second = mult->opcode == GB_SECOND_opcode ;
+    bool A_is_pattern = false ;
+    bool B_is_pattern = false ;
+
     if (flipxy)
     { 
-        // z=fmult(b,a) will be computed
-        ASSERT (GB_Type_compatible (A->type, semiring->multiply->ytype)) ;
-        ASSERT (GB_Type_compatible (B->type, semiring->multiply->xtype)) ;
+        // z = fmult (b,a) will be computed
+        A_is_pattern = op_is_first  ;
+        B_is_pattern = op_is_second ;
+        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->ytype)) ;
+        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->xtype)) ;
     }
     else
     { 
-        // z=fmult(a,b) will be computed
-        ASSERT (GB_Type_compatible (A->type, semiring->multiply->xtype)) ;
-        ASSERT (GB_Type_compatible (B->type, semiring->multiply->ytype)) ;
+        // z = fmult (a,b) will be computed
+        A_is_pattern = op_is_second ;
+        B_is_pattern = op_is_first  ;
+        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->xtype)) ;
+        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->ytype)) ;
     }
-    ASSERT (semiring->multiply->ztype == semiring->add->op->ztype) ;
 
     (*Chandle) = NULL ;
 
@@ -123,7 +139,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     }
 
     GrB_Info info ;
-    GrB_Type ctype = semiring->add->op->ztype ;
+    GrB_Type ctype = add->op->ztype ;
     int64_t cvlen = A->vdim ;
     int64_t cvdim = B->vdim ;
 
@@ -156,8 +172,8 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        info = GB_AdotB (add,mult,xyname) (Chandle, M, Mask_comp, A, B, \
-            flipxy) ;                                                   \
+        info = GB_AdotB (add,mult,xyname) (Chandle, M, Mask_comp,       \
+            A, A_is_pattern, B, B_is_pattern, flipxy) ;                 \
         done = true ;                                                   \
     }                                                                   \
     break ;
@@ -169,16 +185,11 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xycode, zcode ;
 
-    // double t = omp_get_wtime ( ) ;
-
-    if (GB_semiring_builtin (A, B, semiring, flipxy,
-        &mult_opcode, &add_opcode, &xycode, &zcode))
+    if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
+        flipxy, &mult_opcode, &add_opcode, &xycode, &zcode))
     { 
         #include "GB_AxB_factory.c"
     }
-
-    // t = omp_get_wtime ( ) - t ;
-    // fprintf (stderr, "built in dot %g sec\n", t) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -201,14 +212,14 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         if (flipxy)
         { 
             // A is passed as y, and B as x, in z = mult(x,y)
-            atype_required = semiring->multiply->ytype ;
-            btype_required = semiring->multiply->xtype ;
+            atype_required = mult->ytype ;
+            btype_required = mult->xtype ;
         }
         else
         { 
             // A is passed as x, and B as y, in z = mult(x,y)
-            atype_required = semiring->multiply->xtype ;
-            btype_required = semiring->multiply->ytype ;
+            atype_required = mult->xtype ;
+            btype_required = mult->ytype ;
         }
 
         if (A->type == atype_required && B->type == btype_required)
@@ -237,19 +248,15 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 
         // fprintf (stderr, "generic\n") ;
 
-        // get the semiring operators
-        GrB_BinaryOp multiply = semiring->multiply ;
-        GrB_Monoid add = semiring->add ;
-
-        GxB_binary_function fmult = multiply->function ;
+        GxB_binary_function fmult = mult->function ;
         GxB_binary_function fadd  = add->op->function ;
 
         size_t csize = C->type->size ;
-        size_t asize = A->type->size ;
-        size_t bsize = B->type->size ;
+        size_t asize = A_is_pattern ? 0 : A->type->size ;
+        size_t bsize = B_is_pattern ? 0 : B->type->size ;
 
-        size_t xsize = multiply->xtype->size ;
-        size_t ysize = multiply->ytype->size ;
+        size_t xsize = mult->xtype->size ;
+        size_t ysize = mult->ytype->size ;
 
         // scalar workspace: because of typecasting, the x/y types need not
         // be the same as the size of the A and B types.
@@ -273,14 +280,18 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         if (flipxy)
         { 
             // A is typecasted to y, and B is typecasted to x
-            cast_A = GB_cast_factory (multiply->ytype->code, A->type->code) ;
-            cast_B = GB_cast_factory (multiply->xtype->code, B->type->code) ;
+            cast_A = A_is_pattern ? NULL : 
+                     GB_cast_factory (mult->ytype->code, A->type->code) ;
+            cast_B = B_is_pattern ? NULL : 
+                     GB_cast_factory (mult->xtype->code, B->type->code) ;
         }
         else
         { 
             // A is typecasted to x, and B is typecasted to y
-            cast_A = GB_cast_factory (multiply->xtype->code, A->type->code) ;
-            cast_B = GB_cast_factory (multiply->ytype->code, B->type->code) ;
+            cast_A = A_is_pattern ? NULL :
+                     GB_cast_factory (mult->xtype->code, A->type->code) ;
+            cast_B = B_is_pattern ? NULL :
+                     GB_cast_factory (mult->ytype->code, B->type->code) ;
         }
 
         //----------------------------------------------------------------------
@@ -289,15 +300,15 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 
         // aki = A(k,i), located in Ax [pA]
         #define GB_GETA(aki,Ax,pA,asize)                                \
-            cast_A (aki, Ax +((pA)*asize), asize) ; // SKIP if A pattern
+            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB,bsize)                                \
-            cast_B (bkj, Bx +((pB)*bsize), bsize) ; // SKIP if B pattern
+            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
 
-        // multiply aki*bkj
+        // zwork = aki*bkj
         #define GB_DOT_MULT(aki,bkj)                                    \
         {                                                               \
             GB_MULTIPLY (zwork, aki, bkj) ;                             \

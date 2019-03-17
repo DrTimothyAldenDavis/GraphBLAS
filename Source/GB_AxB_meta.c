@@ -218,19 +218,31 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // typecast A and B when transposing them, if needed
     //--------------------------------------------------------------------------
 
+    bool op_is_first  = semiring->multiply->opcode == GB_FIRST_opcode ;
+    bool op_is_second = semiring->multiply->opcode == GB_SECOND_opcode ;
+    bool A_is_pattern = false ;
+    bool B_is_pattern = false ;
+
     GrB_Type atype_required, btype_required ;
     if (flipxy)
     { 
         // A is passed as y, and B as x, in z = mult(x,y)
-        atype_required = semiring->multiply->ytype ;
-        btype_required = semiring->multiply->xtype ;
+        A_is_pattern = op_is_first  ;
+        B_is_pattern = op_is_second ;
+        atype_required = A_is_pattern ? A->type : semiring->multiply->ytype ;
+        btype_required = B_is_pattern ? B->type : semiring->multiply->xtype ;
     }
     else
     { 
         // A is passed as x, and B as y, in z = mult(x,y)
-        atype_required = semiring->multiply->xtype ;
-        btype_required = semiring->multiply->ytype ;
+        A_is_pattern = op_is_second ;
+        B_is_pattern = op_is_first  ;
+        atype_required = A_is_pattern ? A->type : semiring->multiply->xtype ;
+        btype_required = B_is_pattern ? B->type : semiring->multiply->ytype ;
     }
+
+    // TODO: if A or B need to be transposed, and only the pattern is needed,
+    // then create AT or BT as pattern-only matrices.
 
     //--------------------------------------------------------------------------
     // select the algorithm

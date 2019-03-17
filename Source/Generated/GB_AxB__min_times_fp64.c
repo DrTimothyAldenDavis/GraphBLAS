@@ -1,3 +1,5 @@
+
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded C=A*B and C<M>=A*B
 //------------------------------------------------------------------------------
@@ -41,12 +43,12 @@
     z = x * y
 
 // aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA,asize)     \
-    GB_atype aik = Ax [pA] ;     // SKIP if A pattern
+#define GB_GETA(aik,Ax,pA,asize) \
+    GB_atype aik = Ax [pA] ;
 
 // bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB,bsize)     \
-    GB_btype bkj = Bx [pB] ;     // SKIP if B pattern
+#define GB_GETB(bkj,Bx,pB,bsize) \
+    GB_btype bkj = Bx [pB] ;
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
@@ -94,8 +96,8 @@ GrB_Info GB_AgusB__min_times_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix M,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
     bool flipxy,
     GB_Sauna Sauna
 )
@@ -140,8 +142,8 @@ GrB_Info GB_AdotB__min_times_fp64
     GrB_Matrix *Chandle,
     const GrB_Matrix M,
     const bool Mask_comp,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
     bool flipxy
 )
 { 
@@ -183,8 +185,8 @@ GrB_Info GB_AheapB__min_times_fp64
 (
     GrB_Matrix *Chandle,
     const GrB_Matrix M,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
     bool flipxy,
     int64_t *restrict List,
     GB_pointer_pair *restrict pA_pair,

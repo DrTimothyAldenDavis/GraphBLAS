@@ -73,7 +73,7 @@ void mexFunction
     if (nargout > 1)
     {
         // note the calloc of Bflops
-        Bflops = mxCalloc ((bnvec+1) * sizeof (int64_t)) ;
+        Bflops = mxCalloc ((bnvec+1), sizeof (int64_t)) ;
     }
 
     // compute the flop count

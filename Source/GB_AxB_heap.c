@@ -51,19 +51,35 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     ASSERT (A->vdim == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
 
+    //--------------------------------------------------------------------------
+    // get the semiring operators
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp mult = semiring->multiply ;
+    GrB_Monoid add = semiring->add ;
+    ASSERT (mult->ztype == add->op->ztype) ;
+
+    bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
+    bool op_is_second = mult->opcode == GB_SECOND_opcode ;
+    bool A_is_pattern = false ;
+    bool B_is_pattern = false ;
+
     if (flipxy)
     { 
-        // z=fmult(b,a) will be computed
-        ASSERT (GB_Type_compatible (A->type, semiring->multiply->ytype)) ;
-        ASSERT (GB_Type_compatible (B->type, semiring->multiply->xtype)) ;
+        // z = fmult (b,a) will be computed
+        A_is_pattern = op_is_first  ;
+        B_is_pattern = op_is_second ;
+        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->ytype)) ;
+        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->xtype)) ;
     }
     else
     { 
-        // z=fmult(a,b) will be computed
-        ASSERT (GB_Type_compatible (A->type, semiring->multiply->xtype)) ;
-        ASSERT (GB_Type_compatible (B->type, semiring->multiply->ytype)) ;
+        // z = fmult (a,b) will be computed
+        A_is_pattern = op_is_second ;
+        B_is_pattern = op_is_first  ;
+        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->xtype)) ;
+        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->ytype)) ;
     }
-    ASSERT (semiring->multiply->ztype == semiring->add->op->ztype) ;
 
     (*Chandle) = NULL ;
 
@@ -135,12 +151,13 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
 
     #define GB_AheapB(add,mult,xyname) GB_AheapB_ ## add ## mult ## xyname
 
-    #define GB_AxB_WORKER(add,mult,xyname)                          \
-    {                                                               \
-        info = GB_AheapB (add,mult,xyname) (Chandle, M, A, B,       \
-            flipxy, List, pA_pair, Heap, bjnz_max) ;                \
-        done = true ;                                               \
-    }                                                               \
+    #define GB_AxB_WORKER(add,mult,xyname)                  \
+    {                                                       \
+        info = GB_AheapB (add,mult,xyname) (Chandle, M,     \
+            A, A_is_pattern, B, B_is_pattern, flipxy,       \
+            List, pA_pair, Heap, bjnz_max) ;                \
+        done = true ;                                       \
+    }                                                       \
     break ;
 
     //--------------------------------------------------------------------------
@@ -150,8 +167,8 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xycode, zcode ;
 
-    if (GB_semiring_builtin (A, B, semiring, flipxy,
-        &mult_opcode, &add_opcode, &xycode, &zcode))
+    if (GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
+        flipxy, &mult_opcode, &add_opcode, &xycode, &zcode))
     { 
         #include "GB_AxB_factory.c"
     }
@@ -178,14 +195,14 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         if (flipxy)
         { 
             // A is passed as y, and B as x, in z = mult(x,y)
-            atype_required = semiring->multiply->ytype ;
-            btype_required = semiring->multiply->xtype ;
+            atype_required = mult->ytype ;
+            btype_required = mult->xtype ;
         }
         else
         { 
             // A is passed as x, and B as y, in z = mult(x,y)
-            atype_required = semiring->multiply->xtype ;
-            btype_required = semiring->multiply->ytype ;
+            atype_required = mult->xtype ;
+            btype_required = mult->ytype ;
         }
 
         if (A->type == atype_required && B->type == btype_required)
@@ -213,19 +230,15 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         // get operators, functions, workspace, contents of A, B, C, and M
         //----------------------------------------------------------------------
 
-        // get the semiring operators
-        GrB_BinaryOp multiply = semiring->multiply ;
-        GrB_Monoid add = semiring->add ;
-
-        GxB_binary_function fmult = multiply->function ;
+        GxB_binary_function fmult = mult->function ;
         GxB_binary_function fadd  = add->op->function ;
 
         size_t csize = C->type->size ;
-        size_t asize = A->type->size ;
-        size_t bsize = B->type->size ;
+        size_t asize = A_is_pattern ? 0 : A->type->size ;
+        size_t bsize = B_is_pattern ? 0 : B->type->size ;
 
-        size_t xsize = multiply->xtype->size ;
-        size_t ysize = multiply->ytype->size ;
+        size_t xsize = mult->xtype->size ;
+        size_t ysize = mult->ytype->size ;
 
         // scalar workspace
         // flipxy false: aik = (xtype) A(i,k) and bkj = (ytype) B(k,j)
@@ -243,14 +256,18 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         if (flipxy)
         { 
             // A is typecasted to y, and B is typecasted to x
-            cast_A = GB_cast_factory (multiply->ytype->code, A->type->code) ;
-            cast_B = GB_cast_factory (multiply->xtype->code, B->type->code) ;
+            cast_A = A_is_pattern ? NULL : 
+                     GB_cast_factory (mult->ytype->code, A->type->code) ;
+            cast_B = B_is_pattern ? NULL : 
+                     GB_cast_factory (mult->xtype->code, B->type->code) ;
         }
         else
         { 
             // A is typecasted to x, and B is typecasted to y
-            cast_A = GB_cast_factory (multiply->xtype->code, A->type->code) ;
-            cast_B = GB_cast_factory (multiply->ytype->code, B->type->code) ;
+            cast_A = A_is_pattern ? NULL :
+                     GB_cast_factory (mult->xtype->code, A->type->code) ;
+            cast_B = B_is_pattern ? NULL :
+                     GB_cast_factory (mult->ytype->code, B->type->code) ;
         }
 
         //----------------------------------------------------------------------
@@ -259,11 +276,11 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
 
         // aik = A(i,k), of size asize
         #define GB_GETA(aik,Ax,pA,asize)                                    \
-            cast_A (aik, Ax +((pA)*asize), asize) ;  // SKIP if A pattern
+            if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), of size bsize
         #define GB_GETB(bkj,Bx,pB,bsize)                                    \
-            cast_B (bkj, Bx +((pB)*bsize), bsize) ;  // SKIP if B pattern
+            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
 
