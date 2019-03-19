@@ -48,9 +48,9 @@ name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 fprintf (f, 'define(`GB_AgusB'', `GB_AgusB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AdotB'', `GB_AdotB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AheapB'', `GB_AheapB__%s'')\n', name) ;
-fprintf (f, 'define(`GB_ztype'', `%s'')\n', ztype) ;
-fprintf (f, 'define(`GB_xtype'', `%s'')\n', xytype) ;
-fprintf (f, 'define(`GB_ytype'', `%s'')\n', xytype) ;
+fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
+fprintf (f, 'define(`GB_atype'', `%s'')\n', xytype) ;
+fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 
 if (~isempty (terminal))
@@ -63,17 +63,14 @@ end
 if (isequal (multop, 'second'))
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_geta'', `%s aik = Ax [pA] ;'')\n', xytype) ;
+    fprintf (f, 'define(`GB_geta'', `%s aik = Ax [pA]'')\n', xytype) ;
 end
 
 if (isequal (multop, 'first'))
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_getb'', `%s bkj = Bx [pB] ;'')\n', xytype) ;
+    fprintf (f, 'define(`GB_getb'', `%s bkj = Bx [pB]'')\n', xytype) ;
 end
-
-mult = strrep (mult, 'xarg', '`$2''') ;
-mult = strrep (mult, 'yarg', '`$3''') ;
 
 if (~isempty (strfind (mult, 'IDIV')))
     if (unsigned)
@@ -84,6 +81,14 @@ if (~isempty (strfind (mult, 'IDIV')))
     mult = strrep (mult, ')', sprintf (',%d)', bits)) ;
 end
 
+multadd = strrep (add, 't', ['(' mult ')']) ;
+multadd = strrep (multadd, 'w', '`$1''') ;
+multadd = strrep (multadd, 'xarg', '`$2''') ;
+multadd = strrep (multadd, 'yarg', '`$3''') ;
+fprintf (f, 'define(`GB_MULTIPLY_ADD'', `%s'')\n', multadd) ;
+
+mult = strrep (mult, 'xarg', '`$2''') ;
+mult = strrep (mult, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_MULTIPLY'', `$1 = %s'')\n', mult) ;
 
 add = strrep (add, 'w', '`$1''') ;

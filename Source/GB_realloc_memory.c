@@ -88,10 +88,10 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         if (malloc_tracking)
         {
             bool pretend_to_fail = false ;
-            if (GB_Global.malloc_debug)
+            if (GB_Global_malloc_debug_get ( ))
             {
                 // brutal memory usage debug; pretend to fail if the count <= 0
-                pretend_to_fail = (GB_Global.malloc_debug_count-- <= 0) ;
+                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
             }
             if (pretend_to_fail)
             {
@@ -104,13 +104,13 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             else
             {
                 // reallocate the space
-                pnew = (void *) GB_Global.realloc_function (p, size) ;
+                pnew = (void *) GB_Global_realloc_function (p, size) ;
             }
         }
         else
         {
             // reallocate the space
-            pnew = (void *) GB_Global.realloc_function (p, size) ;
+            pnew = (void *) GB_Global_realloc_function (p, size) ;
         }
 
         if (pnew == NULL)
@@ -148,7 +148,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         if (malloc_tracking)
         {
             printf ("Realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
-                pnew, GB_Global_nmalloc_get ( ), GB_Global.malloc_debug,
+                pnew, GB_Global_nmalloc_get ( ), GB_Global_malloc_debug_get ( ),
                 (int64_t) nitems_old, (int64_t) nitems_new,
                 (int64_t) size_of_item) ;
         }

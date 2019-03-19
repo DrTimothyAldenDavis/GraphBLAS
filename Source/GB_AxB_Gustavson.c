@@ -113,14 +113,13 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // allocate the Sauna
     //--------------------------------------------------------------------------
 
-    // TODO: put this in a function:
-    GB_Sauna Sauna = GB_Global.Saunas [Sauna_id] ;
+    GB_Sauna Sauna = GB_Global_Saunas_get (Sauna_id) ;
     if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size < zsize)
     { 
         // get a new Sauna: the Sauna either does not exist, or is too small
         GB_Sauna_free (Sauna_id) ;
         GB_OK (GB_Sauna_alloc (Sauna_id, cvlen, zsize)) ;
-        Sauna = GB_Global.Saunas [Sauna_id] ;
+        Sauna = GB_Global_Saunas_get (Sauna_id) ;
     }
 
     int64_t *restrict Sauna_Mark = Sauna->Sauna_Mark ;
@@ -297,13 +296,9 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     #define GB_IDENTITY \
         identity
 
-    // Sauna_Work [i] = identity
-    #define GB_CLEARW(Sauna_Work,i,identity,zsize)  \
-        memcpy (Sauna_Work +((i)*zsize), identity, zsize) ;
-
-    // Cx [p] = Sauna_Work [i]
-    #define GB_GATHERC(Cx,p,Sauna_Work,i,zsize)     \
-        memcpy (Cx +((p)*zsize), Sauna_Work +((i)*zsize), zsize) ;
+    #define GB_SAUNA_WORK(i) (Sauna_Work +((i)*zsize))
+    #define GB_CX(p)         (Cx +((p)*zsize))
+    #define GB_COPY(z,x)     memcpy (z, x, zsize) ;
 
     size_t asize = A_is_pattern ? 0 : A->type->size ;
     size_t bsize = B_is_pattern ? 0 : B->type->size ;
@@ -322,31 +317,19 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     GB_void *restrict identity = add->identity ;
     GB_void *restrict Cx = C->x ;
 
-    #define GB_XTYPE GB_void
-    #define GB_YTYPE GB_void
+    #define GB_ATYPE GB_void
+    #define GB_BTYPE GB_void
 
-    // generic multiply-add operation (with no mask).
-    #define GB_MULTADD_NOMASK                                           \
-        /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
+    // C(i,j) = A(i,k) * B(k,j)
+    #define GB_MULT(cij, aik, bkj)                                      \
+        GB_MULTIPLY (cij, aik, bkj) ;                                   \
+
+    // C(i,j) += A(i,k) * B(k,j)
+    #define GB_MULTADD(cij, aik, bkj)                                   \
         GB_MULTIPLY (t, aik, bkj) ;                                     \
-        fadd (Sauna_Work +(i*zsize), Sauna_Work +(i*zsize), t) ;
+        fadd (cij, cij, t) ;
 
-    // generic multiply-add operation (with mask)
-    #define GB_MULTADD_WITH_MASK                                        \
-        /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
-        if (mark == hiwater)                                            \
-        {                                                               \
-            /* first time C(i,j) seen */                                \
-            /* Sauna_Work [i] = A(i,k) * B(k,j) */                      \
-            GB_MULTIPLY (Sauna_Work +(i*zsize), aik, bkj) ;             \
-            Sauna_Mark [i] = hiwater + 1 ;                              \
-        }                                                               \
-        else                                                            \
-        {                                                               \
-            /* C(i,j) seen before, update it */                         \
-            /* Sauna_Work [i] += A(i,k) * B(k,j) */                     \
-            GB_MULTADD_NOMASK ;                                         \
-        }
+    #define GB_GENERIC
 
     if (no_typecasting)
     { 
@@ -356,11 +339,11 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         //----------------------------------------------------------------------
 
         // aik = &A(i,k), of size asize
-        #define GB_GETA(aik,Ax,pA,asize)                                    \
-            GB_void *aik = A_is_pattern ? NULL : (Ax +(pA*asize)) ;
+        #define GB_GETA(aik,Ax,pA)                                          \
+            const GB_void *aik = A_is_pattern ? NULL : (Ax +((pA)*asize)) ;
 
         // bkj = B(k,j), of size bsize
-        #define GB_GETB(bkj,Bx,pB,bsize)                                    \
+        #define GB_GETB(bkj,Bx,pB)                                          \
             if (!B_is_pattern) memcpy (bkj, Bx +((pB)*bsize), bsize) ;
 
         if (flipxy)
@@ -404,12 +387,12 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
         // aik = A(i,k), of size asize
         #undef  GB_GETA
-        #define GB_GETA(aik,Ax,pA,asize)                                    \
+        #define GB_GETA(aik,Ax,pA)                                          \
             if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), of size bsize
         #undef  GB_GETB
-        #define GB_GETB(bkj,Bx,pB,bsize)                                    \
+        #define GB_GETB(bkj,Bx,pB)                                          \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         if (flipxy)

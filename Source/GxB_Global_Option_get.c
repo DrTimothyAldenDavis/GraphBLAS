@@ -58,7 +58,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             va_end (ap) ;
 
             GB_RETURN_IF_NULL (format) ;
-            (*format) = (GB_Global.is_csc) ? GxB_BY_COL : GxB_BY_ROW ;
+            (*format) = (GB_Global_is_csc_get ( )) ? GxB_BY_COL : GxB_BY_ROW ;
             break ;
 
         //----------------------------------------------------------------------
@@ -72,7 +72,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             va_end (ap) ;
 
             GB_RETURN_IF_NULL (mode) ;
-            (*mode) = GB_Global.mode ;
+            (*mode) = GB_Global_mode_get ( )  ;
             break ;
 
         //----------------------------------------------------------------------
@@ -126,7 +126,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             int *nthreads_max = va_arg (ap, int *) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (nthreads_max) ;
-            (*nthreads_max) = GB_Global.nthreads_max ;
+            (*nthreads_max) = GB_Global_nthreads_max_get ( ) ;
             break ;
 
         //----------------------------------------------------------------------

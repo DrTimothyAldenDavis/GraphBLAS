@@ -50,7 +50,7 @@ GrB_Info GB_Sauna_release
             if (Sauna_id >= 0)                                              \
             {                                                               \
                 /* release the Sauna previously acquired for thread t */    \
-                GB_Global.Sauna_in_use [Sauna_id] = false ;                 \
+                GB_Global_Sauna_in_use_set (Sauna_id, false) ;              \
             }                                                               \
         }                                                                   \
     }

@@ -70,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Mar 16, 2019 (DRAFT)"
+#define GxB_DATE "Mar 19, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0

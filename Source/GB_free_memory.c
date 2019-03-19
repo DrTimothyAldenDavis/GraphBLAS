@@ -33,7 +33,7 @@ void GB_free_memory
             GB_Global_inuse_decrement (nitems * size_of_item) ;
             #ifdef GB_PRINT_MALLOC
             printf ("Free:    %14p %3d %1d n "GBd" size "GBd"\n",
-                p, nmalloc, GB_Global.malloc_debug,
+                p, nmalloc, GB_Global_malloc_debug_get ( ),
                 (int64_t) nitems, (int64_t) size_of_item) ;
             if (nmalloc < 0)
             {
@@ -43,7 +43,7 @@ void GB_free_memory
             ASSERT (nmalloc >= 0) ;
         }
 
-        GB_Global.free_function (p) ;
+        GB_Global_free_function (p) ;
     }
 }
 

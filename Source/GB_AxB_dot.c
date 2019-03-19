@@ -299,42 +299,37 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         //----------------------------------------------------------------------
 
         // aki = A(k,i), located in Ax [pA]
-        #define GB_GETA(aki,Ax,pA,asize)                                \
+        #define GB_GETA(aki,Ax,pA)                                          \
             if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), located in Bx [pB]
-        #define GB_GETB(bkj,Bx,pB,bsize)                                \
+        #define GB_GETB(bkj,Bx,pB)                                          \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
-        // t = aki*bkj
-        #define GB_DOT_MULT(aki,bkj)                                    \
-            GB_MULTIPLY (t, aki, bkj) ;
-
-        // cij += t
-        #define GB_DOT_ADD                                              \
-            fadd (cij, cij, t) ;
-
         // break if cij reaches the terminal value
-        #define GB_DOT_TERMINAL(cij)                                    \
-            if (terminal != NULL && memcmp (cij, terminal, csize) == 0) \
-            {                                                           \
-                break ;                                                 \
+        #define GB_DOT_TERMINAL(cij)                                        \
+            if (terminal != NULL && memcmp (cij, terminal, csize) == 0)     \
+            {                                                               \
+                break ;                                                     \
             }
 
-        // cij = t
-        #define GB_DOT_COPY    memcpy (cij, t, csize) ;
+        // C(i,j) = A(i,k) * B(k,j)
+        #define GB_MULT(cij, aki, bkj)                                      \
+            GB_MULTIPLY (cij, aki, bkj) ;                                   \
+
+        // C(i,j) += A(i,k) * B(k,j)
+        #define GB_MULTADD(cij, aki, bkj)                                   \
+            GB_MULTIPLY (t, aki, bkj) ;                                     \
+            fadd (cij, cij, t) ;
 
         // C->x has moved so the pointer to cij needs to be recomputed
-        #define GB_DOT_REACQUIRE cij = Cx + cnz * csize ;
-
-        // cij = identity
-        #define GB_DOT_CLEAR   memcpy (cij, identity, csize) ;
+        #define GB_CIJ_REACQUIRE(cij)   cij = Cx + cnz * csize ;
 
         // save the value of C(i,j) by advancing cij pointer to next value
-        #define GB_DOT_SAVE    cij += csize ;
+        #define GB_CIJ_SAVE(cij)        cij += csize ;
 
-        #define GB_XTYPE GB_void
-        #define GB_YTYPE GB_void
+        #define GB_ATYPE GB_void
+        #define GB_BTYPE GB_void
 
         if (flipxy)
         { 

@@ -1,7 +1,6 @@
-
 TODO: add a test to all methods see if GrB_init has been called?
 
-TODO: do not require inputs to be typecasted for FIRST and SECOND
-    operators, for the parameter that is not used.
-    (test this for user-defined types)
+TODO: test for user-defined type:  for FIRST and SECOND operators,
+    do not check for typecast for the unused parameter.
+    (this is written but need to test this for user-defined types)
 

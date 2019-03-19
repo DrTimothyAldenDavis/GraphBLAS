@@ -37,8 +37,9 @@ GrB_Info GxB_Global_Option_set      // set a global default option
         case GxB_HYPER : 
 
             va_start (ap, field) ;
-            GB_Global.hyper_ratio = va_arg (ap, double) ;
+            double hyper_ratio = va_arg (ap, double) ;
             va_end (ap) ;
+            GB_Global_hyper_ratio_set (hyper_ratio) ;
             break ;
 
         case GxB_FORMAT : 
@@ -55,7 +56,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                         (int) format, (int) GxB_BY_ROW, (int) GxB_BY_COL))) ;
             }
 
-            GB_Global.is_csc = (format != GxB_BY_ROW) ; 
+            GB_Global_is_csc_set (format != GxB_BY_ROW) ; 
             break ;
 
         case GxB_GLOBAL_NTHREADS :      // same as GxB_NTHREADS
@@ -74,7 +75,7 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                     "using -DGxB_NTHREADS_MAX=%d (or higher, as needed)",
                     nthreads_max_new, GxB_NTHREADS_MAX, nthreads_max_new))) ;
             }
-            GB_Global.nthreads_max = nthreads_max_new ;
+            GB_Global_nthreads_max_set (nthreads_max_new) ;
             break ;
 
         default : 

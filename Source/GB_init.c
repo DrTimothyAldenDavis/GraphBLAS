@@ -105,7 +105,7 @@ GrB_Info GB_init            // start up GraphBLAS
 
     // Don't log the error for GrB_error, since it might not be initialized.
 
-    if (GB_Global.GrB_init_called)
+    if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once
         return (GrB_INVALID_VALUE) ;
@@ -117,7 +117,7 @@ GrB_Info GB_init            // start up GraphBLAS
         return (GrB_INVALID_VALUE) ;
     }
 
-    GB_Global.GrB_init_called = true ;
+    GB_Global_GrB_init_called_set (true) ;
 
     //--------------------------------------------------------------------------
     // establish malloc/calloc/realloc/free
@@ -125,10 +125,10 @@ GrB_Info GB_init            // start up GraphBLAS
 
     // GrB_init passes in the ANSI C11 malloc/calloc/realloc/free
 
-    GB_Global.malloc_function  = malloc_function  ;
-    GB_Global.calloc_function  = calloc_function  ;
-    GB_Global.realloc_function = realloc_function ;
-    GB_Global.free_function    = free_function    ;
+    GB_Global_malloc_function_set  (malloc_function ) ;
+    GB_Global_calloc_function_set  (calloc_function ) ;
+    GB_Global_realloc_function_set (realloc_function) ;
+    GB_Global_free_function_set    (free_function   ) ;
 
     //--------------------------------------------------------------------------
     // max number of threads
@@ -141,16 +141,16 @@ GrB_Info GB_init            // start up GraphBLAS
     // or POSIX pthreads.
 
     #if defined ( _OPENMP )
-    GB_Global.nthreads_max = omp_get_max_threads ( ) ;
+    GB_Global_nthreads_max_set (omp_get_max_threads ( )) ;
     #else
-    GB_Global.nthreads_max = 1 ;
+    GB_Global_nthreads_max_set (1) ;
     #endif
 
     //--------------------------------------------------------------------------
     // create the mutex for the critical section, and thread-local storage
     //--------------------------------------------------------------------------
 
-    if (GB_Global.user_multithreaded)
+    if (GB_Global_user_multithreaded_get ( ))
     {
 
         bool ok = true ;
@@ -161,8 +161,8 @@ GrB_Info GB_init            // start up GraphBLAS
             int result = pthread_mutex_init (&GB_sync, NULL) ;
             bool ok = (result == 0) ;
             // initialize the key for thread-local storage, allocated in
-            // in GB_thread_local_access via GB_Global.calloc_function,
-            // and freed by GB_Global.free_function.
+            // in GB_thread_local_access via GB_Global_calloc_function,
+            // and freed by GB_Global_free_function.
             result = pthread_key_create (&GB_thread_local_key, free_function) ;
             ok = ok && (result == 0) ;
         }
@@ -203,10 +203,10 @@ GrB_Info GB_init            // start up GraphBLAS
     // queue must be protected and can be initialized only once by any thread.
 
     // clear the queue
-    GB_Global.queue_head = NULL ;
+    GB_Global_queue_head_set (NULL) ;
 
     // set the mode: blocking or nonblocking
-    GB_Global.mode = mode ;
+    GB_Global_mode_set (mode) ;
 
     //--------------------------------------------------------------------------
     // clear Sauna workspaces
@@ -214,8 +214,8 @@ GrB_Info GB_init            // start up GraphBLAS
 
     for (int t = 0 ; t < GxB_NTHREADS_MAX ; t++)
     { 
-        GB_Global.Saunas [t] = NULL ;
-        GB_Global.Sauna_in_use [t] = false ;
+        GB_Global_Saunas_set (t, NULL) ;
+        GB_Global_Sauna_in_use_set (t, false) ;
     }
 
     //--------------------------------------------------------------------------
@@ -225,8 +225,8 @@ GrB_Info GB_init            // start up GraphBLAS
     // set the default hypersparsity ratio and CSR/CSC format;  any thread
     // can do this later as well, so there is no race condition danger.
 
-    GB_Global.hyper_ratio = GB_HYPER_DEFAULT ;
-    GB_Global.is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW) ;
+    GB_Global_hyper_ratio_set (GB_HYPER_DEFAULT) ;
+    GB_Global_is_csc_set (GB_FORMAT_DEFAULT != GxB_BY_ROW) ;
 
     //--------------------------------------------------------------------------
     // initialize malloc tracking (testing and debugging only)
@@ -234,7 +234,7 @@ GrB_Info GB_init            // start up GraphBLAS
 
     GB_Global_malloc_tracking_set (false) ;
     GB_Global_nmalloc_clear ( ) ;
-    GB_Global.malloc_debug = false ;
+    GB_Global_malloc_debug_set (false) ;
     GB_Global_malloc_debug_count_set (0) ;
     GB_Global_inuse_clear ( ) ;
 
@@ -264,7 +264,7 @@ char *GB_thread_local_access ( )    // return pointer to thread-local storage
 
     #if defined (USER_POSIX_THREADS)
     {
-        if (GB_Global.user_multithreaded)
+        if (GB_Global_user_multithreaded_get ( ))
         {
             // thread-local storage for POSIX
             char *p = pthread_getspecific (GB_thread_local_key) ;
@@ -272,7 +272,7 @@ char *GB_thread_local_access ( )    // return pointer to thread-local storage
             if (p == NULL)
             {
                 // first time:  allocate the space for the report
-                p = (void *) GB_Global.calloc_function ((GB_RLEN+1),
+                p = (void *) GB_Global_calloc_function ((GB_RLEN+1),
                     sizeof (char)) ;
                 ok = (p != NULL) ;
                 ok = ok && (pthread_setspecific (GB_thread_local_key, p) == 0) ;
@@ -290,7 +290,7 @@ char *GB_thread_local_access ( )    // return pointer to thread-local storage
     #endif
 
     // USER_OPENMP_THREADS, USER_NO_THREADS, USER_ANSI_THREADS,
-    // or USER_POSIX_THREADS but with GB_Global.user_multithreaded false.
+    // or USER_POSIX_THREADS but with GB_Global_user_multithreaded false.
     return (GB_thread_local_report) ;
 } 
 

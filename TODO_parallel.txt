@@ -38,6 +38,9 @@ the loop is to be parallelized.
 GB_AxB_parallel.c: IN PROGRESS: mxm nicely parallel for large matrices.
     This is where we do C=A*B, for GrB_mxm, GrB_mxv, and GrB_vxm.
     *FINE slice methods written but need tuning.
+    Need better fine-grain methods for mxv and vxm:  do symbolic analysis
+    phase (column nnz count), and then compute C in place without the final
+    copy.
 
 GB_AxB_flopcount.c: IN PROGRESS: reasonably implemented but needs a little work.
     Used by C=A*B for the parallel case, simple for all loop.  Note however the
@@ -50,6 +53,7 @@ GB_hcat_slice.c: DONE
 Template/GB_qsort_template.c: IN PROGRESSS
     Needs a way to set a larger leaf task size.
     Does lots of work, everywhere, for many GraphBLAS operations.
+    Odd segfault with 20 threads.  see "TODO"
 
 GB_transplant.c:
     utility function used by almost all of GraphBLAS.  Easy to parallelize.

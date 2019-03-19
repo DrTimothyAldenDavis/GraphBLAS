@@ -17,7 +17,7 @@
     // get first and last non-empty vector of A
     //--------------------------------------------------------------------------
 
-    int64_t ia_first, ia_last ;
+    int64_t ia_first = -1, ia_last = -1 ;
     if (A_is_hyper)
     {
         // A is hypersparse or hyperslice
@@ -25,11 +25,6 @@
         { 
             ia_first = Ah [0] ;
             ia_last  = Ah [anvec-1] ;
-        }
-        else
-        { 
-            ia_first = -1 ;
-            ia_last  = -1 ;
         }
     }
     else

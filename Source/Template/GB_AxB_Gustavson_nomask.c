@@ -116,10 +116,11 @@
         // clear Sauna_Work
         //----------------------------------------------------------------------
 
+        #pragma omp simd
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)
         { 
             // Sauna_Work [Ci [pC]] = identity ;
-            GB_CLEARW (Sauna_Work, Ci [pC], GB_IDENTITY, zsize) ;
+            GB_COPY (GB_SAUNA_WORK (Ci [pC]), GB_IDENTITY) ;
         }
 
         #ifdef GB_HYPER_CASE
@@ -161,29 +162,40 @@
 
             // get the value of B(k,j)
             // bkj = Bx [pB]
-            GB_GETB (bkj, Bx, pB, bsize) ;
+            GB_GETB (bkj, Bx, pB) ;
 
             //------------------------------------------------------------------
             // Sauna_Work += A(:,k) * B(k,j)
             //------------------------------------------------------------------
 
-            for ( ; pA < pA_end ; pA++)
-            { 
-                // Sauna_Work [i] += A(i,k) * B(k,j)
-                int64_t i = Ai [pA] ;
-                GB_GETA (aik, Ax, pA, asize) ;
-                GB_MULTADD_NOMASK ;
-            }
+            #ifdef GB_BUILTIN
+                #pragma omp simd
+                for ( ; pA < pA_end ; pA++)
+                { 
+                    // Sauna_Work [i] += A(i,k) * B(k,j)
+                    GB_MULTADD (GB_SAUNA_WORK (Ai [pA]), GB_AX (pA), bkj) ;
+                }
+            #else
+                for ( ; pA < pA_end ; pA++)
+                { 
+                    // Sauna_Work [i] += A(i,k) * B(k,j)
+                    int64_t i = Ai [pA] ;
+                    GB_GETA (aik, Ax, pA) ;
+                    GB_MULTADD (GB_SAUNA_WORK (i), aik, bkj) ;
+                }
+            #endif
+
         }
 
         //----------------------------------------------------------------------
         // gather C(:,j) from Sauna_Work
         //----------------------------------------------------------------------
 
+        #pragma omp simd
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)
         { 
             // Cx [pC] = Sauna_Work [Ci [pC]] ;
-            GB_GATHERC (Cx, pC, Sauna_Work, Ci [pC], zsize) ;
+            GB_COPY (GB_CX (pC), GB_SAUNA_WORK (Ci [pC])) ;
         }
     }
 

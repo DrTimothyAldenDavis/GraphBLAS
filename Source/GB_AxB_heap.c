@@ -275,33 +275,30 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         //----------------------------------------------------------------------
 
         // aik = A(i,k), of size asize
-        #define GB_GETA(aik,Ax,pA,asize)                                    \
+        #define GB_GETA(aik,Ax,pA)                                          \
             if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), of size bsize
-        #define GB_GETB(bkj,Bx,pB,bsize)                                    \
+        #define GB_GETB(bkj,Bx,pB)                                          \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
-        // cij = A(i,k) * B(k,j)
-        #define GB_CIJ_MULT(cij, aik, bkj)                                  \
-            GB_MULTIPLY (cij, aik, bkj) ;
+        // C(i,j) = A(i,k) * B(k,j)
+        #define GB_MULT(cij, aik, bkj)                                      \
+            GB_MULTIPLY (cij, aik, bkj) ;                                   \
 
         // C(i,j) += A(i,k) * B(k,j)
-        #define GB_CIJ_MULTADD(cij, aik, bkj)                               \
+        #define GB_MULTADD(cij, aik, bkj)                                   \
             GB_MULTIPLY (t, aik, bkj) ;                                     \
             fadd (cij, cij, t) ;
 
         // C->x has moved so the pointer to cij needs to be recomputed
-        #define GB_CIJ_REACQUIRE cij = Cx + cnz * csize ;
-
-        // cij = identity
-        #define GB_CIJ_CLEAR memcpy (cij, identity, csize) ;
+        #define GB_CIJ_REACQUIRE(cij)   cij = Cx + cnz * csize ;
 
         // save the value of C(i,j) by advancing the cij pointer to next value
-        #define GB_CIJ_SAVE  cij += csize ;
+        #define GB_CIJ_SAVE(cij)        cij += csize ;
 
-        #define GB_XTYPE GB_void
-        #define GB_YTYPE GB_void
+        #define GB_ATYPE GB_void
+        #define GB_BTYPE GB_void
 
         if (flipxy)
         { 

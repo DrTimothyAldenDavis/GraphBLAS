@@ -261,22 +261,10 @@
                     Ci = C->i ;
                     Cx = C->x ;
                     // reacquire the pointer cij since C->x has moved
-                    GB_CIJ_REACQUIRE ;
+                    GB_CIJ_REACQUIRE (cij) ;
                 }
             }
             #endif
-
-            //------------------------------------------------------------------
-            // cij = 0
-            //------------------------------------------------------------------
-
-            #ifdef GB_MASK_CASE
-            if (mij)
-            #endif
-            {
-                // cij = 0
-                GB_CIJ_CLEAR ;
-            }
 
             //------------------------------------------------------------------
             // cij = A (i,List)' * B (List,j), in topological order
@@ -314,10 +302,18 @@
                 if (mij)
                 #endif
                 {
-                    // cij += A(i,k) * B(k,j)
-                    GB_GETA (aik, Ax, pA, asize) ;
-                    GB_GETB (bkj, Bx, pB_start + kk, bsize) ;
-                    GB_CIJ_MULTADD (cij, aik, bkj) ;
+                    GB_GETA (aik, Ax, pA) ;
+                    GB_GETB (bkj, Bx, pB_start + kk) ;
+                    if (klist == nlist-1)
+                    {
+                        // first entry: cij = A(i,k) * B(k,j)
+                        GB_MULT (cij, aik, bkj) ;
+                    }
+                    else
+                    {
+                        // cij += A(i,k) * B(k,j)
+                        GB_MULTADD (cij, aik, bkj) ;
+                    }
                 }
 
                 //--------------------------------------------------------------
@@ -422,7 +418,7 @@
             { 
                 Ci [cnz] = i ;
                 // Cx [cnz] = cij ;
-                GB_CIJ_SAVE ;
+                GB_CIJ_SAVE (cij) ;
                 cnz++ ;
             }
         }
@@ -466,11 +462,11 @@
                 Ci = C->i ;
                 Cx = C->x ;
                 // reacquire cij since C->x has moved
-                GB_CIJ_REACQUIRE ;
+                GB_CIJ_REACQUIRE (cij) ;
             }
 
             // bkj = Bx [ ] ;
-            GB_GETB (bkj, Bx, pB_start + kk, bsize) ;
+            GB_GETB (bkj, Bx, pB_start + kk) ;
 
             // C(ilast:end,j) = A (ilast:end,k) * B (k,j)
             for ( ; pA < pA_end ; pA++)
@@ -479,12 +475,12 @@
                 int64_t i = Ai [pA] ;
 
                 // cij = A(i,k) * B(k,j)
-                GB_GETA (aik, Ax, pA, asize) ;
-                GB_CIJ_MULT (cij, aik, bkj) ;
+                GB_GETA (aik, Ax, pA) ;
+                GB_MULT (cij, aik, bkj) ;
 
                 Ci [cnz] = i ;
                 // Cx [cnz] = cij ;
-                GB_CIJ_SAVE ;
+                GB_CIJ_SAVE (cij) ;
                 cnz++ ;
             }
         }

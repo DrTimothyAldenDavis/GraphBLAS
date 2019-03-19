@@ -142,6 +142,12 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
 m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GBCOMPACT
     #define GB_ADD(z,y)    GB_DEF_$2_add (&(z), &(z), &(y))
+    #define GB_MULTIPLY_ADD(c,a,b)  \
+    {                               \
+        GB_ctype t ;                \
+        GB_MULTIPLY(t,a,b) ;        \
+        GB_ADD(c,c,t) ;             \
+    }
     #define GB_identity    GB_DEF_$2_identity
     #if defined ( GB_DEF_$2_is_user_terminal )
         #define GB_terminal if (memcmp (&cij, &GB_DEF_$2_user_terminal, GB_DEF_$2_zsize) == 0) break ;
@@ -150,16 +156,18 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #else
         #define GB_terminal ;
     #endif
-    #define GB_ztype    GB_DEF_$3_ztype
+    #define GB_ctype    GB_DEF_$3_ztype
+    #define GB_geta     GB_atype aik = Ax [pA]
+    #define GB_getb     GB_btype bkj = Bx [pB]
     #define GB_AgusB    GB_AxB_user_gus_$1
     #define GB_AdotB    GB_AxB_user_dot_$1
     #define GB_AheapB   GB_AxB_user_heap_$1
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(x), &(y))
-    #define GB_xtype    GB_DEF_$3_xtype
-    #define GB_ytype    GB_DEF_$3_ytype
+    #define GB_atype    GB_DEF_$3_xtype
+    #define GB_btype    GB_DEF_$3_ytype
     #include "GB_AxB.c"
-    #undef GB_xtype
-    #undef GB_ytype
+    #undef GB_atype
+    #undef GB_btype
     #undef GB_MULTIPLY
     #undef GB_AgusB
     #undef GB_AdotB
@@ -168,11 +176,11 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #define GB_AdotB    GB_AxB_user_dot_$1_flipxy
     #define GB_AheapB   GB_AxB_user_heap_$1_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(y), &(x))
-    #define GB_xtype    GB_DEF_$3_ytype
-    #define GB_ytype    GB_DEF_$3_xtype
+    #define GB_atype    GB_DEF_$3_ytype
+    #define GB_btype    GB_DEF_$3_xtype
     #include "GB_AxB.c"
-    #undef GB_xtype
-    #undef GB_ytype
+    #undef GB_atype
+    #undef GB_btype
     #undef GB_MULTIPLY
     #undef GB_AgusB
     #undef GB_AdotB
@@ -180,7 +188,9 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GB_ADD
     #undef GB_identity
     #undef GB_terminal
-    #undef GB_ztype
+    #undef GB_ctype
+    #undef GB_geta
+    #undef GB_getb
     struct GB_Semiring_opaque GB_opaque_$1 =
     {
         GB_MAGIC,           // object is defined

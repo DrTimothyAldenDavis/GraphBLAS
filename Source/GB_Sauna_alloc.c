@@ -38,7 +38,7 @@ GrB_Info GB_Sauna_alloc             // create a Sauna
     }
 
     // save it in the global table
-    GB_Global.Saunas [Sauna_id] = Sauna ;
+    GB_Global_Saunas_set (Sauna_id, Sauna) ;
 
     //--------------------------------------------------------------------------
     // allocate the contents of the Sauna

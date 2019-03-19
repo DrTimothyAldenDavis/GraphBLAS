@@ -150,27 +150,6 @@ a wildtype scalar: z = x*y: [this was multiplied]
     -811.0       -5.0      801.0     1607.0 
    -1211.0       -5.0     1201.0     2407.0 
 
-a wildtype scalar: x for add: [identity]
-       0.0        0.0        0.0        0.0 
-       0.0        0.0        0.0        0.0 
-       0.0        0.0        0.0        0.0 
-       0.0        0.0        0.0        0.0 
-
-a wildtype scalar: y for add: [this was multiplied]
-     -11.0       -5.0        1.0        7.0 
-    -411.0       -5.0      401.0      807.0 
-    -811.0       -5.0      801.0     1607.0 
-   -1211.0       -5.0     1201.0     2407.0 
-
-do the add:
-    [this was added] = [this was added] + [this was multiplied]
-
-a wildtype scalar: z = x+y: [this was added]
-     -11.0       -5.0        1.0        7.0 
-    -411.0       -5.0      401.0      807.0 
-    -811.0       -5.0      801.0     1607.0 
-   -1211.0       -5.0     1201.0     2407.0 
-
 a wildtype scalar: x for multiply: [this is A(2,4)]
        0.0        1.0        2.0        3.0 
      100.0      101.0      102.0      103.0 
@@ -192,7 +171,7 @@ a wildtype scalar: z = x*y: [this was multiplied]
    -2876.0    -1064.0      448.0    16660.0 
    -1008.5      386.5     1331.5    24326.5 
 
-a wildtype scalar: x for add: [this was added]
+a wildtype scalar: x for add: [this was multiplied]
      -11.0       -5.0        1.0        7.0 
     -411.0       -5.0      401.0      807.0 
     -811.0       -5.0      801.0     1607.0 

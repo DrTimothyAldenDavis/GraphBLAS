@@ -18,68 +18,64 @@
 // A*B function (Gustavon):  GB_AgusB
 // A'*B function (dot):      GB_AdotB
 // A*B function (heap):      GB_AheapB
-// Z type:   GB_ztype (the type of C)
-// X type:   GB_xtype (the type of x for z=mult(x,y))
-// Y type:   GB_ytype (the type of y for z=mult(x,y))
-// Identity: GB_identity (where GB_ADD(cij,identity) does not change cij)
+// C type:   GB_ctype
+// A type:   GB_atype
+// B type:   GB_btype
 // Multiply: GB_MULTIPLY(z,x,y)
 // Add:      GB_ADD(cij, z)
+// MultAdd:  GB_MULTIPLY_ADD(cij,aik,bkj)
+// Identity: GB_identity
 // Terminal: GB_terminal
 
-#define GB_XTYPE \
-    GB_xtype
+#define GB_BUILTIN
 
-#define GB_YTYPE \
-    GB_ytype
+#define GB_ATYPE \
+    GB_atype
 
-#define GB_DOT_TERMINAL(cij) \
-    GB_terminal
+#define GB_BTYPE \
+    GB_btype
+
+#define GB_AX(pA) (Ax [pA])
 
 // aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA,asize) \
+#define GB_GETA(aik,Ax,pA) \
     GB_geta
 
 // bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB,bsize) \
+#define GB_GETB(bkj,Bx,pB) \
     GB_getb
+
+// multiply operator
+#define GB_MULT(z, x, y)        \
+    GB_MULTIPLY(z, x, y) ;
+
+// multiply-add
+#define GB_MULTADD(z, x, y)     \
+    GB_MULTIPLY_ADD(z, x, y) ;
+
+// copy scalar
+#define GB_COPY(z,x) z = x ;
+
+#define GB_IDENTITY \
+    GB_identity
+
+// break if cij reaches the terminal value
+#define GB_DOT_TERMINAL(cij) \
+    GB_terminal
+
+// cij is not a pointer but a scalar; nothing to do
+#define GB_CIJ_REACQUIRE(cij) ;
+
+// save the value of C(i,j)
+#define GB_CIJ_SAVE(cij) Cx [cnz] = cij ;
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
 //------------------------------------------------------------------------------
 
-#define GB_IDENTITY \
-    GB_identity
+#define GB_SAUNA_WORK(i) Sauna_Work [i]
 
-// Sauna_Work [i] = identity
-#define GB_CLEARW(Sauna_Work,i,identity,zsize)  \
-    Sauna_Work [i] = identity ;
-
-// Cx [p] = Sauna_Work [i]
-#define GB_GATHERC(Cx,p,Sauna_Work,i,zsize)     \
-    Cx [p] = Sauna_Work [i] ;
-
-// mult-add operation (no mask)
-#define GB_MULTADD_NOMASK                       \
-    /* Sauna_Work [i] += A(i,k) * B(k,j) */     \
-    GB_ztype t ;                                \
-    GB_MULTIPLY(t, aik, bkj) ;                  \
-    GB_ADD(Sauna_Work [i], t) ;
-
-// mult-add operation (with mask)
-#define GB_MULTADD_WITH_MASK                    \
-    if (mark == hiwater)                        \
-    {                                           \
-        /* first time C(i,j) seen */            \
-        /* Sauna_Work [i] = A(i,k) * B(k,j) */  \
-        GB_MULTIPLY(Sauna_Work [i], aik, bkj) ; \
-        Sauna_Mark [i] = hiwater + 1 ;          \
-    }                                           \
-    else                                        \
-    {                                           \
-        /* C(i,j) seen before, update it */     \
-        /* Sauna_Work [i] += A(i,k) * B(k,j) */ \
-        GB_MULTADD_NOMASK ;                     \
-    }
+#define GB_CX(p) Cx [p]
 
 GrB_Info GB_AgusB
 (
@@ -90,8 +86,8 @@ GrB_Info GB_AgusB
     GB_Sauna Sauna
 )
 { 
-    GB_ztype *restrict Sauna_Work = Sauna->Sauna_Work ;
-    GB_ztype *restrict Cx = C->x ;
+    GB_ctype *restrict Sauna_Work = Sauna->Sauna_Work ;
+    GB_ctype *restrict Cx = C->x ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_Gustavson_meta.c"
     return (info) ;
@@ -100,30 +96,6 @@ GrB_Info GB_AgusB
 //------------------------------------------------------------------------------
 // C<M>=A'*B, C<!M>=A'*B or C=A'*B: dot product
 //------------------------------------------------------------------------------
-
-// t = aki*bkj
-#define GB_DOT_MULT(aki,bkj)   \
-    GB_ztype t ;               \
-    GB_MULTIPLY(t, aki, bkj) ;
-
-// cij += t
-#define GB_DOT_ADD             \
-    GB_ADD(cij, t) ;
-
-// cij = t
-#define GB_DOT_COPY            \
-    cij = t ;
-
-// cij is not a pointer but a scalar; nothing to do
-#define GB_DOT_REACQUIRE ;
-
-// clear cij
-#define GB_DOT_CLEAR           \
-    cij = GB_identity ;
-
-// save the value of C(i,j)
-#define GB_DOT_SAVE            \
-    Cx [cnz] = cij ;
 
 GrB_Info GB_AdotB
 (
@@ -134,8 +106,8 @@ GrB_Info GB_AdotB
 )
 { 
     GrB_Matrix C = (*Chandle) ;
-    GB_ztype *restrict Cx = C->x ;
-    GB_ztype cij ;
+    GB_ctype *restrict Cx = C->x ;
+    GB_ctype cij ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_dot_meta.c"
     return (info) ;
@@ -146,27 +118,6 @@ GrB_Info GB_AdotB
 //------------------------------------------------------------------------------
 
 #include "GB_heap.h"
-
-// cij = A(i,k) * B(k,j)
-#define GB_CIJ_MULT(cij, aik, bkj)      \
-    GB_MULTIPLY(cij, aik, bkj) ;
-
-// C(i,j) += A(i,k) * B(k,j)
-#define GB_CIJ_MULTADD(cij, aik, bkj)   \
-    GB_ztype t ;                        \
-    GB_MULTIPLY(t, aik, bkj) ;          \
-    GB_ADD(cij, t) ;
-
-// cij is not a pointer but a scalar; nothing to do
-#define GB_CIJ_REACQUIRE ;
-
-// cij = identity
-#define GB_CIJ_CLEAR                    \
-    cij = GB_identity ;
-
-// save the value of C(i,j)
-#define GB_CIJ_SAVE                     \
-    Cx [cnz] = cij ;
 
 GrB_Info GB_AheapB
 (
@@ -181,10 +132,9 @@ GrB_Info GB_AheapB
 )
 { 
     GrB_Matrix C = (*Chandle) ;
-    GB_ztype *restrict Cx = C->x ;
-    GB_ztype cij ;
+    GB_ctype *restrict Cx = C->x ;
+    GB_ctype cij ;
     int64_t cvlen = C->vlen ;
-    GB_CIJ_CLEAR ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_heap_meta.c"
     return (info) ;

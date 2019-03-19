@@ -16,8 +16,8 @@
 
 {
 
-    const GB_XTYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
-    const GB_YTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
+    const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
+    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
 
     //--------------------------------------------------------------------------
     // check inputs

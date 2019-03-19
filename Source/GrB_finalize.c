@@ -32,7 +32,7 @@ GrB_Info GrB_finalize ( )
     // destroy the queue
     //--------------------------------------------------------------------------
 
-    if (GB_Global.user_multithreaded)
+    if (GB_Global_user_multithreaded_get ( ))
     {
 
         #if defined (USER_POSIX_THREADS)

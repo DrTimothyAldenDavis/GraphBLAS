@@ -208,7 +208,7 @@
             // get the value of B(k,j)
             //------------------------------------------------------------------
 
-            GB_GETB (bkj, Bx, pB, bsize) ;
+            GB_GETB (bkj, Bx, pB) ;
 
             //------------------------------------------------------------------
             // Sauna += (A(:,k) * B(k,j)) .* M(:,j)
@@ -221,8 +221,22 @@
                 int64_t mark = Sauna_Mark [i] ;
                 if (mark < hiwater) continue ;
                 // M(i,j) == 1 so do the work
-                GB_GETA (aik, Ax, pA, asize) ;
-                GB_MULTADD_WITH_MASK ;
+                GB_GETA (aik, Ax, pA) ;
+
+                // Sauna_Work [i] += A(i,k) * B(k,j)
+                if (mark == hiwater)
+                { 
+                    // first time C(i,j) seen
+                    // Sauna_Work [i] = A(i,k) * B(k,j)
+                    GB_MULT (GB_SAUNA_WORK (i), aik, bkj) ;
+                    Sauna_Mark [i] = hiwater + 1 ;
+                }
+                else
+                {
+                    // C(i,j) seen before, update it
+                    // Sauna_Work [i] += A(i,k) * B(k,j)
+                    GB_MULTADD (GB_SAUNA_WORK (i), aik, bkj) ;
+                }
             }
 
             //------------------------------------------------------------------
@@ -261,7 +275,7 @@
                 { 
                     // C(i,j) is a live entry, gather its row and value
                     // Cx [cnz] = Sauna_Work [i] ;
-                    GB_GATHERC (Cx, cnz, Sauna_Work, i, zsize) ;
+                    GB_COPY (GB_CX (cnz), GB_SAUNA_WORK (i)) ;
                     Ci [cnz++] = i ;
                 }
             }

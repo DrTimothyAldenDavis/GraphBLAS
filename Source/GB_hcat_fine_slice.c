@@ -136,7 +136,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         }
         // printf ("got sauna %d\n", Sauna_id) ;
         ASSERT (Sauna_id >= 0) ;
-        Sauna = GB_Global.Saunas [Sauna_id] ;
+        Sauna = GB_Global_Saunas_get (Sauna_id) ;
     }
     else
     {
@@ -160,7 +160,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
                 return (GB_OUT_OF_MEMORY) ;
             }
         }
-        Sauna = GB_Global.Saunas [Sauna_id] ;
+        Sauna = GB_Global_Saunas_get (Sauna_id) ;
         // printf ("allocated new sauna %d\n", Sauna_id) ;
     }
 

@@ -55,7 +55,7 @@ GrB_Info GB_Sauna_acquire
                 /* no need for a Sauna for this thread */                   \
                 Sauna_ids [t] = -2 ;                                        \
             }                                                               \
-            else if (GB_Global.Sauna_in_use [t])                            \
+            else if (GB_Global_Sauna_in_use_get (t))                        \
             {                                                               \
                 /* Saunas [t] is already in use */                          \
                 try_again = true ;                                          \
@@ -64,7 +64,7 @@ GrB_Info GB_Sauna_acquire
             else                                                            \
             {                                                               \
                 /* acquire the native Sauna */                              \
-                GB_Global.Sauna_in_use [t] = true ;                         \
+                GB_Global_Sauna_in_use_set (t, true) ;                      \
                 Sauna_ids [t] = t ;                                         \
             }                                                               \
         }                                                                   \
@@ -79,10 +79,10 @@ GrB_Info GB_Sauna_acquire
                     /* thread t does not yet have a Sauna */                \
                     for ( ; s < GxB_NTHREADS_MAX ; s++)                     \
                     {                                                       \
-                        if (!GB_Global.Sauna_in_use [s])                    \
+                        if (!GB_Global_Sauna_in_use_get (s))                \
                         {                                                   \
                             /* acquire the native Sauna */                  \
-                            GB_Global.Sauna_in_use [s] = true ;             \
+                            GB_Global_Sauna_in_use_set (s, true) ;          \
                             Sauna_ids [t] = s ;                             \
                             break ;                                         \
                         }                                                   \

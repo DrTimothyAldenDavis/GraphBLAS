@@ -1,4 +1,5 @@
 
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded C=A*B and C<M>=A*B
 //------------------------------------------------------------------------------
@@ -19,68 +20,64 @@
 // A*B function (Gustavon):  GB_AgusB__max_isle_fp32
 // A'*B function (dot):      GB_AdotB__max_isle_fp32
 // A*B function (heap):      GB_AheapB__max_isle_fp32
-// Z type:   float (the type of C)
-// X type:   float (the type of x for z=mult(x,y))
-// Y type:   float (the type of y for z=mult(x,y))
-// Identity: -INFINITY (where cij = fmaxf (cij,identity) does not change cij)
+// C type:   float
+// A type:   float
+// B type:   float
 // Multiply: z = x <= y
 // Add:      cij = fmaxf (cij,z)
+// MultAdd:  cij = fmaxf (cij,(aik <= bkj))
+// Identity: -INFINITY
 // Terminal: if (cij == INFINITY) break ;
 
-#define GB_XTYPE \
+#define GB_BUILTIN
+
+#define GB_ATYPE \
     float
 
-#define GB_YTYPE \
+#define GB_BTYPE \
     float
 
+#define GB_AX(pA) (Ax [pA])
+
+// aik = Ax [pA]
+#define GB_GETA(aik,Ax,pA) \
+    float aik = Ax [pA]
+
+// bkj = Bx [pB]
+#define GB_GETB(bkj,Bx,pB) \
+    float bkj = Bx [pB]
+
+// multiply operator
+#define GB_MULT(z, x, y)        \
+    z = x <= y ;
+
+// multiply-add
+#define GB_MULTADD(z, x, y)     \
+    z = fmaxf (z,(x <= y)) ;
+
+// copy scalar
+#define GB_COPY(z,x) z = x ;
+
+#define GB_IDENTITY \
+    -INFINITY
+
+// break if cij reaches the terminal value
 #define GB_DOT_TERMINAL(cij) \
     if (cij == INFINITY) break ;
 
-// aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA,asize) \
-    float aik = Ax [pA] ;
+// cij is not a pointer but a scalar; nothing to do
+#define GB_CIJ_REACQUIRE(cij) ;
 
-// bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB,bsize) \
-    float bkj = Bx [pB] ;
+// save the value of C(i,j)
+#define GB_CIJ_SAVE(cij) Cx [cnz] = cij ;
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
 //------------------------------------------------------------------------------
 
-#define GB_IDENTITY \
-    -INFINITY
+#define GB_SAUNA_WORK(i) Sauna_Work [i]
 
-// Sauna_Work [i] = identity
-#define GB_CLEARW(Sauna_Work,i,identity,zsize)  \
-    Sauna_Work [i] = identity ;
-
-// Cx [p] = Sauna_Work [i]
-#define GB_GATHERC(Cx,p,Sauna_Work,i,zsize)     \
-    Cx [p] = Sauna_Work [i] ;
-
-// mult-add operation (no mask)
-#define GB_MULTADD_NOMASK                       \
-    /* Sauna_Work [i] += A(i,k) * B(k,j) */     \
-    float t ;                                \
-    t = aik <= bkj ;                  \
-    Sauna_Work [i] = fmaxf (Sauna_Work [i],t) ;
-
-// mult-add operation (with mask)
-#define GB_MULTADD_WITH_MASK                    \
-    if (mark == hiwater)                        \
-    {                                           \
-        /* first time C(i,j) seen */            \
-        /* Sauna_Work [i] = A(i,k) * B(k,j) */  \
-        Sauna_Work [i] = aik <= bkj ; \
-        Sauna_Mark [i] = hiwater + 1 ;          \
-    }                                           \
-    else                                        \
-    {                                           \
-        /* C(i,j) seen before, update it */     \
-        /* Sauna_Work [i] += A(i,k) * B(k,j) */ \
-        GB_MULTADD_NOMASK ;                     \
-    }
+#define GB_CX(p) Cx [p]
 
 GrB_Info GB_AgusB__max_isle_fp32
 (
@@ -101,30 +98,6 @@ GrB_Info GB_AgusB__max_isle_fp32
 //------------------------------------------------------------------------------
 // C<M>=A'*B, C<!M>=A'*B or C=A'*B: dot product
 //------------------------------------------------------------------------------
-
-// t = aki*bkj
-#define GB_DOT_MULT(aki,bkj)   \
-    float t ;               \
-    t = aki <= bkj ;
-
-// cij += t
-#define GB_DOT_ADD             \
-    cij = fmaxf (cij,t) ;
-
-// cij = t
-#define GB_DOT_COPY            \
-    cij = t ;
-
-// cij is not a pointer but a scalar; nothing to do
-#define GB_DOT_REACQUIRE ;
-
-// clear cij
-#define GB_DOT_CLEAR           \
-    cij = -INFINITY ;
-
-// save the value of C(i,j)
-#define GB_DOT_SAVE            \
-    Cx [cnz] = cij ;
 
 GrB_Info GB_AdotB__max_isle_fp32
 (
@@ -148,27 +121,6 @@ GrB_Info GB_AdotB__max_isle_fp32
 
 #include "GB_heap.h"
 
-// cij = A(i,k) * B(k,j)
-#define GB_CIJ_MULT(cij, aik, bkj)      \
-    cij = aik <= bkj ;
-
-// C(i,j) += A(i,k) * B(k,j)
-#define GB_CIJ_MULTADD(cij, aik, bkj)   \
-    float t ;                        \
-    t = aik <= bkj ;          \
-    cij = fmaxf (cij,t) ;
-
-// cij is not a pointer but a scalar; nothing to do
-#define GB_CIJ_REACQUIRE ;
-
-// cij = identity
-#define GB_CIJ_CLEAR                    \
-    cij = -INFINITY ;
-
-// save the value of C(i,j)
-#define GB_CIJ_SAVE                     \
-    Cx [cnz] = cij ;
-
 GrB_Info GB_AheapB__max_isle_fp32
 (
     GrB_Matrix *Chandle,
@@ -185,7 +137,6 @@ GrB_Info GB_AheapB__max_isle_fp32
     float *restrict Cx = C->x ;
     float cij ;
     int64_t cvlen = C->vlen ;
-    GB_CIJ_CLEAR ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_heap_meta.c"
     return (info) ;

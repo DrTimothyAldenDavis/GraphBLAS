@@ -44,7 +44,7 @@ bool GB_queue_insert            // insert matrix at the head of queue
             if ((A->n_pending > 0 || A->nzombies > 0) && !(A->enqueued))    \
             {                                                               \
                 /* add the matrix to the head of the queue */               \
-                GrB_Matrix Head = (GrB_Matrix) (GB_Global.queue_head) ;     \
+                GrB_Matrix Head = (GrB_Matrix) (GB_Global_queue_head_get ( )) ;\
                 A->queue_next = Head ;                                      \
                 A->queue_prev = NULL ;                                      \
                 A->enqueued = true ;                                        \
@@ -52,7 +52,7 @@ bool GB_queue_insert            // insert matrix at the head of queue
                 {                                                           \
                     Head->queue_prev = A ;                                  \
                 }                                                           \
-                GB_Global.queue_head = A ;                                  \
+                GB_Global_queue_head_set (A) ;                              \
             }                                                               \
         }
 

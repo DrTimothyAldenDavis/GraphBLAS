@@ -1,4 +1,5 @@
 
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded C=A*B and C<M>=A*B
 //------------------------------------------------------------------------------
@@ -19,68 +20,64 @@
 // A*B function (Gustavon):  GB_AgusB__min_rdiv_int64
 // A'*B function (dot):      GB_AdotB__min_rdiv_int64
 // A*B function (heap):      GB_AheapB__min_rdiv_int64
-// Z type:   int64_t (the type of C)
-// X type:   int64_t (the type of x for z=mult(x,y))
-// Y type:   int64_t (the type of y for z=mult(x,y))
-// Identity: INT64_MAX (where cij = GB_IMIN (cij,identity) does not change cij)
+// C type:   int64_t
+// A type:   int64_t
+// B type:   int64_t
 // Multiply: z = GB_IDIV_SIGNED(y,x,64)
 // Add:      cij = GB_IMIN (cij,z)
+// MultAdd:  cij = GB_IMIN (cij,(GB_IDIV_SIGNED(bkj,aik,64)))
+// Identity: INT64_MAX
 // Terminal: if (cij == INT64_MIN) break ;
 
-#define GB_XTYPE \
+#define GB_BUILTIN
+
+#define GB_ATYPE \
     int64_t
 
-#define GB_YTYPE \
+#define GB_BTYPE \
     int64_t
 
+#define GB_AX(pA) (Ax [pA])
+
+// aik = Ax [pA]
+#define GB_GETA(aik,Ax,pA) \
+    int64_t aik = Ax [pA]
+
+// bkj = Bx [pB]
+#define GB_GETB(bkj,Bx,pB) \
+    int64_t bkj = Bx [pB]
+
+// multiply operator
+#define GB_MULT(z, x, y)        \
+    z = GB_IDIV_SIGNED(y,x,64) ;
+
+// multiply-add
+#define GB_MULTADD(z, x, y)     \
+    z = GB_IMIN (z,(GB_IDIV_SIGNED(y,x,64))) ;
+
+// copy scalar
+#define GB_COPY(z,x) z = x ;
+
+#define GB_IDENTITY \
+    INT64_MAX
+
+// break if cij reaches the terminal value
 #define GB_DOT_TERMINAL(cij) \
     if (cij == INT64_MIN) break ;
 
-// aik = Ax [pA]
-#define GB_GETA(aik,Ax,pA,asize) \
-    int64_t aik = Ax [pA] ;
+// cij is not a pointer but a scalar; nothing to do
+#define GB_CIJ_REACQUIRE(cij) ;
 
-// bkj = Bx [pB]
-#define GB_GETB(bkj,Bx,pB,bsize) \
-    int64_t bkj = Bx [pB] ;
+// save the value of C(i,j)
+#define GB_CIJ_SAVE(cij) Cx [cnz] = cij ;
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
 //------------------------------------------------------------------------------
 
-#define GB_IDENTITY \
-    INT64_MAX
+#define GB_SAUNA_WORK(i) Sauna_Work [i]
 
-// Sauna_Work [i] = identity
-#define GB_CLEARW(Sauna_Work,i,identity,zsize)  \
-    Sauna_Work [i] = identity ;
-
-// Cx [p] = Sauna_Work [i]
-#define GB_GATHERC(Cx,p,Sauna_Work,i,zsize)     \
-    Cx [p] = Sauna_Work [i] ;
-
-// mult-add operation (no mask)
-#define GB_MULTADD_NOMASK                       \
-    /* Sauna_Work [i] += A(i,k) * B(k,j) */     \
-    int64_t t ;                                \
-    t = GB_IDIV_SIGNED(bkj,aik,64) ;                  \
-    Sauna_Work [i] = GB_IMIN (Sauna_Work [i],t) ;
-
-// mult-add operation (with mask)
-#define GB_MULTADD_WITH_MASK                    \
-    if (mark == hiwater)                        \
-    {                                           \
-        /* first time C(i,j) seen */            \
-        /* Sauna_Work [i] = A(i,k) * B(k,j) */  \
-        Sauna_Work [i] = GB_IDIV_SIGNED(bkj,aik,64) ; \
-        Sauna_Mark [i] = hiwater + 1 ;          \
-    }                                           \
-    else                                        \
-    {                                           \
-        /* C(i,j) seen before, update it */     \
-        /* Sauna_Work [i] += A(i,k) * B(k,j) */ \
-        GB_MULTADD_NOMASK ;                     \
-    }
+#define GB_CX(p) Cx [p]
 
 GrB_Info GB_AgusB__min_rdiv_int64
 (
@@ -101,30 +98,6 @@ GrB_Info GB_AgusB__min_rdiv_int64
 //------------------------------------------------------------------------------
 // C<M>=A'*B, C<!M>=A'*B or C=A'*B: dot product
 //------------------------------------------------------------------------------
-
-// t = aki*bkj
-#define GB_DOT_MULT(aki,bkj)   \
-    int64_t t ;               \
-    t = GB_IDIV_SIGNED(bkj,aki,64) ;
-
-// cij += t
-#define GB_DOT_ADD             \
-    cij = GB_IMIN (cij,t) ;
-
-// cij = t
-#define GB_DOT_COPY            \
-    cij = t ;
-
-// cij is not a pointer but a scalar; nothing to do
-#define GB_DOT_REACQUIRE ;
-
-// clear cij
-#define GB_DOT_CLEAR           \
-    cij = INT64_MAX ;
-
-// save the value of C(i,j)
-#define GB_DOT_SAVE            \
-    Cx [cnz] = cij ;
 
 GrB_Info GB_AdotB__min_rdiv_int64
 (
@@ -148,27 +121,6 @@ GrB_Info GB_AdotB__min_rdiv_int64
 
 #include "GB_heap.h"
 
-// cij = A(i,k) * B(k,j)
-#define GB_CIJ_MULT(cij, aik, bkj)      \
-    cij = GB_IDIV_SIGNED(bkj,aik,64) ;
-
-// C(i,j) += A(i,k) * B(k,j)
-#define GB_CIJ_MULTADD(cij, aik, bkj)   \
-    int64_t t ;                        \
-    t = GB_IDIV_SIGNED(bkj,aik,64) ;          \
-    cij = GB_IMIN (cij,t) ;
-
-// cij is not a pointer but a scalar; nothing to do
-#define GB_CIJ_REACQUIRE ;
-
-// cij = identity
-#define GB_CIJ_CLEAR                    \
-    cij = INT64_MAX ;
-
-// save the value of C(i,j)
-#define GB_CIJ_SAVE                     \
-    Cx [cnz] = cij ;
-
 GrB_Info GB_AheapB__min_rdiv_int64
 (
     GrB_Matrix *Chandle,
@@ -185,7 +137,6 @@ GrB_Info GB_AheapB__min_rdiv_int64
     int64_t *restrict Cx = C->x ;
     int64_t cij ;
     int64_t cvlen = C->vlen ;
-    GB_CIJ_CLEAR ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_heap_meta.c"
     return (info) ;

@@ -53,10 +53,10 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         {
             // for memory usage testing only
             bool pretend_to_fail = false ;
-            if (GB_Global.malloc_debug)
+            if (GB_Global_malloc_debug_get ( ))
             {
                 // brutal memory usage debug; pretend to fail if the count <= 0
-                pretend_to_fail = (GB_Global.malloc_debug_count-- <= 0) ;
+                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
             }
             if (pretend_to_fail)
             {
@@ -67,7 +67,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
             }
             else
             {
-                p = (void *) GB_Global.calloc_function (nitems, size_of_item) ;
+                p = (void *) GB_Global_calloc_function (nitems, size_of_item) ;
             }
             if (p != NULL)
             {
@@ -75,7 +75,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
                 GB_Global_inuse_increment (nitems * size_of_item) ;
                 #ifdef GB_PRINT_MALLOC
                 printf ("Calloc:  %14p %3d %1d n "GBd" size "GBd"\n",
-                    p, nmalloc, GB_Global.malloc_debug,
+                    p, nmalloc, GB_Global_malloc_debug_get ( ),
                     (int64_t) nitems, (int64_t) size_of_item) ;
                 #endif
             }
@@ -83,7 +83,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
         else
         {
             // normal use, in production
-            p = (void *) GB_Global.calloc_function (nitems, size_of_item) ;
+            p = (void *) GB_Global_calloc_function (nitems, size_of_item) ;
         }
 
     }
