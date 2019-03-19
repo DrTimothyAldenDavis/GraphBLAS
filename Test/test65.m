@@ -8,8 +8,6 @@ X = logical (rand (4) > 0.5) ;
 C = GB_mex_cast (X, 'logical', 1) ;
 assert (isequal (X,C)) ;
 
-[~,~,~,c] = GB_spec_opsall ;
-
     A = 100 * randn (4) ;
 
     X = int8 (A) ;

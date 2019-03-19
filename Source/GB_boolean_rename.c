@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Returns the equivalent opcode when an operator's x and y arguments are
-// boolean.  13 of the 23 binary opcodes are redundant when applied to
+// boolean.  15 of the 25 binary opcodes are redundant when applied to
 // boolean inputs, leaving 10 unique binary opcodes z=f(x,y) when all three
 // operands x,y,z are boolean.
 
@@ -35,10 +35,16 @@ GB_Opcode GB_boolean_rename     // renamed opcode
 
     switch (opcode)
     {
+
         // FIRST and DIV are the same for boolean:
         case GB_DIV_opcode     :    // z = x / y
         case GB_FIRST_opcode   :    // z = x
             return (GB_FIRST_opcode) ;
+
+        // SECOND and RDIV are the same for boolean:
+        case GB_RDIV_opcode    :    // z = y / x
+        case GB_SECOND_opcode  :    // z = y
+            return (GB_SECOND_opcode) ;
 
         // MIN, TIMES, and AND are the same for boolean:
         case GB_MIN_opcode     :    // z = min(x,y)
@@ -52,8 +58,9 @@ GB_Opcode GB_boolean_rename     // renamed opcode
         case GB_LOR_opcode     :    // z = x || y
             return (GB_LOR_opcode) ;
 
-        // ISNE, NE, MINUS, and XOR are the same for boolean:
+        // ISNE, NE, MINUS, RMINUS, and XOR are the same for boolean:
         case GB_MINUS_opcode   :    // z = x - y
+        case GB_RMINUS_opcode  :    // z = y - x
         case GB_ISNE_opcode    :    // z = (x != y)
         case GB_NE_opcode      :    // z = (x != y)
         case GB_LXOR_opcode    :    // z = (x != y)

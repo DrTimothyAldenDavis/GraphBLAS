@@ -9,7 +9,7 @@ if (nargin < 1)
     fulltest = 0 ;
 end
 
-[accum_ops unary_ops add_ops classes] = GB_spec_opsall ;
+[accum_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
 
 dn = struct ;
 dt = struct ( 'inp0', 'tran' ) ;

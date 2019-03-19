@@ -458,10 +458,10 @@ GrB_Info GrB_Type_free          // free a user-defined type
 // z=f(x) is called by GraphBLAS, the pointers x, y, and z are guaranteed to be
 // non-NULL and to point to unique valid space of the expected type.
 
-// GraphBLAS provides 256 built-in binary operators z=f(x,y) and 45 built-in
-// unary operators z=f(x) that operate on the 11 built-in types.  Built-in
-// types are statically allocated and need not be freed when the application
-// finishes.
+// SuiteSparse:GraphBLAS provides 278 built-in binary operators z=f(x,y) and 45
+// built-in unary operators z=f(x) that operate on the 11 built-in types.
+// Built-in types are statically allocated and need not be freed when the
+// application finishes.
 
 //------------------------------------------------------------------------------
 // unary operators
@@ -597,11 +597,12 @@ typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
 //------------------------------------------------------------------------------
 
 // There are three sets of built-in binary operators.  For the first set of
-// 17 kinds of operators, x,y,z all have the same type, and they are available
-// for all 11 types, for a total of 17*11 = 187 operators.  All of them have
+// 19 kinds of operators, x,y,z all have the same type, and they are available
+// for all 11 types, for a total of 19*11 = 209 operators.  All of them have
 // a "_TYPE" suffix that denotes the type of x,y,z:
 
-//      8 general: FIRST, SECOND, MIN, MAX, PLUS, MINUS, TIMES, DIV
+//      10 general: FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES,
+//              DIV, RDIV
 //      6 comparison: ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE
 //      3 logical: LOR, LAND, LXOR
 
@@ -616,11 +617,12 @@ typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
 
 //      3 logical: LOR, LAND, LXOR
 
-// Thus there are 187+66+3 = 256 built-in binary operators.  Some are redundant
+// Thus there are 209+66+3 = 278 built-in binary operators.  Some are redundant
 // but are included to keep the name space of operators uniform.
 
-// For eight binary operators z=f(x,y), x, y, and z are all the same type:
-// FIRST, SECOND, MIN, MAX, PLUS, MINUS, TIMES, and DIV, for all 11 types.
+// For 10 binary operators z=f(x,y), x, y, and z are all the same type:
+// FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV, for all 11
+// types.
 
 extern GrB_BinaryOp
     // z = x            z = y               z = min(x,y)        z = max (x,y)
@@ -647,7 +649,20 @@ extern GrB_BinaryOp
     GrB_PLUS_INT64,     GrB_MINUS_INT64,    GrB_TIMES_INT64,    GrB_DIV_INT64,
     GrB_PLUS_UINT64,    GrB_MINUS_UINT64,   GrB_TIMES_UINT64,   GrB_DIV_UINT64,
     GrB_PLUS_FP32,      GrB_MINUS_FP32,     GrB_TIMES_FP32,     GrB_DIV_FP32,
-    GrB_PLUS_FP64,      GrB_MINUS_FP64,     GrB_TIMES_FP64,     GrB_DIV_FP64 ;
+    GrB_PLUS_FP64,      GrB_MINUS_FP64,     GrB_TIMES_FP64,     GrB_DIV_FP64,
+
+    // z = y-x          z = y/x
+    GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,
+    GxB_RMINUS_INT8,    GxB_RDIV_INT8,
+    GxB_RMINUS_UINT8,   GxB_RDIV_UINT8,
+    GxB_RMINUS_INT16,   GxB_RDIV_INT16,
+    GxB_RMINUS_UINT16,  GxB_RDIV_UINT16,
+    GxB_RMINUS_INT32,   GxB_RDIV_INT32,
+    GxB_RMINUS_UINT32,  GxB_RDIV_UINT32,
+    GxB_RMINUS_INT64,   GxB_RDIV_INT64,
+    GxB_RMINUS_UINT64,  GxB_RDIV_UINT64,
+    GxB_RMINUS_FP32,    GxB_RDIV_FP32,
+    GxB_RMINUS_FP64,    GxB_RDIV_FP64,
 
 // Six comparison operators z=f(x,y) return the same type as their inputs.
 // Each of them compute z = (x OP y), where x, y, and z all have the same type.
@@ -659,7 +674,6 @@ extern GrB_BinaryOp
 // non-boolean, they can be used as multiply operators in a semring with
 // non-boolean monoids (PLUS, for example).
 
-extern GrB_BinaryOp
     // z = (x == y)     z = (x != y)        z = (x > y)         z = (x < y)
     GxB_ISEQ_BOOL,      GxB_ISNE_BOOL,      GxB_ISGT_BOOL,      GxB_ISLT_BOOL,
     GxB_ISEQ_INT8,      GxB_ISNE_INT8,      GxB_ISGT_INT8,      GxB_ISLT_INT8,
@@ -684,7 +698,7 @@ extern GrB_BinaryOp
     GxB_ISGE_INT64,     GxB_ISLE_INT64,
     GxB_ISGE_UINT64,    GxB_ISLE_UINT64,
     GxB_ISGE_FP32,      GxB_ISLE_FP32,
-    GxB_ISGE_FP64,      GxB_ISLE_FP64 ;
+    GxB_ISGE_FP64,      GxB_ISLE_FP64,
 
 // Six comparison operators z=f(x,y) return their result as boolean, but where
 // x and y have the same type (any one of the 11 built-in types).  The suffix
@@ -693,7 +707,6 @@ extern GrB_BinaryOp
 // boolean monoids.  The _BOOL versions of these operators give the same
 // results as their IS*_BOOL counterparts.
 
-extern GrB_BinaryOp
     // z = (x == y)     z = (x != y)        z = (x > y)         z = (x < y)
     GrB_EQ_BOOL,        GrB_NE_BOOL,        GrB_GT_BOOL,        GrB_LT_BOOL,
     GrB_EQ_INT8,        GrB_NE_INT8,        GrB_GT_INT8,        GrB_LT_INT8,
@@ -718,7 +731,7 @@ extern GrB_BinaryOp
     GrB_GE_INT64,       GrB_LE_INT64,
     GrB_GE_UINT64,      GrB_LE_UINT64,
     GrB_GE_FP32,        GrB_LE_FP32,
-    GrB_GE_FP64,        GrB_LE_FP64 ;
+    GrB_GE_FP64,        GrB_LE_FP64,
 
 // Three binary operators operate on each of the types, converting them
 // internally to boolean and returning a value 1 or 0 in the same type, for
@@ -726,7 +739,6 @@ extern GrB_BinaryOp
 // and z all the same type.  These operators are useful as multiply operators
 // when combined with non-boolean monoids of the same type.
 
-extern GrB_BinaryOp
     // z = (x || y)     z = (x && y)        z = (x != y)
     GxB_LOR_BOOL,       GxB_LAND_BOOL,      GxB_LXOR_BOOL,
     GxB_LOR_INT8,       GxB_LAND_INT8,      GxB_LXOR_INT8,
@@ -738,14 +750,14 @@ extern GrB_BinaryOp
     GxB_LOR_INT64,      GxB_LAND_INT64,     GxB_LXOR_INT64,
     GxB_LOR_UINT64,     GxB_LAND_UINT64,    GxB_LXOR_UINT64,
     GxB_LOR_FP32,       GxB_LAND_FP32,      GxB_LXOR_FP32,
-    GxB_LOR_FP64,       GxB_LAND_FP64,      GxB_LXOR_FP64 ;
+    GxB_LOR_FP64,       GxB_LAND_FP64,      GxB_LXOR_FP64,
 
 // Finally, three binary operate only on boolean types: LOR, LAND, LXOR.  The
 // naming convention differs (_BOOL is not appended to the name).  They are
 // the same as GxB_LOR_BOOL, GxB_LAND_BOOL, and GxB_LXOR_BOOL; they just
 // have a simpler name.
 
-extern GrB_BinaryOp
+
     // z = (x || y)     z = (x && y)        z = (x != y)
     GrB_LOR,            GrB_LAND,           GrB_LXOR ;
 
@@ -756,14 +768,14 @@ extern GrB_BinaryOp
 // boolean inputs.  This table is defined by how C typecasts boolean values for
 // non-boolean operations.  For example, if x, y, and z are boolean, x = true,
 // and y = true, then z = x + y = true + true = true.  DIV (x/y) is defined
-// below.
+// below.  RDIV (y/x) is shown as \ in the table; it is the same as 2nd.
 
 //                                                     is  is  is  is  is  is
-//  x y    1st 2nd min max +   -   *   /   or  and xor eq  ne  gt  lt  ge  le
-//  0 0    0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   1
-//  0 1    0   1   0   1   1   1   0   0   1   0   1   0   1   0   1   0   1
-//  1 0    1   0   0   1   1   1   0   1   1   0   1   0   1   1   0   1   0
-//  1 1    1   1   1   1   1   0   1   1   1   1   0   1   0   0   0   1   1
+//  x y    1st 2nd min max +   -   *   /   or  and xor eq  ne  gt  lt  ge  le \
+//  0 0    0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   1  0
+//  0 1    0   1   0   1   1   1   0   0   1   0   1   0   1   0   1   0   1  1
+//  1 0    1   0   0   1   1   1   0   1   1   0   1   0   1   1   0   1   0  0
+//  1 1    1   1   1   1   1   0   1   1   1   1   0   1   0   0   0   1   1  1
 
 // SPEC: the definition of divide-by-zero is an extension to the spec
 
@@ -790,10 +802,10 @@ extern GrB_BinaryOp
 // included in GraphBLAS so that the name space of operators is complete:
 
 //      z = x           FIRST, DIV
-//      z = y           SECOND
+//      z = y           SECOND, RDIV
 //      z = (x && y)    AND, MIN, TIMES
 //      z = (x || y)    OR, MAX, PLUS
-//      z = (x != y)    XOR, MINUS, NE, ISNE
+//      z = (x != y)    XOR, MINUS, RMINUS, NE, ISNE
 //      z = (x == y)    EQ, ISEQ
 //      z = (x >  y)    GT, ISGT
 //      z = (x <  y)    LT, ISLT
@@ -804,8 +816,8 @@ extern GrB_BinaryOp
 // of the form GxB_*_BOOL.
 // (GrB_LOR, GrB_LAND, and GrB_LXOR).
 
-// There are thus 256 built-in binary operators with unique names, 16 of which
-// are redundant, giving 240 built-in binary operators that compute unique
+// There are thus 278 built-in binary operators with unique names, 18 of which
+// are redundant, giving 260 built-in binary operators that compute unique
 // results.
 
 //------------------------------------------------------------------------------
@@ -5185,12 +5197,12 @@ extern GrB_Monoid
 // GxB_LAND_BOOL are different operators but they are redundant since they
 // always return the same result):
 
-// 680 semirings with a multiply operator TxT -> T where T is non-Boolean, from
+// 760 semirings with a multiply operator TxT -> T where T is non-Boolean, from
 // the complete cross product of:
 
 //      4 add monoids (MIN, MAX, PLUS, TIMES)
-//      17 multiply operators:
-//          (FIRST, SECOND, MIN, MAX, PLUS, MINUS, TIMES, DIV,
+//      19 multiply operators:
+//          (FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
 //           ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
 //           LOR, LAND, LXOR)
 //      10 non-Boolean types, T
@@ -5294,6 +5306,18 @@ GxB_MIN_MINUS_UINT64   , GxB_MAX_MINUS_UINT64   , GxB_PLUS_MINUS_UINT64  , GxB_T
 GxB_MIN_MINUS_FP32     , GxB_MAX_MINUS_FP32     , GxB_PLUS_MINUS_FP32    , GxB_TIMES_MINUS_FP32   ,
 GxB_MIN_MINUS_FP64     , GxB_MAX_MINUS_FP64     , GxB_PLUS_MINUS_FP64    , GxB_TIMES_MINUS_FP64   ,
 
+// semirings with multiply op: z = RMINUS (x,y), all types x,y,z the same:
+GxB_MIN_RMINUS_INT8    , GxB_MAX_RMINUS_INT8    , GxB_PLUS_RMINUS_INT8   , GxB_TIMES_RMINUS_INT8   ,
+GxB_MIN_RMINUS_UINT8   , GxB_MAX_RMINUS_UINT8   , GxB_PLUS_RMINUS_UINT8  , GxB_TIMES_RMINUS_UINT8  ,
+GxB_MIN_RMINUS_INT16   , GxB_MAX_RMINUS_INT16   , GxB_PLUS_RMINUS_INT16  , GxB_TIMES_RMINUS_INT16  ,
+GxB_MIN_RMINUS_UINT16  , GxB_MAX_RMINUS_UINT16  , GxB_PLUS_RMINUS_UINT16 , GxB_TIMES_RMINUS_UINT16 ,
+GxB_MIN_RMINUS_INT32   , GxB_MAX_RMINUS_INT32   , GxB_PLUS_RMINUS_INT32  , GxB_TIMES_RMINUS_INT32  ,
+GxB_MIN_RMINUS_UINT32  , GxB_MAX_RMINUS_UINT32  , GxB_PLUS_RMINUS_UINT32 , GxB_TIMES_RMINUS_UINT32 ,
+GxB_MIN_RMINUS_INT64   , GxB_MAX_RMINUS_INT64   , GxB_PLUS_RMINUS_INT64  , GxB_TIMES_RMINUS_INT64  ,
+GxB_MIN_RMINUS_UINT64  , GxB_MAX_RMINUS_UINT64  , GxB_PLUS_RMINUS_UINT64 , GxB_TIMES_RMINUS_UINT64 ,
+GxB_MIN_RMINUS_FP32    , GxB_MAX_RMINUS_FP32    , GxB_PLUS_RMINUS_FP32   , GxB_TIMES_RMINUS_FP32   ,
+GxB_MIN_RMINUS_FP64    , GxB_MAX_RMINUS_FP64    , GxB_PLUS_RMINUS_FP64   , GxB_TIMES_RMINUS_FP64   ,
+
 // semirings with multiply op: z = TIMES (x,y), all types x,y,z the same:
 GxB_MIN_TIMES_INT8     , GxB_MAX_TIMES_INT8     , GxB_PLUS_TIMES_INT8    , GxB_TIMES_TIMES_INT8   ,
 GxB_MIN_TIMES_UINT8    , GxB_MAX_TIMES_UINT8    , GxB_PLUS_TIMES_UINT8   , GxB_TIMES_TIMES_UINT8  ,
@@ -5317,6 +5341,18 @@ GxB_MIN_DIV_INT64      , GxB_MAX_DIV_INT64      , GxB_PLUS_DIV_INT64     , GxB_T
 GxB_MIN_DIV_UINT64     , GxB_MAX_DIV_UINT64     , GxB_PLUS_DIV_UINT64    , GxB_TIMES_DIV_UINT64   ,
 GxB_MIN_DIV_FP32       , GxB_MAX_DIV_FP32       , GxB_PLUS_DIV_FP32      , GxB_TIMES_DIV_FP32     ,
 GxB_MIN_DIV_FP64       , GxB_MAX_DIV_FP64       , GxB_PLUS_DIV_FP64      , GxB_TIMES_DIV_FP64     ,
+
+// semirings with multiply op: z = RDIV (x,y), all types x,y,z the same:
+GxB_MIN_RDIV_INT8      , GxB_MAX_RDIV_INT8      , GxB_PLUS_RDIV_INT8     , GxB_TIMES_RDIV_INT8    ,
+GxB_MIN_RDIV_UINT8     , GxB_MAX_RDIV_UINT8     , GxB_PLUS_RDIV_UINT8    , GxB_TIMES_RDIV_UINT8   ,
+GxB_MIN_RDIV_INT16     , GxB_MAX_RDIV_INT16     , GxB_PLUS_RDIV_INT16    , GxB_TIMES_RDIV_INT16   ,
+GxB_MIN_RDIV_UINT16    , GxB_MAX_RDIV_UINT16    , GxB_PLUS_RDIV_UINT16   , GxB_TIMES_RDIV_UINT16  ,
+GxB_MIN_RDIV_INT32     , GxB_MAX_RDIV_INT32     , GxB_PLUS_RDIV_INT32    , GxB_TIMES_RDIV_INT32   ,
+GxB_MIN_RDIV_UINT32    , GxB_MAX_RDIV_UINT32    , GxB_PLUS_RDIV_UINT32   , GxB_TIMES_RDIV_UINT32  ,
+GxB_MIN_RDIV_INT64     , GxB_MAX_RDIV_INT64     , GxB_PLUS_RDIV_INT64    , GxB_TIMES_RDIV_INT64   ,
+GxB_MIN_RDIV_UINT64    , GxB_MAX_RDIV_UINT64    , GxB_PLUS_RDIV_UINT64   , GxB_TIMES_RDIV_UINT64  ,
+GxB_MIN_RDIV_FP32      , GxB_MAX_RDIV_FP32      , GxB_PLUS_RDIV_FP32     , GxB_TIMES_RDIV_FP32    ,
+GxB_MIN_RDIV_FP64      , GxB_MAX_RDIV_FP64      , GxB_PLUS_RDIV_FP64     , GxB_TIMES_RDIV_FP64    ,
 
 // semirings with multiply op: z = ISEQ (x,y), all types x,y,z the same:
 GxB_MIN_ISEQ_INT8      , GxB_MAX_ISEQ_INT8      , GxB_PLUS_ISEQ_INT8     , GxB_TIMES_ISEQ_INT8    ,

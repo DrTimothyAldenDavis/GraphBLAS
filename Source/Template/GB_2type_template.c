@@ -12,14 +12,15 @@
 // GB_WORKER(type1,type2) is a macro defined in the #including file, where
 // type1 and type2 are the built-in types corresponding to code1 and code2,
 // respectively or (void *) for a user-defined type.  The last statement of
-// GB_WORKER should be a break or return since it doesn't appear here.
+// GB_WORKER should be a break or return since it does not appear here.
 
 // User-defined types are not handled.
 
 // GB_shallow_op and GB_transpose_op use this template to create workers that
 // apply unary operators.  Those functions #define GB_BOP(x) for the boolean
-// unary operator, GB_IOP(x) for integers, and GB_FOP(x) for floating-point.
-// The selection of these operators is controlled by code1.
+// unary operator, GB_IOP(x) for signed integers, GB_UOP(x) for unsigned
+// integers, and GB_FOP(x) for floating-point.  The selection of these
+// operators is controlled by code1.
 
 // parallel: not here.
 
@@ -27,18 +28,22 @@ switch (code1)
 {
     case GB_BOOL_code   :
 
+        #undef  GB_BITS
+        #define GB_BITS 8
         #define GB_OP(x) GB_BOP(x)
         switch (code2)
         {
-            //                            code1 code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1 code2
             case GB_BOOL_code   : GB_WORKER (bool, bool)
             case GB_INT8_code   : GB_WORKER (bool, int8_t)
-            case GB_UINT8_code  : GB_WORKER (bool, uint8_t)
             case GB_INT16_code  : GB_WORKER (bool, int16_t)
-            case GB_UINT16_code : GB_WORKER (bool, uint16_t)
             case GB_INT32_code  : GB_WORKER (bool, int32_t)
-            case GB_UINT32_code : GB_WORKER (bool, uint32_t)
             case GB_INT64_code  : GB_WORKER (bool, int64_t)
+            case GB_UINT8_code  : GB_WORKER (bool, uint8_t)
+            case GB_UINT16_code : GB_WORKER (bool, uint16_t)
+            case GB_UINT32_code : GB_WORKER (bool, uint32_t)
             case GB_UINT64_code : GB_WORKER (bool, uint64_t)
             case GB_FP32_code   : GB_WORKER (bool, float)
             case GB_FP64_code   : GB_WORKER (bool, double)
@@ -48,51 +53,41 @@ switch (code1)
 
     case GB_INT8_code   :
 
+        #undef  GB_BITS
+        #define GB_BITS 8
         #undef  GB_OP
         #define GB_OP(x) GB_IOP(x)
         switch (code2)
         {
-            //                            code1   code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1   code2
             case GB_BOOL_code   : GB_WORKER (int8_t, bool)
             case GB_INT8_code   : GB_WORKER (int8_t, int8_t)
-            case GB_UINT8_code  : GB_WORKER (int8_t, uint8_t)
             case GB_INT16_code  : GB_WORKER (int8_t, int16_t)
-            case GB_UINT16_code : GB_WORKER (int8_t, uint16_t)
             case GB_INT32_code  : GB_WORKER (int8_t, int32_t)
-            case GB_UINT32_code : GB_WORKER (int8_t, uint32_t)
             case GB_INT64_code  : GB_WORKER (int8_t, int64_t)
+            case GB_UINT8_code  : GB_WORKER (int8_t, uint8_t)
+            case GB_UINT16_code : GB_WORKER (int8_t, uint16_t)
+            case GB_UINT32_code : GB_WORKER (int8_t, uint32_t)
             case GB_UINT64_code : GB_WORKER (int8_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_SIGNED(z,x,GB_BITS)
             case GB_FP32_code   : GB_WORKER (int8_t, float)
             case GB_FP64_code   : GB_WORKER (int8_t, double)
             default: ;
         }
         break ;
 
-    case GB_UINT8_code  :
-
-        switch (code2)
-        {
-            //                            code1    code2
-            case GB_BOOL_code   : GB_WORKER (uint8_t, bool)
-            case GB_INT8_code   : GB_WORKER (uint8_t, int8_t)
-            case GB_UINT8_code  : GB_WORKER (uint8_t, uint8_t)
-            case GB_INT16_code  : GB_WORKER (uint8_t, int16_t)
-            case GB_UINT16_code : GB_WORKER (uint8_t, uint16_t)
-            case GB_INT32_code  : GB_WORKER (uint8_t, int32_t)
-            case GB_UINT32_code : GB_WORKER (uint8_t, uint32_t)
-            case GB_INT64_code  : GB_WORKER (uint8_t, int64_t)
-            case GB_UINT64_code : GB_WORKER (uint8_t, uint64_t)
-            case GB_FP32_code   : GB_WORKER (uint8_t, float)
-            case GB_FP64_code   : GB_WORKER (uint8_t, double)
-            default: ;
-        }
-        break ;
-
     case GB_INT16_code  :
 
+        #undef  GB_BITS
+        #define GB_BITS 16
         switch (code2)
         {
-            //                            code1    code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1    code2
             case GB_BOOL_code   : GB_WORKER (int16_t, bool)
             case GB_INT8_code   : GB_WORKER (int16_t, int8_t)
             case GB_UINT8_code  : GB_WORKER (int16_t, uint8_t)
@@ -102,37 +97,23 @@ switch (code1)
             case GB_UINT32_code : GB_WORKER (int16_t, uint32_t)
             case GB_INT64_code  : GB_WORKER (int16_t, int64_t)
             case GB_UINT64_code : GB_WORKER (int16_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_SIGNED(z,x,GB_BITS)
             case GB_FP32_code   : GB_WORKER (int16_t, float)
             case GB_FP64_code   : GB_WORKER (int16_t, double)
             default: ;
         }
         break ;
 
-    case GB_UINT16_code :
-
-        switch (code2)
-        {
-            //                            code1     code2
-            case GB_BOOL_code   : GB_WORKER (uint16_t, bool)
-            case GB_INT8_code   : GB_WORKER (uint16_t, int8_t)
-            case GB_UINT8_code  : GB_WORKER (uint16_t, uint8_t)
-            case GB_INT16_code  : GB_WORKER (uint16_t, int16_t)
-            case GB_UINT16_code : GB_WORKER (uint16_t, uint16_t)
-            case GB_INT32_code  : GB_WORKER (uint16_t, int32_t)
-            case GB_UINT32_code : GB_WORKER (uint16_t, uint32_t)
-            case GB_INT64_code  : GB_WORKER (uint16_t, int64_t)
-            case GB_UINT64_code : GB_WORKER (uint16_t, uint64_t)
-            case GB_FP32_code   : GB_WORKER (uint16_t, float)
-            case GB_FP64_code   : GB_WORKER (uint16_t, double)
-            default: ;
-        }
-        break ;
-
     case GB_INT32_code  :
 
+        #undef  GB_BITS
+        #define GB_BITS 32
         switch (code2)
         {
-            //                            code1    code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1    code2
             case GB_BOOL_code   : GB_WORKER (int32_t, bool)
             case GB_INT8_code   : GB_WORKER (int32_t, int8_t)
             case GB_UINT8_code  : GB_WORKER (int32_t, uint8_t)
@@ -142,37 +123,23 @@ switch (code1)
             case GB_UINT32_code : GB_WORKER (int32_t, uint32_t)
             case GB_INT64_code  : GB_WORKER (int32_t, int64_t)
             case GB_UINT64_code : GB_WORKER (int32_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_SIGNED(z,x,GB_BITS)
             case GB_FP32_code   : GB_WORKER (int32_t, float)
             case GB_FP64_code   : GB_WORKER (int32_t, double)
             default: ;
         }
         break ;
 
-    case GB_UINT32_code :
-
-        switch (code2)
-        {
-            //                            code1     code2
-            case GB_BOOL_code   : GB_WORKER (uint32_t, bool)
-            case GB_INT8_code   : GB_WORKER (uint32_t, int8_t)
-            case GB_UINT8_code  : GB_WORKER (uint32_t, uint8_t)
-            case GB_INT16_code  : GB_WORKER (uint32_t, int16_t)
-            case GB_UINT16_code : GB_WORKER (uint32_t, uint16_t)
-            case GB_INT32_code  : GB_WORKER (uint32_t, int32_t)
-            case GB_UINT32_code : GB_WORKER (uint32_t, uint32_t)
-            case GB_INT64_code  : GB_WORKER (uint32_t, int64_t)
-            case GB_UINT64_code : GB_WORKER (uint32_t, uint64_t)
-            case GB_FP32_code   : GB_WORKER (uint32_t, float)
-            case GB_FP64_code   : GB_WORKER (uint32_t, double)
-            default: ;
-        }
-        break ;
-
     case GB_INT64_code  :
 
+        #undef  GB_BITS
+        #define GB_BITS 64
         switch (code2)
         {
-            //                            code1    code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1    code2
             case GB_BOOL_code   : GB_WORKER (int64_t, bool)
             case GB_INT8_code   : GB_WORKER (int64_t, int8_t)
             case GB_UINT8_code  : GB_WORKER (int64_t, uint8_t)
@@ -182,17 +149,103 @@ switch (code1)
             case GB_UINT32_code : GB_WORKER (int64_t, uint32_t)
             case GB_INT64_code  : GB_WORKER (int64_t, int64_t)
             case GB_UINT64_code : GB_WORKER (int64_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_SIGNED(z,x,GB_BITS)
             case GB_FP32_code   : GB_WORKER (int64_t, float)
             case GB_FP64_code   : GB_WORKER (int64_t, double)
             default: ;
         }
         break ;
 
-    case GB_UINT64_code :
+    case GB_UINT8_code  :
 
+        #undef  GB_BITS
+        #define GB_BITS 8
+        #undef  GB_OP
+        #define GB_OP(x) GB_UOP(x)
         switch (code2)
         {
-            //                            code1     code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1    code2
+            case GB_BOOL_code   : GB_WORKER (uint8_t, bool)
+            case GB_INT8_code   : GB_WORKER (uint8_t, int8_t)
+            case GB_INT16_code  : GB_WORKER (uint8_t, int16_t)
+            case GB_INT32_code  : GB_WORKER (uint8_t, int32_t)
+            case GB_INT64_code  : GB_WORKER (uint8_t, int64_t)
+            case GB_UINT8_code  : GB_WORKER (uint8_t, uint8_t)
+            case GB_UINT16_code : GB_WORKER (uint8_t, uint16_t)
+            case GB_UINT32_code : GB_WORKER (uint8_t, uint32_t)
+            case GB_UINT64_code : GB_WORKER (uint8_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_UNSIGNED(z,x,GB_BITS)
+            case GB_FP32_code   : GB_WORKER (uint8_t, float)
+            case GB_FP64_code   : GB_WORKER (uint8_t, double)
+            default: ;
+        }
+        break ;
+
+    case GB_UINT16_code :
+
+        #undef  GB_BITS
+        #define GB_BITS 16
+        switch (code2)
+        {
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1     code2
+            case GB_BOOL_code   : GB_WORKER (uint16_t, bool)
+            case GB_INT8_code   : GB_WORKER (uint16_t, int8_t)
+            case GB_UINT8_code  : GB_WORKER (uint16_t, uint8_t)
+            case GB_INT16_code  : GB_WORKER (uint16_t, int16_t)
+            case GB_UINT16_code : GB_WORKER (uint16_t, uint16_t)
+            case GB_INT32_code  : GB_WORKER (uint16_t, int32_t)
+            case GB_UINT32_code : GB_WORKER (uint16_t, uint32_t)
+            case GB_INT64_code  : GB_WORKER (uint16_t, int64_t)
+            case GB_UINT64_code : GB_WORKER (uint16_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_UNSIGNED(z,x,GB_BITS)
+            case GB_FP32_code   : GB_WORKER (uint16_t, float)
+            case GB_FP64_code   : GB_WORKER (uint16_t, double)
+            default: ;
+        }
+        break ;
+
+    case GB_UINT32_code :
+
+        #undef  GB_BITS
+        #define GB_BITS 32
+        switch (code2)
+        {
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1     code2
+            case GB_BOOL_code   : GB_WORKER (uint32_t, bool)
+            case GB_INT8_code   : GB_WORKER (uint32_t, int8_t)
+            case GB_UINT8_code  : GB_WORKER (uint32_t, uint8_t)
+            case GB_INT16_code  : GB_WORKER (uint32_t, int16_t)
+            case GB_UINT16_code : GB_WORKER (uint32_t, uint16_t)
+            case GB_INT32_code  : GB_WORKER (uint32_t, int32_t)
+            case GB_UINT32_code : GB_WORKER (uint32_t, uint32_t)
+            case GB_INT64_code  : GB_WORKER (uint32_t, int64_t)
+            case GB_UINT64_code : GB_WORKER (uint32_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_UNSIGNED(z,x,GB_BITS)
+            case GB_FP32_code   : GB_WORKER (uint32_t, float)
+            case GB_FP64_code   : GB_WORKER (uint32_t, double)
+            default: ;
+        }
+        break ;
+
+    case GB_UINT64_code :
+
+        #undef  GB_BITS
+        #define GB_BITS 64
+        switch (code2)
+        {
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1     code2
             case GB_BOOL_code   : GB_WORKER (uint64_t, bool)
             case GB_INT8_code   : GB_WORKER (uint64_t, int8_t)
             case GB_UINT8_code  : GB_WORKER (uint64_t, uint8_t)
@@ -202,6 +255,8 @@ switch (code1)
             case GB_UINT32_code : GB_WORKER (uint64_t, uint32_t)
             case GB_INT64_code  : GB_WORKER (uint64_t, int64_t)
             case GB_UINT64_code : GB_WORKER (uint64_t, uint64_t)
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) GB_CAST_UNSIGNED(z,x,GB_BITS)
             case GB_FP32_code   : GB_WORKER (uint64_t, float)
             case GB_FP64_code   : GB_WORKER (uint64_t, double)
             default: ;
@@ -210,11 +265,15 @@ switch (code1)
 
     case GB_FP32_code   :
 
+        #undef  GB_BITS
+        #define GB_BITS 32
         #undef  GB_OP
         #define GB_OP(x) GB_FOP(x)
         switch (code2)
         {
-            //                            code1  code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1  code2
             case GB_BOOL_code   : GB_WORKER (float, bool)
             case GB_INT8_code   : GB_WORKER (float, int8_t)
             case GB_UINT8_code  : GB_WORKER (float, uint8_t)
@@ -232,11 +291,15 @@ switch (code1)
 
     case GB_FP64_code   :
 
+        #undef  GB_BITS
+        #define GB_BITS 64
         #undef  GB_OP
         #define GB_OP(x) GB_DOP(x)
         switch (code2)
         {
-            //                            code1   code2
+            #undef  GB_CASTING
+            #define GB_CASTING(z,x) z = x ;
+            //                               code1   code2
             case GB_BOOL_code   : GB_WORKER (double, bool)
             case GB_INT8_code   : GB_WORKER (double, int8_t)
             case GB_UINT8_code  : GB_WORKER (double, uint8_t)
@@ -258,6 +321,9 @@ switch (code1)
 #undef GB_OP
 #undef GB_BOP
 #undef GB_IOP
+#undef GB_UOP
 #undef GB_FOP
 #undef GB_DOP
+#undef GB_CASTING
+#undef GB_BITS
 

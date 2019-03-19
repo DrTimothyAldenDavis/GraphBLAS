@@ -217,7 +217,8 @@ else
     // non-associatve ops not handled here: *GT, *LT, *GE, *LE.
 
     // The FIRST and SECOND operators are not associative, but are added for
-    // GB_build_factory.  Since FIRST == DIV, the operator is handled too.
+    // GB_build_factory.  Since FIRST == DIV, and SECOND == RDIV, these
+    // operators are handled too.
 
     switch (GB_boolean_rename (opcode))
     {
@@ -248,7 +249,7 @@ else
 
         case GB_LXOR_opcode : 
 
-            // XOR == NE == MINUS == ISNE
+            // XOR == NE == MINUS == RMINUS == ISNE
             // no terminal value
             #define GB_DUP(w,t) w = (w != t)
             GB_ASSOC_WORKER (bool, GB_IGNORE)
@@ -280,7 +281,7 @@ else
 
         case GB_SECOND_opcode : 
 
-            // SECOND
+            // SECOND == RDIV
             // no terminal value exploited
             #define GB_DUP(w,t) w = t  // replace with the 2nd tuple
             GB_ASSOC_WORKER (bool, GB_IGNORE)

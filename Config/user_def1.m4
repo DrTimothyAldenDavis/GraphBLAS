@@ -97,33 +97,52 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
     else if (GB_s == $1)
     {
         if (GB_AxB_method == GxB_AxB_GUSTAVSON)
-        { 
-            GB_info = GB_AxB_user_gus_$1
-                (*GB_Chandle, GB_M,
-                GB_A, false, GB_B, false, GB_flipxy,
-                GB_C_Sauna) ;
+        {
+            if (GB_flipxy)
+            { 
+                GB_info = GB_AxB_user_gus_$1_flipxy
+                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
+            }
+            else
+            { 
+                GB_info = GB_AxB_user_gus_$1
+                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
+            }
         }
         else if (GB_AxB_method == GxB_AxB_DOT)
-        { 
-            GB_info = GB_AxB_user_dot_$1
-                (GB_Chandle, GB_M, GB_mask_comp,
-                GB_A, false, GB_B, false, GB_flipxy) ;
+        {
+            if (GB_flipxy)
+            { 
+                GB_info = GB_AxB_user_dot_$1_flipxy
+                    (GB_Chandle, GB_M, GB_mask_comp, GB_A, false, GB_B, false) ;
+            }
+            else
+            { 
+                GB_info = GB_AxB_user_dot_$1
+                    (GB_Chandle, GB_M, GB_mask_comp, GB_A, false, GB_B, false) ;
+            }
         }
         else // (GB_AxB_method == GxB_AxB_HEAP)
-        { 
-            GB_info = GB_AxB_user_heap_$1
-                (GB_Chandle, GB_M,
-                GB_A, false, GB_B, false, GB_flipxy,
-                GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+        {
+            if (GB_flipxy)
+            { 
+                GB_info = GB_AxB_user_heap_$1_flipxy
+                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+            }
+            else
+            { 
+                GB_info = GB_AxB_user_heap_$1
+                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+            }
         }
     } ) $2')
 
 m4_define(`GxB_Semiring_define', `GB_semiring($1,`
-    #define GB_AgusB    GB_AxB_user_gus_$1
-    #define GB_AdotB    GB_AxB_user_dot_$1
-    #define GB_AheapB   GB_AxB_user_heap_$1
-    #define GB_identity    GB_DEF_$2_identity
+    #undef GBCOMPACT
     #define GB_ADD(z,y)    GB_DEF_$2_add (&(z), &(z), &(y))
+    #define GB_identity    GB_DEF_$2_identity
     #if defined ( GB_DEF_$2_is_user_terminal )
         #define GB_terminal if (memcmp (&cij, &GB_DEF_$2_user_terminal, GB_DEF_$2_zsize) == 0) break ;
     #elif defined ( GB_DEF_$2_terminal )
@@ -131,23 +150,37 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #else
         #define GB_terminal ;
     #endif
-    #define GB_MULT(z,x,y) GB_DEF_$3_function (&(z), &(x), &(y))
-    #define GB_ztype       GB_DEF_$3_ztype
-    #define GB_xtype       GB_DEF_$3_xtype
-    #define GB_ytype       GB_DEF_$3_ytype
-    #define GB_handle_flipxy 1
-    #undef GBCOMPACT
+    #define GB_ztype    GB_DEF_$3_ztype
+    #define GB_AgusB    GB_AxB_user_gus_$1
+    #define GB_AdotB    GB_AxB_user_dot_$1
+    #define GB_AheapB   GB_AxB_user_heap_$1
+    #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(x), &(y))
+    #define GB_xtype    GB_DEF_$3_xtype
+    #define GB_ytype    GB_DEF_$3_ytype
     #include "GB_AxB.c"
-    #undef GB_identity
-    #undef GB_terminal
-    #undef GB_ADD
     #undef GB_xtype
     #undef GB_ytype
-    #undef GB_ztype
-    #undef GB_MULT
+    #undef GB_MULTIPLY
     #undef GB_AgusB
     #undef GB_AdotB
     #undef GB_AheapB
+    #define GB_AgusB    GB_AxB_user_gus_$1_flipxy
+    #define GB_AdotB    GB_AxB_user_dot_$1_flipxy
+    #define GB_AheapB   GB_AxB_user_heap_$1_flipxy
+    #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(y), &(x))
+    #define GB_xtype    GB_DEF_$3_ytype
+    #define GB_ytype    GB_DEF_$3_xtype
+    #include "GB_AxB.c"
+    #undef GB_xtype
+    #undef GB_ytype
+    #undef GB_MULTIPLY
+    #undef GB_AgusB
+    #undef GB_AdotB
+    #undef GB_AheapB
+    #undef GB_ADD
+    #undef GB_identity
+    #undef GB_terminal
+    #undef GB_ztype
     struct GB_Semiring_opaque GB_opaque_$1 =
     {
         GB_MAGIC,           // object is defined

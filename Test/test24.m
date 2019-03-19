@@ -5,12 +5,11 @@ function test24(fulltest)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+[accum_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
+
 if (nargin < 1)
     fulltest = 0 ;
 end
-
-
-[accum_ops unary_ops add_ops classes] = GB_spec_opsall ;
 
 if (fulltest)
     fprintf ('\n ------------ exhaustive test of GrB_reduce_to_scalar and vector\n') ;

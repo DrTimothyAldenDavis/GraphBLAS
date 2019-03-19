@@ -8,7 +8,7 @@ fprintf ('\n ------------ testing GrB_apply\n') ;
 
 rng ('default')
 
-[accum_ops unary_ops add_ops classes] = GB_spec_opsall ;
+[accum_ops, unary_ops, ~, classes, ~, ~] = GB_spec_opsall ;
 
 dt = struct ('inp0', 'tran') ;
 

@@ -1,4 +1,3 @@
-flop count 26
 
 % run this output of this program as a script in MATLAB:
 

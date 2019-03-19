@@ -10,8 +10,8 @@
 // parallel: not here
 
 {
-    const GB_atype *restrict Ax = A_is_pattern ? NULL : A->x ;
-    const GB_btype *restrict Bx = B_is_pattern ? NULL : B->x ;
+    const GB_XTYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
+    const GB_YTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
 
     bool A_is_hyper = GB_IS_HYPER (A) ;
     bool C_is_hyper = GB_IS_HYPER (C) ;

@@ -54,7 +54,7 @@ row: 8 : 7 entries [71:77]
 row: 9 : 7 entries [78:84]
     ...
 ...
-MIS time in seconds:       0.000392
+MIS time in seconds:       0.000442
 isize: 13
 independent set found: 13 of 65 nodes
 maximal independent set status verified
@@ -89,7 +89,7 @@ row: 4 : 3 entries [15:17]
     column 1: double 0.620002095185994
     column 2: double 0.867500482629324
     column 3: double 0.992311681061557
-MIS time in seconds:       0.000250
+MIS time in seconds:       0.000285
 isize: 1
 independent set found: 1 of 5 nodes
 maximal independent set status verified
@@ -102,7 +102,7 @@ hyper_ratio 0.0625
 GraphBLAS type:  bool size: 1
 empty
 number of entries: 0 
-MIS time in seconds:       0.000107
+MIS time in seconds:       0.000141
 isize: 3
 independent set found: 3 of 3 nodes
 maximal independent set status verified
@@ -122,7 +122,7 @@ row: 2 : 1 entries [2:2]
     column 3: bool 1
 row: 3 : 1 entries [3:3]
     column 2: bool 1
-MIS time in seconds:       0.000238
+MIS time in seconds:       0.000218
 isize: 2
 independent set found: 2 of 4 nodes
 maximal independent set status verified
@@ -148,7 +148,7 @@ row: 2 : 2 entries [6:7]
 row: 3 : 2 entries [8:9]
     column 0: bool 1
     column 1: bool 1
-MIS time in seconds:       0.000258
+MIS time in seconds:       0.000244
 isize: 2
 independent set found: 2 of 4 nodes
 maximal independent set status verified
@@ -225,7 +225,7 @@ row: 8 : 2 entries [16:17]
 row: 9 : 2 entries [18:19]
     column 221: bool 1
 ...
-MIS time in seconds:       0.004632
+MIS time in seconds:       0.000755
 isize: 218
 independent set found: 218 of 304 nodes
 maximal independent set status verified
@@ -284,7 +284,7 @@ row: 8 : 7 entries [56:62]
 row: 9 : 7 entries [63:69]
     ...
 ...
-MIS time in seconds:       0.000296
+MIS time in seconds:       0.000332
 isize: 12
 independent set found: 12 of 48 nodes
 maximal independent set status verified
@@ -345,7 +345,7 @@ row: 12 : 39 entries [192:230]
 row: 13 : 39 entries [231:269]
     ...
 ...
-MIS time in seconds:       0.008807
+MIS time in seconds:       0.010907
 isize: 268
 independent set found: 268 of 4884 nodes
 maximal independent set status verified
@@ -408,7 +408,7 @@ row: 8 : 4 entries [216:219]
 row: 9 : 4 entries [220:223]
     ...
 ...
-MIS time in seconds:       0.000384
+MIS time in seconds:       0.000572
 isize: 89
 independent set found: 89 of 183 nodes
 maximal independent set status verified
@@ -466,7 +466,7 @@ row: 8 : 4 entries [39:42]
 row: 9 : 3 entries [43:45]
     ...
 ...
-MIS time in seconds:       0.000308
+MIS time in seconds:       0.000280
 isize: 24
 independent set found: 24 of 63 nodes
 maximal independent set status verified
@@ -523,7 +523,7 @@ row: 8 : 7 entries [38:44]
 row: 9 : 7 entries [45:51]
     ...
 ...
-MIS time in seconds:       0.000299
+MIS time in seconds:       0.000292
 isize: 25
 independent set found: 25 of 63 nodes
 maximal independent set status verified
@@ -577,7 +577,7 @@ row: 8 : 3 entries [27:29]
 row: 9 : 3 entries [30:32]
     ...
 ...
-MIS time in seconds:       0.000262
+MIS time in seconds:       0.000253
 isize: 50
 independent set found: 50 of 78 nodes
 maximal independent set status verified
@@ -640,7 +640,7 @@ row: 8 : 4 entries [334:337]
 row: 9 : 190 entries [338:527]
     ...
 ...
-MIS time in seconds:       0.002462
+MIS time in seconds:       0.003074
 isize: 384
 independent set found: 384 of 982 nodes
 maximal independent set status verified
@@ -700,11 +700,11 @@ row: 8 : 7 entries [62:68]
 row: 9 : 9 entries [69:77]
     ...
 ...
-MIS time in seconds:       0.000332
+MIS time in seconds:       0.000301
 isize: 15
 independent set found: 15 of 67 nodes
 maximal independent set status verified
-Wathen: nx 200 ny 200 n 120801 nz 1762400 method 0, time: 0.339 sec
+Wathen: nx 200 ny 200 n 120801 nz 1762400 method 0, time: 0.688 sec
 
 GraphBLAS matrix: from get_matrix: 
 nrows: 120801 ncols: 120801 max # entries: 1883201
@@ -760,11 +760,11 @@ row: 8 : 12 entries [71:82]
 row: 9 : 7 entries [83:89]
     ...
 ...
-MIS time in seconds:       0.098302
+MIS time in seconds:       0.141341
 isize: 18430
 independent set found: 18430 of 120801 nodes
 maximal independent set status verified
-random 10000 by 10000, nz: 199768, method 0 time 0.044 sec
+random 10000 by 10000, nz: 199768, method 0 time 0.091 sec
 
 GraphBLAS matrix: from get_matrix: 
 nrows: 10000 ncols: 10000 max # entries: 199768
@@ -822,11 +822,11 @@ row: 8 : 22 entries [174:195]
 row: 9 : 17 entries [196:212]
     ...
 ...
-MIS time in seconds:       0.010527
+MIS time in seconds:       0.015564
 isize: 1684
 independent set found: 1684 of 10000 nodes
 maximal independent set status verified
-random 10000 by 10000, nz: 199768, method 1 time 0.036 sec
+random 10000 by 10000, nz: 199768, method 1 time 0.066 sec
 
 GraphBLAS matrix: from get_matrix: 
 nrows: 10000 ncols: 10000 max # entries: 199768
@@ -884,11 +884,11 @@ row: 8 : 22 entries [174:195]
 row: 9 : 17 entries [196:212]
     ...
 ...
-MIS time in seconds:       0.010488
+MIS time in seconds:       0.015431
 isize: 1684
 independent set found: 1684 of 10000 nodes
 maximal independent set status verified
-random 100000 by 100000, nz: 19980330, method 0 time 5.582 sec
+random 100000 by 100000, nz: 19980330, method 0 time 10.364 sec
 
 GraphBLAS matrix: from get_matrix: 
 nrows: 100000 ncols: 100000 max # entries: 19980330
@@ -947,11 +947,11 @@ row: 8 : 210 entries [1575:1784]
 row: 9 : 205 entries [1785:1989]
     ...
 ...
-MIS time in seconds:       0.618478
+MIS time in seconds:       1.098284
 isize: 2798
 independent set found: 2798 of 100000 nodes
 maximal independent set status verified
-random 100000 by 100000, nz: 19980330, method 1 time 4.902 sec
+random 100000 by 100000, nz: 19980330, method 1 time 9.126 sec
 
 GraphBLAS matrix: from get_matrix: 
 nrows: 100000 ncols: 100000 max # entries: 19980330
@@ -1010,7 +1010,7 @@ row: 8 : 210 entries [1575:1784]
 row: 9 : 205 entries [1785:1989]
     ...
 ...
-MIS time in seconds:       0.593611
+MIS time in seconds:       0.930755
 isize: 2798
 independent set found: 2798 of 100000 nodes
 maximal independent set status verified

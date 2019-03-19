@@ -74,7 +74,7 @@ void GB_transpose_ix        // transpose the pattern and values of a matrix
                 int64_t q = Rp [Ai [p]]++ ;                     \
                 Ri [q] = j ;                                    \
                 /* rx [q] = ax [p], type casting */             \
-                GB_CAST (rx [q], ax [p]) ;                      \
+                GB_CASTING (rx [q], ax [p]) ;                   \
             }                                                   \
         }                                                       \
         return ;                                                \

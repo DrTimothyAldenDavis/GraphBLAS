@@ -98,9 +98,9 @@ static inline bool GB_heap_pathcheck
         return (false) ;
     }
 
-    for (int64_t t = p ; t >= 1 ; t = t / 2)
+    for (int64_t kheap = p ; kheap >= 1 ; kheap = kheap / 2)
     {
-        if (Heap [p].key != Heap [t].key)
+        if (Heap [p].key != Heap [kheap].key)
         {
             // key of node p does not match one if its ancestors
             return (false) ;
@@ -392,10 +392,10 @@ static inline int64_t GB_heap_getminlist    // returns Heap [1].key
     //--------------------------------------------------------------------------
 
     #ifndef NDEBUG
-    for (int64_t t = 0 ; t < (*nlist) ; t++)
+    for (int64_t klist = 0 ; klist < (*nlist) ; klist++)
     {
         // each node p in the List satisfies the path property
-        int64_t p = List [t] ;
+        int64_t p = List [klist] ;
         ASSERT (GB_heap_pathcheck (p, Heap, nheap)) ;
     }
     #endif

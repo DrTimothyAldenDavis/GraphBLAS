@@ -9,7 +9,7 @@ rng ('default') ;
 
 fprintf ('\n-------------- GrB_resize\n') ;
 
-[mult_ops unary_ops add_ops classes semirings] = GB_spec_opsall ;
+[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
 
 for k1 = 1:length(classes)
     clas = classes {k1} ;

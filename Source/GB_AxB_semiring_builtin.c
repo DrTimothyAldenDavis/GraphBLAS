@@ -86,6 +86,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
 
     if ((*add_opcode >= GB_USER_C_opcode) || (*mult_opcode >= GB_USER_C_opcode))
     { 
+        // semiring has user-defined add or multiply operators
         return (false) ;
     }
 
@@ -103,9 +104,10 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     { 
         // z = mult(x,y) where both x and y are boolean.
         // DIV becomes FIRST
+        // RDIV becomes SECOND
         // MIN and TIMES become LAND
         // MAX and PLUS become LOR
-        // NE, ISNE, and MINUS become LXOR
+        // NE, ISNE, RMINUS, and MINUS become LXOR
         // ISEQ becomes EQ
         // ISGT becomes GT
         // ISLT becomes LT
@@ -132,8 +134,8 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     // and B passed as A), so pass A as the 2nd argument to the operator, and B
     // as the first.  This can also be done by flipping operator opcodes
     // instead of flipping the A and B inputs to the operator, thus simplifying
-    // the workers.  Only z=x-y and z=x/y are left unflipped; these are
-    // computed using a ternary in the MINUS and DIV workers instead.
+    // the workers.  The z=x-y and z=x/y operators are flipped using GxB_*
+    // functions: rminus and rdiv.
 
     if (flipxy)
     {
@@ -158,6 +160,14 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
             // swap ISLE and ISGE
             case GB_ISGE_opcode   : (*mult_opcode) = GB_ISLE_opcode ;   break ;
             case GB_ISLE_opcode   : (*mult_opcode) = GB_ISGE_opcode ;   break ;
+
+            // swap DIV and RDIV
+            case GB_DIV_opcode    : (*mult_opcode) = GB_RDIV_opcode ;   break ;
+            case GB_RDIV_opcode   : (*mult_opcode) = GB_DIV_opcode ;    break ;
+
+            // swap MINUS and RMINUS
+            case GB_MINUS_opcode  : (*mult_opcode) = GB_RMINUS_opcode ; break ;
+            case GB_RMINUS_opcode : (*mult_opcode) = GB_MINUS_opcode ;  break ;
 
             default: ;
         }

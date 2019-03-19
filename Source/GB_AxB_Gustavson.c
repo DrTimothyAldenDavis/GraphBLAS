@@ -180,7 +180,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     C->type = mult->ztype ;
     C->type_size = zsize ;
 
-    char zwork [zsize] ;
+    char t [zsize] ;
 
     GB_MALLOC_MEMORY (C->x, C->nzmax, zsize) ;
     if (C->x == NULL)
@@ -305,9 +305,6 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     #define GB_GATHERC(Cx,p,Sauna_Work,i,zsize)     \
         memcpy (Cx +((p)*zsize), Sauna_Work +((i)*zsize), zsize) ;
 
-    // z = x*y
-    #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
-
     size_t asize = A_is_pattern ? 0 : A->type->size ;
     size_t bsize = B_is_pattern ? 0 : B->type->size ;
 
@@ -324,9 +321,32 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     GxB_binary_function fadd  = add->op->function ;
     GB_void *restrict identity = add->identity ;
     GB_void *restrict Cx = C->x ;
-    #define GB_HANDLE_FLIPXY true
+
     #define GB_XTYPE GB_void
     #define GB_YTYPE GB_void
+
+    // generic multiply-add operation (with no mask).
+    #define GB_MULTADD_NOMASK                                           \
+        /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
+        GB_MULTIPLY (t, aik, bkj) ;                                     \
+        fadd (Sauna_Work +(i*zsize), Sauna_Work +(i*zsize), t) ;
+
+    // generic multiply-add operation (with mask)
+    #define GB_MULTADD_WITH_MASK                                        \
+        /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
+        if (mark == hiwater)                                            \
+        {                                                               \
+            /* first time C(i,j) seen */                                \
+            /* Sauna_Work [i] = A(i,k) * B(k,j) */                      \
+            GB_MULTIPLY (Sauna_Work +(i*zsize), aik, bkj) ;             \
+            Sauna_Mark [i] = hiwater + 1 ;                              \
+        }                                                               \
+        else                                                            \
+        {                                                               \
+            /* C(i,j) seen before, update it */                         \
+            /* Sauna_Work [i] += A(i,k) * B(k,j) */                     \
+            GB_MULTADD_NOMASK ;                                         \
+        }
 
     if (no_typecasting)
     { 
@@ -343,35 +363,18 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         #define GB_GETB(bkj,Bx,pB,bsize)                                    \
             if (!B_is_pattern) memcpy (bkj, Bx +((pB)*bsize), bsize) ;
 
-        // generic multiply-add operation (with no mask).  fadd: (z x alias)
-        #define GB_MULTADD_NOMASK                                           \
-        {                                                                   \
-            /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
-            GB_MULTIPLY (zwork, aik, bkj) ;                                 \
-            fadd (Sauna_Work +(i*zsize), Sauna_Work +(i*zsize), zwork) ;    \
+        if (flipxy)
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
+            #include "GB_AxB_Gustavson_meta.c"
+            #undef GB_MULTIPLY
         }
-
-        // generic multiply-add operation (with mask)
-        #define GB_MULTADD_WITH_MASK                                        \
-        {                                                                   \
-            /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
-            if (mark == hiwater)                                            \
-            {                                                               \
-                /* first time C(i,j) seen */                                \
-                /* Sauna_Work [i] = A(i,k) * B(k,j) */                      \
-                /* aik = &Ax [pA] */                                        \
-                GB_MULTIPLY (Sauna_Work +(i*zsize), aik, bkj) ;             \
-                Sauna_Mark [i] = hiwater + 1 ;                              \
-            }                                                               \
-            else                                                            \
-            {                                                               \
-                /* C(i,j) seen before, update it */                         \
-                /* Sauna_Work [i] += A(i,k) * B(k,j) */                     \
-                GB_MULTADD_NOMASK ;                                         \
-            }                                                               \
+        else
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            #include "GB_AxB_Gustavson_meta.c"
+            #undef GB_MULTIPLY
         }
-
-        #include "GB_AxB_Gustavson_flipxy.c"
 
     }
     else
@@ -409,37 +412,18 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         #define GB_GETB(bkj,Bx,pB,bsize)                                    \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
-        // generic multiply-add operation (with no mask).  fadd: (z x alias)
-        #undef  GB_MULTADD_NOMASK
-        #define GB_MULTADD_NOMASK                                           \
-        {                                                                   \
-            /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
-            GB_MULTIPLY (zwork, aik, bkj) ;                                 \
-            fadd (Sauna_Work +(i*zsize), Sauna_Work +(i*zsize), zwork) ;    \
+        if (flipxy)
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
+            #include "GB_AxB_Gustavson_meta.c"
+            #undef GB_MULTIPLY
         }
-
-        // generic multiply-add operation (with mask)
-        #undef  GB_MULTADD_WITH_MASK
-        #define GB_MULTADD_WITH_MASK                                        \
-        {                                                                   \
-            /* Sauna_Work [i] += A(i,k) * B(k,j) */                         \
-            if (mark == hiwater)                                            \
-            {                                                               \
-                /* first time C(i,j) seen */                                \
-                /* Sauna_Work [i] = A(i,k) * B(k,j) */                      \
-                GB_MULTIPLY (Sauna_Work +(i*zsize), aik, bkj) ;             \
-                Sauna_Mark [i] = hiwater + 1 ;                              \
-            }                                                               \
-            else                                                            \
-            {                                                               \
-                /* C(i,j) seen before, update it */                         \
-                /* Sauna_Work [i] += A(i,k) * B(k,j) */                     \
-                GB_MULTADD_NOMASK ;                                         \
-            }                                                               \
+        else
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            #include "GB_AxB_Gustavson_meta.c"
+            #undef GB_MULTIPLY
         }
-
-        #include "GB_AxB_Gustavson_flipxy.c"
-
     }
 
     //--------------------------------------------------------------------------

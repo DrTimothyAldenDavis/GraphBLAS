@@ -177,7 +177,7 @@ size_t type_size ;      // type->size, copied here since the type could be
 // always makes sure its matrices are sorted before returning them to MATLAB.
 // Allowing a matrix to remain jumbled can be faster and simpler, but it means
 // that operations such as GrB_setElement and GrB_*assign are very difficult
-// (CSparse doesn't provide those operations).
+// (CSparse does not provide those operations).
 
 // Finally, MATLAB only allows for boolean ("logical" class) and double
 // precision sparse matrices.  CSparse only supports double.  By contrast,
@@ -280,7 +280,7 @@ int64_t hfirst ;        // if A->is_hyper is false but A->is_slice is true,
 // access the matrix, the matrix is "flattened" by applying all the pending
 // tuples.
 
-// When a new entry is added that doesn't exist in the matrix, it is added to
+// When a new entry is added that does not exist in the matrix, it is added to
 // this list of pending tuples.  Only when the matrix is needed in another
 // operation are the pending tuples assembled into the compressed sparse vector
 // form, A->h, A->p, A->i, and A->x.
@@ -328,7 +328,7 @@ GrB_BinaryOp operator_pending ; // operator to assemble pending tuples
 //-----------------------------------------------------------------------------
 
 // A "zombie" is the opposite of a pending tuple.  It is an entry A(i,j) that
-// has been marked for deletion, but hasn't been deleted yet because it is more
+// has been marked for deletion, but has not been deleted yet because it is more
 // efficient to delete all zombies all at once, rather than one (or a few) at a
 // time.  An entry A(i,j) is marked as a zombie by 'flipping' its index via
 // GB_FLIP(i).  A flipped index is negative, and the actual index can be
@@ -347,7 +347,7 @@ GrB_BinaryOp operator_pending ; // operator to assemble pending tuples
 
 // Unlike pending tuples, no list of zombies is needed since they are already
 // in the right place in the matrix.  However, methods and operations in
-// GraphBLAS that can't tolerate zombies in their input matries can check the
+// GraphBLAS that cannot tolerate zombies in their input matries can check the
 // condition (A->nzombies > 0), and then delete all of them if they appear, via
 // GB_wait.
 

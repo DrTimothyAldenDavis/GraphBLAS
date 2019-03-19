@@ -80,9 +80,20 @@
         //----------------------------------------------------------------------
 
             // 40 semirings: (min,max,plus,times) for non-boolean
-            // MINUS == NE == ISNE == XOR for boolean
+            // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _minus
+            #include "GB_AxB_template.c"
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_RMINUS_opcode   :    // z = y - x (reverse minus)
+        //----------------------------------------------------------------------
+
+            // 40 semirings: (min,max,plus,times) for non-boolean
+            // MINUS == RMINUS == NE == ISNE == XOR for boolean
+            #define GB_NO_BOOLEAN
+            #define GB_MULT_NAME _rminus
             #include "GB_AxB_template.c"
             break ;
 
@@ -103,9 +114,21 @@
 
             // 40 semirings: (min,max,plus,times) for non-boolean
             // FIRST == DIV for boolean
-            // See Source/GB.h for disscusion on integer division
+            // See Source/GB.h for discusion on integer division
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _div
+            #include "GB_AxB_template.c"
+            break ;
+
+        //----------------------------------------------------------------------
+        case GB_RDIV_opcode   :     // z = y / x (reverse division)
+        //----------------------------------------------------------------------
+
+            // 40 semirings: (min,max,plus,times) for non-boolean
+            // SECOND == RDIV for boolean
+            // See Source/GB.h for discusion on integer division
+            #define GB_NO_BOOLEAN
+            #define GB_MULT_NAME _rdiv
             #include "GB_AxB_template.c"
             break ;
 
@@ -125,7 +148,7 @@
         //----------------------------------------------------------------------
 
             // 40 semirings: (min,max,plus,times) for non-boolean
-            // MINUS == NE == ISNE == XOR for boolean
+            // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _isne
             #include "GB_AxB_template.c"
@@ -189,7 +212,7 @@
         //----------------------------------------------------------------------
 
             // 40 semirings: (and,or,xor,eq) * (10 types)
-            // MINUS == NE == ISNE == XOR for boolean
+            // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_MULT_NAME _ne
             #include "GB_AxB_compare_template.c"

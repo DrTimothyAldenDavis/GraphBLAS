@@ -4,18 +4,15 @@ GrB_Info GB_AgusB
     const GrB_Matrix M,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    bool flipxy,
     GB_Sauna Sauna
 ) ;
 
 GrB_Info GB_AdotB
 (
     GrB_Matrix *Chandle,
-    const GrB_Matrix M,
-    const bool Mask_comp,
+    const GrB_Matrix M, const bool Mask_comp,
     const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    bool flipxy
+    const GrB_Matrix B, bool B_is_pattern
 ) ;
 
 GrB_Info GB_AheapB
@@ -24,7 +21,6 @@ GrB_Info GB_AheapB
     const GrB_Matrix M,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    bool flipxy,
     int64_t *restrict List,
     GB_pointer_pair *restrict pA_pair,
     GB_Element *restrict Heap,

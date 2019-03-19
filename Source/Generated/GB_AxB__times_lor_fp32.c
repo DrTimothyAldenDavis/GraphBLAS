@@ -1,5 +1,4 @@
 
-
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded C=A*B and C<M>=A*B
 //------------------------------------------------------------------------------
@@ -23,7 +22,6 @@
 // Z type:   float (the type of C)
 // X type:   float (the type of x for z=mult(x,y))
 // Y type:   float (the type of y for z=mult(x,y))
-// handle flipxy: 0 (0 if mult(x,y) is commutative, 1 otherwise)
 // Identity: 1 (where cij *= identity does not change cij)
 // Multiply: z = (x != 0) || (y != 0)
 // Add:      cij *= z
@@ -31,24 +29,20 @@
 
 #define GB_XTYPE \
     float
+
 #define GB_YTYPE \
     float
-#define GB_HANDLE_FLIPXY \
-    0
 
 #define GB_DOT_TERMINAL(cij) \
     ;
 
-#define GB_MULTOP(z,x,y) \
-    z = (x != 0) || (y != 0)
-
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA,asize) \
-    GB_atype aik = Ax [pA] ;
+    float aik = Ax [pA] ;
 
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB,bsize) \
-    GB_btype bkj = Bx [pB] ;
+    float bkj = Bx [pB] ;
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
@@ -62,35 +56,31 @@
     Sauna_Work [i] = identity ;
 
 // Cx [p] = Sauna_Work [i]
-#define GB_GATHERC(Cx,p,Sauna_Work,i,zsize) \
+#define GB_GATHERC(Cx,p,Sauna_Work,i,zsize)     \
     Cx [p] = Sauna_Work [i] ;
 
 // mult-add operation (no mask)
-#define GB_MULTADD_NOMASK                   \
-{                                           \
-    /* Sauna_Work [i] += A(i,k) * B(k,j) */ \
-    float t ;                            \
-    GB_MULTIPLY (t, aik, bkj) ;             \
-    Sauna_Work [i] *= t ;             \
-}
+#define GB_MULTADD_NOMASK                       \
+    /* Sauna_Work [i] += A(i,k) * B(k,j) */     \
+    float t ;                                \
+    t = (aik != 0) || (bkj != 0) ;                  \
+    Sauna_Work [i] *= t ;
 
 // mult-add operation (with mask)
-#define GB_MULTADD_WITH_MASK                \
-{                                           \
-    if (mark == hiwater)                    \
-    {                                       \
-        /* first time C(i,j) seen */        \
-        /* Sauna_Work [i] = A(i,k) * B(k,j) */      \
-        GB_MULTIPLY (Sauna_Work [i], aik, bkj) ;    \
-        Sauna_Mark [i] = hiwater + 1 ;      \
-    }                                       \
-    else                                    \
-    {                                       \
-        /* C(i,j) seen before, update it */ \
-        /* Sauna_Work [i] += A(i,k) * B(k,j) */     \
-        GB_MULTADD_NOMASK ;                 \
-    }                                       \
-}
+#define GB_MULTADD_WITH_MASK                    \
+    if (mark == hiwater)                        \
+    {                                           \
+        /* first time C(i,j) seen */            \
+        /* Sauna_Work [i] = A(i,k) * B(k,j) */  \
+        Sauna_Work [i] = (aik != 0) || (bkj != 0) ; \
+        Sauna_Mark [i] = hiwater + 1 ;          \
+    }                                           \
+    else                                        \
+    {                                           \
+        /* C(i,j) seen before, update it */     \
+        /* Sauna_Work [i] += A(i,k) * B(k,j) */ \
+        GB_MULTADD_NOMASK ;                     \
+    }
 
 GrB_Info GB_AgusB__times_lor_fp32
 (
@@ -98,14 +88,13 @@ GrB_Info GB_AgusB__times_lor_fp32
     const GrB_Matrix M,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    bool flipxy,
     GB_Sauna Sauna
 )
 { 
     float *restrict Sauna_Work = Sauna->Sauna_Work ;
     float *restrict Cx = C->x ;
     GrB_Info info = GrB_SUCCESS ;
-    #include "GB_AxB_Gustavson_flipxy.c"
+    #include "GB_AxB_Gustavson_meta.c"
     return (info) ;
 }
 
@@ -116,7 +105,7 @@ GrB_Info GB_AgusB__times_lor_fp32
 // t = aki*bkj
 #define GB_DOT_MULT(aki,bkj)   \
     float t ;               \
-    GB_MULTIPLY (t, aki, bkj) ;
+    t = (aki != 0) || (bkj != 0) ;
 
 // cij += t
 #define GB_DOT_ADD             \
@@ -140,19 +129,16 @@ GrB_Info GB_AgusB__times_lor_fp32
 GrB_Info GB_AdotB__times_lor_fp32
 (
     GrB_Matrix *Chandle,
-    const GrB_Matrix M,
-    const bool Mask_comp,
+    const GrB_Matrix M, const bool Mask_comp,
     const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    bool flipxy
+    const GrB_Matrix B, bool B_is_pattern
 )
 { 
     GrB_Matrix C = (*Chandle) ;
     float *restrict Cx = C->x ;
     float cij ;
-    size_t bkj_size = B->type->size ;
     GrB_Info info = GrB_SUCCESS ;
-    #include "GB_AxB_dot_flipxy.c"
+    #include "GB_AxB_dot_meta.c"
     return (info) ;
 }
 
@@ -162,23 +148,25 @@ GrB_Info GB_AdotB__times_lor_fp32
 
 #include "GB_heap.h"
 
+// cij = A(i,k) * B(k,j)
+#define GB_CIJ_MULT(cij, aik, bkj)      \
+    cij = (aik != 0) || (bkj != 0) ;
+
 // C(i,j) += A(i,k) * B(k,j)
-#define GB_CIJ_MULTADD(cij, aik, bkj) \
-{                                  \
-    float t ;                   \
-    GB_MULTIPLY (t, aik, bkj) ;    \
-    cij *= t ;               \
-}
+#define GB_CIJ_MULTADD(cij, aik, bkj)   \
+    float t ;                        \
+    t = (aik != 0) || (bkj != 0) ;          \
+    cij *= t ;
 
 // cij is not a pointer but a scalar; nothing to do
 #define GB_CIJ_REACQUIRE ;
 
 // cij = identity
-#define GB_CIJ_CLEAR \
+#define GB_CIJ_CLEAR                    \
     cij = 1 ;
 
 // save the value of C(i,j)
-#define GB_CIJ_SAVE \
+#define GB_CIJ_SAVE                     \
     Cx [cnz] = cij ;
 
 GrB_Info GB_AheapB__times_lor_fp32
@@ -187,7 +175,6 @@ GrB_Info GB_AheapB__times_lor_fp32
     const GrB_Matrix M,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    bool flipxy,
     int64_t *restrict List,
     GB_pointer_pair *restrict pA_pair,
     GB_Element *restrict Heap,
@@ -200,7 +187,7 @@ GrB_Info GB_AheapB__times_lor_fp32
     int64_t cvlen = C->vlen ;
     GB_CIJ_CLEAR ;
     GrB_Info info = GrB_SUCCESS ;
-    #include "GB_AxB_heap_flipxy.c"
+    #include "GB_AxB_heap_meta.c"
     return (info) ;
 }
 

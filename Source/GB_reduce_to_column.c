@@ -268,7 +268,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
         // launch the switch factory
         //----------------------------------------------------------------------
 
-        // If GB_COMPACT is defined, the switch factory is disabled and all
+        // If GBCOMPACT is defined, the switch factory is disabled and all
         // work is done by the generic worker.  The compiled code will be more
         // compact, but 3 to 4 times slower.
 

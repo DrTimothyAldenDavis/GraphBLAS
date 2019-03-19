@@ -6,8 +6,7 @@ function test17
 
 fprintf ('\n ------------ testing GrB_extractElement\n') ;
 
-[accum_ops unary_ops add_ops classes] = GB_spec_opsall ;
-
+[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
 

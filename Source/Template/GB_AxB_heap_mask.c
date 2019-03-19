@@ -282,7 +282,7 @@
             // cij = A (i,List)' * B (List,j), in topological order
             //------------------------------------------------------------------
 
-            for (int64_t t = nlist-1 ; t >= 0 ; t--)
+            for (int64_t klist = nlist-1 ; klist >= 0 ; klist--)
             {
 
                 //--------------------------------------------------------------
@@ -292,7 +292,7 @@
                 // the index k is implicit; it has been renamed as kk if
                 // B(k,j) is the kk-th nonzero in B(:,j).
                 // get k from the list and the position of A(i,k)
-                int64_t p = List [t] ;          ASSERT (p >= 1 && p <= nheap) ;
+                int64_t p = List [klist] ;      ASSERT (p >= 1 && p <= nheap) ;
                 int64_t kk = Heap [p].name ;    ASSERT (kk >= 0 && kk < bjnz) ;
                 int64_t pA     = pA_pair [kk].start ;
                 int64_t pA_end = pA_pair [kk].end ;
@@ -480,7 +480,7 @@
 
                 // cij = A(i,k) * B(k,j)
                 GB_GETA (aik, Ax, pA, asize) ;
-                GB_MULTIPLY (cij, aik, bkj) ;
+                GB_CIJ_MULT (cij, aik, bkj) ;
 
                 Ci [cnz] = i ;
                 // Cx [cnz] = cij ;

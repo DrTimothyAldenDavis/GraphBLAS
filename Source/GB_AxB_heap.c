@@ -154,7 +154,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     #define GB_AxB_WORKER(add,mult,xyname)                  \
     {                                                       \
         info = GB_AheapB (add,mult,xyname) (Chandle, M,     \
-            A, A_is_pattern, B, B_is_pattern, flipxy,       \
+            A, A_is_pattern, B, B_is_pattern,               \
             List, pA_pair, Heap, bjnz_max) ;                \
         done = true ;                                       \
     }                                                       \
@@ -245,7 +245,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         // flipxy true:  aik = (ytype) A(i,k) and bkj = (xtype) B(k,j)
         char aik [flipxy ? ysize : xsize] ;
         char bkj [flipxy ? xsize : ysize] ;
-        char zwork [csize] ;
+        char t [csize] ;
 
         GB_void *restrict Cx = C->x ;
         GB_void *cij = Cx ;        // advances through each entry of C
@@ -282,33 +282,39 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         #define GB_GETB(bkj,Bx,pB,bsize)                                    \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
-        #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
+        // cij = A(i,k) * B(k,j)
+        #define GB_CIJ_MULT(cij, aik, bkj)                                  \
+            GB_MULTIPLY (cij, aik, bkj) ;
 
         // C(i,j) += A(i,k) * B(k,j)
-        #define GB_CIJ_MULTADD(cij, aik, bkj)                           \
-        {                                                               \
-            /* zwork = aik*bkj, reversing them if flipxy is true */     \
-            GB_MULTIPLY (zwork, aik, bkj) ;                             \
-            /* cij = cij + zwork */                                     \
-            fadd (cij, cij, zwork) ; /* (z x alias) */                  \
-        }
+        #define GB_CIJ_MULTADD(cij, aik, bkj)                               \
+            GB_MULTIPLY (t, aik, bkj) ;                                     \
+            fadd (cij, cij, t) ;
 
         // C->x has moved so the pointer to cij needs to be recomputed
-        #define GB_CIJ_REACQUIRE                                        \
-        {                                                               \
-            cij = Cx + cnz * csize ;                                    \
-        }
+        #define GB_CIJ_REACQUIRE cij = Cx + cnz * csize ;
 
         // cij = identity
-        #define GB_CIJ_CLEAR  memcpy (cij, identity, csize) ;
+        #define GB_CIJ_CLEAR memcpy (cij, identity, csize) ;
 
         // save the value of C(i,j) by advancing the cij pointer to next value
-        #define GB_CIJ_SAVE   cij += csize ;
+        #define GB_CIJ_SAVE  cij += csize ;
 
-        #define GB_HANDLE_FLIPXY true
         #define GB_XTYPE GB_void
         #define GB_YTYPE GB_void
-        #include "GB_AxB_heap_flipxy.c"
+
+        if (flipxy)
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
+            #include "GB_AxB_heap_meta.c"
+            #undef GB_MULTIPLY
+        }
+        else
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            #include "GB_AxB_heap_meta.c"
+            #undef GB_MULTIPLY
+        }
     }
 
     //--------------------------------------------------------------------------

@@ -58,6 +58,11 @@ GrB_Info GB_Monoid_new          // create a monoid
         // FIRST and DIV are the same for boolean:
         op = GrB_FIRST_BOOL ;
     }
+    else if (op == GxB_RDIV_BOOL)
+    { 
+        // SECOND and RDIV are the same for boolean:
+        op = GrB_SECOND_BOOL ;
+    }
     else if (op == GrB_MIN_BOOL || op == GrB_TIMES_BOOL)
     { 
         // MIN, TIMES, and LAND are the same for boolean:
@@ -68,9 +73,10 @@ GrB_Info GB_Monoid_new          // create a monoid
         // MAX, PLUS, and OR are the same for boolean:
         op = GrB_LOR ;
     }
-    else if (op == GxB_ISNE_BOOL || op == GrB_NE_BOOL || op == GrB_MINUS_BOOL)
+    else if (op == GxB_ISNE_BOOL || op == GrB_NE_BOOL || op == GrB_MINUS_BOOL
+        || op == GxB_RMINUS_BOOL)
     { 
-        // ISNE, NE, MINUS, and XOR are the same for boolean:
+        // ISNE, NE, MINUS, RMINUS, and XOR are the same for boolean:
         op = GrB_LXOR ;
     }
     else if (op == GxB_ISEQ_BOOL)

@@ -6,7 +6,7 @@ function test10
 
 fprintf ('\nquick GrB_apply tests\n') ;
 
-[mult_ops unary_ops add_ops classes semirings] = GB_spec_opsall ;
+[~, unary_ops, ~, classes, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
 

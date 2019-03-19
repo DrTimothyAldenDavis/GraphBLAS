@@ -505,47 +505,49 @@ typedef enum
     // TxT -> T
     //--------------------------------------------------------------------------
 
-    // 8 binary operators z=f(x,y) that return the same type as their inputs
+    // 10 binary operators z=f(x,y) that return the same type as their inputs
     GB_FIRST_opcode,    //  7: z = x
     GB_SECOND_opcode,   //  8: z = y
     GB_MIN_opcode,      //  9: z = min(x,y)
     GB_MAX_opcode,      // 10: z = max(x,y)
     GB_PLUS_opcode,     // 11: z = x + y
     GB_MINUS_opcode,    // 12: z = x - y
-    GB_TIMES_opcode,    // 13: z = x * y
-    GB_DIV_opcode,      // 14: z = x / y ; special cases for bool and ints
+    GB_RMINUS_opcode,   // 13: z = y - x
+    GB_TIMES_opcode,    // 14: z = x * y
+    GB_DIV_opcode,      // 15: z = x / y ; special cases for bool and ints
+    GB_RDIV_opcode,     // 16: z = y / x ; special cases for bool and ints
 
     // 6 binary operators z=f(x,y), x,y,z all the same type
-    GB_ISEQ_opcode,     // 15: z = (x == y)
-    GB_ISNE_opcode,     // 16: z = (x != y)
-    GB_ISGT_opcode,     // 17: z = (x >  y)
-    GB_ISLT_opcode,     // 18: z = (x <  y)
-    GB_ISGE_opcode,     // 19: z = (x >= y)
-    GB_ISLE_opcode,     // 20: z = (x <= y)
+    GB_ISEQ_opcode,     // 17: z = (x == y)
+    GB_ISNE_opcode,     // 18: z = (x != y)
+    GB_ISGT_opcode,     // 19: z = (x >  y)
+    GB_ISLT_opcode,     // 20: z = (x <  y)
+    GB_ISGE_opcode,     // 21: z = (x >= y)
+    GB_ISLE_opcode,     // 22: z = (x <= y)
 
     // 3 binary operators that work on purely boolean values
-    GB_LOR_opcode,      // 21: z = (x != 0) || (y != 0)
-    GB_LAND_opcode,     // 22: z = (x != 0) && (y != 0)
-    GB_LXOR_opcode,     // 23: z = (x != 0) != (y != 0)
+    GB_LOR_opcode,      // 23: z = (x != 0) || (y != 0)
+    GB_LAND_opcode,     // 23: z = (x != 0) && (y != 0)
+    GB_LXOR_opcode,     // 25: z = (x != 0) != (y != 0)
 
     //--------------------------------------------------------------------------
     // TxT -> bool
     //--------------------------------------------------------------------------
 
     // 6 binary operators z=f(x,y) that return bool (TxT -> bool)
-    GB_EQ_opcode,       // 24: z = (x == y)
-    GB_NE_opcode,       // 25: z = (x != y)
-    GB_GT_opcode,       // 26: z = (x >  y)
-    GB_LT_opcode,       // 27: z = (x <  y)
-    GB_GE_opcode,       // 28: z = (x >= y)
-    GB_LE_opcode,       // 29: z = (x <= y)
+    GB_EQ_opcode,       // 26: z = (x == y)
+    GB_NE_opcode,       // 27: z = (x != y)
+    GB_GT_opcode,       // 28: z = (x >  y)
+    GB_LT_opcode,       // 29: z = (x <  y)
+    GB_GE_opcode,       // 30: z = (x >= y)
+    GB_LE_opcode,       // 31: z = (x <= y)
 
     //--------------------------------------------------------------------------
     // user-defined: unary and binary operators
     //--------------------------------------------------------------------------
 
-    GB_USER_C_opcode,   // 30: compile-time user-defined operator
-    GB_USER_R_opcode    // 31: run-time user-defined operator
+    GB_USER_C_opcode,   // 32: compile-time user-defined operator
+    GB_USER_R_opcode    // 33: run-time user-defined operator
 }
 GB_Opcode ;
 
@@ -2640,184 +2642,6 @@ static inline GrB_Index GB_rand (uint64_t *seed)
 #define GB_EMPTY(A) ((GB_NNZ (A) == 0) && !GB_PENDING (A))
 
 //------------------------------------------------------------------------------
-// type-specific macros
-//------------------------------------------------------------------------------
-
-// returns the largest possible value for a given type
-#define GB_PLUS_INF(type)         \
-    _Generic                      \
-    (                             \
-        (type),                   \
-        const bool     : true         , \
-              bool     : true         , \
-        const int8_t   : INT8_MAX     , \
-              int8_t   : INT8_MAX     , \
-        const uint8_t  : UINT8_MAX    , \
-              uint8_t  : UINT8_MAX    , \
-        const int16_t  : INT16_MAX    , \
-              int16_t  : INT16_MAX    , \
-        const uint16_t : UINT16_MAX   , \
-              uint16_t : UINT16_MAX   , \
-        const int32_t  : INT32_MAX    , \
-              int32_t  : INT32_MAX    , \
-        const uint32_t : UINT32_MAX   , \
-              uint32_t : UINT32_MAX   , \
-        const int64_t  : INT64_MAX    , \
-              int64_t  : INT64_MAX    , \
-        const uint64_t : UINT64_MAX   , \
-              uint64_t : UINT64_MAX   , \
-        const float    : INFINITY     , \
-              float    : INFINITY     , \
-        const double   : INFINITY     , \
-              double   : INFINITY       \
-    )
-
-// returns the smallest possible value for a given type
-#define GB_MINUS_INF(type)        \
-    _Generic                      \
-    (                             \
-        (type),                   \
-        const bool     : false        , \
-              bool     : false        , \
-        const int8_t   : INT8_MIN     , \
-              int8_t   : INT8_MIN     , \
-        const uint8_t  : 0            , \
-              uint8_t  : 0            , \
-        const int16_t  : INT16_MIN    , \
-              int16_t  : INT16_MIN    , \
-        const uint16_t : 0            , \
-              uint16_t : 0            , \
-        const int32_t  : INT32_MIN    , \
-              int32_t  : INT32_MIN    , \
-        const uint32_t : 0            , \
-              uint32_t : 0            , \
-        const int64_t  : INT64_MIN    , \
-              int64_t  : INT64_MIN    , \
-        const uint64_t : 0            , \
-              uint64_t : 0            , \
-        const float    : -INFINITY    , \
-              float    : -INFINITY    , \
-        const double   : -INFINITY    , \
-              double   : -INFINITY      \
-    )
-
-// true if the type is signed
-#define GB_IS_SIGNED(type)        \
-    _Generic                      \
-    (                             \
-        (type),                   \
-        const bool     : false        , \
-              bool     : false        , \
-        const int8_t   : true         , \
-              int8_t   : true         , \
-        const uint8_t  : false        , \
-              uint8_t  : false        , \
-        const int16_t  : true         , \
-              int16_t  : true         , \
-        const uint16_t : false        , \
-              uint16_t : false        , \
-        const int32_t  : true         , \
-              int32_t  : true         , \
-        const uint32_t : false        , \
-              uint32_t : false        , \
-        const int64_t  : true         , \
-              int64_t  : true         , \
-        const uint64_t : false        , \
-              uint64_t : false        , \
-        const float    : true         , \
-              float    : true         , \
-        const double   : true         , \
-              double   : true           \
-    )
-
-// true if the type is integer (boolean is not integer)
-#define GB_IS_INTEGER(type)       \
-    _Generic                      \
-    (                             \
-        (type),                   \
-        const bool     : false        , \
-              bool     : false        , \
-        const int8_t   : true         , \
-              int8_t   : true         , \
-        const uint8_t  : true         , \
-              uint8_t  : true         , \
-        const int16_t  : true         , \
-              int16_t  : true         , \
-        const uint16_t : true         , \
-              uint16_t : true         , \
-        const int32_t  : true         , \
-              int32_t  : true         , \
-        const uint32_t : true         , \
-              uint32_t : true         , \
-        const int64_t  : true         , \
-              int64_t  : true         , \
-        const uint64_t : true         , \
-              uint64_t : true         , \
-        const float    : false        , \
-              float    : false        , \
-        const double   : false        , \
-              double   : false          \
-    )
-
-// true if the type is boolean
-#define GB_IS_BOOLEAN(type)       \
-    _Generic                      \
-    (                             \
-        (type),                   \
-        const bool     : true         , \
-              bool     : true         , \
-        const int8_t   : false        , \
-              int8_t   : false        , \
-        const uint8_t  : false        , \
-              uint8_t  : false        , \
-        const int16_t  : false        , \
-              int16_t  : false        , \
-        const uint16_t : false        , \
-              uint16_t : false        , \
-        const int32_t  : false        , \
-              int32_t  : false        , \
-        const uint32_t : false        , \
-              uint32_t : false        , \
-        const int64_t  : false        , \
-              int64_t  : false        , \
-        const uint64_t : false        , \
-              uint64_t : false        , \
-        const float    : false        , \
-              float    : false        , \
-        const double   : false        , \
-              double   : false          \
-    )
-
-// true if the type is float or double
-#define GB_IS_FLOAT(type)         \
-    _Generic                      \
-    (                             \
-        (type),                   \
-        const bool     : false        , \
-              bool     : false        , \
-        const int8_t   : false        , \
-              int8_t   : false        , \
-        const uint8_t  : false        , \
-              uint8_t  : false        , \
-        const int16_t  : false        , \
-              int16_t  : false        , \
-        const uint16_t : false        , \
-              uint16_t : false        , \
-        const int32_t  : false        , \
-              int32_t  : false        , \
-        const uint32_t : false        , \
-              uint32_t : false        , \
-        const int64_t  : false        , \
-              int64_t  : false        , \
-        const uint64_t : false        , \
-              uint64_t : false        , \
-        const float    : true         , \
-              float    : true         , \
-        const double   : true         , \
-              double   : true           \
-    )
-
-//------------------------------------------------------------------------------
 // division by zero
 //------------------------------------------------------------------------------
 
@@ -2832,32 +2656,14 @@ static inline GrB_Index GB_rand (uint64_t *seed)
 // For places affected by this decision in the code do:
 // grep "integer division"
 
-// signed integer division x/zero: special cases for 0/0, -(neg)/0, (pos)/0
-#define GB_SIGNED_INTEGER_DIVISION_BY_ZERO(x)                               \
-(                                                                           \
-    ((x) == 0) ?                                                            \
-    (                                                                       \
-        /* zero divided by zero gives 'Nan' */                              \
-        0                                                                   \
-    )                                                                       \
-    :                                                                       \
-    (                                                                       \
-        /* x/0 and x is nonzero */                                          \
-        ((x) < 0) ?                                                         \
-        (                                                                   \
-            /* x is negative: x/0 gives '-Inf' */                           \
-            GB_MINUS_INF (x)                                                \
-        )                                                                   \
-        :                                                                   \
-        (                                                                   \
-            /* x is positive: x/0 gives '+Inf' */                           \
-            GB_PLUS_INF (x)                                                 \
-        )                                                                   \
-    )                                                                       \
-)
+// Signed and unsigned integer division, z = x/y.  The bits parameter can be 8,
+// 16, 32, or 64.
+#define GB_INT_MIN(bits)  INT ## bits ## _MIN
+#define GB_INT_MAX(bits)  INT ## bits ## _MAX
+#define GB_UINT_MAX(bits) UINT ## bits ## _MAX
 
-// signed integer division x/y: special cases for y=-1 and y=0
-#define GB_SIGNED_INTEGER_DIVISION(x,y)                                     \
+// x/y when x and y are signed integers
+#define GB_IDIV_SIGNED(x,y,bits)                                            \
 (                                                                           \
     ((y) == -1) ?                                                           \
     (                                                                       \
@@ -2869,7 +2675,25 @@ static inline GrB_Index GB_rand (uint64_t *seed)
         ((y) == 0) ?                                                        \
         (                                                                   \
             /* x/0 */                                                       \
-            GB_SIGNED_INTEGER_DIVISION_BY_ZERO (x)                          \
+            ((x) == 0) ?                                                    \
+            (                                                               \
+                /* zero divided by zero gives 'Nan' */                      \
+                0                                                           \
+            )                                                               \
+            :                                                               \
+            (                                                               \
+                /* x/0 and x is nonzero */                                  \
+                ((x) < 0) ?                                                 \
+                (                                                           \
+                    /* x is negative: x/0 gives '-Inf' */                   \
+                    GB_INT_MIN (bits)                                       \
+                )                                                           \
+                :                                                           \
+                (                                                           \
+                    /* x is positive: x/0 gives '+Inf' */                   \
+                    GB_INT_MAX (bits)                                       \
+                )                                                           \
+            )                                                               \
         )                                                                   \
         :                                                                   \
         (                                                                   \
@@ -2879,28 +2703,22 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     )                                                                       \
 )
 
-// unsigned integer division x/zero: special cases for 0/0 and (pos)/0
-#define GB_UNSIGNED_INTEGER_DIVISION_BY_ZERO(x)                             \
-(                                                                           \
-    ((x) == 0) ?                                                            \
-    (                                                                       \
-        /* zero divided by zero gives 'Nan' */                              \
-        0                                                                   \
-    )                                                                       \
-    :                                                                       \
-    (                                                                       \
-        /* x is positive: x/0 gives '+Inf' */                               \
-        GB_PLUS_INF (x)                                                     \
-    )                                                                       \
-)                                                                           \
-
-// unsigned integer division x/y: special case for y=0
-#define GB_UNSIGNED_INTEGER_DIVISION(x,y)                                   \
+// x/y when x and y are unsigned integers
+#define GB_IDIV_UNSIGNED(x,y,bits)                                          \
 (                                                                           \
     ((y) == 0) ?                                                            \
     (                                                                       \
         /* x/0 */                                                           \
-        GB_UNSIGNED_INTEGER_DIVISION_BY_ZERO (x)                            \
+        ((x) == 0) ?                                                        \
+        (                                                                   \
+            /* zero divided by zero gives 'Nan' */                          \
+            0                                                               \
+        )                                                                   \
+        :                                                                   \
+        (                                                                   \
+            /* x is positive: x/0 gives '+Inf' */                           \
+            GB_UINT_MAX (bits)                                              \
+        )                                                                   \
     )                                                                       \
     :                                                                       \
     (                                                                       \
@@ -2909,33 +2727,52 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     )                                                                       \
 )
 
-// x/y when x and y are signed or unsigned integers
-#define GB_IDIV(x,y)                                                        \
+// 1/y when y is a signed integer
+#define GB_IMINV_SIGNED(y,bits)                                             \
 (                                                                           \
-    (GB_IS_SIGNED (x)) ?                                                    \
+    ((y) == -1) ?                                                           \
     (                                                                       \
-        GB_SIGNED_INTEGER_DIVISION (x,y)                                    \
+        -1                                                                  \
     )                                                                       \
     :                                                                       \
     (                                                                       \
-        GB_UNSIGNED_INTEGER_DIVISION (x,y)                                  \
+        ((y) == 0) ?                                                        \
+        (                                                                   \
+            GB_INT_MAX (bits)                                               \
+        )                                                                   \
+        :                                                                   \
+        (                                                                   \
+            ((y) == 1) ?                                                    \
+            (                                                               \
+                1                                                           \
+            )                                                               \
+            :                                                               \
+            (                                                               \
+                0                                                           \
+            )                                                               \
+        )                                                                   \
     )                                                                       \
 )
 
-// 1/y when y is signed or unsigned integer
-#define GB_IMINV(y)                                                         \
+// 1/y when y is an unsigned integer
+#define GB_IMINV_UNSIGNED(y,bits)                                           \
 (                                                                           \
     ((y) == 0) ?                                                            \
     (                                                                       \
-        /* 1/0 */                                                           \
-        GB_PLUS_INF (y)                                                     \
+        GB_UINT_MAX (bits)                                                  \
     )                                                                       \
     :                                                                       \
     (                                                                       \
-        /* normal case for integer minv, signed or unsigned */              \
-        1 / (y)                                                             \
+        ((y) == 1) ?                                                        \
+        (                                                                   \
+            1                                                               \
+        )                                                                   \
+        :                                                                   \
+        (                                                                   \
+            0                                                               \
+        )                                                                   \
     )                                                                       \
-)
+)                                                                           \
 
 // GraphBLAS includes a built-in GrB_DIV_BOOL operator, so boolean division
 // must be defined.  There is no MATLAB equivalent since x/y for logical x and
@@ -2975,28 +2812,37 @@ static inline GrB_Index GB_rand (uint64_t *seed)
 // a float or double +Inf is converted to the largest integer, -Inf to the
 // smallest integer, and NaN to zero.  This is the same behavior as MATLAB.
 
-// cast a value x to the type of z
-#define GB_CAST(z,x)                                                        \
+// typecast a float or double x to a signed integer z
+#define GB_CAST_SIGNED(z,x,bits)                                            \
 {                                                                           \
-    if (GB_IS_INTEGER (z) && GB_IS_FLOAT (x))                               \
+    switch (fpclassify (x))                                                 \
     {                                                                       \
-        switch (fpclassify ((double) (x)))                                  \
-        {                                                                   \
-            case FP_NAN:                                                    \
-                z = 0 ;                                                     \
-                break ;                                                     \
-            case FP_INFINITE:                                               \
-                z = ((x) > 0) ? GB_PLUS_INF (z) : GB_MINUS_INF (z) ;        \
-                break ;                                                     \
-            default:                                                        \
-                z = (x) ;                                                   \
-                break ;                                                     \
-        }                                                                   \
+        case FP_NAN:                                                        \
+            z = 0 ;                                                         \
+            break ;                                                         \
+        case FP_INFINITE:                                                   \
+            z = ((x) > 0) ? GB_INT_MAX (bits) : GB_INT_MIN (bits) ;         \
+            break ;                                                         \
+        default:                                                            \
+            z = (x) ;                                                       \
+            break ;                                                         \
     }                                                                       \
-    else                                                                    \
+}
+
+// typecast a float or double x to a unsigned integer z
+#define GB_CAST_UNSIGNED(z,x,bits)                                          \
+{                                                                           \
+    switch (fpclassify (x))                                                 \
     {                                                                       \
-        /* trust the built-in typecast */                                   \
-        z = (x) ;                                                           \
+        case FP_NAN:                                                        \
+            z = 0 ;                                                         \
+            break ;                                                         \
+        case FP_INFINITE:                                                   \
+            z = ((x) > 0) ? GB_UINT_MAX (bits) : 0 ;                        \
+            break ;                                                         \
+        default:                                                            \
+            z = (x) ;                                                       \
+            break ;                                                         \
     }                                                                       \
 }
 
@@ -3942,7 +3788,7 @@ static inline void GBI2s_init
 // macros.  These macros are not used for iterating over slices.
 
 // get the index of the next vector in a given matrix
-#define GBIk_jjget(Iter,matrix)                                              \
+#define GBIk_jjget(Iter,matrix)                                             \
 {                                                                           \
     if (!(Iter->is_hyper [matrix]))                                         \
     {                                                                       \
@@ -3964,17 +3810,17 @@ static inline void GBI2s_init
 // Get the pointers to the next vector A [matrix] (:,j), sparse or hypersparse.
 // The vector appears in Ai and Ax [Iter->pstart [matrix]...Iter->pend
 // [matrix]-1].
-#define GBIk_phget(Iter,matrix)                                              \
+#define GBIk_phget(Iter,matrix)                                             \
 {                                                                           \
     if (!(Iter->is_hyper [matrix]))                                         \
     {                                                                       \
         /* A (:,j) is the jth vector in the non-hypersparse matrix */       \
-        GBIk_pget (Iter, matrix) ;                                           \
+        GBIk_pget (Iter, matrix) ;                                          \
     }                                                                       \
     else if (Iter->j == Iter->jj [matrix])                                  \
     {                                                                       \
         /* A (:,j) is the kth vector in the hypersparse matrix */           \
-        GBIk_pget_hyper (Iter, matrix) ;                                     \
+        GBIk_pget_hyper (Iter, matrix) ;                                    \
     }                                                                       \
     else                                                                    \
     {                                                                       \
@@ -3989,14 +3835,14 @@ static inline void GBI2s_init
 //----------------------------------------
 
 // get the pointers to the next vector A (:,j), not hypersparse
-#define GBIk_pget(Iter,matrix)                                               \
+#define GBIk_pget(Iter,matrix)                                              \
 {                                                                           \
     Iter->pstart [matrix] = (Iter->p [matrix]) [Iter->j  ] ;                \
     Iter->pend   [matrix] = (Iter->p [matrix]) [Iter->j+1] ;                \
 }
 
 // get the pointers to the kth vector A (:,j), hypersparse
-#define GBIk_pget_hyper(Iter,matrix)                                         \
+#define GBIk_pget_hyper(Iter,matrix)                                        \
 {                                                                           \
     Iter->pstart [matrix] = (Iter->p [matrix]) [Iter->k [matrix]  ] ;       \
     Iter->pend   [matrix] = (Iter->p [matrix]) [Iter->k [matrix]+1] ;       \
@@ -4163,7 +4009,7 @@ static inline bool GBI2s_while
 // Advance to the next vector of one, two, or three matrices.  The inline
 // GBI#_next functions are only used in the GB_*each* macros.
 
-#define GBIk_jnext(Iter,matrix)                                                \
+#define GBIk_jnext(Iter,matrix)                                               \
 {                                                                             \
     if (!(Iter->is_hyper [matrix]))                                           \
     {                                                                         \
@@ -4288,25 +4134,25 @@ static inline void GBI2s_next
 //------------------------------------------------------------------------------
 
 // iterate over the vectors in the union of two matrices A and B
-#define GBI2_for_each_vector(A,B)                                              \
-    GBIk_multi_iterator Iter ;                                                  \
+#define GBI2_for_each_vector(A,B)                                           \
+    GBIk_multi_iterator Iter ;                                              \
     for (GBI2_init (&Iter,A,B) ; GBI2_while (&Iter) ; GBI2_next (&Iter))
 
 // iterate over the vectors in the union of three matrices A, B, and C
-#define GBI3_for_each_vector(A,B,C)                                            \
-    GBIk_multi_iterator Iter ;                                                  \
+#define GBI3_for_each_vector(A,B,C)                                         \
+    GBIk_multi_iterator Iter ;                                              \
     for (GBI3_init (&Iter,A,B,C) ; GBI3_while (&Iter) ; GBI3_next (&Iter))
 
 // iterate over the vectors of a matrix A and an expanded scalar
 // (note the scalar arg is not used; it is for code readability only):
-#define GBI2s_for_each_vector(A,scalar)                                        \
-    GBIk_multi_iterator Iter ;                                                  \
+#define GBI2s_for_each_vector(A,scalar)                                     \
+    GBIk_multi_iterator Iter ;                                              \
     for (GBI2s_init (&Iter,A) ; GBI2s_while (&Iter) ; GBI2s_next (&Iter))
 
 // iterate over the vectors of two matrices A and B, and an expanded scalar
 // (note the scalar arg is not used; it is for code readability only):
-#define GBI3s_for_each_vector(A,B,scalar)                                      \
-    GBIk_multi_iterator Iter ;                                                  \
+#define GBI3s_for_each_vector(A,B,scalar)                                   \
+    GBIk_multi_iterator Iter ;                                              \
     for (GBI3s_init (&Iter,A,B) ; GBI3s_while (&Iter) ; GBI3s_next (&Iter))
 
 //------------------------------------------------------------------------------
@@ -4493,56 +4339,66 @@ static inline void GB_jwrapup
 #define GB_BOOLEAN
 #define GB(x)               GB_ ## x ## _BOOL
 #define GB_CAST_NAME(x)     GB_cast_bool_ ## x
+#define GB_BITS             1
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int8_t
 #define GB(x)               GB_ ## x ## _INT8
 #define GB_CAST_NAME(x)     GB_cast_int8_t_ ## x
+#define GB_BITS             8
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint8_t
 #define GB_UNSIGNED
 #define GB(x)               GB_ ## x ## _UINT8
 #define GB_CAST_NAME(x)     GB_cast_uint8_t_ ## x
+#define GB_BITS             8
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int16_t
 #define GB(x)               GB_ ## x ## _INT16
 #define GB_CAST_NAME(x)     GB_cast_int16_t_ ## x
+#define GB_BITS             16
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint16_t
 #define GB_UNSIGNED
 #define GB(x)               GB_ ## x ## _UINT16
 #define GB_CAST_NAME(x)     GB_cast_uint16_t_ ## x
+#define GB_BITS             16
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int32_t
 #define GB(x)               GB_ ## x ## _INT32
 #define GB_CAST_NAME(x)     GB_cast_int32_t_ ## x
+#define GB_BITS             32
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint32_t
 #define GB_UNSIGNED
 #define GB(x)               GB_ ## x ## _UINT32
 #define GB_CAST_NAME(x)     GB_cast_uint32_t_ ## x
+#define GB_BITS             32
 #include "GB_ops_template.h"
 
 #define GB_TYPE             int64_t
 #define GB(x)               GB_ ## x ## _INT64
 #define GB_CAST_NAME(x)     GB_cast_int64_t_ ## x
+#define GB_BITS             64
 #include "GB_ops_template.h"
 
 #define GB_TYPE             uint64_t
 #define GB_UNSIGNED
 #define GB(x)               GB_ ## x ## _UINT64
 #define GB_CAST_NAME(x)     GB_cast_uint64_t_ ## x
+#define GB_BITS             64
 #include "GB_ops_template.h"
 
 #define GB_TYPE             float
 #define GB_FLOATING_POINT
 #define GB(x)               GB_ ## x ## _FP32
 #define GB_CAST_NAME(x)     GB_cast_float_ ## x
+#define GB_BITS             32
 #include "GB_ops_template.h"
 
 #define GB_TYPE             double
@@ -4550,6 +4406,7 @@ static inline void GB_jwrapup
 #define GB_FLOATING_POINT_DOUBLE
 #define GB(x)               GB_ ## x ## _FP64
 #define GB_CAST_NAME(x)     GB_cast_double_ ## x
+#define GB_BITS             64
 #include "GB_ops_template.h"
 
 inline void GB_copy_user_user (void *z, void *x, size_t s)
@@ -5204,6 +5061,62 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 #define GB_DEF_GrB_MINUS_FP64_xtype double
 #define GB_DEF_GrB_MINUS_FP64_ytype double
 
+// op: RMINUS
+#define GB_DEF_GxB_RMINUS_BOOL_function GB_RMINUS_f_BOOL
+#define GB_DEF_GxB_RMINUS_BOOL_ztype bool
+#define GB_DEF_GxB_RMINUS_BOOL_xtype bool
+#define GB_DEF_GxB_RMINUS_BOOL_ytype bool
+
+#define GB_DEF_GxB_RMINUS_INT8_function GB_RMINUS_f_INT8
+#define GB_DEF_GxB_RMINUS_INT8_ztype int8_t
+#define GB_DEF_GxB_RMINUS_INT8_xtype int8_t
+#define GB_DEF_GxB_RMINUS_INT8_ytype int8_t
+
+#define GB_DEF_GxB_RMINUS_UINT8_function GB_RMINUS_f_UINT8
+#define GB_DEF_GxB_RMINUS_UINT8_ztype uint8_t
+#define GB_DEF_GxB_RMINUS_UINT8_xtype uint8_t
+#define GB_DEF_GxB_RMINUS_UINT8_ytype uint8_t
+
+#define GB_DEF_GxB_RMINUS_INT16_function GB_RMINUS_f_INT16
+#define GB_DEF_GxB_RMINUS_INT16_ztype int16_t
+#define GB_DEF_GxB_RMINUS_INT16_xtype int16_t
+#define GB_DEF_GxB_RMINUS_INT16_ytype int16_t
+
+#define GB_DEF_GxB_RMINUS_UINT16_function GB_RMINUS_f_UINT16
+#define GB_DEF_GxB_RMINUS_UINT16_ztype uint16_t
+#define GB_DEF_GxB_RMINUS_UINT16_xtype uint16_t
+#define GB_DEF_GxB_RMINUS_UINT16_ytype uint16_t
+
+#define GB_DEF_GxB_RMINUS_INT32_function GB_RMINUS_f_INT32
+#define GB_DEF_GxB_RMINUS_INT32_ztype int32_t
+#define GB_DEF_GxB_RMINUS_INT32_xtype int32_t
+#define GB_DEF_GxB_RMINUS_INT32_ytype int32_t
+
+#define GB_DEF_GxB_RMINUS_UINT32_function GB_RMINUS_f_UINT32
+#define GB_DEF_GxB_RMINUS_UINT32_ztype uint32_t
+#define GB_DEF_GxB_RMINUS_UINT32_xtype uint32_t
+#define GB_DEF_GxB_RMINUS_UINT32_ytype uint32_t
+
+#define GB_DEF_GxB_RMINUS_INT64_function GB_RMINUS_f_INT64
+#define GB_DEF_GxB_RMINUS_INT64_ztype int64_t
+#define GB_DEF_GxB_RMINUS_INT64_xtype int64_t
+#define GB_DEF_GxB_RMINUS_INT64_ytype int64_t
+
+#define GB_DEF_GxB_RMINUS_UINT64_function GB_RMINUS_f_UINT64
+#define GB_DEF_GxB_RMINUS_UINT64_ztype uint64_t
+#define GB_DEF_GxB_RMINUS_UINT64_xtype uint64_t
+#define GB_DEF_GxB_RMINUS_UINT64_ytype uint64_t
+
+#define GB_DEF_GxB_RMINUS_FP32_function GB_RMINUS_f_FP32
+#define GB_DEF_GxB_RMINUS_FP32_ztype float
+#define GB_DEF_GxB_RMINUS_FP32_xtype float
+#define GB_DEF_GxB_RMINUS_FP32_ytype float
+
+#define GB_DEF_GxB_RMINUS_FP64_function GB_RMINUS_f_FP64
+#define GB_DEF_GxB_RMINUS_FP64_ztype double
+#define GB_DEF_GxB_RMINUS_FP64_xtype double
+#define GB_DEF_GxB_RMINUS_FP64_ytype double
+
 // op: TIMES
 #define GB_DEF_GrB_TIMES_BOOL_function GB_TIMES_f_BOOL
 #define GB_DEF_GrB_TIMES_BOOL_ztype bool
@@ -5315,6 +5228,62 @@ inline void GB_copy_user_user (void *z, void *x, size_t s)
 #define GB_DEF_GrB_DIV_FP64_ztype double
 #define GB_DEF_GrB_DIV_FP64_xtype double
 #define GB_DEF_GrB_DIV_FP64_ytype double
+
+// op: RDIV
+#define GB_DEF_GxB_RDIV_BOOL_function GB_RDIV_f_BOOL
+#define GB_DEF_GxB_RDIV_BOOL_ztype bool
+#define GB_DEF_GxB_RDIV_BOOL_xtype bool
+#define GB_DEF_GxB_RDIV_BOOL_ytype bool
+
+#define GB_DEF_GxB_RDIV_INT8_function GB_RDIV_f_INT8
+#define GB_DEF_GxB_RDIV_INT8_ztype int8_t
+#define GB_DEF_GxB_RDIV_INT8_xtype int8_t
+#define GB_DEF_GxB_RDIV_INT8_ytype int8_t
+
+#define GB_DEF_GxB_RDIV_UINT8_function GB_RDIV_f_UINT8
+#define GB_DEF_GxB_RDIV_UINT8_ztype uint8_t
+#define GB_DEF_GxB_RDIV_UINT8_xtype uint8_t
+#define GB_DEF_GxB_RDIV_UINT8_ytype uint8_t
+
+#define GB_DEF_GxB_RDIV_INT16_function GB_RDIV_f_INT16
+#define GB_DEF_GxB_RDIV_INT16_ztype int16_t
+#define GB_DEF_GxB_RDIV_INT16_xtype int16_t
+#define GB_DEF_GxB_RDIV_INT16_ytype int16_t
+
+#define GB_DEF_GxB_RDIV_UINT16_function GB_RDIV_f_UINT16
+#define GB_DEF_GxB_RDIV_UINT16_ztype uint16_t
+#define GB_DEF_GxB_RDIV_UINT16_xtype uint16_t
+#define GB_DEF_GxB_RDIV_UINT16_ytype uint16_t
+
+#define GB_DEF_GxB_RDIV_INT32_function GB_RDIV_f_INT32
+#define GB_DEF_GxB_RDIV_INT32_ztype int32_t
+#define GB_DEF_GxB_RDIV_INT32_xtype int32_t
+#define GB_DEF_GxB_RDIV_INT32_ytype int32_t
+
+#define GB_DEF_GxB_RDIV_UINT32_function GB_RDIV_f_UINT32
+#define GB_DEF_GxB_RDIV_UINT32_ztype uint32_t
+#define GB_DEF_GxB_RDIV_UINT32_xtype uint32_t
+#define GB_DEF_GxB_RDIV_UINT32_ytype uint32_t
+
+#define GB_DEF_GxB_RDIV_INT64_function GB_RDIV_f_INT64
+#define GB_DEF_GxB_RDIV_INT64_ztype int64_t
+#define GB_DEF_GxB_RDIV_INT64_xtype int64_t
+#define GB_DEF_GxB_RDIV_INT64_ytype int64_t
+
+#define GB_DEF_GxB_RDIV_UINT64_function GB_RDIV_f_UINT64
+#define GB_DEF_GxB_RDIV_UINT64_ztype uint64_t
+#define GB_DEF_GxB_RDIV_UINT64_xtype uint64_t
+#define GB_DEF_GxB_RDIV_UINT64_ytype uint64_t
+
+#define GB_DEF_GxB_RDIV_FP32_function GB_RDIV_f_FP32
+#define GB_DEF_GxB_RDIV_FP32_ztype float
+#define GB_DEF_GxB_RDIV_FP32_xtype float
+#define GB_DEF_GxB_RDIV_FP32_ytype float
+
+#define GB_DEF_GxB_RDIV_FP64_function GB_RDIV_f_FP64
+#define GB_DEF_GxB_RDIV_FP64_ztype double
+#define GB_DEF_GxB_RDIV_FP64_xtype double
+#define GB_DEF_GxB_RDIV_FP64_ytype double
 
 // op: ISEQ
 #define GB_DEF_GxB_ISEQ_BOOL_function GB_ISEQ_f_BOOL

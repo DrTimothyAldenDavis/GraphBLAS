@@ -1,11 +1,20 @@
 Version 2.4.0, TODO, 2019
 
     * parallel GrB_mxm, mxv, vxm, and quicksort
+    * new operators: GxB_RDIV_* and GxB_RMINUS_*
+    * Generated/* simplified: removed flipxy
+    * _Generic: removed from GB.h (type casting, scalar division)
+
+Version 2.3.2, Mar 18, 2019
+
+    * GxB_Matrix_Option_set: removed spurious check of input matrix
 
 Version 2.3.1, Mar 9, 2019
 
-    * _Generic:  further modifications for 'int' vs 'const int', needed for icc 19.0.0.
-    * bug fix in user_def1.m4: compile-time GxB_Semring_define with terminal monoids
+    * _Generic:  further modifications for 'int' vs 'const int', needed for
+        icc 19.0.0.
+    * bug fix in user_def1.m4: compile-time GxB_Semring_define with terminal
+        monoids
 
 Version 2.3.0, Feb 25, 2019
 

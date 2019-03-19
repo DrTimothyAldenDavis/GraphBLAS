@@ -6,7 +6,7 @@ function test14
 
 fprintf ('\nreduce to column and scalar\n') ;
 
-[mult_ops unary_ops add_ops classes semirings] = GB_spec_opsall ;
+[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
 
 rng ('default') ;
 

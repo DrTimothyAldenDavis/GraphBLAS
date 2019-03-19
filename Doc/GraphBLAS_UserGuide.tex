@@ -104,6 +104,10 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
+\item Version 2.4 (TODO 2019):
+The \verb'RDIV' and \verb'RMINUS' operators are added, which are
+defined as $f(x,y)=y/x$ and $f(x,y)=y-x$, respectively.
+
 \item Version 2.3 (Feb 2019) improves the performance of many GraphBLAS
 operations, including an early-exit for monoids.  These changes have a
 significant impact on breadth-first-search (a performance bug was also fixed in
@@ -305,17 +309,18 @@ The user application can create any semiring based on any types, monoids,
 and multiply operators, as long these few rules are followed.
 
 Just considering built-in types and operators, GraphBLAS can perform
-\verb'C=A*B' in 960 unique semirings.  With typecasting, any of these 960
+\verb'C=A*B' in 1040 unique semirings.  With typecasting, any of these 1040
 semirings can be applied to matrices \verb'C', \verb'A', and \verb'B' of any of
-the 11 types, in any combination.  This gives $960 \times 11^3 = 1,277,760$
+the 11 types, in any combination.  This gives $1040 \times 11^3 = 1,384,240$
 possible kinds of sparse matrix multiplication supported by GraphBLAS, and this
 is counting just built-in types and operators.  By contrast, MATLAB provides
 just two semirings for its sparse matrix multiplication \verb'C=A*B':
 plus-times-double and plus-times-complex, not counting the typecasting that
 MATLAB does when multiplying a real matrix times a complex matrix.  All of the
-1.3 million forms of matrix multiplication methods in SuiteSparse:GraphBLAS are
+1.4 million forms of matrix multiplication methods in SuiteSparse:GraphBLAS are
 typically just as fast as computing \verb'C=A*B' in MATLAB using its own native
-sparse matrix multiplication methods, and sometimes faster.
+sparse matrix multiplication methods, and often faster when parallelism can
+be effectively used.
 
 A monoid can also be used in a reduction operation, like \verb's=sum(A)' in
 MATLAB.  MATLAB provides the plus, times, min, and max reductions of a real or
@@ -1288,8 +1293,8 @@ back to GraphBLAS which will do the work.  Assigning one handle to another
 is valid but it does not make a copy of the underlying object.
 
 GraphBLAS provides 11 built-in types and 157 built-in operators;
-SuiteSparse:GraphBLAS adds 99 additional built-in operators.  With these,
-44 unique monoids and 960 unique semirings can be constructed.
+SuiteSparse:GraphBLAS adds 121 additional built-in operators.  With these,
+44 unique monoids and 1040 unique semirings can be constructed.
 
 \begin{spec}
 {\bf SPEC:} SuiteSparse:GraphBLAS predefines all unique monoids and semirings
@@ -1738,9 +1743,9 @@ It does nothing at all if passed a built-in unary operator.
 A binary operator is a scalar function of the form $z=f(x,y)$.  The types of
 $z$, $x$, and $y$ need not be the same.
 
-SuiteSparse:GraphBLAS has 17 kinds of built-in binary operators of the form $T
+SuiteSparse:GraphBLAS has 19 kinds of built-in binary operators of the form $T
 \times T \rightarrow T$ that work on all 11 of the built-in types, $T$, for a
-total of 187 binary operators of this form.  These are listed in the table
+total of 209 binary operators of this form.  These are listed in the table
 below.  For each of these operators, all domains (types) of the three operands
 are the same.  The six comparison operators and three logical operators all
 return a result one for true and zero for false, in the same domain $T$ as
@@ -1754,15 +1759,17 @@ operators for creating semirings with non-Boolean monoids.
 GraphBLAS             & types (domains)            & expression      & description \\
 name                  &                            & $z=f(x,y)$      & \\
 \hline
-% 8 numeric TxT->T
+% 10 numeric TxT->T
 \verb'GrB_FIRST_'$T$  & $T \times T \rightarrow T$ & $z = x$         & first argument \\
 \verb'GrB_SECOND_'$T$ & $T \times T \rightarrow T$ & $z = y$         & second argument \\
 \verb'GrB_MIN_'$T$    & $T \times T \rightarrow T$ & $z = \min(x,y)$ & minimum \\
 \verb'GrB_MAX_'$T$    & $T \times T \rightarrow T$ & $z = \max(x,y)$ & maximum \\
 \verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & addition \\
 \verb'GrB_MINUS_'$T$  & $T \times T \rightarrow T$ & $z = x-y$       & subtraction \\
+\verb'GxB_RMINUS_'$T$ & $T \times T \rightarrow T$ & $z = y-x$       & reverse subtraction \\
 \verb'GrB_TIMES_'$T$  & $T \times T \rightarrow T$ & $z = xy$        & multiplication \\
 \verb'GrB_DIV_'$T$    & $T \times T \rightarrow T$ & $z = x/y$       & division \\
+\verb'GxB_RDIV_'$T$   & $T \times T \rightarrow T$ & $z = y/x$       & reverse division \\
 \hline
 % 6 new TxT->T comparison
 \verb'GxB_ISEQ_'$T$   & $T \times T \rightarrow T$ & $z = (x == y)$  & equal \\
@@ -1782,7 +1789,11 @@ name                  &                            & $z=f(x,y)$      & \\
 \vspace{0.2in}
 
 \begin{spec}
-{\bf SPEC:} The \verb'GxB_IS*_'$T$ operators and the Boolean \verb'GxB_L*_'$T$ are extensions to the spec.
+{\bf SPEC:} The \verb'GxB_IS*_'$T$
+\verb'GxB_RMINUS_'$T$,
+and
+\verb'GxB_RDIV_'$T$
+operators, and the Boolean \verb'GxB_L*_'$T$ are extensions to the spec.
 \end{spec}
 
 Another set of six kinds of built-in comparison operators have the form $T
@@ -1837,10 +1848,10 @@ name                  &                            & $z=f(x,y)$      & \\
 }
 \vspace{0.2in}
 
-This gives a total of 256 built-in binary operators listed in the tables above:
-187 of the form $T \times T \rightarrow T$, 66 of the form $T \times T
-\rightarrow $ \verb'bool', and three purely Boolean.  There are 240 unique
-operators since 16 of the 26 Boolean operators are redundant.
+This gives a total of 278 built-in binary operators listed in the tables above:
+209 of the form $T \times T \rightarrow T$, 66 of the form $T \times T
+\rightarrow $ \verb'bool', and three purely Boolean.  There are 260 unique
+operators since 18 of the 28 Boolean operators are redundant.
 
 There are two sets of built-in comparison operators in SuiteSparse:Graph\-BLAS,
 but they are not redundant.  They are identical except for the type (domain) of
@@ -2558,7 +2569,7 @@ A {\em semiring} defines all the operators required to define the
 multiplication of two sparse matrices in GraphBLAS, ${\bf C=AB}$.  The ``add''
 operator is a commutative and associative monoid, and the binary ``multiply''
 operator defines a function $z=fmult(x,y)$ where the type of $z$ matches the
-exactly with the monoid type.  SuiteSparse:GraphBLAS includes 960
+exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1040
 predefined built-in semirings, which are all those that can be constructed
 from built-in types and operators.  The next sections define the following
 methods for the \verb'GrB_Semiring' object:
@@ -2598,22 +2609,22 @@ additive monoid and \verb'multiply' being the binary ``multiply'' operator.  In
 addition to the standard error cases, the function returns
 \verb'GrB_DOMAIN_MISMATCH' if the output (\verb'ztype') domain of
 \verb'multiply' does not match the domain of the \verb'add' monoid.  Using
-built-in types and operators, 960 unique semirings can be built.  This count
+built-in types and operators, 1040 unique semirings can be built.  This count
 excludes redundant Boolean operators (for example \verb'GrB_TIMES_BOOL' and
 \verb'GrB_LAND' are different operators but they are redundant since they
 always return the same result).
 
 \vspace{-0.05in}
 \begin{itemize}
-\item 680 semirings with a multiplier $T \times T \rightarrow T$ where $T$ is
+\item 760 semirings with a multiplier $T \times T \rightarrow T$ where $T$ is
     non-Boolean, from the complete cross product of:
 
     \vspace{-0.05in}
     \begin{itemize}
     \item 4 add monoids (\verb'MIN', \verb'MAX', \verb'PLUS', \verb'TIMES')
-    \item 17 multiply operators
+    \item 19 multiply operators
     (\verb'FIRST', \verb'SECOND', \verb'MIN', \verb'MAX',
-    \verb'PLUS', \verb'MINUS', \verb'TIMES', \verb'DIV',
+    \verb'PLUS', \verb'MINUS', \verb'RMINUS', \verb'TIMES', \verb'DIV', \verb'RDIV',
     \verb'ISEQ', \verb'ISNE', \verb'ISGT',
     \verb'ISLT', \verb'ISGE', \verb'ISLE',
     \verb'LOR', \verb'LAND', \verb'LXOR').
@@ -2647,7 +2658,7 @@ always return the same result).
 \end{itemize}
 
 \vspace{-0.05in}
-SuiteSparse:GraphBLAS pre-defines all 960 unique semirings that can be
+SuiteSparse:GraphBLAS pre-defines all 1040 unique semirings that can be
 constructed from built-in types and operators, as an extension to the spec.
 The naming convention is \verb'GxB_add_mult_type', where \verb'add' is the
 operator of the addititive monoid, \verb'mult' is the multiply operator, and

@@ -16,32 +16,34 @@ fprintf (f, '// This file has been automatically generated from Generator/GB_AxB
 fprintf (f, '\n\n') ;
 fclose (f) ;
 
-axb_template ('first',  1, 'x') ;
-axb_template ('second', 1, 'y') ;
+axb_template ('first',  1, 'xarg') ;
+axb_template ('second', 1, 'yarg') ;
 
-axb_template ('min',    0, 'GB_IMIN(x,y)', 'fminf(x,y)', 'fmin(x,y)'      ) ;
-axb_template ('max',    0, 'GB_IMAX(x,y)', 'fmaxf(x,y)', 'fmax(x,y)'      ) ;
-axb_template ('plus',   0, 'x + y'                                        ) ;
-axb_template ('minus',  0, 'x - y'       ,  [ ]        , [ ]        , true) ;
-axb_template ('times',  0, 'x * y'                                        ) ;
-axb_template ('div',    0, 'GB_IDIV(x,y)', 'x / y'     , [ ]        , true) ;
+axb_template ('min',    0, 'GB_IMIN(xarg,yarg)', 'fminf(xarg,yarg)', 'fmin(xarg,yarg)') ;
+axb_template ('max',    0, 'GB_IMAX(xarg,yarg)', 'fmaxf(xarg,yarg)', 'fmax(xarg,yarg)') ;
+axb_template ('plus',   0, 'xarg + yarg') ;
+axb_template ('minus',  0, 'xarg - yarg') ;
+axb_template ('rminus', 0, 'yarg - xarg') ;
+axb_template ('times',  0, 'xarg * yarg') ;
+axb_template ('div',    0, 'GB_IDIV(xarg,yarg)', 'xarg / yarg') ;
+axb_template ('rdiv',   0, 'GB_IDIV(yarg,xarg)', 'yarg / xarg') ;
 
-axb_template ('iseq',   0, 'x == y') ;
-axb_template ('isne',   0, 'x != y') ;
-axb_template ('isgt',   0, 'x > y' ) ;
-axb_template ('islt',   0, 'x < y' ) ;
-axb_template ('isge',   0, 'x >= y') ;
-axb_template ('isle',   0, 'x <= y') ;
+axb_template ('iseq',   0, 'xarg == yarg') ;
+axb_template ('isne',   0, 'xarg != yarg') ;
+axb_template ('isgt',   0, 'xarg > yarg' ) ;
+axb_template ('islt',   0, 'xarg < yarg' ) ;
+axb_template ('isge',   0, 'xarg >= yarg') ;
+axb_template ('isle',   0, 'xarg <= yarg') ;
 
-axb_compare_template ('eq',     1, 'x == y') ;
-axb_compare_template ('ne',     0, 'x != y') ;
-axb_compare_template ('gt',     1, 'x > y' ) ;
-axb_compare_template ('lt',     1, 'x < y' ) ;
-axb_compare_template ('ge',     1, 'x >= y') ;
-axb_compare_template ('le',     1, 'x <= y') ;
+axb_compare_template ('eq',     1, 'xarg == yarg') ;
+axb_compare_template ('ne',     0, 'xarg != yarg') ;
+axb_compare_template ('gt',     1, 'xarg > yarg' ) ;
+axb_compare_template ('lt',     1, 'xarg < yarg' ) ;
+axb_compare_template ('ge',     1, 'xarg >= yarg') ;
+axb_compare_template ('le',     1, 'xarg <= yarg') ;
 
-axb_template ('lor',    1, '(x != 0) || (y != 0)') ;
-axb_template ('land',   1, '(x != 0) && (y != 0)') ;
-axb_template ('lxor',   1, '(x != 0) != (y != 0)') ;
+axb_template ('lor',    1, '(xarg != 0) || (yarg != 0)') ;
+axb_template ('land',   1, '(xarg != 0) && (yarg != 0)') ;
+axb_template ('lxor',   1, '(xarg != 0) != (yarg != 0)') ;
 
-
+fprintf ('\n') ;

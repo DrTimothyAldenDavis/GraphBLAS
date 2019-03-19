@@ -6,9 +6,7 @@ function test25
 
 fprintf ('\nquick GxB_select tests\n') ;
 
-[mult_ops unary_ops add_ops classes semirings] = GB_spec_opsall ;
-
-select_ops = { 'tril', 'triu', 'diag', 'offdiag', 'nonzero' } ;
+[~, ~, ~, classes, ~, select_ops] = GB_spec_opsall ;
 
 rng ('default') ;
 

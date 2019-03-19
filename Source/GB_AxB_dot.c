@@ -173,7 +173,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
         info = GB_AdotB (add,mult,xyname) (Chandle, M, Mask_comp,       \
-            A, A_is_pattern, B, B_is_pattern, flipxy) ;                 \
+            A, A_is_pattern, B, B_is_pattern) ;                         \
         done = true ;                                                   \
     }                                                                   \
     break ;
@@ -268,7 +268,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         char aki [aki_size] ;
         char bkj [bkj_size] ;
 
-        char zwork [csize] ;
+        char t [csize] ;
 
         GB_void *restrict Cx = C->x ;
         GB_void *restrict cij = Cx ;        // advances through each entry of C
@@ -306,38 +306,26 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         #define GB_GETB(bkj,Bx,pB,bsize)                                \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
-        #define GB_MULTOP(z,x,y) fmult (z, x, y) ;
-
-        // zwork = aki*bkj
+        // t = aki*bkj
         #define GB_DOT_MULT(aki,bkj)                                    \
-        {                                                               \
-            GB_MULTIPLY (zwork, aki, bkj) ;                             \
-        }
+            GB_MULTIPLY (t, aki, bkj) ;
 
-        // cij += zwork
+        // cij += t
         #define GB_DOT_ADD                                              \
-        {                                                               \
-            /* cij = cij + zwork */                                     \
-            fadd (cij, cij, zwork) ;  /* (z x alias) */                 \
-        }
+            fadd (cij, cij, t) ;
 
         // break if cij reaches the terminal value
         #define GB_DOT_TERMINAL(cij)                                    \
-        {                                                               \
             if (terminal != NULL && memcmp (cij, terminal, csize) == 0) \
             {                                                           \
                 break ;                                                 \
-            }                                                           \
-        }
+            }
 
-        // cij = zwork
-        #define GB_DOT_COPY    memcpy (cij, zwork, csize) ;
+        // cij = t
+        #define GB_DOT_COPY    memcpy (cij, t, csize) ;
 
         // C->x has moved so the pointer to cij needs to be recomputed
-        #define GB_DOT_REACQUIRE                                        \
-        {                                                               \
-            cij = Cx + cnz * csize ;                                    \
-        }
+        #define GB_DOT_REACQUIRE cij = Cx + cnz * csize ;
 
         // cij = identity
         #define GB_DOT_CLEAR   memcpy (cij, identity, csize) ;
@@ -345,10 +333,21 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         // save the value of C(i,j) by advancing cij pointer to next value
         #define GB_DOT_SAVE    cij += csize ;
 
-        #define GB_HANDLE_FLIPXY true
         #define GB_XTYPE GB_void
         #define GB_YTYPE GB_void
-        #include "GB_AxB_dot_flipxy.c"
+
+        if (flipxy)
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
+            #include "GB_AxB_dot_meta.c"
+            #undef GB_MULTIPLY
+        }
+        else
+        { 
+            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            #include "GB_AxB_dot_meta.c"
+            #undef GB_MULTIPLY
+        }
     }
 
     //--------------------------------------------------------------------------

@@ -143,7 +143,7 @@ void mexFunction
 
     GrB_free (&m) ;
 
-    int16_t id0 = GB_MINUS_INF (id0) ;
+    int16_t id0 = INT16_MIN ;
 
     GrB_Monoid_new (&m, GrB_MAX_INT16, id0) ;
     GB_check (m, "max int16 monoid", GxB_COMPLETE) ;

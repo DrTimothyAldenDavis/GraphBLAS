@@ -4,6 +4,8 @@ function test20(fulltest)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+[mult_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
+
 tic
 
 if (nargin < 1)
@@ -26,10 +28,8 @@ kk = 1 ;
 % accumops = 0 ;                        % test with no accum
 aa = 1 ;
 
-[mult_ops unary_ops add_ops classes] = GB_spec_opsall ;
-
 if (n_semirings_max == 1)
-    k1_list = [ 7 ] ;   % times
+    k1_list = [ 8 ] ;   % times
     k2_list = [ 3 ] ;   % plus
     k3_list = [ 11 ] ;  % double
 else

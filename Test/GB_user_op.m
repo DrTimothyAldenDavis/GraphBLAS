@@ -36,6 +36,8 @@ switch op
         z = x+y ;
     case 'minus'
         z = x-y ;
+    case 'rminus'
+        z = y-x ;
     case 'times'
         z = x.*y ;
     case 'div'
@@ -43,6 +45,12 @@ switch op
         % GB_mex_op mexFunction does.  So if z has any of them, replace them
         % with a complex Nan, just to make sure the tests pass...
         z = x./y ;
+        if (any (isnan (z)))
+            z (isnan (z)) = complex (nan,nan) ;
+        end
+        tol = true ;
+    case 'rdiv'
+        z = y./x ;
         if (any (isnan (z)))
             z (isnan (z)) = complex (nan,nan) ;
         end

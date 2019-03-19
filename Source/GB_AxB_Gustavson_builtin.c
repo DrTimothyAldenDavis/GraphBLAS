@@ -259,7 +259,7 @@ GrB_Info GB_AxB_Gustavson_builtin
     #define GB_AxB_WORKER(add,mult,xyname)                      \
     {                                                           \
         info = GB_AXB (add,mult,xyname) (C, M,                  \
-            A, A_is_pattern, B, B_is_pattern, flipxy, Sauna) ;  \
+            A, A_is_pattern, B, B_is_pattern, Sauna) ;          \
         (*done) = true ;                                        \
     }                                                           \
     break ;

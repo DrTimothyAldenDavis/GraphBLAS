@@ -60,7 +60,7 @@ void GB_cast_array              // typecast an array
         for (int64_t k = 0 ; k < n ; k++)   \
         {                                   \
             /* c [k] = a [k] ; */           \
-            GB_CAST (c [k], a [k]) ;        \
+            GB_CASTING (c [k], a [k]) ;     \
         }                                   \
     }                                       \
     break ;

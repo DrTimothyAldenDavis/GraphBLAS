@@ -4,11 +4,11 @@ function test18(fulltest)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+[bin_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;
+
 if (nargin < 1)
     fulltest = 0 ;
 end
-
-[bin_ops unary_ops add_ops classes] = GB_spec_opsall ;
 
 if (fulltest)
     fprintf ('--------------lengthy tests of GrB_eWiseAdd and eWiseMult\n') ;

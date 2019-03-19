@@ -5,6 +5,8 @@ function test74
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+[mult_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
+
 if (nargin < 1)
     fulltest = 1 ;
 end
@@ -16,8 +18,6 @@ else
     fprintf ('quick test of GrB_mxm (dot product method)\n') ;
     n_semirings_max = 1 ;
 end
-
-[mult_ops unary_ops add_ops classes] = GB_spec_opsall ;
 
 dnn = struct ;
 dtn = struct ( 'inp0', 'tran' ) ;

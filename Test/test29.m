@@ -4,9 +4,9 @@ function test29
 %  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 %  http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\n------------------------- GrB_reduce with zombies\n') ;
+[~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
 
-[accum_ops unary_ops add_ops classes] = GB_spec_opsall ;
+fprintf ('\n------------------------- GrB_reduce with zombies\n') ;
 
 for m = [1 5 10]
     for n = [1 5 10]

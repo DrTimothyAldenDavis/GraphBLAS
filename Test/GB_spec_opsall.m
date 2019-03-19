@@ -7,15 +7,17 @@ function [mult_ops unary_ops add_ops classes semirings selops] = GB_spec_opsall
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 mult_ops = {
-% 8 operators where x,y,z are all the same class
+% 10 operators where x,y,z are all the same class
 'first',     % z = x
 'second',    % z = y
 'min',       % z = min(x,y)
 'max',       % z = max(x,y)
 'plus',      % z = x + y
 'minus',     % z = x - y
+'rminus',    % z = y - x
 'times',     % z = x * y
 'div',       % z = x / y
+'rdiv',      % z = y / x
 % 6 comparison operators where x,y,z are all the same class
 'iseq',      % z = (x == y)
 'isne',      % z = (x != y)
@@ -88,12 +90,13 @@ nonbool = {
 'single'
 'double' } ;
 
-% create all 960 unique semirings using built-in operators
+% create all 1040 unique semirings using built-in operators
 
 n = 0 ;
 
-% 680: x,y,z all nonboolean:  (8+6+3)*4*10
-for mult = {'first', 'second', 'min', 'max', 'plus', 'minus', 'times', 'div',...
+% 760: x,y,z all nonboolean:  (10+6+3)*4*10
+for mult = {'first', 'second', 'min', 'max', 'plus', 'minus', 'rminus', ...
+            'times', 'div', 'rdiv', ...
             'iseq', 'isne', 'isgt', 'islt', 'isge', 'isle', ...
             'or', 'and', 'xor', }
     for add = { 'min', 'max', 'plus', 'times' }

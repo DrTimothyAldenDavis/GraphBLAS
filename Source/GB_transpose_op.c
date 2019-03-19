@@ -83,11 +83,11 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
             {                                                   \
                 int64_t q = Rp [Ai [p]]++ ;                     \
                 Ri [q] = j ;                                    \
-                /* x = (ztype) ax [p], type casting */          \
-                ztype x ;                                       \
-                GB_CAST (x, ax [p]) ;                           \
+                /* z = (ztype) ax [p], type casting */          \
+                ztype z ;                                       \
+                GB_CASTING (z, ax [p]) ;                        \
                 /* apply the unary operator */                  \
-                rx [q] = GB_OP (x) ;                            \
+                rx [q] = GB_OP (z) ;                            \
             }                                                   \
         }                                                       \
         return ;                                                \
@@ -97,7 +97,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-    // If GB_COMPACT is defined, the switch factory is disabled and all
+    // If GBCOMPACT is defined, the switch factory is disabled and all
     // work is done by the generic worker.  The compiled code will be more
     // compact, but 3 to 4 times slower.
 
@@ -117,6 +117,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
 
                 #define GB_BOP(x) true
                 #define GB_IOP(x) 1
+                #define GB_UOP(x) 1
                 #define GB_FOP(x) 1
                 #define GB_DOP(x) 1
                 #include "GB_2type_template.c"
@@ -126,6 +127,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
 
                 #define GB_BOP(x) x
                 #define GB_IOP(x) x
+                #define GB_UOP(x) x
                 #define GB_FOP(x) x
                 #define GB_DOP(x) x
                 #include "GB_2type_template.c"
@@ -135,6 +137,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
 
                 #define GB_BOP(x)  x
                 #define GB_IOP(x) -x
+                #define GB_UOP(x) -x
                 #define GB_FOP(x) -x
                 #define GB_DOP(x) -x
                 #include "GB_2type_template.c"
@@ -144,6 +147,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
 
                 #define GB_BOP(x) x
                 #define GB_IOP(x) GB_IABS(x)
+                #define GB_UOP(x) x
                 #define GB_FOP(x) fabsf(x)
                 #define GB_DOP(x) fabs(x)
                 #include "GB_2type_template.c"
@@ -153,7 +157,8 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
 
                 // see Source/GB.h discussion on boolean and integer division
                 #define GB_BOP(x) true
-                #define GB_IOP(x) GB_IMINV(x)
+                #define GB_IOP(x) GB_IMINV_SIGNED(x,GB_BITS)
+                #define GB_UOP(x) GB_IMINV_UNSIGNED(x,GB_BITS)
                 #define GB_FOP(x) 1./x
                 #define GB_DOP(x) 1./x
                 #include "GB_2type_template.c"
@@ -163,6 +168,7 @@ void GB_transpose_op        // transpose and apply an operator to a matrix
 
                 #define GB_BOP(x) !x
                 #define GB_IOP(x) (!(x != 0))
+                #define GB_UOP(x) (!(x != 0))
                 #define GB_FOP(x) (!(x != 0))
                 #define GB_DOP(x) (!(x != 0))
                 #include "GB_2type_template.c"

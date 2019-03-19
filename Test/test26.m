@@ -6,7 +6,7 @@ function test26(longtests)
 
 fprintf ('\nperformance of GxB_select\n') ;
 
-[mult_ops unary_ops add_ops classes semirings select_ops] = GB_spec_opsall ;
+[~, ~, ~, ~, ~, select_ops] = GB_spec_opsall ;
 
 if (nargin < 1)
     longtests = 0 ;
