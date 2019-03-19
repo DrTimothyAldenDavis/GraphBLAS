@@ -105,11 +105,12 @@
             pA_end = Ap [k+1] ;
             #endif
 
-            for ( ; pA < pA_end ; pA++)
+            #pragma omp simd
+            for ( ; pA < pA_end ; pA++, cnz++)
             { 
                 int64_t i = Ai [pA] ;
                 // C(i,j) is nonzero
-                Ci [cnz++] = i ;
+                Ci [cnz] = i ;
             }
 
         }
@@ -222,6 +223,7 @@
             if (len == cvlen)
             {
                 // no need to sort C(:,j) if dense; just recreate it
+                #pragma omp simd
                 for (int64_t pC = cnz_last, i = 0 ; pC < cnz ; pC++, i++)
                 { 
                     Ci [pC] = i ;

@@ -168,23 +168,14 @@
             // Sauna_Work += A(:,k) * B(k,j)
             //------------------------------------------------------------------
 
-            #ifdef GB_BUILTIN
-                #pragma omp simd
-                for ( ; pA < pA_end ; pA++)
-                { 
-                    // Sauna_Work [i] += A(i,k) * B(k,j)
-                    GB_MULTADD (GB_SAUNA_WORK (Ai [pA]), GB_AX (pA), bkj) ;
-                }
-            #else
-                for ( ; pA < pA_end ; pA++)
-                { 
-                    // Sauna_Work [i] += A(i,k) * B(k,j)
-                    int64_t i = Ai [pA] ;
-                    GB_GETA (aik, Ax, pA) ;
-                    GB_MULTADD (GB_SAUNA_WORK (i), aik, bkj) ;
-                }
-            #endif
-
+            #pragma omp simd
+            for ( ; pA < pA_end ; pA++)
+            { 
+                // Sauna_Work [i] += A(i,k) * B(k,j)
+                int64_t i = Ai [pA] ;
+                GB_GETA (aik, Ax, pA) ;
+                GB_MULTADD (GB_SAUNA_WORK (i), aik, bkj) ;
+            }
         }
 
         //----------------------------------------------------------------------
