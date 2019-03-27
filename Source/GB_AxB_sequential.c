@@ -62,6 +62,13 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
         ASSERT (A->vlen == B->vlen) ;
         return (GB_AxB_dot (Chandle, M, Mask_comp, A, B, semiring, flipxy,
             mask_applied)) ;
+
+        // testing dot2 with one thread
+//      GrB_Matrix Aslice [1] ;
+//      Aslice [0] = A ;
+//      return (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B,
+//              semiring, flipxy, mask_applied, 1, NULL)) ;
+
     }
     else
     {

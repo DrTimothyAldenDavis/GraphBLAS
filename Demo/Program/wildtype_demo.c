@@ -155,6 +155,10 @@ int main (void)
         GxB_IMPLEMENTATION_MINOR, GxB_IMPLEMENTATION_SUB, GxB_DATE, GxB_ABOUT,
         GxB_LICENSE, GxB_MAJOR, GxB_MINOR, GxB_SUB, GxB_SPEC_DATE, GxB_SPEC) ;
 
+    int nthreads_max ;
+    GxB_get (GxB_NTHREADS, &nthreads_max) ;
+    fprintf (stderr, "max # of threads used internally: %d\n", nthreads_max) ;
+    
     // create the WildType
     GrB_Type_new (&WildType, sizeof (wildtype)) ;
 

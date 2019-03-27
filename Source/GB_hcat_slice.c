@@ -28,31 +28,31 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT (Cslice != NULL) ;
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        ASSERT_OK (GB_check (Cslice [t], "a slice of C", GB0)) ;
-        ASSERT (!GB_PENDING (Cslice [t])) ;
-        ASSERT (!GB_ZOMBIES (Cslice [t])) ;
-        ASSERT ((Cslice [t])->is_hyper) ;
-        // each Cslice [t] is constructed as its own matrix, with Cslice [t] =
-        // A * Bslice [t].  It is not a slice of an other matrix, so Cslice
-        // [t]->is_slice is false.
-        ASSERT (!(Cslice [t])->is_slice) ;
-        ASSERT ((Cslice [t])->type == (Cslice [0])->type) ;
-        ASSERT ((Cslice [t])->vlen == (Cslice [0])->vlen) ;
-        ASSERT ((Cslice [t])->vdim == (Cslice [0])->vdim) ;
+        ASSERT_OK (GB_check (Cslice [tid], "a slice of C", GB0)) ;
+        ASSERT (!GB_PENDING (Cslice [tid])) ;
+        ASSERT (!GB_ZOMBIES (Cslice [tid])) ;
+        ASSERT ((Cslice [tid])->is_hyper) ;
+        // each Cslice [tid] is constructed as its own matrix, with Cslice
+        // [tid] = A * Bslice [tid].  It is not a slice of an other matrix, so
+        // Cslice [tid]->is_slice is false.
+        ASSERT (!(Cslice [tid])->is_slice) ;
+        ASSERT ((Cslice [tid])->type == (Cslice [0])->type) ;
+        ASSERT ((Cslice [tid])->vlen == (Cslice [0])->vlen) ;
+        ASSERT ((Cslice [tid])->vdim == (Cslice [0])->vdim) ;
     }
 
     //--------------------------------------------------------------------------
     // find the size and type of C
     //--------------------------------------------------------------------------
 
-    // Let cnz_slice [t] be the number of entries in Cslice [t], and let
-    // cnvec_slice [t] be the number vectors in Cslice [t].  Then Cnzs and
+    // Let cnz_slice [tid] be the number of entries in Cslice [tid], and let
+    // cnvec_slice [tid] be the number vectors in Cslice [tid].  Then Cnzs and
     // Cnvecs are cumulative sums of cnz_slice and cnvec_slice, respectively:
 
-    // Cnzs   [t] = sum of cnz_slice   [0:t-1]
-    // Cnvecs [t] = sum of cnvec_slice [0:t-1]
+    // Cnzs   [tid] = sum of cnz_slice   [0:tid-1]
+    // Cnvecs [tid] = sum of cnvec_slice [0:tid-1]
 
     // both arrays are size nthreads+1.  Thus, both Cnzs [0] and Cnvecs [0] are
     // zero, and their last entries are the total # entries and vectors in C,
@@ -71,15 +71,15 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     int64_t cnvec_nonempty = 0 ;
 
     // this for loop does not need to be parallel:
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
         // compute the cumulative sum of the # entries and # vectors
-        Cnzs   [t] = cnz ;
-        Cnvecs [t] = cnvec ;
-        cnz   += GB_NNZ (Cslice [t]) ;
-        cnvec += (Cslice [t])->nvec ;
+        Cnzs   [tid] = cnz ;
+        Cnvecs [tid] = cnvec ;
+        cnz   += GB_NNZ (Cslice [tid]) ;
+        cnvec += (Cslice [tid])->nvec ;
         // also sum the total number of non-empty vectors in all the slices
-        cnvec_nonempty += (Cslice [t])->nvec_nonempty ;
+        cnvec_nonempty += (Cslice [tid])->nvec_nonempty ;
     }
 
     Cnzs   [nthreads] = cnz ;       // total # entries in C
@@ -116,19 +116,19 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(nthreads)
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        // get the Cslice [t] and its position in C
-        int64_t *restrict Csliceh = (Cslice [t])->h ;
-        int64_t *restrict Cslicep = (Cslice [t])->p ;
-        int64_t *restrict Cslicei = (Cslice [t])->i ;
-        GB_void *restrict Cslicex = (Cslice [t])->x ;
-        int64_t cnz         = Cnzs   [t] ;
-        int64_t cnz_slice   = Cnzs   [t+1] - cnz ;
-        int64_t cnvec       = Cnvecs [t] ;
-        int64_t cnvec_slice = Cnvecs [t+1] - cnvec ;
+        // get the Cslice [tid] and its position in C
+        int64_t *restrict Csliceh = (Cslice [tid])->h ;
+        int64_t *restrict Cslicep = (Cslice [tid])->p ;
+        int64_t *restrict Cslicei = (Cslice [tid])->i ;
+        GB_void *restrict Cslicex = (Cslice [tid])->x ;
+        int64_t cnz         = Cnzs   [tid] ;
+        int64_t cnz_slice   = Cnzs   [tid+1] - cnz ;
+        int64_t cnvec       = Cnvecs [tid] ;
+        int64_t cnvec_slice = Cnvecs [tid+1] - cnvec ;
 
-        // copy the row indices and values of Cslice [t] into Ci and Cx
+        // copy the row indices and values of Cslice [tid] into Ci and Cx
         memcpy (Ci + cnz        , Cslicei, cnz_slice * sizeof (int64_t)) ;
         memcpy (Cx + cnz * csize, Cslicex, cnz_slice * csize) ;
 

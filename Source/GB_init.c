@@ -103,7 +103,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
-    // Don't log the error for GrB_error, since it might not be initialized.
+    // Do not log the error for GrB_error, since it might not be initialized.
 
     if (GB_Global_GrB_init_called_get ( ))
     { 
@@ -212,10 +212,10 @@ GrB_Info GB_init            // start up GraphBLAS
     // clear Sauna workspaces
     //--------------------------------------------------------------------------
 
-    for (int t = 0 ; t < GxB_NTHREADS_MAX ; t++)
+    for (int tid = 0 ; tid < GxB_NTHREADS_MAX ; tid++)
     { 
-        GB_Global_Saunas_set (t, NULL) ;
-        GB_Global_Sauna_in_use_set (t, false) ;
+        GB_Global_Saunas_set (tid, NULL) ;
+        GB_Global_Sauna_in_use_set (tid, false) ;
     }
 
     //--------------------------------------------------------------------------

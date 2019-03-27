@@ -7,10 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: this could be done in parallel, but the parallelism will be
-// handled outside this code, in GB_AxB_parallel.  This work is done by a
-// single thread.
-
 {
 
     //--------------------------------------------------------------------------
@@ -51,6 +47,21 @@
         int64_t bjnz = pB_end - pB_start ;
         // no work to do if B(:,j) is empty
         if (bjnz == 0) continue ;
+
+        //----------------------------------------------------------------------
+        // phase 2 of 2: get the range of entries in C(:,j) to compute
+        //----------------------------------------------------------------------
+
+        #if defined ( GB_PHASE_2_OF_2 )
+        // this thread computes Ci and Cx [cnz:cnz_last]
+        int64_t cnz = Cp [Iter_k] +
+            ((C_count_start == NULL) ? 0 : C_count_start [Iter_k]) ;
+        int64_t cnz_last = (C_count_end == NULL) ?
+            (Cp [Iter_k+1] - 1) : (Cp [Iter_k] + C_count_end [Iter_k] - 1) ;
+
+        if (cnz > cnz_last) continue ;
+        GB_CIJ_REACQUIRE (cij, cnz) ;
+        #endif
 
         //----------------------------------------------------------------------
         // get M(:,j)
@@ -174,19 +185,23 @@
         }
 
         //----------------------------------------------------------------------
-        // log the end of C(:,j)
+        // single phase: log the end of C(:,j)
         //----------------------------------------------------------------------
 
+        #if defined ( GB_SINGLE_PHASE )
         // cannot fail since C->plen is at the upper bound: # of non-empty
         // columns of B
         info = GB_jappend (C, j, &jlast, cnz, &cnz_last, NULL) ;
         ASSERT (info == GrB_SUCCESS) ;
+        #endif
     }
 
     //--------------------------------------------------------------------------
-    // finalize C
+    // single phase: finalize C
     //--------------------------------------------------------------------------
 
+    #if defined ( GB_SINGLE_PHASE )
     GB_jwrapup (C, jlast, cnz) ;
+    #endif
 }
 

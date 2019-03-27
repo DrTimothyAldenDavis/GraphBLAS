@@ -18,8 +18,6 @@
 // The function never accessed the global matrix queue, and thus it
 // cannot return GrB_PANIC.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix

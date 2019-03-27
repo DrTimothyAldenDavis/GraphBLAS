@@ -70,7 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Mar 19, 2019 (DRAFT)"
+#define GxB_DATE "Mar 20, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 2
 #define GxB_IMPLEMENTATION_MINOR 4
 #define GxB_IMPLEMENTATION_SUB   0
@@ -2774,6 +2774,10 @@ GrB_Info GrB_Matrix_free    // free a matrix
 //          present, very sparse, and not complemented, or when C is tiny.
 //          It is impossibly slow if C is large and the mask is not present,
 //          since it takes Omega(m*n) time if C is m-by-n.
+//
+//      GxB_AxB_DOT2:  same as GxB_AxB_DOT, except that it uses a 2-phase
+//          method.  The first phase is symbolic, and the 2nd phase is
+//          numeric.  This method parallelizes better than GxB_AxB_DOT.
 
 // GxB_NTHREADS is an enumerated value in both the GrB_Desc_Field and the
 // GxB_Option_Field.  It is defined with the same integer value for
@@ -2833,7 +2837,8 @@ typedef enum
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
     GxB_AxB_DOT       = 1003,   // dot product
-//  GxB_AxB_HASH      = 1004,   // hash-based saxpy method (FUTURE)
+    GxB_AxB_DOT2      = 1004,   // dot product
+//  GxB_AxB_HASH      = 1005,   // hash-based saxpy method (FUTURE)
 
     // for GxB_AxB_SLICE only:
     GxB_SLICE_ATROW       = 2001,   // each slice of A' has same # of rows

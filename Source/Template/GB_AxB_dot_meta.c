@@ -7,30 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// This file is #include'd into GB_AxB_dot.c for the generic case, and in the
-// hard-coded semirings, Generated/GB_AxB__*_*_.c.  It constructs the
-// dot-product variant of sparse matrix multiplication, C=A'*B, without
-// transposing A.
-
-// parallel: not here.
-
 {
-
-    const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
-    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (GB_NOT_ALIASED_3 (C, M, A, B)) ;
-    ASSERT (C->vdim == B->vdim) ;
-    ASSERT (C->vlen == A->vdim) ;
-    ASSERT (A->vlen == B->vlen) ;
 
     //--------------------------------------------------------------------------
     // get A and B
     //--------------------------------------------------------------------------
+
+    #if defined ( GB_PHASE_1_OF_2)
+    ;
+    #else
+    const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
+    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
+    #endif
 
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ap = A->p ;
@@ -45,10 +33,16 @@
     // start the construction of C
     //--------------------------------------------------------------------------
 
+    #if defined ( GB_PHASE_1_OF_2)
+    ;
+    #elif defined ( GB_PHASE_2_OF_2)
+    int64_t *restrict Cp = C->p ;
     int64_t *restrict Ci = C->i ;
-
+    #else
+    int64_t *restrict Ci = C->i ;
     int64_t jlast, cnz, cnz_last ;
     GB_jstartup (C, &jlast, &cnz, &cnz_last) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // C=A'*B, C<M>=A'*B, or C<!M>=A'*B via dot products
@@ -67,9 +61,6 @@
         //----------------------------------------------------------------------
         // get M
         //----------------------------------------------------------------------
-
-        ASSERT (C->vdim == M->vdim) ;
-        ASSERT (C->vlen == M->vlen) ;
 
         const int64_t *restrict Mp = M->p ;
         const int64_t *restrict Mh = M->h ;
@@ -94,3 +85,4 @@
         }
     }
 }
+

@@ -94,7 +94,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
                 GxB_THREAD_WINDOWS ;    // Windows threads not yet supported
                 #elif defined (USER_ANSI_THREADS)
                 GxB_THREAD_ANSI ;       // ANSI C11 threads not yet supported
-                #elif defined (_OPENMP) || defined (USER_OPENMP_THREADS)
+                #elif defined ( _OPENMP ) || defined (USER_OPENMP_THREADS)
                 GxB_THREAD_OPENMP ;
                 #else
                 GxB_THREAD_NONE ;       // GraphBLAS is not thread safe!

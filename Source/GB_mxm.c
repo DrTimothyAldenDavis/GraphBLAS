@@ -115,8 +115,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
         A_transpose, B_transpose, flipxy, &mask_applied, AxB_method,
         &(C->AxB_method_used), Context) ;
 
-    ASSERT_OK (GB_check (C, "C from AxB_meta", GB0)) ;
-
     if (info != GrB_SUCCESS)
     { 
         // out of memory

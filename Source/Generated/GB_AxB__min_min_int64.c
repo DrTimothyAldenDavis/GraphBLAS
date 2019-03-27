@@ -1,7 +1,5 @@
-
-
 //------------------------------------------------------------------------------
-// GB_AxB:  hard-coded C=A*B and C<M>=A*B
+// GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -13,31 +11,29 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__semirings.h"
+#include "GB_AxB__include.h"
 
 // The C=A*B semiring is defined by the following types and operators:
 
 // A*B function (Gustavon):  GB_AgusB__min_min_int64
 // A'*B function (dot):      GB_AdotB__min_min_int64
 // A*B function (heap):      GB_AheapB__min_min_int64
+
 // C type:   int64_t
 // A type:   int64_t
 // B type:   int64_t
-// Multiply: z = GB_IMIN(x,y)
-// Add:      cij = GB_IMIN (cij,z)
-// MultAdd:  cij = GB_IMIN (cij,(GB_IMIN(aik,bkj)))
+
+// Multiply: z = GB_IMIN (aik, bkj)
+// Add:      cij = GB_IMIN (cij, z)
+// MultAdd:  cij = GB_IMIN (cij, GB_IMIN (aik, bkj))
 // Identity: INT64_MAX
 // Terminal: if (cij == INT64_MIN) break ;
-
-#define GB_BUILTIN
 
 #define GB_ATYPE \
     int64_t
 
 #define GB_BTYPE \
     int64_t
-
-#define GB_AX(pA) (Ax [pA])
 
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA) \
@@ -47,37 +43,38 @@
 #define GB_GETB(bkj,Bx,pB) \
     int64_t bkj = Bx [pB]
 
+#define GB_CX(p) Cx [p]
+
 // multiply operator
 #define GB_MULT(z, x, y)        \
-    z = GB_IMIN(x,y) ;
+    z = GB_IMIN (x, y) ;
 
 // multiply-add
 #define GB_MULTADD(z, x, y)     \
-    z = GB_IMIN (z,(GB_IMIN(x,y))) ;
+    z = GB_IMIN (z, GB_IMIN (x, y)) ;
 
 // copy scalar
 #define GB_COPY(z,x) z = x ;
 
+// monoid identity value (Gustavson's method only, with no mask)
 #define GB_IDENTITY \
     INT64_MAX
 
-// break if cij reaches the terminal value
+// break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
     if (cij == INT64_MIN) break ;
 
 // cij is not a pointer but a scalar; nothing to do
-#define GB_CIJ_REACQUIRE(cij) ;
+#define GB_CIJ_REACQUIRE(cij,cnz) ;
 
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij) Cx [cnz] = cij ;
 
+#define GB_SAUNA_WORK(i) Sauna_Work [i]
+
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
 //------------------------------------------------------------------------------
-
-#define GB_SAUNA_WORK(i) Sauna_Work [i]
-
-#define GB_CX(p) Cx [p]
 
 GrB_Info GB_AgusB__min_min_int64
 (
@@ -111,8 +108,33 @@ GrB_Info GB_AdotB__min_min_int64
     int64_t *restrict Cx = C->x ;
     int64_t cij ;
     GrB_Info info = GrB_SUCCESS ;
+    #define GB_SINGLE_PHASE
     #include "GB_AxB_dot_meta.c"
+    #undef GB_SINGLE_PHASE
     return (info) ;
+}
+
+//------------------------------------------------------------------------------
+// C<M>=A'*B, C<!M>=A'*B or C=A'*B: dot product (phase 2)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot2B__min_min_int64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, const bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const int64_t *restrict C_count_start,
+    const int64_t *restrict C_count_end
+)
+{ 
+    GrB_Matrix C = (*Chandle) ;
+    int64_t *restrict Cx = C->x ;
+    int64_t cij ;
+    #define GB_PHASE_2_OF_2
+    #include "GB_AxB_dot_meta.c"
+    #undef GB_PHASE_2_OF_2
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

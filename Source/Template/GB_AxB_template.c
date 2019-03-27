@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_template.c: switch factory for each built-in monoid for C=A*B
+// GB_AxB_template.c: switch factory for C=A*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -19,12 +19,10 @@
 // For all of them, the types of x, y, and z are the same.
 // There are 40 non-boolean monoids and 0 or 4 boolean monoids defined here.
 
-// GB_NO_BOOLEAN is defined for 14 of these multiply operators in the
+// GB_NO_BOOLEAN is defined for 15 of these multiply operators in the
 // #include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*)
 // since those multiply operators are redundant and have been renamed.  For
 // these, the boolean monoids are not needed.
-
-// parallel: not here
 
 ASSERT (zcode == xycode) ;
 

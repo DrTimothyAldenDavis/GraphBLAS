@@ -18,7 +18,7 @@
 #include "GB.h"
 #include "GB_heap.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__semirings.h"
+#include "GB_AxB__include.h"
 #endif
 
 GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
@@ -208,7 +208,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         if (A->type == atype_required && B->type == btype_required)
         {
             info = GB_AxB_user (GxB_AxB_HEAP, semiring, Chandle, M, A, B,
-                flipxy, false, List, pA_pair, Heap, bjnz_max, NULL) ;
+                flipxy, false, List, pA_pair, Heap, bjnz_max, NULL, NULL, NULL);
             done = true ;
             if (info != GrB_SUCCESS)
             { 
@@ -291,11 +291,11 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
             GB_MULTIPLY (t, aik, bkj) ;                                     \
             fadd (cij, cij, t) ;
 
-        // C->x has moved so the pointer to cij needs to be recomputed
-        #define GB_CIJ_REACQUIRE(cij)   cij = Cx + cnz * csize ;
+        // C->x or cnz has moved so the pointer to cij needs to be recomputed
+        #define GB_CIJ_REACQUIRE(cij, cnz)  cij = Cx + cnz * csize ;
 
-        // save the value of C(i,j) by advancing the cij pointer to next value
-        #define GB_CIJ_SAVE(cij)        cij += csize ;
+        // save the value of C(i,j) by advancing cij pointer to next value
+        #define GB_CIJ_SAVE(cij)            cij += csize ;
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void

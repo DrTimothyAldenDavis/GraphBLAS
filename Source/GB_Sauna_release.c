@@ -30,9 +30,9 @@ GrB_Info GB_Sauna_release
 
     ASSERT (Sauna_ids != NULL) ;
     ASSERT (nthreads >= 1) ;
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        ASSERT (Sauna_ids [t] >= -2 && Sauna_ids [t] < GxB_NTHREADS_MAX) ;
+        ASSERT (Sauna_ids [tid] >= -2 && Sauna_ids [tid] < GxB_NTHREADS_MAX) ;
     }
 
     //--------------------------------------------------------------------------
@@ -44,12 +44,12 @@ GrB_Info GB_Sauna_release
     // define the work to do inside the critical section
     #define GB_CRITICAL_SECTION                                             \
     {                                                                       \
-        for (int t = 0 ; t < nthreads ; t++)                                \
+        for (int tid = 0 ; tid < nthreads ; tid++)                          \
         {                                                                   \
-            int Sauna_id = Sauna_ids [t] ;                                  \
+            int Sauna_id = Sauna_ids [tid] ;                                \
             if (Sauna_id >= 0)                                              \
             {                                                               \
-                /* release the Sauna previously acquired for thread t */    \
+                /* release the Sauna previously acquired for thread tid */  \
                 GB_Global_Sauna_in_use_set (Sauna_id, false) ;              \
             }                                                               \
         }                                                                   \

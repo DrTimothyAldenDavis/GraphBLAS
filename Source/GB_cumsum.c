@@ -41,6 +41,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    // TODO: do not use this; pass in # of threads to use
     GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------

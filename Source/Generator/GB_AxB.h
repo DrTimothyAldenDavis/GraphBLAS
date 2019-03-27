@@ -15,6 +15,16 @@ GrB_Info GB_AdotB
     const GrB_Matrix B, bool B_is_pattern
 ) ;
 
+GrB_Info GB_Adot2B
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, const bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const int64_t *restrict C_count_start,
+    const int64_t *restrict C_count_end
+) ;
+
 GrB_Info GB_AheapB
 (
     GrB_Matrix *Chandle,

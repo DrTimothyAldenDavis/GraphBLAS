@@ -261,7 +261,7 @@
                     Ci = C->i ;
                     Cx = C->x ;
                     // reacquire the pointer cij since C->x has moved
-                    GB_CIJ_REACQUIRE (cij) ;
+                    GB_CIJ_REACQUIRE (cij, cnz) ;
                 }
             }
             #endif
@@ -462,7 +462,7 @@
                 Ci = C->i ;
                 Cx = C->x ;
                 // reacquire cij since C->x has moved
-                GB_CIJ_REACQUIRE (cij) ;
+                GB_CIJ_REACQUIRE (cij, cnz) ;
             }
 
             // bkj = Bx [ ] ;

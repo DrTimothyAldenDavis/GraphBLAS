@@ -10,30 +10,21 @@
 // GB_AxB_dot computes the matrix multiplication C<M>=A'*B without forming
 // A' explicitly.  It is useful when A is very tall and thin (n-by-1 in
 // particular).  In that case A' is costly to transpose, but A'*B is very
-// easy if B is also tall and thin (say also n-by-1).
+// easy if B is also tall and thin (say also n-by-1).  It is also useful for
+// computing A'*B when B is a vector.
 
-// If M is NULL, the method computes C=A'*B by considering each entry C(i,j),
-// taking O(m*n) time if C is m-by-n.  This is suitable only when C is small
-// (such as a scalar, a small matrix, or a vector).  If M is present, the upper
-// bound on the number of entries in C is the same as nnz(M), so that space is
-// allocated for C, and C(i,j) is computed only where M(i,j)=1.  This function
-// assumes the mask M is not complemented.
+// GB_AxB_dot uses a single pass, both symbolic and numeric.  It thus cannot
+// be done in parallel.  Instead, parallelism is handled in GB_AxB_parallel,
+// which calls multiple instances of this function on different slices.
+// Alternatively, GB_AxB_dot2 can be done in parallel, in place.
 
-// Compare this function with GB_AxB_Gustavson, which computes C=A*B and
-// C<M>=A*B.  The computation of C=A*B requires C->p and C->i to be constructed
-// first, in a symbolic phase.  Otherwise they are very similar.  The dot
-// product in this algorithm is very much like the merge-add in GB_add,
-// except that the merge in GB_add produces a column (a(:,j)+b(:,j)),
-// whereas the merge in this function produces a scalar (a(:,j)'*b(:,j)).
-
-// parallel: this function will remain sequential.
-// parallelism will be done in GB_AxB_parallel.
+// Any variant of the mask is handled: C=A'*B, C<M>=A'*B, and C<!M>=A'*B.
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__semirings.h"
+#include "GB_AxB__include.h"
 #endif
 
 GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
@@ -53,6 +44,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GB_Context Context = NULL ;
     ASSERT (Chandle != NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for dot A'*B", GB0)) ;
@@ -103,6 +95,10 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     // estimate nnz(C) and allocate C
     //--------------------------------------------------------------------------
 
+    GrB_Type ctype = add->op->ztype ;
+    int64_t cvlen = A->vdim ;
+    int64_t cvdim = B->vdim ;
+
     if (B->nvec_nonempty < 0)
     { 
         B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
@@ -112,9 +108,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     { 
         A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
-
-    // GxB_fprint (A, 2, stderr) ;
-    // GxB_fprint (B, 2, stderr) ;
 
     bool Adense = false, Bdense = false ;
     GrB_Index anzmax, bnzmax ;
@@ -128,9 +121,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         Bdense = (bnzmax == GB_NNZ (B)) ;
     }
 
-    // if (Adense) fprintf (stderr, "all vectors in A are dense\n") ;
-    // if (Bdense) fprintf (stderr, "all vectors in B are dense\n") ;
-
     int64_t cnz_guess = 15 + GB_NNZ (A) + GB_NNZ (B) ;
     if (Adense || Bdense)
     {
@@ -138,14 +128,8 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         cnz_guess = A->nvec_nonempty * B->nvec_nonempty ;
     }
 
-    GrB_Info info ;
-    GrB_Type ctype = add->op->ztype ;
-    int64_t cvlen = A->vdim ;
-    int64_t cvdim = B->vdim ;
-
     info = GB_AxB_alloc (Chandle, ctype, cvlen, cvdim, (Mask_comp ? NULL : M),
         A, B, true, cnz_guess) ;
-
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -153,8 +137,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     }
 
     GrB_Matrix C = (*Chandle) ;
-
-    // fprintf (stderr, "C->nzmax " GBd "\n", C->nzmax) ;
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, via builtin semiring
@@ -225,7 +207,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         if (A->type == atype_required && B->type == btype_required)
         {
             info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, A, B,
-                flipxy, Mask_comp, NULL, NULL, NULL, 0, NULL) ;
+                flipxy, Mask_comp, NULL, NULL, NULL, 0, NULL, NULL, NULL) ;
             done = true ;
             if (info != GrB_SUCCESS)
             { 
@@ -245,8 +227,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, B, C, and M
         //----------------------------------------------------------------------
-
-        // fprintf (stderr, "generic\n") ;
 
         GxB_binary_function fmult = mult->function ;
         GxB_binary_function fadd  = add->op->function ;
@@ -322,14 +302,16 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
             GB_MULTIPLY (t, aki, bkj) ;                                     \
             fadd (cij, cij, t) ;
 
-        // C->x has moved so the pointer to cij needs to be recomputed
-        #define GB_CIJ_REACQUIRE(cij)   cij = Cx + cnz * csize ;
+        // C->x or cnz has moved so the pointer to cij needs to be recomputed
+        #define GB_CIJ_REACQUIRE(cij, cnz)  cij = Cx + cnz * csize ;
 
         // save the value of C(i,j) by advancing cij pointer to next value
-        #define GB_CIJ_SAVE(cij)        cij += csize ;
+        #define GB_CIJ_SAVE(cij)            cij += csize ;
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
+
+        #define GB_SINGLE_PHASE
 
         if (flipxy)
         { 
@@ -352,7 +334,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     info = GB_ix_realloc (C, GB_NNZ (C), true, NULL) ;
     ASSERT (info == GrB_SUCCESS) ;
     ASSERT_OK (GB_check (C, "dot: C = A'*B output", GB0)) ;
-    // GxB_fprint (C, 2, stderr) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
     return (GrB_SUCCESS) ;

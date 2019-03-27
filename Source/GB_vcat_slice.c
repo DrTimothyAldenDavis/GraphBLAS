@@ -28,19 +28,19 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT (Cslice != NULL) ;
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        ASSERT_OK (GB_check (Cslice [t], "a slice of C", GB0)) ;
-        ASSERT (!GB_PENDING (Cslice [t])) ;
-        ASSERT (!GB_ZOMBIES (Cslice [t])) ;
-        ASSERT ((Cslice [t])->is_hyper) ;
-        // each Cslice [t] is constructed as its own matrix, with Cslice [t] =
-        // Aslice [t] * B.  It is not a slice of an other matrix, so Cslice
-        // [t]->is_slice is false.
-        ASSERT (!(Cslice [t])->is_slice) ;
-        ASSERT ((Cslice [t])->type == (Cslice [0])->type) ;
-        ASSERT ((Cslice [t])->vlen == (Cslice [0])->vlen) ;
-        ASSERT ((Cslice [t])->vdim == (Cslice [0])->vdim) ;
+        ASSERT_OK (GB_check (Cslice [tid], "a slice of C", GB0)) ;
+        ASSERT (!GB_PENDING (Cslice [tid])) ;
+        ASSERT (!GB_ZOMBIES (Cslice [tid])) ;
+        ASSERT ((Cslice [tid])->is_hyper) ;
+        // each Cslice [tid] is constructed as its own matrix, with
+        // Cslice [tid] = Aslice [tid] * B.  It is not a slice of an other
+        // matrix, so Cslice [tid]->is_slice is false.
+        ASSERT (!(Cslice [tid])->is_slice) ;
+        ASSERT ((Cslice [tid])->type == (Cslice [0])->type) ;
+        ASSERT ((Cslice [tid])->vlen == (Cslice [0])->vlen) ;
+        ASSERT ((Cslice [tid])->vdim == (Cslice [0])->vdim) ;
     }
 
     //--------------------------------------------------------------------------
@@ -57,11 +57,11 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
     int64_t cnvec = 0 ;             // sum of # vectors in Cslices, not in C
     int64_t cnvec_nonempty = 0 ;    // computed later
 
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
         // compute the cumulative sum of the # entries and # vectors
-        cnz   += GB_NNZ (Cslice [t]) ;
-        cnvec += (Cslice [t])->nvec ;
+        cnz   += GB_NNZ (Cslice [tid]) ;
+        cnvec += (Cslice [tid])->nvec ;
     }
 
     //--------------------------------------------------------------------------
@@ -118,11 +118,11 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
         // Note the parallelism is in the inner loop, not the outer one,
         // because of the reduction on Cp [j].  Also in the 2nd phase below.
 
-        for (int t = 0 ; t < nthreads ; t++)
+        for (int tid = 0 ; tid < nthreads ; tid++)
         {
-            int64_t *restrict Cslice_h = (Cslice [t])->h ;
-            int64_t *restrict Cslice_p = (Cslice [t])->p ;
-            int64_t cslice_nvec = (Cslice [t])->nvec ;
+            int64_t *restrict Cslice_h = (Cslice [tid])->h ;
+            int64_t *restrict Cslice_p = (Cslice [tid])->p ;
+            int64_t cslice_nvec = (Cslice [tid])->nvec ;
 
             #pragma omp parallel for
             for (int64_t k = 0 ; k < cslice_nvec ; k++)
@@ -146,13 +146,13 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
         // 2nd phase: copy each slice into C
         //----------------------------------------------------------------------
 
-        for (int t = 0 ; t < nthreads ; t++)
+        for (int tid = 0 ; tid < nthreads ; tid++)
         {
-            int64_t *restrict Cslice_h = (Cslice [t])->h ;
-            int64_t *restrict Cslice_p = (Cslice [t])->p ;
-            int64_t *restrict Cslice_i = (Cslice [t])->i ;
-            GB_void *restrict Cslice_x = (Cslice [t])->x ;
-            int64_t cslice_nvec = (Cslice [t])->nvec ;
+            int64_t *restrict Cslice_h = (Cslice [tid])->h ;
+            int64_t *restrict Cslice_p = (Cslice [tid])->p ;
+            int64_t *restrict Cslice_i = (Cslice [tid])->i ;
+            GB_void *restrict Cslice_x = (Cslice [tid])->x ;
+            int64_t cslice_nvec = (Cslice [tid])->nvec ;
 
             #pragma omp parallel for
             for (int64_t k = 0 ; k < cslice_nvec ; k++)

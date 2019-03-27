@@ -31,19 +31,19 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT (Cslice != NULL) ;
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        ASSERT_OK (GB_check (Cslice [t], "a fine slice of C", GB0)) ;
-        ASSERT (!GB_PENDING (Cslice [t])) ;
-        ASSERT (!GB_ZOMBIES (Cslice [t])) ;
-        ASSERT ((Cslice [t])->is_hyper) ;
-        // each Cslice [t] is constructed as its own matrix, with Cslice [t] =
-        // A * Bslice [t].  It is not a slice of an other matrix, so Cslice
-        // [t]->is_slice is false.
-        ASSERT (!(Cslice [t])->is_slice) ;
-        ASSERT ((Cslice [t])->type == (Cslice [0])->type) ;
-        ASSERT ((Cslice [t])->vlen == (Cslice [0])->vlen) ;
-        ASSERT ((Cslice [t])->vdim == (Cslice [0])->vdim) ;
+        ASSERT_OK (GB_check (Cslice [tid], "a fine slice of C", GB0)) ;
+        ASSERT (!GB_PENDING (Cslice [tid])) ;
+        ASSERT (!GB_ZOMBIES (Cslice [tid])) ;
+        ASSERT ((Cslice [tid])->is_hyper) ;
+        // each Cslice [tid] is constructed as its own matrix, with
+        // Cslice [tid] = A * Bslice [tid].  It is not a slice of an other
+        // matrix, so Cslice [tid]->is_slice is false.
+        ASSERT (!(Cslice [tid])->is_slice) ;
+        ASSERT ((Cslice [tid])->type == (Cslice [0])->type) ;
+        ASSERT ((Cslice [tid])->vlen == (Cslice [0])->vlen) ;
+        ASSERT ((Cslice [tid])->vdim == (Cslice [0])->vdim) ;
     }
 
     //--------------------------------------------------------------------------
@@ -60,11 +60,11 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     int64_t cnvec = 0 ;             // upper bound on # vectors in C
 
     // this for loop does not need to be parallel:
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
         // compute the cumulative sum of the # entries and # vectors
-        cnz   += GB_NNZ (Cslice [t]) ;
-        cnvec += (Cslice [t])->nvec ;
+        cnz   += GB_NNZ (Cslice [tid]) ;
+        cnvec += (Cslice [tid])->nvec ;
     }
 
     // printf ("bound: cnz "GBd" cnvec "GBd"\n", cnz, cnvec) ;
@@ -86,9 +86,9 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         {
             // at least one thread used a Sauna; free and release all
             // Sauna workspaces
-            for (int t = 0 ; t < nthreads ; t++)
+            for (int tid = 0 ; tid < nthreads ; tid++)
             {
-                int Sauna_id = Sauna_ids [t] ;
+                int Sauna_id = Sauna_ids [tid] ;
                 if (Sauna_id >= 0)
                 { 
                     GB_Sauna_free (Sauna_id) ;
@@ -125,10 +125,10 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     if (any_Gustavson)
     {
         // at least one thread already has a Sauna.  Use it.
-        for (int t = 0 ; t < nthreads ; t++)
+        for (int tid = 0 ; tid < nthreads ; tid++)
         {
-            Sauna_id = Sauna_ids [t] ;
-            // printf ("%d : Sauna id %d\n", t, Sauna_id) ;
+            Sauna_id = Sauna_ids [tid] ;
+            // printf ("%d : Sauna id %d\n", tid, Sauna_id) ;
             if (Sauna_id >= 0)
             { 
                 break ;
@@ -199,29 +199,29 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     GxB_binary_function fadd = add->op->function ;
     ASSERT (C->type == add->op->ztype) ;
 
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
 
         //----------------------------------------------------------------------
-        // get the Cslice [t] and its position in C
+        // get the Cslice [tid] and its position in C
         //----------------------------------------------------------------------
 
-//      printf ("\n================================= do fine slice t=%d\n", t) ;
-        ASSERT_OK (GB_check (Cslice [t], "Cslice [t]", GB0)) ;
+//      printf ("\n============================= do fine slice tid=%d\n", tid) ;
+        ASSERT_OK (GB_check (Cslice [tid], "Cslice [tid]", GB0)) ;
 //      printf ("last_vector "GBd"\n", last_vector) ;
 
-        int64_t *restrict Csliceh = (Cslice [t])->h ;
-        int64_t *restrict Cslicep = (Cslice [t])->p ;
-        int64_t *restrict Cslicei = (Cslice [t])->i ;
-        GB_void *restrict Cslicex = (Cslice [t])->x ;
-        int64_t cnz_slice   = GB_NNZ (Cslice [t]) ;
-        int64_t cnvec_slice = (Cslice [t])->nvec ;
+        int64_t *restrict Csliceh = (Cslice [tid])->h ;
+        int64_t *restrict Cslicep = (Cslice [tid])->p ;
+        int64_t *restrict Cslicei = (Cslice [tid])->i ;
+        GB_void *restrict Cslicex = (Cslice [tid])->x ;
+        int64_t cnz_slice   = GB_NNZ (Cslice [tid]) ;
+        int64_t cnvec_slice = (Cslice [tid])->nvec ;
 
-        // skip if Cslice [t] is empty
+        // skip if Cslice [tid] is empty
         if (cnvec_slice == 0) continue ;
 
         //----------------------------------------------------------------------
-        // discard the first vector in Cslice [t], if already summed
+        // discard the first vector in Cslice [tid], if already summed
         //----------------------------------------------------------------------
 
         int64_t kfirst = 0 ;
@@ -253,18 +253,18 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         }
         */
 
-        // skip if Cslice [t] is now empty
+        // skip if Cslice [tid] is now empty
         if (cnvec_slice - kfirst == 0) continue ;
 
         //----------------------------------------------------------------------
         // search for last vector in subsequent slices
         //----------------------------------------------------------------------
 
-        // search for the last vector of Cslice [t] in all slices t+1:tfine
+        // search for the last vector of Cslice [tid] in all slices tid+1:tfine
         // that contain it as their first vector
         last_vector = Csliceh [cnvec_slice-1] ;
 //      printf ("new last vector "GBd"\n", last_vector) ;
-        int tfine = t ;
+        int tfine = tid ;
         while (tfine+1 < nthreads)
         {
             if ((Cslice [tfine+1])->nvec == 0)
@@ -276,7 +276,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             int64_t first_vector = (Cslice [tfine+1])->h [0] ;
             if (last_vector == first_vector)
             {
-                // the last vector of Cslice [t] is the same as the first
+                // the last vector of Cslice [tid] is the same as the first
                 // vector of Cslice [tfine+1].  Add tfine+1 to the list, and
                 // continue looking for last_vector in subsequent slices.
                 tfine++ ;
@@ -285,21 +285,21 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             else
             {
                 // Cslice [tfine+1] starts with a different vector than the
-                // last vector of Cslice [t], so it is not part of the list.
+                // last vector of Cslice [tid], so it is not part of the list.
                 break ;
             }
         }
 
         #ifndef NDEBUG
         // check the list
-        for (int t2 = t + 1 ; t2 <= tfine ; t2++)
+        for (int tid2 = tid + 1 ; tid2 <= tfine ; tid2++)
         {
-            // slice t2 is in the set t+1:tfine.  If it has any vectors, its
+            // slice tid2 is in the set tid+1:tfine.  If it has any vectors, its
             // first vector is last_vector
-            ASSERT ((Cslice [t2])->nvec >= 0) ;
-            if ((Cslice [t2])->nvec > 0) 
+            ASSERT ((Cslice [tid2])->nvec >= 0) ;
+            if ((Cslice [tid2])->nvec > 0) 
             {
-                ASSERT ((Cslice [t2])->h [0] == last_vector) ;
+                ASSERT ((Cslice [tid2])->h [0] == last_vector) ;
             }
         }
         if (tfine+1 < nthreads)
@@ -309,21 +309,21 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             ASSERT ((Cslice [tfine+1])->nvec > 0) ;
             ASSERT ((Cslice [tfine+1])->h [0] != last_vector) ;
         }
-//      printf ("t %d tfine %d\n", t, tfine) ;
+//      printf ("tid %d tfine %d\n", tid, tfine) ;
         #endif
 
         //----------------------------------------------------------------------
-        // copy the bulk of Cslice [t] into C
+        // copy the bulk of Cslice [tid] into C
         //----------------------------------------------------------------------
 
-        // exclude the first vector from Cslice [t] if it's been discarded
+        // exclude the first vector from Cslice [tid] if it's been discarded
         int64_t pfirst = Cslicep [kfirst] ;
 
-        // copy the row indices of Cslice [t] into Ci and Cx
+        // copy the row indices of Cslice [tid] into Ci and Cx
         memcpy (Ci +(cnz), Cslicei +(pfirst),
             (cnz_slice - pfirst) * sizeof (int64_t)) ;
 
-        // copy the values of Cslice [t] into Ci and Cx
+        // copy the values of Cslice [tid] into Ci and Cx
         memcpy (Cx +(cnz * csize), Cslicex +(pfirst * csize),
             (cnz_slice - pfirst) * csize) ;
 
@@ -358,11 +358,11 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         // handle the last vector, if it needs summation
         //----------------------------------------------------------------------
 
-        if (tfine > t)
+        if (tfine > tid)
         {
 
             //------------------------------------------------------------------
-            // scatter the last_vector from Cslice [t] into the Sauna
+            // scatter the last_vector from Cslice [tid] into the Sauna
             //------------------------------------------------------------------
 
             int64_t pstart = Cslicep [cnvec_slice-1] ;
@@ -382,22 +382,22 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             // scatter and add each subsequent vector
             //------------------------------------------------------------------
 
-            for (int t2 = t + 1 ; t2 <= tfine ; t2++)
+            for (int tid2 = tid + 1 ; tid2 <= tfine ; tid2++)
             {
-                // skip if Cslice [t2] is empty
-                if ((Cslice [t2])->nvec == 0) continue ;
+                // skip if Cslice [tid2] is empty
+                if ((Cslice [tid2])->nvec == 0) continue ;
 
-                int64_t *restrict Cslice2p = (Cslice [t2])->p ;
-                int64_t *restrict Cslice2i = (Cslice [t2])->i ;
-                GB_void *restrict Cslice2x = (Cslice [t2])->x ;
+                int64_t *restrict Cslice2p = (Cslice [tid2])->p ;
+                int64_t *restrict Cslice2i = (Cslice [tid2])->i ;
+                GB_void *restrict Cslice2x = (Cslice [tid2])->x ;
 
-                // scatter/add the first vector from Cslice [t2] into the Sauna
+                // scatter/add first vector from Cslice [tid2] into the Sauna
                 int64_t pstart = Cslice2p [0] ;
                 int64_t pend   = Cslice2p [1] ;
                 for (int64_t p = pstart ; p < pend ; p++)
                 {
                     int64_t i = Cslice2i [p] ;
-//                  printf ("t %d subsequent row "GBd"\n", t, i) ;
+//                  printf ("tid %d subsequent row "GBd"\n", tid, i) ;
                     if (Sauna_Mark [i] < hiwater)
                     {
                         // first time row index i has been seen
@@ -461,8 +461,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             hiwater = GB_Sauna_reset (Sauna, 1, 0) ;
         }
     }
-
-// GB_HERE ;
 
     //--------------------------------------------------------------------------
     // release Sauna workspaces

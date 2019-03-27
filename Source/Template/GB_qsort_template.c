@@ -186,7 +186,7 @@ nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
     // do the quicksort in parallel
     //--------------------------------------------------------------------------
 
-    #ifdef _OPENMP
+    #if defined ( _OPENMP )
     double t ;
     if (n > 1000000) t = omp_get_wtime ( ) ;
     #endif
@@ -208,7 +208,7 @@ nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
         }
     }
 
-    #ifdef _OPENMP
+    #if defined ( _OPENMP )
     if (n > 1000000)
     {
         t = omp_get_wtime ( ) - t ;

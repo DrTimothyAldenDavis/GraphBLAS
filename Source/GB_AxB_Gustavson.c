@@ -17,7 +17,7 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_AxB__semirings.h"
+#include "GB_AxB__include.h"
 #endif
 
 // C=A*B failed, free everything, even the Sauna
@@ -260,7 +260,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         if (A->type == atype_required && B->type == btype_required)
         { 
             info = GB_AxB_user (GxB_AxB_GUSTAVSON, semiring, Chandle, M, A, B,
-                flipxy, false, NULL, NULL, NULL, 0, Sauna) ;
+                flipxy, false, NULL, NULL, NULL, 0, Sauna, NULL, NULL) ;
             (*mask_applied) = (M != NULL) && (info == GrB_SUCCESS) ;
             return (info) ;
         }

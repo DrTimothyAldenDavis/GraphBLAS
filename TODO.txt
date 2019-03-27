@@ -4,3 +4,6 @@ TODO: test for user-defined type:  for FIRST and SECOND operators,
     do not check for typecast for the unused parameter.
     (this is written but need to test this for user-defined types)
 
+TODO: use #ifndef NDEBUG for GB_check, so that GB.h has no _Generic
+    functions unless debugging is enabled.
+

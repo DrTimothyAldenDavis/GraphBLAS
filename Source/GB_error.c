@@ -54,6 +54,18 @@ GrB_Info GB_error           // log an error in thread-local-storage
     ASSERT (info <= GrB_PANIC) ;
 
     //--------------------------------------------------------------------------
+    // quick return if Context is NULL
+    //--------------------------------------------------------------------------
+
+    if (Context == NULL)
+    {
+        // the error cannot be logged in the Context, inside a parallel region,
+        // so just return the error.  The error will be logged when the
+        // parallel region exits.
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
     // get pointer to thread-local-storage
     //--------------------------------------------------------------------------
 

@@ -307,7 +307,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // Z = duplicate of C
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
-        info = GB_dup (&Z, C, Context) ;
+        info = GB_dup (&Z, C, true, NULL, Context) ;
         if (info != GrB_SUCCESS)
         { 
             GB_FREE_ALL ;

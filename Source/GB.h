@@ -717,15 +717,9 @@ typedef GB_Context_struct *GB_Context ;
 //      rule instead, based on Context, nthreads_max, and the problem size.  No
 //      rule can exceed nthreads_max.
 
-#if defined ( _OPENMP )
-    #define GB_GET_NTHREADS(nthreads,Context)                               \
-        int nthreads = (Context == NULL) ? 1 : Context->nthreads ;          \
-        if (nthreads <= GxB_DEFAULT) nthreads = GB_Global_nthreads_max_get ( ) ;
-#else
-    // OpenMP is not available; SuiteSparse:GraphBLAS is sequential.
-    #define GB_GET_NTHREADS(nthreads,Context)                               \
-        int nthreads = 1 ;
-#endif
+#define GB_GET_NTHREADS(nthreads,Context)                               \
+    int nthreads = (Context == NULL) ? 1 : Context->nthreads ;          \
+    if (nthreads <= GxB_DEFAULT) nthreads = GB_Global_nthreads_max_get ( ) ;
 
 // The GB_ERROR and GB_LOG macros work together.  If an error occurs, the
 // GB_ERROR macro records the details in the Context.details, and returns the
@@ -1053,6 +1047,8 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 (
     GrB_Matrix *Chandle,    // handle of output matrix to create
     const GrB_Matrix A,     // input matrix to copy
+    const bool numeric,     // if true, duplicate the numeric values
+    const GrB_Type ctype,   // type of C, if numeric is false
     GB_Context Context
 ) ;
 
@@ -1583,6 +1579,13 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     GB_Context Context
 ) ;
 
+void GB_pslice                  // find how to slice A->p by # of entries
+(
+    int64_t *Slice,             // size nthreads+1
+    const GrB_Matrix A,
+    const int nthreads          // # of threads
+) ;
+
 GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
@@ -1615,6 +1618,21 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     GB_Type_code *zcode             // type code for z output
 ) ;
 
+bool GB_binop_builtin               // true if binary operator is builtin
+(
+    // inputs:
+    const GrB_Matrix A,
+    const bool A_is_pattern,        // true if only the pattern of A is used
+    const GrB_Matrix B,
+    const bool B_is_pattern,        // true if only the pattern of B is used
+    const GrB_BinaryOp op,          // binary operator
+    const bool flipxy,              // true if z=op(y,x), flipping x and y
+    // outputs, unused by caller if this function returns false
+    GB_Opcode *opcode,              // opcode for the binary operator
+    GB_Type_code *xycode,           // type code for x and y inputs
+    GB_Type_code *zcode             // type code for z output
+) ;
+
 GrB_Info GB_AxB_Gustavson_builtin
 (
     GrB_Matrix C,                   // output matrix
@@ -1639,6 +1657,29 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied              // if true, mask was applied
+) ;
+
+GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
+(
+    GrB_Matrix *Chandle,            // output matrix
+    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const bool Mask_comp,           // if true, use !M
+    const GrB_Matrix *Aslice,       // input matrices (already sliced)
+    const GrB_Matrix B,             // input matrix
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    bool *mask_applied,             // if true, mask was applied
+    int nthreads,
+    GB_Context Context
+) ;
+
+GrB_Info GB_AxB_dot2_count          // C<M> = A'*B, dot product counts
+(
+    int64_t **C_count_handle,       // output of size B->nvec
+    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const bool Mask_comp,           // if true, use !M
+    const GrB_Matrix A,             // input matrix, may be a slice
+    const GrB_Matrix B              // input matrix
 ) ;
 
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
@@ -1666,6 +1707,32 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool B_transpose,         // if true, use B' instead of B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    GB_Context Context
+) ;
+
+GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
+(
+    GrB_Matrix *Chandle,            // output matrix
+    const GrB_Matrix D,             // diagonal input matrix
+    const GrB_Matrix B,             // input matrix
+    const GrB_Semiring semiring,    // semiring that defines C=D*A
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    GB_Context Context
+) ;
+
+GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
+(
+    GrB_Matrix *Chandle,            // output matrix
+    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix D,             // diagonal input matrix
+    const GrB_Semiring semiring,    // semiring that defines C=A*D
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    GB_Context Context
+) ;
+
+bool GB_is_diagonal             // true if A is diagonal
+(
+    const GrB_Matrix A,         // input matrix to examine
     GB_Context Context
 ) ;
 
@@ -3499,6 +3566,27 @@ static inline void GBI1_start
 #define GBI_for_each_entry(j,p,pend)                                        \
     GBI_jth_iteration (j, p, pend) ;                                        \
     for ( ; (p) < (pend) ; (p)++)
+
+#define GB_PRAGMA(x) _Pragma (#x)
+
+#define GB_PRAGMA_PARALLEL_FOR(nthreads)                                    \
+    GB_PRAGMA (omp parallel for num_threads(nthreads) schedule(static,1))   \
+
+// iterate in parallel across all vectors in the matrix A, partitioned by nnz
+#define GBI_parallel_for_each_vector_with_iter(Iter,A,nthreads)             \
+    GBI_single_iterator Iter ;                                              \
+    int64_t Iter ## _Slice [nthreads+1] ;                                   \
+    GB_pslice (Iter ## _Slice, A, nthreads) ;                               \
+    GBI1_init (&Iter, A) ;                                                  \
+    GB_PRAGMA_PARALLEL_FOR (nthreads)                                       \
+    for (int Iter ## _tid = 0 ; Iter ## _tid < nthreads ; Iter ## _tid++)   \
+        for (int64_t Iter ## _k = Iter ## _Slice [Iter ## _tid] ;           \
+                     Iter ## _k < Iter ## _Slice [Iter ## _tid+1] ;         \
+                     Iter ## _k++)
+
+// iterate in parallel across all vectors in the matrix A, partitioned by nnz
+#define GBI_parallel_for_each_vector(A,nthreads)                            \
+     GBI_parallel_for_each_vector_with_iter (Iter,A,nthreads)
 
 //------------------------------------------------------------------------------
 // GBIk_multi_iterator: iterate over vectors of multiple matrices
@@ -6259,7 +6347,7 @@ GrB_Info GB_AxB_user
     const GrB_Matrix B,
     bool flipxy,
 
-    // for dot method only:
+    // for dot and dot2 methods only:
     const bool GB_mask_comp,
 
     // for heap method only:
@@ -6269,7 +6357,11 @@ GrB_Info GB_AxB_user
     const int64_t bjnz_max,
 
     // for Gustavson's method only:
-    GB_Sauna Sauna
+    GB_Sauna Sauna,
+
+    // for dot2 method only:
+    const int64_t *restrict C_count_start,
+    const int64_t *restrict C_count_end
 ) ;
 
 //------------------------------------------------------------------------------

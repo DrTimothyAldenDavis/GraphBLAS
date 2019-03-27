@@ -7,20 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// For each thread t, create Bslice [t] as a slice or hyperslice
+// For each thread tid, create Bslice [tid] as a slice or hyperslice
 // of B.  The i and x arrays are the same as B.
 
-// The p array is an offset into Bp (that is, Bp + Slice [t]), which means that
-// p [0] will not be zero (except for Bslice [0]).  If B is hypersparse, the h
-// array is also an offset into B->h.  If B is standard, then Bslice [t]
-// becomes an implicit hypersparse matrix.  Its h array is NULL, and the h list
-// is implicit: h[0..nvec-1] is implicitly [hfirst, hfirst+1, ...
-// hfirst+nvec-1], where nvec = Slice [t+1] - Slice [t].
+// The p array is an offset into Bp (that is, Bp + Slice [tid]), which means
+// that p [0] will not be zero (except for Bslice [0]).  If B is hypersparse,
+// the h array is also an offset into B->h.  If B is standard, then Bslice
+// [tid] becomes an implicit hypersparse matrix.  Its h array is NULL, and the
+// h list is implicit: h[0..nvec-1] is implicitly [hfirst, hfirst+1, ...
+// hfirst+nvec-1], where nvec = Slice [tid+1] - Slice [tid].
 
 // The matrix dimensions of each slice are the same as B.  All slices have
 // vector length B->vlen and vector dimension B->vdim.   The slices are subsets
-// of the vectors of B, as defined by the Slice array.  The Bslice [t] consists
-// of the vectors Slice [t] to Slice [t+1]-1.
+// of the vectors of B, as defined by the Slice array.  The Bslice [tid]
+// consists of the vectors Slice [tid] to Slice [tid+1]-1.
 
 // This function does only O(nthreads) work and allocates O(nthreads) space, so
 // it does not need to be parallel.
@@ -47,9 +47,9 @@ GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
     ASSERT (Slice != NULL) ;
     ASSERT (Slice [0] == 0) ;
     ASSERT (Slice [nthreads] == B->nvec) ;
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        ASSERT (Slice [t] <= Slice [t+1]) ;
+        ASSERT (Slice [tid] <= Slice [tid+1]) ;
     }
 
     GrB_Info info ;
@@ -58,78 +58,78 @@ GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
     // create the slices or hyperslices
     //--------------------------------------------------------------------------
 
-    for (int t = 0 ; t < nthreads ; t++)
+    for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        // printf ("\n================== slice %d\n", t) ;
+        // printf ("\n================== slice %d\n", tid) ;
 
-        // Bslice [t] = B (:, bcol_first:bcol_last)
-        int64_t bvec_first  = Slice [t] ;
-        int64_t bvec_last   = Slice [t+1] - 1 ;
+        // Bslice [tid] = B (:, bcol_first:bcol_last)
+        int64_t bvec_first  = Slice [tid] ;
+        int64_t bvec_last   = Slice [tid+1] - 1 ;
         int64_t bslice_nvec = bvec_last - bvec_first + 1 ;
 
         // printf ("first "GBd" last "GBd" nvec "GBd"\n", 
         // bvec_first, bvec_last, bslice_nvec) ;
 
-        // allocate just the header for Bslice [t]; all content will be shallow
-        Bslice [t] = NULL ;
-        GB_NEW (&(Bslice [t]), B->type, B->vlen, B->vdim, GB_Ap_null,
+        // allocate just the header for Bslice [tid]; all content is shallow
+        Bslice [tid] = NULL ;
+        GB_NEW (&(Bslice [tid]), B->type, B->vlen, B->vdim, GB_Ap_null,
             B->is_csc, GB_SAME_HYPER_AS (B->is_hyper), B->hyper_ratio,
             bslice_nvec, NULL) ;
         if (info != GrB_SUCCESS)
         {
             // out of memory
-            for (int i = 0 ; i < t ; i++)
+            for (int i = 0 ; i < tid ; i++)
             { 
                 GB_MATRIX_FREE (&(Bslice [i])) ;
             }
             return (GB_OUT_OF_MEMORY) ;
         }
 
-        // Bslice [t] is a slice or hyperslice
-        (Bslice [t])->is_slice = true ;
+        // Bslice [tid] is a slice or hyperslice
+        (Bslice [tid])->is_slice = true ;
 
         // Bslice has shallow pointers into B->i and B->x
-        (Bslice [t])->i = B->i ; (Bslice [t])->i_shallow = true ;
-        (Bslice [t])->x = B->x ; (Bslice [t])->x_shallow = true ;
-        (Bslice [t])->h_shallow = true ;
+        (Bslice [tid])->i = B->i ; (Bslice [tid])->i_shallow = true ;
+        (Bslice [tid])->x = B->x ; (Bslice [tid])->x_shallow = true ;
+        (Bslice [tid])->h_shallow = true ;
 
         // Bslice->h hyperlist
         if (B->is_hyper)
         { 
-            // the columns of Bslice [t] are B->h [bvec_first:bvec_last].
-            // Bslice [t] is a hyperslice (with an explict h list).
-            (Bslice [t])->h = B->h + bvec_first ;
-            (Bslice [t])->hfirst = 0 ;      // unused
+            // the columns of Bslice [tid] are B->h [bvec_first:bvec_last].
+            // Bslice [tid] is a hyperslice (with an explict h list).
+            (Bslice [tid])->h = B->h + bvec_first ;
+            (Bslice [tid])->hfirst = 0 ;      // unused
         }
         else
         { 
-            // the columns of Bslice [t] are [bvec_first:bvec_last].
-            // Bslice [t] is a slice (with an implicit h list)
-            (Bslice [t])->h = NULL ;
-            (Bslice [t])->hfirst = bvec_first ;
+            // the columns of Bslice [tid] are [bvec_first:bvec_last].
+            // Bslice [tid] is a slice (with an implicit h list)
+            (Bslice [tid])->h = NULL ;
+            (Bslice [tid])->hfirst = bvec_first ;
         }
 
         // Bslice->p pointers
-        (Bslice [t])->p = B->p + bvec_first ;
-        (Bslice [t])->p_shallow = true ;
-        (Bslice [t])->plen = bslice_nvec ;
+        (Bslice [tid])->p = B->p + bvec_first ;
+        (Bslice [tid])->p_shallow = true ;
+        (Bslice [tid])->plen = bslice_nvec ;
 
-        (Bslice [t])->nvec = bslice_nvec ;
+        (Bslice [tid])->nvec = bslice_nvec ;
 
         if (B->nvec_nonempty == B->nvec)
         {
             // all vectors present in B, so all vectors present in the slice
-            (Bslice [t])->nvec_nonempty = bslice_nvec ;
+            (Bslice [tid])->nvec_nonempty = bslice_nvec ;
         }
         else
         {
-            (Bslice [t])->nvec_nonempty = -1 ;
+            (Bslice [tid])->nvec_nonempty = -1 ;
         }
 
-        (Bslice [t])->nzmax = B->nzmax ;
-        (Bslice [t])->magic = GB_MAGIC ;
+        (Bslice [tid])->nzmax = B->nzmax ;
+        (Bslice [tid])->magic = GB_MAGIC ;
 
-        ASSERT_OK (GB_check (Bslice [t], "Bslice", GB0)) ;
+        ASSERT_OK (GB_check (Bslice [tid], "Bslice", GB0)) ;
     }
 
     //--------------------------------------------------------------------------
