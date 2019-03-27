@@ -30,6 +30,7 @@
         //----------------------------------------------------------------------
 
         GBI_jth_iteration (j, pA, pA_end) ;
+
         int64_t ajnz = pA_end - pA ;
         // no work to do if A(:,j) is empty
         if (ajnz == 0) continue ;

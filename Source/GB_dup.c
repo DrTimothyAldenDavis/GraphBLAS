@@ -27,8 +27,6 @@
 
 // A is the new copy and B is the old copy.  Each should be freed when done.
 
-// PARALLEL: a few large memcpy's, can be done in parallel.
-
 #include "GB.h"
 
 GrB_Info GB_dup             // make an exact copy of a matrix
@@ -94,20 +92,63 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     }
 
     // copy the contents of A into C
-    C->nvec = A->nvec ;
+    int64_t anvec = A->nvec ;
+    C->nvec = anvec ;
     C->nvec_nonempty = A->nvec_nonempty ;
-    memcpy (C->p, A->p, (A->nvec+1) * sizeof (int64_t)) ;   // TODO do parallel
+    int64_t *restrict Cp = C->p ;
+    int64_t *restrict Ch = C->h ;
+    int64_t *restrict Ci = C->i ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
+
+// #if defined ( _OPENMP )
+// double t = omp_get_wtime ( ) ;
+// #endif
+
+    GB_memcpy (Cp, Ap, (anvec+1) * sizeof (int64_t), nthreads) ;
     if (A->is_hyper)
     { 
-        memcpy (C->h, A->h, A->nvec * sizeof (int64_t)) ;   // TODO do parallel
+        GB_memcpy (Ch, Ah, anvec * sizeof (int64_t), nthreads) ;
     }
-    C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
-    memcpy (C->i, A->i, anz * sizeof (int64_t)) ;   // TODO do parallel
+    GB_memcpy (Ci, Ai, anz * sizeof (int64_t), nthreads) ;
+
+/*
+    #pragma omp parallel num_threads (nthreads)
+    {
+        #pragma omp for nowait 
+        for (int64_t k = 0 ; k <= anvec ; k++)
+        {
+            Cp [k] = Ap [k] ;
+        }
+        #pragma omp for nowait
+        for (int64_t p = 0 ; p < anz ; p++)
+        {
+            Ci [p] = Ai [p] ;
+        }
+        if (A->is_hyper)
+        {
+            #pragma omp for nowait
+            for (int64_t k = 0 ; k < anvec ; k++)
+            {
+                Ch [k] = Ah [k] ;
+            }
+        }
+    }
+*/
+
     if (numeric)
     {
-        memcpy (C->x, A->x, anz * A->type->size) ;  // TODO do parallel
-        ASSERT_OK (GB_check (C, "C duplicate of A", GB0)) ;
+        GB_memcpy (C->x, A->x, anz * A->type->size, nthreads) ;
     }
+
+// #if defined ( _OPENMP )
+// t = omp_get_wtime ( ) - t ;
+// fprintf (stderr, " dup memcpy: %g ", t) ;
+// #endif
+
+    C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
+    if (numeric) ASSERT_OK (GB_check (C, "C duplicate of A", GB0)) ;
 
     //--------------------------------------------------------------------------
     // return the result

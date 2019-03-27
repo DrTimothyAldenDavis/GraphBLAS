@@ -42,6 +42,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+// fprintf (stderr, "\ncolscale, threads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -78,6 +79,10 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // copy the pattern of A into C
     //--------------------------------------------------------------------------
 
+// #if defined ( _OPENMP )
+// double t = omp_get_wtime ( ) ;
+// #endif
+
     // allocate but do not initialize C->x
     info = GB_dup (Chandle, A, false, mult->ztype, Context) ;
     if (info != GrB_SUCCESS)
@@ -86,6 +91,11 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         return (info) ;
     }
 
+// #if defined ( _OPENMP )
+// t = omp_get_wtime ( ) - t ;
+// fprintf (stderr, "\ndup time %g ", t) ;
+// #endif
+
     GrB_Matrix C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
@@ -93,6 +103,10 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     bool done = false ;
+
+// #if defined ( _OPENMP )
+// t = omp_get_wtime ( ) ;
+// #endif
 
 #ifndef GBCOMPACT
 
@@ -158,9 +172,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         size_t aij_size = flipxy ? ysize : xsize ;
         size_t djj_size = flipxy ? xsize : ysize ;
 
-        char aij [aij_size] ;
-        char djj [djj_size] ;
-
         GB_void *restrict Cx = C->x ;
 
         GB_cast_function cast_A, cast_D ;
@@ -187,10 +198,12 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
         // aij = A(i,j), located in Ax [pA]
         #define GB_GETA(aij,Ax,pA)                                          \
+            GB_void aij [aij_size] ;                                        \
             if (!A_is_pattern) cast_A (aij, Ax +((pA)*asize), asize) ;
 
         // dji = D(j,j), located in Dx [j]
         #define GB_GETB(djj,Dx,j)                                           \
+            GB_void djj [djj_size] ;                                        \
             if (!D_is_pattern) cast_D (djj, Dx +((j)*dsize), dsize) ;
 
         // C(i,j) = A(i,j) * D(j,j)
@@ -216,6 +229,11 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             #undef GB_BINARYOP
         }
     }
+
+// #if defined ( _OPENMP )
+// t = omp_get_wtime ( ) - t ;
+// fprintf (stderr, " colscale time: %g\n", t) ;
+// #endif
 
     //--------------------------------------------------------------------------
     // return result

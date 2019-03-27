@@ -1052,6 +1052,14 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     GB_Context Context
 ) ;
 
+void GB_memcpy                  // parallel memcpy
+(
+    void *dest,                 // destination
+    const void *src,            // source
+    size_t n,                   // # of bytes to copy
+    int nthreads                // # of threads to use
+) ;
+
 GrB_Info GB_nvals           // get the number of entries in a matrix
 (
     GrB_Index *nvals,       // matrix has nvals entries
