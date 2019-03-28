@@ -70,6 +70,6 @@ void GB_cast_array              // typecast an array
     //--------------------------------------------------------------------------
 
     // There is no generic worker so the switch factory cannot be disabled.
-    #include "GB_2type_template.c"
+    #include "GB_2type_factory.c"
 }
 

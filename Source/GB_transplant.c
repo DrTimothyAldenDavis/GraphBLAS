@@ -112,8 +112,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p and A->h into the newly created C->p and C->h
-            memcpy (C->p, A->p, (A->nvec+1) * sizeof (int64_t)) ; // do parallel
-            memcpy (C->h, A->h,  A->nvec    * sizeof (int64_t)) ; // do parallel
+            GB_memcpy (C->p, A->p, (A->nvec+1) * sizeof (int64_t), nthreads) ;
+            GB_memcpy (C->h, A->h,  A->nvec    * sizeof (int64_t), nthreads) ;
         }
         else
         {
@@ -130,7 +130,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p into the newly created C->p
-            memcpy (C->p, A->p, (A->vdim+1) * sizeof (int64_t)) ; // do parallel
+            GB_memcpy (C->p, A->p, (A->vdim+1) * sizeof (int64_t), nthreads) ;
         }
 
         // free any non-shallow A->p and A->h content of A
@@ -223,7 +223,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
-            memcpy (C->x, A->x, anz * C->type->size) ; // do parallel
+            GB_memcpy (C->x, A->x, anz * C->type->size, nthreads) ;
             A->x = NULL ;
         }
         else
@@ -257,7 +257,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (A->i_shallow)
     { 
         // A->i is a shallow copy of another matrix, so we need a deep copy
-        memcpy (C->i, A->i, anz * sizeof (int64_t)) ; // do parallel
+        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
         A->i = NULL ;
     }
     else

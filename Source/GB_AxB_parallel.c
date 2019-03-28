@@ -410,6 +410,9 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // and A is stored by column.  This method is the default when
             // slicing A.
 
+            // TODO use this instead:
+            // GB_pslice (Slice, A, nthreads) ;
+
             int64_t *Ap = A->p ;
             int64_t pleft = 0 ;
             for (int tid = 1 ; tid < nthreads ; tid++)
@@ -447,17 +450,26 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 //      double t1 = omp_get_wtime ( ) ;
 //      #endif
 
-//      if (C_in_place)
+//      if (C_in_place)     TODO: make this a parameter?
         { 
 
             //------------------------------------------------------------------
             // compute C in place
             //------------------------------------------------------------------
 
+            // TODO: could use 2D parallelism, where Aslice[tid]*B can be
+            // parallel across the columns of B, using the new
+            // GBI_parallel_for_each_vector macro.
+
             GB_OK (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B,
                 semiring, flipxy, &mask_applied, nthreads, Context)) ;
 
         }
+
+        // TODO the following method works too (it is tested), but it is slower
+        // if B is a vector.  Need to determine if there are cases where the
+        // code below is faster than GB_AxB_dot2.
+
 #if 0
         else
         {

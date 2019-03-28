@@ -43,7 +43,7 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 
     // switch factory for two built-in types; user types are skipped.
     // no generic worker so the switch factory cannot be disabled.
-    #include "GB_2type_template.c"
+    #include "GB_2type_factory.c"
 
     //--------------------------------------------------------------------------
     // user-defined types fall through the switch factory to here

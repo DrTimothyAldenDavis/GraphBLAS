@@ -30,8 +30,8 @@
 // parallel case, it might be hard to parallelize the bucket sort.  The qsort
 // is likely better, and the bucket sort could remain mostly sequential.  Most
 // of the work is done in other functions (GB_transpose_bucket, GB_builder,
-// etc), not here.  There are a few large loops here, and a large memcpy, that
-// should be done in parallel.
+// etc), not here.  There are a few large loops here then could be done in
+// parallel.  See also the GB_memcpy below.
 
 #include "GB.h"
 
@@ -373,6 +373,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C->p = Cp ; C->p_shallow = false ;
 
         // fill the vector pointers C->p
+        #pragma omp parallel for num_threads (nthreads)
         for (int64_t k = 0 ; k <= anz ; k++)
         { 
             Cp [k] = k ;
@@ -498,6 +499,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (allocate_new_Ci) ;
             ASSERT (Ah == NULL) ;
             int64_t k = 0 ;
+            // TODO is it worth doing this O(n) loop in parallel?
             for (int64_t j = 0 ; j < avdim ; j++)
             {
                 if (Ap [j] < Ap [j+1])
@@ -729,7 +731,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // A.  This array becomes the permanent T->i on output.  This phase
             // must be done before Chandle is created below, since that step
             // destroys A.  See also GB_extractTuples, where J is extracted.
-            GBI_for_each_vector (A)
+            GBI_parallel_for_each_vector (A, nthreads)
             {
                 GBI_for_each_entry (j, p, pend)
                 { 
@@ -820,7 +822,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 // Tj = Ai, making a deep copy.  Tj is freed by GB_builder.
                 // A->i will not be modified, even if out of memory.
                 // See also GB_extractTuples, where I is extracted.
-                memcpy (Tj, Ai, anz * sizeof (int64_t)) ;   // do parallel
+                GB_memcpy (Tj, Ai, anz * sizeof (int64_t), nthreads) ;
             }
 
             // numerical values: apply the op, typecast, or make shallow copy
@@ -839,6 +841,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                     // be freed early to free up space for GB_builder.
                     // However, in the current usage, when op is used, A is not
                     // transposed in place, so this step is not needed.
+                    ASSERT (GB_DEAD_CODE) ;
                     GB_FREE_MEMORY (Ax, anzmax , asize) ;
                 }
                 #endif

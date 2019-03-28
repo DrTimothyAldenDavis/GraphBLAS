@@ -19,7 +19,7 @@
 // This function is not user-callable.  It does the work for the user-callable
 // GrB_*_extractTuples functions.
 
-// PARALLEL: easy.  Does large memcpy's and fully parallel loops.
+// PARALLEL: via GB_memcpy and simple for loops
 
 #include "GB.h"
 
@@ -103,7 +103,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (I != NULL)
     { 
-        memcpy (I, A->i, anz * sizeof (int64_t)) ;  // do parallel
+        GB_memcpy (I, A->i, anz * sizeof (int64_t), nthreads) ;
     }
 
     //--------------------------------------------------------------------------
@@ -112,7 +112,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (J != NULL)
     {
-        GBI_for_each_vector (A)
+        GBI_parallel_for_each_vector (A, nthreads)
         {
             GBI_for_each_entry (j, p, pend)
             { 
@@ -134,7 +134,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             // user-defined type, but this can't be checked.  For built-in
             // types, xcode has already been determined by the type of X in the
             // function signature of the caller.
-            memcpy (X, A->x, anz * A->type->size) ; // do parallel
+            GB_memcpy (X, A->x, anz * A->type->size, nthreads) ;
         }
         else
         { 

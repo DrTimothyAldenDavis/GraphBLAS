@@ -30,12 +30,12 @@ GrB_Info GrB_Matrix_reduce_ ## kind /* w<M> = accum (w,reduce(A))          */ \
 }
 
 // With just a GrB_BinaryOp, built-in operators can terminate early (MIN, MAX,
-// LOR, and LAND), using the terminal value defined by GB_assoc_template.c.
+// LOR, and LAND), using the terminal value defined by GB_assoc_factory.c.
 // User-defined binary operators do not have a terminal value.
 GB_REDUCE (BinaryOp, reduce    , NULL)
 
 // Built-in monoids ignore the terminal parameter, and use the terminal value
-// defined in GB_assoc_template.c (for MIN, MAX, LOR, and LAND).
+// defined in GB_assoc_factory.c (for MIN, MAX, LOR, and LAND).
 // User-defined monoids can be created with a non-NULL terminal value.
 GB_REDUCE (Monoid  , reduce->op, reduce->terminal)
 

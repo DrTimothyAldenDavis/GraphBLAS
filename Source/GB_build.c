@@ -305,7 +305,7 @@ GrB_Info GB_build               // build matrix
             // GB_reduce_to_column: do not check I, assume not sorted
             //------------------------------------------------------------------
 
-            memcpy (iwork, I, len * sizeof (int64_t)) ; // do parallel
+            GB_memcpy (iwork, I, len * sizeof (int64_t), nthreads) ;
             sorted = false ;
         }
     }

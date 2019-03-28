@@ -228,7 +228,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
         // sum down each sparse vector: T (j) = reduce (A (:,j))
         //----------------------------------------------------------------------
 
-        // FUTURE:: reduction down each sparse vector can be done in parallel.
+        // TODO:: do the reduction down each sparse vector in parallel.
         // Need to first check A for empty vectors, and compute Ti first.
         // then compute Tx.
 
@@ -280,7 +280,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
                 GB_Opcode opcode = reduce->opcode ;
                 GB_Type_code typecode = acode ;
                 ASSERT (typecode <= GB_UDT_code) ;
-                #include "GB_assoc_template.c"
+                #include "GB_assoc_factory.c"
             }
 
         #endif
@@ -343,6 +343,10 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
         // the bucket method would fail.  Thus, the qsort method, below, is
         // used when anz < wlen.
 
+        // TODO when nthreads is high enough, use the qsort method.  Need
+        // to determine the rule for selecting the methods automatically.
+        // Should this be a user parameter?
+
         if (anz < wlen)
         {
 
@@ -389,7 +393,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
 
             // Early exit cannot be exploited, and this method is not
             // easily parallelizable.  Alternative would be to explicitly
-            // transpose the input matrix.
+            // transpose the input matrix
 
             bool *restrict mark = NULL ;
             GB_CALLOC_MEMORY (mark, wlen + 1, sizeof (bool), Context) ;
@@ -414,7 +418,10 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             // sum across each index: work [i] = reduce (A (i,:))
             //------------------------------------------------------------------
 
-            // Early exit cannot be exploited; ignore the terminal value
+            // Early exit cannot be exploited; ignore the terminal value.  This
+            // method is not simple to parallelize, so use it with a single
+            // thread.  For multiple threads, use the qsort method instead (see
+            // above).
 
             bool done = false ;
 
@@ -460,7 +467,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
                     GB_Opcode opcode = reduce->opcode ;
                     GB_Type_code typecode = acode ;
                     ASSERT (typecode <= GB_UDT_code) ;
-                    #include "GB_assoc_template.c"
+                    #include "GB_assoc_factory.c"
                 }
 
             #endif

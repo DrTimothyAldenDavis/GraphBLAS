@@ -23,7 +23,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _first
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -31,7 +31,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _second
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -41,7 +41,7 @@
             // MIN == TIMES == AND for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _min
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -51,7 +51,7 @@
             // MAX == PLUS == OR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _max
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -61,7 +61,7 @@
             // MAX == PLUS == OR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _plus
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -71,7 +71,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _minus
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -81,7 +81,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _rminus
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -91,7 +91,7 @@
             // MIN == TIMES == AND for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _times
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -101,7 +101,7 @@
             // FIRST == DIV for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _div
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -111,7 +111,7 @@
             // SECOND == RDIV for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _rdiv
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -121,7 +121,7 @@
             // ISEQ == EQ for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _iseq
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -131,7 +131,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _isne
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -141,7 +141,7 @@
             // ISGT == GT for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _isgt
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -151,7 +151,7 @@
             // ISLT == LT for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _islt
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -161,7 +161,7 @@
             // ISGE == GE for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _isge
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -171,7 +171,7 @@
             // ISLE == LE for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _isle
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -179,7 +179,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _eq
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -189,7 +189,7 @@
             // MINUS == RMINUS == NE == ISNE == XOR for boolean
             #define GB_NO_BOOLEAN
             #define GB_BINOP_NAME _ne
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -197,7 +197,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _gt
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -205,7 +205,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _lt
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -213,7 +213,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _ge
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -221,7 +221,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _le
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -229,7 +229,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _lor
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -237,7 +237,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _land
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         //----------------------------------------------------------------------
@@ -245,7 +245,7 @@
         //----------------------------------------------------------------------
 
             #define GB_BINOP_NAME _lxor
-            #include "GB_binop_template.c"
+            #include "GB_binop_type_factory.c"
             break ;
 
         default: ;

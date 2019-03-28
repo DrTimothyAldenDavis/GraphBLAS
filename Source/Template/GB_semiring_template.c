@@ -11,10 +11,10 @@
 // semirings.  That file has defined either GB_BOOLEAN, or GB_TYPE as one of
 // the 10 non-boolean types.
 
-// Using built-in types and operators, 960 unique semirings can be built.  This
-// count excludes redundant Boolean operators (for example GrB_TIMES_BOOL and
-// GrB_LAND are different operators but they are redundant since they always
-// return the same result):
+// Using built-in types and operators, 1040 unique semirings can be built.
+// This count excludes redundant Boolean operators (for example GrB_TIMES_BOOL
+// and GrB_LAND are different operators but they are redundant since they
+// always return the same result):
 
 // 760 semirings with a multiply operator TxT -> T where T is non-Boolean, from
 // the complete cross product of:
@@ -26,7 +26,7 @@
 //           LOR, LAND, LXOR)
 //      10 non-Boolean types, T
 
-//      a single instance of this file creates 4*17 = 68 semirings of this
+//      a single instance of this file creates 4*19 = 76 semirings of this
 //      form, of one type T, when T is not BOOL
 
 // 240 semirings with a comparison operator TxT -> bool, where T is
@@ -48,8 +48,6 @@
 
 //      a single instance of this file creates all 4*10 = 40 purely Boolean
 //      semirings, when T is BOOL and GB_BOOLEAN is defined
-
-// parallel: not here; no executable code
 
 //------------------------------------------------------------------------------
 

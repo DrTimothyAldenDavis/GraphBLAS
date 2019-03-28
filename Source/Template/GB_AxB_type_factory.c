@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_template.c: switch factory for C=A*B
+// GB_AxB_type_factory.c: switch factory for C=A*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

@@ -181,7 +181,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     // C->h = B->h
     if (B->is_hyper)
     {
-        memcpy (C->h, B->h, cnvec * sizeof (int64_t)) ;
+        GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nthreads) ;
     }
 
     // free C_count for the first thread; it is no longer needed

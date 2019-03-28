@@ -92,7 +92,7 @@ void GB_transpose_ix        // transpose the pattern and values of a matrix
     GB_Type_code code2 = A->type->code ;        // defines atype
     ASSERT (code1 <= GB_UDT_code) ;
     ASSERT (code2 <= GB_UDT_code) ;
-    #include "GB_2type_template.c"
+    #include "GB_2type_factory.c"
 
     //--------------------------------------------------------------------------
     // generic worker

@@ -102,50 +102,18 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
 
-// #if defined ( _OPENMP )
-// double t = omp_get_wtime ( ) ;
-// #endif
-
+    // FUTURE: each of the four GB_memcpy's are done one at a time with
+    // parallelism inside, but they could all be done in parallel.
     GB_memcpy (Cp, Ap, (anvec+1) * sizeof (int64_t), nthreads) ;
     if (A->is_hyper)
     { 
         GB_memcpy (Ch, Ah, anvec * sizeof (int64_t), nthreads) ;
     }
     GB_memcpy (Ci, Ai, anz * sizeof (int64_t), nthreads) ;
-
-/*
-    #pragma omp parallel num_threads (nthreads)
-    {
-        #pragma omp for nowait 
-        for (int64_t k = 0 ; k <= anvec ; k++)
-        {
-            Cp [k] = Ap [k] ;
-        }
-        #pragma omp for nowait
-        for (int64_t p = 0 ; p < anz ; p++)
-        {
-            Ci [p] = Ai [p] ;
-        }
-        if (A->is_hyper)
-        {
-            #pragma omp for nowait
-            for (int64_t k = 0 ; k < anvec ; k++)
-            {
-                Ch [k] = Ah [k] ;
-            }
-        }
-    }
-*/
-
     if (numeric)
     {
         GB_memcpy (C->x, A->x, anz * A->type->size, nthreads) ;
     }
-
-// #if defined ( _OPENMP )
-// t = omp_get_wtime ( ) - t ;
-// fprintf (stderr, " dup memcpy: %g ", t) ;
-// #endif
 
     C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
     if (numeric) ASSERT_OK (GB_check (C, "C duplicate of A", GB0)) ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_2type_template.c: 2-type switch factory
+// GB_2type_factory.c: 2-type switch factory
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

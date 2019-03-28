@@ -126,7 +126,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_cumsum (rowcount, A->vlen, &(C->nvec_nonempty), Context) ;
 
     // copy the result into C->p
-    memcpy (C->p, rowcount, (A->vlen + 1) * sizeof (int64_t)) ;
+    GB_memcpy (C->p, rowcount, (A->vlen + 1) * sizeof (int64_t), nthreads) ;
 
     C->magic = GB_MAGIC ;      // C is now initialized ]
 

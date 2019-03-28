@@ -174,7 +174,7 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
             GB_Opcode opcode = reduce->op->opcode ;
             GB_Type_code typecode = A->type->code ;
             ASSERT (typecode <= GB_UDT_code) ;
-            #include "GB_assoc_template.c"
+            #include "GB_assoc_factory.c"
 
         #endif
 

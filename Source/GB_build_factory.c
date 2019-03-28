@@ -266,7 +266,7 @@ GrB_Info GB_build_factory           // build a matrix
 
             // controlled by opcode and typecode
             GB_Type_code typecode = tcode ;
-            #include "GB_assoc_template.c"
+            #include "GB_assoc_factory.c"
 
         #endif
 

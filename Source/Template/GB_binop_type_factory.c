@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_binop_template.c: switch factory for binary operators
+// GB_binop_type_factory.c: switch factory for binary operators
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
