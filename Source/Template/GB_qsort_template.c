@@ -199,7 +199,7 @@ nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
     else
     {
         // sort A [0:n-1] with multiple threads
-        #pragma omp parallel num_threads(nthreads)
+        #pragma omp parallel num_threads (nthreads)
         {
             #pragma omp single
             {

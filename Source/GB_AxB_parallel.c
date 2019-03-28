@@ -478,7 +478,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // compute each slice of C independently
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads(nthreads) \
+            #pragma omp parallel for num_threads (nthreads) schedule (static,1)\
                 reduction(&&:ok,allmask) reduction(||:panic)
             for (int tid = 0 ; tid < nthreads ; tid++)
             { 
@@ -784,7 +784,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         int Sauna_ids [nthreads] ;
 
         bool any_Gustavson = false ;
-        #pragma omp parallel for num_threads(nthreads) \
+        #pragma omp parallel for num_threads (nthreads) schedule (static,1) \
             reduction(||:any_Gustavson)
         for (int tid = 0 ; tid < nthreads ; tid++)
         { 
@@ -833,7 +833,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 //      double t1 = omp_get_wtime ( ) ;
 //      #endif
 
-        #pragma omp parallel for num_threads(nthreads) \
+        #pragma omp parallel for num_threads (nthreads) schedule (static,1) \
             reduction(&&:ok,allmask) reduction(||:panic)
         for (int tid = 0 ; tid < nthreads ; tid++)
         { 

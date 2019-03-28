@@ -3578,7 +3578,7 @@ static inline void GBI1_start
 #define GB_PRAGMA(x) _Pragma (#x)
 
 #define GB_PRAGMA_PARALLEL_FOR(nthreads)                                    \
-    GB_PRAGMA (omp parallel for num_threads(nthreads) schedule(static,1))   \
+    GB_PRAGMA (omp parallel for num_threads (nthreads) schedule (static,1))
 
 // iterate in parallel across all vectors in the matrix A, partitioned by nnz
 #define GBI_parallel_for_each_vector_with_iter(Iter,A,nthreads)             \
