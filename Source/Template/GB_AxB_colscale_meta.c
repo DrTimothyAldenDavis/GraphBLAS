@@ -41,6 +41,7 @@
 
         GB_GETB (djj, Dx, j) ;
 
+        // #pragma omp simd
         for ( ; pA < pA_end ; pA++)
         {
             GB_GETA (aij, Ax, pA) ;
