@@ -277,8 +277,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     }
     nthreads = GB_IMAX (nthreads, 1) ;
 
-// fprintf (stderr, "nthreads: %d AxB_slice %d\n", nthreads, AxB_slice) ;
-
     //==========================================================================
     // sequential C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B
     //==========================================================================
