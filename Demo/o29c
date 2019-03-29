@@ -1,0 +1,635 @@
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/ssget/Mallya/lhr71_adj.tsv.gz
+--------------------------------------------------------------
+matrix 70304 by 70304, 2985588 entries, from stdin
+
+total time to read A matrix:       1.816396 sec
+
+n 70304 # edges 1492794
+U=triu(A) time:        0.012687 sec
+L=tril(A) time:        0.011776 sec
+
+------------------------------------- dot product method:
+# triangles 160592
+
+L*U' time (dot):         0.025102 sec
+tricount time:         0.025379 sec (dot product method)
+tri+prep time:         0.049842 sec (incl time to compute L and U)
+compute C time:        0.025102 sec
+reduce (C) time:       0.000277 sec
+rate      29.95 million edges/sec (incl time for U=triu(A))
+rate      58.82 million edges/sec (just tricount itself)
+
+# triangles 160592
+
+L*U' time (dot):         0.020266 sec
+tricount time:         0.020539 sec (dot product method)
+tri+prep time:         0.045001 sec (incl time to compute L and U)
+compute C time:        0.020266 sec
+reduce (C) time:       0.000273 sec
+rate      33.17 million edges/sec (incl time for U=triu(A))
+rate      72.68 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.020035 sec
+tricount time:         0.020308 sec (saxpy method)
+tri+prep time:         0.032084 sec (incl time to compute L)
+compute C time:        0.020035 sec
+reduce (C) time:       0.000273 sec
+rate      46.53 million edges/sec (incl time for L=tril(A))
+rate      73.51 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/ssget/Freescale/Freescale2_adj.tsv.gz
+--------------------------------------------------------------
+matrix 2999349 by 2999349, 11489868 entries, from stdin
+
+total time to read A matrix:       7.776798 sec
+
+n 2999349 # edges 5744934
+U=triu(A) time:        0.088553 sec
+L=tril(A) time:        0.071990 sec
+
+------------------------------------- dot product method:
+# triangles 21027280
+
+L*U' time (dot):         0.523490 sec
+tricount time:         0.535917 sec (dot product method)
+tri+prep time:         0.696461 sec (incl time to compute L and U)
+compute C time:        0.523490 sec
+reduce (C) time:       0.012427 sec
+rate       8.25 million edges/sec (incl time for U=triu(A))
+rate      10.72 million edges/sec (just tricount itself)
+
+# triangles 21027280
+
+L*U' time (dot):         0.486520 sec
+tricount time:         0.498900 sec (dot product method)
+tri+prep time:         0.659444 sec (incl time to compute L and U)
+compute C time:        0.486520 sec
+reduce (C) time:       0.012380 sec
+rate       8.71 million edges/sec (incl time for U=triu(A))
+rate      11.52 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.204913 sec
+tricount time:         0.217490 sec (saxpy method)
+tri+prep time:         0.289481 sec (incl time to compute L)
+compute C time:        0.204913 sec
+reduce (C) time:       0.012577 sec
+rate      19.85 million edges/sec (incl time for L=tril(A))
+rate      26.41 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/cit-HepPh/cit-HepPh_adj.tsv.gz
+--------------------------------------------------------------
+matrix 34546 by 34546, 841754 entries, from stdin
+
+total time to read A matrix:       0.538088 sec
+
+n 34546 # edges 420877
+U=triu(A) time:        0.004271 sec
+L=tril(A) time:        0.003536 sec
+
+------------------------------------- dot product method:
+# triangles 1276868
+
+L*U' time (dot):         0.109467 sec
+tricount time:         0.111245 sec (dot product method)
+tri+prep time:         0.119052 sec (incl time to compute L and U)
+compute C time:        0.109467 sec
+reduce (C) time:       0.001778 sec
+rate       3.54 million edges/sec (incl time for U=triu(A))
+rate       3.78 million edges/sec (just tricount itself)
+
+# triangles 1276868
+
+L*U' time (dot):         0.102756 sec
+tricount time:         0.104524 sec (dot product method)
+tri+prep time:         0.112331 sec (incl time to compute L and U)
+compute C time:        0.102756 sec
+reduce (C) time:       0.001768 sec
+rate       3.75 million edges/sec (incl time for U=triu(A))
+rate       4.03 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.033705 sec
+tricount time:         0.035477 sec (saxpy method)
+tri+prep time:         0.039013 sec (incl time to compute L)
+compute C time:        0.033705 sec
+reduce (C) time:       0.001773 sec
+rate      10.79 million edges/sec (incl time for L=tril(A))
+rate      11.86 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/cit-HepTh/cit-HepTh_adj.tsv.gz
+--------------------------------------------------------------
+matrix 27770 by 27770, 704570 entries, from stdin
+
+total time to read A matrix:       0.446522 sec
+
+n 27770 # edges 352285
+U=triu(A) time:        0.003528 sec
+L=tril(A) time:        0.002932 sec
+
+------------------------------------- dot product method:
+# triangles 1478735
+
+L*U' time (dot):         0.111209 sec
+tricount time:         0.112829 sec (dot product method)
+tri+prep time:         0.119288 sec (incl time to compute L and U)
+compute C time:        0.111209 sec
+reduce (C) time:       0.001619 sec
+rate       2.95 million edges/sec (incl time for U=triu(A))
+rate       3.12 million edges/sec (just tricount itself)
+
+# triangles 1478735
+
+L*U' time (dot):         0.104875 sec
+tricount time:         0.106489 sec (dot product method)
+tri+prep time:         0.112949 sec (incl time to compute L and U)
+compute C time:        0.104875 sec
+reduce (C) time:       0.001614 sec
+rate       3.12 million edges/sec (incl time for U=triu(A))
+rate       3.31 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.038869 sec
+tricount time:         0.040480 sec (saxpy method)
+tri+prep time:         0.043412 sec (incl time to compute L)
+compute C time:        0.038869 sec
+reduce (C) time:       0.001611 sec
+rate       8.11 million edges/sec (incl time for L=tril(A))
+rate       8.70 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/email-EuAll/email-EuAll_adj.tsv.gz
+--------------------------------------------------------------
+matrix 265214 by 265214, 728962 entries, from stdin
+
+total time to read A matrix:       0.500440 sec
+
+n 265214 # edges 364481
+U=triu(A) time:        0.006396 sec
+L=tril(A) time:        0.005764 sec
+
+------------------------------------- dot product method:
+# triangles 267313
+
+L*U' time (dot):         0.072708 sec
+tricount time:         0.073092 sec (dot product method)
+tri+prep time:         0.085253 sec (incl time to compute L and U)
+compute C time:        0.072708 sec
+reduce (C) time:       0.000384 sec
+rate       4.28 million edges/sec (incl time for U=triu(A))
+rate       4.99 million edges/sec (just tricount itself)
+
+# triangles 267313
+
+L*U' time (dot):         0.069394 sec
+tricount time:         0.069775 sec (dot product method)
+tri+prep time:         0.081935 sec (incl time to compute L and U)
+compute C time:        0.069394 sec
+reduce (C) time:       0.000381 sec
+rate       4.45 million edges/sec (incl time for U=triu(A))
+rate       5.22 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.038243 sec
+tricount time:         0.038623 sec (saxpy method)
+tri+prep time:         0.044387 sec (incl time to compute L)
+compute C time:        0.038243 sec
+reduce (C) time:       0.000380 sec
+rate       8.21 million edges/sec (incl time for L=tril(A))
+rate       9.44 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/soc-Epinions1/soc-Epinions1_adj.tsv.gz
+--------------------------------------------------------------
+matrix 75879 by 75879, 811480 entries, from stdin
+
+total time to read A matrix:       0.519224 sec
+
+n 75879 # edges 405740
+U=triu(A) time:        0.004538 sec
+L=tril(A) time:        0.003955 sec
+
+------------------------------------- dot product method:
+# triangles 1624481
+
+L*U' time (dot):         0.211075 sec
+tricount time:         0.212436 sec (dot product method)
+tri+prep time:         0.220929 sec (incl time to compute L and U)
+compute C time:        0.211075 sec
+reduce (C) time:       0.001360 sec
+rate       1.84 million edges/sec (incl time for U=triu(A))
+rate       1.91 million edges/sec (just tricount itself)
+
+# triangles 1624481
+
+L*U' time (dot):         0.197495 sec
+tricount time:         0.198851 sec (dot product method)
+tri+prep time:         0.207344 sec (incl time to compute L and U)
+compute C time:        0.197495 sec
+reduce (C) time:       0.001356 sec
+rate       1.96 million edges/sec (incl time for U=triu(A))
+rate       2.04 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.055848 sec
+tricount time:         0.057204 sec (saxpy method)
+tri+prep time:         0.061160 sec (incl time to compute L)
+compute C time:        0.055848 sec
+reduce (C) time:       0.001356 sec
+rate       6.63 million edges/sec (incl time for L=tril(A))
+rate       7.09 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/soc-Slashdot0811/soc-Slashdot0811_adj.tsv.gz
+--------------------------------------------------------------
+matrix 77360 by 77360, 938360 entries, from stdin
+
+total time to read A matrix:       0.646313 sec
+
+n 77360 # edges 469180
+U=triu(A) time:        0.005211 sec
+L=tril(A) time:        0.004513 sec
+
+------------------------------------- dot product method:
+# triangles 551724
+
+L*U' time (dot):         0.202926 sec
+tricount time:         0.203769 sec (dot product method)
+tri+prep time:         0.213494 sec (incl time to compute L and U)
+compute C time:        0.202926 sec
+reduce (C) time:       0.000843 sec
+rate       2.20 million edges/sec (incl time for U=triu(A))
+rate       2.30 million edges/sec (just tricount itself)
+
+# triangles 551724
+
+L*U' time (dot):         0.189312 sec
+tricount time:         0.190149 sec (dot product method)
+tri+prep time:         0.199874 sec (incl time to compute L and U)
+compute C time:        0.189312 sec
+reduce (C) time:       0.000837 sec
+rate       2.35 million edges/sec (incl time for U=triu(A))
+rate       2.47 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.049466 sec
+tricount time:         0.050304 sec (saxpy method)
+tri+prep time:         0.054817 sec (incl time to compute L)
+compute C time:        0.049466 sec
+reduce (C) time:       0.000838 sec
+rate       8.56 million edges/sec (incl time for L=tril(A))
+rate       9.33 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/soc-Slashdot0902/soc-Slashdot0902_adj.tsv.gz
+--------------------------------------------------------------
+matrix 82168 by 82168, 1008460 entries, from stdin
+
+total time to read A matrix:       0.649993 sec
+
+n 82168 # edges 504230
+U=triu(A) time:        0.005550 sec
+L=tril(A) time:        0.004797 sec
+
+------------------------------------- dot product method:
+# triangles 602592
+
+L*U' time (dot):         0.218860 sec
+tricount time:         0.219764 sec (dot product method)
+tri+prep time:         0.230111 sec (incl time to compute L and U)
+compute C time:        0.218860 sec
+reduce (C) time:       0.000904 sec
+rate       2.19 million edges/sec (incl time for U=triu(A))
+rate       2.29 million edges/sec (just tricount itself)
+
+# triangles 602592
+
+L*U' time (dot):         0.206412 sec
+tricount time:         0.207313 sec (dot product method)
+tri+prep time:         0.217660 sec (incl time to compute L and U)
+compute C time:        0.206412 sec
+reduce (C) time:       0.000901 sec
+rate       2.32 million edges/sec (incl time for U=triu(A))
+rate       2.43 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.054136 sec
+tricount time:         0.055036 sec (saxpy method)
+tri+prep time:         0.059833 sec (incl time to compute L)
+compute C time:        0.054136 sec
+reduce (C) time:       0.000901 sec
+rate       8.43 million edges/sec (incl time for L=tril(A))
+rate       9.16 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/amazon0312/amazon0312_adj.tsv.gz
+--------------------------------------------------------------
+matrix 400727 by 400727, 4699738 entries, from stdin
+
+total time to read A matrix:       3.176861 sec
+
+n 400727 # edges 2349869
+U=triu(A) time:        0.029765 sec
+L=tril(A) time:        0.022102 sec
+
+------------------------------------- dot product method:
+# triangles 3686467
+
+L*U' time (dot):         0.405468 sec
+tricount time:         0.413930 sec (dot product method)
+tri+prep time:         0.465797 sec (incl time to compute L and U)
+compute C time:        0.405468 sec
+reduce (C) time:       0.008462 sec
+rate       5.04 million edges/sec (incl time for U=triu(A))
+rate       5.68 million edges/sec (just tricount itself)
+
+# triangles 3686467
+
+L*U' time (dot):         0.408630 sec
+tricount time:         0.417174 sec (dot product method)
+tri+prep time:         0.469041 sec (incl time to compute L and U)
+compute C time:        0.408630 sec
+reduce (C) time:       0.008544 sec
+rate       5.01 million edges/sec (incl time for U=triu(A))
+rate       5.63 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.192533 sec
+tricount time:         0.200995 sec (saxpy method)
+tri+prep time:         0.223098 sec (incl time to compute L)
+compute C time:        0.192533 sec
+reduce (C) time:       0.008462 sec
+rate      10.53 million edges/sec (incl time for L=tril(A))
+rate      11.69 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/amazon0505/amazon0505_adj.tsv.gz
+--------------------------------------------------------------
+matrix 410236 by 410236, 4878874 entries, from stdin
+
+total time to read A matrix:       3.322113 sec
+
+n 410236 # edges 2439437
+U=triu(A) time:        0.030715 sec
+L=tril(A) time:        0.022964 sec
+
+------------------------------------- dot product method:
+# triangles 3951063
+
+L*U' time (dot):         0.423848 sec
+tricount time:         0.432750 sec (dot product method)
+tri+prep time:         0.486429 sec (incl time to compute L and U)
+compute C time:        0.423848 sec
+reduce (C) time:       0.008903 sec
+rate       5.01 million edges/sec (incl time for U=triu(A))
+rate       5.64 million edges/sec (just tricount itself)
+
+# triangles 3951063
+
+L*U' time (dot):         0.434066 sec
+tricount time:         0.442975 sec (dot product method)
+tri+prep time:         0.496654 sec (incl time to compute L and U)
+compute C time:        0.434066 sec
+reduce (C) time:       0.008909 sec
+rate       4.91 million edges/sec (incl time for U=triu(A))
+rate       5.51 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.191599 sec
+tricount time:         0.200495 sec (saxpy method)
+tri+prep time:         0.223458 sec (incl time to compute L)
+compute C time:        0.191599 sec
+reduce (C) time:       0.008896 sec
+rate      10.92 million edges/sec (incl time for L=tril(A))
+rate      12.17 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/amazon0601/amazon0601_adj.tsv.gz
+--------------------------------------------------------------
+matrix 403394 by 403394, 4886816 entries, from stdin
+
+total time to read A matrix:       3.278669 sec
+
+n 403394 # edges 2443408
+U=triu(A) time:        0.030612 sec
+L=tril(A) time:        0.022786 sec
+
+------------------------------------- dot product method:
+# triangles 3986507
+
+L*U' time (dot):         0.431395 sec
+tricount time:         0.440318 sec (dot product method)
+tri+prep time:         0.493716 sec (incl time to compute L and U)
+compute C time:        0.431395 sec
+reduce (C) time:       0.008923 sec
+rate       4.95 million edges/sec (incl time for U=triu(A))
+rate       5.55 million edges/sec (just tricount itself)
+
+# triangles 3986507
+
+L*U' time (dot):         0.436117 sec
+tricount time:         0.445065 sec (dot product method)
+tri+prep time:         0.498463 sec (incl time to compute L and U)
+compute C time:        0.436117 sec
+reduce (C) time:       0.008948 sec
+rate       4.90 million edges/sec (incl time for U=triu(A))
+rate       5.49 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.189711 sec
+tricount time:         0.198630 sec (saxpy method)
+tri+prep time:         0.221416 sec (incl time to compute L)
+compute C time:        0.189711 sec
+reduce (C) time:       0.008918 sec
+rate      11.04 million edges/sec (incl time for L=tril(A))
+rate      12.30 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/flickrEdges/flickrEdges_adj.tsv.gz
+--------------------------------------------------------------
+matrix 105938 by 105938, 4633896 entries, from stdin
+
+total time to read A matrix:       3.056241 sec
+
+n 105938 # edges 2316948
+U=triu(A) time:        0.020936 sec
+L=tril(A) time:        0.018221 sec
+
+------------------------------------- dot product method:
+# triangles 107987357
+
+L*U' time (dot):         2.761064 sec
+tricount time:         2.772025 sec (dot product method)
+tri+prep time:         2.811182 sec (incl time to compute L and U)
+compute C time:        2.761064 sec
+reduce (C) time:       0.010961 sec
+rate       0.82 million edges/sec (incl time for U=triu(A))
+rate       0.84 million edges/sec (just tricount itself)
+
+# triangles 107987357
+
+L*U' time (dot):         2.568394 sec
+tricount time:         2.579379 sec (dot product method)
+tri+prep time:         2.618536 sec (incl time to compute L and U)
+compute C time:        2.568394 sec
+reduce (C) time:       0.010985 sec
+rate       0.88 million edges/sec (incl time for U=triu(A))
+rate       0.90 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         0.997624 sec
+tricount time:         1.008548 sec (saxpy method)
+tri+prep time:         1.026769 sec (incl time to compute L)
+compute C time:        0.997624 sec
+reduce (C) time:       0.010924 sec
+rate       2.26 million edges/sec (incl time for L=tril(A))
+rate       2.30 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/snap/cit-Patents/cit-Patents_adj.tsv.gz
+--------------------------------------------------------------
+matrix 3774768 by 3774768, 33037894 entries, from stdin
+
+total time to read A matrix:      25.110508 sec
+
+n 3774768 # edges 16518947
+U=triu(A) time:        0.220046 sec
+L=tril(A) time:        0.156281 sec
+
+------------------------------------- dot product method:
+# triangles 7515023
+
+L*U' time (dot):         5.108586 sec
+tricount time:         5.133906 sec (dot product method)
+tri+prep time:         5.510232 sec (incl time to compute L and U)
+compute C time:        5.108586 sec
+reduce (C) time:       0.025319 sec
+rate       3.00 million edges/sec (incl time for U=triu(A))
+rate       3.22 million edges/sec (just tricount itself)
+
+# triangles 7515023
+
+L*U' time (dot):         4.791692 sec
+tricount time:         4.815291 sec (dot product method)
+tri+prep time:         5.191618 sec (incl time to compute L and U)
+compute C time:        4.791692 sec
+reduce (C) time:       0.023600 sec
+rate       3.18 million edges/sec (incl time for U=triu(A))
+rate       3.43 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         2.399435 sec
+tricount time:         2.423669 sec (saxpy method)
+tri+prep time:         2.579949 sec (incl time to compute L)
+compute C time:        2.399435 sec
+reduce (C) time:       0.024234 sec
+rate       6.40 million edges/sec (incl time for L=tril(A))
+rate       6.82 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/ssget/SNAP/soc-LiveJournal1_adj.tsv.gz
+--------------------------------------------------------------
+matrix 4847571 by 4847571, 85702474 entries, from stdin
+
+total time to read A matrix:      62.843523 sec
+
+n 4847571 # edges 42851237
+U=triu(A) time:        0.468892 sec
+L=tril(A) time:        0.378175 sec
+
+------------------------------------- dot product method:
+# triangles 285730264
+
+L*U' time (dot):        26.006514 sec
+tricount time:        26.165436 sec (dot product method)
+tri+prep time:        27.012503 sec (incl time to compute L and U)
+compute C time:       26.006514 sec
+reduce (C) time:       0.158922 sec
+rate       1.59 million edges/sec (incl time for U=triu(A))
+rate       1.64 million edges/sec (just tricount itself)
+
+# triangles 285730264
+
+L*U' time (dot):        25.608244 sec
+tricount time:        25.767458 sec (dot product method)
+tri+prep time:        26.614526 sec (incl time to compute L and U)
+compute C time:       25.608244 sec
+reduce (C) time:       0.159214 sec
+rate       1.61 million edges/sec (incl time for U=triu(A))
+rate       1.66 million edges/sec (just tricount itself)
+
+
+----------------------------------- saxpy method:
+
+C<L>=L*L time (saxpy):         9.449727 sec
+tricount time:         9.608692 sec (saxpy method)
+tri+prep time:         9.986867 sec (incl time to compute L)
+compute C time:        9.449727 sec
+reduce (C) time:       0.158965 sec
+rate       4.29 million edges/sec (incl time for L=tril(A))
+rate       4.46 million edges/sec (just tricount itself)
+
+
+
+--------------------------------------------------------------------------------
+/research/davisgroup/GraphChallenge/ssget/Gleich/wb-edu_adj.tsv.gz
+
+

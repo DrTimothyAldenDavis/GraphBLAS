@@ -185,7 +185,6 @@
 
             if (!marked)
             {
-                #pragma omp simd
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     // mij = (bool) M (i,j)
@@ -215,7 +214,6 @@
             // Sauna += (A(:,k) * B(k,j)) .* M(:,j)
             //------------------------------------------------------------------
 
-            #pragma omp simd
             for ( ; pA < pA_end ; pA++)
             { 
                 // Sauna_Work [i] += (A(i,k) * B(k,j)) .* M(i,j)

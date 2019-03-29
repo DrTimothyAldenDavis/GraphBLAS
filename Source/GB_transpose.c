@@ -373,7 +373,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C->p = Cp ; C->p_shallow = false ;
 
         // fill the vector pointers C->p
-        #pragma omp parallel for num_threads (nthreads)
+        #pragma omp parallel for num_threads(nthreads)
         for (int64_t k = 0 ; k <= anz ; k++)
         { 
             Cp [k] = k ;
@@ -731,7 +731,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // A.  This array becomes the permanent T->i on output.  This phase
             // must be done before Chandle is created below, since that step
             // destroys A.  See also GB_extractTuples, where J is extracted.
-            GBI_parallel_for_each_vector (A, nthreads)
+            // GBI_parallel_for_each_vector (A, nthreads)
+            GBI_for_each_vector (A)
             {
                 GBI_for_each_entry (j, p, pend)
                 { 

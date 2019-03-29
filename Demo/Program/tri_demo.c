@@ -53,6 +53,9 @@ int main (int argc, char **argv)
     fprintf (stderr, "tri_demo:\n") ;
     printf ("--------------------------------------------------------------\n");
 
+// TODO one thread:
+GxB_set (GxB_NTHREADS, 1) ;
+
     //--------------------------------------------------------------------------
     // get a symmetric matrix with no self edges
     //--------------------------------------------------------------------------
@@ -83,12 +86,7 @@ int main (int argc, char **argv)
     double t_U = simple_toc (tic) ;
     printf ("U=triu(A) time:  %14.6f sec\n", t_U) ;
 
-    //--------------------------------------------------------------------------
-    // count the triangles via C<U> = L'*U (dot-produt)
-    //--------------------------------------------------------------------------
-
-    // L = tril (A,-1), for method 4
-    printf ("\n------------------------------------- dot product method:\n") ;
+    // L = tril (A,-1)
     simple_tic (tic) ;
     OK (GrB_Matrix_new (&L, GrB_UINT32, n, n)) ;
     k = -1 ;
@@ -102,10 +100,16 @@ int main (int argc, char **argv)
     nthreads_max = omp_get_max_threads ( ) ;
     #endif
 
+    //--------------------------------------------------------------------------
+    // count the triangles via C<L> = L*U' (dot-produt)
+    //--------------------------------------------------------------------------
+
+    printf ("\n------------------------------------- dot product method:\n") ;
+
     int64_t ntri2 [nthreads_max+1] ;
     double t1 ;
 
-    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads++)
+    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
         GxB_set (GxB_NTHREADS, nthreads) ;
 
@@ -113,14 +117,17 @@ int main (int argc, char **argv)
         OK (tricount (&(ntri2 [nthreads]), 5, NULL, NULL, L, U, t_dot)) ;
 
         printf ("# triangles %.16g\n", (double) ntri2 [nthreads]) ;
-        fprintf (stderr, "# triangles %.16g\n", (double) ntri2 [nthreads]) ;
+        if (nthreads == 1)
+        {
+            fprintf (stderr, "# triangles %.16g\n", (double) ntri2 [nthreads]) ;
+        }
         if (ntri2 [nthreads] != ntri2 [1])
         {
             printf ("error!\n") ;
             exit (1) ;
         }
 
-        printf ("\nL'*U time (dot):   %14.6f sec", t_dot [0]) ;
+        printf ("\nL*U' time (dot):   %14.6f sec", t_dot [0]) ;
         if (nthreads == 1)
         {
             t1 = t_dot [0] ;
@@ -142,19 +149,76 @@ int main (int argc, char **argv)
         r2 = 1e-6*nedges / (t_dot [0] + t_dot [1]) ;
         printf ("rate %10.2f million edges/sec (incl time for U=triu(A))\n",r1);
         printf ("rate %10.2f million edges/sec (just tricount itself)\n\n", r2);
-        fprintf (stderr, "GrB: C<U>=L'*U (dot)   "
-                "rate %10.2f (with prep), %10.2f (just tricount)\n", r1, r2) ;
+        fprintf (stderr, "GrB: C<L>=L*U' (dot)   "
+                "rate %10.2f (with prep), %10.2f (tri)", r1, r2) ;
+        if (nthreads > 1) fprintf (stderr, " speedup: %6.2f", t1/ t_dot [0]) ;
+        fprintf (stderr, "\n") ;
     }
+    if (nthreads_max > 1) fprintf (stderr, "\n") ;
+
+    //--------------------------------------------------------------------------
+    // method 6:  C<U> = U*L' (dot)
+    //--------------------------------------------------------------------------
+
+    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
+    {
+        GxB_set (GxB_NTHREADS, nthreads) ;
+
+        double t_dot [2] ;
+        OK (tricount (&(ntri2 [nthreads]), 6, NULL, NULL, L, U, t_dot)) ;
+
+        printf ("# triangles %.16g\n", (double) ntri2 [nthreads]) ;
+//      fprintf (stderr, "# triangles %.16g\n", (double) ntri2 [nthreads]) ;
+        if (ntri2 [nthreads] != ntri2 [1])
+        {
+            printf ("error!\n") ;
+            exit (1) ;
+        }
+
+        printf ("\nL*U' time (dot):   %14.6f sec", t_dot [0]) ;
+        if (nthreads == 1)
+        {
+            t1 = t_dot [0] ;
+        }
+        else
+        {
+            printf (" (nthreads: %d speedup %g)", nthreads, t1 / t_dot [0]) ;
+        }
+
+        printf ("\ntricount time:   %14.6f sec (dot product method)\n",
+            t_dot [0] + t_dot [1]) ;
+        printf ("tri+prep time:   %14.6f sec (incl time to compute L and U)\n",
+            t_dot [0] + t_dot [1] + t_U + t_L) ;
+
+        printf ("compute C time:  %14.6f sec\n", t_dot [0]) ;
+        printf ("reduce (C) time: %14.6f sec\n", t_dot [1]) ;
+
+        r1 = 1e-6*nedges / (t_dot [0] + t_dot [1] + t_U + t_L) ;
+        r2 = 1e-6*nedges / (t_dot [0] + t_dot [1]) ;
+        printf ("rate %10.2f million edges/sec (incl time for U=triu(A))\n",r1);
+        printf ("rate %10.2f million edges/sec (just tricount itself)\n\n", r2);
+        fprintf (stderr, "GrB: C<U>=U*L' (dot)   "
+                "rate %10.2f (with prep), %10.2f (tri)", r1, r2) ;
+        if (nthreads > 1) fprintf (stderr, " speedup: %6.2f", t1/ t_dot [0]) ;
+        fprintf (stderr, "\n") ;
+    }
+    if (nthreads_max > 1) fprintf (stderr, "\n") ;
 
     //--------------------------------------------------------------------------
     // count the triangles via C<L> = L*L (saxpy)
     //--------------------------------------------------------------------------
 
     printf ("\n----------------------------------- saxpy method:\n") ;
+    // warmup
+    int64_t ntri ;
+    double tt [2] ;
+    GxB_set (GxB_NTHREADS, 1) ;
+    OK (tricount (&ntri, 3, NULL, NULL, L, NULL, tt)) ;
+    printf ("warmup %g %g\n", tt [0], tt [1]) ;
 
     int64_t ntri1 [nthreads_max+1] ;
 
-    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads++)
+    for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
         GxB_set (GxB_NTHREADS, nthreads) ;
 
@@ -189,7 +253,9 @@ int main (int argc, char **argv)
         printf ("rate %10.2f million edges/sec (incl time for L=tril(A))\n",r1);
         printf ("rate %10.2f million edges/sec (just tricount itself)\n\n", r2);
         fprintf (stderr, "GrB: C<L>=L*L (saxpy)  "
-                "rate %10.2f (with prep), %10.2f (just tricount)\n", r1, r2) ;
+                "rate %10.2f (with prep), %10.2f (tri)", r1, r2) ;
+        if (nthreads > 1) fprintf (stderr, " speedup: %6.2f", t1/ t_mark [0]) ;
+        fprintf (stderr, "\n") ;
     }
 
     //--------------------------------------------------------------------------

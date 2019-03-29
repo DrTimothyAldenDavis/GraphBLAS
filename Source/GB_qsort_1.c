@@ -40,6 +40,8 @@
 
 #define GB_partition GB_partition_1
 #define GB_quicksort GB_quicksort_1
+#define GB_quicksort_par  GB_quicksort_par_1
+#define GB_quicksort_main GB_quicksort_main_1
 
 #include "GB_qsort_template.c"
 

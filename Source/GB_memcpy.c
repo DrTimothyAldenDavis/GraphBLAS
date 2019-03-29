@@ -31,7 +31,7 @@ void GB_memcpy                  // parallel memcpy
         nthreads = GB_IMIN (nthreads, n / GB_CHUNK) ;
         size_t nchunks = 1 + (n / GB_CHUNK) ;
 
-        #pragma omp parallel for num_threads (nthreads) schedule (dynamic,1)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (size_t k = 0 ; k < nchunks ; k++)
         {
             size_t start = k * GB_CHUNK ;

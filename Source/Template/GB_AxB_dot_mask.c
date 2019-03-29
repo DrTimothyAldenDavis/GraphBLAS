@@ -32,6 +32,12 @@
         ia_last  = A->hfirst + anvec - 1 ;
     }
 
+    bool A_is_slice    = ( A->is_slice && !A_is_hyper) ;
+    bool A_is_standard = (!A->is_slice && !A_is_hyper) ;
+    bool M_and_B_are_aliased = (M == B) ;
+//  fprintf (stderr, "A [%d %d] B %d\n", A->is_slice, A_is_hyper,
+//      M_and_B_are_aliased) ;
+
     //--------------------------------------------------------------------------
     // C<M>=A'*B via dot products
     //--------------------------------------------------------------------------
@@ -68,11 +74,20 @@
         //----------------------------------------------------------------------
 
         // find vector j in M
-        int64_t pM, pM_end ;
-        GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
-        // no work to do if M(:,j) is empty
-        int64_t mjnz = pM_end - pM ;
-        if (mjnz == 0) continue ;
+        int64_t pM, pM_end, mjnz ;
+        if (M_and_B_are_aliased)
+        {
+            pM = pB_start ;
+            pM_end = pB_end ;
+            mjnz = bjnz ;
+        }
+        else
+        {
+            GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
+            // no work to do if M(:,j) is empty
+            mjnz = pM_end - pM ;
+            if (mjnz == 0) continue ;
+        }
 
         //----------------------------------------------------------------------
         // C(:,j)<M(:,j)> = A'*B(:,j)
@@ -82,19 +97,47 @@
         int64_t ib_first = Bi [pB_start] ;
         int64_t ib_last  = Bi [pB_end-1] ;
 
-        // get the first and last index in M(:,j)
-        int64_t im_first = Mi [pM] ;
-        int64_t im_last  = Mi [pM_end-1] ;
+        if (A_is_standard)
+        {
 
-        // no work to do if M(:,j) does not include any vectors in A
-        if (ia_last < im_first || im_last < ia_first) continue ;
+            //------------------------------------------------------------------
+            // A is a standard sparse matrix
+            //------------------------------------------------------------------
 
-        if (mjnz <= anvec)
+            // iterate over all entries in M(:,j)
+            for ( ; pM < pM_end ; pM++)
+            {
+
+                // get the next entry M(i,j)
+                int64_t i = Mi [pM] ;
+
+                // get the value of M(i,j) and skip if false
+                bool mij ;
+                cast_M (&mij, Mx +(pM*msize), 0) ;
+                if (!mij) continue ;
+
+                // get A(:,i), if it exists
+                int64_t pA     = Ap [i]   ;
+                int64_t pA_end = Ap [i+1] ;
+
+                // C(i,j) = A(:,i)'*B(:,j)
+                #include "GB_AxB_dot_cij.c"
+            }
+
+        }
+        else if (mjnz <= anvec)
         {
 
             //------------------------------------------------------------------
             // M(:,j) is sparser than the vectors of A 
             //------------------------------------------------------------------
+
+            // get the first and last index in M(:,j)
+            int64_t im_first = Mi [pM] ;
+            int64_t im_last  = Mi [pM_end-1] ;
+
+            // no work to do if M(:,j) does not include any vectors in A
+            if (ia_last < im_first || im_last < ia_first) continue ;
 
             // advance pM to the first vector of A
             if (im_first < ia_first)
@@ -134,7 +177,7 @@
 
                 // get A(:,i), if it exists
                 int64_t pA, pA_end ;
-                if (A->is_slice && !A_is_hyper)
+                if (A_is_slice)
                 {
                     // A is a slice
                     int64_t ka = i - ia_first ;
@@ -167,7 +210,6 @@
                 GBI_jth_iteration_with_iter (Iter_A, i, pA, pA_end) ;
 
                 // A(:,i) and B(:,j) are both present.  Check M(i,j).
-                // TODO: skip binary search if mask is dense.
                 bool mij = false ;
                 bool found ;
                 int64_t pright = pM_end - 1 ;

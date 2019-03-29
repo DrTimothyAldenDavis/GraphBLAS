@@ -112,7 +112,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (J != NULL)
     {
-        GBI_parallel_for_each_vector (A, nthreads)
+        // GBI_parallel_for_each_vector (A, nthreads)
+        GBI_for_each_vector (A)
         {
             GBI_for_each_entry (j, p, pend)
             { 

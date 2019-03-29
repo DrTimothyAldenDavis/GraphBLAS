@@ -126,8 +126,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     bool ok = true ;
     int64_t *C_counts [nthreads] ;
 
-    #pragma omp parallel for num_threads (nthreads) schedule (static,1) \
-        reduction (&&:ok) 
+    #pragma omp parallel for num_threads(nthreads) schedule(static,1) reduction(&&:ok) 
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
         if ((Aslice [tid])->nvec_nonempty < 0)
@@ -159,7 +158,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
     // cumulative sum of counts in each column
     // TODO skip if one thread
-    #pragma omp parallel for num_threads (nthreads)
+    #pragma omp parallel for num_threads(nthreads)
     for (int64_t k = 0 ; k < cnvec ; k++)
     {
         int64_t s = 0 ;
@@ -205,7 +204,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     // C = A'*B, computing each entry with a dot product, via builtin semiring
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads (nthreads) schedule (static,1)
+    #pragma omp parallel for num_threads(nthreads) schedule(static,1)
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
 

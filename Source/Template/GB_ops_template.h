@@ -296,13 +296,13 @@ inline void GB_CAST_NAME (uint64_t) GB_CAST_FUNCTION_ANSI (uint64_t)
         #ifdef GB_UNSIGNED
             // ztype is unsigned integer, xtype is float or double
             inline void GB_CAST_NAME (float )
-                GB_CAST_FUNCTION_UNSIGNED (float , GB_BITS)
+                GB_CAST_FUNCTION_UNSIGNED (float, GB_BITS)
             inline void GB_CAST_NAME (double)
                 GB_CAST_FUNCTION_UNSIGNED (double, GB_BITS)
         #else
             // ztype is signed integer, xtype is float or double
             inline void GB_CAST_NAME (float )
-                GB_CAST_FUNCTION_SIGNED (float , GB_BITS)
+                GB_CAST_FUNCTION_SIGNED (float, GB_BITS)
             inline void GB_CAST_NAME (double)
                 GB_CAST_FUNCTION_SIGNED (double, GB_BITS)
         #endif

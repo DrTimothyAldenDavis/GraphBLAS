@@ -89,7 +89,7 @@
         // default: use a named OpenMP critical section.  If OpenMP is not
         // available, then the #pragma is ignored and this becomes vanilla,
         // single-threaded code.
-        #pragma omp critical (GB_critical_section)
+        #pragma omp critical(GB_critical_section)
         GB_CRITICAL_SECTION ;
     }
     #endif

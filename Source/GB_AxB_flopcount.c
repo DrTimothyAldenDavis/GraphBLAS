@@ -180,9 +180,9 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     int64_t total_flops = 0 ;
     bool quick_return = false ;
 
-    #pragma omp parallel for num_threads (nthreads) \
-        reduction (+:total_flops)                   \
-        firstprivate (quick_return)
+    #pragma omp parallel for num_threads(nthreads) \
+        reduction(+:total_flops)                   \
+        firstprivate(quick_return)
     for (int64_t kk = 0 ; kk < bnvec ; kk++)
     {
 

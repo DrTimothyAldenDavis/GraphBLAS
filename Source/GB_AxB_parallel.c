@@ -177,7 +177,14 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         if (AxB_slice == GxB_DEFAULT)
         { 
             // select the method automatically for A'*B
-            AxB_slice = GxB_SLICE_ATNZ ;
+            if (nthreads > bnvec)
+            {
+                AxB_slice = GxB_SLICE_ATNZ ;
+            }
+            else
+            {
+                AxB_slice = GxB_SLICE_BNZ ;
+            }
         }
 
         // can slice A or B when computing A'*B
@@ -270,6 +277,8 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     }
     nthreads = GB_IMAX (nthreads, 1) ;
 
+// fprintf (stderr, "nthreads: %d AxB_slice %d\n", nthreads, AxB_slice) ;
+
     //==========================================================================
     // sequential C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B
     //==========================================================================
@@ -300,6 +309,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
 //      #if defined ( _OPENMP )
 //      double t2 = omp_get_wtime ( ) ;
+//      fprintf (stderr, "Sauna %d\n", Sauna_id) ;
 //      #endif
 
         // C<M>=A*B or A'*B
@@ -376,7 +386,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         //----------------------------------------------------------------------
 
         // thread tid will do rows Slice [tid] to Slice [tid+1]-1 of A'
-        Slice [nthreads] = anvec ;
 
         if (AxB_slice == GxB_SLICE_ATROW)
         {
@@ -388,10 +397,12 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // GxB_SLICE_ATROW: slice A' so that each slice has a balanced # of
             // rows per thread.  Each thread gets roughly anvec/nthreads rows.
 
+            Slice [0] = 0 ;
             for (int tid = 1 ; tid < nthreads ; tid++)
             { 
                 Slice [tid] = ((tid * (double) anvec) / (double) nthreads) ;
             }
+            Slice [nthreads] = anvec ;
 
         }
         else // if (AxB_slice == GxB_SLICE_ATNZ)
@@ -410,9 +421,9 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // and A is stored by column.  This method is the default when
             // slicing A.
 
-            // TODO use this instead:
-            // GB_pslice (Slice, A, nthreads) ;
+            GB_pslice (Slice, A, nthreads) ;
 
+            #if 0
             int64_t *Ap = A->p ;
             int64_t pleft = 0 ;
             for (int tid = 1 ; tid < nthreads ; tid++)
@@ -425,6 +436,8 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
                 GB_BINARY_TRIM_SEARCH (nz, Ap, pleft, pright) ;
                 Slice [tid] = pleft ;
             }
+            #endif
+
         }
 
         //----------------------------------------------------------------------
@@ -478,8 +491,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // compute each slice of C independently
             //------------------------------------------------------------------
 
-            #pragma omp parallel for num_threads (nthreads) schedule (static,1)\
-                reduction(&&:ok,allmask) reduction(||:panic)
+            #pragma omp parallel for num_threads(nthreads) schedule(static,1) reduction(&&:ok,allmask) reduction(||:panic)
             for (int tid = 0 ; tid < nthreads ; tid++)
             { 
                 bool thread_mask_applied = false ;
@@ -553,6 +565,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // pattern.
 
             // thread tid will do columns Slice [tid] to Slice [tid+1]-1
+            Slice [0] = 0 ;
             for (int tid = 1 ; tid < nthreads ; tid++)
             { 
                 Slice [tid] = ((tid * (double) bnvec) / (double) nthreads) ;
@@ -637,6 +650,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             nthreads = GB_IMIN (nthreads, 1 + (int) (total_flops / 1e6)) ;
 
             // binary search to find where to slice B by column
+            Slice [0] = 0 ;
             int64_t pleft = 0 ;
             for (int tid = 1 ; tid < nthreads ; tid++)
             { 
@@ -784,8 +798,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         int Sauna_ids [nthreads] ;
 
         bool any_Gustavson = false ;
-        #pragma omp parallel for num_threads (nthreads) schedule (static,1) \
-            reduction(||:any_Gustavson)
+        #pragma omp parallel for num_threads(nthreads) schedule(static,1) reduction(||:any_Gustavson)
         for (int tid = 0 ; tid < nthreads ; tid++)
         { 
             GrB_Desc_Value thread_method_to_use = 0 ;
@@ -833,8 +846,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 //      double t1 = omp_get_wtime ( ) ;
 //      #endif
 
-        #pragma omp parallel for num_threads (nthreads) schedule (static,1) \
-            reduction(&&:ok,allmask) reduction(||:panic)
+        #pragma omp parallel for num_threads(nthreads) schedule(static,1) reduction(&&:ok,allmask) reduction(||:panic)
         for (int tid = 0 ; tid < nthreads ; tid++)
         { 
             bool thread_mask_applied = false ;

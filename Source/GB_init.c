@@ -78,7 +78,7 @@ _Thread_local
 // OpenMP user threads, or no user threads: this is the default
 #endif
 
-#pragma omp threadprivate (GB_thread_local_report)
+#pragma omp threadprivate(GB_thread_local_report)
 char GB_thread_local_report [GB_RLEN+1] = "" ;
 
 //------------------------------------------------------------------------------

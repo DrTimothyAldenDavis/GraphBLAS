@@ -177,7 +177,7 @@ GrB_Info get_matrix         // get a matrix from stdin, or create random one
     //--------------------------------------------------------------------------
 
     // print a short description of the matrix (about 30 entries)
-    OK (GxB_Matrix_fprint (A, "from get_matrix:", GxB_SHORT, stdout)) ;
+//  OK (GxB_Matrix_fprint (A, "from get_matrix:", GxB_SHORT, stdout)) ;
 
     *A_output = A ;
     A = NULL ;

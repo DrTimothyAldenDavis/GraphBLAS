@@ -124,7 +124,7 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
             int64_t *restrict Cslice_p = (Cslice [tid])->p ;
             int64_t cslice_nvec = (Cslice [tid])->nvec ;
 
-            #pragma omp parallel for num_threads (nthreads)
+            #pragma omp parallel for num_threads(nthreads)
             for (int64_t k = 0 ; k < cslice_nvec ; k++)
             {
                 // sum up the number of entries in C(:,j)
@@ -154,7 +154,7 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
             GB_void *restrict Cslice_x = (Cslice [tid])->x ;
             int64_t cslice_nvec = (Cslice [tid])->nvec ;
 
-            #pragma omp parallel for num_threads (nthreads)
+            #pragma omp parallel for num_threads(nthreads)
             for (int64_t k = 0 ; k < cslice_nvec ; k++)
             {
                 // copy the entries into C(:,j)

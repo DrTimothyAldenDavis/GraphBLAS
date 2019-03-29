@@ -79,6 +79,8 @@
 
 #define GB_partition GB_partition_3
 #define GB_quicksort GB_quicksort_3
+#define GB_quicksort_par  GB_quicksort_par_3
+#define GB_quicksort_main GB_quicksort_main_3
 
 #include "GB_qsort_template.c"
 
