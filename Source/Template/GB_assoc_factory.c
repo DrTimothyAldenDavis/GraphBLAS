@@ -22,8 +22,6 @@
 // workers for the SECOND operator are also created, and 11 for FIRST, for
 // GB_build_factory.
 
-// parallel: not here
-
 #undef  GB_IGNORE
 #define GB_IGNORE 0
 
@@ -51,7 +49,6 @@ if (typecode != GB_BOOL_code)
                 case GB_INT16_code  : GB_ASSOC_WORKER (int16_t , INT16_MIN )
                 case GB_INT32_code  : GB_ASSOC_WORKER (int32_t , INT32_MIN )
                 case GB_INT64_code  : GB_ASSOC_WORKER (int64_t , INT64_MIN )
-
                 case GB_UINT8_code  : GB_ASSOC_WORKER (uint8_t , 0         )
                 case GB_UINT16_code : GB_ASSOC_WORKER (uint16_t, 0         )
                 case GB_UINT32_code : GB_ASSOC_WORKER (uint32_t, 0         )

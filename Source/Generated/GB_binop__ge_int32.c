@@ -47,7 +47,7 @@
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_AxD__ge_int32
+void GB_AxD__ge_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -56,16 +56,14 @@ GrB_Info GB_AxD__ge_int32
 )
 { 
     bool *restrict Cx = C->x ;
-    GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_colscale_meta.c"
-    return (info) ;
 }
 
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-GrB_Info GB_DxB__ge_int32
+void GB_DxB__ge_int32
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -74,9 +72,7 @@ GrB_Info GB_DxB__ge_int32
 )
 { 
     bool *restrict Cx = C->x ;
-    GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_rowscale_meta.c"
-    return (info) ;
 }
 
 #endif

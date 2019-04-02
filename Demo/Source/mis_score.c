@@ -16,6 +16,8 @@
 // degree.  This will increase the probability that low degree nodes are
 // selected and larger sets are selected.
 
+// TODO this is not thread-safe!
+
 void mis_score (double *result, uint32_t *degree)
 {
     // add 1 to prevent divide by zero

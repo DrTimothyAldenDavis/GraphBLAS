@@ -1,7 +1,7 @@
 function codegen_binop_method (binop, op, iscompare, xytype)
-%CODEGEN_BINOP create a function to compute C=binop(A,B)
+%CODEGEN_BINOP_METHOD create a function to compute C=binop(A,B)
 %
-% codegen_binop (binop, op, iscompare, xytype)
+% codegen_binop_method (binop, op, iscompare, xytype)
 
 f = fopen ('control.m4', 'w') ;
 

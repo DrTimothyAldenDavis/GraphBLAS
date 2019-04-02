@@ -118,7 +118,7 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
 
         // There are 44 common cases of this function for built-in types and
         // operators.  Four associative operators: min, max, plus, and times
-        // with 10 types (int*, uint*, float, and double), and three logical
+        // with 10 types (int*, uint*, float, and double), and four logical
         // operators (or, and, xor, eq) with a boolean type of C.  All 44 are
         // hard-coded below via a switch factory.  If the case is not handled
         // by the switch factory, 'done' remains false.

@@ -62,6 +62,7 @@ int main (int argc, char **argv)
     double tic [2], t ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     fprintf (stderr, "mis_demo:\n") ;
+//  OK (GxB_set (GxB_NTHREADS, 1)) ;
 
     //--------------------------------------------------------------------------
     // get a symmetric matrix with no self edges

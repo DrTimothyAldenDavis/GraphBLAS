@@ -116,12 +116,11 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     #define GB_AxD(mult,xyname) GB_AxD_ ## mult ## xyname
 
-    #define GB_BINOP_WORKER(mult,xyname)                                \
-    {                                                                   \
-        info = GB_AxD(mult,xyname) (Chandle,                            \
-            A, A_is_pattern, D, D_is_pattern, nthreads) ;               \
-        done = true ;                                                   \
-    }                                                                   \
+    #define GB_BINOP_WORKER(mult,xyname)                                      \
+    {                                                                         \
+        GB_AxD(mult,xyname) (C, A, A_is_pattern, D, D_is_pattern, nthreads) ; \
+        done = true ;                                                         \
+    }                                                                         \
     break ;
 
     //--------------------------------------------------------------------------
@@ -135,12 +134,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         flipxy, &opcode, &xycode, &zcode))
     { 
         #include "GB_binop_factory.c"
-    }
-
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        return (info) ;
     }
 
 #endif

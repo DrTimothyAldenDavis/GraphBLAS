@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_apply_op:  apply a unary operator to an array
+// GB_apply_op: typecast and apply a unary operator to an array
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -11,17 +11,17 @@
 
 // Compare with GB_transpose_op.c
 
-// PARALLEL: do it here, but it is easy.  Might want to split into separate
-// files like Generated/GB_AxB*, so worker is not in a macro but in a function.
-
 #include "GB.h"
+#ifndef GBCOMPACT
+#include "GB_unaryop__include.h"
+#endif
 
 void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
 (
     GB_void *Cx,            // output array, of type op->ztype
     const GrB_UnaryOp op,   // operator to apply
-    const GB_void *Ax,      // input array, of type atype
-    const GrB_Type atype,   // type of Ax
+    const GB_void *Ax,      // input array, of type Atype
+    const GrB_Type Atype,   // type of Ax
     const int64_t anz,      // size of Ax and Cx
     GB_Context Context
 )
@@ -34,7 +34,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     ASSERT (Cx != NULL) ;
     ASSERT (Ax != NULL) ;
     ASSERT (anz >= 0) ;
-    ASSERT (atype != NULL) ;
+    ASSERT (Atype != NULL) ;
     ASSERT (op != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -47,25 +47,21 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    // Some unary operators z=f(x) do not use the value x, like z=1.  This is
-    // intentional, so the gcc warning is ignored.
-    #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+    // TODO: rename:
+    // GrB_AINV_BOOL and GxB_ABS_BOOL to GrB_IDENTITY_BOOL.
+    // GrB_MINV_BOOL to GxB_ONE_BOOL.
+    // rename GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
+    // and do not create these workers
 
-    // For built-in types only, thus xtype == ztype, but atype can differ
-    #define GB_WORKER(ztype,atype)                              \
-    {                                                           \
-        ztype *cx = (ztype *) Cx ;                              \
-        atype *ax = (atype *) Ax ;                              \
-        for (int64_t p = 0 ; p < anz ; p++)                     \
-        {                                                       \
-            /* z = (ztype) ax [p], type casting */              \
-            ztype z ;                                           \
-            GB_CASTING (z, ax [p]) ;                            \
-            /* apply the unary operator */                      \
-            cx [p] = GB_OP (z) ;                                \
-        }                                                       \
-        return ;                                                \
-    }
+    #define GB_unop(op,zname,aname) GB_unop_ ## op ## zname ## aname
+
+    #define GB_WORKER(op,zname,ztype,aname,atype)                           \
+    {                                                                       \
+        GB_unop (op,zname,aname) ((ztype *) Cx, (const atype *) Ax,         \
+            anz, nthreads) ;                                                \
+        return ;                                                            \
+    }                                                                       \
+    break ;
 
     //--------------------------------------------------------------------------
     // launch the switch factory
@@ -75,29 +71,32 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     #include "GB_unaryop_factory.c"
     #endif
 
-    // If the switch factory has no worker for the opcode or type, then it
-    // falls through to the generic worker below.
-
     //--------------------------------------------------------------------------
-    // generic worker:  apply an operator, with optional typecasting
+    // generic worker: typecast and apply an operator
     //--------------------------------------------------------------------------
 
-    // The generic worker can handle any operator and any type, and it does all
-    // required typecasting.  Thus the switch factory can be disabled, and the
-    // code will more compact and still work.  It will just be slower.
-
-    int64_t asize = atype->size ;
-    int64_t zsize = op->ztype->size ;
+    size_t asize = Atype->size ;
+    size_t zsize = op->ztype->size ;
+    size_t xsize = op->xtype->size ;
     GB_cast_function
-        cast_A_to_X = GB_cast_factory (op->xtype->code, atype->code) ;
+        cast_A_to_X = GB_cast_factory (op->xtype->code, Atype->code) ;
     GxB_unary_function fop = op->function ;
 
-    // scalar workspace
-    char xwork [op->xtype->size] ;
+    // TODO: how do I make this parallel?  Each thread needs a local copy
+    // of the xwork workspace.  This fails (with wrong results):
+    // #pragma omp parallel for num_threads(nthreads)
+    // This fails to compile:
+    // #pragma omp parallel for num_threads(nthreads) firstprivate(xwork)
+    // If I put xwork outside the loop and use threadprivate, it
+    // fails to compile.
 
+    // TODO: Solution:  some user operators are not thread safe!
+    // The parallelism here assumes that fop is thread safe, and it fails on
+    // the Demo/mis code.  See mis_score.
     for (int64_t p = 0 ; p < anz ; p++)
     { 
         // xwork = (xtype) Ax [p]
+        GB_void xwork [xsize] ;
         cast_A_to_X (xwork, Ax +(p*asize), asize) ;
         // Cx [p] = fop (xwork)
         fop (Cx +(p*zsize), xwork) ;

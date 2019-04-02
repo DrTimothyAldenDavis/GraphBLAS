@@ -162,7 +162,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     for (int64_t k = 0 ; k < cnvec ; k++)
     {
         int64_t s = 0 ;
-        // #pragma omp simd reducution(+:s)
+        // #pragma omp simd reduction(+:s)
         for (int tid = 0 ; tid < nthreads ; tid++)
         {
             int64_t *C_count = C_counts [tid] ;

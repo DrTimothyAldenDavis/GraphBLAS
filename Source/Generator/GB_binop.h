@@ -1,4 +1,4 @@
-GrB_Info GB_AxD
+void GB_AxD
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -6,7 +6,7 @@ GrB_Info GB_AxD
     int nthreads
 ) ;
 
-GrB_Info GB_DxB
+void GB_DxB
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
