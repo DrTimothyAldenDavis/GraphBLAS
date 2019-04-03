@@ -237,7 +237,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
         tnz = 0 ;
 
         // define the worker for the switch factory
-        #define GB_ASSOC_WORKER(type,terminal)                              \
+        #define GB_ASSOC_WORKER(ignore1,ignore2,type,terminal)              \
         {                                                                   \
             const type *ax = (type *) Ax ;                                  \
             type *tx = (type *) Tx ;                                        \
@@ -426,7 +426,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             bool done = false ;
 
             // define the worker for the switch factory
-            #define GB_ASSOC_WORKER(type,ignore)                            \
+            #define GB_ASSOC_WORKER(ignore1,ignore2,type,ignore)            \
             {                                                               \
                 const type *ax = (type *) Ax ;                              \
                 type *ww = (type *) work ;                                  \

@@ -78,6 +78,8 @@ GrB_Info mis                    // compute a maximal independent set
     GrB_Descriptor_new (&r_desc) ;
     GrB_Descriptor_set (r_desc, GrB_OUTP, GrB_REPLACE) ;
 
+    // TODO: set_random is not thread-safe:
+
     // descriptor: C_replace + structural complement of mask
     GrB_Descriptor_new (&sr_desc) ;
     GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_SCMP) ;

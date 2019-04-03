@@ -227,7 +227,7 @@ GrB_Info GB_build_factory           // build a matrix
         bool done = false ;
 
         // define the worker for the switch factory
-        #define GB_ASSOC_WORKER(type,ignore)                                \
+        #define GB_ASSOC_WORKER(ignore1,ignore2,type,ignore)                \
         {                                                                   \
             const type *restrict sx = (type *) S ;                          \
             type *restrict tx = (type *) Tx ;                               \

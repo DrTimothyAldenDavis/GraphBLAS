@@ -138,6 +138,7 @@ GrB_Info dpagerank          // GrB_SUCCESS or error condition
 
         // s = a * sum (r) ;
         OK (GrB_reduce (&s, NULL, GxB_PLUS_FP64_MONOID, r, NULL)) ;
+printf ("dpagerank reduce %g\n", s) ;
         s *= a ;
 
         // r = c * r
@@ -156,6 +157,7 @@ GrB_Info dpagerank          // GrB_SUCCESS or error condition
 
     // s = sum (r)
     OK (GrB_reduce (&s, NULL, GxB_PLUS_FP64_MONOID, r, NULL)) ;
+printf ("dpagerank reduce %g\n", s) ;
 
     // r = r / s
     OK (GrB_apply (r, NULL, NULL, op_div, r, NULL)) ;

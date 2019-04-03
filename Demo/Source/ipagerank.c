@@ -189,6 +189,7 @@ GrB_Info ipagerank          // GrB_SUCCESS or error condition
         // s = ia * sum (r) ;
         uint64_t s ;
         OK (GrB_reduce (&s, NULL, GxB_PLUS_UINT64_MONOID, r, NULL)) ;
+//      fprintf (stderr, "ipagerank2 reduce %" PRIu64"\n", s) ;
         s = s * ia ;
 
         // r = ic * r

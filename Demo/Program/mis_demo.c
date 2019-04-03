@@ -62,7 +62,7 @@ int main (int argc, char **argv)
     double tic [2], t ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     fprintf (stderr, "mis_demo:\n") ;
-//  OK (GxB_set (GxB_NTHREADS, 1)) ;
+    OK (GxB_set (GxB_NTHREADS, 1)) ;
 
     //--------------------------------------------------------------------------
     // get a symmetric matrix with no self edges
@@ -116,8 +116,6 @@ int main (int argc, char **argv)
     int64_t isize2 ;
     OK (GrB_reduce (&isize2, NULL, GxB_PLUS_INT64_MONOID, iset2,
         NULL )) ;
-
-    if (isize1 != isize2) { printf ("error!\n") ; exit (1) ; }
 
     GrB_free (&e) ;
     GrB_free (&iset2) ;
@@ -204,6 +202,8 @@ int main (int argc, char **argv)
         (double) isize, (double) n, t) ;
 
     printf ("maximal independent set status verified\n") ;
+
+    if (isize1 != isize2) { printf ("size differs!\n") ; }
 
     FREE_ALL ;
     GrB_finalize ( ) ;

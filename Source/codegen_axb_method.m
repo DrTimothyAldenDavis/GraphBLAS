@@ -1,4 +1,7 @@
-function codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
+
+    codegen_red_method (reduce, ifunc, 'int8_t') ;
+
+function codegen_red_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
 % codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal)

@@ -16,16 +16,18 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-// PARALLEL: a parallel reduction method.  All entries of the matrix
-// must be reduce to a single scalar.
+// PARALLEL: use a parallel reduction of all entries in A to a scalar
 
 #include "GB.h"
+#ifndef GBCOMPACT
+#include "GB_reduce__include.h"
+#endif
 
-GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
+GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 (
     void *c,                    // result scalar
     const GrB_Type ctype,       // the type of scalar, c
-    const GrB_BinaryOp accum,   // for c = accum(c,twork)
+    const GrB_BinaryOp accum,   // for c = accum(c,s)
     const GrB_Monoid reduce,    // monoid to do the reduction
     const GrB_Matrix A,         // matrix to reduce
     GB_Context Context
@@ -60,7 +62,7 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
     ASSERT_OK_OR_NULL (GB_check (accum, "accum for reduce_to_scalar", GB0)) ;
     ASSERT_OK (GB_check (A, "A for reduce_to_scalar", GB0)) ;
 
-    // check domains and dimensions for c = accum (c,twork)
+    // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;
     GrB_Info info = GB_compatible (ctype, NULL, NULL, accum, ztype, Context) ;
     if (info != GrB_SUCCESS)
@@ -68,7 +70,7 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
         return (info) ;
     }
 
-    // twork = reduce (twork,A) must be compatible
+    // s = reduce (s,A) must be compatible
     if (!GB_Type_compatible (A->type, ztype))
     { 
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
@@ -92,17 +94,23 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
     int64_t anz = GB_NNZ (A) ;
     const int64_t *restrict Ai = A->i ;
 
+    // reduce the # of threads if the problem is small
+    // TODO find a good chunk size
+    #define GB_CHUNK (4*1024)
+//  #define GB_CHUNK (4)
+    nthreads = GB_IMIN (nthreads, anz / GB_CHUNK) ;
+    nthreads = GB_IMAX (nthreads, 1) ;
+
     int64_t zsize = ztype->size ;
 
-    char awork [zsize] ;
-    char twork [zsize] ;
+    GB_void s [zsize] ;
 
     //--------------------------------------------------------------------------
-    // twork = reduce_to_scalar (A)
+    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
-    // twork = 0
-    memcpy (twork, reduce->identity, zsize) ;
+    // s = identity
+    memcpy (s, reduce->identity, zsize) ;
 
     // get terminal value, if any
     GB_void *restrict terminal = reduce->terminal ;
@@ -126,47 +134,19 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
         bool done = false ;
 
         // define the worker for the switch factory
-        #define GB_ASSOC_WORKER(type,terminal)                              \
-        {                                                                   \
-            const type *restrict Ax = (type *) A->x ;                       \
-            type s ;                                                        \
-            memcpy (&s, twork, zsize) ;                                     \
-            if (A->nzombies == 0)                                           \
-            {                                                               \
-                for (int64_t p = 0 ; p < anz ; p++)                         \
-                {                                                           \
-                    /* s += A(i,j) */                                       \
-                    ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;                    \
-                    GB_DUP (s, Ax [p]) ;                                    \
-                    /* check for early exit */                              \
-                    if (GB_HAS_TERMINAL && (s == terminal)) break ;         \
-                }                                                           \
-            }                                                               \
-            else                                                            \
-            {                                                               \
-                for (int64_t p = 0 ; p < anz ; p++)                         \
-                {                                                           \
-                    /* s += A(i,j) if the entry is not a zombie */          \
-                    if (GB_IS_NOT_ZOMBIE (Ai [p]))                          \
-                    {                                                       \
-                        GB_DUP (s, Ax [p]) ;                                \
-                        /* check for early exit */                          \
-                        if (GB_HAS_TERMINAL && (s == terminal)) break ;     \
-                    }                                                       \
-                }                                                           \
-            }                                                               \
-            memcpy (twork, &s, zsize) ;                                     \
-            done = true ;                                                   \
-        }                                                                   \
+
+        #define GB_red(op,zname) GB_red_scalar_ ## op ## zname
+
+        #define GB_ASSOC_WORKER(op,zname,ztype,terminal)    \
+        {                                                   \
+            GB_red (op, zname) ((ztype *) s, A, nthreads) ; \
+            done = true ;                                   \
+        }                                                   \
         break ;
 
         //----------------------------------------------------------------------
         // launch the switch factory
         //----------------------------------------------------------------------
-
-        // If GBCOMPACT is defined, the switch factory is disabled and all
-        // work is done by the generic worker.  The compiled code will be more
-        // compact, but 3 to 4 times slower.
 
         #ifndef GBCOMPACT
 
@@ -174,6 +154,7 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
             GB_Opcode opcode = reduce->op->opcode ;
             GB_Type_code typecode = A->type->code ;
             ASSERT (typecode <= GB_UDT_code) ;
+
             #include "GB_assoc_factory.c"
 
         #endif
@@ -186,39 +167,35 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
         {
             // the switch factory didn't handle this case
             GxB_binary_function freduce = reduce->op->function ;
-            const GB_void *Ax = A->x ;
-            if (A->nzombies == 0)
-            {
-                for (int64_t p = 0 ; p < anz ; p++)
-                { 
-                    // twork += A(i,j)
-                    ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
-                    // twork += Ax [p]
-                    freduce (twork, twork, Ax +(p*asize)) ; // (z x alias)
-                    if (terminal != NULL)
-                    {
-                        // check for early exit
-                        if (memcmp (twork, terminal, zsize) == 0) break ;
-                    }
+
+            #define GB_ATYPE GB_void
+
+            // workspace for each thread
+            #define GB_REDUCE_WORKSPACE(w, nthreads) GB_void w [nthreads*zsize]
+
+            // t = identity
+            #define GB_REDUCE_INIT(t)                   \
+                GB_void t [zsize] ;                     \
+                memcpy (t, reduce->identity, zsize) ;
+
+            // t += Ax [p], no typecasting
+            #define GB_REDUCE(t, Ax, p) freduce (t, t, Ax +((p)*asize)) ;
+
+            // w [tid] = t
+            #define GB_REDUCE_WRAPUP(w, tid, t)         \
+                memcpy (w +(tid*zsize), t, zsize) ;
+
+            // s += w [tid]
+            #define GB_REDUCE_W(s, w, tid) freduce (s, s, w +((tid)*zsize)) ;
+
+            // break if terminal value reached
+            #define GB_REDUCE_TERMINAL(t)                           \
+                if (terminal != NULL)                               \
+                {                                                   \
+                    if (memcmp (s, terminal, zsize) == 0) break ;   \
                 }
-            }
-            else
-            {
-                for (int64_t p = 0 ; p < anz ; p++)
-                {
-                    // twork += A(i,j) if not a zombie
-                    if (GB_IS_NOT_ZOMBIE (Ai [p]))
-                    { 
-                        // twork += Ax [p]
-                        freduce (twork, twork, Ax +(p*asize)) ; // (z x alias)
-                        if (terminal != NULL)
-                        {
-                            // check for early exit
-                            if (memcmp (twork, terminal, zsize) == 0) break ;
-                        }
-                    }
-                }
-            }
+
+            #include "GB_reduce_to_scalar_template.c"
         }
 
     }
@@ -233,59 +210,30 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
         GB_cast_function
             cast_A_to_Z = GB_cast_factory (ztype->code, A->type->code) ;
 
-        const GB_void *Ax = A->x ;
-        if (A->nzombies == 0)
-        {
-            for (int64_t p = 0 ; p < anz ; p++)
-            { 
-                // twork += (ztype) A(i,j)
-                ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
-                // awork = (ztype) Ax [p]
-                cast_A_to_Z (awork, Ax +(p*asize), zsize) ;
-                // twork += awork
-                freduce (twork, twork, awork) ; // (z x alias)
-                if (terminal != NULL)
-                {
-                    // check for early exit
-                    if (memcmp (twork, terminal, zsize) == 0) break ;
-                }
+            // t += ((ztype) Ax [p])
+            #undef  GB_REDUCE
+            #define GB_REDUCE(t, Ax, p)                         \
+                GB_void awork [zsize] ;                         \
+                cast_A_to_Z (awork, Ax +((p)*asize), zsize) ;   \
+                freduce (s, s, awork) ;
 
-            }
-        }
-        else
-        {
-            for (int64_t p = 0 ; p < anz ; p++)
-            {
-                // twork += (ztype) A(i,j) if not a zombie
-                if (GB_IS_NOT_ZOMBIE (Ai [p]))
-                { 
-                    // awork = (ztype) Ax [p]
-                    cast_A_to_Z (awork, Ax +(p*asize), zsize) ;
-                    // twork += awork
-                    freduce (twork, twork, awork) ;     // (z x alias)
-                    if (terminal != NULL)
-                    {
-                        // check for early exit
-                        if (memcmp (twork, terminal, zsize) == 0) break ;
-                    }
-                }
-            }
-        }
+            #include "GB_reduce_to_scalar_template.c"
+
     }
 
     //--------------------------------------------------------------------------
-    // c = twork or c = accum (c,twork)
+    // c = s or c = accum (c,s)
     //--------------------------------------------------------------------------
 
-    // This operation does not use GB_accum_mask, since c and twork are
+    // This operation does not use GB_accum_mask, since c and s are
     // scalars, not matrices.  There is no scalar mask.
 
     if (accum == NULL)
     { 
-        // c = (ctype) twork
+        // c = (ctype) s
         GB_cast_function
             cast_Z_to_C = GB_cast_factory (ctype->code, ztype->code) ;
-        cast_Z_to_C (c, twork, ctype->size) ;
+        cast_Z_to_C (c, s, ctype->size) ;
     }
     else
     { 
@@ -304,8 +252,8 @@ GrB_Info GB_reduce_to_scalar    // twork = reduce_to_scalar (A)
         // xaccum = (accum->xtype) c
         cast_C_to_xaccum (xaccum, c, ctype->size) ;
 
-        // yaccum = (accum->ytype) twork
-        cast_Z_to_yaccum (yaccum, twork, zsize) ;
+        // yaccum = (accum->ytype) s
+        cast_Z_to_yaccum (yaccum, s, zsize) ;
 
         // zaccum = xaccum "+" yaccum
         faccum (zaccum, xaccum, yaccum) ;
