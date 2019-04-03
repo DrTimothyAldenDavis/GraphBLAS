@@ -149,8 +149,14 @@ GrB_Info mis_check              // compute a maximal independent set
     while (nvals > 0)
     {
 
+int save ;
+OK (GxB_get (GxB_NTHREADS, &save)) ;
+OK (GxB_set (GxB_NTHREADS, 1)) ;
+
         // compute a random probability scaled by inverse of degree
         OK (GrB_apply (prob, candidates, NULL, set_random, degrees, r_desc)) ;
+
+OK (GxB_set (GxB_NTHREADS, save)) ;
 
         // compute the max probability of all neighbors
         OK (GrB_vxm (neighbor_max, candidates, NULL, maxSelect1st,

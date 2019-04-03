@@ -270,7 +270,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump) ;
 #define OK(method)                                                      \
 {                                                                       \
     info = method ;                                                     \
-    if (info != GrB_SUCCESS)                                            \
+    if (!(info == GrB_SUCCESS || info == GrB_NO_VALUE))                 \
     {                                                                   \
         printf ("GraphBLAS error:\n%s\n", GrB_error ( )) ;              \
         CHECK (false, info) ;                                           \
