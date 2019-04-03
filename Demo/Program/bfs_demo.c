@@ -178,12 +178,16 @@ int main (int argc, char **argv)
                 int32_t v0i = -1, vi = -1 ;
                 OK (GrB_Vector_extractElement (&v0i, v0, i)) ;
                 OK (GrB_Vector_extractElement (&vi , v , i)) ;
-                if (v0i != vi) ok = false ;
+                if (v0i != vi)
+                {
+                    fprintf (stderr, "v failure!\n") ;
+                    printf  ("v failure!\n") ;
+                    ok = false ;
+                    break ;
+                }
             }
             if (!ok)
             {
-                GxB_print (v0, 3) ;
-                GxB_print (v, 3) ;
                 fprintf (stderr, "test failure!\n") ;
                 printf  ("test failure!\n") ;
                 exit (1) ;

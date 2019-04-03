@@ -97,7 +97,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // reduce the # of threads if the problem is small
     // TODO find a good chunk size
     #define GB_CHUNK (4*1024)
-//  #define GB_CHUNK (4)
+
     nthreads = GB_IMIN (nthreads, anz / GB_CHUNK) ;
     nthreads = GB_IMAX (nthreads, 1) ;
 
@@ -192,7 +192,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             #define GB_REDUCE_TERMINAL(t)                           \
                 if (terminal != NULL)                               \
                 {                                                   \
-                    if (memcmp (s, terminal, zsize) == 0) break ;   \
+                    if (memcmp (t, terminal, zsize) == 0) break ;   \
                 }
 
             #include "GB_reduce_to_scalar_template.c"
@@ -215,10 +215,9 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             #define GB_REDUCE(t, Ax, p)                         \
                 GB_void awork [zsize] ;                         \
                 cast_A_to_Z (awork, Ax +((p)*asize), zsize) ;   \
-                freduce (s, s, awork) ;
+                freduce (t, t, awork) ;
 
             #include "GB_reduce_to_scalar_template.c"
-
     }
 
     //--------------------------------------------------------------------------
