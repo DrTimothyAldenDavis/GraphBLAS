@@ -1746,10 +1746,10 @@ bool GB_is_diagonal             // true if A is diagonal
 
 void GB_cumsum                  // compute the cumulative sum of an array
 (
-    int64_t *count,             // size n+1, input/output
+    int64_t *restrict count,    // size n+1, input/output
     const int64_t n,
-    int64_t *kresult,           // return k, if needed by the caller
-    GB_Context Context
+    int64_t *restrict kresult,  // return k, if needed by the caller
+    int nthreads
 ) ;
 
 GrB_Info GB_mask                // C<M> = Z
@@ -2077,6 +2077,33 @@ void GB_pending_free            // free all pending tuples
 (
     GrB_Matrix A                // matrix with pending tuples to free
 ) ;
+
+//------------------------------------------------------------------------------
+// OpenMP definitions
+//------------------------------------------------------------------------------
+
+// GB_PART and GB_PARTITION:  divide the index range 0:n-1 uniformly
+// for nthreads.  GB_PART(tid,n,nthreads) is the first index for thread tid.
+#define GB_PART(tid,n,nthreads)  \
+    (((tid) * ((double) (n))) / ((double) (nthreads)))
+
+// thread tid will operate on the range k1:(k2-1)
+#define GB_PARTITION(k1,k2,n,tid,nthreads)                             \
+    k1 = ((tid) ==  0          ) ?  0  : GB_PART (tid,  n, nthreads) ; \
+    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART (tid+1,n, nthreads) ;
+
+
+#if defined ( _OPENMP )
+
+#define GB_OPENMP_THREAD_ID    omp_get_thread_num ( )
+#define GB_OPENMP_MAX_THREADS  omp_get_max_threads ( )
+
+#else
+
+#define GB_OPENMP_THREAD_ID    (0)
+#define GB_OPENMP_MAX_THREADS  (1)
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_queue operations

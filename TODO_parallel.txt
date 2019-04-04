@@ -74,8 +74,10 @@ GB_emult.c:
     Does "C=A.*B" for GrB_*_eWiseMult_*.  Parallelism is a lot like GB_add.
 
 GB_cumsum.c:
-    a parallel cumulative-sum.  Easy to parallelize.  Used many places.
-    Note the two variants.
+    a parallel cumulative-sum.  Used many places.
+    Note the two variants.  Performance of the parallel case is at
+    most 2x speedup, unless the array is already in L3 cache.
+    needs more work.
 
 GB_build.c, GB_builder.c, GB_build_factory.c:
     does the work of GrB_*_build.  Some is easy to do.  

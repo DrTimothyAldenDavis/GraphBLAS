@@ -138,7 +138,7 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
         // Tp = Cp = cumsum (Cp), and also compute C->nvec_nonempty
         //----------------------------------------------------------------------
 
-        GB_cumsum (Cp, cvdim, &cnvec_nonempty, Context) ;
+        GB_cumsum (Cp, cvdim, &cnvec_nonempty, nthreads) ;
         C->nvec_nonempty = cnvec_nonempty ;
         GB_memcpy (Tp, Cp, (cvdim+1) * sizeof (int64_t), nthreads) ;
 

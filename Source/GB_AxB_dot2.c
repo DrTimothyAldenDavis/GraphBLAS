@@ -175,7 +175,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     Cp [cnvec] = 0 ;
 
     // Cp = cumulative sum of Cp
-    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), Context) ;
+    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
     int64_t cnz = Cp [cnvec] ;
 
     // C->h = B->h

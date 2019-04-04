@@ -140,11 +140,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // parallel, from multiple user threads.  The user threads can use OpenMP,
     // or POSIX pthreads.
 
-    #if defined ( _OPENMP )
-    GB_Global_nthreads_max_set (omp_get_max_threads ( )) ;
-    #else
-    GB_Global_nthreads_max_set (1) ;
-    #endif
+    GB_Global_nthreads_max_set (GB_OPENMP_MAX_THREADS) ;
 
     //--------------------------------------------------------------------------
     // create the mutex for the critical section, and thread-local storage
