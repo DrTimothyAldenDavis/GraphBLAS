@@ -62,7 +62,7 @@ void mexFunction
     TIC ;
     if (nargin > 1)
     {
-        printf ("dpagerank2, method %d\n", method) ;
+        // printf ("dpagerank2, method %d\n", method) ;
         info = dpagerank2 (&P, A, 100, 1e-5, &iters, method) ;
     }
     else // default method

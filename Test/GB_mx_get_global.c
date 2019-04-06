@@ -44,6 +44,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
         // if (malloc_debug) printf ("GraphBLAS malloc debug enabled\n") ;
     }
 
+
     //--------------------------------------------------------------------------
     // clear the time
     //--------------------------------------------------------------------------
@@ -70,6 +71,33 @@ bool GB_mx_get_global       // true if doing malloc_debug
     GB_Global_malloc_tracking_set (true) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
     Complex_init ( ) ;
+
+    //--------------------------------------------------------------------------
+    // get nthreads
+    //--------------------------------------------------------------------------
+
+    int *nthreads = NULL ;
+    const mxArray *nthreads_matlab = NULL ;
+    nthreads_matlab = mexGetVariablePtr ("global", "GraphBLAS_nthreads") ;
+    if (nthreads_matlab == NULL || mxIsEmpty (nthreads_matlab))
+    {
+        // doesn't exist; create it and set it to 1
+        nthreads_matlab = mxCreateNumericMatrix (1, 1, mxINT32_CLASS, mxREAL) ;
+        nthreads = (int32_t *) mxGetData (nthreads_matlab) ;
+        if (nthreads == NULL) mexErrMsgTxt ("nthreads_matlab null?!") ;
+        nthreads [0] = 1 ;
+        // copy it into the global workspace
+        mexPutVariable ("global", "GraphBLAS_nthreads", nthreads_matlab) ;
+    }
+    else
+    {
+        nthreads = (int32_t *) mxGetData (nthreads_matlab) ;
+        if (nthreads == NULL) mexErrMsgTxt ("nthreads_matlab null!") ;
+    }
+
+    if (nthreads [0] > 1) printf ("nthreads %d\n", *nthreads) ;
+
+    GxB_set (GxB_NTHREADS, nthreads [0]) ;
 
     //--------------------------------------------------------------------------
     // return malloc debug status

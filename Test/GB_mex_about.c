@@ -29,6 +29,7 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
+    printf ("in %s\n", __FILE__) ;
 
     // test GrB_init with invalid mode
     GB_Global_GrB_init_called_set (false) ;

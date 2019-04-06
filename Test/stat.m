@@ -4,13 +4,18 @@ function stat
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-global GraphBLAS_debug GraphBLAS_gbcov
+global GraphBLAS_debug GraphBLAS_gbcov GraphBLAS_nthreads
 
 if (isempty (GraphBLAS_debug))
     GraphBLAS_debug = false ;
 end
 
-fprintf ('malloc debug: %d\n', GraphBLAS_debug) ;
+if (isempty (GraphBLAS_nthreads))
+    GraphBLAS_nthreads = int32 (1) ;
+end
+
+fprintf ('malloc debug: %d  nthreads %d\n', ...
+    GraphBLAS_debug, GraphBLAS_nthreads) ;
 
 if (~isempty (GraphBLAS_gbcov))
     covered = sum (GraphBLAS_gbcov > 0) ;

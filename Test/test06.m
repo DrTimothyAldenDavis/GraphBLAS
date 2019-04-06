@@ -12,7 +12,7 @@ function test06 (A,B,fulltests,method_list)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[mult_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall 
+[mult_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
 
 if (nargin < 3)
     fprintf ('\n-------------- GrB_mxm on all semirings\n') ;
@@ -336,7 +336,7 @@ for k1 = k1_list % 1:length(mult_ops)
     end
 end
 
-n_semirings
+% n_semirings
 
 if (fulltests)
     fprintf ('\ntest06: all tests passed\n') ;
