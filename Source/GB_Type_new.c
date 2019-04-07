@@ -35,7 +35,7 @@ GrB_Info GB_Type_new
     //--------------------------------------------------------------------------
 
     // allocate the type
-    GB_CALLOC_MEMORY (*type, 1, sizeof (struct GB_Type_opaque), NULL) ;
+    GB_CALLOC_MEMORY (*type, 1, sizeof (struct GB_Type_opaque)) ;
     if (*type == NULL)
     { 
         // out of memory

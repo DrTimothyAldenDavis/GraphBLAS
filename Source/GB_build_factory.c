@@ -449,8 +449,7 @@ GrB_Info GB_build_factory           // build a matrix
     { 
         // this cannot fail since the size is shrinking.
         bool ok ;
-        GB_REALLOC_MEMORY (iwork, T->nzmax, ijlen, sizeof (int64_t), &ok,
-            Context) ;
+        GB_REALLOC_MEMORY (iwork, T->nzmax, ijlen, sizeof (int64_t), &ok) ;
         ASSERT (ok) ;
     }
     T->i = iwork ;

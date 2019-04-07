@@ -43,7 +43,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     //--------------------------------------------------------------------------
 
     // allocate the unary operator
-    GB_CALLOC_MEMORY (*unaryop, 1, sizeof (struct GB_UnaryOp_opaque), NULL) ;
+    GB_CALLOC_MEMORY (*unaryop, 1, sizeof (struct GB_UnaryOp_opaque)) ;
     if (*unaryop == NULL)
     { 
         // out of memory

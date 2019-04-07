@@ -26,10 +26,6 @@
 #define GB_ATYPE \
     bool
 
-// t += Ax [p]
-#define GB_REDUCE(t,Ax,p)   \
-    t = (t || Ax [p])
-
 // monoid identity value
 #define GB_IDENTITY \
     false
@@ -42,7 +38,11 @@
 #define GB_REDUCE_INIT(t) \
     bool t = false ;
 
-// wrapup for each thread
+// t += Ax [p]
+#define GB_REDUCE(t,Ax,p)   \
+    t = (t || Ax [p])
+
+// w [tid] = t
 #define GB_REDUCE_WRAPUP(w,tid,t) \
     w [tid] = t ;
 

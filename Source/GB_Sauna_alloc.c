@@ -30,7 +30,7 @@ GrB_Info GB_Sauna_alloc             // create a Sauna
     //--------------------------------------------------------------------------
 
     GB_Sauna Sauna ;
-    GB_CALLOC_MEMORY (Sauna, 1, sizeof (struct GB_Sauna_struct), NULL) ;
+    GB_CALLOC_MEMORY (Sauna, 1, sizeof (struct GB_Sauna_struct)) ;
     if (Sauna == NULL)
     { 
         // out of memory
@@ -51,7 +51,7 @@ GrB_Info GB_Sauna_alloc             // create a Sauna
     Sauna->Sauna_size = Sauna_size ;
 
     // note that Sauna_Work does not need to be initialized
-    GB_CALLOC_MEMORY (Sauna->Sauna_Mark, Sauna_n+1, sizeof (int64_t), NULL) ;
+    GB_CALLOC_MEMORY (Sauna->Sauna_Mark, Sauna_n+1, sizeof (int64_t)) ;
     GB_MALLOC_MEMORY (Sauna->Sauna_Work, Sauna_n+1, Sauna_size) ;
 
     if (Sauna->Sauna_Mark == NULL || Sauna->Sauna_Work == NULL)

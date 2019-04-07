@@ -26,10 +26,6 @@
 #define GB_ATYPE \
     int32_t
 
-// t += Ax [p]
-#define GB_REDUCE(t,Ax,p)   \
-    t = GB_IMIN (t, Ax [p])
-
 // monoid identity value
 #define GB_IDENTITY \
     INT32_MAX
@@ -42,7 +38,11 @@
 #define GB_REDUCE_INIT(t) \
     int32_t t = INT32_MAX ;
 
-// wrapup for each thread
+// t += Ax [p]
+#define GB_REDUCE(t,Ax,p)   \
+    t = GB_IMIN (t, Ax [p])
+
+// w [tid] = t
 #define GB_REDUCE_WRAPUP(w,tid,t) \
     w [tid] = t ;
 

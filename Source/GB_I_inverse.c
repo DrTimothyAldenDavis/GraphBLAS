@@ -67,7 +67,7 @@ GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
         GB_MALLOC_MEMORY (Iwork1, nI, sizeof (int64_t)) ;
     }
 
-    GB_CALLOC_MEMORY (Mark, avlen, sizeof (int64_t), Context) ;
+    GB_CALLOC_MEMORY (Mark, avlen, sizeof (int64_t)) ;
 
     if (Inext == NULL || (need_Iwork1 && Iwork1 == NULL) || Mark == NULL)
     {

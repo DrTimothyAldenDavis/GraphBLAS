@@ -131,7 +131,6 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     if (GB_binop_builtin (D, D_is_pattern, B, B_is_pattern, mult,
         flipxy, &opcode, &xycode, &zcode))
     { 
-        // fprintf (stderr, " (built-in) ") ;
         #include "GB_binop_factory.c"
     }
 

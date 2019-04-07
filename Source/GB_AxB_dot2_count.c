@@ -43,7 +43,7 @@ GrB_Info GB_AxB_dot2_count          // C<M> = A'*B, dot product counts
 
     (*C_count_handle) = NULL ;
     int64_t *restrict C_count = NULL ;
-    GB_CALLOC_MEMORY (C_count, B->nvec, sizeof (int64_t), NULL) ;
+    GB_CALLOC_MEMORY (C_count, B->nvec, sizeof (int64_t)) ;
     if (C_count == NULL)
     {
         // out of memory

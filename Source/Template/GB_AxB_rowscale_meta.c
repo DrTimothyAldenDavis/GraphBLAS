@@ -15,8 +15,8 @@
     // get C, D, and B
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *restrict Dx = D_is_pattern ? NULL : B->x ;
-    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : D->x ;
+    const GB_ATYPE *restrict Dx = D_is_pattern ? NULL : D->x ;
+    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
     const int64_t  *restrict Bi = B->i ;
 
     //--------------------------------------------------------------------------

@@ -144,7 +144,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     //--------------------------------------------------------------------------
 
     // allocate the monoid
-    GB_CALLOC_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque), NULL) ;
+    GB_CALLOC_MEMORY (*monoid, 1, sizeof (struct GB_Monoid_opaque)) ;
     if (*monoid == NULL)
     { 
         // out of memory
@@ -168,8 +168,8 @@ GrB_Info GB_Monoid_new          // create a monoid
     // allocate both the identity and terminal value
     #define GB_ALLOC_IDENTITY_AND_TERMINAL                                  \
     {                                                                       \
-        GB_CALLOC_MEMORY (mon->identity, 1, zsize, NULL) ;                  \
-        GB_CALLOC_MEMORY (mon->terminal, 1, zsize, NULL) ;                  \
+        GB_CALLOC_MEMORY (mon->identity, 1, zsize) ;                        \
+        GB_CALLOC_MEMORY (mon->terminal, 1, zsize) ;                        \
         if (mon->identity == NULL || mon->terminal == NULL)                 \
         {                                                                   \
             /* out of memory */                                             \
@@ -183,7 +183,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     // allocate just the identity, not the terminal
     #define GB_ALLOC_JUST_IDENTITY                                          \
     {                                                                       \
-        GB_CALLOC_MEMORY (mon->identity, 1, zsize, NULL) ;                  \
+        GB_CALLOC_MEMORY (mon->identity, 1, zsize) ;                        \
         if (mon->identity == NULL)                                          \
         {                                                                   \
             /* out of memory */                                             \

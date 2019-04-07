@@ -45,7 +45,7 @@ GrB_Info GB_BinaryOp_new
     //--------------------------------------------------------------------------
 
     // allocate the binary operator
-    GB_CALLOC_MEMORY (*binaryop, 1, sizeof (struct GB_BinaryOp_opaque), NULL) ;
+    GB_CALLOC_MEMORY (*binaryop, 1, sizeof (struct GB_BinaryOp_opaque)) ;
     if (*binaryop == NULL)
     { 
         // out of memory

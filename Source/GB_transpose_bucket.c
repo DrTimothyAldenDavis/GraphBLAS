@@ -103,7 +103,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     int64_t *rowcount = NULL ;
-    GB_CALLOC_MEMORY (rowcount, A->vlen + 1, sizeof (int64_t), Context) ;
+    GB_CALLOC_MEMORY (rowcount, A->vlen + 1, sizeof (int64_t)) ;
     if (rowcount == NULL)
     { 
         // out of memory

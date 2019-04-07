@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -24,8 +25,8 @@
 // B type:   int16_t
 
 // Multiply: z = GB_IDIV_SIGNED (aik, bkj, 16)
-// Add:      cij *= z
-// MultAdd:  cij *= GB_IDIV_SIGNED (aik, bkj, 16)
+// Add:      cij *= x_op_y
+// MultAdd:  int16_t x_op_y = GB_IDIV_SIGNED (aik, bkj, 16) ; cij *= x_op_y
 // Identity: 1
 // Terminal: if (cij == 0) break ;
 
@@ -51,7 +52,7 @@
 
 // multiply-add
 #define GB_MULTADD(z, x, y)     \
-    z *= GB_IDIV_SIGNED (x, y, 16) ;
+    int16_t x_op_y = GB_IDIV_SIGNED (x, y, 16) ; z *= x_op_y ;
 
 // copy scalar
 #define GB_COPY(z,x) z = x ;

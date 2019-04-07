@@ -26,10 +26,6 @@
 #define GB_ATYPE \
     float
 
-// t += Ax [p]
-#define GB_REDUCE(t,Ax,p)   \
-    t = fminf (t, Ax [p])
-
 // monoid identity value
 #define GB_IDENTITY \
     INFINITY
@@ -42,7 +38,11 @@
 #define GB_REDUCE_INIT(t) \
     float t = INFINITY ;
 
-// wrapup for each thread
+// t += Ax [p]
+#define GB_REDUCE(t,Ax,p)   \
+    t = fminf (t, Ax [p])
+
+// w [tid] = t
 #define GB_REDUCE_WRAPUP(w,tid,t) \
     w [tid] = t ;
 

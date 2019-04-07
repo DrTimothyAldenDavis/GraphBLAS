@@ -31,14 +31,11 @@ constructed by dox_headers.m
 \brief  GB_AxB_Gustavson_builtin:  hard-coded C=A*B for built-in types
 
 \par
- This function computes C=A*B with hard-coded versions for all 960 unique
+ This function computes C=A*B with hard-coded versions for all 1040 unique
  built-in semirings that can be constructed with built-in operators.  It also
  handles all non-unique built-in semirings, by renaming operators to
  equivalent ones; if these are included, this function computes C=A*B for all
- 1712 valid semirings that can be constructed from built-in operators.
-\par
- parallel: this work is done by a single thread; parallelism will be done in
- GB_AxB_parallel.
+ possible valid semirings that can be constructed from built-in operators.
 */
 
 
@@ -47,9 +44,15 @@ constructed by dox_headers.m
 
 \par
  parallel: this function will remain sequential.
- parallelism will be done in GB_AxB_parallel.
+ parallelism is handled in GB_AxB_parallel.
 \par
  Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
+*/
+
+
+/** \file GB_AxB_colscale.c
+\brief  GB_AxB_colscale: C = A*D, column scale with diagonal matrix D
+
 */
 
 
@@ -60,26 +63,46 @@ constructed by dox_headers.m
  GB_AxB_dot computes the matrix multiplication C\<M\>=A'*B without forming
  A' explicitly.  It is useful when A is very tall and thin (n-by-1 in
  particular).  In that case A' is costly to transpose, but A'*B is very
- easy if B is also tall and thin (say also n-by-1).
+ easy if B is also tall and thin (say also n-by-1).  It is also useful for
+ computing A'*B when B is a vector.
 \par
- If M is NULL, the method computes C=A'*B by considering each entry C(i,j),
- taking O(m*n) time if C is m-by-n.  This is suitable only when C is small
- (such as a scalar, a small matrix, or a vector).  If M is present, the upper
- bound on the number of entries in C is the same as nnz(M), so that space is
- allocated for C, and C(i,j) is computed only where M(i,j)=1.  This function
- assumes the mask M is not complemented.
+ GB_AxB_dot uses a single pass, both symbolic and numeric.  It thus cannot
+ be done in parallel.  Instead, parallelism is handled in GB_AxB_parallel,
+ which calls multiple instances of this function on different slices.
+ Alternatively, GB_AxB_dot2 can be done in parallel, in place.
 \par
- Compare this function with GB_AxB_Gustavson, which computes C=A*B and
- C\<M\>=A*B.  The computation of C=A*B requires C-\>p and C-\>i to be constructed
- first, in a symbolic phase.  Otherwise they are very similar.  The dot
- product in this algorithm is very much like the merge-add in GB_add,
- except that the merge in GB_add produces a column (a(:,j)+b(:,j)),
- whereas the merge in this function produces a scalar (a(:,j)'*b(:,j)).
-\par
- parallel: this function will remain sequential.
- parallelism will be done in GB_AxB_parallel.
+ Any variant of the mask is handled: C=A'*B, C\<M\>=A'*B, and C\<!M\>=A'*B.
 \par
  Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
+*/
+
+
+/** \file GB_AxB_dot2.c
+\brief  GB_AxB_dot2: compute C\<M\> = A'*B in parallel, in place
+
+\par
+ GB_AxB_dot2 is very similar to GB_AxB_dot, except that it does the
+ computation in two phases.  The first phase counts the number of entries in
+ each column of C.  The second phase can then construct the result C in
+ place, and thus this method can be done in parallel for the single matrix
+ computation C=A'*B.  GB_AxB_dot2 operates in parallel on the slices of A,
+ whereas GB_AxB_dot can only work on a single matrix (or a single slice).
+\par
+ Any variant of the mask is handled: C=A'*B, C\<M\>=A'*B, and C\<!M\>=A'*B.
+\par
+ TODO:  the GB_for_each_vector (B) loop in the *dot2* Templates can also
+ be done in parallel.  B does not need to be sliced, but the loop should
+ be scheduled with the same schedules as GxB_SLICE_B* used for slice_A
+ in GB_AxB_parallel (GxB_SLICE_BCOL and GxB_SLICE_BNZ).
+*/
+
+
+/** \file GB_AxB_dot2_count.c
+\brief  GB_AxB_dot2_count: count entries in C=A'*B, C\<M\>=A'*B, or C\<!M\>=A'*B
+
+\par
+ Count the number of entries in each vector of C, for C=A'B, C\<M\>=A'*B, or
+ C\<!M\>=A'*B.
 */
 
 
@@ -173,53 +196,84 @@ constructed by dox_headers.m
  Parallel matrix-matrix multiply, A*B or A'*B, with optional mask M.  This
  method is used by GrB_mxm, GrB_vxm, and GrB_mxv.  For both of the latter two
  methods, B on input will be an nrows-by-1 column vxector.
-
- If do_adotb is true, then A'*B is being computed.  In this case, A has
- not been transposed yet (and will not be).  A and B must have the same
- vector length, vlen (as if both A and B are CSC matrices with the same
- number of rows, for example).  The GB_AxB_sequential method when applied
- to A and B (or a slice of B) will operate on A' without forming it.
-
+\par
+ This function, and the matrices C, M, A, and B are all CSR/CSC agnostic.
+ For this discussion, suppose they are CSC, with vlen = \# of rows, and vdim =
+ \# of columns.
+\par
+ If do_adotb is true, then A'*B is being computed.  In this case, A has not
+ been transposed yet (and will not be).  A and B must have the same vector
+ length, vlen (as if both A and B are CSC matrices with the same number of
+ rows, for example).  The GB_AxB_sequential method when applied to A and B
+ (or a slice of B) can operate on A' without forming it.
+\par
  If do_adotb is false, then A*B is being computed, and the vector dimension
  of A must be identical to the vector length of B (as if both A and B are
  CSC matrices, and the number of columns of A is the same as the number of
  rows of B).
-
+\par
  The output matrix C = *Chandle has not been allocated, so C is NULL on
- input.  The mask M is optional.  If present, it is not complemented.
-
- The semiring defines C=A*B, and must be valid.  flipxy modifies how the
- semiring multiply operator is applied.  If false, then fmult(aik,bkj)
- is computed.  If true, then the operands are swapped, and fmult(bkj,aij)
- is done instead.
-
+ input.  The mask M is optional.
+\par
+ The semiring defines C=A*B.  flipxy modifies how the semiring multiply
+ operator is applied.  If false, then fmult(aik,bkj) is computed.  If true,
+ then the operands are swapped, and fmult(bkj,aij) is done instead.
+\par
  AxB_method selects the method to use:
+\par
       GxB_DEFAULT:        the method is selected automatically
+\par
       GxB_AxB_GUSTAVSON:  Gustavson's method for A*B
+\par
       GxB_AxB_HEAP:       heap method for A*B
+\par
       GxB_AxB_DOT:        dot method for A'*B
+\par
       GxB_AxB_HASH:       hash method for A*B (FUTURE)
-
+\par
  AxB_method_used reports the method actually chosen.  This is for
  informational purposes only, so if a parallel C=A*B splits the work into
  multiple submatrix multiplications, and uses different methods on each
  submatrix, then AxB_method_used is the method chosen by thread zero.
-
+\par
+ AxB_slice determines how A' or B are sliced for parallel matrix multiply:
+\par
+      GxB_DEFAULT             select the slice method automatically
+\par
+      GxB_SLICE_ATROW         each slice of A' has same \# of rows
+\par
+      GxB_SLICE_ATNZ          each slice of A' has same \# of nonzeros
+\par
+      GxB_SLICE_BCOL          each slice of B has same \# of columnns
+\par
+      GxB_SLICE_BNZ           each slice of B has same \# of nonzeros
+\par
+      GxB_SLICE_BFLOPS        each slice of B has same \# of flops
+\par
+      GxB_SLICE_BNZFINE       like BNZ but split cols of B
+\par
+      GxB_SLICE_BFLOPSFINE    like BFLOPS but split cols of B
+\par
+ If computing A'*B, the *_BFLOPS, and *FINE methods cannot be used.  If
+ computing A*B, the *_AT* methods cannot be used.  If an invalid method is
+ chosen, GxB_DEFAULT is used instead (no error condition is reported).
+\par
  Context: the GB_Context containing the \# of threads to use, a string of the
  user-callable function that is calling this function (GrB_mxm, GrB_mxv, or
  GxB_vxm) and detailed error reports.
-
- C, M, A, and B are CSR/CSC agnostic.  For this discussion, suppose they
- are CSC, with vlen = \# of rows, and vdim = \# of columns.
-\par
- PARALLEL: A' or B is sliced, and the slices of C are concatenated.
 \par
  FUTURE: The result of this function is the T matrix in GB_mxm.  It may be
  transplanted directly into the user's matrix, or it may be passed through
  GB_accum_mask.  See GB_mxm.  For the latter case, it would be better to
- delay the contatenation of the output matrix T = [C0 ... C(t-t)].
+ delay the contatenation of the output matrix T = [C0 ... C(nthreads-1)].
  GB_accum_mask could do the accum/mask using the sliced T matrix, to
  update the user's C matrix (which is not sliced), and then T is freed.
+*/
+
+
+/** \file GB_AxB_rowscale.c
+\brief  GB_AxB_rowscale: C = D*B, row scale with diagonal matrix D
+
 */
 
 
@@ -231,6 +285,17 @@ constructed by dox_headers.m
 \par
  parallel: this function can be called in parallel for each thread.
  parallelism will be done in GB_AxB_parallel.
+*/
+
+
+/** \file GB_AxB_semiring_builtin.c
+\brief  GB_AxB_semiring_builtin:  determine if semiring is built-in
+
+\par
+ Determine if A*B uses a built-in semiring, and if so, determine the
+ opcodes and type codes of the semiring.
+\par
+ not parallel: this function does O(1) work and is already thread-safe.
 */
 
 
@@ -362,6 +427,14 @@ constructed by dox_headers.m
 /** \file GB_Global.c
 \brief  GB_Global: global values in GraphBLAS
 
+\par
+ All Global storage is declared, initialized, and accessed here.  The
+ contents of the GB_Global are only accessible to functions in this file.
+ Global storage is used to record a list of matrices with pending operations
+ (for GrB_wait), to keep track of the GraphBLAS mode (blocking or
+ non-blocking), to hold persistent Sauna workspace, for pointers to
+ malloc/calloc/realloc/free functions, global matrix options, and other
+ settings.
 */
 
 
@@ -438,13 +511,9 @@ constructed by dox_headers.m
 
 \par
  If the user only calls GraphBLAS from a single user thread, then all
- internal threads will always find their native Sauna.
-\par
- FUTURE: time spent in the critical section is typically O(nthreads) or
- O(GB_Global.nthreads_max), unless the user calls GraphBLAS simultaneously
- from multiple user threads.  In that case, the time could be
- O(GxB_NTHREADS_MAX), which is 2048 by default.  If it becomes a performance
- bottleneck, doubly-linked list of available Sauna ids could be kept,
+ internal threads will always find their native Sauna: tid == Sauna_id [tid].
+ The native Sauna is best since a thread should use workspace that it
+ allocated itself, for best performance in a NUMA memory system.
 */
 
 
@@ -467,6 +536,14 @@ constructed by dox_headers.m
 /** \file GB_Sauna_release.c
 \brief  GB_Sauna_release: release a set of Saunas
 
+\par
+ A set of threads has finished computing C=A*B, and can now release their
+ thread-specific Sauna workspaces.  This does not need to be done in a
+ critical section, but doing so keeps the Sauna acquire/release in a single
+ batch, for each group of threads.  Another user thread can start C=A*B just
+ as these Saunas are being released, which would lead to an intermingled set
+ of Saunas.  It would work just fine, but might not be optimal.  The critical
+ section is very short.
 */
 
 
@@ -599,7 +676,7 @@ constructed by dox_headers.m
  The next step is C\<M\> = Z.
 \par
  This denotes how the matrix Z is written into C, under the control of the
- mask (or ~M if Mask_complement is true), and the C_replace flag (which
+ mask (or !M if Mask_complement is true), and the C_replace flag (which
  indicates that C should be set to zero first.  This is C\<M\>=Z in
  GraphBLAS notation.  See GB_mask.c, or GB_spec_mask.m for a MATLAB script
  that describes this step.
@@ -699,15 +776,12 @@ constructed by dox_headers.m
 
 
 /** \file GB_apply_op.c
-\brief  GB_apply_op:  apply a unary operator to an array
+\brief  GB_apply_op: typecast and apply a unary operator to an array
 
 \par
  Cx = op ((xtype) Ax)
 \par
  Compare with GB_transpose_op.c
-\par
- PARALLEL: do it here, but it is easy.  Might want to split into separate
- files like Generated/GB_AxB*, so worker is not in a macro but in a function.
 */
 
 
@@ -755,6 +829,15 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_binop_builtin.c
+\brief  GB_binop_builtin:  determine if a binary operator is built-in
+
+\par
+ Determine if A*B uses a built-in semiring, and if so, determine the
+ opcodes and type codes of the semiring.
+*/
+
+
 /** \file GB_block.c
 \brief  GB_block: apply all pending computations if blocking mode enabled
 
@@ -768,7 +851,7 @@ constructed by dox_headers.m
 
 \par
  Returns the equivalent opcode when an operator's x and y arguments are
- boolean.  13 of the 23 binary opcodes are redundant when applied to
+ boolean.  15 of the 25 binary opcodes are redundant when applied to
  boolean inputs, leaving 10 unique binary opcodes z=f(x,y) when all three
  operands x,y,z are boolean.
 \par
@@ -939,19 +1022,17 @@ constructed by dox_headers.m
 
 
 /** \file GB_calloc_memory.c
-\brief  GB_calloc_memory: wrapper for calloc (used via the GB_CALLOC_MEMORY macro)
+\brief  GB_calloc_memory: wrapper for calloc_function
 
 \par
- A wrapper for calloc.  Space is set to zero.
+ A wrapper for calloc_function.  Space is set to zero.
 \par
- This function is called via the GB_CALLOC_MEMORY(p,n,s,Context) macro.
+ This function is called via the GB_CALLOC_MEMORY(p,n,s) macro.
 \par
  Parameters are the same as the POSIX calloc, except that asking to allocate
  a block of zero size causes a block of size 1 to be allocated instead.  This
  allows the return pointer p to be checked for the out-of-memory condition,
  even when allocating an object of size zero.
-\par
- PARALLEL: clear the array in parallel?
 */
 
 
@@ -959,11 +1040,8 @@ constructed by dox_headers.m
 \brief  GB_cast_array: typecast an array
 
 \par
- Casts an input array A to an output array C with a different built-in type.
- Does not handle user-defined types.
-\par
- PARALLEL: easy.  May want to put the workers in functions, like
- Generated/GB_AxB*, instead of in a macro.
+ Casts an input array Ax to an output array Cx with a different built-in
+ type.  Does not handle user-defined types.
 */
 
 
@@ -974,8 +1052,6 @@ constructed by dox_headers.m
  Returns a pointer to a function f(z,x,s) that copies its input x into its
  output z, casting as needed.  That is, it computes z = (type of z) x.
  s is the size for user-defined types, which can only be copied.
-\par
- not parallel: this function does O(1) work and is already thread-safe.
 */
 
 
@@ -995,8 +1071,6 @@ constructed by dox_headers.m
  cannot be recreated, then all content of the matrix is freed or removed, and
  the matrix A is left in an invalid state (A-\>magic == GB_MAGIC2).  Only the
  header is left.
-\par
- parallel: not here, but perhaps in GB_calloc_memory.
 */
 
 
@@ -1110,26 +1184,17 @@ constructed by dox_headers.m
  Compute the cumulative sum of an array count[0:n], of size n+1
  in pseudo-MATLAB notation:
 \par
-      k = sum (count [0:n] != 0) ;
+      k = sum (count [0:n-1] != 0) ;
 \par
       count = cumsum ([0 count[0:n-1]]) ;
 \par
  That is, count [j] on input is overwritten with the value of
- sum (count [0..j-1]).
+ sum (count [0..j-1]).  count [n] is implicitly zero on input.
+ On output, count [n] is the total sum.
 \par
- GB_transpose_bucket uses this function to compute row and column pointers.
- On input, count [j] is the number of nonzeros in column j of a matrix, and
- count [n] should be zero (it only affects the result k, however).  On
- output, count [0..n] contains the column pointers of the matrix, and kresult
- is the number of nonzeros in count [0:n], which becomes nvec_nonempty for
- the resulting matrix.
-\par
- GB_AxB_flopcount uses this to compute the cumulative sum of the flop
- counts for C\<M\>=A*B, for each column of B.  In this case, n is the
- number of vectors in B.  It does not need the value k, so it is not
- computed.
-\par
- PARALLEL: a parallel cumsum
+ PARALLEL: The parallel cumsum gets decent speedup only if the array is
+ already in L3 cache.  Otherwise, speedup is limited to about 2x.  The
+ problem is memory-bound.
 */
 
 
@@ -1139,6 +1204,8 @@ constructed by dox_headers.m
 \par
  C = A, making a deep copy.  Not user-callable; this function does the work
  for user-callable functions GrB_*_dup.
+\par
+ if numeric is false, C-\>x is allocated but not initialized.
 \par
  There is little use for the following feature, but (*Chandle) and A might be
  identical, with GrB_dup (\&A, A).  The input matrix A will be lost, and will
@@ -1154,8 +1221,6 @@ constructed by dox_headers.m
   GrB_free (\&B) ;
 \par
  A is the new copy and B is the old copy.  Each should be freed when done.
-\par
- PARALLEL: a few large memcpy's, can be done in parallel.
 */
 
 
@@ -1298,7 +1363,39 @@ constructed by dox_headers.m
  This function is not user-callable.  It does the work for the user-callable
  GrB_*_extractTuples functions.
 \par
- PARALLEL: easy.  Does large memcpy's and fully parallel loops.
+ PARALLEL: via GB_memcpy and simple for loops
+*/
+
+
+/** \file GB_fine_slice.c
+\brief  GB_fine_slice: create fine hyperslices of B
+
+\par
+ For each thread tid, create Bslice [tid] as a fine hyperslice of B.  The i
+ and x arrays are the same as B.  When this function returns, the rest of
+ GraphBLAS will view Bslice [tid] as a hyperslice, but with non-shallow
+ Bslice [tid]-\>p and either shallow Bslice [tid]-\>h (if B is hypersparse) or
+ non-shallow Bslice [tid]-\>h (if B is sparse).
+\par
+ For each fine hyperslice, Bslice [tid]-\>p is allocated and created here; it
+ is not shallow (unlike the coarse slices computed by GB_slice).
+\par
+ Bslice [tid]-\>i and Bslice [tid]-\>x are offset pointers into B, so that
+ Bslice [tid]-\>p [0] == 0 for all slices tid.
+\par
+ if B is hypersparse, then Bslice [tid]-\>h is a shallow pointer into B-\>h,
+ where Bslice [tid]-\>h [0] is the same as B-\>h [k] if the kth vector of B is
+ the first vector of Bslice [tid].
+\par
+ The matrix dimensions of each slice are the same as B.  All slices have
+ vector length B-\>vlen and vector dimension B-\>vdim.   The slices are subsets
+ of the entries of B, as defined by the Slice array.  The Bslice [tid]
+ consists of the entries Slice [tid] to Slice [tid+1]-1 of B.
+\par
+ This function does O(nthreads+B-\>nvec) work and allocates up to
+ O(nthreads+B-\>nvec) space, so it could be parallel, but it will tend to be
+ used when B-\>nvec is small (even 1, for GrB_mxv and GrB_vxm).  So it does
+ not need to be parallel.
 */
 
 
@@ -1327,14 +1424,28 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_hcat_fine_slice.c
+\brief  GB_hcat_fine_slice: horizontal concatenation and summation of slices of C
+
+\par
+ Horizontal concatenation and summation of fine slices into the matrix C.
+*/
+
+
+/** \file GB_hcat_slice.c
+\brief  GB_hcat_slice: horizontal concatenation of the slices of C
+
+\par
+ Horizontal concatenation of slices into the matrix C.
+*/
+
+
 /** \file GB_hyper_realloc.c
 \brief  GB_hyper_realloc: reallocate a matrix hyperlist
 
 \par
  Change the size of the A-\>h and A-\>p hyperlist.
  No change is made if A is not hypersparse.
-\par
- parallel: not here, but perhaps in GB_realloc_memory
 */
 
 
@@ -1396,6 +1507,17 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_is_diagonal.c
+\brief  GB_is_diagonal: check if A is a diagonal matrix
+
+\par
+ Returns true if A is a square diagonal matrix, with all diagonal entries
+ present.  Pending tuples are ignored.  Zombies are treated as entries.
+\par
+ PARALLEL: simple parallel reduction
+*/
+
+
 /** \file GB_ix_alloc.c
 \brief  GB_ix_alloc: allocate a matrix to hold a given number of entries
 
@@ -1410,8 +1532,6 @@ constructed by dox_headers.m
  GB_ix_alloc is only called by GB_create, so the matrix is not in the queue.
  The function never accessed the global matrix queue, and thus it
  cannot return GrB_PANIC.
-\par
- not parallel: this function does O(1) work and is already thread-safe.
 */
 
 
@@ -1446,8 +1566,6 @@ constructed by dox_headers.m
  nnz(A) has, or will, change.  The \# of nonzeros may decrease significantly,
  in which case the extra space is trimmed.  If the existing space is not
  sufficient, the matrix is doubled in size to accomodate the new entries.
-\par
- parallel: not here, but perhaps in GB_ix_realloc.
 */
 
 
@@ -1490,8 +1608,6 @@ constructed by dox_headers.m
  Asking to allocate a block of zero size causes a block of size 1 to be
  allocated instead.  This allows the return pointer p to be checked for the
  out-of-memory condition, even when allocating an object of size zero.
-\par
- not parallel: this function does O(1) work and is already thread-safe.
 */
 
 
@@ -1524,6 +1640,14 @@ constructed by dox_headers.m
 \par
  parallel: could be parallelized, but this is meant primarily for testing
  and debugging, so performance is not critical.
+*/
+
+
+/** \file GB_memcpy.c
+\brief  GB_memcpy: parallel memcpy
+
+\par
+ PARALLEL: break up a single large memcpy into smaller ones to do in parallel
 */
 
 
@@ -1571,8 +1695,6 @@ constructed by dox_headers.m
  To see where these options are used in SuiteSparse:GraphBLAS:
  grep \"allocate a new header\"
  which shows all uses of GB_new and GB_create
-\par
- parallel: not here; see GB_calloc_memory
 */
 
 
@@ -1651,10 +1773,6 @@ constructed by dox_headers.m
  CSC, i is a row index and j is a column index.  For CSR, i is a column index
  and j is a row index.  This function also does not need to know if A is
  hypersparse or not.
-\par
- parallel: unless reallocation occurs, this function does O(1) work and is
- already thread-safe.  The reallocation could be parallel; see
- GB_realloc_memory.
 */
 
 
@@ -1694,6 +1812,17 @@ constructed by dox_headers.m
  If A is in the queue, it is removed, which requires access to the critical
  section for the queue.  Normally this cannot fail, but In the rare event
  that the critical section does fail, a GrB_PANIC is returned.
+*/
+
+
+/** \file GB_pslice.c
+\brief  GB_pslice: partition A-\>p by \# of entries, for a parallel loop
+
+\par
+ A-\>p [0..A-\>nvec] is a monotonically increasing cumulative sum of the
+ entries in each vector of A.  This function slices Ap so that each chunk has
+ the same number of entries.  Returns the \# of threads that can be
+ effectively used.
 */
 
 
@@ -1801,7 +1930,7 @@ constructed by dox_headers.m
 \par
  Usage:
 \par
-      p = GB_realloc_memory (nnew, nold, size, p, \&ok, Context)
+      p = GB_realloc_memory (nnew, nold, size, p, \&ok)
 \par
       if (ok)
 \par
@@ -1813,8 +1942,6 @@ constructed by dox_headers.m
 \par
           p points to the old space of size nold*size, which is left
           unchanged.  This case never occurs if nnew \< nold.
-\par
- PARALLEL: move the data in parallel?
 */
 
 
@@ -1841,8 +1968,7 @@ constructed by dox_headers.m
  This function does not need to know if A is hypersparse or not, and its
  result is the same if A is in CSR or CSC format.
 \par
- PARALLEL: a parallel reduction method.  All entries of the matrix
- must be reduce to a single scalar.
+ PARALLEL: use a parallel reduction of all entries in A to a scalar
 */
 
 
@@ -1863,18 +1989,8 @@ constructed by dox_headers.m
  user-callable.  It does the work for GxB_*_select.
  Compare this function with GrB_apply.
 \par
- PARALLEL: do in parallel, but using an extra move of the data.
-*/
-
-
-/** \file GB_semiring_builtin.c
-\brief  GB_semiring_builtin:  determine if semiring is built-in
-
-\par
- Determine if A*B uses a built-in semiring, and if so, determine the
- opcodes and type codes of the semiring.
-\par
- not parallel: this function does O(1) work and is already thread-safe.
+ PARALLEL: do in parallel, but using two phases: symbolic to count the
+ \# of entries in each column, and another to move the data.
 */
 
 
@@ -1960,6 +2076,30 @@ constructed by dox_headers.m
  c = a*b but check for overflow
 \par
  not parallel: this function does O(1) work and is already thread-safe.
+*/
+
+
+/** \file GB_slice.c
+\brief  GB_slice: create hypersparse shallow slices of a matrix B
+
+\par
+ For each thread tid, create Bslice [tid] as a slice or hyperslice
+ of B.  The i and x arrays are the same as B.
+\par
+ The p array is an offset into Bp (that is, Bp + Slice [tid]), which means
+ that p [0] will not be zero (except for Bslice [0]).  If B is hypersparse,
+ the h array is also an offset into B-\>h.  If B is standard, then Bslice
+ [tid] becomes an implicit hypersparse matrix.  Its h array is NULL, and the
+ h list is implicit: h[0..nvec-1] is implicitly [hfirst, hfirst+1, ...
+ hfirst+nvec-1], where nvec = Slice [tid+1] - Slice [tid].
+\par
+ The matrix dimensions of each slice are the same as B.  All slices have
+ vector length B-\>vlen and vector dimension B-\>vdim.   The slices are subsets
+ of the vectors of B, as defined by the Slice array.  The Bslice [tid]
+ consists of the vectors Slice [tid] to Slice [tid+1]-1.
+\par
+ This function does only O(nthreads) work and allocates O(nthreads) space, so
+ it does not need to be parallel.
 */
 
 
@@ -2211,8 +2351,8 @@ constructed by dox_headers.m
  parallel case, it might be hard to parallelize the bucket sort.  The qsort
  is likely better, and the bucket sort could remain mostly sequential.  Most
  of the work is done in other functions (GB_transpose_bucket, GB_builder,
- etc), not here.  There are a few large loops here, and a large memcpy, that
- should be done in parallel.
+ etc), not here.  There are a few large loops here then could be done in
+ parallel.  See also the GB_memcpy below.
 */
 
 
@@ -2261,46 +2401,42 @@ constructed by dox_headers.m
 \brief  GB_transpose_ix: transpose the values and pattern of a matrix
 
 \par
- The values of A are typecasted to R_type, the type of the R matrix.
- A can be sparse or hypersparse, but R is not hypersparse.
+ The values of A are typecasted to C_type, the type of the C matrix.
+ A can be sparse or hypersparse, but C is not hypersparse.
 \par
- The row pointers of the output matrix have already been computed, in Rp.
- Row i will appear in Ri, in the positions Rp [i] .. Rp [i+1], for the
- version of Rp on *input*.  On output, however, Rp has been shifted down
- by one.  Rp [0:m-1] has been over written with Rp [1:m].  They can be
- shifted back, if needed, but GraphBLAS treats this array Rp, on input
- to this function, as a throw-away copy of Rp.
+ The row pointers of the output matrix have already been computed, in Cp.
+ Row i will appear in Ci, in the positions Cp [i] .. Cp [i+1], for the
+ version of Cp on *input*.  On output, however, Cp has been shifted down
+ by one.  Cp [0:m-1] has been over written with Cp [1:m].  They can be
+ shifted back, if needed, but GraphBLAS treats this array Cp, on input
+ to this function, as a throw-away copy of Cp.
 \par
  Compare with GB_transpose_op.c
 \par
- PARALLEL: the bucket transpose will not be simple to parallelize.  The qsort
- method of transpose would be more parallel.  This method might remain mostly
- sequential.
+ The bucket sort is not parallel.
 */
 
 
 /** \file GB_transpose_op.c
-\brief  GB_transpose_op: transpose and apply an operator to a matrix
+\brief  GB_transpose_op: transpose, typecase, and apply an operator to a matrix
 
 \par
- R = op ((xtype) A')
+ C = op ((xtype) A')
 \par
  The values of A are typecasted to op-\>xtype and then passed to the unary
  operator.  The output is assigned to R, which must be of type op-\>ztype; no
  output typecasting done with the output of the operator.
 \par
- The row pointers of the output matrix have already been computed, in Rp.
- Row i will appear in Ri, in the positions Rp [i] .. Rp [i+1], for the
- version of Rp on *input*.  On output, however, Rp has been shifted down
- by one.  Rp [0:m-1] has been over written with Rp [1:m].  They can be
- shifted back, if needed, but GraphBLAS treats this array Rp, on input
- to this function, as a throw-away copy of Rp.
+ The row pointers of the output matrix have already been computed, in Cp.
+ Row i will appear in Ci, in the positions Cp [i] .. Cp [i+1], for the
+ version of Cp on *input*.  On output, however, Cp has been shifted down
+ by one.  Cp [0:m-1] has been over written with Cp [1:m].  They can be
+ shifted back, if needed, but GraphBLAS treats this array Cp, on input
+ to this function, as a throw-away copy of Cp.
 \par
  Compare with GB_transpose_ix.c and GB_apply_op.c
 \par
- PARALLEL: the bucket transpose will not be simple to parallelize.  The qsort
- method of transpose would be more parallel.  This method might remain mostly
- sequential.
+ Note that the bucket transpose is sequential.
 */
 
 
@@ -2321,6 +2457,14 @@ constructed by dox_headers.m
  the algorithm, see GB_build.
 \par
  parallel: not here, but in GB_build.
+*/
+
+
+/** \file GB_vcat_slice.c
+\brief  GB_vcat_slice: vertical concatenation of the slices of C
+
+\par
+ Vertical concatenation of slices into the matrix C.
 */
 
 
@@ -3607,33 +3751,19 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_2type_template.c
-\brief  GB_2type_template.c: 2-type switch factory
+/** \file GB_2type_factory.c
+\brief  GB_2type_factory.c: 2-type switch factory
 
 \par
  This is a generic switch factory for creating 121 workers that operate on
  two built-in data types (11 types each), to be \#include'd in another file.
- GB_WORKER(type1,type2) is a macro defined in the \#including file, where
- type1 and type2 are the built-in types corresponding to code1 and code2,
- respectively or (void *) for a user-defined type.  The last statement of
- GB_WORKER should be a break or return since it doesn't appear here.
+ GB_WORKER(op,zname,ztype,xname,xtype) is a macro defined in the \#including
+ file, where ztype and xtype are the built-in types corresponding to code1
+ and code2, respectively or (void *) for a user-defined type.  The last
+ statement of GB_WORKER should be a break or return since it does not appear
+ here.
 \par
  User-defined types are not handled.
-\par
- GB_shallow_op and GB_transpose_op use this template to create workers that
- apply unary operators.  Those functions \#define GB_BOP(x) for the boolean
- unary operator, GB_IOP(x) for integers, and GB_FOP(x) for floating-point.
- The selection of these operators is controlled by code1.
-\par
- parallel: not here.
-*/
-
-
-/** \file GB_AxB_Gustavson_flipxy.c
-\brief  GB_AxB_Gustavson_flipxy: C=A*B and C\<M\>=A*B
-
-\par
- parallel: not here.
 */
 
 
@@ -3696,8 +3826,16 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_AxB_compare_template.c
-\brief  GB_AxB_compare_template.c: switch factory for C=A*B with comparator ops
+/** \file GB_AxB_colscale_meta.c
+\brief  GB_AxB_colscale_meta: C=A*D where D is a square diagonal matrix
+
+\par
+ PARALLEL: all vectors C=A*D are computed fully in parallel. 
+*/
+
+
+/** \file GB_AxB_compare_factory.c
+\brief  GB_AxB_compare_factory.c: switch factory for C=A*B with comparator ops
 
 \par
  A template file \#include'd in GB_AxB_factory.c
@@ -3715,8 +3853,6 @@ constructed by dox_headers.m
  operator NE has already been renamed XOR by GB_AxB_semiring_builtin, and
  thus NE will never use the boolean case, below.  Thus it is removed with the
  \#ifndef GB_NO_BOOLEAN.
-\par
- parallel: not here
 */
 
 
@@ -3724,82 +3860,60 @@ constructed by dox_headers.m
 \brief  GB_AxB_dot_cij: compute C(i,j) = A(:,i)'*B(:,j)
 
 \par
- computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.
+ computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product
 \par
- parallel: the parallelism will be handled outside this code, in
- GB_AxB_parallel.  This work is done by a single thread.
+ For the 2-phase method:
+\par
+      GB_PHASE_1_OF_2 ; determine if cij exists, and increment C_count
+      GB_PHASE_2_OF_2 : 2nd phase, compute cij, no realloc of C
+\par
+ For the single-phase method (dot):
+\par
+      GB_SINGLE_PHASE : both symbolic and numeric
 */
 
 
 /** \file GB_AxB_dot_compmask.c
 \brief  GB_AxB_dot_compmask:  C\<!M\>=A'*B via dot products
 
-\par
- parallel: this could be done in parallel, but the parallelism will be
- handled outside this code, in GB_AxB_parallel.  This work is done by a
- single thread.
-*/
-
-
-/** \file GB_AxB_dot_flipxy.c
-\brief  GB_AxB_dot_flipxy: C=A'*B or C\<M\>=A'*B via dot products
-
-\par
- parallel: not here
 */
 
 
 /** \file GB_AxB_dot_mask.c
 \brief  GB_AxB_dot_mask:  C\<M\>=A'*B via dot products
 
-\par
- parallel: this could be done in parallel, but the parallelism will be
- handled outside this code, in GB_AxB_parallel.  This work is done by a
- single thread.
 */
 
 
 /** \file GB_AxB_dot_meta.c
 \brief  GB_AxB_dot_meta: C=A'*B or C\<M\>=A'*B via dot productes
 
-\par
- This file is \#include'd into GB_AxB_dot.c for the generic case, and in the
- hard-coded semirings, Generated/GB_AxB__*_*_.c.  It constructs the
- dot-product variant of sparse matrix multiplication, C=A'*B, without
- transposing A.
-\par
- parallel: not here.
 */
 
 
 /** \file GB_AxB_dot_nomask.c
 \brief  GB_AxB_dot_nomask:  C=A'*B via dot products
 
-\par
- parallel: this could be done in parallel, but the parallelism will be
- handled outside this code, in GB_AxB_parallel.  This work is done by a
- single thread.
 */
 
 
 /** \file GB_AxB_factory.c
-\brief  GB_AxB_factory: switch factory for built-in methods for C=A*B
+\brief  GB_AxB_factory: switch factory for C=A*B
 
 \par
  This is used by GB_AxB_Gustavson_builtin.c, GB_AxB_dot.c and GB_AxB_heap.c
  to create built-in versions of sparse matrix-matrix multiplication.  The
  \#include'ing file defines the GB_AxB_WORKER macro, and mult_opcode,
- add_opcode, xycode, and zcode
+ add_opcode, xycode, and zcode.
 \par
- parallel: not here
-*/
-
-
-/** \file GB_AxB_heap_flipxy.c
-\brief  GB_AxB_heap_flipxy: compute C\<M\>=A*B or C=A*B using a heap-based method
-
+ Two 2nd level switch factories are used:
 \par
- parallel: not here
+      GB_AxB_type_factory: handles all semirings where the multiply operator
+          is TxT-\>T (as is the monoid).
+\par
+      GB_AxB_compare_factory: handles all semirings where the multiply
+          operator is TxT-\>bool (for the comparison operators, LT, GT, etc),
+          and where the monoid is bool x bool -\> bool.
 */
 
 
@@ -3829,33 +3943,39 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_AxB_template.c
-\brief  GB_AxB_template.c: switch factory for each built-in monoid for C=A*B
+/** \file GB_AxB_rowscale_meta.c
+\brief  GB_AxB_rowscale_meta: C=D*B where D is a square diagonal matrix
+
+\par
+ PARALLEL: all vectors C=A*D are computed fully in parallel. 
+*/
+
+
+/** \file GB_AxB_type_factory.c
+\brief  GB_AxB_type_factory.c: switch factory for C=A*B
 
 \par
  A template file \#include'd in GB_AxB_factory.c
 \par
- This file is used for 17 operators.  The multiply operator is combined here
+ This file is used for 19 operators.  The multiply operator is combined here
  with 40 or 44 monoids to create 40 or 44 unique semiring workers.
 \par
-      FIRST, SECOND, MIN, MAX, PLUS, MINUS, TIMES, DIV,
+      FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
       ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
       LAND, LOR, LXOR.
 \par
  For all of them, the types of x, y, and z are the same.
- There are 40 non-boolean monoids and 4 boolean monoids defined here.
+ There are 40 non-boolean monoids and 0 or 4 boolean monoids defined here.
 \par
- GB_NO_BOOLEAN is defined for 12 of these multiply operators in the
- \#include'ing file (min, max, plus, minus, times, div, is*) since those 12
- multiply operators are redundant and have been renamed.  For these 12, the
- boolean monoids are not needed.
-\par
- parallel: not here
+ GB_NO_BOOLEAN is defined for 15 of these multiply operators in the
+ \#include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*)
+ since those multiply operators are redundant and have been renamed.  For
+ these, the boolean monoids are not needed.
 */
 
 
-/** \file GB_assoc_template.c
-\brief  GB_assoc_template.c: switch factory for associative operators
+/** \file GB_assoc_factory.c
+\brief  GB_assoc_factory.c: switch factory for associative operators
 
 \par
  FUTURE:: write Generator/GB_assoc.c, and use it to create 66 files:
@@ -3872,8 +3992,38 @@ constructed by dox_headers.m
  If GB_INCLUDE_SECOND_OPERATOR is defined then an additional 11 built-in
  workers for the SECOND operator are also created, and 11 for FIRST, for
  GB_build_factory.
+*/
+
+
+/** \file GB_binop_factory.c
+\brief  GB_binop_factory: switch factory for built-in methods for C=binop(A,B)
+
 \par
- parallel: not here
+ The \#include'ing file defines the GB_BINOP_WORKER macro, and opcode, xycode,
+ and zcode
+*/
+
+
+/** \file GB_binop_type_factory.c
+\brief  GB_binop_type_factory.c: switch factory for binary operators
+
+\par
+ A template file \#include'd in GB_binop_factory.c
+\par
+ This file is used for 19 operators.  The operator is combined here
+ with 10 or 11 types to create 10 or 11 unique workers.
+\par
+      FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
+      ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
+      LAND, LOR, LXOR.
+\par
+ For all of them, the types of x, y, and z are the same.  There are 10
+ non-boolean operators and 0 or 1 boolean operators defined here.
+\par
+ GB_NO_BOOLEAN is defined for 15 of these multiply operators in the
+ \#include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*)
+ since those multiply operators are redundant and have been renamed.  For
+ these, the boolean operators are not needed.
 */
 
 
@@ -3977,6 +4127,14 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_reduce_to_scalar_template.c
+\brief  GB_reduce_to_scalar_template: s=reduce(A), reduce a matrix to a scalar
+
+\par
+ Reduce a matrix to a scalar.
+*/
+
+
 /** \file GB_semiring_template.c
 \brief  GB_semiring_template.c: built-in unary and binary functions and operators
 
@@ -3985,22 +4143,22 @@ constructed by dox_headers.m
  semirings.  That file has defined either GB_BOOLEAN, or GB_TYPE as one of
  the 10 non-boolean types.
 \par
- Using built-in types and operators, 960 unique semirings can be built.  This
- count excludes redundant Boolean operators (for example GrB_TIMES_BOOL and
- GrB_LAND are different operators but they are redundant since they always
- return the same result):
+ Using built-in types and operators, 1040 unique semirings can be built.
+ This count excludes redundant Boolean operators (for example GrB_TIMES_BOOL
+ and GrB_LAND are different operators but they are redundant since they
+ always return the same result):
 \par
- 680 semirings with a multiply operator TxT -\> T where T is non-Boolean, from
+ 760 semirings with a multiply operator TxT -\> T where T is non-Boolean, from
  the complete cross product of:
 \par
       4 add monoids (MIN, MAX, PLUS, TIMES)
-      17 multiply operators:
-          (FIRST, SECOND, MIN, MAX, PLUS, MINUS, TIMES, DIV,
+      19 multiply operators:
+          (FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV
            ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
            LOR, LAND, LXOR)
       10 non-Boolean types, T
 \par
-      a single instance of this file creates 4*17 = 68 semirings of this
+      a single instance of this file creates 4*19 = 76 semirings of this
       form, of one type T, when T is not BOOL
 \par
  240 semirings with a comparison operator TxT -\> bool, where T is
@@ -4022,8 +4180,6 @@ constructed by dox_headers.m
 \par
       a single instance of this file creates all 4*10 = 40 purely Boolean
       semirings, when T is BOOL and GB_BOOLEAN is defined
-\par
- parallel: not here; no executable code
 */
 
 
@@ -4104,8 +4260,33 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_unaryop_apply_op.c
+\brief  GB_unaryop_apply_op: Cx=op(cast(Ax)), with typecasting
+
+\par
+ PARALLEL: all entries in C=op(cast(A)) are computed fully in parallel. 
+*/
+
+
+/** \file GB_unaryop_factory.c
+\brief  GB_unaryop_factory.c:  switch factory for unary operators and 2 types
+
+\par
+ Switch factory for applying a unary operator, where the input and output
+ types differ (the worker does the typecasting as well).  This file is
+ \#include'd into GB_apply_op.c and GB_transpose_op.c, which must define
+ the GrB_UnaryOp op and the GrB_Type Atype.
+*/
+
+
+/** \file GB_unaryop_transpose_op.c
+\brief  GB_unaryop_transpose_op: C=op(cast(A')), transpose, apply op and cast
+
+*/
+
+
 /** \file GB_AxB.c
-\brief  GB_AxB:  hard-coded C=A*B and C\<M\>=A*B
+\brief  GB_AxB:  hard-coded functions for semiring: C\<M\>=A*B or A'*B
 
 \par
  Unless this file is Generator/GB_AxB.c, do not edit it (auto-generated)
@@ -4114,4 +4295,41 @@ constructed by dox_headers.m
 
 /** \file GB_AxB.h
 \brief Source/Generator/GB_AxB.h: used to create GB_AxB__semirings.h
+*/
+
+
+/** \file GB_binop.c
+\brief  GB_binop:  hard-coded functions for each built-in binary operator
+
+\par
+ Unless this file is Generator/GB_binop.c, do not edit it (auto-generated)
+*/
+
+
+/** \file GB_binop.h
+\brief 
+*/
+
+
+/** \file GB_red.c
+\brief  GB_red:  hard-coded functions for reductions
+
+*/
+
+
+/** \file GB_red.h
+\brief 
+*/
+
+
+/** \file GB_unaryop.c
+\brief  GB_unaryop:  hard-coded functions for each built-in unary operator
+
+\par
+ If this file is in the Generated/ folder, do not edit it (auto-generated)
+*/
+
+
+/** \file GB_unaryop.h
+\brief 
 */

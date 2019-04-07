@@ -1,7 +1,4 @@
-
-    codegen_red_method (reduce, ifunc, 'int8_t') ;
-
-function codegen_red_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
+function codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
 % codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
@@ -34,14 +31,16 @@ else
 end
 
 % to get an entry from A
-if (isequal (multop, 'second'))
+is_second = isequal (multop, 'second') ;
+if (is_second)
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_geta'', `%s aik = Ax [pA]'')\n', xytype) ;
 end
 
 % to get an entry from B
-if (isequal (multop, 'first'))
+is_first = isequal (multop, 'first') ;
+if (is_first)
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_getb'', `%s bkj = Bx [pB]'')\n', xytype) ;
@@ -57,23 +56,37 @@ if (~isempty (strfind (mult, 'IDIV')))
     mult = strrep (mult, ')', sprintf (', %d)', bits)) ;
 end
 
-% create the multiply-add operator
-multadd = strrep (add, 't',  mult) ;
-multadd = strrep (multadd, 'w', '`$1''') ;
-multadd = strrep (multadd, 'xarg', '`$2''') ;
-multadd = strrep (multadd, 'yarg', '`$3''') ;
-fprintf (f, 'define(`GB_MULTIPLY_ADD'', `%s'')\n', multadd) ;
-
 % create the multiply operator
-mult = strrep (mult, 'xarg', '`$2''') ;
-mult = strrep (mult, 'yarg', '`$3''') ;
-fprintf (f, 'define(`GB_MULTIPLY'', `$1 = %s'')\n', mult) ;
+mult2 = strrep (mult,  'xarg', '`$2''') ;
+mult2 = strrep (mult2, 'yarg', '`$3''') ;
+fprintf (f, 'define(`GB_MULTIPLY'', `$1 = %s'')\n', mult2) ;
 
 % create the add operator
-% (no longer used, but kept for the comments in each generated file)
-add = strrep (add, 'w', '`$1''') ;
-add = strrep (add, 't', '`$2''') ;
-fprintf (f, 'define(`GB_ADD'', `%s'')\n', add) ;
+add2 = strrep (add,  'w', '`$1''') ;
+add2 = strrep (add2, 't', '`$2''') ;
+fprintf (f, 'define(`GB_ADD'', `%s'')\n', add2) ;
+
+% create the multiply-add operator
+if (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
+    isequal (ztype, 'bool') || is_first || is_second || ...
+    isequal (multop (1:2), 'is'))
+    % float and double do not get promoted.
+    % bool is OK since promotion of the result (0 or 1) to int is safe.
+    % first and second are OK since no promotion occurs.
+    % is* operators are OK too.
+    multadd = strrep (add, 't',  mult) ;
+    multadd = strrep (multadd, 'w', '`$1''') ;
+    multadd = strrep (multadd, 'xarg', '`$2''') ;
+    multadd = strrep (multadd, 'yarg', '`$3''') ;
+    fprintf (f, 'define(`GB_MULTIPLY_ADD'', `%s'')\n', multadd) ;
+else
+    % use explicit typecasing to avoid ANSI C integer promotion.
+    add2 = strrep (add,  'w', '`$1''') ;
+    add2 = strrep (add2, 't', 'x_op_y') ;
+    fprintf (f, 'define(`GB_ADD'', `%s'')\n', add2) ;
+    fprintf (f, 'define(`GB_MULTIPLY_ADD'', `%s x_op_y = %s ; %s'')\n', ...
+        ztype, mult2, add2) ;
+end
 
 fclose (f) ;
 

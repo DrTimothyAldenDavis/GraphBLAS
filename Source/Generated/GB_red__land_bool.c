@@ -21,14 +21,10 @@
 
 // Reduce:   s = (s && aij)
 // Identity: true
-// Terminal: if (s == true) break ;
+// Terminal: if (s == false) break ;
 
 #define GB_ATYPE \
     bool
-
-// t += Ax [p]
-#define GB_REDUCE(t,Ax,p)   \
-    t = (t && Ax [p])
 
 // monoid identity value
 #define GB_IDENTITY \
@@ -42,7 +38,11 @@
 #define GB_REDUCE_INIT(t) \
     bool t = true ;
 
-// wrapup for each thread
+// t += Ax [p]
+#define GB_REDUCE(t,Ax,p)   \
+    t = (t && Ax [p])
+
+// w [tid] = t
 #define GB_REDUCE_WRAPUP(w,tid,t) \
     w [tid] = t ;
 
@@ -52,7 +52,7 @@
 
 // break if terminal value of the monoid is reached
 #define GB_REDUCE_TERMINAL(t) \
-    if (s == true) break ;
+    if (s == false) break ;
 
 //------------------------------------------------------------------------------
 // reduce to a scalar

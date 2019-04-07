@@ -42,10 +42,6 @@
 // and j is a row index.  This function also does not need to know if A is
 // hypersparse or not.
 
-// parallel: unless reallocation occurs, this function does O(1) work and is
-// already thread-safe.  The reallocation could be parallel; see
-// GB_realloc_memory.
-
 #include "GB.h"
 
 // cs_entry (c)2006-2016, T. A. Davis, included here with the GraphBLAS license
@@ -125,17 +121,17 @@ GrB_Info GB_pending_add             // add a pending tuple A(i,j) to a matrix
         // allocate new space.
 
         GB_REALLOC_MEMORY (A->i_pending, newsize, A->max_n_pending,
-            sizeof (int64_t), &ok1, Context) ;
+            sizeof (int64_t), &ok1) ;
 
         if (A->vdim > 1)
         { 
             // do not allocate A->j_pending if A has just one column
             GB_REALLOC_MEMORY (A->j_pending, newsize, A->max_n_pending,
-                sizeof (int64_t), &ok2, Context) ;
+                sizeof (int64_t), &ok2) ;
         }
 
         GB_REALLOC_MEMORY (A->s_pending, newsize, A->max_n_pending,
-            ssize, &ok3, Context) ;
+            ssize, &ok3) ;
 
         if (!ok1 || !ok2 || !ok3)
         { 

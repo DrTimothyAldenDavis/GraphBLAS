@@ -130,7 +130,7 @@ GrB_Info GB_resize              // change the size of a matrix
         {
             // change the size of A->p
             GB_REALLOC_MEMORY (A->p, vdim_new+1, vdim_old+1, sizeof (int64_t),
-                &ok, Context) ;
+                &ok) ;
             if (!ok)
             { 
                 // out of memory

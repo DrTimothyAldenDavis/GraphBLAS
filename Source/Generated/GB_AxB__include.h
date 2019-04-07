@@ -3439,6 +3439,7 @@ GrB_Info GB_AheapB__eq_second_bool
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_min_int8
 (
     GrB_Matrix C,
@@ -3477,6 +3478,7 @@ GrB_Info GB_AheapB__min_min_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_min_int16
 (
@@ -3517,6 +3519,7 @@ GrB_Info GB_AheapB__min_min_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_min_int32
 (
     GrB_Matrix C,
@@ -3555,6 +3558,7 @@ GrB_Info GB_AheapB__min_min_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_min_int64
 (
@@ -3595,6 +3599,7 @@ GrB_Info GB_AheapB__min_min_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_min_uint8
 (
     GrB_Matrix C,
@@ -3633,6 +3638,7 @@ GrB_Info GB_AheapB__min_min_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_min_uint16
 (
@@ -3673,6 +3679,7 @@ GrB_Info GB_AheapB__min_min_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_min_uint32
 (
     GrB_Matrix C,
@@ -3711,6 +3718,7 @@ GrB_Info GB_AheapB__min_min_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_min_uint64
 (
@@ -3829,6 +3837,7 @@ GrB_Info GB_AheapB__min_min_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_min_int8
 (
     GrB_Matrix C,
@@ -3867,6 +3876,7 @@ GrB_Info GB_AheapB__max_min_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_min_int16
 (
@@ -3907,6 +3917,7 @@ GrB_Info GB_AheapB__max_min_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_min_int32
 (
     GrB_Matrix C,
@@ -3945,6 +3956,7 @@ GrB_Info GB_AheapB__max_min_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_min_int64
 (
@@ -3985,6 +3997,7 @@ GrB_Info GB_AheapB__max_min_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_min_uint8
 (
     GrB_Matrix C,
@@ -4023,6 +4036,7 @@ GrB_Info GB_AheapB__max_min_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_min_uint16
 (
@@ -4063,6 +4077,7 @@ GrB_Info GB_AheapB__max_min_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_min_uint32
 (
     GrB_Matrix C,
@@ -4101,6 +4116,7 @@ GrB_Info GB_AheapB__max_min_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_min_uint64
 (
@@ -4219,6 +4235,7 @@ GrB_Info GB_AheapB__max_min_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_min_int8
 (
     GrB_Matrix C,
@@ -4257,6 +4274,7 @@ GrB_Info GB_AheapB__plus_min_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_min_uint8
 (
@@ -4297,6 +4315,7 @@ GrB_Info GB_AheapB__plus_min_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_min_int16
 (
     GrB_Matrix C,
@@ -4335,6 +4354,7 @@ GrB_Info GB_AheapB__plus_min_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_min_uint16
 (
@@ -4375,6 +4395,7 @@ GrB_Info GB_AheapB__plus_min_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_min_int32
 (
     GrB_Matrix C,
@@ -4413,6 +4434,7 @@ GrB_Info GB_AheapB__plus_min_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_min_uint32
 (
@@ -4453,6 +4475,7 @@ GrB_Info GB_AheapB__plus_min_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_min_int64
 (
     GrB_Matrix C,
@@ -4491,6 +4514,7 @@ GrB_Info GB_AheapB__plus_min_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_min_uint64
 (
@@ -4609,6 +4633,7 @@ GrB_Info GB_AheapB__plus_min_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_min_int8
 (
     GrB_Matrix C,
@@ -4647,6 +4672,7 @@ GrB_Info GB_AheapB__times_min_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_min_uint8
 (
@@ -4687,6 +4713,7 @@ GrB_Info GB_AheapB__times_min_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_min_int16
 (
     GrB_Matrix C,
@@ -4725,6 +4752,7 @@ GrB_Info GB_AheapB__times_min_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_min_uint16
 (
@@ -4765,6 +4793,7 @@ GrB_Info GB_AheapB__times_min_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_min_int32
 (
     GrB_Matrix C,
@@ -4803,6 +4832,7 @@ GrB_Info GB_AheapB__times_min_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_min_uint32
 (
@@ -4843,6 +4873,7 @@ GrB_Info GB_AheapB__times_min_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_min_int64
 (
     GrB_Matrix C,
@@ -4881,6 +4912,7 @@ GrB_Info GB_AheapB__times_min_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_min_uint64
 (
@@ -4999,6 +5031,7 @@ GrB_Info GB_AheapB__times_min_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_max_int8
 (
     GrB_Matrix C,
@@ -5037,6 +5070,7 @@ GrB_Info GB_AheapB__min_max_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_max_int16
 (
@@ -5077,6 +5111,7 @@ GrB_Info GB_AheapB__min_max_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_max_int32
 (
     GrB_Matrix C,
@@ -5115,6 +5150,7 @@ GrB_Info GB_AheapB__min_max_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_max_int64
 (
@@ -5155,6 +5191,7 @@ GrB_Info GB_AheapB__min_max_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_max_uint8
 (
     GrB_Matrix C,
@@ -5193,6 +5230,7 @@ GrB_Info GB_AheapB__min_max_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_max_uint16
 (
@@ -5233,6 +5271,7 @@ GrB_Info GB_AheapB__min_max_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_max_uint32
 (
     GrB_Matrix C,
@@ -5271,6 +5310,7 @@ GrB_Info GB_AheapB__min_max_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_max_uint64
 (
@@ -5389,6 +5429,7 @@ GrB_Info GB_AheapB__min_max_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_max_int8
 (
     GrB_Matrix C,
@@ -5427,6 +5468,7 @@ GrB_Info GB_AheapB__max_max_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_max_int16
 (
@@ -5467,6 +5509,7 @@ GrB_Info GB_AheapB__max_max_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_max_int32
 (
     GrB_Matrix C,
@@ -5505,6 +5548,7 @@ GrB_Info GB_AheapB__max_max_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_max_int64
 (
@@ -5545,6 +5589,7 @@ GrB_Info GB_AheapB__max_max_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_max_uint8
 (
     GrB_Matrix C,
@@ -5583,6 +5628,7 @@ GrB_Info GB_AheapB__max_max_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_max_uint16
 (
@@ -5623,6 +5669,7 @@ GrB_Info GB_AheapB__max_max_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_max_uint32
 (
     GrB_Matrix C,
@@ -5661,6 +5708,7 @@ GrB_Info GB_AheapB__max_max_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_max_uint64
 (
@@ -5779,6 +5827,7 @@ GrB_Info GB_AheapB__max_max_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_max_int8
 (
     GrB_Matrix C,
@@ -5817,6 +5866,7 @@ GrB_Info GB_AheapB__plus_max_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_max_uint8
 (
@@ -5857,6 +5907,7 @@ GrB_Info GB_AheapB__plus_max_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_max_int16
 (
     GrB_Matrix C,
@@ -5895,6 +5946,7 @@ GrB_Info GB_AheapB__plus_max_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_max_uint16
 (
@@ -5935,6 +5987,7 @@ GrB_Info GB_AheapB__plus_max_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_max_int32
 (
     GrB_Matrix C,
@@ -5973,6 +6026,7 @@ GrB_Info GB_AheapB__plus_max_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_max_uint32
 (
@@ -6013,6 +6067,7 @@ GrB_Info GB_AheapB__plus_max_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_max_int64
 (
     GrB_Matrix C,
@@ -6051,6 +6106,7 @@ GrB_Info GB_AheapB__plus_max_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_max_uint64
 (
@@ -6169,6 +6225,7 @@ GrB_Info GB_AheapB__plus_max_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_max_int8
 (
     GrB_Matrix C,
@@ -6207,6 +6264,7 @@ GrB_Info GB_AheapB__times_max_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_max_uint8
 (
@@ -6247,6 +6305,7 @@ GrB_Info GB_AheapB__times_max_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_max_int16
 (
     GrB_Matrix C,
@@ -6285,6 +6344,7 @@ GrB_Info GB_AheapB__times_max_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_max_uint16
 (
@@ -6325,6 +6385,7 @@ GrB_Info GB_AheapB__times_max_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_max_int32
 (
     GrB_Matrix C,
@@ -6363,6 +6424,7 @@ GrB_Info GB_AheapB__times_max_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_max_uint32
 (
@@ -6403,6 +6465,7 @@ GrB_Info GB_AheapB__times_max_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_max_int64
 (
     GrB_Matrix C,
@@ -6441,6 +6504,7 @@ GrB_Info GB_AheapB__times_max_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_max_uint64
 (
@@ -6559,6 +6623,7 @@ GrB_Info GB_AheapB__times_max_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_plus_int8
 (
     GrB_Matrix C,
@@ -6597,6 +6662,7 @@ GrB_Info GB_AheapB__min_plus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_plus_int16
 (
@@ -6637,6 +6703,7 @@ GrB_Info GB_AheapB__min_plus_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_plus_int32
 (
     GrB_Matrix C,
@@ -6675,6 +6742,7 @@ GrB_Info GB_AheapB__min_plus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_plus_int64
 (
@@ -6715,6 +6783,7 @@ GrB_Info GB_AheapB__min_plus_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_plus_uint8
 (
     GrB_Matrix C,
@@ -6753,6 +6822,7 @@ GrB_Info GB_AheapB__min_plus_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_plus_uint16
 (
@@ -6793,6 +6863,7 @@ GrB_Info GB_AheapB__min_plus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_plus_uint32
 (
     GrB_Matrix C,
@@ -6831,6 +6902,7 @@ GrB_Info GB_AheapB__min_plus_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_plus_uint64
 (
@@ -6949,6 +7021,7 @@ GrB_Info GB_AheapB__min_plus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_plus_int8
 (
     GrB_Matrix C,
@@ -6987,6 +7060,7 @@ GrB_Info GB_AheapB__max_plus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_plus_int16
 (
@@ -7027,6 +7101,7 @@ GrB_Info GB_AheapB__max_plus_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_plus_int32
 (
     GrB_Matrix C,
@@ -7065,6 +7140,7 @@ GrB_Info GB_AheapB__max_plus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_plus_int64
 (
@@ -7105,6 +7181,7 @@ GrB_Info GB_AheapB__max_plus_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_plus_uint8
 (
     GrB_Matrix C,
@@ -7143,6 +7220,7 @@ GrB_Info GB_AheapB__max_plus_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_plus_uint16
 (
@@ -7183,6 +7261,7 @@ GrB_Info GB_AheapB__max_plus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_plus_uint32
 (
     GrB_Matrix C,
@@ -7221,6 +7300,7 @@ GrB_Info GB_AheapB__max_plus_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_plus_uint64
 (
@@ -7339,6 +7419,7 @@ GrB_Info GB_AheapB__max_plus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_plus_int8
 (
     GrB_Matrix C,
@@ -7377,6 +7458,7 @@ GrB_Info GB_AheapB__plus_plus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_plus_uint8
 (
@@ -7417,6 +7499,7 @@ GrB_Info GB_AheapB__plus_plus_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_plus_int16
 (
     GrB_Matrix C,
@@ -7455,6 +7538,7 @@ GrB_Info GB_AheapB__plus_plus_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_plus_uint16
 (
@@ -7495,6 +7579,7 @@ GrB_Info GB_AheapB__plus_plus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_plus_int32
 (
     GrB_Matrix C,
@@ -7533,6 +7618,7 @@ GrB_Info GB_AheapB__plus_plus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_plus_uint32
 (
@@ -7573,6 +7659,7 @@ GrB_Info GB_AheapB__plus_plus_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_plus_int64
 (
     GrB_Matrix C,
@@ -7611,6 +7698,7 @@ GrB_Info GB_AheapB__plus_plus_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_plus_uint64
 (
@@ -7729,6 +7817,7 @@ GrB_Info GB_AheapB__plus_plus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_plus_int8
 (
     GrB_Matrix C,
@@ -7767,6 +7856,7 @@ GrB_Info GB_AheapB__times_plus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_plus_uint8
 (
@@ -7807,6 +7897,7 @@ GrB_Info GB_AheapB__times_plus_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_plus_int16
 (
     GrB_Matrix C,
@@ -7845,6 +7936,7 @@ GrB_Info GB_AheapB__times_plus_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_plus_uint16
 (
@@ -7885,6 +7977,7 @@ GrB_Info GB_AheapB__times_plus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_plus_int32
 (
     GrB_Matrix C,
@@ -7923,6 +8016,7 @@ GrB_Info GB_AheapB__times_plus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_plus_uint32
 (
@@ -7963,6 +8057,7 @@ GrB_Info GB_AheapB__times_plus_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_plus_int64
 (
     GrB_Matrix C,
@@ -8001,6 +8096,7 @@ GrB_Info GB_AheapB__times_plus_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_plus_uint64
 (
@@ -8119,6 +8215,7 @@ GrB_Info GB_AheapB__times_plus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_minus_int8
 (
     GrB_Matrix C,
@@ -8157,6 +8254,7 @@ GrB_Info GB_AheapB__min_minus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_minus_int16
 (
@@ -8197,6 +8295,7 @@ GrB_Info GB_AheapB__min_minus_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_minus_int32
 (
     GrB_Matrix C,
@@ -8235,6 +8334,7 @@ GrB_Info GB_AheapB__min_minus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_minus_int64
 (
@@ -8275,6 +8375,7 @@ GrB_Info GB_AheapB__min_minus_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_minus_uint8
 (
     GrB_Matrix C,
@@ -8313,6 +8414,7 @@ GrB_Info GB_AheapB__min_minus_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_minus_uint16
 (
@@ -8353,6 +8455,7 @@ GrB_Info GB_AheapB__min_minus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_minus_uint32
 (
     GrB_Matrix C,
@@ -8391,6 +8494,7 @@ GrB_Info GB_AheapB__min_minus_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_minus_uint64
 (
@@ -8509,6 +8613,7 @@ GrB_Info GB_AheapB__min_minus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_minus_int8
 (
     GrB_Matrix C,
@@ -8547,6 +8652,7 @@ GrB_Info GB_AheapB__max_minus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_minus_int16
 (
@@ -8587,6 +8693,7 @@ GrB_Info GB_AheapB__max_minus_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_minus_int32
 (
     GrB_Matrix C,
@@ -8625,6 +8732,7 @@ GrB_Info GB_AheapB__max_minus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_minus_int64
 (
@@ -8665,6 +8773,7 @@ GrB_Info GB_AheapB__max_minus_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_minus_uint8
 (
     GrB_Matrix C,
@@ -8703,6 +8812,7 @@ GrB_Info GB_AheapB__max_minus_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_minus_uint16
 (
@@ -8743,6 +8853,7 @@ GrB_Info GB_AheapB__max_minus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_minus_uint32
 (
     GrB_Matrix C,
@@ -8781,6 +8892,7 @@ GrB_Info GB_AheapB__max_minus_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_minus_uint64
 (
@@ -8899,6 +9011,7 @@ GrB_Info GB_AheapB__max_minus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_minus_int8
 (
     GrB_Matrix C,
@@ -8937,6 +9050,7 @@ GrB_Info GB_AheapB__plus_minus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_minus_uint8
 (
@@ -8977,6 +9091,7 @@ GrB_Info GB_AheapB__plus_minus_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_minus_int16
 (
     GrB_Matrix C,
@@ -9015,6 +9130,7 @@ GrB_Info GB_AheapB__plus_minus_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_minus_uint16
 (
@@ -9055,6 +9171,7 @@ GrB_Info GB_AheapB__plus_minus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_minus_int32
 (
     GrB_Matrix C,
@@ -9093,6 +9210,7 @@ GrB_Info GB_AheapB__plus_minus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_minus_uint32
 (
@@ -9133,6 +9251,7 @@ GrB_Info GB_AheapB__plus_minus_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_minus_int64
 (
     GrB_Matrix C,
@@ -9171,6 +9290,7 @@ GrB_Info GB_AheapB__plus_minus_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_minus_uint64
 (
@@ -9289,6 +9409,7 @@ GrB_Info GB_AheapB__plus_minus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_minus_int8
 (
     GrB_Matrix C,
@@ -9327,6 +9448,7 @@ GrB_Info GB_AheapB__times_minus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_minus_uint8
 (
@@ -9367,6 +9489,7 @@ GrB_Info GB_AheapB__times_minus_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_minus_int16
 (
     GrB_Matrix C,
@@ -9405,6 +9528,7 @@ GrB_Info GB_AheapB__times_minus_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_minus_uint16
 (
@@ -9445,6 +9569,7 @@ GrB_Info GB_AheapB__times_minus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_minus_int32
 (
     GrB_Matrix C,
@@ -9483,6 +9608,7 @@ GrB_Info GB_AheapB__times_minus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_minus_uint32
 (
@@ -9523,6 +9649,7 @@ GrB_Info GB_AheapB__times_minus_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_minus_int64
 (
     GrB_Matrix C,
@@ -9561,6 +9688,7 @@ GrB_Info GB_AheapB__times_minus_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_minus_uint64
 (
@@ -9679,6 +9807,7 @@ GrB_Info GB_AheapB__times_minus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rminus_int8
 (
     GrB_Matrix C,
@@ -9717,6 +9846,7 @@ GrB_Info GB_AheapB__min_rminus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rminus_int16
 (
@@ -9757,6 +9887,7 @@ GrB_Info GB_AheapB__min_rminus_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rminus_int32
 (
     GrB_Matrix C,
@@ -9795,6 +9926,7 @@ GrB_Info GB_AheapB__min_rminus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rminus_int64
 (
@@ -9835,6 +9967,7 @@ GrB_Info GB_AheapB__min_rminus_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rminus_uint8
 (
     GrB_Matrix C,
@@ -9873,6 +10006,7 @@ GrB_Info GB_AheapB__min_rminus_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rminus_uint16
 (
@@ -9913,6 +10047,7 @@ GrB_Info GB_AheapB__min_rminus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rminus_uint32
 (
     GrB_Matrix C,
@@ -9951,6 +10086,7 @@ GrB_Info GB_AheapB__min_rminus_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rminus_uint64
 (
@@ -10069,6 +10205,7 @@ GrB_Info GB_AheapB__min_rminus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rminus_int8
 (
     GrB_Matrix C,
@@ -10107,6 +10244,7 @@ GrB_Info GB_AheapB__max_rminus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rminus_int16
 (
@@ -10147,6 +10285,7 @@ GrB_Info GB_AheapB__max_rminus_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rminus_int32
 (
     GrB_Matrix C,
@@ -10185,6 +10324,7 @@ GrB_Info GB_AheapB__max_rminus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rminus_int64
 (
@@ -10225,6 +10365,7 @@ GrB_Info GB_AheapB__max_rminus_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rminus_uint8
 (
     GrB_Matrix C,
@@ -10263,6 +10404,7 @@ GrB_Info GB_AheapB__max_rminus_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rminus_uint16
 (
@@ -10303,6 +10445,7 @@ GrB_Info GB_AheapB__max_rminus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rminus_uint32
 (
     GrB_Matrix C,
@@ -10341,6 +10484,7 @@ GrB_Info GB_AheapB__max_rminus_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rminus_uint64
 (
@@ -10459,6 +10603,7 @@ GrB_Info GB_AheapB__max_rminus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rminus_int8
 (
     GrB_Matrix C,
@@ -10497,6 +10642,7 @@ GrB_Info GB_AheapB__plus_rminus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rminus_uint8
 (
@@ -10537,6 +10683,7 @@ GrB_Info GB_AheapB__plus_rminus_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rminus_int16
 (
     GrB_Matrix C,
@@ -10575,6 +10722,7 @@ GrB_Info GB_AheapB__plus_rminus_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rminus_uint16
 (
@@ -10615,6 +10763,7 @@ GrB_Info GB_AheapB__plus_rminus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rminus_int32
 (
     GrB_Matrix C,
@@ -10653,6 +10802,7 @@ GrB_Info GB_AheapB__plus_rminus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rminus_uint32
 (
@@ -10693,6 +10843,7 @@ GrB_Info GB_AheapB__plus_rminus_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rminus_int64
 (
     GrB_Matrix C,
@@ -10731,6 +10882,7 @@ GrB_Info GB_AheapB__plus_rminus_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rminus_uint64
 (
@@ -10849,6 +11001,7 @@ GrB_Info GB_AheapB__plus_rminus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rminus_int8
 (
     GrB_Matrix C,
@@ -10887,6 +11040,7 @@ GrB_Info GB_AheapB__times_rminus_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rminus_uint8
 (
@@ -10927,6 +11081,7 @@ GrB_Info GB_AheapB__times_rminus_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rminus_int16
 (
     GrB_Matrix C,
@@ -10965,6 +11120,7 @@ GrB_Info GB_AheapB__times_rminus_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rminus_uint16
 (
@@ -11005,6 +11161,7 @@ GrB_Info GB_AheapB__times_rminus_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rminus_int32
 (
     GrB_Matrix C,
@@ -11043,6 +11200,7 @@ GrB_Info GB_AheapB__times_rminus_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rminus_uint32
 (
@@ -11083,6 +11241,7 @@ GrB_Info GB_AheapB__times_rminus_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rminus_int64
 (
     GrB_Matrix C,
@@ -11121,6 +11280,7 @@ GrB_Info GB_AheapB__times_rminus_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rminus_uint64
 (
@@ -11239,6 +11399,7 @@ GrB_Info GB_AheapB__times_rminus_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_times_int8
 (
     GrB_Matrix C,
@@ -11277,6 +11438,7 @@ GrB_Info GB_AheapB__min_times_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_times_int16
 (
@@ -11317,6 +11479,7 @@ GrB_Info GB_AheapB__min_times_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_times_int32
 (
     GrB_Matrix C,
@@ -11355,6 +11518,7 @@ GrB_Info GB_AheapB__min_times_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_times_int64
 (
@@ -11395,6 +11559,7 @@ GrB_Info GB_AheapB__min_times_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_times_uint8
 (
     GrB_Matrix C,
@@ -11433,6 +11598,7 @@ GrB_Info GB_AheapB__min_times_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_times_uint16
 (
@@ -11473,6 +11639,7 @@ GrB_Info GB_AheapB__min_times_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_times_uint32
 (
     GrB_Matrix C,
@@ -11511,6 +11678,7 @@ GrB_Info GB_AheapB__min_times_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_times_uint64
 (
@@ -11629,6 +11797,7 @@ GrB_Info GB_AheapB__min_times_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_times_int8
 (
     GrB_Matrix C,
@@ -11667,6 +11836,7 @@ GrB_Info GB_AheapB__max_times_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_times_int16
 (
@@ -11707,6 +11877,7 @@ GrB_Info GB_AheapB__max_times_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_times_int32
 (
     GrB_Matrix C,
@@ -11745,6 +11916,7 @@ GrB_Info GB_AheapB__max_times_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_times_int64
 (
@@ -11785,6 +11957,7 @@ GrB_Info GB_AheapB__max_times_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_times_uint8
 (
     GrB_Matrix C,
@@ -11823,6 +11996,7 @@ GrB_Info GB_AheapB__max_times_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_times_uint16
 (
@@ -11863,6 +12037,7 @@ GrB_Info GB_AheapB__max_times_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_times_uint32
 (
     GrB_Matrix C,
@@ -11901,6 +12076,7 @@ GrB_Info GB_AheapB__max_times_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_times_uint64
 (
@@ -12019,6 +12195,7 @@ GrB_Info GB_AheapB__max_times_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_times_int8
 (
     GrB_Matrix C,
@@ -12057,6 +12234,7 @@ GrB_Info GB_AheapB__plus_times_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_times_uint8
 (
@@ -12097,6 +12275,7 @@ GrB_Info GB_AheapB__plus_times_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_times_int16
 (
     GrB_Matrix C,
@@ -12135,6 +12314,7 @@ GrB_Info GB_AheapB__plus_times_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_times_uint16
 (
@@ -12175,6 +12355,7 @@ GrB_Info GB_AheapB__plus_times_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_times_int32
 (
     GrB_Matrix C,
@@ -12213,6 +12394,7 @@ GrB_Info GB_AheapB__plus_times_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_times_uint32
 (
@@ -12253,6 +12435,7 @@ GrB_Info GB_AheapB__plus_times_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_times_int64
 (
     GrB_Matrix C,
@@ -12291,6 +12474,7 @@ GrB_Info GB_AheapB__plus_times_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_times_uint64
 (
@@ -12409,6 +12593,7 @@ GrB_Info GB_AheapB__plus_times_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_times_int8
 (
     GrB_Matrix C,
@@ -12447,6 +12632,7 @@ GrB_Info GB_AheapB__times_times_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_times_uint8
 (
@@ -12487,6 +12673,7 @@ GrB_Info GB_AheapB__times_times_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_times_int16
 (
     GrB_Matrix C,
@@ -12525,6 +12712,7 @@ GrB_Info GB_AheapB__times_times_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_times_uint16
 (
@@ -12565,6 +12753,7 @@ GrB_Info GB_AheapB__times_times_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_times_int32
 (
     GrB_Matrix C,
@@ -12603,6 +12792,7 @@ GrB_Info GB_AheapB__times_times_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_times_uint32
 (
@@ -12643,6 +12833,7 @@ GrB_Info GB_AheapB__times_times_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_times_int64
 (
     GrB_Matrix C,
@@ -12681,6 +12872,7 @@ GrB_Info GB_AheapB__times_times_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_times_uint64
 (
@@ -12799,6 +12991,7 @@ GrB_Info GB_AheapB__times_times_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_div_int8
 (
     GrB_Matrix C,
@@ -12837,6 +13030,7 @@ GrB_Info GB_AheapB__min_div_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_div_int16
 (
@@ -12877,6 +13071,7 @@ GrB_Info GB_AheapB__min_div_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_div_int32
 (
     GrB_Matrix C,
@@ -12915,6 +13110,7 @@ GrB_Info GB_AheapB__min_div_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_div_int64
 (
@@ -12955,6 +13151,7 @@ GrB_Info GB_AheapB__min_div_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_div_uint8
 (
     GrB_Matrix C,
@@ -12993,6 +13190,7 @@ GrB_Info GB_AheapB__min_div_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_div_uint16
 (
@@ -13033,6 +13231,7 @@ GrB_Info GB_AheapB__min_div_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_div_uint32
 (
     GrB_Matrix C,
@@ -13071,6 +13270,7 @@ GrB_Info GB_AheapB__min_div_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_div_uint64
 (
@@ -13189,6 +13389,7 @@ GrB_Info GB_AheapB__min_div_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_div_int8
 (
     GrB_Matrix C,
@@ -13227,6 +13428,7 @@ GrB_Info GB_AheapB__max_div_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_div_int16
 (
@@ -13267,6 +13469,7 @@ GrB_Info GB_AheapB__max_div_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_div_int32
 (
     GrB_Matrix C,
@@ -13305,6 +13508,7 @@ GrB_Info GB_AheapB__max_div_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_div_int64
 (
@@ -13345,6 +13549,7 @@ GrB_Info GB_AheapB__max_div_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_div_uint8
 (
     GrB_Matrix C,
@@ -13383,6 +13588,7 @@ GrB_Info GB_AheapB__max_div_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_div_uint16
 (
@@ -13423,6 +13629,7 @@ GrB_Info GB_AheapB__max_div_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_div_uint32
 (
     GrB_Matrix C,
@@ -13461,6 +13668,7 @@ GrB_Info GB_AheapB__max_div_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_div_uint64
 (
@@ -13579,6 +13787,7 @@ GrB_Info GB_AheapB__max_div_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_div_int8
 (
     GrB_Matrix C,
@@ -13617,6 +13826,7 @@ GrB_Info GB_AheapB__plus_div_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_div_uint8
 (
@@ -13657,6 +13867,7 @@ GrB_Info GB_AheapB__plus_div_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_div_int16
 (
     GrB_Matrix C,
@@ -13695,6 +13906,7 @@ GrB_Info GB_AheapB__plus_div_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_div_uint16
 (
@@ -13735,6 +13947,7 @@ GrB_Info GB_AheapB__plus_div_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_div_int32
 (
     GrB_Matrix C,
@@ -13773,6 +13986,7 @@ GrB_Info GB_AheapB__plus_div_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_div_uint32
 (
@@ -13813,6 +14027,7 @@ GrB_Info GB_AheapB__plus_div_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_div_int64
 (
     GrB_Matrix C,
@@ -13851,6 +14066,7 @@ GrB_Info GB_AheapB__plus_div_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_div_uint64
 (
@@ -13969,6 +14185,7 @@ GrB_Info GB_AheapB__plus_div_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_div_int8
 (
     GrB_Matrix C,
@@ -14007,6 +14224,7 @@ GrB_Info GB_AheapB__times_div_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_div_uint8
 (
@@ -14047,6 +14265,7 @@ GrB_Info GB_AheapB__times_div_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_div_int16
 (
     GrB_Matrix C,
@@ -14085,6 +14304,7 @@ GrB_Info GB_AheapB__times_div_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_div_uint16
 (
@@ -14125,6 +14345,7 @@ GrB_Info GB_AheapB__times_div_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_div_int32
 (
     GrB_Matrix C,
@@ -14163,6 +14384,7 @@ GrB_Info GB_AheapB__times_div_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_div_uint32
 (
@@ -14203,6 +14425,7 @@ GrB_Info GB_AheapB__times_div_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_div_int64
 (
     GrB_Matrix C,
@@ -14241,6 +14464,7 @@ GrB_Info GB_AheapB__times_div_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_div_uint64
 (
@@ -14359,6 +14583,7 @@ GrB_Info GB_AheapB__times_div_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rdiv_int8
 (
     GrB_Matrix C,
@@ -14397,6 +14622,7 @@ GrB_Info GB_AheapB__min_rdiv_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rdiv_int16
 (
@@ -14437,6 +14663,7 @@ GrB_Info GB_AheapB__min_rdiv_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rdiv_int32
 (
     GrB_Matrix C,
@@ -14475,6 +14702,7 @@ GrB_Info GB_AheapB__min_rdiv_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rdiv_int64
 (
@@ -14515,6 +14743,7 @@ GrB_Info GB_AheapB__min_rdiv_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rdiv_uint8
 (
     GrB_Matrix C,
@@ -14553,6 +14782,7 @@ GrB_Info GB_AheapB__min_rdiv_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rdiv_uint16
 (
@@ -14593,6 +14823,7 @@ GrB_Info GB_AheapB__min_rdiv_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_rdiv_uint32
 (
     GrB_Matrix C,
@@ -14631,6 +14862,7 @@ GrB_Info GB_AheapB__min_rdiv_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_rdiv_uint64
 (
@@ -14749,6 +14981,7 @@ GrB_Info GB_AheapB__min_rdiv_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rdiv_int8
 (
     GrB_Matrix C,
@@ -14787,6 +15020,7 @@ GrB_Info GB_AheapB__max_rdiv_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rdiv_int16
 (
@@ -14827,6 +15061,7 @@ GrB_Info GB_AheapB__max_rdiv_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rdiv_int32
 (
     GrB_Matrix C,
@@ -14865,6 +15100,7 @@ GrB_Info GB_AheapB__max_rdiv_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rdiv_int64
 (
@@ -14905,6 +15141,7 @@ GrB_Info GB_AheapB__max_rdiv_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rdiv_uint8
 (
     GrB_Matrix C,
@@ -14943,6 +15180,7 @@ GrB_Info GB_AheapB__max_rdiv_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rdiv_uint16
 (
@@ -14983,6 +15221,7 @@ GrB_Info GB_AheapB__max_rdiv_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_rdiv_uint32
 (
     GrB_Matrix C,
@@ -15021,6 +15260,7 @@ GrB_Info GB_AheapB__max_rdiv_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_rdiv_uint64
 (
@@ -15139,6 +15379,7 @@ GrB_Info GB_AheapB__max_rdiv_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rdiv_int8
 (
     GrB_Matrix C,
@@ -15177,6 +15418,7 @@ GrB_Info GB_AheapB__plus_rdiv_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rdiv_uint8
 (
@@ -15217,6 +15459,7 @@ GrB_Info GB_AheapB__plus_rdiv_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rdiv_int16
 (
     GrB_Matrix C,
@@ -15255,6 +15498,7 @@ GrB_Info GB_AheapB__plus_rdiv_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rdiv_uint16
 (
@@ -15295,6 +15539,7 @@ GrB_Info GB_AheapB__plus_rdiv_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rdiv_int32
 (
     GrB_Matrix C,
@@ -15333,6 +15578,7 @@ GrB_Info GB_AheapB__plus_rdiv_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rdiv_uint32
 (
@@ -15373,6 +15619,7 @@ GrB_Info GB_AheapB__plus_rdiv_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_rdiv_int64
 (
     GrB_Matrix C,
@@ -15411,6 +15658,7 @@ GrB_Info GB_AheapB__plus_rdiv_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_rdiv_uint64
 (
@@ -15529,6 +15777,7 @@ GrB_Info GB_AheapB__plus_rdiv_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rdiv_int8
 (
     GrB_Matrix C,
@@ -15567,6 +15816,7 @@ GrB_Info GB_AheapB__times_rdiv_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rdiv_uint8
 (
@@ -15607,6 +15857,7 @@ GrB_Info GB_AheapB__times_rdiv_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rdiv_int16
 (
     GrB_Matrix C,
@@ -15645,6 +15896,7 @@ GrB_Info GB_AheapB__times_rdiv_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rdiv_uint16
 (
@@ -15685,6 +15937,7 @@ GrB_Info GB_AheapB__times_rdiv_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rdiv_int32
 (
     GrB_Matrix C,
@@ -15723,6 +15976,7 @@ GrB_Info GB_AheapB__times_rdiv_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rdiv_uint32
 (
@@ -15763,6 +16017,7 @@ GrB_Info GB_AheapB__times_rdiv_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_rdiv_int64
 (
     GrB_Matrix C,
@@ -15801,6 +16056,7 @@ GrB_Info GB_AheapB__times_rdiv_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_rdiv_uint64
 (
@@ -35419,6 +35675,7 @@ GrB_Info GB_AheapB__eq_le_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lor_int8
 (
     GrB_Matrix C,
@@ -35457,6 +35714,7 @@ GrB_Info GB_AheapB__min_lor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lor_int16
 (
@@ -35497,6 +35755,7 @@ GrB_Info GB_AheapB__min_lor_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lor_int32
 (
     GrB_Matrix C,
@@ -35535,6 +35794,7 @@ GrB_Info GB_AheapB__min_lor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lor_int64
 (
@@ -35575,6 +35835,7 @@ GrB_Info GB_AheapB__min_lor_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lor_uint8
 (
     GrB_Matrix C,
@@ -35613,6 +35874,7 @@ GrB_Info GB_AheapB__min_lor_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lor_uint16
 (
@@ -35653,6 +35915,7 @@ GrB_Info GB_AheapB__min_lor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lor_uint32
 (
     GrB_Matrix C,
@@ -35691,6 +35954,7 @@ GrB_Info GB_AheapB__min_lor_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lor_uint64
 (
@@ -35809,6 +36073,7 @@ GrB_Info GB_AheapB__min_lor_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lor_int8
 (
     GrB_Matrix C,
@@ -35847,6 +36112,7 @@ GrB_Info GB_AheapB__max_lor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lor_int16
 (
@@ -35887,6 +36153,7 @@ GrB_Info GB_AheapB__max_lor_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lor_int32
 (
     GrB_Matrix C,
@@ -35925,6 +36192,7 @@ GrB_Info GB_AheapB__max_lor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lor_int64
 (
@@ -35965,6 +36233,7 @@ GrB_Info GB_AheapB__max_lor_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lor_uint8
 (
     GrB_Matrix C,
@@ -36003,6 +36272,7 @@ GrB_Info GB_AheapB__max_lor_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lor_uint16
 (
@@ -36043,6 +36313,7 @@ GrB_Info GB_AheapB__max_lor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lor_uint32
 (
     GrB_Matrix C,
@@ -36081,6 +36352,7 @@ GrB_Info GB_AheapB__max_lor_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lor_uint64
 (
@@ -36199,6 +36471,7 @@ GrB_Info GB_AheapB__max_lor_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lor_int8
 (
     GrB_Matrix C,
@@ -36237,6 +36510,7 @@ GrB_Info GB_AheapB__plus_lor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lor_uint8
 (
@@ -36277,6 +36551,7 @@ GrB_Info GB_AheapB__plus_lor_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lor_int16
 (
     GrB_Matrix C,
@@ -36315,6 +36590,7 @@ GrB_Info GB_AheapB__plus_lor_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lor_uint16
 (
@@ -36355,6 +36631,7 @@ GrB_Info GB_AheapB__plus_lor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lor_int32
 (
     GrB_Matrix C,
@@ -36393,6 +36670,7 @@ GrB_Info GB_AheapB__plus_lor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lor_uint32
 (
@@ -36433,6 +36711,7 @@ GrB_Info GB_AheapB__plus_lor_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lor_int64
 (
     GrB_Matrix C,
@@ -36471,6 +36750,7 @@ GrB_Info GB_AheapB__plus_lor_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lor_uint64
 (
@@ -36589,6 +36869,7 @@ GrB_Info GB_AheapB__plus_lor_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lor_int8
 (
     GrB_Matrix C,
@@ -36627,6 +36908,7 @@ GrB_Info GB_AheapB__times_lor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lor_uint8
 (
@@ -36667,6 +36949,7 @@ GrB_Info GB_AheapB__times_lor_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lor_int16
 (
     GrB_Matrix C,
@@ -36705,6 +36988,7 @@ GrB_Info GB_AheapB__times_lor_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lor_uint16
 (
@@ -36745,6 +37029,7 @@ GrB_Info GB_AheapB__times_lor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lor_int32
 (
     GrB_Matrix C,
@@ -36783,6 +37068,7 @@ GrB_Info GB_AheapB__times_lor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lor_uint32
 (
@@ -36823,6 +37109,7 @@ GrB_Info GB_AheapB__times_lor_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lor_int64
 (
     GrB_Matrix C,
@@ -36861,6 +37148,7 @@ GrB_Info GB_AheapB__times_lor_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lor_uint64
 (
@@ -37135,6 +37423,7 @@ GrB_Info GB_AheapB__eq_lor_bool
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_land_int8
 (
     GrB_Matrix C,
@@ -37173,6 +37462,7 @@ GrB_Info GB_AheapB__min_land_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_land_int16
 (
@@ -37213,6 +37503,7 @@ GrB_Info GB_AheapB__min_land_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_land_int32
 (
     GrB_Matrix C,
@@ -37251,6 +37542,7 @@ GrB_Info GB_AheapB__min_land_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_land_int64
 (
@@ -37291,6 +37583,7 @@ GrB_Info GB_AheapB__min_land_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_land_uint8
 (
     GrB_Matrix C,
@@ -37329,6 +37622,7 @@ GrB_Info GB_AheapB__min_land_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_land_uint16
 (
@@ -37369,6 +37663,7 @@ GrB_Info GB_AheapB__min_land_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_land_uint32
 (
     GrB_Matrix C,
@@ -37407,6 +37702,7 @@ GrB_Info GB_AheapB__min_land_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_land_uint64
 (
@@ -37525,6 +37821,7 @@ GrB_Info GB_AheapB__min_land_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_land_int8
 (
     GrB_Matrix C,
@@ -37563,6 +37860,7 @@ GrB_Info GB_AheapB__max_land_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_land_int16
 (
@@ -37603,6 +37901,7 @@ GrB_Info GB_AheapB__max_land_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_land_int32
 (
     GrB_Matrix C,
@@ -37641,6 +37940,7 @@ GrB_Info GB_AheapB__max_land_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_land_int64
 (
@@ -37681,6 +37981,7 @@ GrB_Info GB_AheapB__max_land_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_land_uint8
 (
     GrB_Matrix C,
@@ -37719,6 +38020,7 @@ GrB_Info GB_AheapB__max_land_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_land_uint16
 (
@@ -37759,6 +38061,7 @@ GrB_Info GB_AheapB__max_land_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_land_uint32
 (
     GrB_Matrix C,
@@ -37797,6 +38100,7 @@ GrB_Info GB_AheapB__max_land_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_land_uint64
 (
@@ -37915,6 +38219,7 @@ GrB_Info GB_AheapB__max_land_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_land_int8
 (
     GrB_Matrix C,
@@ -37953,6 +38258,7 @@ GrB_Info GB_AheapB__plus_land_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_land_uint8
 (
@@ -37993,6 +38299,7 @@ GrB_Info GB_AheapB__plus_land_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_land_int16
 (
     GrB_Matrix C,
@@ -38031,6 +38338,7 @@ GrB_Info GB_AheapB__plus_land_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_land_uint16
 (
@@ -38071,6 +38379,7 @@ GrB_Info GB_AheapB__plus_land_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_land_int32
 (
     GrB_Matrix C,
@@ -38109,6 +38418,7 @@ GrB_Info GB_AheapB__plus_land_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_land_uint32
 (
@@ -38149,6 +38459,7 @@ GrB_Info GB_AheapB__plus_land_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_land_int64
 (
     GrB_Matrix C,
@@ -38187,6 +38498,7 @@ GrB_Info GB_AheapB__plus_land_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_land_uint64
 (
@@ -38305,6 +38617,7 @@ GrB_Info GB_AheapB__plus_land_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_land_int8
 (
     GrB_Matrix C,
@@ -38343,6 +38656,7 @@ GrB_Info GB_AheapB__times_land_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_land_uint8
 (
@@ -38383,6 +38697,7 @@ GrB_Info GB_AheapB__times_land_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_land_int16
 (
     GrB_Matrix C,
@@ -38421,6 +38736,7 @@ GrB_Info GB_AheapB__times_land_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_land_uint16
 (
@@ -38461,6 +38777,7 @@ GrB_Info GB_AheapB__times_land_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_land_int32
 (
     GrB_Matrix C,
@@ -38499,6 +38816,7 @@ GrB_Info GB_AheapB__times_land_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_land_uint32
 (
@@ -38539,6 +38857,7 @@ GrB_Info GB_AheapB__times_land_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_land_int64
 (
     GrB_Matrix C,
@@ -38577,6 +38896,7 @@ GrB_Info GB_AheapB__times_land_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_land_uint64
 (
@@ -38851,6 +39171,7 @@ GrB_Info GB_AheapB__eq_land_bool
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lxor_int8
 (
     GrB_Matrix C,
@@ -38889,6 +39210,7 @@ GrB_Info GB_AheapB__min_lxor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lxor_int16
 (
@@ -38929,6 +39251,7 @@ GrB_Info GB_AheapB__min_lxor_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lxor_int32
 (
     GrB_Matrix C,
@@ -38967,6 +39290,7 @@ GrB_Info GB_AheapB__min_lxor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lxor_int64
 (
@@ -39007,6 +39331,7 @@ GrB_Info GB_AheapB__min_lxor_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lxor_uint8
 (
     GrB_Matrix C,
@@ -39045,6 +39370,7 @@ GrB_Info GB_AheapB__min_lxor_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lxor_uint16
 (
@@ -39085,6 +39411,7 @@ GrB_Info GB_AheapB__min_lxor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__min_lxor_uint32
 (
     GrB_Matrix C,
@@ -39123,6 +39450,7 @@ GrB_Info GB_AheapB__min_lxor_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__min_lxor_uint64
 (
@@ -39241,6 +39569,7 @@ GrB_Info GB_AheapB__min_lxor_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lxor_int8
 (
     GrB_Matrix C,
@@ -39279,6 +39608,7 @@ GrB_Info GB_AheapB__max_lxor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lxor_int16
 (
@@ -39319,6 +39649,7 @@ GrB_Info GB_AheapB__max_lxor_int16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lxor_int32
 (
     GrB_Matrix C,
@@ -39357,6 +39688,7 @@ GrB_Info GB_AheapB__max_lxor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lxor_int64
 (
@@ -39397,6 +39729,7 @@ GrB_Info GB_AheapB__max_lxor_int64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lxor_uint8
 (
     GrB_Matrix C,
@@ -39435,6 +39768,7 @@ GrB_Info GB_AheapB__max_lxor_uint8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lxor_uint16
 (
@@ -39475,6 +39809,7 @@ GrB_Info GB_AheapB__max_lxor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__max_lxor_uint32
 (
     GrB_Matrix C,
@@ -39513,6 +39848,7 @@ GrB_Info GB_AheapB__max_lxor_uint32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__max_lxor_uint64
 (
@@ -39631,6 +39967,7 @@ GrB_Info GB_AheapB__max_lxor_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lxor_int8
 (
     GrB_Matrix C,
@@ -39669,6 +40006,7 @@ GrB_Info GB_AheapB__plus_lxor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lxor_uint8
 (
@@ -39709,6 +40047,7 @@ GrB_Info GB_AheapB__plus_lxor_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lxor_int16
 (
     GrB_Matrix C,
@@ -39747,6 +40086,7 @@ GrB_Info GB_AheapB__plus_lxor_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lxor_uint16
 (
@@ -39787,6 +40127,7 @@ GrB_Info GB_AheapB__plus_lxor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lxor_int32
 (
     GrB_Matrix C,
@@ -39825,6 +40166,7 @@ GrB_Info GB_AheapB__plus_lxor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lxor_uint32
 (
@@ -39865,6 +40207,7 @@ GrB_Info GB_AheapB__plus_lxor_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__plus_lxor_int64
 (
     GrB_Matrix C,
@@ -39903,6 +40246,7 @@ GrB_Info GB_AheapB__plus_lxor_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__plus_lxor_uint64
 (
@@ -40021,6 +40365,7 @@ GrB_Info GB_AheapB__plus_lxor_fp64
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lxor_int8
 (
     GrB_Matrix C,
@@ -40059,6 +40404,7 @@ GrB_Info GB_AheapB__times_lxor_int8
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lxor_uint8
 (
@@ -40099,6 +40445,7 @@ GrB_Info GB_AheapB__times_lxor_uint8
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lxor_int16
 (
     GrB_Matrix C,
@@ -40137,6 +40484,7 @@ GrB_Info GB_AheapB__times_lxor_int16
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lxor_uint16
 (
@@ -40177,6 +40525,7 @@ GrB_Info GB_AheapB__times_lxor_uint16
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lxor_int32
 (
     GrB_Matrix C,
@@ -40215,6 +40564,7 @@ GrB_Info GB_AheapB__times_lxor_int32
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lxor_uint32
 (
@@ -40255,6 +40605,7 @@ GrB_Info GB_AheapB__times_lxor_uint32
     const int64_t bjnz_max
 ) ;
 
+
 GrB_Info GB_AgusB__times_lxor_int64
 (
     GrB_Matrix C,
@@ -40293,6 +40644,7 @@ GrB_Info GB_AheapB__times_lxor_int64
     GB_Element *restrict Heap,
     const int64_t bjnz_max
 ) ;
+
 
 GrB_Info GB_AgusB__times_lxor_uint64
 (

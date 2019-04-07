@@ -35,8 +35,6 @@
 // grep "allocate a new header"
 // which shows all uses of GB_new and GB_create
 
-// parallel: not here; see GB_calloc_memory
-
 #include "GB.h"
 
 GrB_Info GB_new                 // create matrix, except for indices & values
@@ -71,7 +69,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     bool allocated_header = false ;
     if ((*Ahandle) == NULL)
     {
-        GB_CALLOC_MEMORY (*Ahandle, 1, sizeof (struct GB_Matrix_opaque), NULL) ;
+        GB_CALLOC_MEMORY (*Ahandle, 1, sizeof (struct GB_Matrix_opaque)) ;
         if (*Ahandle == NULL)
         { 
             // out of memory
@@ -179,7 +177,7 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     {
         // Sets the vector pointers to zero, which defines all vectors as empty
         A->magic = GB_MAGIC ;
-        GB_CALLOC_MEMORY (A->p, A->plen+1, sizeof (int64_t), Context) ;
+        GB_CALLOC_MEMORY (A->p, A->plen+1, sizeof (int64_t)) ;
         ok = (A->p != NULL) ;
         if (is_hyper)
         { 

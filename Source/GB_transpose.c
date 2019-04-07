@@ -316,7 +316,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         int64_t *restrict Cp ;
         int64_t *restrict Ci ;
         GB_MALLOC_MEMORY (Cp, anz+1, sizeof (int64_t)) ;
-        GB_CALLOC_MEMORY (Ci, anz  , sizeof (int64_t), Context) ;
+        GB_CALLOC_MEMORY (Ci, anz  , sizeof (int64_t)) ;
         if (allocate_new_Cx)
         { 
             // allocate new space for the new typecasted numerical values of C
@@ -432,7 +432,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         GB_void *restrict Cx = NULL ;
         int64_t *restrict Cp ;
         int64_t *restrict Ci = NULL ;
-        GB_CALLOC_MEMORY (Cp, 2, sizeof (int64_t), NULL) ;
+        GB_CALLOC_MEMORY (Cp, 2, sizeof (int64_t)) ;
 
         bool allocate_new_Ci = (!A_is_hyper) ;
 

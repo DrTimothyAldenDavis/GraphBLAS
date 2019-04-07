@@ -15,8 +15,6 @@
 // allocated instead.  This allows the return pointer p to be checked for the
 // out-of-memory condition, even when allocating an object of size zero.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 void *GB_malloc_memory      // pointer to allocated block of memory
@@ -46,13 +44,26 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 
         if (GB_Global_malloc_tracking_get ( ))
         {
+
+            //------------------------------------------------------------------
             // for memory usage testing only
+            //------------------------------------------------------------------
+
+            // brutal memory debug; pretend to fail if (count-- <= 0)
             bool pretend_to_fail = false ;
-            if (GB_Global_malloc_debug_get ( ))
-            {
-                // brutal memory usage debug; pretend to fail if the count <= 0
-                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
+            bool malloc_debug = false ;
+            #define GB_CRITICAL_SECTION                                      \
+            {                                                                \
+                malloc_debug = GB_Global_malloc_debug_get ( ) ;              \
+                if (malloc_debug)                                            \
+                {                                                            \
+                    pretend_to_fail =                                        \
+                        GB_Global_malloc_debug_count_decrement ( ) ;         \
+                }                                                            \
             }
+            #include "GB_critical_section.c"
+
+            // allocate the memory
             if (pretend_to_fail)
             {
                 #ifdef GB_PRINT_MALLOC
@@ -64,20 +75,34 @@ void *GB_malloc_memory      // pointer to allocated block of memory
             {
                 p = (void *) GB_Global_malloc_function (size) ;
             }
+
+            // check if successful
             if (p != NULL)
             {
-                int nmalloc = GB_Global_nmalloc_increment ( ) ;
-                GB_Global_inuse_increment (nitems * size_of_item) ;
+                // success
+                int nmalloc = 0 ;
+                #undef GB_CRITICAL_SECTION
+                #define GB_CRITICAL_SECTION                             \
+                {                                                       \
+                    nmalloc = GB_Global_nmalloc_increment ( ) ;         \
+                    GB_Global_inuse_increment (nitems * size_of_item) ; \
+                }
+                #include "GB_critical_section.c"
                 #ifdef GB_PRINT_MALLOC
-                printf ("Malloc:  %14p %3d %1d n "GBd" size "GBd"\n",
-                    p, nmalloc, GB_Global_malloc_debug_get ( ),
-                    (int64_t) nitems, (int64_t) size_of_item) ;
+                printf ("Malloc:  %14p %3d %1d n "GBd" size "GBd"\n", p,
+                    nmalloc, malloc_debug, (int64_t) nitems,
+                    (int64_t) size_of_item) ;
                 #endif
             }
+
         }
         else
         {
+
+            //------------------------------------------------------------------
             // normal use, in production
+            //------------------------------------------------------------------
+
             p = (void *) GB_Global_malloc_function (size) ;
         }
 

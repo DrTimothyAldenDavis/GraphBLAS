@@ -396,7 +396,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             // transpose the input matrix
 
             bool *restrict mark = NULL ;
-            GB_CALLOC_MEMORY (mark, wlen + 1, sizeof (bool), Context) ;
+            GB_CALLOC_MEMORY (mark, wlen + 1, sizeof (bool)) ;
 
             GB_void *restrict work = NULL ;
             GB_MALLOC_MEMORY (work, wlen + 1, zsize) ;

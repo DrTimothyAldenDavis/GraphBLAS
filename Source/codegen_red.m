@@ -68,7 +68,7 @@ codegen_red_method ('times', 'zarg *= yarg'               , 'double'  , '1'     
 
 % 4 boolean monoids
 codegen_red_method ('lor' ,  'zarg = (zarg || yarg)'      , 'bool'    , 'false'     , 'true'      ) ;
-codegen_red_method ('land',  'zarg = (zarg && yarg)'      , 'bool'    , 'true'      , 'true'      ) ;
+codegen_red_method ('land',  'zarg = (zarg && yarg)'      , 'bool'    , 'true'      , 'false'     ) ;
 codegen_red_method ('lxor',  'zarg = (zarg != yarg)'      , 'bool'    , 'false'     , [ ]         ) ;
 codegen_red_method ('eq'  ,  'zarg = (zarg == yarg)'      , 'bool'    , 'true'      , [ ]         ) ;
 

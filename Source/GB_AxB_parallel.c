@@ -117,7 +117,8 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_OK (GB_check (semiring, "semiring for parallel A*B", GB0)) ;
     ASSERT (AxB_method_used != NULL) ;
-    // printf ("AxB_method, descriptor: %d\n", AxB_method) ;
+
+// printf ("AxB_method, descriptor: %d\n", AxB_method) ;
 
     GrB_Info info ;
 
@@ -130,6 +131,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+// printf ("AxB nthreads %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // select the method for slicing B or A'
@@ -296,7 +298,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         GB_AxB_select (A, B, semiring, do_adotb, AxB_method,
             AxB_method_used, &bjnz_max) ;
 
-        // printf ("one thread, method %d\n", *AxB_method_used) ;
+// printf ("one thread, method %d\n", *AxB_method_used) ;
 
         // acquire a Sauna if Gustavson's method is being used
         int Sauna_id = -2 ;
@@ -628,7 +630,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
             // note that Bflops is initialized to zero
             int64_t *Bflops ;
-            GB_CALLOC_MEMORY (Bflops, bnvec+1, sizeof (int64_t), Context) ;
+            GB_CALLOC_MEMORY (Bflops, bnvec+1, sizeof (int64_t)) ;
             if (Bflops == NULL)
             { 
                 // out of memory
@@ -725,8 +727,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
             // note that Bflops_per_entry is initialized to zero
             int64_t *Bflops_per_entry ;
-            GB_CALLOC_MEMORY (Bflops_per_entry, bnz+1, sizeof (int64_t),
-                Context) ;
+            GB_CALLOC_MEMORY (Bflops_per_entry, bnz+1, sizeof (int64_t)) ;
             if (Bflops_per_entry == NULL)
             { 
                 // out of memory

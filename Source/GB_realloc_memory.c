@@ -20,7 +20,7 @@
 
 // Usage:
 
-//      p = GB_realloc_memory (nnew, nold, size, p, &ok, Context)
+//      p = GB_realloc_memory (nnew, nold, size, p, &ok)
 
 //      if (ok)
 
@@ -33,8 +33,6 @@
 //          p points to the old space of size nold*size, which is left
 //          unchanged.  This case never occurs if nnew < nold.
 
-// PARALLEL: move the data in parallel?
-
 #include "GB.h"
 
 void *GB_realloc_memory     // pointer to reallocated block of memory, or
@@ -44,8 +42,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_t nitems_old,      // old number of items in the object
     size_t size_of_item,    // sizeof each item
     void *p,                // old object to reallocate
-    bool *ok,               // true if successful, false otherwise
-    GB_Context Context      // for # of threads.  Use one thread if NULL
+    bool *ok                // true if successful, false otherwise
 )
 {
 
@@ -79,39 +76,52 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     { 
         // change the size of the object from nitems_old to nitems_new
         void *pnew ;
-
-        // determine the number of threads to use
-        GB_GET_NTHREADS (nthreads, Context) ;
+        
+        //----------------------------------------------------------------------
+        // for memory usage testing only
+        //----------------------------------------------------------------------
 
         bool malloc_tracking = GB_Global_malloc_tracking_get ( ) ;
+        bool pretend_to_fail = false ;
+        bool malloc_debug = false ;
+        int nmalloc = 0 ;
 
         if (malloc_tracking)
         {
-            bool pretend_to_fail = false ;
-            if (GB_Global_malloc_debug_get ( ))
-            {
-                // brutal memory usage debug; pretend to fail if the count <= 0
-                pretend_to_fail = GB_Global_malloc_debug_count_decrement ( ) ;
+            // brutal memory debug; pretend to fail if (count-- <= 0)
+            #define GB_CRITICAL_SECTION                                      \
+            {                                                                \
+                malloc_debug = GB_Global_malloc_debug_get ( ) ;              \
+                nmalloc = GB_Global_nmalloc_get ( ) ;                        \
+                if (malloc_debug)                                            \
+                {                                                            \
+                    pretend_to_fail =                                        \
+                        GB_Global_malloc_debug_count_decrement ( ) ;         \
+                }                                                            \
             }
-            if (pretend_to_fail)
-            {
-                // brutal memory usage debug; pretend to fail if the count <= 0,
-                #ifdef GB_PRINT_MALLOC
-                printf ("pretend to fail\n") ;
-                #endif
-                pnew = NULL ;
-            }
-            else
-            {
-                // reallocate the space
-                pnew = (void *) GB_Global_realloc_function (p, size) ;
-            }
+            #include "GB_critical_section.c"
+        }
+
+        //----------------------------------------------------------------------
+        // reallocate the memory
+        //----------------------------------------------------------------------
+
+        if (pretend_to_fail)
+        {
+            #ifdef GB_PRINT_MALLOC
+            printf ("pretend to fail\n") ;
+            #endif
+            pnew = NULL ;
         }
         else
         {
             // reallocate the space
             pnew = (void *) GB_Global_realloc_function (p, size) ;
         }
+
+        //----------------------------------------------------------------------
+        // check if successful
+        //----------------------------------------------------------------------
 
         if (pnew == NULL)
         {
@@ -122,8 +132,13 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 (*ok) = true ;
                 if (malloc_tracking)
                 {
-                    GB_Global_inuse_decrement ((nitems_old - nitems_new) *
-                        size_of_item) ;
+                    // reduce the amount of memory in use
+                    #define GB_CRITICAL_SECTION                              \
+                    {                                                        \
+                        GB_Global_inuse_decrement ((nitems_old - nitems_new) \
+                            * size_of_item) ;                                \
+                    }
+                    #include "GB_critical_section.c"
                 }
             }
             else
@@ -139,18 +154,39 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             (*ok) = true ;
             if (malloc_tracking)
             {
-                GB_Global_inuse_increment ((nitems_new - nitems_old) *
-                    size_of_item) ;
+                if (nitems_new < nitems_old)
+                {
+                    // decrease the amount of memory in use
+                    #define GB_CRITICAL_SECTION                              \
+                    {                                                        \
+                        GB_Global_inuse_decrement ((nitems_old - nitems_new) \
+                            * size_of_item) ;                                \
+                    }
+                    #include "GB_critical_section.c"
+                }
+                else
+                {
+                    // increase the amount of memory in use
+                    #define GB_CRITICAL_SECTION                              \
+                    {                                                        \
+                        GB_Global_inuse_increment ((nitems_new - nitems_old) \
+                            * size_of_item) ;                                \
+                    }
+                    #include "GB_critical_section.c"
+                }
             }
         }
+
+        //----------------------------------------------------------------------
+        // print status
+        //----------------------------------------------------------------------
 
         #ifdef GB_PRINT_MALLOC
         if (malloc_tracking)
         {
             printf ("Realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
-                pnew, GB_Global_nmalloc_get ( ), GB_Global_malloc_debug_get ( ),
-                (int64_t) nitems_old, (int64_t) nitems_new,
-                (int64_t) size_of_item) ;
+                pnew, nmalloc, malloc_debug, (int64_t) nitems_old,
+                (int64_t) nitems_new, (int64_t) size_of_item) ;
         }
         #endif
 

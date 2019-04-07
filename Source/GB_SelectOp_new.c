@@ -42,7 +42,7 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
     //--------------------------------------------------------------------------
 
     // allocate the select operator
-    GB_CALLOC_MEMORY (*selectop, 1, sizeof (struct GB_SelectOp_opaque), NULL) ;
+    GB_CALLOC_MEMORY (*selectop, 1, sizeof (struct GB_SelectOp_opaque)) ;
     if (*selectop == NULL)
     { 
         // out of memory

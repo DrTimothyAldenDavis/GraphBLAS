@@ -1283,8 +1283,7 @@ size_t GB_code_size             // return the size of a type, given its code
 void *GB_calloc_memory      // pointer to allocated block of memory
 (
     size_t nitems,          // number of items to allocate
-    size_t size_of_item,    // sizeof each item
-    GB_Context Context
+    size_t size_of_item     // sizeof each item
 ) ;
 
 void *GB_malloc_memory      // pointer to allocated block of memory
@@ -1300,8 +1299,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_t nitems_old,      // old number of items in the object
     size_t size_of_item,    // sizeof each item
     void *p,                // old object to reallocate
-    bool *ok,               // true if successful, false otherwise
-    GB_Context Context
+    bool *ok                // true if successful, false otherwise
 ) ;
 
 void GB_free_memory
@@ -1358,12 +1356,12 @@ void GB_free_memory
     if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
 }
 
-#define GB_CALLOC_MEMORY(p,n,s,Context)                                        \
+#define GB_CALLOC_MEMORY(p,n,s)                                               \
     printf ("\nCalloc:                       "                                \
     "%s = calloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
-    p = GB_calloc_memory (n, s, Context) ;
+    p = GB_calloc_memory (n, s) ;           
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
     printf ("\nMalloc:                       "                                \
@@ -1372,13 +1370,13 @@ void GB_free_memory
     __LINE__,__FILE__) ;                                                      \
     p = GB_malloc_memory (n, s) ;
 
-#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok,Context)                            \
+#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                    \
 {                                                                             \
     printf ("\nRealloc: %14p       "                                          \
     "%s = realloc (%s = "GBd", %s = "GBd", %s = "GBd") line %d file %s\n",    \
     p, GB_STR(p), GB_STR(nnew), (int64_t) nnew, GB_STR(nold), (int64_t) nold, \
     GB_STR(s), (int64_t) s, __LINE__,__FILE__) ;                              \
-    p = GB_realloc_memory (nnew, nold, s, p, ok, Context) ;                   \
+    p = GB_realloc_memory (nnew, nold, s, p, ok) ;                            \
 }
 
 #define GB_FREE_MEMORY(p,n,s)                                                 \
@@ -1413,14 +1411,14 @@ void GB_free_memory
 
 #define GB_VECTOR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
-#define GB_CALLOC_MEMORY(p,n,s,Context)                                       \
-    p = GB_calloc_memory (n, s ,Context) ;
+#define GB_CALLOC_MEMORY(p,n,s)                                               \
+    p = GB_calloc_memory (n, s) ;              
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
     p = GB_malloc_memory (n, s) ;
 
-#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok,Context)                           \
-    p = GB_realloc_memory (nnew, nold, s, p, ok, Context) ;
+#define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                   \
+    p = GB_realloc_memory (nnew, nold, s, p, ok) ;          
 
 #define GB_FREE_MEMORY(p,n,s)                                                 \
 {                                                                             \

@@ -119,15 +119,6 @@ GB_dup.c:
 GB_resize.c:
     does the work for GxB_*_resize.  Low priority but easy to do.
 
-GB_calloc_memory.c:
-    calls the ANSI C calloc function.  If the array is big, this could be
-    set to zero in parallel.  Easy to do.
-
-GB_realloc_memory.c:
-    calls the ANSI C realloc function.  If the array is big, this could be done
-    with a malloc, then a large parallel memcpy, then free the old space. 
-    Easy to do.
-
 GB_select.c:
     does the work for my GxB_*_select operations.  This prunes the matrix,
     like GB_prune_inplace.
