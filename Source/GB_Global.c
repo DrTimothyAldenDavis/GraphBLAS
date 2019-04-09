@@ -96,6 +96,7 @@ typedef struct
     void * (* calloc_function  ) (size_t, size_t) ;
     void * (* realloc_function ) (void *, size_t) ;
     void   (* free_function    ) (void *)         ;
+    bool malloc_is_thread_safe ;   // default is true
 
     //--------------------------------------------------------------------------
     // memory usage tracking: for testing and debugging only
@@ -175,6 +176,7 @@ GB_Global_struct GB_Global =
     .calloc_function  = calloc,
     .realloc_function = realloc,
     .free_function    = free,
+    .malloc_is_thread_safe = true,
 
     // malloc tracking, for testing, statistics, and debugging only
     .malloc_tracking = false,
@@ -341,7 +343,19 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
 
 void * GB_Global_malloc_function (size_t size)
 {
-    return (GB_Global.malloc_function (size)) ;
+    void *p ;
+    if (GB_Global.malloc_is_thread_safe)
+    {
+        p = GB_Global.malloc_function (size) ;
+    }
+    else
+    {
+        #pragma omp critical(GB_critical_section_malloc)
+        {
+            p = GB_Global.malloc_function (size) ;
+        }
+    }
+    return (p) ;
 }
 
 //------------------------------------------------------------------------------
@@ -355,7 +369,19 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
 
 void * GB_Global_calloc_function (size_t count, size_t size)
 {
-    return (GB_Global.calloc_function (count, size)) ;
+    void *p ;
+    if (GB_Global.malloc_is_thread_safe)
+    {
+        p = GB_Global.calloc_function (count, size) ;
+    }
+    else
+    {
+        #pragma omp critical(GB_critical_section_malloc)
+        {
+            p = GB_Global.calloc_function (count, size) ;
+        }
+    }
+    return (p) ;
 }
 
 //------------------------------------------------------------------------------
@@ -372,7 +398,19 @@ void GB_Global_realloc_function_set
 
 void * GB_Global_realloc_function (void *p, size_t size)
 {
-    return (GB_Global.realloc_function (p, size)) ;
+    void *pnew ;
+    if (GB_Global.malloc_is_thread_safe)
+    {
+        pnew = GB_Global.realloc_function (p, size) ;
+    }
+    else
+    {
+        #pragma omp critical(GB_critical_section_malloc)
+        {
+            pnew = GB_Global.realloc_function (p, size) ;
+        }
+    }
+    return (pnew) ;
 }
 
 //------------------------------------------------------------------------------
@@ -386,7 +424,31 @@ void GB_Global_free_function_set (void (* free_function) (void *))
 
 void GB_Global_free_function (void *p)
 {
-    GB_Global.free_function (p) ;
+    if (GB_Global.malloc_is_thread_safe)
+    {
+        GB_Global.free_function (p) ;
+    }
+    else
+    {
+        #pragma omp critical(GB_critical_section_malloc)
+        {
+            GB_Global.free_function (p) ;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+//
+//------------------------------------------------------------------------------
+
+void GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe)
+{
+    GB_Global.malloc_is_thread_safe = malloc_is_thread_safe ;
+}
+
+bool GB_Global_malloc_is_thread_safe_get ( )
+{
+    return (GB_Global.malloc_is_thread_safe) ;
 }
 
 //------------------------------------------------------------------------------

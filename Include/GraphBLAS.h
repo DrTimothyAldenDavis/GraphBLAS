@@ -70,9 +70,9 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
-#define GxB_DATE "Mar 20, 2019 (DRAFT)"
-#define GxB_IMPLEMENTATION_MAJOR 2
-#define GxB_IMPLEMENTATION_MINOR 4
+#define GxB_DATE "Apr 8, 2019 (DRAFT)"
+#define GxB_IMPLEMENTATION_MAJOR 3
+#define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "May 18, 2018"
 #define GxB_MAJOR 1
@@ -324,19 +324,23 @@ GrB_Info GrB_init           // start up GraphBLAS
 // will use internally.  The functions can only be defined once, in GxB_init.
 // The GxB_*import* and GxB_*export* functions require that the user
 // application and the GraphBLAS library agree on the same
-// malloc/calloc/realloc/free functions to use, thus GxB_init is a required
-// so the user application can define them for SuiteSparse:GraphBLAS.
+// malloc/calloc/realloc/free functions to use, thus GxB_init is required so
+// the user application can define them for SuiteSparse:GraphBLAS.  The
+// user_malloc_is_thread_safe parameter tells SuiteSparse:GraphBLAS whether or
+// not the user-provided functions are thread-safe.  If false, then the
+// functions are only called from within an OpenMP critical section, to provide
+// thread safety.
 
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
     const GrB_Mode mode,    // blocking or non-blocking mode
 
-    // pointers to memory management functions.  If any are NULL, use the
-    // built-in ANSI C11 functions.
+    // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
-    void   (* user_free_function    ) (void *)
+    void   (* user_free_function    ) (void *),
+    bool user_malloc_is_thread_safe
 ) ;
 
 // In non-blocking mode, GraphBLAS operations need not complete until their

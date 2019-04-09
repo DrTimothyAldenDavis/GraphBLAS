@@ -103,10 +103,7 @@
 
         cij_exists = true ;
 
-        #if defined ( GB_PHASE_1_OF_2 )
-        break ;
-        #else
-
+        #if !defined ( GB_PHASE_1_OF_2 )
         // cij = A(0,i) * B(0,j)
         GB_GETA (aki, Ax, pA) ;             // aki = A(0,i)
         GB_GETB (bkj, Bx, pB) ;             // bkj = B(0,j)
@@ -132,10 +129,7 @@
 
         cij_exists = true ;
 
-        #if defined ( GB_PHASE_1_OF_2 )
-        break ;
-        #else
-
+        #if !defined ( GB_PHASE_1_OF_2 )
         int64_t k = Bi [pB] ;               // first row index of B(:,j)
         // cij = A(k,i) * B(k,j)
         GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
@@ -163,10 +157,7 @@
 
         cij_exists = true ;
 
-        #if defined ( GB_PHASE_1_OF_2 )
-        break ;
-        #else
-
+        #if !defined ( GB_PHASE_1_OF_2 )
         int64_t k = Ai [pA] ;               // first row index of A(:,i)
         // cij = A(k,i) * B(k,j)
         GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)

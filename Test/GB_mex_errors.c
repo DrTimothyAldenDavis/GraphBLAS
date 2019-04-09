@@ -141,7 +141,7 @@ void mexFunction
     OK (GrB_finalize ( )) ;
 
     GB_Global_GrB_init_called_set (false) ;
-    OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
+    OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false)) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
 
@@ -227,14 +227,15 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     printf ("GrB_init-----------------------------------------------------\n") ;
-    expected = GrB_INVALID_VALUE ;
 
-    // can't call it twiace
-    ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
-    printf ("%s\n", GrB_error ()) ;
+    // can't call it twice
+    expected = GrB_PANIC ;
+    ERR (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false)) ;
+    GB_Global_GrB_init_called_set (false) ;
 
     // invalid mode
-    ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, mxFree, false)) ;
     /*
     OK (GrB_finalize ( )) ;
     GB_Global_GrB_init_called_set (false) ;
@@ -242,10 +243,10 @@ void mexFunction
     */
 
     expected = GrB_NULL_POINTER ;
-    ERR (GxB_init (42, NULL    , mxCalloc, mxRealloc, mxFree)) ;
-    ERR (GxB_init (42, mxMalloc, NULL    , mxRealloc, mxFree)) ;
-    ERR (GxB_init (42, mxMalloc, mxCalloc, NULL     , mxFree)) ;
-    ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, NULL  )) ;
+    ERR (GxB_init (42, NULL    , mxCalloc, mxRealloc, mxFree, false)) ;
+    ERR (GxB_init (42, mxMalloc, NULL    , mxRealloc, mxFree, false)) ;
+    ERR (GxB_init (42, mxMalloc, mxCalloc, NULL     , mxFree, false)) ;
+    ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, NULL  , false)) ;
 
     //--------------------------------------------------------------------------
     // Sauna
@@ -4482,11 +4483,11 @@ void mexFunction
     CHECK (pp == NULL) ;
 
     pp = &x ;
-    pp = GB_calloc_memory (UINT64_MAX, 1, NULL) ;
+    pp = GB_calloc_memory (UINT64_MAX, 1) ;
     CHECK (pp == NULL) ;
 
     ok = true ;
-    pp = GB_realloc_memory (UINT64_MAX, 0, 1, NULL, &ok, NULL) ;
+    pp = GB_realloc_memory (UINT64_MAX, 0, 1, NULL, &ok) ;
     CHECK (!ok) ;
 
     s = 1 ;

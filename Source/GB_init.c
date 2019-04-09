@@ -24,8 +24,6 @@
 // GxB_init is the same as GrB_init except that it also defines the
 // malloc/calloc/realloc/free functions to use.
 
-// not parallel: this function does O(1) work.
-
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -94,6 +92,7 @@ GrB_Info GB_init            // start up GraphBLAS
     void * (* calloc_function  ) (size_t, size_t),
     void * (* realloc_function ) (void *, size_t),
     void   (* free_function    ) (void *),
+    bool malloc_is_thread_safe,
 
     GB_Context Context      // from GrB_init or GxB_init
 )
@@ -108,7 +107,7 @@ GrB_Info GB_init            // start up GraphBLAS
     if (GB_Global_GrB_init_called_get ( ))
     { 
         // GrB_init can only be called once
-        return (GrB_INVALID_VALUE) ;
+        return (GrB_PANIC) ;
     }
 
     if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
@@ -129,6 +128,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_calloc_function_set  (calloc_function ) ;
     GB_Global_realloc_function_set (realloc_function) ;
     GB_Global_free_function_set    (free_function   ) ;
+    GB_Global_malloc_is_thread_safe_set (malloc_is_thread_safe) ;
 
     //--------------------------------------------------------------------------
     // max number of threads

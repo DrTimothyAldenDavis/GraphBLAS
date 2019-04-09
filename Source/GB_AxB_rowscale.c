@@ -34,6 +34,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     ASSERT (!GB_PENDING (D)) ; ASSERT (!GB_ZOMBIES (D)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_OK (GB_check (semiring, "semiring for numeric D*A", GB0)) ;
+    ASSERT (D->vlen == D->vdim) ;
     ASSERT (D->vlen == B->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
 

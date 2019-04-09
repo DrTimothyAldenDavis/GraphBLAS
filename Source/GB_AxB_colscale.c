@@ -34,7 +34,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (D)) ; ASSERT (!GB_ZOMBIES (D)) ;
     ASSERT_OK (GB_check (semiring, "semiring for numeric A*D", GB0)) ;
-    ASSERT (A->vlen == D->vlen) ;
+    ASSERT (A->vdim == D->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
 
     //--------------------------------------------------------------------------

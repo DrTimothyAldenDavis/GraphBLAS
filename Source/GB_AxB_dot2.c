@@ -131,7 +131,8 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     {
         if ((Aslice [tid])->nvec_nonempty < 0)
         { 
-            (Aslice [tid])->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+            (Aslice [tid])->nvec_nonempty =
+                GB_nvec_nonempty (Aslice [tid], NULL) ;
         }
 
         // count the number of entries in each vector of C, for the slice
@@ -167,16 +168,21 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         {
             int64_t *C_count = C_counts [tid] ;
             int64_t c = C_count [k] ;
+            // printf ("tid %d k "GBd" c "GBd"\n", tid, k, c) ;
             C_count [k] = s ;
             s += c ;
         }
         Cp [k] = s ;
     }
     Cp [cnvec] = 0 ;
+    C->nvec = cnvec ;
 
     // Cp = cumulative sum of Cp
     GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
     int64_t cnz = Cp [cnvec] ;
+
+// for (int64_t k = 0 ; k <= cnvec ; k++) printf ("Cp ["GBd"] = "GBd"\n", k, Cp [k]) ;
+// printf ("C->nvec is "GBd"\n", C->nvec) ;
 
     // C->h = B->h
     if (B->is_hyper)
@@ -208,12 +214,24 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
 
+// printf ("\n====================== tid %d of %d\n", tid, nthreads) ;
+
     int64_t *restrict C_count_start =
         (tid == 0) ?          NULL : C_counts [tid] ;
     int64_t *restrict C_count_end   =
         (tid == nthreads-1) ? NULL : C_counts [tid+1] ;
 
     GrB_Matrix A = Aslice [tid] ;
+
+// GxB_print (Aslice [tid], 3) ;
+
+// if (C_count_start != NULL)
+//    for (int64_t k = 0 ; k < cnvec ; k++) printf ("C_count_start ["GBd"] = "GBd"\n",
+//        k, C_count_start [k]) ;
+
+// if (C_count_end != NULL)
+//    for (int64_t k = 0 ; k < cnvec ; k++) printf ("C_count_end   ["GBd"] = "GBd"\n",
+//        k, C_count_end   [k]) ;
 
     bool done = false ;
 

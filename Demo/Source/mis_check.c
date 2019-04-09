@@ -146,12 +146,14 @@ GrB_Info mis_check              // compute a maximal independent set
 
     int64_t last_nvals = nvals ;        // just for error-checking
 
+int save ;
+OK (GxB_get (GxB_NTHREADS, &save)) ;
+
     while (nvals > 0)
     {
 
-int save ;
-OK (GxB_get (GxB_NTHREADS, &save)) ;
 OK (GxB_set (GxB_NTHREADS, 1)) ;
+        // TODO: set_random is not yet thread-safe:
 
         // compute a random probability scaled by inverse of degree
         OK (GrB_apply (prob, candidates, NULL, set_random, degrees, r_desc)) ;
@@ -159,8 +161,17 @@ OK (GxB_set (GxB_NTHREADS, 1)) ;
 OK (GxB_set (GxB_NTHREADS, save)) ;
 
         // compute the max probability of all neighbors
+// GxB_print (r_desc, 3) ;
+// GxB_print (maxSelect1st, 3) ;
+// GxB_print (candidates, 3) ;
+// GxB_print (prob, 3) ;
+// GxB_print (A, 3) ;
+
         OK (GrB_vxm (neighbor_max, candidates, NULL, maxSelect1st,
             prob, A, r_desc)) ;
+
+// GxB_print (neighbor_max, 3) ;
+// OK (GxB_set (GxB_NTHREADS, 1)) ;
 
         // select node if its probability is > than all its active neighbors
         OK (GrB_eWiseAdd (new_members, NULL, NULL, GrB_GT_FP64, prob,
@@ -176,11 +187,16 @@ OK (GxB_set (GxB_NTHREADS, save)) ;
         OK (GrB_Vector_nvals (&nvals, candidates)) ;
         if (nvals == 0) { break ; }                  // early exit condition
 
+// OK (GxB_set (GxB_NTHREADS, 1)) ;
+
         // Neighbors of new members can also be removed from candidates
         OK (GrB_vxm (new_neighbors, candidates, NULL, Boolean,
             new_members, A, NULL)) ;
+
         OK (GrB_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
             candidates, sr_desc)) ;
+
+// OK (GxB_set (GxB_NTHREADS, save)) ;
 
         OK (GrB_Vector_nvals (&nvals, candidates)) ;
 

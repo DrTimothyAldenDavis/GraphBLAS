@@ -987,6 +987,7 @@ GrB_Info GB_init            // start up GraphBLAS
     void * (* calloc_function  ) (size_t, size_t),
     void * (* realloc_function ) (void *, size_t),
     void   (* free_function    ) (void *),
+    bool malloc_is_thread_safe,
 
     GB_Context Context      // from GrB_init or GxB_init
 ) ;
@@ -2408,6 +2409,12 @@ void  *  GB_Global_realloc_function (void *p, size_t size) ;
 
 void     GB_Global_free_function_set (void (* free_function) (void *)) ;
 void     GB_Global_free_function (void *p) ;
+
+void     GB_Global_malloc_is_thread_safe_set
+         (
+            bool malloc_is_thread_safe
+         ) ;
+bool     GB_Global_malloc_is_thread_safe_get ( ) ;
 
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
 bool     GB_Global_malloc_tracking_get ( ) ;

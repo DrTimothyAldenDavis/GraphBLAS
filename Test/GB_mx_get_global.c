@@ -65,7 +65,7 @@ bool GB_mx_get_global       // true if doing malloc_debug
 
     GB_Global_user_multithreaded_set (false) ;
     GB_Global_GrB_init_called_set (false) ;
-    GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
+    GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
     ASSERT (GB_Global_nmalloc_get ( ) == 0) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
@@ -94,8 +94,6 @@ bool GB_mx_get_global       // true if doing malloc_debug
         nthreads = (int32_t *) mxGetData (nthreads_matlab) ;
         if (nthreads == NULL) mexErrMsgTxt ("nthreads_matlab null!") ;
     }
-
-    if (nthreads [0] > 1) printf ("nthreads %d\n", *nthreads) ;
 
     GxB_set (GxB_NTHREADS, nthreads [0]) ;
 

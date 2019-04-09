@@ -133,6 +133,16 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     GB_GET_NTHREADS (nthreads, Context) ;
 // printf ("AxB nthreads %d\n", nthreads) ;
 
+    if (B->nvec_nonempty < 0)
+    { 
+        B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
+    }
+
+    if (A->nvec_nonempty < 0)
+    { 
+        A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
+    }
+
     //--------------------------------------------------------------------------
     // select the method for slicing B or A'
     //--------------------------------------------------------------------------
@@ -279,6 +289,8 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     }
     nthreads = GB_IMAX (nthreads, 1) ;
 
+// printf ("GB_AxB_paralel: nthreads %d\n", nthreads) ;
+
     //==========================================================================
     // sequential C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B
     //==========================================================================
@@ -339,6 +351,11 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 //          (slice_A) ? "A" : "B", (do_adotb) ? "A'*B" : " A*B", t) ;
 //      }
 //      #endif
+
+        if (info == GrB_SUCCESS)
+        {
+            ASSERT_OK (GB_check (*Chandle, "C for sequential A*B", GB0)) ;
+        }
 
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
     }
@@ -544,6 +561,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     }
     else
     {
+        // printf ("slice B\n") ;
 
         //----------------------------------------------------------------------
         // slice B for A*B or A'*B

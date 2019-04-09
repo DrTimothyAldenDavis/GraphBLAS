@@ -13,8 +13,6 @@
 // the malloc/calloc/realloc/free functions that SuiteSparse:GraphBLAS will
 // use.  The functions cannot be modified once GraphBLAS starts.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 // Examples:
 
 /*
@@ -27,14 +25,14 @@
         // either use:
         GrB_init (mode) ;
         // or use this (but not both):
-        GxB_init (mode, malloc, calloc, realloc, free) ;
+        GxB_init (mode, malloc, calloc, realloc, free, true) ;
 
     // to use GraphBLAS from within a MATLAB mexFunction:
 
         #include "mex.h"
         #include "GraphBLAS.h"
         ...
-        GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree) ;
+        GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
 
     // to use the C interface to the Intel TBB scalable allocators:
 
@@ -42,7 +40,7 @@
         #include "GraphBLAS.h"
         ...
         GxB_init (mode, scalable_malloc, scalable_calloc, scalable_realloc,
-            scalable_free) ;
+            scalable_free, true) ;
 
 */
 
@@ -53,12 +51,12 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
     const GrB_Mode mode,    // blocking or non-blocking mode
 
-    // pointers to memory management functions.  If any are NULL, use the
-    // built-in ANSI C11 functions.
+    // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
-    void   (* user_free_function    ) (void *)
+    void   (* user_free_function    ) (void *),
+    bool user_malloc_is_thread_safe
 )
 { 
 
@@ -66,7 +64,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_init (mode, malloc, calloc, realloc, free)") ;
+    GB_WHERE ("GxB_init (mode, malloc, calloc, realloc, free, thread_safe)") ;
     GB_RETURN_IF_NULL (user_malloc_function ) ;
     GB_RETURN_IF_NULL (user_calloc_function ) ;
     GB_RETURN_IF_NULL (user_realloc_function) ;
@@ -77,6 +75,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     //--------------------------------------------------------------------------
 
     return (GB_init (mode, user_malloc_function, user_calloc_function,
-        user_realloc_function, user_free_function, Context)) ;
+        user_realloc_function, user_free_function, user_malloc_is_thread_safe,
+        Context)) ;
 }
 
