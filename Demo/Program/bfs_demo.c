@@ -168,7 +168,7 @@ int main (int argc, char **argv)
         else
         {
             bool ok = true ;
-            if (nreachable != nreach0 || nlevels != nlevels)
+            if (nreachable != nreach0 || nlevels != nlevel0)
             {
                 ok = false ;
             }

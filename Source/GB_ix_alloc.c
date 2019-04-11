@@ -33,11 +33,8 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    // GB_new does not always initialize A->p; GB_check fails in this case.  So
-    // the following assertion is not possible here.  This is by design.
-    // Thus, ASSERT_OK (GB_check (A, "A", ...)) ;  cannot be used here.
-    ASSERT (A != NULL && A->p != NULL) ;
-    ASSERT ((!(A->is_hyper) || A->h != NULL)) ;
+    // GB_new does not always initialize or even allocate A->p
+    ASSERT (A != NULL) ;
 
     if (nzmax > GB_INDEX_MAX)
     { 

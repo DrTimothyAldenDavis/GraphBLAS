@@ -77,8 +77,8 @@ void GB_cast_array              // typecast an array
         // generic worker: typecasting for compact case only
         //----------------------------------------------------------------------
 
-        int64_t csize = GB_code_size (code1) ;
-        int64_t asize = GB_code_size (code2) ;
+        int64_t csize = GB_code_size (code1, 1) ;
+        int64_t asize = GB_code_size (code2, 1) ;
         GB_cast_function cast_A_to_C = GB_cast_factory (code1, code2) ;
 
         #pragma omp parallel for num_threads(nthreads)

@@ -99,6 +99,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                         GB_Global_malloc_debug_count_decrement ( ) ;         \
                 }                                                            \
             }
+            bool ok ;
             #include "GB_critical_section.c"
         }
 
@@ -138,6 +139,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                         GB_Global_inuse_decrement ((nitems_old - nitems_new) \
                             * size_of_item) ;                                \
                     }
+                    bool ok ;
                     #include "GB_critical_section.c"
                 }
             }
@@ -154,6 +156,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             (*ok) = true ;
             if (malloc_tracking)
             {
+                bool ok ;
                 if (nitems_new < nitems_old)
                 {
                     // decrease the amount of memory in use

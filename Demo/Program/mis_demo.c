@@ -163,6 +163,7 @@ GrB_Info mis_check_results
 
     fprintf (stderr, "maximal independent set OK: %.16g of %.16g nodes\n",
         (double) isize, (double) n) ;
+    return (GrB_SUCCESS) ;
 }
 
 //------------------------------------------------------------------------------

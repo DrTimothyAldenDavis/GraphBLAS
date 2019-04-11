@@ -1,0 +1,129 @@
+//------------------------------------------------------------------------------
+// GB_add_phased: C = A+B, C<M>=A+B, or C<!M> = A+B
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// GB_add (C, M, A, B, op), adds C = op (A,B), using the given operator
+// element-wise on the matrices A and B.  The result is typecasted as needed.
+// The pattern of C is the union of the pattern of A and B, intersection
+// with the mask M or !M, if present.
+
+// Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
+// If both A(i,j) and B(i,j) are present, then:
+
+//      C(i,j) = (ctype) op ((xtype) A(i,j), (ytype) B(i,j))
+
+// If just A(i,j) is present but not B(i,j), then:
+
+//      C(i,j) = (ctype) A (i,j)
+
+// If just B(i,j) is present but not A(i,j), then:
+
+//      C(i,j) = (ctype) B (i,j)
+
+// ctype is the type of matrix C.  The pattern of C is the union of A and B.
+
+#include "GB.h"
+
+GrB_Info GB_add_phased      // C=A+B, C<M>=A+B, or C<!M>=A+B
+(
+    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    const GrB_Type ctype,   // type of output matrix C
+    const bool C_is_csc,    // format of output matrix C
+    const GrB_Matrix M,     // optional mask for C, unused if NULL
+    const bool Mask_comp,   // descriptor for M
+    const GrB_Matrix A,     // input A matrix
+    const GrB_Matrix B,     // input B matrix
+    const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    GB_Context Context
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (Chandle != NULL) ;
+    ASSERT_OK (GB_check (A, "A for add phased", GB0)) ;
+    ASSERT_OK (GB_check (B, "B for add phased", GB0)) ;
+    ASSERT_OK (GB_check (op, "op for add phased", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (M, "M for add phased", GB0)) ;
+    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
+    if (M != NULL)
+    {
+        ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
+        ASSERT (A->vdim == M->vdim && A->vlen == M->vlen) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase0: determine the vectors in C(:,j)
+    //--------------------------------------------------------------------------
+
+    int64_t Cnvec, max_Cnvec ;
+    int64_t *Ch, *C_to_M, *C_to_A, *C_to_B ;
+
+    GrB_Info info = GB_add_phase0 (&Cnvec, &max_Cnvec, &Ch, &C_to_M, &C_to_A,
+        &C_to_B, ((Mask_comp) ? NULL : M), A, B, Context) ;
+    if (info != GrB_SUCCESS)
+    {
+        // out of memory
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase1: count the entries in each vector of C
+    //--------------------------------------------------------------------------
+
+    int64_t Cnvec_nonempty ;
+    int64_t *Cp ;
+    info = GB_add_phase1 (&Cp, &Cnvec_nonempty, Cnvec, Ch, C_to_M, C_to_A,
+        C_to_B, M, Mask_comp, A, B, Context) ;
+    if (info != GrB_SUCCESS)
+    {
+        // out of memory
+        GB_FREE_MEMORY (Ch,     max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase2: compute each vector of C
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix C ;
+    info = GB_add_phase2 (&C, ctype, C_is_csc, op,
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Cp, Cnvec_nonempty,
+        M, Mask_comp, A, B, Context) ;
+
+    // free workspace
+    GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+
+    if (info != GrB_SUCCESS)
+    {
+        // out of memory
+        GB_FREE_MEMORY (Ch, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
+        return (info) ;
+    }
+
+    // Ch and Cp must not be freed; they are now C->h and C->p
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    ASSERT_OK (GB_check (C, "C output for add phased", GB0)) ;
+    (*Chandle) = C ;
+    return (GrB_SUCCESS) ;
+}
+

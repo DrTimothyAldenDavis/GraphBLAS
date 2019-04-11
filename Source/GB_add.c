@@ -46,7 +46,9 @@
 // The output C is hypersparse if both A and B are hypersparse; otherwise
 // C is not hypersparse.
 
-// FUTURE: this could be faster with built-in operators and types.
+// TODO: this could be faster with built-in operators and types.
+
+// TODO use the Mask:  do C=A+B, C<M>=A+B, and C<!M>=A+B
 
 // PARALLEL: use 1D parallelism here.  Either do the work in symbolic/numeric
 // phases (one to compute nnz in each column, one to fill the output), or
@@ -66,6 +68,11 @@ GrB_Info GB_add             // C = A+B
     GB_Context Context
 )
 {
+
+    return (GB_add_phased (Chandle, ctype, C_is_csc, NULL, false, A, B, op,
+        Context)) ;
+
+#if 0
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -385,6 +392,9 @@ GrB_Info GB_add             // C = A+B
     ASSERT (info == GrB_SUCCESS) ;
     ASSERT_OK (GB_check (C, "C output for C=A+B", GB0)) ;
     (*Chandle) = C ;
+
+
     return (GrB_SUCCESS) ;
+#endif
 }
 
