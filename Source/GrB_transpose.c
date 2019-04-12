@@ -9,8 +9,6 @@
 
 // C<M> = accum (C,A') or accum (C,A)
 
-// parallel: not here; see GB_transpose and GB_shallow_cast
-
 #include "GB.h"
 
 GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)

@@ -67,7 +67,7 @@ GrB_Info GB_add             // C = A+B
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Context Context
 )
-{
+{ 
 
     return (GB_add_phased (Chandle, ctype, C_is_csc, NULL, false, A, B, op,
         Context)) ;
@@ -113,11 +113,11 @@ GrB_Info GB_add             // C = A+B
     if (C_is_hyper)
     {
         if (A->nvec_nonempty < 0)
-        { 
+        {
             A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
         }
         if (B->nvec_nonempty < 0)
-        { 
+        {
             B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
         }
         cplen = A->nvec_nonempty + B->nvec_nonempty ;
@@ -131,7 +131,7 @@ GrB_Info GB_add             // C = A+B
         GB_SAME_HYPER_AS (C_is_hyper), A->hyper_ratio, cplen,
         GB_NNZ (A) + GB_NNZ (B), true, Context) ;
     if (info != GrB_SUCCESS)
-    { 
+    {
         return (info) ;
     }
 
@@ -163,7 +163,7 @@ GrB_Info GB_add             // C = A+B
         (ctype->code   == op->ztype->code) ;
 
     if (nocasting && A->type == ctype && B->type == ctype)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C = A + B, no typecasting at all, all types the same
@@ -191,11 +191,11 @@ GrB_Info GB_add             // C = A+B
                 int64_t ia = Ai [pa] ;
                 int64_t ib = Bi [pb] ;
                 if (ia < ib)
-                { 
+                {
                     // C (ia:ib-1,j) = A (ia:ib-1,j)
                     int64_t pa2 = pa ;
                     do
-                    { 
+                    {
                         pa2++ ;
                     }
                     while (pa2 < pa_end && Ai [pa2] < ib) ;
@@ -206,11 +206,11 @@ GrB_Info GB_add             // C = A+B
                     cnz += alen ;
                 }
                 else if (ib < ia)
-                { 
+                {
                     // C (ib:ia-1,j) = B (ib:ia-1,j)
                     int64_t pb2 = pb ;
                     do
-                    { 
+                    {
                         pb2++ ;
                     }
                     while (pb2 < pb_end && Bi [pb2] < ia) ;
@@ -221,7 +221,7 @@ GrB_Info GB_add             // C = A+B
                     cnz += blen ;
                 }
                 else // ia == ib == i
-                { 
+                {
                     // C (i,j) = fadd (A (i,j), B (i,j))
                     Ci [cnz] = ib ;
                     fadd (Cx +(cnz*s), Ax +(pa*s), Bx +(pb*s)) ;
@@ -236,14 +236,14 @@ GrB_Info GB_add             // C = A+B
             //------------------------------------------------------------------
 
             if (pa < pa_end)
-            { 
+            {
                 int64_t alen = pa_end - pa ;
                 memcpy (&Ci [cnz  ], &Ai [pa  ], alen * sizeof (int64_t)) ;
                 memcpy (Cx +(cnz*s), Ax +(pa*s), alen * s) ;
                 cnz += alen ;
             }
             else if (pb < pb_end)
-            { 
+            {
                 int64_t blen = pb_end - pb ;
                 memcpy (&Ci [cnz  ], &Bi [pb  ], blen * sizeof (int64_t)) ;
                 memcpy (Cx +(cnz*s), Bx +(pb*s), blen * s) ;
@@ -266,7 +266,7 @@ GrB_Info GB_add             // C = A+B
 
     }
     else
-    { 
+    {
 
         //----------------------------------------------------------------------
         // C = A + B, with any typecasting
@@ -309,7 +309,7 @@ GrB_Info GB_add             // C = A+B
                 int64_t ia = Ai [pa] ;
                 int64_t ib = Bi [pb] ;
                 if (ia < ib)
-                { 
+                {
                     // C (ia,j) = A (ia,j)
                     Ci [cnz] = ia ;
                     // Cx [cnz] = Ax [pa]
@@ -317,7 +317,7 @@ GrB_Info GB_add             // C = A+B
                     pa++ ;
                 }
                 else if (ia > ib)
-                { 
+                {
                     // C (ib,j) = B (ib,j)
                     Ci [cnz] = ib ;
                     // Cx [cnz] = Bx [pb]
@@ -325,16 +325,16 @@ GrB_Info GB_add             // C = A+B
                     pb++ ;
                 }
                 else
-                { 
+                {
                     // C (i,j) = fadd (A (i,j), B (i,j))
                     Ci [cnz] = ib ;
                     if (nocasting)
-                    { 
+                    {
                         // operator requires no typecasting
                         fadd (Cx +(cnz*csize), Ax +(pa*asize), Bx +(pb*bsize)) ;
                     }
                     else
-                    { 
+                    {
                         // xwork = (xtype) Ax [pa]
                         cast_A_to_X (xwork, Ax +(pa*asize), asize) ;
                         // ywork = (ytype) Bx [pa]
@@ -354,14 +354,14 @@ GrB_Info GB_add             // C = A+B
             //------------------------------------------------------------------
 
             for ( ; pa < pa_end ; pa++, cnz++)
-            { 
+            {
                 // C (i,j) = A (i,j)
                 Ci [cnz] = Ai [pa] ;
                 // Cx [cnz] = (ctype) Ax [pa]
                 cast_A_to_C (Cx +(cnz*csize), Ax +(pa*asize), csize) ;
             }
             for ( ; pb < pb_end ; pb++, cnz++)
-            { 
+            {
                 // C (i,j) = B (i,j)
                 Ci [cnz] = Bi [pb] ;
                 // Cx [cnz] = (ctype) Bx [pb]

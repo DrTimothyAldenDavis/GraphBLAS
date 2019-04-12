@@ -9,8 +9,6 @@
 
 // w<M> = accum (w,u+v)
 
-// parallel: not here but in GB_add
-
 #include "GB.h"
 
 #define GB_EWISE(op)                                                        \
@@ -128,3 +126,4 @@ GrB_Info GrB_eWiseAdd_Vector_Semiring       // w<M> = accum (w, u+v)
 
     GB_EWISE (semiring->add->op) ;
 }
+

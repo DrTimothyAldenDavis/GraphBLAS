@@ -106,8 +106,7 @@
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower:
-// TODO Compact is on
-#define GBCOMPACT 1
+// #define GBCOMPACT 1
 
 // uncomment this for code development (additional diagnostics are printed):
 // #define GB_DEVELOPER 1
@@ -1250,15 +1249,18 @@ GrB_Info GB_add             // C = A+B
     GB_Context Context
 ) ;
 
-GrB_Info GB_add_phase0
+GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    int64_t *p_max_Cnvec,       // size of the 4 following arrays:
-    int64_t **Ch_handle,        // output of size max_Cnvec, or NULL
-    int64_t **C_to_M_handle,    // output of size max_Cnvec, or NULL
-    int64_t **C_to_A_handle,    // output of size max_Cnvec, or NULL
-    int64_t **C_to_B_handle,    // output of size max_Cnvec, or NULL
+    int64_t *p_max_Cnvec,       // size of the 3 output arrays:
+    int64_t **Ch_handle,        // Ch: output of size max_Cnvec, or NULL
+    int64_t **C_to_A_handle,    // C_to_A: output of size max_Cnvec, or NULL
+    int64_t **C_to_B_handle,    // C_to_B: output of size max_Cnvec, or NULL
+    bool *p_Ch_is_Mh,           // if true, then Ch == M->h
+
+    // input
     const GrB_Matrix M,         // optional mask, may be NULL
+    const bool Mask_comp,       // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -1269,15 +1271,16 @@ GrB_Info GB_add_phase1
     int64_t **Cp_handle,        // output of size Cnvec+1
     int64_t *Cnvec_nonempty,    // # of non-empty vectors in C
 
-    // analysis from GB_add_phase0:
+    // analysis from GB_add_phase0
     const int64_t Cnvec,
     const int64_t *restrict Ch,
-    const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
+    const bool Ch_is_Mh,        // if true, then Ch == M->h
 
+    // original input
     const GrB_Matrix M,         // optional mask, may be NULL
-    bool Mask_comp,
+    const bool Mask_comp,       // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -1290,19 +1293,21 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
 
-    // analysis from GB_add_phase0:
-    const int64_t Cnvec,
-    const int64_t *restrict Ch,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-
     // from GB_add_phase1
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
 
+    // analysis from GB_add_phase0:
+    const int64_t Cnvec,
+    const int64_t max_Cnvec,
+    const int64_t *restrict Ch,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const bool Ch_is_Mh,        // if true, then Ch == M->h
+
+    // original input
     const GrB_Matrix M,         // optional mask, may be NULL
-    bool Mask_comp,
+    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context

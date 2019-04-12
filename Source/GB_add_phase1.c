@@ -7,10 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// GB_add_phase1 counts the number of entries in each column of C(:,j), for
-// C=A+B, C<M>=A+B, or C<!M>=A+B, and then does a cumulative sum to find Cp.
+// GB_add_phase1 counts the number of entries in each vector of C, for C=A+B,
+// C<M>=A+B, or C<!M>=A+B, and then does a cumulative sum to find Cp.
 // GB_add_phase1 is preceded by GB_add_phase0, which finds the non-empty
-// columns of C(:,j).  This phase is done entirely in parallel.
+// vectors of C.  This phase is done entirely in parallel.
 
 // C, M, A, and B can be standard sparse or hypersparse, as determined by
 // GB_add_phase0.  All cases of the mask M are handled: not present, present
@@ -23,15 +23,15 @@ GrB_Info GB_add_phase1
     int64_t **Cp_handle,        // output of size Cnvec+1
     int64_t *Cnvec_nonempty,    // # of non-empty vectors in C
 
-    // analysis from GB_add_phase0:
+    // analysis from GB_add_phase0
     const int64_t Cnvec,
     const int64_t *restrict Ch,
-    const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
+    const bool Ch_is_Mh,        // if true, then Ch == M->h
 
     const GrB_Matrix M,         // optional mask, may be NULL
-    bool Mask_comp,
+    const bool Mask_comp,       // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -63,21 +63,28 @@ GrB_Info GB_add_phase1
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ai = A->i ;
+
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bi = B->i ;
 
     const int64_t *restrict Mp = NULL ;
+    const int64_t *restrict Mh = NULL ;
     const int64_t *restrict Mi = NULL ;
     const GB_void *restrict Mx = NULL ;
     GB_cast_function cast_M = NULL ;
     size_t msize = 0 ;
+    int64_t Mnvec = 0 ;
+    bool M_is_hyper = false ;
     if (M != NULL)
-    {
+    { 
         Mp = M->p ;
+        Mh = M->h ;
         Mi = M->i ;
         Mx = M->x ;
         cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
         msize = M->type->size ;
+        Mnvec = M->nvec ;
+        M_is_hyper = M->is_hyper ;
     }
 
     //--------------------------------------------------------------------------
@@ -86,7 +93,7 @@ GrB_Info GB_add_phase1
 
     GB_CALLOC_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
     if (Cp == NULL)
-    {
+    { 
         return (GB_OUT_OF_MEMORY) ;
     }
 
@@ -94,7 +101,9 @@ GrB_Info GB_add_phase1
     // count the entries in each vector of C
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads)
+    int64_t cnvec_nonempty = 0 ;
+
+    #pragma omp parallel for num_threads(nthreads) reduction(+:cnvec_nonempty)
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {
 
@@ -113,7 +122,7 @@ GrB_Info GB_add_phase1
         int64_t pA_end = -1 ;
         int64_t kA = (C_to_A == NULL) ? j : C_to_A [k] ;
         if (kA >= 0)
-        {
+        { 
             pA     = Ap [kA] ;
             pA_end = Ap [kA+1] ;
         }
@@ -128,7 +137,7 @@ GrB_Info GB_add_phase1
         int64_t pB_end = -1 ;
         int64_t kB = (C_to_B == NULL) ? j : C_to_B [k] ;
         if (kB >= 0)
-        {
+        { 
             pB     = Bp [kB] ;
             pB_end = Bp [kB+1] ;
         }
@@ -141,17 +150,19 @@ GrB_Info GB_add_phase1
 
         int64_t pM = -1 ;
         int64_t pM_end = -1 ;
-        int64_t mjnz = 0 ;
-        if (M != NULL)
-        {
-            int64_t kM = (C_to_M == NULL) ? j : C_to_M [k] ;
-            if (kM >= 0)
-            {
-                pM     = Mp [kM] ;
-                pM_end = Mp [kM+1] ;
-            }
-            mjnz = pM_end - pM ;        // nnz (M (:,j))
+        if (Ch_is_Mh)
+        { 
+            // Ch is the same as M->h, so binary search is not needed
+            ASSERT (Ch != NULL && Mh != NULL && Ch [k] == Mh [k]) ;
+            pM     = Mp [k] ;
+            pM_end = Mp [k+1] ;
         }
+        else if (M != NULL)
+        { 
+            int64_t kM = 0 ;
+            GB_lookup (M_is_hyper, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
+        }
+        int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
         // printf ("   ["GBd":"GBd"] mjnz  : "GBd"\n", pM, pM_end, mjnz) ;
 
         //----------------------------------------------------------------------
@@ -161,7 +172,7 @@ GrB_Info GB_add_phase1
         int64_t cjnz = 0 ;
 
         if (M != NULL && mjnz == 0 && !Mask_comp)
-        {
+        { 
 
             //------------------------------------------------------------------
             // M(:,j) is empty and not complemented
@@ -178,10 +189,10 @@ GrB_Info GB_add_phase1
             // No mask, or M(:,j) is empty and complemented
             //------------------------------------------------------------------
 
-            // the Mask M(:,j) is ignored since !M(:,j) is all true
+            // if present, M(:,j) is ignored since !M(:,j) is all true
 
             if (ajnz == 0)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // A(:,j) is empty
@@ -191,7 +202,7 @@ GrB_Info GB_add_phase1
 
             }
             else if (bjnz == 0)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // B(:,j) is empty
@@ -201,7 +212,7 @@ GrB_Info GB_add_phase1
 
             }
             else if (Ai [pA_end-1] < Bi [pB] || Bi [pB_end-1] < Ai [pA])
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // intersection of A(:,j) and B(:,j) is empty
@@ -223,7 +234,7 @@ GrB_Info GB_add_phase1
 
                 cjnz = ajnz + bjnz ;
                 for ( ; pB < pB_end ; pB++)
-                {
+                { 
                     int64_t i = Bi [pB] ;
                     // find i in A(:,j)
                     int64_t pright = pA_end ;
@@ -244,7 +255,7 @@ GrB_Info GB_add_phase1
 
                 cjnz = ajnz + bjnz ;
                 for ( ; pA < pA_end ; pA++)
-                {
+                { 
                     int64_t i = Ai [pA] ;
                     // find i in B(:,j)
                     int64_t pright = pB_end ;
@@ -263,22 +274,22 @@ GrB_Info GB_add_phase1
 
                 // linear-time scan of A(:,j) and B(:,j)
 
-                for (cjnz = 0 ; pA < pA_end && pB < pB_end ; cjnz++)
+                for ( ; pA < pA_end && pB < pB_end ; cjnz++)
                 {
                     int64_t iA = Ai [pA] ;
                     int64_t iB = Bi [pB] ;
                     if (iA < iB)
-                    {
+                    { 
                         // A(i,j) exists but not B(i,j)
                         pA++ ;
                     }
                     else if (iB < iA)
-                    {
+                    { 
                         // B(i,j) exists but not A(i,j)
                         pB++ ;
                     }
                     else
-                    {
+                    { 
                         // both A(i,j) and B(i,j) exist
                         pA++ ;
                         pB++ ;
@@ -306,6 +317,8 @@ GrB_Info GB_add_phase1
                 int64_t iB = (pB < pB_end) ? Bi [pB] : INT64_MAX ;
                 int64_t i = GB_IMIN (iA, iB) ;
 
+                // printf ("i : "GBd"\n", i) ;
+
                 //--------------------------------------------------------------
                 // get M(i,j)
                 //--------------------------------------------------------------
@@ -330,12 +343,13 @@ GrB_Info GB_add_phase1
             }
         }
 
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
         // final count of nnz (C (:,j))
-        //------------------------------------------------------------------
+        //----------------------------------------------------------------------
 
-        // printf ("Cp ["GBd"] = "GBd"\n", k, cjnz) ;
+        // printf ("here Cp ["GBd"] = "GBd"\n", k, cjnz) ;
         Cp [k] = cjnz ;
+        if (cjnz > 0) cnvec_nonempty++ ;
     }
 
     //--------------------------------------------------------------------------
@@ -343,14 +357,7 @@ GrB_Info GB_add_phase1
     //--------------------------------------------------------------------------
 
     GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;
-
-//  for (int64_t k = 0 ; k <= Cnvec ; k++)
-//  {
-//      printf ("final Cp ["GBd"] = "GBd"\n", k, Cp [k]) ;
-//  }
-
-    // TODO: if Cnvec_nonempty << Cnvec, then prune Cp, Ch, C_to_*
-
+    // printf ("Cnvec_nonempty "GBd"\n", *Cnvec_nonempty) ;
     (*Cp_handle) = Cp ;
     return (GrB_SUCCESS) ;
 }

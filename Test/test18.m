@@ -152,6 +152,7 @@ for k1 = k1test % 1:length (classes)
                                 GB_spec_compare (w0, w1) ;
 
                                 % C = A+B with mask
+save gunk C Mask accum op A B dnn
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, Mask, accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...

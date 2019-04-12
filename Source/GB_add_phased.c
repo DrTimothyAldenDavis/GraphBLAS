@@ -56,7 +56,7 @@ GrB_Info GB_add_phased      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     if (M != NULL)
-    {
+    { 
         ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
         ASSERT (A->vdim == M->vdim && A->vlen == M->vlen) ;
     }
@@ -66,57 +66,61 @@ GrB_Info GB_add_phased      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     int64_t Cnvec, max_Cnvec ;
-    int64_t *Ch, *C_to_M, *C_to_A, *C_to_B ;
+    int64_t *Ch, *C_to_A, *C_to_B ;
+    bool Ch_is_Mh ;
 
-    GrB_Info info = GB_add_phase0 (&Cnvec, &max_Cnvec, &Ch, &C_to_M, &C_to_A,
-        &C_to_B, ((Mask_comp) ? NULL : M), A, B, Context) ;
+    GrB_Info info = GB_add_phase0 (
+        &Cnvec, &max_Cnvec, &Ch, &C_to_A, &C_to_B, &Ch_is_Mh, // comp. by phase1
+        M, Mask_comp, A, B, Context) ;          // original input
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         return (info) ;
     }
 
     //--------------------------------------------------------------------------
-    // phase1: count the entries in each vector of C
+    // phase1: count the number of entries in each vector of C
     //--------------------------------------------------------------------------
 
     int64_t Cnvec_nonempty ;
     int64_t *Cp ;
-    info = GB_add_phase1 (&Cp, &Cnvec_nonempty, Cnvec, Ch, C_to_M, C_to_A,
-        C_to_B, M, Mask_comp, A, B, Context) ;
+    info = GB_add_phase1 (
+        &Cp, &Cnvec_nonempty,                   // computed by phase1
+        Cnvec, Ch, C_to_A, C_to_B, Ch_is_Mh,    // from phase0
+        M, Mask_comp, A, B, Context) ;          // original input
     if (info != GrB_SUCCESS)
-    {
-        // out of memory
+    { 
+        // out of memory; free everything allocated by GB_add_phase0
         GB_FREE_MEMORY (Ch,     max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
         GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
         GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
     //--------------------------------------------------------------------------
-    // phase2: compute each vector of C
+    // phase2: compute the entries (indices and values) in each vector of C
     //--------------------------------------------------------------------------
 
     GrB_Matrix C ;
-    info = GB_add_phase2 (&C, ctype, C_is_csc, op,
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Cp, Cnvec_nonempty,
-        M, Mask_comp, A, B, Context) ;
+    info = GB_add_phase2 (
+        &C, ctype, C_is_csc, op,                // computed or used by phase2
+        Cp, Cnvec_nonempty,                             // from phase1
+        Cnvec, max_Cnvec, Ch, C_to_A, C_to_B, Ch_is_Mh, // from phase0
+        M, Mask_comp, A, B, Context) ;                  // original input
 
-    // free workspace
-    GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
+    // free workspace (but not Cp or Ch)
     GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
     GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
 
     if (info != GrB_SUCCESS)
-    {
-        // out of memory
-        GB_FREE_MEMORY (Ch, max_Cnvec, sizeof (int64_t)) ;
+    { 
+        // out of memory; free everything else allocated by phase0 and phase1
         GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Ch, max_Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
-    // Ch and Cp must not be freed; they are now C->h and C->p
+    // if successful, Ch and Cp must not be freed; they are now C->h and C->p
 
     //--------------------------------------------------------------------------
     // return result
