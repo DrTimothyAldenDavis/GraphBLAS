@@ -38,6 +38,8 @@
 // better approach in parallel would be to do it like a matrix add (see
 // GB_add).  Some work is done in GB_builder, which can be done in parallel.
 
+// TODO: do not use this merge approach.  Just use GB_add_phased.
+
 #include "GB.h"
 
 GrB_Info GB_wait                // finish all pending computations

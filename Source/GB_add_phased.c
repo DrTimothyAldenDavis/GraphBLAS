@@ -7,10 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// GB_add (C, M, A, B, op), adds C = op (A,B), using the given operator
+// GB_add_phased (C, M, A, B, op), does C<M>=op(A,B), using the given operator
 // element-wise on the matrices A and B.  The result is typecasted as needed.
-// The pattern of C is the union of the pattern of A and B, intersection
-// with the mask M or !M, if present.
+// The pattern of C is the union of the pattern of A and B, intersection with
+// the mask M or !M, if present.
 
 // Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
 // If both A(i,j) and B(i,j) are present, then:

@@ -185,6 +185,9 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // copy M->h into Ch
         GB_memcpy (Ch, M->h, Mnvec * sizeof (int64_t), nthreads) ;
 
+        // TODO: if A and M are aliased (M->h == A->h) then C_to_A [k] == k
+        // TODO: if B and M are aliased (M->h == B->h) then C_to_B [k] == k
+
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)
         {
@@ -227,7 +230,8 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         }
 
         // TODO this is sequential.  Use a parallel merge?  Ah and Bh are
-        // sorted, and the result Ch must be sorted too.
+        // sorted, and the result Ch must be sorted too.  Or use qsort and
+        // then a merge of duplicates?
 
         // merge Ah and Bh into Ch
         int64_t kA = 0 ;

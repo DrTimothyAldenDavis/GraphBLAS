@@ -148,6 +148,8 @@ GrB_Info GB_add_phase1
         // get M(:,j)
         //----------------------------------------------------------------------
 
+        // TODO: if A==M or B==M is aliased, then no need to do GB_lookup
+
         int64_t pM = -1 ;
         int64_t pM_end = -1 ;
         if (Ch_is_Mh)
@@ -184,6 +186,9 @@ GrB_Info GB_add_phase1
         }
         else if (M == NULL || (M != NULL && mjnz == 0 && Mask_comp))
         {
+
+            // TODO if A(:,j) or B(:,j) are dense, then C(:,j) is dense
+            // and then cjnz = A->vlen
 
             //------------------------------------------------------------------
             // No mask, or M(:,j) is empty and complemented

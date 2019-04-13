@@ -100,6 +100,8 @@
         // get M(:,j)
         //----------------------------------------------------------------------
 
+        // TODO: if A==M or B==M is aliased, then no need to do GB_lookup
+
         int64_t pM = -1 ;
         int64_t pM_end = -1 ;
         if (Ch_is_Mh)
