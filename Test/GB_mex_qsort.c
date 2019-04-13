@@ -38,11 +38,11 @@ void mexFunction
     int64_t *J = mxGetData (pargout [0]) ;
     memcpy (J, I, n * sizeof (int64_t)) ;
 
-    TIC ;
+    GB_MEX_TIC ;
 
     GB_qsort_1 (J, n, Context) ;
 
-    TOC ;
+    GB_MEX_TOC ;
     GB_mx_put_time (0) ;
 }
 

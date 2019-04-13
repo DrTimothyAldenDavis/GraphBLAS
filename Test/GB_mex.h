@@ -44,8 +44,8 @@ void GB_mx_put_time
     GrB_Desc_Value AxB_method_used
 ) ;
 void GB_mx_clear_time ( ) ;             // clear the time and start the tic
-#define TIC { GB_mx_clear_time ( ) ; }
-#define TOC { gbtime = simple_toc (tic) ; }
+#define GB_MEX_TIC { GB_mx_clear_time ( ) ; }
+#define GB_MEX_TOC { gbtime = simple_toc (tic) ; }
 
 void GB_mx_abort ( ) ;                  // assertion failure
 
@@ -339,9 +339,12 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
     if (!malloc_debug)                                                      \
     {                                                                       \
         /* no malloc debugging; just call the method */                     \
-        TIC ;                                                               \
+        GB_MEX_TIC ;                                                        \
         GrB_Info info = GRAPHBLAS_OPERATION ;                               \
-        TOC ;                                                               \
+        /* Finish the work since we're returning to MATLAB. */              \
+        /* This allows proper timing with gbresults.m */                    \
+        GrB_wait ( ) ;                                                      \
+        GB_MEX_TOC ;                                                        \
         if (info == GrB_PANIC) mexErrMsgTxt ("panic!") ;                    \
         if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))                \
         {                                                                   \
@@ -362,9 +365,10 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
             METHOD_TRY ;                                                    \
             /* call the method with malloc debug enabled */                 \
             GB_Global_malloc_debug_set (true) ;                             \
-            TIC ;                                                           \
+            GB_MEX_TIC ;                                                    \
             GrB_Info info = GRAPHBLAS_OPERATION ;                           \
-            TOC ;                                                           \
+            /* do not finish the work */                                    \
+            GB_MEX_TOC ;                                                    \
             GB_Global_malloc_debug_set (false) ;                            \
             if (tries > 1000000) mexErrMsgTxt ("infinite loop!") ;          \
             if (info == GrB_SUCCESS || info == GrB_NO_VALUE)                \

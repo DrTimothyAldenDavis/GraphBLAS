@@ -7,11 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// Returns the # of threads that GraphBLAS can use internally.
+// Returns the status of all global settings.
+
+// TODO: add version #, 
 
 #include "GB_mex.h"
 
-#define USAGE "nthreads_max = GB_mex_init"
+#define USAGE "[nthreads_max threading thread_safety format hyperratio] = GB_mex_init"
 
 void mexFunction
 (
@@ -31,6 +33,22 @@ void mexFunction
     int nthreads_max ;
     GxB_get (GxB_NTHREADS, &nthreads_max) ;
     pargout [0] = mxCreateDoubleScalar (nthreads_max) ;
+
+    GxB_Thread_Model threading ;
+    GxB_get (GxB_THREADING, &threading) ;
+    pargout [1] = mxCreateDoubleScalar (threading) ;
+
+    GxB_Thread_Model thread_safety ;
+    GxB_get (GxB_THREAD_SAFETY, &thread_safety) ;
+    pargout [2] = mxCreateDoubleScalar (thread_safety) ;
+
+    GxB_Format_Value format ;
+    GxB_get (GxB_FORMAT, &format) ;
+    pargout [3] = mxCreateDoubleScalar (format) ;
+
+    double hyperratio ;
+    GxB_get (GxB_HYPER, &hyperratio) ;
+    pargout [4] = mxCreateDoubleScalar (hyperratio) ;
 
     GrB_finalize ( ) ;
 }

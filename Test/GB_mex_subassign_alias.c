@@ -74,9 +74,6 @@ void mexFunction
     METHOD (GxB_subassign (C, C, accum, C, GrB_ALL, nrows, GrB_ALL, ncols,
         desc)) ;
 
-    GrB_wait ( ) ;
-    TOC ;
-
     // return C to MATLAB as a struct and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
 

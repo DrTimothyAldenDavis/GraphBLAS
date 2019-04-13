@@ -59,7 +59,7 @@ void mexFunction
 
     // compute the PageRank P
     int iters = 0 ;
-    TIC ;
+    GB_MEX_TIC ;
     if (nargin > 1)
     {
         // printf ("dpagerank2, method %d\n", method) ;
@@ -69,7 +69,7 @@ void mexFunction
     {
         info = dpagerank (&P, A) ;
     }
-    TOC ;
+    GB_MEX_TOC ;
 
     if (info != GrB_SUCCESS)
     {

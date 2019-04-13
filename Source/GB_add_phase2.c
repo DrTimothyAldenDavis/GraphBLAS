@@ -128,14 +128,14 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    #define GB_AplusB(mult,xyname) GB_AplusB_ ## mult ## xyname
+    #define GB_AaddB(mult,xyname) GB_AaddB_ ## mult ## xyname
 
-    #define GB_BINOP_WORKER(mult,xyname)                                      \
-    {                                                                         \
-        GB_AplusB(mult,xyname) (C, M, Mask_comp, A, B, Ch_is_Mh,              \
-            C_to_A, C_to_B, nthreads) ;                                       \
-        done = true ;                                                         \
-    }                                                                         \
+    #define GB_BINOP_WORKER(mult,xyname)                            \
+    {                                                               \
+        GB_AaddB(mult,xyname) (C, M, Mask_comp, A, B, Ch_is_Mh,     \
+            C_to_A, C_to_B, nthreads) ;                             \
+        done = true ;                                               \
+    }                                                               \
     break ;
 
     //--------------------------------------------------------------------------

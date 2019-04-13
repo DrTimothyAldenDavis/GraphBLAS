@@ -14,7 +14,7 @@ void GB_DxB
     int nthreads
 ) ;
 
-void GB_AplusB
+void GB_AaddB
 (
     GrB_Matrix C,
     const GrB_Matrix M,

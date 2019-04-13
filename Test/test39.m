@@ -27,7 +27,7 @@ toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
 assert (isequal (C1, C.matrix)) ;
-fprintf ('speedup over MATLAB: %g\n', tm/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 
 fprintf ('\n===============================================================n') ;
 fprintf ('\nGraphBLAS: C = (single) A'' compared with C=A'' in MATLAB\n') ;
@@ -46,7 +46,7 @@ C2 = GB_mex_transpose (Cin, [ ], '', A) ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n', tm/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 
 [I1, J1, X1] = find (C1) ;
 [I2, J2, X2] = find (C2.matrix) ;
@@ -74,7 +74,7 @@ C2 = GB_mex_transpose (A, [ ], 'plus', B, D) ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n', tm/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C2.matrix)) ;
 
 tic
@@ -82,7 +82,7 @@ C2 = GB_mex_transpose (B, [ ], 'plus', A, D) ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n', tm/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C2.matrix)) ;
 
 clear Cin
@@ -92,7 +92,7 @@ C3 = GB_mex_eWiseAdd_Matrix (Cin, [ ], '', 'plus', A, B) ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n', tm/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C3.matrix)) ;
 
 tic
@@ -100,7 +100,7 @@ C4 = GB_mex_AplusB (A, B, 'plus') ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n', tm/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C4)) ;
 
 tic
@@ -108,7 +108,7 @@ C4 = GB_mex_AplusB (B, A, 'plus') ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n', tm/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C4)) ;
 
 fprintf ('\n===============================================================n') ;
@@ -141,7 +141,7 @@ C3 = GB_mex_eWiseAdd_Matrix (Cin, [ ], 'plus', 'plus', A, B) ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg) ;
-fprintf ('speedup over MATLAB: %g\n', tm1/tg) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm1/tg) ;
 
 assert (isequal (C1, C3.matrix)) ;
 
@@ -152,7 +152,7 @@ C4 = GB_mex_AplusB (C4, B, 'plus') ;
 toc
 tg2 = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
-fprintf ('speedup over MATLAB: %g\n', tm2/(tg1+tg2)) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm2/(tg1+tg2)) ;
 assert (isequal (C1, C4)) ;;
 
 tic
@@ -163,17 +163,17 @@ tg2 = gbresults ;
 toc
 tg = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
-fprintf ('speedup over MATLAB: %g\n', tm3/(tg1+tg2)) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm3/(tg1+tg2)) ;
 assert (isequal (C1, C4)) 
 
-tic
+tstart = tic ;
 C4 = GB_mex_AplusB (Cin, B, 'plus') ;
 tg1 = gbresults ;
 C4 = GB_mex_AplusB (C4, A, 'plus') ;
-toc
+toc (tstart)
 tg2 = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
-fprintf ('speedup over MATLAB: %g\n', tm4/(tg1+tg2)) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm4/(tg1+tg2)) ;
 assert (isequal (C1, C4)) ;;
 
 fprintf ('\ntest39: all tests passed\n') ;

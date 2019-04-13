@@ -95,6 +95,8 @@ void mexFunction
     // get the pre/run-time option
     int GET_SCALAR (4, int, pre, 0) ;
 
+    GB_MEX_TIC ;
+
     // create operator
     op = NULL ;
     if (pre)
@@ -131,6 +133,8 @@ void mexFunction
     {
         OK (GxB_select (C, NULL, NULL, op, A, lohi, desc)) ;
     }
+
+    GB_MEX_TOC ;
 
     // return C to MATLAB as a sparse matrix and free the GraphBLAS C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", false) ;

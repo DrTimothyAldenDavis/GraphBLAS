@@ -75,11 +75,6 @@ void mexFunction
     // C = A+B using the op
     METHOD (GB_add (&C, A->type, true, A, B, op, Context)) ;
 
-    // GrB_wait ( ) ;
-    // TOC ;
-    // printf ("time method: %g\n", simple_toc (tic2)) ;
-    // simple_tic (tic2) ;
-
     // return C to MATLAB as a plain sparse matrix
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C AplusB result", false) ;
 

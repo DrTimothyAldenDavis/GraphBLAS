@@ -15,7 +15,7 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):  GB_AplusB
+// A+B function (eWiseAdd):  GB_AaddB
 // A*D function (colscale):  GB_AxD
 // D*A function (rowscale):  GB_DxB
 
@@ -91,7 +91,7 @@ void GB_DxB
 // C = A+B, eWiseAdd, with any mask M
 //------------------------------------------------------------------------------
 
-void GB_AplusB
+void GB_AaddB
 (
     GrB_Matrix C,
     const GrB_Matrix M,

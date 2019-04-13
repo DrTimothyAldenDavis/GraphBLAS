@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -16,7 +15,7 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):  GB_AplusB__ge_bool
+// A+B function (eWiseAdd):  GB_AaddB__ge_bool
 // A*D function (colscale):  GB_AxD__ge_bool
 // D*A function (rowscale):  GB_DxB__ge_bool
 
@@ -92,7 +91,7 @@ void GB_DxB__ge_bool
 // C = A+B, eWiseAdd, with any mask M
 //------------------------------------------------------------------------------
 
-void GB_AplusB__ge_bool
+void GB_AaddB__ge_bool
 (
     GrB_Matrix C,
     const GrB_Matrix M,

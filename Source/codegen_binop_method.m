@@ -10,7 +10,7 @@ f = fopen ('control.m4', 'w') ;
 name = sprintf ('%s_%s', binop, fname) ;
 
 % function names
-fprintf (f, 'define(`GB_AplusB'', `GB_AplusB__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
 fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
 
@@ -59,14 +59,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.c | m4 | tail -n +9 > Generated/GB_binop__%s.c', ...
+'cat control.m4 Generator/GB_binop.c | m4 | tail -n +10 > Generated/GB_binop__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.h | m4 | tail -n +9 >> Generated/GB_binop__include.h') ;
+'cat control.m4 Generator/GB_binop.h | m4 | tail -n +10 >> Generated/GB_binop__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

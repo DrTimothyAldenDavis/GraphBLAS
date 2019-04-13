@@ -639,7 +639,7 @@ void mexFunction
 
     ASSERT_OK (GB_check (C, "Final C before wait", GB0)) ;
     GrB_wait ( ) ;
-    TOC ;
+    GB_MEX_TOC ;
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C assign result", true) ;
     FREE_ALL ;
 }
