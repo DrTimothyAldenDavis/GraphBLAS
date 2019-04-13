@@ -104,12 +104,12 @@ for k1 = k1test % 1:length (classes)
                                 Bmat = sparse (100 * sprandn (m,n, 0.2)) ;
                                 Cmat = sparse (100 * sprandn (m,n, 0.2)) ;
                                 w = sparse (100 * sprandn (m,1, 0.2)) ;
-                                u = sparse (100 * sprandn (m,1, 0.2)) ;
-                                v = sparse (100 * sprandn (m,1, 0.2)) ;
+                                uvec = sparse (100 * sprandn (m,1, 0.2)) ;
+                                vvec = sparse (100 * sprandn (m,1, 0.2)) ;
                                 Mask = sprandn (m,n,0.2) ~= 0 ;
                                 mask = sprandn (m,1,0.2) ~= 0 ;
-                                AT = Amat' ;
-                                BT = Bmat' ;
+                                ATmat = Amat' ;
+                                BTmat = Bmat' ;
 
                                 for A_is_hyper = 0:1
                                 for A_is_csc   = 0:1
@@ -118,20 +118,60 @@ for k1 = k1test % 1:length (classes)
                                 for C_is_hyper = 0 % 0:1
                                 for C_is_csc   = 0 % 0:1
 
+                                for native = 0:1
+
                                 clear A
                                 A.matrix = Amat ;
                                 A.is_hyper = A_is_hyper ;
                                 A.is_csc   = A_is_csc   ;
+                                if (native)
+                                    A.class = op.opclass ;
+                                end
+
+                                clear AT
+                                AT.matrix = ATmat ;
+                                AT.is_hyper = A_is_hyper ;
+                                AT.is_csc   = A_is_csc   ;
+                                if (native)
+                                    AT.class = op.opclass ;
+                                end
 
                                 clear B
                                 B.matrix = Bmat ;
                                 B.is_hyper = B_is_hyper ;
                                 B.is_csc   = B_is_csc   ;
+                                if (native)
+                                    B.class = op.opclass ;
+                                end
+
+                                clear BT
+                                BT.matrix = BTmat ;
+                                BT.is_hyper = B_is_hyper ;
+                                BT.is_csc   = B_is_csc   ;
+                                if (native)
+                                    BT.class = op.opclass ;
+                                end
 
                                 clear C
                                 C.matrix = Cmat ;
                                 C.is_hyper = C_is_hyper ;
                                 C.is_csc   = C_is_csc   ;
+
+                                clear u
+                                u.matrix = uvec ;
+                                u.is_csc = true ;
+                                if (native)
+                                    u.class = op.opclass ;
+                                end
+
+                                clear v
+                                v.matrix = vvec ;
+                                v.is_csc = true ;
+                                if (native)
+                                    v.class = op.opclass ;
+                                end
+
+%                               fprintf ('\n---------------------\n') ;
 
                                 %---------------------------------------
                                 % A+B
@@ -152,7 +192,7 @@ for k1 = k1test % 1:length (classes)
                                 GB_spec_compare (w0, w1) ;
 
                                 % C = A+B with mask
-save gunk C Mask accum op A B dnn
+% save gunk C Mask accum op A B dnn
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, Mask, accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
@@ -306,6 +346,12 @@ save gunk C Mask accum op A B dnn
                                     (C, Mask, accum, op, AT, BT, dtt);
                                 GB_spec_compare (C0, C1) ;
 
+%                               if (native)
+%                                   fprintf ('\n') ;
+%                                   pause
+%                               end
+
+                                end
                                 end
                                 end
                                 end

@@ -23,6 +23,9 @@
 // vectors from C, if it is hypersparse
 
 #include "GB.h"
+#ifndef GBCOMPACT
+#include "GB_binop__include.h"
+#endif
 
 GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
@@ -114,291 +117,101 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     C->magic = GB_MAGIC ;
 
     //--------------------------------------------------------------------------
-    // get content of C, M, A, and B
+    // using a built-in binary operator
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
-    const GB_void *restrict Ax = A->x ;
+    bool done = false ;
 
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bi = B->i ;
-    const GB_void *restrict Bx = B->x ;
+#ifndef GBCOMPACT
 
-    const int64_t *restrict Mp = NULL ;
-    const int64_t *restrict Mh = NULL ;
-    const int64_t *restrict Mi = NULL ;
-    const GB_void *restrict Mx = NULL ;
-    GB_cast_function cast_M = NULL ;
-    size_t msize = 0 ;
-    int64_t Mnvec = 0 ;
-    bool M_is_hyper = false ;
-    if (M != NULL)
+    //--------------------------------------------------------------------------
+    // define the worker for the switch factory
+    //--------------------------------------------------------------------------
+
+    #define GB_AplusB(mult,xyname) GB_AplusB_ ## mult ## xyname
+
+    #define GB_BINOP_WORKER(mult,xyname)                                      \
+    {                                                                         \
+        GB_AplusB(mult,xyname) (C, M, Mask_comp, A, B, Ch_is_Mh,              \
+            C_to_A, C_to_B, nthreads) ;                                       \
+        done = true ;                                                         \
+    }                                                                         \
+    break ;
+
+    //--------------------------------------------------------------------------
+    // launch the switch factory
+    //--------------------------------------------------------------------------
+
+    GB_Opcode opcode ;
+    GB_Type_code xycode, zcode ;
+
+    if (GB_binop_builtin (A, false, B, false, op,
+        false, &opcode, &xycode, &zcode) && ctype == op->ztype)
     { 
-        Mp = M->p ;
-        Mh = M->h ;
-        Mi = M->i ;
-        Mx = M->x ;
-        cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
-        msize = M->type->size ;
-        Mnvec = M->nvec ;
-        M_is_hyper = M->is_hyper ;
+        #include "GB_binop_factory.c"
+        ASSERT (done) ;
     }
 
-    int64_t *restrict Ci = C->i ;
-    GB_void *restrict Cx = C->x ;
-
-    GxB_binary_function fadd = op->function ;
-
-    size_t csize = ctype->size ;
-    size_t asize = A->type->size ;
-    size_t bsize = B->type->size ;
-
-    size_t xsize = op->xtype->size ;
-    size_t ysize = op->ytype->size ;
-    size_t zsize = op->ztype->size ;
-
-    GB_cast_function
-        cast_A_to_X, cast_B_to_Y, cast_A_to_C, cast_B_to_C, cast_Z_to_C ;
-    cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
-    cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
-    cast_A_to_C = GB_cast_factory (ctype->code,     A->type->code) ;
-    cast_B_to_C = GB_cast_factory (ctype->code,     B->type->code) ;
-    cast_Z_to_C = GB_cast_factory (ctype->code,     op->ztype->code) ;
+#endif
 
     //--------------------------------------------------------------------------
-    // compute each vector of C
+    // generic worker
     //--------------------------------------------------------------------------
 
-    // TODO make this Template/GB_add_template.c:
-
-    #pragma omp parallel for num_threads(nthreads)
-    for (int64_t k = 0 ; k < Cnvec ; k++)
+    if (!done)
     {
 
-        //----------------------------------------------------------------------
-        // scalar workspace
-        //----------------------------------------------------------------------
+        GxB_binary_function fadd = op->function ;
 
-        GB_void xwork [xsize] ;
-        GB_void ywork [ysize] ;
-        GB_void zwork [zsize] ;
+        size_t csize = ctype->size ;
+        size_t asize = A->type->size ;
+        size_t bsize = B->type->size ;
 
-        //----------------------------------------------------------------------
-        // get j, the kth vector of C
-        //----------------------------------------------------------------------
+        size_t xsize = op->xtype->size ;
+        size_t ysize = op->ytype->size ;
+        size_t zsize = op->ztype->size ;
 
-        int64_t j = (Ch == NULL) ? k : Ch [k] ;
-        int64_t pC     = Cp [k] ;
-        int64_t pC_end = Cp [k+1] ;
-        int64_t cjnz = pC_end - pC ;
-        // printf ("phase2 j : "GBd" cjnz "GBd"\n", j, cjnz) ;
-        if (cjnz == 0) continue ;
+        GB_cast_function
+            cast_A_to_X, cast_B_to_Y, cast_A_to_C, cast_B_to_C, cast_Z_to_C ;
+        cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
+        cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
+        cast_A_to_C = GB_cast_factory (ctype->code,     A->type->code) ;
+        cast_B_to_C = GB_cast_factory (ctype->code,     B->type->code) ;
+        cast_Z_to_C = GB_cast_factory (ctype->code,     op->ztype->code) ;
 
-        //----------------------------------------------------------------------
-        // get A(:,j)
-        //----------------------------------------------------------------------
+        // C(i,j) = (ctype) A(i,j), located in Ax [pA]
+        #define GB_COPY_A_TO_C(cij,Ax,pA)                                   \
+            cast_A_to_C (cij, Ax +((pA)*asize), asize) ;
 
-        int64_t pA = -1 ;
-        int64_t pA_end = -1 ;
-        int64_t kA = (C_to_A == NULL) ? j : C_to_A [k] ;
-        if (kA >= 0)
-        { 
-            pA     = Ap [kA] ;
-            pA_end = Ap [kA+1] ;
-        }
-        int64_t ajnz = pA_end - pA ;    // nnz (A (:,j))
-        // printf ("   ["GBd":"GBd"] ajnz  : "GBd"\n", pA, pA_end, ajnz) ;
+        // C(i,j) = (ctype) B(i,j), located in Bx [pB]
+        #define GB_COPY_B_TO_C(cij,Bx,pB)                                   \
+            cast_B_to_C (cij, Bx +((pB)*bsize), bsize) ;
 
-        //----------------------------------------------------------------------
-        // get B(:,j)
-        //----------------------------------------------------------------------
+        // aij = (xtype) A(i,j), located in Ax [pA]
+        #define GB_GETA(aij,Ax,pA)                                          \
+            GB_void aij [xsize] ;                                           \
+            cast_A_to_X (aij, Ax +((pA)*asize), asize) ;
 
-        int64_t pB = -1 ;
-        int64_t pB_end = -1 ;
-        int64_t kB = (C_to_B == NULL) ? j : C_to_B [k] ;
-        if (kB >= 0)
-        { 
-            pB     = Bp [kB] ;
-            pB_end = Bp [kB+1] ;
-        }
-        int64_t bjnz = pB_end - pB ;    // nnz (B (:,j))
-        // printf ("   ["GBd":"GBd"] bjnz  : "GBd"\n", pB, pB_end, bjnz) ;
+        // bij = (ytype) B(i,j), located in Bx [pB]
+        #define GB_GETB(bij,Bx,pB)                                          \
+            GB_void bij [ysize] ;                                           \
+            cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;
 
-        //----------------------------------------------------------------------
-        // get M(:,j)
-        //----------------------------------------------------------------------
+        // C(i,j) = (ctype) (A(i,j) + B(i,j))
+        #define GB_BINOP(cij, aij, bij)                                     \
+            GB_void z [zsize] ;                                             \
+            fadd (z, aij, bij) ;                                            \
+            cast_Z_to_C (cij, z, csize) ;
 
-        int64_t pM = -1 ;
-        int64_t pM_end = -1 ;
-        if (Ch_is_Mh)
-        { 
-            // Ch is the same as M->h, so binary search is not needed
-            ASSERT (Ch != NULL && Mh != NULL && Ch [k] == Mh [k]) ;
-            pM     = Mp [k] ;
-            pM_end = Mp [k+1] ;
-        }
-        else if (M != NULL)
-        { 
-            int64_t kM = 0 ;
-            GB_lookup (M_is_hyper, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
-        }
-        int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
-        // printf ("   ["GBd":"GBd"] mjnz  : "GBd"\n", pM, pM_end, mjnz) ;
+        // address of Cx [p]
+        #define GB_CX(p) Cx +((p)*csize)
 
-        //----------------------------------------------------------------------
-        // compute C(:,j)
-        //----------------------------------------------------------------------
+        #define GB_ATYPE GB_void
+        #define GB_BTYPE GB_void
+        #define GB_CTYPE GB_void
 
-        if (M == NULL || (M != NULL && mjnz == 0 && Mask_comp))
-        {
+        #include "GB_add_template.c"
 
-            //------------------------------------------------------------------
-            // No mask, or M(:,j) is empty and complemented
-            //------------------------------------------------------------------
-
-            for ( ; pA < pA_end && pB < pB_end ; pC++)
-            {
-                // both A(iA,j) and B (iB,j) are at head of lists to merge
-                int64_t iA = Ai [pA] ;
-                int64_t iB = Bi [pB] ;
-                if (iA < iB)
-                { 
-                    // C (iA,j) = A (iA,j)
-                    Ci [pC] = iA ;
-                    // Cx [pC] = Ax [pA]
-                    cast_A_to_C (Cx +(pC*csize), Ax +(pA*asize), csize) ;
-                    pA++ ;
-                }
-                else if (iA > iB)
-                { 
-                    // C (iB,j) = B (iB,j)
-                    Ci [pC] = iB ;
-                    // Cx [pC] = Bx [pB]
-                    cast_B_to_C (Cx +(pC*csize), Bx +(pB*bsize), csize) ;
-                    pB++ ;
-                }
-                else
-                { 
-                    // C (i,j) = A (i,j) + B (i,j)
-                    Ci [pC] = iB ;
-                    // xwork = (xtype) Ax [pA]
-                    cast_A_to_X (xwork, Ax +(pA*asize), asize) ;
-                    // ywork = (ytype) Bx [pA]
-                    cast_B_to_Y (ywork, Bx +(pB*bsize), bsize) ;
-                    // zwork = fadd (xwork, ywork), result is ztype
-                    fadd (zwork, xwork, ywork) ;
-                    // Cx [pC] = (ctype) zwork
-                    cast_Z_to_C (Cx +(pC*csize), zwork, csize) ;
-                    pA++ ;
-                    pB++ ;
-                }
-            }
-
-            //------------------------------------------------------------------
-            // A (:,j) or B (:,j) have entries left; not both
-            //------------------------------------------------------------------
-
-            for ( ; pA < pA_end ; pA++, pC++)
-            { 
-                // C (i,j) = A (i,j)
-                Ci [pC] = Ai [pA] ;
-                // Cx [pC] = (ctype) Ax [pA]
-                cast_A_to_C (Cx +(pC*csize), Ax +(pA*asize), csize) ;
-            }
-            for ( ; pB < pB_end ; pB++, pC++)
-            { 
-                // C (i,j) = B (i,j)
-                Ci [pC] = Bi [pB] ;
-                // Cx [pC] = (ctype) Bx [pB]
-                cast_B_to_C (Cx +(pC*csize), Bx +(pB*bsize), csize) ;
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // M is present
-            //------------------------------------------------------------------
-
-            while (pA < pA_end || pB < pB_end)
-            {
-
-                //--------------------------------------------------------------
-                // get the next i for A(:,j) + B (:,j)
-                //--------------------------------------------------------------
-
-                int64_t iA = (pA < pA_end) ? Ai [pA] : INT64_MAX ;
-                int64_t iB = (pB < pB_end) ? Bi [pB] : INT64_MAX ;
-                int64_t i = GB_IMIN (iA, iB) ;
-
-                //--------------------------------------------------------------
-                // get M(i,j)
-                //--------------------------------------------------------------
-
-                bool mij = false ;  // M(i,j) false if not present
-                int64_t pright = pM_end - 1 ;
-                bool found ;
-                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                if (found)
-                { 
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                }
-                if (Mask_comp)
-                { 
-                    mij = !mij ;
-                }
-
-                // both A(iA,j) and B (iB,j) are at head of lists to merge
-                if (iA < iB)
-                {
-                    if (mij)
-                    { 
-                        // C (i,j) = A (i,j)
-                        // Cx [pC] = Ax [pA]
-                        Ci [pC] = i ;
-                        cast_A_to_C (Cx +(pC*csize), Ax +(pA*asize), csize) ;
-                        pC++ ;
-                    }
-                    pA++ ;
-                }
-                else if (iA > iB)
-                {
-                    if (mij)
-                    { 
-                        // C (i,j) = B (i,j)
-                        // Cx [pC] = Bx [pB]
-                        Ci [pC] = i ;
-                        cast_B_to_C (Cx +(pC*csize), Bx +(pB*bsize), csize) ;
-                        pC++ ;
-                    }
-                    pB++ ;
-                }
-                else
-                {
-                    if (mij)
-                    { 
-                        // C (i,j) = A (i,j) + B (i,j)
-                        Ci [pC] = i ;
-                        // xwork = (xtype) Ax [pA]
-                        cast_A_to_X (xwork, Ax +(pA*asize), asize) ;
-                        // ywork = (ytype) Bx [pA]
-                        cast_B_to_Y (ywork, Bx +(pB*bsize), bsize) ;
-                        // zwork = fadd (xwork, ywork), result is ztype
-                        fadd (zwork, xwork, ywork) ;
-                        // Cx [pC] = (ctype) zwork
-                        cast_Z_to_C (Cx +(pC*csize), zwork, csize) ;
-                        pC++ ;
-                    }
-                    pA++ ;
-                    pB++ ;
-                }
-            }
-        }
-
-        // printf ("pC "GBd" pC_end "GBd"\n", pC, pC_end) ;
-        ASSERT (pC == pC_end) ;
     }
 
     //--------------------------------------------------------------------------

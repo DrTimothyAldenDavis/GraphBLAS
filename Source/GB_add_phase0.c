@@ -141,25 +141,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
-    // find # of non-empty vectors of M, A, and B
-    //--------------------------------------------------------------------------
-
-    if (M != NULL && M->nvec_nonempty < 0)
-    { 
-        M->nvec_nonempty = GB_nvec_nonempty (M, Context) ;
-    }
-
-    if (A->nvec_nonempty < 0)
-    { 
-        A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
-    }
-
-    if (B->nvec_nonempty < 0)
-    { 
-        B->nvec_nonempty = GB_nvec_nonempty (B, Context) ;
-    }
-
-    //--------------------------------------------------------------------------
     // get content of M, A, and B
     //--------------------------------------------------------------------------
 
@@ -239,9 +220,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // C will be hypersparse, so Ch is allocated.  The mask M is ignored.
         // Ch is the set union of Ah and Bh.
 
-        max_Cnvec = A->nvec_nonempty + B->nvec_nonempty ;
-        max_Cnvec = GB_IMIN (max_Cnvec, n) ;
-
+        max_Cnvec = GB_IMIN (Anvec + Bnvec, n) ;
         if (!GB_allocate_result (max_Cnvec, &Ch, &C_to_A, &C_to_B))
         { 
             return (GB_OUT_OF_MEMORY) ;
@@ -397,7 +376,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     //--------------------------------------------------------------------------
 
     #ifndef NDEBUG
-    printf ("Cnvec: " GBd"\n", Cnvec) ;
+    // printf ("Cnvec: " GBd"\n", Cnvec) ;
     ASSERT (A != NULL) ;        // A and B are always present
     ASSERT (B != NULL) ;
     int64_t jlast = -1 ;
@@ -417,7 +396,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
             j = Ch [k] ;
         }
 
-        printf ("phase0: k "GBd" j "GBd"\n", k, j) ;
+        // printf ("phase0: k "GBd" j "GBd"\n", k, j) ;
 
         // vectors j in Ch are sorted, and in the range 0:n-1
         ASSERT (j >= 0 && j < n) ;

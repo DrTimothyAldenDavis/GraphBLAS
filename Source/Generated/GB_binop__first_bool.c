@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -15,6 +16,7 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
+// A+B function (eWiseAdd):  GB_AplusB__first_bool
 // A*D function (colscale):  GB_AxD__first_bool
 // D*A function (rowscale):  GB_DxB__first_bool
 
@@ -29,6 +31,9 @@
 #define GB_BTYPE \
     bool
 
+#define GB_CTYPE \
+    bool
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA)  \
     bool aij = Ax [pA]
@@ -36,6 +41,14 @@
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB)  \
     ;
+
+// cij = Ax [pA]
+#define GB_COPY_A_TO_C(cij,Ax,pA) \
+    cij = Ax [pA] ;
+
+// cij = Bx [pB]
+#define GB_COPY_B_TO_C(cij,Bx,pB) \
+    cij = Bx [pB] ;
 
 #define GB_CX(p) Cx [p]
 
@@ -73,6 +86,26 @@ void GB_DxB__first_bool
 { 
     bool *restrict Cx = C->x ;
     #include "GB_AxB_rowscale_meta.c"
+}
+
+//------------------------------------------------------------------------------
+// C = A+B, eWiseAdd, with any mask M
+//------------------------------------------------------------------------------
+
+void GB_AplusB__first_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *C_to_A,
+    const int64_t *C_to_B,
+    int nthreads
+)
+{ 
+    #include "GB_add_template.c"
 }
 
 #endif

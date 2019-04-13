@@ -98,8 +98,7 @@
 // These flags are used for code development.  Uncomment them as needed.
 
 // to turn on debugging, uncomment this line:
-// TODO Debug is on
-#undef NDEBUG
+// #undef NDEBUG
 
 // to turn on memory usage debug printing, uncomment this line:
 // #define GB_PRINT_MALLOC 1

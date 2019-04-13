@@ -14,3 +14,16 @@ void GB_DxB
     int nthreads
 ) ;
 
+void GB_AplusB
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *C_to_A,
+    const int64_t *C_to_B,
+    int nthreads
+) ;
+

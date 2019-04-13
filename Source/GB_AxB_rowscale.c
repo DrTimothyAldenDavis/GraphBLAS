@@ -207,6 +207,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
+        #define GB_CTYPE GB_void
 
         if (flipxy)
         { 

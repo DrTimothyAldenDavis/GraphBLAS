@@ -15,6 +15,7 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
+// A+B function (eWiseAdd):  GB_AplusB
 // A*D function (colscale):  GB_AxD
 // D*A function (rowscale):  GB_DxB
 
@@ -29,6 +30,9 @@
 #define GB_BTYPE \
     GB_btype
 
+#define GB_CTYPE \
+    GB_ctype
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA)  \
     GB_geta
@@ -36,6 +40,14 @@
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB)  \
     GB_getb
+
+// cij = Ax [pA]
+#define GB_COPY_A_TO_C(cij,Ax,pA) \
+    cij = Ax [pA] ;
+
+// cij = Bx [pB]
+#define GB_COPY_B_TO_C(cij,Bx,pB) \
+    cij = Bx [pB] ;
 
 #define GB_CX(p) Cx [p]
 
@@ -73,6 +85,26 @@ void GB_DxB
 { 
     GB_ctype *restrict Cx = C->x ;
     #include "GB_AxB_rowscale_meta.c"
+}
+
+//------------------------------------------------------------------------------
+// C = A+B, eWiseAdd, with any mask M
+//------------------------------------------------------------------------------
+
+void GB_AplusB
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *C_to_A,
+    const int64_t *C_to_B,
+    int nthreads
+)
+{ 
+    #include "GB_add_template.c"
 }
 
 #endif
