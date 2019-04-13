@@ -3,7 +3,9 @@ function nth = gb
 %
 % nthreads_max = gb
 
-[nthreads_max threading thread_safety format hyperratio] = GB_mex_init ;
+[nthreads_max threading thread_safety format hyperratio ... 
+name version date about license compiledate compiletime api api_about] ... 
+ = GB_mex_init ;
 
 fprintf ('\nGraphBLAS:\n    %d threads\n', nthreads_max) ;
 
@@ -37,6 +39,18 @@ switch (format)
 end
 
 fprintf ('    hyperratio: %g\n\n', hyperratio) ;
+fprintf ('    name: %s\n', name) ;
+fprintf ('    version: %d.%d.%d\n', version) ;
+fprintf ('    date: %s\n', date) ;
+
+fprintf ('    compile date: %s\n', compiledate) ;
+fprintf ('    compile time: %s\n', compiletime) ;
+fprintf ('    API version: %d.%d.%d\n', api) ;
+
+
+fprintf ('\n---------------------------------\n%s', about) ;
+fprintf ('\n---------------------------------\n%s', license) ;
+fprintf ('\n---------------------------------\n%s\n', api_about) ;
 
 if (nargout > 0)
     nth = nthreads_max ;

@@ -341,6 +341,11 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
     GB_Global.malloc_function = malloc_function ;
 }
 
+void * GB_Global_malloc_function_get ( )
+{
+    return (GB_Global.malloc_function) ;
+}
+
 void * GB_Global_malloc_function (size_t size)
 {
     void *p ;
@@ -365,6 +370,11 @@ void * GB_Global_malloc_function (size_t size)
 void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
 {
     GB_Global.calloc_function = calloc_function ;
+}
+
+void * GB_Global_calloc_function_get ( )
+{
+    return (GB_Global.calloc_function) ;
 }
 
 void * GB_Global_calloc_function (size_t count, size_t size)
@@ -396,6 +406,11 @@ void GB_Global_realloc_function_set
     GB_Global.realloc_function = realloc_function ;
 }
 
+void * GB_Global_realloc_function_get ( )
+{
+    return (GB_Global.realloc_function) ;
+}
+
 void * GB_Global_realloc_function (void *p, size_t size)
 {
     void *pnew ;
@@ -422,6 +437,11 @@ void GB_Global_free_function_set (void (* free_function) (void *))
     GB_Global.free_function = free_function ;
 }
 
+void * GB_Global_free_function_get ( )
+{
+    return (GB_Global.free_function) ;
+}
+
 void GB_Global_free_function (void *p)
 {
     if (GB_Global.malloc_is_thread_safe)
@@ -438,7 +458,7 @@ void GB_Global_free_function (void *p)
 }
 
 //------------------------------------------------------------------------------
-//
+// malloc_is_thread_safe
 //------------------------------------------------------------------------------
 
 void GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe)

@@ -61,6 +61,7 @@ fprintf ('\n===============================================================n') ;
 fprintf ('\nC = A + B\n') ;
 
 B = sprandn (m, n, 0.00001) ;
+fprintf ('nnz (A) = %d nnz (B) = %d\n', nnz (A), nnz (B)) ;
 
 tic
 C1 = A + B ;
@@ -69,6 +70,7 @@ tm = toc ;
 
 D = struct ('inp0', 'tran') ;
 
+fprintf ('\nusing accum and GB_wait:\n') ;
 tic
 C2 = GB_mex_transpose (A, [ ], 'plus', B, D) ;
 toc
@@ -77,6 +79,7 @@ fprintf ('GraphBLAS time: %g\n', tg) ;
 fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C2.matrix)) ;
 
+fprintf ('\nusing accum and GB_add:\n') ;
 tic
 C2 = GB_mex_transpose (B, [ ], 'plus', A, D) ;
 toc
@@ -85,6 +88,7 @@ fprintf ('GraphBLAS time: %g\n', tg) ;
 fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C2.matrix)) ;
 
+fprintf ('\nvia GB_add and then accum:\n') ;
 clear Cin
 Cin = sparse (m,n) ;
 tic
@@ -95,6 +99,7 @@ fprintf ('GraphBLAS time: %g\n', tg) ;
 fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C3.matrix)) ;
 
+fprintf ('\nvia GB_add:\n') ;
 tic
 C4 = GB_mex_AplusB (A, B, 'plus') ;
 toc
@@ -103,6 +108,7 @@ fprintf ('GraphBLAS time: %g\n', tg) ;
 fprintf ('speedup over MATLAB: %g\n\n', tm/tg) ;
 assert (isequal (C1, C4)) ;
 
+fprintf ('\nvia GB_add:\n') ;
 tic
 C4 = GB_mex_AplusB (B, A, 'plus') ;
 toc

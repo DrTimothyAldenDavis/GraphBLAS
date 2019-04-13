@@ -104,12 +104,12 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     }
 
     // add Cp as the vector pointers for C, from GB_add_phase1
-    C->p = Cp ;
+    C->p = (int64_t *) Cp ;
 
     // add Ch as the the hypersparse list for C, from GB_add_phase0
     if (C_is_hyper)
     { 
-        C->h = Ch ;
+        C->h = (int64_t *) Ch ;
         C->nvec = Cnvec ;
     }
 

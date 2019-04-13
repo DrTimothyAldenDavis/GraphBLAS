@@ -272,7 +272,7 @@ elseif ( USER_NONE )
     set ( USE_NONE true )
 else ( )
     # default: automatic selection
-    message ( STATUS "Automatic selection of synchronization method" )
+    message ( STATUS "Automatic selection of synchronization method for user threads" )
     if ( OPENMP_FOUND )
         set ( USE_OPENMP true )
     elseif ( CMAKE_USE_PTHREADS_INIT )
@@ -285,13 +285,13 @@ endif ( )
 #-------------------------------------------------------------------------------
 
 if ( USE_OPENMP )
-    # use OpenMP
+    # use OpenMP for user thread synchronization
     message ( STATUS "Using OpenMP to synchronize user threads" )
     target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
     target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -DUSER_OPENMP_THREADS " )
 elseif ( USE_POSIX )
-    # use POSIX
+    # use POSIX for user thread synchronization
     message ( STATUS "Using POSIX pthreads to synchronize user threads" )
     target_link_libraries ( graphblas        m )
     target_link_libraries ( graphblas_static m )
@@ -307,6 +307,14 @@ endif ( )
 if ( CMAKE_THREAD_LIBS_INIT )
     target_link_libraries ( graphblas        ${CMAKE_THREAD_LIBS_INIT} )
     target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
+endif ( )
+
+if ( OPENMP_FOUND )
+    # use OpenMP for internal parallelism
+    message ( STATUS "Using OpenMP for internal parallelism" )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
+    target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
 endif ( )
 
 if ( CMAKE_USE_PTHREADS_INIT )

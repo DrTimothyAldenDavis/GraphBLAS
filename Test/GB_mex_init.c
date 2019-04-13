@@ -13,7 +13,9 @@
 
 #include "GB_mex.h"
 
-#define USAGE "[nthreads_max threading thread_safety format hyperratio] = GB_mex_init"
+#define USAGE "[nthreads_max threading thread_safety format hyperratio" \
+"name version date about license compiledate compiletime api api_about]" \
+" = GB_mex_init"
 
 void mexFunction
 (
@@ -28,6 +30,8 @@ void mexFunction
     GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
+
+    // MATLAB default is by column
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
 
     int nthreads_max ;
@@ -49,6 +53,50 @@ void mexFunction
     double hyperratio ;
     GxB_get (GxB_HYPER, &hyperratio) ;
     pargout [4] = mxCreateDoubleScalar (hyperratio) ;
+
+    char *name ;
+    GxB_get (7, &name) ;
+    pargout [5] = mxCreateString (name) ;
+
+    int version [3] ;
+    GxB_get (8, version) ;
+    pargout [6] = mxCreateDoubleMatrix (1, 3, mxREAL) ;
+    double *p = mxGetPr (pargout [6]) ;
+    p [0] = version [0] ;
+    p [1] = version [1] ;
+    p [2] = version [2] ;
+
+    char *date ;
+    GxB_get (9, &date) ;
+    pargout [7] = mxCreateString (date) ;
+
+    char *about ;
+    GxB_get (10, &about) ;
+    pargout [8] = mxCreateString (about) ;
+
+    char *license ;
+    GxB_get (11, &license) ;
+    pargout [9] = mxCreateString (license) ;
+
+    char *compile_date ;
+    GxB_get (12, &compile_date) ;
+    pargout [10] = mxCreateString (compile_date) ;
+
+    char *compile_time ;
+    GxB_get (13, &compile_time) ;
+    pargout [11] = mxCreateString (compile_time) ;
+
+    int api [3] ;
+    GxB_get (14, api) ;
+    pargout [12] = mxCreateDoubleMatrix (1, 3, mxREAL) ;
+    double *a = mxGetPr (pargout [12]) ;
+    a [0] = api [0] ;
+    a [1] = api [1] ;
+    a [2] = api [2] ;
+
+    char *api_about ;
+    GxB_get (15, &api_about) ;
+    pargout [13] = mxCreateString (api_about) ;
 
     GrB_finalize ( ) ;
 }
