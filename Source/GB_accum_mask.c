@@ -239,7 +239,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // Since I == GrB_ALL and J = GrB_ALL, C can be safely aliased with M
         // or T, or any content of M or T.
 
-printf ("C<M>+= T via subassign\n") ;
         GB_OK (GB_subassign_kernel (C, C_replace, M, Mask_complement, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, 0, Context)) ;
 
@@ -279,8 +278,6 @@ printf ("C<M>+= T via subassign\n") ;
             // may need to do a deep copy if T is shallow.  T is always freed
             // by GB_transplant.
 
-printf ("C<M>= T via transplant\n") ;
-
             // Z and T have same vlen, vdim, is_csc, is_hyper
             GB_OK (GB_transplant (Z, C->type, Thandle, Context)) ;
             // Z initialized, and Z->p, Z->h, Z->i, and Z->x are allocated ]
@@ -292,8 +289,6 @@ printf ("C<M>= T via transplant\n") ;
             //------------------------------------------------------------------
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
-
-printf ("C<M>+= T via add\n") ;
 
             GB_OK (GB_add (&Z, C->type, C->is_csc, C, T, accum, Context)) ;
             GB_MATRIX_FREE (Thandle) ;

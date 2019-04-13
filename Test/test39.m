@@ -7,8 +7,15 @@ function test39
 fprintf ('\ntest39 performance tests : GrB_transpose \n') ;
 rng ('default') ;
 
-Prob = ssget (939)
-A = Prob.A ;
+try
+    Prob = ssget (939)
+    A = Prob.A ;
+catch
+    fprintf ('not using ssget\n') ;
+    n = 720000 ;
+    nz = 290e6 ;
+    A = sprandn (n, n, nz/n^2) ;
+end
 [m n] = size (A) ;
 Cin = sprandn (n, m, 0.000001) ;
 A (1,2) =1 ;
