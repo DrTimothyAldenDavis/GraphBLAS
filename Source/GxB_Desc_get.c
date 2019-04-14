@@ -11,8 +11,6 @@
 // parameters.  The last argument is a pointer whose type depends on the
 // field.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GxB_Desc_get           // get a parameter from a descriptor

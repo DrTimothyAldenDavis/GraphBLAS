@@ -11,10 +11,10 @@
 // contiguous.  Scatter I into the I inverse buckets (Mark and Inext) for quick
 // lookup.
 
-// PARALLEL: constructing the I inverse buckets in parallel would require
-// synchronization (a critical section for each bucket).  A more parallel
-// approach would use qsort first, to find duplicates in I, and then construct
-// the buckets in parallel after the qsort.
+// PARALLEL: TODO constructing the I inverse buckets in parallel would require
+// synchronization (a critical section for each bucket, or atomics).  A more
+// parallel approach would use qsort first, to find duplicates in I, and then
+// construct the buckets in parallel after the qsort.
 
 #include "GB.h"
 

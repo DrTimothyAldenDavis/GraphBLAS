@@ -11,8 +11,6 @@
 // zombies, or both).  If it has any, and if it is not already in the queue,
 // then insert it into the queue.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 bool GB_queue_insert            // insert matrix at the head of queue

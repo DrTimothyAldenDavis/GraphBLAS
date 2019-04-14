@@ -12,8 +12,6 @@
 // function.  Results are undefined if more than one thread calls this
 // function at the same time.
 
-// not parallel: this function does O(1) work
-
 #include "GB.h"
 
 GrB_Info GrB_finalize ( )

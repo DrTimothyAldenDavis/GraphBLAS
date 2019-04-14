@@ -75,7 +75,7 @@
 // which is the requested format of the output matrix C (either CSR or CSC).
 // It is assigned to C->is_csc but otherwise has no effect on this function.
 
-// PARALLEL: the list J can be partitioned, and the subref can be done in
+// PARALLEL: TODO. the list J can be partitioned, and the subref can be done in
 // parallel and the results concatenated.
 
 #ifdef GB_SYMBOLIC

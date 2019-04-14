@@ -11,8 +11,6 @@
 // user-callable.  The macro is used by default since it can capture the name
 // of the select function.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 // the macro version of this function must first be #undefined

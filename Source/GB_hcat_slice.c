@@ -70,7 +70,6 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     int64_t cnvec = 0 ;
     int64_t cnvec_nonempty = 0 ;
 
-    // this for loop does not need to be parallel:
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
         // compute the cumulative sum of the # entries and # vectors

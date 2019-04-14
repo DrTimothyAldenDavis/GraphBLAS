@@ -16,8 +16,8 @@
 
 // Only GrB_SUCCESS and GrB_OUT_OF_MEMORY are returned by this function.
 
-// PARALLEL: several large memcpy's of the whole matrix, and GB_cast_array,
-// if a deep copy needs to be made.
+// PARALLEL: done, except could use tasks to do multiple GB_memcpy's and
+// GB_cast_array at the same time.
 
 #include "GB.h"
 

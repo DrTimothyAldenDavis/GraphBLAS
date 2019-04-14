@@ -13,8 +13,6 @@
 
 // The actual work is done in GB_subassign_scalar.c.
 
-// parallel: not here; see GB_subassign_kernel
-
 #include "GB.h"
 
 #define GB_ASSIGN(type,T,ampersand)                                            \

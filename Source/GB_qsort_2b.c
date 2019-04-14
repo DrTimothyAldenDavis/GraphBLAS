@@ -12,8 +12,6 @@
 // and k in the tuples (i,k) are used as the sort key.  The value i may
 // appear in multiple tuples, but the value k is unique across all tuples.
 
-// parallel: not here, see Template/GB_qsort_template.c
-
 #include "GB.h"
 
 // returns true if a < b

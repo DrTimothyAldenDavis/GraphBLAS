@@ -9,8 +9,6 @@
 
 // Compare with GxB_Col_subassign, which uses the M and C_replace differently
 
-// parallel: not here; see GB_assign
-
 #include "GB.h"
 
 GrB_Info GrB_Col_assign             // C<M>(Rows,col) = accum (C(Rows,col),u)

@@ -74,12 +74,8 @@
 
 // If nvals == 0, I_in, J_in, and S may be NULL.
 
-// PARALLEL: this function passes over the tuples to see if they are sorted,
-// which could be done as a parallel reduction.  The copy into jwork is fully
-// parallel.  The check for indices out-of-bounds is also like a parallel
-// reduction, but it could stop as soon as a single thread finds one index
-// out of bounds.  This function then calls GB_builder, which does the sort
-// of the tuples and constructs the hypersparse CSR/CSC matrix C.
+// PARALLEL: done.
+// checks I and J fully in parallel.  Remaining work is done in GB_builder.
 
 #include "GB.h"
 
@@ -198,7 +194,10 @@ GrB_Info GB_build               // build matrix
     if (len == 0)
     { 
 
+        //----------------------------------------------------------------------
         // nothing to do
+        //----------------------------------------------------------------------
+
         ;
 
     }
@@ -215,45 +214,69 @@ GrB_Info GB_build               // build matrix
         ASSERT (iwork != NULL) ;
         ASSERT ((vdim > 1) == (jwork != NULL)) ;
 
-        int64_t ilast = -1 ;
-        int64_t jlast = -1 ;
+        int64_t kbad [nthreads] ;
 
-        for (int64_t k = 0 ; k < len ; k++)
+        #pragma omp parallel for num_threads(nthreads) reduction(&&:sorted)
+        for (int tid = 0 ; tid < nthreads ; tid++)
         {
-            // get kth index from user input: (i,j)
-            int64_t i = I [k] ;
-            int64_t j = J [k] ;
-            bool out_of_bounds = (i < 0 || i >= vlen || j < 0 || j >= vdim) ;
+            // each thread checks its own part
+            int64_t kstart, kend ;
+            GB_PARTITION (kstart, kend, len, tid, nthreads) ;
 
-            if (out_of_bounds)
+            kbad [tid] = -1 ;
+
+            int64_t ilast = (kstart == 0) ? -1 : I [kstart-1] ;
+            int64_t jlast = (kstart == 0) ? -1 : J [kstart-1] ;
+
+            for (int64_t k = kstart ; k < kend ; k++)
+            {
+                // get kth index from user input: (i,j)
+                int64_t i = I [k] ;
+                int64_t j = J [k] ;
+
+                if (i < 0 || i >= vlen || j < 0 || j >= vdim)
+                { 
+                    // halt if out of bounds
+                    kbad [tid] = k ;
+                    break ;
+                }
+
+                // check if the tuples are already sorted
+                sorted = sorted && ((jlast < j) || (jlast == j && ilast <= i)) ;
+
+                // copy the tuple into the work arrays to be sorted
+                iwork [k] = i ;
+                if (jwork != NULL)
+                { 
+                    jwork [k] = j ;
+                }
+
+                // log the last index seen
+                ilast = i ;
+                jlast = j ;
+            }
+        }
+
+        // collect the report from each thread
+        for (int tid = 0 ; tid < nthreads ; tid++)
+        {
+            if (kbad [tid] >= 0)
             { 
                 // invalid index
                 GB_FREE_MEMORY (iwork, len, sizeof (int64_t)) ;
                 GB_FREE_MEMORY (jwork, len, sizeof (int64_t)) ;
+                int64_t i = I [kbad [tid]] ;
+                int64_t j = J [kbad [tid]] ;
                 int64_t row = C_is_csc ? i : j ;
                 int64_t col = C_is_csc ? j : i ;
                 return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
                     "index ("GBd","GBd") out of bounds,"
                     " must be < ("GBd", "GBd")", row, col, nrows, ncols))) ;
             }
-
-            // check if the tuples are already sorted
-            sorted = sorted && ((jlast < j) || (jlast == j && ilast <= i)) ;
-
-            // copy the tuple into the work arrays to be sorted
-            iwork [k] = i ;
-            if (jwork != NULL)
-            { 
-                jwork [k] = j ;
-            }
-
-            // log the last index seen
-            ilast = i ;
-            jlast = j ;
         }
 
     }
-    else
+    else if (ijcheck)
     {
 
         //----------------------------------------------------------------------
@@ -261,30 +284,29 @@ GrB_Info GB_build               // build matrix
         //----------------------------------------------------------------------
 
         ASSERT (I != NULL) ;
+        int64_t kbad [nthreads] ;
 
-        if (ijcheck)
+        #pragma omp parallel for num_threads(nthreads) reduction(&&:sorted)
+        for (int tid = 0 ; tid < nthreads ; tid++)
         {
+            // each thread checks its own part
+            int64_t kstart, kend ;
+            GB_PARTITION (kstart, kend, len, tid, nthreads) ;
 
-            //------------------------------------------------------------------
-            // GrB_*_build: check the user's input array I
-            //------------------------------------------------------------------
+            kbad [tid] = -1 ;
 
-            int64_t ilast = -1 ;
+            int64_t ilast = (kstart == 0) ? -1 : I [kstart-1] ;
 
-            for (int64_t k = 0 ; k < len ; k++)
+            for (int64_t k = kstart ; k < kend ; k++)
             {
-                // get kth index from user input, just (i)
+                // get kth index from user input: (i)
                 int64_t i = I [k] ;
-                bool out_of_bounds = (i < 0 || i >= vlen) ;
 
-                if (out_of_bounds)
+                if (i < 0 || i >= vlen)
                 { 
-                    // invalid index
-                    GB_FREE_MEMORY (iwork, len, sizeof (int64_t)) ;
-                    GB_FREE_MEMORY (jwork, len, sizeof (int64_t)) ;
-                    return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
-                        "index ("GBd") out of bounds, must be < ("GBd")",
-                        i, vlen))) ;
+                    // halt if out of bounds
+                    kbad [tid] = k ;
+                    break ;
                 }
 
                 // check if the tuples are already sorted
@@ -296,18 +318,33 @@ GrB_Info GB_build               // build matrix
                 // log the last index seen
                 ilast = i ;
             }
-
         }
-        else
-        { 
 
-            //------------------------------------------------------------------
-            // GB_reduce_to_column: do not check I, assume not sorted
-            //------------------------------------------------------------------
-
-            GB_memcpy (iwork, I, len * sizeof (int64_t), nthreads) ;
-            sorted = false ;
+        // collect the report from each thread
+        for (int tid = 0 ; tid < nthreads ; tid++)
+        {
+            if (kbad [tid] >= 0)
+            { 
+                // invalid index
+                GB_FREE_MEMORY (iwork, len, sizeof (int64_t)) ;
+                GB_FREE_MEMORY (jwork, len, sizeof (int64_t)) ;
+                int64_t i = I [kbad [tid]] ;
+                return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
+                    "index ("GBd") out of bounds, must be < ("GBd")",
+                    i, vlen))) ;
+            }
         }
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // GB_reduce_to_column: do not check I, assume not sorted
+        //----------------------------------------------------------------------
+
+        GB_memcpy (iwork, I, len * sizeof (int64_t), nthreads) ;
+        sorted = false ;
     }
 
     //--------------------------------------------------------------------------

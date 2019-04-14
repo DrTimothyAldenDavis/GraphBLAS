@@ -7,7 +7,7 @@ function nth = gb
 name version date about license compiledate compiletime api api_about] ... 
  = GB_mex_init ;
 
-fprintf ('\nGraphBLAS:\n    %d threads\n', nthreads_max) ;
+fprintf ('\nGraphBLAS:\n    max threads: %d\n', nthreads_max) ;
 
 switch (threading)
     case {0}

@@ -9,7 +9,7 @@
 
 // C<M> = accum (C,reduce(A)) where C is n-by-1
 
-// PARALLEL: use a parallel reduction method
+// PARALLEL: TODO. use a parallel reduction method
 
 #include "GB.h"
 
@@ -228,9 +228,9 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
         // sum down each sparse vector: T (j) = reduce (A (:,j))
         //----------------------------------------------------------------------
 
-        // TODO:: do the reduction down each sparse vector in parallel.
-        // Need to first check A for empty vectors, and compute Ti first.
-        // then compute Tx.
+        // TODO:: do the reduction down each sparse vector in parallel.  Need
+        // to first check A for empty vectors, and compute Ti first.  then
+        // compute Tx.  Also put this in a function in Generated/GB_red_*.
 
         bool done = false ;
 
@@ -293,6 +293,9 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
 
         if (!done)
         {
+
+            // TODO use a Template/ for this
+
             GBI_for_each_vector (A)
             {
                 // zwork = reduce (A (:,j))
@@ -418,10 +421,12 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             // sum across each index: work [i] = reduce (A (i,:))
             //------------------------------------------------------------------
 
-            // Early exit cannot be exploited; ignore the terminal value.  This
-            // method is not simple to parallelize, so use it with a single
-            // thread.  For multiple threads, use the qsort method instead (see
-            // above).
+            // TODO: Early exit cannot be exploited; ignore the terminal value.
+            // This method is not simple to parallelize, so use it with a
+            // single thread.  For multiple threads, use the qsort method
+            // instead (see above).
+
+            // TODO: also put this in a function in Generated/GB_red_*.
 
             bool done = false ;
 
@@ -478,6 +483,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
 
             if (!done)
             {
+                // TODO use a Template/ here.
                 for (int64_t p = 0 ; p < anz ; p++)
                 {
                     // get A(i,j)
@@ -538,6 +544,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             if (tdense)
             {
                 // construct the pattern of T
+                #pragma omp parallel for num_threads(nthreads)
                 for (int64_t i = 0 ; i < wlen ; i++)
                 { 
                     Ti [i] = i ;
@@ -546,6 +553,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             else
             {
                 // gather T from mark and work
+                // TODO use a parallel cumsum, then gather
                 GB_void *restrict Tx = T->x ;
                 int64_t p = 0 ;
                 for (int64_t i = 0 ; i < wlen ; i++)

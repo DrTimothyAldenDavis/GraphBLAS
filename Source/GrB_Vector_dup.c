@@ -9,8 +9,6 @@
 
 // w = u, making a deep copy
 
-// parallel: not here, but in GB_dup.
-
 #include "GB.h"
 
 GrB_Info GrB_Vector_dup     // make an exact copy of a vector

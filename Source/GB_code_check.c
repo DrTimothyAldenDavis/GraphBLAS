@@ -9,8 +9,6 @@
 
 // Only prints entries of built-in types; user-defined types can't be printed.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_code_check          // print an entry using a type code

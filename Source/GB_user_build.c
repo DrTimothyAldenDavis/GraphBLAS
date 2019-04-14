@@ -11,7 +11,7 @@
 // not used by GrB_wait or GB_wait (see GB_builder instead).  For details on
 // the algorithm, see GB_build.
 
-// parallel: not here, but in GB_build.
+// TODO: rename
 
 #include "GB.h"
 

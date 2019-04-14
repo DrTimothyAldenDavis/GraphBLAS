@@ -20,8 +20,6 @@
 
 // Compare with GB_assign, which uses M and C_replace differently
 
-// parallel: not here, but in GB_subassign_kernel
-
 #include "GB.h"
 
 #define GB_FREE_ALL                                 \

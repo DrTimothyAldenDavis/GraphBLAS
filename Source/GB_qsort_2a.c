@@ -13,8 +13,6 @@
 // each tuple happens to be unique in itself, but this is not part of the
 // sort key.
 
-// parallel: not here, see Template/GB_qsort_template.c
-
 #include "GB.h"
 
 // returns true if a < b

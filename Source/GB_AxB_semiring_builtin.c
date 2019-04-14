@@ -10,8 +10,6 @@
 // Determine if A*B uses a built-in semiring, and if so, determine the
 // opcodes and type codes of the semiring.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 #ifndef GBCOMPACT

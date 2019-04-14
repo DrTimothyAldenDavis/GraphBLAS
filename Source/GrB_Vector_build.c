@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here, but in GB_build.
-
 #include "GB.h"
 
 #define GB_BUILD(type,T)                                                      \

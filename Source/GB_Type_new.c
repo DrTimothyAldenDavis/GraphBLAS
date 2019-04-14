@@ -10,8 +10,6 @@
 // This is not used for built-in types.  Those are created statically.
 // Users should not call this function directly; use GrB_Type_new instead.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_Type_new

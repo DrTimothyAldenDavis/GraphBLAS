@@ -16,12 +16,12 @@
 // or GrB_Vector_build, and by GB_wait to build a matrix T from the list of
 // pending tuples.
 
-// PARALLEL: first does qsort, so need to parallelize GB_qsort_*.  Then passes
-// over the tuples to find duplicates, which has some dependencies but could be
-// done in bulk parallel.  After sorting, a thread owns a chunk of tuples.  It
-// can mark all its own duplicates, fully in parallel, but not across to tuples
-// owned by another thread.  When done with this first phase, a 2nd pass could
-// find any duplicates across the thread boundaries.
+// PARALLEL: TODO.  first does qsort, so need to parallelize GB_qsort_*.  Then
+// passes over the tuples to find duplicates, which has some dependencies but
+// could be done in bulk parallel.  After sorting, a thread owns a chunk of
+// tuples.  It can mark all its own duplicates, fully in parallel, but not
+// across to tuples owned by another thread.  When done with this first phase,
+// a 2nd pass could find any duplicates across the thread boundaries.
 
 #include "GB.h"
 

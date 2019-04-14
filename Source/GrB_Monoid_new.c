@@ -11,8 +11,6 @@
 // y, and z must all be the same, and the identity value must also have the
 // same type.  No typecasting is done for the identity value.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 #define GB_MONOID_NEW(type,T)                                               \

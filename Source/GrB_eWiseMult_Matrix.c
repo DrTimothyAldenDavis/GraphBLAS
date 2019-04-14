@@ -9,8 +9,6 @@
 
 // C<M> = accum (C,A.*B) and variations.
 
-// parallel: not here but in GB_emult
-
 #include "GB.h"
 
 #define GB_EWISE(op)                                                        \

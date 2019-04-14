@@ -68,8 +68,6 @@
 
 //      This is copied from the GrB_Descriptor into the Context.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_Descriptor_get      // get the contents of a descriptor

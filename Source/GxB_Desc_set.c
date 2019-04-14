@@ -12,8 +12,6 @@
 // in the spec, the type is the same as GrB_Descriptor_set (a scalar of
 // type GrB_Desc_Value).
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GxB_Desc_set           // set a parameter in a descriptor

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here but in GB_clear.
-
 #include "GB.h"
 
 GrB_Info GrB_Vector_clear   // clear a vector of all entries;

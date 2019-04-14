@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here; see GB_resize
-
 #include "GB.h"
 
 GrB_Info GxB_Vector_resize      // change the size of a vector

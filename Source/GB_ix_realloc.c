@@ -11,9 +11,6 @@
 // preserving the existing content of A->x and A->i.  Preserves pending tuples
 // and zombies, if any.  If numeric is false, then A->x is freed instead.
 
-// parallel: not here; see GB_realloc_memory instead, which might be done in
-// parallel to copy from the old to new space.
-
 #include "GB.h"
 
 GrB_Info GB_ix_realloc      // reallocate space in a matrix

@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: all vectors C=A*D are computed fully in parallel. 
+// PARALLEL: done.
+// all vectors C=A*D are computed fully in parallel. 
 
 {
 

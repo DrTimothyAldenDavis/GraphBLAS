@@ -9,8 +9,6 @@
 
 // Compare with GrB_Row_assign, which uses the M and C_replace differently
 
-// parallel: not here, see GB_subassign_kernel
-
 #include "GB.h"
 
 GrB_Info GxB_Row_subassign          // C(row,Cols)<M'> += u'

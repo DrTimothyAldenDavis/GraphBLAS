@@ -45,10 +45,10 @@
 // The time and memory taken by this function is O(t) if t=len is the number
 // of tuples.
 
-// PARALLEL: the tuples have already been sorted, and duplicates tagged.  need
-// to parallelize the summation of duplicate tuples.  Each unique tuple could
-// be done only by the thread the owns it.  It is unlikely that there will be
-// many duplicates, but possible.  So consider a parallel reduction.
+// PARALLEL: TODO. the tuples have already been sorted, and duplicates tagged.
+// need to parallelize the summation of duplicate tuples.  Each unique tuple
+// could be done only by the thread the owns it.  It is unlikely that there
+// will be many duplicates, but possible.  So consider a parallel reduction.
 
 #include "GB.h"
 
@@ -221,6 +221,8 @@ GrB_Info GB_build_factory           // build a matrix
         // GB_reduce_to_* where the FIRST and SECOND operators are not needed.
 
         // Early exit cannot be exploited, so the terminal value is ignored.
+
+        // TODO put this in a function in Generated/GB_red_*
 
         #define GB_INCLUDE_SECOND_OPERATOR
 

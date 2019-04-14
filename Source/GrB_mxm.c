@@ -12,8 +12,6 @@
 // The input matrices A and B are optionally transposed, as determined by the
 // Descriptor desc.
 
-// parallel: not here, see GB_AxB_parallel
-
 #include "GB.h"
 
 GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)

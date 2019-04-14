@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// not parallel: O(1) time
-
 #include "GB.h"
 
 GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix

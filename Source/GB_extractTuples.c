@@ -19,7 +19,8 @@
 // This function is not user-callable.  It does the work for the user-callable
 // GrB_*_extractTuples functions.
 
-// PARALLEL: via GB_memcpy and simple for loops
+// PARALLEL: done, but needs tasking for I,J,X.
+// uses GB_memcpy and simple for loops.
 
 #include "GB.h"
 
@@ -97,6 +98,9 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         J = I_out ;
     }
 
+    // TODO: each of the three phases below (I,J,X) are independent and
+    // can be done with 3 tasks, each with internal parallelism
+
     //--------------------------------------------------------------------------
     // extract the row indices
     //--------------------------------------------------------------------------
@@ -112,8 +116,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (J != NULL)
     {
-        // GBI_parallel_for_each_vector (A, nthreads)
-        GBI_for_each_vector (A)
+        GBI_parallel_for_each_vector (A, nthreads)
         {
             GBI_for_each_entry (j, p, pend)
             { 

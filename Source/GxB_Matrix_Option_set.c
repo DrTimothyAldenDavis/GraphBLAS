@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here, but in GB_transpose.
-
 #include "GB.h"
 
 GrB_Info GxB_Matrix_Option_set      // set an option in a matrix

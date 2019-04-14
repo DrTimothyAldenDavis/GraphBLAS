@@ -12,8 +12,8 @@
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
-// parallel: this function will remain sequential.
-// parallelism will be done in GB_AxB_parallel.
+// PARALLEL: done; this function is intentionally single-threaded.
+// it is called in parallel by GB_AxB_parallel.
 
 #include "GB.h"
 

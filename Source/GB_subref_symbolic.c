@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here; see Template/GB_subref_template.c
-
 #include "GB.h"
 #define GB_SYMBOLIC
 #include "GB_subref_template.c"

@@ -12,8 +12,6 @@
 // matrix A:", for example.  The internal name is the C typedef with which the
 // GraphBLAS GrB_Type was created.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_Type_check      // check a GraphBLAS Type

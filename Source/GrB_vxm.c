@@ -13,8 +13,6 @@
 // w<M> = accum (w,t) where t = A'*u or A*u, but with the multiply operator
 // flipped.  The input descriptor for A, inp1, is also negated.
 
-// parallel: not here, see GB_AxB_parallel
-
 #include "GB.h"
 
 GrB_Info GrB_vxm                    // w'<M> = accum (w, u'*A)

@@ -27,8 +27,6 @@
 // two input operands always appear in that order.  That is, the multiply
 // operator is not assumed to be commutative.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GrB_Semiring_new           // create a semiring

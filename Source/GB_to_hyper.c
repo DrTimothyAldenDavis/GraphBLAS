@@ -17,7 +17,7 @@
 
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
 
-// PARALLEL: a reduction loop
+// PARALLEL: TODO. a reduction loop
 
 #include "GB.h"
 

@@ -9,8 +9,6 @@
 
 // Compare with GxB_Vector_subassign, which uses M and C_replace differently
 
-// parallel: not here; see GB_assign
-
 #include "GB.h"
 
 GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)

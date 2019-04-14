@@ -12,8 +12,6 @@
 // always be shallow, in either A or B, or both.  NULL pointers are not
 // aliased.
 
-// not parallel: takes O(1) time
-
 #include "GB.h"
 
 bool GB_aliased             // determine if A and B are aliased

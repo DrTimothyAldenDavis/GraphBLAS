@@ -12,8 +12,6 @@
 // This function is not user-callable.  It does the work for user-callable
 // functions GrB_mxm, GrB_mxv, and GrB_vxm.
 
-// parallel: not here; see GB_AxB_parallel instead.
-
 #include "GB.h"
 
 GrB_Info GB_mxm                     // C<M> = A*B

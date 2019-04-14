@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here
-
 {
 
     const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;

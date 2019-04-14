@@ -33,12 +33,11 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
-// PARALLEL: this moves lots of data inside the matrix, but it is like a single
+// PARALLEL: TODO.  This is slow, even sequentially.  Use GB_add_phased.
+// This moves lots of data inside the matrix, but it is like a single
 // merge of a mergesort.  Hard to do in parallel as currently written.  A
 // better approach in parallel would be to do it like a matrix add (see
 // GB_add).  Some work is done in GB_builder, which can be done in parallel.
-
-// TODO: do not use this merge approach.  Just use GB_add_phased.
 
 #include "GB.h"
 

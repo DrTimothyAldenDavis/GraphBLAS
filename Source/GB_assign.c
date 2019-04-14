@@ -24,8 +24,8 @@
 
 // Compare with GB_subassign, which uses M and C_replace differently
 
-// PARALLEL: some C_replace_phase here, mainly in GB_subassign_kernel and
-// GB_subref_numeric.
+// PARALLEL: TODO.  some C_replace_phase here, mainly in GB_subassign_kernel
+// and GB_subref_numeric.
 
 #include "GB.h"
 

@@ -9,8 +9,6 @@
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
-// parallel: not here; see GB_select
-
 #include "GB.h"
 
 GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)

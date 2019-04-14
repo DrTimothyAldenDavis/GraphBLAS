@@ -5,7 +5,8 @@
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-// PARALLEL:  all vectors of a GrB_Matrix C are computed fully in parallel.  A
+// PARALLEL: done, except when # threads > # vectors (as in GrB_Vector).
+// all vectors of a GrB_Matrix C are computed fully in parallel.  A
 // single GrB_Vector will use only one thread, however.
 
 //------------------------------------------------------------------------------
@@ -128,6 +129,8 @@
             //------------------------------------------------------------------
             // No mask, or M(:,j) is empty and complemented
             //------------------------------------------------------------------
+
+            // TODO exploit dense vector cases
 
             for ( ; pA < pA_end && pB < pB_end ; pC++)
             {

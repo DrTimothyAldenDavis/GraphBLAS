@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: break up a single large memcpy into smaller ones to do in parallel
+// PARALLEL: done, except need to tune chunk size.
+// breaks up a single large memcpy into smaller ones to do in parallel
 
 #include "GB.h"
 

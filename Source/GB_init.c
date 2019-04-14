@@ -249,8 +249,6 @@ GrB_Info GB_init            // start up GraphBLAS
 // OpenMP, and no user threads.  Windows and ANSI C11 threads are not yet
 // supported.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 char *GB_thread_local_access ( )    // return pointer to thread-local storage
 { 
 

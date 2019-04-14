@@ -25,8 +25,6 @@
 
 // Compare this function with GB_extractElement.
 
-// not parallel: this function does O(log(..)) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar

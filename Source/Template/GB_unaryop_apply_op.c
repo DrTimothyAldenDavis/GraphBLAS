@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: all entries in C=op(cast(A)) are computed fully in parallel. 
+// PARALLEL: done.
+// all entries in C=op(cast(A)) are computed fully in parallel. 
 
 {
 

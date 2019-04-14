@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here, see GB_reduce_to_column
-
 #include "GB.h"
 
 #define GB_REDUCE(kind,reduceop,terminal)                                     \

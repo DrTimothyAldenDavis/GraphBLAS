@@ -7,9 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: this could be done in parallel, but the parallelism will be
-// handled outside this code, in GB_AxB_parallel.  This work is done by a
-// single thread.
+// PARALLEL: done; this function is intentionally single-threaded.
+// it is called in parallel by GB_AxB_parallel.
 
 {
 

@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here; see GB_apply
-
 #include "GB.h"
 
 GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))

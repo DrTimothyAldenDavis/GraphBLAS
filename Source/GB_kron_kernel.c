@@ -12,7 +12,7 @@
 // different.  The type of C is the type of z.  C is hypersparse if either A
 // or B are hypersparse.
 
-// PARALLEL: simple parallelism, but need to handle combinations of
+// PARALLEL: TODO.  simple parallelism, but need to handle combinations of
 // hyper/non-hyper cases in doubly-nested loops.
 
 #include "GB.h"

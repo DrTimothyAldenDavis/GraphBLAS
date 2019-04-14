@@ -31,9 +31,7 @@
 
 // FUTURE: this could be faster with built-in operators and types.
 
-// PARALLEL: use 1D parallelism.  Either do the work in symbolic/numeric phases
-// (one to compute nnz in each column, one to fill the output), or compute
-// submatrices and then concatenate them.  See also GB_add.
+// PARALLEL: TODO. See GB_add_phase*.
 
 #include "GB.h"
 

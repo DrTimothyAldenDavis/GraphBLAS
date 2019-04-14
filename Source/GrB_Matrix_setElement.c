@@ -10,8 +10,6 @@
 // Set a single entry in a matrix, C(row,col) = x in MATLAB notation,
 // typecasting from the type of x to the type of C, as needed.
 
-// not parallel: this function does O(log(..)) work and is already thread-safe.
-
 #include "GB.h"
 
 #define GB_SET(type,T,ampersand)                                            \

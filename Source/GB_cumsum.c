@@ -18,9 +18,9 @@
 // sum (count [0..j-1]).  count [n] is implicitly zero on input.
 // On output, count [n] is the total sum.
 
-// PARALLEL: The parallel cumsum gets decent speedup only if the array is
-// already in L3 cache.  Otherwise, speedup is limited to about 2x.  The
-// problem is memory-bound.
+// PARALLEL: done, except the parallel cumsum gets decent speedup only if the
+// array is already in L3 cache.  Otherwise, speedup is limited to about 2x.
+// The problem is memory-bound.  Needs tuning.
 
 #include "GB.h"
 

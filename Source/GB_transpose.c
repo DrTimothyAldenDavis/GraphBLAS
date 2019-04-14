@@ -26,12 +26,9 @@
 // If A_in is not NULL and Chandle is NULL, then A is modified in place, and
 // the A_in matrix is not freed when done.
 
-// PARALLEL: two methods are used: a bucket sort, and a qsort.  For the
-// parallel case, it might be hard to parallelize the bucket sort.  The qsort
-// is likely better, and the bucket sort could remain mostly sequential.  Most
-// of the work is done in other functions (GB_transpose_bucket, GB_builder,
-// etc), not here.  There are a few large loops here then could be done in
-// parallel.  See also the GB_memcpy below.
+// PARALLEL: TODO.a few parallel loops; most work is in the qsort or bucket
+// sort.  Need to determine when enough threads are available to do a parallel
+// qsort.  The bucket sort is likely sequential.
 
 #include "GB.h"
 
@@ -499,7 +496,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (allocate_new_Ci) ;
             ASSERT (Ah == NULL) ;
             int64_t k = 0 ;
-            // TODO is it worth doing this O(n) loop in parallel?
+            // TODO could be done with a parallel cumsum
             for (int64_t j = 0 ; j < avdim ; j++)
             {
                 if (Ap [j] < Ap [j+1])
@@ -731,8 +728,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // A.  This array becomes the permanent T->i on output.  This phase
             // must be done before Chandle is created below, since that step
             // destroys A.  See also GB_extractTuples, where J is extracted.
-            // TODO: use GBI_parallel_for_each_vector (A, nthreads)
-            GBI_for_each_vector (A)
+            GBI_parallel_for_each_vector (A, nthreads)
             {
                 GBI_for_each_entry (j, p, pend)
                 { 

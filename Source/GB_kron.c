@@ -11,10 +11,6 @@
 
 // The input matrices A and B are optionally transposed.
 
-// Not user-callable.  Does the work for GxB_kron
-
-// parallel: not here, but in GB_kron_kernel.
-
 #include "GB.h"
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))

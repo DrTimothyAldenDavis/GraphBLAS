@@ -9,8 +9,6 @@
 
 // w<M> = accum (w,u.*v)
 
-// parallel: not here but in GB_emult
-
 #include "GB.h"
 
 #define GB_EWISE(op)                                                        \

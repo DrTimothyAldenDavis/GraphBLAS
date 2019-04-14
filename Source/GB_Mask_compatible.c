@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// check the type and dimenions of the mask
-
-// not parallel: this function does O(1) work and is already thread-safe.
+// check the type and dimensions of the mask
 
 #include "GB.h"
 

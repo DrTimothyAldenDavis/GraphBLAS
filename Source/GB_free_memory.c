@@ -11,8 +11,6 @@
 
 // This function is called via the GB_FREE_MEMORY(p,n,s) macro.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 void GB_free_memory

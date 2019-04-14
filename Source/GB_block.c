@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here.  See GB_wait instead.
-
 #include "GB.h"
 
 GrB_Info GB_block   // apply all pending computations if blocking mode enabled

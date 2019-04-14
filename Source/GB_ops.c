@@ -10,8 +10,6 @@
 // This file defines the predefined built-in objects: 11 types, 45 unary
 // operators, 256 binary operators, 44 monoids, and 960 semirings.
 
-// not parallel: this function has no executable code, just definitions.
-
 #include "GB.h"
 
 //------------------------------------------------------------------------------

@@ -23,8 +23,6 @@
 
 // See discussion on Source/GB.h on boolean and integer division
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GB_Opcode GB_boolean_rename     // renamed opcode

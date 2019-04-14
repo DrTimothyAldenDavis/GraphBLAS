@@ -10,8 +10,6 @@
 // Determine the length of I, and process the colon notation I = begin:inc:end.
 // No error checking is done.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 // ensure an unsigned integer does not cause signed integer overflow

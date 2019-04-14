@@ -23,8 +23,6 @@
 
 // Compare this function with GB_shallow_op.c
 
-// parallel: not here, but in GB_cast_array
-
 #include "GB.h"
 
 GrB_Info GB_shallow_cast    // create a shallow typecasted matrix

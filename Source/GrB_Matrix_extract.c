@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here, but in GB_subref_numeric.
-
 #include "GB.h"
 
 GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))

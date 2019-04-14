@@ -10,8 +10,6 @@
 // This sort is not stable, but it is used in GraphBLAS only on lists with
 // unique integers.  So it does not need to be stable.
 
-// parallel: not here, see Template/GB_qsort_template.c
-
 #include "GB.h"
 
 // returns true if a < b

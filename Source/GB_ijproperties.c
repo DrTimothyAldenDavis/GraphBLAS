@@ -9,9 +9,9 @@
 
 // check a list of indices I and determine its properties
 
-// PARALLEL: checks the entire set of indices in the array I, if it is a list,
-// to see if any entry is out of bounds, and to determine if it is sorted
-// order.  Similar to the the check of I and J in GB_build.
+// PARALLEL: TODO. checks the entire set of indices in the array I, if it is a
+// list, to see if any entry is out of bounds, and to determine if it is sorted
+// order.  Similar to the check of I and J in GB_build.
 
 #include "GB.h"
 
@@ -170,6 +170,8 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
         // scan I to find imin and imax, and validate the list. Also determine
         // if it is sorted or not.
+
+        // TODO do in parallel; see also the error check of I,J in GB_build
 
         imin = limit ;
         imax = -1 ;

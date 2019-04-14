@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: see GB_resize
-
 #include "GB.h"
 
 GrB_Info GxB_Matrix_resize      // change the size of a matrix

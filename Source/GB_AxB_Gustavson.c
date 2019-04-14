@@ -10,10 +10,10 @@
 // This method is agnostic to the CSR/CSC format.  The format of C is set
 // to CSC but this is a placeholder that will be changed in GB_AxB_meta.
 
-// parallel: this work is done by a single thread.  parallelism will be done in
-// GB_AxB_parallel.
-
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
+
+// PARALLEL: done; this function is intentionally single-threaded.
+// it is called in parallel by GB_AxB_parallel.
 
 #include "GB.h"
 #ifndef GBCOMPACT

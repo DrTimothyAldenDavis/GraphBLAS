@@ -9,8 +9,6 @@
 
 // The indices must appear in sorted order.
 
-// not parallel: O(1) time
-
 #include "GB.h"
 
 GrB_Info GxB_Vector_import  // import a vector in CSC format

@@ -16,7 +16,7 @@
 // variant of GB_qsort*, with the same names.  They are called only by the
 // GB_qsort* function in the #include'ing file.
  
-// PARALLEL: TODO: use a larger leaf task size
+// PARALLEL: TODO: needs tuning for smallest task size, and segfault
 
 //------------------------------------------------------------------------------
 // GB_partition: use a pivot to partition an array

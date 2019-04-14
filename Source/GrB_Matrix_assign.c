@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here; see GB_assign
-
 #include "GB.h"
 
 GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'

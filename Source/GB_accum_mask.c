@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here, but in GB_mask, GB_add, GB_transpose
-
 // C<M> = accum (C,T)
 
 // The primary computation of a GraphBLAS operations is done, and the results

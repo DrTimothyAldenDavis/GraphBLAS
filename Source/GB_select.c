@@ -11,8 +11,8 @@
 // user-callable.  It does the work for GxB_*_select.
 // Compare this function with GrB_apply.
 
-// PARALLEL: do in parallel, but using two phases: symbolic to count the
-// # of entries in each column, and another to move the data.
+// PARALLEL: TODO. use two phases: symbolic to count the # of entries in each
+// column, and another to move the data.
 
 #include "GB.h"
 

@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: could be parallelized, but this is meant primarily for testing
-// and debugging, so performance is not critical.
-
 #include "GB.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector

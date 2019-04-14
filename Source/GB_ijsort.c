@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: deletes duplicates, see also GB_builder.  This is only used in
-// GB_assign, for scalar expansion and for the C_replace_phase, and only when I
-// and/or J are lists (not GrB_ALL, nor lo:inc:hi).
+// PARALLEL: TODO. deletes duplicates, see also GB_builder.  This is only used
+// in GB_assign, for scalar expansion and for the C_replace_phase, and only
+// when I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
 
 #include "GB.h"
 
@@ -59,10 +59,11 @@ GrB_Info GB_ijsort
     // copy I into I2 and sort it
     //--------------------------------------------------------------------------
 
-    for (int64_t k = 0 ; k < ni ; k++)
-    { 
-        I2 [k] = I [k] ;
-    }
+    GB_memcpy (I2, I, ni * sizeof (GrB_Index), nthreads) ;
+//  for (int64_t k = 0 ; k < ni ; k++)
+//  { 
+//      I2 [k] = I [k] ;
+//  }
 
     GB_qsort_1 ((int64_t *) I2, ni, Context) ;
 
@@ -70,6 +71,7 @@ GrB_Info GB_ijsort
     // remove duplicates from I2
     //--------------------------------------------------------------------------
 
+    // TODO remove duplicates in parallel
     int64_t ni2 = 1 ;
     for (int64_t k = 1 ; k < ni ; k++)
     {

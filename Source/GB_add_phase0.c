@@ -42,8 +42,8 @@
 //      not appear in B, then C_to_B [k] = -1.  If B is not hypersparse, then
 //      C_to_B is returned as NULL.
 
-// PARALLEL: this is fully parallel, except in one conditiion: A and B are
-// hypersparse and Ch_is_Mh is false.
+// PARALLEL: done, except in one conditiion: A and B are hypersparse and
+// Ch_is_Mh is false.
 
 #include "GB.h"
 

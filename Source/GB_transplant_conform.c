@@ -9,8 +9,6 @@
 
 // C = (type) T, then conform C to its desired hypersparsity.  T is freed
 
-// parallel: not here
-
 #include "GB.h"
 
 GrB_Info GB_transplant_conform      // transplant and conform hypersparsity

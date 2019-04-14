@@ -15,7 +15,7 @@
 // This code is used by GB_wait to delete zombies, and by GB_resize to delete
 // entries outside the resized dimensions, if A->vlen decreases.
 
-// PARALLEL: requires a reduction-style parallelism
+// PARALLEL: TODO. requires a reduction-style parallelism
 
 {
 

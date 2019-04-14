@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: this function will remain sequential.
-// parallelism is handled in GB_AxB_parallel.
-
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
 #include "GB.h"

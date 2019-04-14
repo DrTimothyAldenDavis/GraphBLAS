@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: simple parallelism; not a lot of work to unless the vector
+// PARALLEL: TODO. simple parallelism; not a lot of work to unless the vector
 // length is decreasing.  See Template/GB_prune_inplace.c
 
 #include "GB.h"
@@ -145,6 +145,8 @@ GrB_Info GB_resize              // change the size of a matrix
         {
             // number of vectors is increasing, extend the vector pointers
             int64_t anz = GB_NNZ (A) ;
+            // TODO is this worth doing in parallel?
+            #pragma omp parallel for num_threads(nthreads)
             for (int64_t j = vdim_old + 1 ; j <= vdim_new ; j++)
             { 
                 Ap [j] = anz ;

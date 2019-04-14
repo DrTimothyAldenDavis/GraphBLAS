@@ -59,7 +59,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     int64_t cnz = 0 ;               // upper bound on nnz(C)
     int64_t cnvec = 0 ;             // upper bound on # vectors in C
 
-    // this for loop does not need to be parallel:
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
         // compute the cumulative sum of the # entries and # vectors

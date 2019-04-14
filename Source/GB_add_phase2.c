@@ -19,8 +19,8 @@
 // GB_add_phase0.  All cases of the mask M are handled: not present, present
 // and not complemented, and present and complemented.
 
-// PARALLEL: fully parallel except for the last phase, to prune empty
-// vectors from C, if it is hypersparse
+// PARALLEL: done, except for the last phase, to prune empty vectors from C,
+// if it is hypersparse with empty vectors
 
 #include "GB.h"
 #ifndef GBCOMPACT

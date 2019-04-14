@@ -17,11 +17,8 @@
 // The method is chosen automatically:  a gather/scatter saxpy method
 // (Gustavson), a heap-based saxpy method, or a dot product method.
 
-// FUTURE: an outer-product method for C=A*B'
-// FUTURE: a hash-based method for C=A*B
-
-// parallel: this function will remain sequential.
-// parallelism will be done in GB_AxB_parallel and GB_transpose.
+// TODO: an outer-product method for C=A*B'
+// TODO: a hash-based method for C=A*B
 
 #define GB_FREE_ALL             \
 {                               \

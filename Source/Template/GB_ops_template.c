@@ -12,8 +12,6 @@
 // int8_t, uint64_t, double, etc), and GB(x) is the corresponding macro that
 // creates the function name (GB_*_BOOL, GB_*_INT8, etc).
 
-// parallel: not here; no executable code
-
 #define GB_Z_X_ARGS       GB_TYPE *z, const GB_TYPE *x
 #define GB_Z_X_Y_ARGS     GB_TYPE *z, const GB_TYPE *x, const GB_TYPE *y
 #define GB_Zbool_X_Y_ARGS bool *z, const GB_TYPE *x, const GB_TYPE *y

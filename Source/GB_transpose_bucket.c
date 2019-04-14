@@ -38,9 +38,9 @@
 // hypersparse matrices, or for very sparse matrices, the qsort method should
 // be used instead (see GB_transpose).
 
-// PARALLEL: the bucket transpose will not be simple to parallelize.  The qsort
-// method of transpose would be more parallel.  This method might remain mostly
-// sequential.  There
+// PARALLEL: TODO. the bucket transpose will be hard to parallelize.  The qsort
+// method of transpose would be more parallel.  This method might remain
+// sequential.  Perhaps use atomics?
 
 #include "GB.h"
 

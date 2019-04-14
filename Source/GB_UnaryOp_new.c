@@ -13,8 +13,6 @@
 
 // This function is not directly user-callable.  Use GrB_UnaryOp_new instead.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator

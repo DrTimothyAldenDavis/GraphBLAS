@@ -12,8 +12,6 @@
 // size 1, A->plen is 1, and contents A->x and A->i are NULL.  If this method
 // fails, *A is set to NULL.
 
-// parallel: not here; see GB_new.
-
 #include "GB.h"
 
 GrB_Info GrB_Matrix_new     // create a new matrix with no entries

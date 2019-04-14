@@ -17,8 +17,6 @@
 
 // Compare with GB_assign_scalar, which uses M and C_replace differently
 
-// parallel: not here; see GB_subassign
-
 #include "GB.h"
 
 GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x

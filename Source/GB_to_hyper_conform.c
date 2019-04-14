@@ -11,8 +11,6 @@
 // hypersparsity is changed, these components are no longer shallow.  If the
 // method fails and the matrix is shallow, all content is removed or freed.
 
-// parallel: not here
-
 #include "GB.h"
 
 GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format

@@ -10,7 +10,7 @@
 // Pending tuples are ignored.  If a vector has all zombies it is still
 // counted as non-empty.
 
-// PARALLEL: simple parallel reduction
+// PARALLEL: TODO. simple parallel reduction
 
 #include "GB.h"
 

@@ -26,8 +26,6 @@
 
 //  (4) a failure to destroy the critical section in GrB_finalize.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_error           // log an error in thread-local-storage

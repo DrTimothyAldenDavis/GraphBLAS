@@ -10,7 +10,7 @@
 // Returns true if A is a square diagonal matrix, with all diagonal entries
 // present.  Pending tuples are ignored.  Zombies are treated as entries.
 
-// PARALLEL: simple parallel reduction
+// PARALLEL: TODO. simple parallel reduction, but could use early exit.
 
 #include "GB.h"
 

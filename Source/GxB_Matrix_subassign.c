@@ -9,8 +9,6 @@
 
 // Compare with GrB_Matrix_assign, which uses M and C_replace differently
 
-// parallel: not here; see GB_subassign_kernel
-
 #include "GB.h"
 
 GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'

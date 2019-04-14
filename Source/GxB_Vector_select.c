@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here; see GB_select
-
 #include "GB.h"
 
 GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))

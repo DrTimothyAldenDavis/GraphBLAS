@@ -16,7 +16,8 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-// PARALLEL: use a parallel reduction of all entries in A to a scalar
+// PARALLEL: done, but needs tuning for chunk size.
+// A parallel reduction of all entries in A to a scalar
 
 #include "GB.h"
 #ifndef GBCOMPACT

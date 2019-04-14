@@ -49,7 +49,7 @@
 // can be changed by turning an entry into a zombie, or by bringing a zombie
 // back to life, but no entry in C->i moves in position.
 
-// PARALLEL: the pattern of C is not changing, except that zombies are
+// PARALLEL: TODO.  the pattern of C is not changing, except that zombies are
 // introduced.  Pending tuples are added, but they could be added in any order.
 // Each thread could keep its own list of pending tuples.  To parallelize this
 // function, partition the list J, and call this function for each partition.
@@ -500,7 +500,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         int64_t pC = pC_start ;                                                \
         int64_t pright = pC_end - 1 ;                                          \
         bool found, is_zombie ;                                                \
-        /* PARALLEL: always check for zombies */                               \
+        /* TODO parallel check for zombies */                                  \
         GB_BINARY_ZOMBIE (iC, Ci, pC, pright, found, C->nzombies, is_zombie) ;
 
     //--------------------------------------------------------------------------
@@ -547,7 +547,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     #define GB_DELETE                                                   \
     {                                                                   \
         /* turn C(iC,jC) into a zombie */                               \
-        C->nzombies++ ;  /* PARALLEL: thread private; reduce when done*/\
+        C->nzombies++ ;  /* TODO: thread private; reduce when done*/\
         Ci [pC] = GB_FLIP (iC) ;                                        \
     }
 
@@ -556,7 +556,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         /* bring a zombie C(iC,jC) back to life;                 */     \
         /* the value of C(iC,jC) must also be assigned.          */     \
         Ci [pC] = iC ;                                                  \
-        C->nzombies-- ;  /* PARALLEL: thread private; reduce when done*/\
+        C->nzombies-- ;  /* TODO: thread private; reduce when done*/\
     }
 
     #define GB_INSERT(aij)                                              \
@@ -3360,7 +3360,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     // insert C in the queue if it has work to do and isn't already queued
     //--------------------------------------------------------------------------
 
-    // PARALLEL: all threads need to sum up their local changes first
+    // TODO: in parallel, all threads need to sum up their local changes first
 
     if (C->nzombies == 0 && C->n_pending == 0)
     { 

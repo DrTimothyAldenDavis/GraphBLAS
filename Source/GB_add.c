@@ -46,14 +46,9 @@
 // The output C is hypersparse if both A and B are hypersparse; otherwise
 // C is not hypersparse.
 
-// TODO: this could be faster with built-in operators and types.
-
-// TODO use the Mask:  do C=A+B, C<M>=A+B, and C<!M>=A+B
-
-// PARALLEL: use 1D parallelism here.  Either do the work in symbolic/numeric
-// phases (one to compute nnz in each column, one to fill the output), or
-// compute submatrices and then concatenate them.  Probably do the former.
-// See also GB_emult.
+// PARALLEL: done; see GB_add_phased.  Might create a single thread version
+// that is like this one, but based on a merger of GB_add_phase[0,1,2] into a
+// single phase?
 
 #include "GB.h"
 

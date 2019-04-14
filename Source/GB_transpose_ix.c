@@ -19,7 +19,7 @@
 
 // Compare with GB_transpose_op.c
 
-// The bucket sort is not parallel.
+// PARALLEL: TODO: The bucket sort is hard to do in parallel.
 
 #include "GB.h"
 #ifndef GBCOMPACT

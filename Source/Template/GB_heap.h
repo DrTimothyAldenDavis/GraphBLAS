@@ -13,9 +13,6 @@
 // These functions are only used by the heap method for C=A*B.
 // See Source/Template/GB_AxB_heap_mask.c.
 
-// parallel: the parallelism will be handled outside this code, in
-// GB_AxB_parallel.  This work is done by a single thread.
-
 #ifndef GB_HEAP
 #define GB_HEAP
 

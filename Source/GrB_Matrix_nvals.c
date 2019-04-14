@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// parallel: not here, but in GB_nvals (which forces completeion).
-
 #include "GB.h"
 
 GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix

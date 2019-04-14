@@ -16,10 +16,6 @@
 // result t is the identity value of the monoid.  Unlike most other GraphBLAS
 // operations, this operation uses an accum operator but no mask.
 
-// The actual work is done in GB_reduce_to_scalar.c.
-
-// parallel: not here but in GB_reduce_to_scalar
-
 #include "GB.h"
 
 #define GB_REDUCE(type,T)                                                      \

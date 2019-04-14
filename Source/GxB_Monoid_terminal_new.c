@@ -11,8 +11,6 @@
 // typecasting is done for the terminal value.  Its type must match the
 // identity value.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 #define GB_MONOID_TERMINAL_NEW(type,T)                                      \

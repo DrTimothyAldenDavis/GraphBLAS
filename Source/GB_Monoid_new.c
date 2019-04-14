@@ -15,8 +15,6 @@
 // are used instead.  This is to allow the use of the hard-coded functions for
 // built-in monoids.
 
-// not parallel: this function does O(1) work and is already thread-safe.
-
 #include "GB.h"
 
 GrB_Info GB_Monoid_new          // create a monoid

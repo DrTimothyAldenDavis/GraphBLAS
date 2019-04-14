@@ -17,8 +17,6 @@
 // extract just the row indices, pass I as non-NULL, and X as NULL.  This is
 // like [I,~,~] = find (v) in MATLAB.
 
-// parallel: not here, but in see GB_extractTuples.
-
 #include "GB.h"
 
 #define GB_EXTRACT(type,T)                                                    \
