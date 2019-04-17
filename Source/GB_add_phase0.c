@@ -15,6 +15,10 @@
 // function does not consider the complemented-Mask case (use M=NULL for that
 // case).
 
+// The A matrix can be sparse, hypersparse, slice, or hyperslice.  The B matrix
+// can only be sparse or hypersparse.  See GB_wait, which can pass in A as any
+// of the four formats.  In this case, no mask is present.
+
 // On output, two integers (max_Cnvec and Cnvec) a boolean (Ch_to_Mh) and up to
 // 3 arrays are returned, either NULL or of size max_Cnvec.  If not NULL, only
 // the first Cnvec entries in each array is used.  Let n = A->vdim be the
@@ -100,8 +104,8 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,       // if true, then M is complemented
-    const GrB_Matrix A,
-    const GrB_Matrix B,
+    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
+    const GrB_Matrix B,         // standard or hypersparse; never a slice
     GB_Context Context
 )
 {
@@ -151,11 +155,13 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     bool A_is_hyper = A->is_hyper ;
+    bool A_is_slice = A->is_slice ;
 
     int64_t Bnvec = B->nvec ;
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
     bool B_is_hyper = B->is_hyper ;
+    ASSERT (!B->is_slice) ;
 
     // if M is present, hypersparse, and not complemented, then C will be
     // hypersparse, and it will have set of vectors as M (Ch == M->h).
@@ -172,6 +178,9 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // C is hypersparse, with the same vectors as the hypersparse M
         //----------------------------------------------------------------------
 
+        // GB_wait is the only place where A may be a slice, and it does not
+        // use a mask.  So this phase can ignore the case where A is a slice.
+        ASSERT (!A_is_slice) ;
         int64_t Mnvec = M->nvec ;
         Cnvec = Mnvec ;
         max_Cnvec = Mnvec ;
@@ -213,7 +222,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         }
 
     }
-    else if (A_is_hyper && B_is_hyper)
+    else if ((A_is_hyper || A_is_slice) && B_is_hyper)
     {
 
         //----------------------------------------------------------------------
@@ -238,8 +247,9 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         int64_t kB = 0 ;
         for (Cnvec = 0 ; kA < Anvec && kB < Bnvec ; Cnvec++)
         {
-            int64_t jA = Ah [kA] ;
+            int64_t jA = (A_is_hyper) ? Ah [kA] : (A->hfirst + kA) ;
             int64_t jB = Bh [kB] ;
+            // printf ("jA "GBd" jB "GBd"\n", jA, jB) ;
             if (jA < jB)
             { 
                 // append jA to Ch
@@ -268,7 +278,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
             for ( ; kA < Anvec ; kA++, Cnvec++)
             { 
                 // append jA to Ch
-                int64_t jA = Ah [kA] ;
+                int64_t jA = (A_is_hyper) ? Ah [kA] : (A->hfirst + kA) ;
                 Ch     [Cnvec] = jA ;
                 C_to_A [Cnvec] = kA ;
                 C_to_B [Cnvec] = -1 ;
@@ -288,7 +298,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         }
 
     }
-    else if (A_is_hyper && !B_is_hyper)
+    else if ((A_is_hyper || A_is_slice) && !B_is_hyper)
     {
 
         //----------------------------------------------------------------------
@@ -314,12 +324,12 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t kA = 0 ; kA < Anvec ; kA++)
         { 
-            int64_t jA = Ah [kA] ;
+            int64_t jA = (A_is_hyper) ? Ah [kA] : (A->hfirst + kA) ;
             C_to_A [jA] = kA ;
         }
 
     }
-    else if (!A_is_hyper && B_is_hyper)
+    else if (!(A_is_hyper || A_is_slice) && B_is_hyper)
     {
 
         //----------------------------------------------------------------------
@@ -410,13 +420,13 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // see if A (:,j) exists
         if (C_to_A != NULL)
         {
-            // A is hypersparse
-            ASSERT (A->is_hyper) ;
+            // A is hypersparse, or a slice
+            ASSERT (A->is_hyper || A->is_slice) ;
             int64_t kA = C_to_A [k] ;
             ASSERT (kA >= -1 && kA < A->nvec) ;
             if (kA >= 0)
             {
-                int64_t jA = A->h [kA] ;
+                int64_t jA = (A->is_hyper) ? A->h [kA] : (A->hfirst + kA) ;
                 ASSERT (j == jA) ;
             }
         }
@@ -424,7 +434,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         {
             // A is in standard sparse form
             // C_to_A exists only if A is hypersparse
-            ASSERT (!A->is_hyper) ;
+            ASSERT (!(A->is_hyper || A->is_slice)) ;
         }
 
         // see if B (:,j) exists

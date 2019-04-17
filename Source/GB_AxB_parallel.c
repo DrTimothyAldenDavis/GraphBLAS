@@ -443,21 +443,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
             GB_pslice (Slice, A, nthreads) ;
 
-            #if 0
-            int64_t *Ap = A->p ;
-            int64_t pleft = 0 ;
-            for (int tid = 1 ; tid < nthreads ; tid++)
-            { 
-                // binary search to find k so that Ap [k] == (tid * anz) /
-                // nthreads.  The exact value will not typically not be found;
-                // just pick what the binary search comes up with.
-                int64_t nz = ((tid * (double) anz) / (double) nthreads) ;
-                int64_t pright = anvec ;
-                GB_BINARY_TRIM_SEARCH (nz, Ap, pleft, pright) ;
-                Slice [tid] = pleft ;
-            }
-            #endif
-
         }
 
         //----------------------------------------------------------------------
@@ -610,22 +595,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // thread tid will do columns Slice [tid] to Slice [tid+1]-1
 
             GB_pslice (Slice, B, nthreads) ;
-
-#if 0
-            int64_t *Bp = B->p ;
-            int64_t pleft = 0 ;
-            for (int tid = 1 ; tid < nthreads ; tid++)
-            { 
-                // binary search to find k so that Bp [k] == (tid * bnz) /
-                // nthreads.  The exact value will not typically not be found;
-                // just pick what the binary search comes up with.
-                int64_t nz = ((tid * (double) bnz) / (double) nthreads) ;
-                int64_t pright = bnvec ;
-                GB_BINARY_TRIM_SEARCH (nz, Bp, pleft, pright) ;
-                Slice [tid] = pleft ;
-            }
-            Slice [nthreads] = bnvec ;
-#endif
 
         }
         else if (AxB_slice == GxB_SLICE_BFLOPS)

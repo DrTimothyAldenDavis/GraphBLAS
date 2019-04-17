@@ -16,22 +16,29 @@
 // GB_add_phase0.  All cases of the mask M are handled: not present, present
 // and not complemented, and present and complemented.
 
+// GB_wait computes A=A+T where T is the matrix of the assembled pending
+// tuples.  A and T are disjoint, so this function does not need to examine
+// the pattern of A and T at all.  No mask is used in this case.
+
+// PARALLEL: done
+
 #include "GB.h"
 
-GrB_Info GB_add_phase1
+GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (
-    int64_t **Cp_handle,        // output of size Cnvec+1
-    int64_t *Cnvec_nonempty,    // # of non-empty vectors in C
+    int64_t **Cp_handle,                // output of size Cnvec+1
+    int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
+    const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
 
     // analysis from GB_add_phase0
     const int64_t Cnvec,
     const int64_t *restrict Ch,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
-    const bool Ch_is_Mh,        // if true, then Ch == M->h
+    const bool Ch_is_Mh,                // if true, then Ch == M->h
 
-    const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,       // if true, then M is complemented
+    const GrB_Matrix M,                 // optional mask, may be NULL
+    const bool Mask_comp,               // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -63,6 +70,7 @@ GrB_Info GB_add_phase1
 
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ai = A->i ;
+    int64_t vlen = A->vlen ;
 
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bi = B->i ;
@@ -187,16 +195,31 @@ GrB_Info GB_add_phase1
         else if (M == NULL || (M != NULL && mjnz == 0 && Mask_comp))
         {
 
-            // TODO if A(:,j) or B(:,j) are dense, then C(:,j) is dense
-            // and then cjnz = A->vlen
-
             //------------------------------------------------------------------
             // No mask, or M(:,j) is empty and complemented
             //------------------------------------------------------------------
 
             // if present, M(:,j) is ignored since !M(:,j) is all true
 
-            if (ajnz == 0)
+            if (A_and_B_are_disjoint)
+            {
+
+                // only used by GB_wait, which computes A+T where T is the
+                // matrix of pending tuples for A.  The pattern of pending
+                // tuples is always disjoint with the pattern of A.
+                cjnz = ajnz + bjnz ;
+                // printf ("disjoint cjnz "GBd"\n", cjnz) ;
+
+            }
+            else if (ajnz == vlen || bjnz == vlen)
+            {
+                // if A(:,j) or B(:,j) are dense, then C(:,j) is dense
+                // and then cjnz = A->vlen
+
+                cjnz = vlen ;
+
+            }
+            else if (ajnz == 0)
             { 
 
                 //--------------------------------------------------------------

@@ -27,6 +27,15 @@
 
 // ctype is the type of matrix C.  The pattern of C is the union of A and B.
 
+// op may be NULL.  In this case, the intersection of A and B must be empty.
+// This is used by GB_wait only, for merging the pending tuple matrix T into A.
+// Any duplicate pending tuples have already been summed in T, so the
+// intersection of T and A is always empty.
+
+// PARALLEL: done, except for phase0 when both A and B are hypersparse, and
+// phase2 to prune empty vectors from C->h.  Consider a single phase method
+// when nthreads == 1.
+
 #include "GB.h"
 
 GrB_Info GB_add_phased      // C=A+B, C<M>=A+B, or C<!M>=A+B
@@ -50,7 +59,7 @@ GrB_Info GB_add_phased      // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT (Chandle != NULL) ;
     ASSERT_OK (GB_check (A, "A for add phased", GB0)) ;
     ASSERT_OK (GB_check (B, "B for add phased", GB0)) ;
-    ASSERT_OK (GB_check (op, "op for add phased", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (op, "op for add phased", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for add phased", GB0)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
@@ -86,6 +95,7 @@ GrB_Info GB_add_phased      // C=A+B, C<M>=A+B, or C<!M>=A+B
     int64_t *Cp ;
     info = GB_add_phase1 (
         &Cp, &Cnvec_nonempty,                   // computed by phase1
+        op == NULL,                             // if true, A and B disjoint
         Cnvec, Ch, C_to_A, C_to_B, Ch_is_Mh,    // from phase0
         M, Mask_comp, A, B, Context) ;          // original input
     if (info != GrB_SUCCESS)

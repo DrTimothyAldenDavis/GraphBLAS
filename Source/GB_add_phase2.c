@@ -19,6 +19,9 @@
 // GB_add_phase0.  All cases of the mask M are handled: not present, present
 // and not complemented, and present and complemented.
 
+// op may be NULL.  In this case, the intersection of A and B must be empty.
+// This is used by GB_wait only, for merging the pending tuple matrix T into A.
+
 // PARALLEL: done, except for the last phase, to prune empty vectors from C,
 // if it is hypersparse with empty vectors
 
@@ -32,7 +35,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
 
     // from GB_add_phase1
     const int64_t *restrict Cp,         // vector pointers for C
@@ -60,17 +63,29 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     ASSERT (Cp != NULL) ;
-    ASSERT_OK (GB_check (op, "op for add phase2", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (op, "op for add phase2", GB0)) ;
     ASSERT_OK (GB_check (A, "A for add phase2", GB0)) ;
     ASSERT_OK (GB_check (B, "B for add phase2", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for add phase2", GB0)) ;
     ASSERT (A->vdim == B->vdim) ;
 
-    ASSERT (GB_Type_compatible (ctype,   op->ztype)) ;
-    ASSERT (GB_Type_compatible (ctype,   A->type)) ;
-    ASSERT (GB_Type_compatible (ctype,   B->type)) ;
-    ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
-    ASSERT (GB_Type_compatible (B->type, op->ytype)) ;
+    if (op == NULL)
+    { 
+        // GB_wait does no typecasting.  A and T have the same type when
+        // computing A=A+T, and no operator is used since A and T have disjoint
+        // nonzero patterns.  No mask is used.
+        ASSERT (ctype == A->type) ;
+        ASSERT (ctype == B->type) ;
+        ASSERT (M == NULL) ;
+    }
+    else
+    { 
+        ASSERT (GB_Type_compatible (ctype,   A->type)) ;
+        ASSERT (GB_Type_compatible (ctype,   B->type)) ;
+        ASSERT (GB_Type_compatible (ctype,   op->ztype)) ;
+        ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
+        ASSERT (GB_Type_compatible (B->type, op->ytype)) ;
+    }
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -115,6 +130,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     C->nvec_nonempty = Cnvec_nonempty ;
     C->magic = GB_MAGIC ;
+    GB_Type_code ccode = ctype->code ;
 
     //--------------------------------------------------------------------------
     // using a built-in binary operator
@@ -146,7 +162,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_Type_code xycode, zcode ;
 
     if (GB_binop_builtin (A, false, B, false, op,
-        false, &opcode, &xycode, &zcode) && ctype == op->ztype)
+        false, &opcode, &xycode, &zcode) && ccode == zcode)
     { 
         #include "GB_binop_factory.c"
         ASSERT (done) ;
@@ -161,23 +177,43 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     if (!done)
     {
 
-        GxB_binary_function fadd = op->function ;
-
-        size_t csize = ctype->size ;
-        size_t asize = A->type->size ;
-        size_t bsize = B->type->size ;
-
-        size_t xsize = op->xtype->size ;
-        size_t ysize = op->ytype->size ;
-        size_t zsize = op->ztype->size ;
-
+        GxB_binary_function fadd ;
+        size_t csize, asize, bsize, xsize, ysize, zsize ;
         GB_cast_function
             cast_A_to_X, cast_B_to_Y, cast_A_to_C, cast_B_to_C, cast_Z_to_C ;
-        cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
-        cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
-        cast_A_to_C = GB_cast_factory (ctype->code,     A->type->code) ;
-        cast_B_to_C = GB_cast_factory (ctype->code,     B->type->code) ;
-        cast_Z_to_C = GB_cast_factory (ctype->code,     op->ztype->code) ;
+
+        if (op == NULL)
+        { 
+            // implicit GB_SECOND_[type] operator with no typecasting
+            fadd = NULL ;
+            csize = ctype->size ;
+            asize = csize ;
+            bsize = csize ;
+            xsize = csize ;
+            ysize = csize ;
+            zsize = csize ;
+            cast_A_to_X = GB_copy_user_user ;
+            cast_B_to_Y = GB_copy_user_user ;
+            cast_A_to_C = GB_copy_user_user ;
+            cast_B_to_C = GB_copy_user_user ;
+            cast_Z_to_C = GB_copy_user_user ;
+        }
+        else
+        { 
+            // normal case, C = A + B with optional typecasting
+            fadd = op->function ;
+            csize = ctype->size ;
+            asize = A->type->size ;
+            bsize = B->type->size ;
+            xsize = op->xtype->size ;
+            ysize = op->ytype->size ;
+            zsize = op->ztype->size ;
+            cast_A_to_X = GB_cast_factory (op->xtype->code, A->type->code) ;
+            cast_B_to_Y = GB_cast_factory (op->ytype->code, B->type->code) ;
+            cast_A_to_C = GB_cast_factory (ccode,           A->type->code) ;
+            cast_B_to_C = GB_cast_factory (ccode,           B->type->code) ;
+            cast_Z_to_C = GB_cast_factory (ccode,           op->ztype->code) ;
+        }
 
         // C(i,j) = (ctype) A(i,j), located in Ax [pA]
         #define GB_COPY_A_TO_C(cij,Ax,pA)                                   \
@@ -198,7 +234,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
             cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;
 
         // C(i,j) = (ctype) (A(i,j) + B(i,j))
+        // not used if op is null
         #define GB_BINOP(cij, aij, bij)                                     \
+            ASSERT (op != NULL) ;                                           \
             GB_void z [zsize] ;                                             \
             fadd (z, aij, bij) ;                                            \
             cast_Z_to_C (cij, z, csize) ;
@@ -218,15 +256,16 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // prune empty vectors from Ch
     //--------------------------------------------------------------------------
 
-    // TODO this is sequential.  Could use a parallel cumulative sum of the
-    // Cp > 0 condition, and then an out-of-place copy to new Ch and Cp arrays.
-
     // printf ("Cnvec_nonempty "GBd" Cnvec "GBd"\n", Cnvec_nonempty, Cnvec) ;
     if (C->is_hyper && Cnvec_nonempty < Cnvec)
     {
         int64_t *restrict Cp = C->p ;
         int64_t *restrict Ch = C->h ;
         int64_t cnvec_new = 0 ;
+
+        // TODO this loop is sequential.  Could use a parallel cumulative sum
+        // of the Cp > 0 condition, and then an out-of-place copy to new Ch and
+        // Cp arrays.
         for (int64_t k = 0 ; k < Cnvec ; k++)
         {
             int64_t cjnz = Cp [k+1] - Cp [k] ;
@@ -239,6 +278,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
                 cnvec_new++ ;
             }
         }
+
         Cp [cnvec_new] = Cp [Cnvec] ;
         C->nvec = cnvec_new ;
         // printf ("cnvec_new "GBd"\n", cnvec_new) ;

@@ -37,6 +37,8 @@ for k1 = 1:length(classes)
         crange = 1 ;
     end
 
+    is_float = isequal (aclass, 'single') || isequal (aclass, 'double') ;
+
     for A_is_hyper = 0:1
     for A_is_csc   = 0:1
 
@@ -92,9 +94,10 @@ for k1 = 1:length(classes)
         % slightly because of different round off errors.  The
         % alternative would be to compare c1 and c2 within round-off error.
 
+        % UPDATE: parallel reduction leads to different roundoff 
+
         A_hack = A ;
-        if (~A.is_csc && ...
-            (isequal (aclass, 'single') || isequal (aclass, 'double')))
+        if (~A.is_csc && is_float)
             A_hack.matrix = A_hack.matrix' ;
             A_hack.pattern = A_hack.pattern' ;
             A_hack.is_csc = true ;
@@ -103,12 +106,20 @@ for k1 = 1:length(classes)
         % to scalar
         c1 = GB_spec_reduce_to_scalar (cin, [ ], op, A_hack) ;
         c2 = GB_mex_reduce_to_scalar  (cin, [ ], op, A) ;
-        assert (isequal (c1, c2)) ;
+        if (is_float)
+            assert (abs (c1-c2) < 4 * eps (A.class) *  (abs(c1) + 1))
+        else
+            assert (isequal (c1, c2)) ;
+        end
 
         % to scalar, with accum
         c1 = GB_spec_reduce_to_scalar (cin, 'plus', op, A_hack) ;
         c2 = GB_mex_reduce_to_scalar  (cin, 'plus', op, A) ;
-        assert (isequal (c1, c2)) ;
+        if (is_float)
+            assert (abs (c1-c2) < 4 * eps (A.class) *  (abs(c1) + 1))
+        else
+            assert (isequal (c1, c2)) ;
+        end
 
     end
     end

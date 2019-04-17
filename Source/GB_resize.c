@@ -34,16 +34,11 @@ GrB_Info GB_resize              // change the size of a matrix
     GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
-    // delete any lingering zombies and assemble any pending tuples
-    //--------------------------------------------------------------------------
-
-    GB_WAIT (A) ;
-    ASSERT_OK (GB_check (A, "A to resize, wait", GB0)) ;
-
-    //--------------------------------------------------------------------------
     // handle the CSR/CSC format
     //--------------------------------------------------------------------------
 
+    int64_t vdim_old = A->vdim ;
+    int64_t vlen_old = A->vlen ;
     int64_t vlen_new, vdim_new ;
     if (A->is_csc)
     { 
@@ -57,14 +52,23 @@ GrB_Info GB_resize              // change the size of a matrix
     }
 
     //--------------------------------------------------------------------------
+    // delete any lingering zombies and assemble any pending tuples
+    //--------------------------------------------------------------------------
+
+    // only do so if either dimension is shrinking
+    if (vdim_new < vdim_old || vlen_new < vlen_old)
+    { 
+        GB_WAIT (A) ;
+        ASSERT_OK (GB_check (A, "A to resize, wait", GB0)) ;
+    }
+
+    //--------------------------------------------------------------------------
     // check for early conversion to hypersparse
     //--------------------------------------------------------------------------
 
     // If the # of vectors grows very large, it is costly to reallocate enough
     // space for the non-hypersparse A->p component.  So convert the matrix to
     // hypersparse if that happens.
-
-    int64_t vdim_old = A->vdim ;
 
     GrB_Info info = GrB_SUCCESS ;
 
@@ -110,14 +114,16 @@ GrB_Info GB_resize              // change the size of a matrix
             Ap = A->p ;
             Ah = A->h ;
         }
-        // descrease A->nvec to delete the vectors outside the range
-        // 0...vdim_new-1.
-        int64_t pleft = 0 ;
-        int64_t pright = GB_IMIN (A->nvec, vdim_new) - 1 ;
-        bool found ;
-        GB_BINARY_SPLIT_SEARCH (vdim_new, Ah, pleft, pright, found) ;
-        A->nvec = pleft ;
-
+        if (vdim_new < vdim_old)
+        { 
+            // descrease A->nvec to delete the vectors outside the range
+            // 0...vdim_new-1.
+            int64_t pleft = 0 ;
+            int64_t pright = GB_IMIN (A->nvec, vdim_new) - 1 ;
+            bool found ;
+            GB_BINARY_SPLIT_SEARCH (vdim_new, Ah, pleft, pright, found) ;
+            A->nvec = pleft ;
+        }
     }
     else
     {
@@ -146,7 +152,7 @@ GrB_Info GB_resize              // change the size of a matrix
             // number of vectors is increasing, extend the vector pointers
             int64_t anz = GB_NNZ (A) ;
             // TODO is this worth doing in parallel?
-            #pragma omp parallel for num_threads(nthreads)
+//          #pragma omp parallel for num_threads(nthreads)
             for (int64_t j = vdim_old + 1 ; j <= vdim_new ; j++)
             { 
                 Ap [j] = anz ;
@@ -168,7 +174,7 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     // if vlen is shrinking, delete entries outside the new matrix
-    if (vlen_new < A->vlen)
+    if (vlen_new < vlen_old)
     { 
         // compare with zombie pruning in GB_wait
         // also compute A->nvec_nonempty
