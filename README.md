@@ -92,7 +92,10 @@ Test:           Extensive tests, not meant for general usage.  To compile
 
 User:           user-defined objects at compile-time (.m4 files)
 
-build:          build directory, initially empty
+build:          build directory for CMake, initially empty
+
+Lib:            an alternative to CMake; edit the Lib/Makefile and do "make"
+                in this directory
 
 --------------------------------------------------------------------------------
 

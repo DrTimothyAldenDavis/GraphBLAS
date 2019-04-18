@@ -1237,17 +1237,6 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
     const GB_Type_code code2       // the type of x, the input value
 ) ;
 
-GrB_Info GB_add             // C = A+B
-(
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
-    const GrB_Type ctype,   // type of output matrix C
-    const bool C_is_csc,    // format of output matrix C
-    const GrB_Matrix A,     // input A matrix
-    const GrB_Matrix B,     // input B matrix
-    const GrB_BinaryOp op,  // op to perform C = op (A,B)
-    GB_Context Context
-) ;
-
 GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
@@ -1312,7 +1301,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_Context Context
 ) ;
 
-GrB_Info GB_add_phased      // C=A+B, C<M>=A+B, or C<!M>=A+B
+GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C

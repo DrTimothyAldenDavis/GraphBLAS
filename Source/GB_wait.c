@@ -33,9 +33,7 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
-// PARALLEL: in progress.  Need a parallel GB_prune_inplace (see also
-// GB_resize).  Need to finish the case for
-// S = A (: tjfirst:end) + T, then A = [A(:, 0:tjfirst-1) S]
+// PARALLEL: done, except for parallel GB_prune_inplace (see also GB_resize).
 
 #include "GB.h"
 
@@ -349,8 +347,8 @@ GrB_Info GB_wait                // finish all pending computations
             GB_MATRIX_FREE (&(Aslice [0])) ;
 
             // S = A1 + T
-            GB_OK (GB_add_phased (&S, A->type, A->is_csc, NULL, false,
-                Aslice [1], T, NULL, Context)) ;
+            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, false, Aslice [1], T,
+                NULL, Context)) ;
 
             ASSERT_OK (GB_check (S, "S = A1+T", GB0)) ;
 
@@ -435,7 +433,7 @@ GrB_Info GB_wait                // finish all pending computations
         // into A.  The nzmax of A is tight, with no room for future
         // incremental growth.
 
-        GB_OK (GB_add_phased (&S, A->type, A->is_csc, NULL, false, A, T, NULL,
+        GB_OK (GB_add (&S, A->type, A->is_csc, NULL, false, A, T, NULL,
             Context)) ;
         GB_MATRIX_FREE (&T) ;
         ASSERT_OK (GB_check (S, "S after GB_wait:add", GB0)) ;

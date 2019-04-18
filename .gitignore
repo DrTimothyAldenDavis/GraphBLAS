@@ -51,6 +51,10 @@ Demo/import_demo.out
 Demo/t1.out
 Demo/t2.out
 
+alternative/*.out
+alternative/*_out.m
+alternative/*_demo
+
 Test/*.log
 Test/errlog.txt
 Test/log.txt

@@ -49,7 +49,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
 
-    // original input to GB_add_phased
+    // original input to GB_add
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,
     const GrB_Matrix A,

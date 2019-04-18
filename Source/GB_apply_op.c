@@ -82,17 +82,8 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
         cast_A_to_X = GB_cast_factory (op->xtype->code, Atype->code) ;
     GxB_unary_function fop = op->function ;
 
-    // TODO: how do I make this parallel?  Each thread needs a local copy
-    // of the xwork workspace.  This fails (with wrong results):
-    // #pragma omp parallel for num_threads(nthreads)
-    // This fails to compile:
-    // #pragma omp parallel for num_threads(nthreads) firstprivate(xwork)
-    // If I put xwork outside the loop and use threadprivate, it
-    // fails to compile.
-
-    // TODO: Solution:  some user operators are not thread safe!
-    // The parallelism here assumes that fop is thread safe, and it fails on
-    // the Demo/mis code.  See mis_score.
+    // TODO: some user operations are not thread safe.  This fails on
+    // Demo/mis code.  See mis_score.
     for (int64_t p = 0 ; p < anz ; p++)
     { 
         // xwork = (xtype) Ax [p]

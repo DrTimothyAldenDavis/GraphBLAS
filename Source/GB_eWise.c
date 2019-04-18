@@ -122,8 +122,6 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
         // Flip the sense of A_transpose.  For example, if C is CSC and A is
         // CSR, and A_transpose is true, then C=A'+B is being computed.  But
         // this is the same as C=A+B where A is treated as if it is CSC.
-        // GB_add and GB_emult are agnostic to the CSR/CSC
-        // format of their inputs.
         A_transpose = !A_transpose ;
     }
 
@@ -163,7 +161,7 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             // T = A + B, with flipped CSR/CSC format so GB_accum_mask does C=T'
             if (eWiseAdd)
             { 
-                GB_OK (GB_add_phased (&T, T_type, !C_is_csc, 
+                GB_OK (GB_add (&T, T_type, !C_is_csc, 
                     (M_is_csc == C_is_csc) ? MT : M, Mask_comp,
                     A, B, op, Context)) ;
             }
@@ -190,7 +188,7 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             // T = AT + B
             if (eWiseAdd)
             { 
-                GB_OK (GB_add_phased (&T, T_type, C_is_csc,
+                GB_OK (GB_add (&T, T_type, C_is_csc,
                     (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
                     AT, B, op, Context)) ;
             }
@@ -221,7 +219,7 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             // T = A + BT
             if (eWiseAdd)
             { 
-                GB_OK (GB_add_phased (&T, T_type, C_is_csc,
+                GB_OK (GB_add (&T, T_type, C_is_csc,
                     (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
                     A, BT, op, Context)) ;
             }
@@ -241,7 +239,7 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
 
             if (eWiseAdd)
             { 
-                GB_OK (GB_add_phased (&T, T_type, C_is_csc,
+                GB_OK (GB_add (&T, T_type, C_is_csc,
                     (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
                     A, B, op, Context)) ;
             }

@@ -223,8 +223,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // then use subassign.  It will be fast when T is very sparse and C has
     // many nonzeros.  If the # of pending tuples in C is growing, however,
     // then it would be better to finish the work now, and leave C completed.
-    // In this case, GB_transplant (if no accum) or GB_add_phased (with accum),
-    // and GB_mask are used for the accum/mask step.
+    // In this case, GB_transplant (if no accum) or GB_add (with accum), and
+    // GB_mask are used for the accum/mask step.
 
     // If there is no mask M, and no accum, then C=T is fast (just
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
@@ -292,7 +292,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             //------------------------------------------------------------------
 
             // TODO exploit the mask
-            GB_OK (GB_add_phased (&Z, C->type, C->is_csc, 
+            GB_OK (GB_add (&Z, C->type, C->is_csc, 
                 NULL, false,        // TODO, will be: M, Mask_comp,
                 C, T, accum, Context)) ;
             GB_MATRIX_FREE (Thandle) ;

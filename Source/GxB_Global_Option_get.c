@@ -200,6 +200,15 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*compile_time) = __TIME__ ;
             break ;
 
+        case 18 : // GxB_LIBRARY_URL :
+
+            va_start (ap, field) ;
+            char **url = va_arg (ap, char **) ;
+            va_end (ap) ;
+            GB_RETURN_IF_NULL (url) ;
+            (*url) = "http://faculty.cse.tamu.edu/davis/GraphBLAS" ;
+            break ;
+
         //----------------------------------------------------------------------
         // GraphBLAS API version, tec
         //----------------------------------------------------------------------
@@ -215,6 +224,15 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             api_version [2] = GxB_SUB ;
             break ;
 
+        case 16 : // GxB_API_DATE :
+
+            va_start (ap, field) ;
+            char **api_date = va_arg (ap, char **) ;
+            va_end (ap) ;
+            GB_RETURN_IF_NULL (api_date) ;
+            (*api_date) = GxB_SPEC_DATE ;
+            break ;
+
         case 15 : // GxB_API_ABOUT :
 
             va_start (ap, field) ;
@@ -222,6 +240,15 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             va_end (ap) ;
             GB_RETURN_IF_NULL (api_about) ;
             (*api_about) = GxB_SPEC ;
+            break ;
+
+        case 17 : // GxB_API_URL :
+
+            va_start (ap, field) ;
+            char **api_url = va_arg (ap, char **) ;
+            va_end (ap) ;
+            GB_RETURN_IF_NULL (api_url) ;
+            (*api_url) = "http://graphblas.org" ;
             break ;
 
         //----------------------------------------------------------------------
