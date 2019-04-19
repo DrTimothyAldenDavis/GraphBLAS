@@ -55,11 +55,11 @@ void mexFunction
     pargout [4] = mxCreateDoubleScalar (hyperratio) ;
 
     char *name ;
-    GxB_get (7, &name) ;
+    GxB_get (GxB_LIBRARY_NAME, &name) ;
     pargout [5] = mxCreateString (name) ;
 
     int version [3] ;
-    GxB_get (8, version) ;
+    GxB_get (GxB_LIBRARY_VERSION, version) ;
     pargout [6] = mxCreateDoubleMatrix (1, 3, mxREAL) ;
     double *p = mxGetPr (pargout [6]) ;
     p [0] = version [0] ;
@@ -67,27 +67,27 @@ void mexFunction
     p [2] = version [2] ;
 
     char *date ;
-    GxB_get (9, &date) ;
+    GxB_get (GxB_LIBRARY_DATE, &date) ;
     pargout [7] = mxCreateString (date) ;
 
     char *about ;
-    GxB_get (10, &about) ;
+    GxB_get (GxB_LIBRARY_ABOUT, &about) ;
     pargout [8] = mxCreateString (about) ;
 
     char *license ;
-    GxB_get (11, &license) ;
+    GxB_get (GxB_LIBRARY_LICENSE, &license) ;
     pargout [9] = mxCreateString (license) ;
 
     char *compile_date ;
-    GxB_get (12, &compile_date) ;
+    GxB_get (GxB_LIBRARY_COMPILE_DATE, &compile_date) ;
     pargout [10] = mxCreateString (compile_date) ;
 
     char *compile_time ;
-    GxB_get (13, &compile_time) ;
+    GxB_get (GxB_LIBRARY_COMPILE_TIME, &compile_time) ;
     pargout [11] = mxCreateString (compile_time) ;
 
     int api [3] ;
-    GxB_get (14, api) ;
+    GxB_get (GxB_API_VERSION, api) ;
     pargout [12] = mxCreateDoubleMatrix (1, 3, mxREAL) ;
     double *a = mxGetPr (pargout [12]) ;
     a [0] = api [0] ;
@@ -95,7 +95,7 @@ void mexFunction
     a [2] = api [2] ;
 
     char *api_about ;
-    GxB_get (15, &api_about) ;
+    GxB_get (GxB_API_ABOUT, &api_about) ;
     pargout [13] = mxCreateString (api_about) ;
 
     GrB_finalize ( ) ;

@@ -80,11 +80,20 @@ static inline bool GB_allocate_result
         ok = ok && (*C_to_B_handle != NULL) ;
     }
     if (!ok)
-    { 
+    {
         // out of memory
-        GB_FREE_MEMORY (*Ch_handle,     max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (*C_to_A_handle, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (*C_to_B_handle, max_Cnvec, sizeof (int64_t)) ;
+        if (Ch_handle != NULL)
+        { 
+            GB_FREE_MEMORY (*Ch_handle,     max_Cnvec, sizeof (int64_t)) ;
+        }
+        if (C_to_A_handle != NULL)
+        { 
+            GB_FREE_MEMORY (*C_to_A_handle, max_Cnvec, sizeof (int64_t)) ;
+        }
+        if (C_to_B_handle != NULL)
+        { 
+            GB_FREE_MEMORY (*C_to_B_handle, max_Cnvec, sizeof (int64_t)) ;
+        }
     }
     return (ok) ;
 }

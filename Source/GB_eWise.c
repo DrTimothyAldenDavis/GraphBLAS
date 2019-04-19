@@ -15,7 +15,12 @@
 
 #include "GB.h"
 
-#define GB_FREE_ALL GB_MATRIX_FREE (&MT) ;
+#define GB_FREE_ALL         \
+{                           \
+    GB_MATRIX_FREE (&AT) ;  \
+    GB_MATRIX_FREE (&BT) ;  \
+    GB_MATRIX_FREE (&MT) ;  \
+}
 
 GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
 (
@@ -40,7 +45,7 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GrB_Matrix MT = NULL ;
+    GrB_Matrix MT = NULL, BT = NULL, AT = NULL ;
     ASSERT (GB_ALIAS_OK3 (C, M, A, B)) ;
 
     GB_RETURN_IF_FAULTY (accum) ;
@@ -212,7 +217,6 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             // FUTURE: for emult, if A is much sparser than B then do T'=A'+B
 
             // BT = B'
-            GrB_Matrix BT = NULL ;
             // transpose: no typecast, no op, not in place
             GB_OK (GB_transpose (&BT, NULL, C_is_csc, B, NULL, Context)) ;
 

@@ -34,4 +34,3 @@ void GB_mx_put_time
     mexPutVariable ("global", "GraphBLAS_results", gbresults_matlab) ;
 }
 
-

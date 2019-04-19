@@ -157,19 +157,18 @@ int main (void)
         GxB_LICENSE, GxB_MAJOR, GxB_MINOR, GxB_SUB, GxB_SPEC_DATE, GxB_SPEC) ;
     */
 
-    // TODO use enums here
-    char *library ;     GxB_get (7, &library) ;
-    int version [3] ;   GxB_get (8, version) ;
-    char *date ;        GxB_get (9, &date) ;
-    char *about ;       GxB_get (10, &about) ;
-    char *url ;         GxB_get (18, &url) ;
-    char *license ;     GxB_get (11, &license) ;
-    char *cdate ;       GxB_get (12, &cdate) ;
-    char *ctime ;       GxB_get (13, &ctime) ;
-    int api_ver [3] ;   GxB_get (14, api_ver) ;
-    char *api_date ;    GxB_get (16, &api_date) ;
-    char *api_about ;   GxB_get (15, &api_about) ;
-    char *api_url ;     GxB_get (17, &api_url) ;
+    char *library ;     GxB_get (GxB_LIBRARY_NAME,         &library) ;
+    int version [3] ;   GxB_get (GxB_LIBRARY_VERSION,      version) ;
+    char *date ;        GxB_get (GxB_LIBRARY_DATE,         &date) ;
+    char *about ;       GxB_get (GxB_LIBRARY_ABOUT,        &about) ;
+    char *url ;         GxB_get (GxB_LIBRARY_URL,          &url) ;
+    char *license ;     GxB_get (GxB_LIBRARY_LICENSE,      &license) ;
+    char *cdate ;       GxB_get (GxB_LIBRARY_COMPILE_DATE, &cdate) ;
+    char *ctime ;       GxB_get (GxB_LIBRARY_COMPILE_TIME, &ctime) ;
+    int api_ver [3] ;   GxB_get (GxB_API_VERSION,          api_ver) ;
+    char *api_date ;    GxB_get (GxB_API_DATE,             &api_date) ;
+    char *api_about ;   GxB_get (GxB_API_ABOUT,            &api_about) ;
+    char *api_url ;     GxB_get (GxB_API_URL,              &api_url) ;
 
     fprintf (stderr, LINE2 "%s Version %d.%d.%d, %s\n" LINE2 "%s"
         "(%s)\n" LINE "License: %s" LINE "GraphBLAS API Version %d.%d.%d, %s"

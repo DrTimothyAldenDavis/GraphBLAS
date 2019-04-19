@@ -70,6 +70,7 @@
     (((major)*1000ULL + (minor))*1000ULL + (sub))
 
 // The version of this implementation, and the GraphBLAS API version:
+#define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
 #define GxB_DATE "@GraphBLAS_DATE@"
 #define GxB_IMPLEMENTATION_MAJOR @GraphBLAS_VERSION_MAJOR@
 #define GxB_IMPLEMENTATION_MINOR @GraphBLAS_VERSION_MINOR@
@@ -118,34 +119,6 @@
 "Jose' Moreira, Carl Yang.  Based on \"GraphBLAS Mathematics\" by\n"    \
 "Jeremy Kepner.  See also \"Graph Algorithms in the Language of\n"      \
 "Linear Algebra\", edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
-
-//------------------------------------------------------------------------------
-// GXB_* macros
-//------------------------------------------------------------------------------
-
-// The above macros were named GXB_* in SuiteSparse:GraphBLAS 2.0.3 and earlier
-// because an early draft of the GraphBLAS API used the GRB_* prefix, which is
-// not used in the final API.  In version 2.1.0 and later, the GXB_* #define's
-// have been renamed GxB_* to be more consistent with the GrB_* naming scheme.
-// The GXB_* names defined below shall always be kept for backward
-// compatibility and will not be deprecated.  They are just no longer mentioned
-// in the SuiteSparse:GraphBLAS User Guide.
-
-#define GXB_SUITESPARSE_GRAPHBLAS
-#define GXB_VERSION(major,minor,sub)    GxB_VERSION(major,minor,sub)
-#define GXB_DATE                        GxB_DATE 
-#define GXB_IMPLEMENTATION_MAJOR        GxB_IMPLEMENTATION_MAJOR 
-#define GXB_IMPLEMENTATION_MINOR        GxB_IMPLEMENTATION_MINOR 
-#define GXB_IMPLEMENTATION_SUB          GxB_IMPLEMENTATION_SUB   
-#define GXB_IMPLEMENTATION              GxB_IMPLEMENTATION
-#define GXB_ABOUT                       GxB_ABOUT
-#define GXB_LICENSE                     GxB_LICENSE
-#define GXB_SPEC_DATE                   GxB_SPEC_DATE
-#define GXB_MAJOR                       GxB_MAJOR
-#define GXB_MINOR                       GxB_MINOR
-#define GXB_SUB                         GxB_SUB
-#define GXB                             GxB_VERSION(GxB_MAJOR,GxB_MINOR,GxB_SUB)
-#define GXB_SPEC                        GxB_SPEC
 
 //------------------------------------------------------------------------------
 // include files required by GraphBLAS
@@ -2946,11 +2919,11 @@ GrB_Info GrB_Descriptor_free    // free a descriptor
 
 typedef enum            // for global options or matrix options
 {
-    // these are either global or matrix options:
+    // GxB_Matrix_Option_get/set and GxB_Global_Option_get/set:
     GxB_HYPER = 0,      // defines switch to hypersparse format (a double value)
     GxB_FORMAT = 1,     // defines CSR/CSC format: GxB_BY_ROW or GxB_BY_COL
 
-    // these are global options only:
+    // GxB_Global_Option_get only:
     GxB_MODE = 2,       // mode passed to GrB_init (blocking or non-blocking)
 
     GxB_THREAD_SAFETY = 3,  // thread library that allows GraphBLAS to
@@ -2960,12 +2933,27 @@ typedef enum            // for global options or matrix options
 
     GxB_THREADING = 4,  // thread library used for internal GraphBLAS threads
 
+    // GxB_Matrix_Option_get/set only:
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
                         // If <= GxB_DEFAULT, then GraphBLAS selects the number
                         // of threads automatically.
 
-    GxB_IS_HYPER = 6    // query a matrix to see if it hypersparse or not
-                        // (GxB_Matrix_Option_get only)
+    // GxB_Matrix_Option_get only:
+    GxB_IS_HYPER = 6,   // query a matrix to see if it hypersparse or not
+
+    // GxB_Global_Option_get only:
+    GxB_LIBRARY_NAME = 7,           // name of the library (char *)
+    GxB_LIBRARY_VERSION = 8,        // library version (3 int's)
+    GxB_LIBRARY_DATE = 9,           // date of the library (char *)
+    GxB_LIBRARY_ABOUT = 10,         // about the library (char *)
+    GxB_LIBRARY_URL = 11,           // URL for the library (char *)
+    GxB_LIBRARY_LICENSE = 12,       // license of the library (char *)
+    GxB_LIBRARY_COMPILE_DATE = 13,  // date library was compiled (char *)
+    GxB_LIBRARY_COMPILE_TIME = 14,  // time library was compiled (char *)
+    GxB_API_VERSION = 15,           // API version (3 int's)
+    GxB_API_DATE = 16,              // date of the API (char *)
+    GxB_API_ABOUT = 17,             // about the API (char *)
+    GxB_API_URL = 18                // URL for the API (char *)
 
 } GxB_Option_Field ;
 

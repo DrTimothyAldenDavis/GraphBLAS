@@ -135,16 +135,16 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         // SuiteSparse:GraphBLAS version, etc
         //----------------------------------------------------------------------
 
-        case 7 : // GxB_LIBRARY_NAME :
+        case GxB_LIBRARY_NAME :
 
             va_start (ap, field) ;
             char **name = va_arg (ap, char **) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (name) ;
-            (*name) = "SuiteSparse:GraphBLAS" ;     // GxB_(whatever...) TODO 
+            (*name) = GxB_IMPLEMENTATION_NAME ;
             break ;
 
-        case 8 : // GxB_LIBRARY_VERSION :
+        case GxB_LIBRARY_VERSION :
 
             va_start (ap, field) ;
             int *version = va_arg (ap, int *) ;
@@ -155,7 +155,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             version [2] = GxB_IMPLEMENTATION_SUB ;
             break ;
 
-        case 9 : // GxB_LIBRARY_DATE :
+        case GxB_LIBRARY_DATE :
 
             va_start (ap, field) ;
             char **date = va_arg (ap, char **) ;
@@ -164,7 +164,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*date) = GxB_DATE ;
             break ;
 
-        case 10 : // GxB_LIBRARY_ABOUT :
+        case GxB_LIBRARY_ABOUT :
 
             va_start (ap, field) ;
             char **about = va_arg (ap, char **) ;
@@ -173,7 +173,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*about) = GxB_ABOUT ;
             break ;
 
-        case 11 : // GxB_LIBRARY_LICENSE :
+        case GxB_LIBRARY_LICENSE :
 
             va_start (ap, field) ;
             char **license = va_arg (ap, char **) ;
@@ -182,7 +182,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*license) = GxB_LICENSE ;
             break ;
 
-        case 12 : // GxB_LIBRARY_COMPILE_DATE :
+        case GxB_LIBRARY_COMPILE_DATE :
 
             va_start (ap, field) ;
             char **compile_date = va_arg (ap, char **) ;
@@ -191,7 +191,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*compile_date) = __DATE__ ;
             break ;
 
-        case 13 : // GxB_LIBRARY_COMPILE_TIME :
+        case GxB_LIBRARY_COMPILE_TIME :
 
             va_start (ap, field) ;
             char **compile_time = va_arg (ap, char **) ;
@@ -200,7 +200,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*compile_time) = __TIME__ ;
             break ;
 
-        case 18 : // GxB_LIBRARY_URL :
+        case GxB_LIBRARY_URL :
 
             va_start (ap, field) ;
             char **url = va_arg (ap, char **) ;
@@ -213,7 +213,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         // GraphBLAS API version, tec
         //----------------------------------------------------------------------
 
-        case 14 : // GxB_API_VERSION :
+        case GxB_API_VERSION :
 
             va_start (ap, field) ;
             int *api_version = va_arg (ap, int *) ;
@@ -224,7 +224,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             api_version [2] = GxB_SUB ;
             break ;
 
-        case 16 : // GxB_API_DATE :
+        case GxB_API_DATE :
 
             va_start (ap, field) ;
             char **api_date = va_arg (ap, char **) ;
@@ -233,7 +233,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*api_date) = GxB_SPEC_DATE ;
             break ;
 
-        case 15 : // GxB_API_ABOUT :
+        case GxB_API_ABOUT :
 
             va_start (ap, field) ;
             char **api_about = va_arg (ap, char **) ;
@@ -242,7 +242,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             (*api_about) = GxB_SPEC ;
             break ;
 
-        case 17 : // GxB_API_URL :
+        case GxB_API_URL :
 
             va_start (ap, field) ;
             char **api_url = va_arg (ap, char **) ;
@@ -252,6 +252,8 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
+
+        // TODO
 
 /*
         case 16: // GxB_MALLOC_FUNCTION

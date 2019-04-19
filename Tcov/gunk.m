@@ -1,4 +1,50 @@
 
+% test18
+clear
+addpath ../Test
+addpath ../Test/spok
+addpath ../Demo/MATLAB
+debug_on
+load gunk
+%save gunk C Mask accum op AT B dtn
+                                % C = A'+B, no Mask
+                                C0 = GB_spec_eWiseAdd_Matrix ...
+                                    (C, [ ], accum, op, AT, B, dtn);
+                                C1 = GB_mex_eWiseAdd_Matrix ...
+                                    (C, [ ], accum, op, AT, B, dtn);
+                                GB_spec_compare (C0, C1) ;
+
+
+%{
+% test106
+clear
+load gunk
+addpath ../Test
+addpath ../Test/spok
+addpath ../Demo/MATLAB
+debug_on
+'here0'
+gb
+% save gunk C I0 J0 I1 J1 A
+%                    C1a = GB_mex_subassign  (C, [ ], [ ],  C,  I0, J0, [ ]) ;
+%'here1'
+%                    C2  = GB_spec_subassign (C, [ ], [ ],  C,  I1, J1, [ ], 0) ;
+%'here2'
+%                    GB_spec_compare (C1a, C2) ;
+%'here3'
+%                    C1b = GB_mex_subassign  (C, [ ], [ ], 'C', I0, J0, [ ]) ;
+%                    GB_spec_compare (C1b, C2) ;
+%
+%'here4'
+%                    C1a = GB_mex_subassign  (C,  C,  [ ], A, I0, J0, [ ]) ;
+%'here5'
+                    C2  = GB_spec_subassign (C,  C,  [ ], A, I1, J1, [ ], 0) ;
+%                    GB_spec_compare (C1a, C2) ;
+'here6'
+                    C1b = GB_mex_subassign  (C, 'C', [ ], A, I0, J0, [ ]) ;
+'here7'
+                    GB_spec_compare (C1b, C2) ;
+
 % test103
 % save gunk C M A desc
 clear
@@ -7,7 +53,6 @@ load gunk
                     C2a = GB_spec_transpose (C, M, 'plus', A, desc) ;
                     C2b = GB_mex_transpose  (C, M, 'plus', A, desc, 'test') ;
                     GB_spec_compare (C2a, C2b) ;
-%{
 % test103
 % save gunk C M A desc
 clear

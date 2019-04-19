@@ -29,6 +29,7 @@ for m = [0 1 5 100]
                     M = GB_spec_random (m, n, d, 100, 'double', ...
                         is_csc, is_hyper, hyper_ratio) ;
 
+save gunk C I0 J0 I1 J1 A
                     C1a = GB_mex_subassign  (C, [ ], [ ],  C,  I0, J0, [ ]) ;
                     C2  = GB_spec_subassign (C, [ ], [ ],  C,  I1, J1, [ ], 0) ;
                     GB_spec_compare (C1a, C2) ;

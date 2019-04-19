@@ -94,8 +94,8 @@ User:           user-defined objects at compile-time (.m4 files)
 
 build:          build directory for CMake, initially empty
 
-Lib:            an alternative to CMake; edit the Lib/Makefile and do "make"
-                in this directory
+alternative:    an alternative to CMake; edit the alternative/Makefile and do
+                "make" or "make run" in this directory
 
 --------------------------------------------------------------------------------
 

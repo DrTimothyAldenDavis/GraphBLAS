@@ -74,8 +74,9 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // phase0: determine the vectors in C(:,j)
     //--------------------------------------------------------------------------
 
-    int64_t Cnvec, max_Cnvec ;
-    int64_t *Ch, *C_to_A, *C_to_B ;
+    GrB_Matrix C = NULL ;
+    int64_t Cnvec, max_Cnvec, Cnvec_nonempty ;
+    int64_t *Cp = NULL, *Ch = NULL, *C_to_A = NULL, *C_to_B = NULL ;
     bool Ch_is_Mh ;
 
     GrB_Info info = GB_add_phase0 (
@@ -91,8 +92,6 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // phase1: count the number of entries in each vector of C
     //--------------------------------------------------------------------------
 
-    int64_t Cnvec_nonempty ;
-    int64_t *Cp ;
     info = GB_add_phase1 (
         &Cp, &Cnvec_nonempty,                   // computed by phase1
         op == NULL,                             // if true, A and B disjoint
@@ -111,7 +110,6 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // phase2: compute the entries (indices and values) in each vector of C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C ;
     info = GB_add_phase2 (
         &C, ctype, C_is_csc, op,                // computed or used by phase2
         Cp, Cnvec_nonempty,                             // from phase1
