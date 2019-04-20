@@ -14,8 +14,29 @@
 #define GB_H
 
 //------------------------------------------------------------------------------
-// the method for multithreading in the user application must be known:
+// code development settings
 //------------------------------------------------------------------------------
+
+// turn off debugging; do not edit these three lines
+#ifndef NDEBUG
+#define NDEBUG
+#endif
+
+// These flags are used for code development.  Uncomment them as needed.
+
+// to turn on debugging, uncomment this line:
+// TODO Debug is on
+#undef NDEBUG
+
+// to turn on memory usage debug printing, uncomment this line:
+// #define GB_PRINT_MALLOC 1
+
+// to reduce code size and for faster time to compile, uncomment this line;
+// GraphBLAS will be slower:
+// #define GBCOMPACT 1
+
+// uncomment this for code development (additional diagnostics are printed):
+// #define GB_DEVELOPER 1
 
 // set these via cmake, or uncomment to select the user-thread model:
 
@@ -87,31 +108,9 @@
 #include "GraphBLAS.h"
 
 //------------------------------------------------------------------------------
-// code development settings
+// for coverage tests in Tcov/
 //------------------------------------------------------------------------------
 
-// turn off debugging; do not edit these three lines
-#ifndef NDEBUG
-#define NDEBUG
-#endif
-
-// These flags are used for code development.  Uncomment them as needed.
-
-// to turn on debugging, uncomment this line:
-// TODO Debug is on
-#undef NDEBUG
-
-// to turn on memory usage debug printing, uncomment this line:
-// #define GB_PRINT_MALLOC 1
-
-// to reduce code size and for faster time to compile, uncomment this line;
-// GraphBLAS will be slower:
-// #define GBCOMPACT 1
-
-// uncomment this for code development (additional diagnostics are printed):
-// #define GB_DEVELOPER 1
-
-// for coverage tests
 #ifdef GBCOVER
 #define GBCOVER_MAX 10000
 extern int64_t GB_cov [GBCOVER_MAX] ;
@@ -6542,7 +6541,7 @@ static inline int64_t GB_Sauna_reset
 }
 
 //------------------------------------------------------------------------------
-// import/export
+// macros for import/export
 //------------------------------------------------------------------------------
 
 #define GB_IMPORT_CHECK                                         \

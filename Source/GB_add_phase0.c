@@ -47,7 +47,7 @@
 //      C_to_B is returned as NULL.
 
 // PARALLEL: done, except in one conditiion: A and B are hypersparse and
-// Ch_is_Mh is false.
+// Ch_is_Mh is false.  takes O(A->nvec + B->nvec) time.
 
 #include "GB.h"
 

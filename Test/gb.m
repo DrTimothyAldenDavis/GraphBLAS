@@ -7,7 +7,14 @@
 name version date about license compiledate compiletime api api_about] ... 
  = GB_mex_init ;
 
-fprintf ('\nGraphBLAS:\n    max threads: %d\n', nthreads_max) ;
+fprintf ('\nGraphBLAS:\n    max nthreads: %d\n', nthreads_max) ;
+
+nthreads = nthreads_get ;
+fprintf ('    # of threads to use (nthreads_get/set): %d\n', nthreads) ;
+
+ncores = feature ('numcores') ;
+fprintf ('    # of cores for MATLAB: %d\n', ncores) ;
+
 
 switch (threading)
     case {0}

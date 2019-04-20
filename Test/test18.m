@@ -209,7 +209,6 @@ for k1 = k1test % 1:length (classes)
                                 % A'+B
                                 %---------------------------------------
 
-save gunk C Mask accum op AT B dtn
                                 % C = A'+B, no Mask
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, AT, B, dtn);

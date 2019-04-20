@@ -25,12 +25,6 @@
 
 // ctype is the type of matrix C.  Its pattern is the intersection of A and B.
 
-// This function should not be called by the end user.  It is a helper function
-// for user-callable routines.  No error checking is performed except for
-// out-of-memory conditions.
-
-// FUTURE: this could be faster with built-in operators and types.
-
 // PARALLEL: TODO. See GB_add_phase*.
 
 #include "GB.h"

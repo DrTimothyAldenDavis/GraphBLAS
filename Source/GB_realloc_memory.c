@@ -134,6 +134,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 if (malloc_tracking)
                 {
                     // reduce the amount of memory in use
+                    #undef  GB_CRITICAL_SECTION
                     #define GB_CRITICAL_SECTION                              \
                     {                                                        \
                         GB_Global_inuse_decrement ((nitems_old - nitems_new) \
@@ -160,6 +161,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 if (nitems_new < nitems_old)
                 {
                     // decrease the amount of memory in use
+                    #undef  GB_CRITICAL_SECTION
                     #define GB_CRITICAL_SECTION                              \
                     {                                                        \
                         GB_Global_inuse_decrement ((nitems_old - nitems_new) \
@@ -170,6 +172,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 else
                 {
                     // increase the amount of memory in use
+                    #undef  GB_CRITICAL_SECTION
                     #define GB_CRITICAL_SECTION                              \
                     {                                                        \
                         GB_Global_inuse_increment ((nitems_new - nitems_old) \

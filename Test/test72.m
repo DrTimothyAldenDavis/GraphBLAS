@@ -40,9 +40,9 @@ GB_spec_compare (C0, C1, 0) ;
 assert (isequal (Z, sparse (C0.matrix))) ;
 
 n = 500 ;
-%%% n = 4 ;
+% n = 4 ;
 A = speye (n) ;
-%%% A = sparse (rand (n)) ;
+% A = sparse (rand (n)) ;
 B = sparse (rand (n)) ;
 Z = sparse (n,n) ;
 

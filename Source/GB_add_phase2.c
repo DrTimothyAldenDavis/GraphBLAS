@@ -23,7 +23,8 @@
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 
 // PARALLEL: done, except for the last phase, to prune empty vectors from C,
-// if it is hypersparse with empty vectors
+// if it is hypersparse with empty vectors.  Takes O(C->nvec time), and is
+// not always used.
 
 #include "GB.h"
 #ifndef GBCOMPACT

@@ -359,7 +359,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         {
             ASSERT_OK (GB_check (*Chandle, "C for sequential A*B", GB0)) ;
         }
-
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
     }
 
@@ -883,6 +882,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
                 }
                 GB_OK (GB_Sauna_release (nthreads, Sauna_ids)) ;
             }
+            GB_FREE_ALL ;
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -935,8 +935,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_ALL ;
-
 //  #if defined ( _OPENMP )
 //  t = omp_get_wtime ( ) - t ;
 //  if (avlen > 1000)
@@ -947,6 +945,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 //  }
 //  #endif
 
+    GB_FREE_ALL ;
     ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
     return (GrB_SUCCESS) ;
 }

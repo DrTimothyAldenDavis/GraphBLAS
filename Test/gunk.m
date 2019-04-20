@@ -1,4 +1,17 @@
+% test72, nthreads > 1
+clear all
+addpath ../Test
+addpath ../Test/spok
+addpath ../Demo/MATLAB
+debug_on
+load gunk
+% save gunk Z Mask semiring A B dtt
+C0 = GB_spec_mxm (Z, Mask, [ ], semiring, A, B, dtt);
+C1 = GB_mex_mxm  (Z, Mask, [ ], semiring, A, B, dtt);
+nthreads_set (4)
+C2 = GB_mex_mxm  (Z, Mask, [ ], semiring, A, B, dtt);
 
+%{
 % test18
 clear
 addpath ../Test
@@ -6,6 +19,7 @@ addpath ../Test/spok
 addpath ../Demo/MATLAB
 debug_on
 load gunk
+
 %save gunk C Mask accum op AT B dtn
                                 % C = A'+B, no Mask
                                 C0 = GB_spec_eWiseAdd_Matrix ...
@@ -15,7 +29,6 @@ load gunk
                                 GB_spec_compare (C0, C1) ;
 
 
-%{
 % test106
 clear
 load gunk

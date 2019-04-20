@@ -84,7 +84,7 @@ clean:
 	$(RM) -f *.o *.out *_out.m
 
 distclean: clean
-	$(RM) -rf *.dSYM $(DEMO_PRG)
+	$(RM) -rf *.dSYM $(DEMO) libgraphblas.*
 
 purge: distclean
 

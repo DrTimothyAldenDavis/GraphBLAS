@@ -355,10 +355,11 @@ void * GB_Global_malloc_function (size_t size)
     }
     else
     {
-        #pragma omp critical(GB_critical_section_malloc)
-        {
-            p = GB_Global.malloc_function (size) ;
+        #define GB_CRITICAL_SECTION                             \
+        {                                                       \
+            p = GB_Global.malloc_function (size) ;              \
         }
+        #include "GB_critical_section.c"
     }
     return (p) ;
 }
@@ -386,10 +387,12 @@ void * GB_Global_calloc_function (size_t count, size_t size)
     }
     else
     {
-        #pragma omp critical(GB_critical_section_malloc)
-        {
-            p = GB_Global.calloc_function (count, size) ;
+        #undef  GB_CRITICAL_SECTION                             \
+        #define GB_CRITICAL_SECTION                             \
+        {                                                       \
+            p = GB_Global.calloc_function (count, size) ;       \
         }
+        #include "GB_critical_section.c"
     }
     return (p) ;
 }
@@ -420,10 +423,12 @@ void * GB_Global_realloc_function (void *p, size_t size)
     }
     else
     {
-        #pragma omp critical(GB_critical_section_malloc)
-        {
-            pnew = GB_Global.realloc_function (p, size) ;
+        #undef  GB_CRITICAL_SECTION                             \
+        #define GB_CRITICAL_SECTION                             \
+        {                                                       \
+            pnew = GB_Global.realloc_function (p, size) ;       \
         }
+        #include "GB_critical_section.c"
     }
     return (pnew) ;
 }
@@ -450,10 +455,12 @@ void GB_Global_free_function (void *p)
     }
     else
     {
-        #pragma omp critical(GB_critical_section_malloc)
-        {
-            GB_Global.free_function (p) ;
+        #undef  GB_CRITICAL_SECTION                             \
+        #define GB_CRITICAL_SECTION                             \
+        {                                                       \
+            GB_Global.free_function (p) ;                       \
         }
+        #include "GB_critical_section.c"
     }
 }
 

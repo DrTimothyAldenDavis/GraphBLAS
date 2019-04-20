@@ -9,8 +9,6 @@
 
 // Returns the status of all global settings.
 
-// TODO: add version #, 
-
 #include "GB_mex.h"
 
 #define USAGE "[nthreads_max threading thread_safety format hyperratio" \
