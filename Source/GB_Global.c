@@ -387,7 +387,7 @@ void * GB_Global_calloc_function (size_t count, size_t size)
     }
     else
     {
-        #undef  GB_CRITICAL_SECTION                             \
+        #undef  GB_CRITICAL_SECTION
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
             p = GB_Global.calloc_function (count, size) ;       \
@@ -423,7 +423,7 @@ void * GB_Global_realloc_function (void *p, size_t size)
     }
     else
     {
-        #undef  GB_CRITICAL_SECTION                             \
+        #undef  GB_CRITICAL_SECTION
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
             pnew = GB_Global.realloc_function (p, size) ;       \
@@ -455,7 +455,7 @@ void GB_Global_free_function (void *p)
     }
     else
     {
-        #undef  GB_CRITICAL_SECTION                             \
+        #undef  GB_CRITICAL_SECTION
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
             GB_Global.free_function (p) ;                       \
