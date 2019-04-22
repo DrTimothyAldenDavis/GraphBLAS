@@ -11,10 +11,10 @@ if (nargin < 1)
 end
 
 if (fulltest)
-    fprintf ('--------------lengthy tests of GrB_eWiseAdd and eWiseMult\n') ;
+    fprintf ('test18 ----------lengthy tests of GrB_eWiseAdd and eWiseMult\n') ;
     k1test = 1:length(classes) ;
 else
-    fprintf ('--------------quick tests of GrB_eWiseAdd and eWiseMult\n') ;
+    fprintf ('test18 ------------quick tests of GrB_eWiseAdd and eWiseMult\n') ;
     k1test = [1 2 4 10 11] ;
 end
 
@@ -40,7 +40,7 @@ for k1 = k1test % 1:length (classes)
     for k2 = k2test % 1:length(bin_ops)
         binop = bin_ops {k2}  ;
 
-        fprintf (' %s', binop) ;
+        fprintf ('\n%s', binop) ;
 
         op.opname = binop ;
         op.opclass = clas ;
@@ -106,8 +106,8 @@ for k1 = k1test % 1:length (classes)
                                 w = sparse (100 * sprandn (m,1, 0.2)) ;
                                 uvec = sparse (100 * sprandn (m,1, 0.2)) ;
                                 vvec = sparse (100 * sprandn (m,1, 0.2)) ;
-                                Mask = sprandn (m,n,0.2) ~= 0 ;
-                                mask = sprandn (m,1,0.2) ~= 0 ;
+                                Maskmat = sprandn (m,n,0.2) ~= 0 ;
+                                maskvec = sprandn (m,1,0.2) ~= 0 ;
                                 ATmat = Amat' ;
                                 BTmat = Bmat' ;
 
@@ -117,6 +117,7 @@ for k1 = k1test % 1:length (classes)
                                 for B_is_csc   = 0:1
                                 for C_is_hyper = 0 % 0:1
                                 for C_is_csc   = 0 % 0:1
+                                fprintf ('.') ;
 
                                 for native = 0:1
 
@@ -171,184 +172,228 @@ for k1 = k1test % 1:length (classes)
                                     v.class = op.opclass ;
                                 end
 
-%                               fprintf ('\n---------------------\n') ;
-
                                 %---------------------------------------
                                 % A+B
                                 %---------------------------------------
 
-                                % C = A+B, no mask
+% here = 1 ; save gunk C accum op A B dnn here
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 GB_spec_compare (C0, C1) ;
 
-                                % w = u+v, no mask
+% here = 2 ; save gunk w accum op u v dnn here
                                 w0 = GB_spec_eWiseAdd_Vector ...
                                     (w, [ ], accum, op, u, v, dnn);
                                 w1 = GB_mex_eWiseAdd_Vector ...
                                     (w, [ ], accum, op, u, v, dnn);
-                                GB_spec_compare (w0, w1) ;
-
-                                % C = A+B with mask
-                                C0 = GB_spec_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, A, B, dnn);
-                                C1 = GB_mex_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, A, B, dnn);
-                                GB_spec_compare (C0, C1) ;
-
-                                % w = u+v with mask
-                                w0 = GB_spec_eWiseAdd_Vector ...
-                                    (w, mask, accum, op, u, v, dnn);
-                                w1 = GB_mex_eWiseAdd_Vector ...
-                                    (w, mask, accum, op, u, v, dnn);
                                 GB_spec_compare (w0, w1) ;
 
                                 %---------------------------------------
                                 % A'+B
                                 %---------------------------------------
 
-                                % C = A'+B, no Mask
+% here = 5 ; save gunk C accum op AT B dtn here
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, AT, B, dtn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, AT, B, dtn);
-                                GB_spec_compare (C0, C1) ;
-
-                                % C = A'+B with mask
-                                C0 = GB_spec_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, AT, B, dtn);
-                                C1 = GB_mex_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, AT, B, dtn);
                                 GB_spec_compare (C0, C1) ;
 
                                 %---------------------------------------
                                 % A+B'
                                 %---------------------------------------
 
-                                % no mask
+% here = 7 ; save gunk C accum op A BT dnt here
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, A, BT, dnt);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, A, BT, dnt);
-                                GB_spec_compare (C0, C1) ;
-
-                                % with mask
-                                C0 = GB_spec_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, A, BT, dnt);
-                                C1 = GB_mex_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, A, BT, dnt);
                                 GB_spec_compare (C0, C1) ;
 
                                 %---------------------------------------
                                 % A'+B'
                                 %---------------------------------------
 
-                                % no Mask
+% here = 9 ; save gunk C accum op AT BT dtt here
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, AT, BT, dtt);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, AT, BT, dtt);
-                                GB_spec_compare (C0, C1) ;
-
-                                % A'+B', with mask
-                                C0 = GB_spec_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, AT, BT, dtt);
-                                C1 = GB_mex_eWiseAdd_Matrix ...
-                                    (C, Mask, accum, op, AT, BT, dtt);
                                 GB_spec_compare (C0, C1) ;
 
                                 %---------------------------------------
                                 % A.*B
                                 %---------------------------------------
 
-                                % C = A.*B, no mask
+% here = 11 ; save gunk C accum op A B dnn here
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 GB_spec_compare (C0, C1) ;
 
-                                % w = u.*v, no mask
+% here = 12 ; save gunk w accum op u v dnn here
                                 w0 = GB_spec_eWiseMult_Vector ...
                                     (w, [ ], accum, op, u, v, dnn);
                                 w1 = GB_mex_eWiseMult_Vector ...
                                     (w, [ ], accum, op, u, v, dnn);
-                                GB_spec_compare (w0, w1) ;
-
-                                % C = A.*B with mask
-                                C0 = GB_spec_eWiseMult_Matrix ...
-                                    (C, Mask, accum, op, A, B, dnn);
-                                C1 = GB_mex_eWiseMult_Matrix ...
-                                    (C, Mask, accum, op, A, B, dnn);
-                                GB_spec_compare (C0, C1) ;
-
-                                % w = u.*v with mask
-                                w0 = GB_spec_eWiseMult_Vector ...
-                                    (w, mask, accum, op, u, v, dnn);
-                                w1 = GB_mex_eWiseMult_Vector ...
-                                    (w, mask, accum, op, u, v, dnn);
                                 GB_spec_compare (w0, w1) ;
 
                                 %---------------------------------------
                                 % A'.*B
                                 %---------------------------------------
 
-                                % C = A'.*B, no Mask
+% here = 15 ; save gunk C accum op AT B dtn here
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, AT, B, dtn);
                                 C1 = GB_mex_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, AT, B, dtn);
-                                GB_spec_compare (C0, C1) ;
-
-                                % C = A'.*B with mask
-                                C0 = GB_spec_eWiseMult_Matrix ...
-                                    (C, Mask, accum, op, AT, B, dtn);
-                                C1 = GB_mex_eWiseMult_Matrix ...
-                                    (C, Mask, accum, op, AT, B, dtn);
                                 GB_spec_compare (C0, C1) ;
 
                                 %---------------------------------------
                                 % A.*B'
                                 %---------------------------------------
 
-                                % no mask
+% here = 17 ; save gunk C accum op A BT dnt here
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, A, BT, dnt);
                                 C1 = GB_mex_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, A, BT, dnt);
-                                GB_spec_compare (C0, C1) ;
-
-                                % with mask
-                                C0 = GB_spec_eWiseMult_Matrix ...
-                                    (C, Mask, accum, op, A, BT, dnt);
-                                C1 = GB_mex_eWiseMult_Matrix ...
-                                    (C, Mask, accum, op, A, BT, dnt);
                                 GB_spec_compare (C0, C1) ;
 
                                 %---------------------------------------
                                 % A'.*B'
                                 %---------------------------------------
 
-                                % no Mask
+% here = 18 ; save gunk C accum op AT BT dtt here
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, AT, BT, dtt);
                                 C1 = GB_mex_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, AT, BT, dtt);
                                 GB_spec_compare (C0, C1) ;
 
+                                %-----------------------------------------------
+                                % with mask
+                                %-----------------------------------------------
+
+                                for M_is_hyper = 0:1
+                                for M_is_csc   = 0:1
+
+                                clear Mask
+                                Mask.matrix = Maskmat ;
+                                Mask.is_hyper = M_is_hyper ;
+                                Mask.is_csc   = M_is_csc   ;
+
+                                clear mask
+                                mask.matrix = maskvec ;
+                                mask.is_csc = true ;
+
+                                %---------------------------------------
+                                % A+B, with mask
+                                %---------------------------------------
+
+% here = 3 ; save gunk C Mask accum op A B dnn here
+                                C0 = GB_spec_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, A, B, dnn);
+                                C1 = GB_mex_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, A, B, dnn);
+                                GB_spec_compare (C0, C1) ;
+
+% here = 4 ; save gunk w mask accum op u v dnn here
+                                w0 = GB_spec_eWiseAdd_Vector ...
+                                    (w, mask, accum, op, u, v, dnn);
+                                w1 = GB_mex_eWiseAdd_Vector ...
+                                    (w, mask, accum, op, u, v, dnn);
+                                GB_spec_compare (w0, w1) ;
+
+                                %---------------------------------------
+                                % A'+B, with mask
+                                %---------------------------------------
+
+% here = 6 ; save gunk C Mask accum op AT B dtn here
+                                C0 = GB_spec_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, AT, B, dtn);
+                                C1 = GB_mex_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, AT, B, dtn);
+                                GB_spec_compare (C0, C1) ;
+
+                                %---------------------------------------
+                                % A+B', with mask
+                                %---------------------------------------
+
+% here = 8 ; save gunk C Mask accum op A BT dnt here
+                                C0 = GB_spec_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, A, BT, dnt);
+                                C1 = GB_mex_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, A, BT, dnt);
+                                GB_spec_compare (C0, C1) ;
+
+                                %---------------------------------------
+                                % A'+B', with mask
+                                %---------------------------------------
+
+% here = 10 ; save gunk C Mask accum op AT BT dtt here
+                                C0 = GB_spec_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, AT, BT, dtt);
+                                C1 = GB_mex_eWiseAdd_Matrix ...
+                                    (C, Mask, accum, op, AT, BT, dtt);
+                                GB_spec_compare (C0, C1) ;
+
+                                %---------------------------------------
+                                % A.*B, with mask
+                                %---------------------------------------
+
+% here = 13 ; save gunk C Mask accum op A B dnn here
+                                C0 = GB_spec_eWiseMult_Matrix ...
+                                    (C, Mask, accum, op, A, B, dnn);
+                                C1 = GB_mex_eWiseMult_Matrix ...
+                                    (C, Mask, accum, op, A, B, dnn);
+                                GB_spec_compare (C0, C1) ;
+
+% here = 14 ; save gunk w mask accum op u v dnn here
+                                w0 = GB_spec_eWiseMult_Vector ...
+                                    (w, mask, accum, op, u, v, dnn);
+                                w1 = GB_mex_eWiseMult_Vector ...
+                                    (w, mask, accum, op, u, v, dnn);
+                                GB_spec_compare (w0, w1) ;
+
+                                %---------------------------------------
+                                % A'.*B, with mask
+                                %---------------------------------------
+
+% here = 16 ; save gunk C Mask accum op AT B dtn here
+                                C0 = GB_spec_eWiseMult_Matrix ...
+                                    (C, Mask, accum, op, AT, B, dtn);
+                                C1 = GB_mex_eWiseMult_Matrix ...
+                                    (C, Mask, accum, op, AT, B, dtn);
+                                GB_spec_compare (C0, C1) ;
+
+                                %---------------------------------------
+                                % A.*B', with mask
+                                %---------------------------------------
+
+% here = 18 ; save gunk C Mask accum op A BT dnt here
+                                C0 = GB_spec_eWiseMult_Matrix ...
+                                    (C, Mask, accum, op, A, BT, dnt);
+                                C1 = GB_mex_eWiseMult_Matrix ...
+                                    (C, Mask, accum, op, A, BT, dnt);
+                                GB_spec_compare (C0, C1) ;
+
+                                %---------------------------------------
                                 % A'.*B', with mask
+                                %---------------------------------------
+
+% here = 19 ; save gunk C Mask accum op AT BT dtt here
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, Mask, accum, op, AT, BT, dtt);
                                 C1 = GB_mex_eWiseMult_Matrix ...
                                     (C, Mask, accum, op, AT, BT, dtt);
                                 GB_spec_compare (C0, C1) ;
 
-%                               if (native)
-%                                   fprintf ('\n') ;
-%                                   pause
-%                               end
+                                end
+                                end
 
                                 end
                                 end

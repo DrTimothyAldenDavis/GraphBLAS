@@ -82,10 +82,9 @@ GB_add.c: mostly done
     C = A+B. Does the work for GrB_*_eWiseAdd, and the accumulator operator.
     Very important.  GB_add breaks the work into symbolic/numeric
     phases.  phase0 finds the columns of C, phase1 computes the number of
-    entries in each column of C. phase2 does the work.  Consider adding
-    a single phase method when nthreads = 1
+    entries in each column of C. phase2 does the work.
 
-GB_emult.c:
+GB_emult.c: done, except for final prune of C->h.
     Does "C=A.*B" for GrB_*_eWiseMult_*.  Parallelism is a lot like GB_add
 
 GB_mask.c:
@@ -130,7 +129,7 @@ GB_to_nonhyper.c, GB_to_hyper.c:
 
 GB_wait.c: done, except for parallel GB_prune_inplace (see also GB_resize).
 
-GB_dup.c:  4 parallel memcpy's, but these can also be 4 tasks.
+GB_dup.c:  done.  4 parallel memcpy's, but these can also be 4 tasks.
     does the work for GrB_*_dup.  Easy to parallelize.
 
 GB_resize.c:

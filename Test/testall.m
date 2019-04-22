@@ -8,7 +8,7 @@ function testall (longtests)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-t = cputime ;
+testall_time = tic ;
 
 if (nargin < 1)
     % run the shorter tests by default
@@ -165,5 +165,6 @@ if (longtests)
     logstat ('test61') ;
 end
 
-fprintf ('\ntestall: all tests passed, total time %g sec\n', cputime-t) ;
+t = toc (testall_time) ;
+fprintf ('\ntestall: all tests passed, total time %g sec\n', t) ;
 

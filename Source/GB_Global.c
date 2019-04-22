@@ -359,6 +359,7 @@ void * GB_Global_malloc_function (size_t size)
         {                                                       \
             p = GB_Global.malloc_function (size) ;              \
         }
+        bool ok ;
         #include "GB_critical_section.c"
     }
     return (p) ;
@@ -392,6 +393,7 @@ void * GB_Global_calloc_function (size_t count, size_t size)
         {                                                       \
             p = GB_Global.calloc_function (count, size) ;       \
         }
+        bool ok ;
         #include "GB_critical_section.c"
     }
     return (p) ;
@@ -428,6 +430,7 @@ void * GB_Global_realloc_function (void *p, size_t size)
         {                                                       \
             pnew = GB_Global.realloc_function (p, size) ;       \
         }
+        bool ok ;
         #include "GB_critical_section.c"
     }
     return (pnew) ;
@@ -460,6 +463,7 @@ void GB_Global_free_function (void *p)
         {                                                       \
             GB_Global.free_function (p) ;                       \
         }
+        bool ok ;
         #include "GB_critical_section.c"
     }
 }

@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -15,9 +16,10 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):  GB_AaddB__eq_int64
-// A*D function (colscale):  GB_AxD__eq_int64
-// D*A function (rowscale):  GB_DxB__eq_int64
+// A+B function (eWiseAdd):    GB_AaddB__eq_int64
+// A.*B function (eWiseMult):  GB_AemultB__eq_int64
+// A*D function (colscale):    GB_AxD__eq_int64
+// D*A function (rowscale):    GB_DxB__eq_int64
 
 // C type:   bool
 // A type:   int64_t
@@ -54,6 +56,9 @@
 // binary operator
 #define GB_BINOP(z, x, y)   \
     z = (x == y) ;
+
+// do the numerical phases of GB_add and GB_emult
+#define GB_PHASE_2_OF_2
 
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix
@@ -105,6 +110,26 @@ void GB_AaddB__eq_int64
 )
 { 
     #include "GB_add_template.c"
+}
+
+//------------------------------------------------------------------------------
+// C = A.*B, eWiseMult, with any mask M
+//------------------------------------------------------------------------------
+
+void GB_AemultB__eq_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *C_to_M,
+    const int64_t *C_to_A,
+    const int64_t *C_to_B,
+    int nthreads
+)
+{ 
+    #include "GB_emult_template.c"
 }
 
 #endif

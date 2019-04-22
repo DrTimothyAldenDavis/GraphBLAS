@@ -1,4 +1,4 @@
-function test15
+% function test15
 %TEST15 test AxB and AdotB internal functions
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.

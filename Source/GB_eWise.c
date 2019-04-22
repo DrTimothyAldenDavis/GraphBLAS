@@ -172,7 +172,9 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             }
             else
             { 
-                GB_OK (GB_emult (&T, T_type, !C_is_csc, A, B, op, Context)) ;
+                GB_OK (GB_emult (&T, T_type, !C_is_csc,
+                    (M_is_csc == C_is_csc) ? MT : M, Mask_comp,
+                    A, B, op, Context)) ;
             }
 
         }
@@ -199,7 +201,9 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             }
             else
             { 
-                GB_OK (GB_emult (&T, T_type, C_is_csc, AT, B, op, Context)) ;
+                GB_OK (GB_emult (&T, T_type, C_is_csc,
+                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
+                    AT, B, op, Context)) ;
             }
             GB_MATRIX_FREE (&AT) ;
 
@@ -229,7 +233,9 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             }
             else
             { 
-                GB_OK (GB_emult (&T, T_type, C_is_csc, A, BT, op, Context)) ;
+                GB_OK (GB_emult (&T, T_type, C_is_csc,
+                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
+                    A, BT, op, Context)) ;
             }
             GB_MATRIX_FREE (&BT) ;
 
@@ -249,7 +255,9 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
             }
             else
             { 
-                GB_OK (GB_emult (&T, T_type, C_is_csc, A, B, op, Context)) ;
+                GB_OK (GB_emult (&T, T_type, C_is_csc,
+                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
+                    A, B, op, Context)) ;
             }
         }
     }

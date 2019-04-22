@@ -249,6 +249,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
+        #define GB_PHASE_2_OF_2
+
         #include "GB_add_template.c"
 
     }
@@ -258,7 +260,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     // printf ("Cnvec_nonempty "GBd" Cnvec "GBd"\n", Cnvec_nonempty, Cnvec) ;
-    if (C->is_hyper && Cnvec_nonempty < Cnvec)
+    if (C_is_hyper && Cnvec_nonempty < Cnvec)
     {
         int64_t *restrict Cp = C->p ;
         int64_t *restrict Ch = C->h ;
@@ -291,6 +293,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         ASSERT (ok) ;
         GB_REALLOC_MEMORY (C->h, cnvec_new, max_Cnvec, sizeof (int64_t), &ok) ;
         ASSERT (ok) ;
+        C->plen = cnvec_new ;
     }
 
     //--------------------------------------------------------------------------

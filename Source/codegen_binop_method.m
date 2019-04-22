@@ -11,6 +11,7 @@ name = sprintf ('%s_%s', binop, fname) ;
 
 % function names
 fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
+fprintf (f, 'define(`GB_AemultB'', `GB_AemultB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
 fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
 

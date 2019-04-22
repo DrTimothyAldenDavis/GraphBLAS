@@ -27,3 +27,16 @@ void GB_AaddB
     int nthreads
 ) ;
 
+void GB_AemultB
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *C_to_M,
+    const int64_t *C_to_A,
+    const int64_t *C_to_B,
+    int nthreads
+) ;
+

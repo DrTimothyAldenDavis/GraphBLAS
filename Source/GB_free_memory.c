@@ -42,6 +42,7 @@ void GB_free_memory
                 nmalloc = GB_Global_nmalloc_decrement ( ) ;         \
                 GB_Global_inuse_decrement (nitems * size_of_item) ; \
             }
+            bool ok ;
             #include "GB_critical_section.c"
 
             #ifdef GB_PRINT_MALLOC

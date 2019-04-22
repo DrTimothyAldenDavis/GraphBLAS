@@ -80,7 +80,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     bool Ch_is_Mh ;
 
     GrB_Info info = GB_add_phase0 (
-        &Cnvec, &max_Cnvec, &Ch, &C_to_A, &C_to_B, &Ch_is_Mh, // comp. by phase1
+        &Cnvec, &max_Cnvec, &Ch, &C_to_A, &C_to_B, &Ch_is_Mh, // comp. by phase0
         M, Mask_comp, A, B, Context) ;          // original input
     if (info != GrB_SUCCESS)
     { 

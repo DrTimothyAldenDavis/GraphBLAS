@@ -25,8 +25,7 @@
 // These flags are used for code development.  Uncomment them as needed.
 
 // to turn on debugging, uncomment this line:
-// TODO Debug is on
-#undef NDEBUG
+// #undef NDEBUG
 
 // to turn on memory usage debug printing, uncomment this line:
 // #define GB_PRINT_MALLOC 1
@@ -1314,11 +1313,73 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_Context Context
 ) ;
 
-GrB_Info GB_emult           // C = A.*B
+GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
+(
+    int64_t *p_Cnvec,           // # of vectors to compute in C
+    int64_t **Ch_handle,        // Ch is M->h, A->h, B->h, or NULL
+    int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
+    int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
+    int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
+
+    const GrB_Matrix M,         // optional mask, may be NULL
+    const bool Mask_comp,       // if true, then M is complemented
+    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
+    const GrB_Matrix B,         // standard or hypersparse; never a slice
+    GB_Context Context
+) ;
+
+GrB_Info GB_emult_phase1        // count nnz in each C(:,j)
+(
+    int64_t **Cp_handle,                // output of size Cnvec+1
+    int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
+
+    // analysis from GB_emult_phase0
+    const int64_t Cnvec,                // # of vectors to compute in C
+    const int64_t *restrict Ch,         // Ch is NULL, M->h, A->h, or B->h
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+
+    const GrB_Matrix M,         // optional mask, may be NULL
+    const bool Mask_comp,       // if true, then M is complemented
+    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
+    const GrB_Matrix B,         // standard or hypersparse; never a slice
+    GB_Context Context
+) ;
+
+GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
+    const GrB_BinaryOp op,  // op to perform C = op (A,B)
+
+    // from GB_emult_phase1
+    const int64_t *restrict Cp,         // vector pointers for C
+    const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
+
+    // analysis from GB_emult_phase0
+    const int64_t Cnvec,                // # of vectors to compute in C
+    const int64_t *restrict Ch,         // Ch is NULL, M->h, A->h, or B->h
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+
+    // original input to GB_emult
+    const GrB_Matrix M,         // optional mask, may be NULL
+    const bool Mask_comp,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    GB_Context Context
+) ;
+
+GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+(
+    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    const GrB_Type ctype,   // type of output matrix C
+    const bool C_is_csc,    // format of output matrix C
+    const GrB_Matrix M,     // optional mask for C, unused if NULL
+    const bool Mask_comp,   // descriptor for M
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)

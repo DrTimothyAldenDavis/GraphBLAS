@@ -11,9 +11,7 @@
 // this phase, which determines which vectors of C need to be computed.
 
 // On input, A and B are the two matrices being added, and M is the optional
-// mask matrix.  If present (not NULL) then it is not complemented.  This
-// function does not consider the complemented-Mask case (use M=NULL for that
-// case).
+// mask matrix, possibly complemented.
 
 // The A matrix can be sparse, hypersparse, slice, or hyperslice.  The B matrix
 // can only be sparse or hypersparse.  See GB_wait, which can pass in A as any
@@ -46,7 +44,7 @@
 //      not appear in B, then C_to_B [k] = -1.  If B is not hypersparse, then
 //      C_to_B is returned as NULL.
 
-// PARALLEL: done, except in one conditiion: A and B are hypersparse and
+// PARALLEL: done, except in one condition: A and B are hypersparse and
 // Ch_is_Mh is false.  takes O(A->nvec + B->nvec) time.
 
 #include "GB.h"

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_template:  C=A+B, C<M>=A+B, and C<!M>=A+B
+// GB_add_template:  phase1 and phase2 for C=A+B, C<M>=A+B, and C<!M>=A+B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -19,11 +19,10 @@
 
     const int64_t  *restrict Ap = A->p ;
     const int64_t  *restrict Ai = A->i ;
-    const GB_ATYPE *restrict Ax = A->x ;
+    int64_t vlen = A->vlen ;
 
     const int64_t  *restrict Bp = B->p ;
     const int64_t  *restrict Bi = B->i ;
-    const GB_ATYPE *restrict Bx = B->x ;
 
     const int64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
@@ -45,14 +44,18 @@
         M_is_hyper = M->is_hyper ;
     }
 
+    #if defined ( GB_PHASE_2_OF_2 )
+    const GB_ATYPE *restrict Ax = A->x ;
+    const GB_ATYPE *restrict Bx = B->x ;
     const int64_t  *restrict Cp = C->p ;
     const int64_t  *restrict Ch = C->h ;
           int64_t  *restrict Ci = C->i ;
           GB_CTYPE *restrict Cx = C->x ;
     int64_t Cnvec = C->nvec ;
+    #endif
 
     //--------------------------------------------------------------------------
-    // C=A+B, C<M>=A+B, or C<!M>=A+B
+    // phase1: count entries in each C(:j); phase 2: compute C
     //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(nthreads)
@@ -64,10 +67,16 @@
         //----------------------------------------------------------------------
 
         int64_t j = (Ch == NULL) ? k : Ch [k] ;
+        // printf ("phase1 j : "GBd"\n", j) ;
+
+        #if defined ( GB_PHASE_1_OF_2 )
+        int64_t cjnz = 0 ;
+        #else
         int64_t pC     = Cp [k] ;
         int64_t pC_end = Cp [k+1] ;
         int64_t cjnz = pC_end - pC ;
         if (cjnz == 0) continue ;
+        #endif
 
         //----------------------------------------------------------------------
         // get A(:,j)
@@ -82,6 +91,7 @@
             pA_end = Ap [kA+1] ;
         }
         int64_t ajnz = pA_end - pA ;    // nnz (A (:,j))
+        // printf ("   ["GBd":"GBd"] ajnz  : "GBd"\n", pA, pA_end, ajnz) ;
 
         //----------------------------------------------------------------------
         // get B(:,j)
@@ -96,6 +106,7 @@
             pB_end = Bp [kB+1] ;
         }
         int64_t bjnz = pB_end - pB ;    // nnz (B (:,j))
+        // printf ("   ["GBd":"GBd"] bjnz  : "GBd"\n", pB, pB_end, bjnz) ;
 
         //----------------------------------------------------------------------
         // get M(:,j)
@@ -118,10 +129,28 @@
             GB_lookup (M_is_hyper, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
         }
         int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
+        // printf ("   ["GBd":"GBd"] mjnz  : "GBd"\n", pM, pM_end, mjnz) ;
 
         //----------------------------------------------------------------------
-        // compute C(:,j)
+        // phase1: count nnz (C (:,j)); phase2: compute C(:,j)
         //----------------------------------------------------------------------
+
+        #if defined ( GB_PHASE_1_OF_2 )
+
+        if (M != NULL && mjnz == 0 && !Mask_comp)
+        { 
+
+            //------------------------------------------------------------------
+            // M(:,j) is empty and not complemented
+            //------------------------------------------------------------------
+
+            // C(:,j) is empty, regardless of A(:,j) and B(:,j)
+            ;
+
+        }
+        else 
+
+        #endif
 
         if (M == NULL || (M != NULL && mjnz == 0 && Mask_comp))
         {
@@ -130,58 +159,300 @@
             // No mask, or M(:,j) is empty and complemented
             //------------------------------------------------------------------
 
-            // TODO exploit dense vector cases
+            // if present, M(:,j) is ignored since !M(:,j) is all true
 
-            for ( ; pA < pA_end && pB < pB_end ; pC++)
+            #if defined ( GB_PHASE_1_OF_2 )
+
+            if (A_and_B_are_disjoint)
+            { 
+
+                // only used by GB_wait, which computes A+T where T is the
+                // matrix of pending tuples for A.  The pattern of pending
+                // tuples is always disjoint with the pattern of A.
+                cjnz = ajnz + bjnz ;
+                // printf ("disjoint cjnz "GBd"\n", cjnz) ;
+
+            }
+            else
+
+            #endif
+
+            if (ajnz == vlen && bjnz == vlen)
             {
 
                 //--------------------------------------------------------------
-                // C(i,j) = A(i,j), B(i,j), or A(i,j) + B(i,j)
+                // A(:,j) and B(:,j) dense
                 //--------------------------------------------------------------
 
-                int64_t iA = Ai [pA] ;
-                int64_t iB = Bi [pB] ;
-                if (iA < iB)
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz = vlen ;
+                #else
+                ASSERT (cjnz == vlen) ;
+                for (int64_t i = 0 ; i < vlen ; i++)
                 { 
-                    // C (iA,j) = A (iA,j)
-                    Ci [pC] = iA ;
+                    Ci [pC + i] = i ;
+                    GB_GETA (aij, Ax, pA + i) ;
+                    GB_GETB (bij, Bx, pB + i) ;
+                    GB_BINOP (GB_CX (pC + i), aij, bij) ;
+                }
+                #endif
+
+            }
+            else if (ajnz == vlen)
+            {
+
+                //--------------------------------------------------------------
+                // A(:,j) is dense, B(:,j) is sparse
+                //--------------------------------------------------------------
+
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz = vlen ;
+                #else
+                ASSERT (cjnz == vlen) ;
+                for (int64_t i = 0 ; i < vlen ; i++)
+                { 
+                    Ci [pC + i] = i ;
+                    GB_COPY_A_TO_C (GB_CX (pC + i), Ax, pA + i) ;
+                }
+                for (int64_t p = 0 ; p < bjnz ; p++)
+                { 
+                    int64_t i = Bi [pB + p] ;
+                    GB_GETA (aij, Ax, pA + i) ;
+                    GB_GETB (bij, Bx, pB + p) ;
+                    GB_BINOP (GB_CX (pC + i), aij, bij) ;
+                }
+                #endif
+
+            }
+            else if (bjnz == vlen)
+            {
+
+                //--------------------------------------------------------------
+                // A(:,j) is sparse, B(:,j) is dense
+                //--------------------------------------------------------------
+
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz = vlen ;
+                #else
+                ASSERT (cjnz == vlen) ;
+                for (int64_t i = 0 ; i < vlen ; i++)
+                { 
+                    Ci [pC + i] = i ;
+                    GB_COPY_B_TO_C (GB_CX (pC + i), Bx, pB + i) ;
+                }
+                for (int64_t p = 0 ; p < ajnz ; p++)
+                { 
+                    int64_t i = Ai [pA + p] ;
+                    GB_GETA (aij, Ax, pA + p) ;
+                    GB_GETB (bij, Bx, pB + i) ;
+                    GB_BINOP (GB_CX (pC + i), aij, bij) ;
+                }
+                #endif
+
+            }
+            else if (ajnz == 0)
+            {
+
+                //--------------------------------------------------------------
+                // A(:,j) is empty
+                //--------------------------------------------------------------
+
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz = bjnz ;
+                #else
+                ASSERT (cjnz == bjnz) ;
+                for (int64_t p = 0 ; p < bjnz ; p++)
+                { 
+                    Ci [pC + p] = Bi [pB + p] ;
+                    GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                }
+                #endif
+
+            }
+            else if (bjnz == 0)
+            {
+
+                //--------------------------------------------------------------
+                // B(:,j) is empty
+                //--------------------------------------------------------------
+
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz = ajnz ;
+                #else
+                ASSERT (cjnz == ajnz) ;
+                for (int64_t p = 0 ; p < ajnz ; p++)
+                { 
+                    Ci [pC + p] = Ai [pA + p] ;
+                    GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                }
+                #endif
+
+            }
+            else if (Ai [pA_end-1] < Bi [pB])
+            {
+
+                //--------------------------------------------------------------
+                // last entry of A(:,j) comes before first entry of B(:,j)
+                //--------------------------------------------------------------
+
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz = ajnz + bjnz ;
+                #else
+                ASSERT (cjnz == ajnz + bjnz) ;
+                for (int64_t p = 0 ; p < ajnz ; p++)
+                { 
+                    Ci [pC + p] = Ai [pA + p] ;
+                    GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                }
+                pC += ajnz ;
+                for (int64_t p = 0 ; p < bjnz ; p++)
+                { 
+                    Ci [pC + p] = Bi [pB + p] ;
+                    GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                }
+                #endif
+
+            }
+            else if (Bi [pB_end-1] < Ai [pA])
+            {
+
+                //--------------------------------------------------------------
+                // last entry of B(:,j) comes before first entry of A(:,j)
+                //--------------------------------------------------------------
+
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz = ajnz + bjnz ;
+                #else
+                ASSERT (cjnz == ajnz + bjnz) ;
+                for (int64_t p = 0 ; p < bjnz ; p++)
+                { 
+                    Ci [pC + p] = Bi [pB + p] ;
+                    GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
+                }
+                pC += bjnz ;
+                for (int64_t p = 0 ; p < ajnz ; p++)
+                { 
+                    Ci [pC + p] = Ai [pA + p] ;
+                    GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
+                }
+                #endif
+
+            }
+
+            #if defined ( GB_PHASE_1_OF_2 )
+            else if (ajnz > 32 * bjnz)
+            {
+
+                //--------------------------------------------------------------
+                // A(:,j) is much denser than B(:,j)
+                //--------------------------------------------------------------
+
+                // cjnz = ajnz + bjnz - nnz in the intersection
+
+                cjnz = ajnz + bjnz ;
+                for ( ; pB < pB_end ; pB++)
+                { 
+                    int64_t i = Bi [pB] ;
+                    // find i in A(:,j)
+                    int64_t pright = pA_end ;
+                    bool found ;
+                    GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
+                    if (found) cjnz-- ;
+                }
+
+            }
+            else if (bjnz > 32 * ajnz)
+            {
+
+                //--------------------------------------------------------------
+                // B(:,j) is must denser than A(:,j)
+                //--------------------------------------------------------------
+
+                // cjnz = ajnz + bjnz - nnz in the intersection
+
+                cjnz = ajnz + bjnz ;
+                for ( ; pA < pA_end ; pA++)
+                { 
+                    int64_t i = Ai [pA] ;
+                    // find i in B(:,j)
+                    int64_t pright = pB_end ;
+                    bool found ;
+                    GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
+                    if (found) cjnz-- ;
+                }
+
+            }
+            #endif
+
+            else
+            {
+
+                //--------------------------------------------------------------
+                // A(:,j) and B(:,j) have about the same # of entries
+                //--------------------------------------------------------------
+
+                while (pA < pA_end && pB < pB_end)
+                {
+                    int64_t iA = Ai [pA] ;
+                    int64_t iB = Bi [pB] ;
+                    if (iA < iB)
+                    { 
+                        // C (iA,j) = A (iA,j)
+                        #if defined ( GB_PHASE_2_OF_2 )
+                        Ci [pC] = iA ;
+                        GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                        #endif
+                        pA++ ;
+                    }
+                    else if (iA > iB)
+                    { 
+                        // C (iB,j) = B (iB,j)
+                        #if defined ( GB_PHASE_2_OF_2 )
+                        Ci [pC] = iB ;
+                        GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                        #endif
+                        pB++ ;
+                    }
+                    else
+                    { 
+                        // C (i,j) = A (i,j) + B (i,j)
+                        #if defined ( GB_PHASE_2_OF_2 )
+                        Ci [pC] = iB ;
+                        GB_GETA (aij, Ax, pA) ;
+                        GB_GETB (bij, Bx, pB) ;
+                        GB_BINOP (GB_CX (pC), aij, bij) ;
+                        #endif
+                        pA++ ;
+                        pB++ ;
+                    }
+                    #if defined ( GB_PHASE_2_OF_2 )
+                    pC++ ;
+                    #else
+                    cjnz++ ;
+                    #endif
+                }
+
+                //--------------------------------------------------------------
+                // A (:,j) or B (:,j) have entries left; not both
+                //--------------------------------------------------------------
+
+                #if defined ( GB_PHASE_1_OF_2 )
+                cjnz += (pA_end - pA) + (pB_end - pB) ;
+                #else
+                for ( ; pA < pA_end ; pA++, pC++)
+                { 
+                    // C (i,j) = A (i,j)
+                    Ci [pC] = Ai [pA] ;
                     GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
-                    pA++ ;
                 }
-                else if (iA > iB)
+                for ( ; pB < pB_end ; pB++, pC++)
                 { 
-                    // C (iB,j) = B (iB,j)
-                    Ci [pC] = iB ;
+                    // C (i,j) = B (i,j)
+                    Ci [pC] = Bi [pB] ;
                     GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
-                    pB++ ;
                 }
-                else
-                { 
-                    // C (i,j) = A (i,j) + B (i,j)
-                    Ci [pC] = iB ;
-                    GB_GETA (aij, Ax, pA) ;
-                    GB_GETB (bij, Bx, pB) ;
-                    GB_BINOP (GB_CX (pC), aij, bij) ;
-                    pA++ ;
-                    pB++ ;
-                }
-            }
-
-            //------------------------------------------------------------------
-            // A (:,j) or B (:,j) have entries left; not both
-            //------------------------------------------------------------------
-
-            for ( ; pA < pA_end ; pA++, pC++)
-            { 
-                // C (i,j) = A (i,j)
-                Ci [pC] = Ai [pA] ;
-                GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
-            }
-            for ( ; pB < pB_end ; pB++, pC++)
-            { 
-                // C (i,j) = B (i,j)
-                Ci [pC] = Bi [pB] ;
-                GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                ASSERT (pC == pC_end) ;
+                #endif
             }
 
         }
@@ -229,9 +500,13 @@
                     if (mij)
                     { 
                         // C (i,j) = A (i,j)
+                        #if defined ( GB_PHASE_1_OF_2 )
+                        cjnz++ ;
+                        #else
                         Ci [pC] = i ;
                         GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
                         pC++ ;
+                        #endif
                     }
                     pA++ ;
                 }
@@ -240,9 +515,13 @@
                     if (mij)
                     { 
                         // C (i,j) = B (i,j)
+                        #if defined ( GB_PHASE_1_OF_2 )
+                        cjnz++ ;
+                        #else
                         Ci [pC] = i ;
                         GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
                         pC++ ;
+                        #endif
                     }
                     pB++ ;
                 }
@@ -251,19 +530,35 @@
                     if (mij)
                     { 
                         // C (i,j) = A (i,j) + B (i,j)
+                        #if defined ( GB_PHASE_1_OF_2 )
+                        cjnz++ ;
+                        #else
                         Ci [pC] = i ;
                         GB_GETA (aij, Ax, pA) ;
                         GB_GETB (bij, Bx, pB) ;
                         GB_BINOP (GB_CX (pC), aij, bij) ;
                         pC++ ;
+                        #endif
                     }
                     pA++ ;
                     pB++ ;
                 }
             }
+
+            #if defined ( GB_PHASE_2_OF_2 )
+            ASSERT (pC == pC_end) ;
+            #endif
         }
 
-        ASSERT (pC == pC_end) ;
+        //----------------------------------------------------------------------
+        // final count of nnz (C (:,j))
+        //----------------------------------------------------------------------
+
+        #if defined ( GB_PHASE_1_OF_2 )
+        // printf ("here Cp ["GBd"] = "GBd"\n", k, cjnz) ;
+        Cp [k] = cjnz ;
+        #endif
+
     }
 }
 
