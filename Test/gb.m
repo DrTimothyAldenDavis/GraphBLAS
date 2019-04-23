@@ -1,4 +1,4 @@
-% function nth = gb
+function nth = gb
 %GB print info about the GraphBLAS version
 %
 % nthreads_max = gb
@@ -59,7 +59,7 @@ fprintf ('\n---------------------------------\n%s', about) ;
 fprintf ('\n---------------------------------\n%s', license) ;
 fprintf ('\n---------------------------------\n%s\n', api_about) ;
 
-% if (nargout > 0)
+if (nargout > 0)
     nth = nthreads_max ;
-% end
+end
 
