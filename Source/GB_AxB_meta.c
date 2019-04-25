@@ -254,6 +254,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     if (atrans)
     {
+GB_HERE ;
 
         //----------------------------------------------------------------------
         // C<M> = A'*B' or A'*B
@@ -265,6 +266,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (btrans && !B_is_diagonal)
         {
             // B = B'
+GB_HERE ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             B = BT ;
         }
@@ -300,19 +302,23 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (AxB_method == GxB_DEFAULT)
         {
+GB_HERE ;
             // auto selection for A'*B
-            if (M != NULL)
+            if (M != NULL && !Mask_comp)
             { 
+GB_HERE ;
                 // C<M> = A'*B always uses the dot product method
                 do_adotb = true ;
             }
             else if (A->vdim == 1 || B->vdim == 1)
             { 
+GB_HERE ;
                 // C=A'*B uses dot product method if C is a 1-by-n or n-by-1
                 do_adotb = true ;
             }
             else
             { 
+GB_HERE ;
                 // when C is a matrix, C=A'*B uses the dot product method if A
                 // or B are dense, since the dot product method requires no
                 // workspace in that case and can exploit dense vectors of A
@@ -327,9 +333,12 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
+GB_HERE ;
             // user selection for A'*B
             do_adotb = (AxB_method == GxB_AxB_DOT) ;
         }
+
+        printf ("do_adotb: %d\n", do_adotb) ;
 
         //----------------------------------------------------------------------
         // C<M> = A'*B
@@ -348,6 +357,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (do_adotb)
         { 
+GB_HERE ;
             // C<M> = A'*B via dot product method
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, true, AxB_method, AxB_slice, AxB_method_used,
@@ -355,6 +365,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
+GB_HERE ;
             // C<M> = A'*B via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, B, semiring,
@@ -365,6 +376,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
     else if (btrans)
     {
+GB_HERE ;
 
         //----------------------------------------------------------------------
         // C<M> = A*B'
@@ -372,17 +384,20 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
+GB_HERE ;
             // C = A*D
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
+GB_HERE ;
             // C = D*B'
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, BT, semiring, flipxy, Context));
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
+GB_HERE ;
             // C<M> = A*B' via dot product
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
@@ -392,6 +407,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
+GB_HERE ;
             // C<M> = A*B' via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, BT, semiring,
@@ -402,6 +418,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
     else
     {
+GB_HERE ;
 
         //----------------------------------------------------------------------
         // C<M> = A*B
@@ -409,16 +426,19 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
+GB_HERE ;
             // C = A*D, column scale
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
+GB_HERE ;
             // C = D*B, row scale
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
+GB_HERE ;
             // C<M> = A*B via dot product
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, B, semiring,
@@ -427,6 +447,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
+GB_HERE ;
             // C<M> = A*B via saxpy: Gustavson or heap method
             GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, false, AxB_method, AxB_slice, AxB_method_used,

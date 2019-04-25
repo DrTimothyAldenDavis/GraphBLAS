@@ -35,6 +35,9 @@
 #define GB_BTYPE \
     int8_t
 
+#define GB_CTYPE \
+    bool
+
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA) \
     int8_t aik = Ax [pA]
@@ -67,8 +70,12 @@
 // cij is not a pointer but a scalar; nothing to do
 #define GB_CIJ_REACQUIRE(cij,cnz) ;
 
+// declare the cij scalar
+#define GB_CIJ_DECLARE(cij) ; \
+    bool cij ;
+
 // save the value of C(i,j)
-#define GB_CIJ_SAVE(cij) Cx [cnz] = cij ;
+#define GB_CIJ_SAVE(cij,p) Cx [p] = cij ;
 
 #define GB_SAUNA_WORK(i) Sauna_Work [i]
 
@@ -105,9 +112,8 @@ GrB_Info GB_AdotB__land_ne_int8
 )
 { 
     GrB_Matrix C = (*Chandle) ;
-    bool *restrict Cx = C->x ;
-    bool cij ;
     GrB_Info info = GrB_SUCCESS ;
+    int nthreads = 1 ;
     #define GB_SINGLE_PHASE
     #include "GB_AxB_dot_meta.c"
     #undef GB_SINGLE_PHASE
@@ -125,12 +131,11 @@ GrB_Info GB_Adot2B__land_ne_int8
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     const int64_t *restrict C_count_start,
-    const int64_t *restrict C_count_end
+    const int64_t *restrict C_count_end,
+    int nthreads, int naslice, int nbslice
 )
 { 
     GrB_Matrix C = (*Chandle) ;
-    bool *restrict Cx = C->x ;
-    bool cij ;
     #define GB_PHASE_2_OF_2
     #include "GB_AxB_dot_meta.c"
     #undef GB_PHASE_2_OF_2

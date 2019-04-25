@@ -76,7 +76,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
     // initializations
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ch = NULL ;
+    const int64_t *restrict Ch = NULL ;
     int64_t *restrict C_to_M = NULL ;
     int64_t *restrict C_to_A = NULL ;
     int64_t *restrict C_to_B = NULL ;

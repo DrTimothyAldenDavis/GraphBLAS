@@ -245,14 +245,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        char aki [aki_size] ;
-        char bkj [bkj_size] ;
-
-        char t [csize] ;
-
-        GB_void *restrict Cx = C->x ;
-        GB_void *restrict cij = Cx ;        // advances through each entry of C
-
         GB_void *restrict identity = add->identity ;
         GB_void *restrict terminal = add->terminal ;
 
@@ -280,10 +272,12 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 
         // aki = A(k,i), located in Ax [pA]
         #define GB_GETA(aki,Ax,pA)                                          \
+            GB_void aki [aki_size] ;                                        \
             if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
+            GB_void bkj [bkj_size] ;                                        \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         // break if cij reaches the terminal value
@@ -299,17 +293,24 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
-            GB_MULTIPLY (t, aki, bkj) ;                                     \
-            fadd (cij, cij, t) ;
+            GB_void zwork [csize] ;                                         \
+            GB_MULTIPLY (zwork, aki, bkj) ;                                 \
+            fadd (cij, cij, zwork) ;
 
-        // C->x or cnz has moved so the pointer to cij needs to be recomputed
-        #define GB_CIJ_REACQUIRE(cij, cnz)  cij = Cx + cnz * csize ;
+        // define cij for each task
+        #define GB_CIJ_DECLARE(cij)                                         \
+            GB_void cij [csize] ;
 
-        // save the value of C(i,j) by advancing cij pointer to next value
-        #define GB_CIJ_SAVE(cij)            cij += csize ;
+        // address of Cx [p]
+        #define GB_CX(p) Cx +((p)*csize)
+
+        // save the value of C(i,j)
+        #define GB_CIJ_SAVE(cij,p)                                          \
+            memcpy (GB_CX (p), cij, csize) ;
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
+        #define GB_CTYPE GB_void
 
         #define GB_SINGLE_PHASE
 
@@ -331,6 +332,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     // trim the size of C: this cannot fail
     //--------------------------------------------------------------------------
 
+GB_HERE ;
     info = GB_ix_realloc (C, GB_NNZ (C), true, NULL) ;
     ASSERT (info == GrB_SUCCESS) ;
     ASSERT_OK (GB_check (C, "dot: C = A'*B output", GB0)) ;

@@ -383,7 +383,8 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     GB_Global_abort_function ( ) ;                          \
 }
 
-#define GB_HERE printf (" Here: " __FILE__ " line: %d\n",  __LINE__) ;
+#define GB_HERE printf ("%2d: Here: " __FILE__ " line: %d\n",  \
+    GB_OPENMP_THREAD_ID, __LINE__) ;
 
 // ASSERT (GB_DEAD_CODE) marks code that is intentionally dead, leftover from
 // prior versions of SuiteSparse:GraphBLAS but no longer used in the current
@@ -1804,16 +1805,21 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
     int nthreads,
+    int naslice,
+    int nbslice,
     GB_Context Context
 ) ;
 
-GrB_Info GB_AxB_dot2_count          // C<M> = A'*B, dot product counts
+GrB_Info GB_AxB_dot2_phase1         // C<M> = A'*B, dot product counts
 (
     int64_t **C_count_handle,       // output of size B->nvec
     const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix, may be a slice
-    const GrB_Matrix B              // input matrix
+    const GrB_Matrix B,             // input matrix
+    int nthreads,
+    int naslice,
+    int nbslice
 ) ;
 
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B

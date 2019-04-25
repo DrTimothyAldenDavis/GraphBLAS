@@ -295,7 +295,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         #define GB_CIJ_REACQUIRE(cij, cnz)  cij = Cx + cnz * csize ;
 
         // save the value of C(i,j) by advancing cij pointer to next value
-        #define GB_CIJ_SAVE(cij)            cij += csize ;
+        #define GB_CIJ_SAVE(cij,p)          cij += csize ;
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
@@ -324,6 +324,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     ASSERT_OK (GB_check (C, "heap: C = A*B output", GB0)) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
+GB_HERE ;
     return (GrB_SUCCESS) ;
 }
 

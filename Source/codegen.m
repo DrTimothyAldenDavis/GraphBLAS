@@ -4,4 +4,5 @@ function codegen
 codegen_axb ;       % semirings
 codegen_binop ;     % binary operators
 codegen_unop ;      % unary operators
+codegen_red ;       % monoids
 

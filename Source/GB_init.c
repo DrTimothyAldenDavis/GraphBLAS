@@ -142,6 +142,10 @@ GrB_Info GB_init            // start up GraphBLAS
 
     GB_Global_nthreads_max_set (GB_OPENMP_MAX_THREADS) ;
 
+    #if defined ( _OPENMP )
+    omp_set_nested (true) ;
+    #endif
+
     //--------------------------------------------------------------------------
     // create the mutex for the critical section, and thread-local storage
     //--------------------------------------------------------------------------

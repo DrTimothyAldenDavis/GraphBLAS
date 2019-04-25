@@ -37,7 +37,6 @@
             (Cp [Iter_k+1] - 1) : (Cp [Iter_k] + C_count_end [Iter_k] - 1) ;
 
         if (cnz > cnz_last) continue ;
-        GB_CIJ_REACQUIRE (cij, cnz) ;
         #endif
 
         //----------------------------------------------------------------------

@@ -35,13 +35,15 @@
 
     #if defined ( GB_PHASE_1_OF_2)
     ;
-    #elif defined ( GB_PHASE_2_OF_2)
-    int64_t *restrict Cp = C->p ;
-    int64_t *restrict Ci = C->i ;
     #else
-    int64_t *restrict Ci = C->i ;
-    int64_t jlast, cnz, cnz_last ;
-    GB_jstartup (C, &jlast, &cnz, &cnz_last) ;
+        int64_t  *restrict Ci = C->i ;
+        GB_CTYPE *restrict Cx = C->x ;
+        #if defined ( GB_PHASE_2_OF_2)
+        int64_t  *restrict Cp = C->p ;
+        #else
+        int64_t jlast, cnz, cnz_last ;
+        GB_jstartup (C, &jlast, &cnz, &cnz_last) ;
+        #endif
     #endif
 
     //--------------------------------------------------------------------------

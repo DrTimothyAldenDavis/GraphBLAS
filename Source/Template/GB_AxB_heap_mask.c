@@ -417,7 +417,7 @@
             { 
                 Ci [cnz] = i ;
                 // Cx [cnz] = cij ;
-                GB_CIJ_SAVE (cij) ;
+                GB_CIJ_SAVE (cij, cnz) ;
                 cnz++ ;
             }
         }
@@ -479,7 +479,7 @@
 
                 Ci [cnz] = i ;
                 // Cx [cnz] = cij ;
-                GB_CIJ_SAVE (cij) ;
+                GB_CIJ_SAVE (cij, cnz) ;
                 cnz++ ;
             }
         }

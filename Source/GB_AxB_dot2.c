@@ -16,10 +16,7 @@
 
 // Any variant of the mask is handled: C=A'*B, C<M>=A'*B, and C<!M>=A'*B.
 
-// TODO:  the GB_for_each_vector (B) loop in the *dot2* Templates can also
-// be done in parallel.  B does not need to be sliced, but the loop should
-// be scheduled with the same schedules as GxB_SLICE_B* used for slice_A
-// in GB_AxB_parallel (GxB_SLICE_BCOL and GxB_SLICE_BNZ).
+// Parallel: done
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -28,9 +25,9 @@
 
 #define GB_FREE_ALL                                                     \
 {                                                                       \
-    for (int tid = 0 ; tid < nthreads ; tid++)                          \
+    for (int taskid = 0 ; taskid < naslice ; taskid++)                  \
     {                                                                   \
-        GB_FREE_MEMORY (C_counts [tid], cnvec, sizeof (int64_t)) ;      \
+        GB_FREE_MEMORY (C_counts [taskid], cnvec, sizeof (int64_t)) ;   \
     }                                                                   \
 }
 
@@ -43,9 +40,11 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *mask_applied              // if true, mask was applied
-    , int nthreads
-    , GB_Context Context
+    bool *mask_applied,             // if true, mask was applied
+    int nthreads,
+    int naslice,
+    int nbslice,
+    GB_Context Context
 )
 {
 
@@ -58,15 +57,15 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     ASSERT (Chandle != NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for dot A'*B", GB0)) ;
     ASSERT_OK (GB_check (A, "A for dot A'*B", GB0)) ;
-    for (int tid = 0 ; tid < nthreads ; tid++)
+    for (int taskid = 0 ; taskid < naslice ; taskid++)
     {
-        ASSERT_OK (GB_check (Aslice [tid], "A slice for dot2 A'*B", GB0)) ;
-        ASSERT (!GB_PENDING (Aslice [tid])) ;
-        ASSERT (!GB_ZOMBIES (Aslice [tid])) ;
-        ASSERT ((Aslice [tid])->vlen == B->vlen) ;
-        ASSERT (A->vlen == (Aslice [tid])->vlen) ;
-        ASSERT (A->vdim == (Aslice [tid])->vdim) ;
-        ASSERT (A->type == (Aslice [tid])->type) ;
+        ASSERT_OK (GB_check (Aslice [taskid], "A slice for dot2 A'*B", GB0)) ;
+        ASSERT (!GB_PENDING (Aslice [taskid])) ;
+        ASSERT (!GB_ZOMBIES (Aslice [taskid])) ;
+        ASSERT ((Aslice [taskid])->vlen == B->vlen) ;
+        ASSERT (A->vlen == (Aslice [taskid])->vlen) ;
+        ASSERT (A->vdim == (Aslice [taskid])->vdim) ;
+        ASSERT (A->type == (Aslice [taskid])->type) ;
     }
     ASSERT_OK (GB_check (B, "B for dot A'*B", GB0)) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
@@ -123,24 +122,43 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
     }
 
-    bool ok = true ;
-    int64_t *C_counts [nthreads] ;
+    int64_t *C_counts [naslice] ;
+    double t = omp_get_wtime ( ) ;
+    GrB_Info task_info [naslice] ;
 
-    #pragma omp parallel for num_threads(nthreads) schedule(static,1) reduction(&&:ok) 
-    for (int tid = 0 ; tid < nthreads ; tid++)
+//  #pragma omp parallel for num_threads(nthreads) schedule(static,1) \
+//      reduction(&&:ok) 
+
+    #pragma omp parallel num_threads(nthreads)
     {
-        if ((Aslice [tid])->nvec_nonempty < 0)
-        { 
-            (Aslice [tid])->nvec_nonempty =
-                GB_nvec_nonempty (Aslice [tid], NULL) ;
+        #pragma omp single
+        {
+            for (int taskid = 0 ; taskid < naslice ; taskid++)
+            {
+                #pragma omp task
+                {
+
+                    if ((Aslice [taskid])->nvec_nonempty < 0)
+                    { 
+                        (Aslice [taskid])->nvec_nonempty =
+                            GB_nvec_nonempty (Aslice [taskid], NULL) ;
+                    }
+                    // count # of entries in each vector of C, for the slice
+                    task_info [taskid] = GB_AxB_dot2_phase1
+                        (&(C_counts [taskid]), M, Mask_comp, Aslice [taskid],
+                        B, nthreads, naslice, nbslice) ;
+                }
+            }
         }
+    }
 
-        // count the number of entries in each vector of C, for the slice
-        GrB_Info thread_info = GB_AxB_dot2_count (&(C_counts [tid]), M,
-            Mask_comp, Aslice [tid], B) ;
+GB_HERE ;
 
-        // collect all thread-specific info
-        ok = ok && (thread_info == GrB_SUCCESS) ;
+    // collect all thread-specific info
+    bool ok = true ;
+    for (int taskid = 0 ; taskid < naslice ; taskid++)
+    {
+        ok = ok && (task_info [taskid] == GrB_SUCCESS) ;
     }
 
     int64_t cnvec = B->nvec ;
@@ -158,17 +176,17 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     int64_t *restrict Cp = C->p ;
 
     // cumulative sum of counts in each column
-    // TODO skip if one thread
+    // TODO skip if naslice == 1
     #pragma omp parallel for num_threads(nthreads)
     for (int64_t k = 0 ; k < cnvec ; k++)
     {
         int64_t s = 0 ;
         // #pragma omp simd reduction(+:s)
-        for (int tid = 0 ; tid < nthreads ; tid++)
+        for (int taskid = 0 ; taskid < naslice ; taskid++)
         {
-            int64_t *C_count = C_counts [tid] ;
+            int64_t *C_count = C_counts [taskid] ;
             int64_t c = C_count [k] ;
-            // printf ("tid %d k "GBd" c "GBd"\n", tid, k, c) ;
+            // printf ("taskid %d k "GBd" c "GBd"\n", taskid, k, c) ;
             C_count [k] = s ;
             s += c ;
         }
@@ -194,6 +212,10 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     GB_FREE_MEMORY (C_counts [0], cnvec, sizeof (int64_t)) ;
     C->magic = GB_MAGIC ;
 
+    t = omp_get_wtime ( ) - t ;
+    printf ("dot2 phase1: %g\n", t) ;
+    t = omp_get_wtime ( )  ;
+
     //--------------------------------------------------------------------------
     // allocate C->x and C->i
     //--------------------------------------------------------------------------
@@ -210,20 +232,27 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     // C = A'*B, computing each entry with a dot product, via builtin semiring
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads) schedule(static,1)
-    for (int tid = 0 ; tid < nthreads ; tid++)
+    #pragma omp parallel num_threads(nthreads)
     {
+        #pragma omp single
+        {
+            for (int taskid = 0 ; taskid < naslice ; taskid++)
+            {
+                #pragma omp task
+                {
 
-// printf ("\n====================== tid %d of %d\n", tid, nthreads) ;
+// printf ("\n====================== taskid %d of %d\n", taskid, naslice) ;
 
     int64_t *restrict C_count_start =
-        (tid == 0) ?          NULL : C_counts [tid] ;
+        (taskid == 0) ?          NULL : C_counts [taskid] ;
     int64_t *restrict C_count_end   =
-        (tid == nthreads-1) ? NULL : C_counts [tid+1] ;
+        (taskid == naslice-1) ? NULL : C_counts [taskid+1] ;
 
-    GrB_Matrix A = Aslice [tid] ;
+    GrB_Matrix A = Aslice [taskid] ;
 
-// GxB_print (Aslice [tid], 3) ;
+    // TODO call this a function GB_AxB_dot2_phase2
+
+// GxB_print (Aslice [taskid], 3) ;
 
 // if (C_count_start != NULL)
 //    for (int64_t k = 0 ; k < cnvec ; k++) printf ("C_count_start ["GBd"] = "GBd"\n",
@@ -247,7 +276,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     {                                                                   \
         info = GB_Adot2B (add,mult,xyname) (Chandle, M, Mask_comp,      \
             A, A_is_pattern, B, B_is_pattern,                           \
-            C_count_start, C_count_end) ;                               \
+            C_count_start, C_count_end, nthreads, naslice, nbslice) ;   \
         done = true ;                                                   \
     }                                                                   \
     break ;
@@ -327,14 +356,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        char aki [aki_size] ;
-        char bkj [bkj_size] ;
-
-        char t [csize] ;
-
-        GB_void *restrict Cx = C->x ;
-        GB_void *restrict cij = Cx ;        // advances through each entry of C
-
         GB_void *restrict identity = add->identity ;
         GB_void *restrict terminal = add->terminal ;
 
@@ -362,10 +383,12 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
         // aki = A(k,i), located in Ax [pA]
         #define GB_GETA(aki,Ax,pA)                                          \
+            GB_void aki [aki_size] ;                                        \
             if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
+            GB_void bkj [bkj_size] ;                                        \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         // break if cij reaches the terminal value
@@ -381,17 +404,24 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
-            GB_MULTIPLY (t, aki, bkj) ;                                     \
-            fadd (cij, cij, t) ;
+            GB_void zwork [csize] ;                                         \
+            GB_MULTIPLY (zwork, aki, bkj) ;                                 \
+            fadd (cij, cij, zwork) ;
 
-        // C->x or cnz has moved so the pointer to cij needs to be recomputed
-        #define GB_CIJ_REACQUIRE(cij, cnz)  cij = Cx + cnz * csize ;
+        // define cij for each task
+        #define GB_CIJ_DECLARE(cij)                                         \
+            GB_void cij [csize] ;
 
-        // save the value of C(i,j) by advancing cij pointer to next value
-        #define GB_CIJ_SAVE(cij)            cij += csize ;
+        // address of Cx [p]
+        #define GB_CX(p) Cx +((p)*csize)
+
+        // save the value of C(i,j)
+        #define GB_CIJ_SAVE(cij,p)                                          \
+            memcpy (GB_CX (p), cij, csize) ;
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
+        #define GB_CTYPE GB_void
 
         #define GB_PHASE_2_OF_2
 
@@ -409,7 +439,10 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         }
     }
 
-    }
+    } } } }
+
+    t = omp_get_wtime ( ) - t ;
+    printf ("dot2 phase2: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

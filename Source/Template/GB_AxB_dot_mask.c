@@ -42,7 +42,25 @@
     // C<M>=A'*B via dot products
     //--------------------------------------------------------------------------
 
+    #if defined ( GB_SINGLE_PHASE )
+
     GBI_for_each_vector (B)
+
+    #else
+
+    // dot2 uses tasks in the outer loop
+    GBI_single_iterator Iter ;
+    int64_t Iter_Slice [nbslice+1] ;
+    GB_pslice (Iter_Slice, B, nbslice) ;
+    GBI1_init (&Iter, B) ;
+    for (int Iter_taskid = 0 ; Iter_taskid < nbslice ; Iter_taskid++)
+        #pragma omp task
+        for (int64_t Iter_k = Iter_Slice [Iter_taskid] ;
+                     Iter_k < Iter_Slice [Iter_taskid+1] ;
+                     Iter_k++)
+
+    #endif
+
     {
 
         //----------------------------------------------------------------------
@@ -66,7 +84,6 @@
             (Cp [Iter_k+1] - 1) : (Cp [Iter_k] + C_count_end [Iter_k] - 1) ;
 
         if (cnz > cnz_last) continue ;
-        GB_CIJ_REACQUIRE (cij, cnz) ;
         #endif
 
         //----------------------------------------------------------------------

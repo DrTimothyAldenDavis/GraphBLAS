@@ -121,7 +121,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     ASSERT_OK (GB_check (semiring, "semiring for parallel A*B", GB0)) ;
     ASSERT (AxB_method_used != NULL) ;
 
-// printf ("AxB_method, descriptor: %d\n", AxB_method) ;
+   printf ("AxB_method, descriptor: %d\n", AxB_method) ;
 
     GrB_Info info ;
 
@@ -164,6 +164,8 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     if (do_adotb)
     { 
+GB_HERE ;
+AxB_slice = GxB_SLICE_ATNZ ;
 
         //----------------------------------------------------------------------
         // select slicing method for A'*B
@@ -279,17 +281,21 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     nthreads = GB_IMIN (nthreads, anz) ;
     nthreads = GB_IMIN (nthreads, bnz) ;
 
+/*
     if (slice_A)
     {
         nthreads = GB_IMIN (nthreads, anvec) ;
     }
-    else // if slice_B
+*/
+
+    if (!slice_A)
     {
         if (AxB_slice <= GxB_SLICE_BFLOPS)
         {
             nthreads = GB_IMIN (nthreads, bnvec) ;
         }
     }
+
     nthreads = GB_IMAX (nthreads, 1) ;
 
 // printf ("GB_AxB_paralel: nthreads %d\n", nthreads) ;
@@ -397,15 +403,39 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     // find where to slice and compute C=A'*B or A*B accordingly.
     //--------------------------------------------------------------------------
 
-    if (slice_A)
+    if (do_adotb)
     {
+GB_HERE ;
 
         //----------------------------------------------------------------------
         // slice A' for C=A'*B
         //----------------------------------------------------------------------
 
+        // determine number of slices for A' and B
+
+        int nbslice, naslice ;
+        if (bnvec > 8 * nthreads)
+        {
+            // just slice B
+            nbslice = 8 * nthreads ;
+            naslice = 1 ;
+        }
+        else
+        {
+            // slice B into individual vectors
+            nbslice = bnvec ;
+
+            // slice A' to get a total of about 8*nthreads tasks
+            naslice = (8 * nthreads) / nbslice ;
+
+            // but do not slice A to finely
+            naslice = GB_IMIN (naslice, anvec/4) ;
+            naslice = GB_IMAX (naslice, nthreads) ;
+        }
+
         // thread tid will do rows Slice [tid] to Slice [tid+1]-1 of A'
 
+#if 0
         if (AxB_slice == GxB_SLICE_ATROW)
         {
 
@@ -425,6 +455,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
         }
         else // if (AxB_slice == GxB_SLICE_ATNZ)
+#endif
         {
 
             //------------------------------------------------------------------
@@ -440,7 +471,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
             // and A is stored by column.  This method is the default when
             // slicing A.
 
-            GB_pslice (Slice, A, nthreads) ;
+            GB_pslice (Slice, A, naslice) ;
 
         }
 
@@ -448,7 +479,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         // construct each slice of A'
         //----------------------------------------------------------------------
 
-        GB_OK (GB_slice (A, nthreads, Slice, Aslice, Context)) ;
+        GB_OK (GB_slice (A, naslice, Slice, Aslice, Context)) ;
 
         //----------------------------------------------------------------------
         // compute each slice of C = A'*B, with optional mask M
@@ -467,88 +498,25 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 //      double t1 = omp_get_wtime ( ) ;
 //      #endif
 
-//      if (C_in_place)     TODO: make this a parameter?
+//      if (C_in_place)
         { 
 
             //------------------------------------------------------------------
             // compute C in place
             //------------------------------------------------------------------
 
-            // TODO: could use 2D parallelism, where Aslice[tid]*B can be
-            // parallel across the columns of B, using the new
-            // GBI_parallel_for_each_vector macro.
-
+printf ("slice A with dot2 nthreads %d naslice %d nbslice %d\n",
+    nthreads, naslice, nbslice) ;
             GB_OK (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B,
-                semiring, flipxy, &mask_applied, nthreads, Context)) ;
+                semiring, flipxy, &mask_applied, nthreads, naslice, nbslice,
+                Context)) ;
 
         }
-
-        // TODO the following method works too (it is tested), but it is slower
-        // if B is a vector.  Need to determine if there are cases where the
-        // code below is faster than GB_AxB_dot2.
-
-#if 0
-        else
-        {
-
-            //------------------------------------------------------------------
-            // compute each slice of C independently
-            //------------------------------------------------------------------
-
-            #pragma omp parallel for num_threads(nthreads) schedule(static,1) reduction(&&:ok,allmask) reduction(||:panic)
-            for (int tid = 0 ; tid < nthreads ; tid++)
-            { 
-                bool thread_mask_applied = false ;
-                GrB_Info thread_info = GB_AxB_dot (&(Cslice [tid]), M,
-                    Mask_comp, Aslice [tid], B, semiring, flipxy,
-                    &thread_mask_applied) ;
-
-                // collect all thread-specific info 
-                ok      = ok      && (thread_info == GrB_SUCCESS) ;
-                allmask = allmask && (thread_mask_applied) ;
-                panic   = panic   || (thread_info == GrB_PANIC) ;
-            }
-
-    //      #if defined ( _OPENMP )
-    //      t1 = omp_get_wtime ( ) - t1 ;
-    //      if (avlen > 1000)
-    //      {
-    //          fprintf (stderr, "just the slice Ck=A'*Bk: %g sec\n", t1) ;
-    //      }
-    //      #endif
-
-            if (!ok)
-            { 
-                // out of memory, or panic if a critical section fails
-                return (panic ? GrB_PANIC : GB_OUT_OF_MEMORY) ;
-            }
-
-            // if all threads applied the mask to their slices, then
-            // GB_accum_mask does not need to apply it to the concatenated C in
-            // GB_AxB_meta.  If just some of them did, then GB_accum_mask needs
-            // to apply the mask again.  Currently, GB_AxB_dot always applies
-            // the mask if it is present, so the reduction is not needed
-            // (allmask == (M != NULL)), but the reduction is more flexible if
-            // this changes in the future.
-            (*mask_applied) = allmask ;
-
-            //------------------------------------------------------------------
-            // concatenate the slices of C
-            //------------------------------------------------------------------
-
-            // C = [Cslice(0) ; Cslice(1) ; ... ; Cslice(nthreads-1)]
-            // concatenated vertically.  Each slice Cslice(tid) has the same
-            // dimensions as C, but each one contains entries that appear in a
-            // unique and contiguous subset of the rows of C.  C is stored by
-            // column.
-            GB_OK (GB_vcat_slice (Chandle, nthreads, Cslice, Context)) ;
-        }
-#endif
 
     }
     else
     {
-        // printf ("slice B\n") ;
+        printf ("slice B\n") ;
 
         //----------------------------------------------------------------------
         // slice B for A*B or A'*B
@@ -860,6 +828,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         //----------------------------------------------------------------------
         // check error conditions
         //----------------------------------------------------------------------
+GB_HERE ;
 
         // panic if a critical section fails
         if (panic) return (GrB_PANIC) ;
@@ -945,6 +914,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 //  }
 //  #endif
 
+GB_HERE ;
     GB_FREE_ALL ;
     ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
     return (GrB_SUCCESS) ;

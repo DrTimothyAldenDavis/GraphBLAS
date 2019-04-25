@@ -49,6 +49,14 @@
     ASSERT (ainz >= 0) ;
 
     //--------------------------------------------------------------------------
+    // declare the cij scalar
+    //--------------------------------------------------------------------------
+
+    #if !defined ( GB_PHASE_1_OF_2 )
+    GB_CIJ_DECLARE (cij) ;
+    #endif
+
+    //--------------------------------------------------------------------------
     // for single phase: ensure enough space exists in C
     //--------------------------------------------------------------------------
 
@@ -65,8 +73,6 @@
         }
         Ci = C->i ;
         Cx = C->x ;
-        // reacquire the pointer cij since C->x has moved
-        GB_CIJ_REACQUIRE (cij, cnz) ;
     }
     #endif
 
@@ -307,7 +313,7 @@
         #if defined ( GB_PHASE_1_OF_2 )
         C_count [Iter_k] ++ ;
         #else
-        GB_CIJ_SAVE (cij) ;
+        GB_CIJ_SAVE (cij, cnz) ;
         Ci [cnz++] = i ;
         #if defined ( GB_PHASE_2_OF_2 )
         if (cnz > cnz_last) break ;

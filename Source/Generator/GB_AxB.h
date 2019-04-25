@@ -22,7 +22,8 @@ GrB_Info GB_Adot2B
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     const int64_t *restrict C_count_start,
-    const int64_t *restrict C_count_end
+    const int64_t *restrict C_count_end,
+    int nthreads, int naslice, int nbslice
 ) ;
 
 GrB_Info GB_AheapB

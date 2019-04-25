@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2_count: count entries in C=A'*B, C<M>=A'*B, or C<!M>=A'*B
+// GB_AxB_dot2_phase1: count entries in C=A'*B, C<M>=A'*B, or C<!M>=A'*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -12,13 +12,16 @@
 
 #include "GB.h"
 
-GrB_Info GB_AxB_dot2_count          // C<M> = A'*B, dot product counts
+GrB_Info GB_AxB_dot2_phase1         // C<M> = A'*B, dot product counts
 (
     int64_t **C_count_handle,       // output of size B->nvec
     const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix, may be a slice
-    const GrB_Matrix B              // input matrix
+    const GrB_Matrix B,             // input matrix
+    int nthreads,
+    int naslice,
+    int nbslice
 )
 {
 
@@ -28,9 +31,9 @@ GrB_Info GB_AxB_dot2_count          // C<M> = A'*B, dot product counts
 
     GB_Context Context = NULL ;
     ASSERT (C_count_handle != NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for dot_count A'*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for dot_count A'*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for dot_count A'*B", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (M, "M for dot2 phase1 A'*B", GB0)) ;
+    ASSERT_OK (GB_check (A, "A for dot2 phase1 A'*B", GB0)) ;
+    ASSERT_OK (GB_check (B, "B for dot2 phase1 A'*B", GB0)) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
