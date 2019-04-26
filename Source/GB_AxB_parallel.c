@@ -121,7 +121,7 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     ASSERT_OK (GB_check (semiring, "semiring for parallel A*B", GB0)) ;
     ASSERT (AxB_method_used != NULL) ;
 
-   printf ("AxB_method, descriptor: %d\n", AxB_method) ;
+   // printf ("AxB_method, descriptor: %d\n", AxB_method) ;
 
     GrB_Info info ;
 
@@ -164,7 +164,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     if (do_adotb)
     { 
-GB_HERE ;
 AxB_slice = GxB_SLICE_ATNZ ;
 
         //----------------------------------------------------------------------
@@ -405,7 +404,6 @@ AxB_slice = GxB_SLICE_ATNZ ;
 
     if (do_adotb)
     {
-GB_HERE ;
 
         //----------------------------------------------------------------------
         // slice A' for C=A'*B
@@ -505,8 +503,8 @@ GB_HERE ;
             // compute C in place
             //------------------------------------------------------------------
 
-printf ("slice A with dot2 nthreads %d naslice %d nbslice %d\n",
-    nthreads, naslice, nbslice) ;
+// printf ("slice A with dot2 nthreads %d naslice %d nbslice %d\n",
+    // nthreads, naslice, nbslice) ;
             GB_OK (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B,
                 semiring, flipxy, &mask_applied, nthreads, naslice, nbslice,
                 Context)) ;
@@ -516,7 +514,7 @@ printf ("slice A with dot2 nthreads %d naslice %d nbslice %d\n",
     }
     else
     {
-        printf ("slice B\n") ;
+        // printf ("slice B\n") ;
 
         //----------------------------------------------------------------------
         // slice B for A*B or A'*B
@@ -828,7 +826,6 @@ printf ("slice A with dot2 nthreads %d naslice %d nbslice %d\n",
         //----------------------------------------------------------------------
         // check error conditions
         //----------------------------------------------------------------------
-GB_HERE ;
 
         // panic if a critical section fails
         if (panic) return (GrB_PANIC) ;
@@ -914,7 +911,6 @@ GB_HERE ;
 //  }
 //  #endif
 
-GB_HERE ;
     GB_FREE_ALL ;
     ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
     return (GrB_SUCCESS) ;

@@ -332,7 +332,6 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     // trim the size of C: this cannot fail
     //--------------------------------------------------------------------------
 
-GB_HERE ;
     info = GB_ix_realloc (C, GB_NNZ (C), true, NULL) ;
     ASSERT (info == GrB_SUCCESS) ;
     ASSERT_OK (GB_check (C, "dot: C = A'*B output", GB0)) ;

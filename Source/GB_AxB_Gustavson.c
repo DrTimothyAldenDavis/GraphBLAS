@@ -413,7 +413,6 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // return result
     //--------------------------------------------------------------------------
 
-GB_HERE ;
     ASSERT_SAUNA_IS_RESET ;
 
     // cannot fail since C->plen is the upper bound: # non-empty columns of B

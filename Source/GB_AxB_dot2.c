@@ -123,7 +123,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     }
 
     int64_t *C_counts [naslice] ;
-    double t = omp_get_wtime ( ) ;
+    // double t = omp_get_wtime ( ) ;
     GrB_Info task_info [naslice] ;
 
 //  #pragma omp parallel for num_threads(nthreads) schedule(static,1) \
@@ -151,8 +151,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
             }
         }
     }
-
-GB_HERE ;
 
     // collect all thread-specific info
     bool ok = true ;
@@ -212,9 +210,9 @@ GB_HERE ;
     GB_FREE_MEMORY (C_counts [0], cnvec, sizeof (int64_t)) ;
     C->magic = GB_MAGIC ;
 
-    t = omp_get_wtime ( ) - t ;
-    printf ("dot2 phase1: %g\n", t) ;
-    t = omp_get_wtime ( )  ;
+    // t = omp_get_wtime ( ) - t ;
+    // printf ("dot2 phase1: %g\n", t) ;
+    // t = omp_get_wtime ( )  ;
 
     //--------------------------------------------------------------------------
     // allocate C->x and C->i
@@ -441,8 +439,8 @@ GB_HERE ;
 
     } } } }
 
-    t = omp_get_wtime ( ) - t ;
-    printf ("dot2 phase2: %g\n", t) ;
+    // t = omp_get_wtime ( ) - t ;
+    // printf ("dot2 phase2: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

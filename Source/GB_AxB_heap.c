@@ -324,7 +324,6 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     ASSERT_OK (GB_check (C, "heap: C = A*B output", GB0)) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
-GB_HERE ;
     return (GrB_SUCCESS) ;
 }
 
