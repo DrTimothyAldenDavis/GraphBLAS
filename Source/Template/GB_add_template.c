@@ -58,7 +58,8 @@
     // phase1: count entries in each C(:j); phase 2: compute C
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads)
+    int nth = GB_IMIN (Cnvec, nthreads) ;
+    #pragma omp parallel for num_threads(nth)
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {
 

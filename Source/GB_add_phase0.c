@@ -207,7 +207,8 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)
         {
-            #pragma omp parallel for num_threads(nthreads)
+            int nth = GB_IMIN (Cnvec, nthreads) ;
+            #pragma omp parallel for num_threads(nth)
             for (int64_t k = 0 ; k < Cnvec ; k++)
             {
                 int64_t j = Ch [k] ;
@@ -321,6 +322,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
             return (GB_OUT_OF_MEMORY) ;
         }
 
+        int nth = GB_IMIN (n, nthreads) ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t j = 0 ; j < n ; j++)
         { 
@@ -328,6 +330,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         }
 
         // scatter Ah into C_to_A
+        nth = GB_IMIN (Anvec, nthreads) ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t kA = 0 ; kA < Anvec ; kA++)
         { 
@@ -352,6 +355,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
             return (GB_OUT_OF_MEMORY) ;
         }
 
+        int nth = GB_IMIN (n, nthreads) ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t j = 0 ; j < n ; j++)
         { 
@@ -359,6 +363,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         }
 
         // scatter Bh into C_to_B
+        nth = GB_IMIN (Bnvec, nthreads) ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t kB = 0 ; kB < Bnvec ; kB++)
         { 
