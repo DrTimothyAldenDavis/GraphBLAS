@@ -353,22 +353,22 @@ AxB_slice = GxB_SLICE_ATNZ ;
 
     ASSERT (nthreads > 1) ;
 
-    int64_t Slice [nthreads+1] ;
+    int64_t Slice [16*nthreads+1] ;
     GrB_Matrix Cslice [nthreads] ;
     GrB_Matrix Bslice [nthreads] ;
     GrB_Matrix Aslice [16*nthreads] ;
 
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        Slice [tid] = 0 ;
         Cslice [tid] = NULL ;
         Bslice [tid] = NULL ;
     }
-    for (int tid = 0 ; tid < 8*nthreads ; tid++)
+    for (int tid = 0 ; tid < 16*nthreads ; tid++)
     {
+        Slice [tid] = 0 ;
         Aslice [tid] = NULL ;
     }
-    Slice [nthreads] = 0 ;
+    Slice [16*nthreads+1] = 0 ;
     int nbslice = 0, naslice = 0 ;
 
     #undef  GB_FREE_ALL
@@ -406,6 +406,8 @@ AxB_slice = GxB_SLICE_ATNZ ;
             // just slice B
             nbslice = 16 * nthreads ;
             naslice = 1 ;
+//          printf ("do adotb nthreads %d naslice one %d nbslice %d\n",
+//              nthreads, naslice, nbslice) ;
         }
         else
         {
@@ -418,6 +420,9 @@ AxB_slice = GxB_SLICE_ATNZ ;
             // but do not slice A to finely
             naslice = GB_IMIN (naslice, anvec/4) ;
             naslice = GB_IMAX (naslice, nthreads) ;
+
+//          printf ("here do adotb nthreads %d naslice %d nbslice %d\n",
+//              nthreads, naslice, nbslice) ;
         }
 
         // thread tid will do rows Slice [tid] to Slice [tid+1]-1 of A'
@@ -498,7 +503,6 @@ AxB_slice = GxB_SLICE_ATNZ ;
                 semiring, flipxy, &mask_applied, nthreads, naslice, nbslice,
                 Context)) ;
         }
-
     }
     else
     {

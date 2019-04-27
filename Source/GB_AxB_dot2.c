@@ -76,10 +76,10 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
 
-    printf ("dot2: nthreads %d naslice %d nbslice %d\n", nthreads,
-        naslice, nbslice) ;
+//  printf ("dot2: nthreads %d naslice %d nbslice %d\n", nthreads,
+//      naslice, nbslice) ;
 
-    double t = omp_get_wtime ( ) ;
+//  double t = omp_get_wtime ( ) ;
 /*
     GB_check (M, "M for dot2", GB0) ;
     GB_check (A, "A for dot2", GB0) ;
@@ -232,9 +232,9 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         return (info) ;
     }
 
-    t = omp_get_wtime ( ) - t ;
-    printf ("dot2: phase1 time: %g\n", t) ;
-    t = omp_get_wtime ( ) ;
+//  t = omp_get_wtime ( ) - t ;
+//  printf ("dot2: phase1 time: %g\n", t) ;
+//  t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, via builtin semiring
@@ -419,8 +419,8 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         }
     }
 
-    t = omp_get_wtime ( ) - t ;
-    printf ("dot2 phase2: %g\n", t) ;
+//  t = omp_get_wtime ( ) - t ;
+//  printf ("dot2 phase2: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result
