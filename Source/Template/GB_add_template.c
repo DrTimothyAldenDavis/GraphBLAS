@@ -68,7 +68,6 @@
         //----------------------------------------------------------------------
 
         int64_t j = (Ch == NULL) ? k : Ch [k] ;
-        // printf ("phase1 j : "GBd"\n", j) ;
 
         #if defined ( GB_PHASE_1_OF_2 )
         int64_t cjnz = 0 ;
@@ -92,7 +91,6 @@
             pA_end = Ap [kA+1] ;
         }
         int64_t ajnz = pA_end - pA ;    // nnz (A (:,j))
-        // printf ("   ["GBd":"GBd"] ajnz  : "GBd"\n", pA, pA_end, ajnz) ;
 
         //----------------------------------------------------------------------
         // get B(:,j)
@@ -107,7 +105,6 @@
             pB_end = Bp [kB+1] ;
         }
         int64_t bjnz = pB_end - pB ;    // nnz (B (:,j))
-        // printf ("   ["GBd":"GBd"] bjnz  : "GBd"\n", pB, pB_end, bjnz) ;
 
         //----------------------------------------------------------------------
         // get M(:,j)
@@ -130,7 +127,6 @@
             GB_lookup (M_is_hyper, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
         }
         int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
-        // printf ("   ["GBd":"GBd"] mjnz  : "GBd"\n", pM, pM_end, mjnz) ;
 
         //----------------------------------------------------------------------
         // phase1: count nnz (C (:,j)); phase2: compute C(:,j)
@@ -171,7 +167,6 @@
                 // matrix of pending tuples for A.  The pattern of pending
                 // tuples is always disjoint with the pattern of A.
                 cjnz = ajnz + bjnz ;
-                // printf ("disjoint cjnz "GBd"\n", cjnz) ;
 
             }
             else
@@ -556,7 +551,6 @@
         //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
-        // printf ("here Cp ["GBd"] = "GBd"\n", k, cjnz) ;
         Cp [k] = cjnz ;
         #endif
 

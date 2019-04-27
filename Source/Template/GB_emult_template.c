@@ -65,7 +65,6 @@
         //----------------------------------------------------------------------
 
         int64_t j = (Ch == NULL) ? k : Ch [k] ;
-        // printf ("\n---- k "GBd" j "GBd"\n", k, j) ;
 
         #if defined ( GB_PHASE_1_OF_2 )
         int64_t cjnz = 0 ;
@@ -74,7 +73,6 @@
         int64_t pC_end = Cp [k+1] ;
         int64_t cjnz = pC_end - pC ;
         if (cjnz == 0) continue ;
-        // printf ("   ["GBd":"GBd"] cjnz  : "GBd"\n", pC, pC_end, cjnz) ;
         #endif
 
         //----------------------------------------------------------------------
@@ -91,7 +89,6 @@
             pA_end = Ap [kA+1] ;
         }
         int64_t ajnz = pA_end - pA ;    // nnz (A (:,j))
-        // printf ("   ["GBd":"GBd"] ajnz  : "GBd"\n", pA, pA_end, ajnz) ;
 
         //----------------------------------------------------------------------
         // get B(:,j)
@@ -107,7 +104,6 @@
             pB_end = Bp [kB+1] ;
         }
         int64_t bjnz = pB_end - pB ;    // nnz (B (:,j))
-        // printf ("   ["GBd":"GBd"] bjnz  : "GBd"\n", pB, pB_end, bjnz) ;
 
         //----------------------------------------------------------------------
         // get M(:,j)
@@ -126,7 +122,6 @@
             }
         }
         int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
-        // printf ("   ["GBd":"GBd"] mjnz  : "GBd"\n", pM, pM_end, mjnz) ;
 
         //----------------------------------------------------------------------
         // phase1: count nnz (C (:,j)), phase2: compute C(:,j)
@@ -561,7 +556,6 @@
         //----------------------------------------------------------------------
 
         #if defined ( GB_PHASE_1_OF_2 )
-        // printf ("here Cp ["GBd"] = "GBd"\n", k, cjnz) ;
         Cp [k] = cjnz ;
         #endif
 

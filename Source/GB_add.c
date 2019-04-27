@@ -112,21 +112,22 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // phase2: compute the entries (indices and values) in each vector of C
     //--------------------------------------------------------------------------
 
+    // Cp and Ch are either freed by phase2, or transplanted into C.
+    // Either way, they are not freed here.
+
     info = GB_add_phase2 (
         &C, ctype, C_is_csc, op,                // computed or used by phase2
         Cp, Cnvec_nonempty,                             // from phase1
         Cnvec, max_Cnvec, Ch, C_to_A, C_to_B, Ch_is_Mh, // from phase0
         M, Mask_comp, A, B, Context) ;                  // original input
 
-    // free workspace (but not Cp or Ch)
+    // free workspace
     GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
     GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; free everything else allocated by phase0 and phase1
-        GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
-        GB_FREE_MEMORY (Ch, max_Cnvec, sizeof (int64_t)) ;
+        // out of memory; note that Cp and Ch are already freed
         return (info) ;
     }
 

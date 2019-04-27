@@ -1,4 +1,4 @@
-SuiteSparse/GraphBLAS/Lib/README.txt
+SuiteSparse/GraphBLAS/alternative/README.txt
 
 CMake is prefered for compiling SuiteSparse/GraphBLAS, but this folder provides
 a simple alternative, if you don't have CMake or if you prefer a simple

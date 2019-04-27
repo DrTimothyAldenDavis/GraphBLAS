@@ -31,8 +31,11 @@
 //      case, C will be a standard matrix, not hypersparse.  Thus, the kth
 //      vector is j = (Ch == NULL) ? k : Ch [k].
 
+//      Ch is freed by GB_add if phase1 fails.  phase2 either frees it or
+//      transplants it into C.
+
 //      Ch_is_Mh:  true if the mask M is present, hypersparse, and not
-//      complemented, false otherwise.  In this case Ch is a copy of M->h.
+//      complemented, false otherwise.  In this case Ch is a deep copy of M->h.
 
 //      C_to_A:  if A is hypersparse, then C_to_A [k] = kA if the kth vector, j
 //      = (Ch == NULL) ? k : Ch [k] appears in A, as j = Ah [kA].  If j does
@@ -257,7 +260,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         {
             int64_t jA = (A_is_hyper) ? Ah [kA] : (A->hfirst + kA) ;
             int64_t jB = Bh [kB] ;
-            // printf ("jA "GBd" jB "GBd"\n", jA, jB) ;
             if (jA < jB)
             { 
                 // append jA to Ch
@@ -402,7 +404,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     //--------------------------------------------------------------------------
 
     #ifndef NDEBUG
-    // printf ("Cnvec: " GBd"\n", Cnvec) ;
     ASSERT (A != NULL) ;        // A and B are always present
     ASSERT (B != NULL) ;
     int64_t jlast = -1 ;
@@ -421,8 +422,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
             // C will be constructed as hypersparse
             j = Ch [k] ;
         }
-
-        // printf ("phase0: k "GBd" j "GBd"\n", k, j) ;
 
         // vectors j in Ch are sorted, and in the range 0:n-1
         ASSERT (j >= 0 && j < n) ;

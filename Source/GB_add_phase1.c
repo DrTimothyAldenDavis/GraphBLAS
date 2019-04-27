@@ -20,6 +20,8 @@
 // tuples.  A and T are disjoint, so this function does not need to examine
 // the pattern of A and T at all.  No mask is used in this case.
 
+// Cp is either freed by phase2, or transplanted into C.
+
 // PARALLEL: done
 
 #include "GB.h"
@@ -87,7 +89,6 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;
-    // printf ("Cnvec_nonempty "GBd"\n", *Cnvec_nonempty) ;
     (*Cp_handle) = Cp ;
     return (GrB_SUCCESS) ;
 }

@@ -19,6 +19,9 @@
 // GB_add_phase0.  All cases of the mask M are handled: not present, present
 // and not complemented, and present and complemented.
 
+// This function either frees Cp and Ch, or transplants then into C, as C->p
+// and C->h.  Either way, the caller must not free them.
+
 // op may be NULL.  In this case, the intersection of A and B must be empty.
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 
@@ -115,7 +118,9 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         Context) ;
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; caller must free Cp, Ch, C_to_A, C_to_B
+        // out of memory; caller must free C_to_A, C_to_B
+        GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Ch, max_Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -128,6 +133,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         C->h = (int64_t *) Ch ;
         C->nvec = Cnvec ;
     }
+
+    // now Cp and Ch have been transplanted into C, so they must not be freed.
 
     C->nvec_nonempty = Cnvec_nonempty ;
     C->magic = GB_MAGIC ;
@@ -259,7 +266,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // prune empty vectors from Ch
     //--------------------------------------------------------------------------
 
-    // printf ("Cnvec_nonempty "GBd" Cnvec "GBd"\n", Cnvec_nonempty, Cnvec) ;
     if (C_is_hyper && Cnvec_nonempty < Cnvec)
     {
         int64_t *restrict Cp = C->p ;
@@ -272,10 +278,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         for (int64_t k = 0 ; k < Cnvec ; k++)
         {
             int64_t cjnz = Cp [k+1] - Cp [k] ;
-            // printf ("consider "GBd" = "GBd"\n", k, cjnz) ;
             if (cjnz > 0)
             { 
-                // printf ("keep k: "GBd" j: "GBd"\n", k, Ch [k]) ;
                 Cp [cnvec_new] = Cp [k] ;
                 Ch [cnvec_new] = Ch [k] ;
                 cnvec_new++ ;
@@ -284,7 +288,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
         Cp [cnvec_new] = Cp [Cnvec] ;
         C->nvec = cnvec_new ;
-        // printf ("cnvec_new "GBd"\n", cnvec_new) ;
         ASSERT (cnvec_new == Cnvec_nonempty) ;
         // reduce the size of Cp and Ch (this cannot fail)
         bool ok ;

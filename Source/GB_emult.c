@@ -97,7 +97,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // phase2: compute the entries (indices and values) in each vector of C
     //--------------------------------------------------------------------------
 
-    // Cp is either freed by GB_emult_phase2, or transplanted into C.
+    // Cp is either freed by phase2, or transplanted into C.
     // Either way, it is not freed here.
 
     info = GB_emult_phase2 (
