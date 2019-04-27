@@ -126,18 +126,16 @@ GrB_Info GB_AdotB__min_rdiv_fp64
 
 GrB_Info GB_Adot2B__min_rdiv_fp64
 (
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp,
-    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    const int64_t *restrict C_count_start,
-    const int64_t *restrict C_count_end,
+    int64_t **C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 
-    GrB_Matrix C = (*Chandle) ;
     #define GB_PHASE_2_OF_2
-    #include "GB_AxB_dot_meta.c"
+    #include "GB_AxB_dot2_meta.c"
     #undef GB_PHASE_2_OF_2
     return (GrB_SUCCESS) ;
 }

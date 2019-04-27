@@ -207,26 +207,6 @@ AxB_slice = GxB_SLICE_ATNZ ;
         slice_A = (AxB_slice == GxB_SLICE_ATROW) ||
                   (AxB_slice == GxB_SLICE_ATNZ) ;
 
-        // TODO: if the output C matrix is dense in the space of
-        // A->nvec_nonempty * B->nvec_nonempty, then the pattern of C can be
-        // determined easily.  Each slice of the output C could be computed in
-        // place, with no need for a subsequent call to GB_vcat_slice.  Better
-        // yet, just make one call to GB_AxB_dot, preconstruct the pattern of C
-        // (in parallel), and then do all dot products in parallel.
-
-        // TODO: if the mask M is present, and not complemented, then assume
-        // all entries in M are true.  Then give C the pattern of M, and
-        // compute all entries in parallel.  If an entry in C does not actually
-        // appear (M(i,j) is zero, or the dot product finds that C(i,j) is not
-        // an entry, then make it a zombie.
-
-        // TODO: the above ideas can be merged.  They share the same method:
-        // (1) precompute the pattern (either C is dense, or the pattern is the
-        // same as M).  And then (2) compute all entries in C in parallel,
-        // placing zombies if needed.
-
-        // In this case, slice_A and slice_B are both false.
-
     }
     else
     { 
@@ -376,16 +356,20 @@ AxB_slice = GxB_SLICE_ATNZ ;
     int64_t Slice [nthreads+1] ;
     GrB_Matrix Cslice [nthreads] ;
     GrB_Matrix Bslice [nthreads] ;
-    GrB_Matrix Aslice [nthreads] ;
+    GrB_Matrix Aslice [16*nthreads] ;
 
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
         Slice [tid] = 0 ;
         Cslice [tid] = NULL ;
         Bslice [tid] = NULL ;
+    }
+    for (int tid = 0 ; tid < 8*nthreads ; tid++)
+    {
         Aslice [tid] = NULL ;
     }
     Slice [nthreads] = 0 ;
+    int nbslice = 0, naslice = 0 ;
 
     #undef  GB_FREE_ALL
     #define GB_FREE_ALL                             \
@@ -394,8 +378,14 @@ AxB_slice = GxB_SLICE_ATNZ ;
         {                                           \
             GB_MATRIX_FREE (& (Cslice [tid])) ;     \
             GB_MATRIX_FREE (& (Bslice [tid])) ;     \
-            GB_MATRIX_FREE (& (Aslice [tid])) ;     \
         }                                           \
+        if (naslice > 1)                                    \
+        {                                                   \
+            for (int tid = 0 ; tid < naslice ; tid++)       \
+            {                                               \
+                GB_MATRIX_FREE (& (Aslice [tid])) ;         \
+            }                                               \
+        }                                                   \
     }
 
     //--------------------------------------------------------------------------
@@ -411,11 +401,10 @@ AxB_slice = GxB_SLICE_ATNZ ;
 
         // determine number of slices for A' and B
 
-        int nbslice, naslice ;
-        if (bnvec > 8 * nthreads)
+        if (bnvec > 16 * nthreads || bnvec == 0)
         {
             // just slice B
-            nbslice = 8 * nthreads ;
+            nbslice = 16 * nthreads ;
             naslice = 1 ;
         }
         else
@@ -424,7 +413,7 @@ AxB_slice = GxB_SLICE_ATNZ ;
             nbslice = bnvec ;
 
             // slice A' to get a total of about 8*nthreads tasks
-            naslice = (8 * nthreads) / nbslice ;
+            naslice = (16 * nthreads) / nbslice ;
 
             // but do not slice A to finely
             naslice = GB_IMIN (naslice, anvec/4) ;
@@ -504,11 +493,10 @@ AxB_slice = GxB_SLICE_ATNZ ;
             //------------------------------------------------------------------
 
 // printf ("slice A with dot2 nthreads %d naslice %d nbslice %d\n",
-    // nthreads, naslice, nbslice) ;
+// nthreads, naslice, nbslice) ;
             GB_OK (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B,
                 semiring, flipxy, &mask_applied, nthreads, naslice, nbslice,
                 Context)) ;
-
         }
 
     }

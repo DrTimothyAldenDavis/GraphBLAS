@@ -59,6 +59,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     ASSERT_OK (GB_check (A, "A for dot A'*B", GB0)) ;
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     {
+        // printf ("taskid %d\n", taskid) ;
         ASSERT_OK (GB_check (Aslice [taskid], "A slice for dot2 A'*B", GB0)) ;
         ASSERT (!GB_PENDING (Aslice [taskid])) ;
         ASSERT (!GB_ZOMBIES (Aslice [taskid])) ;
@@ -74,6 +75,21 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     ASSERT_OK (GB_check (semiring, "semiring for numeric A'*B", GB0)) ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
+
+    printf ("dot2: nthreads %d naslice %d nbslice %d\n", nthreads,
+        naslice, nbslice) ;
+
+    double t = omp_get_wtime ( ) ;
+/*
+    GB_check (M, "M for dot2", GB0) ;
+    GB_check (A, "A for dot2", GB0) ;
+    for (int taskid = 0 ; taskid < naslice ; taskid++)
+    {
+        printf ("aslice: %d\n", taskid) ;
+        GB_check (Aslice [taskid], "Aslice for dot2", GB0) ;
+    }
+    GB_check (B, "B for dot2", GB0) ;
+*/
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -122,48 +138,45 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
     }
 
+    int64_t cnvec = B->nvec ;
+
     int64_t *C_counts [naslice] ;
-    // double t = omp_get_wtime ( ) ;
     GrB_Info task_info [naslice] ;
 
-//  #pragma omp parallel for num_threads(nthreads) schedule(static,1) \
-//      reduction(&&:ok) 
-
-    #pragma omp parallel num_threads(nthreads)
+    for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
     {
-        #pragma omp single
-        {
-            for (int taskid = 0 ; taskid < naslice ; taskid++)
-            {
-                #pragma omp task
-                {
+        C_counts [a_taskid] = NULL ;
+    }
 
-                    if ((Aslice [taskid])->nvec_nonempty < 0)
-                    { 
-                        (Aslice [taskid])->nvec_nonempty =
-                            GB_nvec_nonempty (Aslice [taskid], NULL) ;
-                    }
-                    // count # of entries in each vector of C, for the slice
-                    task_info [taskid] = GB_AxB_dot2_phase1
-                        (&(C_counts [taskid]), M, Mask_comp, Aslice [taskid],
-                        B, nthreads, naslice, nbslice) ;
-                }
-            }
+    for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
+    {
+        int64_t *restrict C_count = NULL ;
+        GB_CALLOC_MEMORY (C_count, B->nvec, sizeof (int64_t)) ;
+        if (C_count == NULL)
+        {
+            // out of memory
+            GB_FREE_ALL ;
+            return (GrB_OUT_OF_MEMORY) ;
+        }
+        C_counts [a_taskid] = C_count ;
+    }
+
+    for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
+    {
+        if ((Aslice [a_taskid])->nvec_nonempty < 0)
+        { 
+            (Aslice [a_taskid])->nvec_nonempty =
+                GB_nvec_nonempty (Aslice [a_taskid], NULL) ;
         }
     }
 
-    // collect all thread-specific info
-    bool ok = true ;
-    for (int taskid = 0 ; taskid < naslice ; taskid++)
-    {
-        ok = ok && (task_info [taskid] == GrB_SUCCESS) ;
-    }
-
-    int64_t cnvec = B->nvec ;
+    #define GB_PHASE_1_OF_2
+    #include "GB_AxB_dot2_meta.c"
+    #undef  GB_PHASE_1_OF_2
 
     GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (B->is_hyper), B->hyper_ratio, cnvec, Context) ;
-    if (!ok || info != GrB_SUCCESS)
+    if (info != GrB_SUCCESS)
     {
         // out of memory
         GB_FREE_ALL ;
@@ -197,9 +210,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nthreads) ;
     int64_t cnz = Cp [cnvec] ;
 
-// for (int64_t k = 0 ; k <= cnvec ; k++) printf ("Cp ["GBd"] = "GBd"\n", k, Cp [k]) ;
-// printf ("C->nvec is "GBd"\n", C->nvec) ;
-
     // C->h = B->h
     if (B->is_hyper)
     {
@@ -209,10 +219,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     // free C_count for the first thread; it is no longer needed
     GB_FREE_MEMORY (C_counts [0], cnvec, sizeof (int64_t)) ;
     C->magic = GB_MAGIC ;
-
-    // t = omp_get_wtime ( ) - t ;
-    // printf ("dot2 phase1: %g\n", t) ;
-    // t = omp_get_wtime ( )  ;
 
     //--------------------------------------------------------------------------
     // allocate C->x and C->i
@@ -226,39 +232,13 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         return (info) ;
     }
 
+    t = omp_get_wtime ( ) - t ;
+    printf ("dot2: phase1 time: %g\n", t) ;
+    t = omp_get_wtime ( ) ;
+
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, via builtin semiring
     //--------------------------------------------------------------------------
-
-    #pragma omp parallel num_threads(nthreads)
-    {
-        #pragma omp single
-        {
-            for (int taskid = 0 ; taskid < naslice ; taskid++)
-            {
-                #pragma omp task
-                {
-
-// printf ("\n====================== taskid %d of %d\n", taskid, naslice) ;
-
-    int64_t *restrict C_count_start =
-        (taskid == 0) ?          NULL : C_counts [taskid] ;
-    int64_t *restrict C_count_end   =
-        (taskid == naslice-1) ? NULL : C_counts [taskid+1] ;
-
-    GrB_Matrix A = Aslice [taskid] ;
-
-    // TODO call this a function GB_AxB_dot2_phase2
-
-// GxB_print (Aslice [taskid], 3) ;
-
-// if (C_count_start != NULL)
-//    for (int64_t k = 0 ; k < cnvec ; k++) printf ("C_count_start ["GBd"] = "GBd"\n",
-//        k, C_count_start [k]) ;
-
-// if (C_count_end != NULL)
-//    for (int64_t k = 0 ; k < cnvec ; k++) printf ("C_count_end   ["GBd"] = "GBd"\n",
-//        k, C_count_end   [k]) ;
 
     bool done = false ;
 
@@ -272,9 +252,9 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        info = GB_Adot2B (add,mult,xyname) (Chandle, M, Mask_comp,      \
-            A, A_is_pattern, B, B_is_pattern,                           \
-            C_count_start, C_count_end, nthreads, naslice, nbslice) ;   \
+        info = GB_Adot2B (add,mult,xyname) (C, M, Mask_comp,            \
+            Aslice, A_is_pattern, B, B_is_pattern,                      \
+            C_counts, nthreads, naslice, nbslice) ;                     \
         done = true ;                                                   \
     }                                                                   \
     break ;
@@ -298,6 +278,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     // user semirings created at compile time
     //--------------------------------------------------------------------------
 
+#if 0
     if (semiring->object_kind == GB_USER_COMPILED)
     {
 
@@ -325,6 +306,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
             done = true ;
         }
     }
+#endif
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, with typecasting
@@ -426,21 +408,19 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         if (flipxy)
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
-            #include "GB_AxB_dot_meta.c"
+            #include "GB_AxB_dot2_meta.c"
             #undef GB_MULTIPLY
         }
         else
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
-            #include "GB_AxB_dot_meta.c"
+            #include "GB_AxB_dot2_meta.c"
             #undef GB_MULTIPLY
         }
     }
 
-    } } } }
-
-    // t = omp_get_wtime ( ) - t ;
-    // printf ("dot2 phase2: %g\n", t) ;
+    t = omp_get_wtime ( ) - t ;
+    printf ("dot2 phase2: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

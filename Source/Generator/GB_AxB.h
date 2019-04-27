@@ -17,12 +17,11 @@ GrB_Info GB_AdotB
 
 GrB_Info GB_Adot2B
 (
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,
     const GrB_Matrix M, const bool Mask_comp,
-    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    const int64_t *restrict C_count_start,
-    const int64_t *restrict C_count_end,
+    int64_t **C_counts,
     int nthreads, int naslice, int nbslice
 ) ;
 
