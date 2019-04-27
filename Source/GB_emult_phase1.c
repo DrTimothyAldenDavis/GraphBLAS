@@ -16,11 +16,13 @@
 // GB_emult_phase0.  All cases of the mask M are handled: not present, present
 // and not complemented, and present and complemented.
 
+// Cp is either freed by GB_emult_phase2, or transplanted into C.
+
 // PARALLEL: done
 
 #include "GB.h"
 
-GrB_Info GB_emult_phase1        // count nnz in each C(:,j)
+GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 (
     int64_t **Cp_handle,                // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
@@ -83,7 +85,6 @@ GrB_Info GB_emult_phase1        // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;
-    // printf ("Cnvec_nonempty "GBd"\n", *Cnvec_nonempty) ;
     (*Cp_handle) = Cp ;
     return (GrB_SUCCESS) ;
 }

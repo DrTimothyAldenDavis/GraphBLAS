@@ -130,21 +130,17 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
-    // GB_NNZ(C) requires GB_WAIT (C) first.  so subtract zombies
-    // and add pending tuples to get an upper bound on NNZ(C)
-    int64_t cnz_upper_bound = (GB_NNZ (C) - C->nzombies) + C->n_pending ;
-
     if ((accum == NULL) && (C->is_csc == T->is_csc)
         && (M == NULL || (M != NULL && mask_applied))
-        && (C_replace || GB_NNZ (C) == 0))
+        && (C_replace || GB_NNZ_UPPER_BOUND (C) == 0))
     { 
-        // C = 0 ; C = (ctype) T ; with the same CSR/CSC format.
-        // The mask M (if any) has already been applied in GB_AxB_meta.
-        // If C is also empty, or to be cleared anyway, and if accum is not
-        // present, then T can be transplanted directly into C, as C = (ctype)
-        // T, typecasting if needed.  If no typecasting is done then this takes
-        // no time at all and is a pure transplant.  Also conform C to its
-        // desired hypersparsity.
+        // C = 0 ; C = (ctype) T ; with the same CSR/CSC format.  The mask M
+        // (if any) has already been applied.  If C is also empty, or to be
+        // cleared anyway, and if accum is not present, then T can be
+        // transplanted directly into C, as C = (ctype) T, typecasting if
+        // needed.  If no typecasting is done then this takes no time at all
+        // and is a pure transplant.  Also conform C to its desired
+        // hypersparsity.
         GB_MATRIX_FREE (&MT) ;
         return (GB_transplant_conform (C, C->type, &T, Context)) ;
     }

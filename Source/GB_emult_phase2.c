@@ -19,6 +19,9 @@
 // GB_emult_phase0.  All cases of the mask M are handled: not present, present
 // and not complemented, and present and complemented.
 
+// This function either frees Cp or transplants it into C, as C->p.  Either
+// way, the caller must not free it.
+
 // PARALLEL: done, except for the last phase, to prune empty vectors from C.
 
 #include "GB.h"
@@ -66,9 +69,6 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     ASSERT (GB_Type_compatible (ctype,   op->ztype)) ;
     ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
     ASSERT (GB_Type_compatible (B->type, op->ytype)) ;
-    // printf ("C_to_A %p\n", C_to_A) ;
-    // printf ("C_to_B %p\n", C_to_B) ;
-    // printf ("C_to_M %p\n", C_to_M) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -93,11 +93,12 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         Context) ;
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; caller must free Cp, C_to_M, C_to_A, C_to_B
+        // out of memory; caller must free C_to_M, C_to_A, C_to_B but not Cp
+        GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
         return (info) ;
     }
 
-    // add Cp as the vector pointers for C, from GB_emult_phase1
+    // transplant Cp into C as the vector pointers, from GB_emult_phase1.
     C->p = (int64_t *) Cp ;
 
     // add Ch as the the hypersparse list for C, from GB_emult_phase0
@@ -211,7 +212,6 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // TODO make this a stand-alone function so it can be used elsewhere.
     // See also GB_add_phase2, which is slightly different.
 
-    // printf ("prune Cnvec "GBd" "GBd"\n", Cnvec_nonempty, Cnvec) ;
     if (C_is_hyper)
     {
         int64_t *restrict Cp = C->p ;
@@ -219,7 +219,9 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         GB_MALLOC_MEMORY (Ch_final, Cnvec_nonempty, sizeof (int64_t)) ;
         if (Ch_final == NULL)
         { 
-            // out of memory
+            // out of memory.  Note that this frees C->p which is Cp on input.
+            // It does not free C->h, which is a shallow pointer to A->h,
+            // B->h, or M->h.
             GB_MATRIX_FREE (&C) ;
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -232,10 +234,9 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         for (int64_t k = 0 ; k < Cnvec ; k++)
         {
             int64_t cjnz = Cp [k+1] - Cp [k] ;
-            // printf ("consider "GBd" = "GBd"\n", k, cjnz) ;
             if (cjnz > 0)
             { 
-                // printf ("keep k: "GBd" j: "GBd"\n", k, Ch [k]) ;
+                // keep this vector in Cp and Ch
                 Cp       [cnvec_new] = Cp [k] ;
                 Ch_final [cnvec_new] = Ch [k] ;
                 cnvec_new++ ;
@@ -244,17 +245,16 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
         Cp [cnvec_new] = Cp [Cnvec] ;
         C->nvec = cnvec_new ;
-        // printf ("cnvec_new "GBd"\n", cnvec_new) ;
         ASSERT (cnvec_new == Cnvec_nonempty) ;
         // reduce the size of Cp and Ch (this cannot fail)
         bool ok ;
         GB_REALLOC_MEMORY (C->p, cnvec_new, GB_IMAX (2, Cnvec+1),
             sizeof (int64_t), &ok) ;
+        ASSERT (ok) ;
         // transplant Ch_final into C->h
         C->h = Ch_final ;
         C->h_shallow = false ;
         C->plen = cnvec_new ;
-        ASSERT (ok) ;
     }
 
     //--------------------------------------------------------------------------

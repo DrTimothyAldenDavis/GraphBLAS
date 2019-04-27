@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_eWise: C<M> = accum (C, A+B) or A.*B
+// GB_ewise: C<M> = accum (C, A+B) or A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -22,7 +22,7 @@
     GB_MATRIX_FREE (&MT) ;  \
 }
 
-GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
+GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 (
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_replace,           // if true, clear C before writing to it
@@ -50,12 +50,12 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
 
     GB_RETURN_IF_FAULTY (accum) ;
 
-    ASSERT_OK (GB_check (C, "C input for GB_eWise", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_eWise", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_eWise", GB0)) ;
-    ASSERT_OK (GB_check (op, "op for GB_eWise", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for GB_eWise", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for GB_eWise", GB0)) ;
+    ASSERT_OK (GB_check (C, "C input for GB_ewise", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_ewise", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_ewise", GB0)) ;
+    ASSERT_OK (GB_check (op, "op for GB_ewise", GB0)) ;
+    ASSERT_OK (GB_check (A, "A for GB_ewise", GB0)) ;
+    ASSERT_OK (GB_check (B, "B for GB_ewise", GB0)) ;
 
     // T has the same type as the output z for z=op(a,b)
     GrB_Type T_type = op->ztype ;
@@ -263,11 +263,34 @@ GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     //--------------------------------------------------------------------------
-    // C<M> = accum (C,T): accumulate the results into C via the M
+    // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
-    info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp, Context) ;
-    GB_FREE_ALL ;
-    return (info) ;
+    // TODO: see GB_mxm; same test, except mask_applied is always true for
+    // GB_ewise.  Move this code to GB_accum_mask.
+
+    if ((accum == NULL) && (C->is_csc == T->is_csc)
+//      && (M == NULL || (M != NULL && mask_applied))
+        && (C_replace || GB_NNZ_UPPER_BOUND (C) == 0))
+    { 
+        // C = 0 ; C = (ctype) T ; with the same CSR/CSC format.  The mask M
+        // (if any) has already been applied.  If C is also empty, or to be
+        // cleared anyway, and if accum is not present, then T can be
+        // transplanted directly into C, as C = (ctype) T, typecasting if
+        // needed.  If no typecasting is done then this takes no time at all
+        // and is a pure transplant.  Also conform C to its desired
+        // hypersparsity.
+        GB_MATRIX_FREE (&MT) ;
+        return (GB_transplant_conform (C, C->type, &T, Context)) ;
+    }
+    else
+    { 
+        // C<M> = accum (C,T)
+        // GB_accum_mask also conforms C to its desired hypersparsity
+        info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
+            Context) ;
+        GB_MATRIX_FREE (&MT) ;
+        return (info) ;
+    }
 }
 

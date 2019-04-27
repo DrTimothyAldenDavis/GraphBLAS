@@ -150,6 +150,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         ASSERT (!GB_aliased (C, A)) ;
     }
 
+    // delete any lingering zombies and assemble any pending tuples
+    GB_WAIT (M) ;
+    GB_WAIT (A) ;
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------

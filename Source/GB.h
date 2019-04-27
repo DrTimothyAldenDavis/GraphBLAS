@@ -276,6 +276,10 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 // (sparse, hypersparse, slice, hyperslice), nnz(A) = Ap [nvec] - Ap [0].
 #define GB_NNZ(A) (((A)->nzmax > 0) ? ((A)->p [(A)->nvec] - (A)->p [0]) : 0 )
 
+// Upper bound on nnz(A) when the matrix has zombies and pending tuples;
+// does not need GB_WAIT(A) first.
+#define GB_NNZ_UPPER_BOUND(A) ((GB_NNZ (A) - A->nzombies) + A->n_pending)
+
 // A is nrows-by-ncols, in either CSR or CSC format
 #define GB_NROWS(A) ((A)->is_csc ? (A)->vlen : (A)->vdim)
 #define GB_NCOLS(A) ((A)->is_csc ? (A)->vdim : (A)->vlen)
@@ -2036,7 +2040,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GB_Context Context
 ) ;
 
-GrB_Info GB_eWise                   // C<M> = accum (C, A+B) or A.*B
+GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 (
     GrB_Matrix C,                   // input/output matrix for results
     const bool C_replace,           // if true, clear C before writing to it
@@ -2762,13 +2766,16 @@ static inline GrB_Index GB_rand (uint64_t *seed)
 #define GB_PENDING(A) ((A) != NULL && (A)->n_pending > 0)
 
 // true if a matrix is allowed to have pending tuples
-#define GB_PENDING_OK(A) ((A) != NULL && (A)->n_pending >= 0)
+#define GB_PENDING_OK(A) (((A) == NULL) || ((A) != NULL && (A)->n_pending >= 0))
 
 // true if a matrix has zombies
 #define GB_ZOMBIES(A) ((A) != NULL && (A)->nzombies > 0)
 
 // true if a matrix is allowed to have zombies
-#define GB_ZOMBIES_OK(A) ((A) != NULL && (A)->nzombies >= 0)
+#define GB_ZOMBIES_OK(A) (((A) == NULL) || ((A) != NULL && (A)->nzombies >= 0))
+
+// true if a matrix has pending tuples or zombies
+#define GB_PENDING_OR_ZOMBIES(A) (GB_PENDING (A) || GB_ZOMBIES (A))
 
 // do all pending updates:  delete zombies and assemble any pending tuples
 #define GB_WAIT_MATRIX(A)                                               \
@@ -2787,7 +2794,7 @@ static inline GrB_Index GB_rand (uint64_t *seed)
 // wait for any pending operations: both pending tuples and zombies
 #define GB_WAIT(A)                                                      \
 {                                                                       \
-    if (GB_PENDING (A) || GB_ZOMBIES (A)) GB_WAIT_MATRIX (A) ;          \
+    if (GB_PENDING_OR_ZOMBIES (A)) GB_WAIT_MATRIX (A) ;                 \
 }
 
 // just wait for pending tuples; zombies are OK but removed anyway if the

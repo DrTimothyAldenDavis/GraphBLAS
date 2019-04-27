@@ -112,6 +112,13 @@
 
 */
 
+#define GB_FREE_ALL                     \
+{                                       \
+    GB_MATRIX_FREE (Zhandle) ;          \
+    GB_MATRIX_FREE (&C_cleared) ;       \
+    GB_MATRIX_FREE (&R) ;               \
+}
+
 //------------------------------------------------------------------------------
 
 // If an entry C(i,j) or Z(i,j) is found that must be copied into R(i,j), the
@@ -146,15 +153,15 @@ GrB_Info GB_mask                // C<M> = Z
     //--------------------------------------------------------------------------
 
     ASSERT (GB_ALIAS_OK (C_result, M)) ;
-
-    // C_result has no pending tuples and no zombies
-    // M is optional but if present it has no pending tuples and no zombies
     ASSERT_OK (GB_check (C_result, "C_result for GB_mask", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for GB_mask", GB0)) ;
-    ASSERT (!GB_PENDING (C_result)) ;
-    ASSERT (!GB_ZOMBIES (C_result)) ;
-    ASSERT (!GB_PENDING (M)) ;
-    ASSERT (!GB_ZOMBIES (M)) ;
+
+    // C may be cleared anyway, without the need for finishing it
+    ASSERT (GB_PENDING_OK (C_result)) ; ASSERT (GB_ZOMBIES_OK (C_result)) ;
+
+    // M may have zombies and pending tuples
+    ASSERT (GB_PENDING_OK (M)) ; ASSERT (GB_ZOMBIES_OK (M)) ;
+
     if (Zhandle != NULL)
     { 
         // If Z is not NULL, it has the same type as C_result.
@@ -175,6 +182,10 @@ GrB_Info GB_mask                // C<M> = Z
 
     GrB_Info info = GrB_SUCCESS ;
 
+    GrB_Matrix R = NULL ;
+    GrB_Matrix C = NULL ;
+    GrB_Matrix C_cleared = NULL ;
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
@@ -191,6 +202,8 @@ GrB_Info GB_mask                // C<M> = Z
         //----------------------------------------------------------------------
         // there is no mask (implicitly M(i,j)=1 for all i and j)
         //----------------------------------------------------------------------
+
+        // Any pending work on C is abandoned (zombies and/or pending tuples)
 
         if (!Mask_complement)
         { 
@@ -222,7 +235,7 @@ GrB_Info GB_mask                // C<M> = Z
             // apply the mask immediately, and then return to its caller.
             // This done by the GB_RETURN_IF_QUICK_MASK macro.
 
-            // NOTE: in the current version, this work is done by the
+            // NOTE: in the current version, this work is always done by the
             // GB_RETURN_IF_QUICK_MASK macro, and GB_mask is no longer called
             // with an empty complemented mask.  The following is thus dead
             // code.  It is kept here in case this function is called to handle
@@ -253,8 +266,8 @@ GrB_Info GB_mask                // C<M> = Z
         // the mask is present
         //----------------------------------------------------------------------
 
-        GrB_Matrix C ;
-        GrB_Matrix C_cleared = NULL ;
+        // delete any lingering zombies and assemble any pending tuples
+        if (GB_PENDING (M) || GB_ZOMBIES (M)) GB_OK (GB_wait (M, Context)) ;
 
         // R has the same CSR/CSC format as C_result.  It is hypersparse if
         // both C and Z are hypersparse.
@@ -272,33 +285,34 @@ GrB_Info GB_mask                // C<M> = Z
                 // must be cleared.  To resolve this, a new matrix C_cleared is
                 // created, which is what C_result would look like if cleared.
                 // C_result is left unchanged since changing it would change M.
-                // The C_cleared matrix is has the same hypersparsity as
-                // a matrix created by GrB_Matrix_new.  It has the same CSC/CSR
+                // The C_cleared matrix has the same hypersparsity and CSC/CSR
                 // format as the orginal C matrix.
                 C_cleared = NULL;   // allocate a new header for C_cleared
                 GB_CREATE (&C_cleared, C_result->type, vlen, vdim,
                     GB_Ap_calloc, C_result_is_csc, GB_AUTO_HYPER,
                     C_result->hyper_ratio, 0, 0, true, Context) ;
+                GB_OK (info) ;
                 C = C_cleared ;
             }
             else
             { 
                 // Clear all entries from C_result
-                info = GB_clear (C_result, Context) ;
+                GB_OK (GB_clear (C_result, Context)) ;
                 C = C_result ;
             }
+            // C has been cleared, so it has no zombies or pending tuples
         }
         else
         { 
             C = C_result ;
+
+            // delete any lingering zombies and assemble any pending tuples
+            if (GB_PENDING (C) || GB_ZOMBIES (C)) GB_OK (GB_wait (C, Context)) ;
         }
 
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_MATRIX_FREE (Zhandle) ;
-            return (info) ;
-        }
+        // no more zombies or pending tuples
+        ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
+        ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
 
         // continue with C, do not use C_result until the end since it may be
         // aliased with M.
@@ -332,18 +346,10 @@ GrB_Info GB_mask                // C<M> = Z
         // R is hypersparse if C and Z are hypersparse
         // R->plen is the upper bound: sum of # non-empty columns of C and Z,
         // or C->vdim, whichever is smaller.
-        GrB_Matrix R = NULL ;       // allocate a new header for R
         GB_CREATE (&R, C->type, vlen, vdim, GB_Ap_malloc, C_result_is_csc,
             GB_SAME_HYPER_AS (R_is_hyper), C->hyper_ratio, rplen,
             GB_NNZ (C) + GB_NNZ (Z), true, Context) ;
-
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_MATRIX_FREE (&C_cleared) ;
-            GB_MATRIX_FREE (Zhandle) ;
-            return (info) ;
-        }
+        GB_OK (info) ;
 
         // get the function pointer for casting M(i,j) from its current
         // type into boolean
@@ -724,18 +730,7 @@ GrB_Info GB_mask                // C<M> = Z
             // cannot fail since C->plen is at the upper bound
             info = GB_jappend (R, j, &jlast, rnz, &rnz_last, Context) ;
             ASSERT (info == GrB_SUCCESS) ;
-
-            #if 0
-            // if GB_jappend could fail, do this:
-            if (info != GrB_SUCCESS)
-            {
-                // out of memory for C->p and C->h (not possible here)
-                GB_MATRIX_FREE (&R) ;
-                GB_MATRIX_FREE (&C_cleared) ;
-                GB_MATRIX_FREE (Zhandle) ;
-                return (info) ;
-            }
-            #endif
+            // GB_OK (info) ;   // not needed
         }
 
         //----------------------------------------------------------------------

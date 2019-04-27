@@ -46,6 +46,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // zombies in A can be safely transplanted into C
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
+    // C is about to be cleared, so zombies and pending tuples are OK
+    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
+
     // the ctype and A->type must be compatible.  C->type is ignored
     ASSERT (GB_Type_compatible (ctype, A->type)) ;
 

@@ -72,11 +72,8 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             GB_code_string (scalar_code), ctype->name))) ;
     }
 
-    // pending tuples are expected
-    ASSERT (GB_PENDING_OK (C)) ;
-
-    // zombies are expected
-    ASSERT (GB_ZOMBIES_OK (C)) ;
+    // pending tuples and zombies are expected
+    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format

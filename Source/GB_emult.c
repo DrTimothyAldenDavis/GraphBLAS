@@ -62,6 +62,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL ;
+    (*Chandle) = NULL ;
     int64_t Cnvec, max_Cnvec, Cnvec_nonempty ;
     int64_t *Cp = NULL, *Ch = NULL ;
     int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
@@ -96,25 +97,25 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // phase2: compute the entries (indices and values) in each vector of C
     //--------------------------------------------------------------------------
 
+    // Cp is either freed by GB_emult_phase2, or transplanted into C.
+    // Either way, it is not freed here.
+
     info = GB_emult_phase2 (
         &C, ctype, C_is_csc, op,                // computed or used by phase2
         Cp, Cnvec_nonempty,                     // from phase1
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,      // from phase0
         M, Mask_comp, A, B, Context) ;          // original input
 
-    // free workspace (but not Cp)
+    // free workspace
     GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
     GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
     GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; free everything else allocated by phase0 and phase1
-        GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
+        // out of memory; note that Cp is already freed
         return (info) ;
     }
-
-    // if successful, Cp must not be freed; it is now C->p
 
     //--------------------------------------------------------------------------
     // return result

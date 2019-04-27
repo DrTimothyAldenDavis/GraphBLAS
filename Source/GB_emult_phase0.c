@@ -392,7 +392,6 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
             { 
                 int64_t pM, pM_end, kM = 0 ;
                 int64_t j = Ch [k] ;
-                // printf ("j is "GBd"\n", j) ;
                 GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
                 C_to_M [k] = (pM < pM_end) ? kM : -1 ;
             }
@@ -493,12 +492,9 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     #ifndef NDEBUG
-    // printf ("emult Cnvec: " GBd"\n", Cnvec) ;
-    // printf ("Ch is %d %d %d\n", Ch == Ah, Ch == Bh, Ch == Mh) ;
     ASSERT (A != NULL) ;        // A and B are always present
     ASSERT (B != NULL) ;
     int64_t jlast = -1 ;
-    // printf ("C_to_A %p C_to_B %p C_to_M %p\n", C_to_A, C_to_B, C_to_M) ;
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {
 
@@ -514,8 +510,6 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
             // C will be constructed as hypersparse
             j = Ch [k] ;
         }
-
-        // printf ("phase0: k "GBd" j "GBd"\n", k, j) ;
 
         // vectors j in Ch are sorted, and in the range 0:n-1
         ASSERT (j >= 0 && j < n) ;

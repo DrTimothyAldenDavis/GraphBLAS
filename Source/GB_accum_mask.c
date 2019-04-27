@@ -157,11 +157,14 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_OK_OR_NULL (GB_check (MT_in, "MT_in for GB_accum_mask", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_accum_mask", GB0)) ;
 
+    // pending work in C may be abandoned, so it is postponed
+    ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
+    ASSERT (GB_PENDING_OK (M)) ; ASSERT (GB_ZOMBIES_OK (M)) ;
+
     // GB_extract can pass in a matrix T that is jumbled, but it does so
     // only if T->is_csc and C->is_csc are different.  In that case, T is
     // transposed, so the sort can be skipped.
     ASSERT_OK_OR_JUMBLED (GB_check (T, "[T = results of computation]", GB0)) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (T)) ; ASSERT (!GB_ZOMBIES (T)) ;
 
     //--------------------------------------------------------------------------
@@ -186,6 +189,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // transpose: typecast, no op, not in place
         if (MT_in == NULL)
         { 
+            if (GB_PENDING_OR_ZOMBIES (M)) GB_OK (GB_wait (M, Context)) ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M, NULL, Context)) ;
             // use the transpose mask
             M = MT ;
@@ -204,7 +208,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT (C->is_csc == T->is_csc) ;
     ASSERT (M == NULL || (C->vlen == M->vlen && C->vdim == M->vdim)) ;
     ASSERT (M == NULL || (C->is_csc == M->is_csc)) ;
-    ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (T)) ; ASSERT (!GB_ZOMBIES (T)) ;
 
     //--------------------------------------------------------------------------
@@ -257,9 +260,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         // see GB_spec_accum.m for a description of this step
 
-        // finish pending work on C
-        if (GB_PENDING (C) || GB_ZOMBIES (C)) GB_OK (GB_wait (C, Context)) ;
-
         if (accum == NULL)
         { 
 
@@ -291,10 +291,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
 
-            // TODO exploit the mask
-            GB_OK (GB_add (&Z, C->type, C->is_csc, 
-                NULL, false,        // TODO, will be: M, Mask_comp,
-                C, T, accum, Context)) ;
+            // exploit the mask when computing Z, to reduce time and memory
+            GB_OK (GB_add (&Z, C->type, C->is_csc, M, Mask_comp, C, T, accum,
+                Context)) ;
             GB_MATRIX_FREE (Thandle) ;
         }
 

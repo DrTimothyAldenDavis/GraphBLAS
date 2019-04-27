@@ -61,14 +61,16 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     ASSERT_OK (GB_check (B, "B for add phased", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (op, "op for add phased", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for add phased", GB0)) ;
-    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
-    ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     if (M != NULL)
     { 
-        ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
         ASSERT (A->vdim == M->vdim && A->vlen == M->vlen) ;
     }
+
+    // delete any lingering zombies and assemble any pending tuples
+    GB_WAIT (M) ;
+    GB_WAIT (A) ;
+    GB_WAIT (B) ;
 
     //--------------------------------------------------------------------------
     // phase0: determine the vectors in C(:,j)

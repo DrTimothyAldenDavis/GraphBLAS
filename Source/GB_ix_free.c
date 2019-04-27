@@ -32,8 +32,7 @@ GrB_Info GB_ix_free             // free A->i and A->x of a matrix
     //--------------------------------------------------------------------------
 
     // zombies and pending tuples are about to be deleted
-    ASSERT (GB_PENDING_OK (A)) ;
-    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ; ASSERT (GB_ZOMBIES_OK (A)) ;
 
     // free A->i unless it is shallow
     if (!A->i_shallow)

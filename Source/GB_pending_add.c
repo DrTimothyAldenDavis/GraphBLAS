@@ -76,10 +76,7 @@ GrB_Info GB_pending_add             // add a pending tuple A(i,j) to a matrix
     //--------------------------------------------------------------------------
 
     // pending tuples are OK; that is the whole point of this function
-    ASSERT (GB_PENDING_OK (A)) ;
-
-    // likesize, the matrix A may have zombies
-    ASSERT (GB_ZOMBIES_OK (A)) ;
+    ASSERT (GB_PENDING_OK (A)) ; ASSERT (GB_ZOMBIES_OK (A)) ;
 
     ASSERT (A->n_pending <= A->max_n_pending) ;
     ASSERT (GB_IMPLIES (A->max_n_pending == 0,
