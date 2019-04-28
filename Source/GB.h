@@ -107,6 +107,63 @@
 #include "GraphBLAS.h"
 
 //------------------------------------------------------------------------------
+// min, max, and NaN handling
+//------------------------------------------------------------------------------
+
+// For floating-point computations, SuiteSparse:GraphBLAS relies on the IEEE
+// 754 standard for the basic operations (+ - / *).  Comparison operators also
+// work as they should; any comparison with NaN is always false, even
+// eq(NaN,NaN) is false.  This follows the IEEE 754 standard.
+
+// For integer MIN and MAX, SuiteSparse:GraphBLAS relies on one comparison:
+
+// z = min(x,y) = (x < y) ? x : y
+// z = max(x,y) = (x > y) ? x : y
+
+// However, this is not suitable for floating-point x and y.  Comparisons with
+// NaN always return false, so if either x or y are NaN, then z = y, for both
+// min(x,y) and max(x,y).  In MATLAB, min(3,NaN), min(NaN,3), max(3,NaN), and
+// max(NaN,3) are all 3, which is another interpretation.  The MATLAB min and
+// max functions have a 3rd argument that specifies how NaNs are handled:
+// 'omitnan' (default) and 'includenan'.  In SuiteSparse:GraphBLAS 2.2.* and
+// earlier, the min and max functions were the same as 'includenan' in MATLAB.
+// As of version 2.3 and later, they are 'omitnan', to facilitate the terminal
+// exit of the MIN and MAX monoids for floating-point values.
+
+// The ANSI C11 fmin, fminf, fmax, and fmaxf functions have the 'omitnan'
+// behavior.  These are used in SuiteSparse:GraphBLAS v2.3.0 and later.
+
+// Below is a complete comparison of MATLAB and GraphBLAS.  Both tables are the
+// results for both min and max (they return the same results in these cases):
+
+//   x    y  MATLAB    MATLAB   (x<y)?x:y   SuiteSparse:    SuiteSparse:    ANSI
+//           omitnan includenan             GraphBLAS       GraphBLAS       fmin
+//                                          v 2.2.x         this version
+//
+//   3    3     3        3          3        3              3               3
+//   3   NaN    3       NaN        NaN      NaN             3               3
+//  NaN   3     3       NaN         3       NaN             3               3
+//  NaN  NaN   NaN      NaN        NaN      NaN             NaN             NaN
+
+// for integers only:
+#define GB_IABS(x) (((x) >= 0) ? (x) : (-(x)))
+
+// for floating point:
+// #define GB_FABS(x) (((x) >= 0) ? (x) : (-(x)))
+
+// suitable for integers, and non-NaN floating point:
+#define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
+#define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
+
+// for floating-point, same as min(x,y,'includenan') and max(...) in MATLAB
+// #define GB_FMIN(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMIN (x,y))
+// #define GB_FMAX(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMAX (x,y))
+
+// for floating-point, same as min(x,y,'omitnan') and max(...) in MATLAB
+// #define GB_FMAX(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMAX(x,y)))
+// #define GB_FMIN(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMIN(x,y)))
+
+//------------------------------------------------------------------------------
 // for coverage tests in Tcov/
 //------------------------------------------------------------------------------
 
@@ -709,8 +766,10 @@ typedef GB_Context_struct *GB_Context ;
     Context->where = where_string ;                 \
     Context->nthreads = GB_Global_nthreads_max_get ( ) ;
 
+//------------------------------------------------------------------------------
 // GB_GET_NTHREADS:  determine number of threads for OpenMP parallelism.
-//
+//------------------------------------------------------------------------------
+
 //      GB_GET_NTHREADS obtains the # of threads to use, from the Context.  If
 //      Context is NULL then a single thread *must* be used (this is only used
 //      for GB_qsort_*, calloc, and realloc, for problems that are small or
@@ -724,6 +783,64 @@ typedef GB_Context_struct *GB_Context ;
 #define GB_GET_NTHREADS(nthreads,Context)                               \
     int nthreads = (Context == NULL) ? 1 : Context->nthreads ;          \
     if (nthreads <= GxB_DEFAULT) nthreads = GB_Global_nthreads_max_get ( ) ;
+
+//------------------------------------------------------------------------------
+// GB_nthreads: determine # of threads to use for a parallel loop or region
+//------------------------------------------------------------------------------
+
+// If work < 2*chunk, then only one thread is used.
+// else if work < 3*chunk, then two threads are used, and so on.
+
+static inline int GB_nthreads   // return # of threads to use
+(
+    int64_t work,               // total work to do
+    int64_t chunk,              // give each thread at least this much work
+    int nthreads_max            // max # of threads to use
+)
+{
+    ASSERT (work >= 0) ;
+    ASSERT (chunk > 0) ;
+    int64_t nthreads = work / chunk ;
+    nthreads = GB_IMIN (nthreads, nthreads_max) ;
+    nthreads = GB_IMAX (nthreads, 1) ;
+    return ((int) nthreads) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_teams: divide the threads into equal-sized teams
+//------------------------------------------------------------------------------
+
+// Each team of threads is given at least one task to do (unless ntasks is
+// zero).  If there are more tasks than threads, then each thread is in its
+// own team.
+
+static inline void GB_teams
+(
+    // input
+    int64_t ntasks,         // total # of tasks to do
+    int nthreads_max,       // max # of threads to use across all teams
+    // output
+    int *nteams,            // # of teams to use to do the tasks
+    int *nthreads_per_team  // # of threads in each team
+)
+{
+    ASSERT (ntasks >= 0) ;
+    ASSERT (nthreads_max >= 1) ;
+
+    (*nteams) = GB_IMIN (nthreads_max, ntasks) ;
+    (*nteams) = GB_IMAX ((*nteams), 1) ;
+
+    (*nthreads_per_team) = nthreads_max / (*nteams) ;
+    (*nthreads_per_team) = GB_IMAX ((*nthreads_per_team), 1) ;
+
+    ASSERT (*nteams >= 1) ;
+    ASSERT (*nthreads_per_team >= 1) ;
+    ASSERT ((*nteams) * (*nthreads_per_team) <= nthreads_max) ;
+}
+
+//------------------------------------------------------------------------------
+// error logging
+//------------------------------------------------------------------------------
 
 // The GB_ERROR and GB_LOG macros work together.  If an error occurs, the
 // GB_ERROR macro records the details in the Context.details, and returns the
@@ -3395,63 +3512,6 @@ static inline void GB_bracket
     (*kleft_new ) = kleft ;
     (*kright_new) = kright ;
 }
-
-//------------------------------------------------------------------------------
-// NaN handling
-//------------------------------------------------------------------------------
-
-// For floating-point computations, SuiteSparse:GraphBLAS relies on the IEEE
-// 754 standard for the basic operations (+ - / *).  Comparison operators also
-// work as they should; any comparison with NaN is always false, even
-// eq(NaN,NaN) is false.  This follows the IEEE 754 standard.
-
-// For integer MIN and MAX, SuiteSparse:GraphBLAS relies on one comparison:
-
-// z = min(x,y) = (x < y) ? x : y
-// z = max(x,y) = (x > y) ? x : y
-
-// However, this is not suitable for floating-point x and y.  Comparisons with
-// NaN always return false, so if either x or y are NaN, then z = y, for both
-// min(x,y) and max(x,y).  In MATLAB, min(3,NaN), min(NaN,3), max(3,NaN), and
-// max(NaN,3) are all 3, which is another interpretation.  The MATLAB min and
-// max functions have a 3rd argument that specifies how NaNs are handled:
-// 'omitnan' (default) and 'includenan'.  In SuiteSparse:GraphBLAS 2.2.* and
-// earlier, the min and max functions were the same as 'includenan' in MATLAB.
-// As of version 2.3 and later, they are 'omitnan', to facilitate the terminal
-// exit of the MIN and MAX monoids for floating-point values.
-
-// The ANSI C11 fmin, fminf, fmax, and fmaxf functions have the 'omitnan'
-// behavior.  These are used in SuiteSparse:GraphBLAS v2.3.0 and later.
-
-// Below is a complete comparison of MATLAB and GraphBLAS.  Both tables are the
-// results for both min and max (they return the same results in these cases):
-
-//   x    y  MATLAB    MATLAB   (x<y)?x:y   SuiteSparse:    SuiteSparse:    ANSI
-//           omitnan includenan             GraphBLAS       GraphBLAS       fmin
-//                                          v 2.2.x         this version
-//
-//   3    3     3        3          3        3              3               3
-//   3   NaN    3       NaN        NaN      NaN             3               3
-//  NaN   3     3       NaN         3       NaN             3               3
-//  NaN  NaN   NaN      NaN        NaN      NaN             NaN             NaN
-
-// for integers only:
-#define GB_IABS(x) (((x) >= 0) ? (x) : (-(x)))
-
-// for floating point:
-// #define GB_FABS(x) (((x) >= 0) ? (x) : (-(x)))
-
-// suitable for integers, and non-NaN floating point:
-#define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
-#define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
-
-// for floating-point, same as min(x,y,'includenan') and max(...) in MATLAB
-// #define GB_FMIN(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMIN (x,y))
-// #define GB_FMAX(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMAX (x,y))
-
-// for floating-point, same as min(x,y,'omitnan') and max(...) in MATLAB
-// #define GB_FMAX(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMAX(x,y)))
-// #define GB_FMIN(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMIN(x,y)))
 
 //------------------------------------------------------------------------------
 // GB_lookup: find k so that j == Ah [k]

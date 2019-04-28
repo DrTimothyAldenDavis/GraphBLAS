@@ -55,11 +55,18 @@
     #endif
 
     //--------------------------------------------------------------------------
+    // determine the # of teams and their sizes
+    //--------------------------------------------------------------------------
+
+    int nteams ;                // # of thread teams to use across the vectors
+    int nthreads_per_team ;     // size of thread team to use inside each vector
+    GB_teams (Cnvec, nthreads, &nteams, &nthreads_per_team) ;
+
+    //--------------------------------------------------------------------------
     // phase1: count entries in each C(:j); phase 2: compute C
     //--------------------------------------------------------------------------
 
-    int nth = GB_IMIN (Cnvec, nthreads) ;
-    #pragma omp parallel for num_threads(nth)
+    #pragma omp parallel for num_threads(nteams) schedule(guided,1)
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {
 
@@ -184,6 +191,8 @@
                 cjnz = vlen ;
                 #else
                 ASSERT (cjnz == vlen) ;
+                int nth = GB_nthreads (vlen, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t i = 0 ; i < vlen ; i++)
                 { 
                     Ci [pC + i] = i ;
@@ -205,11 +214,15 @@
                 cjnz = vlen ;
                 #else
                 ASSERT (cjnz == vlen) ;
+                int nth = GB_nthreads (vlen, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t i = 0 ; i < vlen ; i++)
                 { 
                     Ci [pC + i] = i ;
                     GB_COPY_A_TO_C (GB_CX (pC + i), Ax, pA + i) ;
                 }
+                nth = GB_nthreads (bjnz, 1024, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < bjnz ; p++)
                 { 
                     int64_t i = Bi [pB + p] ;
@@ -231,11 +244,15 @@
                 cjnz = vlen ;
                 #else
                 ASSERT (cjnz == vlen) ;
+                int nth = GB_nthreads (vlen, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t i = 0 ; i < vlen ; i++)
                 { 
                     Ci [pC + i] = i ;
                     GB_COPY_B_TO_C (GB_CX (pC + i), Bx, pB + i) ;
                 }
+                nth = GB_nthreads (ajnz, 1024, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < ajnz ; p++)
                 { 
                     int64_t i = Ai [pA + p] ;
@@ -257,6 +274,8 @@
                 cjnz = bjnz ;
                 #else
                 ASSERT (cjnz == bjnz) ;
+                int nth = GB_nthreads (bjnz, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < bjnz ; p++)
                 { 
                     Ci [pC + p] = Bi [pB + p] ;
@@ -276,6 +295,8 @@
                 cjnz = ajnz ;
                 #else
                 ASSERT (cjnz == ajnz) ;
+                int nth = GB_nthreads (ajnz, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < ajnz ; p++)
                 { 
                     Ci [pC + p] = Ai [pA + p] ;
@@ -295,12 +316,16 @@
                 cjnz = ajnz + bjnz ;
                 #else
                 ASSERT (cjnz == ajnz + bjnz) ;
+                int nth = GB_nthreads (ajnz, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < ajnz ; p++)
                 { 
                     Ci [pC + p] = Ai [pA + p] ;
                     GB_COPY_A_TO_C (GB_CX (pC + p), Ax, pA + p) ;
                 }
                 pC += ajnz ;
+                nth = GB_nthreads (bjnz, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < bjnz ; p++)
                 { 
                     Ci [pC + p] = Bi [pB + p] ;
@@ -320,12 +345,16 @@
                 cjnz = ajnz + bjnz ;
                 #else
                 ASSERT (cjnz == ajnz + bjnz) ;
+                int nth = GB_nthreads (bjnz, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < bjnz ; p++)
                 { 
                     Ci [pC + p] = Bi [pB + p] ;
                     GB_COPY_B_TO_C (GB_CX (pC + p), Bx, pB + p) ;
                 }
                 pC += bjnz ;
+                nth = GB_nthreads (ajnz, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < ajnz ; p++)
                 { 
                     Ci [pC + p] = Ai [pA + p] ;
@@ -345,6 +374,7 @@
 
                 // cjnz = ajnz + bjnz - nnz in the intersection
 
+                // TODO use a reduction on cjnz
                 cjnz = ajnz + bjnz ;
                 for ( ; pB < pB_end ; pB++)
                 { 
@@ -366,6 +396,7 @@
 
                 // cjnz = ajnz + bjnz - nnz in the intersection
 
+                // TODO use a reduction on cjnz
                 cjnz = ajnz + bjnz ;
                 for ( ; pA < pA_end ; pA++)
                 { 
@@ -386,6 +417,8 @@
                 //--------------------------------------------------------------
                 // A(:,j) and B(:,j) have about the same # of entries
                 //--------------------------------------------------------------
+
+                // TODO: this is sequential.  Consider a parallel merge.
 
                 while (pA < pA_end && pB < pB_end)
                 {
@@ -435,12 +468,14 @@
                 #if defined ( GB_PHASE_1_OF_2 )
                 cjnz += (pA_end - pA) + (pB_end - pB) ;
                 #else
+                // TODO simplify and make parallel
                 for ( ; pA < pA_end ; pA++, pC++)
                 { 
                     // C (i,j) = A (i,j)
                     Ci [pC] = Ai [pA] ;
                     GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
                 }
+                // TODO simplify and make parallel
                 for ( ; pB < pB_end ; pB++, pC++)
                 { 
                     // C (i,j) = B (i,j)
@@ -458,6 +493,8 @@
             //------------------------------------------------------------------
             // M is present
             //------------------------------------------------------------------
+
+            // TODO: this is sequential.  Consider a parallel merge.
 
             while (pA < pA_end || pB < pB_end)
             {
