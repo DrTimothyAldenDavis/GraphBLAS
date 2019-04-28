@@ -186,7 +186,10 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # options for icc: also needs -std=c11
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -qopt-report -qopt-report-phase=vec" )
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g -std=c11 " )
+    # the -mp1 option is important for predictable floating-point results with
+    # the icc compiler.  Without, ((float) 1.)/((float) 0.) produces NaN,
+    # instead of the correct result, Inf.
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g -std=c11 -mp1" )
     # check all warnings:
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
