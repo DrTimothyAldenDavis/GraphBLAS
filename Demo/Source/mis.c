@@ -85,7 +85,7 @@ GrB_Info mis                    // compute a maximal independent set
     GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_SCMP) ;
     GrB_Descriptor_set (sr_desc, GrB_OUTP, GrB_REPLACE) ;
 
-    // create the mis_score unary operator
+    // create the mis_score unary operator (TODO: not thread safe)
     GrB_UnaryOp_new (&set_random, mis_score, GrB_FP64, GrB_UINT32) ;
 
     // compute the degree of each nodes
