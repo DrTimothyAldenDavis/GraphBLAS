@@ -53,10 +53,18 @@
     #endif
 
     //--------------------------------------------------------------------------
+    // determine the # of teams and their sizes
+    //--------------------------------------------------------------------------
+
+    int nteams ;                // # of thread teams to use across the vectors
+    int nthreads_per_team ;     // size of thread team to use inside each vector
+    GB_teams (Cnvec, nthreads, &nteams, &nthreads_per_team) ;
+
+    //--------------------------------------------------------------------------
     // phase1: count nnz in each C(:,j);  phase2: compute C
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads)
+    #pragma omp parallel for num_threads(nteams) schedule(guided,1)
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {
 
@@ -186,6 +194,8 @@
                 cjnz = vlen ;
                 #else
                 ASSERT (cjnz == vlen) ;
+                int nth = GB_nthreads (vlen, 4096, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t i = 0 ; i < vlen ; i++)
                 { 
                     Ci [pC + i] = i ;
@@ -207,6 +217,8 @@
                 cjnz = bjnz ;
                 #else
                 ASSERT (cjnz == bjnz) ;
+                int nth = GB_nthreads (bjnz, 1024, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < bjnz ; p++)
                 { 
                     int64_t i = Bi [pB + p] ;
@@ -229,6 +241,8 @@
                 cjnz = ajnz ;
                 #else
                 ASSERT (cjnz == ajnz) ;
+                int nth = GB_nthreads (ajnz, 1024, nthreads_per_team) ;
+                #pragma omp parallel for num_threads(nth) schedule(static)
                 for (int64_t p = 0 ; p < ajnz ; p++)
                 { 
                     int64_t i = Ai [pA + p] ;
@@ -246,6 +260,8 @@
                 //--------------------------------------------------------------
                 // A(:,j) is much denser than B(:,j)
                 //--------------------------------------------------------------
+
+                // TODO: phase1: use a reduction on cjnz
 
                 for ( ; pB < pB_end ; pB++)
                 {
@@ -279,6 +295,8 @@
                 //--------------------------------------------------------------
                 // B(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
+
+                // TODO: phase1: use a reduction on cjnz
 
                 for ( ; pA < pA_end ; pA++)
                 {
@@ -367,6 +385,8 @@
                 // M(:,j) is very sparse, and not complemented
                 //--------------------------------------------------------------
 
+                // TODO: phase1: use a reduction on cjnz
+
                 for ( ; pM < pM_end ; pM++)
                 { 
                     // find M(i,j)
@@ -406,6 +426,8 @@
                 //--------------------------------------------------------------
                 // A(:,j) is much denser than B(:,j)
                 //--------------------------------------------------------------
+
+                // TODO: phase1: use a reduction on cjnz
 
                 for ( ; pB < pB_end ; pB++)
                 { 
@@ -451,6 +473,8 @@
                 //--------------------------------------------------------------
                 // B(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
+
+                // TODO: phase1: use a reduction on cjnz
 
                 for ( ; pA < pA_end ; pA++)
                 { 
