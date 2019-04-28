@@ -80,16 +80,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 //      naslice, nbslice) ;
 
 //  double t = omp_get_wtime ( ) ;
-/*
-    GB_check (M, "M for dot2", GB0) ;
-    GB_check (A, "A for dot2", GB0) ;
-    for (int taskid = 0 ; taskid < naslice ; taskid++)
-    {
-        printf ("aslice: %d\n", taskid) ;
-        GB_check (Aslice [taskid], "Aslice for dot2", GB0) ;
-    }
-    GB_check (B, "B for dot2", GB0) ;
-*/
 
     //--------------------------------------------------------------------------
     // get the semiring operators
