@@ -2076,6 +2076,9 @@ It does nothing at all if passed a built-in binary operator.
 %===============================================================================
 \label{selectop}
 
+{\bf TODO: need to change "thunk" parameter for Version 3.0.  It is not safe to
+use in non-blocking mode.  Consider adding a \verb'GxB_Scalar' object.}
+
 A select operator is a scalar function of the form
 $z=f(i,j,m,n,a_{ij},\mbox{thunk})$ that is applied to the entries $a_{ij}$ of
 an $m$-by-$n$ matrix.  The domain (type) of $z$ is always boolean.  The domain

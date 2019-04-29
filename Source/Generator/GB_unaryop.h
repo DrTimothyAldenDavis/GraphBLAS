@@ -8,9 +8,12 @@ void GB_unop
 
 void GB_tran
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    GB_ctype *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 

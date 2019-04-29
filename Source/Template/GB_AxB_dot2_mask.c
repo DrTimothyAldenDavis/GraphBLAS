@@ -109,7 +109,8 @@
             }
             else
             {
-                GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j,
+                int64_t mpleft = 0 ;
+                GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mnvec-1, j,
                     &pM, &pM_end) ;
                 // no work to do if M(:,j) is empty
                 mjnz = pM_end - pM ;

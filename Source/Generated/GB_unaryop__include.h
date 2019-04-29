@@ -17,10 +17,13 @@ void GB_unop__one_bool_bool
 
 void GB_tran__one_bool_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_int8_int8
@@ -33,10 +36,13 @@ void GB_unop__one_int8_int8
 
 void GB_tran__one_int8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_int16_int16
@@ -49,10 +55,13 @@ void GB_unop__one_int16_int16
 
 void GB_tran__one_int16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_int32_int32
@@ -65,10 +74,13 @@ void GB_unop__one_int32_int32
 
 void GB_tran__one_int32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_int64_int64
@@ -81,10 +93,13 @@ void GB_unop__one_int64_int64
 
 void GB_tran__one_int64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_uint8_uint8
@@ -97,10 +112,13 @@ void GB_unop__one_uint8_uint8
 
 void GB_tran__one_uint8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_uint16_uint16
@@ -113,10 +131,13 @@ void GB_unop__one_uint16_uint16
 
 void GB_tran__one_uint16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_uint32_uint32
@@ -129,10 +150,13 @@ void GB_unop__one_uint32_uint32
 
 void GB_tran__one_uint32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_uint64_uint64
@@ -145,10 +169,13 @@ void GB_unop__one_uint64_uint64
 
 void GB_tran__one_uint64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_fp32_fp32
@@ -161,10 +188,13 @@ void GB_unop__one_fp32_fp32
 
 void GB_tran__one_fp32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__one_fp64_fp64
@@ -177,10 +207,13 @@ void GB_unop__one_fp64_fp64
 
 void GB_tran__one_fp64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_bool
@@ -193,10 +226,13 @@ void GB_unop__identity_bool_bool
 
 void GB_tran__identity_bool_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_int8
@@ -209,10 +245,13 @@ void GB_unop__identity_bool_int8
 
 void GB_tran__identity_bool_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_int16
@@ -225,10 +264,13 @@ void GB_unop__identity_bool_int16
 
 void GB_tran__identity_bool_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_int32
@@ -241,10 +283,13 @@ void GB_unop__identity_bool_int32
 
 void GB_tran__identity_bool_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_int64
@@ -257,10 +302,13 @@ void GB_unop__identity_bool_int64
 
 void GB_tran__identity_bool_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_uint8
@@ -273,10 +321,13 @@ void GB_unop__identity_bool_uint8
 
 void GB_tran__identity_bool_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_uint16
@@ -289,10 +340,13 @@ void GB_unop__identity_bool_uint16
 
 void GB_tran__identity_bool_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_uint32
@@ -305,10 +359,13 @@ void GB_unop__identity_bool_uint32
 
 void GB_tran__identity_bool_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_uint64
@@ -321,10 +378,13 @@ void GB_unop__identity_bool_uint64
 
 void GB_tran__identity_bool_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_fp32
@@ -337,10 +397,13 @@ void GB_unop__identity_bool_fp32
 
 void GB_tran__identity_bool_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_bool_fp64
@@ -353,10 +416,13 @@ void GB_unop__identity_bool_fp64
 
 void GB_tran__identity_bool_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_bool
@@ -369,10 +435,13 @@ void GB_unop__identity_int8_bool
 
 void GB_tran__identity_int8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_int8
@@ -385,10 +454,13 @@ void GB_unop__identity_int8_int8
 
 void GB_tran__identity_int8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_int16
@@ -401,10 +473,13 @@ void GB_unop__identity_int8_int16
 
 void GB_tran__identity_int8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_int32
@@ -417,10 +492,13 @@ void GB_unop__identity_int8_int32
 
 void GB_tran__identity_int8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_int64
@@ -433,10 +511,13 @@ void GB_unop__identity_int8_int64
 
 void GB_tran__identity_int8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_uint8
@@ -449,10 +530,13 @@ void GB_unop__identity_int8_uint8
 
 void GB_tran__identity_int8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_uint16
@@ -465,10 +549,13 @@ void GB_unop__identity_int8_uint16
 
 void GB_tran__identity_int8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_uint32
@@ -481,10 +568,13 @@ void GB_unop__identity_int8_uint32
 
 void GB_tran__identity_int8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_uint64
@@ -497,10 +587,13 @@ void GB_unop__identity_int8_uint64
 
 void GB_tran__identity_int8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_fp32
@@ -513,10 +606,13 @@ void GB_unop__identity_int8_fp32
 
 void GB_tran__identity_int8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int8_fp64
@@ -529,10 +625,13 @@ void GB_unop__identity_int8_fp64
 
 void GB_tran__identity_int8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_bool
@@ -545,10 +644,13 @@ void GB_unop__identity_int16_bool
 
 void GB_tran__identity_int16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_int8
@@ -561,10 +663,13 @@ void GB_unop__identity_int16_int8
 
 void GB_tran__identity_int16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_int16
@@ -577,10 +682,13 @@ void GB_unop__identity_int16_int16
 
 void GB_tran__identity_int16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_int32
@@ -593,10 +701,13 @@ void GB_unop__identity_int16_int32
 
 void GB_tran__identity_int16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_int64
@@ -609,10 +720,13 @@ void GB_unop__identity_int16_int64
 
 void GB_tran__identity_int16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_uint8
@@ -625,10 +739,13 @@ void GB_unop__identity_int16_uint8
 
 void GB_tran__identity_int16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_uint16
@@ -641,10 +758,13 @@ void GB_unop__identity_int16_uint16
 
 void GB_tran__identity_int16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_uint32
@@ -657,10 +777,13 @@ void GB_unop__identity_int16_uint32
 
 void GB_tran__identity_int16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_uint64
@@ -673,10 +796,13 @@ void GB_unop__identity_int16_uint64
 
 void GB_tran__identity_int16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_fp32
@@ -689,10 +815,13 @@ void GB_unop__identity_int16_fp32
 
 void GB_tran__identity_int16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int16_fp64
@@ -705,10 +834,13 @@ void GB_unop__identity_int16_fp64
 
 void GB_tran__identity_int16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_bool
@@ -721,10 +853,13 @@ void GB_unop__identity_int32_bool
 
 void GB_tran__identity_int32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_int8
@@ -737,10 +872,13 @@ void GB_unop__identity_int32_int8
 
 void GB_tran__identity_int32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_int16
@@ -753,10 +891,13 @@ void GB_unop__identity_int32_int16
 
 void GB_tran__identity_int32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_int32
@@ -769,10 +910,13 @@ void GB_unop__identity_int32_int32
 
 void GB_tran__identity_int32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_int64
@@ -785,10 +929,13 @@ void GB_unop__identity_int32_int64
 
 void GB_tran__identity_int32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_uint8
@@ -801,10 +948,13 @@ void GB_unop__identity_int32_uint8
 
 void GB_tran__identity_int32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_uint16
@@ -817,10 +967,13 @@ void GB_unop__identity_int32_uint16
 
 void GB_tran__identity_int32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_uint32
@@ -833,10 +986,13 @@ void GB_unop__identity_int32_uint32
 
 void GB_tran__identity_int32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_uint64
@@ -849,10 +1005,13 @@ void GB_unop__identity_int32_uint64
 
 void GB_tran__identity_int32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_fp32
@@ -865,10 +1024,13 @@ void GB_unop__identity_int32_fp32
 
 void GB_tran__identity_int32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int32_fp64
@@ -881,10 +1043,13 @@ void GB_unop__identity_int32_fp64
 
 void GB_tran__identity_int32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_bool
@@ -897,10 +1062,13 @@ void GB_unop__identity_int64_bool
 
 void GB_tran__identity_int64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_int8
@@ -913,10 +1081,13 @@ void GB_unop__identity_int64_int8
 
 void GB_tran__identity_int64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_int16
@@ -929,10 +1100,13 @@ void GB_unop__identity_int64_int16
 
 void GB_tran__identity_int64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_int32
@@ -945,10 +1119,13 @@ void GB_unop__identity_int64_int32
 
 void GB_tran__identity_int64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_int64
@@ -961,10 +1138,13 @@ void GB_unop__identity_int64_int64
 
 void GB_tran__identity_int64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_uint8
@@ -977,10 +1157,13 @@ void GB_unop__identity_int64_uint8
 
 void GB_tran__identity_int64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_uint16
@@ -993,10 +1176,13 @@ void GB_unop__identity_int64_uint16
 
 void GB_tran__identity_int64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_uint32
@@ -1009,10 +1195,13 @@ void GB_unop__identity_int64_uint32
 
 void GB_tran__identity_int64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_uint64
@@ -1025,10 +1214,13 @@ void GB_unop__identity_int64_uint64
 
 void GB_tran__identity_int64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_fp32
@@ -1041,10 +1233,13 @@ void GB_unop__identity_int64_fp32
 
 void GB_tran__identity_int64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_int64_fp64
@@ -1057,10 +1252,13 @@ void GB_unop__identity_int64_fp64
 
 void GB_tran__identity_int64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_bool
@@ -1073,10 +1271,13 @@ void GB_unop__identity_uint8_bool
 
 void GB_tran__identity_uint8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_int8
@@ -1089,10 +1290,13 @@ void GB_unop__identity_uint8_int8
 
 void GB_tran__identity_uint8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_int16
@@ -1105,10 +1309,13 @@ void GB_unop__identity_uint8_int16
 
 void GB_tran__identity_uint8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_int32
@@ -1121,10 +1328,13 @@ void GB_unop__identity_uint8_int32
 
 void GB_tran__identity_uint8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_int64
@@ -1137,10 +1347,13 @@ void GB_unop__identity_uint8_int64
 
 void GB_tran__identity_uint8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_uint8
@@ -1153,10 +1366,13 @@ void GB_unop__identity_uint8_uint8
 
 void GB_tran__identity_uint8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_uint16
@@ -1169,10 +1385,13 @@ void GB_unop__identity_uint8_uint16
 
 void GB_tran__identity_uint8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_uint32
@@ -1185,10 +1404,13 @@ void GB_unop__identity_uint8_uint32
 
 void GB_tran__identity_uint8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_uint64
@@ -1201,10 +1423,13 @@ void GB_unop__identity_uint8_uint64
 
 void GB_tran__identity_uint8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_fp32
@@ -1217,10 +1442,13 @@ void GB_unop__identity_uint8_fp32
 
 void GB_tran__identity_uint8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint8_fp64
@@ -1233,10 +1461,13 @@ void GB_unop__identity_uint8_fp64
 
 void GB_tran__identity_uint8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_bool
@@ -1249,10 +1480,13 @@ void GB_unop__identity_uint16_bool
 
 void GB_tran__identity_uint16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_int8
@@ -1265,10 +1499,13 @@ void GB_unop__identity_uint16_int8
 
 void GB_tran__identity_uint16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_int16
@@ -1281,10 +1518,13 @@ void GB_unop__identity_uint16_int16
 
 void GB_tran__identity_uint16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_int32
@@ -1297,10 +1537,13 @@ void GB_unop__identity_uint16_int32
 
 void GB_tran__identity_uint16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_int64
@@ -1313,10 +1556,13 @@ void GB_unop__identity_uint16_int64
 
 void GB_tran__identity_uint16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_uint8
@@ -1329,10 +1575,13 @@ void GB_unop__identity_uint16_uint8
 
 void GB_tran__identity_uint16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_uint16
@@ -1345,10 +1594,13 @@ void GB_unop__identity_uint16_uint16
 
 void GB_tran__identity_uint16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_uint32
@@ -1361,10 +1613,13 @@ void GB_unop__identity_uint16_uint32
 
 void GB_tran__identity_uint16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_uint64
@@ -1377,10 +1632,13 @@ void GB_unop__identity_uint16_uint64
 
 void GB_tran__identity_uint16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_fp32
@@ -1393,10 +1651,13 @@ void GB_unop__identity_uint16_fp32
 
 void GB_tran__identity_uint16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint16_fp64
@@ -1409,10 +1670,13 @@ void GB_unop__identity_uint16_fp64
 
 void GB_tran__identity_uint16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_bool
@@ -1425,10 +1689,13 @@ void GB_unop__identity_uint32_bool
 
 void GB_tran__identity_uint32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_int8
@@ -1441,10 +1708,13 @@ void GB_unop__identity_uint32_int8
 
 void GB_tran__identity_uint32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_int16
@@ -1457,10 +1727,13 @@ void GB_unop__identity_uint32_int16
 
 void GB_tran__identity_uint32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_int32
@@ -1473,10 +1746,13 @@ void GB_unop__identity_uint32_int32
 
 void GB_tran__identity_uint32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_int64
@@ -1489,10 +1765,13 @@ void GB_unop__identity_uint32_int64
 
 void GB_tran__identity_uint32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_uint8
@@ -1505,10 +1784,13 @@ void GB_unop__identity_uint32_uint8
 
 void GB_tran__identity_uint32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_uint16
@@ -1521,10 +1803,13 @@ void GB_unop__identity_uint32_uint16
 
 void GB_tran__identity_uint32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_uint32
@@ -1537,10 +1822,13 @@ void GB_unop__identity_uint32_uint32
 
 void GB_tran__identity_uint32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_uint64
@@ -1553,10 +1841,13 @@ void GB_unop__identity_uint32_uint64
 
 void GB_tran__identity_uint32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_fp32
@@ -1569,10 +1860,13 @@ void GB_unop__identity_uint32_fp32
 
 void GB_tran__identity_uint32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint32_fp64
@@ -1585,10 +1879,13 @@ void GB_unop__identity_uint32_fp64
 
 void GB_tran__identity_uint32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_bool
@@ -1601,10 +1898,13 @@ void GB_unop__identity_uint64_bool
 
 void GB_tran__identity_uint64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_int8
@@ -1617,10 +1917,13 @@ void GB_unop__identity_uint64_int8
 
 void GB_tran__identity_uint64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_int16
@@ -1633,10 +1936,13 @@ void GB_unop__identity_uint64_int16
 
 void GB_tran__identity_uint64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_int32
@@ -1649,10 +1955,13 @@ void GB_unop__identity_uint64_int32
 
 void GB_tran__identity_uint64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_int64
@@ -1665,10 +1974,13 @@ void GB_unop__identity_uint64_int64
 
 void GB_tran__identity_uint64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_uint8
@@ -1681,10 +1993,13 @@ void GB_unop__identity_uint64_uint8
 
 void GB_tran__identity_uint64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_uint16
@@ -1697,10 +2012,13 @@ void GB_unop__identity_uint64_uint16
 
 void GB_tran__identity_uint64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_uint32
@@ -1713,10 +2031,13 @@ void GB_unop__identity_uint64_uint32
 
 void GB_tran__identity_uint64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_uint64
@@ -1729,10 +2050,13 @@ void GB_unop__identity_uint64_uint64
 
 void GB_tran__identity_uint64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_fp32
@@ -1745,10 +2069,13 @@ void GB_unop__identity_uint64_fp32
 
 void GB_tran__identity_uint64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_uint64_fp64
@@ -1761,10 +2088,13 @@ void GB_unop__identity_uint64_fp64
 
 void GB_tran__identity_uint64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_bool
@@ -1777,10 +2107,13 @@ void GB_unop__identity_fp32_bool
 
 void GB_tran__identity_fp32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_int8
@@ -1793,10 +2126,13 @@ void GB_unop__identity_fp32_int8
 
 void GB_tran__identity_fp32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_int16
@@ -1809,10 +2145,13 @@ void GB_unop__identity_fp32_int16
 
 void GB_tran__identity_fp32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_int32
@@ -1825,10 +2164,13 @@ void GB_unop__identity_fp32_int32
 
 void GB_tran__identity_fp32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_int64
@@ -1841,10 +2183,13 @@ void GB_unop__identity_fp32_int64
 
 void GB_tran__identity_fp32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_uint8
@@ -1857,10 +2202,13 @@ void GB_unop__identity_fp32_uint8
 
 void GB_tran__identity_fp32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_uint16
@@ -1873,10 +2221,13 @@ void GB_unop__identity_fp32_uint16
 
 void GB_tran__identity_fp32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_uint32
@@ -1889,10 +2240,13 @@ void GB_unop__identity_fp32_uint32
 
 void GB_tran__identity_fp32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_uint64
@@ -1905,10 +2259,13 @@ void GB_unop__identity_fp32_uint64
 
 void GB_tran__identity_fp32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_fp32
@@ -1921,10 +2278,13 @@ void GB_unop__identity_fp32_fp32
 
 void GB_tran__identity_fp32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp32_fp64
@@ -1937,10 +2297,13 @@ void GB_unop__identity_fp32_fp64
 
 void GB_tran__identity_fp32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_bool
@@ -1953,10 +2316,13 @@ void GB_unop__identity_fp64_bool
 
 void GB_tran__identity_fp64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_int8
@@ -1969,10 +2335,13 @@ void GB_unop__identity_fp64_int8
 
 void GB_tran__identity_fp64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_int16
@@ -1985,10 +2354,13 @@ void GB_unop__identity_fp64_int16
 
 void GB_tran__identity_fp64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_int32
@@ -2001,10 +2373,13 @@ void GB_unop__identity_fp64_int32
 
 void GB_tran__identity_fp64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_int64
@@ -2017,10 +2392,13 @@ void GB_unop__identity_fp64_int64
 
 void GB_tran__identity_fp64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_uint8
@@ -2033,10 +2411,13 @@ void GB_unop__identity_fp64_uint8
 
 void GB_tran__identity_fp64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_uint16
@@ -2049,10 +2430,13 @@ void GB_unop__identity_fp64_uint16
 
 void GB_tran__identity_fp64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_uint32
@@ -2065,10 +2449,13 @@ void GB_unop__identity_fp64_uint32
 
 void GB_tran__identity_fp64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_uint64
@@ -2081,10 +2468,13 @@ void GB_unop__identity_fp64_uint64
 
 void GB_tran__identity_fp64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_fp32
@@ -2097,10 +2487,13 @@ void GB_unop__identity_fp64_fp32
 
 void GB_tran__identity_fp64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__identity_fp64_fp64
@@ -2113,10 +2506,13 @@ void GB_unop__identity_fp64_fp64
 
 void GB_tran__identity_fp64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_bool
@@ -2129,10 +2525,13 @@ void GB_unop__ainv_bool_bool
 
 void GB_tran__ainv_bool_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_int8
@@ -2145,10 +2544,13 @@ void GB_unop__ainv_bool_int8
 
 void GB_tran__ainv_bool_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_int16
@@ -2161,10 +2563,13 @@ void GB_unop__ainv_bool_int16
 
 void GB_tran__ainv_bool_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_int32
@@ -2177,10 +2582,13 @@ void GB_unop__ainv_bool_int32
 
 void GB_tran__ainv_bool_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_int64
@@ -2193,10 +2601,13 @@ void GB_unop__ainv_bool_int64
 
 void GB_tran__ainv_bool_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_uint8
@@ -2209,10 +2620,13 @@ void GB_unop__ainv_bool_uint8
 
 void GB_tran__ainv_bool_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_uint16
@@ -2225,10 +2639,13 @@ void GB_unop__ainv_bool_uint16
 
 void GB_tran__ainv_bool_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_uint32
@@ -2241,10 +2658,13 @@ void GB_unop__ainv_bool_uint32
 
 void GB_tran__ainv_bool_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_uint64
@@ -2257,10 +2677,13 @@ void GB_unop__ainv_bool_uint64
 
 void GB_tran__ainv_bool_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_fp32
@@ -2273,10 +2696,13 @@ void GB_unop__ainv_bool_fp32
 
 void GB_tran__ainv_bool_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_bool_fp64
@@ -2289,10 +2715,13 @@ void GB_unop__ainv_bool_fp64
 
 void GB_tran__ainv_bool_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_bool
@@ -2305,10 +2734,13 @@ void GB_unop__ainv_int8_bool
 
 void GB_tran__ainv_int8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_int8
@@ -2321,10 +2753,13 @@ void GB_unop__ainv_int8_int8
 
 void GB_tran__ainv_int8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_int16
@@ -2337,10 +2772,13 @@ void GB_unop__ainv_int8_int16
 
 void GB_tran__ainv_int8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_int32
@@ -2353,10 +2791,13 @@ void GB_unop__ainv_int8_int32
 
 void GB_tran__ainv_int8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_int64
@@ -2369,10 +2810,13 @@ void GB_unop__ainv_int8_int64
 
 void GB_tran__ainv_int8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_uint8
@@ -2385,10 +2829,13 @@ void GB_unop__ainv_int8_uint8
 
 void GB_tran__ainv_int8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_uint16
@@ -2401,10 +2848,13 @@ void GB_unop__ainv_int8_uint16
 
 void GB_tran__ainv_int8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_uint32
@@ -2417,10 +2867,13 @@ void GB_unop__ainv_int8_uint32
 
 void GB_tran__ainv_int8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_uint64
@@ -2433,10 +2886,13 @@ void GB_unop__ainv_int8_uint64
 
 void GB_tran__ainv_int8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_fp32
@@ -2449,10 +2905,13 @@ void GB_unop__ainv_int8_fp32
 
 void GB_tran__ainv_int8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int8_fp64
@@ -2465,10 +2924,13 @@ void GB_unop__ainv_int8_fp64
 
 void GB_tran__ainv_int8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_bool
@@ -2481,10 +2943,13 @@ void GB_unop__ainv_int16_bool
 
 void GB_tran__ainv_int16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_int8
@@ -2497,10 +2962,13 @@ void GB_unop__ainv_int16_int8
 
 void GB_tran__ainv_int16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_int16
@@ -2513,10 +2981,13 @@ void GB_unop__ainv_int16_int16
 
 void GB_tran__ainv_int16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_int32
@@ -2529,10 +3000,13 @@ void GB_unop__ainv_int16_int32
 
 void GB_tran__ainv_int16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_int64
@@ -2545,10 +3019,13 @@ void GB_unop__ainv_int16_int64
 
 void GB_tran__ainv_int16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_uint8
@@ -2561,10 +3038,13 @@ void GB_unop__ainv_int16_uint8
 
 void GB_tran__ainv_int16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_uint16
@@ -2577,10 +3057,13 @@ void GB_unop__ainv_int16_uint16
 
 void GB_tran__ainv_int16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_uint32
@@ -2593,10 +3076,13 @@ void GB_unop__ainv_int16_uint32
 
 void GB_tran__ainv_int16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_uint64
@@ -2609,10 +3095,13 @@ void GB_unop__ainv_int16_uint64
 
 void GB_tran__ainv_int16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_fp32
@@ -2625,10 +3114,13 @@ void GB_unop__ainv_int16_fp32
 
 void GB_tran__ainv_int16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int16_fp64
@@ -2641,10 +3133,13 @@ void GB_unop__ainv_int16_fp64
 
 void GB_tran__ainv_int16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_bool
@@ -2657,10 +3152,13 @@ void GB_unop__ainv_int32_bool
 
 void GB_tran__ainv_int32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_int8
@@ -2673,10 +3171,13 @@ void GB_unop__ainv_int32_int8
 
 void GB_tran__ainv_int32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_int16
@@ -2689,10 +3190,13 @@ void GB_unop__ainv_int32_int16
 
 void GB_tran__ainv_int32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_int32
@@ -2705,10 +3209,13 @@ void GB_unop__ainv_int32_int32
 
 void GB_tran__ainv_int32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_int64
@@ -2721,10 +3228,13 @@ void GB_unop__ainv_int32_int64
 
 void GB_tran__ainv_int32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_uint8
@@ -2737,10 +3247,13 @@ void GB_unop__ainv_int32_uint8
 
 void GB_tran__ainv_int32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_uint16
@@ -2753,10 +3266,13 @@ void GB_unop__ainv_int32_uint16
 
 void GB_tran__ainv_int32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_uint32
@@ -2769,10 +3285,13 @@ void GB_unop__ainv_int32_uint32
 
 void GB_tran__ainv_int32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_uint64
@@ -2785,10 +3304,13 @@ void GB_unop__ainv_int32_uint64
 
 void GB_tran__ainv_int32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_fp32
@@ -2801,10 +3323,13 @@ void GB_unop__ainv_int32_fp32
 
 void GB_tran__ainv_int32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int32_fp64
@@ -2817,10 +3342,13 @@ void GB_unop__ainv_int32_fp64
 
 void GB_tran__ainv_int32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_bool
@@ -2833,10 +3361,13 @@ void GB_unop__ainv_int64_bool
 
 void GB_tran__ainv_int64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_int8
@@ -2849,10 +3380,13 @@ void GB_unop__ainv_int64_int8
 
 void GB_tran__ainv_int64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_int16
@@ -2865,10 +3399,13 @@ void GB_unop__ainv_int64_int16
 
 void GB_tran__ainv_int64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_int32
@@ -2881,10 +3418,13 @@ void GB_unop__ainv_int64_int32
 
 void GB_tran__ainv_int64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_int64
@@ -2897,10 +3437,13 @@ void GB_unop__ainv_int64_int64
 
 void GB_tran__ainv_int64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_uint8
@@ -2913,10 +3456,13 @@ void GB_unop__ainv_int64_uint8
 
 void GB_tran__ainv_int64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_uint16
@@ -2929,10 +3475,13 @@ void GB_unop__ainv_int64_uint16
 
 void GB_tran__ainv_int64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_uint32
@@ -2945,10 +3494,13 @@ void GB_unop__ainv_int64_uint32
 
 void GB_tran__ainv_int64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_uint64
@@ -2961,10 +3513,13 @@ void GB_unop__ainv_int64_uint64
 
 void GB_tran__ainv_int64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_fp32
@@ -2977,10 +3532,13 @@ void GB_unop__ainv_int64_fp32
 
 void GB_tran__ainv_int64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_int64_fp64
@@ -2993,10 +3551,13 @@ void GB_unop__ainv_int64_fp64
 
 void GB_tran__ainv_int64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_bool
@@ -3009,10 +3570,13 @@ void GB_unop__ainv_uint8_bool
 
 void GB_tran__ainv_uint8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_int8
@@ -3025,10 +3589,13 @@ void GB_unop__ainv_uint8_int8
 
 void GB_tran__ainv_uint8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_int16
@@ -3041,10 +3608,13 @@ void GB_unop__ainv_uint8_int16
 
 void GB_tran__ainv_uint8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_int32
@@ -3057,10 +3627,13 @@ void GB_unop__ainv_uint8_int32
 
 void GB_tran__ainv_uint8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_int64
@@ -3073,10 +3646,13 @@ void GB_unop__ainv_uint8_int64
 
 void GB_tran__ainv_uint8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_uint8
@@ -3089,10 +3665,13 @@ void GB_unop__ainv_uint8_uint8
 
 void GB_tran__ainv_uint8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_uint16
@@ -3105,10 +3684,13 @@ void GB_unop__ainv_uint8_uint16
 
 void GB_tran__ainv_uint8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_uint32
@@ -3121,10 +3703,13 @@ void GB_unop__ainv_uint8_uint32
 
 void GB_tran__ainv_uint8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_uint64
@@ -3137,10 +3722,13 @@ void GB_unop__ainv_uint8_uint64
 
 void GB_tran__ainv_uint8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_fp32
@@ -3153,10 +3741,13 @@ void GB_unop__ainv_uint8_fp32
 
 void GB_tran__ainv_uint8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint8_fp64
@@ -3169,10 +3760,13 @@ void GB_unop__ainv_uint8_fp64
 
 void GB_tran__ainv_uint8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_bool
@@ -3185,10 +3779,13 @@ void GB_unop__ainv_uint16_bool
 
 void GB_tran__ainv_uint16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_int8
@@ -3201,10 +3798,13 @@ void GB_unop__ainv_uint16_int8
 
 void GB_tran__ainv_uint16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_int16
@@ -3217,10 +3817,13 @@ void GB_unop__ainv_uint16_int16
 
 void GB_tran__ainv_uint16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_int32
@@ -3233,10 +3836,13 @@ void GB_unop__ainv_uint16_int32
 
 void GB_tran__ainv_uint16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_int64
@@ -3249,10 +3855,13 @@ void GB_unop__ainv_uint16_int64
 
 void GB_tran__ainv_uint16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_uint8
@@ -3265,10 +3874,13 @@ void GB_unop__ainv_uint16_uint8
 
 void GB_tran__ainv_uint16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_uint16
@@ -3281,10 +3893,13 @@ void GB_unop__ainv_uint16_uint16
 
 void GB_tran__ainv_uint16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_uint32
@@ -3297,10 +3912,13 @@ void GB_unop__ainv_uint16_uint32
 
 void GB_tran__ainv_uint16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_uint64
@@ -3313,10 +3931,13 @@ void GB_unop__ainv_uint16_uint64
 
 void GB_tran__ainv_uint16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_fp32
@@ -3329,10 +3950,13 @@ void GB_unop__ainv_uint16_fp32
 
 void GB_tran__ainv_uint16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint16_fp64
@@ -3345,10 +3969,13 @@ void GB_unop__ainv_uint16_fp64
 
 void GB_tran__ainv_uint16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_bool
@@ -3361,10 +3988,13 @@ void GB_unop__ainv_uint32_bool
 
 void GB_tran__ainv_uint32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_int8
@@ -3377,10 +4007,13 @@ void GB_unop__ainv_uint32_int8
 
 void GB_tran__ainv_uint32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_int16
@@ -3393,10 +4026,13 @@ void GB_unop__ainv_uint32_int16
 
 void GB_tran__ainv_uint32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_int32
@@ -3409,10 +4045,13 @@ void GB_unop__ainv_uint32_int32
 
 void GB_tran__ainv_uint32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_int64
@@ -3425,10 +4064,13 @@ void GB_unop__ainv_uint32_int64
 
 void GB_tran__ainv_uint32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_uint8
@@ -3441,10 +4083,13 @@ void GB_unop__ainv_uint32_uint8
 
 void GB_tran__ainv_uint32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_uint16
@@ -3457,10 +4102,13 @@ void GB_unop__ainv_uint32_uint16
 
 void GB_tran__ainv_uint32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_uint32
@@ -3473,10 +4121,13 @@ void GB_unop__ainv_uint32_uint32
 
 void GB_tran__ainv_uint32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_uint64
@@ -3489,10 +4140,13 @@ void GB_unop__ainv_uint32_uint64
 
 void GB_tran__ainv_uint32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_fp32
@@ -3505,10 +4159,13 @@ void GB_unop__ainv_uint32_fp32
 
 void GB_tran__ainv_uint32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint32_fp64
@@ -3521,10 +4178,13 @@ void GB_unop__ainv_uint32_fp64
 
 void GB_tran__ainv_uint32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_bool
@@ -3537,10 +4197,13 @@ void GB_unop__ainv_uint64_bool
 
 void GB_tran__ainv_uint64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_int8
@@ -3553,10 +4216,13 @@ void GB_unop__ainv_uint64_int8
 
 void GB_tran__ainv_uint64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_int16
@@ -3569,10 +4235,13 @@ void GB_unop__ainv_uint64_int16
 
 void GB_tran__ainv_uint64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_int32
@@ -3585,10 +4254,13 @@ void GB_unop__ainv_uint64_int32
 
 void GB_tran__ainv_uint64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_int64
@@ -3601,10 +4273,13 @@ void GB_unop__ainv_uint64_int64
 
 void GB_tran__ainv_uint64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_uint8
@@ -3617,10 +4292,13 @@ void GB_unop__ainv_uint64_uint8
 
 void GB_tran__ainv_uint64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_uint16
@@ -3633,10 +4311,13 @@ void GB_unop__ainv_uint64_uint16
 
 void GB_tran__ainv_uint64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_uint32
@@ -3649,10 +4330,13 @@ void GB_unop__ainv_uint64_uint32
 
 void GB_tran__ainv_uint64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_uint64
@@ -3665,10 +4349,13 @@ void GB_unop__ainv_uint64_uint64
 
 void GB_tran__ainv_uint64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_fp32
@@ -3681,10 +4368,13 @@ void GB_unop__ainv_uint64_fp32
 
 void GB_tran__ainv_uint64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_uint64_fp64
@@ -3697,10 +4387,13 @@ void GB_unop__ainv_uint64_fp64
 
 void GB_tran__ainv_uint64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_bool
@@ -3713,10 +4406,13 @@ void GB_unop__ainv_fp32_bool
 
 void GB_tran__ainv_fp32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_int8
@@ -3729,10 +4425,13 @@ void GB_unop__ainv_fp32_int8
 
 void GB_tran__ainv_fp32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_int16
@@ -3745,10 +4444,13 @@ void GB_unop__ainv_fp32_int16
 
 void GB_tran__ainv_fp32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_int32
@@ -3761,10 +4463,13 @@ void GB_unop__ainv_fp32_int32
 
 void GB_tran__ainv_fp32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_int64
@@ -3777,10 +4482,13 @@ void GB_unop__ainv_fp32_int64
 
 void GB_tran__ainv_fp32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_uint8
@@ -3793,10 +4501,13 @@ void GB_unop__ainv_fp32_uint8
 
 void GB_tran__ainv_fp32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_uint16
@@ -3809,10 +4520,13 @@ void GB_unop__ainv_fp32_uint16
 
 void GB_tran__ainv_fp32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_uint32
@@ -3825,10 +4539,13 @@ void GB_unop__ainv_fp32_uint32
 
 void GB_tran__ainv_fp32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_uint64
@@ -3841,10 +4558,13 @@ void GB_unop__ainv_fp32_uint64
 
 void GB_tran__ainv_fp32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_fp32
@@ -3857,10 +4577,13 @@ void GB_unop__ainv_fp32_fp32
 
 void GB_tran__ainv_fp32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp32_fp64
@@ -3873,10 +4596,13 @@ void GB_unop__ainv_fp32_fp64
 
 void GB_tran__ainv_fp32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_bool
@@ -3889,10 +4615,13 @@ void GB_unop__ainv_fp64_bool
 
 void GB_tran__ainv_fp64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_int8
@@ -3905,10 +4634,13 @@ void GB_unop__ainv_fp64_int8
 
 void GB_tran__ainv_fp64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_int16
@@ -3921,10 +4653,13 @@ void GB_unop__ainv_fp64_int16
 
 void GB_tran__ainv_fp64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_int32
@@ -3937,10 +4672,13 @@ void GB_unop__ainv_fp64_int32
 
 void GB_tran__ainv_fp64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_int64
@@ -3953,10 +4691,13 @@ void GB_unop__ainv_fp64_int64
 
 void GB_tran__ainv_fp64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_uint8
@@ -3969,10 +4710,13 @@ void GB_unop__ainv_fp64_uint8
 
 void GB_tran__ainv_fp64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_uint16
@@ -3985,10 +4729,13 @@ void GB_unop__ainv_fp64_uint16
 
 void GB_tran__ainv_fp64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_uint32
@@ -4001,10 +4748,13 @@ void GB_unop__ainv_fp64_uint32
 
 void GB_tran__ainv_fp64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_uint64
@@ -4017,10 +4767,13 @@ void GB_unop__ainv_fp64_uint64
 
 void GB_tran__ainv_fp64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_fp32
@@ -4033,10 +4786,13 @@ void GB_unop__ainv_fp64_fp32
 
 void GB_tran__ainv_fp64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__ainv_fp64_fp64
@@ -4049,10 +4805,13 @@ void GB_unop__ainv_fp64_fp64
 
 void GB_tran__ainv_fp64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_bool
@@ -4065,10 +4824,13 @@ void GB_unop__abs_bool_bool
 
 void GB_tran__abs_bool_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_int8
@@ -4081,10 +4843,13 @@ void GB_unop__abs_bool_int8
 
 void GB_tran__abs_bool_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_int16
@@ -4097,10 +4862,13 @@ void GB_unop__abs_bool_int16
 
 void GB_tran__abs_bool_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_int32
@@ -4113,10 +4881,13 @@ void GB_unop__abs_bool_int32
 
 void GB_tran__abs_bool_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_int64
@@ -4129,10 +4900,13 @@ void GB_unop__abs_bool_int64
 
 void GB_tran__abs_bool_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_uint8
@@ -4145,10 +4919,13 @@ void GB_unop__abs_bool_uint8
 
 void GB_tran__abs_bool_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_uint16
@@ -4161,10 +4938,13 @@ void GB_unop__abs_bool_uint16
 
 void GB_tran__abs_bool_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_uint32
@@ -4177,10 +4957,13 @@ void GB_unop__abs_bool_uint32
 
 void GB_tran__abs_bool_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_uint64
@@ -4193,10 +4976,13 @@ void GB_unop__abs_bool_uint64
 
 void GB_tran__abs_bool_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_fp32
@@ -4209,10 +4995,13 @@ void GB_unop__abs_bool_fp32
 
 void GB_tran__abs_bool_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_bool_fp64
@@ -4225,10 +5014,13 @@ void GB_unop__abs_bool_fp64
 
 void GB_tran__abs_bool_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_bool
@@ -4241,10 +5033,13 @@ void GB_unop__abs_int8_bool
 
 void GB_tran__abs_int8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_int8
@@ -4257,10 +5052,13 @@ void GB_unop__abs_int8_int8
 
 void GB_tran__abs_int8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_int16
@@ -4273,10 +5071,13 @@ void GB_unop__abs_int8_int16
 
 void GB_tran__abs_int8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_int32
@@ -4289,10 +5090,13 @@ void GB_unop__abs_int8_int32
 
 void GB_tran__abs_int8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_int64
@@ -4305,10 +5109,13 @@ void GB_unop__abs_int8_int64
 
 void GB_tran__abs_int8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_uint8
@@ -4321,10 +5128,13 @@ void GB_unop__abs_int8_uint8
 
 void GB_tran__abs_int8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_uint16
@@ -4337,10 +5147,13 @@ void GB_unop__abs_int8_uint16
 
 void GB_tran__abs_int8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_uint32
@@ -4353,10 +5166,13 @@ void GB_unop__abs_int8_uint32
 
 void GB_tran__abs_int8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_uint64
@@ -4369,10 +5185,13 @@ void GB_unop__abs_int8_uint64
 
 void GB_tran__abs_int8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_fp32
@@ -4385,10 +5204,13 @@ void GB_unop__abs_int8_fp32
 
 void GB_tran__abs_int8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int8_fp64
@@ -4401,10 +5223,13 @@ void GB_unop__abs_int8_fp64
 
 void GB_tran__abs_int8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_bool
@@ -4417,10 +5242,13 @@ void GB_unop__abs_int16_bool
 
 void GB_tran__abs_int16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_int8
@@ -4433,10 +5261,13 @@ void GB_unop__abs_int16_int8
 
 void GB_tran__abs_int16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_int16
@@ -4449,10 +5280,13 @@ void GB_unop__abs_int16_int16
 
 void GB_tran__abs_int16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_int32
@@ -4465,10 +5299,13 @@ void GB_unop__abs_int16_int32
 
 void GB_tran__abs_int16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_int64
@@ -4481,10 +5318,13 @@ void GB_unop__abs_int16_int64
 
 void GB_tran__abs_int16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_uint8
@@ -4497,10 +5337,13 @@ void GB_unop__abs_int16_uint8
 
 void GB_tran__abs_int16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_uint16
@@ -4513,10 +5356,13 @@ void GB_unop__abs_int16_uint16
 
 void GB_tran__abs_int16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_uint32
@@ -4529,10 +5375,13 @@ void GB_unop__abs_int16_uint32
 
 void GB_tran__abs_int16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_uint64
@@ -4545,10 +5394,13 @@ void GB_unop__abs_int16_uint64
 
 void GB_tran__abs_int16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_fp32
@@ -4561,10 +5413,13 @@ void GB_unop__abs_int16_fp32
 
 void GB_tran__abs_int16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int16_fp64
@@ -4577,10 +5432,13 @@ void GB_unop__abs_int16_fp64
 
 void GB_tran__abs_int16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_bool
@@ -4593,10 +5451,13 @@ void GB_unop__abs_int32_bool
 
 void GB_tran__abs_int32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_int8
@@ -4609,10 +5470,13 @@ void GB_unop__abs_int32_int8
 
 void GB_tran__abs_int32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_int16
@@ -4625,10 +5489,13 @@ void GB_unop__abs_int32_int16
 
 void GB_tran__abs_int32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_int32
@@ -4641,10 +5508,13 @@ void GB_unop__abs_int32_int32
 
 void GB_tran__abs_int32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_int64
@@ -4657,10 +5527,13 @@ void GB_unop__abs_int32_int64
 
 void GB_tran__abs_int32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_uint8
@@ -4673,10 +5546,13 @@ void GB_unop__abs_int32_uint8
 
 void GB_tran__abs_int32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_uint16
@@ -4689,10 +5565,13 @@ void GB_unop__abs_int32_uint16
 
 void GB_tran__abs_int32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_uint32
@@ -4705,10 +5584,13 @@ void GB_unop__abs_int32_uint32
 
 void GB_tran__abs_int32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_uint64
@@ -4721,10 +5603,13 @@ void GB_unop__abs_int32_uint64
 
 void GB_tran__abs_int32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_fp32
@@ -4737,10 +5622,13 @@ void GB_unop__abs_int32_fp32
 
 void GB_tran__abs_int32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int32_fp64
@@ -4753,10 +5641,13 @@ void GB_unop__abs_int32_fp64
 
 void GB_tran__abs_int32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_bool
@@ -4769,10 +5660,13 @@ void GB_unop__abs_int64_bool
 
 void GB_tran__abs_int64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_int8
@@ -4785,10 +5679,13 @@ void GB_unop__abs_int64_int8
 
 void GB_tran__abs_int64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_int16
@@ -4801,10 +5698,13 @@ void GB_unop__abs_int64_int16
 
 void GB_tran__abs_int64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_int32
@@ -4817,10 +5717,13 @@ void GB_unop__abs_int64_int32
 
 void GB_tran__abs_int64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_int64
@@ -4833,10 +5736,13 @@ void GB_unop__abs_int64_int64
 
 void GB_tran__abs_int64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_uint8
@@ -4849,10 +5755,13 @@ void GB_unop__abs_int64_uint8
 
 void GB_tran__abs_int64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_uint16
@@ -4865,10 +5774,13 @@ void GB_unop__abs_int64_uint16
 
 void GB_tran__abs_int64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_uint32
@@ -4881,10 +5793,13 @@ void GB_unop__abs_int64_uint32
 
 void GB_tran__abs_int64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_uint64
@@ -4897,10 +5812,13 @@ void GB_unop__abs_int64_uint64
 
 void GB_tran__abs_int64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_fp32
@@ -4913,10 +5831,13 @@ void GB_unop__abs_int64_fp32
 
 void GB_tran__abs_int64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_int64_fp64
@@ -4929,10 +5850,13 @@ void GB_unop__abs_int64_fp64
 
 void GB_tran__abs_int64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_bool
@@ -4945,10 +5869,13 @@ void GB_unop__abs_uint8_bool
 
 void GB_tran__abs_uint8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_int8
@@ -4961,10 +5888,13 @@ void GB_unop__abs_uint8_int8
 
 void GB_tran__abs_uint8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_int16
@@ -4977,10 +5907,13 @@ void GB_unop__abs_uint8_int16
 
 void GB_tran__abs_uint8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_int32
@@ -4993,10 +5926,13 @@ void GB_unop__abs_uint8_int32
 
 void GB_tran__abs_uint8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_int64
@@ -5009,10 +5945,13 @@ void GB_unop__abs_uint8_int64
 
 void GB_tran__abs_uint8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_uint8
@@ -5025,10 +5964,13 @@ void GB_unop__abs_uint8_uint8
 
 void GB_tran__abs_uint8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_uint16
@@ -5041,10 +5983,13 @@ void GB_unop__abs_uint8_uint16
 
 void GB_tran__abs_uint8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_uint32
@@ -5057,10 +6002,13 @@ void GB_unop__abs_uint8_uint32
 
 void GB_tran__abs_uint8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_uint64
@@ -5073,10 +6021,13 @@ void GB_unop__abs_uint8_uint64
 
 void GB_tran__abs_uint8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_fp32
@@ -5089,10 +6040,13 @@ void GB_unop__abs_uint8_fp32
 
 void GB_tran__abs_uint8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint8_fp64
@@ -5105,10 +6059,13 @@ void GB_unop__abs_uint8_fp64
 
 void GB_tran__abs_uint8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_bool
@@ -5121,10 +6078,13 @@ void GB_unop__abs_uint16_bool
 
 void GB_tran__abs_uint16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_int8
@@ -5137,10 +6097,13 @@ void GB_unop__abs_uint16_int8
 
 void GB_tran__abs_uint16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_int16
@@ -5153,10 +6116,13 @@ void GB_unop__abs_uint16_int16
 
 void GB_tran__abs_uint16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_int32
@@ -5169,10 +6135,13 @@ void GB_unop__abs_uint16_int32
 
 void GB_tran__abs_uint16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_int64
@@ -5185,10 +6154,13 @@ void GB_unop__abs_uint16_int64
 
 void GB_tran__abs_uint16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_uint8
@@ -5201,10 +6173,13 @@ void GB_unop__abs_uint16_uint8
 
 void GB_tran__abs_uint16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_uint16
@@ -5217,10 +6192,13 @@ void GB_unop__abs_uint16_uint16
 
 void GB_tran__abs_uint16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_uint32
@@ -5233,10 +6211,13 @@ void GB_unop__abs_uint16_uint32
 
 void GB_tran__abs_uint16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_uint64
@@ -5249,10 +6230,13 @@ void GB_unop__abs_uint16_uint64
 
 void GB_tran__abs_uint16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_fp32
@@ -5265,10 +6249,13 @@ void GB_unop__abs_uint16_fp32
 
 void GB_tran__abs_uint16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint16_fp64
@@ -5281,10 +6268,13 @@ void GB_unop__abs_uint16_fp64
 
 void GB_tran__abs_uint16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_bool
@@ -5297,10 +6287,13 @@ void GB_unop__abs_uint32_bool
 
 void GB_tran__abs_uint32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_int8
@@ -5313,10 +6306,13 @@ void GB_unop__abs_uint32_int8
 
 void GB_tran__abs_uint32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_int16
@@ -5329,10 +6325,13 @@ void GB_unop__abs_uint32_int16
 
 void GB_tran__abs_uint32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_int32
@@ -5345,10 +6344,13 @@ void GB_unop__abs_uint32_int32
 
 void GB_tran__abs_uint32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_int64
@@ -5361,10 +6363,13 @@ void GB_unop__abs_uint32_int64
 
 void GB_tran__abs_uint32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_uint8
@@ -5377,10 +6382,13 @@ void GB_unop__abs_uint32_uint8
 
 void GB_tran__abs_uint32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_uint16
@@ -5393,10 +6401,13 @@ void GB_unop__abs_uint32_uint16
 
 void GB_tran__abs_uint32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_uint32
@@ -5409,10 +6420,13 @@ void GB_unop__abs_uint32_uint32
 
 void GB_tran__abs_uint32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_uint64
@@ -5425,10 +6439,13 @@ void GB_unop__abs_uint32_uint64
 
 void GB_tran__abs_uint32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_fp32
@@ -5441,10 +6458,13 @@ void GB_unop__abs_uint32_fp32
 
 void GB_tran__abs_uint32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint32_fp64
@@ -5457,10 +6477,13 @@ void GB_unop__abs_uint32_fp64
 
 void GB_tran__abs_uint32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_bool
@@ -5473,10 +6496,13 @@ void GB_unop__abs_uint64_bool
 
 void GB_tran__abs_uint64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_int8
@@ -5489,10 +6515,13 @@ void GB_unop__abs_uint64_int8
 
 void GB_tran__abs_uint64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_int16
@@ -5505,10 +6534,13 @@ void GB_unop__abs_uint64_int16
 
 void GB_tran__abs_uint64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_int32
@@ -5521,10 +6553,13 @@ void GB_unop__abs_uint64_int32
 
 void GB_tran__abs_uint64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_int64
@@ -5537,10 +6572,13 @@ void GB_unop__abs_uint64_int64
 
 void GB_tran__abs_uint64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_uint8
@@ -5553,10 +6591,13 @@ void GB_unop__abs_uint64_uint8
 
 void GB_tran__abs_uint64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_uint16
@@ -5569,10 +6610,13 @@ void GB_unop__abs_uint64_uint16
 
 void GB_tran__abs_uint64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_uint32
@@ -5585,10 +6629,13 @@ void GB_unop__abs_uint64_uint32
 
 void GB_tran__abs_uint64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_uint64
@@ -5601,10 +6648,13 @@ void GB_unop__abs_uint64_uint64
 
 void GB_tran__abs_uint64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_fp32
@@ -5617,10 +6667,13 @@ void GB_unop__abs_uint64_fp32
 
 void GB_tran__abs_uint64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_uint64_fp64
@@ -5633,10 +6686,13 @@ void GB_unop__abs_uint64_fp64
 
 void GB_tran__abs_uint64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_bool
@@ -5649,10 +6705,13 @@ void GB_unop__abs_fp32_bool
 
 void GB_tran__abs_fp32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_int8
@@ -5665,10 +6724,13 @@ void GB_unop__abs_fp32_int8
 
 void GB_tran__abs_fp32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_int16
@@ -5681,10 +6743,13 @@ void GB_unop__abs_fp32_int16
 
 void GB_tran__abs_fp32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_int32
@@ -5697,10 +6762,13 @@ void GB_unop__abs_fp32_int32
 
 void GB_tran__abs_fp32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_int64
@@ -5713,10 +6781,13 @@ void GB_unop__abs_fp32_int64
 
 void GB_tran__abs_fp32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_uint8
@@ -5729,10 +6800,13 @@ void GB_unop__abs_fp32_uint8
 
 void GB_tran__abs_fp32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_uint16
@@ -5745,10 +6819,13 @@ void GB_unop__abs_fp32_uint16
 
 void GB_tran__abs_fp32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_uint32
@@ -5761,10 +6838,13 @@ void GB_unop__abs_fp32_uint32
 
 void GB_tran__abs_fp32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_uint64
@@ -5777,10 +6857,13 @@ void GB_unop__abs_fp32_uint64
 
 void GB_tran__abs_fp32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_fp32
@@ -5793,10 +6876,13 @@ void GB_unop__abs_fp32_fp32
 
 void GB_tran__abs_fp32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp32_fp64
@@ -5809,10 +6895,13 @@ void GB_unop__abs_fp32_fp64
 
 void GB_tran__abs_fp32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_bool
@@ -5825,10 +6914,13 @@ void GB_unop__abs_fp64_bool
 
 void GB_tran__abs_fp64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_int8
@@ -5841,10 +6933,13 @@ void GB_unop__abs_fp64_int8
 
 void GB_tran__abs_fp64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_int16
@@ -5857,10 +6952,13 @@ void GB_unop__abs_fp64_int16
 
 void GB_tran__abs_fp64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_int32
@@ -5873,10 +6971,13 @@ void GB_unop__abs_fp64_int32
 
 void GB_tran__abs_fp64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_int64
@@ -5889,10 +6990,13 @@ void GB_unop__abs_fp64_int64
 
 void GB_tran__abs_fp64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_uint8
@@ -5905,10 +7009,13 @@ void GB_unop__abs_fp64_uint8
 
 void GB_tran__abs_fp64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_uint16
@@ -5921,10 +7028,13 @@ void GB_unop__abs_fp64_uint16
 
 void GB_tran__abs_fp64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_uint32
@@ -5937,10 +7047,13 @@ void GB_unop__abs_fp64_uint32
 
 void GB_tran__abs_fp64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_uint64
@@ -5953,10 +7066,13 @@ void GB_unop__abs_fp64_uint64
 
 void GB_tran__abs_fp64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_fp32
@@ -5969,10 +7085,13 @@ void GB_unop__abs_fp64_fp32
 
 void GB_tran__abs_fp64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__abs_fp64_fp64
@@ -5985,10 +7104,13 @@ void GB_unop__abs_fp64_fp64
 
 void GB_tran__abs_fp64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_bool
@@ -6001,10 +7123,13 @@ void GB_unop__minv_bool_bool
 
 void GB_tran__minv_bool_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_int8
@@ -6017,10 +7142,13 @@ void GB_unop__minv_bool_int8
 
 void GB_tran__minv_bool_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_int16
@@ -6033,10 +7161,13 @@ void GB_unop__minv_bool_int16
 
 void GB_tran__minv_bool_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_int32
@@ -6049,10 +7180,13 @@ void GB_unop__minv_bool_int32
 
 void GB_tran__minv_bool_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_int64
@@ -6065,10 +7199,13 @@ void GB_unop__minv_bool_int64
 
 void GB_tran__minv_bool_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_uint8
@@ -6081,10 +7218,13 @@ void GB_unop__minv_bool_uint8
 
 void GB_tran__minv_bool_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_uint16
@@ -6097,10 +7237,13 @@ void GB_unop__minv_bool_uint16
 
 void GB_tran__minv_bool_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_uint32
@@ -6113,10 +7256,13 @@ void GB_unop__minv_bool_uint32
 
 void GB_tran__minv_bool_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_uint64
@@ -6129,10 +7275,13 @@ void GB_unop__minv_bool_uint64
 
 void GB_tran__minv_bool_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_fp32
@@ -6145,10 +7294,13 @@ void GB_unop__minv_bool_fp32
 
 void GB_tran__minv_bool_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_bool_fp64
@@ -6161,10 +7313,13 @@ void GB_unop__minv_bool_fp64
 
 void GB_tran__minv_bool_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_bool
@@ -6177,10 +7332,13 @@ void GB_unop__minv_int8_bool
 
 void GB_tran__minv_int8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_int8
@@ -6193,10 +7351,13 @@ void GB_unop__minv_int8_int8
 
 void GB_tran__minv_int8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_int16
@@ -6209,10 +7370,13 @@ void GB_unop__minv_int8_int16
 
 void GB_tran__minv_int8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_int32
@@ -6225,10 +7389,13 @@ void GB_unop__minv_int8_int32
 
 void GB_tran__minv_int8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_int64
@@ -6241,10 +7408,13 @@ void GB_unop__minv_int8_int64
 
 void GB_tran__minv_int8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_uint8
@@ -6257,10 +7427,13 @@ void GB_unop__minv_int8_uint8
 
 void GB_tran__minv_int8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_uint16
@@ -6273,10 +7446,13 @@ void GB_unop__minv_int8_uint16
 
 void GB_tran__minv_int8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_uint32
@@ -6289,10 +7465,13 @@ void GB_unop__minv_int8_uint32
 
 void GB_tran__minv_int8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_uint64
@@ -6305,10 +7484,13 @@ void GB_unop__minv_int8_uint64
 
 void GB_tran__minv_int8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_fp32
@@ -6321,10 +7503,13 @@ void GB_unop__minv_int8_fp32
 
 void GB_tran__minv_int8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int8_fp64
@@ -6337,10 +7522,13 @@ void GB_unop__minv_int8_fp64
 
 void GB_tran__minv_int8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_bool
@@ -6353,10 +7541,13 @@ void GB_unop__minv_int16_bool
 
 void GB_tran__minv_int16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_int8
@@ -6369,10 +7560,13 @@ void GB_unop__minv_int16_int8
 
 void GB_tran__minv_int16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_int16
@@ -6385,10 +7579,13 @@ void GB_unop__minv_int16_int16
 
 void GB_tran__minv_int16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_int32
@@ -6401,10 +7598,13 @@ void GB_unop__minv_int16_int32
 
 void GB_tran__minv_int16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_int64
@@ -6417,10 +7617,13 @@ void GB_unop__minv_int16_int64
 
 void GB_tran__minv_int16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_uint8
@@ -6433,10 +7636,13 @@ void GB_unop__minv_int16_uint8
 
 void GB_tran__minv_int16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_uint16
@@ -6449,10 +7655,13 @@ void GB_unop__minv_int16_uint16
 
 void GB_tran__minv_int16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_uint32
@@ -6465,10 +7674,13 @@ void GB_unop__minv_int16_uint32
 
 void GB_tran__minv_int16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_uint64
@@ -6481,10 +7693,13 @@ void GB_unop__minv_int16_uint64
 
 void GB_tran__minv_int16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_fp32
@@ -6497,10 +7712,13 @@ void GB_unop__minv_int16_fp32
 
 void GB_tran__minv_int16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int16_fp64
@@ -6513,10 +7731,13 @@ void GB_unop__minv_int16_fp64
 
 void GB_tran__minv_int16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_bool
@@ -6529,10 +7750,13 @@ void GB_unop__minv_int32_bool
 
 void GB_tran__minv_int32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_int8
@@ -6545,10 +7769,13 @@ void GB_unop__minv_int32_int8
 
 void GB_tran__minv_int32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_int16
@@ -6561,10 +7788,13 @@ void GB_unop__minv_int32_int16
 
 void GB_tran__minv_int32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_int32
@@ -6577,10 +7807,13 @@ void GB_unop__minv_int32_int32
 
 void GB_tran__minv_int32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_int64
@@ -6593,10 +7826,13 @@ void GB_unop__minv_int32_int64
 
 void GB_tran__minv_int32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_uint8
@@ -6609,10 +7845,13 @@ void GB_unop__minv_int32_uint8
 
 void GB_tran__minv_int32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_uint16
@@ -6625,10 +7864,13 @@ void GB_unop__minv_int32_uint16
 
 void GB_tran__minv_int32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_uint32
@@ -6641,10 +7883,13 @@ void GB_unop__minv_int32_uint32
 
 void GB_tran__minv_int32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_uint64
@@ -6657,10 +7902,13 @@ void GB_unop__minv_int32_uint64
 
 void GB_tran__minv_int32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_fp32
@@ -6673,10 +7921,13 @@ void GB_unop__minv_int32_fp32
 
 void GB_tran__minv_int32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int32_fp64
@@ -6689,10 +7940,13 @@ void GB_unop__minv_int32_fp64
 
 void GB_tran__minv_int32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_bool
@@ -6705,10 +7959,13 @@ void GB_unop__minv_int64_bool
 
 void GB_tran__minv_int64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_int8
@@ -6721,10 +7978,13 @@ void GB_unop__minv_int64_int8
 
 void GB_tran__minv_int64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_int16
@@ -6737,10 +7997,13 @@ void GB_unop__minv_int64_int16
 
 void GB_tran__minv_int64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_int32
@@ -6753,10 +8016,13 @@ void GB_unop__minv_int64_int32
 
 void GB_tran__minv_int64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_int64
@@ -6769,10 +8035,13 @@ void GB_unop__minv_int64_int64
 
 void GB_tran__minv_int64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_uint8
@@ -6785,10 +8054,13 @@ void GB_unop__minv_int64_uint8
 
 void GB_tran__minv_int64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_uint16
@@ -6801,10 +8073,13 @@ void GB_unop__minv_int64_uint16
 
 void GB_tran__minv_int64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_uint32
@@ -6817,10 +8092,13 @@ void GB_unop__minv_int64_uint32
 
 void GB_tran__minv_int64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_uint64
@@ -6833,10 +8111,13 @@ void GB_unop__minv_int64_uint64
 
 void GB_tran__minv_int64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_fp32
@@ -6849,10 +8130,13 @@ void GB_unop__minv_int64_fp32
 
 void GB_tran__minv_int64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_int64_fp64
@@ -6865,10 +8149,13 @@ void GB_unop__minv_int64_fp64
 
 void GB_tran__minv_int64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_bool
@@ -6881,10 +8168,13 @@ void GB_unop__minv_uint8_bool
 
 void GB_tran__minv_uint8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_int8
@@ -6897,10 +8187,13 @@ void GB_unop__minv_uint8_int8
 
 void GB_tran__minv_uint8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_int16
@@ -6913,10 +8206,13 @@ void GB_unop__minv_uint8_int16
 
 void GB_tran__minv_uint8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_int32
@@ -6929,10 +8225,13 @@ void GB_unop__minv_uint8_int32
 
 void GB_tran__minv_uint8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_int64
@@ -6945,10 +8244,13 @@ void GB_unop__minv_uint8_int64
 
 void GB_tran__minv_uint8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_uint8
@@ -6961,10 +8263,13 @@ void GB_unop__minv_uint8_uint8
 
 void GB_tran__minv_uint8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_uint16
@@ -6977,10 +8282,13 @@ void GB_unop__minv_uint8_uint16
 
 void GB_tran__minv_uint8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_uint32
@@ -6993,10 +8301,13 @@ void GB_unop__minv_uint8_uint32
 
 void GB_tran__minv_uint8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_uint64
@@ -7009,10 +8320,13 @@ void GB_unop__minv_uint8_uint64
 
 void GB_tran__minv_uint8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_fp32
@@ -7025,10 +8339,13 @@ void GB_unop__minv_uint8_fp32
 
 void GB_tran__minv_uint8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint8_fp64
@@ -7041,10 +8358,13 @@ void GB_unop__minv_uint8_fp64
 
 void GB_tran__minv_uint8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_bool
@@ -7057,10 +8377,13 @@ void GB_unop__minv_uint16_bool
 
 void GB_tran__minv_uint16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_int8
@@ -7073,10 +8396,13 @@ void GB_unop__minv_uint16_int8
 
 void GB_tran__minv_uint16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_int16
@@ -7089,10 +8415,13 @@ void GB_unop__minv_uint16_int16
 
 void GB_tran__minv_uint16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_int32
@@ -7105,10 +8434,13 @@ void GB_unop__minv_uint16_int32
 
 void GB_tran__minv_uint16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_int64
@@ -7121,10 +8453,13 @@ void GB_unop__minv_uint16_int64
 
 void GB_tran__minv_uint16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_uint8
@@ -7137,10 +8472,13 @@ void GB_unop__minv_uint16_uint8
 
 void GB_tran__minv_uint16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_uint16
@@ -7153,10 +8491,13 @@ void GB_unop__minv_uint16_uint16
 
 void GB_tran__minv_uint16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_uint32
@@ -7169,10 +8510,13 @@ void GB_unop__minv_uint16_uint32
 
 void GB_tran__minv_uint16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_uint64
@@ -7185,10 +8529,13 @@ void GB_unop__minv_uint16_uint64
 
 void GB_tran__minv_uint16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_fp32
@@ -7201,10 +8548,13 @@ void GB_unop__minv_uint16_fp32
 
 void GB_tran__minv_uint16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint16_fp64
@@ -7217,10 +8567,13 @@ void GB_unop__minv_uint16_fp64
 
 void GB_tran__minv_uint16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_bool
@@ -7233,10 +8586,13 @@ void GB_unop__minv_uint32_bool
 
 void GB_tran__minv_uint32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_int8
@@ -7249,10 +8605,13 @@ void GB_unop__minv_uint32_int8
 
 void GB_tran__minv_uint32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_int16
@@ -7265,10 +8624,13 @@ void GB_unop__minv_uint32_int16
 
 void GB_tran__minv_uint32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_int32
@@ -7281,10 +8643,13 @@ void GB_unop__minv_uint32_int32
 
 void GB_tran__minv_uint32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_int64
@@ -7297,10 +8662,13 @@ void GB_unop__minv_uint32_int64
 
 void GB_tran__minv_uint32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_uint8
@@ -7313,10 +8681,13 @@ void GB_unop__minv_uint32_uint8
 
 void GB_tran__minv_uint32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_uint16
@@ -7329,10 +8700,13 @@ void GB_unop__minv_uint32_uint16
 
 void GB_tran__minv_uint32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_uint32
@@ -7345,10 +8719,13 @@ void GB_unop__minv_uint32_uint32
 
 void GB_tran__minv_uint32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_uint64
@@ -7361,10 +8738,13 @@ void GB_unop__minv_uint32_uint64
 
 void GB_tran__minv_uint32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_fp32
@@ -7377,10 +8757,13 @@ void GB_unop__minv_uint32_fp32
 
 void GB_tran__minv_uint32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint32_fp64
@@ -7393,10 +8776,13 @@ void GB_unop__minv_uint32_fp64
 
 void GB_tran__minv_uint32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_bool
@@ -7409,10 +8795,13 @@ void GB_unop__minv_uint64_bool
 
 void GB_tran__minv_uint64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_int8
@@ -7425,10 +8814,13 @@ void GB_unop__minv_uint64_int8
 
 void GB_tran__minv_uint64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_int16
@@ -7441,10 +8833,13 @@ void GB_unop__minv_uint64_int16
 
 void GB_tran__minv_uint64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_int32
@@ -7457,10 +8852,13 @@ void GB_unop__minv_uint64_int32
 
 void GB_tran__minv_uint64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_int64
@@ -7473,10 +8871,13 @@ void GB_unop__minv_uint64_int64
 
 void GB_tran__minv_uint64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_uint8
@@ -7489,10 +8890,13 @@ void GB_unop__minv_uint64_uint8
 
 void GB_tran__minv_uint64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_uint16
@@ -7505,10 +8909,13 @@ void GB_unop__minv_uint64_uint16
 
 void GB_tran__minv_uint64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_uint32
@@ -7521,10 +8928,13 @@ void GB_unop__minv_uint64_uint32
 
 void GB_tran__minv_uint64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_uint64
@@ -7537,10 +8947,13 @@ void GB_unop__minv_uint64_uint64
 
 void GB_tran__minv_uint64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_fp32
@@ -7553,10 +8966,13 @@ void GB_unop__minv_uint64_fp32
 
 void GB_tran__minv_uint64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_uint64_fp64
@@ -7569,10 +8985,13 @@ void GB_unop__minv_uint64_fp64
 
 void GB_tran__minv_uint64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_bool
@@ -7585,10 +9004,13 @@ void GB_unop__minv_fp32_bool
 
 void GB_tran__minv_fp32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_int8
@@ -7601,10 +9023,13 @@ void GB_unop__minv_fp32_int8
 
 void GB_tran__minv_fp32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_int16
@@ -7617,10 +9042,13 @@ void GB_unop__minv_fp32_int16
 
 void GB_tran__minv_fp32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_int32
@@ -7633,10 +9061,13 @@ void GB_unop__minv_fp32_int32
 
 void GB_tran__minv_fp32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_int64
@@ -7649,10 +9080,13 @@ void GB_unop__minv_fp32_int64
 
 void GB_tran__minv_fp32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_uint8
@@ -7665,10 +9099,13 @@ void GB_unop__minv_fp32_uint8
 
 void GB_tran__minv_fp32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_uint16
@@ -7681,10 +9118,13 @@ void GB_unop__minv_fp32_uint16
 
 void GB_tran__minv_fp32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_uint32
@@ -7697,10 +9137,13 @@ void GB_unop__minv_fp32_uint32
 
 void GB_tran__minv_fp32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_uint64
@@ -7713,10 +9156,13 @@ void GB_unop__minv_fp32_uint64
 
 void GB_tran__minv_fp32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_fp32
@@ -7729,10 +9175,13 @@ void GB_unop__minv_fp32_fp32
 
 void GB_tran__minv_fp32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp32_fp64
@@ -7745,10 +9194,13 @@ void GB_unop__minv_fp32_fp64
 
 void GB_tran__minv_fp32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_bool
@@ -7761,10 +9213,13 @@ void GB_unop__minv_fp64_bool
 
 void GB_tran__minv_fp64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_int8
@@ -7777,10 +9232,13 @@ void GB_unop__minv_fp64_int8
 
 void GB_tran__minv_fp64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_int16
@@ -7793,10 +9251,13 @@ void GB_unop__minv_fp64_int16
 
 void GB_tran__minv_fp64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_int32
@@ -7809,10 +9270,13 @@ void GB_unop__minv_fp64_int32
 
 void GB_tran__minv_fp64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_int64
@@ -7825,10 +9289,13 @@ void GB_unop__minv_fp64_int64
 
 void GB_tran__minv_fp64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_uint8
@@ -7841,10 +9308,13 @@ void GB_unop__minv_fp64_uint8
 
 void GB_tran__minv_fp64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_uint16
@@ -7857,10 +9327,13 @@ void GB_unop__minv_fp64_uint16
 
 void GB_tran__minv_fp64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_uint32
@@ -7873,10 +9346,13 @@ void GB_unop__minv_fp64_uint32
 
 void GB_tran__minv_fp64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_uint64
@@ -7889,10 +9365,13 @@ void GB_unop__minv_fp64_uint64
 
 void GB_tran__minv_fp64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_fp32
@@ -7905,10 +9384,13 @@ void GB_unop__minv_fp64_fp32
 
 void GB_tran__minv_fp64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__minv_fp64_fp64
@@ -7921,10 +9403,13 @@ void GB_unop__minv_fp64_fp64
 
 void GB_tran__minv_fp64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_bool
@@ -7937,10 +9422,13 @@ void GB_unop__lnot_bool_bool
 
 void GB_tran__lnot_bool_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_int8
@@ -7953,10 +9441,13 @@ void GB_unop__lnot_bool_int8
 
 void GB_tran__lnot_bool_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_int16
@@ -7969,10 +9460,13 @@ void GB_unop__lnot_bool_int16
 
 void GB_tran__lnot_bool_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_int32
@@ -7985,10 +9479,13 @@ void GB_unop__lnot_bool_int32
 
 void GB_tran__lnot_bool_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_int64
@@ -8001,10 +9498,13 @@ void GB_unop__lnot_bool_int64
 
 void GB_tran__lnot_bool_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_uint8
@@ -8017,10 +9517,13 @@ void GB_unop__lnot_bool_uint8
 
 void GB_tran__lnot_bool_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_uint16
@@ -8033,10 +9536,13 @@ void GB_unop__lnot_bool_uint16
 
 void GB_tran__lnot_bool_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_uint32
@@ -8049,10 +9555,13 @@ void GB_unop__lnot_bool_uint32
 
 void GB_tran__lnot_bool_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_uint64
@@ -8065,10 +9574,13 @@ void GB_unop__lnot_bool_uint64
 
 void GB_tran__lnot_bool_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_fp32
@@ -8081,10 +9593,13 @@ void GB_unop__lnot_bool_fp32
 
 void GB_tran__lnot_bool_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_bool_fp64
@@ -8097,10 +9612,13 @@ void GB_unop__lnot_bool_fp64
 
 void GB_tran__lnot_bool_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    bool *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_bool
@@ -8113,10 +9631,13 @@ void GB_unop__lnot_int8_bool
 
 void GB_tran__lnot_int8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_int8
@@ -8129,10 +9650,13 @@ void GB_unop__lnot_int8_int8
 
 void GB_tran__lnot_int8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_int16
@@ -8145,10 +9669,13 @@ void GB_unop__lnot_int8_int16
 
 void GB_tran__lnot_int8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_int32
@@ -8161,10 +9688,13 @@ void GB_unop__lnot_int8_int32
 
 void GB_tran__lnot_int8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_int64
@@ -8177,10 +9707,13 @@ void GB_unop__lnot_int8_int64
 
 void GB_tran__lnot_int8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_uint8
@@ -8193,10 +9726,13 @@ void GB_unop__lnot_int8_uint8
 
 void GB_tran__lnot_int8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_uint16
@@ -8209,10 +9745,13 @@ void GB_unop__lnot_int8_uint16
 
 void GB_tran__lnot_int8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_uint32
@@ -8225,10 +9764,13 @@ void GB_unop__lnot_int8_uint32
 
 void GB_tran__lnot_int8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_uint64
@@ -8241,10 +9783,13 @@ void GB_unop__lnot_int8_uint64
 
 void GB_tran__lnot_int8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_fp32
@@ -8257,10 +9802,13 @@ void GB_unop__lnot_int8_fp32
 
 void GB_tran__lnot_int8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int8_fp64
@@ -8273,10 +9821,13 @@ void GB_unop__lnot_int8_fp64
 
 void GB_tran__lnot_int8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_bool
@@ -8289,10 +9840,13 @@ void GB_unop__lnot_int16_bool
 
 void GB_tran__lnot_int16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_int8
@@ -8305,10 +9859,13 @@ void GB_unop__lnot_int16_int8
 
 void GB_tran__lnot_int16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_int16
@@ -8321,10 +9878,13 @@ void GB_unop__lnot_int16_int16
 
 void GB_tran__lnot_int16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_int32
@@ -8337,10 +9897,13 @@ void GB_unop__lnot_int16_int32
 
 void GB_tran__lnot_int16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_int64
@@ -8353,10 +9916,13 @@ void GB_unop__lnot_int16_int64
 
 void GB_tran__lnot_int16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_uint8
@@ -8369,10 +9935,13 @@ void GB_unop__lnot_int16_uint8
 
 void GB_tran__lnot_int16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_uint16
@@ -8385,10 +9954,13 @@ void GB_unop__lnot_int16_uint16
 
 void GB_tran__lnot_int16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_uint32
@@ -8401,10 +9973,13 @@ void GB_unop__lnot_int16_uint32
 
 void GB_tran__lnot_int16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_uint64
@@ -8417,10 +9992,13 @@ void GB_unop__lnot_int16_uint64
 
 void GB_tran__lnot_int16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_fp32
@@ -8433,10 +10011,13 @@ void GB_unop__lnot_int16_fp32
 
 void GB_tran__lnot_int16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int16_fp64
@@ -8449,10 +10030,13 @@ void GB_unop__lnot_int16_fp64
 
 void GB_tran__lnot_int16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_bool
@@ -8465,10 +10049,13 @@ void GB_unop__lnot_int32_bool
 
 void GB_tran__lnot_int32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_int8
@@ -8481,10 +10068,13 @@ void GB_unop__lnot_int32_int8
 
 void GB_tran__lnot_int32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_int16
@@ -8497,10 +10087,13 @@ void GB_unop__lnot_int32_int16
 
 void GB_tran__lnot_int32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_int32
@@ -8513,10 +10106,13 @@ void GB_unop__lnot_int32_int32
 
 void GB_tran__lnot_int32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_int64
@@ -8529,10 +10125,13 @@ void GB_unop__lnot_int32_int64
 
 void GB_tran__lnot_int32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_uint8
@@ -8545,10 +10144,13 @@ void GB_unop__lnot_int32_uint8
 
 void GB_tran__lnot_int32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_uint16
@@ -8561,10 +10163,13 @@ void GB_unop__lnot_int32_uint16
 
 void GB_tran__lnot_int32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_uint32
@@ -8577,10 +10182,13 @@ void GB_unop__lnot_int32_uint32
 
 void GB_tran__lnot_int32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_uint64
@@ -8593,10 +10201,13 @@ void GB_unop__lnot_int32_uint64
 
 void GB_tran__lnot_int32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_fp32
@@ -8609,10 +10220,13 @@ void GB_unop__lnot_int32_fp32
 
 void GB_tran__lnot_int32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int32_fp64
@@ -8625,10 +10239,13 @@ void GB_unop__lnot_int32_fp64
 
 void GB_tran__lnot_int32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_bool
@@ -8641,10 +10258,13 @@ void GB_unop__lnot_int64_bool
 
 void GB_tran__lnot_int64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_int8
@@ -8657,10 +10277,13 @@ void GB_unop__lnot_int64_int8
 
 void GB_tran__lnot_int64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_int16
@@ -8673,10 +10296,13 @@ void GB_unop__lnot_int64_int16
 
 void GB_tran__lnot_int64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_int32
@@ -8689,10 +10315,13 @@ void GB_unop__lnot_int64_int32
 
 void GB_tran__lnot_int64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_int64
@@ -8705,10 +10334,13 @@ void GB_unop__lnot_int64_int64
 
 void GB_tran__lnot_int64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_uint8
@@ -8721,10 +10353,13 @@ void GB_unop__lnot_int64_uint8
 
 void GB_tran__lnot_int64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_uint16
@@ -8737,10 +10372,13 @@ void GB_unop__lnot_int64_uint16
 
 void GB_tran__lnot_int64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_uint32
@@ -8753,10 +10391,13 @@ void GB_unop__lnot_int64_uint32
 
 void GB_tran__lnot_int64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_uint64
@@ -8769,10 +10410,13 @@ void GB_unop__lnot_int64_uint64
 
 void GB_tran__lnot_int64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_fp32
@@ -8785,10 +10429,13 @@ void GB_unop__lnot_int64_fp32
 
 void GB_tran__lnot_int64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_int64_fp64
@@ -8801,10 +10448,13 @@ void GB_unop__lnot_int64_fp64
 
 void GB_tran__lnot_int64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_bool
@@ -8817,10 +10467,13 @@ void GB_unop__lnot_uint8_bool
 
 void GB_tran__lnot_uint8_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_int8
@@ -8833,10 +10486,13 @@ void GB_unop__lnot_uint8_int8
 
 void GB_tran__lnot_uint8_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_int16
@@ -8849,10 +10505,13 @@ void GB_unop__lnot_uint8_int16
 
 void GB_tran__lnot_uint8_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_int32
@@ -8865,10 +10524,13 @@ void GB_unop__lnot_uint8_int32
 
 void GB_tran__lnot_uint8_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_int64
@@ -8881,10 +10543,13 @@ void GB_unop__lnot_uint8_int64
 
 void GB_tran__lnot_uint8_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_uint8
@@ -8897,10 +10562,13 @@ void GB_unop__lnot_uint8_uint8
 
 void GB_tran__lnot_uint8_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_uint16
@@ -8913,10 +10581,13 @@ void GB_unop__lnot_uint8_uint16
 
 void GB_tran__lnot_uint8_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_uint32
@@ -8929,10 +10600,13 @@ void GB_unop__lnot_uint8_uint32
 
 void GB_tran__lnot_uint8_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_uint64
@@ -8945,10 +10619,13 @@ void GB_unop__lnot_uint8_uint64
 
 void GB_tran__lnot_uint8_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_fp32
@@ -8961,10 +10638,13 @@ void GB_unop__lnot_uint8_fp32
 
 void GB_tran__lnot_uint8_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint8_fp64
@@ -8977,10 +10657,13 @@ void GB_unop__lnot_uint8_fp64
 
 void GB_tran__lnot_uint8_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint8_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_bool
@@ -8993,10 +10676,13 @@ void GB_unop__lnot_uint16_bool
 
 void GB_tran__lnot_uint16_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_int8
@@ -9009,10 +10695,13 @@ void GB_unop__lnot_uint16_int8
 
 void GB_tran__lnot_uint16_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_int16
@@ -9025,10 +10714,13 @@ void GB_unop__lnot_uint16_int16
 
 void GB_tran__lnot_uint16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_int32
@@ -9041,10 +10733,13 @@ void GB_unop__lnot_uint16_int32
 
 void GB_tran__lnot_uint16_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_int64
@@ -9057,10 +10752,13 @@ void GB_unop__lnot_uint16_int64
 
 void GB_tran__lnot_uint16_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_uint8
@@ -9073,10 +10771,13 @@ void GB_unop__lnot_uint16_uint8
 
 void GB_tran__lnot_uint16_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_uint16
@@ -9089,10 +10790,13 @@ void GB_unop__lnot_uint16_uint16
 
 void GB_tran__lnot_uint16_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_uint32
@@ -9105,10 +10809,13 @@ void GB_unop__lnot_uint16_uint32
 
 void GB_tran__lnot_uint16_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_uint64
@@ -9121,10 +10828,13 @@ void GB_unop__lnot_uint16_uint64
 
 void GB_tran__lnot_uint16_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_fp32
@@ -9137,10 +10847,13 @@ void GB_unop__lnot_uint16_fp32
 
 void GB_tran__lnot_uint16_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint16_fp64
@@ -9153,10 +10866,13 @@ void GB_unop__lnot_uint16_fp64
 
 void GB_tran__lnot_uint16_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_bool
@@ -9169,10 +10885,13 @@ void GB_unop__lnot_uint32_bool
 
 void GB_tran__lnot_uint32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_int8
@@ -9185,10 +10904,13 @@ void GB_unop__lnot_uint32_int8
 
 void GB_tran__lnot_uint32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_int16
@@ -9201,10 +10923,13 @@ void GB_unop__lnot_uint32_int16
 
 void GB_tran__lnot_uint32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_int32
@@ -9217,10 +10942,13 @@ void GB_unop__lnot_uint32_int32
 
 void GB_tran__lnot_uint32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_int64
@@ -9233,10 +10961,13 @@ void GB_unop__lnot_uint32_int64
 
 void GB_tran__lnot_uint32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_uint8
@@ -9249,10 +10980,13 @@ void GB_unop__lnot_uint32_uint8
 
 void GB_tran__lnot_uint32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_uint16
@@ -9265,10 +10999,13 @@ void GB_unop__lnot_uint32_uint16
 
 void GB_tran__lnot_uint32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_uint32
@@ -9281,10 +11018,13 @@ void GB_unop__lnot_uint32_uint32
 
 void GB_tran__lnot_uint32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_uint64
@@ -9297,10 +11037,13 @@ void GB_unop__lnot_uint32_uint64
 
 void GB_tran__lnot_uint32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_fp32
@@ -9313,10 +11056,13 @@ void GB_unop__lnot_uint32_fp32
 
 void GB_tran__lnot_uint32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint32_fp64
@@ -9329,10 +11075,13 @@ void GB_unop__lnot_uint32_fp64
 
 void GB_tran__lnot_uint32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint32_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_bool
@@ -9345,10 +11094,13 @@ void GB_unop__lnot_uint64_bool
 
 void GB_tran__lnot_uint64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_int8
@@ -9361,10 +11113,13 @@ void GB_unop__lnot_uint64_int8
 
 void GB_tran__lnot_uint64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_int16
@@ -9377,10 +11132,13 @@ void GB_unop__lnot_uint64_int16
 
 void GB_tran__lnot_uint64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_int32
@@ -9393,10 +11151,13 @@ void GB_unop__lnot_uint64_int32
 
 void GB_tran__lnot_uint64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_int64
@@ -9409,10 +11170,13 @@ void GB_unop__lnot_uint64_int64
 
 void GB_tran__lnot_uint64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_uint8
@@ -9425,10 +11189,13 @@ void GB_unop__lnot_uint64_uint8
 
 void GB_tran__lnot_uint64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_uint16
@@ -9441,10 +11208,13 @@ void GB_unop__lnot_uint64_uint16
 
 void GB_tran__lnot_uint64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_uint32
@@ -9457,10 +11227,13 @@ void GB_unop__lnot_uint64_uint32
 
 void GB_tran__lnot_uint64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_uint64
@@ -9473,10 +11246,13 @@ void GB_unop__lnot_uint64_uint64
 
 void GB_tran__lnot_uint64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_fp32
@@ -9489,10 +11265,13 @@ void GB_unop__lnot_uint64_fp32
 
 void GB_tran__lnot_uint64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_uint64_fp64
@@ -9505,10 +11284,13 @@ void GB_unop__lnot_uint64_fp64
 
 void GB_tran__lnot_uint64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    uint64_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_bool
@@ -9521,10 +11303,13 @@ void GB_unop__lnot_fp32_bool
 
 void GB_tran__lnot_fp32_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_int8
@@ -9537,10 +11322,13 @@ void GB_unop__lnot_fp32_int8
 
 void GB_tran__lnot_fp32_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_int16
@@ -9553,10 +11341,13 @@ void GB_unop__lnot_fp32_int16
 
 void GB_tran__lnot_fp32_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_int32
@@ -9569,10 +11360,13 @@ void GB_unop__lnot_fp32_int32
 
 void GB_tran__lnot_fp32_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_int64
@@ -9585,10 +11379,13 @@ void GB_unop__lnot_fp32_int64
 
 void GB_tran__lnot_fp32_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_uint8
@@ -9601,10 +11398,13 @@ void GB_unop__lnot_fp32_uint8
 
 void GB_tran__lnot_fp32_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_uint16
@@ -9617,10 +11417,13 @@ void GB_unop__lnot_fp32_uint16
 
 void GB_tran__lnot_fp32_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_uint32
@@ -9633,10 +11436,13 @@ void GB_unop__lnot_fp32_uint32
 
 void GB_tran__lnot_fp32_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_uint64
@@ -9649,10 +11455,13 @@ void GB_unop__lnot_fp32_uint64
 
 void GB_tran__lnot_fp32_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_fp32
@@ -9665,10 +11474,13 @@ void GB_unop__lnot_fp32_fp32
 
 void GB_tran__lnot_fp32_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp32_fp64
@@ -9681,10 +11493,13 @@ void GB_unop__lnot_fp32_fp64
 
 void GB_tran__lnot_fp32_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    float *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_bool
@@ -9697,10 +11512,13 @@ void GB_unop__lnot_fp64_bool
 
 void GB_tran__lnot_fp64_bool
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_int8
@@ -9713,10 +11531,13 @@ void GB_unop__lnot_fp64_int8
 
 void GB_tran__lnot_fp64_int8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_int16
@@ -9729,10 +11550,13 @@ void GB_unop__lnot_fp64_int16
 
 void GB_tran__lnot_fp64_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_int32
@@ -9745,10 +11569,13 @@ void GB_unop__lnot_fp64_int32
 
 void GB_tran__lnot_fp64_int32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_int64
@@ -9761,10 +11588,13 @@ void GB_unop__lnot_fp64_int64
 
 void GB_tran__lnot_fp64_int64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_uint8
@@ -9777,10 +11607,13 @@ void GB_unop__lnot_fp64_uint8
 
 void GB_tran__lnot_fp64_uint8
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_uint16
@@ -9793,10 +11626,13 @@ void GB_unop__lnot_fp64_uint16
 
 void GB_tran__lnot_fp64_uint16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_uint32
@@ -9809,10 +11645,13 @@ void GB_unop__lnot_fp64_uint32
 
 void GB_tran__lnot_fp64_uint32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_uint64
@@ -9825,10 +11664,13 @@ void GB_unop__lnot_fp64_uint64
 
 void GB_tran__lnot_fp64_uint64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_fp32
@@ -9841,10 +11683,13 @@ void GB_unop__lnot_fp64_fp32
 
 void GB_tran__lnot_fp64_fp32
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 
 void GB_unop__lnot_fp64_fp64
@@ -9857,9 +11702,12 @@ void GB_unop__lnot_fp64_fp64
 
 void GB_tran__lnot_fp64_fp64
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    double *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 ) ;
 

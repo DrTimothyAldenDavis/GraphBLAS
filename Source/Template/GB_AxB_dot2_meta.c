@@ -23,7 +23,8 @@
     const int64_t *restrict Bi = B->i ;
     int64_t bvlen = B->vlen ;
 
-    // create the iterator for B
+    // create the iterator for B.  Since the iterator is a read-only object
+    // after initialization with GBI1_init, it can be shared by all threads.
     GBI_single_iterator Iter ;
     int64_t B_slice [nbslice+1] ;
     GB_pslice (B_slice, B, nbslice) ;
@@ -54,8 +55,6 @@
         GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
         size_t msize = M->type->size ;
         const int64_t mnvec = M->nvec ;
-        int64_t mpleft = 0 ;
-        int64_t mpright = mnvec - 1 ;
         bool M_is_hyper = GB_IS_HYPER (M) ;
 
         if (Mask_comp)

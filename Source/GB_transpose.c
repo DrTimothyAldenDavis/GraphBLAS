@@ -26,9 +26,12 @@
 // If A_in is not NULL and Chandle is NULL, then A is modified in place, and
 // the A_in matrix is not freed when done.
 
-// PARALLEL: TODO.a few parallel loops; most work is in the qsort or bucket
-// sort.  Need to determine when enough threads are available to do a parallel
-// qsort.  The bucket sort is likely sequential.
+// PARALLEL: mostly done.  The bucket sort is parallel, but not highly
+// scalable.  If e=nnz(A) and A is m-by-n, then at most O(e/n) threads are
+// used.  For many matrices, e is O(n), although the constant can be high.  The
+// qsort method is more scalable, but the parallel qsort is still in progress.
+// Once that is done, need a better automatic selection between the two methods
+// (also add a new field to the descriptor to choose the method).
 
 #include "GB.h"
 
@@ -370,7 +373,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C->p = Cp ; C->p_shallow = false ;
 
         // fill the vector pointers C->p
-        #pragma omp parallel for num_threads(nthreads)
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k <= anz ; k++)
         { 
             Cp [k] = k ;
@@ -546,7 +549,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // select the method
         //----------------------------------------------------------------------
 
-        // FUTURE: give the user control over which transpose method to use
+        // TODO: add a descriptor to select the method
 
         // for the qsort method, if the transpose is done in place and A->i is
         // not shallow, A->i can be used and then freed.  Otherwise, A->i is
@@ -570,6 +573,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             //------------------------------------------------------------------
             // select the method that uses the least memory
             //------------------------------------------------------------------
+            
+            // TODO this selection does not account for parallelism
 
             // Both memory computations below include the output matrix C, but
             // not the memory used for the input matrix.  In general, the qsort
@@ -671,6 +676,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             //------------------------------------------------------------------
             // memory usage for transpose via bucket sort
             //------------------------------------------------------------------
+
+            // TODO: parallelism increases the workspace needed
 
             // Total memory usage is O(avlen+anz), with simple constants:
 

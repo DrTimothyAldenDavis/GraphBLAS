@@ -74,7 +74,8 @@
 
             // find vector j in M
             int64_t pM, pM_end ;
-            GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ;
+            int64_t mpleft = 0 ;
+            GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mnvec-1, j, &pM, &pM_end) ;
 
             //------------------------------------------------------------------
             // C(:,j)<!M(:,j)> = A'*B(:,j)

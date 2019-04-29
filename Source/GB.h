@@ -387,6 +387,87 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 #define GBd "%" PRId64
 
 //------------------------------------------------------------------------------
+// Global access functions
+//------------------------------------------------------------------------------
+
+void     GB_Global_user_multithreaded_set (bool user_multithreaded) ;
+bool     GB_Global_user_multithreaded_get ( ) ;
+
+void     GB_Global_queue_head_set (void *p) ;
+void  *  GB_Global_queue_head_get ( ) ;
+
+void     GB_Global_mode_set (GrB_Mode mode) ;
+GrB_Mode GB_Global_mode_get ( ) ;
+
+void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
+bool     GB_Global_GrB_init_called_get ( ) ;
+
+void     GB_Global_nthreads_max_set (int nthreads_max) ;
+int      GB_Global_nthreads_max_get ( ) ;
+
+void     GB_Global_hyper_ratio_set (double hyper_ratio) ;
+double   GB_Global_hyper_ratio_get ( ) ;
+
+void     GB_Global_is_csc_set (bool is_csc) ;
+double   GB_Global_is_csc_get ( ) ;
+
+void     GB_Global_Saunas_set (int id, GB_Sauna Sauna) ;
+GB_Sauna GB_Global_Saunas_get (int id) ;
+
+bool     GB_Global_Sauna_in_use_get (int id) ;
+void     GB_Global_Sauna_in_use_set (int id, bool in_use) ;
+
+void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
+void     GB_Global_abort_function ( ) ;
+
+void     GB_Global_malloc_function_set
+         (
+             void * (* malloc_function) (size_t)
+         ) ;
+void  *  GB_Global_malloc_function (size_t size) ;
+
+void     GB_Global_calloc_function_set
+         (
+             void * (* calloc_function) (size_t, size_t)
+         ) ;
+void  *  GB_Global_calloc_function (size_t count, size_t size) ;
+
+void     GB_Global_realloc_function_set
+         (
+             void * (* realloc_function) (void *, size_t)
+         ) ;
+void  *  GB_Global_realloc_function (void *p, size_t size) ;
+
+void     GB_Global_free_function_set (void (* free_function) (void *)) ;
+void     GB_Global_free_function (void *p) ;
+
+void     GB_Global_malloc_is_thread_safe_set
+         (
+            bool malloc_is_thread_safe
+         ) ;
+bool     GB_Global_malloc_is_thread_safe_get ( ) ;
+
+void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
+bool     GB_Global_malloc_tracking_get ( ) ;
+
+void     GB_Global_nmalloc_clear ( ) ;
+int64_t  GB_Global_nmalloc_get ( ) ;
+int64_t  GB_Global_nmalloc_increment ( ) ;
+int64_t  GB_Global_nmalloc_decrement ( ) ;
+
+void     GB_Global_malloc_debug_set (bool malloc_debug) ;
+bool     GB_Global_malloc_debug_get ( ) ;
+
+void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
+bool     GB_Global_malloc_debug_count_decrement ( ) ;
+
+void     GB_Global_inuse_clear ( ) ;
+void     GB_Global_inuse_increment (int64_t s) ;
+void     GB_Global_inuse_decrement (int64_t s) ;
+int64_t  GB_Global_inuse_get ( ) ;
+int64_t  GB_Global_maxused_get ( ) ;
+
+//------------------------------------------------------------------------------
 // debugging definitions
 //------------------------------------------------------------------------------
 
@@ -1274,26 +1355,6 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     const bool C_is_csc,        // format of output matrix C
     const GrB_Matrix A,         // input matrix
     const GrB_UnaryOp op,       // operator to apply, NULL if no operator
-    GB_Context Context
-) ;
-
-void GB_transpose_ix        // transpose the pattern and values of a matrix
-(
-    int64_t *Rp,            // size m+1, input: row pointers, shifted on output
-    int64_t *Ri,            // size cnz, output column indices
-    GB_void *Rx,            // size cnz, output numerical values, type R_type
-    const GrB_Type R_type,  // type of output R (do typecasting into R)
-    const GrB_Matrix A,     // input matrix
-    GB_Context Context
-) ;
-
-void GB_transpose_op        // transpose and apply an operator to a matrix
-(
-    int64_t *Rp,            // size m+1, input: row pointers, shifted on output
-    int64_t *Ri,            // size cnz, output column indices
-    GB_void *Rx,            // size cnz, output values, type op->ztype
-    const GrB_UnaryOp op,   // operator to apply, NULL if no operator
-    const GrB_Matrix A,     // input matrix
     GB_Context Context
 ) ;
 
@@ -2608,88 +2669,6 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     GrB_Matrix A,               // matrix to conform
     GB_Context Context
 ) ;
-
-//------------------------------------------------------------------------------
-// Global access functions
-//------------------------------------------------------------------------------
-
-void     GB_Global_user_multithreaded_set (bool user_multithreaded) ;
-bool     GB_Global_user_multithreaded_get ( ) ;
-
-void     GB_Global_queue_head_set (void *p) ;
-void  *  GB_Global_queue_head_get ( ) ;
-
-void     GB_Global_mode_set (GrB_Mode mode) ;
-GrB_Mode GB_Global_mode_get ( ) ;
-
-void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
-bool     GB_Global_GrB_init_called_get ( ) ;
-
-void     GB_Global_nthreads_max_set (int nthreads_max) ;
-int      GB_Global_nthreads_max_get ( ) ;
-
-void     GB_Global_hyper_ratio_set (double hyper_ratio) ;
-double   GB_Global_hyper_ratio_get ( ) ;
-
-void     GB_Global_is_csc_set (bool is_csc) ;
-double   GB_Global_is_csc_get ( ) ;
-
-void     GB_Global_Saunas_set (int id, GB_Sauna Sauna) ;
-GB_Sauna GB_Global_Saunas_get (int id) ;
-
-bool     GB_Global_Sauna_in_use_get (int id) ;
-void     GB_Global_Sauna_in_use_set (int id, bool in_use) ;
-
-void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
-void     GB_Global_abort_function ( ) ;
-
-void     GB_Global_malloc_function_set
-         (
-             void * (* malloc_function) (size_t)
-         ) ;
-void  *  GB_Global_malloc_function (size_t size) ;
-
-void     GB_Global_calloc_function_set
-         (
-             void * (* calloc_function) (size_t, size_t)
-         ) ;
-void  *  GB_Global_calloc_function (size_t count, size_t size) ;
-
-void     GB_Global_realloc_function_set
-         (
-             void * (* realloc_function) (void *, size_t)
-         ) ;
-void  *  GB_Global_realloc_function (void *p, size_t size) ;
-
-void     GB_Global_free_function_set (void (* free_function) (void *)) ;
-void     GB_Global_free_function (void *p) ;
-
-void     GB_Global_malloc_is_thread_safe_set
-         (
-            bool malloc_is_thread_safe
-         ) ;
-bool     GB_Global_malloc_is_thread_safe_get ( ) ;
-
-void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
-bool     GB_Global_malloc_tracking_get ( ) ;
-
-void     GB_Global_nmalloc_clear ( ) ;
-int64_t  GB_Global_nmalloc_get ( ) ;
-int64_t  GB_Global_nmalloc_increment ( ) ;
-int64_t  GB_Global_nmalloc_decrement ( ) ;
-
-void     GB_Global_malloc_debug_set (bool malloc_debug) ;
-bool     GB_Global_malloc_debug_get ( ) ;
-
-void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
-bool     GB_Global_malloc_debug_count_decrement ( ) ;
-
-void     GB_Global_inuse_clear ( ) ;
-void     GB_Global_inuse_increment (int64_t s) ;
-void     GB_Global_inuse_decrement (int64_t s) ;
-int64_t  GB_Global_inuse_get ( ) ;
-int64_t  GB_Global_maxused_get ( ) ;
-
 
 //------------------------------------------------------------------------------
 // critical section for user threads
@@ -6722,6 +6701,31 @@ static inline int64_t GB_Sauna_reset
     (*nrows) = GB_NROWS (*A) ;                                  \
     (*ncols) = GB_NCOLS (*A) ;                                  \
     (*nvals) = GB_NNZ (*A) ;
+
+//------------------------------------------------------------------------------
+
+void GB_transpose_ix            // transpose the pattern and values of a matrix
+(
+    GrB_Matrix C,                       // output matrix
+    const GrB_Matrix A,                 // input matrix
+    int64_t **Rowcounts,                // Rowcounts [naslice]
+    GBI_single_iterator Iter,           // iterator for the matrix A
+    const int64_t *restrict A_slice,    // defines how A is sliced
+    int naslice,                        // # of slices of A
+    int nthreads                        // # of threads to use
+) ;
+
+void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
+(
+    GrB_Matrix C,                       // output matrix
+    const GrB_UnaryOp op,               // operator to apply
+    const GrB_Matrix A,                 // input matrix
+    int64_t **Rowcounts,                // Rowcounts [naslice]
+    GBI_single_iterator Iter,           // iterator for the matrix A
+    const int64_t *restrict A_slice,    // defines how A is sliced
+    int naslice,                        // # of slices of A
+    int nthreads                        // # of threads to use
+) ;
 
 #endif
 

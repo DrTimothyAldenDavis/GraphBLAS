@@ -178,7 +178,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
     // cumulative sum of counts in each column
     // TODO skip if naslice == 1
-    #pragma omp parallel for num_threads(nthreads)
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t k = 0 ; k < cnvec ; k++)
     {
         int64_t s = 0 ;

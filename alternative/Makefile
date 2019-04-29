@@ -13,7 +13,9 @@
 # CC = clang
 # CC = xlc
 # CC = gcc-8
-  CC = icc
+  CC = icc -mp1
+
+# note that -mp1 is essential for icc, for proper Inf and NaN behavior.
 
 SRC = ../Source/*.c ../Source/Generated/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h

@@ -108,6 +108,7 @@ GrB_Info GB_builder
         // It also keeps track of where the numerical value of the tuple can be
         // found; it is in S[k] for the tuple (i,k) or (j,i,k), regardless of
         // where the tuple appears in the list after it is sorted.
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < len ; k++)
         { 
             kwork [k] = k ;
@@ -143,6 +144,7 @@ GrB_Info GB_builder
     int64_t ilast = -1 ;
     int64_t jlast = -1 ;
 
+    // TODO do this in parallel
     for (int64_t t = 0 ; t < len ; t++)
     {
         // get the t-th tuple.  No need to look up position k in kwork [t]
@@ -222,6 +224,7 @@ GrB_Info GB_builder
     tnvec = 0 ;
     jlast = -1 ;
 
+    // TODO do this in parallel
     for (int64_t t = 0 ; t < len ; t++)
     {
         // get the t-th tuple.  No need to look up position k in kwork [t]

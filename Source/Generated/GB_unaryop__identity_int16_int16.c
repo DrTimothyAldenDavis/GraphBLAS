@@ -23,6 +23,12 @@
 // cast:     int16_t cij = aij
 // unaryop:  cij = aij
 
+#define GB_ATYPE \
+    int16_t
+
+#define GB_CTYPE \
+    int16_t
+
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA)  \
     int16_t aij = Ax [pA]
@@ -37,8 +43,18 @@
 #define GB_CASTING(z, x)   \
     int16_t z = x ;
 
+// cij = op (cast (aij))
+#define GB_CAST_OP(pC,pA)           \
+{                                   \
+    /* aij = Ax [pA] */             \
+    GB_GETA (aij, Ax, pA) ;         \
+    /* Cx [pC] = op (cast (aij)) */ \
+    GB_CASTING (x, aij) ;           \
+    GB_OP (GB_CX (pC), x) ;         \
+}
+
 //------------------------------------------------------------------------------
-// Cx = op(cast(Ax)), apply a unary operator
+// Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
 void GB_unop__identity_int16_int16
@@ -49,23 +65,30 @@ void GB_unop__identity_int16_int16
     int nthreads
 )
 { 
-    #include "GB_unaryop_apply_op.c"
+    #pragma omp parallel for num_threads(nthreads)
+    for (int64_t p = 0 ; p < anz ; p++)
+    {
+        GB_CAST_OP (p, p) ;
+    }
 }
 
 //------------------------------------------------------------------------------
-// C = op(cast(A')), transpose, typecast, and apply a unary operator
+// C = op (cast (A')): transpose, typecast, and apply a unary operator
 //------------------------------------------------------------------------------
 
 void GB_tran__identity_int16_int16
 (
-    int64_t *restrict Cp,
-    int64_t *restrict Ci,
-    int16_t *restrict Cx,
-    const GrB_Matrix A
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    int64_t **Rowcounts,
+    GBI_single_iterator Iter,
+    const int64_t *restrict A_slice,
+    int naslice,
+    int nthreads
 )
 { 
-    int16_t *restrict Ax = A->x ;
-    #include "GB_unaryop_transpose_op.c"
+    #define GB_PHASE_2_OF_2
+    #include "GB_unaryop_transpose.c"
 }
 
 #endif

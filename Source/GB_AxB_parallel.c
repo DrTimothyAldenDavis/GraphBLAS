@@ -298,8 +298,6 @@ AxB_slice = GxB_SLICE_ATNZ ;
         GB_AxB_select (A, B, semiring, do_adotb, AxB_method,
             AxB_method_used, &bjnz_max) ;
 
-// printf ("one thread, method %d\n", *AxB_method_used) ;
-
         // acquire a Sauna if Gustavson's method is being used
         int Sauna_id = -2 ;
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
@@ -506,7 +504,6 @@ AxB_slice = GxB_SLICE_ATNZ ;
     }
     else
     {
-        // printf ("slice B\n") ;
 
         //----------------------------------------------------------------------
         // slice B for A*B or A'*B
