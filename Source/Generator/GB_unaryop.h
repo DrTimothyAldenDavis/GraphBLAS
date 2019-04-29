@@ -13,7 +13,6 @@ void GB_tran
     int64_t **Rowcounts,
     GBI_single_iterator Iter,
     const int64_t *restrict A_slice,
-    int naslice,
-    int nthreads
+    int naslice
 ) ;
 

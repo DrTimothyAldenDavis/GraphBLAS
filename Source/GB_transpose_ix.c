@@ -24,8 +24,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     int64_t **Rowcounts,                // Rowcounts [naslice]
     GBI_single_iterator Iter,           // iterator for the matrix A
     const int64_t *restrict A_slice,    // defines how A is sliced
-    int naslice,                        // # of slices of A
-    int nthreads                        // # of threads to use
+    int naslice                         // # of slices of A
 )
 {
 
@@ -35,12 +34,11 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 
     #define GB_tran(zname,aname) GB_tran__identity ## zname ## aname
 
-    #define GB_WORKER(ignore1,zname,ztype,aname,atype)                  \
-    {                                                                   \
-        GB_tran (zname,aname) (C, A,                                    \
-            Rowcounts, Iter, A_slice, naslice, nthreads) ;              \
-        return ;                                                        \
-    }                                                                   \
+    #define GB_WORKER(ignore1,zname,ztype,aname,atype)                      \
+    {                                                                       \
+        GB_tran (zname,aname) (C, A, Rowcounts, Iter, A_slice, naslice) ;   \
+        return ;                                                            \
+    }                                                                       \
     break ;
 
     //--------------------------------------------------------------------------

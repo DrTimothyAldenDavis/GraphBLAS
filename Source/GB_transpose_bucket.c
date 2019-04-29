@@ -153,28 +153,71 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     GB_pslice (A_slice, A, naslice) ;
     GBI1_init (&Iter, A) ;
 
-    // compute the row counts of A for each slice
-    #define GB_PHASE_1_OF_2
-    #include "GB_unaryop_transpose.c"
-
-    // cumulative sum of the rowcounts across the slices
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t i = 0 ; i < vlen ; i++)
+    // sum up the row counts and find C->p
+    if (naslice == 1)
     {
-        int64_t s = 0 ;
-        for (int taskid = 0 ; taskid < naslice ; taskid++)
-        {
-            int64_t *restrict rowcount = Rowcounts [taskid] ;
-            int64_t c = rowcount [i] ;
-            rowcount [i] = s;
-            s += c ;
-        }
-        Cp [i] = s ;
-    }
-    Cp [vlen] = 0 ;
 
-    // compute the vector pointers for C; also compute C->nvec_nonempty
-    GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nthreads) ;
+        //----------------------------------------------------------------------
+        // A is not sliced
+        //----------------------------------------------------------------------
+
+        // compute the row counts of A.  No need to scan the A->p pointers
+        int64_t *restrict rowcount = Rowcounts [0] ;
+        const int64_t *restrict Ai = A->i ;
+        for (int64_t p = 0 ; p < anz ; p++)
+        { 
+            rowcount [Ai [p]]++ ;
+        }
+
+        // cumulative sum of the rowcount, and copy back into C->p
+        GB_cumsum (rowcount, vlen, (&C->nvec_nonempty), nthreads) ;
+        GB_memcpy (Cp, rowcount, (vlen+1) * sizeof (int64_t), nthreads) ;
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // A is sliced
+        //----------------------------------------------------------------------
+
+        // compute the row counts of A for each slice
+        #define GB_PHASE_1_OF_2
+        #include "GB_unaryop_transpose.c"
+
+        // cumulative sum of the rowcounts across the slices
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (int64_t i = 0 ; i < vlen ; i++)
+        {
+            int64_t s = 0 ;
+            for (int taskid = 0 ; taskid < naslice ; taskid++)
+            {
+                int64_t *restrict rowcount = Rowcounts [taskid] ;
+                int64_t c = rowcount [i] ;
+                rowcount [i] = s ;
+                s += c ;
+            }
+            Cp [i] = s ;
+        }
+        Cp [vlen] = 0 ;
+
+        // compute the vector pointers for C; also compute C->nvec_nonempty
+        GB_cumsum (Cp, vlen, &(C->nvec_nonempty), nthreads) ;
+
+        // add Cp back to all Rowcounts
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (int64_t i = 0 ; i < vlen ; i++)
+        {
+            int64_t s = Cp [i] ;
+            int64_t *restrict rowcount = Rowcounts [0] ;
+            rowcount [i] = s ;
+            for (int taskid = 1 ; taskid < naslice ; taskid++)
+            {
+                int64_t *restrict rowcount = Rowcounts [taskid] ;
+                rowcount [i] += s ;
+            }
+        }
+    }
 
     C->magic = GB_MAGIC ;      // C is now initialized ]
 
@@ -186,12 +229,12 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     if (op == NULL)
     { 
         // do not apply an operator; optional typecast to ctype
-        GB_transpose_ix (C, A, Rowcounts, Iter, A_slice, naslice, nthreads) ;
+        GB_transpose_ix (C, A, Rowcounts, Iter, A_slice, naslice) ;
     }
     else
     { 
         // apply an operator, C has type op->ztype
-        GB_transpose_op (C, op, A, Rowcounts, Iter, A_slice, naslice, nthreads);
+        GB_transpose_op (C, op, A, Rowcounts, Iter, A_slice, naslice) ;
     }
 
     //--------------------------------------------------------------------------

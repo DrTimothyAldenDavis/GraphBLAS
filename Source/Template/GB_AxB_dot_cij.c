@@ -142,13 +142,13 @@
         GB_GETB (bkj, Bx, pB  ) ;           // bkj = B(k,j)
         GB_MULT (cij, aki, bkj) ;           // cij = aki * bkj
 
-        for (pB++ ; pB < pB_end ; pB++)
+        for (int64_t p = pB+1 ; p < pB_end ; p++)
         { 
             GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
-            int64_t k = Bi [pB] ;               // next row index of B(:,j)
+            int64_t k = Bi [p] ;                // next row index of B(:,j)
             // cij += A(k,i) * B(k,j)
             GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
-            GB_GETB (bkj, Bx, pB  ) ;           // bkj = B(k,j)
+            GB_GETB (bkj, Bx, p   ) ;           // bkj = B(k,j)
             GB_MULTADD (cij, aki, bkj) ;        // cij += aki * bkj
         }
         #endif
@@ -170,12 +170,12 @@
         GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
         GB_MULT (cij, aki, bkj) ;           // cij = aki * bkj
 
-        for (pA++ ; pA < pA_end ; pA++)
+        for (int64_t p = pA+1 ; p < pA_end ; p++)
         { 
             GB_DOT_TERMINAL (cij) ;             // break if cij == terminal
-            int64_t k = Ai [pA] ;               // next row index of A(:,i)
+            int64_t k = Ai [p] ;                // next row index of A(:,i)
             // cij += A(k,i) * B(k,j)
-            GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)
+            GB_GETA (aki, Ax, p   ) ;           // aki = A(k,i)
             GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
             GB_MULTADD (cij, aki, bkj) ;        // cij += aki * bkj
         }

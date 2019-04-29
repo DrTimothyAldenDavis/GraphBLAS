@@ -1992,18 +1992,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     GB_Context Context
 ) ;
 
-GrB_Info GB_AxB_dot2_phase1         // C<M> = A'*B, dot product counts
-(
-    int64_t **C_count_handle,       // output of size B->nvec
-    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
-    const bool Mask_comp,           // if true, use !M
-    const GrB_Matrix A,             // input matrix, may be a slice
-    const GrB_Matrix B,             // input matrix
-    int nthreads,
-    int naslice,
-    int nbslice
-) ;
-
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 (
     int64_t *Bflops,            // size B->nvec+1 and all zero, if present
@@ -3787,6 +3775,8 @@ static inline void GBI1_start
     for ( ; (p) < (pend) ; (p)++)
 
 #define GB_PRAGMA(x) _Pragma (#x)
+
+#define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
 
 #define GB_PRAGMA_PARALLEL_FOR(nthreads)                                    \
     GB_PRAGMA (omp parallel for num_threads (nthreads) schedule (static,1))
@@ -6711,8 +6701,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     int64_t **Rowcounts,                // Rowcounts [naslice]
     GBI_single_iterator Iter,           // iterator for the matrix A
     const int64_t *restrict A_slice,    // defines how A is sliced
-    int naslice,                        // # of slices of A
-    int nthreads                        // # of threads to use
+    int naslice                         // # of slices of A
 ) ;
 
 void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
@@ -6723,8 +6712,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     int64_t **Rowcounts,                // Rowcounts [naslice]
     GBI_single_iterator Iter,           // iterator for the matrix A
     const int64_t *restrict A_slice,    // defines how A is sliced
-    int naslice,                        // # of slices of A
-    int nthreads                        // # of threads to use
+    int naslice                         // # of slices of A
 ) ;
 
 #endif

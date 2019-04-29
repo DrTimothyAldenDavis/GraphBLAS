@@ -29,7 +29,7 @@
     // C = op (cast (A'))
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(naslice) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(naslice) schedule(static)
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     { 
         // get the rowcount for this slice, of size A->vlen
@@ -41,13 +41,12 @@
             GBI_jth_iteration_with_iter (Iter, j, pA, pA_end) ;
             for ( ; pA < pA_end ; pA++)
             { 
-                int64_t i = Ai [pA] ;
                 #if defined ( GB_PHASE_1_OF_2)
                 // count one more entry in C(i,:) for this slice
-                rowcount [i]++ ;
+                rowcount [Ai [pA]]++ ;
                 #else
                 // insert the entry into C(i,:) for this slice
-                int64_t pC = Cp [i] + rowcount [i]++ ;
+                int64_t pC = rowcount [Ai [pA]]++ ;
                 Ci [pC] = j ;
                 // Cx [pC] = op (cast (Ax [pA]))
                 GB_CAST_OP (pC, pA) ;

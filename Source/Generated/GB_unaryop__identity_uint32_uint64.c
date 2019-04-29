@@ -83,8 +83,7 @@ void GB_tran__identity_uint32_uint64
     int64_t **Rowcounts,
     GBI_single_iterator Iter,
     const int64_t *restrict A_slice,
-    int naslice,
-    int nthreads
+    int naslice
 )
 { 
     #define GB_PHASE_2_OF_2
