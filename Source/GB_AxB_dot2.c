@@ -395,6 +395,9 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
         #define GB_PHASE_2_OF_2
 
+        // loops with function pointers cannot be vectorized
+        #define GB_DOT_SIMD ;
+
         if (flipxy)
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,y,x)

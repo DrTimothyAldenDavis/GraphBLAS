@@ -1,4 +1,5 @@
 
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -67,6 +68,10 @@
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
     if (cij == INT64_MAX) break ;
+
+// simd pragma for dot product
+#define GB_DOT_SIMD \
+    ;
 
 // cij is not a pointer but a scalar; nothing to do
 #define GB_CIJ_REACQUIRE(cij,cnz) ;

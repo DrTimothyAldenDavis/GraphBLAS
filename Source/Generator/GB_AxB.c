@@ -67,6 +67,10 @@
 #define GB_DOT_TERMINAL(cij) \
     GB_terminal
 
+// simd pragma for dot product
+#define GB_DOT_SIMD \
+    GB_dot_simd
+
 // cij is not a pointer but a scalar; nothing to do
 #define GB_CIJ_REACQUIRE(cij,cnz) ;
 

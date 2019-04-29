@@ -26,8 +26,10 @@ fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 if (~isempty (terminal))
     fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', ...
         terminal) ;
+    fprintf (f, 'define(`GB_dot_simd'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
+    fprintf (f, 'define(`GB_dot_simd'', `GB_PRAGMA_SIMD'')\n') ;
 end
 
 % to get an entry from A
@@ -92,14 +94,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +15 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +16 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +15 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +16 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;
