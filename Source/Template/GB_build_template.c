@@ -16,8 +16,6 @@
         // no duplicates, just permute S into Tx
         //----------------------------------------------------------------------
 
-        ASSERT (kwork != NULL) ;
-
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < nthreads ; tid++)
         {
@@ -26,7 +24,7 @@
             for (int64_t t = tstart ; t < tend ; t++)
             {
                 // Tx [t] = S [k] ;
-                int64_t k = kwork [t] ;
+                int64_t k = (kwork == NULL) ? t : kwork [t] ;
                 GB_BUILD_COPY (Tx, t, S, k) ;
             }
         }
@@ -68,7 +66,7 @@
                 // assemble all duplicates that follow it.  This may assemble
                 // the first duplicates in the next slice (up to but not
                 // including the first unique tuple in the subsequent slice).
-                for ( ; t+1 < ntuples && iwork [t+1] < 0 ; t++)
+                for ( ; t+1 < nvals && iwork [t+1] < 0 ; t++)
                 {
                     // assemble the duplicate tuple
                     int64_t k = (kwork == NULL) ? (t+1) : kwork [t+1] ;

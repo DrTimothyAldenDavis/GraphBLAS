@@ -12,12 +12,12 @@ void GB_bild
     GB_atype *restrict Tx,
     int64_t  *restrict Ti,
     const GB_atype *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 

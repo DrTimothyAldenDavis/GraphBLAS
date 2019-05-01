@@ -21,12 +21,12 @@ void GB_bild__min_int8
     int8_t *restrict Tx,
     int64_t  *restrict Ti,
     const int8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -44,12 +44,12 @@ void GB_bild__min_int16
     int16_t *restrict Tx,
     int64_t  *restrict Ti,
     const int16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -67,12 +67,12 @@ void GB_bild__min_int32
     int32_t *restrict Tx,
     int64_t  *restrict Ti,
     const int32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -90,12 +90,12 @@ void GB_bild__min_int64
     int64_t *restrict Tx,
     int64_t  *restrict Ti,
     const int64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -113,12 +113,12 @@ void GB_bild__min_uint8
     uint8_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -136,12 +136,12 @@ void GB_bild__min_uint16
     uint16_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -159,12 +159,12 @@ void GB_bild__min_uint32
     uint32_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -182,12 +182,12 @@ void GB_bild__min_uint64
     uint64_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -205,12 +205,12 @@ void GB_bild__min_fp32
     float *restrict Tx,
     int64_t  *restrict Ti,
     const float *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -228,12 +228,12 @@ void GB_bild__min_fp64
     double *restrict Tx,
     int64_t  *restrict Ti,
     const double *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -251,12 +251,12 @@ void GB_bild__max_int8
     int8_t *restrict Tx,
     int64_t  *restrict Ti,
     const int8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -274,12 +274,12 @@ void GB_bild__max_int16
     int16_t *restrict Tx,
     int64_t  *restrict Ti,
     const int16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -297,12 +297,12 @@ void GB_bild__max_int32
     int32_t *restrict Tx,
     int64_t  *restrict Ti,
     const int32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -320,12 +320,12 @@ void GB_bild__max_int64
     int64_t *restrict Tx,
     int64_t  *restrict Ti,
     const int64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -343,12 +343,12 @@ void GB_bild__max_uint8
     uint8_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -366,12 +366,12 @@ void GB_bild__max_uint16
     uint16_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -389,12 +389,12 @@ void GB_bild__max_uint32
     uint32_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -412,12 +412,12 @@ void GB_bild__max_uint64
     uint64_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -435,12 +435,12 @@ void GB_bild__max_fp32
     float *restrict Tx,
     int64_t  *restrict Ti,
     const float *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -458,12 +458,12 @@ void GB_bild__max_fp64
     double *restrict Tx,
     int64_t  *restrict Ti,
     const double *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -481,12 +481,12 @@ void GB_bild__plus_int8
     int8_t *restrict Tx,
     int64_t  *restrict Ti,
     const int8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -504,12 +504,12 @@ void GB_bild__plus_int16
     int16_t *restrict Tx,
     int64_t  *restrict Ti,
     const int16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -527,12 +527,12 @@ void GB_bild__plus_int32
     int32_t *restrict Tx,
     int64_t  *restrict Ti,
     const int32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -550,12 +550,12 @@ void GB_bild__plus_int64
     int64_t *restrict Tx,
     int64_t  *restrict Ti,
     const int64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -573,12 +573,12 @@ void GB_bild__plus_uint8
     uint8_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -596,12 +596,12 @@ void GB_bild__plus_uint16
     uint16_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -619,12 +619,12 @@ void GB_bild__plus_uint32
     uint32_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -642,12 +642,12 @@ void GB_bild__plus_uint64
     uint64_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -665,12 +665,12 @@ void GB_bild__plus_fp32
     float *restrict Tx,
     int64_t  *restrict Ti,
     const float *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -688,12 +688,12 @@ void GB_bild__plus_fp64
     double *restrict Tx,
     int64_t  *restrict Ti,
     const double *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -711,12 +711,12 @@ void GB_bild__times_int8
     int8_t *restrict Tx,
     int64_t  *restrict Ti,
     const int8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -734,12 +734,12 @@ void GB_bild__times_int16
     int16_t *restrict Tx,
     int64_t  *restrict Ti,
     const int16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -757,12 +757,12 @@ void GB_bild__times_int32
     int32_t *restrict Tx,
     int64_t  *restrict Ti,
     const int32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -780,12 +780,12 @@ void GB_bild__times_int64
     int64_t *restrict Tx,
     int64_t  *restrict Ti,
     const int64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -803,12 +803,12 @@ void GB_bild__times_uint8
     uint8_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -826,12 +826,12 @@ void GB_bild__times_uint16
     uint16_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -849,12 +849,12 @@ void GB_bild__times_uint32
     uint32_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -872,12 +872,12 @@ void GB_bild__times_uint64
     uint64_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -895,12 +895,12 @@ void GB_bild__times_fp32
     float *restrict Tx,
     int64_t  *restrict Ti,
     const float *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -918,12 +918,12 @@ void GB_bild__times_fp64
     double *restrict Tx,
     int64_t  *restrict Ti,
     const double *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -941,12 +941,12 @@ void GB_bild__lor_bool
     bool *restrict Tx,
     int64_t  *restrict Ti,
     const bool *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -964,12 +964,12 @@ void GB_bild__land_bool
     bool *restrict Tx,
     int64_t  *restrict Ti,
     const bool *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -987,12 +987,12 @@ void GB_bild__lxor_bool
     bool *restrict Tx,
     int64_t  *restrict Ti,
     const bool *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1010,12 +1010,12 @@ void GB_bild__eq_bool
     bool *restrict Tx,
     int64_t  *restrict Ti,
     const bool *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1033,12 +1033,12 @@ void GB_bild__first_bool
     bool *restrict Tx,
     int64_t  *restrict Ti,
     const bool *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1056,12 +1056,12 @@ void GB_bild__first_int8
     int8_t *restrict Tx,
     int64_t  *restrict Ti,
     const int8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1079,12 +1079,12 @@ void GB_bild__first_int16
     int16_t *restrict Tx,
     int64_t  *restrict Ti,
     const int16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1102,12 +1102,12 @@ void GB_bild__first_int32
     int32_t *restrict Tx,
     int64_t  *restrict Ti,
     const int32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1125,12 +1125,12 @@ void GB_bild__first_int64
     int64_t *restrict Tx,
     int64_t  *restrict Ti,
     const int64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1148,12 +1148,12 @@ void GB_bild__first_uint8
     uint8_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1171,12 +1171,12 @@ void GB_bild__first_uint16
     uint16_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1194,12 +1194,12 @@ void GB_bild__first_uint32
     uint32_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1217,12 +1217,12 @@ void GB_bild__first_uint64
     uint64_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1240,12 +1240,12 @@ void GB_bild__first_fp32
     float *restrict Tx,
     int64_t  *restrict Ti,
     const float *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1263,12 +1263,12 @@ void GB_bild__first_fp64
     double *restrict Tx,
     int64_t  *restrict Ti,
     const double *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1286,12 +1286,12 @@ void GB_bild__second_bool
     bool *restrict Tx,
     int64_t  *restrict Ti,
     const bool *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1309,12 +1309,12 @@ void GB_bild__second_int8
     int8_t *restrict Tx,
     int64_t  *restrict Ti,
     const int8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1332,12 +1332,12 @@ void GB_bild__second_int16
     int16_t *restrict Tx,
     int64_t  *restrict Ti,
     const int16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1355,12 +1355,12 @@ void GB_bild__second_int32
     int32_t *restrict Tx,
     int64_t  *restrict Ti,
     const int32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1378,12 +1378,12 @@ void GB_bild__second_int64
     int64_t *restrict Tx,
     int64_t  *restrict Ti,
     const int64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1401,12 +1401,12 @@ void GB_bild__second_uint8
     uint8_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint8_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1424,12 +1424,12 @@ void GB_bild__second_uint16
     uint16_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1447,12 +1447,12 @@ void GB_bild__second_uint32
     uint32_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint32_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1470,12 +1470,12 @@ void GB_bild__second_uint64
     uint64_t *restrict Tx,
     int64_t  *restrict Ti,
     const uint64_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1493,12 +1493,12 @@ void GB_bild__second_fp32
     float *restrict Tx,
     int64_t  *restrict Ti,
     const float *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 
@@ -1516,12 +1516,12 @@ void GB_bild__second_fp64
     double *restrict Tx,
     int64_t  *restrict Ti,
     const double *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
 

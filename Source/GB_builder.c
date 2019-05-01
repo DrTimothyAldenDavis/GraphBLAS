@@ -159,6 +159,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     }
     else
     { 
+
         // If the tuples were already known to be sorted on input, kwork is
         // NULL.  This implicitly means that kwork [k] = k for all k =
         // 0:nvals-1.  kwork is not allocated.
@@ -273,6 +274,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // count the # of unique vector indices in jwork.  No need to scan
             // iwork since there are no duplicates to be found.
 
+// TODO add this count to the first pass, in case the input is sorted.
+// double t = omp_get_wtime ( ) ;
+
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int tid = 0 ; tid < nthreads ; tid++)
             {
@@ -295,6 +299,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 tnvec_slice [tid] = my_tnvec ;
                 tnz_slice   [tid] = tend - tstart ;
             }
+// t = omp_get_wtime ( ) - t ;
+// printf ("count time %g\n", t) ;
+
         }
 
     }

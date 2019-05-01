@@ -67,17 +67,17 @@
 
 #if 0
 
-    void GB_red_scalar__(none)
-    (
-        int16_t *result,
-        const GrB_Matrix A,
-        int nthreads
-    )
-    { 
-        GB_REDUCE_INIT (s) ;
-        #include "GB_reduce_to_scalar_template.c"
-        (*result) = s ;
-    }
+void GB_red_scalar__(none)
+(
+    int16_t *result,
+    const GrB_Matrix A,
+    int nthreads
+)
+{ 
+    GB_REDUCE_INIT (s) ;
+    #include "GB_reduce_to_scalar_template.c"
+    (*result) = s ;
+}
 
 #endif
 
@@ -90,12 +90,12 @@ void GB_bild__first_int16
     int16_t *restrict Tx,
     int64_t  *restrict Ti,
     const int16_t *restrict S,
-    int64_t ntuples,
+    int64_t nvals,
     int64_t ndupl,
     const int64_t *restrict iwork,
     const int64_t *restrict kwork,
-    const int64_t *tstart_slice,
-    const int64_t *tnz_slice,
+    const int64_t *restrict tstart_slice,
+    const int64_t *restrict tnz_slice,
     int nthreads
 )
 {
