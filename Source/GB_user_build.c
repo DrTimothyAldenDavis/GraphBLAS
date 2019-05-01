@@ -7,9 +7,13 @@
 
 //------------------------------------------------------------------------------
 
+// CALLED BY: GrB_Matrix_build_* and GrB_Vector_build_*
+// CALLS:     GB_build
+
 // This function implements GrB_Matrix_build_* and GrB_Vector_build_*.  It is
 // not used by GrB_wait or GB_wait (see GB_builder instead).  For details on
-// the algorithm, see GB_build.
+// the algorithm, see GB_build.  This function simply checks all O(1)-time
+// error conditions, and then calls GB_build.
 
 // TODO: rename
 

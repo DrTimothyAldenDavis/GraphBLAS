@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// CALLS:     GB_builder
+
 // This function is typically called via the GB_WAIT(A) macro, except for
 // GB_assign and GB_subassign.
 
@@ -167,9 +169,6 @@ GrB_Info GB_wait                // finish all pending computations
     // construct a new hypersparse matrix T with just the pending tuples
     //--------------------------------------------------------------------------
 
-    // If anz > 0, T is always hypersparse.  Otherwise T can be returned as
-    // non-hypersparse, and it is then transplanted as-is into the final A.
-
     // T has the same type as A->type, which can differ from the type of the
     // pending tuples, A->type_pending.  This is OK since build process
     // assembles the tuples in the order they were inserted into the matrix.
@@ -177,10 +176,23 @@ GrB_Info GB_wait                // finish all pending computations
     // can be any accum operator.  The z=accum(x,y) operator can have any
     // types, and it does not have to be associative.
 
-    info = GB_builder (&T, A->type, A->vlen, A->vdim, A->is_csc,
-        &(A->i_pending), &(A->j_pending), A->sorted_pending, A->s_pending,
-        A->n_pending, A->max_n_pending, A->operator_pending,
-        A->type_pending->code, Context) ;
+    // TODO: keep track of whether or not duplicates could appear
+
+    info = GB_builder (&T,      // create T
+        A->type,                // T->type = A->type
+        A->vlen,                // T->vlen = A->vlen
+        A->vdim,                // T->vdim = A->vdim
+        A->is_csc,              // T->is_csc = A->is_csc
+        &(A->i_pending),        // iwork_handle, becomes T->i on output
+        &(A->j_pending),        // jwork_handle, free on output
+        A->sorted_pending,      // tuples may or may not be sorted
+        false,                  // check for duplicates (TODO)
+        A->s_pending,           // tuple values, of type A->type_pending->code
+        A->n_pending,           // # of tuples
+        A->max_n_pending,       // size of A->[ijs]_pending arrays
+        A->operator_pending,    // dup operator for assembling duplicates
+        A->type_pending->code,  // type of A->s_pending
+        Context) ;
 
     //--------------------------------------------------------------------------
     // free pending tuples
@@ -304,16 +316,6 @@ GrB_Info GB_wait                // finish all pending computations
         // second part (A1, with anz1 = nnz (A1) entries) overlaps with T.
         // If anz1 is zero, or small compared to anz0, then it is faster to
         // leave A0 unmodified, and to update just A1.
-
-//      if (anz1 == 0)
-//      {
-//          printf ("]]]]]]]]]]]]]]]]]]]] GB_wait concatenate\n") ;
-//      }
-//      else
-//      {
-//          printf ("]]]]]]]]]]]]]]]]]]]] GB_wait add and concatenate\n") ;
-//      }
-//      printf ("A->nvec_nonempty: "GBd"\n", A->nvec_nonempty) ;
 
         // make sure A has enough space for the new tuples
         if (anz_new > A->nzmax)

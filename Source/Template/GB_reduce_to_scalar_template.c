@@ -7,7 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// Reduce a matrix to a scalar.
+// Reduce a matrix to a scalar.  No typecasting is performed.
+
+// PARALLEL: done
+
+// TODO add simd vectorization for non-terminal monoids.
 
 {
 
@@ -75,7 +79,7 @@
             //------------------------------------------------------------------
 
             // each thread reduces its own part in parallel
-            #pragma omp parallel for num_threads(nthreads)
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int tid = 0 ; tid < nthreads ; tid++)
             {
                 GB_REDUCE_INIT (t) ;
@@ -108,7 +112,7 @@
             //------------------------------------------------------------------
 
             // each thread reduces its own part in parallel
-            #pragma omp parallel for num_threads(nthreads)
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int tid = 0 ; tid < nthreads ; tid++)
             {
                 GB_REDUCE_INIT (t) ;

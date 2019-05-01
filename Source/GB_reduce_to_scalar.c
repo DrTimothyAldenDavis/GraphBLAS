@@ -21,7 +21,7 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_reduce__include.h"
+#include "GB_red__include.h"
 #endif
 
 GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
@@ -122,27 +122,28 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     {
 
         //----------------------------------------------------------------------
-        // sum up the entries; no casting needed
+        // sum up the entries; no typecasting needed
         //----------------------------------------------------------------------
 
         // There are 44 common cases of this function for built-in types and
-        // operators.  Four associative operators: min, max, plus, and times
+        // operators.  Four associative operators: MIN, MAX, PLUS, and TIMES
         // with 10 types (int*, uint*, float, and double), and four logical
-        // operators (or, and, xor, eq) with a boolean type of C.  All 44 are
+        // operators (OR, AND, XOR, EQ) with a boolean type of C.  All 44 are
         // hard-coded below via a switch factory.  If the case is not handled
-        // by the switch factory, 'done' remains false.
+        // by the switch factory, 'done' remains false.  The hard-coded workers
+        // do no typecasting at all.
 
         bool done = false ;
 
         // define the worker for the switch factory
 
-        #define GB_red(op,zname) GB_red_scalar_ ## op ## zname
+        #define GB_red(opname,aname) GB_red_scalar_ ## opname ## aname
 
-        #define GB_ASSOC_WORKER(op,zname,ztype,terminal)    \
-        {                                                   \
-            GB_red (op, zname) ((ztype *) s, A, nthreads) ; \
-            done = true ;                                   \
-        }                                                   \
+        #define GB_ASSOC_WORKER(opname,aname,atype,terminal)        \
+        {                                                           \
+            GB_red (opname, aname) ((atype *) s, A, nthreads) ;     \
+            done = true ;                                           \
+        }                                                           \
         break ;
 
         //----------------------------------------------------------------------

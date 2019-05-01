@@ -1,23 +1,33 @@
-function codegen_red_method (op, func, ztype, identity, terminal)
+function codegen_red_method (opname, func, atype, identity, terminal)
 %CODEGEN_RED_METHOD create a reductionfunction
 %
-% codegen_red_method (op, func, ztype, identity, terminal)
+% codegen_red_method (opname, func, atype, identity, terminal)
 
 f = fopen ('control.m4', 'w') ;
 
-[zname, unsigned, bits] = codegen_type (ztype) ;
+[aname, unsigned, bits] = codegen_type (atype) ;
 
-name = sprintf ('%s_%s', op, zname) ;
+name = sprintf ('%s_%s', opname, aname) ;
 
 % function names
-fprintf (f, 'define(`GB_red_scalar'', `GB_red_scalar__%s'')\n', name) ;
+fprintf (f, 'define(`GB_bild'', `GB_bild__%s'')\n', name) ;
 
 % type (no typecasting)
-fprintf (f, 'define(`GB_atype'', `%s'')\n', ztype) ;
-fprintf (f, 'define(`GB_ztype'', `%s'')\n', ztype) ;
+fprintf (f, 'define(`GB_atype'', `%s'')\n', atype) ;
 
-% identity and terminal values for the monoid
-fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
+if (~isempty (identity))
+    fprintf (f, 'define(`GB_red_scalar'', `GB_red_scalar__%s'')\n', name) ;
+    % identity and terminal values for the monoid
+    fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
+    fprintf (f, 'define(`if_is_monoid'', `'')\n') ;
+    fprintf (f, 'define(`endif_is_monoid'', `'')\n') ;
+else
+    fprintf (f, 'define(`GB_red_scalar'', `GB_red_scalar__(none)'')\n') ;
+    % first and second operators are not monoids (GB_bild only)
+    fprintf (f, 'define(`GB_identity'', `(none)'')\n') ;
+    fprintf (f, 'define(`if_is_monoid'', `#if 0'')\n') ;
+    fprintf (f, 'define(`endif_is_monoid'', `#endif'')\n') ;
+end
 
 if (~isempty (terminal))
     fprintf (f, 'define(`GB_terminal'', `if (s == %s) break ;'')\n', ...
@@ -35,14 +45,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.c | m4 | tail -n +6 > Generated/GB_red__%s.c', ...
+'cat control.m4 Generator/GB_red.c | m4 | tail -n +9 > Generated/GB_red__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.h | m4 | tail -n +6 >> Generated/GB_reduce__include.h') ;
+'cat control.m4 Generator/GB_red.h | m4 | tail -n +9 >> Generated/GB_red__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

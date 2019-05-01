@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -10,13 +9,13 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_reduce__include.h"
+#include "GB_red__include.h"
 
 // The reduction is defined by the following types and operators:
 
 // Reduce to scalar:  GB_red_scalar__min_uint16
+// Assemble tuples:   GB_bild__min_uint16
 
-// C type:   uint16_t
 // A type:   uint16_t
 
 // Reduce:   s = GB_IMIN (s, aij)
@@ -34,7 +33,7 @@
 #define GB_REDUCE_WORKSPACE(w,nthreads) \
     uint16_t w [nthreads] ;
 
-// set t = identity
+// t = identity
 #define GB_REDUCE_INIT(t) \
     uint16_t t = UINT16_MAX ;
 
@@ -54,20 +53,53 @@
 #define GB_REDUCE_TERMINAL(t) \
     if (s == 0) break ;
 
+// Tx [p] += S [k]
+#define GB_BUILD_OP(Tx, p, S, k) \
+    Tx [p] = GB_IMIN (Tx [p], S [k])
+
+// Tx [p] = S [k]
+#define GB_BUILD_COPY(Tx, p, S, k) \
+    Tx [p] = S [k] ;
+
 //------------------------------------------------------------------------------
-// reduce to a scalar
+// reduce to a scalar, for monoids only
 //------------------------------------------------------------------------------
 
-void GB_red_scalar__min_uint16
+
+
+    void GB_red_scalar__min_uint16
+    (
+        uint16_t *result,
+        const GrB_Matrix A,
+        int nthreads
+    )
+    { 
+        GB_REDUCE_INIT (s) ;
+        #include "GB_reduce_to_scalar_template.c"
+        (*result) = s ;
+    }
+
+
+
+//------------------------------------------------------------------------------
+// build matrix
+//------------------------------------------------------------------------------
+
+void GB_bild__min_uint16
 (
-    uint16_t *result,
-    const GrB_Matrix A,
+    uint16_t *restrict Tx,
+    int64_t  *restrict Ti,
+    const uint16_t *restrict S,
+    int64_t ntuples,
+    int64_t ndupl,
+    const int64_t *restrict iwork,
+    const int64_t *restrict kwork,
+    const int64_t *tstart_slice,
+    const int64_t *tnz_slice,
     int nthreads
 )
-{ 
-    uint16_t s = UINT16_MAX ;
-    #include "GB_reduce_to_scalar_template.c"
-    (*result) = s ;
+{
+    #include "GB_build_template.c"
 }
 
 #endif

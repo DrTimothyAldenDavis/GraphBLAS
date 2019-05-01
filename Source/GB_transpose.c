@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// CALLS:     GB_builder
+
 // Transpose a matrix, C=A', and optionally apply a unary operator and/or
 // typecast the values.  The transpose may be done in place, in which case C or
 // A are modified in place.  If the matrix to be transposed has more than one
@@ -586,9 +588,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // memory usage for transpose via qsort
             //------------------------------------------------------------------
 
-            // The method with GB_builder, using qsort, requires space for Ti,
-            // Tj, Tx, and kwork.  Tj can be the recycled Ai, and Tx can be the
-            // same as Ax if no op is present.
+            // The method with GB_builder, using qsort, requires space for
+            // iwork, jwork, S, and kwork.  jwork can be the recycled Ai, and S
+            // can be the same as Ax if no op is present.
 
             // Total memory usage is O(anz), but the constant can vary
             // depending on whether or not A->i can be recycled in place, and
@@ -596,16 +598,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // (no op applied, not in place so A->i cannot be recycled, and
             // assuming csize <= sizeof (int64_t)), the space is:
 
-            //      integers:  3*anz    for Tj, Ti, kwork
-            //      values:    0        since Tj is freed before T->x allocated
+            //      integers:  3*anz    for jwork, iwork, kwork
+            //      values:    0        jwork is freed before T->x allocated
 
             // If csize >= sizeof (int64_t) the space becomes:
 
-            //      integers:  2*anz    for Ti, kwork, but not Tj
-            //      values:    anz      since Tj is freed before T->x allocated
+            //      integers:  2*anz    for iwork, kwork, but not jwork
+            //      values:    anz      jwork is freed before T->x allocated
 
             // The above space does not account for T->p and T->h, but since T
-            // can be hypersparse, this could be very small, and anz would be
+            // is hypersparse, this could be very small, and anz would be
             // larger than T->nvec anyway (typically much larger).  It also
             // doesn't account for the in-place freeing of A->p, which has size
             // avdim+1 since A is not hypersparse for this comparison.
@@ -636,16 +638,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
             if (!recycle_Ai)
             { 
-                // allocate Tj of size anz
+                // allocate jwork of size anz
                 qusage += GBYTES (anz, sizeof (int64_t)) ;
             }
 
-            // allocate Ti of size anz
+            // allocate iwork of size anz
             qusage += GBYTES (anz, sizeof (int64_t)) ;
 
             if (op != NULL)
             { 
-                // allocate Tx of size anz * csize
+                // allocate S of size anz * csize
                 qusage += GBYTES (anz, csize) ;
             }
 
@@ -666,7 +668,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             qusage += GBYTES (anz, sizeof (int64_t)) ;
             qsort_memory = GB_IMAX (qsort_memory, qusage) ;
 
-            // free Tj in GB_builder
+            // free jwork in GB_builder
             qusage -= GBYTES (anz, sizeof (int64_t)) ;
 
             // allocate the final T->x
@@ -717,14 +719,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             //==================================================================
 
             //------------------------------------------------------------------
-            // allocate and create Ti
+            // allocate and create iwork
             //------------------------------------------------------------------
 
-            // allocate Ti of size anz
-            int64_t *Ti ;
-            GB_MALLOC_MEMORY (Ti, anz, sizeof (int64_t)) ;
+            // allocate iwork of size anz
+            int64_t *iwork ;
+            GB_MALLOC_MEMORY (iwork, anz, sizeof (int64_t)) ;
 
-            if (Ti == NULL)
+            if (iwork == NULL)
             { 
                 // out of memory
                 GB_FREE_C ;
@@ -739,12 +741,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             {
                 GBI_for_each_entry (j, p, pend)
                 { 
-                    Ti [p] = j ;
+                    iwork [p] = j ;
                 }
             }
 
             //------------------------------------------------------------------
-            // allocate the output matrix and additional space (Tj and Tx)
+            // allocate the output matrix and additional space (jwork and S)
             //------------------------------------------------------------------
 
             // Allocate the header of C, with no C->p, C->h, C->i, or C->x
@@ -760,7 +762,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory
                 ASSERT (!in_place) ;        // cannot fail if in place
-                GB_FREE_MEMORY (Ti, anz, sizeof (int64_t)) ;
+                GB_FREE_MEMORY (iwork, anz, sizeof (int64_t)) ;
                 GB_FREE_C ;
                 return (info) ;
             }
@@ -781,60 +783,60 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 if (!Ah_shallow) GB_FREE_MEMORY (Ah, aplen  , sizeof (int64_t));
             }
 
-            int64_t *Tj = NULL ;
+            int64_t *jwork = NULL ;
             GB_Type_code tcode ;
-            GB_void *Tx = NULL ;
+            GB_void *S = NULL ;
 
             if (!recycle_Ai)
             { 
-                // allocate Tj of size anz
-                GB_MALLOC_MEMORY (Tj, anz, sizeof (int64_t)) ;
+                // allocate jwork of size anz
+                GB_MALLOC_MEMORY (jwork, anz, sizeof (int64_t)) ;
             }
 
             if (op != NULL)
             { 
-                // allocate Tx of size anz * csize
-                GB_MALLOC_MEMORY (Tx, anz, csize) ;
+                // allocate S of size anz * csize
+                GB_MALLOC_MEMORY (S, anz, csize) ;
             }
 
-            if ((!recycle_Ai && (Tj == NULL)) || ((op != NULL) && (Tx == NULL)))
+            if ((!recycle_Ai && (jwork == NULL))
+            || ((op != NULL) && (S == NULL)))
             { 
                 // out of memory
-                GB_FREE_MEMORY (Ti, anz, sizeof (int64_t)) ;
-                GB_FREE_MEMORY (Tj, anz, sizeof (int64_t)) ;
-                GB_FREE_MEMORY (Tx, anz, csize) ;
+                GB_FREE_MEMORY (iwork, anz, sizeof (int64_t)) ;
+                GB_FREE_MEMORY (jwork, anz, sizeof (int64_t)) ;
+                GB_FREE_MEMORY (S,  anz, csize) ;
                 GB_FREE_A_AND_C ;
                 return (GB_OUT_OF_MEMORY) ;
             }
 
             //------------------------------------------------------------------
-            // construct Tj and Tx
+            // construct jwork and S
             //------------------------------------------------------------------
 
             // "row" indices of A become "column" indices of C
             if (recycle_Ai)
             { 
                 // Ai is used as workspace for the "column" indices of C.
-                // Tj is a shallow copy of Ai, and is freed by GB_builder.
-                Tj = Ai ;
+                // jwork is a shallow copy of Ai, and is freed by GB_builder.
+                jwork = Ai ;
                 ASSERT (in_place) ;
                 // set Ai to NULL so it is not freed by GB_FREE_IN_PLACE_A
                 Ai = NULL ;
             }
             else
             { 
-                // Tj = Ai, making a deep copy.  Tj is freed by GB_builder.
-                // A->i will not be modified, even if out of memory.
-                // See also GB_extractTuples, where I is extracted.
-                GB_memcpy (Tj, Ai, anz * sizeof (int64_t), nthreads) ;
+                // jwork = Ai, making a deep copy.  jwork is freed by
+                // GB_builder.  A->i is not modified, even if out of memory.
+                GB_memcpy (jwork, Ai, anz * sizeof (int64_t), nthreads) ;
             }
 
             // numerical values: apply the op, typecast, or make shallow copy
             if (op != NULL)
             {
-                // Tx = op ((op->xtype) Ax)
-                GB_apply_op (Tx, op, Ax, atype, anz, Context) ;
-                // GB_builder will not need to typecast Tx to T->x
+                // S = op ((op->xtype) Ax)
+                GB_apply_op (S, op, Ax, atype, anz, Context) ;
+                // GB_builder will not need to typecast S to T->x
                 tcode = ccode ;
                 #if 0
                 if (in_place && !Ax_shallow)
@@ -852,9 +854,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             }
             else
             { 
-                // GB_builder will typecast Tx from atype to ctype if needed.
-                // Tx is a shallow copy of Ax.
-                Tx = Ax ;
+                // GB_builder will typecast S from atype to ctype if needed.
+                // S is a shallow copy of Ax.
+                S = Ax ;
                 tcode = acode ;
             }
 
@@ -862,9 +864,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // build the matrix: T = (ctype) A' or op ((xtype) A')
             //------------------------------------------------------------------
 
-            // internally, Tj is freed and then T->x is allocated, so the total
-            // high-water memory usage is anz * max (csize, sizeof(int64_t)).
-            // T is always hypersparse.
+            // internally, jwork is freed and then T->x is allocated, so the
+            // total high-water memory usage is anz * max (csize,
+            // sizeof(int64_t)).  T is always hypersparse.
 
             GrB_Matrix T ;
             info = GB_builder (&T, // create T
@@ -872,20 +874,21 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 avdim,      // T->vlen = A->vdim, always > 1
                 avlen,      // T->vdim = A->vlen, always > 1
                 C_is_csc,   // T has the same CSR/CSC format as C
-                &Ti,        // iwork_handle, becomes T->i on output
-                &Tj,        // jwork_handle, freed on output
+                &iwork,     // iwork_handle, becomes T->i on output
+                &jwork,     // jwork_handle, freed on output
                 false,      // tuples are not sorted on input
-                Tx,         // array of values of type ctype, not modified
-                anz,        // size of Tx (no duplicates will be found)
-                anz,        // size of Ti and Tj
+                true,       // tuples have no duplicates
+                S,          // array of values of type ctype, not modified
+                anz,        // number of tuples
+                anz,        // size of iwork, jwork, and S
                 NULL,       // no dup operator needed (input has no duplicates)
-                tcode,      // type of Tx
+                tcode,      // type of S
                 Context) ;
 
-            // GB_builder always frees Tj, and either frees Ti or transplants
-            // it in to T->i and sets Ti to NULL.  So Ti and Tj are always NULL
-            // on output.  GB_builder does not modify Tx.
-            ASSERT (Ti == NULL && Tj == NULL && Tx != NULL) ;
+            // GB_builder always frees jwork, and either frees iwork or
+            // transplants it in to T->i and sets iwork to NULL.  So iwork and
+            // jwork are always NULL on output.  GB_builder does not modify S.
+            ASSERT (iwork == NULL && jwork == NULL && S != NULL) ;
 
             //------------------------------------------------------------------
             // free workspace and return result
@@ -893,8 +896,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
             if (op != NULL)
             { 
-                // free Tx, just allocated above
-                GB_FREE_MEMORY (Tx, anz, csize) ;
+                // free S, just allocated above
+                GB_FREE_MEMORY (S, anz, csize) ;
             }
 
             // Free the prior content of the input matrix, if done in place.

@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -10,13 +9,13 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_reduce__include.h"
+#include "GB_red__include.h"
 
 // The reduction is defined by the following types and operators:
 
 // Reduce to scalar:  GB_red_scalar__land_bool
+// Assemble tuples:   GB_bild__land_bool
 
-// C type:   bool
 // A type:   bool
 
 // Reduce:   s = (s && aij)
@@ -34,7 +33,7 @@
 #define GB_REDUCE_WORKSPACE(w,nthreads) \
     bool w [nthreads] ;
 
-// set t = identity
+// t = identity
 #define GB_REDUCE_INIT(t) \
     bool t = true ;
 
@@ -54,20 +53,53 @@
 #define GB_REDUCE_TERMINAL(t) \
     if (s == false) break ;
 
+// Tx [p] += S [k]
+#define GB_BUILD_OP(Tx, p, S, k) \
+    Tx [p] = (Tx [p] && S [k])
+
+// Tx [p] = S [k]
+#define GB_BUILD_COPY(Tx, p, S, k) \
+    Tx [p] = S [k] ;
+
 //------------------------------------------------------------------------------
-// reduce to a scalar
+// reduce to a scalar, for monoids only
 //------------------------------------------------------------------------------
 
-void GB_red_scalar__land_bool
+
+
+    void GB_red_scalar__land_bool
+    (
+        bool *result,
+        const GrB_Matrix A,
+        int nthreads
+    )
+    { 
+        GB_REDUCE_INIT (s) ;
+        #include "GB_reduce_to_scalar_template.c"
+        (*result) = s ;
+    }
+
+
+
+//------------------------------------------------------------------------------
+// build matrix
+//------------------------------------------------------------------------------
+
+void GB_bild__land_bool
 (
-    bool *result,
-    const GrB_Matrix A,
+    bool *restrict Tx,
+    int64_t  *restrict Ti,
+    const bool *restrict S,
+    int64_t ntuples,
+    int64_t ndupl,
+    const int64_t *restrict iwork,
+    const int64_t *restrict kwork,
+    const int64_t *tstart_slice,
+    const int64_t *tnz_slice,
     int nthreads
 )
-{ 
-    bool s = true ;
-    #include "GB_reduce_to_scalar_template.c"
-    (*result) = s ;
+{
+    #include "GB_build_template.c"
 }
 
 #endif

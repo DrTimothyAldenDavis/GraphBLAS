@@ -90,9 +90,6 @@ GB_cumsum.c: done, but not as fast as I think it should be.
     Performance of the parallel case is at most 2x speedup, unless the array is
     already in L3 cache.  Needs more work.
 
-GB_build.c: done, except the internal loop needs vectorization
-    calls GB_builder to do remainder of work.
-
 GB_transpose.c: done, except for the qsort
     uses two methods, a qsort-based method and a bucket sort.
 
@@ -100,7 +97,6 @@ GB_transpose_ix, GB_transpose_op, GB_transpose_bucket: done
 
 GB_reduce_to_scalar.c: done
     Does the work for GrB_reduce, to a scalar.  Simple reduction for loop.
-    Note that early exit for some monoids needs to be added.
 
 GB_extractTuples.c: done, except tasks can be used to extract I,J,X in parallel
     does GrB_*_extractTuples.
@@ -112,6 +108,10 @@ GB_wait.c: done, except for parallel GB_prune_inplace (see also GB_resize).
 
 GB_dup.c:  done.  4 parallel memcpy's, but these can also be 4 tasks.
     does the work for GrB_*_dup.  Easy to parallelize.
+
+GB_build.c, GB_builder: done
+    does GrB_*_build, GB_wait, GrB_reduce_to_column (transposed),
+    and GrB_transpose (when the qsort method is used).
 
 ----------------------------------------------------------------------
 in progress
@@ -125,10 +125,6 @@ Template/GB_qsort_template.c: IN PROGRESS
 ----------------------------------------------------------------------
 not started
 ----------------------------------------------------------------------
-
-GB_builder.c, GB_build_factory.c:
-    does the work of GrB_*_build.  Some is easy to do.  
-    Also used by GB_transpose so it is an important function to parallelize.
 
 GB_reduce_to_column.c:
     does the work for GrB_*_reduce (to a vector)

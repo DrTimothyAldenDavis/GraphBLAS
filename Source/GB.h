@@ -2322,7 +2322,7 @@ GrB_Info GB_build               // build matrix
     GB_Context Context
 ) ;
 
-GrB_Info GB_builder
+GrB_Info GB_builder                 // build a matrix from tuples
 (
     GrB_Matrix *Thandle,            // matrix T to build
     const GrB_Type ttype,           // type of output matrix T
@@ -2331,26 +2331,11 @@ GrB_Info GB_builder
     const bool is_csc,              // true if T is CSC, false if CSR
     int64_t **iwork_handle,         // for (i,k) or (j,i,k) tuples
     int64_t **jwork_handle,         // for (j,i,k) tuples
-    const bool already_sorted,      // true if tuples already sorted on input
-    const void *S,                  // array of values of tuples
-    const int64_t len,              // number of tuples, and size of kwork
-    const int64_t ijlen,            // size of iwork and jwork arrays
-    const GrB_BinaryOp dup,         // binary function to assemble duplicates,
-                                    // if NULL use the "SECOND" function to
-                                    // keep the most recent duplicate.
-    const GB_Type_code scode,       // GB_Type_code of S array
-    GB_Context Context
-) ;
-
-GrB_Info GB_build_factory           // build a matrix
-(
-    GrB_Matrix *Thandle,            // matrix T to build
-    const int64_t tnz0,             // final nnz(T)
-    int64_t **iwork_handle,         // for (i,k) or (j,i,k) tuples
-    int64_t **kwork_handle,         // for (i,k) or (j,i,k) tuples
+    const bool known_sorted,        // true if tuples known to be sorted
+    const bool known_no_duplicates, // true if tuples known to not have dupl
     const GB_void *S,               // array of values of tuples
-    const int64_t len,              // number of tuples and size of kwork
-    const int64_t ijlen,            // size of iwork array
+    const int64_t ntuples,          // number of tuples, and size of kwork
+    const int64_t ijlen,            // size of iwork and jwork arrays
     const GrB_BinaryOp dup,         // binary function to assemble duplicates,
                                     // if NULL use the "SECOND" function to
                                     // keep the most recent duplicate.

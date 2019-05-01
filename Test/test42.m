@@ -56,6 +56,7 @@ assert (spok (T) == 1) ;
 %     % pause
 % end
 
+%-------------------------------------------------------------------------------
 fprintf ('matrix from collection, no sorting:\n') ;
 Prob = ssget (939)
 A = Prob.A ;
@@ -103,6 +104,32 @@ catch
 end
 assert (ok) ;
 
+%-------------------------------------------------------------------------------
+fprintf ('\nsame matrix, but unsorted:\n') ;
+
+rng ('default') ;
+nz = length (x)
+p = randperm (nz) ;
+i1 = i1 (p) ;
+j1 = j1 (p) ;
+x  = x  (p) ;
+i  = i  (p) ;
+j  = j  (p) ;
+
+fprintf ('MATLAB:\n') ;
+tic
+T = sparse (i1, j1, x) ;
+toc
+
+fprintf ('GrB:\n') ;
+tic
+S = GB_mex_Matrix_build (i,j,x) ;
+S = S.matrix ;
+toc
+assert (isequal (T,S))
+assert (spok (S) == 1) ;
+
+%-------------------------------------------------------------------------------
 fprintf ('\nrandom matrix, with duplicates:\n') ;
 i2 = floor (rand (1000000,1) * n) + 1 ;
 j2 = floor (rand (1000000,1) * n) + 1 ;

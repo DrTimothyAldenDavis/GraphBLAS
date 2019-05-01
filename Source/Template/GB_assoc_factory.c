@@ -7,20 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// FUTURE:: write Generator/GB_assoc.c, and use it to create 66 files:
-// Generator/GB_assoc__[operator]_[type].  Each file has 4 functions for the
-// kernels for GB_reduce_to_scalar, GB_build_factory, and GB_reduce_to_column
-// (2 kernels).  (but 22 files with FIRST and SECOND just have one kernel for
-// GB_build_factory).
+// TODO: add to GB_build, and GB_reduce_to_col to Generator/GB_red.[ch]
 
 // This is a generic body of code for creating hard-coded versions of code for
 // 44 combinations of associative operators and built-in types: 10 types (all
-// but boolean) with min, max, plus, and times, and one type (boolean) with
-// "or", "and" "xor" and "eq"
+// but boolean) with MIN, MAX, PLUS, and TIMES, and one type (boolean) with
+// OR, AND, XOR, and EQ
 
 // If GB_INCLUDE_SECOND_OPERATOR is defined then an additional 11 built-in
 // workers for the SECOND operator are also created, and 11 for FIRST, for
-// GB_build_factory.
+// GB_builder.
 
 #undef  GB_IGNORE
 #define GB_IGNORE 0
@@ -147,7 +143,7 @@ if (typecode != GB_BOOL_code)
             #undef  GB_DUP
 
         //----------------------------------------------------------------------
-        // FIRST and SECOND for GB_build_factory
+        // FIRST and SECOND for GB_builder
         //----------------------------------------------------------------------
 
         // GB_build does not terminate early
@@ -211,11 +207,8 @@ else
     // boolean case: rename the opcode as needed
     //--------------------------------------------------------------------------
 
-    // non-associatve ops not handled here: *GT, *LT, *GE, *LE.
-
     // The FIRST and SECOND operators are not associative, but are added for
-    // GB_build_factory.  Since FIRST == DIV, and SECOND == RDIV, these
-    // operators are handled too.
+    // GB_builder.
 
     switch (GB_boolean_rename (opcode))
     {
@@ -261,7 +254,7 @@ else
             #undef  GB_DUP
 
         //----------------------------------------------------------------------
-        // FIRST and SECOND for GB_build_factory
+        // FIRST and SECOND for GB_builder
         //----------------------------------------------------------------------
 
         // GB_build does not terminate early
@@ -281,7 +274,7 @@ else
             // SECOND == RDIV
             // no terminal value exploited
             #define GB_DUP(w,t) w = t  // replace with the 2nd tuple
-            GB_ASSOC_WORKER (_first, _bool, bool, GB_IGNORE)
+            GB_ASSOC_WORKER (_second, _bool, bool, GB_IGNORE)
             #undef  GB_DUP
 
         #endif

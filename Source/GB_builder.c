@@ -7,25 +7,32 @@
 
 //------------------------------------------------------------------------------
 
-// The input arguments &iwork and &jwork are always freed by this function.
-// This function is agnostic regarding the CSR/CSC format.  It decides whether
-// T is standard sparse or hypersparse, as determined by the default rules
-// for GrB_Matrix_new.
+// CALLED BY: GB_build, GB_wait, and GB_transpose
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
-// or GrB_Vector_build, and by GB_wait to build a matrix T from the list of
-// pending tuples.
+// or GrB_Vector_build, by GB_wait to build a matrix T from the list of pending
+// tuples, and by GB_transpose to transpose a matrix or vector.  Duplicates can
+// appear if called by GB_build or GB_wait, but not GB_transpose.
 
-// PARALLEL: TODO.  first does qsort, so need to parallelize GB_qsort_*.  Then
-// passes over the tuples to find duplicates, which has some dependencies but
-// could be done in bulk parallel.  After sorting, a thread owns a chunk of
-// tuples.  It can mark all its own duplicates, fully in parallel, but not
-// across to tuples owned by another thread.  When done with this first phase,
-// a 2nd pass could find any duplicates across the thread boundaries.
+// PARALLEL: done
 
 #include "GB.h"
+#ifndef GBCOMPACT
+#include "GB_red__include.h"
+#endif
 
-GrB_Info GB_builder
+#define GB_IWORK(t) (((t) < 0) ? -1 : iwork [t])
+#define GB_JWORK(t) (((t) < 0) ? -1 : ((jwork == NULL) ? 0 : jwork [t]))
+#define GB_KWORK(t) (((t) < 0) ? -1 : ((kwork == NULL) ? t : kwork [t]))
+
+#define GB_FREE_WORK                                            \
+{                                                               \
+    GB_FREE_MEMORY (*iwork_handle, ijlen, sizeof (int64_t)) ;   \
+    GB_FREE_MEMORY (*jwork_handle, ijlen, sizeof (int64_t)) ;   \
+    GB_FREE_MEMORY (kwork,         nvals, sizeof (int64_t)) ;   \
+}
+
+GrB_Info GB_builder                 // build a matrix from tuples
 (
     GrB_Matrix *Thandle,            // matrix T to build
     const GrB_Type ttype,           // type of output matrix T
@@ -34,9 +41,10 @@ GrB_Info GB_builder
     const bool is_csc,              // true if T is CSC, false if CSR
     int64_t **iwork_handle,         // for (i,k) or (j,i,k) tuples
     int64_t **jwork_handle,         // for (j,i,k) tuples
-    const bool already_sorted,      // true if tuples already sorted on input
-    const void *S,                  // array of values of tuples
-    const int64_t len,              // number of tuples, and size of kwork
+    const bool known_sorted,        // true if tuples known to be sorted
+    const bool known_no_duplicates, // true if tuples known to not have dupl
+    const GB_void *S,               // array of values of tuples
+    const int64_t nvals,            // number of tuples, and size of kwork
     const int64_t ijlen,            // size of iwork and jwork arrays
     const GrB_BinaryOp dup,         // binary function to assemble duplicates,
                                     // if NULL use the "SECOND" function to
@@ -50,31 +58,40 @@ GrB_Info GB_builder
     // check inputs
     //--------------------------------------------------------------------------
 
-    // S, scode, and dup are not used here but simply passed down to
-    // GB_build_factory, which does the numerical work.
-
     ASSERT (Thandle != NULL) ;
-    (*Thandle) = NULL ;
-    ASSERT (GB_IMPLIES (len > 0, S != NULL)) ;
-    ASSERT (len >= 0) ;
+    ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
+    ASSERT (nvals >= 0) ;
+    ASSERT (nvals <= ijlen) ;
     ASSERT (scode <= GB_UDT_code) ;
-
-    ASSERT (iwork_handle != NULL) ;
-    ASSERT (jwork_handle != NULL) ;
-    int64_t *restrict iwork = *iwork_handle ;
-    int64_t *restrict jwork = *jwork_handle ;
-    ASSERT (iwork != NULL) ;
-
-    // If T has more than one vector, jwork must be present on input
-    ASSERT (GB_IMPLIES (vdim > 1, jwork != NULL)) ;
-
     ASSERT_OK (GB_check (ttype, "ttype for builder", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (dup, "dup for builder", GB0)) ;
+    ASSERT (iwork_handle != NULL) ;
+    ASSERT (jwork_handle != NULL) ;
 
-    // When this function returns, iwork and jwork are freed, and the iwork and
-    // jwork pointers (in the caller) are set to NULL by setting their handles
-    // to NULL.  Note that jwork may already be NULL on input, if T has
-    // one or zero vectors (jwork_handle is always non-NULL however).
+    //==========================================================================
+    // symbolic phase of the build =============================================
+    //==========================================================================
+
+    // The symbolic phase sorts the tuples and finds any duplicates.  The
+    // output matrix T is constructed (not including T->i and T->x), and T->h
+    // and T->p are computed.  Then iwork is transplanted into T->i, or T->i is
+    // allocated.  T->x is then allocated.  It is not computed until the
+    // numeric phase.
+
+    // When this function returns, iwork is either freed or transplanted into
+    // T->i.  jwork is freed, and the iwork and jwork pointers (in the caller)
+    // are set to NULL by setting their handles to NULL.  Note that jwork may
+    // already be NULL on input, if T has one or zero vectors (jwork_handle is
+    // always non-NULL however).
+
+    GrB_Info info ;
+    GrB_Matrix T = NULL ;
+    (*Thandle) = NULL ;
+    int64_t *restrict iwork = *iwork_handle ;
+    int64_t *restrict jwork = *jwork_handle ;
+    int64_t *restrict kwork = NULL ;
+    ASSERT (iwork != NULL) ;
+    ASSERT (GB_IMPLIES (vdim > 1, jwork != NULL)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -82,250 +99,753 @@ GrB_Info GB_builder
 
     GB_GET_NTHREADS (nthreads, Context) ;
 
+/*
+{
+    printf ("nvals: "GBd"\n", nvals) ;
+    size_t tsize = ttype->size ;
+    size_t ssize = GB_code_size (scode, tsize) ;
+    for (int jj = 0 ; jj < nvals ; jj++)
+    {
+        printf ("%3d i "GBd" j "GBd", value: ", jj,
+            GB_IWORK (jj), GB_JWORK (jj)) ;
+        GB_code_check (scode, S +(jj)*ssize, stdout, Context) ;
+        printf ("\n") ;
+    }
+}
+*/
+
     //--------------------------------------------------------------------------
     // sort the tuples in ascending order (just the pattern, not the values)
     //--------------------------------------------------------------------------
 
-    int64_t *kwork = NULL ;
-
-    if (!already_sorted)
+    if (!known_sorted)
     {
 
         // create the k part of each tuple
-        GB_MALLOC_MEMORY (kwork, len, sizeof (int64_t)) ;
+        GB_MALLOC_MEMORY (kwork, nvals, sizeof (int64_t)) ;
         if (kwork == NULL)
         { 
             // out of memory
-            GB_FREE_MEMORY (*iwork_handle, ijlen, sizeof (int64_t)) ;
-            GB_FREE_MEMORY (*jwork_handle, ijlen, sizeof (int64_t)) ;
+            GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }
 
         // The k part of each tuple (i,k) or (j,i,k) records the original
-        // position of the tuple in the input list.  This allows sort to be
-        // unstable; since k is unique, it forces the result of the sort to be
-        // stable regardless of whether or not the sorting algorithm is stable.
-        // It also keeps track of where the numerical value of the tuple can be
-        // found; it is in S[k] for the tuple (i,k) or (j,i,k), regardless of
-        // where the tuple appears in the list after it is sorted.
+        // position of the tuple in the input list.  This allows an unstable
+        // sorting algorith to be used.  Since k is unique, it forces the
+        // result of the sort to be stable regardless of whether or not the
+        // sorting algorithm is stable.  It also keeps track of where the
+        // numerical value of the tuple can be found; it is in S[k] for the
+        // tuple (i,k) or (j,i,k), regardless of where the tuple appears in the
+        // list after it is sorted.
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t k = 0 ; k < len ; k++)
+        for (int64_t k = 0 ; k < nvals ; k++)
         { 
             kwork [k] = k ;
         }
 
-        // This work takes O(t log t) time if t=len is the number of tuples.
+        // sort all the tuples, in parallel
         if (jwork != NULL)
         { 
             // sort a set of (j,i,k) tuples
-            GB_qsort_3 (jwork, iwork, kwork, len, Context) ;
+            GB_qsort_3 (jwork, iwork, kwork, nvals, Context) ;
         }
         else
         { 
             // sort a set of (i,k) tuples
-            GB_qsort_2b (iwork, kwork, len, Context) ;
+            GB_qsort_2b (iwork, kwork, nvals, Context) ;
         }
 
     }
     else
     { 
         // If the tuples were already known to be sorted on input, kwork is
-        // NULL.  This implicitly means that kwork [k] = k for all k = 0:len-1.
-        // kwork is not allocated.
+        // NULL.  This implicitly means that kwork [k] = k for all k =
+        // 0:nvals-1.  kwork is not allocated.
         ;
     }
 
-    //--------------------------------------------------------------------------
-    // find the size of the result, mark duplicates, and count non-empty vectors
-    //--------------------------------------------------------------------------
-
-    int64_t tnz = 0 ;
-    int64_t tnvec = 0 ;
-    int64_t ilast = -1 ;
-    int64_t jlast = -1 ;
-
-    // TODO do this in parallel
-    for (int64_t t = 0 ; t < len ; t++)
+/*
+{
+    printf ("\nsorted, nvals: "GBd"\n", nvals) ;
+    size_t tsize = ttype->size ;
+    size_t ssize = GB_code_size (scode, tsize) ;
+    for (int jj = 0 ; jj < nvals ; jj++)
     {
-        // get the t-th tuple.  No need to look up position k in kwork [t]
-        int64_t i = iwork [t] ;
-        int64_t j = (jwork == NULL) ? 0 : jwork [t] ;
+        printf ("%3d i "GBd" j "GBd", k "GBd" value: ", jj,
+            GB_IWORK (jj), GB_JWORK (jj), GB_KWORK (jj)) ;
+        GB_code_check (scode, S +(GB_KWORK (jj))*ssize, stdout, Context) ;
+        printf ("\n") ;
+    }
+}
+*/
 
-        // check if (j,i,k) is a duplicate
-        bool is_duplicate = (i == ilast && j == jlast) ;
+    //--------------------------------------------------------------------------
+    // partition the tuples for the threads
+    //--------------------------------------------------------------------------
 
-        // tuples are now sorted but there may be duplicates
-        ASSERT ((jlast < j) || (jlast == j && ilast <= i)) ;
+    // Thread tid handles tuples tstart_slice [tid] to tstart_slice [tid+1]-1.
+    // Each thread handles about the same number of tuples.
+    int64_t tstart_slice [nthreads+1] ; // first tuple in each slice
+    tstart_slice [0] = 0 ;
+    for (int tid = 1 ; tid < nthreads ; tid++)
+    {
+        tstart_slice [tid] = GB_PART (tid, nvals, nthreads) ;
+    }
+    tstart_slice [nthreads] = nvals ;
 
-        if (is_duplicate)
+/*
+{
+    printf ("\nnvals sliced: "GBd"\n", nvals) ;
+    size_t tsize = ttype->size ;
+    size_t ssize = GB_code_size (scode, tsize) ;
+    for (int tid = 0 ; tid < nthreads ; tid++)
+    {
+        printf ("\n   tid: %d------\n", tid) ;
+        for (int jj = tstart_slice [tid] ; jj < tstart_slice [tid+1]  ; jj++)
+        {
+            printf ("%3d i "GBd" j "GBd", k "GBd" value: ", jj,
+            GB_IWORK (jj), GB_JWORK (jj), GB_KWORK (jj)) ;
+            GB_code_check (scode, S +(GB_KWORK (jj))*ssize, stdout, Context) ;
+            printf ("\n") ;
+        }
+    }
+}
+*/
+
+    //--------------------------------------------------------------------------
+    // count vectors and duplicates in each slice
+    //--------------------------------------------------------------------------
+
+    // tnvec_slice [tid]: # of vectors that start in a slice.  If a vector
+    //                    starts in one slice and ends in another, it is
+    //                    counted as being in the first slice.
+    // tnz_slice   [tid]: # of entries in a slice after removing duplicates
+
+    int64_t tnvec_slice [nthreads+1] ;
+    int64_t tnz_slice   [nthreads+1] ;
+
+    // sentinel values for the final cumulative sum
+    tnvec_slice [nthreads] = 0 ;
+    tnz_slice   [nthreads] = 0 ;
+
+    if (known_no_duplicates)
+    {
+
+        //----------------------------------------------------------------------
+        // is it known that no duplicates appear
+        //----------------------------------------------------------------------
+
+        #ifndef NDEBUG
+        {
+            // assert that there are no duplicates
+            int64_t ilast = -1, jlast = -1 ;
+            for (int64_t t = 0 ; t < nvals ; t++)
+            {
+                int64_t i= GB_IWORK (t), j= GB_JWORK (t) ;
+                bool is_duplicate = (i == ilast && j == jlast) ;
+                ASSERT (!is_duplicate) ;
+                ilast = i ; jlast = j ;
+            }
+        }
+        #endif
+
+        if (jwork == NULL)
         { 
-            // tuple is a duplicate of tuple just before it in the sorted list.
-            // mark the tuple as a duplicate by setting the index to -1
-            iwork [t] = -1 ;
 
-            #ifndef NDEBUG
-            // sort places older tuples (with smaller k) after older ones
-            int64_t klast = (t==0) ?
-                                -1 : ((kwork == NULL) ? t-1 : kwork [t-1]) ;
-            int64_t kthis = (kwork == NULL) ? t : kwork [t] ;
-            ASSERT (klast < kthis) ;
-            #endif
+            // all tuples appear in at most one vector, and there are no
+            // duplicates, so there is no need to scan iwork or jwork.
+
+            ASSERT (vdim == 0 || vdim == 1) ;
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            { 
+                int64_t tstart = tstart_slice [tid] ;
+                int64_t tend   = tstart_slice [tid+1] ;
+                tnvec_slice [tid] = 0 ;
+                tnz_slice   [tid] = tend - tstart ;
+            }
+            tnvec_slice [0] = (nvals == 0) ? 0 : 1 ;
+
         }
         else
         {
-            // this is a new tuple
-            if (j > jlast)
-            { 
-                tnvec++ ;       // this is also the first entry in vector j
-                jlast = j ;     // log the new unique vector j
+
+            // count the # of unique vector indices in jwork.  No need to scan
+            // iwork since there are no duplicates to be found.
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+                int64_t my_tnvec = 0 ;
+                int64_t tstart = tstart_slice [tid] ;
+                int64_t tend   = tstart_slice [tid+1] ;
+                int64_t jlast  = GB_JWORK (tstart-1) ;
+
+                for (int64_t t = tstart ; t < tend ; t++)
+                {
+                    // get the t-th tuple
+                    int64_t j = jwork [t] ;
+                    if (j > jlast)
+                    { 
+                        // vector j starts in this slice
+                        my_tnvec++ ;
+                        jlast = j ;
+                    }
+                }
+                tnvec_slice [tid] = my_tnvec ;
+                tnz_slice   [tid] = tend - tstart ;
             }
-            tnz++ ;
-            ilast = i ;         // log the last non-duplicate tuple seen
+        }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // look for duplicates
+        //----------------------------------------------------------------------
+
+        int64_t ilast_slice [nthreads] ;
+        for (int tid = 0 ; tid < nthreads ; tid++)
+        {
+            int64_t tstart = tstart_slice [tid] ;
+            ilast_slice [tid] = GB_IWORK (tstart-1) ;
+        }
+
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (int tid = 0 ; tid < nthreads ; tid++)
+        {
+
+            int64_t my_tnvec = 0 ;
+            int64_t my_ndupl = 0 ;
+            int64_t tstart   = tstart_slice [tid] ;
+            int64_t tend     = tstart_slice [tid+1] ;
+            int64_t ilast    = ilast_slice [tid] ;
+            int64_t jlast    = GB_JWORK (tstart-1) ;
+
+            for (int64_t t = tstart ; t < tend ; t++)
+            {
+                // get the t-th tuple
+                int64_t i = iwork [t] ;
+                int64_t j = GB_JWORK (t) ;
+
+                // tuples are now sorted but there may be duplicates
+                ASSERT ((jlast < j) || (jlast == j && ilast <= i)) ;
+
+                // check if (j,i,k) is a duplicate
+                if (i == ilast && j == jlast)
+                {
+                    // flag the tuple as a duplicate
+                    iwork [t] = -1 ;
+//                  printf ("%d : %3d dupl ("GBd", "GBd")\n", tid, t, i, j) ;
+                    my_ndupl++ ;
+                    // the sort places earlier duplicate tuples (with smaller
+                    // k) after later ones (with larger k).
+                    ASSERT (GB_KWORK (t-1) < GB_KWORK (t)) ;
+                }
+                else
+                {
+                    // this is a new tuple
+                    if (j > jlast)
+                    { 
+                        // vector j starts in this slice
+                        my_tnvec++ ;
+                        jlast = j ;
+                    }
+                    ilast = i ;
+                }
+            }
+            tnvec_slice [tid] = my_tnvec ;
+            tnz_slice   [tid] = (tend - tstart) - my_ndupl ;
         }
     }
+
+    //--------------------------------------------------------------------------
+    // find total # of vectors and duplicates in all tuples
+    //--------------------------------------------------------------------------
+
+    // Replace tnvec_slice with its cumulative sum, after which each slice tid
+    // will be responsible for the # vectors in T that range from tnvec_slice
+    // [tid] to tnvec_slice [tid+1]-1.
+    GB_cumsum (tnvec_slice, nthreads, NULL, 1) ;
+    int64_t tnvec = tnvec_slice [nthreads] ;
+
+    // Replace tnz_slice with its cumulative sum
+    GB_cumsum (tnz_slice, nthreads, NULL, 1) ;
+
+    // find the total # of final entries, after assembling duplicates
+    int64_t tnz = tnz_slice [nthreads] ;
+    int64_t ndupl = nvals - tnz ;
+
+/*
+{
+    printf ("\nnvals sliced: "GBd" dupl "GBd"\n", nvals, ndupl) ;
+    size_t tsize = ttype->size ;
+    size_t ssize = GB_code_size (scode, tsize) ;
+    for (int tid = 0 ; tid < nthreads ; tid++)
+    {
+        printf ("\n   tid: %d------\n", tid) ;
+        for (int jj = tstart_slice [tid] ; jj < tstart_slice [tid+1]  ; jj++)
+        {
+            printf ("%3d i "GBd" j "GBd", k "GBd" value: ", jj,
+            GB_IWORK (jj), GB_JWORK (jj), GB_KWORK (jj)) ;
+            GB_code_check (scode, S +(GB_KWORK (jj))*ssize, stdout, Context) ;
+            printf ("\n") ;
+        }
+    }
+}
+*/
 
     //--------------------------------------------------------------------------
     // allocate T; always hypersparse
     //--------------------------------------------------------------------------
 
-    // [ allocate T; allocate T->p and T->h but do not initialize them
+    // [ allocate T; allocate T->p and T->h but do not initialize them.
     // T is always hypersparse.
-    GrB_Info info ;
-    GrB_Matrix T = NULL ;           // allocate a new header for T
     GB_NEW (&T, ttype, vlen, vdim, GB_Ap_malloc, is_csc, GB_FORCE_HYPER,
         GB_ALWAYS_HYPER, tnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE_MEMORY (*iwork_handle, ijlen, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (*jwork_handle, ijlen, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (kwork,         len,   sizeof (int64_t)) ;
+        GB_FREE_WORK ;
         return (info) ;
     }
 
-    // bool T_is_hyper = T->is_hyper ;
     ASSERT (T->is_hyper) ;
-
-    (*Thandle) = T ;
     ASSERT (T->nzmax == 0) ;        // T->i and T->x not yet allocated
 
     //--------------------------------------------------------------------------
     // construct the vector pointers and hyperlist for T
     //--------------------------------------------------------------------------
 
-    // This phase takes O(t) time if T is hypersparse, or O(n+t) if T is
-    // non-hypersparse (but the non-hypersparse code is commented out).
-
     int64_t *restrict Th = T->h ;
     int64_t *restrict Tp = T->p ;
 
-    // like GB_jstart, except Tp [0] = 0 is done later, and tnz_last not needed
-    tnz = 0 ;
-    tnvec = 0 ;
-    jlast = -1 ;
-
-    // TODO do this in parallel
-    for (int64_t t = 0 ; t < len ; t++)
+    if (ndupl == 0)
     {
-        // get the t-th tuple.  No need to look up position k in kwork [t]
-        int64_t i = iwork [t] ;
-        int64_t j = (jwork == NULL) ? 0 : jwork [t] ;
 
-        // check if (j,i,k) is a duplicate
-        bool is_duplicate = (i == -1) ;
+        //----------------------------------------------------------------------
+        // is it known that no duplicates appear
+        //----------------------------------------------------------------------
 
-        if (!is_duplicate)
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (int tid = 0 ; tid < nthreads ; tid++)
         {
-            // this is a new tuple
-            if (j > jlast)
-            { 
-                // First entry in vector j.  Log the start of T(:,j).
-                // GB_jappend is not used since that logs the end of T(:,j).
-                // if (T_is_hyper)
-                {
-                    // T is hypersparse; just log this vector j.
-                    ASSERT (tnvec < T->plen) ;
-                    Th [tnvec] = j ;
-                    Tp [tnvec] = tnz ;
+
+            int64_t my_tnvec = tnvec_slice [tid] ;
+            int64_t tstart   = tstart_slice [tid] ;
+            int64_t tend     = tstart_slice [tid+1] ;
+            int64_t jlast    = GB_JWORK (tstart-1) ;
+
+            for (int64_t t = tstart ; t < tend ; t++)
+            {
+                // get the t-th tuple
+                int64_t j = GB_JWORK (t) ;
+                if (j > jlast)
+                { 
+                    // vector j starts in this slice
+                    Th [my_tnvec] = j ;
+                    Tp [my_tnvec] = t ;
+                    my_tnvec++ ;
+                    jlast = j ;
                 }
-                #if 0
-                else
-                {
-                    // T is non-hypersparse.  Finish vectors jlast+1 to j.
-                    // This adds O(n) time to the work required to build T.
-                    for (int64_t jprior = jlast+1 ; jprior <= j ; jprior++)
-                    {
-                        Tp [jprior] = tnz ;
-                    }
-                }
-                #endif
-                tnvec++ ;       // one more non-empty vector in T
-                jlast = j ;
             }
-            tnz++ ;
         }
-    }
 
-    T->nvec_nonempty = tnvec ;
-
-    // log the end of the last column, like GB_jwrapup
-    // if (T_is_hyper)
-    { 
-        Tp [tnvec] = tnz ;
-        T->nvec = tnvec ;
-        ASSERT (T->nvec == T->plen) ;
     }
-    #if 0
     else
     {
-        // T is non-hypersparse.  Finish vectors jlast+1 to n-1.
-        // This adds O(n) time to the work required to build T.
-        for (int64_t jprior = jlast+1 ; jprior <= vdim ; jprior++)
+
+        //----------------------------------------------------------------------
+        // it is known that at least one duplicate appears
+        //----------------------------------------------------------------------
+
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (int tid = 0 ; tid < nthreads ; tid++)
         {
-            Tp [jprior] = tnz ;
+
+            int64_t my_tnz   = tnz_slice [tid] ;
+            int64_t my_tnvec = tnvec_slice [tid] ;
+            int64_t tstart   = tstart_slice [tid] ;
+            int64_t tend     = tstart_slice [tid+1] ;
+            int64_t ilast    = GB_IWORK (tstart-1) ;
+            int64_t jlast    = GB_JWORK (tstart-1) ;
+
+            for (int64_t t = tstart ; t < tend ; t++)
+            {
+                // get the t-th tuple
+                int64_t i = iwork [t] ;
+                int64_t j = GB_JWORK (t) ;
+                if (i >= 0)
+                {
+                    // this is a new tuple
+                    if (j > jlast)
+                    { 
+                        // vector j starts in this slice 
+                        Th [my_tnvec] = j ;
+                        Tp [my_tnvec] = my_tnz ;
+                        my_tnvec++ ;
+                        jlast = j ;
+                    }
+                    my_tnz++ ;
+                }
+            }
         }
     }
-    #endif
 
+    // log the end of the last column
+    T->nvec_nonempty = tnvec ;
+    T->nvec = tnvec ;
+    Tp [tnvec] = tnz ;
+    ASSERT (T->nvec == T->plen) ;
     T->magic = GB_MAGIC ;                      // T->p and T->h are now valid ]
 
-    // all duplicates have been removed from T
-    // int64_t nduplicates = len - tnz ;    // if needed for reporting
-    ASSERT (tnz <= len && tnz >= 0) ;
-
     //--------------------------------------------------------------------------
-    // free the vector indices, jwork
+    // free jwork if it exists
     //--------------------------------------------------------------------------
-
-    // jwork is no longer needed and can be freed.  This is a very important
-    // step because for all built-in types, jwork is at least as big as T->x,
-    // which has not yet been allocated.  jwork is as big as the number of
-    // tuples (len, or nvals), whereas T->x will have size tnz.  Thus, if the
-    // matrix is really big the memory manager should be able to allocate T->x
-    // in place of the freed jwork array as a cheap allocation.  This is
-    // design, and it helps to speed up the build process.
-
-    // During testing on a Macbook Pro and clang 8.0.0 it was observed that the
-    // jwork and T->x pointers were typically identical for large problems (for
-    // T->x double precision, where sizeof (double) == sizeof (int64_t) = 8).
-    // Thus, the memory manager is detecting this condition and exploiting it.
-
-    // jwork may already be NULL.  It is only required when T has more than
-    // one vector.  But the jwork_handle itself is always non-NULL.
 
     ASSERT (jwork_handle != NULL) ;
     GB_FREE_MEMORY (*jwork_handle, ijlen, sizeof (int64_t)) ;
 
     //--------------------------------------------------------------------------
-    // numerical phase of the build via switch factory or generic workers
+    // allocate T->i and T->x
     //--------------------------------------------------------------------------
 
-    // kwork is freed when GB_build_factory returns.  S has not yet been
-    // accessed by this function.  All the work up until now has been symbolic,
-    // with no processing of the numerical values.  That step is saved for
-    // GB_build_factory.
+    T->nzmax = GB_IMAX (tnz, 1) ;
 
-    return (GB_build_factory (Thandle, tnz, iwork_handle, &kwork,
-        S, len, ijlen, dup, scode, Context)) ;
+    if (ndupl == 0)
+    {
+        // shrink iwork from size ijlen to size T->nzmax
+        if (T->nzmax < ijlen)
+        { 
+            // this cannot fail since the size is shrinking.
+            bool ok ;
+            GB_REALLOC_MEMORY (iwork, T->nzmax, ijlen, sizeof (int64_t), &ok) ;
+            ASSERT (ok) ;
+        }
+        // transplant iwork into T->i
+        T->i = iwork ;
+        iwork = NULL ;
+        (*iwork_handle) = NULL ;
+    }
+    else
+    { 
+        // duplicates exist, so allocate a new T->i.  iwork must be freed later
+        GB_MALLOC_MEMORY (T->i, tnz, sizeof (int64_t)) ;
+    }
+
+    GB_MALLOC_MEMORY (T->x, tnz, T->type->size) ;
+    if (T->i == NULL || T->x == NULL)
+    { 
+        // out of memory
+        GB_MATRIX_FREE (&T) ;
+        GB_FREE_WORK ;
+        return (GB_OUT_OF_MEMORY) ;
+    }
+
+    (*Thandle) = T ;
+
+    GB_void *restrict Tx = T->x ;
+    int64_t *restrict Ti = T->i ;
+
+    //==========================================================================
+    // numerical phase of the build: assemble any duplicates
+    //==========================================================================
+
+    // The tuples have been sorted.  Assemble any duplicates with a switch
+    // factory of built-in workers, or four generic workers.  The vector
+    // pointers T->p and hyperlist T->h (if hypersparse) have already been
+    // computed.
+
+    // If there are no duplicates, T->i holds the row indices of the tuple.
+    // Otherwise, the row indices are still in iwork.  kwork holds the
+    // positions of each tuple in the array S.  The tuples are sorted so that
+    // duplicates are adjacent to each other and they appear in the order they
+    // appeared in the original tuples.  This method assembles the duplicates
+    // and computes T->i and T->x from iwork, kwork, and S.  into T, becoming
+    // T->i.  If no duplicates appear, T->i is already computed, and S just
+    // needs to be copied and permuted into T->x.
+
+    // The (i,k,S[k]) tuples are held in two integer arrays: (1) iwork or T->i,
+    // and (2) kwork, and an array S of numerical values.  S has not been
+    // sorted, nor even accessed yet.  It is identical to the original unsorted
+    // tuples.  The (i,k,S[k]) tuple holds the row index i, the position k, and
+    // the value S [k].  This entry becomes T(i,j) = S [k] in the matrix T, and
+    // duplicates (if any) are assembled via the dup operator.
+
+    //--------------------------------------------------------------------------
+    // get opcodes and check types
+    //--------------------------------------------------------------------------
+
+    // With GB_build, there can be 1 to 2 different types.
+    //      T->type is identical to the types of x,y,z for z=dup(x,y).
+    //      dup is never NULL and all its three types are the same
+    //      The type of S (scode) can different but must be compatible
+    //          with T->type
+
+    // With GB_wait, there can be 1 to 5 different types:
+    //      The pending tuples are in S, of type scode which must be
+    //          compatible with dup->ytype and T->type
+    //      z = dup (x,y): can be NULL or have 1 to 3 different types
+    //      T->type: must be compatible with all above types.
+    //      dup may be NULL, in which case it is assumed be the implicit SECOND
+    //          operator, with all three types equal to T->type
+
+    GrB_Type xtype, ytype, ztype ;
+    GxB_binary_function fdup ;
+    GB_Opcode opcode ;
+
+    GB_Type_code tcode = ttype->code ;
+    bool op_2nd ;
+
+    ASSERT_OK (GB_check (ttype, "ttype for build_factorize", GB0)) ;
+
+    if (dup == NULL)
+    { 
+
+        //----------------------------------------------------------------------
+        // dup is the implicit SECOND operator
+        //----------------------------------------------------------------------
+
+        // z = SECOND (x,y) where all three types are the same as ttype
+        // T(i,j) = (ttype) S(k) will be done for all tuples.
+
+        opcode = GB_SECOND_opcode ;
+        ASSERT (GB_op_is_second (dup, ttype)) ;
+        xtype = ttype ;
+        ytype = ttype ;
+        ztype = ttype ;
+        fdup = NULL ;
+        op_2nd = true ;
+
+    }
+    else
+    { 
+
+        //----------------------------------------------------------------------
+        // dup is an explicit operator
+        //----------------------------------------------------------------------
+
+        // T(i,j) = (ttype) S[k] will be done for the first tuple.
+        // for subsequent tuples: T(i,j) += S[k], via the dup operator and
+        // typecasting:
+        //
+        //      y = (dup->ytype) S[k]
+        //      x = (dup->xtype) T(i,j)
+        //      z = (dup->ztype) dup (x,y)
+        //      T(i,j) = (ttype) z
+
+        ASSERT_OK (GB_check (dup, "dup for build_factory", GB0)) ;
+        opcode = dup->opcode ;
+        xtype = dup->xtype ;
+        ytype = dup->ytype ;
+        ztype = dup->ztype ;
+        fdup = dup->function ;
+        op_2nd = GB_op_is_second (dup, ttype) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get the sizes and codes of each type
+    //--------------------------------------------------------------------------
+
+    GB_Type_code zcode = ztype->code ;
+    GB_Type_code xcode = xtype->code ;
+    GB_Type_code ycode = ytype->code ;
+
+    ASSERT (GB_code_compatible (tcode, scode)) ;    // T(i,j) = (ttype) S
+    ASSERT (GB_code_compatible (ycode, scode)) ;    // y = (ytype) S
+    ASSERT (GB_Type_compatible (xtype, ttype)) ;    // x = (xtype) T(i,j)
+    ASSERT (GB_Type_compatible (ttype, ztype)) ;    // T(i,j) = (ttype) z
+
+    size_t tsize = ttype->size ;
+    size_t zsize = ztype->size ;
+    size_t xsize = xtype->size ;
+    size_t ysize = ytype->size ;
+    size_t ssize = GB_code_size (scode, tsize) ;
+
+    //--------------------------------------------------------------------------
+    // assemble the output
+    //--------------------------------------------------------------------------
+
+    // so that tcode can match scode
+    GB_Type_code tcode2 = (tcode == GB_UCT_code) ? GB_UDT_code : tcode ;
+    GB_Type_code scode2 = (scode == GB_UCT_code) ? GB_UDT_code : scode ;
+
+    // no typecasting if all 5 types are the same
+    bool nocasting = (tcode2 == scode2) &&
+        (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
+
+    if (nocasting && known_sorted && ndupl == 0)
+    { 
+
+        //----------------------------------------------------------------------
+        // copy S into T->x
+        //----------------------------------------------------------------------
+
+        // No typecasting is needed, the tuples were originally in sorted
+        // order, and no duplicates appear.  All that is required is to copy S
+        // into Tx.
+
+        GB_memcpy (Tx, S, nvals * tsize, nthreads) ;
+
+    }
+    else if (nocasting)
+    { 
+
+        //----------------------------------------------------------------------
+        // assemble the values, S, into T, no typecasting needed
+        //----------------------------------------------------------------------
+
+        // There are 44 common cases of this function for built-in types and
+        // 8 associative operators: MIN, MAX, PLUS, TIMES for 10 types (all
+        // but boolean; and OR, AND, XOR, and EQ for boolean.
+
+        // In addition, the FIRST and SECOND operators are hard-coded, for
+        // another 22 workers, since SECOND is used by GB_wait and since FIRST
+        // is useful for keeping the first tuple seen.  It is controlled by the
+        // GB_INCLUDE_SECOND_OPERATOR definition, so they do not appear in
+        // GB_reduce_to_* where the FIRST and SECOND operators are not needed.
+
+        // Early exit cannot be exploited, so the terminal value is ignored.
+
+        #define GB_INCLUDE_SECOND_OPERATOR
+
+        bool done = false ;
+
+        #define GB_bild(opname,aname) GB_bild_ ## opname ## aname
+
+        #define GB_ASSOC_WORKER(opname,aname,atype,terminal)                 \
+        {                                                                    \
+            GB_bild (opname, aname) ((atype *) Tx, Ti, (atype *) S, nvals,   \
+                ndupl, iwork, kwork, tstart_slice, tnz_slice, nthreads) ;    \
+            done = true ;                                                    \
+        }                                                                    \
+        break ;
+
+        //----------------------------------------------------------------------
+        // launch the switch factory
+        //----------------------------------------------------------------------
+
+        #ifndef GBCOMPACT
+
+            // controlled by opcode and typecode
+            GB_Type_code typecode = tcode ;
+            #include "GB_assoc_factory.c"
+
+        #endif
+
+        //----------------------------------------------------------------------
+        // generic worker
+        //----------------------------------------------------------------------
+
+        if (!done)
+        {
+
+            //------------------------------------------------------------------
+            // no typecasting, but use the fdup function pointer and memcpy
+            //------------------------------------------------------------------
+
+            // Tx [p] = S [k]
+            #define GB_BUILD_COPY(Tx,p,S,k)                                 \
+                memcpy (Tx +((p)*tsize), S +((k)*tsize), tsize) ;
+
+            if (op_2nd)
+            { 
+
+                //--------------------------------------------------------------
+                // dup is the SECOND operator, with no typecasting
+                //--------------------------------------------------------------
+
+                #define GB_BUILD_OP(Tx,p,S,k) GB_BUILD_COPY(Tx,p,S,k)
+                #include "GB_build_template.c"
+
+            }
+            else
+            { 
+
+                //--------------------------------------------------------------
+                // dup is another operator, with no typecasting needed
+                //--------------------------------------------------------------
+
+                // Tx [p] += S [k]
+                #undef  GB_BUILD_OP
+                #define GB_BUILD_OP(Tx,p,S,k)                               \
+                    fdup (Tx +((p)*tsize), Tx +((p)*tsize), S +((k)*tsize)) ;
+                #include "GB_build_template.c"
+            }
+        }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // assemble the values S into T, typecasting as needed
+        //----------------------------------------------------------------------
+
+        GB_cast_function cast_S_to_T = GB_cast_factory (tcode, scode) ;
+        GB_cast_function cast_S_to_Y = GB_cast_factory (ycode, scode) ;
+        GB_cast_function cast_T_to_X = GB_cast_factory (xcode, tcode) ;
+        GB_cast_function cast_Z_to_T = GB_cast_factory (tcode, zcode) ;
+
+        // The type of the S array differs from the type of T and dup, but both
+        // types are built-in since user-defined types cannot be typecasted.
+        ASSERT (scode <= GB_FP64_code) ;
+        ASSERT (tcode <= GB_FP64_code) ;
+        ASSERT (xcode <= GB_FP64_code) ;
+        ASSERT (ycode <= GB_FP64_code) ;
+        ASSERT (zcode <= GB_FP64_code) ;
+
+        // Tx [p] = (ttype) (S [k])
+        #undef  GB_BUILD_COPY
+        #define GB_BUILD_COPY(Tx,p,S,k)                             \
+            cast_S_to_T (Tx +((p)*tsize), S +((k)*ssize), ssize) ;
+
+        if (op_2nd)
+        { 
+
+            //------------------------------------------------------------------
+            // dup operator is the implicit SECOND operator, with typecasting
+            //------------------------------------------------------------------
+
+            #undef  GB_BUILD_OP
+            #define GB_BUILD_OP(Tx,p,S,k) GB_BUILD_COPY(Tx,p,S,k)
+            #include "GB_build_template.c"
+
+        }
+        else
+        { 
+
+            //------------------------------------------------------------------
+            // dup is another operator, with typecasting required
+            //------------------------------------------------------------------
+
+            // Tx [p] += S [k]
+            #undef  GB_BUILD_OP
+            #define GB_BUILD_OP(Tx,p,S,k)                               \
+            {                                                           \
+                /* ywork = (ytype) S [k] */                             \
+                GB_void ywork [ysize] ;                                 \
+                cast_S_to_Y (ywork, S +((k)*ssize), ssize) ;            \
+                /* xwork = (xtype) Tx [p] */                            \
+                GB_void xwork [xsize] ;                                 \
+                cast_T_to_X (xwork, Tx +((p)*tsize), tsize) ;           \
+                /* zwork = f (xwork, ywork) */                          \
+                GB_void zwork [zsize] ;                                 \
+                fdup (zwork, xwork, ywork) ;                            \
+                /* Tx [tnz-1] = (ttype) zwork */                        \
+                cast_Z_to_T (Tx +((p)*tsize), zwork, zsize) ;           \
+            }
+            #include "GB_build_template.c"
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_WORK ;
+    ASSERT_OK (GB_check (T, "T built", GB0)) ;
+    return (GrB_SUCCESS) ;
 }
 

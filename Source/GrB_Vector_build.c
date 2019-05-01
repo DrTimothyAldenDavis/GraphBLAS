@@ -21,7 +21,7 @@ GrB_Info GrB_Vector_build_ ## T     /* build a vector from (I,X) tuples   */  \
 {                                                                             \
     GB_WHERE ("GrB_Vector_build_" GB_STR(T) " (w, I, X, nvals, dup)") ;       \
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                         \
-    Context->nthreads = GxB_DEFAULT ;   /* no descriptor, so use default rule*/\
+    Context->nthreads = GxB_DEFAULT ;  /* no descriptor, so use default rule*/\
     ASSERT (GB_VECTOR_OK (w)) ;                                               \
     GrB_Info info = GB_user_build ((GrB_Matrix) w, I, NULL, X, nvals, dup,    \
         GB_ ## T ## _code, false, Context) ;                                  \

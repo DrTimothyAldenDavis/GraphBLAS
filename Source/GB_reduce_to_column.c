@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// CALLS:     GB_build
+
 // C<M> = accum (C,reduce(A)) where C is n-by-1
 
 // PARALLEL: TODO. use a parallel reduction method
@@ -544,7 +546,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             if (tdense)
             {
                 // construct the pattern of T
-                #pragma omp parallel for num_threads(nthreads)
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (int64_t i = 0 ; i < wlen ; i++)
                 { 
                     Ti [i] = i ;
