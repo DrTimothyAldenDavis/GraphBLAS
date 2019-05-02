@@ -146,7 +146,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     if (iwork == NULL)
     {
 
-double ttt = omp_get_wtime ( ) ;
+// double ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // allocate workspace
@@ -395,8 +395,8 @@ double ttt = omp_get_wtime ( ) ;
 
         known_no_duplicates = known_sorted && no_duplicates_found ;
 
-ttt = omp_get_wtime ( ) - ttt ;
-printf ("1st pass   %g\n", ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// fprintf (stderr,"1st pass   %g\n", ttt) ;
 
     }
 
@@ -406,8 +406,8 @@ printf ("1st pass   %g\n", ttt) ;
     ASSERT (iwork != NULL) ;
     ASSERT (GB_IMPLIES (vdim > 1, jwork != NULL)) ;
 
-printf ("builder nthreads %d\n", nthreads) ;
-double ttt ;
+// fprintf (stderr,"builder nthreads %d\n", nthreads) ;
+// double ttt ;
 
 /*
 {
@@ -432,7 +432,7 @@ double ttt ;
     if (!known_sorted)
     {
 
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) ;
 
         // create the k part of each tuple
         GB_MALLOC_MEMORY (kwork, nvals, sizeof (int64_t)) ;
@@ -469,8 +469,8 @@ ttt = omp_get_wtime ( ) ;
             GB_qsort_2b (iwork, kwork, nvals, Context) ;
         }
 
-ttt = omp_get_wtime ( ) - ttt ;
-printf ("sort  time %g\n", ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// fprintf (stderr,"sort  time %g\n", ttt) ;
 
     }
     else
@@ -526,7 +526,7 @@ printf ("sort  time %g\n", ttt) ;
         }
         #endif
 
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) ;
 
         if (jwork == NULL)
         { 
@@ -581,14 +581,15 @@ ttt = omp_get_wtime ( ) ;
             }
         }
 
-ttt = omp_get_wtime ( ) - ttt ;
-printf ("nodup time %g\n", ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// fprintf (stderr,"nodup time %g\n", ttt) ;
 
     }
     else
     {
 
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) ;
+
         //----------------------------------------------------------------------
         // look for duplicates and count # vectors in each slice
         //----------------------------------------------------------------------
@@ -646,8 +647,8 @@ ttt = omp_get_wtime ( ) ;
             tnvec_slice [tid] = my_tnvec ;
             tnz_slice   [tid] = (tend - tstart) - my_ndupl ;
         }
-ttt = omp_get_wtime ( ) - ttt ;
-printf ("dupl  time %g\n", ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// fprintf (stderr,"dupl  time %g\n", ttt) ;
     }
 
     //--------------------------------------------------------------------------
@@ -719,7 +720,8 @@ printf ("dupl  time %g\n", ttt) ;
         //----------------------------------------------------------------------
         // is it known that no duplicates appear
         //----------------------------------------------------------------------
-ttt = omp_get_wtime ( ) ;
+
+// ttt = omp_get_wtime ( ) ;
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < nthreads ; tid++)
@@ -744,13 +746,13 @@ ttt = omp_get_wtime ( ) ;
                 }
             }
         }
-ttt = omp_get_wtime ( ) - ttt ;
-printf ("vec nodupl %g\n", ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// fprintf (stderr,"vec nodupl %g\n", ttt) ;
 
     }
     else
     {
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // it is known that at least one duplicate appears
@@ -787,11 +789,11 @@ ttt = omp_get_wtime ( ) ;
                 }
             }
         }
-ttt = omp_get_wtime ( ) - ttt ;
-printf ("vec dupl   %g\n", ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// fprintf (stderr,"vec dupl   %g\n", ttt) ;
     }
 
-ttt = omp_get_wtime ( ) ;
+// ttt = omp_get_wtime ( ) ;
 
     // log the end of the last vector
     T->nvec_nonempty = tnvec ;
@@ -1146,8 +1148,8 @@ ttt = omp_get_wtime ( ) ;
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-ttt = omp_get_wtime ( ) - ttt ;
-printf ("numeric    %g\n", ttt) ;
+// ttt = omp_get_wtime ( ) - ttt ;
+// fprintf (stderr,"numeric    %g\n", ttt) ;
     ASSERT_OK (GB_check (T, "T built", GB0)) ;
     return (GrB_SUCCESS) ;
 }
