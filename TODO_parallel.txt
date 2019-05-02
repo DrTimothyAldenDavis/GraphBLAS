@@ -179,4 +179,7 @@ GB_subassign_kernel.c:
 GB_I_inverse.c, GB_ijproperties.c, GB_ijsort.c:
     utility functions for assign and extract (A=C(I,J) and C(I,J)=A).
     I_inverse is hard to parallelize.
+    GB_ijsort: deletes duplicates, see also GB_builder.  This is only used in
+    GB_assign, for scalar expansion and for the C_replace_phase, and only when
+    I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
 
