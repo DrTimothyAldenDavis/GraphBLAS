@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: TODO. deletes duplicates, see also GB_builder.  This is only used
-// in GB_assign, for scalar expansion and for the C_replace_phase, and only
-// when I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
+// PARALLEL: TODO
 
 #include "GB.h"
 

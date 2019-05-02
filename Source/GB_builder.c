@@ -14,6 +14,8 @@
 // tuples, and by GB_transpose to transpose a matrix or vector.  Duplicates can
 // appear if called by GB_build or GB_wait, but not GB_transpose.
 
+// The indices are provided either as (I,J) or (iwork,jwork), not both.
+
 // PARALLEL: done
 
 #include "GB.h"
@@ -34,18 +36,26 @@
 
 GrB_Info GB_builder                 // build a matrix from tuples
 (
+    // matrix to build:
     GrB_Matrix *Thandle,            // matrix T to build
     const GrB_Type ttype,           // type of output matrix T
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T
     const bool is_csc,              // true if T is CSC, false if CSR
+    // if iwork is NULL then these are not yet allocated, or known:
     int64_t **iwork_handle,         // for (i,k) or (j,i,k) tuples
     int64_t **jwork_handle,         // for (j,i,k) tuples
-    const bool known_sorted,        // true if tuples known to be sorted
-    const bool known_no_duplicates, // true if tuples known to not have dupl
-    const GB_void *S,               // array of values of tuples
+    bool known_sorted,              // true if tuples known to be sorted
+    bool known_no_duplicates,       // true if tuples known to not have dupl
+    int64_t ijlen,                  // size of iwork and jwork arrays
+    // only used if iwork is NULL:
+    const bool is_matrix,           // true if T a GrB_Matrix, false if vector
+    const bool ijcheck,             // true if I,J must be checked
+    // original inputs:
+    const int64_t *I,               // original indices, size nvals
+    const int64_t *J,               // original indices, size nvals
+    const GB_void *S,               // array of values of tuples, size nvals
     const int64_t nvals,            // number of tuples, and size of kwork
-    const int64_t ijlen,            // size of iwork and jwork arrays
     const GrB_BinaryOp dup,         // binary function to assemble duplicates,
                                     // if NULL use the "SECOND" function to
                                     // keep the most recent duplicate.
@@ -61,7 +71,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (Thandle != NULL) ;
     ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
     ASSERT (nvals >= 0) ;
-    ASSERT (nvals <= ijlen) ;
     ASSERT (scode <= GB_UDT_code) ;
     ASSERT_OK (GB_check (ttype, "ttype for builder", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (dup, "dup for builder", GB0)) ;
@@ -90,14 +99,315 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *restrict iwork = *iwork_handle ;
     int64_t *restrict jwork = *jwork_handle ;
     int64_t *restrict kwork = NULL ;
-    ASSERT (iwork != NULL) ;
-    ASSERT (GB_IMPLIES (vdim > 1, jwork != NULL)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+
+    //--------------------------------------------------------------------------
+    // partition the tuples for the threads
+    //--------------------------------------------------------------------------
+
+    // Thread tid handles tuples tstart_slice [tid] to tstart_slice [tid+1]-1.
+    // Each thread handles about the same number of tuples.  This partition
+    // depends only on nvals.
+
+    int64_t tstart_slice [nthreads+1] ; // first tuple in each slice
+    tstart_slice [0] = 0 ;
+    for (int tid = 1 ; tid < nthreads ; tid++)
+    {
+        tstart_slice [tid] = GB_PART (tid, nvals, nthreads) ;
+    }
+    tstart_slice [nthreads] = nvals ;
+
+    // tnvec_slice [tid]: # of vectors that start in a slice.  If a vector
+    //                    starts in one slice and ends in another, it is
+    //                    counted as being in the first slice.
+    // tnz_slice   [tid]: # of entries in a slice after removing duplicates
+
+    int64_t tnvec_slice [nthreads+1] ;
+    int64_t tnz_slice   [nthreads+1] ;
+
+    // sentinel values for the final cumulative sum
+    tnvec_slice [nthreads] = 0 ;
+    tnz_slice   [nthreads] = 0 ;
+
+    // this becomes true if the first pass computes tnvec_slice and tnz_slice,
+    // and if the I,J tuples were found to be already sorted with no duplicates
+    // present.
+    bool tnvec_and_tnz_slice_computed = false ;
+
+    //--------------------------------------------------------------------------
+    // copy user input and check if valid
+    //--------------------------------------------------------------------------
+
+    if (iwork == NULL)
+    {
+
+double ttt = omp_get_wtime ( ) ;
+
+        //----------------------------------------------------------------------
+        // allocate workspace
+        //----------------------------------------------------------------------
+
+        // allocate workspace to load and sort the index tuples:
+
+        // vdim <= 1: iwork and kwork for (i,k) tuples, where i = I(k)
+        // vdim > 1: also jwork for (j,i,k) tuples where i = I(k) and j = J (k)
+
+        // The k value in the tuple gives the position in the original set of
+        // tuples: I[k] and S[k] when vdim <= 1, and also J[k] for matrices
+        // with vdim > 1.
+
+        // The workspace iwork and jwork are allocated here but freed (or
+        // transplanted) inside GB_builder.  kwork is allocated, used, and
+        // freed in GB_builder.
+
+        GB_MALLOC_MEMORY (iwork, nvals, sizeof (int64_t)) ;
+        bool ok = (iwork != NULL) ;
+        ASSERT (jwork == NULL) ;
+        if (vdim > 1)
+        { 
+            GB_MALLOC_MEMORY (jwork, nvals, sizeof (int64_t)) ;
+            ok = ok && (jwork != NULL) ;
+        }
+
+        (*iwork_handle) = iwork ;
+        (*jwork_handle) = jwork ;
+        ijlen = nvals ;
+
+        if (!ok)
+        { 
+            // out of memory
+            GB_FREE_WORK ;
+            return (GB_OUT_OF_MEMORY) ;
+        }
+
+        //----------------------------------------------------------------------
+        // create the tuples to sort, and check for any invalid indices
+        //----------------------------------------------------------------------
+
+        known_sorted = true ;
+        bool no_duplicates_found = true ;
+
+        if (nvals == 0)
+        { 
+
+            //------------------------------------------------------------------
+            // nothing to do
+            //------------------------------------------------------------------
+
+            ;
+
+        }
+        else if (is_matrix)
+        {
+
+            //------------------------------------------------------------------
+            // C is a matrix; check both I and J
+            //------------------------------------------------------------------
+
+            // but if vdim <= 1, do not create jwork
+            ASSERT (J != NULL) ;
+            ASSERT (iwork != NULL) ;
+            ASSERT (vdim >= 0) ;
+            ASSERT ((vdim > 1) == (jwork != NULL)) ;
+            ASSERT (I != NULL) ;
+
+            int64_t kbad [nthreads] ;
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static) \
+                reduction(&&:known_sorted) reduction(&&:no_duplicates_found)
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+
+                kbad [tid] = -1 ;
+                int64_t my_tnvec = 0 ;
+                int64_t kstart   = tstart_slice [tid] ;
+                int64_t kend     = tstart_slice [tid+1] ;
+                int64_t ilast = (kstart == 0) ? -1 : I [kstart-1] ;
+                int64_t jlast = (kstart == 0) ? -1 : J [kstart-1] ;
+                bool my_bad = false ;
+
+                for (int64_t k = kstart ; k < kend ; k++)
+                {
+                    // get k-th index from user input: (i,j)
+                    int64_t i = I [k] ;
+                    int64_t j = J [k] ;
+
+                    if (i < 0 || i >= vlen || j < 0 || j >= vdim)
+                    { 
+                        // halt if out of bounds
+                        kbad [tid] = k ;
+                        break ;
+                    }
+
+                    // check if the tuples are already sorted
+                    known_sorted = known_sorted &&
+                        ((jlast < j) || (jlast == j && ilast <= i)) ;
+
+                    // check if this entry is a duplicate of the one before it
+                    no_duplicates_found = no_duplicates_found &&
+                        (!(jlast == j && ilast == i)) ;
+
+                    // copy the tuple into the work arrays to be sorted
+                    iwork [k] = i ;
+                    if (jwork != NULL)
+                    {
+                        jwork [k] = j ;
+                        if (j > jlast)
+                        { 
+                            // vector j starts in this slice (but this is 
+                            // valid only if J is sorted on input)
+                            my_tnvec++ ;
+                        }
+                    }
+           
+                    // log the last index seen
+                    ilast = i ; jlast = j ;
+                }
+
+                // these are valid only if I and J are sorted on input,
+                // with no duplicates present.
+                tnvec_slice [tid] = my_tnvec ;
+                tnz_slice   [tid] = kend - kstart ; 
+
+            }
+
+            // collect the report from each thread
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+                if (kbad [tid] >= 0)
+                { 
+                    // invalid index
+                    GB_FREE_WORK ;
+                    int64_t i = I [kbad [tid]] ;
+                    int64_t j = J [kbad [tid]] ;
+                    int64_t row = is_csc ? i : j ;
+                    int64_t col = is_csc ? j : i ;
+                    int64_t nrows = is_csc ? vlen : vdim ;
+                    int64_t ncols = is_csc ? vdim : vlen ;
+                    return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
+                        "index ("GBd","GBd") out of bounds,"
+                        " must be < ("GBd", "GBd")", row, col, nrows, ncols))) ;
+                }
+            }
+
+            // if the tuples were found to be already in sorted order, and if
+            // no duplicates were found, then tnvec_slice and tnz_slice are now
+            // valid, Otherwise, they can only be computed after sorting.
+            tnvec_and_tnz_slice_computed =
+                jwork != NULL && known_sorted && no_duplicates_found ;
+
+        }
+        else if (ijcheck)
+        {
+
+            //------------------------------------------------------------------
+            // C is a typecasted GrB_Vector; check only I
+            //------------------------------------------------------------------
+
+            ASSERT (I != NULL) ;
+            ASSERT (J == NULL) ;
+            ASSERT (vdim == 1) ;
+            int64_t kbad [nthreads] ;
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static) \
+                reduction(&&:known_sorted) reduction(&&:no_duplicates_found)
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+
+                kbad [tid] = -1 ;
+                int64_t kstart   = tstart_slice [tid] ;
+                int64_t kend     = tstart_slice [tid+1] ;
+                int64_t ilast = (kstart == 0) ? -1 : I [kstart-1] ;
+
+                for (int64_t k = kstart ; k < kend ; k++)
+                {
+                    // get k-th index from user input: (i)
+                    int64_t i = I [k] ;
+
+                    if (i < 0 || i >= vlen)
+                    { 
+                        // halt if out of bounds
+                        kbad [tid] = k ;
+                        break ;
+                    }
+
+                    // check if the tuples are already sorted
+                    known_sorted = known_sorted && (ilast <= i) ;
+
+                    // check if this entry is a duplicate of the one before it
+                    no_duplicates_found = no_duplicates_found &&
+                        (!(ilast == i)) ;
+
+                    // copy the tuple into the work arrays to be sorted
+                    iwork [k] = i ;
+
+                    // log the last index seen
+                    ilast = i ;
+                }
+            }
+
+            // collect the report from each thread
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+                if (kbad [tid] >= 0)
+                { 
+                    // invalid index
+                    GB_FREE_WORK ;
+                    int64_t i = I [kbad [tid]] ;
+                    return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
+                        "index ("GBd") out of bounds, must be < ("GBd")",
+                        i, vlen))) ;
+                }
+            }
+
+        }
+        else
+        { 
+
+            //------------------------------------------------------------------
+            // GB_reduce_to_column: do not check I, assume not sorted
+            //------------------------------------------------------------------
+
+            // Many duplicates are possible, since the tuples are being used to
+            // construct a single vector.  For a CSC format, each entry A(i,j)
+            // becomes an (i,aij) tuple, with the column index j discarded.  All
+            // entries in a single row i are reduced to a single entry in the
+            // vector.  The input is unlikely to be sorted, so do not bother to
+            // check.
+
+            GB_memcpy (iwork, I, nvals * sizeof (int64_t), nthreads) ;
+            known_sorted = false ;
+        }
+
+        //----------------------------------------------------------------------
+        // determine if duplicates are possible
+        //----------------------------------------------------------------------
+
+        // The input is now known to be sorted, or not.  If it is sorted, and
+        // if no duplicates were found, then it is known to have no duplicates.
+        // Otherwise, duplicates might appear, but a sort is required first to
+        // check for duplicates.
+
+        known_no_duplicates = known_sorted && no_duplicates_found ;
+
+ttt = omp_get_wtime ( ) - ttt ;
+printf ("1st pass   %g\n", ttt) ;
+
+    }
+
+
+    //--------------------------------------------------------------------------
+
+    ASSERT (iwork != NULL) ;
+    ASSERT (GB_IMPLIES (vdim > 1, jwork != NULL)) ;
+
+printf ("builder nthreads %d\n", nthreads) ;
+double ttt ;
 
 /*
 {
@@ -114,12 +424,15 @@ GrB_Info GB_builder                 // build a matrix from tuples
 }
 */
 
+
     //--------------------------------------------------------------------------
     // sort the tuples in ascending order (just the pattern, not the values)
     //--------------------------------------------------------------------------
 
     if (!known_sorted)
     {
+
+ttt = omp_get_wtime ( ) ;
 
         // create the k part of each tuple
         GB_MALLOC_MEMORY (kwork, nvals, sizeof (int64_t)) ;
@@ -156,6 +469,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             GB_qsort_2b (iwork, kwork, nvals, Context) ;
         }
 
+ttt = omp_get_wtime ( ) - ttt ;
+printf ("sort  time %g\n", ttt) ;
+
     }
     else
     { 
@@ -168,36 +484,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
 /*
 {
-    printf ("\nsorted, nvals: "GBd"\n", nvals) ;
-    size_t tsize = ttype->size ;
-    size_t ssize = GB_code_size (scode, tsize) ;
-    for (int jj = 0 ; jj < nvals ; jj++)
-    {
-        printf ("%3d i "GBd" j "GBd", k "GBd" value: ", jj,
-            GB_IWORK (jj), GB_JWORK (jj), GB_KWORK (jj)) ;
-        GB_code_check (scode, S +(GB_KWORK (jj))*ssize, stdout, Context) ;
-        printf ("\n") ;
-    }
-}
-*/
-
-    //--------------------------------------------------------------------------
-    // partition the tuples for the threads
-    //--------------------------------------------------------------------------
-
-    // Thread tid handles tuples tstart_slice [tid] to tstart_slice [tid+1]-1.
-    // Each thread handles about the same number of tuples.
-    int64_t tstart_slice [nthreads+1] ; // first tuple in each slice
-    tstart_slice [0] = 0 ;
-    for (int tid = 1 ; tid < nthreads ; tid++)
-    {
-        tstart_slice [tid] = GB_PART (tid, nvals, nthreads) ;
-    }
-    tstart_slice [nthreads] = nvals ;
-
-/*
-{
-    printf ("\nnvals sliced: "GBd"\n", nvals) ;
+    printf ("\nsorted, nvals sliced: "GBd"\n", nvals) ;
     size_t tsize = ttype->size ;
     size_t ssize = GB_code_size (scode, tsize) ;
     for (int tid = 0 ; tid < nthreads ; tid++)
@@ -218,23 +505,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // count vectors and duplicates in each slice
     //--------------------------------------------------------------------------
 
-    // tnvec_slice [tid]: # of vectors that start in a slice.  If a vector
-    //                    starts in one slice and ends in another, it is
-    //                    counted as being in the first slice.
-    // tnz_slice   [tid]: # of entries in a slice after removing duplicates
-
-    int64_t tnvec_slice [nthreads+1] ;
-    int64_t tnz_slice   [nthreads+1] ;
-
-    // sentinel values for the final cumulative sum
-    tnvec_slice [nthreads] = 0 ;
-    tnz_slice   [nthreads] = 0 ;
-
     if (known_no_duplicates)
     {
 
         //----------------------------------------------------------------------
-        // is it known that no duplicates appear
+        // no duplicates: just count # vectors in each slice
         //----------------------------------------------------------------------
 
         #ifndef NDEBUG
@@ -250,6 +525,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
             }
         }
         #endif
+
+ttt = omp_get_wtime ( ) ;
 
         if (jwork == NULL)
         { 
@@ -272,44 +549,48 @@ GrB_Info GB_builder                 // build a matrix from tuples
         {
 
             // count the # of unique vector indices in jwork.  No need to scan
-            // iwork since there are no duplicates to be found.
+            // iwork since there are no duplicates to be found.  Also no need
+            // to compute them if already found in the first pass.
 
-// TODO add this count to the first pass, in case the input is sorted.
-// double t = omp_get_wtime ( ) ;
-
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            if (!tnvec_and_tnz_slice_computed)
             {
-                int64_t my_tnvec = 0 ;
-                int64_t tstart = tstart_slice [tid] ;
-                int64_t tend   = tstart_slice [tid+1] ;
-                int64_t jlast  = GB_JWORK (tstart-1) ;
 
-                for (int64_t t = tstart ; t < tend ; t++)
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
+                for (int tid = 0 ; tid < nthreads ; tid++)
                 {
-                    // get the t-th tuple
-                    int64_t j = jwork [t] ;
-                    if (j > jlast)
-                    { 
-                        // vector j starts in this slice
-                        my_tnvec++ ;
-                        jlast = j ;
-                    }
-                }
-                tnvec_slice [tid] = my_tnvec ;
-                tnz_slice   [tid] = tend - tstart ;
-            }
-// t = omp_get_wtime ( ) - t ;
-// printf ("count time %g\n", t) ;
+                    int64_t my_tnvec = 0 ;
+                    int64_t tstart = tstart_slice [tid] ;
+                    int64_t tend   = tstart_slice [tid+1] ;
+                    int64_t jlast  = GB_JWORK (tstart-1) ;
 
+                    for (int64_t t = tstart ; t < tend ; t++)
+                    {
+                        // get the t-th tuple
+                        int64_t j = jwork [t] ;
+                        if (j > jlast)
+                        { 
+                            // vector j starts in this slice
+                            my_tnvec++ ;
+                            jlast = j ;
+                        }
+                    }
+
+                    tnvec_slice [tid] = my_tnvec ;
+                    tnz_slice   [tid] = tend - tstart ;
+                }
+            }
         }
+
+ttt = omp_get_wtime ( ) - ttt ;
+printf ("nodup time %g\n", ttt) ;
 
     }
     else
     {
 
+ttt = omp_get_wtime ( ) ;
         //----------------------------------------------------------------------
-        // look for duplicates
+        // look for duplicates and count # vectors in each slice
         //----------------------------------------------------------------------
 
         int64_t ilast_slice [nthreads] ;
@@ -365,6 +646,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
             tnvec_slice [tid] = my_tnvec ;
             tnz_slice   [tid] = (tend - tstart) - my_ndupl ;
         }
+ttt = omp_get_wtime ( ) - ttt ;
+printf ("dupl  time %g\n", ttt) ;
     }
 
     //--------------------------------------------------------------------------
@@ -384,6 +667,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t tnz = tnz_slice [nthreads] ;
     int64_t ndupl = nvals - tnz ;
 
+
 /*
 {
     printf ("\nnvals sliced: "GBd" dupl "GBd"\n", nvals, ndupl) ;
@@ -402,6 +686,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     }
 }
 */
+
 
     //--------------------------------------------------------------------------
     // allocate T; always hypersparse
@@ -434,6 +719,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         //----------------------------------------------------------------------
         // is it known that no duplicates appear
         //----------------------------------------------------------------------
+ttt = omp_get_wtime ( ) ;
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < nthreads ; tid++)
@@ -458,10 +744,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
             }
         }
+ttt = omp_get_wtime ( ) - ttt ;
+printf ("vec nodupl %g\n", ttt) ;
 
     }
     else
     {
+ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // it is known that at least one duplicate appears
@@ -498,9 +787,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 }
             }
         }
+ttt = omp_get_wtime ( ) - ttt ;
+printf ("vec dupl   %g\n", ttt) ;
     }
 
-    // log the end of the last column
+ttt = omp_get_wtime ( ) ;
+
+    // log the end of the last vector
     T->nvec_nonempty = tnvec ;
     T->nvec = tnvec ;
     Tp [tnvec] = tnz ;
@@ -513,6 +806,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     ASSERT (jwork_handle != NULL) ;
     GB_FREE_MEMORY (*jwork_handle, ijlen, sizeof (int64_t)) ;
+    jwork = NULL ;
 
     //--------------------------------------------------------------------------
     // allocate T->i and T->x
@@ -852,6 +1146,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
+ttt = omp_get_wtime ( ) - ttt ;
+printf ("numeric    %g\n", ttt) ;
     ASSERT_OK (GB_check (T, "T built", GB0)) ;
     return (GrB_SUCCESS) ;
 }

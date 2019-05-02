@@ -17,14 +17,14 @@
 // code development settings
 //------------------------------------------------------------------------------
 
-// turn off debugging; do not edit these three lines
+// turn off Debugging; do not edit these three lines
 #ifndef NDEBUG
 #define NDEBUG
 #endif
 
 // These flags are used for code development.  Uncomment them as needed.
 
-// to turn on debugging, uncomment this line:
+// to turn on Debug, uncomment this line:
 // #undef NDEBUG
 
 // to turn on memory usage debug printing, uncomment this line:
@@ -2324,18 +2324,26 @@ GrB_Info GB_build               // build matrix
 
 GrB_Info GB_builder                 // build a matrix from tuples
 (
+    // matrix to build:
     GrB_Matrix *Thandle,            // matrix T to build
     const GrB_Type ttype,           // type of output matrix T
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T
     const bool is_csc,              // true if T is CSC, false if CSR
+    // if iwork is NULL then these are not yet allocated, or known:
     int64_t **iwork_handle,         // for (i,k) or (j,i,k) tuples
     int64_t **jwork_handle,         // for (j,i,k) tuples
-    const bool known_sorted,        // true if tuples known to be sorted
-    const bool known_no_duplicates, // true if tuples known to not have dupl
-    const GB_void *S,               // array of values of tuples
-    const int64_t ntuples,          // number of tuples, and size of kwork
-    const int64_t ijlen,            // size of iwork and jwork arrays
+    bool known_sorted,              // true if tuples known to be sorted
+    bool known_no_duplicates,       // true if tuples known to not have dupl
+    int64_t ijlen,                  // size of iwork and jwork arrays
+    // only used if iwork is NULL:
+    const bool is_matrix,           // true if T a GrB_Matrix, false if vector
+    const bool ijcheck,             // true if I,J must be checked
+    // original inputs:
+    const int64_t *I,               // original indices, size nvals
+    const int64_t *J,               // original indices, size nvals
+    const GB_void *S,               // array of values of tuples, size nvals
+    const int64_t nvals,            // number of tuples, and size of kwork
     const GrB_BinaryOp dup,         // binary function to assemble duplicates,
                                     // if NULL use the "SECOND" function to
                                     // keep the most recent duplicate.

@@ -176,9 +176,9 @@ GrB_Info GB_wait                // finish all pending computations
     // can be any accum operator.  The z=accum(x,y) operator can have any
     // types, and it does not have to be associative.
 
-    // TODO: keep track of whether or not duplicates could appear
-
-    info = GB_builder (&T,      // create T
+    info = GB_builder
+    (
+        &T,                     // create T
         A->type,                // T->type = A->type
         A->vlen,                // T->vlen = A->vlen
         A->vdim,                // T->vdim = A->vdim
@@ -186,13 +186,17 @@ GrB_Info GB_wait                // finish all pending computations
         &(A->i_pending),        // iwork_handle, becomes T->i on output
         &(A->j_pending),        // jwork_handle, free on output
         A->sorted_pending,      // tuples may or may not be sorted
-        false,                  // check for duplicates (TODO)
+        false,                  // check for duplicates
+        A->max_n_pending,       // size of A->[ijs]_pending arrays
+        true,                   // is_matrix: unused
+        false,                  // ijcheck: unused
+        NULL, NULL,             // original I,J indices, not used here
         A->s_pending,           // tuple values, of type A->type_pending->code
         A->n_pending,           // # of tuples
-        A->max_n_pending,       // size of A->[ijs]_pending arrays
         A->operator_pending,    // dup operator for assembling duplicates
         A->type_pending->code,  // type of A->s_pending
-        Context) ;
+        Context
+    ) ;
 
     //--------------------------------------------------------------------------
     // free pending tuples

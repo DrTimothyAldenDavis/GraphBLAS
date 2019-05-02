@@ -376,6 +376,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
 
             info = GB_build (T, (GrB_Index *) Ai, NULL, Ax, anz, reduce, acode,
                 false, false, Context) ;
+
             if (info != GrB_SUCCESS)
             { 
                 // out of memory

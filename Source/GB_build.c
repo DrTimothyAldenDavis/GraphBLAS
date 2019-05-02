@@ -15,12 +15,13 @@
 // might be sorted on input, so this condition is checked and exploited if
 // found.  GB_reduce_to_column constructs a GrB_Vector froma GrB_Matrix, by
 // discarding the column index.  As a result, duplicates are likely to appear,
-// and the input is likely to be unsorted.  The sorted condition is checked
-// here.  The duplicates are found in GB_builder.
+// and the input is likely to be unsorted.  But for GB_reduce_to_column, the
+// validity of the tuples need not be checked.  All of these conditions are
+// checked in GB_builder.
 
-// Construct a matrix C from a list of indices and values.  Any duplicate
-// entries with identical indices are assembled using the binary dup operator
-// provided on input.  All three types (x,y,z for z=dup(x,y)) must be
+// GB_build constructs a matrix C from a list of indices and values.  Any
+// duplicate entries with identical indices are assembled using the binary dup
+// operator provided on input.  All three types (x,y,z for z=dup(x,y)) must be
 // identical.  The types of dup, S, and C must all be compatible.
 
 // Duplicates are assembled using T(i,j) = dup (T (i,j), S (k)) into a
@@ -85,9 +86,6 @@
 
 // If nvals == 0, I_in, J_in, and S may be NULL.
 
-// PARALLEL: done.
-// checks I and J fully in parallel.  Remaining work is done in GB_builder.
-
 #include "GB.h"
 
 GrB_Info GB_build               // build matrix
@@ -112,23 +110,6 @@ GrB_Info GB_build               // build matrix
     ASSERT (C != NULL) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-
-    //--------------------------------------------------------------------------
-    // get C
-    //--------------------------------------------------------------------------
-
-    GrB_Type ctype = C->type ;
-    int64_t vlen = C->vlen ;
-    int64_t vdim = C->vdim ;
-    bool C_is_csc = C->is_csc ;
-    int64_t nrows = GB_NROWS (C) ;
-    int64_t ncols = GB_NCOLS (C) ;
-
-    //--------------------------------------------------------------------------
     // free all content of C
     //--------------------------------------------------------------------------
 
@@ -143,271 +124,55 @@ GrB_Info GB_build               // build matrix
     //--------------------------------------------------------------------------
 
     int64_t *I, *J ;
-    if (C_is_csc)
+    if (C->is_csc)
     { 
         // C can be a CSC GrB_Matrix, or a GrB_Vector.
         // If C is a typecasted GrB_Vector, then J_in and J must both be NULL.
-        I = (int64_t *) I_in ;  // indices in the range 0 to vlen-1
-        J = (int64_t *) J_in ;  // indices in the range 0 to vdim-1
+        I = (int64_t *) I_in ;  // indices in the range 0 to C->vlen-1
+        J = (int64_t *) J_in ;  // indices in the range 0 to C->vdim-1
     }
     else
     { 
         // C can only be a CSR GrB_Matrix
-        I = (int64_t *) J_in ;  // indices in the range 0 to vlen-1
-        J = (int64_t *) I_in ;  // indices in the range 0 to vdim-1
+        I = (int64_t *) J_in ;  // indices in the range 0 to C->vlen-1
+        J = (int64_t *) I_in ;  // indices in the range 0 to C->vdim-1
     }
 
     // J contains vector names and I contains indices into those vectors.
     // The rest of this function is agnostic to the CSR/CSC format.
 
     //--------------------------------------------------------------------------
-    // create T
+    // build the matrix T
     //--------------------------------------------------------------------------
 
+    // T is always hypersparse.  Its type is the same as the z output of the
+    // z=dup(x,y) operator.
+
+    int64_t *no_iwork = NULL ;
+    int64_t *no_jwork = NULL ;
     GrB_Matrix T = NULL ;
 
-    //--------------------------------------------------------------------------
-    // allocate workspace
-    //--------------------------------------------------------------------------
-
-    // allocate workspace to load and sort the index tuples:
-
-    // vdim <= 1: iwork and kwork for (i,k) tuples, where i = I(k)
-    // vdim > 1: also jwork for (j,i,k) tuples where i = I(k) and j = J (k).
-
-    // The k value in the tuple gives the position in the original set of
-    // tuples: I[k] and S[k] when vdim <= 1, and also J[k] for matrices with
-    // vdim > 1.
-
-    // The workspace iwork and jwork are allocated here but freed (or
-    // transplanted) inside GB_builder.  kwork is allocated, used, and freed
-    // in GB_builder.
-
-    GB_MALLOC_MEMORY (int64_t *iwork, nvals, sizeof (int64_t)) ;
-    bool ok = (iwork != NULL) ;
-    int64_t *jwork = NULL ;
-    if (vdim > 1)
-    { 
-        GB_MALLOC_MEMORY (jwork, nvals, sizeof (int64_t)) ;
-        ok = ok && (jwork != NULL) ;
-    }
-
-    if (!ok)
-    { 
-        // out of memory
-        GB_FREE_MEMORY (iwork, nvals, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (jwork, nvals, sizeof (int64_t)) ;
-        return (GB_OUT_OF_MEMORY) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // create the tuples to sort, and check for any invalid indices
-    //--------------------------------------------------------------------------
-
-    bool known_sorted = true ;
-    bool no_duplicates_found = true ;
-
-    if (nvals == 0)
-    { 
-
-        //----------------------------------------------------------------------
-        // nothing to do
-        //----------------------------------------------------------------------
-
-        ;
-
-    }
-    else if (is_matrix)
-    {
-
-        //----------------------------------------------------------------------
-        // C is a matrix; check both I and J
-        //----------------------------------------------------------------------
-
-        // but if vdim <= 1, do not create jwork
-        ASSERT (J != NULL) ;
-        ASSERT (iwork != NULL) ;
-        ASSERT ((vdim > 1) == (jwork != NULL)) ;
-        ASSERT (I != NULL) ;
-        int64_t kbad [nthreads] ;
-
-        #pragma omp parallel for num_threads(nthreads) schedule(static) \
-            reduction(&&:known_sorted)
-        for (int tid = 0 ; tid < nthreads ; tid++)
-        {
-            // each thread checks its own part
-            int64_t kstart, kend ;
-            GB_PARTITION (kstart, kend, nvals, tid, nthreads) ;
-            kbad [tid] = -1 ;
-            int64_t ilast = (kstart == 0) ? -1 : I [kstart-1] ;
-            int64_t jlast = (kstart == 0) ? -1 : J [kstart-1] ;
-            for (int64_t k = kstart ; k < kend ; k++)
-            {
-                // get kth index from user input: (i,j)
-                int64_t i = I [k] ;
-                int64_t j = J [k] ;
-                if (i < 0 || i >= vlen || j < 0 || j >= vdim)
-                { 
-                    // halt if out of bounds
-                    kbad [tid] = k ;
-                    break ;
-                }
-
-                // check if the tuples are already sorted
-                known_sorted = known_sorted &&
-                    ((jlast < j) || (jlast == j && ilast <= i)) ;
-
-                // check if this entry is a duplicate of the one just before it
-                if (jlast == j && ilast == i) no_duplicates_found = false ;
-
-                // copy the tuple into the work arrays to be sorted
-                iwork [k] = i ;
-                if (jwork != NULL) jwork [k] = j ;
-                // log the last index seen
-                ilast = i ; jlast = j ;
-            }
-        }
-
-        // collect the report from each thread
-        for (int tid = 0 ; tid < nthreads ; tid++)
-        {
-            if (kbad [tid] >= 0)
-            { 
-                // invalid index
-                GB_FREE_MEMORY (iwork, nvals, sizeof (int64_t)) ;
-                GB_FREE_MEMORY (jwork, nvals, sizeof (int64_t)) ;
-                int64_t i = I [kbad [tid]] ;
-                int64_t j = J [kbad [tid]] ;
-                int64_t row = C_is_csc ? i : j ;
-                int64_t col = C_is_csc ? j : i ;
-                return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
-                    "index ("GBd","GBd") out of bounds,"
-                    " must be < ("GBd", "GBd")", row, col, nrows, ncols))) ;
-            }
-        }
-
-    }
-    else if (ijcheck)
-    {
-
-        //----------------------------------------------------------------------
-        // C is a typecasted GrB_Vector; check only I
-        //----------------------------------------------------------------------
-
-        ASSERT (I != NULL) ;
-        int64_t kbad [nthreads] ;
-
-        #pragma omp parallel for num_threads(nthreads) schedule(static) \
-            reduction(&&:known_sorted)
-        for (int tid = 0 ; tid < nthreads ; tid++)
-        {
-            // each thread checks its own part
-            int64_t kstart, kend ;
-            GB_PARTITION (kstart, kend, nvals, tid, nthreads) ;
-            kbad [tid] = -1 ;
-            int64_t ilast = (kstart == 0) ? -1 : I [kstart-1] ;
-
-            for (int64_t k = kstart ; k < kend ; k++)
-            {
-                // get kth index from user input: (i)
-                int64_t i = I [k] ;
-
-                if (i < 0 || i >= vlen)
-                { 
-                    // halt if out of bounds
-                    kbad [tid] = k ;
-                    break ;
-                }
-
-                // check if the tuples are already sorted
-                known_sorted = known_sorted && (ilast <= i) ;
-
-                // check if this entry is a duplicate of the one just before it
-                if (ilast == i) no_duplicates_found = false ;
-
-                // copy the tuple into the work arrays to be sorted
-                iwork [k] = i ;
-
-                // log the last index seen
-                ilast = i ;
-            }
-        }
-
-        // collect the report from each thread
-        for (int tid = 0 ; tid < nthreads ; tid++)
-        {
-            if (kbad [tid] >= 0)
-            { 
-                // invalid index
-                GB_FREE_MEMORY (iwork, nvals, sizeof (int64_t)) ;
-                GB_FREE_MEMORY (jwork, nvals, sizeof (int64_t)) ;
-                int64_t i = I [kbad [tid]] ;
-                return (GB_ERROR (GrB_INDEX_OUT_OF_BOUNDS, (GB_LOG,
-                    "index ("GBd") out of bounds, must be < ("GBd")",
-                    i, vlen))) ;
-            }
-        }
-
-    }
-    else
-    { 
-
-        //----------------------------------------------------------------------
-        // GB_reduce_to_column: do not check I, assume not sorted
-        //----------------------------------------------------------------------
-
-        // Many duplicates are possible, since the tuples are being used to
-        // construct a single vector.  For a CSC format, each entry A(i,j)
-        // becomes an (i,aij) tuple, with the column index j discarded.  All
-        // entries in a single row i are reduced to a single entry in the
-        // vector.  The input is unlikely to be sorted, so don't bother to
-        // check.
-
-        GB_memcpy (iwork, I, nvals * sizeof (int64_t), nthreads) ;
-        known_sorted = false ;
-    }
-
-    //--------------------------------------------------------------------------
-    // determine if duplicates are possible
-    //--------------------------------------------------------------------------
-
-    // The input is now known to be sorted, or not.  If it is sorted, and if no
-    // duplicates were found, then it is known to have no duplicates.
-    // Otherwise, duplicates might appear, but a sort is required first to
-    // check for duplicates.
-
-    bool known_no_duplicates = known_sorted && no_duplicates_found ;
-
-    //--------------------------------------------------------------------------
-    // build the matrix T and transplant it into C
-    //--------------------------------------------------------------------------
-
-    // If successful, GB_builder will transplant iwork into its output matrix T
-    // as the row indices T->i and set iwork to NULL, or if it fails it has
-    // freed iwork.  In either case iwork is NULL when GB_builder returns.  It
-    // always frees jwork and sets it to NULL.  T can be non-hypersparse or
-    // hypersparse, as determined by GB_builder; it will typically be
-    // hypersparse.  Its type is the same as the z output of the z=dup(x,y)
-    // operator.
-
-    GrB_Info info = GB_builder (&T,     // create T
+    GrB_Info info = GB_builder
+    (
+        &T,             // create T
         dup->ztype,     // T has the type determined by the dup operator
-        vlen,           // T->vlen = C->vlen
-        vdim,           // T->vdim = C->vdim
-        C_is_csc,       // T has the same CSR/CSC format as C
-        &iwork,         // iwork_handle, becomes T->i on output
-        &jwork,         // jwork_handle, freed on output
-        known_sorted,        // tuples may or may not be sorted, as found above
-        known_no_duplicates, // tuples might have duplicates: need to check
-        S,              // original array of values, of type scode, size nvals
+        C->vlen,        // T->vlen = C->vlen
+        C->vdim,        // T->vdim = C->vdim
+        C->is_csc,      // T has the same CSR/CSC format as C
+        &no_iwork,      // iwork_handle, not used here
+        &no_jwork,      // jwork_handle, not used here
+        false,          // known_sorted: not yet known
+        false,          // known_no_duplicatces: not yet known
+        0,              // iwork and jwork not used here
+        is_matrix,      // T is a GrB_Matrix
+        ijcheck,        // check I and J
+        I, J, S,        // original tuples, each of size nvals
         nvals,          // number of tuples
-        nvals,          // size of iwork, jwork, and S
         dup,            // operator to assemble duplicates
         scode,          // type of the S array
-        Context) ;
+        Context
+    ) ;
 
-    ASSERT (iwork == NULL) ;
-    ASSERT (jwork == NULL) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -418,6 +183,6 @@ GrB_Info GB_build               // build matrix
     // transplant and typecast T into C, conform C, and free T
     //--------------------------------------------------------------------------
 
-    return (GB_transplant_conform (C, ctype, &T, Context)) ;
+    return (GB_transplant_conform (C, C->type, &T, Context)) ;
 }
 

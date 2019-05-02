@@ -869,7 +869,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // sizeof(int64_t)).  T is always hypersparse.
 
             GrB_Matrix T ;
-            info = GB_builder (&T, // create T
+            info = GB_builder
+            (
+                &T,         // create T
                 ctype,      // T is of type ctype
                 avdim,      // T->vlen = A->vdim, always > 1
                 avlen,      // T->vdim = A->vlen, always > 1
@@ -878,12 +880,16 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 &jwork,     // jwork_handle, freed on output
                 false,      // tuples are not sorted on input
                 true,       // tuples have no duplicates
+                anz,        // size of iwork and jwork
+                true,       // is_matrix: unused
+                false,      // ijcheck: unused
+                NULL, NULL, // original I,J indices: not used here
                 S,          // array of values of type ctype, not modified
                 anz,        // number of tuples
-                anz,        // size of iwork, jwork, and S
                 NULL,       // no dup operator needed (input has no duplicates)
                 tcode,      // type of S
-                Context) ;
+                Context
+            ) ;
 
             // GB_builder always frees jwork, and either frees iwork or
             // transplants it in to T->i and sets iwork to NULL.  So iwork and
@@ -893,6 +899,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             //------------------------------------------------------------------
             // free workspace and return result
             //------------------------------------------------------------------
+
+            // TODO: if op is not NULL, then S could be transplanted into T in
+            // GB_builder, instead.
 
             if (op != NULL)
             { 
