@@ -107,7 +107,6 @@ GrB_Info mis_check              // compute a maximal independent set
 void mis_score (double *result, uint32_t *degree) ;
 
 extern int32_t level ;
-#pragma omp threadprivate(level)
 
 void bfs_level (int32_t *result, bool *element) ;
 

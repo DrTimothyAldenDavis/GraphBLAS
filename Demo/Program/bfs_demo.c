@@ -90,6 +90,7 @@ int main (int argc, char **argv)
         // All methods give identical results, just using different methods
 
         GrB_Index s = 0 ;
+        GxB_set (GxB_NTHREADS, 2) ;
 
         switch (method)
         {
@@ -190,6 +191,8 @@ int main (int argc, char **argv)
             {
                 fprintf (stderr, "test failure!\n") ;
                 printf  ("test failure!\n") ;
+                GxB_print (v0, 3) ;
+                GxB_print (v , 3) ;
                 exit (1) ;
             }
         }

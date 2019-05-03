@@ -17,35 +17,23 @@
 // code development settings
 //------------------------------------------------------------------------------
 
-// turn off Debugging; do not edit these three lines
-#ifndef NDEBUG
-#define NDEBUG
-#endif
+// to turn on Debug for a single file of GraphBLAS, add:
+// #define GB_DEBUG
+// just before the statement:
+// #include "GB.h"
 
-// These flags are used for code development.  Uncomment them as needed.
-
-// to turn on Debug, uncomment this line:
-// #undef NDEBUG
-
-// to turn on memory usage debug printing, uncomment this line:
-// #define GB_PRINT_MALLOC 1
+// to turn on Debug for all of GraphBLAS, uncomment this line:
+// #define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower:
 // #define GBCOMPACT 1
-
-// uncomment this for code development (additional diagnostics are printed):
-// #define GB_DEVELOPER 1
 
 // set these via cmake, or uncomment to select the user-thread model:
 
 // #define USER_POSIX_THREADS
 // #define USER_OPENMP_THREADS
 // #define USER_NO_THREADS
-
-// These are in draft status, and not yet implemented:
-// #define USER_WINDOWS_THREADS         // not yet supported
-// #define USER_ANSI_THREADS            // not yet supported
 
 //------------------------------------------------------------------------------
 // manage compiler warnings
@@ -475,44 +463,62 @@ int64_t  GB_Global_maxused_get ( ) ;
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
 #undef ASSERT_OK_OR_JUMBLED
+#undef ASSERT_SAUNA_IS_RESET
 
-#ifndef NDEBUG
+#ifdef GB_DEBUG
 
-    #define ASSERT(x)                                                       \
+    // assert X is true
+    #define ASSERT(X)                                                       \
     {                                                                       \
-        if (!(x))                                                           \
+        if (!(X))                                                           \
         {                                                                   \
-            printf ("assertion failed: " __FILE__ " line %d\n", __LINE__) ; \
-            printf ("[%s]\n", GB_STR (x)) ;                                 \
+            printf ("assert(" GB_STR(X) ") failed: "                        \
+                __FILE__ " line %d\n", __LINE__) ;                          \
             GB_Global_abort_function ( ) ;                                  \
         }                                                                   \
     }
 
+    // call a GraphBLAS method and assert that it returns GrB_SUCCESS
     #define ASSERT_OK(X)                                                    \
     {                                                                       \
-        GrB_Info Info = X ;                                                 \
+        GrB_Info Info = (X) ;                                               \
         ASSERT (Info == GrB_SUCCESS) ;                                      \
     }
 
+    // call a GraphBLAS method and assert that it returns GrB_SUCCESS
+    // or GrB_NULL_POINTER.
     #define ASSERT_OK_OR_NULL(X)                                            \
     {                                                                       \
-        GrB_Info Info = X ;                                                 \
+        GrB_Info Info = (X) ;                                               \
         ASSERT (Info == GrB_SUCCESS || Info == GrB_NULL_POINTER) ;          \
     }
 
+    // call a GraphBLAS method and assert that it returns GrB_SUCCESS
+    // or GrB_INDEX_OUT_OF_BOUNDS.  Used by GB_check(A,...) when the indices
+    // in the vectors of A may be jumbled.
     #define ASSERT_OK_OR_JUMBLED(X)                                         \
     {                                                                       \
-        GrB_Info Info = X ;                                                 \
+        GrB_Info Info = (X) ;                                               \
         ASSERT (Info == GrB_SUCCESS || Info == GrB_INDEX_OUT_OF_BOUNDS) ;   \
+    }
+
+    // assert that all entries in Sauna_Mark are < Sauna_hiwater
+    #define ASSERT_SAUNA_IS_RESET                                           \
+    {                                                                       \
+        for (int64_t i = 0 ; i < Sauna->Sauna_n ; i++)                      \
+        {                                                                   \
+            ASSERT (Sauna->Sauna_Mark [i] < Sauna->Sauna_hiwater) ;         \
+        }                                                                   \
     }
 
 #else
 
     // debugging disabled
-    #define ASSERT(x)
+    #define ASSERT(X)
     #define ASSERT_OK(X)
     #define ASSERT_OK_OR_NULL(X)
     #define ASSERT_OK_OR_JUMBLED(X)
+    #define ASSERT_SAUNA_IS_RESET
 
 #endif
 
@@ -1624,7 +1630,7 @@ void GB_free_memory
 // macros to create/free matrices, vectors, and generic memory
 //------------------------------------------------------------------------------
 
-// if GB_PRINT_MALLOC is define above, these macros print diagnostic
+// if GB_PRINT_MALLOC is defined, these macros print diagnostic
 // information, meant for development of SuiteSparse:GraphBLAS only
 
 #ifdef GB_PRINT_MALLOC
@@ -2324,30 +2330,27 @@ GrB_Info GB_build               // build matrix
 
 GrB_Info GB_builder                 // build a matrix from tuples
 (
-    // matrix to build:
     GrB_Matrix *Thandle,            // matrix T to build
     const GrB_Type ttype,           // type of output matrix T
     const int64_t vlen,             // length of each vector of T
     const int64_t vdim,             // number of vectors in T
     const bool is_csc,              // true if T is CSC, false if CSR
-    // if iwork is NULL then these are not yet allocated, or known:
     int64_t **iwork_handle,         // for (i,k) or (j,i,k) tuples
     int64_t **jwork_handle,         // for (j,i,k) tuples
+    GB_void **Swork_handle,         // array of values of tuples, size ijslen
     bool known_sorted,              // true if tuples known to be sorted
     bool known_no_duplicates,       // true if tuples known to not have dupl
-    int64_t ijlen,                  // size of iwork and jwork arrays
-    // only used if iwork is NULL:
+    int64_t ijslen,                 // size of iwork and jwork arrays
     const bool is_matrix,           // true if T a GrB_Matrix, false if vector
     const bool ijcheck,             // true if I,J must be checked
-    // original inputs:
-    const int64_t *I,               // original indices, size nvals
-    const int64_t *J,               // original indices, size nvals
-    const GB_void *S,               // array of values of tuples, size nvals
+    const int64_t *restrict I,      // original indices, size nvals
+    const int64_t *restrict J,      // original indices, size nvals
+    const GB_void *restrict S_input,// array of values of tuples, size nvals
     const int64_t nvals,            // number of tuples, and size of kwork
     const GrB_BinaryOp dup,         // binary function to assemble duplicates,
                                     // if NULL use the "SECOND" function to
                                     // keep the most recent duplicate.
-    const GB_Type_code scode,       // GB_Type_code of S array
+    const GB_Type_code scode,       // GB_Type_code of Swork or S_input array
     GB_Context Context
 ) ;
 
@@ -6595,18 +6598,6 @@ GrB_Info GB_Sauna_release
     int nthreads,           // number of internal threads that have a Sauna
     int *Sauna_ids          // size nthreads, the Sauna id's to release
 ) ;
-
-#ifndef NDEBUG
-    #define ASSERT_SAUNA_IS_RESET                                           \
-    {                                                                       \
-        for (int64_t i = 0 ; i < Sauna->Sauna_n ; i++)                      \
-        {                                                                   \
-            ASSERT (Sauna->Sauna_Mark [i] < Sauna->Sauna_hiwater) ;         \
-        }                                                                   \
-    }
-#else
-    #define ASSERT_SAUNA_IS_RESET
-#endif
 
 // GB_Sauna_reset: increment the Sauna_hiwater and clear Sauna_Mark if needed
 static inline int64_t GB_Sauna_reset

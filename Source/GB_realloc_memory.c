@@ -33,6 +33,9 @@
 //          p points to the old space of size nold*size, which is left
 //          unchanged.  This case never occurs if nnew < nold.
 
+// to turn on memory usage debug printing, uncomment this line:
+// #define GB_PRINT_MALLOC 1
+
 #include "GB.h"
 
 void *GB_realloc_memory     // pointer to reallocated block of memory, or

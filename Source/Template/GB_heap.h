@@ -16,7 +16,7 @@
 #ifndef GB_HEAP
 #define GB_HEAP
 
-#ifndef NDEBUG
+#ifdef GB_DEBUG
 
 //------------------------------------------------------------------------------
 // Functions only for assertions
@@ -388,7 +388,7 @@ static inline int64_t GB_heap_getminlist    // returns Heap [1].key
     // return the result
     //--------------------------------------------------------------------------
 
-    #ifndef NDEBUG
+    #ifdef GB_DEBUG
     for (int64_t klist = 0 ; klist < (*nlist) ; klist++)
     {
         // each node p in the List satisfies the path property

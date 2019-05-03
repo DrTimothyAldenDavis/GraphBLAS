@@ -46,8 +46,9 @@
 // scalar operators
 //------------------------------------------------------------------------------
 
+// NOTE: this operator uses global value.  ipagerank can be done in
+// parallel, internally, but only one instance of ipagerank can be used.
 uint64_t ic ;
-#pragma omp threadprivate(ic)
 
 // scale by the integer ic
 void iscale (uint64_t *z, const uint64_t *x)
@@ -189,7 +190,6 @@ GrB_Info ipagerank          // GrB_SUCCESS or error condition
         // s = ia * sum (r) ;
         uint64_t s ;
         OK (GrB_reduce (&s, NULL, GxB_PLUS_UINT64_MONOID, r, NULL)) ;
-//      fprintf (stderr, "ipagerank2 reduce %" PRIu64"\n", s) ;
         s = s * ia ;
 
         // r = ic * r

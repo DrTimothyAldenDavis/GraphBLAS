@@ -230,27 +230,24 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
 //          printf ("discard first vector "GBd"\n", Csliceh [0]) ;
         }
 
-        /*
-            int64_t first_vector_nz = Cslicep [1] - Cslicep [0] ;
-            Csliceh++ ;
-            Cslicep++ ;
-            Cslicei += first_vector_nz ;
-            Cslicex += first_vector_nz * csize ;
-            cnz_slice -= first_vector_nz ;
-            cnvec_slice-- ;
-            printf ("\nafter discard:\n") ;
-            for (int64_t k = 0 ; k < cnvec_slice ; k++)
-            {
-                printf ("Csliceh ["GBd"]="GBd"  ", k, Csliceh [k]) ;
-                printf ("Cslicep ["GBd"]="GBd"\n", k, Cslicep [k]) ;
-                for (int64_t p = Cslicep [k] ; p < Cslicep [k+1] ; p++)
-                {
-                    printf ("   row "GBd"\n", Cslicei [p]) ;
-                }
-            }
-            printf ("\n") ;
-        }
-        */
+//          int64_t first_vector_nz = Cslicep [1] - Cslicep [0] ;
+//          Csliceh++ ;
+//          Cslicep++ ;
+//          Cslicei += first_vector_nz ;
+//          Cslicex += first_vector_nz * csize ;
+//          cnz_slice -= first_vector_nz ;
+//          cnvec_slice-- ;
+//          printf ("\nafter discard:\n") ;
+//          for (int64_t k = 0 ; k < cnvec_slice ; k++)
+//          {
+//              printf ("Csliceh ["GBd"]="GBd"  ", k, Csliceh [k]) ;
+//              printf ("Cslicep ["GBd"]="GBd"\n", k, Cslicep [k]) ;
+//              for (int64_t p = Cslicep [k] ; p < Cslicep [k+1] ; p++)
+//              {
+//                  printf ("   row "GBd"\n", Cslicei [p]) ;
+//              }
+//          }
+//          printf ("\n") ;
 
         // skip if Cslice [tid] is now empty
         if (cnvec_slice - kfirst == 0) continue ;
@@ -289,7 +286,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             }
         }
 
-        #ifndef NDEBUG
+        #ifdef GB_DEBUG
         // check the list
         for (int tid2 = tid + 1 ; tid2 <= tfine ; tid2++)
         {

@@ -403,7 +403,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     // The code below describes what the output contains:
     //--------------------------------------------------------------------------
 
-    #ifndef NDEBUG
+    #ifdef GB_DEBUG
     ASSERT (A != NULL) ;        // A and B are always present
     ASSERT (B != NULL) ;
     int64_t jlast = -1 ;

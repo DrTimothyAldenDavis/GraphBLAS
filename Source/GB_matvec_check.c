@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// for additional diagnostics, use:
+// #define GB_DEVELOPER 1
+
 #include "GB.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
@@ -52,7 +55,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     GB_CHECK_MAGIC (A, kind) ;
-    ASSERT (A->magic == GB_MAGIC) ;    // A is now a valid initialized object
 
     //--------------------------------------------------------------------------
     // print the header

@@ -87,7 +87,6 @@ GrB_Info bfs6_check         // BFS of a graph (using unary operator)
     //--------------------------------------------------------------------------
 
     bool successor = true ; // true when some successor found
-//  GrB_Index nvals = 1 ;
     for (level = 1 ; successor && level <= n ; level++)
     {
         // v[q] = level, using apply.  This function applies the unary operator
@@ -102,8 +101,6 @@ GrB_Info bfs6_check         // BFS of a graph (using unary operator)
 
         // successor = ||(q)
         GrB_reduce (&successor, NULL, GxB_LOR_BOOL_MONOID, q, NULL) ;
-//      // this fails if A has any explicit zeros
-//      GrB_Vector_nvals (&nvals, q) ;
     }
 
     // make v sparse

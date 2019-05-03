@@ -20,8 +20,6 @@
     // to use GraphBLAS with the ANSI C11 functions (or to another library
     // linked in that replaces them): 
 
-        #include "GraphBLAS.h"
-        ...
         // either use:
         GrB_init (mode) ;
         // or use this (but not both):
@@ -30,15 +28,11 @@
     // to use GraphBLAS from within a MATLAB mexFunction:
 
         #include "mex.h"
-        #include "GraphBLAS.h"
-        ...
         GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
 
     // to use the C interface to the Intel TBB scalable allocators:
 
         #include "tbb/scalable_allocator.h"
-        #include "GraphBLAS.h"
-        ...
         GxB_init (mode, scalable_malloc, scalable_calloc, scalable_realloc,
             scalable_free, true) ;
 

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// CALLS:     GB_build
+// CALLS:     GB_build (TODO: call GB_builder instead)
 
 // C<M> = accum (C,reduce(A)) where C is n-by-1
 
@@ -374,8 +374,20 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
                 return (info) ;
             }
 
-            info = GB_build (T, (GrB_Index *) Ai, NULL, Ax, anz, reduce, acode,
-                false, false, Context) ;
+            // GB_build treats Ai and Ax as read-only; they must be modified.
+            info = GB_build
+            (
+                T,                  // construct result in the T vector
+                (GrB_Index *) Ai,   // row indices
+                NULL,               // column indices
+                Ax,                 // values, of size anz
+                anz,                // number of tuples
+                reduce,             // reduction operator
+                acode,              // type code of the Ax array
+                false,              // the input is a vector
+                false,              // indices do not need to be checked
+                Context
+            ) ;
 
             if (info != GrB_SUCCESS)
             { 
@@ -396,10 +408,6 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             // memory usage is O(wlen) and time is O(wlen + anz).  This can be
             // costly if A is hypersparse, but it is only used if anz >= wlen,
             // so the time and memory usage are OK.
-
-            // Early exit cannot be exploited, and this method is not
-            // easily parallelizable.  Alternative would be to explicitly
-            // transpose the input matrix
 
             bool *restrict mark = NULL ;
             GB_CALLOC_MEMORY (mark, wlen + 1, sizeof (bool)) ;

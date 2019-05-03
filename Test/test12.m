@@ -25,14 +25,10 @@ A = GB_mex_wathen (2,2) ;
 assert (spok (A) == 1) ;
 assert (nnz (A-A') == 0) ;
 
-%% this test is too slow when debugging
+% this test is too slow when debugging
 debug = GB_mex_debug ;
 
 fprintf ('\nWathen matrices:\n') ;
-
-% if (debug)
-%     fprintf ('Wathen test skipped when GraphBLAS compiled with NDEBUG\n') ;
-% else
 
     for nx = [1 5 10] % 1:20
         fprintf ('%d:', nx) ;

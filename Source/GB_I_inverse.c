@@ -120,7 +120,7 @@ GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
     // If Mark [i] < flag, then the ith bucket is empty and i is not in I.
     // Otherise, the first index in bucket i is (Mark [i] - flag).
 
-    #ifndef NDEBUG
+    #ifdef GB_DEBUG
     for (int64_t i = 0 ; i < avlen ; i++)
     {
         GB_for_each_index_in_bucket (inew, i)

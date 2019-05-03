@@ -16,6 +16,9 @@
 // allows the return pointer p to be checked for the out-of-memory condition,
 // even when allocating an object of size zero.
 
+// to turn on memory usage debug printing, uncomment this line:
+// #define GB_PRINT_MALLOC 1
+
 #include "GB.h"
 
 void *GB_calloc_memory      // pointer to allocated block of memory

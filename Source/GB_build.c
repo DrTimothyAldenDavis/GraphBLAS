@@ -84,19 +84,21 @@
 // time taken by this function is just O(nvals*log(nvals)), regardless of what
 // format C is returned in.
 
-// If nvals == 0, I_in, J_in, and S may be NULL.
+// The input arrays I_input, J_input, and S_input are not modified.
+// If nvals == 0, I_input, J_input, and S_input may be NULL.
 
 #include "GB.h"
 
 GrB_Info GB_build               // build matrix
 (
     GrB_Matrix C,               // matrix to build
-    const GrB_Index *I_in,      // row indices of tuples
-    const GrB_Index *J_in,      // col indices of tuples
-    const void *S,              // array of values of tuples
+    const GrB_Index *I_input,   // row indices of tuples
+    const GrB_Index *J_input,   // col indices of tuples (NULL for
+                                // GrB_Vector_build or GB_reduce_to_column)
+    const void *S_input,        // values
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates
-    const GB_Type_code scode,   // GB_Type_code of S array
+    const GB_Type_code scode,   // GB_Type_code of S_input array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool ijcheck,         // true if I and J are to be checked
     GB_Context Context
@@ -126,16 +128,16 @@ GrB_Info GB_build               // build matrix
     int64_t *I, *J ;
     if (C->is_csc)
     { 
-        // C can be a CSC GrB_Matrix, or a GrB_Vector.
-        // If C is a typecasted GrB_Vector, then J_in and J must both be NULL.
-        I = (int64_t *) I_in ;  // indices in the range 0 to C->vlen-1
-        J = (int64_t *) J_in ;  // indices in the range 0 to C->vdim-1
+        // C can be a CSC GrB_Matrix, or a GrB_Vector.  If C is a typecasted
+        // GrB_Vector, then J_input and J must both be NULL.
+        I = (int64_t *) I_input ;  // indices in the range 0 to C->vlen-1
+        J = (int64_t *) J_input ;  // indices in the range 0 to C->vdim-1
     }
     else
     { 
         // C can only be a CSR GrB_Matrix
-        I = (int64_t *) J_in ;  // indices in the range 0 to C->vlen-1
-        J = (int64_t *) I_in ;  // indices in the range 0 to C->vdim-1
+        I = (int64_t *) J_input ;  // indices in the range 0 to C->vlen-1
+        J = (int64_t *) I_input ;  // indices in the range 0 to C->vdim-1
     }
 
     // J contains vector names and I contains indices into those vectors.
@@ -148,8 +150,14 @@ GrB_Info GB_build               // build matrix
     // T is always hypersparse.  Its type is the same as the z output of the
     // z=dup(x,y) operator.
 
-    int64_t *no_iwork = NULL ;
-    int64_t *no_jwork = NULL ;
+    // S_input must be treated as read-only, so GB_builder is not allowed to
+    // transplant it into T->x.
+
+    GB_void *S = S_input ;
+
+    int64_t *no_I_work = NULL ;
+    int64_t *no_J_work = NULL ;
+    GB_void *no_S_work = NULL ;
     GrB_Matrix T = NULL ;
 
     GrB_Info info = GB_builder
@@ -159,14 +167,15 @@ GrB_Info GB_build               // build matrix
         C->vlen,        // T->vlen = C->vlen
         C->vdim,        // T->vdim = C->vdim
         C->is_csc,      // T has the same CSR/CSC format as C
-        &no_iwork,      // iwork_handle, not used here
-        &no_jwork,      // jwork_handle, not used here
+        &no_I_work,     // I_work_handle, not used here
+        &no_J_work,     // J_work_handle, not used here
+        &no_S_work,     // S_work_handle, not used here
         false,          // known_sorted: not yet known
         false,          // known_no_duplicatces: not yet known
-        0,              // iwork and jwork not used here
-        is_matrix,      // T is a GrB_Matrix
-        ijcheck,        // check I and J
-        I, J, S,        // original tuples, each of size nvals
+        0,              // I_work, J_work, and S_work not used here
+        is_matrix,      // true if T is a GrB_Matrix
+        ijcheck,        // true if I and J are to be checked
+        I, J, S,        // original tuples, each of size nvals, not modified
         nvals,          // number of tuples
         dup,            // operator to assemble duplicates
         scode,          // type of the S array

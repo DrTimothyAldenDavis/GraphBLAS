@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// for additional diagnostics, use:
+// #define GB_DEVELOPER 1
+
 #include "GB.h"
 
 GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator

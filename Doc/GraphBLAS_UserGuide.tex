@@ -8967,27 +8967,7 @@ prints about 30 entries from the vector \verb'v' to the file \verb'f'.
 
 Even when the print level is \verb'GxB_SILENT', these methods extensively check
 the contents of the objects passed to them, which can take some time.  They
-should be considered debugging tools only, not for final use in production.  To
-control when these methods are used, the user application could define the
-following macro and global variable \verb'pr' in a user include file:
-
-{\footnotesize
-\begin{verbatim}
-#include <assert.h>
-extern GxB_Print_Level pr ;
-#define CHECK(object) assert (GxB_print (object, pr) == GrB_SUCCESS) \end{verbatim}}
-
-Place the following statement:
-
-{\footnotesize
-\begin{verbatim}
-GxB_Print_Level pr = GxB_SILENT ; \end{verbatim}}
-
-\noindent in one of the source files (outside of any function), and then use
-\verb'CHECK(A)' to check a matrix or any other object.  To enable printing, set
-the global \verb'pr' value to a nonzero value, say \verb'GxB_SUMMARY' or
-\verb'GxB_COMPLETE'.  Compile normally to enable debugging, or with
-\verb'-DNDEBUG' to disable debugging when compiling the code for performance.
+should be considered debugging tools only, not for final use in production.
 
 The return value of the \verb'GxB_*print' methods can be relied upon, but the
 output to the file (or \verb'stdout') can change from version to version.  If

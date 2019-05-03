@@ -627,7 +627,7 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
         int64_t pstart = pA_start ;
         int64_t pend = pA_end - 1 ;
 
-        #ifndef NDEBUG
+        #ifdef GB_DEBUG
         // used just for assertions
         int64_t pstart_orig = pstart ;
         int64_t pend_orig   = pend ;

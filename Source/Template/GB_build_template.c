@@ -24,7 +24,7 @@
             for (int64_t t = tstart ; t < tend ; t++)
             {
                 // Tx [t] = S [k] ;
-                int64_t k = (kwork == NULL) ? t : kwork [t] ;
+                int64_t k = (K_work == NULL) ? t : K_work [t] ;
                 GB_BUILD_COPY (Tx, t, S, k) ;
             }
         }
@@ -49,15 +49,15 @@
             for (t = tstart ; t < tend ; t++)
             {
                 // get the tuple and break if it is not a duplicate
-                if (iwork [t] >= 0) break ;
+                if (I_work [t] >= 0) break ;
             }
 
             // scan all tuples and assemble any duplicates
             for ( ; t < tend ; t++)
             {
                 // get the t-th tuple, a unique tuple
-                int64_t i = iwork [t] ;
-                int64_t k = (kwork == NULL) ? t : kwork [t] ;
+                int64_t i = I_work [t] ;
+                int64_t k = (K_work == NULL) ? t : K_work [t] ;
                 ASSERT (i >= 0) ;
                 // Tx [my_tnz] = S [k] ;
                 GB_BUILD_COPY (Tx, my_tnz, S, k) ;
@@ -66,10 +66,10 @@
                 // assemble all duplicates that follow it.  This may assemble
                 // the first duplicates in the next slice (up to but not
                 // including the first unique tuple in the subsequent slice).
-                for ( ; t+1 < nvals && iwork [t+1] < 0 ; t++)
+                for ( ; t+1 < nvals && I_work [t+1] < 0 ; t++)
                 {
                     // assemble the duplicate tuple
-                    int64_t k = (kwork == NULL) ? (t+1) : kwork [t+1] ;
+                    int64_t k = (K_work == NULL) ? (t+1) : K_work [t+1] ;
                     // duplicate entry: Tx [my_tnz] += S [k]
                     GB_BUILD_OP (Tx, my_tnz, S, k) ;
                 }

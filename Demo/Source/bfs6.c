@@ -80,16 +80,9 @@ GrB_Info bfs6               // BFS of a graph (using unary operator)
     // BFS traversal and label the nodes
     //--------------------------------------------------------------------------
 
-// GxB_print (A, 3) ;
-
-//  GrB_Index nvals = 1 ;
     bool successor = true ; // true when some successor found
     for (level = 1 ; successor && level <= n ; level++)
     {
-
-// printf ("\nlevel: %d\n", level) ;
-// GxB_print (q, 3) ;
-// GxB_print (v, 3) ;
 
         // v[q] = level, using apply.  This function applies the unary operator
         // to the entries in q, which are the unvisited successors, and then
@@ -103,8 +96,6 @@ GrB_Info bfs6               // BFS of a graph (using unary operator)
 
         // successor = ||(q)
         GrB_reduce (&successor, NULL, Lor, q, NULL) ;
-//      // this fails if A has any explicit zeros
-//      GrB_Vector_nvals (&nvals, q) ;
     }
 
     // make v sparse

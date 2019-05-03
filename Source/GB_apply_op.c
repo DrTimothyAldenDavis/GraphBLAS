@@ -83,7 +83,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     GxB_unary_function fop = op->function ;
 
     // TODO: some user operations are not thread safe.  This fails on
-    // Demo/mis code.  See mis_score.
+    // Demo/mis code when nthreads > 1.  See Demo/Source/mis_score.c.
     #pragma omp parallel for num_threads(nthreads)
     for (int64_t p = 0 ; p < anz ; p++)
     { 

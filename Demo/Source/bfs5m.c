@@ -67,15 +67,9 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     // BFS traversal and label the nodes
     //--------------------------------------------------------------------------
 
-// GxB_print (A, 3) ;
-
     bool successor = true ; // true when some successor found
     for (int32_t level = 1 ; successor && level <= n ; level++)
     {
-
-// printf ("\nlevel: %d\n", level) ;
-// GxB_print (q, 3) ;
-// GxB_print (v, 3) ;
 
         // v<q> = level, using vector assign with q as the mask
         GrB_assign (v, q, NULL, level, GrB_ALL, n, NULL) ;

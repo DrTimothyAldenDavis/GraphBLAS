@@ -54,7 +54,7 @@
 //      as-is.  Otherwise, it is transposed first.  That is, the results are
 //      the same as if the transpose of the matrix was passed to the method.
 
-//  desc->axb                   see GraphBLAS.h; can be:
+//  desc->axb                   can be:
 
 //      GxB_DEFAULT = 0         automatic selection
 

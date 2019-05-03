@@ -74,6 +74,9 @@ pagerank_type ;
 // probability of walking to random neighbor
 #define PAGERANK_DAMPING 0.85
 
+// NOTE: these operators use global values.  dpagerank2 can be done in
+// parallel, internally, but only one instance of dpagerank can be used.
+
 // global values shared by all threads:
 double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
 
@@ -357,7 +360,6 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
         OK (GrB_eWiseAdd (rdiff, NULL, NULL, PageRank_diff, r, rnew, NULL));
         pagerank_type rsum ;
         OK (GrB_reduce (&rsum, NULL, PageRank_monoid, rdiff, NULL)) ;
-// printf ("dpagerank2 reduce %g %g\n", rsum.rank, rsum.invdegree) ;
 
         pagerank_rdiff = rsum.rank ;
 
@@ -382,7 +384,6 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
 
     // pagerank_rsum = sum (rdouble)
     OK (GrB_reduce (&pagerank_rsum, NULL, GxB_PLUS_FP64_MONOID, rdouble, NULL));
-// printf ("dpagerank2 reduce %g\n", pagerank_rsum) ;
 
     // TODO replace with GrB_vxm, with a 1-by-1 matrix
     // r = r / pagerank_rsum

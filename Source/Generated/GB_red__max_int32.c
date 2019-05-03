@@ -92,8 +92,8 @@ void GB_bild__max_int32
     const int32_t *restrict S,
     int64_t nvals,
     int64_t ndupl,
-    const int64_t *restrict iwork,
-    const int64_t *restrict kwork,
+    const int64_t *restrict I_work,
+    const int64_t *restrict K_work,
     const int64_t *restrict tstart_slice,
     const int64_t *restrict tnz_slice,
     int nthreads

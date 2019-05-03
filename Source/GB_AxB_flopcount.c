@@ -116,7 +116,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
     bool check_quick_return = (Bflops == NULL) && (Bflops_per_entry == NULL) ;
 
-    #ifndef NDEBUG
+    #ifdef GB_DEBUG
     if (check_quick_return)
     {
         // a single thread is testing the condition (total_flops <= floplimit)

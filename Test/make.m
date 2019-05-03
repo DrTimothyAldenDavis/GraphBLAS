@@ -24,6 +24,15 @@ end
 
 fprintf ('\nCompiling GraphBLAS tests:\n') ;
 
+try
+    spok (sparse (1)) ;
+catch
+    here = pwd ;
+    cd ('spok') ;
+    spok_install ;
+    cd (here) ;
+end
+
 if (nargin < 1)
     what = '' ;
 end

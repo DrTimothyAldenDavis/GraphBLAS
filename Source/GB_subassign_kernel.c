@@ -1386,7 +1386,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         Si = S->i ;
         Sx = S->x ;
 
-        #ifndef NDEBUG
+        #ifdef GB_DEBUG
         // this body of code explains what S contains.
         // S is nI-by-nJ where nI = length (I) and nJ = length (J)
         GBI_for_each_vector (S)

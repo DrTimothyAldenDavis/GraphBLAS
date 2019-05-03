@@ -91,15 +91,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_AxB_dot2_phase1.c
-\brief  GB_AxB_dot2_phase1: count entries in C=A'*B, C\<M\>=A'*B, or C\<!M\>=A'*B
-
-\par
- Count the number of entries in each vector of C, for C=A'B, C\<M\>=A'*B, or
- C\<!M\>=A'*B.
-*/
-
-
 /** \file GB_AxB_flopcount.c
 \brief  GB_AxB_flopcount:  compute flops for C\<M\>=A*B or C=A*B
 
@@ -308,6 +299,9 @@ constructed by dox_headers.m
 /** \file GB_BinaryOp_check.c
 \brief  GB_BinaryOp_check: check and print a binary operator
 
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -336,6 +330,9 @@ constructed by dox_headers.m
 /** \file GB_Descriptor_check.c
 \brief  GB_Descriptor_check: check and print a Descriptor
 
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -390,7 +387,7 @@ constructed by dox_headers.m
       as-is.  Otherwise, it is transposed first.  That is, the results are
       the same as if the transpose of the matrix was passed to the method.
 \par
-  desc-\>axb                   see GraphBLAS.h; can be:
+  desc-\>axb                   can be:
 \par
       GxB_DEFAULT = 0         automatic selection
 \par
@@ -461,6 +458,9 @@ constructed by dox_headers.m
 /** \file GB_Monoid_check.c
 \brief  GB_Monoid_check: check and print a monoid
 
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -520,6 +520,9 @@ constructed by dox_headers.m
 /** \file GB_SelectOp_check.c
 \brief  GB_SelectOp_check: check and print a select operator
 
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -539,6 +542,9 @@ constructed by dox_headers.m
 /** \file GB_Semiring_check.c
 \brief  GB_Semiring_check: check and print a semiring
 
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -550,6 +556,9 @@ constructed by dox_headers.m
  type-\>name.  The caller can use the name argument to print \"the type of
  matrix A:\", for example.  The internal name is the C typedef with which the
  GraphBLAS GrB_Type was created.
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -574,6 +583,9 @@ constructed by dox_headers.m
 /** \file GB_UnaryOp_check.c
 \brief  GB_UnaryOp_check: check and print a unary operator
 
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -901,9 +913,21 @@ constructed by dox_headers.m
 \brief  GB_build: build a matrix
 
 \par
- Construct a matrix C from a list of indices and values.  Any duplicate
- entries with identical indices are assembled using the binary dup operator
- provided on input.  All three types (x,y,z for z=dup(x,y)) must be
+ CALLED BY: GB_user_build and GB_reduce_to_column
+ CALLS:     GB_builder
+\par
+ GB_user_build constructs a GrB_Matrix or GrB_Vector from the tuples provided
+ by the user.  In that case, the tuples must be checked for duplicates.  They
+ might be sorted on input, so this condition is checked and exploited if
+ found.  GB_reduce_to_column constructs a GrB_Vector froma GrB_Matrix, by
+ discarding the column index.  As a result, duplicates are likely to appear,
+ and the input is likely to be unsorted.  But for GB_reduce_to_column, the
+ validity of the tuples need not be checked.  All of these conditions are
+ checked in GB_builder.
+\par
+ GB_build constructs a matrix C from a list of indices and values.  Any
+ duplicate entries with identical indices are assembled using the binary dup
+ operator provided on input.  All three types (x,y,z for z=dup(x,y)) must be
  identical.  The types of dup, S, and C must all be compatible.
 \par
  Duplicates are assembled using T(i,j) = dup (T (i,j), S (k)) into a
@@ -966,59 +990,8 @@ constructed by dox_headers.m
  time taken by this function is just O(nvals*log(nvals)), regardless of what
  format C is returned in.
 \par
- If nvals == 0, I_in, J_in, and S may be NULL.
-\par
- PARALLEL: done.
- checks I and J fully in parallel.  Remaining work is done in GB_builder.
-*/
-
-
-/** \file GB_build_factory.c
-\brief  GB_build_factory: build a matrix from sorted tuples
-
-\par
- The tuples have been sorted and duplicates marked by GB_builder.  Assemble
- them with a switch factory of built-in workers, or two generic workers.  The
- vector pointers T-\>p and hyperlist T-\>h (if hypersparse) have already been
- computed.  This function is agnostic regarding the CSR/CSR format, and even
- hypersparsity.  The rest of the build process here needs to know nothing at
- all about the vectors.  kwork is NULL on input if the original input tuples
- did not need sorting; in this case, kwork [k] == k is implicitly true.
-\par
- iwork holds the row indices of the tuple, and kwork holds the positions in
- the array S.  The tuples are sorted so that duplicates are adjacent to each
- other and they appear in the order they appeared in the original tuples.
- This method assembles the duplicates and creates T-\>x from iwork, kwork, and
- S.  iwork is then transplanted into T, becoming T-\>i.
-\par
- On input, the (i,k,S[k]) tuples are held in two integer arrays, iwork and
- kwork, and an array S of numerical values.  S has not been sorted, nor even
- accessed yet.  It is identical to the original unsorted tuples.  The
- (i,k,S[k]) tuple holds the row index i, the position k, and the value S [k].
- This entry becomes T(i,j) = S [k] in the matrix T, and duplicates are
- assembled via the dup operator.
-\par
- The row indices on input are in iwork, and after duplicates are removed,
- iwork is compacted (duplicates removed) and then transplanted directly in
- the T, becoming the row indices T-\>i.  The symbolic analysis is thus
- consumed by this function, and incorporated into the output matrix T, in
- place.  If this method is split into user-callable symbolic analysis and
- numerical phases, then a copy of iwork should be made, which would then be
- consumed and transplanted into T-\>i.  Also, kwork (which is read-only by
- thus function) should not be freed.  If these changes were made, then iwork
- and kwork could be used for subsequent builds of T with the same pattern and
- ordering of tuples but with different numerical values.
-\par
- On output, kwork is freed and iwork becomes T-\>i.   Thus iwork_handle and
- kwork_handle in the caller are both set to NULL.
-\par
- The time and memory taken by this function is O(t) if t=len is the number
- of tuples.
-\par
- PARALLEL: TODO. the tuples have already been sorted, and duplicates tagged.
- need to parallelize the summation of duplicate tuples.  Each unique tuple
- could be done only by the thread the owns it.  It is unlikely that there
- will be many duplicates, but possible.  So consider a parallel reduction.
+ The input arrays I_input, J_input, and S_input are not modified.
+ If nvals == 0, I_input, J_input, and S_input may be NULL.
 */
 
 
@@ -1026,21 +999,19 @@ constructed by dox_headers.m
 \brief  GB_builder: build a matrix from tuples
 
 \par
- The input arguments \&iwork and \&jwork are always freed by this function.
- This function is agnostic regarding the CSR/CSC format.  It decides whether
- T is standard sparse or hypersparse, as determined by the default rules
- for GrB_Matrix_new.
+ CALLED BY: GB_build, GB_wait, and GB_transpose
+ CALLS:     Generated/GB_bild__* workers
 \par
  This function is called by GB_build to build a matrix T for GrB_Matrix_build
- or GrB_Vector_build, and by GB_wait to build a matrix T from the list of
- pending tuples.
+ or GrB_Vector_build, by GB_wait to build a matrix T from the list of pending
+ tuples, and by GB_transpose to transpose a matrix or vector.  Duplicates can
+ appear if called by GB_build or GB_wait, but not GB_transpose.
 \par
- PARALLEL: TODO.  first does qsort, so need to parallelize GB_qsort_*.  Then
- passes over the tuples to find duplicates, which has some dependencies but
- could be done in bulk parallel.  After sorting, a thread owns a chunk of
- tuples.  It can mark all its own duplicates, fully in parallel, but not
- across to tuples owned by another thread.  When done with this first phase,
- a 2nd pass could find any duplicates across the thread boundaries.
+ The indices are provided either as (I,J) or (iwork,jwork), not both.
+\par
+ PARALLEL: done
+\par
+ TODO cleanup printfs and timing
 */
 
 
@@ -1056,6 +1027,9 @@ constructed by dox_headers.m
  a block of zero size causes a block of size 1 to be allocated instead.  This
  allows the return pointer p to be checked for the out-of-memory condition,
  even when allocating an object of size zero.
+\par
+ to turn on memory usage debug printing, uncomment this line:
+ \#define GB_PRINT_MALLOC 1
 */
 
 
@@ -1480,6 +1454,9 @@ constructed by dox_headers.m
  A wrapper for free.  If p is NULL on input, it is not freed.
 \par
  This function is called via the GB_FREE_MEMORY(p,n,s) macro.
+\par
+ to turn on memory usage debug printing, uncomment this line:
+ \#define GB_PRINT_MALLOC 1
 */
 
 
@@ -1533,9 +1510,7 @@ constructed by dox_headers.m
 \brief  GB_ijsort:  sort an index array I and remove duplicates
 
 \par
- PARALLEL: TODO. deletes duplicates, see also GB_builder.  This is only used
- in GB_assign, for scalar expansion and for the C_replace_phase, and only
- when I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
+ PARALLEL: TODO
 */
 
 
@@ -1655,6 +1630,9 @@ constructed by dox_headers.m
  a block of zero size causes a block of size 1 to be allocated instead.  This
  allows the return pointer p to be checked for the out-of-memory condition,
  even when allocating an object of size zero.
+\par
+ to turn on memory usage debug printing, uncomment this line:
+ \#define GB_PRINT_MALLOC 1
 */
 
 
@@ -1684,6 +1662,9 @@ constructed by dox_headers.m
 /** \file GB_matvec_check.c
 \brief  GB_matvec_check: print a GraphBLAS matrix and check if it is valid
 
+\par
+ for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -1956,12 +1937,17 @@ constructed by dox_headers.m
 \par
           p points to the old space of size nold*size, which is left
           unchanged.  This case never occurs if nnew \< nold.
+\par
+ to turn on memory usage debug printing, uncomment this line:
+ \#define GB_PRINT_MALLOC 1
 */
 
 
 /** \file GB_reduce_to_column.c
 \brief  GB_reduce_to_column: reduce a matrix to a column using a binary op
 
+\par
+ CALLS:     GB_build (TODO: call GB_builder instead)
 \par
  C\<M\> = accum (C,reduce(A)) where C is n-by-1
 \par
@@ -2318,6 +2304,8 @@ constructed by dox_headers.m
 \brief  GB_transpose:  C=A' or C=op(A'), with typecasting
 
 \par
+ CALLS:     GB_builder
+\par
  Transpose a matrix, C=A', and optionally apply a unary operator and/or
  typecast the values.  The transpose may be done in place, in which case C or
  A are modified in place.  If the matrix to be transposed has more than one
@@ -2416,9 +2404,10 @@ constructed by dox_headers.m
 \brief  GB_user_build: check inputs and build a matrix
 
 \par
- This function implements GrB_Matrix_build_* and GrB_Vector_build_*.  It is
- not used by GrB_wait or GB_wait (see GB_builder instead).  For details on
- the algorithm, see GB_build.
+ CALLED BY: GrB_Matrix_build_* and GrB_Vector_build_*
+ CALLS:     GB_build
+\par
+ This function implements GrB_Matrix_build_* and GrB_Vector_build_*.
 \par
  TODO: rename
 */
@@ -2435,6 +2424,8 @@ constructed by dox_headers.m
 /** \file GB_wait.c
 \brief  GB_wait:  finish all pending computations on a single matrix
 
+\par
+ CALLS:     GB_builder
 \par
  This function is typically called via the GB_WAIT(A) macro, except for
  GB_assign and GB_subassign.
@@ -3734,20 +3725,16 @@ constructed by dox_headers.m
 \brief  GB_assoc_factory.c: switch factory for associative operators
 
 \par
- FUTURE:: write Generator/GB_assoc.c, and use it to create 66 files:
- Generator/GB_assoc__[operator]_[type].  Each file has 4 functions for the
- kernels for GB_reduce_to_scalar, GB_build_factory, and GB_reduce_to_column
- (2 kernels).  (but 22 files with FIRST and SECOND just have one kernel for
- GB_build_factory).
+ TODO: add to GB_build, and GB_reduce_to_col to Generator/GB_red.[ch]
 \par
  This is a generic body of code for creating hard-coded versions of code for
  44 combinations of associative operators and built-in types: 10 types (all
- but boolean) with min, max, plus, and times, and one type (boolean) with
- \"or\", \"and\" \"xor\" and \"eq\"
+ but boolean) with MIN, MAX, PLUS, and TIMES, and one type (boolean) with
+ OR, AND, XOR, and EQ
 \par
  If GB_INCLUDE_SECOND_OPERATOR is defined then an additional 11 built-in
  workers for the SECOND operator are also created, and 11 for FIRST, for
- GB_build_factory.
+ GB_builder.
 */
 
 
@@ -3780,6 +3767,12 @@ constructed by dox_headers.m
  \#include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*)
  since those multiply operators are redundant and have been renamed.  For
  these, the boolean operators are not needed.
+*/
+
+
+/** \file GB_build_template.c
+\brief  GB_build_template: T=build(S), and assemble any duplicate tuples
+
 */
 
 
@@ -3886,7 +3879,11 @@ constructed by dox_headers.m
 \brief  GB_reduce_to_scalar_template: s=reduce(A), reduce a matrix to a scalar
 
 \par
- Reduce a matrix to a scalar.
+ Reduce a matrix to a scalar.  No typecasting is performed.
+\par
+ PARALLEL: done
+\par
+ TODO add simd vectorization for non-terminal monoids.
 */
 
 
@@ -4068,7 +4065,8 @@ constructed by dox_headers.m
 
 
 /** \file GB_red.h
-\brief 
+\brief id GB_red_scalar
+
 */
 
 

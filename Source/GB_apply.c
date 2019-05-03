@@ -97,7 +97,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     if (A_transpose)
     { 
-        // T = op (A'), typecastint to op->ztype
+        // T = op (A'), typecasting to op->ztype
         // transpose: typecast, apply an op, not in place
         info = GB_transpose (&T, T_type, C_is_csc, A, op, Context) ;
     }

@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// to turn on memory usage debug printing, uncomment this line:
+// #define GB_PRINT_MALLOC 1
+
 #ifndef GB_MEXH
 #define GB_MEXH
 

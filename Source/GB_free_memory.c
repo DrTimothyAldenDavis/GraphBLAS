@@ -11,6 +11,9 @@
 
 // This function is called via the GB_FREE_MEMORY(p,n,s) macro.
 
+// to turn on memory usage debug printing, uncomment this line:
+// #define GB_PRINT_MALLOC 1
+
 #include "GB.h"
 
 void GB_free_memory

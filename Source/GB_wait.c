@@ -185,13 +185,13 @@ GrB_Info GB_wait                // finish all pending computations
         A->is_csc,              // T->is_csc = A->is_csc
         &(A->i_pending),        // iwork_handle, becomes T->i on output
         &(A->j_pending),        // jwork_handle, free on output
+        &(A->s_pending),        // Swork_handle, free on output
         A->sorted_pending,      // tuples may or may not be sorted
         false,                  // check for duplicates
         A->max_n_pending,       // size of A->[ijs]_pending arrays
         true,                   // is_matrix: unused
         false,                  // ijcheck: unused
-        NULL, NULL,             // original I,J indices, not used here
-        A->s_pending,           // tuple values, of type A->type_pending->code
+        NULL, NULL, NULL,       // original I,J,S tuples, not used here
         A->n_pending,           // # of tuples
         A->operator_pending,    // dup operator for assembling duplicates
         A->type_pending->code,  // type of A->s_pending
@@ -210,10 +210,9 @@ GrB_Info GB_wait                // finish all pending computations
     // GB_builder frees A->j_pending.  If successful, A->i_pending is now T->i.
     // Otherwise A->i_pending is freed.  In both cases, it has been set to NULL.
     ASSERT (A->i_pending == NULL && A->j_pending == NULL) ;
+    ASSERT (A->s_pending == NULL) ;
 
-    // pending tuples are now freed; so A->s_pending can be freed as well
-    // FUTURE: GB_builder could modify A->s_pending in place to save memory,
-    // but it can't do that for the user's S array for GrB_*_build.
+    // pending tuples are all freed; also reset A->*_pending scalars
     GB_pending_free (A) ;
 
     //--------------------------------------------------------------------------

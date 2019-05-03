@@ -43,10 +43,11 @@ typedef struct
     // emtpy.  A simple link list suffices for the list.  The links are in the
     // matrices themselves so no additional memory needs to be allocated.  The
     // list never needs to be searched; if a particular matrix is to be removed
-    // from the list, GraphBLAS has already been given the matrix handle, and
-    // the prev & next pointers it contains.  All of these operations can thus
-    // be done in O(1) time, except for GrB_wait which needs to traverse the
-    // whole list once and then the list is empty afterwards.
+    // from the list, the GraphBLAS operation already been given the matrix
+    // handle, and the prev & next pointers it contains.  All of these
+    // operations can thus be done in O(1) time, except for GrB_wait which
+    // needs to traverse the whole list once and then the list is empty
+    // afterwards.
 
     // The access of these variables must be protected in a critical section,
     // if the user application is multithreaded.
@@ -71,10 +72,6 @@ typedef struct
     //--------------------------------------------------------------------------
     // hypersparsity and CSR/CSC format control
     //--------------------------------------------------------------------------
-
-    // See GB_matrix.h and GraphBLAS.h for a description.  It is safe for
-    // a multi-threaded application to modify these in parallel, and thus
-    // they do not need to be protected by a critical section.
 
     double hyper_ratio ;        // default hyper_ratio for new matrices
     bool is_csc ;               // default CSR/CSC format for new matrices

@@ -20,7 +20,8 @@ GrB_Info GB_user_build          // check inputs then build matrix
 (
     GrB_Matrix C,               // matrix to build
     const GrB_Index *I,         // row indices of tuples
-    const GrB_Index *J,         // col indices of tuples
+    const GrB_Index *J,         // col indices of tuples (NULL for
+                                // GrB_Vector_build)
     const void *S,              // array of values of tuples
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates
@@ -127,6 +128,8 @@ GrB_Info GB_user_build          // check inputs then build matrix
     //--------------------------------------------------------------------------
     // build the matrix
     //--------------------------------------------------------------------------
+
+    // GB_build treats I, J, and S as read-only; they must not be modified
 
     return (GB_build (C, I, J, S, nvals, dup, scode, is_matrix, true, Context));
 }
