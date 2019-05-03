@@ -20,32 +20,70 @@
 // the *work arrays are either transplanted into T, or freed, since they are
 // temporary workspaces.
 
-// The work is done in major 5 steps, some of which can be skipped.  Let e be
-// the of tuples on input.  Let p be the # of threads used.
+// The work is done in major 5 Steps, some of which can be skipped, depending
+// on how the tuples are provided (*_work or *_input), and whether or not they
+// are sorted, or have duplicates.  If vdim <= 1, some work is skipped (for
+// GrB_Vectors, and single-vector GrB_Matrices).  Let e be the of tuples on
+// input.  Let p be the # of threads used.
 
-// STEP 1: copy user input.  Time: O(e/p), read/write, or skipped.
+// STEP 1: copy user input.  O(e/p) read/write per thread, or skipped.
 
 // STEP 2: sort the tuples.  Time: O((e log e)/p), read/write, or skipped if
 //         the tuples are already sorted.
 
-// STEP 3: count vectors and duplicates.  Time: O(e/p) reads, if no duplicates,
-//         or skipped if already done.  Time is O(e/p) read/writes if
-//         duplicates appear.
+// STEP 3: count vectors and duplicates.  O(e/p) reads, per thread, if no
+//         duplicates, or skipped if already done.  O(e/p) read/writes
+//         per thread if duplicates appear.
 
-// STEP 4: construct T->h and T->p.  Time: O(e/p) reads, or skipped if
+// STEP 4: construct T->h and T->p.  O(e/p) reads per thread, or skipped if
 //         T is a vector.
 
-// STEP 5: assemble the tuples.  Time O(e/p) read/writes, or O(1) if the values
-//         can be transplanted into T as-is.
+// STEP 5: assemble the tuples.  O(e/p) read/writes per thread, or O(1) if the
+//         values can be transplanted into T as-is.
 
-// For GrB_Matrix_build:  if the input is already sorted with no duplicates,
-// and no typecasting needs to be done, then step 1 still must be done (time is
-// O(e/p), to read I_input,J_input and write I_work), but step 1 also does the
-// work for step 3.  Step 2 and 3 are skipped.  Step 4 takes O(e/p) time (read
-// J_input only).  Then I_work is transplanted into T->i.  Step 5 takes O(e/p)
-// time to copy S into T->x (read/write).
+// For GrB_Matrix_build:  If the input (I_input, J_input, S_input) is already
+// sorted with no duplicates, and no typecasting needs to be done, then Step 1
+// still must be done (each thread does O(e/p) reads of (I_input,J_input) and
+// writes to I_work), but Step 1 also does the work for Step 3.  Step 2 and 3
+// are skipped.  Step 4 does O(e/p) reads per thread (J_input only).  Then
+// I_work is transplanted into T->i.  Step 5 does O(e/p) read/writes per thread
+// to copy S into T->x.
 
-// For GrB_Vector
+// For GrB_Vector_build: as GrB_Matrix_build, Step 1 does O(e/p) read/writes
+// per thread.  The input is always a vector, so vdim == 1 always holds.  Step
+// 2 is skipped if the indices are already sorted, and Step 3 does no work at
+// all unless duplicates appear.  Step 4 takes no time, for any vector. Step 5
+// does O(e/p) reads/writes per thread.  TODO: do not flag duplicates with
+// I_work [t] < 0 when vdim <= 1.  Instead, just check the prior I_work [t-1].
+
+// For GrB_reduce_to_column: like GrB_Vector_build, but many duplicates are
+// likely, and the indices will not be sorted.  The input is always a single
+// vector (vdim == 1).  Step 1 only does a parallel memcpy, from I_input to
+// I_work.  Step 2 takes O((e log e)/p) time to sort the (i,k) tuples.  Step 3
+// does O(e/p) read/writes (TODO: do not write to I_work when vdim <= 1).  Step
+// 4 takes no time.  Step 5 does O(e/p) read/writes per thread.
+
+// For GB_wait:  the pending tuples are provided as I_work, J_work, and S_work,
+// so Step 1 is skipped (no need to check for invalid indices).  The input
+// J_work may be null (vdim can be anything, since GB_wait is used for both
+// vectors and matrices).  The tuples might be in sorted order already, which
+// is known precisely known from A->sorted_pending.  Step 2 does O((e log e)/p)
+// work to sort the tuples.  Duplicates may appear, and out-of-order tuples are
+// likely.  Step 3 does O(e/p) read/writes (but TODO: do not modify I_work if
+// vdim <= 1).  Step 4 does O(e/p) reads per thread of I_work,J_work, or just
+// I_work.  Step 5 does O(e/p) read/writes per thread, or O(1) time if S_work
+// can be transplanted into T->x.
+
+// For GB_transpose: uses I_work, J_work, and either S_input (if no op applied
+// to the values) or S_work (if an op was applied to the A->x values).  This is
+// only done for matrices, not vectors, so vdim > 1 will always hold.  The
+// indices are valid so Step 1 is skipped.  The tuples are not sorted, so Step
+// 2 takes O((e log e)/p) time to do the sort.  There are no duplicates, so
+// Step 3 only does O(e/p) reads of J_work to count the vectors in each slice.
+// Step 4 only does O(e/p) reads of J_work to compute T->h and T->p.  Step 5
+// does O(e/p) read/writes per thread, but it uses the simpler case in
+// GB_build_template since no duplicates can appear.  It is unlikely able to
+// transplant S_work into T->x since the input will almost always be unsorted.
 
 // PARALLEL: done
 
@@ -109,8 +147,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     ASSERT (I_work_handle != NULL) ;
     ASSERT (J_work_handle != NULL) ;
     ASSERT (S_work_handle != NULL) ;
-
-double ttt = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get S
@@ -454,10 +490,6 @@ double ttt = omp_get_wtime ( ) ;
         // check for duplicates.
 
         known_no_duplicates = known_sorted && no_duplicates_found ;
-
-ttt = omp_get_wtime ( ) - ttt ;
-fprintf (stderr, "1st pass   %g\n", ttt) ;
-
     }
 
     ASSERT (I_work != NULL) ;
@@ -467,14 +499,12 @@ fprintf (stderr, "1st pass   %g\n", ttt) ;
     // STEP 2: sort the tuples in ascending order
     //--------------------------------------------------------------------------
 
-    // If the tuples are known to already be sorted, this step is skipped.  In
+    // If the tuples are known to already be sorted, Step 2 is skipped.  In
     // that case, K_work is NULL (not allocated), which implicitly means that
     // K_work [k] = k for all k = 0:nvals-1.
 
     if (!known_sorted)
     {
-
-ttt = omp_get_wtime ( ) ;
 
         // create the k part of each tuple
         GB_MALLOC_MEMORY (K_work, nvals, sizeof (int64_t)) ;
@@ -510,9 +540,6 @@ ttt = omp_get_wtime ( ) ;
             // sort a set of (i,k) tuples
             GB_qsort_2b (I_work, K_work, nvals, Context) ;
         }
-
-ttt = omp_get_wtime ( ) - ttt ;
-fprintf (stderr, "sort  time %g\n", ttt) ;
     }
 
     //--------------------------------------------------------------------------
@@ -522,11 +549,10 @@ fprintf (stderr, "sort  time %g\n", ttt) ;
     // Duplicates are located, counted and their indices negated.  The # of
     // vectors in each slice is counted.  If the indices are known to not have
     // duplicates, then only the vectors are counted.  Counting the # of
-    // vectors is skipped if already done by step 1.
+    // vectors is skipped if already done by Step 1.
 
     if (known_no_duplicates)
     {
-ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // no duplicates: just count # vectors in each slice
@@ -570,7 +596,7 @@ ttt = omp_get_wtime ( ) ;
 
             // count the # of unique vector indices in J_work.  No need to scan
             // I_work since there are no duplicates to be found.  Also no need
-            // to compute them if already found in step 1. 
+            // to compute them if already found in Step 1. 
 
             if (!tnvec_and_tnz_slice_computed)
             {
@@ -601,14 +627,9 @@ ttt = omp_get_wtime ( ) ;
             }
         }
 
-ttt = omp_get_wtime ( ) - ttt ;
-fprintf (stderr, "nodup time %g\n", ttt) ;
-
     }
     else
     {
-
-ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // look for duplicates and count # vectors in each slice
@@ -645,6 +666,7 @@ ttt = omp_get_wtime ( ) ;
                 if (i == ilast && j == jlast)
                 { 
                     // flag the tuple as a duplicate
+// TODO do not flag I_work for vdim <= 1 case
                     I_work [t] = -1 ;
                     my_ndupl++ ;
                     // the sort places earlier duplicate tuples (with smaller
@@ -666,8 +688,6 @@ ttt = omp_get_wtime ( ) ;
             tnvec_slice [tid] = my_tnvec ;
             tnz_slice   [tid] = (tend - tstart) - my_ndupl ;
         }
-ttt = omp_get_wtime ( ) - ttt ;
-fprintf (stderr, "dupl  time %g\n", ttt) ;
     }
 
     //--------------------------------------------------------------------------
@@ -713,7 +733,7 @@ fprintf (stderr, "dupl  time %g\n", ttt) ;
     // STEP 4: construct the vector pointers and hyperlist for T
     //--------------------------------------------------------------------------
 
-    // This step scans the J_work indices and constructs T->h and T->p.
+    // Step 4 scans the J_work indices and constructs T->h and T->p.
 
     int64_t *restrict Th = T->h ;
     int64_t *restrict Tp = T->p ;
@@ -737,9 +757,8 @@ fprintf (stderr, "dupl  time %g\n", ttt) ;
     {
 
         //----------------------------------------------------------------------
-        // is it known that no duplicates appear
+        // no duplicates appear
         //----------------------------------------------------------------------
-ttt = omp_get_wtime ( ) ;
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < nthreads ; tid++)
@@ -764,13 +783,10 @@ ttt = omp_get_wtime ( ) ;
                 }
             }
         }
-ttt = omp_get_wtime ( ) - ttt ;
-fprintf (stderr, "vec nodupl %g\n", ttt) ;
 
     }
     else
     {
-ttt = omp_get_wtime ( ) ;
 
         //----------------------------------------------------------------------
         // it is known that at least one duplicate appears
@@ -806,11 +822,7 @@ ttt = omp_get_wtime ( ) ;
                 }
             }
         }
-ttt = omp_get_wtime ( ) - ttt ;
-fprintf (stderr, "vec dupl   %g\n", ttt) ;
     }
-
-ttt = omp_get_wtime ( ) ;
 
     // log the end of the last vector
     T->nvec_nonempty = tnvec ;
@@ -959,7 +971,8 @@ ttt = omp_get_wtime ( ) ;
         op_2nd = GB_op_is_second (dup, ttype) ;
     }
 
-    // TODO: add op_1st
+    // TODO the FIRST and SECOND operators do too much work, when many
+    // duplicates exist.
 
     //--------------------------------------------------------------------------
     // get the sizes and codes of each type
@@ -1003,9 +1016,11 @@ ttt = omp_get_wtime ( ) ;
         // order, and no duplicates appear.  All that is required is to copy S
         // into Tx.  S can be directly transplanted into T->x since S is
         // provided as S_work.  GB_builder must either transplant or free
-        // S_work.  The transplant can be used by GB_wait (for all cases, since
-        // S_work is A->s_pending) and in rare cases for GB_transpose (when op
-        // is NULL and the transposed tuples happen to be sorted).
+        // S_work.  The transplant can be used by GB_wait (whenever the tuples
+        // are already sorted, with no duplicates, and no typecasting is
+        // needed, since S_work is always A->s_pending).  This transplant can
+        // rarely be used for GB_transpose (when op is NULL and the transposed
+        // tuples happen to be sorted, which is unlikely).
 
         T->x = S_work ;
         S_work = NULL ;
@@ -1125,9 +1140,6 @@ ttt = omp_get_wtime ( ) ;
                     // dup is the SECOND operator, with no typecasting
                     //----------------------------------------------------------
 
-                    // TODO this is too much work; just grab the last tuple
-                    // in a list of duplicates
-
                     #define GB_BUILD_OP(Tx,p,S,k) GB_BUILD_COPY(Tx,p,S,k)
                     #include "GB_build_template.c"
 
@@ -1184,9 +1196,6 @@ ttt = omp_get_wtime ( ) ;
                 // dup operator is the SECOND operator, with typecasting
                 //--------------------------------------------------------------
 
-                // TODO this is too much work; just grab the last tuple
-                // in a list of duplicates
-
                 #undef  GB_BUILD_OP
                 #define GB_BUILD_OP(Tx,p,S,k) GB_BUILD_COPY(Tx,p,S,k)
                 #include "GB_build_template.c"
@@ -1225,8 +1234,6 @@ ttt = omp_get_wtime ( ) ;
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-ttt = omp_get_wtime ( ) - ttt ;
-fprintf (stderr, "numeric    %g\n", ttt) ;
     ASSERT_OK (GB_check (T, "T built", GB0)) ;
     return (GrB_SUCCESS) ;
 }
