@@ -55,7 +55,7 @@
 // all unless duplicates appear.  Step 4 takes no time, for any vector. Step 5
 // does O(e/p) reads/writes per thread.
 
-// For GrB_reduce_to_column: like GrB_Vector_build, but many duplicates are
+// For GrB_reduce_to_vector: like GrB_Vector_build, but many duplicates are
 // likely, and the indices will not be sorted.  The input is always a single
 // vector (vdim == 1).  Step 1 only does a parallel memcpy, from I_input to
 // I_work.  Step 2 takes O((e log e)/p) time to sort the (i,k) tuples.  Step 3
@@ -464,12 +464,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
         { 
 
             //------------------------------------------------------------------
-            // GB_reduce_to_column: do not check I_input, assume not sorted
+            // GB_reduce_to_vector: do not check I_input, assume not sorted
             //------------------------------------------------------------------
 
             // Many duplicates are possible, since the tuples are being used to
             // construct a single vector.  For a CSC format, each entry A(i,j)
-            // becomes an (i,aij) tuple, with the column index j discarded.  All
+            // becomes an (i,aij) tuple, with the vector index j discarded.  All
             // entries in a single row i are reduced to a single entry in the
             // vector.  The input is unlikely to be sorted, so do not bother to
             // check.

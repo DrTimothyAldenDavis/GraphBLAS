@@ -7,15 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// CALLED BY: GB_user_build and GB_reduce_to_column
+// CALLED BY: GB_user_build and GB_reduce_to_vector
 // CALLS:     GB_builder
 
 // GB_user_build constructs a GrB_Matrix or GrB_Vector from the tuples provided
 // by the user.  In that case, the tuples must be checked for duplicates.  They
 // might be sorted on input, so this condition is checked and exploited if
-// found.  GB_reduce_to_column constructs a GrB_Vector froma GrB_Matrix, by
-// discarding the column index.  As a result, duplicates are likely to appear,
-// and the input is likely to be unsorted.  But for GB_reduce_to_column, the
+// found.  GB_reduce_to_vector constructs a GrB_Vector froma GrB_Matrix, by
+// discarding the vector index.  As a result, duplicates are likely to appear,
+// and the input is likely to be unsorted.  But for GB_reduce_to_vector, the
 // validity of the tuples need not be checked.  All of these conditions are
 // checked in GB_builder.
 
@@ -34,12 +34,12 @@
 // the results are not defined.
 
 // SuiteSparse:GraphBLAS provides a well-defined order of assembly, however.
-// Entries in [I,J,S] are first sorted in increasing order of row and column
-// index via a stable sort, with ties broken by the position of the tuple in
-// the [I,J,S] list.  If duplicates appear, they are assembled in the order
-// they appear in the [I,J,S] input.  That is, if the same indices i and j
-// appear in positions k1, k2, k3, and k4 in [I,J,S], where k1 < k2 < k3 < k4,
-// then the following operations will occur in order:
+// For a CSC format, entries in [I,J,S] are first sorted in increasing order of
+// row and column index via a stable sort, with ties broken by the position of
+// the tuple in the [I,J,S] list.  If duplicates appear, they are assembled in
+// the order they appear in the [I,J,S] input.  That is, if the same indices i
+// and j appear in positions k1, k2, k3, and k4 in [I,J,S], where k1 < k2 < k3
+// < k4, then the following operations will occur in order:
 
 //      T (i,j) = S (k1) ;
 
@@ -92,9 +92,9 @@
 GrB_Info GB_build               // build matrix
 (
     GrB_Matrix C,               // matrix to build
-    const GrB_Index *I_input,   // row indices of tuples
-    const GrB_Index *J_input,   // col indices of tuples (NULL for
-                                // GrB_Vector_build or GB_reduce_to_column)
+    const GrB_Index *I_input,   // "row" indices of tuples (as if CSC)
+    const GrB_Index *J_input,   // "col" indices of tuples (as if CSC) NULL for
+                                // GrB_Vector_build or GB_reduce_to_vector
     const void *S_input,        // values
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates

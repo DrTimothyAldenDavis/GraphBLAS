@@ -19,6 +19,11 @@
 // PARALLEL: done, but needs tuning for chunk size.
 // A parallel reduction of all entries in A to a scalar
 
+// TODO: see test107, terminal exit with many threads is slow; when one
+// thread finds the termainl value, it needs to terminate all other threads.
+
+// TODO: need to vectorize
+
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"

@@ -2229,7 +2229,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     GB_Context Context
 ) ;
 
-GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
+GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (
     GrB_Matrix C,                   // input/output for results, size n-by-1
     const GrB_Matrix M,             // optional M for C, unused if NULL
@@ -2317,12 +2317,13 @@ GrB_Info GB_user_build          // check inputs then build matrix
 GrB_Info GB_build               // build matrix
 (
     GrB_Matrix C,               // matrix to build
-    const GrB_Index *I_in,      // row indices of tuples
-    const GrB_Index *J_in,      // col indices of tuples
-    const void *S,              // array of values of tuples
+    const GrB_Index *I_input,   // "row" indices of tuples (as if CSC)
+    const GrB_Index *J_input,   // "col" indices of tuples (as if CSC) NULL for
+                                // GrB_Vector_build or GB_reduce_to_vector
+    const void *S_input,        // values
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates
-    const GB_Type_code scode,   // GB_Type_code of S array
+    const GB_Type_code scode,   // GB_Type_code of S_input array
     const bool is_matrix,       // true if C is a matrix, false if GrB_Vector
     const bool ijcheck,         // true if I and J are to be checked
     GB_Context Context

@@ -110,7 +110,7 @@ GB_dup.c:  done.  4 parallel memcpy's, but these can also be 4 tasks.
     does the work for GrB_*_dup.  Easy to parallelize.
 
 GB_build.c, GB_builder: done
-    does GrB_*_build, GB_wait, GrB_reduce_to_column (transposed),
+    does GrB_*_build, GB_wait, GrB_reduce_to_vector (transposed),
     and GrB_transpose (when the qsort method is used).
 
 ----------------------------------------------------------------------
@@ -126,7 +126,7 @@ Template/GB_qsort_template.c: IN PROGRESS
 not started
 ----------------------------------------------------------------------
 
-GB_reduce_to_column.c:
+GB_reduce_to_vector.c:
     does the work for GrB_*_reduce (to a vector)
 
 Template/GB_prune_inplace.c:

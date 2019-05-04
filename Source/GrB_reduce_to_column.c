@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_reduce_to_column: reduce a matrix to a column
+// GrB_reduce_to_vector: reduce a matrix to a vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -23,7 +23,7 @@ GrB_Info GrB_Matrix_reduce_ ## kind /* w<M> = accum (w,reduce(A))          */ \
     GB_WHERE ("GrB_Matrix_reduce_" GB_STR(kind)                               \
         " (w, M, accum, reduce, A, desc)") ;                                  \
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;                                    \
-    return (GB_reduce_to_column ((GrB_Matrix) w, (GrB_Matrix) M, accum,       \
+    return (GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M, accum,       \
         reduceop, terminal, A, desc, Context)) ;                              \
 }
 

@@ -20,20 +20,25 @@ for trial = 1:ntrials
     C1 = A' ;
 end
 tmsum = toc ;
-fprintf ('MATLAB time: %g per trial: %g\n', tmsum, tmsum / ntrials) ;
+fprintf ('MATLAB    transpose time: %g\n', tmsum / ntrials) ;
 
-% C = Cin + A'
+% C = 0 ; C += A'
 for trial = 1:ntrials
-%  TODO this is slow: figure out why
-%   C = GB_mex_transpose (Cin, [ ], 'plus', A) ;
-% this is fast:
+    C = GB_mex_transpose (Cin, [ ], 'plus', A) ;
+    tg (trial) = gbresults ;
+end
+tgsum = sum (tg) ;
+fprintf ('GraphBLAS transpose time: %g (for C=0 ; C+=A'')\n', tgsum / ntrials) ;
+assert (isequal (C1, C.matrix)) ;
+fprintf ('speedup over MATLAB: %g\n', tmsum / tgsum) ;
+
+% C = A'
+for trial = 1:ntrials
     C = GB_mex_transpose (Cin, [ ], [ ], A) ;
     tg (trial) = gbresults ;
 end
-tg
 tgsum = sum (tg) ;
-
-fprintf ('GraphBLAS time: %g\n', tgsum, tgsum / ntrials) ;
+fprintf ('GraphBLAS transpose time: %g (for C=A'')\n', tgsum / ntrials) ;
 assert (isequal (C1, C.matrix)) ;
 fprintf ('speedup over MATLAB: %g\n', tmsum / tgsum) ;
 
@@ -74,5 +79,5 @@ desc.inp0 = 'tran' ;
 y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A, desc) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
-norm (y.matrix - y2', 1)
+% norm (y.matrix - y2', 1)
 assert (isequal (1*(y.matrix), y2'))

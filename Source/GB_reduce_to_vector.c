@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_reduce_to_column: reduce a matrix to a column using a binary op
+// GB_reduce_to_vector: reduce a matrix to a vector using a binary op
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -13,11 +13,9 @@
 
 // PARALLEL: TODO. use a parallel reduction method
 
-// TODO: rename to GB_reduce_to_vector
-
 #include "GB.h"
 
-GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
+GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (
     GrB_Matrix C,                   // input/output for results, size n-by-1
     const GrB_Matrix M,             // optional M for C, unused if NULL
@@ -146,19 +144,19 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
 
     GrB_Matrix T = NULL ;
 
-    // T = reduce_to_column (A) or reduce_to_column (A'), which is T = sum (A')
+    // T = reduce_to_vector (A) or reduce_to_vector (A'), which is T = sum (A')
     // or sum (A), in MATLAB notation, except where where 'sum' is any
     // associative operator.
 
-    // By default, T(i) = op (A (i,:)) is a column whose length is the same as
+    // By default, T(i) = op (A (i,:)) is a vector whose length is the same as
     // the number of rows of A.  T(i) is the reduction of all entries in the
     // ith row of A.  If A_transpose is true, the T is computed as if A were
-    // transposed first, and thus its length is equal to the number of columns
+    // transposed first, and thus its length is equal to the number of vectors
     // of the input matrix A.  The use of A_transpose is the opposite of
     // MATLAB, since sum(A) in MATLAB sums up the columns of A, and sum(A')
     // sums up the rows of A..
 
-    // T is an wlen-by-1 GrB_Matrix that represents the column.  It is computed
+    // T is an wlen-by-1 GrB_Matrix that represents the vector.  It is computed
     // as a matrix so it can be passed to GB_accum_mask without typecasting.
 
     ASSERT (wlen == (A_transpose) ? A->vdim : A->vlen) ;
@@ -198,7 +196,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
         // count the number of entries in the result
         //----------------------------------------------------------------------
 
-        // nnz(T) = # of non-empty columns of A
+        // nnz(T) = # of non-empty vectors of A
 
         if (A->nvec_nonempty < 0)
         { 
@@ -378,8 +376,8 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
             info = GB_build
             (
                 T,                  // construct result in the T vector
-                (GrB_Index *) Ai,   // row indices
-                NULL,               // column indices
+                (GrB_Index *) Ai,   // indices inside the vector
+                NULL,               // vector indices (none)
                 Ax,                 // values, of size anz
                 anz,                // number of tuples
                 reduce,             // reduction operator

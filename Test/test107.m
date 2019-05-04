@@ -45,13 +45,13 @@ toc
 
 tic
 for trial = 1:ntrials
-    c2 = GB_mex_reduce_terminal (A, 1) ;
+    c2 = GB_mex_reduce_terminal (A, 1) ;        % user-defined at run-time
 end
 toc
 
 tic
 for trial = 1:ntrials
-    c3 = GB_mex_reduce_terminal (A, 2) ;
+    c3 = GB_mex_reduce_terminal (A, 2) ;        % user-defined at run-time
 end
 toc
 

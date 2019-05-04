@@ -258,9 +258,10 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // apply the accumulator (Z = accum (C,T) or Z=T if accum not present)
         //----------------------------------------------------------------------
 
-        // see GB_spec_accum.m for a description of this step
+        // see GB_spec_accum.m for a description of this step.  If C is empty,
+        // then the accumulator can be ignored.
 
-        if (accum == NULL)
+        if (accum == NULL || cnz == 0)
         { 
 
             //------------------------------------------------------------------

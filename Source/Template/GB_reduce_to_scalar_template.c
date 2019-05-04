@@ -30,7 +30,7 @@
         {
 
             //------------------------------------------------------------------
-            // no zombiies
+            // no zombies
             //------------------------------------------------------------------
 
             for (int64_t p = 0 ; p < anz ; p++)
@@ -41,6 +41,7 @@
                 // check for early exit
                 GB_REDUCE_TERMINAL (s) ;
             }
+
         }
         else
         {
@@ -59,6 +60,7 @@
                     GB_REDUCE_TERMINAL (s) ;
                 }
             }
+
         }
 
     }
@@ -82,14 +84,22 @@
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int tid = 0 ; tid < nthreads ; tid++)
             {
-                GB_REDUCE_INIT (t) ;
+
+                /*
                 int64_t pstart = (tid == 0) ? 0 :
                     (((tid  ) * (double) anz) / (double) nthreads) ;
                 int64_t pend   = (tid == nthreads-1) ? anz :
                     (((tid+1) * (double) anz) / (double) nthreads) ;
+                */
+
+                int64_t pstart, pend ;
+                GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
+
+                // t = 0
+                GB_REDUCE_INIT (t) ;
                 for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // s += A(i,j)
+                    // t += A(i,j)
                     ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
                     GB_REDUCE (t, Ax, p) ;
                     // check for early exit
@@ -115,14 +125,14 @@
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int tid = 0 ; tid < nthreads ; tid++)
             {
+                int64_t pstart, pend ;
+                GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
+
+                // t = 0
                 GB_REDUCE_INIT (t) ;
-                int64_t pstart = (tid == 0) ? 0 :
-                    (((tid  ) * (double) anz) / (double) nthreads) ;
-                int64_t pend   = (tid == nthreads-1) ? anz :
-                    (((tid+1) * (double) anz) / (double) nthreads) ;
                 for (int64_t p = pstart ; p < pend ; p++)
                 {
-                    // s += A(i,j)
+                    // t += A(i,j)
                     if (GB_IS_NOT_ZOMBIE (Ai [p]))
                     {
                         GB_REDUCE (t, Ax, p) ;

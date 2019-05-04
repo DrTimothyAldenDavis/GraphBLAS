@@ -7,8 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// TODO: add to GB_build, and GB_reduce_to_col to Generator/GB_red.[ch]
-
 // This is a generic body of code for creating hard-coded versions of code for
 // 44 combinations of associative operators and built-in types: 10 types (all
 // but boolean) with MIN, MAX, PLUS, and TIMES, and one type (boolean) with
