@@ -913,15 +913,15 @@ constructed by dox_headers.m
 \brief  GB_build: build a matrix
 
 \par
- CALLED BY: GB_user_build and GB_reduce_to_column
+ CALLED BY: GB_user_build and GB_reduce_to_vector
  CALLS:     GB_builder
 \par
  GB_user_build constructs a GrB_Matrix or GrB_Vector from the tuples provided
  by the user.  In that case, the tuples must be checked for duplicates.  They
  might be sorted on input, so this condition is checked and exploited if
- found.  GB_reduce_to_column constructs a GrB_Vector froma GrB_Matrix, by
- discarding the column index.  As a result, duplicates are likely to appear,
- and the input is likely to be unsorted.  But for GB_reduce_to_column, the
+ found.  GB_reduce_to_vector constructs a GrB_Vector froma GrB_Matrix, by
+ discarding the vector index.  As a result, duplicates are likely to appear,
+ and the input is likely to be unsorted.  But for GB_reduce_to_vector, the
  validity of the tuples need not be checked.  All of these conditions are
  checked in GB_builder.
 \par
@@ -940,12 +940,12 @@ constructed by dox_headers.m
  the results are not defined.
 \par
  SuiteSparse:GraphBLAS provides a well-defined order of assembly, however.
- Entries in [I,J,S] are first sorted in increasing order of row and column
- index via a stable sort, with ties broken by the position of the tuple in
- the [I,J,S] list.  If duplicates appear, they are assembled in the order
- they appear in the [I,J,S] input.  That is, if the same indices i and j
- appear in positions k1, k2, k3, and k4 in [I,J,S], where k1 \< k2 \< k3 \< k4,
- then the following operations will occur in order:
+ For a CSC format, entries in [I,J,S] are first sorted in increasing order of
+ row and column index via a stable sort, with ties broken by the position of
+ the tuple in the [I,J,S] list.  If duplicates appear, they are assembled in
+ the order they appear in the [I,J,S] input.  That is, if the same indices i
+ and j appear in positions k1, k2, k3, and k4 in [I,J,S], where k1 \< k2 \< k3
+ \< k4, then the following operations will occur in order:
 \par
       T (i,j) = S (k1) ;
 \par
@@ -1007,11 +1007,75 @@ constructed by dox_headers.m
  tuples, and by GB_transpose to transpose a matrix or vector.  Duplicates can
  appear if called by GB_build or GB_wait, but not GB_transpose.
 \par
- The indices are provided either as (I,J) or (iwork,jwork), not both.
+ The indices are provided either as (I_input,J_input) or (I_work,J_work), not
+ both.  The values are provided as S_input or S_work, not both.  On return,
+ the *work arrays are either transplanted into T, or freed, since they are
+ temporary workspaces.
+\par
+ The work is done in major 5 Steps, some of which can be skipped, depending
+ on how the tuples are provided (*_work or *_input), and whether or not they
+ are sorted, or have duplicates.  If vdim \<= 1, some work is skipped (for
+ GrB_Vectors, and single-vector GrB_Matrices).  Let e be the of tuples on
+ input.  Let p be the \# of threads used.
+\par
+ STEP 1: copy user input.  O(e/p) read/write per thread, or skipped.
+\par
+ STEP 2: sort the tuples.  Time: O((e log e)/p), read/write, or skipped if
+         the tuples are already sorted.
+\par
+ STEP 3: count vectors and duplicates.  O(e/p) reads, per thread, if no
+         duplicates, or skipped if already done.  O(e/p) read/writes
+         per thread if duplicates appear.
+\par
+ STEP 4: construct T-\>h and T-\>p.  O(e/p) reads per thread, or skipped if
+         T is a vector.
+\par
+ STEP 5: assemble the tuples.  O(e/p) read/writes per thread, or O(1) if the
+         values can be transplanted into T as-is.
+\par
+ For GrB_Matrix_build:  If the input (I_input, J_input, S_input) is already
+ sorted with no duplicates, and no typecasting needs to be done, then Step 1
+ still must be done (each thread does O(e/p) reads of (I_input,J_input) and
+ writes to I_work), but Step 1 also does the work for Step 3.  Step 2 and 3
+ are skipped.  Step 4 does O(e/p) reads per thread (J_input only).  Then
+ I_work is transplanted into T-\>i.  Step 5 does O(e/p) read/writes per thread
+ to copy S into T-\>x.
+\par
+ For GrB_Vector_build: as GrB_Matrix_build, Step 1 does O(e/p) read/writes
+ per thread.  The input is always a vector, so vdim == 1 always holds.  Step
+ 2 is skipped if the indices are already sorted, and Step 3 does no work at
+ all unless duplicates appear.  Step 4 takes no time, for any vector. Step 5
+ does O(e/p) reads/writes per thread.
+\par
+ For GrB_reduce_to_vector: like GrB_Vector_build, but many duplicates are
+ likely, and the indices will not be sorted.  The input is always a single
+ vector (vdim == 1).  Step 1 only does a parallel memcpy, from I_input to
+ I_work.  Step 2 takes O((e log e)/p) time to sort the (i,k) tuples.  Step 3
+ does O(e/p) read/writes.  Step 4 takes no time.  Step 5 does O(e/p)
+ read/writes per thread.
+\par
+ For GB_wait:  the pending tuples are provided as I_work, J_work, and S_work,
+ so Step 1 is skipped (no need to check for invalid indices).  The input
+ J_work may be null (vdim can be anything, since GB_wait is used for both
+ vectors and matrices).  The tuples might be in sorted order already, which
+ is known precisely known from A-\>sorted_pending.  Step 2 does O((e log e)/p)
+ work to sort the tuples.  Duplicates may appear, and out-of-order tuples are
+ likely.  Step 3 does O(e/p) read/writes.  Step 4 does O(e/p) reads per
+ thread of (I_work,J_work), or just I_work.  Step 5 does O(e/p) read/writes
+ per thread, or O(1) time if S_work can be transplanted into T-\>x.
+\par
+ For GB_transpose: uses I_work, J_work, and either S_input (if no op applied
+ to the values) or S_work (if an op was applied to the A-\>x values).  This is
+ only done for matrices, not vectors, so vdim \> 1 will always hold.  The
+ indices are valid so Step 1 is skipped.  The tuples are not sorted, so Step
+ 2 takes O((e log e)/p) time to do the sort.  There are no duplicates, so
+ Step 3 only does O(e/p) reads of J_work to count the vectors in each slice.
+ Step 4 only does O(e/p) reads of J_work to compute T-\>h and T-\>p.  Step 5
+ does O(e/p) read/writes per thread, but it uses the simpler case in
+ GB_build_template since no duplicates can appear.  It is unlikely able to
+ transplant S_work into T-\>x since the input will almost always be unsorted.
 \par
  PARALLEL: done
-\par
- TODO cleanup printfs and timing
 */
 
 
@@ -1943,18 +2007,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_reduce_to_column.c
-\brief  GB_reduce_to_column: reduce a matrix to a column using a binary op
-
-\par
- CALLS:     GB_build (TODO: call GB_builder instead)
-\par
- C\<M\> = accum (C,reduce(A)) where C is n-by-1
-\par
- PARALLEL: TODO. use a parallel reduction method
-*/
-
-
 /** \file GB_reduce_to_scalar.c
 \brief  GB_reduce_to_scalar: reduce a matrix to a scalar
 
@@ -1970,6 +2022,23 @@ constructed by dox_headers.m
 \par
  PARALLEL: done, but needs tuning for chunk size.
  A parallel reduction of all entries in A to a scalar
+\par
+ TODO: see test107, terminal exit with many threads is slow; when one
+ thread finds the termainl value, it needs to terminate all other threads.
+\par
+ TODO: need to vectorize
+*/
+
+
+/** \file GB_reduce_to_vector.c
+\brief  GB_reduce_to_vector: reduce a matrix to a vector using a binary op
+
+\par
+ CALLS:     GB_build
+\par
+ C\<M\> = accum (C,reduce(A)) where C is n-by-1
+\par
+ PARALLEL: TODO. use a parallel reduction method
 */
 
 
@@ -2974,7 +3043,7 @@ constructed by dox_headers.m
 
 
 /** \file GrB_reduce_to_column.c
-\brief  GrB_reduce_to_column: reduce a matrix to a column
+\brief  GrB_reduce_to_vector: reduce a matrix to a vector
 
 */
 
@@ -3725,8 +3794,6 @@ constructed by dox_headers.m
 \brief  GB_assoc_factory.c: switch factory for associative operators
 
 \par
- TODO: add to GB_build, and GB_reduce_to_col to Generator/GB_red.[ch]
-\par
  This is a generic body of code for creating hard-coded versions of code for
  44 combinations of associative operators and built-in types: 10 types (all
  but boolean) with MIN, MAX, PLUS, and TIMES, and one type (boolean) with
@@ -3773,6 +3840,10 @@ constructed by dox_headers.m
 /** \file GB_build_template.c
 \brief  GB_build_template: T=build(S), and assemble any duplicate tuples
 
+\par
+ This template is used in GB_builder and the Generated/GB_bild__* workers.
+ This is the same for both vectors and matrices, since this step is agnostic
+ about which vectors the entries appear.
 */
 
 
