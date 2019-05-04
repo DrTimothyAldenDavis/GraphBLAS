@@ -24,7 +24,10 @@ fprintf ('MATLAB time: %g per trial: %g\n', tmsum, tmsum / ntrials) ;
 
 % C = Cin + A'
 for trial = 1:ntrials
-    C = GB_mex_transpose (Cin, [ ], 'plus', A) ;
+%  TODO this is slow: figure out why
+%   C = GB_mex_transpose (Cin, [ ], 'plus', A) ;
+% this is fast:
+    C = GB_mex_transpose (Cin, [ ], [ ], A) ;
     tg (trial) = gbresults ;
 end
 tg
@@ -45,3 +48,31 @@ y = GB_mex_reduce_to_vector (yin, [ ], 'plus', 'plus', A) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 assert (isequal (y.matrix, y2))
+
+% sum across the rows, no accum
+yin = sparse (rand (m,1)) ;
+fprintf ('row sum:\n') ;
+tic
+y2 = (sum (A,2)) ;
+t1 = toc ;
+
+y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A) ;
+t2 = gbresults ;
+fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
+% norm (y.matrix - y2, 1)
+assert (isequal (1*(y.matrix), y2))
+
+% sum down the columns, no accum
+yin = sparse (rand (m,1)) ;
+fprintf ('col sum:\n') ;
+tic
+y2 = (sum (A,1)) ;
+t1 = toc ;
+
+desc.inp0 = 'tran' ;
+
+y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A, desc) ;
+t2 = gbresults ;
+fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
+norm (y.matrix - y2', 1)
+assert (isequal (1*(y.matrix), y2'))

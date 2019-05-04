@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// This template is used in GB_builder and the Generated/GB_bild__* workers.
+// This is the same for both vectors and matrices, since this step is agnostic
+// about which vectors the entries appear.
 
 {
     if (ndupl == 0)
@@ -15,6 +18,11 @@
         //----------------------------------------------------------------------
         // no duplicates, just permute S into Tx
         //----------------------------------------------------------------------
+
+        // If no duplicates are present, then GB_builder has already
+        // transplanted I_work into T->i, so this step does not need to
+        // construct T->i.  The tuple values, in S, are copied or permuted into
+        // T->x.
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < nthreads ; tid++)
@@ -36,6 +44,9 @@
         //----------------------------------------------------------------------
         // assemble duplicates
         //----------------------------------------------------------------------
+
+        // Otherwise, entries in S must be copied into T->x, with any
+        // duplicates summed via the operator.  T->i must also be constructed.
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < nthreads ; tid++)
@@ -64,8 +75,8 @@
                 Ti [my_tnz] = i ;
 
                 // assemble all duplicates that follow it.  This may assemble
-                // the first duplicates in the next slice (up to but not
-                // including the first unique tuple in the subsequent slice).
+                // the first duplicates in the next slice(s) (up to but not
+                // including the first unique tuple in the subsequent slice(s)).
                 for ( ; t+1 < nvals && I_work [t+1] < 0 ; t++)
                 {
                     // assemble the duplicate tuple

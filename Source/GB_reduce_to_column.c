@@ -7,11 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// CALLS:     GB_build (TODO: call GB_builder instead)
+// CALLS:     GB_build
 
 // C<M> = accum (C,reduce(A)) where C is n-by-1
 
 // PARALLEL: TODO. use a parallel reduction method
+
+// TODO: rename to GB_reduce_to_vector
 
 #include "GB.h"
 
@@ -348,9 +350,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
         // the bucket method would fail.  Thus, the qsort method, below, is
         // used when anz < wlen.
 
-        // TODO when nthreads is high enough, use the qsort method.  Need
-        // to determine the rule for selecting the methods automatically.
-        // Should this be a user parameter?
+        // TODO: give the user a descriptor to select the method to use?
 
         if (anz < wlen)
         {
@@ -374,7 +374,7 @@ GrB_Info GB_reduce_to_column        // C<M> = accum (C,reduce(A))
                 return (info) ;
             }
 
-            // GB_build treats Ai and Ax as read-only; they must be modified.
+            // GB_build treats Ai and Ax as read-only; they must not be modified
             info = GB_build
             (
                 T,                  // construct result in the T vector

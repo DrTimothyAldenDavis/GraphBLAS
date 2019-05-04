@@ -155,7 +155,6 @@ for k0 = 1:size (problems,1) ;
                     % fprintf ('\n-------------------------------op: %s ', op) ;
                     % fprintf ('opclass: %s ', opclass) ;
                     % fprintf ('xclass: %s\n', xclass) ;
-save gunk I X nrows op cclass
                     A = GB_mex_Vector_build (I, X, nrows, op, cclass) ;
                     % pause
                     % A is sparse but may have explicit zeros

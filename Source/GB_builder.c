@@ -53,15 +53,14 @@
 // per thread.  The input is always a vector, so vdim == 1 always holds.  Step
 // 2 is skipped if the indices are already sorted, and Step 3 does no work at
 // all unless duplicates appear.  Step 4 takes no time, for any vector. Step 5
-// does O(e/p) reads/writes per thread.  TODO: do not flag duplicates with
-// I_work [t] < 0 when vdim <= 1.  Instead, just check the prior I_work [t-1].
+// does O(e/p) reads/writes per thread.
 
 // For GrB_reduce_to_column: like GrB_Vector_build, but many duplicates are
 // likely, and the indices will not be sorted.  The input is always a single
 // vector (vdim == 1).  Step 1 only does a parallel memcpy, from I_input to
 // I_work.  Step 2 takes O((e log e)/p) time to sort the (i,k) tuples.  Step 3
-// does O(e/p) read/writes (TODO: do not write to I_work when vdim <= 1).  Step
-// 4 takes no time.  Step 5 does O(e/p) read/writes per thread.
+// does O(e/p) read/writes.  Step 4 takes no time.  Step 5 does O(e/p)
+// read/writes per thread.
 
 // For GB_wait:  the pending tuples are provided as I_work, J_work, and S_work,
 // so Step 1 is skipped (no need to check for invalid indices).  The input
@@ -69,10 +68,9 @@
 // vectors and matrices).  The tuples might be in sorted order already, which
 // is known precisely known from A->sorted_pending.  Step 2 does O((e log e)/p)
 // work to sort the tuples.  Duplicates may appear, and out-of-order tuples are
-// likely.  Step 3 does O(e/p) read/writes (but TODO: do not modify I_work if
-// vdim <= 1).  Step 4 does O(e/p) reads per thread of I_work,J_work, or just
-// I_work.  Step 5 does O(e/p) read/writes per thread, or O(1) time if S_work
-// can be transplanted into T->x.
+// likely.  Step 3 does O(e/p) read/writes.  Step 4 does O(e/p) reads per
+// thread of (I_work,J_work), or just I_work.  Step 5 does O(e/p) read/writes
+// per thread, or O(1) time if S_work can be transplanted into T->x.
 
 // For GB_transpose: uses I_work, J_work, and either S_input (if no op applied
 // to the values) or S_work (if an op was applied to the A->x values).  This is
@@ -492,9 +490,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         known_no_duplicates = known_sorted && no_duplicates_found ;
     }
 
-    ASSERT (I_work != NULL) ;
-    ASSERT ((vdim > 1) == (J_work != NULL)) ;
-
     //--------------------------------------------------------------------------
     // STEP 2: sort the tuples in ascending order
     //--------------------------------------------------------------------------
@@ -666,7 +661,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 if (i == ilast && j == jlast)
                 { 
                     // flag the tuple as a duplicate
-// TODO do not flag I_work for vdim <= 1 case
                     I_work [t] = -1 ;
                     my_ndupl++ ;
                     // the sort places earlier duplicate tuples (with smaller
@@ -971,9 +965,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
         op_2nd = GB_op_is_second (dup, ttype) ;
     }
 
-    // TODO the FIRST and SECOND operators do too much work, when many
-    // duplicates exist.
-
     //--------------------------------------------------------------------------
     // get the sizes and codes of each type
     //--------------------------------------------------------------------------
@@ -1092,12 +1083,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             #define GB_bild(opname,aname) GB_bild_ ## opname ## aname
 
-            #define GB_ASSOC_WORKER(opname,aname,atype,ignore)                 \
-            {                                                                  \
-                GB_bild (opname, aname) ((atype *) Tx, Ti, (atype *) S, nvals, \
-                    ndupl, I_work, K_work, tstart_slice, tnz_slice, nthreads) ;\
-                done = true ;                                                  \
-            }                                                                  \
+            #define GB_ASSOC_WORKER(opname,aname,atype,ignore)              \
+            {                                                               \
+                GB_bild (opname, aname) ((atype *) Tx, Ti, (atype *) S,     \
+                    nvals, ndupl, I_work, K_work, tstart_slice,             \
+                    tnz_slice, nthreads) ;                                  \
+                done = true ;                                               \
+            }                                                               \
             break ;
 
             //------------------------------------------------------------------
