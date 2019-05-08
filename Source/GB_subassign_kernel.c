@@ -159,6 +159,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz))
 
     //--------------------------------------------------------------------------
     // check empty mask conditions

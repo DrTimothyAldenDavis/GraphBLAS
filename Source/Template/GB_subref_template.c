@@ -143,6 +143,7 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: hard to determine)
 
     //--------------------------------------------------------------------------
     // check the properties of I and J

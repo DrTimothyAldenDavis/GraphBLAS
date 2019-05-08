@@ -91,6 +91,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(Cnvec))
 
     //--------------------------------------------------------------------------
     // get content of M, A, and B

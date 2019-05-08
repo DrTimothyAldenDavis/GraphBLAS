@@ -113,6 +113,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(bnz))
 
     bool check_quick_return = (Bflops == NULL) && (Bflops_per_entry == NULL) ;
 

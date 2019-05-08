@@ -34,6 +34,8 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(ni), except for
+    // qsort which is O(ni*log2(ni)), but it can find its own nthreads)
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -58,11 +60,6 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GB_memcpy (I2, I, ni * sizeof (GrB_Index), nthreads) ;
-//  for (int64_t k = 0 ; k < ni ; k++)
-//  { 
-//      I2 [k] = I [k] ;
-//  }
-
     GB_qsort_1 ((int64_t *) I2, ni, Context) ;
 
     //--------------------------------------------------------------------------

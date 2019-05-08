@@ -39,6 +39,7 @@ GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(nI))
 
     //--------------------------------------------------------------------------
     // get inputs

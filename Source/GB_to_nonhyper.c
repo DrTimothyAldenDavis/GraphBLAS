@@ -45,6 +45,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(vdim))
 
     //--------------------------------------------------------------------------
     // convert A to non-hypersparse form

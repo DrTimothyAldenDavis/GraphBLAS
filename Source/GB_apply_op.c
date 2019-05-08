@@ -42,6 +42,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz))
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory

@@ -102,6 +102,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anvec+anz),
+    // except for diag which is O(anvec*log2(anvec))
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples

@@ -66,6 +66,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz+bnz+Cnvec))
 
     //--------------------------------------------------------------------------
     // allocate the result

@@ -9,7 +9,7 @@
 
 #include "GB.h"
 
-#define GB_REDUCE(kind,reduceop,terminal)                                     \
+#define GB_MATRIX_TO_VECTOR(kind,reduceop,terminal)                           \
 GrB_Info GrB_Matrix_reduce_ ## kind /* w<M> = accum (w,reduce(A))          */ \
 (                                                                             \
     GrB_Vector w,                   /* input/output vector for results     */ \
@@ -29,10 +29,10 @@ GrB_Info GrB_Matrix_reduce_ ## kind /* w<M> = accum (w,reduce(A))          */ \
 
 // With just a GrB_BinaryOp, built-in operators can terminate early (MIN, MAX,
 // LOR, and LAND).  User-defined binary operators do not have a terminal value.
-GB_REDUCE (BinaryOp, reduce    , NULL)
+GB_MATRIX_TO_VECTOR (BinaryOp, reduce    , NULL)
 
 // Built-in monoids ignore the terminal parameter, and use the terminal value
 // based on the built-in operator.  User-defined monoids can be created with an
 // arbitrary non-NULL terminal value.
-GB_REDUCE (Monoid  , reduce->op, reduce->terminal)
+GB_MATRIX_TO_VECTOR (Monoid  , reduce->op, reduce->terminal)
 

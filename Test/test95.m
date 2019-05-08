@@ -1,10 +1,10 @@
 function test95
 %TEST95 performance test for GrB_transpose
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\ntest95 performance tests : GrB_transpose \n') ;
+fprintf ('\ntest95: performance tests : GrB_transpose \n') ;
 rng ('default') ;
 
 Prob = ssget (2662)
@@ -52,7 +52,13 @@ t1 = toc ;
 y = GB_mex_reduce_to_vector (yin, [ ], 'plus', 'plus', A) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
-assert (isequal (y.matrix, y2))
+err = norm (1*(y.matrix) - y2, 1) ;
+if (norm (y2) ~= 0)
+    err = err / norm (y2) ;
+end
+err
+assert (err < 1e-14)
+% assert (isequal (y.matrix, y2))
 
 % sum across the rows, no accum
 yin = sparse (rand (m,1)) ;
@@ -64,8 +70,13 @@ t1 = toc ;
 y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
-% norm (y.matrix - y2, 1)
-assert (isequal (1*(y.matrix), y2))
+err = norm (1*(y.matrix) - y2, 1) ;
+if (norm (y2) ~= 0)
+    err = err / norm (y2) ;
+end
+err
+assert (err < 1e-14)
+% assert (isequal (1*(y.matrix), y2))
 
 % sum down the columns, no accum
 yin = sparse (rand (m,1)) ;
@@ -79,5 +90,10 @@ desc.inp0 = 'tran' ;
 y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A, desc) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
-% norm (y.matrix - y2', 1)
-assert (isequal (1*(y.matrix), y2'))
+err = norm (1*(y.matrix) - y2', 1) ;
+if (norm (y2) ~= 0)
+    err = err / norm (y2) ;
+end
+err
+assert (err < 1e-14)
+% assert (isequal (1*(y.matrix), y2'))

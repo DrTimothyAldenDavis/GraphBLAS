@@ -1,12 +1,12 @@
 function test29
 %TEST29 GrB_reduce with zombies
 
-%  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+%  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 %  http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [~, ~, ~, classes, ~, ~] = GB_spec_opsall ;
 
-fprintf ('\n------------------------- GrB_reduce with zombies\n') ;
+fprintf ('\ntest29: ----------------- GrB_reduce with zombies\n') ;
 
 for m = [1 5 10]
     for n = [1 5 10]

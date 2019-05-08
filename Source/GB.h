@@ -136,20 +136,9 @@
 // for integers only:
 #define GB_IABS(x) (((x) >= 0) ? (x) : (-(x)))
 
-// for floating point:
-// #define GB_FABS(x) (((x) >= 0) ? (x) : (-(x)))
-
 // suitable for integers, and non-NaN floating point:
 #define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
-
-// for floating-point, same as min(x,y,'includenan') and max(...) in MATLAB
-// #define GB_FMIN(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMIN (x,y))
-// #define GB_FMAX(x,y) ((isnan (x) || isnan (y)) ? NAN : GB_IMAX (x,y))
-
-// for floating-point, same as min(x,y,'omitnan') and max(...) in MATLAB
-// #define GB_FMAX(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMAX(x,y)))
-// #define GB_FMIN(x,y) ((isnan (x)) ? (y) : ((isnan (y)) ? (x) : GB_IMIN(x,y)))
 
 //------------------------------------------------------------------------------
 // for coverage tests in Tcov/
@@ -1907,6 +1896,13 @@ void GB_pslice                  // find how to slice A->p by # of entries
     int64_t *Slice,             // size nthreads+1
     const GrB_Matrix A,
     const int nthreads          // # of threads
+) ;
+
+void GB_eslice
+(
+    int64_t *Slice,         // array of size ntasks+1
+    int64_t e,              // number items to partition amongst the tasks
+    const int ntasks        // # of tasks
 ) ;
 
 GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply

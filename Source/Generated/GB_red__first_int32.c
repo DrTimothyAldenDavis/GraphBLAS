@@ -13,10 +13,13 @@
 
 // The reduction is defined by the following types and operators:
 
-// Reduce to scalar:  GB_red_scalar__(none)
-// Assemble tuples:   GB_bild__first_int32
+// Assemble tuples:    GB_red_build__first_int32
+// Reduce to scalar:   GB_red_scalar__(none)
+// Reduce each vector: GB_red_eachvec__(none)
+// Reduce each index:  GB_red_eachindex__(none)
 
 // A type:   int32_t
+// C type:   int32_t
 
 // Reduce:   ;
 // Identity: (none)
@@ -25,41 +28,61 @@
 #define GB_ATYPE \
     int32_t
 
-// monoid identity value
-#define GB_IDENTITY \
-    (none)
+#define GB_CTYPE \
+    int32_t
 
-// scalar workspace for each thread
-#define GB_REDUCE_WORKSPACE(w,nthreads) \
-    int32_t w [nthreads] ;
+// Array to array
 
-// t = identity
-#define GB_REDUCE_INIT(t) \
-    int32_t t = (none) ;
+    // W [k] = (ztype) S [i], with typecast
+    #define GB_CAST_ARRAY_TO_ARRAY(W,k,S,i)         \
+        W [k] = S [i]
 
-// t += Ax [p]
-#define GB_REDUCE(t,Ax,p)   \
-    ;
+    // W [k] += (ztype) S [i], with typecast
+    #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
+        ;
 
-// w [tid] = t
-#define GB_REDUCE_WRAPUP(w,tid,t) \
-    w [tid] = t ;
+    // W [k] = S [i], no typecast
+    #define GB_COPY_ARRAY_TO_ARRAY(W,k,S,i)         \
+        W [k] = S [i]
 
-// s += w [tid], sum up results of each thread
-#define GB_REDUCE_W(s,w,tid)  \
-    ;
+    // W [k] += S [i], no typecast
+    #define GB_ADD_ARRAY_TO_ARRAY(W,k,S,i)          \
+        ;
 
-// break if terminal value of the monoid is reached
-#define GB_REDUCE_TERMINAL(t) \
-    ;
+// Array to scalar
 
-// Tx [p] += S [k]
-#define GB_BUILD_OP(Tx, p, S, k) \
-    ;
+    // ztype s = (ztype) Ax [p], with typecast
+    #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)         \
+        int32_t s = Ax [p]
 
-// Tx [p] = S [k]
-#define GB_BUILD_COPY(Tx, p, S, k) \
-    Tx [p] = S [k] ;
+    // s += (ztype) Ax [p], with typecast
+    #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
+        ;
+
+    // s += S [i], no typecast
+    #define GB_ADD_ARRAY_TO_SCALAR(s,S,i)           \
+        ;
+
+// Scalar to array
+
+    // W [k] = s, no typecast
+    #define GB_COPY_SCALAR_TO_ARRAY(W,k,s)          \
+        W [k] = s
+
+    // W [k] += s, no typecast
+    #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
+        ;
+
+// workspace
+
+    // declare a ztype array of size nthreads
+    #define GB_REDUCTION_WORKSPACE(W,nthreads)      \
+        int32_t W [nthreads]
+
+// break the loop if terminal condition reached
+
+    #define GB_BREAK_IF_TERMINAL(t)                 \
+        ;
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
@@ -74,9 +97,52 @@ void GB_red_scalar__(none)
     int nthreads
 )
 { 
-    GB_REDUCE_INIT (s) ;
+    int32_t s = (*result) ;
     #include "GB_reduce_to_scalar_template.c"
     (*result) = s ;
+}
+
+//------------------------------------------------------------------------------
+// reduce to each vector: each vector A(:,k) reduces to a scalar Tx (k)
+//------------------------------------------------------------------------------
+
+void GB_red_eachvec__(none)
+(
+    int32_t *restrict Tx,
+    GrB_Matrix A,
+    const int64_t *restrict kfirst_slice,
+    const int64_t *restrict klast_slice,
+    const int64_t *restrict pstart_slice,
+    int nthreads
+)
+{
+    #include "GB_reduce_each_vector.c"
+}
+
+//------------------------------------------------------------------------------
+// reduce to each index: each A(i,:) reduces to a scalar T (i)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_red_eachindex__(none)
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GB_Sauna *Saunas,
+    const int64_t hiwater,
+    GrB_Matrix A,
+    const int64_t *restrict pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+)
+{
+    GrB_Info info = GrB_SUCCESS ;
+    GrB_Matrix T = NULL ;
+    (*Thandle) = NULL ;
+    #define GB_FREE_ALL ;
+    #include "GB_reduce_each_index.c"
+    (*Thandle) = T ;
+    return (info) ;
 }
 
 #endif
@@ -85,7 +151,7 @@ void GB_red_scalar__(none)
 // build matrix
 //------------------------------------------------------------------------------
 
-void GB_bild__first_int32
+void GB_red_build__first_int32
 (
     int32_t *restrict Tx,
     int64_t  *restrict Ti,
@@ -99,7 +165,7 @@ void GB_bild__first_int32
     int nthreads
 )
 {
-    #include "GB_build_template.c"
+    #include "GB_reduce_build_template.c"
 }
 
 #endif

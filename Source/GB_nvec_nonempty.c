@@ -32,6 +32,7 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: O(anvec))
 
     //--------------------------------------------------------------------------
     // trivial case

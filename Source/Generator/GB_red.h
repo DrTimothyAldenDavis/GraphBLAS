@@ -1,13 +1,38 @@
 if_is_monoid
+
 void GB_red_scalar
 (
     GB_atype *result,
     const GrB_Matrix A,
     int nthreads
 ) ;
+
+void GB_red_eachvec
+(
+    GB_atype *restrict Tx,
+    GrB_Matrix A,
+    const int64_t *restrict kfirst_slice,
+    const int64_t *restrict klast_slice,
+    const int64_t *restrict pstart_slice,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GB_Sauna *Saunas,
+    const int64_t hiwater,
+    GrB_Matrix A,
+    const int64_t *restrict pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
 endif_is_monoid
 
-void GB_bild
+void GB_red_build
 (
     GB_atype *restrict Tx,
     int64_t  *restrict Ti,

@@ -44,6 +44,7 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: O(anz*bnz))
 
     //--------------------------------------------------------------------------
     // get inputs

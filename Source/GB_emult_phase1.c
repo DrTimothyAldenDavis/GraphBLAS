@@ -61,6 +61,8 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz+bnz), but this
+    // is a loose upper bound)
 
     //--------------------------------------------------------------------------
     // allocate the result

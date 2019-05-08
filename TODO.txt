@@ -4,3 +4,43 @@ TODO: test for user-defined type:  for FIRST and SECOND operators,
     do not check for typecast for the unused parameter.
     (this is written but need to test this for user-defined types)
 
+TODO: speedup XOR and EQ monoids using uint8_t summation
+
+        //------------------------------------------------------------
+        // xor
+        //------------------------------------------------------------
+
+        bool z = false ;
+        for (int64_t i = 0 ; i < N ; i++)
+        {
+            z = (z != x [i]) ;
+        }
+
+        // via sum with uint8: much faster, same result
+        uint8_t w = 0 ;
+        for (int64_t i = 0 ; i < N ; i++)
+        {
+            w += x [i] ;
+        }
+        w = ((w % 2) == 1) ;
+        assert (z == w) ;
+
+        //------------------------------------------------------------
+        // eq
+        //------------------------------------------------------------
+
+        z = true ;
+        for (int64_t i = 0 ; i < N ; i++)
+        {
+            z = (z == x [i]) ;
+        }
+
+        // via sum with uint8: much faster, same result
+        w = 0 ;
+        for (int64_t i = 0 ; i < N ; i++)
+        {
+            w += x [i] ;
+        }
+        w = ((w % 2) == 0) ;
+        assert (z == w) ;
+

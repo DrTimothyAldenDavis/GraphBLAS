@@ -85,7 +85,7 @@ fprintf ('\neq     ') ;
 codegen_red_method ('eq'  ,   'zarg = (zarg == yarg)'      , 'bool'    , 'true'      , [ ]         ) ;
 
 %-------------------------------------------------------------------------------
-% FIRST and SECOND (not monoids; used for GB_bild__[first or second]_[type])
+% FIRST and SECOND (not monoids; used for GB_red_build__[first,second]_[type])
 %-------------------------------------------------------------------------------
 
 % FIRST: 11 ops:    name      function                       type        identity      terminal

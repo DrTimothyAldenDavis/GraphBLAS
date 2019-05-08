@@ -93,6 +93,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(vlen+anvec+anz))
 
     // A is sliced into naslice parts, so that each part has at least vlen
     // entries.  The workspace required is naslice*vlen, so this ensures

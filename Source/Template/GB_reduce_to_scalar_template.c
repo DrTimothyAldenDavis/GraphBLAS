@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// Reduce a matrix to a scalar.  No typecasting is performed.
+// Reduce a matrix to a scalar
 
 // PARALLEL: done
 
-// TODO add simd vectorization for non-terminal monoids.
+// TODO add simd vectorization for non-terminal monoids.  Particular max, min
 
 {
 
@@ -35,11 +35,11 @@
 
             for (int64_t p = 0 ; p < anz ; p++)
             {
-                // s += A(i,j)
                 ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
-                GB_REDUCE (s, Ax, p) ;
+                // s += (ztype) Ax [p]
+                GB_ADD_CAST_ARRAY_TO_SCALAR (s, Ax, p) ;
                 // check for early exit
-                GB_REDUCE_TERMINAL (s) ;
+                GB_BREAK_IF_TERMINAL (s) ;
             }
 
         }
@@ -52,15 +52,14 @@
 
             for (int64_t p = 0 ; p < anz ; p++)
             {
-                // s += A(i,j) if the entry is not a zombie
                 if (GB_IS_NOT_ZOMBIE (Ai [p]))
                 {
-                    GB_REDUCE (s, Ax, p) ;
+                    // s += (ztype) Ax [p]
+                    GB_ADD_CAST_ARRAY_TO_SCALAR (s, Ax, p) ;
                     // check for early exit
-                    GB_REDUCE_TERMINAL (s) ;
+                    GB_BREAK_IF_TERMINAL (s) ;
                 }
             }
-
         }
 
     }
@@ -68,10 +67,16 @@
     {
 
         //----------------------------------------------------------------------
-        // multiple threads
+        // create workspace for multiple threads
         //----------------------------------------------------------------------
 
-        GB_REDUCE_WORKSPACE (w, nthreads) ;
+        // ztype W [nthreads] ;
+        GB_REDUCTION_WORKSPACE (W, nthreads) ;
+        ASSERT (nthreads <= anz) ;
+
+        //----------------------------------------------------------------------
+        // each thread reduces its own slice in parallel
+        //----------------------------------------------------------------------
 
         if (A->nzombies == 0)
         {
@@ -80,37 +85,26 @@
             // no zombies
             //------------------------------------------------------------------
 
-            // each thread reduces its own part in parallel
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int tid = 0 ; tid < nthreads ; tid++)
             {
-
-                /*
-                int64_t pstart = (tid == 0) ? 0 :
-                    (((tid  ) * (double) anz) / (double) nthreads) ;
-                int64_t pend   = (tid == nthreads-1) ? anz :
-                    (((tid+1) * (double) anz) / (double) nthreads) ;
-                */
-
                 int64_t pstart, pend ;
                 GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
+                // no slice is empty
+                ASSERT (pstart < pend) ;
 
-                // t = 0
-                GB_REDUCE_INIT (t) ;
-                for (int64_t p = pstart ; p < pend ; p++)
+                // ztype t = (ztype) Ax [pstart], with typecast
+                GB_CAST_ARRAY_TO_SCALAR (t, Ax, pstart) ;
+                for (int64_t p = pstart+1 ; p < pend ; p++)
                 {
-                    // t += A(i,j)
                     ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
-                    GB_REDUCE (t, Ax, p) ;
+                    // t += (ztype) Ax [p], with typecast
+                    GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
                     // check for early exit
-                    GB_REDUCE_TERMINAL (t) ;
+                    GB_BREAK_IF_TERMINAL (t) ;
                 }
-                GB_REDUCE_WRAPUP (w, tid, t) ;
-            }
-            // sum up the results of each part using a single thread
-            for (int tid = 0 ; tid < nthreads ; tid++)
-            {
-                GB_REDUCE_W (s, w, tid) ;
+                // W [tid] = t, no typecast
+                GB_COPY_SCALAR_TO_ARRAY (W, tid, t) ;
             }
 
         }
@@ -121,32 +115,39 @@
             // with zombies
             //------------------------------------------------------------------
 
-            // each thread reduces its own part in parallel
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int tid = 0 ; tid < nthreads ; tid++)
             {
                 int64_t pstart, pend ;
                 GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
+                // no slice is empty
+                ASSERT (pstart < pend) ;
 
-                // t = 0
-                GB_REDUCE_INIT (t) ;
-                for (int64_t p = pstart ; p < pend ; p++)
+                // ztype t = (ztype) Ax [pstart], with typecast
+                GB_CAST_ARRAY_TO_SCALAR (t, Ax, pstart) ;
+                for (int64_t p = pstart+1 ; p < pend ; p++)
                 {
-                    // t += A(i,j)
                     if (GB_IS_NOT_ZOMBIE (Ai [p]))
                     {
-                        GB_REDUCE (t, Ax, p) ;
+                        // t += (ztype) Ax [p], with typecast
+                        GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
                         // check for early exit
-                        GB_REDUCE_TERMINAL (t) ;
+                        GB_BREAK_IF_TERMINAL (t) ;
                     }
                 }
-                GB_REDUCE_WRAPUP (w, tid, t) ;
+                // W [tid] = t, no typecast
+                GB_COPY_SCALAR_TO_ARRAY (W, tid, t) ;
             }
-            // sum up the results of each part using a single thread
-            for (int tid = 0 ; tid < nthreads ; tid++)
-            {
-                GB_REDUCE_W (s, w, tid) ;
-            }
+        }
+
+        //----------------------------------------------------------------------
+        // sum up the results of each slice using a single thread
+        //----------------------------------------------------------------------
+
+        for (int tid = 0 ; tid < nthreads ; tid++)
+        {
+            // s += W [tid], no typecast
+            GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;
         }
     }
 }

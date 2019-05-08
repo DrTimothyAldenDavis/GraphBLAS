@@ -9,7 +9,7 @@
 
 #include "GB.h"
 
-#define GB_BUILD(type,T)                                                      \
+#define GB_MATRIX_BUILD(type,T)                                               \
 GrB_Info GrB_Matrix_build_ ## T     /* build a matrix from (I,J,X) tuples */  \
 (                                                                             \
     GrB_Matrix C,                   /* matrix to build                    */  \
@@ -27,16 +27,16 @@ GrB_Info GrB_Matrix_build_ ## T     /* build a matrix from (I,J,X) tuples */  \
         Context)) ;                                                           \
 }
 
-GB_BUILD (bool     , BOOL   )
-GB_BUILD (int8_t   , INT8   )
-GB_BUILD (uint8_t  , UINT8  )
-GB_BUILD (int16_t  , INT16  )
-GB_BUILD (uint16_t , UINT16 )
-GB_BUILD (int32_t  , INT32  )
-GB_BUILD (uint32_t , UINT32 )
-GB_BUILD (int64_t  , INT64  )
-GB_BUILD (uint64_t , UINT64 )
-GB_BUILD (float    , FP32   )
-GB_BUILD (double   , FP64   )
-GB_BUILD (void     , UDT    )
+GB_MATRIX_BUILD (bool     , BOOL   )
+GB_MATRIX_BUILD (int8_t   , INT8   )
+GB_MATRIX_BUILD (uint8_t  , UINT8  )
+GB_MATRIX_BUILD (int16_t  , INT16  )
+GB_MATRIX_BUILD (uint16_t , UINT16 )
+GB_MATRIX_BUILD (int32_t  , INT32  )
+GB_MATRIX_BUILD (uint32_t , UINT32 )
+GB_MATRIX_BUILD (int64_t  , INT64  )
+GB_MATRIX_BUILD (uint64_t , UINT64 )
+GB_MATRIX_BUILD (float    , FP32   )
+GB_MATRIX_BUILD (double   , FP64   )
+GB_MATRIX_BUILD (void     , UDT    )
 

@@ -9,11 +9,15 @@
 
 // CALLS:     GB_build
 
-// C<M> = accum (C,reduce(A)) where C is n-by-1
-
-// PARALLEL: TODO. use a parallel reduction method
+// C<M> = accum (C,reduce(A)) where C is n-by-1.  Reduces a matrix A or A'
+// to a vector.
 
 #include "GB.h"
+#ifndef GBCOMPACT
+#include "GB_red__include.h"
+#endif
+
+#define GB_FREE_ALL GrB_free (&T) ;
 
 GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (
@@ -47,6 +51,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     ASSERT_OK (GB_check (A, "A input for reduce_BinaryOp", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (desc, "desc for reduce_BinaryOp", GB0)) ;
 
+    GrB_Matrix T = NULL ;
+
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
 
@@ -56,11 +62,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type ttype = reduce->ztype ;
-    info = GB_compatible (C->type, C, M, accum, ttype, Context) ;
-    if (info != GrB_SUCCESS)
-    { 
-        return (info) ;
-    }
+    GB_OK (GB_compatible (C->type, C, M, accum, ttype, Context)) ;
 
     // check types of reduce
     if (reduce->xtype != reduce->ztype || reduce->ytype != reduce->ztype)
@@ -84,36 +86,30 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     }
 
     // check the dimensions
-    int64_t wlen = GB_NROWS (C) ;
+    int64_t n = GB_NROWS (C) ;
     if (A_transpose)
     {
-        if (wlen != GB_NCOLS (A))
+        if (n != GB_NCOLS (A))
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
                 "w=reduce(A'):  length of w is "GBd";\n"
                 "it must match the number of columns of A, which is "GBd".",
-                wlen, GB_NCOLS (A)))) ;
+                n, GB_NCOLS (A)))) ;
         }
     }
     else
     {
-        if (wlen != GB_NROWS(A))
+        if (n != GB_NROWS(A))
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
                 "w=reduce(A):  length of w is "GBd";\n"
                 "it must match the number of rows of A, which is "GBd".",
-                wlen, GB_NROWS (A)))) ;
+                n, GB_NROWS (A)))) ;
         }
     }
 
     // quick return if an empty mask is complemented
     GB_RETURN_IF_QUICK_MASK (C, C_replace, M, Mask_comp) ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -140,9 +136,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     //--------------------------------------------------------------------------
 
     // T is created below so that it can be typecasted to a GrB_Vector when
-    // done: non-hypersparse wlen-by-1 matrix in CSC format.
-
-    GrB_Matrix T = NULL ;
+    // done: non-hypersparse n-by-1 matrix in CSC format.
 
     // T = reduce_to_vector (A) or reduce_to_vector (A'), which is T = sum (A')
     // or sum (A), in MATLAB notation, except where where 'sum' is any
@@ -156,10 +150,11 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // MATLAB, since sum(A) in MATLAB sums up the columns of A, and sum(A')
     // sums up the rows of A..
 
-    // T is an wlen-by-1 GrB_Matrix that represents the vector.  It is computed
-    // as a matrix so it can be passed to GB_accum_mask without typecasting.
+    // T is an n-by-1 GrB_Matrix that represents the vector.  It is computed
+    // as a GrB_Matrix so it can be passed to GB_accum_mask without
+    // typecasting.
 
-    ASSERT (wlen == (A_transpose) ? A->vdim : A->vlen) ;
+    ASSERT (n == (A_transpose) ? A->vdim : A->vlen) ;
 
     //--------------------------------------------------------------------------
     // scalar workspace
@@ -169,12 +164,25 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     int    acode = A->type->code ;
     const int64_t *restrict Ai = A->i ;
     const GB_void *restrict Ax = A->x ;
+    int64_t anvec = A->nvec ;
     int64_t anz = GB_NNZ (A) ;
 
     size_t zsize = reduce->ztype->size ;
     int    zcode = reduce->ztype->code ;
-    char awork [zsize] ;
-    char zwork [zsize] ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    // TODO find a good chunk size
+    // #define GB_CHUNK (1024*1024)
+//    #define GB_CHUNK (4*1024)
+    #define GB_CHUNK (2)
+    GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz))
+
+    nthreads = GB_IMIN (anz / GB_CHUNK, nthreads) ;
+    nthreads = GB_IMAX (nthreads, 1) ;
 
     //--------------------------------------------------------------------------
     // T = reduce(A) or reduce(A')
@@ -182,7 +190,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     GxB_binary_function freduce = reduce->function ;
     GB_cast_function cast_A_to_Z = GB_cast_factory (zcode, acode) ;
-    int64_t tnz = 0 ;
     bool nocasting = (A->type == reduce->ztype) ;
 
     if (A_transpose)
@@ -192,89 +199,192 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // T = reduce(A'), where T(j) = reduce (A (:,j))
         //----------------------------------------------------------------------
 
-        //----------------------------------------------------------------------
-        // count the number of entries in the result
-        //----------------------------------------------------------------------
-
-        // nnz(T) = # of non-empty vectors of A
-
-        if (A->nvec_nonempty < 0)
-        { 
-            A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
-        }
-
-        tnz = A->nvec_nonempty ;
-        ASSERT (tnz == GB_nvec_nonempty (A, NULL)) ;
+        // Each vector A(:,j) is reduced to the scalar T(j)
 
         //----------------------------------------------------------------------
-        // allocate T
+        // allocate T, including T->p, T->i, and T->x.  T is not hypersparse.
         //----------------------------------------------------------------------
 
         // since T is a GrB_Vector, it is CSC and not hypersparse
-        T = NULL ;                  // allocate a new header for T
-        GB_CREATE (&T, ttype, wlen, 1, GB_Ap_calloc, true,
-            GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, tnz, true, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            return (info) ;
-        }
+        GB_CREATE (&T, ttype, n, 1, GB_Ap_calloc, true,
+            GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, anvec, true, Context) ;
+        GB_OK (info) ;
         ASSERT (GB_VECTOR_OK (T)) ;
 
         T->p [0] = 0 ;
-        T->p [1] = tnz ;
+        T->p [1] = anvec ;
         int64_t *restrict Ti = T->i ;
         GB_void *restrict Tx = T->x ;
-        T->nvec_nonempty = (tnz > 0) ? 1 : 0 ;
+        T->nvec_nonempty = (anvec > 0) ? 1 : 0 ;
 
         //----------------------------------------------------------------------
-        // sum down each sparse vector: T (j) = reduce (A (:,j))
+        // symbolic phase
         //----------------------------------------------------------------------
 
-        // TODO:: do the reduction down each sparse vector in parallel.  Need
-        // to first check A for empty vectors, and compute Ti first.  then
-        // compute Tx.  Also put this in a function in Generated/GB_red_*.
+        // Construct the pattern of T.  The kth vector in A creates one entry
+        // in T, but it is flagged as a zombie if it is empty.
+
+        int64_t nzombies = 0 ;
+        const int64_t *restrict Ah = A->h ;
+        const int64_t *restrict Ap = A->p ;
+
+        // TODO is this worth doing in parallel?
+        //      #pragma omp parallel for num_threads(nthreads) \\
+        //          schedule(static) reduction(+:nzombies)
+        for (int64_t k = 0 ; k < anvec ; k++)
+        {
+            // if A(:,j) is empty, then the entry in T becomes a zombie
+            int64_t j = (Ah == NULL) ? k : Ah [k] ;
+            int64_t jnz = Ap [k+1] - Ap [k] ;
+            if (jnz == 0)
+            {
+                // A(:,j) is empty: T(j) is a zombie
+                Ti [k] = GB_FLIP (j) ;
+                nzombies++ ;
+            }
+            else
+            {
+                // A(:,j) has at least one entry; T(j) is live
+                Ti [k] = j ;
+            }
+        }
+
+        if (A->nvec_nonempty < 0)
+        {
+            A->nvec_nonempty = anvec - nzombies ;
+        }
+        ASSERT (A->nvec_nonempty != (anvec - nzombies)) ;
+        T->nzombies = nzombies ;
+
+        //----------------------------------------------------------------------
+        // slice the entries of A for the numeric phase
+        //----------------------------------------------------------------------
+
+        // TODO consider creating ntasks > nthreads.  Perhaps ntasks = 8 *
+        // nthreads or so, for better load-balancing.  A slice whose entries
+        // are all in a single vector will be faster than a slice with each
+        // entry in a unique vector.  It might be 4x or 8x faster, if SIMD
+        // vectorization can be exploited.
+
+        // Thread tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1
+        // and vectors kfirst_slice [tid] to klast_slice [tid].  The first and
+        // last vectors may be shared with prior slices and subsequent slices.
+
+        int64_t pstart_slice [nthreads+1] ;
+        GB_eslice (pstart_slice, anz, nthreads) ;
+
+        //----------------------------------------------------------------------
+        // find the first and last vectors in each slice
+        //----------------------------------------------------------------------
+
+        // The first vector of the slice is the kth vector of A if
+        // pstart_slice [tid] is in the range Ap [k]...A[k+1]-1, and this
+        // is vector is k = kfirst_slice [tid].
+
+        // The last vector of the slice is the kth vector of A if
+        // pstart_slice [tid+1]-1 is in the range Ap [k]...A[k+1]-1, and this
+        // is vector is k = klast_slice [tid].
+
+        // See also GB_fine_slice.
+
+        int64_t kfirst_slice [nthreads] ;
+        int64_t klast_slice  [nthreads] ;
+
+        for (int tid = 0 ; tid < nthreads ; tid++)
+        {
+
+            // The slice for thread tid contains entries pfirst:plast-1 of A.
+            int64_t pfirst = pstart_slice [tid] ;
+            int64_t plast  = pstart_slice [tid+1] - 1 ;
+
+            if (pfirst <= plast)
+            {
+
+                // find the first vector of the slice for thread tid: the
+                // vector that owns the entry Ai [pfirst] and Ax [pfirst].
+                int64_t kfirst = 0 ;
+                int64_t pright = anvec ;
+                bool found ;
+                GB_BINARY_SPLIT_SEARCH (pfirst, Ap, kfirst, pright, found) ;
+                if (found)
+                {
+                    // Ap [kfirst] == pfirst has been found, but if kfirst
+                    // is an empty vector, then the next vector will also
+                    // contain the entry pfirst.  In that case, kfirst
+                    // needs to be incremented until finding the first
+                    // non-empty vector for which Ap [k] == pfirst.
+                    ASSERT (Ap [kfirst] == pfirst) ;
+                    while (kfirst < anvec-1 && Ap [kfirst+1] == pfirst)
+                    {
+                        kfirst++ ;
+                    }
+                }
+                else
+                { 
+                    // pfirst has not been found in Ap, so it appears in the
+                    // middle of Ap [kfirst-1] ... Ap [kfirst], as computed by
+                    // the binary search.  This is the range of entries for
+                    // the vector kfirst-1, so kfirst must be decremented.
+                    kfirst-- ;
+                }
+
+                // The entry pfirst must reside in a non-empty vector.
+                ASSERT (kfirst >= 0 && kfirst < anvec) ;
+                ASSERT (Ap [kfirst] <= pfirst && pfirst < Ap [kfirst+1]) ;
+
+                // find the last vector of the slice for thread tid: the
+                // vector that owns the entry Ai [plast] and Ax [plast].
+                int64_t klast = kfirst ;
+                pright = anvec ;
+                GB_BINARY_SPLIT_SEARCH (plast, Ap, klast, pright, found) ;
+                if (found)
+                {
+                    // see comments above
+                    while (klast < anvec-1 && Ap [klast+1] == plast)
+                    {
+                        klast++ ;
+                    }
+                }
+                else
+                { 
+                    klast-- ;
+                }
+
+                // The entry plast must reside in a non-empty vector.
+                ASSERT (klast >= 0 && klast < anvec) ;
+                ASSERT (Ap [klast] <= plast && plast < Ap [klast+1]) ;
+
+                kfirst_slice [tid] = kfirst ;
+                klast_slice  [tid] = klast ;
+                ASSERT (0 <= kfirst && kfirst <= klast && klast < anvec) ;
+            }
+            else
+            {
+                // this thread does nothing
+                kfirst_slice [tid] = -1 ;
+                klast_slice  [tid] = -2 ;
+            }
+        }
+
+        kfirst_slice [0] = 0 ;
+        klast_slice  [nthreads-1] = anvec-1 ;
+
+        //----------------------------------------------------------------------
+        // numeric phase: launch the switch factory
+        //----------------------------------------------------------------------
 
         bool done = false ;
 
-        tnz = 0 ;
-
-        // define the worker for the switch factory
-        #define GB_ASSOC_WORKER(ignore1,ignore2,type,terminal)              \
-        {                                                                   \
-            const type *ax = (type *) Ax ;                                  \
-            type *tx = (type *) Tx ;                                        \
-            GBI_for_each_vector (A)                                         \
-            {                                                               \
-                /* tj = reduce (A (:,j)) */                                 \
-                GBI_jth_iteration (j, p, pend) ;                            \
-                type tj ;                                                   \
-                if (p >= pend) continue ;   /* skip vector j if empty */    \
-                /* tj = Ax [p], the first entry in vector j */              \
-                tj = ax [p] ;                                               \
-                /* subsequent entries in vector j */                        \
-                for (p++ ; p < pend ; p++)                                  \
-                {                                                           \
-                    /* tj "+=" ax [p] ; */                                  \
-                    if (GB_HAS_TERMINAL && (tj == terminal)) break ;        \
-                    GB_DUP (tj, ax [p]) ;                                   \
-                }                                                           \
-                Ti [tnz] = j ;                                              \
-                tx [tnz] = tj ;                                             \
-                tnz++ ;                                                     \
-            }                                                               \
-            done = true ;                                                   \
-        }                                                                   \
-        break ;
-
-        //----------------------------------------------------------------------
-        // launch the switch factory
-        //----------------------------------------------------------------------
-
-        // If GBCOMPACT is defined, the switch factory is disabled and all
-        // work is done by the generic worker.  The compiled code will be more
-        // compact, but 3 to 4 times slower.
-
         #ifndef GBCOMPACT
+
+            #define GB_red(opname,aname) GB_red_eachvec_ ## opname ## aname
+            #define GB_RED_WORKER(opname,aname,atype)                       \
+            {                                                               \
+                GB_red (opname, aname) ((atype *) Tx, A,                    \
+                    kfirst_slice, klast_slice, pstart_slice, nthreads) ;    \
+                done = true ;                                               \
+            }                                                               \
+            break ;
 
             if (nocasting)
             { 
@@ -282,12 +392,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                 GB_Opcode opcode = reduce->opcode ;
                 GB_Type_code typecode = acode ;
                 ASSERT (typecode <= GB_UDT_code) ;
-                #include "GB_assoc_factory.c"
+                #include "GB_red_factory.c"
             }
 
         #endif
-
-        #undef GB_ASSOC_WORKER
 
         //----------------------------------------------------------------------
         // generic worker: with typecasting
@@ -296,37 +404,70 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         if (!done)
         {
 
-            // TODO use a Template/ for this
+            #define GB_ATYPE GB_void
+            #define GB_CTYPE GB_void
 
-            GBI_for_each_vector (A)
-            {
-                // zwork = reduce (A (:,j))
-                GBI_jth_iteration (j, p, pend) ;
-                if (p >= pend) continue ;   // skip vector j if empty
-                // zwork = (ztype) Ax [p], the first entry in vector j
-                cast_A_to_Z (zwork, Ax +(p*asize), zsize) ;
-                // subsequent entries in vector j
-                for (p++ ; p < pend ; p++)
-                { 
-                    if (terminal != NULL)
-                    {
-                        // check for early exit
-                        if (memcmp (zwork, terminal, zsize) == 0) break ;
-                    }
-                    // awork = (ztype) Ax [p]
-                    cast_A_to_Z (awork, Ax +(p*asize), zsize) ;
-                    // zwork += awork
-                    freduce (zwork, zwork, awork) ;         // (z x alias)
+            // workspace for each thread
+            #define GB_REDUCTION_WORKSPACE(W, nthreads)             \
+                GB_void W [nthreads*zsize]
+
+            // ztype s = (ztype) Ax [p], with typecast
+            #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)                 \
+                GB_void s [zsize] ;                                 \
+                cast_A_to_Z (s, Ax +((p)*asize), zsize) ;           \
+
+            // s += (ztype) Ax [p], with typecast
+            #define GB_ADD_CAST_ARRAY_TO_SCALAR(s, Ax, p)           \
+                GB_void awork [zsize] ;                             \
+                cast_A_to_Z (awork, Ax +((p)*asize), zsize) ;       \
+                freduce (s, s, awork) ;
+
+            // W [k] = s, no typecast
+            #define GB_COPY_SCALAR_TO_ARRAY(W,k,s)                  \
+                memcpy (W +((k)*zsize), s, zsize) ;
+
+            // W [k] = S [i], no typecast
+            #define GB_COPY_ARRAY_TO_ARRAY(W,k,S,i)                 \
+                memcpy (W +((k)*zsize), S +((i)*zsize), zsize) ;
+
+            // W [k] += S [i], no typecast
+            #define GB_ADD_ARRAY_TO_ARRAY(W,k,S,i)                  \
+                freduce (W +((k)*zsize), W +((k)*zsize), S +((i)*zsize)) ;
+
+            // W [k] += s, no typecast
+            #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)                   \
+                freduce (W +((k)*zsize), W +((k)*zsize), s) ;
+
+            // break if terminal value reached
+            #define GB_BREAK_IF_TERMINAL(t)                         \
+                if (terminal != NULL)                               \
+                {                                                   \
+                    if (memcmp (t, terminal, zsize) == 0) break ;   \
                 }
-                Ti [tnz] = j ;
-                // Tx [tnz] = zwork ;
-                memcpy (Tx +(tnz*zsize), zwork, zsize) ;
-                tnz++ ;
-            }
+
+            #include "GB_reduce_each_vector.c"
+
         }
 
-        ASSERT (tnz == T->p [1]) ;
+        //----------------------------------------------------------------------
+        // wrapup: delete any zombies
+        //----------------------------------------------------------------------
 
+        ASSERT_OK (GB_check (T, "T before wait", GB_FLIP (GB0)));
+
+        if (nzombies > 0)
+        {
+            // This cannot fail since there are no pending tuples, and since T
+            // is already in its proper sparse/hypersparse form.  T is already
+            // non-hypersparse, and it is a single vector.  Note that T is not
+            // in the queue, even though it has pending operations.
+            ASSERT (GB_VECTOR_OK (T)) ;
+            ASSERT (!GB_PENDING (T)) ;
+            ASSERT (GB_ZOMBIES (T)) ;
+            GB_WAIT (T) ;
+        }
+
+        ASSERT_OK (GB_check (T, "T output for T = reduce_each_vector(A)", GB0));
     }
     else
     {
@@ -340,17 +481,17 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         //----------------------------------------------------------------------
 
         // When A_transpose is false (after flipping it to account for the
-        // CSR/CSC format), wlen is A->vlen, the vector length of A.  This is
+        // CSR/CSC format), n is A->vlen, the vector length of A.  This is
         // the number of rows of a CSC matrix, or the # of columns of a CSR
         // matrix.  The matrix A itself requires O(vdim+anz) memory if
         // non-hypersparse and O(anz) if hypersparse.  This does not depend on
-        // A->vlen.  So if the vector length is really huge (when anz << wlen),
+        // A->vlen.  So if the vector length is really huge (when anz << n),
         // the bucket method would fail.  Thus, the qsort method, below, is
-        // used when anz < wlen.
+        // used when A is very sparse.
 
         // TODO: give the user a descriptor to select the method to use?
 
-        if (anz < wlen)
+        if (8 * anz < n)
         {
 
             //------------------------------------------------------------------
@@ -360,17 +501,12 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // memory usage is O(anz) and time is O(anz*log(anz)).  This is
             // more efficient than the bucket method, below, when A is very
             // hypersparse.  The time and memory complexity does not depend
-            // on wlen.
+            // on n.
 
             // since T is a GrB_Vector, it is not hypersparse
-            T = NULL ;                  // allocate a new header for T
-            GB_NEW (&T, ttype, wlen, 1, GB_Ap_null, true, GB_FORCE_NONHYPER,
+            GB_NEW (&T, ttype, n, 1, GB_Ap_null, true, GB_FORCE_NONHYPER,
                 GB_HYPER_DEFAULT, 1, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                return (info) ;
-            }
+            GB_OK (info) ;
 
             // GB_build treats Ai and Ax as read-only; they must not be modified
             info = GB_build
@@ -400,78 +536,118 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         {
 
             //------------------------------------------------------------------
-            // bucket method: allocate workspace
+            // bucket method
             //------------------------------------------------------------------
 
-            // memory usage is O(wlen) and time is O(wlen + anz).  This can be
-            // costly if A is hypersparse, but it is only used if anz >= wlen,
-            // so the time and memory usage are OK.
+            // Determine number of threads to use for constructing the buckets.
+            // Each thread requires O(n) Sauna workspace, so this method does
+            // not scale well when there are many threads compared to anz.
+            // Total workspace is n*nth, so limit the # of threads used so that
+            // at most anz workspace is used.
 
-            bool *restrict mark = NULL ;
-            GB_CALLOC_MEMORY (mark, wlen + 1, sizeof (bool)) ;
+            int nth = anz / n ;
+            nth = GB_IMIN (nth, nthreads) ;
+            nth = GB_IMAX (nth, 1) ;
 
-            GB_void *restrict work = NULL ;
-            GB_MALLOC_MEMORY (work, wlen + 1, zsize) ;
+            //------------------------------------------------------------------
+            // slice the entries for each thread
+            //------------------------------------------------------------------
 
-            #define GB_REDUCE_FREE_WORK                                     \
+            // Thread tid does entries pstart_slice [tid] to
+            // pstart_slice [tid+1]-1.  No need to compute kfirst or klast.
+
+            int64_t pstart_slice [nth+1] ;
+            GB_eslice (pstart_slice, anz, nth) ;
+
+            //------------------------------------------------------------------
+            // allocate Sauna workspace for each thread
+            //------------------------------------------------------------------
+
+            int Sauna_ids [nth] ;
+            GB_Sauna Saunas [nth] ;
+            GB_OK (GB_Sauna_acquire (nth, Sauna_ids, NULL, Context)) ;
+
+            #undef  GB_FREE_ALL
+            #define GB_FREE_ALL                                             \
             {                                                               \
-                GB_FREE_MEMORY (mark, wlen + 1, sizeof (bool)) ;            \
-                GB_FREE_MEMORY (work, wlen + 1, zsize) ;                    \
+                GrB_free (&T) ;                                             \
+                /* free and release all Sauna workspaces */                 \
+                for (int tid = 0 ; tid < nth ; tid++)                       \
+                {                                                           \
+                    GB_Sauna_free (Sauna_ids [tid]) ;                       \
+                }                                                           \
+                GrB_Info info2 = GB_Sauna_release (nthreads, Sauna_ids) ;   \
+                info = GB_IMAX (info, info2) ;                              \
             }
 
-            if (mark == NULL || work == NULL)
-            { 
+            bool ok = true ;
+
+            #pragma omp parallel for num_threads(nth) schedule(static) \
+                reduction(&:ok)
+            for (int tid = 0 ; tid < nth ; tid++)
+            {
+                int Sauna_id = Sauna_ids [tid] ;
+                GB_Sauna Sauna = GB_Global_Saunas_get (Sauna_id) ;
+                if (Sauna == NULL || Sauna->Sauna_n < n
+                    || Sauna->Sauna_size < zsize)
+                { 
+                    // get a new Sauna: the Sauna either does not exist,
+                    // or is too small
+                    GB_Sauna_free (Sauna_id) ;
+                    GrB_Info my_info = GB_Sauna_alloc (Sauna_id, n, zsize) ;
+                    ok = ok && (my_info == GrB_SUCCESS) ;
+                    Sauna = GB_Global_Saunas_get (Sauna_id) ;
+                }
+                Saunas [tid] = Sauna ;
+            }
+
+            if (!ok)
+            {
                 // out of memory
-                GB_REDUCE_FREE_WORK ;
+                GB_FREE_ALL ;
                 return (GB_OUT_OF_MEMORY) ;
             }
 
             //------------------------------------------------------------------
-            // sum across each index: work [i] = reduce (A (i,:))
+            // set hiwater of all Saunas to be the same
             //------------------------------------------------------------------
 
-            // TODO: Early exit cannot be exploited; ignore the terminal value.
-            // This method is not simple to parallelize, so use it with a
-            // single thread.  For multiple threads, use the qsort method
-            // instead (see above).
+            int64_t hiwater = 0 ;
+            for (int tid = 0 ; tid < nth ; tid++)
+            {
+                GB_Sauna Sauna = Saunas [tid] ;
+                int64_t my_hiwater = GB_Sauna_reset (Sauna, 1, 0) ;
+                hiwater = GB_IMAX (hiwater, my_hiwater) ;
+            }
 
-            // TODO: also put this in a function in Generated/GB_red_*.
+            for (int tid = 0 ; tid < nth ; tid++)
+            {
+                GB_Sauna Sauna = Saunas [tid] ;
+                Sauna->Sauna_hiwater = hiwater ;
+            }
 
-            bool done = false ;
+            //------------------------------------------------------------------
+            // sum across each index: T(i) = reduce (A (i,:))
+            //------------------------------------------------------------------
 
-            // define the worker for the switch factory
-            #define GB_ASSOC_WORKER(ignore1,ignore2,type,ignore)            \
+            // Early exit cannot be exploited; ignore the terminal value.
+
+            #undef  GB_red
+            #define GB_red(opname,aname) GB_red_eachindex_ ## opname ## aname
+            #undef  GB_RED_WORKER
+            #define GB_RED_WORKER(opname,aname,atype)                       \
             {                                                               \
-                const type *ax = (type *) Ax ;                              \
-                type *ww = (type *) work ;                                  \
-                for (int64_t p = 0 ; p < anz ; p++)                         \
-                {                                                           \
-                    /* get A(i,j) */                                        \
-                    int64_t i = Ai [p] ;                                    \
-                    if (!mark [i])                                          \
-                    {                                                       \
-                        /* first time row i has been seen */                \
-                        ww [i] = ax [p] ;                                   \
-                        mark [i] = true ;                                   \
-                        tnz++ ;                                             \
-                    }                                                       \
-                    else                                                    \
-                    {                                                       \
-                        /* ww [i] "+=" ax [p] */                            \
-                        GB_DUP (ww [i], ax [p]) ;                           \
-                    }                                                       \
-                }                                                           \
+                info = GB_red (opname, aname) (&T, ttype, Saunas, hiwater,  \
+                    A, pstart_slice, nth, nthreads, Context) ;              \
                 done = true ;                                               \
             }                                                               \
             break ;
 
+            bool done = false ;
+
             //------------------------------------------------------------------
             // launch the switch factory
             //------------------------------------------------------------------
-
-            // If GB_COMPACT is defined, the switch factory is disabled and all
-            // work is done by the generic worker.  The compiled code will be
-            // more compact, but 3 to 4 times slower.
 
             #ifndef GBCOMPACT
 
@@ -481,7 +657,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                     GB_Opcode opcode = reduce->opcode ;
                     GB_Type_code typecode = acode ;
                     ASSERT (typecode <= GB_UDT_code) ;
-                    #include "GB_assoc_factory.c"
+                    #include "GB_red_factory.c"
+                    GB_OK (info) ;
                 }
 
             #endif
@@ -492,100 +669,17 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             if (!done)
             {
-                // TODO use a Template/ here.
-                for (int64_t p = 0 ; p < anz ; p++)
-                {
-                    // get A(i,j)
-                    int64_t i = Ai [p] ;
-                    if (!mark [i])
-                    { 
-                        // work [i] = (ztype) Ax [p]
-                        cast_A_to_Z (work +(i*zsize), Ax +(p*asize), zsize) ;
-                        mark [i] = true ;
-                        tnz++ ;
-                    }
-                    else
-                    { 
-                        // awork = (ztype) Ax [p]
-                        cast_A_to_Z (awork, Ax +(p*asize), zsize) ;
-                        // work [i] += awork
-                        GB_void *restrict worki = work +(i*zsize) ;
-                        freduce (worki, worki, awork) ;     // (z x alias)
-                    }
-                }
+                #include "GB_reduce_each_index.c"
             }
 
             //------------------------------------------------------------------
-            // allocate T
+            // release all Saunas
             //------------------------------------------------------------------
 
-            // if T is dense, then transplant work into T->x
-            bool tdense = (tnz == wlen) ;
-
-            // since T is a GrB_Vector, it is CSC and not hypersparse
-            T = NULL ;                  // allocate a new header for T
-            GB_CREATE (&T, ttype, wlen, 1, GB_Ap_calloc, true,
-                GB_FORCE_NONHYPER, GB_HYPER_DEFAULT, 1, tnz, !tdense, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                GB_REDUCE_FREE_WORK ;
-                return (info) ;
-            }
-
-            if (tdense)
-            { 
-                // T is dense, transplant work into T->x
-                T->x = work ;
-                // set work to NULL so it will not be freed
-                work = NULL ;
-            }
-
-            T->p [0] = 0 ;
-            T->p [1] = tnz ;
-            int64_t *restrict Ti = T->i ;
-            T->nvec_nonempty = (tnz > 0) ? 1 : 0 ;
-
-            //------------------------------------------------------------------
-            // gather the results into T
-            //------------------------------------------------------------------
-
-            if (tdense)
-            {
-                // construct the pattern of T
-                #pragma omp parallel for num_threads(nthreads) schedule(static)
-                for (int64_t i = 0 ; i < wlen ; i++)
-                { 
-                    Ti [i] = i ;
-                }
-            }
-            else
-            {
-                // gather T from mark and work
-                // TODO use a parallel cumsum, then gather
-                GB_void *restrict Tx = T->x ;
-                int64_t p = 0 ;
-                for (int64_t i = 0 ; i < wlen ; i++)
-                {
-                    if (mark [i])
-                    { 
-                        Ti [p] = i ;
-                        // Tx [p] = work [i]
-                        memcpy (Tx +(p*zsize), work +(i*zsize), zsize) ;
-                        p++ ;
-                    }
-                }
-                ASSERT (p == tnz) ;
-            }
-
-            //------------------------------------------------------------------
-            // free workspace
-            //------------------------------------------------------------------
-
-            GB_REDUCE_FREE_WORK ;
+            GB_OK (GB_Sauna_release (nth, Sauna_ids)) ;
         }
+        ASSERT_OK (GB_check (T, "T output for T = reduce_each_index (A)", GB0));
     }
-    ASSERT_OK (GB_check (T, "T output for T = reduce (A)", GB0)) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask

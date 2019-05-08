@@ -1,3 +1,4 @@
+% test eWise
 clear all
 addpath ('~/ssget') ;
 addpath ('spok') ;

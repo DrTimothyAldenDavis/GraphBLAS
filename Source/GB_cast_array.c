@@ -48,6 +48,7 @@ void GB_cast_array              // typecast an array
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: O(anz))
 
     #ifndef GBCOMPACT
 

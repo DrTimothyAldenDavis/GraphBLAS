@@ -113,6 +113,9 @@ GB_build.c, GB_builder: done
     does GrB_*_build, GB_wait, GrB_reduce_to_vector (transposed),
     and GrB_transpose (when the qsort method is used).
 
+GB_reduce_to_vector.c: done
+    does the work for GrB_*_reduce (to a vector)
+
 ----------------------------------------------------------------------
 in progress
 ----------------------------------------------------------------------
@@ -126,27 +129,26 @@ Template/GB_qsort_template.c: IN PROGRESS
 not started
 ----------------------------------------------------------------------
 
-GB_reduce_to_vector.c:
-    does the work for GrB_*_reduce (to a vector)
-
 Template/GB_prune_inplace.c:
     kills zombies for GrB_wait, and also to resize a matrix by GxB_*_resize.
     Could use a reduction-style parallelism.
 
 GB_to_nonhyper.c, GB_to_hyper.c:
-    converts to/from hypersparse and standard.  Important utility,
-    easy to parallelize.
+    converts to/from hypersparse and standard.  Important utility, but does
+    only O(n) work if n = # vectors in the matrix.  Parallel speedup will be
+    low.
 
 GB_mask.c:
     Does the C<M>=result for all operations.  Important function.  Parallel
-    method would look like GB_add
+    method would look like GB_add.
 
 GB_resize.c:
     does the work for GxB_*_resize.  Low priority.  See GB_prune_inplace
 
 GB_select.c:
     does the work for my GxB_*_select operations.  This prunes the matrix,
-    like GB_prune_inplace.
+    like GB_prune_inplace.  Change void *thunk to a GrB_Matrix, GrB_Vector,
+    or perhaps a GxB_Scalar.
 
 GB_nvec_nonempty.c:
     counts # of non-empty vectors.  simple parallel reduction.
@@ -183,3 +185,7 @@ GB_I_inverse.c, GB_ijproperties.c, GB_ijsort.c:
     GB_assign, for scalar expansion and for the C_replace_phase, and only when
     I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
 
+GB_is_diagonal: determines if A is diagonal, for C=A*B.  Very little work to
+    do, and can exit early as soon as it finds a vector k so that A(:,k)
+    contains anything more than a single A(k,k) entry.  So it really needs
+    a parallel early-exit.

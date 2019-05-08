@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // CALLED BY: GB_build, GB_wait, and GB_transpose
-// CALLS:     Generated/GB_bild__* workers
+// CALLS:     Generated/GB_red_build__* workers
 
 // This function is called by GB_build to build a matrix T for GrB_Matrix_build
 // or GrB_Vector_build, by GB_wait to build a matrix T from the list of pending
@@ -80,8 +80,9 @@
 // Step 3 only does O(e/p) reads of J_work to count the vectors in each slice.
 // Step 4 only does O(e/p) reads of J_work to compute T->h and T->p.  Step 5
 // does O(e/p) read/writes per thread, but it uses the simpler case in
-// GB_build_template since no duplicates can appear.  It is unlikely able to
-// transplant S_work into T->x since the input will almost always be unsorted.
+// GB_reduce_build_template since no duplicates can appear.  It is unlikely
+// able to transplant S_work into T->x since the input will almost always be
+// unsorted.
 
 // PARALLEL: done
 
@@ -184,6 +185,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(nvals), the sort
+    // is O(nvals*log2(nvals)) but qsort could determine its own nthreads)
 
     //--------------------------------------------------------------------------
     // partition the tuples for the threads
@@ -1081,11 +1084,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             bool done = false ;
 
-            #define GB_bild(opname,aname) GB_bild_ ## opname ## aname
+            #define GB_red(opname,aname) GB_red_build_ ## opname ## aname
 
-            #define GB_ASSOC_WORKER(opname,aname,atype,ignore)              \
+            #define GB_RED_WORKER(opname,aname,atype)                       \
             {                                                               \
-                GB_bild (opname, aname) ((atype *) Tx, Ti, (atype *) S,     \
+                GB_red (opname, aname) ((atype *) Tx, Ti, (atype *) S,      \
                     nvals, ndupl, I_work, K_work, tstart_slice,             \
                     tnz_slice, nthreads) ;                                  \
                 done = true ;                                               \
@@ -1100,7 +1103,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
                 // controlled by opcode and typecode
                 GB_Type_code typecode = tcode ;
-                #include "GB_assoc_factory.c"
+                #include "GB_red_factory.c"
 
             #endif
 
@@ -1117,12 +1120,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
                 // Either the fdup operator or type of S and T are
                 // user-defined, or fdup is not an associative operator handled
-                // by the GB_assoc_factory, or some combination of these
+                // by the GB_red_factory, or some combination of these
                 // conditions.  User-defined types cannot be typecasted, so
                 // this handles all user-defined types.
 
-                // Tx [p] = S [k]
-                #define GB_BUILD_COPY(Tx,p,S,k)                                \
+                // Tx [p] = (ttype) S [k], but with no typecasting
+                #define GB_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)                \
                     memcpy (Tx +((p)*tsize), S +((k)*tsize), tsize) ;
 
                 if (op_2nd)
@@ -1132,8 +1135,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     // dup is the SECOND operator, with no typecasting
                     //----------------------------------------------------------
 
-                    #define GB_BUILD_OP(Tx,p,S,k) GB_BUILD_COPY(Tx,p,S,k)
-                    #include "GB_build_template.c"
+                    // Tx [p] += (ttype) S [k], but 2nd op and no typecasting
+                    #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)        \
+                        GB_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)
+                    #include "GB_reduce_build_template.c"
 
                 }
                 else
@@ -1143,11 +1148,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     // dup is another operator, with no typecasting needed
                     //----------------------------------------------------------
 
-                    // Tx [p] += S [k]
-                    #undef  GB_BUILD_OP
-                    #define GB_BUILD_OP(Tx,p,S,k)                              \
+                    // Tx [p] += (ttype) S [k], but with no typecasting
+                    #undef  GB_ADD_CAST_ARRAY_TO_ARRAY
+                    #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)        \
                         fdup (Tx +((p)*tsize), Tx +((p)*tsize), S +((k)*tsize));
-                    #include "GB_build_template.c"
+                    #include "GB_reduce_build_template.c"
                 }
             }
 
@@ -1176,9 +1181,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ASSERT (ycode <= GB_FP64_code) ;
             ASSERT (zcode <= GB_FP64_code) ;
 
-            // Tx [p] = (ttype) (S [k])
-            #undef  GB_BUILD_COPY
-            #define GB_BUILD_COPY(Tx,p,S,k)                                    \
+            // Tx [p] = (ttype) S [k], with typecasting
+            #undef  GB_CAST_ARRAY_TO_ARRAY
+            #define GB_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)                        \
                 cast_S_to_T (Tx +((p)*tsize), S +((k)*ssize), ssize) ;
 
             if (op_2nd)
@@ -1188,9 +1193,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // dup operator is the SECOND operator, with typecasting
                 //--------------------------------------------------------------
 
-                #undef  GB_BUILD_OP
-                #define GB_BUILD_OP(Tx,p,S,k) GB_BUILD_COPY(Tx,p,S,k)
-                #include "GB_build_template.c"
+                // Tx [p] += (ttype) S [k], but 2nd op, with typecasting
+                #undef  GB_ADD_CAST_ARRAY_TO_ARRAY
+                #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)        \
+                    GB_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)
+                #include "GB_reduce_build_template.c"
 
             }
             else
@@ -1200,9 +1207,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 // dup is another operator, with typecasting required
                 //--------------------------------------------------------------
 
-                // Tx [p] += S [k]
-                #undef  GB_BUILD_OP
-                #define GB_BUILD_OP(Tx,p,S,k)                               \
+                // Tx [p] += S [k], with typecasting
+                #undef  GB_ADD_CAST_ARRAY_TO_ARRAY
+                #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)                \
                 {                                                           \
                     /* ywork = (ytype) S [k] */                             \
                     GB_void ywork [ysize] ;                                 \
@@ -1216,7 +1223,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
                     /* Tx [tnz-1] = (ttype) zwork */                        \
                     cast_Z_to_T (Tx +((p)*tsize), zwork, zsize) ;           \
                 }
-                #include "GB_build_template.c"
+
+                #include "GB_reduce_build_template.c"
             }
         }
     }

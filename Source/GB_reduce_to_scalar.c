@@ -102,20 +102,22 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     // reduce the # of threads if the problem is small
     // TODO find a good chunk size
-    #define GB_CHUNK (4*1024)
+//  #define GB_CHUNK (4*1024)
+    // TODO chunk size for testing only.  Find a simple way to control the
+    // chunk size for Test/*.m and Tcov tests.
+    #define GB_CHUNK (2)
 
     nthreads = GB_IMIN (nthreads, anz / GB_CHUNK) ;
     nthreads = GB_IMAX (nthreads, 1) ;
 
     int64_t zsize = ztype->size ;
 
-    GB_void s [zsize] ;
-
     //--------------------------------------------------------------------------
     // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
     // s = identity
+    GB_void s [zsize] ;
     memcpy (s, reduce->identity, zsize) ;
 
     // get terminal value, if any
@@ -123,7 +125,17 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     // reduce all the entries in the matrix, but skip any zombies
 
-    if (A->type == ztype)
+    if (anz == 0)
+    {
+
+        //----------------------------------------------------------------------
+        // nothing to do
+        //----------------------------------------------------------------------
+
+        ;
+
+    }
+    else if (A->type == ztype)
     {
 
         //----------------------------------------------------------------------
@@ -144,7 +156,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         #define GB_red(opname,aname) GB_red_scalar_ ## opname ## aname
 
-        #define GB_ASSOC_WORKER(opname,aname,atype,terminal)        \
+        #define GB_RED_WORKER(opname,aname,atype)                   \
         {                                                           \
             GB_red (opname, aname) ((atype *) s, A, nthreads) ;     \
             done = true ;                                           \
@@ -162,7 +174,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             GB_Type_code typecode = A->type->code ;
             ASSERT (typecode <= GB_UDT_code) ;
 
-            #include "GB_assoc_factory.c"
+            #include "GB_red_factory.c"
 
         #endif
 
@@ -178,29 +190,32 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             #define GB_ATYPE GB_void
 
             // workspace for each thread
-            #define GB_REDUCE_WORKSPACE(w, nthreads) GB_void w [nthreads*zsize]
+            #define GB_REDUCTION_WORKSPACE(W, nthreads) \
+                GB_void W [nthreads*zsize]
 
-            // t = identity
-            #define GB_REDUCE_INIT(t)                   \
-                GB_void t [zsize] ;                     \
-                memcpy (t, reduce->identity, zsize) ;
+            // W [tid] = t, no typecast
+            #define GB_COPY_SCALAR_TO_ARRAY(W, tid, t)              \
+                memcpy (W +(tid*zsize), t, zsize)
 
-            // t += Ax [p], no typecasting
-            #define GB_REDUCE(t, Ax, p) freduce (t, t, Ax +((p)*asize)) ;
-
-            // w [tid] = t
-            #define GB_REDUCE_WRAPUP(w, tid, t)         \
-                memcpy (w +(tid*zsize), t, zsize) ;
-
-            // s += w [tid]
-            #define GB_REDUCE_W(s, w, tid) freduce (s, s, w +((tid)*zsize)) ;
+            // s += W [k], no typecast
+            #define GB_ADD_ARRAY_TO_SCALAR(s,W,k)                   \
+                freduce (s, s, W +((k)*zsize))
 
             // break if terminal value reached
-            #define GB_REDUCE_TERMINAL(t)                           \
+            #define GB_BREAK_IF_TERMINAL(t)                         \
                 if (terminal != NULL)                               \
                 {                                                   \
                     if (memcmp (t, terminal, zsize) == 0) break ;   \
                 }
+
+            // ztype t = (ztype) Ax [p], but no typecasting needed
+            #define GB_CAST_ARRAY_TO_SCALAR(t,Ax,p)                 \
+                GB_void t [zsize] ;                                 \
+                memcpy (t, Ax +((p)*zsize), zsize)
+
+            // t += (ztype) Ax [p], but no typecasting needed
+            #define GB_ADD_CAST_ARRAY_TO_SCALAR(t,Ax,p)             \
+                freduce (t, t, Ax +((p)*zsize))
 
             #include "GB_reduce_to_scalar_template.c"
         }
@@ -217,14 +232,20 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         GB_cast_function
             cast_A_to_Z = GB_cast_factory (ztype->code, A->type->code) ;
 
-            // t += ((ztype) Ax [p])
-            #undef  GB_REDUCE
-            #define GB_REDUCE(t, Ax, p)                         \
-                GB_void awork [zsize] ;                         \
-                cast_A_to_Z (awork, Ax +((p)*asize), zsize) ;   \
-                freduce (t, t, awork) ;
+            // ztype t = (ztype) Ax [p], with typecast
+            #undef  GB_CAST_ARRAY_TO_SCALAR
+            #define GB_CAST_ARRAY_TO_SCALAR(t,Ax,p)                 \
+                GB_void t [zsize] ;                                 \
+                cast_A_to_Z (t, Ax +((p)*asize), asize)
 
-            #include "GB_reduce_to_scalar_template.c"
+            // t += (ztype) Ax [p], with typecast
+            #undef  GB_ADD_CAST_ARRAY_TO_SCALAR
+            #define GB_ADD_CAST_ARRAY_TO_SCALAR(t,Ax,p)             \
+                GB_void awork [zsize] ;                             \
+                cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
+                freduce (t, t, awork)
+
+          #include "GB_reduce_to_scalar_template.c"
     }
 
     //--------------------------------------------------------------------------

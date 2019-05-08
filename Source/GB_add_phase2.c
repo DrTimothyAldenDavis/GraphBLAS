@@ -96,6 +96,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz+bnz+Cnvec))
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C

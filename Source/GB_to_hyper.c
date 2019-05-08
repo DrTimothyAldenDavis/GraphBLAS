@@ -45,6 +45,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(n))
 
     //--------------------------------------------------------------------------
     // convert A to hypersparse form

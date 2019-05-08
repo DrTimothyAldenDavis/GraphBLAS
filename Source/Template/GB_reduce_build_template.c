@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// This template is used in GB_builder and the Generated/GB_bild__* workers.
-// This is the same for both vectors and matrices, since this step is agnostic
-// about which vectors the entries appear.
+// This template is used in GB_builder and the Generated/GB_red_build__*
+// workers.  This is the same for both vectors and matrices, since this step is
+// agnostic about which vectors the entries appear.
 
 {
     if (ndupl == 0)
@@ -24,16 +24,35 @@
         // construct T->i.  The tuple values, in S, are copied or permuted into
         // T->x.
 
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int tid = 0 ; tid < nthreads ; tid++)
+        if (K_work == NULL)
         {
-            int64_t tstart = tstart_slice [tid] ;
-            int64_t tend   = tstart_slice [tid+1] ;
-            for (int64_t t = tstart ; t < tend ; t++)
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (int tid = 0 ; tid < nthreads ; tid++)
             {
-                // Tx [t] = S [k] ;
-                int64_t k = (K_work == NULL) ? t : K_work [t] ;
-                GB_BUILD_COPY (Tx, t, S, k) ;
+                int64_t tstart = tstart_slice [tid] ;
+                int64_t tend   = tstart_slice [tid+1] ;
+                for (int64_t t = tstart ; t < tend ; t++)
+                {
+                    // Tx [t] = (ttype) S [t] ; with typecast
+                    GB_CAST_ARRAY_TO_ARRAY (Tx, t, S, t) ;
+                }
+            }
+
+        }
+        else
+        {
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (int tid = 0 ; tid < nthreads ; tid++)
+            {
+                int64_t tstart = tstart_slice [tid] ;
+                int64_t tend   = tstart_slice [tid+1] ;
+                for (int64_t t = tstart ; t < tend ; t++)
+                {
+                    // Tx [t] = (ttype) S [K_work [t]] ; with typecast
+                    GB_CAST_ARRAY_TO_ARRAY (Tx, t, S, K_work [t]) ;
+                }
             }
         }
 
@@ -45,8 +64,8 @@
         // assemble duplicates
         //----------------------------------------------------------------------
 
-        // Otherwise, entries in S must be copied into T->x, with any
-        // duplicates summed via the operator.  T->i must also be constructed.
+        // Entries in S must be copied into T->x, with any duplicates summed
+        // via the operator.  T->i must also be constructed.
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < nthreads ; tid++)
@@ -70,8 +89,8 @@
                 int64_t i = I_work [t] ;
                 int64_t k = (K_work == NULL) ? t : K_work [t] ;
                 ASSERT (i >= 0) ;
-                // Tx [my_tnz] = S [k] ;
-                GB_BUILD_COPY (Tx, my_tnz, S, k) ;
+                // Tx [my_tnz] = S [k] ; with typecast
+                GB_CAST_ARRAY_TO_ARRAY (Tx, my_tnz, S, k) ;
                 Ti [my_tnz] = i ;
 
                 // assemble all duplicates that follow it.  This may assemble
@@ -81,8 +100,8 @@
                 {
                     // assemble the duplicate tuple
                     int64_t k = (K_work == NULL) ? (t+1) : K_work [t+1] ;
-                    // duplicate entry: Tx [my_tnz] += S [k]
-                    GB_BUILD_OP (Tx, my_tnz, S, k) ;
+                    // Tx [my_tnz] += S [k] with typecast
+                    GB_ADD_CAST_ARRAY_TO_ARRAY (Tx, my_tnz, S, k) ;
                 }
                 my_tnz++ ;
             }

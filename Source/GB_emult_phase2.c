@@ -75,6 +75,7 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz+bnz))
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -121,8 +122,6 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
 
     bool done = false ;
 
-#ifndef GBCOMPACT
-
     //--------------------------------------------------------------------------
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
@@ -141,17 +140,19 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-    GB_Opcode opcode ;
-    GB_Type_code xycode, zcode ;
+    #ifndef GBCOMPACT
 
-    if (GB_binop_builtin (A, false, B, false, op,
-        false, &opcode, &xycode, &zcode) && ccode == zcode)
-    { 
-        #include "GB_binop_factory.c"
-        ASSERT (done) ;
-    }
+        GB_Opcode opcode ;
+        GB_Type_code xycode, zcode ;
 
-#endif
+        if (GB_binop_builtin (A, false, B, false, op,
+            false, &opcode, &xycode, &zcode) && ccode == zcode)
+        { 
+            #include "GB_binop_factory.c"
+            ASSERT (done) ;
+        }
+
+    #endif
 
     //--------------------------------------------------------------------------
     // generic worker

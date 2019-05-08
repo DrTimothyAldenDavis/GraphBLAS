@@ -50,7 +50,8 @@ GrB_Info GB_Sauna_acquire
         /* try to acquire the native Saunas for each thread */              \
         for (int tid = 0 ; tid < nthreads ; tid++)                          \
         {                                                                   \
-            if (AxB_methods_used [tid] != GxB_AxB_GUSTAVSON)                \
+            if (AxB_methods_used != NULL &&                                 \
+               (AxB_methods_used [tid] != GxB_AxB_GUSTAVSON))               \
             {                                                               \
                 /* no need for a Sauna for this thread */                   \
                 Sauna_ids [tid] = -2 ;                                      \

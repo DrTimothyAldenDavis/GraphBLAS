@@ -2,7 +2,7 @@ function test24(fulltest)
 %TEST24 test GrB_reduce
 % test24(fulltest); fulltest=1 if longer test, 0 for quick test
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2018, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [accum_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
@@ -12,11 +12,11 @@ if (nargin < 1)
 end
 
 if (fulltest)
-    fprintf ('\n ------------ exhaustive test of GrB_reduce_to_scalar and vector\n') ;
+    fprintf ('\ntest24: ----- exhaustive test of GrB_reduce_to_scalar and vector\n') ;
     cset = 1:length (classes) ;
     aset = 1:length (classes) ;
 else
-    fprintf ('\n ------------ quick test of GrB_reduce_to_scalar and vector\n') ;
+    fprintf ('\ntest24: ----- quick test of GrB_reduce_to_scalar and vector\n') ;
     cset = 10 ;
     aset = 11 ;
 end

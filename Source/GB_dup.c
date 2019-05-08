@@ -27,6 +27,8 @@
 
 // A is the new copy and B is the old copy.  Each should be freed when done.
 
+// PARALLEL: done.  Except tasks could be used to do the memcpy's in parallel
+
 #include "GB.h"
 
 GrB_Info GB_dup             // make an exact copy of a matrix
@@ -51,6 +53,8 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anvec+anz),
+    // for let GB_memcpy decide, unless tasks are used.
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -102,8 +106,8 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
 
-    // FUTURE: each of the four GB_memcpy's are done one at a time with
-    // parallelism inside, but they could all be done in parallel.
+    // TODO: each of the four GB_memcpy's are done one at a time with
+    // parallelism inside, but they could all be done in parallel, via tasks.
     GB_memcpy (Cp, Ap, (anvec+1) * sizeof (int64_t), nthreads) ;
     if (A->is_hyper)
     { 

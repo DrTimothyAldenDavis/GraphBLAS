@@ -113,6 +113,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // allocate the Sauna
     //--------------------------------------------------------------------------
 
+    // TODO: make this a function.  See GB_reduce_to_vector
     GB_Sauna Sauna = GB_Global_Saunas_get (Sauna_id) ;
     if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size < zsize)
     { 

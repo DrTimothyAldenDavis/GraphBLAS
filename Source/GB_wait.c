@@ -72,6 +72,7 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz+npending))
 
     //--------------------------------------------------------------------------
     // delete zombies

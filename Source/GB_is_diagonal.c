@@ -32,6 +32,7 @@ bool GB_is_diagonal             // true if A is diagonal
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anvec))
 
     //--------------------------------------------------------------------------
     // trivial cases

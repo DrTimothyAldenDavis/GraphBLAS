@@ -134,7 +134,9 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
-// printf ("AxB nthreads %d\n", nthreads) ;
+    // TODO reduce nthreads for small problem (work: about O(flops) for
+    // saxpy-based methods as found by GB_AxB_flopcount.  Hard to determine
+    // for dot product)
 
     if (B->nvec_nonempty < 0)
     { 

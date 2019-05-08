@@ -32,6 +32,8 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz) if the
+    // matrix shrinks, in GB_prune_in_place)
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -152,7 +154,7 @@ GrB_Info GB_resize              // change the size of a matrix
             // number of vectors is increasing, extend the vector pointers
             int64_t anz = GB_NNZ (A) ;
             // TODO is this worth doing in parallel?
-//          #pragma omp parallel for num_threads(nthreads)
+            // #pragma omp parallel for num_threads(nthreads)
             for (int64_t j = vdim_old + 1 ; j <= vdim_new ; j++)
             { 
                 Ap [j] = anz ;

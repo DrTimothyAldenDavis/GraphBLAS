@@ -81,6 +81,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: O(nvals))
 
     //-------------------------------------------------------------------------
     // handle the CSR/CSC format

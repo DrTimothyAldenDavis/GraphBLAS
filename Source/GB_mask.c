@@ -191,6 +191,8 @@ GrB_Info GB_mask                // C<M> = Z
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(cnz+znz)
+    // when M != NULL; not done here if M==NULL)
 
     //--------------------------------------------------------------------------
     // apply the mask

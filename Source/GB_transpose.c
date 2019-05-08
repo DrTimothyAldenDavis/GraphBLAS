@@ -131,6 +131,8 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz+anvec+vlen),
+    // unless hypersparse.  Control parallelism in each phase separately).
 
     //--------------------------------------------------------------------------
     // get A

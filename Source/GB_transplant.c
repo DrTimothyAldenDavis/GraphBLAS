@@ -57,6 +57,9 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: depends on what kind of
+    // transplant.  Let GB_memcpy decide for itself, unless tasks are used to
+    // do multiple GB_memcpy's at the same time.
 
     //--------------------------------------------------------------------------
     // clear C and transplant the type, size, and hypersparsity

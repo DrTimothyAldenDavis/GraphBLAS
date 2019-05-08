@@ -42,7 +42,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
-// fprintf (stderr, "\ncolscale, threads: %d\n", nthreads) ;
+    // TODO reduce nthreads for small problem (work: about O(cnvec+cnz))
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -79,10 +79,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // copy the pattern of A into C
     //--------------------------------------------------------------------------
 
-// #if defined ( _OPENMP )
-// double t = omp_get_wtime ( ) ;
-// #endif
-
     // allocate but do not initialize C->x
     info = GB_dup (Chandle, A, false, mult->ztype, Context) ;
     if (info != GrB_SUCCESS)
@@ -91,11 +87,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         return (info) ;
     }
 
-// #if defined ( _OPENMP )
-// t = omp_get_wtime ( ) - t ;
-// fprintf (stderr, "\ndup time %g ", t) ;
-// #endif
-
     GrB_Matrix C = (*Chandle) ;
 
     //--------------------------------------------------------------------------
@@ -103,12 +94,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     //--------------------------------------------------------------------------
 
     bool done = false ;
-
-// #if defined ( _OPENMP )
-// t = omp_get_wtime ( ) ;
-// #endif
-
-#ifndef GBCOMPACT
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory
@@ -127,16 +112,17 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-    GB_Opcode opcode ;
-    GB_Type_code xycode, zcode ;
+    #ifndef GBCOMPACT
 
-    if (GB_binop_builtin (A, A_is_pattern, D, D_is_pattern, mult,
-        flipxy, &opcode, &xycode, &zcode))
-    { 
-        #include "GB_binop_factory.c"
-    }
+        GB_Opcode opcode ;
+        GB_Type_code xycode, zcode ;
+        if (GB_binop_builtin (A, A_is_pattern, D, D_is_pattern, mult,
+            flipxy, &opcode, &xycode, &zcode))
+        { 
+            #include "GB_binop_factory.c"
+        }
 
-#endif
+    #endif
 
     //--------------------------------------------------------------------------
     // C = A*D, column scale, with typecasting or user-defined operator
@@ -223,11 +209,6 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
             #undef GB_BINARYOP
         }
     }
-
-// #if defined ( _OPENMP )
-// t = omp_get_wtime ( ) - t ;
-// fprintf (stderr, " colscale time: %g\n", t) ;
-// #endif
 
     //--------------------------------------------------------------------------
     // return result

@@ -232,6 +232,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
+    // TODO reduce nthreads for small problem (work: about O(anz))
 
     //--------------------------------------------------------------------------
     // quick return if an empty mask is complemented

@@ -167,6 +167,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
         // determine the number of threads to use
         GB_GET_NTHREADS (nthreads, Context) ;
+        // TODO reduce nthreads for small problem (work: O(ni))
 
         // scan I to find imin and imax, and validate the list. Also determine
         // if it is sorted or not.
