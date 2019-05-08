@@ -72,6 +72,8 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     GB_WAIT (A) ;
     GB_WAIT (B) ;
 
+    // TODO tolerate zombies in A (at least) for GB_wait.
+
     //--------------------------------------------------------------------------
     // phase0: determine the vectors in C(:,j)
     //--------------------------------------------------------------------------

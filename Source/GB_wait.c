@@ -321,6 +321,9 @@ GrB_Info GB_wait                // finish all pending computations
         // If anz1 is zero, or small compared to anz0, then it is faster to
         // leave A0 unmodified, and to update just A1.
 
+        // TODO this does not tolerate zombies.  So do it only if
+        // A has no zombies on input.
+
         // make sure A has enough space for the new tuples
         if (anz_new > A->nzmax)
         { 
@@ -438,6 +441,9 @@ GrB_Info GB_wait                // finish all pending computations
         // a single parallel add: S=A+T, free T, and then transplant S back
         // into A.  The nzmax of A is tight, with no room for future
         // incremental growth.
+
+        // TODO: if GB_add could tolerate zombies in A, then the initial
+        // prune of zombies can be skipped.
 
         GB_OK (GB_add (&S, A->type, A->is_csc, NULL, false, A, T, NULL,
             Context)) ;

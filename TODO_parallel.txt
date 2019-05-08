@@ -132,6 +132,8 @@ not started
 Template/GB_prune_inplace.c:
     kills zombies for GrB_wait, and also to resize a matrix by GxB_*_resize.
     Could use a reduction-style parallelism.
+    If both zombies and pending tuples exist, then GB_add should tolerate
+    zombies on input.  Then the prune is not needed.
 
 GB_to_nonhyper.c, GB_to_hyper.c:
     converts to/from hypersparse and standard.  Important utility, but does
