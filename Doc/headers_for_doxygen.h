@@ -1000,7 +1000,7 @@ constructed by dox_headers.m
 
 \par
  CALLED BY: GB_build, GB_wait, and GB_transpose
- CALLS:     Generated/GB_bild__* workers
+ CALLS:     Generated/GB_red_build__* workers
 \par
  This function is called by GB_build to build a matrix T for GrB_Matrix_build
  or GrB_Vector_build, by GB_wait to build a matrix T from the list of pending
@@ -1072,8 +1072,9 @@ constructed by dox_headers.m
  Step 3 only does O(e/p) reads of J_work to count the vectors in each slice.
  Step 4 only does O(e/p) reads of J_work to compute T-\>h and T-\>p.  Step 5
  does O(e/p) read/writes per thread, but it uses the simpler case in
- GB_build_template since no duplicates can appear.  It is unlikely able to
- transplant S_work into T-\>x since the input will almost always be unsorted.
+ GB_reduce_build_template since no duplicates can appear.  It is unlikely
+ able to transplant S_work into T-\>x since the input will almost always be
+ unsorted.
 \par
  PARALLEL: done
 */
@@ -1245,6 +1246,14 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_delete_zombies.c
+\brief  GB_delete_zombies: delete all zombies from a matrix
+
+\par
+ TODO: put the bulk of this method in a template, and use for GB_select.
+*/
+
+
 /** \file GB_dup.c
 \brief  GB_dup: make a deep copy of a sparse matrix
 
@@ -1268,6 +1277,18 @@ constructed by dox_headers.m
   GrB_free (\&B) ;
 \par
  A is the new copy and B is the old copy.  Each should be freed when done.
+\par
+ PARALLEL: done.  Except tasks could be used to do the memcpy's in parallel
+*/
+
+
+/** \file GB_ek_slice.c
+\brief  GB_ek_slice: slice the entries and vectors of a matrix
+
+\par
+ Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 and
+ vectors kfirst_slice [t] to klast_slice [t].  The first and last vectors
+ may be shared with prior slices and subsequent slices.
 */
 
 
@@ -1401,6 +1422,15 @@ constructed by dox_headers.m
       (see GB_thread_local_access).
 \par
   (4) a failure to destroy the critical section in GrB_finalize.
+*/
+
+
+/** \file GB_eslice.c
+\brief  GB_eslice: uniform partition of e items to each task 
+
+\par
+ There are e items to split between ntasks.  Task tid will own items
+ Slice [tid] to Slice [tid+1]-1.
 */
 
 
@@ -1700,6 +1730,27 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_map_slice.c
+\brief  GB_map_pslice: find where each task starts its work in matrix C
+
+\par
+ Each task t operates on C(:,kfirst:klast), where kfirst = kfirst_slice [t]
+ to klast = klast_slice [t], inclusive.  The kfirst vector for task t may
+ overlap with one or more tasks 0 to t-1, and the klast vector for task t may
+ overlap with the vectors of tasks t+1 to ntasks-1.  If kfirst == klast, then
+ this single vector may overlap any other task.  Task t contributes Wfirst
+ [t] entries to C(:,kfirst), and (if kfirst \< klast) Wlast [t] entries to
+ C(:,klast).  These entries are always in task order.  That is, if tasks t
+ and t+1 both contribute to the same vector C(:,k), then all entries of task
+ come just before all entries of task t+1.
+\par
+ This function computes C_pstart_slice [0..ntasks-1].  Task t starts at its
+ vector C(:,kfirst), at the position pC = C_pstart_slice [t].  It always
+ starts its last vector C(:,klast) at Cp [klast], so this does not need to be
+ computed.
+*/
+
+
 /** \file GB_mask.c
 \brief  GB_mask: apply a mask: C\<M\> = Z
 
@@ -1728,7 +1779,6 @@ constructed by dox_headers.m
 
 \par
  for additional diagnostics, use:
- \#define GB_DEVELOPER 1
 */
 
 
@@ -2036,9 +2086,8 @@ constructed by dox_headers.m
 \par
  CALLS:     GB_build
 \par
- C\<M\> = accum (C,reduce(A)) where C is n-by-1
-\par
- PARALLEL: TODO. use a parallel reduction method
+ C\<M\> = accum (C,reduce(A)) where C is n-by-1.  Reduces a matrix A or A'
+ to a vector.
 */
 
 
@@ -2051,6 +2100,15 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_search_for_vector.c
+\brief  GB_search_for_vector: find the vector k that contains p
+
+\par
+ Given an index p, find k so that Ap [k] \<= p \&\& p \< Ap [k+1].  The search is
+ limited to k in the range Ap [kleft ... anvec].
+*/
+
+
 /** \file GB_select.c
 \brief  GB_select: apply a select operator; optionally transpose a matrix
 
@@ -2060,7 +2118,10 @@ constructed by dox_headers.m
  Compare this function with GrB_apply.
 \par
  PARALLEL: TODO. use two phases: symbolic to count the \# of entries in each
- column, and another to move the data.
+ column, and another to move the data.  This is just like GB_delete_zombies,
+ but with a different selector op.  Merge with GB_delete_zombies, and
+ make the body of work a template.  Consider doing this with 11 hard-coded
+ versions for any A-\>type (no typecasting) and one generic.
 */
 
 
@@ -2522,7 +2583,7 @@ constructed by dox_headers.m
  If A is non-hypersparse, then O(n) is added in the worst case, to prune
  zombies and to update the vector pointers for A.
 \par
- PARALLEL: done, except for parallel GB_prune_inplace (see also GB_resize).
+ PARALLEL:  done, but update it when GB_add can tolerate zombies on input
 */
 
 
@@ -3042,7 +3103,7 @@ constructed by dox_headers.m
 */
 
 
-/** \file GrB_reduce_to_column.c
+/** \file GrB_reduce_to_vector.c
 \brief  GrB_reduce_to_vector: reduce a matrix to a vector
 
 */
@@ -3790,21 +3851,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_assoc_factory.c
-\brief  GB_assoc_factory.c: switch factory for associative operators
-
-\par
- This is a generic body of code for creating hard-coded versions of code for
- 44 combinations of associative operators and built-in types: 10 types (all
- but boolean) with MIN, MAX, PLUS, and TIMES, and one type (boolean) with
- OR, AND, XOR, and EQ
-\par
- If GB_INCLUDE_SECOND_OPERATOR is defined then an additional 11 built-in
- workers for the SECOND operator are also created, and 11 for FIRST, for
- GB_builder.
-*/
-
-
 /** \file GB_binop_factory.c
 \brief  GB_binop_factory: switch factory for built-in methods for C=binop(A,B)
 
@@ -3834,16 +3880,6 @@ constructed by dox_headers.m
  \#include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*)
  since those multiply operators are redundant and have been renamed.  For
  these, the boolean operators are not needed.
-*/
-
-
-/** \file GB_build_template.c
-\brief  GB_build_template: T=build(S), and assemble any duplicate tuples
-
-\par
- This template is used in GB_builder and the Generated/GB_bild__* workers.
- This is the same for both vectors and matrices, since this step is agnostic
- about which vectors the entries appear.
 */
 
 
@@ -3946,15 +3982,73 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_red_factory.c
+\brief  GB_red_factory.c: switch factory for reduction operators
+
+\par
+ This is a generic body of code for creating hard-coded versions of code for
+ 44 combinations of associative operators and built-in types: 10 types (all
+ but boolean) with MIN, MAX, PLUS, and TIMES, and one type (boolean) with
+ OR, AND, XOR, and EQ
+\par
+ If GB_INCLUDE_SECOND_OPERATOR is defined then an additional 11 built-in
+ workers for the SECOND operator are also created, and 11 for FIRST, for
+ GB_builder.
+*/
+
+
+/** \file GB_reduce_build_template.c
+\brief  GB_build_template: T=build(S), and assemble any duplicate tuples
+
+\par
+ This template is used in GB_builder and the Generated/GB_red_build__*
+ workers.  This is the same for both vectors and matrices, since this step is
+ agnostic about which vectors the entries appear.
+*/
+
+
+/** \file GB_reduce_each_index.c
+\brief  GB_reduce_each_index: T(i)=reduce(A(i,:)), reduce a matrix to a vector
+
+\par
+ Reduce a matrix to a vector.  All entries in A(i,:) are reduced to T(i).
+ First, all threads reduce their slice to their own Sauna workspace,
+ operating on roughly the same number of entries each.  The vectors in A are
+ ignored; the reduction only depends on the indices.  Next, the threads
+ cooperate to reduce all Sauna workspaces to the Sauna of thread 0.  Finally,
+ this last Sauna workspace is collected into T.
+\par
+ PARALLEL: done
+*/
+
+
+/** \file GB_reduce_each_vector.c
+\brief  GB_reduce_each_vector: T(j)=reduce(A(:,j)), reduce a matrix to a vector
+
+\par
+ Reduce a matrix to a vector.  The kth vector A(:,k) is reduced to the kth
+ scalar T(k).  Each thread computes the reductions on roughly the same number
+ of entries, which means that a vector A(:,k) may be reduced by more than one
+ thread.  The first vector A(:,kfirst) reduced by thread tid may be partial,
+ where the prior thread tid-1 (and other prior threads) may also do some of
+ the reductions for this same vector A(:,kfirst).  The thread tid fully
+ reduces all vectors A(:,k) for k in the range kfirst+1 to klast-1.  The last
+ vector A(:,klast) reduced by thread tid may also be partial.  Thread tid+1,
+ and following threads, may also do some of the reduces for A(:,klast).
+\par
+ PARALLEL: done
+*/
+
+
 /** \file GB_reduce_to_scalar_template.c
 \brief  GB_reduce_to_scalar_template: s=reduce(A), reduce a matrix to a scalar
 
 \par
- Reduce a matrix to a scalar.  No typecasting is performed.
+ Reduce a matrix to a scalar
 \par
  PARALLEL: done
 \par
- TODO add simd vectorization for non-terminal monoids.
+ TODO add simd vectorization for non-terminal monoids.  Particular max, min
 */
 
 
@@ -4136,9 +4230,6 @@ constructed by dox_headers.m
 
 
 /** \file GB_red.h
-\brief id GB_red_scalar
-
-*/
 
 
 /** \file GB_unaryop.c
