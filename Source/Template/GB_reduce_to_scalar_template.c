@@ -93,9 +93,10 @@
                 // no slice is empty
                 ASSERT (pstart < pend) ;
 
-                // ztype t = (ztype) Ax [pstart], with typecast
-                GB_CAST_ARRAY_TO_SCALAR (t, Ax, pstart) ;
-                for (int64_t p = pstart+1 ; p < pend ; p++)
+                // ztype t = identity
+                GB_SCALAR_IDENTITY (t) ;
+
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
                     ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
                     // t += (ztype) Ax [p], with typecast
@@ -123,9 +124,10 @@
                 // no slice is empty
                 ASSERT (pstart < pend) ;
 
-                // ztype t = (ztype) Ax [pstart], with typecast
-                GB_CAST_ARRAY_TO_SCALAR (t, Ax, pstart) ;
-                for (int64_t p = pstart+1 ; p < pend ; p++)
+                // ztype t = identity
+                GB_SCALAR_IDENTITY (t) ;
+
+                for (int64_t p = pstart ; p < pend ; p++)
                 {
                     if (GB_IS_NOT_ZOMBIE (Ai [p]))
                     {

@@ -73,6 +73,12 @@
     #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
         W [k] = GB_IMAX (W [k], s)
 
+// set scalar to identity
+
+    // s = identity
+    #define GB_SCALAR_IDENTITY(s)                   \
+        int64_t s = INT64_MIN
+
 // workspace
 
     // declare a ztype array of size nthreads
