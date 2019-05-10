@@ -17,7 +17,7 @@
 #include "GB_red__include.h"
 #endif
 
-#define GB_FREE_ALL GrB_free (&T) ;
+#define GB_FREE_ALL GB_MATRIX_FREE (&T) ;
 
 GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (
@@ -216,6 +216,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         int64_t *restrict Ti = T->i ;
         GB_void *restrict Tx = T->x ;
         T->nvec_nonempty = (anvec > 0) ? 1 : 0 ;
+        T->magic = GB_MAGIC ;
 
         //----------------------------------------------------------------------
         // symbolic phase
@@ -228,7 +229,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ap = A->p ;
 
-        // TODO is this worth doing in parallel?
+        // TODO benchmark this in parallel
         //      #pragma omp parallel for num_threads(nthreads) \\
         //          schedule(static) reduction(+:nzombies)
         for (int64_t k = 0 ; k < anvec ; k++)
@@ -253,7 +254,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         {
             A->nvec_nonempty = anvec - nzombies ;
         }
-        ASSERT (A->nvec_nonempty != (anvec - nzombies)) ;
+        ASSERT (A->nvec_nonempty == (anvec - nzombies)) ;
         T->nzombies = nzombies ;
 
         //----------------------------------------------------------------------
@@ -271,103 +272,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // last vectors may be shared with prior slices and subsequent slices.
 
         int64_t pstart_slice [nthreads+1] ;
-        GB_eslice (pstart_slice, anz, nthreads) ;
-
-        //----------------------------------------------------------------------
-        // find the first and last vectors in each slice
-        //----------------------------------------------------------------------
-
-        // The first vector of the slice is the kth vector of A if
-        // pstart_slice [tid] is in the range Ap [k]...A[k+1]-1, and this
-        // is vector is k = kfirst_slice [tid].
-
-        // The last vector of the slice is the kth vector of A if
-        // pstart_slice [tid+1]-1 is in the range Ap [k]...A[k+1]-1, and this
-        // is vector is k = klast_slice [tid].
-
-        // See also GB_fine_slice.
-
         int64_t kfirst_slice [nthreads] ;
         int64_t klast_slice  [nthreads] ;
 
-        for (int tid = 0 ; tid < nthreads ; tid++)
-        {
-
-            // The slice for thread tid contains entries pfirst:plast-1 of A.
-            int64_t pfirst = pstart_slice [tid] ;
-            int64_t plast  = pstart_slice [tid+1] - 1 ;
-
-            if (pfirst <= plast)
-            {
-
-                // find the first vector of the slice for thread tid: the
-                // vector that owns the entry Ai [pfirst] and Ax [pfirst].
-                int64_t kfirst = 0 ;
-                int64_t pright = anvec ;
-                bool found ;
-                GB_BINARY_SPLIT_SEARCH (pfirst, Ap, kfirst, pright, found) ;
-                if (found)
-                {
-                    // Ap [kfirst] == pfirst has been found, but if kfirst
-                    // is an empty vector, then the next vector will also
-                    // contain the entry pfirst.  In that case, kfirst
-                    // needs to be incremented until finding the first
-                    // non-empty vector for which Ap [k] == pfirst.
-                    ASSERT (Ap [kfirst] == pfirst) ;
-                    while (kfirst < anvec-1 && Ap [kfirst+1] == pfirst)
-                    {
-                        kfirst++ ;
-                    }
-                }
-                else
-                { 
-                    // pfirst has not been found in Ap, so it appears in the
-                    // middle of Ap [kfirst-1] ... Ap [kfirst], as computed by
-                    // the binary search.  This is the range of entries for
-                    // the vector kfirst-1, so kfirst must be decremented.
-                    kfirst-- ;
-                }
-
-                // The entry pfirst must reside in a non-empty vector.
-                ASSERT (kfirst >= 0 && kfirst < anvec) ;
-                ASSERT (Ap [kfirst] <= pfirst && pfirst < Ap [kfirst+1]) ;
-
-                // find the last vector of the slice for thread tid: the
-                // vector that owns the entry Ai [plast] and Ax [plast].
-                int64_t klast = kfirst ;
-                pright = anvec ;
-                GB_BINARY_SPLIT_SEARCH (plast, Ap, klast, pright, found) ;
-                if (found)
-                {
-                    // see comments above
-                    while (klast < anvec-1 && Ap [klast+1] == plast)
-                    {
-                        klast++ ;
-                    }
-                }
-                else
-                { 
-                    klast-- ;
-                }
-
-                // The entry plast must reside in a non-empty vector.
-                ASSERT (klast >= 0 && klast < anvec) ;
-                ASSERT (Ap [klast] <= plast && plast < Ap [klast+1]) ;
-
-                kfirst_slice [tid] = kfirst ;
-                klast_slice  [tid] = klast ;
-                ASSERT (0 <= kfirst && kfirst <= klast && klast < anvec) ;
-            }
-            else
-            {
-                // this thread does nothing
-                kfirst_slice [tid] = -1 ;
-                klast_slice  [tid] = -2 ;
-            }
-        }
-
-        kfirst_slice [0] = 0 ;
-        klast_slice  [nthreads-1] = anvec-1 ;
+        GB_ek_slice (pstart_slice, kfirst_slice, klast_slice, A, nthreads) ;
 
         //----------------------------------------------------------------------
         // numeric phase: launch the switch factory
@@ -457,17 +365,15 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
         if (nzombies > 0)
         {
-            // This cannot fail since there are no pending tuples, and since T
-            // is already in its proper sparse/hypersparse form.  T is already
-            // non-hypersparse, and it is a single vector.  Note that T is not
-            // in the queue, even though it has pending operations.
+            // TODO: if GB_accum_mask could tolerate zombies in T on input,
+            // this could be skipped
             ASSERT (GB_VECTOR_OK (T)) ;
             ASSERT (!GB_PENDING (T)) ;
             ASSERT (GB_ZOMBIES (T)) ;
-            GB_WAIT (T) ;
+            GB_OK (GB_wait (T, Context)) ;
         }
 
-        ASSERT_OK (GB_check (T, "T output for T = reduce_each_vector(A)", GB0));
+        ASSERT_OK (GB_check (T, "T output = reduce_each_vector (A)", GB0)) ;
     }
     else
     {
@@ -570,7 +476,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             #undef  GB_FREE_ALL
             #define GB_FREE_ALL                                             \
             {                                                               \
-                GrB_free (&T) ;                                             \
+                GB_MATRIX_FREE (&T) ;                                       \
                 /* free and release all Sauna workspaces */                 \
                 for (int tid = 0 ; tid < nth ; tid++)                       \
                 {                                                           \

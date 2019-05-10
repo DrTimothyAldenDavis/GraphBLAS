@@ -76,14 +76,12 @@ GB_transplant.c: mostly done
 GB_cast_array.c: done
     Typecasts the numerical values, so used everywhere.
 
-GB_add.c: done, except for final prune of C->h.
-    C = A+B. Does the work for GrB_*_eWiseAdd, and the accumulator operator.
-    Very important.  GB_add breaks the work into symbolic/numeric
-    phases.  phase0 finds the columns of C, phase1 computes the number of
-    entries in each column of C. phase2 does the work.
+GB_add.c: done, for now, except for final prune of C->h.   Needs a better
+    method to slice vectors (see GB_reduce_each_vector and extend this to
+    GB_add).  Does the work for GrB_*_eWiseAdd, and the accumulator operator.
 
-GB_emult.c: done, except for final prune of C->h.
-    Does "C=A.*B" for GrB_*_eWiseMult_*.  Parallelism is a lot like GB_add
+GB_emult.c: done, except for final prune of C->h.  See also the future work
+    for GB_add.  Does "C=A.*B" for GrB_*_eWiseMult_*.
 
 GB_cumsum.c: done, but not as fast as I think it should be.
     a parallel cumulative-sum.  Used many places.  Note the two variants.
@@ -104,7 +102,8 @@ GB_extractTuples.c: done, except tasks can be used to extract I,J,X in parallel
 GB_apply_op.c: done
     Applies a unary operator for GrB_*_apply.
 
-GB_wait.c: done, except for parallel GB_prune_inplace (see also GB_resize).
+GB_wait.c: done, except it will be updated when GB_add can tolerate zombies
+    on input
 
 GB_dup.c:  done.  4 parallel memcpy's, but these can also be 4 tasks.
     does the work for GrB_*_dup.  Easy to parallelize.
@@ -129,11 +128,13 @@ Template/GB_qsort_template.c: IN PROGRESS
 not started
 ----------------------------------------------------------------------
 
-Template/GB_prune_inplace.c:
-    kills zombies for GrB_wait, and also to resize a matrix by GxB_*_resize.
-    Could use a reduction-style parallelism.
-    If both zombies and pending tuples exist, then GB_add should tolerate
-    zombies on input.  Then the prune is not needed.
+GB_resize.c:  see GB_delete_zombies.  Uses Template/GB_prune_inplace.c, which
+    will be deleted and replaced with a template also used for
+    GB_delete_zombies
+
+GB_select.c:
+    does the work for my GxB_*_select operations.  Use a template for this
+    and GB_delete_zombies.
 
 GB_to_nonhyper.c, GB_to_hyper.c:
     converts to/from hypersparse and standard.  Important utility, but does
@@ -143,14 +144,6 @@ GB_to_nonhyper.c, GB_to_hyper.c:
 GB_mask.c:
     Does the C<M>=result for all operations.  Important function.  Parallel
     method would look like GB_add.
-
-GB_resize.c:
-    does the work for GxB_*_resize.  Low priority.  See GB_prune_inplace
-
-GB_select.c:
-    does the work for my GxB_*_select operations.  This prunes the matrix,
-    like GB_prune_inplace.  Change void *thunk to a GrB_Matrix, GrB_Vector,
-    or perhaps a GxB_Scalar.
 
 GB_nvec_nonempty.c:
     counts # of non-empty vectors.  simple parallel reduction.
@@ -191,3 +184,4 @@ GB_is_diagonal: determines if A is diagonal, for C=A*B.  Very little work to
     do, and can exit early as soon as it finds a vector k so that A(:,k)
     contains anything more than a single A(k,k) entry.  So it really needs
     a parallel early-exit.
+

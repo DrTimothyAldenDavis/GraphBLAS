@@ -12,7 +12,10 @@
 // Compare this function with GrB_apply.
 
 // PARALLEL: TODO. use two phases: symbolic to count the # of entries in each
-// column, and another to move the data.
+// column, and another to move the data.  This is just like GB_delete_zombies,
+// but with a different selector op.  Merge with GB_delete_zombies, and
+// make the body of work a template.  Consider doing this with 11 hard-coded
+// versions for any A->type (no typecasting) and one generic.
 
 #include "GB.h"
 

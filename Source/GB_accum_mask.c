@@ -167,6 +167,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_OK_OR_JUMBLED (GB_check (T, "[T = results of computation]", GB0)) ;
     ASSERT (!GB_PENDING (T)) ; ASSERT (!GB_ZOMBIES (T)) ;
 
+    // TODO allow zombies in T on input
+
     //--------------------------------------------------------------------------
     // ensure M and T have the same CSR/CSC format as C
     //--------------------------------------------------------------------------

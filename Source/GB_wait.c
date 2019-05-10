@@ -35,7 +35,7 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
-// PARALLEL: done, except for parallel GB_prune_inplace (see also GB_resize).
+// PARALLEL:  done, but update it when GB_add can tolerate zombies on input
 
 #include "GB.h"
 
@@ -86,63 +86,28 @@ GrB_Info GB_wait                // finish all pending computations
 
     GrB_Matrix T = NULL, S = NULL, Aslice [2] = { NULL, NULL } ;
     GrB_Info info = GrB_SUCCESS ;
-    int64_t anz = GB_NNZ (A) ;
-    int64_t anz_orig = anz ;
-    int64_t anzmax_orig = A->nzmax ;
-    ASSERT (anz_orig <= anzmax_orig) ;
 
     int64_t nzombies = A->nzombies ;
 
     if (nzombies > 0)
-    { 
-
-        // There are zombies that will now be deleted.
-        ASSERT (GB_ZOMBIES_OK (A)) ;
-        ASSERT (GB_ZOMBIES (A)) ;
-
-        // This step tolerates pending tuples
-        // since pending tuples and zombies do not intersect
-        ASSERT (GB_PENDING_OK (A)) ;
-
-        //----------------------------------------------------------------------
-        // zombies exist in the matrix: delete them all
-        //----------------------------------------------------------------------
-
-        // compare with the pruning phase of GB_resize
-        #define GB_PRUNE if (GB_IS_ZOMBIE (i)) continue ;
-        #include "GB_prune_inplace.c"
-
-        //----------------------------------------------------------------------
-        // all zombies have been deleted
-        //----------------------------------------------------------------------
-
-        // exactly A->nzombies have been deleted from A
-        ASSERT (A->nzombies == (anz_orig - anz)) ;
-
-        // at least one zombie has been deleted
-        ASSERT (anz < anz_orig) ;
-
-        // no more zombies; pending tuples may still exist
-        A->nzombies = 0 ;
-        ASSERT (GB_PENDING_OK (A)) ;
-
-        // A->nvec_nonempty has been updated
-        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, NULL)) ;
+    {
+        // remove all zombies from A.  Also compute A->nvec_nonempty
+        GB_OK (GB_delete_zombies (A, Context)) ;
     }
     else if (A->nvec_nonempty < 0)
     { 
-        // printf ("recompute A->nvec\n") ;
+        // no zombies to remove, but make sure A->nvec_nonempty is computed
         A->nvec_nonempty = GB_nvec_nonempty (A, Context) ;
     }
 
-    ASSERT (anz == GB_NNZ (A)) ;
+    // all the zombies are gone
+    ASSERT (!GB_ZOMBIES (A)) ;
 
     //--------------------------------------------------------------------------
     // check for pending tuples
     //--------------------------------------------------------------------------
 
-    // all the zombies are gone
-    ASSERT (!GB_ZOMBIES (A)) ;
+    int64_t anz = GB_NNZ (A) ;
 
     if (!GB_PENDING (A))
     { 
@@ -155,9 +120,7 @@ GrB_Info GB_wait                // finish all pending computations
         // future insertions.  do not increase the size of the matrix;
         // zombies have been deleted but no pending tuples added.  This is
         // guaranteed not to fail.
-        ASSERT (anz <= anz_orig) ;
-        info = GB_ix_resize (A, anz, Context) ;
-        ASSERT (info == GrB_SUCCESS) ;
+        GB_OK (GB_ix_resize (A, anz, Context)) ;
 
         // conform A to its desired hypersparsity
         return (GB_to_hyper_conform (A, Context)) ;
@@ -234,7 +197,7 @@ GrB_Info GB_wait                // finish all pending computations
     //--------------------------------------------------------------------------
 
     // Finally check the status of the builder.  The pending tuples, must
-    // be freed (just above), whether or not the builder is succesful.
+    // be freed (just above), whether or not the builder is successful.
     GB_OK (info) ;
 
     ASSERT_OK (GB_check (T, "T = matrix of pending tuples", GB0)) ;
@@ -321,8 +284,10 @@ GrB_Info GB_wait                // finish all pending computations
         // If anz1 is zero, or small compared to anz0, then it is faster to
         // leave A0 unmodified, and to update just A1.
 
-        // TODO this does not tolerate zombies.  So do it only if
-        // A has no zombies on input.
+        // TODO this does not tolerate zombies.  So do it only if A has no
+        // zombies on input.  Or, when GB_add can tolerate zombies, set the
+        // Aslice [1] to start at the first zombie.  Keep track of the vector
+        // containing the first zombie.
 
         // make sure A has enough space for the new tuples
         if (anz_new > A->nzmax)

@@ -137,7 +137,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
             // both GrB_LAND and GxB_LAND_BOOL (same opcode)
             switch (add->xtype->code)
             {
-                case GB_BOOL_code   : return (GxB_LAND_BOOL_MONOID    ) :
+                case GB_BOOL_code   : return (GxB_LAND_BOOL_MONOID    ) ;
                 default: 
                     mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
                     return (NULL) ;
@@ -150,7 +150,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
             // 2 XOR boolean monoids
             switch (add->xtype->code)
             {
-                case GB_BOOL_code   : return (GxB_LXOR_BOOL_MONOID    ) :
+                case GB_BOOL_code   : return (GxB_LXOR_BOOL_MONOID    ) ;
                 default: 
                     mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
                     return (NULL) ;
@@ -165,7 +165,7 @@ GrB_Monoid GB_mx_builtin_monoid     // built-in monoid, or NULL if error
             // EQ and ISEQ boolean monoids
             switch (add->xtype->code)
             {
-                case GB_BOOL_code   : return (GxB_EQ_BOOL_MONOID      ) :
+                case GB_BOOL_code   : return (GxB_EQ_BOOL_MONOID      ) ;
                 default: 
                     mexWarnMsgIdAndTxt ("GB:warn", "invalid monoid") ;
                     return (NULL) ;

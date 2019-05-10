@@ -103,7 +103,7 @@ GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
         if (Tp == NULL)
         {
             // out of memory
-            GrB_free (Chandle) ;
+            GB_MATRIX_FREE (Chandle) ;
             return (GB_OUT_OF_MEMORY) ;
         }
 

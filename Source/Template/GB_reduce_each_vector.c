@@ -187,12 +187,12 @@
                 { 
                     // This thread is the first one that did work on
                     // A(:,klast), so use it to start the reduction.
-                    // Tx [klast] = Wlast [tid], no typecase
+                    // Tx [klast] = Wlast [tid], no typecast
                     GB_COPY_ARRAY_TO_ARRAY (Tx, klast, Wlast, tid) ;
                 }
                 else
                 { 
-                    // Tx [klast] += Wlast [tid], no typecase
+                    // Tx [klast] += Wlast [tid], no typecast
                     GB_ADD_ARRAY_TO_ARRAY (Tx, klast, Wlast, tid) ;
                 }
                 kprior = klast ;

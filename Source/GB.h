@@ -1900,9 +1900,35 @@ void GB_pslice                  // find how to slice A->p by # of entries
 
 void GB_eslice
 (
+    // output:
     int64_t *Slice,         // array of size ntasks+1
+    // input:
     int64_t e,              // number items to partition amongst the tasks
     const int ntasks        // # of tasks
+) ;
+
+void GB_ek_slice
+(
+    // output:
+    int64_t *restrict pstart_slice, // size ntasks+1
+    int64_t *restrict kfirst_slice, // size ntasks
+    int64_t *restrict klast_slice,  // size ntasks
+    // input:
+    GrB_Matrix A,                   // matrix to slize
+    int ntasks                      // # of tasks
+) ;
+
+void GB_map_pslice
+(
+    // output
+    int64_t *C_pstart_slice,                // size ntasks
+    // input
+    const int64_t *restrict Cp,             // size cnvec+1
+    const int64_t *restrict kfirst_slice,   // size ntasks
+    const int64_t *restrict klast_slice,    // size ntasks
+    const int64_t *restrict Wfirst,         // size ntasks
+    const int64_t *restrict Wlast,          // size ntasks
+    int ntasks                              // number of tasks
 ) ;
 
 GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
@@ -2225,6 +2251,14 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     GB_Context Context
 ) ;
 
+int64_t GB_search_for_vector        // return the vector k that contains p
+(
+    const int64_t p,                // search for vector k that contains p
+    const int64_t *restrict Ap,     // vector pointers to search
+    int64_t kleft,                  // left-most k to search
+    int64_t anvec                   // Ap is of size anvec+1
+) ;
+
 GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 (
     GrB_Matrix C,                   // input/output for results, size n-by-1
@@ -2348,6 +2382,12 @@ GrB_Info GB_builder                 // build a matrix from tuples
                                     // if NULL use the "SECOND" function to
                                     // keep the most recent duplicate.
     const GB_Type_code scode,       // GB_Type_code of Swork or S_input array
+    GB_Context Context
+) ;
+
+GrB_Info GB_delete_zombies
+(
+    GrB_Matrix A,               // matrix to delete zombies from
     GB_Context Context
 ) ;
 
