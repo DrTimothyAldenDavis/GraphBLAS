@@ -1,11 +1,10 @@
 
 clear all
-for k = 1:2
+make
+for k = [1 2 4 8 20]
     nthreads_set (k) ;
+    debug_off ;
     testall 
-end
-debug_on
-for k = 1:2
-    nthreads_set (k) ;
+    debug_on
     testall 
 end
