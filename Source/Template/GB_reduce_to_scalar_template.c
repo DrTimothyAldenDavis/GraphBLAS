@@ -90,8 +90,6 @@
             {
                 int64_t pstart, pend ;
                 GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
-                // no slice is empty
-                ASSERT (pstart < pend) ;
 
                 // ztype t = identity
                 GB_SCALAR_IDENTITY (t) ;
@@ -121,8 +119,6 @@
             {
                 int64_t pstart, pend ;
                 GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
-                // no slice is empty
-                ASSERT (pstart < pend) ;
 
                 // ztype t = identity
                 GB_SCALAR_IDENTITY (t) ;

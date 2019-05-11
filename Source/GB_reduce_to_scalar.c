@@ -194,8 +194,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             #define GB_REDUCTION_WORKSPACE(W, nthreads) \
                 GB_void W [nthreads*zsize]
 
-            // t = identity
-            #define GB_SCALAR_IDENTITY(s)                           \
+            // ztype t = identity
+            #define GB_SCALAR_IDENTITY(t)                           \
                 GB_void t [zsize] ;                                 \
                 memcpy (t, reduce->identity, zsize) ;
 
@@ -254,10 +254,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
           #include "GB_reduce_to_scalar_template.c"
     }
 
-    // printf ("reduce to scalar result: [") ;
-    // GB_entry_check (ztype, s, stdout, Context) ;
-    // printf ("]\n") ;
-
     //--------------------------------------------------------------------------
     // c = s or c = accum (c,s)
     //--------------------------------------------------------------------------
@@ -298,10 +294,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // c = (ctype) zaccum
         cast_zaccum_to_C (c, zaccum, ctype->size) ;
     }
-
-    // printf ("reduce to scalar final result: [") ;
-    // GB_entry_check (ctype, c, stdout, Context) ;
-    // printf ("]\n") ;
 
     return (GrB_SUCCESS) ;
 }
