@@ -8,6 +8,7 @@ rng ('default')
 
 dclear.outp = 'replace' ;
 dclear.mask = 'scmp' ;
+tol = 1e-13 ;
 
 seed = 1 ;
 for m = [1 5 10 50]
@@ -34,12 +35,14 @@ for m = [1 5 10 50]
                 [C3,c1] = GB_mex_subassign (C, M, [ ], A, I0, J0, [], 'plus') ;
                 cin = complex (0,0) ;
                 c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;
-                assert (isequal (c1,c2)) ;
+                assert (abs (c1-c2) <= tol * (abs (c1) + 1)) ;
+                % assert (isequal (c1,c2)) ;
 
                 C1 = C ;
                 C1 (I,J) = C1 (I,J) + A ;
 
                 C2 = GB_mex_subassign (C, [ ], 'plus', A, I0, J0, []) ;
+                assert (norm (C1 - C2.matrix, 1) <= tol * (norm (C1,1)+1)) ;
                 assert (isequal (C1, C2.matrix)) ;
 
             end
