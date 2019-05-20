@@ -23,6 +23,7 @@ void GB_red_eachvec__min_int8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -30,8 +31,6 @@ GrB_Info GB_red_eachindex__min_int8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -71,6 +70,7 @@ void GB_red_eachvec__min_int16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -78,8 +78,6 @@ GrB_Info GB_red_eachindex__min_int16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -119,6 +117,7 @@ void GB_red_eachvec__min_int32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -126,8 +125,6 @@ GrB_Info GB_red_eachindex__min_int32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -167,6 +164,7 @@ void GB_red_eachvec__min_int64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -174,8 +172,6 @@ GrB_Info GB_red_eachindex__min_int64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -215,6 +211,7 @@ void GB_red_eachvec__min_uint8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -222,8 +219,6 @@ GrB_Info GB_red_eachindex__min_uint8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -263,6 +258,7 @@ void GB_red_eachvec__min_uint16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -270,8 +266,6 @@ GrB_Info GB_red_eachindex__min_uint16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -311,6 +305,7 @@ void GB_red_eachvec__min_uint32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -318,8 +313,6 @@ GrB_Info GB_red_eachindex__min_uint32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -359,6 +352,7 @@ void GB_red_eachvec__min_uint64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -366,8 +360,6 @@ GrB_Info GB_red_eachindex__min_uint64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -407,6 +399,7 @@ void GB_red_eachvec__min_fp32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -414,8 +407,6 @@ GrB_Info GB_red_eachindex__min_fp32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -455,6 +446,7 @@ void GB_red_eachvec__min_fp64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -462,8 +454,6 @@ GrB_Info GB_red_eachindex__min_fp64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -503,6 +493,7 @@ void GB_red_eachvec__max_int8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -510,8 +501,6 @@ GrB_Info GB_red_eachindex__max_int8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -551,6 +540,7 @@ void GB_red_eachvec__max_int16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -558,8 +548,6 @@ GrB_Info GB_red_eachindex__max_int16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -599,6 +587,7 @@ void GB_red_eachvec__max_int32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -606,8 +595,6 @@ GrB_Info GB_red_eachindex__max_int32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -647,6 +634,7 @@ void GB_red_eachvec__max_int64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -654,8 +642,6 @@ GrB_Info GB_red_eachindex__max_int64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -695,6 +681,7 @@ void GB_red_eachvec__max_uint8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -702,8 +689,6 @@ GrB_Info GB_red_eachindex__max_uint8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -743,6 +728,7 @@ void GB_red_eachvec__max_uint16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -750,8 +736,6 @@ GrB_Info GB_red_eachindex__max_uint16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -791,6 +775,7 @@ void GB_red_eachvec__max_uint32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -798,8 +783,6 @@ GrB_Info GB_red_eachindex__max_uint32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -839,6 +822,7 @@ void GB_red_eachvec__max_uint64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -846,8 +830,6 @@ GrB_Info GB_red_eachindex__max_uint64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -887,6 +869,7 @@ void GB_red_eachvec__max_fp32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -894,8 +877,6 @@ GrB_Info GB_red_eachindex__max_fp32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -935,6 +916,7 @@ void GB_red_eachvec__max_fp64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -942,8 +924,6 @@ GrB_Info GB_red_eachindex__max_fp64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -983,6 +963,7 @@ void GB_red_eachvec__plus_int8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -990,8 +971,6 @@ GrB_Info GB_red_eachindex__plus_int8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1031,6 +1010,7 @@ void GB_red_eachvec__plus_int16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1038,8 +1018,6 @@ GrB_Info GB_red_eachindex__plus_int16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1079,6 +1057,7 @@ void GB_red_eachvec__plus_int32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1086,8 +1065,6 @@ GrB_Info GB_red_eachindex__plus_int32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1127,6 +1104,7 @@ void GB_red_eachvec__plus_int64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1134,8 +1112,6 @@ GrB_Info GB_red_eachindex__plus_int64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1175,6 +1151,7 @@ void GB_red_eachvec__plus_uint8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1182,8 +1159,6 @@ GrB_Info GB_red_eachindex__plus_uint8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1223,6 +1198,7 @@ void GB_red_eachvec__plus_uint16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1230,8 +1206,6 @@ GrB_Info GB_red_eachindex__plus_uint16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1271,6 +1245,7 @@ void GB_red_eachvec__plus_uint32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1278,8 +1253,6 @@ GrB_Info GB_red_eachindex__plus_uint32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1319,6 +1292,7 @@ void GB_red_eachvec__plus_uint64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1326,8 +1300,6 @@ GrB_Info GB_red_eachindex__plus_uint64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1367,6 +1339,7 @@ void GB_red_eachvec__plus_fp32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1374,8 +1347,6 @@ GrB_Info GB_red_eachindex__plus_fp32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1415,6 +1386,7 @@ void GB_red_eachvec__plus_fp64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1422,8 +1394,6 @@ GrB_Info GB_red_eachindex__plus_fp64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1463,6 +1433,7 @@ void GB_red_eachvec__times_int8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1470,8 +1441,6 @@ GrB_Info GB_red_eachindex__times_int8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1511,6 +1480,7 @@ void GB_red_eachvec__times_int16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1518,8 +1488,6 @@ GrB_Info GB_red_eachindex__times_int16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1559,6 +1527,7 @@ void GB_red_eachvec__times_int32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1566,8 +1535,6 @@ GrB_Info GB_red_eachindex__times_int32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1607,6 +1574,7 @@ void GB_red_eachvec__times_int64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1614,8 +1582,6 @@ GrB_Info GB_red_eachindex__times_int64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1655,6 +1621,7 @@ void GB_red_eachvec__times_uint8
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1662,8 +1629,6 @@ GrB_Info GB_red_eachindex__times_uint8
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1703,6 +1668,7 @@ void GB_red_eachvec__times_uint16
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1710,8 +1676,6 @@ GrB_Info GB_red_eachindex__times_uint16
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1751,6 +1715,7 @@ void GB_red_eachvec__times_uint32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1758,8 +1723,6 @@ GrB_Info GB_red_eachindex__times_uint32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1799,6 +1762,7 @@ void GB_red_eachvec__times_uint64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1806,8 +1770,6 @@ GrB_Info GB_red_eachindex__times_uint64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1847,6 +1809,7 @@ void GB_red_eachvec__times_fp32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1854,8 +1817,6 @@ GrB_Info GB_red_eachindex__times_fp32
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1895,6 +1856,7 @@ void GB_red_eachvec__times_fp64
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1902,8 +1864,6 @@ GrB_Info GB_red_eachindex__times_fp64
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1943,6 +1903,7 @@ void GB_red_eachvec__lor_bool
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1950,8 +1911,6 @@ GrB_Info GB_red_eachindex__lor_bool
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -1991,6 +1950,7 @@ void GB_red_eachvec__land_bool
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -1998,8 +1958,6 @@ GrB_Info GB_red_eachindex__land_bool
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2039,6 +1997,7 @@ void GB_red_eachvec__lxor_bool
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2046,8 +2005,6 @@ GrB_Info GB_red_eachindex__lxor_bool
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2087,6 +2044,7 @@ void GB_red_eachvec__eq_bool
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2094,8 +2052,6 @@ GrB_Info GB_red_eachindex__eq_bool
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2135,6 +2091,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2142,8 +2099,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2183,6 +2138,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2190,8 +2146,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2231,6 +2185,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2238,8 +2193,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2279,6 +2232,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2286,8 +2240,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2327,6 +2279,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2334,8 +2287,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2375,6 +2326,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2382,8 +2334,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2423,6 +2373,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2430,8 +2381,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2471,6 +2420,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2478,8 +2428,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2519,6 +2467,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2526,8 +2475,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2567,6 +2514,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2574,8 +2522,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2615,6 +2561,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2622,8 +2569,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2663,6 +2608,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2670,8 +2616,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2711,6 +2655,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2718,8 +2663,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2759,6 +2702,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2766,8 +2710,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2807,6 +2749,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2814,8 +2757,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2855,6 +2796,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2862,8 +2804,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2903,6 +2843,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2910,8 +2851,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2951,6 +2890,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -2958,8 +2898,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -2999,6 +2937,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -3006,8 +2945,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -3047,6 +2984,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -3054,8 +2992,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -3095,6 +3031,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -3102,8 +3039,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,
@@ -3143,6 +3078,7 @@ void GB_red_eachvec__(none)
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 ) ;
 
@@ -3150,8 +3086,6 @@ GrB_Info GB_red_eachindex__(none)
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,

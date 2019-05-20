@@ -18,7 +18,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     const char *name,       // name of the matrix, optional
     int pr,                 // 0: print nothing, 1: print header and errors,
                             // 2: print brief, 3: print all
-                            // if negative, ignore queue conditions
+                            // if negative, ignore queue and nzombie conditions
                             // and use GB_FLIP(pr) for diagnostic printing.
     FILE *f,                // file for output
     const char *kind,       // "matrix" or "vector"
@@ -30,7 +30,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
-    bool ignore_queue = false ;
+    bool ignore_queue_and_nzombies = false ;
     if (pr < 0)
     { 
         // -2: print nothing (pr = 0)
@@ -38,7 +38,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // -4: print brief   (pr = 2)
         // -5: print all     (pr = 3)
         pr = GB_FLIP (pr) ;
-        ignore_queue = true ;
+        ignore_queue_and_nzombies = true ;
     }
 
     if (pr > 0) GBPR ("\nGraphBLAS %s: %s ", kind, GB_NAME) ;
@@ -389,8 +389,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
     }
 
-    if (A->nzombies < 0 || A->nzombies > anz)
+    if (!ignore_queue_and_nzombies && (A->nzombies < 0 || A->nzombies > anz))
     { 
+        // zombie count is ignored if pr is flipped
         if (pr > 0) GBPR ("invalid number of zombies: "GBd" "
             "must be >= 0 and <= # entries ("GBd")\n", A->nzombies, anz) ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
@@ -493,8 +494,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the zombie count
     //--------------------------------------------------------------------------
 
-    if (nzombies != A->nzombies)
+    if (!ignore_queue_and_nzombies && nzombies != A->nzombies)
     { 
+        // zombie count is ignored if pr is flipped
         if (pr > 0) GBPR ("invalid zombie count: "GBd" exist but"
             " A->nzombies = "GBd"\n", nzombies, A->nzombies) ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
@@ -630,7 +632,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the queue
     //--------------------------------------------------------------------------
 
-    if (!ignore_queue)
+    if (!ignore_queue_and_nzombies)
     {
         GrB_Matrix head, prev, next ;
         bool enqd ;

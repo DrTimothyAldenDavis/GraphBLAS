@@ -35,5 +35,8 @@ switch (xytype)
     case 'double'
         fname = 'fp64' ;
         bits = 64 ;
+    case 'GB_void'
+        fname = 'any' ;
+        bits = nan ;
 end
 

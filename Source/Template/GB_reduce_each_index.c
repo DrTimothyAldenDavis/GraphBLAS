@@ -8,70 +8,103 @@
 //------------------------------------------------------------------------------
 
 // Reduce a matrix to a vector.  All entries in A(i,:) are reduced to T(i).
-// First, all threads reduce their slice to their own Sauna workspace,
-// operating on roughly the same number of entries each.  The vectors in A are
-// ignored; the reduction only depends on the indices.  Next, the threads
-// cooperate to reduce all Sauna workspaces to the Sauna of thread 0.  Finally,
-// this last Sauna workspace is collected into T.
+// First, all threads reduce their slice to their own workspace, operating on
+// roughly the same number of entries each.  The vectors in A are ignored; the
+// reduction only depends on the indices.  Next, the threads cooperate to
+// reduce all workspaces to the workspace of thread 0.  Finally, this last
+// workspace is collected into T.
 
 // PARALLEL: done
 
 {
 
+    //--------------------------------------------------------------------------
+    // get A
+    //--------------------------------------------------------------------------
+
     const GB_ATYPE *restrict Ax = A->x ;
     const int64_t  *restrict Ai = A->i ;
     const int64_t n = A->vlen ;
+    size_t zsize = ttype->size ;
 
     //--------------------------------------------------------------------------
-    // reduce each slice it its own Sauna
+    // reduce each slice in its own workspace
     //--------------------------------------------------------------------------
 
-    GB_CTYPE **Sauna_Works [nth] ;
-    int64_t  **Sauna_Marks [nth] ;
+    GB_CTYPE **Works [nth] ;
+    bool     **Marks [nth] ;
     int64_t  Tnz [nth] ;
+    bool ok = true ;
 
     // each thread reduces its own slice in parallel
-    #pragma omp parallel for num_threads(nth) schedule(static)
+    #pragma omp parallel for num_threads(nth) schedule(static) reduction(&&:ok)
     for (int tid = 0 ; tid < nth ; tid++)
     {
 
-        // get the Sauna for this thread
-        GB_Sauna Sauna = Saunas [tid] ;
-        GB_CTYPE *restrict Sauna_Work = Sauna->Sauna_Work ;
-        int64_t  *restrict Sauna_Mark = Sauna->Sauna_Mark ;
-        Sauna_Works [tid] = Sauna_Work ;
-        Sauna_Marks [tid] = Sauna_Mark ;
+        //----------------------------------------------------------------------
+        // allocate workspace for this thread
+        //----------------------------------------------------------------------
+
+        GB_CTYPE *restrict Work ;
+        bool     *restrict Mark ;
+        GB_MALLOC_MEMORY (Work, n, zsize) ;
+        GB_CALLOC_MEMORY (Mark, n, sizeof (bool)) ;
+        Works [tid] = Work ;
+        Marks [tid] = Mark ;
+        bool my_ok = (Mark != NULL && Work != NULL) ;
+        ok = ok && my_ok ;
         int64_t my_tnz = 0 ;
 
+        //----------------------------------------------------------------------
         // reduce the entries
-        for (int64_t p = pstart_slice [tid] ; p < pstart_slice [tid+1] ; p++)
+        //----------------------------------------------------------------------
+
+        if (my_ok)
         {
-            int64_t i = Ai [p] ;
-            // ztype aij = (ztype) Ax [p], with typecast
-            GB_CAST_ARRAY_TO_SCALAR (aij, Ax, p) ;
-            if (Sauna_Mark [i] < hiwater)
+            for (int64_t p = pstart_slice [tid] ; p < pstart_slice [tid+1] ;p++)
             {
-                // first time index i has been seen
-                // Sauna_Work [i] = aij ; no typecast
-                GB_COPY_SCALAR_TO_ARRAY (Sauna_Work, i, aij) ;
-                Sauna_Mark [i] = hiwater ;
-                my_tnz++ ;
+                int64_t i = Ai [p] ;
+                // ztype aij = (ztype) Ax [p], with typecast
+                GB_CAST_ARRAY_TO_SCALAR (aij, Ax, p) ;
+                if (!Mark [i])
+                {
+                    // first time index i has been seen
+                    // Work [i] = aij ; no typecast
+                    GB_COPY_SCALAR_TO_ARRAY (Work, i, aij) ;
+                    Mark [i] = true ;
+                    my_tnz++ ;
+                }
+                else
+                {
+                    // Work [i] += aij ; no typecast
+                    GB_ADD_SCALAR_TO_ARRAY (Work, i, aij) ;
+                }
             }
-            else
-            {
-                // Sauna_Work [i] += aij ; no typecast
-                GB_ADD_SCALAR_TO_ARRAY (Sauna_Work, i, aij) ;
-            }
+            Tnz [tid] = my_tnz ;
         }
-        Tnz [tid] = my_tnz ;
     }
 
     //--------------------------------------------------------------------------
-    // reduce all Saunas to Sauna [0] and count # entries in T
+    // handle out-of-memory condition
     //--------------------------------------------------------------------------
 
-    GB_CTYPE *restrict Sauna_Work0 = Sauna_Works [0] ;
-    int64_t  *restrict Sauna_Mark0 = Sauna_Marks [0] ;
+    if (!ok)
+    {
+        // out of memory
+        for (int tid = 0 ; tid < nth ; tid++)
+        {
+            GB_FREE_MEMORY (Works [tid], n, zsize) ;
+            GB_FREE_MEMORY (Marks [tid], n, sizeof (bool)) ;
+        }
+        return (GB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // reduce all workspace to Work [0] and count # entries in T
+    //--------------------------------------------------------------------------
+
+    GB_CTYPE *restrict Work0 = Works [0] ;
+    bool     *restrict Mark0 = Marks [0] ;
     int64_t tnz = Tnz [0] ;
 
     if (nth > 1)
@@ -82,28 +115,33 @@
         {
             for (int tid = 1 ; tid < nth ; tid++)
             {
-                const GB_CTYPE *restrict Sauna_Work = Sauna_Works [tid] ;
-                const int64_t  *restrict Sauna_Mark = Sauna_Marks [tid] ;
-                if (Sauna_Mark [i] == hiwater)
+                const bool *restrict Mark = Marks [tid] ;
+                if (Mark [i])
                 {
-                    // Sauna for thread tid has a contribution to index i
-                    if (Sauna_Mark0 [i] < hiwater)
+                    // thread tid has a contribution to index i
+                    const GB_CTYPE *restrict Work = Works [tid] ;
+                    if (!Mark0 [i])
                     {
                         // first time index i has been seen
-                        // Sauna_Work0 [i] = Sauna_Work [i] ; no typecast
-                        GB_COPY_ARRAY_TO_ARRAY (Sauna_Work0, i,
-                            Sauna_Work, i) ;
-                        Sauna_Mark0 [i] = hiwater ;
+                        // Work0 [i] = Work [i] ; no typecast
+                        GB_COPY_ARRAY_TO_ARRAY (Work0, i, Work, i) ;
+                        Mark0 [i] = true ;
                         tnz++ ;
                     }
                     else
                     {
-                        // Sauna_Work0 [i] += Sauna_Work [i] ; no typecast
-                        GB_ADD_ARRAY_TO_ARRAY (Sauna_Work0, i,
-                            Sauna_Work, i) ;
+                        // Work0 [i] += Work [i] ; no typecast
+                        GB_ADD_ARRAY_TO_ARRAY (Work0, i, Work, i) ;
                     }
                 }
             }
+        }
+
+        // free all but workspace for thread 0
+        for (int tid = 1 ; tid < nth ; tid++)
+        {
+            GB_FREE_MEMORY (Works [tid], n, zsize) ;
+            GB_FREE_MEMORY (Marks [tid], n, sizeof (bool)) ;
         }
     }
 
@@ -117,7 +155,8 @@
     if (info != GrB_SUCCESS)
     { 
         // out of memory
-        GB_FREE_ALL ;
+        GB_FREE_MEMORY (Works [0], n, zsize) ;
+        GB_FREE_MEMORY (Marks [0], n, sizeof (bool)) ;
         return (GB_OUT_OF_MEMORY) ;
     }
 
@@ -133,32 +172,36 @@
 
     if (tnz == n)
     {
-        // T is dense: copy from Sauna_Work0
+        // T is dense: transplant Work0 into T->x
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t i = 0 ; i < n ; i++)
         { 
             Ti [i] = i ;
         }
-        size_t zsize = ttype->size ;
-        GB_memcpy (Tx, Sauna_Work0, n * zsize, nthreads) ;
+        GB_FREE_MEMORY (T->x, n, zsize) ;
+        T->x = Work0 ;
+        Work0 = NULL ;
     }
     else
     {
-        // T is sparse: gather from Sauna_Work0 and Sauna_Mark0
+        // T is sparse: gather from Work0 and Mark0
         // FUTURE: this is not yet parallel
-        GB_CTYPE *restrict Tx = T->x ;
         int64_t p = 0 ;
         for (int64_t i = 0 ; i < n ; i++)
         {
-            if (Sauna_Mark0 [i] == hiwater)
+            if (Mark0 [i])
             { 
                 Ti [p] = i ;
-                // Tx [p] = Sauna_Work0 [i], no typecast
-                GB_COPY_ARRAY_TO_ARRAY (Tx, p, Sauna_Work0, i) ;
+                // Tx [p] = Work0 [i], no typecast
+                GB_COPY_ARRAY_TO_ARRAY (Tx, p, Work0, i) ;
                 p++ ;
             }
         }
         ASSERT (p == tnz) ;
     }
+
+    // free workspace for thread 0 
+    GB_FREE_MEMORY (Work0, n, zsize) ;
+    GB_FREE_MEMORY (Mark0, n, sizeof (bool)) ;
 }
 

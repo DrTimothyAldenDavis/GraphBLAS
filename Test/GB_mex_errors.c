@@ -3170,12 +3170,16 @@ void mexFunction
 
     double thresh = 42 ;
 
-    ERR (GxB_select (A, Z   , NULL, selectop, A, &thresh, NULL)) ;
-    ERR (GxB_select (A, NULL, o2  , selectop, A, &thresh, NULL)) ;
-    ERR (GxB_select (A, NULL, o2  , selectop, Z, &thresh, NULL)) ;
-    ERR (GxB_select (A, NULL, NULL, selectop, Z, &thresh, NULL)) ;
-    ERR (GxB_select (Z, NULL, NULL, selectop, A, &thresh, NULL)) ;
-    ERR (GxB_select (Z, NULL, NULL, selectop, Z, &thresh, NULL)) ;
+    GrB_Vector Thunk = NULL ;
+    OK (GrB_Vector_new (&Thunk, GrB_FP64, 1)) ;
+    OK (GrB_Vector_setElement (Thunk, thresh, 0)) ;
+
+    ERR (GxB_select (A, Z   , NULL, selectop, A, Thunk, NULL)) ;
+    ERR (GxB_select (A, NULL, o2  , selectop, A, Thunk, NULL)) ;
+    ERR (GxB_select (A, NULL, o2  , selectop, Z, Thunk, NULL)) ;
+    ERR (GxB_select (A, NULL, NULL, selectop, Z, Thunk, NULL)) ;
+    ERR (GxB_select (Z, NULL, NULL, selectop, A, Thunk, NULL)) ;
+    ERR (GxB_select (Z, NULL, NULL, selectop, Z, Thunk, NULL)) ;
 
     v0 = NULL ;
     A0 = NULL ;
@@ -3188,7 +3192,9 @@ void mexFunction
 
     expected = GrB_DIMENSION_MISMATCH ;
 
-    ERR (GxB_select (A , NULL, NULL, GxB_TRIL, C , &thresh, d0)) ;
+    ERR (GxB_select (A , NULL, NULL, GxB_TRIL, C , NULL, d0)) ;
+
+    OK (GrB_free (&Thunk)) ;
 
     //--------------------------------------------------------------------------
     // reduce to scalar

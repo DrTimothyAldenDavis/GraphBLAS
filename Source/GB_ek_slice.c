@@ -7,9 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+// Slice the entries of a matrix or vector into ntasks slices.
+
 // Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 and
 // vectors kfirst_slice [t] to klast_slice [t].  The first and last vectors
 // may be shared with prior slices and subsequent slices.
+
+// On input, ntasks must be <= nnz (A), unless nnz (A) is zero.  In that
+// case, ntasks must be 1.
 
 #include "GB.h"
 
@@ -32,6 +37,19 @@ void GB_ek_slice
     int64_t anvec = A->nvec ;
     int64_t anz = GB_NNZ (A) ;
     const int64_t *Ap = A->p ;
+
+    if (anz == 0)
+    {
+        // quick return for empty matrices
+        ASSERT (ntasks == 1) ;
+        pstart_slice [0] = 0 ;
+        pstart_slice [1] = 0 ;
+        kfirst_slice [0] = -1 ;
+        klast_slice  [0] = -2 ;
+        return ;
+    }
+
+    ASSERT (ntasks <= anz) ;
 
     //--------------------------------------------------------------------------
     // find the first and last entries in each slice
@@ -58,26 +76,19 @@ void GB_ek_slice
         int64_t pfirst = pstart_slice [taskid] ;
         int64_t plast  = pstart_slice [taskid+1] - 1 ;
 
-        if (pfirst <= plast)
-        {
-            // find the first vector of the slice for task taskid: the
-            // vector that owns the entry Ai [pfirst] and Ax [pfirst].
-            int64_t kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec) ;
+        ASSERT (pfirst <= plast) ;
 
-            // find the last vector of the slice for task taskid: the
-            // vector that owns the entry Ai [plast] and Ax [plast].
-            int64_t klast = GB_search_for_vector (plast, Ap, kfirst, anvec) ;
+        // find the first vector of the slice for task taskid: the
+        // vector that owns the entry Ai [pfirst] and Ax [pfirst].
+        int64_t kfirst = GB_search_for_vector (pfirst, Ap, 0, anvec) ;
 
-            kfirst_slice [taskid] = kfirst ;
-            klast_slice  [taskid] = klast ;
-            ASSERT (0 <= kfirst && kfirst <= klast && klast < anvec) ;
-        }
-        else
-        {
-            // this task does nothing
-            kfirst_slice [taskid] = -1 ;
-            klast_slice  [taskid] = -2 ;
-        }
+        // find the last vector of the slice for task taskid: the
+        // vector that owns the entry Ai [plast] and Ax [plast].
+        int64_t klast = GB_search_for_vector (plast, Ap, kfirst, anvec) ;
+
+        kfirst_slice [taskid] = kfirst ;
+        klast_slice  [taskid] = klast ;
+        ASSERT (0 <= kfirst && kfirst <= klast && klast < anvec) ;
     }
 
     kfirst_slice [0] = 0 ;

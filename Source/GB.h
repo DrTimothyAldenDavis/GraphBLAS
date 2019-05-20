@@ -586,19 +586,19 @@ bool GB_aliased             // determine if A and B are aliased
 typedef enum
 {
     // the 12 scalar types
-    GB_BOOL_code,               // 0: bool
-    GB_INT8_code,               // 1: int8_t
-    GB_UINT8_code,              // 2: uint8_t
-    GB_INT16_code,              // 3: int16_t
-    GB_UINT16_code,             // 4: uint16_t
-    GB_INT32_code,              // 5: int32_t
-    GB_UINT32_code,             // 6: uint32_t
-    GB_INT64_code,              // 7: int64_t
-    GB_UINT64_code,             // 8: uint64_t
-    GB_FP32_code,               // 9: float
-    GB_FP64_code,               // 10: double
-    GB_UCT_code,                // 11: void *, compile-time user-defined type
-    GB_UDT_code                 // 12: void *, run-time user-defined type
+    GB_BOOL_code    = 0,
+    GB_INT8_code    = 1,
+    GB_UINT8_code   = 2,
+    GB_INT16_code   = 3,
+    GB_UINT16_code  = 4,
+    GB_INT32_code   = 5,
+    GB_UINT32_code  = 6,
+    GB_INT64_code   = 7,
+    GB_UINT64_code  = 8,
+    GB_FP32_code    = 9,
+    GB_FP64_code    = 10,
+    GB_UCT_code     = 11,       // void *, compile-time user-defined type
+    GB_UDT_code     = 12        // void *, run-time user-defined type
 }
 GB_Type_code ;                  // enumerated type code
 
@@ -749,34 +749,39 @@ extern struct GB_Monoid_opaque
     GB_opaque_GxB_EQ_BOOL_MONOID ;          // identity: true
 
 //------------------------------------------------------------------------------
-// built-in semirings
-//------------------------------------------------------------------------------
-
-// Using built-in types and operators, 960 unique semirings can be built.  This
-// count excludes redundant Boolean operators (for example GxB_TIMES_BOOL and
-// GxB_LAND_BOOL are different operators but they are redundant since they
-// always return the same result):
-
-// 680 semirings with a multiply operator TxT -> T where T is non-Boolean, from
-
-
-//------------------------------------------------------------------------------
 // select opcodes
 //------------------------------------------------------------------------------
 
 // operator codes used in GrB_SelectOp structures
 typedef enum
 {
-    // built-in select operators:
-    GB_TRIL_opcode,
-    GB_TRIU_opcode,
-    GB_DIAG_opcode,
-    GB_OFFDIAG_opcode,
-    GB_NONZERO_opcode,
+    // built-in select operators: thunk optional; defaults to zero
+    GB_TRIL_opcode      = 0,
+    GB_TRIU_opcode      = 1,
+    GB_DIAG_opcode      = 2,
+    GB_OFFDIAG_opcode   = 3,
+    GB_RESIZE_opcode    = 4,
 
-    // for all user-defined select operators:
-    GB_USER_SELECT_C_opcode,    // defined at compile-time
-    GB_USER_SELECT_R_opcode     // defined at run-time
+    // built-in select operators, no thunk used
+    GB_NONZOMBIE_opcode = 5,
+    GB_NONZERO_opcode   = 6,
+    GB_EQ_ZERO_opcode   = 7,
+    GB_GT_ZERO_opcode   = 8,
+    GB_GE_ZERO_opcode   = 9,
+    GB_LT_ZERO_opcode   = 10,
+    GB_LE_ZERO_opcode   = 11,
+
+    // built-in select operators, thunk required
+    GB_NE_THUNK_opcode  = 12,
+    GB_EQ_THUNK_opcode  = 13,
+    GB_GT_THUNK_opcode  = 14,
+    GB_GE_THUNK_opcode  = 15,
+    GB_LT_THUNK_opcode  = 16,
+    GB_LE_THUNK_opcode  = 17,
+
+    // for all user-defined select operators:  thunk is optional
+    GB_USER_SELECT_C_opcode = 18,   // defined at compile-time
+    GB_USER_SELECT_R_opcode = 19    // defined at run-time
 }
 GB_Select_Opcode ;
 
@@ -785,7 +790,18 @@ extern struct GB_SelectOp_opaque
     GB_opaque_GxB_TRIU,
     GB_opaque_GxB_DIAG,
     GB_opaque_GxB_OFFDIAG,
-    GB_opaque_GxB_NONZERO ;
+    GB_opaque_GxB_NONZERO,
+    GB_opaque_GxB_EQ_ZERO,
+    GB_opaque_GxB_GT_ZERO,
+    GB_opaque_GxB_GE_ZERO,
+    GB_opaque_GxB_LT_ZERO,
+    GB_opaque_GxB_LE_ZERO,
+    GB_opaque_GxB_NE_THUNK,
+    GB_opaque_GxB_EQ_THUNK,
+    GB_opaque_GxB_GT_THUNK,
+    GB_opaque_GxB_GE_THUNK,
+    GB_opaque_GxB_LT_THUNK,
+    GB_opaque_GxB_LE_THUNK ;
 
 //------------------------------------------------------------------------------
 // error logging and parallel thread control
@@ -912,6 +928,63 @@ static inline void GB_teams
     ASSERT (*nteams >= 1) ;
     ASSERT (*nthreads_per_team >= 1) ;
     ASSERT ((*nteams) * (*nthreads_per_team) <= nthreads_max) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_get_pA_and_pC: find the part of A(:,k) to be operated on by this task
+//------------------------------------------------------------------------------
+
+static inline void GB_get_pA_and_pC
+(
+    // output
+    int64_t *pA_start,
+    int64_t *pA_end,
+    int64_t *pC,
+    // input
+    int tid,            // task id
+    int64_t k,          // current vector
+    int64_t kfirst,     // first vector for this slice
+    int64_t klast,      // last vector for this slice
+    const int64_t *restrict pstart_slice,   // start of each slice in A
+    const int64_t *restrict C_pstart_slice, // start of each slice in C
+    const int64_t *restrict Cp,             // vector pointers for C
+    const int64_t *restrict Ap              // vector pointers for A
+)
+{
+    if (k == kfirst)
+    { 
+        // First vector for task tid; may only be partially owned.
+        (*pA_start) = pstart_slice [tid] ;
+        (*pA_end  ) = GB_IMIN (Ap [kfirst+1], pstart_slice [tid+1]) ;
+        if (pC != NULL) (*pC) = C_pstart_slice [tid] ;
+    }
+    else if (k == klast)
+    { 
+        // Last vector for task tid; may only be partially owned.
+        (*pA_start) = Ap [k] ;
+        (*pA_end  ) = pstart_slice [tid+1] ;
+        if (pC != NULL) (*pC) = Cp [k] ;
+    }
+    else
+    { 
+        // task tid fully owns this vector A(:,k).
+        (*pA_start) = Ap [k] ;
+        (*pA_end  ) = Ap [k+1] ;
+        if (pC != NULL) (*pC) = Cp [k] ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_is_nonzero
+//------------------------------------------------------------------------------
+
+static inline bool GB_is_nonzero (const GB_void *value, int64_t size)
+{
+    for (int64_t i = 0 ; i < size ; i++)
+    {
+        if (value [i] != 0) return (true) ;
+    }
+    return (false) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1375,8 +1448,20 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GxB_SelectOp op,          // operator to select the entries
     const GrB_Matrix A,             // input matrix
-    const void *k,                  // optional input for select operator
+    const GrB_Vector Thunk_in,      // optional input for select operator
     const bool A_transpose,         // A matrix descriptor
+    GB_Context Context
+) ;
+
+GrB_Info GB_selector
+(
+    GrB_Matrix *Chandle,        // output matrix, NULL to modify A in-place
+    GB_Select_Opcode opcode,    // selector opcode
+    const GxB_SelectOp op,      // user operator
+    const bool flipij,          // if true, flip i and j for user operator
+    GrB_Matrix A,               // input matrix
+    int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
+    const GrB_Vector Thunk,     // optional input for select operator
     GB_Context Context
 ) ;
 
@@ -2382,12 +2467,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
                                     // if NULL use the "SECOND" function to
                                     // keep the most recent duplicate.
     const GB_Type_code scode,       // GB_Type_code of Swork or S_input array
-    GB_Context Context
-) ;
-
-GrB_Info GB_delete_zombies
-(
-    GrB_Matrix A,               // matrix to delete zombies from
     GB_Context Context
 ) ;
 

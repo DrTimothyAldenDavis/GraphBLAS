@@ -205,11 +205,79 @@ struct GB_SelectOp_opaque GB_opaque_GxB_NONZERO =
     GB_MAGIC, NULL, NULL, "nonzero", GB_NONZERO_opcode
 } ;
 
-GxB_SelectOp GxB_TRIL    = & GB_opaque_GxB_TRIL ;
-GxB_SelectOp GxB_TRIU    = & GB_opaque_GxB_TRIU ;
-GxB_SelectOp GxB_DIAG    = & GB_opaque_GxB_DIAG ;
-GxB_SelectOp GxB_OFFDIAG = & GB_opaque_GxB_OFFDIAG ;
-GxB_SelectOp GxB_NONZERO = & GB_opaque_GxB_NONZERO ;
+struct GB_SelectOp_opaque GB_opaque_GxB_EQ_ZERO =
+{
+    GB_MAGIC, NULL, NULL, "eq_zero", GB_EQ_ZERO_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_GT_ZERO =
+{
+    GB_MAGIC, NULL, NULL, "gt_zero", GB_GT_ZERO_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_GE_ZERO =
+{
+    GB_MAGIC, NULL, NULL, "ge_zero", GB_GE_ZERO_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_LT_ZERO =
+{
+    GB_MAGIC, NULL, NULL, "lt_zero", GB_LT_ZERO_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_LE_ZERO =
+{
+    GB_MAGIC, NULL, NULL, "le_zero", GB_LE_ZERO_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_NE_THUNK =
+{
+    GB_MAGIC, NULL, NULL, "ne_thunk", GB_NE_THUNK_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_EQ_THUNK =
+{
+    GB_MAGIC, NULL, NULL, "eq_thunk", GB_EQ_THUNK_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_GT_THUNK =
+{
+    GB_MAGIC, NULL, NULL, "gt_thunk", GB_GT_THUNK_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_GE_THUNK =
+{
+    GB_MAGIC, NULL, NULL, "ge_thunk", GB_GE_THUNK_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_LT_THUNK =
+{
+    GB_MAGIC, NULL, NULL, "lt_thunk", GB_LT_THUNK_opcode
+} ;
+
+struct GB_SelectOp_opaque GB_opaque_GxB_LE_THUNK =
+{
+    GB_MAGIC, NULL, NULL, "le_thunk", GB_LE_THUNK_opcode
+} ;
+
+GxB_SelectOp GxB_TRIL     = & GB_opaque_GxB_TRIL ;
+GxB_SelectOp GxB_TRIU     = & GB_opaque_GxB_TRIU ;
+GxB_SelectOp GxB_DIAG     = & GB_opaque_GxB_DIAG ;
+GxB_SelectOp GxB_OFFDIAG  = & GB_opaque_GxB_OFFDIAG ;
+
+GxB_SelectOp GxB_NONZERO  = & GB_opaque_GxB_NONZERO ;
+GxB_SelectOp GxB_EQ_ZERO  = & GB_opaque_GxB_EQ_ZERO ;
+GxB_SelectOp GxB_GT_ZERO  = & GB_opaque_GxB_GT_ZERO ;
+GxB_SelectOp GxB_GE_ZERO  = & GB_opaque_GxB_GE_ZERO ;
+GxB_SelectOp GxB_LT_ZERO  = & GB_opaque_GxB_LT_ZERO ;
+GxB_SelectOp GxB_LE_ZERO  = & GB_opaque_GxB_LE_ZERO ;
+
+GxB_SelectOp GxB_NE_THUNK = & GB_opaque_GxB_NE_THUNK ;
+GxB_SelectOp GxB_EQ_THUNK = & GB_opaque_GxB_EQ_THUNK ;
+GxB_SelectOp GxB_GT_THUNK = & GB_opaque_GxB_GT_THUNK ;
+GxB_SelectOp GxB_GE_THUNK = & GB_opaque_GxB_GE_THUNK ;
+GxB_SelectOp GxB_LT_THUNK = & GB_opaque_GxB_LT_THUNK ;
+GxB_SelectOp GxB_LE_THUNK = & GB_opaque_GxB_LE_THUNK ;
 
 //------------------------------------------------------------------------------
 // GrB_ALL

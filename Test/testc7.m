@@ -36,7 +36,6 @@ for m = [1 5 10 50]
                 cin = complex (0,0) ;
                 c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;
                 assert (abs (c1-c2) <= tol * (abs (c1) + 1)) ;
-                % assert (isequal (c1,c2)) ;
 
                 C1 = C ;
                 C1 (I,J) = C1 (I,J) + A ;
@@ -52,16 +51,16 @@ for m = [1 5 10 50]
         C = GB_mex_random (m, n, 100*(m*n), 1, seed) ; seed = seed + 1 ;
         M = GB_mex_random (m, n, 4*(ni+nj), 0, seed) ; seed = seed + 1 ;
         A = GB_mex_random (m, n, m+n, 1, seed) ;       seed = seed + 1 ;
+% save gunk C M A dclear cin C3
         [C3,c1] = GB_mex_subassign (C, M, [ ], A, [ ], [ ], dclear, 'plus') ;
         cin = complex (0,0) ;
         c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;
-        assert (isequal (c1,c2)) ;
+        assert (abs (c1-c2) <= tol * (abs (c1) + 1)) ;
 
         [C3,c1] = GB_mex_subassign (C, [ ], [ ], A, [ ], [ ], dclear, 'plus') ;
         cin = complex (0,0) ;
         c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;
-        assert (isequal (c1,c2)) ;
-
+        assert (abs (c1-c2) <= tol * (abs (c1) + 1)) ;
 
     end
 end

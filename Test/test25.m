@@ -4,7 +4,7 @@ function test25
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\nquick GxB_select tests\n') ;
+fprintf ('\ntest25: GxB_select tests\n') ;
 
 [~, ~, ~, classes, ~, select_ops] = GB_spec_opsall ;
 
@@ -14,7 +14,7 @@ m = 10 ;
 n = 6 ;
 dt = struct ('inp0', 'tran') ;
 
-for k1 = 11 % Was: 1:length(classes)
+for k1 = 1:length(classes)
     aclass = classes {k1} ;
     fprintf ('%s: ', aclass) ;
 
@@ -53,48 +53,57 @@ for k1 = 11 % Was: 1:length(classes)
     Mask = GB_random_mask (m, n, 0.5, M_is_csc, M_is_hyper) ;
     Mask.hyper_ratio = hm ;
 
+    fprintf ('.') ;
+
     for k2 = 1:length(select_ops)
         op = select_ops {k2} ;
         % fprintf ('%s ', op) ;
-        fprintf ('.') ;
 
         for k = -m:3:n % Was: [-m:n]
 
+% here = 1 ; save gunk Cin op A k here
             % no mask
             C1 = GB_spec_select (Cin, [], [], op, A, k, []) ;
             C2 = GB_mex_select  (Cin, [], [], op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
+% here = 2 ; save gunk Cin op A k here
             % no mask, with accum
             C1 = GB_spec_select (Cin, [], 'plus', op, A, k, []) ;
             C2 = GB_mex_select  (Cin, [], 'plus', op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
+% here = 3 ; save gunk Cin op A k here
             % with mask
             C1 = GB_spec_select (Cin, Mask, [], op, A, k, []) ;
             C2 = GB_mex_select  (Cin, Mask, [], op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
+% here = 4 ; save gunk Cin op A k here
             % with mask and accum
             C1 = GB_spec_select (Cin, Mask, 'plus', op, A, k, []) ;
             C2 = GB_mex_select  (Cin, Mask, 'plus', op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
+% here = 5 ; save gunk Cin op B dt k here
             % no mask, transpose
             C1 = GB_spec_select (Cin, [], [], op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, [], [], op, B, k, dt, 'test') ;
             GB_spec_compare (C1, C2) ;
 
+% here = 6 ; save gunk Cin op B dt k here
             % no mask, with accum, transpose
             C1 = GB_spec_select (Cin, [], 'plus', op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, [], 'plus', op, B, k, dt, 'test') ;
             GB_spec_compare (C1, C2) ;
 
+% here = 7 ; save gunk Cin op B dt k Mask here
             % with mask, transpose
             C1 = GB_spec_select (Cin, Mask, [], op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, Mask, [], op, B, k, dt, 'test') ;
             GB_spec_compare (C1, C2) ;
 
+% here = 8 ; save gunk Cin op B dt k Mask here
             % with mask and accum, transpose
             C1 = GB_spec_select (Cin, Mask, 'plus', op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, Mask, 'plus', op, B, k, dt, 'test') ;

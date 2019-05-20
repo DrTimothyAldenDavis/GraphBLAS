@@ -121,6 +121,26 @@
 "Linear Algebra\", edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
 
 //------------------------------------------------------------------------------
+// GXB_* macros: deprecated (use GxB_* instead)
+//------------------------------------------------------------------------------
+
+#define GXB_SUITESPARSE_GRAPHBLAS
+#define GXB_VERSION(major,minor,sub)    GxB_VERSION(major,minor,sub)
+#define GXB_DATE                        GxB_DATE 
+#define GXB_IMPLEMENTATION_MAJOR        GxB_IMPLEMENTATION_MAJOR 
+#define GXB_IMPLEMENTATION_MINOR        GxB_IMPLEMENTATION_MINOR 
+#define GXB_IMPLEMENTATION_SUB          GxB_IMPLEMENTATION_SUB   
+#define GXB_IMPLEMENTATION              GxB_IMPLEMENTATION
+#define GXB_ABOUT                       GxB_ABOUT
+#define GXB_LICENSE                     GxB_LICENSE
+#define GXB_SPEC_DATE                   GxB_SPEC_DATE
+#define GXB_MAJOR                       GxB_MAJOR
+#define GXB_MINOR                       GxB_MINOR
+#define GXB_SUB                         GxB_SUB
+#define GXB                             GxB_VERSION(GxB_MAJOR,GxB_MINOR,GxB_SUB)
+#define GXB_SPEC                        GxB_SPEC
+
+//------------------------------------------------------------------------------
 // include files required by GraphBLAS
 //------------------------------------------------------------------------------
 
@@ -304,6 +324,9 @@ GrB_Info GrB_init           // start up GraphBLAS
 // functions are only called from within an OpenMP critical section, to provide
 // thread safety.
 
+// SuiteSparse:GraphBLAS V3.0 added user_malloc_is_thread_safe argument to
+// GxB_init.  As a result, this function is not backward compatible with V2.x.
+
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
     const GrB_Mode mode,    // blocking or non-blocking mode
@@ -313,7 +336,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *),
-    bool user_malloc_is_thread_safe
+    bool user_malloc_is_thread_safe     // ADDED thread_safe arg in V3.0
 ) ;
 
 // In non-blocking mode, GraphBLAS operations need not complete until their
@@ -629,7 +652,7 @@ extern GrB_BinaryOp
     GrB_PLUS_FP64,      GrB_MINUS_FP64,     GrB_TIMES_FP64,     GrB_DIV_FP64,
 
     // z = y-x          z = y/x
-    GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,
+    GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,      // ADDED RMINUS, RDIV in V3.0
     GxB_RMINUS_INT8,    GxB_RDIV_INT8,
     GxB_RMINUS_UINT8,   GxB_RDIV_UINT8,
     GxB_RMINUS_INT16,   GxB_RDIV_INT16,
@@ -877,10 +900,23 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 // operator may be any of the 11 built-in types, or any user-defined type.  It
 // may also be GrB_NULL, to indicate that the function is type-generic and does
 // not depend at all on the value aij.  In this case, x is passed to f as a
-// NULL pointer.  The thunk parameter is a const void * pointer to a
-// user-defined object that is passed to GxB_select (see for example the
-// 'thunk' argument to the qsort_r library function in the GNU C Library).  The
-// 'thunk' is not used by GxB_select except to pass it to the function f.
+// NULL pointer.
+
+// The optional Thunk parameter to GxB_select is a GrB_Vector of length 1.  If
+// present, it must contain exactly one entry.  For built-in select operators
+// (TRIL, TRIU, DIAG, and OFFDIAG), Thunk must have any built-in type, and
+// thunk = (int64_t) Thunk(0) is used to specific the diagonal for these
+// operators.  Thunk may be NULL, in which case thunk is zero.  The value of
+// Thunk (if present) is not modified by any built-in select operator.
+
+// For user-defined select operators, Thunk is not typecasted at all.  The
+// value of Thunk parameter is passed to the user-defined select operator as a
+// (const void *) pointer, thunk.  The user-defined select operator must treat
+// the thunk scalar as a read-only value.  Modifying it is not thread-safe, and
+// results are undefined if it is modified.  The purpose of the thunk is to
+// provide an additional optional input to the user-defined select operator,
+// similar to the use of the thunk parameter of the qsort_s function in the
+// ANSI C11 specification.
 
 // GxB_SelectOp:  a function z=f(i,j,m,n,x,thunk) for the GxB_Select operation.
 // The function f must have the signature:
@@ -889,32 +925,62 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 //              GrB_Index nrows, GrB_Index ncols,
 //              const void *x, const void *thunk) ;
 
+// Note that in Version 2.x of SuiteSparse:GraphBLAS, Thunk was passed to
+// GxB_select as a const void * pointer.  However, this design was incompatible
+// with non-blocking mode, when the GxB_select is computed in parallel.  Thus,
+// in Version 3.0 and following of SuiteSparse:GraphBLAS, Thunk becomes a
+// GrB_Vector of length 1, with a single entry.  The function signature of the
+// user-defined select operator, f, remains the same.
+
+// ADDED in V3.0:  thunk changed from (const void *) to a GrB_Vector.
+// This change is not backward compatible with SuiteSparse:GraphBLAS V2.x.
+
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 
 //------------------------------------------------------------------------------
 // built-in select operators
 //------------------------------------------------------------------------------
 
-// GxB_select (C, Mask, accum, op, A, thunk, desc) always returns a matrix C of
+// GxB_select (C, Mask, accum, op, A, Thunk, desc) always returns a matrix C of
 // the same size as A (or A' if GrB_TRAN is in the descriptor).
 
 extern GxB_SelectOp
+
     GxB_TRIL,       // C=tril(A,thunk):   returns true if ((j-i) <= thunk)
     GxB_TRIU,       // C=triu(A,thunk):   returns true if ((j-i) >= thunk)
     GxB_DIAG,       // C=diag(A,thunk):   returns true if ((j-i) == thunk)
     GxB_OFFDIAG,    // C=A-diag(A,thunk): returns true if ((j-i) != thunk)
-    GxB_NONZERO ;   // C=A(A~=0):     returns true if aij is nonzero,
-                    //                for any built-in or user-defined type
 
-// For GxB_TRIL, GxB_TRIU, GxB_DIAG, and GxB_OFFDIAG, the parameter thunk is a
-// const void * pointer to a single scalar value of type int64_t.  These select
-// operators do not depend on the values of A, but just their position.
+    GxB_NONZERO,    // C=A(A ~= 0)
+    GxB_EQ_ZERO,    // C=A(A == 0)
+    GxB_GT_ZERO,    // C=A(A >  0)
+    GxB_GE_ZERO,    // C=A(A >= 0)
+    GxB_LT_ZERO,    // C=A(A <  0)
+    GxB_LE_ZERO,    // C=A(A <= 0)
 
-// For GxB_NONZERO, the result depends only on the value of A(i,j), and the
-// thunk parameter may be GrB_NULL.  It works on all built-in types and all
-// user-defined types.  When applied to user-defined types the operator it
-// returns true if all bits in the user-defined value are zero, which can be
-// tested regardless of how the user-defined type is defined.
+    GxB_NE_THUNK,   // C=A(A ~= thunk)
+    GxB_EQ_THUNK,   // C=A(A == thunk)
+    GxB_GT_THUNK,   // C=A(A >  thunk)
+    GxB_GE_THUNK,   // C=A(A >= thunk)
+    GxB_LT_THUNK,   // C=A(A <  thunk)
+    GxB_LE_THUNK ;  // C=A(A <= thunk)
+
+// For GxB_TRIL, GxB_TRIU, GxB_DIAG, and GxB_OFFDIAG, the parameter Thunk is a
+// GrB_Vector of length 1 of any built-in type.  If non-NULL, it must contain a
+// single entry thunk = (int64_t) Thunk (0).  The Thunk parameter to GxB_select
+// may be NULL, in which case thunk is zero.  These select operators do not
+// depend on the values of A, but just their position, and they work on
+// matrices of any type.
+
+// For GxB_*ZERO, the result depends only on the value of A(i,j).  The Thunk
+// parameter to GxB_select is ignored and may be GrB_NULL.
+
+// For GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO, GxB_EQ_ZERO,
+// GxB_NE_THUNK, and GxB_EQ_THUNK, work on all built-in types and all
+// user-defined types.
+
+// GxB_GT_*, GxB_GE_*, GxB_LT_*, and GxB_LE_* only work on the 11 built-in
+// types.  They cannot be used for user-defined types.
 
 //------------------------------------------------------------------------------
 // select operators
@@ -932,7 +998,7 @@ typedef bool (*GxB_select_function)      // return true if A(i,j) is kept
     GrB_Index nrows,            // number of rows of A
     GrB_Index ncols,            // number of columns of A
     const void *x,              // value of A(i,j)
-    const void *k               // optional input for select function
+    const void *thunk           // optional input for select function
 ) ;
 
 #undef GxB_SelectOp_new
@@ -2814,9 +2880,11 @@ typedef enum
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
     GxB_AxB_DOT       = 1003,   // dot product
+// ADDED DOT2 in V3.0 (TODO, revise it?):
     GxB_AxB_DOT2      = 1004,   // dot product
 //  GxB_AxB_HASH      = 1005,   // hash-based saxpy method (FUTURE)
 
+// ADDED in V3.0 (TODO, revise these):
     // for GxB_AxB_SLICE only:
     GxB_SLICE_ATROW       = 2001,   // each slice of A' has same # of rows
     GxB_SLICE_ATNZ        = 2002,   // each slice of A' has same # of nonzeros
@@ -2937,6 +3005,8 @@ typedef enum            // for global options or matrix options
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
                         // If <= GxB_DEFAULT, then GraphBLAS selects the number
                         // of threads automatically.
+
+// ADDED in V3.0: GxB_IS_HYPER, GxB_LIBRARY_*, GxB_API_* options:
 
     // GxB_Matrix_Option_get only:
     GxB_IS_HYPER = 6,   // query a matrix to see if it hypersparse or not
@@ -4688,7 +4758,7 @@ GrB_Info GxB_Vector_select          // w<mask> = accum (w, op(u,k))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const void *thunk,              // optional input for the select operator
+    const GrB_Vector Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -4699,7 +4769,7 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const void *thunk,              // optional input for the select operator
+    const GrB_Vector Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -4713,14 +4783,14 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 // GrB_Vector_select (w,mask,acc,op,u,k,d)  // w<mask> = accum (w, op(u,k))
 // GrB_Matrix_select (C,Mask,acc,op,A,k,d)  // C<Mask> = accum (C, op(A,k))
 
-#define GxB_select(C,Mask,accum,op,A,k,desc)    \
-    _Generic                                    \
-    (                                           \
-        (C),                                    \
-        GrB_Vector   : GxB_Vector_select ,      \
-        GrB_Matrix   : GxB_Matrix_select        \
-    )                                           \
-    (C, Mask, accum, op, A, k, desc)
+#define GxB_select(C,Mask,accum,op,A,Thunk,desc)    \
+    _Generic                                        \
+    (                                               \
+        (C),                                        \
+        GrB_Vector   : GxB_Vector_select ,          \
+        GrB_Matrix   : GxB_Matrix_select            \
+    )                                               \
+    (C, Mask, accum, op, A, Thunk, desc)
 
 //------------------------------------------------------------------------------
 // matrix and vector reduction
@@ -5302,6 +5372,8 @@ GxB_MIN_MINUS_INT64    , GxB_MAX_MINUS_INT64    , GxB_PLUS_MINUS_INT64   , GxB_T
 GxB_MIN_MINUS_UINT64   , GxB_MAX_MINUS_UINT64   , GxB_PLUS_MINUS_UINT64  , GxB_TIMES_MINUS_UINT64 ,
 GxB_MIN_MINUS_FP32     , GxB_MAX_MINUS_FP32     , GxB_PLUS_MINUS_FP32    , GxB_TIMES_MINUS_FP32   ,
 GxB_MIN_MINUS_FP64     , GxB_MAX_MINUS_FP64     , GxB_PLUS_MINUS_FP64    , GxB_TIMES_MINUS_FP64   ,
+
+// ADDED in V3.0: semirings with RDIV and RMINUS:
 
 // semirings with multiply op: z = RMINUS (x,y), all types x,y,z the same:
 GxB_MIN_RMINUS_INT8    , GxB_MAX_RMINUS_INT8    , GxB_PLUS_RMINUS_INT8   , GxB_TIMES_RMINUS_INT8   ,

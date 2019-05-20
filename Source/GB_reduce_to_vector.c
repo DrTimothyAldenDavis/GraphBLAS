@@ -176,11 +176,12 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     // TODO find a good chunk size
     // #define GB_CHUNK (1024*1024)
-//    #define GB_CHUNK (4*1024)
+    // #define GB_CHUNK (4*1024)
     #define GB_CHUNK (2)
     GB_GET_NTHREADS (nthreads, Context) ;
     // TODO reduce nthreads for small problem (work: about O(anz))
 
+    ASSERT (GB_CHUNK > 0) ;
     nthreads = GB_IMIN (anz / GB_CHUNK, nthreads) ;
     nthreads = GB_IMAX (nthreads, 1) ;
 
@@ -261,21 +262,18 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // slice the entries of A for the numeric phase
         //----------------------------------------------------------------------
 
-        // TODO consider creating ntasks > nthreads.  Perhaps ntasks = 8 *
-        // nthreads or so, for better load-balancing.  A slice whose entries
-        // are all in a single vector will be faster than a slice with each
-        // entry in a unique vector.  It might be 4x or 8x faster, if SIMD
-        // vectorization can be exploited.
-
-        // Thread tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1
+        // Task tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1
         // and vectors kfirst_slice [tid] to klast_slice [tid].  The first and
         // last vectors may be shared with prior slices and subsequent slices.
 
-        int64_t pstart_slice [nthreads+1] ;
-        int64_t kfirst_slice [nthreads] ;
-        int64_t klast_slice  [nthreads] ;
+        int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
+        ntasks = GB_IMIN (ntasks, anz) ;
+        ntasks = GB_IMAX (ntasks, 1) ;
+        int64_t pstart_slice [ntasks+1] ;
+        int64_t kfirst_slice [ntasks] ;
+        int64_t klast_slice  [ntasks] ;
 
-        GB_ek_slice (pstart_slice, kfirst_slice, klast_slice, A, nthreads) ;
+        GB_ek_slice (pstart_slice, kfirst_slice, klast_slice, A, ntasks) ;
 
         //----------------------------------------------------------------------
         // numeric phase: launch the switch factory
@@ -288,8 +286,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             #define GB_red(opname,aname) GB_red_eachvec_ ## opname ## aname
             #define GB_RED_WORKER(opname,aname,atype)                       \
             {                                                               \
-                GB_red (opname, aname) ((atype *) Tx, A,                    \
-                    kfirst_slice, klast_slice, pstart_slice, nthreads) ;    \
+                GB_red (opname, aname) ((atype *) Tx, A, kfirst_slice,      \
+                    klast_slice, pstart_slice, ntasks, nthreads) ;          \
                 done = true ;                                               \
             }                                                               \
             break ;
@@ -316,8 +314,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             #define GB_CTYPE GB_void
 
             // workspace for each thread
-            #define GB_REDUCTION_WORKSPACE(W, nthreads)             \
-                GB_void W [nthreads*zsize]
+            #define GB_REDUCTION_WORKSPACE(W, ntasks)               \
+                GB_void W [ntasks*zsize]
 
             // ztype s = (ztype) Ax [p], with typecast
             #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)                 \
@@ -354,7 +352,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                 }
 
             #include "GB_reduce_each_vector.c"
-
         }
 
         //----------------------------------------------------------------------
@@ -415,7 +412,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             GB_OK (info) ;
 
             // GB_build treats Ai and Ax as read-only; they must not be modified
-            info = GB_build
+            GB_OK (GB_build
             (
                 T,                  // construct result in the T vector
                 (GrB_Index *) Ai,   // indices inside the vector
@@ -427,14 +424,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                 false,              // the input is a vector
                 false,              // indices do not need to be checked
                 Context
-            ) ;
+            )) ;
 
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                GB_MATRIX_FREE (&T) ;
-                return (info) ;
-            }
             ASSERT (T->nvec_nonempty == GB_nvec_nonempty (T, NULL)) ;
 
         }
@@ -446,10 +437,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             //------------------------------------------------------------------
 
             // Determine number of threads to use for constructing the buckets.
-            // Each thread requires O(n) Sauna workspace, so this method does
-            // not scale well when there are many threads compared to anz.
-            // Total workspace is n*nth, so limit the # of threads used so that
-            // at most anz workspace is used.
+            // Each thread requires O(n) workspace, so this method does not
+            // scale well when there are many threads compared to anz.  Total
+            // workspace is O(n*nth), so limit the # of threads used so that at
+            // most anz workspace is used.  Each thread takes a single task.
 
             int nth = anz / n ;
             nth = GB_IMIN (nth, nthreads) ;
@@ -466,73 +457,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             GB_eslice (pstart_slice, anz, nth) ;
 
             //------------------------------------------------------------------
-            // allocate Sauna workspace for each thread
-            //------------------------------------------------------------------
-
-            int Sauna_ids [nth] ;
-            GB_Sauna Saunas [nth] ;
-            GB_OK (GB_Sauna_acquire (nth, Sauna_ids, NULL, Context)) ;
-
-            #undef  GB_FREE_ALL
-            #define GB_FREE_ALL                                             \
-            {                                                               \
-                GB_MATRIX_FREE (&T) ;                                       \
-                /* free and release all Sauna workspaces */                 \
-                for (int tid = 0 ; tid < nth ; tid++)                       \
-                {                                                           \
-                    GB_Sauna_free (Sauna_ids [tid]) ;                       \
-                }                                                           \
-                GrB_Info info2 = GB_Sauna_release (nthreads, Sauna_ids) ;   \
-                info = GB_IMAX (info, info2) ;                              \
-            }
-
-            bool ok = true ;
-
-            #pragma omp parallel for num_threads(nth) schedule(static) \
-                reduction(&:ok)
-            for (int tid = 0 ; tid < nth ; tid++)
-            {
-                int Sauna_id = Sauna_ids [tid] ;
-                GB_Sauna Sauna = GB_Global_Saunas_get (Sauna_id) ;
-                if (Sauna == NULL || Sauna->Sauna_n < n
-                    || Sauna->Sauna_size < zsize)
-                { 
-                    // get a new Sauna: the Sauna either does not exist,
-                    // or is too small
-                    GB_Sauna_free (Sauna_id) ;
-                    GrB_Info my_info = GB_Sauna_alloc (Sauna_id, n, zsize) ;
-                    ok = ok && (my_info == GrB_SUCCESS) ;
-                    Sauna = GB_Global_Saunas_get (Sauna_id) ;
-                }
-                Saunas [tid] = Sauna ;
-            }
-
-            if (!ok)
-            {
-                // out of memory
-                GB_FREE_ALL ;
-                return (GB_OUT_OF_MEMORY) ;
-            }
-
-            //------------------------------------------------------------------
-            // set hiwater of all Saunas to be the same
-            //------------------------------------------------------------------
-
-            int64_t hiwater = 0 ;
-            for (int tid = 0 ; tid < nth ; tid++)
-            {
-                GB_Sauna Sauna = Saunas [tid] ;
-                int64_t my_hiwater = GB_Sauna_reset (Sauna, 1, 0) ;
-                hiwater = GB_IMAX (hiwater, my_hiwater) ;
-            }
-
-            for (int tid = 0 ; tid < nth ; tid++)
-            {
-                GB_Sauna Sauna = Saunas [tid] ;
-                Sauna->Sauna_hiwater = hiwater ;
-            }
-
-            //------------------------------------------------------------------
             // sum across each index: T(i) = reduce (A (i,:))
             //------------------------------------------------------------------
 
@@ -543,8 +467,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             #undef  GB_RED_WORKER
             #define GB_RED_WORKER(opname,aname,atype)                       \
             {                                                               \
-                info = GB_red (opname, aname) (&T, ttype, Saunas, hiwater,  \
-                    A, pstart_slice, nth, nthreads, Context) ;              \
+                info = GB_red (opname, aname) (&T, ttype, A, pstart_slice,  \
+                    nth, nthreads, Context) ;                               \
                 done = true ;                                               \
             }                                                               \
             break ;
@@ -577,12 +501,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             {
                 #include "GB_reduce_each_index.c"
             }
-
-            //------------------------------------------------------------------
-            // release all Saunas
-            //------------------------------------------------------------------
-
-            GB_OK (GB_Sauna_release (nth, Sauna_ids)) ;
         }
         ASSERT_OK (GB_check (T, "T output for T = reduce_each_index (A)", GB0));
     }

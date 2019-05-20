@@ -104,9 +104,22 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
-\item Version 2.4 (TODO 2019):
-The \verb'RDIV' and \verb'RMINUS' operators are added, which are
-defined as $f(x,y)=y/x$ and $f(x,y)=y-x$, respectively.
+\item Version 3.0 (TODO 2019):  The version number is increased to 3.0, since
+this version is not backward compatible with V2.x.  The \verb'GxB_select'
+operation changes; the \verb'Thunk' parameter was formerly a
+\verb'const void *' pointer, and is now a \verb'GrB_Vector' of length 1.  A new
+parameter is added to \verb'GxB_init', to specify whether or not the
+user-provided memory management functions are thread safe.
+
+The remaining changes add new features, and are upward compatible with V2.x.
+The major change is the addition of OpenMP parallelism.  This addition has no
+effect on the API, except that round-off errors can differ with the number of
+threads used, for floating-point types.  \verb'GxB_set' can optionally define
+the number of threads to use (the default is \verb'omp_get_max_threads').  The
+number of threads can also defined globally, and/or in the
+\verb'GrB_Descriptor'.  The \verb'RDIV' and \verb'RMINUS' operators are added,
+which are defined as $f(x,y)=y/x$ and $f(x,y)=y-x$, respectively.  Additional
+options are added to \verb'GxB_get'.
 
 \item Version 2.3 (Feb 2019) improves the performance of many GraphBLAS
 operations, including an early-exit for monoids.  These changes have a
@@ -2076,9 +2089,6 @@ It does nothing at all if passed a built-in binary operator.
 %===============================================================================
 \label{selectop}
 
-{\bf TODO: need to change "thunk" parameter for Version 3.0.  It is not safe to
-use in non-blocking mode.  Consider adding a \verb'GxB_Scalar' object.}
-
 A select operator is a scalar function of the form
 $z=f(i,j,m,n,a_{ij},\mbox{thunk})$ that is applied to the entries $a_{ij}$ of
 an $m$-by-$n$ matrix.  The domain (type) of $z$ is always boolean.  The domain
@@ -2103,11 +2113,9 @@ bool f                      // returns true if A(i,j) is kept
     const void *thunk       // user-defined auxiliary data
 ) ; \end{verbatim}}
 
-There are five built-in select operators listed in the table below.  For the
-first four operators, \verb'thunk' is a pointer to a single scalar of type
-\verb'int64_t', which holds the value of \verb'k'.  Each operator can be used
-on any type, including user-defined types.  User-defined select operators can
-also be created.
+Operators can be used on any type, including user-defined types, except that
+the comparisons \verb'GT', \verb'GE', \verb'LT', and \verb'LE' can only be used
+with built-in types.  User-defined select operators can also be created.
 
 \vspace{0.2in}
 {\footnotesize
@@ -2120,7 +2128,21 @@ GraphBLAS name          & MATLAB            & description \\
 \verb'GxB_TRIU'         & \verb'C=triu(A,k)'   & true for \verb'A(i,j)' if \verb'(j-i) >= k' \\
 \verb'GxB_DIAG'         & \verb'C=diag(A,k)'   & true for \verb'A(i,j)' if \verb'(j-i) == k' \\
 \verb'GxB_OFFDIAG'      & \verb'C=A-diag(A,k)' & true for \verb'A(i,j)' if \verb'(j-i) != k' \\
+%
 \verb'GxB_NONZERO'      & \verb'C=A(A~=0)'     & true if \verb'A(i,j)' is nonzero\\
+\verb'GxB_EQ_ZERO'      & \verb'C=A(A==0)'     & true if \verb'A(i,j)' is zero\\
+\verb'GxB_GT_ZERO'      & \verb'C=A(A>0)'      & true if \verb'A(i,j)' is greater than zero \\
+\verb'GxB_GE_ZERO'      & \verb'C=A(A>=0)'     & true if \verb'A(i,j)' is greater than or equal to zero \\
+\verb'GxB_LT_ZERO'      & \verb'C=A(A<0)'      & true if \verb'A(i,j)' is less than zero \\
+\verb'GxB_LE_ZERO'      & \verb'C=A(A<=0)'     & true if \verb'A(i,j)' is less than or equal to zero \\
+%
+\verb'GxB_NE_THUNK'     & \verb'C=A(A~=k)'     & true if \verb'A(i,j)' is not equal to \verb'k'\\
+\verb'GxB_EQ_THUNK'     & \verb'C=A(A==k)'     & true if \verb'A(i,j)' is equal to \verb'k'\\
+\verb'GxB_GT_THUNK'     & \verb'C=A(A>k)'      & true if \verb'A(i,j)' is greater than \verb'k' \\
+\verb'GxB_GE_THUNK'     & \verb'C=A(A>=k)'     & true if \verb'A(i,j)' is greater than or equal to \verb'k' \\
+\verb'GxB_LT_THUNK'     & \verb'C=A(A<k)'      & true if \verb'A(i,j)' is less than \verb'k' \\
+\verb'GxB_LE_THUNK'     & \verb'C=A(A<=k)'     & true if \verb'A(i,j)' is less than or equal to \verb'k' \\
+%
 \hline
 \end{tabular}
 }
@@ -2130,18 +2152,6 @@ GraphBLAS name          & MATLAB            & description \\
 {\bf SPEC:} \verb'GxB_SelectOp' and the table above
 are extensions to the spec.
 \end{spec}
-
-The built-in \verb'GxB_NONZERO' select operator is unique in that it is a
-function of the value of the entry $a_{ij}$, but it is still type-generic.  It
-does this by simply returning false if all bits in the value are zero, or true
-otherwise.  This gives the proper result for any built-in type, since integer
-and floating-point zeros are represented this way.  For user-defined types, the
-function returns the same thing.  This action is well-defined but its
-suitability for any particular user-defined type must be determined according
-to how the user application defines the type, and what a value with all bits
-zero means for this type.  Whatever it means, if the bits of a value with a
-user-defined type are all zero, the function returns false, and if any bit is
-one, the \verb'GxB_NONZERO' function returns true.
 
 The following methods operate on the \verb'GxB_SelectOp' object:
 
@@ -2187,18 +2197,14 @@ not appear in the output.
 The type \verb'xtype' is the GraphBLAS type of the input $x$ of the
 user-defined function $z=f(i,j,m,n,x,\mbox{thunk})$.  The type may be built-in
 or user-defined, or it may even be \verb'GrB_NULL'.  If the \verb'xtype' is
-\verb'GrB_NULL', then the \verb'selectop' is type-generic.  The
-\verb'GxB_select' operation does not pass the value of $x=a_{ij}$ to the select
-function, but passes \verb'GrB_NULL' for the input \verb'x' to the user-defined
-select \verb'function'.
+\verb'GrB_NULL', then the \verb'selectop' is type-generic.
+All built-in select operators are type-generic.
 
 For example, to delete all entries in a matrix equal to the additive identity
-of a monoid, create a user-defined \verb'GxB_SelectOp' with a function that
-compares its input value \verb'x' with the value of the identity, passed in to
-it via the \verb'thunk' parameter of type \verb'void *'.  The user-defined
-function should return \verb'false' if \verb'x' is equal the value
-\verb'(*thunk)', and \verb'true' otherwise.
+of a monoid, use the \verb'GxB_NE_THUNK' select operator, and pass in
+the identity value as the \verb'Thunk' parameter to \verb'GxB_select'.
 
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_SelectOp\_xtype:} return the type of $x$} 
 %-------------------------------------------------------------------------------
@@ -2220,7 +2226,8 @@ GrB_Info GxB_SelectOp_xtype     // return the type of x
 which is the type of $x$ in the function $z=f(i,j,m,n,x,\mbox{thunk})$.  If the
 select operator is type-generic, \verb'xtype' is returned as \verb'GrB_NULL'.
 This is not an error condition, but simply indicates that the
-\verb'GxB_SelectOp' is type-generic.
+\verb'GxB_SelectOp' is type-generic.  All built-in select operators
+are type-generic.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_SelectOp\_free:} free a user-defined select operator}
@@ -8222,7 +8229,7 @@ GrB_Info GxB_select                 // w<mask> = accum (w, op(u,k))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const void *k,                  // optional input for the select operator
+    const GrB_Vector Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -8258,7 +8265,7 @@ GrB_Info GxB_select                 // C<Mask> = accum (C, op(A,k)) or op(A',k)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const void *k,                  // optional input for the select operator
+    const GrB_Vector Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -8275,36 +8282,51 @@ Section~\ref{accummask}.
 The matrix \verb'T' has the same size and type as \verb'A' (or the transpose of
 \verb'A' if the input is transposed via the descriptor).  The entries of
 \verb'T' are a subset of those of \verb'A'.  Each entry \verb'A(i,j)' of
-\verb'A' is passed to the \verb'op', as $z=f(i,j,m,n,a_{ij},k)$, where \verb'A'
+\verb'A' is passed to the \verb'op', as $z=f(i,j,m,n,a_{ij},\mbox{thunk})$, where \verb'A'
 is $m$-by-$n$.  If \verb'A' is transposed first then the operator is applied to
 entries in the transposed matrix, \verb"A'".  If $z$ is returned as true, then
 the entry is copied into \verb'T', unchanged.  If it returns false, the entry
 does not appear in \verb'T'.
 
-For user-defined select operators, the argument \verb'k' is passed to the
-operator unchanged.  For built-in operators, \verb'k' is a pointer to an
-\verb'int64_t' scalar that refers to the \verb'k'th diagonal of the matrix.
-The value \verb'k=0' specifies the main diagonal of the matrix, \verb'k=1' is
-the +1 diagonal (the entries just above the main diagonal), \verb'k=-1' is the
--1 diagonal, and so on.  Note that \verb'k' must be passed as a pointer to
-\verb'int64_t', not merely as an integer.  The parameter \verb'k' is not used
-by \verb'GxB_NONZERO' and may be passed as \verb'GrB_NULL'.
+For user-defined select operators, if \verb'Thunk' is not \verb'NULL',
+then it must be a vector of length 1, with exactly one entry.  The value
+of this entry is passed to the user-defined select operator, with no typecasting.
+
+For the \verb'GxB_TRIL', \verb'GxB_TRIU', \verb'GxB_DIAG', and
+\verb'GxB_OFFDIAG', the \verb'Thunk' parameter may be \verb'NULL', in which
+case they operate with the value of \verb'k=0', the main diagonal.  Otherwise,
+\verb'Thunk' must be a vector of length 1, with exactly one entry.  It can be
+any built-in type.  The value of this entry is typecasted:
+\verb'k = (int64_t) Thunk (0)'.  The value \verb'k=0' specifies the main
+diagonal of the matrix, \verb'k=1' is the +1 diagonal (the entries just above
+the main diagonal), \verb'k=-1' is the -1 diagonal, and so on.
+
+For the \verb'GxB_*ZERO' select operators, \verb'Thunk' is ignored, and may be
+\verb'NULL'.  For the \verb'GxB_*THUNK' select operators, \verb'Thunk' must be
+a vector of length 1 with exactly one entry.  For built-in types, the value of
+\verb'Thunk(0)' is typecasted to the same type as the \verb'A' matrix.  For
+user-defined types, \verb'Thunk' is passed to the select operator without
+typecasting.
 
 The action of \verb'GxB_select' with the built-in select operators is described
 in the table below.  The MATLAB analogs are precise for \verb'tril' and
 \verb'triu', but shorthand for the other operations.  The MATLAB \verb'diag'
 function returns a column with the diagonal, if \verb'A' is a matrix, whereas
-the matrix \verb'T' in \verb'GxB_select' always has same size as \verb'A' (or
-its transpose if the \verb'GrB_INP0' is set to \verb'GrB_TRAN').  In the MATLAB
-analog column, \verb'diag' is as if it operates like \verb'GxB_select', where
-\verb'T' is a matrix.
+the matrix \verb'T' in \verb'GxB_select' always has the same size as \verb'A'
+(or its transpose if the \verb'GrB_INP0' is set to \verb'GrB_TRAN').  In the
+MATLAB analog column, \verb'diag' is as if it operates like \verb'GxB_select',
+where \verb'T' is a matrix.
+
+The comparators \verb'GxB_GT_*' \verb'GxB_GE_*' \verb'GxB_LT_*', and
+\verb'GxB_LE_*' only work for built-in types.  All other built-in select
+operators can be used for any type, both built-in and any user-defined type.
 
 \vspace{0.2in}
 {\small
 \begin{tabular}{llp{3in}}
 \hline
 GraphBLAS               & MATLAB            & \\
-name                   & analog            & \\
+name                    & analog            & \\
 \hline
 \verb'GxB_TRIL'         & \verb'T=tril(A,k)'   &
     Entries in \verb'T' are the entries on and below the \verb'k'th diagonal of \verb'A'. \\
@@ -8314,8 +8336,32 @@ name                   & analog            & \\
     Entries in \verb'T' are the entries on the \verb'k'th diagonal of \verb'A'. \\
 \verb'GxB_OFFDIAG'      & \verb'T=A-diag(A,k)' & 
     Entries in \verb'T' are all entries not on the \verb'k'th diagonal of \verb'A'. \\
+\hline
 \verb'GxB_NONZERO'      & \verb'T=A(A~=0)'     & 
     Entries in \verb'T' are all entries in \verb'A' that have nonzero value. \\
+\verb'GxB_EQ_ZERO'      & \verb'T=A(A==0)'     & 
+    Entries in \verb'T' are all entries in \verb'A' that are equal to zero. \\
+\verb'GxB_GT_ZERO'      & \verb'T=A(A>0)'      & 
+    Entries in \verb'T' are all entries in \verb'A' that are greater than zero. \\
+\verb'GxB_GE_ZERO'      & \verb'T=A(A<=0)'     & 
+    Entries in \verb'T' are all entries in \verb'A' that are greater than or equal to zero. \\
+\verb'GxB_LT_ZERO'      & \verb'T=A(A<0)'      & 
+    Entries in \verb'T' are all entries in \verb'A' that are less than zero. \\
+\verb'GxB_LE_ZERO'      & \verb'T=A(A<=0)'     & 
+    Entries in \verb'T' are all entries in \verb'A' that are less than or equal to zero. \\
+\hline
+\verb'GxB_NE_THUNK'     & \verb'T=A(A~=k)'     & 
+    Entries in \verb'T' are all entries in \verb'A' that are not equal to \verb'k'. \\
+\verb'GxB_EQ_THUNK'     & \verb'T=A(A==k)'     & 
+    Entries in \verb'T' are all entries in \verb'A' that are equal to \verb'k'. \\
+\verb'GxB_GT_THUNK'     & \verb'T=A(A>k)'      & 
+    Entries in \verb'T' are all entries in \verb'A' that are greater than \verb'k'. \\
+\verb'GxB_GE_THUNK'     & \verb'T=A(A<=k)'     & 
+    Entries in \verb'T' are all entries in \verb'A' that are greater than or equal to \verb'k'. \\
+\verb'GxB_LT_THUNK'     & \verb'T=A(A<k)'      & 
+    Entries in \verb'T' are all entries in \verb'A' that are less than \verb'k'. \\
+\verb'GxB_LE_THUNK'     & \verb'T=A(A<=k)'     & 
+    Entries in \verb'T' are all entries in \verb'A' that are less than or equal to \verb'k'. \\
 \hline
 \end{tabular}
 }

@@ -37,6 +37,7 @@
 
 // macro used by OK(...) to free workspace if an error occurs
 #define FREE_ALL                \
+    GrB_free (&Thunk) ;         \
     GrB_free (&C) ;             \
     GrB_free (&A) ;             \
     GrB_free (&L) ;             \
@@ -47,6 +48,7 @@
 int main (int argc, char **argv)
 {
     GrB_Matrix C = NULL, A = NULL, L = NULL, U = NULL ;
+    GrB_Vector Thunk = NULL ;
     GrB_Info info ;
     double tic [2], r1, r2 ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
@@ -76,11 +78,13 @@ GxB_set (GxB_NTHREADS, 1) ;
     printf ("\ntotal time to read A matrix: %14.6f sec\n", t_read) ;
     GrB_free (&C) ;
 
+    OK (GrB_Vector_new (&Thunk, GrB_INT64, 1)) ;
+
     // U = triu (A,1)
     simple_tic (tic) ;
-    GrB_Index k = 1 ;
+    OK (GrB_Vector_setElement (Thunk, (int64_t) 1, 0)) ;
     OK (GrB_Matrix_new (&U, GrB_UINT32, n, n)) ;
-    OK (GxB_select (U, NULL, NULL, GxB_TRIU, A, &k, NULL)) ;
+    OK (GxB_select (U, NULL, NULL, GxB_TRIU, A, Thunk, NULL)) ;
     OK (GrB_Matrix_nvals (&nedges, U)) ;
     printf ("\nn %.16g # edges %.16g\n", (double) n, (double) nedges) ;
     double t_U = simple_toc (tic) ;
@@ -89,8 +93,8 @@ GxB_set (GxB_NTHREADS, 1) ;
     // L = tril (A,-1)
     simple_tic (tic) ;
     OK (GrB_Matrix_new (&L, GrB_UINT32, n, n)) ;
-    k = -1 ;
-    OK (GxB_select (L, NULL, NULL, GxB_TRIL, A, &k, NULL)) ;
+    OK (GrB_Vector_setElement (Thunk, (int64_t) (-1), 0)) ;
+    OK (GxB_select (L, NULL, NULL, GxB_TRIL, A, Thunk, NULL)) ;
     double t_L = simple_toc (tic) ;
     printf ("L=tril(A) time:  %14.6f sec\n", t_L) ;
     OK (GrB_free (&A)) ;

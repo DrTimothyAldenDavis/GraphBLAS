@@ -4,7 +4,7 @@ function test26(longtests)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\nperformance of GxB_select\n') ;
+fprintf ('\ntest26 ------------------------------performance of GxB_select\n') ;
 
 [~, ~, ~, ~, ~, select_ops] = GB_spec_opsall ;
 
@@ -41,7 +41,7 @@ for probs = 1:nprobs
             A = A4.matrix ;
             % spok(A) will fail since it has intentional explicit zeros
         case 4
-            A = sparse (rand (4000)) ;
+            A = sparse (rand (6000)) ;
         case 5
             Prob = ssget (2662) ;
             A = Prob.A ;

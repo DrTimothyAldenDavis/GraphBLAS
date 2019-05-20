@@ -15,8 +15,10 @@
 
 #define FREE_ALL                        \
 {                                       \
+    GB_VECTOR_FREE (&Thunk) ;           \
     GB_MATRIX_FREE (&C) ;               \
     GB_MATRIX_FREE (&A) ;               \
+    GrB_free (&Thunk_type) ;            \
     GrB_free (&op) ;                    \
     GrB_free (&desc) ;                  \
     GB_mx_put_global (true, 0) ;        \
@@ -32,6 +34,12 @@
         mexErrMsgTxt ("GraphBLAS failed") ;             \
     }                                                   \
 }
+
+typedef struct
+{
+    int64_t lo ;
+    int64_t hi ;
+} LoHi ; 
 
 bool band (GrB_Index i, GrB_Index j, GrB_Index nrows,
     GrB_Index ncols, const void *x, const void *k)
@@ -59,6 +67,8 @@ void mexFunction
     GxB_SelectOp op = NULL ;
     GrB_Info info ;
     GrB_Descriptor desc = NULL ;
+    GrB_Vector Thunk = NULL ;
+    GrB_Type Thunk_type = NULL ;
 
     #define GET_DEEP_COPY ;
     #define FREE_DEEP_COPY ;
@@ -82,6 +92,14 @@ void mexFunction
     int64_t lohi [2] ;
     lohi [0] = (int64_t) mxGetScalar (pargin [1]) ;
     lohi [1] = (int64_t) mxGetScalar (pargin [2]) ;
+
+    // create the Thunk
+    OK (GrB_Type_new (&Thunk_type, sizeof (LoHi))) ;
+    OK (GrB_Vector_new (&Thunk, Thunk_type, 1)) ;
+    OK (GrB_Vector_setElement_UDT (Thunk, (const void *) lohi, 0)) ;
+    GrB_Index ignore ;
+    OK (GrB_Vector_nvals (&ignore, Thunk)) ;
+    // GxB_print (Thunk, 3) ;
 
     // get atranspose
     bool atranspose = false ;
@@ -127,11 +145,11 @@ void mexFunction
     {
         // this is just to test the Vector version
         OK (GxB_select ((GrB_Vector) C, NULL, NULL, op, (GrB_Vector) A,
-            lohi, NULL)) ;
+            Thunk, NULL)) ;
     }
     else
     {
-        OK (GxB_select (C, NULL, NULL, op, A, lohi, desc)) ;
+        OK (GxB_select (C, NULL, NULL, op, A, Thunk, desc)) ;
     }
 
     GB_MEX_TOC ;

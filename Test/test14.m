@@ -53,41 +53,49 @@ for k1 = 1:length(classes)
     for k2 = 1:length(ops)
         op = ops {k2} ;
 
+here = 1 ; save gunk w op A tol here
         % no mask
         w1 = GB_spec_reduce_to_vector (w, [], [], op, A, []) ;
         w2 = GB_mex_reduce_to_vector  (w, [], [], op, A, []) ;
         GB_spec_compare (w1, w2, tol) ;
 
+here = 2 ; save gunk w op A tol here
         % no mask, with accum
         w1 = GB_spec_reduce_to_vector (w, [], 'plus', op, A, []) ;
         w2 = GB_mex_reduce_to_vector  (w, [], 'plus', op, A, []) ;
         GB_spec_compare (w1, w2, tol) ;
 
+here = 3 ; save gunk w op A tol mask here
         % with mask
         w1 = GB_spec_reduce_to_vector (w, mask, [], op, A, []) ;
         w2 = GB_mex_reduce_to_vector  (w, mask, [], op, A, []) ;
         GB_spec_compare (w1, w2, tol) ;
 
+here = 4 ; save gunk w op A tol mask here
         % with mask and accum
         w1 = GB_spec_reduce_to_vector (w, mask, 'plus', op, A, []) ;
         w2 = GB_mex_reduce_to_vector  (w, mask, 'plus', op, A, []) ;
         GB_spec_compare (w1, w2, tol) ;
 
+here = 5 ; save gunk w op B dt tol mask here
         % no mask, transpose
         w1 = GB_spec_reduce_to_vector (w, [], [], op, B, dt) ;
         w2 = GB_mex_reduce_to_vector  (w, [], [], op, B, dt) ;
         GB_spec_compare (w1, w2, tol) ;
 
+here = 6 ; save gunk w op B dt tol here
         % no mask, with accum, transpose
         w1 = GB_spec_reduce_to_vector (w, [], 'plus', op, B, dt) ;
         w2 = GB_mex_reduce_to_vector  (w, [], 'plus', op, B, dt) ;
         GB_spec_compare (w1, w2, tol) ;
 
+here = 7 ; save gunk w op B dt tol mask here
         % with mask, transpose
         w1 = GB_spec_reduce_to_vector (w, mask, [], op, B, dt) ;
         w2 = GB_mex_reduce_to_vector  (w, mask, [], op, B, dt) ;
         GB_spec_compare (w1, w2, tol) ;
 
+here = 8 ; save gunk w op B dt tol mask here
         % with mask and accum, transpose
         w1 = GB_spec_reduce_to_vector (w, mask, 'plus', op, B, dt) ;
         w2 = GB_mex_reduce_to_vector  (w, mask, 'plus', op, B, dt) ;

@@ -38,23 +38,21 @@ void GB_map_pslice
 )
 {
 
-/*
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-        printf ("\ntaskid %d of %d\n", taskid, ntasks) ;
-        printf ("   kfirst %d\n", kfirst_slice [taskid]) ;
-        printf ("   klast  %d\n", klast_slice [taskid]) ;
-        printf ("   Wfirst %d\n", Wfirst [taskid]) ;
-        printf ("   Wlast  %d\n", Wlast  [taskid]) ;
-    }
-*/
+//  for (int taskid = 0 ; taskid < ntasks ; taskid++)
+//  {
+//      printf ("\ntaskid %d of %d\n", taskid, ntasks) ;
+//      printf ("   kfirst %d\n", kfirst_slice [taskid]) ;
+//      printf ("   klast  %d\n", klast_slice [taskid]) ;
+//      printf ("   Wfirst %d\n", Wfirst [taskid]) ;
+//      printf ("   Wlast  %d\n", Wlast  [taskid]) ;
+//  }
 
     int64_t kprior = -1 ;
     int64_t pC = 0 ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
-        // printf ("\ntaskid is %d\n", taskid) ;
+//      printf ("\ntaskid is %d\n", taskid) ;
 
         int64_t k = kfirst_slice [taskid] ;
 
@@ -62,26 +60,26 @@ void GB_map_pslice
         {
             // Task taskid is the first one to do work on C(:,k), so it starts
             // at Cp [k], and it contributes Wfirst [taskid] entries to C(:,k)
-            // printf ("   kprior "GBd"\n", kprior) ;
-            // printf ("   k "GBd"\n", k) ;
+//          printf ("   kprior "GBd"\n", kprior) ;
+//          printf ("   k "GBd"\n", k) ;
             pC = Cp [k] ;
             kprior = k ;
-            // printf ("   pC at first "GBd"\n", pC) ;
+//          printf ("   pC at first "GBd"\n", pC) ;
         }
 
         // Task taskid contributes Wfirst [taskid] entries to C(:,k)
         C_pstart_slice [taskid] = pC ;
-        // printf ("   C_pstart "GBd"\n", pC) ;
+//      printf ("   C_pstart "GBd"\n", pC) ;
         pC += Wfirst [taskid] ;
-        // printf ("   pC now  "GBd"\n", pC) ;
+//      printf ("   pC now  "GBd"\n", pC) ;
 
         int64_t klast = klast_slice [taskid] ;
         if (k < klast)
         {
             // Task taskid is the last to contribute to C(:,k).
-            // printf ("   k "GBd"\n", k) ;
-            // printf ("   klast  "GBd"\n", klast ) ;
-            // printf ("   pC "GBd" should be "GBd"\n", pC, Cp [k+1]) ;
+//          printf ("   k "GBd"\n", k) ;
+//          printf ("   klast  "GBd"\n", klast ) ;
+//          printf ("   pC "GBd" should be "GBd"\n", pC, Cp [k+1]) ;
             ASSERT (pC == Cp [k+1]) ;
             // Task taskid contributes the first Wlast [taskid] entries
             // to C(:,klast), so the next task taskid+1 starts at this
@@ -91,12 +89,10 @@ void GB_map_pslice
         }
     }
 
-/*
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-        printf ("\ntaskid %d of %d\n", taskid, ntasks) ;
-        printf ("   C_pstart_slice  %d\n", C_pstart_slice [taskid]) ;
-    }
-*/
+//  for (int taskid = 0 ; taskid < ntasks ; taskid++)
+//  {
+//      printf ("\ntaskid %d of %d\n", taskid, ntasks) ;
+//      printf ("   C_pstart_slice  %d\n", C_pstart_slice [taskid]) ;
+//  }
 }
 

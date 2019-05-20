@@ -6,9 +6,11 @@ function test95
 
 fprintf ('\ntest95: performance tests : GrB_transpose \n') ;
 rng ('default') ;
+tol = 1e-12 ;
 
 Prob = ssget (2662)
 A = Prob.A ;
+% A = sparse (rand (6000)) ;
 [m n] = size (A) ;
 Cin = sparse (n, m) ;
 A (1,2) =1 ;
@@ -44,7 +46,7 @@ fprintf ('speedup over MATLAB: %g\n', tmsum / tgsum) ;
 
 % sum across the rows
 yin = sparse (rand (m,1)) ;
-fprintf ('row sum:\n') ;
+fprintf ('row sum (with accum):\n') ;
 tic
 y2 = yin + (sum (A,2)) ;
 t1 = toc ;
@@ -56,13 +58,12 @@ err = norm (1*(y.matrix) - y2, 1) ;
 if (norm (y2) ~= 0)
     err = err / norm (y2) ;
 end
-err
-assert (err < 1e-14)
+assert (err < tol)
 % assert (isequal (y.matrix, y2))
 
 % sum across the rows, no accum
 yin = sparse (rand (m,1)) ;
-fprintf ('row sum:\n') ;
+fprintf ('row sum (no accum):\n') ;
 tic
 y2 = (sum (A,2)) ;
 t1 = toc ;
@@ -74,13 +75,12 @@ err = norm (1*(y.matrix) - y2, 1) ;
 if (norm (y2) ~= 0)
     err = err / norm (y2) ;
 end
-err
-assert (err < 1e-14)
+assert (err < tol)
 % assert (isequal (1*(y.matrix), y2))
 
 % sum down the columns, no accum
 yin = sparse (rand (m,1)) ;
-fprintf ('col sum:\n') ;
+fprintf ('col sum (no accum):\n') ;
 tic
 y2 = (sum (A,1)) ;
 t1 = toc ;
@@ -94,6 +94,5 @@ err = norm (1*(y.matrix) - y2', 1) ;
 if (norm (y2) ~= 0)
     err = err / norm (y2) ;
 end
-err
-assert (err < 1e-14)
+assert (err < tol)
 % assert (isequal (1*(y.matrix), y2'))

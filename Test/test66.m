@@ -7,9 +7,9 @@ function test66
 fprintf ('\ntest66: ---- quick test for GrB_reduce_to_scalar and vector\n') ;
 
 rng ('default') ;
-A = sparse (rand (4,3))
-x = full (sum (sum (A))) + 1.3
-c = GB_mex_reduce_to_scalar (1.3, 'plus', 'plus', A)
+A = sparse (rand (4,3)) ;
+x = full (sum (sum (A))) + 1.3 ;
+c = GB_mex_reduce_to_scalar (1.3, 'plus', 'plus', A) ;
 assert (isequal (x,c))
 
 tic
@@ -62,7 +62,7 @@ y = GB_mex_reduce_to_vector (yin, [ ], 'plus', 'plus', A) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 y1 = 1*y.matrix ;
-err = norm (y1-y2,1) / norm (y2,1)
+err = norm (y1-y2,1) / norm (y2,1) ;
 assert (err < 1e-14)
 % assert (isequal (y.matrix, y2))
 
@@ -77,7 +77,7 @@ y = GB_mex_reduce_to_vector (yin, [ ], [ ], 'plus', A) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 y1 = 1*y.matrix ;
-err = norm (y1-y2,1) / norm (y2,1)
+err = norm (y1-y2,1) / norm (y2,1) ;
 assert (err < 1e-14)
 % assert (isequal (y.matrix, y2))
 
@@ -93,7 +93,7 @@ y = GB_mex_reduce_to_vector (yin, [ ], 'plus', 'plus', A, d) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 y1 = 1*y.matrix ;
-err = norm (y1-y2',1) / norm (y2,1)
+err = norm (y1-y2',1) / norm (y2,1) ;
 assert (err < 1e-14)
 % assert (isequal (y.matrix, y2'))
 
@@ -109,7 +109,7 @@ y = GB_mex_reduce_to_vector (yempty, [ ], [ ], 'plus', A, d) ;
 t2 = gbresults ;
 fprintf ('MATLAB: %g GraphBLAS %g speedup %g\n', t1, t2, t1/t2) ;
 y1 = 1*y.matrix ;
-err = norm (y1-y2',1) / norm (y2,1)
+err = norm (y1-y2',1) / norm (y2,1) ;
 assert (err < 1e-14)
 % assert (isequal (y.matrix, y2'))
 

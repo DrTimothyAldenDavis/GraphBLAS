@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_reduce_each_vector: T(j)=reduce(A(:,j)), reduce a matrix to a vector
+// GB_reduce_each_vector: Tx(j)=reduce(A(:,j)), reduce a matrix to a vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Reduce a matrix to a vector.  The kth vector A(:,k) is reduced to the kth
-// scalar T(k).  Each thread computes the reductions on roughly the same number
+// scalar Tx(k).  Each thread computes the reductions on roughly the same number
 // of entries, which means that a vector A(:,k) may be reduced by more than one
 // thread.  The first vector A(:,kfirst) reduced by thread tid may be partial,
 // where the prior thread tid-1 (and other prior threads) may also do some of
@@ -19,26 +19,39 @@
 
 // PARALLEL: done
 
+#ifndef GB_GET_J
+#define GB_GET_J ;
+#endif
+
 {
 
-    const GB_ATYPE *restrict Ax = A->x ;
+    //--------------------------------------------------------------------------
+    // get A
+    //--------------------------------------------------------------------------
+
     const int64_t  *restrict Ap = A->p ;
+    const int64_t  *restrict Ah = A->h ;
+    const int64_t  *restrict Ai = A->i ;
+    const GB_ATYPE *restrict Ax = A->x ;
+    size_t  asize = A->type->size ;
+    int64_t avlen = A->vlen ;
+    int64_t avdim = A->vdim ;
 
     //--------------------------------------------------------------------------
     // workspace for first and last vectors of each slice
     //--------------------------------------------------------------------------
 
-    // ztype Wfirst [nthreads], Wlast [nthreads] ;
-    GB_REDUCTION_WORKSPACE (Wfirst, nthreads) ;
-    GB_REDUCTION_WORKSPACE (Wlast , nthreads) ;
+    // ztype Wfirst [ntasks], Wlast [ntasks] ;
+    GB_REDUCTION_WORKSPACE (Wfirst, ntasks) ;
+    GB_REDUCTION_WORKSPACE (Wlast , ntasks) ;
 
     //--------------------------------------------------------------------------
     // reduce each slice
     //--------------------------------------------------------------------------
 
     // each thread reduces its own part in parallel
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int tid = 0 ; tid < nthreads ; tid++)
+    #pragma omp parallel for num_threads(nthreads) schedule(guided,1)
+    for (int tid = 0 ; tid < ntasks ; tid++)
     {
 
         // if kfirst > klast then thread tid does no work at all
@@ -56,36 +69,10 @@
             // find the part of A(:,k) to be reduced by this thread
             //------------------------------------------------------------------
 
+            GB_GET_J ;
             int64_t pA_start, pA_end ;
-            if (k == kfirst)
-            { 
-                // First vector for thread tid; may only be partially owned.
-                // It is reduced to Wfirst [tid].  Reduction always starts at
-                // pstart_slice [tid], and ends either at the end of the vector
-                // A(:,kfirst), or at the end of the entries this thread owns
-                // in all of the A matrix, whichever comes first.
-                pA_start = pstart_slice [tid] ;
-                pA_end   = GB_IMIN (Ap [kfirst+1], pstart_slice [tid+1]) ;
-            }
-            else if (k == klast)
-            { 
-                // Last vector for thread tid; may only be partially owned.
-                // It is reduced to Wlast [tid].  If kfirst == klast then
-                // this case is skipped.  If kfirst < klast, then thread tid
-                // owns the first part of A(:,k), so it always starts its work
-                // at Ap [klast].  It ends its work at the end of the entries
-                // this thread owns in A.
-                pA_start = Ap [klast] ;
-                pA_end   = pstart_slice [tid+1] ;
-            }
-            else
-            { 
-                // Thread tid fully owns this vector A(:,k), and reduces it
-                // entirely to T(:,k).  No workspace is used.  The thread has
-                // no such vectors if kfirst == klast.
-                pA_start = Ap [k] ;
-                pA_end   = Ap [k+1] ;
-            }
+            GB_get_pA_and_pC (&pA_start, &pA_end, NULL,
+                tid, k, kfirst, klast, pstart_slice, NULL, NULL, Ap) ;
 
             //------------------------------------------------------------------
             // reduce Ax [pA_start ... pA_end-1] to a scalar, if non-empty
@@ -135,13 +122,13 @@
     // reduce the first and last vector of each slice using a single thread
     //--------------------------------------------------------------------------
 
-    // This step is sequential, but it takes only O(nthreads) time.  The only
+    // This step is sequential, but it takes only O(ntasks) time.  The only
     // case where this could be a problem is if a user-defined operator was
     // a very costly one.
 
     int64_t kprior = -1 ;
 
-    for (int tid = 0 ; tid < nthreads ; tid++)
+    for (int tid = 0 ; tid < ntasks ; tid++)
     {
 
         //----------------------------------------------------------------------

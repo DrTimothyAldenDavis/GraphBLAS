@@ -267,7 +267,6 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // prune empty vectors from Ch
     //--------------------------------------------------------------------------
 
-    // TODO make this a function; see also GB_emult, GB_delete_zombies
     if (C_is_hyper && Cnvec_nonempty < Cnvec)
     {
         int64_t *restrict Cp = C->p ;

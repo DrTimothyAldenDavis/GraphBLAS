@@ -119,6 +119,7 @@ void GB_red_eachvec__lor_bool
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    int ntasks,
     int nthreads
 )
 {
@@ -133,8 +134,6 @@ GrB_Info GB_red_eachindex__lor_bool
 (
     GrB_Matrix *Thandle,
     GrB_Type ttype,
-    GB_Sauna *Saunas,
-    const int64_t hiwater,
     GrB_Matrix A,
     const int64_t *restrict pstart_slice,
     int nth,

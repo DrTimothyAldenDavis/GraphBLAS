@@ -1246,14 +1246,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_delete_zombies.c
-\brief  GB_delete_zombies: delete all zombies from a matrix
-
-\par
- TODO: put the bulk of this method in a template, and use for GB_select.
-*/
-
-
 /** \file GB_dup.c
 \brief  GB_dup: make a deep copy of a sparse matrix
 
@@ -1286,9 +1278,14 @@ constructed by dox_headers.m
 \brief  GB_ek_slice: slice the entries and vectors of a matrix
 
 \par
+ Slice the entries of a matrix or vector into ntasks slices.
+\par
  Task t does entries pstart_slice [t] to pstart_slice [t+1]-1 and
  vectors kfirst_slice [t] to klast_slice [t].  The first and last vectors
  may be shared with prior slices and subsequent slices.
+\par
+ On input, ntasks must be \<= nnz (A), unless nnz (A) is zero.  In that
+ case, ntasks must be 1.
 */
 
 
@@ -1730,7 +1727,7 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_map_slice.c
+/** \file GB_map_pslice.c
 \brief  GB_map_pslice: find where each task starts its work in matrix C
 
 \par
@@ -2095,8 +2092,8 @@ constructed by dox_headers.m
 \brief  GB_resize: change the size of a matrix
 
 \par
- PARALLEL: TODO. simple parallelism; not a lot of work to unless the vector
- length is decreasing.  See Template/GB_prune_inplace.c
+ PARALLEL: TODO.  one for loop, typically very small.
+ Most work is done in GB_selector.
 */
 
 
@@ -2110,18 +2107,16 @@ constructed by dox_headers.m
 
 
 /** \file GB_select.c
-\brief  GB_select: apply a select operator; optionally transpose a matrix
+\brief  GB_select: apply a select operator
 
 \par
- C\<M\> = accum (C, select(A,k)) or select(A,k)').  This function is not
- user-callable.  It does the work for GxB_*_select.
- Compare this function with GrB_apply.
-\par
- PARALLEL: TODO. use two phases: symbolic to count the \# of entries in each
- column, and another to move the data.  This is just like GB_delete_zombies,
- but with a different selector op.  Merge with GB_delete_zombies, and
- make the body of work a template.  Consider doing this with 11 hard-coded
- versions for any A-\>type (no typecasting) and one generic.
+ C\<M\> = accum (C, select(A,Thunk)) or select(A,Thunk)').
+*/
+
+
+/** \file GB_selector.c
+\brief  GB_selector:  select entries from a matrix
+
 */
 
 
@@ -3951,22 +3946,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_prune_inplace.c
-\brief  GB_prune_inplace: prune a matrix in place
-
-\par
- The function that \#include's this file defines a GB_PRUNE macro that defines
- how entries are pruned in place from the matrix.  This task is similar to
- GB_select, except that here the pruning is done in place, whereas GB_select
- constructs a new matrix T with the pruned version of A.
-\par
- This code is used by GB_wait to delete zombies, and by GB_resize to delete
- entries outside the resized dimensions, if A-\>vlen decreases.
-\par
- PARALLEL: TODO. requires a reduction-style parallelism
-*/
-
-
 /** \file GB_qsort_template.c
 \brief  GB_qsort_template: sort an n-by-GB_K list of integers
 
@@ -4012,22 +3991,22 @@ constructed by dox_headers.m
 
 \par
  Reduce a matrix to a vector.  All entries in A(i,:) are reduced to T(i).
- First, all threads reduce their slice to their own Sauna workspace,
- operating on roughly the same number of entries each.  The vectors in A are
- ignored; the reduction only depends on the indices.  Next, the threads
- cooperate to reduce all Sauna workspaces to the Sauna of thread 0.  Finally,
- this last Sauna workspace is collected into T.
+ First, all threads reduce their slice to their own workspace, operating on
+ roughly the same number of entries each.  The vectors in A are ignored; the
+ reduction only depends on the indices.  Next, the threads cooperate to
+ reduce all workspaces to the workspace of thread 0.  Finally, this last
+ workspace is collected into T.
 \par
  PARALLEL: done
 */
 
 
 /** \file GB_reduce_each_vector.c
-\brief  GB_reduce_each_vector: T(j)=reduce(A(:,j)), reduce a matrix to a vector
+\brief  GB_reduce_each_vector: Tx(j)=reduce(A(:,j)), reduce a matrix to a vector
 
 \par
  Reduce a matrix to a vector.  The kth vector A(:,k) is reduced to the kth
- scalar T(k).  Each thread computes the reductions on roughly the same number
+ scalar Tx(k).  Each thread computes the reductions on roughly the same number
  of entries, which means that a vector A(:,k) may be reduced by more than one
  thread.  The first vector A(:,kfirst) reduced by thread tid may be partial,
  where the prior thread tid-1 (and other prior threads) may also do some of
@@ -4049,6 +4028,24 @@ constructed by dox_headers.m
  PARALLEL: done
 \par
  TODO add simd vectorization for non-terminal monoids.  Particular max, min
+*/
+
+
+/** \file GB_select_count.c
+\brief  GB_select_count: count entries in eacn vector for C=select(A,thunk)
+
+*/
+
+
+/** \file GB_select_exec.c
+\brief  GB_select_exec: C=select(A,thunk)
+
+*/
+
+
+/** \file GB_select_factory.c
+\brief  GB_select_factory: switch factory for C=select(A,thunk)
+
 */
 
 
@@ -4230,6 +4227,17 @@ constructed by dox_headers.m
 
 
 /** \file GB_red.h
+
+
+/** \file GB_sel.c
+\brief  GB_sel:  hard-coded functions for selection operators
+
+*/
+
+
+/** \file GB_sel.h
+\brief 
+*/
 
 
 /** \file GB_unaryop.c

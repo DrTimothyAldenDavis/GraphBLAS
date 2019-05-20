@@ -7,10 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: TODO. simple parallelism; not a lot of work to unless the vector
-// length is decreasing.  See Template/GB_prune_inplace.c
+// PARALLEL: TODO.  one trivial for loop, typically very small, but could be
+// parallel.  Most work is done in GB_selector.
 
 #include "GB.h"
+#define GB_FREE_ALL GB_PHIX_FREE (A) ;
 
 GrB_Info GB_resize              // change the size of a matrix
 (
@@ -32,8 +33,7 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz) if the
-    // matrix shrinks, in GB_prune_in_place)
+    // TODO reduce nthreads for small problem (work is small here, though)
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -72,7 +72,7 @@ GrB_Info GB_resize              // change the size of a matrix
     // space for the non-hypersparse A->p component.  So convert the matrix to
     // hypersparse if that happens.
 
-    GrB_Info info = GrB_SUCCESS ;
+    GrB_Info info ;
 
     if (A->nvec_nonempty < 0)
     { 
@@ -81,13 +81,7 @@ GrB_Info GB_resize              // change the size of a matrix
 
     if (GB_to_hyper_test (A, A->nvec_nonempty, vdim_new))
     { 
-        info = GB_to_hyper (A, Context) ;
-    }
-
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory; all content of A has been freed
-        return (info) ;
+        GB_OK (GB_to_hyper (A, Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -142,7 +136,7 @@ GrB_Info GB_resize              // change the size of a matrix
             if (!ok)
             { 
                 // out of memory
-                GB_PHIX_FREE (A) ;
+                GB_FREE_ALL ;
                 return (GB_OUT_OF_MEMORY) ;
             }
             Ap = A->p ;
@@ -178,12 +172,8 @@ GrB_Info GB_resize              // change the size of a matrix
     // if vlen is shrinking, delete entries outside the new matrix
     if (vlen_new < vlen_old)
     { 
-        // compare with zombie pruning in GB_wait
-        // also compute A->nvec_nonempty
-        int64_t vdim = vdim_new ;
-        int64_t anz ;
-        #define GB_PRUNE if (i >= vlen_new) break ;
-        #include "GB_prune_inplace.c"
+        GB_OK (GB_selector (NULL, GB_RESIZE_opcode, NULL, false, A, vlen_new-1,
+            NULL, Context)) ;
     }
 
     //--------------------------------------------------------------------------

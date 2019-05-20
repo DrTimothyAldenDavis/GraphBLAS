@@ -92,7 +92,12 @@ GrB_Info GB_wait                // finish all pending computations
     if (nzombies > 0)
     {
         // remove all zombies from A.  Also compute A->nvec_nonempty
-        GB_OK (GB_delete_zombies (A, Context)) ;
+        int64_t anz_orig = GB_NNZ (A) ;
+        GB_OK (GB_selector (NULL, GB_NONZOMBIE_opcode, NULL, false, A,
+            0, NULL, Context)) ;
+        ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, NULL)) ;
+        ASSERT (A->nzombies == (anz_orig - GB_NNZ (A))) ;
+        A->nzombies = 0 ;
     }
     else if (A->nvec_nonempty < 0)
     { 

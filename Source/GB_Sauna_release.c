@@ -32,6 +32,7 @@ GrB_Info GB_Sauna_release
     ASSERT (nthreads >= 1) ;
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
+        // printf ("tid %d releasing %d\n", tid, Sauna_ids [tid]) ; 
         ASSERT (Sauna_ids [tid] >= -2 && Sauna_ids [tid] < GxB_NTHREADS_MAX) ;
     }
 
