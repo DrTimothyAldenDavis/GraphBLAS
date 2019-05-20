@@ -50,6 +50,7 @@ assert (err < 1e-14) ;
 A = sprand (3e6, 3e6, 2e-6) ;
 n = size (A,1) ;
 yin = sparse (rand (n,1)) ;
+fprintf ('\nbig matrix with %g million entries\n', nnz (A)/ 1e6) ;
 
 % sum across the rows
 fprintf ('row sum with accum:\n') ;
