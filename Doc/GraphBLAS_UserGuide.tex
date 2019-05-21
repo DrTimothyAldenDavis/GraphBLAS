@@ -8282,15 +8282,15 @@ Section~\ref{accummask}.
 The matrix \verb'T' has the same size and type as \verb'A' (or the transpose of
 \verb'A' if the input is transposed via the descriptor).  The entries of
 \verb'T' are a subset of those of \verb'A'.  Each entry \verb'A(i,j)' of
-\verb'A' is passed to the \verb'op', as $z=f(i,j,m,n,a_{ij},\mbox{thunk})$, where \verb'A'
-is $m$-by-$n$.  If \verb'A' is transposed first then the operator is applied to
-entries in the transposed matrix, \verb"A'".  If $z$ is returned as true, then
-the entry is copied into \verb'T', unchanged.  If it returns false, the entry
-does not appear in \verb'T'.
+\verb'A' is passed to the \verb'op', as $z=f(i,j,m,n,a_{ij},\mbox{thunk})$,
+where \verb'A' is $m$-by-$n$.  If \verb'A' is transposed first then the
+operator is applied to entries in the transposed matrix, \verb"A'".  If $z$ is
+returned as true, then the entry is copied into \verb'T', unchanged.  If it
+returns false, the entry does not appear in \verb'T'.
 
-For user-defined select operators, if \verb'Thunk' is not \verb'NULL',
-then it must be a vector of length 1, with exactly one entry.  The value
-of this entry is passed to the user-defined select operator, with no typecasting.
+For user-defined select operators, if \verb'Thunk' is not \verb'NULL', then it
+must be a vector of length 1, with exactly one entry.  The value of this entry
+is passed to the user-defined select operator, with no typecasting.
 
 For the \verb'GxB_TRIL', \verb'GxB_TRIU', \verb'GxB_DIAG', and
 \verb'GxB_OFFDIAG', the \verb'Thunk' parameter may be \verb'NULL', in which
@@ -8356,7 +8356,7 @@ name                    & analog            & \\
     Entries in \verb'T' are all entries in \verb'A' that are equal to \verb'k'. \\
 \verb'GxB_GT_THUNK'     & \verb'T=A(A>k)'      & 
     Entries in \verb'T' are all entries in \verb'A' that are greater than \verb'k'. \\
-\verb'GxB_GE_THUNK'     & \verb'T=A(A<=k)'     & 
+\verb'GxB_GE_THUNK'     & \verb'T=A(A>=k)'     & 
     Entries in \verb'T' are all entries in \verb'A' that are greater than or equal to \verb'k'. \\
 \verb'GxB_LT_THUNK'     & \verb'T=A(A<k)'      & 
     Entries in \verb'T' are all entries in \verb'A' that are less than \verb'k'. \\

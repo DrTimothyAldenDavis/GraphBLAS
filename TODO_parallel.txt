@@ -49,7 +49,7 @@ DONE or mostly done:
 
 GB_AxB_parallel.c: much is done: mxm nicely parallel for large matrices,
     and decent parallelism for mxv when using the dot product.  This is where
-    we do C=A*B, for GrB_mxm, GrB_mxv, and GrB_vxm.  *FINE slice methods
+    we do C=A*B, for GrB_mxm, GrB_mxv, and GrB_vxm.  *FINE slice methods are
     written but need tuning.  Need better fine-grain methods for mxv and vxm:
     do symbolic analysis phase (column nnz count), and then compute C in place
     without the final copy.  See for example *dot2.c. Need to do the same for
@@ -82,8 +82,9 @@ GB_cumsum.c: done, but not as fast as I think it should be.
     Performance of the parallel case is at most 2x speedup, unless the array is
     already in L3 cache.  Needs more work.
 
-GB_transpose.c: done, except for the qsort.
-    uses two methods, a qsort-based method and a bucket sort.
+GB_transpose.c: done, except for the qsort.  uses two methods, a qsort-based
+    method and a bucket sort.  Once the qsort is done, need to tune the auto
+    selection betweeen the qsort and bucket sort.
 
 GB_transpose_ix, GB_transpose_op, GB_transpose_bucket: done
 
@@ -91,7 +92,6 @@ GB_reduce_to_scalar.c: done.
     Does the work for GrB_reduce, to a scalar.  Simple reduction for loop.
 
 GB_extractTuples.c: done, except tasks can be used to extract I,J,X in parallel
-    does GrB_*_extractTuples.
 
 GB_apply_op.c: done.  Applies a unary operator for GrB_*_apply.
 
