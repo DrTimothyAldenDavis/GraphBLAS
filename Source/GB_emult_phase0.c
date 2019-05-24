@@ -556,7 +556,8 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
         // see if M (:,j) exists
         if (C_to_M != NULL)
         {
-            // M is hypersparse
+            // M is present and hypersparse
+            ASSERT (M != NULL) ;
             ASSERT (M->is_hyper)
             int64_t kM = C_to_M [k] ;
             ASSERT (kM >= -1 && kM < M->nvec) ;
@@ -566,7 +567,35 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 ASSERT (j == jM) ;
             }
         }
+
+        // see if M (:,j) exists
+        if (Ch_is_Mh)
+        { 
+            // Ch is the same as Mh
+            ASSERT (M != NULL) ;
+            ASSERT (M->is_hyper) ;
+            ASSERT (!Mask_comp) ;
+            ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
+            ASSERT (C_to_M == NULL) ;
+        }
+        else if (C_to_M != NULL)
+        {
+            ASSERT (M->is_hyper) ;
+            kM = C_to_M [k] ;
+            ASSERT (kM >= -1 && kM < M->nvec) ;
+            if (kM >= 0)
+            {
+                int64_t jM = M->h [kM] ;
+                ASSERT (j == jM) ;
+            }
+        }
+        else
+        {
+            // M is not present, or in standard form
+            ASSERT (M == NULL || !(M->is_hyper)) ;
+        }
     }
+
     #endif
 
     return (GrB_SUCCESS) ;

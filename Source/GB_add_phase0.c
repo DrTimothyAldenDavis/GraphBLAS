@@ -35,7 +35,7 @@
 //      transplants it into C.
 
 //      Ch_is_Mh:  true if the mask M is present, hypersparse, and not
-//      complemented, false otherwise.  In this case Ch is a deep copy of M->h.
+//      complemented, false otherwise.  In this case Ch is a deep copy of Mh.
 
 //      C_to_A:  if A is hypersparse, then C_to_A [k] = kA if the kth vector, j
 //      = (Ch == NULL) ? k : Ch [k] appears in A, as j = Ah [kA].  If j does
@@ -46,6 +46,11 @@
 //      = (Ch == NULL) ? k : Ch [k] appears in B, as j = Bh [kB].  If j does
 //      not appear in B, then C_to_B [k] = -1.  If B is not hypersparse, then
 //      C_to_B is returned as NULL.
+
+//      C_to_M:  if M is hypersparse, and Ch_is_Mh is false, then C_to_M [k] =
+//      kM if the kth vector, j = (Ch == NULL) ? k : Ch [k] appears in M, as j
+//      = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
+//      not hypersparse, then C_to_M is returned as NULL.
 
 // PARALLEL: done, except in one condition: A and B are hypersparse and
 // Ch_is_Mh is false.  takes O(A->nvec + B->nvec) time.
@@ -60,6 +65,7 @@ static inline bool GB_allocate_result
 (
     int64_t max_Cnvec,
     int64_t **Ch_handle,
+    int64_t **C_to_M_handle,
     int64_t **C_to_A_handle,
     int64_t **C_to_B_handle
 )
@@ -69,6 +75,11 @@ static inline bool GB_allocate_result
     { 
         GB_MALLOC_MEMORY (*Ch_handle, max_Cnvec, sizeof (int64_t)) ;
         ok = (*Ch_handle != NULL) ;
+    }
+    if (C_to_M_handle != NULL)
+    { 
+        GB_MALLOC_MEMORY (*C_to_M_handle, max_Cnvec, sizeof (int64_t)) ;
+        ok = ok && (*C_to_M_handle != NULL) ;
     }
     if (C_to_A_handle != NULL)
     { 
@@ -80,12 +91,17 @@ static inline bool GB_allocate_result
         GB_MALLOC_MEMORY (*C_to_B_handle, max_Cnvec, sizeof (int64_t)) ;
         ok = ok && (*C_to_B_handle != NULL) ;
     }
+
     if (!ok)
     {
         // out of memory
         if (Ch_handle != NULL)
         { 
             GB_FREE_MEMORY (*Ch_handle,     max_Cnvec, sizeof (int64_t)) ;
+        }
+        if (C_to_M_handle != NULL)
+        { 
+            GB_FREE_MEMORY (*C_to_M_handle, max_Cnvec, sizeof (int64_t)) ;
         }
         if (C_to_A_handle != NULL)
         { 
@@ -108,9 +124,10 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     int64_t *p_Cnvec,           // # of vectors to compute in C
     int64_t *p_max_Cnvec,       // size of the 3 output arrays:
     int64_t **Ch_handle,        // Ch: output of size max_Cnvec, or NULL
+    int64_t **C_to_M_handle,    // C_to_M: output of size max_Cnvec, or NULL
     int64_t **C_to_A_handle,    // C_to_A: output of size max_Cnvec, or NULL
     int64_t **C_to_B_handle,    // C_to_B: output of size max_Cnvec, or NULL
-    bool *p_Ch_is_Mh,           // if true, then Ch == M->h
+    bool *p_Ch_is_Mh,           // if true, then Ch == Mh
 
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,       // if true, then M is complemented
@@ -128,6 +145,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     ASSERT (p_max_Cnvec != NULL) ;
     ASSERT (p_Ch_is_Mh != NULL) ;
     ASSERT (Ch_handle != NULL) ;
+    ASSERT (C_to_M_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
     ASSERT_OK (GB_check (A, "A for add phase0", GB0)) ;
@@ -141,10 +159,12 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     //--------------------------------------------------------------------------
 
     int64_t *restrict Ch = NULL ;
+    int64_t *restrict C_to_M = NULL ;
     int64_t *restrict C_to_A = NULL ;
     int64_t *restrict C_to_B = NULL ;
 
     (*Ch_handle) = NULL ;
+    (*C_to_M_handle) = NULL ;
     (*C_to_A_handle) = NULL ;
     (*C_to_B_handle) = NULL ;
 
@@ -174,9 +194,22 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     bool B_is_hyper = B->is_hyper ;
     ASSERT (!B->is_slice) ;
 
+    int64_t Mnvec = 0 ;
+    const int64_t *restrict Mp = NULL ;
+    const int64_t *restrict Mh = NULL ;
+    bool M_is_hyper = false ;
+    if (M != NULL)
+    {
+        Mnvec = M->nvec ;
+        Mp = M->p ;
+        Mh = M->h ;
+        M_is_hyper = M->is_hyper ;
+        ASSERT (!M->is_slice) ;
+    }
+
     // if M is present, hypersparse, and not complemented, then C will be
-    // hypersparse, and it will have set of vectors as M (Ch == M->h).
-    bool Ch_is_Mh = (M != NULL && M->is_hyper && !Mask_comp) ;
+    // hypersparse, and it will have set of vectors as M (Ch == Mh).
+    bool Ch_is_Mh = (M != NULL && M_is_hyper && !Mask_comp) ;
 
     //--------------------------------------------------------------------------
     // find the set union of the non-empty vectors of A and B
@@ -192,18 +225,16 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // GB_wait is the only place where A may be a slice, and it does not
         // use a mask.  So this phase can ignore the case where A is a slice.
         ASSERT (!A_is_slice) ;
-        int64_t Mnvec = M->nvec ;
         Cnvec = Mnvec ;
         max_Cnvec = Mnvec ;
-        if (!GB_allocate_result (max_Cnvec, &Ch,
-            (A_is_hyper) ? (&C_to_A) : NULL,
-            (B_is_hyper) ? (&C_to_B) : NULL))
+        if (!GB_allocate_result (max_Cnvec, &Ch, NULL,
+            (A_is_hyper) ? (&C_to_A) : NULL, (B_is_hyper) ? (&C_to_B) : NULL))
         { 
             return (GB_OUT_OF_MEMORY) ;
         }
 
-        // copy M->h into Ch
-        GB_memcpy (Ch, M->h, Mnvec * sizeof (int64_t), nthreads) ;
+        // copy Mh into Ch.  Ch is Mh so C_to_M is not needed.
+        GB_memcpy (Ch, Mh, Mnvec * sizeof (int64_t), nthreads) ;
 
         // TODO: if A and M are aliased (M->h == A->h) then C_to_A [k] == k
         // TODO: if B and M are aliased (M->h == B->h) then C_to_B [k] == k
@@ -220,15 +251,15 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
                 { 
                     // C_to_A [k] = kA if Ah [kA] == j and A(:,j) is non-empty
                     int64_t kA = 0, pA, pA_end ;
-                    C_to_A [k] = (GB_lookup (true, Ah, Ap, &kA, Anvec-1, j,
-                        &pA, &pA_end) && (pA < pA_end)) ? kA : -1 ;
+                    GB_lookup (true, Ah, Ap, &kA, Anvec-1, j, &pA, &pA_end) ;
+                    C_to_A [k] = (pA < pA_end) ? kA : -1 ;
                 }
                 if (B_is_hyper)
                 { 
                     // C_to_B [k] = kB if Bh [kB] == j and B(:,j) is non-empty
                     int64_t kB = 0, pB, pB_end ;
-                    C_to_B [k] = (GB_lookup (true, Bh, Bp, &kB, Bnvec-1, j,
-                        &pB, &pB_end) && (pB < pB_end)) ? kB : -1 ;
+                    GB_lookup (true, Bh, Bp, &kB, Bnvec-1, j, &pB, &pB_end) ;
+                    C_to_B [k] = (pB < pB_end) ? kB : -1 ;
                 }
             }
         }
@@ -241,11 +272,12 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // both A and B are hypersparse
         //----------------------------------------------------------------------
 
-        // C will be hypersparse, so Ch is allocated.  The mask M is ignored.
-        // Ch is the set union of Ah and Bh.
+        // C will be hypersparse, so Ch is allocated.  The mask M is ignored
+        // for computing Ch.  Ch is the set union of Ah and Bh.
 
         max_Cnvec = GB_IMIN (Anvec + Bnvec, n) ;
-        if (!GB_allocate_result (max_Cnvec, &Ch, &C_to_A, &C_to_B))
+        if (!GB_allocate_result (max_Cnvec, &Ch,
+            (M_is_hyper) ? (&C_to_M) : NULL, &C_to_A, &C_to_B))
         { 
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -320,7 +352,8 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 
         Cnvec = n ;
         max_Cnvec = n ;
-        if (!GB_allocate_result (max_Cnvec, NULL, &C_to_A, NULL))
+        if (!GB_allocate_result (max_Cnvec, NULL,
+            (M_is_hyper) ? (&C_to_M) : NULL, &C_to_A, NULL))
         { 
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -353,7 +386,8 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 
         Cnvec = n ;
         max_Cnvec = n ;
-        if (!GB_allocate_result (max_Cnvec, NULL, NULL, &C_to_B))
+        if (!GB_allocate_result (max_Cnvec, NULL,
+            (M_is_hyper) ? (&C_to_M) : NULL, NULL, &C_to_B))
         { 
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -382,10 +416,58 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // A and B are both standard
         //----------------------------------------------------------------------
 
-        // nothing to do
+        // C will be standard
+
         Cnvec = n ;
         max_Cnvec = n ;
+        if (!GB_allocate_result (max_Cnvec, NULL,
+            (M_is_hyper) ? (&C_to_M) : NULL, NULL, NULL))
+        { 
+            return (GB_OUT_OF_MEMORY) ;
+        }
 
+    }
+
+    //--------------------------------------------------------------------------
+    // construct C_to_M if needed
+    //--------------------------------------------------------------------------
+
+    // TODO if A==M or B==M is aliased, then no need to do GB_lookup
+
+    if (C_to_M != NULL)
+    { 
+        // TODO make this a function;  See GB_emult_phase0.
+        if (Ch != NULL)
+        {
+            // C is hypersparse
+            int nth = GB_IMIN (Cnvec, nthreads) ;
+            #pragma omp parallel for num_threads(nth)
+            for (int64_t k = 0 ; k < Cnvec ; k++)
+            {
+                int64_t j = Ch [k] ;
+                // C_to_M [k] = kM if Mh [kM] == j and M(:,j) is non-empty
+                int64_t kM = 0, pM, pM_end ;
+                GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
+                C_to_M [k] = (pM < pM_end) ? kM : -1 ;
+            }
+        }
+        else
+        {
+            // this case can occur only if M is present, complemented, and
+            // hypersparse, and C is standard.
+            #pragma omp parallel for num_threads(nthreads)
+            for (int64_t j = 0 ; j < n ; j++)
+            { 
+                C_to_M [j] = -1 ;
+            }
+            // scatter Mh into C_to_M
+            #pragma omp parallel for num_threads(nthreads)
+            for (int64_t kM = 0 ; kM < Mnvec ; kM++)
+            { 
+                int64_t jM = Mh [kM] ;
+                C_to_M [jM] = kM ;
+            }
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -397,6 +479,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     (*p_max_Cnvec  ) = max_Cnvec ;
     (*p_Ch_is_Mh   ) = Ch_is_Mh ;
     (*Ch_handle    ) = Ch ;
+    (*C_to_M_handle) = C_to_M ;
     (*C_to_A_handle) = C_to_A ;
     (*C_to_B_handle) = C_to_B ;
 
@@ -469,6 +552,34 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
             ASSERT (!B->is_hyper) ;
         }
 
+        // see if M (:,j) exists
+        if (Ch_is_Mh)
+        { 
+            // Ch is the same as Mh
+            ASSERT (M != NULL) ;
+            ASSERT (M->is_hyper) ;
+            ASSERT (!Mask_comp) ;
+            ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
+            ASSERT (C_to_M == NULL) ;
+        }
+        else if (C_to_M != NULL)
+        {
+            // M is present and hypersparse
+            ASSERT (M != NULL) ;
+            ASSERT (M->is_hyper) ;
+            int64_t kM = C_to_M [k] ;
+            ASSERT (kM >= -1 && kM < M->nvec) ;
+            if (kM >= 0)
+            {
+                int64_t jM = M->h [kM] ;
+                ASSERT (j == jM) ;
+            }
+        }
+        else
+        {
+            // M is not present, or in standard form
+            ASSERT (M == NULL || !(M->is_hyper)) ;
+        }
     }
     #endif
 

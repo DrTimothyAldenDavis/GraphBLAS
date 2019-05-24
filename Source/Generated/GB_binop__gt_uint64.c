@@ -104,9 +104,12 @@ void GB_AaddB__gt_uint64
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
-    const int64_t *C_to_A,
-    const int64_t *C_to_B,
-    int nthreads
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
+    const GB_task_struct *restrict TaskList,
+    const int ntasks,
+    const int nthreads
 )
 { 
     #include "GB_add_template.c"
@@ -123,9 +126,9 @@ void GB_AemultB__gt_uint64
     const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *C_to_M,
-    const int64_t *C_to_A,
-    const int64_t *C_to_B,
+    const int64_t *restrict C_to_M,
+    const int64_t *restrict C_to_A,
+    const int64_t *restrict C_to_B,
     int nthreads
 )
 { 

@@ -1499,20 +1499,82 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
     const GB_Type_code code2       // the type of x, the input value
 ) ;
 
+//------------------------------------------------------------------------------
+// GB_task_struct: Element-wise Task descriptor
+//------------------------------------------------------------------------------
+
+// The element-wise computations (GB_add, GB_emult, and GB_mask) compute
+// C(:,j)<M(:,j)> = op (A (:,j), B(:,j)).  They are parallelized by slicing the
+// work into tasks, described by the GB_task_struct.
+
+// There are two kinds of tasks.  For a coarse task, kfirst <= klast, and the
+// task computes all vectors in C(:,kfirst:klast), inclusive.  None of the
+// vectors are sliced and computed by other tasks.  For a fine task, klast is
+// -1.  The task computes part of the single vector C(:,kfirst).  It starts at
+// pA in Ai,Ax, and pB in Bi,Bx.
+
+typedef struct          // task descriptor
+{
+    int64_t kfirst ;    // C(:,kfirst) is the first vector in this task.
+    int64_t klast  ;    // C(:,klast) is the last vector in this task.
+    int64_t pA ;        // fine task starts at Ai, Ax [pA]
+    int64_t pB ;        // fine task starts at Bi, Bx [pB]
+    int64_t pC ;        // fine task starts at Ci, Cx [pC]
+}
+GB_task_struct ;
+
+GrB_Info GB_ewise_slice
+(
+    // output:
+    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
+    int *p_max_ntasks,              // size of TaskList
+    int *p_ntasks,                  // # of tasks constructed
+    // input:
+    const int64_t Cnvec,            // # of vectors of C
+    const int64_t *restrict Ch,     // vectors of C, if hypersparse
+    const int64_t *restrict C_to_M, // mapping of C to M
+    const int64_t *restrict C_to_A, // mapping of C to A
+    const int64_t *restrict C_to_B, // mapping of C to B
+    const GrB_Matrix M,             // optional mask
+    const bool Mask_comp,
+    const GrB_Matrix A,             // matrix to slice
+    const GrB_Matrix B,             // matrix to slice
+    GB_Context Context
+) ;
+
+void GB_slice_vector
+(
+    // output: return i, pA, and pB
+    int64_t *p_i,                   // work starts at A(i,ka) and B(i,kb)
+    int64_t *p_pA,                  // A(i:end,ka) starts at pA
+    int64_t *p_pB,                  // B(i:end,kb) starts at pB
+    // input:
+    const int64_t pA_start,         // A(:,ka) starts at pA_start in Ai,Ax
+    const int64_t pA_end,           // A(:,ka) ends at pA_end-1 in Ai,Ax
+    const int64_t *restrict Ai,     // indices of A
+    const int64_t pB_start,         // B(:,kb) starts at pB_start in Bi,Bx
+    const int64_t pB_end,           // B(:,kb) ends at pB_end-1 in Bi,Bx
+    const int64_t *restrict Bi,     // indices of B
+    const int64_t vlen,             // A->vlen and B->vlen
+    const double target_work        // target work
+) ;
+
+//------------------------------------------------------------------------------
+
 GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     int64_t *p_max_Cnvec,       // size of the 3 output arrays:
     int64_t **Ch_handle,        // Ch: output of size max_Cnvec, or NULL
+    int64_t **C_to_M_handle,    // C_to_M: output of size max_Cnvec, or NULL
     int64_t **C_to_A_handle,    // C_to_A: output of size max_Cnvec, or NULL
     int64_t **C_to_B_handle,    // C_to_B: output of size max_Cnvec, or NULL
-    bool *p_Ch_is_Mh,           // if true, then Ch == M->h
+    bool *p_Ch_is_Mh,           // if true, then Ch == Mh
 
-    // input
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,       // if true, then M is complemented
-    const GrB_Matrix A,
-    const GrB_Matrix B,
+    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
+    const GrB_Matrix B,         // standard or hypersparse; never a slice
     GB_Context Context
 ) ;
 
@@ -1522,9 +1584,14 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
 
+    // tasks from GB_add_phase0b
+    GB_task_struct *restrict TaskList,      // array of structs
+    const int ntasks,                       // # of tasks
+
     // analysis from GB_add_phase0
     const int64_t Cnvec,
     const int64_t *restrict Ch,
+    const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,                // if true, then Ch == M->h
@@ -1547,10 +1614,15 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
 
+    // tasks from GB_add_phase0b
+    const GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                         // # of tasks
+
     // analysis from GB_add_phase0:
     const int64_t Cnvec,
     const int64_t max_Cnvec,
     const int64_t *restrict Ch,
+    const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h

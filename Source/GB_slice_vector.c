@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_slice_vector:  slice a vector for GB_add and GB_emult
+// GB_slice_vector:  slice a vector for GB_add, GB_emult, and GB_mask
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,32 +7,26 @@
 
 //------------------------------------------------------------------------------
 
-// A(:,ka) and B(:,kb) are two long vectors that will be added with GB_add or
-// GB_emult, and the work to compute them needs to be split into multiple
-// tasks.  They represent the same vector index j, for C(:,j) = A(:,j) +
-// B(:,j).  The vector index j is not needed here.  The vectors ka and kb are
-// not required, either; just the positions where the vectors appear in A and B
+// A(:,ka) and B(:,kb) are two long vectors that will be added with GB_add,
+// GB_emult, or GB_mask, and the work to compute them needs to be split into
+// multiple tasks.  They represent the same vector index j, for:
+
+//      C(:,j) = A(:,j) +  B(:,j) in GB_add
+//      C(:,j) = A(:,j) .* B(:,j) in GB_emult
+//      C(:,j)<M(:,j)> = B(:,j) in GB_mask (A is passed in as the input C)
+
+// The vector index j is not needed here.  The vectors ka and kb are not
+// required, either; just the positions where the vectors appear in A and B
 // (pA_start, pA_end, pB_start, and pB_end).
 
-// Find i so that nnz (A (i:end,ka)) + nnz (B (i:end,kb)) is roughly equal to
-// target_work = target_fraction * (nnz (A (:,ka)) + nnz (B (:,kb))).  The
-// entries in A(i:end,ka) start at position pA in Ai and Ax, and the entries in
-// B(i:end,kb) start at position pB in Bi and Bx.
-
-// If the resulting subtask is too small then it is returned as empty, and i =
-// vlen.  If the subtask is too large, then it is returned with i = 0.  In both
-// cases, the function returns false.
-
-// If a subtask is found with roughly the correct amount of target work, then
-// the task starts at A(i,ka) and B(i,kb), at position pA in Ai,Ax and position
-// pB in Bi,Bx.
+// This method finds i so that nnz (A (i:end,ka)) + nnz (B (i:end,kb)) is
+// roughly equal to target_work.  The entries in A(i:end,ka) start at position
+// pA in Ai and Ax, and the entries in B(i:end,kb) start at position pB in Bi
+// and Bx.
 
 // If n = A->vlen = B->vlen, anz = nnz (A (:,ka)), and bnz = nnz (B (:,kb)),
-// then the total time taken by this function is O(log(n)*(log(anz)+log(bnz)),
+// then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
 // or at most O((log(n)^2)).
-
-
-#define GB_DEBUG
 
 #include "GB.h"
 
@@ -50,7 +44,7 @@ void GB_slice_vector
     const int64_t pB_end,           // B(:,kb) ends at pB_end-1 in Bi,Bx
     const int64_t *restrict Bi,     // indices of B
     const int64_t vlen,             // A->vlen and B->vlen
-    const double target_fraction    // target work fraction (0 to 1, inclusive)
+    const double target_work        // target work
 )
 {
 
@@ -58,64 +52,57 @@ void GB_slice_vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (target_fraction >= 0 && target_fraction <= 1) ;
     ASSERT (Ai != NULL && Bi != NULL) ;
     ASSERT (p_i != NULL && p_pA != NULL && p_pB != NULL) ;
-
-    //--------------------------------------------------------------------------
-    // get A (:,ka) and B (:,kb)
-    //--------------------------------------------------------------------------
-
-    int64_t anz = pA_end - pA_start ;
-    int64_t bnz = pB_end - pB_start ;
-
-    double total_work  = anz + bnz ;
-    double target_work = target_fraction * total_work ;
-
-    //--------------------------------------------------------------------------
-    // special cases
-    //--------------------------------------------------------------------------
-
-    if (total_work - target_work < 1024)
-    {
-        // this subtask starts at the beginning of A(:,ka) and B(:,kb)
-        (*p_i)  = 0 ;
-        (*p_pA) = pA_start ;
-        (*p_pB) = pB_start ;
-    }
-    else if (target_work < 1024)
-    {
-        // this subtask is empty
-        (*p_i)  = vlen ;
-        (*p_pA) = pA_end ;
-        (*p_pB) = pB_end ;
-    }
 
     //--------------------------------------------------------------------------
     // find i, pA, and pB for the start of this task
     //--------------------------------------------------------------------------
 
+    // TODO allow ileft and iright to be specified on input, to limit the
+    // search.
+
     // search for index i in the range ileft:iright, inclusive
     int64_t ileft  = 0 ;
     int64_t iright = vlen-1 ;
+    int64_t i = 0 ;
+    int64_t pA = pA_start ;
+    int64_t pB = pB_start ;
+    int64_t aknz = pA_end - pA_start ;
+    int64_t bknz = pB_end - pB_start ;
 
-    while (true)
+    while (ileft < iright)
     {
 
         //----------------------------------------------------------------------
         // find the index i in the middle of ileft:iright
         //----------------------------------------------------------------------
 
-        int64_t i = (ileft + iright) / 2 ;
+        i = (ileft + iright) / 2 ;
+        // printf ("   slice vector i "GBd" in ["GBd" to "GBd"]\n", i, ileft,
+        //     iright) ;
 
         //----------------------------------------------------------------------
         // find where i appears in A(:,ka)
         //----------------------------------------------------------------------
 
-        bool afound ;
-        int64_t pA = pA_start ;
-        int64_t apright = pA_end - 1 ;
-        GB_BINARY_SPLIT_SEARCH (i, Ai, pA, apright, afound) ;
+        double awork = 0 ;
+        pA = pA_start ;
+        if (aknz == vlen)
+        {
+            // A(:,ka) is dense; no need for a binary search
+            pA = pA_start + i ;
+            ASSERT (Ai [pA] == i) ;
+        }
+        else if (aknz > 0)
+        {
+            bool afound ;
+            int64_t apright = pA_end - 1 ;
+            GB_BINARY_SPLIT_SEARCH (i, Ai, pA, apright, afound) ;
+        }
+        if (pA > 0) ASSERT (Ai [pA-1] < i) ;
+        ASSERT (Ai [pA] >= i) ;
+
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
         //      Ai [pA : pA_end-1]   > i
@@ -130,10 +117,22 @@ void GB_slice_vector
         // find where i appears in B(:,kb)
         //----------------------------------------------------------------------
 
-        bool bfound ;
-        int64_t pB = pB_start ;
-        int64_t bpright = pB_end - 1 ;
-        GB_BINARY_SPLIT_SEARCH (i, Bi, pB, bpright, bfound) ;
+        double bwork = 0 ;
+        pB = pB_start ;
+        if (bknz == vlen)
+        {
+            // B(:,kb) is dense; no need for a binary search
+            pB = pB_start + i ;
+            ASSERT (Bi [pB] == i) ;
+        }
+        else if (bknz > 0)
+        {
+            bool bfound ;
+            int64_t bpright = pB_end - 1 ;
+            GB_BINARY_SPLIT_SEARCH (i, Bi, pB, bpright, bfound) ;
+        }
+        if (pB > 0) ASSERT (Bi [pB-1] < i) ;
+        ASSERT (Bi [pB] >= i) ;
 
         // Bi has been split.  If bfound is false:
         //      Bi [pB_start : pB-1] < i
@@ -150,8 +149,9 @@ void GB_slice_vector
         //----------------------------------------------------------------------
 
         double work = (pA_end - pA) + (pB_end - pB) ;
+        // printf ("    work %g target %g\n", work, target_work) ;
 
-        if (work < 0.8 * target_work)
+        if (work < 0.9999 * target_work)
         {
 
             //------------------------------------------------------------------
@@ -164,7 +164,7 @@ void GB_slice_vector
             iright = i ;
 
         }
-        else if (work > 1.25 * target_work)
+        else if (work > 1.0001 * target_work)
         {
 
             //------------------------------------------------------------------
@@ -188,11 +188,16 @@ void GB_slice_vector
             ASSERT (0 <= i && i <= vlen) ;
             ASSERT (pA_start <= pA && pA <= pA_end) ;
             ASSERT (pB_start <= pB && pB <= pB_end) ;
-            (*p_i)  = i ;
-            (*p_pA) = pA ;
-            (*p_pB) = pB ;
-            return ;
+            break ;
         }
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    (*p_i)  = i ;
+    (*p_pA) = pA ;
+    (*p_pB) = pB ;
 }
 

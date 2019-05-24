@@ -45,10 +45,15 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
 
+    // tasks from GB_add_phase0b
+    const GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                         // # of tasks
+
     // analysis from GB_add_phase0:
     const int64_t Cnvec,
     const int64_t max_Cnvec,
     const int64_t *restrict Ch,
+    const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
@@ -119,7 +124,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
         Context) ;
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; caller must free C_to_A, C_to_B
+        // out of memory; caller must free C_to_M, C_to_A, C_to_B
         GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
         GB_FREE_MEMORY (Ch, max_Cnvec, sizeof (int64_t)) ;
         return (info) ;
@@ -158,7 +163,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     #define GB_BINOP_WORKER(mult,xyname)                            \
     {                                                               \
         GB_AaddB(mult,xyname) (C, M, Mask_comp, A, B, Ch_is_Mh,     \
-            C_to_A, C_to_B, nthreads) ;                             \
+            C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
         done = true ;                                               \
     }                                                               \
     break ;
@@ -304,7 +309,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // return result
     //--------------------------------------------------------------------------
 
-    // caller must free C_to_A, and C_to_B, but not Cp or Ch
+    // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
     ASSERT_OK (GB_check (C, "C output for add phase2", GB0)) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;

@@ -1,5 +1,6 @@
 % test eWise
 clear all
+make
 addpath ('~/ssget') ;
 addpath ('spok') ;
 nthreads_set (2) ;
@@ -10,8 +11,8 @@ test72
 testc8
 test68  % eWiseMult performance
 test105
-test20
-test26
+% test20
+% test26
 test34
 test58  % eWiseAdd performance
 
