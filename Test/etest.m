@@ -19,3 +19,5 @@ test58  % eWiseAdd performance
 test61  % eWiseMult performance
 test18
 test39  % eWiseAdd performance
+
+test111 % eWiseAdd performance

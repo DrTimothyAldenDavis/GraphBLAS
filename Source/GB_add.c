@@ -57,10 +57,10 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A for add phased", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for add phased", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (op, "op for add phased", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for add phased", GB0)) ;
+    ASSERT_OK (GB_check (A, "A for add", GB0)) ;
+    ASSERT_OK (GB_check (B, "B for add", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (op, "op for add", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (M, "M for add", GB0)) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     if (M != NULL)
     { 
@@ -95,6 +95,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         &Cnvec, &max_Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, &Ch_is_Mh,
         // original input:
         M, Mask_comp, A, B, Context) ;
+
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -109,9 +110,9 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // computed by phase0b
         &TaskList, &max_ntasks, &ntasks,
         // computed by phase0:
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B,
+        Cnvec, Ch, C_to_A, C_to_B,
         // original input:
-        M, Mask_comp, A, B, Context) ;
+        A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -185,7 +186,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "C output for add phased", GB0)) ;
+    ASSERT_OK (GB_check (C, "C output for add", GB0)) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

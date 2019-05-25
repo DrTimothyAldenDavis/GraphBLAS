@@ -328,6 +328,7 @@ void GB_Global_abort_function_set (void (* abort_function) (void))
 
 void GB_Global_abort_function ( )
 {
+    printf ("ABORT: %p %p\n", abort, GB_Global.abort_function) ;
     GB_Global.abort_function ( ) ;
 }
 

@@ -1532,11 +1532,8 @@ GrB_Info GB_ewise_slice
     // input:
     const int64_t Cnvec,            // # of vectors of C
     const int64_t *restrict Ch,     // vectors of C, if hypersparse
-    const int64_t *restrict C_to_M, // mapping of C to M
     const int64_t *restrict C_to_A, // mapping of C to A
     const int64_t *restrict C_to_B, // mapping of C to B
-    const GrB_Matrix M,             // optional mask
-    const bool Mask_comp,
     const GrB_Matrix A,             // matrix to slice
     const GrB_Matrix B,             // matrix to slice
     GB_Context Context
@@ -1557,6 +1554,16 @@ void GB_slice_vector
     const int64_t *restrict Bi,     // indices of B
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
+) ;
+
+void GB_ewise_cumsum
+(
+    int64_t *Cp,                        // size Cnvec+1
+    const int64_t Cnvec,
+    int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
+    GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                   // # of tasks
+    const int nthreads                  // # of threads
 ) ;
 
 //------------------------------------------------------------------------------
@@ -1584,11 +1591,11 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
 
-    // tasks from GB_add_phase0b
+    // tasks from phase0b
     GB_task_struct *restrict TaskList,      // array of structs
     const int ntasks,                       // # of tasks
 
-    // analysis from GB_add_phase0
+    // analysis from phase0
     const int64_t Cnvec,
     const int64_t *restrict Ch,
     const int64_t *restrict C_to_M,
@@ -1608,17 +1615,17 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
 
-    // from GB_add_phase1
+    // from phase1
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
 
-    // tasks from GB_add_phase0b
+    // tasks from phase0b
     const GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                         // # of tasks
 
-    // analysis from GB_add_phase0:
+    // analysis from phase0
     const int64_t Cnvec,
     const int64_t max_Cnvec,
     const int64_t *restrict Ch,
@@ -1658,27 +1665,31 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
 
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,       // if true, then M is complemented
-    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
-    const GrB_Matrix B,         // standard or hypersparse; never a slice
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     GB_Context Context
 ) ;
 
-GrB_Info GB_emult_phase1        // count nnz in each C(:,j)
+GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 (
     int64_t **Cp_handle,                // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
 
-    // analysis from GB_emult_phase0
-    const int64_t Cnvec,                // # of vectors to compute in C
-    const int64_t *restrict Ch,         // Ch is NULL, M->h, A->h, or B->h
+    // tasks from phase0b
+    GB_task_struct *restrict TaskList,      // array of structs
+    const int ntasks,                       // # of tasks
+
+    // analysis from phase0
+    const int64_t Cnvec,
+    const int64_t *restrict Ch,         // Ch is NULL, or shallow pointer
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
 
-    const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,       // if true, then M is complemented
-    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
-    const GrB_Matrix B,         // standard or hypersparse; never a slice
+    const GrB_Matrix M,                 // optional mask, may be NULL
+    const bool Mask_comp,               // if true, then M is complemented
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     GB_Context Context
 ) ;
 
@@ -1689,18 +1700,22 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
 
-    // from GB_emult_phase1
+    // from phase1
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
 
-    // analysis from GB_emult_phase0
-    const int64_t Cnvec,                // # of vectors to compute in C
-    const int64_t *restrict Ch,         // Ch is NULL, M->h, A->h, or B->h
+    // tasks from phase0b
+    const GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                         // # of tasks
+
+    // analysis from phase0
+    const int64_t Cnvec,
+    const int64_t *restrict Ch,         // Ch is NULL, or a shallow pointer
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
 
-    // original input to GB_emult
+    // original input
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,
     const GrB_Matrix A,

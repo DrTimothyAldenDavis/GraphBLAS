@@ -89,13 +89,13 @@ void GB_slice_vector
         double awork = 0 ;
         pA = pA_start ;
         if (aknz == vlen)
-        {
+        { 
             // A(:,ka) is dense; no need for a binary search
             pA = pA_start + i ;
             ASSERT (Ai [pA] == i) ;
         }
         else if (aknz > 0)
-        {
+        { 
             bool afound ;
             int64_t apright = pA_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Ai, pA, apright, afound) ;
@@ -120,13 +120,13 @@ void GB_slice_vector
         double bwork = 0 ;
         pB = pB_start ;
         if (bknz == vlen)
-        {
+        { 
             // B(:,kb) is dense; no need for a binary search
             pB = pB_start + i ;
             ASSERT (Bi [pB] == i) ;
         }
         else if (bknz > 0)
-        {
+        { 
             bool bfound ;
             int64_t bpright = pB_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Bi, pB, bpright, bfound) ;
@@ -152,7 +152,7 @@ void GB_slice_vector
         // printf ("    work %g target %g\n", work, target_work) ;
 
         if (work < 0.9999 * target_work)
-        {
+        { 
 
             //------------------------------------------------------------------
             // work is too low
@@ -165,7 +165,7 @@ void GB_slice_vector
 
         }
         else if (work > 1.0001 * target_work)
-        {
+        { 
 
             //------------------------------------------------------------------
             // work is too high
@@ -178,7 +178,7 @@ void GB_slice_vector
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // work is about right; use this result.

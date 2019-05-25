@@ -41,15 +41,15 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
 
-    // from GB_add_phase1
+    // from phase1
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
 
-    // tasks from GB_add_phase0b
+    // tasks from phase0b
     const GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                         // # of tasks
 
-    // analysis from GB_add_phase0:
+    // analysis from phase0
     const int64_t Cnvec,
     const int64_t max_Cnvec,
     const int64_t *restrict Ch,
@@ -58,7 +58,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
 
-    // original input to GB_add
+    // original input
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,
     const GrB_Matrix A,

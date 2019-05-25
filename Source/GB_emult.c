@@ -58,7 +58,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     }
 
     //--------------------------------------------------------------------------
-    // phase0: determine the vectors in C(:,j)
+    // initializations
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL ;
@@ -66,13 +66,43 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     int64_t Cnvec, max_Cnvec, Cnvec_nonempty ;
     int64_t *Cp = NULL, *Ch = NULL ;
     int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
+    int ntasks, max_ntasks ;
+    GB_task_struct *TaskList = NULL ;
+
+    //--------------------------------------------------------------------------
+    // phase0: determine the vectors in C(:,j)
+    //--------------------------------------------------------------------------
 
     GrB_Info info = GB_emult_phase0 (
-        &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, // computed by phase0
-        M, Mask_comp, A, B, Context) ;          // original input
+        // computed by phase0:
+        &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B,
+        // original input:
+        M, Mask_comp, A, B, Context) ;
+
     if (info != GrB_SUCCESS)
     { 
         // out of memory
+        return (info) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase0b: split C into tasks for phase1 and phase2
+    //--------------------------------------------------------------------------
+
+    info = GB_ewise_slice (
+        // computed by phase0b:
+        &TaskList, &max_ntasks, &ntasks,
+        // computed by phase0:
+        Cnvec, Ch, C_to_A, C_to_B,
+        // original input:
+        A, B, Context) ;
+
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory; free everything allocated by GB_add_phase0
+        GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -81,12 +111,19 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     info = GB_emult_phase1 (
-        &Cp, &Cnvec_nonempty,                   // computed by phase1
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B,      // from phase0
-        M, Mask_comp, A, B, Context) ;          // original input
+        // computed by phase1:
+        &Cp, &Cnvec_nonempty,
+        // from phase0b:
+        TaskList, ntasks,
+        // from phase0:
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B,
+        // original input:
+        M, Mask_comp, A, B, Context) ;
+
     if (info != GrB_SUCCESS)
     { 
         // out of memory; free everything allocated by phase 0
+        GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
         GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
         GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
         GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
@@ -101,19 +138,26 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     // Either way, it is not freed here.
 
     info = GB_emult_phase2 (
-        &C, ctype, C_is_csc, op,                // computed or used by phase2
-        Cp, Cnvec_nonempty,                     // from phase1
-        Cnvec, Ch, C_to_M, C_to_A, C_to_B,      // from phase0
-        M, Mask_comp, A, B, Context) ;          // original input
+        // computed or used by phase2:
+        &C, ctype, C_is_csc, op,
+        // from phase1:
+        Cp, Cnvec_nonempty,
+        // from phase0b:
+        TaskList, ntasks,
+        // from phase0:
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B,
+        // original input:
+        M, Mask_comp, A, B, Context) ;
 
     // free workspace
+    GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
     GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
     GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
     GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; note that Cp is already freed
+        // out of memory; note that Cp is already freed, and Ch is shallow
         return (info) ;
     }
 

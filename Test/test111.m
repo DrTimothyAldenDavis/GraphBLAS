@@ -9,7 +9,8 @@ rng ('default') ;
 
 save = nthreads_get ;
 
-n = 100e6 ;
+n = 40e6 ;
+% n = 1e6 ;
 Empty = sparse (n, 1) ;
 
 for d = [0.001 0.01 0.1:.1:1]
@@ -25,16 +26,18 @@ for d = [0.001 0.01 0.1:.1:1]
     fprintf ('\nd = %g\n', d) ;
     fprintf ('nnz (A) = %d nnz (B) = %d\n', nnz (A), nnz (B)) ;
 
+    %--------------------------------------------------------------------------
+    % add
+    %--------------------------------------------------------------------------
+
     % warmup
     C1 = A + B ;
     C1 = A + B ;
-
     tic
     C1 = A + B ;
     toc
     tm = toc ;
     fprintf ('nnz (C) = %d\n', nnz (C1));
-
     fprintf ('\nvia GB_add:\n') ;
 %    try
         for nthreads = 1:4
@@ -55,6 +58,45 @@ for d = [0.001 0.01 0.1:.1:1]
         end
 %    catch
 %    end
+
+    %--------------------------------------------------------------------------
+    % ewise multiply
+    %--------------------------------------------------------------------------
+
+    % warmup
+    C1 = A .* B ;
+    C1 = A .* B ;
+    tic
+    C1 = A .* B ;
+    toc
+    tm = toc ;
+    fprintf ('nnz (C) = %d for A.*B\n', nnz (C1));
+    fprintf ('\nvia GB_eWiseMult:\n') ;
+%    try
+        for nthreads = 1:4
+            nthreads_set (nthreads) ;
+            % tic
+% usage: w = GB_mex_eWiseMult_Vector (w, mask, accum, mult, u, v, desc)
+
+            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
+            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
+            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
+%           C4 = GB_mex_AplusB (A, B, 'plus') ;
+%           C4 = GB_mex_AplusB (A, B, 'plus') ;
+%           C4 = GB_mex_AplusB (A, B, 'plus') ;
+            % toc
+            tg = gbresults ;
+            if (nthreads == 1)
+                t1 = tg ;
+            end
+            fprintf ('nthreads %d GraphBLAS time: %g ', nthreads, tg) ;
+            fprintf ('speedup %g over MATLAB: %g\n', t1/tg, tm/tg) ;
+            assert (spok (C4.matrix) == 1) ;
+            assert (isequal (C1, C4.matrix)) ;
+        end
+%    catch
+%    end
+
 end
 
 fprintf ('\ndense matrices:\n') ;

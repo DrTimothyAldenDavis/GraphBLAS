@@ -36,18 +36,22 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
 
-    // from GB_emult_phase1
+    // from phase1
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
 
-    // analysis from GB_emult_phase0
-    const int64_t Cnvec,                // # of vectors to compute in C
-    const int64_t *restrict Ch,         // Ch is NULL, M->h, A->h, or B->h
+    // tasks from phase0b
+    const GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                         // # of tasks
+
+    // analysis from phase0
+    const int64_t Cnvec,
+    const int64_t *restrict Ch,         // Ch is NULL, or a shallow pointer
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
 
-    // original input to GB_emult
+    // original input
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,
     const GrB_Matrix A,
@@ -94,7 +98,8 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         Context) ;
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; caller must free C_to_M, C_to_A, C_to_B but not Cp
+        // out of memory; caller must free C_to_M, C_to_A, C_to_B
+        // Ch must not be freed since Ch is always shallow
         GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
         return (info) ;
     }
@@ -131,7 +136,7 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     #define GB_BINOP_WORKER(mult,xyname)                            \
     {                                                               \
         GB_AemultB(mult,xyname) (C, M, Mask_comp, A, B,             \
-            C_to_M, C_to_A, C_to_B, nthreads) ;                     \
+            C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
         done = true ;                                               \
     }                                                               \
     break ;
@@ -263,7 +268,7 @@ GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
     //--------------------------------------------------------------------------
 
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
-    ASSERT_OK (GB_check (C, "C output for add phase2", GB0)) ;
+    ASSERT_OK (GB_check (C, "C output for emult phase2", GB0)) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

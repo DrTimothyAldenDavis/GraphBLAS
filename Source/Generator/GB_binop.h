@@ -40,6 +40,8 @@ void GB_AemultB
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
-    int nthreads
+    const GB_task_struct *restrict TaskList,
+    const int ntasks,
+    const int nthreads
 ) ;
 

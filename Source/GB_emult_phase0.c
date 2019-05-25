@@ -51,8 +51,8 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
 
     const GrB_Matrix M,         // optional mask, may be NULL
     const bool Mask_comp,       // if true, then M is complemented
-    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
-    const GrB_Matrix B,         // standard or hypersparse; never a slice
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     GB_Context Context
 )
 {
@@ -532,6 +532,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
         }
         else if (A->is_hyper)
         {
+            // A is hypersparse, and Ch is a shallow copy of A->h
             ASSERT (Ch == A->h) ;
         }
 
@@ -550,26 +551,12 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
         }
         else if (B->is_hyper)
         {
+            // A is hypersparse, and Ch is a shallow copy of A->h
             ASSERT (Ch == B->h) ;
         }
 
         // see if M (:,j) exists
-        if (C_to_M != NULL)
-        {
-            // M is present and hypersparse
-            ASSERT (M != NULL) ;
-            ASSERT (M->is_hyper)
-            int64_t kM = C_to_M [k] ;
-            ASSERT (kM >= -1 && kM < M->nvec) ;
-            if (kM >= 0)
-            {
-                int64_t jM = M->h [kM] ;
-                ASSERT (j == jM) ;
-            }
-        }
-
-        // see if M (:,j) exists
-        if (Ch_is_Mh)
+        if (Ch != NULL && M != NULL && Ch == M->h)
         { 
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
@@ -580,8 +567,10 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
         }
         else if (C_to_M != NULL)
         {
+            // M is present and hypersparse
+            ASSERT (M != NULL) ;
             ASSERT (M->is_hyper) ;
-            kM = C_to_M [k] ;
+            int64_t kM = C_to_M [k] ;
             ASSERT (kM >= -1 && kM < M->nvec) ;
             if (kM >= 0)
             {

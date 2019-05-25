@@ -27,17 +27,21 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     int64_t **Cp_handle,                // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
 
-    // analysis from GB_emult_phase0
-    const int64_t Cnvec,                // # of vectors to compute in C
-    const int64_t *restrict Ch,         // Ch is NULL, M->h, A->h, or B->h
+    // tasks from phase0b
+    GB_task_struct *restrict TaskList,      // array of structs
+    const int ntasks,                       // # of tasks
+
+    // analysis from phase0
+    const int64_t Cnvec,
+    const int64_t *restrict Ch,         // Ch is NULL, or shallow pointer
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
 
-    const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,       // if true, then M is complemented
-    const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
-    const GrB_Matrix B,         // standard or hypersparse; never a slice
+    const GrB_Matrix M,                 // optional mask, may be NULL
+    const bool Mask_comp,               // if true, then M is complemented
+    const GrB_Matrix A,
+    const GrB_Matrix B,
     GB_Context Context
 )
 {
@@ -83,10 +87,15 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     #include "GB_emult_template.c"
 
     //--------------------------------------------------------------------------
-    // replace Cp with its cumulative sum and return result
+    // cumulative sum of Cp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;
+    GB_ewise_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads) ;
+
+    //--------------------------------------------------------------------------
+    // return the result
+    //--------------------------------------------------------------------------
+
     (*Cp_handle) = Cp ;
     return (GrB_SUCCESS) ;
 }

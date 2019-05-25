@@ -230,6 +230,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         if (!GB_allocate_result (max_Cnvec, &Ch, NULL,
             (A_is_hyper) ? (&C_to_A) : NULL, (B_is_hyper) ? (&C_to_B) : NULL))
         { 
+            // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -279,6 +280,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         if (!GB_allocate_result (max_Cnvec, &Ch,
             (M_is_hyper) ? (&C_to_M) : NULL, &C_to_A, &C_to_B))
         { 
+            // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -355,6 +357,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         if (!GB_allocate_result (max_Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, &C_to_A, NULL))
         { 
+            // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -389,6 +392,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         if (!GB_allocate_result (max_Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, NULL, &C_to_B))
         { 
+            // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -423,6 +427,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         if (!GB_allocate_result (max_Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, NULL, NULL))
         { 
+            // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
 

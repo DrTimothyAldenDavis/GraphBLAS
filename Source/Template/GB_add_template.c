@@ -5,10 +5,6 @@
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-// PARALLEL: done, except when # threads > # vectors (as in GrB_Vector).
-// all vectors of a GrB_Matrix C are computed fully in parallel.  A
-// single GrB_Vector will use only one thread, however.
-
 //------------------------------------------------------------------------------
 
 {
@@ -17,12 +13,12 @@
     // get A, B, M, and C
     //--------------------------------------------------------------------------
 
-    const int64_t  *restrict Ap = A->p ;
-    const int64_t  *restrict Ai = A->i ;
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ai = A->i ;
     int64_t vlen = A->vlen ;
 
-    const int64_t  *restrict Bp = B->p ;
-    const int64_t  *restrict Bi = B->i ;
+    const int64_t *restrict Bp = B->p ;
+    const int64_t *restrict Bi = B->i ;
 
     const int64_t *restrict Mp = NULL ;
     const int64_t *restrict Mh = NULL ;
@@ -54,7 +50,7 @@
     #endif
 
     //--------------------------------------------------------------------------
-    // phase1: count entries in each C(:j); phase 2: compute C
+    // phase1: count entries in each C(:,j); phase2: compute C
     //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
@@ -77,7 +73,6 @@
             // get j, the kth vector of C
             //------------------------------------------------------------------
 
-            ASSERT (k >= 0 && k < Cnvec) ;
             int64_t j = (Ch == NULL) ? k : Ch [k] ;
 
             #if defined ( GB_PHASE_1_OF_2 )
@@ -85,14 +80,14 @@
             #else
             int64_t pC, pC_end ;
             if (fine_task)
-            {
+            { 
                 // A fine task computes a slice of C(:,j)
                 pC     = TaskList [taskid  ].pC ;
                 pC_end = TaskList [taskid+1].pC ;
                 ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;
             }
             else
-            {
+            { 
                 // The vectors of C are never sliced for a coarse task.
                 pC     = Cp [k] ;
                 pC_end = Cp [k+1] ;
@@ -108,14 +103,14 @@
             int64_t pA = -1 ;
             int64_t pA_end = -1 ;
             if (fine_task)
-            {
+            { 
                 // A fine task operates on Ai,Ax [pA...pA_end-1], which is
                 // a subset of the vector A(:,j)
                 pA     = TaskList [taskid  ].pA ;
                 pA_end = TaskList [taskid+1].pA ;
             }
             else
-            {
+            { 
                 // A coarse task operates on the entire vector A (:,j)
                 int64_t kA = (C_to_A == NULL) ? j : C_to_A [k] ;
                 if (kA >= 0)
@@ -133,14 +128,14 @@
             int64_t pB = -1 ;
             int64_t pB_end = -1 ;
             if (fine_task)
-            {
+            { 
                 // A fine task operates on Bi,Bx [pB...pB_end-1], which is
                 // a subset of the vector B(:,j)
                 pB     = TaskList [taskid  ].pB ;
                 pB_end = TaskList [taskid+1].pB ;
             }
             else
-            {
+            { 
                 // A coarse task operates on the entire vector B (:,j)
                 int64_t kB = (C_to_B == NULL) ? j : C_to_B [k] ;
                 if (kB >= 0)
@@ -164,15 +159,17 @@
             if (Ch_is_Mh)
             { 
                 // Ch is the same as Mh, so binary search is not needed
-                ASSERT (Ch != NULL && Mh != NULL && Ch [k] == Mh [k]) ;
+                ASSERT (Ch != NULL) ;
+                ASSERT (Mh != NULL) ;
+                ASSERT (Ch [k] == Mh [k]) ;
                 kM = k ;
             }
             else if (M != NULL)
-            {
+            { 
                 kM = (C_to_M == NULL) ? j : C_to_M [k] ;
             }
             if (kM >= 0)
-            {
+            { 
                 pM     = Mp [kM] ;
                 pM_end = Mp [kM+1] ;
             }
@@ -230,7 +227,7 @@
                 // dense.
 
                 if (ajnz == vlen && bjnz == vlen)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // A(:,j) and B(:,j) dense
@@ -251,7 +248,7 @@
 
                 }
                 else if (ajnz == vlen)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // A(:,j) is dense, B(:,j) is sparse
@@ -277,7 +274,7 @@
 
                 }
                 else if (bjnz == vlen)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // A(:,j) is sparse, B(:,j) is dense
@@ -303,7 +300,7 @@
 
                 }
                 else if (ajnz == 0)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // A(:,j) is empty
@@ -322,7 +319,7 @@
 
                 }
                 else if (bjnz == 0)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // B(:,j) is empty
@@ -341,7 +338,7 @@
 
                 }
                 else if (Ai [pA_end-1] < Bi [pB])
-                {
+                { 
 
                     //----------------------------------------------------------
                     // last entry of A(:,j) comes before first entry of B(:,j)
@@ -366,7 +363,7 @@
 
                 }
                 else if (Bi [pB_end-1] < Ai [pA])
-                {
+                { 
 
                     //----------------------------------------------------------
                     // last entry of B(:,j) comes before first entry of A(:,j)
@@ -393,7 +390,7 @@
 
                 #if defined ( GB_PHASE_1_OF_2 )
                 else if (ajnz > 32 * bjnz)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // A(:,j) is much denser than B(:,j)
@@ -414,7 +411,7 @@
 
                 }
                 else if (bjnz > 32 * ajnz)
-                {
+                { 
 
                     //----------------------------------------------------------
                     // B(:,j) is must denser than A(:,j)
@@ -437,7 +434,7 @@
                 #endif
 
                 else
-                {
+                { 
 
                     //----------------------------------------------------------
                     // A(:,j) and B(:,j) have about the same # of entries
@@ -608,11 +605,11 @@
 
             #if defined ( GB_PHASE_1_OF_2 )
             if (fine_task)
-            {
+            { 
                 TaskList [taskid].pC = cjnz ;
             }
             else
-            {
+            { 
                 Cp [k] = cjnz ;
             }
             #endif

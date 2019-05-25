@@ -32,11 +32,11 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
 
-    // tasks from GB_add_phase0b
+    // tasks from phase0b
     GB_task_struct *restrict TaskList,      // array of structs
     const int ntasks,                       // # of tasks
 
-    // analysis from GB_add_phase0
+    // analysis from phase0
     const int64_t Cnvec,
     const int64_t *restrict Ch,
     const int64_t *restrict C_to_M,
@@ -80,6 +80,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     GB_CALLOC_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
     if (Cp == NULL)
     { 
+        // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
 
@@ -90,66 +91,12 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     #define GB_PHASE_1_OF_2
     #include "GB_add_template.c"
 
-    // TODO make this a function; use in GB_emult:
 
     //--------------------------------------------------------------------------
-    // local cumulative sum of the fine tasks
+    // cumulative sum of Cp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-        int64_t k = TaskList [taskid].kfirst ;
-        if (TaskList [taskid].klast == -1)
-        {
-            // Compute the sum of all fine tasks for vector k, in Cp [k].  Also
-            // compute the cumulative sum of TaskList [taskid].pC, for the
-            // tasks that work on vector k.  The first fine task uses pC = 0,
-            // which becomes an offset from the final Cp [k].  A subsequent
-            // fine task t for a vector k starts on offset of TaskList [t].pC.
-            // from the start of C(:,k).  Cp [k] has not been cumsum'd across
-            // all of Cp.  It is just the count of the entries in C(:,k).  The
-            // final Cp [k] is added to each fine task below, after the
-            // GB_cumsum of Cp.
-            int64_t pC = Cp [k] ;
-            Cp [k] += TaskList [taskid].pC ;
-            TaskList [taskid].pC = pC ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // replace Cp with its cumulative sum
-    //--------------------------------------------------------------------------
-
-    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;
-
-    //--------------------------------------------------------------------------
-    // shift the cumulative sum of the fine tasks
-    //--------------------------------------------------------------------------
-
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-        int64_t k = TaskList [taskid].kfirst ;
-        if (TaskList [taskid].klast == -1)
-        {
-            // TaskList [taskid].pC is currently an offset for this task into
-            // C(:,k).  The first fine task for vector k has an offset of zero,
-            // the 2nd fine task has an offset equal to the # of entries
-            // computed by the first task, and so on.  Cp [k] needs to be added
-            // to all offsets to get the final starting position for each fine
-            // task in C.
-            TaskList [taskid].pC += Cp [k] ;
-        }
-        else
-        {
-            // The last fine task to operate on vector k needs know its own
-            // pC_end, which is Cp [k+1].  Suppose that task is taskid-1.  If
-            // this taskid is the first fine task for vector k, then TaskList
-            // [taskid].pC is set to Cp [k] above.  If all coarse tasks are
-            // also given TaskList [taskid].pC = Cp [k], then taskid-1 will
-            // always know its pC_end, which is TaskList [taskid].pC.
-            TaskList [taskid].pC = Cp [k] ;
-        }
-    }
+    GB_ewise_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads) ;
 
     //--------------------------------------------------------------------------
     // return the result

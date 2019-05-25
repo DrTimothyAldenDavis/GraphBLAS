@@ -6,6 +6,8 @@ function logstat (testscript)
 
 [debug, compact, malloc, covered] = GB_mex_debug ;
 
+nthreads = nthreads_get ;
+
 if (nargin == 0)
     f = fopen ('log.txt', 'a') ;
     fprintf (f, '\n----------------------------------------------') ;
@@ -22,6 +24,7 @@ if (nargin == 0)
     if (covered)
         fprintf (f, ' [cover]') ;
     end
+    fprintf (f, ' [nthreads: %d]', nthreads) ;
     fprintf (f, '\n') ;
 
     fclose (f) ;
@@ -42,6 +45,7 @@ end
 if (covered)
     fprintf (' [cover]') ;
 end
+fprintf (' [nthreads: %d]', nthreads) ;
 fprintf ('\n') ;
 
 t1 = cputime ;

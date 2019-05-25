@@ -7,7 +7,17 @@ function nth = gb
 name version date about license compiledate compiletime api api_about] ... 
  = GB_mex_init ;
 
-fprintf ('\nGraphBLAS:\n    max nthreads: %d\n', nthreads_max) ;
+d = stat ;
+
+fprintf ('\n%s version: %d.%d.%d\n', name, version) ;
+
+if (d)
+    fprintf ('    malloc debug: on\n') ;
+else
+    fprintf ('    malloc debug: off\n') ;
+end
+
+fprintf ('    max nthreads: %d\n', nthreads_max) ;
 
 nthreads = nthreads_get ;
 fprintf ('    # of threads to use (nthreads_get/set): %d\n', nthreads) ;
@@ -45,21 +55,16 @@ switch (format)
         error ('?') ;
 end
 
-fprintf ('    hyperratio: %g\n\n', hyperratio) ;
-fprintf ('    name: %s\n', name) ;
-fprintf ('    version: %d.%d.%d\n', version) ;
+fprintf ('    hyperratio: %g\n', hyperratio) ;
 fprintf ('    date: %s\n', date) ;
-
 fprintf ('    compile date: %s\n', compiledate) ;
-fprintf ('    compile time: %s\n', compiletime) ;
-fprintf ('    API version: %d.%d.%d\n', api) ;
-
-
-fprintf ('\n---------------------------------\n%s', about) ;
-fprintf ('\n---------------------------------\n%s', license) ;
-fprintf ('\n---------------------------------\n%s\n', api_about) ;
+fprintf ('    compile time: %s\n\n', compiletime) ;
 
 if (nargout > 0)
+    fprintf ('\n---------------------------------\n%s', about) ;
+    fprintf ('\n---------------------------------\n%s', license) ;
+    fprintf ('\n---------------------------------\n%s\n', api_about) ;
+    fprintf ('API version: %d.%d.%d\n', api) ;
     nth = nthreads_max ;
 end
 
