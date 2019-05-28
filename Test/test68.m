@@ -10,7 +10,7 @@ rng ('default') ;
 
 if (nargin < 1)
     n = 3000 ;
-etd
+end
 
 A = sparse (rand (n)) ;
 B = sparse (rand (n)) ;

@@ -11,6 +11,11 @@ Version 3.0.0, TODO.
         global library and API information.
     * new operators and semirings: RDIV (f(x,y)=y/x) and RMINUS (y-x)
 
+Version 2.3.3, May 27, 2019
+
+    * Collected Algorithm of the ACM
+    * minor changes to the documentation: no change to the code
+
 Version 2.3.2, Mar 18, 2019
 
     * GxB_Matrix_Option_set: removed spurious check of input matrix
