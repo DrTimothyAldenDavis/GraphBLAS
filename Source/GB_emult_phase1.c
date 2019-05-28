@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase1: find # of entries in C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+// GB_emult_phase1: find # of entries in C=A.*B or C<M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -8,17 +8,14 @@
 //------------------------------------------------------------------------------
 
 // GB_emult_phase1 counts the number of entries in each vector of C, for
-// C=A.*B, C<M>=A.*B, or C<!M>=A.*B, and then does a cumulative sum to find Cp.
+// C=A.*B or C<M>=A.*B and then does a cumulative sum to find Cp.
 // GB_emult_phase1 is preceded by GB_emult_phase0, which finds the non-empty
 // vectors of C.  This phase is done entirely in parallel.
 
 // C, M, A, and B can be standard sparse or hypersparse, as determined by
-// GB_emult_phase0.  All cases of the mask M are handled: not present, present
-// and not complemented, and present and complemented.
+// GB_emult_phase0.  If present, the mask M is not complemented.
 
 // Cp is either freed by GB_emult_phase2, or transplanted into C.
-
-// PARALLEL: done
 
 #include "GB.h"
 
@@ -26,20 +23,17 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 (
     int64_t **Cp_handle,                // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
-
-    // tasks from phase0b
-    GB_task_struct *restrict TaskList,      // array of structs
-    const int ntasks,                       // # of tasks
-
-    // analysis from phase0
+    // tasks from phase0b:
+    GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                   // # of tasks
+    // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,         // Ch is NULL, or shallow pointer
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
-
+    // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
-    const bool Mask_comp,               // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context

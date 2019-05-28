@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_phase0: find vectors of C to compute for C<M>=A+B
+// GB_add_phase0: find vectors of C to compute for C=A+B or C<M>=A+B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -9,9 +9,11 @@
 
 // The eWise add of two matrices, C=A+B, C<M>=A+B, or C<!M>=A+B starts with
 // this phase, which determines which vectors of C need to be computed.
+// This phase is also used for GB_masker.
 
 // On input, A and B are the two matrices being added, and M is the optional
-// mask matrix, possibly complemented.
+// mask matrix (not complemented).  The complemented mask is handed in GB_mask,
+// not here.
 
 // The A matrix can be sparse, hypersparse, slice, or hyperslice.  The B matrix
 // can only be sparse or hypersparse.  See GB_wait, which can pass in A as any
@@ -36,6 +38,8 @@
 
 //      Ch_is_Mh:  true if the mask M is present, hypersparse, and not
 //      complemented, false otherwise.  In this case Ch is a deep copy of Mh.
+//      Only GB_add uses this option; it is not used by GB_masker (Ch_is_Mh
+//      is always false for GB_masker).
 
 //      C_to_A:  if A is hypersparse, then C_to_A [k] = kA if the kth vector, j
 //      = (Ch == NULL) ? k : Ch [k] appears in A, as j = Ah [kA].  If j does
@@ -54,6 +58,8 @@
 
 // PARALLEL: done, except in one condition: A and B are hypersparse and
 // Ch_is_Mh is false.  takes O(A->nvec + B->nvec) time.
+
+// TODO: exploit A==M, B==M, and A==B aliases
 
 #include "GB.h"
 
@@ -119,7 +125,7 @@ static inline bool GB_allocate_result
 // GB_add_phase0:  find the vectors of C for C<M>=A+B
 //------------------------------------------------------------------------------
 
-GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
+GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     int64_t *p_max_Cnvec,       // size of the 3 output arrays:
@@ -127,10 +133,9 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     int64_t **C_to_M_handle,    // C_to_M: output of size max_Cnvec, or NULL
     int64_t **C_to_A_handle,    // C_to_A: output of size max_Cnvec, or NULL
     int64_t **C_to_B_handle,    // C_to_B: output of size max_Cnvec, or NULL
-    bool *p_Ch_is_Mh,           // if true, then Ch == Mh
-
-    const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,       // if true, then M is complemented
+    bool *p_Ch_is_Mh,           // if true, then Ch == Mh.  This option is for
+                                // GB_add only, not GB_masker.
+    const GrB_Matrix M,         // optional mask, may be NULL; not complemented
     const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
     const GrB_Matrix B,         // standard or hypersparse; never a slice
     GB_Context Context
@@ -143,7 +148,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (p_max_Cnvec != NULL) ;
-    ASSERT (p_Ch_is_Mh != NULL) ;
     ASSERT (Ch_handle != NULL) ;
     ASSERT (C_to_M_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
@@ -207,9 +211,10 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         ASSERT (!M->is_slice) ;
     }
 
-    // if M is present, hypersparse, and not complemented, then C will be
-    // hypersparse, and it will have set of vectors as M (Ch == Mh).
-    bool Ch_is_Mh = (M != NULL && M_is_hyper && !Mask_comp) ;
+    // For GB_add, if M is present, hypersparse, and not complemented, then C
+    // will be hypersparse, and it will have set of vectors as M (Ch == Mh).
+    // For GB_masker, Ch is never equal to Mh.
+    bool Ch_is_Mh = (p_Ch_is_Mh != NULL) && (M != NULL && M_is_hyper) ;
 
     //--------------------------------------------------------------------------
     // find the set union of the non-empty vectors of A and B
@@ -222,6 +227,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         // C is hypersparse, with the same vectors as the hypersparse M
         //----------------------------------------------------------------------
 
+        // This step is done for GB_add only, not GB_masker.
         // GB_wait is the only place where A may be a slice, and it does not
         // use a mask.  So this phase can ignore the case where A is a slice.
         ASSERT (!A_is_slice) ;
@@ -236,9 +242,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
 
         // copy Mh into Ch.  Ch is Mh so C_to_M is not needed.
         GB_memcpy (Ch, Mh, Mnvec * sizeof (int64_t), nthreads) ;
-
-        // TODO: if A and M are aliased (M->h == A->h) then C_to_A [k] == k
-        // TODO: if B and M are aliased (M->h == B->h) then C_to_B [k] == k
 
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)
@@ -317,9 +320,11 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
                 C_to_B [Cnvec] = kB++ ;
             }
         }
+
         if (kA < Anvec)
         {
             // B is exhausted but A is not
+            // TODO this can be easily done in parallel
             for ( ; kA < Anvec ; kA++, Cnvec++)
             { 
                 // append jA to Ch
@@ -332,6 +337,7 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
         else if (kB < Bnvec)
         {
             // A is exhausted but B is not
+            // TODO this can be easily done in parallel
             for ( ; kB < Bnvec ; kB++, Cnvec++)
             { 
                 // append jB to Ch
@@ -437,8 +443,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     // construct C_to_M if needed
     //--------------------------------------------------------------------------
 
-    // TODO if A==M or B==M is aliased, then no need to do GB_lookup
-
     if (C_to_M != NULL)
     { 
         // TODO make this a function;  See GB_emult_phase0.
@@ -482,7 +486,11 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     ASSERT (Cnvec <= max_Cnvec) ;
     (*p_Cnvec      ) = Cnvec ;
     (*p_max_Cnvec  ) = max_Cnvec ;
-    (*p_Ch_is_Mh   ) = Ch_is_Mh ;
+    if (p_Ch_is_Mh != NULL)
+    {
+        // return Ch_is_Mh to GB_add.  For GB_masker, Ch is never Mh.
+        (*p_Ch_is_Mh) = Ch_is_Mh ;
+    }
     (*Ch_handle    ) = Ch ;
     (*C_to_M_handle) = C_to_M ;
     (*C_to_A_handle) = C_to_A ;
@@ -563,7 +571,6 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
             ASSERT (M->is_hyper) ;
-            ASSERT (!Mask_comp) ;
             ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
             ASSERT (C_to_M == NULL) ;
         }

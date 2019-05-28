@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_Matrix_option_set: set an option in a matrix
+// GxB_Matrix_Option_set: set an option in a matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

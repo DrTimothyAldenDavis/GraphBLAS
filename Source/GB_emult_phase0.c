@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult_phase0: find vectors of C to compute for C<M>=A.*B
+// GB_emult_phase0: find vectors of C to compute for C=A.*B or C<M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -11,7 +11,7 @@
 // with this phase, which determines which vectors of C need to be computed.
 
 // On input, A and B are the two matrices being ewise multiplied, and M is the
-// optional mask matrix, possibly complemented.
+// optional mask matrix.  If present, it is not complemented.
 
 // The M, A, and B matrices are sparse or hypersparse (not a slice or
 // hyperslice).  C will be standard (if Ch is returned NULL) or hypersparse
@@ -33,24 +33,21 @@
 //      C_to_M:  if M is hypersparse, and Ch is not M->h, then C_to_M [k] = kM
 //      if the kth vector j = (Ch == NULL) ? k : Ch [k] is equal to Mh [kM].
 //      If j does not appear in M, then C_to_M [k] = -1.  Otherwise, C_to_M is
-//      returned as NULL.  C is hypersparse, except for one case.  If both A
-//      and B are standard, and M is hypersparse and complemented, then C is
-//      standard.  In this case, C_to_M must be computed.
+//      returned as NULL.  C is always hypersparse in this case.
 
-// PARALLEL: done
+// TODO: exploit A==M, B==M, and A==B aliases
 
 #include "GB.h"
 
-GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
+GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     int64_t **Ch_handle,        // Ch is M->h, A->h, B->h, or NULL
     int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
     int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
     int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
-
+    // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,       // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -125,7 +122,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
     // determine how to construct the vectors of C
     //--------------------------------------------------------------------------
 
-    if (M != NULL && !Mask_comp)
+    if (M != NULL)
     {
 
         //----------------------------------------------------------------------
@@ -142,7 +139,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 {
 
                     //----------------------------------------------------------
-                    // (1) A hyper, B hyper, M hyper
+                    // (1) A hyper, B hyper, M hyper: C hyper
                     //----------------------------------------------------------
 
                     // Ch = smaller of Mh, Bh, Ah
@@ -167,7 +164,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 {
 
                     //----------------------------------------------------------
-                    // (2) A hyper, B hyper, M standard
+                    // (2) A hyper, B hyper, M standard: C hyper
                     //----------------------------------------------------------
 
                     // Ch = smaller of Ah, Bh
@@ -189,7 +186,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 {
 
                     //----------------------------------------------------------
-                    // (3) A hyper, B standard, M hyper
+                    // (3) A hyper, B standard, M hyper: C hyper
                     //----------------------------------------------------------
 
                     // Ch = smaller of Mh, Ah
@@ -207,7 +204,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 { 
 
                     //----------------------------------------------------------
-                    // (4) A hyper, B standard, M standard
+                    // (4) A hyper, B standard, M standard: C hyper
                     //----------------------------------------------------------
 
                     Ch = Ah ;
@@ -224,7 +221,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 {
 
                     //----------------------------------------------------------
-                    // (5) A standard, B hyper, M hyper
+                    // (5) A standard, B hyper, M hyper: C hyper
                     //----------------------------------------------------------
 
                     // Ch = smaller of Mh, Bh
@@ -243,7 +240,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 { 
 
                     //----------------------------------------------------------
-                    // (6) A standard, B hyper, M standard
+                    // (6) A standard, B hyper, M standard: C hyper
                     //----------------------------------------------------------
 
                     Ch = Bh ;
@@ -257,7 +254,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 { 
 
                     //----------------------------------------------------------
-                    // (7) A standard, B standard, M hyper
+                    // (7) A standard, B standard, M hyper: C hyper
                     //----------------------------------------------------------
 
                     Ch = Mh ;
@@ -267,10 +264,9 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
                 { 
 
                     //----------------------------------------------------------
-                    // (8) A standard, B standard, M standard
+                    // (8) A standard, B standard, M standard: C standard
                     //----------------------------------------------------------
 
-                    // C is standard
                     ;
 
                 }
@@ -293,7 +289,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
             {
 
                 //--------------------------------------------------------------
-                // (1) A hyper, B hyper   
+                // (1) A hyper, B hyper:  C hyper
                 //--------------------------------------------------------------
 
                 // Ch = smaller of Ah, Bh
@@ -310,7 +306,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
             { 
 
                 //--------------------------------------------------------------
-                // (2) A hyper, B standard
+                // (2) A hyper, B standard: C hyper
                 //--------------------------------------------------------------
 
                 Ch = Ah ;
@@ -325,7 +321,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
             { 
 
                 //--------------------------------------------------------------
-                // (3) A standard, B hyper   
+                // (3) A standard, B hyper: C hyper
                 //--------------------------------------------------------------
 
                 Ch = Bh ;
@@ -335,10 +331,9 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
             { 
 
                 //--------------------------------------------------------------
-                // (4) A standard, B standard
+                // (4) A standard, B standard: C standard
                 //--------------------------------------------------------------
 
-                // C is standard
                 ;
             }
         }
@@ -364,7 +359,7 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
     { 
         Cnvec = Mnvec ;
     }
-    else // Ch == NULL
+    else // Ch == NULL and C is standard
     { 
         Cnvec = n ;
     }
@@ -384,40 +379,16 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
         }
 
         // compute C_to_M
-        if (C_is_hyper)
-        {
+        ASSERT (C_is_hyper) ;
 
-            const int64_t *restrict Mp = M->p ;
-            #pragma omp parallel for num_threads(nthreads)
-            for (int64_t k = 0 ; k < Cnvec ; k++)
-            { 
-                int64_t pM, pM_end, kM = 0 ;
-                int64_t j = Ch [k] ;
-                GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
-                C_to_M [k] = (pM < pM_end) ? kM : -1 ;
-            }
-
-        }
-        else
-        {
-
-            // this case can occur only if M is present, complemented, and
-            // hypersparse, and C is standard (A standard and B standard)
-            ASSERT (M != NULL && Mask_comp && !A_is_hyper && !B_is_hyper) ;
-
-            #pragma omp parallel for num_threads(nthreads)
-            for (int64_t j = 0 ; j < n ; j++)
-            { 
-                C_to_M [j] = -1 ;
-            }
-
-            // scatter Mh into C_to_M
-            #pragma omp parallel for num_threads(nthreads)
-            for (int64_t kM = 0 ; kM < Mnvec ; kM++)
-            { 
-                int64_t jM = Mh [kM] ;
-                C_to_M [jM] = kM ;
-            }
+        const int64_t *restrict Mp = M->p ;
+        #pragma omp parallel for num_threads(nthreads)
+        for (int64_t k = 0 ; k < Cnvec ; k++)
+        { 
+            int64_t pM, pM_end, kM = 0 ;
+            int64_t j = Ch [k] ;
+            GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
+            C_to_M [k] = (pM < pM_end) ? kM : -1 ;
         }
     }
 
@@ -561,7 +532,6 @@ GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
             ASSERT (M->is_hyper) ;
-            ASSERT (!Mask_comp) ;
             ASSERT (Ch != NULL && M->h != NULL && Ch [k] == M->h [k]) ;
             ASSERT (C_to_M == NULL) ;
         }

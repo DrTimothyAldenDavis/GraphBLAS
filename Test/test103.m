@@ -30,7 +30,7 @@ for m = [1 5 10]
                     % C<M>=A, to test shallow cast
                     desc.inp0 = 'tran' ;
 
-% save gunk C M A desc
+save gunk C M A desc
                     C2a = GB_spec_transpose (C, M, 'plus', A, desc) ;
                     C2b = GB_mex_transpose  (C, M, 'plus', A, desc, 'test') ;
                     GB_spec_compare (C2a, C2b) ;

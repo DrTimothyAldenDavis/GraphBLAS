@@ -228,12 +228,14 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // then use subassign.  It will be fast when T is very sparse and C has
     // many nonzeros.  If the # of pending tuples in C is growing, however,
     // then it would be better to finish the work now, and leave C completed.
-    // In this case, GB_transplant (if no accum) or GB_add (with accum), and
+    // In this case, GB_transplant (if no accum) or GB_add with accum, and
     // GB_mask are used for the accum/mask step.
 
     // If there is no mask M, and no accum, then C=T is fast (just
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
     // So in this case, GB_subassign_kernel takes more work.
+
+//    printf ("tnz "GBd" cnpending "GBd" cnz "GBd"\n", tnz, cnpending, cnz) ;
 
     if ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz))
     { 
@@ -294,9 +296,15 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
 
-            // exploit the mask when computing Z, to reduce time and memory
-            GB_OK (GB_add (&Z, C->type, C->is_csc, M, Mask_comp, C, T, accum,
-                Context)) ;
+            // use the mask if very sparse, and not complemented
+            GrB_Matrix M1 = NULL ;
+            if (M != NULL && !Mask_comp &&
+                // TODO allow this test to be determined via a descriptor?
+                8 * GB_NNZ (M) < GB_NNZ (C) + GB_NNZ (T))
+            {
+                M1 = M ;
+            }
+            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, C, T, accum, Context)) ;
             GB_MATRIX_FREE (Thandle) ;
         }
 

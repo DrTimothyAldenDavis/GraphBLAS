@@ -93,14 +93,13 @@ void GB_DxB__land_int64
 }
 
 //------------------------------------------------------------------------------
-// C = A+B, eWiseAdd, with any mask M
+// eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
 void GB_AaddB__land_int64
 (
     GrB_Matrix C,
     const GrB_Matrix M,
-    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
@@ -116,14 +115,13 @@ void GB_AaddB__land_int64
 }
 
 //------------------------------------------------------------------------------
-// C = A.*B, eWiseMult, with any mask M
+// eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
 void GB_AemultB__land_int64
 (
     GrB_Matrix C,
     const GrB_Matrix M,
-    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *restrict C_to_M,

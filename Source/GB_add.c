@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add: C = A+B, C<M>=A+B, or C<!M> = A+B
+// GB_add: C = A+B or C<M>=A+B, but not C<!M>=A+B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,10 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// GB_add (C, M, A, B, op), does C<M>=op(A,B), using the given operator
-// element-wise on the matrices A and B.  The result is typecasted as needed.
-// The pattern of C is the union of the pattern of A and B, intersection with
-// the mask M or !M, if present.
+// GB_add computes C=A+B or C<M>=A+B, using the given operator element-wise on
+// the matrices A and B.  The result is typecasted as needed.  The pattern of C
+// is the union of the pattern of A and B, intersection with the mask M, if
+// present.  The C<!M>=A+B case is not handled; the complemented mask is
+// handled in GB_mask.
 
 // Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
 // If both A(i,j) and B(i,j) are present, then:
@@ -38,13 +39,12 @@
 
 #include "GB.h"
 
-GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
+GrB_Info GB_add             // C=A+B or C<M>=A+B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask for C, unused if NULL
-    const bool Mask_comp,   // descriptor for M
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
@@ -94,7 +94,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // computed by by phase0:
         &Cnvec, &max_Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, &Ch_is_Mh,
         // original input:
-        M, Mask_comp, A, B, Context) ;
+        M, A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -110,9 +110,9 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // computed by phase0b
         &TaskList, &max_ntasks, &ntasks,
         // computed by phase0:
-        Cnvec, Ch, C_to_A, C_to_B,
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
         // original input:
-        A, B, Context) ;
+        M, A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -136,7 +136,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
         // original input:
-        M, Mask_comp, A, B, Context) ;
+        M, A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -158,7 +158,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     info = GB_add_phase2 (
         // computed or used by phase2:
-        &C, ctype, C_is_csc, op, 
+        &C, ctype, C_is_csc, op,
         // from phase1:
         Cp, Cnvec_nonempty,
         // from phase0b:
@@ -166,7 +166,7 @@ GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
         // from phase0:
         Cnvec, max_Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
         // original input:
-        M, Mask_comp, A, B, Context) ;
+        M, A, B, Context) ;
 
     // free workspace
     GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;

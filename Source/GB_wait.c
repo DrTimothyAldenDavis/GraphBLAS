@@ -325,9 +325,9 @@ GrB_Info GB_wait                // finish all pending computations
             // free A0; not used (TODO: do not create it in GB_slice)
             GB_MATRIX_FREE (&(Aslice [0])) ;
 
-            // S = A1 + T
-            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, false, Aslice [1], T,
-                NULL, Context)) ;
+            // S = A1 + T, but with no operator
+            GB_OK (GB_add (&S, A->type, A->is_csc, NULL, Aslice [1], T, NULL,
+                Context)) ;
 
             ASSERT_OK (GB_check (S, "S = A1+T", GB0)) ;
 
@@ -415,8 +415,7 @@ GrB_Info GB_wait                // finish all pending computations
         // TODO: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
-        GB_OK (GB_add (&S, A->type, A->is_csc, NULL, false, A, T, NULL,
-            Context)) ;
+        GB_OK (GB_add (&S, A->type, A->is_csc, NULL, A, T, NULL, Context)) ;
         GB_MATRIX_FREE (&T) ;
         ASSERT_OK (GB_check (S, "S after GB_wait:add", GB0)) ;
         return (GB_transplant_conform (A, A->type, &S, Context)) ;

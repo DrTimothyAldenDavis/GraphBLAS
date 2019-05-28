@@ -1,13 +1,17 @@
-function test68
+function test68(n)
 %TEST68 performance tests for eWiseMult
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\n---------------------------- quick test of GrB_eWiseMult\n') ;
+fprintf ('\ntest68 --------------------------- quick test of GrB_eWiseMult\n') ;
 
 rng ('default') ;
-n = 3000 ;
+
+if (nargin < 1)
+    n = 3000 ;
+etd
+
 A = sparse (rand (n)) ;
 B = sparse (rand (n)) ;
 C = sparse (n,n) ;

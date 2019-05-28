@@ -9,7 +9,8 @@
 
 // Constructs a set of tasks to compute C, for an element-wise operation
 // (GB_add, GB_emult, and GB_mask) that operates on two input matrices,
-// C=op(A,B).  The mask is ignored.
+// C=op(A,B).  The mask is ignored for computing where to slice the work, but
+// it is sliced once the location has been found.
 
 #include "GB.h"
 
@@ -43,6 +44,8 @@
             TaskList [t].pA     = INT64_MIN ;                           \
             TaskList [t].pB     = INT64_MIN ;                           \
             TaskList [t].pC     = INT64_MIN ;                           \
+            TaskList [t].pM     = INT64_MIN ;                           \
+            TaskList [t].len    = INT64_MIN ;                           \
         }                                                               \
         max_ntasks = 2 * (ntasks) ;                                     \
     }                                                                   \
@@ -62,8 +65,11 @@ GrB_Info GB_ewise_slice
     // input:
     const int64_t Cnvec,            // # of vectors of C
     const int64_t *restrict Ch,     // vectors of C, if hypersparse
+    const int64_t *restrict C_to_M, // mapping of C to M
     const int64_t *restrict C_to_A, // mapping of C to A
     const int64_t *restrict C_to_B, // mapping of C to B
+    bool Ch_is_Mh,                  // if true, then Ch == Mh; GB_add only
+    const GrB_Matrix M,             // mask matrix to slice (optional)
     const GrB_Matrix A,             // matrix to slice
     const GrB_Matrix B,             // matrix to slice
     GB_Context Context
@@ -102,16 +108,19 @@ GrB_Info GB_ewise_slice
     // fine tasks can cause this number to be exceeded.  If that occurs,
     // TaskList is reallocated.
 
+    // When the mask is present, it is often fastest to break the work up
+    // into tasks, even when nthreads is 1.
+
     GB_task_struct *restrict TaskList = NULL ;
     int max_ntasks = 0 ;
-    int ntasks0 = (nthreads == 1) ? 1 : (20 * nthreads) ;
+    int ntasks0 = (M == NULL && nthreads == 1) ? 1 : (32 * nthreads) ;
     GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
 
     //--------------------------------------------------------------------------
-    // check for quick return for a single thread
+    // check for quick return for a single task
     //--------------------------------------------------------------------------
 
-    if (Cnvec == 0 || nthreads == 1)
+    if (Cnvec == 0 || ntasks0 == 1)
     { 
         // construct a single coarse task that computes all of C
         TaskList [0].kfirst = 0 ;
@@ -123,7 +132,7 @@ GrB_Info GB_ewise_slice
     }
 
     //--------------------------------------------------------------------------
-    // get A and B
+    // get A, B, and M
     //--------------------------------------------------------------------------
 
     const int64_t vlen = A->vlen ;
@@ -133,6 +142,17 @@ GrB_Info GB_ewise_slice
     const int64_t *restrict Bi = B->i ;
     bool Ch_is_Ah = (Ch != NULL && A->h != NULL && Ch == A->h) ;
     bool Ch_is_Bh = (Ch != NULL && B->h != NULL && Ch == B->h) ;
+
+    const int64_t *restrict Mp = NULL ;
+    const int64_t *restrict Mi = NULL ;
+    if (M != NULL)
+    {
+        Mp = M->p ;
+        Mi = M->i ;
+        // Ch_is_Mh is true if either true on input (for GB_add, which denotes
+        // that Ch is a deep copy of M->h), or if Ch is a shallow copy of M->h.
+        Ch_is_Mh = Ch_is_Mh || (Ch != NULL && M->h != NULL && Ch == M->h) ;
+    }
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -152,14 +172,21 @@ GrB_Info GB_ewise_slice
 
     // This estimate ignores the mask.
 
-    int nth = GB_nthreads (Cnvec, 4096, nthreads) ;
+    int nth = GB_nthreads (Cnvec, 16 * 1024, nthreads) ;
     #pragma omp parallel for num_threads(nth)
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {
+
+        //----------------------------------------------------------------------
         // get the C(:,j) vector
+        //----------------------------------------------------------------------
+
         int64_t j = (Ch == NULL) ? k : Ch [k] ;
 
+        //----------------------------------------------------------------------
         // get the corresponding vector of A
+        //----------------------------------------------------------------------
+
         int64_t kA ;
         if (C_to_A != NULL)
         { 
@@ -187,7 +214,10 @@ GrB_Info GB_ewise_slice
             kA = j ;
         }
 
+        //----------------------------------------------------------------------
         // get the corresponding vector of B
+        //----------------------------------------------------------------------
+
         int64_t kB ;
         if (C_to_B != NULL)
         { 
@@ -215,13 +245,14 @@ GrB_Info GB_ewise_slice
             kB = j ;
         }
 
-        // printf ("kA "GBd" kB "GBd"\n", kA, kB) ;
+        //----------------------------------------------------------------------
+        // estimate the work for C(:,j)
+        //----------------------------------------------------------------------
+
         ASSERT (kA >= -1 && kA < A->nvec) ;
         ASSERT (kB >= -1 && kB < B->nvec) ;
         int64_t aknz = (kA < 0) ? 0 : (Ap [kA+1] - Ap [kA]) ;
         int64_t bknz = (kB < 0) ? 0 : (Bp [kB+1] - Bp [kB]) ;
-        // printf ("aknz "GBd"\n", aknz) ;
-        // printf ("bknz "GBd"\n", bknz) ;
 
         Cwork [k] = aknz + bknz + 1 ;
     }
@@ -230,31 +261,18 @@ GrB_Info GB_ewise_slice
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-//  for (int64_t k = 0 ; k < Cnvec ; k++)
-//  {
-//      printf ("Cwork ["GBd"] = "GBd"\n", k, Cwork [k]) ;
-//  }
-
     GB_cumsum (Cwork, Cnvec, NULL, nthreads) ;
     double cwork = (double) Cwork [Cnvec] ;
-
-//  printf ("\nafter cumsum:\n") ;
-//  for (int64_t k = 0 ; k <= Cnvec ; k++)
-//  {
-//      printf ("Cwork ["GBd"] = "GBd"\n", k, Cwork [k]) ;
-//  }
 
     //--------------------------------------------------------------------------
     // determine the number of tasks to create
     //--------------------------------------------------------------------------
 
-    double target_task_size = cwork / (double) (32 * nthreads) ;
+    double target_task_size = cwork / (double) (ntasks0) ;
     target_task_size = GB_IMAX (target_task_size, 4096) ;
     int ntasks1 = cwork / target_task_size ;
     ntasks1 = GB_IMAX (ntasks1, 1) ;
-
-// printf ("nthreads %d ntasks1 %d max_ntask %d\n",
-    // nthreads, ntasks1, max_ntasks) ;
+    // printf ("ntasks0 %d ntasks1 %d\n", ntasks0, ntasks1) ;
 
     //--------------------------------------------------------------------------
     // slice the work into coarse tasks
@@ -271,10 +289,8 @@ GrB_Info GB_ewise_slice
         int64_t pright = Cnvec ;
         GB_BINARY_TRIM_SEARCH (work, Cwork, k, pright) ;
         Coarse [t] = k ;
-        // printf ("Coarse [%d] = "GBd"\n", t, Coarse [t]) ;
     }
     Coarse [ntasks1] = Cnvec ;
-    // printf ("last Coarse [%d] = "GBd"\n", ntasks1, Coarse [ntasks1]) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine
@@ -344,13 +360,15 @@ GrB_Info GB_ewise_slice
             }
 
             //------------------------------------------------------------------
-            // determine the # of fine-grain tasks to create for vector k
+            // get the vector of C
             //------------------------------------------------------------------
 
-            // get the vector of C
             int64_t j = (Ch == NULL) ? k : Ch [k] ;
 
+            //------------------------------------------------------------------
             // get the corresponding vector of A
+            //------------------------------------------------------------------
+
             int64_t kA ;
             if (C_to_A != NULL)
             { 
@@ -367,8 +385,13 @@ GrB_Info GB_ewise_slice
                 // A is standard
                 kA = j ;
             }
+            int64_t pA_start = (kA < 0) ? -1 : Ap [kA] ;
+            int64_t pA_end   = (kA < 0) ? -1 : Ap [kA+1] ;
 
+            //------------------------------------------------------------------
             // get the corresponding vector of B
+            //------------------------------------------------------------------
+
             int64_t kB ;
             if (C_to_B != NULL)
             { 
@@ -385,19 +408,46 @@ GrB_Info GB_ewise_slice
                 // B is standard
                 kB = j ;
             }
-
-            int64_t pA_start = (kA < 0) ? -1 : Ap [kA] ;
-            int64_t pA_end   = (kA < 0) ? -1 : Ap [kA+1] ;
             int64_t pB_start = (kB < 0) ? -1 : Bp [kB] ;
             int64_t pB_end   = (kB < 0) ? -1 : Bp [kB+1] ;
 
+            //------------------------------------------------------------------
+            // get the corresponding vector of M, if present
+            //------------------------------------------------------------------
+
+            int64_t pM_start = -1 ;
+            int64_t pM_end   = -1 ;
+            if (M != NULL)
+            {
+                int64_t kM ;
+                if (C_to_M != NULL)
+                { 
+                    // M is hypersparse and the C_to_M mapping has been created
+                    kM = C_to_M [k] ;
+                }
+                else if (Ch_is_Mh)
+                {
+                    // Ch is a deep or shallow copy of Mh
+                    kM = k ;
+                }
+                else
+                { 
+                    // M is standard
+                    kM = j ;
+                }
+                pM_start = (kM < 0) ? -1 : Mp [kM] ;
+                pM_end   = (kM < 0) ? -1 : Mp [kM+1] ;
+            }
+
+            //------------------------------------------------------------------
+            // determine the # of fine-grain tasks to create for vector k
+            //------------------------------------------------------------------
+
             double ckwork = Cwork [k+1] - Cwork [k] ;
-            // printf ("ckwork %g target_task_size %g\n",
-                // ckwork, target_task_size) ;
             int nfine = ckwork / target_task_size ;
             nfine = GB_IMAX (nfine, 1) ;
-            // printf ("nfine %d\n", nfine) ;
 
+            // make the TaskList bigger, if needed
             GB_REALLOC_TASK_LIST (TaskList, ntasks + nfine, max_ntasks) ;
 
             //------------------------------------------------------------------
@@ -427,58 +477,65 @@ GrB_Info GB_ewise_slice
                 ASSERT (ntasks < max_ntasks) ;
                 TaskList [ntasks].kfirst = k ;
                 TaskList [ntasks].klast  = -1 ; // this is a fine task
+                TaskList [ntasks].pM = pM_start ;
                 TaskList [ntasks].pA = pA_start ;
                 TaskList [ntasks].pB = pB_start ;
                 ntasks++ ;
+                int64_t ilast = 0, i = 0 ;
 
                 for (int tfine = 1 ; tfine < nfine ; tfine++)
                 { 
                     double target_work = ((nfine-tfine) * ckwork) / nfine ;
-// printf ("tfine %d target %g\n", tfine, target_work) ;
-                    int64_t i, pA, pB ;
-                    GB_slice_vector (&i, &pA, &pB,
-                        pA_start, pA_end, Ai, pB_start, pB_end, Bi,
+                    int64_t pM, pA, pB ;
+                    GB_slice_vector (&i, &pM, &pA, &pB,
+                        pM_start, pM_end, Mi,
+                        pA_start, pA_end, Ai,
+                        pB_start, pB_end, Bi,
                         vlen, target_work) ;
-// printf ("    i "GBd" pA "GBd" pA "GBd"\n", i, pA, pB) ;
 
-                    // tfine task starts at pA and pB 
+                    // task tfine starts at pM, pA, and pB 
                     ASSERT (ntasks < max_ntasks) ;
                     TaskList [ntasks].kfirst = k ;
                     TaskList [ntasks].klast  = -1 ; // this is a fine task
+                    TaskList [ntasks].pM = pM ;
                     TaskList [ntasks].pA = pA ;
                     TaskList [ntasks].pB = pB ;
                     ntasks++ ;
+
+                    // task tfine-1 handles indices ilast:i-1.
+                    TaskList [tfine-1].len = i - ilast ;
+                    ilast = i ;
                 }
 
                 // Terminate the last fine task.  This space will also be used
                 // by the next task in the TaskList.  If the next task is a
                 // fine task, it will operate on vector k+1, and its pA_start
-                // will equal the pA_end of vector A(:,k), and likewise for B.
-                // In that case, TaskList [t+1].pA and pB are both the end of
-                // the prior task t, and the start of task t+1.  If the next
-                // task t+1 is a coarse task, it will ignore its TaskList
-                // [t+1].pA and pB, so this space can be used to terminate the
-                // TaskList [t].
+                // will equal the pA_end of vector A(:,k), and likewise for M
+                // and B.  In that case, TaskList [t+1].pA, pB, and pM are the
+                // end of the prior task t, and the start of task t+1.  If the
+                // next task t+1 is a coarse task, it will ignore its TaskList
+                // [t+1].pA, pB, and pM, so this space can be used to terminate
+                // the fine task t in TaskList [t].
                 ASSERT (ntasks <= max_ntasks) ;
+                TaskList [ntasks].pM = pM_end ;
                 TaskList [ntasks].pA = pA_end ;
                 TaskList [ntasks].pB = pB_end ;
+                TaskList [ntasks-1].len = vlen - i ;
             }
         }
     }
 
     ASSERT (ntasks <= max_ntasks) ;
 
-// printf ("nthreads %d ntasks1 %d max_ntask %d ntasks %d\n",
-//     nthreads, ntasks1, max_ntasks, ntasks) ;
-
     #if 0
     printf ("\nnthreads %d ntasks %d\n", nthreads, ntasks) ;
     for (int t = 0 ; t < ntasks ; t++)
     {
-        printf ("Task %d: kfirst "GBd" klast "GBd" pA "GBd" pB "GBd
+        printf ("Task %d: kfirst "GBd" klast "GBd" pM "GBd" pA "GBd" pB "GBd
             " pC "GBd"\n", t,
             TaskList [t].kfirst,
             TaskList [t].klast,
+            TaskList [t].pM,
             TaskList [t].pA,
             TaskList [t].pB,
             TaskList [t].pC) ;
@@ -493,7 +550,6 @@ GrB_Info GB_ewise_slice
     (*p_TaskList  ) = TaskList ;
     (*p_max_ntasks) = max_ntasks ;
     (*p_ntasks    ) = ntasks ;
-    // printf ("ntasks %d max %d\n", ntasks, max_ntasks) ;
     return (GrB_SUCCESS) ;
 }
 

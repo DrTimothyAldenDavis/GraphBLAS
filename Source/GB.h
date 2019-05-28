@@ -1511,15 +1511,18 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 // task computes all vectors in C(:,kfirst:klast), inclusive.  None of the
 // vectors are sliced and computed by other tasks.  For a fine task, klast is
 // -1.  The task computes part of the single vector C(:,kfirst).  It starts at
-// pA in Ai,Ax, and pB in Bi,Bx.
+// pA in Ai,Ax, at pB in Bi,Bx, and (if M is present) at pM in Mi,Mx.  It
+// computes C(:,kfirst), starting at pC in Ci,Cx.
 
 typedef struct          // task descriptor
 {
     int64_t kfirst ;    // C(:,kfirst) is the first vector in this task.
     int64_t klast  ;    // C(:,klast) is the last vector in this task.
+    int64_t pC ;        // fine task starts at Ci, Cx [pC]
+    int64_t pM ;        // fine task starts at Mi, Mx [pM]
     int64_t pA ;        // fine task starts at Ai, Ax [pA]
     int64_t pB ;        // fine task starts at Bi, Bx [pB]
-    int64_t pC ;        // fine task starts at Ci, Cx [pC]
+    int64_t len ;       // fine task handles a subvector of this length
 }
 GB_task_struct ;
 
@@ -1532,8 +1535,11 @@ GrB_Info GB_ewise_slice
     // input:
     const int64_t Cnvec,            // # of vectors of C
     const int64_t *restrict Ch,     // vectors of C, if hypersparse
+    const int64_t *restrict C_to_M, // mapping of C to M
     const int64_t *restrict C_to_A, // mapping of C to A
     const int64_t *restrict C_to_B, // mapping of C to B
+    bool Ch_is_Mh,                  // if true, then Ch == Mh; GB_add only
+    const GrB_Matrix M,             // mask matrix to slice (optional)
     const GrB_Matrix A,             // matrix to slice
     const GrB_Matrix B,             // matrix to slice
     GB_Context Context
@@ -1542,15 +1548,19 @@ GrB_Info GB_ewise_slice
 void GB_slice_vector
 (
     // output: return i, pA, and pB
-    int64_t *p_i,                   // work starts at A(i,ka) and B(i,kb)
-    int64_t *p_pA,                  // A(i:end,ka) starts at pA
-    int64_t *p_pB,                  // B(i:end,kb) starts at pB
+    int64_t *p_i,                   // work starts at A(i,kA) and B(i,kB)
+    int64_t *p_pM,                  // M(i:end,kM) starts at pM
+    int64_t *p_pA,                  // A(i:end,kA) starts at pA
+    int64_t *p_pB,                  // B(i:end,kB) starts at pB
     // input:
-    const int64_t pA_start,         // A(:,ka) starts at pA_start in Ai,Ax
-    const int64_t pA_end,           // A(:,ka) ends at pA_end-1 in Ai,Ax
+    const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
+    const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
+    const int64_t *restrict Mi,     // indices of M (or NULL)
+    const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
+    const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
     const int64_t *restrict Ai,     // indices of A
-    const int64_t pB_start,         // B(:,kb) starts at pB_start in Bi,Bx
-    const int64_t pB_end,           // B(:,kb) ends at pB_end-1 in Bi,Bx
+    const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
+    const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
     const int64_t *restrict Bi,     // indices of B
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
@@ -1566,9 +1576,7 @@ void GB_ewise_cumsum
     const int nthreads                  // # of threads
 ) ;
 
-//------------------------------------------------------------------------------
-
-GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
+GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     int64_t *p_max_Cnvec,       // size of the 3 output arrays:
@@ -1576,10 +1584,9 @@ GrB_Info GB_add_phase0      // find vectors in C for C=A+B, C<M>=A+B, C<!M>=A+B
     int64_t **C_to_M_handle,    // C_to_M: output of size max_Cnvec, or NULL
     int64_t **C_to_A_handle,    // C_to_A: output of size max_Cnvec, or NULL
     int64_t **C_to_B_handle,    // C_to_B: output of size max_Cnvec, or NULL
-    bool *p_Ch_is_Mh,           // if true, then Ch == Mh
-
-    const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,       // if true, then M is complemented
+    bool *p_Ch_is_Mh,           // if true, then Ch == Mh.  This option is for
+                                // GB_add only, not GB_masker.
+    const GrB_Matrix M,         // optional mask, may be NULL; not complemented
     const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
     const GrB_Matrix B,         // standard or hypersparse; never a slice
     GB_Context Context
@@ -1590,42 +1597,36 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     int64_t **Cp_handle,                // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
-
-    // tasks from phase0b
+    // tasks from phase0b:
     GB_task_struct *restrict TaskList,      // array of structs
     const int ntasks,                       // # of tasks
-
-    // analysis from phase0
+    // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,                // if true, then Ch == M->h
-
+    // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
-    const bool Mask_comp,               // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
 ) ;
 
-GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
+GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
-
-    // from phase1
+    // from phase1:
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
-
-    // tasks from phase0b
+    // tasks from phase0b:
     const GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                         // # of tasks
-
-    // analysis from phase0
+    // analysis from phase0:
     const int64_t Cnvec,
     const int64_t max_Cnvec,
     const int64_t *restrict Ch,
@@ -1633,38 +1634,34 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
-
-    // original input
+    // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
 ) ;
 
-GrB_Info GB_add             // C=A+B, C<M>=A+B, or C<!M>=A+B
+GrB_Info GB_add             // C=A+B or C<M>=A+B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask for C, unused if NULL
-    const bool Mask_comp,   // descriptor for M
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Context Context
 ) ;
 
-GrB_Info GB_emult_phase0 // find vectors in C for C=A.*B, C<M>=A.*B, C<!M>=A.*B
+GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
     int64_t **Ch_handle,        // Ch is M->h, A->h, B->h, or NULL
     int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
     int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
     int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
-
+    // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,       // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -1674,67 +1671,60 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 (
     int64_t **Cp_handle,                // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
-
-    // tasks from phase0b
-    GB_task_struct *restrict TaskList,      // array of structs
-    const int ntasks,                       // # of tasks
-
-    // analysis from phase0
+    // tasks from phase0b:
+    GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                   // # of tasks
+    // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,         // Ch is NULL, or shallow pointer
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
-
+    // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
-    const bool Mask_comp,               // if true, then M is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
 ) ;
 
-GrB_Info GB_emult_phase2    // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 (
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
-    const GrB_Type ctype,   // type of output matrix C
-    const bool C_is_csc,    // format of output matrix C
-    const GrB_BinaryOp op,  // op to perform C = op (A,B)
-
-    // from phase1
+    GrB_Matrix *Chandle,                // output matrix
+    const GrB_Type ctype,               // type of output matrix C
+    const bool C_is_csc,                // format of output matrix C
+    const GrB_BinaryOp op,              // op to perform C = op (A,B)
+    // from phase1:
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
-
-    // tasks from phase0b
+    // tasks from phase0b:
     const GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                         // # of tasks
-
-    // analysis from phase0
+    // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,         // Ch is NULL, or a shallow pointer
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
-
-    // original input
-    const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,
+    // original input:
+    const GrB_Matrix M,                 // optional mask, may be NULL
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
 ) ;
 
-GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_Matrix M,     // optional mask for C, unused if NULL
-    const bool Mask_comp,   // descriptor for M
+    const GrB_Matrix M,     // optional mask, unused if NULL.  Not complemented
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
     GB_Context Context
 ) ;
+
+//------------------------------------------------------------------------------
 
 GrB_Info GB_transplant          // transplant one matrix into another
 (
@@ -2263,6 +2253,69 @@ GrB_Info GB_mask                // C<M> = Z
                                 // complemented.  Z is freed when done.
     const bool C_replace,       // true if clear(C) to be done first
     const bool Mask_complement, // true if M is to be complemented
+    GB_Context Context
+) ;
+
+GrB_Info GB_masker          // R = masker (M, C, Z)
+(
+    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
+    const bool R_is_csc,    // format of output matrix R
+    const GrB_Matrix M,     // required input mask
+    const bool Mask_comp,   // descriptor for M
+    const GrB_Matrix C,     // input C matrix
+    const GrB_Matrix Z,     // input Z matrix
+    GB_Context Context
+) ;
+
+GrB_Info GB_mask_phase1                 // count nnz in each R(:,j)
+(
+    int64_t **Rp_handle,                // output of size Rnvec+1
+    int64_t *Rnvec_nonempty,            // # of non-empty vectors in R
+
+    // tasks from phase0b
+    GB_task_struct *restrict TaskList,      // array of structs
+    const int ntasks,                       // # of tasks
+
+    // analysis from phase0
+    const int64_t Rnvec,
+    const int64_t *restrict Rh,
+    const int64_t *restrict R_to_M,
+    const int64_t *restrict R_to_C,
+    const int64_t *restrict R_to_Z,
+
+    const GrB_Matrix M,                 // required mask
+    const bool Mask_comp,               // if true, then M is complemented
+    const GrB_Matrix C,
+    const GrB_Matrix Z,
+    GB_Context Context
+) ;
+
+GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
+(
+    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
+    const bool R_is_csc,    // format of output matrix R
+
+    // from phase1
+    const int64_t *restrict Rp,         // vector pointers for R
+    const int64_t Rnvec_nonempty,       // # of non-empty vectors in R
+
+    // tasks from phase0b
+    const GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                         // # of tasks
+
+    // analysis from phase0
+    const int64_t Rnvec,
+    const int64_t max_Rnvec,
+    const int64_t *restrict Rh,
+    const int64_t *restrict R_to_M,
+    const int64_t *restrict R_to_C,
+    const int64_t *restrict R_to_Z,
+
+    // original input
+    const GrB_Matrix M,         // required mask
+    const bool Mask_comp,
+    const GrB_Matrix C,
+    const GrB_Matrix Z,
     GB_Context Context
 ) ;
 

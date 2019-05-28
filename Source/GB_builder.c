@@ -84,8 +84,6 @@
 // able to transplant S_work into T->x since the input will almost always be
 // unsorted.
 
-// PARALLEL: done
-
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"

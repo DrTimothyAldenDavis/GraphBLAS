@@ -34,22 +34,19 @@
 #include "GB_binop__include.h"
 #endif
 
-GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
+GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_BinaryOp op,  // op to perform C = op (A,B), or NULL if no op
-
-    // from phase1
+    // from phase1:
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
-
-    // tasks from phase0b
+    // tasks from phase0b:
     const GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                         // # of tasks
-
-    // analysis from phase0
+    // analysis from phase0:
     const int64_t Cnvec,
     const int64_t max_Cnvec,
     const int64_t *restrict Ch,
@@ -57,10 +54,8 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     const int64_t *restrict C_to_A,
     const int64_t *restrict C_to_B,
     const bool Ch_is_Mh,        // if true, then Ch == M->h
-
-    // original input
+    // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
-    const bool Mask_comp,
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -133,7 +128,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
     // add Cp as the vector pointers for C, from GB_add_phase1
     C->p = (int64_t *) Cp ;
 
-    // add Ch as the the hypersparse list for C, from GB_add_phase0
+    // add Ch as the hypersparse list for C, from GB_add_phase0
     if (C_is_hyper)
     { 
         C->h = (int64_t *) Ch ;
@@ -162,7 +157,7 @@ GrB_Info GB_add_phase2      // C=A+B, C<M>=A+B, or C<!M>=A+B
 
     #define GB_BINOP_WORKER(mult,xyname)                            \
     {                                                               \
-        GB_AaddB(mult,xyname) (C, M, Mask_comp, A, B, Ch_is_Mh,     \
+        GB_AaddB(mult,xyname) (C, M, A, B, Ch_is_Mh,                \
             C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
         done = true ;                                               \
     }                                                               \

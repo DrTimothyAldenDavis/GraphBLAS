@@ -176,7 +176,7 @@ fprintf ('speedup over MATLAB: %g\n\n', tm1/tg) ;
 
 assert (isequal (C1, C3.matrix)) ;
 
-fprintf ('\nvia two GB_add (Cin+A)+B:\n') ;
+fprintf ('\nvia two GB_add: (Cin+A)+B:\n') ;
 tic
 C4 = GB_mex_AplusB (Cin, A, 'plus') ;
 tg1 = gbresults ;
@@ -187,7 +187,7 @@ fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
 fprintf ('speedup over MATLAB: %g\n\n', tm2/(tg1+tg2)) ;
 assert (isequal (C1, C4)) ;;
 
-fprintf ('\nvia two GB_add (Cin+(A+B)):\n') ;
+fprintf ('\nvia two GB_add: (Cin+(A+B)):\n') ;
 tic
 C4 = GB_mex_AplusB (A, B, 'plus') ;
 tg1 = gbresults ;
@@ -199,7 +199,7 @@ fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
 fprintf ('speedup over MATLAB: %g\n\n', tm3/(tg1+tg2)) ;
 assert (isequal (C1, C4)) 
 
-fprintf ('\nvia two GB_add (Cin+B)+A)):\n') ;
+fprintf ('\nvia two GB_add: (Cin+B)+A)):\n') ;
 tstart = tic ;
 C4 = GB_mex_AplusB (Cin, B, 'plus') ;
 tg1 = gbresults ;

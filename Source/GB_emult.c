@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_emult: C = A.*B, C<M>=A.*B, or C<!M> = A.*B
+// GB_emult: C = A.*B or C<M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,10 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// GB_emult (C, M, A, B, op), does C<M>=op(A,B), using the given operator
-// element-wise on the matrices A and B.  The result is typecasted as needed.
-// The pattern of C is the intersection of the pattern of A and B, intersection
-// with the mask M or !M, if present.
+// GB_emult, does C=A.*B or C<M>=A.*B, using the given operator element-wise on
+// the matrices A and B.  The result is typecasted as needed.  The pattern of C
+// is the intersection of the pattern of A and B, intersection with the mask M,
+// if present and not complemented.  The complemented mask is not handled here,
+// but in GB_mask.
 
 // Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
 // If both A(i,j) and B(i,j) are present, then:
@@ -21,17 +22,16 @@
 // if just B(i,j) is present but not A(i,j), then C(i,j) is not present.
 
 // ctype is the type of matrix C.  The pattern of C is the intersection of A
-// and B.
+// and B, and also intersection with M if present.
 
 #include "GB.h"
 
-GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
+GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
-    const GrB_Matrix M,     // optional mask for C, unused if NULL
-    const bool Mask_comp,   // descriptor for M
+    const GrB_Matrix M,     // optional mask, unused if NULL.  Not complemented
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
@@ -77,7 +77,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed by phase0:
         &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B,
         // original input:
-        M, Mask_comp, A, B, Context) ;
+        M, A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -93,9 +93,9 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // computed by phase0b:
         &TaskList, &max_ntasks, &ntasks,
         // computed by phase0:
-        Cnvec, Ch, C_to_A, C_to_B,
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
         // original input:
-        A, B, Context) ;
+        M, A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -118,7 +118,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,
         // original input:
-        M, Mask_comp, A, B, Context) ;
+        M, A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -147,7 +147,7 @@ GrB_Info GB_emult           // C=A.*B, C<M>=A.*B, or C<!M>=A.*B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,
         // original input:
-        M, Mask_comp, A, B, Context) ;
+        M, A, B, Context) ;
 
     // free workspace
     GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;

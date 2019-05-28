@@ -7,16 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// C<M> = accum (C,A+B), A.*B and variations.
-
-// The input matrices A and B are optionally transposed.
-
-// Does the work for GrB_eWiseAdd_* and GrB_eWiseMult_*
+// C<M> = accum (C,A+B), A.*B and variations.  The input matrices A and B are
+// optionally transposed.  Does the work for GrB_eWiseAdd_* and
+// GrB_eWiseMult_*.  Handles all cases the the mask.
 
 #include "GB.h"
 
 #define GB_FREE_ALL         \
 {                           \
+    GB_MATRIX_FREE (&T) ;   \
     GB_MATRIX_FREE (&AT) ;  \
     GB_MATRIX_FREE (&BT) ;  \
     GB_MATRIX_FREE (&MT) ;  \
@@ -45,7 +44,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    GrB_Matrix MT = NULL, BT = NULL, AT = NULL ;
+    GrB_Matrix MT = NULL, BT = NULL, AT = NULL, T = NULL ;
     ASSERT (GB_ALIAS_OK3 (C, M, A, B)) ;
 
     GB_RETURN_IF_FAULTY (accum) ;
@@ -136,141 +135,95 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         B_transpose = !B_transpose ;
     }
 
+    if (A_transpose && B_transpose)
+    {
+        // T=A'+B' replaced with T=(A+B)'
+        A_transpose = false ;
+        B_transpose = false ;
+        C_is_csc = !C_is_csc ;
+    }
+
     //--------------------------------------------------------------------------
-    // transpose the mask if needed
+    // decide when to apply the mask
     //--------------------------------------------------------------------------
+
+    // GB_add and GB_emult can apply any non-complemented mask, but it is
+    // faster to exploit the mask in GB_add / GB_emult only when it is very
+    // sparse.
 
     // check the CSR/CSC format of M
     bool M_is_csc = (M == NULL) ? C_is_csc : M->is_csc ;
 
-    if (M != NULL && ((C_is_csc != M_is_csc) || (A_transpose && B_transpose)))
+    bool mask_applied = false ;
+    GrB_Matrix M1 = NULL ;
+
+    if (M != NULL && !Mask_comp &&
+        // TODO allow this test to be determined via a descriptor?
+        8 * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
     {
-        GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
+        M1 = M ;
+        if (C_is_csc != M_is_csc)
+        {
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
+            M1 = MT ;
+        }
+        mask_applied = true ;
     }
 
     //--------------------------------------------------------------------------
-    // T = A+B, A'+B, A+B', or A'+B'
+    // transpose A if needed
     //--------------------------------------------------------------------------
 
-    GrB_Matrix T ;
-
+    GrB_Matrix A1 = A ;
     if (A_transpose)
     {
-        if (B_transpose)
-        {
+        // AT = A'
+        // transpose: no typecast, no op, not in place
+        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
+        A1 = AT ;
+    }
 
-            //------------------------------------------------------------------
-            // T = A'+B'
-            //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // transpose B if needed
+    //--------------------------------------------------------------------------
 
-            // T = A + B, with flipped CSR/CSC format so GB_accum_mask does C=T'
-            if (eWiseAdd)
-            { 
-                GB_OK (GB_add (&T, T_type, !C_is_csc, 
-                    (M_is_csc == C_is_csc) ? MT : M, Mask_comp,
-                    A, B, op, Context)) ;
-            }
-            else
-            { 
-                GB_OK (GB_emult (&T, T_type, !C_is_csc,
-                    (M_is_csc == C_is_csc) ? MT : M, Mask_comp,
-                    A, B, op, Context)) ;
-            }
+    GrB_Matrix B1 = B ;
+    if (B_transpose)
+    {
+        // BT = B'
+        // transpose: no typecast, no op, not in place
+        GB_OK (GB_transpose (&BT, NULL, C_is_csc, B, NULL, Context)) ;
+        B1 = BT ;
+    }
 
-        }
-        else
-        {
+    //--------------------------------------------------------------------------
+    // T = A+B or A.*B
+    //--------------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // T = A'+B
-            //------------------------------------------------------------------
-
-            // FUTURE: for emult, if B is much sparser than A then do T'=A+B'
-
-            // AT = A'
-            GrB_Matrix AT = NULL ;
-            // transpose: no typecast, no op, not in place
-            GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
-
-            // T = AT + B
-            if (eWiseAdd)
-            { 
-                GB_OK (GB_add (&T, T_type, C_is_csc,
-                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
-                    AT, B, op, Context)) ;
-            }
-            else
-            { 
-                GB_OK (GB_emult (&T, T_type, C_is_csc,
-                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
-                    AT, B, op, Context)) ;
-            }
-            GB_MATRIX_FREE (&AT) ;
-
-        }
+    if (eWiseAdd)
+    { 
+        GB_OK (GB_add (&T, T_type, C_is_csc, M1, A1, B1, op, Context)) ;
     }
     else
-    {
-        if (B_transpose)
-        {
-
-            //------------------------------------------------------------------
-            // T = A+B'
-            //------------------------------------------------------------------
-
-            // FUTURE: for emult, if A is much sparser than B then do T'=A'+B
-
-            // BT = B'
-            // transpose: no typecast, no op, not in place
-            GB_OK (GB_transpose (&BT, NULL, C_is_csc, B, NULL, Context)) ;
-
-            // T = A + BT
-            if (eWiseAdd)
-            { 
-                GB_OK (GB_add (&T, T_type, C_is_csc,
-                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
-                    A, BT, op, Context)) ;
-            }
-            else
-            { 
-                GB_OK (GB_emult (&T, T_type, C_is_csc,
-                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
-                    A, BT, op, Context)) ;
-            }
-            GB_MATRIX_FREE (&BT) ;
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // T = A+B
-            //------------------------------------------------------------------
-
-            if (eWiseAdd)
-            { 
-                GB_OK (GB_add (&T, T_type, C_is_csc,
-                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
-                    A, B, op, Context)) ;
-            }
-            else
-            { 
-                GB_OK (GB_emult (&T, T_type, C_is_csc,
-                    (M_is_csc == C_is_csc) ? M : MT, Mask_comp,
-                    A, B, op, Context)) ;
-            }
-        }
+    { 
+        GB_OK (GB_emult (&T, T_type, C_is_csc, M1, A1, B1, op, Context)) ;
     }
+
+    //--------------------------------------------------------------------------
+    // free the transposed matrices
+    //--------------------------------------------------------------------------
+
+    GB_MATRIX_FREE (&AT) ;
+    GB_MATRIX_FREE (&BT) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
-    // TODO: see GB_mxm; same test, except mask_applied is always true for
-    // GB_ewise.  Move this code to GB_accum_mask.
+    // TODO: see GB_mxm; same test.  Move this code to GB_accum_mask.
 
     if ((accum == NULL) && (C->is_csc == T->is_csc)
-//      && (M == NULL || (M != NULL && mask_applied))
+        && (M == NULL || (M != NULL && mask_applied))
         && (C_replace || GB_NNZ_UPPER_BOUND (C) == 0))
     { 
         // C = 0 ; C = (ctype) T ; with the same CSR/CSC format.  The mask M

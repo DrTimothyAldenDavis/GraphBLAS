@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// A(:,ka) and B(:,kb) are two long vectors that will be added with GB_add,
+// A(:,kA) and B(:,kB) are two long vectors that will be added with GB_add,
 // GB_emult, or GB_mask, and the work to compute them needs to be split into
 // multiple tasks.  They represent the same vector index j, for:
 
@@ -15,16 +15,17 @@
 //      C(:,j) = A(:,j) .* B(:,j) in GB_emult
 //      C(:,j)<M(:,j)> = B(:,j) in GB_mask (A is passed in as the input C)
 
-// The vector index j is not needed here.  The vectors ka and kb are not
+// The vector index j is not needed here.  The vectors kA and kB are not
 // required, either; just the positions where the vectors appear in A and B
 // (pA_start, pA_end, pB_start, and pB_end).
 
-// This method finds i so that nnz (A (i:end,ka)) + nnz (B (i:end,kb)) is
-// roughly equal to target_work.  The entries in A(i:end,ka) start at position
-// pA in Ai and Ax, and the entries in B(i:end,kb) start at position pB in Bi
-// and Bx.
+// This method finds i so that nnz (A (i:end,kA)) + nnz (B (i:end,kB)) is
+// roughly equal to target_work.  The entries in A(i:end,kA) start at position
+// pA in Ai and Ax, and the entries in B(i:end,kB) start at position pB in Bi
+// and Bx.  Once the work is split, pM is found for M(i:end,kM), if the mask M
+// is present.
 
-// If n = A->vlen = B->vlen, anz = nnz (A (:,ka)), and bnz = nnz (B (:,kb)),
+// If n = A->vlen = B->vlen, anz = nnz (A (:,kA)), and bnz = nnz (B (:,kB)),
 // then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
 // or at most O((log(n)^2)).
 
@@ -33,15 +34,19 @@
 void GB_slice_vector
 (
     // output: return i, pA, and pB
-    int64_t *p_i,                   // work starts at A(i,ka) and B(i,kb)
-    int64_t *p_pA,                  // A(i:end,ka) starts at pA
-    int64_t *p_pB,                  // B(i:end,kb) starts at pB
+    int64_t *p_i,                   // work starts at A(i,kA) and B(i,kB)
+    int64_t *p_pM,                  // M(i:end,kM) starts at pM
+    int64_t *p_pA,                  // A(i:end,kA) starts at pA
+    int64_t *p_pB,                  // B(i:end,kB) starts at pB
     // input:
-    const int64_t pA_start,         // A(:,ka) starts at pA_start in Ai,Ax
-    const int64_t pA_end,           // A(:,ka) ends at pA_end-1 in Ai,Ax
+    const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
+    const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
+    const int64_t *restrict Mi,     // indices of M (or NULL)
+    const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
+    const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
     const int64_t *restrict Ai,     // indices of A
-    const int64_t pB_start,         // B(:,kb) starts at pB_start in Bi,Bx
-    const int64_t pB_end,           // B(:,kb) ends at pB_end-1 in Bi,Bx
+    const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
+    const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
     const int64_t *restrict Bi,     // indices of B
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
@@ -53,7 +58,7 @@ void GB_slice_vector
     //--------------------------------------------------------------------------
 
     ASSERT (Ai != NULL && Bi != NULL) ;
-    ASSERT (p_i != NULL && p_pA != NULL && p_pB != NULL) ;
+    ASSERT (p_i != NULL && p_pM != NULL && p_pA != NULL && p_pB != NULL) ;
 
     //--------------------------------------------------------------------------
     // find i, pA, and pB for the start of this task
@@ -66,10 +71,12 @@ void GB_slice_vector
     int64_t ileft  = 0 ;
     int64_t iright = vlen-1 ;
     int64_t i = 0 ;
+    int64_t pM = pM_start ;
     int64_t pA = pA_start ;
     int64_t pB = pB_start ;
     int64_t aknz = pA_end - pA_start ;
     int64_t bknz = pB_end - pB_start ;
+    int64_t mknz = pM_end - pM_start ;      // zero if M not present
 
     while (ileft < iright)
     {
@@ -83,14 +90,14 @@ void GB_slice_vector
         //     iright) ;
 
         //----------------------------------------------------------------------
-        // find where i appears in A(:,ka)
+        // find where i appears in A(:,kA)
         //----------------------------------------------------------------------
 
         double awork = 0 ;
         pA = pA_start ;
         if (aknz == vlen)
         { 
-            // A(:,ka) is dense; no need for a binary search
+            // A(:,kA) is dense; no need for a binary search
             pA = pA_start + i ;
             ASSERT (Ai [pA] == i) ;
         }
@@ -100,8 +107,8 @@ void GB_slice_vector
             int64_t apright = pA_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Ai, pA, apright, afound) ;
         }
-        if (pA > 0) ASSERT (Ai [pA-1] < i) ;
-        ASSERT (Ai [pA] >= i) ;
+        if (pA >  0) ASSERT (Ai [pA-1] < i) ;
+        if (pA >= 0 && pA < pA_end) ASSERT (Ai [pA] >= i) ;
 
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
@@ -114,14 +121,14 @@ void GB_slice_vector
         // subtask starts at index i, and position pA in Ai,Ax.
 
         //----------------------------------------------------------------------
-        // find where i appears in B(:,kb)
+        // find where i appears in B(:,kB)
         //----------------------------------------------------------------------
 
         double bwork = 0 ;
         pB = pB_start ;
         if (bknz == vlen)
         { 
-            // B(:,kb) is dense; no need for a binary search
+            // B(:,kB) is dense; no need for a binary search
             pB = pB_start + i ;
             ASSERT (Bi [pB] == i) ;
         }
@@ -131,8 +138,8 @@ void GB_slice_vector
             int64_t bpright = pB_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Bi, pB, bpright, bfound) ;
         }
-        if (pB > 0) ASSERT (Bi [pB-1] < i) ;
-        ASSERT (Bi [pB] >= i) ;
+        if (pB >  0) ASSERT (Bi [pB-1] < i) ;
+        if (pB >= 0 && pB < pB_end) ASSERT (Bi [pB] >= i) ;
 
         // Bi has been split.  If bfound is false:
         //      Bi [pB_start : pB-1] < i
@@ -193,10 +200,34 @@ void GB_slice_vector
     }
 
     //--------------------------------------------------------------------------
+    // find where i appears in M(:,kM)
+    //--------------------------------------------------------------------------
+
+    if (Mi != NULL)
+    {
+        pM = pM_start ;
+        if (mknz == vlen)
+        { 
+            // M(:,kM) is dense; no need for a binary search
+            pM = pM_start + i ;
+            ASSERT (Mi [pM] == i) ;
+        }
+        else if (mknz > 0)
+        { 
+            bool mfound ;
+            int64_t mpright = pM_end - 1 ;
+            GB_BINARY_SPLIT_SEARCH (i, Mi, pM, mpright, mfound) ;
+        }
+        if (pM >  0) ASSERT (Mi [pM-1] < i) ;
+        if (pM >= 0 && pM < pM_end) ASSERT (Mi [pM] >= i) ;
+    }
+
+    //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
     (*p_i)  = i ;
+    (*p_pM) = pM ;
     (*p_pA) = pA ;
     (*p_pB) = pB ;
 }

@@ -1,11 +1,22 @@
 //------------------------------------------------------------------------------
-// GB_emult_template:  phase1 and phase2 for C=A.*B, C<M>=A.*B, and C<!M>=A.*B
+// GB_emult_template:  phase1 and phase2 for C=A.*B, C<M>=A.*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// Computes C=A.*B (no mask) or C<M>=A.*B (mask present and not complemented).
+// Does not handle the case C<!M>=A.*B.  The complemented mask is handled in
+// GB_mask instead.  If present, the mask M is assumed to be very sparse
+// compared with A and B.
+
+// phase1: does not compute C itself, but just counts the # of entries in each
+// vector of C.  Fine tasks compute the # of entries in their slice of a
+// single vector of C, and the results are cumsum'd in GB_ewise_cumsum.
+
+// phase2: computes C, using the counts computed by phase1.
 
 {
 
@@ -16,7 +27,7 @@
     const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ah = A->h ;
     const int64_t *restrict Ai = A->i ;
-    int64_t vlen = A->vlen ;
+    const int64_t vlen = A->vlen ;
 
     const int64_t *restrict Bp = B->p ;
     const int64_t *restrict Bh = B->h ;
@@ -28,8 +39,6 @@
     const GB_void *restrict Mx = NULL ;
     GB_cast_function cast_M = NULL ;
     size_t msize = 0 ;
-    int64_t Mnvec = 0 ;
-    bool M_is_hyper = false ;
     if (M != NULL)
     { 
         Mp = M->p ;
@@ -38,8 +47,6 @@
         Mx = M->x ;
         cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
         msize = M->type->size ;
-        Mnvec = M->nvec ;
-        M_is_hyper = M->is_hyper ;
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
@@ -66,7 +73,18 @@
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
         bool fine_task = (klast == -1) ;
-        if (fine_task) klast = kfirst ;
+        int64_t len ;
+        if (fine_task)
+        {
+            // a fine task operates on a slice of a single vector
+            klast = kfirst ;
+            len = TaskList [taskid].len ;
+        }
+        else
+        {
+            // a coarse task operates on one or more whole vectors
+            len = vlen ;
+        }
 
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
@@ -102,8 +120,7 @@
             // get A(:,j)
             //------------------------------------------------------------------
 
-            int64_t pA = -1 ;
-            int64_t pA_end = -1 ;
+            int64_t pA = -1, pA_end = -1 ;
             if (fine_task)
             { 
                 // A fine task operates on Ai,Ax [pA...pA_end-1], which is
@@ -122,14 +139,22 @@
                     pA_end = Ap [kA+1] ;
                 }
             }
-            int64_t ajnz = pA_end - pA ;    // nnz (A (:,j))
+
+            int64_t ajnz = pA_end - pA ;        // nnz in A(:,j) for this slice
+            bool adense = (ajnz == len) ;
+            int64_t iA_first = -1, iA_last = -1 ;
+            if (ajnz > 0)
+            {
+                // get the first and last indices in A(:,j) for this vector
+                iA_first = Ai [pA] ;
+                iA_last  = Ai [pA_end-1] ;
+            }
 
             //------------------------------------------------------------------
             // get B(:,j)
             //------------------------------------------------------------------
 
-            int64_t pB = -1 ;
-            int64_t pB_end = -1 ;
+            int64_t pB = -1, pB_end = -1 ;
             if (fine_task)
             { 
                 // A fine task operates on Bi,Bx [pB...pB_end-1], which is
@@ -140,7 +165,7 @@
             else
             { 
                 // A coarse task operates on the entire vector B (:,j)
-                int64_t kB = (Ch == Bh) ? k : 
+                int64_t kB = (Ch == Bh) ? k :
                             ((C_to_B == NULL) ? j : C_to_B [k]) ;
                 if (kB >= 0)
                 { 
@@ -148,29 +173,16 @@
                     pB_end = Bp [kB+1] ;
                 }
             }
-            int64_t bjnz = pB_end - pB ;    // nnz (B (:,j))
 
-            //------------------------------------------------------------------
-            // get M(:,j)
-            //------------------------------------------------------------------
-
-            // All fine tasks that operate on C(:,j) share the vector M(:,j),
-            // so M(:,j) is not sliced.
-
-            int64_t pM = -1 ;
-            int64_t pM_end = -1 ;
-            if (M != NULL)
+            int64_t bjnz = pB_end - pB ;        // nnz in B(:,j) for this slice
+            bool bdense = (bjnz == len) ;
+            int64_t iB_first = -1, iB_last = -1 ;
+            if (bjnz > 0)
             {
-                int64_t kM = (Ch == Mh) ? k :
-                            ((C_to_M == NULL) ? j : C_to_M [k]) ;
-                ASSERT (kM >= -1 && kM < M->nvec) ;
-                if (kM >= 0)
-                { 
-                    pM     = Mp [kM] ;
-                    pM_end = Mp [kM+1] ;
-                }
+                // get the first and last indices in B(:,j) for this vector
+                iB_first = Bi [pB] ;
+                iB_last  = Bi [pB_end-1] ;
             }
-            int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
 
             //------------------------------------------------------------------
             // phase1: count nnz (C (:,j)); phase2: compute C(:,j)
@@ -178,28 +190,17 @@
 
             #if defined ( GB_PHASE_1_OF_2 )
 
-            if (M != NULL && mjnz == 0 && !Mask_comp)
+            if (ajnz == 0 || bjnz == 0)
             { 
 
                 //--------------------------------------------------------------
-                // M(:,j) is empty and not complemented
-                //--------------------------------------------------------------
-
-                // C(:,j) is empty, regardless of A(:,j) and B(:,j)
-                ;
-
-            }
-            else if (ajnz == 0 || bjnz == 0)
-            { 
-
-                //--------------------------------------------------------------
-                // A(:,j) and/or B(:,j) are empty 
+                // A(:,j) and/or B(:,j) are empty
                 //--------------------------------------------------------------
 
                 ;
 
             }
-            else if (Ai [pA_end-1] < Bi [pB] || Bi [pB_end-1] < Ai [pA])
+            else if (iA_last < iB_first || iB_last < iA_first)
             { 
 
                 //--------------------------------------------------------------
@@ -215,43 +216,38 @@
 
             #endif
 
-            if (M == NULL || (M != NULL && mjnz == 0 && Mask_comp))
+            if (M == NULL)
             {
 
-                //--------------------------------------------------------------
-                // No mask, or M(:,j) is empty and complemented
-                //--------------------------------------------------------------
-
-                // if present, M(:,j) is ignored since !M(:,j) is all true
-
-                // TODO use a dense test that works for fine tasks.
-
-                if (ajnz == vlen && bjnz == vlen)
+                if (adense && bdense)
                 { 
 
                     //----------------------------------------------------------
-                    // A(:,j) and B(:,j) dense
+                    // A(:,j) and B(:,j) dense: thus C(:,j) dense
                     //----------------------------------------------------------
 
+                    ASSERT (ajnz == bjnz) ;
+                    ASSERT (iA_first == iB_first) ;
+                    ASSERT (iA_last  == iB_last ) ;
                     #if defined ( GB_PHASE_1_OF_2 )
-                    cjnz = vlen ;
+                    cjnz = ajnz ;
                     #else
-                    ASSERT (cjnz == vlen) ;
-                    for (int64_t i = 0 ; i < vlen ; i++)
+                    ASSERT (cjnz == ajnz) ;
+                    for (int64_t p = 0 ; p < ajnz ; p++)
                     { 
-                        Ci [pC + i] = i ;
-                        GB_GETA (aij, Ax, pA + i) ;
-                        GB_GETB (bij, Bx, pB + i) ;
-                        GB_BINOP (GB_CX (pC + i), aij, bij) ;
+                        Ci [pC + p] = p + iA_first ;
+                        GB_GETA (aij, Ax, pA + p) ;
+                        GB_GETB (bij, Bx, pB + p) ;
+                        GB_BINOP (GB_CX (pC + p), aij, bij) ;
                     }
                     #endif
 
                 }
-                else if (ajnz == vlen)
+                else if (adense)
                 { 
 
                     //----------------------------------------------------------
-                    // A(:,j) is dense, B(:,j) is sparse
+                    // A(:,j) is dense, B(:,j) is sparse: thus C(:,j) sparse
                     //----------------------------------------------------------
 
                     #if defined ( GB_PHASE_1_OF_2 )
@@ -262,18 +258,18 @@
                     { 
                         int64_t i = Bi [pB + p] ;
                         Ci [pC + p] = i ;
-                        GB_GETA (aij, Ax, pA + i) ;
+                        GB_GETA (aij, Ax, pA + i - iA_first) ;
                         GB_GETB (bij, Bx, pB + p) ;
                         GB_BINOP (GB_CX (pC + p), aij, bij) ;
                     }
                     #endif
 
                 }
-                else if (bjnz == vlen)
+                else if (bdense)
                 { 
 
                     //----------------------------------------------------------
-                    // A(:,j) is sparse, B(:,j) is dense
+                    // A(:,j) is sparse, B(:,j) is dense: thus C(:,j) sparse
                     //----------------------------------------------------------
 
                     #if defined ( GB_PHASE_1_OF_2 )
@@ -285,7 +281,7 @@
                         int64_t i = Ai [pA + p] ;
                         Ci [pC + p] = i ;
                         GB_GETA (aij, Ax, pA + p) ;
-                        GB_GETB (bij, Bx, pB + i) ;
+                        GB_GETB (bij, Bx, pB + i - iB_first) ;
                         GB_BINOP (GB_CX (pC + p), aij, bij) ;
                     }
                     #endif
@@ -408,193 +404,85 @@
             {
 
                 //--------------------------------------------------------------
-                // M is present
+                // Mask is present
                 //--------------------------------------------------------------
 
-                if (!Mask_comp && GB_IMIN (ajnz,bjnz) > 32 * mjnz)
+                int64_t pM = -1 ;
+                int64_t pM_end = -1 ;
+                if (fine_task)
                 { 
-
-                    //----------------------------------------------------------
-                    // M(:,j) is very sparse, and not complemented
-                    //----------------------------------------------------------
-
-                    for ( ; pM < pM_end ; pM++)
-                    { 
-                        // find M(i,j)
-                        bool mij = false ;
-                        int64_t i = Mi [pM] ;
-                        cast_M (&mij, Mx +(pM*msize), 0) ;
-                        if (!mij) continue ;
-
-                        // find A(i,j)
-                        int64_t pright = pA_end - 1 ;
-                        bool found ;
-                        GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
-                        if (!found) continue ;
-
-                        // find B(i,j)
-                        pright = pB_end - 1 ;
-                        GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
-                        if (!found) continue ;
-
-                        // A(i,j) and B(i,j) found, and M(i,j) is true
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        ASSERT (pC < pC_end) ;
-                        Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;
-                        GB_GETB (bij, Bx, pB) ;
-                        GB_BINOP (GB_CX (pC), aij, bij) ;
-                        pC++ ;
-                        #endif
-                    }
-
-                }
-                else if (ajnz > 32 * bjnz)
-                { 
-
-                    //----------------------------------------------------------
-                    // A(:,j) is much denser than B(:,j)
-                    //----------------------------------------------------------
-
-                    for ( ; pB < pB_end ; pB++)
-                    { 
-                        int64_t i = Bi [pB] ;
-
-                        // find A(i,j)
-                        int64_t pright = pA_end - 1 ;
-                        bool found ;
-                        GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
-                        if (!found) continue ;
-
-                        // find M(i,j)
-                        bool mij = false ;
-                        pright = pM_end - 1 ;
-                        GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                        if (found)
-                        { 
-                            cast_M (&mij, Mx +(pM*msize), 0) ;
-                        }
-                        if (Mask_comp)
-                        { 
-                            mij = !mij ;
-                        }
-                        if (!mij) continue ;
-
-                        // A(i,j) and B(i,j) found, and M(i,j) is true
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        ASSERT (pC < pC_end) ;
-                        Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;
-                        GB_GETB (bij, Bx, pB) ;
-                        GB_BINOP (GB_CX (pC), aij, bij) ;
-                        pC++ ;
-                        #endif
-                    }
-
-                }
-                else if (bjnz > 32 * ajnz)
-                { 
-
-                    //----------------------------------------------------------
-                    // B(:,j) is much denser than A(:,j)
-                    //----------------------------------------------------------
-
-                    for ( ; pA < pA_end ; pA++)
-                    { 
-                        int64_t i = Ai [pA] ;
-
-                        // find B(i,j)
-                        int64_t pright = pB_end - 1 ;
-                        bool found ;
-                        GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
-                        if (!found) continue ;
-
-                        // find M(i,j)
-                        bool mij = false ;
-                        pright = pM_end - 1 ;
-                        GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                        if (found)
-                        { 
-                            cast_M (&mij, Mx +(pM*msize), 0) ;
-                        }
-                        if (Mask_comp)
-                        { 
-                            mij = !mij ;
-                        }
-                        if (!mij) continue ;
-
-                        // A(i,j) and B(i,j) found, and M(i,j) is true
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        ASSERT (pC < pC_end) ;
-                        Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;
-                        GB_GETB (bij, Bx, pB) ;
-                        GB_BINOP (GB_CX (pC), aij, bij) ;
-                        pC++ ;
-                        #endif
-                    }
-
+                    // A fine task operates on Mi,Mx [pM...pM_end-1], which is
+                    // a subset of the vector M(:,j)
+                    pM     = TaskList [taskid  ].pM ;
+                    pM_end = TaskList [taskid+1].pM ;
                 }
                 else
-                { 
-
-                    //----------------------------------------------------------
-                    // A(:,j) and B(:,j) have about the same # of entries
-                    //----------------------------------------------------------
-
-                    while (pA < pA_end && pB < pB_end)
-                    {
-                        int64_t iA = Ai [pA] ;
-                        int64_t iB = Bi [pB] ;
-                        if (iA < iB)
-                        { 
-                            // A(i,j) exists but not B(i,j)
-                            pA++ ;
-                        }
-                        else if (iB < iA)
-                        { 
-                            // B(i,j) exists but not A(i,j)
-                            pB++ ;
-                        }
-                        else
-                        { 
-                            // both A(i,j) and B(i,j) exist.  Check the mask.
-                            bool mij = false ;  // M(i,j) false if not present
-                            int64_t pright = pM_end - 1 ;
-                            bool found ;
-                            GB_BINARY_SEARCH (iB, Mi, pM, pright, found) ;
-                            if (found)
-                            { 
-                                cast_M (&mij, Mx +(pM*msize), 0) ;
-                            }
-                            if (Mask_comp)
-                            { 
-                                mij = !mij ;
-                            }
-                            if (mij)
-                            { 
-                                // A(i,j) and B(i,j) found, and M(i,j) is true
-                                #if defined ( GB_PHASE_1_OF_2 )
-                                cjnz++ ;
-                                #else
-                                ASSERT (pC < pC_end) ;
-                                Ci [pC] = iB ;
-                                GB_GETA (aij, Ax, pA) ;
-                                GB_GETB (bij, Bx, pB) ;
-                                GB_BINOP (GB_CX (pC), aij, bij) ;
-                                pC++ ;
-                                #endif
-                            }
-                            pA++ ;
-                            pB++ ;
-                        }
+                {
+                    int64_t kM = -1 ;
+                    if (Ch == Mh)
+                    { 
+                        // Ch is the same as Mh (a shallow copy), or both NULL
+                        kM = k ;
                     }
+                    else
+                    { 
+                        kM = (C_to_M == NULL) ? j : C_to_M [k] ;
+                    }
+                    if (kM >= 0)
+                    { 
+                        pM     = Mp [kM] ;
+                        pM_end = Mp [kM+1] ;
+                    }
+                }
+
+                //--------------------------------------------------------------
+                // C(:,j)<M(:,j) = A(:,j) .* B (:,j)
+                //--------------------------------------------------------------
+
+                for ( ; pM < pM_end ; pM++)
+                {
+
+                    //----------------------------------------------------------
+                    // get M(i,j) for A(i,j) .* B (i,j)
+                    //----------------------------------------------------------
+
+                    int64_t i = Mi [pM] ;
+                    bool mij ;
+                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    if (!mij) continue ;
+
+                    //----------------------------------------------------------
+                    // get A(i,j)
+                    //----------------------------------------------------------
+
+                    int64_t apright = pA_end - 1 ;
+                    bool afound ;
+                    GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
+                    if (!afound) continue ;
+
+                    //----------------------------------------------------------
+                    // get B(i,j)
+                    //----------------------------------------------------------
+
+                    int64_t bpright = pB_end - 1 ;
+                    bool bfound ;
+                    GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
+                    if (!bfound) continue ;
+
+                    //----------------------------------------------------------
+                    // C(i,j) = A(i,j) .* B(i,j)
+                    //----------------------------------------------------------
+
+                    // C (i,j) = A (i,j) .* B (i,j)
+                    #if defined ( GB_PHASE_1_OF_2 )
+                    cjnz++ ;
+                    #else
+                    Ci [pC] = i ;
+                    GB_GETA (aij, Ax, pA) ;
+                    GB_GETB (bij, Bx, pB) ;
+                    GB_BINOP (GB_CX (pC), aij, bij) ;
+                    pC++ ;
+                    #endif
                 }
 
                 #if defined ( GB_PHASE_2_OF_2 )

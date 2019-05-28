@@ -116,14 +116,21 @@ void GB_ewise_cumsum
             int64_t pB_end = TaskList [t+1].pB ;
             int64_t pC     = TaskList [t  ].pC ;
             int64_t pC_end = TaskList [t+1].pC ;
-//          printf ("pA "GBd":"GBd" pB "GBd":"GBd" pC "GBd":"GBd"\n",
-//              pA, pA_end-1, pB, pB_end-1, pC, pC_end-1) ;
+            int64_t pM     = TaskList [t  ].pM ;
+            int64_t pM_end = TaskList [t+1].pM ;
+            int64_t len    = TaskList [t+1].len ;
+//          printf ("pA "GBd":"GBd" pB "GBd":"GBd" pC "GBd":"GBd
+//              " pM "GBd":"GBd" len "GBd"\n",
+//              pA, pA_end-1, pB, pB_end-1, pC, pC_end-1,
+//              pM, pM_end-1, len) ;
             ASSERT (k >= 0 && k < Cnvec) ;
-            // pA:(pA_end-1) must reside inside A(:,j), and pB:(pB_end-1_ must
+            // pA:(pA_end-1) must reside inside A(:,j), and pB:(pB_end-1) must
             // reside inside B(:,j), but these cannot be checked here since A
             // and B are not available.  These basic checks can be done:
             ASSERT (0 <= pA && pA <= pA_end) ;
             ASSERT (0 <= pB && pB <= pB_end) ;
+            // M is optional, but this condition still holds
+            ASSERT (-1 <= pM && pM <= pM_end) ;
             // pC and pC_end can be checked exactly.  This task t computes
             // entries pC:(pC_end-1) of C, inclusive.
             ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;

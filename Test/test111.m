@@ -13,90 +13,194 @@ n = 40e6 ;
 % n = 1e6 ;
 Empty = sparse (n, 1) ;
 
-for d = [0.001 0.01 0.1:.1:1]
+% for d = [0.001 0.01 0.1:.1:1]
+for d = [0.001 0.01 0.1 0.4 1 2 3]
 
     if (d == 1)
         A = sparse (rand (n,1)) ;
         B = sparse (rand (n,1)) ;
+        mds = 1 ;
+    elseif (d == 2)
+        A = sparse (rand (n,1)) ;
+        B = sprand (n,1,0.1) ;
+        mds = 0.1 ;
+    elseif (d == 3)
+        A = sprand (n,1,0.1) ;
+        B = sparse (rand (n,1)) ;
+        mds = 0.1 ;
     else
         A = sprand (n,1,d) ;
         B = sprand (n,1,d) ;
+        mds = [d/36 d/8 d] ;
     end
 
-    fprintf ('\nd = %g\n', d) ;
-    fprintf ('nnz (A) = %d nnz (B) = %d\n', nnz (A), nnz (B)) ;
+    for md = mds
 
-    %--------------------------------------------------------------------------
-    % add
-    %--------------------------------------------------------------------------
+        if (md == 1)
+            M = sparse (rand (n,1)) ;
+        else
+            M = sprand (n,1,md) ;
+        end
 
-    % warmup
-    C1 = A + B ;
-    C1 = A + B ;
-    tic
-    C1 = A + B ;
-    toc
-    tm = toc ;
-    fprintf ('nnz (C) = %d\n', nnz (C1));
-    fprintf ('\nvia GB_add:\n') ;
-%    try
-        for nthreads = 1:4
+        M = spones (M) ;
+        M0 = logical (M) ;
+
+        fprintf ('\n######################################################\n') ;
+        fprintf ('d = %12.4f md = %12.4f\n', d, md) ;
+        fprintf ('######################################################\n') ;
+        fprintf ('nnz (A) = %d nnz (B) = %d nnz (M) = %d\n', ...
+            nnz (A), nnz (B), nnz (M)) ;
+
+        %----------------------------------------------------------------------
+        % add
+        %----------------------------------------------------------------------
+
+        % warmup
+        C1 = A + B ;
+        tic
+        C1 = A + B ;
+        toc
+        tm = toc ;
+        fprintf ('nnz (C) = %d\n', nnz (C1));
+        fprintf ('\nvia GB_add:\n') ;
+
+        for nthreads = [1 2 4]
             nthreads_set (nthreads) ;
-            % tic
             C4 = GB_mex_AplusB (A, B, 'plus') ;
-            C4 = GB_mex_AplusB (A, B, 'plus') ;
-            C4 = GB_mex_AplusB (A, B, 'plus') ;
-            % toc
             tg = gbresults ;
             if (nthreads == 1)
                 t1 = tg ;
             end
-            fprintf ('nthreads %d GraphBLAS time: %g ', nthreads, tg) ;
-            fprintf ('speedup %g over MATLAB: %g\n', t1/tg, tm/tg) ;
+            fprintf ('nthreads %d GraphBLAS time: %12.4f ', nthreads, tg) ;
+            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
             assert (spok (C4) == 1) ;
             assert (isequal (C1, C4)) ;
         end
-%    catch
-%    end
 
-    %--------------------------------------------------------------------------
-    % ewise multiply
-    %--------------------------------------------------------------------------
+        %----------------------------------------------------------------------
+        % masked add
+        %----------------------------------------------------------------------
 
-    % warmup
-    C1 = A .* B ;
-    C1 = A .* B ;
-    tic
-    C1 = A .* B ;
-    toc
-    tm = toc ;
-    fprintf ('nnz (C) = %d for A.*B\n', nnz (C1));
-    fprintf ('\nvia GB_eWiseMult:\n') ;
-%    try
-        for nthreads = 1:4
+        fprintf ('\nmasked add:\n') ;
+        % warmup
+        C1 = M.*(A + B) ;
+        tic
+        C1 = M.*(A + B) ;
+        toc
+        tm = toc ;
+        fprintf ('nnz (C) = %d\n', nnz (C1));
+        fprintf ('\nvia masked GB_add:\n') ;
+
+        for nthreads = [1 2 4]
             nthreads_set (nthreads) ;
-            % tic
-% usage: w = GB_mex_eWiseMult_Vector (w, mask, accum, mult, u, v, desc)
-
-            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
-            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
-            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
-%           C4 = GB_mex_AplusB (A, B, 'plus') ;
-%           C4 = GB_mex_AplusB (A, B, 'plus') ;
-%           C4 = GB_mex_AplusB (A, B, 'plus') ;
-            % toc
+            % warmup
+            C4 = GB_mex_eWiseAdd_Vector (Empty, M0, [ ], 'plus', A, B, [ ]) ;
+            %
+            C4 = GB_mex_eWiseAdd_Vector (Empty, M0, [ ], 'plus', A, B, [ ]) ;
             tg = gbresults ;
             if (nthreads == 1)
                 t1 = tg ;
             end
-            fprintf ('nthreads %d GraphBLAS time: %g ', nthreads, tg) ;
-            fprintf ('speedup %g over MATLAB: %g\n', t1/tg, tm/tg) ;
+            fprintf ('nthreads %d GraphBLAS time: %12.4f ', nthreads, tg) ;
+            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
             assert (spok (C4.matrix) == 1) ;
             assert (isequal (C1, C4.matrix)) ;
         end
-%    catch
-%    end
 
+        %-----------------------------------------------------------------------
+        % unmasked add then ewise mult
+        %-----------------------------------------------------------------------
+
+        fprintf ('\nunmasked add then emult:\n') ;
+        % warmup
+        C1 = M.*(A + B) ;
+        tic
+        C1 = M.*(A + B) ;
+        toc
+        tm = toc ;
+        fprintf ('nnz (C) = %d\n', nnz (C1));
+        fprintf ('\nvia unmasked add then emult:\n') ;
+
+        for nthreads = [1 2 4]
+            nthreads_set (nthreads) ;
+            % warmup
+            C4 = GB_mex_eWiseAdd_Vector (Empty, [ ], [ ], 'plus', A, B, [ ]) ;
+            C4 = GB_mex_eWiseMult_Vector(Empty, [ ], [ ], 'times',M, C4, [ ]) ;
+            %
+            C4 = GB_mex_eWiseAdd_Vector (Empty, [ ], [ ], 'plus', A, B, [ ]) ;
+            tg1 = gbresults ;
+            C4 = GB_mex_eWiseMult_Vector(Empty, [ ], [ ], 'times',M, C4, [ ]) ;
+            tg2 = gbresults ;
+            tg = tg1 + tg2 ;
+            if (nthreads == 1)
+                t1 = tg ;
+            end
+            fprintf ('nthreads %d GraphBLAS time: %12.4f ', nthreads, tg) ;
+            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            assert (spok (C4.matrix) == 1) ;
+            assert (isequal (C1, C4.matrix)) ;
+        end
+
+        %-----------------------------------------------------------------------
+        % ewise multiply
+        %-----------------------------------------------------------------------
+
+        % warmup
+        C1 = A .* B ;
+        tic
+        C1 = A .* B ;
+        toc
+        tm = toc ;
+        fprintf ('nnz (C) = %d for A.*B\n', nnz (C1));
+        fprintf ('\nvia GB_eWiseMult:\n') ;
+
+        for nthreads = [1 2 4]
+            nthreads_set (nthreads) ;
+            % warmup
+            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
+            %
+            C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
+            tg = gbresults ;
+            if (nthreads == 1)
+                t1 = tg ;
+            end
+            fprintf ('nthreads %d GraphBLAS time: %12.4f ', nthreads, tg) ;
+            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            assert (spok (C4.matrix) == 1) ;
+            assert (isequal (C1, C4.matrix)) ;
+        end
+
+        %-----------------------------------------------------------------------
+        % masked ewise multiply
+        %-----------------------------------------------------------------------
+
+        fprintf ('\nmasked emult:\n') ;
+        % warmup
+        C1 = M.* (A .* B) ;
+        tic
+        C1 = M.* (A .* B) ;
+        toc
+        tm = toc ;
+        fprintf ('nnz (C) = %d for A.*B\n', nnz (C1));
+        fprintf ('\nvia GB_eWiseMult:\n') ;
+
+        for nthreads = [1 2 4]
+            nthreads_set (nthreads) ;
+            % warmup
+            C4 = GB_mex_eWiseMult_Vector (Empty, M0, [ ], 'times', A,B, [ ]) ;
+            %
+            C4 = GB_mex_eWiseMult_Vector (Empty, M0, [ ], 'times', A,B, [ ]) ;
+            tg = gbresults ;
+            if (nthreads == 1)
+                t1 = tg ;
+            end
+            fprintf ('nthreads %d GraphBLAS time: %12.4f ', nthreads, tg) ;
+            fprintf ('speedup %12.4f over MATLAB: %12.4f\n', t1/tg, tm/tg) ;
+            assert (spok (C4.matrix) == 1) ;
+            assert (isequal (C1, C4.matrix)) ;
+        end
+
+    end
 end
 
 fprintf ('\ndense matrices:\n') ;
