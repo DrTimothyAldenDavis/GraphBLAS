@@ -532,13 +532,14 @@ GrB_Info GB_ewise_slice
     for (int t = 0 ; t < ntasks ; t++)
     {
         printf ("Task %d: kfirst "GBd" klast "GBd" pM "GBd" pA "GBd" pB "GBd
-            " pC "GBd"\n", t,
+            " pC "GBd" len "GBd"\n", t,
             TaskList [t].kfirst,
             TaskList [t].klast,
             TaskList [t].pM,
             TaskList [t].pA,
             TaskList [t].pB,
-            TaskList [t].pC) ;
+            TaskList [t].pC,
+            TaskList [t].len) ;
     }
     #endif
 

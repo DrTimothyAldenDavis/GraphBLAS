@@ -13,10 +13,10 @@ if (nargin < 1)
 end
 
 if (fulltest)
-    fprintf ('lengthy tests of GrB_mxm, mxv, and vxm\n') ;
+    fprintf ('test20: lengthy tests of GrB_mxm, mxv, and vxm\n') ;
     n_semirings_max = inf ;
 else
-    fprintf ('quick test of GrB_mxm, mxv, and vxm\n') ;
+    fprintf ('test20: quick test of GrB_mxm, mxv, and vxm\n') ;
     n_semirings_max = 1 ;
 end
 

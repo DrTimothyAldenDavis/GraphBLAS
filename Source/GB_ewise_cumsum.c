@@ -106,7 +106,7 @@ void GB_ewise_cumsum
     {
         int64_t k = TaskList [t].kfirst ;
         int64_t klast = TaskList [t].klast ;
-//      printf ("Task %d: kfirst "GBd" klast "GBd" ", t, k, klast) ;
+        // printf ("Task %d: kfirst "GBd" klast "GBd" ", t, k, klast) ;
         if (klast == -1)
         {
             // this is a fine task for vector k
@@ -119,10 +119,10 @@ void GB_ewise_cumsum
             int64_t pM     = TaskList [t  ].pM ;
             int64_t pM_end = TaskList [t+1].pM ;
             int64_t len    = TaskList [t+1].len ;
-//          printf ("pA "GBd":"GBd" pB "GBd":"GBd" pC "GBd":"GBd
-//              " pM "GBd":"GBd" len "GBd"\n",
-//              pA, pA_end-1, pB, pB_end-1, pC, pC_end-1,
-//              pM, pM_end-1, len) ;
+            // printf ("pA "GBd":"GBd" pB "GBd":"GBd" pC "GBd":"GBd
+                // " pM "GBd":"GBd" len "GBd"\n",
+                // pA, pA_end-1, pB, pB_end-1, pC, pC_end-1,
+                // pM, pM_end-1, len) ;
             ASSERT (k >= 0 && k < Cnvec) ;
             // pA:(pA_end-1) must reside inside A(:,j), and pB:(pB_end-1) must
             // reside inside B(:,j), but these cannot be checked here since A
@@ -138,7 +138,7 @@ void GB_ewise_cumsum
         else
         {
             // this is a coarse task for vectors k:klast, inclusive
-//          printf ("\n") ;
+            // printf ("\n") ;
             ASSERT (k >= 0 && k < Cnvec) ;
             ASSERT (klast >= 0 && klast <= Cnvec) ;
             ASSERT (k <= klast) ;

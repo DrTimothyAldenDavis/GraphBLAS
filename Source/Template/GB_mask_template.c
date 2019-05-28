@@ -323,9 +323,9 @@
                     if (i == iM)
                     {
                         cast_M (&mij, Mx +(pM*msize), 0) ;
-                        if (Mask_comp) mij = !mij ;
                         pM++ ;
                     }
+                    if (Mask_comp) mij = !mij ;
                     if (mij)
                     {
                         memcpy (Rx +(pR+p)*rsize, Zx +(pZ+p)*rsize, rsize) ;
