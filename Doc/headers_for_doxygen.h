@@ -661,13 +661,14 @@ constructed by dox_headers.m
 
 
 /** \file GB_add.c
-\brief  GB_add: C = A+B, C\<M\>=A+B, or C\<!M\> = A+B
+\brief  GB_add: C = A+B or C\<M\>=A+B, but not C\<!M\>=A+B
 
 \par
- GB_add (C, M, A, B, op), does C\<M\>=op(A,B), using the given operator
- element-wise on the matrices A and B.  The result is typecasted as needed.
- The pattern of C is the union of the pattern of A and B, intersection with
- the mask M or !M, if present.
+ GB_add computes C=A+B or C\<M\>=A+B, using the given operator element-wise on
+ the matrices A and B.  The result is typecasted as needed.  The pattern of C
+ is the union of the pattern of A and B, intersection with the mask M, if
+ present.  The C\<!M\>=A+B case is not handled; the complemented mask is
+ handled in GB_mask.
 \par
  Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
  If both A(i,j) and B(i,j) are present, then:
@@ -696,14 +697,16 @@ constructed by dox_headers.m
 
 
 /** \file GB_add_phase0.c
-\brief  GB_add_phase0: find vectors of C to compute for C\<M\>=A+B
+\brief  GB_add_phase0: find vectors of C to compute for C=A+B or C\<M\>=A+B
 
 \par
  The eWise add of two matrices, C=A+B, C\<M\>=A+B, or C\<!M\>=A+B starts with
  this phase, which determines which vectors of C need to be computed.
+ This phase is also used for GB_masker.
 \par
  On input, A and B are the two matrices being added, and M is the optional
- mask matrix, possibly complemented.
+ mask matrix (not complemented).  The complemented mask is handed in GB_mask,
+ not here.
 \par
  The A matrix can be sparse, hypersparse, slice, or hyperslice.  The B matrix
  can only be sparse or hypersparse.  See GB_wait, which can pass in A as any
@@ -727,7 +730,9 @@ constructed by dox_headers.m
       transplants it into C.
 \par
       Ch_is_Mh:  true if the mask M is present, hypersparse, and not
-      complemented, false otherwise.  In this case Ch is a deep copy of M-\>h.
+      complemented, false otherwise.  In this case Ch is a deep copy of Mh.
+      Only GB_add uses this option; it is not used by GB_masker (Ch_is_Mh
+      is always false for GB_masker).
 \par
       C_to_A:  if A is hypersparse, then C_to_A [k] = kA if the kth vector, j
       = (Ch == NULL) ? k : Ch [k] appears in A, as j = Ah [kA].  If j does
@@ -739,31 +744,35 @@ constructed by dox_headers.m
       not appear in B, then C_to_B [k] = -1.  If B is not hypersparse, then
       C_to_B is returned as NULL.
 \par
+      C_to_M:  if M is hypersparse, and Ch_is_Mh is false, then C_to_M [k] =
+      kM if the kth vector, j = (Ch == NULL) ? k : Ch [k] appears in M, as j
+      = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
+      not hypersparse, then C_to_M is returned as NULL.
+\par
  PARALLEL: done, except in one condition: A and B are hypersparse and
  Ch_is_Mh is false.  takes O(A-\>nvec + B-\>nvec) time.
+\par
+ TODO: exploit A==M, B==M, and A==B aliases
 */
 
 
 /** \file GB_add_phase1.c
-\brief  GB_add_phase1: find \# of entries in C=A+B, C\<M\>=A+B, or C\<!M\>=A+B
+\brief  GB_add_phase1: find \# of entries in C=A+B or C\<M\>=A+B
 
 \par
- GB_add_phase1 counts the number of entries in each vector of C, for C=A+B,
- C\<M\>=A+B, or C\<!M\>=A+B, and then does a cumulative sum to find Cp.
- GB_add_phase1 is preceded by GB_add_phase0, which finds the non-empty
- vectors of C.  This phase is done entirely in parallel.
+ GB_add_phase1 counts the number of entries in each vector of C, for C=A+B or
+ C\<M\>=A+B  and then does a cumulative sum to find Cp.  GB_add_phase1 is
+ preceded by GB_add_phase0, which finds the non-empty vectors of C.  This
+ phase is done entirely in parallel.
 \par
  C, M, A, and B can be standard sparse or hypersparse, as determined by
- GB_add_phase0.  All cases of the mask M are handled: not present, present
- and not complemented, and present and complemented.
+ GB_add_phase0.  The mask M may be present, but it is not complemented.
 \par
  GB_wait computes A=A+T where T is the matrix of the assembled pending
  tuples.  A and T are disjoint, so this function does not need to examine
  the pattern of A and T at all.  No mask is used in this case.
 \par
  Cp is either freed by phase2, or transplanted into C.
-\par
- PARALLEL: done
 */
 
 
@@ -1075,8 +1084,6 @@ constructed by dox_headers.m
  GB_reduce_build_template since no duplicates can appear.  It is unlikely
  able to transplant S_work into T-\>x since the input will almost always be
  unsorted.
-\par
- PARALLEL: done
 */
 
 
@@ -1290,13 +1297,14 @@ constructed by dox_headers.m
 
 
 /** \file GB_emult.c
-\brief  GB_emult: C = A.*B, C\<M\>=A.*B, or C\<!M\> = A.*B
+\brief  GB_emult: C = A.*B or C\<M\>=A.*B
 
 \par
- GB_emult (C, M, A, B, op), does C\<M\>=op(A,B), using the given operator
- element-wise on the matrices A and B.  The result is typecasted as needed.
- The pattern of C is the intersection of the pattern of A and B, intersection
- with the mask M or !M, if present.
+ GB_emult, does C=A.*B or C\<M\>=A.*B, using the given operator element-wise on
+ the matrices A and B.  The result is typecasted as needed.  The pattern of C
+ is the intersection of the pattern of A and B, intersection with the mask M,
+ if present and not complemented.  The complemented mask is not handled here,
+ but in GB_mask.
 \par
  Let the op be z=f(x,y) where x, y, and z have type xtype, ytype, and ztype.
  If both A(i,j) and B(i,j) are present, then:
@@ -1307,19 +1315,19 @@ constructed by dox_headers.m
  if just B(i,j) is present but not A(i,j), then C(i,j) is not present.
 \par
  ctype is the type of matrix C.  The pattern of C is the intersection of A
- and B.
+ and B, and also intersection with M if present.
 */
 
 
 /** \file GB_emult_phase0.c
-\brief  GB_emult_phase0: find vectors of C to compute for C\<M\>=A.*B
+\brief  GB_emult_phase0: find vectors of C to compute for C=A.*B or C\<M\>=A.*B
 
 \par
  The eWise multiply of two matrices, C=A.*B, C\<M\>=A.*B, or C\<!M\>=A.*B starts
  with this phase, which determines which vectors of C need to be computed.
 \par
  On input, A and B are the two matrices being ewise multiplied, and M is the
- optional mask matrix, possibly complemented.
+ optional mask matrix.  If present, it is not complemented.
 \par
  The M, A, and B matrices are sparse or hypersparse (not a slice or
  hyperslice).  C will be standard (if Ch is returned NULL) or hypersparse
@@ -1341,48 +1349,42 @@ constructed by dox_headers.m
       C_to_M:  if M is hypersparse, and Ch is not M-\>h, then C_to_M [k] = kM
       if the kth vector j = (Ch == NULL) ? k : Ch [k] is equal to Mh [kM].
       If j does not appear in M, then C_to_M [k] = -1.  Otherwise, C_to_M is
-      returned as NULL.  C is hypersparse, except for one case.  If both A
-      and B are standard, and M is hypersparse and complemented, then C is
-      standard.  In this case, C_to_M must be computed.
+      returned as NULL.  C is always hypersparse in this case.
 \par
- PARALLEL: done
+ TODO: exploit A==M, B==M, and A==B aliases
 */
 
 
 /** \file GB_emult_phase1.c
-\brief  GB_emult_phase1: find \# of entries in C=A.*B, C\<M\>=A.*B, or C\<!M\>=A.*B
+\brief  GB_emult_phase1: find \# of entries in C=A.*B or C\<M\>=A.*B
 
 \par
  GB_emult_phase1 counts the number of entries in each vector of C, for
- C=A.*B, C\<M\>=A.*B, or C\<!M\>=A.*B, and then does a cumulative sum to find Cp.
+ C=A.*B or C\<M\>=A.*B and then does a cumulative sum to find Cp.
  GB_emult_phase1 is preceded by GB_emult_phase0, which finds the non-empty
  vectors of C.  This phase is done entirely in parallel.
 \par
  C, M, A, and B can be standard sparse or hypersparse, as determined by
- GB_emult_phase0.  All cases of the mask M are handled: not present, present
- and not complemented, and present and complemented.
+ GB_emult_phase0.  If present, the mask M is not complemented.
 \par
  Cp is either freed by GB_emult_phase2, or transplanted into C.
-\par
- PARALLEL: done
 */
 
 
 /** \file GB_emult_phase2.c
-\brief  GB_emult_phase2: C=A.*B, C\<M\>=A.*+B, or C\<!M\>=A.*+B
+\brief  GB_emult_phase2: C=A.*B or C\<M\>=A.*+B
 
 \par
- GB_emult_phase2 computes C=A.*B, C\<M\>=A.*B, or C\<!M\>=A.*B.  It is preceded
- first by GB_emult_phase0, which computes the list of vectors of C to compute
- (Ch) and their location in M, A, and B (C_to_[MAB]).  Next, GB_emult_phase1
- counts the entries in each vector C(:,j) and computes Cp.
+ GB_emult_phase2 computes C=A.*B or C\<M\>=A.*B.  It is preceded first by
+ GB_emult_phase0, which computes the list of vectors of C to compute (Ch) and
+ their location in M, A, and B (C_to_[MAB]).  Next, GB_emult_phase1 counts
+ the entries in each vector C(:,j) and computes Cp.
 \par
  GB_emult_phase2 computes the pattern and values of each vector of C(:,j),
  fully in parallel.
 \par
  C, M, A, and B can be standard sparse or hypersparse, as determined by
- GB_emult_phase0.  All cases of the mask M are handled: not present, present
- and not complemented, and present and complemented.
+ GB_emult_phase0.  If present, the mask M is not complemented.
 \par
  This function either frees Cp or transplants it into C, as C-\>p.  Either
  way, the caller must not free it.
@@ -1435,11 +1437,26 @@ constructed by dox_headers.m
 \brief  GB_ewise: C\<M\> = accum (C, A+B) or A.*B
 
 \par
- C\<M\> = accum (C,A+B), A.*B and variations.
+ C\<M\> = accum (C,A+B), A.*B and variations.  The input matrices A and B are
+ optionally transposed.  Does the work for GrB_eWiseAdd_* and
+ GrB_eWiseMult_*.  Handles all cases the the mask.
+*/
+
+
+/** \file GB_ewise_cumsum.c
+\brief  GB_ewise_cumsum: cumulative sum of Cp and fine tasks in TaskList
+
+*/
+
+
+/** \file GB_ewise_slice.c
+\brief  GB_ewise_slice: slice the entries and vectors for an ewise operation
+
 \par
- The input matrices A and B are optionally transposed.
-\par
- Does the work for GrB_eWiseAdd_* and GrB_eWiseMult_*
+ Constructs a set of tasks to compute C, for an element-wise operation
+ (GB_add, GB_emult, and GB_mask) that operates on two input matrices,
+ C=op(A,B).  The mask is ignored for computing where to slice the work, but
+ it is sliced once the location has been found.
 */
 
 
@@ -1766,8 +1783,94 @@ constructed by dox_headers.m
  i in the jth vector, and likewise for M, Z, and R.  If the matrices are all
  CSC, then this is row i and column j.  If the matrices are all CSR, then it
  is row j and column i.
+*/
+
+
+/** \file GB_mask_phase1.c
+\brief  GB_mask_phase1: find \# of entries in R = masker (M,C,Z)
+
 \par
- PARALLEL: TODO. similar method as GB_add
+ GB_mask_phase1 counts the number of entries in each vector of R, for R =
+ masker (M,C,Z), and then does a cumulative sum to find Cp.  GB_mask_phase1
+ is preceded by GB_add_phase0, which finds the non-empty vectors of R.  This
+ phase is done entirely in parallel.
+\par
+ R, M, C, and Z can be standard sparse or hypersparse, as determined by
+ GB_add_phase0.  All cases of the mask M are handled: present and not
+ complemented, and present and complemented.  The mask is always present for
+ R=masker(M,C,Z).
+\par
+ Rp is either freed by phase2, or transplanted into R.
+*/
+
+
+/** \file GB_mask_phase2.c
+\brief  GB_mask_phase2: phase2 for R = masker (M,C,Z)
+
+\par
+ GB_mask_phase2 computes R = masker (M,C,Z).  It is preceded first by
+ GB_add_phase0, which computes the list of vectors of R to compute (Rh) and
+ their location in C and Z (R_to_[CZ]).  Next, GB_mask_phase1 counts the
+ entries in each vector R(:,j) and computes Rp.
+\par
+ GB_mask_phase2 computes the pattern and values of each vector of R(:,j),
+ fully in parallel.
+\par
+ R, M, C, and Z can be standard sparse or hypersparse, as determined by
+ GB_add_phase0.  All cases of the mask M are handled: present and not
+ complemented, and present and complemented.  The mask is always present.
+\par
+ This function either frees Rp and Rh, or transplants then into R, as R-\>p
+ and R-\>h.  Either way, the caller must not free them.
+\par
+ PARALLEL: done, except for the last phase, to prune empty vectors from R,
+ if it is hypersparse with empty vectors.  Takes O(R-\>nvec time), and is
+ not always used.
+*/
+
+
+/** \file GB_masker.c
+\brief  GB_masker: R = masker (M, C, Z)
+
+\par
+ GB_masker (R, M, C, Z), does R=C ; R\<M\>=Z.  No typecasting is performed.
+ The operation is similar to both R=C+Z via GB_add and R=C.*Z via GB_emult,
+ depending on the value of the mask.
+\par
+ Let R be the result of the mask.  In the caller, R is written back into the
+ final C matrix, but in GB_masker, C is a read-only matrix.  Consider the
+ following table, where \"add\" is the result of C+Z, an \"emult\" is the result
+ of C.*Z.
+\par
+                                      R = masker (M,C,Z)
+\par
+ C(i,j)   Z(i,j)  add     emult       M(i,j)=1    M(i,j)=0
+\par
+ ------   ------  ------  ------      --------    --------
+\par
+  cij     zij     cij+zij cij*zij     zij         cij
+\par
+   -      zij     zij     -           zij         -
+\par
+  cij     -       cij     -           -           cij
+\par
+   -      -       -       -           -           -
+\par
+ Half of the results are like C.*Z using the FIRST operator, and the
+ other are the same as C+Z using the SECOND operator:
+\par
+  cij     zij     cij+zij cij*zij     2nd(C+Z)    1st(C.*Z)
+\par
+   -      zij     zij     -           2nd(C+Z)    1st(C.*Z)
+\par
+  cij     -       cij     -           1st(C.*Z)   2nd(C+Z)
+\par
+   -      -       -       -           1st(C.*Z)   2nd(C+Z)
+\par
+ As a result, GB_masker is very similar to GB_add and GB_emult.  The
+ vectors that appear in R are bounded by the set union of C and Z, just
+ like GB_add when the mask is *not* present.  The pattern of R is bounded
+ by the pattern of C+Z, also ignoring the mask.
 */
 
 
@@ -1776,6 +1879,7 @@ constructed by dox_headers.m
 
 \par
  for additional diagnostics, use:
+ \#define GB_DEVELOPER 1
 */
 
 
@@ -2092,8 +2196,8 @@ constructed by dox_headers.m
 \brief  GB_resize: change the size of a matrix
 
 \par
- PARALLEL: TODO.  one for loop, typically very small.
- Most work is done in GB_selector.
+ PARALLEL: TODO.  one trivial for loop, typically very small, but could be
+ parallel.  Most work is done in GB_selector.
 */
 
 
@@ -2218,6 +2322,34 @@ constructed by dox_headers.m
 \par
  This function does only O(nslices) work and allocates O(nslices) space, so
  it does not need to be parallel.
+*/
+
+
+/** \file GB_slice_vector.c
+\brief  GB_slice_vector:  slice a vector for GB_add, GB_emult, and GB_mask
+
+\par
+ A(:,kA) and B(:,kB) are two long vectors that will be added with GB_add,
+ GB_emult, or GB_mask, and the work to compute them needs to be split into
+ multiple tasks.  They represent the same vector index j, for:
+\par
+      C(:,j) = A(:,j) +  B(:,j) in GB_add
+      C(:,j) = A(:,j) .* B(:,j) in GB_emult
+      C(:,j)\<M(:,j)\> = B(:,j) in GB_mask (A is passed in as the input C)
+\par
+ The vector index j is not needed here.  The vectors kA and kB are not
+ required, either; just the positions where the vectors appear in A and B
+ (pA_start, pA_end, pB_start, and pB_end).
+\par
+ This method finds i so that nnz (A (i:end,kA)) + nnz (B (i:end,kB)) is
+ roughly equal to target_work.  The entries in A(i:end,kA) start at position
+ pA in Ai and Ax, and the entries in B(i:end,kB) start at position pB in Bi
+ and Bx.  Once the work is split, pM is found for M(i:end,kM), if the mask M
+ is present.
+\par
+ If n = A-\>vlen = B-\>vlen, anz = nnz (A (:,kA)), and bnz = nnz (B (:,kB)),
+ then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
+ or at most O((log(n)^2)).
 */
 
 
@@ -3246,7 +3378,7 @@ constructed by dox_headers.m
 
 
 /** \file GxB_Matrix_Option_set.c
-\brief  GxB_Matrix_option_set: set an option in a matrix
+\brief  GxB_Matrix_Option_set: set an option in a matrix
 
 */
 
@@ -3837,12 +3969,19 @@ constructed by dox_headers.m
 
 
 /** \file GB_add_template.c
-\brief  GB_add_template:  phase1 and phase2 for C=A+B, C\<M\>=A+B, and C\<!M\>=A+B
+\brief  GB_add_template:  phase1 and phase2 for C=A+B, C\<M\>=A+B
 
 \par
- PARALLEL: done, except when \# threads \> \# vectors (as in GrB_Vector).
- all vectors of a GrB_Matrix C are computed fully in parallel.  A
- single GrB_Vector will use only one thread, however.
+ Computes C=A+B (no mask) or C\<M\>=A+B (mask present and not complemented).
+ Does not handle the case C\<!M\>=A+B.  The complemented mask is handled in
+ GB_mask instead.  If present, the mask M is assumed to be very sparse
+ compared with A and B.
+\par
+ phase1: does not compute C itself, but just counts the \# of entries in each
+ vector of C.  Fine tasks compute the \# of entries in their slice of a
+ single vector of C, and the results are cumsum'd in GB_ewise_cumsum.
+\par
+ phase2: computes C, using the counts computed by phase1.
 */
 
 
@@ -3895,8 +4034,19 @@ constructed by dox_headers.m
 
 
 /** \file GB_emult_template.c
-\brief  GB_emult_template:  phase1 and phase2 for C=A.*B, C\<M\>=A.*B, and C\<!M\>=A.*B
+\brief  GB_emult_template:  phase1 and phase2 for C=A.*B, C\<M\>=A.*B
 
+\par
+ Computes C=A.*B (no mask) or C\<M\>=A.*B (mask present and not complemented).
+ Does not handle the case C\<!M\>=A.*B.  The complemented mask is handled in
+ GB_mask instead.  If present, the mask M is assumed to be very sparse
+ compared with A and B.
+\par
+ phase1: does not compute C itself, but just counts the \# of entries in each
+ vector of C.  Fine tasks compute the \# of entries in their slice of a
+ single vector of C, and the results are cumsum'd in GB_ewise_cumsum.
+\par
+ phase2: computes C, using the counts computed by phase1.
 */
 
 
@@ -3909,6 +4059,27 @@ constructed by dox_headers.m
 \par
  These functions are only used by the heap method for C=A*B.
  See Source/Template/GB_AxB_heap_mask.c.
+*/
+
+
+/** \file GB_mask_template.c
+\brief  GB_mask_template:  phase1 and phase2 for R = masker (M, C, Z)
+
+\par
+ Computes C\<M\>=Z or C\<!M\>=Z, returning the result in R.  The input matrix C
+ is not modified.  Effectively, this computes R=C and then R\<M\>=Z or R\<!M\>=Z.
+ If the C_replace descriptor is enabled, then C has already been cleared, and
+ is an empty (but non-NULL) matrix.
+\par
+ phase1: does not compute R itself, but just counts the \# of entries in each
+ vector of R.  Fine tasks compute the \# of entries in their slice of a
+ single vector of R, and the results are cumsum'd in GB_ewise_cumsum.
+\par
+ phase2: computes R, using the counts computed by phase1.
+\par
+ TODO: add special cases for C==Z, C==M, and Z==M aliases
+\par
+ R(i,j) = Z(i,j)
 */
 
 
@@ -4031,20 +4202,20 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_select_count.c
+/** \file GB_select_factory.c
+\brief  GB_select_factory: switch factory for C=select(A,thunk)
+
+*/
+
+
+/** \file GB_select_phase1.c
 \brief  GB_select_count: count entries in eacn vector for C=select(A,thunk)
 
 */
 
 
-/** \file GB_select_exec.c
+/** \file GB_select_phase2.c
 \brief  GB_select_exec: C=select(A,thunk)
-
-*/
-
-
-/** \file GB_select_factory.c
-\brief  GB_select_factory: switch factory for C=select(A,thunk)
 
 */
 
@@ -4236,8 +4407,6 @@ constructed by dox_headers.m
 
 
 /** \file GB_sel.h
-\brief 
-*/
 
 
 /** \file GB_unaryop.c
