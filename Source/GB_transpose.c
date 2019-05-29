@@ -28,10 +28,12 @@
 // If A_in is not NULL and Chandle is NULL, then A is modified in place, and
 // the A_in matrix is not freed when done.
 
-// PARALLEL: mostly done.  The bucket sort is parallel, but not highly
+// The bucket sort is parallel, but not highly
 // scalable.  If e=nnz(A) and A is m-by-n, then at most O(e/n) threads are
 // used.  For many matrices, e is O(n), although the constant can be high.  The
-// qsort method is more scalable, but the parallel qsort is still in progress.
+// qsort method is more scalable, but not as fast with a modest number of threads.
+
+// PARALLEL: TODO, parallel qsort is still in progress.
 // Once that is done, need a better automatic selection between the two methods
 // (also add a new field to the descriptor to choose the method).
 
@@ -127,12 +129,14 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     ASSERT (!GB_ZOMBIES (A)) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
+    // determine the number of threads to use here
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz+anvec+vlen),
-    // unless hypersparse.  Control parallelism in each phase separately).
+    int64_t anz   = GB_NNZ (A) ;
+    int64_t anvec = A->nvec ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -147,8 +151,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
     int64_t aplen = A->plen ;
-    int64_t anvec = A->nvec ;
-    int64_t anz   = GB_NNZ (A) ;
 
     bool A_is_hyper = A->is_hyper ;
     bool A_is_csc   = A->is_csc ;
@@ -1007,7 +1009,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         return (info) ;
     }
 
-    ASSERT_OK (GB_check (C, "C conformed in GB_transpose", GB0)) ;
     ASSERT_OK (GB_check (*Chandle, "Chandle conformed in GB_transpose", GB0)) ;
     return (GrB_SUCCESS) ;
 }

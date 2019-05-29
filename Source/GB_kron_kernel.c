@@ -43,8 +43,13 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: O(anz*bnz))
+    int64_t anz = GB_NNZ (A) ;
+    int64_t bnz = GB_NNZ (B) ;
+    double work = ((double) anz) * ((double) bnz)
+                + ((double) A->nvec) + ((double) B->nvec) ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -74,7 +79,7 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
 
     bool ok = GB_Index_multiply (&cvlen, A->vlen, bvlen) ;
     ok = ok & GB_Index_multiply (&cvdim, A->vdim, bvdim) ;
-    ok = ok & GB_Index_multiply (&cnzmax, GB_NNZ (A), GB_NNZ (B)) ;
+    ok = ok & GB_Index_multiply (&cnzmax, anz, bnz) ;
     ASSERT (ok) ;
 
     // C is hypersparse if either A or B are hypersparse
@@ -191,7 +196,7 @@ GrB_Info GB_kron_kernel             // C = kron (A,B)
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT (cnz == GB_NNZ (A) * GB_NNZ (B)) ;
+    ASSERT (cnz == anz * bnz) ;
     ASSERT_OK (GB_check (C, "C=kron(A,B)", GB0)) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;

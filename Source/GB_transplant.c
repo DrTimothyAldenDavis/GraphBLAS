@@ -16,9 +16,6 @@
 
 // Only GrB_SUCCESS and GrB_OUT_OF_MEMORY are returned by this function.
 
-// PARALLEL: done, except could use tasks to do multiple GB_memcpy's and
-// GB_cast_array at the same time.
-
 #include "GB.h"
 
 GrB_Info GB_transplant          // transplant one matrix into another
@@ -56,16 +53,15 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: depends on what kind of
-    // transplant.  Let GB_memcpy decide for itself, unless tasks are used to
-    // do multiple GB_memcpy's at the same time.
+    int64_t anz = GB_NNZ (A) ;
+    int64_t anvec = A->nvec ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // clear C and transplant the type, size, and hypersparsity
     //--------------------------------------------------------------------------
-
-    int64_t anz = GB_NNZ (A) ;
 
     // free all content of C
     GB_PHIX_FREE (C) ;
@@ -105,8 +101,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->is_hyper)
         {
             // A is hypersparse, create new C->p and C->h
-            C->plen = A->nvec ;
-            C->nvec = A->nvec ;
+            C->plen = anvec ;
+            C->nvec = anvec ;
             GB_MALLOC_MEMORY (C->p, C->plen+1, sizeof (int64_t)) ;
             GB_MALLOC_MEMORY (C->h, C->plen,   sizeof (int64_t)) ;
             if (C->p == NULL || C->h == NULL)
@@ -118,8 +114,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p and A->h into the newly created C->p and C->h
-            GB_memcpy (C->p, A->p, (A->nvec+1) * sizeof (int64_t), nthreads) ;
-            GB_memcpy (C->h, A->h,  A->nvec    * sizeof (int64_t), nthreads) ;
+            GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nthreads) ;
+            GB_memcpy (C->h, A->h,  anvec    * sizeof (int64_t), nthreads) ;
         }
         else
         {
@@ -157,7 +153,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         C->p = A->p ;
         C->h = A->h ;
         C->plen = A->plen ;
-        C->nvec = A->nvec ;
+        C->nvec = anvec ;
     }
 
     // A->p and A->h have been freed or removed from A

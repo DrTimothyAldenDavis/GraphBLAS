@@ -3,7 +3,7 @@ to be done in parallel.  I've roughly sorted them by priority and partly by the
 low-hanging fruit (some will be quick to do).  You can find them all with:
 
 cd GraphBLAS/Source
-grep -r PARALLEL .
+grep -r PARALLEL: .
 
 Testing the parallel codes:  Most of my test suite is done through MATLAB
 mexFunctions in the GraphBLAS/Test directory.  The mexFunctions link against
@@ -15,36 +15,38 @@ GraphBLAS/Demo (BFS, MIS, PageRank, triangle counting) and GraphBLAS/Extras
 (triangle counting, k-truss, and all-k-truss).  The k-truss and all-k-truss do
 lots of matrix-matrix multiplies.  Pagerank is a good test for mxv via "*FINE"
 slice methods.  For the parallel qsort, use LAGraph/BuildMatrix/btest to test
-the parallel performance.
+the parallel performance.  See also Test/DNN.
 
 A few methods use the GBI_parallel_for_each_vector(A) iterator, but most use
 their own parallel for loop structure.  The more complex iterators (GBI2,
 GBI2s, GBI3, GBI3s) can be ignored for now; they iterate over a set union of 2
 or more lists.  They are currently not easily parallelizable and need to be
-replaced with simpler loops to parallelize them.  See for example the new
-GB_add.c.
+replaced with simpler loops to parallelize them.
 
-All parallel methods need tuning.  Right now, I do not reduce nthreads for
-smaller problems, and so they can see significant slowdowns (C=A*B when the
-matrices are 16-by-16 with 16 threads is very slow).  All parallel regions use
-the num_threads(nthreads) construct.  Need to write this instead:
-
-    int nth = GB_nthreads_workload (c*work, nthreads) ;
-    #pragma omp parallel for num_threads(nth)
-    for ( ... )
-
-where "work" is the total work of the parallel for loop or region.
-It should be O(actual work), with a constant c that will vary per
-for loop.  Then decide on a chunk size (perhaps in a global parameter)
-that does something like:
-
-    int GB_nthreads_workload (double work, int nthreads)
-    {
-        return (max (nthreads, 1 + floor (work / chunk))) ;
-    }
+All parallel methods need tuning and benchmarking.
 
 ----------------------------------------------------------------------
-DONE or mostly done:
+done:
+----------------------------------------------------------------------
+
+GB_transpose_ix.c
+GB_transpose_op.c
+GB_transpose_bucket.c
+GB_extractTuples.c
+GB_apply_op.c
+GB_dup.c
+GB_build.c
+GB_builder.c:
+GB_reduce_to_vector.c
+GB_select.c
+GB_selector.c
+GB_transplant.c
+GB_cast_array.c
+GB_nvec_nonempty.c
+GB_memcpy.c
+
+----------------------------------------------------------------------
+mostly done:
 ----------------------------------------------------------------------
 
 GB_AxB_parallel.c: much is done: mxm nicely parallel for large matrices,
@@ -62,15 +64,12 @@ GB_AxB_flopcount.c: mostly done: reasonably implemented but needs a little work.
     a 'continue' statement but if any thread terminates then all threads could
     break early.
 
-GB_transplant.c: mostly done.
-    utility function used by almost all of GraphBLAS.  Does all its work in the
-    parallel GB_memcpy.  But could use OpenMP tasks to do all GB_memcpy's in
-    parallel.
+GB_add.c: done, except for final prune of C->h, and the merge when 
+    both A and B are hypersparse.  Modify to tolerate
+    zombies on input, to make GB_wait faster?
 
-GB_cast_array.c: done.
-    Typecasts the numerical values, so used everywhere.
-
-GB_add.c: done, except for final prune of C->h.
+GB_wait.c: done, except it might be updated when GB_add can tolerate zombies
+    on input
 
 GB_emult.c: done, except for final prune of C->h.
 
@@ -85,29 +84,10 @@ GB_transpose.c: done, except for the qsort.  uses two methods, a qsort-based
     method and a bucket sort.  Once the qsort is done, need to tune the auto
     selection betweeen the qsort and bucket sort.
 
-GB_transpose_ix, GB_transpose_op, GB_transpose_bucket: done.
+GB_reduce_to_scalar.c: done, except needs a better terminal exit
 
-GB_reduce_to_scalar.c: done.
-    Does the work for GrB_reduce, to a scalar.  Simple reduction for loop.
-
-GB_extractTuples.c: done, except tasks can be used to extract I,J,X in parallel
-
-GB_apply_op.c: done.  Applies a unary operator for GrB_*_apply.
-
-GB_wait.c: done, except it will be updated when GB_add can tolerate zombies
-    on input
-
-GB_dup.c:  done.  4 parallel memcpy's, but these can also be 4 tasks.
-    does the work for GrB_*_dup.  Easy to parallelize.
-
-GB_build.c, GB_builder: done.
-    does GrB_*_build, GB_wait, GrB_reduce_to_vector (transposed),
-    and GrB_transpose (when the qsort method is used).
-
-GB_reduce_to_vector.c: done.
-    does the work for GrB_*_reduce (to a vector)
-
-GB_select.c, GB_selector.c: done.
+GB_AxB_colscale_meta.c: done, but use GB_ewise_slice for better parallelism.
+GB_AxB_rowscale_meta.c: done, but use GB_ewise_slice for better parallelism.
 
 ----------------------------------------------------------------------
 in progress
@@ -122,15 +102,12 @@ Template/GB_qsort_template.c: IN PROGRESS
 not started
 ----------------------------------------------------------------------
 
+GrB_wait: do all matrices in parallel?
+
 GB_to_nonhyper.c, GB_to_hyper.c:
     converts to/from hypersparse and standard.  Important utility, but does
     only O(n) work if n = # vectors in the matrix.  Parallel speedup will be
     low unless the problem is huge.
-
-GB_nvec_nonempty.c:
-    counts # of non-empty vectors.  simple parallel reduction.
-    Small utility routine used everywhere, but doesn't do a lot of work
-    so lower priority.
 
 GB_is_diagonal: determines if A is diagonal, for C=A*B.  Very little work to
     do, and can exit early as soon as it finds a vector k so that A(:,k)

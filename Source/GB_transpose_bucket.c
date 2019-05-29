@@ -33,8 +33,8 @@
 // hypersparse matrices, or for very sparse matrices, the qsort method should
 // be used instead (see GB_transpose).
 
-// PARALLEL: done.  The method is parallel, but not highly scalable.  At most
-// O(e/m) threads are used.
+// This method is parallel, but not highly scalable.  At most O(e/m) threads
+// are used.
 
 #include "GB.h"
 
@@ -92,8 +92,10 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(vlen+anvec+anz))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+
+    // # of threads to use in the O(vlen) loops below
+    int nthreads = GB_nthreads (vlen, chunk, nthreads_max) ;
 
     // A is sliced into naslice parts, so that each part has at least vlen
     // entries.  The workspace required is naslice*vlen, so this ensures
@@ -102,9 +104,14 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // naslice < floor (anz / vlen) < anz / vlen
     // thus naslice*vlen < anz
 
-    // also, naslice < nthreads, since each part will be about the same size
+    // also, naslice < nthreads_max, since each part will be about the same size
 
-    int naslice = GB_nthreads (anz, vlen, nthreads) ;
+    int naslice = GB_nthreads (anz, GB_IMAX (vlen, chunk), nthreads_max) ;
+
+    //--------------------------------------------------------------------------
+    // initialze the row count arrays
+    //--------------------------------------------------------------------------
+
     int64_t *Rowcounts [naslice] ;
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     {

@@ -259,7 +259,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     GrB_Desc_Value in0 ;    // first input descriptor (A for C=A*B, for example)
     GrB_Desc_Value in1 ;    // second input descriptor (B for C=A*B)
     GrB_Desc_Value axb ;    // for selecting the method for C=A*B
-    int nthreads ;          // # threads to use in this call to GraphBLAS
+    int nthreads_max ;      // max # threads to use in this call to GraphBLAS
 } ;
 
 //------------------------------------------------------------------------------
@@ -381,6 +381,9 @@ bool     GB_Global_GrB_init_called_get ( ) ;
 
 void     GB_Global_nthreads_max_set (int nthreads_max) ;
 int      GB_Global_nthreads_max_get ( ) ;
+
+void     GB_Global_chunk_set (double chunk) ;
+double   GB_Global_chunk_get ( ) ;
 
 void     GB_Global_hyper_ratio_set (double hyper_ratio) ;
 double   GB_Global_hyper_ratio_get ( ) ;
@@ -816,7 +819,7 @@ extern struct GB_SelectOp_opaque
 
 // The Context also contains the number of threads to use in the operation.  It
 // is normally determined from the user's descriptor, with a default of
-// nthreads = GxB_DEFAULT (that is, zero).  The default rule is to let
+// nthreads_max = GxB_DEFAULT (that is, zero).  The default rule is to let
 // GraphBLAS determine the number of threads automatically by selecting a
 // number of threads between 1 and nthreads_max.  GrB_init initializes
 // nthreads_max to omp_get_max_threads ( ).  Both the global value and the
@@ -824,15 +827,15 @@ extern struct GB_SelectOp_opaque
 
 // Some GrB_Matrix and GrB_Vector methods do not take a descriptor, however
 // (GrB_*_dup, _build, _exportTuples, _clear, _nvals, _wait, and GxB_*_resize).
-// For those methods the default rule is always used (nthreads = GxB_DEFAULT),
-// which then relies on the global nthreads_max.
+// For those methods the default rule is always used (nthreads_max =
+// GxB_DEFAULT), which then relies on the global nthreads_max.
 
 #define GB_RLEN 384
 #define GB_DLEN 256
 
 typedef struct
 {
-    int nthreads ;              // number of threads to use
+    int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
     char details [GB_DLEN] ;    // error report
 }
@@ -856,25 +859,30 @@ typedef GB_Context_struct *GB_Context ;
     GB_Context_struct Context_struct ;              \
     GB_Context Context = &Context_struct ;          \
     Context->where = where_string ;                 \
-    Context->nthreads = GB_Global_nthreads_max_get ( ) ;
+    Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;
 
 //------------------------------------------------------------------------------
-// GB_GET_NTHREADS:  determine number of threads for OpenMP parallelism.
+// GB_GET_NTHREADS_MAX:  determine max # of threads for OpenMP parallelism.
 //------------------------------------------------------------------------------
 
-//      GB_GET_NTHREADS obtains the # of threads to use, from the Context.  If
-//      Context is NULL then a single thread *must* be used (this is only used
-//      for GB_qsort_*, calloc, and realloc, for problems that are small or
-//      where the calling function is already being done by one thread in a
-//      larger parallel construct).  If Context->nthreads is <= GxB_DEFAULT,
-//      then select automatically: between 1 and nthreads_max, depending on the
-//      problem size.  Below is the default rule.  Any function can use its own
-//      rule instead, based on Context, nthreads_max, and the problem size.  No
-//      rule can exceed nthreads_max.
+//      GB_GET_NTHREADS_MAX obtains the max # of threads to use and the chunk
+//      size from the Context.  If Context is NULL then a single thread *must*
+//      be used (this is only used for GB_qsort_*, calloc, and realloc, for
+//      problems that are small or where the calling function is already being
+//      done by one thread in a larger parallel construct).  If
+//      Context->nthreads_max is <= GxB_DEFAULT, then select automatically:
+//      between 1 and nthreads_max, depending on the problem size.  Below is
+//      the default rule.  Any function can use its own rule instead, based on
+//      Context, nthreads_max, and the problem size.  No rule can exceed
+//      nthreads_max.
 
-#define GB_GET_NTHREADS(nthreads,Context)                               \
-    int nthreads = (Context == NULL) ? 1 : Context->nthreads ;          \
-    if (nthreads <= GxB_DEFAULT) nthreads = GB_Global_nthreads_max_get ( ) ;
+#define GB_GET_NTHREADS_MAX(nthreads_max,chunk,Context)                     \
+    double chunk = GB_Global_chunk_get ( ) ;                                \
+    int nthreads_max = (Context == NULL) ? 1 : Context->nthreads_max ;      \
+    if (nthreads_max <= GxB_DEFAULT)                                        \
+    {                                                                       \
+        nthreads_max = GB_Global_nthreads_max_get ( ) ;                     \
+    }                                                                       \
 
 //------------------------------------------------------------------------------
 // GB_nthreads: determine # of threads to use for a parallel loop or region
@@ -885,49 +893,17 @@ typedef GB_Context_struct *GB_Context ;
 
 static inline int GB_nthreads   // return # of threads to use
 (
-    int64_t work,               // total work to do
-    int64_t chunk,              // give each thread at least this much work
+    double work,                // total work to do
+    double chunk,               // give each thread at least this much work
     int nthreads_max            // max # of threads to use
 )
 {
-    ASSERT (work >= 0) ;
-    ASSERT (chunk > 0) ;
-    int64_t nthreads = work / chunk ;
+    work  = GB_IMAX (work, 1) ;
+    chunk = GB_IMAX (chunk, 1) ;
+    int64_t nthreads = (int64_t) floor (work / chunk) ;
     nthreads = GB_IMIN (nthreads, nthreads_max) ;
     nthreads = GB_IMAX (nthreads, 1) ;
     return ((int) nthreads) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_teams: divide the threads into equal-sized teams
-//------------------------------------------------------------------------------
-
-// Each team of threads is given at least one task to do (unless ntasks is
-// zero).  If there are more tasks than threads, then each thread is in its
-// own team.
-
-static inline void GB_teams
-(
-    // input
-    int64_t ntasks,         // total # of tasks to do
-    int nthreads_max,       // max # of threads to use across all teams
-    // output
-    int *nteams,            // # of teams to use to do the tasks
-    int *nthreads_per_team  // # of threads in each team
-)
-{
-    ASSERT (ntasks >= 0) ;
-    ASSERT (nthreads_max >= 1) ;
-
-    (*nteams) = GB_IMIN (nthreads_max, ntasks) ;
-    (*nteams) = GB_IMAX ((*nteams), 1) ;
-
-    (*nthreads_per_team) = nthreads_max / (*nteams) ;
-    (*nthreads_per_team) = GB_IMAX ((*nthreads_per_team), 1) ;
-
-    ASSERT (*nteams >= 1) ;
-    ASSERT (*nthreads_per_team >= 1) ;
-    ASSERT ((*nteams) * (*nthreads_per_team) <= nthreads_max) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1520,8 +1496,11 @@ typedef struct          // task descriptor
     int64_t klast  ;    // C(:,klast) is the last vector in this task.
     int64_t pC ;        // fine task starts at Ci, Cx [pC]
     int64_t pM ;        // fine task starts at Mi, Mx [pM]
+    int64_t pM_end ;    // fine task ends at Mi, Mx [pM_end-1]
     int64_t pA ;        // fine task starts at Ai, Ax [pA]
+    int64_t pA_end ;    // fine task ends at Ai, Ax [pA_end-1]
     int64_t pB ;        // fine task starts at Bi, Bx [pB]
+    int64_t pB_end ;    // fine task ends at Bi, Bx [pB_end-1]
     int64_t len ;       // fine task handles a subvector of this length
 }
 GB_task_struct ;
@@ -1532,6 +1511,7 @@ GrB_Info GB_ewise_slice
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
     int *p_max_ntasks,              // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
+    int *p_nthreads,                // # of threads to use
     // input:
     const int64_t Cnvec,            // # of vectors of C
     const int64_t *restrict Ch,     // vectors of C, if hypersparse
@@ -1600,6 +1580,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     // tasks from phase0b:
     GB_task_struct *restrict TaskList,      // array of structs
     const int ntasks,                       // # of tasks
+    const int nthreads,                     // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,
@@ -1624,8 +1605,9 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase0b:
-    const GB_task_struct *restrict TaskList,  // array of structs
-    const int ntasks,                         // # of tasks
+    const GB_task_struct *restrict TaskList,    // array of structs
+    const int ntasks,                           // # of tasks
+    const int nthreads,                         // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t max_Cnvec,
@@ -1674,6 +1656,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     // tasks from phase0b:
     GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                   // # of tasks
+    const int nthreads,                 // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,         // Ch is NULL, or shallow pointer
@@ -1699,6 +1682,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // tasks from phase0b:
     const GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                         // # of tasks
+    const int nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,         // Ch is NULL, or a shallow pointer
@@ -1721,6 +1705,65 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
+    GB_Context Context
+) ;
+
+GrB_Info GB_masker          // R = masker (M, C, Z)
+(
+    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
+    const bool R_is_csc,    // format of output matrix R
+    const GrB_Matrix M,     // required input mask
+    const bool Mask_comp,   // descriptor for M
+    const GrB_Matrix C,     // input C matrix
+    const GrB_Matrix Z,     // input Z matrix
+    GB_Context Context
+) ;
+
+GrB_Info GB_mask_phase1                 // count nnz in each R(:,j)
+(
+    int64_t **Rp_handle,                // output of size Rnvec+1
+    int64_t *Rnvec_nonempty,            // # of non-empty vectors in R
+    // tasks from phase0b:
+    GB_task_struct *restrict TaskList,      // array of structs
+    const int ntasks,                       // # of tasks
+    const int nthreads,                     // # of threads to use
+    // analysis from phase0:
+    const int64_t Rnvec,
+    const int64_t *restrict Rh,
+    const int64_t *restrict R_to_M,
+    const int64_t *restrict R_to_C,
+    const int64_t *restrict R_to_Z,
+    // original input:
+    const GrB_Matrix M,                 // required mask
+    const bool Mask_comp,               // if true, then M is complemented
+    const GrB_Matrix C,
+    const GrB_Matrix Z,
+    GB_Context Context
+) ;
+
+GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
+(
+    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
+    const bool R_is_csc,    // format of output matrix R
+    // from phase1:
+    const int64_t *restrict Rp,         // vector pointers for R
+    const int64_t Rnvec_nonempty,       // # of non-empty vectors in R
+    // tasks from phase0b:
+    const GB_task_struct *restrict TaskList,    // array of structs
+    const int ntasks,                           // # of tasks
+    const int nthreads,                         // # of threads to use
+    // analysis from phase0:
+    const int64_t Rnvec,
+    const int64_t max_Rnvec,
+    const int64_t *restrict Rh,
+    const int64_t *restrict R_to_M,
+    const int64_t *restrict R_to_C,
+    const int64_t *restrict R_to_Z,
+    // original input:
+    const GrB_Matrix M,         // required mask
+    const bool Mask_comp,
+    const GrB_Matrix C,
+    const GrB_Matrix Z,
     GB_Context Context
 ) ;
 
@@ -2256,69 +2299,6 @@ GrB_Info GB_mask                // C<M> = Z
     GB_Context Context
 ) ;
 
-GrB_Info GB_masker          // R = masker (M, C, Z)
-(
-    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
-    const bool R_is_csc,    // format of output matrix R
-    const GrB_Matrix M,     // required input mask
-    const bool Mask_comp,   // descriptor for M
-    const GrB_Matrix C,     // input C matrix
-    const GrB_Matrix Z,     // input Z matrix
-    GB_Context Context
-) ;
-
-GrB_Info GB_mask_phase1                 // count nnz in each R(:,j)
-(
-    int64_t **Rp_handle,                // output of size Rnvec+1
-    int64_t *Rnvec_nonempty,            // # of non-empty vectors in R
-
-    // tasks from phase0b
-    GB_task_struct *restrict TaskList,      // array of structs
-    const int ntasks,                       // # of tasks
-
-    // analysis from phase0
-    const int64_t Rnvec,
-    const int64_t *restrict Rh,
-    const int64_t *restrict R_to_M,
-    const int64_t *restrict R_to_C,
-    const int64_t *restrict R_to_Z,
-
-    const GrB_Matrix M,                 // required mask
-    const bool Mask_comp,               // if true, then M is complemented
-    const GrB_Matrix C,
-    const GrB_Matrix Z,
-    GB_Context Context
-) ;
-
-GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
-(
-    GrB_Matrix *Rhandle,    // output matrix (unallocated on input)
-    const bool R_is_csc,    // format of output matrix R
-
-    // from phase1
-    const int64_t *restrict Rp,         // vector pointers for R
-    const int64_t Rnvec_nonempty,       // # of non-empty vectors in R
-
-    // tasks from phase0b
-    const GB_task_struct *restrict TaskList,  // array of structs
-    const int ntasks,                         // # of tasks
-
-    // analysis from phase0
-    const int64_t Rnvec,
-    const int64_t max_Rnvec,
-    const int64_t *restrict Rh,
-    const int64_t *restrict R_to_M,
-    const int64_t *restrict R_to_C,
-    const int64_t *restrict R_to_Z,
-
-    // original input
-    const GrB_Matrix M,         // required mask
-    const bool Mask_comp,
-    const GrB_Matrix C,
-    const GrB_Matrix Z,
-    GB_Context Context
-) ;
-
 GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 (
     GrB_Matrix C,               // input/output matrix for results
@@ -2658,6 +2638,9 @@ void GB_pending_free            // free all pending tuples
 #define GB_OPENMP_MAX_THREADS  (1)
 
 #endif
+
+// by default, give each thread at least 4096 units of work to do
+#define GB_CHUNK_DEFAULT 4096
 
 //------------------------------------------------------------------------------
 // GB_queue operations
@@ -3017,7 +3000,7 @@ char *GB_thread_local_access ( ) ;
     GB_RETURN_IF_NULL (arg) ;                                           \
     GB_RETURN_IF_FAULTY (arg) ;
 
-// check the descriptor and extract its contents (also gets nthreads)
+// check the descriptor and extract its contents (gets Context->nthreads_max)
 #define GB_GET_DESCRIPTOR(info,desc,dout,dm,d0,d1,dalgo)                     \
     GrB_Info info ;                                                          \
     bool dout, dm, d0, d1 ;                                                  \

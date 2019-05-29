@@ -107,13 +107,15 @@
     // phase1: count entries in each C(:,j); phase2: compute C
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+//    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
         // get the task descriptor
         //----------------------------------------------------------------------
+
+        // printf ("Task: %d\n", taskid) ;
 
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
@@ -174,8 +176,8 @@
             { 
                 // A fine task operates on Ci,Cx [pC...pC_end-1], which is
                 // a subset of the vector C(:,j)
-                pC     = TaskList [taskid  ].pA ;
-                pC_end = TaskList [taskid+1].pA ;
+                pC     = TaskList [taskid].pA ;
+                pC_end = TaskList [taskid].pA_end ;
             }
             else
             {
@@ -189,7 +191,7 @@
             }
 
             int64_t cjnz = pC_end - pC ;        // nnz in C(:,j) for this slice
-            bool cdense = (cjnz == len) ;
+            bool cdense = (cjnz == len) && (cjnz > 0) ;
             int64_t iC_first = -1, iC_last = -1 ;
             if (cjnz > 0)
             {
@@ -197,6 +199,7 @@
                 iC_first = Ci [pC] ;
                 iC_last  = Ci [pC_end-1] ;
             }
+            // printf ("iC "GBd" "GBd"\n", iC_first, iC_last) ;
 
             //------------------------------------------------------------------
             // get Z(:,j)
@@ -207,8 +210,8 @@
             { 
                 // A fine task operates on Zi,Zx [pZ...pZ_end-1], which is
                 // a subset of the vector Z(:,j)
-                pZ     = TaskList [taskid  ].pB ;
-                pZ_end = TaskList [taskid+1].pB ;
+                pZ     = TaskList [taskid].pB ;
+                pZ_end = TaskList [taskid].pB_end ;
             }
             else
             {
@@ -222,13 +225,14 @@
             }
 
             int64_t zjnz = pZ_end - pZ ;        // nnz in Z(:,j) for this slice
-            bool zdense = (zjnz == len) ;
+            bool zdense = (zjnz == len) && (zjnz > 0) ;
             int64_t iZ_first = -1, iZ_last = -1 ;
             if (zjnz > 0)
             {
                 iZ_first = Zi [pZ] ;
                 iZ_last  = Zi [pZ_end-1] ;
             }
+            // printf ("iZ "GBd" "GBd"\n", iZ_first, iZ_last) ;
 
             //------------------------------------------------------------------
             // get M(:,j)
@@ -239,8 +243,8 @@
             { 
                 // A fine task operates on Mi,Mx [pM...pM_end-1], which is
                 // a subset of the vector M(:,j)
-                pM     = TaskList [taskid  ].pM ;
-                pM_end = TaskList [taskid+1].pM ;
+                pM     = TaskList [taskid].pM ;
+                pM_end = TaskList [taskid].pM_end ;
             }
             else
             {

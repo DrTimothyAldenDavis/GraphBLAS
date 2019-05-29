@@ -108,7 +108,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
         case GxB_DESCRIPTOR_NTHREADS :      // same as GxB_NTHREADS
 
             va_start (ap, field) ;
-            desc->nthreads = va_arg (ap, int) ;
+            desc->nthreads_max = va_arg (ap, int) ;
             va_end (ap) ;
             break ;
 

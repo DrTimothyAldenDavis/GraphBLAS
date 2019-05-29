@@ -44,8 +44,10 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(n))
+    int64_t n = A->vdim ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // convert A to hypersparse form
@@ -54,7 +56,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     if (!A->is_hyper)
     {
         ASSERT (A->h == NULL) ;
-        ASSERT (A->nvec == A->plen && A->plen == A->vdim) ;
+        ASSERT (A->nvec == A->plen && A->plen == n) ;
 
         //----------------------------------------------------------------------
         // count the number of non-empty vectors in A
@@ -62,8 +64,6 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
 
         int64_t *restrict Ap_old = A->p ;
         bool Ap_old_shallow = A->p_shallow ;
-
-        int64_t n = A->vdim ;
 
         if (A->nvec_nonempty < 0)
         { 

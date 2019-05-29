@@ -31,6 +31,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     // tasks from phase0b:
     GB_task_struct *restrict TaskList,      // array of structs
     const int ntasks,                       // # of tasks
+    const int nthreads,                     // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,
@@ -59,13 +60,6 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 
     int64_t *restrict Cp = NULL ;
     (*Cp_handle) = NULL ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz+bnz+Cnvec))
 
     //--------------------------------------------------------------------------
     // allocate the result

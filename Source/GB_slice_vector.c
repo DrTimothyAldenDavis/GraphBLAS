@@ -57,7 +57,6 @@ void GB_slice_vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (Ai != NULL && Bi != NULL) ;
     ASSERT (p_i != NULL && p_pM != NULL && p_pA != NULL && p_pB != NULL) ;
 
     //--------------------------------------------------------------------------
@@ -71,12 +70,23 @@ void GB_slice_vector
     int64_t ileft  = 0 ;
     int64_t iright = vlen-1 ;
     int64_t i = 0 ;
-    int64_t pM = pM_start ;
-    int64_t pA = pA_start ;
-    int64_t pB = pB_start ;
+
     int64_t aknz = pA_end - pA_start ;
     int64_t bknz = pB_end - pB_start ;
     int64_t mknz = pM_end - pM_start ;      // zero if M not present
+
+    bool a_empty = (aknz == 0) ;
+    bool b_empty = (bknz == 0) ;
+    bool m_empty = (mknz == 0) ;
+    // printf ("empty a %d b %d m %d\n", a_empty, b_empty, m_empty) ;
+
+    int64_t pM = (m_empty) ? -1 : pM_start ;
+    int64_t pA = (a_empty) ? -1 : pA_start ;
+    int64_t pB = (b_empty) ? -1 : pB_start ;
+
+    ASSERT (GB_IMPLIES (!a_empty, Ai != NULL)) ;
+    ASSERT (GB_IMPLIES (!b_empty, Bi != NULL)) ;
+    ASSERT (GB_IMPLIES (!m_empty, Mi != NULL)) ;
 
     while (ileft < iright)
     {
@@ -93,22 +103,26 @@ void GB_slice_vector
         // find where i appears in A(:,kA)
         //----------------------------------------------------------------------
 
-        double awork = 0 ;
-        pA = pA_start ;
-        if (aknz == vlen)
+        if (a_empty)
+        {
+            pA = -1 ;
+        }
+        else if (aknz == vlen)
         { 
             // A(:,kA) is dense; no need for a binary search
             pA = pA_start + i ;
             ASSERT (Ai [pA] == i) ;
         }
-        else if (aknz > 0)
+        else
         { 
+            ASSERT (aknz > 0) ;
+            pA = pA_start ;
             bool afound ;
             int64_t apright = pA_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Ai, pA, apright, afound) ;
         }
-        if (pA >  0) ASSERT (Ai [pA-1] < i) ;
-        if (pA >= 0 && pA < pA_end) ASSERT (Ai [pA] >= i) ;
+        if (pA >  pA_start && pA < pA_end) ASSERT (Ai [pA-1] < i) ;
+        if (pA >= pA_start && pA < pA_end) ASSERT (Ai [pA] >= i) ;
 
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
@@ -120,26 +134,34 @@ void GB_slice_vector
         // in both cases, if i is chosen as the breakpoint, then the
         // subtask starts at index i, and position pA in Ai,Ax.
 
+        // if A(:,kA) is empty, then pA is -1
+
         //----------------------------------------------------------------------
         // find where i appears in B(:,kB)
         //----------------------------------------------------------------------
 
-        double bwork = 0 ;
-        pB = pB_start ;
-        if (bknz == vlen)
+        if (b_empty)
+        {
+            pB = -1 ;
+        }
+        else if (bknz == vlen)
         { 
             // B(:,kB) is dense; no need for a binary search
             pB = pB_start + i ;
             ASSERT (Bi [pB] == i) ;
         }
-        else if (bknz > 0)
+        else
         { 
+            // printf ("i is "GBd" bknz "GBd"\n", i, bknz) ;
+            ASSERT (bknz > 0) ;
+            pB = pB_start ;
             bool bfound ;
             int64_t bpright = pB_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Bi, pB, bpright, bfound) ;
+            // printf ("pB "GBd" bfound %d\n", pB, bfound) ;
         }
-        if (pB >  0) ASSERT (Bi [pB-1] < i) ;
-        if (pB >= 0 && pB < pB_end) ASSERT (Bi [pB] >= i) ;
+        if (pB >  pB_start && pB < pB_end) ASSERT (Bi [pB-1] < i) ;
+        if (pB >= pB_start && pB < pB_end) ASSERT (Bi [pB] >= i) ;
 
         // Bi has been split.  If bfound is false:
         //      Bi [pB_start : pB-1] < i
@@ -151,11 +173,14 @@ void GB_slice_vector
         // in both cases, if i is chosen as the breakpoint, then the
         // subtask starts at index i, and position pB in Bi,Bx.
 
+        // if B(:,kB) is empty, then pB is -1
+
         //----------------------------------------------------------------------
         // determine if the subtask is near the target task size
         //----------------------------------------------------------------------
 
-        double work = (pA_end - pA) + (pB_end - pB) ;
+        double work = (a_empty ? 0 : (pA_end - pA))
+                    + (b_empty ? 0 : (pB_end - pB)) ;
         // printf ("    work %g target %g\n", work, target_work) ;
 
         if (work < 0.9999 * target_work)
@@ -193,8 +218,8 @@ void GB_slice_vector
 
             // return i, pA, and pB as the start of this task.
             ASSERT (0 <= i && i <= vlen) ;
-            ASSERT (pA_start <= pA && pA <= pA_end) ;
-            ASSERT (pB_start <= pB && pB <= pB_end) ;
+            ASSERT (pA == -1 || (pA_start <= pA && pA <= pA_end)) ;
+            ASSERT (pB == -1 || (pB_start <= pB && pB <= pB_end)) ;
             break ;
         }
     }
@@ -203,28 +228,44 @@ void GB_slice_vector
     // find where i appears in M(:,kM)
     //--------------------------------------------------------------------------
 
-    if (Mi != NULL)
+    // printf ("sliced at i "GBd" pA "GBd" pB "GBd"\n", i, pA, pB) ;
+
+    if (m_empty)
     {
-        pM = pM_start ;
-        if (mknz == vlen)
-        { 
-            // M(:,kM) is dense; no need for a binary search
-            pM = pM_start + i ;
-            ASSERT (Mi [pM] == i) ;
-        }
-        else if (mknz > 0)
-        { 
-            bool mfound ;
-            int64_t mpright = pM_end - 1 ;
-            GB_BINARY_SPLIT_SEARCH (i, Mi, pM, mpright, mfound) ;
-        }
-        if (pM >  0) ASSERT (Mi [pM-1] < i) ;
-        if (pM >= 0 && pM < pM_end) ASSERT (Mi [pM] >= i) ;
+        pM = -1 ;
     }
+    else if (mknz == vlen)
+    { 
+        // M(:,kM) is dense; no need for a binary search
+        pM = pM_start + i ;
+        ASSERT (Mi [pM] == i) ;
+    }
+    else
+    { 
+        ASSERT (mknz > 0) ;
+        pM = pM_start ;
+        bool mfound ;
+        int64_t mpright = pM_end - 1 ;
+        GB_BINARY_SPLIT_SEARCH (i, Mi, pM, mpright, mfound) ;
+    }
+    // printf ("pM "GBd"\n", pM) ;
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
+
+    // pM, pA, and pB partition the three vectors M(:,j), A(:,j), and B(:,j),
+    // or if any vector is empty, their p* pointer is -1.
+
+    ASSERT (GB_IMPLIES ((pM >  pM_start && pM < pM_end), Mi [pM-1] <  i)) ;
+    ASSERT (GB_IMPLIES ((pM >= pM_start && pM < pM_end), Mi [pM  ] >= i)) ;
+    ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end), Ai [pA-1] <  i)) ;
+    ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end), Ai [pA  ] >= i)) ;
+    ASSERT (GB_IMPLIES ((pB >  pB_start && pB < pB_end), Bi [pB-1] <  i)) ;
+    ASSERT (GB_IMPLIES ((pB >= pB_start && pB < pB_end), Bi [pB  ] >= i)) ;
+
+    // printf ("sliced vector: i "GBd" pA "GBd" pB "GBd" pM "GBd"\n",
+    //  i, pA, pM, pB) ;
 
     (*p_i)  = i ;
     (*p_pM) = pM ;

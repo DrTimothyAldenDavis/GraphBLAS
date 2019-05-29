@@ -35,7 +35,7 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
-// PARALLEL:  done, but update it when GB_add can tolerate zombies on input
+// PARALLEL: done, but update it when GB_add can tolerate zombies on input
 
 #include "GB.h"
 
@@ -68,11 +68,10 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT_OK (GB_check (A, "A to wait", GB_FLIP (GB0))) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
+    // determine the max # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz+npending))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // delete zombies
@@ -364,6 +363,8 @@ GrB_Info GB_wait                // finish all pending computations
 
         anz = anz0 ;
         int64_t anz_last = anz ;
+    
+        int nthreads = GB_nthreads (tnz, chunk, nthreads_max) ;
 
         // append the indices and values of T to the end of A
         GB_memcpy (Ai + anz        , Ti, tnz * sizeof (int64_t), nthreads) ;

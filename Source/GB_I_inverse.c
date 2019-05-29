@@ -38,8 +38,8 @@ GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(nI))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (nI, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get inputs

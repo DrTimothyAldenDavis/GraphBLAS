@@ -31,8 +31,10 @@ bool GB_is_diagonal             // true if A is diagonal
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anvec))
+    int64_t anvec = A->nvec ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // trivial cases

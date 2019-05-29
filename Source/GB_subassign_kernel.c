@@ -155,13 +155,6 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     GB_WAIT (A) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz))
-
-    //--------------------------------------------------------------------------
     // check empty mask conditions
     //--------------------------------------------------------------------------
 
@@ -276,6 +269,13 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     // the size of the entries of the matrix A, or the scalar
     size_t asize = atype->size ;
     GB_Type_code acode = atype->code ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + nI, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // check the size of the mask
@@ -2184,7 +2184,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 //--------------------------------------------------------------
 
                 // time: O(nnz(A)*(log(c)+log(md))+mnvec) if C standard and not
-                //dense, where md = avg nnz M(:,j).  O(nnz(A)*(log(md))+mnvec)
+                // dense, where md = avg nnz M(:,j).  O(nnz(A)*(log(md))+mnvec)
                 // if C dense.  +O(anvec*log(cnvec)) if C hyper.
 
                 // GB_accum_mask case: C(:,:)<M> = accum (C(:,:),T)

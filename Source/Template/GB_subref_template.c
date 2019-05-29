@@ -139,11 +139,11 @@ GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
     GrB_Info info ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
+    // determine the max # number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: hard to determine)
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    // int nthreads = GB_nthreads (TODO chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // check the properties of I and J

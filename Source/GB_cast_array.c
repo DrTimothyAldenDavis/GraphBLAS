@@ -47,8 +47,12 @@ void GB_cast_array              // typecast an array
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: O(anz))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+
+    //--------------------------------------------------------------------------
+    // typecase the array
+    //--------------------------------------------------------------------------
 
     #ifndef GBCOMPACT
 

@@ -44,8 +44,10 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(vdim))
+    int64_t vdim = A->vdim ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (vdim, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // convert A to non-hypersparse form
@@ -55,7 +57,6 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     {
 
         // allocate the new Ap array, of size A->vdim+1
-        int64_t vdim = A->vdim ;
         int64_t *restrict Ap_new ;
         GB_MALLOC_MEMORY (Ap_new, vdim+1, sizeof (int64_t)) ;
         if (Ap_new == NULL)

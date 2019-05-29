@@ -64,7 +64,7 @@
 
 //      GxB_AxB_DOT             dot product
 
-//  desc->nthreads              number of threads to use (auto select if <= 0)
+//  desc->nthreads_max          max # number of threads to use (auto if <= 0)
 
 //      This is copied from the GrB_Descriptor into the Context.
 
@@ -112,11 +112,11 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         In1_desc  = desc->in1 ;   // DEFAULT or TRAN
         AxB_desc  = desc->axb ;   // DEFAULT, GUSTAVSON, HEAP, or DOT
 
-        // default is zero.  if descriptor->nthreads <= 0, GraphBLAS selects
+        // default is zero.  if descriptor->nthreads_max <= 0, GraphBLAS selects
         // automatically: any value between 1 and the global nthreads_max.  If
-        // descriptor->nthreads > 0, then that defines the exact number of
+        // descriptor->nthreads_max > 0, then that defines the exact number of
         // threads to use in the current GraphBLAS operation.
-        nthreads_desc  = desc->nthreads ;
+        nthreads_desc  = desc->nthreads_max ;
     }
 
     // check for valid values of each descriptor field
@@ -153,7 +153,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 
     // The number of threads is copied from the descriptor into the Context, so
     // it is available to any internal function that needs it.
-    Context->nthreads = nthreads_desc ;
+    Context->nthreads_max = nthreads_desc ;
 
     return (GrB_SUCCESS) ;
 }

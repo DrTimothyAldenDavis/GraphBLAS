@@ -65,6 +65,13 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     int64_t imin, imax ;
 
     //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
+
+    //--------------------------------------------------------------------------
     // scan I
     //--------------------------------------------------------------------------
 
@@ -164,10 +171,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         //----------------------------------------------------------------------
         // I is an array of indices
         //----------------------------------------------------------------------
-
-        // determine the number of threads to use
-        GB_GET_NTHREADS (nthreads, Context) ;
-        // TODO reduce nthreads for small problem (work: O(ni))
 
         // scan I to find imin and imax, and validate the list. Also determine
         // if it is sorted or not.

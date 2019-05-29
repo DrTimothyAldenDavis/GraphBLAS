@@ -127,8 +127,8 @@
             { 
                 // A fine task operates on Ai,Ax [pA...pA_end-1], which is
                 // a subset of the vector A(:,j)
-                pA     = TaskList [taskid  ].pA ;
-                pA_end = TaskList [taskid+1].pA ;
+                pA     = TaskList [taskid].pA ;
+                pA_end = TaskList [taskid].pA_end ;
             }
             else
             { 
@@ -160,8 +160,8 @@
             { 
                 // A fine task operates on Bi,Bx [pB...pB_end-1], which is
                 // a subset of the vector B(:,j)
-                pB     = TaskList [taskid  ].pB ;
-                pB_end = TaskList [taskid+1].pB ;
+                pB     = TaskList [taskid].pB ;
+                pB_end = TaskList [taskid].pB_end ;
             }
             else
             { 
@@ -510,8 +510,8 @@
                 { 
                     // A fine task operates on Mi,Mx [pM...pM_end-1], which is
                     // a subset of the vector M(:,j)
-                    pM     = TaskList [taskid  ].pM ;
-                    pM_end = TaskList [taskid+1].pM ;
+                    pM     = TaskList [taskid].pM ;
+                    pM_end = TaskList [taskid].pM_end ;
                 }
                 else
                 {

@@ -228,11 +228,15 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
+    // determine the number of threads to use in the C_replace phase
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz))
+    // The C_replace phase must examine all of C
+    int64_t cnz = GB_NNZ (C) ;
+    int64_t cnvec = C->nvec ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (cnz + cnvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // quick return if an empty mask is complemented
@@ -263,7 +267,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 {
                     // delete all entries in vector j
                     int64_t j = (col_assign) ? Cols [0] : Rows [0] ;
-                    int64_t p, pend, pleft = 0, pright = C->nvec-1 ;
+                    int64_t p, pend, pleft = 0, pright = cnvec-1 ;
                     GB_lookup (C->is_hyper, C->h, C->p, &pleft, pright, j,
                         &p, &pend) ;
 
@@ -430,7 +434,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         Icolon  = ColColon ;    Jcolon  = RowColon ;
     }
 
-    // C has C->vdim vectors, each of length C->nvec.
+    // C has cnvec vectors, where cnvec <= C->vdim
     // J is a list of vectors in the range 0:C->vdim-1
     // I is a list of indices in the range 0:C->vlen-1
 

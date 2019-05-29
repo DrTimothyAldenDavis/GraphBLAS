@@ -169,14 +169,6 @@ GrB_Info GB_mask                // C<M> = Z
     GrB_Matrix C_cleared = NULL ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(cnz+znz)
-    // when M != NULL; not done here if M==NULL)
-
-    //--------------------------------------------------------------------------
     // apply the mask
     //--------------------------------------------------------------------------
 

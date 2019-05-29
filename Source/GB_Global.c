@@ -61,6 +61,7 @@ typedef struct
     bool GrB_init_called ;      // true if GrB_init already called
 
     int nthreads_max ;          // max number of threads to use
+    double chunk ;              // chunk size for determining # threads to use
 
     //--------------------------------------------------------------------------
     // Sauna: thread workspace for Gustavson's method
@@ -259,6 +260,21 @@ void GB_Global_nthreads_max_set (int nthreads_max)
 int GB_Global_nthreads_max_get ( )
 {
     return (GB_Global.nthreads_max) ;
+}
+
+//------------------------------------------------------------------------------
+// chunk
+//------------------------------------------------------------------------------
+
+void GB_Global_chunk_set (double chunk)
+{
+    chunk = GB_IMAX (chunk, 1) ;
+    GB_Global.chunk = chunk ;
+}
+
+double GB_Global_chunk_get ( )
+{
+    return (GB_Global.chunk) ;
 }
 
 //------------------------------------------------------------------------------

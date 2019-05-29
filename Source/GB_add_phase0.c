@@ -176,8 +176,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(cnvec))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = 1 ;      // nthreads depends on Cnvec, computed below
 
     //--------------------------------------------------------------------------
     // get content of M, A, and B
@@ -230,9 +230,13 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // This step is done for GB_add only, not GB_masker.
         // GB_wait is the only place where A may be a slice, and it does not
         // use a mask.  So this phase can ignore the case where A is a slice.
-        ASSERT (!A_is_slice) ;
+
         Cnvec = Mnvec ;
         max_Cnvec = Mnvec ;
+        nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
+
+        ASSERT (!A_is_slice) ;
+
         if (!GB_allocate_result (max_Cnvec, &Ch, NULL,
             (A_is_hyper) ? (&C_to_A) : NULL, (B_is_hyper) ? (&C_to_B) : NULL))
         { 
@@ -246,8 +250,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)
         {
-            int nth = GB_IMIN (Cnvec, nthreads) ;
-            #pragma omp parallel for num_threads(nth)
+            #pragma omp parallel for num_threads(nthreads)
             for (int64_t k = 0 ; k < Cnvec ; k++)
             {
                 int64_t j = Ch [k] ;
@@ -280,6 +283,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // for computing Ch.  Ch is the set union of Ah and Bh.
 
         max_Cnvec = GB_IMIN (Anvec + Bnvec, n) ;
+        nthreads = GB_nthreads (max_Cnvec, chunk, nthreads_max) ;
+
         if (!GB_allocate_result (max_Cnvec, &Ch,
             (M_is_hyper) ? (&C_to_M) : NULL, &C_to_A, &C_to_B))
         { 
@@ -360,6 +365,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
         Cnvec = n ;
         max_Cnvec = n ;
+        nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
+
         if (!GB_allocate_result (max_Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, &C_to_A, NULL))
         { 
@@ -367,7 +374,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             return (GB_OUT_OF_MEMORY) ;
         }
 
-        int nth = GB_IMIN (n, nthreads) ;
+
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t j = 0 ; j < n ; j++)
         { 
@@ -375,7 +382,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         }
 
         // scatter Ah into C_to_A
-        nth = GB_IMIN (Anvec, nthreads) ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t kA = 0 ; kA < Anvec ; kA++)
         { 
@@ -395,6 +401,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
         Cnvec = n ;
         max_Cnvec = n ;
+        nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
+
         if (!GB_allocate_result (max_Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, NULL, &C_to_B))
         { 
@@ -402,7 +410,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             return (GB_OUT_OF_MEMORY) ;
         }
 
-        int nth = GB_IMIN (n, nthreads) ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t j = 0 ; j < n ; j++)
         { 
@@ -410,7 +417,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         }
 
         // scatter Bh into C_to_B
-        nth = GB_IMIN (Bnvec, nthreads) ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t kB = 0 ; kB < Bnvec ; kB++)
         { 
@@ -430,6 +436,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
         Cnvec = n ;
         max_Cnvec = n ;
+        nthreads = GB_nthreads (Cnvec, chunk, nthreads_max) ;
+
         if (!GB_allocate_result (max_Cnvec, NULL,
             (M_is_hyper) ? (&C_to_M) : NULL, NULL, NULL))
         { 
@@ -449,8 +457,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         if (Ch != NULL)
         {
             // C is hypersparse
-            int nth = GB_IMIN (Cnvec, nthreads) ;
-            #pragma omp parallel for num_threads(nth)
+            #pragma omp parallel for num_threads(nthreads)
             for (int64_t k = 0 ; k < Cnvec ; k++)
             {
                 int64_t j = Ch [k] ;

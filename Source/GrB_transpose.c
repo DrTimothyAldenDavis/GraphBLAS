@@ -87,6 +87,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
     if (!A_transpose)
     {
+
         // T = A', the default behavior.  This step may seem counter-intuitive,
         // but method computes C<M>=A' by default when A_transpose is false.
 
@@ -113,6 +114,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     }
     else
     { 
+
         // T = A, a pure shallow copy; nothing at all is allocated.  No
         // typecasting is done since the types of T and A are the same.  If the
         // A_transpose descriptor is true, A is viewed as transposed first.

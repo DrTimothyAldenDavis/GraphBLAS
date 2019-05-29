@@ -34,8 +34,7 @@
 // intersection of T and A is always empty.
 
 // PARALLEL: done, except for phase0 when both A and B are hypersparse, and
-// phase2 to prune empty vectors from C->h.  Consider a single phase method
-// when nthreads == 1.
+// phase2 to prune empty vectors from C->h.
 
 #include "GB.h"
 
@@ -83,7 +82,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     int64_t *Cp = NULL, *Ch = NULL ;
     int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
     bool Ch_is_Mh ;
-    int ntasks, max_ntasks ;
+    int ntasks, max_ntasks, nthreads ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
@@ -108,7 +107,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
 
     info = GB_ewise_slice (
         // computed by phase0b
-        &TaskList, &max_ntasks, &ntasks,
+        &TaskList, &max_ntasks, &ntasks, &nthreads,
         // computed by phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
         // original input:
@@ -132,7 +131,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
         // computed or used by phase1:
         &Cp, &Cnvec_nonempty, op == NULL,
         // from phase0b:
-        TaskList, ntasks,
+        TaskList, ntasks, nthreads,
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
         // original input:
@@ -162,7 +161,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
         // from phase1:
         Cp, Cnvec_nonempty,
         // from phase0b:
-        TaskList, ntasks,
+        TaskList, ntasks, nthreads,
         // from phase0:
         Cnvec, max_Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
         // original input:

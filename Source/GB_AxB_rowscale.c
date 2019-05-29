@@ -42,8 +42,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(cnvec+cnz))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (GB_NNZ (B) + B->nvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators

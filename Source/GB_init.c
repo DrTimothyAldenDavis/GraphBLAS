@@ -141,6 +141,7 @@ GrB_Info GB_init            // start up GraphBLAS
     // or POSIX pthreads.
 
     GB_Global_nthreads_max_set (GB_OPENMP_MAX_THREADS) ;
+    GB_Global_chunk_set (GB_CHUNK_DEFAULT) ;
 
     #if defined ( _OPENMP )
     omp_set_nested (true) ;

@@ -45,11 +45,6 @@ GrB_Info GrB_wait ( )       // finish all pending computations
 
     GB_WHERE ("GrB_wait ( )") ;
 
-    // GrB_wait takes no input arguments, so there is no mechanism for telling
-    // it how many threads to use.  Thus, the default rule is used (get #
-    // of threads from the global nthreads_max).
-    Context->nthreads = GxB_DEFAULT ;
-
     //--------------------------------------------------------------------------
     // assemble all matrices with lingering zombies and/or pending tuples
     //--------------------------------------------------------------------------

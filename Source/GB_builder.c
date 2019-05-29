@@ -182,9 +182,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(nvals), the sort
-    // is O(nvals*log2(nvals)) but qsort could determine its own nthreads)
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (nvals, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // partition the tuples for the threads

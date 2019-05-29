@@ -79,7 +79,7 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             int *nthreads = va_arg (ap, int *) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (nthreads) ;
-            int nth = (desc == NULL) ? GxB_DEFAULT : desc->nthreads ;
+            int nth = (desc == NULL) ? GxB_DEFAULT : desc->nthreads_max ;
             (*nthreads) = GB_IMIN (nth, GxB_NTHREADS_MAX) ;
             break ;
 

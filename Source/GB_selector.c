@@ -63,15 +63,12 @@ GrB_Info GB_selector
     // determine the number of threads and tasks to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
     int64_t anz = GB_NNZ (A) ;
-    // TODO reduce nthreads for small problem (work: about O(nvec*log(anz)+anz))
-    // all methods are O(nnz) except for diag, which is about O(nvec*log(anz))
+    int64_t anvec = A->nvec ;
+    double work = 8*anvec + (opcode == GB_DIAG_opcode) ? 0 : anz ;
 
-    #define GB_CHUNK (2)
-    ASSERT (GB_CHUNK > 0) ;
-    nthreads = GB_IMIN (anz / GB_CHUNK, nthreads) ;
-    nthreads = GB_IMAX (nthreads, 1) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
     int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
     ntasks = GB_IMIN (ntasks, anz) ;
@@ -86,7 +83,6 @@ GrB_Info GB_selector
     int64_t *restrict Ai = A->i ;
     GB_void *restrict Ax = A->x ;
     int64_t asize = A->type->size ;
-    int64_t anvec = A->nvec ;
     int64_t aplen = A->plen ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;

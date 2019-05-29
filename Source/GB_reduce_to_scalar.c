@@ -16,11 +16,12 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-// PARALLEL: done, but needs tuning for chunk size.
-// A parallel reduction of all entries in A to a scalar
+// Uses a parallel reduction of all entries in A to a scalar.
+
+// PARALLEL: done, but needs better terminal exit.
 
 // TODO: see test107, terminal exit with many threads is slow; when one
-// thread finds the termainl value, it needs to terminate all other threads.
+// thread finds the terminal value, it needs to terminate all other threads.
 
 // TODO: need to vectorize
 
@@ -87,30 +88,20 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     }
 
     //--------------------------------------------------------------------------
+    // get A
+    //--------------------------------------------------------------------------
+
+    const int64_t *restrict Ai = A->i ;
+    int64_t asize = A->type->size ;
+    int64_t zsize = ztype->size ;
+    int64_t anz = GB_NNZ (A) ;
+
+    //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-
-    //--------------------------------------------------------------------------
-    // scalar workspace
-    //--------------------------------------------------------------------------
-
-    int64_t asize = A->type->size ;
-    int64_t anz = GB_NNZ (A) ;
-    const int64_t *restrict Ai = A->i ;
-
-    // reduce the # of threads if the problem is small
-    // TODO find a good chunk size
-//  #define GB_CHUNK (4*1024)
-    // TODO chunk size for testing only.  Find a simple way to control the
-    // chunk size for Test/*.m and Tcov tests.
-    #define GB_CHUNK (2)
-
-    nthreads = GB_IMIN (nthreads, anz / GB_CHUNK) ;
-    nthreads = GB_IMAX (nthreads, 1) ;
-
-    int64_t zsize = ztype->size ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // s = reduce_to_scalar (A)

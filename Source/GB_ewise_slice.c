@@ -42,9 +42,12 @@
             TaskList [t].kfirst = -1 ;                                  \
             TaskList [t].klast  = INT64_MIN ;                           \
             TaskList [t].pA     = INT64_MIN ;                           \
+            TaskList [t].pA_end = INT64_MIN ;                           \
             TaskList [t].pB     = INT64_MIN ;                           \
+            TaskList [t].pB_end = INT64_MIN ;                           \
             TaskList [t].pC     = INT64_MIN ;                           \
             TaskList [t].pM     = INT64_MIN ;                           \
+            TaskList [t].pM_end = INT64_MIN ;                           \
             TaskList [t].len    = INT64_MIN ;                           \
         }                                                               \
         max_ntasks = 2 * (ntasks) ;                                     \
@@ -62,6 +65,7 @@ GrB_Info GB_ewise_slice
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
     int *p_max_ntasks,              // size of TaskList
     int *p_ntasks,                  // # of tasks constructed
+    int *p_nthreads,                // # of threads for eWise operation
     // input:
     const int64_t Cnvec,            // # of vectors of C
     const int64_t *restrict Ch,     // vectors of C, if hypersparse
@@ -83,12 +87,14 @@ GrB_Info GB_ewise_slice
     ASSERT (p_TaskList != NULL) ;
     ASSERT (p_max_ntasks != NULL) ;
     ASSERT (p_ntasks != NULL) ;
+    ASSERT (p_nthreads != NULL) ;
     ASSERT_OK (GB_check (A, "A for ewise_slice", GB0)) ;
     ASSERT_OK (GB_check (B, "B for ewise_slice", GB0)) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
     (*p_ntasks    ) = 0 ;
+    (*p_nthreads  ) = 1 ;
 
     int64_t *restrict Cwork = NULL ;
 
@@ -96,24 +102,23 @@ GrB_Info GB_ewise_slice
     // determine # of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problems
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
 
     //--------------------------------------------------------------------------
     // allocate the initial TaskList
     //--------------------------------------------------------------------------
 
     // Allocate the TaskList to hold at least 2*ntask0 tasks.  It will grow
-    // later, if needed.  Usually, 40*nthreads is enough, but in a few cases
+    // later, if needed.  Usually, 64*nthreads_max is enough, but in a few cases
     // fine tasks can cause this number to be exceeded.  If that occurs,
     // TaskList is reallocated.
 
     // When the mask is present, it is often fastest to break the work up
-    // into tasks, even when nthreads is 1.
+    // into tasks, even when nthreads_max is 1.
 
     GB_task_struct *restrict TaskList = NULL ;
     int max_ntasks = 0 ;
-    int ntasks0 = (M == NULL && nthreads == 1) ? 1 : (32 * nthreads) ;
+    int ntasks0 = (M == NULL && nthreads_max == 1) ? 1 : (32 * nthreads_max) ;
     GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
 
     //--------------------------------------------------------------------------
@@ -128,6 +133,7 @@ GrB_Info GB_ewise_slice
         (*p_TaskList  ) = TaskList ;
         (*p_max_ntasks) = max_ntasks ;
         (*p_ntasks    ) = (Cnvec == 0) ? 0 : 1 ;
+        (*p_nthreads  ) = 1 ;
         return (GrB_SUCCESS) ;
     }
 
@@ -170,10 +176,8 @@ GrB_Info GB_ewise_slice
     // compute an estimate of the work for each vector of C
     //--------------------------------------------------------------------------
 
-    // This estimate ignores the mask.
-
-    int nth = GB_nthreads (Cnvec, 16 * 1024, nthreads) ;
-    #pragma omp parallel for num_threads(nth)
+    int nthreads_for_Cwork = GB_nthreads (Cnvec, chunk, nthreads_max) ;
+    #pragma omp parallel for num_threads(nthreads_for_Cwork) schedule(static)
     for (int64_t k = 0 ; k < Cnvec ; k++)
     {
 
@@ -261,18 +265,24 @@ GrB_Info GB_ewise_slice
     // replace Cwork with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cwork, Cnvec, NULL, nthreads) ;
+    GB_cumsum (Cwork, Cnvec, NULL, nthreads_for_Cwork) ;
     double cwork = (double) Cwork [Cnvec] ;
 
     //--------------------------------------------------------------------------
-    // determine the number of tasks to create
+    // determine # of threads and tasks for the eWise operation
     //--------------------------------------------------------------------------
 
+    int nthreads = GB_nthreads (cwork, chunk, nthreads_max) ;
+    // printf ("cwork %g chunk %g nthreads_max %d\n",
+    //    cwork, chunk, nthreads_max) ;
+
+    ntasks0 = (M == NULL && nthreads == 1) ? 1 : (32 * nthreads) ;
     double target_task_size = cwork / (double) (ntasks0) ;
-    target_task_size = GB_IMAX (target_task_size, 4096) ;
+    target_task_size = GB_IMAX (target_task_size, chunk) ;
     int ntasks1 = cwork / target_task_size ;
     ntasks1 = GB_IMAX (ntasks1, 1) ;
-    // printf ("ntasks0 %d ntasks1 %d\n", ntasks0, ntasks1) ;
+    // printf ("ntasks0 %d ntasks1 %d nthreads %d\n", ntasks0, ntasks1,
+        // nthreads) ;
 
     //--------------------------------------------------------------------------
     // slice the work into coarse tasks
@@ -387,6 +397,7 @@ GrB_Info GB_ewise_slice
             }
             int64_t pA_start = (kA < 0) ? -1 : Ap [kA] ;
             int64_t pA_end   = (kA < 0) ? -1 : Ap [kA+1] ;
+            bool a_empty = (pA_end == pA_start) ;
 
             //------------------------------------------------------------------
             // get the corresponding vector of B
@@ -410,6 +421,7 @@ GrB_Info GB_ewise_slice
             }
             int64_t pB_start = (kB < 0) ? -1 : Bp [kB] ;
             int64_t pB_end   = (kB < 0) ? -1 : Bp [kB+1] ;
+            bool b_empty = (pB_end == pB_start) ;
 
             //------------------------------------------------------------------
             // get the corresponding vector of M, if present
@@ -438,6 +450,7 @@ GrB_Info GB_ewise_slice
                 pM_start = (kM < 0) ? -1 : Mp [kM] ;
                 pM_end   = (kM < 0) ? -1 : Mp [kM+1] ;
             }
+            bool m_empty = (pM_end == pM_start) ;
 
             //------------------------------------------------------------------
             // determine the # of fine-grain tasks to create for vector k
@@ -473,53 +486,62 @@ GrB_Info GB_ewise_slice
                 // slice vector k into nfine fine tasks
                 //--------------------------------------------------------------
 
+                // printf ("\nslice vector "GBd" into %d tasks\n", k, nfine) ;
+                // printf ("pA_start "GBd" pA_end "GBd" a_empty %d\n",
+                //     pA_start, pA_end, a_empty) ;
+                // printf ("pB_start "GBd" pB_end "GBd" b_empty %d\n",
+                //     pB_start, pB_end, b_empty) ;
+                // printf ("pM_start "GBd" pM_end "GBd" m_empty %d\n",
+                //     pM_start, pM_end, m_empty) ;
+
                 // first fine task starts at the top of vector k
                 ASSERT (ntasks < max_ntasks) ;
                 TaskList [ntasks].kfirst = k ;
                 TaskList [ntasks].klast  = -1 ; // this is a fine task
-                TaskList [ntasks].pM = pM_start ;
-                TaskList [ntasks].pA = pA_start ;
-                TaskList [ntasks].pB = pB_start ;
+                TaskList [ntasks].pM = (m_empty) ? -1 : pM_start ;
+                TaskList [ntasks].pA = (a_empty) ? -1 : pA_start ;
+                TaskList [ntasks].pB = (b_empty) ? -1 : pB_start ;
+                TaskList [ntasks].len = 0 ;     // to be determined below
                 ntasks++ ;
                 int64_t ilast = 0, i = 0 ;
 
                 for (int tfine = 1 ; tfine < nfine ; tfine++)
                 { 
                     double target_work = ((nfine-tfine) * ckwork) / nfine ;
+                    // printf ("target work %g\n", target_work) ;
                     int64_t pM, pA, pB ;
                     GB_slice_vector (&i, &pM, &pA, &pB,
-                        pM_start, pM_end, Mi,
+                        pM_start, pM_end, Mi,   // Mi NULL if no mask M present
                         pA_start, pA_end, Ai,
                         pB_start, pB_end, Bi,
                         vlen, target_work) ;
 
-                    // task tfine starts at pM, pA, and pB 
+                    // prior task ends at pM-1, pA-1, and pB-1
+                    TaskList [ntasks-1].pM_end = pM ;
+                    TaskList [ntasks-1].pA_end = pA ;
+                    TaskList [ntasks-1].pB_end = pB ;
+
+                    // prior task handles indices ilast:i-1
+                    TaskList [ntasks-1].len = i - ilast ;
+
+                    // this task starts at pM, pA, and pB 
                     ASSERT (ntasks < max_ntasks) ;
                     TaskList [ntasks].kfirst = k ;
                     TaskList [ntasks].klast  = -1 ; // this is a fine task
                     TaskList [ntasks].pM = pM ;
                     TaskList [ntasks].pA = pA ;
                     TaskList [ntasks].pB = pB ;
-                    ntasks++ ;
 
-                    // task tfine-1 handles indices ilast:i-1.
-                    TaskList [tfine-1].len = i - ilast ;
+                    // advance to the next task
+                    ntasks++ ;
                     ilast = i ;
                 }
 
-                // Terminate the last fine task.  This space will also be used
-                // by the next task in the TaskList.  If the next task is a
-                // fine task, it will operate on vector k+1, and its pA_start
-                // will equal the pA_end of vector A(:,k), and likewise for M
-                // and B.  In that case, TaskList [t+1].pA, pB, and pM are the
-                // end of the prior task t, and the start of task t+1.  If the
-                // next task t+1 is a coarse task, it will ignore its TaskList
-                // [t+1].pA, pB, and pM, so this space can be used to terminate
-                // the fine task t in TaskList [t].
+                // Terminate the last fine task.
                 ASSERT (ntasks <= max_ntasks) ;
-                TaskList [ntasks].pM = pM_end ;
-                TaskList [ntasks].pA = pA_end ;
-                TaskList [ntasks].pB = pB_end ;
+                TaskList [ntasks-1].pM_end = (m_empty) ? -1 : pM_end ;
+                TaskList [ntasks-1].pA_end = (a_empty) ? -1 : pA_end ;
+                TaskList [ntasks-1].pB_end = (b_empty) ? -1 : pB_end ;
                 TaskList [ntasks-1].len = vlen - i ;
             }
         }
@@ -527,21 +549,26 @@ GrB_Info GB_ewise_slice
 
     ASSERT (ntasks <= max_ntasks) ;
 
-    #if 0
-    printf ("\nnthreads %d ntasks %d\n", nthreads, ntasks) ;
-    for (int t = 0 ; t < ntasks ; t++)
-    {
-        printf ("Task %d: kfirst "GBd" klast "GBd" pM "GBd" pA "GBd" pB "GBd
-            " pC "GBd" len "GBd"\n", t,
-            TaskList [t].kfirst,
-            TaskList [t].klast,
-            TaskList [t].pM,
-            TaskList [t].pA,
-            TaskList [t].pB,
-            TaskList [t].pC,
-            TaskList [t].len) ;
-    }
-    #endif
+//  printf ("\nnthreads %d ntasks %d\n", nthreads, ntasks) ;
+//  for (int t = 0 ; t < ntasks ; t++)
+//  {
+//      printf ("Task %d: kfirst "GBd" klast "GBd, t,
+//          TaskList [t].kfirst,
+//          TaskList [t].klast) ;
+//      if (TaskList [t].klast == -1)
+//      {
+//          printf (
+//              " pM ["GBd":"GBd"-1]"
+//              " pA ["GBd":"GBd"-1]"
+//              " pB ["GBd":"GBd"-1]"
+//              " len "GBd,
+//              TaskList [t].pM, TaskList [t].pM_end,
+//              TaskList [t].pA, TaskList [t].pA_end,
+//              TaskList [t].pB, TaskList [t].pB_end,
+//              TaskList [t].len) ;
+//      }
+//      printf ("\n") ;
+//  }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
@@ -551,6 +578,7 @@ GrB_Info GB_ewise_slice
     (*p_TaskList  ) = TaskList ;
     (*p_max_ntasks) = max_ntasks ;
     (*p_ntasks    ) = ntasks ;
+    (*p_nthreads  ) = nthreads ;
     return (GrB_SUCCESS) ;
 }
 

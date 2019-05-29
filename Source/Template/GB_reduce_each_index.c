@@ -14,8 +14,6 @@
 // reduce all workspaces to the workspace of thread 0.  Finally, this last
 // workspace is collected into T.
 
-// PARALLEL: done
-
 {
 
     //--------------------------------------------------------------------------

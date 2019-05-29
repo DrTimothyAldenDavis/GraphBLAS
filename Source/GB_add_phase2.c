@@ -44,8 +44,9 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     const int64_t *restrict Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase0b:
-    const GB_task_struct *restrict TaskList,  // array of structs
-    const int ntasks,                         // # of tasks
+    const GB_task_struct *restrict TaskList,    // array of structs
+    const int ntasks,                           // # of tasks
+    const int nthreads,                         // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t max_Cnvec,
@@ -90,13 +91,6 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
         ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
         ASSERT (GB_Type_compatible (B->type, op->ytype)) ;
     }
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz+bnz+Cnvec))
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C

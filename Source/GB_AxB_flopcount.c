@@ -105,15 +105,19 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (A->vdim == B->vlen) ;
 
-    int64_t bnz = GB_NNZ (B) ;
-    int64_t bnvec = B->nvec ;
-
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(bnz))
+    int64_t bnz = GB_NNZ (B) ;
+    int64_t bnvec = B->nvec ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (bnz + bnvec, chunk, nthreads_max) ;
+
+    //--------------------------------------------------------------------------
+    // determine the kind of result to return
+    //--------------------------------------------------------------------------
 
     bool check_quick_return = (Bflops == NULL) && (Bflops_per_entry == NULL) ;
 
@@ -181,7 +185,8 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     int64_t total_flops = 0 ;
     bool quick_return = false ;
 
-    #pragma omp parallel for num_threads(nthreads) reduction(+:total_flops) firstprivate(quick_return)
+    #pragma omp parallel for num_threads(nthreads) reduction(+:total_flops) \
+        firstprivate(quick_return)
     for (int64_t kk = 0 ; kk < bnvec ; kk++)
     {
 

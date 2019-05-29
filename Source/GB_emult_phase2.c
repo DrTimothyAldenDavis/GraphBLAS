@@ -40,6 +40,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // tasks from phase0b:
     const GB_task_struct *restrict TaskList,  // array of structs
     const int ntasks,                         // # of tasks
+    const int nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
     const int64_t *restrict Ch,         // Ch is NULL, or a shallow pointer
@@ -67,13 +68,6 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     ASSERT (GB_Type_compatible (ctype,   op->ztype)) ;
     ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
     ASSERT (GB_Type_compatible (B->type, op->ytype)) ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz+bnz))
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C

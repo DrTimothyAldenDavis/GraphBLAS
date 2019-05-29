@@ -13,7 +13,8 @@
 // operator.  The output is assigned to R, which must be of type op->ztype; no
 // output typecasting done with the output of the operator.
 
-// PARALLEL: done, but uses only naslice = nnz(A)/(A->vlen) threads.
+// This method is parallel, but not highly scalable.  It uses only naslice =
+// nnz(A)/(A->vlen) threads.
 
 #include "GB.h"
 #ifndef GBCOMPACT

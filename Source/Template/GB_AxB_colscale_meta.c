@@ -7,8 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: done.
-// all vectors C=A*D are computed fully in parallel. 
+// All vectors C=A*D are computed fully in parallel. 
+
+// PARALLEL: done, but use GB_ewise_slice for better parallelism.
 
 {
 

@@ -101,7 +101,8 @@ void GB_ewise_cumsum
     //--------------------------------------------------------------------------
 
     #ifdef GB_DEBUG
-//  printf ("\nnthreads %d ntasks %d Cnvec "GBd"\n", nthreads, ntasks, Cnvec) ;
+    // printf ("\nnthreads %d ntasks %d Cnvec "GBd"\n",
+    // nthreads, ntasks, Cnvec) ;
     for (int t = 0 ; t < ntasks ; t++)
     {
         int64_t k = TaskList [t].kfirst ;
@@ -110,27 +111,25 @@ void GB_ewise_cumsum
         if (klast == -1)
         {
             // this is a fine task for vector k
-            int64_t pA     = TaskList [t  ].pA ;
-            int64_t pA_end = TaskList [t+1].pA ;
-            int64_t pB     = TaskList [t  ].pB ;
-            int64_t pB_end = TaskList [t+1].pB ;
-            int64_t pC     = TaskList [t  ].pC ;
+            int64_t pA     = TaskList [t].pA ;
+            int64_t pA_end = TaskList [t].pA_end ;
+            int64_t pB     = TaskList [t].pB ;
+            int64_t pB_end = TaskList [t].pB_end ;
+            int64_t pC     = TaskList [t].pC ;
             int64_t pC_end = TaskList [t+1].pC ;
-            int64_t pM     = TaskList [t  ].pM ;
-            int64_t pM_end = TaskList [t+1].pM ;
-            int64_t len    = TaskList [t+1].len ;
-            // printf ("pA "GBd":"GBd" pB "GBd":"GBd" pC "GBd":"GBd
-                // " pM "GBd":"GBd" len "GBd"\n",
-                // pA, pA_end-1, pB, pB_end-1, pC, pC_end-1,
-                // pM, pM_end-1, len) ;
+            int64_t pM     = TaskList [t].pM ;
+            int64_t pM_end = TaskList [t].pM_end ;
+            int64_t len    = TaskList [t].len ;
+            // printf ("pA ["GBd":"GBd"-1] pB ["GBd":"GBd"-1] pC ["GBd":"GBd
+            //       "-1] pM ["GBd":"GBd"-1] len "GBd"\n",
+            //       pA, pA_end, pB, pB_end, pC, pC_end, pM, pM_end, len) ;
             ASSERT (k >= 0 && k < Cnvec) ;
             // pA:(pA_end-1) must reside inside A(:,j), and pB:(pB_end-1) must
             // reside inside B(:,j), but these cannot be checked here since A
             // and B are not available.  These basic checks can be done:
-            ASSERT (0 <= pA && pA <= pA_end) ;
-            ASSERT (0 <= pB && pB <= pB_end) ;
-            // M is optional, but this condition still holds
-            ASSERT (-1 <= pM && pM <= pM_end) ;
+            ASSERT (pA == -1 || (0 <= pA && pA <= pA_end)) ;
+            ASSERT (pB == -1 || (0 <= pB && pB <= pB_end)) ;
+            ASSERT (pM == -1 || (0 <= pM && pM <= pM_end)) ;
             // pC and pC_end can be checked exactly.  This task t computes
             // entries pC:(pC_end-1) of C, inclusive.
             ASSERT (Cp [k] <= pC && pC <= pC_end && pC_end <= Cp [k+1]) ;
@@ -138,7 +137,7 @@ void GB_ewise_cumsum
         else
         {
             // this is a coarse task for vectors k:klast, inclusive
-            // printf ("\n") ;
+            //   printf ("\n") ;
             ASSERT (k >= 0 && k < Cnvec) ;
             ASSERT (klast >= 0 && klast <= Cnvec) ;
             ASSERT (k <= klast) ;

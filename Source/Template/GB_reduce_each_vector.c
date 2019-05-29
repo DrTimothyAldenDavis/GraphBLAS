@@ -17,8 +17,6 @@
 // vector A(:,klast) reduced by thread tid may also be partial.  Thread tid+1,
 // and following threads, may also do some of the reduces for A(:,klast).
 
-// PARALLEL: done
-
 #ifndef GB_GET_J
 #define GB_GET_J ;
 #endif

@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: TODO.  one trivial for loop, typically very small, but could be
-// parallel.  Most work is done in GB_selector.
-
 #include "GB.h"
 #define GB_FREE_ALL GB_PHIX_FREE (A) ;
 
@@ -29,13 +26,6 @@ GrB_Info GB_resize              // change the size of a matrix
     ASSERT_OK (GB_check (A, "A to resize", GB0)) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work is small here, though)
-
-    //--------------------------------------------------------------------------
     // handle the CSR/CSC format
     //--------------------------------------------------------------------------
 
@@ -52,6 +42,15 @@ GrB_Info GB_resize              // change the size of a matrix
         vlen_new = ncols_new ;
         vdim_new = nrows_new ;
     }
+
+    //--------------------------------------------------------------------------
+    // determine the max # of threads to use here
+    //--------------------------------------------------------------------------
+
+    // GB_selector (RESIZE) will use a different # of threads
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (vdim_new - vdim_old, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // delete any lingering zombies and assemble any pending tuples
@@ -147,8 +146,7 @@ GrB_Info GB_resize              // change the size of a matrix
         {
             // number of vectors is increasing, extend the vector pointers
             int64_t anz = GB_NNZ (A) ;
-            // TODO is this worth doing in parallel?
-            // #pragma omp parallel for num_threads(nthreads)
+            #pragma omp parallel for num_threads(nthreads)
             for (int64_t j = vdim_old + 1 ; j <= vdim_new ; j++)
             { 
                 Ap [j] = anz ;

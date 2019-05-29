@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: done, but uses only naslice = nnz(A)/(A->vlen) threads.  This is
-// limited since each thread requires O(vlen) space for the rowcount workspace.
+// This method is parallel, but not highly scalable.  It uses only naslice =
+// nnz(A)/(A->vlen) threads.  Each thread requires O(vlen) workspace.
 
 {
 

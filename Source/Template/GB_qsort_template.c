@@ -180,8 +180,8 @@ static void GB_quicksort_main   // sort A [0:n-1]
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(n*log2(n)))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
 
 nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
 

@@ -19,9 +19,6 @@
 // This function is not user-callable.  It does the work for the user-callable
 // GrB_*_extractTuples functions.
 
-// PARALLEL: done, but needs tasking for I,J,X.
-// uses GB_memcpy and simple for loops.
-
 #include "GB.h"
 
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
@@ -80,8 +77,8 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: O(nvals))
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + A->nvec, chunk, nthreads_max) ;
 
     //-------------------------------------------------------------------------
     // handle the CSR/CSC format

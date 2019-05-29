@@ -25,7 +25,6 @@ GrB_Info GrB_Vector_dup     // make an exact copy of a vector
     GB_WHERE ("GrB_Vector_dup (&w, u)") ;
     GB_RETURN_IF_NULL (w) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
-    Context->nthreads = GxB_DEFAULT ;   // no descriptor, so use default rule
     ASSERT (GB_VECTOR_OK (u)) ;
 
     //--------------------------------------------------------------------------

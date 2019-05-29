@@ -25,7 +25,6 @@ GrB_Info GrB_Matrix_clear   // clear a matrix of all entries;
 
     GB_WHERE ("GrB_Matrix_clear (A)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    Context->nthreads = GxB_DEFAULT ;   // no descriptor, so use default rule
 
     //--------------------------------------------------------------------------
     // clear the matrix

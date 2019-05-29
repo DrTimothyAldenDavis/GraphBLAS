@@ -174,16 +174,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    // TODO find a good chunk size
-    // #define GB_CHUNK (1024*1024)
-    // #define GB_CHUNK (4*1024)
-    #define GB_CHUNK (2)
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(anz))
-
-    ASSERT (GB_CHUNK > 0) ;
-    nthreads = GB_IMIN (anz / GB_CHUNK, nthreads) ;
-    nthreads = GB_IMAX (nthreads, 1) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // T = reduce(A) or reduce(A')

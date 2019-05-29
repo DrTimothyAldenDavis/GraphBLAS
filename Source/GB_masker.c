@@ -82,7 +82,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     int64_t Rnvec, max_Rnvec, Rnvec_nonempty ;
     int64_t *Rp = NULL, *Rh = NULL ;
     int64_t *R_to_M = NULL, *R_to_C = NULL, *R_to_Z = NULL ;
-    int ntasks, max_ntasks ;
+    int ntasks, max_ntasks, nthreads ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
@@ -110,7 +110,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
 
     info = GB_ewise_slice (
         // computed by phase0b
-        &TaskList, &max_ntasks, &ntasks,
+        &TaskList, &max_ntasks, &ntasks, &nthreads,
         // computed by phase0:
         Rnvec, Rh, R_to_M, R_to_C, R_to_Z, false,
         // original input:
@@ -134,7 +134,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
         // computed or used by phase1:
         &Rp, &Rnvec_nonempty,
         // from phase0b:
-        TaskList, ntasks,
+        TaskList, ntasks, nthreads,
         // from phase0:
         Rnvec, Rh, R_to_M, R_to_C, R_to_Z,
         // original input:
@@ -164,7 +164,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
         // from phase1:
         Rp, Rnvec_nonempty,
         // from phase0b:
-        TaskList, ntasks,
+        TaskList, ntasks, nthreads,
         // from phase0:
         Rnvec, max_Rnvec, Rh, R_to_M, R_to_C, R_to_Z,
         // original input:

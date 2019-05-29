@@ -397,7 +397,7 @@ constructed by dox_headers.m
 \par
       GxB_AxB_DOT             dot product
 \par
-  desc-\>nthreads              number of threads to use (auto select if \<= 0)
+  desc-\>nthreads_max          max \# number of threads to use (auto if \<= 0)
 \par
       This is copied from the GrB_Descriptor into the Context.
 */
@@ -691,8 +691,7 @@ constructed by dox_headers.m
  intersection of T and A is always empty.
 \par
  PARALLEL: done, except for phase0 when both A and B are hypersparse, and
- phase2 to prune empty vectors from C-\>h.  Consider a single phase method
- when nthreads == 1.
+ phase2 to prune empty vectors from C-\>h.
 */
 
 
@@ -1276,8 +1275,6 @@ constructed by dox_headers.m
   GrB_free (\&B) ;
 \par
  A is the new copy and B is the old copy.  Each should be freed when done.
-\par
- PARALLEL: done.  Except tasks could be used to do the memcpy's in parallel
 */
 
 
@@ -1506,9 +1503,6 @@ constructed by dox_headers.m
 \par
  This function is not user-callable.  It does the work for the user-callable
  GrB_*_extractTuples functions.
-\par
- PARALLEL: done, but needs tasking for I,J,X.
- uses GB_memcpy and simple for loops.
 */
 
 
@@ -1618,7 +1612,7 @@ constructed by dox_headers.m
 \brief  GB_ijsort:  sort an index array I and remove duplicates
 
 \par
- PARALLEL: TODO
+ PARALLEL: TODO, remove duplicates in parallel
 */
 
 
@@ -1887,8 +1881,7 @@ constructed by dox_headers.m
 \brief  GB_memcpy: parallel memcpy
 
 \par
- PARALLEL: done, except need to tune chunk size.
- breaks up a single large memcpy into smaller ones to do in parallel
+ Note that this function uses its own hard-coded chunk size.
 */
 
 
@@ -1949,8 +1942,6 @@ constructed by dox_headers.m
 \par
  Pending tuples are ignored.  If a vector has all zombies it is still
  counted as non-empty.
-\par
- PARALLEL: TODO. simple parallel reduction
 */
 
 
@@ -2171,11 +2162,12 @@ constructed by dox_headers.m
  This function does not need to know if A is hypersparse or not, and its
  result is the same if A is in CSR or CSC format.
 \par
- PARALLEL: done, but needs tuning for chunk size.
- A parallel reduction of all entries in A to a scalar
+ Uses a parallel reduction of all entries in A to a scalar.
+\par
+ PARALLEL: done, but needs better terminal exit.
 \par
  TODO: see test107, terminal exit with many threads is slow; when one
- thread finds the termainl value, it needs to terminate all other threads.
+ thread finds the terminal value, it needs to terminate all other threads.
 \par
  TODO: need to vectorize
 */
@@ -2195,9 +2187,6 @@ constructed by dox_headers.m
 /** \file GB_resize.c
 \brief  GB_resize: change the size of a matrix
 
-\par
- PARALLEL: TODO.  one trivial for loop, typically very small, but could be
- parallel.  Most work is done in GB_selector.
 */
 
 
@@ -2542,9 +2531,6 @@ constructed by dox_headers.m
  must be compatible with A-\>type.
 \par
  Only GrB_SUCCESS and GrB_OUT_OF_MEMORY are returned by this function.
-\par
- PARALLEL: done, except could use tasks to do multiple GB_memcpy's and
- GB_cast_array at the same time.
 */
 
 
@@ -2582,10 +2568,12 @@ constructed by dox_headers.m
  If A_in is not NULL and Chandle is NULL, then A is modified in place, and
  the A_in matrix is not freed when done.
 \par
- PARALLEL: mostly done.  The bucket sort is parallel, but not highly
+ The bucket sort is parallel, but not highly
  scalable.  If e=nnz(A) and A is m-by-n, then at most O(e/n) threads are
  used.  For many matrices, e is O(n), although the constant can be high.  The
- qsort method is more scalable, but the parallel qsort is still in progress.
+ qsort method is more scalable, but not as fast with a modest number of threads.
+\par
+ PARALLEL: TODO, parallel qsort is still in progress.
  Once that is done, need a better automatic selection between the two methods
  (also add a new field to the descriptor to choose the method).
 */
@@ -2621,8 +2609,8 @@ constructed by dox_headers.m
  hypersparse matrices, or for very sparse matrices, the qsort method should
  be used instead (see GB_transpose).
 \par
- PARALLEL: done.  The method is parallel, but not highly scalable.  At most
- O(e/m) threads are used.
+ This method is parallel, but not highly scalable.  At most O(e/m) threads
+ are used.
 */
 
 
@@ -2633,7 +2621,8 @@ constructed by dox_headers.m
  The values of A are typecasted to C-\>type, the type of the C matrix.
  A can be sparse or hypersparse, but C is not hypersparse.
 \par
- PARALLEL: done, but uses only naslice = nnz(A)/(A-\>vlen) threads.
+ This method is parallel, but not highly scalable.  It uses only naslice =
+ nnz(A)/(A-\>vlen) threads.
 */
 
 
@@ -2647,7 +2636,8 @@ constructed by dox_headers.m
  operator.  The output is assigned to R, which must be of type op-\>ztype; no
  output typecasting done with the output of the operator.
 \par
- PARALLEL: done, but uses only naslice = nnz(A)/(A-\>vlen) threads.
+ This method is parallel, but not highly scalable.  It uses only naslice =
+ nnz(A)/(A-\>vlen) threads.
 */
 
 
@@ -2710,7 +2700,7 @@ constructed by dox_headers.m
  If A is non-hypersparse, then O(n) is added in the worst case, to prune
  zombies and to update the vector pointers for A.
 \par
- PARALLEL:  done, but update it when GB_add can tolerate zombies on input
+ PARALLEL: done, but update it when GB_add can tolerate zombies on input
 */
 
 
@@ -3801,8 +3791,9 @@ constructed by dox_headers.m
 \brief  GB_AxB_colscale_meta: C=A*D where D is a square diagonal matrix
 
 \par
- PARALLEL: done.
- all vectors C=A*D are computed fully in parallel. 
+ All vectors C=A*D are computed fully in parallel. 
+\par
+ PARALLEL: done, but use GB_ewise_slice for better parallelism.
 */
 
 
@@ -3940,8 +3931,9 @@ constructed by dox_headers.m
 \brief  GB_AxB_rowscale_meta: C=D*B where D is a square diagonal matrix
 
 \par
- PARALLEL: done.
- all vectors C=A*D are computed fully in parallel. 
+ All vectors C=D*B are computed fully in parallel. 
+\par
+ PARALLEL: done, but use GB_ewise_slice for better parallelism.
 */
 
 
@@ -4167,8 +4159,6 @@ constructed by dox_headers.m
  reduction only depends on the indices.  Next, the threads cooperate to
  reduce all workspaces to the workspace of thread 0.  Finally, this last
  workspace is collected into T.
-\par
- PARALLEL: done
 */
 
 
@@ -4185,8 +4175,6 @@ constructed by dox_headers.m
  reduces all vectors A(:,k) for k in the range kfirst+1 to klast-1.  The last
  vector A(:,klast) reduced by thread tid may also be partial.  Thread tid+1,
  and following threads, may also do some of the reduces for A(:,klast).
-\par
- PARALLEL: done
 */
 
 
@@ -4194,9 +4182,7 @@ constructed by dox_headers.m
 \brief  GB_reduce_to_scalar_template: s=reduce(A), reduce a matrix to a scalar
 
 \par
- Reduce a matrix to a scalar
-\par
- PARALLEL: done
+ Reduce a matrix to a scalar.
 \par
  TODO add simd vectorization for non-terminal monoids.  Particular max, min
 */
@@ -4360,8 +4346,8 @@ constructed by dox_headers.m
 \brief  GB_unaryop_transpose: C=op(cast(A')), transpose, typecast, and apply op
 
 \par
- PARALLEL: done, but uses only naslice = nnz(A)/(A-\>vlen) threads.  This is
- limited since each thread requires O(vlen) space for the rowcount workspace.
+ This method is parallel, but not highly scalable.  It uses only naslice =
+ nnz(A)/(A-\>vlen) threads.  Each thread requires O(vlen) workspace.
 */
 
 

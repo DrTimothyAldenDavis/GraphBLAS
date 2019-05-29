@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Reduce a matrix to a scalar
-
-// PARALLEL: done
+// Reduce a matrix to a scalar.
 
 // TODO add simd vectorization for non-terminal monoids.  Particular max, min
 

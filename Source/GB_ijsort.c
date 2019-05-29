@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: TODO
+// PARALLEL: TODO, remove duplicates in parallel
 
 #include "GB.h"
 
@@ -30,19 +30,18 @@ GrB_Info GB_ijsort
     ASSERT (p_I2 != NULL) ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(ni), except for
-    // qsort which is O(ni*log2(ni)), but it can find its own nthreads)
-
-    //--------------------------------------------------------------------------
     // get inputs
     //--------------------------------------------------------------------------
 
     GrB_Index *I2 = NULL ;
     int64_t ni = *p_ni ;
+
+    //--------------------------------------------------------------------------
+    // determine the number of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // allocate the new list

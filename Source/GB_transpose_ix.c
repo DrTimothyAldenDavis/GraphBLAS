@@ -10,7 +10,8 @@
 // The values of A are typecasted to C->type, the type of the C matrix.
 // A can be sparse or hypersparse, but C is not hypersparse.
 
-// PARALLEL: done, but uses only naslice = nnz(A)/(A->vlen) threads.
+// This method is parallel, but not highly scalable.  It uses only naslice =
+// nnz(A)/(A->vlen) threads.
 
 #include "GB.h"
 #ifndef GBCOMPACT

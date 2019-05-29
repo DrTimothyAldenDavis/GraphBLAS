@@ -133,10 +133,14 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    GB_GET_NTHREADS (nthreads, Context) ;
-    // TODO reduce nthreads for small problem (work: about O(flops) for
-    // saxpy-based methods as found by GB_AxB_flopcount.  Hard to determine
-    // for dot product)
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = nthreads_max ;   // this is reduced later
+
+    // TODO use the chunk to reduce the # of threads
+
+    //--------------------------------------------------------------------------
+    // get A and B
+    //--------------------------------------------------------------------------
 
     if (B->nvec_nonempty < 0)
     { 
@@ -148,10 +152,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
         A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
 
-    //--------------------------------------------------------------------------
-    // select the method for slicing B or A'
-    //--------------------------------------------------------------------------
-
     int64_t anvec = A->nvec ;
     int64_t avdim = A->vdim ;
     int64_t avlen = A->vlen ;
@@ -161,6 +161,10 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
     int64_t bvdim = B->vdim ;
     int64_t bvlen = B->vlen ;
     int64_t bnz   = GB_NNZ (B) ;
+
+    //--------------------------------------------------------------------------
+    // select the method for slicing B or A'
+    //--------------------------------------------------------------------------
 
     bool slice_A ;      // true if slicing A', false if slicing B
 

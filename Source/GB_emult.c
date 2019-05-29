@@ -66,7 +66,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     int64_t Cnvec, max_Cnvec, Cnvec_nonempty ;
     int64_t *Cp = NULL, *Ch = NULL ;
     int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
-    int ntasks, max_ntasks ;
+    int ntasks, max_ntasks, nthreads ;
     GB_task_struct *TaskList = NULL ;
 
     //--------------------------------------------------------------------------
@@ -91,7 +91,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 
     info = GB_ewise_slice (
         // computed by phase0b:
-        &TaskList, &max_ntasks, &ntasks,
+        &TaskList, &max_ntasks, &ntasks, &nthreads,
         // computed by phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B, false,
         // original input:
@@ -114,7 +114,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
         // computed by phase1:
         &Cp, &Cnvec_nonempty,
         // from phase0b:
-        TaskList, ntasks,
+        TaskList, ntasks, nthreads,
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,
         // original input:
@@ -143,7 +143,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
         // from phase1:
         Cp, Cnvec_nonempty,
         // from phase0b:
-        TaskList, ntasks,
+        TaskList, ntasks, nthreads,
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,
         // original input:
