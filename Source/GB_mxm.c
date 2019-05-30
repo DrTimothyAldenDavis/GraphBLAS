@@ -142,7 +142,8 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
         GB_MATRIX_FREE (&MT) ;
-        return (GB_transplant_conform (C, C->type, &T, Context)) ;
+        info = GB_transplant_conform (C, C->type, &T, Context) ;
+        return (info) ;
     }
     else
     { 

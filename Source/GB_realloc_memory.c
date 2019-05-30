@@ -54,6 +54,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     // make sure at least one item is allocated
     nitems_old = GB_IMAX (1, nitems_old) ;
     nitems_new = GB_IMAX (1, nitems_new) ;
+    void *pold = p ;
 
     // make sure at least one byte is allocated
     size_of_item = GB_IMAX (1, size_of_item) ;
@@ -193,8 +194,9 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         #ifdef GB_PRINT_MALLOC
         if (malloc_tracking)
         {
-            printf ("Realloc: %14p "GBd" %1d n "GBd" -> "GBd" size "GBd"\n",
-                pnew, nmalloc, malloc_debug, (int64_t) nitems_old,
+            printf ("%14p Realloc new\n%14p Realloc old: %3d %1d n "GBd
+                " -> "GBd" size "GBd"\n",
+                pnew, pold, nmalloc, malloc_debug, (int64_t) nitems_old,
                 (int64_t) nitems_new, (int64_t) size_of_item) ;
         }
         #endif

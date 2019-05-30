@@ -3,7 +3,11 @@ void GB_AxD
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    int nthreads
+    const int64_t *restrict kfirst_slice,
+    const int64_t *restrict klast_slice,
+    const int64_t *restrict pstart_slice,
+    const int ntasks,
+    const int nthreads
 ) ;
 
 void GB_DxB

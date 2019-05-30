@@ -292,15 +292,15 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
 
 #ifdef GB_PRINT_MALLOC
 
-#define AS_IF_FREE(p)                   \
-{                                       \
-    GB_Global_nmalloc_decrement ( ) ;   \
-    printf ("\nfree:                         to MATLAB (%s) line %d file %s\n",\
-        GB_STR(p), __LINE__,__FILE__);  \
-    printf ("free:    %14p %3d %1d\n",  \
-        p, GB_Global_nmalloc_get ( ),   \
-        GB_Global_malloc_debug_get ( )) ; \
-    (p) = NULL ;                        \
+#define AS_IF_FREE(p)                       \
+{                                           \
+    GB_Global_nmalloc_decrement ( ) ;       \
+    printf ("\nfree: to MATLAB (%s) line %d file %s\n",\
+        GB_STR(p), __LINE__,__FILE__);      \
+    printf ("%14p as if free: %3d %1d\n",   \
+        p, GB_Global_nmalloc_get ( ),       \
+        GB_Global_malloc_debug_get ( )) ;   \
+    (p) = NULL ;                            \
 }
 
 #else

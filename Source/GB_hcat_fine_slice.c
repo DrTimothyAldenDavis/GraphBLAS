@@ -145,6 +145,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         // no thread used a Sauna; acquire a single one
         int method = GxB_AxB_GUSTAVSON ;
         GB_OK (GB_Sauna_acquire (1, &Sauna_id, &method, Context)) ;
+        Sauna = GB_Global_Saunas_get (Sauna_id) ;
 
         // TODO: put this in a function:
         if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size <csize)

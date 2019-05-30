@@ -7,9 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// All vectors C=D*B are computed fully in parallel. 
-
-// PARALLEL: done, but use GB_ewise_slice for better parallelism.
+// All entries in C=D*B are computed fully in parallel. 
 
 {
 
@@ -20,31 +18,27 @@
     const GB_ATYPE *restrict Dx = D_is_pattern ? NULL : D->x ;
     const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
     const int64_t  *restrict Bi = B->i ;
+    int64_t bnz = GB_NNZ (B) ;
 
     //--------------------------------------------------------------------------
     // C=D*B
     //--------------------------------------------------------------------------
 
-    GBI_parallel_for_each_vector (B, nthreads)
+    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
+    ntasks = GB_IMIN (bnz, ntasks) ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    for (int tid = 0 ; tid < ntasks ; tid++)
     {
-
-        //----------------------------------------------------------------------
-        // get B(:,j)
-        //----------------------------------------------------------------------
-
-        GBI_jth_iteration (j, pB, pB_end) ;
-
-        //----------------------------------------------------------------------
-        // C(:,j) = D*B(:,j)
-        //----------------------------------------------------------------------
-
-        // #pragma omp simd
-        for ( ; pB < pB_end ; pB++)
+        int64_t pstart, pend ;
+        GB_PARTITION (pstart, pend, bnz, tid, ntasks) ;
+        GB_PRAGMA_VECTORIZE
+        for (int64_t p = pstart ; p < pend ; p++)
         {
-            int64_t i = Bi [pB] ;
-            GB_GETA (dii, Dx, i) ;
-            GB_GETB (bij, Bx, pB) ;
-            GB_BINOP (GB_CX (pB), dii, bij) ;
+            int64_t i = Bi [p] ;                // get row index of B(i,j)
+            GB_GETA (dii, Dx, i) ;              // dii = D(i,i)
+            GB_GETB (bij, Bx, p) ;              // bij = B(i,j)
+            GB_BINOP (GB_CX (p), dii, bij) ;    // C(i,j) = dii*bij
         }
     }
 }

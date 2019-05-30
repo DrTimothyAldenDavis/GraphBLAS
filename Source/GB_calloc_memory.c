@@ -93,7 +93,7 @@ void *GB_calloc_memory      // pointer to allocated block of memory
                 }
                 #include "GB_critical_section.c"
                 #ifdef GB_PRINT_MALLOC
-                printf ("Calloc:  %14p %3d %1d n "GBd" size "GBd"\n", p,
+                printf ("%14p Calloc:  %3d %1d n "GBd" size "GBd"\n", p,
                     nmalloc, malloc_debug, (int64_t) nitems,
                     (int64_t) size_of_item) ;
                 #endif

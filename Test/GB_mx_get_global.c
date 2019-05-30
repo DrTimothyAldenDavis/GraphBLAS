@@ -71,6 +71,11 @@ bool GB_mx_get_global       // true if doing malloc_debug
     GB_Global_malloc_tracking_set (true) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
     GB_Global_chunk_set (1) ;       // very low, for testing
+
+    //--------------------------------------------------------------------------
+    // allocate the complex type and operators
+    //--------------------------------------------------------------------------
+
     Complex_init ( ) ;
 
     //--------------------------------------------------------------------------

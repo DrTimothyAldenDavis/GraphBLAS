@@ -197,6 +197,9 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
+        // no vectorization
+        #define GB_PRAGMA_VECTORIZE
+
         if (flipxy)
         { 
             #define GB_BINARYOP(z,x,y) fmult (z,y,x)

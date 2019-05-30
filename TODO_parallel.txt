@@ -44,6 +44,8 @@ GB_transplant.c
 GB_cast_array.c
 GB_nvec_nonempty.c
 GB_memcpy.c
+GB_AxB_colscale.c
+GB_AxB_rowscale.c
 
 ----------------------------------------------------------------------
 mostly done:
@@ -85,9 +87,6 @@ GB_transpose.c: done, except for the qsort.  uses two methods, a qsort-based
     selection betweeen the qsort and bucket sort.
 
 GB_reduce_to_scalar.c: done, except needs a better terminal exit
-
-GB_AxB_colscale_meta.c: done, but use GB_ewise_slice for better parallelism.
-GB_AxB_rowscale_meta.c: done, but use GB_ewise_slice for better parallelism.
 
 ----------------------------------------------------------------------
 in progress

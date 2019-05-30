@@ -77,6 +77,7 @@ for pp = 0:2
             assert (isequal (method, 'dot')) ;
 
             % tic
+% save gunk w semiring A x dt_gus
             cg = GB_mex_mxm (w, [],[], semiring, A, x, dt_gus) ;
             % t = toc ;
             [tg method] = gbresults ;

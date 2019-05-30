@@ -49,7 +49,7 @@ void GB_free_memory
             #include "GB_critical_section.c"
 
             #ifdef GB_PRINT_MALLOC
-            printf ("Free:    %14p %3d %1d n "GBd" size "GBd"\n",
+            printf ("%14p Free:  %3d %1d n "GBd" size "GBd"\n",
                 p, nmalloc, malloc_debug, (int64_t) nitems,
                 (int64_t) size_of_item) ;
             if (nmalloc < 0)

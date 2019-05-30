@@ -60,6 +60,9 @@
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
 
+// hard-coded loops can be vectorized
+#define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD
+
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
@@ -69,7 +72,11 @@ void GB_AxD__rminus_int64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    int nthreads
+    const int64_t *restrict kfirst_slice,
+    const int64_t *restrict klast_slice,
+    const int64_t *restrict pstart_slice,
+    const int ntasks,
+    const int nthreads
 )
 { 
     int64_t *restrict Cx = C->x ;

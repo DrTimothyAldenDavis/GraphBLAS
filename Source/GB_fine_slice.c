@@ -171,17 +171,8 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         { 
             // the columns of Bslice [tid] are [bvec_first:bvec_last].
             // Bslice [tid] is a hyperslice (with an explicit h list)
-            GB_MALLOC_MEMORY ((Bslice [tid])->h, bslice_nvec, sizeof (int64_t));
-            (Bslice [tid])->h_shallow = false ;
-            if ((Bslice [tid])->h == NULL)
-            {
-                // out of memory
-                for (int i = 0 ; i <= tid ; i++)
-                { 
-                    GB_MATRIX_FREE (&(Bslice [i])) ;
-                }
-                return (GB_OUT_OF_MEMORY) ;
-            }
+            ASSERT ((Bslice [tid])->h != NULL) ;
+            ASSERT ((Bslice [tid])->h_shallow == false) ;
             for (int64_t k = 0 ; k < bslice_nvec ; k++)
             {
                 (Bslice [tid])->h [k] = bvec_first + k ;
@@ -189,7 +180,8 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         }
 
         // Bslice->p is always allocated fresh by GB_new.
-        ASSERT (!(Bslice [tid])->p_shallow) ;
+        ASSERT ((Bslice [tid])->p != NULL) ;
+        ASSERT ((Bslice [tid])->p_shallow == false) ;
         (Bslice [tid])->p [0] = 0 ;
         for (int64_t k = 1 ; k < bslice_nvec ; k++)
         {

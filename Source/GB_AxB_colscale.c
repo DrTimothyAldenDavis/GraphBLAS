@@ -41,8 +41,29 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    int64_t anz   = GB_NNZ (A) ;
+    int64_t anvec = A->nvec ;
+
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (GB_NNZ (A) + A->nvec, chunk, nthreads_max) ;
+    int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
+
+    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
+    ntasks = GB_IMIN (ntasks, anz) ;
+    ntasks = GB_IMAX (ntasks, 1) ;
+
+    //--------------------------------------------------------------------------
+    // slice the entries for each task
+    //--------------------------------------------------------------------------
+
+    // Task tid does entries pstart_slice [tid] to pstart_slice [tid+1]-1 and
+    // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
+    // vectors may be shared with prior slices and subsequent slices.
+
+    int64_t pstart_slice [ntasks+1] ;
+    int64_t kfirst_slice [ntasks] ;
+    int64_t klast_slice  [ntasks] ;
+
+    GB_ek_slice (pstart_slice, kfirst_slice, klast_slice, A, ntasks) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -101,11 +122,12 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     #define GB_AxD(mult,xyname) GB_AxD_ ## mult ## xyname
 
-    #define GB_BINOP_WORKER(mult,xyname)                                      \
-    {                                                                         \
-        GB_AxD(mult,xyname) (C, A, A_is_pattern, D, D_is_pattern, nthreads) ; \
-        done = true ;                                                         \
-    }                                                                         \
+    #define GB_BINOP_WORKER(mult,xyname)                                    \
+    {                                                                       \
+        GB_AxD(mult,xyname) (C, A, A_is_pattern, D, D_is_pattern,           \
+            kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ;    \
+        done = true ;                                                       \
+    }                                                                       \
     break ;
 
     //--------------------------------------------------------------------------
@@ -195,6 +217,9 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
+
+        // no vectorization
+        #define GB_PRAGMA_VECTORIZE
 
         if (flipxy)
         { 
