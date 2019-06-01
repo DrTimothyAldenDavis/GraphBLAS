@@ -167,6 +167,7 @@ constructed by dox_headers.m
  (Gustavson), a heap-based saxpy method, or a dot product method.
 \par
  TODO: an outer-product method for C=A*B'
+\par
  TODO: a hash-based method for C=A*B
 */
 
@@ -748,8 +749,8 @@ constructed by dox_headers.m
       = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
       not hypersparse, then C_to_M is returned as NULL.
 \par
- PARALLEL: done, except in one condition: A and B are hypersparse and
- Ch_is_Mh is false.  takes O(A-\>nvec + B-\>nvec) time.
+ PARALLEL: mostly done. TODO except in one condition: A and B are hypersparse
+ and Ch_is_Mh is false.  takes O(A-\>nvec + B-\>nvec) time.
 \par
  TODO: exploit A==M, B==M, and A==B aliases
 */
@@ -855,8 +856,7 @@ constructed by dox_headers.m
 \par
  Compare with GB_subassign, which uses M and C_replace differently
 \par
- PARALLEL: TODO.  some C_replace_phase here, mainly in GB_subassign_kernel
- and GB_subref_numeric.
+ PARALLEL: TODO
 */
 
 
@@ -921,17 +921,17 @@ constructed by dox_headers.m
 \brief  GB_build: build a matrix
 
 \par
- CALLED BY: GB_user_build and GB_reduce_to_vector
+ CALLED BY: GB_matvec_build and GB_reduce_to_vector
  CALLS:     GB_builder
 \par
- GB_user_build constructs a GrB_Matrix or GrB_Vector from the tuples provided
- by the user.  In that case, the tuples must be checked for duplicates.  They
- might be sorted on input, so this condition is checked and exploited if
- found.  GB_reduce_to_vector constructs a GrB_Vector froma GrB_Matrix, by
- discarding the vector index.  As a result, duplicates are likely to appear,
- and the input is likely to be unsorted.  But for GB_reduce_to_vector, the
- validity of the tuples need not be checked.  All of these conditions are
- checked in GB_builder.
+ GB_matvec_build constructs a GrB_Matrix or GrB_Vector from the tuples
+ provided by the user.  In that case, the tuples must be checked for
+ duplicates.  They might be sorted on input, so this condition is checked and
+ exploited if found.  GB_reduce_to_vector constructs a GrB_Vector froma
+ GrB_Matrix, by discarding the vector index.  As a result, duplicates are
+ likely to appear, and the input is likely to be unsorted.  But for
+ GB_reduce_to_vector, the validity of the tuples need not be checked.  All of
+ these conditions are checked in GB_builder.
 \par
  GB_build constructs a matrix C from a list of indices and values.  Any
  duplicate entries with identical indices are assembled using the binary dup
@@ -1612,7 +1612,7 @@ constructed by dox_headers.m
 \brief  GB_ijsort:  sort an index array I and remove duplicates
 
 \par
- PARALLEL: TODO, remove duplicates in parallel
+ PARALLEL: TODO
 */
 
 
@@ -1646,7 +1646,7 @@ constructed by dox_headers.m
  Returns true if A is a square diagonal matrix, with all diagonal entries
  present.  Pending tuples are ignored.  Zombies are treated as entries.
 \par
- PARALLEL: TODO. simple parallel reduction, but could use early exit.
+ PARALLEL: TODO
 */
 
 
@@ -1715,8 +1715,7 @@ constructed by dox_headers.m
  different.  The type of C is the type of z.  C is hypersparse if either A
  or B are hypersparse.
 \par
- PARALLEL: TODO.  simple parallelism, but need to handle combinations of
- hyper/non-hyper cases in doubly-nested loops.
+ PARALLEL: TODO
 */
 
 
@@ -1865,6 +1864,17 @@ constructed by dox_headers.m
  vectors that appear in R are bounded by the set union of C and Z, just
  like GB_add when the mask is *not* present.  The pattern of R is bounded
  by the pattern of C+Z, also ignoring the mask.
+*/
+
+
+/** \file GB_matvec_build.c
+\brief  GB_matvec_build: check inputs and build a matrix or vector
+
+\par
+ CALLED BY: GrB_Matrix_build_* and GrB_Vector_build_*
+ CALLS:     GB_build
+\par
+ This function implements GrB_Matrix_build_* and GrB_Vector_build_*.
 */
 
 
@@ -2170,6 +2180,8 @@ constructed by dox_headers.m
  thread finds the terminal value, it needs to terminate all other threads.
 \par
  TODO: need to vectorize
+\par
+ TODO: currently uses ntasks = nthreads; use ntasks = 32 * nthreads
 */
 
 
@@ -2468,8 +2480,6 @@ constructed by dox_headers.m
  shallow/non-shallow state that it had on input).
 \par
  If an out-of-memory condition occurs, all content of the matrix is cleared.
-\par
- PARALLEL: TODO. a reduction loop
 */
 
 
@@ -2505,8 +2515,6 @@ constructed by dox_headers.m
  shallow/non-shallow state that it had on input).
 \par
  If an out-of-memory condition occurs, all content of the matrix is cleared.
-\par
- PARALLEL: TODO a few simple loops, no synchronization or reduction needed
 */
 
 
@@ -2644,27 +2652,6 @@ constructed by dox_headers.m
 /** \file GB_type.c
 \brief  GB_type: return the type of a matrix
 
-*/
-
-
-/** \file GB_user_build.c
-\brief  GB_user_build: check inputs and build a matrix
-
-\par
- CALLED BY: GrB_Matrix_build_* and GrB_Vector_build_*
- CALLS:     GB_build
-\par
- This function implements GrB_Matrix_build_* and GrB_Vector_build_*.
-\par
- TODO: rename
-*/
-
-
-/** \file GB_vcat_slice.c
-\brief  GB_vcat_slice: vertical concatenation of the slices of C
-
-\par
- Vertical concatenation of slices into the matrix C.
 */
 
 
@@ -3276,9 +3263,6 @@ constructed by dox_headers.m
  attempting to access.  However, it is safe for multiple user threads to call
  GrB_wait at the same time.  The user threads will then safely cooperate to
  complete all the matrices in the queue, in parallel.
-\par
- PARALLEL: TODO.  Consider doing all matrices in the list in parallel,
- each one in a task
 */
 
 
@@ -3791,9 +3775,8 @@ constructed by dox_headers.m
 \brief  GB_AxB_colscale_meta: C=A*D where D is a square diagonal matrix
 
 \par
- All vectors C=A*D are computed fully in parallel. 
-\par
- PARALLEL: done, but use GB_ewise_slice for better parallelism.
+ All entries in C=A*D are computed fully in parallel, using the same kind of
+ parallelism as Template/GB_reduce_each_vector.c.
 */
 
 
@@ -3863,6 +3846,8 @@ constructed by dox_headers.m
 /** \file GB_AxB_dot_compmask.c
 \brief  GB_AxB_dot_compmask:  C\<!M\>=A'*B via dot products
 
+\par
+ TODO: delete this method entirely?  Use dot2 instead.
 */
 
 
@@ -3931,9 +3916,7 @@ constructed by dox_headers.m
 \brief  GB_AxB_rowscale_meta: C=D*B where D is a square diagonal matrix
 
 \par
- All vectors C=D*B are computed fully in parallel. 
-\par
- PARALLEL: done, but use GB_ewise_slice for better parallelism.
+ All entries in C=D*B are computed fully in parallel. 
 */
 
 
@@ -4184,7 +4167,9 @@ constructed by dox_headers.m
 \par
  Reduce a matrix to a scalar.
 \par
- TODO add simd vectorization for non-terminal monoids.  Particular max, min
+ TODO add simd vectorization for non-terminal monoids.  Particular max, min.
+\par
+ TODO use ntasks = 32 * nthreads
 */
 
 
@@ -4326,8 +4311,7 @@ constructed by dox_headers.m
  which is the requested format of the output matrix C (either CSR or CSC).
  It is assigned to C-\>is_csc but otherwise has no effect on this function.
 \par
- PARALLEL: TODO. the list J can be partitioned, and the subref can be done in
- parallel and the results concatenated.
+ PARALLEL: TODO
 */
 
 

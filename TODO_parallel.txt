@@ -46,6 +46,8 @@ GB_nvec_nonempty.c
 GB_memcpy.c
 GB_AxB_colscale.c
 GB_AxB_rowscale.c
+GB_to_nonhyper.c
+GB_to_hyper.c
 
 ----------------------------------------------------------------------
 mostly done:
@@ -100,13 +102,6 @@ Template/GB_qsort_template.c: IN PROGRESS
 ----------------------------------------------------------------------
 not started
 ----------------------------------------------------------------------
-
-GrB_wait: do all matrices in parallel?
-
-GB_to_nonhyper.c, GB_to_hyper.c:
-    converts to/from hypersparse and standard.  Important utility, but does
-    only O(n) work if n = # vectors in the matrix.  Parallel speedup will be
-    low unless the problem is huge.
 
 GB_is_diagonal: determines if A is diagonal, for C=A*B.  Very little work to
     do, and can exit early as soon as it finds a vector k so that A(:,k)

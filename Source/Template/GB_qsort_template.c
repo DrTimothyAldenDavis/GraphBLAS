@@ -16,7 +16,7 @@
 // variant of GB_qsort*, with the same names.  They are called only by the
 // GB_qsort* function in the #include'ing file.
  
-// PARALLEL: TODO: needs tuning for smallest task size, and segfault
+// PARALLEL: TODO: needs tuning for smallest task size; fix segfault
 
 //------------------------------------------------------------------------------
 // GB_partition: use a pivot to partition an array
@@ -189,11 +189,6 @@ nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
     // do the quicksort in parallel
     //--------------------------------------------------------------------------
 
-    #if defined ( _OPENMP )
-    double t ;
-    if (n > 1000000) t = omp_get_wtime ( ) ;
-    #endif
-
     if (nthreads == 1)
     {
         // sort A [0:n-1] with a single thread
@@ -210,13 +205,5 @@ nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
             }
         }
     }
-
-    #if defined ( _OPENMP )
-    if (n > 1000000)
-    {
-        t = omp_get_wtime ( ) - t ;
-        // printf ("qsort with %d threads : %g sec\n", nthreads, t) ;
-    }
-    #endif
 }
 

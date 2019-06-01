@@ -96,9 +96,6 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
         J = I_out ;
     }
 
-    // TODO: each of the three phases below (I,J,X) are independent and
-    // can be done with 3 tasks, each with internal parallelism
-
     //--------------------------------------------------------------------------
     // extract the row indices
     //--------------------------------------------------------------------------

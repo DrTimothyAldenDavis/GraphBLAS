@@ -219,7 +219,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             int *api_version = va_arg (ap, int *) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (api_version) ;
-            api_version [0] = GxB_MAJOR ;       // TODO rename GxB_API_MAJOR ...
+            // TODO rename GxB_MAJOR to GxB_API_MAJOR ... but keep older
+            // #define for backward compatibility
+            api_version [0] = GxB_MAJOR ; 
             api_version [1] = GxB_MINOR ;
             api_version [2] = GxB_SUB ;
             break ;
@@ -253,7 +255,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
 
         //----------------------------------------------------------------------
 
-        // TODO
+        // TODO: GxB_get malloc/calloc/realloc/free/malloc_is_thread_safe
 
 /*
         case 16: // GxB_MALLOC_FUNCTION

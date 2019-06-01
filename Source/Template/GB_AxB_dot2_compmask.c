@@ -9,7 +9,8 @@
 
 {
 
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) collapse(2)
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        collapse(2)
     for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
     for (int b_taskid = 0 ; b_taskid < nbslice ; b_taskid++)
     {

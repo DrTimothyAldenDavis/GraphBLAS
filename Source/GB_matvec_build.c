@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_user_build: check inputs and build a matrix
+// GB_matvec_build: check inputs and build a matrix or vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -12,16 +12,13 @@
 
 // This function implements GrB_Matrix_build_* and GrB_Vector_build_*.
 
-// TODO: rename
-
 #include "GB.h"
 
-GrB_Info GB_user_build          // check inputs then build matrix
+GrB_Info GB_matvec_build        // check inputs then build matrix or vector
 (
-    GrB_Matrix C,               // matrix to build
+    GrB_Matrix C,               // matrix or vector to build
     const GrB_Index *I,         // row indices of tuples
-    const GrB_Index *J,         // col indices of tuples (NULL for
-                                // GrB_Vector_build)
+    const GrB_Index *J,         // col indices of tuples (NULL for vector)
     const void *S,              // array of values of tuples
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates
@@ -35,7 +32,7 @@ GrB_Info GB_user_build          // check inputs then build matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "C for GB_user_build", GB0)) ;
+    ASSERT_OK (GB_check (C, "C for GB_matvec_build", GB0)) ;
     GB_RETURN_IF_NULL (I) ;
     if (I == GrB_ALL)
     { 

@@ -10,6 +10,7 @@
 // Reduce a matrix to a scalar.
 
 // TODO add simd vectorization for non-terminal monoids.  Particular max, min.
+
 // TODO use ntasks = 32 * nthreads
 
 {

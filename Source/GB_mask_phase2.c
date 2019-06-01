@@ -127,9 +127,9 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
         int64_t *restrict Rh = R->h ;
         int64_t rnvec_new = 0 ;
 
-        // TODO this loop is sequential.  Could use a parallel cumulative sum
-        // of the Rp > 0 condition, and then an out-of-place copy to new Rh and
-        // Rp arrays.
+        // TODO do this in parallel.
+        // use a parallel cumulative sum of the Rp > 0 condition, and then an
+        // out-of-place copy to new Rh and Rp arrays.
         for (int64_t k = 0 ; k < Rnvec ; k++)
         {
             int64_t rjnz = Rp [k+1] - Rp [k] ;

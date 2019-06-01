@@ -505,7 +505,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (allocate_new_Ci) ;
             ASSERT (Ah == NULL) ;
             int64_t k = 0 ;
-            // TODO could be done with a parallel cumsum
+            // TODO do this in parallel
             for (int64_t j = 0 ; j < avdim ; j++)
             {
                 if (Ap [j] < Ap [j+1])

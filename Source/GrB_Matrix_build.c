@@ -22,7 +22,7 @@ GrB_Info GrB_Matrix_build_ ## T     /* build a matrix from (I,J,X) tuples */  \
 {                                                                             \
     GB_WHERE ("GrB_Matrix_build_" GB_STR(T) " (C, I, J, X, nvals, dup)") ;    \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                         \
-    return (GB_user_build (C, I, J, X, nvals, dup, GB_ ## T ## _code, true,   \
+    return (GB_matvec_build (C, I, J, X, nvals, dup, GB_ ## T ## _code, true, \
         Context)) ;                                                           \
 }
 

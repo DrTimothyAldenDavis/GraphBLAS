@@ -222,7 +222,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ap = A->p ;
 
-        // TODO benchmark this in parallel
+        // TODO do this in parallel
         //      #pragma omp parallel for num_threads(nthreads) \\
         //          schedule(static) reduction(+:nzombies)
         for (int64_t k = 0 ; k < anvec ; k++)

@@ -24,8 +24,7 @@
 
 // Compare with GB_subassign, which uses M and C_replace differently
 
-// PARALLEL: TODO.  some C_replace_phase here, mainly in GB_subassign_kernel
-// and GB_subref_numeric.
+// PARALLEL: TODO
 
 #include "GB.h"
 
@@ -270,9 +269,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                     int64_t p, pend, pleft = 0, pright = cnvec-1 ;
                     GB_lookup (C->is_hyper, C->h, C->p, &pleft, pright, j,
                         &p, &pend) ;
-
                     // TODO do this in parallel
-
                     for ( ; p < pend ; p++)
                     {
                         int64_t i = Ci [p] ;
@@ -286,11 +283,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 }
                 else
                 {
-
-                    // TODO do this in parallel
-
                     // delete all entries in each vector with index i
                     int64_t i = (row_assign) ? Rows [0] : Cols [0] ;
+                    // TODO do this in parallel
                     GBI_for_each_vector (C)
                     {
                         // get C(:,j)
@@ -877,9 +872,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t pM = Mp [0] ;
             int64_t pM_end = Mp [1] ;
 
-            // TODO do this in paralllel
-
             // iterate over all entries in Z(:,j)
+            // TODO do this in paralllel
             for (int64_t p = pZ ; p < pZ_end ; p++)
             {
                 // Z(i,j) is outside the Z(I,j) subcolumn if i is
@@ -934,8 +928,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // index assignment, examine just Z(i,:) and M
             //------------------------------------------------------------------
 
-            // TODO do this in parallel
-
             // GrB_Row_assign: only examine Z(i,:)
             // M has vlen == 1 and the same vdim as Z
             ASSERT (nI == 1) ;
@@ -944,6 +936,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t i = I [0] ;
             ASSERT (i == GB_ijlist (I, 0, Ikind, Icolon)) ;
 
+            // TODO do this in parallel
             GBI2_for_each_vector (Z, M)
             {
                 GBI2_jth_iteration (Iter, j, pZ, pZ_end, pM, pM_end) ;
@@ -992,12 +985,11 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             //------------------------------------------------------------------
             // Matrix/vector assignment: examine all of Z and M
             //------------------------------------------------------------------
-        
-            // TODO do this in parallel
 
             // M has the same size as Z
             ASSERT (M->vlen == Z->vlen && M->vdim == Z->vdim) ;
 
+            // TODO do this in parallel
             GBI2_for_each_vector (Z, M)
             {
                 GBI2_jth_iteration (Iter, j, pZ, pZ_end, pM, pM_end) ;

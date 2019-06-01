@@ -75,8 +75,7 @@
 // which is the requested format of the output matrix C (either CSR or CSC).
 // It is assigned to C->is_csc but otherwise has no effect on this function.
 
-// PARALLEL: TODO. the list J can be partitioned, and the subref can be done in
-// parallel and the results concatenated.
+// PARALLEL: TODO
 
 #ifdef GB_SYMBOLIC
 GrB_Info GB_subref_symbolic     // C = A (I,J), extract the pattern

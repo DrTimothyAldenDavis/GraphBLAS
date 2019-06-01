@@ -31,9 +31,6 @@
 // GrB_wait at the same time.  The user threads will then safely cooperate to
 // complete all the matrices in the queue, in parallel.
 
-// PARALLEL: TODO.  Consider doing all matrices in the list in parallel,
-// each one in a task
-
 #include "GB.h"
 
 GrB_Info GrB_wait ( )       // finish all pending computations

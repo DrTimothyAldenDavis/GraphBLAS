@@ -56,8 +56,8 @@
 //      = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
 //      not hypersparse, then C_to_M is returned as NULL.
 
-// PARALLEL: done, except in one condition: A and B are hypersparse and
-// Ch_is_Mh is false.  takes O(A->nvec + B->nvec) time.
+// PARALLEL: mostly done. TODO except in one condition: A and B are hypersparse
+// and Ch_is_Mh is false.  takes O(A->nvec + B->nvec) time.
 
 // TODO: exploit A==M, B==M, and A==B aliases
 
@@ -292,9 +292,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             return (GB_OUT_OF_MEMORY) ;
         }
 
-        // TODO this is sequential.  Use a parallel merge?  Ah and Bh are
-        // sorted, and the result Ch must be sorted too.  Or use qsort and
-        // then a merge of duplicates?
+        // TODO this is sequential.  Use a parallel merge.  Ah and Bh are
+        // sorted, and the result Ch must be sorted too.
 
         // merge Ah and Bh into Ch
         int64_t kA = 0 ;

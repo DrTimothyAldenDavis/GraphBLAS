@@ -18,6 +18,7 @@
 // (Gustavson), a heap-based saxpy method, or a dot product method.
 
 // TODO: an outer-product method for C=A*B'
+
 // TODO: a hash-based method for C=A*B
 
 #define GB_FREE_ALL             \
@@ -444,6 +445,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // C.  If swap_rule == C_transpose, then C_transpose is always false here,
     // but this could change in the future.  The following code will adapt to
     // any swap_rule, so it does not change if the swap_rule changes.
+
+    // TODO change the swap rule so C=A'*B' becomes C=(B*A)'
 
     GrB_Matrix C = (*Chandle) ;
     ASSERT (C != NULL) ;

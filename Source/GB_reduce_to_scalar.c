@@ -25,6 +25,8 @@
 
 // TODO: need to vectorize
 
+// TODO: currently uses ntasks = nthreads; use ntasks = 32 * nthreads
+
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"

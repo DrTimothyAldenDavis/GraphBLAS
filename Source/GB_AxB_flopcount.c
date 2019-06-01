@@ -265,13 +265,14 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
         int64_t bjflops = 0 ;
 
-        // TODO: the following for loop could also be parallel.  pleft would
-        // need to be set to zero before each call to GB_lookup, or private for
-        // each thread.  It is currently updated after each search to reduce
-        // the work in subsequent binary searches.  The break statement would
-        // need to be removed.  Doing the following loop in parallel would be
-        // important if B is a single dense vector, for example.  In that case,
-        // the outer loop is a single iteration, with bnvec == 1.
+        // TODO do this in parallel.
+        // pleft would need to be set to zero before each call to GB_lookup, or
+        // private for each thread.  It is currently updated after each search
+        // to reduce the work in subsequent binary searches.  The break
+        // statement would need to be removed.  Doing the following loop in
+        // parallel would be important if B is a single dense vector, for
+        // example.  In that case, the outer loop is a single iteration, with
+        // bnvec == 1.
 
         // reduction (+:bjflops, +:total_flops)
         for ( ; pB < pB_end ; pB++)

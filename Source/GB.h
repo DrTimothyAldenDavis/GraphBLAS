@@ -2077,14 +2077,6 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     GB_Context Context
 ) ;
 
-GrB_Info GB_vcat_slice      // vertical concatenation of the slices of C
-(
-    GrB_Matrix *Chandle,    // output matrix C to create
-    int nthreads,           // # of slices to concatenate
-    GrB_Matrix *Cslice,     // array of slices of size nthreads
-    GB_Context Context
-) ;
-
 GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
 (
     GrB_Matrix *Chandle,    // output matrix C to create
@@ -2536,11 +2528,11 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_Context Context
 ) ;
 
-GrB_Info GB_user_build          // check inputs then build matrix
+GrB_Info GB_matvec_build        // check inputs then build matrix or vector
 (
-    GrB_Matrix C,               // matrix to build
+    GrB_Matrix C,               // matrix or vector to build
     const GrB_Index *I,         // row indices of tuples
-    const GrB_Index *J,         // col indices of tuples
+    const GrB_Index *J,         // col indices of tuples (NULL for vector)
     const void *S,              // array of values of tuples
     const GrB_Index nvals,      // number of tuples
     const GrB_BinaryOp dup,     // binary function to assemble duplicates
@@ -3381,10 +3373,10 @@ static inline GrB_Index GB_rand (uint64_t *seed)
 //    is any one of the entries with value i in the list.
 // If found is false then
 //    X [original_pleft ... pleft-1] < i and
-//    X [pleft ... original_pright-1] > i holds, and pleft-1 == pright
+//    X [pleft ... original_pright] > i holds, and pleft-1 == pright
 // If X has no duplicates, then whether or not i is found,
 //    X [original_pleft ... pleft-1] < i and
-//    X [pleft ... original_pright-1] >= i holds.
+//    X [pleft ... original_pright] >= i holds.
 #define GB_BINARY_SPLIT_SEARCH(i,X,pleft,pright,found)                      \
 {                                                                           \
     GB_BINARY_SEARCH (i, X, pleft, pright, found)                           \

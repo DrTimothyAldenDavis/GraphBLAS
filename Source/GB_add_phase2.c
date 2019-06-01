@@ -267,9 +267,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
         int64_t *restrict Ch = C->h ;
         int64_t cnvec_new = 0 ;
 
-        // TODO this loop is sequential.  Could use a parallel cumulative sum
-        // of the Cp > 0 condition, and then an out-of-place copy to new Ch and
-        // Cp arrays.
+        // TODO do this in parallel
         for (int64_t k = 0 ; k < Cnvec ; k++)
         {
             int64_t cjnz = Cp [k+1] - Cp [k] ;

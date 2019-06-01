@@ -10,7 +10,7 @@
 // Returns true if A is a square diagonal matrix, with all diagonal entries
 // present.  Pending tuples are ignored.  Zombies are treated as entries.
 
-// PARALLEL: TODO. simple parallel reduction, but could use early exit.
+// PARALLEL: TODO
 
 #include "GB.h"
 
@@ -63,6 +63,7 @@ bool GB_is_diagonal             // true if A is diagonal
 
     const int64_t *restrict Ai = A->i ;
 
+    // TODO do this in parallel.  Needs early exit
     GBI_for_each_vector (A)
     { 
         GBI_jth_iteration (j, p, pend) ;

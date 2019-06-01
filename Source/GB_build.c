@@ -7,17 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// CALLED BY: GB_user_build and GB_reduce_to_vector
+// CALLED BY: GB_matvec_build and GB_reduce_to_vector
 // CALLS:     GB_builder
 
-// GB_user_build constructs a GrB_Matrix or GrB_Vector from the tuples provided
-// by the user.  In that case, the tuples must be checked for duplicates.  They
-// might be sorted on input, so this condition is checked and exploited if
-// found.  GB_reduce_to_vector constructs a GrB_Vector froma GrB_Matrix, by
-// discarding the vector index.  As a result, duplicates are likely to appear,
-// and the input is likely to be unsorted.  But for GB_reduce_to_vector, the
-// validity of the tuples need not be checked.  All of these conditions are
-// checked in GB_builder.
+// GB_matvec_build constructs a GrB_Matrix or GrB_Vector from the tuples
+// provided by the user.  In that case, the tuples must be checked for
+// duplicates.  They might be sorted on input, so this condition is checked and
+// exploited if found.  GB_reduce_to_vector constructs a GrB_Vector froma
+// GrB_Matrix, by discarding the vector index.  As a result, duplicates are
+// likely to appear, and the input is likely to be unsorted.  But for
+// GB_reduce_to_vector, the validity of the tuples need not be checked.  All of
+// these conditions are checked in GB_builder.
 
 // GB_build constructs a matrix C from a list of indices and values.  Any
 // duplicate entries with identical indices are assembled using the binary dup

@@ -135,7 +135,6 @@ GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = nthreads_max ;   // this is reduced later
-
     // TODO use the chunk to reduce the # of threads
 
     //--------------------------------------------------------------------------
