@@ -36,7 +36,7 @@ double pagerank_teleport, pagerank_init_rank pagerank_rsum ;
 // parsable as an argument to the m4 macro.  If the user-defined type is a
 // struct, the initializer uses curly brackets, but this causes a parsing error
 // for m4.  The solution is to define a C macro with the initialization
-// constant, and to use it in the GxB*define m4 macro.
+// constant, and to use it in the GxB_*define m4 macro.
 #define PAGERANK_ZERO {0,0}
 
 // unary operator to divide a double entry by the scalar pagerank_rsum

@@ -91,7 +91,7 @@ version of SuiteSparse:GraphBLAS fully conforms to Version
 \input{GraphBLAS_API_version.tex} of that specification.  In this User Guide,
 aspects of the GraphBLAS specification that would be true for any GraphBLAS
 implementation are simply called ``GraphBLAS.'' Details unique to this
-particular implementation are referred to as SuiteSparse:GraphBLAS. 
+particular implementation are referred to as SuiteSparse:GraphBLAS.
 
 \begin{spec}
 {\bf SPEC:} See the tag {\bf SPEC:} for SuiteSparse extensions to the spec.
@@ -622,7 +622,7 @@ than 10 using logical indexing in MATLAB:
          5    11    10     8
          9     7     6    12
          4    14    15     1
-    >> A (A>10) = - A (A>10) 
+    >> A (A>10) = - A (A>10)
     A =
        -16     2     3   -13
          5   -11    10     8
@@ -802,7 +802,7 @@ be used in the following manner in a user application:
 
 {\footnotesize
 \begin{verbatim}
-    #if GxB >= GxB_VERSION (2,0,3)
+    #if GxB_SPEC_VERSION >= GxB_VERSION (2,0,3)
     ... use features in GraphBLAS specification 2.0.3 ...
     #else
     ... only use features in early specifications
@@ -822,20 +822,25 @@ Refer to the \verb'GraphBLAS.h' file for details.
 \hline
 Macro                & purpose                                      \\
 \hline
-\verb'GxB_ABOUT'        & this particular implementation, copyright, and URL \\
-\verb'GxB_DATE'         & the date of this implementation \\
-\verb'GxB_SPEC'         & the GraphBLAS specification for this implementation \\
-\verb'GxB_SPEC_DATE'    & the date of the GraphBLAS specification \\
-\verb'GxB_LICENSE'      & the license for this particular implementation \\
+\verb'GxB_IMPLEMENTATION_ABOUT'
+    & this particular implementation, copyright, and URL \\
+\verb'GxB_IMPLEMENTATION_DATE'
+    & the date of this implementation \\
+\verb'GxB_SPEC_ABOUT'
+    & the GraphBLAS specification for this implementation \\
+\verb'GxB_SPEC_DATE'
+    & the date of the GraphBLAS specification \\
+\verb'GxB_IMPLEMENTATION_LICENSE'
+    & the license for this particular implementation \\
 \hline
 \end{tabular}
 }
 \vspace{0.2in}
 
 Finally, SuiteSparse:GraphBLAS gives itself a unique name of the form
-\verb'GxB_SUITESPARSE_GRAPHBLAS' that the user application can use in \verb'#ifdef'
-tests. This is helpful in case a particular implementation provides
-non-standard features that extend the GraphBLAS specification, such as
+\verb'GxB_SUITESPARSE_GRAPHBLAS' that the user application can use in
+\verb'#ifdef' tests. This is helpful in case a particular implementation
+provides non-standard features that extend the GraphBLAS specification, such as
 additional predefined built-in operators, or if a GraphBLAS implementation does
 not yet fully implement all of the GraphBLAS specification.  The
 SuiteSparse:GraphBLAS name is provided in its \verb'GraphBLAS.h' file as:
@@ -960,7 +965,7 @@ operation or method.
 
 With multiple user threads, exactly one user thread must call \verb'GrB_init'
 before any user thread may call any \verb'GrB_*' or \verb'GxB_*' function.
-When the user application is finished, exactly one user thread 
+When the user application is finished, exactly one user thread
 must call \verb'GrB_finalize', after which no user thread may call
 any \verb'GrB_*' or \verb'GxB_*' function.
 
@@ -1498,7 +1503,7 @@ GrB_Info GxB_Type_size          // determine the size of the type
 
 This function acts just like \verb'sizeof(type)' in the C language.  For
 example \verb'GxB_Type_size (&s, GrB_INT32)' sets \verb's' to 4, the same as
-\verb'sizeof(int32_t)'. 
+\verb'sizeof(int32_t)'.
 
 \begin{spec}
 {\bf SPEC:} \verb'GxB_Type_size' is an extension to the spec.
@@ -1674,13 +1679,13 @@ operator was created.
 Currently, the pointers will be unique.  That is, the user function is not
 called with pointers that point to the same space.  Future versions of
 SuiteSparse:GraphBLAS may call the function with the pointers \verb'z' and
-\verb'x' equal to one another, in which case \verb'z=f(z)' should be computed. 
+\verb'x' equal to one another, in which case \verb'z=f(z)' should be computed.
 
 % SPEC: the spec is silent on aliasing in user-defined functions
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_UnaryOp\_ztype:} return the type of $z$} 
+\subsubsection{{\sf GxB\_UnaryOp\_ztype:} return the type of $z$}
 %-------------------------------------------------------------------------------
 \label{unaryop_ztype}
 
@@ -1703,7 +1708,7 @@ is the type of $z$ in the function $z=f(x)$.
 \end{spec}
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_UnaryOp\_xtype:} return the type of $x$} 
+\subsubsection{{\sf GxB\_UnaryOp\_xtype:} return the type of $x$}
 %-------------------------------------------------------------------------------
 \label{unaryop_xtype}
 
@@ -1750,7 +1755,7 @@ Either usage:
     GrB_free (&unaryop) ; \end{verbatim}}
 
 \noindent
-frees the \verb'unaryop' and sets \verb'unaryop' to \verb'NULL'. 
+frees the \verb'unaryop' and sets \verb'unaryop' to \verb'NULL'.
 It safely does nothing if passed a \verb'NULL'
 handle, or if \verb'unaryop == NULL' on input.
 It does nothing at all if passed a built-in unary operator.
@@ -1985,7 +1990,7 @@ should be computed.  Future versions may use additional pointer aliasing.
 
 % \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_BinaryOp\_ztype:} return the type of $z$} 
+\subsubsection{{\sf GxB\_BinaryOp\_ztype:} return the type of $z$}
 %-------------------------------------------------------------------------------
 \label{binaryop_ztype}
 
@@ -2009,7 +2014,7 @@ type of $z$ in the function $z=f(x,y)$.
 \end{spec}
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_BinaryOp\_xtype:} return the type of $x$} 
+\subsubsection{{\sf GxB\_BinaryOp\_xtype:} return the type of $x$}
 %-------------------------------------------------------------------------------
 \label{binaryop_xtype}
 
@@ -2033,7 +2038,7 @@ type of $x$ in the function $z=f(x,y)$.
 \end{spec}
 
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_BinaryOp\_ytype:} return the type of $y$} 
+\subsubsection{{\sf GxB\_BinaryOp\_ytype:} return the type of $y$}
 %-------------------------------------------------------------------------------
 \label{binaryop_ytype}
 
@@ -2081,7 +2086,7 @@ Either usage:
     GrB_free (&op) ; \end{verbatim}}
 
 \noindent
-frees the \verb'op' and sets \verb'op' to \verb'NULL'. 
+frees the \verb'op' and sets \verb'op' to \verb'NULL'.
 It safely does nothing if passed a \verb'NULL'
 handle, or if \verb'op == NULL' on input.
 It does nothing at all if passed a built-in binary operator.
@@ -2209,7 +2214,7 @@ the identity value as the \verb'Thunk' parameter to \verb'GxB_select'.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsubsection{{\sf GxB\_SelectOp\_xtype:} return the type of $x$} 
+\subsubsection{{\sf GxB\_SelectOp\_xtype:} return the type of $x$}
 %-------------------------------------------------------------------------------
 \label{selectop_xtype}
 
@@ -3051,7 +3056,7 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 The operation is exactly like setting a single entry in an \verb'n'-by-1
 matrix, \verb'A(i,0) = x', where the column index for a vector is implicitly
 \verb'j=0'.  For further details of this function, see
-\verb'GrB_Matrix_setElement' in Section~\ref{matrix_setElement}. 
+\verb'GrB_Matrix_setElement' in Section~\ref{matrix_setElement}.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -3077,7 +3082,7 @@ method are discussed in Section~\ref{matrix_extractElement}, which discusses
 \verb'GrB_Matrix_extractElement'.  In this case, the column index is implicitly
 \verb'j=0'.
 {\bf NOTE: }  if no entry is present at \verb'v(i)', then
-\verb'x' is not modified, and the return value of 
+\verb'x' is not modified, and the return value of
 \verb'GrB_Vector_extractElement' is \verb'GrB_NO_VALUE'.
 
 \paragraph{Forced completion:}
@@ -3519,7 +3524,7 @@ that this error code differs from the same kind of condition in
 because \verb'GrB_INVALID_INDEX' is an API error, and is caught immediately
 even in non-blocking mode, whereas \verb'GrB_INDEX_OUT_OF_BOUNDS' is an
 execution error whose detection may wait until the computation completes
-sometime later. 
+sometime later.
 
 The scalar \verb'x' is typecasted into the type of \verb'C'.  Any value can be
 passed to this function and its type will be detected, via the \verb'_Generic'
@@ -3588,7 +3593,7 @@ greater than or equal to the number of rows of \verb'C', or if column index
 \verb'j' is greater than or equal to the number of columns of \verb'C'.
 
 {\bf NOTE: }  if no entry is present at \verb'A(i,j)', then
-\verb'x' is not modified, and the return value of 
+\verb'x' is not modified, and the return value of
 \verb'GrB_Matrix_extractElement' is \verb'GrB_NO_VALUE'.
 
 If the entry is not present then GraphBLAS does not know its value, since its
@@ -3681,7 +3686,7 @@ GrB_Info GxB_Matrix_resize      // change the size of a matrix
 \end{verbatim} } \end{mdframed}
 
 \verb'GxB_Matrix_resize' changes the size of a matrix.
-If the dimensions decrease, entries that fall outside the resized 
+If the dimensions decrease, entries that fall outside the resized
 matrix are deleted.
 
 %-------------------------------------------------------------------------------
@@ -3950,7 +3955,7 @@ returned in \verb'vx'.  If \verb'nvals' is zero, the \verb'vi' and \verb'vx'
 arrays are returned as \verb'NULL'; this is not an error condition.
 
 If not successful, \verb'v' is unmodified and \verb'vi' and \verb'vx' are
-not modified.  
+not modified.
 
 \begin{spec}
 {\bf SPEC:} \verb'GxB_Vector_export' is an extension to the spec.
@@ -4634,7 +4639,7 @@ e)$ time.
 \label{descriptor}
 
 A GraphBLAS {\em descriptor} modifies the behavior of a GraphBLAS operation.
-% (not a operator). 
+% (not a operator).
 % GraphBLAS operations are described in
 % Section~\ref{operations}, and all of them have a final parameter of a
 % descriptor.
@@ -4798,7 +4803,7 @@ need not be an array:
     the mask is not present, since it takes $\Omega(mn)$ time if \verb'C' is
     $m$-by-$n$ in that case.  It can work either without any workspace at all,
     or with workspace of size $O(k)$, where $k$ is the inner dimension (the
-    number of rows of \verb'B' if the matrices are stored by column). 
+    number of rows of \verb'B' if the matrices are stored by column).
     It does not need any workspace at all if \verb'A' or \verb'B' are
     completely dense, and is the fastest method in this case.  Otherwise, the
     method is faster if it has access to workspace, and thus it uses $O(k)$
@@ -5455,7 +5460,7 @@ This usage of \verb'GxB_set' sets the value of a global option.
 The \verb'field' parameter can be \verb'GxB_HYPER' or \verb'GxB_FORMAT'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
-and the format of future matrices to \verb'GxB_BY_COL'. 
+and the format of future matrices to \verb'GxB_BY_COL'.
 No existing matrices are changed.
 
 {\footnotesize
@@ -6189,7 +6194,7 @@ according to the descriptor, \verb'desc' (which may be \verb'NULL') and then
 typecasted to match the multiply operator of the \verb'semiring'.  Next,
 \verb'T=A*B' is computed on the \verb'semiring', precisely defined in the
 \verb'GB_spec_mxm.m' script.  The actual algorithm exploits sparsity and does
-not take $O(n^3)$ time, but what computes is the following: 
+not take $O(n^3)$ time, but what computes is the following:
 
 {\footnotesize
 \begin{verbatim}
@@ -6279,7 +6284,7 @@ linear algebraic property $A^{\sf T} B^{\sf T}=(BA)^{\sf T}$.
 
 {\footnotesize
 \begin{verbatim}
-    swap_rule = C_transpose 
+    swap_rule = C_transpose
     if (swap_rule)
         swap the matrices A and B
         A_transpose = !B_transpose
@@ -6299,7 +6304,7 @@ transposed.
 
 There are now four cases to handle:
 
-\begin{enumerate} 
+\begin{enumerate}
 
 \item If computing \verb"C<M> = A'*B'":   the matrix \verb'B' is
     explicitly transposed and then rule (2) below is applied.
@@ -6411,10 +6416,10 @@ select the fastest method, which is why the method can be selected via the
 
 The meta-algorithm never transposes the final result (\verb"C=A'*B'" is never
 converted into \verb"C=(B*A)'"), although that strategy can lead to better
-performance. 
+performance.
 % A different \verb'swap_rule' would allow for the output matrix to
 % be transposed (with \verb"C=(B*A)'" being computed); a user descriptor may be
-% added in the future to allow for this selection. 
+% added in the future to allow for this selection.
 The user application can do this by computing \verb"C'=B*A", and then
 transposing the result via \verb'GrB_transpose' to obtain
 \verb"C=(B*A)'=A'*B'".  This can be faster in some cases, depending on the size
@@ -6923,7 +6928,7 @@ the matrix \verb'T' is defined as follows:
 If duplicate indices are present in \verb'I' or \verb'J', the above method
 defines the result in \verb'T'.  Duplicates result in the same values of
 \verb'A' being copied into different places in \verb'T'.
-See Section~\ref{colon} for a description of the row indices 
+See Section~\ref{colon} for a description of the row indices
 \verb'I' and \verb'ni', and the column indices
 \verb'J' and \verb'nj'.
 The final step is ${\bf C \langle M \rangle  = C \odot
@@ -6965,7 +6970,7 @@ single row \verb'j' from the matrix \verb'A', the result of which is a column
 vector \verb'w'.  The type of \verb't' and \verb'A' are the same.
 The size of \verb'w' is \verb'|I|'-by-1.
 
-See Section~\ref{colon} for a description of the row indices 
+See Section~\ref{colon} for a description of the row indices
 \verb'I' and \verb'ni'.
 The final step is ${\bf w \langle m
 \rangle  = w \odot t}$, as described in Section~\ref{accummask}, except that
@@ -6989,7 +6994,7 @@ confusion between the different kinds of assignment, the name of the specific
 function is used when describing each variation.  If the discussion applies to
 all variations, the simple name \verb'GxB_subassign' is used.
 
-See Section~\ref{colon} for a description of the row indices 
+See Section~\ref{colon} for a description of the row indices
 \verb'I' and \verb'ni', and the column indices
 \verb'J' and \verb'nj'.
 
@@ -7065,7 +7070,7 @@ Step & GraphBLAS & description \\
 \hline
 1 & ${\bf S} = {\bf C(I,J)}$                             & extract the ${\bf C(I,J)}$ submatrix \\
 2 & ${\bf S \langle M \rangle} = {\bf S} \odot {\bf A}$  & apply the accumulator/mask to the submatrix ${\bf S}$\\
-3 & ${\bf C(I,J)}= {\bf S}$                              & put the submatrix ${\bf S}$ back into ${\bf C(I,J)}$ \\ 
+3 & ${\bf C(I,J)}= {\bf S}$                              & put the submatrix ${\bf S}$ back into ${\bf C(I,J)}$ \\
 \hline
 \end{tabular}
 \vspace{0.1in}
@@ -7485,7 +7490,7 @@ GrB_Info GrB_assign                 // C<mask'>(i,J) = accum (C(i,J),u')
 \verb'GxB_Row_subassign' modifies a single sub-row of a matrix \verb'C'.  It is
 the same as \verb'GxB_Matrix_subassign' where the index vector \verb'I[0]=i' is
 a single row index, and where all matrices in \verb'GxB_Matrix_subassign'
-(except \verb'C') consist of a single row. 
+(except \verb'C') consist of a single row.
 
 Unlike \verb'GrB_Matrix_assign', the \verb'mask' is a vector with the same size
 as a single row of \verb'C'.
@@ -7703,7 +7708,7 @@ Step & \verb'GrB_Matrix_assign'                & \verb'GxB_Matrix_subassign'    
 \hline
 1 & ${\bf S} = {\bf C(I,J)}$                & ${\bf S} = {\bf C(I,J)}$                              \\
 2 & ${\bf S} = {\bf S} \odot {\bf A}$       & ${\bf S \langle M \rangle} = {\bf S} \odot {\bf A}$   \\
-3 & ${\bf Z} = {\bf C}$                     & ${\bf C(I,J)}= {\bf S}$                               \\ 
+3 & ${\bf Z} = {\bf C}$                     & ${\bf C(I,J)}= {\bf S}$                               \\
 4 & ${\bf Z(I,J)} = {\bf S}$                &                                                       \\
 5 & ${\bf C \langle M \rangle = Z}$         &                                                       \\
 \hline
@@ -8333,37 +8338,37 @@ name                    & analog            & \\
 \hline
 \verb'GxB_TRIL'         & \verb'T=tril(A,k)'   &
     Entries in \verb'T' are the entries on and below the \verb'k'th diagonal of \verb'A'. \\
-\verb'GxB_TRIU'         & \verb'T=triu(A,k)'   & 
+\verb'GxB_TRIU'         & \verb'T=triu(A,k)'   &
     Entries in \verb'T' are the entries on and above the \verb'k'th diagonal of \verb'A'. \\
-\verb'GxB_DIAG'         & \verb'T=diag(A,k)'   & 
+\verb'GxB_DIAG'         & \verb'T=diag(A,k)'   &
     Entries in \verb'T' are the entries on the \verb'k'th diagonal of \verb'A'. \\
-\verb'GxB_OFFDIAG'      & \verb'T=A-diag(A,k)' & 
+\verb'GxB_OFFDIAG'      & \verb'T=A-diag(A,k)' &
     Entries in \verb'T' are all entries not on the \verb'k'th diagonal of \verb'A'. \\
 \hline
-\verb'GxB_NONZERO'      & \verb'T=A(A~=0)'     & 
+\verb'GxB_NONZERO'      & \verb'T=A(A~=0)'     &
     Entries in \verb'T' are all entries in \verb'A' that have nonzero value. \\
-\verb'GxB_EQ_ZERO'      & \verb'T=A(A==0)'     & 
+\verb'GxB_EQ_ZERO'      & \verb'T=A(A==0)'     &
     Entries in \verb'T' are all entries in \verb'A' that are equal to zero. \\
-\verb'GxB_GT_ZERO'      & \verb'T=A(A>0)'      & 
+\verb'GxB_GT_ZERO'      & \verb'T=A(A>0)'      &
     Entries in \verb'T' are all entries in \verb'A' that are greater than zero. \\
-\verb'GxB_GE_ZERO'      & \verb'T=A(A<=0)'     & 
+\verb'GxB_GE_ZERO'      & \verb'T=A(A<=0)'     &
     Entries in \verb'T' are all entries in \verb'A' that are greater than or equal to zero. \\
-\verb'GxB_LT_ZERO'      & \verb'T=A(A<0)'      & 
+\verb'GxB_LT_ZERO'      & \verb'T=A(A<0)'      &
     Entries in \verb'T' are all entries in \verb'A' that are less than zero. \\
-\verb'GxB_LE_ZERO'      & \verb'T=A(A<=0)'     & 
+\verb'GxB_LE_ZERO'      & \verb'T=A(A<=0)'     &
     Entries in \verb'T' are all entries in \verb'A' that are less than or equal to zero. \\
 \hline
-\verb'GxB_NE_THUNK'     & \verb'T=A(A~=k)'     & 
+\verb'GxB_NE_THUNK'     & \verb'T=A(A~=k)'     &
     Entries in \verb'T' are all entries in \verb'A' that are not equal to \verb'k'. \\
-\verb'GxB_EQ_THUNK'     & \verb'T=A(A==k)'     & 
+\verb'GxB_EQ_THUNK'     & \verb'T=A(A==k)'     &
     Entries in \verb'T' are all entries in \verb'A' that are equal to \verb'k'. \\
-\verb'GxB_GT_THUNK'     & \verb'T=A(A>k)'      & 
+\verb'GxB_GT_THUNK'     & \verb'T=A(A>k)'      &
     Entries in \verb'T' are all entries in \verb'A' that are greater than \verb'k'. \\
-\verb'GxB_GE_THUNK'     & \verb'T=A(A>=k)'     & 
+\verb'GxB_GE_THUNK'     & \verb'T=A(A>=k)'     &
     Entries in \verb'T' are all entries in \verb'A' that are greater than or equal to \verb'k'. \\
-\verb'GxB_LT_THUNK'     & \verb'T=A(A<k)'      & 
+\verb'GxB_LT_THUNK'     & \verb'T=A(A<k)'      &
     Entries in \verb'T' are all entries in \verb'A' that are less than \verb'k'. \\
-\verb'GxB_LE_THUNK'     & \verb'T=A(A<=k)'     & 
+\verb'GxB_LE_THUNK'     & \verb'T=A(A<=k)'     &
     Entries in \verb'T' are all entries in \verb'A' that are less than or equal to \verb'k'. \\
 \hline
 \end{tabular}
@@ -8475,7 +8480,7 @@ This cannot be checked by GraphBLAS and thus results are undefined if the
 types are not the same.
 
 The descriptor is unused, but it appears in case it is needed in future
-versions of the GraphBLAS API. 
+versions of the GraphBLAS API.
 This function has no mask so its accumulator/mask step differs from the other
 GraphBLAS operations.  It does not use the methods described in
 Section~\ref{accummask}, but uses the following method instead.
@@ -9035,7 +9040,7 @@ inserted into the primary data structure.  It can also print out entries that
 remain in the data structure but are awaiting deletion; these are called {\em
 zombies} in the output report.
 
-Most of the rest of the report is self-explanatory. 
+Most of the rest of the report is self-explanatory.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9282,7 +9287,7 @@ defined at run-time instead, \verb'GrB_mxm' is about two to three times slower.
 
 User definitions in the \verb'User/*m4' files are visible to all internal
 SuiteSparse:GraphBLAS functions and thus must be given names that do not
-conflict with internal variables, functions, and macros. 
+conflict with internal variables, functions, and macros.
 
 Objects defined by \verb'GxB_*_define', user-defined static inline functions,
 typedefs, global variables, and macros (via \verb'#define') in the
@@ -9583,7 +9588,7 @@ Algorithms & description \\
 \verb'LAGraph_bfs_pushpull' & a direction-optimized BFS
                                 \cite{Beamer:2012:DOB,Yang:2018:IPE}, \\
                             & typically 2x faster than \verb'bfs5m' \\
-\verb'LAGraph_bfs_simple'   & a simple BFS (about the same as \verb'bfs5m') \\ 
+\verb'LAGraph_bfs_simple'   & a simple BFS (about the same as \verb'bfs5m') \\
 \verb'LACC_GraphBLAS.c'     & connected components \\
 \verb'LAGraph_BF_*.c'       & two variants of Bellman-Ford \\
 \hline
@@ -9753,7 +9758,7 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     // free workspace
     GrB_free (&q) ; GrB_free (&Lor) ; GrB_free (&Boolean) ; GrB_free (&desc) ;
     return (GrB_SUCCESS) ;
-} \end{verbatim}} 
+} \end{verbatim}}
 \end{mdframed}
 
 \newpage
@@ -9813,11 +9818,11 @@ candidate set:
 
     // singletons are not candidates; they are added to iset first instead
     // candidates[degree != 0] = 1
-    GrB_assign (candidates, degrees, NULL, true, GrB_ALL, n, NULL); 
+    GrB_assign (candidates, degrees, NULL, true, GrB_ALL, n, NULL);
 
     // add all singletons to iset
     // iset[degree == 0] = 1
-    GrB_assign (iset, degrees, NULL, true, GrB_ALL, n, sr_desc) ; 
+    GrB_assign (iset, degrees, NULL, true, GrB_ALL, n, sr_desc) ;
 
     // Iterate while there are candidates to check.
     GrB_Index nvals ;
@@ -10006,7 +10011,7 @@ methods, \verb'setElement' and \verb'build' in SuiteSparse:GraphBLAS, and
 % data gives an estimated run time of $4 \times 10^7$ seconds (462 days),
 % which is nearly a million times slower than the other three methods.
 
-% 
+%
 %     {\footnotesize
 %     \begin{verbatim}
 %     A = sparse (n,n) ;
@@ -10039,7 +10044,7 @@ SuiteSparse:GraphBLAS.
         I = a list of 8 row indices
         J = a list of 8 column indices
         % using GrB_assign, with the 'plus' accum operator:
-        A (I,J) = A (I,J) + F 
+        A (I,J) = A (I,J) + F
     end \end{verbatim}}
 
 If this were done in MATLAB or in GraphBLAS with blocking mode enabled, the
@@ -10362,13 +10367,13 @@ GraphBLAS or by \verb'nnz' or \verb'sum(sum(...))' in MATLAB.
 \noindent
 {\footnotesize
 \begin{tabular}{lll}
-\hline 
+\hline
 method and     & in MATLAB & in GraphBLAS \\
 citation    & & \\
-\hline 
+\hline
 minitri \cite{WolfBerryStark15} & \verb"nnz(A*E==2)/3"
     & ${\bf C}={\bf AE}$, then \verb'GrB_apply' \\
-Burkhardt \cite{Burkhardt16} & \verb"sum(sum((A^2).*A))/6" 
+Burkhardt \cite{Burkhardt16} & \verb"sum(sum((A^2).*A))/6"
     & ${\bf C \langle A \rangle} = {\bf A}^2$ \\
 Cohen \cite{AzadBulucGilbert15,Cohen09} & \verb"sum(sum((L*U).*A))/2"
     & ${\bf C \langle A \rangle} = {\bf LU}$ \\
@@ -10378,7 +10383,7 @@ SandiaDot & \verb"sum(sum((U'*L).*L))"
     & ${\bf C \langle U \rangle} = {\bf L}{\bf U}^{\sf T}$ (dot product) \\
 Sandia2  & \verb"sum(sum((L*L).*L))"
     & ${\bf C \langle U \rangle} = {\bf UU}$ (outer product) \\
-\hline 
+\hline
 \end{tabular}
 }
 \vspace{0.05in}
@@ -10456,7 +10461,7 @@ endless possibilities of user-defined types and their use in GraphBLAS.
 
 \newpage
 %-------------------------------------------------------------------------------
-\subsection{User applications using OpenMP or POSIX pthreads} 
+\subsection{User applications using OpenMP or POSIX pthreads}
 %-------------------------------------------------------------------------------
 \label{threads}
 

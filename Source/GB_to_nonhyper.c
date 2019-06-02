@@ -94,7 +94,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
             reduction(+:nvec_nonempty)
         for (int tid = 0 ; tid < ntasks ; tid++)
         {
-            int64_t jstart, jend, my_nvec_nonempty = 0 ; ;
+            int64_t jstart, jend, my_nvec_nonempty = 0 ;
             GB_PARTITION (jstart, jend, n, tid, ntasks) ;
             ASSERT (0 <= jstart && jstart <= jend && jend <= n) ;
 

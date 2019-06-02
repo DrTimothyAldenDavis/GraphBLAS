@@ -203,52 +203,30 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // construct the final C->h
     //--------------------------------------------------------------------------
 
-    // TODO make this a stand-alone function so it can be used elsewhere.
-    // See also GB_add_phase2, which is slightly different.
-
     if (C_is_hyper)
     {
-        int64_t *restrict Cp = C->p ;
-        int64_t *restrict Ch_final ;
-        GB_MALLOC_MEMORY (Ch_final, Cnvec_nonempty, sizeof (int64_t)) ;
-        if (Ch_final == NULL)
+        // create new Cp_new and Ch_new arrays, with no empty vectors
+        int64_t *restrict Cp_new = NULL ;
+        int64_t *restrict Ch_new = NULL ;
+        int64_t nvec_new ;
+        info = GB_hyper_prune (&Cp_new, &Ch_new, &nvec_new, C->p, C->h, Cnvec,
+            Context) ;
+        if (info != GrB_SUCCESS)
         { 
-            // out of memory.  Note that this frees C->p which is Cp on input.
-            // It does not free C->h, which is a shallow pointer to A->h,
-            // B->h, or M->h.
+            // out of memory
             GB_MATRIX_FREE (&C) ;
-            return (GB_OUT_OF_MEMORY) ;
+            return (info) ;
         }
-
-        int64_t cnvec_new = 0 ;
-
-        // TODO do this in parallel.
-        // use a parallel cumulative sum of the Cp > 0 condition, and then an
-        // out-of-place copy to new Ch and Cp arrays.
-        for (int64_t k = 0 ; k < Cnvec ; k++)
-        {
-            int64_t cjnz = Cp [k+1] - Cp [k] ;
-            if (cjnz > 0)
-            { 
-                // keep this vector in Cp and Ch
-                Cp       [cnvec_new] = Cp [k] ;
-                Ch_final [cnvec_new] = Ch [k] ;
-                cnvec_new++ ;
-            }
-        }
-
-        Cp [cnvec_new] = Cp [Cnvec] ;
-        C->nvec = cnvec_new ;
-        ASSERT (cnvec_new == Cnvec_nonempty) ;
-        // reduce the size of Cp and Ch (this cannot fail)
-        bool ok ;
-        GB_REALLOC_MEMORY (C->p, cnvec_new, GB_IMAX (2, Cnvec+1),
-            sizeof (int64_t), &ok) ;
-        ASSERT (ok) ;
-        // transplant Ch_final into C->h
-        C->h = Ch_final ;
+        // transplant the new hyperlist into C
+        GB_FREE_MEMORY (C->p, Cnvec+1, sizeof (int64_t)) ;
+        // do not free C->h since it is a shallow copy
+        ASSERT (C->h_shallow) ;
+        C->p = Cp_new ;
+        C->h = Ch_new ;
+        C->nvec = nvec_new ;
+        C->plen = nvec_new ;
         C->h_shallow = false ;
-        C->plen = cnvec_new ;
+        ASSERT (C->nvec == C->nvec_nonempty) ;
     }
 
     //--------------------------------------------------------------------------

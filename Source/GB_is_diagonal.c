@@ -10,8 +10,6 @@
 // Returns true if A is a square diagonal matrix, with all diagonal entries
 // present.  Pending tuples are ignored.  Zombies are treated as entries.
 
-// PARALLEL: TODO
-
 #include "GB.h"
 
 bool GB_is_diagonal             // true if A is diagonal
@@ -26,15 +24,7 @@ bool GB_is_diagonal             // true if A is diagonal
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL) ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    int64_t anvec = A->nvec ;
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
+    ASSERT_OK (GB_check (A, "A check diag", GB2)) ;
 
     //--------------------------------------------------------------------------
     // trivial cases
@@ -46,38 +36,89 @@ bool GB_is_diagonal             // true if A is diagonal
     if (n != ncols)
     { 
         // A is rectangular
+        // printf ("diagonal: false (rectangular\n") ;
         return (false) ;
     }
 
-    int64_t nvals = GB_NNZ (A) ;
+    int64_t anz  = GB_NNZ (A) ;
+    int64_t nvec = A->nvec ;
 
-    if (n != nvals)
+    if (n != anz || n != nvec)
     { 
-        // A must have exactly n entries
+        // A must have exactly n entries in n vectors.  A can be sparse or
+        // hypersparse.  If hypersparse, all vectors must be present, so
+        // Ap has size n+1 whether sparse or hypersparse.
+        // printf ("diagonal: false\n") ;
         return (false) ;
     }
 
     //--------------------------------------------------------------------------
-    // examine each column of A
+    // determine the number of threads to use
     //--------------------------------------------------------------------------
 
+    // Break the work into lots of tasks so the early-exit can be exploited.
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
+    int ntasks = (nthreads == 1) ? 1 : (256 * nthreads) ;
+    ntasks = GB_IMIN (ntasks, n) ;
+    ntasks = GB_IMAX (ntasks, 1) ;
+
+    //--------------------------------------------------------------------------
+    // examine each vector of A
+    //--------------------------------------------------------------------------
+
+    const int64_t *restrict Ap = A->p ;
     const int64_t *restrict Ai = A->i ;
 
-    // TODO do this in parallel.  Needs early exit
-    GBI_for_each_vector (A)
-    { 
-        GBI_jth_iteration (j, p, pend) ;
-        int64_t ajnz = pend - p ;
-        if (ajnz != 1)
-        { 
-            // A(:,j) must have exactly one entry
-            return (false) ;
+    int diagonal = true ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    for (int tid = 0 ; tid < ntasks ; tid++)
+    {
+
+        //----------------------------------------------------------------------
+        // check for early exit
+        //----------------------------------------------------------------------
+
+        int diag = true ;
+        {
+            #pragma omp atomic read
+            diag = diagonal ;
         }
-        int64_t i = Ai [p] ;
-        if (i != j)
-        { 
-            // the single entry must be A(i,i)
-            return (false) ;
+        if (!diag) continue ;
+
+        //----------------------------------------------------------------------
+        // check if vectors jstart:jend-1 are diagonal
+        //----------------------------------------------------------------------
+
+        int64_t jstart, jend ;
+        GB_PARTITION (jstart, jend, n, tid, ntasks) ;
+        for (int64_t j = jstart ; diag && j < jend ; j++)
+        {
+            int64_t p = Ap [j] ;
+            int64_t ajnz = Ap [j+1] - p ;
+            if (ajnz != 1)
+            {
+                // A(:,j) must have exactly one entry
+                diag = false ;
+            }
+            int64_t i = Ai [p] ;
+            if (i != j)
+            { 
+                // the single entry must be A(i,i)
+                diag = false ;
+            }
+        }
+
+        //----------------------------------------------------------------------
+        // early exit: tell all other tasks to halt
+        //----------------------------------------------------------------------
+
+        if (!diag)
+        {
+            #pragma omp atomic write
+            diagonal = false ;
         }
     }
 
@@ -85,8 +126,9 @@ bool GB_is_diagonal             // true if A is diagonal
     // return result
     //--------------------------------------------------------------------------
 
-    // A is a square diagonal matrix with all entries present on the diagonal
-    A->nvec_nonempty = n ;
-    return (true) ;
+    // printf ("diagonal: %d\n", diagonal) ;
+
+    if (diagonal) A->nvec_nonempty = n ;
+    return ((bool) diagonal) ;
 }
 

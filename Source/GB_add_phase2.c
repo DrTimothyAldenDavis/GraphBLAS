@@ -258,38 +258,31 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     }
 
     //--------------------------------------------------------------------------
-    // prune empty vectors from Ch
+    // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    if (C_is_hyper && Cnvec_nonempty < Cnvec)
+    if (C_is_hyper && C->nvec_nonempty < Cnvec)
     {
-        int64_t *restrict Cp = C->p ;
-        int64_t *restrict Ch = C->h ;
-        int64_t cnvec_new = 0 ;
-
-        // TODO do this in parallel
-        for (int64_t k = 0 ; k < Cnvec ; k++)
-        {
-            int64_t cjnz = Cp [k+1] - Cp [k] ;
-            if (cjnz > 0)
-            { 
-                Cp [cnvec_new] = Cp [k] ;
-                Ch [cnvec_new] = Ch [k] ;
-                cnvec_new++ ;
-            }
+        // create new Cp_new and Ch_new arrays, with no empty vectors
+        int64_t *restrict Cp_new = NULL ;
+        int64_t *restrict Ch_new = NULL ;
+        int64_t nvec_new ;
+        info = GB_hyper_prune (&Cp_new, &Ch_new, &nvec_new, C->p, C->h, Cnvec,
+            Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            GB_MATRIX_FREE (&C) ;
+            return (info) ;
         }
-
-        Cp [cnvec_new] = Cp [Cnvec] ;
-        C->nvec = cnvec_new ;
-        ASSERT (cnvec_new == Cnvec_nonempty) ;
-        // reduce the size of Cp and Ch (this cannot fail)
-        bool ok ;
-        GB_REALLOC_MEMORY (C->p, cnvec_new, GB_IMAX (2, Cnvec+1),
-            sizeof (int64_t), &ok) ;
-        ASSERT (ok) ;
-        GB_REALLOC_MEMORY (C->h, cnvec_new, max_Cnvec, sizeof (int64_t), &ok) ;
-        ASSERT (ok) ;
-        C->plen = cnvec_new ;
+        // transplant the new hyperlist into C
+        GB_FREE_MEMORY (C->p, Cnvec+1, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C->h, Cnvec,   sizeof (int64_t)) ;
+        C->p = Cp_new ;
+        C->h = Ch_new ;
+        C->nvec = nvec_new ;
+        C->plen = nvec_new ;
+        ASSERT (C->nvec == C->nvec_nonempty) ;
     }
 
     //--------------------------------------------------------------------------

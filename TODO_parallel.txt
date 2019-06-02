@@ -29,104 +29,88 @@ All parallel methods need tuning and benchmarking.
 done:
 ----------------------------------------------------------------------
 
-GB_transpose_ix.c
-GB_transpose_op.c
-GB_transpose_bucket.c
-GB_extractTuples.c
-GB_apply_op.c
-GB_dup.c
-GB_build.c
-GB_builder.c:
-GB_reduce_to_vector.c
-GB_select.c
-GB_selector.c
-GB_transplant.c
-GB_cast_array.c
-GB_nvec_nonempty.c
-GB_memcpy.c
-GB_AxB_colscale.c
-GB_AxB_rowscale.c
-GB_to_nonhyper.c
-GB_to_hyper.c
+GB_transpose_ix
+GB_transpose_op
+GB_transpose_bucket
+GB_extractTuples
+GB_apply_op
+GB_dup
+GB_build
+GB_builder
+GB_reduce_to_vector
+GB_select
+GB_selector
+GB_transplant
+GB_cast_array
+GB_nvec_nonempty
+GB_memcpy
+GB_AxB_colscale
+GB_AxB_rowscale
+GB_to_nonhyper
+GB_to_hyper
+GB_is_diagonal
+GB_cumsum
+GB_kron_kernel
+GB_emult
+GB_mask
+GB_hyper_prune
 
 ----------------------------------------------------------------------
 mostly done:
 ----------------------------------------------------------------------
 
-GB_AxB_parallel.c: much is done: mxm nicely parallel for large matrices,
+GB_AxB_parallel: much is done: mxm nicely parallel for large matrices,
     and decent parallelism for mxv when using the dot product.  This is where
     we do C=A*B, for GrB_mxm, GrB_mxv, and GrB_vxm.  *FINE slice methods are
     written but need tuning.  Need better fine-grain methods for mxv and vxm:
     do symbolic analysis phase (column nnz count), and then compute C in place
-    without the final copy.  See for example *dot2.c. Need to do the same for
+    without the final copy.  See for example *dot2. Need to do the same for
     Gustavson's method and for the Heap method.  Need to add the SLICE methods
     to the descriptor.  Need to write a hash-based method.
 
-GB_AxB_flopcount.c: mostly done: reasonably implemented but needs a little work.
+GB_AxB_flopcount: mostly done: reasonably implemented but needs a little work.
     Used by C=A*B for the parallel case, simple for all loop.  Note however the
     early exit, but this is only when nthreads == 1.  Currently, one thread has
     a 'continue' statement but if any thread terminates then all threads could
     break early.
 
-GB_add.c: done, except for final prune of C->h, and the merge when 
-    both A and B are hypersparse.  Modify to tolerate
-    zombies on input, to make GB_wait faster?
+GB_add: done, except for the merge when both A and B are hypersparse.
+    Modify to tolerate zombies on input, to make GB_wait faster?
 
-GB_wait.c: done, except it might be updated when GB_add can tolerate zombies
+GB_wait: done, except it might be updated when GB_add can tolerate zombies
     on input
 
-GB_emult.c: done, except for final prune of C->h.
-
-GB_mask.c: done, except for final prune of C->h
-
-GB_cumsum.c: done, but not as fast as I think it should be.
-    a parallel cumulative-sum.  Used many places.  Note the two variants.
-    Performance of the parallel case is at most 2x speedup, unless the array is
-    already in L3 cache.  Needs more work.
-
-GB_transpose.c: done, except for the qsort.  uses two methods, a qsort-based
+GB_transpose: done, except for the qsort.  uses two methods, a qsort-based
     method and a bucket sort.  Once the qsort is done, need to tune the auto
     selection betweeen the qsort and bucket sort.
 
-GB_reduce_to_scalar.c: done, except needs a better terminal exit
+GB_reduce_to_scalar: done, except needs a better terminal exit
 
 ----------------------------------------------------------------------
 in progress
 ----------------------------------------------------------------------
 
-Template/GB_qsort_template.c: IN PROGRESS
+Template/GB_qsort_template: IN PROGRESS
     Needs a way to set a larger leaf task size.
     Does lots of work, everywhere, for many GraphBLAS operations.
     Odd segfault with 20 threads.  see "TODO"
 
 ----------------------------------------------------------------------
-not started
-----------------------------------------------------------------------
-
-GB_is_diagonal: determines if A is diagonal, for C=A*B.  Very little work to
-    do, and can exit early as soon as it finds a vector k so that A(:,k)
-    contains anything more than a single A(k,k) entry.  So it really needs
-    a parallel early-exit.
-
-GB_kron_kernel.c:
-    Easy, with a 2-phase method.
-
-----------------------------------------------------------------------
 not started:  C=A(I,J) and C(I,J)=A
 ----------------------------------------------------------------------
 
-GB_ijproperties.c: easy
+GB_ijproperties: easy
     determines the properties of I and J for GB_subref_template and
     GB_subassign_kernel.
 
-Template/GB_subref_template.c:
+Template/GB_subref_template:
     Does the work for GrB_extract: A=C(I,J).  The list J can be partitioned and
     called in parallel to work on independent submatrices, like A1=C(I,J1)
     where J1 is the first set of columns in J.  Use a 2-phase method (phase1:
     count # entries, phase2: do the work).  Need to use fine tasks like
     GB_add, GB_emult, and GB_masker.  Note that J can have duplicates.
 
-GB_subassign_kernel.c:
+GB_subassign_kernel:
     This does C(I,J)=A (GrB_assign and GxB_subassign).  Huge file, but can be
     parallel since the main pass does not modify the pattern of C at all,
     except to kill entries by making them zombies.  If a new entry is to be
@@ -134,12 +118,12 @@ GB_subassign_kernel.c:
     its own list, and the lists could be combined at the end.  This would be a
     single-phase method.
 
-GB_assign.c:
+GB_assign:
     Does the work of GrB_*_assign.  Most of the work is in GB_subassign_kernel,
     but does work for the C_replace_phase, to create zombies in C outside of
     the IxJ submatrix.
 
-GB_I_inverse.c:
+GB_I_inverse:
     inverts the explicit list I for GB_subref_template.  A bucket sort; hard to
     parallelize the current algorithm.
 

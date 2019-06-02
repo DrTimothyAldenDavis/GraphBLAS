@@ -119,39 +119,28 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // prune empty vectors from Rh
     //--------------------------------------------------------------------------
 
-    // TODO see GB_add_phase2; this code is identical.
-
-    if (R_is_hyper && Rnvec_nonempty < Rnvec)
+    if (R_is_hyper && R->nvec_nonempty < Rnvec)
     {
-        int64_t *restrict Rp = R->p ;
-        int64_t *restrict Rh = R->h ;
-        int64_t rnvec_new = 0 ;
-
-        // TODO do this in parallel.
-        // use a parallel cumulative sum of the Rp > 0 condition, and then an
-        // out-of-place copy to new Rh and Rp arrays.
-        for (int64_t k = 0 ; k < Rnvec ; k++)
-        {
-            int64_t rjnz = Rp [k+1] - Rp [k] ;
-            if (rjnz > 0)
-            { 
-                Rp [rnvec_new] = Rp [k] ;
-                Rh [rnvec_new] = Rh [k] ;
-                rnvec_new++ ;
-            }
+        // create new Rp_new and Rh_new arrays, with no empty vectors
+        int64_t *restrict Rp_new = NULL ;
+        int64_t *restrict Rh_new = NULL ;
+        int64_t nvec_new ;
+        info = GB_hyper_prune (&Rp_new, &Rh_new, &nvec_new, R->p, R->h, Rnvec,
+            Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            GB_MATRIX_FREE (&R) ;
+            return (info) ;
         }
-
-        Rp [rnvec_new] = Rp [Rnvec] ;
-        R->nvec = rnvec_new ;
-        ASSERT (rnvec_new == Rnvec_nonempty) ;
-        // reduce the size of Rp and Rh (this cannot fail)
-        bool ok ;
-        GB_REALLOC_MEMORY (R->p, rnvec_new, GB_IMAX (2, Rnvec+1),
-            sizeof (int64_t), &ok) ;
-        ASSERT (ok) ;
-        GB_REALLOC_MEMORY (R->h, rnvec_new, max_Rnvec, sizeof (int64_t), &ok) ;
-        ASSERT (ok) ;
-        R->plen = rnvec_new ;
+        // transplant the new hyperlist into R
+        GB_FREE_MEMORY (R->p, GB_IMAX (2, Rnvec+1), sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R->h, max_Rnvec, sizeof (int64_t)) ;
+        R->p = Rp_new ;
+        R->h = Rh_new ;
+        R->nvec = nvec_new ;
+        R->plen = nvec_new ;
+        ASSERT (R->nvec == R->nvec_nonempty) ;
     }
 
     //--------------------------------------------------------------------------

@@ -52,7 +52,7 @@
 // and the version of the GraphBLAS specification it conforms to.  User code
 // can use tests like this:
 //
-//      #if GxB >= GxB_VERSION (2,0,3)
+//      #if GxB_SPEC_VERSION >= GxB_VERSION (2,0,3)
 //      ... use features in GraphBLAS specification 2.0.3 ...
 //      #else
 //      ... only use features in early specifications
@@ -71,14 +71,14 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_DATE "June 1, 2019 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "June 1, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
 #define GxB_SPEC_DATE "May 18, 2018"
-#define GxB_MAJOR 1
-#define GxB_MINOR 2
-#define GxB_SUB   0
+#define GxB_SPEC_MAJOR 1
+#define GxB_SPEC_MINOR 2
+#define GxB_SPEC_SUB   0
 
 #define GxB_IMPLEMENTATION \
         GxB_VERSION (GxB_IMPLEMENTATION_MAJOR, \
@@ -86,13 +86,13 @@
                      GxB_IMPLEMENTATION_SUB)
 
 // The 'about' string the describes this particular implementation of GraphBLAS:
-#define GxB_ABOUT \
+#define GxB_IMPLEMENTATION_ABOUT \
 "SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, "                   \
 "All Rights Reserved.\n"                                                     \
 "http://suitesparse.com  Dept of Computer Sci. & Eng, Texas A&M University\n"
 
 // The GraphBLAS license for this particular implementation of GraphBLAS:
-#define GxB_LICENSE \
+#define GxB_IMPLEMENTATION_LICENSE \
 "SuiteSparse:GraphBLAS, Copyright 2017-2019, Timothy A. Davis\n"             \
 "\n"                                                                         \
 "Licensed under the Apache License, Version 2.0 (the \"License\");\n"        \
@@ -111,10 +111,10 @@
 // GraphBLAS C API version
 //------------------------------------------------------------------------------
 
-#define GxB GxB_VERSION(GxB_MAJOR, GxB_MINOR, GxB_SUB)
+#define GxB_SPEC_VERSION GxB_VERSION(GxB_SPEC_MAJOR,GxB_SPEC_MINOR,GxB_SPEC_SUB)
 
 // The 'spec' string describes the GraphBLAS spec:
-#define GxB_SPEC \
+#define GxB_SPEC_ABOUT \
 "GraphBLAS C API, by Aydin Buluc, Timothy Mattson, Scott McMillan,\n"   \
 "Jose' Moreira, Carl Yang.  Based on \"GraphBLAS Mathematics\" by\n"    \
 "Jeremy Kepner.  See also \"Graph Algorithms in the Language of\n"      \
@@ -126,19 +126,30 @@
 
 #define GXB_SUITESPARSE_GRAPHBLAS
 #define GXB_VERSION(major,minor,sub)    GxB_VERSION(major,minor,sub)
-#define GXB_DATE                        GxB_DATE 
-#define GXB_IMPLEMENTATION_MAJOR        GxB_IMPLEMENTATION_MAJOR 
-#define GXB_IMPLEMENTATION_MINOR        GxB_IMPLEMENTATION_MINOR 
-#define GXB_IMPLEMENTATION_SUB          GxB_IMPLEMENTATION_SUB   
+#define GXB_DATE                        GxB_IMPLEMENTATION_DATE
+#define GXB_IMPLEMENTATION_MAJOR        GxB_IMPLEMENTATION_MAJOR
+#define GXB_IMPLEMENTATION_MINOR        GxB_IMPLEMENTATION_MINOR
+#define GXB_IMPLEMENTATION_SUB          GxB_IMPLEMENTATION_SUB
 #define GXB_IMPLEMENTATION              GxB_IMPLEMENTATION
-#define GXB_ABOUT                       GxB_ABOUT
-#define GXB_LICENSE                     GxB_LICENSE
-#define GXB_SPEC_DATE                   GxB_SPEC_DATE
-#define GXB_MAJOR                       GxB_MAJOR
-#define GXB_MINOR                       GxB_MINOR
-#define GXB_SUB                         GxB_SUB
-#define GXB                             GxB_VERSION(GxB_MAJOR,GxB_MINOR,GxB_SUB)
-#define GXB_SPEC                        GxB_SPEC
+#define GXB_ABOUT                       GxB_IMPLEMENTATION_ABOUT
+#define GXB_LICENSE                     GxB_IMPLEMENTATION_LICENSE
+
+#define GXB_SPEC_DATE   GxB_SPEC_DATE
+#define GXB_MAJOR       GxB_SPEC_MAJOR
+#define GXB_MINOR       GxB_SPEC_MINOR
+#define GXB_SUB         GxB_SPEC_SUB
+#define GXB             GxB_SPEC_VERSION
+#define GXB_SPEC        GxB_SPEC_ABOUT
+
+#define GxB             GxB_SPEC_VERSION
+#define GxB_MAJOR       GxB_SPEC_MAJOR
+#define GxB_MINOR       GxB_SPEC_MINOR
+#define GxB_SUB         GxB_SPEC_SUB
+#define GxB_SPEC        GxB_SPEC_ABOUT
+
+#define GxB_DATE        GxB_IMPLEMENTATION_DATE
+#define GxB_ABOUT       GxB_IMPLEMENTATION_ABOUT
+#define GxB_LICENSE     GxB_IMPLEMENTATION_LICENSE
 
 //------------------------------------------------------------------------------
 // include files required by GraphBLAS
@@ -422,7 +433,7 @@ GrB_Info GrB_Type_new           // create a new GraphBLAS type
 #define GB_STR(x) #x
 
 // GrB_Type_new as a user-callable macro, which allows the name of the ctype
-// to be added to the new type. 
+// to be added to the new type.
 #ifndef NMACRO
 #define GrB_Type_new(utype, sizeof_ctype) \
     GB_Type_new (utype, sizeof_ctype, GB_STR(sizeof_ctype))
@@ -2965,7 +2976,7 @@ GrB_Info GrB_Descriptor_free    // free a descriptor
 //=== SuiteSparse:GraphBLAS options ============================================
 //==============================================================================
 
-// SPEC: GxB*Option* are extensions to the specification.
+// SPEC: GxB_*_Option_* are extensions to the specification.
 
 // The following options modify how SuiteSparse:GraphBLAS stores and operates
 // on its matrices.  The GxB_*Option* methods allow the user to suggest how the
@@ -3738,13 +3749,13 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 // Summary:
 
 // --- assign ------------------------------------------------------------------
-// 
+//
 // GrB_Matrix_assign      C<M>(I,J) += A        M same size as matrix C.
 //                                              A is |I|-by-|J|
-// 
+//
 // GrB_Vector_assign      w<m>(I)   += u        m same size as column vector w.
 //                                              u is |I|-by-1
-// 
+//
 // GrB_Row_assign         C<m'>(i,J) += u'      m is a column vector the same
 //                                              size as a row of C.
 //                                              u is |J|-by-1
@@ -3756,17 +3767,17 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 //                                              j is a scalar.
 //
 // --- subassign ---------------------------------------------------------------
-// 
+//
 // GxB_Matrix_subassign   C(I,J)<M> += A        M same size as matrix A.
 //                                              A is |I|-by-|J|
 //
 // GxB_Vector_subassign   w(I)<m>   += u        m same size as column vector u.
 //                                              u is |I|-by-1
-// 
+//
 // GxB_Row_subassign      C(i,J)<m'> += u'      m same size as column vector u.
 //                                              u is |J|-by-1
 //                                              i is a scalar.
-// 
+//
 // GxB_Col_subassign      C(I,j)<m> += u        m same size as column vector u.
 //                                              u is |I|-by-1
 //                                              j is a scalar.
@@ -5612,16 +5623,16 @@ GxB_LOR_LE_FP64        , GxB_LAND_LE_FP64       , GxB_LXOR_LE_FP64       , GxB_E
 //------------------------------------------------------------------------------
 
 // purely boolean semirings (in the form GxB_(add monoid)_(multipy operator)_BOOL:
-GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      , 
-GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     , 
-GxB_LOR_LOR_BOOL       , GxB_LAND_LOR_BOOL      , GxB_LXOR_LOR_BOOL      , GxB_EQ_LOR_BOOL        , 
-GxB_LOR_LAND_BOOL      , GxB_LAND_LAND_BOOL     , GxB_LXOR_LAND_BOOL     , GxB_EQ_LAND_BOOL       , 
-GxB_LOR_LXOR_BOOL      , GxB_LAND_LXOR_BOOL     , GxB_LXOR_LXOR_BOOL     , GxB_EQ_LXOR_BOOL       , 
-GxB_LOR_EQ_BOOL        , GxB_LAND_EQ_BOOL       , GxB_LXOR_EQ_BOOL       , GxB_EQ_EQ_BOOL         , 
-GxB_LOR_GT_BOOL        , GxB_LAND_GT_BOOL       , GxB_LXOR_GT_BOOL       , GxB_EQ_GT_BOOL         , 
-GxB_LOR_LT_BOOL        , GxB_LAND_LT_BOOL       , GxB_LXOR_LT_BOOL       , GxB_EQ_LT_BOOL         , 
-GxB_LOR_GE_BOOL        , GxB_LAND_GE_BOOL       , GxB_LXOR_GE_BOOL       , GxB_EQ_GE_BOOL         , 
-GxB_LOR_LE_BOOL        , GxB_LAND_LE_BOOL       , GxB_LXOR_LE_BOOL       , GxB_EQ_LE_BOOL         ; 
+GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      ,
+GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     ,
+GxB_LOR_LOR_BOOL       , GxB_LAND_LOR_BOOL      , GxB_LXOR_LOR_BOOL      , GxB_EQ_LOR_BOOL        ,
+GxB_LOR_LAND_BOOL      , GxB_LAND_LAND_BOOL     , GxB_LXOR_LAND_BOOL     , GxB_EQ_LAND_BOOL       ,
+GxB_LOR_LXOR_BOOL      , GxB_LAND_LXOR_BOOL     , GxB_LXOR_LXOR_BOOL     , GxB_EQ_LXOR_BOOL       ,
+GxB_LOR_EQ_BOOL        , GxB_LAND_EQ_BOOL       , GxB_LXOR_EQ_BOOL       , GxB_EQ_EQ_BOOL         ,
+GxB_LOR_GT_BOOL        , GxB_LAND_GT_BOOL       , GxB_LXOR_GT_BOOL       , GxB_EQ_GT_BOOL         ,
+GxB_LOR_LT_BOOL        , GxB_LAND_LT_BOOL       , GxB_LXOR_LT_BOOL       , GxB_EQ_LT_BOOL         ,
+GxB_LOR_GE_BOOL        , GxB_LAND_GE_BOOL       , GxB_LXOR_GE_BOOL       , GxB_EQ_GE_BOOL         ,
+GxB_LOR_LE_BOOL        , GxB_LAND_LE_BOOL       , GxB_LXOR_LE_BOOL       , GxB_EQ_LE_BOOL         ;
 
 //------------------------------------------------------------------------------
 // GxB_resize:  change the size of a matrix or vector

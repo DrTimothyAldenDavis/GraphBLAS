@@ -2885,6 +2885,19 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     GB_Context Context
 ) ;
 
+GrB_Info GB_hyper_prune
+(
+    // output, not allocated on input:
+    int64_t **p_Ap,                 // size nvec+1
+    int64_t **p_Ah,                 // size nvec
+    int64_t *p_nvec,                // # of vectors, all nonempty
+    // input, not modified
+    const int64_t *Ap_old,          // size nvec_old+1
+    const int64_t *Ah_old,          // size nvec_old
+    const int64_t nvec_old,         // original number of vectors
+    GB_Context Context
+) ;
+
 //------------------------------------------------------------------------------
 // critical section for user threads
 //------------------------------------------------------------------------------

@@ -161,7 +161,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             char **date = va_arg (ap, char **) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (date) ;
-            (*date) = GxB_DATE ;
+            (*date) = GxB_IMPLEMENTATION_DATE ;
             break ;
 
         case GxB_LIBRARY_ABOUT :
@@ -170,7 +170,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             char **about = va_arg (ap, char **) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (about) ;
-            (*about) = GxB_ABOUT ;
+            (*about) = GxB_IMPLEMENTATION_ABOUT ;
             break ;
 
         case GxB_LIBRARY_LICENSE :
@@ -179,7 +179,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             char **license = va_arg (ap, char **) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (license) ;
-            (*license) = GxB_LICENSE ;
+            (*license) = GxB_IMPLEMENTATION_LICENSE ;
             break ;
 
         case GxB_LIBRARY_COMPILE_DATE :
@@ -219,11 +219,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             int *api_version = va_arg (ap, int *) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (api_version) ;
-            // TODO rename GxB_MAJOR to GxB_API_MAJOR ... but keep older
-            // #define for backward compatibility
-            api_version [0] = GxB_MAJOR ; 
-            api_version [1] = GxB_MINOR ;
-            api_version [2] = GxB_SUB ;
+            api_version [0] = GxB_SPEC_MAJOR ; 
+            api_version [1] = GxB_SPEC_MINOR ;
+            api_version [2] = GxB_SPEC_SUB ;
             break ;
 
         case GxB_API_DATE :
@@ -241,7 +239,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             char **api_about = va_arg (ap, char **) ;
             va_end (ap) ;
             GB_RETURN_IF_NULL (api_about) ;
-            (*api_about) = GxB_SPEC ;
+            (*api_about) = GxB_SPEC_ABOUT ;
             break ;
 
         case GxB_API_URL :

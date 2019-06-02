@@ -153,8 +153,10 @@ int main (void)
     fprintf (stderr, LINE2 "SuiteSparse:GraphBLAS Version %d.%d.%d, %s\n" LINE2
         "%s" LINE "License: %s" LINE "GraphBLAS API Version %d.%d.%d, %s"
         " (http://graphblas.org)\n%s" LINE2, GxB_IMPLEMENTATION_MAJOR,
-        GxB_IMPLEMENTATION_MINOR, GxB_IMPLEMENTATION_SUB, GxB_DATE, GxB_ABOUT,
-        GxB_LICENSE, GxB_MAJOR, GxB_MINOR, GxB_SUB, GxB_SPEC_DATE, GxB_SPEC) ;
+        GxB_IMPLEMENTATION_MINOR, GxB_IMPLEMENTATION_SUB,
+        GxB_IMPLEMENTATION_DATE,  GxB_IMPLEMENTATION_ABOUT,
+        GxB_IMPLEMENTATION_LICENSE, GxB_SPEC_MAJOR, GxB_SPEC_MINOR,
+        GxB_SPEC_SUB, GxB_SPEC_DATE, GxB_SPEC_ABOUT) ;
     */
 
     char *library ;     GxB_get (GxB_LIBRARY_NAME,         &library) ;
