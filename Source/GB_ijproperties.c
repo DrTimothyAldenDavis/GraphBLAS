@@ -9,10 +9,6 @@
 
 // check a list of indices I and determine its properties
 
-// PARALLEL: TODO. checks the entire set of indices in the array I, if it is a
-// list, to see if any entry is out of bounds, and to determine if it is sorted
-// order.  Similar to the check of I and J in GB_build.
-
 #include "GB.h"
 
 // FUTURE:: if limit=0, print a different message.  see also setEl, extractEl.
@@ -63,13 +59,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     ASSERT (limit >= 0) ;
     ASSERT (limit <= GB_INDEX_MAX) ;
     int64_t imin, imax ;
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // scan I
@@ -169,41 +158,99 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     {
 
         //----------------------------------------------------------------------
+        // determine the number of threads to use
+        //----------------------------------------------------------------------
+
+        GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+        int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
+        int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
+        ntasks = GB_IMIN (ntasks, ni) ;
+        ntasks = GB_IMAX (ntasks, 0) ;
+
+        //----------------------------------------------------------------------
         // I is an array of indices
         //----------------------------------------------------------------------
 
         // scan I to find imin and imax, and validate the list. Also determine
-        // if it is sorted or not.
-
-        // TODO do in parallel; see also the error check of I,J in GB_build
+        // if it is sorted or not, and contigous or not.
 
         imin = limit ;
         imax = -1 ;
-        int64_t ilast = -1 ;
-        for (int64_t inew = 0 ; inew < ni ; inew++)
+
+        #pragma omp parallel for num_threads(nthreads)  \
+            reduction(||:I_unsorted) reduction(&&:I_contig) \
+            reduction(min:imin) reduction(max:imax) schedule(dynamic)
+        for (int tid = 0 ; tid < ntasks ; tid++)
         {
-            int64_t i = I [inew] ;
-            GB_ICHECK (i, limit) ;
-            if (i < ilast)
-            { 
-                // The list I of row indices is out of order, and C=A(I,J) will
-                // need to use qsort to sort each column.  If C=A(I,J)' is
-                // computed, however, this flag will be set back to false,
-                // since qsort is not needed if the result is transposed.
-                I_unsorted = true ;
+            int64_t istart, iend ;
+            GB_PARTITION (istart, iend, ni, tid, ntasks) ;
+            int64_t ilast = (istart == 0) ? -1 : I [istart-1] ;
+            for (int64_t inew = istart ; inew < iend ; inew++)
+            {
+                int64_t i = I [inew] ;
+                if (inew > 0)
+                {
+                    if (i < ilast)
+                    { 
+                        // The list I of row indices is out of order, and
+                        // C=A(I,J) will need to use qsort to sort each column.
+                        // If C=A(I,J)' is computed, however, this flag will be
+                        // set back to false, since qsort is not needed if the
+                        // result is transposed.
+                        I_unsorted = true ;
+                    }
+                    if (i != ilast + 1)
+                    { 
+                        I_contig = false ;
+                    }
+                }
+                imin = GB_IMIN (imin, i) ;
+                imax = GB_IMAX (imax, i) ;
+                ilast = i ;
             }
-            if (inew > 0 && i != ilast + 1)
-            { 
-                I_contig = false ;
-            }
-            imin = GB_IMIN (imin, i) ;
-            imax = GB_IMAX (imax, i) ;
-            ilast = i ;
         }
+
+        #ifdef GB_DEBUG
+        {
+            // check result with one thread
+            bool I_unsorted2 = false ;
+            bool I_contig2 = true ;
+            int64_t imin2 = limit ;
+            int64_t imax2 = -1 ;
+            int64_t ilast = -1 ;
+            for (int64_t inew = 0 ; inew < ni ; inew++)
+            {
+                int64_t i = I [inew] ;
+                if (inew > 0)
+                {
+                    if (i < ilast) I_unsorted2 = true ;
+                    if (i != ilast + 1) I_contig2 = false ;
+                }
+                imin2 = GB_IMIN (imin2, i) ;
+                imax2 = GB_IMAX (imax2, i) ;
+                ilast = i ;
+            }
+            ASSERT (I_unsorted == I_unsorted2) ;
+            ASSERT (I_contig   == I_contig2) ;
+            ASSERT (imin       == imin2) ;
+            ASSERT (imax       == imax2) ;
+        }
+        #endif
+
+        if (ni > 0)
+        {
+            // check the limits
+            GB_ICHECK (imin, limit) ;
+            GB_ICHECK (imax, limit) ;
+        }
+
         if (ni == 1)
         {
             // a single entry does not need to be sorted
-            ASSERT (I [0] == imin && I [0] == imax && !I_unsorted) ;
+            ASSERT (I [0] == imin) ;
+            ASSERT (I [0] == imax) ;
+            ASSERT (I_unsorted == false) ;
+            ASSERT (I_contig   == true) ;
         }
         if (ni == 0)
         {

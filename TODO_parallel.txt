@@ -54,6 +54,7 @@ GB_kron_kernel
 GB_emult
 GB_mask
 GB_hyper_prune
+GB_ijproperties
 
 ----------------------------------------------------------------------
 mostly done:
@@ -98,10 +99,6 @@ Template/GB_qsort_template: IN PROGRESS
 ----------------------------------------------------------------------
 not started:  C=A(I,J) and C(I,J)=A
 ----------------------------------------------------------------------
-
-GB_ijproperties: easy
-    determines the properties of I and J for GB_subref_template and
-    GB_subassign_kernel.
 
 Template/GB_subref_template:
     Does the work for GrB_extract: A=C(I,J).  The list J can be partitioned and
