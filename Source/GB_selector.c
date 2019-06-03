@@ -65,7 +65,7 @@ GrB_Info GB_selector
 
     int64_t anz = GB_NNZ (A) ;
     int64_t anvec = A->nvec ;
-    double work = 8*anvec + (opcode == GB_DIAG_opcode) ? 0 : anz ;
+    double work = 8*anvec + ((opcode == GB_DIAG_opcode) ? 0 : anz) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
