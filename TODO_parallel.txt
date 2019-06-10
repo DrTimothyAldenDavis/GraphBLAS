@@ -70,17 +70,11 @@ GB_AxB_parallel: much is done: mxm nicely parallel for large matrices,
     Gustavson's method and for the Heap method.  Need to add the SLICE methods
     to the descriptor.  Need to write a hash-based method.
 
-GB_AxB_flopcount: mostly done: reasonably implemented but needs a little work.
-    Used by C=A*B for the parallel case, simple for all loop.  Note however the
-    early exit, but this is only when nthreads == 1.  Currently, one thread has
-    a 'continue' statement but if any thread terminates then all threads could
-    break early.
+GB_AxB_flopcount: done, except needs an better early exit.
 
 GB_add_phase0: done, except for the merge when both A and B are hypersparse.
 
-GB_transpose: done, except for the qsort method.  uses two methods, a
-    qsort-based method and a bucket sort.  Once the qsort is done, need to tune
-    the auto selection betweeen the qsort and bucket sort.
+GB_transpose: done, except for rule to select of qsort method
 
 GB_reduce_to_scalar: done, except needs a better terminal exit
 
@@ -121,5 +115,5 @@ do not do at all?:  one minor step for GrB_extract
 GB_I_inverse: requires a fast parallel qsort, if this is to be parallelized.
     inverts the explicit list I for GB_subref.  A bucket sort would be hard to
     parallelize in the current algorithm.  Perhaps leave this for future work,
-    and leave this sequential.
+    and leave this sequential.  Does O(length(I)) work.
 
