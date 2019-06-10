@@ -5,6 +5,9 @@ fprintf ('test86: performance test of of GrB_Matrix_extract\n') ;
 
 rng ('default') ;
 save = nthreads_get ;
+nthreads_max = 2*GB_mex_omp_max_threads ;
+nthread_list = [1 2 3 4 8 16 32 40 64 128 160 256] ;
+nthread_list = nthread_list (nthread_list <= nthreads_max) ;
 
 Prob = ssget (2662)
 
@@ -26,7 +29,7 @@ for subset = [n 1e6 1e4 100]
     S = sparse (cm, cn) ;
     I0 = uint64 (I2) - 1 ;
     J0 = uint64 (J2) - 1 ;
-    for nthreads = [1 2 4]
+    for nthreads = nthread_list
         nthreads_set (nthreads) ;
         C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I0, J0) ;
         t2 = gbresults ;
@@ -49,7 +52,7 @@ for subset = [n 1e6 1e4 100]
     S = sparse (cm, cn) ;
     I0 = uint64 (I2) - 1 ;
     J0.begin = 0 ; J0.inc = 1   ; J0.end = n-1 ;
-    for nthreads = [1 2 4]
+    for nthreads = nthread_list
         nthreads_set (nthreads) ;
         C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I0, J0) ;
         t2 = gbresults ;
@@ -74,7 +77,7 @@ for inc = [1:10 16 64 128 256 1024 100000 1e6 2e6]
     J.begin = 0 ; J.inc = 1   ; J.end = n-1 ;
     [cm cn] = size (C) ;
     S = sparse (cm, cn) ;
-    for nthreads = [1 2 4]
+    for nthreads = nthread_list
         nthreads_set (nthreads) ;
         % C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I, I) ;
           C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I, J) ;
@@ -98,7 +101,7 @@ for hi = [1:10 16 64 128 256 1024 100000 1e6 2e6]
     I.end = hi-1 ;
     [cm cn] = size (C) ;
     S = sparse (cm, cn) ;
-    for nthreads = [1 2 4]
+    for nthreads = nthread_list
         nthreads_set (nthreads) ;
         C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I, I) ;
         t2 = gbresults ;
@@ -123,7 +126,7 @@ for lo = [1:10 16 64 128 256 1024 100000 1e6 2e6]
         I.end = hi-1 ;
         [cm cn] = size (C) ;
         S = sparse (cm, cn) ;
-        for nthreads = [1 2 4]
+        for nthreads = nthread_list
             nthreads_set (nthreads) ;
             C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I, I) ;
             t2 = gbresults ;
@@ -149,7 +152,7 @@ for lo = [1:10 16 64 128 256 1024 100000 1e6 2e6]
         I.end = lo-1 ;
         [cm cn] = size (C) ;
         S = sparse (cm, cn) ;
-        for nthreads = [1 2 4]
+        for nthreads = nthread_list
             nthreads_set (nthreads) ;
             C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I, I) ;
             t2 = gbresults ;
@@ -172,7 +175,7 @@ for inc = [1:10 16 64 128 256 1024 100000 1e6 2e6]
     I.end = 0 ;
     [cm cn] = size (C) ;
     S = sparse (cm, cn) ;
-    for nthreads = [1 2 4]
+    for nthreads = nthread_list
         nthreads_set (nthreads) ;
         C2 = GB_mex_Matrix_extract (S, [ ], [ ], A, I, I) ;
         t2 = gbresults ;
