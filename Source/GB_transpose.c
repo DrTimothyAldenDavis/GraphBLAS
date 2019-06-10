@@ -37,9 +37,9 @@
 // Once that is done, need a better automatic selection between the two methods
 // (also add a new field to the descriptor to choose the method).
 
-#include "GB.h"
-
 // TODO: add option for creating a pattern-only matrix C = pattern(A')
+
+#include "GB.h"
 
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 (
@@ -740,16 +740,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // Construct the "row" indices of C, which are "column" indices of
             // A.  This array becomes the permanent T->i on output.  This phase
             // must be done before Chandle is created below, since that step
-            // destroys A.  See also GB_extractTuples, where J is extracted.
-            // TODO use GB_ek_slice: this is imbalanced for dense vectors.
+            // destroys A.
 
-            GBI_parallel_for_each_vector (A, nthreads)  // TODO:use GB_ek_slice
-            {
-                GBI_for_each_entry (j, p, pend)
-                { 
-                    iwork [p] = j ;
-                }
-            }
+            GB_extract_vector_list (iwork, A, nthreads) ;
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and S)

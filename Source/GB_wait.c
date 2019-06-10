@@ -35,8 +35,6 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
-// PARALLEL: done, but update it when GB_add can tolerate zombies on input
-
 #include "GB.h"
 
 #define GB_FREE_ALL                     \
@@ -288,7 +286,7 @@ GrB_Info GB_wait                // finish all pending computations
         // If anz1 is zero, or small compared to anz0, then it is faster to
         // leave A0 unmodified, and to update just A1.
 
-        // TODO this does not tolerate zombies.  So do it only if A has no
+        // FUTURE:: this does not tolerate zombies.  So do it only if A has no
         // zombies on input.  Or, when GB_add can tolerate zombies, set the
         // Aslice [1] to start at the first zombie.  Keep track of the vector
         // containing the first zombie.
@@ -413,7 +411,7 @@ GrB_Info GB_wait                // finish all pending computations
         // into A.  The nzmax of A is tight, with no room for future
         // incremental growth.
 
-        // TODO: if GB_add could tolerate zombies in A, then the initial
+        // FUTURE:: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
         GB_OK (GB_add (&S, A->type, A->is_csc, NULL, A, T, NULL, Context)) ;

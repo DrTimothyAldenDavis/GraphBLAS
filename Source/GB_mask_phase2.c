@@ -22,10 +22,6 @@
 // This function either frees Rp and Rh, or transplants then into R, as R->p
 // and R->h.  Either way, the caller must not free them.
 
-// PARALLEL: done, except for the last phase, to prune empty vectors from R,
-// if it is hypersparse with empty vectors.  Takes O(R->nvec time), and is
-// not always used.
-
 #include "GB.h"
 
 GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)

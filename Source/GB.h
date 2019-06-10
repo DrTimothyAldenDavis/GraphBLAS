@@ -2644,6 +2644,15 @@ bool GB_size_t_multiply     // true if ok, false if overflow
     const size_t b
 ) ;
 
+void GB_extract_vector_list
+(
+    // output:
+    int64_t *restrict J,        // size nnz(A) or more
+    // input
+    const GrB_Matrix A,
+    int nthreads
+) ;
+
 GrB_Info GB_extractTuples       // extract all tuples from a matrix
 (
     GrB_Index *I_out,           // array for returning row indices of tuples
@@ -4200,25 +4209,6 @@ static inline void GBI1_start
 #define GB_PRAGMA(x) _Pragma (#x)
 
 #define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
-
-#define GB_PRAGMA_PARALLEL_FOR(nthreads)                                    \
-    GB_PRAGMA (omp parallel for num_threads (nthreads) schedule (static,1))
-
-// iterate in parallel across all vectors in the matrix A, partitioned by nnz
-#define GBI_parallel_for_each_vector_with_iter(Iter,A,nthreads)             \
-    GBI_single_iterator Iter ;                                              \
-    int64_t Iter ## _Slice [nthreads+1] ;                                   \
-    GB_pslice (Iter ## _Slice, A, nthreads) ;                               \
-    GBI1_init (&Iter, A) ;                                                  \
-    GB_PRAGMA_PARALLEL_FOR (nthreads)                                       \
-    for (int Iter ## _tid = 0 ; Iter ## _tid < nthreads ; Iter ## _tid++)   \
-        for (int64_t Iter ## _k = Iter ## _Slice [Iter ## _tid] ;           \
-                     Iter ## _k < Iter ## _Slice [Iter ## _tid+1] ;         \
-                     Iter ## _k++)
-
-// iterate in parallel across all vectors in the matrix A, partitioned by nnz
-#define GBI_parallel_for_each_vector(A,nthreads)                            \
-     GBI_parallel_for_each_vector_with_iter (Iter,A,nthreads)
 
 //------------------------------------------------------------------------------
 // GBIk_multi_iterator: iterate over vectors of multiple matrices

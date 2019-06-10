@@ -33,8 +33,7 @@
 // Any duplicate pending tuples have already been summed in T, so the
 // intersection of T and A is always empty.
 
-// PARALLEL: done, except for phase0 when both A and B are hypersparse, and
-// phase2 to prune empty vectors from C->h.
+// PARALLEL: done, except for phase0 when both A and B are hypersparse
 
 #include "GB.h"
 
@@ -71,7 +70,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     GB_WAIT (A) ;
     GB_WAIT (B) ;
 
-    // TODO tolerate zombies in A (at least) for GB_wait.
+    // FUTURE:: tolerate zombies in A (at least) for GB_wait.
 
     //--------------------------------------------------------------------------
     // initializations

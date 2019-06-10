@@ -16,7 +16,7 @@ for nth = [2 1]
     test82
     test86
 
-    debug_on
+    debug_off
     gb
     testc3
     testc4

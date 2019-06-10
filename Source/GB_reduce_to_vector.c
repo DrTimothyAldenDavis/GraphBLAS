@@ -222,9 +222,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ap = A->p ;
 
-        // TODO do this in parallel
-        //      #pragma omp parallel for num_threads(nthreads) \\
-        //          schedule(static) reduction(+:nzombies)
+        int nthreads_for_anvec = GB_nthreads (anvec, chunk, nthreads_max) ;
+        #pragma omp parallel for num_threads(nthreads_for_anvec) \
+            schedule(static) reduction(+:nzombies)
         for (int64_t k = 0 ; k < anvec ; k++)
         {
             // if A(:,j) is empty, then the entry in T becomes a zombie
@@ -354,8 +354,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
         if (nzombies > 0)
         {
-            // TODO: if GB_accum_mask could tolerate zombies in T on input,
-            // this could be skipped
             ASSERT (GB_VECTOR_OK (T)) ;
             ASSERT (!GB_PENDING (T)) ;
             ASSERT (GB_ZOMBIES (T)) ;

@@ -21,8 +21,6 @@
 // This function either frees Cp or transplants it into C, as C->p.  Either
 // way, the caller must not free it.
 
-// PARALLEL: done, except for the last phase, to prune empty vectors from C.
-
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"

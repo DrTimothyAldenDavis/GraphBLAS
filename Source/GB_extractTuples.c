@@ -111,14 +111,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
 
     if (J != NULL)
     {
-        // TODO: use GB_ek_slice; this is imbalanced for dense vectors
-        GBI_parallel_for_each_vector (A, nthreads)  // TODO:use GB_ek_slice
-        {
-            GBI_for_each_entry (j, p, pend)
-            { 
-                J [p] = j ;
-            }
-        }
+        GB_extract_vector_list ((int64_t *) J, A, nthreads) ;
     }
 
     //--------------------------------------------------------------------------
