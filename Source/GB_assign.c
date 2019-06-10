@@ -534,14 +534,18 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (C_is_csc)
             { 
                 ASSERT (J == J2 || J == Cols) ;
-                info = GB_subref_numeric (&SubMask, true, M,
-                    J, nj, GrB_ALL, 1, true, Context) ;
+                // info = GB_subref_numeric (&SubMask, true, M,
+                //     J, nj, GrB_ALL, 1, true, Context) ;
+                info = GB_subref (&SubMask, true, M,
+                    J, nj, GrB_ALL, 1, false, true, Context) ;
             }
             else
             { 
                 ASSERT (I == I2 || I == Cols) ;
-                info = GB_subref_numeric (&SubMask, true, M,
-                    I, ni, GrB_ALL, 1, true, Context) ;
+                // info = GB_subref_numeric (&SubMask, true, M,
+                //    I, ni, GrB_ALL, 1, true, Context) ;
+                info = GB_subref (&SubMask, true, M,
+                    I, ni, GrB_ALL, 1, false, true, Context) ;
             }
             ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_VECTOR_OK (SubMask))) ;
         }
@@ -553,14 +557,18 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (C_is_csc)
             { 
                 ASSERT (I == I2 || I == Rows) ;
-                info = GB_subref_numeric (&SubMask, true, M,
-                    I, ni, GrB_ALL, 1, true, Context) ;
+                // info = GB_subref_numeric (&SubMask, true, M,
+                //     I, ni, GrB_ALL, 1, true, Context) ;
+                info = GB_subref (&SubMask, true, M,
+                    I, ni, GrB_ALL, 1, false, true, Context) ;
             }
             else
             { 
                 ASSERT (J == J2 || J == Rows) ;
-                info = GB_subref_numeric (&SubMask, true, M,
-                    J, nj, GrB_ALL, 1, true, Context) ;
+                // info = GB_subref_numeric (&SubMask, true, M,
+                //    J, nj, GrB_ALL, 1, true, Context) ;
+                info = GB_subref (&SubMask, true, M,
+                    J, nj, GrB_ALL, 1, false, true, Context) ;
             }
             ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_VECTOR_OK (SubMask))) ;
         }
@@ -569,13 +577,17 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // SubMask = M (I,J)
             if (M->is_csc == C_is_csc)
             { 
-                info = GB_subref_numeric (&SubMask, M->is_csc,
-                    M, I, ni, J, nj, true, Context) ;
+                // info = GB_subref_numeric (&SubMask, M->is_csc,
+                //     M, I, ni, J, nj, true, Context) ;
+                info = GB_subref (&SubMask, M->is_csc,
+                    M, I, ni, J, nj, false, true, Context) ;
             }
             else
             { 
-                info = GB_subref_numeric (&SubMask, M->is_csc,
-                    M, J, nj, I, ni, true, Context) ;
+                // info = GB_subref_numeric (&SubMask, M->is_csc,
+                //     M, J, nj, I, ni, true, Context) ;
+                info = GB_subref (&SubMask, M->is_csc,
+                    M, J, nj, I, ni, false, true, Context) ;
             }
         }
         if (info != GrB_SUCCESS)

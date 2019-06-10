@@ -176,15 +176,11 @@ for k1 = k1test % 1:length (classes)
                                 % A+B
                                 %---------------------------------------
 
-% here = 1 ; save gunk C accum op A B dnn here
-
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 GB_spec_compare (C0, C1) ;
-
-% here = 2 ; save gunk w accum op u v dnn here
 
                                 w0 = GB_spec_eWiseAdd_Vector ...
                                     (w, [ ], accum, op, u, v, dnn);
@@ -196,8 +192,6 @@ for k1 = k1test % 1:length (classes)
                                 % A'+B
                                 %---------------------------------------
 
-% here = 3 ; save gunk C accum op AT B dtn here
-
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, AT, B, dtn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
@@ -207,8 +201,6 @@ for k1 = k1test % 1:length (classes)
                                 %---------------------------------------
                                 % A+B'
                                 %---------------------------------------
-
-% here = 4 ; save gunk C accum op A BT dnt here
 
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, A, BT, dnt);
@@ -220,8 +212,6 @@ for k1 = k1test % 1:length (classes)
                                 % A'+B'
                                 %---------------------------------------
 
-% here = 5 ; save gunk C accum op AT BT dtt here
-
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, [ ], accum, op, AT, BT, dtt);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
@@ -232,15 +222,11 @@ for k1 = k1test % 1:length (classes)
                                 % A.*B
                                 %---------------------------------------
 
-% here = 6 ; save gunk C accum op A B dnn here
-
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, A, B, dnn);
                                 GB_spec_compare (C0, C1) ;
-
-% here = 7 ; save gunk w accum op u v dnn here
 
                                 w0 = GB_spec_eWiseMult_Vector ...
                                     (w, [ ], accum, op, u, v, dnn);
@@ -252,8 +238,6 @@ for k1 = k1test % 1:length (classes)
                                 % A'.*B
                                 %---------------------------------------
 
-% here = 8 ; save gunk C accum op AT B dtn here
-
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, AT, B, dtn);
                                 C1 = GB_mex_eWiseMult_Matrix ...
@@ -264,8 +248,6 @@ for k1 = k1test % 1:length (classes)
                                 % A.*B'
                                 %---------------------------------------
 
-% here = 9 ; save gunk C accum op A BT dnt here
-
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, A, BT, dnt);
                                 C1 = GB_mex_eWiseMult_Matrix ...
@@ -275,8 +257,6 @@ for k1 = k1test % 1:length (classes)
                                 %---------------------------------------
                                 % A'.*B'
                                 %---------------------------------------
-
-% here = 10 ; save gunk C accum op AT BT dtt here
 
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, [ ], accum, op, AT, BT, dtt);
@@ -304,15 +284,11 @@ for k1 = k1test % 1:length (classes)
                                 % A+B, with mask
                                 %---------------------------------------
 
-% here = 11 ; save gunk C Mask accum op A B dnn here
-
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, Mask, accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
                                     (C, Mask, accum, op, A, B, dnn);
                                 GB_spec_compare (C0, C1) ;
-
-% here = 12 ; save gunk w mask accum op u v dnn here
 
                                 w0 = GB_spec_eWiseAdd_Vector ...
                                     (w, mask, accum, op, u, v, dnn);
@@ -324,8 +300,6 @@ for k1 = k1test % 1:length (classes)
                                 % A'+B, with mask
                                 %---------------------------------------
 
-% here = 13 ; save gunk C Mask accum op AT B dtn here
-
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, Mask, accum, op, AT, B, dtn);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
@@ -335,8 +309,6 @@ for k1 = k1test % 1:length (classes)
                                 %---------------------------------------
                                 % A+B', with mask
                                 %---------------------------------------
-
-% here = 14 ; save gunk C Mask accum op A BT dnt here
 
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, Mask, accum, op, A, BT, dnt);
@@ -348,8 +320,6 @@ for k1 = k1test % 1:length (classes)
                                 % A'+B', with mask
                                 %---------------------------------------
 
-% here = 15 ; save gunk C Mask accum op AT BT dtt here
-
                                 C0 = GB_spec_eWiseAdd_Matrix ...
                                     (C, Mask, accum, op, AT, BT, dtt);
                                 C1 = GB_mex_eWiseAdd_Matrix ...
@@ -360,15 +330,11 @@ for k1 = k1test % 1:length (classes)
                                 % A.*B, with mask
                                 %---------------------------------------
 
-% here = 16 ; save gunk C Mask accum op A B dnn here
-
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, Mask, accum, op, A, B, dnn);
                                 C1 = GB_mex_eWiseMult_Matrix ...
                                     (C, Mask, accum, op, A, B, dnn);
                                 GB_spec_compare (C0, C1) ;
-
-% here = 17 ; save gunk w mask accum op u v dnn here
 
                                 w0 = GB_spec_eWiseMult_Vector ...
                                     (w, mask, accum, op, u, v, dnn);
@@ -380,8 +346,6 @@ for k1 = k1test % 1:length (classes)
                                 % A'.*B, with mask
                                 %---------------------------------------
 
-% here = 18 ; save gunk C Mask accum op AT B dtn here
-
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, Mask, accum, op, AT, B, dtn);
                                 C1 = GB_mex_eWiseMult_Matrix ...
@@ -392,8 +356,6 @@ for k1 = k1test % 1:length (classes)
                                 % A.*B', with mask
                                 %---------------------------------------
 
-% here = 19 ; save gunk C Mask accum op A BT dnt here
-
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, Mask, accum, op, A, BT, dnt);
                                 C1 = GB_mex_eWiseMult_Matrix ...
@@ -403,8 +365,6 @@ for k1 = k1test % 1:length (classes)
                                 %---------------------------------------
                                 % A'.*B', with mask
                                 %---------------------------------------
-
-% here = 20 ; save gunk C Mask accum op AT BT dtt here
 
                                 C0 = GB_spec_eWiseMult_Matrix ...
                                     (C, Mask, accum, op, AT, BT, dtt);

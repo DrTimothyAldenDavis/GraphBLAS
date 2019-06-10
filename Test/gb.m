@@ -17,7 +17,7 @@ else
     fprintf ('    malloc debug: off\n') ;
 end
 
-fprintf ('    max nthreads: %d\n', nthreads_max) ;
+fprintf ('    current max nthreads: %d\n', nthreads_max) ;
 
 nthreads = nthreads_get ;
 fprintf ('    # of threads to use (nthreads_get/set): %d\n', nthreads) ;
@@ -25,6 +25,7 @@ fprintf ('    # of threads to use (nthreads_get/set): %d\n', nthreads) ;
 ncores = feature ('numcores') ;
 fprintf ('    # of cores for MATLAB: %d\n', ncores) ;
 
+fprintf ('    OpenMP max threads: %d\n', GB_mex_omp_max_threads) ;
 
 switch (threading)
     case {0}

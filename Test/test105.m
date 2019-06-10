@@ -25,7 +25,6 @@ for m = [0 1 5 100]
                     M = GB_spec_random (m, n, d, 100, 'double', ...
                         is_csc, is_hyper, hyper_ratio) ;
 
-% here = 1 ; save gunk C A B here
                     % C = A+B, no mask
                     C0 = GB_spec_eWiseAdd_Matrix (C, [ ], [ ], ...
                                                  'plus', A, B, [ ], 'test') ;
@@ -33,7 +32,6 @@ for m = [0 1 5 100]
                                                  'plus', A, B, [ ], 'test') ;
                     GB_spec_compare (C0, C1) ;
 
-% here = 2 ; save gunk C A B M here
                     % C = A+B, with mask
                     C0 = GB_spec_eWiseAdd_Matrix (C, M, [ ], ...
                                                  'plus', A, B, [ ], 'test') ;

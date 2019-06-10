@@ -62,20 +62,5 @@
             }
         }
     }
-
-    #if 0
-    GBI_parallel_for_each_vector (A, nthreads)
-    {
-        GBI_jth_iteration (j, pA, pA_end) ;
-        int64_t ajnz = pA_end - pA ;
-        if (ajnz == 0) continue ;
-        GB_GETB (djj, Dx, j) ;
-        for ( ; pA < pA_end ; pA++)
-        {
-            GB_GETA (aij, Ax, pA) ;
-            GB_BINOP (GB_CX (pA), aij, djj) ;
-        }
-    }
-    #endif
 }
 

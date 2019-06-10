@@ -428,8 +428,9 @@ constructed by dox_headers.m
 \par
  PARALLEL: TODO constructing the I inverse buckets in parallel would require
  synchronization (a critical section for each bucket, or atomics).  A more
- parallel approach would use qsort first, to find duplicates in I, and then
- construct the buckets in parallel after the qsort.
+ parallel approach might use qsort first, to find duplicates in I, and then
+ construct the buckets in parallel after the qsort.  But the time complexity
+ would be higher.
 */
 
 
@@ -797,10 +798,6 @@ constructed by dox_headers.m
 \par
  op may be NULL.  In this case, the intersection of A and B must be empty.
  This is used by GB_wait only, for merging the pending tuple matrix T into A.
-\par
- PARALLEL: done, except for the last phase, to prune empty vectors from C,
- if it is hypersparse with empty vectors.  Takes O(C-\>nvec time), and is
- not always used.
 */
 
 
@@ -1245,10 +1242,6 @@ constructed by dox_headers.m
  That is, count [j] on input is overwritten with the value of
  sum (count [0..j-1]).  count [n] is implicitly zero on input.
  On output, count [n] is the total sum.
-\par
- PARALLEL: done, except the parallel cumsum gets decent speedup only if the
- array is already in L3 cache.  Otherwise, speedup is limited to about 2x.
- The problem is memory-bound.  Needs tuning.
 */
 
 
@@ -1440,12 +1433,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_ewise_cumsum.c
-\brief  GB_ewise_cumsum: cumulative sum of Cp and fine tasks in TaskList
-
-*/
-
-
 /** \file GB_ewise_slice.c
 \brief  GB_ewise_slice: slice the entries and vectors for an ewise operation
 
@@ -1578,6 +1565,17 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_hyper_prune.c
+\brief  GB_hyper_prune: remove empty vectors from a hypersparse Ap, Ah list
+
+\par
+ Removes empty vectors from a hypersparse list.  On input, *Ap and *Ah are
+ assumed to be NULL.  The input arrays Ap_old and Ah_old are not modified,
+ and thus can be shallow content from another matrix.  New hyperlists Ap and
+ Ah are allocated, for nvec vectors, all nonempty.
+*/
+
+
 /** \file GB_hyper_realloc.c
 \brief  GB_hyper_realloc: reallocate a matrix hyperlist
 
@@ -1601,10 +1599,6 @@ constructed by dox_headers.m
 
 \par
  check a list of indices I and determine its properties
-\par
- PARALLEL: TODO. checks the entire set of indices in the array I, if it is a
- list, to see if any entry is out of bounds, and to determine if it is sorted
- order.  Similar to the check of I and J in GB_build.
 */
 
 
@@ -1645,8 +1639,6 @@ constructed by dox_headers.m
 \par
  Returns true if A is a square diagonal matrix, with all diagonal entries
  present.  Pending tuples are ignored.  Zombies are treated as entries.
-\par
- PARALLEL: TODO
 */
 
 
@@ -1715,7 +1707,15 @@ constructed by dox_headers.m
  different.  The type of C is the type of z.  C is hypersparse if either A
  or B are hypersparse.
 \par
- PARALLEL: TODO
+ FUTURE: GB_kron would be faster with built-in types and operators.
+\par
+ FUTURE: at most one thread is used for each vector of C=kron(A,B).  The
+ matrix C is normally very large, but if both A and B are n-by-1, then C is
+ n^2-by-1 and only a single thread is used.  A better method for this case
+ would construct vectors of C in parallel.
+\par
+ FUTURE: each vector C(:,k) takes O(nnz(C(:,k))) work, but this is not
+ accounted for in the parallel load-balancing.
 */
 
 
@@ -2059,6 +2059,17 @@ constructed by dox_headers.m
 \par
  This sort is not stable, but it is used in GraphBLAS only on lists with
  unique integers.  So it does not need to be stable.
+*/
+
+
+/** \file GB_qsort_1b.c
+\brief  GB_qsort_1b: sort a 2-by-n list, using A [0][ ] as the sort key
+
+\par
+ This sort is not stable, but it is used in GraphBLAS only on lists with
+ unique tuples (i,x).  So it does not need to be stable.  Just the first
+ entry i in each tuple (i,x) is used as the sort key.  The second item x in
+ is an arbitrary item of size xsize.
 */
 
 
@@ -2433,9 +2444,8 @@ constructed by dox_headers.m
  function, partition the list J, and call this function for each partition.
  Assuming that pending tuples are first added to a thread's private list, and
  then merged into C when done, C can be modified safely in parallel.  Also
- relies on GB_subref_symbolic, which can be done in parallel (but if J is
- partitioned, GB_subref_symbolic would be called independently for each
- partition).
+ relies on GB_subref, which is parallel (but if J is partitioned, GB_subref
+ could be called independently for each partition).
 */
 
 
@@ -2455,14 +2465,136 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_subref_numeric.c
-\brief  GB_subref_numeric: C = A(I,J) or C = (A(J,I))', extract the values
+/** \file GB_subref.c
+\brief  GB_subref: C = A(I,J)
+
+\par
+ C=A(I,J), either symbolic or numeric.  In a symbolic extraction, Cx [p] is
+ not the value of A(i,j), but its position in Ai,Ax.  That is, pA = Cx [p]
+ means that the entry at position p in C is the same as the entry in A at
+ position pA.  In this case, Cx has a type of int64_t.
+\par
+ Numeric extraction:
+\par
+      Sparse submatrix reference, C = A(I,J), extracting the values.  This is
+      an internal function called by GB_extract with symbolic==false, which
+      does the work of the user-callable GrB_*_extract methods.  It is also
+      called by GB_assign to extract the submask.  No pending tuples or
+      zombies appear in A.
+\par
+ Symbolic extraction:
+\par
+      Sparse submatrix reference, C = A(I,J), extracting the pattern, not the
+      values.  This function is called only by GB_subassign_kernel.  Symbolic
+      extraction creates a matrix C with the same pattern (C-\>p and C-\>i) as
+      numeric extraction, but with different values, C-\>x.  For numeric
+      extracion if C(inew,jnew) = A(i,j), the value of A(i,j) is copied into
+      C(i,j).  For symbolic extraction, its *pointer* is copied into C(i,j).
+      Suppose an entry A(i,j) is held in Ai [pa] and Ax [pa], and it appears
+      in the output matrix C in Ci [pc] and Cx [pc].  Then the two methods
+      differ as follows:
+\par
+          this is the same:
+\par
+          i = Ai [pa] ;           // index i of entry A(i,j)
+\par
+          aij = Ax [pa] ;         // value of the entry A(i,j)
+\par
+          Ci [pc] = inew ;        // index inew of C(inew,jnew)
+\par
+          this is different:
+\par
+          Cx [pc] = aij ;         // for numeric extraction
+\par
+          Cx [pc] = pa ;          // for symbolic extraction
+\par
+      This function is called with symbolic==true by GB_subassign_kernel,
+      which uses it to extract the pattern of C(I,J), for the submatrix
+      assignment C(I,J)=A.  In this case, this function needs to deal with
+      zombie entries.  The GB_subassign_kernel caller uses this function on
+      its C matrix, which is called A here because it is not modified here.
+\par
+      Reading a zombie entry:  A zombie entry A(i,j) has been marked by
+      flipping its index.  The value of a zombie is not important, just its
+      presence in the pattern.  All zombies have been flipped (i \< 0), and
+      all regular entries are not flipped (i \>= 0).  Zombies are entries that
+      have been marked for deletion but have not been removed from the matrix
+      yet, since it's more efficient to delete zombies all at once rather
+      than one at a time.
+\par
+      The symbolic case is zombie-agnostic, in the sense that it does not
+      delete them.  It treats them like regular entries.  However, their
+      normal index must be used, not their flipped indices.  The output
+      matrix C contains all unflipped indices, and its references to zombies
+      and regular entries are identical.  Zombies in A are dealt with later.
+      They cannot be detected in the output C matrix, but they can be
+      detected in A.  Since pa = Cx [pc] holds the position of the entry in
+      A, the entry is a zombie if Ai [pa] has been flipped.
+*/
+
+
+/** \file GB_subref_method.h
+\brief  GB_subref_method: select a method for C(:,k) = A(I,j), for one vector of C
 
 */
 
 
-/** \file GB_subref_symbolic.c
-\brief  GB_subref_symbolic: C = A(I,J), extract the pattern
+/** \file GB_subref_phase0.c
+\brief  GB_subref_phase0: find vectors of C = A(I,J) and determine I,J properties
+
+*/
+
+
+/** \file GB_subref_phase1.c
+\brief  GB_subref_phase1: find \# of entries in C=A(I,J)
+
+\par
+ GB_subref_phase1 counts the number of entries in each vector of C, for
+ C=A(I,J) and then does a cumulative sum to find Cp.
+\par
+ Cp is either freed by phase2, or transplanted into C.
+*/
+
+
+/** \file GB_subref_phase2.c
+\brief  GB_subref_phase2: C=A(I,J)
+
+\par
+ This function either frees Cp and Ch, or transplants then into C, as C-\>p
+ and C-\>h.  Either way, the caller must not free them.
+*/
+
+
+/** \file GB_subref_slice.c
+\brief  GB_subref_slice: construct coarse/fine tasks for C = A(I,J)
+
+\par
+ Determine the tasks for computing C=A(I,J).  The matrix C has Cnvec vectors,
+ and these are divided into coarse and fine tasks.  A coarse task will
+ compute one or more whole vectors of C.  A fine task operates on a slice of
+ a single vector of C.  The slice can be done by the \# of entries in the
+ corresponding vector of A, or by the list of indices I, depending on how the
+ work is done for that method.
+\par
+ The (kC)th vector will access A(imin:imax,kA) in Ai,Ax [pA:pA_end-1], where
+ pA = Ap_start [kC] and pA_end = Ap_end [kC].
+\par
+ The computation of each vector C(:,kC) = A(I,kA) is by done using one of 12
+ different cases, depending on the vector, as determined by GB_subref_method.
+ Not all vectors in C are computed using the same method.
+\par
+ Note that J can have duplicates.  kC is unique (0:Cnvec-1) but the
+ corresponding vector kA in A may repeat, if J has duplicates.  Duplicates in
+ J are not exploited, since the coarse/fine tasks are constructed by slicing
+ slicing the list of vectors Ch of size Cnvec, not the vectors of A.
+\par
+ Compare this function with GB_ewise_slice, which constructs coarse/fine
+ tasks for the eWise operations (C=A+B, C=A.*B, and C\<M\>=Z).
+*/
+
+
+/** \file GB_task_cumsum.c
+\brief  GB_task_cumsum: cumulative sum of Cp and fine tasks in TaskList
 
 */
 
@@ -3954,7 +4086,7 @@ constructed by dox_headers.m
 \par
  phase1: does not compute C itself, but just counts the \# of entries in each
  vector of C.  Fine tasks compute the \# of entries in their slice of a
- single vector of C, and the results are cumsum'd in GB_ewise_cumsum.
+ single vector of C, and the results are cumsum'd in GB_task_cumsum.
 \par
  phase2: computes C, using the counts computed by phase1.
 */
@@ -4019,7 +4151,7 @@ constructed by dox_headers.m
 \par
  phase1: does not compute C itself, but just counts the \# of entries in each
  vector of C.  Fine tasks compute the \# of entries in their slice of a
- single vector of C, and the results are cumsum'd in GB_ewise_cumsum.
+ single vector of C, and the results are cumsum'd in GB_task_cumsum.
 \par
  phase2: computes C, using the counts computed by phase1.
 */
@@ -4048,7 +4180,7 @@ constructed by dox_headers.m
 \par
  phase1: does not compute R itself, but just counts the \# of entries in each
  vector of R.  Fine tasks compute the \# of entries in their slice of a
- single vector of R, and the results are cumsum'd in GB_ewise_cumsum.
+ single vector of R, and the results are cumsum'd in GB_task_cumsum.
 \par
  phase2: computes R, using the counts computed by phase1.
 \par
@@ -4240,78 +4372,8 @@ constructed by dox_headers.m
 
 
 /** \file GB_subref_template.c
-\brief  GB_subref_template: C = A(I,J), C = (A(J,I))', or C = pattern (A(I,J))
+\brief  GB_subref_template: C = A(I,J), or C = pattern (A(I,J))
 
-\par
- This template creates two functions:
-\par
- GB_subref_numeric: numeric extraction
-\par
-      Sparse submatrix reference, C = A(I,J), extracting the values.  This is
-      an internal function called by GB_extract that does the work of the
-      user-callable GrB_*_extract methods.  It is also called by GB_assign to
-      extract the submask.  No pending tuples or zombies appear in A.
-\par
- GB_subref_symbolic: symbolic extraction
-\par
-      Sparse submatrix reference, C = A(I,J), extracting the pattern, not the
-      values.  This function is called only by GB_subassign_kernel.  Symbolic
-      extraction creates a matrix C with the same pattern (C-\>p and C-\>i) as
-      numeric extraction, but with different values, C-\>x.  For numeric
-      extracion if C(inew,jnew) = A(i,j), the value of A(i,j) is copied into
-      C(i,j).  For symbolic extraction, its *pointer* is copied into C(i,j).
-      Suppose an entry A(i,j) is held in Ai [pa] and Ax [pa], and it appears
-      in the output matrix C in Ci [pc] and Cx [pc].  Then the two methods
-      differ as follows:
-\par
-          this is the same:
-\par
-          i = Ai [pa] ;           // index i of entry A(i,j)
-\par
-          aij = Ax [pa] ;         // value of the entry A(i,j)
-\par
-          Ci [pc] = inew ;        // index inew of C(inew,jnew)
-\par
-          this is different:
-\par
-          Cx [pc] = aij ;         // for numeric extraction
-\par
-          Cx [pc] = pa ;          // for symbolic extraction
-\par
-      GB_subref_symolic is created if GB_SYMBOLIC is defined.  The function
-      is used by GB_subassign_kernel, which uses it to extract the pattern of
-      C(I,J), for the submatrix assignment C(I,J)=A.  GB_subref_symbolic
-      needs to deal with zombie entries.  The GB_subassign_kernel caller uses
-      this function on its C matrix, which is called A here because it is not
-      modified here.
-\par
-      Reading a zombie entry:  A zombie entry A(i,j) has been marked by
-      flipping its index.  The value of a zombie is not important, just its
-      presence in the pattern.  All zombies have been flipped (i \< 0), and
-      all regular entries are not flipped (i \>= 0).  Zombies are entries that
-      have been marked for deletion but have not been removed from the matrix
-      yet, since it's more efficient to delete zombies all at once rather
-      than one at a time.
-\par
-      GB_subref_pattern may encounter zombies in A.  It is zombie-agnostic,
-      doing nothing to them and treating them like regular entries.  Their
-      normal index must be used, not their flipped indices.  The output
-      matrix C contains all unflipped indices, and its references to zombies
-      and regular entries are identical.  Zombies in A are dealt with later.
-      They cannot be detected in the output C matrix, but they can be
-      detected in A.  Since pa = Cx [pc] holds the position of the entry in
-      A, the entry is a zombie if Ai [pa] has been flipped.
-\par
- Neither function is user-callable.
-\par
- The output matrix is passed as a handle, and created by this function, just
- like GrB_Matrix_new or GrB_Matrix_dup.
-\par
- This function is agnostic as to the CSR/CSC format, except for C_is_csc
- which is the requested format of the output matrix C (either CSR or CSC).
- It is assigned to C-\>is_csc but otherwise has no effect on this function.
-\par
- PARALLEL: TODO
 */
 
 

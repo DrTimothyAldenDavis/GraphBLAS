@@ -7,21 +7,25 @@ grep -r PARALLEL: .
 
 Testing the parallel codes:  Most of my test suite is done through MATLAB
 mexFunctions in the GraphBLAS/Test directory.  The mexFunctions link against
-the GraphBLAS library, so do a "make install" and then use Test/testall.m
-in MATLAB.
+the GraphBLAS library, so do a "make install" and then use Test/testall.m in
+MATLAB.  MATLAB can't link with a library compiled with the icc compiler, so
+use gcc instead.
 
-Alternatively: use the algorithms and main programs in LAGraph (BFS for now),
-GraphBLAS/Demo (BFS, MIS, PageRank, triangle counting) and GraphBLAS/Extras
-(triangle counting, k-truss, and all-k-truss).  The k-truss and all-k-truss do
-lots of matrix-matrix multiplies.  Pagerank is a good test for mxv via "*FINE"
-slice methods.  For the parallel qsort, use LAGraph/BuildMatrix/btest to test
-the parallel performance.  See also Test/DNN.
+Alternatively: use the algorithms and main programs in LAGraph,
+For the parallel qsort, use LAGraph/BuildMatrix/btest to test
+the parallel performance.
 
-A few methods use the GBI_parallel_for_each_vector(A) iterator, but most use
-their own parallel for loop structure.  The more complex iterators (GBI2,
-GBI2s, GBI3, GBI3s) can be ignored for now; they iterate over a set union of 2
-or more lists.  They are currently not easily parallelizable and need to be
-replaced with simpler loops to parallelize them.
+Two methods use the GBI_parallel_for_each_vector(A) iterator, but most use
+their own parallel for loop structure.  The GBI_parallel_for_each_vector
+is used in GB_transpose and GB_extractTuples but it needs to be replaced with
+parallel tasks constructed by GB_ek_slice.  Then GBI_parallel_for_each_vector
+will be deleted.
+
+Only GrB_assign and GxB_subassign use the more complex iterators (GBI2, GBI2s,
+GBI3, GBI3s), which iterate over multiple matrices at the same time.  They can
+be ignored for now; they iterate over a set union of 2 or more lists.  They are
+currently not easily parallelizable and need to be replaced with simpler loops
+to parallelize them.
 
 All parallel methods need tuning and benchmarking.
 
@@ -32,7 +36,6 @@ done:
 GB_transpose_ix
 GB_transpose_op
 GB_transpose_bucket
-GB_extractTuples
 GB_apply_op
 GB_dup
 GB_build
@@ -55,6 +58,8 @@ GB_emult
 GB_mask
 GB_hyper_prune
 GB_ijproperties
+GB_extract
+GB_subref_*
 
 ----------------------------------------------------------------------
 mostly done:
@@ -81,11 +86,14 @@ GB_add: done, except for the merge when both A and B are hypersparse.
 GB_wait: done, except it might be updated when GB_add can tolerate zombies
     on input
 
-GB_transpose: done, except for the qsort.  uses two methods, a qsort-based
-    method and a bucket sort.  Once the qsort is done, need to tune the auto
-    selection betweeen the qsort and bucket sort.
+GB_transpose: done, except for the qsort method.  uses two methods, a
+    qsort-based method and a bucket sort.  Once the qsort is done, need to tune
+    the auto selection betweeen the qsort and bucket sort.  Needs a better
+    parallel loop to construct column indices (see "TODO: use GB_ek_slice").
 
 GB_reduce_to_scalar: done, except needs a better terminal exit
+
+GB_extractTuples: done, except needs GB_ek_slice for better parallelism
 
 ----------------------------------------------------------------------
 in progress
@@ -97,15 +105,8 @@ Template/GB_qsort_template: IN PROGRESS
     Odd segfault with 20 threads.  see "TODO"
 
 ----------------------------------------------------------------------
-not started:  C=A(I,J) and C(I,J)=A
+not started:  GrB_assign and GxB_subassign:  C(I,J)=A
 ----------------------------------------------------------------------
-
-Template/GB_subref_template:
-    Does the work for GrB_extract: A=C(I,J).  The list J can be partitioned and
-    called in parallel to work on independent submatrices, like A1=C(I,J1)
-    where J1 is the first set of columns in J.  Use a 2-phase method (phase1:
-    count # entries, phase2: do the work).  Need to use fine tasks like
-    GB_add, GB_emult, and GB_masker.  Note that J can have duplicates.
 
 GB_subassign_kernel:
     This does C(I,J)=A (GrB_assign and GxB_subassign).  Huge file, but can be
@@ -120,11 +121,15 @@ GB_assign:
     but does work for the C_replace_phase, to create zombies in C outside of
     the IxJ submatrix.
 
-GB_I_inverse:
-    inverts the explicit list I for GB_subref_template.  A bucket sort; hard to
-    parallelize the current algorithm.
-
 GB_ijsort: deletes duplicates, see also GB_builder.  This is only used in
     GB_assign, for scalar expansion and for the C_replace_phase, and only when
     I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
 
+----------------------------------------------------------------------
+do not do at all?:  one minor step for GrB_extract
+----------------------------------------------------------------------
+
+GB_I_inverse: requires a fast parallel qsort, if this is to be parallelized.
+    inverts the explicit list I for GB_subref.  A bucket sort would be hard to
+    parallelize in the current algorithm.  Perhaps leave this for future work,
+    and leave this sequential.

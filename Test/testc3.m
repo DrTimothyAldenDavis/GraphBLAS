@@ -4,6 +4,8 @@ function testc3
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+rng ('default') ;
+
 d = struct ('outp', 'replace') ;
 seed = 1 ;
 for m = [1 5 10 100]

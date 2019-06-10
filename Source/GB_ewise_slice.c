@@ -12,48 +12,13 @@
 // C=op(A,B).  The mask is ignored for computing where to slice the work, but
 // it is sliced once the location has been found.
 
-#include "GB.h"
-
-//------------------------------------------------------------------------------
-// GB_REALLOC_TASK_LIST
-//------------------------------------------------------------------------------
-
-// Allocate or reallocate the TaskList so that it can hold at least ntasks.
-// Double the size if it's too small.
-
-#define GB_REALLOC_TASK_LIST(TaskList,ntasks,max_ntasks)                \
+#define GB_FREE_ALL                                                     \
 {                                                                       \
-    if ((ntasks) >= max_ntasks)                                         \
-    {                                                                   \
-        bool ok ;                                                       \
-        int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;           \
-        int nnew = 2 * (ntasks) + 1 ;                                   \
-        GB_REALLOC_MEMORY (TaskList, nnew, nold,                        \
-            sizeof (GB_task_struct), &ok) ;                             \
-        if (!ok)                                                        \
-        {                                                               \
-            /* out of memory */                                         \
-            GB_FREE_MEMORY (TaskList, nold, sizeof (GB_task_struct)) ;  \
-            GB_FREE_MEMORY (Cwork, Cnvec+1, sizeof (int64_t)) ;         \
-            return (GB_OUT_OF_MEMORY) ;                                 \
-        }                                                               \
-        for (int t = nold ; t < nnew ; t++)                             \
-        {                                                               \
-            TaskList [t].kfirst = -1 ;                                  \
-            TaskList [t].klast  = INT64_MIN ;                           \
-            TaskList [t].pA     = INT64_MIN ;                           \
-            TaskList [t].pA_end = INT64_MIN ;                           \
-            TaskList [t].pB     = INT64_MIN ;                           \
-            TaskList [t].pB_end = INT64_MIN ;                           \
-            TaskList [t].pC     = INT64_MIN ;                           \
-            TaskList [t].pM     = INT64_MIN ;                           \
-            TaskList [t].pM_end = INT64_MIN ;                           \
-            TaskList [t].len    = INT64_MIN ;                           \
-        }                                                               \
-        max_ntasks = 2 * (ntasks) ;                                     \
-    }                                                                   \
-    ASSERT ((ntasks) < max_ntasks) ;                                    \
+    GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;  \
+    GB_FREE_MEMORY (Cwork, Cnvec+1, sizeof (int64_t)) ;                 \
 }
+
+#include "GB.h"
 
 //------------------------------------------------------------------------------
 // GB_ewise_slice
@@ -168,7 +133,7 @@ GrB_Info GB_ewise_slice
     if (Cwork == NULL)
     { 
         // out of memory
-        GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
+        GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
     }
 
@@ -288,7 +253,6 @@ GrB_Info GB_ewise_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    // also see GB_pslice
     int Coarse [ntasks1+1] ;
     Coarse [0] = 0 ;
     int64_t k = 0 ;

@@ -44,7 +44,7 @@ logstat ('test108') ; % boolean monoids
 logstat ('test109') ; % terminal monoid with user-defined type
 logstat ('test110') ; % binary search of M(:,j) in accum/mask
 logstat ('test98') ;  % GB_mex_mxm, typecast on the fly
-logstat ('test92') ;  % GB_subref_symbolic
+logstat ('test92') ;  % GB_subref (symbolic case)
 logstat ('test97') ;  % GB_mex_assign, scalar expansion and zombies
 logstat ('test100') ; % GB_mex_isequal
 logstat ('test01') ;  % error handling

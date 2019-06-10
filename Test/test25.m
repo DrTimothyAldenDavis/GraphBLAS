@@ -61,49 +61,41 @@ for k1 = 1:length(classes)
 
         for k = -m:3:n % Was: [-m:n]
 
-% here = 1 ; save gunk Cin op A k here
             % no mask
             C1 = GB_spec_select (Cin, [], [], op, A, k, []) ;
             C2 = GB_mex_select  (Cin, [], [], op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
-% here = 2 ; save gunk Cin op A k here
             % no mask, with accum
             C1 = GB_spec_select (Cin, [], 'plus', op, A, k, []) ;
             C2 = GB_mex_select  (Cin, [], 'plus', op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
-% here = 3 ; save gunk Cin op A k here
             % with mask
             C1 = GB_spec_select (Cin, Mask, [], op, A, k, []) ;
             C2 = GB_mex_select  (Cin, Mask, [], op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
-% here = 4 ; save gunk Cin op A k here
             % with mask and accum
             C1 = GB_spec_select (Cin, Mask, 'plus', op, A, k, []) ;
             C2 = GB_mex_select  (Cin, Mask, 'plus', op, A, k, [], 'test') ;
             GB_spec_compare (C1, C2) ;
 
-% here = 5 ; save gunk Cin op B dt k here
             % no mask, transpose
             C1 = GB_spec_select (Cin, [], [], op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, [], [], op, B, k, dt, 'test') ;
             GB_spec_compare (C1, C2) ;
 
-% here = 6 ; save gunk Cin op B dt k here
             % no mask, with accum, transpose
             C1 = GB_spec_select (Cin, [], 'plus', op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, [], 'plus', op, B, k, dt, 'test') ;
             GB_spec_compare (C1, C2) ;
 
-% here = 7 ; save gunk Cin op B dt k Mask here
             % with mask, transpose
             C1 = GB_spec_select (Cin, Mask, [], op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, Mask, [], op, B, k, dt, 'test') ;
             GB_spec_compare (C1, C2) ;
 
-% here = 8 ; save gunk Cin op B dt k Mask here
             % with mask and accum, transpose
             C1 = GB_spec_select (Cin, Mask, 'plus', op, B, k, dt) ;
             C2 = GB_mex_select  (Cin, Mask, 'plus', op, B, k, dt, 'test') ;

@@ -9,9 +9,9 @@ if (nargin < 1)
 end
 
 if (fulltests)
-    fprintf ('\n==== exhaustive test for GrB_Matrix_extract:\n') ;
+    fprintf ('\n==== test53: exhaustive test for GrB_Matrix_extract:\n') ;
 else
-    fprintf ('\n==== quick test for GrB_Matrix_extract:\n') ;
+    fprintf ('\n==== test53: quick test for GrB_Matrix_extract:\n') ;
 end
 
 [mult_ops, ~, ~, classes, ~, ~] = GB_spec_opsall ;

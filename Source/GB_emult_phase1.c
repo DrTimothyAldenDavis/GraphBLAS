@@ -77,7 +77,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     // cumulative sum of Cp and fine tasks in TaskList
     //--------------------------------------------------------------------------
 
-    GB_ewise_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads) ;
+    GB_task_cumsum (Cp, Cnvec, Cnvec_nonempty, TaskList, ntasks, nthreads) ;
 
     //--------------------------------------------------------------------------
     // return the result

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_ewise_cumsum: cumulative sum of Cp and fine tasks in TaskList
+// GB_task_cumsum: cumulative sum of Cp and fine tasks in TaskList
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "GB.h"
 
-void GB_ewise_cumsum
+void GB_task_cumsum
 (
     int64_t *Cp,                        // size Cnvec+1
     const int64_t Cnvec,
@@ -38,7 +38,7 @@ void GB_ewise_cumsum
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
         int64_t k = TaskList [taskid].kfirst ;
-        if (TaskList [taskid].klast == -1)
+        if (TaskList [taskid].klast < 0)
         { 
             // Compute the sum of all fine tasks for vector k, in Cp [k].  Also
             // compute the cumulative sum of TaskList [taskid].pC, for the
@@ -68,7 +68,7 @@ void GB_ewise_cumsum
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
         int64_t k = TaskList [taskid].kfirst ;
-        if (TaskList [taskid].klast == -1)
+        if (TaskList [taskid].klast < 0)
         { 
             // TaskList [taskid].pC is currently an offset for this task into
             // C(:,k).  The first fine task for vector k has an offset of zero,
@@ -108,7 +108,7 @@ void GB_ewise_cumsum
         int64_t k = TaskList [t].kfirst ;
         int64_t klast = TaskList [t].klast ;
         // printf ("Task %d: kfirst "GBd" klast "GBd" ", t, k, klast) ;
-        if (klast == -1)
+        if (klast < 0)
         {
             // this is a fine task for vector k
             int64_t pA     = TaskList [t].pA ;
@@ -121,8 +121,8 @@ void GB_ewise_cumsum
             int64_t pM_end = TaskList [t].pM_end ;
             int64_t len    = TaskList [t].len ;
             // printf ("pA ["GBd":"GBd"-1] pB ["GBd":"GBd"-1] pC ["GBd":"GBd
-            //       "-1] pM ["GBd":"GBd"-1] len "GBd"\n",
-            //       pA, pA_end, pB, pB_end, pC, pC_end, pM, pM_end, len) ;
+            // "-1] pM ["GBd":"GBd"-1] len "GBd"\n",
+            // pA, pA_end, pB, pB_end, pC, pC_end, pM, pM_end, len) ;
             ASSERT (k >= 0 && k < Cnvec) ;
             // pA:(pA_end-1) must reside inside A(:,j), and pB:(pB_end-1) must
             // reside inside B(:,j), but these cannot be checked here since A
@@ -137,7 +137,7 @@ void GB_ewise_cumsum
         else
         {
             // this is a coarse task for vectors k:klast, inclusive
-            //   printf ("\n") ;
+            // printf ("\n") ;
             ASSERT (k >= 0 && k < Cnvec) ;
             ASSERT (klast >= 0 && klast <= Cnvec) ;
             ASSERT (k <= klast) ;

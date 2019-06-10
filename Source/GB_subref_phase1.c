@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_phase1: find # of entries in C=A+B or C<M>=A+B
+// GB_subref_phase1: find # of entries in C=A(I,J)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,42 +7,37 @@
 
 //------------------------------------------------------------------------------
 
-// GB_add_phase1 counts the number of entries in each vector of C, for C=A+B or
-// C<M>=A+B  and then does a cumulative sum to find Cp.  GB_add_phase1 is
-// preceded by GB_add_phase0, which finds the non-empty vectors of C.  This
-// phase is done entirely in parallel.
-
-// C, M, A, and B can be standard sparse or hypersparse, as determined by
-// GB_add_phase0.  The mask M may be present, but it is not complemented.
-
-// GB_wait computes A=A+T where T is the matrix of the assembled pending
-// tuples.  A and T are disjoint, so this function does not need to examine
-// the pattern of A and T at all.  No mask is used in this case.
+// GB_subref_phase1 counts the number of entries in each vector of C, for
+// C=A(I,J) and then does a cumulative sum to find Cp.
 
 // Cp is either freed by phase2, or transplanted into C.
 
 #include "GB.h"
+#include "GB_subref_method.h"
 
-GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
+GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 (
     int64_t **Cp_handle,                // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
-    const bool A_and_B_are_disjoint,    // if true, then A and B are disjoint
     // tasks from phase0b:
-    GB_task_struct *restrict TaskList,      // array of structs
-    const int ntasks,                       // # of tasks
-    const int nthreads,                     // # of threads to use
+    GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                   // # of tasks
+    const int nthreads,                 // # of threads to use
+    const int64_t *Mark,                // for I inverse buckets, size A->vlen
+    const int64_t *Inext,               // for I inverse buckets, size nI
+    const int64_t nduplicates,          // # of duplicates, if I inverted
     // analysis from phase0:
+    const int64_t *restrict Ap_start,
+    const int64_t *restrict Ap_end,
     const int64_t Cnvec,
-    const int64_t *restrict Ch,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const bool Ch_is_Mh,                // if true, then Ch == M->h
+    const bool need_qsort,
+    const int Ikind,
+    const int nI,
+    const int64_t Icolon [3],
     // original input:
-    const GrB_Matrix M,                 // optional mask, may be NULL
     const GrB_Matrix A,
-    const GrB_Matrix B,
+    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool symbolic,
     GB_Context Context
 )
 {
@@ -52,18 +47,14 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     ASSERT (Cp_handle != NULL) ;
-    ASSERT (Cnvec_nonempty != NULL) ;
-    ASSERT_OK (GB_check (A, "A for add phase1", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for add phase1", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for add phase1", GB0)) ;
-    ASSERT (A->vdim == B->vdim) ;
-
-    int64_t *restrict Cp = NULL ;
-    (*Cp_handle) = NULL ;
+    ASSERT_OK (GB_check (A, "A for subref phase1", GB0)) ;
 
     //--------------------------------------------------------------------------
     // allocate the result
     //--------------------------------------------------------------------------
+
+    int64_t *restrict Cp = NULL ;
+    (*Cp_handle) = NULL ;
 
     GB_CALLOC_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
     if (Cp == NULL)
@@ -77,7 +68,18 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     //--------------------------------------------------------------------------
 
     #define GB_PHASE_1_OF_2
-    #include "GB_add_template.c"
+    if (symbolic)
+    {
+        #define GB_SYMBOLIC
+        #include "GB_subref_template.c"
+        #undef  GB_SYMBOLIC
+    }
+    else
+    {
+        #define GB_NUMERIC
+        #include "GB_subref_template.c"
+        #undef  GB_NUMERIC
+    }
 
     //--------------------------------------------------------------------------
     // cumulative sum of Cp and fine tasks in TaskList

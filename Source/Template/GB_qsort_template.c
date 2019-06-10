@@ -40,8 +40,6 @@ static inline int64_t GB_partition
     // get the pivot entry
     int64_t Pivot_0 [1] ; Pivot_0 [0] = A_0 [pivot] ;
     #if GB_K > 1
-    // GB_qsort_2a: ignore gcc warning for Pivot_1
-    #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
     int64_t Pivot_1 [1] ; Pivot_1 [0] = A_1 [pivot] ;
     #endif
     #if GB_K > 2

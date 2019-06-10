@@ -263,6 +263,15 @@ int GB_Global_nthreads_max_get ( )
 }
 
 //------------------------------------------------------------------------------
+// OpenMP max_threads
+//------------------------------------------------------------------------------
+
+int GB_Global_omp_get_max_threads ( )
+{
+    return (GB_OPENMP_MAX_THREADS) ;
+}
+
+//------------------------------------------------------------------------------
 // chunk
 //------------------------------------------------------------------------------
 
@@ -344,7 +353,7 @@ void GB_Global_abort_function_set (void (* abort_function) (void))
 
 void GB_Global_abort_function ( )
 {
-    printf ("ABORT: %p %p\n", abort, GB_Global.abort_function) ;
+    // printf ("ABORT: %p %p\n", abort, GB_Global.abort_function) ;
     GB_Global.abort_function ( ) ;
 }
 

@@ -6242,189 +6242,189 @@ two copies: one stored by row, and other by column, and use the copy that
 results in the fastest computation.
 
 %===============================================================================
-\subsection{Meta-algorithm for sparse matrix multiplication}
-\label{meta}
-%===============================================================================
-
-SuiteSparse:GraphBLAS includes three different
-methods for computing \verb'C<M>=A*B', and more may be added in the future.
-It uses a meta-algorithm to select between the methods, described below.
-The default behavior depends on the CSR/CSC format of each matrix (any
-combination can be used for the four matrices), whether or not the mask
-\verb'M' is present, and the descriptor values for transposing \verb'A' and
-\verb'B'.  This gives a large number of possible combinations, so the
-meta-algorithm that selects the method starts by reducing this space of
-combinations.
-
-A matrix stored by row but not transposed has the same data structure as a
-matrix stored by column and transposed.  To make all matrices uniform
-all matrices are viewed as if stored by column, by negating the transpose
-descriptors if they are stored by row.  No data movement takes place.
-
-{\footnotesize
-\begin{verbatim}
-    A_transpose = true if transposed by INP0, false otherwise
-    B_transpose = true if transposed by INP1, false otherwise
-    if (A is stored by row)
-        A_transpose = !A_transpose
-    if (B is stored by row)
-        B_transpose = !B_transpose
-    if (C is stored by row)
-        C_transpose = true
-    else
-        C_transpose = false
-    if (M is present and stored by row)
-        M_transpose = true
-    else
-        M_transpose = false \end{verbatim}}
-
-Now all matrices are treated as if stored by column.  The next phase applies
-the default {\em swap rule}, which removes the transpose of \verb'C' via the
-linear algebraic property $A^{\sf T} B^{\sf T}=(BA)^{\sf T}$.
-
-{\footnotesize
-\begin{verbatim}
-    swap_rule = C_transpose
-    if (swap_rule)
-        swap the matrices A and B
-        A_transpose = !B_transpose
-        B_transpose = !A_transpose
-        C_transpose = !C_transpose
-        M_transpose = !M_transpose \end{verbatim}}
-
-With this default swap rule, \verb'C_transpose' is now false.  All transposes
-below are now explicit, requiring data movement.  Next, the mask is explicitly
-transposed.
-
-{\footnotesize
-\begin{verbatim}
-    if (M_transpose)
-        M = M' (an explicit transpose)
-        M_transpose = false \end{verbatim}}
-
-There are now four cases to handle:
-
-\begin{enumerate}
-
-\item If computing \verb"C<M> = A'*B'":   the matrix \verb'B' is
-    explicitly transposed and then rule (2) below is applied.
-
-\item If computing \verb"C<M> = A'*B"
-
-{\footnotesize
-\begin{verbatim}
-if default method:
-    if M is present, or if A or B have a single column, or if B or A are dense:
-        use the dot method
-    else
-        select the heap or Gustavson method (see below)
-if dot method:
-    compute C<M>=A'*B
-else if heap or Gustavon's method:
-    A=A' ;
-    compute C<M>=A*B \end{verbatim}}
-
-\item If computing \verb"C<M> = A*B'"
-
-{\footnotesize
-\begin{verbatim}
-if default method:
-    select the heap or Gustavson method (see below)
-if dot method (not selected automatically):
-    A=A' ; B=B' ;
-    compute C<M>=A'*B
-else if heap or Gustavon's method:
-    B=B' ;
-    compute C<M>=A*B \end{verbatim}}
-
-\item If computing \verb"C<M> = A*B"
-
-{\footnotesize
-\begin{verbatim}
-if default method:
-    select the heap or Gustavson method (see below)
-if dot method (not selected automatically):
-    A=A' ;
-    compute C<M>=A'*B
-else if heap or Gustavon's method:
-    compute C<M>=A*B \end{verbatim}}
-
-\end{enumerate}
-
-The \verb'GrB_vxm' and \verb'GrB_mxv' operations described in
-Sections~\ref{vxm}~and~\ref{mxv} use the same method above, where the vectors
-\verb'w', \verb'mask', and \verb'u' are treated as \verb'n'-by-1 matrices,
-stored by column.
-
-The default automatic selection between the heap method or Gustavson's method
-for \verb'C<M>=A*B' depends on the sparsity of \verb'A' and \verb'B'.  Let $b$
-be the largest number of entries in any column of \verb'B'.  Let $m$-by-$n$ be
-the dimensions of \verb'C'.  Let $k$ be the inner dimension, so that \verb'A'
-is $m$-by-$k$ and \verb'B' is $k$-by-$n$ (and thus $b \le k$).
-
-The workspace required by the heap method is $5b$ integers, or $40b$ bytes.
-Gustavson's method requires $(s+1)m$ bytes of workspace where $s$ is the number
-of bytes required for the data type of \verb'C' ($s=8$ if \verb'C' is
-\verb'GrB_FP64', for example).  The workspace of Gustavson's method can be
-prohibitive if the matrices are extremely sparse since $m >> b$ or even $m >>
-|{\bf B}|$ is possible.
-
-When the \verb'GxB_AxB_METHOD' is \verb'GxB_DEFAULT' and the \verb'GxB_AxB_DOT'
-method has not been chosen (see above), then the following rules are used to
-select between the heap method and Gustavson's method.
-
-\begin{itemize}
-
-\item {\bf Rule (1):} If $b<2$ use the heap method.  The heap will be at most 2
-in size, which makes the heap method very fast.  It is typically faster than
-Gustavson's method in this case.  Example \verb'B' matrices that fit Rule (1)
-include diagonal matrices, permutation matrices, or upper/lower bidiagonal
-matrices.
-
-\item {\bf Rule (2):}
-    If $|{\bf B}| \le 3k$, or $|{\bf B}| \le m$,  or if $|{\bf A}| \le
-    \min(k,m)$ then the heap method is used if its memory requirements are much
-    less than Gustavson's method.  The heap method can be slow if $b$ is large,
-    however, since modifying the heap after each operation can take as much as
-    $O(\log b)$ time.  So the heap selection is penalized by a $4 \log_2 b$
-    factor.  Thus, the heap method is used if the condition
-    \[
-        (40b) 4 \log_2 b < (s+1)m
-    \]
-    holds; otherwise Gustavson's method is used.  Rules (1) and (2) mean that
-    the heap rule is used for computing $C=PAQ$ where $P$ and $Q$ are
-    permutation matrices or diagonal scaling matrices, which are common use
-    cases.  The heap method uses very little memory and is faster than
-    Gustavson's method for these cases.
-
-\item {\bf Rule (3):}
-    Otherwise, Gustavson's method is used.  Rules (1) and (2) ensure that the
-    workspace requirement for Gustavson's method will not be prohibitive.
-
-\end{itemize}
-
-The automatic selection applies to any mixture of the format of the
-four matrices (CSR or CSC, and hypersparse or non-hypersparse), and any
-combination of the input descriptors that transpose \verb'A' and \verb'B'.
-If all matrices are CSR format, \verb'C<M>=A*B' does not explicitly
-transpose any matrix.
-
-\paragraph{\bf Performance considerations:}
-With such a large space of combinations, the default meta-algorithm may not
-select the fastest method, which is why the method can be selected via the
-\verb'GxB_AxB_METHOD' field of the descriptor.
-
-The meta-algorithm never transposes the final result (\verb"C=A'*B'" is never
-converted into \verb"C=(B*A)'"), although that strategy can lead to better
-performance.
-% A different \verb'swap_rule' would allow for the output matrix to
-% be transposed (with \verb"C=(B*A)'" being computed); a user descriptor may be
-% added in the future to allow for this selection.
-The user application can do this by computing \verb"C'=B*A", and then
-transposing the result via \verb'GrB_transpose' to obtain
-\verb"C=(B*A)'=A'*B'".  This can be faster in some cases, depending on the size
-and sparsity of the three or four matrices (\verb'C', \verb'A', \verb'B', and
-\verb'M' if present).
+% \subsection{Meta-algorithm for sparse matrix multiplication}
+% \label{meta}
+% %===============================================================================
+% 
+% SuiteSparse:GraphBLAS includes three different
+% methods for computing \verb'C<M>=A*B', and more may be added in the future.
+% It uses a meta-algorithm to select between the methods, described below.
+% The default behavior depends on the CSR/CSC format of each matrix (any
+% combination can be used for the four matrices), whether or not the mask
+% \verb'M' is present, and the descriptor values for transposing \verb'A' and
+% \verb'B'.  This gives a large number of possible combinations, so the
+% meta-algorithm that selects the method starts by reducing this space of
+% combinations.
+% 
+% A matrix stored by row but not transposed has the same data structure as a
+% matrix stored by column and transposed.  To make all matrices uniform
+% all matrices are viewed as if stored by column, by negating the transpose
+% descriptors if they are stored by row.  No data movement takes place.
+% 
+% {\footnotesize
+% \begin{verbatim}
+%     A_transpose = true if transposed by INP0, false otherwise
+%     B_transpose = true if transposed by INP1, false otherwise
+%     if (A is stored by row)
+%         A_transpose = !A_transpose
+%     if (B is stored by row)
+%         B_transpose = !B_transpose
+%     if (C is stored by row)
+%         C_transpose = true
+%     else
+%         C_transpose = false
+%     if (M is present and stored by row)
+%         M_transpose = true
+%     else
+%         M_transpose = false \end{verbatim}}
+% 
+% Now all matrices are treated as if stored by column.  The next phase applies
+% the default {\em swap rule}, which removes the transpose of \verb'C' via the
+% linear algebraic property $A^{\sf T} B^{\sf T}=(BA)^{\sf T}$.
+% 
+% {\footnotesize
+% \begin{verbatim}
+%     swap_rule = C_transpose
+%     if (swap_rule)
+%         swap the matrices A and B
+%         A_transpose = !B_transpose
+%         B_transpose = !A_transpose
+%         C_transpose = !C_transpose
+%         M_transpose = !M_transpose \end{verbatim}}
+% 
+% With this default swap rule, \verb'C_transpose' is now false.  All transposes
+% below are now explicit, requiring data movement.  Next, the mask is explicitly
+% transposed.
+% 
+% {\footnotesize
+% \begin{verbatim}
+%     if (M_transpose)
+%         M = M' (an explicit transpose)
+%         M_transpose = false \end{verbatim}}
+% 
+% There are now four cases to handle:
+% 
+% \begin{enumerate}
+% 
+% \item If computing \verb"C<M> = A'*B'":   the matrix \verb'B' is
+%     explicitly transposed and then rule (2) below is applied.
+% 
+% \item If computing \verb"C<M> = A'*B"
+% 
+% {\footnotesize
+% \begin{verbatim}
+% if default method:
+%     if M is present, or if A or B have a single column, or if B or A are dense:
+%         use the dot method
+%     else
+%         select the heap or Gustavson method (see below)
+% if dot method:
+%     compute C<M>=A'*B
+% else if heap or Gustavon's method:
+%     A=A' ;
+%     compute C<M>=A*B \end{verbatim}}
+% 
+% \item If computing \verb"C<M> = A*B'"
+% 
+% {\footnotesize
+% \begin{verbatim}
+% if default method:
+%     select the heap or Gustavson method (see below)
+% if dot method (not selected automatically):
+%     A=A' ; B=B' ;
+%     compute C<M>=A'*B
+% else if heap or Gustavon's method:
+%     B=B' ;
+%     compute C<M>=A*B \end{verbatim}}
+% 
+% \item If computing \verb"C<M> = A*B"
+% 
+% {\footnotesize
+% \begin{verbatim}
+% if default method:
+%     select the heap or Gustavson method (see below)
+% if dot method (not selected automatically):
+%     A=A' ;
+%     compute C<M>=A'*B
+% else if heap or Gustavon's method:
+%     compute C<M>=A*B \end{verbatim}}
+% 
+% \end{enumerate}
+% 
+% The \verb'GrB_vxm' and \verb'GrB_mxv' operations described in
+% Sections~\ref{vxm}~and~\ref{mxv} use the same method above, where the vectors
+% \verb'w', \verb'mask', and \verb'u' are treated as \verb'n'-by-1 matrices,
+% stored by column.
+% 
+% The default automatic selection between the heap method or Gustavson's method
+% for \verb'C<M>=A*B' depends on the sparsity of \verb'A' and \verb'B'.  Let $b$
+% be the largest number of entries in any column of \verb'B'.  Let $m$-by-$n$ be
+% the dimensions of \verb'C'.  Let $k$ be the inner dimension, so that \verb'A'
+% is $m$-by-$k$ and \verb'B' is $k$-by-$n$ (and thus $b \le k$).
+% 
+% The workspace required by the heap method is $5b$ integers, or $40b$ bytes.
+% Gustavson's method requires $(s+1)m$ bytes of workspace where $s$ is the number
+% of bytes required for the data type of \verb'C' ($s=8$ if \verb'C' is
+% \verb'GrB_FP64', for example).  The workspace of Gustavson's method can be
+% prohibitive if the matrices are extremely sparse since $m >> b$ or even $m >>
+% |{\bf B}|$ is possible.
+% 
+% When the \verb'GxB_AxB_METHOD' is \verb'GxB_DEFAULT' and the \verb'GxB_AxB_DOT'
+% method has not been chosen (see above), then the following rules are used to
+% select between the heap method and Gustavson's method.
+% 
+% \begin{itemize}
+% 
+% \item {\bf Rule (1):} If $b<2$ use the heap method.  The heap will be at most 2
+% in size, which makes the heap method very fast.  It is typically faster than
+% Gustavson's method in this case.  Example \verb'B' matrices that fit Rule (1)
+% include diagonal matrices, permutation matrices, or upper/lower bidiagonal
+% matrices.
+% 
+% \item {\bf Rule (2):}
+%     If $|{\bf B}| \le 3k$, or $|{\bf B}| \le m$,  or if $|{\bf A}| \le
+%     \min(k,m)$ then the heap method is used if its memory requirements are much
+%     less than Gustavson's method.  The heap method can be slow if $b$ is large,
+%     however, since modifying the heap after each operation can take as much as
+%     $O(\log b)$ time.  So the heap selection is penalized by a $4 \log_2 b$
+%     factor.  Thus, the heap method is used if the condition
+%     \[
+%         (40b) 4 \log_2 b < (s+1)m
+%     \]
+%     holds; otherwise Gustavson's method is used.  Rules (1) and (2) mean that
+%     the heap rule is used for computing $C=PAQ$ where $P$ and $Q$ are
+%     permutation matrices or diagonal scaling matrices, which are common use
+%     cases.  The heap method uses very little memory and is faster than
+%     Gustavson's method for these cases.
+% 
+% \item {\bf Rule (3):}
+%     Otherwise, Gustavson's method is used.  Rules (1) and (2) ensure that the
+%     workspace requirement for Gustavson's method will not be prohibitive.
+% 
+% \end{itemize}
+% 
+% The automatic selection applies to any mixture of the format of the
+% four matrices (CSR or CSC, and hypersparse or non-hypersparse), and any
+% combination of the input descriptors that transpose \verb'A' and \verb'B'.
+% If all matrices are CSR format, \verb'C<M>=A*B' does not explicitly
+% transpose any matrix.
+% 
+% \paragraph{\bf Performance considerations:}
+% With such a large space of combinations, the default meta-algorithm may not
+% select the fastest method, which is why the method can be selected via the
+% \verb'GxB_AxB_METHOD' field of the descriptor.
+% 
+% The meta-algorithm never transposes the final result (\verb"C=A'*B'" is never
+% converted into \verb"C=(B*A)'"), although that strategy can lead to better
+% performance.
+% % A different \verb'swap_rule' would allow for the output matrix to
+% % be transposed (with \verb"C=(B*A)'" being computed); a user descriptor may be
+% % added in the future to allow for this selection.
+% The user application can do this by computing \verb"C'=B*A", and then
+% transposing the result via \verb'GrB_transpose' to obtain
+% \verb"C=(B*A)'=A'*B'".  This can be faster in some cases, depending on the size
+% and sparsity of the three or four matrices (\verb'C', \verb'A', \verb'B', and
+% \verb'M' if present).
 
 \newpage
 %===============================================================================

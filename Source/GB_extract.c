@@ -166,8 +166,9 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     //--------------------------------------------------------------------------
 
     GrB_Matrix T ;
-    info = GB_subref_numeric (&T, T_is_csc, A, I, ni, J, nj, must_sort,
-        Context) ;
+    // info = GB_subref_numeric (&T, T_is_csc, A, I, ni, J, nj, must_sort,
+    //      Context) ;
+    info = GB_subref (&T, T_is_csc, A, I, ni, J, nj, false, must_sort, Context);
     if (info != GrB_SUCCESS)
     {
         return (info) ;

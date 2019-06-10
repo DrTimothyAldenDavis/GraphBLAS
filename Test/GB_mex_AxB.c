@@ -209,13 +209,6 @@ void mexFunction
     #define GET_DEEP_COPY ;
     #define FREE_DEEP_COPY ;
 
-    if (mxIsComplex (pargin [0]))
-    {
-        // just for testing
-        // METHOD (Complex_finalize ()) ;
-        // METHOD (Complex_init ()) ;
-    }
-
     // get A and B
     A = GB_mx_mxArray_to_Matrix (pargin [0], "A", false, true) ;
     B = GB_mx_mxArray_to_Matrix (pargin [1], "B", false, true) ;

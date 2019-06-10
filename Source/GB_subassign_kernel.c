@@ -55,9 +55,8 @@
 // function, partition the list J, and call this function for each partition.
 // Assuming that pending tuples are first added to a thread's private list, and
 // then merged into C when done, C can be modified safely in parallel.  Also
-// relies on GB_subref_symbolic, which can be done in parallel (but if J is
-// partitioned, GB_subref_symbolic would be called independently for each
-// partition).
+// relies on GB_subref, which is parallel (but if J is partitioned, GB_subref
+// could be called independently for each partition).
 
 #include "GB.h"
 
@@ -721,7 +720,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             // X . 0                    X           X        |
             // . . 0                    .           .        |
 
-            //          S_Extraction Method works well: first extract pattern
+            //          S_Extraction method works well: first extract pattern
             //          of S=C(I,J). Then examine all of A, M, S, and update
             //          C(I,J).  The method needs to examine all entries in
             //          in C(I,J) to delete them if A is not present, so
@@ -748,7 +747,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             // X . 0                    X           X        |
             // . . 0                    .           .        |
 
-            //          S_Extraction Method works well, since all of C(I,J)
+            //          S_Extraction method works well, since all of C(I,J)
             //          needs to be traversed, S=C(I,J) is reasonable to
             //          compute.
 
@@ -790,7 +789,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             //          binary search instead.  Otherwise, use the same
             //          S_Extraction method as the other 3 cases.
 
-            //          S_Extraction Method: if nnz(C(:,j)) + nnz(M) is
+            //          S_Extraction method: if nnz(C(:,j)) + nnz(M) is
             //          similar to nnz(A) then the S_Extraction method would
             //          work well.
 
@@ -815,7 +814,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             // X . 0                    X           X        |
             // . . 0                    .           .        |
 
-            //          S_Extraction Method works well since all entries
+            //          S_Extraction method works well since all entries
             //          in C(I,J) must be examined.
 
             //          With accum: If there is no M and M is not
@@ -1323,7 +1322,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
                 if (jC < 0 || jC >= cvdim)
                 { 
-                    // invalid vector; check them all in GB_subref_symbolic
+                    // invalid vector; check them all in GB_subref
                     break ;
                 }
                 // get the C(:,jC) vector where jC = J [j]
@@ -1372,8 +1371,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         //----------------------------------------------------------------------
 
         // S and C have the same CSR/CSC format.  S is always returned sorted,
-        // in the same hypersparse form as C. This step also checks I and J.
-        info = GB_subref_symbolic (&S, C->is_csc, C, I, ni, J, nj, Context) ;
+        // in the same hypersparse form as C (unless S is empty, in which case
+        // it is always returned as hypersparse). This also checks I and J.
+//      info = GB_subref_symbolic (&S, C->is_csc, C, I, ni, J, nj, Context) ;
+        info = GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, true, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // out of memory or invalid indices I and J
@@ -1428,20 +1429,20 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         // do not create S=C(I,J), but do check I and J
         //----------------------------------------------------------------------
 
-        // GB_subref_symbolic does this task, so do it here when S is not
+        // GB_subref does this task, so do it here when S is not
         // computed.  Make sure I and J are valid for C(I,J)=A
 
         bool I_unsorted, I_contig, J_unsorted, J_contig ;
         int64_t imin, imax, jmin, jmax ;
         info = GB_ijproperties (I, ni, nI, cvlen, Ikind, Icolon,
-                    &I_unsorted, &I_contig, &imin, &imax, true, Context) ;
+                    &I_unsorted, &I_contig, &imin, &imax, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // I invalid
             return (info) ;
         }
         info = GB_ijproperties (J, nj, nJ, cvdim, Jkind, Jcolon,
-                    &J_unsorted, &J_contig, &jmin, &jmax, false, Context) ;
+                    &J_unsorted, &J_contig, &jmin, &jmax, Context) ;
         if (info != GrB_SUCCESS)
         { 
             // J invalid
@@ -1583,7 +1584,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     {
 
         //----------------------------------------------------------------------
-        // METHOD 1: C(I,J)<M> = scalar or +=scalar, !C_replace, !Mask_comp
+        // C(I,J)<M> = scalar or +=scalar, !C_replace, !Mask_comp
         //----------------------------------------------------------------------
 
         // This method iterates across all entries in the mask M, and for each
@@ -1601,7 +1602,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         {
 
             //------------------------------------------------------------------
-            // METHOD 1a (no accum): C(I,J)<M> = scalar
+            // C(I,J)<M> = scalar
             //------------------------------------------------------------------
 
             // time:  O(nnz(M)*log(c)) if c = avg nnz(C(:,j)) C not hyper or
@@ -1618,7 +1619,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 GBI_jth_iteration (j, pM, pM_end) ;
 
                 //-------------------------------------------------------------
-                // C(I,j)<M(:,j> = scalar
+                // C(I,j)<M(:,j)> = scalar
                 //-------------------------------------------------------------
 
                 // get the C(:,jC) vector where jC = J [j]
@@ -1626,6 +1627,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
                 if (pC_end - pC_start == cvlen)
                 {
+
+                    //----------------------------------------------------------
+                    // Method 1: C(I,j)<M(:,j)> = scalar ; C dense, no S
+                    //----------------------------------------------------------
 
                     // C(:,jC) is dense so the binary search of C is not needed
                     GBI_for_each_entry (j, pM, pM_end)
@@ -1661,6 +1666,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 }
                 else
                 {
+
+                    //----------------------------------------------------------
+                    // Method 2: C(I,j)<M(:,j)> = scalar ; C sparse, no S
+                    //----------------------------------------------------------
 
                     // C(:,jC) is sparse; use binary search for C
                     GBI_for_each_entry (j, pM, pM_end)
@@ -1712,10 +1721,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         {
 
             //------------------------------------------------------------------
-            // METHOD 1b (accum): C(I,J)<M> += scalar
+            // C(I,J)<M> += scalar
             //------------------------------------------------------------------
-
-            // time:  same as METHOD 1b
 
             GBI_for_each_vector (M)
             {
@@ -1727,7 +1734,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 GBI_jth_iteration (j, pM, pM_end) ;
 
                 //-------------------------------------------------------------
-                // C(I,j)<M(:,j> += scalar
+                // C(I,j)<M(:,j)> += scalar
                 //-------------------------------------------------------------
 
                 // get the C(:,jC) vector where jC = J [j]
@@ -1735,6 +1742,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
 
                 if (pC_end - pC_start == cvlen)
                 {
+
+                    //----------------------------------------------------------
+                    // Method 3: C(I,j)<M(:,j)> += scalar ; C dense, no S
+                    //----------------------------------------------------------
 
                     // C(:,jC) is dense so the binary search of C is not needed
                     GBI_for_each_entry (j, pM, pM_end)
@@ -1770,6 +1781,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                 }
                 else
                 {
+
+                    //----------------------------------------------------------
+                    // Method 4: C(I,j)<M(:,j)> += scalar ; C sparse, no S
+                    //----------------------------------------------------------
 
                     // C(:,jC) is sparse; use binary search for C
                     GBI_for_each_entry (j, pM, pM_end)
@@ -1822,7 +1837,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     {
 
         //----------------------------------------------------------------------
-        // METHOD 2: assignment without S, accum present, C_replace false
+        // assignment without S, accum present, C_replace false
         //----------------------------------------------------------------------
 
         // This method can only be used if accum is present and C_replace is
@@ -1841,7 +1856,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 2a: C(I,J) += scalar, not using S
+                // C(I,J) += scalar, not using S
                 //--------------------------------------------------------------
 
                 // time: O(nI*nJ*log(c)) if C standard.  O(nI*nJ) if C dense.
@@ -1856,8 +1871,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is dense so binary search of C is not needed
+                        // Method 5: C(I,j) += scalar ; C dense, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is dense so binary search of C is not needed
 
                         // for each iA in I [...]:
                         for (int64_t iA = 0 ; iA < nI ; iA++)
@@ -1881,8 +1898,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is sparse; use binary search for C
+                        // Method 6: C(I,j) += scalar ; C sparse, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is sparse; use binary search for C
 
                         // for each iA in I [...]:
                         for (int64_t iA = 0 ; iA < nI ; iA++)
@@ -1919,13 +1938,12 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 2b: C(I,J)<!M> += scalar, not using S
+                // C(I,J)<!M> += scalar, not using S
                 //--------------------------------------------------------------
 
-                // time: same as METHOD 2a
+                // The case for C(I,J)<M> += scalar, not using S, and C_replace
+                // false already handled by the C_Mask_scalar case.
 
-                // C(I,J)<M> += scalar, not using S, and C_replace false
-                // already handled by the C_Mask_scalar case
                 ASSERT (Mask_comp) ;
                 ASSERT (!C_replace) ;
 
@@ -1948,8 +1966,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is dense so binary search of C is not needed
+                        // Method 7: C(I,j)<!M(I,j)> += scalar ; C dense, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is dense so binary search of C is not needed
 
                         // for each iA in I [...]:
                         for (int64_t iA = 0 ; iA < nI ; iA++)
@@ -2004,8 +2024,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is sparse; use binary search for C
+                        // Method 8: C(I,j)<!M(I,j)> += scalar ; C sparse, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is sparse; use binary search for C
 
                         // for each iA in I [...]:
                         for (int64_t iA = 0 ; iA < nI ; iA++)
@@ -2077,7 +2099,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 2c: C(I,J) += A, not using S
+                // C(I,J) += A, not using S
                 //--------------------------------------------------------------
 
                 // time: O(nnz(A)*log(c)) if C standard. O(nnz(A)) if C dense.
@@ -2105,8 +2127,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is dense so binary search of C is not needed
+                        // Method 9: C(I,j) += A(:,j) ; C dense, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is dense so binary search of C is not needed
 
                         for ( ; pA < pA_end ; pA++)
                         { 
@@ -2136,8 +2160,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is sparse; use binary search for C
+                        // Method 10: C(I,j) += A(:,j) ; C sparse, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is sparse; use binary search for C
 
                         for ( ; pA < pA_end ; pA++)
                         {
@@ -2180,7 +2206,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 2d: C(I,J)<M> += A, not using S
+                // C(I,J)<M> += A or C(I,J)<!M> += A, not using S
                 //--------------------------------------------------------------
 
                 // time: O(nnz(A)*(log(c)+log(md))+mnvec) if C standard and not
@@ -2207,8 +2233,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is dense so binary search of C is not needed
+                        // Method 11: C(I,j)<#M(I,j)> += A(:,j) ; C dense, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is dense so binary search of C is not needed
 
                         for ( ; pA < pA_end ; pA++)
                         {
@@ -2272,8 +2300,10 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
                     {
 
                         //------------------------------------------------------
-                        // C(:,jC) is sparse; use binary search for C
+                        // Method 12: C(I,j)<#M(I,j)> += A(:,j) ; C sparse, no S
                         //------------------------------------------------------
+
+                        // C(:,jC) is sparse; use binary search for C
 
                         for ( ; pA < pA_end ; pA++)
                         {
@@ -2352,7 +2382,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     {
 
         //----------------------------------------------------------------------
-        // METHOD 3: assignment using S_Extraction method, no mask M
+        // assignment using S_Extraction method, no mask M
         //----------------------------------------------------------------------
 
         // 6 cases to consider
@@ -2368,14 +2398,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         {
 
             //------------------------------------------------------------------
-            // METHOD 3a: C(I,J) = scalar or C(I,J) += scalar, using S
+            // C(I,J) = scalar or C(I,J) += scalar, using S
             //------------------------------------------------------------------
 
             if (accum == NULL)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 3a (no accum): C(I,J) = scalar, using S
+                // Method 13: C(I,J) = scalar, using S
                 //--------------------------------------------------------------
 
                 // time: O(nI*nJ)
@@ -2428,7 +2458,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 3a (with accum): C(I,J) += scalar, using S
+                // Method 14: C(I,J) += scalar, using S
                 //--------------------------------------------------------------
 
                 // time: O(nI*nJ)
@@ -2482,14 +2512,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         {
 
             //------------------------------------------------------------------
-            // METHOD 3b: C(I,J) = A or C(I,J) += A, using S
+            // C(I,J) = A or C(I,J) += A, using S
             //------------------------------------------------------------------
 
             if (accum == NULL)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 3b (no accum): C(I,J) = A, using S
+                // Method 15: C(I,J) = A, using S
                 //--------------------------------------------------------------
 
                 // time:  O(nnz(S)+nnz(A)+nvec(S+A))
@@ -2581,10 +2611,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 3b (with accum): C(I,J) += A, using S
+                // Method 16: C(I,J) += A, using S
                 //--------------------------------------------------------------
-
-                // time:  same as METHOD 3b (without accum)
 
                 GBI2_for_each_vector (S, A)
                 {
@@ -2672,14 +2700,14 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
     {
 
         //----------------------------------------------------------------------
-        // METHOD 4: assignment using S_Extraction method, with M
+        // assignment using S_Extraction method, with #M (#M denotes M or !M)
         //----------------------------------------------------------------------
 
         if (scalar_expansion)
         {
 
             //------------------------------------------------------------------
-            // METHOD 4a: C(I,J)<M> = scalar or += scalar, using S
+            // C(I,J)<#M> = scalar or += scalar, using S
             //------------------------------------------------------------------
 
             // 6 cases to consider
@@ -2694,7 +2722,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 4a (no accum): C(I,J)<M> = scalar, using S
+                // Method 17: C(I,J)<#M> = scalar, using S
                 //--------------------------------------------------------------
 
                 // time:  O(nI*nJ)
@@ -2840,7 +2868,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 4a (with accum): C(I,J)<M> += scalar, using S
+                // Method 18: C(I,J)<#M> += scalar, using S
                 //--------------------------------------------------------------
 
                 // time:  O(nI*nJ)
@@ -2987,7 +3015,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
         {
 
             //------------------------------------------------------------------
-            // METHOD 4b: C(I,J)<M> = A or += A, using S
+            // C(I,J)<#M> = A or += A, using S
             //------------------------------------------------------------------
 
             // 12 cases to consider
@@ -3008,7 +3036,7 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 4b (no accum): C(I,J)<M> = A, using S
+                // Method 19: C(I,J)<#M> = A, using S
                 //--------------------------------------------------------------
 
                 // time: O(nnz(S)+nnz(M)+nnz(A)+nvec(S+M+A))
@@ -3185,10 +3213,8 @@ GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
             {
 
                 //--------------------------------------------------------------
-                // METHOD 4b (with accum): C(I,J)<M> += A, using S
+                // Method 20: C(I,J)<#M> += A, using S
                 //--------------------------------------------------------------
-
-                // time: same as METHOD 4b (without accum)
 
                 // GB_accum_mask case: C(:,:)<M> = A
 

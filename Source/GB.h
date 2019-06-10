@@ -382,6 +382,8 @@ bool     GB_Global_GrB_init_called_get ( ) ;
 void     GB_Global_nthreads_max_set (int nthreads_max) ;
 int      GB_Global_nthreads_max_get ( ) ;
 
+int      GB_Global_omp_get_max_threads ( ) ;
+
 void     GB_Global_chunk_set (double chunk) ;
 double   GB_Global_chunk_get ( ) ;
 
@@ -1490,6 +1492,11 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 // pA in Ai,Ax, at pB in Bi,Bx, and (if M is present) at pM in Mi,Mx.  It
 // computes C(:,kfirst), starting at pC in Ci,Cx.
 
+// GB_subref also uses the TaskList.  It has TODO kinds of fine tasks,
+// corresponding to each of the TODO methods used in GB_subref_template.  For
+// those fine tasks, method = -TaskList [taskid].klast defines the method to
+// use.
+
 typedef struct          // task descriptor
 {
     int64_t kfirst ;    // C(:,kfirst) is the first vector in this task.
@@ -1504,6 +1511,42 @@ typedef struct          // task descriptor
     int64_t len ;       // fine task handles a subvector of this length
 }
 GB_task_struct ;
+
+// GB_REALLOC_TASK_LIST: Allocate or reallocate the TaskList so that it can
+// hold at least ntasks.  Double the size if it's too small.
+
+#define GB_REALLOC_TASK_LIST(TaskList,ntasks,max_ntasks)                \
+{                                                                       \
+    if ((ntasks) >= max_ntasks)                                         \
+    {                                                                   \
+        bool ok ;                                                       \
+        int nold = (max_ntasks == 0) ? 0 : (max_ntasks + 1) ;           \
+        int nnew = 2 * (ntasks) + 1 ;                                   \
+        GB_REALLOC_MEMORY (TaskList, nnew, nold,                        \
+            sizeof (GB_task_struct), &ok) ;                             \
+        if (!ok)                                                        \
+        {                                                               \
+            /* out of memory */                                         \
+            GB_FREE_ALL ;                                               \
+            return (GB_OUT_OF_MEMORY) ;                                 \
+        }                                                               \
+        for (int t = nold ; t < nnew ; t++)                             \
+        {                                                               \
+            TaskList [t].kfirst = -1 ;                                  \
+            TaskList [t].klast  = INT64_MIN ;                           \
+            TaskList [t].pA     = INT64_MIN ;                           \
+            TaskList [t].pA_end = INT64_MIN ;                           \
+            TaskList [t].pB     = INT64_MIN ;                           \
+            TaskList [t].pB_end = INT64_MIN ;                           \
+            TaskList [t].pC     = INT64_MIN ;                           \
+            TaskList [t].pM     = INT64_MIN ;                           \
+            TaskList [t].pM_end = INT64_MIN ;                           \
+            TaskList [t].len    = INT64_MIN ;                           \
+        }                                                               \
+        max_ntasks = 2 * (ntasks) ;                                     \
+    }                                                                   \
+    ASSERT ((ntasks) < max_ntasks) ;                                    \
+}
 
 GrB_Info GB_ewise_slice
 (
@@ -1546,7 +1589,7 @@ void GB_slice_vector
     const double target_work        // target work
 ) ;
 
-void GB_ewise_cumsum
+void GB_task_cumsum
 (
     int64_t *Cp,                        // size Cnvec+1
     const int64_t Cnvec,
@@ -2350,6 +2393,15 @@ void GB_qsort_1         // sort array A of size 1-by-n
     GB_Context Context  // for # of threads; use one thread if NULL
 ) ;
 
+void GB_qsort_1b        // sort array A of size 2-by-n, using 1 key (A [0][])
+(
+    int64_t A_0 [ ],    // size n array
+    GB_void A_1 [ ],    // size n array
+    const size_t xsize, // size of entries in A_1
+    const int64_t n,
+    GB_Context Context  // for # of threads; use one thread if NULL
+) ;
+
 void GB_qsort_2a        // sort array A of size 2-by-n, using 1 key (A [0][])
 (
     int64_t A_0 [ ],    // size n array
@@ -2375,43 +2427,138 @@ void GB_qsort_3         // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     GB_Context Context  // for # of threads; use one thread if NULL
 ) ;
 
-GrB_Info GB_subref_numeric      // C = A (I,J), extract the values
+GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (
-    GrB_Matrix *Chandle,        // output C
+    // output
+    GrB_Matrix *Chandle,
+    // input, not modified
     const bool C_is_csc,        // requested format of C
-    const GrB_Matrix A,         // input matrix
-    const GrB_Index *I,         // list of indices, duplicates OK
-    int64_t ni,                 // length of the I array, or special
-    const GrB_Index *J,         // list of vector indices, duplicates OK
-    int64_t nj,                 // length of the J array, or special
+    const GrB_Matrix A,
+    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const int64_t ni,           // length of I, or special
+    const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const int64_t nj,           // length of J, or special
+    const bool symbolic,        // if true, construct Cx as symbolic
     const bool must_sort,       // if true, must return C sorted
     GB_Context Context
 ) ;
 
-GrB_Info GB_subref_symbolic     // C = A (I,J), extract the pattern
+GrB_Info GB_subref_phase0
 (
-    GrB_Matrix *Chandle,        // output C
-    const bool C_is_csc,        // requested format of C
-    const GrB_Matrix A,         // input matrix
-    const GrB_Index *I,         // list of indices, duplicates OK
-    int64_t ni,                 // length of the I array, or special
-    const GrB_Index *J,         // list of vector indices, duplicates OK
-    int64_t nj,                 // length of the J array, or special
+    // output
+    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL
+    int64_t **p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
+    int64_t **p_Ap_end,     // ... and ends at Ap_end [kC] - 1
+    int64_t *p_Cnvec,       // # of vectors in C
+    bool *p_C_is_hyper,     // true if C is hypersparse
+    bool *p_need_qsort,     // true if C must be sorted
+    int *p_Ikind,           // kind of I
+    int64_t *p_nI,          // length of I
+    int64_t Icolon [3],     // for GB_RANGE, GB_STRIDE
+    int64_t *p_nJ,          // length of J
+    // input, not modified
+    const GrB_Matrix A,
+    const GrB_Index *I,     // index list for C = A(I,J), or GrB_ALL, etc.
+    const int64_t ni,       // length of I, or special
+    const GrB_Index *J,     // index list for C = A(I,J), or GrB_ALL, etc.
+    const int64_t nj,       // length of J, or special
+    const bool must_sort,   // true if C must be returned sorted
     GB_Context Context
 ) ;
 
-GrB_Info GB_I_inverse           // invert the I list for GB_subref_template
+GrB_Info GB_subref_slice
+(
+    // output:
+    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
+    int *p_max_ntasks,              // size of TaskList
+    int *p_ntasks,                  // # of tasks constructed
+    int *p_nthreads,                // # of threads for subref operation
+    bool *p_post_sort,              // true if a final post-sort is needed
+    int64_t **p_Mark,               // for I inverse, if needed; size avlen
+    int64_t **p_Inext,              // for I inverse, if needed; size nI
+    int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
+    // from phase0:
+    const int64_t *restrict Ap_start,   // location of A(imin:imax,kA)
+    const int64_t *restrict Ap_end,
+    const int64_t Cnvec,            // # of vectors of C
+    const bool need_qsort,          // true if C must be sorted
+    const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE or GB_LIST
+    const int64_t nI,               // length of I
+    const int64_t Icolon [3],       // for GB_RANGE and GB_STRIDE
+    // original input:
+    const int64_t avlen,            // A->vlen
+    const int64_t anz,              // nnz (A)
+    const GrB_Index *I,
+    GB_Context Context
+) ;
+
+GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
+(
+    int64_t **Cp_handle,                // output of size Cnvec+1
+    int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
+    // tasks from phase0b:
+    GB_task_struct *restrict TaskList,  // array of structs
+    const int ntasks,                   // # of tasks
+    const int nthreads,                 // # of threads to use
+    const int64_t *Mark,                // for I inverse buckets, size A->vlen
+    const int64_t *Inext,               // for I inverse buckets, size nI
+    const int64_t nduplicates,          // # of duplicates, if I inverted
+    // analysis from phase0:
+    const int64_t *restrict Ap_start,
+    const int64_t *restrict Ap_end,
+    const int64_t Cnvec,
+    const bool need_qsort,
+    const int Ikind,
+    const int nI,
+    const int64_t Icolon [3],
+    // original input:
+    const GrB_Matrix A,
+    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
+    const bool symbolic,
+    GB_Context Context
+) ;
+
+GrB_Info GB_subref_phase2   // C=A(I,J)
+(
+    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
+    // from phase1:
+    const int64_t *restrict Cp,         // vector pointers for C
+    const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
+    // from phase0b:
+    const GB_task_struct *restrict TaskList,    // array of structs
+    const int ntasks,                           // # of tasks
+    const int nthreads,                         // # of threads to use
+    const bool post_sort,               // true if post-sort needed
+    const int64_t *Mark,                // for I inverse buckets, size A->vlen
+    const int64_t *Inext,               // for I inverse buckets, size nI
+    const int64_t nduplicates,          // # of duplicates, if I inverted
+    // from phase0:
+    const int64_t *restrict Ch,
+    const int64_t *restrict Ap_start,
+    const int64_t *restrict Ap_end,
+    const int64_t Cnvec,
+    const bool need_qsort,
+    const int Ikind,
+    const int64_t nI,
+    const int64_t Icolon [3],
+    const int64_t nJ,
+    // original input:
+    const bool C_is_csc,        // format of output matrix C
+    const GrB_Matrix A,
+    const GrB_Index *I,
+    const bool symbolic,
+    GB_Context Context
+) ;
+
+GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 (
     const GrB_Index *I,         // list of indices, duplicates OK
     int64_t nI,                 // length of I
     int64_t avlen,              // length of the vectors of A
-    bool need_Iwork1,           // true if Iwork1 of size nI needed for sorting
     // outputs:
     int64_t **p_Mark,           // head pointers for buckets, size avlen
     int64_t **p_Inext,          // next pointers for buckets, size nI
-    int64_t **p_Iwork1,         // workspace of size nI, if needed
-    int64_t *p_nduplicates,     // number of duplicate entries in I
-    int64_t *p_flag,            // Mark [0:avlen-1] < flag
+    int64_t *p_ndupl,           // number of duplicate entries in I
     GB_Context Context
 ) ;
 
@@ -2614,9 +2761,9 @@ void GB_pending_free            // free all pending tuples
     (((tid) * ((double) (n))) / ((double) (nthreads)))
 
 // thread tid will operate on the range k1:(k2-1)
-#define GB_PARTITION(k1,k2,n,tid,nthreads)                             \
-    k1 = ((tid) ==  0          ) ?  0  : GB_PART (tid,  n, nthreads) ; \
-    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART (tid+1,n, nthreads) ;
+#define GB_PARTITION(k1,k2,n,tid,nthreads)                                  \
+    k1 = ((tid) ==  0          ) ?  0  : GB_PART ((tid),  n, nthreads) ;    \
+    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads) ;
 
 
 #if defined ( _OPENMP )
@@ -3457,6 +3604,42 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     }                                                                       \
 }
 
+#define GB_BINARY_SPLIT_ZOMBIE(i,X,pleft,pright,found,nzombies,is_zombie)   \
+{                                                                           \
+    if (nzombies > 0)                                                       \
+    {                                                                       \
+        GB_BINARY_TRIM_ZOMBIE (i, X, pleft, pright) ;                       \
+        found = false ;                                                     \
+        is_zombie = false ;                                                 \
+        if (pleft == pright)                                                \
+        {                                                                   \
+            int64_t i2 = X [pleft] ;                                        \
+            is_zombie = GB_IS_ZOMBIE (i2) ;                                 \
+            if (is_zombie)                                                  \
+            {                                                               \
+                i2 = GB_FLIP (i2) ;                                         \
+            }                                                               \
+            found = (i == i2) ;                                             \
+            if (!found)                                                     \
+            {                                                               \
+                if (i > i2)                                                 \
+                {                                                           \
+                    pleft++ ;                                               \
+                }                                                           \
+                else                                                        \
+                {                                                           \
+                    pright++ ;                                              \
+                }                                                           \
+            }                                                               \
+        }                                                                   \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        is_zombie = false ;                                                 \
+        GB_BINARY_SPLIT_SEARCH(i,X,pleft,pright,found)                      \
+    }                                                                       \
+}
+
 //------------------------------------------------------------------------------
 // index lists I and J
 //------------------------------------------------------------------------------
@@ -3489,7 +3672,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     bool *I_is_contig,          // true if I is a contiguous list, imin:imax
     int64_t *imin_result,       // min (I)
     int64_t *imax_result,       // max (I)
-    bool is_I,                  // true if I, false if J (debug only)
     GB_Context Context
 ) ;
 
@@ -3615,6 +3797,7 @@ static inline bool GB_ij_is_in_list // determine if i is in the list I
         return (found) ;
     }
 }
+
 
 //------------------------------------------------------------------------------
 // GB_bracket_left

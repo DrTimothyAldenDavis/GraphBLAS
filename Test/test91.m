@@ -40,14 +40,6 @@ for ilen = [1 10 100 1000 10000 100000 1e6]
 
     J0 = uint64 (0) ;
 
-%   fprintf ('GB old:\n') ;
-%   tic
-%   for trials = 1:ntrials
-%       C2 = GB_mex_Matrix_subref_old (A, I0, J0) ;
-%   end
-%   toc
-%   assert (isequal (C1, C2)) ;
-
     fprintf ('GB new:\n') ;
     tic
     for trials = 1:ntrials
@@ -66,14 +58,6 @@ for trials = 1:ntrials
     C1 = A (:) ;
 end
 toc
-
-% fprintf ('GB old:\n') ;
-% tic
-% for trials = 1:ntrials
-%     C2 = GB_mex_Matrix_subref_old (A, [ ], J0) ;
-% end
-% toc
-% assert (isequal (C1, C2)) ;
 
 fprintf ('GB new:\n') ;
 tic

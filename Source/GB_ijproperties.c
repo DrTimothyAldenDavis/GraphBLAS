@@ -33,7 +33,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     bool *I_is_contig,          // true if I is a contiguous list, imin:imax
     int64_t *imin_result,       // min (I)
     int64_t *imax_result,       // max (I)
-    bool is_I,                  // true if I, false if J (debug only)
     GB_Context Context
 )
 {
@@ -79,6 +78,11 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         imin = 0 ;
         imax = limit-1 ;
 
+        ASSERT (Icolon [GxB_BEGIN] == imin) ;
+        ASSERT (Icolon [GxB_INC  ] == 1) ;
+        ASSERT (Icolon [GxB_END  ] == imax) ;
+        // printf ("GB_ALL "GBd":"GBd"\n", imin, imax) ;
+
     }
     else if (Ikind == GB_RANGE)
     {
@@ -88,6 +92,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         //----------------------------------------------------------------------
 
         imin = Icolon [GxB_BEGIN] ;
+        ASSERT (Icolon [GxB_INC] == 1) ;
         imax = Icolon [GxB_END  ] ;
 
         if (imin > imax)
@@ -102,6 +107,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
         }
+        // printf ("GB_RANGE "GBd":"GBd"\n", imin, imax) ;
 
     }
     else if (Ikind == GB_STRIDE)
@@ -152,6 +158,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
         }
+        // printf ("GB_STRIDE "GBd":"GBd":"GBd"\n", ibegin, iinc, iend) ;
 
     }
     else // Ikind == GB_LIST
@@ -173,6 +180,10 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
         // scan I to find imin and imax, and validate the list. Also determine
         // if it is sorted or not, and contigous or not.
+
+        // printf ("GB_LIST length "GBd"\n", ni) ;
+        // for (int64_t k = 0 ; k < ni ; k++) printf (" "GBd, I [k]) ;
+        // printf ("\n") ;
 
         imin = limit ;
         imax = -1 ;
@@ -243,6 +254,10 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
         }
+
+        // TODO: if I_config is true, then change Ikind to GB_RANGE
+        // or GB_ALL (if imin == 0 and imax == limit-1)
+        // printf ("imin "GBd" imax "GBd"\n", imin, imax) ;
 
         if (ni == 1)
         {

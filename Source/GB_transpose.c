@@ -741,7 +741,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // A.  This array becomes the permanent T->i on output.  This phase
             // must be done before Chandle is created below, since that step
             // destroys A.  See also GB_extractTuples, where J is extracted.
-            GBI_parallel_for_each_vector (A, nthreads)
+            // TODO use GB_ek_slice: this is imbalanced for dense vectors.
+
+            GBI_parallel_for_each_vector (A, nthreads)  // TODO:use GB_ek_slice
             {
                 GBI_for_each_entry (j, p, pend)
                 { 

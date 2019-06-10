@@ -51,7 +51,7 @@ for m = [1 5 10 50]
         C = GB_mex_random (m, n, 100*(m*n), 1, seed) ; seed = seed + 1 ;
         M = GB_mex_random (m, n, 4*(ni+nj), 0, seed) ; seed = seed + 1 ;
         A = GB_mex_random (m, n, m+n, 1, seed) ;       seed = seed + 1 ;
-% save gunk C M A dclear cin C3
+
         [C3,c1] = GB_mex_subassign (C, M, [ ], A, [ ], [ ], dclear, 'plus') ;
         cin = complex (0,0) ;
         c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;
