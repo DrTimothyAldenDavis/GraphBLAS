@@ -81,14 +81,29 @@
 
 // workspace
 
-    // declare a ztype array of size nthreads
-    #define GB_REDUCTION_WORKSPACE(W,nthreads)      \
-        bool W [nthreads]
+    // declare a ztype array of size ntasks
+    #define GB_REDUCTION_WORKSPACE(W,ntasks)        \
+        bool W [ntasks]   
 
 // break the loop if terminal condition reached
 
-    #define GB_BREAK_IF_TERMINAL(t)                 \
+    #define GB_BREAK_IF_TERMINAL(s)                 \
         if (s == false) break ;
+
+    #define GB_IF_NOT_EARLY_EXIT                    \
+        bool my_exit ; \
+        GB_PRAGMA (omp atomic read) \
+        my_exit = early_exit ; \
+        if (!my_exit)
+
+    #define GB_PARALLEL_BREAK_IF_TERMINAL(s)        \
+        if (s == false) \
+        { \
+            GB_PRAGMA (omp atomic write) \
+            early_exit = true ; \
+            break ; \
+        }
+ 
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
@@ -100,6 +115,7 @@ void GB_red_scalar__land_bool
 (
     bool *result,
     const GrB_Matrix A,
+    int ntasks,
     int nthreads
 )
 { 

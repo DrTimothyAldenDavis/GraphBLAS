@@ -81,14 +81,29 @@
 
 // workspace
 
-    // declare a ztype array of size nthreads
-    #define GB_REDUCTION_WORKSPACE(W,nthreads)      \
-        uint8_t W [nthreads]
+    // declare a ztype array of size ntasks
+    #define GB_REDUCTION_WORKSPACE(W,ntasks)        \
+        uint8_t W [ntasks]   
 
 // break the loop if terminal condition reached
 
-    #define GB_BREAK_IF_TERMINAL(t)                 \
+    #define GB_BREAK_IF_TERMINAL(s)                 \
         if (s == UINT8_MAX) break ;
+
+    #define GB_IF_NOT_EARLY_EXIT                    \
+        bool my_exit ; \
+        GB_PRAGMA (omp atomic read) \
+        my_exit = early_exit ; \
+        if (!my_exit)
+
+    #define GB_PARALLEL_BREAK_IF_TERMINAL(s)        \
+        if (s == UINT8_MAX) \
+        { \
+            GB_PRAGMA (omp atomic write) \
+            early_exit = true ; \
+            break ; \
+        }
+ 
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
@@ -100,6 +115,7 @@ void GB_red_scalar__max_uint8
 (
     uint8_t *result,
     const GrB_Matrix A,
+    int ntasks,
     int nthreads
 )
 { 

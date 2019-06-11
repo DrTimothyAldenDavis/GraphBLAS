@@ -11,8 +11,6 @@
 
 // TODO add simd vectorization for non-terminal monoids.  Particular max, min.
 
-// TODO use ntasks = 32 * nthreads
-
 {
 
     const GB_ATYPE *restrict Ax = A->x ;
@@ -70,9 +68,10 @@
         // create workspace for multiple threads
         //----------------------------------------------------------------------
 
-        // ztype W [nthreads] ;
-        GB_REDUCTION_WORKSPACE (W, nthreads) ;
-        ASSERT (nthreads <= anz) ;
+        // ztype W [ntasks] ;
+        GB_REDUCTION_WORKSPACE (W, ntasks) ;
+        ASSERT (ntasks <= anz) ;
+        bool early_exit = false ;
 
         //----------------------------------------------------------------------
         // each thread reduces its own slice in parallel
@@ -86,22 +85,25 @@
             //------------------------------------------------------------------
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (int tid = 0 ; tid < ntasks ; tid++)
             {
-                int64_t pstart, pend ;
-                GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
-
                 // ztype t = identity
                 GB_SCALAR_IDENTITY (t) ;
 
-                for (int64_t p = pstart ; p < pend ; p++)
+                GB_IF_NOT_EARLY_EXIT
                 {
-                    ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
-                    // t += (ztype) Ax [p], with typecast
-                    GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
-                    // check for early exit
-                    GB_BREAK_IF_TERMINAL (t) ;
+                    int64_t pstart, pend ;
+                    GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
+                    for (int64_t p = pstart ; p < pend ; p++)
+                    {
+                        ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
+                        // t += (ztype) Ax [p], with typecast
+                        GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
+                        // check for early exit
+                        GB_PARALLEL_BREAK_IF_TERMINAL (t) ;
+                    }
                 }
+
                 // W [tid] = t, no typecast
                 GB_COPY_SCALAR_TO_ARRAY (W, tid, t) ;
             }
@@ -115,24 +117,27 @@
             //------------------------------------------------------------------
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (int tid = 0 ; tid < ntasks ; tid++)
             {
-                int64_t pstart, pend ;
-                GB_PARTITION (pstart, pend, anz, tid, nthreads) ;
-
                 // ztype t = identity
                 GB_SCALAR_IDENTITY (t) ;
 
-                for (int64_t p = pstart ; p < pend ; p++)
+                GB_IF_NOT_EARLY_EXIT
                 {
-                    if (GB_IS_NOT_ZOMBIE (Ai [p]))
+                    int64_t pstart, pend ;
+                    GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
+                    for (int64_t p = pstart ; p < pend ; p++)
                     {
-                        // t += (ztype) Ax [p], with typecast
-                        GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
-                        // check for early exit
-                        GB_BREAK_IF_TERMINAL (t) ;
+                        if (GB_IS_NOT_ZOMBIE (Ai [p]))
+                        {
+                            // t += (ztype) Ax [p], with typecast
+                            GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
+                            // check for early exit
+                            GB_PARALLEL_BREAK_IF_TERMINAL (t) ;
+                        }
                     }
                 }
+
                 // W [tid] = t, no typecast
                 GB_COPY_SCALAR_TO_ARRAY (W, tid, t) ;
             }
@@ -142,7 +147,7 @@
         // sum up the results of each slice using a single thread
         //----------------------------------------------------------------------
 
-        for (int tid = 0 ; tid < nthreads ; tid++)
+        for (int tid = 0 ; tid < ntasks ; tid++)
         {
             // s += W [tid], no typecast
             GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;

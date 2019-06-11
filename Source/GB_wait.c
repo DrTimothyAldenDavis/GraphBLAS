@@ -319,7 +319,7 @@ GrB_Info GB_wait                // finish all pending computations
 
             ASSERT_OK (GB_check (Aslice [1], "A1 slice for GB_wait", GB0)) ;
 
-            // free A0; not used (TODO: do not create it in GB_slice)
+            // free A0, which is not used
             GB_MATRIX_FREE (&(Aslice [0])) ;
 
             // S = A1 + T, but with no operator

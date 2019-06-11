@@ -2386,6 +2386,11 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     GB_Context Context
 ) ;
 
+// Several methods can use choose between a qsort-based method that takes
+// O(anz*log(anz)) time, or a bucket-sort method that takes O(anz+n) time.
+// The qsort method is choosen if the following condition is true:
+#define GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET(anz,n) ((16 * (anz)) < (n))
+
 void GB_qsort_1         // sort array A of size 1-by-n
 (
     int64_t A_0 [ ],    // size-n array

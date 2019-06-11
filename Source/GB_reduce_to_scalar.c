@@ -7,25 +7,17 @@
 
 //------------------------------------------------------------------------------
 
-// c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix
-// to a scalar.  Not user-callable.  Does the work for GrB_*_reduce_TYPE,
-// both matrix and vector.  This funciton tolerates zombies and does not
-// delete them.  It does not tolerate pending tuples, so if they are present,
-// all zombies are deleted and all pending tuples are assembled.
+// c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix to a scalar.
+// Does the work for GrB_*_reduce_TYPE, both matrix and vector.  This function
+// tolerates zombies and does not delete them.  It does not tolerate pending
+// tuples, so if they are present, all zombies are deleted and all pending
+// tuples are assembled.
 
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-// Uses a parallel reduction of all entries in A to a scalar.
-
-// PARALLEL: done, but needs better terminal exit.
-
-// TODO: see test107, terminal exit with many threads is slow; when one
-// thread finds the terminal value, it needs to terminate all other threads.
-
-// TODO: need to vectorize
-
-// TODO: currently uses ntasks = nthreads; use ntasks = 32 * nthreads
+// TODO: need to vectorize, particularly max and min, which are currently 5x
+// slower than s=max(max(A)) in MATLAB.
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -104,6 +96,9 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
+    int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
+    ntasks = GB_IMIN (ntasks, anz) ;
+    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // s = reduce_to_scalar (A)
@@ -119,7 +114,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // reduce all the entries in the matrix, but skip any zombies
 
     if (anz == 0)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // nothing to do
@@ -149,11 +144,11 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         #define GB_red(opname,aname) GB_red_scalar_ ## opname ## aname
 
-        #define GB_RED_WORKER(opname,aname,atype)                   \
-        {                                                           \
-            GB_red (opname, aname) ((atype *) s, A, nthreads) ;     \
-            done = true ;                                           \
-        }                                                           \
+        #define GB_RED_WORKER(opname,aname,atype)                       \
+        {                                                               \
+            GB_red (opname, aname) ((atype *) s, A, ntasks, nthreads) ; \
+            done = true ;                                               \
+        }                                                               \
         break ;
 
         //----------------------------------------------------------------------
@@ -176,7 +171,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         //----------------------------------------------------------------------
 
         if (!done)
-        {
+        { 
 
             // the switch factory didn't handle this case
             GxB_binary_function freduce = reduce->op->function ;
@@ -184,8 +179,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             #define GB_ATYPE GB_void
 
             // workspace for each thread
-            #define GB_REDUCTION_WORKSPACE(W, nthreads) \
-                GB_void W [nthreads*zsize]
+            #define GB_REDUCTION_WORKSPACE(W, ntasks) \
+                GB_void W [ntasks*zsize]
 
             // ztype t = identity
             #define GB_SCALAR_IDENTITY(t)                           \
@@ -201,10 +196,30 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 freduce (s, s, W +((k)*zsize))
 
             // break if terminal value reached
-            #define GB_BREAK_IF_TERMINAL(t)                         \
+            #define GB_BREAK_IF_TERMINAL(s)                         \
                 if (terminal != NULL)                               \
                 {                                                   \
-                    if (memcmp (t, terminal, zsize) == 0) break ;   \
+                    if (memcmp (s, terminal, zsize) == 0) break ;   \
+                }
+
+            // skip the work for this task if early exit is reached
+            #define GB_IF_NOT_EARLY_EXIT                            \
+                bool my_exit ;                                      \
+                GB_PRAGMA (omp atomic read)                         \
+                my_exit = early_exit ;                              \
+                if (!my_exit)
+
+            // break if terminal value reached, inside parallel task
+            #define GB_PARALLEL_BREAK_IF_TERMINAL(s)                \
+                if (terminal != NULL)                               \
+                {                                                   \
+                    if (memcmp (s, terminal, zsize) == 0)           \
+                    {                                               \
+                        /* tell the other tasks to exit early */    \
+                        GB_PRAGMA (omp atomic write)                \
+                        early_exit = true ;                         \
+                        break ;                                     \
+                    }                                               \
                 }
 
             // ztype t = (ztype) Ax [p], but no typecasting needed
@@ -221,7 +236,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // generic worker: sum up the entries, with typecasting

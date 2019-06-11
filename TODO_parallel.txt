@@ -26,6 +26,7 @@ All parallel methods need tuning and benchmarking.
 done: (except for tuning and benchmarking)
 ----------------------------------------------------------------------
 
+GB_transpose
 GB_transpose_ix
 GB_transpose_op
 GB_transpose_bucket
@@ -34,6 +35,7 @@ GB_dup
 GB_build
 GB_builder
 GB_reduce_to_vector
+GB_reduce_to_scalar
 GB_select
 GB_selector
 GB_transplant
@@ -74,10 +76,6 @@ GB_AxB_flopcount: done, except needs an better early exit.
 
 GB_add_phase0: done, except for the merge when both A and B are hypersparse.
 
-GB_transpose: done, except for rule to select of qsort method
-
-GB_reduce_to_scalar: done, except needs a better terminal exit
-
 ----------------------------------------------------------------------
 in progress
 ----------------------------------------------------------------------
@@ -107,13 +105,4 @@ GB_assign:
 GB_ijsort: deletes duplicates, see also GB_builder.  This is only used in
     GB_assign, for scalar expansion and for the C_replace_phase, and only when
     I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
-
-----------------------------------------------------------------------
-do not do at all?:  one minor step for GrB_extract
-----------------------------------------------------------------------
-
-GB_I_inverse: requires a fast parallel qsort, if this is to be parallelized.
-    inverts the explicit list I for GB_subref.  A bucket sort would be hard to
-    parallelize in the current algorithm.  Perhaps leave this for future work,
-    and leave this sequential.  Does O(length(I)) work.
 

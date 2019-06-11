@@ -66,8 +66,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         cnvec += (Cslice [tid])->nvec ;
     }
 
-    // printf ("bound: cnz "GBd" cnvec "GBd"\n", cnz, cnvec) ;
-
     //--------------------------------------------------------------------------
     // create C and allocate all of its space
     //--------------------------------------------------------------------------
@@ -127,13 +125,11 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         for (int tid = 0 ; tid < nthreads ; tid++)
         {
             Sauna_id = Sauna_ids [tid] ;
-            // printf ("%d : Sauna id %d\n", tid, Sauna_id) ;
             if (Sauna_id >= 0)
             { 
                 break ;
             }
         }
-        // printf ("got sauna %d\n", Sauna_id) ;
         ASSERT (Sauna_id >= 0) ;
         Sauna = GB_Global_Saunas_get (Sauna_id) ;
     }
@@ -147,7 +143,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         GB_OK (GB_Sauna_acquire (1, &Sauna_id, &method, Context)) ;
         Sauna = GB_Global_Saunas_get (Sauna_id) ;
 
-        // TODO: put this in a function:
         if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size <csize)
         {
             // get a new Sauna: the Sauna either does not exist, or is too small
@@ -161,7 +156,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             }
         }
         Sauna = GB_Global_Saunas_get (Sauna_id) ;
-        // printf ("allocated new sauna %d\n", Sauna_id) ;
     }
 
     // Sauna has been acquired
@@ -172,13 +166,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     // hiwater++
     int64_t hiwater = GB_Sauna_reset (Sauna, 1, 0) ;
     int64_t *restrict Sauna_Mark = Sauna->Sauna_Mark ;
-
-    for (int64_t i = 0 ; i < C->vlen ; i++)
-    {
-        // printf ("Sauna_Mark ["GBd"] = "GBd"  hi "GBd"\n", i, Sauna_Mark [i],
-        //     hiwater) ;
-        ASSERT (Sauna_Mark [i] < hiwater) ;
-    }
 
     // Sauna_Mark [0..cvlen-1] < hiwater holds
     ASSERT_SAUNA_IS_RESET ;
@@ -206,9 +193,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         // get the Cslice [tid] and its position in C
         //----------------------------------------------------------------------
 
-//      printf ("\n============================= do fine slice tid=%d\n", tid) ;
         ASSERT_OK (GB_check (Cslice [tid], "Cslice [tid]", GB0)) ;
-//      printf ("last_vector "GBd"\n", last_vector) ;
 
         int64_t *restrict Csliceh = (Cslice [tid])->h ;
         int64_t *restrict Cslicep = (Cslice [tid])->p ;
@@ -228,27 +213,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         if (Csliceh [0] == last_vector)
         { 
             kfirst = 1 ;
-//          printf ("discard first vector "GBd"\n", Csliceh [0]) ;
         }
-
-//          int64_t first_vector_nz = Cslicep [1] - Cslicep [0] ;
-//          Csliceh++ ;
-//          Cslicep++ ;
-//          Cslicei += first_vector_nz ;
-//          Cslicex += first_vector_nz * csize ;
-//          cnz_slice -= first_vector_nz ;
-//          cnvec_slice-- ;
-//          printf ("\nafter discard:\n") ;
-//          for (int64_t k = 0 ; k < cnvec_slice ; k++)
-//          {
-//              printf ("Csliceh ["GBd"]="GBd"  ", k, Csliceh [k]) ;
-//              printf ("Cslicep ["GBd"]="GBd"\n", k, Cslicep [k]) ;
-//              for (int64_t p = Cslicep [k] ; p < Cslicep [k+1] ; p++)
-//              {
-//                  printf ("   row "GBd"\n", Cslicei [p]) ;
-//              }
-//          }
-//          printf ("\n") ;
 
         // skip if Cslice [tid] is now empty
         if (cnvec_slice - kfirst == 0) continue ;
@@ -260,7 +225,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         // search for the last vector of Cslice [tid] in all slices tid+1:tfine
         // that contain it as their first vector
         last_vector = Csliceh [cnvec_slice-1] ;
-//      printf ("new last vector "GBd"\n", last_vector) ;
         int tfine = tid ;
         while (tfine+1 < nthreads)
         {
@@ -306,7 +270,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             ASSERT ((Cslice [tfine+1])->nvec > 0) ;
             ASSERT ((Cslice [tfine+1])->h [0] != last_vector) ;
         }
-//      printf ("tid %d tfine %d\n", tid, tfine) ;
         #endif
 
         //----------------------------------------------------------------------
@@ -329,7 +292,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             (cnvec_slice - kfirst) * sizeof (int64_t)) ;
 
         // construct the column pointers of C (shift upwards by cnz)
-//      printf ("\n construct Cp\n") ;
         for (int64_t k = kfirst ; k < cnvec_slice ; k++)
         {
             Cp [cnvec++] = Cslicep [k] + cnz - pfirst ;
@@ -338,18 +300,9 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
 
         // entries and vectors have been appended to C
         cnz   += (cnz_slice - pfirst) ;
-//      printf ("now cnz "GBd"\n", cnz) ;
 
         // the last_vector in C starts at Ci [cnz_last] and Cx [cnz_last]
         int64_t cnz_last = Cp [cnvec-1] ;
-
-//      for (int64_t k = 0 ; k < cnvec ; k++)
-//      {
-//          printf ("Cp ["GBd"] = "GBd"\n", k, Cp [k]) ;
-//      }
-//
-//      printf ("cnz_last "GBd" cnvec now "GBd" Cp[cnvec-1] "GBd"\n",
-//          cnz_last, cnvec, Cp [cnvec-1]) ;
 
         //----------------------------------------------------------------------
         // handle the last vector, if it needs summation
@@ -367,7 +320,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             for (int64_t p = pstart ; p < pend ; p++)
             {
                 int64_t i = Cslicei [p] ;
-//              printf ("last vector, row "GBd"\n", i) ;
                 Sauna_Mark [i] = hiwater ;
                 // Sauna_Work [i] = Cslicex [p]
                 memcpy (Sauna_Work +(i*csize), Cslicex +(p*csize), csize) ;
@@ -394,7 +346,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
                 for (int64_t p = pstart ; p < pend ; p++)
                 {
                     int64_t i = Cslice2i [p] ;
-//                  printf ("tid %d subsequent row "GBd"\n", tid, i) ;
                     if (Sauna_Mark [i] < hiwater)
                     {
                         // first time row index i has been seen
@@ -445,11 +396,9 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             for (int64_t pC = cnz_last ; pC < cnz ; pC++)
             {
                 int64_t i = Ci [pC] ;
-//              printf ("gathered row "GBd"\n", i) ;
                 // Cx [pC] = Sauna_Work [i]
                 memcpy (Cx +(pC*csize), Sauna_Work +(i*csize), csize) ;
             }
-//          printf ("wrapup cnz "GBd"\n", cnz) ;
 
             //------------------------------------------------------------------
             // hiwater++

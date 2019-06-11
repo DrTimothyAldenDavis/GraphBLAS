@@ -81,14 +81,20 @@
 
 // workspace
 
-    // declare a ztype array of size nthreads
-    #define GB_REDUCTION_WORKSPACE(W,nthreads)      \
-        uint16_t W [nthreads]
+    // declare a ztype array of size ntasks
+    #define GB_REDUCTION_WORKSPACE(W,ntasks)        \
+        uint16_t W [ntasks]   
 
 // break the loop if terminal condition reached
 
-    #define GB_BREAK_IF_TERMINAL(t)                 \
+    #define GB_BREAK_IF_TERMINAL(s)                 \
         ;
+
+    #define GB_IF_NOT_EARLY_EXIT                    \
+        ;
+
+    #define GB_PARALLEL_BREAK_IF_TERMINAL(s)        \
+        ; 
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
@@ -100,6 +106,7 @@ void GB_red_scalar__plus_uint16
 (
     uint16_t *result,
     const GrB_Matrix A,
+    int ntasks,
     int nthreads
 )
 { 

@@ -638,7 +638,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // not shallow, A->i can be used and then freed.  Otherwise, A->i is
         // not modified at all.
         bool recycle_Ai = (in_place && !Ai_shallow) ;
-        bool transpose_via_qsort ;
+        bool use_qsort ;
 
         if (A_is_hyper)
         { 
@@ -647,7 +647,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // always use qsort for hypersparse matrices
             //------------------------------------------------------------------
 
-            transpose_via_qsort = true ;
+            use_qsort = true ;
 
         }
         else
@@ -657,9 +657,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // select qsort if the transpose will likely be hypersparse
             //------------------------------------------------------------------
 
-            // TODO: add a descriptor so the user can select the method.
-
-            transpose_via_qsort = (16 * anz < avlen) ;
+            use_qsort = GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET (anz, avlen) ;
 
         }
 
@@ -667,7 +665,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // transpose the matrix with the selected method
         //----------------------------------------------------------------------
 
-        if (transpose_via_qsort)
+        if (use_qsort)
         {
 
             //==================================================================

@@ -37,8 +37,12 @@ end
 if (~isempty (terminal))
     fprintf (f, 'define(`GB_terminal'', `if (s == %s) break ;'')\n', ...
         terminal) ;
+    fprintf (f, 'define(`GB_if_not_early_exit'', `bool my_exit ; \\\n        GB_PRAGMA (omp atomic read) \\\n        my_exit = early_exit ; \\\n        if (!my_exit)'')\n') ;
+    fprintf (f, 'define(`GB_parallel_terminal'', `if (s == %s) \\\n        { \\\n            GB_PRAGMA (omp atomic write) \\\n            early_exit = true ; \\\n            break ; \\\n        }\n'')\n', terminal) ;
 else
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
+    fprintf (f, 'define(`GB_if_not_early_exit'', `;'')\n') ;
+    fprintf (f, 'define(`GB_parallel_terminal'', `;'')\n') ;
 end
 
 % create the operator
@@ -50,14 +54,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.c | m4 | tail -n +12 > Generated/GB_red__%s.c', ...
+'cat control.m4 Generator/GB_red.c | m4 | tail -n +14 > Generated/GB_red__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.h | m4 | tail -n +12 >> Generated/GB_red__include.h') ;
+'cat control.m4 Generator/GB_red.h | m4 | tail -n +14 >> Generated/GB_red__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

@@ -9,9 +9,6 @@
 
 // C<M> = accum (C,A') or accum (C,A)
 
-// TODO add a descriptor to select the method for computing A':  bucket sort
-// or qsort.
-
 #include "GB.h"
 
 GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)

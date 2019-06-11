@@ -382,9 +382,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // the bucket method would fail.  Thus, the qsort method, below, is
         // used when A is very sparse.
 
-        // TODO: give the user a descriptor to select the method to use?
-
-        if (8 * anz < n)
+        if (GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET (anz, n))
         {
 
             //------------------------------------------------------------------

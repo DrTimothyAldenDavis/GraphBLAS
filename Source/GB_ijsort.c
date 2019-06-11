@@ -65,7 +65,6 @@ GrB_Info GB_ijsort
     // remove duplicates from I2
     //--------------------------------------------------------------------------
 
-    // TODO do this in parallel
     int64_t ni2 = 1 ;
     for (int64_t k = 1 ; k < ni ; k++)
     {
