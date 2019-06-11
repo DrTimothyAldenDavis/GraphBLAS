@@ -149,7 +149,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     // GB_add and GB_emult can apply any non-complemented mask, but it is
     // faster to exploit the mask in GB_add / GB_emult only when it is very
-    // sparse.
+    // sparse compared with A and B.
 
     // check the CSR/CSC format of M
     bool M_is_csc = (M == NULL) ? C_is_csc : M->is_csc ;
@@ -157,10 +157,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool mask_applied = false ;
     GrB_Matrix M1 = NULL ;
 
-    if (M != NULL && !Mask_comp &&
-        // TODO allow this test to be determined via a descriptor?
-        8 * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
+    if (M != NULL && !Mask_comp && GB_MASK_VERY_SPARSE (M, A, B))
     {
+        // the mask is present, not complemented, and very sparse; use it
+        // during GB_add and GB_emult to reduce memory and work.
         M1 = M ;
         if (C_is_csc != M_is_csc)
         {
@@ -219,8 +219,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
-
-    // TODO: see GB_mxm; same test.  Move this code to GB_accum_mask.
 
     if ((accum == NULL) && (C->is_csc == T->is_csc)
         && (M == NULL || (M != NULL && mask_applied))

@@ -48,11 +48,11 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    // TODO: rename:
+    // FUTURE:: these operators could be renamed:
     // GrB_AINV_BOOL and GxB_ABS_BOOL to GrB_IDENTITY_BOOL.
     // GrB_MINV_BOOL to GxB_ONE_BOOL.
-    // rename GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
-    // and do not create these workers
+    // GxB_ABS_UINT* to GrB_IDENTITY_UINT*.
+    // and then these workers would not need to be created.
 
     #define GB_unop(op,zname,aname) GB_unop_ ## op ## zname ## aname
 
@@ -83,9 +83,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
         cast_A_to_X = GB_cast_factory (op->xtype->code, Atype->code) ;
     GxB_unary_function fop = op->function ;
 
-    // TODO: some user operations are not thread safe.  This fails on
-    // Demo/mis code when nthreads > 1.  See Demo/Source/mis_score.c.
-    #pragma omp parallel for num_threads(nthreads)
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t p = 0 ; p < anz ; p++)
     { 
         // xwork = (xtype) Ax [p]

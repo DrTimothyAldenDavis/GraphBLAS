@@ -63,9 +63,6 @@ void GB_slice_vector
     // find i, pA, and pB for the start of this task
     //--------------------------------------------------------------------------
 
-    // TODO allow ileft and iright to be specified on input, to limit the
-    // search.
-
     // search for index i in the range ileft:iright, inclusive
     int64_t ileft  = 0 ;
     int64_t iright = vlen-1 ;

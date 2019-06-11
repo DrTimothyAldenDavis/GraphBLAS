@@ -1,6 +1,11 @@
 //------------------------------------------------------------------------------
-// GB_subref_method: select a method for C(:,k) = A(I,j), for one vector of C
+// GB_subref_method: select a method for C(:,kC) = A(I,kA), for one vector of C
 //------------------------------------------------------------------------------
+
+// This method is #include'd in GB_subref_slice.c, GB_subref_phase1.c, and
+// GB_subref_phase2.c, and used by Template/GB_subref_template.c.  It
+// determines the method used for to construct C(:,kC) = A(I,kA) for a
+// single vector of C and A.
 
 static inline int GB_subref_method  // return the method to use (1 to 12)
 (

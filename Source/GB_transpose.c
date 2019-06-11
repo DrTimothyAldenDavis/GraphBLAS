@@ -28,16 +28,10 @@
 // If A_in is not NULL and Chandle is NULL, then A is modified in place, and
 // the A_in matrix is not freed when done.
 
-// The bucket sort is parallel, but not highly
-// scalable.  If e=nnz(A) and A is m-by-n, then at most O(e/n) threads are
-// used.  For many matrices, e is O(n), although the constant can be high.  The
-// qsort method is more scalable, but not as fast with a modest number of threads.
-
-// PARALLEL: TODO, parallel qsort is still in progress.
-// Once that is done, need a better automatic selection between the two methods
-// (also add a new field to the descriptor to choose the method).
-
-// TODO: add option for creating a pattern-only matrix C = pattern(A')
+// The bucket sort is parallel, but not highly scalable.  If e=nnz(A) and A is
+// m-by-n, then at most O(e/n) threads are used.  For many matrices, e is O(n),
+// although the constant can be high.  The qsort method is more scalable, but
+// not as fast with a modest number of threads.
 
 #include "GB.h"
 
@@ -466,10 +460,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
 
         //----------------------------------------------------------------------
-        // the transpose will now succeed; fill the content of C
+        // numerical values of C: apply the op, typecast, or make shallow copy
         //----------------------------------------------------------------------
 
-        // numerical values: apply the operator, typecast, or make shallow copy
         if (op != NULL)
         { 
             // Cx = op ((op->xtype) Ax)
@@ -491,31 +484,117 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             Ax = NULL ;  // do not free prior Ax
         }
 
+        //----------------------------------------------------------------------
+        // pattern of C
+        //----------------------------------------------------------------------
+
         if (A_is_hyper)
         { 
+
+            //------------------------------------------------------------------
             // each non-empty vector in A becomes an entry in C
+            //------------------------------------------------------------------
+
             ASSERT (!allocate_new_Ci) ;
             C->i = Ah ; C->i_shallow = (in_place) ? Ah_shallow : true ;
             ASSERT (anvec == anz) ;
             Ah = NULL ;  // do not free prior Ah
+
         }
         else
         {
+
+            //------------------------------------------------------------------
             // find the non-empty vectors of A, which become entries in C
+            //------------------------------------------------------------------
+
             ASSERT (allocate_new_Ci) ;
             ASSERT (Ah == NULL) ;
+
+            int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
+
+            if (nth == 1)
+            {
+
+                //--------------------------------------------------------------
+                // construct Ci with a single thread
+                //--------------------------------------------------------------
+
+                int64_t k = 0 ;
+                for (int64_t j = 0 ; j < avdim ; j++)
+                {
+                    if (Ap [j] < Ap [j+1])
+                    { 
+                        Ci [k++] = j ;
+                    }
+                }
+                ASSERT (k == anz) ;
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // construct Ci in parallel
+                //--------------------------------------------------------------
+
+                int ntasks = (nth == 1) ? 1 : (8 * nth) ;
+                ntasks = GB_IMIN (ntasks, avdim) ;
+                ntasks = GB_IMAX (ntasks, 1) ;
+                int64_t Count [ntasks+1] ;
+
+                #pragma omp parallel for num_threads(nth) schedule(dynamic)
+                for (int tid = 0 ; tid < ntasks ; tid++)
+                {
+                    int64_t jstart, jend, k = 0 ;
+                    GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;
+                    for (int64_t j = jstart ; j < jend ; j++)
+                    {
+                        if (Ap [j] < Ap [j+1])
+                        { 
+                            k++ ;
+                        }
+                    }
+                    Count [tid] = k ;
+                }
+
+                GB_cumsum (Count, ntasks, NULL, 1) ;
+                ASSERT (Count [ntasks] == anz) ;
+
+                #pragma omp parallel for num_threads(nth) schedule(dynamic)
+                for (int tid = 0 ; tid < ntasks ; tid++)
+                {
+                    int64_t jstart, jend, k = Count [tid] ;
+                    GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;
+                    for (int64_t j = jstart ; j < jend ; j++)
+                    {
+                        if (Ap [j] < Ap [j+1])
+                        { 
+                            Ci [k++] = j ;
+                        }
+                    }
+                }
+            }
+
+            #ifdef GB_DEBUG
             int64_t k = 0 ;
-            // TODO do this in parallel
             for (int64_t j = 0 ; j < avdim ; j++)
             {
                 if (Ap [j] < Ap [j+1])
-                { 
-                    Ci [k++] = j ;
+                {
+                    ASSERT (Ci [k] == j) ;
+                    k++ ;
                 }
             }
             ASSERT (k == anz) ;
+            #endif
+
             C->i = Ci ; C->i_shallow = false ;
         }
+
+        //----------------------------------------------------------------------
+        // vector pointers of C
+        //----------------------------------------------------------------------
 
         C->nzmax = anz ;
 
@@ -555,8 +634,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // select the method
         //----------------------------------------------------------------------
 
-        // TODO: add a descriptor to select the method
-
         // for the qsort method, if the transpose is done in place and A->i is
         // not shallow, A->i can be used and then freed.  Otherwise, A->i is
         // not modified at all.
@@ -577,138 +654,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         {
 
             //------------------------------------------------------------------
-            // select the method that uses the least memory
-            //------------------------------------------------------------------
-            
-            // TODO this selection does not account for parallelism
-
-            // Both memory computations below include the output matrix C, but
-            // not the memory used for the input matrix.  In general, the qsort
-            // method is used only for very sparse non-hypersparse matrices,
-            // typically when anz  < 2*m if A is m-by-n in CSC format (or
-            // anz < 2*n if in CSR format), with anz entries.
-
-            //------------------------------------------------------------------
-            // memory usage for transpose via qsort
+            // select qsort if the transpose will likely be hypersparse
             //------------------------------------------------------------------
 
-            // The method with GB_builder, using qsort, requires space for
-            // iwork, jwork, S, and kwork.  jwork can be the recycled Ai, and S
-            // can be the same as Ax if no op is present.
+            // TODO: add a descriptor so the user can select the method.
 
-            // Total memory usage is O(anz), but the constant can vary
-            // depending on whether or not A->i can be recycled in place, and
-            // whether or not a unary operator is applied.  In the typical case
-            // (no op applied, not in place so A->i cannot be recycled, and
-            // assuming csize <= sizeof (int64_t)), the space is:
+            transpose_via_qsort = (16 * anz < avlen) ;
 
-            //      integers:  3*anz    for jwork, iwork, kwork
-            //      values:    0        jwork is freed before T->x allocated
-
-            // If csize >= sizeof (int64_t) the space becomes:
-
-            //      integers:  2*anz    for iwork, kwork, but not jwork
-            //      values:    anz      jwork is freed before T->x allocated
-
-            // The above space does not account for T->p and T->h, but since T
-            // is hypersparse, this could be very small, and anz would be
-            // larger than T->nvec anyway (typically much larger).  It also
-            // doesn't account for the in-place freeing of A->p, which has size
-            // avdim+1 since A is not hypersparse for this comparison.
-
-            // If csize <= sizeof (int64_t), this simplifies to 3*anz 64-bit
-            // words.  Note that avlen does not come in to the memory usage for
-            // qsort, but it does for the bucket sort method.  The bucket sort
-            // method in this case requires 2*avlen + 2*anz memory space.  So
-            // in this particular case, if anz < 2*avlen, the qsort method is
-            // be used.  If A is m-by-n in CSC format, this corresponds to the
-            // condition (anz < 2*m), which if true, the qsort method is used.
-            // This is a very sparse matrix A.
-
-            // If op is present, the memory space for the qsort method
-            // increases by anz values.
-
-            // The time complexity of the qsort method is O(anz*log(anz)) if A
-            // is hypersparse and its memory usage is O(anz); neither is
-            // dependent on the dimenions avlen or avdim.  If A is
-            // non-hypersparse, O(avdim) is added to the time for the qsort
-            // method, but not the memory usage.  The time and memory
-            // complexity of the bucket method is O(anz+avlen) if A is
-            // hypersparse, or O(anz+avlen+avdim) otherwise.  If avlen is huge,
-            // the bucket sort method is prohibitively expensive in terms of
-            // time and memory usage.
-
-            double qusage = 0, qsort_memory = 0 ;
-
-            if (!recycle_Ai)
-            { 
-                // allocate jwork of size anz
-                qusage += GBYTES (anz, sizeof (int64_t)) ;
-            }
-
-            // allocate iwork of size anz
-            qusage += GBYTES (anz, sizeof (int64_t)) ;
-
-            if (op != NULL)
-            { 
-                // allocate S of size anz * csize
-                qusage += GBYTES (anz, csize) ;
-            }
-
-            // high water memory usage so far
-            qsort_memory = qusage ;
-
-            // free Ap and Ah if in place
-            if (in_place)
-            { 
-                // A is not hypersparse for this comparison, so aplen is avdim,
-                // and this space can be large
-                if (!Ap_shallow) qusage -= GBYTES (aplen+1, sizeof (int64_t)) ;
-            //  if (!Ah_shallow) qusage -= GBYTES (aplen  , sizeof (int64_t)) ;
-                ASSERT (Ah == NULL) ;
-            }
-
-            // allocate kwork in GB_builder
-            qusage += GBYTES (anz, sizeof (int64_t)) ;
-            qsort_memory = GB_IMAX (qsort_memory, qusage) ;
-
-            // free jwork in GB_builder
-            qusage -= GBYTES (anz, sizeof (int64_t)) ;
-
-            // allocate the final T->x
-            qusage += GBYTES (anz, csize) ;
-            qsort_memory = GB_IMAX (qsort_memory, qusage) ;
-
-            //------------------------------------------------------------------
-            // memory usage for transpose via bucket sort
-            //------------------------------------------------------------------
-
-            // TODO: parallelism increases the workspace needed
-
-            // Total memory usage is O(avlen+anz), with simple constants:
-
-            //      integer: 2*avlen+anz
-            //      values:  anz
-
-            // If csize == sizeof (int64_t) then the space is 2*avlen+2*anz
-            // words.
-
-            // output T is non-hypersparse, avdim-by-avlen.  Also need rowcount
-            double bucket_memory =
-                  GBYTES (avlen, sizeof (int64_t))      // T->p
-                + GBYTES (anz,   sizeof (int64_t))      // T->i
-                + GBYTES (anz,   csize)                 // T->x
-                + GBYTES (avlen, sizeof (int64_t)) ;    // rowcount
-
-            // Next, free rowcount.  If in place, free the temporary matrix.
-            // However, the high-water mark has already been reached prior
-            // to freeing this space.
-
-            //------------------------------------------------------------------
-            // select the method that uses the least total memory space
-            //------------------------------------------------------------------
-
-            transpose_via_qsort = (qsort_memory < bucket_memory) ;
         }
 
         //----------------------------------------------------------------------
@@ -872,10 +824,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // If op is not NULL, then Swork can be transplanted into T in
             // GB_builder, instead.  However, this requires the tuples to be
             // sorted on input, which is possible but rare for GB_transpose.
-
-            // TODO: a better optimization would be to pass the op to
-            // GB_builder, so it can apply the op at the same time it is
-            // permuting S or Swork into T->x.
 
             GrB_Matrix T ;
             info = GB_builder

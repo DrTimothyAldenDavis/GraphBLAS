@@ -167,8 +167,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_OK_OR_JUMBLED (GB_check (T, "[T = results of computation]", GB0)) ;
     ASSERT (!GB_PENDING (T)) ; ASSERT (!GB_ZOMBIES (T)) ;
 
-    // TODO allow zombies in T on input
-
     //--------------------------------------------------------------------------
     // ensure M and T have the same CSR/CSC format as C
     //--------------------------------------------------------------------------
@@ -296,11 +294,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             // Z = (ctype) accum (C,T) ;
             //------------------------------------------------------------------
 
-            // use the mask if very sparse, and not complemented
+            // use the mask if present, not complemented, and very sparse
             GrB_Matrix M1 = NULL ;
-            if (M != NULL && !Mask_comp &&
-                // TODO allow this test to be determined via a descriptor?
-                8 * GB_NNZ (M) < GB_NNZ (C) + GB_NNZ (T))
+            if (M != NULL && !Mask_comp && GB_MASK_VERY_SPARSE (M, C, T))
             {
                 M1 = M ;
             }

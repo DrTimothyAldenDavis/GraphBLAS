@@ -1492,8 +1492,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 // pA in Ai,Ax, at pB in Bi,Bx, and (if M is present) at pM in Mi,Mx.  It
 // computes C(:,kfirst), starting at pC in Ci,Cx.
 
-// GB_subref also uses the TaskList.  It has TODO kinds of fine tasks,
-// corresponding to each of the TODO methods used in GB_subref_template.  For
+// GB_subref also uses the TaskList.  It has 12 kinds of fine tasks,
+// corresponding to each of the 12 methods used in GB_subref_template.  For
 // those fine tasks, method = -TaskList [taskid].klast defines the method to
 // use.
 
@@ -3182,6 +3182,10 @@ char *GB_thread_local_access ( ) ;
         /* C<!NULL>=NULL since result does not depend on computing Z */ \
         return (C_replace ? GB_clear (C, Context) : GrB_SUCCESS) ;      \
     }
+
+// GB_MASK_VERY_SPARSE is true if C<M>=A+B or C<M>=accum(C,T) is being
+// computed, and the mask M is very sparse compared with A and B.
+#define GB_MASK_VERY_SPARSE(M,A,B) (8 * GB_NNZ (M) < GB_NNZ (A) + GB_NNZ (B))
 
 //------------------------------------------------------------------------------
 // random number generator

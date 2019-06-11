@@ -238,16 +238,12 @@ GrB_Info GB_ewise_slice
     //--------------------------------------------------------------------------
 
     int nthreads = GB_nthreads (cwork, chunk, nthreads_max) ;
-    // printf ("cwork %g chunk %g nthreads_max %d\n",
-    //    cwork, chunk, nthreads_max) ;
 
     ntasks0 = (M == NULL && nthreads == 1) ? 1 : (32 * nthreads) ;
     double target_task_size = cwork / (double) (ntasks0) ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
     int ntasks1 = cwork / target_task_size ;
     ntasks1 = GB_IMAX (ntasks1, 1) ;
-    // printf ("ntasks0 %d ntasks1 %d nthreads %d\n", ntasks0, ntasks1,
-        // nthreads) ;
 
     //--------------------------------------------------------------------------
     // slice the work into coarse tasks
@@ -450,14 +446,6 @@ GrB_Info GB_ewise_slice
                 // slice vector k into nfine fine tasks
                 //--------------------------------------------------------------
 
-                // printf ("\nslice vector "GBd" into %d tasks\n", k, nfine) ;
-                // printf ("pA_start "GBd" pA_end "GBd" a_empty %d\n",
-                //     pA_start, pA_end, a_empty) ;
-                // printf ("pB_start "GBd" pB_end "GBd" b_empty %d\n",
-                //     pB_start, pB_end, b_empty) ;
-                // printf ("pM_start "GBd" pM_end "GBd" m_empty %d\n",
-                //     pM_start, pM_end, m_empty) ;
-
                 // first fine task starts at the top of vector k
                 ASSERT (ntasks < max_ntasks) ;
                 TaskList [ntasks].kfirst = k ;
@@ -472,7 +460,6 @@ GrB_Info GB_ewise_slice
                 for (int tfine = 1 ; tfine < nfine ; tfine++)
                 { 
                     double target_work = ((nfine-tfine) * ckwork) / nfine ;
-                    // printf ("target work %g\n", target_work) ;
                     int64_t pM, pA, pB ;
                     GB_slice_vector (&i, &pM, &pA, &pB,
                         pM_start, pM_end, Mi,   // Mi NULL if no mask M present
@@ -512,27 +499,6 @@ GrB_Info GB_ewise_slice
     }
 
     ASSERT (ntasks <= max_ntasks) ;
-
-//  printf ("\nnthreads %d ntasks %d\n", nthreads, ntasks) ;
-//  for (int t = 0 ; t < ntasks ; t++)
-//  {
-//      printf ("Task %d: kfirst "GBd" klast "GBd, t,
-//          TaskList [t].kfirst,
-//          TaskList [t].klast) ;
-//      if (TaskList [t].klast == -1)
-//      {
-//          printf (
-//              " pM ["GBd":"GBd"-1]"
-//              " pA ["GBd":"GBd"-1]"
-//              " pB ["GBd":"GBd"-1]"
-//              " len "GBd,
-//              TaskList [t].pM, TaskList [t].pM_end,
-//              TaskList [t].pA, TaskList [t].pA_end,
-//              TaskList [t].pB, TaskList [t].pB_end,
-//              TaskList [t].len) ;
-//      }
-//      printf ("\n") ;
-//  }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
