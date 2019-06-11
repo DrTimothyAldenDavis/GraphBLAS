@@ -29,11 +29,11 @@ tic
 tm = toc ;
 fprintf ('MATLAB [i,j,x]=find(A) time: %g\n', tm) ;
 
-nthreads_max = GB_mex_omp_max_threads ;
+nthreads_max = 2*GB_mex_omp_max_threads ;
 save = nthreads_get ;
 
 t1 = 0 ;
-for nthreads = [1 2 4 8 16 32 40 64 128 260 256]
+for nthreads = [1 2 4 8 16 20 32 40 64 128 260 256]
     if (nthreads > nthreads_max)
         break ;
     end
