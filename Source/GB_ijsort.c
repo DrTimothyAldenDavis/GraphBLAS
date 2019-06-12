@@ -59,7 +59,7 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GB_memcpy (I2, I, ni * sizeof (GrB_Index), nthreads) ;
-    GB_qsort_1 ((int64_t *) I2, ni, Context) ;
+    GB_qsort_1a ((int64_t *) I2, ni, Context) ;
 
     //--------------------------------------------------------------------------
     // remove duplicates from I2

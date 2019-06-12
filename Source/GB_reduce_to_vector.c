@@ -44,12 +44,12 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
-    ASSERT_OK (GB_check (C, "C input for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK (GB_check (reduce, "reduce for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK (GB_check (A, "A input for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (desc, "desc for reduce_BinaryOp", GB0)) ;
+    ASSERT_OK (GB_check (C, "C input for reduce_BinaryOp", GB3)) ;
+    ASSERT_OK_OR_NULL (GB_check (M, "M for reduce_BinaryOp", GB3)) ;
+    ASSERT_OK_OR_NULL (GB_check (accum, "accum for reduce_BinaryOp", GB3)) ;
+    ASSERT_OK (GB_check (reduce, "reduce for reduce_BinaryOp", GB3)) ;
+    ASSERT_OK (GB_check (A, "A input for reduce_BinaryOp", GB3)) ;
+    ASSERT_OK_OR_NULL (GB_check (desc, "desc for reduce_BinaryOp", GB3)) ;
 
     GrB_Matrix T = NULL ;
 
@@ -309,9 +309,12 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             #define GB_REDUCTION_WORKSPACE(W, ntasks)               \
                 GB_void W [ntasks*zsize]
 
+            // ztype s ;
+            #define GB_SCALAR(s)                                    \
+                GB_void s [zsize]
+
             // ztype s = (ztype) Ax [p], with typecast
             #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)                 \
-                GB_void s [zsize] ;                                 \
                 cast_A_to_Z (s, Ax +((p)*asize), zsize) ;           \
 
             // s += (ztype) Ax [p], with typecast
@@ -350,7 +353,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // wrapup: delete any zombies
         //----------------------------------------------------------------------
 
-        ASSERT_OK (GB_check (T, "T before wait", GB_FLIP (GB0)));
+        ASSERT_OK (GB_check (T, "T before wait", GB_FLIP (GB3)));
 
         if (nzombies > 0)
         {
@@ -360,7 +363,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             GB_OK (GB_wait (T, Context)) ;
         }
 
-        ASSERT_OK (GB_check (T, "T output = reduce_each_vector (A)", GB0)) ;
+        ASSERT_OK (GB_check (T, "T output = reduce_each_vector (A)", GB3)) ;
     }
     else
     {
@@ -490,7 +493,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                 #include "GB_reduce_each_index.c"
             }
         }
-        ASSERT_OK (GB_check (T, "T output for T = reduce_each_index (A)", GB0));
+        ASSERT_OK (GB_check (T, "T output for T = reduce_each_index (A)", GB3));
     }
 
     //--------------------------------------------------------------------------

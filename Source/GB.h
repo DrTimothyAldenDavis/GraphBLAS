@@ -2391,7 +2391,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
 // The qsort method is choosen if the following condition is true:
 #define GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET(anz,n) ((16 * (anz)) < (n))
 
-void GB_qsort_1         // sort array A of size 1-by-n
+void GB_qsort_1a        // sort array A of size 1-by-n
 (
     int64_t A_0 [ ],    // size-n array
     const int64_t n,
@@ -2407,15 +2407,7 @@ void GB_qsort_1b        // sort array A of size 2-by-n, using 1 key (A [0][])
     GB_Context Context  // for # of threads; use one thread if NULL
 ) ;
 
-void GB_qsort_2a        // sort array A of size 2-by-n, using 1 key (A [0][])
-(
-    int64_t A_0 [ ],    // size n array
-    int64_t A_1 [ ],    // size n array
-    const int64_t n,
-    GB_Context Context  // for # of threads; use one thread if NULL
-) ;
-
-void GB_qsort_2b        // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+void GB_qsort_2         // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t A_0 [ ],    // size n array
     int64_t A_1 [ ],    // size n array

@@ -37,7 +37,7 @@ A = sparse (rand (n)) ;
 
 tic
 for trial = 1:ntrials
-    s = full (max (max (A))) ;      % fastest
+    s = full (max (max (A))) ;
 end
 tm = toc ;
 fprintf ('MATLAB max: %g\n', tm) ;
@@ -52,23 +52,25 @@ for nthreads = nthreads_list
         c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
     end
     t1 = toc ;
+    assert (s == c1) ;
+
     fprintf ('nthreads %3d built-in      %g\n', nthreads, t1) ;
-    % TODO: faster GrB_reduce for pre-compiled user-defined monoids
     tic
     for trial = 1:ntrials
         c2 = GB_mex_reduce_terminal (A, 1) ;    % user-defined at compile-time
     end
     t2 = toc ;
     fprintf ('nthreads %3d compile-time  %g\n', nthreads, t2) ;
+    assert (s == c2) ;
+
     tic
     for trial = 1:ntrials
         c3 = GB_mex_reduce_terminal (A, 2) ;        % user-defined at run-time
     end
     t3 = toc ;
     fprintf ('nthreads %3d run-time      %g\n', nthreads, t3) ;
-    assert (s == c1) ;
-    assert (s == c2) ;
     assert (s == c3) ;
+
 end
 
 %-------------------------------------------------------------------------------
@@ -78,7 +80,7 @@ A (n,1) = 1 ;
 
 tic
 for trial = 1:ntrials
-    s = full (max (max (A))) ;      % fastest
+    s = full (max (max (A))) ;
 end
 tm = toc ;
 fprintf ('MATLAB max: %g\n', tm) ;
@@ -112,7 +114,7 @@ A (n,1) = inf ;
 
 tic
 for trial = 1:ntrials
-    s = full (max (max (A))) ;      % fastest
+    s = full (max (max (A))) ;
 end
 tm = toc ;
 fprintf ('MATLAB max: %g\n', tm) ;
@@ -146,7 +148,7 @@ A (n,1) = 2 ;
 
 tic
 for trial = 1:ntrials
-    s = full (max (max (A))) ;      % fastest
+    s = full (max (max (A))) ;
 end
 tm = toc ;
 fprintf ('MATLAB max: %g\n', tm) ;
@@ -180,7 +182,7 @@ A (n,1) = nan ;
 
 tic
 for trial = 1:ntrials
-    s = full (max (max (A))) ;      % fastest
+    s = full (max (max (A))) ;
 end
 tm = toc ;
 fprintf ('MATLAB max: %g\n', tm) ;

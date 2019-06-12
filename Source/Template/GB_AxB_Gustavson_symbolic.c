@@ -231,7 +231,7 @@
             else
             { 
                 // sort the nonzero indices in C(:,j)
-                GB_qsort_1 (Ci + cnz_last, len, NULL) ;
+                GB_qsort_1a (Ci + cnz_last, len, NULL) ;
             }
         }
 

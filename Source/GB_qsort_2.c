@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_qsort_2b: sort a 2-by-n list of integers, using A[0:1][ ] as the key
+// GB_qsort_2: sort a 2-by-n list of integers, using A[0:1][ ] as the key
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -58,14 +58,14 @@
     int64_t t1 = A ## _1 [a] ; A ## _1 [a] = A ## _1 [b] ; A ## _1 [b] = t1 ; \
 }
 
-#define GB_partition GB_partition_2b
-#define GB_quicksort GB_quicksort_2b
-#define GB_quicksort_par  GB_quicksort_par_2b
-#define GB_quicksort_main GB_quicksort_main_2b
+#define GB_partition GB_partition_2
+#define GB_quicksort GB_quicksort_2
+#define GB_quicksort_par  GB_quicksort_par_2
+#define GB_quicksort_main GB_quicksort_main_2
 
 #include "GB_qsort_template.c"
 
-void GB_qsort_2b        // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+void GB_qsort_2         // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t A_0 [ ],    // size n array
     int64_t A_1 [ ],    // size n array

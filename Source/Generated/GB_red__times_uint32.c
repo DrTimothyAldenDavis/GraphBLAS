@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -31,6 +32,11 @@
 #define GB_CTYPE \
     uint32_t
 
+// declare scalar
+
+    #define GB_SCALAR(s)                            \
+        uint32_t s
+
 // Array to array
 
     // W [k] = (ztype) S [i], with typecast
@@ -51,9 +57,13 @@
 
 // Array to scalar
 
-    // ztype s = (ztype) Ax [p], with typecast
+    // s = (ztype) Ax [p], with typecast
     #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)         \
-        uint32_t s = Ax [p]
+        s = Ax [p]
+
+    // s = W [k], no typecast
+    #define GB_COPY_ARRAY_TO_SCALAR(s,W,k)          \
+        s = W [k]
 
     // s += (ztype) Ax [p], with typecast
     #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
@@ -73,12 +83,6 @@
     #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
         W [k] *= s
 
-// set scalar to identity
-
-    // s = identity
-    #define GB_SCALAR_IDENTITY(s)                   \
-        uint32_t s = 1
-
 // workspace
 
     // declare a ztype array of size ntasks
@@ -87,23 +91,19 @@
 
 // break the loop if terminal condition reached
 
-    #define GB_BREAK_IF_TERMINAL(s)                 \
+    #define GB_HAS_TERMINAL                         \
+        1
+
+    #define GB_TERMINAL_VALUE                       \
+        0
+
+    #define GB_BREAK_IF_TERMINAL(t)                 \
         if (s == 0) break ;
 
-    #define GB_IF_NOT_EARLY_EXIT                    \
-        bool my_exit ; \
-        GB_PRAGMA (omp atomic read) \
-        my_exit = early_exit ; \
-        if (!my_exit)
+// panel size for built-in operators
 
-    #define GB_PARALLEL_BREAK_IF_TERMINAL(s)        \
-        if (s == 0) \
-        { \
-            GB_PRAGMA (omp atomic write) \
-            early_exit = true ; \
-            break ; \
-        }
- 
+    #define GB_PANEL                                \
+        64
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
@@ -120,7 +120,7 @@ void GB_red_scalar__times_uint32
 )
 { 
     uint32_t s = (*result) ;
-    #include "GB_reduce_to_scalar_template.c"
+    #include "GB_reduce_panel.c"
     (*result) = s ;
 }
 

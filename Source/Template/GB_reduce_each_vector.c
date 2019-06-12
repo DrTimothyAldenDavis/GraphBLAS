@@ -84,6 +84,7 @@
                 //--------------------------------------------------------------
 
                 // ztype s = (ztype) Ax [pA_start], with typecast
+                GB_SCALAR (s) ;
                 GB_CAST_ARRAY_TO_SCALAR (s, Ax, pA_start) ;
                 for (int64_t p = pA_start+1 ; p < pA_end ; p++)
                 {

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_qsort_1: sort an n-by-1 list of integers
+// GB_qsort_1a: sort an n-by-1 list of integers
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -36,14 +36,14 @@
     int64_t t = A ## _0 [a] ; A ## _0 [a] = A ## _0 [b] ; A ## _0 [b] = t ; \
 }
 
-#define GB_partition GB_partition_1
-#define GB_quicksort GB_quicksort_1
-#define GB_quicksort_par  GB_quicksort_par_1
-#define GB_quicksort_main GB_quicksort_main_1
+#define GB_partition GB_partition_1a
+#define GB_quicksort GB_quicksort_1a
+#define GB_quicksort_par  GB_quicksort_par_1a
+#define GB_quicksort_main GB_quicksort_main_1a
 
 #include "GB_qsort_template.c"
 
-void GB_qsort_1         // sort array A of size 1-by-n
+void GB_qsort_1a        // sort array A of size 1-by-n
 (
     int64_t A_0 [ ],    // size-n array
     const int64_t n,

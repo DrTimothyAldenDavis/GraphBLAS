@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -21,7 +22,7 @@
 // A type:   int16_t
 // C type:   int16_t
 
-// Reduce:   s = GB_IMIN (s, aij)
+// Reduce:   if (aij < s) s = aij
 // Identity: INT16_MAX
 // Terminal: if (s == INT16_MIN) break ;
 
@@ -31,6 +32,11 @@
 #define GB_CTYPE \
     int16_t
 
+// declare scalar
+
+    #define GB_SCALAR(s)                            \
+        int16_t s
+
 // Array to array
 
     // W [k] = (ztype) S [i], with typecast
@@ -39,7 +45,7 @@
 
     // W [k] += (ztype) S [i], with typecast
     #define GB_ADD_CAST_ARRAY_TO_ARRAY(W,k,S,i)     \
-        W [k] = GB_IMIN (W [k], S [i])
+        if (S [i] < W [k]) W [k] = S [i]
 
     // W [k] = S [i], no typecast
     #define GB_COPY_ARRAY_TO_ARRAY(W,k,S,i)         \
@@ -47,21 +53,25 @@
 
     // W [k] += S [i], no typecast
     #define GB_ADD_ARRAY_TO_ARRAY(W,k,S,i)          \
-        W [k] = GB_IMIN (W [k], S [i])
+        if (S [i] < W [k]) W [k] = S [i]
 
 // Array to scalar
 
-    // ztype s = (ztype) Ax [p], with typecast
+    // s = (ztype) Ax [p], with typecast
     #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)         \
-        int16_t s = Ax [p]
+        s = Ax [p]
+
+    // s = W [k], no typecast
+    #define GB_COPY_ARRAY_TO_SCALAR(s,W,k)          \
+        s = W [k]
 
     // s += (ztype) Ax [p], with typecast
     #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
-        s = GB_IMIN (s, Ax [p])
+        if (Ax [p] < s) s = Ax [p]
 
     // s += S [i], no typecast
     #define GB_ADD_ARRAY_TO_SCALAR(s,S,i)           \
-        s = GB_IMIN (s, S [i])
+        if (S [i] < s) s = S [i]
 
 // Scalar to array
 
@@ -71,13 +81,7 @@
 
     // W [k] += s, no typecast
     #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
-        W [k] = GB_IMIN (W [k], s)
-
-// set scalar to identity
-
-    // s = identity
-    #define GB_SCALAR_IDENTITY(s)                   \
-        int16_t s = INT16_MAX
+        if (s < W [k]) W [k] = s
 
 // workspace
 
@@ -87,23 +91,19 @@
 
 // break the loop if terminal condition reached
 
-    #define GB_BREAK_IF_TERMINAL(s)                 \
+    #define GB_HAS_TERMINAL                         \
+        1
+
+    #define GB_TERMINAL_VALUE                       \
+        INT16_MIN
+
+    #define GB_BREAK_IF_TERMINAL(t)                 \
         if (s == INT16_MIN) break ;
 
-    #define GB_IF_NOT_EARLY_EXIT                    \
-        bool my_exit ; \
-        GB_PRAGMA (omp atomic read) \
-        my_exit = early_exit ; \
-        if (!my_exit)
+// panel size for built-in operators
 
-    #define GB_PARALLEL_BREAK_IF_TERMINAL(s)        \
-        if (s == INT16_MIN) \
-        { \
-            GB_PRAGMA (omp atomic write) \
-            early_exit = true ; \
-            break ; \
-        }
- 
+    #define GB_PANEL                                \
+        16
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
@@ -120,7 +120,7 @@ void GB_red_scalar__min_int16
 )
 { 
     int16_t s = (*result) ;
-    #include "GB_reduce_to_scalar_template.c"
+    #include "GB_reduce_panel.c"
     (*result) = s ;
 }
 

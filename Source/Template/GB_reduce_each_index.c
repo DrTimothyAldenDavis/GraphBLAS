@@ -63,6 +63,7 @@
             {
                 int64_t i = Ai [p] ;
                 // ztype aij = (ztype) Ax [p], with typecast
+                GB_SCALAR (aij) ;
                 GB_CAST_ARRAY_TO_SCALAR (aij, Ax, p) ;
                 if (!Mark [i])
                 {

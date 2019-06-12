@@ -31,6 +31,11 @@
 #define GB_CTYPE \
     GB_ctype
 
+// declare scalar
+
+    #define GB_SCALAR(s)                            \
+        GB_ctype s
+
 // Array to array
 
     // W [k] = (ztype) S [i], with typecast
@@ -51,9 +56,13 @@
 
 // Array to scalar
 
-    // ztype s = (ztype) Ax [p], with typecast
+    // s = (ztype) Ax [p], with typecast
     #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)         \
-        GB_ctype s = Ax [p]
+        s = Ax [p]
+
+    // s = W [k], no typecast
+    #define GB_COPY_ARRAY_TO_SCALAR(s,W,k)          \
+        s = W [k]
 
     // s += (ztype) Ax [p], with typecast
     #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)     \
@@ -73,12 +82,6 @@
     #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
         GB_REDUCE_OP(W [k], s)
 
-// set scalar to identity
-
-    // s = identity
-    #define GB_SCALAR_IDENTITY(s)                   \
-        GB_ctype s = GB_identity
-
 // workspace
 
     // declare a ztype array of size ntasks
@@ -87,14 +90,19 @@
 
 // break the loop if terminal condition reached
 
-    #define GB_BREAK_IF_TERMINAL(s)                 \
+    #define GB_HAS_TERMINAL                         \
+        GB_has_terminal
+
+    #define GB_TERMINAL_VALUE                       \
+        GB_terminal_value
+
+    #define GB_BREAK_IF_TERMINAL(t)                 \
         GB_terminal
 
-    #define GB_IF_NOT_EARLY_EXIT                    \
-        GB_if_not_early_exit
+// panel size for built-in operators
 
-    #define GB_PARALLEL_BREAK_IF_TERMINAL(s)        \
-        GB_parallel_terminal 
+    #define GB_PANEL                                \
+        GB_panel
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
@@ -111,7 +119,7 @@ void GB_red_scalar
 )
 { 
     GB_ctype s = (*result) ;
-    #include "GB_reduce_to_scalar_template.c"
+    #include "GB_reduce_panel.c"
     (*result) = s ;
 }
 

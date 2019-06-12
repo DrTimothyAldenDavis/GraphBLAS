@@ -1,4 +1,4 @@
-function codegen_red_method (opname, func, atype, identity, terminal)
+function codegen_red_method (opname, func, atype, identity, terminal, panel)
 %CODEGEN_RED_METHOD create a reduction function, C = reduce (A)
 %
 % codegen_red_method (opname, func, atype, identity, terminal)
@@ -35,15 +35,16 @@ else
 end
 
 if (~isempty (terminal))
-    fprintf (f, 'define(`GB_terminal'', `if (s == %s) break ;'')\n', ...
-        terminal) ;
-    fprintf (f, 'define(`GB_if_not_early_exit'', `bool my_exit ; \\\n        GB_PRAGMA (omp atomic read) \\\n        my_exit = early_exit ; \\\n        if (!my_exit)'')\n') ;
-    fprintf (f, 'define(`GB_parallel_terminal'', `if (s == %s) \\\n        { \\\n            GB_PRAGMA (omp atomic write) \\\n            early_exit = true ; \\\n            break ; \\\n        }\n'')\n', terminal) ;
+    fprintf (f, 'define(`GB_has_terminal'', `1'')\n') ;
+    fprintf (f, 'define(`GB_terminal_value'', `%s'')\n', terminal) ;
+    fprintf (f, 'define(`GB_terminal'', `if (s == %s) break ;'')\n', terminal) ;
 else
+    fprintf (f, 'define(`GB_has_terminal'', `0'')\n') ;
+    fprintf (f, 'define(`GB_terminal_value'', `(none)'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
-    fprintf (f, 'define(`GB_if_not_early_exit'', `;'')\n') ;
-    fprintf (f, 'define(`GB_parallel_terminal'', `;'')\n') ;
 end
+
+fprintf (f, 'define(`GB_panel'', `%d'')\n', panel) ;
 
 % create the operator
 func = strrep (func, 'zarg', '`$1''') ;

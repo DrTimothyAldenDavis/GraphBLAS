@@ -533,7 +533,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         else
         { 
             // sort a set of (i,k) tuples
-            GB_qsort_2b (I_work, K_work, nvals, Context) ;
+            GB_qsort_2 (I_work, K_work, nvals, Context) ;
         }
     }
 

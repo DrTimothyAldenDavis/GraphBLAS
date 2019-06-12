@@ -154,9 +154,11 @@ GrB_Info GB_subref_slice
 
     int nthreads_for_Cwork = GB_nthreads (Cnvec, chunk, nthreads_max) ;
 
-    // For debugging only: record the methods used.  This is slow, however.
-    // int64_t Hist [13] ;
-    // for (int method = 0 ; method <= 12 ; method++) Hist [method] = 0 ;
+    #ifdef GB_DEBUG
+    // For debugging only: record the methods used for each vector.
+    int64_t Hist [13] ;
+    for (int method = 0 ; method <= 12 ; method++) Hist [method] = 0 ;
+    #endif
 
     #pragma omp parallel for num_threads(nthreads_for_Cwork) \
         schedule(static) reduction(||:need_I_inverse)
@@ -178,24 +180,30 @@ GrB_Info GB_subref_slice
         // must be created.  The # of duplicates has no impact on the I inverse
         // decision, and a minor effect on the work (which is ignored).
 
-        // int method =
+        #ifdef GB_DEBUG
+        int method =
+        #endif
         GB_subref_method (&work, &this_needs_I_inverse, alen, avlen,
             Ikind, nI, I_inverse_ok, need_qsort, iinc, 0) ;
-        // #pragma omp atomic update
-        // Hist [method] ++ ;
+        #ifdef GB_DEBUG
+        #pragma omp atomic update
+        Hist [method] ++ ;
+        #endif
 
         // log the result
         need_I_inverse = need_I_inverse || this_needs_I_inverse ;
         Cwork [kC] = work ;
     }
 
-    // for (int method = 0 ; method <= 12 ; method++)
-    // {
-    //     if (Hist [method] > 0)
-    //     {
-    //         printf ("method %2d : "GBd"\n", method, Hist [method]) ;
-    //     }
-    // }
+    #ifdef GB_DEBUG
+    for (int method = 0 ; method <= 12 ; method++)
+    {
+        if (Hist [method] > 0)
+        {
+            // printf ("method %2d : "GBd"\n", method, Hist [method]) ;
+        }
+    }
+    #endif
 
     //--------------------------------------------------------------------------
     // replace Cwork with its cumulative sum

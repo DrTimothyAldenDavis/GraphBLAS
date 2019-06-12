@@ -7,15 +7,15 @@
 
 //------------------------------------------------------------------------------
 
-// Reduce a matrix to a scalar.
-
-// TODO add simd vectorization for non-terminal monoids.  Particular max, min.
+// Reduce a matrix to a scalar, with typecasting and generic operators.
+// No panel is used.
 
 {
 
     const GB_ATYPE *restrict Ax = A->x ;
     const int64_t  *restrict Ai = A->i ;
     int64_t anz = GB_NNZ (A) ;
+    ASSERT (anz > 0) ;
 
     if (nthreads == 1)
     {
@@ -24,40 +24,14 @@
         // single thread
         //----------------------------------------------------------------------
 
-        if (A->nzombies == 0)
+        // s = (ztype) Ax [0]
+        GB_CAST_ARRAY_TO_SCALAR (s, Ax, 0) ;
+        for (int64_t p = 1 ; p < anz ; p++)
         {
-
-            //------------------------------------------------------------------
-            // no zombies
-            //------------------------------------------------------------------
-
-            for (int64_t p = 0 ; p < anz ; p++)
-            {
-                ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
-                // s += (ztype) Ax [p]
-                GB_ADD_CAST_ARRAY_TO_SCALAR (s, Ax, p) ;
-                // check for early exit
-                GB_BREAK_IF_TERMINAL (s) ;
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // with zombies
-            //------------------------------------------------------------------
-
-            for (int64_t p = 0 ; p < anz ; p++)
-            {
-                if (GB_IS_NOT_ZOMBIE (Ai [p]))
-                {
-                    // s += (ztype) Ax [p]
-                    GB_ADD_CAST_ARRAY_TO_SCALAR (s, Ax, p) ;
-                    // check for early exit
-                    GB_BREAK_IF_TERMINAL (s) ;
-                }
-            }
+            // check for early exit
+            GB_BREAK_IF_TERMINAL (s) ;
+            // s = op (s, (ztype) Ax [p])
+            GB_ADD_CAST_ARRAY_TO_SCALAR (s, Ax, p) ;
         }
 
     }
@@ -77,79 +51,37 @@
         // each thread reduces its own slice in parallel
         //----------------------------------------------------------------------
 
-        if (A->nzombies == 0)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+        for (int tid = 0 ; tid < ntasks ; tid++)
         {
-
-            //------------------------------------------------------------------
-            // no zombies
-            //------------------------------------------------------------------
-
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < ntasks ; tid++)
+            int64_t pstart, pend ;
+            GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
+            // ztype t = (ztype) Ax [pstart], with typecast
+            GB_SCALAR (t) ;
+            GB_CAST_ARRAY_TO_SCALAR (t, Ax, pstart) ;
+            GB_IF_NOT_EARLY_EXIT
             {
-                // ztype t = identity
-                GB_SCALAR_IDENTITY (t) ;
-
-                GB_IF_NOT_EARLY_EXIT
+                for (int64_t p = pstart+1 ; p < pend ; p++)
                 {
-                    int64_t pstart, pend ;
-                    GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
-                    for (int64_t p = pstart ; p < pend ; p++)
-                    {
-                        ASSERT (GB_IS_NOT_ZOMBIE (Ai [p])) ;
-                        // t += (ztype) Ax [p], with typecast
-                        GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
-                        // check for early exit
-                        GB_PARALLEL_BREAK_IF_TERMINAL (t) ;
-                    }
+                    // check for early exit
+                    GB_PARALLEL_BREAK_IF_TERMINAL (t) ;
+                    // t = op (t, (ztype) Ax [p]), with typecast
+                    GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
                 }
-
-                // W [tid] = t, no typecast
-                GB_COPY_SCALAR_TO_ARRAY (W, tid, t) ;
             }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // with zombies
-            //------------------------------------------------------------------
-
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int tid = 0 ; tid < ntasks ; tid++)
-            {
-                // ztype t = identity
-                GB_SCALAR_IDENTITY (t) ;
-
-                GB_IF_NOT_EARLY_EXIT
-                {
-                    int64_t pstart, pend ;
-                    GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
-                    for (int64_t p = pstart ; p < pend ; p++)
-                    {
-                        if (GB_IS_NOT_ZOMBIE (Ai [p]))
-                        {
-                            // t += (ztype) Ax [p], with typecast
-                            GB_ADD_CAST_ARRAY_TO_SCALAR (t, Ax, p) ;
-                            // check for early exit
-                            GB_PARALLEL_BREAK_IF_TERMINAL (t) ;
-                        }
-                    }
-                }
-
-                // W [tid] = t, no typecast
-                GB_COPY_SCALAR_TO_ARRAY (W, tid, t) ;
-            }
+            // W [tid] = t, no typecast
+            GB_COPY_SCALAR_TO_ARRAY (W, tid, t) ;
         }
 
         //----------------------------------------------------------------------
         // sum up the results of each slice using a single thread
         //----------------------------------------------------------------------
 
-        for (int tid = 0 ; tid < ntasks ; tid++)
+        // s = W [0], no typecast
+        GB_COPY_ARRAY_TO_SCALAR (s, W, 0) ;
+        for (int tid = 1 ; tid < ntasks ; tid++)
         {
-            // s += W [tid], no typecast
+            // s = op (s, W [tid]), no typecast
             GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;
         }
     }

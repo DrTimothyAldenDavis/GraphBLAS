@@ -9,6 +9,7 @@
 
 
 
+
 void GB_red_scalar__min_int8
 (
     int8_t *result,
@@ -54,6 +55,7 @@ void GB_red_build__min_int8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -105,6 +107,7 @@ void GB_red_build__min_int16
 
 
 
+
 void GB_red_scalar__min_int32
 (
     int32_t *result,
@@ -150,6 +153,7 @@ void GB_red_build__min_int32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -201,6 +205,7 @@ void GB_red_build__min_int64
 
 
 
+
 void GB_red_scalar__min_uint8
 (
     uint8_t *result,
@@ -246,6 +251,7 @@ void GB_red_build__min_uint8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -297,6 +303,7 @@ void GB_red_build__min_uint16
 
 
 
+
 void GB_red_scalar__min_uint32
 (
     uint32_t *result,
@@ -342,6 +349,7 @@ void GB_red_build__min_uint32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -393,6 +401,7 @@ void GB_red_build__min_uint64
 
 
 
+
 void GB_red_scalar__min_fp32
 (
     float *result,
@@ -438,6 +447,7 @@ void GB_red_build__min_fp32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -489,6 +499,7 @@ void GB_red_build__min_fp64
 
 
 
+
 void GB_red_scalar__max_int8
 (
     int8_t *result,
@@ -534,6 +545,7 @@ void GB_red_build__max_int8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -585,6 +597,7 @@ void GB_red_build__max_int16
 
 
 
+
 void GB_red_scalar__max_int32
 (
     int32_t *result,
@@ -630,6 +643,7 @@ void GB_red_build__max_int32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -681,6 +695,7 @@ void GB_red_build__max_int64
 
 
 
+
 void GB_red_scalar__max_uint8
 (
     uint8_t *result,
@@ -726,6 +741,7 @@ void GB_red_build__max_uint8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -777,6 +793,7 @@ void GB_red_build__max_uint16
 
 
 
+
 void GB_red_scalar__max_uint32
 (
     uint32_t *result,
@@ -822,6 +839,7 @@ void GB_red_build__max_uint32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -873,6 +891,7 @@ void GB_red_build__max_uint64
 
 
 
+
 void GB_red_scalar__max_fp32
 (
     float *result,
@@ -918,6 +937,7 @@ void GB_red_build__max_fp32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -969,6 +989,7 @@ void GB_red_build__max_fp64
 
 
 
+
 void GB_red_scalar__plus_int8
 (
     int8_t *result,
@@ -1014,6 +1035,7 @@ void GB_red_build__plus_int8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1065,6 +1087,7 @@ void GB_red_build__plus_int16
 
 
 
+
 void GB_red_scalar__plus_int32
 (
     int32_t *result,
@@ -1110,6 +1133,7 @@ void GB_red_build__plus_int32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1161,6 +1185,7 @@ void GB_red_build__plus_int64
 
 
 
+
 void GB_red_scalar__plus_uint8
 (
     uint8_t *result,
@@ -1206,6 +1231,7 @@ void GB_red_build__plus_uint8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1257,6 +1283,7 @@ void GB_red_build__plus_uint16
 
 
 
+
 void GB_red_scalar__plus_uint32
 (
     uint32_t *result,
@@ -1302,6 +1329,7 @@ void GB_red_build__plus_uint32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1353,6 +1381,7 @@ void GB_red_build__plus_uint64
 
 
 
+
 void GB_red_scalar__plus_fp32
 (
     float *result,
@@ -1398,6 +1427,7 @@ void GB_red_build__plus_fp32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1449,6 +1479,7 @@ void GB_red_build__plus_fp64
 
 
 
+
 void GB_red_scalar__times_int8
 (
     int8_t *result,
@@ -1494,6 +1525,7 @@ void GB_red_build__times_int8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1545,6 +1577,7 @@ void GB_red_build__times_int16
 
 
 
+
 void GB_red_scalar__times_int32
 (
     int32_t *result,
@@ -1590,6 +1623,7 @@ void GB_red_build__times_int32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1641,6 +1675,7 @@ void GB_red_build__times_int64
 
 
 
+
 void GB_red_scalar__times_uint8
 (
     uint8_t *result,
@@ -1686,6 +1721,7 @@ void GB_red_build__times_uint8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1737,6 +1773,7 @@ void GB_red_build__times_uint16
 
 
 
+
 void GB_red_scalar__times_uint32
 (
     uint32_t *result,
@@ -1782,6 +1819,7 @@ void GB_red_build__times_uint32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1833,6 +1871,7 @@ void GB_red_build__times_uint64
 
 
 
+
 void GB_red_scalar__times_fp32
 (
     float *result,
@@ -1878,6 +1917,7 @@ void GB_red_build__times_fp32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -1929,6 +1969,7 @@ void GB_red_build__times_fp64
 
 
 
+
 void GB_red_scalar__lor_bool
 (
     bool *result,
@@ -1974,6 +2015,7 @@ void GB_red_build__lor_bool
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -2025,6 +2067,7 @@ void GB_red_build__land_bool
 
 
 
+
 void GB_red_scalar__lxor_bool
 (
     bool *result,
@@ -2070,6 +2113,7 @@ void GB_red_build__lxor_bool
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 
 
@@ -2119,6 +2163,7 @@ void GB_red_build__eq_bool
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2166,6 +2211,7 @@ void GB_red_build__first_bool
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2215,6 +2261,7 @@ void GB_red_build__first_int8
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2262,6 +2309,7 @@ void GB_red_build__first_int16
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2311,6 +2359,7 @@ void GB_red_build__first_int32
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2358,6 +2407,7 @@ void GB_red_build__first_int64
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2407,6 +2457,7 @@ void GB_red_build__first_uint8
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2454,6 +2505,7 @@ void GB_red_build__first_uint16
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2503,6 +2555,7 @@ void GB_red_build__first_uint32
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2550,6 +2603,7 @@ void GB_red_build__first_uint64
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2599,6 +2653,7 @@ void GB_red_build__first_fp32
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2646,6 +2701,7 @@ void GB_red_build__first_fp64
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2695,6 +2751,7 @@ void GB_red_build__second_bool
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2742,6 +2799,7 @@ void GB_red_build__second_int8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2791,6 +2849,7 @@ void GB_red_build__second_int16
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2838,6 +2897,7 @@ void GB_red_build__second_int32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2887,6 +2947,7 @@ void GB_red_build__second_int64
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -2934,6 +2995,7 @@ void GB_red_build__second_uint8
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -2983,6 +3045,7 @@ void GB_red_build__second_uint16
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -3030,6 +3093,7 @@ void GB_red_build__second_uint32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 
@@ -3079,6 +3143,7 @@ void GB_red_build__second_uint64
     int nthreads
 ) ;
 
+
 #if 0
 
 void GB_red_scalar__(none)
@@ -3126,6 +3191,7 @@ void GB_red_build__second_fp32
     const int64_t *restrict tnz_slice,
     int nthreads
 ) ;
+
 
 #if 0
 

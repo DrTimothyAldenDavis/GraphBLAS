@@ -8,16 +8,10 @@
 //------------------------------------------------------------------------------
 
 // c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix to a scalar.
-// Does the work for GrB_*_reduce_TYPE, both matrix and vector.  This function
-// tolerates zombies and does not delete them.  It does not tolerate pending
-// tuples, so if they are present, all zombies are deleted and all pending
-// tuples are assembled.
+// Does the work for GrB_*_reduce_TYPE, both matrix and vector.
 
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
-
-// TODO: need to vectorize, particularly max and min, which are currently 5x
-// slower than s=max(max(A)) in MATLAB.
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -39,21 +33,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    // Zombies are an opaque internal detail of the GrB_Matrix data structure
-    // that do not depend on anything outside the matrix.  Thus, Table 2.4 of
-    // the GrapBLAS spec, version 1.1.0, does not require their deletion.
-    // Pending tuples are different, since they rely on another object outside
-    // the matrix: the pending operator, which might be user-defined.  Per
-    // Table 2.4, the user can expect that GrB_reduce applies the pending
-    // operator, which can then be deleted by the user.  Thus, if the pending
-    // operator is user-defined it must be applied here.  Assembling pending
-    // tuples requires zombies to be deleted first.  Note that if the pending
-    // operator is built-in, then the updates could in principle be skipped,
-    // but this could be done only if the reduce monoid is the same as the
-    // pending operator.
-
-    GB_WAIT_PENDING (A) ;
-    ASSERT (GB_ZOMBIES_OK (A)) ;       // Zombies are tolerated, and not deleted
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL (c) ;
@@ -80,6 +59,13 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             "cannot be typecast to reduction operator of type [%s]",
             reduce->op->name, A->type->name, reduce->op->ztype->name))) ;
     }
+
+    //--------------------------------------------------------------------------
+    // delete any lingering zombies and assemble any pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_WAIT (A) ;
+    ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
     //--------------------------------------------------------------------------
     // get A
@@ -110,8 +96,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
     // get terminal value, if any
     GB_void *restrict terminal = reduce->terminal ;
-
-    // reduce all the entries in the matrix, but skip any zombies
 
     if (anz == 0)
     { 
@@ -178,14 +162,21 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             #define GB_ATYPE GB_void
 
+            // no panel used
+            #define GB_PANEL 1
+
             // workspace for each thread
-            #define GB_REDUCTION_WORKSPACE(W, ntasks) \
+            #define GB_REDUCTION_WORKSPACE(W, ntasks)               \
                 GB_void W [ntasks*zsize]
 
             // ztype t = identity
             #define GB_SCALAR_IDENTITY(t)                           \
                 GB_void t [zsize] ;                                 \
                 memcpy (t, reduce->identity, zsize) ;
+
+            // t = W [tid], no typecast
+            #define GB_COPY_ARRAY_TO_SCALAR(t, W, tid)              \
+                memcpy (t, W +(tid*zsize), zsize)
 
             // W [tid] = t, no typecast
             #define GB_COPY_SCALAR_TO_ARRAY(W, tid, t)              \
@@ -222,9 +213,12 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                     }                                               \
                 }
 
-            // ztype t = (ztype) Ax [p], but no typecasting needed
+            // ztype t ;
+            #define GB_SCALAR(t)                                    \
+                GB_void t [zsize]
+
+            // t = (ztype) Ax [p], but no typecasting needed
             #define GB_CAST_ARRAY_TO_SCALAR(t,Ax,p)                 \
-                GB_void t [zsize] ;                                 \
                 memcpy (t, Ax +((p)*zsize), zsize)
 
             // t += (ztype) Ax [p], but no typecasting needed
@@ -246,10 +240,9 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         GB_cast_function
             cast_A_to_Z = GB_cast_factory (ztype->code, A->type->code) ;
 
-            // ztype t = (ztype) Ax [p], with typecast
+            // t = (ztype) Ax [p], with typecast
             #undef  GB_CAST_ARRAY_TO_SCALAR
             #define GB_CAST_ARRAY_TO_SCALAR(t,Ax,p)                 \
-                GB_void t [zsize] ;                                 \
                 cast_A_to_Z (t, Ax +((p)*asize), asize)
 
             // t += (ztype) Ax [p], with typecast

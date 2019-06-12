@@ -52,7 +52,7 @@
 
 // ztype s = (ztype) Ax [p], with typecast
 #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)                 \
-    int64_t s = GB_SELECT (p)
+    s = GB_SELECT (p)
 
 // s += (ztype) Ax [p], with typecast
 #define GB_ADD_CAST_ARRAY_TO_SCALAR(s,Ax,p)             \
@@ -61,6 +61,10 @@
 // Cx [pC] = Ax [pA], no typecast
 #define GB_SELECT_ENTRY(Cx,pC,Ax,pA)                    \
     Cx [pC] = Ax [pA]
+
+// declare scalar for GB_reduce_each_vector
+#define GB_SCALAR(s)                                    \
+    int64_t s
 
 //------------------------------------------------------------------------------
 // GB_sel_phase1__gt_thunk_uint16
