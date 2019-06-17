@@ -9,7 +9,6 @@
 
 // check a list of indices I and determine its properties
 
-#define GB_DEBUG
 #include "GB.h"
 
 // FUTURE:: if limit=0, print a different message.  see also setEl, extractEl.

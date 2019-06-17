@@ -24,7 +24,7 @@ bool GB_is_diagonal             // true if A is diagonal
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL) ;
-    ASSERT_OK (GB_check (A, "A check diag", GB2)) ;
+    ASSERT_OK (GB_check (A, "A check diag", GB0)) ;
 
     //--------------------------------------------------------------------------
     // trivial cases

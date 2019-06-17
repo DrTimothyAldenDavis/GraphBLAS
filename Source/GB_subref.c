@@ -78,7 +78,6 @@
     GB_FREE_MEMORY (Inext,    nI, sizeof (int64_t)) ;                       \
 }
 
-#define GB_DEBUG
 #include "GB.h"
 
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric

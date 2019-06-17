@@ -12,7 +12,6 @@
 
 // Cp is either freed by phase2, or transplanted into C.
 
-#define GB_DEBUG
 #include "GB.h"
 #include "GB_subref_method.h"
 

@@ -37,7 +37,6 @@
     GB_FREE_MEMORY (Inext, nI,    sizeof (int64_t)) ;                   \
 }
 
-#define GB_DEBUG
 #include "GB.h"
 #include "GB_subref_method.h"
 
