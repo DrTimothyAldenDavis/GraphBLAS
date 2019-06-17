@@ -36,10 +36,11 @@ Additional installation notes are below.
 
 --------------------------------------------------------------------------------
 
-SuiteSparse:GraphBLAS is not yet parallel, but it needs POSIX pthreads or
-OpenMP to be thread-safe, for multithreaded user applications.  The Mac has
-POSIX pthreads built-in, which works fine, but if you want to use OpenMP on the
-Mac instead, try these instructions.
+SuiteSparse:GraphBLAS requires OpenMP for its internal parallelism.  It also
+needs either POSIX pthreads or OpenMP to be thread-safe, for multithreaded user
+applications.  The Mac has POSIX pthreads built-in, which works fine for
+user-thread safety, but will not be enough to get internal parallelism in
+GraphBLAS.  To install OpenMP on the Mac, try these instructions.
 
 To use OpenMP in GraphBLAS on the Mac:
 

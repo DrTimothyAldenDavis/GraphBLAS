@@ -26,7 +26,7 @@ GrB_Info GB_block   // apply all pending computations if blocking mode enabled
     // check for blocking mode
     //--------------------------------------------------------------------------
 
-    // no synchronization is needed since this value is read-only after
+    // no synchronization is needed since the blocking mode is read-only after
     // GrB_Init sets it.
 
     if (GB_Global_mode_get ( ) == GrB_BLOCKING)

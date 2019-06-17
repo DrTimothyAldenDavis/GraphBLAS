@@ -96,7 +96,6 @@ for nthreads = nthreads_list
     end
     t1 = toc ;
     fprintf ('nthreads %3d built-in      %g\n', nthreads, t1) ;
-    % TODO: faster GrB_reduce for pre-compiled user-defined monoids
     tic
     for trial = 1:ntrials
         c2 = GB_mex_reduce_terminal (A, 1) ;    % user-defined at compile-time
@@ -130,7 +129,6 @@ for nthreads = nthreads_list
     end
     t1 = toc ;
     fprintf ('nthreads %3d built-in      %g\n', nthreads, t1) ;
-    % TODO: faster GrB_reduce for pre-compiled user-defined monoids
     tic
     for trial = 1:ntrials
         c2 = GB_mex_reduce_terminal (A, inf) ;
@@ -164,7 +162,6 @@ for nthreads = nthreads_list
     end
     t1 = toc ;
     fprintf ('nthreads %3d built-in      %g\n', nthreads, t1) ;
-    % TODO: faster GrB_reduce for pre-compiled user-defined monoids
     tic
     for trial = 1:ntrials
         c2 = GB_mex_reduce_terminal (A, 2) ;

@@ -146,7 +146,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     //--------------------------------------------------------------------------
 
     GrB_Matrix T ;
-    info = GB_kron_kernel (&T, C->is_csc, op,
+    info = GB_kroner (&T, C->is_csc, op,
         A_transpose ? AT : A, B_transpose ? BT : B, Context) ;
 
     // free workspace

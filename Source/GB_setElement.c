@@ -155,7 +155,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             if (C->nzombies == 0 && C->n_pending == 0)
             { 
                 // remove from queue if zombies goes to 0 and n_pending is zero
-                // FUTURE:: may thrash.  See FUTURE: in GB_subassign_kernel.
+                // FUTURE:: may thrash; see GrB_wait.
                 GB_CRITICAL (GB_queue_remove (C)) ;
             }
         }
@@ -174,7 +174,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         // No typecasting can be done.  The new pending tuple must either be
         // the first pending tuple, or its type must match the prior pending
-        // tuples.  See GB_subassign_kernel for a complete description.
+        // tuples.  See GB_subassigner for a complete description.
 
         // stype is the type of this scalar
         GrB_Type stype = GB_code_type (scalar_code, ctype) ;

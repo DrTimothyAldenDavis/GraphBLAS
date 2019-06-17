@@ -30,11 +30,11 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     // check inputs
     //--------------------------------------------------------------------------
 
-    // GB_subref_numeric can return a matrix with jumbled columns, since it
-    // soon be transposed (and sorted) in GB_accum_mask.  However, it passes
-    // the jumbled matrix to GB_to_hyper_conform.  This function does not
-    // access the row indices at all, so it works fine if the columns have
-    // jumbled row indices.
+    // GB_subref can return a matrix with jumbled columns, since it may soon be
+    // transposed (and sorted) in GB_accum_mask.  However, it passes the
+    // jumbled matrix to GB_to_hyper_conform.  This function does not access
+    // the row indices, so it works fine if the columns have jumbled row
+    // indices.
 
     ASSERT_OK_OR_JUMBLED (GB_check (A, "A converting to hypersparse", GB0)) ;
     int64_t anz = GB_NNZ (A) ;

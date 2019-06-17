@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_kron_kernel: Kronecker product, C = kron (A,B)
+// GB_kroner: Kronecker product, C = kron (A,B)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -24,7 +24,7 @@
 
 #include "GB.h"
 
-GrB_Info GB_kron_kernel             // C = kron (A,B)
+GrB_Info GB_kroner                  // C = kron (A,B)
 (
     GrB_Matrix *Chandle,            // output matrix
     const bool C_is_csc,            // desired format of C

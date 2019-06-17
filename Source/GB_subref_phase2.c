@@ -10,6 +10,7 @@
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
+#define GB_DEBUG
 #include "GB.h"
 #include "GB_subref_method.h"
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_qsort_2a: sort using GB_qsort_2a
+// GB_mex_qsort_1b: sort using GB_qsort_1b
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -54,7 +54,7 @@ void mexFunction
 
     GB_MEX_TIC ;
 
-    GB_qsort_2a (Iout, Jout, n, Context) ;
+    GB_qsort_1b (Iout, Jout, sizeof (int64_t), n, Context) ;
 
     GB_MEX_TOC ;
     GB_mx_put_time (0) ;

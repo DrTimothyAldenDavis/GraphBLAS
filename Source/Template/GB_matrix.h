@@ -164,7 +164,7 @@ size_t type_size ;      // type->size, copied here since the type could be
 
 // Like MATLAB, the indices in a GraphBLAS matrix (as implemented here) are
 // "always" kept sorted.  There is one temporary exception to this rule.
-// GB_subref_numeric can return a matrix with unsorted vectors, if it will be
+// GB_subref can return a matrix with unsorted vectors, if it will be
 // later be transposed by its caller.  The transpose does the sort.
 
 // Unlike MATLAB, explicit zeros are never dropped in a GraphBLAS matrix.  They

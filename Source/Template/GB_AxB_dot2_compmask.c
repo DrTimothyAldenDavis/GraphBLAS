@@ -92,7 +92,7 @@
                 GBI_jth_iteration_with_iter (Iter_A, i, pA, pA_end) ;
 
                 // A(:,i) and B(:,j) are both present.  Check M(i,j).
-                // TODO: skip binary search if mask is dense.
+                // FUTURE:: skip binary search if mask is dense.
                 bool mij = false ;
                 bool found ;
                 int64_t pright = pM_end - 1 ;

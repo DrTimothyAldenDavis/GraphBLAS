@@ -231,7 +231,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     // If there is no mask M, and no accum, then C=T is fast (just
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
-    // So in this case, GB_subassign_kernel takes more work.
+    // So in this case, GB_subassigner takes more work.
 
     // printf ("tnz "GBd" cnpending "GBd" cnz "GBd"\n", tnz, cnpending, cnz) ;
 
@@ -239,13 +239,13 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     { 
 
         //----------------------------------------------------------------------
-        // C(:,:)<M> = accum (C(:,:),T) via GB_subassign_kernel
+        // C(:,:)<M> = accum (C(:,:),T) via GB_subassigner
         //----------------------------------------------------------------------
 
         // Since I == GrB_ALL and J = GrB_ALL, C can be safely aliased with M
         // or T, or any content of M or T.
 
-        GB_OK (GB_subassign_kernel (C, C_replace, M, Mask_comp, accum,
+        GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, 0, Context)) ;
 
     }

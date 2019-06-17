@@ -3,7 +3,7 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-VERSION 3.0.0, June 10, 2019 (DRAFT)
+VERSION 3.0.0, June 16, 2019 (DRAFT)
 
 SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of

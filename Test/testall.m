@@ -34,6 +34,7 @@ logstat ;             % start the log.txt
 %-------------------------------------------------------------------------------
 % quick tests for statement coverage
 
+logstat ('test115') ; % GrB_assign with duplicate indices
 logstat ('test101') ; % GrB_*_import and export
 logstat ('test103') ; % GrB_transpose aliases
 logstat ('test104') ; % export/import

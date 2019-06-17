@@ -37,6 +37,7 @@
     GB_FREE_MEMORY (Inext, nI,    sizeof (int64_t)) ;                   \
 }
 
+#define GB_DEBUG
 #include "GB.h"
 #include "GB_subref_method.h"
 
@@ -131,7 +132,8 @@ GrB_Info GB_subref_slice
     // requires I inverse.
 
     int64_t I_inverse_limit = GB_IMAX (4096, anz) ;
-    bool I_inverse_ok = (Ikind == GB_LIST && (nI + avlen) < I_inverse_limit) ;
+    bool I_inverse_ok = (Ikind == GB_LIST &&
+        ((nI > avlen / 256) || ((nI + avlen) < I_inverse_limit))) ;
     bool need_I_inverse = false ;
     bool post_sort = false ;
     int64_t iinc = Icolon [GxB_INC] ;

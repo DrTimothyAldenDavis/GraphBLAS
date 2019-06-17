@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 
+#define GB_DEBUG
 #include "GB.h"
 
 #define GB_Ai(p) GB_UNFLIP (Ai [p])
@@ -147,11 +148,10 @@ static inline void GB_find_Ap_start_end
 GrB_Info GB_subref_phase0
 (
     // output
-    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL
+    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL if C standard
     int64_t **p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
     int64_t **p_Ap_end,     // ... and ends at Ap_end [kC] - 1
     int64_t *p_Cnvec,       // # of vectors in C
-    bool *p_C_is_hyper,     // true if C is hypersparse
     bool *p_need_qsort,     // true if C must be sorted
     int *p_Ikind,           // kind of I
     int64_t *p_nI,          // length of I
@@ -176,7 +176,6 @@ GrB_Info GB_subref_phase0
     ASSERT (p_Ap_start != NULL) ;
     ASSERT (p_Ap_end != NULL) ;
     ASSERT (p_Cnvec != NULL) ;
-    ASSERT (p_C_is_hyper != NULL) ;
 
     ASSERT (p_nJ != NULL) ;
 
@@ -212,12 +211,12 @@ GrB_Info GB_subref_phase0
     GB_ijlength (I, ni, avlen, &nI, &Ikind, Icolon) ;
     GB_ijlength (J, nj, avdim, &nJ, &Jkind, Jcolon) ;
 
-    bool I_unsorted, I_contig, J_unsorted, J_contig ;
+    bool I_unsorted, I_has_dupl, I_contig, J_unsorted, J_has_dupl, J_contig ;
     int64_t imin, imax, jmin, jmax ;
 
     // printf ("\n================================================= I:\n") ;
-    info = GB_ijproperties (I, ni, nI, avlen, Ikind, Icolon,
-        &I_unsorted, &I_contig, &imin, &imax, Context) ;
+    info = GB_ijproperties (I, ni, nI, avlen, &Ikind, Icolon,
+        &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // I invalid
@@ -225,8 +224,8 @@ GrB_Info GB_subref_phase0
     }
 
     // printf ("\n================================================= J:\n") ;
-    info = GB_ijproperties (J, nj, nJ, avdim, Jkind, Jcolon,
-        &J_unsorted, &J_contig, &jmin, &jmax, Context) ;
+    info = GB_ijproperties (J, nj, nJ, avdim, &Jkind, Jcolon,
+        &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // J invalid
@@ -242,28 +241,6 @@ GrB_Info GB_subref_phase0
     { 
         // The caller does not need C to be returned with sorted vectors.
         need_qsort = false ;
-    }
-
-    //--------------------------------------------------------------------------
-    // replace I and J if they are explicit contiguous lists of stride 1
-    //--------------------------------------------------------------------------
-
-    // TODO move this to GB_ijproperties
-
-    if (I_contig && Ikind == GB_LIST)
-    { 
-        Ikind = GB_RANGE ;
-        Icolon [GxB_BEGIN] = imin ;
-        Icolon [GxB_INC  ] = 1 ;
-        Icolon [GxB_END  ] = imax ;
-    }
-
-    if (J_contig && Jkind == GB_LIST)
-    { 
-        Jkind = GB_RANGE ;
-        Jcolon [GxB_BEGIN] = jmin ;
-        Jcolon [GxB_INC  ] = 1 ;
-        Jcolon [GxB_END  ] = jmax ;
     }
 
     //--------------------------------------------------------------------------
@@ -709,7 +686,6 @@ GrB_Info GB_subref_phase0
     (*p_Ap_start  ) = Ap_start ;
     (*p_Ap_end    ) = Ap_end ;
     (*p_Cnvec     ) = Cnvec ;
-    (*p_C_is_hyper) = C_is_hyper ;
     (*p_need_qsort) = need_qsort ;
     (*p_Ikind     ) = Ikind ;
     (*p_nI        ) = nI ;

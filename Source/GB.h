@@ -2443,11 +2443,10 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 GrB_Info GB_subref_phase0
 (
     // output
-    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL
+    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL if C standard
     int64_t **p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
     int64_t **p_Ap_end,     // ... and ends at Ap_end [kC] - 1
     int64_t *p_Cnvec,       // # of vectors in C
-    bool *p_C_is_hyper,     // true if C is hypersparse
     bool *p_need_qsort,     // true if C must be sorted
     int *p_Ikind,           // kind of I
     int64_t *p_nI,          // length of I
@@ -2882,18 +2881,18 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     GB_Context Context
 ) ;
 
-GrB_Info GB_subassign_kernel        // C(I,J)<M> = A or accum (C (I,J), A)
+GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 (
     GrB_Matrix C,                   // input/output matrix for results
     bool C_replace,                 // C matrix descriptor
-    const GrB_Matrix M,             // optional mask for C(I,J), unused if NULL
+    const GrB_Matrix M_input,       // optional mask for C(I,J), unused if NULL
     const bool Mask_comp,           // mask descriptor
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C(I,J),A)
-    const GrB_Matrix A,             // input matrix (NULL for scalar expansion)
-    const GrB_Index *I,             // list of indices
-    const int64_t   ni,             // number of indices
-    const GrB_Index *J,             // list of vector indices
-    const int64_t   nj,             // number of column indices
+    const GrB_Matrix A_input,       // input matrix (NULL for scalar expansion)
+    const GrB_Index *I_input,       // list of indices
+    const int64_t   ni_input,       // number of indices
+    const GrB_Index *J_input,       // list of vector indices
+    const int64_t   nj_input,       // number of column indices
     const bool scalar_expansion,    // if true, expand scalar to A
     const void *scalar,             // scalar to be expanded
     const GB_Type_code scalar_code, // type code of scalar to expand
@@ -2967,7 +2966,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GB_Context Context
 ) ;
 
-GrB_Info GB_kron_kernel             // C = kron (A,B)
+GrB_Info GB_kroner                  // C = kron (A,B)
 (
     GrB_Matrix *Chandle,            // output matrix
     const bool C_is_csc,            // desired format of C
@@ -3672,13 +3671,18 @@ void GB_ijlength            // get the length and kind of an index list I
 
 GrB_Info GB_ijproperties        // check I and determine its properties
 (
+    // input:
     const GrB_Index *I,         // list of indices, or special
     const int64_t ni,           // length I, or special
     const int64_t nI,           // actual length from GB_ijlength
     const int64_t limit,        // I must be in the range 0 to limit-1
-    const int64_t Ikind,        // kind of I, from GB_ijlength
-    const int64_t Icolon [3],   // begin:inc:end from GB_ijlength
+    // input/output:
+    int *Ikind,                 // kind of I, from GB_ijlength
+    int64_t Icolon [3],         // begin:inc:end from GB_ijlength
+    // output:
     bool *I_is_unsorted,        // true if I is out of order
+    bool *I_has_dupl,           // true if I has a duplicate entry (undefined
+                                // if I is unsorted)
     bool *I_is_contig,          // true if I is a contiguous list, imin:imax
     int64_t *imin_result,       // min (I)
     int64_t *imax_result,       // max (I)
@@ -3687,10 +3691,11 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
 GrB_Info GB_ijsort
 (
-    const GrB_Index *I, // index array of size ni
+    const GrB_Index *I, // index array of size ni, where ni > 1 always holds
     int64_t *p_ni,      // input: size of I, output: number of indices in I2
-    GrB_Index **p_I2,   // output array of size ni, where I2 [0..ni2-1]
+    GrB_Index **p_I2,   // output array of size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
+    GrB_Index **p_I2k,  // output array of size ni2
     GB_Context Context
 ) ;
 

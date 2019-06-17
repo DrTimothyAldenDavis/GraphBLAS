@@ -4594,7 +4594,6 @@ void mexFunction
 
     bool b1, b2 ;
     int64_t imin, imax ;
-    // OK (GB_ijproperties (I, 0, J, 0, 2, 2, &b1, &b2, &imin, &imax)) ;
 
     OK (GB_op_is_second (GrB_SECOND_FP64, NULL)) ;
 

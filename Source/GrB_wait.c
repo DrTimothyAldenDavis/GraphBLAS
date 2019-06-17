@@ -55,7 +55,7 @@ GrB_Info GrB_wait ( )       // finish all pending computations
         // pending operations.  GB_check expects it to be in the queue.
         // ASSERT_OK (GB_check (A, "to assemble in GrB_wait", GB0)) ;
         // FUTURE:: allow matrices with no pending operations to be in the
-        // queue.  See FUTURE:: in GB_setElement and GB_subassign_kernel.
+        // queue; this may help avoid thrashing the critical section.
         ASSERT (GB_PENDING (A) || GB_ZOMBIES (A)) ;
         // delete any lingering zombies and assemble any pending tuples.
         GB_WAIT (A) ;

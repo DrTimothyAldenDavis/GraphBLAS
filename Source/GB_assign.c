@@ -30,10 +30,13 @@
 
 #define GB_FREE_ALL                                     \
 {                                                       \
+    GB_MATRIX_FREE (&Z2) ;                              \
     GB_MATRIX_FREE (&AT) ;                              \
     GB_MATRIX_FREE (&MT) ;                              \
-    GB_FREE_MEMORY (I2, I2_size, sizeof (GrB_Index)) ;  \
-    GB_FREE_MEMORY (J2, J2_size, sizeof (GrB_Index)) ;  \
+    GB_FREE_MEMORY (I2,  I2_size, sizeof (GrB_Index)) ; \
+    GB_FREE_MEMORY (I2k, I2_size, sizeof (GrB_Index)) ; \
+    GB_FREE_MEMORY (J2,  J2_size, sizeof (GrB_Index)) ; \
+    GB_FREE_MEMORY (J2k, J2_size, sizeof (GrB_Index)) ; \
     GB_MATRIX_FREE (&SubMask) ;                         \
 }
 
@@ -64,13 +67,24 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // check inputs
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+    GrB_Matrix AT = NULL ;
+    GrB_Matrix MT = NULL ;
+    GrB_Matrix Z = NULL ;
+    GrB_Matrix Z2 = NULL ;
+    GrB_Index *restrict I2  = NULL ;
+    GrB_Index *restrict I2k = NULL ;
+    GrB_Index *restrict J2  = NULL ;
+    GrB_Index *restrict J2k = NULL ;
+    int64_t I2_size = 0, J2_size = 0 ;
+    GrB_Matrix SubMask = NULL ;
+
     ASSERT (GB_ALIAS_OK2 (C, M_in, A_in)) ;
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL (Rows) ;
     GB_RETURN_IF_NULL (Cols) ;
 
-    GrB_Info info ;
     GrB_Matrix M = M_in ;
     GrB_Matrix A = A_in ;
 
@@ -107,12 +121,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     GB_ijlength (Rows, nRows_in, GB_NROWS (C), &nRows, &RowsKind, RowColon) ;
     GB_ijlength (Cols, nCols_in, GB_NCOLS (C), &nCols, &ColsKind, ColColon) ;
 
-    GrB_Matrix AT = NULL ;
-    GrB_Matrix MT = NULL ;
-    GrB_Index *I2 = NULL ;
-    GrB_Index *J2 = NULL ;
-    GrB_Matrix SubMask = NULL ;
-
     bool C_is_csc = C->is_csc ;
 
     //--------------------------------------------------------------------------
@@ -123,14 +131,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     if (accum != NULL)
     { 
         // C<M>(Rows,Cols) = accum (C(Rows,Cols),A)
-        info = GB_BinaryOp_compatible (accum, C->type, C->type,
+        GB_OK (GB_BinaryOp_compatible (accum, C->type, C->type,
             (scalar_expansion) ? NULL : A->type,
-            (scalar_expansion) ? scalar_code : 0, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // domain(s) of accum are not compatible
-            return (info) ;
-        }
+            (scalar_expansion) ? scalar_code : 0, Context)) ;
     }
 
     // C<M>(Rows,Cols) = T, so C and T must be compatible.
@@ -442,18 +445,17 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // tracking is enabled (see GB_FREE_ALL defined above).  Ignore the
     // spurious gcc warnings.
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-    int64_t I2_size = 0, J2_size = 0 ;
 
     if (scalar_expansion)
     {
         // The spec states that scalar expansion is well-defined if I and J
-        // have duplicate entries.  However, GB_subassign_kernel is not defined
-        // in this case.  To ensure that GrB_assign is well-defined, duplicates
-        // in I and J must first be removed.  This reduces the size of I and J,
+        // have duplicate entries.  However, GB_subassigner is not defined in
+        // this case.  To ensure that GrB_assign is well-defined, duplicates in
+        // I and J must first be removed.  This reduces the size of I and J,
         // but has no effect on any other parameters.  This can be done here
         // since the mask M has the same size as C (or the entire row/column
         // for GrB_Row_assign and GrB_Col_assign).  It cannot be done in
-        // GB_subassign_kernel since its mask has the same size as IxJ.
+        // GB_subassigner since its mask has the same size as IxJ.
 
         // no need to sort a list of length 0 or 1; it is already sorted
 
@@ -461,13 +463,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         {
             // ni and nI are reduced if there are duplicates
             I2_size = ni ;
-            info = GB_ijsort (I, &ni, &I2, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_ijsort (I, &ni, &I2, &I2k, Context)) ;
             ASSERT (ni <= I2_size) ;
             nI = ni ;
             I = I2 ;
@@ -477,13 +473,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         {
             // nj and nJ are reduced if there are duplicates
             J2_size = nj ;
-            info = GB_ijsort (J, &nj, &J2, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_ijsort (J, &nj, &J2, &J2k, Context)) ;
             ASSERT (nj <= J2_size) ;
             nJ = nj ;
             J = J2 ;
@@ -501,13 +491,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     {
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
-        info = GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (info) ;
-        }
+        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
         A = AT ;
     }
 
@@ -534,20 +518,16 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (C_is_csc)
             { 
                 ASSERT (J == J2 || J == Cols) ;
-                // info = GB_subref_numeric (&SubMask, true, M,
-                //     J, nj, GrB_ALL, 1, true, Context) ;
-                info = GB_subref (&SubMask, true, M,
-                    J, nj, GrB_ALL, 1, false, true, Context) ;
+                GB_OK (GB_subref (&SubMask, true, M,
+                    J, nj, GrB_ALL, 1, false, true, Context)) ;
             }
             else
             { 
                 ASSERT (I == I2 || I == Cols) ;
-                // info = GB_subref_numeric (&SubMask, true, M,
-                //    I, ni, GrB_ALL, 1, true, Context) ;
-                info = GB_subref (&SubMask, true, M,
-                    I, ni, GrB_ALL, 1, false, true, Context) ;
+                GB_OK (GB_subref (&SubMask, true, M,
+                    I, ni, GrB_ALL, 1, false, true, Context)) ;
             }
-            ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_VECTOR_OK (SubMask))) ;
+            ASSERT (GB_VECTOR_OK (SubMask)) ;
         }
         else if (col_assign)
         {
@@ -557,44 +537,30 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             if (C_is_csc)
             { 
                 ASSERT (I == I2 || I == Rows) ;
-                // info = GB_subref_numeric (&SubMask, true, M,
-                //     I, ni, GrB_ALL, 1, true, Context) ;
-                info = GB_subref (&SubMask, true, M,
-                    I, ni, GrB_ALL, 1, false, true, Context) ;
+                GB_OK (GB_subref (&SubMask, true, M,
+                    I, ni, GrB_ALL, 1, false, true, Context)) ;
             }
             else
             { 
                 ASSERT (J == J2 || J == Rows) ;
-                // info = GB_subref_numeric (&SubMask, true, M,
-                //    J, nj, GrB_ALL, 1, true, Context) ;
-                info = GB_subref (&SubMask, true, M,
-                    J, nj, GrB_ALL, 1, false, true, Context) ;
+                GB_OK (GB_subref (&SubMask, true, M,
+                    J, nj, GrB_ALL, 1, false, true, Context)) ;
             }
-            ASSERT (GB_IMPLIES (info == GrB_SUCCESS, GB_VECTOR_OK (SubMask))) ;
+            ASSERT (GB_VECTOR_OK (SubMask)) ;
         }
         else
         {
             // SubMask = M (I,J)
             if (M->is_csc == C_is_csc)
             { 
-                // info = GB_subref_numeric (&SubMask, M->is_csc,
-                //     M, I, ni, J, nj, true, Context) ;
-                info = GB_subref (&SubMask, M->is_csc,
-                    M, I, ni, J, nj, false, true, Context) ;
+                GB_OK (GB_subref (&SubMask, M->is_csc,
+                    M, I, ni, J, nj, false, true, Context)) ;
             }
             else
             { 
-                // info = GB_subref_numeric (&SubMask, M->is_csc,
-                //     M, J, nj, I, ni, true, Context) ;
-                info = GB_subref (&SubMask, M->is_csc,
-                    M, J, nj, I, ni, false, true, Context) ;
+                GB_OK (GB_subref (&SubMask, M->is_csc,
+                    M, J, nj, I, ni, false, true, Context)) ;
             }
-        }
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (info) ;
         }
         M = SubMask ;
         ASSERT_OK (GB_check (M, "extracted submask M", GB0)) ;
@@ -623,13 +589,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // MT = M' to conform M to the same CSR/CSC format as C.
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: typecast, no op, not in place
-            info = GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
             M = MT ;
         }
     }
@@ -638,9 +598,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // Z = C
     //--------------------------------------------------------------------------
 
-    // GB_subassign_kernel modifies C efficiently in place, but there are cases
-    // when C is aliased with M or A that require the work to not be done in
-    // place.
+    // GB_subassigner modifies C efficiently in place, but there are cases when
+    // C is aliased with M or A that require the work to not be done in place.
 
     // If both I == GrB_ALL and J == GrB_ALL, then C can be safely aliased with
     // M or A, or both.  In addition, M and/or A may also have shallow
@@ -650,13 +609,11 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // aliased with M or A.  Nor can any shallow component of M or A refer to
     // any component of C.  This is an unsafe alias.
 
-    // If C is unsafely aliased a copy must be made.  GB_subassign_kernel
-    // operates on the copy, Z, which is then transplanted back into C when
-    // done.  This is costly, and can have performance implications, but it is
-    // the only reasonable method.  If a copy of C must be made, then it is as
-    // large as M or A, so copying the whole matrix will not add much time.
-
-    GrB_Matrix Z ;
+    // If C is unsafely aliased a copy must be made.  GB_subassigner operates
+    // on the copy, Z, which is then transplanted back into C when done.  This
+    // is costly, and can have performance implications, but it is the only
+    // reasonable method.  If a copy of C must be made, then it is as large as
+    // M or A, so copying the whole matrix will not add much time.
 
     bool unsafely_aliased ;
     if (I == GrB_ALL && J == GrB_ALL)
@@ -679,21 +636,16 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     if (unsafely_aliased)
     {
-        // Z = duplicate of C
+        // Z2 = duplicate of C, which must be freed when done
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
-        info = GB_dup (&Z, C, true, NULL, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_FREE_ALL ;
-            return (info) ;
-        }
+        GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
+        Z = Z2 ;
     }
     else
     { 
-        // GB_subassign_kernel can safely operate on C in place
-        // and so can the C_replace_phase below.
+        // GB_subassigner can safely operate on C in place and so can the
+        // C_replace_phase below.
         Z = C ;
     }
 
@@ -701,7 +653,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // Z(I,J)<M> = A or accum (Z(I,J),A)
     //--------------------------------------------------------------------------
 
-    info = GB_subassign_kernel (
+    GB_OK (GB_subassigner (
         Z,          C_replace,      // Z matrix and its descriptor
         M,          Mask_comp,      // mask matrix and its descriptor
         accum,                      // for accum (C(I,J),A)
@@ -711,27 +663,19 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         scalar_expansion,           // if true, expand scalar to A
         scalar,                     // scalar to expand, NULL if A not NULL
         scalar_code,                // type code of scalar to expand
-        Context) ;
+        Context)) ;
 
-    // return if GB_subassign_kernel failed
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    // free all but Z2, I2, and J2, which are still needed.  MT and SubMask are
+    // freed because the C_replace_phase requires the original mask, not the
+    // submask or its transpose.  Z2 is still needed since Z == Z2, and it will
+    // be modified by the C_replace_phase and then transplanted back into C.
+    GB_MATRIX_FREE (&AT) ;
+    GB_MATRIX_FREE (&MT) ;
+    GB_MATRIX_FREE (&SubMask) ;
 
     //--------------------------------------------------------------------------
     // examine Z outside the Z(I,J) submatrix
     //--------------------------------------------------------------------------
-
-    // free all but I2 and J2, which are still needed.  MT and SubMask are
-    // freed because the C_replace_phase requires the original mask, not the
-    // submask or its transpose.
-    GB_MATRIX_FREE (&AT) ;
-    GB_MATRIX_FREE (&MT) ;
-    GB_MATRIX_FREE (&SubMask) ;
 
     if (C_replace_phase)
     {
@@ -765,14 +709,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
         if (GB_PENDING (Z))
         {
-            info = GB_wait (Z, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_wait (Z, Context)) ;
         }
 
         ASSERT_OK (GB_check (Z, "Z cleaned up for C-replace-phase", GB0)) ;
@@ -788,14 +725,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // MT = M' to conform M to the same CSR/CSC format as C.
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: typecast, no op, not in place
-            info = GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
             M = MT ;
         }
 
@@ -815,13 +745,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         {
             // ni and nI are reduced if there are duplicates
             I2_size = ni ;
-            info = GB_ijsort (I, &ni, &I2, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_ijsort (I, &ni, &I2, &I2k, Context)) ;
             ASSERT (ni <= I2_size) ;
             nI = ni ;
             I = I2 ;
@@ -831,13 +755,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         {
             // nj and nJ are reduced if there are duplicates
             J2_size = nj ;
-            info = GB_ijsort (J, &nj, &J2, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                // out of memory
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_ijsort (J, &nj, &J2, &J2k, Context)) ;
             ASSERT (nj <= J2_size) ;
             nJ = nj ;
             J = J2 ;
@@ -1063,53 +981,41 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         ASSERT_OK (GB_check (Z, "Z for C-replace-phase done", GB_FLIP (GB0))) ;
     }
 
-    // free all workspace, except Z
-    GB_FREE_ALL ;
-
     //--------------------------------------------------------------------------
-    // C = Z
+    // transplant Z2 back into C
     //--------------------------------------------------------------------------
-
-    // Z and C have the same dimensions, CSR/CSC format, and hypersparsity
 
     if (unsafely_aliased)
     {
         // zombies can be transplanted into C but pending tuples cannot
-        if (GB_PENDING (Z))
+        if (GB_PENDING (Z2))
         { 
             // assemble all pending tuples, and delete all zombies too
-            info = GB_wait (Z, Context) ;
+            GB_OK (GB_wait (Z2, Context)) ;
         }
-        if (info == GrB_SUCCESS)
-        { 
-            // transplants the content of Z into C and frees Z
-            info = GB_transplant (C, C->type, &Z, Context) ;
-        }
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            // Z needs to be freed if C is aliased but info != GrB_SUCCESS.
-            // C remains unchanged.
-            GB_MATRIX_FREE (&Z) ;
-            return (info) ;
-        }
+        // transplants the content of Z into C and frees Z
+        GB_OK (GB_transplant (C, C->type, &Z2, Context)) ;
     }
 
     // The hypersparsity of C is not modified.  This will be done eventually,
     // when all pending operations are completed via GB_wait.
 
     //--------------------------------------------------------------------------
-    // cleanup
+    // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
     if (C->nzombies > 0)
     { 
-        // make sure C is in the queue
+        // make sure C is in the queue.  GB_subassigner can place it in the
+        // queue, but it might not need to if the matrix has no zombies or
+        // pending tuples.  Zombies can be added by the C_replace_phase.
         GB_CRITICAL (GB_queue_insert (C)) ;
     }
 
     // finalize C if blocking mode is enabled, and return result
+
     ASSERT_OK (GB_check (C, "Final C for assign", GB0)) ;
+    GB_FREE_ALL ;
     return (GB_block (C, Context)) ;
 }
 

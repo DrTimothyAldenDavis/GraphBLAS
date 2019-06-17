@@ -48,9 +48,9 @@ GrB_Info GB_selector
 
     // If the opcode is NONZOMBIE, then GB_wait has removed A from the queue.
     // A will have zombies and pending tuples, but it is not in the queue.
-    ASSERT_OK (GB_check (A, "A input for GB_selector", GB_FLIP (GB3))) ;
-    ASSERT_OK_OR_NULL (GB_check (op, "selectop for GB_selector", GB3)) ;
-    ASSERT_OK_OR_NULL (GB_check (Thunk, "Thunk for GB_selector", GB3)) ;
+    ASSERT_OK (GB_check (A, "A input for GB_selector", GB_FLIP (GB0))) ;
+    ASSERT_OK_OR_NULL (GB_check (op, "selectop for GB_selector", GB0)) ;
+    ASSERT_OK_OR_NULL (GB_check (Thunk, "Thunk for GB_selector", GB0)) ;
     ASSERT (opcode >= 0 && opcode <= GB_USER_SELECT_R_opcode) ;
 
     GrB_Info info ;
@@ -334,7 +334,7 @@ GrB_Info GB_selector
 
         // the NONZOMBIES opcode may have removed all zombies, but A->nzombie
         // is still nonzero.  It set to zero in GB_wait.
-        ASSERT_OK (GB_check (A, "A output for GB_selector", GB_FLIP (GB3))) ;
+        ASSERT_OK (GB_check (A, "A output for GB_selector", GB_FLIP (GB0))) ;
 
     }
     else
@@ -390,7 +390,7 @@ GrB_Info GB_selector
         }
 
         (*Chandle) = C ;
-        ASSERT_OK (GB_check (C, "C output for GB_selector", GB3)) ;
+        ASSERT_OK (GB_check (C, "C output for GB_selector", GB0)) ;
     }
 
     //--------------------------------------------------------------------------

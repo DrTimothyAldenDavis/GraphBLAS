@@ -48,7 +48,7 @@ GB_to_nonhyper
 GB_to_hyper
 GB_is_diagonal
 GB_cumsum
-GB_kron_kernel
+GB_kroner
 GB_emult
 GB_mask
 GB_hyper_prune
@@ -58,6 +58,7 @@ GB_subref_*
 GB_extractTuples
 GB_extract_vector_list
 GB_wait
+GB_ijsort
 
 ----------------------------------------------------------------------
 mostly done:
@@ -80,6 +81,8 @@ GB_add_phase0: done, except for the merge when both A and B are hypersparse.
 in progress
 ----------------------------------------------------------------------
 
+GB_subassigner: in progress
+
 Template/GB_qsort_template:
     Needs a way to set a larger leaf task size.
     Does lots of work, everywhere, for many GraphBLAS operations.
@@ -89,20 +92,8 @@ Template/GB_qsort_template:
 not started:  GrB_assign and GxB_subassign:  C(I,J)=A
 ----------------------------------------------------------------------
 
-GB_subassign_kernel:
-    This does C(I,J)=A (GrB_assign and GxB_subassign).  Huge file, but can be
-    parallel since the main pass does not modify the pattern of C at all,
-    except to kill entries by making them zombies.  If a new entry is to be
-    added, it gets put into a list of pending tuples.  Each thread could make
-    its own list, and the lists could be combined at the end.  This would be a
-    single-phase method.
-
 GB_assign:
-    Does the work of GrB_*_assign.  Most of the work is in GB_subassign_kernel,
+    Does the work of GrB_*_assign.  Most of the work is in GB_subassigner,
     but does work for the C_replace_phase, to create zombies in C outside of
     the IxJ submatrix.
-
-GB_ijsort: deletes duplicates, see also GB_builder.  This is only used in
-    GB_assign, for scalar expansion and for the C_replace_phase, and only when
-    I and/or J are lists (not GrB_ALL, nor lo:inc:hi).
 

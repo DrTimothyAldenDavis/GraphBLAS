@@ -23,14 +23,14 @@
 // Symbolic extraction:
 
 //      Sparse submatrix reference, C = A(I,J), extracting the pattern, not the
-//      values.  This function is called only by GB_subassign_kernel.  Symbolic
-//      extraction creates a matrix C with the same pattern (C->p and C->i) as
-//      numeric extraction, but with different values, C->x.  For numeric
-//      extracion if C(inew,jnew) = A(i,j), the value of A(i,j) is copied into
-//      C(i,j).  For symbolic extraction, its *pointer* is copied into C(i,j).
-//      Suppose an entry A(i,j) is held in Ai [pa] and Ax [pa], and it appears
-//      in the output matrix C in Ci [pc] and Cx [pc].  Then the two methods
-//      differ as follows:
+//      values.  For the symbolic case, this function is called only by
+//      GB_subassigner.  Symbolic extraction creates a matrix C with the same
+//      pattern (C->p and C->i) as numeric extraction, but with different
+//      values, C->x.  For numeric extracion if C(inew,jnew) = A(i,j), the
+//      value of A(i,j) is copied into C(i,j).  For symbolic extraction, its
+//      *pointer* is copied into C(i,j).  Suppose an entry A(i,j) is held in Ai
+//      [pa] and Ax [pa], and it appears in the output matrix C in Ci [pc] and
+//      Cx [pc].  Then the two methods differ as follows:
 
 //          this is the same:
 
@@ -46,11 +46,11 @@
 
 //          Cx [pc] = pa ;          // for symbolic extraction
 
-//      This function is called with symbolic==true by GB_subassign_kernel,
+//      This function is called with symbolic==true by only by GB_subassigner,
 //      which uses it to extract the pattern of C(I,J), for the submatrix
 //      assignment C(I,J)=A.  In this case, this function needs to deal with
-//      zombie entries.  The GB_subassign_kernel caller uses this function on
-//      its C matrix, which is called A here because it is not modified here.
+//      zombie entries.  GB_subassigner uses this function on its C matrix,
+//      which is called A here because it is not modified here.
 
 //      Reading a zombie entry:  A zombie entry A(i,j) has been marked by
 //      flipping its index.  The value of a zombie is not important, just its
@@ -78,6 +78,7 @@
     GB_FREE_MEMORY (Inext,    nI, sizeof (int64_t)) ;                       \
 }
 
+#define GB_DEBUG
 #include "GB.h"
 
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
@@ -118,13 +119,12 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     GrB_Matrix C = NULL ;
 
     int64_t Cnvec, nI, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
-    bool C_is_hyper, need_I_inverse, post_sort, need_qsort ;
+    bool post_sort, need_qsort ;
     int Ikind, ntasks, max_ntasks, nthreads ;
 
     GrB_Info info = GB_subref_phase0 (
         // computed by phase0:
-        &Ch, &Ap_start, &Ap_end, &Cnvec, &C_is_hyper,
-        &need_qsort, &Ikind, &nI, Icolon, &nJ,
+        &Ch, &Ap_start, &Ap_end, &Cnvec, &need_qsort, &Ikind, &nI, Icolon, &nJ,
         // original input:
         A, I, ni, J, nj, must_sort, Context) ;
 

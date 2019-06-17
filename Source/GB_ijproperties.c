@@ -9,6 +9,7 @@
 
 // check a list of indices I and determine its properties
 
+#define GB_DEBUG
 #include "GB.h"
 
 // FUTURE:: if limit=0, print a different message.  see also setEl, extractEl.
@@ -23,13 +24,18 @@
 
 GrB_Info GB_ijproperties        // check I and determine its properties
 (
+    // input:
     const GrB_Index *I,         // list of indices, or special
     const int64_t ni,           // length I, or special
     const int64_t nI,           // actual length from GB_ijlength
     const int64_t limit,        // I must be in the range 0 to limit-1
-    const int64_t Ikind,        // kind of I, from GB_ijlength
-    const int64_t Icolon [3],   // begin:inc:end from GB_ijlength
+    // input/output:
+    int *Ikind,                 // kind of I, from GB_ijlength
+    int64_t Icolon [3],         // begin:inc:end from GB_ijlength
+    // output:
     bool *I_is_unsorted,        // true if I is out of order
+    bool *I_has_dupl,           // true if I has a duplicate entry (undefined
+                                // if I is unsorted)
     bool *I_is_contig,          // true if I is a contiguous list, imin:imax
     int64_t *imin_result,       // min (I)
     int64_t *imax_result,       // max (I)
@@ -41,9 +47,13 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     // check inputs
     //--------------------------------------------------------------------------
 
+    // inputs:
+    // I: a list of indices if Ikind is GB_LIST
     // limit: the matrix dimension (# of rows or # of columns)
     // ni: only used if Ikind is GB_LIST: the length of the array I
     // nI: the length of the list I, either actual or implicit
+
+    // input/output:  these can be modified
     // Ikind: GB_ALL, GB_RANGE, GB_STRIDE (both +/- inc), or GB_LIST
     // Icolon: begin:inc:end for all but GB_LIST
 
@@ -66,9 +76,10 @@ GrB_Info GB_ijproperties        // check I and determine its properties
     // scan the list of indices: check if OK, determine if they are
     // jumbled, or contiguous, their min and max index, and actual length
     bool I_unsorted = false ;
+    bool I_has_duplicates = false ;
     bool I_contig = true ;
 
-    if (Ikind == GB_ALL)
+    if ((*Ikind) == GB_ALL)
     { 
 
         //----------------------------------------------------------------------
@@ -84,7 +95,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         // printf ("GB_ALL "GBd":"GBd"\n", imin, imax) ;
 
     }
-    else if (Ikind == GB_RANGE)
+    else if ((*Ikind) == GB_RANGE)
     {
 
         //----------------------------------------------------------------------
@@ -110,7 +121,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         // printf ("GB_RANGE "GBd":"GBd"\n", imin, imax) ;
 
     }
-    else if (Ikind == GB_STRIDE)
+    else if ((*Ikind) == GB_STRIDE)
     {
 
         //----------------------------------------------------------------------
@@ -148,6 +159,14 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             // list is empty: so it is contiguous and sorted
             imin = limit ;
             imax = -1 ;
+
+            // change this to an empty GB_RANGE
+            (*Ikind) = GB_RANGE ;
+            Icolon [GxB_BEGIN] = imin ;
+            Icolon [GxB_INC  ] = 1 ;
+            Icolon [GxB_END  ] = imax ;
+            // printf ("GB_STRIDE converted to empty GB_RANGE\n") ;
+
         }
         else
         { 
@@ -157,11 +176,11 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             // check the limits
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
+            // printf ("GB_STRIDE "GBd":"GBd":"GBd"\n", ibegin, iinc, iend) ;
         }
-        // printf ("GB_STRIDE "GBd":"GBd":"GBd"\n", ibegin, iinc, iend) ;
 
     }
-    else // Ikind == GB_LIST
+    else // (*Ikind) == GB_LIST
     {
 
         //----------------------------------------------------------------------
@@ -190,7 +209,8 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
         #pragma omp parallel for num_threads(nthreads)  \
             reduction(||:I_unsorted) reduction(&&:I_contig) \
-            reduction(min:imin) reduction(max:imax) schedule(dynamic)
+            reduction(min:imin) reduction(max:imax) \
+            reduction(||:I_has_duplicates) schedule(dynamic)
         for (int tid = 0 ; tid < ntasks ; tid++)
         {
             int64_t istart, iend ;
@@ -210,6 +230,14 @@ GrB_Info GB_ijproperties        // check I and determine its properties
                         // result is transposed.
                         I_unsorted = true ;
                     }
+                    else if (i == ilast)
+                    {
+                        // I has at least one duplicate entry.  If I is
+                        // unsorted, then it is not known if I has duplicates
+                        // or not.  But if I is sorted, but with duplicates,
+                        // then this flag will be true.
+                        I_has_duplicates = true ;
+                    }
                     if (i != ilast + 1)
                     { 
                         I_contig = false ;
@@ -225,6 +253,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         {
             // check result with one thread
             bool I_unsorted2 = false ;
+            bool I_has_dupl2 = false ;
             bool I_contig2 = true ;
             int64_t imin2 = limit ;
             int64_t imax2 = -1 ;
@@ -235,6 +264,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
                 if (inew > 0)
                 {
                     if (i < ilast) I_unsorted2 = true ;
+                    else if (i == ilast) I_has_dupl2 = true ;
                     if (i != ilast + 1) I_contig2 = false ;
                 }
                 imin2 = GB_IMIN (imin2, i) ;
@@ -242,6 +272,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
                 ilast = i ;
             }
             ASSERT (I_unsorted == I_unsorted2) ;
+            ASSERT (I_has_duplicates == I_has_dupl2) ;
             ASSERT (I_contig   == I_contig2) ;
             ASSERT (imin       == imin2) ;
             ASSERT (imax       == imax2) ;
@@ -254,10 +285,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
         }
-
-        // TODO: if I_config is true, then change Ikind to GB_RANGE
-        // or GB_ALL (if imin == 0 and imax == limit-1)
-        // printf ("imin "GBd" imax "GBd"\n", imin, imax) ;
 
         if (ni == 1)
         {
@@ -272,11 +299,37 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             // the list is empty
             ASSERT (imin == limit && imax == -1) ;
         }
+
+        //----------------------------------------------------------------------
+        // change I if it is an explicit contiguous list of stride 1
+        //----------------------------------------------------------------------
+
+        if (I_contig)
+        { 
+            // I is a contigous list of stride 1, imin:imax.
+            // change Ikind to GB_ALL if 0:limit-1, or GB_RANGE otherwise
+            if (imin == 0 && imax == limit-1)
+            {
+                (*Ikind) = GB_ALL ;
+                // printf ("GB_LIST -> GB_ALL\n") ;
+            }
+            else
+            {
+                (*Ikind) = GB_RANGE ;
+                // printf ("GB_LIST -> GB_RANGE "GBd":"GBd"\n", imin,imax) ;
+            }
+            Icolon [GxB_BEGIN] = imin ;
+            Icolon [GxB_INC  ] = 1 ;
+            Icolon [GxB_END  ] = imax ;
+        }
     }
 
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
     ASSERT (GB_IMPLIES (I_contig, !I_unsorted)) ;
-    ASSERT (GB_IMPLIES (Ikind == GB_ALL, I_contig)) ;
-    ASSERT (GB_IMPLIES (Ikind == GB_RANGE, I_contig)) ;
+    ASSERT (((*Ikind) == GB_ALL || (*Ikind) == GB_RANGE) == I_contig) ;
 
     // I_is_contig is true if the list of row indices is a contiguous list,
     // imin:imax in MATLAB notation.  This is an important special case.
@@ -286,6 +339,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
     (*I_is_contig) = I_contig ;
     (*I_is_unsorted) = I_unsorted ;
+    (*I_has_dupl) = I_has_duplicates ;
     (*imin_result) = imin ;
     (*imax_result) = imax ;
     return (GrB_SUCCESS) ;

@@ -20,10 +20,12 @@
 
 // Compare with GB_assign, which uses M and C_replace differently
 
+#define GB_DEBUG
 #include "GB.h"
 
 #define GB_FREE_ALL                                 \
 {                                                   \
+    GB_MATRIX_FREE (&Z2) ;                          \
     GB_MATRIX_FREE (&AT) ;                          \
     GB_MATRIX_FREE (&MT) ;                          \
 }
@@ -90,6 +92,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     GrB_Matrix AT = NULL ;
     GrB_Matrix MT = NULL ;
+    GrB_Matrix Z2 = NULL ;
+    GrB_Matrix Z = NULL ;
 
     bool C_is_csc = C->is_csc ;
 
@@ -101,13 +105,9 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (accum != NULL)
     {
         // C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
-        info = GB_BinaryOp_compatible (accum, C->type, C->type,
+        GB_OK (GB_BinaryOp_compatible (accum, C->type, C->type,
             (scalar_expansion) ? NULL : A->type,
-            (scalar_expansion) ? scalar_code : 0, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            return (info) ;
-        }
+            (scalar_expansion) ? scalar_code : 0, Context)) ;
     }
 
     // C(Rows,Cols)<M> = T, so C and T must be compatible.
@@ -224,12 +224,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     {
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
-        info = GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            GB_FREE_ALL ;
-            return (info) ;
-        }
+        GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
         A = AT ;
     }
 
@@ -256,12 +251,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // MT = M' to conform M to the same CSR/CSC format as C.
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: no typecast, no op, not in place
-            info = GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context) ;
-            if (info != GrB_SUCCESS)
-            { 
-                GB_FREE_ALL ;
-                return (info) ;
-            }
+            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
             M = MT ;
         }
     }
@@ -270,9 +260,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // Z = C
     //--------------------------------------------------------------------------
 
-    // GB_subassign_kernel modifies C efficiently in place, but there are cases
-    // when C is aliased with M or A that require the work to not be done in
-    // place.
+    // GB_subassigner modifies C efficiently in place, but there are cases when
+    // C is aliased with M or A that require the work to not be done in place.
 
     // If both I == GrB_ALL and J == GrB_ALL, then C can be safely aliased with
     // M or A, or both.  In addition, M and/or A may also have shallow
@@ -282,13 +271,12 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // aliased with M or A.  Nor can any shallow component of M or A refer to
     // any component of C.  This is an unsafe alias.
 
-    // If C is unsafely aliased a copy must be made.  GB_subassign_kernel
-    // operates on the copy, Z, which is then transplanted back into C when
-    // done.  This is costly, and can have performance implications, but it is
-    // the only reasonable method.  If a copy of C must be made, then it is as
-    // large as M or A, so copying the whole matrix will not add much time.
+    // If C is unsafely aliased a copy must be made.  GB_subassigner operates on
+    // the copy, Z, which is then transplanted back into C when done.  This is
+    // costly, and can have performance implications, but it is the only
+    // reasonable method.  If a copy of C must be made, then it is as large as
+    // M or A, so copying the whole matrix will not add much time.
 
-    GrB_Matrix Z ;
     bool unsafely_aliased ;
     if (I == GrB_ALL && J == GrB_ALL)
     { 
@@ -305,16 +293,12 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // Z = duplicate of C
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
-        info = GB_dup (&Z, C, true, NULL, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            GB_FREE_ALL ;
-            return (info) ;
-        }
+        GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
+        Z = Z2 ;
     }
     else
     { 
-        // GB_subassign_kernel can safely operate on C in place
+        // GB_subassigner can safely operate on C in place
         Z = C ;
     }
 
@@ -322,7 +306,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // Z(I,J)<M> = A or accum (Z(I,J),A)
     //--------------------------------------------------------------------------
 
-    info = GB_subassign_kernel (
+    GB_OK (GB_subassigner (
         Z,          C_replace,      // Z matrix and its descriptor
         M,          Mask_comp,      // mask matrix and its descriptor
         accum,                      // for accum (C(I,J),A)
@@ -332,47 +316,37 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         scalar_expansion,           // if true, expand scalar to A
         scalar,                     // scalar to expand, NULL if A not NULL
         scalar_code,                // type code of scalar to expand
-        Context) ;
+        Context)) ;
 
-    GB_FREE_ALL ;
-
-    if (info != GrB_SUCCESS)
-    { 
-        // out of memory
-        if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
-        return (info) ;
-    }
+    // Z2 is still needed
+    GB_MATRIX_FREE (&AT) ;
+    GB_MATRIX_FREE (&MT) ;
 
     //--------------------------------------------------------------------------
-    // C = Z
+    // transplant Z2 back into C
     //--------------------------------------------------------------------------
 
     if (unsafely_aliased)
     {
         // zombies can be transplanted into C but pending tuples cannot
-        if (GB_PENDING (Z))
+        if (GB_PENDING (Z2))
         { 
             // assemble all pending tuples, and delete all zombies too
-            info = GB_wait (Z, Context) ;
+            GB_OK (GB_wait (Z2, Context)) ;
         }
-        if (info == GrB_SUCCESS)
-        { 
-            // transplants the content of Z into C and frees Z
-            info = GB_transplant (C, C->type, &Z, Context) ;
-        }
+        // transplants the content of Z2 into C and frees Z2
+        GB_OK (GB_transplant (C, C->type, &Z2, Context)) ;
     }
 
     // The hypersparsity of C is not modified.  This will be done eventually,
     // when all pending operations are completed via GB_wait.
 
-    if (info == GrB_SUCCESS)
-    {
-        ASSERT_OK (GB_check (C, "C output for GB_subassign", GB0)) ;
-    }
+    //--------------------------------------------------------------------------
+    // free workspace, finalize C, and return result
+    //--------------------------------------------------------------------------
 
-    // Z will have already been freed if the GB_transplant was done;
-    // this won't free it twice since Z will be NULL if already freed.
-    if (unsafely_aliased) GB_MATRIX_FREE (&Z) ;
-    return (info) ;
+    ASSERT_OK (GB_check (C, "Final C for subassign", GB0)) ;
+    GB_FREE_ALL ;
+    return (GB_block (C, Context)) ;
 }
 
