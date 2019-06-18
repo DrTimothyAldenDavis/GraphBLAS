@@ -6,6 +6,7 @@ function codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, 
 f = fopen ('control.m4', 'w') ;
 
 [fname, unsigned, bits] = codegen_type (xytype) ;
+[zname, ~, ~] = codegen_type (ztype) ;
 
 name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 
@@ -90,18 +91,38 @@ else
         ztype, mult2, add2) ;
 end
 
+% create the disable flag
+disable  = sprintf ('defined (GxB_NO_%s)', upper (addop)) ;
+if (~isequal (addop, multop))
+    disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (multop)))] ;
+end
+disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (fname)))] ;
+disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (addop), upper (zname)))] ;
+if (~ (isequal (addop, multop) && isequal (zname, fname)))
+    disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (multop), upper (fname)))] ;
+end
+disable = [disable (sprintf (' || defined (GxB_NO_%s_%s_%s)', ...
+    upper (addop), upper (multop), upper (fname))) ] ;
+fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
+
+% ff = fopen ('temp.h', 'a') ;
+% fprintf (ff, '// #define GxB_NO_%s\n', upper (addop)) ;
+% fprintf (ff, '// #define GxB_NO_%s\n', upper (multop)) ;
+% fprintf (ff, '//  #define GxB_NO_%s\n', upper (fname)) ;
+% fprintf (ff, '//   #define GxB_NO_%s_%s_%s\n', upper (addop), upper (multop), upper (fname)) ;
+% fclose (ff) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +16 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +17 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +16 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +17 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

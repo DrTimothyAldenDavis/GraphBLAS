@@ -2228,7 +2228,6 @@ GrB_Info GB_AxB_Gustavson_builtin
     const bool B_is_pattern,        // true if only the pattern of B is used
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *done,                     // true if C=A*B has been computed
     GB_Sauna Sauna                  // sparse accumulator
 ) ;
 

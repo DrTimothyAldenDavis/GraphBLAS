@@ -210,20 +210,18 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
 #ifndef GBCOMPACT
 
-    // If the GB_AxB_Gustavson_builtin function has a worker for the
-    // particular semiring, then it does the computation and returns done =
-    // true.  Otherwise, it returns done as false, and the generic worker
-    // below does the work.
+    // If the GB_AxB_Gustavson_builtin function has a worker for the particular
+    // semiring, then it does the computation and returns info != GrB_NO_VALUE.
+    // Otherwise, it returns info as GrB_NO_VALUE, and the generic worker below
+    // does the work.
 
     // If GBCOMPACT is enabled at compile-time, then no built-in workers
     // are created, and this function is not used.  All C=A*B computations
     // are done with the generic worker below.
 
-    bool done = false ;
     info = GB_AxB_Gustavson_builtin (C, M, A, A_is_pattern,
-        B, B_is_pattern, semiring, flipxy, &done, Sauna) ;
-    ASSERT (info == GrB_SUCCESS) ;
-    if (done)
+        B, B_is_pattern, semiring, flipxy, Sauna) ;
+    if (info == GrB_SUCCESS)
     { 
         // C = A*B has been done via a hard-coded case
         ASSERT_OK (GB_check (C, "C hard-coded for Gustavson C=A*B", GB0)) ;
@@ -231,6 +229,11 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         ASSERT_SAUNA_IS_RESET ;
         (*mask_applied) = (M != NULL) ;
         return (GrB_SUCCESS) ;
+    }
+    else if (info != GrB_NO_VALUE)
+    { 
+        // error condition
+        return (info) ;
     }
 
 #endif

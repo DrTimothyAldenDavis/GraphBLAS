@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -13,6 +12,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
+#include "GB_control.h"
 
 // C=binop(A,B) is defined by the following types and operators:
 
@@ -63,11 +63,15 @@
 // hard-coded loops can be vectorized
 #define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD
 
+// disable this operator and use the generic case if these conditions hold
+#define GB_DISABLE \
+    (defined (GxB_NO_LXOR) || defined (GxB_NO_INT8) || defined (GxB_NO_LXOR_INT8))
+
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-void GB_AxD__lxor_int8
+GrB_Info GB_AxD__lxor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -79,15 +83,20 @@ void GB_AxD__lxor_int8
     const int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     int8_t *restrict Cx = C->x ;
     #include "GB_AxB_colscale_meta.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-void GB_DxB__lxor_int8
+GrB_Info GB_DxB__lxor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -95,15 +104,20 @@ void GB_DxB__lxor_int8
     int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     int8_t *restrict Cx = C->x ;
     #include "GB_AxB_rowscale_meta.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
-void GB_AaddB__lxor_int8
+GrB_Info GB_AaddB__lxor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -118,14 +132,19 @@ void GB_AaddB__lxor_int8
     const int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_add_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-void GB_AemultB__lxor_int8
+GrB_Info GB_AemultB__lxor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -139,7 +158,12 @@ void GB_AemultB__lxor_int8
     const int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_emult_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 #endif

@@ -37,15 +37,17 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
     GrB_Type Atype = A->type ;
 
     #define GB_tran(opname,zname,aname) GB_tran_ ## opname ## zname ## aname
 
-    #define GB_WORKER(opname,zname,ztype,aname,atype)                   \
-    {                                                                   \
-        GB_tran (opname,zname,aname) (C, A, Rowcounts, Iter, A_slice, naslice);\
-        return ;                                                        \
-    }                                                                   \
+    #define GB_WORKER(opname,zname,ztype,aname,atype)                        \
+    {                                                                        \
+        info = GB_tran (opname,zname,aname) (C, A, Rowcounts, Iter, A_slice, \
+                naslice) ;                                                   \
+        if (info == GrB_SUCCESS) return ;                                    \
+    }                                                                        \
     break ;
 
     //--------------------------------------------------------------------------

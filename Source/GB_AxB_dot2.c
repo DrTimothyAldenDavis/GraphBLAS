@@ -16,8 +16,6 @@
 
 // Any variant of the mask is handled: C=A'*B, C<M>=A'*B, and C<!M>=A'*B.
 
-// Parallel: done
-
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
@@ -245,7 +243,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         info = GB_Adot2B (add,mult,xyname) (C, M, Mask_comp,            \
             Aslice, A_is_pattern, B, B_is_pattern,                      \
             C_counts, nthreads, naslice, nbslice) ;                     \
-        done = true ;                                                   \
+        done = (info != GrB_NO_VALUE) ;                                 \
     }                                                                   \
     break ;
 
@@ -260,6 +258,13 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         flipxy, &mult_opcode, &add_opcode, &xycode, &zcode))
     { 
         #include "GB_AxB_factory.c"
+    }
+
+    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
+    { 
+        // out of memory
+        GB_FREE_ALL ;
+        return (info) ;
     }
 
 #endif

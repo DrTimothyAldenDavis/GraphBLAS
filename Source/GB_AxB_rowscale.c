@@ -101,11 +101,12 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     #define GB_DxB(mult,xyname) GB_DxB_ ## mult ## xyname
 
-    #define GB_BINOP_WORKER(mult,xyname)                                      \
-    {                                                                         \
-        GB_DxB(mult,xyname) (C, D, D_is_pattern, B, B_is_pattern, nthreads) ; \
-        done = true ;                                                         \
-    }                                                                         \
+    #define GB_BINOP_WORKER(mult,xyname)                                    \
+    {                                                                       \
+        info = GB_DxB(mult,xyname) (C, D, D_is_pattern, B, B_is_pattern,    \
+            nthreads) ;                                                     \
+        done = (info != GrB_NO_VALUE) ;                                     \
+    }                                                                       \
     break ;
 
     //--------------------------------------------------------------------------

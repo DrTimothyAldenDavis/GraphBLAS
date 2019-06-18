@@ -156,7 +156,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         info = GB_AheapB (add,mult,xyname) (Chandle, M,     \
             A, A_is_pattern, B, B_is_pattern,               \
             List, pA_pair, Heap, bjnz_max) ;                \
-        done = true ;                                       \
+        done = (info != GrB_NO_VALUE) ;                     \
     }                                                       \
     break ;
 
@@ -173,7 +173,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         #include "GB_AxB_factory.c"
     }
 
-    if (info != GrB_SUCCESS)
+    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
     { 
         // out of memory
         GB_HEAP_FREE_WORK ;

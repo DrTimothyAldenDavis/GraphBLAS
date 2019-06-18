@@ -278,9 +278,10 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             #define GB_red(opname,aname) GB_red_eachvec_ ## opname ## aname
             #define GB_RED_WORKER(opname,aname,atype)                       \
             {                                                               \
-                GB_red (opname, aname) ((atype *) Tx, A, kfirst_slice,      \
-                    klast_slice, pstart_slice, ntasks, nthreads) ;          \
-                done = true ;                                               \
+                info = GB_red (opname, aname) ((atype *) Tx, A,             \
+                    kfirst_slice, klast_slice, pstart_slice, ntasks,        \
+                    nthreads) ;                                             \
+                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -460,7 +461,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             {                                                               \
                 info = GB_red (opname, aname) (&T, ttype, A, pstart_slice,  \
                     nth, nthreads, Context) ;                               \
-                done = true ;                                               \
+                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 
@@ -479,7 +480,12 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                     GB_Type_code typecode = acode ;
                     ASSERT (typecode <= GB_UDT_code) ;
                     #include "GB_red_factory.c"
-                    GB_OK (info) ;
+                    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
+                    { 
+                        // out of memory
+                        GB_FREE_ALL ;
+                        return (info) ;
+                    }
                 }
 
             #endif

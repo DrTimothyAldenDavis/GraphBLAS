@@ -156,7 +156,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
     {                                                                   \
         info = GB_AdotB (add,mult,xyname) (Chandle, M, Mask_comp,       \
             A, A_is_pattern, B, B_is_pattern) ;                         \
-        done = true ;                                                   \
+        done = (info != GrB_NO_VALUE) ;                                 \
     }                                                                   \
     break ;
 
@@ -173,7 +173,7 @@ GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
         #include "GB_AxB_factory.c"
     }
 
-    if (info != GrB_SUCCESS)
+    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
     { 
         // out of memory
         return (info) ;

@@ -12,6 +12,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_unaryop__include.h"
+#include "GB_control.h"
 
 // C=unop(A) is defined by the following types and operators:
 
@@ -53,11 +54,15 @@
     GB_OP (GB_CX (pC), x) ;         \
 }
 
+// disable this operator and use the generic case if these conditions hold
+#define GB_DISABLE \
+    (defined (GxB_NO_LNOT) || defined (GxB_NO_FP64) || defined (GxB_NO_FP32))
+
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator
 //------------------------------------------------------------------------------
 
-void GB_unop__lnot_fp64_fp32
+GrB_Info GB_unop__lnot_fp64_fp32
 (
     double *restrict Cx,
     float *restrict Ax,
@@ -65,18 +70,23 @@ void GB_unop__lnot_fp64_fp32
     int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #pragma omp parallel for num_threads(nthreads)
     for (int64_t p = 0 ; p < anz ; p++)
     {
         GB_CAST_OP (p, p) ;
     }
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // C = op (cast (A')): transpose, typecast, and apply a unary operator
 //------------------------------------------------------------------------------
 
-void GB_tran__lnot_fp64_fp32
+GrB_Info GB_tran__lnot_fp64_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -86,8 +96,13 @@ void GB_tran__lnot_fp64_fp32
     int naslice
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #define GB_PHASE_2_OF_2
     #include "GB_unaryop_transpose.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 #endif

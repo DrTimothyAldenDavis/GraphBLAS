@@ -1085,10 +1085,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             #define GB_RED_WORKER(opname,aname,atype)                       \
             {                                                               \
-                GB_red (opname, aname) ((atype *) Tx, Ti, (atype *) S,      \
-                    nvals, ndupl, I_work, K_work, tstart_slice,             \
+                info = GB_red (opname, aname) ((atype *) Tx, Ti,            \
+                    (atype *) S, nvals, ndupl, I_work, K_work, tstart_slice,\
                     tnz_slice, nthreads) ;                                  \
-                done = true ;                                               \
+                done = (info != GrB_NO_VALUE) ;                             \
             }                                                               \
             break ;
 

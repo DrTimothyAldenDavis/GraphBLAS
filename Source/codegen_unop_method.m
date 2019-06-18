@@ -52,18 +52,29 @@ else
     fprintf (f, 'define(`GB_CAST'', `%s'')\n', fcast) ;
 end
 
+% create the disable flag
+disable  = sprintf ('defined (GxB_NO_%s)', upper (unop)) ;
+disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (zname)))] ;
+if (~isequal (zname, xname))
+    disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (xname)))] ;
+end
+fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
+
+% ff = fopen ('temp.h', 'a') ;
+% fprintf (ff, '// #define GxB_NO_%s\n', upper (unop)) ;
+% fclose (ff) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unaryop.c | m4 | tail -n +8 > Generated/GB_unaryop__%s.c', ...
+'cat control.m4 Generator/GB_unaryop.c | m4 | tail -n +9 > Generated/GB_unaryop__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_unaryop.h | m4 | tail -n +8 >> Generated/GB_unaryop__include.h') ;
+'cat control.m4 Generator/GB_unaryop.h | m4 | tail -n +9 >> Generated/GB_unaryop__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

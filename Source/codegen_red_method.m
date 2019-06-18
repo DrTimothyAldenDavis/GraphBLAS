@@ -51,18 +51,24 @@ func = strrep (func, 'zarg', '`$1''') ;
 func = strrep (func, 'yarg', '`$2''') ;
 fprintf (f, 'define(`GB_REDUCE_OP'', `%s'')\n', func) ;
 
+% create the disable flag
+disable  = sprintf ('defined (GxB_NO_%s)', upper (opname)) ;
+disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (aname)))] ;
+disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (opname), upper (aname)))] ;
+fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
+
 fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.c | m4 | tail -n +14 > Generated/GB_red__%s.c', ...
+'cat control.m4 Generator/GB_red.c | m4 | tail -n +16 > Generated/GB_red__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_red.h | m4 | tail -n +14 >> Generated/GB_red__include.h') ;
+'cat control.m4 Generator/GB_red.h | m4 | tail -n +16 >> Generated/GB_red__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

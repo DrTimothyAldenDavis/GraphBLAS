@@ -13,6 +13,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
+#include "GB_control.h"
 
 // The C=A*B semiring is defined by the following types and operators:
 
@@ -84,6 +85,10 @@
 
 #define GB_SAUNA_WORK(i) Sauna_Work [i]
 
+// disable this semiring and use the generic case if these conditions hold
+#define GB_DISABLE \
+    (defined (GxB_NO_MAX) || defined (GxB_NO_MINUS) || defined (GxB_NO_INT8) || defined (GxB_NO_MAX_INT8) || defined (GxB_NO_MINUS_INT8) || defined (GxB_NO_MAX_MINUS_INT8))
+
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
 //------------------------------------------------------------------------------
@@ -97,11 +102,15 @@ GrB_Info GB_AgusB__max_minus_int8
     GB_Sauna Sauna
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     int8_t *restrict Sauna_Work = Sauna->Sauna_Work ;
     int8_t *restrict Cx = C->x ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_Gustavson_meta.c"
     return (info) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -116,6 +125,9 @@ GrB_Info GB_AdotB__max_minus_int8
     const GrB_Matrix B, bool B_is_pattern
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     GrB_Matrix C = (*Chandle) ;
     GrB_Info info = GrB_SUCCESS ;
     int nthreads = 1 ;
@@ -123,6 +135,7 @@ GrB_Info GB_AdotB__max_minus_int8
     #include "GB_AxB_dot_meta.c"
     #undef GB_SINGLE_PHASE
     return (info) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -139,10 +152,14 @@ GrB_Info GB_Adot2B__max_minus_int8
     int nthreads, int naslice, int nbslice
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #define GB_PHASE_2_OF_2
     #include "GB_AxB_dot2_meta.c"
     #undef GB_PHASE_2_OF_2
     return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -163,6 +180,9 @@ GrB_Info GB_AheapB__max_minus_int8
     const int64_t bjnz_max
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     GrB_Matrix C = (*Chandle) ;
     int8_t *restrict Cx = C->x ;
     int8_t cij ;
@@ -170,6 +190,7 @@ GrB_Info GB_AheapB__max_minus_int8
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_heap_meta.c"
     return (info) ;
+    #endif
 }
 
 #endif

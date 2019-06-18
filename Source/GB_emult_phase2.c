@@ -121,9 +121,9 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
     #define GB_BINOP_WORKER(mult,xyname)                            \
     {                                                               \
-        GB_AemultB(mult,xyname) (C, M, A, B,                        \
+        info = GB_AemultB(mult,xyname) (C, M, A, B,                 \
             C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
-        done = true ;                                               \
+        done = (info != GrB_NO_VALUE) ;                             \
     }                                                               \
     break ;
 

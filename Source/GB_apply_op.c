@@ -37,6 +37,8 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     ASSERT (Atype != NULL) ;
     ASSERT (op != NULL) ;
 
+    GrB_Info info ;
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------
@@ -58,9 +60,9 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
 
     #define GB_WORKER(op,zname,ztype,aname,atype)                           \
     {                                                                       \
-        GB_unop (op,zname,aname) ((ztype *) Cx, (const atype *) Ax,         \
+        info = GB_unop (op,zname,aname) ((ztype *) Cx, (const atype *) Ax,  \
             anz, nthreads) ;                                                \
-        return ;                                                            \
+        if (info == GrB_SUCCESS) return ;                                   \
     }                                                                       \
     break ;
 

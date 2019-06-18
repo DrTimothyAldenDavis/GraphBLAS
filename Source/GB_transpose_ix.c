@@ -33,12 +33,15 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
+    GrB_Info info ;
+
     #define GB_tran(zname,aname) GB_tran__identity ## zname ## aname
 
     #define GB_WORKER(ignore1,zname,ztype,aname,atype)                      \
     {                                                                       \
-        GB_tran (zname,aname) (C, A, Rowcounts, Iter, A_slice, naslice) ;   \
-        return ;                                                            \
+        info = GB_tran (zname,aname) (C, A, Rowcounts, Iter, A_slice,       \
+            naslice) ;                                                      \
+        if (info == GrB_SUCCESS) return ;                                   \
     }                                                                       \
     break ;
 

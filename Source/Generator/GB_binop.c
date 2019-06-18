@@ -12,6 +12,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
+#include "GB_control.h"
 
 // C=binop(A,B) is defined by the following types and operators:
 
@@ -62,11 +63,15 @@
 // hard-coded loops can be vectorized
 #define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD
 
+// disable this operator and use the generic case if these conditions hold
+#define GB_DISABLE \
+    GB_disable
+
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-void GB_AxD
+GrB_Info GB_AxD
 (
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
@@ -78,15 +83,20 @@ void GB_AxD
     const int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     GB_ctype *restrict Cx = C->x ;
     #include "GB_AxB_colscale_meta.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // C = D*B, row scale with diagonal D matrix
 //------------------------------------------------------------------------------
 
-void GB_DxB
+GrB_Info GB_DxB
 (
     GrB_Matrix C,
     const GrB_Matrix D, bool D_is_pattern,
@@ -94,15 +104,20 @@ void GB_DxB
     int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     GB_ctype *restrict Cx = C->x ;
     #include "GB_AxB_rowscale_meta.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // eWiseAdd: C = A+B or C<M> = A+B
 //------------------------------------------------------------------------------
 
-void GB_AaddB
+GrB_Info GB_AaddB
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -117,14 +132,19 @@ void GB_AaddB
     const int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_add_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // eWiseMult: C = A.*B or C<M> = A.*B
 //------------------------------------------------------------------------------
 
-void GB_AemultB
+GrB_Info GB_AemultB
 (
     GrB_Matrix C,
     const GrB_Matrix M,
@@ -138,7 +158,12 @@ void GB_AemultB
     const int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_emult_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 #endif

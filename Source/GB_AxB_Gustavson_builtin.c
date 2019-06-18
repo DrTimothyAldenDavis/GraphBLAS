@@ -27,7 +27,6 @@ GrB_Info GB_AxB_Gustavson_builtin
     const bool B_is_pattern,        // true if only the pattern of B is used
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *done,                     // true if C=A*B has been computed
     GB_Sauna Sauna                  // sparse accumulator
 )
 { 
@@ -55,15 +54,14 @@ GrB_Info GB_AxB_Gustavson_builtin
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xycode, zcode ;
 
-    GrB_Info info = GrB_SUCCESS ;
-    (*done) = false ;
+    GrB_Info info = GrB_NO_VALUE ;
 
     // check if the semiring is builtin, and if so, get opcodes and type codes
     if (!GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern, semiring,
         flipxy, &mult_opcode, &add_opcode, &xycode, &zcode))
     { 
-        // no error condition, just not a built-in semiring.  done is false.
-        return (GrB_SUCCESS) ;
+        // no error condition, just not a built-in semiring.
+        return (GrB_NO_VALUE) ;
     }
 
     //--------------------------------------------------------------------------
@@ -76,7 +74,6 @@ GrB_Info GB_AxB_Gustavson_builtin
     {                                                           \
         info = GB_AXB (add,mult,xyname) (C, M,                  \
             A, A_is_pattern, B, B_is_pattern, Sauna) ;          \
-        (*done) = true ;                                        \
     }                                                           \
     break ;
 

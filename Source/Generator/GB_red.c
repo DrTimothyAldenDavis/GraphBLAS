@@ -10,6 +10,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
+#include "GB_control.h" 
 
 // The reduction is defined by the following types and operators:
 
@@ -104,13 +105,17 @@
     #define GB_PANEL                                \
         GB_panel
 
+// disable this operator and use the generic case if these conditions hold
+#define GB_DISABLE \
+    GB_disable
+
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
 //------------------------------------------------------------------------------
 
 if_is_monoid
 
-void GB_red_scalar
+GrB_Info GB_red_scalar
 (
     GB_atype *result,
     const GrB_Matrix A,
@@ -118,16 +123,21 @@ void GB_red_scalar
     int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     GB_ctype s = (*result) ;
     #include "GB_reduce_panel.c"
     (*result) = s ;
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // reduce to each vector: each vector A(:,k) reduces to a scalar Tx (k)
 //------------------------------------------------------------------------------
 
-void GB_red_eachvec
+GrB_Info GB_red_eachvec
 (
     GB_atype *restrict Tx,
     GrB_Matrix A,
@@ -138,7 +148,12 @@ void GB_red_eachvec
     int nthreads
 )
 {
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_reduce_each_vector.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -156,6 +171,9 @@ GrB_Info GB_red_eachindex
     GB_Context Context
 )
 {
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     GrB_Info info = GrB_SUCCESS ;
     GrB_Matrix T = NULL ;
     (*Thandle) = NULL ;
@@ -163,6 +181,7 @@ GrB_Info GB_red_eachindex
     #include "GB_reduce_each_index.c"
     (*Thandle) = T ;
     return (info) ;
+    #endif
 }
 
 endif_is_monoid
@@ -171,7 +190,7 @@ endif_is_monoid
 // build matrix
 //------------------------------------------------------------------------------
 
-void GB_red_build
+GrB_Info GB_red_build
 (
     GB_atype *restrict Tx,
     int64_t  *restrict Ti,
@@ -185,7 +204,12 @@ void GB_red_build
     int nthreads
 )
 {
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_reduce_build_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 #endif

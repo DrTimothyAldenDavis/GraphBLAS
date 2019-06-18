@@ -56,18 +56,28 @@ op = strrep (op, 'xarg', '`$2''') ;
 op = strrep (op, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_BINARYOP'', `$1 = %s'')\n', op) ;
 
+% create the disable flag
+disable = sprintf ('defined (GxB_NO_%s)', upper (binop)) ;
+disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (fname)))] ;
+disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (binop), upper (fname)))] ;
+fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
+
+% ff = fopen ('temp.h', 'a') ;
+% fprintf (ff, '// #define GxB_NO_%s_%s\n',  upper (binop), upper (fname)) ;
+% fclose (ff) ;
+
 fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.c | m4 | tail -n +10 > Generated/GB_binop__%s.c', ...
+'cat control.m4 Generator/GB_binop.c | m4 | tail -n +12 > Generated/GB_binop__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.h | m4 | tail -n +10 >> Generated/GB_binop__include.h') ;
+'cat control.m4 Generator/GB_binop.h | m4 | tail -n +12 >> Generated/GB_binop__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

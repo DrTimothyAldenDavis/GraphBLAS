@@ -1,6 +1,6 @@
 if_is_monoid
 
-void GB_red_scalar
+GrB_Info GB_red_scalar
 (
     GB_atype *result,
     const GrB_Matrix A,
@@ -8,7 +8,7 @@ void GB_red_scalar
     int nthreads
 ) ;
 
-void GB_red_eachvec
+GrB_Info GB_red_eachvec
 (
     GB_atype *restrict Tx,
     GrB_Matrix A,
@@ -32,7 +32,7 @@ GrB_Info GB_red_eachindex
 
 endif_is_monoid
 
-void GB_red_build
+GrB_Info GB_red_build
 (
     GB_atype *restrict Tx,
     int64_t  *restrict Ti,

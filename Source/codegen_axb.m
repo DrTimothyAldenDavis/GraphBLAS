@@ -1,4 +1,4 @@
-function codegencodegen__axb
+function codegen__axb
 %CODEGEN_AXB create all C=A*B functions for all semirings
 %
 % This function creates all files of the form GB_AxB__*.[ch], including all

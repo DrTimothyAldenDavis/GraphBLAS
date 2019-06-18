@@ -124,9 +124,9 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     #define GB_BINOP_WORKER(mult,xyname)                                    \
     {                                                                       \
-        GB_AxD(mult,xyname) (C, A, A_is_pattern, D, D_is_pattern,           \
+        info = GB_AxD(mult,xyname) (C, A, A_is_pattern, D, D_is_pattern,    \
             kfirst_slice, klast_slice, pstart_slice, ntasks, nthreads) ;    \
-        done = true ;                                                       \
+        done = (info != GrB_NO_VALUE) ;                                     \
     }                                                                       \
     break ;
 

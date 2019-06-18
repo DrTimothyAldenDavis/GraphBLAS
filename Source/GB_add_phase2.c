@@ -147,9 +147,9 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
     #define GB_BINOP_WORKER(mult,xyname)                            \
     {                                                               \
-        GB_AaddB(mult,xyname) (C, M, A, B, Ch_is_Mh,                \
+        info = GB_AaddB(mult,xyname) (C, M, A, B, Ch_is_Mh,         \
             C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
-        done = true ;                                               \
+        done = (info != GrB_NO_VALUE) ;                             \
     }                                                               \
     break ;
 

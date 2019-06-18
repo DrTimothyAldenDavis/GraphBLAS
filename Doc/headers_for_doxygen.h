@@ -86,8 +86,6 @@ constructed by dox_headers.m
  whereas GB_AxB_dot can only work on a single matrix (or a single slice).
 \par
  Any variant of the mask is handled: C=A'*B, C\<M\>=A'*B, and C\<!M\>=A'*B.
-\par
- Parallel: done
 */
 
 
@@ -426,11 +424,11 @@ constructed by dox_headers.m
  contiguous.  Scatter I into the I inverse buckets (Mark and Inext) for quick
  lookup.
 \par
- PARALLEL: TODO constructing the I inverse buckets in parallel would require
- synchronization (a critical section for each bucket, or atomics).  A more
- parallel approach might use qsort first, to find duplicates in I, and then
- construct the buckets in parallel after the qsort.  But the time complexity
- would be higher.
+ FUTURE:: this code is sequential.  Constructing the I inverse buckets in
+ parallel would require synchronization (a critical section for each bucket,
+ or atomics).  A more parallel approach might use qsort first, to find
+ duplicates in I, and then construct the buckets in parallel after the qsort.
+ But the time complexity would be higher.
 */
 
 
@@ -692,8 +690,7 @@ constructed by dox_headers.m
  Any duplicate pending tuples have already been summed in T, so the
  intersection of T and A is always empty.
 \par
- PARALLEL: done, except for phase0 when both A and B are hypersparse, and
- phase2 to prune empty vectors from C-\>h.
+ PARALLEL: done, except for phase0 when both A and B are hypersparse
 */
 
 
@@ -1196,6 +1193,53 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_control.h
+\brief  GB_control.h:  disable hard-coded functions to reduce code size
+
+\par
+ The installer of SuiteSparse:GraphBLAS can edit this file to reduce the code
+ size of the compiled library, by disabling the corresonding hard-coded
+ functions in Source/Generated.  For example, if SuiteSparse:GraphBLAS is
+ integrated into an application that makes no use of the GrB_INT16 data type,
+ or just occassional use where performance is not a concern, then uncomment
+ the line \#define GxB_NO_INT16.  Alternatively, SuiteSparse:GraphBLAS can be
+ compiled with a list of options, such as -DGxB_NO_INT16, which does the same
+ thing.
+\par
+ GraphBLAS will still work as expected.  It will simply use a generic method
+ in place of the type- or operator-specific code.  It will be slower, by
+ about 2x or 3x, depending on the operation. but its results will be the
+ same.  A few operations will be 10x slower, such as GrB_reduce to scalar
+ using the GrB_MAX_FP64 operator.
+\par
+ Enabling the \"\#define GBCOMPACT\" option is the same as uncommenting this
+ entire file.  This file provides a more concise control over which
+ types, operators, and semirings are given fast hard-coded versions in
+ Source/Generated, and which use the slower generic methods.
+\par
+ However, the code size can be reduced significantly.  Uncommenting all of
+ the options below cuts the code from 55MB to under 2.7MB, on a MacBook Pro
+ using gcc 8.2.0 (as of the draft V3.0.0 version, June 18, 2019).  Disabling
+ all types except GxB_NO_FP64 results in a code size of 7.8MB.
+\par
+ Note that some semirings are renamed.  For example, C=A*B when all matrices
+ are in CSC format, uses the semiring as-is.  If all matrices are in CSR
+ format instead, then C'=B'*A' is computed, treating the internal matrices
+ as if they are in CSC format.  To accomplish this, the semiring may be
+ \"flipped\", if the multiply operator is not commutative.  That is,
+ the GxB_PLUS_FIRST_* semiring is replaced with GxB_PLUS_SECOND_*.  Below
+ is a list of all multiplicative operators and their \"flipped\" pair.
+\par
+ As a result of the \"flip\", if the FIRST operator is disabled, it may disable
+ some uses of the GxB_*_SECOND_* semirings, and visa versa, depending on the
+ matrix formats.  I recommend that if you want to use the FIRST operator with
+ fast hard-coded semirings, then do not disable FIRST or SECOND.  The
+ following is a complete list of all pairs of operators that may be replaced
+ with the other.  I recommend either keeping both of each pair, or disabling
+ both.
+*/
+
+
 /** \file GB_create.c
 \brief  GB_create: create a matrix and allocate space
 
@@ -1378,8 +1422,6 @@ constructed by dox_headers.m
 \par
  This function either frees Cp or transplants it into C, as C-\>p.  Either
  way, the caller must not free it.
-\par
- PARALLEL: done, except for the last phase, to prune empty vectors from C.
 */
 
 
@@ -1490,6 +1532,16 @@ constructed by dox_headers.m
 \par
  This function is not user-callable.  It does the work for the user-callable
  GrB_*_extractTuples functions.
+*/
+
+
+/** \file GB_extract_vector_list.c
+\brief  GB_extract_vector_list: extract vector indices for all entries in a matrix
+
+\par
+ Constructs a list of vector indices for each entry in a matrix.  Creates
+ the output J for GB_extractTuples, and I for GB_transpose when the qsort
+ method is used.
 */
 
 
@@ -1606,7 +1658,7 @@ constructed by dox_headers.m
 \brief  GB_ijsort:  sort an index array I and remove duplicates
 
 \par
- PARALLEL: TODO
+ Sort an index array and remove duplicates.  In MATLAB notation:
 */
 
 
@@ -1698,8 +1750,8 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_kron_kernel.c
-\brief  GB_kron_kernel: Kronecker product, C = kron (A,B)
+/** \file GB_kroner.c
+\brief  GB_kroner: Kronecker product, C = kron (A,B)
 
 \par
  C = kron(A,B) where op determines the binary multiplier to use.  The type of
@@ -1815,10 +1867,6 @@ constructed by dox_headers.m
 \par
  This function either frees Rp and Rh, or transplants then into R, as R-\>p
  and R-\>h.  Either way, the caller must not free them.
-\par
- PARALLEL: done, except for the last phase, to prune empty vectors from R,
- if it is hypersparse with empty vectors.  Takes O(R-\>nvec time), and is
- not always used.
 */
 
 
@@ -1883,7 +1931,6 @@ constructed by dox_headers.m
 
 \par
  for additional diagnostics, use:
- \#define GB_DEVELOPER 1
 */
 
 
@@ -2053,8 +2100,8 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_qsort_1.c
-\brief  GB_qsort_1: sort an n-by-1 list of integers
+/** \file GB_qsort_1a.c
+\brief  GB_qsort_1a: sort an n-by-1 list of integers
 
 \par
  This sort is not stable, but it is used in GraphBLAS only on lists with
@@ -2073,20 +2120,8 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_qsort_2a.c
-\brief  GB_qsort_2a: sort a 2-by-n list of integers, using A [0][ ] as the sort key
-
-\par
- This sort is not stable, but it is used in GraphBLAS only on lists with
- unique tuples (i,k).  So it does not need to be stable.  Just the first
- entry i in each tuple (i,k) is used as the sort key.  The second item k in
- each tuple happens to be unique in itself, but this is not part of the
- sort key.
-*/
-
-
-/** \file GB_qsort_2b.c
-\brief  GB_qsort_2b: sort a 2-by-n list of integers, using A[0:1][ ] as the key
+/** \file GB_qsort_2.c
+\brief  GB_qsort_2: sort a 2-by-n list of integers, using A[0:1][ ] as the key
 
 \par
  This sort is not stable, but it is used in GraphBLAS only on lists with
@@ -2174,25 +2209,11 @@ constructed by dox_headers.m
 \brief  GB_reduce_to_scalar: reduce a matrix to a scalar
 
 \par
- c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix
- to a scalar.  Not user-callable.  Does the work for GrB_*_reduce_TYPE,
- both matrix and vector.  This funciton tolerates zombies and does not
- delete them.  It does not tolerate pending tuples, so if they are present,
- all zombies are deleted and all pending tuples are assembled.
+ c = accum (c, reduce_to_scalar(A)), reduce entries in a matrix to a scalar.
+ Does the work for GrB_*_reduce_TYPE, both matrix and vector.
 \par
  This function does not need to know if A is hypersparse or not, and its
  result is the same if A is in CSR or CSC format.
-\par
- Uses a parallel reduction of all entries in A to a scalar.
-\par
- PARALLEL: done, but needs better terminal exit.
-\par
- TODO: see test107, terminal exit with many threads is slow; when one
- thread finds the terminal value, it needs to terminate all other threads.
-\par
- TODO: need to vectorize
-\par
- TODO: currently uses ntasks = nthreads; use ntasks = 32 * nthreads
 */
 
 
@@ -2392,8 +2413,120 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_subassign_kernel.c
-\brief  GB_subassign_kernel: C(I,J)\<M\> = accum (C(I,J), A)
+/** \file GB_subassign.h
+\brief  GB_subassign.h: helper macros for GB_subassigner and GB_subassign_method*
+
+*/
+
+
+/** \file GB_subassign_method0.c
+\brief  GB_subassign_method0: C(I,J) = 0 ; using S
+
+*/
+
+
+/** \file GB_subassign_method1.c
+\brief  GB_subassign_method1: C(I,J)\<M\> = scalar ; no S
+
+*/
+
+
+/** \file GB_subassign_method10.c
+\brief  GB_subassign_method10: C(I,J) += A ; using S
+
+*/
+
+
+/** \file GB_subassign_method11.c
+\brief  GB_subassign_method11: C(I,J)\<\#M\> = scalar ; using S
+
+*/
+
+
+/** \file GB_subassign_method12.c
+\brief  GB_subassign_method12: C(I,J)\<\#M\> += scalar ; using S
+
+*/
+
+
+/** \file GB_subassign_method13.c
+\brief  GB_subassign_method13: C(I,J)\<\#M\> = A ; using S
+
+*/
+
+
+/** \file GB_subassign_method14.c
+\brief  GB_subassign_method14: C(I,J)\<\#M\> += A ; using S
+
+*/
+
+
+/** \file GB_subassign_method2.c
+\brief  GB_subassign_method2: C(I,J)\<M\> += scalar ; no S
+
+*/
+
+
+/** \file GB_subassign_method3.c
+\brief  GB_subassign_method3: C(I,J) += scalar ; no S
+
+*/
+
+
+/** \file GB_subassign_method4.c
+\brief  GB_subassign_method4: C(I,J)\<!M\> += scalar ; no S
+
+*/
+
+
+/** \file GB_subassign_method5.c
+\brief  GB_subassign_method5: C(I,J) += A ; no S
+
+*/
+
+
+/** \file GB_subassign_method6.c
+\brief  GB_subassign_method6: C(I,J)\<\#M\> += A ; no S
+
+*/
+
+
+/** \file GB_subassign_method7.c
+\brief  GB_subassign_method7: C(I,J) = scalar ; using S
+
+*/
+
+
+/** \file GB_subassign_method8.c
+\brief  GB_subassign_method8: C(I,J) += scalar ; using S
+
+*/
+
+
+/** \file GB_subassign_method9.c
+\brief  GB_subassign_method9: C(I,J) = A ; using S
+
+*/
+
+
+/** \file GB_subassign_scalar.c
+\brief  GB_subassign_scalar: C(Rows,Cols)\<M\> = accum (C(Rows,Cols),x)
+
+\par
+ Assigns a single scalar to a submatrix:
+\par
+ C(Rows,Cols)\<M\> = accum (C(Rows,Cols),x)
+\par
+ This function does the work for GxB_Matrix_subassign_TYPE and
+ GxB_Vector_subassign_[type], where [type] is one of the 11 types, or the
+ type-generic macro suffix, \"_UDT\".
+\par
+ Compare with GB_assign_scalar, which uses M and C_replace differently
+*/
+
+
+/** \file GB_subassigner.c
+\brief  GB_subassigner: C(I,J)\<\#M\> = accum (C(I,J), A)
 
 \par
  Submatrix assignment: C(I,J)\<M\> = A, or accum (C (I,J), A), no transpose
@@ -2437,31 +2570,6 @@ constructed by dox_headers.m
  entry at a time.  No entries are shifted.  C-\>x can be modified, and C-\>i
  can be changed by turning an entry into a zombie, or by bringing a zombie
  back to life, but no entry in C-\>i moves in position.
-\par
- PARALLEL: TODO.  the pattern of C is not changing, except that zombies are
- introduced.  Pending tuples are added, but they could be added in any order.
- Each thread could keep its own list of pending tuples.  To parallelize this
- function, partition the list J, and call this function for each partition.
- Assuming that pending tuples are first added to a thread's private list, and
- then merged into C when done, C can be modified safely in parallel.  Also
- relies on GB_subref, which is parallel (but if J is partitioned, GB_subref
- could be called independently for each partition).
-*/
-
-
-/** \file GB_subassign_scalar.c
-\brief  GB_subassign_scalar: C(Rows,Cols)\<M\> = accum (C(Rows,Cols),x)
-
-\par
- Assigns a single scalar to a submatrix:
-\par
- C(Rows,Cols)\<M\> = accum (C(Rows,Cols),x)
-\par
- This function does the work for GxB_Matrix_subassign_TYPE and
- GxB_Vector_subassign_[type], where [type] is one of the 11 types, or the
- type-generic macro suffix, \"_UDT\".
-\par
- Compare with GB_assign_scalar, which uses M and C_replace differently
 */
 
 
@@ -2485,14 +2593,14 @@ constructed by dox_headers.m
  Symbolic extraction:
 \par
       Sparse submatrix reference, C = A(I,J), extracting the pattern, not the
-      values.  This function is called only by GB_subassign_kernel.  Symbolic
-      extraction creates a matrix C with the same pattern (C-\>p and C-\>i) as
-      numeric extraction, but with different values, C-\>x.  For numeric
-      extracion if C(inew,jnew) = A(i,j), the value of A(i,j) is copied into
-      C(i,j).  For symbolic extraction, its *pointer* is copied into C(i,j).
-      Suppose an entry A(i,j) is held in Ai [pa] and Ax [pa], and it appears
-      in the output matrix C in Ci [pc] and Cx [pc].  Then the two methods
-      differ as follows:
+      values.  For the symbolic case, this function is called only by
+      GB_subassigner.  Symbolic extraction creates a matrix C with the same
+      pattern (C-\>p and C-\>i) as numeric extraction, but with different
+      values, C-\>x.  For numeric extracion if C(inew,jnew) = A(i,j), the
+      value of A(i,j) is copied into C(i,j).  For symbolic extraction, its
+      *pointer* is copied into C(i,j).  Suppose an entry A(i,j) is held in Ai
+      [pa] and Ax [pa], and it appears in the output matrix C in Ci [pc] and
+      Cx [pc].  Then the two methods differ as follows:
 \par
           this is the same:
 \par
@@ -2508,11 +2616,11 @@ constructed by dox_headers.m
 \par
           Cx [pc] = pa ;          // for symbolic extraction
 \par
-      This function is called with symbolic==true by GB_subassign_kernel,
+      This function is called with symbolic==true by only by GB_subassigner,
       which uses it to extract the pattern of C(I,J), for the submatrix
       assignment C(I,J)=A.  In this case, this function needs to deal with
-      zombie entries.  The GB_subassign_kernel caller uses this function on
-      its C matrix, which is called A here because it is not modified here.
+      zombie entries.  GB_subassigner uses this function on its C matrix,
+      which is called A here because it is not modified here.
 \par
       Reading a zombie entry:  A zombie entry A(i,j) has been marked by
       flipping its index.  The value of a zombie is not important, just its
@@ -2534,8 +2642,13 @@ constructed by dox_headers.m
 
 
 /** \file GB_subref_method.h
-\brief  GB_subref_method: select a method for C(:,k) = A(I,j), for one vector of C
+\brief  GB_subref_method: select a method for C(:,kC) = A(I,kA), for one vector of C
 
+\par
+ This method is \#include'd in GB_subref_slice.c, GB_subref_phase1.c, and
+ GB_subref_phase2.c, and used by Template/GB_subref_template.c.  It
+ determines the method used for to construct C(:,kC) = A(I,kA) for a
+ single vector of C and A.
 */
 
 
@@ -2708,14 +2821,10 @@ constructed by dox_headers.m
  If A_in is not NULL and Chandle is NULL, then A is modified in place, and
  the A_in matrix is not freed when done.
 \par
- The bucket sort is parallel, but not highly
- scalable.  If e=nnz(A) and A is m-by-n, then at most O(e/n) threads are
- used.  For many matrices, e is O(n), although the constant can be high.  The
- qsort method is more scalable, but not as fast with a modest number of threads.
-\par
- PARALLEL: TODO, parallel qsort is still in progress.
- Once that is done, need a better automatic selection between the two methods
- (also add a new field to the descriptor to choose the method).
+ The bucket sort is parallel, but not highly scalable.  If e=nnz(A) and A is
+ m-by-n, then at most O(e/n) threads are used.  For many matrices, e is O(n),
+ although the constant can be high.  The qsort method is more scalable, but
+ not as fast with a modest number of threads.
 */
 
 
@@ -2818,8 +2927,6 @@ constructed by dox_headers.m
 \par
  If A is non-hypersparse, then O(n) is added in the worst case, to prune
  zombies and to update the vector pointers for A.
-\par
- PARALLEL: done, but update it when GB_add can tolerate zombies on input
 */
 
 
@@ -3350,9 +3457,6 @@ constructed by dox_headers.m
 
 \par
  C\<M\> = accum (C,A') or accum (C,A)
-\par
- TODO add a descriptor to select the method for computing A':  bucket sort
- or qsort.
 */
 
 
@@ -4293,15 +4397,21 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_reduce_panel.c
+\brief  GB_reduce_panel: s=reduce(A), reduce a matrix to a scalar
+
+\par
+ Reduce a matrix to a scalar using a panel-based method for built-in
+ operators.  No typecasting is performed.
+*/
+
+
 /** \file GB_reduce_to_scalar_template.c
 \brief  GB_reduce_to_scalar_template: s=reduce(A), reduce a matrix to a scalar
 
 \par
- Reduce a matrix to a scalar.
-\par
- TODO add simd vectorization for non-terminal monoids.  Particular max, min.
-\par
- TODO use ntasks = 32 * nthreads
+ Reduce a matrix to a scalar, with typecasting and generic operators.
+ No panel is used.
 */
 
 

@@ -130,8 +130,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         #define GB_RED_WORKER(opname,aname,atype)                       \
         {                                                               \
-            GB_red (opname, aname) ((atype *) s, A, ntasks, nthreads) ; \
-            done = true ;                                               \
+            info = GB_red (opname, aname) ((atype *) s, A, ntasks, nthreads) ; \
+            done = (info != GrB_NO_VALUE) ;                             \
         }                                                               \
         break ;
 

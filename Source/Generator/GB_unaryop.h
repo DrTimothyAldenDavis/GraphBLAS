@@ -1,4 +1,4 @@
-void GB_unop
+GrB_Info GB_unop
 (
     GB_ctype *restrict Cx,
     GB_atype *restrict Ax,
@@ -6,7 +6,7 @@ void GB_unop
     int nthreads
 ) ;
 
-void GB_tran
+GrB_Info GB_tran
 (
     GrB_Matrix C,
     const GrB_Matrix A,

@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
@@ -11,6 +10,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
+#include "GB_control.h" 
 
 // The reduction is defined by the following types and operators:
 
@@ -105,13 +105,17 @@
     #define GB_PANEL                                \
         8
 
+// disable this operator and use the generic case if these conditions hold
+#define GB_DISABLE \
+    (defined (GxB_NO_LAND) || defined (GxB_NO_BOOL) || defined (GxB_NO_LAND_BOOL))
+
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only
 //------------------------------------------------------------------------------
 
 
 
-void GB_red_scalar__land_bool
+GrB_Info GB_red_scalar__land_bool
 (
     bool *result,
     const GrB_Matrix A,
@@ -119,16 +123,21 @@ void GB_red_scalar__land_bool
     int nthreads
 )
 { 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     bool s = (*result) ;
     #include "GB_reduce_panel.c"
     (*result) = s ;
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
 // reduce to each vector: each vector A(:,k) reduces to a scalar Tx (k)
 //------------------------------------------------------------------------------
 
-void GB_red_eachvec__land_bool
+GrB_Info GB_red_eachvec__land_bool
 (
     bool *restrict Tx,
     GrB_Matrix A,
@@ -139,7 +148,12 @@ void GB_red_eachvec__land_bool
     int nthreads
 )
 {
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_reduce_each_vector.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -157,6 +171,9 @@ GrB_Info GB_red_eachindex__land_bool
     GB_Context Context
 )
 {
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     GrB_Info info = GrB_SUCCESS ;
     GrB_Matrix T = NULL ;
     (*Thandle) = NULL ;
@@ -164,6 +181,7 @@ GrB_Info GB_red_eachindex__land_bool
     #include "GB_reduce_each_index.c"
     (*Thandle) = T ;
     return (info) ;
+    #endif
 }
 
 
@@ -172,7 +190,7 @@ GrB_Info GB_red_eachindex__land_bool
 // build matrix
 //------------------------------------------------------------------------------
 
-void GB_red_build__land_bool
+GrB_Info GB_red_build__land_bool
 (
     bool *restrict Tx,
     int64_t  *restrict Ti,
@@ -186,7 +204,12 @@ void GB_red_build__land_bool
     int nthreads
 )
 {
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
     #include "GB_reduce_build_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
 }
 
 #endif
