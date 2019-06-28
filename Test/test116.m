@@ -29,7 +29,7 @@ C1 = C0 ;
 C1 (1:k,1:k) = A ;
 tm = toc ;
 
-for nthreads = [1 2 4 8 16 32 40 64]
+for nthreads = [1 2 4 8 16 20 32 40 64]
     if (nthreads > 2*ncores)
         break ;
     end
@@ -58,7 +58,7 @@ B1 = C1 (1:k,1:k) ;
 tm = toc ;
 S = sparse (k,k) ;
 
-for nthreads = [1 2 4 8 16 32 40 64]
+for nthreads = [1 2 4 8 16 20 32 40 64]
     if (nthreads > 2*ncores)
         break ;
     end
