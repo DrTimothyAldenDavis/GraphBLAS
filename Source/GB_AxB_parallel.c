@@ -467,7 +467,7 @@ AxB_slice = GxB_SLICE_ATNZ ;
             // and A is stored by column.  This method is the default when
             // slicing A.
 
-            GB_pslice (Slice, A, naslice) ;
+            GB_pslice (Slice, /* A */ A->p, A->nvec, naslice) ;
 
         }
 
@@ -554,7 +554,7 @@ AxB_slice = GxB_SLICE_ATNZ ;
 
             // thread tid will do columns Slice [tid] to Slice [tid+1]-1
 
-            GB_pslice (Slice, B, nthreads) ;
+            GB_pslice (Slice, /* B */ B->p, B->nvec, nthreads) ;
 
         }
         else if (AxB_slice == GxB_SLICE_BFLOPS)

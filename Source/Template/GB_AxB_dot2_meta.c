@@ -27,7 +27,7 @@
     // after initialization with GBI1_init, it can be shared by all threads.
     GBI_single_iterator Iter ;
     int64_t B_slice [nbslice+1] ;
-    GB_pslice (B_slice, B, nbslice) ;
+    GB_pslice (B_slice, /* B */ B->p, B->nvec, nbslice) ;
     GBI1_init (&Iter, B) ;
 
     //--------------------------------------------------------------------------

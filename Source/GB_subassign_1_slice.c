@@ -153,7 +153,7 @@ GrB_Info GB_subassign_1_slice
     //--------------------------------------------------------------------------
 
     int64_t Coarse [ntasks1+1] ;
-    GB_pslice (Coarse, A, ntasks1) ;
+    GB_pslice (Coarse, /* A */ A->p, A->nvec, ntasks1) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

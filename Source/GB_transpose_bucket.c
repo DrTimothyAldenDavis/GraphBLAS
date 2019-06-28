@@ -158,7 +158,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // create the iterator for A
     GBI_single_iterator Iter ;
     int64_t A_slice [naslice+1] ;
-    GB_pslice (A_slice, A, naslice) ;
+    GB_pslice (A_slice, /* A */ A->p, A->nvec, naslice) ;
     GBI1_init (&Iter, A) ;
 
     // sum up the row counts and find C->p

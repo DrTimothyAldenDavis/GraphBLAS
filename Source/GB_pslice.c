@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_pslice: partition A->p by # of entries, for a parallel loop
+// GB_pslice: partition Ap for a parallel loop
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,28 +7,27 @@
 
 //------------------------------------------------------------------------------
 
-// A->p [0..A->nvec] is a monotonically increasing cumulative sum of the
-// entries in each vector of A.  This function slices Ap so that each chunk has
-// the same number of entries.
-
-// TODO: pass in Ap, and anvec instead.  Then anz = Ap [anvec],
-// and use this for GB_ewise_slice and GB_subref_slice. 
+// Ap [0..n] is an array with monotonically increasing entries.  This function
+// slices Ap so that each chunk has the same number of total values of its
+// entries.  Ap can be A->p for a matrix and then n = A->nvec.  Or it can be
+// the work needed for computing each vector of a matrix (see GB_ewise_slice
+// and GB_subref_slice, for example).
 
 #include "GB.h"
 
-void GB_pslice                  // find how to slice A->p by # of entries
+void GB_pslice                      // find how to slice Ap
 (
-    int64_t *Slice,             // size ntasks+1
-    const GrB_Matrix A,
-    const int ntasks            // # of tasks
+    int64_t *Slice,                 // size ntasks+1
+    const int64_t *restrict Ap,     // array of size n+1
+    const int64_t n,
+    const int ntasks                // # of tasks
 )
 {
 
-    const int64_t *restrict Ap = A->p ;
-    int64_t anz = GB_NNZ (A) ;
-    int64_t anvec = A->nvec ;
+    const double work = (Ap == NULL) ? 0 : Ap [n] ;
+
     Slice [0] = 0 ;
-    if (Ap == NULL || anvec == 0 || ntasks <= 1 || anz == 0)
+    if (Ap == NULL || n == 0 || ntasks <= 1 || work == 0)
     {
         // matrix is empty, or a single thread is used
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
@@ -39,18 +38,18 @@ void GB_pslice                  // find how to slice A->p by # of entries
     else
     {
         // slice Ap by # of entries
-        int64_t pleft = 0 ;
+        int64_t k = 0 ;
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
         { 
-            // binary search to find k so that Ap [k] == (taskid * anz) /
+            // binary search to find k so that Ap [k] == (taskid * work) /
             // ntasks.  The exact value will not typically not be found;
             // just pick what the binary search comes up with.
-            int64_t nz = ((taskid * (double) anz) / (double) ntasks) ;
-            int64_t pright = anvec ;
-            GB_BINARY_TRIM_SEARCH (nz, Ap, pleft, pright) ;
-            Slice [taskid] = pleft ;
+            int64_t wtask = ((taskid * work) / (double) ntasks) ;
+            int64_t pright = n ;
+            GB_BINARY_TRIM_SEARCH (wtask, Ap, k, pright) ;
+            Slice [taskid] = k ;
         }
     }
-    Slice [ntasks] = anvec ;
+    Slice [ntasks] = n ;
 }
 

@@ -263,19 +263,8 @@ GrB_Info GB_subref_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    // TODO use GB_pslice instead
     int64_t Coarse [ntasks1+1] ;
-    Coarse [0] = 0 ;
-    int64_t k = 0 ;
-    for (int t = 1 ; t < ntasks1 ; t++)
-    { 
-        // find k so that Cwork [k] == t * target_task_size
-        int64_t work = t * target_task_size ;
-        int64_t pright = Cnvec ;
-        GB_BINARY_TRIM_SEARCH (work, Cwork, k, pright) ;
-        Coarse [t] = k ;
-    }
-    Coarse [ntasks1] = Cnvec ;
+    GB_pslice (Coarse, Cwork, Cnvec, ntasks1) ;
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine

@@ -2135,11 +2135,12 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     GB_Context Context
 ) ;
 
-void GB_pslice                  // find how to slice A->p by # of entries
+void GB_pslice                      // find how to slice Ap
 (
-    int64_t *Slice,             // size nthreads+1
-    const GrB_Matrix A,
-    const int nthreads          // # of threads
+    int64_t *Slice,                 // size ntasks+1
+    const int64_t *restrict Ap,     // array of size n+1
+    const int64_t n,
+    const int ntasks                // # of tasks
 ) ;
 
 void GB_eslice
