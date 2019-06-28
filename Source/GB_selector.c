@@ -228,8 +228,37 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     int64_t C_pstart_slice [ntasks] ;
-    GB_map_pslice (C_pstart_slice, Cp, kfirst_slice, klast_slice,
-        Wfirst, Wlast, ntasks) ;
+    int64_t kprior = -1 ;
+    int64_t pC = 0 ;
+
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+        int64_t k = kfirst_slice [taskid] ;
+
+        if (kprior < k)
+        {
+            // Task taskid is the first one to do work on C(:,k), so it starts
+            // at Cp [k], and it contributes Wfirst [taskid] entries to C(:,k)
+            pC = Cp [k] ;
+            kprior = k ;
+        }
+
+        // Task taskid contributes Wfirst [taskid] entries to C(:,k)
+        C_pstart_slice [taskid] = pC ;
+        pC += Wfirst [taskid] ;
+
+        int64_t klast = klast_slice [taskid] ;
+        if (k < klast)
+        {
+            // Task taskid is the last to contribute to C(:,k).
+            ASSERT (pC == Cp [k+1]) ;
+            // Task taskid contributes the first Wlast [taskid] entries
+            // to C(:,klast), so the next task taskid+1 starts at this
+            // location, if its first vector is klast of this task.
+            pC = Cp [klast] + Wlast [taskid] ;
+            kprior = klast ;
+        }
+    }
 
     //--------------------------------------------------------------------------
     // allocate new space for the compacted Ci and Cx

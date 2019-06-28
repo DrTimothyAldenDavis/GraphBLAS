@@ -53,10 +53,10 @@ else
 end
 
 % create the disable flag
-disable  = sprintf ('defined (GxB_NO_%s)', upper (unop)) ;
-disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (zname)))] ;
+disable  = sprintf ('GxB_NO_%s', upper (unop)) ;
+disable = [disable (sprintf (' || GxB_NO_%s', upper (zname)))] ;
 if (~isequal (zname, xname))
-    disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (xname)))] ;
+    disable = [disable (sprintf (' || GxB_NO_%s', upper (xname)))] ;
 end
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;

@@ -42,7 +42,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK2 (C, M, A)) ;
+    // C may be aliased with M and/or A
 
     GB_RETURN_IF_NULL (Rows) ;
     GB_RETURN_IF_NULL (Cols) ;

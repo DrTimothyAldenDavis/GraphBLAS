@@ -18,7 +18,7 @@
 
 // phase2: computes R, using the counts computed by phase1.
 
-// TODO: add special cases for C==Z, C==M, and Z==M aliases
+// FUTURE:: add special cases for C==Z, C==M, and Z==M aliases
 
 //------------------------------------------------------------------------------
 // R(i,j) = Z(i,j)

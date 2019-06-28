@@ -249,7 +249,8 @@ GrB_Info GB_ewise_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    int Coarse [ntasks1+1] ;
+    // TODO use GB_pslice instead
+    int64_t Coarse [ntasks1+1] ;
     Coarse [0] = 0 ;
     int64_t k = 0 ;
     for (int t = 1 ; t < ntasks1 ; t++)

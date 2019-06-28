@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// PARALLEL: done; this function is intentionally single-threaded.
-// it is called in parallel by GB_AxB_parallel.
-
 {
 
     //--------------------------------------------------------------------------

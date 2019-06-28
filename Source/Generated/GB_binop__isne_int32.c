@@ -65,7 +65,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (defined (GxB_NO_ISNE) || defined (GxB_NO_INT32) || defined (GxB_NO_ISNE_INT32))
+    (GxB_NO_ISNE || GxB_NO_INT32 || GxB_NO_ISNE_INT32)
 
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix

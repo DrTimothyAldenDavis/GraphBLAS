@@ -175,7 +175,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     int64_t *restrict Cp = C->p ;
 
     // cumulative sum of counts in each column
-    // TODO skip if naslice == 1
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t k = 0 ; k < cnvec ; k++)
     {
@@ -423,9 +422,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
-
-    // TODO: if C->nvec_nonempty is small, then check if C should be converted
-    // to hypersparse form.  If already hypersparse, prune C->h.
 
     GB_FREE_ALL ;
     ASSERT_OK (GB_check (C, "dot: C = A'*B output", GB0)) ;

@@ -141,24 +141,13 @@ GrB_Info GB_new                 // create matrix, except for indices & values
     A->nvec_nonempty = 0 ;      // all vectors are empty
 
     // content that is freed or reset in GB_ix_free
-    // (GB_ix_free then calls GB_pending_free and GB_queue_remove):
     A->i = NULL ;
     A->x = NULL ;
     A->nzmax = 0 ;              // GB_NNZ(A) checks nzmax==0 before Ap[nvec]
     A->i_shallow = false ;
     A->x_shallow = false ;
     A->nzombies = 0 ;
-
-    // content that is freed or reset by GB_pending_free:
-    A->n_pending = 0 ;
-    A->max_n_pending = 0 ;
-    A->sorted_pending = true ;
-    A->i_pending = NULL ;
-    A->j_pending = NULL ;
-    A->s_pending = NULL ;
-    A->operator_pending = NULL ;
-    A->type_pending = NULL ;
-    A->type_pending_size = 0 ;
+    A->Pending = NULL ;
 
     // content freed or reset by GB_queue_remove:
     A->queue_next = NULL ;

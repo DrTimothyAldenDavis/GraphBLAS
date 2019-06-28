@@ -543,7 +543,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ntasks = GB_IMAX (ntasks, 1) ;
                 int64_t Count [ntasks+1] ;
 
-                #pragma omp parallel for num_threads(nth) schedule(dynamic)
+                #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
                 for (int tid = 0 ; tid < ntasks ; tid++)
                 {
                     int64_t jstart, jend, k = 0 ;
@@ -561,7 +561,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 GB_cumsum (Count, ntasks, NULL, 1) ;
                 ASSERT (Count [ntasks] == anz) ;
 
-                #pragma omp parallel for num_threads(nth) schedule(dynamic)
+                #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
                 for (int tid = 0 ; tid < ntasks ; tid++)
                 {
                     int64_t jstart, jend, k = Count [tid] ;

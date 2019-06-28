@@ -56,10 +56,11 @@
 //      = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
 //      not hypersparse, then C_to_M is returned as NULL.
 
-// PARALLEL: mostly done. TODO except in one condition: A and B are hypersparse
-// and Ch_is_Mh is false.  takes O(A->nvec + B->nvec) time.
+// TODO: parallel merge when A and B are hypersparse and Ch_is_Mh is false.
+// takes O(A->nvec + B->nvec) time.  Use GB_slice_vector to create fine tasks
+// to merge Ah and Bh.
 
-// TODO: exploit A==M, B==M, and A==B aliases
+// FUTURE:: exploit A==M, B==M, and A==B aliases
 
 #include "GB.h"
 
@@ -149,7 +150,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (p_max_Cnvec != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    ASSERT (C_to_M_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
     ASSERT_OK (GB_check (A, "A for add phase0", GB0)) ;
@@ -168,9 +168,12 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     int64_t *restrict C_to_B = NULL ;
 
     (*Ch_handle) = NULL ;
-    (*C_to_M_handle) = NULL ;
     (*C_to_A_handle) = NULL ;
     (*C_to_B_handle) = NULL ;
+    if (C_to_M_handle != NULL)
+    {
+        (*C_to_M_handle) = NULL ;
+    }
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -498,9 +501,12 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         (*p_Ch_is_Mh) = Ch_is_Mh ;
     }
     (*Ch_handle    ) = Ch ;
-    (*C_to_M_handle) = C_to_M ;
     (*C_to_A_handle) = C_to_A ;
     (*C_to_B_handle) = C_to_B ;
+    if (C_to_M_handle != NULL)
+    {
+        (*C_to_M_handle) = C_to_M ;
+    }
 
     //--------------------------------------------------------------------------
     // The code below describes what the output contains:

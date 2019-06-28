@@ -63,7 +63,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 
     GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;
-    int64_t Cnvec, max_Cnvec, Cnvec_nonempty ;
+    int64_t Cnvec, Cnvec_nonempty ;
     int64_t *Cp = NULL, *Ch = NULL ;
     int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
     int ntasks, max_ntasks, nthreads ;
@@ -100,9 +100,9 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     if (info != GrB_SUCCESS)
     { 
         // out of memory; free everything allocated by GB_add_phase0
-        GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_A, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_B, Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -124,9 +124,9 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     { 
         // out of memory; free everything allocated by phase 0
         GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
-        GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_A, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_B, Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -151,9 +151,9 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 
     // free workspace
     GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
-    GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
-    GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
-    GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_A, Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_B, Cnvec, sizeof (int64_t)) ;
 
     if (info != GrB_SUCCESS)
     { 

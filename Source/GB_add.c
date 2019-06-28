@@ -33,8 +33,6 @@
 // Any duplicate pending tuples have already been summed in T, so the
 // intersection of T and A is always empty.
 
-// PARALLEL: done, except for phase0 when both A and B are hypersparse
-
 #include "GB.h"
 
 GrB_Info GB_add             // C=A+B or C<M>=A+B

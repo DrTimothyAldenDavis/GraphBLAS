@@ -184,7 +184,7 @@
     else
     {
         // T is sparse: gather from Work0 and Mark0
-        // FUTURE: this is not yet parallel
+        // TODO: do this in parallel
         int64_t p = 0 ;
         for (int64_t i = 0 ; i < n ; i++)
         {

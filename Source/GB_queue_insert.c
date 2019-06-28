@@ -31,7 +31,7 @@ bool GB_queue_insert            // insert matrix at the head of queue
 
     bool ok = true ;
 
-    if ((A->n_pending > 0 || A->nzombies > 0) && !(A->enqueued))
+    if ((A->Pending != NULL || A->nzombies > 0) && !(A->enqueued))
     {
         // A is not in the queue yet, but needs to be there
 
@@ -39,7 +39,7 @@ bool GB_queue_insert            // insert matrix at the head of queue
         #define GB_CRITICAL_SECTION                                         \
         {                                                                   \
             /* check again to be safe, then add A to the head of queue */   \
-            if ((A->n_pending > 0 || A->nzombies > 0) && !(A->enqueued))    \
+            if ((A->Pending != NULL || A->nzombies > 0) && !(A->enqueued))  \
             {                                                               \
                 /* add the matrix to the head of the queue */               \
                 GrB_Matrix Head = (GrB_Matrix) (GB_Global_queue_head_get ( )) ;\

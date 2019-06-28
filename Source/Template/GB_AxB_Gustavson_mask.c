@@ -21,16 +21,15 @@
 // GB_AxB_Gustavson_nomask is used instead, if the total flop count is less
 // than nnz(M).
 
-// PARALLEL: done; this function is intentionally single-threaded.
-// it is called in parallel by GB_AxB_parallel.
-
 {
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_NOT_ALIASED_3 (C, M, A, B)) ;
+    ASSERT (!GB_aliased (C, M)) ;
+    ASSERT (!GB_aliased (C, A)) ;
+    ASSERT (!GB_aliased (C, B)) ;
     ASSERT (C->vdim == B->vdim) ;
     ASSERT (C->vlen == A->vlen) ;
     ASSERT (A->vdim == B->vlen) ;

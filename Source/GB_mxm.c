@@ -36,7 +36,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK3 (C, M, A, B)) ;
+    // C may be aliased with M, A, and/or B
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;

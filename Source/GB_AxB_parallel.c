@@ -76,15 +76,16 @@
 // user-callable function that is calling this function (GrB_mxm, GrB_mxv, or
 // GxB_vxm) and detailed error reports.
 
-// FUTURE: The result of this function is the T matrix in GB_mxm.  It may be
+// FUTURE:: The result of this function is the T matrix in GB_mxm.  It may be
 // transplanted directly into the user's matrix, or it may be passed through
 // GB_accum_mask.  See GB_mxm.  For the latter case, it would be better to
 // delay the contatenation of the output matrix T = [C0 ... C(nthreads-1)].
 // GB_accum_mask could do the accum/mask using the sliced T matrix, to
 // update the user's C matrix (which is not sliced), and then T is freed.
 
-// PARALLEL: done, for now.  Needs cleanup.  Also need to write a hash-based
-// method, and multi-phase Gustavson and Heap methods.
+// TODO: cleanup, descriptors, load balance
+
+// FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods.
 
 #include "GB.h"
 

@@ -35,7 +35,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK (A, B)) ;
+    // A and B may be aliased
 
     GrB_BinaryOp add  = semiring->add->op ;     // add operator
     GrB_BinaryOp mult = semiring->multiply ;    // multiply operator

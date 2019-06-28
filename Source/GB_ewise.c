@@ -43,9 +43,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // check inputs
     //--------------------------------------------------------------------------
 
+    // C may be aliased with M, A, and/or B
+
     GrB_Info info ;
     GrB_Matrix MT = NULL, BT = NULL, AT = NULL, T = NULL ;
-    ASSERT (GB_ALIAS_OK3 (C, M, A, B)) ;
 
     GB_RETURN_IF_FAULTY (accum) ;
 

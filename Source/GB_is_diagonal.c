@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Returns true if A is a square diagonal matrix, with all diagonal entries
-// present.  Pending tuples are ignored.  Zombies are treated as entries.
+// present.  All pending tuples are ignored.  Zombies are treated as entries.
 
 #include "GB.h"
 

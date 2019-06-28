@@ -259,7 +259,9 @@ GrB_Info assign ( )
     }
 
     ASSERT_OK (GB_check (C, "Final C before wait", GB0)) ;
+    // double tt [2], t ; simple_tic (tt) ;
     OK (GrB_wait ( )) ;
+    // t = simple_toc (tt) ; printf ("wait %g sec\n", t) ;
     return (info) ;
 }
 

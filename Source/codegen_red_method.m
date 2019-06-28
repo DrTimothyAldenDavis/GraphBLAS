@@ -52,9 +52,9 @@ func = strrep (func, 'yarg', '`$2''') ;
 fprintf (f, 'define(`GB_REDUCE_OP'', `%s'')\n', func) ;
 
 % create the disable flag
-disable  = sprintf ('defined (GxB_NO_%s)', upper (opname)) ;
-disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (aname)))] ;
-disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (opname), upper (aname)))] ;
+disable  = sprintf ('GxB_NO_%s', upper (opname)) ;
+disable = [disable (sprintf (' || GxB_NO_%s', upper (aname)))] ;
+disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (opname), upper (aname)))] ;
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;

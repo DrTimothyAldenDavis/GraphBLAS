@@ -92,16 +92,16 @@ else
 end
 
 % create the disable flag
-disable  = sprintf ('defined (GxB_NO_%s)', upper (addop)) ;
+disable  = sprintf ('GxB_NO_%s', upper (addop)) ;
 if (~isequal (addop, multop))
-    disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (multop)))] ;
+    disable = [disable (sprintf (' || GxB_NO_%s', upper (multop)))] ;
 end
-disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (fname)))] ;
-disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (addop), upper (zname)))] ;
+disable = [disable (sprintf (' || GxB_NO_%s', upper (fname)))] ;
+disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (addop), upper (zname)))] ;
 if (~ (isequal (addop, multop) && isequal (zname, fname)))
-    disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (multop), upper (fname)))] ;
+    disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (multop), upper (fname)))] ;
 end
-disable = [disable (sprintf (' || defined (GxB_NO_%s_%s_%s)', ...
+disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
     upper (addop), upper (multop), upper (fname))) ] ;
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;

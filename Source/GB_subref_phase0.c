@@ -307,7 +307,6 @@ GrB_Info GB_subref_phase0
     int max_ntasks = nthreads_max * 8 ;
     int64_t Count [max_ntasks+1] ;
 
-    // TODO make this a static inline function in GB.h:
     #define GB_GET_NTHREADS_AND_NTASKS(work)                    \
     {                                                           \
         nthreads = GB_nthreads (work, chunk, nthreads_max) ;    \
@@ -388,7 +387,7 @@ GrB_Info GB_subref_phase0
         GB_GET_NTHREADS_AND_NTASKS (anvec) ;
 
         // scan all of Ah and check each entry if it appears in J
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
         {
             int64_t kA_start, kA_end, my_Cnvec = 0 ;
@@ -424,7 +423,7 @@ GrB_Info GB_subref_phase0
         GB_GET_NTHREADS_AND_NTASKS (nJ) ;
 
         // scan all of J and check each entry if it appears in Ah
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
         {
             int64_t jC_start, jC_end, my_Cnvec = 0 ;
@@ -547,7 +546,7 @@ GrB_Info GB_subref_phase0
 
         if (jinc > 0)
         {
-            #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+            #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
             for (int tid = 0 ; tid < ntasks ; tid++)
             {
                 int64_t kA_start, kA_end ;
@@ -569,7 +568,7 @@ GrB_Info GB_subref_phase0
         }
         else
         {
-            #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+            #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
             for (int tid = 0 ; tid < ntasks ; tid++)
             {
                 int64_t kA_start, kA_end ;
@@ -602,7 +601,7 @@ GrB_Info GB_subref_phase0
         // list J, or the entire jbegin:jinc:jend sequence.  Each vector is
         // then found in Ah, via binary search.
 
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+        #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
         {
             int64_t jC_start, jC_end ;

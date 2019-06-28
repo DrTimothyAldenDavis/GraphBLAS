@@ -12,9 +12,6 @@
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
-// PARALLEL: done; this function is intentionally single-threaded.
-// it is called in parallel by GB_AxB_parallel.
-
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
@@ -113,7 +110,6 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // allocate the Sauna
     //--------------------------------------------------------------------------
 
-    // TODO: make this a function.  See GB_reduce_to_vector
     GB_Sauna Sauna = GB_Global_Saunas_get (Sauna_id) ;
     if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size < zsize)
     { 

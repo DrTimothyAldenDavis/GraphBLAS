@@ -24,9 +24,7 @@
 
 // Compare with GB_subassign, which uses M and C_replace differently
 
-// PARALLEL: TODO
-
-#include "GB.h"
+#include "GB_assign.h"
 
 #define GB_FREE_ALL                                     \
 {                                                       \
@@ -79,7 +77,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     int64_t I2_size = 0, J2_size = 0 ;
     GrB_Matrix SubMask = NULL ;
 
-    ASSERT (GB_ALIAS_OK2 (C, M_in, A_in)) ;
+    // C may be aliased with M_in and/or A_in
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL (Rows) ;
@@ -269,43 +267,13 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 {
                     // delete all entries in vector j
                     int64_t j = (col_assign) ? Cols [0] : Rows [0] ;
-                    int64_t p, pend, pleft = 0, pright = cnvec-1 ;
-                    GB_lookup (C->is_hyper, C->h, C->p, &pleft, pright, j,
-                        &p, &pend) ;
-                    // TODO do this in parallel
-                    for ( ; p < pend ; p++)
-                    {
-                        int64_t i = Ci [p] ;
-                        if (i >= 0)
-                        { 
-                            // delete C(i,j) by marking it as a zombie
-                            C->nzombies++ ;
-                            Ci [p] = GB_FLIP (i) ;
-                        }
-                    }
+                    GB_assign_zombie1 (C, j, Context) ;
                 }
                 else
                 {
                     // delete all entries in each vector with index i
                     int64_t i = (row_assign) ? Rows [0] : Cols [0] ;
-                    // TODO do this in parallel
-                    GBI_for_each_vector (C)
-                    {
-                        // get C(:,j)
-                        GBI_jth_iteration (j, p, pend) ;
-                        // find C(i,j) if it exists
-                        int64_t pright = pend-1 ;
-                        bool found, is_zombie ;
-                        GB_BINARY_ZOMBIE (i, Ci, p, pright, found, C->nzombies,
-                            is_zombie) ;
-                        if (found && !is_zombie)
-                        { 
-                            // delete C(i,j) by marking it as a zombie
-                            ASSERT (i == Ci [p]) ;
-                            C->nzombies++ ;
-                            Ci [p] = GB_FLIP (i) ;
-                        }
-                    }
+                    GB_assign_zombie2 (C, i, Context) ;
                 }
             }
             else
@@ -595,46 +563,26 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     //--------------------------------------------------------------------------
-    // Z = C
+    // make a copy Z = C if C is aliased to A or M
     //--------------------------------------------------------------------------
 
-    // GB_subassigner modifies C efficiently in place, but there are cases when
-    // C is aliased with M or A that require the work to not be done in place.
+    // If C is aliased to A and/or M, a copy must be made.  GB_subassigner
+    // operates on the copy, Z, which is then transplanted back into C when
+    // done.  This is costly, and can have performance implications, but it is
+    // the only reasonable method.  If a copy of C must be made, then it is as
+    // large as M or A, so copying the whole matrix will not add much time.
 
-    // If both I == GrB_ALL and J == GrB_ALL, then C can be safely aliased with
-    // M or A, or both.  In addition, M and/or A may also have shallow
-    // components that refer back to components of C.
-
-    // Otherwise, if I is not GrB_ALL or J is not GrB_ALL, then C cannot be
-    // aliased with M or A.  Nor can any shallow component of M or A refer to
-    // any component of C.  This is an unsafe alias.
-
-    // If C is unsafely aliased a copy must be made.  GB_subassigner operates
-    // on the copy, Z, which is then transplanted back into C when done.  This
-    // is costly, and can have performance implications, but it is the only
-    // reasonable method.  If a copy of C must be made, then it is as large as
-    // M or A, so copying the whole matrix will not add much time.
-
-    bool unsafely_aliased ;
-    if (I == GrB_ALL && J == GrB_ALL)
-    { 
-        // any alias is OK (unless C_replace_phase is true, below)
-        unsafely_aliased = false ; 
-    }
-    else
-    { 
-        unsafely_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
-    }
+    bool C_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
 
     // GB_assign cannot tolerate any alias with the input mask,
     // if the C_replace phase will be performed.
     if (C_replace_phase)
     { 
         // the C_replace_phase requires C and M_in not to be aliased
-        unsafely_aliased = unsafely_aliased || GB_aliased (C, M_in) ;
+        C_aliased = C_aliased || GB_aliased (C, M_in) ;
     }
 
-    if (unsafely_aliased)
+    if (C_aliased)
     {
         // Z2 = duplicate of C, which must be freed when done
         ASSERT (!GB_ZOMBIES (C)) ;
@@ -762,21 +710,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         }
 
         //----------------------------------------------------------------------
-        // get Z and M
-        //----------------------------------------------------------------------
-
-        const int64_t *Zh = Z->h ;
-        const int64_t *Zp = Z->p ;
-        int64_t *Zi = Z->i ;
-
-        const int64_t *Mh = M->h ;
-        const int64_t *Mp = M->p ;
-        const int64_t *Mi = M->i ;
-        const GB_void *Mx = M->x ;
-        size_t msize = M->type->size ;
-        GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
-
-        //----------------------------------------------------------------------
         // delete entries outside Z(I,J) for which M(i,j) is false
         //----------------------------------------------------------------------
 
@@ -794,62 +727,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t j = J [0] ;
             ASSERT (j == GB_ijlist (J, 0, Jkind, Jcolon)) ;
 
-            // find Z (:,j)
-            int64_t pZ, pZ_end, pleft = 0, pright = Z->nvec-1 ;
-            GB_lookup (Z->is_hyper, Zh, Zp, &pleft, pright, j, &pZ, &pZ_end) ;
-
-            // find M (:,0)
-            int64_t pM = Mp [0] ;
-            int64_t pM_end = Mp [1] ;
-
-            // iterate over all entries in Z(:,j)
-            // TODO do this in paralllel
-            for (int64_t p = pZ ; p < pZ_end ; p++)
-            {
-                // Z(i,j) is outside the Z(I,j) subcolumn if i is
-                // not in the list I
-                int64_t i = Zi [p] ;
-                if (i < 0)
-                { 
-                    // Z(i,j) is already a zombie; skip it.
-                    continue ;
-                }
-
-                bool i_outside = !GB_ij_is_in_list (I, nI, i, Ikind, Icolon) ;
-
-                if (i_outside)
-                {
-                    // Z(i,j) is a live entry not in the Z(I,j) subcolumn.
-                    // Check the mask M to see if it should be deleted.
-                    bool mij ;
-                    int64_t pleft  = pM ;
-                    int64_t pright = pM_end - 1 ;
-                    bool found ;
-                    GB_BINARY_SEARCH (i, Mi, pleft, pright, found) ;
-                    if (found)
-                    { 
-                        // found it
-                        cast_M (&mij, Mx +(pleft*msize), 0) ;
-                    }
-                    else
-                    { 
-                        // M(i,j) not present, implicitly false
-                        mij = false ;
-                    }
-                    if (Mask_comp)
-                    { 
-                        // negate the mask if Mask_comp is true
-                        mij = !mij ;
-                    }
-                    if (!mij)
-                    { 
-                        // delete Z(i,j) by marking it as a zombie
-                        Z->nzombies++ ;
-                        Zi [p] = GB_FLIP (i) ;
-                    }
-                }
-            }
-
+            GB_assign_zombie3 (Z, M, Mask_comp, j, I, nI, Ikind, Icolon,
+                Context) ;
         }
         else if ((row_assign && C->is_csc) || (col_assign && !C->is_csc))
         {
@@ -866,48 +745,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t i = I [0] ;
             ASSERT (i == GB_ijlist (I, 0, Ikind, Icolon)) ;
 
-            // TODO do this in parallel
-            GBI2_for_each_vector (Z, M)
-            {
-                GBI2_jth_iteration (Iter, j, pZ, pZ_end, pM, pM_end) ;
-
-                // j_outside is true if column j is outside the Z(I,J) submatrix
-                bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
-
-                if (j_outside)
-                {
-                    // find Z(i,j) if it exists
-                    int64_t p = pZ ;
-                    int64_t pright = pZ_end - 1 ;
-                    bool found, is_zombie ;
-                    GB_BINARY_ZOMBIE (i, Zi, p, pright, found, Z->nzombies,
-                        is_zombie) ;
-                    if (found && !is_zombie)
-                    {
-                        // Z(i,j) is a live entry not in the Z(I,J) submatrix.
-                        // Check the M(0,j) to see if it should be deleted.
-                        bool mij = false ;
-                        int64_t pmask = pM ;
-                        if (pmask < pM_end)
-                        { 
-                            // found it
-                            cast_M (&mij, Mx +(pmask*msize), 0) ;
-                        }
-                        if (Mask_comp)
-                        { 
-                            // negate the mask M if Mask_comp is true
-                            mij = !mij ;
-                        }
-                        if (!mij)
-                        { 
-                            // delete Z(i,j) by marking it as a zombie
-                            Z->nzombies++ ;
-                            Zi [p] = GB_FLIP (i) ;
-                        }
-                    }
-                }
-            }
-
+            GB_assign_zombie4 (Z, M, Mask_comp, i, J, nJ, Jkind, Jcolon,
+                Context) ;
         }
         else
         {
@@ -919,62 +758,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // M has the same size as Z
             ASSERT (M->vlen == Z->vlen && M->vdim == Z->vdim) ;
 
-            // TODO do this in parallel
-            GBI2_for_each_vector (Z, M)
-            {
-                GBI2_jth_iteration (Iter, j, pZ, pZ_end, pM, pM_end) ;
-
-                // j_outside is true if column j is outside the Z(I,J) submatrix
-                bool j_outside = !GB_ij_is_in_list (J, nJ, j, Jkind, Jcolon) ;
-
-                // iterate over all entries in Z(:,j)
-                for (int64_t p = pZ ; p < pZ_end ; p++)
-                {
-                    // Z(i,j) is outside the Z(I,J) submatrix if either i is
-                    // not in the list I, or j is not in J, or both.
-                    int64_t i = Zi [p] ;
-                    if (i < 0)
-                    { 
-                        // Z(i,j) is already a zombie; skip it.
-                        continue ;
-                    }
-
-                    // Z(i,j) is outside if either J, or I, or both are outside
-                    if (j_outside ||
-                        !GB_ij_is_in_list (I, nI, i, Ikind, Icolon))
-                    {
-
-                        // Z(i,j) is a live entry not in the Z(I,J) submatrix.
-                        // Check the mask M to see if it should be deleted.
-                        bool mij ;
-                        int64_t pleft  = pM ;
-                        int64_t pright = pM_end - 1 ;
-                        bool found ;
-                        GB_BINARY_SEARCH (i, Mi, pleft, pright, found) ;
-                        if (found)
-                        { 
-                            // found it
-                            cast_M (&mij, Mx +(pleft*msize), 0) ;
-                        }
-                        else
-                        { 
-                            // M(i,j) not present, implicitly false
-                            mij = false ;
-                        }
-                        if (Mask_comp)
-                        { 
-                            // negate the mask if Mask_comp is true
-                            mij = !mij ;
-                        }
-                        if (!mij)
-                        { 
-                            // delete Z(i,j) by marking it as a zombie
-                            Z->nzombies++ ;
-                            Zi [p] = GB_FLIP (i) ;
-                        }
-                    }
-                }
-            }
+            GB_assign_zombie5 (Z, M, Mask_comp,
+                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Context) ;
         }
 
         // Z is valid, but it has zombies and it not in the queue.
@@ -985,7 +770,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // transplant Z2 back into C
     //--------------------------------------------------------------------------
 
-    if (unsafely_aliased)
+    if (C_aliased)
     {
         // zombies can be transplanted into C but pending tuples cannot
         if (GB_PENDING (Z2))

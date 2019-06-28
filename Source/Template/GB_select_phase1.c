@@ -141,7 +141,7 @@
     //--------------------------------------------------------------------------
 
     // Wfirst [0..ntasks-1] and Wlast [0..ntasks-1] are required for
-    // GB_map_pslice.
+    // constructing C_start_slice [0..ntasks-1] in GB_selector.
 
     int64_t kprior = -1 ;
 

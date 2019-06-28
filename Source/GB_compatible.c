@@ -27,7 +27,7 @@ GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK (C, M)) ;
+    // C may be aliased with M
 
     GrB_Info info ;
 

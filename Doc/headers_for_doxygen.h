@@ -21,9 +21,6 @@ constructed by dox_headers.m
  to CSC but this is a placeholder that will be changed in GB_AxB_meta.
 \par
  Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
@@ -144,9 +141,6 @@ constructed by dox_headers.m
  check any performance impact
 \par
  Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
@@ -164,9 +158,9 @@ constructed by dox_headers.m
  The method is chosen automatically:  a gather/scatter saxpy method
  (Gustavson), a heap-based saxpy method, or a dot product method.
 \par
- TODO: an outer-product method for C=A*B'
+ FUTURE:: an outer-product method for C=A*B'
 \par
- TODO: a hash-based method for C=A*B
+ FUTURE:: a hash-based method for C=A*B
 */
 
 
@@ -243,15 +237,16 @@ constructed by dox_headers.m
  user-callable function that is calling this function (GrB_mxm, GrB_mxv, or
  GxB_vxm) and detailed error reports.
 \par
- FUTURE: The result of this function is the T matrix in GB_mxm.  It may be
+ FUTURE:: The result of this function is the T matrix in GB_mxm.  It may be
  transplanted directly into the user's matrix, or it may be passed through
  GB_accum_mask.  See GB_mxm.  For the latter case, it would be better to
  delay the contatenation of the output matrix T = [C0 ... C(nthreads-1)].
  GB_accum_mask could do the accum/mask using the sliced T matrix, to
  update the user's C matrix (which is not sliced), and then T is freed.
 \par
- PARALLEL: done, for now.  Needs cleanup.  Also need to write a hash-based
- method, and multi-phase Gustavson and Heap methods.
+ TODO: cleanup, descriptors, load balance
+\par
+ FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods.
 */
 
 
@@ -266,9 +261,6 @@ constructed by dox_headers.m
 
 \par
  Select a saxpy method for each thread: gather/scatter or heap
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
@@ -289,9 +281,6 @@ constructed by dox_headers.m
  of the arguments.
 \par
  Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
@@ -475,6 +464,48 @@ constructed by dox_headers.m
  value and terminal value provided on input are ignored, and the known values
  are used instead.  This is to allow the use of the hard-coded functions for
  built-in monoids.
+*/
+
+
+/** \file GB_Pending.h
+\brief  GB_Pending.h: data structure and operations for pending tuples
+
+*/
+
+
+/** \file GB_Pending_alloc.c
+\brief  GB_Pending_alloc: allocate a list of pending tuples
+
+*/
+
+
+/** \file GB_Pending_free.c
+\brief  GB_Pending_free: free a list of pending tuples
+
+*/
+
+
+/** \file GB_Pending_merge.c
+\brief  GB_Pending_merge: merge pending tuples
+
+\par
+ Each GB_subassign_method* creates a set of Pending tuple objects, one per
+ task.  After all tasks are finished, the pending tuples are merged into
+ the single Pending object for the final matrix.
+*/
+
+
+/** \file GB_Pending_n.c
+\brief  GB_Pending_n: return the \# of pending tuples in a matrix
+
+*/
+
+
+/** \file GB_Pending_realloc.c
+\brief  GB_Pending_realloc: reallocate a list of pending tuples
+
+\par
+ Reallocate a list of pending tuples.  If it fails, the list is freed.
 */
 
 
@@ -689,8 +720,6 @@ constructed by dox_headers.m
  This is used by GB_wait only, for merging the pending tuple matrix T into A.
  Any duplicate pending tuples have already been summed in T, so the
  intersection of T and A is always empty.
-\par
- PARALLEL: done, except for phase0 when both A and B are hypersparse
 */
 
 
@@ -747,10 +776,11 @@ constructed by dox_headers.m
       = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
       not hypersparse, then C_to_M is returned as NULL.
 \par
- PARALLEL: mostly done. TODO except in one condition: A and B are hypersparse
- and Ch_is_Mh is false.  takes O(A-\>nvec + B-\>nvec) time.
+ TODO: parallel merge when A and B are hypersparse and Ch_is_Mh is false.
+ takes O(A-\>nvec + B-\>nvec) time.  Use GB_slice_vector to create fine tasks
+ to merge Ah and Bh.
 \par
- TODO: exploit A==M, B==M, and A==B aliases
+ FUTURE:: exploit A==M, B==M, and A==B aliases
 */
 
 
@@ -849,8 +879,12 @@ constructed by dox_headers.m
  If row_assign is true, this function does the work for GrB_Row_assign.
 \par
  Compare with GB_subassign, which uses M and C_replace differently
-\par
- PARALLEL: TODO
+*/
+
+
+/** \file GB_assign.h
+\brief  GB_assign.h: definitions for GB_assign and related functions
+
 */
 
 
@@ -867,6 +901,61 @@ constructed by dox_headers.m
  type-generic macro suffix, \"_UDT\".
 \par
  Compare with GB_subassign_scalar, which uses M and C_replace differently
+*/
+
+
+/** \file GB_assign_zombie1.c
+\brief  GB_assign_zombie1: delete all entries in C(:,j) for GB_assign
+
+\par
+ C(:,j)\<!\> = anything: GrB_Row_assign or GrB_Col_assign with an empty
+ complemented mask requires all entries in the C(:,j) vector to be deleted.
+*/
+
+
+/** \file GB_assign_zombie2.c
+\brief  GB_assign_zombie2: delete all entries in C(i,:) for GB_assign
+
+\par
+ C(i,:)\<!\> = anything: GrB_Row_assign or GrB_Col_assign with an empty
+ complemented mask requires all entries in C(i,:) to be deleted.
+*/
+
+
+/** \file GB_assign_zombie3.c
+\brief  GB_assign_zombie3: delete entries in C(:,j) for C_replace_phase
+
+\par
+ For GrB_Row_assign or GrB_Col_assign, C(I,j)\<\#M,repl\>=any must delete all
+ entries C(i,j) outside of C(I,j), if the mask M(i,0) (or its complement) is
+ zero.  This step is not done for GxB_*_subassign, since that method does not
+ modify anything outside IxJ.
+\par
+ GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
+*/
+
+
+/** \file GB_assign_zombie4.c
+\brief  GB_assign_zombie4: delete entries in C(i,:) for C_replace_phase
+
+\par
+ For GrB_Row_assign or GrB_Col_assign, C(i,J)\<M,repl\>=..., if C_replace is
+ true, and mask M is present, then any entry C(i,j) outside the list J must
+ be deleted, if M(0,j)=0.
+\par
+ GB_assign_zombie3 and GB_assign_zombie4 are transposes of each other.
+*/
+
+
+/** \file GB_assign_zombie5.c
+\brief  GB_assign_zombie5: delete entries in C for C_replace_phase
+
+\par
+ For GrB_Matrix_assign, C(I,J)\<M,repl\>=..., if C_replace is true, and mask M
+ is present, then any entry C(i,j) outside IxJ must be be deleted, if
+ M(i,j)=0.
+\par
+ See also GB_assign_zombie3 and GB_assign_zombie4.
 */
 
 
@@ -1060,7 +1149,7 @@ constructed by dox_headers.m
  so Step 1 is skipped (no need to check for invalid indices).  The input
  J_work may be null (vdim can be anything, since GB_wait is used for both
  vectors and matrices).  The tuples might be in sorted order already, which
- is known precisely known from A-\>sorted_pending.  Step 2 does O((e log e)/p)
+ is known precisely known from A-\>Pending-\>sorted.  Step 2 does O((e log e)/p)
  work to sort the tuples.  Duplicates may appear, and out-of-order tuples are
  likely.  Step 3 does O(e/p) read/writes.  Step 4 does O(e/p) reads per
  thread of (I_work,J_work), or just I_work.  Step 5 does O(e/p) read/writes
@@ -1385,7 +1474,7 @@ constructed by dox_headers.m
       If j does not appear in M, then C_to_M [k] = -1.  Otherwise, C_to_M is
       returned as NULL.  C is always hypersparse in this case.
 \par
- TODO: exploit A==M, B==M, and A==B aliases
+ FUTURE:: exploit A==M, B==M, and A==B aliases
 */
 
 
@@ -1690,7 +1779,7 @@ constructed by dox_headers.m
 
 \par
  Returns true if A is a square diagonal matrix, with all diagonal entries
- present.  Pending tuples are ignored.  Zombies are treated as entries.
+ present.  All pending tuples are ignored.  Zombies are treated as entries.
 */
 
 
@@ -1807,6 +1896,9 @@ constructed by dox_headers.m
  vector C(:,kfirst), at the position pC = C_pstart_slice [t].  It always
  starts its last vector C(:,klast) at Cp [klast], so this does not need to be
  computed.
+\par
+ TODO: this is only used by GB_selector.  Paste this code there and
+ remove this function.
 */
 
 
@@ -1997,7 +2089,7 @@ constructed by dox_headers.m
 \brief  GB_nvec_nonempty: count the number of non-empty vectors
 
 \par
- Pending tuples are ignored.  If a vector has all zombies it is still
+ All pending tuples are ignored.  If a vector has all zombies it is still
  counted as non-empty.
 */
 
@@ -2014,52 +2106,6 @@ constructed by dox_headers.m
 \par
  This file defines the predefined built-in objects: 11 types, 45 unary
  operators, 256 binary operators, 44 monoids, and 960 semirings.
-*/
-
-
-/** \file GB_pending_add.c
-\brief  GB_pending_add:  add an entry A(i,j) to the list of pending tuples
-
-\par
- Compare this function with the CSparse function cs_entry, the essence of
- which is copied below.  A CSparse matrix can be held in either compressed
- sparse column format, or as a list of tuples, but never both.  A GraphBLAS
- matrix can have both components.
-\par
- The cs_entry function appends a single entry to the end of the tuple list,
- and it doubles the space if no space is available.  It also augments the
- matrix dimension as needed, which GB_pending_add does not do.
-\par
- This function starts with an initial list that is larger than cs_entry
- (which starts with a list of size 1), and it quadruples the size as needed
- instead of doubling it.  If A has a single column then the column index is
- not kept.  Finally, this function supports any data type whereas CSparse
- only allows for double.
-\par
- Otherwise the two methods are essentially the same.  The reader is
- encouraged the compare/contrast the unique coding styles used in CSparse and
- this implementation of GraphBLAS.  CSparse is concise; the book provides the
- SIAM, Philadelphia, Sept. 2006, http://bookstore.siam.org/fa02 .  Csparse is
- at http://faculty.cse.tamu.edu/davis/publications_files/CSparse.zip .
-\par
- If the function succeeds, the matrix is added to the queue if it is not
- already there.
-\par
- If the function fails to add the pending tuple, the entire matrix is
- cleared of all entries, all pending tuples, and all zombies; and it is
- removed from the queue if it is already there.
-\par
- This function is agnostic about the CSR/CSC format of A.  Regardless of the
- format, i refers to an index into the vectors, and j is a vector.  So for
- CSC, i is a row index and j is a column index.  For CSR, i is a column index
- and j is a row index.  This function also does not need to know if A is
- hypersparse or not.
-*/
-
-
-/** \file GB_pending_free.c
-\brief  GB_pending_free: free all pending tuples
-
 */
 
 
@@ -2097,6 +2143,9 @@ constructed by dox_headers.m
  A-\>p [0..A-\>nvec] is a monotonically increasing cumulative sum of the
  entries in each vector of A.  This function slices Ap so that each chunk has
  the same number of entries.
+\par
+ TODO: pass in Ap, and anvec instead.  Then anz = Ap [anvec],
+ and use this for GB_ewise_slice and GB_subref_slice. 
 */
 
 
@@ -2416,96 +2465,458 @@ constructed by dox_headers.m
 /** \file GB_subassign.h
 \brief  GB_subassign.h: helper macros for GB_subassigner and GB_subassign_method*
 
+\par
+ This macros are used to simplify the cosntruction of the 26 methods for
+ GB_subassign.
+*/
+
+
+/** \file GB_subassign_1_slice.c
+\brief  GB_subassign_1_slice: slice the entries and vectors for subassign
+
+\par
+ Constructs a set of tasks to compute C for a subassign method, based on
+ slicing a single input matrix (M or A).  Fine tasks must also find their
+ location in their vector C(:,jC).
+\par
+ This method is used by GB_subassign_methods 1, 2, 5, 6a, 6b:
+*/
+
+
+/** \file GB_subassign_IxJ_slice.c
+\brief  GB_subassign_IxJ_slice: slice IxJ for subassign
+
+\par
+ Construct a set of tasks to compute C(I,J)\<...\> = x or += x, for a subassign
+ method that performs scalar assignment, based on slicing the Cartesian
+ product IxJ.  If enough tasks can be constructed by just slicing J, then all
+ tasks are coarse.  Each coarse tasks computes all of C(I,J(kfirst:klast-1)),
+ for its range of indices kfirst:klast-1, inclusive.
+\par
+ Otherwise, if not enough coarse tasks can be constructed, then all tasks are
+ fine.  Each fine task computes a slice of C(I(iA_start:iA_end-1), jC) for a
+ single index jC = J(kfirst).
+\par
+ This method is used by GB_subassign_methods 3, 4, 7, 8, 11a, 11b, 12a, 12b,
+ which are the 8 scalar assignment methods that must iterate over all IxJ.
 */
 
 
 /** \file GB_subassign_method0.c
-\brief  GB_subassign_method0: C(I,J) = 0 ; using S
+\brief  GB_subassign_method0: C(I,J) = empty ; using S
 
+\par
+ Method 0: C(I,J) = empty ; using S
+\par
+ M:           NULL
+ Mask_comp:   true
+ C_replace:   true
+ accum:       any (present or not; result is the same)
+ A:           any (scalar or matrix; result is the same)
+ S:           constructed
 */
 
 
 /** \file GB_subassign_method1.c
 \brief  GB_subassign_method1: C(I,J)\<M\> = scalar ; no S
 
+\par
+ Method 1: C(I,J)\<M\> = scalar ; no S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           scalar
+ S:           none
 */
 
 
 /** \file GB_subassign_method10.c
 \brief  GB_subassign_method10: C(I,J) += A ; using S
 
+\par
+ Method 10: C(I,J) += A ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           constructed (see also Method 5)
+\par
+ Compare with Method 5, which computes the same thing without creating S.
 */
 
 
-/** \file GB_subassign_method11.c
-\brief  GB_subassign_method11: C(I,J)\<\#M\> = scalar ; using S
+/** \file GB_subassign_method11a.c
+\brief  GB_subassign_method11a: C(I,J)\<!M,repl\> = scalar ; using S
 
+\par
+ Method 11a: C(I,J)\<!M,repl\> = scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       NULL
+ A:           scalar
+ S:           constructed
 */
 
 
-/** \file GB_subassign_method12.c
-\brief  GB_subassign_method12: C(I,J)\<\#M\> += scalar ; using S
+/** \file GB_subassign_method11b.c
+\brief  GB_subassign_method11b: C(I,J)\<!M\> = scalar ; using S
 
+\par
+ Method 11b: C(I,J)\<!M\> = scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       NULL
+ A:           scalar
+ S:           constructed
 */
 
 
-/** \file GB_subassign_method13.c
-\brief  GB_subassign_method13: C(I,J)\<\#M\> = A ; using S
+/** \file GB_subassign_method11c.c
+\brief  GB_subassign_method11c: C(I,J)\<M,repl\> = scalar ; using S
 
+\par
+ Method 11c: C(I,J)\<M,repl\> = scalar ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       NULL
+ A:           scalar
+ S:           constructed
 */
 
 
-/** \file GB_subassign_method14.c
-\brief  GB_subassign_method14: C(I,J)\<\#M\> += A ; using S
+/** \file GB_subassign_method12a.c
+\brief  GB_subassign_method12a: C(I,J)\<!M,repl\> += scalar ; using S
 
+\par
+ Method 12a: C(I,J)\<!M,repl\> += scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       present
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method12b.c
+\brief  GB_subassign_method12b: C(I,J)\<!M\> += scalar ; using S
+
+\par
+ Method 12b: C(I,J)\<!M\> += scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           constructed (see also Method 4)
+\par
+ Compare with Method 4, which computes the same thing without creating S.
+*/
+
+
+/** \file GB_subassign_method12c.c
+\brief  GB_subassign_method12c: C(I,J)\<M,repl\> += scalar ; using S
+
+\par
+ Method 12c: C(I,J)\<M,repl\> += scalar ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       present
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method13a.c
+\brief  GB_subassign_method13a: C(I,J)\<!M,repl\> = A ; using S
+
+\par
+ Method 13a: C(I,J)\<!M,repl\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method13b.c
+\brief  GB_subassign_method13b: C(I,J)\<!M\> = A ; using S
+
+\par
+ Method 13b: C(I,J)\<!M\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method13c.c
+\brief  GB_subassign_method13c: C(I,J)\<M,repl\> = A ; using S
+
+\par
+ Method 13c: C(I,J)\<M,repl\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method13d.c
+\brief  GB_subassign_method13d: C(I,J)\<M\> = A ; using S
+
+\par
+ Method 13d: C(I,J)\<M\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method14a.c
+\brief  GB_subassign_method14a: C(I,J)\<!M,repl\> += A ; using S
+
+\par
+ Method 14a: C(I,J)\<!M,repl\> += A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       present
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method14b.c
+\brief  GB_subassign_method14b: C(I,J)\<!M\> += A ; using S
+
+\par
+ Method 14b: C(I,J)\<!M\> += A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           constructed (see also Method 6a)
+\par
+ Compare with Method 6a, which computes the same thing without creating S.
+*/
+
+
+/** \file GB_subassign_method14c.c
+\brief  GB_subassign_method14c: C(I,J)\<M,repl\> += A ; using S
+
+\par
+ Method 14c: C(I,J)\<M,repl\> += A ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       present
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_method14d.c
+\brief  GB_subassign_method14d: C(I,J)\<M\> += A ; using S
+
+\par
+ Method 14d: C(I,J)\<M\> += A ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           constructed (see also Method 6b)
+\par
+ Compare with Method 6b, which computes the same thing without creating S.
 */
 
 
 /** \file GB_subassign_method2.c
 \brief  GB_subassign_method2: C(I,J)\<M\> += scalar ; no S
 
+\par
+ Method 2: C(I,J)\<M\> += scalar ; no S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           none
 */
 
 
 /** \file GB_subassign_method3.c
 \brief  GB_subassign_method3: C(I,J) += scalar ; no S
 
+\par
+ Method 3: C(I,J) += scalar ; no S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           none (see also Method 8)
+\par
+ Compare with Method 8, which computes the same thing, but creates S first.
 */
 
 
 /** \file GB_subassign_method4.c
 \brief  GB_subassign_method4: C(I,J)\<!M\> += scalar ; no S
 
+\par
+ Method 4: C(I,J)\<!M\> += scalar ; no S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           none (see also Method 12b)
+\par
+ Compare with Method 12b, which computes the same thing, but creates S first.
 */
 
 
 /** \file GB_subassign_method5.c
 \brief  GB_subassign_method5: C(I,J) += A ; no S
 
+\par
+ Method 5: C(I,J) += A ; no S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           none (see also Method 10)
+\par
+ Compare with Method 10, which computes the same thing, but creates S first.
+\par
+ Both methods are Omega(nnz(A)), since all entries in A must be considered,
+ and inserted or accumulated into C.  Method 5 uses a binary search to find
+ the corresponding entry in C, for each entry in A, and thus takes
+ O(nnz(A)*log(c)) time in general, if c is the \# entries in a given vector of
+ C.  Method 10 takes O(nnz(A)+nnz(S)), plus any additional time required to
+ search C to construct S.  If nnz(A) \<\< nnz (S), then Method 10 is costly,
+ and Method 5 is used instead.
 */
 
 
-/** \file GB_subassign_method6.c
-\brief  GB_subassign_method6: C(I,J)\<\#M\> += A ; no S
+/** \file GB_subassign_method6a.c
+\brief  GB_subassign_method6a: C(I,J)\<!M\> += A ; no S
 
+\par
+ Method 6a: C(I,J)\<!M\> += A ; no S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           none (see also Method 14b)
+\par
+ Compare with Method 14b, which computes the same thing, but creates S first.
+*/
+
+
+/** \file GB_subassign_method6b.c
+\brief  GB_subassign_method6b: C(I,J)\<M\> += A ; no S
+
+\par
+ Method 6b: C(I,J)\<M\> += A ; no S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           none (see also Method 14d)
+\par
+ Compare with Method 14d, which computes the same thing, but creates S first.
 */
 
 
 /** \file GB_subassign_method7.c
 \brief  GB_subassign_method7: C(I,J) = scalar ; using S
 
+\par
+ Method 7: C(I,J) = scalar ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           scalar
+ S:           constructed
 */
 
 
 /** \file GB_subassign_method8.c
 \brief  GB_subassign_method8: C(I,J) += scalar ; using S
 
+\par
+ Method 8: C(I,J) += scalar ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           constructed (see also Method 3)
+\par
+ Compare with Method 3, which computes the same thing without creating S.
 */
 
 
 /** \file GB_subassign_method9.c
 \brief  GB_subassign_method9: C(I,J) = A ; using S
 
+\par
+ Method 9: C(I,J) = A ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           matrix
+ S:           constructed
 */
 
 
@@ -2522,6 +2933,12 @@ constructed by dox_headers.m
  type-generic macro suffix, \"_UDT\".
 \par
  Compare with GB_assign_scalar, which uses M and C_replace differently
+*/
+
+
+/** \file GB_subassign_select.c
+\brief  GB_subassign_select: determine if S should be constructed for GB_subassign
+
 */
 
 
@@ -3970,9 +4387,6 @@ constructed by dox_headers.m
  dense mask can be costly to exploit.  Thus, this method is not used, and
  GB_AxB_Gustavson_nomask is used instead, if the total flop count is less
  than nnz(M).
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
@@ -3992,18 +4406,12 @@ constructed by dox_headers.m
  The pattern of C has already been computed in the symbolic phase of
  GB_AxB_Gustavson.  This is Gustavson's method, extended to handle
  hypersparse matrices and arbitrary semirings.
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
 /** \file GB_AxB_Gustavson_symbolic.c
 \brief  GB_AxB_Gustavson_symbolic: C=A*B symbolic analysis
 
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
@@ -4136,9 +4544,6 @@ constructed by dox_headers.m
  exploiting the mask, so a very dense mask can be costly to exploit.  Thus,
  the mask is not passed to the heap method if the total flop count is less
  than nnz(M).
-\par
- PARALLEL: done; this function is intentionally single-threaded.
- it is called in parallel by GB_AxB_parallel.
 */
 
 
@@ -4288,7 +4693,7 @@ constructed by dox_headers.m
 \par
  phase2: computes R, using the counts computed by phase1.
 \par
- TODO: add special cases for C==Z, C==M, and Z==M aliases
+ FUTURE:: add special cases for C==Z, C==M, and Z==M aliases
 \par
  R(i,j) = Z(i,j)
 */
@@ -4304,6 +4709,17 @@ constructed by dox_headers.m
  GB_Vector_opaque structs.  It would be cleaner to define just one opaque
  struct, and then GrB_Matrix and GrB_Vector would be typedef'd as pointers to
  the same struct, but then the compiler gets confused with Generic(x).
+\par
+ For a GrB_Vector object, as an m-by-1 non-hypersparse CSC matrix:
+      bool is_hyper ;         // always false
+      bool is_csc ;           // always true
+      int64_t plen ;          // always 1, so A-\>p always has length 2, and
+                              // contains [0 k] if the vector has k entries
+      int64_t vdim ;          // always 1
+      int64_t nvec ;          // always 1
+      int64_t *h ;            // always NULL
+\par
+ basic information: magic and type
 */
 
 
@@ -4516,7 +4932,7 @@ constructed by dox_headers.m
 
 
 /** \file GB_AxB.h
-\brief Source/Generator/GB_AxB.h: used to create GB_AxB__semirings.h
+\brief Source/Generator/GB_AxB.h: used to create GB_AxB__include.h
 */
 
 
@@ -4529,7 +4945,7 @@ constructed by dox_headers.m
 
 
 /** \file GB_binop.h
-\brief 
+\brief Source/Generator/GB_binop.h: used to create GB_binop__include.h
 */
 
 
@@ -4540,6 +4956,8 @@ constructed by dox_headers.m
 
 
 /** \file GB_red.h
+\brief Source/Generator/GB_red.h: used to create GB_red__include.h
+*/
 
 
 /** \file GB_sel.c
@@ -4549,6 +4967,8 @@ constructed by dox_headers.m
 
 
 /** \file GB_sel.h
+\brief Source/Generator/GB_sel.h: used to create GB_sel__include.h
+*/
 
 
 /** \file GB_unaryop.c
@@ -4560,5 +4980,5 @@ constructed by dox_headers.m
 
 
 /** \file GB_unaryop.h
-\brief 
+\brief Source/Generator/GB_unaryop.h: used to create GB_unaryop__include.h
 */

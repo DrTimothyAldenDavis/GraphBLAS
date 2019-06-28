@@ -38,7 +38,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK (A, B)) ;
+    // A and B may be aliased
 
     //--------------------------------------------------------------------------
     // check if the operator is builtin, with no typecasting

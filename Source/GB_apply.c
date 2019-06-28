@@ -31,7 +31,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK2 (C, M, A)) ;
+    // C may be aliased with M and/or A
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;

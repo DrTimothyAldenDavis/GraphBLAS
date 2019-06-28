@@ -8,9 +8,9 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
-#include "GB.h"
+#include "GB_Pending.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
@@ -147,17 +147,20 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // count the allocated blocks
     //--------------------------------------------------------------------------
 
+    GB_Pending Pending = A->Pending ;
+
     #ifdef GB_DEVELOPER
 
-    // a matrix contains 1 to 8 different allocated blocks
+    // a matrix contains 1 to 9 different allocated blocks
     int64_t nallocs = 1 +                       // header
         (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
         (A->p != NULL && !A->p_shallow) +       // A->p, if not shallow
         (A->i != NULL && !A->i_shallow) +       // A->i, if not shallow
         (A->x != NULL && !A->x_shallow) +       // A->x, if not shallow
-        (A->i_pending != NULL) +                // A->i_pending if tuples
-        (A->j_pending != NULL) +                // A->j_pending if tuples
-        (A->s_pending != NULL) ;                // A->s_pending if tuples
+        (Pending != NULL) +
+        (Pending != NULL && Pending->i != NULL) +
+        (Pending != NULL && Pending->j != NULL) +
+        (Pending != NULL && Pending->x != NULL) ;
 
     if (pr > 1) GBPR ("A %p number of memory blocks: "GBd"\n", A, nallocs) ;
 
@@ -376,10 +379,12 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // report the number of pending tuples and zombies
     //--------------------------------------------------------------------------
 
-    if (A->n_pending != 0 || A->nzombies != 0)
+    if (Pending != NULL || A->nzombies != 0)
     { 
         if (pr > 0) GBPR ("pending tuples: "GBd" max pending: "GBd
-            " zombies: "GBd"\n", A->n_pending, A->max_n_pending, A->nzombies) ;
+            " zombies: "GBd"\n", GB_Pending_n (A),
+            (Pending == NULL) ? 0 : (Pending->nmax),
+            A->nzombies) ;
         if (A->is_slice)
         { 
             // a slice or hyperslice cannot have pending work
@@ -508,48 +513,35 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check and print the pending tuples
     //--------------------------------------------------------------------------
 
-    if (A->n_pending < 0 || A->n_pending > A->max_n_pending ||
-        A->max_n_pending < 0)
-    { 
-        if (pr > 0) GBPR ("invalid pending count\n") ;
-        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-            "%s invalid pending tuple count: pending "GBd" max "GBd": [%s]",
-            kind, A->n_pending, A->max_n_pending, GB_NAME))) ;
-    }
-
     #ifdef GB_DEVELOPER
-    if (pr > 1) GBPR ("->i_pending %p\n", A->i_pending) ;
-    if (pr > 1) GBPR ("->j_pending %p\n", A->j_pending) ;
-    if (pr > 1) GBPR ("->s_pending %p\n", A->s_pending) ;
+    if (pr > 1) GBPR ("Pending %p\n", Pending) ;
     #endif
 
-    if (A->n_pending == 0)
-    {
-
-        //---------------------------------------------------------------------
-        // A has no pending tuples
-        //---------------------------------------------------------------------
-
-        // no tuples; arrays must be NULL
-        if (A->i_pending != NULL || A->s_pending != NULL ||
-            A->j_pending != NULL || A->max_n_pending != 0)
-        { 
-            if (pr > 0) GBPR ("invalid pending tuples\n") ;
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "%s invalid pending tuples: [%s]", kind, GB_NAME))) ;
-        }
-
-    }
-    else
+    if (Pending != NULL)
     {
 
         //---------------------------------------------------------------------
         // A has pending tuples
         //---------------------------------------------------------------------
 
+        #ifdef GB_DEVELOPER
+        if (pr > 1) GBPR ("Pending->i %p\n", Pending->i) ;
+        if (pr > 1) GBPR ("Pending->j %p\n", Pending->j) ;
+        if (pr > 1) GBPR ("Pending->x %p\n", Pending->x) ;
+        #endif
+
+        if (Pending->n < 0 || Pending->n > Pending->nmax ||
+            Pending->nmax < 0)
+        { 
+            if (pr > 0) GBPR ("invalid pending count\n") ;
+            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
+                "%s invalid pending tuple count: pending "GBd" max "GBd": [%s]",
+                kind, Pending->n, Pending->nmax, GB_NAME))) ;
+        }
+
         // matrix has tuples, arrays and type must not be NULL
-        if (A->i_pending == NULL || A->s_pending == NULL ||
-            (A->vdim > 1 && A->j_pending == NULL))
+        if (Pending->i == NULL || Pending->x == NULL ||
+            (A->vdim > 1 && Pending->j == NULL))
         { 
             if (pr > 0) GBPR ("invalid pending tuples\n") ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
@@ -558,23 +550,22 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         if (pr > 0) GBPR ("pending tuples:\n") ;
 
-        info = GB_Type_check (A->type_pending, "", pr, f, Context) ;
-        if (info != GrB_SUCCESS ||
-            (A->type_pending->size != A->type_pending_size))
+        info = GB_Type_check (Pending->type, "", pr, f, Context) ;
+        if (info != GrB_SUCCESS || (Pending->type->size != Pending->size))
         { 
-            if (pr > 0) GBPR ("%s has an invalid type_pending\n", kind) ;
+            if (pr > 0) GBPR ("%s has an invalid Pending->type\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "%s has an invalid type_pending: [%s]", kind, GB_NAME))) ;
+                "%s has an invalid Pending->type: [%s]", kind, GB_NAME))) ;
         }
 
         int64_t ilast = -1 ;
         int64_t jlast = -1 ;
         bool sorted = true ;
 
-        for (int64_t k = 0 ; k < A->n_pending ; k++)
+        for (int64_t k = 0 ; k < Pending->n ; k++)
         {
-            int64_t i = A->i_pending [k] ;
-            int64_t j = (A->vdim <= 1) ? 0 : (A->j_pending [k]) ;
+            int64_t i = Pending->i [k] ;
+            int64_t j = (A->vdim <= 1) ? 0 : (Pending->j [k]) ;
             int64_t row = A->is_csc ? i : j ;
             int64_t col = A->is_csc ? j : i ;
 
@@ -582,9 +573,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             if ((pr > 1 && k < GB_NZBRIEF) || pr > 2)
             { 
                 GBPR ("row: "GBd" col: "GBd" ", row, col) ;
-                GB_void *As = A->s_pending ;
-                info = GB_entry_check (A->type_pending,
-                    As +(k * A->type_pending->size), f, Context) ;
+                info = GB_entry_check (Pending->type,
+                    Pending->x +(k * Pending->type->size), f, Context) ;
                 if (info != GrB_SUCCESS) return (info) ;
                 GBPR ("\n") ;
             }
@@ -603,21 +593,21 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             jlast = j ;
         }
 
-        if (sorted != A->sorted_pending)
+        if (sorted != Pending->sorted)
         { 
-            GBPR ("sorted %d sorted_pending %d\n", sorted, A->sorted_pending);
+            GBPR ("sorted %d Pending->sorted %d\n", sorted, Pending->sorted);
             if (pr > 0) GBPR ("invalid pending tuples: invalid sort\n") ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "%s invalid pending tuples: [%s]", kind, GB_NAME))) ;
         }
 
-        if (A->operator_pending == NULL)
+        if (Pending->op == NULL)
         { 
             if (pr > 0) GBPR ("pending operator: implicit 2nd\n") ;
         }
         else
         {
-            info = GB_BinaryOp_check (A->operator_pending, "pending operator:",
+            info = GB_BinaryOp_check (Pending->op, "pending operator:",
                 pr, f, Context) ;
             if (info != GrB_SUCCESS)
             { 

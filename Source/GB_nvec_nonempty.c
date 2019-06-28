@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Pending tuples are ignored.  If a vector has all zombies it is still
+// All pending tuples are ignored.  If a vector has all zombies it is still
 // counted as non-empty.
 
 #include "GB.h"

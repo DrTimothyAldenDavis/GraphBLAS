@@ -36,7 +36,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK2 (C, M, A)) ;
+    // C may be aliased with M and/or A
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;

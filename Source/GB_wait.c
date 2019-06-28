@@ -35,7 +35,7 @@
 // If A is non-hypersparse, then O(n) is added in the worst case, to prune
 // zombies and to update the vector pointers for A.
 
-#include "GB.h"
+#include "GB_Pending.h"
 
 #define GB_FREE_ALL                     \
 {                                       \
@@ -86,6 +86,7 @@ GrB_Info GB_wait                // finish all pending computations
 
     int64_t nzombies = A->nzombies ;
 
+// double t = omp_get_wtime ( ) ;
     if (nzombies > 0)
     {
         // remove all zombies from A.  Also compute A->nvec_nonempty
@@ -104,6 +105,9 @@ GrB_Info GB_wait                // finish all pending computations
 
     // all the zombies are gone
     ASSERT (!GB_ZOMBIES (A)) ;
+
+// t = omp_get_wtime ( ) - t ; printf ("zombies %g sec\n", t) ;
+// t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check for pending tuples
@@ -130,15 +134,16 @@ GrB_Info GB_wait                // finish all pending computations
 
     // There are pending tuples that will now be assembled.
     ASSERT (GB_PENDING (A)) ;
+    GB_Pending Pending = A->Pending ;
 
     //--------------------------------------------------------------------------
     // construct a new hypersparse matrix T with just the pending tuples
     //--------------------------------------------------------------------------
 
     // T has the same type as A->type, which can differ from the type of the
-    // pending tuples, A->type_pending.  This is OK since build process
+    // pending tuples, A->Pending->type.  This is OK since build process
     // assembles the tuples in the order they were inserted into the matrix.
-    // The A->operator_pending can be NULL (an implicit SECOND function), or it
+    // The Pending->op can be NULL (an implicit SECOND function), or it
     // can be any accum operator.  The z=accum(x,y) operator can have any
     // types, and it does not have to be associative.
 
@@ -149,18 +154,18 @@ GrB_Info GB_wait                // finish all pending computations
         A->vlen,                // T->vlen = A->vlen
         A->vdim,                // T->vdim = A->vdim
         A->is_csc,              // T->is_csc = A->is_csc
-        &(A->i_pending),        // iwork_handle, becomes T->i on output
-        &(A->j_pending),        // jwork_handle, free on output
-        &(A->s_pending),        // Swork_handle, free on output
-        A->sorted_pending,      // tuples may or may not be sorted
+        &(Pending->i),          // iwork_handle, becomes T->i on output
+        &(Pending->j),          // jwork_handle, free on output
+        &(Pending->x),          // Swork_handle, free on output
+        Pending->sorted,        // tuples may or may not be sorted
         false,                  // check for duplicates
-        A->max_n_pending,       // size of A->[ijs]_pending arrays
+        Pending->nmax,          // size of Pending->[ijx] arrays
         true,                   // is_matrix: unused
         false,                  // ijcheck: unused
         NULL, NULL, NULL,       // original I,J,S tuples, not used here
-        A->n_pending,           // # of tuples
-        A->operator_pending,    // dup operator for assembling duplicates
-        A->type_pending->code,  // type of A->s_pending
+        Pending->n,             // # of tuples
+        Pending->op,            // dup operator for assembling duplicates
+        Pending->type->code,    // type of Pending->x
         Context
     ) ;
 
@@ -173,13 +178,14 @@ GrB_Info GB_wait                // finish all pending computations
 
     // This work needs to be done even if the builder fails.
 
-    // GB_builder frees A->j_pending.  If successful, A->i_pending is now T->i.
-    // Otherwise A->i_pending is freed.  In both cases, it has been set to NULL.
-    ASSERT (A->i_pending == NULL && A->j_pending == NULL) ;
-    ASSERT (A->s_pending == NULL) ;
+    // GB_builder frees Pending->j.  If successful, Pending->i is now T->i.
+    // Otherwise Pending->i is freed.  In both cases, it has been set to NULL.
+    ASSERT (Pending->i == NULL) ;
+    ASSERT (Pending->j == NULL) ;
+    ASSERT (Pending->x == NULL) ;
 
-    // pending tuples are all freed; also reset A->*_pending scalars
-    GB_pending_free (A) ;
+    // free the list of pending tuples
+    GB_Pending_free (&(A->Pending)) ;
 
     //--------------------------------------------------------------------------
     // remove the matrix from the queue
@@ -209,6 +215,9 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT (T->is_hyper) ;
     ASSERT (T->nvec == T->nvec_nonempty) ;
 
+// t = omp_get_wtime ( ) - t ; printf ("build %g sec\n", t) ;
+// t = omp_get_wtime ( ) ;
+
     //--------------------------------------------------------------------------
     // check for quick transplant
     //--------------------------------------------------------------------------
@@ -235,7 +244,6 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t anz0 = 0 ;
     int64_t kA = 0 ;
     int64_t jlast ;
-    // printf ("tjfirst: "GBd"\n", tjfirst) ;
 
     // anz0 = nnz (A0) = nnz (A (:, 0:tjfirst-1)), the region not modified by T
     if (A->is_hyper)
@@ -290,6 +298,8 @@ GrB_Info GB_wait                // finish all pending computations
         // zombies on input.  Or, when GB_add can tolerate zombies, set the
         // Aslice [1] to start at the first zombie.  Keep track of the vector
         // containing the first zombie.
+
+// t = omp_get_wtime ( ) ;
 
         // make sure A has enough space for the new tuples
         if (anz_new > A->nzmax)
@@ -395,6 +405,8 @@ GrB_Info GB_wait                // finish all pending computations
 
         GB_MATRIX_FREE (&T) ;
 
+// t = omp_get_wtime ( ) - t ; printf ("append %g sec\n", t) ;
+
         // conform A to its desired hypersparsity
         return (GB_to_hyper_conform (A, Context)) ;
 
@@ -414,9 +426,12 @@ GrB_Info GB_wait                // finish all pending computations
         // FUTURE:: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
+// t = omp_get_wtime ( ) ;
+
         GB_OK (GB_add (&S, A->type, A->is_csc, NULL, A, T, NULL, Context)) ;
         GB_MATRIX_FREE (&T) ;
         ASSERT_OK (GB_check (S, "S after GB_wait:add", GB0)) ;
+// t = omp_get_wtime ( ) - t ; printf ("add %g sec\n", t) ;
         return (GB_transplant_conform (A, A->type, &S, Context)) ;
     }
 }

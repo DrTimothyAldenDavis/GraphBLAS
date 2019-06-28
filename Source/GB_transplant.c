@@ -33,7 +33,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     ASSERT (Ahandle != NULL) ;
     GrB_Matrix A = *Ahandle ;
-    ASSERT (GB_NOT_ALIASED (C, A)) ;
+    ASSERT (!GB_aliased (C, A)) ;
 
     ASSERT (C != NULL) ;
     ASSERT_OK (GB_check (A, "A before transplant", GB0)) ;

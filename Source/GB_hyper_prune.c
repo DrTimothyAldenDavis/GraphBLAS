@@ -96,7 +96,7 @@ GrB_Info GB_hyper_prune
     // create the Ap and Ah result
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads) schedule(guided)
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t k = 0 ; k < nvec_old ; k++)
     {
         if (Ap_old [k] < Ap_old [k+1])

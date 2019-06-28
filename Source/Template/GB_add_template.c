@@ -68,6 +68,7 @@
         // get the task descriptor
         //----------------------------------------------------------------------
 
+        // GB_GET_TASK_DESCRIPTOR (also get len)
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
         bool fine_task = (klast == -1) ;
@@ -122,6 +123,7 @@
             // get A(:,j)
             //------------------------------------------------------------------
 
+            // GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, C_to_A) ;
             int64_t pA = -1, pA_end = -1 ;
             if (fine_task)
             { 
@@ -140,6 +142,7 @@
                     pA_end = Ap [kA+1] ;
                 }
             }
+            // ----
 
             int64_t ajnz = pA_end - pA ;        // nnz in A(:,j) for this slice
             bool adense = (ajnz == len) ;
@@ -155,6 +158,7 @@
             // get B(:,j)
             //------------------------------------------------------------------
 
+            // GB_GET_MAPPED_VECTOR (pB, pB_end, pB, pB_end, Bp, j, k, C_to_B) ;
             int64_t pB = -1, pB_end = -1 ;
             if (fine_task)
             { 
@@ -173,6 +177,7 @@
                     pB_end = Bp [kB+1] ;
                 }
             }
+            // ----
 
             int64_t bjnz = pB_end - pB ;        // nnz in B(:,j) for this slice
             bool bdense = (bjnz == len) ;

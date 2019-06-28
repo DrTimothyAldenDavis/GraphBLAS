@@ -35,7 +35,7 @@
 //      If j does not appear in M, then C_to_M [k] = -1.  Otherwise, C_to_M is
 //      returned as NULL.  C is always hypersparse in this case.
 
-// TODO: exploit A==M, B==M, and A==B aliases
+// FUTURE:: exploit A==M, B==M, and A==B aliases
 
 #include "GB.h"
 
@@ -60,7 +60,6 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
     ASSERT (p_Cnvec != NULL) ;
     ASSERT (Ch_handle != NULL) ;
-    ASSERT (C_to_M_handle != NULL) ;
     ASSERT (C_to_A_handle != NULL) ;
     ASSERT (C_to_B_handle != NULL) ;
     ASSERT_OK (GB_check (A, "A for emult phase0", GB0)) ;
@@ -79,7 +78,10 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     int64_t *restrict C_to_B = NULL ;
 
     (*Ch_handle    ) = NULL ;
-    (*C_to_M_handle) = NULL ;
+    if (C_to_M_handle != NULL)
+    {
+        (*C_to_M_handle) = NULL ;
+    }
     (*C_to_A_handle) = NULL ;
     (*C_to_B_handle) = NULL ;
 
@@ -455,7 +457,10 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
     (*p_Cnvec      ) = Cnvec ;
     (*Ch_handle    ) = Ch ;
-    (*C_to_M_handle) = C_to_M ;
+    if (C_to_M_handle != NULL)
+    {
+        (*C_to_M_handle) = C_to_M ;
+    }
     (*C_to_A_handle) = C_to_A ;
     (*C_to_B_handle) = C_to_B ;
 

@@ -7,6 +7,17 @@
 
 //------------------------------------------------------------------------------
 
+// Method 4: C(I,J)<!M> += scalar ; no S
+
+// M:           present
+// Mask_comp:   true
+// C_replace:   false
+// accum:       present
+// A:           scalar
+// S:           none (see also Method 12b)
+
+// Compare with Method 12b, which computes the same thing, but creates S first.
+
 #include "GB_subassign.h"
 
 GrB_Info GB_subassign_method4
@@ -41,147 +52,190 @@ GrB_Info GB_subassign_method4
     // Method 4: C(I,J)<!M> += scalar ; no S
     //--------------------------------------------------------------------------
 
-    // The case for C(I,J)<M> += scalar, not using S, and C_replace
-    // false already handled by the C_Mask_scalar case.
+    // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
+    // required.  The sparsity of !M cannot be exploited.
 
-    // PARALLEL: split nI*nJ into all-coarse or all-fine
-    GBI2s_for_each_vector (M, scalar)
+    // The submatrix C(I,J) becomes completely dense.  Existing entries in
+    // C(I,J) are found and updated, adding an extra log(n) term to the time
+    // for this method.  Total time is thus O(|I|*|J|*log(n)) in the worst
+    // case, plus O(|J|*log(Cnvec)) if C is hypersparse.
+
+    // Method 12b computes the same thing as Method 4, but searches for the
+    // entries in C by constructing S first.
+
+    // The mask !M cannot be easily exploited.  The traversal of M is identical
+    // to the traversal of S in Method 8.
+
+    //--------------------------------------------------------------------------
+    // Parallel: all IxJ (Methods 3, 4, 7, 8, 11a, 11b, 12a, 12b)
+    //--------------------------------------------------------------------------
+
+    GB_SUBASSIGN_IXJ_SLICE (C) ;
+
+    // Each task must also look up its part of M, but this does not affect
+    // the parallel tasks.  Total work is about the same as Method 3.
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(+:nzombies) reduction(&&:ok)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
-        // get M(:,j) and the scalar
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        GBI2s_jth_iteration (Iter, j, pM, pM_end) ;
+        GB_GET_IXJ_TASK_DESCRIPTOR ;
 
         //----------------------------------------------------------------------
-        // get the C(:,jC) vector where jC = J [j]
+        // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        int64_t GB_jC_LOOKUP ;
-
-        if (pC_end - pC_start == cvlen)
+        for (int64_t j = kfirst ; task_ok && j <= klast ; j++)
         {
 
             //------------------------------------------------------------------
-            // C(:,jC) is dense so binary search of C is not needed
+            // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            // for each iA in I [...]:
-            for (int64_t iA = 0 ; iA < nI ; iA++)
+            GB_GET_jC ;
+
+            //------------------------------------------------------------------
+            // find M(iA_start,j)
+            //------------------------------------------------------------------
+
+            GB_GET_VECTOR_FOR_IXJ (M) ;
+
+            //------------------------------------------------------------------
+            // C(I(iA_start,iA_end-1),jC)<!M> = scalar
+            //------------------------------------------------------------------
+
+            if (pC_end - pC_start == cvlen)
             {
 
                 //--------------------------------------------------------------
-                // find M(iA,j)
+                // C(:,jC) is dense so binary search of C is not needed
                 //--------------------------------------------------------------
 
-                bool mij ;
-                bool found = (pM < pM_end) && (Mi [pM] == iA) ;
-                if (found)
-                { 
-                    // found it
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                    GB_NEXT (M) ;
-                }
-                else
-                { 
-                    // M(iA,j) not present, implicitly false
-                    mij = false ;
-                }
-                // negate the mask M since Mask_comp is true
-                mij = !mij ;
-
-                //--------------------------------------------------------------
-                // find C(iC,jC), but only if M(iA,j) allows it
-                //--------------------------------------------------------------
-
-                if (mij)
-                { 
-
-                    //----------------------------------------------------------
-                    // C(iC,jC) += scalar
-                    //----------------------------------------------------------
-
-                    // direct lookup of C(iC,jC)
-                    GB_CDENSE_I_LOOKUP ;
-
-                    // ----[C A 1] or [X A 1]-----------------------------------
-                    // [C A 1]: action: ( =C+A ): apply accum
-                    // [X A 1]: action: ( undelete ) zombie lives
-                    GB_withaccum_C_A_1_scalar ;
-                }
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // C(:,jC) is sparse; use binary search for C
-            //------------------------------------------------------------------
-
-            // for each iA in I [...]:
-            for (int64_t iA = 0 ; iA < nI ; iA++)
-            {
-
-                //--------------------------------------------------------------
-                // find M(iA,j)
-                //--------------------------------------------------------------
-
-                bool mij ;
-                bool found = (pM < pM_end) && (Mi [pM] == iA) ;
-                if (found)
-                { 
-                    // found it
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                    GB_NEXT (M) ;
-                }
-                else
-                { 
-                    // M(iA,j) not present, implicitly false
-                    mij = false ;
-                }
-                // negate the mask M since Mask_comp is true
-                mij = !mij ;
-
-                //--------------------------------------------------------------
-                // find C(iC,jC), but only if M(iA,j) allows it
-                //--------------------------------------------------------------
-
-                if (mij)
+                for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 {
 
                     //----------------------------------------------------------
-                    // C(iC,jC) += scalar
+                    // find M(iA,j)
                     //----------------------------------------------------------
 
-                    // iC = I [iA] ; or I is a colon expression
-                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                    // binary search for C(iC,jC) in C(:,jC)
-                    GB_iC_BINARY_SEARCH ;
-
+                    bool mij ;
+                    bool found = (pM < pM_end) && (Mi [pM] == iA) ;
                     if (found)
                     { 
-                        // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =C+A ): apply accum
-                        // [X A 1]: action: ( undelete ) zombie lives
-                        GB_withaccum_C_A_1_scalar ;
+                        // found it
+                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        GB_NEXT (M) ;
                     }
                     else
                     { 
-                        // ----[. A 1]------------------------------------------
-                        // action: ( insert )
-                        GB_D_A_1_scalar ;
+                        // M(iA,j) not present, implicitly false
+                        mij = false ;
+                    }
+
+                    // complement the mask entry mij since Mask_comp is true
+                    mij = !mij ;
+
+                    //----------------------------------------------------------
+                    // find C(iC,jC), but only if M(iA,j) allows it
+                    //----------------------------------------------------------
+
+                    if (mij)
+                    { 
+
+                        //------------------------------------------------------
+                        // C(iC,jC) += scalar
+                        //------------------------------------------------------
+
+                        // direct lookup of C(iC,jC)
+                        GB_iC_DENSE_LOOKUP ;
+
+                        // ----[C A 1] or [X A 1]-------------------------------
+                        // [C A 1]: action: ( =C+A ): apply accum
+                        // [X A 1]: action: ( undelete ): zombie lives
+                        GB_withaccum_C_A_1_scalar ;
+                    }
+                }
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // C(:,jC) is sparse; use binary search for C
+                //--------------------------------------------------------------
+
+                for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+                {
+
+                    //----------------------------------------------------------
+                    // find M(iA,j)
+                    //----------------------------------------------------------
+
+                    bool mij ;
+                    bool found = (pM < pM_end) && (Mi [pM] == iA) ;
+                    if (found)
+                    { 
+                        // found it
+                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        GB_NEXT (M) ;
+                    }
+                    else
+                    { 
+                        // M(iA,j) not present, implicitly false
+                        mij = false ;
+                    }
+
+                    // complement the mask entry mij since Mask_comp is true
+                    mij = !mij ;
+
+                    //----------------------------------------------------------
+                    // find C(iC,jC), but only if M(iA,j) allows it
+                    //----------------------------------------------------------
+
+                    if (mij)
+                    {
+
+                        //------------------------------------------------------
+                        // C(iC,jC) += scalar
+                        //------------------------------------------------------
+
+                        // binary search for C(iC,jC) in C(:,jC)
+                        GB_iC_BINARY_SEARCH ;
+
+                        if (found)
+                        { 
+                            // ----[C A 1] or [X A 1]---------------------------
+                            // [C A 1]: action: ( =C+A ): apply accum
+                            // [X A 1]: action: ( undelete ): zombie lives
+                            GB_withaccum_C_A_1_scalar ;
+                        }
+                        else
+                        { 
+                            // ----[. A 1]--------------------------------------
+                            // action: ( insert )
+                            GB_D_A_1_scalar ;
+                        }
                     }
                 }
             }
         }
+
+        //----------------------------------------------------------------------
+        // log the result of this task
+        //----------------------------------------------------------------------
+
+        ok = ok && task_ok ;
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // finalize the matrix and return result
     //--------------------------------------------------------------------------
 
-    return (GrB_SUCCESS) ;
+    GB_SUBASSIGN_WRAPUP ;
 }
 

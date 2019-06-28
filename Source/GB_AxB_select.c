@@ -9,9 +9,6 @@
 
 // Select a saxpy method for each thread: gather/scatter or heap
 
-// PARALLEL: done; this function is intentionally single-threaded.
-// it is called in parallel by GB_AxB_parallel.
-
 #include "GB.h"
 
 void GB_AxB_select                  // select method for A*B or A'*B

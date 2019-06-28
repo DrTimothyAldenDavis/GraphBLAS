@@ -33,7 +33,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK3 (C, M, A, B)) ;
+    // C may be aliased with M, A, and/or B
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
@@ -64,8 +64,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     }
 
     // delete any lingering zombies and assemble any pending tuples in A and B,
-    // so that cnz = nnz(A) * nnz(B) can be computed.  Pending updates of C
-    // and M are done after this check.
+    // so that cnz = nnz(A) * nnz(B) can be computed.  Updates of C and M are
+    // done after this check.
     GB_WAIT (A) ;
     GB_WAIT (B) ;
 

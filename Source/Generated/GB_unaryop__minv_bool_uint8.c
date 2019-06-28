@@ -56,7 +56,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (defined (GxB_NO_MINV) || defined (GxB_NO_BOOL) || defined (GxB_NO_UINT8))
+    (GxB_NO_MINV || GxB_NO_BOOL || GxB_NO_UINT8)
 
 //------------------------------------------------------------------------------
 // Cx = op (cast (Ax)): apply a unary operator

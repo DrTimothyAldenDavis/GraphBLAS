@@ -7,6 +7,17 @@
 
 //------------------------------------------------------------------------------
 
+// Method 3: C(I,J) += scalar ; no S
+
+// M:           NULL
+// Mask_comp:   false
+// C_replace:   false
+// accum:       present
+// A:           scalar
+// S:           none (see also Method 8)
+
+// Compare with Method 8, which computes the same thing, but creates S first.
+
 #include "GB_subassign.h"
 
 GrB_Info GB_subassign_method3
@@ -39,85 +50,116 @@ GrB_Info GB_subassign_method3
     // Method 3: C(I,J) += scalar ; no S
     //--------------------------------------------------------------------------
 
-    // time: O(nI*nJ*log(c)) if C standard.  O(nI*nJ) if C dense.
-    // +O(nJ*log(cnvec)) if C hypersparse.
+    // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
+    // required.
 
-    // PARALLEL: split of nI*nJ into either all-coarse or all-fine
-    // tasks.  All-coarse tasks preferred, but if nJ < nthreads,
-    // this does not give enough parallelism.  If split into fine
-    // tasks, each fine task needs to know its slice of C(:,jC).
+    // The submatrix C(I,J) becomes completely dense.  Existing entries in
+    // C(I,J) are found and updated, adding an extra log(n) term to the time
+    // for this method.  Total time is thus O(|I|*|J|*log(n)) in the worst
+    // case, plus O(|J|*log(Cnvec)) if C is hypersparse.
 
-    for (int64_t j = 0 ; j < nJ ; j++)
+    // Method 8 computes the same thing as Method 3, but searches for the
+    // entries in C by constructing S first.
+
+    //--------------------------------------------------------------------------
+    // Parallel: all IxJ (Methods 3, 4, 7, 8, 11a, 11b, 12a, 12b)
+    //--------------------------------------------------------------------------
+
+    GB_SUBASSIGN_IXJ_SLICE (C) ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(+:nzombies) reduction(&&:ok)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
-        // get the C(:,jC) vector where jC = J [j]
-        int64_t GB_jC_LOOKUP ;
 
-        if (pC_end - pC_start == cvlen)
+        //----------------------------------------------------------------------
+        // get the task descriptor
+        //----------------------------------------------------------------------
+
+        GB_GET_IXJ_TASK_DESCRIPTOR ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t j = kfirst ; task_ok && j <= klast ; j++)
         {
 
             //------------------------------------------------------------------
-            // C(:,jC) is dense so binary search of C is not needed
+            // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            // for each iA in I [...]:
-            for (int64_t iA = 0 ; iA < nI ; iA++)
-            { 
+            GB_GET_jC ;
 
-                //--------------------------------------------------------------
-                // C(iC,jC) += scalar
-                //--------------------------------------------------------------
-
-                // direct lookup of C(iC,jC)
-                GB_CDENSE_I_LOOKUP ;
-
-                // ----[C A 1] or [X A 1]---------------------------------------
-                // [C A 1]: action: ( =C+A ): apply accum
-                // [X A 1]: action: ( undelete ): bring zombie back
-                GB_withaccum_C_A_1_scalar ;
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // C(:,jC) is sparse; use binary search for C
-            //------------------------------------------------------------------
-
-            // for each iA in I [...]:
-            for (int64_t iA = 0 ; iA < nI ; iA++)
+            if (pC_end - pC_start == cvlen)
             {
 
                 //--------------------------------------------------------------
-                // C(iC,jC) += scalar
+                // C(:,jC) is dense so binary search of C is not needed
                 //--------------------------------------------------------------
 
-                // iC = I [iA] ; or I is a colon expression
-                int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                // binary search for C(iC,jC) in C(:,jC)
-                GB_iC_BINARY_SEARCH ;
-
-                if (found)
+                for (int64_t iA = iA_start ; iA < iA_end ; iA++)
                 { 
+
+                    //----------------------------------------------------------
+                    // C(iC,jC) += scalar
+                    //----------------------------------------------------------
+
+                    // direct lookup of C(iC,jC)
+                    GB_iC_DENSE_LOOKUP ;
+
                     // ----[C A 1] or [X A 1]-----------------------------------
                     // [C A 1]: action: ( =C+A ): apply accum
-                    // [X A 1]: action: ( undelete ): zombie lives
+                    // [X A 1]: action: ( undelete ): bring zombie back
                     GB_withaccum_C_A_1_scalar ;
                 }
-                else
-                { 
-                    // ----[. A 1]----------------------------------------------
-                    // action: ( insert )
-                    GB_D_A_1_scalar ;
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // C(:,jC) is sparse; use binary search for C
+                //--------------------------------------------------------------
+
+                for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+                {
+
+                    //----------------------------------------------------------
+                    // C(iC,jC) += scalar
+                    //----------------------------------------------------------
+
+                    // binary search for C(iC,jC) in C(:,jC)
+                    GB_iC_BINARY_SEARCH ;
+
+                    if (found)
+                    { 
+                        // ----[C A 1] or [X A 1]-------------------------------
+                        // [C A 1]: action: ( =C+A ): apply accum
+                        // [X A 1]: action: ( undelete ): zombie lives
+                        GB_withaccum_C_A_1_scalar ;
+                    }
+                    else
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // action: ( insert )
+                        GB_D_A_1_scalar ;
+                    }
                 }
             }
         }
+
+        //----------------------------------------------------------------------
+        // log the result of this task
+        //----------------------------------------------------------------------
+
+        ok = ok && task_ok ;
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // finalize the matrix and return result
     //--------------------------------------------------------------------------
 
-    return (GrB_SUCCESS) ;
+    GB_SUBASSIGN_WRAPUP ;
 }
 

@@ -209,7 +209,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         #pragma omp parallel for num_threads(nthreads)  \
             reduction(||:I_unsorted) reduction(&&:I_contig) \
             reduction(min:imin) reduction(max:imax) \
-            reduction(||:I_has_duplicates) schedule(dynamic)
+            reduction(||:I_has_duplicates) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)
         {
             int64_t istart, iend ;

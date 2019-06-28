@@ -13,7 +13,6 @@
 // GB_Vector_opaque structs.  It would be cleaner to define just one opaque
 // struct, and then GrB_Matrix and GrB_Vector would be typedef'd as pointers to
 // the same struct, but then the compiler gets confused with Generic(x).
- 
 
 // For a GrB_Vector object, as an m-by-1 non-hypersparse CSC matrix:
 //      bool is_hyper ;         // always false
@@ -23,7 +22,6 @@
 //      int64_t vdim ;          // always 1
 //      int64_t nvec ;          // always 1
 //      int64_t *h ;            // always NULL
-//      int64_t *j_pending ;    // always NULL
 
 //------------------------------------------------------------------------------
 // basic information: magic and type
@@ -285,7 +283,7 @@ int64_t hfirst ;        // if A->is_hyper is false but A->is_slice is true,
 // operation are the pending tuples assembled into the compressed sparse vector
 // form, A->h, A->p, A->i, and A->x.
 
-// The type of the list of pending tuples (type_pending) need not be the same
+// The type of the list of pending tuples (Pending->type) need not be the same
 // as the type of the matrix.  The GrB_assign and GxB_subassign operations can
 // leave pending tuples in the matrix.  The accum operator, if not NULL,
 // becomes the pending operator for assembling the pending tuples and adding
@@ -293,13 +291,13 @@ int64_t hfirst ;        // if A->is_hyper is false but A->is_slice is true,
 // typecasted to the type of y.
 //
 // Let aij by the value of the pending tuple of a matrix C.  There are up to 5
-// different types to consider: type_pending (the type of aij), ztype, xtype,
+// different types to consider: Pending->type (the type of aij), ztype, xtype,
 // ytype, and ctype = C->type, (the type of the matrix C with pending tuples).
 //
 // If this is the first update to C(i,j), or if there is no accum operator,
 // for for GrB_setElement:
 //
-//      aij of type_pending
+//      aij of Pending->type
 //      cij = (ctype) aij
 //
 // For subsequent tuples with GrB_assign or GxB_subassign, when accum is
@@ -311,17 +309,9 @@ int64_t hfirst ;        // if A->is_hyper is false but A->is_slice is true,
 //      cij = (ctype) z ;
 //
 // Since the pending tuple must be typecasted to either ctype or ytype,
-// depening on where it appears, it must be stored in its ori0j
+// depending on where it appears, it must be stored in its original type.
 
-int64_t n_pending ;         // number of pending tuples to add to the matrix
-int64_t max_n_pending ;     // size of i_pending, j_pending, and s_pending
-// bool sorted_pending ;    // true if pending tuples are in sorted order
-int64_t *i_pending ;        // row indices of pending tuples
-int64_t *j_pending ;        // col indices of pending tuples; NULL if vdim <= 1
-void *s_pending ;           // values of pending tuples
-GrB_Type type_pending ;     // the type of s_pending
-size_t type_pending_size ;  // type_pending->size
-GrB_BinaryOp operator_pending ; // operator to assemble pending tuples
+GB_Pending Pending ;        // list of pending tuples
 
 //-----------------------------------------------------------------------------
 // zombies
@@ -402,6 +392,5 @@ bool x_shallow ;        // true if x is a shallow copy
 
 bool is_hyper ;         // true if the matrix is hypersparse
 bool is_csc ;           // true if stored by column (CSC or hypersparse CSC)
-bool sorted_pending ;   // true if pending tuples are in sorted order
 bool is_slice ;         // true if the matrix is a slice or hyperslice
 

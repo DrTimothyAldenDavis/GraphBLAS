@@ -1,11 +1,20 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method0: C(I,J) = 0 ; using S
+// GB_subassign_method0: C(I,J) = empty ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// Method 0: C(I,J) = empty ; using S
+
+// M:           NULL
+// Mask_comp:   true
+// C_replace:   true
+// accum:       any (present or not; result is the same)
+// A:           any (scalar or matrix; result is the same)
+// S:           constructed
 
 #include "GB_subassign.h"
 
@@ -34,28 +43,41 @@ GrB_Info GB_subassign_method0
     GB_GET_S ;
 
     //--------------------------------------------------------------------------
-    // Method 0: C(I,J) = 0 ; using S
+    // Method 0: C(I,J) = empty ; using S
     //--------------------------------------------------------------------------
 
-    GBI_for_each_vector (S)
-    {
-        GBI_for_each_entry (jnew, pS, pS_end)
-        {
-            // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
-            GB_C_S_LOOKUP ;
-            if (!is_zombie)
-            { 
-                // ----[C - 0] replace
-                // action: ( delete ): becomes a zombie
-                GB_DELETE ;
-            }
-        }
+    // Time: Optimal, O(nnz(S)), assuming S has already been constructed.
+
+    //--------------------------------------------------------------------------
+    // Parallel: all entries in S can be processed fully in parallel.
+    //--------------------------------------------------------------------------
+
+    // All entries in C(I,J) are deleted.  The result does not depend on A or
+    // the scalar.
+
+    int64_t snz = GB_NNZ (S) ;
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (snz, chunk, nthreads_max) ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(static) \
+        reduction(+:nzombies)
+    for (int64_t pS = 0 ; pS < snz ; pS++)
+    { 
+        // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
+        GB_C_S_LOOKUP ;
+        // ----[X A 0] or [X . 0]-----------------------------------------------
+        // action: ( X ): still a zombie
+        // ----[C A 0] or [C . 0]-----------------------------------------------
+        // action: C_repl: ( delete ): becomes a zombie
+        GB_DELETE_ENTRY ;
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
+    C->nzombies = nzombies ;
     return (GrB_SUCCESS) ;
 }
 

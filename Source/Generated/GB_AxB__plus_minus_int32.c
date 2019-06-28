@@ -87,7 +87,7 @@
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (defined (GxB_NO_PLUS) || defined (GxB_NO_MINUS) || defined (GxB_NO_INT32) || defined (GxB_NO_PLUS_INT32) || defined (GxB_NO_MINUS_INT32) || defined (GxB_NO_PLUS_MINUS_INT32))
+    (GxB_NO_PLUS || GxB_NO_MINUS || GxB_NO_INT32 || GxB_NO_PLUS_INT32 || GxB_NO_MINUS_INT32 || GxB_NO_PLUS_MINUS_INT32)
 
 //------------------------------------------------------------------------------
 // C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)

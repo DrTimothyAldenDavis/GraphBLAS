@@ -36,7 +36,10 @@ GrB_Info GB_AxB_Gustavson_builtin
     //--------------------------------------------------------------------------
 
     GB_Context Context = NULL ;
-    ASSERT (GB_NOT_ALIASED_3 (C, M, A, B)) ;
+    ASSERT (!GB_aliased (C, M)) ;
+    ASSERT (!GB_aliased (C, A)) ;
+    ASSERT (!GB_aliased (C, B)) ;
+
     if (M == NULL)
     {
         // C contains the pattern of C=A*B

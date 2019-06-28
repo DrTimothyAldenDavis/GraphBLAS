@@ -57,9 +57,9 @@ op = strrep (op, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_BINARYOP'', `$1 = %s'')\n', op) ;
 
 % create the disable flag
-disable = sprintf ('defined (GxB_NO_%s)', upper (binop)) ;
-disable = [disable (sprintf (' || defined (GxB_NO_%s)', upper (fname)))] ;
-disable = [disable (sprintf (' || defined (GxB_NO_%s_%s)', upper (binop), upper (fname)))] ;
+disable = sprintf ('GxB_NO_%s', upper (binop)) ;
+disable = [disable (sprintf (' || GxB_NO_%s', upper (fname)))] ;
+disable = [disable (sprintf (' || GxB_NO_%s_%s', upper (binop), upper (fname)))] ;
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 % ff = fopen ('temp.h', 'a') ;

@@ -29,6 +29,7 @@ if (debug == 0)
     % to MATLAB.
 
     fprintf ('start GraphBLAS:\n') ;
+
     tic 
     C2 = GB_mex_subassign (A, [], [], scalar, I0, J0, []) ;
     toc

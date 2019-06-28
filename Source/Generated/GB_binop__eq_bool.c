@@ -65,7 +65,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (defined (GxB_NO_EQ) || defined (GxB_NO_BOOL) || defined (GxB_NO_EQ_BOOL))
+    (GxB_NO_EQ || GxB_NO_BOOL || GxB_NO_EQ_BOOL)
 
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix

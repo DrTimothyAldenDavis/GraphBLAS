@@ -15,9 +15,6 @@
 // the mask is not passed to the heap method if the total flop count is less
 // than nnz(M).
 
-// PARALLEL: done; this function is intentionally single-threaded.
-// it is called in parallel by GB_AxB_parallel.
-
 #ifndef GB_HEAP_FREE_WORK
 #define GB_HEAP_FREE_WORK
 #endif

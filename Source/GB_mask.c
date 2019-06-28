@@ -135,7 +135,7 @@ GrB_Info GB_mask                // C<M> = Z
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK (C_result, M)) ;
+    // C_result may be aliased with M
     ASSERT_OK (GB_check (C_result, "C_result for GB_mask", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for GB_mask", GB0)) ;
 

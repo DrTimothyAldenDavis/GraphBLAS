@@ -25,7 +25,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK2 (C, M, A)) ;
+    // C may be aliased with M and/or A
 
     GB_WHERE ("GrB_transpose (C, M, accum, A, desc)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;

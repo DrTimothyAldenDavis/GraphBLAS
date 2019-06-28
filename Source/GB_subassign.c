@@ -54,7 +54,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK2 (C, M_in, A_in)) ;
+    // C may be aliased with M_in and/or A_in
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL (Rows) ;
@@ -220,7 +220,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     //--------------------------------------------------------------------------
 
     if (!scalar_expansion && A_transpose)
-    {
+    { 
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
@@ -246,7 +246,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             M_transpose = !M_transpose ;
         }
         if (M_transpose)
-        {
+        { 
             // MT = M' to conform M to the same CSR/CSC format as C.
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: no typecast, no op, not in place
@@ -256,40 +256,20 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     }
 
     //--------------------------------------------------------------------------
-    // Z = C
+    // make a copy Z = C if C is aliased to A or M
     //--------------------------------------------------------------------------
 
-    // GB_subassigner modifies C efficiently in place, but there are cases when
-    // C is aliased with M or A that require the work to not be done in place.
+    // If C is aliased to A and/or M, a copy must be made.  GB_subassigner
+    // operates on the copy, Z, which is then transplanted back into C when
+    // done.  This is costly, and can have performance implications, but it is
+    // the only reasonable method.  If a copy of C must be made, then it is as
+    // large as M or A, so copying the whole matrix will not add much time.
 
-    // If both I == GrB_ALL and J == GrB_ALL, then C can be safely aliased with
-    // M or A, or both.  In addition, M and/or A may also have shallow
-    // components that refer back to components of C.
+    bool C_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
 
-    // Otherwise, if I is not GrB_ALL or J is not GrB_ALL, then C cannot be
-    // aliased with M or A.  Nor can any shallow component of M or A refer to
-    // any component of C.  This is an unsafe alias.
-
-    // If C is unsafely aliased a copy must be made.  GB_subassigner operates on
-    // the copy, Z, which is then transplanted back into C when done.  This is
-    // costly, and can have performance implications, but it is the only
-    // reasonable method.  If a copy of C must be made, then it is as large as
-    // M or A, so copying the whole matrix will not add much time.
-
-    bool unsafely_aliased ;
-    if (I == GrB_ALL && J == GrB_ALL)
-    { 
-        // any alias is OK
-        unsafely_aliased = false ; 
-    }
-    else
-    { 
-        unsafely_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
-    }
-
-    if (unsafely_aliased)
-    { 
-        // Z = duplicate of C
+    if (C_aliased)
+    {
+        // Z2 = duplicate of C, which must be freed when done
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
         GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
@@ -297,7 +277,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     }
     else
     { 
-        // GB_subassigner can safely operate on C in place
+        // GB_subassigner can safely operate on C in place and so can the
+        // C_replace_phase below.
         Z = C ;
     }
 
@@ -325,7 +306,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // transplant Z2 back into C
     //--------------------------------------------------------------------------
 
-    if (unsafely_aliased)
+    if (C_aliased)
     {
         // zombies can be transplanted into C but pending tuples cannot
         if (GB_PENDING (Z2))

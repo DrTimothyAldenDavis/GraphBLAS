@@ -66,7 +66,7 @@
 // so Step 1 is skipped (no need to check for invalid indices).  The input
 // J_work may be null (vdim can be anything, since GB_wait is used for both
 // vectors and matrices).  The tuples might be in sorted order already, which
-// is known precisely known from A->sorted_pending.  Step 2 does O((e log e)/p)
+// is known precisely known from A->Pending->sorted.  Step 2 does O((e log e)/p)
 // work to sort the tuples.  Duplicates may appear, and out-of-order tuples are
 // likely.  Step 3 does O(e/p) read/writes.  Step 4 does O(e/p) reads per
 // thread of (I_work,J_work), or just I_work.  Step 5 does O(e/p) read/writes
@@ -1009,7 +1009,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // provided as S_work.  GB_builder must either transplant or free
         // S_work.  The transplant can be used by GB_wait (whenever the tuples
         // are already sorted, with no duplicates, and no typecasting is
-        // needed, since S_work is always A->s_pending).  This transplant can
+        // needed, since S_work is always A->Pending->x).  This transplant can
         // rarely be used for GB_transpose (when op is NULL and the transposed
         // tuples happen to be sorted, which is unlikely).
 

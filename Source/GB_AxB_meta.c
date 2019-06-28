@@ -17,9 +17,9 @@
 // The method is chosen automatically:  a gather/scatter saxpy method
 // (Gustavson), a heap-based saxpy method, or a dot product method.
 
-// TODO: an outer-product method for C=A*B'
+// FUTURE:: an outer-product method for C=A*B'
 
-// TODO: a hash-based method for C=A*B
+// FUTURE:: a hash-based method for C=A*B
 
 #define GB_FREE_ALL             \
 {                               \

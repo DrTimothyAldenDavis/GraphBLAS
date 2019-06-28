@@ -11,11 +11,14 @@
 // entries in each vector of A.  This function slices Ap so that each chunk has
 // the same number of entries.
 
+// TODO: pass in Ap, and anvec instead.  Then anz = Ap [anvec],
+// and use this for GB_ewise_slice and GB_subref_slice. 
+
 #include "GB.h"
 
 void GB_pslice                  // find how to slice A->p by # of entries
 (
-    int64_t *Slice,             // size ntask+1
+    int64_t *Slice,             // size ntasks+1
     const GrB_Matrix A,
     const int ntasks            // # of tasks
 )

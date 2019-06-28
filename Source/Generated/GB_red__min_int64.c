@@ -107,7 +107,7 @@
 
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
-    (defined (GxB_NO_MIN) || defined (GxB_NO_INT64) || defined (GxB_NO_MIN_INT64))
+    (GxB_NO_MIN || GxB_NO_INT64 || GxB_NO_MIN_INT64)
 
 //------------------------------------------------------------------------------
 // reduce to a scalar, for monoids only

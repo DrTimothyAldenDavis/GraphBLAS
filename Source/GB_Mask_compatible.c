@@ -25,7 +25,7 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK (C, M)) ;
+    // C and M may be aliased
 
     //--------------------------------------------------------------------------
     // check the mask M

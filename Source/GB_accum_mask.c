@@ -142,10 +142,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // check inputs
     //--------------------------------------------------------------------------
 
-    // C and M may be aliased but nothing else
-    ASSERT (Thandle != NULL) ;
-    ASSERT (GB_ALIAS_OK (C, M_in)) ;       // C can be aliased with M_in
+    // C may be aliased with M_in
 
+    ASSERT (Thandle != NULL) ;
     GrB_Info info ;
     GrB_Matrix T = *Thandle ;
     GrB_Matrix MT = NULL ;
@@ -216,7 +215,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     // decide on the method
     int64_t cnz = GB_NNZ (C) ;          // includes live entries and zombies
-    int64_t cnpending = C->n_pending ;  // # pending tuples
+    int64_t cnpending = GB_Pending_n (C) ;  // # pending tuples in C
     int64_t tnz = GB_NNZ (T) ;
 
     // Use subassign for the accum/mask step if either M or accum is present
@@ -235,15 +234,13 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     // printf ("tnz "GBd" cnpending "GBd" cnz "GBd"\n", tnz, cnpending, cnz) ;
 
-    if ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz))
+    if ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
+        && !GB_aliased (C, M) && !GB_aliased (C, T))
     { 
 
         //----------------------------------------------------------------------
         // C(:,:)<M> = accum (C(:,:),T) via GB_subassigner
         //----------------------------------------------------------------------
-
-        // Since I == GrB_ALL and J = GrB_ALL, C can be safely aliased with M
-        // or T, or any content of M or T.
 
         GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, 0, Context)) ;

@@ -7,13 +7,21 @@
 
 //------------------------------------------------------------------------------
 
+// Method 7: C(I,J) = scalar ; using S
+
+// M:           NULL
+// Mask_comp:   false
+// C_replace:   false
+// accum:       NULL
+// A:           scalar
+// S:           constructed
+
 #include "GB_subassign.h"
 
 GrB_Info GB_subassign_method7
 (
     GrB_Matrix C,
     // input:
-    const bool C_replace,
     const GrB_Index *I,
     const int64_t nI,
     const int Ikind,
@@ -42,58 +50,93 @@ GrB_Info GB_subassign_method7
     // Method 7: C(I,J) = scalar ; using S
     //--------------------------------------------------------------------------
 
-    // time: O(nI*nJ)
+    // Time: Optimal; must visit all IxJ, so Omega(|I|*|J|) is required.
 
-    // PARALLEL: split nI*nJ into all-coarse or all-fine tasks.
-    // like methods 3 and 4, but with S not M.
-    // No need to find where the slice C(:,j); S gives that info
-    GBI2s_for_each_vector (S, scalar)
+    // Entries in S are found and the corresponding entry in C replaced with
+    // the scalar.  The traversal of S is identical to the traversal of M in
+    // Method 4.
+
+    // Method 7 and Method 8 are very similar.
+
+    //--------------------------------------------------------------------------
+    // Parallel: all IxJ (Methods 3, 4, 7, 8, 11a, 11b, 12a, 12b)
+    //--------------------------------------------------------------------------
+
+    GB_SUBASSIGN_IXJ_SLICE (NULL) ;
+
+    // Each task must also look up its part of S, but this does not affect
+    // the parallel tasks.  Total work is about the same as Method 3.
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(+:nzombies) reduction(&&:ok)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
-        // get S(:,j) and the scalar
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        GBI2s_jth_iteration (Iter, j, pS, pS_end) ;
+        GB_GET_IXJ_TASK_DESCRIPTOR ;
 
         //----------------------------------------------------------------------
-        // do a 2-way merge of S(:,j) and the scalar
+        // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        // jC = J [j] ; or J is a colon expression
-        int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
-
-        // for each iA in I [...]:
-        for (int64_t iA = 0 ; iA < nI ; iA++)
+        for (int64_t j = kfirst ; task_ok && j <= klast ; j++)
         {
-            bool found = (pS < pS_end) && (Si [pS] == iA) ;
 
-            if (!found)
-            { 
-                // ----[. A 1]--------------------------------------------------
-                // S (i,j) is not present, the scalar is present
-                // [. A 1]: action: ( insert )
-                // iC = I [iA] ; or I is a colon expression
-                int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                GB_D_A_1_scalar ;
-            }
-            else
-            { 
-                // ----[C A 1] or [X A 1]---------------------------------------
-                // both S (i,j) and A (i,j) present
-                // [C A 1]: action: ( =A ): scalar to C, no accum
-                // [X A 1]: action: ( undelete ): zombie lives
-                GB_C_S_LOOKUP ;
-                GB_noaccum_C_A_1_scalar ;
-                GB_NEXT (S) ;
+            //------------------------------------------------------------------
+            // get jC, the corresponding vector of C
+            //------------------------------------------------------------------
+
+            GB_GET_jC ;
+
+            //------------------------------------------------------------------
+            // get S(iA_start:end,j)
+            //------------------------------------------------------------------
+
+            GB_GET_VECTOR_FOR_IXJ (S) ;
+
+            //------------------------------------------------------------------
+            // C(I(iA_start,iA_end-1),jC) = scalar
+            //------------------------------------------------------------------
+
+            for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+            {
+                bool found = (pS < pS_end) && (Si [pS] == iA) ;
+                if (!found)
+                { 
+                    // ----[. A 1]----------------------------------------------
+                    // S (i,j) is not present, the scalar is present
+                    // [. A 1]: action: ( insert )
+                    // iC = I [iA] ; or I is a colon expression
+                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                    GB_D_A_1_scalar ;
+                }
+                else
+                { 
+                    // ----[C A 1] or [X A 1]-----------------------------------
+                    // both S (i,j) and A (i,j) present
+                    // [C A 1]: action: ( =A ): scalar to C, no accum
+                    // [X A 1]: action: ( undelete ): zombie lives
+                    GB_C_S_LOOKUP ;
+                    GB_noaccum_C_A_1_scalar ;
+                    GB_NEXT (S) ;
+                }
             }
         }
+
+        //----------------------------------------------------------------------
+        // log the result of this task
+        //----------------------------------------------------------------------
+
+        ok = ok && task_ok ;
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // finalize the matrix and return result
     //--------------------------------------------------------------------------
 
-    return (GrB_SUCCESS) ;
+    GB_SUBASSIGN_WRAPUP ;
 }
 

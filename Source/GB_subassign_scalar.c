@@ -39,7 +39,7 @@ GrB_Info GB_subassign_scalar        // C(Rows,Cols)<M> += x
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (GB_ALIAS_OK (C, M)) ;
+    // C may be aliased with M
 
     GB_RETURN_IF_NULL (scalar) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
