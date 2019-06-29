@@ -216,7 +216,6 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT (T->nvec == T->nvec_nonempty) ;
 
 // t = omp_get_wtime ( ) - t ; printf ("build %g sec\n", t) ;
-// t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check for quick transplant

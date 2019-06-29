@@ -17,14 +17,15 @@ struct GB_Pending_struct    // list of pending tuples for a matrix or task
     GrB_BinaryOp op ;   // operator to assemble pending tuples
 } ;
 
-#define GB_PENDING_INIT 8
+#define GB_PENDING_INIT 1024
 
 bool GB_Pending_alloc       // create a list of pending tuples
 (
     GB_Pending *PHandle,    // output
     GrB_Type type,          // type of pending tuples
     GrB_BinaryOp op,        // operator for assembling pending tuples
-    bool is_matrix          // true if Pending->j must be allocated
+    bool is_matrix,         // true if Pending->j must be allocated
+    int64_t nmax            // # of pending tuples to hold
 ) ;
 
 bool GB_Pending_realloc     // reallocate a list of pending tuples
@@ -38,15 +39,13 @@ void GB_Pending_free        // free a list of pending tuples
     GB_Pending *PHandle
 ) ;
 
-bool GB_Pending_merge                   // merge pending tuples from each task
+bool GB_Pending_ensure      // create or reallocate a list of pending tuples
 (
-    GB_Pending *PHandle,                // input/output
-    const GrB_Type type,
-    const GrB_BinaryOp op,
-    const bool is_matrix,
-    const GB_task_struct *TaskList,     // list of subassign tasks
-    const int ntasks,                   // number of tasks
-    const int nthreads                  // number of threads
+    GB_Pending *PHandle,    // input/output
+    GrB_Type type,          // type of pending tuples
+    GrB_BinaryOp op,        // operator for assembling pending tuples
+    bool is_matrix,         // true if Pending->j must be allocated
+    int64_t nnew            // # of pending tuples to add
 ) ;
 
 //------------------------------------------------------------------------------
@@ -138,7 +137,10 @@ static inline bool GB_Pending_add   // add a tuple to the list
         // this is the first pending tuple: define the type of the pending
         // tuples, and the operator to eventually be used to assemble them.
         // If op is NULL, the implicit SECOND_Atype operator will be used.
-        if (!GB_Pending_alloc (PHandle, type, op, is_matrix)) return (false) ;
+        if (!GB_Pending_alloc (PHandle, type, op, is_matrix, GB_PENDING_INIT))
+        {
+            return (false) ;
+        }
         Pending = (*PHandle) ;
     }
     else
@@ -147,7 +149,10 @@ static inline bool GB_Pending_add   // add a tuple to the list
         if (n == Pending->nmax)
         { 
             // reallocate the list so it can hold the new tuple
-            if (!GB_Pending_realloc (PHandle, 1)) return (false) ;
+            if (!GB_Pending_realloc (PHandle, 1))
+            {
+                return (false) ;
+            }
         }
     }
 
@@ -185,4 +190,23 @@ static inline bool GB_Pending_add   // add a tuple to the list
 
     return (true) ;     // success
 }
+
+//------------------------------------------------------------------------------
+// add (iC,jC,aij) or just (iC,aij) if Pending_j is NULL
+//------------------------------------------------------------------------------
+
+#define GB_PENDING_INSERT(aij)                                  \
+    if (task_sorted)                                            \
+    {                                                           \
+        if (!((jlast < jC) || (jlast == jC && ilast <= iC)))    \
+        {                                                       \
+            task_sorted = false ;                               \
+        }                                                       \
+    }                                                           \
+    Pending_i [n] = iC ;                                        \
+    if (Pending_j != NULL) Pending_j [n] = jC ;                 \
+    memcpy (Pending_x +(n*asize), aij, asize) ;                 \
+    n++ ;                                                       \
+    ilast = iC ;                                                \
+    jlast = jC ;
 

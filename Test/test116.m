@@ -35,7 +35,7 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
     end
     nthreads_set (nthreads) ;
 
-    C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
+%   C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
 
     C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
     tg = gbresults ;
@@ -64,7 +64,7 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
     end
     nthreads_set (nthreads) ;
 
-    B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
+%   B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
 
     B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
     tg = gbresults ;

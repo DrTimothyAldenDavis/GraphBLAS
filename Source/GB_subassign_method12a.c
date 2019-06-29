@@ -71,8 +71,12 @@ GrB_Info GB_subassign_method12a
     // Each task must also look up its part of S and M, but this does not
     // affect the parallel tasks.  Total work is about the same as Method 3.
 
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
+    //--------------------------------------------------------------------------
+
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies) reduction(&&:ok)
+        reduction(+:nzombies)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -86,7 +90,7 @@ GrB_Info GB_subassign_method12a
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t j = kfirst ; task_ok && j <= klast ; j++)
+        for (int64_t j = kfirst ; j <= klast ; j++)
         {
 
             //------------------------------------------------------------------
@@ -179,20 +183,124 @@ GrB_Info GB_subassign_method12a
                         { 
                             // ----[. A 1]--------------------------------------
                             // [. A 1]: action: ( insert )
-                            // iC = I [iA] ; or I is a colon expression
-                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                            GB_D_A_1_scalar ;
+                            task_pending++ ;
                         }
                     }
                 }
             }
         }
 
+        GB_PHASE1_TASK_WRAPUP ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase 2: insert pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_PENDING_CUMSUM ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(&&:pending_sorted)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+
         //----------------------------------------------------------------------
-        // log the result of this task
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        ok = ok && task_ok ;
+        GB_GET_IXJ_TASK_DESCRIPTOR ;
+        GB_START_PENDING_INSERTION ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t j = kfirst ; j <= klast ; j++)
+        {
+
+            //------------------------------------------------------------------
+            // get jC, the corresponding vector of C
+            //------------------------------------------------------------------
+
+            GB_GET_jC ;
+
+            //------------------------------------------------------------------
+            // get S(iA_start:end,j) and M(iA_start:end,j)
+            //------------------------------------------------------------------
+
+            GB_GET_VECTOR_FOR_IXJ (S) ;
+            GB_GET_VECTOR_FOR_IXJ (M) ;
+
+            //------------------------------------------------------------------
+            // C(I(iA_start,iA_end-1),jC)<!M,repl> += scalar
+            //------------------------------------------------------------------
+
+            for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+            {
+
+                //--------------------------------------------------------------
+                // Get the indices at the top of each list.
+                //--------------------------------------------------------------
+
+                int64_t iS = (pS < pS_end) ? Si [pS] : INT64_MAX ;
+                int64_t iM = (pM < pM_end) ? Mi [pM] : INT64_MAX ;
+
+                //--------------------------------------------------------------
+                // find the smallest index of [iS iA iM] (always iA)
+                //--------------------------------------------------------------
+
+                int64_t i = iA ;
+
+                //--------------------------------------------------------------
+                // get M(i,j)
+                //--------------------------------------------------------------
+
+                bool mij ;
+                if (i == iM)
+                { 
+                    // mij = (bool) M [pM]
+                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    GB_NEXT (M) ;
+                }
+                else
+                { 
+                    // mij not present, implicitly false
+                    ASSERT (i < iM) ;
+                    mij = false ;
+                }
+
+                // complement the mask entry mij since Mask_comp is true
+                mij = !mij ;
+
+                //--------------------------------------------------------------
+                // accumulate the entry
+                //--------------------------------------------------------------
+
+                if (i == iS)
+                {
+                    ASSERT (i == iA) ;
+                    {
+                        GB_NEXT (S) ;
+                    }
+                }
+                else
+                {
+                    ASSERT (i == iA) ;
+                    {
+                        // S (i,j) is not present, A (i,j) is present
+                        if (mij)
+                        { 
+                            // ----[. A 1]--------------------------------------
+                            // [. A 1]: action: ( insert )
+                            int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                            GB_PENDING_INSERT (scalar) ;
+                        }
+                    }
+                }
+            }
+        }
+
+        GB_PHASE2_TASK_WRAPUP ;
     }
 
     //--------------------------------------------------------------------------

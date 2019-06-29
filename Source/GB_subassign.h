@@ -23,14 +23,7 @@
 #define GB_FREE_ALL                                                         \
 {                                                                           \
     GB_FREE_WORK ;                                                          \
-    if (TaskList != NULL)                                                   \
-    {                                                                       \
-        for (int taskid = 0 ; taskid < ntasks ; taskid++)                   \
-        {                                                                   \
-            GB_Pending_free (&(TaskList [taskid].Pending)) ;                \
-        }                                                                   \
-        GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;  \
-    }                                                                       \
+    GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;  \
 }
 
 //------------------------------------------------------------------------------
@@ -52,25 +45,7 @@
     const bool C_is_hyper = C->is_hyper && (Cnvec < cvdim) ;                \
     int64_t nzombies = C->nzombies ;                                        \
     const int64_t zorig = nzombies ;                                        \
-    bool ok = true ;                                                        \
     const bool is_matrix = (cvdim > 1) ;
-
-//------------------------------------------------------------------------------
-// return from a subassign method
-//------------------------------------------------------------------------------
-
-#define GB_SUBASSIGN_WRAPUP                                             \
-{                                                                       \
-    if (ok)                                                             \
-    {                                                                   \
-        /* finalize the zombie count and merge all pending tuples */    \
-        C->nzombies = nzombies ;                                        \
-        ok = GB_Pending_merge (&(C->Pending), atype, accum, is_matrix,  \
-            TaskList, ntasks, nthreads) ;                               \
-    }                                                                   \
-    GB_FREE_ALL ;                                                       \
-    return (ok ? GrB_SUCCESS : GB_OUT_OF_MEMORY) ;                      \
-}
 
 //------------------------------------------------------------------------------
 // get the content of the mask matrix M
@@ -281,7 +256,7 @@
     #define GB_DELETE                                                   \
     {                                                                   \
         /* turn C(iC,jC) into a zombie */                               \
-        nzombies++ ;                                                    \
+        task_nzombies++ ;                                               \
         Ci [pC] = GB_FLIP (iC) ;                                        \
     }
 
@@ -290,17 +265,7 @@
         /* bring a zombie C(iC,jC) back to life;                 */     \
         /* the value of C(iC,jC) must also be assigned.          */     \
         Ci [pC] = iC ;                                                  \
-        nzombies-- ;                                                    \
-    }
-
-    #define GB_INSERT(aij)                                                  \
-    {                                                                       \
-        /* C(iC,jC) = aij, inserting a pending tuple.  aij is either */     \
-        /* A(i,j) or the scalar for scalar expansion.  If the insert */     \
-        /* fails, the Pending list is freed and task_ok is set to false. */ \
-        task_ok = task_ok && GB_Pending_add (&(TaskList [taskid].Pending),  \
-            aij, atype, accum, iC, jC, is_matrix) ;                         \
-        if (!task_ok) break ;                                               \
+        task_nzombies-- ;                                               \
     }
 
     //--------------------------------------------------------------------------
@@ -805,19 +770,23 @@
             // Otherwise the matrix C would be left in an incoherent partial
             // state of computation.  It's cleaner to just free it all.
 
+            // The action is done by GB_PENDING_INSERT in GB_Pending.h.
+
+            #if 0
             #define GB_D_A_1_scalar                                         \
             {                                                               \
                 /* ----[. A 1]                                           */ \
                 /* action: ( insert )                                    */ \
-                GB_INSERT (scalar) ;                                        \
+                GB_PENDING_INSERT (scalar) ;                                \
             }
 
             #define GB_D_A_1_matrix                                         \
             {                                                               \
                 /* ----[. A 1]                                           */ \
                 /* action: ( insert )                                    */ \
-                GB_INSERT (Ax +(pA*asize)) ;                                \
+                GB_PENDING_INSERT (Ax +(pA*asize)) ;                        \
             }
+            #endif
 
         //----------------------------------------------------------------------
         // ----[C . 1] or [X . 1]: C present, A not present, M=1
@@ -1632,6 +1601,7 @@ GrB_Info GB_subassign_method14d
     GB_OK (GB_subassign_1_slice (&TaskList, &max_ntasks,    \
         &ntasks, &nthreads, C, I, nI, Ikind, Icolon,        \
         J, nJ, Jkind, Jcolon, X, Context)) ;                \
+    int64_t Npending [ntasks+1] ;
 
 //------------------------------------------------------------------------------
 // GB_SUBASSIGN_2_SLICE: slice two matrices (Methods 9, 10, 11c, 12c, 13*, 14*)
@@ -1653,6 +1623,7 @@ GrB_Info GB_subassign_method14d
         &TaskList, &max_ntasks, &ntasks, &nthreads,         \
         Znvec, Zh, NULL, Z_to_X, Z_to_S, false,             \
         NULL, X, S, Context)) ;                             \
+    int64_t Npending [ntasks+1] ;
 
 #define GB_FREE_2_SLICE                                                 \
 {                                                                       \
@@ -1670,6 +1641,7 @@ GrB_Info GB_subassign_method14d
     GB_OK (GB_subassign_IxJ_slice (&TaskList, &max_ntasks,  \
         &ntasks, &nthreads, C, I, nI, Ikind, Icolon,        \
         J, nJ, Jkind, Jcolon, Context)) ;                   \
+    int64_t Npending [ntasks+1] ;
 
 //------------------------------------------------------------------------------
 // GB_subassign_1_slice
@@ -1737,7 +1709,8 @@ GrB_Info GB_subassign_IxJ_slice
         /* a fine task operates on a slice of a single vector */    \
         klast = kfirst ;                                            \
     }                                                               \
-    bool task_ok = true ;
+    int64_t task_nzombies = 0 ;                                     \
+    int64_t task_pending = 0 ;
 
 //------------------------------------------------------------------------------
 // GB_GET_VECTOR: get the content of a vector for a coarse/fine task
@@ -1860,4 +1833,90 @@ GrB_Info GB_subassign_IxJ_slice
 #define GB_GET_MIJ_COMPLEMENT(i)                                    \
     GB_GET_MIJ (i) ;                                                \
     mij = !mij ;
+
+//------------------------------------------------------------------------------
+// GB_PHASE1_TASK_WRAPUP: wrapup for a task in phase 1
+//------------------------------------------------------------------------------
+
+// sum up the zombie count, and record the # of pending tuples for this task
+
+#define GB_PHASE1_TASK_WRAPUP                                       \
+    nzombies += task_nzombies ;                                     \
+    Npending [taskid] = task_pending ;
+
+//------------------------------------------------------------------------------
+// finalize the zombies, and count the # of pending tuples from all tasks
+//------------------------------------------------------------------------------
+
+#define GB_PENDING_CUMSUM                                                   \
+    C->nzombies = nzombies ;                                                \
+    GB_cumsum (Npending, ntasks, NULL, 1) ;                                 \
+    int64_t nnew = Npending [ntasks] ;                                      \
+    if (nnew == 0)                                                          \
+    {                                                                       \
+        GB_FREE_ALL ;                                                       \
+        return (GrB_SUCCESS) ;                                              \
+    }                                                                       \
+    if (!GB_Pending_ensure (&(C->Pending), atype, accum, is_matrix, nnew))  \
+    {                                                                       \
+        GB_FREE_ALL ;                                                       \
+        return (GB_OUT_OF_MEMORY) ;                                         \
+    }                                                                       \
+    GB_Pending Pending = C->Pending ;                                       \
+    int64_t *restrict Pending_i = Pending->i ;                              \
+    int64_t *restrict Pending_j = Pending->j ;                              \
+    GB_void *restrict Pending_x = Pending->x ;                              \
+    int64_t npending_orig = Pending->n ;                                    \
+    bool pending_sorted = Pending->sorted ;
+
+//------------------------------------------------------------------------------
+// start the insertion of pending tuples for this task
+//------------------------------------------------------------------------------
+
+#define GB_START_PENDING_INSERTION                                          \
+    int64_t n = Npending [taskid] ;                                         \
+    task_pending = Npending [taskid+1] - n ;                                \
+    if (task_pending == 0) continue ;                                       \
+    n += npending_orig ;                                                    \
+    bool task_sorted = true ;                                               \
+    int64_t ilast = -1 ;                                                    \
+    int64_t jlast = -1 ;
+
+//------------------------------------------------------------------------------
+// GB_PHASE2_TASK_WRAPUP: wrapup for a task in phase 2
+//------------------------------------------------------------------------------
+
+#define GB_PHASE2_TASK_WRAPUP                                   \
+    pending_sorted = pending_sorted && task_sorted ;
+
+//------------------------------------------------------------------------------
+// finalize the subassign method
+//------------------------------------------------------------------------------
+
+#define GB_SUBASSIGN_WRAPUP                                                 \
+    if (pending_sorted)                                                     \
+    {                                                                       \
+        /* original tuples are sorted, and all tasks report their */        \
+        /* tuples are sorted; check the boundaries of all the tasks */      \
+        for (int taskid = 0 ; pending_sorted && taskid < ntasks ; taskid++) \
+        {                                                                   \
+            int64_t n1 = npending_orig + Npending [taskid] ;                \
+            if (n1 > 0)                                                     \
+            {                                                               \
+                /* (i,j) is the first pending tuple for this task; check */ \
+                /* with the pending tuple just before it in the merged */   \
+                /* list of pending tuples */                                \
+                int64_t i = Pending_i [n1] ;                                \
+                int64_t j = (Pending_j != NULL) ? Pending_j [n1] : 0 ;      \
+                int64_t ilast = Pending_i [n1-1] ;                          \
+                int64_t jlast = (Pending_j != NULL) ?  Pending_j [n1-1] : 0 ; \
+                pending_sorted = pending_sorted &&                          \
+                    ((jlast < j) || (jlast == j && ilast <= i)) ;           \
+            }                                                               \
+        }                                                                   \
+    }                                                                       \
+    Pending->n += nnew ;                                                    \
+    Pending->sorted = pending_sorted ;                                      \
+    GB_FREE_ALL ;                                                           \
+    return (GrB_SUCCESS) ;
 

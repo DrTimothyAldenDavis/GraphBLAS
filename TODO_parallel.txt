@@ -67,6 +67,8 @@ GB_AxB_parallel: much is done: mxm nicely parallel for large matrices,
     Gustavson's method and for the Heap method.  Need to add the SLICE methods
     to the descriptor.  Need to write a hash-based method.
 
+    Check load balance for dot2 method for lcc problem.
+
 GB_AxB_flopcount: better early exit, one loop not parallel
 
 Template/GB_reduce_each_index: one loop not parallel

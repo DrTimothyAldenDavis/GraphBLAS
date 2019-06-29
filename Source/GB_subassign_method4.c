@@ -75,8 +75,12 @@ GrB_Info GB_subassign_method4
     // Each task must also look up its part of M, but this does not affect
     // the parallel tasks.  Total work is about the same as Method 3.
 
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
+    //--------------------------------------------------------------------------
+
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies) reduction(&&:ok)
+        reduction(+:nzombies)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -90,7 +94,7 @@ GrB_Info GB_subassign_method4
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t j = kfirst ; task_ok && j <= klast ; j++)
+        for (int64_t j = kfirst ; j <= klast ; j++)
         {
 
             //------------------------------------------------------------------
@@ -218,18 +222,114 @@ GrB_Info GB_subassign_method4
                         { 
                             // ----[. A 1]--------------------------------------
                             // action: ( insert )
-                            GB_D_A_1_scalar ;
+                            task_pending++ ;
                         }
                     }
                 }
             }
         }
 
+        GB_PHASE1_TASK_WRAPUP ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase 2: insert pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_PENDING_CUMSUM ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(&&:pending_sorted)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+
         //----------------------------------------------------------------------
-        // log the result of this task
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        ok = ok && task_ok ;
+        GB_GET_IXJ_TASK_DESCRIPTOR ;
+        GB_START_PENDING_INSERTION ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t j = kfirst ; j <= klast ; j++)
+        {
+
+            //------------------------------------------------------------------
+            // get jC, the corresponding vector of C
+            //------------------------------------------------------------------
+
+            GB_GET_jC ;
+
+            //------------------------------------------------------------------
+            // find M(iA_start,j)
+            //------------------------------------------------------------------
+
+            GB_GET_VECTOR_FOR_IXJ (M) ;
+
+            //------------------------------------------------------------------
+            // C(I(iA_start,iA_end-1),jC)<!M> = scalar
+            //------------------------------------------------------------------
+
+            if (pC_end - pC_start != cvlen)
+            {
+
+                //--------------------------------------------------------------
+                // C(:,jC) is sparse; use binary search for C
+                //--------------------------------------------------------------
+
+                for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+                {
+
+                    //----------------------------------------------------------
+                    // find M(iA,j)
+                    //----------------------------------------------------------
+
+                    bool mij ;
+                    bool found = (pM < pM_end) && (Mi [pM] == iA) ;
+                    if (found)
+                    { 
+                        // found it
+                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        GB_NEXT (M) ;
+                    }
+                    else
+                    { 
+                        // M(iA,j) not present, implicitly false
+                        mij = false ;
+                    }
+
+                    // complement the mask entry mij since Mask_comp is true
+                    mij = !mij ;
+
+                    //----------------------------------------------------------
+                    // find C(iC,jC), but only if M(iA,j) allows it
+                    //----------------------------------------------------------
+
+                    if (mij)
+                    {
+
+                        //------------------------------------------------------
+                        // C(iC,jC) += scalar
+                        //------------------------------------------------------
+
+                        // binary search for C(iC,jC) in C(:,jC)
+                        GB_iC_BINARY_SEARCH ;
+
+                        if (!found)
+                        { 
+                            // ----[. A 1]--------------------------------------
+                            // action: ( insert )
+                            GB_PENDING_INSERT (scalar) ;
+                        }
+                    }
+                }
+            }
+        }
+
+        GB_PHASE2_TASK_WRAPUP ;
     }
 
     //--------------------------------------------------------------------------

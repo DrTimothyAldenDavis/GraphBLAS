@@ -60,8 +60,10 @@ GrB_Info GB_subassign_method0
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (snz, chunk, nthreads_max) ;
 
+    int64_t task_nzombies = C->nzombies ;
+
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
-        reduction(+:nzombies)
+        reduction(+:task_nzombies)
     for (int64_t pS = 0 ; pS < snz ; pS++)
     { 
         // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
@@ -77,7 +79,7 @@ GrB_Info GB_subassign_method0
     // return result
     //--------------------------------------------------------------------------
 
-    C->nzombies = nzombies ;
+    C->nzombies = task_nzombies ;
     return (GrB_SUCCESS) ;
 }
 

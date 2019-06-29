@@ -61,13 +61,14 @@ GrB_Info GB_subassign_method9
     // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
     //--------------------------------------------------------------------------
 
-// double t = omp_get_wtime ( ) ;
     GB_SUBASSIGN_2_SLICE (A, S) ;
-// t = omp_get_wtime ( ) - t ; printf ("schedule time %g\n", t) ;
-// t = omp_get_wtime ( ) ;
+
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
+    //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies) reduction(&&:ok)
+        reduction(+:nzombies)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -81,7 +82,7 @@ GrB_Info GB_subassign_method9
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t k = kfirst ; task_ok && k <= klast ; k++)
+        for (int64_t k = kfirst ; k <= klast ; k++)
         {
 
             //------------------------------------------------------------------
@@ -120,9 +121,7 @@ GrB_Info GB_subassign_method9
                     // ----[. A 1]----------------------------------------------
                     // S (i,j) is not present, A (i,j) is present
                     // [. A 1]: action: ( insert )
-                    // iC = I [iA] ; or I is a colon expression
-                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                    GB_D_A_1_matrix ;
+                    task_pending++ ;
                     GB_NEXT (A) ;
                 }
                 else
@@ -138,9 +137,7 @@ GrB_Info GB_subassign_method9
                 }
             }
 
-            if (!task_ok) break ;
-
-            // while list S (:,j) has entries.  List A (:,j) exhausted
+            // while list S (:,j) has entries.  List A (:,j) exhausted.
             while (pS < pS_end)
             { 
                 // ----[C . 1] or [X . 1]---------------------------------------
@@ -152,46 +149,99 @@ GrB_Info GB_subassign_method9
                 GB_NEXT (S) ;
             }
 
-            // while list A (:,j) has entries.  List S (:,j) exhausted
+            // List A (:,j) has entries.  List S (:,j) exhausted.
+            task_pending += (pA_end - pA) ;
+        }
+
+        GB_PHASE1_TASK_WRAPUP ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase 2: insert pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_PENDING_CUMSUM ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(&&:pending_sorted)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+
+        //----------------------------------------------------------------------
+        // get the task descriptor
+        //----------------------------------------------------------------------
+
+        GB_GET_TASK_DESCRIPTOR ;
+        GB_START_PENDING_INSERTION ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t k = kfirst ; k <= klast ; k++)
+        {
+
+            //------------------------------------------------------------------
+            // get A(:,j) and S(:,j)
+            //------------------------------------------------------------------
+
+            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X) ;
+            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
+
+            //------------------------------------------------------------------
+            // do a 2-way merge of S(:,j) and A(:,j)
+            //------------------------------------------------------------------
+
+            // jC = J [j] ; or J is a colon expression
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+
+            // while both list S (:,j) and A (:,j) have entries
+            while (pS < pS_end && pA < pA_end)
+            {
+                int64_t iS = Si [pS] ;
+                int64_t iA = Ai [pA] ;
+
+                if (iS < iA)
+                { 
+                    GB_NEXT (S) ;
+                }
+                else if (iA < iS)
+                { 
+                    // ----[. A 1]----------------------------------------------
+                    // S (i,j) is not present, A (i,j) is present
+                    // [. A 1]: action: ( insert )
+                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                    GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                    GB_NEXT (A) ;
+                }
+                else
+                { 
+                    GB_NEXT (S) ;
+                    GB_NEXT (A) ;
+                }
+            }
+
+            // while list A (:,j) has entries.  List S (:,j) exhausted.
             while (pA < pA_end)
             { 
                 // ----[. A 1]--------------------------------------------------
                 // S (i,j) is not present, A (i,j) is present
                 // [. A 1]: action: ( insert )
                 int64_t iA = Ai [pA] ;
-                // iC = I [iA] ; or I is a colon expression
                 int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                GB_D_A_1_matrix ;
+                GB_PENDING_INSERT (Ax +(pA*asize)) ;
                 GB_NEXT (A) ;
             }
         }
 
-        //----------------------------------------------------------------------
-        // log the result of this task
-        //----------------------------------------------------------------------
-
-        ok = ok && task_ok ;
+        GB_PHASE2_TASK_WRAPUP ;
     }
-
-// t = omp_get_wtime ( ) - t ; printf ("task time %g\n", t) ;
-// t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // finalize the matrix and return result
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_WRAPUP ;
-
-//  if (ok)
-//  {
-//      /* finalize the zombie count and merge all pending tuples */
-//      C->nzombies = nzombies ;
-//      ok = GB_Pending_merge (&(C->Pending), atype, accum, is_matrix,
-//          TaskList, ntasks, nthreads) ;
-// t = omp_get_wtime ( ) - t ; printf ("merge time %g\n", t) ;
-//  }
-//    GB_FREE_ALL ;
-//    return (ok ? GrB_SUCCESS : GB_OUT_OF_MEMORY) ;
-
 }
 

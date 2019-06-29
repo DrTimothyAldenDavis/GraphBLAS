@@ -72,8 +72,12 @@ GrB_Info GB_subassign_method5
 
     GB_SUBASSIGN_1_SLICE (A) ;
 
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
+    //--------------------------------------------------------------------------
+
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies) reduction(&&:ok)
+        reduction(+:nzombies)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -87,7 +91,7 @@ GrB_Info GB_subassign_method5
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t k = kfirst ; task_ok && k <= klast ; k++)
+        for (int64_t k = kfirst ; k <= klast ; k++)
         {
 
             //------------------------------------------------------------------
@@ -173,17 +177,93 @@ GrB_Info GB_subassign_method5
                     { 
                         // ----[. A 1]------------------------------------------
                         // action: ( insert )
-                        GB_D_A_1_matrix ;
+                        task_pending++ ;
                     }
                 }
             }
         }
 
+        GB_PHASE1_TASK_WRAPUP ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase 2: insert pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_PENDING_CUMSUM ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(&&:pending_sorted)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+
         //----------------------------------------------------------------------
-        // log the result of this task
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        ok = ok && task_ok ;
+        GB_GET_TASK_DESCRIPTOR ;
+        GB_START_PENDING_INSERTION ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t k = kfirst ; k <= klast ; k++)
+        {
+
+            //------------------------------------------------------------------
+            // get j, the kth vector of A
+            //------------------------------------------------------------------
+
+            int64_t j = (Ah == NULL) ? k : Ah [k] ;
+            GB_GET_VECTOR (pA, pA_end, pA, pA_end, Ap, k) ;
+            int64_t ajnz = pA_end - pA ;
+            if (ajnz == 0) continue ;
+
+            //------------------------------------------------------------------
+            // get jC, the corresponding vector of C
+            //------------------------------------------------------------------
+
+            GB_GET_jC ;
+
+            //------------------------------------------------------------------
+            // C(I,jC) += A(:,j)
+            //------------------------------------------------------------------
+
+            if (pC_end - pC_start != cvlen)
+            {
+
+                //--------------------------------------------------------------
+                // C(:,jC) is sparse; use binary search for C
+                //--------------------------------------------------------------
+
+                for ( ; pA < pA_end ; pA++)
+                {
+
+                    //----------------------------------------------------------
+                    // consider the entry A(iA,j)
+                    //----------------------------------------------------------
+
+                    int64_t iA = Ai [pA] ;
+
+                    //----------------------------------------------------------
+                    // C(iC,jC) += A(iA,j)
+                    //----------------------------------------------------------
+
+                    // binary search for C(iC,jC) in C(:,jC)
+                    GB_iC_BINARY_SEARCH ;
+
+                    if (!found)
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // action: ( insert )
+                        GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                    }
+                }
+            }
+        }
+
+        GB_PHASE2_TASK_WRAPUP ;
     }
 
     //--------------------------------------------------------------------------

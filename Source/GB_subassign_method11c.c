@@ -71,8 +71,12 @@ GrB_Info GB_subassign_method11c
 
     GB_SUBASSIGN_2_SLICE (M, S) ;
 
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
+    //--------------------------------------------------------------------------
+
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies) reduction(&&:ok)
+        reduction(+:nzombies)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -86,7 +90,7 @@ GrB_Info GB_subassign_method11c
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t k = kfirst ; task_ok && k <= klast ; k++)
+        for (int64_t k = kfirst ; k <= klast ; k++)
         {
 
             //------------------------------------------------------------------
@@ -129,9 +133,7 @@ GrB_Info GB_subassign_method11c
                     { 
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
-                        // iC = I [iM] ; or I is a colon expression
-                        int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                        GB_D_A_1_scalar ;
+                        task_pending++ ;
                     }
                     GB_NEXT (M) ;
                 }
@@ -160,8 +162,6 @@ GrB_Info GB_subassign_method11c
                 }
             }
 
-            if (!task_ok) break ;
-
             // while list S (:,j) has entries.  List M (:,j) exhausted
             while (pS < pS_end)
             { 
@@ -185,20 +185,108 @@ GrB_Info GB_subassign_method11c
                 { 
                     // ----[. A 1]------------------------------------------
                     // [. A 1]: action: ( insert )
-                    // iC = I [iM] ; or I is a colon expression
-                    int64_t iM = Mi [pM] ;
-                    int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
-                    GB_D_A_1_scalar ;
+                    task_pending++ ;
                 }
                 GB_NEXT (M) ;
             }
         }
 
+        GB_PHASE1_TASK_WRAPUP ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase 2: insert pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_PENDING_CUMSUM ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(&&:pending_sorted)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+
         //----------------------------------------------------------------------
-        // log the result of this task
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        ok = ok && task_ok ;
+        GB_GET_TASK_DESCRIPTOR ;
+        GB_START_PENDING_INSERTION ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t k = kfirst ; k <= klast ; k++)
+        {
+
+            //------------------------------------------------------------------
+            // get S(:,j) and M(:,j)
+            //------------------------------------------------------------------
+
+            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            GB_GET_MAPPED_VECTOR (pM, pM_end, pA, pA_end, Mp, j, k, Z_to_X) ;
+            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
+
+            //------------------------------------------------------------------
+            // do a 2-way merge of S(:,j) and M(:,j)
+            //------------------------------------------------------------------
+
+            // jC = J [j] ; or J is a colon expression
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+
+            // while both list S (:,j) and M (:,j) have entries
+            while (pS < pS_end && pM < pM_end)
+            {
+                int64_t iS = Si [pS] ;
+                int64_t iM = Mi [pM] ;
+
+                if (iS < iM)
+                { 
+                    // S (i,j) is present but M (i,j) is not
+                    GB_NEXT (S) ;
+                }
+                else if (iM < iS)
+                {
+                    // S (i,j) is not present, M (i,j) is present
+                    bool mij ;
+                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    if (mij)
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // [. A 1]: action: ( insert )
+                        int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
+                        GB_PENDING_INSERT (scalar) ;
+                    }
+                    GB_NEXT (M) ;
+                }
+                else
+                {
+                    // both S (i,j) and M (i,j) present
+                    GB_NEXT (S) ;
+                    GB_NEXT (M) ;
+                }
+            }
+
+            // while list M (:,j) has entries.  List S (:,j) exhausted
+            while (pM < pM_end)
+            {
+                // S (i,j) is not present, M (i,j) is present
+                // mij = (bool) M [pM]
+                bool mij ;
+                cast_M (&mij, Mx +(pM*msize), 0) ;
+                if (mij)
+                { 
+                    // ----[. A 1]------------------------------------------
+                    // [. A 1]: action: ( insert )
+                    int64_t iM = Mi [pM] ;
+                    int64_t iC = GB_ijlist (I, iM, Ikind, Icolon) ;
+                    GB_PENDING_INSERT (scalar) ;
+                }
+                GB_NEXT (M) ;
+            }
+        }
+
+        GB_PHASE2_TASK_WRAPUP ;
     }
 
     //--------------------------------------------------------------------------

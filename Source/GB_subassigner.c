@@ -628,10 +628,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // in the same hypersparse form as C (unless S is empty, in which case
         // it is always returned as hypersparse). This also checks I and J.
 
-        // double t = omp_get_wtime ( ) ;
+// double t = omp_get_wtime ( ) ;
         GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, true, Context));
-        // t = omp_get_wtime ( ) - t ;
-        // printf ("subref %g sec\n", t) ;
+// t = omp_get_wtime ( ) - t ; printf ("\nsubref %g sec\n", t) ;
 
         ASSERT_OK (GB_check (C, "C for subref extraction", GB0)) ;
         ASSERT_OK (GB_check (S, "S for subref extraction", GB0)) ;
@@ -772,7 +771,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   -   +   A   -       6a: C(I,J)<!M> += A
         //  M   c   -   +   A   S      14b: C(I,J)<!M> += A, with S
 
-    // double t = omp_get_wtime ( ) ;
+// double t = omp_get_wtime ( ) ;
 
     if (M == NULL && Mask_comp)
     { 

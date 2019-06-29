@@ -1494,8 +1494,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 // those fine tasks, method = -TaskList [taskid].klast defines the method to
 // use.
 
-// The GB_subassign_method* functions use the TaskList, and each task places
-// any pending tuples in its own TaskList [t].Pending list.
+// The GB_subassign_method* functions use the TaskList, in several different
+// ways.
 
 typedef struct          // task descriptor
 {
@@ -1510,7 +1510,6 @@ typedef struct          // task descriptor
     int64_t pB ;        // fine task starts at Bi, Bx [pB]
     int64_t pB_end ;    // fine task ends at Bi, Bx [pB_end-1]
     int64_t len ;       // fine task handles a subvector of this length
-    GB_Pending Pending ;    // pending tuples for subassign methods
 }
 GB_task_struct ;
 
@@ -1545,7 +1544,6 @@ GB_task_struct ;
             TaskList [t].pM     = INT64_MIN ;                           \
             TaskList [t].pM_end = INT64_MIN ;                           \
             TaskList [t].len    = INT64_MIN ;                           \
-            TaskList [t].Pending = NULL ;                               \
         }                                                               \
         max_ntasks = 2 * (ntasks) ;                                     \
     }                                                                   \

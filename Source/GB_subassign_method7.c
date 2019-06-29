@@ -67,8 +67,12 @@ GrB_Info GB_subassign_method7
     // Each task must also look up its part of S, but this does not affect
     // the parallel tasks.  Total work is about the same as Method 3.
 
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
+    //--------------------------------------------------------------------------
+
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies) reduction(&&:ok)
+        reduction(+:nzombies)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -82,7 +86,7 @@ GrB_Info GB_subassign_method7
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t j = kfirst ; task_ok && j <= klast ; j++)
+        for (int64_t j = kfirst ; j <= klast ; j++)
         {
 
             //------------------------------------------------------------------
@@ -109,9 +113,7 @@ GrB_Info GB_subassign_method7
                     // ----[. A 1]----------------------------------------------
                     // S (i,j) is not present, the scalar is present
                     // [. A 1]: action: ( insert )
-                    // iC = I [iA] ; or I is a colon expression
-                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                    GB_D_A_1_scalar ;
+                    task_pending++ ;
                 }
                 else
                 { 
@@ -126,11 +128,70 @@ GrB_Info GB_subassign_method7
             }
         }
 
+        GB_PHASE1_TASK_WRAPUP ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase 2: insert pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_PENDING_CUMSUM ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(&&:pending_sorted)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+
         //----------------------------------------------------------------------
-        // log the result of this task
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        ok = ok && task_ok ;
+        GB_GET_IXJ_TASK_DESCRIPTOR ;
+        GB_START_PENDING_INSERTION ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t j = kfirst ; j <= klast ; j++)
+        {
+
+            //------------------------------------------------------------------
+            // get jC, the corresponding vector of C
+            //------------------------------------------------------------------
+
+            GB_GET_jC ;
+
+            //------------------------------------------------------------------
+            // get S(iA_start:end,j)
+            //------------------------------------------------------------------
+
+            GB_GET_VECTOR_FOR_IXJ (S) ;
+
+            //------------------------------------------------------------------
+            // C(I(iA_start,iA_end-1),jC) = scalar
+            //------------------------------------------------------------------
+
+            for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+            {
+                bool found = (pS < pS_end) && (Si [pS] == iA) ;
+                if (!found)
+                { 
+                    // ----[. A 1]----------------------------------------------
+                    // S (i,j) is not present, the scalar is present
+                    // [. A 1]: action: ( insert )
+                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                    GB_PENDING_INSERT (scalar) ;
+                }
+                else
+                { 
+                    // both S (i,j) and A (i,j) present
+                    GB_NEXT (S) ;
+                }
+            }
+        }
+
+        GB_PHASE2_TASK_WRAPUP ;
     }
 
     //--------------------------------------------------------------------------

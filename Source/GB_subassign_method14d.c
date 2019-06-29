@@ -70,8 +70,12 @@ GrB_Info GB_subassign_method14d
 
     GB_SUBASSIGN_2_SLICE (A, S) ;
 
+    //--------------------------------------------------------------------------
+    // phase 1: create zombies, update entries, and count pending tuples
+    //--------------------------------------------------------------------------
+
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
-        reduction(+:nzombies) reduction(&&:ok)
+        reduction(+:nzombies)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
@@ -85,7 +89,7 @@ GrB_Info GB_subassign_method14d
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t k = kfirst ; task_ok && k <= klast ; k++)
+        for (int64_t k = kfirst ; k <= klast ; k++)
         {
 
             //------------------------------------------------------------------
@@ -135,9 +139,7 @@ GrB_Info GB_subassign_method14d
                     { 
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
-                        // iC = I [iA] ; or I is a colon expression
-                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                        GB_D_A_1_matrix ;
+                        task_pending++ ;
                     }
                     GB_NEXT (A) ;
                 }
@@ -159,8 +161,6 @@ GrB_Info GB_subassign_method14d
                 }
             }
 
-            if (!task_ok) break ;
-
             // ignore the remainder of S(:,j)
 
             // while list A (:,j) has entries.  List S (:,j) exhausted
@@ -173,19 +173,112 @@ GrB_Info GB_subassign_method14d
                 { 
                     // ----[. A 1]----------------------------------------------
                     // [. A 1]: action: ( insert )
-                    // iC = I [iA] ; or I is a colon expression
-                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                    GB_D_A_1_matrix ;
+                    task_pending++ ;
                 }
                 GB_NEXT (A) ;
             }
         }
 
+        GB_PHASE1_TASK_WRAPUP ;
+    }
+
+    //--------------------------------------------------------------------------
+    // phase 2: insert pending tuples
+    //--------------------------------------------------------------------------
+
+    GB_PENDING_CUMSUM ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
+        reduction(&&:pending_sorted)
+    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    {
+
         //----------------------------------------------------------------------
-        // log the result of this task
+        // get the task descriptor
         //----------------------------------------------------------------------
 
-        ok = ok && task_ok ;
+        GB_GET_TASK_DESCRIPTOR ;
+        GB_START_PENDING_INSERTION ;
+
+        //----------------------------------------------------------------------
+        // compute all vectors in this task
+        //----------------------------------------------------------------------
+
+        for (int64_t k = kfirst ; k <= klast ; k++)
+        {
+
+            //------------------------------------------------------------------
+            // get A(:,j) and S(:,j)
+            //------------------------------------------------------------------
+
+            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X) ;
+            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
+
+            //------------------------------------------------------------------
+            // get M(:,j)
+            //------------------------------------------------------------------
+
+            int64_t pM_start, pM_end ;
+            GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+
+            //------------------------------------------------------------------
+            // do a 2-way merge of S(:,j) and A(:,j)
+            //------------------------------------------------------------------
+
+            // jC = J [j] ; or J is a colon expression
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+
+            // while both list S (:,j) and A (:,j) have entries
+            while (pS < pS_end && pA < pA_end)
+            {
+                int64_t iS = Si [pS] ;
+                int64_t iA = Ai [pA] ;
+
+                if (iS < iA)
+                { 
+                    // S (i,j) is present but A (i,j) is not
+                    GB_NEXT (S) ;
+                }
+                else if (iA < iS)
+                { 
+                    // S (i,j) is not present, A (i,j) is present
+                    GB_GET_MIJ (iA) ;
+                    if (mij)
+                    { 
+                        // ----[. A 1]------------------------------------------
+                        // [. A 1]: action: ( insert )
+                        int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                        GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                    }
+                    GB_NEXT (A) ;
+                }
+                else
+                { 
+                    // both S (i,j) and A (i,j) present
+                    GB_NEXT (S) ;
+                    GB_NEXT (A) ;
+                }
+            }
+
+            // while list A (:,j) has entries.  List S (:,j) exhausted
+            while (pA < pA_end)
+            { 
+                // S (i,j) is not present, A (i,j) is present
+                int64_t iA = Ai [pA] ;
+                GB_GET_MIJ (iA) ;
+                if (mij)
+                { 
+                    // ----[. A 1]----------------------------------------------
+                    // [. A 1]: action: ( insert )
+                    int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                    GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                }
+                GB_NEXT (A) ;
+            }
+        }
+
+        GB_PHASE2_TASK_WRAPUP ;
     }
 
     //--------------------------------------------------------------------------
