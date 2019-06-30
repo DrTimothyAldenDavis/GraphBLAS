@@ -3,6 +3,8 @@ function test117
 
 % test C(:,:)<M> += A
 
+fprintf ('test117 ----------------------------------- C(:,:)<M> += A\n') ;
+
 rng ('default') ;
 n = 4000 ;
 
@@ -39,7 +41,6 @@ for dm = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
         % warmup
         C1 = C0 + M.*A ;
 
-        fprintf ('C(:,:)<M> += A:\n') ;
         tic
         C1 = C0 + M.*A ;
         tm = toc ;
@@ -50,24 +51,18 @@ for dm = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
             end
             nthreads_set (nthreads) ;
 
-            % warmup: default method (14d)
+            if (nthreads > 1 & t1 < 0.003)
+                continue
+            end
+
+            % warmup:
             C2 = GB_mex_assign (C0, M, 'plus', A, I, I) ;
             C2 = GB_mex_assign (C0, M, 'plus', A, I, I) ;
             tg = gbresults ;
             assert (isequal (C1, C2.matrix)) ;
-
             if (nthreads == 1)
                 t1 = tg ;
             end
-
-            % nondefault method (6b)
-            GB_mex_hack (-1) ;
-            C2 = GB_mex_assign (C0, M, 'plus', A, I, I) ;
-            C2 = GB_mex_assign (C0, M, 'plus', A, I, I) ;
-            GB_mex_hack (0) ;
-            tg2 = gbresults ;
-
-            assert (isequal (C1, C2.matrix)) ;
 
             % ewise
             C2 = GB_mex_eWiseMult_Matrix (C0, [ ], 'plus', 'times', M, A) ;
@@ -77,9 +72,8 @@ for dm = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
             assert (isequal (C1, C2.matrix)) ;
 
             fprintf (...
-                '%3d : %8.4f GB: %8.4f %8.4f %8.4f rel %8.2f %8.2f %8.2f\n', ...
-                nthreads, tm, tg, tg2, tg3, ...
-                    tm / tg, tm/tg2, tm/tg3) ;
+                '%3d : %8.4f GB: %8.4f %8.4f rel %8.2f %8.2f\n', ...
+                nthreads, tm, tg, tg3, tm / tg, tm/tg3) ;
         end
 
     end

@@ -10,7 +10,6 @@
 // This macros are used to simplify the construction of the GB_subassign
 // methods.
 
-#define GB_DEBUG
 #include "GB_Pending.h"
 
 //------------------------------------------------------------------------------
