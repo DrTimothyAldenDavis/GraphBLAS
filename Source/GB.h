@@ -462,6 +462,9 @@ void     GB_Global_inuse_decrement (int64_t s) ;
 int64_t  GB_Global_inuse_get ( ) ;
 int64_t  GB_Global_maxused_get ( ) ;
 
+void     GB_Global_hack_set (int64_t hack) ;
+int64_t  GB_Global_hack_get ( ) ;
+
 //------------------------------------------------------------------------------
 // debugging definitions
 //------------------------------------------------------------------------------

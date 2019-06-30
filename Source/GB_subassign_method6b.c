@@ -14,11 +14,115 @@
 // C_replace:   false
 // accum:       present
 // A:           matrix
-// S:           none (see also Method 14d)
+// S:           none
 
-// Compare with Method 14d, which computes the same thing, but creates S first.
+#define GB_FREE_WORK GB_FREE_2DOT_SLICE
 
 #include "GB_subassign.h"
+
+//------------------------------------------------------------------------------
+// GB_SUBASSIGN_2DOT_SLICE: slice M.*A (just Method 6b)
+//------------------------------------------------------------------------------
+
+#define GB_SUBASSIGN_2DOT_SLICE(A,M)                                        \
+    GB_EMPTY_TASKLIST ;                                                     \
+    int64_t Znvec ;                                                         \
+    int64_t *restrict Zh = NULL ;                                           \
+    int64_t *restrict Z_to_A = NULL ;                                       \
+    int64_t *restrict Z_to_M = NULL ;                                       \
+    GB_OK (GB_emult_phase0 (                                                \
+        &Znvec, &Zh, NULL, &Z_to_A, &Z_to_M,                                \
+        NULL, A, M, Context)) ;                                             \
+    GB_OK (GB_ewise_slice (                                                 \
+        &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
+        Znvec, Zh, NULL, Z_to_A, Z_to_M, false,                             \
+        NULL, A, M, Context)) ;                                             \
+    int64_t Npending [ntasks+1] ;
+
+#define GB_FREE_2DOT_SLICE                                                  \
+{                                                                           \
+    GB_FREE_MEMORY (Z_to_A, Znvec, sizeof (int64_t)) ;                      \
+    GB_FREE_MEMORY (Z_to_M, Znvec, sizeof (int64_t)) ;                      \
+}
+
+//------------------------------------------------------------------------------
+// GB_GET_2DOT_VECTOR: get the content of a vector for a coarse/fine task
+//------------------------------------------------------------------------------
+
+#define GB_GET_2DOT_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, Xh, j, k, Z_to_X)\
+    int64_t pX_start = -1, pX_fini = -1 ;                                   \
+    if (fine_task)                                                          \
+    {                                                                       \
+        /* A fine task operates on a slice of X(:,k) */                     \
+        pX_start = TaskList [taskid].pX ;                                   \
+        pX_fini  = TaskList [taskid].pX_end ;                               \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* vectors are never sliced for a coarse task */                    \
+        int64_t kX = (Zh == Xh) ? k : ((Z_to_X == NULL) ? j : Z_to_X [k]) ; \
+        if (kX >= 0)                                                        \
+        {                                                                   \
+            pX_start = Xp [kX] ;                                            \
+            pX_fini  = Xp [kX+1] ;                                          \
+        }                                                                   \
+    }
+
+//------------------------------------------------------------------------------
+// GB_PHASE1_ACTION
+//------------------------------------------------------------------------------
+
+// action to take for phase 1 when A(i,j) exists and M(i,j)=1
+#define GB_PHASE1_ACTION                                                    \
+{                                                                           \
+    if (cjdense)                                                            \
+    {                                                                       \
+        /* direct lookup of C(iC,jC) */                                     \
+        GB_iC_DENSE_LOOKUP ;                                                \
+        /* ----[C A 1] or [X A 1]------------------------------- */         \
+        /* [C A 1]: action: ( =C+A ): apply accum                */         \
+        /* [X A 1]: action: ( undelete ): zombie lives           */         \
+        GB_withaccum_C_A_1_matrix ;                                         \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* binary search for C(iC,jC) in C(:,jC) */                         \
+        GB_iC_BINARY_SEARCH ;                                               \
+        if (found)                                                          \
+        {                                                                   \
+            /* ----[C A 1] or [X A 1]--------------------------- */         \
+            /* [C A 1]: action: ( =C+A ): apply accum            */         \
+            /* [X A 1]: action: ( undelete ): zombie lives       */         \
+            GB_withaccum_C_A_1_matrix ;                                     \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            /* ----[. A 1]-------------------------------------- */         \
+            /* action: ( insert )                                */         \
+            task_pending++ ;                                                \
+        }                                                                   \
+    }                                                                       \
+}
+
+//------------------------------------------------------------------------------
+// GB_PHASE2_ACTION
+//------------------------------------------------------------------------------
+
+// action to take for phase 2 when A(i,j) exists and M(i,j)=1
+#define GB_PHASE2_ACTION                                                    \
+{                                                                           \
+    ASSERT (!cjdense) ;                                                     \
+    {                                                                       \
+        /* binary search for C(iC,jC) in C(:,jC) */                         \
+        GB_iC_BINARY_SEARCH ;                                               \
+        if (!found)                                                         \
+        {                                                                   \
+            /* ----[. A 1]-------------------------------------- */         \
+            /* action: ( insert )                                */         \
+            GB_PENDING_INSERT (Ax +(pA*asize)) ;                            \
+        }                                                                   \
+    }                                                                       \
+}
 
 GrB_Info GB_subassign_method6b
 (
@@ -52,22 +156,22 @@ GrB_Info GB_subassign_method6b
     // Method 6b: C(I,J)<M> += A ; no S
     //--------------------------------------------------------------------------
 
-    // Time: TODO SUBOPTIMAL.  C(I,J)<M> += A ; no S: do only M.*A.
+    // Time: only the intersection of A.*M needs to be considered, so the time
+    // is Omega (sum_j (min (nnz (A(:,j)), nnz (M(:,j)))).  If either M(:,j) or
+    // A(:,j) are very sparse compared to the other, then the shorter is
+    // traversed with a linear-time scan and a binary search is used for the
+    // other.  If the number of nonzeros is comparable, a linear-time scan is
+    // used for both.  Once a pair of entries M(i,j)=1 and A(i,j), is found,
+    // the entry A(i,j) is accumulated or inserted into C.
 
-    // The method traverses all entries in A, but only those
-    // entries in the intersection M.*A are needed.  If nnz(M) << nnz (A),
-    // this method is slow.
-
-    // better solution: use GB_emult_phase0 (M=NULL, A=A, B=M) to compute Zh,
-    // Z_to_A, and Z_to_M.  Then use GB_ewise_slice to construct the tasks.
-
-    // Method 6a and Method 6b are very similar.
+    // The algorithm is very much like the eWise multiplication of A.*M, so the
+    // parallel scheduling relies on GB_emult_phase0(AA and GB_ewise_slice.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice A into coarse/fine tasks (Method 1, 2, 5, 6a, 6b)
+    // Parallel: slice the eWiseMult of A.*M (Method 6b)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_1_SLICE (A) ;
+    GB_SUBASSIGN_2DOT_SLICE (A,M) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -92,114 +196,107 @@ GrB_Info GB_subassign_method6b
         {
 
             //------------------------------------------------------------------
-            // get j, the kth vector of A
+            // get A(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Ah == NULL) ? k : Ah [k] ;
-            GB_GET_VECTOR (pA, pA_end, pA, pA_end, Ap, k) ;
+            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            GB_GET_2DOT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
+            GB_GET_2DOT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
+
+            //------------------------------------------------------------------
+            // quick checks for empty intersection of A(:,j) and M(:,j)
+            //------------------------------------------------------------------
+
             int64_t ajnz = pA_end - pA ;
-            if (ajnz == 0) continue ;
+            int64_t mjnz = pM_end - pM ;
+            if (ajnz == 0 || mjnz == 0) continue ;
+            int64_t iA_first = Ai [pA] ;
+            int64_t iA_last  = Ai [pA_end-1] ;
+            int64_t iM_first = Mi [pM] ;
+            int64_t iM_last  = Mi [pM_end-1] ;
+            if (iA_last < iM_first || iM_last < iA_first) continue ;
+            int64_t pM_start = pM ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
-
-            //------------------------------------------------------------------
-            // get M(:,j)
-            //------------------------------------------------------------------
-
-            int64_t pM_start, pM_end ;
-            GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+            int64_t GB_jC_LOOKUP ;
+            bool cjdense = (pC_end - pC_start == cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> += A(:,j) ; no S
             //------------------------------------------------------------------
 
-            if (pC_end - pC_start == cvlen)
+            if (ajnz > 32 * mjnz)
             {
 
                 //--------------------------------------------------------------
-                // C(:,jC) is dense so binary search of C is not needed
+                // A(:,j) is much denser than M(:,j)
                 //--------------------------------------------------------------
 
-                for ( ; pA < pA_end ; pA++)
+                for ( ; pM < pM_end ; pM++)
                 {
-
-                    //----------------------------------------------------------
-                    // consider the entry A(iA,j)
-                    //----------------------------------------------------------
-
-                    int64_t iA = Ai [pA] ;
-
-                    //----------------------------------------------------------
-                    // find C(iC,jC), but only if M(iA,j) allows it
-                    //----------------------------------------------------------
-
-                    GB_GET_MIJ (iA) ;
+                    bool mij ;
+                    cast_M (&mij, Mx +(pM*msize), 0) ;
                     if (mij)
                     { 
-
-                        //------------------------------------------------------
-                        // C(iC,jC) += A(iA,j)
-                        //------------------------------------------------------
-
-                        // direct lookup of C(iC,jC)
-                        GB_iC_DENSE_LOOKUP ;
-
-                        // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =C+A ): apply accum
-                        // [X A 1]: action: ( undelete ): zombie live
-                        GB_withaccum_C_A_1_matrix ;
+                        int64_t iA = Mi [pM] ;
+                        // find iA in A(:,j)
+                        int64_t pright = pA_end - 1 ;
+                        bool found ;
+                        GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
+                        if (found) GB_PHASE1_ACTION ;
                     }
                 }
 
             }
-            else
+            else if (mjnz > 32 * ajnz)
             {
 
                 //--------------------------------------------------------------
-                // C(:,jC) is sparse; use binary search for C
+                // M(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
 
                 for ( ; pA < pA_end ; pA++)
-                {
-
-                    //----------------------------------------------------------
-                    // consider the entry A(iA,j)
-                    //----------------------------------------------------------
-
+                { 
                     int64_t iA = Ai [pA] ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    if (mij) GB_PHASE1_ACTION ;
+                }
 
-                    //----------------------------------------------------------
-                    // find C(iC,jC), but only if M(iA,j) allows it
-                    //----------------------------------------------------------
+            }
+            else
+            { 
 
-                    GB_GET_MIJ (iA) ;
-                    if (mij)
-                    {
+                //----------------------------------------------------------
+                // A(:,j) and M(:,j) have about the same # of entries
+                //----------------------------------------------------------
 
-                        //------------------------------------------------------
-                        // C(iC,jC) += A(iA,j)
-                        //------------------------------------------------------
+                // linear-time scan of A(:,j) and M(:,j)
 
-                        // binary search for C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
-
-                        if (found)
-                        { 
-                            // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =C+A ): apply accum
-                            // [X A 1]: action: ( undelete ): zombie lives
-                            GB_withaccum_C_A_1_matrix ;
-                        }
-                        else
-                        { 
-                            // ----[. A 1]--------------------------------------
-                            // action: ( insert )
-                            task_pending++ ;
-                        }
+                while (pA < pA_end && pM < pM_end)
+                {
+                    int64_t iA = Ai [pA] ;
+                    int64_t iM = Mi [pM] ;
+                    if (iA < iM)
+                    { 
+                        // A(i,j) exists but not M(i,j)
+                        GB_NEXT (A) ;
+                    }
+                    else if (iM < iA)
+                    { 
+                        // M(i,j) exists but not A(i,j)
+                        GB_NEXT (M) ;
+                    }
+                    else
+                    { 
+                        // both A(i,j) and M(i,j) exist
+                        bool mij ;
+                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        if (mij) GB_PHASE1_ACTION ;
+                        GB_NEXT (A) ;
+                        GB_NEXT (M) ;
                     }
                 }
             }
@@ -234,68 +331,108 @@ GrB_Info GB_subassign_method6b
         {
 
             //------------------------------------------------------------------
-            // get j, the kth vector of A
+            // get A(:,j) and M(:,j)
             //------------------------------------------------------------------
 
-            int64_t j = (Ah == NULL) ? k : Ah [k] ;
-            GB_GET_VECTOR (pA, pA_end, pA, pA_end, Ap, k) ;
+            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            GB_GET_2DOT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
+            GB_GET_2DOT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
+
+            //------------------------------------------------------------------
+            // quick checks for empty intersection of A(:,j) and M(:,j)
+            //------------------------------------------------------------------
+
             int64_t ajnz = pA_end - pA ;
-            if (ajnz == 0) continue ;
+            int64_t mjnz = pM_end - pM ;
+            if (ajnz == 0 || mjnz == 0) continue ;
+            int64_t iA_first = Ai [pA] ;
+            int64_t iA_last  = Ai [pA_end-1] ;
+            int64_t iM_first = Mi [pM] ;
+            int64_t iM_last  = Mi [pM_end-1] ;
+            if (iA_last < iM_first || iM_last < iA_first) continue ;
+            int64_t pM_start = pM ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
-
-            //------------------------------------------------------------------
-            // get M(:,j)
-            //------------------------------------------------------------------
-
-            int64_t pM_start, pM_end ;
-            GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+            int64_t GB_jC_LOOKUP ;
+            bool cjdense = (pC_end - pC_start == cvlen) ;
+            if (cjdense) continue ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> += A(:,j) ; no S
             //------------------------------------------------------------------
 
-            if (pC_end - pC_start != cvlen)
+            if (ajnz > 32 * mjnz)
             {
 
                 //--------------------------------------------------------------
-                // C(:,jC) is sparse; use binary search for C
+                // A(:,j) is much denser than M(:,j)
+                //--------------------------------------------------------------
+
+                for ( ; pM < pM_end ; pM++)
+                {
+                    bool mij ;
+                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    if (mij)
+                    { 
+                        int64_t iA = Mi [pM] ;
+                        // find iA in A(:,j)
+                        int64_t pright = pA_end - 1 ;
+                        bool found ;
+                        GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
+                        if (found) GB_PHASE2_ACTION ;
+                    }
+                }
+
+            }
+            else if (mjnz > 32 * ajnz)
+            {
+
+                //--------------------------------------------------------------
+                // M(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
 
                 for ( ; pA < pA_end ; pA++)
-                {
-
-                    //----------------------------------------------------------
-                    // consider the entry A(iA,j)
-                    //----------------------------------------------------------
-
+                { 
                     int64_t iA = Ai [pA] ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    if (mij) GB_PHASE2_ACTION ;
+                }
 
-                    //----------------------------------------------------------
-                    // find C(iC,jC), but only if M(iA,j) allows it
-                    //----------------------------------------------------------
+            }
+            else
+            { 
 
-                    GB_GET_MIJ (iA) ;
-                    if (mij)
-                    {
+                //----------------------------------------------------------
+                // A(:,j) and M(:,j) have about the same # of entries
+                //----------------------------------------------------------
 
-                        //------------------------------------------------------
-                        // C(iC,jC) += A(iA,j)
-                        //------------------------------------------------------
+                // linear-time scan of A(:,j) and M(:,j)
 
-                        // binary search for C(iC,jC) in C(:,jC)
-                        GB_iC_BINARY_SEARCH ;
-
-                        if (!found)
-                        { 
-                            // ----[. A 1]--------------------------------------
-                            // action: ( insert )
-                            GB_PENDING_INSERT (Ax +(pA*asize)) ;
-                        }
+                while (pA < pA_end && pM < pM_end)
+                {
+                    int64_t iA = Ai [pA] ;
+                    int64_t iM = Mi [pM] ;
+                    if (iA < iM)
+                    { 
+                        // A(i,j) exists but not M(i,j)
+                        GB_NEXT (A) ;
+                    }
+                    else if (iM < iA)
+                    { 
+                        // M(i,j) exists but not A(i,j)
+                        GB_NEXT (M) ;
+                    }
+                    else
+                    { 
+                        // both A(i,j) and M(i,j) exist
+                        bool mij ;
+                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        if (mij) GB_PHASE2_ACTION ;
+                        GB_NEXT (A) ;
+                        GB_NEXT (M) ;
                     }
                 }
             }

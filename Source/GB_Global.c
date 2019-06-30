@@ -131,6 +131,10 @@ typedef struct
     int64_t inuse ;                 // memory space current in use
     int64_t maxused ;               // high water memory usage
 
+    //--------------------------------------------------------------------------
+
+    int64_t hack ;                  // for testing and development
+
 }
 GB_Global_struct ;
 
@@ -182,8 +186,10 @@ GB_Global_struct GB_Global =
     .malloc_debug = false,       // do not test memory handling
     .malloc_debug_count = 0,     // counter for testing memory handling
     .inuse = 0,                  // memory space current in use
-    .maxused = 0                 // high water memory usage
+    .maxused = 0,                // high water memory usage
 
+    // for testing and development
+    .hack = 0
 } ;
 
 //==============================================================================
@@ -604,3 +610,16 @@ int64_t GB_Global_maxused_get ( )
     return (GB_Global.maxused) ;
 }
 
+//------------------------------------------------------------------------------
+// hack
+//------------------------------------------------------------------------------
+
+void GB_Global_hack_set (int64_t hack)
+{
+    GB_Global.hack = hack ;
+}
+
+int64_t GB_Global_hack_get ( )
+{
+    return (GB_Global.hack) ;
+}

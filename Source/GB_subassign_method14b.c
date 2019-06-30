@@ -58,9 +58,7 @@ GrB_Info GB_subassign_method14b
 
     // Time: Close to optimal.  All entries in A+S must be traversed.
 
-    // Compare with Method 10 and Method 14d
-
-    // Method 14b and 14d are very similar (but Method 14d is suboptimal)
+    // Compare with Method 10.
 
     //--------------------------------------------------------------------------
     // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
@@ -132,7 +130,8 @@ GrB_Info GB_subassign_method14b
                 else if (iA < iS)
                 { 
                     // S (i,j) is not present, A (i,j) is present
-                    GB_GET_MIJ_COMPLEMENT (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -144,7 +143,8 @@ GrB_Info GB_subassign_method14b
                 else
                 { 
                     // both S (i,j) and A (i,j) present
-                    GB_GET_MIJ_COMPLEMENT (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    mij = !mij ;
                     if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
@@ -166,7 +166,8 @@ GrB_Info GB_subassign_method14b
             { 
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                GB_GET_MIJ_COMPLEMENT (iA) ;
+                GB_MIJ_BINARY_SEARCH (iA) ;
+                mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -241,7 +242,8 @@ GrB_Info GB_subassign_method14b
                 else if (iA < iS)
                 { 
                     // S (i,j) is not present, A (i,j) is present
-                    GB_GET_MIJ_COMPLEMENT (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    mij = !mij ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -264,7 +266,8 @@ GrB_Info GB_subassign_method14b
             { 
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                GB_GET_MIJ_COMPLEMENT (iA) ;
+                GB_MIJ_BINARY_SEARCH (iA) ;
+                mij = !mij ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------

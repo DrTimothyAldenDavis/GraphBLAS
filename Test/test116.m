@@ -19,6 +19,8 @@ I.inc = 1 ;
 I.end = k-1 ;
 
 ncores = feature ('numcores') ;
+
+% warmup
 C1 = C0 ;
 C1 (1:k,1:k) = A ;
 
@@ -35,7 +37,8 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
     end
     nthreads_set (nthreads) ;
 
-%   C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
+    % warmup
+    C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
 
     C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
     tg = gbresults ;
@@ -53,6 +56,10 @@ end
 
 fprintf ('\n--------------------------------------\n') ;
 fprintf ('B = C(I,J):\n') ;
+
+% warmup
+B1 = C1 (1:k,1:k) ;
+
 tic
 B1 = C1 (1:k,1:k) ;
 tm = toc ;
@@ -64,7 +71,8 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
     end
     nthreads_set (nthreads) ;
 
-%   B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
+    % warmup
+    B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
 
     B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
     tg = gbresults ;

@@ -56,7 +56,7 @@ GrB_Info GB_selector
     GrB_Info info ;
     if (Chandle != NULL)
     {
-        (*Chandle == NULL) ;
+        (*Chandle) = NULL ;
     }
 
     //--------------------------------------------------------------------------

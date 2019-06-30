@@ -67,7 +67,7 @@ GrB_Info GB_subassign_method10
     // Method 9 and Method 10 are somewhat similar.  They differ on how C is
     // modified when the entry is present in S but not A.
 
-    // Compare with Methods 14b and 14d
+    // Compare with Method 14b, which computes C(I,J)<!M> += A, using S.
 
     //--------------------------------------------------------------------------
     // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])

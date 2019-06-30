@@ -47,7 +47,6 @@ for m = [1 5 10]
                     GB_spec_compare (C3a, C3b) ;
                     GB_spec_compare (C3a, C3c) ;
 
-save gunk C A desc
                     C3a = GB_spec_transpose (C,  C,  [ ], A, desc) ;
                     C3b = GB_mex_transpose  (C,  C,  [ ], A, desc, 'test') ;
                     C3c = GB_mex_transpose  (C, 'C', [ ], A, desc, 'test') ;

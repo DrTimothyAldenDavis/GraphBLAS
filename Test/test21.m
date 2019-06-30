@@ -15,10 +15,10 @@ dn = struct ;
 dt = struct ( 'inp0', 'tran' ) ;
 
 if (fulltest)
-    fprintf ('\n--------------exhaustive test of GB_mex_subassign\n') ;
+    fprintf ('\ntest21 --------------exhaustive test of GB_mex_subassign\n') ;
     k1test = 0:length(accum_ops) ;
 else
-    fprintf ('\n--------------quick test of GB_mex_subassign\n') ;
+    fprintf ('\ntest21 --------------quick test of GB_mex_subassign\n') ;
     k1test = [ 4 0] ; % Was [4 0 2 7] ;
 end
 

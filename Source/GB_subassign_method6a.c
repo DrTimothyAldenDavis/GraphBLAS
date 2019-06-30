@@ -146,7 +146,8 @@ GrB_Info GB_subassign_method6a
                     // find C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    GB_GET_MIJ_COMPLEMENT (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    mij = !mij ;
                     if (mij)
                     { 
 
@@ -185,7 +186,8 @@ GrB_Info GB_subassign_method6a
                     // find C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    GB_GET_MIJ_COMPLEMENT (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    mij = !mij ;
                     if (mij)
                     {
 
@@ -288,7 +290,8 @@ GrB_Info GB_subassign_method6a
                     // find C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    GB_GET_MIJ_COMPLEMENT (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    mij = !mij ;
                     if (mij)
                     {
 

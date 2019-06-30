@@ -116,7 +116,7 @@ GrB_Info GB_subassign_method13d
                 if (iS < iA)
                 { 
                     // S (i,j) is present but A (i,j) is not
-                    GB_GET_MIJ (iS) ;
+                    GB_MIJ_BINARY_SEARCH (iS) ;
                     if (mij)
                     { 
                         // ----[C . 1] or [X . 1]-------------------------------
@@ -130,7 +130,7 @@ GrB_Info GB_subassign_method13d
                 else if (iA < iS)
                 { 
                     // S (i,j) is not present, A (i,j) is present
-                    GB_GET_MIJ (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -142,7 +142,7 @@ GrB_Info GB_subassign_method13d
                 else
                 { 
                     // both S (i,j) and A (i,j) present
-                    GB_GET_MIJ (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
@@ -161,7 +161,7 @@ GrB_Info GB_subassign_method13d
             { 
                 // S (i,j) is present but A (i,j) is not
                 int64_t iS = Si [pS] ;
-                GB_GET_MIJ (iS) ;
+                GB_MIJ_BINARY_SEARCH (iS) ;
                 if (mij)
                 { 
                     // ----[C . 1] or [X . 1]-----------------------------------
@@ -178,7 +178,7 @@ GrB_Info GB_subassign_method13d
             { 
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                GB_GET_MIJ (iA) ;
+                GB_MIJ_BINARY_SEARCH (iA) ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -253,7 +253,7 @@ GrB_Info GB_subassign_method13d
                 else if (iA < iS)
                 { 
                     // S (i,j) is not present, A (i,j) is present
-                    GB_GET_MIJ (iA) ;
+                    GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -276,7 +276,7 @@ GrB_Info GB_subassign_method13d
             { 
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                GB_GET_MIJ (iA) ;
+                GB_MIJ_BINARY_SEARCH (iA) ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------

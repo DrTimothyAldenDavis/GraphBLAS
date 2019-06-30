@@ -230,8 +230,6 @@
                 case 1 : // C(:,kC) = A(:,kA) where A(:,kA) is dense
                 //--------------------------------------------------------------
 
-                    // Time: not benchmarked TODO
-
                     // A (:,kA) has not been sliced
                     ASSERT (Ikind == GB_ALL) ;
                     ASSERT (pA     == Ap_start [kC]) ;
@@ -254,8 +252,6 @@
                 //--------------------------------------------------------------
                 case 2 : // C(:,kC) = A(I,kA) where A(I,kA) is dense
                 //--------------------------------------------------------------
-
-                    // Time: not benchmarked TODO
 
                     // This method handles any kind of list I, but A(:,kA)
                     // must be dense.  A(:,kA) has not been sliced.
@@ -573,8 +569,6 @@
                 case 11 : // I not contiguous, with duplicates. No qsort needed
                 //--------------------------------------------------------------
 
-                    // Time: not benchmarked TODO
-
                     // Case 11 works well when I has many entries and A(:,kA)
                     // has few entries.  It requires that I be sorted on input,
                     // so that no sort is required for C(:,kC).  It is
@@ -609,8 +603,6 @@
                 //--------------------------------------------------------------
                 case 12 : // I not contiguous, no duplicates.  No qsort needed.
                 //--------------------------------------------------------------
-
-                    // Time: not benchmarked TODO
 
                     // Identical to Case 11, except GB_for_each_index_in_bucket
                     // just needs to iterate 0 or 1 times.  Works well when I
