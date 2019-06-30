@@ -186,10 +186,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     bool I_unsorted, I_has_dupl, I_contig, J_unsorted, J_has_dupl, J_contig ;
     int64_t imin, imax, jmin, jmax ;
-    // printf ("=========================================== I\n") ;
     GB_OK (GB_ijproperties (I, ni, nI, cvlen, &Ikind, Icolon,
                 &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, Context)) ;
-    // printf ("=========================================== J\n") ;
     GB_OK (GB_ijproperties (J, nj, nJ, cvdim, &Jkind, Jcolon,
                 &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, Context)) ;
 
@@ -325,6 +323,20 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     ASSERT (! (I_unsorted || I_has_dupl)) ;
     ASSERT (! (J_unsorted || J_has_dupl)) ;
+
+//  printf ("I:  nI "GBd"\n", nI) ;
+//  for (int64_t i = 0 ; i < nI ; i++)
+//  {
+//      int64_t iC = GB_ijlist (I, i, Ikind, Icolon) ;
+//      printf (GBd": "GBd"\n", i, iC) ;
+//  }
+
+//  printf ("\nJ:  nJ "GBd"\n", nJ) ;
+//  for (int64_t j = 0 ; j < nJ ; j++)
+//  {
+//      int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+//      printf (GBd": "GBd"\n", j, jC) ;
+//  }
 
     //--------------------------------------------------------------------------
     // determine the type and nnz of A (from a scalar or matrix)
@@ -558,19 +570,27 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // Before allocating S, see if there is a faster method
     // that does not require S to be created.
 
+    int64_t hack = GB_Global_hack_get ( ) ;
+
     bool S_Extraction = true ;
 
-    bool C_Mask_scalar = (scalar_expansion &&
-        !C_replace && M != NULL && !Mask_comp) ;
+    // empty_mask:  C(I,J)<!> = ... ; empty mask is complemented
+    bool empty_mask =(Mask_comp && M == NULL) ;
 
-    bool C_Mask_matrix = (!scalar_expansion &&
-        !C_replace && M != NULL && !Mask_comp) ;
+    // simple_mask: C(I,J)<M> = ... ; or C(I,J)<M> += ...
+    bool simple_mask = (!C_replace && M != NULL && !Mask_comp) ;
+
+    // C_Mask_scalar: C(I,J)<M> = scalar or += scalar
+    bool C_Mask_scalar = (scalar_expansion && simple_mask) ;
+
+    // C_Mask_matrix:  C(I,J)<M> = A or += A
+    bool C_Mask_matrix = (!scalar_expansion && simple_mask) ;
 
     int64_t cnz = GB_NNZ (C) ;      // includes zombies but not pending tuples
 
-    int64_t nzMask = (M == NULL) ? 0 : GB_NNZ (M) ;
+    int64_t mnz = (M == NULL) ? 0 : GB_NNZ (M) ;
 
-    if (Mask_comp && M == NULL)
+    if (empty_mask)
     {
         // use Method 0: C(I,J) = empty
         S_Extraction = true ;
@@ -580,25 +600,49 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // use Method 1 or 2: C(I,J)<M> = scalar or += scalar; C_replace false
         S_Extraction = false ;
     }
+    else if (C_Mask_matrix)
+    {
+        if (accum != NULL)
+        {
+            // C(I,J)<M> += A always uses method 6b.  S is not constructed.
+            S_Extraction = false ;
+        }
+        else
+        {
+            // C(I,J)<M> = A can use method 15 (no S) or method 13d (with S)
+            if (hack < 0)
+            {
+                // use method 15
+                S_Extraction = false ;
+            }
+            else if (hack > 0)
+            {
+                // use method 13d
+                S_Extraction = true ;
+            }
+            else
+            {
+                // method 13d is faster when nnz (A) < nnz (M)
+                // TODO: hack not needed; rule is simple and accurate
+                S_Extraction = (anz < mnz) ;
+            }
+        }
+    }
     else if (accum != NULL && !C_replace)
     {
         // If accum is present and C_replace is false, then only entries in A
         // need to be examined.  Not all entries in C(I,J) and M need to be
         // examined.  As a result, computing S=C(I,J) can dominate the time and
         // memory required for the S_Extraction method.  If S_Extraction is
-        // set false, then Method 3, 4, 5, 6a, or 6b will be used.
-        int64_t hack = GB_Global_hack_get ( ) ;
-        if (C_Mask_matrix)
+        // set false, then Method 3, 4, 5, or 6a will be used.
+        if (hack < 0)
         {
-            // C(I,J)<M> += A always uses method 6b.  S is not constructed.
-            S_Extraction = false ;
-        }
-        else if (hack < 0)
-        {
+            // use method 3, 4, 5, or 6a (no S constructed)
             S_Extraction = false ;
         }
         else if (hack > 0)
         {
+            // use method 8, 10, 12b, 14b (construct S first)
             S_Extraction = true ;
         }
         else if (nI == 1 || nJ == 1 || cnz == 0)
@@ -608,10 +652,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // S; use Methods 3, 4, 5, or 6a instead.
             S_Extraction = false ;
         }
-        else if (anz_ok && cnz + nzMask > anz)
+        else if (anz_ok && cnz + mnz > anz)
         {
+            // TODO benchmark the selection of (3,4,5,6a) vs (8,10,12b,14b)
             // If C and M are very dense, then do not extract S
-            S_Extraction = GB_subassign_select (C, nzMask, anz,
+            S_Extraction = GB_subassign_select (C, mnz, anz,
                 J, nJ, Jkind, Jcolon, Context)  ;
         }
     }
@@ -697,7 +742,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // determined here; it is not a user input).  The first 5 options are
     // determined by the input.  The table below has been collapsed to remove
     // combinations that are not used, or equivalent to other entries in the
-    // table.  Only 25 unique combinations of the 64 combinations are needed.
+    // table.  Only 26 unique combinations of the 64 combinations are needed.
 
     //      M           present or NULL
     //      Mask_comp   true or false
@@ -720,9 +765,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         //  -   -   -   -   -   S        7: C(I,J) = x, with S
         //  -   -   -   -   A   S        9: C(I,J) = A, with S
-        //  -   -   -   +   -   -        3: C(I,J) += x
+        //  -   -   -   +   -   -        3: C(I,J) += x, no S
         //  -   -   -   +   -   S        8: C(I,J) += x, with S
-        //  -   -   -   +   A   -        5: C(I,J) += A
+        //  -   -   -   +   A   -        5: C(I,J) += A, no S
         //  -   -   -   +   A   S       10: C(I,J) += A, with S
 
         //  -   -   r                   C_replace true on input but now false:
@@ -732,11 +777,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         //  -   c   r           S        0: C(I,J)<!,repl> = empty, with S
 
-        //  M   -   -   -   -   -        1: C(I,J)<M> = x
-        //  M   -   -   -   A   -       15: C(I,J)<M> = A, no S (TODO)
+        //  M   -   -   -   -   -        1: C(I,J)<M> = x, no S
+        //  M   -   -   -   A   -       15: C(I,J)<M> = A, no S
         //  M   -   -   -   A   S      13d: C(I,J)<M> = A, with S
-        //  M   -   -   +   -   -        2: C(I,J)<M> += x
-        //  M   -   -   +   A   -       6b: C(I,J)<M> += A
+        //  M   -   -   +   -   -        2: C(I,J)<M> += x, no S
+        //  M   -   -   +   A   -       6b: C(I,J)<M> += A, no S
 
         //  M   -   r   -   -   S      11c: C(I,J)<M,repl> = x, with S
         //  M   -   r   -   A   S      13c: C(I,J)<M,repl> = A, with S
@@ -745,9 +790,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         //  M   c   -   -   -   S      11b: C(I,J)<!M> = x, with S
         //  M   c   -   -   A   S      13b: C(I,J)<!M> = A, with S
-        //  M   c   -   +   -   -        4: C(I,J)<!M> += x
+        //  M   c   -   +   -   -        4: C(I,J)<!M> += x, no S
         //  M   c   -   +   -   S      12b: C(I,J)<!M> += x, with S
-        //  M   c   -   +   A   -       6a: C(I,J)<!M> += A
+        //  M   c   -   +   A   -       6a: C(I,J)<!M> += A, no S
         //  M   c   -   +   A   S      14b: C(I,J)<!M> += A, with S
 
         //  M   c   r   -   -   S      11a: C(I,J)<!M,repl> = x, with S
@@ -755,13 +800,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   +   -   S      12a: C(I,J)<!M,repl> += x, with S
         //  M   c   r   +   A   S      14a: C(I,J)<!M,repl> += A, with S
 
-// TODO consider C(I,J)<M>=A.
-// 15:  C(I,J)<M> = A, no S (TODO, scan M, and binary search C and A)
-// 13d:  Time: TODO SUBOPTIMAL.  C(I,J)<M> = A ; using S: do only M.*(A+S)
-// use method 15 if nnz(M) << nnz(A); method 13d otherwise
-
     // The following cases (on input) can be handled by two methods: with or
-    // without S.  For all these cases, C_replace is false and accum is
+    // without S.  For the first four cases, C_replace is false and accum is
     // present.  The choice between these pairs of methods is made via a
     // heuristic that attempts to pick the fastest method of the two options.
 
@@ -781,9 +821,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   -   +   A   -       6a: C(I,J)<!M> += A
         //  M   c   -   +   A   S      14b: C(I,J)<!M> += A, with S
 
+        // Methods 15 and 13d:
+        //  M   -   -   -   A   -       15: C(I,J)<M> = A
+        //  M   -   -   -   A   S      13d: C(I,J)<M> = A, with S
+
 // double t = omp_get_wtime ( ) ;
 
-    if (M == NULL && Mask_comp)
+    if (empty_mask)
     { 
 
         //----------------------------------------------------------------------
@@ -818,7 +862,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     {
 
         //----------------------------------------------------------------------
-        // C(I,J)<M> = scalar or +=scalar, !C_replace, !Mask_comp
+        // C(I,J)<M> = scalar or +=scalar
         //----------------------------------------------------------------------
 
         //  =====================       ==============
@@ -853,6 +897,48 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
 
     }
+    else if (C_Mask_matrix)
+    {
+
+        //----------------------------------------------------------------------
+        // C(I,J)<M> = A or += A
+        //----------------------------------------------------------------------
+
+        //  =====================       ==============
+        //  M   cmp rpl acc A   S       method: action
+        //  =====================       ==============
+        //  M   -   -   +   A   -       6b: C(I,J)<M> += A, no S
+        //  M   -   -   -   A   -       15: C(I,J)<M> = A, no S
+        //  M   -   -   -   A   S      13d: C(I,J)<M> = A, with S
+
+        ASSERT (!scalar_expansion) ;        // A is a matrix
+        ASSERT (M != NULL && !Mask_comp) ;  // mask M present, not compl.
+        ASSERT (!C_replace) ;
+
+        if (accum != NULL)
+        { 
+            // Method 6b: C(I,J)<M> += A ; no S
+            ASSERT (S == NULL) ;
+            GB_OK (GB_subassign_method6b (C,
+                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                M, accum, A, Context)) ;
+        }
+        else if (S == NULL)
+        {
+            // Method 15: C(I,J)<M> = A ; no S
+            GB_OK (GB_subassign_method15 (C,
+                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                M, A, Context)) ;
+        }
+        else
+        { 
+            // Method 13d: C(I,J)<M> = A ; using S
+            GB_OK (GB_subassign_method13d (C,
+                I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                M, A, S, Context)) ;
+        }
+
+    }
     else if (S == NULL)
     {
 
@@ -863,11 +949,10 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
         //  =====================       ==============
-        //  -   -   -   +   -   -        3: C(I,J) += x
-        //  -   -   -   +   A   -        5: C(I,J) += A
-        //  M   -   -   +   A   -       6b: C(I,J)<M> += A
-        //  M   c   -   +   -   -        4: C(I,J)<!M> += x
-        //  M   c   -   +   A   -       6a: C(I,J)<!M> += A
+        //  -   -   -   +   -   -        3: C(I,J) += x, no S
+        //  -   -   -   +   A   -        5: C(I,J) += A, no S
+        //  M   c   -   +   -   -        4: C(I,J)<!M> += x, no S
+        //  M   c   -   +   A   -       6a: C(I,J)<!M> += A, no S
 
         // These 4 methods can only be used if accum is present and C_replace
         // is false.  They iterate over the entries in A and ignore any part
@@ -908,20 +993,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             }
             else
             {
-                if (Mask_comp)
-                { 
-                    // Method 6a: C(I,J)<!M> += A ; no S
-                    GB_OK (GB_subassign_method6a (C,
-                        I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                        M, accum, A, Context)) ;
-                }
-                else
-                { 
-                    // Method 6b: C(I,J)<M> += A ; no S
-                    GB_OK (GB_subassign_method6b (C,
-                        I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                        M, accum, A, Context)) ;
-                }
+                // Method 6a: C(I,J)<!M> += A ; no S
+                ASSERT (Mask_comp) ;
+                GB_OK (GB_subassign_method6a (C,
+                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+                    M, accum, A, Context)) ;
             }
         }
 
@@ -957,6 +1033,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         ASSERT (!Mask_comp) ;
         ASSERT (!C_replace) ;
+        ASSERT (S != NULL) ;
 
         if (scalar_expansion)
         {
@@ -1092,7 +1169,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
         //  =====================       ==============
-        //  M   -   -   -   A   S      13d: C(I,J)<M> = A, with S
         //  M   -   r   -   A   S      13c: C(I,J)<M,repl> = A, with S
         //  M   -   r   +   A   S      14c: C(I,J)<M,repl> += A, with S
         //  M   c   -   -   A   S      13b: C(I,J)<!M> = A, with S
@@ -1114,6 +1190,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // [ X . 0 ]    C_D_0: C zombie, A not present, M 0
         // [ . . 0 ]           M not present or zero, nothing to do
 
+        ASSERT (Mask_comp || C_replace) ;
+
         if (accum == NULL)
         {
             if (Mask_comp && C_replace)
@@ -1130,17 +1208,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                     I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                     M, A, S, Context)) ;
             }
-            else if (C_replace)
+            else // if (C_replace)
             { 
                 // Method 13c: C(I,J)<M,repl> = A ; using S
+                ASSERT (C_replace) ;
                 GB_OK (GB_subassign_method13c (C,
-                    I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-                    M, A, S, Context)) ;
-            }
-            else
-            { 
-                // Method 13d: C(I,J)<M> = A ; using S
-                GB_OK (GB_subassign_method13d (C,
                     I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
                     M, A, S, Context)) ;
             }

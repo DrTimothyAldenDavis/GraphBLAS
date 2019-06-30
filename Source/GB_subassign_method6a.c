@@ -73,7 +73,7 @@ GrB_Info GB_subassign_method6a
     // Method 6a and Method 6b are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice A into coarse/fine tasks (Method 1, 2, 5, 6a, 6b)
+    // Parallel: slice A into coarse/fine tasks (Method 1, 2, 5, 6a, 15)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_1_SLICE (A) ;

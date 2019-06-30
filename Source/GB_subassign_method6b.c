@@ -156,10 +156,10 @@ GrB_Info GB_subassign_method6b
     // Method 6b: C(I,J)<M> += A ; no S
     //--------------------------------------------------------------------------
 
-    // Time: only the intersection of A.*M needs to be considered, so the time
-    // is Omega (sum_j (min (nnz (A(:,j)), nnz (M(:,j)))).  If either M(:,j) or
-    // A(:,j) are very sparse compared to the other, then the shorter is
-    // traversed with a linear-time scan and a binary search is used for the
+    // Time: Close to optimal. Omega (sum_j (min (nnz (A(:,j)), nnz (M(:,j)))),
+    // since only the intersection of A.*M needs to be considered.  If either
+    // M(:,j) or A(:,j) are very sparse compared to the other, then the shorter
+    // is traversed with a linear-time scan and a binary search is used for the
     // other.  If the number of nonzeros is comparable, a linear-time scan is
     // used for both.  Once a pair of entries M(i,j)=1 and A(i,j), is found,
     // the entry A(i,j) is accumulated or inserted into C.

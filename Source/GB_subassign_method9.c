@@ -58,7 +58,7 @@ GrB_Info GB_subassign_method9
     // modified when the entry is present in S but not A.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
+    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_2_SLICE (A, S) ;

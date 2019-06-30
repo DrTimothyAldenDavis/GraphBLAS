@@ -67,7 +67,7 @@ GrB_Info GB_subassign_method5
     // O(anvec*log(Cnvec)) is added if C is hypersparse.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice A into coarse/fine tasks (Method 1, 2, 5, 6a, 6b)
+    // Parallel: slice A into coarse/fine tasks (Method 1, 2, 5, 6a, 15)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_1_SLICE (A) ;

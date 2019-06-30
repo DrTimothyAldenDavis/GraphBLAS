@@ -54,14 +54,14 @@ GrB_Info GB_subassign_method14a
     // Method 14a: C(I,J)<!M,repl> += A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: all entries in S+A must be traversed, so Omega(nnz(S)+nnz(A)) is
-    // required.  All cases of the mask (0, 1, or not present) must be
+    // Time: Optimal.  Omega(nnz(S)+nnz(A)) since all entries in S+A must be
+    // traversed.  All cases of the mask (0, 1, or not present) must be
     // considered, because of the C_replace descriptor being true.
 
     // Method 14a and Method 14c are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
+    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_2_SLICE (A, S) ;

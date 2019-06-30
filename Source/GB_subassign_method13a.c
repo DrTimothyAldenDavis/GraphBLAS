@@ -53,14 +53,15 @@ GrB_Info GB_subassign_method13a
     // Method 13a: C(I,J)<!M,repl> = A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Omega (nnz(A)+nnz(S)), since all entries in S+A must be traversed,
-    // and the corresponding entry in M (even if not present) determines the
-    // action to take.
+    // Time: Optimal.  O((nnz(A)+nnz(S))*log(m)), since all entries in S+A must
+    // be traversed, and the corresponding entry in M (even if not present)
+    // determines the action to take. log(m) is the # of entries in a column
+    // of M.
 
     // Method 13a and 13c are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
+    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_2_SLICE (A, S) ;

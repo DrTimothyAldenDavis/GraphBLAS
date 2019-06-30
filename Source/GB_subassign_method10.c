@@ -70,7 +70,7 @@ GrB_Info GB_subassign_method10
     // Compare with Method 14b, which computes C(I,J)<!M> += A, using S.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
+    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_2_SLICE (A, S) ;

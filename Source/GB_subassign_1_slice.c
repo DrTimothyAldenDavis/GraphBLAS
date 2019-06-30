@@ -11,7 +11,7 @@
 // slicing a single input matrix (M or A).  Fine tasks must also find their
 // location in their vector C(:,jC).
 
-// This method is used by GB_subassign_methods 1, 2, 5, 6a, 6b:
+// This method is used by GB_subassign_methods 1, 2, 5, 6a, 15:
 
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
@@ -19,8 +19,8 @@
         //  -   -   -   +   A   -        5: C(I,J) += A         for A
         //  M   -   -   -   -   -        1: C(I,J)<M> = x       for M
         //  M   -   -   +   -   -        2: C(I,J)<M> += x      for M
-        //  M   -   -   +   A   -       6b: C(I,J)<M> += A      for A
         //  M   c   -   +   A   -       6a: C(I,J)<!M> += A     for A
+        //  M   -   -   -   A   -       15: C(I,J)<M> = A       for M
 
 #include "GB_subassign.h"
 

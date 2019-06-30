@@ -18,6 +18,10 @@
 
 // Compare with Method 8, which computes the same thing, but creates S first.
 
+// TODO: this method is slower than method 8 for all cases (on Mac);
+// delete it.  Always construct S for C(I,J)+=scalar in Method 8.
+// But first test on hypersparse...
+
 #include "GB_subassign.h"
 
 GrB_Info GB_subassign_method3

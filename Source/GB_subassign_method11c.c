@@ -66,7 +66,7 @@ GrB_Info GB_subassign_method11c
     // Method 11c and Method 12c are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=M+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
+    // Parallel: Z=M+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_2_SLICE (M, S) ;

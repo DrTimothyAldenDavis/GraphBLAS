@@ -1,12 +1,12 @@
-function test117
-%TEST117 performance tests for GrB_assign
+function test118
+%TEST118 performance tests for GrB_assign
 
 % test C(:,:)<M> = A
 
-fprintf ('test117 ----------------------------------- C(:,:)<M> = A\n') ;
+fprintf ('test118 ----------------------------------- C(:,:)<M> = A\n') ;
 
 rng ('default') ;
-n = 4000 ;
+n = 2000 ;
 S = sparse (n,n) ;
 
 I.begin = 0 ;
@@ -15,72 +15,80 @@ I.end = n-1 ;
 
 ncores = feature ('numcores') ;
 
-for da = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
-    A  = sprand (n, n, da) ;
+for dc = [0 1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
 
-for dm = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
+    C0 = sparse (n,n,dc) ;
 
-    M = spones (sprand (n, n, dm)) ;
+    for da = [1e-5  1e-4 1e-3 1e-2 1e-1 0.5]
+        A  = sprand (n, n, da) ;
 
-        fprintf ('\n--------------------------------------\n') ;
-        fprintf ('da: %g, dm: %g ', da, dm) ;
-        fprintf ('\n') ;
+        for dm = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
 
-        fprintf ('nnz(M): %g million, ',  nnz (M) / 1e6) ;
-        fprintf ('nnz(A): %g million\n',  nnz (A) / 1e6) ;
+            M = spones (sprand (n, n, dm)) ;
+            Mbool = logical (M) ;
 
-        % warmup
-        C1 = M.*A ;
+            fprintf ('\n--------------------------------------\n') ;
+            fprintf ('dc: %g, da: %g, dm: %g ', dc, da, dm) ;
+            fprintf ('\n') ;
 
-        tic
-        C1 = M.*A ;
-        tm = toc ;
+            fprintf ('nnz(M): %g million, ',  nnz (M) / 1e6) ;
+            fprintf ('nnz(A): %g million\n',  nnz (A) / 1e6) ;
 
-        t1 = 0 ;
+            % warmup
+            % C1 = C0 ;
+            % C1 (Mbool) = A (Mbool) ;
 
-        for nthreads = [1 2 4 8 16 20 32 40 64]
-            if (nthreads > 2*ncores)
-                break ;
+            tic
+            C1 = C0 ;
+            C1 (Mbool) = A (Mbool) ;
+            tm = toc ;
+
+            t1 = 0 ;
+
+            for nthreads = [1 2 4 8 16 20 32 40 64]
+                if (nthreads > 2*ncores)
+                    break ;
+                end
+                nthreads_set (nthreads) ;
+
+                if (nthreads > 1 & t1 < 0.1)
+                    continue
+                end
+
+                % method (13d): better when nnz (A) < nnz (M)
+                GB_mex_hack (1) ;
+                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
+                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
+                t_13d = gbresults ;
+                assert (isequal (C1, C2.matrix)) ;
+
+                % method (15): better when nnz (M) < nnz (A)
+                GB_mex_hack (-1) ;
+                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
+                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
+                t_15 = gbresults ;
+                assert (isequal (C1, C2.matrix)) ;
+
+                % default: if (nnz(A)<nnz(M)) method13d, else method15
+                % this is the best rule
+                GB_mex_hack (0) ;
+                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
+                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
+                tg = gbresults ;
+                assert (isequal (C1, C2.matrix)) ;
+                if (nthreads == 1)
+                    t1 = tg ;
+                end
+
+                fprintf (...
+                    '%3d : %8.4f GB: %8.4f %8.4f %8.4f', ...
+                    nthreads, tm, t_13d, t_15, tg) ;
+
+                fprintf (' speedup: %8.2f  rel: [%8.2f] %8.2f\n', ....
+                    t1/tg, max(t_13d,t_15)/tg, tm / tg) ;
+
             end
-            nthreads_set (nthreads) ;
-
-            if (nthreads > 1 & t1 < 0.1)
-                continue
-            end
-
-            % warmup: default method (13d)
-            C2 = GB_mex_assign (S, M, [ ], A, I, I) ;
-            C2 = GB_mex_assign (S, M, [ ], A, I, I) ;
-            tg = gbresults ;
-            assert (isequal (C1, C2.matrix)) ;
-            if (nthreads == 1)
-                t1 = tg ;
-            end
-
-%           % nondefault method (15)
-%           GB_mex_hack (-1) ;
-%           C2 = GB_mex_assign (S, M, [ ], A, I, I) ;
-%           C2 = GB_mex_assign (S, M, [ ], A, I, I) ;
-%           GB_mex_hack (0) ;
-%           tg2 = gbresults ;
-            tg2 = inf ;
-
-            assert (isequal (C1, C2.matrix)) ;
-
-            % ewise
-            C2 = GB_mex_eWiseMult_Matrix (S, [ ], [ ], 'times', M, A) ;
-            C2 = GB_mex_eWiseMult_Matrix (S, [ ], [ ], 'times', M, A) ;
-            tg3 = gbresults ;
-
-            assert (isequal (C1, C2.matrix)) ;
-
-            fprintf (...
-                '%3d : %8.4f GB: %8.4f %8.4f %8.4f rel %8.2f %8.2f %8.2f\n', ...
-                nthreads, tm, tg, tg2, tg3, ...
-                    tm / tg, tm/tg2, tm/tg3) ;
-
         end
-
     end
 end
-end
+

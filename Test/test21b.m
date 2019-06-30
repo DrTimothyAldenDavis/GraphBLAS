@@ -201,6 +201,7 @@ for k1 = k1test
                                         GB_spec_compare (C0, C1) ;
 
                                         % C(I,J)<Mask> = accum (C (I,J),A)
+save gunk C Mask accum A I J dn scalar I0 J0
                                         C0 = GB_spec_assign (C, Mask, accum, A, I, J, dn, scalar);
                                         C1 = GB_mex_assign  (C, Mask, accum, A, I0, J0, dn);
                                         GB_spec_compare (C0, C1) ;

@@ -7,8 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// This macros are used to simplify the construction of the GB_subassign
-// methods.
+// macros for the construction of the GB_subassign methods
 
 #include "GB_Pending.h"
 
@@ -44,7 +43,7 @@
     const int64_t cvdim = C->vdim ;                                         \
     const bool C_is_hyper = C->is_hyper && (Cnvec < cvdim) ;                \
     int64_t nzombies = C->nzombies ;                                        \
-    const int64_t zorig = nzombies ;                                        \
+    int64_t zorig = nzombies ;                                              \
     const bool is_matrix = (cvdim > 1) ;
 
 //------------------------------------------------------------------------------
@@ -89,7 +88,9 @@
     const int64_t *restrict Ah = A->h ;                                     \
     const int64_t *restrict Ai = A->i ;                                     \
     const GB_void *restrict Ax = A->x ;                                     \
-    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
+    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
+    const int64_t Anvec = A->nvec ;                                         \
+    const bool A_is_hyper = A->is_hyper ;
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -1564,6 +1565,27 @@ GrB_Info GB_subassign_method14c
 ) ;
 
 //------------------------------------------------------------------------------
+// GB_subassign_method15: C(I,J)<M> = A ; no S
+//------------------------------------------------------------------------------
+
+GrB_Info GB_subassign_method15
+(
+    GrB_Matrix C,
+    // input:
+    const GrB_Index *I,
+    const int64_t nI,
+    const int Ikind,
+    const int64_t Icolon [3],
+    const GrB_Index *J,
+    const int64_t nJ,
+    const int Jkind,
+    const int64_t Jcolon [3],
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
 // GB_EMPTY_TASKLIST: declare an empty TaskList
 //------------------------------------------------------------------------------
 
@@ -1775,7 +1797,6 @@ GrB_Info GB_subassign_IxJ_slice
     GB_VECTOR_LOOKUP (p ## X, p ## X ## _end, X, j) ;                       \
     if (iA_start != 0)                                                      \
     {                                                                       \
-        /* TODO: do this in IxJ_slice */                                    \
         int64_t pright = p ## X ## _end - 1 ;                               \
         bool found ;                                                        \
         GB_BINARY_SPLIT_SEARCH (iA_start, X ## i, p ## X, pright, found) ;  \
@@ -1820,6 +1841,7 @@ GrB_Info GB_subassign_IxJ_slice
 
 #define GB_PENDING_CUMSUM                                                   \
     C->nzombies = nzombies ;                                                \
+    zorig = nzombies ;                                                      \
     GB_cumsum (Npending, ntasks, NULL, 1) ;                                 \
     int64_t nnew = Npending [ntasks] ;                                      \
     if (nnew == 0)                                                          \

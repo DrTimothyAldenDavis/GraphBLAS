@@ -1,6 +1,8 @@
 function test116
 %TEST116 performance tests for GrB_assign
 
+fprintf ('test116:---------------- C(I,J)=A and C=A(I,J) performance\n') ;
+
 million = 1e6 ;
 
 rng ('default') ;
@@ -39,7 +41,6 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
 
     % warmup
     C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
-
     C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
     tg = gbresults ;
 

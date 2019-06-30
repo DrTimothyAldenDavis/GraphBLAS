@@ -14,7 +14,7 @@
 // C_replace:   false
 // accum:       NULL
 // A:           matrix
-// S:           constructed
+// S:           constructed (see also Method 15)
 
 #define GB_FREE_WORK GB_FREE_2_SLICE
 
@@ -53,12 +53,15 @@ GrB_Info GB_subassign_method13d
     // Method 13d: C(I,J)<M> = A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: TODO SUBOPTIMAL.  C(I,J)<M> = A ; using S: do only M.*(A+S)
+    // Time: O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector
+    // of M, not including the time to construct S=C(I,J).  If A, S, and M
+    // are similar in sparsity, then this method can perform well.  If M is
+    // very sparse, Method 15 should be used instead.
 
-    // Method 13b and 13d are very similar (but 13d is suboptimal)
+    // Method 13b and 13d are very similar
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abcd])
+    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_2_SLICE (A, S) ;
