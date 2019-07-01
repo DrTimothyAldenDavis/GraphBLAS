@@ -22,6 +22,10 @@ bool GB_subassign_select            // true if S should be constructed
 )
 {
 
+    return (true) ;
+
+    #if 0
+
     bool S_Extraction = true ;
 
     int64_t cnz_to_scan = nzMask ;
@@ -33,7 +37,6 @@ bool GB_subassign_select            // true if S should be constructed
     const bool C_is_hyper = C->is_hyper ;
     const int64_t cvdim = C->vdim ;
 
-    // TODO do this in parallel
     for (int64_t j = 0 ; S_Extraction && j < nJ ; j++)
     {
         // jC = J [j] ; or J is a colon expression
@@ -63,5 +66,7 @@ bool GB_subassign_select            // true if S should be constructed
     }
 
     return (S_Extraction) ;
+    #endif
+
 }
 

@@ -570,6 +570,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // Before allocating S, see if there is a faster method
     // that does not require S to be created.
 
+    // TODO remove hack
     int64_t hack = GB_Global_hack_get ( ) ;
 
     bool S_Extraction = true ;
@@ -623,7 +624,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             else
             {
                 // method 13d is faster when nnz (A) < nnz (M)
-                // TODO: hack not needed; rule is simple and accurate
                 S_Extraction = (anz < mnz) ;
             }
         }
@@ -640,25 +640,24 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // use method 3, 4, 5, or 6a (no S constructed)
             S_Extraction = false ;
         }
-        else if (hack > 0)
+        else // if (hack > 0)
         {
-            // use method 8, 10, 12b, 14b (construct S first)
+            // default: use method 8, 10, 12b, 14b (construct S first)
             S_Extraction = true ;
         }
+
+        #if 0
         else if (nI == 1 || nJ == 1 || cnz == 0)
         { 
-            // No need to form S if it has just a single row or column.  If C
-            // is empty so is S, so don't bother computing it.  Do not use
-            // S; use Methods 3, 4, 5, or 6a instead.
             S_Extraction = false ;
         }
         else if (anz_ok && cnz + mnz > anz)
         {
-            // TODO benchmark the selection of (3,4,5,6a) vs (8,10,12b,14b)
-            // If C and M are very dense, then do not extract S
             S_Extraction = GB_subassign_select (C, mnz, anz,
                 J, nJ, Jkind, Jcolon, Context)  ;
         }
+        #endif
+
     }
 
     //--------------------------------------------------------------------------
@@ -765,9 +764,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         //  -   -   -   -   -   S        7: C(I,J) = x, with S
         //  -   -   -   -   A   S        9: C(I,J) = A, with S
-        //  -   -   -   +   -   -        3: C(I,J) += x, no S
         //  -   -   -   +   -   S        8: C(I,J) += x, with S
-        //  -   -   -   +   A   -        5: C(I,J) += A, no S
         //  -   -   -   +   A   S       10: C(I,J) += A, with S
 
         //  -   -   r                   C_replace true on input but now false:
@@ -790,7 +787,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         //  M   c   -   -   -   S      11b: C(I,J)<!M> = x, with S
         //  M   c   -   -   A   S      13b: C(I,J)<!M> = A, with S
-        //  M   c   -   +   -   -        4: C(I,J)<!M> += x, no S
         //  M   c   -   +   -   S      12b: C(I,J)<!M> += x, with S
         //  M   c   -   +   A   -       6a: C(I,J)<!M> += A, no S
         //  M   c   -   +   A   S      14b: C(I,J)<!M> += A, with S
@@ -800,28 +796,10 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   +   -   S      12a: C(I,J)<!M,repl> += x, with S
         //  M   c   r   +   A   S      14a: C(I,J)<!M,repl> += A, with S
 
-    // The following cases (on input) can be handled by two methods: with or
-    // without S.  For the first four cases, C_replace is false and accum is
-    // present.  The choice between these pairs of methods is made via a
-    // heuristic that attempts to pick the fastest method of the two options.
+    // FUTURE:: create a set of methods that operate on a dense matrix C.
+    // The matrix S is not needed.
 
-        // Methods 3 and 8:
-        //  -   -   -   +   -   -        3: C(I,J) += x
-        //  -   -   -   +   -   S        8: C(I,J) += x, with S
-
-        // Methods 5 and 10:
-        //  -   -   -   +   A   -        5: C(I,J) += A
-        //  -   -   -   +   A   S       10: C(I,J) += A, with S
-
-        // Methods 4 and 12b:
-        //  M   c   -   +   -   -        4: C(I,J)<!M> += x
-        //  M   c   -   +   -   S      12b: C(I,J)<!M> += x, with S
-
-        // Methods 6a and 14b:
-        //  M   c   -   +   A   -       6a: C(I,J)<!M> += A
-        //  M   c   -   +   A   S      14b: C(I,J)<!M> += A, with S
-
-        // Methods 15 and 13d:
+        // Methods 15 and 13d: use 13d if nnz(A) < nnz(M)
         //  M   -   -   -   A   -       15: C(I,J)<M> = A
         //  M   -   -   -   A   S      13d: C(I,J)<M> = A, with S
 
@@ -959,6 +937,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // of C outside of the pattern of A.  They handle any case of the mask:
         // present or NULL, and complemented or not complemented.  A can be a
         // matrix or a scalar.  No entries in C are deleted.
+
+        // TODO: delete these methods
 
         ASSERT (accum != NULL) ;
         ASSERT (!C_replace) ;

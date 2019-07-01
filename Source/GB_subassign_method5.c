@@ -26,6 +26,8 @@
 // search C to construct S.  If nnz(A) << nnz (S), then Method 10 is costly,
 // and Method 5 is used instead.
 
+// TODO method 5 is slower than method 10.  delete this
+
 #include "GB_subassign.h"
 
 GrB_Info GB_subassign_method5

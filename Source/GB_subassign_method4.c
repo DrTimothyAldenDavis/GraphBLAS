@@ -18,6 +18,8 @@
 
 // Compare with Method 12b, which computes the same thing, but creates S first.
 
+// TODO: method 12b is always fastest. delete this method
+
 #include "GB_subassign.h"
 
 GrB_Info GB_subassign_method4

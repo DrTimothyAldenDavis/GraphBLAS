@@ -146,8 +146,6 @@ GrB_Info GB_subassign_method15
                         // ----[C . 1] or [X . 1]-------------------------------
                         // [C . 1]: action: ( delete ): becomes zombie
                         // [X . 1]: action: ( X ): still zombie
-//                      printf ("delete ("GBd":"GBd") = ("GBd":"GBd")\n",
-//                          iC, jC, iA, j) ;
                         GB_DELETE_ENTRY ;
                     }
                     else if (!cij_found && aij_found)
@@ -155,8 +153,6 @@ GrB_Info GB_subassign_method15
                         // C (iC,jC) is not present, A (i,j) is present
                         // ----[. A 1]------------------------------------------
                         // [. A 1]: action: ( insert )
-//                      printf (GBd" pending ("GBd":"GBd") = ("GBd":"GBd")\n",
-//                          task_pending, iC, jC, iA, j) ;
                         task_pending++ ;
                     }
                     else if (cij_found && aij_found)
@@ -164,8 +160,6 @@ GrB_Info GB_subassign_method15
                         // ----[C A 1] or [X A 1]-------------------------------
                         // [C A 1]: action: ( =A ): A to C no accum
                         // [X A 1]: action: ( undelete ): zombie lives
-//                      printf ("copy ("GBd":"GBd") = ("GBd":"GBd")\n",
-//                          iC, jC, iA, j) ;
                         GB_noaccum_C_A_1_matrix ;
                     }
                 }
@@ -178,8 +172,6 @@ GrB_Info GB_subassign_method15
     //--------------------------------------------------------------------------
     // phase 2: insert pending tuples
     //--------------------------------------------------------------------------
-
-//    printf ("\n") ;
 
     GB_PENDING_CUMSUM ;
 
@@ -262,8 +254,6 @@ GrB_Info GB_subassign_method15
                         // C (iC,jC) is not present, A (i,j) is present
                         // ----[. A 1]--------------------------------------
                         // [. A 1]: action: ( insert )
-//                      printf (GBd" pending ("GBd":"GBd") = ("GBd":"GBd
-//                          ")\n", task_pending, iC, jC, iA, j) ;
                         GB_PENDING_INSERT (Ax +(pA*asize)) ;
                     }
                 }

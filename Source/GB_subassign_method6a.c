@@ -18,6 +18,8 @@
 
 // Compare with Method 14b, which computes the same thing, but creates S first.
 
+// TODO: delete this method
+
 #include "GB_subassign.h"
 
 GrB_Info GB_subassign_method6a
