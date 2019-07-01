@@ -17,7 +17,11 @@ ncores = feature ('numcores') ;
 
 for dc = [ 0 1e-6 1e-5 1e-4 ]
 
+    C0 = sprandn (n, n, dc) ;
+
     for da = [ 0 1e-6 1e-5 1e-4 1e-3 ]
+    
+        A = sprandn (k, k, da) ;
 
         % warmup
         C1 = C0 ;
