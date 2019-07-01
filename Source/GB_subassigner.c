@@ -681,16 +681,16 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // extract symbolic structure S=C(I,J)
         //----------------------------------------------------------------------
 
-        // TODO: the properties of I and J are already known, and thus do not
-        // need to be recomputed by GB_subref.
+        // FUTURE:: the properties of I and J are already known, and thus do
+        // not need to be recomputed by GB_subref.
 
         // S and C have the same CSR/CSC format.  S is always returned sorted,
         // in the same hypersparse form as C (unless S is empty, in which case
         // it is always returned as hypersparse). This also checks I and J.
 
-// double t = omp_get_wtime ( ) ;
+        // double t = omp_get_wtime ( ) ;
         GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, true, Context));
-// t = omp_get_wtime ( ) - t ; printf ("\nsubref %g sec\n", t) ;
+        // t = omp_get_wtime ( ) - t ; printf ("\nsubref %g sec\n", t) ;
 
         ASSERT_OK (GB_check (C, "C for subref extraction", GB0)) ;
         ASSERT_OK (GB_check (S, "S for subref extraction", GB0)) ;
@@ -758,6 +758,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // If M is not present, Mask_comp true, C_replace true: use method0
     // If M is not present, Mask_comp false:  C_replace is now false.
 
+    // TODO: renumber the methods: 01, 02, ...
+
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
         //  =====================       ==============
@@ -768,7 +770,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  -   -   -   +   A   S       10: C(I,J) += A, with S
 
         //  -   -   r                   C_replace true on input but now false:
-        //                              use methods 7, 9, 3, 8, 5, 10 above.
+        //                              use methods 7, 9, 8, 10 above.
 
         //  -   c   -                   no work to do; already returned
 
@@ -796,14 +798,16 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   +   -   S      12a: C(I,J)<!M,repl> += x, with S
         //  M   c   r   +   A   S      14a: C(I,J)<!M,repl> += A, with S
 
-    // FUTURE:: create a set of methods that operate on a dense matrix C.
-    // The matrix S is not needed.
+    // For the single case C(I,J)<M>=A, two methods can be used.
 
         // Methods 15 and 13d: use 13d if nnz(A) < nnz(M)
         //  M   -   -   -   A   -       15: C(I,J)<M> = A
         //  M   -   -   -   A   S      13d: C(I,J)<M> = A, with S
 
-// double t = omp_get_wtime ( ) ;
+    // FUTURE:: create a set of methods that operate on a dense matrix C.
+    // The matrix S is not needed.
+
+    // double t = omp_get_wtime ( ) ;
 
     if (empty_mask)
     { 
@@ -1225,7 +1229,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
     }
 
-// t = omp_get_wtime ( ) - t ; printf ("method %g sec\n", t) ;
+    // t = omp_get_wtime ( ) - t ; printf ("method %g sec\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace
