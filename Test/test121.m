@@ -44,8 +44,6 @@ for dc = [ 0 1e-6 1e-5 1e-4 ]
                 continue ;
             end
 
-            % default
-            GB_mex_hack (0) ;
             C2 = GB_mex_assign (C0, [ ], 'plus', A, I0, I0) ;
             C2 = GB_mex_assign (C0, [ ], 'plus', A, I0, I0) ;
             tg = gbresults ;
@@ -54,32 +52,8 @@ for dc = [ 0 1e-6 1e-5 1e-4 ]
                 t1 = tg ;
             end
 
-            % method5, sometimes 10% faster for very very sparse case
-            GB_mex_hack (-1) ;
-            C2 = GB_mex_assign (C0, [ ], 'plus', A, I0, I0) ;
-            C2 = GB_mex_assign (C0, [ ], 'plus', A, I0, I0) ;
-            t_5 = gbresults ;
-            assert (isequal (C1, C2.matrix)) ;
-            if (nthreads == 1)
-                t1 = t_5 ;
-            end
-
-            % method10 (typically tied, fastest, or almost so)
-            GB_mex_hack (1) ;
-            C2 = GB_mex_assign (C0, [ ], 'plus', A, I0, I0) ;
-            C2 = GB_mex_assign (C0, [ ], 'plus', A, I0, I0) ;
-            t_10 = gbresults ;
-            assert (isequal (C1, C2.matrix)) ;
-            if (nthreads == 1)
-                t1 = t_10 ;
-            end
-
-            GB_mex_hack (0) ;
-
-            fprintf ('%3d : MATLAB: %10.4f GB: %10.4f %10.4f %10.4f', ...
-                nthreads, tm, tg, t_5, t_10) ;
-
-            fprintf (' [ %10.4f ] speedup %10.4f\n', t_5/t_10, tm / tg) ;
+            fprintf ('%3d : MATLAB: %10.4f GB: %10.4f', nthreads, tm, tg) ;
+            fprintf ('  speedup %10.4f\n', tm / tg) ;
         end
     end
 end

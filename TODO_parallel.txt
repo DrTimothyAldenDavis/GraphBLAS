@@ -49,14 +49,11 @@ GB_extract_vector_list
 GB_wait
 GB_ijsort
 GB_assign_zombie*
+GB_subassign_*
 
 ----------------------------------------------------------------------
 mostly done:
 ----------------------------------------------------------------------
-
-GB_subassign*: mostly done, except three methods are suboptimal.
-
-GB_subassign_select: one loop not parallel
 
 GB_AxB_parallel: much is done: mxm nicely parallel for large matrices,
     and decent parallelism for mxv when using the dot product.  This is where

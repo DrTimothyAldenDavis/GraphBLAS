@@ -55,23 +55,7 @@ for dc = [0 1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
                     continue
                 end
 
-                % method (13d): better when nnz (A) < nnz (M)
-                GB_mex_hack (1) ;
-                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
-                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
-                t_13d = gbresults ;
-                assert (isequal (C1, C2.matrix)) ;
-
-                % method (15): better when nnz (M) < nnz (A)
-                GB_mex_hack (-1) ;
-                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
-                C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
-                t_15 = gbresults ;
-                assert (isequal (C1, C2.matrix)) ;
-
-                % default: if (nnz(A)<nnz(M)) method13d, else method15
-                % this is the best rule
-                GB_mex_hack (0) ;
+                % if (nnz(A)<nnz(M)) method13d, else method15
                 C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
                 C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
                 tg = gbresults ;
@@ -80,12 +64,8 @@ for dc = [0 1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
                     t1 = tg ;
                 end
 
-                fprintf (...
-                    '%3d : %8.4f GB: %8.4f %8.4f %8.4f', ...
-                    nthreads, tm, t_13d, t_15, tg) ;
-
-                fprintf (' speedup: %8.2f  rel: [%8.2f] %8.2f\n', ....
-                    t1/tg, max(t_13d,t_15)/tg, tm / tg) ;
+                fprintf ('%3d : %8.4f GB: %8.4f', nthreads, tm, tg) ;
+                fprintf (' speedup: %8.2f  %8.2f\n', t1/tg, tm / tg) ;
 
             end
         end

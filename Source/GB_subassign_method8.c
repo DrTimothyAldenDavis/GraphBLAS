@@ -14,9 +14,7 @@
 // C_replace:   false
 // accum:       present
 // A:           scalar
-// S:           constructed (see also Method 3)
-
-// Compare with Method 3, which computes the same thing without creating S.
+// S:           constructed
 
 #include "GB_subassign.h"
 
@@ -55,19 +53,15 @@ GrB_Info GB_subassign_method8
     // Time: Optimal; must visit all IxJ, so Omega(|I|*|J|) is required.
 
     // Entries in S are found and the corresponding entry in C replaced with
-    // the scalar.  The traversal of S is identical to the traversal of M in
-    // Method 4.
+    // the scalar.
 
     // Method 7 and Method 8 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 3, 4, 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_IXJ_SLICE (NULL) ;
-
-    // Each task must also look up its part of S, but this does not affect
-    // the parallel tasks.  Total work is about the same as Method 3.
+    GB_SUBASSIGN_IXJ_SLICE ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

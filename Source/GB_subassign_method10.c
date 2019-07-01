@@ -14,9 +14,7 @@
 // C_replace:   false
 // accum:       present
 // A:           matrix
-// S:           constructed (see also Method 5)
-
-// Compare with Method 5, which computes the same thing without creating S.
+// S:           constructed
 
 #define GB_FREE_WORK GB_FREE_2_SLICE
 
@@ -57,8 +55,7 @@ GrB_Info GB_subassign_method10
     // Time: Close to Optimal.  Every entry in A must be visited, and the
     // corresponding entry in S must then be found.  Time for this phase is
     // Omega(nnz(A)), but S has already been constructed, in Omega(nnz(S))
-    // time.  If nnz(S) is very high, then Method 5 is used instead.  As a
-    // result, this method simply traverses all of A+S (like GB_add for
+    // time.  This method simply traverses all of A+S (like GB_add for
     // computing A+S), the same as Method 9.  Time taken is O(nnz(A)+nnz(S)).
     // The only difference is that the traversal of A+S can terminate if A is
     // exhausted.  Entries in S but not A do not actually require any work

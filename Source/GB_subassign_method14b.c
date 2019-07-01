@@ -14,9 +14,7 @@
 // C_replace:   false
 // accum:       present
 // A:           matrix
-// S:           constructed (see also Method 6a)
-
-// Compare with Method 6a, which computes the same thing without creating S.
+// S:           constructed
 
 #define GB_FREE_WORK GB_FREE_2_SLICE
 

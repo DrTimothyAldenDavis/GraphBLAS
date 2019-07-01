@@ -14,9 +14,7 @@
 // C_replace:   false
 // accum:       present
 // A:           scalar
-// S:           constructed (see also Method 4)
-
-// Compare with Method 4, which computes the same thing without creating S.
+// S:           constructed
 
 #include "GB_subassign.h"
 
@@ -61,17 +59,10 @@ GrB_Info GB_subassign_method12b
     // Method 12a and Method 12b are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 3, 4, 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
     //--------------------------------------------------------------------------
 
-    // The only difference with Method 3 is that the pre-analysis needed not
-    // slice the vectors of C for fine tasks.  Each task looks up its own part
-    // of S and M, but this does not affect the construction of parallel tasks.
-
-    GB_SUBASSIGN_IXJ_SLICE (NULL) ;
-
-    // Each task must also look up its part of S and M, but this does not
-    // affect the parallel tasks.  Total work is about the same as Method 3.
+    GB_SUBASSIGN_IXJ_SLICE ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

@@ -59,13 +59,10 @@ GrB_Info GB_subassign_method7
     // Method 7 and Method 8 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 3, 4, 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_IXJ_SLICE (NULL) ;
-
-    // Each task must also look up its part of S, but this does not affect
-    // the parallel tasks.  Total work is about the same as Method 3.
+    GB_SUBASSIGN_IXJ_SLICE ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

@@ -54,10 +54,10 @@ GrB_Info GB_subassign_method15
     // (where the entries are true) and the matrix addition C(I,J)+A must be
     // examined.  This method scans M, and searches for entries in A and C(I,J)
     // using two binary searches.  If M is very dense, this method can be
-    // slower than Method 13d.
+    // slower than Method 13d.  This method is selected if nnz (A) >= nnz (M).
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into coarse/fine tasks (Method 1, 2, 5, 6a, 15)
+    // Parallel: slice M into coarse/fine tasks (Method 1, 2, 15)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_1_SLICE (M) ;

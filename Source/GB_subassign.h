@@ -1634,13 +1634,13 @@ GrB_Info GB_subassign_method15
 }
 
 //------------------------------------------------------------------------------
-// GB_SUBASSIGN_IXJ_SLICE: slice IxJ (Methods 3, 4, 7, 8, 11a, 11b, 12a, 12b)
+// GB_SUBASSIGN_IXJ_SLICE: slice IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
 //------------------------------------------------------------------------------
 
-#define GB_SUBASSIGN_IXJ_SLICE(C)                                           \
+#define GB_SUBASSIGN_IXJ_SLICE                                              \
     GB_EMPTY_TASKLIST ;                                                     \
     GB_OK (GB_subassign_IxJ_slice (&TaskList, &max_ntasks,                  \
-        &ntasks, &nthreads, C, I, nI, Ikind, Icolon,                        \
+        &ntasks, &nthreads, I, nI, Ikind, Icolon,                           \
         J, nJ, Jkind, Jcolon, Context)) ;                                   \
     int64_t Npending [ntasks+1] ;
 
@@ -1685,7 +1685,6 @@ GrB_Info GB_subassign_IxJ_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     // input:
-    const GrB_Matrix C,             // output matrix C (method 3 and 4 only)
     const GrB_Index *I,
     const int64_t nI,
     const int Ikind,
