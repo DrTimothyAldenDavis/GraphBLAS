@@ -76,3 +76,5 @@ TODO    Demo/tri_demo.c: use all threads in initialization phase
 TODO    user guide: describe all changes, add new descriptors and
         global settings
 
+TODO    Tcov statement coverage
+
