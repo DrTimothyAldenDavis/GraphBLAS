@@ -1586,6 +1586,7 @@ void GB_slice_vector
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
     const int64_t *restrict Ai,     // indices of A
+    const int64_t A_hfirst,         // if Ai is an implicit hyperlist
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
     const int64_t *restrict Bi,     // indices of B
@@ -1606,11 +1607,10 @@ void GB_task_cumsum
 GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    int64_t *p_max_Cnvec,       // size of the 3 output arrays:
-    int64_t **Ch_handle,        // Ch: output of size max_Cnvec, or NULL
-    int64_t **C_to_M_handle,    // C_to_M: output of size max_Cnvec, or NULL
-    int64_t **C_to_A_handle,    // C_to_A: output of size max_Cnvec, or NULL
-    int64_t **C_to_B_handle,    // C_to_B: output of size max_Cnvec, or NULL
+    int64_t **Ch_handle,        // Ch: output of size Cnvec, or NULL
+    int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
+    int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
+    int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
     bool *p_Ch_is_Mh,           // if true, then Ch == Mh.  This option is for
                                 // GB_add only, not GB_masker.
     const GrB_Matrix M,         // optional mask, may be NULL; not complemented
@@ -1657,7 +1657,6 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     const int nthreads,                         // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t max_Cnvec,
     const int64_t *restrict Ch,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -1801,7 +1800,6 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     const int nthreads,                         // # of threads to use
     // analysis from phase0:
     const int64_t Rnvec,
-    const int64_t max_Rnvec,
     const int64_t *restrict Rh,
     const int64_t *restrict R_to_M,
     const int64_t *restrict R_to_C,

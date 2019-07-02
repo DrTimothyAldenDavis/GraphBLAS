@@ -602,7 +602,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         else
         {
-            // C(I,J)<M> = A can use method 06n (no S) or method o6s (with S).
+            // C(I,J)<M> = A ;  use 06s (with S) or 06n (without S)
             // method 06s (with S) is faster when nnz (A) < nnz (M)
             S_Extraction = (anz < GB_NNZ (M)) ;
         }

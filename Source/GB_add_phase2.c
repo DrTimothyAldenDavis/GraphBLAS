@@ -45,7 +45,6 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     const int nthreads,                         // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t max_Cnvec,
     const int64_t *restrict Ch,
     const int64_t *restrict C_to_M,
     const int64_t *restrict C_to_A,
@@ -111,7 +110,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     { 
         // out of memory; caller must free C_to_M, C_to_A, C_to_B
         GB_FREE_MEMORY (Cp, GB_IMAX (2, Cnvec+1), sizeof (int64_t)) ;
-        GB_FREE_MEMORY (Ch, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Ch, Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 

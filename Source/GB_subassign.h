@@ -1518,12 +1518,12 @@ GrB_Info GB_subassign_20
 
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
     GB_EMPTY_TASKLIST ;                                                     \
-    int64_t Znvec, max_Znvec ;                                              \
+    int64_t Znvec ;                                                         \
     int64_t *restrict Zh = NULL ;                                           \
     int64_t *restrict Z_to_X = NULL ;                                       \
     int64_t *restrict Z_to_S = NULL ;                                       \
     GB_OK (GB_add_phase0 (                                                  \
-        &Znvec, &max_Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL,              \
+        &Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL,                          \
         NULL, X, S, Context)) ;                                             \
     GB_OK (GB_ewise_slice (                                                 \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
@@ -1533,9 +1533,9 @@ GrB_Info GB_subassign_20
 
 #define GB_FREE_TWO_SLICE                                                   \
 {                                                                           \
-    GB_FREE_MEMORY (Zh,     max_Znvec, sizeof (int64_t)) ;                  \
-    GB_FREE_MEMORY (Z_to_X, max_Znvec, sizeof (int64_t)) ;                  \
-    GB_FREE_MEMORY (Z_to_S, max_Znvec, sizeof (int64_t)) ;                  \
+    GB_FREE_MEMORY (Zh,     Znvec, sizeof (int64_t)) ;                      \
+    GB_FREE_MEMORY (Z_to_X, Znvec, sizeof (int64_t)) ;                      \
+    GB_FREE_MEMORY (Z_to_S, Znvec, sizeof (int64_t)) ;                      \
 }
 
 //------------------------------------------------------------------------------

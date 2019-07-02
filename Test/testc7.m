@@ -30,11 +30,9 @@ for m = [1 5 10 50]
                 I0 = uint64 (I-1) ;
                 J0 = uint64 (J-1) ;
 
-here = 1 ; save gunk M C C1 I J A I0 J0 here
                 C2 = GB_mex_subassign (C, [ ], [ ], A, I0, J0, []) ;
                 assert (isequal (C1, C2.matrix)) ;
 
-here = 2 ; save gunk M C C1 I J A I0 J0 here
                 [C3,c1] = GB_mex_subassign (C, M, [ ], A, I0, J0, [], 'plus') ;
                 cin = complex (0,0) ;
                 c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;
@@ -43,7 +41,6 @@ here = 2 ; save gunk M C C1 I J A I0 J0 here
                 C1 = C ;
                 C1 (I,J) = C1 (I,J) + A ;
 
-here = 3 ; save gunk M C C1 I J A I0 J0 tol here
                 C2 = GB_mex_subassign (C, [ ], 'plus', A, I0, J0, []) ;
                 assert (norm (C1 - C2.matrix, 1) <= tol * (norm (C1,1)+1)) ;
                 assert (isequal (C1, C2.matrix)) ;
@@ -56,13 +53,11 @@ here = 3 ; save gunk M C C1 I J A I0 J0 tol here
         M = GB_mex_random (m, n, 4*(ni+nj), 0, seed) ; seed = seed + 1 ;
         A = GB_mex_random (m, n, m+n, 1, seed) ;       seed = seed + 1 ;
 
-here = 4 ; save gunk C M A dclear
         [C3,c1] = GB_mex_subassign (C, M, [ ], A, [ ], [ ], dclear, 'plus') ;
         cin = complex (0,0) ;
         c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;
         assert (abs (c1-c2) <= tol * (abs (c1) + 1)) ;
 
-here = 5 ; save gunk C M A dclear
         [C3,c1] = GB_mex_subassign (C, [ ], [ ], A, [ ], [ ], dclear, 'plus') ;
         cin = complex (0,0) ;
         c2 = GB_mex_reduce_to_scalar (cin, '', 'plus', C3) ;

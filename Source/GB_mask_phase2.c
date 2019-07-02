@@ -37,7 +37,6 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     const int nthreads,                         // # of threads to use
     // analysis from phase0:
     const int64_t Rnvec,
-    const int64_t max_Rnvec,
     const int64_t *restrict Rh,
     const int64_t *restrict R_to_M,
     const int64_t *restrict R_to_C,
@@ -85,7 +84,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     { 
         // out of memory; caller must free R_to_M, R_to_C, R_to_Z
         GB_FREE_MEMORY (Rp, GB_IMAX (2, Rnvec+1), sizeof (int64_t)) ;
-        GB_FREE_MEMORY (Rh, max_Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Rh, Rnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -131,7 +130,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
         }
         // transplant the new hyperlist into R
         GB_FREE_MEMORY (R->p, GB_IMAX (2, Rnvec+1), sizeof (int64_t)) ;
-        GB_FREE_MEMORY (R->h, max_Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R->h, Rnvec, sizeof (int64_t)) ;
         R->p = Rp_new ;
         R->h = Rh_new ;
         R->nvec = nvec_new ;

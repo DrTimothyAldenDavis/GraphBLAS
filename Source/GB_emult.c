@@ -99,7 +99,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 
     if (info != GrB_SUCCESS)
     { 
-        // out of memory; free everything allocated by GB_add_phase0
+        // out of memory; free everything allocated by GB_emult_phase0
         GB_FREE_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
         GB_FREE_MEMORY (C_to_A, Cnvec, sizeof (int64_t)) ;
         GB_FREE_MEMORY (C_to_B, Cnvec, sizeof (int64_t)) ;

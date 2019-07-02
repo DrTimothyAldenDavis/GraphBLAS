@@ -79,7 +79,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     //--------------------------------------------------------------------------
 
     GrB_Matrix R = NULL ;
-    int64_t Rnvec, max_Rnvec, Rnvec_nonempty ;
+    int64_t Rnvec, Rnvec_nonempty ;
     int64_t *Rp = NULL, *Rh = NULL ;
     int64_t *R_to_M = NULL, *R_to_C = NULL, *R_to_Z = NULL ;
     int ntasks, max_ntasks, nthreads ;
@@ -94,7 +94,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
 
     GrB_Info info = GB_add_phase0 (
         // computed by by phase0:
-        &Rnvec, &max_Rnvec, &Rh, &R_to_M, &R_to_C, &R_to_Z, NULL,
+        &Rnvec, &Rh, &R_to_M, &R_to_C, &R_to_Z, NULL,
         // original input:
         M, C, Z, Context) ;
 
@@ -119,10 +119,10 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     if (info != GrB_SUCCESS)
     { 
         // out of memory; free everything allocated by GB_add_phase0
-        GB_FREE_MEMORY (Rh,     max_Rnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (R_to_M, max_Rnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (R_to_C, max_Rnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (R_to_Z, max_Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Rh,     Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R_to_M, Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R_to_C, Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R_to_Z, Rnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -144,10 +144,10 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     { 
         // out of memory; free everything allocated by GB_add_phase0
         GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
-        GB_FREE_MEMORY (Rh,     max_Rnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (R_to_M, max_Rnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (R_to_C, max_Rnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (R_to_Z, max_Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Rh,     Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R_to_M, Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R_to_C, Rnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (R_to_Z, Rnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -166,15 +166,15 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
         // from phase0b:
         TaskList, ntasks, nthreads,
         // from phase0:
-        Rnvec, max_Rnvec, Rh, R_to_M, R_to_C, R_to_Z,
+        Rnvec, Rh, R_to_M, R_to_C, R_to_Z,
         // original input:
         M, Mask_comp, C, Z, Context) ;
 
     // free workspace
     GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
-    GB_FREE_MEMORY (R_to_M, max_Rnvec, sizeof (int64_t)) ;
-    GB_FREE_MEMORY (R_to_C, max_Rnvec, sizeof (int64_t)) ;
-    GB_FREE_MEMORY (R_to_Z, max_Rnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (R_to_M, Rnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (R_to_C, Rnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (R_to_Z, Rnvec, sizeof (int64_t)) ;
 
     if (info != GrB_SUCCESS)
     { 

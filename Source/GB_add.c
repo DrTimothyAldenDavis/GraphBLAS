@@ -75,7 +75,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     //--------------------------------------------------------------------------
 
     GrB_Matrix C = NULL ;
-    int64_t Cnvec, max_Cnvec, Cnvec_nonempty ;
+    int64_t Cnvec, Cnvec_nonempty ;
     int64_t *Cp = NULL, *Ch = NULL ;
     int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
     bool Ch_is_Mh ;
@@ -88,7 +88,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
 
     GrB_Info info = GB_add_phase0 (
         // computed by by phase0:
-        &Cnvec, &max_Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, &Ch_is_Mh,
+        &Cnvec, &Ch, &C_to_M, &C_to_A, &C_to_B, &Ch_is_Mh,
         // original input:
         M, A, B, Context) ;
 
@@ -113,10 +113,10 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     if (info != GrB_SUCCESS)
     { 
         // out of memory; free everything allocated by GB_add_phase0
-        GB_FREE_MEMORY (Ch,     max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Ch,     Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_A, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_B, Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -138,10 +138,10 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     { 
         // out of memory; free everything allocated by GB_add_phase0
         GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
-        GB_FREE_MEMORY (Ch,     max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Ch,     Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_A, Cnvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (C_to_B, Cnvec, sizeof (int64_t)) ;
         return (info) ;
     }
 
@@ -160,15 +160,15 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
         // from phase0b:
         TaskList, ntasks, nthreads,
         // from phase0:
-        Cnvec, max_Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
+        Cnvec, Ch, C_to_M, C_to_A, C_to_B, Ch_is_Mh,
         // original input:
         M, A, B, Context) ;
 
     // free workspace
     GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;
-    GB_FREE_MEMORY (C_to_M, max_Cnvec, sizeof (int64_t)) ;
-    GB_FREE_MEMORY (C_to_A, max_Cnvec, sizeof (int64_t)) ;
-    GB_FREE_MEMORY (C_to_B, max_Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_A, Cnvec, sizeof (int64_t)) ;
+    GB_FREE_MEMORY (C_to_B, Cnvec, sizeof (int64_t)) ;
 
     if (info != GrB_SUCCESS)
     { 

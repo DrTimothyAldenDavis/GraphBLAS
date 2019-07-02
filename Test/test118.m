@@ -55,7 +55,7 @@ for dc = [0 1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
                     continue
                 end
 
-                % if (nnz(A)<nnz(M)) method13d, else method15
+                % if (nnz(A)<nnz(M)) use method 06s, else method 06n
                 C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
                 C2 = GB_mex_assign (C0, M, [ ], A, I, I) ;
                 tg = gbresults ;

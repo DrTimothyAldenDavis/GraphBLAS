@@ -452,9 +452,9 @@ GrB_Info GB_ewise_slice
                     double target_work = ((nfine-tfine) * ckwork) / nfine ;
                     int64_t pM, pA, pB ;
                     GB_slice_vector (&i, &pM, &pA, &pB,
-                        pM_start, pM_end, Mi,   // Mi NULL if no mask M present
-                        pA_start, pA_end, Ai,
-                        pB_start, pB_end, Bi,
+                        pM_start, pM_end, Mi,       // Mi NULL if M not present
+                        pA_start, pA_end, Ai, 0,    // Ai always explicit list
+                        pB_start, pB_end, Bi,       // Bi always explicit list
                         vlen, target_work) ;
 
                     // prior task ends at pM-1, pA-1, and pB-1

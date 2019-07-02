@@ -479,19 +479,15 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_Pending_free.c
-\brief  GB_Pending_free: free a list of pending tuples
+/** \file GB_Pending_ensure.c
+\brief  GB_Pending_ensure: ensure the list of pending tuples is large enough 
 
 */
 
 
-/** \file GB_Pending_merge.c
-\brief  GB_Pending_merge: merge pending tuples
+/** \file GB_Pending_free.c
+\brief  GB_Pending_free: free a list of pending tuples
 
-\par
- Each GB_subassign_method* creates a set of Pending tuple objects, one per
- task.  After all tasks are finished, the pending tuples are merged into
- the single Pending object for the final matrix.
 */
 
 
@@ -739,10 +735,9 @@ constructed by dox_headers.m
  can only be sparse or hypersparse.  See GB_wait, which can pass in A as any
  of the four formats.  In this case, no mask is present.
 \par
- On output, two integers (max_Cnvec and Cnvec) a boolean (Ch_to_Mh) and up to
- 3 arrays are returned, either NULL or of size max_Cnvec.  If not NULL, only
- the first Cnvec entries in each array is used.  Let n = A-\>vdim be the
- vector dimension of A, B, M and C.
+ On output, an integer (Cnvec) a boolean (Ch_to_Mh) and up to 3 arrays are
+ returned, either NULL or of size Cnvec.  Let n = A-\>vdim be the vector
+ dimension of A, B, M and C.
 \par
       Ch:  the list of vectors to compute.  If not NULL, Ch [k] = j is the
       kth vector in C to compute, which will become the hyperlist C-\>h of C.
@@ -775,12 +770,6 @@ constructed by dox_headers.m
       kM if the kth vector, j = (Ch == NULL) ? k : Ch [k] appears in M, as j
       = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
       not hypersparse, then C_to_M is returned as NULL.
-\par
- TODO: parallel merge when A and B are hypersparse and Ch_is_Mh is false.
- takes O(A-\>nvec + B-\>nvec) time.  Use GB_slice_vector to create fine tasks
- to merge Ah and Bh.
-\par
- FUTURE:: exploit A==M, B==M, and A==B aliases
 */
 
 
@@ -1291,9 +1280,9 @@ constructed by dox_headers.m
  functions in Source/Generated.  For example, if SuiteSparse:GraphBLAS is
  integrated into an application that makes no use of the GrB_INT16 data type,
  or just occassional use where performance is not a concern, then uncomment
- the line \#define GxB_NO_INT16.  Alternatively, SuiteSparse:GraphBLAS can be
- compiled with a list of options, such as -DGxB_NO_INT16, which does the same
- thing.
+ the line \"\#define GxB_NO_INT16 1\".  Alternatively, SuiteSparse:GraphBLAS can
+ be compiled with a list of options, such as -DGxB_NO_INT16=1, which does the
+ same thing.
 \par
  GraphBLAS will still work as expected.  It will simply use a generic method
  in place of the type- or operator-specific code.  It will be slower, by
@@ -1878,30 +1867,6 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_map_pslice.c
-\brief  GB_map_pslice: find where each task starts its work in matrix C
-
-\par
- Each task t operates on C(:,kfirst:klast), where kfirst = kfirst_slice [t]
- to klast = klast_slice [t], inclusive.  The kfirst vector for task t may
- overlap with one or more tasks 0 to t-1, and the klast vector for task t may
- overlap with the vectors of tasks t+1 to ntasks-1.  If kfirst == klast, then
- this single vector may overlap any other task.  Task t contributes Wfirst
- [t] entries to C(:,kfirst), and (if kfirst \< klast) Wlast [t] entries to
- C(:,klast).  These entries are always in task order.  That is, if tasks t
- and t+1 both contribute to the same vector C(:,k), then all entries of task
- come just before all entries of task t+1.
-\par
- This function computes C_pstart_slice [0..ntasks-1].  Task t starts at its
- vector C(:,kfirst), at the position pC = C_pstart_slice [t].  It always
- starts its last vector C(:,klast) at Cp [klast], so this does not need to be
- computed.
-\par
- TODO: this is only used by GB_selector.  Paste this code there and
- remove this function.
-*/
-
-
 /** \file GB_mask.c
 \brief  GB_mask: apply a mask: C\<M\> = Z
 
@@ -2137,15 +2102,14 @@ constructed by dox_headers.m
 
 
 /** \file GB_pslice.c
-\brief  GB_pslice: partition A-\>p by \# of entries, for a parallel loop
+\brief  GB_pslice: partition Ap for a parallel loop
 
 \par
- A-\>p [0..A-\>nvec] is a monotonically increasing cumulative sum of the
- entries in each vector of A.  This function slices Ap so that each chunk has
- the same number of entries.
-\par
- TODO: pass in Ap, and anvec instead.  Then anz = Ap [anvec],
- and use this for GB_ewise_slice and GB_subref_slice. 
+ Ap [0..n] is an array with monotonically increasing entries.  This function
+ slices Ap so that each chunk has the same number of total values of its
+ entries.  Ap can be A-\>p for a matrix and then n = A-\>nvec.  Or it can be
+ the work needed for computing each vector of a matrix (see GB_ewise_slice
+ and GB_subref_slice, for example).
 */
 
 
@@ -2418,6 +2382,7 @@ constructed by dox_headers.m
       C(:,j) = A(:,j) +  B(:,j) in GB_add
       C(:,j) = A(:,j) .* B(:,j) in GB_emult
       C(:,j)\<M(:,j)\> = B(:,j) in GB_mask (A is passed in as the input C)
+      union (A-\>h, B-\>h) in GB_add_phase0.
 \par
  The vector index j is not needed here.  The vectors kA and kB are not
  required, either; just the positions where the vectors appear in A and B
@@ -2429,9 +2394,14 @@ constructed by dox_headers.m
  and Bx.  Once the work is split, pM is found for M(i:end,kM), if the mask M
  is present.
 \par
- If n = A-\>vlen = B-\>vlen, anz = nnz (A (:,kA)), and bnz = nnz (B (:,kB)),
- then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
- or at most O((log(n)^2)).
+ The lists Ai and Bi can also be any sorted integer array.  This is used by
+ GB_add_phase0 to construct the set union of A-\>h and B-\>h.  In this case,
+ pA_start and pB_start are both zero, and pA_end and pB_end are A-\>nvec and
+ B-\>nvec, respectively.  A can be a non-hypersparse slice, so that A-\>h is
+ NULL.  In this case, Ai is NULL, and represents the implicit list
+ A_hfirst:A_hfirst+pA_end-1, inclusive.
+\par
+ This macro defines the kth entry in the Ai list, for k = 0 to pA_end-1:
 */
 
 
@@ -2463,23 +2433,340 @@ constructed by dox_headers.m
 
 
 /** \file GB_subassign.h
-\brief  GB_subassign.h: helper macros for GB_subassigner and GB_subassign_method*
+\brief  GB_subassign.h: helper macros for GB_subassigner and GB_subassign methods
 
 \par
- This macros are used to simplify the cosntruction of the 26 methods for
- GB_subassign.
+ macros for the construction of the GB_subassign methods
 */
 
 
-/** \file GB_subassign_1_slice.c
-\brief  GB_subassign_1_slice: slice the entries and vectors for subassign
+/** \file GB_subassign_00.c
+\brief  GB_subassign_00: C(I,J)\<!,repl\> = empty ; using S
 
 \par
- Constructs a set of tasks to compute C for a subassign method, based on
- slicing a single input matrix (M or A).  Fine tasks must also find their
- location in their vector C(:,jC).
+ Method 00: C(I,J)\<!,repl\> = empty ; using S
 \par
- This method is used by GB_subassign_methods 1, 2, 5, 6a, 6b:
+ M:           NULL
+ Mask_comp:   true
+ C_replace:   true
+ accum:       any (present or not; result is the same)
+ A:           any (scalar or matrix; result is the same)
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_01.c
+\brief  GB_subassign_01: C(I,J) = scalar ; using S
+
+\par
+ Method 01: C(I,J) = scalar ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_02.c
+\brief  GB_subassign_02: C(I,J) = A ; using S
+
+\par
+ Method 02: C(I,J) = A ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_03.c
+\brief  GB_subassign_03: C(I,J) += scalar ; using S
+
+\par
+ Method 03: C(I,J) += scalar ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_04.c
+\brief  GB_subassign_04: C(I,J) += A ; using S
+
+\par
+ Method 04: C(I,J) += A ; using S
+\par
+ M:           NULL
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_05.c
+\brief  GB_subassign_05: C(I,J)\<M\> = scalar ; no S
+
+\par
+ Method 05: C(I,J)\<M\> = scalar ; no S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           scalar
+ S:           none
+*/
+
+
+/** \file GB_subassign_06n.c
+\brief  GB_subassign_06n: C(I,J)\<M\> = A ; no S
+
+\par
+ Method 06n: C(I,J)\<M\> = A ; no S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           matrix
+ S:           none (see also GB_subassign_06s)
+*/
+
+
+/** \file GB_subassign_06s.c
+\brief  GB_subassign_06s: C(I,J)\<M\> = A ; using S
+
+\par
+ Method 06s: C(I,J)\<M\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       NULL
+ A:           matrix
+ S:           constructed (see also Method 06n)
+*/
+
+
+/** \file GB_subassign_07.c
+\brief  GB_subassign_07: C(I,J)\<M\> += scalar ; no S
+
+\par
+ Method 07: C(I,J)\<M\> += scalar ; no S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           none
+*/
+
+
+/** \file GB_subassign_08.c
+\brief  GB_subassign_08: C(I,J)\<M\> += A ; no S
+
+\par
+ Method 08: C(I,J)\<M\> += A ; no S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           none
+*/
+
+
+/** \file GB_subassign_09.c
+\brief  GB_subassign_09: C(I,J)\<M,repl\> = scalar ; using S
+
+\par
+ Method 09: C(I,J)\<M,repl\> = scalar ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       NULL
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_10.c
+\brief  GB_subassign_10: C(I,J)\<M,repl\> = A ; using S
+
+\par
+ Method 10: C(I,J)\<M,repl\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_11.c
+\brief  GB_subassign_11: C(I,J)\<M,repl\> += scalar ; using S
+
+\par
+ Method 11: C(I,J)\<M,repl\> += scalar ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       present
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_12.c
+\brief  GB_subassign_12: C(I,J)\<M,repl\> += A ; using S
+
+\par
+ Method 12: C(I,J)\<M,repl\> += A ; using S
+\par
+ M:           present
+ Mask_comp:   false
+ C_replace:   true
+ accum:       present
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_13.c
+\brief  GB_subassign_13: C(I,J)\<!M\> = scalar ; using S
+
+\par
+ Method 13: C(I,J)\<!M\> = scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       NULL
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_14.c
+\brief  GB_subassign_14: C(I,J)\<!M\> = A ; using S
+
+\par
+ Method 14: C(I,J)\<!M\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_15.c
+\brief  GB_subassign_15: C(I,J)\<!M\> += scalar ; using S
+
+\par
+ Method 15: C(I,J)\<!M\> += scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       present
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_16.c
+\brief  GB_subassign_16: C(I,J)\<!M\> += A ; using S
+
+\par
+ Method 16: C(I,J)\<!M\> += A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   false
+ accum:       present
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_17.c
+\brief  GB_subassign_17: C(I,J)\<!M,repl\> = scalar ; using S
+
+\par
+ Method 17: C(I,J)\<!M,repl\> = scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       NULL
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_18.c
+\brief  GB_subassign_18: C(I,J)\<!M,repl\> = A ; using S
+
+\par
+ Method 18: C(I,J)\<!M,repl\> = A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       NULL
+ A:           matrix
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_19.c
+\brief  GB_subassign_19: C(I,J)\<!M,repl\> += scalar ; using S
+
+\par
+ Method 19: C(I,J)\<!M,repl\> += scalar ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       present
+ A:           scalar
+ S:           constructed
+*/
+
+
+/** \file GB_subassign_20.c
+\brief  GB_subassign_20: C(I,J)\<!M,repl\> += A ; using S
+
+\par
+ Method 20: C(I,J)\<!M,repl\> += A ; using S
+\par
+ M:           present
+ Mask_comp:   true
+ C_replace:   true
+ accum:       present
+ A:           matrix
+ S:           constructed
 */
 
 
@@ -2497,426 +2784,34 @@ constructed by dox_headers.m
  fine.  Each fine task computes a slice of C(I(iA_start:iA_end-1), jC) for a
  single index jC = J(kfirst).
 \par
- This method is used by GB_subassign_methods 3, 4, 7, 8, 11a, 11b, 12a, 12b,
- which are the 8 scalar assignment methods that must iterate over all IxJ.
+ This method is used by methods 01, 03, 13, 15, 17, 19, which are the 6
+ scalar assignment methods that must iterate over all IxJ.
 */
 
 
-/** \file GB_subassign_method0.c
-\brief  GB_subassign_method0: C(I,J) = empty ; using S
+/** \file GB_subassign_emult_slice.c
+\brief  GB_subassign_emult_slice: slice the entries and vectors for GB_subassign_08
 
 \par
- Method 0: C(I,J) = empty ; using S
+ Constructs a set of tasks to compute C for GB_subassign_80, based on
+ slicing a two input matrix (A and M).  Fine tasks must also find their
+ location in their vector C(:,jC).
 \par
- M:           NULL
- Mask_comp:   true
- C_replace:   true
- accum:       any (present or not; result is the same)
- A:           any (scalar or matrix; result is the same)
- S:           constructed
+ This method is used only by GB_subassign_08.  New zombies cannot be created,
+ since no entries are deleted.  Old zombies can be brought back to life,
+ however.
 */
 
 
-/** \file GB_subassign_method1.c
-\brief  GB_subassign_method1: C(I,J)\<M\> = scalar ; no S
+/** \file GB_subassign_one_slice.c
+\brief  GB_subassign_one_slice: slice the entries and vectors for subassign
 
 \par
- Method 1: C(I,J)\<M\> = scalar ; no S
+ Constructs a set of tasks to compute C for a subassign method, based on
+ slicing a single input matrix (M or A).  Fine tasks must also find their
+ location in their vector C(:,jC).
 \par
- M:           present
- Mask_comp:   false
- C_replace:   false
- accum:       NULL
- A:           scalar
- S:           none
-*/
-
-
-/** \file GB_subassign_method10.c
-\brief  GB_subassign_method10: C(I,J) += A ; using S
-
-\par
- Method 10: C(I,J) += A ; using S
-\par
- M:           NULL
- Mask_comp:   false
- C_replace:   false
- accum:       present
- A:           matrix
- S:           constructed (see also Method 5)
-\par
- Compare with Method 5, which computes the same thing without creating S.
-*/
-
-
-/** \file GB_subassign_method11a.c
-\brief  GB_subassign_method11a: C(I,J)\<!M,repl\> = scalar ; using S
-
-\par
- Method 11a: C(I,J)\<!M,repl\> = scalar ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   true
- accum:       NULL
- A:           scalar
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method11b.c
-\brief  GB_subassign_method11b: C(I,J)\<!M\> = scalar ; using S
-
-\par
- Method 11b: C(I,J)\<!M\> = scalar ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   false
- accum:       NULL
- A:           scalar
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method11c.c
-\brief  GB_subassign_method11c: C(I,J)\<M,repl\> = scalar ; using S
-
-\par
- Method 11c: C(I,J)\<M,repl\> = scalar ; using S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   true
- accum:       NULL
- A:           scalar
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method12a.c
-\brief  GB_subassign_method12a: C(I,J)\<!M,repl\> += scalar ; using S
-
-\par
- Method 12a: C(I,J)\<!M,repl\> += scalar ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   true
- accum:       present
- A:           scalar
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method12b.c
-\brief  GB_subassign_method12b: C(I,J)\<!M\> += scalar ; using S
-
-\par
- Method 12b: C(I,J)\<!M\> += scalar ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   false
- accum:       present
- A:           scalar
- S:           constructed (see also Method 4)
-\par
- Compare with Method 4, which computes the same thing without creating S.
-*/
-
-
-/** \file GB_subassign_method12c.c
-\brief  GB_subassign_method12c: C(I,J)\<M,repl\> += scalar ; using S
-
-\par
- Method 12c: C(I,J)\<M,repl\> += scalar ; using S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   true
- accum:       present
- A:           scalar
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method13a.c
-\brief  GB_subassign_method13a: C(I,J)\<!M,repl\> = A ; using S
-
-\par
- Method 13a: C(I,J)\<!M,repl\> = A ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   true
- accum:       NULL
- A:           matrix
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method13b.c
-\brief  GB_subassign_method13b: C(I,J)\<!M\> = A ; using S
-
-\par
- Method 13b: C(I,J)\<!M\> = A ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   false
- accum:       NULL
- A:           matrix
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method13c.c
-\brief  GB_subassign_method13c: C(I,J)\<M,repl\> = A ; using S
-
-\par
- Method 13c: C(I,J)\<M,repl\> = A ; using S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   true
- accum:       NULL
- A:           matrix
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method13d.c
-\brief  GB_subassign_method13d: C(I,J)\<M\> = A ; using S
-
-\par
- Method 13d: C(I,J)\<M\> = A ; using S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   false
- accum:       NULL
- A:           matrix
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method14a.c
-\brief  GB_subassign_method14a: C(I,J)\<!M,repl\> += A ; using S
-
-\par
- Method 14a: C(I,J)\<!M,repl\> += A ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   true
- accum:       present
- A:           matrix
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method14b.c
-\brief  GB_subassign_method14b: C(I,J)\<!M\> += A ; using S
-
-\par
- Method 14b: C(I,J)\<!M\> += A ; using S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   false
- accum:       present
- A:           matrix
- S:           constructed (see also Method 6a)
-\par
- Compare with Method 6a, which computes the same thing without creating S.
-*/
-
-
-/** \file GB_subassign_method14c.c
-\brief  GB_subassign_method14c: C(I,J)\<M,repl\> += A ; using S
-
-\par
- Method 14c: C(I,J)\<M,repl\> += A ; using S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   true
- accum:       present
- A:           matrix
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method14d.c
-\brief  GB_subassign_method14d: C(I,J)\<M\> += A ; using S
-
-\par
- Method 14d: C(I,J)\<M\> += A ; using S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   false
- accum:       present
- A:           matrix
- S:           constructed (see also Method 6b)
-\par
- Compare with Method 6b, which computes the same thing without creating S.
-*/
-
-
-/** \file GB_subassign_method2.c
-\brief  GB_subassign_method2: C(I,J)\<M\> += scalar ; no S
-
-\par
- Method 2: C(I,J)\<M\> += scalar ; no S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   false
- accum:       present
- A:           scalar
- S:           none
-*/
-
-
-/** \file GB_subassign_method3.c
-\brief  GB_subassign_method3: C(I,J) += scalar ; no S
-
-\par
- Method 3: C(I,J) += scalar ; no S
-\par
- M:           NULL
- Mask_comp:   false
- C_replace:   false
- accum:       present
- A:           scalar
- S:           none (see also Method 8)
-\par
- Compare with Method 8, which computes the same thing, but creates S first.
-*/
-
-
-/** \file GB_subassign_method4.c
-\brief  GB_subassign_method4: C(I,J)\<!M\> += scalar ; no S
-
-\par
- Method 4: C(I,J)\<!M\> += scalar ; no S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   false
- accum:       present
- A:           scalar
- S:           none (see also Method 12b)
-\par
- Compare with Method 12b, which computes the same thing, but creates S first.
-*/
-
-
-/** \file GB_subassign_method5.c
-\brief  GB_subassign_method5: C(I,J) += A ; no S
-
-\par
- Method 5: C(I,J) += A ; no S
-\par
- M:           NULL
- Mask_comp:   false
- C_replace:   false
- accum:       present
- A:           matrix
- S:           none (see also Method 10)
-\par
- Compare with Method 10, which computes the same thing, but creates S first.
-\par
- Both methods are Omega(nnz(A)), since all entries in A must be considered,
- and inserted or accumulated into C.  Method 5 uses a binary search to find
- the corresponding entry in C, for each entry in A, and thus takes
- O(nnz(A)*log(c)) time in general, if c is the \# entries in a given vector of
- C.  Method 10 takes O(nnz(A)+nnz(S)), plus any additional time required to
- search C to construct S.  If nnz(A) \<\< nnz (S), then Method 10 is costly,
- and Method 5 is used instead.
-*/
-
-
-/** \file GB_subassign_method6a.c
-\brief  GB_subassign_method6a: C(I,J)\<!M\> += A ; no S
-
-\par
- Method 6a: C(I,J)\<!M\> += A ; no S
-\par
- M:           present
- Mask_comp:   true
- C_replace:   false
- accum:       present
- A:           matrix
- S:           none (see also Method 14b)
-\par
- Compare with Method 14b, which computes the same thing, but creates S first.
-*/
-
-
-/** \file GB_subassign_method6b.c
-\brief  GB_subassign_method6b: C(I,J)\<M\> += A ; no S
-
-\par
- Method 6b: C(I,J)\<M\> += A ; no S
-\par
- M:           present
- Mask_comp:   false
- C_replace:   false
- accum:       present
- A:           matrix
- S:           none (see also Method 14d)
-\par
- Compare with Method 14d, which computes the same thing, but creates S first.
-*/
-
-
-/** \file GB_subassign_method7.c
-\brief  GB_subassign_method7: C(I,J) = scalar ; using S
-
-\par
- Method 7: C(I,J) = scalar ; using S
-\par
- M:           NULL
- Mask_comp:   false
- C_replace:   false
- accum:       NULL
- A:           scalar
- S:           constructed
-*/
-
-
-/** \file GB_subassign_method8.c
-\brief  GB_subassign_method8: C(I,J) += scalar ; using S
-
-\par
- Method 8: C(I,J) += scalar ; using S
-\par
- M:           NULL
- Mask_comp:   false
- C_replace:   false
- accum:       present
- A:           scalar
- S:           constructed (see also Method 3)
-\par
- Compare with Method 3, which computes the same thing without creating S.
-*/
-
-
-/** \file GB_subassign_method9.c
-\brief  GB_subassign_method9: C(I,J) = A ; using S
-
-\par
- Method 9: C(I,J) = A ; using S
-\par
- M:           NULL
- Mask_comp:   false
- C_replace:   false
- accum:       NULL
- A:           matrix
- S:           constructed
+ This method is used by GB_subassign_05, 06n, and 07
 */
 
 
@@ -2933,12 +2828,6 @@ constructed by dox_headers.m
  type-generic macro suffix, \"_UDT\".
 \par
  Compare with GB_assign_scalar, which uses M and C_replace differently
-*/
-
-
-/** \file GB_subassign_select.c
-\brief  GB_subassign_select: determine if S should be constructed for GB_subassign
-
 */
 
 

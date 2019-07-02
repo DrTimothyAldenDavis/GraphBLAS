@@ -14,6 +14,7 @@
 //      C(:,j) = A(:,j) +  B(:,j) in GB_add
 //      C(:,j) = A(:,j) .* B(:,j) in GB_emult
 //      C(:,j)<M(:,j)> = B(:,j) in GB_mask (A is passed in as the input C)
+//      union (A->h, B->h) in GB_add_phase0.
 
 // The vector index j is not needed here.  The vectors kA and kB are not
 // required, either; just the positions where the vectors appear in A and B
@@ -24,6 +25,16 @@
 // pA in Ai and Ax, and the entries in B(i:end,kB) start at position pB in Bi
 // and Bx.  Once the work is split, pM is found for M(i:end,kM), if the mask M
 // is present.
+
+// The lists Ai and Bi can also be any sorted integer array.  This is used by
+// GB_add_phase0 to construct the set union of A->h and B->h.  In this case,
+// pA_start and pB_start are both zero, and pA_end and pB_end are A->nvec and
+// B->nvec, respectively.  A can be a non-hypersparse slice, so that A->h is
+// NULL.  In this case, Ai is NULL, and represents the implicit list
+// A_hfirst:A_hfirst+pA_end-1, inclusive.
+
+// This macro defines the kth entry in the Ai list, for k = 0 to pA_end-1:
+#define GB_Ai(k) ((Ai != NULL) ? Ai [k] : (A_hfirst + (k)))
 
 // If n = A->vlen = B->vlen, anz = nnz (A (:,kA)), and bnz = nnz (B (:,kB)),
 // then the total time taken by this function is O(log(n)*(log(anz)+log(bnz))),
@@ -45,6 +56,7 @@ void GB_slice_vector
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
     const int64_t *restrict Ai,     // indices of A
+    const int64_t A_hfirst,         // if Ai is an implicit hyperlist
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
     const int64_t *restrict Bi,     // indices of B
@@ -57,7 +69,7 @@ void GB_slice_vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (p_i != NULL && p_pM != NULL && p_pA != NULL && p_pB != NULL) ;
+    ASSERT (p_pA != NULL && p_pB != NULL) ;
 
     //--------------------------------------------------------------------------
     // find i, pA, and pB for the start of this task
@@ -81,7 +93,6 @@ void GB_slice_vector
     int64_t pA = (a_empty) ? -1 : pA_start ;
     int64_t pB = (b_empty) ? -1 : pB_start ;
 
-    ASSERT (GB_IMPLIES (!a_empty, Ai != NULL)) ;
     ASSERT (GB_IMPLIES (!b_empty, Bi != NULL)) ;
     ASSERT (GB_IMPLIES (!m_empty, Mi != NULL)) ;
 
@@ -101,25 +112,49 @@ void GB_slice_vector
         //----------------------------------------------------------------------
 
         if (a_empty)
-        {
+        { 
+            // Ai is empty so i does not appear
             pA = -1 ;
+        }
+        else if (Ai == NULL)
+        { 
+            // Ai is an implicit hyperlist: A_hfirst, A_first+1, ... to
+            // A_hfirst + pA_end - 1, inclusive.  No need for a binary search.
+            ASSERT (pA_start == 0) ;
+            if (i < A_hfirst)
+            {
+                pA = 0 ;
+            }
+            else if (A_hfirst + pA_end - 1 < i)
+            {
+                pA = pA_end ;
+            }
+            else // (A_hfirst <= i && i <= A_hfirst + pA_end - 1)
+            {
+                pA = i - A_hfirst ;
+                ASSERT (GB_Ai (pA) == i) ;
+            }
         }
         else if (aknz == vlen)
         { 
             // A(:,kA) is dense; no need for a binary search
             pA = pA_start + i ;
-            ASSERT (Ai [pA] == i) ;
+            ASSERT (GB_Ai (pA) == i) ;
         }
         else
         { 
+            // Ai is an explicit integer list, Ai [pA_start:pA_end-1]
             ASSERT (aknz > 0) ;
             pA = pA_start ;
             bool afound ;
             int64_t apright = pA_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Ai, pA, apright, afound) ;
+            ASSERT (GB_IMPLIES (afound, GB_Ai (pA) == i)) ;
+            ASSERT (pA_start <= pA && pA <= pA_end) ;
         }
-        if (pA >  pA_start && pA < pA_end) ASSERT (Ai [pA-1] < i) ;
-        if (pA >= pA_start && pA < pA_end) ASSERT (Ai [pA] >= i) ;
+
+        if (pA >  pA_start && pA < pA_end) ASSERT (GB_Ai (pA-1) < i) ;
+        if (pA >= pA_start && pA < pA_end) ASSERT (GB_Ai (pA) >= i) ;
 
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
@@ -138,7 +173,7 @@ void GB_slice_vector
         //----------------------------------------------------------------------
 
         if (b_empty)
-        {
+        { 
             pB = -1 ;
         }
         else if (bknz == vlen)
@@ -155,6 +190,7 @@ void GB_slice_vector
             bool bfound ;
             int64_t bpright = pB_end - 1 ;
             GB_BINARY_SPLIT_SEARCH (i, Bi, pB, bpright, bfound) ;
+            ASSERT (pB_start <= pB && pB <= pB_end) ;
             // printf ("pB "GBd" bfound %d\n", pB, bfound) ;
         }
         if (pB >  pB_start && pB < pB_end) ASSERT (Bi [pB-1] < i) ;
@@ -228,7 +264,7 @@ void GB_slice_vector
     // printf ("sliced at i "GBd" pA "GBd" pB "GBd"\n", i, pA, pB) ;
 
     if (m_empty)
-    {
+    { 
         pM = -1 ;
     }
     else if (mknz == vlen)
@@ -256,16 +292,22 @@ void GB_slice_vector
 
     ASSERT (GB_IMPLIES ((pM >  pM_start && pM < pM_end), Mi [pM-1] <  i)) ;
     ASSERT (GB_IMPLIES ((pM >= pM_start && pM < pM_end), Mi [pM  ] >= i)) ;
-    ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end), Ai [pA-1] <  i)) ;
-    ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end), Ai [pA  ] >= i)) ;
+    ASSERT (GB_IMPLIES ((pA >  pA_start && pA < pA_end), GB_Ai (pA-1) <  i)) ;
+    ASSERT (GB_IMPLIES ((pA >= pA_start && pA < pA_end), GB_Ai (pA  ) >= i)) ;
     ASSERT (GB_IMPLIES ((pB >  pB_start && pB < pB_end), Bi [pB-1] <  i)) ;
     ASSERT (GB_IMPLIES ((pB >= pB_start && pB < pB_end), Bi [pB  ] >= i)) ;
 
     // printf ("sliced vector: i "GBd" pA "GBd" pB "GBd" pM "GBd"\n",
-    //  i, pA, pM, pB) ;
+    //     i, pA, pM, pB) ;
 
-    (*p_i)  = i ;
-    (*p_pM) = pM ;
+    if (p_i != NULL)
+    { 
+        (*p_i)  = i ;
+    }
+    if (p_pM != NULL)
+    { 
+        (*p_pM) = pM ;
+    }
     (*p_pA) = pA ;
     (*p_pB) = pB ;
 }
