@@ -53,7 +53,7 @@ for dc = [ 0 1e-6 1e-5 1e-4 ]
             end
 
             fprintf ('%3d : MATLAB: %10.4f GB: %10.4f', nthreads, tm, tg) ;
-            fprintf ('  speedup %10.4f\n', tm / tg) ;
+            fprintf ('  speedup %10.4f %10.4f\n', t1/tg, tm / tg) ;
         end
     end
 end
