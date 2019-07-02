@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method6b: C(I,J)<M> += A ; no S
+// GB_subassign_08: C(I,J)<M> += A ; no S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 6b: C(I,J)<M> += A ; no S
+// Method 08: C(I,J)<M> += A ; no S
 
 // M:           present
 // Mask_comp:   false
@@ -16,57 +16,9 @@
 // A:           matrix
 // S:           none
 
-#define GB_FREE_WORK GB_FREE_2DOT_SLICE
+#define GB_FREE_WORK GB_FREE_EMULT_SLICE
 
 #include "GB_subassign.h"
-
-//------------------------------------------------------------------------------
-// GB_SUBASSIGN_2DOT_SLICE: slice M.*A (just Method 6b)
-//------------------------------------------------------------------------------
-
-#define GB_SUBASSIGN_2DOT_SLICE(A,M)                                        \
-    GB_EMPTY_TASKLIST ;                                                     \
-    int64_t Znvec ;                                                         \
-    int64_t *restrict Zh = NULL ;                                           \
-    int64_t *restrict Z_to_A = NULL ;                                       \
-    int64_t *restrict Z_to_M = NULL ;                                       \
-    GB_OK (GB_emult_phase0 (                                                \
-        &Znvec, &Zh, NULL, &Z_to_A, &Z_to_M,                                \
-        NULL, A, M, Context)) ;                                             \
-    GB_OK (GB_ewise_slice (                                                 \
-        &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
-        Znvec, Zh, NULL, Z_to_A, Z_to_M, false,                             \
-        NULL, A, M, Context)) ;                                             \
-    int64_t Npending [ntasks+1] ;
-
-#define GB_FREE_2DOT_SLICE                                                  \
-{                                                                           \
-    GB_FREE_MEMORY (Z_to_A, Znvec, sizeof (int64_t)) ;                      \
-    GB_FREE_MEMORY (Z_to_M, Znvec, sizeof (int64_t)) ;                      \
-}
-
-//------------------------------------------------------------------------------
-// GB_GET_2DOT_VECTOR: get the content of a vector for a coarse/fine task
-//------------------------------------------------------------------------------
-
-#define GB_GET_2DOT_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, Xh, j, k, Z_to_X)\
-    int64_t pX_start = -1, pX_fini = -1 ;                                   \
-    if (fine_task)                                                          \
-    {                                                                       \
-        /* A fine task operates on a slice of X(:,k) */                     \
-        pX_start = TaskList [taskid].pX ;                                   \
-        pX_fini  = TaskList [taskid].pX_end ;                               \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* vectors are never sliced for a coarse task */                    \
-        int64_t kX = (Zh == Xh) ? k : ((Z_to_X == NULL) ? j : Z_to_X [k]) ; \
-        if (kX >= 0)                                                        \
-        {                                                                   \
-            pX_start = Xp [kX] ;                                            \
-            pX_fini  = Xp [kX+1] ;                                          \
-        }                                                                   \
-    }
 
 //------------------------------------------------------------------------------
 // GB_PHASE1_ACTION
@@ -88,7 +40,7 @@
     {                                                                       \
         /* binary search for C(iC,jC) in C(:,jC) */                         \
         GB_iC_BINARY_SEARCH ;                                               \
-        if (found)                                                          \
+        if (cij_found)                                                      \
         {                                                                   \
             /* ----[C A 1] or [X A 1]--------------------------- */         \
             /* [C A 1]: action: ( =C+A ): apply accum            */         \
@@ -98,7 +50,7 @@
         else                                                                \
         {                                                                   \
             /* ----[. A 1]-------------------------------------- */         \
-            /* action: ( insert )                                */         \
+            /* [. A 1]: action: ( insert )                       */         \
             task_pending++ ;                                                \
         }                                                                   \
     }                                                                       \
@@ -115,16 +67,20 @@
     {                                                                       \
         /* binary search for C(iC,jC) in C(:,jC) */                         \
         GB_iC_BINARY_SEARCH ;                                               \
-        if (!found)                                                         \
+        if (!cij_found)                                                     \
         {                                                                   \
             /* ----[. A 1]-------------------------------------- */         \
-            /* action: ( insert )                                */         \
+            /* [. A 1]: action: ( insert )                       */         \
             GB_PENDING_INSERT (Ax +(pA*asize)) ;                            \
         }                                                                   \
     }                                                                       \
 }
 
-GrB_Info GB_subassign_method6b
+//------------------------------------------------------------------------------
+// GB_subassign_08: C(I,J)<M> += A ; no S
+//------------------------------------------------------------------------------
+
+GrB_Info GB_subassign_08
 (
     GrB_Matrix C,
     // input:
@@ -153,7 +109,7 @@ GrB_Info GB_subassign_method6b
     GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------
-    // Method 6b: C(I,J)<M> += A ; no S
+    // Method 08: C(I,J)<M> += A ; no S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal. Omega (sum_j (min (nnz (A(:,j)), nnz (M(:,j)))),
@@ -168,10 +124,10 @@ GrB_Info GB_subassign_method6b
     // parallel scheduling relies on GB_emult_phase0(AA and GB_ewise_slice.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice the eWiseMult of A.*M (Method 6b)
+    // Parallel: slice the eWiseMult of A.*M (Method 08)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_2DOT_SLICE (A,M) ;
+    GB_SUBASSIGN_EMULT_SLICE (A,M) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -200,8 +156,8 @@ GrB_Info GB_subassign_method6b
             //------------------------------------------------------------------
 
             int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_2DOT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
-            GB_GET_2DOT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
+            GB_GET_EMULT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
+            GB_GET_EMULT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
 
             //------------------------------------------------------------------
             // quick checks for empty intersection of A(:,j) and M(:,j)
@@ -221,7 +177,7 @@ GrB_Info GB_subassign_method6b
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t GB_jC_LOOKUP ;
+            GB_GET_jC ;
             bool cjdense = (pC_end - pC_start == cvlen) ;
 
             //------------------------------------------------------------------
@@ -335,8 +291,8 @@ GrB_Info GB_subassign_method6b
             //------------------------------------------------------------------
 
             int64_t j = (Zh == NULL) ? k : Zh [k] ;
-            GB_GET_2DOT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
-            GB_GET_2DOT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
+            GB_GET_EMULT_VECTOR (pA, pA_end, pA, pA_end, Ap, Ah, j, k, Z_to_A) ;
+            GB_GET_EMULT_VECTOR (pM, pM_end, pB, pB_end, Mp, Mh, j, k, Z_to_M) ;
 
             //------------------------------------------------------------------
             // quick checks for empty intersection of A(:,j) and M(:,j)
@@ -356,7 +312,7 @@ GrB_Info GB_subassign_method6b
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t GB_jC_LOOKUP ;
+            GB_GET_jC ;
             bool cjdense = (pC_end - pC_start == cvlen) ;
             if (cjdense) continue ;
 

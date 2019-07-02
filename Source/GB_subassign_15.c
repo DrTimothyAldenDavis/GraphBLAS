@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method11a: C(I,J)<!M,repl> = scalar ; using S
+// GB_subassign_15: C(I,J)<!M> += scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// Method 11a: C(I,J)<!M,repl> = scalar ; using S
+// Method 15: C(I,J)<!M> += scalar ; using S
 
 // M:           present
 // Mask_comp:   true
-// C_replace:   true
-// accum:       NULL
+// C_replace:   false
+// accum:       present
 // A:           scalar
 // S:           constructed
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method11a
+GrB_Info GB_subassign_15
 (
     GrB_Matrix C,
     // input:
@@ -31,6 +31,7 @@ GrB_Info GB_subassign_method11a
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -44,22 +45,20 @@ GrB_Info GB_subassign_method11a
 
     GB_GET_C ;
     GB_GET_MASK ;
-    GB_GET_SCALAR ;
     GB_GET_S ;
-    GrB_BinaryOp accum = NULL ;
+    GB_GET_ACCUM_SCALAR ;
 
     //--------------------------------------------------------------------------
-    // Method 11a: C(I,J)<!M,repl> = scalar ; using S
+    // Method 15: C(I,J)<!M> += scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
     // required.  The sparsity of !M cannot be exploited.
 
-    // Method 11a and Method 12a are very similar.
-    // Method 11a and Method 11b are very similar.
+    // Methods 13, 15, 17, and 19 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 01, 03, 13, 15, 17, 19)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_IXJ_SLICE ;
@@ -100,7 +99,7 @@ GrB_Info GB_subassign_method11a
             GB_GET_VECTOR_FOR_IXJ (M) ;
 
             //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC)<!M,repl> = scalar
+            // C(I(iA_start,iA_end-1),jC)<!M> += scalar
             //------------------------------------------------------------------
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
@@ -141,7 +140,7 @@ GrB_Info GB_subassign_method11a
                 mij = !mij ;
 
                 //--------------------------------------------------------------
-                // assign the entry
+                // accumulate the entry
                 //--------------------------------------------------------------
 
                 if (i == iS)
@@ -149,20 +148,13 @@ GrB_Info GB_subassign_method11a
                     ASSERT (i == iA) ;
                     {
                         // both S (i,j) and A (i,j) present
-                        GB_C_S_LOOKUP ;
                         if (mij)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =A ): copy A, no accum
+                            // [C A 1]: action: ( =C+A ): apply accum
                             // [X A 1]: action: ( undelete ): zombie lives
-                            GB_noaccum_C_A_1_scalar ;
-                        }
-                        else
-                        { 
-                            // ----[C A 0] or [X A 0]---------------------------
-                            // [X A 0]: action: ( X ): still a zombie
-                            // [C A 0]: C_repl: action: ( delete ): zombie
-                            GB_DELETE_ENTRY ;
+                            GB_C_S_LOOKUP ;
+                            GB_withaccum_C_A_1_scalar ;
                         }
                         GB_NEXT (S) ;
                     }
@@ -225,7 +217,7 @@ GrB_Info GB_subassign_method11a
             GB_GET_VECTOR_FOR_IXJ (M) ;
 
             //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC)<!M,repl> = scalar
+            // C(I(iA_start,iA_end-1),jC)<!M> += scalar
             //------------------------------------------------------------------
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
@@ -266,7 +258,7 @@ GrB_Info GB_subassign_method11a
                 mij = !mij ;
 
                 //--------------------------------------------------------------
-                // assign the entry
+                // accumulate the entry
                 //--------------------------------------------------------------
 
                 if (i == iS)

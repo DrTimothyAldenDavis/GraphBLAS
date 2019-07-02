@@ -1038,13 +1038,13 @@ GrB_Info GB_error           // log an error in thread-local-storage
 
 // check object->magic code
 #ifdef GB_DEVELOPER
-#define GBPR_MAGIC(pkind,pcode)                                         \
+#define GBPR_MAGIC(pcode)                                               \
 {                                                                       \
     char *p = (char *) &(pcode) ;                                       \
-    if (pr > 0) GBPR (" %s: [ %d1 %s ] ", pkind, p [0], p) ;            \
+    if (pr > 0) GBPR (" pcode: [ %d1 %s ] ", p [0], p) ;                \
 }
 #else
-#define GBPR_MAGIC(pkind,pcode) ;
+#define GBPR_MAGIC(pcode) ;
 #endif
 
 // check object->magic and print an error if invalid 
@@ -1054,19 +1054,19 @@ GrB_Info GB_error           // log an error in thread-local-storage
     {                                                                   \
         case GB_MAGIC :                                                 \
             /* the object is valid */                                   \
-            GBPR_MAGIC ("valid object", object->magic) ;                \
+            GBPR_MAGIC (object->magic) ;                                \
             break ;                                                     \
                                                                         \
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
-            GBPR_MAGIC ("freed object", object->magic) ;                \
+            GBPR_MAGIC (object->magic) ;                                \
             if (pr > 0) GBPR ("already freed!\n") ;                     \
             return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
                 "%s is freed: [%s]", kind, name))) ;                    \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
-            GBPR_MAGIC ("uninitialized object", object->magic) ;        \
+            GBPR_MAGIC (object->magic) ;                                \
             if (pr > 0) GBPR ("invalid\n") ;                            \
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
                 "%s is invalid: [%s]", kind, name))) ;                  \
@@ -1497,8 +1497,7 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 // those fine tasks, method = -TaskList [taskid].klast defines the method to
 // use.
 
-// The GB_subassign_method* functions use the TaskList, in several different
-// ways.
+// The GB_subassign functions use the TaskList, in many different ways.
 
 typedef struct          // task descriptor
 {

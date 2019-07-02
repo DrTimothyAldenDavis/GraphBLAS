@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method2: C(I,J)<M> += scalar ; no S
+// GB_subassign_06n: C(I,J)<M> = A ; no S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// Method 2: C(I,J)<M> += scalar ; no S
+// Method 06n: C(I,J)<M> = A ; no S
 
 // M:           present
 // Mask_comp:   false
 // C_replace:   false
-// accum:       present
-// A:           scalar
-// S:           none
+// accum:       NULL
+// A:           matrix
+// S:           none (see also GB_subassign_06s)
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method2
+GrB_Info GB_subassign_06n
 (
     GrB_Matrix C,
     // input:
@@ -31,9 +31,7 @@ GrB_Info GB_subassign_method2
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const GrB_BinaryOp accum,
-    const void *scalar,
-    const GrB_Type atype,
+    const GrB_Matrix A,
     GB_Context Context
 )
 {
@@ -44,21 +42,28 @@ GrB_Info GB_subassign_method2
 
     GB_GET_C ;
     GB_GET_MASK ;
-    GB_GET_ACCUM_SCALAR ;
+    GB_GET_A ;
+    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 2: C(I,J)<M> += scalar ; no S
+    // Method 06n: C(I,J)<M> = A ; no S
     //--------------------------------------------------------------------------
 
-    // Time: Close to Optimal:  same as Method 1.
+    // Time: O(nnz(M)*(log(a)+log(c)), where a and c are the # of entries in a
+    // vector of A and C, respectively.  The entries in the intersection of M
+    // (where the entries are true) and the matrix addition C(I,J)+A must be
+    // examined.  This method scans M, and searches for entries in A and C(I,J)
+    // using two binary searches.  If M is very dense, this method can be
+    // slower than Method 06s.  This method is selected if nnz (A) >= nnz (M).
 
-    // Method 1 and Method 2 are very similar.
+    // Compare with Methods 05 and 07, which use a similar algorithmic outline
+    // and parallelization strategy.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into coarse/fine tasks (Method 1, 2, 15)
+    // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_1_SLICE (M) ;
+    GB_SUBASSIGN_ONE_SLICE (M) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -92,16 +97,27 @@ GrB_Info GB_subassign_method2
             if (mjnz == 0) continue ;
 
             //------------------------------------------------------------------
+            // get A(:,j)
+            //------------------------------------------------------------------
+
+            int64_t pA, pA_end ;
+            GB_VECTOR_LOOKUP (pA, pA_end, A, j) ;
+            int64_t ajnz = pA_end - pA ;
+
+            //------------------------------------------------------------------
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
             GB_GET_jC ;
+            int64_t cjnz = pC_end - pC_start ;
+            if (cjnz == 0 && ajnz == 0) continue ;
+            bool cjdense = (cjnz == cvlen) ;
 
             //------------------------------------------------------------------
-            // C(I,jC)<M(:,j)> += scalar ; no S
+            // C(I,jC)<M(:,j)> = A(:,j) ; no S
             //------------------------------------------------------------------
 
-            if (pC_end - pC_start == cvlen)
+            if (cjdense)
             {
 
                 //--------------------------------------------------------------
@@ -124,20 +140,32 @@ GrB_Info GB_subassign_method2
 
                     if (mij)
                     { 
-
-                        //------------------------------------------------------
-                        // C(iC,jC) += scalar
-                        //------------------------------------------------------
-
                         int64_t iA = Mi [pM] ;
                         GB_iC_DENSE_LOOKUP ;
 
-                        // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =C+A ): apply accum
-                        // [X A 1]: action: ( undelete ): bring zombie back
-                        GB_withaccum_C_A_1_scalar ;
+                        // find iA in A(:,j)
+                        int64_t apright = pA_end - 1 ;
+                        bool aij_found ;
+                        GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
+
+                        if (!aij_found)
+                        { 
+                            // C (iC,jC) is present but A (i,j) is not
+                            // ----[C . 1] or [X . 1]---------------------------
+                            // [C . 1]: action: ( delete ): becomes zombie
+                            // [X . 1]: action: ( X ): still zombie
+                            GB_DELETE_ENTRY ;
+                        }
+                        else
+                        { 
+                            // ----[C A 1] or [X A 1]---------------------------
+                            // [C A 1]: action: ( =A ): copy A into C, no accum
+                            // [X A 1]: action: ( undelete ): zombie lives
+                            GB_noaccum_C_A_1_matrix ;
+                        }
                     }
                 }
+
             }
             else
             {
@@ -157,32 +185,40 @@ GrB_Info GB_subassign_method2
                     cast_M (&mij, Mx +(pM*msize), 0) ;
 
                     //----------------------------------------------------------
-                    // find C(iC,jC), but only if M(iA,j) allows it
+                    // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
                     if (mij)
                     {
-
-                        //------------------------------------------------------
-                        // C(iC,jC) += scalar
-                        //------------------------------------------------------
-
-                        // binary search for C(iC,jC) in C(:,jC)
                         int64_t iA = Mi [pM] ;
                         GB_iC_BINARY_SEARCH ;
 
-                        if (found)
+                        // find iA in A(:,j)
+                        int64_t apright = pA_end - 1 ;
+                        bool aij_found ;
+                        GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
+
+                        if (cij_found && aij_found)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =C+A ): apply accum
+                            // [C A 1]: action: ( =A ): copy A into C, no accum
                             // [X A 1]: action: ( undelete ): zombie lives
-                            GB_withaccum_C_A_1_scalar ;
+                            GB_noaccum_C_A_1_matrix ;
                         }
-                        else
+                        else if (!cij_found && aij_found)
                         { 
+                            // C (iC,jC) is not present, A (i,j) is present
                             // ----[. A 1]--------------------------------------
-                            // action: ( insert )
+                            // [. A 1]: action: ( insert )
                             task_pending++ ;
+                        }
+                        else if (cij_found && !aij_found)
+                        { 
+                            // C (iC,jC) is present but A (i,j) is not
+                            // ----[C . 1] or [X . 1]---------------------------
+                            // [C . 1]: action: ( delete ): becomes zombie
+                            // [X . 1]: action: ( X ): still zombie
+                            GB_DELETE_ENTRY ;
                         }
                     }
                 }
@@ -227,16 +263,26 @@ GrB_Info GB_subassign_method2
             if (mjnz == 0) continue ;
 
             //------------------------------------------------------------------
+            // get A(:,j)
+            //------------------------------------------------------------------
+
+            int64_t pA, pA_end ;
+            GB_VECTOR_LOOKUP (pA, pA_end, A, j) ;
+            int64_t ajnz = pA_end - pA ;
+            if (ajnz == 0) continue ;
+
+            //------------------------------------------------------------------
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
             GB_GET_jC ;
+            bool cjdense = ((pC_end - pC_start) == cvlen) ;
 
             //------------------------------------------------------------------
-            // C(I,jC)<M(:,j)> += scalar ; no S
+            // C(I,jC)<M(:,j)> = A(:,j)
             //------------------------------------------------------------------
 
-            if (pC_end - pC_start != cvlen)
+            if (!cjdense)
             {
 
                 //--------------------------------------------------------------
@@ -254,25 +300,26 @@ GrB_Info GB_subassign_method2
                     cast_M (&mij, Mx +(pM*msize), 0) ;
 
                     //----------------------------------------------------------
-                    // find C(iC,jC), but only if M(iA,j) allows it
+                    // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
                     if (mij)
                     {
-
-                        //------------------------------------------------------
-                        // C(iC,jC) += scalar
-                        //------------------------------------------------------
-
-                        // binary search for C(iC,jC) in C(:,jC)
                         int64_t iA = Mi [pM] ;
-                        GB_iC_BINARY_SEARCH ;
 
-                        if (!found)
+                        // find iA in A(:,j)
+                        int64_t apright = pA_end - 1 ;
+                        bool aij_found ;
+                        GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
+                        if (!aij_found) continue ;
+
+                        GB_iC_BINARY_SEARCH ;
+                        if (!cij_found)
                         { 
+                            // C (iC,jC) is not present, A (i,j) is present
                             // ----[. A 1]--------------------------------------
-                            // action: ( insert )
-                            GB_PENDING_INSERT (scalar) ;
+                            // [. A 1]: action: ( insert )
+                            GB_PENDING_INSERT (Ax +(pA*asize)) ;
                         }
                     }
                 }

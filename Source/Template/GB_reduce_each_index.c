@@ -66,7 +66,7 @@
                 GB_SCALAR (aij) ;
                 GB_CAST_ARRAY_TO_SCALAR (aij, Ax, p) ;
                 if (!Mark [i])
-                {
+                { 
                     // first time index i has been seen
                     // Work [i] = aij ; no typecast
                     GB_COPY_SCALAR_TO_ARRAY (Work, i, aij) ;
@@ -74,7 +74,7 @@
                     my_tnz++ ;
                 }
                 else
-                {
+                { 
                     // Work [i] += aij ; no typecast
                     GB_ADD_SCALAR_TO_ARRAY (Work, i, aij) ;
                 }
@@ -91,7 +91,7 @@
     {
         // out of memory
         for (int tid = 0 ; tid < nth ; tid++)
-        {
+        { 
             GB_FREE_MEMORY (Works [tid], n, zsize) ;
             GB_FREE_MEMORY (Marks [tid], n, sizeof (bool)) ;
         }
@@ -120,7 +120,7 @@
                     // thread tid has a contribution to index i
                     const GB_CTYPE *restrict Work = Works [tid] ;
                     if (!Mark0 [i])
-                    {
+                    { 
                         // first time index i has been seen
                         // Work0 [i] = Work [i] ; no typecast
                         GB_COPY_ARRAY_TO_ARRAY (Work0, i, Work, i) ;
@@ -128,7 +128,7 @@
                         tnz++ ;
                     }
                     else
-                    {
+                    { 
                         // Work0 [i] += Work [i] ; no typecast
                         GB_ADD_ARRAY_TO_ARRAY (Work0, i, Work, i) ;
                     }
@@ -171,7 +171,11 @@
 
     if (tnz == n)
     {
+
+        //----------------------------------------------------------------------
         // T is dense: transplant Work0 into T->x
+        //----------------------------------------------------------------------
+
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t i = 0 ; i < n ; i++)
         { 
@@ -180,23 +184,87 @@
         GB_FREE_MEMORY (T->x, n, zsize) ;
         T->x = Work0 ;
         Work0 = NULL ;
+
     }
     else
     {
+
+        //----------------------------------------------------------------------
         // T is sparse: gather from Work0 and Mark0
-        // TODO: do this in parallel
-        int64_t p = 0 ;
-        for (int64_t i = 0 ; i < n ; i++)
+        //----------------------------------------------------------------------
+
+        if (nthreads == 1)
         {
-            if (Mark0 [i])
-            { 
-                Ti [p] = i ;
-                // Tx [p] = Work0 [i], no typecast
-                GB_COPY_ARRAY_TO_ARRAY (Tx, p, Work0, i) ;
-                p++ ;
+
+            int64_t p = 0 ;
+            for (int64_t i = 0 ; i < n ; i++)
+            {
+                if (Mark0 [i])
+                { 
+                    Ti [p] = i ;
+                    // Tx [p] = Work0 [i], no typecast
+                    GB_COPY_ARRAY_TO_ARRAY (Tx, p, Work0, i) ;
+                    p++ ;
+                }
             }
+            ASSERT (p == tnz) ;
+
         }
-        ASSERT (p == tnz) ;
+        else
+        {
+
+            int ntasks = 256 * nthreads ;
+            ntasks = GB_IMIN (ntasks, n) ;
+            int64_t Count [ntasks+1] ;
+            #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+            for (int taskid = 0 ; taskid < ntasks ; taskid++)
+            {
+                int64_t ifirst, ilast, p = 0 ;
+                GB_PARTITION (ifirst, ilast, n, taskid, ntasks) ;
+                for (int64_t i = ifirst ; i < ilast ; i++)
+                { 
+                    p += Mark0 [i] ;
+                }
+                Count [taskid] = p ;
+            }
+
+            GB_cumsum (Count, ntasks, NULL, 1) ;
+
+            #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+            for (int64_t taskid = 0 ; taskid < ntasks ; taskid++)
+            {
+                int64_t ifirst, ilast, p = Count [taskid] ;
+                int64_t my_count = (Count [taskid+1] - p) ;
+                GB_PARTITION (ifirst, ilast, n, taskid, ntasks) ;
+                if (my_count > 0)
+                {
+                    for (int64_t i = ifirst ; i < ilast ; i++)
+                    {
+                        if (Mark0 [i])
+                        { 
+                            Ti [p] = i ;
+                            // Tx [p] = Work0 [i], no typecast
+                            GB_COPY_ARRAY_TO_ARRAY (Tx, p, Work0, i) ;
+                            p++ ;
+                        }
+                    }
+                }
+            }
+
+            #ifdef GB_DEBUG
+            // check result using a single thread
+            int64_t p = 0 ;
+            for (int64_t i = 0 ; i < n ; i++)
+            {
+                if (Mark0 [i])
+                { 
+                    ASSERT (Ti [p] == i) ;
+                    p++ ;
+                }
+            }
+            ASSERT (p == tnz) ;
+            #endif
+        }
     }
 
     // free workspace for thread 0 

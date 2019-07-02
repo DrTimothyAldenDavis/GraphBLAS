@@ -41,8 +41,6 @@ int64_t GB_search_for_vector        // return the vector k that contains p
         // next vector will also contain the entry p.  In that case, k needs to
         // be incremented until finding the first non-empty vector for which
         // Ap [k] == p.
-        // TODO if Ap [k+1] == p, then use another binary search for p+1,
-        // not a linear-time search
         ASSERT (Ap [k] == p) ;
         while (k < anvec-1 && Ap [k+1] == p)
         {

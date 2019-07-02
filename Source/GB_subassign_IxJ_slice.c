@@ -17,30 +17,30 @@
 // fine.  Each fine task computes a slice of C(I(iA_start:iA_end-1), jC) for a
 // single index jC = J(kfirst).
 
-// This method is used by GB_subassign_methods 7, 8, 11a, 11b, 12a, 12b,
-// which are the 6 scalar assignment methods that must iterate over all IxJ.
+// This method is used by methods 01, 03, 13, 15, 17, 19, which are the 6
+// scalar assignment methods that must iterate over all IxJ.
 
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
         //  =====================       ==============
-        //  -   -   -   -   -   S        7: C(I,J) = x, with S
-        //  -   -   -   +   -   S        8: C(I,J) += x, with S
-        //  M   c   -   -   -   S      11b: C(I,J)<!M> = x, with S
-        //  M   c   -   +   -   S      12b: C(I,J)<!M> += x, with S
-        //  M   c   r   -   -   S      11a: C(I,J)<!M,repl> = x, with S
-        //  M   c   r   +   -   S      12a: C(I,J)<!M,repl> += x, with S
+        //  -   -   -   -   -   S       01:  C(I,J) = x, with S
+        //  -   -   -   +   -   S       03:  C(I,J) += x, with S
+        //  M   c   -   -   -   S       13:  C(I,J)<!M> = x, with S
+        //  M   c   -   +   -   S       15:  C(I,J)<!M> += x, with S
+        //  M   c   r   -   -   S       17:  C(I,J)<!M,repl> = x, with S
+        //  M   c   r   +   -   S       19:  C(I,J)<!M,repl> += x, with S
 
 // There are 10 methods that perform scalar assignment: the 6 listed above, and
-// Methods 1, 2, 11c, 12c.  The latter 4 methods do do not need to iterate over
-// the entire IxJ space, because of the mask M:
+// Methods 05, 07, 09, and 11.  The latter 4 methods do do not need to iterate
+// over the entire IxJ space, because of the mask M:
 
-        //  M   -   -   -   -   -        1: C(I,J)<M> = x
-        //  M   -   -   +   -   -        2: C(I,J)<M> += x
-        //  M   -   r   -   -   S      11c: C(I,J)<M,repl> = x, with S
-        //  M   -   r   +   -   S      12c: C(I,J)<M,repl> += x, with S
+        //  M   -   -   -   -   -       05:  C(I,J)<M> = x
+        //  M   -   -   +   -   -       07:  C(I,J)<M> += x
+        //  M   -   r   -   -   S       09:  C(I,J)<M,repl> = x, with S
+        //  M   -   r   +   -   S       11:  C(I,J)<M,repl> += x, with S
 
 // As a result, they do not use GB_subassign_IxJ_slice to define their tasks.
-// Instead, Methods 1 and 2 slice the matrix M, and Methods 11c and 12c slice
+// Instead, Methods 05 and 07 slice the matrix M, and Methods 09 and 11 slice
 // the matrix addition M+S.
 
 #include "GB_subassign.h"

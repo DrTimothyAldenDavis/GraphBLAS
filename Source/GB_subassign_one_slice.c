@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_1_slice: slice the entries and vectors for subassign
+// GB_subassign_one_slice: slice the entries and vectors for subassign
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -11,16 +11,14 @@
 // slicing a single input matrix (M or A).  Fine tasks must also find their
 // location in their vector C(:,jC).
 
-// This method is used by GB_subassign_methods 1, 2, 5, 6a, 15:
+// This method is used by GB_subassign_05, 06n, and 07
 
         //  =====================       ==============
         //  M   cmp rpl acc A   S       method: action
         //  =====================       ==============
-        //  -   -   -   +   A   -        5: C(I,J) += A         for A
-        //  M   -   -   -   -   -        1: C(I,J)<M> = x       for M
-        //  M   -   -   +   -   -        2: C(I,J)<M> += x      for M
-        //  M   c   -   +   A   -       6a: C(I,J)<!M> += A     for A
-        //  M   -   -   -   A   -       15: C(I,J)<M> = A       for M
+        //  M   -   -   -   -   -       05:  C(I,J)<M> = x       for M
+        //  M   -   -   +   -   -       07:  C(I,J)<M> += x      for M
+        //  M   -   -   -   A   -       06n: C(I,J)<M> = A       for M
 
 #include "GB_subassign.h"
 
@@ -31,10 +29,10 @@
 }
 
 //------------------------------------------------------------------------------
-// GB_subassign_1_slice
+// GB_subassign_one_slice
 //------------------------------------------------------------------------------
 
-GrB_Info GB_subassign_1_slice
+GrB_Info GB_subassign_one_slice
 (
     // output:
     GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks

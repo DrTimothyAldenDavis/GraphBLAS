@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method14b: C(I,J)<!M> += A ; using S
+// GB_subassign_16: C(I,J)<!M> += A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 14b: C(I,J)<!M> += A ; using S
+// Method 16: C(I,J)<!M> += A ; using S
 
 // M:           present
 // Mask_comp:   true
@@ -16,11 +16,11 @@
 // A:           matrix
 // S:           constructed
 
-#define GB_FREE_WORK GB_FREE_2_SLICE
+#define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method14b
+GrB_Info GB_subassign_16
 (
     GrB_Matrix C,
     // input:
@@ -51,18 +51,18 @@ GrB_Info GB_subassign_method14b
     GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------
-    // Method 14b: C(I,J)<!M> += A ; using S
+    // Method 16: C(I,J)<!M> += A ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal.  All entries in A+S must be traversed.
 
-    // Compare with Method 10.
+    // Compare with Method 04.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
+    // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_2_SLICE (A, S) ;
+    GB_SUBASSIGN_TWO_SLICE (A, S) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

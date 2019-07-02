@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method11b: C(I,J)<!M> = scalar ; using S
+// GB_subassign_17: C(I,J)<!M,repl> = scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// Method 11b: C(I,J)<!M> = scalar ; using S
+// Method 17: C(I,J)<!M,repl> = scalar ; using S
 
 // M:           present
 // Mask_comp:   true
-// C_replace:   false
+// C_replace:   true
 // accum:       NULL
 // A:           scalar
 // S:           constructed
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method11b
+GrB_Info GB_subassign_17
 (
     GrB_Matrix C,
     // input:
@@ -49,17 +49,16 @@ GrB_Info GB_subassign_method11b
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 11b: C(I,J)<!M> = scalar ; using S
+    // Method 17: C(I,J)<!M,repl> = scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
     // required.  The sparsity of !M cannot be exploited.
 
-    // Method 11b and Method 12b are very similar.
-    // Method 11a and Method 11b are very similar.
+    // Methods 13, 15, 17, and 19 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 01, 03, 13, 15, 17, 19)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_IXJ_SLICE ;
@@ -149,13 +148,20 @@ GrB_Info GB_subassign_method11b
                     ASSERT (i == iA) ;
                     {
                         // both S (i,j) and A (i,j) present
+                        GB_C_S_LOOKUP ;
                         if (mij)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
                             // [C A 1]: action: ( =A ): copy A, no accum
                             // [X A 1]: action: ( undelete ): zombie lives
-                            GB_C_S_LOOKUP ;
                             GB_noaccum_C_A_1_scalar ;
+                        }
+                        else
+                        { 
+                            // ----[C A 0] or [X A 0]---------------------------
+                            // [X A 0]: action: ( X ): still a zombie
+                            // [C A 0]: C_repl: action: ( delete ): zombie
+                            GB_DELETE_ENTRY ;
                         }
                         GB_NEXT (S) ;
                     }

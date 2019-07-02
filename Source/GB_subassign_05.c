@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method1: C(I,J)<M> = scalar ; no S
+// GB_subassign_05: C(I,J)<M> = scalar ; no S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 1: C(I,J)<M> = scalar ; no S
+// Method 05: C(I,J)<M> = scalar ; no S
 
 // M:           present
 // Mask_comp:   false
@@ -18,7 +18,7 @@
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method1
+GrB_Info GB_subassign_05
 (
     GrB_Matrix C,
     // input:
@@ -47,7 +47,7 @@ GrB_Info GB_subassign_method1
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 1: C(I,J)<M> = scalar ; no S
+    // Method 05: C(I,J)<M> = scalar ; no S
     //--------------------------------------------------------------------------
 
     // Time: Close to Optimal:  the method must iterate over all entries in M,
@@ -60,13 +60,13 @@ GrB_Info GB_subassign_method1
     // hypersparse.  There is no equivalent method that computes
     // C(I,J)<M>=scalar using the matrix S.
 
-    // Method 1 and Method 2 are very similar.
+    // Method 05 and Method 07 are very similar.  Also compare with Method 06n.
 
     //--------------------------------------------------------------------------
-    // Parallel: slice M into coarse/fine tasks (Method 1, 2, 15)
+    // Parallel: slice M into coarse/fine tasks (Method 05, 06n, 07)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_1_SLICE (M) ;
+    GB_SUBASSIGN_ONE_SLICE (M) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -104,12 +104,14 @@ GrB_Info GB_subassign_method1
             //------------------------------------------------------------------
 
             GB_GET_jC ;
+            int64_t cjnz = pC_end - pC_start ;
+            bool cjdense = (cjnz == cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> = scalar ; no S
             //------------------------------------------------------------------
 
-            if (pC_end - pC_start == cvlen)
+            if (cjdense)
             {
 
                 //--------------------------------------------------------------
@@ -132,20 +134,16 @@ GrB_Info GB_subassign_method1
 
                     if (mij)
                     { 
-
-                        //------------------------------------------------------
-                        // C(iC,jC) = scalar
-                        //------------------------------------------------------
-
                         int64_t iA = Mi [pM] ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // ----[C A 1] or [X A 1]-------------------------------
                         // [C A 1]: action: ( =A ): copy A into C, no accum
-                        // [X A 1]: action: ( undelete ): bring zombie back
+                        // [X A 1]: action: ( undelete ): zombie lives
                         GB_noaccum_C_A_1_scalar ;
                     }
                 }
+
             }
             else
             {
@@ -165,31 +163,24 @@ GrB_Info GB_subassign_method1
                     cast_M (&mij, Mx +(pM*msize), 0) ;
 
                     //----------------------------------------------------------
-                    // find C(iC,jC), but only if M(iA,j) allows it
+                    // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
                     if (mij)
                     {
-
-                        //------------------------------------------------------
-                        // C(iC,jC) = scalar
-                        //------------------------------------------------------
-
-                        // binary search for C(iC,jC) in C(:,jC)
                         int64_t iA = Mi [pM] ;
                         GB_iC_BINARY_SEARCH ;
-
-                        if (found)
+                        if (cij_found)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =A ): A to C, no accum
+                            // [C A 1]: action: ( =A ): copy A into C, no accum
                             // [X A 1]: action: ( undelete ): zombie lives
                             GB_noaccum_C_A_1_scalar ;
                         }
                         else
                         { 
                             // ----[. A 1]--------------------------------------
-                            // action: ( insert )
+                            // [. A 1]: action: ( insert )
                             task_pending++ ;
                         }
                     }
@@ -239,12 +230,13 @@ GrB_Info GB_subassign_method1
             //------------------------------------------------------------------
 
             GB_GET_jC ;
+            bool cjdense = ((pC_end - pC_start) == cvlen) ;
 
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> = scalar ; no S
             //------------------------------------------------------------------
 
-            if (pC_end - pC_start != cvlen)
+            if (!cjdense)
             {
 
                 //--------------------------------------------------------------
@@ -262,24 +254,17 @@ GrB_Info GB_subassign_method1
                     cast_M (&mij, Mx +(pM*msize), 0) ;
 
                     //----------------------------------------------------------
-                    // find C(iC,jC), but only if M(iA,j) allows it
+                    // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
                     if (mij)
                     {
-
-                        //------------------------------------------------------
-                        // C(iC,jC) = scalar
-                        //------------------------------------------------------
-
-                        // binary search for C(iC,jC) in C(:,jC)
                         int64_t iA = Mi [pM] ;
                         GB_iC_BINARY_SEARCH ;
-
-                        if (!found)
+                        if (!cij_found)
                         { 
                             // ----[. A 1]--------------------------------------
-                            // action: ( insert )
+                            // [. A 1]: action: ( insert )
                             GB_PENDING_INSERT (scalar) ;
                         }
                     }

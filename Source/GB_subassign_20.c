@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method13a: C(I,J)<!M,repl> = A ; using S
+// GB_subassign_20: C(I,J)<!M,repl> += A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,20 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// Method 13a: C(I,J)<!M,repl> = A ; using S
+// Method 20: C(I,J)<!M,repl> += A ; using S
 
 // M:           present
 // Mask_comp:   true
 // C_replace:   true
-// accum:       NULL
+// accum:       present
 // A:           matrix
 // S:           constructed
 
-#define GB_FREE_WORK GB_FREE_2_SLICE
+#define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method13a
+GrB_Info GB_subassign_20
 (
     GrB_Matrix C,
     // input:
@@ -33,6 +33,7 @@ GrB_Info GB_subassign_method13a
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -47,24 +48,23 @@ GrB_Info GB_subassign_method13a
     GB_GET_MASK ;
     GB_GET_A ;
     GB_GET_S ;
-    GrB_BinaryOp accum = NULL ;
+    GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------
-    // Method 13a: C(I,J)<!M,repl> = A ; using S
+    // Method 20: C(I,J)<!M,repl> += A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Optimal.  O((nnz(A)+nnz(S))*log(m)), since all entries in S+A must
-    // be traversed, and the corresponding entry in M (even if not present)
-    // determines the action to take. log(m) is the # of entries in a column
-    // of M.
+    // Time: Optimal.  Omega(nnz(S)+nnz(A)) since all entries in S+A must be
+    // traversed.  All cases of the mask (0, 1, or not present) must be
+    // considered, because of the C_replace descriptor being true.
 
-    // Method 13a and 13c are very similar.
+    // Method 12 and Method 20 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
+    // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_2_SLICE (A, S) ;
+    GB_SUBASSIGN_TWO_SLICE (A, S) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -119,14 +119,16 @@ GrB_Info GB_subassign_method13a
                 if (iS < iA)
                 { 
                     // S (i,j) is present but A (i,j) is not
-                    // ----[C . 1] or [X . 1]-----------------------------------
-                    // [C . 1]: action: ( delete ): becomes zombie
-                    // [X . 1]: action: ( X ): still zombie
-                    // ----[C . 0] or [X . 0]-----------------------------------
-                    // [X . 0]: action: ( X ): still a zombie
-                    // [C . 0]: C_repl: action: ( delete ): becomes zombie
-                    GB_C_S_LOOKUP ;
-                    GB_DELETE_ENTRY ;
+                    GB_MIJ_BINARY_SEARCH (iS) ;
+                    mij = !mij ;
+                    if (!mij)
+                    { 
+                        // ----[C . 0] or [X . 0]-------------------------------
+                        // [X . 0]: action: ( X ): still a zombie
+                        // [C . 0]: C_repl: action: ( delete ): becomes zombie
+                        GB_C_S_LOOKUP ;
+                        GB_DELETE_ENTRY ;
+                    }
                     GB_NEXT (S) ;
                 }
                 else if (iA < iS)
@@ -152,8 +154,9 @@ GrB_Info GB_subassign_method13a
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
                         // [C A 1]: action: ( =A ): A to C no accum
+                        // [C A 1]: action: ( =C+A ): apply accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_noaccum_C_A_1_matrix ;
+                        GB_withaccum_C_A_1_matrix ;
                     }
                     else
                     { 
@@ -170,12 +173,17 @@ GrB_Info GB_subassign_method13a
             // while list S (:,j) has entries.  List A (:,j) exhausted
             while (pS < pS_end)
             { 
-                // ----[C . 1] or [X . 1]---------------------------------------
-                // S (i,j) is present but A (i,j) is not
-                // [C . 1]: action: ( delete ): becomes zombie
-                // [X . 1]: action: ( X ): still a zombie
-                GB_C_S_LOOKUP ;
-                GB_DELETE_ENTRY ;
+                int64_t iS = Si [pS] ;
+                GB_MIJ_BINARY_SEARCH (iS) ;
+                mij = !mij ;
+                if (!mij)
+                { 
+                    // ----[C . 0] or [X . 0]-----------------------------------
+                    // [X . 0]: action: ( X ): still a zombie
+                    // [C . 0]: C_repl: action: ( delete ): becomes zombie
+                    GB_C_S_LOOKUP ;
+                    GB_DELETE_ENTRY ;
+                }
                 GB_NEXT (S) ;
             }
 

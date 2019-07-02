@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method8: C(I,J) += scalar ; using S
+// GB_subassign_02: C(I,J) = A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,18 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// Method 8: C(I,J) += scalar ; using S
+// Method 02: C(I,J) = A ; using S
 
 // M:           NULL
 // Mask_comp:   false
 // C_replace:   false
-// accum:       present
-// A:           scalar
+// accum:       NULL
+// A:           matrix
 // S:           constructed
+
+#define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method8
+GrB_Info GB_subassign_02
 (
     GrB_Matrix C,
     // input:
@@ -30,9 +32,7 @@ GrB_Info GB_subassign_method8
     const int64_t nJ,
     const int Jkind,
     const int64_t Jcolon [3],
-    const GrB_BinaryOp accum,
-    const void *scalar,
-    const GrB_Type atype,
+    const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
 )
@@ -43,25 +43,25 @@ GrB_Info GB_subassign_method8
     //--------------------------------------------------------------------------
 
     GB_GET_C ;
+    GB_GET_A ;
     GB_GET_S ;
-    GB_GET_ACCUM_SCALAR ;
+    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 8: C(I,J) += scalar ; using S
+    // Method 02: C(I,J) = A ; using S
     //--------------------------------------------------------------------------
 
-    // Time: Optimal; must visit all IxJ, so Omega(|I|*|J|) is required.
+    // Time: Optimal.  All entries in A+S must be examined, so the work is
+    // Omega (nnz(A)+nnz(S)).
 
-    // Entries in S are found and the corresponding entry in C replaced with
-    // the scalar.
-
-    // Method 7 and Method 8 are very similar.
+    // Method 02 and Method 04 are somewhat similar.  They differ on how C is
+    // modified when the entry is present in S but not A.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_IXJ_SLICE ;
+    GB_SUBASSIGN_TWO_SLICE (A, S) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -76,52 +76,81 @@ GrB_Info GB_subassign_method8
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR ;
+        GB_GET_TASK_DESCRIPTOR ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t j = kfirst ; j <= klast ; j++)
+        for (int64_t k = kfirst ; k <= klast ; k++)
         {
 
             //------------------------------------------------------------------
-            // get jC, the corresponding vector of C
+            // get A(:,j) and S(:,j)
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
+            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X) ;
+            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
 
             //------------------------------------------------------------------
-            // get S(iA_start:end,j)
+            // do a 2-way merge of S(:,j) and A(:,j)
             //------------------------------------------------------------------
 
-            GB_GET_VECTOR_FOR_IXJ (S) ;
+            // jC = J [j] ; or J is a colon expression
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
-            //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC) += scalar
-            //------------------------------------------------------------------
-
-            for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+            // while both list S (:,j) and A (:,j) have entries
+            while (pS < pS_end && pA < pA_end)
             {
-                bool found = (pS < pS_end) && (Si [pS] == iA) ;
-                if (!found)
+                int64_t iS = Si [pS] ;
+                int64_t iA = Ai [pA] ;
+
+                if (iS < iA)
+                { 
+                    // ----[C . 1] or [X . 1]-----------------------------------
+                    // S (i,j) is present but A (i,j) is not
+                    // [C . 1]: action: ( delete ): becomes zombie
+                    // [X . 1]: action: ( X ): still a zombie
+                    GB_C_S_LOOKUP ;
+                    GB_DELETE_ENTRY ;
+                    GB_NEXT (S) ;
+                }
+                else if (iA < iS)
                 { 
                     // ----[. A 1]----------------------------------------------
-                    // S (i,j) is not present, the scalar is present
+                    // S (i,j) is not present, A (i,j) is present
                     // [. A 1]: action: ( insert )
                     task_pending++ ;
+                    GB_NEXT (A) ;
                 }
                 else
                 { 
                     // ----[C A 1] or [X A 1]-----------------------------------
                     // both S (i,j) and A (i,j) present
-                    // [C A 1]: action: ( =C+A ): apply accum
+                    // [C A 1]: action: ( =A ): copy A into C, no accum
                     // [X A 1]: action: ( undelete ): zombie lives
                     GB_C_S_LOOKUP ;
-                    GB_withaccum_C_A_1_scalar ;
+                    GB_noaccum_C_A_1_matrix ;
                     GB_NEXT (S) ;
+                    GB_NEXT (A) ;
                 }
             }
+
+            // while list S (:,j) has entries.  List A (:,j) exhausted.
+            while (pS < pS_end)
+            { 
+                // ----[C . 1] or [X . 1]---------------------------------------
+                // S (i,j) is present but A (i,j) is not
+                // [C . 1]: action: ( delete ): becomes zombie
+                // [X . 1]: action: ( X ): still a zombie
+                GB_C_S_LOOKUP ;
+                GB_DELETE_ENTRY ;
+                GB_NEXT (S) ;
+            }
+
+            // List A (:,j) has entries.  List S (:,j) exhausted.
+            task_pending += (pA_end - pA) ;
         }
 
         GB_PHASE1_TASK_WRAPUP ;
@@ -142,48 +171,67 @@ GrB_Info GB_subassign_method8
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR ;
+        GB_GET_TASK_DESCRIPTOR ;
         GB_START_PENDING_INSERTION ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
         //----------------------------------------------------------------------
 
-        for (int64_t j = kfirst ; j <= klast ; j++)
+        for (int64_t k = kfirst ; k <= klast ; k++)
         {
 
             //------------------------------------------------------------------
-            // get jC, the corresponding vector of C
+            // get A(:,j) and S(:,j)
             //------------------------------------------------------------------
 
-            GB_GET_jC ;
+            int64_t j = (Zh == NULL) ? k : Zh [k] ;
+            GB_GET_MAPPED_VECTOR (pA, pA_end, pA, pA_end, Ap, j, k, Z_to_X) ;
+            GB_GET_MAPPED_VECTOR (pS, pS_end, pB, pB_end, Sp, j, k, Z_to_S) ;
 
             //------------------------------------------------------------------
-            // get S(iA_start:end,j)
+            // do a 2-way merge of S(:,j) and A(:,j)
             //------------------------------------------------------------------
 
-            GB_GET_VECTOR_FOR_IXJ (S) ;
+            // jC = J [j] ; or J is a colon expression
+            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
-            //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC) += scalar
-            //------------------------------------------------------------------
-
-            for (int64_t iA = iA_start ; iA < iA_end ; iA++)
+            // while both list S (:,j) and A (:,j) have entries
+            while (pS < pS_end && pA < pA_end)
             {
-                bool found = (pS < pS_end) && (Si [pS] == iA) ;
-                if (!found)
+                int64_t iS = Si [pS] ;
+                int64_t iA = Ai [pA] ;
+
+                if (iS < iA)
+                { 
+                    GB_NEXT (S) ;
+                }
+                else if (iA < iS)
                 { 
                     // ----[. A 1]----------------------------------------------
-                    // S (i,j) is not present, the scalar is present
+                    // S (i,j) is not present, A (i,j) is present
                     // [. A 1]: action: ( insert )
                     int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
-                    GB_PENDING_INSERT (scalar) ;
+                    GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                    GB_NEXT (A) ;
                 }
                 else
                 { 
-                    // both S (i,j) and A (i,j) present
                     GB_NEXT (S) ;
+                    GB_NEXT (A) ;
                 }
+            }
+
+            // while list A (:,j) has entries.  List S (:,j) exhausted.
+            while (pA < pA_end)
+            { 
+                // ----[. A 1]--------------------------------------------------
+                // S (i,j) is not present, A (i,j) is present
+                // [. A 1]: action: ( insert )
+                int64_t iA = Ai [pA] ;
+                int64_t iC = GB_ijlist (I, iA, Ikind, Icolon) ;
+                GB_PENDING_INSERT (Ax +(pA*asize)) ;
+                GB_NEXT (A) ;
             }
         }
 

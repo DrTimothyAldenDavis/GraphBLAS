@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method7: C(I,J) = scalar ; using S
+// GB_subassign_01: C(I,J) = scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 7: C(I,J) = scalar ; using S
+// Method 01: C(I,J) = scalar ; using S
 
 // M:           NULL
 // Mask_comp:   false
@@ -18,7 +18,7 @@
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method7
+GrB_Info GB_subassign_01
 (
     GrB_Matrix C,
     // input:
@@ -47,7 +47,7 @@ GrB_Info GB_subassign_method7
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 7: C(I,J) = scalar ; using S
+    // Method 01: C(I,J) = scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Optimal; must visit all IxJ, so Omega(|I|*|J|) is required.
@@ -56,10 +56,10 @@ GrB_Info GB_subassign_method7
     // the scalar.  The traversal of S is identical to the traversal of M in
     // Method 4.
 
-    // Method 7 and Method 8 are very similar.
+    // Method 01 and Method 03 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 01, 03, 13, 15, 17, 19)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_IXJ_SLICE ;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method12a: C(I,J)<!M,repl> += scalar ; using S
+// GB_subassign_19: C(I,J)<!M,repl> += scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 12a: C(I,J)<!M,repl> += scalar ; using S
+// Method 19: C(I,J)<!M,repl> += scalar ; using S
 
 // M:           present
 // Mask_comp:   true
@@ -18,7 +18,7 @@
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method12a
+GrB_Info GB_subassign_19
 (
     GrB_Matrix C,
     // input:
@@ -49,17 +49,16 @@ GrB_Info GB_subassign_method12a
     GB_GET_ACCUM_SCALAR ;
 
     //--------------------------------------------------------------------------
-    // Method 12a: C(I,J)<!M,repl> += scalar ; using S
+    // Method 19: C(I,J)<!M,repl> += scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
     // required.  The sparsity of !M cannot be exploited.
 
-    // Method 11a and Method 12a are very similar.
-    // Method 12a and Method 12b are very similar.
+    // Methods 13, 15, 17, and 19 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 01, 03, 13, 15, 17, 19)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_IXJ_SLICE ;
@@ -154,7 +153,7 @@ GrB_Info GB_subassign_method12a
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
                             // [C A 1]: action: ( =C+A ): apply accum
-                            // [X A 1]: action: ( undelete ): bring zombie back
+                            // [X A 1]: action: ( undelete ): zombie lives
                             GB_withaccum_C_A_1_scalar ;
                         }
                         else

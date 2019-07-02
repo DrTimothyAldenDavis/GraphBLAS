@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method12b: C(I,J)<!M> += scalar ; using S
+// GB_subassign_13: C(I,J)<!M> = scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,18 +7,18 @@
 
 //------------------------------------------------------------------------------
 
-// Method 12b: C(I,J)<!M> += scalar ; using S
+// Method 13: C(I,J)<!M> = scalar ; using S
 
 // M:           present
 // Mask_comp:   true
 // C_replace:   false
-// accum:       present
+// accum:       NULL
 // A:           scalar
 // S:           constructed
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method12b
+GrB_Info GB_subassign_13
 (
     GrB_Matrix C,
     // input:
@@ -31,7 +31,6 @@ GrB_Info GB_subassign_method12b
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -45,21 +44,21 @@ GrB_Info GB_subassign_method12b
 
     GB_GET_C ;
     GB_GET_MASK ;
+    GB_GET_SCALAR ;
     GB_GET_S ;
-    GB_GET_ACCUM_SCALAR ;
+    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 12b: C(I,J)<!M> += scalar ; using S
+    // Method 13: C(I,J)<!M> = scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal; must visit all IxJ, so Omega(|I|*|J|) is
     // required.  The sparsity of !M cannot be exploited.
 
-    // Method 11b and Method 12b are very similar.
-    // Method 12a and Method 12b are very similar.
+    // Methods 13, 15, 17, and 19 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: all IxJ (Methods 7, 8, 11a, 11b, 12a, 12b)
+    // Parallel: all IxJ (Methods 01, 03, 13, 15, 17, 19)
     //--------------------------------------------------------------------------
 
     GB_SUBASSIGN_IXJ_SLICE ;
@@ -100,7 +99,7 @@ GrB_Info GB_subassign_method12b
             GB_GET_VECTOR_FOR_IXJ (M) ;
 
             //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC)<!M> += scalar
+            // C(I(iA_start,iA_end-1),jC)<!M,repl> = scalar
             //------------------------------------------------------------------
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
@@ -141,7 +140,7 @@ GrB_Info GB_subassign_method12b
                 mij = !mij ;
 
                 //--------------------------------------------------------------
-                // accumulate the entry
+                // assign the entry
                 //--------------------------------------------------------------
 
                 if (i == iS)
@@ -152,10 +151,10 @@ GrB_Info GB_subassign_method12b
                         if (mij)
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
-                            // [C A 1]: action: ( =C+A ): apply accum
-                            // [X A 1]: action: ( undelete ): bring zombie back
+                            // [C A 1]: action: ( =A ): copy A, no accum
+                            // [X A 1]: action: ( undelete ): zombie lives
                             GB_C_S_LOOKUP ;
-                            GB_withaccum_C_A_1_scalar ;
+                            GB_noaccum_C_A_1_scalar ;
                         }
                         GB_NEXT (S) ;
                     }
@@ -218,7 +217,7 @@ GrB_Info GB_subassign_method12b
             GB_GET_VECTOR_FOR_IXJ (M) ;
 
             //------------------------------------------------------------------
-            // C(I(iA_start,iA_end-1),jC)<!M> += scalar
+            // C(I(iA_start,iA_end-1),jC)<!M,repl> = scalar
             //------------------------------------------------------------------
 
             for (int64_t iA = iA_start ; iA < iA_end ; iA++)
@@ -259,7 +258,7 @@ GrB_Info GB_subassign_method12b
                 mij = !mij ;
 
                 //--------------------------------------------------------------
-                // accumulate the entry
+                // assign the entry
                 //--------------------------------------------------------------
 
                 if (i == iS)

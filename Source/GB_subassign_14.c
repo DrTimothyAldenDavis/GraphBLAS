@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method13b: C(I,J)<!M> = A ; using S
+// GB_subassign_14: C(I,J)<!M> = A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 13b: C(I,J)<!M> = A ; using S
+// Method 14: C(I,J)<!M> = A ; using S
 
 // M:           present
 // Mask_comp:   true
@@ -16,11 +16,11 @@
 // A:           matrix
 // S:           constructed
 
-#define GB_FREE_WORK GB_FREE_2_SLICE
+#define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method13b
+GrB_Info GB_subassign_14
 (
     GrB_Matrix C,
     // input:
@@ -50,20 +50,20 @@ GrB_Info GB_subassign_method13b
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 13b: C(I,J)<!M> = A ; using S
+    // Method 14: C(I,J)<!M> = A ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to optimal.  Omega(nnz(S)+nnz(A)) is required, and the
     // sparsity of !M cannot be exploited.  The time taken is
     // O((nnz(A)+nnz(S))*log(m)) where m is the # of entries in a vector of M.
 
-    // Method 13b and 13d are very similar (but 13d is suboptimal)
+    // Method 06s and 14 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
+    // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_2_SLICE (A, S) ;
+    GB_SUBASSIGN_TWO_SLICE (A, S) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples

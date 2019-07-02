@@ -2,7 +2,7 @@
 clear all
 make
 
-for k = [1 2 4]
+for k = [4 2 1]
 
     nthreads_set (k) ;
 

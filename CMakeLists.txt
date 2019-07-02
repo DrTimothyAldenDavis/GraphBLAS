@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "July 1, 2019 (6am) (DRAFT)" )
+set ( GraphBLAS_DATE "July 1, 2019 (10pm) (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -251,16 +251,14 @@ set_property ( TARGET graphblas PROPERTY C_STANDARD 11 )
 # static graphblas library properties
 #-------------------------------------------------------------------------------
 
-# TODO HACK
-# add_library ( graphblas_static STATIC ${GRAPHBLAS_SOURCES} )
-# SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
-#    VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-#    OUTPUT_NAME graphblas
-#    POSITION_INDEPENDENT_CODE OFF
-#    SOVERSION ${GraphBLAS_VERSION_MAJOR}
-#    C_STANDARD_REQUIRED 11
-#    PUBLIC_HEADER "Include/GraphBLAS.h" )
-# set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
+add_library ( graphblas_static STATIC ${GRAPHBLAS_SOURCES} )
+SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
+    VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+    OUTPUT_NAME graphblas
+    SOVERSION ${GraphBLAS_VERSION_MAJOR}
+    C_STANDARD_REQUIRED 11
+    PUBLIC_HEADER "Include/GraphBLAS.h" )
+ set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
 
 #-------------------------------------------------------------------------------
 # select the threading library 
@@ -295,25 +293,25 @@ if ( USE_OPENMP )
     # use OpenMP for user thread synchronization
     message ( STATUS "Using OpenMP to synchronize user threads" )
     target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
-    # target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -DUSER_OPENMP_THREADS " )
 elseif ( USE_POSIX )
     # use POSIX for user thread synchronization
     message ( STATUS "Using POSIX pthreads to synchronize user threads" )
     target_link_libraries ( graphblas        m )
-    # target_link_libraries ( graphblas_static m )
+    target_link_libraries ( graphblas_static m )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -pthread -DUSER_POSIX_THREADS " )
 else ( )
     # use no threading at all
     message ( WARNING "No support for user threads; GraphBLAS will not be thread-safe" )
     target_link_libraries ( graphblas        m )
-    # target_link_libraries ( graphblas_static m )
+    target_link_libraries ( graphblas_static m )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DUSER_NO_THREADS " )
 endif ( )
 
 if ( CMAKE_THREAD_LIBS_INIT )
     target_link_libraries ( graphblas        ${CMAKE_THREAD_LIBS_INIT} )
-    # target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
+    target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
 endif ( )
 
 if ( OPENMP_FOUND )
@@ -321,7 +319,7 @@ if ( OPENMP_FOUND )
     message ( STATUS "Using OpenMP for internal parallelism" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
     target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
-    # target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
 endif ( )
 
 if ( CMAKE_USE_PTHREADS_INIT )
@@ -363,7 +361,7 @@ SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
 set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
 
 target_link_libraries ( graphblasdemo         m graphblas )
-# target_link_libraries ( graphblasdemo_static  graphblas_static )
+target_link_libraries ( graphblasdemo_static  graphblas_static )
 
 #-------------------------------------------------------------------------------
 # Demo programs
@@ -398,8 +396,8 @@ target_link_libraries ( import_demo   graphblas graphblasdemo )
 # graphblas installation location
 #-------------------------------------------------------------------------------
 
-# install ( TARGETS graphblas graphblas_static
-install ( TARGETS graphblas
+install ( TARGETS graphblas graphblas_static
     LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+

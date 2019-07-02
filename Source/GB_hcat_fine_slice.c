@@ -136,7 +136,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     else
     {
 
-        // TODO: use a hypersparse-friendly method instead of the Sauna
+        // FUTURE: use a hypersparse-friendly method instead of the Sauna
 
         // no thread used a Sauna; acquire a single one
         int method = GxB_AxB_GUSTAVSON ;

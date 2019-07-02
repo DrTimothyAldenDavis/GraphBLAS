@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method12c: C(I,J)<M,repl> += scalar ; using S
+// GB_subassign_09: C(I,J)<M,repl> = scalar ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,20 +7,20 @@
 
 //------------------------------------------------------------------------------
 
-// Method 12c: C(I,J)<M,repl> += scalar ; using S
+// Method 09: C(I,J)<M,repl> = scalar ; using S
 
 // M:           present
 // Mask_comp:   false
 // C_replace:   true
-// accum:       present
+// accum:       NULL
 // A:           scalar
 // S:           constructed
 
-#define GB_FREE_WORK GB_FREE_2_SLICE
+#define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method12c
+GrB_Info GB_subassign_09
 (
     GrB_Matrix C,
     // input:
@@ -33,7 +33,6 @@ GrB_Info GB_subassign_method12c
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
-    const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -47,11 +46,12 @@ GrB_Info GB_subassign_method12c
 
     GB_GET_C ;
     GB_GET_MASK ;
+    GB_GET_SCALAR ;
     GB_GET_S ;
-    GB_GET_ACCUM_SCALAR ;
+    GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
-    // Method 12c: C(I,J)<M,repl> += scalar ; using S
+    // Method 09: C(I,J)<M,repl> = scalar ; using S
     //--------------------------------------------------------------------------
 
     // Time: Optimal.  All entries in M+S must be examined.  All entries in S
@@ -63,13 +63,13 @@ GrB_Info GB_subassign_method12c
     // method need not traverse all of IxJ.  It can limit its traversal to the
     // pattern of M+S.
 
-    // Method 11c and Method 12c are very similar.
+    // Method 09 and Method 11 are very similar.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=M+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
+    // Parallel: Z=M+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_2_SLICE (M, S) ;
+    GB_SUBASSIGN_TWO_SLICE (M, S) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -146,9 +146,9 @@ GrB_Info GB_subassign_method12c
                     if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
-                        // [C A 1]: action: ( =C+A ): apply accum
+                        // [C A 1]: action: ( =A ): copy A, no accum
                         // [X A 1]: action: ( undelete ): zombie lives
-                        GB_withaccum_C_A_1_scalar ;
+                        GB_noaccum_C_A_1_scalar ;
                     }
                     else
                     { 

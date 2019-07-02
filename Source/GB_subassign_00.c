@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method0: C(I,J)<!,repl> = empty ; using S
+// GB_subassign_00: C(I,J)<!,repl> = empty ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 0: C(I,J)<!,repl> = empty ; using S
+// Method 00: C(I,J)<!,repl> = empty ; using S
 
 // M:           NULL
 // Mask_comp:   true
@@ -18,7 +18,7 @@
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method0
+GrB_Info GB_subassign_00
 (
     GrB_Matrix C,
     // input:
@@ -43,7 +43,7 @@ GrB_Info GB_subassign_method0
     GB_GET_S ;
 
     //--------------------------------------------------------------------------
-    // Method 0: C(I,J)<!,repl> = empty ; using S
+    // Method 00: C(I,J)<!,repl> = empty ; using S
     //--------------------------------------------------------------------------
 
     // Time: Optimal, O(nnz(S)), assuming S has already been constructed.

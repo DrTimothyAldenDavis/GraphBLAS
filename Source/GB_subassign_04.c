@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_subassign_method10: C(I,J) += A ; using S
+// GB_subassign_04: C(I,J) += A ; using S
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 10: C(I,J) += A ; using S
+// Method 04: C(I,J) += A ; using S
 
 // M:           NULL
 // Mask_comp:   false
@@ -16,11 +16,11 @@
 // A:           matrix
 // S:           constructed
 
-#define GB_FREE_WORK GB_FREE_2_SLICE
+#define GB_FREE_WORK GB_FREE_TWO_SLICE
 
 #include "GB_subassign.h"
 
-GrB_Info GB_subassign_method10
+GrB_Info GB_subassign_04
 (
     GrB_Matrix C,
     // input:
@@ -49,28 +49,28 @@ GrB_Info GB_subassign_method10
     GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------
-    // Method 10: C(I,J) += A ; using S
+    // Method 04: C(I,J) += A ; using S
     //--------------------------------------------------------------------------
 
     // Time: Close to Optimal.  Every entry in A must be visited, and the
     // corresponding entry in S must then be found.  Time for this phase is
     // Omega(nnz(A)), but S has already been constructed, in Omega(nnz(S))
     // time.  This method simply traverses all of A+S (like GB_add for
-    // computing A+S), the same as Method 9.  Time taken is O(nnz(A)+nnz(S)).
+    // computing A+S), the same as Method 02.  Time taken is O(nnz(A)+nnz(S)).
     // The only difference is that the traversal of A+S can terminate if A is
     // exhausted.  Entries in S but not A do not actually require any work
-    // (unlike Method 9, which must visit all entries in A+S).
+    // (unlike Method 02, which must visit all entries in A+S).
 
-    // Method 9 and Method 10 are somewhat similar.  They differ on how C is
+    // Method 02 and Method 04 are somewhat similar.  They differ on how C is
     // modified when the entry is present in S but not A.
 
-    // Compare with Method 14b, which computes C(I,J)<!M> += A, using S.
+    // Compare with Method 16, which computes C(I,J)<!M> += A, using S.
 
     //--------------------------------------------------------------------------
-    // Parallel: Z=A+S (Methods 9, 10, 11c, 12c, 13[abcd], 14[abc])
+    // Parallel: Z=A+S (Methods 02, 04, 09, 10, 11, 12, 14, 16, 18, 20)
     //--------------------------------------------------------------------------
 
-    GB_SUBASSIGN_2_SLICE (A, S) ;
+    GB_SUBASSIGN_TWO_SLICE (A, S) ;
 
     //--------------------------------------------------------------------------
     // phase 1: create zombies, update entries, and count pending tuples
@@ -137,7 +137,7 @@ GrB_Info GB_subassign_method10
                     // ----[C A 1] or [X A 1]-----------------------------------
                     // both S (i,j) and A (i,j) present
                     // [C A 1]: action: ( =C+A ): apply accum
-                    // [X A 1]: action: ( undelete ): bring zombie back
+                    // [X A 1]: action: ( undelete ): zombie lives
                     GB_C_S_LOOKUP ;
                     GB_withaccum_C_A_1_matrix ;
                     GB_NEXT (S) ;
