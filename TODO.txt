@@ -8,8 +8,6 @@ TODO: test for user-defined type:  for FIRST and SECOND operators,
     do not check for typecast for the unused parameter.
     (this is written but need to test this for user-defined types)
 
-TODO: clean up descriptors: AxB method, chunk size, ...
-
 TODO: speedup XOR and EQ monoids using uint8_t summation.
     The boolean tests also do not vectorize, and #pragma omp simd
     may cause xlc to fail.
@@ -51,4 +49,30 @@ TODO: speedup XOR and EQ monoids using uint8_t summation.
         }
         w = ((w % 2) == 0) ;
         assert (z == w) ;
+
+
+TODO    All parallel methods need tuning and benchmarking.
+
+TODO    Add chunk to descriptor and to global settings (GxB_set/get).
+
+TODO    GB_AxB_parallel and GB_AxB_meta:
+        Check load balance for masked dot2 method for lcc problem.
+        Add AxB_SLICE methods to descriptor and to global settings.
+        Remove dot and replace with dot2.
+
+TODO    GB_AxB_meta: change swap rule so that C=A'*B' becomes C=(B*A)'
+
+TODO    GB_AxB_flopcount: better early exit, one loop not parallel
+
+TODO    GB_AxB_dot: remove this method; replace with dot2
+
+TODO    Template/GB_qsort_template: better leaf task size;
+            segfault with tiny leaf
+
+TODO    user-defined function in MIS Demo : make it thread-safe
+
+TODO    Demo/tri_demo.c: use all threads in initialization phase
+
+TODO    user guide: describe all changes, add new descriptors and
+        global settings
 

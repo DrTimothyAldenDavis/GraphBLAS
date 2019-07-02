@@ -55,7 +55,7 @@ int main (int argc, char **argv)
     fprintf (stderr, "tri_demo:\n") ;
     printf ("--------------------------------------------------------------\n");
 
-// TODO do init with one thread:
+// TODO doing init with one thread: (delete this and use all threads)
 GxB_set (GxB_NTHREADS, 1) ;
 
     //--------------------------------------------------------------------------

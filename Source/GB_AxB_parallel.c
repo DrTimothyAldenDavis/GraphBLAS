@@ -595,7 +595,7 @@ AxB_slice = GxB_SLICE_ATNZ ;
 
             // reduce # of threads, based on flop count (ensure
             // each thread does at least a lower bound # of flops.
-            // TODO make this a parameter
+            // TODO use chunk
             int64_t total_flops = Bflops [bnvec] ;
             nthreads = GB_IMIN (nthreads, 1 + (int) (total_flops / 1e6)) ;
 
@@ -651,7 +651,7 @@ AxB_slice = GxB_SLICE_ATNZ ;
 
             // reduce # of threads, based on bnz (ensure
             // each thread does at least a lower bound # of bnz.
-            // TODO make this a parameter
+            // TODO use chunk
             nthreads = GB_IMIN (nthreads, 1 + (int) (bnz / 1e6)) ;
 
             for (int tid = 1 ; tid < nthreads ; tid++)
@@ -692,7 +692,7 @@ AxB_slice = GxB_SLICE_ATNZ ;
 
             // reduce # of threads, based on flop count (ensure
             // each thread does at least a lower bound # of flops.
-            // TODO make this a parameter
+            // TODO use chunk
             int64_t total_flops = Bflops_per_entry [bnz] ;
             nthreads = GB_IMIN (nthreads, 1 + (int) (total_flops / 1e6)) ;
 

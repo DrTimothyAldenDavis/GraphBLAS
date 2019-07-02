@@ -81,7 +81,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     (*mask_applied) = false ;
     (*AxB_method_used) = GxB_DEFAULT ;
 
-    // TODO: get this from the descriptor:
+    // TODO: get AxB_slice selection from the descriptor:
     GrB_Desc_Value AxB_slice = GxB_DEFAULT ;
 
     //--------------------------------------------------------------------------
@@ -238,9 +238,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         atype_required = A_is_pattern ? A->type : semiring->multiply->xtype ;
         btype_required = B_is_pattern ? B->type : semiring->multiply->ytype ;
     }
-
-    // TODO: if A or B need to be transposed, and only the pattern is needed,
-    // then create AT or BT as pattern-only matrices.
 
     //--------------------------------------------------------------------------
     // select the algorithm
