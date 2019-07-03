@@ -78,19 +78,6 @@
 
 #include "GB.h"
 
-#ifdef GB_DEBUG
-bool GB_old                     // compute flops for C<M>=A*B or C=A*B
-(
-    int64_t *Bflops,            // size B->nvec+1 and all zero, if present
-    int64_t *Bflops_per_entry,  // size nnz(B)+1 and all zero, if present
-    const GrB_Matrix M,         // optional mask matrix
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    int64_t floplimit,          // maximum flops to compute if Bflops NULL
-    GB_Context Context
-) ;
-#endif
-
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 (
     int64_t *Bflops,            // size B->nvec+1 and all zero, if present
@@ -500,45 +487,6 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
-
-    #ifdef GB_DEBUG
-    // check results with GB_old version
-    int64_t *Bflops_old = NULL ;
-    int64_t *Bflops_per_entry_old = NULL ;
-    if (Bflops != NULL)
-    {
-        // GB_CALLOC_MEMORY (Bflops_old, bnvec, sizeof (int64_t)) ;
-        Bflops_old = (int64_t *)
-            GB_Global_calloc_function (bnvec+1, sizeof (int64_t)) ;
-        ASSERT (Bflops_old != NULL) ;
-    }
-    if (Bflops_per_entry != NULL)
-    {
-        // GB_CALLOC_MEMORY (Bflops_per_entry_old, bnz, sizeof (int64_t)) ;
-        Bflops_per_entry_old = (int64_t *)
-            GB_Global_calloc_function (bnz+1, sizeof (int64_t)) ;
-        ASSERT (Bflops_per_entry_old != NULL) ;
-    }
-    bool old_result = GB_old (Bflops_old, Bflops_per_entry_old, M, A, B,
-        floplimit, Context) ;
-    ASSERT (old_result == result) ;
-    if (Bflops != NULL)
-    {
-        for (int64_t k = 0 ; k <= bnvec ; k++)
-        {
-            ASSERT (Bflops [k] == Bflops_old [k]) ;
-        }
-        GB_Global_free_function (Bflops_old) ;
-    }
-    if (Bflops_per_entry != NULL)
-    {
-        for (int64_t p = 0 ; p <= bnz ; p++)
-        {
-            ASSERT (Bflops_per_entry [p] == Bflops_per_entry_old [p]) ;
-        }
-        GB_Global_free_function (Bflops_per_entry_old) ;
-    }
-    #endif
 
     return (result) ;
 }
