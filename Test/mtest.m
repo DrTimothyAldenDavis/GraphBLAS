@@ -7,7 +7,6 @@ debug_on
 nthreads_set (2) ;
 gb
 
-test48
 test16
 
 %
@@ -24,6 +23,7 @@ test75
 test87
 test88
 test98
+test48
 testall
 testca
 testperf
