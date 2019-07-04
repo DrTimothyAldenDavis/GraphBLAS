@@ -19,10 +19,6 @@
 #ifdef GB_DEBUG
 
 //------------------------------------------------------------------------------
-// Functions only for assertions
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // GB_heap_check: make sure the min-heap property holds for the whole Heap
 //------------------------------------------------------------------------------
 
@@ -251,153 +247,37 @@ static inline void GB_heapify
 // On input, the Heap [1..nheap] may not satisfy the min-heap property.
 // On output, the elements have been rearranged so that it does.
 
-static inline void GB_heap_build
+void GB_heap_build
 (
     GB_Element *restrict Heap,  // Heap [1..nheap]; modified
     const int64_t nheap         // the number of nodes in the Heap
-)
-{
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (Heap != NULL && nheap >= 0) ;
-
-    //--------------------------------------------------------------------------
-    // build the Heap
-    //--------------------------------------------------------------------------
-
-    for (int64_t p = nheap / 2 ; p >= 1 ; p--)
-    { 
-        GB_heapify (p, Heap, nheap) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // check result
-    //--------------------------------------------------------------------------
-
-    // Heap [1..nheap] now satisfies the min-heap property
-    ASSERT (GB_heap_check (Heap, nheap)) ;
-}
+) ;
 
 //------------------------------------------------------------------------------
 // GB_heap_delete: delete an element in the middle of a Heap
 //------------------------------------------------------------------------------
 
-static inline void GB_heap_delete
+void GB_heap_delete
 (
     int64_t p,                  // node that needs to be deleted
     GB_Element *restrict Heap,  // Heap [1..nheap]
     int64_t *restrict nheap     // the number of nodes in the Heap;
                                 // decremented on output
-)
-{ 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (Heap != NULL && (*nheap) >= 0) ;
-    ASSERT (p >= 0 && p <= (*nheap)) ;
-
-    //--------------------------------------------------------------------------
-    // delete node p from the Heap
-    //--------------------------------------------------------------------------
-
-    // move the last node to node p and decrement the # of nodes in the Heap
-    Heap [p] = Heap [(*nheap)--] ;
-
-    // heapify node p (safely does nothing if node p was the one just deleted)
-    GB_heapify (p, Heap, (*nheap)) ;
-}
-
+) ;
 
 //------------------------------------------------------------------------------
 // GB_heap_getminlist: get a list of all nodes with minimum key
 //------------------------------------------------------------------------------
 
-// Constructs a list of all nodes in the Heap with a key equal to Heap [1].key.
-// The Heap is not modified.  The list is returned in topological order: If
-// node p appears as p = List [k], and if its left child pleft = 2*p is in the
-// list at pleft = List [kleft], then k < kleft.  Likewise for its right child,
-// pright = 2*p+1.
-
-static inline int64_t GB_heap_getminlist    // returns Heap [1].key
+int64_t GB_heap_getminlist      // returns Heap [1].key
 (
     const GB_Element *restrict Heap,    // Heap [1..nheap], not modified
     const int64_t nheap,                // the number of nodes in the Heap
-
     // output
     int64_t *restrict List,     // List [0..nlist-1] is a list of all nodes p
                                 // with Heap [p].key == Heap [1].key.  Node 1
                                 // is always in the list.  List has size nheap.
     int64_t *restrict nlist     // the size of the List
-)
-{
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (GB_heap_check (Heap, nheap)) ;
-    ASSERT (nheap >= 1) ;
-
-    //--------------------------------------------------------------------------
-    // start the list with node 1
-    //--------------------------------------------------------------------------
-
-    // nothing in the List
-    (*nlist) = 0 ;
-
-    // push node 1 on the stack (in workspace at the bottom of the List)
-    int64_t top = nheap ;
-    List [--top] = 1 ;
-
-    // get the key of node 1
-    int64_t minkey = Heap [1].key ;
-
-    //--------------------------------------------------------------------------
-    // fill the List while the stack is not empty
-    //--------------------------------------------------------------------------
-
-    while (top < nheap)
-    {
-        // pop the top of the stack
-        int64_t p = List [top++] ;
-
-        // append p to the List
-        List [(*nlist)++] = p ;
-
-        // push its right child on the stack, if it has the same key
-        int64_t pright = 2*p + 1 ;
-        if (pright <= nheap && Heap [pright].key == minkey)
-        { 
-            List [--top] = pright ;
-        }
-
-        // push its left child on the stack, if it has the same key
-        int64_t pleft = 2*p ;
-        if (pleft <= nheap && Heap [pleft].key == minkey)
-        { 
-            List [--top] = pleft ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // return the result
-    //--------------------------------------------------------------------------
-
-    #ifdef GB_DEBUG
-    for (int64_t klist = 0 ; klist < (*nlist) ; klist++)
-    {
-        // each node p in the List satisfies the path property
-        int64_t p = List [klist] ;
-        ASSERT (GB_heap_pathcheck (p, Heap, nheap)) ;
-    }
-    #endif
-
-    return (minkey) ;
-}
+) ;
 
 #endif

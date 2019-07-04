@@ -870,6 +870,10 @@ typedef GB_Context_struct *GB_Context ;
     /* get the default max # of threads */                          \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;
 
+
+// #define GB_WHERE(where_string)                                      \
+//     GB_CONTEXT (where_string) ;
+
 #define GB_WHERE(where_string)                                      \
     if (!GB_Global_GrB_init_called_get ( ))                         \
     {                                                               \

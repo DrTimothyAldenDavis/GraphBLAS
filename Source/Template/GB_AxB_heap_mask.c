@@ -337,13 +337,13 @@
                 //--------------------------------------------------------------
 
                 pA_pair [kk].start = pA ;
+                bool do_heapify = true ;
                 if (pA < pA_end)
                 { 
                     // advance p to the next entry in A(:,k) or M(:,j).
                     // kk < bjnz refers to A(:,k), and kk=bjnz is M(:,j).
                     Heap [p].key = Ai [pA] ;
                     ASSERT (Heap [p].key > i && Heap [p].key < cvlen) ;
-                    GB_heapify (p, Heap, nheap) ;
                 }
                 else
                 {
@@ -354,6 +354,7 @@
                     { 
                         // safe to delete p from the Heap
                         GB_heap_delete (p, Heap, &nheap) ;
+                        do_heapify = false ;
                     }
                     else
                     { 
@@ -363,10 +364,13 @@
                         // is not safe to delete.  Give node p a maximal
                         // key so and heapify it is no longer considered.
                         Heap [p].key = cvlen ;
-                        GB_heapify (p, Heap, nheap) ;
                     }
                     // one less live node in the Heap
                     --nlive ;
+                }
+                if (do_heapify)
+                { 
+                    GB_heapify (p, Heap, nheap) ;
                 }
             }
 
