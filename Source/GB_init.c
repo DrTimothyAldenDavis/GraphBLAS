@@ -110,13 +110,13 @@ GrB_Info GB_init            // start up GraphBLAS
         return (GrB_PANIC) ;
     }
 
+    GB_Global_GrB_init_called_set (true) ;
+
     if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
     {
         // invalid mode
         return (GrB_INVALID_VALUE) ;
     }
-
-    GB_Global_GrB_init_called_set (true) ;
 
     //--------------------------------------------------------------------------
     // establish malloc/calloc/realloc/free

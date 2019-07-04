@@ -221,9 +221,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     printf ("rand seed----------------------------------------------------\n") ;
-    fprintf (f, "random seed is %llu\n", simple_rand_getseed ( )) ;
+    fprintf (f, "random seed is %g\n", (double) simple_rand_getseed ( )) ;
     simple_rand_seed (1) ;
-    fprintf (f, "random seed is now %llu\n", simple_rand_getseed ( )) ;
+    fprintf (f, "random seed is now %g\n", (double) simple_rand_getseed ( )) ;
 
     //--------------------------------------------------------------------------
     // init
@@ -2683,8 +2683,14 @@ void mexFunction
     fprintf (ff, "test for indices out of bounds:\n") ;
     OK (GxB_fprint (A, GxB_COMPLETE, ff)) ;
     OK (GxB_fprint (C, GxB_COMPLETE, ff)) ;
-    for (int k = 0 ; k < 3 ; k++) fprintf (ff, "I [%d] = %lld\n", k, I [k]) ;
-    for (int k = 0 ; k < 2 ; k++) fprintf (ff, "J [%d] = %lld\n", k, J [k]) ;
+    for (int k = 0 ; k < 3 ; k++)
+    {
+        fprintf (ff, "I [%d] = %g\n", k, (double) I [k]) ;
+    }
+    for (int k = 0 ; k < 2 ; k++)
+    {
+        fprintf (ff, "J [%d] = %g\n", k, (double) J [k]) ;
+    }
     expected = GrB_INDEX_OUT_OF_BOUNDS ;
 
     OK (GrB_Matrix_dup (&A4, A)) ;

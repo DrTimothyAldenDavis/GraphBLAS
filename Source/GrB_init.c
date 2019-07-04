@@ -22,7 +22,7 @@ GrB_Info GrB_init           // start up GraphBLAS
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_init (mode)") ;
+    GB_CONTEXT ("GrB_init (mode)") ;
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS

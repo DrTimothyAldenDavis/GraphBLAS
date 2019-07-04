@@ -857,12 +857,11 @@ typedef GB_Context_struct *GB_Context ;
 // GrB_*free does not encounter error conditions so it doesn't need to be
 // logged by the GB_WHERE macro.
 
-#define GB_WHERE(where_string)                                      \
-    if (!GB_Global_GrB_init_called_get ( ))                         \
-    {                                                               \
-        /* GrB_init (or GxB_init) has not been called! */           \
-        return (GrB_PANIC) ;                                        \
-    }                                                               \
+#ifndef GB_PANIC
+#define GB_PANIC return (GrB_PANIC) ;
+#endif
+
+#define GB_CONTEXT(where_string)                                    \
     /* construct the Context */                                     \
     GB_Context_struct Context_struct ;                              \
     GB_Context Context = &Context_struct ;                          \
@@ -870,6 +869,14 @@ typedef GB_Context_struct *GB_Context ;
     Context->where = where_string ;                                 \
     /* get the default max # of threads */                          \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;
+
+#define GB_WHERE(where_string)                                      \
+    if (!GB_Global_GrB_init_called_get ( ))                         \
+    {                                                               \
+        /* GrB_init (or GxB_init) has not been called! */           \
+        GB_PANIC ;                                                  \
+    }                                                               \
+    GB_CONTEXT (where_string) ;
 
 //------------------------------------------------------------------------------
 // GB_GET_NTHREADS_MAX:  determine max # of threads for OpenMP parallelism.
@@ -1353,10 +1360,6 @@ GrB_Info GB_ix_resize           // resize a matrix
     const int64_t anz_new,      // required new nnz(A)
     GB_Context Context
 ) ;
-
-#ifndef GB_PANIC
-#define GB_PANIC { printf ("panic %s %d\n", __FILE__, __LINE__) ; return (GrB_PANIC) ; }
-#endif
 
 // free A->i and A->x and return if critical section fails
 #define GB_IX_FREE(A)                                                       \

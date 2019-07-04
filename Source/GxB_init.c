@@ -58,11 +58,12 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_init (mode, malloc, calloc, realloc, free, thread_safe)") ;
-    GB_RETURN_IF_NULL (user_malloc_function ) ;
-    GB_RETURN_IF_NULL (user_calloc_function ) ;
-    GB_RETURN_IF_NULL (user_realloc_function) ;
-    GB_RETURN_IF_NULL (user_free_function   ) ;
+    GB_CONTEXT ("GxB_init (mode, malloc, calloc, realloc, free, thread_safe)") ;
+    if (user_malloc_function == NULL || user_realloc_function == NULL ||
+        user_calloc_function == NULL || user_free_function == NULL)
+    { 
+        return (GrB_NULL_POINTER) ;
+    }
 
     //--------------------------------------------------------------------------
     // initialize GraphBLAS
