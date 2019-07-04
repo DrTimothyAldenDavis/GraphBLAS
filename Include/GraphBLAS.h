@@ -71,7 +71,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 2, 2019 (2pm) (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "July 4, 2019 (2pm) (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -2827,11 +2827,8 @@ GrB_Info GrB_Matrix_free    // free a matrix
 //          A very specialized method that works well only if the mask is
 //          present, very sparse, and not complemented, or when C is tiny.
 //          It is impossibly slow if C is large and the mask is not present,
-//          since it takes Omega(m*n) time if C is m-by-n.
-//
-//      GxB_AxB_DOT2:  same as GxB_AxB_DOT, except that it uses a 2-phase
-//          method.  The first phase is symbolic, and the 2nd phase is
-//          numeric.  This method parallelizes better than GxB_AxB_DOT.
+//          since it takes Omega(m*n) time if C is m-by-n.  Uses a 2-phase
+//          method.  The first phase is symbolic, and the 2nd phase is numeric.
 
 // GxB_NTHREADS is an enumerated value in both the GrB_Desc_Field and the
 // GxB_Option_Field.  It is defined with the same integer value for
@@ -2891,11 +2888,9 @@ typedef enum
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
     GxB_AxB_DOT       = 1003,   // dot product
-// ADDED DOT2 in V3.0 (TODO, revise it?):
-    GxB_AxB_DOT2      = 1004,   // dot product
 //  GxB_AxB_HASH      = 1005,   // hash-based saxpy method (FUTURE)
 
-// ADDED in V3.0 (TODO, revise these):
+// ADDED in V3.0 (TODO, revise these SLICE descriptors):
     // for GxB_AxB_SLICE only:
     GxB_SLICE_ATROW       = 2001,   // each slice of A' has same # of rows
     GxB_SLICE_ATNZ        = 2002,   // each slice of A' has same # of nonzeros

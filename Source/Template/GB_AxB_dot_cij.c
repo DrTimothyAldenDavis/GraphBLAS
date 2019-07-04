@@ -9,14 +9,8 @@
 
 // computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product
 
-// For the 2-phase method:
-
 //      GB_PHASE_1_OF_2 ; determine if cij exists, and increment C_count
 //      GB_PHASE_2_OF_2 : 2nd phase, compute cij, no realloc of C
-
-// For the single-phase method (dot):
-
-//      GB_SINGLE_PHASE : both symbolic and numeric
 
 #undef GB_DOT_MERGE
 
@@ -54,26 +48,6 @@
 
     #if !defined ( GB_PHASE_1_OF_2 )
     GB_CIJ_DECLARE (cij) ;
-    #endif
-
-    //--------------------------------------------------------------------------
-    // for single phase: ensure enough space exists in C
-    //--------------------------------------------------------------------------
-
-    #if defined ( GB_SINGLE_PHASE )
-    if (cnz == C->nzmax)
-    {
-        GrB_Info info = GB_ix_realloc (C, 2*(C->nzmax), true, NULL) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            ASSERT (!(C->enqueued)) ;
-            GB_free (Chandle) ;
-            return (info) ;
-        }
-        Ci = C->i ;
-        Cx = C->x ;
-    }
     #endif
 
     //--------------------------------------------------------------------------

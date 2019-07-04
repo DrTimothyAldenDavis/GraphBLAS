@@ -83,11 +83,11 @@
 // GB_accum_mask could do the accum/mask using the sliced T matrix, to
 // update the user's C matrix (which is not sliced), and then T is freed.
 
-// TODO: cleanup, descriptors, load balance
-
 // FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods.
 
 #include "GB.h"
+
+// TODO: cleanup, descriptors, load balance
 
 GrB_Info GB_AxB_parallel            // parallel matrix-matrix multiply
 (

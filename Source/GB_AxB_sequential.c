@@ -57,14 +57,10 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
         // The dot product method can efficiently exploit any mask.
 
         ASSERT (A->vlen == B->vlen) ;
-        return (GB_AxB_dot (Chandle, M, Mask_comp, A, B, semiring, flipxy,
-            mask_applied)) ;
-
-        // testing dot2 with one thread
-//      GrB_Matrix Aslice [1] ;
-//      Aslice [0] = A ;
-//      return (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B,
-//              semiring, flipxy, mask_applied, 1, NULL)) ;
+        GrB_Matrix Aslice [1] ;
+        Aslice [0] = A ;
+        return (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B, semiring,
+            flipxy, mask_applied, 1, 1, 1, NULL)) ;
 
     }
     else
@@ -103,13 +99,12 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
         }
 
         // do the matrix multiply
-
         if (AxB_method == GxB_AxB_HEAP)
         { 
             // C<M> = A*B via heap method
             ASSERT (A->vdim == B->vlen) ;
-            return (GB_AxB_heap (Chandle, M, Mask_comp, A, B, semiring, flipxy,
-                mask_applied, bjnz_max)) ;
+            return (GB_AxB_heap (Chandle, M, Mask_comp, A, B, semiring,
+                flipxy, mask_applied, bjnz_max)) ;
         }
         else // AxB_method == GxB_AxB_GUSTAVSON
         { 

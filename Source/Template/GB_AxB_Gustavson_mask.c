@@ -33,7 +33,6 @@
     ASSERT (C->vdim == B->vdim) ;
     ASSERT (C->vlen == A->vlen) ;
     ASSERT (A->vdim == B->vlen) ;
-
     ASSERT (C->vdim == M->vdim) ;
     ASSERT (C->vlen == M->vlen) ;
 
@@ -183,7 +182,6 @@
 
             if (!marked)
             {
-                // #pragma omp simd
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
                 {
                     // mij = (bool) M (i,j)
@@ -213,7 +211,6 @@
             // Sauna += (A(:,k) * B(k,j)) .* M(:,j)
             //------------------------------------------------------------------
 
-            // #pragma omp simd
             for ( ; pA < pA_end ; pA++)
             { 
                 // Sauna_Work [i] += (A(i,k) * B(k,j)) .* M(i,j)
@@ -275,6 +272,7 @@
                 { 
                     // C(i,j) is a live entry, gather its row and value
                     // Cx [cnz] = Sauna_Work [i] ;
+                    ASSERT (cnz < C->nzmax) ;
                     GB_COPY (GB_CX (cnz), GB_SAUNA_WORK (i)) ;
                     Ci [cnz++] = i ;
                 }

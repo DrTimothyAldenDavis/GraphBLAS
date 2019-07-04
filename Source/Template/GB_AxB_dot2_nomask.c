@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot_nomask:  C=A'*B via dot products
+// GB_AxB_dot2_nomask:  C=A'*B via dot products
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

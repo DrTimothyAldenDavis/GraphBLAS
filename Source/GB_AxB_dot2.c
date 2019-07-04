@@ -53,6 +53,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     GrB_Info info ;
     GrB_Matrix A = Aslice [0] ;     // just for type and dimensions
     ASSERT (Chandle != NULL) ;
+    ASSERT (*Chandle == NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for dot A'*B", GB0)) ;
     ASSERT_OK (GB_check (A, "A for dot A'*B", GB0)) ;
     for (int taskid = 0 ; taskid < naslice ; taskid++)
@@ -179,12 +180,10 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     for (int64_t k = 0 ; k < cnvec ; k++)
     {
         int64_t s = 0 ;
-        // #pragma omp simd reduction(+:s)
         for (int taskid = 0 ; taskid < naslice ; taskid++)
         {
             int64_t *C_count = C_counts [taskid] ;
             int64_t c = C_count [k] ;
-            // printf ("taskid %d k "GBd" c "GBd"\n", taskid, k, c) ;
             C_count [k] = s ;
             s += c ;
         }
@@ -215,6 +214,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     if (info != GrB_SUCCESS)
     { 
         // out of memory
+        GB_MATRIX_FREE (Chandle) ;
         GB_FREE_ALL ;
         return (info) ;
     }
@@ -262,6 +262,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
     { 
         // out of memory
+        GB_MATRIX_FREE (Chandle) ;
         GB_FREE_ALL ;
         return (info) ;
     }
@@ -272,6 +273,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     // user semirings created at compile time
     //--------------------------------------------------------------------------
 
+    // TODO: user dot2: needs nthreads, naslice, nbslice
 #if 0
     if (semiring->object_kind == GB_USER_COMPILED)
     {
@@ -294,7 +296,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
         if (A->type == atype_required && B->type == btype_required)
         {
-            info = GB_AxB_user (GxB_AxB_DOT2, semiring, Chandle, M, A, B,
+            info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, A, B,
                 flipxy, Mask_comp, NULL, NULL, NULL, 0, NULL,
                 C_count_start, C_count_end) ;
             done = true ;

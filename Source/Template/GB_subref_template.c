@@ -543,24 +543,8 @@
                         // handled by multiple fine tasks must wait until all
                         // task are completed, below in the post sort.
                         pC = Cp [kC] ;
-                        #if defined ( GB_SYMBOLIC )
-                        // printf ("method 10 sort "GBd" before\n", kC) ;
-                        // for (int64_t k = 0 ; k < clen ; k++)
-                        // {
-                        //     printf ("   "GBd" : ("GBd" : "GBd")\n",
-                        //         k, Ci [pC + k], Cx [pC + k]) ;
-                        // }
-                        #endif
                         GB_qsort_1b (Ci + pC, Cx + pC*GB_CSIZE1, GB_CSIZE2,
                             clen, NULL) ;
-                        #if defined ( GB_SYMBOLIC )
-                        // printf ("after\n") ;
-                        // for (int64_t k = 0 ; k < clen ; k++)
-                        // {
-                        //    printf ("   "GBd" : ("GBd" : "GBd")\n",
-                        //        k, Ci [pC + k], Cx [pC + k]) ;
-                        //}
-                        #endif
                     }
                     #endif
                     break ;

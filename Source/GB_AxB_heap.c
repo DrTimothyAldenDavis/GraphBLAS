@@ -115,7 +115,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     }
 
     //--------------------------------------------------------------------------
-    // esimate nnz(C) and allocate C
+    // esimate nnz(C) and allocate C (both pattern and values)
     //--------------------------------------------------------------------------
 
     int64_t cvlen = A->vlen ;
@@ -123,7 +123,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     GrB_Type ctype = semiring->add->op->ztype ;
 
     GrB_Info info = GB_AxB_alloc (Chandle, ctype, cvlen, cvdim, M, A, B, true,
-        15 + GB_NNZ (A) + GB_NNZ (B)) ;
+        15) ;
 
     if (info != GrB_SUCCESS)
     { 

@@ -60,6 +60,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
     if (anz == 0)
     { 
         // no work to do
+        (*p_nvals) = 0 ;
         return (GrB_SUCCESS) ;
     }
 

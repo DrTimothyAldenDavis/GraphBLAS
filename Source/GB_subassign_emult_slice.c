@@ -125,11 +125,10 @@ GrB_Info GB_subassign_emult_slice
     // atomic, but there is no gaurantee that this is true for all
     // architectures.  Note that GB_subassign_08 cannot create new zombies.
 
-    // This work could be done in parallel with the following pragma, but each
-    // task does at most 2 binary searches.  The total work for all the binary
-    // searches will likely be small.  So do the work with a single thread.
+    // This work could be done in parallel, but each task does at most 2 binary
+    // searches.  The total work for all the binary searches will likely be
+    // small.  So do the work with a single thread.
 
-    // #pragma omp parallel for num_threads(nthreads)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 

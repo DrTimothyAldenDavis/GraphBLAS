@@ -37,37 +37,18 @@ constructed by dox_headers.m
 
 
 /** \file GB_AxB_alloc.c
-\brief  GB_AxB_alloc: estimate nnz(C) and allocate C for C=A*B or C=A'*B
+\brief  GB_AxB_alloc: estimate nnz(C) and allocate C for C=A*B or C\<M\>=A*B
 
 \par
  Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
+ This used for Gustavon's method and the heap-based method, not the dot
+ product method.
 */
 
 
 /** \file GB_AxB_colscale.c
 \brief  GB_AxB_colscale: C = A*D, column scale with diagonal matrix D
 
-*/
-
-
-/** \file GB_AxB_dot.c
-\brief  GB_AxB_dot: compute C\<M\> = A'*B without forming A' via dot products
-
-\par
- GB_AxB_dot computes the matrix multiplication C\<M\>=A'*B without forming
- A' explicitly.  It is useful when A is very tall and thin (n-by-1 in
- particular).  In that case A' is costly to transpose, but A'*B is very
- easy if B is also tall and thin (say also n-by-1).  It is also useful for
- computing A'*B when B is a vector.
-\par
- GB_AxB_dot uses a single pass, both symbolic and numeric.  It thus cannot
- be done in parallel.  Instead, parallelism is handled in GB_AxB_parallel,
- which calls multiple instances of this function on different slices.
- Alternatively, GB_AxB_dot2 can be done in parallel, in place.
-\par
- Any variant of the mask is handled: C=A'*B, C\<M\>=A'*B, and C\<!M\>=A'*B.
-\par
- Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 */
 
 
@@ -243,8 +224,6 @@ constructed by dox_headers.m
  delay the contatenation of the output matrix T = [C0 ... C(nthreads-1)].
  GB_accum_mask could do the accum/mask using the sliced T matrix, to
  update the user's C matrix (which is not sliced), and then T is freed.
-\par
- TODO: cleanup, descriptors, load balance
 \par
  FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods.
 */
@@ -4354,7 +4333,7 @@ constructed by dox_headers.m
 
 
 /** \file GB_AxB_dot2_nomask.c
-\brief  GB_AxB_dot_nomask:  C=A'*B via dot products
+\brief  GB_AxB_dot2_nomask:  C=A'*B via dot products
 
 */
 
@@ -4365,40 +4344,8 @@ constructed by dox_headers.m
 \par
  computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product
 \par
- For the 2-phase method:
-\par
       GB_PHASE_1_OF_2 ; determine if cij exists, and increment C_count
       GB_PHASE_2_OF_2 : 2nd phase, compute cij, no realloc of C
-\par
- For the single-phase method (dot):
-\par
-      GB_SINGLE_PHASE : both symbolic and numeric
-*/
-
-
-/** \file GB_AxB_dot_compmask.c
-\brief  GB_AxB_dot_compmask:  C\<!M\>=A'*B via dot products
-
-\par
- TODO: delete this method entirely?  Use dot2 instead.
-*/
-
-
-/** \file GB_AxB_dot_mask.c
-\brief  GB_AxB_dot_mask:  C\<M\>=A'*B via dot products
-
-*/
-
-
-/** \file GB_AxB_dot_meta.c
-\brief  GB_AxB_dot_meta: C=A'*B or C\<M\>=A'*B via dot productes
-
-*/
-
-
-/** \file GB_AxB_dot_nomask.c
-\brief  GB_AxB_dot_nomask:  C=A'*B via dot products
-
 */
 
 

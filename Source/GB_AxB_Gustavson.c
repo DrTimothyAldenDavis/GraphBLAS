@@ -125,11 +125,11 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     ASSERT_SAUNA_IS_RESET ;
 
     //--------------------------------------------------------------------------
-    // estimate nnz(C) and allocate C (just the pattern)
+    // allocate C (just the pattern)
     //--------------------------------------------------------------------------
 
     GB_OK (GB_AxB_alloc (Chandle, GrB_BOOL, cvlen, cvdim, M, A, B, false,
-        cvlen + GB_NNZ (A) + GB_NNZ (B))) ;
+        cvlen)) ;
 
     GrB_Matrix C = (*Chandle) ;
     ASSERT (C != NULL) ;
@@ -265,6 +265,8 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
             return (info) ;
         }
     }
+
+    info = GrB_SUCCESS ;
 
     //--------------------------------------------------------------------------
     // determine the required types of A and B, for typecasting

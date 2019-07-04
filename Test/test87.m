@@ -146,6 +146,7 @@ tic
 y3 = GB_mex_AxB (A,x, true) ;
 toc
 [tg method] = gbresults ;
+fprintf ('GrB time is %g\n', tg) ;
 
 fprintf ('GrB (A'')xB outer:\n') ;
 tic
@@ -154,7 +155,8 @@ toc
 
 assert (isequal (y1, sparse (y0))) ;
 assert (isequal (y1, y2)) ;
-assert (isequal (y1, y3)) ;
+% assert (isequal (y1, y3)) ;
+assert (norm (y1-y3,1) / norm (y1,1) < eps)
 
 fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, method (1), tm/tg) ;
@@ -193,7 +195,8 @@ toc
 
 assert (isequal (y1, sparse (y0))) ;
 assert (isequal (y1, y2)) ;
-assert (isequal (y1, y3)) ;
+% assert (isequal (y1, y3)) ;
+assert (norm (y1-y2,1) / norm (y2,1) < eps)
 
 fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, method (1), tm/tg) ;
@@ -220,7 +223,8 @@ toc
 [tg method] = gbresults ;
 
 assert (isequal (y1, sparse (y0))) ;
-assert (isequal (y1, y3)) ;
+% assert (isequal (y1, y3)) ;
+assert (norm (y1-y3,1) / norm (y1,1) < eps)
 
 fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, method (1), tm/tg) ;
@@ -254,7 +258,8 @@ y3 = GB_mex_AxB (A',x) ;
 toc
 
 assert (isequal (y1, y2)) ;
-assert (isequal (y1, y3)) ;
+% assert (isequal (y1, y3)) ;
+assert (norm (y1-y3,1) / norm (y1,1) < eps)
 
 fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, method (1), tm/tg) ;

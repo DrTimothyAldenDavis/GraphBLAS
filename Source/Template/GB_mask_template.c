@@ -107,15 +107,13 @@
     // phase1: count entries in each C(:,j); phase2: compute C
     //--------------------------------------------------------------------------
 
-//    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
         // get the task descriptor
         //----------------------------------------------------------------------
-
-        // printf ("Task: %d\n", taskid) ;
 
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
@@ -199,7 +197,6 @@
                 iC_first = Ci [pC] ;
                 iC_last  = Ci [pC_end-1] ;
             }
-            // printf ("iC "GBd" "GBd"\n", iC_first, iC_last) ;
 
             //------------------------------------------------------------------
             // get Z(:,j)
@@ -232,7 +229,6 @@
                 iZ_first = Zi [pZ] ;
                 iZ_last  = Zi [pZ_end-1] ;
             }
-            // printf ("iZ "GBd" "GBd"\n", iZ_first, iZ_last) ;
 
             //------------------------------------------------------------------
             // get M(:,j)

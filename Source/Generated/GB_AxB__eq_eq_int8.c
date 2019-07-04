@@ -17,7 +17,7 @@
 // The C=A*B semiring is defined by the following types and operators:
 
 // A*B function (Gustavon):  GB_AgusB__eq_eq_int8
-// A'*B function (dot):      GB_AdotB__eq_eq_int8
+// A'*B function (dot):      GB_Adot2B__eq_eq_int8
 // A*B function (heap):      GB_AheapB__eq_eq_int8
 
 // C type:   bool
@@ -108,31 +108,6 @@ GrB_Info GB_AgusB__eq_eq_int8
     bool *restrict Cx = C->x ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_Gustavson_meta.c"
-    return (info) ;
-    #endif
-}
-
-//------------------------------------------------------------------------------
-// C<M>=A'*B, C<!M>=A'*B or C=A'*B: dot product
-//------------------------------------------------------------------------------
-
-GrB_Info GB_AdotB__eq_eq_int8
-(
-    GrB_Matrix *Chandle,
-    const GrB_Matrix M, const bool Mask_comp,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    GrB_Matrix C = (*Chandle) ;
-    GrB_Info info = GrB_SUCCESS ;
-    int nthreads = 1 ;
-    #define GB_SINGLE_PHASE
-    #include "GB_AxB_dot_meta.c"
-    #undef GB_SINGLE_PHASE
     return (info) ;
     #endif
 }

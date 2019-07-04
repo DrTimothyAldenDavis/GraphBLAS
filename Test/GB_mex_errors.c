@@ -2001,8 +2001,10 @@ void mexFunction
     GxB_fprint (HugeRow, GB3, ff) ;
 
     bool mask_applied = false ;
-    OK (GB_AxB_dot (&HugeMatrix, NULL, false, HugeRow, HugeRow,
-        GxB_PLUS_TIMES_FP64, false, &mask_applied)) ;
+    GrB_Matrix Aslice [1] ;
+    Aslice [0] = HugeRow ;
+    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, Aslice, HugeRow,
+        GxB_PLUS_TIMES_FP64, false, &mask_applied, 1, 1, 1, Context)) ;
 
     GxB_fprint (HugeMatrix, GB3, ff) ;
     GrB_free (&HugeMatrix) ;

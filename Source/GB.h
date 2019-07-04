@@ -857,10 +857,18 @@ typedef GB_Context_struct *GB_Context ;
 // GrB_*free does not encounter error conditions so it doesn't need to be
 // logged by the GB_WHERE macro.
 
-#define GB_WHERE(where_string)                      \
-    GB_Context_struct Context_struct ;              \
-    GB_Context Context = &Context_struct ;          \
-    Context->where = where_string ;                 \
+#define GB_WHERE(where_string)                                      \
+    if (!GB_Global_GrB_init_called_get ( ))                         \
+    {                                                               \
+        /* GrB_init (or GxB_init) has not been called! */           \
+        return (GrB_PANIC) ;                                        \
+    }                                                               \
+    /* construct the Context */                                     \
+    GB_Context_struct Context_struct ;                              \
+    GB_Context Context = &Context_struct ;                          \
+    /* set Context->where so GrB_error can report it if needed */   \
+    Context->where = where_string ;                                 \
+    /* get the default max # of threads */                          \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;
 
 //------------------------------------------------------------------------------
@@ -1999,10 +2007,10 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     const GrB_Index cvlen,      // vector length of C
     const GrB_Index cvdim,      // # of vectors of C
     const GrB_Matrix M,         // optional mask
-    const GrB_Matrix A,         // input matrix A (transposed for dot product)
+    const GrB_Matrix A,         // input matrix A
     const GrB_Matrix B,         // input matrix B
     const bool numeric,         // if true, allocate A->x, else A->x is NULL
-    const int64_t rough_guess   // rough estimate of nnz(C)
+    const int64_t cnz_extra     // added to the rough estimate (if M NULL)
 ) ;
 
 GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
@@ -2219,18 +2227,6 @@ GrB_Info GB_AxB_Gustavson_builtin
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Sauna Sauna                  // sparse accumulator
-) ;
-
-GrB_Info GB_AxB_dot                 // C = A'*B using dot product method
-(
-    GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
-    const bool Mask_comp,           // if true, use !M
-    const GrB_Matrix A,             // input matrix
-    const GrB_Matrix B,             // input matrix
-    const GrB_Semiring semiring,    // semiring that defines C=A*B
-    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
-    bool *mask_applied              // if true, mask was applied
 ) ;
 
 GrB_Info GB_AxB_dot2                // C = A'*B using dot product method

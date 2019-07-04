@@ -7,14 +7,6 @@ GrB_Info GB_AgusB
     GB_Sauna Sauna
 ) ;
 
-GrB_Info GB_AdotB
-(
-    GrB_Matrix *Chandle,
-    const GrB_Matrix M, const bool Mask_comp,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern
-) ;
-
 GrB_Info GB_Adot2B
 (
     GrB_Matrix C,

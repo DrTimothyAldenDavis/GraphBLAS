@@ -114,7 +114,6 @@
         // clear Sauna_Work
         //----------------------------------------------------------------------
 
-        // #pragma omp simd
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)
         { 
             // Sauna_Work [Ci [pC]] = identity ;
@@ -166,7 +165,6 @@
             // Sauna_Work += A(:,k) * B(k,j)
             //------------------------------------------------------------------
 
-            // #pragma omp simd
             for ( ; pA < pA_end ; pA++)
             { 
                 // Sauna_Work [i] += A(i,k) * B(k,j)
@@ -180,14 +178,11 @@
         // gather C(:,j) from Sauna_Work
         //----------------------------------------------------------------------
 
-        // #pragma omp simd
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)
         { 
             // Cx [pC] = Sauna_Work [Ci [pC]] ;
             GB_COPY (GB_CX (pC), GB_SAUNA_WORK (Ci [pC])) ;
         }
     }
-
-    ASSERT (info == GrB_SUCCESS) ;
 }
 

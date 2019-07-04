@@ -58,16 +58,21 @@ GrB_Info adotb_complex (GB_Context Context)
 
     bool mask_applied = false ;
 
-    info = GB_AxB_dot (&C, Mask,
+    GrB_Matrix Aslice [1] ;
+    Aslice [0] = Aconj ;
+
+    info = GB_AxB_dot2 (&C, Mask,
         false,      // mask not complemented
-        Aconj, B,
+        Aslice, B,
         #ifdef MY_COMPLEX
             My_Complex_plus_times,
         #else
             Complex_plus_times,
         #endif
         false,
-        &mask_applied) ;
+        &mask_applied,
+        // single thread:
+        1, 1, 1, Context) ;
 
     #ifdef MY_COMPLEX
     // convert back to run-time complex type
@@ -95,12 +100,16 @@ GrB_Info adotb (GB_Context Context)
     }
     // C = A'*B
     bool mask_applied = false ;
-    info = GB_AxB_dot (&C, Mask,
+    GrB_Matrix Aslice [1] ;
+    Aslice [0] = A ;
+    info = GB_AxB_dot2 (&C, Mask,
         false,      // mask not complemented
-        A, B,
+        Aslice, B,
         semiring /* GxB_PLUS_TIMES_FP64 */,
         false,
-        &mask_applied) ;
+        &mask_applied,
+        // single thread:
+        1, 1, 1, Context) ;
     GrB_free (&add) ;
     GrB_free (&semiring) ;
     return (info) ;

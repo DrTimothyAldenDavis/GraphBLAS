@@ -1,6 +1,6 @@
-TODO: add a test to all methods see if GrB_init has been called?
+TODO: user defined semirings, dot2 needs more args
 
-TODO: fix compiler warnings (icc on hypersparse, GB_control.h)
+TODO: fix compiler warnings (icc on hypersparse)
 
 TODO: split GB.h; it's too long
 
@@ -58,11 +58,8 @@ TODO    Add chunk to descriptor and to global settings (GxB_set/get).
 TODO    GB_AxB_parallel and GB_AxB_meta:
         Check load balance for masked dot2 method for lcc problem.
         Add AxB_SLICE methods to descriptor and to global settings.
-        Remove dot and replace with dot2.
 
 TODO    GB_AxB_meta: change swap rule so that C=A'*B' becomes C=(B*A)'
-
-TODO    GB_AxB_dot: remove this method; replace with dot2
 
 TODO    Template/GB_qsort_template: better leaf task size;
             segfault with tiny leaf
@@ -75,4 +72,6 @@ TODO    user guide: describe all changes, add new descriptors and
         global settings
 
 TODO    Tcov statement coverage
+
+TODO    make functions GB_heap not static inline, to reduce code size
 
