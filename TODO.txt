@@ -57,12 +57,9 @@ TODO    Add chunk to descriptor and to global settings (GxB_set/get).
 
 TODO    GB_AxB_parallel and GB_AxB_meta:
         Check load balance for masked dot2 method for lcc problem.
-        Add AxB_SLICE methods to descriptor and to global settings.
 
-TODO    GB_AxB_meta: change swap rule so that C=A'*B' becomes C=(B*A)'
-
-TODO    Template/GB_qsort_template: better leaf task size;
-            segfault with tiny leaf
+TODO    qsort: make qsort sequential and keep all 4 versions,
+        add parallel merge sort for GB_qsort_2 and GB_qsort_3.
 
 TODO    user-defined function in MIS Demo : make it thread-safe
 
@@ -72,6 +69,4 @@ TODO    user guide: describe all changes, add new descriptors and
         global settings
 
 TODO    Tcov statement coverage
-
-TODO    make functions GB_heap not static inline, to reduce code size
 

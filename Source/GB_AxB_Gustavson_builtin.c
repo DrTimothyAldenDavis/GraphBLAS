@@ -13,7 +13,7 @@
 // equivalent ones; if these are included, this function computes C=A*B for all
 // possible valid semirings that can be constructed from built-in operators.
 
-#include "GB.h"
+#include "GB_mxm.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 

@@ -12,7 +12,7 @@
 // This function is not user-callable.  It does the work for user-callable
 // functions GrB_mxm, GrB_mxv, and GrB_vxm.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 GrB_Info GB_mxm                     // C<M> = A*B
 (

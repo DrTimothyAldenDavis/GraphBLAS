@@ -11,7 +11,7 @@
 // This used for Gustavon's method and the heap-based method, not the dot
 // product method.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
 (

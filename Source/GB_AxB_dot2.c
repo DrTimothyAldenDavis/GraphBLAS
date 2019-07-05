@@ -7,16 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// GB_AxB_dot2 is very similar to GB_AxB_dot, except that it does the
-// computation in two phases.  The first phase counts the number of entries in
-// each column of C.  The second phase can then construct the result C in
-// place, and thus this method can be done in parallel for the single matrix
-// computation C=A'*B.  GB_AxB_dot2 operates in parallel on the slices of A,
-// whereas GB_AxB_dot can only work on a single matrix (or a single slice).
+// GB_AxB_dot2 does its computation in two phases.  The first phase counts the
+// number of entries in each column of C.  The second phase can then construct
+// the result C in place, and thus this method can be done in parallel for the
+// single matrix computation C=A'*B.
 
 // Any variant of the mask is handled: C=A'*B, C<M>=A'*B, and C<!M>=A'*B.
 
-#include "GB.h"
+#include "GB_mxm.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif

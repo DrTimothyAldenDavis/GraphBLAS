@@ -9,7 +9,7 @@
 
 // Horizontal concatenation of slices into the matrix C.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
 (

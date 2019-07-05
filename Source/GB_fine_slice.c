@@ -33,7 +33,7 @@
 // used when B->nvec is small (even 1, for GrB_mxv and GrB_vxm).  So it does
 // not need to be parallel.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
 (

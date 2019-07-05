@@ -12,7 +12,7 @@
 // The input matrix A is optionally transposed, as determined by the
 // Descriptor desc.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 GrB_Info GrB_mxv                    // w<M> = accum (w, A*u)
 (

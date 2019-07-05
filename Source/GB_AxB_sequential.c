@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_sequential: C<M>=A*B, C<M>=A'*B, C=A*B, or C=A'*B
+// GB_AxB_sequential: C<M>=A*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -12,9 +12,9 @@
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
-GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
+GrB_Info GB_AxB_sequential          // single-threaded C<M>=A*B
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix M,                   // optional mask matrix
@@ -46,73 +46,52 @@ GrB_Info GB_AxB_sequential          // single-threaded matrix-matrix multiply
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT_OK (GB_check (semiring, "semiring for sequential A*B", GB0)) ;
     ASSERT (mask_applied != NULL) ;
+    ASSERT (AxB_method != GxB_AxB_DOT) ;
 
-    if (AxB_method == GxB_AxB_DOT)
-    { 
+    //----------------------------------------------------------------------
+    // C<M> = A*B via a saxpy-based method
+    //----------------------------------------------------------------------
 
-        //----------------------------------------------------------------------
-        // C<M> = A'*B via dot product method
-        //----------------------------------------------------------------------
+    // Decide whether or not to use the mask.
 
-        // The dot product method can efficiently exploit any mask.
-
-        ASSERT (A->vlen == B->vlen) ;
-        GrB_Matrix Aslice [1] ;
-        Aslice [0] = A ;
-        return (GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B, semiring,
-            flipxy, mask_applied, 1, 1, 1, NULL)) ;
-
-    }
-    else
+    if (M != NULL)
     {
-
-        //----------------------------------------------------------------------
-        // C<M> = A*B via a saxpy-based method
-        //----------------------------------------------------------------------
-
-        // Decide whether or not to use the mask.
-
-        if (M != NULL)
+        if (Mask_comp)
+        { 
+            // the saxpy methods cannot handle a complemented mask at all.
+            // Discard the mask; mask_applied will be false.
+            M = NULL ;
+        }
+        else if (check_for_dense_mask)
         {
-            if (Mask_comp)
+            // The saxpy methods can handle any mask that's not complemented,
+            // but they will examine each entry in the mask.  This is costly if
+            // (total_flops < nnz(M)).  This condition is not checked if it has
+            // already been considered in the caller.
+            int64_t floplimit = GB_NNZ (M) ;
+            if (GB_AxB_flopcount (NULL, NULL, M, A, B, floplimit, NULL))
             { 
-                // the saxpy methods cannot handle a complemented mask at all.
+                // total_flops < nnz(M), so the mask is too dense to use.
                 // Discard the mask; mask_applied will be false.
                 M = NULL ;
             }
-            else if (check_for_dense_mask)
-            {
-                // The saxpy methods can handle any mask that's not
-                // complemented, but they will examine each entry in the mask.
-                // This is costly if (total_flops < nnz(M)).  This condition
-                // is not checked if it has already been considered in the
-                // caller (GB_AxB_parallel), with the GxB_SLICE_BFLOPS
-                // method.
-                int64_t floplimit = GB_NNZ (M) ;
-                if (GB_AxB_flopcount (NULL, NULL, M, A, B, floplimit, NULL))
-                { 
-                    // total_flops < nnz(M), so the mask is too dense to use.
-                    // Discard the mask; mask_applied will be false.
-                    M = NULL ;
-                }
-            }
         }
+    }
 
-        // do the matrix multiply
-        if (AxB_method == GxB_AxB_HEAP)
-        { 
-            // C<M> = A*B via heap method
-            ASSERT (A->vdim == B->vlen) ;
-            return (GB_AxB_heap (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, mask_applied, bjnz_max)) ;
-        }
-        else // AxB_method == GxB_AxB_GUSTAVSON
-        { 
-            // C<M> = A*B via Gustavson method
-            ASSERT (A->vdim == B->vlen) ;
-            return (GB_AxB_Gustavson (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, mask_applied, Sauna_id)) ;
-        }
+    // do the matrix multiply
+    if (AxB_method == GxB_AxB_HEAP)
+    { 
+        // C<M> = A*B via heap method
+        ASSERT (A->vdim == B->vlen) ;
+        return (GB_AxB_heap (Chandle, M, Mask_comp, A, B, semiring,
+            flipxy, mask_applied, bjnz_max)) ;
+    }
+    else // AxB_method == GxB_AxB_GUSTAVSON
+    { 
+        // C<M> = A*B via Gustavson method
+        ASSERT (A->vdim == B->vlen) ;
+        return (GB_AxB_Gustavson (Chandle, M, Mask_comp, A, B, semiring,
+            flipxy, mask_applied, Sauna_id)) ;
     }
 }
 

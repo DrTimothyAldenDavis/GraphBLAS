@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_mxm.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif

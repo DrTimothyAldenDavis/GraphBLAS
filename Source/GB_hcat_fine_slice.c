@@ -9,7 +9,7 @@
 
 // Horizontal concatenation and summation of fine slices into the matrix C.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
 (

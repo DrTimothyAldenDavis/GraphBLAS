@@ -29,7 +29,7 @@
     GB_MATRIX_FREE (&MT) ;      \
 }
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
@@ -80,9 +80,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     (*mask_applied) = false ;
     (*AxB_method_used) = GxB_DEFAULT ;
-
-    // TODO: get AxB_slice selection from the descriptor:
-    GrB_Desc_Value AxB_slice = GxB_DEFAULT ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC formats of C, M, A, and B
@@ -368,17 +365,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (do_adotb)
         { 
             // C<M> = A'*B via dot product method
-            GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, true, AxB_method, AxB_slice, AxB_method_used,
-                mask_applied, Context)) ;
+            GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, A, B, semiring,
+                flipxy, mask_applied, Context)) ;
         }
         else
         { 
             // C<M> = A'*B via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
-            GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, B, semiring,
-                flipxy, false, AxB_method, AxB_slice, AxB_method_used,
-                mask_applied, Context)) ;
+            GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, AT, B,
+                semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
+                Context)) ;
         }
 
     }
@@ -405,17 +401,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C<M> = A*B' via dot product
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
-            GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
-                flipxy, true, AxB_method, AxB_slice, AxB_method_used,
-                mask_applied, Context)) ;
+            GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
+                flipxy, mask_applied, Context)) ;
         }
         else
         { 
             // C<M> = A*B' via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
-            GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, BT, semiring,
-                flipxy, false, AxB_method, AxB_slice, AxB_method_used,
-                mask_applied, Context)) ;
+            GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, BT,
+                semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
+                Context)) ;
         }
 
     }
@@ -440,16 +435,15 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         { 
             // C<M> = A*B via dot product
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
-            GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, AT, B, semiring,
-                flipxy, true, AxB_method, AxB_slice, AxB_method_used,
-                mask_applied, Context)) ;
+            GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, B, semiring,
+                flipxy, mask_applied, Context)) ;
         }
         else
         { 
             // C<M> = A*B via saxpy: Gustavson or heap method
-            GB_OK (GB_AxB_parallel (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, false, AxB_method, AxB_slice, AxB_method_used,
-                mask_applied, Context)) ;
+            GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, B,
+                semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
+                Context)) ;
         }
     }
 

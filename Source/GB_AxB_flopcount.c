@@ -76,7 +76,7 @@
 // result of the test (total_flops <= floplimit) is returned.  This allows the
 // function to return early, once the total_flops exceeds the threshold.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 (

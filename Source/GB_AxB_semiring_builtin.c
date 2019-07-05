@@ -10,7 +10,7 @@
 // Determine if A*B uses a built-in semiring, and if so, determine the
 // opcodes and type codes of the semiring.
 
-#include "GB.h"
+#include "GB_mxm.h"
 
 #ifndef GBCOMPACT
 
