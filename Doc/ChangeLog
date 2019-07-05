@@ -1,4 +1,9 @@
-Version 3.0.0, TODO.
+Version 3.0.0, TODO, 2019
+
+    * version number: Two changes to the user-visible API are not
+        backward-compatible with V2.x: the extra parameter to GxB_init, and the
+        change in the type of the Thunk argument for GxB_select.  Thus, the SO
+        version of SuiteSparse:GraphBLAS is now 3, no longer 2.
 
     * OpenMP parallelism
     * added parameter to GxB_init: bool user_malloc_is_thread_safe,

@@ -12,7 +12,7 @@
 // The native Sauna is best since a thread should use workspace that it
 // allocated itself, for best performance in a NUMA memory system.
 
-#include "GB.h"
+#include "GB_Sauna.h"
 
 // The time spent in the critical section is typically O(nthreads) or, unless
 // the user calls GraphBLAS simultaneously from multiple user threads.  In that

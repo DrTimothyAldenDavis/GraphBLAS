@@ -10,6 +10,7 @@
 // Horizontal concatenation and summation of fine slices into the matrix C.
 
 #include "GB_mxm.h"
+#include "GB_Sauna.h"
 
 GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
 (
@@ -17,7 +18,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     int nthreads,           // # of slices to concatenate
     GrB_Matrix *Cslice,     // array of slices of size nthreads
     GrB_Monoid add,         // monoid to use to sum up the entries
-    bool any_Gustavson,     // true if any thread used Gustavson's method
     int *Sauna_ids,         // size nthreads, Sauna id's of each thread
     GB_Context Context
 )
@@ -79,20 +79,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     if (info != GrB_SUCCESS)
     {
         // out of memory
-        if (any_Gustavson)
-        {
-            // at least one thread used a Sauna; free and release all
-            // Sauna workspaces
-            for (int tid = 0 ; tid < nthreads ; tid++)
-            {
-                int Sauna_id = Sauna_ids [tid] ;
-                if (Sauna_id >= 0)
-                { 
-                    GB_Sauna_free (Sauna_id) ;
-                }
-            }
-            GB_OK (GB_Sauna_release (nthreads, Sauna_ids)) ;
-        }
         return (GB_OUT_OF_MEMORY) ;
     }
 
@@ -116,47 +102,27 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     // acquire a single Sauna
     //--------------------------------------------------------------------------
 
+    // FUTURE: use a hypersparse-friendly method instead of the Sauna
+
     GB_Sauna Sauna = NULL ;
     int Sauna_id = -2 ;
+    GB_OK (GB_Sauna_acquire (1, &Sauna_id, NULL, Context)) ;
+    Sauna = GB_Global_Saunas_get (Sauna_id) ;
 
-    if (any_Gustavson)
+    if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size < csize)
     {
-        // at least one thread already has a Sauna.  Use it.
-        for (int tid = 0 ; tid < nthreads ; tid++)
-        {
-            Sauna_id = Sauna_ids [tid] ;
-            if (Sauna_id >= 0)
-            { 
-                break ;
-            }
+        // The Sauna id has been acquired, but the Sauna is either NULL
+        // (not yet allocated) or it is too small.
+        GB_Sauna_free (Sauna_id) ;
+        info = GB_Sauna_alloc (Sauna_id, cvlen, csize) ;
+        if (info != GrB_SUCCESS)
+        { 
+            GB_FREE_ALL ;
+            GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
+            return (GB_OUT_OF_MEMORY) ;
         }
-        ASSERT (Sauna_id >= 0) ;
-        Sauna = GB_Global_Saunas_get (Sauna_id) ;
     }
-    else
-    {
-
-        // FUTURE: use a hypersparse-friendly method instead of the Sauna
-
-        // no thread used a Sauna; acquire a single one
-        int method = GxB_AxB_GUSTAVSON ;
-        GB_OK (GB_Sauna_acquire (1, &Sauna_id, &method, Context)) ;
-        Sauna = GB_Global_Saunas_get (Sauna_id) ;
-
-        if (Sauna == NULL || Sauna->Sauna_n < cvlen || Sauna->Sauna_size <csize)
-        {
-            // get a new Sauna: the Sauna either does not exist, or is too small
-            GB_Sauna_free (Sauna_id) ;
-            info = GB_Sauna_alloc (Sauna_id, cvlen, csize) ;
-            if (info != GrB_SUCCESS)
-            { 
-                GB_FREE_ALL ;
-                GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
-                return (GB_OUT_OF_MEMORY) ;
-            }
-        }
-        Sauna = GB_Global_Saunas_get (Sauna_id) ;
-    }
+    Sauna = GB_Global_Saunas_get (Sauna_id) ;
 
     // Sauna has been acquired
     ASSERT (Sauna != NULL) ;
@@ -409,19 +375,10 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     }
 
     //--------------------------------------------------------------------------
-    // release Sauna workspaces
+    // release the Sauna workspace
     //--------------------------------------------------------------------------
 
-    if (any_Gustavson)
-    { 
-        // release all Sauna workspaces, if any
-        GB_OK (GB_Sauna_release (nthreads, Sauna_ids)) ;
-    }
-    else
-    {
-        // release the newly acquired Sauna
-        GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
-    }
+    GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
 
     //--------------------------------------------------------------------------
     // finalize the matrix

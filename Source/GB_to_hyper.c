@@ -17,6 +17,8 @@
 
 // If an out-of-memory condition occurs, all content of the matrix is cleared.
 
+// The input matrix may be jumbled; this is not an error condition.
+
 #include "GB.h"
 
 GrB_Info GB_to_hyper        // convert a matrix to hypersparse
@@ -29,12 +31,6 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    // GB_subref can return a matrix with jumbled columns, since it may soon be
-    // transposed (and sorted) in GB_accum_mask.  However, it passes the
-    // jumbled matrix to GB_to_hyper_conform.  This function does not access
-    // the row indices, so it works fine if the columns have jumbled row
-    // indices.
 
     ASSERT_OK_OR_JUMBLED (GB_check (A, "A converting to hypersparse", GB0)) ;
     int64_t anz = GB_NNZ (A) ;

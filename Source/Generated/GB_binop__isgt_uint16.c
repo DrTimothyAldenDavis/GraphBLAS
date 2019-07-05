@@ -11,8 +11,9 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
-#include "GB_binop__include.h"
 #include "GB_control.h"
+#include "GB_ek_slice.h"
+#include "GB_binop__include.h"
 
 // C=binop(A,B) is defined by the following types and operators:
 

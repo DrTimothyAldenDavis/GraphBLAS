@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB.h"
+#include "GB_ek_slice.h"
 #include "GB_sel__include.h"
 
 // The selection is defined by the following types and operators:

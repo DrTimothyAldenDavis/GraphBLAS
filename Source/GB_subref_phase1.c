@@ -12,8 +12,7 @@
 
 // Cp is either freed by phase2, or transplanted into C.
 
-#include "GB.h"
-#include "GB_subref_method.h"
+#include "GB_subref.h"
 
 GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 (

@@ -227,7 +227,6 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     int nthreads,           // # of slices to concatenate
     GrB_Matrix *Cslice,     // array of slices of size nthreads
     GrB_Monoid add,         // monoid to use to sum up the entries
-    bool any_Gustavson,     // true if any thread used Gustavson's method
     int *Sauna_ids,         // size nthreads, Sauna id's of each thread
     GB_Context Context
 ) ;

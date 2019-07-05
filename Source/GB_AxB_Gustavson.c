@@ -13,6 +13,7 @@
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
 #include "GB_mxm.h"
+#include "GB_Sauna.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif

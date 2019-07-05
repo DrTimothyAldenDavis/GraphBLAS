@@ -25,6 +25,7 @@
 // Compare with GB_subassign, which uses M and C_replace differently
 
 #include "GB_assign.h"
+#include "GB_subref.h"
 
 #define GB_FREE_ALL                                     \
 {                                                       \

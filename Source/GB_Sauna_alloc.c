@@ -9,7 +9,7 @@
 
 // Does not use error reporting; returns GrB_SUCCESS or GrB_OUT_OF_MEMORY.
 
-#include "GB.h"
+#include "GB_Sauna.h"
 
 GrB_Info GB_Sauna_alloc             // create a Sauna
 (

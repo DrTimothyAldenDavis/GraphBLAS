@@ -48,6 +48,7 @@
 // FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods.
 
 #include "GB_mxm.h"
+#include "GB_Sauna.h"
 
 GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
 (
@@ -442,6 +443,16 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     }
 
     //----------------------------------------------------------------------
+    // release the Saunas
+    //----------------------------------------------------------------------
+
+    if (any_Gustavson)
+    { 
+        // at least one thread used a Sauna
+        GB_OK (GB_Sauna_release (nthreads, Sauna_ids)) ;
+    }
+
+    //----------------------------------------------------------------------
     // check if all threads applied the mask
     //----------------------------------------------------------------------
 
@@ -470,18 +481,13 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
         // share columns, which must be summed.  Columns in the middle of
         // each slice are concatenated horizontally.
         GB_OK (GB_hcat_fine_slice (Chandle, nthreads, Cslice, 
-            semiring->add, any_Gustavson, Sauna_ids, Context)) ;
+            semiring->add, Sauna_ids, Context)) ;
     }
     else
     {
         // C = [Cslice(0) Cslice(1) ... Cslice(nthreads-1)] concatenatied
         // horizontally.  Each slice contains entries that appear in a
         // unique and contiguous subset of the columns of C.
-        if (any_Gustavson)
-        { 
-            // release all Sauna workspaces, if any
-            GB_OK (GB_Sauna_release (nthreads, Sauna_ids)) ;
-        }
         GB_OK (GB_hcat_slice (Chandle, nthreads, Cslice, Context)) ;
     }
 

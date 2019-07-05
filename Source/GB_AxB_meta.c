@@ -367,6 +367,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C<M> = A'*B via dot product method
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, mask_applied, Context)) ;
+            (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
         { 
@@ -403,6 +404,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
                 flipxy, mask_applied, Context)) ;
+            (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
         { 
@@ -437,6 +439,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, B, semiring,
                 flipxy, mask_applied, Context)) ;
+            (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
         { 

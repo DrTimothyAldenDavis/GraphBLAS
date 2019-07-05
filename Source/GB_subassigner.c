@@ -61,6 +61,7 @@
 }
 
 #include "GB_subassign.h"
+#include "GB_subref.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                     \

@@ -2,7 +2,16 @@
 // GB_Pending.h: data structure and operations for pending tuples
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 #include "GB.h"
+
+//------------------------------------------------------------------------------
+// GB_Pending data structure
+//------------------------------------------------------------------------------
 
 struct GB_Pending_struct    // list of pending tuples for a matrix
 {
@@ -17,7 +26,12 @@ struct GB_Pending_struct    // list of pending tuples for a matrix
     GrB_BinaryOp op ;   // operator to assemble pending tuples
 } ;
 
+// initial size of the pending tuples
 #define GB_PENDING_INIT 256
+
+//------------------------------------------------------------------------------
+// GB_Pending functions
+//------------------------------------------------------------------------------
 
 bool GB_Pending_alloc       // create a list of pending tuples
 (

@@ -11,7 +11,7 @@
 // the output J for GB_extractTuples, and I for GB_transpose when the qsort
 // method is used.
 
-#include "GB.h"
+#include "GB_ek_slice.h"
 
 void GB_extract_vector_list     // construct vector indices J, for each entry
 (

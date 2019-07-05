@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_ek_slice.h"
 #include "GB_sel__include.h"
 
 #define GB_FREE_ALL                         \

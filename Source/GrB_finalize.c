@@ -12,7 +12,7 @@
 // function.  Results are undefined if more than one thread calls this
 // function at the same time.
 
-#include "GB.h"
+#include "GB_Sauna.h"
 
 GrB_Info GrB_finalize ( )
 { 

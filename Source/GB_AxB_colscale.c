@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+#include "GB_ek_slice.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif

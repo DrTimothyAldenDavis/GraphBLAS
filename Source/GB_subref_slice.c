@@ -37,8 +37,7 @@
     GB_FREE_MEMORY (Inext, nI,    sizeof (int64_t)) ;                   \
 }
 
-#include "GB.h"
-#include "GB_subref_method.h"
+#include "GB_subref.h"
 
 GrB_Info GB_subref_slice
 (
@@ -467,3 +466,4 @@ GrB_Info GB_subref_slice
     (*p_post_sort ) = post_sort ;
     return (GrB_SUCCESS) ;
 }
+

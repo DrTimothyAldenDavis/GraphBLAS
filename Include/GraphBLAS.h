@@ -121,8 +121,10 @@
 "Linear Algebra\", edited by J. Kepner and J. Gilbert, SIAM, 2011.\n"
 
 //------------------------------------------------------------------------------
-// GXB_* macros: deprecated (use GxB_* instead)
+// deprecrated macros
 //------------------------------------------------------------------------------
+
+// Use the definitions on the right, not on the left.
 
 #define GXB_SUITESPARSE_GRAPHBLAS
 #define GXB_VERSION(major,minor,sub)    GxB_VERSION(major,minor,sub)
@@ -336,7 +338,8 @@ GrB_Info GrB_init           // start up GraphBLAS
 // thread safety.
 
 // SuiteSparse:GraphBLAS V3.0 added user_malloc_is_thread_safe argument to
-// GxB_init.  As a result, this function is not backward compatible with V2.x.
+// GxB_init, and the Thunk argument changed in GxB_select.  As a result,
+// GxB_init and GxB_select in V3.0 are not backward compatible with V2.x.
 
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
@@ -347,7 +350,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void * (* user_calloc_function  ) (size_t, size_t),
     void * (* user_realloc_function ) (void *, size_t),
     void   (* user_free_function    ) (void *),
-    bool user_malloc_is_thread_safe     // ADDED thread_safe arg in V3.0
+    bool user_malloc_is_thread_safe     // ADDED in V3.0: thread_safe arg
 ) ;
 
 // In non-blocking mode, GraphBLAS operations need not complete until their
@@ -458,7 +461,6 @@ GrB_Info GrB_Type_free          // free a user-defined type
 (
     GrB_Type *type              // handle of user-defined type to free
 ) ;
-
 
 //------------------------------------------------------------------------------
 // GraphBLAS unary and binary operators
@@ -663,7 +665,7 @@ extern GrB_BinaryOp
     GrB_PLUS_FP64,      GrB_MINUS_FP64,     GrB_TIMES_FP64,     GrB_DIV_FP64,
 
     // z = y-x          z = y/x
-    GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,      // ADDED RMINUS, RDIV in V3.0
+    GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,      // ADDED in V3.0: RMINUS, RDIV
     GxB_RMINUS_INT8,    GxB_RDIV_INT8,
     GxB_RMINUS_UINT8,   GxB_RDIV_UINT8,
     GxB_RMINUS_INT16,   GxB_RDIV_INT16,
@@ -2999,10 +3001,10 @@ typedef enum            // for global options or matrix options
                         // If <= GxB_DEFAULT, then GraphBLAS selects the number
                         // of threads automatically.
 
-// ADDED in V3.0: GxB_IS_HYPER, GxB_LIBRARY_*, GxB_API_* options:
-
     // GxB_Matrix_Option_get only:
     GxB_IS_HYPER = 6,   // query a matrix to see if it hypersparse or not
+
+    // ADDED in V3.0: GxB_LIBRARY_*, GxB_API_* options:
 
     // GxB_Global_Option_get only:
     GxB_LIBRARY_NAME = 7,           // name of the library (char *)
@@ -4743,6 +4745,9 @@ GrB_Info GrB_Matrix_apply           // C<Mask> = accum (C, op(A)) or op(A')
 // the entries of A.
 
 // The input matrix A may be optionally transposed first, via the descriptor.
+
+// ADDED in V3.0: Thunk is now a length-1 GrB_Vector, not a (void *).
+// This change is not backward compatible with V2.x.
 
 GrB_Info GxB_Vector_select          // w<mask> = accum (w, op(u,k))
 (

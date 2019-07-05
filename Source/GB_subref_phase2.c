@@ -10,8 +10,7 @@
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.
 
-#include "GB.h"
-#include "GB_subref_method.h"
+#include "GB_subref.h"
 
 GrB_Info GB_subref_phase2   // C=A(I,J)
 (

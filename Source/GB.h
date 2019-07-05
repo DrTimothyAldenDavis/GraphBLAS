@@ -160,16 +160,6 @@ typedef void (*GB_cast_function)   (void *, void *, size_t) ;
 
 #define GB_LEN 128
 
-struct GB_Sauna_struct      // sparse accumulator
-{
-    int64_t Sauna_hiwater ; // Sauna_Mark [0..Sauna_n-1] < hiwater holds when
-                            // the Sauna_Mark is clear.
-    int64_t Sauna_n ;       // size of Sauna_Mark and Sauna_Work
-    int64_t *Sauna_Mark ;   // array of size Sauna_n
-    void    *Sauna_Work ;   // array of size Sauna_n, each entry Sauna_size
-    size_t Sauna_size ;     // size of each entry in Sauna_Work
-} ;
-
 typedef struct GB_Sauna_struct *GB_Sauna ;
 
 //------------------------------------------------------------------------------
@@ -473,7 +463,6 @@ int64_t  GB_Global_hack_get ( ) ;
 #undef ASSERT_OK
 #undef ASSERT_OK_OR_NULL
 #undef ASSERT_OK_OR_JUMBLED
-#undef ASSERT_SAUNA_IS_RESET
 
 #ifdef GB_DEBUG
 
@@ -512,15 +501,6 @@ int64_t  GB_Global_hack_get ( ) ;
         ASSERT (Info == GrB_SUCCESS || Info == GrB_INDEX_OUT_OF_BOUNDS) ;   \
     }
 
-    // assert that all entries in Sauna_Mark are < Sauna_hiwater
-    #define ASSERT_SAUNA_IS_RESET                                           \
-    {                                                                       \
-        for (int64_t i = 0 ; i < Sauna->Sauna_n ; i++)                      \
-        {                                                                   \
-            ASSERT (Sauna->Sauna_Mark [i] < Sauna->Sauna_hiwater) ;         \
-        }                                                                   \
-    }
-
 #else
 
     // debugging disabled
@@ -528,7 +508,6 @@ int64_t  GB_Global_hack_get ( ) ;
     #define ASSERT_OK(X)
     #define ASSERT_OK_OR_NULL(X)
     #define ASSERT_OK_OR_JUMBLED(X)
-    #define ASSERT_SAUNA_IS_RESET
 
 #endif
 
@@ -921,50 +900,6 @@ static inline int GB_nthreads   // return # of threads to use
     nthreads = GB_IMIN (nthreads, nthreads_max) ;
     nthreads = GB_IMAX (nthreads, 1) ;
     return ((int) nthreads) ;
-}
-
-//------------------------------------------------------------------------------
-// GB_get_pA_and_pC: find the part of A(:,k) to be operated on by this task
-//------------------------------------------------------------------------------
-
-static inline void GB_get_pA_and_pC
-(
-    // output
-    int64_t *pA_start,
-    int64_t *pA_end,
-    int64_t *pC,
-    // input
-    int tid,            // task id
-    int64_t k,          // current vector
-    int64_t kfirst,     // first vector for this slice
-    int64_t klast,      // last vector for this slice
-    const int64_t *restrict pstart_slice,   // start of each slice in A
-    const int64_t *restrict C_pstart_slice, // start of each slice in C
-    const int64_t *restrict Cp,             // vector pointers for C
-    const int64_t *restrict Ap              // vector pointers for A
-)
-{
-    if (k == kfirst)
-    { 
-        // First vector for task tid; may only be partially owned.
-        (*pA_start) = pstart_slice [tid] ;
-        (*pA_end  ) = GB_IMIN (Ap [kfirst+1], pstart_slice [tid+1]) ;
-        if (pC != NULL) (*pC) = C_pstart_slice [tid] ;
-    }
-    else if (k == klast)
-    { 
-        // Last vector for task tid; may only be partially owned.
-        (*pA_start) = Ap [k] ;
-        (*pA_end  ) = pstart_slice [tid+1] ;
-        if (pC != NULL) (*pC) = Cp [k] ;
-    }
-    else
-    { 
-        // task tid fully owns this vector A(:,k).
-        (*pA_start) = Ap [k] ;
-        (*pA_end  ) = Ap [k+1] ;
-        if (pC != NULL) (*pC) = Cp [k] ;
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -2046,17 +1981,6 @@ void GB_eslice
     const int ntasks        // # of tasks
 ) ;
 
-void GB_ek_slice
-(
-    // output:
-    int64_t *restrict pstart_slice, // size ntasks+1
-    int64_t *restrict kfirst_slice, // size ntasks
-    int64_t *restrict klast_slice,  // size ntasks
-    // input:
-    GrB_Matrix A,                   // matrix to slize
-    int ntasks                      // # of tasks
-) ;
-
 bool GB_binop_builtin               // true if binary operator is builtin
 (
     // inputs:
@@ -2180,128 +2104,6 @@ void GB_qsort_3         // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     int64_t A_2 [ ],    // size n array
     const int64_t n,
     GB_Context Context  // for # of threads; use one thread if NULL
-) ;
-
-GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
-(
-    // output
-    GrB_Matrix *Chandle,
-    // input, not modified
-    const bool C_is_csc,        // requested format of C
-    const GrB_Matrix A,
-    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
-    const int64_t ni,           // length of I, or special
-    const GrB_Index *J,         // index list for C = A(I,J), or GrB_ALL, etc.
-    const int64_t nj,           // length of J, or special
-    const bool symbolic,        // if true, construct Cx as symbolic
-    const bool must_sort,       // if true, must return C sorted
-    GB_Context Context
-) ;
-
-GrB_Info GB_subref_phase0
-(
-    // output
-    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL if C standard
-    int64_t **p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
-    int64_t **p_Ap_end,     // ... and ends at Ap_end [kC] - 1
-    int64_t *p_Cnvec,       // # of vectors in C
-    bool *p_need_qsort,     // true if C must be sorted
-    int *p_Ikind,           // kind of I
-    int64_t *p_nI,          // length of I
-    int64_t Icolon [3],     // for GB_RANGE, GB_STRIDE
-    int64_t *p_nJ,          // length of J
-    // input, not modified
-    const GrB_Matrix A,
-    const GrB_Index *I,     // index list for C = A(I,J), or GrB_ALL, etc.
-    const int64_t ni,       // length of I, or special
-    const GrB_Index *J,     // index list for C = A(I,J), or GrB_ALL, etc.
-    const int64_t nj,       // length of J, or special
-    const bool must_sort,   // true if C must be returned sorted
-    GB_Context Context
-) ;
-
-GrB_Info GB_subref_slice
-(
-    // output:
-    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
-    int *p_max_ntasks,              // size of TaskList
-    int *p_ntasks,                  // # of tasks constructed
-    int *p_nthreads,                // # of threads for subref operation
-    bool *p_post_sort,              // true if a final post-sort is needed
-    int64_t **p_Mark,               // for I inverse, if needed; size avlen
-    int64_t **p_Inext,              // for I inverse, if needed; size nI
-    int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
-    // from phase0:
-    const int64_t *restrict Ap_start,   // location of A(imin:imax,kA)
-    const int64_t *restrict Ap_end,
-    const int64_t Cnvec,            // # of vectors of C
-    const bool need_qsort,          // true if C must be sorted
-    const int Ikind,                // GB_ALL, GB_RANGE, GB_STRIDE or GB_LIST
-    const int64_t nI,               // length of I
-    const int64_t Icolon [3],       // for GB_RANGE and GB_STRIDE
-    // original input:
-    const int64_t avlen,            // A->vlen
-    const int64_t anz,              // nnz (A)
-    const GrB_Index *I,
-    GB_Context Context
-) ;
-
-GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
-(
-    int64_t **Cp_handle,                // output of size Cnvec+1
-    int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
-    // tasks from phase0b:
-    GB_task_struct *restrict TaskList,  // array of structs
-    const int ntasks,                   // # of tasks
-    const int nthreads,                 // # of threads to use
-    const int64_t *Mark,                // for I inverse buckets, size A->vlen
-    const int64_t *Inext,               // for I inverse buckets, size nI
-    const int64_t nduplicates,          // # of duplicates, if I inverted
-    // analysis from phase0:
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
-    const int64_t Cnvec,
-    const bool need_qsort,
-    const int Ikind,
-    const int nI,
-    const int64_t Icolon [3],
-    // original input:
-    const GrB_Matrix A,
-    const GrB_Index *I,         // index list for C = A(I,J), or GrB_ALL, etc.
-    const bool symbolic,
-    GB_Context Context
-) ;
-
-GrB_Info GB_subref_phase2   // C=A(I,J)
-(
-    GrB_Matrix *Chandle,    // output matrix (unallocated on input)
-    // from phase1:
-    const int64_t *restrict Cp,         // vector pointers for C
-    const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
-    // from phase0b:
-    const GB_task_struct *restrict TaskList,    // array of structs
-    const int ntasks,                           // # of tasks
-    const int nthreads,                         // # of threads to use
-    const bool post_sort,               // true if post-sort needed
-    const int64_t *Mark,                // for I inverse buckets, size A->vlen
-    const int64_t *Inext,               // for I inverse buckets, size nI
-    const int64_t nduplicates,          // # of duplicates, if I inverted
-    // from phase0:
-    const int64_t *restrict Ch,
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
-    const int64_t Cnvec,
-    const bool need_qsort,
-    const int Ikind,
-    const int64_t nI,
-    const int64_t Icolon [3],
-    const int64_t nJ,
-    // original input:
-    const bool C_is_csc,        // format of output matrix C
-    const GrB_Matrix A,
-    const GrB_Index *I,
-    const bool symbolic,
-    GB_Context Context
 ) ;
 
 GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
@@ -6143,64 +5945,6 @@ GrB_Info GB_AxB_user
     const int64_t *restrict C_count_start,
     const int64_t *restrict C_count_end
 ) ;
-
-//------------------------------------------------------------------------------
-// Sauna methods: the sparse accumulator
-//------------------------------------------------------------------------------
-
-void GB_Sauna_free                  // free a Sauna
-(
-    int Sauna_id                    // id of Sauna to free
-) ;
-
-GrB_Info GB_Sauna_alloc             // create a Sauna
-(
-    int Sauna_id,                   // id of Sauna to create
-    int64_t Sauna_n,                // size of the Sauna
-    size_t Sauna_size               // size of each entry in the Sauna
-) ;
-
-GrB_Info GB_Sauna_acquire
-(
-    int nthreads,           // number of internal threads that need a Sauna
-    int *Sauna_ids,         // size nthreads, the Sauna id's acquired
-    GrB_Desc_Value *AxB_methods_used,       // size nthreads
-    GB_Context Context
-) ;
-
-GrB_Info GB_Sauna_release
-(
-    int nthreads,           // number of internal threads that have a Sauna
-    int *Sauna_ids          // size nthreads, the Sauna id's to release
-) ;
-
-// GB_Sauna_reset: increment the Sauna_hiwater and clear Sauna_Mark if needed
-static inline int64_t GB_Sauna_reset
-(
-    GB_Sauna Sauna,     // Sauna to reset
-    int64_t reset,      // does Sauna_hiwater += reset
-    int64_t range       // clear Mark if Sauna_hiwater+reset+range overflows
-)
-{ 
-
-    ASSERT (Sauna != NULL) ;
-    Sauna->Sauna_hiwater += reset ;     // increment the Sauna_hiwater
-
-    if (Sauna->Sauna_hiwater + range <= 0 || reset == 0)
-    { 
-        // integer overflow has occurred; clear all of the Sauna_Mark array
-        for (int64_t i = 0 ; i < Sauna->Sauna_n ; i++)
-        { 
-            Sauna->Sauna_Mark [i] = 0 ;
-        }
-        Sauna->Sauna_hiwater = 1 ;
-    }
-
-    // assertion for debugging only:
-    ASSERT_SAUNA_IS_RESET ;         // assert that Sauna_Mark [...] < hiwater
-
-    return (Sauna->Sauna_hiwater) ;
-}
 
 //------------------------------------------------------------------------------
 // macros for import/export

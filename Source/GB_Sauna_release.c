@@ -15,7 +15,7 @@
 // of Saunas.  It would work just fine, but might not be optimal.  The critical
 // section is very short.
 
-#include "GB.h"
+#include "GB_Sauna.h"
 
 GrB_Info GB_Sauna_release
 (

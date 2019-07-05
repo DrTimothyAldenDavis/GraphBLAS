@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_Sauna.h"
 
 void GB_Sauna_free                  // free a Sauna
 (
