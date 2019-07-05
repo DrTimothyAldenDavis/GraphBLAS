@@ -147,25 +147,42 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         //      C'<M'> = A' * B'
 
     //--------------------------------------------------------------------------
-    // swap_rule: remove the transpose of C
+    // swap_rule: decide if C or C' should be computed
     //--------------------------------------------------------------------------
 
-    // It is also possible to compute and return C' from this function, and to
-    // set C->is_csc as the negation of the desired format C_is_csc.  This
-    // ensures that GB_accum_mask will transpose C when this function is done.
+    // This function can compute C or C', by setting C->is_csc as the negation
+    // of the desired format C_is_csc.  This ensures that GB_accum_mask will
+    // transpose C when this function is done.
 
-    // FUTURE: give user control over the swap_rule.  Any test here will work,
-    // with no other changes to the code below.  The decision will only affect
-    // the performance, not the result.
+    // For these 4 cases, the swap_rule is true:
 
-    bool swap_rule = (C_transpose) ;
+        // C' = A'*B'       becomes C = B*A
+        // C' = A'*B        becomes C = B'*A
+        // C' = A*B'        becomes C = B*A'
+        // C  = A'*B'       becomes C = (B*A)'
+
+    // For these 4 cases, the swap_rule is false:
+
+        // C' = A*B         C = (A*B)'
+        // C  = A'*B        use as-is
+        // C  = A*B'        use as-is
+        // C  = A*B         use as-is
+
+    // This rule is the same as that used by SuiteSparse/MATLAB_Tools/SSMULT,
+    // which is the built-in sparse matrix multiply function in MATLAB.
+
+    bool swap_rule =
+        ( C_transpose &&  A_transpose &&  B_transpose) ||   // C' = A'*B'
+        ( C_transpose &&  A_transpose && !B_transpose) ||   // C' = A'*B
+        ( C_transpose && !A_transpose &&  B_transpose) ||   // C' = A*B'
+        (!C_transpose &&  A_transpose &&  B_transpose) ;    // C  = A'*B'
 
     GrB_Matrix A, B ;
     bool atrans, btrans ;
 
     if (swap_rule)
     { 
-        // Replace C'=A*B with C=B'*A', and so on.  Swap A and B and transose
+        // Replace C'=(A'*B') with C=B*A, and so on.  Swap A and B and transose
         // them, transpose M, negate flipxy, and transpose M and C.
         A = B_in ; atrans = !B_transpose ;
         B = A_in ; btrans = !A_transpose ;
@@ -243,12 +260,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // select the algorithm
     //--------------------------------------------------------------------------
 
-    // C and M are no longer transposed; four cases remain (M may be NULL):
+    // Four cases remain with the swap_rule above.  M may or may not be
+    // present.
 
         //      C<M> = A *B
         //      C<M> = A *B'
         //      C<M> = A'*B
-        //      C<M> = A'*B'
+        //      C<M> = (A*B)'
 
     if (atrans)
     {
@@ -263,6 +281,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (btrans && !B_is_diagonal)
         {
             // B = B'
+            // with swap_rule == C_transpose || (A_transpose && B_transpose),
+            // this case will never occur
+            ASSERT (DEAD_CODE) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             B = BT ;
         }
@@ -439,11 +460,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // If C_transpose is true, then C' has been computed.  In this case, negate
     // the desired C_is_csc so that GB_accum_mask transposes the result before
     // applying the accum operator and/or writing the result back to the user's
-    // C.  If swap_rule == C_transpose, then C_transpose is always false here,
-    // but this could change in the future.  The following code will adapt to
-    // any swap_rule, so it does not change if the swap_rule changes.
-
-    // TODO change the swap rule so C=A'*B' becomes C=(B*A)'
+    // C.
 
     GrB_Matrix C = (*Chandle) ;
     ASSERT (C != NULL) ;
