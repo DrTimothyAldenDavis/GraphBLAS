@@ -1,6 +1,4 @@
 
-TODO: fix compiler warnings (icc on hypersparse)
-
 TODO: test for user-defined type:  for FIRST and SECOND operators,
     do not check for typecast for the unused parameter.
     (this is written but need to test this for user-defined types)
@@ -59,8 +57,6 @@ TODO    qsort: make qsort sequential and keep all 4 versions,
         add parallel merge sort for GB_qsort_2 and GB_qsort_3.
 
 TODO    user-defined function in MIS Demo : make it thread-safe
-
-TODO    Demo/tri_demo.c: use all threads in initialization phase
 
 TODO    user guide: describe all changes, add new descriptors and
         global settings

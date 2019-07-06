@@ -55,9 +55,6 @@ int main (int argc, char **argv)
     fprintf (stderr, "tri_demo:\n") ;
     printf ("--------------------------------------------------------------\n");
 
-// TODO doing init with one thread: (delete this and use all threads)
-GxB_set (GxB_NTHREADS, 1) ;
-
     //--------------------------------------------------------------------------
     // get a symmetric matrix with no self edges
     //--------------------------------------------------------------------------
