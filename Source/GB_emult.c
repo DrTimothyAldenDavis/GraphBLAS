@@ -24,7 +24,7 @@
 // ctype is the type of matrix C.  The pattern of C is the intersection of A
 // and B, and also intersection with M if present.
 
-#include "GB.h"
+#include "GB_emult.h"
 
 GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 (

@@ -11,6 +11,7 @@
 // and C->h.  Either way, the caller must not free them.
 
 #include "GB_subref.h"
+#include "GB_qsort.h"
 
 GrB_Info GB_subref_phase2   // C=A(I,J)
 (

@@ -178,7 +178,7 @@
     // This used for GB_subassign_one_slice and GB_subassign_emult_slice,
     // which compute the parallel schedule for Methods 05, 06n, 07, and 08.
 
-    #define GB_jC_LOOKUP                                                    \
+    #define GB_LOOKUP_jC                                                    \
         /* lookup jC in C */                                                \
         /* jC = J [j] ; or J is ":" or jbegin:jend or jbegin:jinc:jend */   \
         jC = GB_ijlist (J, j, Jkind, Jcolon) ;                              \

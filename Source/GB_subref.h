@@ -131,6 +131,18 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     GB_Context Context
 ) ;
 
+GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
+(
+    const GrB_Index *I,         // list of indices, duplicates OK
+    int64_t nI,                 // length of I
+    int64_t avlen,              // length of the vectors of A
+    // outputs:
+    int64_t **p_Mark,           // head pointers for buckets, size avlen
+    int64_t **p_Inext,          // next pointers for buckets, size nI
+    int64_t *p_ndupl,           // number of duplicate entries in I
+    GB_Context Context
+) ;
+
 //------------------------------------------------------------------------------
 // GB_subref_method: select a method for C(:,kC) = A(I,kA), for one vector of C
 //------------------------------------------------------------------------------

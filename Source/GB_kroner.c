@@ -22,7 +22,7 @@
 // FUTURE: each vector C(:,k) takes O(nnz(C(:,k))) work, but this is not
 // accounted for in the parallel load-balancing.
 
-#include "GB.h"
+#include "GB_kron.h"
 
 GrB_Info GB_kroner                  // C = kron (A,B)
 (

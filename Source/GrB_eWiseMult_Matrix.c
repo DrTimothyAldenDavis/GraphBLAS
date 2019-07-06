@@ -9,7 +9,7 @@
 
 // C<M> = accum (C,A.*B) and variations.
 
-#include "GB.h"
+#include "GB_ewise.h"
 
 #define GB_EWISE(op)                                                        \
 {                                                                           \

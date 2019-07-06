@@ -12,7 +12,7 @@
 // implementation, both are the same as an n-by-1 GrB_Matrix, except with
 // restrictions on the matrix operations that can be performed on them.
 
-#include "GB.h"
+#include "GB_extract.h"
 
 GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
 (

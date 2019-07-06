@@ -14,6 +14,9 @@
 #include "GB_control.h"
 #include "GB_ek_slice.h"
 #include "GB_Sauna.h"
+#include "GB_jappend.h"
+#include "GB_bracket.h"
+#include "GB_iterator.h"
 #include "GB_AxB__include.h"
 
 // The C=A*B semiring is defined by the following types and operators:

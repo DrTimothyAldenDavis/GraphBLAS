@@ -11,7 +11,8 @@
 
 // The input matrices A and B are optionally transposed.
 
-#include "GB.h"
+#include "GB_kron.h"
+#include "GB_transpose.h"
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
 (

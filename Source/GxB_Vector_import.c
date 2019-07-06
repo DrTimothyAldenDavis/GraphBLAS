@@ -9,7 +9,7 @@
 
 // The indices must appear in sorted order.
 
-#include "GB.h"
+#include "GB_export.h"
 
 GrB_Info GxB_Vector_import  // import a vector in CSC format
 (

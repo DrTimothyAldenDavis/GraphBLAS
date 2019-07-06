@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mex.h"
-#include "GB_Pending.h"
 
 bool GB_mx_isequal     // true if A and B are exactly the same
 (

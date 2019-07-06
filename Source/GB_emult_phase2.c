@@ -21,7 +21,7 @@
 // This function either frees Cp or transplants it into C, as C->p.  Either
 // way, the caller must not free it.
 
-#include "GB.h"
+#include "GB_emult.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_transpose.h"
 
 GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 (

@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_apply.h"
 
 GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
 (

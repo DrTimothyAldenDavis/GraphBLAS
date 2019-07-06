@@ -12,6 +12,8 @@
 // C<M> = accum (C,reduce(A)) where C is n-by-1.  Reduces a matrix A or A'
 // to a vector.
 
+#include "GB_reduce.h"
+#include "GB_build.h"
 #include "GB_ek_slice.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"

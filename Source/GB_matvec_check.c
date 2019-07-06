@@ -8,9 +8,10 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
+#include "GB_iterator.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (

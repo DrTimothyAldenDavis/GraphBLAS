@@ -21,6 +21,7 @@
         //  M   -   -   +   A   -       08:  C(I,J)<M> += A, no S
 
 #include "GB_subassign_methods.h"
+#include "GB_emult.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                                         \
@@ -172,7 +173,7 @@ GrB_Info GB_subassign_emult_slice
             // get jC, the corresponding vector of C
             //------------------------------------------------------------------
 
-            int64_t GB_jC_LOOKUP ;
+            int64_t GB_LOOKUP_jC ;
             bool cjdense = (pC_end - pC_start == cvlen) ;
 
             //------------------------------------------------------------------

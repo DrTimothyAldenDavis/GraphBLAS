@@ -15,6 +15,7 @@
 // Any variant of the mask is handled: C=A'*B, C<M>=A'*B, and C<!M>=A'*B.
 
 #include "GB_mxm.h"
+#include "GB_iterator.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif

@@ -2,8 +2,6 @@ TODO: user defined semirings, dot2 needs more args
 
 TODO: fix compiler warnings (icc on hypersparse)
 
-TODO: split GB.h; it's too long
-
 TODO: test for user-defined type:  for FIRST and SECOND operators,
     do not check for typecast for the unused parameter.
     (this is written but need to test this for user-defined types)

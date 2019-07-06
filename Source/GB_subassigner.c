@@ -63,6 +63,9 @@
 #include "GB_subassign.h"
 #include "GB_subassign_methods.h"
 #include "GB_subref.h"
+#ifdef GB_DEBUG
+#include "GB_iterator.h"
+#endif
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                     \

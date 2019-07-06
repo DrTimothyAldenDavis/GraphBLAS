@@ -16,7 +16,7 @@
 // result t is the identity value of the monoid.  Unlike most other GraphBLAS
 // operations, this operation uses an accum operator but no mask.
 
-#include "GB.h"
+#include "GB_reduce.h"
 
 #define GB_MATRIX_TO_SCALAR(type,T)                                            \
 GrB_Info GrB_Matrix_reduce_ ## T    /* c = accum (c, reduce_to_scalar (A))  */ \

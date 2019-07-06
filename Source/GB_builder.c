@@ -84,7 +84,8 @@
 // able to transplant S_work into T->x since the input will almost always be
 // unsorted.
 
-#include "GB.h"
+#include "GB_build.h"
+#include "GB_qsort.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif

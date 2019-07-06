@@ -9,7 +9,7 @@
 
 // C<M> = accum (C,A') or accum (C,A)
 
-#include "GB.h"
+#include "GB_transpose.h"
 
 GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 (

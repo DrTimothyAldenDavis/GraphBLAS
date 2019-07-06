@@ -78,6 +78,7 @@
 
 #include "GB_mxm.h"
 #include "GB_ek_slice.h"
+#include "GB_bracket.h"
 
 bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 (

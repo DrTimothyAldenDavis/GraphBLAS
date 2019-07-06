@@ -12,7 +12,7 @@
 // and k in the tuples (i,k) are used as the sort key.  The value i may
 // appear in multiple tuples, but the value k is unique across all tuples.
 
-#include "GB.h"
+#include "GB_qsort.h"
 
 // returns true if a < b
 #define GB_lt(A,a,B,b)                                                      \

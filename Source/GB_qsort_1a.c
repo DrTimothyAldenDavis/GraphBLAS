@@ -10,7 +10,7 @@
 // This sort is not stable, but it is used in GraphBLAS only on lists with
 // unique integers.  So it does not need to be stable.
 
-#include "GB.h"
+#include "GB_qsort.h"
 
 // returns true if a < b
 #define GB_lt(A,a,B,b)                  \

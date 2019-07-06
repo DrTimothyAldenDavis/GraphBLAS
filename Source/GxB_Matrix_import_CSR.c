@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_export.h"
 
 GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 (

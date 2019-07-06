@@ -8,5 +8,6 @@
 // and objects inside GraphBLAS, which are not user-callable.
 
 #include "GB.h"
+#include "GB_mxm.h"
 #include "GB_user.h"
 

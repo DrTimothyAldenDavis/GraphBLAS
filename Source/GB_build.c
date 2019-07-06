@@ -87,7 +87,7 @@
 // The input arrays I_input, J_input, and S_input are not modified.
 // If nvals == 0, I_input, J_input, and S_input may be NULL.
 
-#include "GB.h"
+#include "GB_build.h"
 
 GrB_Info GB_build               // build matrix
 (

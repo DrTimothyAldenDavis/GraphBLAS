@@ -17,6 +17,7 @@
 */
 
 #include "GB_ij.h"
+#include "GB_qsort.h"
 
 #define GB_FREE_WORK                                    \
 {                                                       \

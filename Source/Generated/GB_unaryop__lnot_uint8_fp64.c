@@ -12,6 +12,7 @@
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_control.h"
+#include "GB_iterator.h"
 #include "GB_unaryop__include.h"
 
 // C=unop(A) is defined by the following types and operators:

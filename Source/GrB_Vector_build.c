@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_build.h"
 
 #define GB_VECTOR_BUILD(type,T)                                               \
 GrB_Info GrB_Vector_build_ ## T     /* build a vector from (I,X) tuples   */  \

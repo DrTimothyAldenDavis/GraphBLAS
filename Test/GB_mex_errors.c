@@ -14,7 +14,6 @@
 // generates an unexpected error.
 
 #include "GB_mex.h"
-#include "GB_Pending.h"
 
 #undef CHECK
 #define USAGE "GB_mex_errors"

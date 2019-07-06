@@ -29,6 +29,14 @@ void GB_ek_slice
     int ntasks                      // # of tasks
 ) ;
 
+int64_t GB_search_for_vector        // return the vector k that contains p
+(
+    const int64_t p,                // search for vector k that contains p
+    const int64_t *restrict Ap,     // vector pointers to search
+    int64_t kleft,                  // left-most k to search
+    int64_t anvec                   // Ap is of size anvec+1
+) ;
+
 //------------------------------------------------------------------------------
 // GB_get_pA_and_pC: find the part of A(:,k) to be operated on by this task
 //------------------------------------------------------------------------------

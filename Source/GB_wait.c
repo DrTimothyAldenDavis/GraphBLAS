@@ -38,6 +38,8 @@
 #include "GB_select.h"
 #include "GB_add.h"
 #include "GB_Pending.h"
+#include "GB_build.h"
+#include "GB_jappend.h"
 
 #define GB_FREE_ALL                     \
 {                                       \

@@ -11,7 +11,10 @@
 // optionally transposed.  Does the work for GrB_eWiseAdd_* and
 // GrB_eWiseMult_*.  Handles all cases the the mask.
 
+#include "GB_ewise.h"
 #include "GB_add.h"
+#include "GB_emult.h"
+#include "GB_transpose.h"
 
 #define GB_FREE_ALL         \
 {                           \

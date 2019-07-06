@@ -228,7 +228,7 @@ GrB_Info GB_subassign_one_slice
             ASSERT (j >= 0 && j < nJ) ;
             // printf ("J %p j "GBd" jkind %d Jcolon "GBd" "GBd" "GBd"\n",
             //     J, j, Jkind, Jcolon [0], Jcolon [1], Jcolon [2]) ;
-            int64_t GB_jC_LOOKUP ;
+            int64_t GB_LOOKUP_jC ;
 
             bool jC_dense = (pC_end - pC_start == cvlen) ;
 

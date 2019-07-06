@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_reduce.h"
 
 #define GB_MATRIX_TO_VECTOR(kind,reduceop,terminal)                           \
 GrB_Info GrB_Matrix_reduce_ ## kind /* w<M> = accum (w,reduce(A))          */ \

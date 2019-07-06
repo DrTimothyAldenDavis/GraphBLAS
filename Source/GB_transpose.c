@@ -33,7 +33,9 @@
 // although the constant can be high.  The qsort method is more scalable, but
 // not as fast with a modest number of threads.
 
-#include "GB.h"
+#include "GB_transpose.h"
+#include "GB_build.h"
+#include "GB_apply.h"
 
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 (

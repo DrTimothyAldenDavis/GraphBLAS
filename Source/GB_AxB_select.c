@@ -10,6 +10,7 @@
 // Select a saxpy method for each thread: Gustavons or heap-based method
 
 #include "GB_mxm.h"
+#include "GB_iterator.h"
 
 void GB_AxB_select                  // select method for A*B
 (

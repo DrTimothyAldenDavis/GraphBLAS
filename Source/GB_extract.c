@@ -19,6 +19,7 @@
 
 // C<M> = accum (C, A(Cols,Rows)')
 
+#include "GB_extract.h"
 #include "GB_subref.h"
 
 GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))

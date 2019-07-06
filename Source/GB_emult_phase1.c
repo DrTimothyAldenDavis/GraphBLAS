@@ -17,7 +17,7 @@
 
 // Cp is either freed by GB_emult_phase2, or transplanted into C.
 
-#include "GB.h"
+#include "GB_emult.h"
 
 GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 (

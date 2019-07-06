@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_extract.h"
 
 GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
 (

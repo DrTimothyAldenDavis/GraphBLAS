@@ -11,7 +11,8 @@
 
 // GB_apply does the work for GrB_*_apply.  Compare this with GrB_transpose.
 
-#include "GB.h"
+#include "GB_apply.h"
+#include "GB_transpose.h"
 
 GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 (

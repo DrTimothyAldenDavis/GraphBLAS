@@ -9,7 +9,7 @@
 
 // w<M> = accum (w,u+v)
 
-#include "GB.h"
+#include "GB_ewise.h"
 
 #define GB_EWISE(op)                                                        \
 {                                                                           \

@@ -27,6 +27,7 @@
 #include "GB_assign.h"
 #include "GB_subassign.h"
 #include "GB_subref.h"
+#include "GB_transpose.h"
 
 #define GB_FREE_ALL                                     \
 {                                                       \

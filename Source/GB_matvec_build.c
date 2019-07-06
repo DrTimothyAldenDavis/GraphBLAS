@@ -12,7 +12,7 @@
 
 // This function implements GrB_Matrix_build_* and GrB_Vector_build_*.
 
-#include "GB.h"
+#include "GB_build.h"
 
 GrB_Info GB_matvec_build        // check inputs then build matrix or vector
 (

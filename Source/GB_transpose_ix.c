@@ -13,7 +13,7 @@
 // This method is parallel, but not highly scalable.  It uses only naslice =
 // nnz(A)/(A->vlen) threads.
 
-#include "GB.h"
+#include "GB_transpose.h"
 #ifndef GBCOMPACT
 #include "GB_unaryop__include.h"
 #endif

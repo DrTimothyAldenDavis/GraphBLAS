@@ -12,6 +12,7 @@
 // product method.
 
 #include "GB_mxm.h"
+#include "GB_iterator.h"
 
 GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
 (

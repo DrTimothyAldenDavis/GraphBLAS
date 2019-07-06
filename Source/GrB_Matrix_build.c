@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_build.h"
 
 #define GB_MATRIX_BUILD(type,T)                                               \
 GrB_Info GrB_Matrix_build_ ## T     /* build a matrix from (I,J,X) tuples */  \

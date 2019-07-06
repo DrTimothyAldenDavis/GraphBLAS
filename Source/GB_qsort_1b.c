@@ -12,7 +12,7 @@
 // entry i in each tuple (i,x) is used as the sort key.  The second item x in
 // is an arbitrary item of size xsize.
 
-#include "GB.h"
+#include "GB_qsort.h"
 
 // returns true if a < b
 #define GB_lt(A,a,B,b)                  \

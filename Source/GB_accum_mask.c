@@ -55,6 +55,7 @@
 #include "GB_subassign.h"
 #include "GB_add.h"
 #include "GB_mask.h"
+#include "GB_transpose.h"
 
 /* -----------------------------------------------------------------------------
 
