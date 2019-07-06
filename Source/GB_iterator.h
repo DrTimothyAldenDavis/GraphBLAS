@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_ITERATOR_H
+#define GB_ITERATOR_H
 #include "GB.h"
 
 // GBI_single_iterator: controls the iteration over the vectors of a single
@@ -230,4 +232,5 @@ static inline void GBI1_start
     GBI_jth_iteration (j, p, pend) ;                                        \
     for ( ; (p) < (pend) ; (p)++)
 
+#endif
 

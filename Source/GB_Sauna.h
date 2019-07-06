@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_SAUNA_H
+#define GB_SAUNA_H
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -101,4 +103,6 @@ static inline int64_t GB_Sauna_reset
 
     return (Sauna->Sauna_hiwater) ;
 }
+
+#endif
 

@@ -64,7 +64,7 @@
     uint32_t x_op_y = ((x != 0) && (y != 0)) ; z += x_op_y ;
 
 // copy scalar
-#define GB_COPY(z,x) z = x ;
+#define GB_COPY_C(z,x) z = x ;
 
 // monoid identity value (Gustavson's method only, with no mask)
 #define GB_IDENTITY \

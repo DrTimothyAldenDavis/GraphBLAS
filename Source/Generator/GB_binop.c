@@ -38,19 +38,17 @@
 
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA)  \
-    GB_geta
+    GB_geta(aij,Ax,pA)
 
 // bij = Bx [pB]
 #define GB_GETB(bij,Bx,pB)  \
-    GB_getb
+    GB_getb(bij,Bx,pB)
 
 // cij = Ax [pA]
-#define GB_COPY_A_TO_C(cij,Ax,pA) \
-    cij = Ax [pA] ;
+#define GB_COPY_A_TO_C(cij,Ax,pA) cij = Ax [pA] ;
 
 // cij = Bx [pB]
-#define GB_COPY_B_TO_C(cij,Bx,pB) \
-    cij = Bx [pB] ;
+#define GB_COPY_B_TO_C(cij,Bx,pB) cij = Bx [pB] ;
 
 #define GB_CX(p) Cx [p]
 

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_KRON_H
+#define GB_KRON_H
 #include "GB.h"
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
@@ -33,4 +35,6 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     const GrB_Matrix B,             // input matrix
     GB_Context Context
 ) ;
+
+#endif
 

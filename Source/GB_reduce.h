@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_REDUCE_H
+#define GB_REDUCE_H
 #include "GB.h"
 
 GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
@@ -30,4 +32,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     const GrB_Descriptor desc,      // descriptor for C, M, and A
     GB_Context Context
 ) ;
+
+#endif
 

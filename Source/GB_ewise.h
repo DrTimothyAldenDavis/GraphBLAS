@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_EWISE_H
+#define GB_EWISE_H
 #include "GB.h"
 
 GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
@@ -26,3 +28,4 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     GB_Context Context
 ) ;
 
+#endif

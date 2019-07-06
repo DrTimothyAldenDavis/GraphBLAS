@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_BUILD_H
+#define GB_BUILD_H
 #include "GB.h"
 
 GrB_Info GB_matvec_build        // check inputs then build matrix or vector
@@ -63,3 +65,4 @@ GrB_Info GB_builder                 // build a matrix from tuples
     GB_Context Context
 ) ;
 
+#endif

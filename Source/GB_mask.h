@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_MASK_H
+#define GB_MASK_H
 #include "GB.h"
 
 GrB_Info GB_mask                // C<M> = Z
@@ -77,4 +79,6 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     const GrB_Matrix Z,
     GB_Context Context
 ) ;
+
+#endif
 

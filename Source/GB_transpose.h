@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_TRANSPOSE_H
+#define GB_TRANSPOSE_H
 #include "GB.h"
 #include "GB_iterator.h"
 
@@ -60,4 +62,6 @@ GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
     const GrB_Matrix A,     // input matrix to typecast
     GB_Context Context
 ) ;
+
+#endif
 

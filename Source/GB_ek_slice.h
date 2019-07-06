@@ -16,6 +16,8 @@
 // On input, ntasks must be <= nnz (A), unless nnz (A) is zero.  In that
 // case, ntasks must be 1.
 
+#ifndef GB_EK_SLICE_H
+#define GB_EK_SLICE_H
 #include "GB.h"
 
 void GB_ek_slice
@@ -83,3 +85,4 @@ static inline void GB_get_pA_and_pC
     }
 }
 
+#endif

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_ASSIGN_H
+#define GB_ASSIGN_H
 #include "GB_ij.h"
 
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
@@ -102,3 +104,4 @@ void GB_assign_zombie5
     GB_Context Context
 ) ;
 
+#endif

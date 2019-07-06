@@ -272,11 +272,8 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     // user semirings created at compile time
     //--------------------------------------------------------------------------
 
-    // TODO: user dot2: needs nthreads, naslice, nbslice
-#if 0
     if (semiring->object_kind == GB_USER_COMPILED)
     {
-
         // determine the required type of A and B for the user semiring
         GrB_Type atype_required, btype_required ;
 
@@ -295,13 +292,12 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
         if (A->type == atype_required && B->type == btype_required)
         {
-            info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, A, B,
-                flipxy, Mask_comp, NULL, NULL, NULL, 0, NULL,
-                C_count_start, C_count_end) ;
+            info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, NULL, B,
+                flipxy, NULL, NULL, NULL, 0, NULL,
+                Aslice, Mask_comp,  nthreads, naslice, nbslice, C_counts) ;
             done = true ;
         }
     }
-#endif
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, with typecasting

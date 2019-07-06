@@ -245,7 +245,6 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
     if (semiring->object_kind == GB_USER_COMPILED)
     {
-
         // determine the required type of A and B for the user semiring
         GrB_Type atype_required, btype_required ;
 
@@ -265,7 +264,8 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         if (A->type == atype_required && B->type == btype_required)
         { 
             info = GB_AxB_user (GxB_AxB_GUSTAVSON, semiring, Chandle, M, A, B,
-                flipxy, false, NULL, NULL, NULL, 0, Sauna, NULL, NULL) ;
+                flipxy, NULL, NULL, NULL, 0, Sauna,
+                NULL, 0, 1, 1, 1, NULL) ;
             (*mask_applied) = (M != NULL) && (info == GrB_SUCCESS) ;
             return (info) ;
         }
@@ -300,12 +300,10 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // Define operations for GB_AxB_Gustavson_mask and GB_AxB_Gustavson_nomask,
     // whether or not typecasting is needed.
 
-    #define GB_IDENTITY \
-        identity
-
+    #define GB_IDENTITY      identity
     #define GB_SAUNA_WORK(i) (Sauna_Work +((i)*zsize))
     #define GB_CX(p)         (Cx +((p)*zsize))
-    #define GB_COPY(z,x)     memcpy (z, x, zsize) ;
+    #define GB_COPY_C(z,x)   memcpy (z, x, zsize) ;
 
     size_t asize = A_is_pattern ? 0 : A->type->size ;
     size_t bsize = B_is_pattern ? 0 : B->type->size ;

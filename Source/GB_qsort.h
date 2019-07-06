@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_QSORT_H
+#define GB_QSORT_H
 #include "GB.h"
 
 void GB_qsort_1a        // sort array A of size 1-by-n
@@ -65,3 +67,6 @@ static inline GrB_Index GB_rand (uint64_t *seed)
     i = GB_RAND_MAX * i + GB_rand15 (seed) ;
     return (i) ;
 }
+
+#endif
+

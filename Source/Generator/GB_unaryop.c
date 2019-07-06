@@ -33,7 +33,7 @@
 
 // aij = Ax [pA]
 #define GB_GETA(aij,Ax,pA)  \
-    GB_geta
+    GB_geta(aij,Ax,pA)
 
 #define GB_CX(p) Cx [p]
 

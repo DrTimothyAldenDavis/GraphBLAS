@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_SUBREF_H
+#define GB_SUBREF_H
 #include "GB_ij.h"
 
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
@@ -288,4 +290,6 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
     }
     return (method) ;
 }
+
+#endif
 

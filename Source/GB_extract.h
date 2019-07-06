@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_EXTRACT_H
+#define GB_EXTRACT_H
 #include "GB.h"
 
 GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
@@ -24,4 +26,6 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     const GrB_Index nCols_in,       // number of column indices
     GB_Context Context
 ) ;
+
+#endif
 

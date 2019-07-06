@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_PENDING_H
+#define GB_PENDING_H
 #include "GB.h"
 
 //------------------------------------------------------------------------------
@@ -173,4 +175,6 @@ static inline bool GB_Pending_add   // add a tuple to the list
     n++ ;                                                                   \
     ilast = iC ;                                                            \
     jlast = jC ;
+
+#endif
 

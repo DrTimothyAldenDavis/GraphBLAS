@@ -273,7 +273,7 @@
                     // C(i,j) is a live entry, gather its row and value
                     // Cx [cnz] = Sauna_Work [i] ;
                     ASSERT (cnz < C->nzmax) ;
-                    GB_COPY (GB_CX (cnz), GB_SAUNA_WORK (i)) ;
+                    GB_COPY_C (GB_CX (cnz), GB_SAUNA_WORK (i)) ;
                     Ci [cnz++] = i ;
                 }
             }

@@ -117,7 +117,7 @@
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)
         { 
             // Sauna_Work [Ci [pC]] = identity ;
-            GB_COPY (GB_SAUNA_WORK (Ci [pC]), GB_IDENTITY) ;
+            GB_COPY_C (GB_SAUNA_WORK (Ci [pC]), GB_IDENTITY) ;
         }
 
         #ifdef GB_HYPER_CASE
@@ -181,7 +181,7 @@
         for (int64_t pC = pC_start ; pC < pC_end ; pC++)
         { 
             // Cx [pC] = Sauna_Work [Ci [pC]] ;
-            GB_COPY (GB_CX (pC), GB_SAUNA_WORK (Ci [pC])) ;
+            GB_COPY_C (GB_CX (pC), GB_SAUNA_WORK (Ci [pC])) ;
         }
     }
 }

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_MXM_H
+#define GB_MXM_H
 #include "GB.h"
 
 GrB_Info GB_mxm                     // C<M> = A*B
@@ -250,29 +252,32 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
 
 GrB_Info GB_AxB_user
 (
-    const GrB_Desc_Value AxB_method,
-    const GrB_Semiring s,
+    const GrB_Desc_Value GB_AxB_method,
+    const GrB_Semiring GB_s,
 
-    GrB_Matrix *Chandle,
-    const GrB_Matrix M,
-    const GrB_Matrix A,
-    const GrB_Matrix B,
-    bool flipxy,
-
-    // for dot and dot2 methods only:
-    const bool GB_mask_comp,
+    GrB_Matrix *GB_Chandle,
+    const GrB_Matrix GB_M,
+    const GrB_Matrix GB_A,     // not used for dot method
+    const GrB_Matrix GB_B,
+    bool GB_flipxy,
 
     // for heap method only:
-    int64_t *restrict List,
-    GB_pointer_pair *restrict pA_pair,
-    GB_Element *restrict Heap,
-    const int64_t bjnz_max,
+    int64_t *restrict GB_List,
+    GB_pointer_pair *restrict GB_pA_pair,
+    GB_Element *restrict GB_Heap,
+    const int64_t GB_bjnz_max,
 
     // for Gustavson's method only:
-    GB_Sauna Sauna,
+    GB_Sauna GB_C_Sauna,
 
-    // for dot2 method only:
-    const int64_t *restrict C_count_start,
-    const int64_t *restrict C_count_end
+    // for dot method only:
+    const GrB_Matrix *GB_Aslice,
+    const bool GB_mask_comp,
+    const int GB_dot_nthreads,
+    const int GB_naslice,
+    const int GB_nbsllce,
+    const int64_t *restrict GB_C_counts
 ) ;
+
+#endif
 

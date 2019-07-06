@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_EMULT_H
+#define GB_EMULT_H
 #include "GB.h"
 
 GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
@@ -82,3 +84,4 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     GB_Context Context
 ) ;
 
+#endif

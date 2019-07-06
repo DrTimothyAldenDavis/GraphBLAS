@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_SUBASSIGN_H
+#define GB_SUBASSIGN_H
 #include "GB_ij.h"
 #include "GB_add.h"
 
@@ -62,4 +64,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     const GB_Type_code scalar_code, // type code of scalar to expand
     GB_Context Context
 ) ;
+
+#endif
 

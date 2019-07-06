@@ -114,12 +114,16 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
             if (GB_flipxy)
             { 
                 GB_info = GB_AxB_user_dot_$1_flipxy
-                    (GB_Chandle, GB_M, GB_mask_comp, GB_A, false, GB_B, false) ;
+                    (GB_Chandle, GB_M, GB_mask_comp, GB_Aslice, false, GB_B,
+                    false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                    GB_nbslice) ;
             }
             else
             { 
-                GB_info = GB_AxB_user_dot_$1
-                    (GB_Chandle, GB_M, GB_mask_comp, GB_A, false, GB_B, false) ;
+                GB_info = GB_AxB_user_dot_$1_flipxy
+                    (GB_Chandle, GB_M, GB_mask_comp, GB_Aslice, false, GB_B,
+                    false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                    GB_nbslice) ;
             }
         }
         else // (GB_AxB_method == GxB_AxB_HEAP)
@@ -146,9 +150,10 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     {                               \
         GB_ctype t ;                \
         GB_MULTIPLY(t,a,b) ;        \
-        GB_ADD(c,c,t) ;             \
+        GB_ADD(c,t) ;               \
     }
     #define GB_identity    GB_DEF_$2_identity
+    #define GB_dot_simd    ;
     #if defined ( GB_DEF_$2_is_user_terminal )
         #define GB_terminal if (memcmp (&cij, &GB_DEF_$2_user_terminal, GB_DEF_$2_zsize) == 0) break ;
     #elif defined ( GB_DEF_$2_terminal )
@@ -157,10 +162,10 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
         #define GB_terminal ;
     #endif
     #define GB_ctype    GB_DEF_$3_ztype
-    #define GB_geta     GB_atype aik = Ax [pA]
-    #define GB_getb     GB_btype bkj = Bx [pB]
+    #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
+    #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
     #define GB_AgusB    GB_AxB_user_gus_$1
-    #define GB_AdotB    GB_AxB_user_dot_$1
+    #define GB_Adot2B   GB_AxB_user_dot_$1
     #define GB_AheapB   GB_AxB_user_heap_$1
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(x), &(y))
     #define GB_atype    GB_DEF_$3_xtype
@@ -170,10 +175,10 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GB_btype
     #undef GB_MULTIPLY
     #undef GB_AgusB
-    #undef GB_AdotB
+    #undef GB_Adot2B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_$1_flipxy
-    #define GB_AdotB    GB_AxB_user_dot_$1_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot_$1_flipxy
     #define GB_AheapB   GB_AxB_user_heap_$1_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(y), &(x))
     #define GB_atype    GB_DEF_$3_ytype
@@ -183,10 +188,11 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GB_btype
     #undef GB_MULTIPLY
     #undef GB_AgusB
-    #undef GB_AdotB
+    #undef GB_Adot2B
     #undef GB_AheapB
     #undef GB_ADD
     #undef GB_identity
+    #undef GB_dot_simd
     #undef GB_terminal
     #undef GB_ctype
     #undef GB_geta

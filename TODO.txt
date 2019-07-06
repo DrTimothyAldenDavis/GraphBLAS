@@ -1,4 +1,3 @@
-TODO: user defined semirings, dot2 needs more args
 
 TODO: fix compiler warnings (icc on hypersparse)
 

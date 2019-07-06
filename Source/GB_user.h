@@ -10,6 +10,9 @@
 // Definitions of built-in types and functions, which can be referenced
 // by user-defined objects constructed at compile-time.
 
+#ifndef GB_USER_H
+#define GB_USER_H
+
 //------------------------------------------------------
 // built-in types
 //------------------------------------------------------
@@ -1911,4 +1914,6 @@
 #define GB_DEF_GxB_LAND_BOOL_MONOID_terminal   false
 // no #define GB_DEF_GxB_LXOR_BOOL_MONOID_terminal
 // no #define GB_DEF_GxB_EQ_BOOL_MONOID_terminal
+
+#endif
 

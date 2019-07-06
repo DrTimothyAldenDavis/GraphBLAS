@@ -9,6 +9,8 @@
 
 // macros for the construction of the GB_subassign methods
 
+#ifndef GB_SUBASSIGN_METHODS_H
+#define GB_SUBASSIGN_METHODS_H
 #include "GB_add.h"
 #include "GB_ij.h"
 #include "GB_Pending.h"
@@ -1918,4 +1920,6 @@ GrB_Info GB_subassign_emult_slice
     /* C is valid, but might not be in the queue; thus the FLIP */          \
     ASSERT_OK (GB_check (C, "C with pending tuples ", GB_FLIP (GB0))) ;     \
     return (GrB_SUCCESS) ;
+
+#endif
 

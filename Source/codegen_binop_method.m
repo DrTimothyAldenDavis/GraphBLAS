@@ -31,14 +31,14 @@ fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 if (isequal (binop, 'second'))
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_geta'', `%s aij = Ax [pA]'')\n', xytype) ;
+    fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xytype) ;
 end
 
 % to get an entry from B
 if (isequal (binop, 'first'))
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_getb'', `%s bij = Bx [pB]'')\n', xytype) ;
+    fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', xytype) ;
 end
 
 % type-specific IDIV

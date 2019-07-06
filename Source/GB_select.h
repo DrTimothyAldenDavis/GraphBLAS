@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_SELECT_H
+#define GB_SELECT_H
 #include "GB.h"
 
 GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
@@ -47,4 +49,6 @@ static inline bool GB_is_nonzero (const GB_void *value, int64_t size)
     }
     return (false) ;
 }
+
+#endif
 

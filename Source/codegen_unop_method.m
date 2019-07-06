@@ -25,7 +25,7 @@ if (A_is_pattern)
     % A(i,j) is not needed
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_geta'', `%s aij = Ax [pA]'')\n', xtype) ;
+    fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xtype) ;
 end
 
 % type-specific IMINV

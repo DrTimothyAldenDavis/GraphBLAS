@@ -46,11 +46,11 @@
 
 // aik = Ax [pA]
 #define GB_GETA(aik,Ax,pA) \
-    GB_geta
+    GB_geta(aik,Ax,pA)
 
 // bkj = Bx [pB]
 #define GB_GETB(bkj,Bx,pB) \
-    GB_getb
+    GB_getb(bkj,Bx,pB)
 
 #define GB_CX(p) Cx [p]
 
@@ -63,7 +63,7 @@
     GB_MULTIPLY_ADD(z, x, y) ;
 
 // copy scalar
-#define GB_COPY(z,x) z = x ;
+#define GB_COPY_C(z,x) z = x ;
 
 // monoid identity value (Gustavson's method only, with no mask)
 #define GB_IDENTITY \

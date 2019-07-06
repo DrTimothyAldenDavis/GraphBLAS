@@ -37,7 +37,7 @@ is_second = isequal (multop, 'second') ;
 if (is_second)
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_geta'', `%s aik = Ax [pA]'')\n', xytype) ;
+    fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xytype) ;
 end
 
 % to get an entry from B
@@ -45,7 +45,7 @@ is_first = isequal (multop, 'first') ;
 if (is_first)
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
-    fprintf (f, 'define(`GB_getb'', `%s bkj = Bx [pB]'')\n', xytype) ;
+    fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', xytype) ;
 end
 
 % type-specific IDIV

@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef GB_ADD_H
+#define GB_ADD_H
 #include "GB.h"
 
 GrB_Info GB_add             // C=A+B or C<M>=A+B
@@ -86,3 +88,4 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     GB_Context Context
 ) ;
 
+#endif
