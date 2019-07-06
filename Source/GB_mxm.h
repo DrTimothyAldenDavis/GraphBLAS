@@ -54,7 +54,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel C=A'*B
     GB_Context Context
 ) ;
 
-void GB_AxB_select                  // select method for A*B or A'*B
+void GB_AxB_select                  // select method for A*B
 (
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
@@ -65,7 +65,7 @@ void GB_AxB_select                  // select method for A*B or A'*B
     int64_t *bjnz_max                       // # entries in densest col of B
 ) ;
 
-GrB_Info GB_AxB_sequential          // single-threaded C<M>=A*B
+GrB_Info GB_AxB_saxpy_sequential    // single-threaded C<M>=A*B
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix M,                   // optional mask matrix

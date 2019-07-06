@@ -25,7 +25,7 @@
 // op may be NULL.  In this case, the intersection of A and B must be empty.
 // This is used by GB_wait only, for merging the pending tuple matrix T into A.
 
-#include "GB.h"
+#include "GB_add.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
 #endif

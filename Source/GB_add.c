@@ -33,7 +33,7 @@
 // Any duplicate pending tuples have already been summed in T, so the
 // intersection of T and A is always empty.
 
-#include "GB.h"
+#include "GB_add.h"
 
 GrB_Info GB_add             // C=A+B or C<M>=A+B
 (

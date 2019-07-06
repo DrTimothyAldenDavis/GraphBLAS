@@ -20,7 +20,7 @@
         //  =====================       ==============
         //  M   -   -   +   A   -       08:  C(I,J)<M> += A, no S
 
-#include "GB_subassign.h"
+#include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                                         \

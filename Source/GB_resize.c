@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_select.h"
+
 #define GB_FREE_ALL GB_PHIX_FREE (A) ;
 
 GrB_Info GB_resize              // change the size of a matrix

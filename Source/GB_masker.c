@@ -46,7 +46,8 @@
 // like GB_add when the mask is *not* present.  The pattern of R is bounded
 // by the pattern of C+Z, also ignoring the mask.
 
-#include "GB.h"
+#include "GB_mask.h"
+#include "GB_add.h"
 
 GrB_Info GB_masker          // R = masker (M, C, Z)
 (

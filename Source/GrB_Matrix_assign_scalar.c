@@ -19,7 +19,7 @@
 
 // The actual work is done in GB_assign_scalar.c.
 
-#include "GB.h"
+#include "GB_assign.h"
 
 #define GB_ASSIGN(type,T,ampersand)                                            \
 GrB_Info GrB_Matrix_assign_ ## T    /* C<M>(Rows,Cols) += x                 */ \

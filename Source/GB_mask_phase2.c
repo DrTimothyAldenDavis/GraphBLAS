@@ -22,7 +22,7 @@
 // This function either frees Rp and Rh, or transplants then into R, as R->p
 // and R->h.  Either way, the caller must not free them.
 
-#include "GB.h"
+#include "GB_mask.h"
 
 GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
 (

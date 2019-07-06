@@ -16,7 +16,7 @@
 // A:           matrix
 // S:           none (see also GB_subassign_06s)
 
-#include "GB_subassign.h"
+#include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_06n
 (

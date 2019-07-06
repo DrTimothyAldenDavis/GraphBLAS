@@ -7,11 +7,11 @@
 
 //------------------------------------------------------------------------------
 
-// Select a saxpy method for each thread: gather/scatter or heap
+// Select a saxpy method for each thread: Gustavons or heap-based method
 
 #include "GB_mxm.h"
 
-void GB_AxB_select                  // select method for A*B or A'*B
+void GB_AxB_select                  // select method for A*B
 (
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B

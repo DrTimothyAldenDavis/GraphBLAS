@@ -9,7 +9,7 @@
 
 // check a list of indices I and determine its properties
 
-#include "GB.h"
+#include "GB_ij.h"
 
 // FUTURE:: if limit=0, print a different message.  see also setEl, extractEl.
 #define GB_ICHECK(i,limit)                                              \

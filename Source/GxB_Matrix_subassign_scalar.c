@@ -17,7 +17,7 @@
 // Compare with GrB_Matrix_assign_scalar,
 // which uses M and C_Replace differently.
 
-#include "GB.h"
+#include "GB_subassign.h"
 
 #define GB_ASSIGN(type,T,ampersand)                                            \
 GrB_Info GxB_Matrix_subassign_ ## T /* C(Rows,Cols)<M> += x                 */ \

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_sequential: C<M>=A*B
+// GB_AxB_saxpy_sequential: C<M>=A*B using a single thread
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,14 +7,14 @@
 
 //------------------------------------------------------------------------------
 
-// sequential matrix-matrix multiply.  See GB_AxB_parallel for a description
-// of the arguments.
+// sequential matrix-matrix multiply using a saxpy-based method.  See
+// GB_AxB_parallel for a description of the arguments.
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
 #include "GB_mxm.h"
 
-GrB_Info GB_AxB_sequential          // single-threaded C<M>=A*B
+GrB_Info GB_AxB_saxpy_sequential    // single-threaded C<M>=A*B
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix M,                   // optional mask matrix

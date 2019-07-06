@@ -9,7 +9,7 @@
 
 // C<M> = accum(C,select(A,k)) or accum(C,select(A',))
 
-#include "GB.h"
+#include "GB_select.h"
 
 GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
 (

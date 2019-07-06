@@ -21,7 +21,7 @@
 
 // Cp is either freed by phase2, or transplanted into C.
 
-#include "GB.h"
+#include "GB_add.h"
 
 GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
 (

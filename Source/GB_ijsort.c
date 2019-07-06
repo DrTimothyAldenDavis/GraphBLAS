@@ -16,7 +16,7 @@
     I2k = I1k (~Iduplicate) ;
 */
 
-#include "GB.h"
+#include "GB_ij.h"
 
 #define GB_FREE_WORK                                    \
 {                                                       \

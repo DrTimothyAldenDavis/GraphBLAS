@@ -52,7 +52,9 @@
 
 // desc [GB_OUTP] = GrB_REPLACE means to clear C before writing Z into C.
 
-#include "GB.h"
+#include "GB_subassign.h"
+#include "GB_add.h"
+#include "GB_mask.h"
 
 /* -----------------------------------------------------------------------------
 

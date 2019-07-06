@@ -22,7 +22,7 @@
 // CSC, then this is row i and column j.  If the matrices are all CSR, then it
 // is row j and column i.
 
-#include "GB.h"
+#include "GB_mask.h"
 
 /*
 

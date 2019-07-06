@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_ij.h"
 
 GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 (

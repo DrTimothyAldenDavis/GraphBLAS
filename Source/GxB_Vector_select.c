@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_select.h"
 
 GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
 (

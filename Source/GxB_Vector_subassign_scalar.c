@@ -13,7 +13,7 @@
 
 // The actual work is done in GB_subassign_scalar.c.
 
-#include "GB.h"
+#include "GB_subassign.h"
 
 #define GB_ASSIGN(type,T,ampersand)                                            \
 GrB_Info GxB_Vector_subassign_ ## T /* w(Rows)<M> = accum (w(Rows),x)       */ \

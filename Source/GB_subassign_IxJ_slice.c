@@ -43,7 +43,7 @@
 // Instead, Methods 05 and 07 slice the matrix M, and Methods 09 and 11 slice
 // the matrix addition M+S.
 
-#include "GB_subassign.h"
+#include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                                     \

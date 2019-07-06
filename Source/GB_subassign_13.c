@@ -16,7 +16,7 @@
 // A:           scalar
 // S:           constructed
 
-#include "GB_subassign.h"
+#include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_13
 (

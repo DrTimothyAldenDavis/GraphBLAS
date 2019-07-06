@@ -18,7 +18,7 @@
 
 #define GB_FREE_WORK GB_FREE_EMULT_SLICE
 
-#include "GB_subassign.h"
+#include "GB_subassign_methods.h"
 
 //------------------------------------------------------------------------------
 // GB_PHASE1_ACTION

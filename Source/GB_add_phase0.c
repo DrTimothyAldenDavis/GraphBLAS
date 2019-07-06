@@ -55,7 +55,7 @@
 //      = Mh [kM].  If j does not appear in M, then C_to_M [k] = -1.  If M is
 //      not hypersparse, then C_to_M is returned as NULL.
 
-#include "GB.h"
+#include "GB_add.h"
 
 //------------------------------------------------------------------------------
 // GB_allocate_result

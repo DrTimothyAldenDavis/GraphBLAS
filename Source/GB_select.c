@@ -14,7 +14,7 @@
     GB_MATRIX_FREE (&T) ;                   \
 }
 
-#include "GB.h"
+#include "GB_select.h"
 
 GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 (

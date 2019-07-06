@@ -11,7 +11,7 @@
 // The scalar x is implicitly expanded into a vector u of size nRows-by-1,
 // with each entry in u equal to x.
 
-#include "GB.h"
+#include "GB_assign.h"
 
 #define GB_ASSIGN(type,T,ampersand)                                            \
 GrB_Info GrB_Vector_assign_ ## T    /* w<M>(Rows) = accum (w(Rows),x)       */ \

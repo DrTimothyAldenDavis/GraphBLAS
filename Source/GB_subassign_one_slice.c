@@ -20,7 +20,7 @@
         //  M   -   -   +   -   -       07:  C(I,J)<M> += x      for M
         //  M   -   -   -   A   -       06n: C(I,J)<M> = A       for M
 
-#include "GB_subassign.h"
+#include "GB_subassign_methods.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                                     \

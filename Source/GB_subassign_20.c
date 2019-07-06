@@ -18,7 +18,7 @@
 
 #define GB_FREE_WORK GB_FREE_TWO_SLICE
 
-#include "GB_subassign.h"
+#include "GB_subassign_methods.h"
 
 GrB_Info GB_subassign_20
 (

@@ -20,7 +20,7 @@
 
 // Compare with GB_assign, which uses M and C_replace differently
 
-#include "GB.h"
+#include "GB_subassign.h"
 
 #define GB_FREE_ALL                                 \
 {                                                   \

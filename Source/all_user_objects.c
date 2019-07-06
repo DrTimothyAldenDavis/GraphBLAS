@@ -8,6 +8,7 @@
 // and objects inside GraphBLAS, which are not user-callable.
 
 #include "GB.h"
+#include "GB_user.h"
 
 //------------------------------------------------------------------------------
 // SuiteSparse/GraphBLAS/Config/user_def1.m4: define user-defined objects

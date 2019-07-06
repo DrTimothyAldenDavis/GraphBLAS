@@ -9,7 +9,7 @@
 
 // Compare with GrB_Row_assign, which uses the M and C_replace differently
 
-#include "GB.h"
+#include "GB_subassign.h"
 
 GrB_Info GxB_Row_subassign          // C(row,Cols)<M'> += u'
 (
