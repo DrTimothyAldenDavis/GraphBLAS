@@ -234,7 +234,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     // find the size of each slice
     //--------------------------------------------------------------------------
 
-    nthreads = GB_nthreads (total_flops, 1024 * chunk, nthreads_max) ;
+    nthreads = GB_nthreads (total_flops, chunk, nthreads_max) ;
     int64_t Slice [nthreads+1] ;
     Slice [0] = 0 ;
 

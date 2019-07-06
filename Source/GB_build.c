@@ -122,28 +122,6 @@ GrB_Info GB_build               // build matrix
     ASSERT (C->magic == GB_MAGIC2) ;
 
     //--------------------------------------------------------------------------
-    // handle the CSR/CSC format
-    //--------------------------------------------------------------------------
-
-    int64_t *I, *J ;
-    if (C->is_csc)
-    { 
-        // C can be a CSC GrB_Matrix, or a GrB_Vector.  If C is a typecasted
-        // GrB_Vector, then J_input and J must both be NULL.
-        I = (int64_t *) I_input ;  // indices in the range 0 to C->vlen-1
-        J = (int64_t *) J_input ;  // indices in the range 0 to C->vdim-1
-    }
-    else
-    { 
-        // C can only be a CSR GrB_Matrix
-        I = (int64_t *) J_input ;  // indices in the range 0 to C->vlen-1
-        J = (int64_t *) I_input ;  // indices in the range 0 to C->vdim-1
-    }
-
-    // J contains vector names and I contains indices into those vectors.
-    // The rest of this function is agnostic to the CSR/CSC format.
-
-    //--------------------------------------------------------------------------
     // build the matrix T
     //--------------------------------------------------------------------------
 
@@ -152,8 +130,6 @@ GrB_Info GB_build               // build matrix
 
     // S_input must be treated as read-only, so GB_builder is not allowed to
     // transplant it into T->x.
-
-    GB_void *S = S_input ;
 
     int64_t *no_I_work = NULL ;
     int64_t *no_J_work = NULL ;
@@ -175,7 +151,9 @@ GrB_Info GB_build               // build matrix
         0,              // I_work, J_work, and S_work not used here
         is_matrix,      // true if T is a GrB_Matrix
         ijcheck,        // true if I and J are to be checked
-        I, J, S,        // original tuples, each of size nvals, not modified
+        ((C->is_csc) ? I_input : J_input),
+        ((C->is_csc) ? J_input : I_input),
+        S_input,        // original values, each of size nvals, not modified
         nvals,          // number of tuples
         dup,            // operator to assemble duplicates
         scode,          // type of the S array

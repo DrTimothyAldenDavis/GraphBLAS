@@ -48,7 +48,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     ASSERT_OK (GB_check (A, "A input for GB_select", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (Thunk_in, "Thunk_in for GB_select", GB0)) ;
 
-    GrB_Matrix T = NULL, Thunk = NULL ;
+    GrB_Matrix T = NULL ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Info info ;
@@ -158,7 +158,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
     }
 
-    Thunk = Thunk_in ;
+    bool use_Thunk_in = true ;
     int64_t ithunk = 0 ;
 
     bool use_dup = false ;
@@ -189,7 +189,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
                 GB_cast_array (&ithunk, GB_INT64_code,
                     Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
                 ithunk = -ithunk ;
-                Thunk = NULL ;
+                use_Thunk_in = false ;
             }
             if (opcode == GB_TRIL_opcode)
             { 
@@ -424,7 +424,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     else
     { 
         // T = select (A, Thunk)
-        GB_OK (GB_selector (&T, opcode, op, flipij, A, ithunk, Thunk, Context));
+        GB_OK (GB_selector (&T, opcode, op, flipij, A, ithunk,
+            (use_Thunk_in) ? Thunk_in : NULL, Context)) ;
     }
 
     T->is_csc = A_csc ;

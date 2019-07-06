@@ -29,8 +29,8 @@
     // reduce each slice in its own workspace
     //--------------------------------------------------------------------------
 
-    GB_CTYPE **Works [nth] ;
-    bool     **Marks [nth] ;
+    GB_CTYPE *Works [nth] ;
+    bool     *Marks [nth] ;
     int64_t  Tnz [nth] ;
     bool ok = true ;
 

@@ -64,8 +64,11 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;
     int64_t Cnvec, Cnvec_nonempty ;
-    int64_t *Cp = NULL, *Ch = NULL ;
-    int64_t *C_to_M = NULL, *C_to_A = NULL, *C_to_B = NULL ;
+    int64_t *restrict Cp = NULL ;
+    int64_t *restrict Ch = NULL ;
+    int64_t *restrict C_to_M = NULL ;
+    int64_t *restrict C_to_A = NULL ;
+    int64_t *restrict C_to_B = NULL ;
     int ntasks, max_ntasks, nthreads ;
     GB_task_struct *TaskList = NULL ;
 

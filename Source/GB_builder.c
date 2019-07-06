@@ -150,7 +150,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // get S
     //--------------------------------------------------------------------------
 
-    const GB_void *restrict S_work = (*S_work_handle) ;
+    GB_void *restrict S_work = (*S_work_handle) ;
     const GB_void *restrict S = (S_work == NULL) ? S_input : S_work ;
     size_t tsize = ttype->size ;
     size_t ssize = GB_code_size (scode, tsize) ;
@@ -393,7 +393,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             { 
                 // J_work is a shallow copy of J_input.  The pointer is not
                 // copied into (*J_work_handle), so it will not be freed.
-                J_work = J_input ;
+                // J_input is not modified, even though it is typecast to the
+                // int64_t *J_work, since J_work is not modified in this case.
+                J_work = (int64_t *) J_input ;
             }
 
         }

@@ -108,10 +108,12 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     GrB_Matrix A = A_input ;
     GrB_Matrix M = M_input ;
-    GrB_Index *I = I_input ;
-    GrB_Index *J = J_input ;
     int64_t ni = ni_input ;
     int64_t nj = nj_input ;
+
+    // I and J are either the user inputs, or sorted copies
+    #define I ((I_jumbled) ? I2 : I_input)
+    #define J ((J_jumbled) ? J2 : J_input)
 
     ASSERT (C != NULL) ;
     ASSERT (!GB_aliased (C, M)) ;
@@ -182,8 +184,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     int64_t nI, nJ, Icolon [3], Jcolon [3] ;
     int Ikind, Jkind ;
-    GB_ijlength (I, ni, cvlen, &nI, &Ikind, Icolon) ;
-    GB_ijlength (J, nj, cvdim, &nJ, &Jkind, Jcolon) ;
+    GB_ijlength (I_input, ni, cvlen, &nI, &Ikind, Icolon) ;
+    GB_ijlength (J_input, nj, cvdim, &nJ, &Jkind, Jcolon) ;
 
     // If the descriptor says that A must be transposed, it has already been
     // transposed in the caller.  Thus C(I,J), A, and M (if present) all
@@ -191,9 +193,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     bool I_unsorted, I_has_dupl, I_contig, J_unsorted, J_has_dupl, J_contig ;
     int64_t imin, imax, jmin, jmax ;
-    GB_OK (GB_ijproperties (I, ni, nI, cvlen, &Ikind, Icolon,
+    GB_OK (GB_ijproperties (I_input, ni, nI, cvlen, &Ikind, Icolon,
                 &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, Context)) ;
-    GB_OK (GB_ijproperties (J, nj, nJ, cvdim, &Jkind, Jcolon,
+    GB_OK (GB_ijproperties (J_input, nj, nJ, cvdim, &Jkind, Jcolon,
                 &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, Context)) ;
 
     //--------------------------------------------------------------------------
@@ -269,30 +271,28 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         if (I_jumbled)
         { 
-            // sort I and remove duplicates
-            // printf ("sort I and remove duplicates::::\n") ;
+            // I2 = sort I_input and remove duplicates
+            // printf ("sort I_input and remove duplicates::::\n") ;
             ASSERT (Ikind == GB_LIST) ;
-            GB_OK (GB_ijsort (I, &ni, &I2, &I2k, Context)) ;
-            I = I2 ;
-            // Recheck the length and properties of the new I.  This may
-            // convert I to GB_ALL or GB_RANGE, after I has been sorted.
-            GB_ijlength (I, ni, cvlen, &nI, &Ikind, Icolon) ;
-            GB_OK (GB_ijproperties (I, ni, nI, cvlen, &Ikind, Icolon,
+            GB_OK (GB_ijsort (I_input, &ni, &I2, &I2k, Context)) ;
+            // Recheck the length and properties of the new I2.  This may
+            // convert I2 to GB_ALL or GB_RANGE, after I2 has been sorted.
+            GB_ijlength (I2, ni, cvlen, &nI, &Ikind, Icolon) ;
+            GB_OK (GB_ijproperties (I2, ni, nI, cvlen, &Ikind, Icolon,
                 &I_unsorted, &I_has_dupl, &I_contig, &imin, &imax, Context)) ;
             ASSERT (! (I_unsorted || I_has_dupl)) ;
         }
 
         if (J_jumbled)
         { 
-            // sort J and remove duplicates
-            // printf ("sort J and remove duplicates::::\n") ;
+            // J2 = sort J_input and remove duplicates
+            // printf ("sort J_input and remove duplicates::::\n") ;
             ASSERT (Jkind == GB_LIST) ;
-            GB_OK (GB_ijsort (J, &nj, &J2, &J2k, Context)) ;
-            J = J2 ;
-            // Recheck the length and properties of the new J.  This may
-            // convert J to GB_ALL or GB_RANGE, after J has been sorted.
-            GB_ijlength (J, nj, cvdim, &nJ, &Jkind, Jcolon) ;
-            GB_OK (GB_ijproperties (J, nj, nJ, cvdim, &Jkind, Jcolon,
+            GB_OK (GB_ijsort (J_input, &nj, &J2, &J2k, Context)) ;
+            // Recheck the length and properties of the new J2.  This may
+            // convert J2 to GB_ALL or GB_RANGE, after J2 has been sorted.
+            GB_ijlength (J2, nj, cvdim, &nJ, &Jkind, Jcolon) ;
+            GB_OK (GB_ijproperties (J2, nj, nJ, cvdim, &Jkind, Jcolon,
                 &J_unsorted, &J_has_dupl, &J_contig, &jmin, &jmax, Context)) ;
             ASSERT (! (J_unsorted || J_has_dupl)) ;
         }
