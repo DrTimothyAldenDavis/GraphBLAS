@@ -64,14 +64,6 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     GrB_Info info ;
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = nthreads_max ;   // this is reduced later
-    // TODO use the chunk to reduce the # of threads
-
-    //--------------------------------------------------------------------------
     // get A and B
     //--------------------------------------------------------------------------
 
@@ -98,15 +90,11 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     ASSERT (A->vlen == B->vlen) ;
 
     //--------------------------------------------------------------------------
-    // reduce # of threads as needed
+    // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    // If the matrix is too small to slice, reduce the # of threads.  If either
-    // matrix is empty, a single thread is used.
-
-    nthreads = GB_IMIN (nthreads, anz) ;
-    nthreads = GB_IMIN (nthreads, bnz) ;
-    nthreads = GB_IMAX (nthreads, 1) ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;
 
     //==========================================================================
     // sequential C<#M>=A'*B
@@ -117,14 +105,10 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     if (nthreads == 1)
     {
         // do the entire computation with a single thread
-
         GrB_Matrix Aslice [1] ;
         Aslice [0] = A ;
-        GrB_Info thread_info = GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B,
-            semiring, flipxy, mask_applied, 1, 1, 1, NULL) ;
-
-        info = thread_info ;
-
+        info = GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B, semiring, flipxy,
+            mask_applied, 1, 1, 1, NULL) ;
         if (info == GrB_SUCCESS)
         {
             ASSERT_OK (GB_check (*Chandle, "C for sequential A*B", GB0)) ;
