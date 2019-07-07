@@ -67,7 +67,8 @@ GrB_Info info ;
 GrB_Info mis_check_results
 (
     int64_t *p_isize,
-    GrB_Vector iset
+    GrB_Vector iset,
+    double t
 )
 {
 
@@ -127,7 +128,7 @@ GrB_Info mis_check_results
         exit (1) ;
     }
 
-    // TODO do this with a mask instead of extractTuples
+    // could do this with a mask instead of extractTuples.
     OK (GrB_Matrix_extractTuples (I2, J2, X2, &nvals, C)) ;
     GrB_free (&C) ;
 
@@ -161,8 +162,8 @@ GrB_Info mis_check_results
 
     free (I) ; I = NULL ;
 
-    fprintf (stderr, "maximal independent set OK: %.16g of %.16g nodes\n",
-        (double) isize, (double) n) ;
+    fprintf (stderr, "maximal independent set OK: %.16g of %.16g nodes"
+        " time: %g\n", (double) isize, (double) n, t) ;
     return (GrB_SUCCESS) ;
 }
 
@@ -173,7 +174,7 @@ GrB_Info mis_check_results
 int main (int argc, char **argv)
 {
 
-    double tic [2], t ;
+    double tic [2], t1, t2 ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     fprintf (stderr, "\nmis_demo:\n") ;
 
@@ -201,29 +202,37 @@ int main (int argc, char **argv)
     // compute maximal independent set
     //--------------------------------------------------------------------------
 
-    simple_rand_seed (1) ;
-    simple_tic (tic) ;
-    OK (mis (&iset1, A)) ;
-    t = simple_toc (tic) ;
-    printf ("MIS time in seconds: %14.6f\n", t) ;
-
-    // also test the version that checks every error condition
-    simple_rand_seed (1) ;
-    OK (mis_check (&iset2, A)) ;
-
-    //--------------------------------------------------------------------------
-    // compare results
-    //--------------------------------------------------------------------------
-
-    mis_check_results (&isize1, iset1) ;
-    mis_check_results (&isize2, iset2) ;
-
-    printf ("isize: %.16g %.16g\n", (double) isize1, (double) isize2) ;
-
-    if (isize1 != isize2)
+    for (int64_t seed = 1 ; seed <= 2 ; seed++)
     {
-        fprintf (stderr, "====================================================size differs!\n") ;
-        printf ("size differs!\n") ;
+
+        simple_tic (tic) ;
+        OK (mis (&iset1, A, seed)) ;
+        t1 = simple_toc (tic) ;
+        printf ("MIS time in seconds: %14.6f\n", t1) ;
+
+        // also test the version that checks every error condition
+        simple_tic (tic) ;
+        OK (mis_check (&iset2, A, seed)) ;
+        t2 = simple_toc (tic) ;
+        printf ("MIS time in seconds: %14.6f\n", t2) ;
+
+        //----------------------------------------------------------------------
+        // compare results
+        //----------------------------------------------------------------------
+
+        mis_check_results (&isize1, iset1, t1) ;
+        mis_check_results (&isize2, iset2, t2) ;
+
+        printf ("isize: %.16g %.16g\n", (double) isize1, (double) isize2) ;
+
+        if (isize1 != isize2)
+        {
+            fprintf (stderr, "=============================================="
+                "======size differs!\n") ;
+            printf ("size differs!\n") ;
+        }
+        GrB_free (&iset1) ;
+        GrB_free (&iset2) ;
     }
 
     FREE_ALL ;

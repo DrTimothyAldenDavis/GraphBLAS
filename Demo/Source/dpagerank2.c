@@ -385,7 +385,7 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     // pagerank_rsum = sum (rdouble)
     OK (GrB_reduce (&pagerank_rsum, NULL, GxB_PLUS_FP64_MONOID, rdouble, NULL));
 
-    // TODO replace with GrB_vxm, with a 1-by-1 matrix
+    // could also do this with GrB_vxm, with a 1-by-1 matrix
     // r = r / pagerank_rsum
     OK (GrB_apply (rdouble, NULL, NULL, PageRank_div, rdouble, NULL)) ;
 

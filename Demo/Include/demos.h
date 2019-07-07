@@ -13,6 +13,7 @@
 #include "simple_rand.h"
 #include "simple_timer.h"
 #include "usercomplex.h"
+#include "prand.h"
 
 #ifdef MATLAB_MEX_FILE
 #include "mex.h"
@@ -95,16 +96,19 @@ GrB_Info read_matrix        // read a double-precision matrix
 GrB_Info mis                    // compute a maximal independent set
 (
     GrB_Vector *iset_output,    // iset(i) = true if i is in the set
-    const GrB_Matrix A          // symmetric Boolean matrix
+    const GrB_Matrix A,         // symmetric Boolean matrix
+    int64_t seed                // random number seed
 ) ;
 
 GrB_Info mis_check              // compute a maximal independent set
 (
     GrB_Vector *iset_output,    // iset(i) = true if i is in the set
-    const GrB_Matrix A          // symmetric Boolean matrix
+    const GrB_Matrix A,         // symmetric Boolean matrix
+    int64_t seed                // random number seed
 ) ;
 
 void mis_score (double *result, uint32_t *degree) ;
+void mis_score2 (double *result, uint32_t *degree, double *xrand) ;
 
 extern int32_t level ;
 
