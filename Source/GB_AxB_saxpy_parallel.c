@@ -7,9 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// Parallel matrix-matrix multiply, A*B with optional mask M.  This
-// method is used by GrB_mxm, GrB_vxm, and GrB_mxv.  For both of the latter two
-// methods, B on input will be an nrows-by-1 column vxector.
+// Parallel matrix-matrix multiply, A*B with optional mask M, using the saxpy
+// method.  This method is used by GrB_mxm, GrB_vxm, and GrB_mxv.  For both of
+// the latter two methods, B on input will be an nrows-by-1 column vxector.
 
 // This function, and the matrices C, M, A, and B are all CSR/CSC agnostic.
 // For this discussion, suppose they are CSC, with vlen = # of rows, and vdim =
@@ -36,14 +36,12 @@
 
 //      GxB_AxB_HASH:       hash method for A*B (FUTURE)
 
+// The dot product method does not use this function.
+
 // AxB_method_used reports the method actually chosen.  This is for
 // informational purposes only, so if a parallel C=A*B splits the work into
 // multiple submatrix multiplications, and uses different methods on each
 // submatrix, then AxB_method_used is the method chosen by thread zero.
-
-// Context: the GB_Context containing the # of threads to use, a string of the
-// user-callable function that is calling this function (GrB_mxm, GrB_mxv, or
-// GxB_vxm) and detailed error reports.
 
 // FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods.
 
@@ -136,15 +134,17 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
         }
 
         // C<M>=A*B
-        info = GB_AxB_saxpy_sequential (Chandle, M, Mask_comp, A, B, semiring,
-            flipxy, *AxB_method_used, bjnz_max, true, mask_applied, Sauna_id) ;
+        GrB_Info info1 = GB_AxB_saxpy_sequential (Chandle, M, Mask_comp, A, B,
+            semiring, flipxy, *AxB_method_used, bjnz_max, true, mask_applied,
+            Sauna_id) ;
 
         // release the Sauna for Gustavson's method
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
         {
+            // info is reset, so info1 is used above
             GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
         }
-        return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
+        return ((info1 == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info1) ;
     }
 
     //==========================================================================
