@@ -58,5 +58,3 @@ TODO    user guide: describe all changes, add new descriptors and
 
 TODO    Tcov statement coverage
 
-TODO    ask the API committee about enum values in the spec
-
