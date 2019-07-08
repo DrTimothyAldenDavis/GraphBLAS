@@ -54,7 +54,7 @@ for code1 = 1:ntypes
         atype = types {code2} ;
 
         % determine the casting function
-        fcast = 'GB_ctype zarg = xarg' ;
+        fcast = 'GB_ctype zarg = (GB_ctype) xarg' ;
         if (atype (1) == 'f' || atype (1) == 'd')
             if (ctype (1) == 'i')
                 % casting float or double to int

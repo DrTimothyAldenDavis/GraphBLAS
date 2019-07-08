@@ -77,6 +77,11 @@
 
 #elif defined __GNUC__
 
+// disable warnings for gcc 8.2:
+#pragma GCC diagnostic ignored "-Wunknown-warning-option"
+#pragma GCC diagnostic ignored "-Wint-in-bool-context"
+#pragma GCC diagnostic ignored "-Wformat-truncation="
+
 // disable warnings from -Wall -Wextra -Wpendantic
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
@@ -88,13 +93,10 @@
 
 // resolved (warnings no longer disabled globally):
 // #pragma GCC diagnostic ignored "-Wunknown-pragmas"
-// #pragma GCC diagnostic ignored "-Wunknown-warning-option"
 // #pragma GCC diagnostic ignored "-Wtype-limits"
 // #pragma GCC diagnostic ignored "-Wunused-result"
-// #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 // #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 // #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
-// #pragma GCC diagnostic ignored "-Wformat-truncation="
 
 // enable these warnings as errors
 #pragma GCC diagnostic error "-Wmisleading-indentation"

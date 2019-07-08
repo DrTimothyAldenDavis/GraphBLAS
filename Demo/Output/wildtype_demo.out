@@ -319,6 +319,7 @@ nrows: 10 ncols: 10 max # entries: 4
 format: standard CSC vlen: 10 nvec_nonempty: 2 nvec: 10 plen: 10 vdim: 10
 hyper_ratio 0.0625
 GraphBLAS type:  run-time user-defined: [wildtype] size: 128
+last method used for GrB_mxm, vxm, or mxv: heap
 number of entries: 4 
 column: 2 : 2 entries [0:1]
     row 2: [user-defined value]
@@ -377,7 +378,7 @@ number of entries: 0
 
 The matrix D is not wild enough to print.
 
-This supposed to fail, as a demo of GrB_error:
+This is supposed to fail, as a demo of GrB_error:
 GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GrB_eWiseAdd_Matrix_BinaryOp (C, M, accum, add, A, B, desc)
 incompatible type for z=wildtype_add(x,y):

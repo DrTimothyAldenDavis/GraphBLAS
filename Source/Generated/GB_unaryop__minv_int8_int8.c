@@ -22,7 +22,7 @@
 
 // C type:   int8_t
 // A type:   int8_t
-// cast:     int8_t cij = aij
+// cast:     int8_t cij = (int8_t) aij
 // unaryop:  cij = GB_IMINV_SIGNED (aij, 8)
 
 #define GB_ATYPE \
@@ -43,7 +43,7 @@
 
 // casting
 #define GB_CASTING(z, x)   \
-    int8_t z = x ;
+    int8_t z = (int8_t) x ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \

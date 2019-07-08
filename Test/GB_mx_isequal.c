@@ -91,7 +91,10 @@ bool GB_mx_isequal     // true if A and B are exactly the same
         int64_t np = AP->n ;
         if (!GB_mx_same ((char *) AP->i, (char *) BP->i, np*s)) return (false) ;
         if (!GB_mx_same ((char *) AP->j, (char *) BP->j, np*s)) return (false) ;
-        if (!GB_mx_same (AP->x, BP->x, np*psize)) return (false) ;
+        if (!GB_mx_same ((char *) AP->x, (char *) BP->x, np*psize))
+        {
+            return (false) ;
+        }
         // printf ("xp same\n") ;
     }
 

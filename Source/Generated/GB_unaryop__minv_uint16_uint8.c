@@ -22,7 +22,7 @@
 
 // C type:   uint16_t
 // A type:   uint8_t
-// cast:     uint16_t cij = aij
+// cast:     uint16_t cij = (uint16_t) aij
 // unaryop:  cij = GB_IMINV_UNSIGNED (aij, 16)
 
 #define GB_ATYPE \
@@ -43,7 +43,7 @@
 
 // casting
 #define GB_CASTING(z, x)   \
-    uint16_t z = x ;
+    uint16_t z = (uint16_t) x ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \

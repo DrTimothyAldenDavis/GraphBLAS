@@ -347,7 +347,8 @@ GB_MONOID_DEFINE_TERM ( GrB_, MIN_UINT16   , uint16_t , UINT16_MAX , 0         )
 GB_MONOID_DEFINE_TERM ( GrB_, MIN_UINT32   , uint32_t , UINT32_MAX , 0         )
 GB_MONOID_DEFINE_TERM ( GrB_, MIN_UINT64   , uint64_t , UINT64_MAX , 0         )
 GB_MONOID_DEFINE_TERM ( GrB_, MIN_FP32     , float    , INFINITY   , -INFINITY )
-GB_MONOID_DEFINE_TERM ( GrB_, MIN_FP64     , double   , INFINITY   , -INFINITY )
+GB_MONOID_DEFINE_TERM ( GrB_, MIN_FP64     , double   ,
+    ((double) INFINITY)   , ((double) -INFINITY) )
 
 // MAX monoids:
 GB_MONOID_DEFINE_TERM ( GrB_, MAX_INT8     , int8_t   , INT8_MIN   , INT8_MAX  )
@@ -359,7 +360,8 @@ GB_MONOID_DEFINE_TERM ( GrB_, MAX_UINT16   , uint16_t , 0          , UINT16_MAX)
 GB_MONOID_DEFINE_TERM ( GrB_, MAX_UINT32   , uint32_t , 0          , UINT32_MAX)
 GB_MONOID_DEFINE_TERM ( GrB_, MAX_UINT64   , uint64_t , 0          , UINT64_MAX)
 GB_MONOID_DEFINE_TERM ( GrB_, MAX_FP32     , float    , -INFINITY  , INFINITY  )
-GB_MONOID_DEFINE_TERM ( GrB_, MAX_FP64     , double   , -INFINITY  , INFINITY  )
+GB_MONOID_DEFINE_TERM ( GrB_, MAX_FP64     , double   , 
+    ((double) -INFINITY)  , ((double) INFINITY)  )
 
 // PLUS monoids:
 GB_MONOID_DEFINE      ( GrB_, PLUS_INT8    , int8_t   , 0          )

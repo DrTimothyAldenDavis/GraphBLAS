@@ -22,7 +22,7 @@
 
 // C type:   uint32_t
 // A type:   int8_t
-// cast:     uint32_t cij = aij
+// cast:     uint32_t cij = (uint32_t) aij
 // unaryop:  cij = !(aij != 0)
 
 #define GB_ATYPE \
@@ -43,7 +43,7 @@
 
 // casting
 #define GB_CASTING(z, x)   \
-    uint32_t z = x ;
+    uint32_t z = (uint32_t) x ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \

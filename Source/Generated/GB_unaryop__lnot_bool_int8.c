@@ -22,7 +22,7 @@
 
 // C type:   bool
 // A type:   int8_t
-// cast:     bool cij = aij
+// cast:     bool cij = (bool) aij
 // unaryop:  cij = !aij
 
 #define GB_ATYPE \
@@ -43,7 +43,7 @@
 
 // casting
 #define GB_CASTING(z, x)   \
-    bool z = x ;
+    bool z = (bool) x ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \

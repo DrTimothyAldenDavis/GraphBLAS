@@ -22,7 +22,7 @@
 
 // C type:   float
 // A type:   uint64_t
-// cast:     float cij = aij
+// cast:     float cij = (float) aij
 // unaryop:  cij = (1.0F)/aij
 
 #define GB_ATYPE \
@@ -43,7 +43,7 @@
 
 // casting
 #define GB_CASTING(z, x)   \
-    float z = x ;
+    float z = (float) x ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
