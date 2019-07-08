@@ -262,8 +262,8 @@ GrB_Info GB_wait                // finish all pending computations
         // Ah [0 ... kA-1] excludes vector tjfirst.  The list
         // Ah [kA ... A->nvec-1] includes tjfirst.
         ASSERT (kA >= 0 && kA <= A->nvec) ;
-        if (kA > 0 && kA < A->nvec) ASSERT (Ah [kA-1] < tjfirst) ;
-        if (found) ASSERT (Ah [kA] == tjfirst) ;
+        ASSERT (GB_IMPLIES (kA > 0 && kA < A->nvec, Ah [kA-1] < tjfirst)) ;
+        ASSERT (GB_IMPLIES (found, Ah [kA] == tjfirst)) ;
         anz0 = A->p [kA] ;
         jlast = Ah [kA-1] ;
     }

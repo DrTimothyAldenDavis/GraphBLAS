@@ -151,8 +151,8 @@ GrB_Info GB_build               // build matrix
         0,              // I_work, J_work, and S_work not used here
         is_matrix,      // true if T is a GrB_Matrix
         ijcheck,        // true if I and J are to be checked
-        ((C->is_csc) ? I_input : J_input),
-        ((C->is_csc) ? J_input : I_input),
+        (int64_t *) ((C->is_csc) ? I_input : J_input),
+        (int64_t *) ((C->is_csc) ? J_input : I_input),
         S_input,        // original values, each of size nvals, not modified
         nvals,          // number of tuples
         dup,            // operator to assemble duplicates

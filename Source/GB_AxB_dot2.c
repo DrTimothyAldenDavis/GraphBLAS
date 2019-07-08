@@ -97,16 +97,20 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         // z = fmult (b,a) will be computed
         A_is_pattern = op_is_first  ;
         B_is_pattern = op_is_second ;
-        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->ytype)) ;
-        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->xtype)) ;
+        ASSERT (GB_IMPLIES (!A_is_pattern,
+            GB_Type_compatible (A->type, mult->ytype))) ;
+        ASSERT (GB_IMPLIES (!B_is_pattern,
+            GB_Type_compatible (B->type, mult->xtype))) ;
     }
     else
     { 
         // z = fmult (a,b) will be computed
         A_is_pattern = op_is_second ;
         B_is_pattern = op_is_first  ;
-        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->xtype)) ;
-        if (!B_is_pattern) ASSERT (GB_Type_compatible (B->type, mult->ytype)) ;
+        ASSERT (GB_IMPLIES (!A_is_pattern,
+            GB_Type_compatible (A->type, mult->xtype))) ;
+        ASSERT (GB_IMPLIES (!B_is_pattern,
+            GB_Type_compatible (B->type, mult->ytype))) ;
     }
 
     (*Chandle) = NULL ;

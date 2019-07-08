@@ -18,9 +18,9 @@
 
 void GB_cast_array              // typecast an array
 (
-    void *Cx,                   // output array
+    GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
-    const void *Ax,             // input array
+    const GB_void *Ax,          // input array
     const GB_Type_code code2,   // type code for Ax
     const int64_t anz,          // number of entries in Cx and Ax
     GB_Context Context

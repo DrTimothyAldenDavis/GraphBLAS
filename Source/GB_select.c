@@ -154,7 +154,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool bthunk = false ;
     if (typecode == GB_BOOL_code && opcode < GB_USER_SELECT_C_opcode)
     { 
-        GB_cast_array (&bthunk, GB_BOOL_code,
+        GB_cast_array ((GB_void *) (&bthunk), GB_BOOL_code,
             Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
     }
 

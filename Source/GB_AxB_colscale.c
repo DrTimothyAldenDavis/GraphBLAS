@@ -83,16 +83,20 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         // z = fmult (b,a) will be computed
         A_is_pattern = op_is_first  ;
         D_is_pattern = op_is_second ;
-        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->ytype)) ;
-        if (!D_is_pattern) ASSERT (GB_Type_compatible (D->type, mult->xtype)) ;
+        ASSERT (GB_IMPLIES (!A_is_pattern,
+            GB_Type_compatible (A->type, mult->ytype))) ;
+        ASSERT (GB_IMPLIES (!D_is_pattern,
+            GB_Type_compatible (D->type, mult->xtype))) ;
     }
     else
     { 
         // z = fmult (a,b) will be computed
         A_is_pattern = op_is_second ;
         D_is_pattern = op_is_first  ;
-        if (!A_is_pattern) ASSERT (GB_Type_compatible (A->type, mult->xtype)) ;
-        if (!D_is_pattern) ASSERT (GB_Type_compatible (D->type, mult->ytype)) ;
+        ASSERT (GB_IMPLIES (!A_is_pattern,
+            GB_Type_compatible (A->type, mult->xtype))) ;
+        ASSERT (GB_IMPLIES (!D_is_pattern,
+            GB_Type_compatible (D->type, mult->ytype))) ;
     }
 
     (*Chandle) = NULL ;

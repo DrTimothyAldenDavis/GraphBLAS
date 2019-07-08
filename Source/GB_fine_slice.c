@@ -154,7 +154,8 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         // Bslice has shallow pointers into B->i and B->x
         (Bslice [tid])->i = B->i + pfirst ;
         (Bslice [tid])->i_shallow = true ;
-        (Bslice [tid])->x = B->x + pfirst * B->type->size ;
+        GB_void *restrict Bx = B->x ;
+        (Bslice [tid])->x = Bx + pfirst * B->type->size ;
         (Bslice [tid])->x_shallow = true ;
 
         // Bslice->h hyperlist

@@ -293,7 +293,7 @@ GrB_Info GB_selector
     #define GB_sel2(opname,aname) GB_sel_phase2_ ## opname ## aname
     #define GB_SEL_WORKER(opname,aname,atype)                           \
     {                                                                   \
-        GB_sel2 (opname, aname) (Ci, Cx,                                \
+        GB_sel2 (opname, aname) (Ci, (atype *) Cx,                      \
             Zp, Cp, C_pstart_slice,                                     \
             A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
             (atype *) xthunk, user_select, ntasks, nthreads) ;          \

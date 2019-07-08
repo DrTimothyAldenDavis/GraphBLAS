@@ -153,8 +153,8 @@ void GB_slice_vector
             ASSERT (pA_start <= pA && pA <= pA_end) ;
         }
 
-        if (pA >  pA_start && pA < pA_end) ASSERT (GB_Ai (pA-1) < i) ;
-        if (pA >= pA_start && pA < pA_end) ASSERT (GB_Ai (pA) >= i) ;
+        ASSERT (GB_IMPLIES (pA >  pA_start && pA < pA_end, (GB_Ai (pA-1) < i)));
+        ASSERT (GB_IMPLIES (pA >= pA_start && pA < pA_end, (GB_Ai (pA) >= i )));
 
         // Ai has been split.  If afound is false:
         //      Ai [pA_start : pA-1] < i
@@ -193,8 +193,8 @@ void GB_slice_vector
             ASSERT (pB_start <= pB && pB <= pB_end) ;
             // printf ("pB "GBd" bfound %d\n", pB, bfound) ;
         }
-        if (pB >  pB_start && pB < pB_end) ASSERT (Bi [pB-1] < i) ;
-        if (pB >= pB_start && pB < pB_end) ASSERT (Bi [pB] >= i) ;
+        ASSERT (GB_IMPLIES (pB >  pB_start && pB < pB_end, (Bi [pB-1] < i))) ;
+        ASSERT (GB_IMPLIES (pB >= pB_start && pB < pB_end, (Bi [pB] >= i ))) ;
 
         // Bi has been split.  If bfound is false:
         //      Bi [pB_start : pB-1] < i

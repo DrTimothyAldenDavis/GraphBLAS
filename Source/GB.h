@@ -52,6 +52,7 @@
 //  181:  format
 //  186:  useless comparison
 //  188:  mixing enum types
+//  193:  zero used for undefined #define
 //  589:  bypass initialization
 //  593:  set but not used
 //  869:  unused parameters
@@ -66,7 +67,7 @@
 //  2557: sign compare
 //  2547: remark about include files
 //  3280: shadow
-#pragma warning (disable: 58 167 144 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2330 2557 2547 3280 )
+#pragma warning (disable: 58 167 144 177 181 186 188 193 589 593 869 981 1418 1419 1572 1599 2259 2282 2330 2557 2547 3280 )
 
 #elif defined __GNUC__
 
@@ -1244,8 +1245,8 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 
 void GB_memcpy                  // parallel memcpy
 (
-    void *dest,                 // destination
-    const void *src,            // source
+    GB_void *dest,              // destination
+    const GB_void *src,         // source
     size_t n,                   // # of bytes to copy
     int nthreads                // # of threads to use
 ) ;
@@ -1333,9 +1334,9 @@ bool GB_code_compatible         // check if two types can be typecast
 
 void GB_cast_array              // typecast an array
 (
-    void *C,                    // output array
+    GB_void *C,                 // output array
     const GB_Type_code code1,   // type code for C
-    const void *A,              // input array
+    const GB_void *A,           // input array
     const GB_Type_code code2,   // type code for A
     const int64_t n,            // number of entries in C and A
     GB_Context Context

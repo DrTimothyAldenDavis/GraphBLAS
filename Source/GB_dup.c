@@ -117,7 +117,9 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     }
 
     C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
+    #ifdef GB_DEBUG
     if (numeric) ASSERT_OK (GB_check (C, "C duplicate of A", GB0)) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // return the result

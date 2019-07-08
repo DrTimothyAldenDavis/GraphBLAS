@@ -100,3 +100,24 @@ GrB_Info prand_print
     int pr              // 0: print nothing, 1: print some, 2: print all
 ) ;
 
+// prand_next: advance the seed
+GrB_Info prand_next
+(
+    GrB_Vector Seed
+) ;
+
+//------------------------------------------------------------------------------
+// prand_t: the random number seed
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+    uint64_t seed [5] ;      // random seed
+}
+prand_t ;
+
+void prand_next_f (prand_t *z, const prand_t *x) ;
+void prand_iget_f (uint64_t *z, const prand_t *x) ;
+void prand_xget_f (double *z, prand_t *x) ;
+void prand_dup_f (prand_t *z, const prand_t *x, const prand_t *y) ;
+

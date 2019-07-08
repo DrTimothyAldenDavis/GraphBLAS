@@ -6,18 +6,14 @@
 
 #include "prand.h"
 
-//------------------------------------------------------------------------------
-// prand_t: the random number seed
-//------------------------------------------------------------------------------
-
-typedef struct
-{
-    uint64_t seed [5] ;      // random seed
-}
-prand_t ;
+#if defined __INTEL_COMPILER
+// disable icc warnings
+//  869:  unused parameters
+#pragma warning (disable: 869 )
+#endif
 
 //------------------------------------------------------------------------------
-// prand macors
+// prand macros
 //------------------------------------------------------------------------------
 
 // Generate the next seed, and extract a random 15-bit value from a seed.
@@ -110,6 +106,7 @@ void prand_dup_f (prand_t *z, const prand_t *x, const prand_t *y)
     GrB_free (&prand_dup_op) ;                              \
 }
 
+#undef  OK
 #define OK(method)                                          \
 {                                                           \
     GrB_Info info = method ;                                \
@@ -217,7 +214,7 @@ GrB_Info prand_seed
 
     // construct the tuples for the initial seeds
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t i = 0 ; i < n ; i++)
+    for (int64_t i = 0 ; i < (int64_t) n ; i++)
     {
         I [i] = i ;
         for (int k = 0 ; k < 5 ; k++)
@@ -260,7 +257,7 @@ GrB_Info prand_print
         printf ("\nSeed: length %g\n", (double) n) ;
         prand_t x ;
         for (int k = 0 ; k < 5 ; k++) x.seed [k] = -1 ;
-        for (int64_t i = 0 ; i < n ; i++)
+        for (int64_t i = 0 ; i < (int64_t) n ; i++)
         {
             if (GrB_Vector_extractElement_UDT (&x, Seed, i) == GrB_SUCCESS)
             {

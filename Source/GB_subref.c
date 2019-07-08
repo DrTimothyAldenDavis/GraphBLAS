@@ -117,9 +117,9 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     GB_task_struct *TaskList = NULL ;
     GrB_Matrix C = NULL ;
 
-    int64_t Cnvec, nI, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
+    int64_t Cnvec = 0, nI = 0, nJ, Icolon [3], Cnvec_nonempty, ndupl ;
     bool post_sort, need_qsort ;
-    int Ikind, ntasks, max_ntasks, nthreads ;
+    int Ikind, ntasks, max_ntasks = 0, nthreads ;
 
     GrB_Info info = GB_subref_phase0 (
         // computed by phase0:

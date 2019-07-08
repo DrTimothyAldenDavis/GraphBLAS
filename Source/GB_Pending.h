@@ -22,7 +22,7 @@ struct GB_Pending_struct    // list of pending tuples for a matrix
     bool sorted ;       // true if pending tuples are in sorted order
     int64_t *i ;        // row indices of pending tuples
     int64_t *j ;        // col indices of pending tuples; NULL if A->vdim <= 1
-    void *x ;           // values of pending tuples
+    GB_void *x ;        // values of pending tuples
     GrB_Type type ;     // the type of s
     size_t size ;       // type->size
     GrB_BinaryOp op ;   // operator to assemble pending tuples
@@ -147,7 +147,8 @@ static inline bool GB_Pending_add   // add a tuple to the list
         Pending_j [n] = j ;
     }
     size_t size = type->size ;
-    memcpy (Pending->x +(n*size), scalar, size) ;
+    GB_void *restrict Pending_x = Pending->x ;
+    memcpy (Pending_x +(n*size), scalar, size) ;
     Pending->n++ ;
 
     return (true) ;     // success

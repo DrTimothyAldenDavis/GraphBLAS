@@ -147,7 +147,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     ASSERT_OK (GB_check (B, "B for add phase0", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for add phase0", GB0)) ;
     ASSERT (A->vdim == B->vdim) ;
-    if (M != NULL) ASSERT (A->vdim == M->vdim) ;
+    ASSERT (GB_IMPLIES (M != NULL, A->vdim == M->vdim)) ;
 
     //--------------------------------------------------------------------------
     // initializations
