@@ -5901,7 +5901,7 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
 GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -5938,7 +5938,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -5975,7 +5975,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -6023,7 +6023,7 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
 GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -6106,7 +6106,7 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
 GrB_Info GxB_Vector_import  // import a vector in CSC format
 (
     GrB_Vector *vhandle,    // handle of vector to create
-    const GrB_Type type,    // type of vector to create
+    GrB_Type type,          // type of vector to create
     GrB_Index n,            // vector length
     GrB_Index nvals,        // number of entries in the vector
     // CSR/CSC format:

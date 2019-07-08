@@ -133,6 +133,31 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
         }
     }
 
+    int nthreads_max = D->nthreads_max ;
+    double chunk = D->chunk ;
+
+    if (pr > 0)
+    {
+        GBPR ("D.nthreads = ") ;
+        if (nthreads_max <= GxB_DEFAULT)
+        {
+            GBPR ("default\n") ;
+        }
+        else
+        {
+            GBPR ("%d\n", nthreads_max) ;
+        }
+        GBPR ("D.chunk = ") ;
+        if (chunk <= GxB_DEFAULT)
+        {
+            GBPR ("default\n") ;
+        }
+        else
+        {
+            GBPR ("%g\n", chunk) ;
+        }
+    }
+
     return (GrB_SUCCESS) ;
 }
 

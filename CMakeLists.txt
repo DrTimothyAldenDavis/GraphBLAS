@@ -190,11 +190,11 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # the icc compiler.  Without, ((float) 1.)/((float) 0.) produces NaN,
     # instead of the correct result, Inf.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -mp1 -fPIC" )
-    # TODO: the -g option is useful for the Intel VTune tool, but it
-    # should be removed in production.  Comment this line out:
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+    # The -g option is useful for the Intel VTune tool, but it should be
+    # removed in production.  Comment this line out if not in use:
+    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     # check all warnings:
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 " )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
         message ( FATAL_ERROR "icc version must be at least 19.0" )
     endif ( )

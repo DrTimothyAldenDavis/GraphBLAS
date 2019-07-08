@@ -919,7 +919,7 @@ GrB_Mode ;
 \begin{verbatim}
 GrB_Info GrB_init           // start up GraphBLAS
 (
-    const GrB_Mode mode     // blocking or non-blocking mode
+    GrB_Mode mode           // blocking or non-blocking mode
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -988,7 +988,7 @@ You can query the mode of a GraphBLAS session with the following
 \begin{verbatim}
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
-    const GrB_Mode mode,    // blocking or non-blocking mode
+    GrB_Mode mode,          // blocking or non-blocking mode
 
     // pointers to memory management functions.
     void * (* user_malloc_function  ) (size_t),
@@ -1648,8 +1648,8 @@ GrB_Info GrB_UnaryOp_new            // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
     void *function,                 // pointer to the unary function
-    const GrB_Type ztype,           // type of output z
-    const GrB_Type xtype            // type of input x
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype                  // type of input x
 ) ;
 \end{verbatim} }\end{mdframed}
 
@@ -1695,7 +1695,7 @@ SuiteSparse:GraphBLAS may call the function with the pointers \verb'z' and
 GrB_Info GxB_UnaryOp_ztype          // return the type of z
 (
     GrB_Type *ztype,                // return type of output z
-    const GrB_UnaryOp unaryop       // unary operator
+    GrB_UnaryOp unaryop             // unary operator
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -1718,7 +1718,7 @@ is the type of $z$ in the function $z=f(x)$.
 GrB_Info GxB_UnaryOp_xtype          // return the type of x
 (
     GrB_Type *xtype,                // return type of input x
-    const GrB_UnaryOp unaryop       // unary operator
+    GrB_UnaryOp unaryop             // unary operator
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -1951,9 +1951,9 @@ GrB_Info GrB_BinaryOp_new
 (
     GrB_BinaryOp *binaryop,         // handle for the new binary operator
     void *function,                 // pointer to the binary function
-    const GrB_Type ztype,           // type of output z
-    const GrB_Type xtype,           // type of input x
-    const GrB_Type ytype            // type of input y
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype,                 // type of input x
+    GrB_Type ytype                  // type of input y
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -2000,7 +2000,7 @@ should be computed.  Future versions may use additional pointer aliasing.
 GrB_Info GxB_BinaryOp_ztype         // return the type of z
 (
     GrB_Type *ztype,                // return type of output z
-    const GrB_BinaryOp binaryop     // binary operator to query
+    GrB_BinaryOp binaryop           // binary operator to query
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2024,7 +2024,7 @@ type of $z$ in the function $z=f(x,y)$.
 GrB_Info GxB_BinaryOp_xtype         // return the type of x
 (
     GrB_Type *xtype,                // return type of input x
-    const GrB_BinaryOp binaryop     // binary operator to query
+    GrB_BinaryOp binaryop           // binary operator to query
 ) ;
 \end{verbatim}
 }\end{mdframed}
@@ -2048,7 +2048,7 @@ type of $x$ in the function $z=f(x,y)$.
 GrB_Info GxB_BinaryOp_ytype         // return the type of y
 (
     GrB_Type *ytype,                // return type of input y
-    const GrB_BinaryOp binaryop     // binary operator to query
+    GrB_BinaryOp binaryop           // binary operator to query
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2187,7 +2187,7 @@ GrB_Info GxB_SelectOp_new       // create a new user-defined select operator
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     void *function,             // pointer to the select function
-    const GrB_Type xtype        // type of input x, or NULL if type-generic
+    GrB_Type xtype              // type of input x, or NULL if type-generic
 ) ;
 \end{verbatim} }\end{mdframed}
 
@@ -2224,7 +2224,7 @@ the identity value as the \verb'Thunk' parameter to \verb'GxB_select'.
 GrB_Info GxB_SelectOp_xtype     // return the type of x
 (
     GrB_Type *xtype,            // return type of input x
-    const GxB_SelectOp selectop // select operator
+    GxB_SelectOp selectop       // select operator
 ) ;
 
 \end{verbatim}
@@ -2380,8 +2380,8 @@ object:
 GrB_Info GrB_Monoid_new             // create a monoid
 (
     GrB_Monoid *monoid,             // handle of monoid to create
-    const GrB_BinaryOp op,          // binary operator of the monoid
-    const <type> identity           // identity value of the monoid
+    GrB_BinaryOp op,                // binary operator of the monoid
+    <type> identity                 // identity value of the monoid
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2393,7 +2393,7 @@ In the definition above, \verb'<type>' is a place-holder for the specific type
 of the monoid.  For built-in types, it is the C type corresponding to the
 built-in type (see Section~\ref{type}), such as \verb'bool', \verb'int32_t',
 \verb'float', or \verb'double'.  In this case, \verb'identity' is a
-\verb'const' scalar value of the particular type, not a pointer.  For
+scalar value of the particular type, not a pointer.  For
 user-defined types, \verb'<type>' is \verb'void *', and thus \verb'identity' is
 a not a scalar itself but a \verb'void *' pointer to a memory location
 containing the identity value of the user-defined operator, \verb'op'.
@@ -2414,9 +2414,9 @@ instead.
 GrB_Info GxB_Monoid_terminal_new    // create a monoid that has a terminal value
 (
     GrB_Monoid *monoid,             // handle of monoid to create
-    const GrB_BinaryOp op,          // binary operator of the monoid
-    const <type> identity,          // identity value of the monoid
-    const <type> terminal           // terminal value of the monoid
+    GrB_BinaryOp op,                // binary operator of the monoid
+    <type> identity,                // identity value of the monoid
+    <type> terminal                 // terminal value of the monoid
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2483,7 +2483,7 @@ operator with a terminal value of zero and an identity of \verb'+INFINITY'.
 GrB_Info GxB_Monoid_operator        // return the monoid operator
 (
     GrB_BinaryOp *op,               // returns the binary op of the monoid
-    const GrB_Monoid monoid         // monoid to query
+    GrB_Monoid monoid               // monoid to query
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2505,7 +2505,7 @@ GrB_Info GxB_Monoid_operator        // return the monoid operator
 GrB_Info GxB_Monoid_identity        // return the monoid identity
 (
     void *identity,                 // returns the identity of the monoid
-    const GrB_Monoid monoid         // monoid to query
+    GrB_Monoid monoid               // monoid to query
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2533,7 +2533,7 @@ GrB_Info GxB_Monoid_terminal        // return the monoid terminal
 (
     bool *has_terminal,             // true if the monoid has a terminal value
     void *terminal,                 // returns the terminal of the monoid
-    const GrB_Monoid monoid         // monoid to query
+    GrB_Monoid monoid               // monoid to query
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2621,8 +2621,8 @@ methods for the \verb'GrB_Semiring' object:
 GrB_Info GrB_Semiring_new           // create a semiring
 (
     GrB_Semiring *semiring,         // handle of semiring to create
-    const GrB_Monoid add,           // add monoid of the semiring
-    const GrB_BinaryOp multiply     // multiply operator of the semiring
+    GrB_Monoid add,                 // add monoid of the semiring
+    GrB_BinaryOp multiply           // multiply operator of the semiring
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2707,7 +2707,7 @@ monoid, and the \verb'GrB_EQ_FP32' as the binary multiplicative operator.
 GrB_Info GxB_Semiring_add           // return the add monoid of a semiring
 (
     GrB_Monoid *add,                // returns add monoid of the semiring
-    const GrB_Semiring semiring     // semiring to query
+    GrB_Semiring semiring           // semiring to query
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2730,7 +2730,7 @@ GrB_Info GxB_Semiring_add           // return the add monoid of a semiring
 GrB_Info GxB_Semiring_multiply      // return multiply operator of a semiring
 (
     GrB_BinaryOp *multiply,         // returns multiply operator of the semiring
-    const GrB_Semiring semiring     // semiring to query
+    GrB_Semiring semiring           // semiring to query
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2840,8 +2840,8 @@ and destroy a GraphBLAS sparse vector, \verb'GrB_Vector':
 GrB_Info GrB_Vector_new     // create a new vector with no entries
 (
     GrB_Vector *v,          // handle of vector to create
-    const GrB_Type type,    // type of vector to create
-    const GrB_Index n       // vector dimension is n-by-1
+    GrB_Type type,          // type of vector to create
+    GrB_Index n             // vector dimension is n-by-1
 ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -3013,7 +3013,7 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
     GrB_Vector w,                   // vector to build
     const GrB_Index *I,             // array of row indices of tuples
     const <type> *X,                // array of values of tuples
-    const GrB_Index nvals,          // number of tuples
+    GrB_Index nvals,                // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 \end{verbatim}
@@ -3047,8 +3047,8 @@ equal to zero.  Otherwise the methods are identical.
 GrB_Info GrB_Vector_setElement          // w(i) = x
 (
     GrB_Vector w,                       // vector to modify
-    const <type> x,                     // scalar to assign to w(i)
-    const GrB_Index i                   // row index
+    <type> x,                           // scalar to assign to w(i)
+    GrB_Index i                         // row index
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -3071,7 +3071,7 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 (
     <type> *x,                      // scalar extracted
     const GrB_Vector v,             // vector to extract an entry from
-    const GrB_Index i               // row index
+    GrB_Index i                     // row index
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -3130,7 +3130,7 @@ guaranteed to be finished when the method returns.
 GrB_Info GxB_Vector_resize      // change the size of a vector
 (
     GrB_Vector u,               // vector to modify
-    const GrB_Index nrows_new   // new number of rows in vector
+    GrB_Index nrows_new         // new number of rows in vector
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -3226,9 +3226,9 @@ and destroy a GraphBLAS sparse matrix, \verb'GrB_Matrix':
 GrB_Info GrB_Matrix_new     // create a new matrix with no entries
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
-    const GrB_Index nrows,  // matrix dimension is nrows-by-ncols
-    const GrB_Index ncols
+    GrB_Type type,          // type of matrix to create
+    GrB_Index nrows,        // matrix dimension is nrows-by-ncols
+    GrB_Index ncols
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -3406,7 +3406,7 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
     const GrB_Index *I,             // array of row indices of tuples
     const GrB_Index *J,             // array of column indices of tuples
     const <type> *X,                // array of values of tuples
-    const GrB_Index nvals,          // number of tuples
+    GrB_Index nvals,                // number of tuples
     const GrB_BinaryOp dup          // binary function to assemble duplicates
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -3503,9 +3503,9 @@ complex, and logical sparse matrices.
 GrB_Info GrB_Matrix_setElement          // C (i,j) = x
 (
     GrB_Matrix C,                       // matrix to modify
-    const <type> x,                     // scalar to assign to C(i,j)
-    const GrB_Index i,                  // row index
-    const GrB_Index j                   // column index
+    <type> x,                           // scalar to assign to C(i,j)
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -3580,8 +3580,8 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 (
     <type> *x,                          // extracted scalar
     const GrB_Matrix A,                 // matrix to extract a scalar from
-    const GrB_Index i,                  // row index
-    const GrB_Index j                   // column index
+    GrB_Index i,                        // row index
+    GrB_Index j                         // column index
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -3845,7 +3845,7 @@ the internal data structure is opaque to the user application.
 GrB_Info GxB_Vector_import  // import a vector in CSC format
 (
     GrB_Vector *v,          // vector to create
-    const GrB_Type type,    // type of vector to create
+    GrB_Type type,          // type of vector to create
     GrB_Index n,            // vector length
     GrB_Index nvals,        // number of entries in the vector
     GrB_Index **vi,         // indices, size nvals (in sorted order)
@@ -3973,7 +3973,7 @@ not modified.
 GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -4133,7 +4133,7 @@ the user application, which is eventually responsible for freeing them with
 GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -4230,7 +4230,7 @@ are still freed and returned as \verb'NULL', if the method is successful).
 GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -4349,7 +4349,7 @@ if $\ge 0$, it must be exact.
 GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols,
     GrB_Index nvals,        // number of entries in the matrix
@@ -4648,7 +4648,8 @@ If the descriptor is \verb'GrB_NULL', defaults are used.
 % neither are any unary or binary operators.
 
 \begin{spec}
-{\bf SPEC:} \verb'GxB_DEFAULT', \verb'GxB_NTHRADS', \verb'GxB_AxB_METHOD', and \verb'GxB_AxB_*'
+{\bf SPEC:} \verb'GxB_DEFAULT', \verb'GxB_NTHRADS', \verb'GxB_CHUNK',
+\verb'GxB_AxB_METHOD', and \verb'GxB_AxB_*'
 are extensions to the spec.
 \end{spec}
 
@@ -4659,6 +4660,7 @@ by two \verb'enum' types, \verb'GrB_Desc_Field' and \verb'GrB_Desc_Value':
 {\footnotesize
 \begin{verbatim}
 #define GxB_NTHREADS 5  // for both GrB_Desc_field and GxB_Option_field
+#define GxB_CHUNK 7
 typedef enum
 {
     GrB_OUTP = 0,   // descriptor for output of a method
@@ -4666,6 +4668,7 @@ typedef enum
     GrB_INP0 = 2,   // descriptor for the first input of a method
     GrB_INP1 = 3,   // descriptor for the second input of a method
     GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,   // number of threads to use
+    GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems
     GxB_AxB_METHOD = 1000, // descriptor for selecting C=A*B algorithm
 }
 GrB_Desc_Field ;
@@ -4849,8 +4852,8 @@ selected automatically).
 GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
 (
     GrB_Descriptor desc,        // descriptor to modify
-    const GrB_Desc_Field field, // parameter to change
-    const GrB_Desc_Value val    // value to change it to
+    GrB_Desc_Field field,       // parameter to change
+    GrB_Desc_Value val          // value to change it to
 ) ;
 \end{verbatim} } \end{mdframed}
 
@@ -4932,7 +4935,7 @@ field      & &  \\
 GrB_Info GxB_Desc_set           // set a parameter in a descriptor
 (
     GrB_Descriptor desc,        // descriptor to modify
-    const GrB_Desc_Field field, // parameter to change
+    GrB_Desc_Field field,       // parameter to change
     ...                         // value to change it to
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -4959,8 +4962,8 @@ see \verb'GxB_set' described in Section~\ref{options}.
 \begin{verbatim}
 GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 (
-    const GrB_Descriptor desc,  // descriptor to query; NULL means defaults
-    const GrB_Desc_Field field, // parameter to query
+    GrB_Descriptor desc,        // descriptor to query; NULL means defaults
+    GrB_Desc_Field field,       // parameter to query
     ...                         // value of the parameter
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -5086,10 +5089,7 @@ on the amount of time or memory taken.
 
 \item \verb'GxB_set (GrB_Descriptor desc, field, value)' is another way to
     set the value of a field in a \verb'GrB_Descriptor'.  It is identical to \\
-    \verb'GrB_Descriptor_set', just with a generic name.  Except for
-    \verb'GxB_AxB_METHOD', the descriptor settings are not hints but are always
-    implemented by GraphBLAS, since they affect the results of any GraphBLAS
-    operation.
+    \verb'GrB_Descriptor_set', just with a generic name. 
 
 \end{itemize}
 
@@ -5108,6 +5108,71 @@ or the global options.
     of a field in a descriptor.
 
 \end{itemize}
+
+%-------------------------------------------------------------------------------
+\subsection{OpenMP parallelism}
+%-------------------------------------------------------------------------------
+
+SuiteSparse:GraphBLAS Version 3 is a parallel library, based on OpenMP.  By
+default, all GraphBLAS operations will use up to the maximum number of threads
+specified by the \verb'omp_get_max_threads' OpenMP function.  For small
+problems, GraphBLAS may choose to use fewer threads, using two parameters: the
+maximum number of threads to use (which may differ from the
+\verb'omp_get_max_threads' value), and a parameter called the \verb'chunk'.
+Suppose \verb'w' is a measure of the work an operation needs to perform (say
+the number of nonzeros in the two input matrices for \verb'GrB_eWiseAdd').  No
+more than \verb'floor(work/chunk)' threads will be used (or one thread if the
+ratio is less than 1).
+
+The default \verb'chunk' value is 4096, but this may change in future versions,
+or it may be modified when GraphBLAS is installed on a particular machine.
+
+Both parameters can be set in two ways:
+
+\begin{itemize}
+
+\item Globally:  If these methods are used, then all subsequent GraphBLAS
+operations will use these settings.
+
+    {\footnotesize
+    \begin{verbatim}
+    int nthreads_max = 40 ;
+    GxB_set (GxB_NTHREADS, nthreads_max) ;
+    double chunk = 20000 ;
+    GxB_set (GxB_NTHREADS, chunk) ; \end{verbatim} }
+
+\item Per operation:  Most GraphBLAS operations take a \verb'GrB_Descriptor'
+input, and this can be modified to set the number of threads and chunk
+size for the operation that uses this descriptor.
+
+    {\footnotesize
+    \begin{verbatim}
+    GrB_Descriptor desc ;
+    GrB_Descriptor_new (&desc) 
+    int nthreads_max = 40 ;
+    GxB_set (desc, GxB_NTHREADS, nthreads_max) ;
+    double chunk = 20000 ;
+    GxB_set (desc, GxB_NTHREADS, chunk) ; \end{verbatim} }
+
+\end{itemize}
+
+The smaller of \verb'nthreads_max' and \verb'floor(work/chunk)' is used for any
+given GraphBLAS operation, except that a single thread is used if this value is
+zero or less.
+
+If either parameter is set to \verb'GxB_DEFAULT', then default values are used.
+The default for \verb'nthreads_max' is the return value from
+\verb'omp_get_max_threads', and the default chunk size is currently 4096.
+
+If a descriptor value for either parameter is left at its default, or set to
+\verb'GxB_DEFAULT', then the global setting is used.  This global setting may
+have been modified from its default, and this modified value will be used.
+
+For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If
+\verb'GxB_set (GxB_NTHREADS, 4)' is used, then the global setting is four
+threads, not eight.  If a descriptor is used but its \verb'GxB_NTHREADS' is not
+set, or set to \verb'GxB_DEFAULT', then any operation that uses this descriptor
+will use the global setting of four threads.
 
 %-------------------------------------------------------------------------------
 \subsection{Storing a matrix by row or by column}
@@ -5280,6 +5345,7 @@ typedef enum
     GxB_THREAD_SAFETY = 3,  // thread library for thread safety
     GxB_THREADING = 4,      // currently none (in progress)
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS, // max number of threads to use
+    GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems
     GxB_IS_HYPER = 6     // query a matrix to see if it hypersparse or not
                          // (GxB_Matrix_Option_get only)
 }
@@ -5457,16 +5523,20 @@ GrB_Info GxB_set                    // set a global default option
 \end{verbatim} } \end{mdframed}
 
 This usage of \verb'GxB_set' sets the value of a global option.
-The \verb'field' parameter can be \verb'GxB_HYPER' or \verb'GxB_FORMAT'.
+The \verb'field' parameter can be \verb'GxB_HYPER', \verb'GxB_FORMAT',
+\verb'GxB_NTHREADS', or \verb'GxB_CHUNK'.
 
 For example, the following usage sets the global hypersparsity ratio to 0.2,
-and the format of future matrices to \verb'GxB_BY_COL'.
+the format of future matrices to \verb'GxB_BY_COL', the maximum number
+of threads to 4, and the chunk size to 10000.
 No existing matrices are changed.
 
 {\footnotesize
 \begin{verbatim}
     GxB_set (GxB_HYPER, 0.2) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
+    GxB_set (GxB_NTHREADS, 4) ;
+    GxB_set (GxB_CHUNK, 10000) ;
 \end{verbatim} }
 
 %===============================================================================
@@ -5520,11 +5590,11 @@ GrB_Info GxB_set                // set a parameter in a descriptor
 ) ;
 \end{verbatim} } \end{mdframed}
 
-This usage is identical to \verb'GrB_Descriptor_set', just with a name that is
+This usage is similar to \verb'GrB_Descriptor_set', just with a name that is
 consistent with the other usages of this generic function.  Unlike
-\verb'GrB_Descriptor_set', Future versions of \verb'GxB_Desc_set' will allow
-for different types for the third parameter.  Refer to
-Sections~\ref{descriptor_set}~and~\ref{desc_set} for details.
+\verb'GrB_Descriptor_set', the \verb'field' may also be \verb'GxB_NTHREADS', or
+\verb'GxB_CHUNK'.  Refer to Sections~\ref{descriptor_set}~and~\ref{desc_set}
+for details.
 
 %===============================================================================
 \subsection{{\sf GxB\_Global\_Option\_get:} retrieve a global option}
@@ -5543,8 +5613,9 @@ GrB_Info GxB_get                    // gets the current global default option
 
 This usage of \verb'GxB_get' retrieves the value of a global option.  The
 \verb'field' parameter can be \verb'GxB_HYPER', \verb'GxB_FORMAT'.
-\verb'GxB_MODE', \verb'GxB_THREAD_SAFETY', or \verb'GxB_THREADING'.  For
-example:
+\verb'GxB_MODE', \verb'GxB_THREAD_SAFETY', \verb'GxB_THREADING',
+\verb'GxB_NTHREADS', or \verb'GxB_CHUNK'.
+For example:
 
 {\footnotesize
 \begin{verbatim}
@@ -5562,6 +5633,14 @@ example:
     if (mode == GrB_BLOCKING) printf ("GrB_init(GrB_BLOCKING) was called.\n") :
     else printf ("GrB_init(GrB_NONBLOCK) was called.\n") ;
 
+    int nthreads_max ;
+    GxB_get (GxB_NTHREADS, &nthreads_max) ;
+    printf ("max # of threads to use: %d\n", nthreads_max) ;
+
+    double chunk ;
+    GxB_get (GxB_CHUNK, &chunk) ;
+    printf ("chunk size: %g\n", chunk) ;
+
     // see Demo/Program/pthread_demo.c and openmp_demo.c for examples:
     GxB_Threading_Model thread_safety, threading ;
     GxB_get (GxB_THREAD_SAFETY, &thread_safey) ;
@@ -5577,8 +5656,8 @@ example:
 \begin{verbatim}
 GrB_Info GxB_get                    // gets the current option of a matrix
 (
-    const GrB_Matrix A,             // matrix to query
-    const GxB_Option_Field field,   // option to query
+    GrB_Matrix A,                   // matrix to query
+    GxB_Option_Field field,         // option to query
     ...                             // return value of the matrix option
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -5607,15 +5686,17 @@ For example:
 \begin{verbatim}
 GrB_Info GxB_get                // get a parameter from a descriptor
 (
-    const GrB_Descriptor desc,  // descriptor to query; NULL means defaults
-    const GrB_Desc_Field field, // parameter to query
+    GrB_Descriptor desc,        // descriptor to query; NULL means defaults
+    GrB_Desc_Field field,       // parameter to query
     ...                         // value of the parameter
 ) ;
 \end{verbatim} } \end{mdframed}
 
 This usage is the same as \verb'GxB_Desc_get'.  The \verb'field' parameter can
-be \verb'GrB_OUTP', \verb'GrB_MASK', \verb'GrB_INP0', \verb'GrB_INP1' or
-\verb'GxB_AxB_METHOD'.  Refer to Section~\ref{desc_get} for details.
+be \verb'GrB_OUTP', \verb'GrB_MASK', \verb'GrB_INP0', \verb'GrB_INP1',
+\verb'GxB_AxB_METHOD',
+\verb'GxB_NTHREADS', or \verb'GxB_CHUNK'.
+Refer to Section~\ref{desc_get} for details.
 
 %===============================================================================
 \newpage
@@ -5636,7 +5717,13 @@ To set/get the global options:
 
     GxB_set (GxB_FORMAT, GxB_BY_ROW) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
-    GxB_get (GxB_FORMAT, GxB_Format_Value *s) ; \end{verbatim} }
+    GxB_get (GxB_FORMAT, GxB_Format_Value *s) ;
+
+    GxB_set (GxB_THREADS, int nthreads_max) ;
+    GxB_get (GxB_THREADS, int *nthreads_max) ;
+
+    GxB_set (GxB_CHUNK, double chunk) ;
+    GxB_get (GxB_CHUNK, double *chunk) ; \end{verbatim} }
 
 \noindent
 To get global options that can be queried but not modified:
@@ -5683,14 +5770,20 @@ To set/get a descriptor field:
     GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN) ;
 
     GxB_set (GrB_Descriptor d, GrB_INP1, GxB_DEFAULT) ;
-    GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN);
+    GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN) ;
 
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HEAP) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;
 
-    GxB_get (GrB_Descriptor d, GrB_Desc_Field f, GrB_Desc_Value *v) ; \end{verbatim} }
+    GxB_get (GrB_Descriptor d, GrB_Desc_Field f, GrB_Desc_Value *v) ;
+
+    GxB_set (GrB_Descriptor d, GxB_NTHREADS, int nthreads) ;
+    GxB_get (GrB_Descriptor d, GxB_NTHREADS, int *nthreads) ;
+
+    GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
+    GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ; \end{verbatim} }
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9559,7 +9652,7 @@ sequential methods, and methods that use OpenMP).
 
 The LAGraph project is a community-wide effort to create graph algorithms based
 on GraphBLAS (any implementation of the API, not just SuiteSparse: GraphBLAS).
-As of March 10, 2019, the library includes the algorithms and utilities listed in
+As of July, 2019, the library includes the algorithms and utilities listed in
 the table below.  Many additional algorithms are planned, such as betweenness
 centrality, PageRank, single-source shortest path (via delta stepping), minimum
 spanning trees, connected components, and many more.  Refer to
@@ -9591,6 +9684,12 @@ Algorithms & description \\
 \verb'LAGraph_bfs_simple'   & a simple BFS (about the same as \verb'bfs5m') \\
 \verb'LACC_GraphBLAS.c'     & connected components \\
 \verb'LAGraph_BF_*.c'       & two variants of Bellman-Ford \\
+\verb'LAGraph_allktruss'    & construct all $k$-trusses \\
+\verb'LAGraph_dnn'          & sparse deep neural network \\
+\verb'LAGraph_ktruss'       & construct a $k$-trusses \\
+\verb'LAGraph_lcc'          & local clustering coefficient \\
+\verb'LAGraph_pagerank'     & PageRank \\
+\verb'LAGraph_tricount'     & triangle count \\
 \hline
 \hline
 Utilities & description \\
@@ -9611,12 +9710,15 @@ Utilities & description \\
 \verb'LAGraph_mmread'           & read a Matrix Market file \\
 \verb'LAGraph_mmwrite'          & write a Matrix Market file \\
 \verb'LAGraph_pattern'          & extracts the pattern of a matrix \\
+\verb'LAGraph_prune_diag'       & diagonal entries from a matrix \\
 \verb'LAGraph_rand'             & simple random number generator \\
 \verb'LAGraph_rand64'           & \verb'int64_t' random number generator \\
 \verb'LAGraph_random'           & random matrix generator \\
 \verb'LAGraph_randx'            & \verb'double' random number generator \\
 \verb'LAGraph_tic'              & start a timer \\
 \verb'LAGraph_toc'              & end a timer \\
+\verb'LAGraph_tsvread'          & read a TSV file \\
+\verb'LAGraph_xinit'            & starts LAGraph, with different malloc \\
 \end{tabular}}
 
 \newpage
@@ -9797,7 +9899,8 @@ assignment to \verb'iset' uses the complement of the mask, via the
 \verb'sr_desc' descriptor.  Finally, the \verb'GrB_Vector_nvals' statement
 counts how many candidates remain.
 
-Each phase of Luby's algorithm consists of nine calls to GraphBLAS operations.
+Each phase of Luby's algorithm consists of 11 calls to GraphBLAS operations,
+all of which are either parallel, or take $O(1)$ time.
 Not all of them are described here since they are commented in the code itself.
 The two matrix-vector multiplications are the important parts and also take the
 most time.  They also make interesting use of semirings and masks.  The first
@@ -9830,31 +9933,27 @@ candidate set:
 
     while (nvals > 0)
     {
+        // sparsify the random number seeds (just keep it for each candidate) 
+        GrB_assign (Seed, candidates, NULL, Seed, GrB_ALL, n, r_desc) ;
         // compute a random probability scaled by inverse of degree
-        GrB_apply (prob, candidates, NULL, set_random, degrees, r_desc) ;
-
+        prand_xget (X, Seed) ;  // two calls to GrB_apply
+        GrB_eWiseMult (prob, candidates, NULL, set_random, degrees, X, r_desc) ;
         // compute the max probability of all neighbors
         GrB_vxm (neighbor_max, candidates, NULL, maxSelect1st, prob, A, r_desc) ;
-
         // select node if its probability is > than all its active neighbors
-        GrB_eWiseAdd (new_members, NULL,NULL, GrB_GT_FP64, prob, neighbor_max,
-                                                                        NULL) ;
+        GrB_eWiseAdd (new_members, NULL,NULL, GrB_GT_FP64, prob, neighbor_max,0);
         // add new members to independent set.
         GrB_eWiseAdd (iset, NULL, NULL, GrB_LOR, iset, new_members, NULL) ;
-
         // remove new members from set of candidates c = c & !new
         GrB_apply (candidates, new_members, NULL, GrB_IDENTITY_BOOL,
             candidates, sr_desc) ;
-
         GrB_Vector_nvals (&nvals, candidates) ;
         if (nvals == 0) { break ; }                  // early exit condition
-
         // Neighbors of new members can also be removed from candidates
         GrB_vxm (new_neighbors, candidates, NULL, Boolean,
             new_members, A, NULL) ;
         GrB_apply (candidates, new_neighbors, NULL, GrB_IDENTITY_BOOL,
             candidates, sr_desc) ;
-
         GrB_Vector_nvals (&nvals, candidates) ;
     }
 \end{verbatim}}

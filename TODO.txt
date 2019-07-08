@@ -53,8 +53,5 @@ TODO: speedup XOR and EQ monoids using uint8_t summation.
 TODO    qsort: make qsort sequential and keep all 4 versions,
         add parallel merge sort for GB_qsort_2 and GB_qsort_3.
 
-TODO    user guide: describe all changes, add new descriptors and
-        global settings
-
 TODO    Tcov statement coverage
 
