@@ -37,20 +37,33 @@ void GB_free_memory
             nitems = GB_IMAX (1, nitems) ;
             size_of_item = GB_IMAX (1, size_of_item) ;
 
-            bool malloc_debug = false ;
-            int nmalloc = 0 ;
-            #define GB_CRITICAL_SECTION                             \
-            {                                                       \
-                malloc_debug = GB_Global_malloc_debug_get ( ) ;     \
-                nmalloc = GB_Global_nmalloc_decrement ( ) ;         \
-                GB_Global_inuse_decrement (nitems * size_of_item) ; \
-            }
-            bool ok ;
+            #if defined ( GB_PRINT_MALLOC ) || defined ( GB_DEBUG )
+
+                int nmalloc = 0 ;
+                #define GB_CRITICAL_SECTION                             \
+                {                                                       \
+                    nmalloc = GB_Global_nmalloc_decrement ( ) ;         \
+                    GB_Global_inuse_decrement (nitems * size_of_item) ; \
+                }
+
+            #else
+
+                #define GB_CRITICAL_SECTION                             \
+                {                                                       \
+                    GB_Global_nmalloc_decrement ( ) ;                   \
+                    GB_Global_inuse_decrement (nitems * size_of_item) ; \
+                }
+
+            #endif
+
+            #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
+            bool ok = true ;
+            #endif
             #include "GB_critical_section.c"
 
             #ifdef GB_PRINT_MALLOC
             printf ("%14p Free:  %3d %1d n "GBd" size "GBd"\n",
-                p, nmalloc, malloc_debug, (int64_t) nitems,
+                p, nmalloc, GB_Global_malloc_debug_get ( ), (int64_t) nitems,
                 (int64_t) size_of_item) ;
             if (nmalloc < 0)
             {

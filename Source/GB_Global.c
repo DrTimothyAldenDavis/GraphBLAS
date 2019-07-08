@@ -206,7 +206,7 @@ void GB_Global_user_multithreaded_set (bool user_multithreaded)
     GB_Global.user_multithreaded = user_multithreaded ;
 }
 
-bool GB_Global_user_multithreaded_get ( )
+bool GB_Global_user_multithreaded_get (void)
 {
     return (GB_Global.user_multithreaded) ;
 }
@@ -220,7 +220,7 @@ void GB_Global_queue_head_set (void *p)
     GB_Global.queue_head = p ;
 }
 
-void *GB_Global_queue_head_get ( )
+void *GB_Global_queue_head_get (void)
 {
     return (GB_Global.queue_head) ;
 }
@@ -234,7 +234,7 @@ void GB_Global_mode_set (GrB_Mode mode)
     GB_Global.mode = mode ;
 }
 
-GrB_Mode GB_Global_mode_get ( )
+GrB_Mode GB_Global_mode_get (void)
 {
     return (GB_Global.mode) ;
 }
@@ -248,7 +248,7 @@ void GB_Global_GrB_init_called_set (bool GrB_init_called)
     GB_Global.GrB_init_called = GrB_init_called ;
 }
 
-bool GB_Global_GrB_init_called_get ( )
+bool GB_Global_GrB_init_called_get (void)
 {
     return (GB_Global.GrB_init_called) ;
 }
@@ -264,7 +264,7 @@ void GB_Global_nthreads_max_set (int nthreads_max)
     GB_Global.nthreads_max = nthreads_max ;
 }
 
-int GB_Global_nthreads_max_get ( )
+int GB_Global_nthreads_max_get (void)
 {
     return (GB_Global.nthreads_max) ;
 }
@@ -273,7 +273,7 @@ int GB_Global_nthreads_max_get ( )
 // OpenMP max_threads
 //------------------------------------------------------------------------------
 
-int GB_Global_omp_get_max_threads ( )
+int GB_Global_omp_get_max_threads (void)
 {
     return (GB_OPENMP_MAX_THREADS) ;
 }
@@ -288,7 +288,7 @@ void GB_Global_chunk_set (double chunk)
     GB_Global.chunk = chunk ;
 }
 
-double GB_Global_chunk_get ( )
+double GB_Global_chunk_get (void)
 {
     return (GB_Global.chunk) ;
 }
@@ -302,7 +302,7 @@ void GB_Global_hyper_ratio_set (double hyper_ratio)
     GB_Global.hyper_ratio = hyper_ratio ;
 }
 
-double GB_Global_hyper_ratio_get ( )
+double GB_Global_hyper_ratio_get (void)
 {
     return (GB_Global.hyper_ratio) ;
 }
@@ -316,7 +316,7 @@ void GB_Global_is_csc_set (bool is_csc)
     GB_Global.is_csc = is_csc ;
 }
 
-double GB_Global_is_csc_get ( )
+double GB_Global_is_csc_get (void)
 {
     return (GB_Global.is_csc) ;
 }
@@ -358,7 +358,7 @@ void GB_Global_abort_function_set (void (* abort_function) (void))
     GB_Global.abort_function = abort_function ;
 }
 
-void GB_Global_abort_function ( )
+void GB_Global_abort_function (void)
 {
     // printf ("ABORT: %p %p\n", abort, GB_Global.abort_function) ;
     GB_Global.abort_function ( ) ;
@@ -373,14 +373,10 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
     GB_Global.malloc_function = malloc_function ;
 }
 
-void * GB_Global_malloc_function_get ( )
-{
-    return (GB_Global.malloc_function) ;
-}
-
 void * GB_Global_malloc_function (size_t size)
 {
-    void *p ;
+    bool ok = true ;
+    void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
         p = GB_Global.malloc_function (size) ;
@@ -391,10 +387,9 @@ void * GB_Global_malloc_function (size_t size)
         {                                                       \
             p = GB_Global.malloc_function (size) ;              \
         }
-        bool ok ;
         #include "GB_critical_section.c"
     }
-    return (p) ;
+    return (ok ? p : NULL) ;
 }
 
 //------------------------------------------------------------------------------
@@ -406,14 +401,10 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
     GB_Global.calloc_function = calloc_function ;
 }
 
-void * GB_Global_calloc_function_get ( )
-{
-    return (GB_Global.calloc_function) ;
-}
-
 void * GB_Global_calloc_function (size_t count, size_t size)
 {
-    void *p ;
+    bool ok = true ;
+    void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
         p = GB_Global.calloc_function (count, size) ;
@@ -425,10 +416,9 @@ void * GB_Global_calloc_function (size_t count, size_t size)
         {                                                       \
             p = GB_Global.calloc_function (count, size) ;       \
         }
-        bool ok ;
         #include "GB_critical_section.c"
     }
-    return (p) ;
+    return (ok ? p : NULL) ;
 }
 
 //------------------------------------------------------------------------------
@@ -443,14 +433,10 @@ void GB_Global_realloc_function_set
     GB_Global.realloc_function = realloc_function ;
 }
 
-void * GB_Global_realloc_function_get ( )
-{
-    return (GB_Global.realloc_function) ;
-}
-
 void * GB_Global_realloc_function (void *p, size_t size)
 {
-    void *pnew ;
+    bool ok = true ;
+    void *pnew = NULL ;
     if (GB_Global.malloc_is_thread_safe)
     {
         pnew = GB_Global.realloc_function (p, size) ;
@@ -462,10 +448,9 @@ void * GB_Global_realloc_function (void *p, size_t size)
         {                                                       \
             pnew = GB_Global.realloc_function (p, size) ;       \
         }
-        bool ok ;
         #include "GB_critical_section.c"
     }
-    return (pnew) ;
+    return (ok ? pnew : NULL) ;
 }
 
 //------------------------------------------------------------------------------
@@ -477,13 +462,11 @@ void GB_Global_free_function_set (void (* free_function) (void *))
     GB_Global.free_function = free_function ;
 }
 
-void * GB_Global_free_function_get ( )
-{
-    return (GB_Global.free_function) ;
-}
-
 void GB_Global_free_function (void *p)
 {
+    #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
+    bool ok = true ;
+    #endif
     if (GB_Global.malloc_is_thread_safe)
     {
         GB_Global.free_function (p) ;
@@ -495,7 +478,6 @@ void GB_Global_free_function (void *p)
         {                                                       \
             GB_Global.free_function (p) ;                       \
         }
-        bool ok ;
         #include "GB_critical_section.c"
     }
 }
@@ -509,7 +491,7 @@ void GB_Global_malloc_is_thread_safe_set (bool malloc_is_thread_safe)
     GB_Global.malloc_is_thread_safe = malloc_is_thread_safe ;
 }
 
-bool GB_Global_malloc_is_thread_safe_get ( )
+bool GB_Global_malloc_is_thread_safe_get (void)
 {
     return (GB_Global.malloc_is_thread_safe) ;
 }
@@ -523,7 +505,7 @@ void GB_Global_malloc_tracking_set (bool malloc_tracking)
     GB_Global.malloc_tracking = malloc_tracking ;
 }
 
-bool GB_Global_malloc_tracking_get ( )
+bool GB_Global_malloc_tracking_get (void)
 {
     return (GB_Global.malloc_tracking) ;
 }
@@ -532,22 +514,22 @@ bool GB_Global_malloc_tracking_get ( )
 // nmalloc
 //------------------------------------------------------------------------------
 
-void GB_Global_nmalloc_clear ( )
+void GB_Global_nmalloc_clear (void)
 {
     GB_Global.nmalloc = 0 ;
 }
 
-int64_t GB_Global_nmalloc_get ( )
+int64_t GB_Global_nmalloc_get (void)
 {
     return (GB_Global.nmalloc) ;
 }
 
-int64_t GB_Global_nmalloc_increment ( )
+int64_t GB_Global_nmalloc_increment (void)
 {
     return (++(GB_Global.nmalloc)) ;
 }
 
-int64_t GB_Global_nmalloc_decrement ( )
+int64_t GB_Global_nmalloc_decrement (void)
 {
     return (--(GB_Global.nmalloc)) ;
 }
@@ -561,7 +543,7 @@ void GB_Global_malloc_debug_set (bool malloc_debug)
     GB_Global.malloc_debug = malloc_debug ;
 }
 
-bool GB_Global_malloc_debug_get ( )
+bool GB_Global_malloc_debug_get (void)
 {
     return (GB_Global.malloc_debug) ;
 }
@@ -575,7 +557,7 @@ void GB_Global_malloc_debug_count_set (int64_t malloc_debug_count)
     GB_Global.malloc_debug_count = malloc_debug_count ;
 }
 
-bool GB_Global_malloc_debug_count_decrement ( )
+bool GB_Global_malloc_debug_count_decrement (void)
 {
     return (GB_Global.malloc_debug_count-- <= 0) ;
 }
@@ -584,7 +566,7 @@ bool GB_Global_malloc_debug_count_decrement ( )
 // inuse and maxused
 //------------------------------------------------------------------------------
 
-void GB_Global_inuse_clear ( )
+void GB_Global_inuse_clear (void)
 {
     GB_Global.inuse = 0 ;
     GB_Global.maxused = 0 ;
@@ -601,12 +583,12 @@ void GB_Global_inuse_decrement (int64_t s)
     GB_Global.inuse -= s ;
 }
 
-int64_t GB_Global_inuse_get ( )
+int64_t GB_Global_inuse_get (void)
 {
     return (GB_Global.inuse) ;
 }
 
-int64_t GB_Global_maxused_get ( )
+int64_t GB_Global_maxused_get (void)
 {
     return (GB_Global.maxused) ;
 }
@@ -620,7 +602,7 @@ void GB_Global_hack_set (int64_t hack)
     GB_Global.hack = hack ;
 }
 
-int64_t GB_Global_hack_get ( )
+int64_t GB_Global_hack_get (void)
 {
     return (GB_Global.hack) ;
 }

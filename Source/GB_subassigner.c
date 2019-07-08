@@ -101,10 +101,18 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     GrB_Matrix S = NULL ;
     GrB_Matrix A2 = NULL ;
     GrB_Matrix M2 = NULL ;
+
     GrB_Index *restrict I2  = NULL ;
     GrB_Index *restrict I2k = NULL ;
     GrB_Index *restrict J2  = NULL ;
     GrB_Index *restrict J2k = NULL ;
+
+    /*
+    GrB_Index *I2  = NULL ;
+    GrB_Index *I2k = NULL ;
+    GrB_Index *J2  = NULL ;
+    GrB_Index *J2k = NULL ;
+    */
 
     GrB_Matrix A = A_input ;
     GrB_Matrix M = M_input ;
@@ -172,7 +180,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     int64_t cvlen = C->vlen ;
     int64_t cvdim = C->vdim ;
-    int64_t ccode = C->type->code ;
 
     // the matrix C may have pending tuples and/or zombies
     ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
@@ -354,7 +361,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool mn_ok = GB_Index_multiply (&mn, nI, nJ) ;
     bool A_is_dense ;   // true if A is dense (or scalar expansion)
     int64_t anz ;       // nnz(A), or mn for scalar expansion
-    bool anz_ok ;       // true if anz is OK
     GrB_Type atype ;    // the type of A or the scalar
 
     if (scalar_expansion)
@@ -365,7 +371,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         ASSERT (A == NULL) ;
         ASSERT (scalar != NULL) ;
         anz = mn ;
-        anz_ok = mn_ok ;
         A_is_dense = true ;
         // a run-time or compile-time user-defined scalar is assumed to have
         // the same type as C->type which is also user-defined (or else it
@@ -385,7 +390,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         ASSERT (!GB_PENDING (A)) ;   ASSERT (!GB_ZOMBIES (A)) ;
         ASSERT (scalar == NULL) ;
         anz = GB_NNZ (A) ;
-        anz_ok = true ;
         A_is_dense = (mn_ok && anz == (int64_t) mn) ;
         atype = A->type ;
     }
@@ -586,8 +590,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // C_Mask_matrix:  C(I,J)<M> = A or += A
     bool C_Mask_matrix = (!scalar_expansion && simple_mask) ;
 
-    int64_t mnz = (M == NULL) ? 0 : GB_NNZ (M) ;
-
     if (empty_mask)
     {
         // use Method 00: C(I,J) = empty
@@ -649,7 +651,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         ASSERT_OK (GB_check (S, "S for subref extraction", GB0)) ;
 
         #ifdef GB_DEBUG
-        GB_GET_S ;
+        const int64_t *restrict Si = S->i ;
+        const int64_t *restrict Sx = S->x ;
         // this body of code explains what S contains.
         // S is nI-by-nJ where nI = length (I) and nJ = length (J)
         GBI_for_each_vector (S)

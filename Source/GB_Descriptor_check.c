@@ -121,7 +121,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     info [1] = GB_dc (true,  "mask      ", D->mask, GrB_SCMP,    pr,f,Context) ;
     info [2] = GB_dc (true,  "input0    ", D->in0,  GrB_TRAN,    pr,f,Context) ;
     info [3] = GB_dc (true,  "input1    ", D->in1,  GrB_TRAN,    pr,f,Context) ;
-    info [4] = GB_dc (false, "AxB_method", D->axb,  0,           pr,f,Context) ;
+    info [4] = GB_dc (false, "AxB_method", D->axb,  GxB_DEFAULT, pr,f,Context) ;
 
     for (int i = 0 ; i < 5 ; i++)
     { 

@@ -84,13 +84,27 @@ void *GB_calloc_memory      // pointer to allocated block of memory
             if (p != NULL)
             {
                 // success
-                int nmalloc = 0 ;
                 #undef GB_CRITICAL_SECTION
-                #define GB_CRITICAL_SECTION                             \
-                {                                                       \
-                    nmalloc = GB_Global_nmalloc_increment ( ) ;         \
-                    GB_Global_inuse_increment (nitems * size_of_item) ; \
-                }
+
+                #ifdef GB_PRINT_MALLOC
+
+                    int nmalloc = 0 ;
+                    #define GB_CRITICAL_SECTION                             \
+                    {                                                       \
+                        nmalloc = GB_Global_nmalloc_increment ( ) ;         \
+                        GB_Global_inuse_increment (nitems * size_of_item) ; \
+                    }
+
+                #else
+
+                    #define GB_CRITICAL_SECTION                             \
+                    {                                                       \
+                        GB_Global_nmalloc_increment ( ) ;                   \
+                        GB_Global_inuse_increment (nitems * size_of_item) ; \
+                    }
+
+                #endif
+
                 #include "GB_critical_section.c"
                 #ifdef GB_PRINT_MALLOC
                 printf ("%14p Calloc:  %3d %1d n "GBd" size "GBd"\n", p,

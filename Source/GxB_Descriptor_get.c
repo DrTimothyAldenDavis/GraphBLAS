@@ -44,6 +44,7 @@ GrB_Info GxB_Descriptor_get     // get a parameter from a descriptor
         case GrB_INP0 : 
 
             (*val) = (desc == NULL) ? GxB_DEFAULT : desc->in0  ; break ;
+
         case GrB_INP1 : 
 
             (*val) = (desc == NULL) ? GxB_DEFAULT : desc->in1  ; break ;

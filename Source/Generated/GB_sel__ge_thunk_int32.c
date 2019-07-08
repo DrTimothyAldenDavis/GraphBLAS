@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
+
 #include "GB_select.h"
 #include "GB_ek_slice.h"
 #include "GB_sel__include.h"
@@ -75,12 +77,10 @@
 
 void GB_sel_phase1__ge_thunk_int32
 (
-    // output
     int64_t *restrict Zp,
     int64_t *restrict Cp,
     int64_t *restrict Wfirst,
     int64_t *restrict Wlast,
-    // input
     const GrB_Matrix A,
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
@@ -101,15 +101,13 @@ void GB_sel_phase1__ge_thunk_int32
 
 
 //------------------------------------------------------------------------------
-// GB_sel_exec
+// GB_sel_phase2__ge_thunk_int32
 //------------------------------------------------------------------------------
 
 void GB_sel_phase2__ge_thunk_int32
 (
-    // output
     int64_t *restrict Ci,
     int32_t *restrict Cx,
-    // input
     const int64_t *restrict Zp,
     const int64_t *restrict Cp,
     const int64_t *restrict C_pstart_slice,

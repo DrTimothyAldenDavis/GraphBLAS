@@ -13,7 +13,7 @@
 // This function does not need to know if A is hypersparse or not, and its
 // result is the same if A is in CSR or CSC format.
 
-#include "GB.h"
+#include "GB_reduce.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
@@ -71,7 +71,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // get A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ai = A->i ;
     int64_t asize = A->type->size ;
     int64_t zsize = ztype->size ;
     int64_t anz = GB_NNZ (A) ;

@@ -106,7 +106,7 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
                     (double) nrows, (double) ncols, (double) nvals) ;
                 OK (GxB_Type_fprint (type, "type", GxB_COMPLETE, stdout)) ;
                 GETVAL ;
-                printf ("Ap %p Aj %p Ax %p\n", Ap, Aj, Ax) ;
+                printf ("Ap %p Aj %p Ax %p\n", (void *) Ap, (void *) Aj, Ax) ;
 
                 for (int64_t i = 0 ; i < nrows ; i++)
                 {

@@ -30,9 +30,9 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 GrB_Info GB_subref_phase0
 (
     // output
-    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL if C standard
-    int64_t **p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
-    int64_t **p_Ap_end,     // ... and ends at Ap_end [kC] - 1
+    int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL standard
+    int64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
+    int64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
     int64_t *p_Cnvec,       // # of vectors in C
     bool *p_need_qsort,     // true if C must be sorted
     int *p_Ikind,           // kind of I
@@ -57,8 +57,8 @@ GrB_Info GB_subref_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for subref operation
     bool *p_post_sort,              // true if a final post-sort is needed
-    int64_t **p_Mark,               // for I inverse, if needed; size avlen
-    int64_t **p_Inext,              // for I inverse, if needed; size nI
+    int64_t *restrict *p_Mark,      // for I inverse, if needed; size avlen
+    int64_t *restrict *p_Inext,     // for I inverse, if needed; size nI
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     // from phase0:
     const int64_t *restrict Ap_start,   // location of A(imin:imax,kA)
@@ -77,7 +77,7 @@ GrB_Info GB_subref_slice
 
 GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 (
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    int64_t *restrict *Cp_handle,       // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase0b:
     GB_task_struct *restrict TaskList,  // array of structs
@@ -139,8 +139,8 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t nI,                 // length of I
     int64_t avlen,              // length of the vectors of A
     // outputs:
-    int64_t **p_Mark,           // head pointers for buckets, size avlen
-    int64_t **p_Inext,          // next pointers for buckets, size nI
+    int64_t *restrict *p_Mark,  // head pointers for buckets, size avlen
+    int64_t *restrict *p_Inext, // next pointers for buckets, size nI
     int64_t *p_ndupl,           // number of duplicate entries in I
     GB_Context Context
 ) ;

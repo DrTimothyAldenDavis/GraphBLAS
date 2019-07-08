@@ -26,11 +26,11 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
 void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
 (
-    GB_void *Cx,            // output array, of type op->ztype
-    const GrB_UnaryOp op,   // operator to apply
-    const GB_void *Ax,      // input array, of type Atype
-    const GrB_Type Atype,   // type of Ax
-    const int64_t anz,      // size of Ax and Cx
+    GB_void *restrict Cx,           // output array, of type op->ztype
+    const GrB_UnaryOp op,           // operator to apply
+    const GB_void *restrict Ax,     // input array, of type Atype
+    const GrB_Type Atype,           // type of Ax
+    const int64_t anz,              // size of Ax and Cx
     GB_Context Context
 ) ;
 

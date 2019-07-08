@@ -67,7 +67,8 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     GB_OK (GB_compatible (C->type, C, M, accum, T_type, Context)) ;
 
     // T=op(A,B) via op operator, so A and B must be compatible with z=op(a,b)
-    GB_OK (GB_BinaryOp_compatible (op, NULL, A->type, B->type, 0, Context)) ;
+    GB_OK (GB_BinaryOp_compatible (op, NULL, A->type, B->type,
+        GB_ignore_code, Context)) ;
 
     if (eWiseAdd)
     {

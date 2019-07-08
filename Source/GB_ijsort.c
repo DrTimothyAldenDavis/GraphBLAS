@@ -27,11 +27,11 @@
 
 GrB_Info GB_ijsort
 (
-    const GrB_Index *I, // index array of size ni, where ni > 1 always holds
-    int64_t *p_ni,      // input: size of I, output: number of indices in I2
-    GrB_Index **p_I2,   // output array of size ni2, where I2 [0..ni2-1]
+    const GrB_Index *restrict I, // size ni, where ni > 1 always holds
+    int64_t *restrict p_ni,      // : size of I, output: # of indices in I2
+    GrB_Index *restrict *p_I2,   // size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
-    GrB_Index **p_I2k,  // output array of size ni2
+    GrB_Index *restrict *p_I2k,  // output array of size ni2
     GB_Context Context
 )
 {
@@ -192,9 +192,9 @@ GrB_Info GB_ijsort
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    *(p_I2 ) = I2 ;
-    *(p_I2k) = I2k ;
-    *(p_ni ) = ni2 ;
+    *(p_I2 ) = (GrB_Index *) I2 ;
+    *(p_I2k) = (GrB_Index *) I2k ;
+    *(p_ni ) = (int64_t    ) ni2 ;
 
     return (GrB_SUCCESS) ;
 }

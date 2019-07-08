@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
+
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_ek_slice.h"
@@ -24,8 +26,8 @@
 // C type:   double
 
 // Reduce:   if ((aij < s) || (s != s)) s = aij
-// Identity: INFINITY
-// Terminal: if (s == -INFINITY) break ;
+// Identity: ((double) INFINITY)
+// Terminal: if (s == ((double) -INFINITY)) break ;
 
 #define GB_ATYPE \
     double
@@ -96,10 +98,10 @@
         1
 
     #define GB_TERMINAL_VALUE                       \
-        -INFINITY
+        ((double) -INFINITY)
 
     #define GB_BREAK_IF_TERMINAL(t)                 \
-        if (s == -INFINITY) break ;
+        if (s == ((double) -INFINITY)) break ;
 
 // panel size for built-in operators
 

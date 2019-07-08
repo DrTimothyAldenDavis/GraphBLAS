@@ -281,7 +281,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // B = B'
             // with swap_rule == C_transpose || (A_transpose && B_transpose),
             // this case will never occur
-            ASSERT (DEAD_CODE) ;
+            ASSERT (GB_DEAD_CODE) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             B = BT ;
         }

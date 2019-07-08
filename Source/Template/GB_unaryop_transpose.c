@@ -12,6 +12,9 @@
 
 {
 
+    // Ax unused for some uses of this template
+    #include "GB_unused.h"
+
     //--------------------------------------------------------------------------
     // get A and C
     //--------------------------------------------------------------------------
@@ -20,7 +23,7 @@
 
     #if defined ( GB_PHASE_2_OF_2 )
     const GB_ATYPE *restrict Ax = A->x ;
-    int64_t  *restrict Cp = C->p ;
+    // int64_t  *restrict Cp = C->p ;
     int64_t  *restrict Ci = C->i ;
     GB_CTYPE *restrict Cx = C->x ;
     #endif

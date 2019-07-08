@@ -48,6 +48,14 @@ GrB_Type
 // built-in unary and binary operators
 //------------------------------------------------------------------------------
 
+#if defined __INTEL_COMPILER
+// disable icc warnings
+//  144:  initialize with incompatible pointer
+#pragma warning (disable: 144 )
+#elif defined __GNUC__
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#endif
+
 // helper macro to define unary operators; z and x have the same type
 #define GB_UNARY_OP_DEFINE(PREFIX,OPERATOR,OPNAME)                          \
 struct GB_UnaryOp_opaque GB (opaque_ ## PREFIX ## OPERATOR) =               \
@@ -165,8 +173,6 @@ GrB_BinaryOp GrB_NAME (PREFIX,OPERATOR) = & GB (opaque_ ## PREFIX ## OPERATOR) ;
 //------------------------------------------------------------------------------
 // special cases for functions and operators
 //------------------------------------------------------------------------------
-
-extern void GB_copy_user_user (void *z, void *x, size_t s) ;
 
 // 4 special cases:
 // purely boolean operators: these do not have _BOOL in their name

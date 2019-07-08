@@ -26,12 +26,11 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
 GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    int64_t **Ch_handle,        // Ch: output of size Cnvec, or NULL
-    int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
-    int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
-    int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
-    bool *p_Ch_is_Mh,           // if true, then Ch == Mh.  This option is for
-                                // GB_add only, not GB_masker.
+    int64_t *restrict *Ch_handle,        // Ch: size Cnvec, or NULL
+    int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    int64_t *restrict *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    int64_t *restrict *C_to_B_handle,    // C_to_B: of size Cnvec, or NULL
+    bool *p_Ch_is_Mh,           // if true, then Ch == Mh
     const GrB_Matrix M,         // optional mask, may be NULL; not complemented
     const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
     const GrB_Matrix B,         // standard or hypersparse; never a slice

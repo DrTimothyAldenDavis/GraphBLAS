@@ -17,7 +17,7 @@
 // duplicates in I, and then construct the buckets in parallel after the qsort.
 // But the time complexity would be higher.
 
-#include "GB.h"
+#include "GB_subref.h"
 
 GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
 (
@@ -25,19 +25,12 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     int64_t nI,                 // length of I
     int64_t avlen,              // length of the vectors of A
     // outputs:
-    int64_t **p_Mark,           // head pointers for buckets, size avlen
-    int64_t **p_Inext,          // next pointers for buckets, size nI
+    int64_t *restrict *p_Mark,  // head pointers for buckets, size avlen
+    int64_t *restrict *p_Inext, // next pointers for buckets, size nI
     int64_t *p_ndupl,           // number of duplicate entries in I
     GB_Context Context
 )
 {
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (nI, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // get inputs
@@ -72,7 +65,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // at this point, Mark is all zero, so Mark [i] < 1 for all i in
     // the range 0 to avlen-1.
 
-    // O(nI) time but this is OK since nI = length of the explicit list I
+    // O(nI) time; not parallel
     for (int64_t inew = nI-1 ; inew >= 0 ; inew--)
     {
         int64_t i = I [inew] ;

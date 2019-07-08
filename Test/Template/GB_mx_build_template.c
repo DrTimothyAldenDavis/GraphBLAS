@@ -78,6 +78,26 @@
 
 bool malloc_debug = false ;
 
+GrB_Info builder
+(
+    #ifdef MATRIX
+    GrB_Matrix *Chandle,
+    #else
+    GrB_Vector *Chandle,
+    #endif
+    GrB_Type ctype,
+    GrB_Index nrows,
+    GrB_Index ncols,
+    GrB_Index *I,
+    GrB_Index *J,
+    void *X,
+    GrB_Index ni,
+    GrB_BinaryOp dup,
+    bool C_is_csc,
+    mxClassID xclass,
+    GB_Context Context
+) ;
+
 //------------------------------------------------------------------------------
 
 GrB_Info builder

@@ -78,7 +78,6 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         int64_t plast  = Slice [tid+1] - 1 ;
         int64_t bslice_nz = plast - pfirst + 1 ;
         int64_t bvec_first = 0 ;
-        int64_t bvec_last = 0 ;
         int64_t bslice_nvec = 0 ;
 
 //      printf ("pfirst "GBd" plast "GBd" nz "GBd"\n", 

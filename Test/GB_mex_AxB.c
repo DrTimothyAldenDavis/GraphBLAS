@@ -46,6 +46,9 @@ int64_t bncols = 0 ;
 GrB_Desc_Value AxB_method = GxB_DEFAULT ;
 GrB_Desc_Value AxB_method_used = GxB_DEFAULT ;
 
+GrB_Info axb (GB_Context Context) ;
+GrB_Info axb_complex (GB_Context Context) ;
+
 //------------------------------------------------------------------------------
 
 GrB_Info axb (GB_Context Context)

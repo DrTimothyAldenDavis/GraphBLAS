@@ -13,7 +13,6 @@
 {
 
     const GB_ATYPE *restrict Ax = A->x ;
-    const int64_t  *restrict Ai = A->i ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (anz > 0) ;
 

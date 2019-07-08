@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
+
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_ek_slice.h"
@@ -24,7 +26,7 @@
 // C type:   float
 
 // Reduce:   if ((aij > s) || (s != s)) s = aij
-// Identity: -INFINITY
+// Identity: (-INFINITY)
 // Terminal: if (s == INFINITY) break ;
 
 #define GB_ATYPE \

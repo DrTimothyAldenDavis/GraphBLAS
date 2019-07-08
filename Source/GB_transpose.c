@@ -149,8 +149,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     int64_t aplen = A->plen ;
 
     bool A_is_hyper = A->is_hyper ;
-    bool A_is_csc   = A->is_csc ;
-    double A_hyper_ratio  = A->hyper_ratio ;
+    double A_hyper_ratio = A->hyper_ratio ;
 
     int64_t anzmax = A->nzmax ;
 

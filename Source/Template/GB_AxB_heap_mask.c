@@ -435,7 +435,9 @@
         if (nheap == 1)
         {
             // get the last A(:,k)
+            #ifdef GB_DEBUG
             int64_t ilast = Heap [1].key ;
+            #endif
             ASSERT (ilast >= 0 && ilast < cvlen) ;
             int64_t kk = Heap [1].name ;
             ASSERT (kk >= 0 && kk < bjnz) ;

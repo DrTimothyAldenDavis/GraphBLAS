@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Unless this file is Generator/GB_binop.c, do not edit it (auto-generated)
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 #include "GB.h"
 #ifndef GBCOMPACT

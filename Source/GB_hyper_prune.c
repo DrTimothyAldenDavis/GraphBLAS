@@ -17,8 +17,8 @@
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t **p_Ap,                 // size nvec+1
-    int64_t **p_Ah,                 // size nvec
+    int64_t *restrict *p_Ap,        // size nvec+1
+    int64_t *restrict *p_Ah,        // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1

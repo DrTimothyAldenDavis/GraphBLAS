@@ -49,13 +49,13 @@
     //--------------------------------------------------------------------------
 
     const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mi = M->i ;
     const GB_void *restrict Mx = M->x ;
     GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
     size_t msize = M->type->size ;
-    const int64_t mnvec = M->nvec ;
     #ifdef GB_HYPER_CASE
+    const int64_t *restrict Mh = M->h ;
+    const int64_t mnvec = M->nvec ;
     int64_t mpleft = 0 ;
     int64_t mpright = mnvec - 1 ;
     #endif
@@ -79,7 +79,9 @@
     //--------------------------------------------------------------------------
 
     int64_t *restrict Ci = C->i ;
+    #ifndef GB_HYPER_CASE
     int64_t *restrict Cp = C->p ;
+    #endif
 
     int64_t jlast, cnz, cnz_last ;
     GB_jstartup (C, &jlast, &cnz, &cnz_last) ;

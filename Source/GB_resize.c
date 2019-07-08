@@ -93,7 +93,6 @@ GrB_Info GB_resize              // change the size of a matrix
     int64_t *restrict Ah = A->h ;
     int64_t *restrict Ap = A->p ;
     A->vdim = vdim_new ;
-    bool recount = false ;
 
     if (A->is_hyper)
     {

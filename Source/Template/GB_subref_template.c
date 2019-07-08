@@ -66,8 +66,11 @@
     //--------------------------------------------------------------------------
 
     const int64_t *restrict Ai = A->i ;
-    const int64_t nzombies = A->nzombies ;
     const int64_t avlen = A->vlen ;
+
+    #if defined ( GB_SYMBOLIC )
+    const int64_t nzombies = A->nzombies ;
+    #endif
 
     #if defined ( GB_PHASE_2_OF_2 ) && defined ( GB_NUMERIC )
     const GB_CTYPE *restrict Ax = A->x ;
@@ -91,7 +94,9 @@
     int64_t ibegin = Icolon [GxB_BEGIN] ;
     int64_t iinc   = Icolon [GxB_INC  ] ;
     int64_t inc    = (iinc < 0) ? (-iinc) : iinc ;
+    #ifdef GB_DEBUG
     int64_t iend   = Icolon [GxB_END  ] ;
+    #endif
 
     //--------------------------------------------------------------------------
     // phase1: count entries in each C(:,kC); phase2: compute C
@@ -543,8 +548,8 @@
                         // handled by multiple fine tasks must wait until all
                         // task are completed, below in the post sort.
                         pC = Cp [kC] ;
-                        GB_qsort_1b (Ci + pC, Cx + pC*GB_CSIZE1, GB_CSIZE2,
-                            clen, NULL) ;
+                        GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
+                            GB_CSIZE2, clen, NULL) ;
                     }
                     #endif
                     break ;
@@ -660,7 +665,8 @@
                 // unsorted indices.
                 int64_t pC = Cp [kC] ;
                 int64_t clen = Cp [kC+1] - pC ;
-                GB_qsort_1b (Ci + pC, Cx + pC*GB_CSIZE1, GB_CSIZE2, clen, NULL);
+                GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
+                    GB_CSIZE2, clen, NULL) ;
             }
         }
     }

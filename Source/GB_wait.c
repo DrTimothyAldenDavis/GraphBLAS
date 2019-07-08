@@ -94,7 +94,9 @@ GrB_Info GB_wait                // finish all pending computations
     if (nzombies > 0)
     {
         // remove all zombies from A.  Also compute A->nvec_nonempty
+        #ifdef GB_DEBUG
         int64_t anz_orig = GB_NNZ (A) ;
+        #endif
         GB_OK (GB_selector (NULL, GB_NONZOMBIE_opcode, NULL, false, A,
             0, NULL, Context)) ;
         ASSERT (A->nvec_nonempty == GB_nvec_nonempty (A, NULL)) ;
@@ -252,7 +254,6 @@ GrB_Info GB_wait                // finish all pending computations
     if (A->is_hyper)
     { 
         // find tjfirst in A->h 
-        int64_t pleft = 0 ;
         int64_t pright = A->nvec - 1 ;
         bool found ;
         int64_t *restrict Ah = A->h ;

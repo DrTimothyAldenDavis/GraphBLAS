@@ -304,7 +304,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 int64_t kend     = tstart_slice [tid+1] ;
                 int64_t ilast = (kstart == 0) ? -1 : I_input [kstart-1] ;
                 int64_t jlast = (kstart == 0) ? -1 : J_input [kstart-1] ;
-                bool my_bad = false ;
 
                 for (int64_t k = kstart ; k < kend ; k++)
                 {

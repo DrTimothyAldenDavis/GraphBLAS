@@ -6,12 +6,6 @@
 
 #include "prand.h"
 
-#if defined __INTEL_COMPILER
-// disable icc warnings
-//  869:  unused parameters
-#pragma warning (disable: 869 )
-#endif
-
 //------------------------------------------------------------------------------
 // prand macros
 //------------------------------------------------------------------------------
@@ -88,7 +82,15 @@ void prand_xget_f (double *z, prand_t *x)
 // This is required by GrB_Vector_build, but is never called since no
 // duplicates are created.  This is the SECOND operator for the prand_type.
 
-void prand_dup_f (prand_t *z, const prand_t *x, const prand_t *y)
+#if defined ( __INTEL_COMPILER )
+// disable icc warnings
+//  869:  unused parameters
+#pragma warning (disable: 869 )
+#elif defined (  __GNUC__ )
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
+void prand_dup_f (prand_t *z, /* unused: */ const prand_t *x, const prand_t *y)
 {
     (*z) = (*y) ;
 }

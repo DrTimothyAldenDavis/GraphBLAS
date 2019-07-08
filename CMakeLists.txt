@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "July 7, 2019 (11pm) (DRAFT)" )
+set ( GraphBLAS_DATE "July 8, 2019 (5pm) (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -179,7 +179,7 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas -fPIC " )
     # check all warnings:
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
@@ -193,8 +193,8 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # The -g option is useful for the Intel VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
     # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
-    # check all warnings:
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 " )
+    # check all warnings and remarks:
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
         message ( FATAL_ERROR "icc version must be at least 19.0" )
     endif ( )
@@ -258,7 +258,7 @@ SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
     C_STANDARD_REQUIRED 11
     PUBLIC_HEADER "Include/GraphBLAS.h" )
- set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
+set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
 
 #-------------------------------------------------------------------------------
 # select the threading library 
@@ -396,8 +396,8 @@ target_link_libraries ( import_demo   graphblas graphblasdemo )
 # graphblas installation location
 #-------------------------------------------------------------------------------
 
-install ( TARGETS graphblas graphblas_static
-    LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+install ( TARGETS graphblas  graphblas_static
+     LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+     ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 

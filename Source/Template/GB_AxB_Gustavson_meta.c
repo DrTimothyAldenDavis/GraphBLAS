@@ -8,6 +8,10 @@
 //------------------------------------------------------------------------------
 
 {
+    // Ax and Bx are not used if the multiply operator is SECOND or FIRST,
+    // respectively.
+    #include "GB_unused.h"
+
     const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
     const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
 

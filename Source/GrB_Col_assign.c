@@ -54,7 +54,7 @@ GrB_Info GrB_Col_assign             // C<M>(Rows,col) = accum (C(Rows,col),u)
         (GrB_Matrix) u,     false,          // u as a matrix; never transposed
         Rows, nRows,                        // row indices
         Cols, 1,                            // a single column index
-        false, NULL, 0,                     // no scalar expansion
+        false, NULL, GB_ignore_code,        // no scalar expansion
         true, false,                        // GrB_Col_assign
         Context)) ;
 }

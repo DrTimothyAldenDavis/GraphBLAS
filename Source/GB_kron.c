@@ -58,7 +58,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     }
 
     // T=op(A,B) via op operator, so A and B must be compatible with z=op(a,b)
-    info = GB_BinaryOp_compatible (op, NULL, A->type, B->type, 0, Context) ;
+    info = GB_BinaryOp_compatible (op, NULL, A->type, B->type,
+        GB_ignore_code, Context) ;
     if (info != GrB_SUCCESS)
     { 
         return (info) ;

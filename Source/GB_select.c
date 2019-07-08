@@ -186,7 +186,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
             if (Thunk_in != NULL)
             { 
                 // ithunk = - (int64_t) (Thunk_in (0)) ;
-                GB_cast_array (&ithunk, GB_INT64_code,
+                GB_cast_array ((GB_void *) &ithunk, GB_INT64_code,
                     Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
                 ithunk = -ithunk ;
                 use_Thunk_in = false ;

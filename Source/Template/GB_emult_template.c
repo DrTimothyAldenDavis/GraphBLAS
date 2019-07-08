@@ -20,6 +20,9 @@
 
 {
 
+    // iB_first is unused if the operator is FIRST
+    #include "GB_unused.h"
+
     //--------------------------------------------------------------------------
     // get A, B, M, and C
     //--------------------------------------------------------------------------
@@ -142,13 +145,20 @@
 
             int64_t ajnz = pA_end - pA ;        // nnz in A(:,j) for this slice
             bool adense = (ajnz == len) ;
-            int64_t iA_first = -1, iA_last = -1 ;
+
+            // get the first and last indices in A(:,j) for this vector
+            int64_t iA_first = -1 ;
             if (ajnz > 0)
             {
-                // get the first and last indices in A(:,j) for this vector
                 iA_first = Ai [pA] ;
+            }
+            #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
+            int64_t iA_last = -1 ;
+            if (ajnz > 0)
+            {
                 iA_last  = Ai [pA_end-1] ;
             }
+            #endif
 
             //------------------------------------------------------------------
             // get B(:,j)
@@ -176,13 +186,20 @@
 
             int64_t bjnz = pB_end - pB ;        // nnz in B(:,j) for this slice
             bool bdense = (bjnz == len) ;
-            int64_t iB_first = -1, iB_last = -1 ;
+
+            // get the first and last indices in B(:,j) for this vector
+            int64_t iB_first = -1 ;
             if (bjnz > 0)
             {
-                // get the first and last indices in B(:,j) for this vector
                 iB_first = Bi [pB] ;
+            }
+            #if defined ( GB_PHASE_1_OF_2 ) || defined ( GB_DEBUG )
+            int64_t iB_last = -1 ;
+            if (bjnz > 0)
+            {
                 iB_last  = Bi [pB_end-1] ;
             }
+            #endif
 
             //------------------------------------------------------------------
             // phase1: count nnz (C (:,j)); phase2: compute C(:,j)

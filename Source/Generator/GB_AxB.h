@@ -13,7 +13,7 @@ GrB_Info GB_Adot2B
     const GrB_Matrix M, const bool Mask_comp,
     const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    int64_t **C_counts,
+    int64_t *restrict *C_counts,
     int nthreads, int naslice, int nbslice
 ) ;
 

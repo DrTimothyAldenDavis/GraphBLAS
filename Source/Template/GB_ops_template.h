@@ -231,7 +231,7 @@ extern struct GB_BinaryOp_opaque
 #define GB_CAST_FUNCTION_ANSI(xtype)                                        \
     (                                                                       \
         void *z,            /* typecasted output, of type ztype */          \
-        void *x,            /* input value to typecast, of type xtype */    \
+        const void *x,      /* input value to typecast, of type xtype */    \
         size_t s            /* size of type, for GB_copy_user_user only */  \
     )                                                                       \
     {                                                                       \
@@ -257,7 +257,7 @@ inline void GB_CAST_NAME (uint64_t) GB_CAST_FUNCTION_ANSI (uint64_t)
 #define GB_CAST_FUNCTION_UNSIGNED(xtype,bits)                               \
     (                                                                       \
         void *z,            /* typecasted output, of type ztype */          \
-        void *x,            /* input value to typecast, of type xtype */    \
+        const void *x,      /* input value to typecast, of type xtype */    \
         size_t s            /* size of type, for GB_copy_user_user only */  \
     )                                                                       \
     {                                                                       \
@@ -271,7 +271,7 @@ inline void GB_CAST_NAME (uint64_t) GB_CAST_FUNCTION_ANSI (uint64_t)
 #define GB_CAST_FUNCTION_SIGNED(xtype,bits)                                 \
     (                                                                       \
         void *z,            /* typecasted output, of type ztype */          \
-        void *x,            /* input value to typecast, of type xtype */    \
+        const void *x,      /* input value to typecast, of type xtype */    \
         size_t s            /* size of type, for GB_copy_user_user only */  \
     )                                                                       \
     {                                                                       \

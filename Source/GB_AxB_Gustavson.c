@@ -47,7 +47,9 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // check inputs
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUG
     GB_Context Context = NULL ;
+    #endif
     ASSERT (Chandle != NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M_in, "M for Gustavson C<M>=A*B", GB0)) ;
     ASSERT_OK (GB_check (A, "A for Gustavson C=A*B", GB0)) ;

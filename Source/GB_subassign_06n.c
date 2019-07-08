@@ -41,8 +41,17 @@ GrB_Info GB_subassign_06n
     //--------------------------------------------------------------------------
 
     GB_GET_C ;
+    int64_t zorig = C->nzombies ;
+    const bool C_is_hyper = C->is_hyper ;
+    const int64_t Cnvec = C->nvec ;
+    const int64_t cvlen = C->vlen ;
+    const int64_t *restrict Ch = C->h ;
+    const int64_t *restrict Cp = C->p ;
     GB_GET_MASK ;
     GB_GET_A ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t Anvec = A->nvec ;
+    const bool A_is_hyper = A->is_hyper ;
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
@@ -78,7 +87,7 @@ GrB_Info GB_subassign_06n
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR ;
+        GB_GET_TASK_DESCRIPTOR_PHASE1 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -233,6 +242,7 @@ GrB_Info GB_subassign_06n
     //--------------------------------------------------------------------------
 
     GB_PENDING_CUMSUM ;
+    zorig = C->nzombies ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(&&:pending_sorted)
@@ -243,8 +253,7 @@ GrB_Info GB_subassign_06n
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR ;
-        GB_START_PENDING_INSERTION ;
+        GB_GET_TASK_DESCRIPTOR_PHASE2 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task

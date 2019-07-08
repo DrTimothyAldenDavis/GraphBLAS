@@ -95,14 +95,9 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
         A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
     }
 
-    int64_t anvec = A->nvec ;
-    int64_t avdim = A->vdim ;
-    int64_t avlen = A->vlen ;
     int64_t anz   = GB_NNZ (A) ;
 
     int64_t bnvec = B->nvec ;
-    int64_t bvdim = B->vdim ;
-    int64_t bvlen = B->vlen ;
     int64_t bnz   = GB_NNZ (B) ;
 
     //--------------------------------------------------------------------------
@@ -310,7 +305,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
         reduction(||:any_Gustavson)
     for (int tid = 0 ; tid < nthreads ; tid++)
     { 
-        GrB_Desc_Value thread_method_to_use = 0 ;
+        GrB_Desc_Value thread_method_to_use ;
         GB_AxB_select (A, (nthreads == 1) ? B : Bslice [tid], semiring,
             AxB_method, &thread_method_to_use, &(bjnz_max [tid])) ;
         AxB_methods_used [tid] = thread_method_to_use ;

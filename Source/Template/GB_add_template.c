@@ -32,7 +32,7 @@
     const int64_t *restrict Bi = B->i ;
 
     const int64_t *restrict Mp = NULL ;
-    const int64_t *restrict Mh = NULL ;
+    // const int64_t *restrict Mh = NULL ;
     const int64_t *restrict Mi = NULL ;
     const GB_void *restrict Mx = NULL ;
     GB_cast_function cast_M = NULL ;
@@ -40,7 +40,7 @@
     if (M != NULL)
     { 
         Mp = M->p ;
-        Mh = M->h ;
+        // Mh = M->h ;
         Mi = M->i ;
         Mx = M->x ;
         cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
@@ -68,7 +68,6 @@
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        // GB_GET_TASK_DESCRIPTOR (also get len)
         int64_t kfirst = TaskList [taskid].kfirst ;
         int64_t klast  = TaskList [taskid].klast ;
         bool fine_task = (klast == -1) ;
@@ -525,8 +524,8 @@
                     { 
                         // Ch is the same as Mh (a deep copy)
                         ASSERT (Ch != NULL) ;
-                        ASSERT (Mh != NULL) ;
-                        ASSERT (Ch [k] == Mh [k]) ;
+                        ASSERT (M->h != NULL) ;
+                        ASSERT (Ch [k] == M->h [k]) ;
                         kM = k ;
                     }
                     else

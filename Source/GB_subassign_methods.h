@@ -37,19 +37,19 @@
 #define GB_GET_C                                                            \
     GrB_Info info ;                                                         \
     ASSERT_OK (GB_check (C, "C for subassign kernel", GB0)) ;               \
-    const int64_t *restrict Ch = C->h ;                                     \
-    const int64_t *restrict Cp = C->p ;                                     \
     int64_t *restrict Ci = C->i ;                                           \
     GB_void *restrict Cx = C->x ;                                           \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
-    const int64_t Cnvec = C->nvec ;                                         \
-    const int64_t cvlen = C->vlen ;                                         \
     const int64_t cvdim = C->vdim ;                                         \
-    const bool C_is_hyper = C->is_hyper && (Cnvec < cvdim) ;                \
     int64_t nzombies = C->nzombies ;                                        \
-    int64_t zorig = nzombies ;                                              \
     const bool is_matrix = (cvdim > 1) ;
+
+//  const bool C_is_hyper = C->is_hyper ;
+//  const int64_t Cnvec = C->nvec ;
+//  const int64_t cvlen = C->vlen ;
+//  const int64_t *restrict Ch = C->h ;
+//  const int64_t *restrict Cp = C->p ;
 
 //------------------------------------------------------------------------------
 // GB_GET_MASK: get the mask matrix M
@@ -62,9 +62,10 @@
     const int64_t *restrict Mi = M->i ;                                     \
     const GB_void *restrict Mx = M->x ;                                     \
     const size_t msize = M->type->size ;                                    \
-    GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ; \
-    int64_t Mnvec = M->nvec ;                                               \
-    const bool M_is_hyper = M->is_hyper ;
+    GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
+
+//  const bool M_is_hyper = M->is_hyper ;
+//  const int64_t Mnvec = M->nvec ;
 
 //------------------------------------------------------------------------------
 // GB_GET_ACCUM: get the accumulator op and its related typecasting functions
@@ -90,12 +91,13 @@
     size_t asize = atype->size ;                                            \
     GB_Type_code acode = atype->code ;                                      \
     const int64_t *restrict Ap = A->p ;                                     \
-    const int64_t *restrict Ah = A->h ;                                     \
     const int64_t *restrict Ai = A->i ;                                     \
     const GB_void *restrict Ax = A->x ;                                     \
-    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
-    const int64_t Anvec = A->nvec ;                                         \
-    const bool A_is_hyper = A->is_hyper ;
+    GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
+
+//  const int64_t *restrict Ah = A->h ;
+//  const int64_t Anvec = A->nvec ;
+//  const bool A_is_hyper = A->is_hyper ;
 
 //------------------------------------------------------------------------------
 // GB_GET_SCALAR: get the scalar
@@ -126,11 +128,12 @@
 #define GB_GET_S                                                            \
     ASSERT_OK (GB_check (S, "S extraction", GB0)) ;                         \
     const int64_t *restrict Sp = S->p ;                                     \
-    const int64_t *restrict Sh = S->h ;                                     \
     const int64_t *restrict Si = S->i ;                                     \
-    const int64_t *restrict Sx = S->x ;                                     \
-    const int64_t Snvec = S->nvec ;                                         \
-    const bool S_is_hyper = S->is_hyper ;
+    const int64_t *restrict Sx = S->x ;
+
+//  const int64_t *restrict Sh = S->h ;
+//  const int64_t Snvec = S->nvec ;
+//  const bool S_is_hyper = S->is_hyper ;
 
 //------------------------------------------------------------------------------
 // basic actions
@@ -1555,7 +1558,7 @@ GrB_Info GB_subassign_20
 #define GB_SUBASSIGN_EMULT_SLICE(A,M)                                       \
     GB_EMPTY_TASKLIST ;                                                     \
     int64_t Znvec ;                                                         \
-    int64_t *restrict Zh = NULL ;                                           \
+    const int64_t *restrict Zh = NULL ;                                     \
     int64_t *restrict Z_to_A = NULL ;                                       \
     int64_t *restrict Z_to_M = NULL ;                                       \
     GB_OK (GB_subassign_emult_slice (                                       \
@@ -1650,9 +1653,9 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    int64_t **Zh_handle,            // Zh is A->h, M->h, or NULL
-    int64_t **Z_to_A_handle,        // Z_to_A: output of size Znvec, or NULL
-    int64_t **Z_to_M_handle,        // Z_to_M: output of size Znvec, or NULL
+    const int64_t *restrict *Zh_handle,     // Zh is A->h, M->h, or NULL
+    int64_t *restrict *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
+    int64_t *restrict *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,
@@ -1681,6 +1684,9 @@ GrB_Info GB_subassign_emult_slice
         /* a fine task operates on a slice of a single vector */            \
         klast = kfirst ;                                                    \
     }                                                                       \
+
+#define GB_GET_TASK_DESCRIPTOR_PHASE1                                       \
+    GB_GET_TASK_DESCRIPTOR ;                                                \
     int64_t task_nzombies = 0 ;                                             \
     int64_t task_pending = 0 ;
 
@@ -1779,6 +1785,15 @@ GrB_Info GB_subassign_emult_slice
         iA_end   = TaskList [taskid].pA_end ;                               \
     }
 
+#define GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1                                   \
+    GB_GET_IXJ_TASK_DESCRIPTOR ;                                            \
+    int64_t task_nzombies = 0 ;                                             \
+    int64_t task_pending = 0 ;
+
+#define GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2                                   \
+    GB_GET_IXJ_TASK_DESCRIPTOR ;                                            \
+    GB_START_PENDING_INSERTION ;
+
 //------------------------------------------------------------------------------
 // GB_GET_VECTOR_FOR_IXJ: get the start of a vector for scalar assignment
 //------------------------------------------------------------------------------
@@ -1835,7 +1850,6 @@ GrB_Info GB_subassign_emult_slice
 
 #define GB_PENDING_CUMSUM                                                   \
     C->nzombies = nzombies ;                                                \
-    zorig = nzombies ;                                                      \
     GB_cumsum (Npending, ntasks, NULL, 1) ;                                 \
     int64_t nnew = Npending [ntasks] ;                                      \
     if (nnew == 0)                                                          \
@@ -1868,9 +1882,13 @@ GrB_Info GB_subassign_emult_slice
     int64_t ilast = -1 ;                                                    \
     int64_t jlast = -1 ;                                                    \
     int64_t n = Npending [taskid] ;                                         \
-    task_pending = Npending [taskid+1] - n ;                                \
+    int64_t task_pending = Npending [taskid+1] - n ;                        \
     if (task_pending == 0) continue ;                                       \
     n += npending_orig ;
+
+#define GB_GET_TASK_DESCRIPTOR_PHASE2                                       \
+    GB_GET_TASK_DESCRIPTOR ;                                                \
+    GB_START_PENDING_INSERTION ;
 
 //------------------------------------------------------------------------------
 // GB_PHASE2_TASK_WRAPUP: wrapup for a task in phase 2

@@ -22,7 +22,6 @@
     const int64_t *restrict Ai = A->i ;
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
-    int64_t avdim = A->vdim ;
 
     //--------------------------------------------------------------------------
     // tril, triu, diag, offdiag, resize: binary search in each vector
@@ -143,8 +142,6 @@
     // Wfirst [0..ntasks-1] and Wlast [0..ntasks-1] are required for
     // constructing C_start_slice [0..ntasks-1] in GB_selector.
 
-    int64_t kprior = -1 ;
-
     for (int tid = 0 ; tid < ntasks ; tid++)
     {
 
@@ -188,8 +185,6 @@
                     Wfirst [tid] += GB_IMAX (0, pA_end - p) ;
 
                 #endif
-
-                kprior = kfirst ;
             }
 
         }
@@ -230,8 +225,6 @@
                     Wlast [tid] += GB_IMAX (0, pA_end - p) ;
 
                 #endif
-
-                kprior = klast ;
             }
         }
     }

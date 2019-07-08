@@ -127,9 +127,9 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         // I = imin:iinc:imax
         //----------------------------------------------------------------------
 
-        int64_t ibegin = Icolon [GxB_BEGIN] ;
+        // int64_t ibegin = Icolon [GxB_BEGIN] ;
         int64_t iinc   = Icolon [GxB_INC  ] ;
-        int64_t iend   = Icolon [GxB_END  ] ;
+        // int64_t iend   = Icolon [GxB_END  ] ;
 
         // if iinc == 1 on input, the kind has been changed to GB_RANGE
         ASSERT (iinc != 1) ;

@@ -28,11 +28,14 @@ void GB_AxB_select                  // select method for A*B
     // check inputs
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUG
     GB_Context Context = NULL ;
+    #endif
     ASSERT_OK (GB_check (A, "A for AxB select", GB0)) ;
     ASSERT_OK (GB_check (B, "B for AxB select", GB0)) ;
     ASSERT_OK (GB_check (semiring, "semiring for AxB select", GB0)) ;
     ASSERT (AxB_method_used != NULL) ;
+    (*AxB_method_used) = GxB_DEFAULT ;
 
     //----------------------------------------------------------------------
     // select the type of saxpy method for A*B

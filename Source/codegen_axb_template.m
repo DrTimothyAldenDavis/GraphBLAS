@@ -30,9 +30,10 @@ codegen_axb_method ('min', multop, add, imult, 'uint16_t', 'uint16_t', 'UINT16_M
 codegen_axb_method ('min', multop, add, imult, 'uint32_t', 'uint32_t', 'UINT32_MAX', '0'         ) ;
 codegen_axb_method ('min', multop, add, imult, 'uint64_t', 'uint64_t', 'UINT64_MAX', '0'         ) ;
 add = 'w = fminf (w, t)' ;
-codegen_axb_method ('min', multop, add, fmult, 'float'   , 'float'   , 'INFINITY'  , '-INFINITY' ) ;
+codegen_axb_method ('min', multop, add, fmult, 'float'   , 'float'   , 'INFINITY'  , '(-INFINITY)' ) ;
 add = 'w = fmin (w, t)' ;
-codegen_axb_method ('min', multop, add, dmult, 'double'  , 'double'  , 'INFINITY'  , '-INFINITY' ) ;
+codegen_axb_method ('min', multop, add, dmult, 'double'  , 'double'  , ....
+        '((double) INFINITY)'  , '((double) -INFINITY)' ) ;
 
 % max monoid: all are terminal
 add = 'w = GB_IMAX (w, t)' ;
@@ -45,9 +46,10 @@ codegen_axb_method ('max', multop, add, imult, 'uint16_t', 'uint16_t', '0'      
 codegen_axb_method ('max', multop, add, imult, 'uint32_t', 'uint32_t', '0'         , 'UINT32_MAX') ;
 codegen_axb_method ('max', multop, add, imult, 'uint64_t', 'uint64_t', '0'         , 'UINT64_MAX') ;
 add = 'w = fmaxf (w, t)' ;
-codegen_axb_method ('max', multop, add, fmult, 'float'   , 'float'   , '-INFINITY' , 'INFINITY'  ) ;
+codegen_axb_method ('max', multop, add, fmult, 'float'   , 'float'   , '(-INFINITY)' , 'INFINITY') ;
 add = 'w = fmax (w, t)' ;
-codegen_axb_method ('max', multop, add, dmult, 'double'  , 'double'  , '-INFINITY' , 'INFINITY'  ) ;
+codegen_axb_method ('max', multop, add, dmult, 'double'  , 'double'  , ...
+        '((double) -INFINITY)'  , '((double) INFINITY)' ) ;
 
 % plus monoid: none are terminal
 add = 'w += t' ;

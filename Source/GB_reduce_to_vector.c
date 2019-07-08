@@ -163,14 +163,14 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     //--------------------------------------------------------------------------
 
     size_t asize = A->type->size ;
-    int    acode = A->type->code ;
+    GB_Type_code acode = A->type->code ;
     const int64_t *restrict Ai = A->i ;
     const GB_void *restrict Ax = A->x ;
     int64_t anvec = A->nvec ;
     int64_t anz = GB_NNZ (A) ;
 
     size_t zsize = reduce->ztype->size ;
-    int    zcode = reduce->ztype->code ;
+    GB_Type_code zcode = reduce->ztype->code ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use

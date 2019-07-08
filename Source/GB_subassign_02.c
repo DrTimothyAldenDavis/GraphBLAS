@@ -76,7 +76,7 @@ GrB_Info GB_subassign_02
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR ;
+        GB_GET_TASK_DESCRIPTOR_PHASE1 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -98,7 +98,7 @@ GrB_Info GB_subassign_02
             //------------------------------------------------------------------
 
             // jC = J [j] ; or J is a colon expression
-            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            // int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
             // while both list S (:,j) and A (:,j) have entries
             while (pS < pS_end && pA < pA_end)
@@ -171,8 +171,7 @@ GrB_Info GB_subassign_02
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR ;
-        GB_START_PENDING_INSERTION ;
+        GB_GET_TASK_DESCRIPTOR_PHASE2 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task

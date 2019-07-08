@@ -44,8 +44,17 @@ GrB_Info GB_subassign_19
     //--------------------------------------------------------------------------
 
     GB_GET_C ;
+    const bool C_is_hyper = C->is_hyper ;
+    const int64_t Cnvec = C->nvec ;
+    const int64_t *restrict Ch = C->h ;
+    const int64_t *restrict Cp = C->p ;
     GB_GET_MASK ;
+    const bool M_is_hyper = M->is_hyper ;
+    const int64_t Mnvec = M->nvec ;
     GB_GET_S ;
+    const int64_t *restrict Sh = S->h ;
+    const int64_t Snvec = S->nvec ;
+    const bool S_is_hyper = S->is_hyper ;
     GB_GET_ACCUM_SCALAR ;
 
     //--------------------------------------------------------------------------
@@ -76,7 +85,7 @@ GrB_Info GB_subassign_19
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE1 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -200,8 +209,7 @@ GrB_Info GB_subassign_19
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_IXJ_TASK_DESCRIPTOR ;
-        GB_START_PENDING_INSERTION ;
+        GB_GET_IXJ_TASK_DESCRIPTOR_PHASE2 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task

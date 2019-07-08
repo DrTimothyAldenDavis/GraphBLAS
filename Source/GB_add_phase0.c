@@ -38,7 +38,8 @@
 //      Ch_is_Mh:  true if the mask M is present, hypersparse, and not
 //      complemented, false otherwise.  In this case Ch is a deep copy of Mh.
 //      Only GB_add uses this option; it is not used by GB_masker (Ch_is_Mh
-//      is always false for GB_masker).
+//      is always false for GB_masker).  This is determined by passing in
+//      p_Ch_is_Mh as a NULL or non-NULL pointer.
 
 //      C_to_A:  if A is hypersparse, then C_to_A [k] = kA if the kth vector, j
 //      = (Ch == NULL) ? k : Ch [k] appears in A, as j = Ah [kA].  If j does
@@ -64,10 +65,10 @@
 static inline bool GB_allocate_result
 (
     int64_t Cnvec,
-    int64_t **Ch_handle,
-    int64_t **C_to_M_handle,
-    int64_t **C_to_A_handle,
-    int64_t **C_to_B_handle
+    int64_t *restrict *Ch_handle,
+    int64_t *restrict *C_to_M_handle,
+    int64_t *restrict *C_to_A_handle,
+    int64_t *restrict *C_to_B_handle
 )
 {
     bool ok = true ;
@@ -122,12 +123,11 @@ static inline bool GB_allocate_result
 GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    int64_t **Ch_handle,        // Ch: output of size Cnvec, or NULL
-    int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
-    int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
-    int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
-    bool *p_Ch_is_Mh,           // if true, then Ch == Mh.  This option is for
-                                // GB_add only, not GB_masker.
+    int64_t *restrict *Ch_handle,        // Ch: size Cnvec, or NULL
+    int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    int64_t *restrict *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    int64_t *restrict *C_to_B_handle,    // C_to_B: of size Cnvec, or NULL
+    bool *p_Ch_is_Mh,           // if true, then Ch == Mh
     const GrB_Matrix M,         // optional mask, may be NULL; not complemented
     const GrB_Matrix A,         // standard, hypersparse, slice, or hyperslice
     const GrB_Matrix B,         // standard or hypersparse; never a slice

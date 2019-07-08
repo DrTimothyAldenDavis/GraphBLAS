@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Unless this file is Generator/GB_AxB.c, do not edit it (auto-generated)
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -33,7 +33,7 @@
 // Add:      cij = fminf (cij, z)
 // MultAdd:  cij = fminf (cij, (bkj - aik))
 // Identity: INFINITY
-// Terminal: if (cij == -INFINITY) break ;
+// Terminal: if (cij == (-INFINITY)) break ;
 
 #define GB_ATYPE \
     float
@@ -71,7 +71,7 @@
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
-    if (cij == -INFINITY) break ;
+    if (cij == (-INFINITY)) break ;
 
 // simd pragma for dot product
 #define GB_DOT_SIMD \
@@ -127,7 +127,7 @@ GrB_Info GB_Adot2B__min_rminus_fp32
     const GrB_Matrix M, const bool Mask_comp,
     const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    int64_t **C_counts,
+    int64_t *restrict *C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 

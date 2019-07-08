@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated/ folder, do not edit it (auto-generated)
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -66,7 +66,7 @@
 GrB_Info GB_unop__ainv_uint64_uint64
 (
     uint64_t *restrict Cx,
-    uint64_t *restrict Ax,
+    const uint64_t *restrict Ax,
     int64_t anz,
     int nthreads
 )
@@ -74,7 +74,7 @@ GrB_Info GB_unop__ainv_uint64_uint64
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #pragma omp parallel for num_threads(nthreads)
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t p = 0 ; p < anz ; p++)
     {
         GB_CAST_OP (p, p) ;

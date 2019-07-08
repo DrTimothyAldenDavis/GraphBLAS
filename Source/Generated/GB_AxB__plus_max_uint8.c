@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-// Unless this file is Generator/GB_AxB.c, do not edit it (auto-generated)
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -128,7 +128,7 @@ GrB_Info GB_Adot2B__plus_max_uint8
     const GrB_Matrix M, const bool Mask_comp,
     const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    int64_t **C_counts,
+    int64_t *restrict *C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 

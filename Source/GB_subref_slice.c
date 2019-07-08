@@ -47,8 +47,8 @@ GrB_Info GB_subref_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads for subref operation
     bool *p_post_sort,              // true if a final post-sort is needed
-    int64_t **p_Mark,               // for I inverse, if needed; size avlen
-    int64_t **p_Inext,              // for I inverse, if needed; size nI
+    int64_t *restrict *p_Mark,      // for I inverse, if needed; size avlen
+    int64_t *restrict *p_Inext,     // for I inverse, if needed; size nI
     int64_t *p_nduplicates,         // # of duplicates, if I inverse computed
     // from phase0:
     const int64_t *restrict Ap_start,   // location of A(imin:imax,kA)

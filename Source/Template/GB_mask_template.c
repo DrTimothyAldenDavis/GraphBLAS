@@ -74,23 +74,23 @@
     const int64_t *restrict Zi = Z->i ;
 
     const int64_t *restrict Mp = NULL ;
-    const int64_t *restrict Mh = NULL ;
+    // const int64_t *restrict Mh = NULL ;
     const int64_t *restrict Mi = NULL ;
     const GB_void *restrict Mx = NULL ;
     GB_cast_function cast_M = NULL ;
     size_t msize = 0 ;
-    int64_t Mnvec = 0 ;
-    bool M_is_hyper = false ;
+    // int64_t Mnvec = 0 ;
+    // bool M_is_hyper = false ;
     if (M != NULL)
     { 
         Mp = M->p ;
-        Mh = M->h ;
+        // Mh = M->h ;
         Mi = M->i ;
         Mx = M->x ;
         cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
         msize = M->type->size ;
-        Mnvec = M->nvec ;
-        M_is_hyper = M->is_hyper ;
+        // Mnvec = M->nvec ;
+        // M_is_hyper = M->is_hyper ;
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
@@ -190,13 +190,23 @@
 
             int64_t cjnz = pC_end - pC ;        // nnz in C(:,j) for this slice
             bool cdense = (cjnz == len) && (cjnz > 0) ;
-            int64_t iC_first = -1, iC_last = -1 ;
+
+            #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DEBUG )
+            int64_t iC_first = -1 ;
             if (cjnz > 0)
             {
                 // get the first and last indices in C(:,j) for this vector
                 iC_first = Ci [pC] ;
+            }
+            #endif
+
+            #ifdef GB_DEBUG
+            int64_t iC_last = -1 ;
+            if (cjnz > 0)
+            {
                 iC_last  = Ci [pC_end-1] ;
             }
+            #endif
 
             //------------------------------------------------------------------
             // get Z(:,j)
@@ -223,12 +233,14 @@
 
             int64_t zjnz = pZ_end - pZ ;        // nnz in Z(:,j) for this slice
             bool zdense = (zjnz == len) && (zjnz > 0) ;
+            #ifdef GB_DEBUG
             int64_t iZ_first = -1, iZ_last = -1 ;
             if (zjnz > 0)
             {
                 iZ_first = Zi [pZ] ;
                 iZ_last  = Zi [pZ_end-1] ;
             }
+            #endif
 
             //------------------------------------------------------------------
             // get M(:,j)

@@ -47,7 +47,8 @@ GrB_Info GB_compatible          // SUCCESS if all is OK, *_MISMATCH otherwise
         // be compatible.  This is the same as the condition below
         // when accum is NULL.
 
-        info = GB_BinaryOp_compatible (accum, ctype, ctype, ttype, 0, Context) ;
+        info = GB_BinaryOp_compatible (accum, ctype, ctype, ttype,
+            GB_ignore_code, Context) ;
         if (info != GrB_SUCCESS)
         { 
             return (info) ;

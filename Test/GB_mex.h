@@ -54,11 +54,11 @@ void GB_mx_put_time
 (
     GrB_Desc_Value AxB_method_used
 ) ;
-void GB_mx_clear_time ( ) ;             // clear the time and start the tic
+void GB_mx_clear_time (void) ;          // clear the time and start the tic
 #define GB_MEX_TIC { GB_mx_clear_time ( ) ; }
 #define GB_MEX_TOC { gbtime = simple_toc (tic) ; }
 
-void GB_mx_abort ( ) ;                  // assertion failure
+void GB_mx_abort (void) ;               // assertion failure
 
 bool GB_mx_mxArray_to_BinaryOp          // true if successful, false otherwise
 (
@@ -284,12 +284,12 @@ bool GB_mx_isequal  // true if A and B are exactly the same
     GrB_Matrix B
 ) ;
 
-int GB_mx_Sauna_nmalloc ( ) ;  // return # of mallocs in Saunas in use
+int GB_mx_Sauna_nmalloc (void) ;  // return # of mallocs in Saunas in use
 
 GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
 (
     char *arg_name,         // name of the output matrix
-    mxArray *arg,           // string to select the alias
+    const mxArray *arg,     // string to select the alias
     char *arg1_name,        // name of first possible alias
     GrB_Matrix arg1,        // first possible alias
     char *arg2_name,        // name of 2nd possible alias
@@ -437,13 +437,13 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
 // the internal GB_cov array.  The MATLAB array is created if it doesn't exist.
 // Thus, to clear the counts simply clear GraphBLAS_gbcov from the MATLAB
 // global workpace.
-void GB_cover_get ( ) ;
+void GB_cover_get (void) ;
 
 // GB_cover_put copies the internal GB_cov array back into the MATLAB
 // GraphBLAS_gbcov array, for analysis and for subsequent statement counting.
 // This way, multiple tests in MATLAB can be accumulated into a single array
 // of counters.
-void GB_cover_put ( ) ;
+void GB_cover_put (void) ;
 
 #endif
 

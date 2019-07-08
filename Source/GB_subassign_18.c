@@ -45,6 +45,8 @@ GrB_Info GB_subassign_18
 
     GB_GET_C ;
     GB_GET_MASK ;
+    const bool M_is_hyper = M->is_hyper ;
+    const int64_t Mnvec = M->nvec ;
     GB_GET_A ;
     GB_GET_S ;
     GrB_BinaryOp accum = NULL ;
@@ -79,7 +81,7 @@ GrB_Info GB_subassign_18
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR ;
+        GB_GET_TASK_DESCRIPTOR_PHASE1 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -108,7 +110,7 @@ GrB_Info GB_subassign_18
             //------------------------------------------------------------------
 
             // jC = J [j] ; or J is a colon expression
-            int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
+            // int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
 
             // while both list S (:,j) and A (:,j) have entries
             while (pS < pS_end && pA < pA_end)
@@ -214,8 +216,7 @@ GrB_Info GB_subassign_18
         // get the task descriptor
         //----------------------------------------------------------------------
 
-        GB_GET_TASK_DESCRIPTOR ;
-        GB_START_PENDING_INSERTION ;
+        GB_GET_TASK_DESCRIPTOR_PHASE2 ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task

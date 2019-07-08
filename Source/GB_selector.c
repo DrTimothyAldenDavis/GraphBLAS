@@ -111,9 +111,10 @@ GrB_Info GB_selector
         if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_C_opcode)
         {
             // ithunk = (int64_t) Thunk (0)
-            GB_cast_array (&ithunk, GB_INT64_code, Thunk->x, tcode, 1, NULL) ;
+            GB_cast_array ((GB_void *restrict) &ithunk,
+                                    GB_INT64_code, Thunk->x, tcode, 1, NULL) ;
             // athunk = (atype) Thunk (0)
-            GB_cast_array ( athunk, A->type->code, Thunk->x, tcode, 1,NULL) ;
+            GB_cast_array ( athunk, A->type->code, Thunk->x, tcode, 1, NULL) ;
             // xthunk now points to the typecasted (atype) Thunk (0)
             xthunk = athunk ;
         }

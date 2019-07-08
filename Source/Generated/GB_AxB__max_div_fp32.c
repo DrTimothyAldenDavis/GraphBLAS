@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Unless this file is Generator/GB_AxB.c, do not edit it (auto-generated)
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -32,7 +32,7 @@
 // Multiply: z = (aik / bkj)
 // Add:      cij = fmaxf (cij, z)
 // MultAdd:  cij = fmaxf (cij, (aik / bkj))
-// Identity: -INFINITY
+// Identity: (-INFINITY)
 // Terminal: if (cij == INFINITY) break ;
 
 #define GB_ATYPE \
@@ -67,7 +67,7 @@
 
 // monoid identity value (Gustavson's method only, with no mask)
 #define GB_IDENTITY \
-    -INFINITY
+    (-INFINITY)
 
 // break if cij reaches the terminal value (dot product only)
 #define GB_DOT_TERMINAL(cij) \
@@ -127,7 +127,7 @@ GrB_Info GB_Adot2B__max_div_fp32
     const GrB_Matrix M, const bool Mask_comp,
     const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    int64_t **C_counts,
+    int64_t *restrict *C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 

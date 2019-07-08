@@ -16,7 +16,7 @@
 
 GrB_Info GB_subref_phase1               // count nnz in each C(:,j)
 (
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    int64_t *restrict *Cp_handle,       // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase0b:
     GB_task_struct *restrict TaskList,  // array of structs

@@ -13,7 +13,6 @@
 {
 
     const GB_ATYPE *restrict Ax = A->x ;
-    const int64_t  *restrict Ai = A->i ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (anz > 0) ;
 
@@ -32,7 +31,9 @@
         {
             Panel [k] = Ax [k] ;
         }
+        #if GB_HAS_TERMINAL
         int panel_count = 0 ;
+        #endif
 
         // reduce the rest of the entries into the panel
         for (int64_t p = GB_PANEL ; p < anz ; p += GB_PANEL)
@@ -91,7 +92,9 @@
 
         GB_CTYPE W [ntasks] ;
         ASSERT (ntasks <= anz) ;
+        #if GB_HAS_TERMINAL
         bool early_exit = false ;
+        #endif
 
         //----------------------------------------------------------------------
         // each thread reduces its own slice in parallel
@@ -119,7 +122,9 @@
                 {
                     Panel [k] = Ax [pstart + k] ;
                 }
+                #if GB_HAS_TERMINAL
                 int panel_count = 0 ;
+                #endif
                 for (int64_t p = pstart + GB_PANEL ; p < pend ; p += GB_PANEL)
                 {
                     if (p + GB_PANEL > pend)

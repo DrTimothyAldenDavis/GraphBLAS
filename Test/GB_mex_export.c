@@ -53,6 +53,8 @@ GrB_Descriptor desc = NULL ;
 bool dump = false ;
 GrB_Type type = NULL ;
 size_t asize = 0 ;
+GrB_Info import_export (GB_Context Context) ;
+GrB_Info import_export2 (GB_Context Context) ;
 
 //------------------------------------------------------------------------------
 

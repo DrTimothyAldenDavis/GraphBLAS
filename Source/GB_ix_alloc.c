@@ -48,8 +48,7 @@ GrB_Info GB_ix_alloc        // allocate A->i and A->x space in a matrix
 
     // Free the existing A->x and A->i content, if any.
     // Leave A->p and A->h unchanged.
-    GrB_Info info = GB_ix_free (A) ;
-    ASSERT (info == GrB_SUCCESS) ;
+    GB_IX_FREE (A) ;
 
     // allocate the new A->x and A->i content
     A->nzmax = GB_IMAX (nzmax, 1) ;

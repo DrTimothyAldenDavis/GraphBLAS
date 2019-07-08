@@ -28,6 +28,8 @@
 GrB_Matrix A = NULL, B = NULL, C = NULL, Aconj = NULL, Mask = NULL ;
 GrB_Monoid add = NULL ;
 GrB_Semiring semiring = NULL ;
+GrB_Info adotb_complex (GB_Context Context) ;
+GrB_Info adotb (GB_Context Context) ;
 
 //------------------------------------------------------------------------------
 

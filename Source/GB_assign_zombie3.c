@@ -46,7 +46,6 @@ void GB_assign_zombie3
     // get M(:,0)
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mp = M->p ;
     const int64_t *restrict Mi = M->i ;
     const GB_void *restrict Mx = M->x ;

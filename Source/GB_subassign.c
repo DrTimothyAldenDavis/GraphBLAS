@@ -107,7 +107,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
         GB_OK (GB_BinaryOp_compatible (accum, C->type, C->type,
             (scalar_expansion) ? NULL : A->type,
-            (scalar_expansion) ? scalar_code : 0, Context)) ;
+            (scalar_expansion) ? scalar_code : GB_ignore_code, Context)) ;
     }
 
     // C(Rows,Cols)<M> = T, so C and T must be compatible.

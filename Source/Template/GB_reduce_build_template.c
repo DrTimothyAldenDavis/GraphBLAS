@@ -12,6 +12,10 @@
 // agnostic about which vectors the entries appear.
 
 {
+
+    // k unused for some uses of this template
+    #include "GB_unused.h"
+
     if (ndupl == 0)
     {
 

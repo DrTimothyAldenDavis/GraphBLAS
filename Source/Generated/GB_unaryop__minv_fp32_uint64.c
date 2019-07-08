@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// If this file is in the Generated/ folder, do not edit it (auto-generated)
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
 
 #include "GB.h"
 #ifndef GBCOMPACT
@@ -23,7 +23,7 @@
 // C type:   float
 // A type:   uint64_t
 // cast:     float cij = aij
-// unaryop:  cij = 1./aij
+// unaryop:  cij = (1.0F)/aij
 
 #define GB_ATYPE \
     uint64_t
@@ -39,7 +39,7 @@
 
 // unary operator
 #define GB_OP(z, x)   \
-    z = 1./x ;
+    z = (1.0F)/x ;
 
 // casting
 #define GB_CASTING(z, x)   \
@@ -66,7 +66,7 @@
 GrB_Info GB_unop__minv_fp32_uint64
 (
     float *restrict Cx,
-    uint64_t *restrict Ax,
+    const uint64_t *restrict Ax,
     int64_t anz,
     int nthreads
 )
@@ -74,7 +74,7 @@ GrB_Info GB_unop__minv_fp32_uint64
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #pragma omp parallel for num_threads(nthreads)
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t p = 0 ; p < anz ; p++)
     {
         GB_CAST_OP (p, p) ;

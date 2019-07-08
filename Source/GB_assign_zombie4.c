@@ -46,7 +46,6 @@ void GB_assign_zombie4
 
     const int64_t *restrict Mh = M->h ;
     const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mi = M->i ;
     const GB_void *restrict Mx = M->x ;
     const size_t msize = M->type->size ;
     const GB_cast_function cast_M =

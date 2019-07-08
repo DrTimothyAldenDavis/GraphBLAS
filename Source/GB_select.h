@@ -50,5 +50,12 @@ static inline bool GB_is_nonzero (const GB_void *value, int64_t size)
     return (false) ;
 }
 
+//------------------------------------------------------------------------------
+// compiler diagnostics
+//------------------------------------------------------------------------------
+
+// Tx unused for some uses of the Generated/GB_sel_* functions
+#include "GB_unused.h"
+
 #endif
 

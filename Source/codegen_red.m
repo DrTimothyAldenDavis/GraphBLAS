@@ -49,8 +49,9 @@ codegen_red_method ('min',    op, 'uint16_t', 'UINT16_MAX', '0'         , 16) ;
 codegen_red_method ('min',    op, 'uint32_t', 'UINT32_MAX', '0'         , 16) ;
 codegen_red_method ('min',    op, 'uint64_t', 'UINT64_MAX', '0'         , 16) ;
 op = 'if ((yarg < zarg) || (zarg != zarg)) zarg = yarg' ;
-codegen_red_method ('min',    op, 'float'   , 'INFINITY'  , '-INFINITY' , 16) ;
-codegen_red_method ('min',    op, 'double'  , 'INFINITY'  , '-INFINITY' , 16) ;
+codegen_red_method ('min',    op, 'float'   , 'INFINITY' , '(-INFINITY)', 16) ;
+codegen_red_method ('min',    op, 'double'  , ...
+    '((double) INFINITY)'  , '((double) -INFINITY)' , 16) ;
 
 % MAX: 10 monoids
 fprintf ('\nmax    ') ;
@@ -64,8 +65,9 @@ codegen_red_method ('max',    op, 'uint16_t', '0'         , 'UINT16_MAX', 16) ;
 codegen_red_method ('max',    op, 'uint32_t', '0'         , 'UINT32_MAX', 16) ;
 codegen_red_method ('max',    op, 'uint64_t', '0'         , 'UINT64_MAX', 16) ;
 op = 'if ((yarg > zarg) || (zarg != zarg)) zarg = yarg' ;
-codegen_red_method ('max',    op, 'float'   , '-INFINITY' , 'INFINITY'  , 16) ;
-codegen_red_method ('max',    op, 'double'  , '-INFINITY' , 'INFINITY'  , 16) ;
+codegen_red_method ('max',    op, 'float'   , '(-INFINITY)', 'INFINITY' , 16) ;
+codegen_red_method ('max',    op, 'double'  , ...
+    '((double) INFINITY)'  , '((double) -INFINITY)' , 16) ;
 
 % PLUS: 10 monoids
 fprintf ('\nplus   ') ;

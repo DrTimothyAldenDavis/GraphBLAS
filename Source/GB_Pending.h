@@ -86,7 +86,6 @@ static inline bool GB_Pending_add   // add a tuple to the list
 
     ASSERT (PHandle != NULL) ;
     GB_Pending Pending = (*PHandle) ;
-    GrB_Info info = GrB_SUCCESS ;
 
     //--------------------------------------------------------------------------
     // allocate the Pending tuples, or ensure existing list is large enough

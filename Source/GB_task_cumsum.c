@@ -119,10 +119,9 @@ void GB_task_cumsum
             int64_t pC_end = TaskList [t+1].pC ;
             int64_t pM     = TaskList [t].pM ;
             int64_t pM_end = TaskList [t].pM_end ;
-            int64_t len    = TaskList [t].len ;
             // printf ("pA ["GBd":"GBd"-1] pB ["GBd":"GBd"-1] pC ["GBd":"GBd
-            // "-1] pM ["GBd":"GBd"-1] len "GBd"\n",
-            // pA, pA_end, pB, pB_end, pC, pC_end, pM, pM_end, len) ;
+            // "-1] pM ["GBd":"GBd"-1] len "GBd"\n", pA, pA_end, pB, pB_end,
+            // pC, pC_end, pM, pM_end, TaskList [t].len) ;
             ASSERT (k >= 0 && k < Cnvec) ;
             // pA:(pA_end-1) must reside inside A(:,j), and pB:(pB_end-1) must
             // reside inside B(:,j), but these cannot be checked here since A

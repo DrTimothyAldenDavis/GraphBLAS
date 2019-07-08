@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_select_exec: C=select(A,thunk)
+// GB_select_phase2: C=select(A,thunk)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -9,15 +9,18 @@
 
 {
 
+    // asize, avlen, avdim, and Ah unused for some uses of this template
+    #include "GB_unused.h"
+
     //--------------------------------------------------------------------------
     // get A
     //--------------------------------------------------------------------------
 
     const int64_t  *restrict Ap = A->p ;
-    const int64_t  *restrict Ah = A->h ;
+    const int64_t  *restrict Ah = A->p ;
     const int64_t  *restrict Ai = A->i ;
     const GB_ATYPE *restrict Ax = A->x ;
-    size_t  asize = A->type->size ;
+    size_t asize = A->type->size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
 

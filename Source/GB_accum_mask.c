@@ -246,7 +246,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         //----------------------------------------------------------------------
 
         GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, accum,
-            T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, 0, Context)) ;
+            T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, GB_ignore_code, Context)) ;
 
     }
     else

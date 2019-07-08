@@ -23,7 +23,7 @@
 
 // Compare this function with GB_shallow_op.c
 
-#include "GB.h"
+#include "GB_transpose.h"
 
 GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
 (

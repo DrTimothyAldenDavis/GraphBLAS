@@ -49,6 +49,21 @@ bool ignore ;
 bool malloc_debug = false ;
 GrB_Info info = GrB_SUCCESS ;
 int kind = 0 ;
+GrB_Info assign (void) ;
+
+GrB_Info many_assign
+(
+    int nwork,
+    int fA,
+    int fI,
+    int fJ,
+    int faccum,
+    int fMask,
+    int fdesc,
+    mxClassID cclass,
+    int fkind,
+    const mxArray *pargin [ ]
+) ;
 
 //------------------------------------------------------------------------------
 // assign: perform a single assignment

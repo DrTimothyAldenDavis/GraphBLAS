@@ -276,7 +276,7 @@ GrB_Info GB_AxB_user
     const int GB_dot_nthreads,
     const int GB_naslice,
     const int GB_nbsllce,
-    const int64_t *restrict GB_C_counts
+    int64_t **GB_C_counts
 ) ;
 
 #endif

@@ -15,8 +15,8 @@
 
 void GB_memcpy                  // parallel memcpy
 (
-    GB_void *dest,              // destination
-    const GB_void *src,         // source
+    void *dest,                 // destination
+    const void *src,            // source
     size_t n,                   // # of bytes to copy
     int nthreads                // # of threads to use
 )
@@ -30,6 +30,8 @@ void GB_memcpy                  // parallel memcpy
     {
         nthreads = GB_IMIN (nthreads, n / GB_CHUNK) ;
         size_t nchunks = 1 + (n / GB_CHUNK) ;
+        GB_void *pdest = dest ;
+        const GB_void *psrc = src ;
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (size_t k = 0 ; k < nchunks ; k++)
@@ -38,7 +40,7 @@ void GB_memcpy                  // parallel memcpy
             if (start < n)
             {
                 size_t chunk = GB_IMIN (n - start, GB_CHUNK) ;
-                memcpy (dest + start, src + start, chunk) ;
+                memcpy (pdest + start, psrc + start, chunk) ;
             }
         }
     }

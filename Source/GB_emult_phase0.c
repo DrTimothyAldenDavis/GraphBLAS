@@ -42,10 +42,10 @@
 GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    const int64_t **Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
-    int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
-    int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
-    int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
+    const int64_t *restrict *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
+    int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    int64_t *restrict *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    int64_t *restrict *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
     const GrB_Matrix A,
@@ -338,8 +338,6 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     // find Cnvec
     //--------------------------------------------------------------------------
 
-    bool C_is_hyper = (Ch != NULL) ;
-
     int64_t Cnvec ;
 
     if (Ch == Ah)
@@ -381,7 +379,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // compute C_to_M
-        ASSERT (C_is_hyper) ;
+        ASSERT (Ch != NULL) ;
 
         const int64_t *restrict Mp = M->p ;
         #pragma omp parallel for num_threads(nthreads)
@@ -410,7 +408,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // compute C_to_A
-        ASSERT (C_is_hyper) ;
+        ASSERT (Ch != NULL) ;
         const int64_t *restrict Ap = A->p ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t k = 0 ; k < Cnvec ; k++)
@@ -439,7 +437,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         }
 
         // compute C_to_B
-        ASSERT (C_is_hyper) ;
+        ASSERT (Ch != NULL) ;
         const int64_t *restrict Bp = B->p ;
         #pragma omp parallel for num_threads(nthreads)
         for (int64_t k = 0 ; k < Cnvec ; k++)

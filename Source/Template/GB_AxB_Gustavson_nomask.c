@@ -56,7 +56,7 @@
     #endif
 
     // C->p and C->h have already been computed in the symbolic phase
-    ASSERT (C->magic = GB_MAGIC) ;
+    ASSERT (C->magic == GB_MAGIC) ;
 
     //--------------------------------------------------------------------------
     // C=A*B using the Gustavson's saxpy-based method; precomputed pattern of C

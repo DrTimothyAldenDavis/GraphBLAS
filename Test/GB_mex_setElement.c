@@ -23,6 +23,9 @@
     GB_mx_put_global (true, 0) ;        \
 }
 
+#if defined ( __GNUC__ )
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#endif
 
 // set all elements of a matrix and return if an error is encountered
 #define setEl(name,type)                                                    \

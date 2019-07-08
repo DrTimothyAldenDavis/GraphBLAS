@@ -61,13 +61,13 @@ GrB_Info GB_mxm                     // C<M> = A*B
     { 
         // z=fmult(b,a), for entries a from A, and b from B
         info = GB_BinaryOp_compatible (semiring->multiply,
-                                        NULL, B->type, A->type, 0, Context) ;
+                NULL, B->type, A->type, GB_ignore_code, Context) ;
     }
     else
     { 
         // z=fmult(a,b), for entries a from A, and b from B
         info = GB_BinaryOp_compatible (semiring->multiply,
-                                        NULL, A->type, B->type, 0, Context) ;
+                NULL, A->type, B->type, GB_ignore_code, Context) ;
     }
     if (info != GrB_SUCCESS)
     { 

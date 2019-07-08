@@ -42,6 +42,9 @@ typedef struct
 } LoHi ; 
 
 bool band (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *k) ;
+
+bool band (GrB_Index i, GrB_Index j, GrB_Index nrows,
     GrB_Index ncols, const void *x, const void *k)
 {
     int64_t *lohi = (int64_t *) k ;
@@ -96,7 +99,7 @@ void mexFunction
     // create the Thunk
     OK (GrB_Type_new (&Thunk_type, sizeof (LoHi))) ;
     OK (GrB_Vector_new (&Thunk, Thunk_type, 1)) ;
-    OK (GrB_Vector_setElement_UDT (Thunk, (const void *) lohi, 0)) ;
+    OK (GrB_Vector_setElement_UDT (Thunk, (void *) lohi, 0)) ;
     GrB_Index ignore ;
     OK (GrB_Vector_nvals (&ignore, Thunk)) ;
     // GxB_print (Thunk, 3) ;

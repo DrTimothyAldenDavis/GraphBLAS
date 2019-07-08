@@ -38,9 +38,9 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    int64_t **Zh_handle,            // Zh is A->h, M->h, or NULL
-    int64_t **Z_to_A_handle,        // Z_to_A: output of size Znvec, or NULL
-    int64_t **Z_to_M_handle,        // Z_to_M: output of size Znvec, or NULL
+    const int64_t *restrict *Zh_handle,     // Zh is A->h, M->h, or NULL
+    int64_t *restrict *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
+    int64_t *restrict *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,
@@ -90,9 +90,22 @@ GrB_Info GB_subassign_emult_slice
     // get inputs
     //--------------------------------------------------------------------------
 
-    GB_GET_C ;
-    GB_GET_MASK ;
-    GB_GET_A ;
+    GrB_Info info ;
+    int64_t *restrict Ci = C->i ;
+    int64_t nzombies = C->nzombies ;
+    const bool C_is_hyper = C->is_hyper ;
+    const int64_t Cnvec = C->nvec ;
+    const int64_t cvlen = C->vlen ;
+    const int64_t *restrict Ch = C->h ;
+    const int64_t *restrict Cp = C->p ;
+
+    const int64_t *restrict Mp = M->p ;
+    const int64_t *restrict Mh = M->h ;
+    const int64_t *restrict Mi = M->i ;
+
+    const int64_t *restrict Ap = A->p ;
+    const int64_t *restrict Ah = A->h ;
+    const int64_t *restrict Ai = A->i ;
 
     //--------------------------------------------------------------------------
     // construct fine/coarse tasks for eWise multiply of A.*M
@@ -102,7 +115,7 @@ GrB_Info GB_subassign_emult_slice
     // function takes the place of B in GB_emult.
 
     int64_t Znvec ;
-    int64_t *restrict Zh = NULL ;
+    const int64_t *restrict Zh = NULL ;
     int64_t *restrict Z_to_A = NULL ;
     int64_t *restrict Z_to_M = NULL ;
 
@@ -167,7 +180,6 @@ GrB_Info GB_subassign_emult_slice
             int64_t iM_first = Mi [pM] ;
             int64_t iM_last  = Mi [pM_end-1] ;
             if (iA_last < iM_first || iM_last < iA_first) continue ;
-            int64_t pM_start = pM ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C

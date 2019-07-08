@@ -10,7 +10,7 @@
 // Given an index p, find k so that Ap [k] <= p && p < Ap [k+1].  The search is
 // limited to k in the range Ap [kleft ... anvec].
 
-#include "GB.h"
+#include "GB_ek_slice.h"
 
 int64_t GB_search_for_vector        // return the vector k that contains p
 (

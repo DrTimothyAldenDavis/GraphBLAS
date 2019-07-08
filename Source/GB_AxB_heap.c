@@ -36,7 +36,9 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     // check inputs
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUG
     GB_Context Context = NULL ;
+    #endif
     ASSERT (Chandle != NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M_in, "M_in for heap A*B", GB0)) ;
     ASSERT_OK (GB_check (A, "A for heap A*B", GB0)) ;
@@ -251,7 +253,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         GB_void *restrict Cx = C->x ;
         GB_void *cij = Cx ;        // advances through each entry of C
 
-        GB_void *identity = add->identity ;
+        // GB_void *identity = add->identity ;
 
         GB_cast_function cast_A, cast_B ;
         if (flipxy)

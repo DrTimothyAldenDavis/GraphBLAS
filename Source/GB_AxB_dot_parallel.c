@@ -78,13 +78,9 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     }
 
     int64_t anvec = A->nvec ;
-    int64_t avdim = A->vdim ;
-    int64_t avlen = A->vlen ;
     int64_t anz   = GB_NNZ (A) ;
 
     int64_t bnvec = B->nvec ;
-    int64_t bvdim = B->vdim ;
-    int64_t bvlen = B->vlen ;
     int64_t bnz   = GB_NNZ (B) ;
 
     ASSERT (A->vlen == B->vlen) ;

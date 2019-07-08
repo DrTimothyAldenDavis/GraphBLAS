@@ -23,7 +23,7 @@ bool GB_Pending_ensure      // create or reallocate a list of pending tuples
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (Phandle != NULL) ;
+    ASSERT (PHandle != NULL) ;
 
     //--------------------------------------------------------------------------
     // ensure the list of pending tuples is large enough

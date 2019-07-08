@@ -39,7 +39,7 @@ void GB_assign_zombie5
 
     const int64_t *restrict Zh = Z->h ;
     const int64_t *restrict Zp = Z->p ;
-    const int64_t Znvec = Z->nvec ;
+    // const int64_t Znvec = Z->nvec ;
     int64_t *restrict Zi = Z->i ;
     int64_t nzombies = Z->nzombies ;
     const int64_t znz = GB_NNZ (Z) ;

@@ -32,7 +32,9 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     // check inputs
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUG
     GB_Context Context = NULL ;
+    #endif
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for alloc C=A*B", GB0)) ;

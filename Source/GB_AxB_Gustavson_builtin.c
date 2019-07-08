@@ -35,7 +35,9 @@ GrB_Info GB_AxB_Gustavson_builtin
     // check inputs
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUG
     GB_Context Context = NULL ;
+    #endif
     ASSERT (!GB_aliased (C, M)) ;
     ASSERT (!GB_aliased (C, A)) ;
     ASSERT (!GB_aliased (C, B)) ;

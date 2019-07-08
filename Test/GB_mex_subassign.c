@@ -75,6 +75,22 @@ GrB_Monoid reduce = NULL ;
 GrB_BinaryOp op = NULL ;
 bool reduce_is_complex = false ;
 
+GrB_Info assign (GB_Context Context) ;
+
+GrB_Info many_subassign
+(
+    int nwork,
+    int fA,
+    int fI,
+    int fJ,
+    int faccum,
+    int fM,
+    int fdesc,
+    mxClassID cclass,
+    const mxArray *pargin [ ],
+    GB_Context Context
+) ;
+
 //------------------------------------------------------------------------------
 // assign: perform a single assignment
 //------------------------------------------------------------------------------

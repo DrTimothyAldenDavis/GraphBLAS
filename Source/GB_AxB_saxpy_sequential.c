@@ -35,7 +35,9 @@ GrB_Info GB_AxB_saxpy_sequential    // single-threaded C<M>=A*B
     // check inputs
     //--------------------------------------------------------------------------
 
+    #ifdef GB_DEBUG
     GB_Context Context = NULL ;
+    #endif
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL
     ASSERT (*Chandle == NULL) ;
     ASSERT_OK_OR_NULL (GB_check (M, "M for sequential A*B", GB0)) ;

@@ -10,6 +10,8 @@
 // All entries in C=D*B are computed fully in parallel. 
 
 {
+    // Bx is unused if the operator is FIRST
+    #include "GB_unused.h"
 
     //--------------------------------------------------------------------------
     // get C, D, and B

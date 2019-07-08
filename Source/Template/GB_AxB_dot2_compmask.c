@@ -24,18 +24,18 @@
         #if defined ( GB_PHASE_1_OF_2 )
         int64_t *restrict C_count = C_counts [a_taskid] ;
         #else
-        int64_t *restrict C_count_start =
+        const int64_t *restrict C_count_start =
             (a_taskid == 0) ?         NULL : C_counts [a_taskid] ;
-        int64_t *restrict C_count_end   =
+        const int64_t *restrict C_count_end   =
             (a_taskid == naslice-1) ? NULL : C_counts [a_taskid+1] ;
         const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
         #endif
 
-        const int64_t *restrict Ah = A->h ;
-        const int64_t *restrict Ap = A->p ;
+        // const int64_t *restrict Ah = A->h ;
+        // const int64_t *restrict Ap = A->p ;
         const int64_t *restrict Ai = A->i ;
-        int64_t anvec = A->nvec ;
-        bool A_is_hyper = GB_IS_HYPER (A) ;
+        // int64_t anvec = A->nvec ;
+        // bool A_is_hyper = GB_IS_HYPER (A) ;
 
         //----------------------------------------------------------------------
         // C<!M>=A'*B via dot products

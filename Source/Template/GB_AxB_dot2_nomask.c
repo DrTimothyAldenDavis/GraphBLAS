@@ -30,11 +30,11 @@
         const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
         #endif
 
-        const int64_t *restrict Ah = A->h ;
-        const int64_t *restrict Ap = A->p ;
+        // const int64_t *restrict Ah = A->h ;
+        // const int64_t *restrict Ap = A->p ;
         const int64_t *restrict Ai = A->i ;
-        int64_t anvec = A->nvec ;
-        bool A_is_hyper = GB_IS_HYPER (A) ;
+        // int64_t anvec = A->nvec ;
+        // bool A_is_hyper = GB_IS_HYPER (A) ;
 
         //----------------------------------------------------------------------
         // C=A'*B via dot products

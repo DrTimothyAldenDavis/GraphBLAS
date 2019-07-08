@@ -26,10 +26,10 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
 GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 (
     int64_t *p_Cnvec,           // # of vectors to compute in C
-    const int64_t **Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
-    int64_t **C_to_M_handle,    // C_to_M: output of size Cnvec, or NULL
-    int64_t **C_to_A_handle,    // C_to_A: output of size Cnvec, or NULL
-    int64_t **C_to_B_handle,    // C_to_B: output of size Cnvec, or NULL
+    const int64_t *restrict *Ch_handle,  // Ch is M->h, A->h, B->h, or NULL
+    int64_t *restrict *C_to_M_handle,    // C_to_M: size Cnvec, or NULL
+    int64_t *restrict *C_to_A_handle,    // C_to_A: size Cnvec, or NULL
+    int64_t *restrict *C_to_B_handle,    // C_to_B: size Cnvec, or NULL
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
     const GrB_Matrix A,
@@ -39,7 +39,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
 GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
 (
-    int64_t **Cp_handle,                // output of size Cnvec+1
+    int64_t *restrict *Cp_handle,       // output of size Cnvec+1
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
     // tasks from phase0b:
     GB_task_struct *restrict TaskList,  // array of structs

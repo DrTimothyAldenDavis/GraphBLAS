@@ -1,7 +1,7 @@
 GrB_Info GB_unop
 (
     GB_ctype *restrict Cx,
-    GB_atype *restrict Ax,
+    const GB_atype *restrict Ax,
     int64_t anz,
     int nthreads
 ) ;

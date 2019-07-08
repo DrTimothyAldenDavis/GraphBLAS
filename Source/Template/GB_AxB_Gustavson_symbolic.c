@@ -13,7 +13,7 @@
     // get A and B
     //--------------------------------------------------------------------------
 
-    const int64_t *Bp = B->p ;
+    // const int64_t *Bp = B->p ;
     const int64_t *Bi = B->i ;
     const int64_t *Ap = A->p ;
     const int64_t *Ai = A->i ;
@@ -28,7 +28,9 @@
     //--------------------------------------------------------------------------
 
     int64_t *restrict Ci = C->i ;
+    #ifndef GB_HYPER_CASE
     int64_t *restrict Cp = C->p ;
+    #endif
 
     int64_t jlast, cnz, cnz_last ;
     GB_jstartup (C, &jlast, &cnz, &cnz_last) ;

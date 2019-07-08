@@ -134,7 +134,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // C<M>(Rows,Cols) = accum (C(Rows,Cols),A)
         GB_OK (GB_BinaryOp_compatible (accum, C->type, C->type,
             (scalar_expansion) ? NULL : A->type,
-            (scalar_expansion) ? scalar_code : 0, Context)) ;
+            (scalar_expansion) ? scalar_code : GB_ignore_code, Context)) ;
     }
 
     // C<M>(Rows,Cols) = T, so C and T must be compatible.
@@ -231,17 +231,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     //--------------------------------------------------------------------------
-    // determine the number of threads to use in the C_replace phase
-    //--------------------------------------------------------------------------
-
-    // The C_replace phase must examine all of C
-    int64_t cnz = GB_NNZ (C) ;
-    int64_t cnvec = C->nvec ;
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (cnz + cnvec, chunk, nthreads_max) ;
-
-    //--------------------------------------------------------------------------
     // quick return if an empty mask is complemented
     //--------------------------------------------------------------------------
 
@@ -265,7 +254,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 // all pending tuples must first be assembled; zombies OK
                 GB_WAIT_PENDING (C) ;
                 ASSERT_OK (GB_check (C, "waited C for quick mask", GB0)) ;
-                int64_t *Ci = C->i ;
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
                 {
                     // delete all entries in vector j
@@ -410,12 +398,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
     // scalar expansion: sort I and J and remove duplicates
     //--------------------------------------------------------------------------
-
-    // NOTE: gcc with -Wunused-but-set-variable may complain about I2_size and
-    // J2_size, but this is spurious.  The values are used when memory usage
-    // tracking is enabled (see GB_FREE_ALL defined above).  Ignore the
-    // spurious gcc warnings.
-    #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
     if (scalar_expansion)
     {
@@ -726,7 +708,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // M is a single column so it is never hypersparse
             ASSERT (nJ == 1) ;
             ASSERT (M->vlen == Z->vlen && M->vdim == 1 && !M->is_hyper) ;
-            ASSERT (Jkind = GB_LIST) ;
+            ASSERT (Jkind == GB_LIST) ;
             int64_t j = J [0] ;
             ASSERT (j == GB_ijlist (J, 0, Jkind, Jcolon)) ;
 
@@ -744,7 +726,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // M has vlen == 1 and the same vdim as Z
             ASSERT (nI == 1) ;
             ASSERT (M->vlen == 1 && M->vdim == Z->vdim) ;
-            ASSERT (Ikind = GB_LIST) ;
+            ASSERT (Ikind == GB_LIST) ;
             int64_t i = I [0] ;
             ASSERT (i == GB_ijlist (I, 0, Ikind, Icolon)) ;
 

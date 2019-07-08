@@ -133,7 +133,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     int64_t cnvec = B->nvec ;
 
     int64_t *C_counts [naslice] ;
-    GrB_Info task_info [naslice] ;
 
     for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
     {
@@ -185,7 +184,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         int64_t s = 0 ;
         for (int taskid = 0 ; taskid < naslice ; taskid++)
         {
-            int64_t *C_count = C_counts [taskid] ;
+            int64_t *restrict C_count = C_counts [taskid] ;
             int64_t c = C_count [k] ;
             C_count [k] = s ;
             s += c ;
@@ -298,7 +297,8 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         {
             info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, NULL, B,
                 flipxy, NULL, NULL, NULL, 0, NULL,
-                Aslice, Mask_comp,  nthreads, naslice, nbslice, C_counts) ;
+                Aslice, Mask_comp,  nthreads, naslice, nbslice,
+                C_counts) ;
             done = true ;
         }
     }
@@ -331,7 +331,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        GB_void *restrict identity = add->identity ;
+        // GB_void *restrict identity = add->identity ;
         GB_void *restrict terminal = add->terminal ;
 
         GB_cast_function cast_A, cast_B ;

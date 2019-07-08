@@ -22,7 +22,9 @@
     GB_mx_put_global (true, 0) ;        \
 }
 
-void maxdouble (double *z, double *x, double *y)
+void maxdouble (double *z, const double *x, const double *y) ;
+
+void maxdouble (double *z, const double *x, const double *y)
 {
     // this is not safe with NaNs
     (*z) = ((*x) > (*y)) ? (*x) : (*y) ;

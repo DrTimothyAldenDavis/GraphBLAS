@@ -39,53 +39,68 @@
 // manage compiler warnings
 //------------------------------------------------------------------------------
 
-// These warnings are spurious.  SuiteSparse:GraphBLAS uses many template-style
-// code generation mechanisms, and these can generate unused results that an
-// optimizing compiler can safely discard as dead code.
-
 #if defined __INTEL_COMPILER
-// disable icc warnings
-//  58:   sign compare
-//  167:  incompatible pointer
-//  144:  initialize with incompatible pointer
-//  177:  declared but unused
-//  181:  format
-//  186:  useless comparison
-//  188:  mixing enum types
+
+// disable icc -w2 warnings
+//  191:  type qualifier meangingless
 //  193:  zero used for undefined #define
 //  589:  bypass initialization
-//  593:  set but not used
+#pragma warning (disable: 191 193 )
+
+// disable icc -w3 warnings
+//  181:  format
 //  869:  unused parameters
+//  1572: floating point comparisons
+//  1599: shadow
+//  2259: typecasting may lose bits
+//  2282: unrecognized pragma
+//  2557: sign compare
+#pragma warning (disable: 181 869 1572 1599 2259 2282 2557 )
+
+// See GB_unused.h, for warnings 177 and 593, which are not globally 
+// disabled, but selectively by #include'ing GB_unused.h as needed.
+
+// resolved (warnings no longer disabled globally):
+//  58:   sign compare
+//  144:  initialize with incompatible pointer
+//  167:  incompatible pointer
+//  177:  declared but unused
+//  186:  useless comparison
+//  188:  mixing enum types
+//  593:  set but not used
 //  981:  unspecified order
 //  1418: no external declaration
 //  1419: external declaration in source file
-//  1572: floating point comparisons
-//  1599: shadow
-//  2259: typecasting
-//  2282: unrecognized pragma
 //  2330: const incompatible
-//  2557: sign compare
 //  2547: remark about include files
 //  3280: shadow
-#pragma warning (disable: 58 167 144 177 181 186 188 193 589 593 869 981 1418 1419 1572 1599 2259 2282 2330 2557 2547 3280 )
 
 #elif defined __GNUC__
 
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma GCC diagnostic ignored "-Wunknown-warning-option"
-#pragma GCC diagnostic ignored "-Wformat-truncation="
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-result"
-#pragma GCC diagnostic ignored "-Wint-in-bool-context"
+// disable warnings from -Wall -Wextra -Wpendantic
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wtype-limits"
-#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
-#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
+// See GB_unused.h, where these two pragmas are used:
+// #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+// #pragma GCC diagnostic ignored "-Wunused-variable"
+
+// resolved (warnings no longer disabled globally):
+// #pragma GCC diagnostic ignored "-Wunknown-pragmas"
+// #pragma GCC diagnostic ignored "-Wunknown-warning-option"
+// #pragma GCC diagnostic ignored "-Wtype-limits"
+// #pragma GCC diagnostic ignored "-Wunused-result"
+// #pragma GCC diagnostic ignored "-Wint-in-bool-context"
+// #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+// #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
+// #pragma GCC diagnostic ignored "-Wformat-truncation="
 
 // enable these warnings as errors
 #pragma GCC diagnostic error "-Wmisleading-indentation"
 #pragma GCC diagnostic error "-Wswitch-default"
+#pragma GCC diagnostic error "-Wdouble-promotion"
+#pragma GCC diagnostic error "-Wmissing-prototypes"
 
 #endif
 
@@ -157,7 +172,7 @@ extern int GB_cover_max ;
 
 typedef unsigned char GB_void ;
 
-typedef void (*GB_cast_function)   (void *, void *, size_t) ;
+typedef void (*GB_cast_function) (void *, const void *, size_t) ;
 
 #define GB_LEN 128
 
@@ -173,6 +188,143 @@ typedef struct GB_Sauna_struct *GB_Sauna ;
 typedef struct GB_Pending_struct *GB_Pending ;
 
 //------------------------------------------------------------------------------
+// type codes for GrB_Type
+//------------------------------------------------------------------------------
+
+typedef enum
+{
+    // the 12 scalar types
+    GB_ignore_code  = 0,
+    GB_BOOL_code    = 0,
+    GB_INT8_code    = 1,
+    GB_UINT8_code   = 2,
+    GB_INT16_code   = 3,
+    GB_UINT16_code  = 4,
+    GB_INT32_code   = 5,
+    GB_UINT32_code  = 6,
+    GB_INT64_code   = 7,
+    GB_UINT64_code  = 8,
+    GB_FP32_code    = 9,
+    GB_FP64_code    = 10,
+    GB_UCT_code     = 11,       // void *, compile-time user-defined type
+    GB_UDT_code     = 12        // void *, run-time user-defined type
+}
+GB_Type_code ;                  // enumerated type code
+
+//------------------------------------------------------------------------------
+// operator codes used in GrB_BinaryOp and GrB_UnaryOp
+//------------------------------------------------------------------------------
+
+typedef enum
+{
+    //--------------------------------------------------------------------------
+    // NOP
+    //--------------------------------------------------------------------------
+
+    // a placeholder; not an actual operator
+    GB_NOP_opcode,      //  0: nop
+
+    //--------------------------------------------------------------------------
+    // T -> T
+    //--------------------------------------------------------------------------
+
+    // 6 unary operators x=f(x) that return the same type as their input
+    GB_ONE_opcode,      //  1: z = 1
+    GB_IDENTITY_opcode, //  2: z = x
+    GB_AINV_opcode,     //  3: z = -x
+    GB_ABS_opcode,      //  4: z = abs(x)
+    GB_MINV_opcode,     //  5: z = 1/x ; special cases for bool and integers
+    GB_LNOT_opcode,     //  6: z = !x
+
+    //--------------------------------------------------------------------------
+    // TxT -> T
+    //--------------------------------------------------------------------------
+
+    // 10 binary operators z=f(x,y) that return the same type as their inputs
+    GB_FIRST_opcode,    //  7: z = x
+    GB_SECOND_opcode,   //  8: z = y
+    GB_MIN_opcode,      //  9: z = min(x,y)
+    GB_MAX_opcode,      // 10: z = max(x,y)
+    GB_PLUS_opcode,     // 11: z = x + y
+    GB_MINUS_opcode,    // 12: z = x - y
+    GB_RMINUS_opcode,   // 13: z = y - x
+    GB_TIMES_opcode,    // 14: z = x * y
+    GB_DIV_opcode,      // 15: z = x / y ; special cases for bool and ints
+    GB_RDIV_opcode,     // 16: z = y / x ; special cases for bool and ints
+
+    // 6 binary operators z=f(x,y), x,y,z all the same type
+    GB_ISEQ_opcode,     // 17: z = (x == y)
+    GB_ISNE_opcode,     // 18: z = (x != y)
+    GB_ISGT_opcode,     // 19: z = (x >  y)
+    GB_ISLT_opcode,     // 20: z = (x <  y)
+    GB_ISGE_opcode,     // 21: z = (x >= y)
+    GB_ISLE_opcode,     // 22: z = (x <= y)
+
+    // 3 binary operators that work on purely boolean values
+    GB_LOR_opcode,      // 23: z = (x != 0) || (y != 0)
+    GB_LAND_opcode,     // 23: z = (x != 0) && (y != 0)
+    GB_LXOR_opcode,     // 25: z = (x != 0) != (y != 0)
+
+    //--------------------------------------------------------------------------
+    // TxT -> bool
+    //--------------------------------------------------------------------------
+
+    // 6 binary operators z=f(x,y) that return bool (TxT -> bool)
+    GB_EQ_opcode,       // 26: z = (x == y)
+    GB_NE_opcode,       // 27: z = (x != y)
+    GB_GT_opcode,       // 28: z = (x >  y)
+    GB_LT_opcode,       // 29: z = (x <  y)
+    GB_GE_opcode,       // 30: z = (x >= y)
+    GB_LE_opcode,       // 31: z = (x <= y)
+
+    //--------------------------------------------------------------------------
+    // user-defined: unary and binary operators
+    //--------------------------------------------------------------------------
+
+    GB_USER_C_opcode,   // 32: compile-time user-defined operator
+    GB_USER_R_opcode    // 33: run-time user-defined operator
+}
+GB_Opcode ;
+
+//------------------------------------------------------------------------------
+// select opcodes
+//------------------------------------------------------------------------------
+
+// operator codes used in GrB_SelectOp structures
+typedef enum
+{
+    // built-in select operators: thunk optional; defaults to zero
+    GB_TRIL_opcode      = 0,
+    GB_TRIU_opcode      = 1,
+    GB_DIAG_opcode      = 2,
+    GB_OFFDIAG_opcode   = 3,
+    GB_RESIZE_opcode    = 4,
+
+    // built-in select operators, no thunk used
+    GB_NONZOMBIE_opcode = 5,
+    GB_NONZERO_opcode   = 6,
+    GB_EQ_ZERO_opcode   = 7,
+    GB_GT_ZERO_opcode   = 8,
+    GB_GE_ZERO_opcode   = 9,
+    GB_LT_ZERO_opcode   = 10,
+    GB_LE_ZERO_opcode   = 11,
+
+    // built-in select operators, thunk required
+    GB_NE_THUNK_opcode  = 12,
+    GB_EQ_THUNK_opcode  = 13,
+    GB_GT_THUNK_opcode  = 14,
+    GB_GE_THUNK_opcode  = 15,
+    GB_LT_THUNK_opcode  = 16,
+    GB_LE_THUNK_opcode  = 17,
+
+    // for all user-defined select operators:  thunk is optional
+    GB_USER_SELECT_C_opcode = 18,   // defined at compile-time
+    GB_USER_SELECT_R_opcode = 19    // defined at run-time
+}
+GB_Select_Opcode ;
+
+
+//------------------------------------------------------------------------------
 // opaque content of GraphBLAS objects
 //------------------------------------------------------------------------------
 
@@ -180,7 +332,7 @@ struct GB_Type_opaque       // content of GrB_Type
 {
     int64_t magic ;         // for detecting uninitialized objects
     size_t size ;           // size of the type
-    int code ;              // the type code
+    GB_Type_code code ;     // the type code
     char name [GB_LEN] ;    // name of the type
 } ;
 
@@ -191,7 +343,7 @@ struct GB_UnaryOp_opaque    // content of GrB_UnaryOp
     GrB_Type ztype ;        // type of z
     GxB_unary_function function ;        // a pointer to the unary function
     char name [GB_LEN] ;    // name of the unary operator
-    int opcode ;            // operator opcode
+    GB_Opcode opcode ;      // operator opcode
 } ;
 
 struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
@@ -202,7 +354,7 @@ struct GB_BinaryOp_opaque   // content of GrB_BinaryOp
     GrB_Type ztype ;        // type of z
     GxB_binary_function function ;        // a pointer to the binary function
     char name [GB_LEN] ;    // name of the binary operator
-    int opcode ;            // operator opcode
+    GB_Opcode opcode ;      // operator opcode
 } ;
 
 struct GB_SelectOp_opaque   // content of GxB_SelectOp
@@ -211,7 +363,7 @@ struct GB_SelectOp_opaque   // content of GxB_SelectOp
     GrB_Type xtype ;        // type of x, or NULL if generic
     GxB_select_function function ;        // a pointer to the select function
     char name [GB_LEN] ;    // name of the select operator
-    int opcode ;            // operator opcode
+    GB_Select_Opcode opcode ;   // operator opcode
 } ;
 
 // codes used in GrB_Monoid and GrB_Semiring objects
@@ -373,30 +525,30 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 //------------------------------------------------------------------------------
 
 void     GB_Global_user_multithreaded_set (bool user_multithreaded) ;
-bool     GB_Global_user_multithreaded_get ( ) ;
+bool     GB_Global_user_multithreaded_get (void) ;
 
 void     GB_Global_queue_head_set (void *p) ;
-void  *  GB_Global_queue_head_get ( ) ;
+void  *  GB_Global_queue_head_get (void) ;
 
 void     GB_Global_mode_set (GrB_Mode mode) ;
-GrB_Mode GB_Global_mode_get ( ) ;
+GrB_Mode GB_Global_mode_get (void) ;
 
 void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
-bool     GB_Global_GrB_init_called_get ( ) ;
+bool     GB_Global_GrB_init_called_get (void) ;
 
 void     GB_Global_nthreads_max_set (int nthreads_max) ;
-int      GB_Global_nthreads_max_get ( ) ;
+int      GB_Global_nthreads_max_get (void) ;
 
-int      GB_Global_omp_get_max_threads ( ) ;
+int      GB_Global_omp_get_max_threads (void) ;
 
 void     GB_Global_chunk_set (double chunk) ;
-double   GB_Global_chunk_get ( ) ;
+double   GB_Global_chunk_get (void) ;
 
 void     GB_Global_hyper_ratio_set (double hyper_ratio) ;
-double   GB_Global_hyper_ratio_get ( ) ;
+double   GB_Global_hyper_ratio_get (void) ;
 
 void     GB_Global_is_csc_set (bool is_csc) ;
-double   GB_Global_is_csc_get ( ) ;
+double   GB_Global_is_csc_get (void) ;
 
 void     GB_Global_Saunas_set (int id, GB_Sauna Sauna) ;
 GB_Sauna GB_Global_Saunas_get (int id) ;
@@ -405,7 +557,7 @@ bool     GB_Global_Sauna_in_use_get (int id) ;
 void     GB_Global_Sauna_in_use_set (int id, bool in_use) ;
 
 void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
-void     GB_Global_abort_function ( ) ;
+void     GB_Global_abort_function (void) ;
 
 void     GB_Global_malloc_function_set
          (
@@ -432,30 +584,30 @@ void     GB_Global_malloc_is_thread_safe_set
          (
             bool malloc_is_thread_safe
          ) ;
-bool     GB_Global_malloc_is_thread_safe_get ( ) ;
+bool     GB_Global_malloc_is_thread_safe_get (void) ;
 
 void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
-bool     GB_Global_malloc_tracking_get ( ) ;
+bool     GB_Global_malloc_tracking_get (void) ;
 
-void     GB_Global_nmalloc_clear ( ) ;
-int64_t  GB_Global_nmalloc_get ( ) ;
-int64_t  GB_Global_nmalloc_increment ( ) ;
-int64_t  GB_Global_nmalloc_decrement ( ) ;
+void     GB_Global_nmalloc_clear (void) ;
+int64_t  GB_Global_nmalloc_get (void) ;
+int64_t  GB_Global_nmalloc_increment (void) ;
+int64_t  GB_Global_nmalloc_decrement (void) ;
 
 void     GB_Global_malloc_debug_set (bool malloc_debug) ;
-bool     GB_Global_malloc_debug_get ( ) ;
+bool     GB_Global_malloc_debug_get (void) ;
 
 void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
-bool     GB_Global_malloc_debug_count_decrement ( ) ;
+bool     GB_Global_malloc_debug_count_decrement (void) ;
 
-void     GB_Global_inuse_clear ( ) ;
+void     GB_Global_inuse_clear (void) ;
 void     GB_Global_inuse_increment (int64_t s) ;
 void     GB_Global_inuse_decrement (int64_t s) ;
-int64_t  GB_Global_inuse_get ( ) ;
-int64_t  GB_Global_maxused_get ( ) ;
+int64_t  GB_Global_inuse_get (void) ;
+int64_t  GB_Global_maxused_get (void) ;
 
 void     GB_Global_hack_set (int64_t hack) ;
-int64_t  GB_Global_hack_get ( ) ;
+int64_t  GB_Global_hack_get (void) ;
 
 //------------------------------------------------------------------------------
 // debugging definitions
@@ -569,25 +721,6 @@ bool GB_aliased             // determine if A and B are aliased
 // when A->p array is allocated but not initialized.
 #define GB_MAGIC2 0x7265745f786f62ULL
 
-typedef enum
-{
-    // the 12 scalar types
-    GB_BOOL_code    = 0,
-    GB_INT8_code    = 1,
-    GB_UINT8_code   = 2,
-    GB_INT16_code   = 3,
-    GB_UINT16_code  = 4,
-    GB_INT32_code   = 5,
-    GB_UINT32_code  = 6,
-    GB_INT64_code   = 7,
-    GB_UINT64_code  = 8,
-    GB_FP32_code    = 9,
-    GB_FP64_code    = 10,
-    GB_UCT_code     = 11,       // void *, compile-time user-defined type
-    GB_UDT_code     = 12        // void *, run-time user-defined type
-}
-GB_Type_code ;                  // enumerated type code
-
 // predefined type objects
 extern struct GB_Type_opaque
     GB_opaque_GrB_BOOL   ,  // GrB_BOOL is a pointer to this object, etc.
@@ -601,78 +734,6 @@ extern struct GB_Type_opaque
     GB_opaque_GrB_UINT64 ,
     GB_opaque_GrB_FP32   ,
     GB_opaque_GrB_FP64   ;
-
-// operator codes used in GrB_BinaryOp and GrB_UnaryOp
-typedef enum
-{
-    //--------------------------------------------------------------------------
-    // NOP
-    //--------------------------------------------------------------------------
-
-    // a placeholder; not an actual operator
-    GB_NOP_opcode,      //  0: nop
-
-    //--------------------------------------------------------------------------
-    // T -> T
-    //--------------------------------------------------------------------------
-
-    // 6 unary operators x=f(x) that return the same type as their input
-    GB_ONE_opcode,      //  1: z = 1
-    GB_IDENTITY_opcode, //  2: z = x
-    GB_AINV_opcode,     //  3: z = -x
-    GB_ABS_opcode,      //  4: z = abs(x)
-    GB_MINV_opcode,     //  5: z = 1/x ; special cases for bool and integers
-    GB_LNOT_opcode,     //  6: z = !x
-
-    //--------------------------------------------------------------------------
-    // TxT -> T
-    //--------------------------------------------------------------------------
-
-    // 10 binary operators z=f(x,y) that return the same type as their inputs
-    GB_FIRST_opcode,    //  7: z = x
-    GB_SECOND_opcode,   //  8: z = y
-    GB_MIN_opcode,      //  9: z = min(x,y)
-    GB_MAX_opcode,      // 10: z = max(x,y)
-    GB_PLUS_opcode,     // 11: z = x + y
-    GB_MINUS_opcode,    // 12: z = x - y
-    GB_RMINUS_opcode,   // 13: z = y - x
-    GB_TIMES_opcode,    // 14: z = x * y
-    GB_DIV_opcode,      // 15: z = x / y ; special cases for bool and ints
-    GB_RDIV_opcode,     // 16: z = y / x ; special cases for bool and ints
-
-    // 6 binary operators z=f(x,y), x,y,z all the same type
-    GB_ISEQ_opcode,     // 17: z = (x == y)
-    GB_ISNE_opcode,     // 18: z = (x != y)
-    GB_ISGT_opcode,     // 19: z = (x >  y)
-    GB_ISLT_opcode,     // 20: z = (x <  y)
-    GB_ISGE_opcode,     // 21: z = (x >= y)
-    GB_ISLE_opcode,     // 22: z = (x <= y)
-
-    // 3 binary operators that work on purely boolean values
-    GB_LOR_opcode,      // 23: z = (x != 0) || (y != 0)
-    GB_LAND_opcode,     // 23: z = (x != 0) && (y != 0)
-    GB_LXOR_opcode,     // 25: z = (x != 0) != (y != 0)
-
-    //--------------------------------------------------------------------------
-    // TxT -> bool
-    //--------------------------------------------------------------------------
-
-    // 6 binary operators z=f(x,y) that return bool (TxT -> bool)
-    GB_EQ_opcode,       // 26: z = (x == y)
-    GB_NE_opcode,       // 27: z = (x != y)
-    GB_GT_opcode,       // 28: z = (x >  y)
-    GB_LT_opcode,       // 29: z = (x <  y)
-    GB_GE_opcode,       // 30: z = (x >= y)
-    GB_LE_opcode,       // 31: z = (x <= y)
-
-    //--------------------------------------------------------------------------
-    // user-defined: unary and binary operators
-    //--------------------------------------------------------------------------
-
-    GB_USER_C_opcode,   // 32: compile-time user-defined operator
-    GB_USER_R_opcode    // 33: run-time user-defined operator
-}
-GB_Opcode ;
 
 //------------------------------------------------------------------------------
 // monoid structs
@@ -735,41 +796,8 @@ extern struct GB_Monoid_opaque
     GB_opaque_GxB_EQ_BOOL_MONOID ;          // identity: true
 
 //------------------------------------------------------------------------------
-// select opcodes
+// select structs
 //------------------------------------------------------------------------------
-
-// operator codes used in GrB_SelectOp structures
-typedef enum
-{
-    // built-in select operators: thunk optional; defaults to zero
-    GB_TRIL_opcode      = 0,
-    GB_TRIU_opcode      = 1,
-    GB_DIAG_opcode      = 2,
-    GB_OFFDIAG_opcode   = 3,
-    GB_RESIZE_opcode    = 4,
-
-    // built-in select operators, no thunk used
-    GB_NONZOMBIE_opcode = 5,
-    GB_NONZERO_opcode   = 6,
-    GB_EQ_ZERO_opcode   = 7,
-    GB_GT_ZERO_opcode   = 8,
-    GB_GE_ZERO_opcode   = 9,
-    GB_LT_ZERO_opcode   = 10,
-    GB_LE_ZERO_opcode   = 11,
-
-    // built-in select operators, thunk required
-    GB_NE_THUNK_opcode  = 12,
-    GB_EQ_THUNK_opcode  = 13,
-    GB_GT_THUNK_opcode  = 14,
-    GB_GE_THUNK_opcode  = 15,
-    GB_LT_THUNK_opcode  = 16,
-    GB_LE_THUNK_opcode  = 17,
-
-    // for all user-defined select operators:  thunk is optional
-    GB_USER_SELECT_C_opcode = 18,   // defined at compile-time
-    GB_USER_SELECT_R_opcode = 19    // defined at run-time
-}
-GB_Select_Opcode ;
 
 extern struct GB_SelectOp_opaque
     GB_opaque_GxB_TRIL,
@@ -805,8 +833,8 @@ extern struct GB_SelectOp_opaque
 // nthreads_max = GxB_DEFAULT (that is, zero).  The default rule is to let
 // GraphBLAS determine the number of threads automatically by selecting a
 // number of threads between 1 and nthreads_max.  GrB_init initializes
-// nthreads_max to omp_get_max_threads ( ).  Both the global value and the
-// value in a descriptor can set/queried by GxB_set / GxB_get.
+// nthreads_max to omp_get_max_threads.  Both the global value and the value in
+// a descriptor can set/queried by GxB_set / GxB_get.
 
 // Some GrB_Matrix and GrB_Vector methods do not take a descriptor, however
 // (GrB_*_dup, _build, _exportTuples, _clear, _nvals, _wait, and GxB_*_resize).
@@ -989,7 +1017,7 @@ GrB_Info GB_error           // log an error in thread-local-storage
 #define GBPR_MAGIC(pcode) ;
 #endif
 
-// check object->magic and print an error if invalid 
+// check object->magic and print an error if invalid
 #define GB_CHECK_MAGIC(object,kind)                                     \
 {                                                                       \
     switch (object->magic)                                              \
@@ -1245,8 +1273,8 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 
 void GB_memcpy                  // parallel memcpy
 (
-    GB_void *dest,              // destination
-    const GB_void *src,         // source
+    void *dest,                 // destination
+    const void *src,            // source
     size_t n,                   // # of bytes to copy
     int nthreads                // # of threads to use
 ) ;
@@ -1334,11 +1362,11 @@ bool GB_code_compatible         // check if two types can be typecast
 
 void GB_cast_array              // typecast an array
 (
-    GB_void *C,                 // output array
-    const GB_Type_code code1,   // type code for C
-    const GB_void *A,           // input array
-    const GB_Type_code code2,   // type code for A
-    const int64_t n,            // number of entries in C and A
+    GB_void *restrict Cx,       // output array
+    const GB_Type_code code1,   // type code for Cx
+    const GB_void *restrict Ax, // input array
+    const GB_Type_code code2,   // type code for Ax
+    const int64_t anz,          // number of entries in Cx and Ax
     GB_Context Context
 ) ;
 
@@ -1347,6 +1375,8 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
     const GB_Type_code code1,      // the type of z, the output value
     const GB_Type_code code2       // the type of x, the input value
 ) ;
+
+void GB_copy_user_user (void *z, const void *x, size_t s) ;
 
 //------------------------------------------------------------------------------
 // GB_task_struct: Element-wise Task descriptor
@@ -1580,7 +1610,7 @@ void GB_free_memory
     "%s = calloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
-    p = GB_calloc_memory (n, s) ;           
+    p = GB_calloc_memory (n, s) ;
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
     printf ("\nMalloc:                       "                                \
@@ -1595,7 +1625,7 @@ void GB_free_memory
     "%s = realloc (%s = "GBd", %s = "GBd", %s = "GBd") line %d file %s\n",    \
     p, GB_STR(p), GB_STR(nnew), (int64_t) nnew, GB_STR(nold), (int64_t) nold, \
     GB_STR(s), (int64_t) s, __LINE__,__FILE__) ;                              \
-    p = GB_realloc_memory (nnew, nold, s, p, ok) ;                            \
+    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok) ;                   \
 }
 
 #define GB_FREE_MEMORY(p,n,s)                                                 \
@@ -1605,7 +1635,7 @@ void GB_free_memory
     "(%s, %s = "GBd", %s = "GBd") line %d file %s\n",                         \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
-    GB_free_memory (p, n, s) ;                                                \
+    GB_free_memory ((void *) p, n, s) ;                                       \
     (p) = NULL ;                                                              \
 }
 
@@ -1631,17 +1661,17 @@ void GB_free_memory
 #define GB_VECTOR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
 #define GB_CALLOC_MEMORY(p,n,s)                                               \
-    p = GB_calloc_memory (n, s) ;              
+    p = GB_calloc_memory (n, s) ;
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
     p = GB_malloc_memory (n, s) ;
 
 #define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                   \
-    p = GB_realloc_memory (nnew, nold, s, p, ok) ;          
+    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok) ;
 
 #define GB_FREE_MEMORY(p,n,s)                                                 \
 {                                                                             \
-    GB_free_memory (p, n, s) ;                                                \
+    GB_free_memory ((void *) p, n, s) ;                                       \
     (p) = NULL ;                                                              \
 }
 
@@ -1991,8 +2021,8 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t **p_Ap,                 // size nvec+1
-    int64_t **p_Ah,                 // size nvec
+    int64_t *restrict *p_Ap,        // size nvec+1
+    int64_t *restrict *p_Ah,        // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
@@ -2015,7 +2045,7 @@ extern pthread_mutex_t GB_sync ;
 
 #elif defined (USER_WINDOWS_THREADS)
 // for user applications that use Windows threads (not yet supported)
-extern CRITICAL_SECTION GB_sync ; 
+extern CRITICAL_SECTION GB_sync ;
 
 #elif defined (USER_ANSI_THREADS)
 // for user applications that use ANSI C11 threads (not yet supported)
@@ -2057,7 +2087,7 @@ _Thread_local
 extern char GB_thread_local_report [GB_RLEN+1] ;
 
 // return pointer to thread-local storage
-char *GB_thread_local_access ( ) ;
+char *GB_thread_local_access (void) ;
 
 //------------------------------------------------------------------------------
 // boiler plate macros for checking inputs and returning if an error occurs
@@ -2714,11 +2744,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 #define GB_CAST_NAME(x)     GB_cast_double_ ## x
 #define GB_BITS             64
 #include "GB_ops_template.h"
-
-inline void GB_copy_user_user (void *z, void *x, size_t s)
-{ 
-    memcpy (z, x, s) ;
-}
 
 #define GB_opaque_GrB_LNOT GB_opaque_GxB_LNOT_BOOL
 #define GB_opaque_GrB_LOR  GB_opaque_GxB_LOR_BOOL

@@ -95,6 +95,12 @@
         FAIL (method) ;                                     \
     }                                                       \
 }
+ 
+void f1 (double *z, uint32_t *x) ;
+void f2 (int32_t *z, uint8_t *x, int16_t *y) ;
+void f3 (double complex *z, double complex *x, double *y) ;
+bool fselect (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const double *x, const double *k) ;
 
 void f1 (double *z, uint32_t *x)
 { 
@@ -688,7 +694,7 @@ void mexFunction
 
     OK (GxB_Monoid_terminal (&has_terminal, &x_double, GxB_MAX_FP64_MONOID)) ;
     CHECK (has_terminal) ;
-    CHECK (x_double == INFINITY) ;
+    CHECK (x_double == ((double) INFINITY)) ;
 
     ERR (GxB_Monoid_terminal (NULL, NULL, GxB_MAX_FP64_MONOID)) ;
     ERR (GxB_Monoid_terminal (&has_terminal, NULL, GxB_MAX_FP64_MONOID)) ;

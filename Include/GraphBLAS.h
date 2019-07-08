@@ -71,7 +71,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 7, 2019 (11pm) (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "July 8, 2019 (3pm) (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -110,10 +110,6 @@
 //------------------------------------------------------------------------------
 // GraphBLAS C API version
 //------------------------------------------------------------------------------
-
-// These definitions appear in the draft V1.3 of the GraphBLAS C API:
-// #define GrB_VERSION GxB_SPEC_MAJOR
-// #define GrB_SUBVERSION GxB_SPEC_MINOR
 
 #define GxB_SPEC_VERSION GxB_VERSION(GxB_SPEC_MAJOR,GxB_SPEC_MINOR,GxB_SPEC_SUB)
 
@@ -360,22 +356,11 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 // In non-blocking mode, GraphBLAS operations need not complete until their
 // results are required.  GrB_wait ensures all pending operations are finished.
 
-GrB_Info GrB_wait ( ) ;     // finish all pending computations
+GrB_Info GrB_wait (void) ;     // finish all pending computations
 
 // GrB_finalize does not call GrB_wait; any pending computations are abandoned.
 
-GrB_Info GrB_finalize ( ) ;     // finish GraphBLAS
-
-// GrB_getVersion: get the C API version this library implements.
-// This function appears in the V1.3 draft of the GraphBLAS C API.
-
-/*
-GrB_Info GrB_getVersion
-(
-    unsigned int *version,
-    unsigned int *subversion
-) ;
-*/
+GrB_Info GrB_finalize (void) ;     // finish GraphBLAS
 
 //==============================================================================
 //=== GraphBLAS sequence termination ===========================================
@@ -386,7 +371,7 @@ GrB_Info GrB_getVersion
 // null-terminated string.  The string returned by GrB_error is statically
 // allocated in thread local storage and must not be free'd.
 
-const char *GrB_error ( ) ;     // return a string describing the last error
+const char *GrB_error (void) ;     // return a string describing the last error
 
 //==============================================================================
 //=== GraphBLAS types, operators, monoids, and semirings =======================
@@ -799,11 +784,11 @@ extern GrB_BinaryOp
 // below.  RDIV (y/x) is shown as \ in the table; it is the same as 2nd.
 
 //                                                     is  is  is  is  is  is
-//  x y    1st 2nd min max +   -   *   /   or  and xor eq  ne  gt  lt  ge  le \
-//  0 0    0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   1  0
-//  0 1    0   1   0   1   1   1   0   0   1   0   1   0   1   0   1   0   1  1
-//  1 0    1   0   0   1   1   1   0   1   1   0   1   0   1   1   0   1   0  0
-//  1 1    1   1   1   1   1   0   1   1   1   1   0   1   0   0   0   1   1  1
+//  x y  1st 2nd min max +   -   *   /   or  and xor eq  ne  gt  lt  ge  le rdiv
+//  0 0  0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   1  0
+//  0 1  0   1   0   1   1   1   0   0   1   0   1   0   1   0   1   0   1  1
+//  1 0  1   0   0   1   1   1   0   1   1   0   1   0   1   1   0   1   0  0
+//  1 1  1   1   1   1   1   0   1   1   1   1   0   1   0   0   0   1   1  1
 
 // SPEC: the definition of divide-by-zero is an extension to the spec
 
@@ -2904,14 +2889,10 @@ typedef enum
     GrB_REPLACE = 1,    // clear the output before assigning new values to it
 
     // for GrB_MASK only: these two options are identical
-    GrB_COMP = 2,       // from the draft V1.3 C API (same as GrB_SCMP)
     GrB_SCMP = 2,       // use the structural complement of the input
 
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
-
-    // for GrB_MASK only: (from the draft V1.3 C API)
-    GrB_STRUCTURE = 4,  // structural complement, not yet implemented (V1.3)
 
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method

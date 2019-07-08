@@ -13,6 +13,8 @@
 
 #define USAGE "GB_mex_about"
 
+GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt) ;
+
 GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt)
 {
     GB_WHERE ("ack") ;

@@ -28,6 +28,7 @@ GrB_Matrix A = NULL ;
 GrB_Descriptor desc = NULL ;
 GrB_BinaryOp accum = NULL ;
 GrB_UnaryOp op = NULL ;
+GrB_Info apply (bool is_matrix) ;
 
 //------------------------------------------------------------------------------
 

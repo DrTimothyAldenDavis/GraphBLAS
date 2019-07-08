@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
+
 #include "GB.h"
 #ifndef GBCOMPACT
 #include "GB_ek_slice.h"

@@ -147,9 +147,9 @@ static inline void GB_find_Ap_start_end
 GrB_Info GB_subref_phase0
 (
     // output
-    int64_t **p_Ch,         // Ch = C->h hyperlist, or NULL if C standard
-    int64_t **p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
-    int64_t **p_Ap_end,     // ... and ends at Ap_end [kC] - 1
+    int64_t *restrict *p_Ch,         // Ch = C->h hyperlist, or NULL standard
+    int64_t *restrict *p_Ap_start,   // A(:,kA) starts at Ap_start [kC]
+    int64_t *restrict *p_Ap_end,     // ... and ends at Ap_end [kC] - 1
     int64_t *p_Cnvec,       // # of vectors in C
     bool *p_need_qsort,     // true if C must be sorted
     int *p_Ikind,           // kind of I
