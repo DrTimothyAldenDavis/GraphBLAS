@@ -6,6 +6,11 @@ function test61
 
 fprintf ('\n----------------------------- eMult performance tests\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 Prob = ssget (2662)
 A = Prob.A ;
 [m n] = size (A) ;
@@ -57,3 +62,4 @@ end
 
 fprintf ('\ntest61: all tests passed\n') ;
 
+nthreads_set (save, save_chunk) ;

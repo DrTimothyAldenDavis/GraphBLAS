@@ -12,7 +12,7 @@
 GrB_Info GxB_BinaryOp_ytype         // return the type of y
 (
     GrB_Type *ytype,                // return type of input y
-    const GrB_BinaryOp binaryop     // binary operator to query
+    GrB_BinaryOp binaryop           // binary operator to query
 )
 { 
 

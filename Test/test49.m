@@ -4,6 +4,11 @@ function test49
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 d = struct ('inp0', 'tran', 'axb', 'dot') ;
 
 rng ('default') ;
@@ -38,6 +43,8 @@ for m = 1:4
            m, n, t1, t2, t1/t2, e) ;
     end
 end
+
+nthreads_set (save, save_chunk) ;
 
 fprintf ('\ntest49: all tests passed\n') ;
 

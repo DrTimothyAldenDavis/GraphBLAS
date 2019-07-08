@@ -6,6 +6,11 @@ function test46
 
 fprintf ('\n--------------performance test GB_mex_subassign\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 dt = struct ('inp0', 'tran') ;
 
 rng ('default') ;
@@ -116,6 +121,8 @@ C3 = GB_mex_subassign (C2, [], 'plus', B, I0, J0, []) ;
 toc
 
 assert (isequal (C, C3.matrix)) ;
+
+nthreads_set (save, save_chunk) ;
 
 fprintf ('\ntest46: all tests passed\n') ;
 

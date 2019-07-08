@@ -17,7 +17,7 @@
 GrB_Info GrB_Vector_new     // create a new vector with no entries
 (
     GrB_Vector *v,          // handle of vector to create
-    const GrB_Type type,    // type of vector to create
+    GrB_Type type,          // type of vector to create
     GrB_Index n             // dimension is n-by-1
 )
 {

@@ -14,7 +14,7 @@ GrB_Info GxB_Monoid_terminal        // return the monoid terminal
     bool *has_terminal,             // true if the monoid has a terminal value
     void *terminal,                 // returns the terminal of the monoid,
                                     // unmodified if has_terminal is false
-    const GrB_Monoid monoid         // monoid to query
+    GrB_Monoid monoid               // monoid to query
 )
 { 
 

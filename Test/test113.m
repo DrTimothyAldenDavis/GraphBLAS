@@ -3,7 +3,8 @@ function test113
 
 fprintf ('test113: performance tests for GrB_kron\n') ;
 
-save = nthreads_get ;
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
 
 A = sprand (310, 302, 0.1) ;
 B = sprand (300, 301, 0.1) ;
@@ -21,7 +22,7 @@ Empty = sparse (m,n) ;
 
 for nthreads = [1 2 4]
 
-    nthreads_set (nthreads) ;
+    nthreads_set (nthreads,chunk) ;
 
     tic
     C1 = GB_mex_kron (Empty, [ ], [ ], 'times', A, B) ;
@@ -33,4 +34,5 @@ for nthreads = [1 2 4]
         t (nthreads), t (1) / t (nthreads), tm / t (nthreads)) ;
 
 end
-nthreads_set (save) ;
+
+nthreads_set (save, save_chunk) ;

@@ -6,6 +6,11 @@ function test42
 
 fprintf ('\n----------------------- performance tests for GrB_Matrix_build\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 Prob = ssget ('HB/west0067')
 A = Prob.A ;
 [m n] = size (A) ;
@@ -228,3 +233,4 @@ assert (ok) ;
 
 fprintf ('\ntest42: all tests passed\n') ;
 
+nthreads_set (save, save_chunk) ;

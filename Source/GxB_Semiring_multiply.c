@@ -12,7 +12,7 @@
 GrB_Info GxB_Semiring_multiply      // return multiply operator of a semiring
 (
     GrB_BinaryOp *multiply,         // returns multiply operator of the semiring
-    const GrB_Semiring semiring     // semiring to query
+    GrB_Semiring semiring           // semiring to query
 )
 { 
 

@@ -5,6 +5,9 @@ function test117
 
 fprintf ('test117 ----------------------------------- C(:,:)<M> += A\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+
 rng ('default') ;
 n = 4000 ;
 
@@ -49,7 +52,7 @@ for dm = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
             if (nthreads > 2*ncores)
                 break ;
             end
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
 
             if (nthreads > 1 & t1 < 0.003)
                 continue
@@ -80,3 +83,5 @@ for dm = [1e-5 1e-4 1e-3 1e-2 1e-1 0.5]
 end
 end
 end
+
+nthreads_set (save, save_chunk) ;

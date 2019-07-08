@@ -12,8 +12,8 @@
 #include "GB_mex.h"
 
 #define USAGE "[nthreads_max threading thread_safety format hyperratio" \
-"name version date about license compiledate compiletime api api_about]" \
-" = GB_mex_init"
+"name version date about license compiledate compiletime api api_about" \
+" chunk] = GB_mex_init"
 
 void mexFunction
 (
@@ -26,7 +26,6 @@ void mexFunction
     GB_Global_user_multithreaded_set (false) ;
     GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
     GB_WHERE (USAGE) ;
-    GB_Global_chunk_set (1) ;       // very low, for testing
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
 
@@ -96,6 +95,10 @@ void mexFunction
     char *api_about ;
     GxB_get (GxB_API_ABOUT, &api_about) ;
     pargout [13] = mxCreateString (api_about) ;
+
+    double chunk ;
+    GxB_get (GxB_CHUNK, &chunk) ;
+    pargout [14] = mxCreateDoubleScalar (chunk) ;
 
     GrB_finalize ( ) ;
 }

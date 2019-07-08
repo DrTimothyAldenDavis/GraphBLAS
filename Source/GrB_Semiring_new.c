@@ -32,8 +32,8 @@
 GrB_Info GrB_Semiring_new           // create a semiring
 (
     GrB_Semiring *semiring,         // handle of semiring to create
-    const GrB_Monoid add,           // additive monoid of the semiring
-    const GrB_BinaryOp multiply     // multiply operator of the semiring
+    GrB_Monoid add,                 // additive monoid of the semiring
+    GrB_BinaryOp multiply           // multiply operator of the semiring
 )
 {
 

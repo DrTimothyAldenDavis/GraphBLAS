@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GxB_BinaryOp_xtype: return the type of x for z=f(x,y)
+// GrB_getVersion: get the C API version this library implements
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,12 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+// This function appears in the V1.3 draft of the GraphBLAS C API.
+
 #include "GB.h"
 
-GrB_Info GxB_BinaryOp_xtype         // return the type of x
+GrB_Info GrB_getVersion
 (
-    GrB_Type *xtype,                // return type of input x
-    GrB_BinaryOp binaryop           // binary operator to query
+    unsigned int *version,
+    unsigned int *subversion
 )
 { 
 
@@ -20,16 +22,16 @@ GrB_Info GxB_BinaryOp_xtype         // return the type of x
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GxB_BinaryOp_xtype (&xtype, binaryop)") ;
-    GB_RETURN_IF_NULL (xtype) ;
-    GB_RETURN_IF_NULL_OR_FAULTY (binaryop) ;
-    ASSERT_OK (GB_check (binaryop, "binaryop for xtype", GB0)) ;
+    GB_CONTEXT ("GrB_getVersion (&version, &subversion") ;
+    GB_RETURN_IF_NULL (version) ;
+    GB_RETURN_IF_NULL (subversion) ;
 
     //--------------------------------------------------------------------------
-    // return the xtype
+    // return the C API version
     //--------------------------------------------------------------------------
 
-    (*xtype) = binaryop->xtype ;
+    (*version) = GrB_VERSION ;
+    (*subversion) = GrB_SUBVERSION ;
     return (GrB_SUCCESS) ;
 }
 

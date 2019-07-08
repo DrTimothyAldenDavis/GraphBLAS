@@ -12,7 +12,7 @@
 GrB_Info GxB_Semiring_add           // return the additive monoid of a semiring
 (
     GrB_Monoid *add,                // returns additive monoid of the semiring
-    const GrB_Semiring semiring     // semiring to query
+    GrB_Semiring semiring           // semiring to query
 )
 { 
 

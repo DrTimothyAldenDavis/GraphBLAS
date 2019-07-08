@@ -12,7 +12,7 @@
 GrB_Info GxB_UnaryOp_ztype          // return the type of z
 (
     GrB_Type *ztype,                // return type of output z
-    const GrB_UnaryOp unaryop       // unary operator
+    GrB_UnaryOp unaryop             // unary operator
 )
 { 
 

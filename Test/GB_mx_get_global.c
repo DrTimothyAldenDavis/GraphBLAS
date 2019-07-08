@@ -70,13 +70,6 @@ bool GB_mx_get_global       // true if doing malloc_debug
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
-    GB_Global_chunk_set (1) ;       // very low, for testing
-
-    //--------------------------------------------------------------------------
-    // allocate the complex type and operators
-    //--------------------------------------------------------------------------
-
-    Complex_init ( ) ;
 
     //--------------------------------------------------------------------------
     // get nthreads
@@ -102,6 +95,37 @@ bool GB_mx_get_global       // true if doing malloc_debug
     }
 
     GxB_set (GxB_NTHREADS, nthreads [0]) ;
+
+    //--------------------------------------------------------------------------
+    // get chunk
+    //--------------------------------------------------------------------------
+
+    double *chunk = NULL ;
+    const mxArray *chunk_matlab = NULL ;
+    chunk_matlab = mexGetVariablePtr ("global", "GraphBLAS_chunk") ;
+    if (chunk_matlab == NULL || mxIsEmpty (chunk_matlab))
+    {
+        // doesn't exist; create it and set it to GB_CHUNK_DEFAULT
+        chunk_matlab = mxCreateNumericMatrix (1, 1, mxDOUBLE_CLASS, mxREAL) ;
+        chunk = (double *) mxGetData (chunk_matlab) ;
+        if (chunk == NULL) mexErrMsgTxt ("chunk_matlab null?!") ;
+        chunk [0] = GB_CHUNK_DEFAULT ;
+        // copy it into the global workspace
+        mexPutVariable ("global", "GraphBLAS_chunk", chunk_matlab) ;
+    }
+    else
+    {
+        chunk = (double *) mxGetData (chunk_matlab) ;
+        if (chunk == NULL) mexErrMsgTxt ("chunk_matlab null!") ;
+    }
+
+    GxB_set (GxB_CHUNK, chunk [0]) ;
+
+    //--------------------------------------------------------------------------
+    // allocate the complex type and operators
+    //--------------------------------------------------------------------------
+
+    Complex_init ( ) ;
 
     //--------------------------------------------------------------------------
     // return malloc debug status

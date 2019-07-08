@@ -83,6 +83,15 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
             (*nthreads) = GB_IMIN (nth, GxB_NTHREADS_MAX) ;
             break ;
 
+        case GxB_DESCRIPTOR_CHUNK :     // same as GxB_CHUNK
+
+            va_start (ap, field) ;
+            double *chunk = va_arg (ap, double *) ;
+            va_end (ap) ;
+            GB_RETURN_IF_NULL (chunk) ;
+            (*chunk) = (desc == NULL) ? GxB_DEFAULT : desc->chunk ;
+            break ;
+
         case GxB_AxB_METHOD : 
 
             va_start (ap, field) ;
@@ -96,10 +105,11 @@ GrB_Info GxB_Desc_get           // get a parameter from a descriptor
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                 "invalid descriptor field [%d], must be one of:\n"
-                "GrB_OUTP [%d], GrB_MASK [%d], GrB_INP0 [%d], GrB_INP1 [%d]"
-                "GxB_NTHREADS [%d], or GxB_AxB_METHOD [%d]", (int) field,
-                (int) GrB_OUTP, (int) GrB_MASK, (int) GrB_INP0, (int) GrB_INP1,
-                (int) GxB_NTHREADS, (int) GxB_AxB_METHOD))) ;
+                "GrB_OUTP [%d], GrB_MASK [%d], GrB_INP0 [%d], GrB_INP1 [%d],\n"
+                "GxB_NTHREADS [%d], GxB_CHUNK [%d] or GxB_AxB_METHOD [%d]",
+                (int) field, (int) GrB_OUTP, (int) GrB_MASK, (int) GrB_INP0,
+                (int) GrB_INP1, (int) GxB_NTHREADS, (int) GxB_CHUNK, 
+                (int) GxB_AxB_METHOD))) ;
     }
 
     return (GrB_SUCCESS) ;

@@ -7,7 +7,8 @@ function test111
 fprintf ('\ntest111 performance tests : eWiseAdd \n') ;
 rng ('default') ;
 
-save = nthreads_get ;
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
 
 n = 40e6 ;
 % n = 1e6 ;
@@ -65,7 +66,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
         fprintf ('\nvia GB_add:\n') ;
 
         for nthreads = [1 2 4 8 20 40]
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
             C4 = GB_mex_AplusB (A, B, 'plus') ;
             tg = gbresults ;
             if (nthreads == 1)
@@ -92,7 +93,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
         fprintf ('\nvia masked GB_add:\n') ;
 
         for nthreads = [1 2 4 8 20 40]
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
             % warmup
             C4 = GB_mex_eWiseAdd_Vector (Empty, M0, [ ], 'plus', A, B, [ ]) ;
             %
@@ -122,7 +123,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
         fprintf ('\nvia unmasked add then emult:\n') ;
 
         for nthreads = [1 2 4 8 20 40]
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
             % warmup
             C4 = GB_mex_eWiseAdd_Vector (Empty, [ ], [ ], 'plus', A, B, [ ]) ;
             C4 = GB_mex_eWiseMult_Vector(Empty, [ ], [ ], 'times',M, C4, [ ]) ;
@@ -155,7 +156,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
         fprintf ('\nvia GB_eWiseMult:\n') ;
 
         for nthreads = [1 2 4 8 20 40]
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
             % warmup
             C4 = GB_mex_eWiseMult_Vector (Empty, [ ], [ ], 'times', A,B, [ ]) ;
             %
@@ -185,7 +186,7 @@ for d = [0.001 0.01 0.1 0.4 1 2 3]
         fprintf ('\nvia GB_eWiseMult:\n') ;
 
         for nthreads = [1 2 4 8 20 40]
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
             % warmup
             C4 = GB_mex_eWiseMult_Vector (Empty, M0, [ ], 'times', A,B, [ ]) ;
             %
@@ -214,6 +215,6 @@ for trial = 1:4
     toc
     tm = toc ;
 end
-nthreads_set (save) ;
+nthreads_set (save, save_chunk) ;
 
 fprintf ('test111: all tests passed\n') ;

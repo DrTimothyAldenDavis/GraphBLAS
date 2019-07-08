@@ -17,9 +17,9 @@
 GrB_Info GxB_Monoid_terminal_new_ ## T   /* create a new monoid */          \
 (                                                                           \
     GrB_Monoid *monoid,             /* handle of monoid to create    */     \
-    const GrB_BinaryOp op,          /* binary operator of the monoid */     \
-    const type identity,            /* identity value of the monoid  */     \
-    const type terminal             /* terminal value of the monoid  */     \
+    GrB_BinaryOp op,                /* binary operator of the monoid */     \
+    type identity,                  /* identity value of the monoid  */     \
+    type terminal                   /* terminal value of the monoid  */     \
 )                                                                           \
 {                                                                           \
     GB_WHERE ("GxB_Monoid_terminal_new" GB_STR(T)                           \
@@ -44,9 +44,9 @@ GB_MONOID_TERMINAL_NEW (double   , FP64   )
 GrB_Info GxB_Monoid_terminal_new_UDT        // create a monoid with a user type
 (
     GrB_Monoid *monoid,             // handle of monoid to create
-    const GrB_BinaryOp op,          // binary operator of the monoid
-    const void *identity,           // identity value of the monoid
-    const void *terminal            // terminal value of the monoid
+    GrB_BinaryOp op,                // binary operator of the monoid
+    void *identity,                 // identity value of the monoid
+    void *terminal                  // terminal value of the monoid
 )
 { 
     GB_WHERE ("GxB_Monoid_terminal_new_UDT (&monoid, op, identity, terminal)") ;

@@ -5,6 +5,12 @@ function test39
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 fprintf ('\ntest39 performance tests : GrB_transpose \n') ;
+
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 rng ('default') ;
 
 try
@@ -209,6 +215,8 @@ tg2 = gbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
 fprintf ('speedup over MATLAB: %g\n\n', tm4/(tg1+tg2)) ;
 assert (isequal (C1, C4)) ;;
+
+nthreads_set (save, save_chunk) ;
 
 fprintf ('\ntest39: all tests passed\n') ;
 

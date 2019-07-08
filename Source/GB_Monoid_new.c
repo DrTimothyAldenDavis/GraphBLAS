@@ -21,9 +21,9 @@ GrB_Info GB_Monoid_new          // create a monoid
 (
     GrB_Monoid *monoid,         // handle of monoid to create
     GrB_BinaryOp op,            // binary operator of the monoid
-    const void *identity,       // identity value
-    const void *terminal,       // terminal value, if any (may be NULL)
-    const GB_Type_code idcode,  // identity and terminal type code
+    void *identity,             // identity value
+    void *terminal,             // terminal value, if any (may be NULL)
+    GB_Type_code idcode,        // identity and terminal type code
     GB_Context Context
 )
 { 

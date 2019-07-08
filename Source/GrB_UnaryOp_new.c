@@ -20,8 +20,8 @@ GrB_Info GrB_UnaryOp_new            // create a new user-defined unary operator
 (
     GrB_UnaryOp *unaryop,           // handle for the new unary operator
     GxB_unary_function function,    // pointer to the unary function
-    const GrB_Type ztype,           // type of output z
-    const GrB_Type xtype            // type of input x
+    GrB_Type ztype,                 // type of output z
+    GrB_Type xtype                  // type of input x
 )
 { 
     return (GB_UnaryOp_new (unaryop, function, ztype, xtype, "f")) ;

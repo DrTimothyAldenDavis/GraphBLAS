@@ -3,6 +3,9 @@ function test120
 
 fprintf ('test120:-------------------  C(I,J)<!M> += scalar:\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+
 rng ('default') ;
 n = 4000 ; ;
 
@@ -63,7 +66,7 @@ for dc = [2 0 1e-6 1e-5 1e-4 1e-3 1e-2 0.1 1]
                 break ;
             end
 
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
 
             C2 = GB_mex_subassign (C0, M, 'plus', scalar, I0, I0, d) ;
             C2 = GB_mex_subassign (C0, M, 'plus', scalar, I0, I0, d) ;
@@ -81,3 +84,5 @@ for dc = [2 0 1e-6 1e-5 1e-4 1e-3 1e-2 0.1 1]
         end
     end
 end
+
+nthreads_set (save, save_chunk) ;

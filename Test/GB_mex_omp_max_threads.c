@@ -22,7 +22,6 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    GB_WHERE (USAGE) ;
     int omp_nthreads_max = GB_Global_omp_get_max_threads ( ) ;
     pargout [0] = mxCreateDoubleScalar (omp_nthreads_max) ;
 }

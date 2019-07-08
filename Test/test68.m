@@ -6,6 +6,11 @@ function test68(n)
 
 fprintf ('\ntest68 --------------------------- quick test of GrB_eWiseMult\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 rng ('default') ;
 
 if (nargin < 1)
@@ -88,3 +93,5 @@ for d =  [0.000:0.002:0.1]
     fprintf ('d %8.3f MATLAB %0.4f  GB %0.4f speedup %g\n', d, t0, t1, t0/t1) ;
     assert (isequal (C0, C1.matrix)) ;
 end
+
+nthreads_set (save, save_chunk) ;

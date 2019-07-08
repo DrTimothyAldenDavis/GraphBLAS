@@ -5,7 +5,7 @@ addpath ('~/ssget') ;
 addpath ('spok') ;
 
 for nth = [2 1]
-    nthreads_set (nth) ;
+    nthreads_set (nth,1) ;
 
     for d = 0 % [1 0]
         if (d)
@@ -33,14 +33,7 @@ for nth = [2 1]
         test30b
         test39
 
-        test46
-        test46b
-
-        test51
-        test51b
-
         test54
-
         test55
         test55b
 
@@ -59,3 +52,9 @@ for nth = [2 1]
 
     end
 end
+
+% performance tests
+test46
+test46b
+test51
+test51b

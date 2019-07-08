@@ -3,6 +3,9 @@ function test121
 
 fprintf ('test121:---------------- C(I,J)+=A performance\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+
 rng ('default') ;
 n = 1e6 ;
 k = n/10 ;
@@ -39,7 +42,7 @@ for dc = [ 0 1e-6 1e-5 1e-4 ]
             if (nthreads > 2*ncores)
                 break ;
             end
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads, chunk) ;
             if (nthreads > 1 && t1 < 0.01)
                 continue ;
             end
@@ -58,3 +61,4 @@ for dc = [ 0 1e-6 1e-5 1e-4 ]
     end
 end
 
+nthreads_set (save, save_chunk) ;

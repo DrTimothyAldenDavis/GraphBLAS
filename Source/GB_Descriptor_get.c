@@ -101,8 +101,9 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     GrB_Desc_Value In1_desc  = GxB_DEFAULT ;
     GrB_Desc_Value AxB_desc  = GxB_DEFAULT ;
     int nthreads_desc        = GxB_DEFAULT ;
+    double chunk_desc        = GxB_DEFAULT ;
 
-    // non-defaults descriptors
+    // non-defaults descriptor values
     if (desc != NULL)
     { 
         // get the contents
@@ -116,7 +117,8 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         // automatically: any value between 1 and the global nthreads_max.  If
         // descriptor->nthreads_max > 0, then that defines the exact number of
         // threads to use in the current GraphBLAS operation.
-        nthreads_desc  = desc->nthreads_max ;
+        nthreads_desc = desc->nthreads_max ;
+        chunk_desc = desc->chunk ;
     }
 
     // check for valid values of each descriptor field
@@ -154,6 +156,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     // The number of threads is copied from the descriptor into the Context, so
     // it is available to any internal function that needs it.
     Context->nthreads_max = nthreads_desc ;
+    Context->chunk = chunk_desc ;
 
     return (GrB_SUCCESS) ;
 }

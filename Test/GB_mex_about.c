@@ -366,6 +366,14 @@ void mexFunction
     GxB_get (GxB_THREADING, &threading) ;
     printf ("threading: %d\n", threading) ;
 
+    int nthreads ;
+    GxB_get (GxB_NTHREADS, &nthreads) ;
+    printf ("# threads: %d\n", nthreads) ;
+
+    double chunk ;
+    GxB_get (GxB_CHUNK, &chunk) ;
+    printf ("chunk: %g\n", chunk) ;
+
     GB_mx_put_global (true, 0) ;
 }
 

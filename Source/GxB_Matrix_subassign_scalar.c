@@ -25,7 +25,7 @@ GrB_Info GxB_Matrix_subassign_ ## T /* C(Rows,Cols)<M> += x                 */ \
     GrB_Matrix C,                   /* input/output matrix for results      */ \
     const GrB_Matrix M,             /* optional mask for C(Rows,Cols)       */ \
     const GrB_BinaryOp accum,       /* accum for Z=accum(C(Rows,Cols),x)    */ \
-    const type x,                   /* scalar to assign to C(Rows,Cols)     */ \
+    type x,                         /* scalar to assign to C(Rows,Cols)     */ \
     const GrB_Index *Rows,          /* row indices                          */ \
     GrB_Index nRows,                /* number of row indices                */ \
     const GrB_Index *Cols,          /* column indices                       */ \

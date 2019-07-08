@@ -1,6 +1,11 @@
 function test87
 %TEST87 performance test of GrB_mxm
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 rng ('default') ;
 
 %-------------------------------------------------------------------------------
@@ -266,3 +271,4 @@ fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
 
 fprintf ('\ntest87: all tests passed\n') ;
 
+nthreads_set (save, save_chunk) ;

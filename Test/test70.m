@@ -26,6 +26,11 @@ function test70 (f)
 
 addpath ('../Demo/MATLAB') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 index = ssget ;
 if (nargin == 0)
     % get all square matrices and sort by nnz(A)
@@ -198,3 +203,4 @@ for k = 1:nmat
 
 end
 
+nthreads_set (save, save_chunk) ;

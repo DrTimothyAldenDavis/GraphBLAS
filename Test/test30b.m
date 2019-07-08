@@ -9,6 +9,11 @@ debug = GB_mex_debug ;
 
 if (debug == 0)
 
+    [save save_chunk] = nthreads_get ;
+    chunk = 4096 ;
+    nthreads = feature ('numcores') ;
+    nthreads_set (nthreads, chunk) ;
+
     Prob = ssget (2662) ;
     A = Prob.A ;
 
@@ -44,6 +49,8 @@ if (debug == 0)
 
     assert (isequal (C, C2.matrix)) ;
     fprintf ('\ntest30b: all tests passed\n') ;
+
+    nthreads_set (save, save_chunk) ;
 
 else
     fprintf ('\ntest30b: tests skipped when debug enabled\n') ;

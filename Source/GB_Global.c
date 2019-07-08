@@ -159,8 +159,9 @@ GB_Global_struct GB_Global =
     // initialization flag
     .GrB_init_called = false,   // GrB_init has not yet been called
 
-    // max number of threads
-    .nthreads_max = 1,          // max number of threads
+    // max number of threads and chunk size
+    .nthreads_max = 1,
+    .chunk = GB_CHUNK_DEFAULT,
 
     // default format
     .hyper_ratio = GB_HYPER_DEFAULT,
@@ -283,7 +284,7 @@ int GB_Global_omp_get_max_threads ( )
 
 void GB_Global_chunk_set (double chunk)
 {
-    chunk = GB_IMAX (chunk, 1) ;
+    if (chunk <= GxB_DEFAULT) chunk = GB_CHUNK_DEFAULT ;
     GB_Global.chunk = chunk ;
 }
 

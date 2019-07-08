@@ -76,13 +76,22 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             GB_Global_nthreads_max_set (nthreads_max_new) ;
             break ;
 
+        case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
+
+            va_start (ap, field) ;
+            double chunk = va_arg (ap, double) ;
+            va_end (ap) ;
+            GB_Global_chunk_set (chunk) ;
+            break ;
+
         default : 
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                     "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d], GxB_FORMAT [%d], or GxB_NTHREADS [%d]",
+                    "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_NTHREADS [%d]"
+                    " or GxB_CHUNK [%d]",
                     (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
-                    (int) GxB_NTHREADS))) ;
+                    (int) GxB_NTHREADS, (int) GxB_CHUNK))) ;
 
     }
 

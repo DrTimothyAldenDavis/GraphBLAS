@@ -5,6 +5,12 @@ function test95
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 fprintf ('\ntest95: performance tests : GrB_transpose \n') ;
+
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 rng ('default') ;
 tol = 1e-12 ;
 
@@ -96,3 +102,5 @@ if (norm (y2) ~= 0)
 end
 assert (err < tol)
 % assert (isequal (1*(y.matrix), y2'))
+
+nthreads_set (save, save_chunk) ;

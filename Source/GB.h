@@ -259,6 +259,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     GrB_Desc_Value in1 ;    // second input descriptor (B for C=A*B)
     GrB_Desc_Value axb ;    // for selecting the method for C=A*B
     int nthreads_max ;      // max # threads to use in this call to GraphBLAS
+    double chunk ;          // chunk size for # of threads for small problems
 } ;
 
 //------------------------------------------------------------------------------
@@ -816,6 +817,7 @@ extern struct GB_SelectOp_opaque
 
 typedef struct
 {
+    double chunk ;              // chunk size for small problems
     int nthreads_max ;          // max # of threads to use
     const char *where ;         // GraphBLAS function where error occurred
     char details [GB_DLEN] ;    // error report
@@ -846,8 +848,9 @@ typedef GB_Context_struct *GB_Context ;
     GB_Context Context = &Context_struct ;                          \
     /* set Context->where so GrB_error can report it if needed */   \
     Context->where = where_string ;                                 \
-    /* get the default max # of threads */                          \
-    Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;
+    /* get the default max # of threads and default chunk size */   \
+    Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
+    Context->chunk = GB_Global_chunk_get ( ) ;
 
 #define GB_WHERE(where_string)                                      \
     if (!GB_Global_GrB_init_called_get ( ))                         \
@@ -866,16 +869,20 @@ typedef GB_Context_struct *GB_Context ;
 //      be used.  If Context->nthreads_max is <= GxB_DEFAULT, then select
 //      automatically: between 1 and nthreads_max, depending on the problem
 //      size.  Below is the default rule.  Any function can use its own rule
-//      instead, based on Context, nthreads_max, and the problem size.  No rule
-//      can exceed nthreads_max.
+//      instead, based on Context, chunk, nthreads_max, and the problem size.
+//      No rule can exceed nthreads_max.
 
 #define GB_GET_NTHREADS_MAX(nthreads_max,chunk,Context)                     \
-    double chunk = GB_Global_chunk_get ( ) ;                                \
     int nthreads_max = (Context == NULL) ? 1 : Context->nthreads_max ;      \
     if (nthreads_max <= GxB_DEFAULT)                                        \
     {                                                                       \
         nthreads_max = GB_Global_nthreads_max_get ( ) ;                     \
     }                                                                       \
+    double chunk = (Context == NULL) ? GxB_DEFAULT : Context->chunk ;       \
+    if (chunk <= GxB_DEFAULT)                                               \
+    {                                                                       \
+        chunk = GB_Global_chunk_get ( ) ;                                   \
+    }
 
 //------------------------------------------------------------------------------
 // GB_nthreads: determine # of threads to use for a parallel loop or region
@@ -2100,7 +2107,8 @@ char *GB_thread_local_access ( ) ;
     GB_RETURN_IF_NULL (arg) ;                                           \
     GB_RETURN_IF_FAULTY (arg) ;
 
-// check the descriptor and extract its contents (gets Context->nthreads_max)
+// check the descriptor and extract its contents; also copies
+// nthreads_max and chunk from the descriptor to the Context
 #define GB_GET_DESCRIPTOR(info,desc,dout,dm,d0,d1,dalgo)                     \
     GrB_Info info ;                                                          \
     bool dout, dm, d0, d1 ;                                                  \

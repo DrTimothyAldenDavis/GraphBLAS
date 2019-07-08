@@ -6,6 +6,11 @@ function test46b
 
 fprintf ('\n--------------performance test GB_mex_assign\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 dt = struct ('inp0', 'tran') ;
 
 rng ('default') ;
@@ -109,6 +114,6 @@ toc
 
 assert (isequal (C, C3.matrix)) ;
 
+nthreads_set (save, save_chunk) ;
+
 fprintf ('\ntest46b: all tests passed\n') ;
-
-

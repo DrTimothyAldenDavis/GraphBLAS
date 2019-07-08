@@ -12,7 +12,7 @@
 GrB_Info GxB_Monoid_identity        // return the monoid identity
 (
     void *identity,                 // returns the identity of the monoid
-    const GrB_Monoid monoid         // monoid to query
+    GrB_Monoid monoid               // monoid to query
 )
 { 
 

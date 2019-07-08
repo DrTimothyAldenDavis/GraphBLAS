@@ -6,6 +6,11 @@ function test51
 
 fprintf ('\n-----------performance test GB_mex_subassign, multiple ops\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 rng ('default')
 
 for problem = 1:5
@@ -161,3 +166,4 @@ end
 
 fprintf ('\ntest51: all tests passed\n') ;
 
+nthreads_set (save, save_chunk) ;

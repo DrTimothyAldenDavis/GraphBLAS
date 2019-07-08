@@ -3,7 +3,8 @@ function test114
 
 rng ('default') ;
 
-save = nthreads_get ;
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
 nthreads_list = [1 2 4 8 16 2 40 64 160] ;
 nthreads_max = GB_mex_omp_max_threads ;
 ntrials = 10 ;
@@ -57,7 +58,7 @@ for k1 = 1:4
         if (nthreads > nthreads_max)
             break ;
         end
-        nthreads_set (nthreads) ;
+        nthreads_set (nthreads,chunk) ;
         t = 0 ;
         tic
         for trial = 1:ntrials
@@ -108,7 +109,7 @@ for k1 = 1:4
             if (nthreads > nthreads_max)
                 break ;
             end
-            nthreads_set (nthreads) ;
+            nthreads_set (nthreads,chunk) ;
             t = 0 ;
             tic
             for trial = 1:ntrials
@@ -124,3 +125,4 @@ for k1 = 1:4
     end
 end
 
+nthreads_set (save, save_chunk) ;

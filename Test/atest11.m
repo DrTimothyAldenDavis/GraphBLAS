@@ -7,7 +7,7 @@ addpath ('spok') ;
 % tests Method11c
 
 for nth = [2 1]
-    nthreads_set (nth) ;
+    nthreads_set (nth,1) ;
 
     for d = 0 % [1 0]
         if (d)

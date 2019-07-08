@@ -16,7 +16,7 @@
 GrB_Info GrB_Matrix_setElement_ ## T    /* C (row,col) = x */               \
 (                                                                           \
     GrB_Matrix C,                       /* matrix to modify               */\
-    const type x,                       /* scalar to assign to C(row,col) */\
+    type x,                             /* scalar to assign to C(row,col) */\
     GrB_Index row,                      /* row index                      */\
     GrB_Index col                       /* column index                   */\
 )                                                                           \

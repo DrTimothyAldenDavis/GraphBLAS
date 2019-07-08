@@ -20,7 +20,7 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
-    const GrB_Type xtype,       // type of input x
+    GrB_Type xtype,             // type of input x
     const char *name            // name of the function
 )
 { 

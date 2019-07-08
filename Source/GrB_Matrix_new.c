@@ -17,7 +17,7 @@
 GrB_Info GrB_Matrix_new     // create a new matrix with no entries
 (
     GrB_Matrix *A,          // handle of matrix to create
-    const GrB_Type type,    // type of matrix to create
+    GrB_Type type,          // type of matrix to create
     GrB_Index nrows,        // matrix dimension is nrows-by-ncols
     GrB_Index ncols
 )

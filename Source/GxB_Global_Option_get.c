@@ -132,6 +132,19 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
+        // default chunk size
+        //----------------------------------------------------------------------
+
+        case GxB_GLOBAL_CHUNK :         // same as GxB_CHUNK
+
+            va_start (ap, field) ;
+            double *chunk = va_arg (ap, double *) ;
+            va_end (ap) ;
+            GB_RETURN_IF_NULL (chunk) ;
+            (*chunk) = GB_Global_chunk_get ( ) ;
+            break ;
+
+        //----------------------------------------------------------------------
         // SuiteSparse:GraphBLAS version, etc
         //----------------------------------------------------------------------
 
@@ -258,14 +271,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
         default : 
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                    "invalid option field [%d], must be one of:\n"
-                    "GxB_HYPER [%d], GxB_FORMAT [%d], GxB_MODE [%d],\n"
-                    "GxB_THREAD_SAFETY [%d], GxB_THREADING [%d]"
-                    "or GxB_NTHREADS [%d]",
-                    (int) field, (int) GxB_HYPER, (int) GxB_FORMAT,
-                    (int) GxB_MODE, (int) GxB_THREAD_SAFETY,
-                    (int) GxB_THREADING, (int) GxB_NTHREADS))) ;
-
+                    "invalid option field [%d]\n", (int) field))) ;
     }
 
     return (GrB_SUCCESS) ;

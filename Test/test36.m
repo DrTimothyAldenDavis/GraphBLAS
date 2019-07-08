@@ -6,6 +6,11 @@ function test36
 
 fprintf ('\ntest36 --------------------- performance of GB_Matrix_subref\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 rng ('default') ;
 n = 100e6 ;
 fprintf ('-------------------------- column vector (%d-by-1):\n', n) ;
@@ -128,6 +133,8 @@ tic
 t1 = toc ;
 fprintf ('MATLAB %0.6f GrB: %0.6f  speedup %g\n', t0, t1, t0/t1) ;
 assert (isequal (x,y))
+
+nthreads_set (save, save_chunk) ;
 
 fprintf ('\ntest36: all tests passed\n') ;
 

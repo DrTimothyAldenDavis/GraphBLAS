@@ -10,6 +10,11 @@ end
 
 fprintf ('\ntest58: ----- quick performance for GB_mex_eWiseAdd_Matrix\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 
 add = 'plus' ;
 Mask = [ ] ;
@@ -146,3 +151,4 @@ end
 
 fprintf ('\ntest58: all tests passed\n') ;
 
+nthreads_set (save, save_chunk) ;

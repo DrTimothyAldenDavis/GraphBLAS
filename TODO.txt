@@ -1,3 +1,8 @@
+TODO    check C=A*B load balance for masked dot2 method for lcc problem.
+
+TODO    All parallel methods need tuning and benchmarking.
+
+TODO    vectorization
 
 TODO: test for user-defined type:  for FIRST and SECOND operators,
     do not check for typecast for the unused parameter.
@@ -45,14 +50,6 @@ TODO: speedup XOR and EQ monoids using uint8_t summation.
         w = ((w % 2) == 0) ;
         assert (z == w) ;
 
-
-TODO    All parallel methods need tuning and benchmarking.
-
-TODO    Add chunk to descriptor and to global settings (GxB_set/get).
-
-TODO    GB_AxB_parallel and GB_AxB_meta:
-        Check load balance for masked dot2 method for lcc problem.
-
 TODO    qsort: make qsort sequential and keep all 4 versions,
         add parallel merge sort for GB_qsort_2 and GB_qsort_3.
 
@@ -60,4 +57,6 @@ TODO    user guide: describe all changes, add new descriptors and
         global settings
 
 TODO    Tcov statement coverage
+
+TODO    ask the API committee about enum values in the spec
 

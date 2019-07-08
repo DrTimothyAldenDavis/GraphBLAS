@@ -6,6 +6,11 @@ function test26(longtests)
 
 fprintf ('\ntest26 ------------------------------performance of GxB_select\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 [~, ~, ~, ~, ~, select_ops] = GB_spec_opsall ;
 
 if (nargin < 1)
@@ -131,3 +136,4 @@ for probs = 1:nprobs
     end
 end
 
+nthreads_set (save, save_chunk) ;

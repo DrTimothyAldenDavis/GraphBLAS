@@ -43,7 +43,7 @@
 
 GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
 (
-    const GrB_Mode mode,    // blocking or non-blocking mode
+    GrB_Mode mode,          // blocking or non-blocking mode
 
     // pointers to memory management functions
     void * (* user_malloc_function  ) (size_t),

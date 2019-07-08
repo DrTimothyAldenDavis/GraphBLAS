@@ -3,6 +3,9 @@ function test116
 
 fprintf ('test116:---------------- C(I,J)=A and C=A(I,J) performance\n') ;
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+
 million = 1e6 ;
 
 rng ('default') ;
@@ -37,7 +40,7 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
     if (nthreads > 2*ncores)
         break ;
     end
-    nthreads_set (nthreads) ;
+    nthreads_set (nthreads, chunk) ;
 
     % warmup
     C2 = GB_mex_assign (C0, [ ], [ ], A, I, I) ;
@@ -70,7 +73,7 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
     if (nthreads > 2*ncores)
         break ;
     end
-    nthreads_set (nthreads) ;
+    nthreads_set (nthreads, chunk) ;
 
     % warmup
     B2 = GB_mex_Matrix_extract (S, [ ], [ ], C1, I, I) ;
@@ -87,3 +90,5 @@ for nthreads = [1 2 4 8 16 20 32 40 64]
 
     assert (isequal (B1, B2.matrix)) ;
 end
+
+nthreads_set (save, save_chunk) ;

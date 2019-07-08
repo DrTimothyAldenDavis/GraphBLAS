@@ -144,7 +144,6 @@ void mexFunction
     OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false)) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
-    GB_Global_chunk_set (1) ;       // very low, for testing
 
     fprintf (f,"\n========================================================\n") ;
     fprintf (f,"=== GB_mex_errors : testing error handling =============\n") ;

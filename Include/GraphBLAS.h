@@ -2802,9 +2802,16 @@ GrB_Info GrB_Matrix_free    // free a matrix
 //
 // GrB_INP1: the same as GrB_INP0 but for the second input
 //
-// GxB_NTHREADS: the number of threads to use in the current method.
+// GxB_NTHREADS: the maximum number of threads to use in the current method.
 //      If <= GxB_DEFAULT (which is zero), then the number of threads is
 //      determined automatically.  This is the default value.
+//
+// GxB_CHUNK: an integer parameter that determines the number of threads to use
+//      for a small problem.  If w is the work to be performed, and chunk is
+//      the value of this parameter, then the # of threads is limited to floor
+//      (w/chunk).  The default chunk is currently 4096, but this may change in
+//      the future.  If chunk is set to <= GxB_DEFAULT (that is, zero), the
+//      default is used.
 //
 // GxB_AxB_METHOD: this is a hint to SuiteSparse:GraphBLAS on which algorithm
 //      it should use to compute C=A*B, in GrB_mxm, GrB_mxv, and GrB_vxm.
@@ -2818,7 +2825,7 @@ GrB_Info GrB_Matrix_free    // free a matrix
 //      GxB_AxB_GUSTAVSON:  Gustavon's method, computing C(:,j)=A*B(,j) via
 //          a gather/scatter workspace of size equal to the number of rows of A.
 //          Very good general-purpose method, but sometimes the workspace can be
-//          too large.
+//          too large when many threads are used..
 //
 //      GxB_AxB_HEAP: a heap-based method, computing C(:,j)=A*B(:,j) via a heap
 //          of size equal to the maximum number of entries in any column of B.
@@ -2832,11 +2839,12 @@ GrB_Info GrB_Matrix_free    // free a matrix
 //          since it takes Omega(m*n) time if C is m-by-n.  Uses a 2-phase
 //          method.  The first phase is symbolic, and the 2nd phase is numeric.
 
-// GxB_NTHREADS is an enumerated value in both the GrB_Desc_Field and the
-// GxB_Option_Field.  It is defined with the same integer value for
-// both enums, so the user can use GxB_NTHREADS for both.
+// GxB_NTHREADS and GxB_CHUNK are an enumerated value in both the
+// GrB_Desc_Field and the GxB_Option_Field.  They are defined with the same
+// integer value for both enums, so the user can use them for both.
 
 #define GxB_NTHREADS 5
+#define GxB_CHUNK 7
 
 // GxB_NTHREADS_MAX is a compile-time constant that gives the upper bound on
 // the number of threads that GraphBLAS can use.  This thread count is the sum
@@ -2857,9 +2865,12 @@ typedef enum
     GrB_INP0 = 2,   // descriptor for the first input of a method
     GrB_INP1 = 3,   // descriptor for the second input of a method
 
-    GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,   // number of threads to use.
-                        // If <= GxB_DEFAULT, then GraphBLAS selects the number
-                        // of threads automatically.
+    GxB_DESCRIPTOR_NTHREADS = GxB_NTHREADS,     // max number of threads to use.
+                    // If <= GxB_DEFAULT, then GraphBLAS selects the number
+                    // of threads automatically.
+
+    GxB_DESCRIPTOR_CHUNK = GxB_CHUNK,   // chunk size for small problems.
+                    // If <= GxB_DEFAULT, then the default is used.
 
     // SuiteSparse:GraphBLAS extensions are given large values so they do not
     // conflict with future enum values added to the spec:
@@ -2867,7 +2878,8 @@ typedef enum
 }
 GrB_Desc_Field ;
 
-// SPEC: GxB_DEFAULT, and GxB_AxB_* are extensions to the spec
+// SPEC: GxB_DEFAULT, GxB_NTHREADS, GxB_CHUNK and GxB_AxB_* are extensionsi
+// to the spec.
 
 typedef enum
 {
@@ -2980,6 +2992,8 @@ GrB_Info GrB_Descriptor_free    // free a descriptor
 //  GxB_set: sets a global option, a GrB_Matrix option or a GrB_Descriptor
 //  GxB_get: queries a global option, a GrB_Matrix option or a GrB_Descriptor
 
+// ADDED in V3.0: GxB_CHUNK, GxB_LIBRARY_*, GxB_API_* options:
+
 typedef enum            // for global options or matrix options
 {
     // GxB_Matrix_Option_get/set and GxB_Global_Option_get/set:
@@ -2996,29 +3010,30 @@ typedef enum            // for global options or matrix options
 
     GxB_THREADING = 4,  // thread library used for internal GraphBLAS threads
 
-    // GxB_Matrix_Option_get/set only:
+    // GxB_Global_Option_get/set only:
     GxB_GLOBAL_NTHREADS = GxB_NTHREADS,  // max number of threads to use
                         // If <= GxB_DEFAULT, then GraphBLAS selects the number
                         // of threads automatically.
 
+    GxB_GLOBAL_CHUNK = GxB_CHUNK,       // chunk size for small problems.
+                        // If <= GxB_DEFAULT, then the default is used.
+
     // GxB_Matrix_Option_get only:
     GxB_IS_HYPER = 6,   // query a matrix to see if it hypersparse or not
 
-    // ADDED in V3.0: GxB_LIBRARY_*, GxB_API_* options:
-
     // GxB_Global_Option_get only:
-    GxB_LIBRARY_NAME = 7,           // name of the library (char *)
-    GxB_LIBRARY_VERSION = 8,        // library version (3 int's)
-    GxB_LIBRARY_DATE = 9,           // date of the library (char *)
-    GxB_LIBRARY_ABOUT = 10,         // about the library (char *)
-    GxB_LIBRARY_URL = 11,           // URL for the library (char *)
-    GxB_LIBRARY_LICENSE = 12,       // license of the library (char *)
-    GxB_LIBRARY_COMPILE_DATE = 13,  // date library was compiled (char *)
-    GxB_LIBRARY_COMPILE_TIME = 14,  // time library was compiled (char *)
-    GxB_API_VERSION = 15,           // API version (3 int's)
-    GxB_API_DATE = 16,              // date of the API (char *)
-    GxB_API_ABOUT = 17,             // about the API (char *)
-    GxB_API_URL = 18                // URL for the API (char *)
+    GxB_LIBRARY_NAME = 8,           // name of the library (char *)
+    GxB_LIBRARY_VERSION = 9,        // library version (3 int's)
+    GxB_LIBRARY_DATE = 10,          // date of the library (char *)
+    GxB_LIBRARY_ABOUT = 11,         // about the library (char *)
+    GxB_LIBRARY_URL = 12,           // URL for the library (char *)
+    GxB_LIBRARY_LICENSE = 13,       // license of the library (char *)
+    GxB_LIBRARY_COMPILE_DATE = 14,  // date library was compiled (char *)
+    GxB_LIBRARY_COMPILE_TIME = 15,  // time library was compiled (char *)
+    GxB_API_VERSION = 16,           // API version (3 int's)
+    GxB_API_DATE = 17,              // date of the API (char *)
+    GxB_API_ABOUT = 18,             // about the API (char *)
+    GxB_API_URL = 19                // URL for the API (char *)
 
 } GxB_Option_Field ;
 

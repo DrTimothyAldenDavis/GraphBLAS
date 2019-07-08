@@ -12,7 +12,7 @@
 GrB_Info GxB_UnaryOp_xtype          // return the type of x
 (
     GrB_Type *xtype,                // return type of input x
-    const GrB_UnaryOp unaryop       // unary operator
+    GrB_UnaryOp unaryop             // unary operator
 )
 { 
 

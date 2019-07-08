@@ -22,6 +22,11 @@ function test71(f)
 %  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 %  http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+[save save_chunk] = nthreads_get ;
+chunk = 4096 ;
+nthreads = feature ('numcores') ;
+nthreads_set (nthreads, chunk) ;
+
 L = sparse (1) ;
 try
     ssmultsym (L,L) ;
@@ -231,3 +236,4 @@ end
 if (nargin == 0)
     test71_plot ;
 end
+nthreads_set (save, save_chunk) ;

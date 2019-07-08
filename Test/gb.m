@@ -1,11 +1,11 @@
-function nth = gb
+function [nth chnk] = gb
 %GB print info about the GraphBLAS version
 %
-% nthreads_max = gb
+% nthreads = gb
 
-[nthreads_max threading thread_safety format hyperratio ... 
-name version date about license compiledate compiletime api api_about] ... 
- = GB_mex_init ;
+[nthreads threading thread_safety format hyperratio ... 
+name version date about license compiledate compiletime api api_about ...
+chunk ] = GB_mex_init ;
 
 d = stat ;
 
@@ -17,15 +17,14 @@ else
     fprintf ('    malloc debug: off\n') ;
 end
 
-fprintf ('    current max nthreads: %d\n', nthreads_max) ;
-
-nthreads = nthreads_get ;
-fprintf ('    # of threads to use (nthreads_get/set): %d\n', nthreads) ;
-
 ncores = feature ('numcores') ;
+[nthreads chunk] = nthreads_get ;
+
+fprintf ('    # of threads to use:   %d\n', nthreads) ;
+fprintf ('    chunk:                 %g\n', chunk) ;
+fprintf ('    OpenMP max threads:    %d\n', GB_mex_omp_max_threads) ;
 fprintf ('    # of cores for MATLAB: %d\n', ncores) ;
 
-fprintf ('    OpenMP max threads: %d\n', GB_mex_omp_max_threads) ;
 
 switch (threading)
     case {0}
@@ -66,6 +65,7 @@ if (nargout > 0)
     fprintf ('\n---------------------------------\n%s', license) ;
     fprintf ('\n---------------------------------\n%s\n', api_about) ;
     fprintf ('API version: %d.%d.%d\n', api) ;
-    nth = nthreads_max ;
+    nth = nthreads ;
+    chnk = chunk ;
 end
 

@@ -12,7 +12,7 @@
 GrB_Info GxB_Monoid_operator        // return the monoid operator
 (
     GrB_BinaryOp *op,               // returns the binary op of the monoid
-    const GrB_Monoid monoid         // monoid to query
+    GrB_Monoid monoid               // monoid to query
 )
 { 
 

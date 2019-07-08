@@ -12,7 +12,7 @@
 GrB_Info GxB_SelectOp_xtype         // return the type of x or NULL if generic
 (
     GrB_Type *xtype,                // return type of input x
-    const GxB_SelectOp selectop     // select operator
+    GxB_SelectOp selectop           // select operator
 )
 { 
 

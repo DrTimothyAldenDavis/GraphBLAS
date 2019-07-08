@@ -12,8 +12,8 @@
 GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
 (
     GrB_Descriptor desc,        // descriptor to modify
-    const GrB_Desc_Field field, // parameter to change
-    const GrB_Desc_Value value  // value to change it to
+    GrB_Desc_Field field,       // parameter to change
+    GrB_Desc_Value value        // value to change it to
 )
 {
 
@@ -79,8 +79,6 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
             }
             desc->in1  = value ;
             break ;
-
-        // case GxB_NTHREADS:  use GxB_Desc_set instead
 
         case GxB_AxB_METHOD : 
 
