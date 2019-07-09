@@ -31,8 +31,6 @@ test73 ;        % performance of C = A*B, with mask
 test86 ;        % performance of GrB_Matrix_extract
 test52 ;        % performance of A*B with tall matrices, AdotB, AxB
 
-
-
 test37 ;        % performance of qsort
 test51b ;       % performance of GrB_assign, multiply operations
 test87 ;        % performance test of GrB_mxm

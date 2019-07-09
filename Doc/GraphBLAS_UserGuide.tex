@@ -5119,7 +5119,7 @@ specified by the \verb'omp_get_max_threads' OpenMP function.  For small
 problems, GraphBLAS may choose to use fewer threads, using two parameters: the
 maximum number of threads to use (which may differ from the
 \verb'omp_get_max_threads' value), and a parameter called the \verb'chunk'.
-Suppose \verb'w' is a measure of the work an operation needs to perform (say
+Suppose \verb'work' is a measure of the work an operation needs to perform (say
 the number of nonzeros in the two input matrices for \verb'GrB_eWiseAdd').  No
 more than \verb'floor(work/chunk)' threads will be used (or one thread if the
 ratio is less than 1).
@@ -5131,15 +5131,15 @@ Both parameters can be set in two ways:
 
 \begin{itemize}
 
-\item Globally:  If these methods are used, then all subsequent GraphBLAS
-operations will use these settings.
+\item Globally:  If the following methods are used, then all subsequent
+GraphBLAS operations will use these settings.
 
     {\footnotesize
     \begin{verbatim}
     int nthreads_max = 40 ;
     GxB_set (GxB_NTHREADS, nthreads_max) ;
     double chunk = 20000 ;
-    GxB_set (GxB_NTHREADS, chunk) ; \end{verbatim} }
+    GxB_set (GxB_CHUNK, chunk) ; \end{verbatim} }
 
 \item Per operation:  Most GraphBLAS operations take a \verb'GrB_Descriptor'
 input, and this can be modified to set the number of threads and chunk
@@ -5152,7 +5152,7 @@ size for the operation that uses this descriptor.
     int nthreads_max = 40 ;
     GxB_set (desc, GxB_NTHREADS, nthreads_max) ;
     double chunk = 20000 ;
-    GxB_set (desc, GxB_NTHREADS, chunk) ; \end{verbatim} }
+    GxB_set (desc, GxB_CHUNK, chunk) ; \end{verbatim} }
 
 \end{itemize}
 
@@ -5168,7 +5168,7 @@ If a descriptor value for either parameter is left at its default, or set to
 \verb'GxB_DEFAULT', then the global setting is used.  This global setting may
 have been modified from its default, and this modified value will be used.
 
-For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If
+For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If \newline
 \verb'GxB_set (GxB_NTHREADS, 4)' is used, then the global setting is four
 threads, not eight.  If a descriptor is used but its \verb'GxB_NTHREADS' is not
 set, or set to \verb'GxB_DEFAULT', then any operation that uses this descriptor
@@ -5646,7 +5646,6 @@ For example:
     GxB_get (GxB_THREAD_SAFETY, &thread_safey) ;
     GxB_get (GxB_THREADING, &threading) ; \end{verbatim} }
 
-\newpage
 %===============================================================================
 \subsection{{\sf GxB\_Matrix\_Option\_get:} retrieve a matrix option}
 %===============================================================================
@@ -5755,6 +5754,7 @@ To get the hypersparse status of a matrix:
     \begin{verbatim}
     GxB_get (GrB_Matrix A, GxB_IS_HYPER, bool *is_hyper) ; \end{verbatim} }
 
+\newpage
 \noindent
 To set/get a descriptor field:
 
@@ -5762,22 +5762,25 @@ To set/get a descriptor field:
     \begin{verbatim}
     GxB_set (GrB_Descriptor d, GrB_OUTP, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_OUTP, GrB_REPLACE) ;
+    GxB_get (GrB_Descriptor d, GrB_OUTP, GrB_Desc_Value *v) ;
 
     GxB_set (GrB_Descriptor d, GrB_MASK, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_MASK, GrB_SCMP) ;
+    GxB_get (GrB_Descriptor d, GrB_MASK, GrB_Desc_Value *v) ;
 
     GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN) ;
+    GxB_get (GrB_Descriptor d, GrB_INP0, GrB_Desc_Value *v) ;
 
     GxB_set (GrB_Descriptor d, GrB_INP1, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN) ;
+    GxB_get (GrB_Descriptor d, GrB_INP1, GrB_Desc_Value *v) ;
 
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HEAP) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;
-
-    GxB_get (GrB_Descriptor d, GrB_Desc_Field f, GrB_Desc_Value *v) ;
+    GxB_get (GrB_Descriptor d, GrB_AxB_METHOD, GrB_Desc_Value *v) ;
 
     GxB_set (GrB_Descriptor d, GxB_NTHREADS, int nthreads) ;
     GxB_get (GrB_Descriptor d, GxB_NTHREADS, int *nthreads) ;
@@ -9594,7 +9597,7 @@ define a {\sf GrB\_Monoid} at compile time, with a terminal value}
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GxB_Monoid_terminal_define(GrB_Monoid monoid, GrB_BinaryOp op, identity, terminal) ;
+GxB_Monoid_terminal_define(monoid, op, identity, terminal) ;
 \end{verbatim} } \end{mdframed}
 
 \verb'GxB_Monoid_terminal_define' is identical to \verb'GxB_Monoid_define',
@@ -10835,6 +10838,14 @@ To compile SuiteSparse:GraphBLAS without running the demos, use
 Several compile-time options can be selected by editing the \verb'Source/GB.h'
 file, but these are meant only for code development of SuiteSparse:GraphBLAS
 itself, not for end-users of SuiteSparse:GraphBLAS.
+
+%----------------------------------------
+\subsection{Using a plain makefile}
+%----------------------------------------
+
+The \verb'GraphBLAS/alternative' directory contains a simple \verb'Makefile'
+that can be used to compile SuiteSparse:GraphBLAS.  This is a useful option
+if you do not have the required version of \verb'cmake'.
 
 %----------------------------------------
 \subsection{Running the Demos}
