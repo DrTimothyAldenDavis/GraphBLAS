@@ -17,7 +17,7 @@
     //--------------------------------------------------------------------------
 
     const int64_t  *restrict Ap = A->p ;
-    const int64_t  *restrict Ah = A->p ;
+    const int64_t  *restrict Ah = A->h ;
     const int64_t  *restrict Ai = A->i ;
     const GB_ATYPE *restrict Ax = A->x ;
     size_t asize = A->type->size ;

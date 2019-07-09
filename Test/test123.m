@@ -7,11 +7,14 @@ Prob = ssget (2662)
 A = Prob.A ;
 
 % make symmetric and remove self edges
+fprintf ('prep (in MATLAB):\n') ;
+tic
 A = spones (A) ;
 A = A+A' ;
 A = tril (A,-1) ;
 A = A+A' ;
 n = size (A,1) ;
+toc
 
 ncores = feature ('numcores') ;
 
@@ -42,5 +45,10 @@ for seed = 1:3
             isize, n, 100 * isize / n) ;
     end
 end
+
+fprintf ('amd run time, for comparison:\n') ;
+tic
+p = amd (A) ;
+toc
 
 fprintf ('test123: all tests passed\n') ;

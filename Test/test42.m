@@ -8,8 +8,9 @@ fprintf ('\n----------------------- performance tests for GrB_Matrix_build\n') ;
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
-nthreads = feature ('numcores') ;
-nthreads_set (nthreads, chunk) ;
+nthreads_max = feature ('numcores') ;
+% fprintf ('GraphBLAS: one thread\n') ;
+% nthreads_set (1, chunk) ;
 
 Prob = ssget ('HB/west0067')
 A = Prob.A ;
@@ -62,7 +63,7 @@ assert (spok (T) == 1) ;
 % end
 
 %-------------------------------------------------------------------------------
-fprintf ('matrix from collection, no sorting:\n') ;
+fprintf ('----------------------- matrix from collection, no sorting:\n') ;
 Prob = ssget (939)
 A = Prob.A ;
 [m n] = size (A) ;
@@ -78,12 +79,19 @@ toc
 assert (isequal (A,T))
 
 fprintf ('GrB:\n') ;
-tic
-S = GB_mex_Matrix_build (i,j,x) ;
-S = S.matrix ;
-toc
-assert (isequal (A,S))
-assert (spok (S) == 1) ;
+for nth = [1 2 4 8 16 20 40]
+    if (nth > 2*nthreads_max)
+        break ;
+    end
+    nthreads_set (nth) ;
+    tic
+    S = GB_mex_Matrix_build (i,j,x) ;
+    S = S.matrix ;
+    t = toc ;
+    fprintf ('GrB with %d threads: %g\n', nth, t) ;
+    assert (isequal (A,S))
+    assert (spok (S) == 1) ;
+end
 
 try 
     fprintf ('Csparse:\n') ;
@@ -110,7 +118,7 @@ end
 assert (ok) ;
 
 %-------------------------------------------------------------------------------
-fprintf ('\nsame matrix, but unsorted:\n') ;
+fprintf ('\n----------------------- same matrix, but unsorted:\n') ;
 
 rng ('default') ;
 nz = length (x)
@@ -127,15 +135,22 @@ T = sparse (i1, j1, x) ;
 toc
 
 fprintf ('GrB:\n') ;
-tic
-S = GB_mex_Matrix_build (i,j,x) ;
-S = S.matrix ;
-toc
-assert (isequal (T,S))
-assert (spok (S) == 1) ;
+for nth = [1 2 4 8 16 20 40]
+    if (nth > 2*nthreads_max)
+        break ;
+    end
+    nthreads_set (nth) ;
+    tic
+    S = GB_mex_Matrix_build (i,j,x) ;
+    S = S.matrix ;
+    t = toc ;
+    fprintf ('GrB with %d threads: %g\n', nth, t) ;
+    assert (isequal (T,S))
+    assert (spok (S) == 1) ;
+end
 
 %-------------------------------------------------------------------------------
-fprintf ('\nrandom matrix, with duplicates:\n') ;
+fprintf ('\n----------------------- random matrix, with duplicates:\n') ;
 i2 = floor (rand (1000000,1) * n) + 1 ;
 j2 = floor (rand (1000000,1) * n) + 1 ;
 x2 = rand (1000000,1) ;
@@ -151,13 +166,20 @@ T = sparse (i1, j1, x) ;
 toc
 
 fprintf ('GrB:\n') ;
-tic
-S = GB_mex_Matrix_build (i,j,x) ;
-S = S.matrix ;
-toc
-% norm (T-S,1)
-assert (isequal (T,S))
-assert (spok (S) == 1) ;
+for nth = [1 2 4 8 16 20 40]
+    if (nth > 2*nthreads_max)
+        break ;
+    end
+    nthreads_set (nth) ;
+    tic
+    S = GB_mex_Matrix_build (i,j,x) ;
+    S = S.matrix ;
+    % norm (T-S,1)
+    t = toc ;
+    fprintf ('GrB with %d threads: %g\n', nth, t) ;
+    assert (isequal (T,S))
+    assert (spok (S) == 1) ;
+end
 
 try
     fprintf ('Csparse:\n') ;
@@ -184,7 +206,7 @@ catch
 end
 assert (ok) ;
 
-fprintf ('\nsame random matrix, but presorted:\n') ;
+fprintf ('\n----------------------- same random matrix, but presorted:\n') ;
 [ignore,p] = sortrows ([j i x]) ;
 i = i (p) ;
 j = j (p) ;
@@ -198,13 +220,20 @@ T = sparse (i1, j1, x) ;
 toc
 
 fprintf ('GrB:\n') ;
-tic
-S = GB_mex_Matrix_build (i,j,x) ;
-S = S.matrix ;
-toc
-% norm (T-S,1)
-assert (isequal (T,S))
-assert (spok (S) == 1) ;
+for nth = [1 2 4 8 16 20 40]
+    if (nth > 2*nthreads_max)
+        break ;
+    end
+    nthreads_set (nth) ;
+    tic
+    S = GB_mex_Matrix_build (i,j,x) ;
+    S = S.matrix ;
+    % norm (T-S,1)
+    t = toc ;
+    fprintf ('GrB with %d threads: %g\n', nth, t) ;
+    assert (isequal (T,S))
+    assert (spok (S) == 1) ;
+end
 
 try
     fprintf ('CSparse:\n') ;

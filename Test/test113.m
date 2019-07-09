@@ -5,6 +5,7 @@ fprintf ('test113: performance tests for GrB_kron\n') ;
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
+ncores = feature ('numcores') ;
 
 A = sprand (310, 302, 0.1) ;
 B = sprand (300, 301, 0.1) ;
@@ -20,7 +21,11 @@ fprintf ('MATLAB: %g sec\n', tm) ;
 [m n] = size (C) ;
 Empty = sparse (m,n) ;
 
-for nthreads = [1 2 4]
+for nthreads = [1 2 4 8 16 20 40]
+
+    if (nthreads > 2*ncores)
+        break ;
+    end
 
     nthreads_set (nthreads,chunk) ;
 

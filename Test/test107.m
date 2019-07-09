@@ -6,7 +6,7 @@ fprintf ('test107: reduce with built-in and  user-defined terminal monoids\n') ;
 rng ('default') ;
 
 save = nthreads_get ;
-nthreads_list = [1 2 4 8 16 2 40 64 160] ;
+nthreads_list = [1 2 4 8 16 20 40 64 160] ;
 nthreads_max = GB_mex_omp_max_threads ;
 
 % clear all
@@ -43,7 +43,7 @@ tm = toc ;
 fprintf ('MATLAB max: %g\n', tm) ;
 for nthreads = nthreads_list
     fprintf ('\n') ;
-    if (nthreads > nthreads_max)
+    if (nthreads > 2*nthreads_max)
         break ;
     end
     nthreads_set (nthreads) ;
@@ -51,10 +51,14 @@ for nthreads = nthreads_list
     for trial = 1:ntrials
         c1 = GB_mex_reduce_to_scalar (0, [ ], 'max', A) ;
     end
-    t1 = toc ;
+    tg = toc ;
     assert (s == c1) ;
+    if (nthreads == 1)
+        t1 = tg ;
+    end
 
-    fprintf ('nthreads %3d built-in      %g\n', nthreads, t1) ;
+    fprintf ('nthreads %3d built-in      %g  speedup %g\n', nthreads, tg, t1/tg) ;
+
     tic
     for trial = 1:ntrials
         c2 = GB_mex_reduce_terminal (A, 1) ;    % user-defined at compile-time

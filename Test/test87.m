@@ -34,14 +34,14 @@ C3 = GB_mex_AxB (A',B) ;
 toc
 
 fprintf ('GrB A''*B native:\n') ;
-tic
+% tic
 C4 = GB_mex_AxB (A,B, true) ;
-toc
+% toc
 [tg method] = gbresults ;
 
-assert (isequal (C, C2)) ;
-assert (isequal (C, C3)) ;
-assert (isequal (C, C4)) ;
+assert (norm (C-C2,1) / norm (C,1) < 1e-12)
+assert (norm (C-C3,1) / norm (C,1) < 1e-12)
+assert (norm (C-C4,1) / norm (C,1) < 1e-12)
 
 fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, method (1), tm/tg) ;
@@ -86,9 +86,9 @@ toc
 fprintf ('MATLAB: %10.4f  GB:auto: %10.4f(%s) speedup %10.4f\n', ...
     tm, tg, method (1), tm/tg) ;
 
-assert (isequal (C, C2)) ;
-assert (isequal (C, C3)) ;
-assert (isequal (C, C4)) ;
+assert (norm (C-C2,1) / norm (C,1) < 1e-12)
+assert (norm (C-C3,1) / norm (C,1) < 1e-12)
+assert (norm (C-C4,1) / norm (C,1) < 1e-12)
 
 %-------------------------------------------------------------------------------
 fprintf ('\n--------------------------------------------------\n') ;
