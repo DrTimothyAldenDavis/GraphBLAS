@@ -10,6 +10,7 @@ fprintf ('\n--------------performance test GB_mex_subassign\n') ;
 chunk = 4096 ;
 nthreads = feature ('numcores') ;
 nthreads_set (nthreads, chunk) ;
+debug_off
 
 dt = struct ('inp0', 'tran') ;
 
@@ -68,10 +69,15 @@ Prob = ssget (2662) ;
 A = Prob.A ;
 % n = 2^21 ; A = A (1:n,1:n) ;
 % A = A (:) ;
-% A = [A A] ;
+A = [A A ; A A] ;
+A = [A A ; A A] ;
+% A = [A A ; A A] ;
+%A = [A A ; A A] ;
+%A = [A A ; A A] ;
 C = A ; 
 C (1,1) = 1 ;
 [m n] = size (A) ;
+fprintf ('size: %d %d\n', m, n) ;
 
 ni = min (size (A, 1), 5500) ;
 nj = min (size (A, 2), 7000) ;
@@ -82,7 +88,7 @@ I = randperm (m,ni) ;
 J = randperm (n,nj) ;
 fprintf ('nnzB: %g\n', nnz (B)) ;
 
-fprintf ('MATLAB start:\n')
+fprintf ('\nC(I,J)=B, MATLAB start:\n')
 tic
 C (I,J) = B ;
 toc
@@ -94,20 +100,23 @@ C2 = A;
 C2 (1,1) =1 ;
 
 fprintf ('GraphBLAS start:\n')
-tic
-C3 = GB_mex_subassign (C2, [], [], B, I0, J0, []) ;
-toc
 
-assert (isequal (C, C3.matrix)) ;
+for nthreads = [1 20 40]
+    nthreads_set (nthreads) ;
+    C3 = GB_mex_subassign (C2, [], [], B, I0, J0, []) ;
+    tg = gbresults ;
+    fprintf ('%d threads, GB time: %g\n', nthreads, tg) ;
+    assert (isequal (C, C3.matrix)) ;
+end
 
-A = Prob.A ;
+% A = Prob.A ;
 % A = A (:) ;
 % A = [A A] ;
 % n = 2^21 ; A = A (1:n,1:n) ;
 C = A ;
 C (1,1) = 1 ;
 
-fprintf ('MATLAB start:\n')
+fprintf ('\nC(I,J)+=B, MATLAB start:\n')
 tic
 C (I,J) = C (I,J) + B ;
 toc
@@ -116,11 +125,14 @@ C2 = A ;
 C2 (1,1) = 1 ;
 
 fprintf ('GraphBLAS start:\n')
-tic
-C3 = GB_mex_subassign (C2, [], 'plus', B, I0, J0, []) ;
-toc
 
-assert (isequal (C, C3.matrix)) ;
+for nthreads = [1 20 40]
+    nthreads_set (nthreads) ;
+    C3 = GB_mex_subassign (C2, [], 'plus', B, I0, J0, []) ;
+    tg = gbresults ;
+    fprintf ('%d threads, GB time: %g\n', nthreads, tg) ;
+    assert (isequal (C, C3.matrix)) ;
+end
 
 nthreads_set (save, save_chunk) ;
 
