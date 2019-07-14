@@ -13,6 +13,7 @@
 
 #include "GB_kron.h"
 #include "GB_transpose.h"
+#include "GB_accum_mask.h"
 
 GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
 (
@@ -166,7 +167,6 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
-    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+    return (GB_ACCUM_MASK (C, M, NULL, accum, &T, C_replace, Mask_comp)) ;
 }
 

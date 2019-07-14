@@ -273,10 +273,49 @@ GrB_Info GB_AxB_user
     // for dot method only:
     const GrB_Matrix *GB_Aslice,
     const bool GB_mask_comp,
-    const int GB_dot_nthreads,
+    const int GB_dot_nthreads,      // also for dot3
     const int GB_naslice,
-    const int GB_nbsllce,
-    int64_t **GB_C_counts
+    const int GB_nbslice,
+    int64_t **GB_C_counts,
+
+    // for dot3 method only:
+    const GB_task_struct *restrict GB_TaskList,
+    const int GB_ntasks
+) ;
+
+GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
+(
+    GrB_Matrix *Chandle,            // output matrix
+    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix B,             // input matrix
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    GB_Context Context
+) ;
+
+GrB_Info GB_AxB_dot3_slice
+(
+    // output:
+    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
+    int *p_max_ntasks,              // size of TaskList
+    int *p_ntasks,                  // # of tasks constructed
+    int *p_nthreads,                // # of threads to use
+    // input:
+    const GrB_Matrix C,             // matrix to slice
+    GB_Context Context
+) ;
+
+GrB_Info GB_AxB_dot3_one_slice
+(
+    // output:
+    GB_task_struct **p_TaskList,    // array of structs, of size max_ntasks
+    int *p_max_ntasks,              // size of TaskList
+    int *p_ntasks,                  // # of tasks constructed
+    int *p_nthreads,                // # of threads to use
+    // input:
+    const GrB_Matrix M,             // matrix to slice
+    GB_Context Context
 ) ;
 
 #endif

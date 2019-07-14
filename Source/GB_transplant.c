@@ -38,6 +38,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (C != NULL) ;
     ASSERT_OK (GB_check (A, "A before transplant", GB0)) ;
     ASSERT_OK (GB_check (ctype, "new type for C", GB0)) ;
+
+    // pending tuples may not appear in A
     ASSERT (!GB_PENDING (A)) ;
 
     // zombies in A can be safely transplanted into C

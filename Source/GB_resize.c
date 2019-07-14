@@ -146,7 +146,7 @@ GrB_Info GB_resize              // change the size of a matrix
         {
             // number of vectors is increasing, extend the vector pointers
             int64_t anz = GB_NNZ (A) ;
-            #pragma omp parallel for num_threads(nthreads)
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int64_t j = vdim_old + 1 ; j <= vdim_new ; j++)
             { 
                 Ap [j] = anz ;

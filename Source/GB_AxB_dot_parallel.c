@@ -64,6 +64,16 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     GrB_Info info ;
 
     //--------------------------------------------------------------------------
+    // use dot3 if M is present and not complemented
+    //--------------------------------------------------------------------------
+
+    if (M != NULL && !Mask_comp)
+    {
+        (*mask_applied) = true ;
+        return (GB_AxB_dot3 (Chandle, M, A, B, semiring, flipxy, Context)) ;
+    }
+
+    //--------------------------------------------------------------------------
     // get A and B
     //--------------------------------------------------------------------------
 

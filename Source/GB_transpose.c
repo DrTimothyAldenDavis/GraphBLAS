@@ -61,7 +61,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // C = C'       (&C is transposed in place)
+        // C = C' ; &C is transposed in place
         //----------------------------------------------------------------------
 
         // GB_transpose (&C, ctype, csc, NULL, op) ;
@@ -80,7 +80,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // A = A'       (A is transposed in place; reuse the header of A)
+        // A = A' ; A is transposed in place; reuse the header of A
         //----------------------------------------------------------------------
 
         // GB_transpose (NULL, ctype, csc, A, op) ;
@@ -100,7 +100,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     { 
 
         //----------------------------------------------------------------------
-        // C = A'       (C and A are different)
+        // C = A' ; C and A are different
         //----------------------------------------------------------------------
 
         // GB_transpose (&C, ctype, csc, A, op) ;

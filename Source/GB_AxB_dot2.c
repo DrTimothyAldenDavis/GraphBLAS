@@ -50,6 +50,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+    ASSERT (Aslice != NULL) ;
     GrB_Matrix A = Aslice [0] ;     // just for type and dimensions
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
@@ -296,9 +297,12 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         if (A->type == atype_required && B->type == btype_required)
         {
             info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, NULL, B,
-                flipxy, NULL, NULL, NULL, 0, NULL,
-                Aslice, Mask_comp,  nthreads, naslice, nbslice,
-                C_counts) ;
+                flipxy,
+                /* heap: */ NULL, NULL, NULL, 0,
+                /* Gustavson: */ NULL,
+                /* dot: */ Aslice, Mask_comp, nthreads, naslice, nbslice,
+                           C_counts,
+                /* dot3: */ NULL, 0) ;
             done = true ;
         }
     }

@@ -22,7 +22,7 @@
 // out-of-memory conditions.  This function is not user-callable.  Shallow
 // matrices are never passed back to the user.
 
-// Compare this function with GB_shallow_cast.c
+// Compare this function with GB_shallow_copy.c
 
 #include "GB_apply.h"
 

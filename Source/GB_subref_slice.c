@@ -160,8 +160,8 @@ GrB_Info GB_subref_slice
     for (int method = 0 ; method <= 12 ; method++) Hist [method] = 0 ;
     #endif
 
-    #pragma omp parallel for num_threads(nthreads_for_Cwork) \
-        schedule(static) reduction(||:need_I_inverse)
+    #pragma omp parallel for num_threads(nthreads_for_Cwork) schedule(static) \
+        reduction(||:need_I_inverse)
     for (int64_t kC = 0 ; kC < Cnvec ; kC++)
     {
         // jC is the (kC)th vector of C = A(I,J)

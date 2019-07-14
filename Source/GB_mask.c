@@ -211,7 +211,7 @@ GrB_Info GB_mask                // C<M> = Z
             // apply the mask immediately, and then return to its caller.
             // This done by the GB_RETURN_IF_QUICK_MASK macro.
 
-            // NOTE: in the current version, this work is always done by the
+            // In the current version, this work is always done by the
             // GB_RETURN_IF_QUICK_MASK macro, and GB_mask is no longer called
             // with an empty complemented mask.  The following is thus dead
             // code.  It is kept here in case this function is called to handle

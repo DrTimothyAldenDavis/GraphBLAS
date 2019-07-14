@@ -284,18 +284,35 @@
     // save C(i,j)
     //--------------------------------------------------------------------------
 
-    if (cij_exists)
-    { 
-        // C(i,j) = cij
-        #if defined ( GB_PHASE_1_OF_2 )
-        C_count [Iter_k] ++ ;
-        #else
-        GB_CIJ_SAVE (cij, cnz) ;
-        Ci [cnz++] = i ;
-        #if defined ( GB_PHASE_2_OF_2 )
-        if (cnz > cnz_last) break ;
-        #endif
-        #endif
-    }
+    #if defined ( GB_DOT3 )
+
+        if (cij_exists)
+        {
+            GB_CIJ_SAVE (cij, pC) ;
+            Ci [pC] = i ;
+        }
+        else
+        {
+            task_nzombies++ ;
+            Ci [pC] = GB_FLIP (i) ;
+        }
+
+    #else
+
+        if (cij_exists)
+        { 
+            // C(i,j) = cij
+            #if defined ( GB_PHASE_1_OF_2 )
+                C_count [Iter_k] ++ ;
+            #else
+                GB_CIJ_SAVE (cij, cnz) ;
+                Ci [cnz++] = i ;
+                #if defined ( GB_PHASE_2_OF_2 )
+                    if (cnz > cnz_last) break ;
+                #endif
+            #endif
+        }
+
+    #endif
 }
 

@@ -270,8 +270,11 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         if (A->type == atype_required && B->type == btype_required)
         { 
             info = GB_AxB_user (GxB_AxB_GUSTAVSON, semiring, Chandle, M, A, B,
-                flipxy, NULL, NULL, NULL, 0, Sauna,
-                NULL, 0, 1, 1, 1, NULL) ;
+                flipxy,
+                /* heap: */ NULL, NULL, NULL, 0,
+                /* Gustavson: */ Sauna,
+                /* dot: */ NULL, 0, 1, 1, 1, NULL,
+                /* dot3: */ NULL, 0) ;
             (*mask_applied) = (M != NULL) && (info == GrB_SUCCESS) ;
             return (info) ;
         }

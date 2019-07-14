@@ -1,5 +1,3 @@
-TODO: check C=A*B load balance for masked dot2 method for lcc problem.
-
 TODO: All parallel methods need tuning and benchmarking.
 
 TODO: vectorization

@@ -34,7 +34,6 @@
         r = simple_toc (tic) ;      // r is time for work C, in seconds
 */
 
-#define _POSIX_C_SOURCE 200809L
 #include <time.h>
 
 #if defined ( __linux__ )

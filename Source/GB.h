@@ -48,6 +48,7 @@
 #pragma warning (disable: 191 193 )
 
 // disable icc -w3 warnings
+//  144:  initialize with incompatible pointer
 //  181:  format
 //  869:  unused parameters
 //  1572: floating point comparisons
@@ -55,14 +56,13 @@
 //  2259: typecasting may lose bits
 //  2282: unrecognized pragma
 //  2557: sign compare
-#pragma warning (disable: 181 869 1572 1599 2259 2282 2557 )
+#pragma warning (disable: 144 181 869 1572 1599 2259 2282 2557 )
 
 // See GB_unused.h, for warnings 177 and 593, which are not globally 
 // disabled, but selectively by #include'ing GB_unused.h as needed.
 
 // resolved (warnings no longer disabled globally):
 //  58:   sign compare
-//  144:  initialize with incompatible pointer
 //  167:  incompatible pointer
 //  177:  declared but unused
 //  186:  useless comparison
@@ -86,6 +86,7 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
 // See GB_unused.h, where these two pragmas are used:
 // #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
@@ -95,14 +96,14 @@
 // #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 // #pragma GCC diagnostic ignored "-Wtype-limits"
 // #pragma GCC diagnostic ignored "-Wunused-result"
-// #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 // #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 
 // enable these warnings as errors
 #pragma GCC diagnostic error "-Wmisleading-indentation"
 #pragma GCC diagnostic error "-Wswitch-default"
-#pragma GCC diagnostic error "-Wdouble-promotion"
 #pragma GCC diagnostic error "-Wmissing-prototypes"
+
+// #pragma GCC diagnostic error "-Wdouble-promotion"
 
 #endif
 
@@ -1008,12 +1009,20 @@ GrB_Info GB_error           // log an error in thread-local-storage
     }                                                                       \
 }
 
+#define GBPR0(...)                  \
+{                                   \
+    if (pr > 0)                     \
+    {                               \
+        GBPR (__VA_ARGS__) ;        \
+    }                               \
+}
+
 // check object->magic code
 #ifdef GB_DEVELOPER
 #define GBPR_MAGIC(pcode)                                               \
 {                                                                       \
     char *p = (char *) &(pcode) ;                                       \
-    if (pr > 0) GBPR (" pcode: [ %d1 %s ] ", p [0], p) ;                \
+    GBPR0 (" pcode: [ %d1 %s ] ", p [0], p) ;                           \
 }
 #else
 #define GBPR_MAGIC(pcode) ;
@@ -1032,20 +1041,20 @@ GrB_Info GB_error           // log an error in thread-local-storage
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
             GBPR_MAGIC (object->magic) ;                                \
-            if (pr > 0) GBPR ("already freed!\n") ;                     \
+            GBPR0 ("already freed!\n") ;                                \
             return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
                 "%s is freed: [%s]", kind, name))) ;                    \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
             GBPR_MAGIC (object->magic) ;                                \
-            if (pr > 0) GBPR ("invalid\n") ;                            \
+            GBPR0 ("invalid\n") ;                                       \
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
                 "%s is invalid: [%s]", kind, name))) ;                  \
                                                                         \
         default :                                                       \
             /* uninitialized */                                         \
-            if (pr > 0) GBPR ("uninititialized\n") ;                    \
+            GBPR0 ("uninititialized\n") ;                               \
             return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
                 "%s is uninitialized: [%s]", kind, name))) ;            \
     }                                                                   \
@@ -1381,7 +1390,7 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
 void GB_copy_user_user (void *z, const void *x, size_t s) ;
 
 //------------------------------------------------------------------------------
-// GB_task_struct: Element-wise Task descriptor
+// GB_task_struct: parallel task descriptor
 //------------------------------------------------------------------------------
 
 // The element-wise computations (GB_add, GB_emult, and GB_mask) compute
@@ -1506,6 +1515,25 @@ void GB_task_cumsum
     const int ntasks,                   // # of tasks
     const int nthreads                  // # of threads
 ) ;
+
+//------------------------------------------------------------------------------
+// GB_GET_VECTOR: get the content of a vector for a coarse/fine task
+//------------------------------------------------------------------------------
+
+#define GB_GET_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, kX)                \
+    int64_t pX_start, pX_fini ;                                             \
+    if (fine_task)                                                          \
+    {                                                                       \
+        /* A fine task operates on a slice of X(:,k) */                     \
+        pX_start = TaskList [taskid].pX ;                                   \
+        pX_fini  = TaskList [taskid].pX_end ;                               \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* vectors are never sliced for a coarse task */                    \
+        pX_start = Xp [kX] ;                                                \
+        pX_fini  = Xp [kX+1] ;                                              \
+    }
 
 //------------------------------------------------------------------------------
 
@@ -1753,18 +1781,6 @@ void GB_cumsum                  // compute the cumulative sum of an array
     int nthreads
 ) ;
 
-GrB_Info GB_accum_mask          // C<M> = accum (C,T)
-(
-    GrB_Matrix C,               // input/output matrix for results
-    const GrB_Matrix M_in,      // optional mask for C, unused if NULL
-    const GrB_Matrix MT_in,     // MT=M' if computed already in the caller
-    const GrB_BinaryOp accum,   // optional accum for Z=accum(C,results)
-    GrB_Matrix *Thandle,        // results of computation, freed when done
-    const bool C_replace,       // if true, clear C first
-    const bool Mask_complement, // if true, complement the mask
-    GB_Context Context
-) ;
-
 GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 (
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
@@ -1892,13 +1908,13 @@ GrB_Info GB_wait                // finish all pending computations
 
 #if defined ( _OPENMP )
 
-#define GB_OPENMP_THREAD_ID    omp_get_thread_num ( )
-#define GB_OPENMP_MAX_THREADS  omp_get_max_threads ( )
+    #define GB_OPENMP_THREAD_ID    omp_get_thread_num ( )
+    #define GB_OPENMP_MAX_THREADS  omp_get_max_threads ( )
 
 #else
 
-#define GB_OPENMP_THREAD_ID    (0)
-#define GB_OPENMP_MAX_THREADS  (1)
+    #define GB_OPENMP_THREAD_ID    (0)
+    #define GB_OPENMP_MAX_THREADS  (1)
 
 #endif
 

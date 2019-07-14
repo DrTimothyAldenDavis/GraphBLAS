@@ -27,12 +27,12 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (pr > 0) GBPR ("\nGraphBLAS SelectOp: %s: ", GB_NAME) ;
+    GBPR0 ("\nGraphBLAS SelectOp: %s: ", GB_NAME) ;
 
     if (op == NULL)
     { 
         // GrB_error status not modified since this may be an optional argument
-        if (pr > 0) GBPR ("NULL\n") ;
+        GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -58,11 +58,11 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
         }
     }
 
-    if (pr > 0) GBPR ("C=%s(A,k)\n", op->name) ;
+    GBPR0 ("C=%s(A,k)\n", op->name) ;
 
     if (op->function == NULL && op->opcode >= GB_USER_SELECT_C_opcode)
     { 
-        if (pr > 0) GBPR ("function pointer is NULL\n") ;
+        GBPR0 ("function pointer is NULL\n") ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
             "SelectOp has a NULL function pointer: %s [%s]",
             GB_NAME, op->name))) ;
@@ -70,7 +70,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
 
     if (op->opcode < GB_TRIL_opcode || op->opcode > GB_USER_SELECT_R_opcode)
     { 
-        if (pr > 0) GBPR ("invalid opcode\n") ;
+        GBPR0 ("invalid opcode\n") ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
             "SelectOp has an invalid opcode: %s [%s]", GB_NAME, op->name))) ;
     }
@@ -80,7 +80,7 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
         GrB_Info info = GB_Type_check (op->xtype, "xtype", pr, f, Context) ;
         if (info != GrB_SUCCESS)
         { 
-            if (pr > 0) GBPR ("SelectOP has an invalid xtype\n") ;
+            GBPR0 ("SelectOP has an invalid xtype\n") ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "SelectOp has an invalid xtype: %s [%s]", GB_NAME, op->name))) ;
         }

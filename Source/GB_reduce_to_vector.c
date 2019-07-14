@@ -15,6 +15,7 @@
 #include "GB_reduce.h"
 #include "GB_build.h"
 #include "GB_ek_slice.h"
+#include "GB_accum_mask.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
@@ -224,9 +225,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         const int64_t *restrict Ah = A->h ;
         const int64_t *restrict Ap = A->p ;
 
-        int nthreads_for_anvec = GB_nthreads (anvec, chunk, nthreads_max) ;
-        #pragma omp parallel for num_threads(nthreads_for_anvec) \
-            schedule(static) reduction(+:nzombies)
+        int nth = GB_nthreads (anvec, chunk, nthreads_max) ;
+        #pragma omp parallel for num_threads(nth) schedule(static) \
+            reduction(+:nzombies)
         for (int64_t k = 0 ; k < anvec ; k++)
         {
             // if A(:,j) is empty, then the entry in T becomes a zombie
@@ -508,7 +509,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // C<M> = accum (C,T): accumulate the results into C via the mask
     //--------------------------------------------------------------------------
 
-    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+    return (GB_ACCUM_MASK (C, M, NULL, accum, &T, C_replace, Mask_comp)) ;
 }
 

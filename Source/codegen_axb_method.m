@@ -13,6 +13,7 @@ name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 % function names
 fprintf (f, 'define(`GB_AgusB'', `GB_AgusB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot2B'', `GB_Adot2B__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Adot3B'', `GB_Adot3B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AheapB'', `GB_AheapB__%s'')\n', name) ;
 
 % type of C, A, and B

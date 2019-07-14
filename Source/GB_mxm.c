@@ -13,6 +13,7 @@
 // functions GrB_mxm, GrB_mxv, and GrB_vxm.
 
 #include "GB_mxm.h"
+#include "GB_accum_mask.h"
 
 GrB_Info GB_mxm                     // C<M> = A*B
 (
@@ -123,7 +124,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
 
     ASSERT_OK (GB_check (T, "T=A*B from GB_AxB_meta", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (MT, "MT from GB_AxB_meta", GB0)) ;
-    ASSERT (!GB_ZOMBIES (T)) ;
+    ASSERT (GB_ZOMBIES_OK (T)) ;
     ASSERT (!GB_PENDING (T)) ;
 
     //--------------------------------------------------------------------------
@@ -143,16 +144,37 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // hypersparsity.
         GB_MATRIX_FREE (&MT) ;
         info = GB_transplant_conform (C, C->type, &T, Context) ;
-        return (info) ;
+        #ifdef GB_DEBUG
+        if (info == GrB_SUCCESS)
+        {
+            // C may be returned with zombies, but no pending tuples
+            ASSERT_OK (GB_check (C, "C from GB_mxm (transplanted)", GB0)) ;
+            ASSERT (GB_ZOMBIES_OK (C)) ;
+            ASSERT (!GB_PENDING (C)) ;
+        }
+        #endif
     }
     else
     { 
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity
-        info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
-            Context) ;
+        info = GB_ACCUM_MASK (C, M, MT, accum, &T, C_replace, Mask_comp) ;
         GB_MATRIX_FREE (&MT) ;
-        return (info) ;
+        #ifdef GB_DEBUG
+        if (info == GrB_SUCCESS)
+        {
+            // C may be returned with zombies and pending tuples
+            ASSERT_OK (GB_check (C, "Final C from GB_mxm (accum_mask)", GB0)) ;
+            ASSERT (GB_ZOMBIES_OK (C)) ;
+            ASSERT (GB_PENDING_OK (C)) ;
+        }
+        #endif
     }
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    return (info) ;
 }
 

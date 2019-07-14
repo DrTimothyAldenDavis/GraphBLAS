@@ -10,7 +10,9 @@
 // The input matrix can have shallow A->p and/or A->h components.  If the
 // hypersparsity is changed, these components are no longer shallow.  If the
 // method fails and the matrix is shallow, all content is removed or freed.
-// The input matrix may be jumbled; this is not an error condition.
+// The input matrix may be jumbled; this is not an error condition.  Zombies
+// are OK, but A never has pending tuples.  However, this function is agnostic
+// about pending tuples so they could be OK.
 
 #include "GB.h"
 
@@ -26,7 +28,7 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     //--------------------------------------------------------------------------
 
     ASSERT_OK_OR_JUMBLED (GB_check (A, "A to conform", GB0)) ;
-    ASSERT (!GB_ZOMBIES (A)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
     //--------------------------------------------------------------------------

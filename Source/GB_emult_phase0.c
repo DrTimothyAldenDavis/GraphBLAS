@@ -382,7 +382,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         ASSERT (Ch != NULL) ;
 
         const int64_t *restrict Mp = M->p ;
-        #pragma omp parallel for num_threads(nthreads)
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < Cnvec ; k++)
         { 
             int64_t pM, pM_end, kM = 0 ;
@@ -410,7 +410,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         // compute C_to_A
         ASSERT (Ch != NULL) ;
         const int64_t *restrict Ap = A->p ;
-        #pragma omp parallel for num_threads(nthreads)
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < Cnvec ; k++)
         { 
             int64_t pA, pA_end, kA = 0 ;
@@ -439,7 +439,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         // compute C_to_B
         ASSERT (Ch != NULL) ;
         const int64_t *restrict Bp = B->p ;
-        #pragma omp parallel for num_threads(nthreads)
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < Cnvec ; k++)
         { 
             int64_t pB, pB_end, kB = 0 ;

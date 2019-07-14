@@ -25,10 +25,14 @@ GrB_Info GB_AxB_user
     // for dot method only:
     const GrB_Matrix *GB_Aslice,
     const bool GB_mask_comp,
-    const int GB_dot_nthreads,
+    const int GB_dot_nthreads,      // also for dot3
     const int GB_naslice,
     const int GB_nbslice,
-    int64_t **GB_C_counts
+    int64_t **GB_C_counts,
+
+    // for dot3 method only:
+    const GB_task_struct *restrict GB_TaskList,
+    const int GB_ntasks
 )
 {
     GrB_Info GB_info = GrB_SUCCESS ;

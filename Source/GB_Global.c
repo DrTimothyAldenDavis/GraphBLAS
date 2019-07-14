@@ -100,8 +100,6 @@ typedef struct
     // memory usage tracking: for testing and debugging only
     //--------------------------------------------------------------------------
 
-    // NOTE: these statistics are not thread-safe, and used only for testing.
-
     // malloc_tracking:  default is false.  There is no user-accessible API for
     // setting this to true.  If true, the following statistics are computed.
     // If false, all of the following are unused.

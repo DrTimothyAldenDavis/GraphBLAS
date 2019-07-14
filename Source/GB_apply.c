@@ -13,6 +13,7 @@
 
 #include "GB_apply.h"
 #include "GB_transpose.h"
+#include "GB_accum_mask.h"
 
 GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 (
@@ -122,7 +123,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     // C<M> = accum (C,T): accumulate the results into C via the M
     //--------------------------------------------------------------------------
 
-    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+    return (GB_ACCUM_MASK (C, M, NULL, accum, &T, C_replace, Mask_comp)) ;
 }
 

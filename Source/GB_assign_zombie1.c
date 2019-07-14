@@ -46,7 +46,7 @@ void GB_assign_zombie1
     for (int64_t pC = pC_start ; pC < pC_end ; pC++)
     {
         int64_t i = Ci [pC] ;
-        if (GB_IS_ZOMBIE (i))
+        if (!GB_IS_ZOMBIE (i))
         { 
             // delete C(i,j) by marking it as a zombie
             nzombies++ ;

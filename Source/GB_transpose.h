@@ -54,12 +54,11 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     int naslice                         // # of slices of A
 ) ;
 
-GrB_Info GB_shallow_cast    // create a shallow typecasted matrix
+GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
-    GrB_Matrix *Chandle,    // output matrix C, of type op->ztype
-    const GrB_Type ctype,   // type of the output matrix C
+    GrB_Matrix *Chandle,    // output matrix C
     const bool C_is_csc,    // desired CSR/CSC format of C
-    const GrB_Matrix A,     // input matrix to typecast
+    const GrB_Matrix A,     // input matrix
     GB_Context Context
 ) ;
 

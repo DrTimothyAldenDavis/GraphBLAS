@@ -33,6 +33,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     //--------------------------------------------------------------------------
 
     ASSERT_OK_OR_JUMBLED (GB_check (A, "A being converted to nonhyper", GB0)) ;
+    ASSERT (GB_ZOMBIES_OK (A)) ;
 
     //--------------------------------------------------------------------------
     // convert A to non-hypersparse form

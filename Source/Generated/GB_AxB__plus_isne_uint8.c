@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -137,6 +138,29 @@ GrB_Info GB_Adot2B__plus_isne_uint8
     #define GB_PHASE_2_OF_2
     #include "GB_AxB_dot2_meta.c"
     #undef GB_PHASE_2_OF_2
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C<M>=A'*B: masked dot product method (phase 2)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot3B__plus_isne_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *restrict TaskList,
+    const int ntasks,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_dot3_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

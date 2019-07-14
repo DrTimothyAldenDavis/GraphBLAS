@@ -56,6 +56,7 @@
 #include "GB_add.h"
 #include "GB_mask.h"
 #include "GB_transpose.h"
+#include "GB_accum_mask.h"
 
 /* -----------------------------------------------------------------------------
 
@@ -159,15 +160,28 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     ASSERT_OK_OR_NULL (GB_check (MT_in, "MT_in for GB_accum_mask", GB0)) ;
     ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_accum_mask", GB0)) ;
 
-    // pending work in C may be abandoned, so it is postponed
+    // pending work in C may be abandoned, or it might not need to be
+    // finished if GB_subassigner is used, so it is not finished here.
     ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (GB_PENDING_OK (M)) ; ASSERT (GB_ZOMBIES_OK (M)) ;
+
+    // pending work in T will be finished now
+    ASSERT (GB_PENDING_OK (T)) ; ASSERT (GB_ZOMBIES_OK (T)) ;
 
     // GB_extract can pass in a matrix T that is jumbled, but it does so
     // only if T->is_csc and C->is_csc are different.  In that case, T is
     // transposed, so the sort can be skipped.
     ASSERT_OK_OR_JUMBLED (GB_check (T, "[T = results of computation]", GB0)) ;
-    ASSERT (!GB_PENDING (T)) ; ASSERT (!GB_ZOMBIES (T)) ;
+
+    //--------------------------------------------------------------------------
+    // remove zombies and pending tuples from T
+    //--------------------------------------------------------------------------
+
+    if (GB_PENDING_OR_ZOMBIES (T))
+    {
+        // if this fails, *Thandle must be freed
+        GB_OK (GB_wait (T, Context)) ;
+    }
 
     //--------------------------------------------------------------------------
     // ensure M and T have the same CSR/CSC format as C
@@ -175,7 +189,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     if (C->is_csc != T->is_csc)
     { 
-        // transpose: no typecast, no op, in place of T, jumbled
+        // transpose: no typecast, no op, in place of T, jumbled, but T
+        // cannot have any zombies or pending tuples.
         GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL, NULL, Context)) ;
         T = (*Thandle) ;
     }
@@ -191,7 +206,11 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // transpose: typecast, no op, not in place
         if (MT_in == NULL)
         { 
-            if (GB_PENDING_OR_ZOMBIES (M)) GB_OK (GB_wait (M, Context)) ;
+            if (GB_PENDING_OR_ZOMBIES (M))
+            {
+                // remove zombies and pending tuples from M
+                GB_OK (GB_wait (M, Context)) ;
+            }
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M, NULL, Context)) ;
             // use the transpose mask
             M = MT ;

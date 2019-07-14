@@ -31,17 +31,17 @@ static GrB_Info GB_dc
     bool ok = true ;
     GrB_Info info = GrB_SUCCESS ;
 
-    if (pr > 0) GBPR ("D.%s = ", field) ;
+    GBPR0 ("D.%s = ", field) ;
     switch (v)
     {
-        case GxB_DEFAULT       : if (pr > 0) GBPR ("default   ") ; break ;
-        case GrB_SCMP          : if (pr > 0) GBPR ("scmp      ") ; break ;
-        case GrB_TRAN          : if (pr > 0) GBPR ("tran      ") ; break ;
-        case GrB_REPLACE       : if (pr > 0) GBPR ("replace   ") ; break ;
-        case GxB_AxB_GUSTAVSON : if (pr > 0) GBPR ("Gustavson ") ; break ;
-        case GxB_AxB_HEAP      : if (pr > 0) GBPR ("heap      ") ; break ;
-        case GxB_AxB_DOT       : if (pr > 0) GBPR ("dot       ") ; break ;
-        default                : if (pr > 0) GBPR ("unknown   ") ;
+        case GxB_DEFAULT       : GBPR0 ("default   ") ; break ;
+        case GrB_SCMP          : GBPR0 ("scmp      ") ; break ;
+        case GrB_TRAN          : GBPR0 ("tran      ") ; break ;
+        case GrB_REPLACE       : GBPR0 ("replace   ") ; break ;
+        case GxB_AxB_GUSTAVSON : GBPR0 ("Gustavson ") ; break ;
+        case GxB_AxB_HEAP      : GBPR0 ("heap      ") ; break ;
+        case GxB_AxB_DOT       : GBPR0 ("dot       ") ; break ;
+        default                : GBPR0 ("unknown   ") ;
             info = GrB_INVALID_OBJECT ;
             ok = false ;
             break ;
@@ -71,11 +71,11 @@ static GrB_Info GB_dc
 
     if (!ok)
     { 
-        if (pr > 0) GBPR (" (invalid value for this field)") ;
+        GBPR0 (" (invalid value for this field)") ;
         info = GrB_INVALID_OBJECT ;
     }
 
-    if (pr > 0) GBPR ("\n") ;
+    GBPR0 ("\n") ;
 
     return (info) ;
 }
@@ -99,12 +99,12 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (pr > 0) GBPR ("\nGraphBLAS Descriptor: %s ", GB_NAME) ;
+    GBPR0 ("\nGraphBLAS Descriptor: %s ", GB_NAME) ;
 
     if (D == NULL)
     { 
         // GrB_error status not modified since this may be an optional argument
-        if (pr > 0) GBPR ("NULL\n") ;
+        GBPR0 ("NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
 
@@ -114,7 +114,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 
     GB_CHECK_MAGIC (D, "Descriptor") ;
 
-    if (pr > 0) GBPR ("\n") ;
+    GBPR0 ("\n") ;
 
     GrB_Info info [5] ;
     info [0] = GB_dc (true,  "output    ", D->out,  GrB_REPLACE, pr,f,Context) ;
@@ -127,7 +127,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     { 
         if (info [i] != GrB_SUCCESS)
         {
-            if (pr > 0) GBPR ("Descriptor field set to an invalid value\n") ;
+            GBPR0 ("Descriptor field set to an invalid value\n") ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "Descriptor field set to an invalid value: [%s]", GB_NAME))) ;
         }

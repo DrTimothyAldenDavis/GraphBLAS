@@ -3,14 +3,14 @@ clear all
 make
 addpath ('~/ssget') ;
 addpath ('spok') ;
-debug_on
+% debug_on
 nthreads_set (2) ;
 gb
 
-test16
 
 %
 test06
+test16
 test20
 test28
 test32

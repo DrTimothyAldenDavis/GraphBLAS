@@ -1691,25 +1691,6 @@ GrB_Info GB_subassign_emult_slice
     int64_t task_pending = 0 ;
 
 //------------------------------------------------------------------------------
-// GB_GET_VECTOR: get the content of a vector for a coarse/fine task
-//------------------------------------------------------------------------------
-
-#define GB_GET_VECTOR(pX_start, pX_fini, pX, pX_end, Xp, kX)                \
-    int64_t pX_start, pX_fini ;                                             \
-    if (fine_task)                                                          \
-    {                                                                       \
-        /* A fine task operates on a slice of X(:,k) */                     \
-        pX_start = TaskList [taskid].pX ;                                   \
-        pX_fini  = TaskList [taskid].pX_end ;                               \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        /* vectors are never sliced for a coarse task */                    \
-        pX_start = Xp [kX] ;                                                \
-        pX_fini  = Xp [kX+1] ;                                              \
-    }
-
-//------------------------------------------------------------------------------
 // GB_GET_MAPPED_VECTOR: get the content of a vector for a coarse/fine task
 //------------------------------------------------------------------------------
 

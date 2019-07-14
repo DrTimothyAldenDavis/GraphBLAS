@@ -15,6 +15,7 @@
 #include "GB_add.h"
 #include "GB_emult.h"
 #include "GB_transpose.h"
+#include "GB_accum_mask.h"
 
 #define GB_FREE_ALL         \
 {                           \
@@ -243,8 +244,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity
-        info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
-            Context) ;
+        info = GB_ACCUM_MASK (C, M, MT, accum, &T, C_replace, Mask_comp) ;
         GB_MATRIX_FREE (&MT) ;
         return (info) ;
     }

@@ -111,19 +111,38 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
         }
         else if (GB_AxB_method == GxB_AxB_DOT)
         {
-            if (GB_flipxy)
-            { 
-                GB_info = GB_AxB_user_dot_$1_flipxy
-                    (GB_Chandle, GB_M, GB_mask_comp, GB_Aslice, false, GB_B,
-                    false, GB_C_counts, GB_dot_nthreads, GB_naslice,
-                    GB_nbslice) ;
+
+            if (GB_Aslice == NULL)
+            {
+                if (GB_flipxy)
+                { 
+                    GB_info = GB_AxB_user_dot3_$1_flipxy
+                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+                }
+                else
+                { 
+                    GB_info = GB_AxB_user_dot3_$1
+                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+                }
             }
             else
-            { 
-                GB_info = GB_AxB_user_dot_$1_flipxy
-                    (GB_Chandle, GB_M, GB_mask_comp, GB_Aslice, false, GB_B,
-                    false, GB_C_counts, GB_dot_nthreads, GB_naslice,
-                    GB_nbslice) ;
+            {
+                if (GB_flipxy)
+                { 
+                    GB_info = GB_AxB_user_dot_$1_flipxy
+                        (*GB_Chandle, GB_M, GB_mask_comp, GB_Aslice, false,
+                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                        GB_nbslice) ;
+                }
+                else
+                { 
+                    GB_info = GB_AxB_user_dot_$1
+                        (*GB_Chandle, GB_M, GB_mask_comp, GB_Aslice, false,
+                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                        GB_nbslice) ;
+                }
             }
         }
         else // (GB_AxB_method == GxB_AxB_HEAP)
@@ -166,29 +185,35 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
     #define GB_AgusB    GB_AxB_user_gus_$1
     #define GB_Adot2B   GB_AxB_user_dot_$1
+    #define GB_Adot3B   GB_AxB_user_dot3_$1
     #define GB_AheapB   GB_AxB_user_heap_$1
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(x), &(y))
     #define GB_atype    GB_DEF_$3_xtype
     #define GB_btype    GB_DEF_$3_ytype
+    #include "GB_AxB.h"
     #include "GB_AxB.c"
     #undef GB_atype
     #undef GB_btype
     #undef GB_MULTIPLY
     #undef GB_AgusB
     #undef GB_Adot2B
+    #undef GB_Adot3B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_$1_flipxy
     #define GB_Adot2B   GB_AxB_user_dot_$1_flipxy
+    #define GB_Adot3B   GB_AxB_user_dot3_$1_flipxy
     #define GB_AheapB   GB_AxB_user_heap_$1_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(y), &(x))
     #define GB_atype    GB_DEF_$3_ytype
     #define GB_btype    GB_DEF_$3_xtype
+    #include "GB_AxB.h"
     #include "GB_AxB.c"
     #undef GB_atype
     #undef GB_btype
     #undef GB_MULTIPLY
     #undef GB_AgusB
     #undef GB_Adot2B
+    #undef GB_Adot3B
     #undef GB_AheapB
     #undef GB_ADD
     #undef GB_identity

@@ -21,6 +21,7 @@
 
 #include "GB_extract.h"
 #include "GB_subref.h"
+#include "GB_accum_mask.h"
 
 GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
 (
@@ -186,7 +187,6 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     // C<M> = accum (C,T): accumulate the results into C via the mask M
     //--------------------------------------------------------------------------
 
-    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+    return (GB_ACCUM_MASK (C, M, NULL, accum, &T, C_replace, Mask_comp)) ;
 }
 
