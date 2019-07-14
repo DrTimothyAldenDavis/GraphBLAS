@@ -290,7 +290,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
         C, Context)) ;
 
-    if (ntasks > 1) printf ("ntasks %d\n", ntasks) ;
+    // if (ntasks > 1) printf ("ntasks %d\n", ntasks) ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and built-in semiring

@@ -37,8 +37,6 @@ void GB_cast_array              // typecast an array
         return ;
     }
 
-    GrB_Info info ;
-
     ASSERT (Cx != NULL) ;
     ASSERT (Ax != NULL) ;
     ASSERT (anz > 0) ;
@@ -65,12 +63,12 @@ void GB_cast_array              // typecast an array
 
         #define GB_unop(zname,xname) GB_unop__identity ## zname ## xname
 
-        #define GB_WORKER(ignore1,zname,ztype,xname,xtype)              \
-        {                                                               \
-            info = GB_unop (zname,xname) ((ztype *restrict) Cx,         \
-                (const xtype *restrict) Ax, anz, nthreads) ;            \
-            if (info == GrB_SUCCESS) return ;                           \
-        }                                                               \
+        #define GB_WORKER(ignore1,zname,ztype,xname,xtype)                  \
+        {                                                                   \
+            GrB_Info info = GB_unop (zname,xname) ((ztype *restrict) Cx,    \
+                (const xtype *restrict) Ax, anz, nthreads) ;                \
+            if (info == GrB_SUCCESS) return ;                               \
+        }                                                                   \
         break ;
 
         //----------------------------------------------------------------------

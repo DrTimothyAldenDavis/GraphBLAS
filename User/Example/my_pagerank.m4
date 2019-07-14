@@ -23,12 +23,7 @@ typedef struct
 pagerank_type ;
 
 // global values shared by all threads in a single pagerank computation:
-extern
-double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
-
-// for thread safety if the user application uses OpenMP, with parallel calls
-// to dpagerank2 on independent problems.
-#pragma omp threadprivate(pagerank_teleport, pagerank_init_rank, pagerank_rsum)
+extern double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
 
 // The identity value for the pagerank_add monoid is {0,0}. For the
 // GxB_*_define macro that defines the GrB_Monoid, the identity argument must

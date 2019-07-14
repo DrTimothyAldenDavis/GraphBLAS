@@ -916,7 +916,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     GrB_Type xtype, ytype, ztype ;
     GxB_binary_function fdup ;
+    #ifndef GBCOMPACT
     GB_Opcode opcode ;
+    #endif
 
     GB_Type_code tcode = ttype->code ;
     bool op_2nd ;
@@ -933,7 +935,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // z = SECOND (x,y) where all three types are the same as ttype
         // T(i,j) = (ttype) S(k) will be done for all tuples.
 
+        #ifndef GBCOMPACT
         opcode = GB_SECOND_opcode ;
+        #endif
         ASSERT (GB_op_is_second (dup, ttype)) ;
         xtype = ttype ;
         ytype = ttype ;
@@ -959,7 +963,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         //      T(i,j) = (ttype) z
 
         ASSERT_OK (GB_check (dup, "dup for build_factory", GB0)) ;
+        #ifndef GBCOMPACT
         opcode = dup->opcode ;
+        #endif
         xtype = dup->xtype ;
         ytype = dup->ytype ;
         ztype = dup->ztype ;

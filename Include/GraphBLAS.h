@@ -71,7 +71,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 13, 2019 (10pm) (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "July 14, 2019 (10am) (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -6290,12 +6290,7 @@ typedef struct
 pagerank_type ;
 
 // global values shared by all threads in a single pagerank computation:
-extern
-double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
-
-// for thread safety if the user application uses OpenMP, with parallel calls
-// to dpagerank2 on independent problems.
-#pragma omp threadprivate(pagerank_teleport, pagerank_init_rank, pagerank_rsum)
+extern double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
 
 // The identity value for the pagerank_add monoid is {0,0}. For the
 // GxB_*_define macro that defines the GrB_Monoid, the identity argument must
@@ -6483,8 +6478,6 @@ extern GrB_BinaryOp PageRank_diff ;
     #define MY_SCALE
 
     extern double my_scalar ;
-    // for thread safety if the user application uses OpenMP
-    #pragma omp threadprivate(my_scalar)
 
     static inline void my_scale
     (

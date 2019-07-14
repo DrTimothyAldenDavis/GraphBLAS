@@ -14,6 +14,8 @@ Please follow my coding style for the Hackathon.  If you break these rules,
 I'll need to go back over your modifications to the code to fix these stylistic
 issues.
 
+    * use lots of comments
+
     * follow my indentation style: indent each level by 4
 
     * use "//"-style comments (The code is not C++, but these are now valid in
@@ -94,15 +96,15 @@ issues.
 
             ((rule) ? a : b)
 
-        or
+        or this, if a and b are expressions
 
-            ((rule) ? (a) : (b))
+            ((rule) ? (a*2) : (b+1))
 
         Never do
 
             rule?a:b
 
-        this can be ok as long as "rule" is single token
+        this is ok as long as "rule" is single token:
 
             rule ? a : b
 
@@ -122,4 +124,9 @@ issues.
     * always use a space before a left paranthesis.
 
     * always follow a right paranthesis with a space, newline, or comma
+
+    * use a space before and after an equal sign
+
+        int likethis = 42 ;
+        bool notlikethis=false ;        // do not to do this
 

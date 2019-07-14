@@ -4651,8 +4651,6 @@ void mexFunction
     OK (GB_shallow_op (&B, true, GrB_AINV_FP32, C, Context)) ;
     OK (GB_Matrix_check (B, "B empty, float", GB3, NULL, Context)) ;
     GrB_free (&B) ;
-    OK (GB_shallow_cast (&B, GrB_FP64, true, C, Context)) ;
-    OK (GB_Matrix_check (B, "B empty, double", GB3, NULL, Context)) ;
 
     bool b1, b2 ;
     int64_t imin, imax ;

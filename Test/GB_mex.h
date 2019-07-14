@@ -15,7 +15,7 @@
 
 #define GB_PANIC mexErrMsgTxt ("panic") ;
 
-#include "GB.h"
+// #include "GB.h"
 #include "GB_mxm.h"
 #include "GB_Pending.h"
 #include "GB_Sauna.h"

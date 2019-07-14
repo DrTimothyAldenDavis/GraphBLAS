@@ -294,9 +294,9 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     OK (GrB_BinaryOp_new (&PageRank_diff, pagerank_diff,
         PageRank_type, PageRank_type, PageRank_type)) ;
 
-    // printf ("dpagerank2: pagerank objects defined at run-time\n") ;
+    printf ("dpagerank2: pagerank objects defined at run-time\n") ;
     #else
-    // printf ("dpagerank2: pagerank objects defined at compile-time\n") ;
+    printf ("dpagerank2: pagerank objects defined at compile-time\n") ;
     #endif
 
     //--------------------------------------------------------------------------
