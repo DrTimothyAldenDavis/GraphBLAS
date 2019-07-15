@@ -21,7 +21,7 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
     FILE *f,                        // file for output
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

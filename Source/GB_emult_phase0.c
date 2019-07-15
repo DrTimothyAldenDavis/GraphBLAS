@@ -79,7 +79,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
     (*Ch_handle    ) = NULL ;
     if (C_to_M_handle != NULL)
-    {
+    { 
         (*C_to_M_handle) = NULL ;
     }
     (*C_to_A_handle) = NULL ;
@@ -106,7 +106,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     bool M_is_hyper = false ;
 
     if (M != NULL)
-    {
+    { 
         Mnvec = M->nvec ;
         Mh = M->h ;
         M_is_hyper = M->is_hyper ;

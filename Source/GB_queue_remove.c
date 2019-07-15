@@ -28,7 +28,7 @@ bool GB_queue_remove            // remove matrix from queue
     bool ok = true ;
 
     if (A->enqueued)
-    {
+    { 
         // remove the matrix from the queue
 
         // define the work to do inside the critical section

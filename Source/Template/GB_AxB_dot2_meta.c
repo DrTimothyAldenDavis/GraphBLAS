@@ -58,7 +58,7 @@
         bool M_is_hyper = GB_IS_HYPER (M) ;
 
         if (Mask_comp)
-        {
+        { 
             // C<!M> = A'*B via dot products
             #include "GB_AxB_dot2_compmask.c"
         }

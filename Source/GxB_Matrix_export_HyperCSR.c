@@ -55,7 +55,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
         GB_OK (GB_to_hyper ((*A), Context)) ;
     }
     if ((*A)->is_csc)
-    { 
+    {
         // A = A', done in place, to put A in CSR format
         GB_OK (GB_transpose (NULL, NULL, false, (*A), NULL, Context)) ;
         // the transpose might make it non-hypersparse (if vdim is 1)

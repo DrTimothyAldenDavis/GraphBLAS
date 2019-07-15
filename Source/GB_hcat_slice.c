@@ -71,7 +71,7 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     int64_t cnvec_nonempty = 0 ;
 
     for (int tid = 0 ; tid < nthreads ; tid++)
-    {
+    { 
         // compute the cumulative sum of the # entries and # vectors
         Cnzs   [tid] = cnz ;
         Cnvecs [tid] = cnvec ;
@@ -93,7 +93,7 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
         GB_FORCE_HYPER, GB_Global_hyper_ratio_get ( ), cnvec, cnz, true,
         Context) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -136,7 +136,7 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
 
         // construct the column pointers of C (shift upwards by cnz)
         for (int64_t k = 0 ; k < cnvec_slice ; k++)
-        {
+        { 
             Cp [cnvec + k] = Cslicep [k] + cnz ;
         }
     }

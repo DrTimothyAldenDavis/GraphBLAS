@@ -56,7 +56,7 @@ GrB_Info GB_slice       // slice B into nslices slices or hyperslices
 
     // quick return
     if (nslices == 1)
-    {
+    { 
         // the caller must not free Bslice [0]
         Bslice [0] = B ;
         return (GrB_SUCCESS) ;
@@ -125,12 +125,12 @@ GrB_Info GB_slice       // slice B into nslices slices or hyperslices
         (Bslice [s])->nvec = bslice_nvec ;
 
         if (B->nvec_nonempty == B->nvec)
-        {
+        { 
             // all vectors present in B, so all vectors present in the slice
             (Bslice [s])->nvec_nonempty = bslice_nvec ;
         }
         else
-        {
+        { 
             (Bslice [s])->nvec_nonempty = -1 ;
         }
 

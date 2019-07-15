@@ -52,7 +52,7 @@ GrB_Info GxB_init           // start up GraphBLAS and also define malloc, etc
     void   (* user_free_function    ) (void *),
     bool user_malloc_is_thread_safe
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

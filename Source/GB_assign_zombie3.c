@@ -82,7 +82,7 @@ void GB_assign_zombie3
 
             int64_t i = Zi [pZ] ;
             if (!GB_IS_ZOMBIE (i))
-            { 
+            {
 
                 //--------------------------------------------------------------
                 // Z(i,j) is outside Z(I,j) if i is not in the list I

@@ -39,7 +39,7 @@ void GB_ek_slice
     const int64_t *Ap = A->p ;
 
     if (anz == 0)
-    {
+    { 
         // quick return for empty matrices
         ASSERT (ntasks == 1) ;
         pstart_slice [0] = 0 ;
@@ -70,7 +70,7 @@ void GB_ek_slice
     // is vector is k = klast_slice [taskid].
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
+    { 
 
         // The slice for task taskid contains entries pfirst:plast-1 of A.
         int64_t pfirst = pstart_slice [taskid] ;

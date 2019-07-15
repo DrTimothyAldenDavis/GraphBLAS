@@ -19,7 +19,7 @@ GrB_Info GB_Mask_compatible     // check type and dimensions of mask
     const GrB_Index ncols,
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

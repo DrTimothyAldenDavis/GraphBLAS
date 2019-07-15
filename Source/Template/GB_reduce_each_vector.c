@@ -90,7 +90,7 @@
                 GB_SCALAR (s) ;
                 GB_CAST_ARRAY_TO_SCALAR (s, Ax, pA_start) ;
                 for (int64_t p = pA_start+1 ; p < pA_end ; p++)
-                {
+                { 
                     // check for early exit
                     GB_BREAK_IF_TERMINAL (s) ;
                     // s += (ztype) Ax [p], with typecast
@@ -102,17 +102,17 @@
                 //--------------------------------------------------------------
 
                 if (k == kfirst)
-                {
+                { 
                     // Wfirst [tid] = s ; no typecast
                     GB_COPY_SCALAR_TO_ARRAY (Wfirst, tid, s) ;
                 }
                 else if (k == klast)
-                {
+                { 
                     // Wlast [tid] = s ; no typecast
                     GB_COPY_SCALAR_TO_ARRAY (Wlast, tid, s) ;
                 }
                 else
-                {
+                { 
                     // Tx [k] = s ; no typecast
                     GB_COPY_SCALAR_TO_ARRAY (Tx, k, s) ;
                 }

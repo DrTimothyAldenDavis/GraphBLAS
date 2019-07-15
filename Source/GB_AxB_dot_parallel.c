@@ -68,7 +68,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     //--------------------------------------------------------------------------
 
     if (M != NULL && !Mask_comp)
-    {
+    { 
         (*mask_applied) = true ;
         return (GB_AxB_dot3 (Chandle, M, A, B, semiring, flipxy, Context)) ;
     }
@@ -109,14 +109,14 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     #define GB_FREE_ALL ;
 
     if (nthreads == 1)
-    {
+    { 
         // do the entire computation with a single thread
         GrB_Matrix Aslice [1] ;
         Aslice [0] = A ;
         info = GB_AxB_dot2 (Chandle, M, Mask_comp, Aslice, B, semiring, flipxy,
             mask_applied, 1, 1, 1, NULL) ;
         if (info == GrB_SUCCESS)
-        {
+        { 
             ASSERT_OK (GB_check (*Chandle, "C for sequential A*B", GB0)) ;
         }
         return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
@@ -132,7 +132,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     GrB_Matrix Aslice [32*nthreads] ;
 
     for (int tid = 0 ; tid < 32*nthreads ; tid++)
-    {
+    { 
         Slice [tid] = 0 ;
         Aslice [tid] = NULL ;
     }
@@ -158,13 +158,13 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     // determine number of slices for A' and B
 
     if (bnvec > 32 * nthreads || bnvec == 0)
-    {
+    { 
         // just slice B
         nbslice = 32 * nthreads ;
         naslice = 1 ;
     }
     else
-    {
+    { 
         // slice B into individual vectors
         nbslice = bnvec ;
 

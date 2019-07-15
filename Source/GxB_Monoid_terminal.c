@@ -16,7 +16,7 @@ GrB_Info GxB_Monoid_terminal        // return the monoid terminal
                                     // unmodified if has_terminal is false
     GrB_Monoid monoid               // monoid to query
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

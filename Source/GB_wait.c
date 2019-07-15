@@ -90,9 +90,8 @@ GrB_Info GB_wait                // finish all pending computations
 
     int64_t nzombies = A->nzombies ;
 
-// double t = omp_get_wtime ( ) ;
     if (nzombies > 0)
-    {
+    { 
         // remove all zombies from A.  Also compute A->nvec_nonempty
         #ifdef GB_DEBUG
         int64_t anz_orig = GB_NNZ (A) ;
@@ -111,9 +110,6 @@ GrB_Info GB_wait                // finish all pending computations
 
     // all the zombies are gone
     ASSERT (!GB_ZOMBIES (A)) ;
-
-// t = omp_get_wtime ( ) - t ; printf ("zombies %g sec\n", t) ;
-// t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // check for pending tuples
@@ -221,8 +217,6 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT (T->is_hyper) ;
     ASSERT (T->nvec == T->nvec_nonempty) ;
 
-// t = omp_get_wtime ( ) - t ; printf ("build %g sec\n", t) ;
-
     //--------------------------------------------------------------------------
     // check for quick transplant
     //--------------------------------------------------------------------------
@@ -258,8 +252,6 @@ GrB_Info GB_wait                // finish all pending computations
         bool found ;
         int64_t *restrict Ah = A->h ;
         GB_BINARY_SPLIT_SEARCH (tjfirst, Ah, kA, pright, found) ;
-        // printf ("kA: "GBd"\n", kA) ;
-        // printf ("found: %d\n", found) ;
         // Ah [0 ... kA-1] excludes vector tjfirst.  The list
         // Ah [kA ... A->nvec-1] includes tjfirst.
         ASSERT (kA >= 0 && kA <= A->nvec) ;
@@ -280,9 +272,6 @@ GrB_Info GB_wait                // finish all pending computations
 
     // A + T will have anz_new entries
     int64_t anz_new = anz + GB_NNZ (T) ;  // must have at least this space
-    // printf ("jlast: "GBd"\n", jlast) ;
-    // printf ("anz0: "GBd"\n", anz0) ;
-    // printf ("anz1: "GBd"\n", anz1) ;
 
     if (2 * anz1 < anz0)
     {
@@ -302,8 +291,6 @@ GrB_Info GB_wait                // finish all pending computations
         // zombies on input.  Or, when GB_add can tolerate zombies, set the
         // Aslice [1] to start at the first zombie.  Keep track of the vector
         // containing the first zombie.
-
-// t = omp_get_wtime ( ) ;
 
         // make sure A has enough space for the new tuples
         if (anz_new > A->nzmax)
@@ -371,7 +358,6 @@ GrB_Info GB_wait                // finish all pending computations
         const GB_void *restrict Tx = T->x ;
         int64_t tnvec = T->nvec ;
         int64_t tnz = GB_NNZ (T) ;
-        // printf ("tnz "GBd"\n", tnz) ;
 
         anz = anz0 ;
         int64_t anz_last = anz ;
@@ -383,22 +369,14 @@ GrB_Info GB_wait                // finish all pending computations
         GB_memcpy (Ax + anz * asize, Tx, tnz * asize           , nthreads) ;
 
         // append the vectors of T to the end of A
-        // printf ("tnvec "GBd"\n", tnvec) ;
         for (int64_t k = 0 ; k < tnvec ; k++)
         { 
-            // printf ("k: "GBd"\n", k) ;
             int64_t j = Th [k] ;
-            // printf ("   j: "GBd" jlast: "GBd"\n", j, jlast) ;
             ASSERT (j >= tjfirst) ;
             anz += (Tp [k+1] - Tp [k]) ;
-            // printf ("   new anz: "GBd" anz_last "GBd"\n", anz, anz_last) ;
-            // if (A->is_hyper) printf ("   Ap [A->nvec = "GBd"] = "GBd"\n",
-            //     A->nvec, A->p [A->nvec] );
             GB_OK (GB_jappend (A, j, &jlast, anz, &anz_last, Context)) ;
-            // printf ("   here\n") ;
         }
 
-        // printf ("wrapup:\n") ;
         GB_jwrapup (A, jlast, anz) ;
         ASSERT (anz == anz_new) ;
 
@@ -408,8 +386,6 @@ GrB_Info GB_wait                // finish all pending computations
         ASSERT_OK (GB_check (A, "A after GB_wait:append", GB0)) ;
 
         GB_MATRIX_FREE (&T) ;
-
-// t = omp_get_wtime ( ) - t ; printf ("append %g sec\n", t) ;
 
         // conform A to its desired hypersparsity
         return (GB_to_hyper_conform (A, Context)) ;
@@ -430,12 +406,9 @@ GrB_Info GB_wait                // finish all pending computations
         // FUTURE:: if GB_add could tolerate zombies in A, then the initial
         // prune of zombies can be skipped.
 
-// t = omp_get_wtime ( ) ;
-
         GB_OK (GB_add (&S, A->type, A->is_csc, NULL, A, T, NULL, Context)) ;
         GB_MATRIX_FREE (&T) ;
         ASSERT_OK (GB_check (S, "S after GB_wait:add", GB0)) ;
-// t = omp_get_wtime ( ) - t ; printf ("add %g sec\n", t) ;
         return (GB_transplant_conform (A, A->type, &S, Context)) ;
     }
 }

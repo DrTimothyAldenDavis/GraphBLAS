@@ -55,7 +55,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
         GB_OK (GB_to_hyper ((*A), Context)) ;
     }
     if (!((*A)->is_csc))
-    { 
+    {
         // A = A', done in place, to put A in CSC format
         GB_OK (GB_transpose (NULL, NULL, true, (*A), NULL, Context)) ;
         // the transpose might make it non-hypersparse (if vdim is 1)

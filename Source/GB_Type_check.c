@@ -26,7 +26,7 @@ GrB_Info GB_Type_check      // check a GraphBLAS Type
     FILE *f,                // file for output
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

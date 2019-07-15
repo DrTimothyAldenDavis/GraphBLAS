@@ -67,19 +67,19 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     int64_t cncols = GB_NCOLS (C) ;
 
     int64_t nRows, nCols, RowColon [3], ColColon [3] ;
-    int RowsKind, ColsKind ;
+    int rkind, ckind ;
 
     if (!A_transpose)
     { 
         // T = A(Rows,Cols)
-        GB_ijlength (Rows, nRows_in, GB_NROWS (A), &nRows, &RowsKind, RowColon);
-        GB_ijlength (Cols, nCols_in, GB_NCOLS (A), &nCols, &ColsKind, ColColon);
+        GB_ijlength (Rows, nRows_in, GB_NROWS (A), &nRows, &rkind, RowColon) ;
+        GB_ijlength (Cols, nCols_in, GB_NCOLS (A), &nCols, &ckind, ColColon) ;
     }
     else
     { 
         // T = A(Cols,Rows)
-        GB_ijlength (Rows, nRows_in, GB_NCOLS (A), &nRows, &RowsKind, RowColon);
-        GB_ijlength (Cols, nCols_in, GB_NROWS (A), &nCols, &ColsKind, ColColon);
+        GB_ijlength (Rows, nRows_in, GB_NCOLS (A), &nRows, &rkind, RowColon) ;
+        GB_ijlength (Cols, nCols_in, GB_NROWS (A), &nCols, &ckind, ColColon) ;
     }
 
     if (cnrows != nRows || cncols != nCols)
@@ -170,7 +170,7 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GrB_Matrix T ;
     info = GB_subref (&T, T_is_csc, A, I, ni, J, nj, false, must_sort, Context);
     if (info != GrB_SUCCESS)
-    {
+    { 
         return (info) ;
     }
 

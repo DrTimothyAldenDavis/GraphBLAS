@@ -36,7 +36,6 @@ bool GB_is_diagonal             // true if A is diagonal
     if (n != ncols)
     { 
         // A is rectangular
-        // printf ("diagonal: false (rectangular\n") ;
         return (false) ;
     }
 
@@ -48,7 +47,6 @@ bool GB_is_diagonal             // true if A is diagonal
         // A must have exactly n entries in n vectors.  A can be sparse or
         // hypersparse.  If hypersparse, all vectors must be present, so
         // Ap has size n+1 whether sparse or hypersparse.
-        // printf ("diagonal: false\n") ;
         return (false) ;
     }
 
@@ -82,7 +80,7 @@ bool GB_is_diagonal             // true if A is diagonal
         //----------------------------------------------------------------------
 
         int diag = true ;
-        {
+        { 
             #pragma omp atomic read
             diag = diagonal ;
         }
@@ -99,7 +97,7 @@ bool GB_is_diagonal             // true if A is diagonal
             int64_t p = Ap [j] ;
             int64_t ajnz = Ap [j+1] - p ;
             if (ajnz != 1)
-            {
+            { 
                 // A(:,j) must have exactly one entry
                 diag = false ;
             }
@@ -116,7 +114,7 @@ bool GB_is_diagonal             // true if A is diagonal
         //----------------------------------------------------------------------
 
         if (!diag)
-        {
+        { 
             #pragma omp atomic write
             diagonal = false ;
         }
@@ -125,8 +123,6 @@ bool GB_is_diagonal             // true if A is diagonal
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
-
-    // printf ("diagonal: %d\n", diagonal) ;
 
     if (diagonal) A->nvec_nonempty = n ;
     return ((bool) diagonal) ;

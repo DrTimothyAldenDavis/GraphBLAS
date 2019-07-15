@@ -46,7 +46,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
 
     GrB_Type op_xtype, op_ytype, op_ztype ;
     if (op == NULL)
-    {
+    { 
         ASSERT (A->type == B->type) ;
         (*opcode) = GB_SECOND_opcode ;
         op_xtype = A->type ;
@@ -54,7 +54,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         op_ztype = A->type ;
     }
     else
-    {
+    { 
         (*opcode) = op->opcode ;
         op_xtype = op->xtype ;
         op_ytype = op->ytype ;

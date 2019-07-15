@@ -14,7 +14,7 @@ const char panic [GB_RLEN+1] = "GraphBLAS error: GrB_PANIC\n"
     "Out of memory for thread-local storage\n" ;
 
 const char *GrB_error ( )       // return a string describing the last error
-{
+{ 
     char *p = GB_thread_local_access ( ) ;
     return (p == NULL ? panic : p) ;
 }

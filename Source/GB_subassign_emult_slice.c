@@ -193,13 +193,13 @@ GrB_Info GB_subassign_emult_slice
             //------------------------------------------------------------------
 
             if (cjdense)
-            {
+            { 
                 // do not slice C(:,jC) if it is dense
                 TaskList [taskid].pC     = pC_start ;
                 TaskList [taskid].pC_end = pC_end ;
             }
             else
-            {
+            { 
 
                 // find where this task starts and ends in C(:,jC)
                 int64_t iA_start = GB_IMIN (iA_first, iM_first) ;

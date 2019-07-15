@@ -272,7 +272,7 @@ GrB_Info GB_subassign_13
                 if (i == iS)
                 {
                     ASSERT (i == iA) ;
-                    {
+                    { 
                         GB_NEXT (S) ;
                     }
                 }

@@ -55,13 +55,10 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
     ASSERT (Slice != NULL) ;
     ASSERT (Slice [0] == 0) ;
     ASSERT (Slice [nthreads] == GB_NNZ (B)) ;
-//  printf ("nthreads %d\n", nthreads) ;
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
-//      printf ("Slice [%d] = "GBd"\n", tid, Slice [tid]) ;
         ASSERT (Slice [tid] <= Slice [tid+1]) ;
     }
-//  printf ("Slice [%d] = "GBd"\n", nthreads, Slice [nthreads]) ;
 
     GrB_Info info ;
 
@@ -71,7 +68,6 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
 
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
-//      printf ("\n================== fine slice %d\n", tid) ;
 
         // Bslice [tid] will contain entries pfirst:plast-1 of B.
         int64_t pfirst = Slice [tid] ;
@@ -79,9 +75,6 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         int64_t bslice_nz = plast - pfirst + 1 ;
         int64_t bvec_first = 0 ;
         int64_t bslice_nvec = 0 ;
-
-//      printf ("pfirst "GBd" plast "GBd" nz "GBd"\n", 
-//          pfirst, plast, bslice_nz) ;
 
         if (bslice_nz > 0)
         {
@@ -95,8 +88,6 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
             { 
                 bvec_first-- ;
             }
-//          printf ("bvec_first: "GBd"\n", bvec_first) ;
-//          printf ("pfirst: "GBd"\n", pfirst) ;
             ASSERT (B->p [bvec_first] <= pfirst) ;
             ASSERT (pfirst <= B->p [bvec_first+1]) ;
 
@@ -109,14 +100,11 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
             { 
                 bvec_last-- ;
             }
-//          printf ("bvec_last "GBd"\n", bvec_last) ;
             ASSERT (B->p [bvec_last] <= plast && plast < B->p [bvec_last+1]) ;
 
             // total number of vectors in B
             bslice_nvec = bvec_last - bvec_first + 1 ;
 
-//          printf ("vec first "GBd" vec last "GBd" nvec "GBd"\n", 
-//              bvec_first, bvec_last, bslice_nvec) ;
         }
 
         // allocate Bslice [tid].  Bslice [tid]->p is always allocated.  Bslice
@@ -184,7 +172,7 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         ASSERT ((Bslice [tid])->p_shallow == false) ;
         (Bslice [tid])->p [0] = 0 ;
         for (int64_t k = 1 ; k < bslice_nvec ; k++)
-        {
+        { 
             (Bslice [tid])->p [k] = B->p [bvec_first + k] - pfirst ;
         }
         (Bslice [tid])->p [bslice_nvec] = bslice_nz ;

@@ -62,7 +62,7 @@
                 {
                     int64_t i = Ai [pA] ;
                     if (GB_SELECT (pA))
-                    {
+                    { 
                         ASSERT (pC >= Cp [k] && pC < Cp [k+1]) ;
                         Ci [pC] = i ;
                         // Cx [pC] = Ax [pA] ;
@@ -78,7 +78,7 @@
                 int64_t p = GB_IMIN (Zp [k], pA_end) ;
                 int64_t mynz = p - pA_start ;
                 if (mynz > 0)
-                {
+                { 
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
                     memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
                     memcpy (Cx +pC*asize, Ax +pA_start*asize, mynz*asize) ;
@@ -89,7 +89,7 @@
                 // task that owns the diagonal entry does this work
                 int64_t p = Zp [k] ;
                 if (pA_start <= p && p < pA_end)
-                {
+                { 
                     ASSERT (pC >= Cp [k] && pC + 1 <= Cp [k+1]) ;
                     Ci [pC] = Ai [p] ;
                     memcpy (Cx +pC*asize, Ax +p*asize, asize) ;
@@ -101,7 +101,7 @@
                 int64_t p = GB_IMIN (Zp [k], pA_end) ;
                 int64_t mynz = p - pA_start ;
                 if (mynz > 0)
-                {
+                { 
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
                     memcpy (Ci +pC, Ai +pA_start, mynz*sizeof (int64_t)) ;
                     memcpy (Cx +pC*asize, Ax +pA_start*asize, mynz*asize) ;
@@ -112,7 +112,7 @@
                 p = GB_IMAX (Zp [k]+1, pA_start) ;
                 mynz = pA_end - p ;
                 if (mynz > 0)
-                {
+                { 
                     ASSERT (pA_start <= p && p < pA_end) ;
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
                     memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;
@@ -125,7 +125,7 @@
                 int64_t p = GB_IMAX (Zp [k], pA_start) ;
                 int64_t mynz = pA_end - p ;
                 if (mynz > 0)
-                {
+                { 
                     ASSERT (pA_start <= p && p + mynz <= pA_end) ;
                     ASSERT (pC >= Cp [k] && pC + mynz <= Cp [k+1]) ;
                     memcpy (Ci +pC, Ai +p, mynz*sizeof (int64_t)) ;

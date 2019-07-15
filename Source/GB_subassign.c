@@ -103,7 +103,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     // GB_compatible is not used since most of it is slightly different here
     if (accum != NULL)
-    {
+    { 
         // C(Rows,Cols)<M> = accum (C(Rows,Cols),A)
         GB_OK (GB_BinaryOp_compatible (accum, C->type, C->type,
             (scalar_expansion) ? NULL : A->type,
@@ -269,7 +269,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     bool C_aliased = GB_aliased (C, A) || GB_aliased (C, M) ;
 
     if (C_aliased)
-    {
+    { 
         // Z2 = duplicate of C, which must be freed when done
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;

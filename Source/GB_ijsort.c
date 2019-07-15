@@ -85,7 +85,7 @@ GrB_Info GB_ijsort
 
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t k = 0 ; k < ni ; k++)
-    {
+    { 
         I1k [k] = k ;
     }
 
@@ -109,7 +109,7 @@ GrB_Info GB_ijsort
         for (int64_t k = GB_IMAX (kfirst,1) ; k < klast ; k++)
         {
             if (I1 [k-1] != I1 [k])
-            {
+            { 
                 my_count++ ;
             }
         }
@@ -144,7 +144,7 @@ GrB_Info GB_ijsort
         int64_t kfirst, klast, k2 = Count [tid] ;
         GB_PARTITION (kfirst, klast, ni, tid, ntasks) ;
         if (tid == 0)
-        {
+        { 
             // the first entry in I1 is never a duplicate
             I2  [k2] = I1  [0] ;
             I2k [k2] = I1k [0] ;
@@ -153,7 +153,7 @@ GrB_Info GB_ijsort
         for (int64_t k = GB_IMAX (kfirst,1) ; k < klast ; k++)
         {
             if (I1 [k-1] != I1 [k])
-            {
+            { 
                 I2  [k2] = I1  [k] ;
                 I2k [k2] = I1k [k] ;
                 k2++ ;

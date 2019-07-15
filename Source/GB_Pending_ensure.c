@@ -32,13 +32,13 @@ bool GB_Pending_ensure      // create or reallocate a list of pending tuples
     if ((*PHandle) == NULL)
     {
         if (!GB_Pending_alloc (PHandle, type, op, is_matrix, nnew))
-        {
+        { 
             // out of memory
             return (false) ;
         }
     }
     else if (!GB_Pending_realloc (PHandle, nnew))
-    {
+    { 
         // out of memory
         return (false) ;
     }

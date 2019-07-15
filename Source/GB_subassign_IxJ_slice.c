@@ -156,7 +156,7 @@ GrB_Info GB_subassign_IxJ_slice
 
         ntasks = ntasks0 ;
         for (int taskid = 0 ; taskid < ntasks ; taskid++)
-        {
+        { 
             // the coarse task computes C (I, J (j:jlast-1))
             int64_t j, jlast ;
             GB_PARTITION (j, jlast, nJ, taskid, ntasks) ;

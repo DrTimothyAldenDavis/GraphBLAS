@@ -162,7 +162,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     (*C_to_A_handle) = NULL ;
     (*C_to_B_handle) = NULL ;
     if (C_to_M_handle != NULL)
-    {
+    { 
         (*C_to_M_handle) = NULL ;
     }
 
@@ -199,7 +199,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     const int64_t *restrict Mh = NULL ;
     bool M_is_hyper = false ;
     if (M != NULL)
-    {
+    { 
         Mnvec = M->nvec ;
         Mp = M->p ;
         Mh = M->h ;
@@ -305,7 +305,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         kB_start [ntasks] = (Bnvec == 0) ? -1 : Bnvec ;
 
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
-        {
+        { 
             double target_work = ((ntasks-taskid) * work) / ntasks ;
             GB_slice_vector (NULL, NULL,
                 &(kA_start [taskid]), &(kB_start [taskid]),
@@ -620,13 +620,13 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     //--------------------------------------------------------------------------
 
     if (C_to_M != NULL)
-    { 
+    {
         if (Ch != NULL)
         {
             // C is hypersparse
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int64_t k = 0 ; k < Cnvec ; k++)
-            {
+            { 
                 int64_t j = Ch [k] ;
                 // C_to_M [k] = kM if Mh [kM] == j and M(:,j) is non-empty
                 int64_t kM = 0, pM, pM_end ;
@@ -659,7 +659,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
     (*p_Cnvec      ) = Cnvec ;
     if (p_Ch_is_Mh != NULL)
-    {
+    { 
         // return Ch_is_Mh to GB_add.  For GB_masker, Ch is never Mh.
         (*p_Ch_is_Mh) = Ch_is_Mh ;
     }
@@ -667,7 +667,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
     (*C_to_A_handle) = C_to_A ;
     (*C_to_B_handle) = C_to_B ;
     if (C_to_M_handle != NULL)
-    {
+    { 
         (*C_to_M_handle) = C_to_M ;
     }
 

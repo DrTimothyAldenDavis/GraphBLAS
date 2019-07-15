@@ -20,7 +20,7 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
     FILE *f,                // file for output
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check GrB_Matrix conditions

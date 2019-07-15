@@ -287,12 +287,12 @@
     #if defined ( GB_DOT3 )
 
         if (cij_exists)
-        {
+        { 
             GB_CIJ_SAVE (cij, pC) ;
             Ci [pC] = i ;
         }
         else
-        {
+        { 
             task_nzombies++ ;
             Ci [pC] = GB_FLIP (i) ;
         }

@@ -122,15 +122,15 @@ void GB_slice_vector
             // A_hfirst + pA_end - 1, inclusive.  No need for a binary search.
             ASSERT (pA_start == 0) ;
             if (i < A_hfirst)
-            {
+            { 
                 pA = 0 ;
             }
             else if (A_hfirst + pA_end - 1 < i)
-            {
+            { 
                 pA = pA_end ;
             }
             else // (A_hfirst <= i && i <= A_hfirst + pA_end - 1)
-            {
+            { 
                 pA = i - A_hfirst ;
                 ASSERT (GB_Ai (pA) == i) ;
             }

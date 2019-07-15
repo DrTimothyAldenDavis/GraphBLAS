@@ -19,7 +19,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
     if (A != NULL)
     {
         if (A->Pending != NULL)
-        {
+        { 
             n = A->Pending->n ;
         }
     }

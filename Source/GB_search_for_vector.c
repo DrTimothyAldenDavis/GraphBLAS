@@ -43,7 +43,7 @@ int64_t GB_search_for_vector        // return the vector k that contains p
         // Ap [k] == p.
         ASSERT (Ap [k] == p) ;
         while (k < anvec-1 && Ap [k+1] == p)
-        {
+        { 
             k++ ;
         }
     }

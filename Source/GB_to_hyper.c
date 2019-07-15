@@ -73,7 +73,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
             int64_t jstart, jend, my_nvec_nonempty = 0 ; ;
             GB_PARTITION (jstart, jend, n, tid, ntasks) ;
             for (int64_t j = jstart ; j < jend ; j++)
-            {
+            { 
                 if (Ap_old [j] < Ap_old [j+1]) my_nvec_nonempty++ ;
             }
             Count [tid] = my_nvec_nonempty ;
@@ -127,7 +127,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
             for (int64_t j = jstart ; j < jend ; j++)
             {
                 if (Ap_old [j] < Ap_old [j+1])
-                {
+                { 
                     // vector index j is the kth vector in the new Ah
                     Ap_new [k] = Ap_old [j] ;
                     Ah_new [k] = j ;

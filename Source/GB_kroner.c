@@ -146,7 +146,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             int64_t kC = kA * bnvec + kB ;
             Cp [kC] = aknz * bknz ;
             if (C_is_hyper)
-            {
+            { 
                 Ch [kC] = jA * bvdim + jB ;
             }
         }

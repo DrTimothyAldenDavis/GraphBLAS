@@ -23,7 +23,7 @@ void GB_memcpy                  // parallel memcpy
 {
 
     if (nthreads <= 1 || n <= GB_CHUNK)
-    {
+    { 
         memcpy (dest, src, n) ;
     }
     else
@@ -38,7 +38,7 @@ void GB_memcpy                  // parallel memcpy
         {
             size_t start = k * GB_CHUNK ;
             if (start < n)
-            {
+            { 
                 size_t chunk = GB_IMIN (n - start, GB_CHUNK) ;
                 memcpy (pdest + start, psrc + start, chunk) ;
             }

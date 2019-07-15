@@ -69,20 +69,20 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 
             // allocate the memory
             if (pretend_to_fail)
-            {
+            { 
                 #ifdef GB_PRINT_MALLOC
                 printf ("pretend to fail\n") ;
                 #endif
                 p = NULL ;
             }
             else
-            {
+            { 
                 p = (void *) GB_Global_malloc_function (size) ;
             }
 
             // check if successful
             if (p != NULL)
-            {
+            { 
                 // success
                 #undef GB_CRITICAL_SECTION
 
@@ -115,7 +115,7 @@ void *GB_malloc_memory      // pointer to allocated block of memory
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // normal use, in production

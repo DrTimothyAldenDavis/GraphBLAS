@@ -22,7 +22,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
     const GB_Type_code bcode,       // B may not have a type, just a code
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

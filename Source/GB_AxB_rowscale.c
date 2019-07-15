@@ -86,7 +86,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     info = GB_dup (Chandle, B, false, mult->ztype, Context) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         return (info) ;
     }

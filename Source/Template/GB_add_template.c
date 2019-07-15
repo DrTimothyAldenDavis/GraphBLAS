@@ -73,13 +73,13 @@
         bool fine_task = (klast == -1) ;
         int64_t len ;
         if (fine_task)
-        {
+        { 
             // a fine task operates on a slice of a single vector
             klast = kfirst ;
             len = TaskList [taskid].len ;
         }
         else
-        {
+        { 
             // a coarse task operates on one or more whole vectors
             len = vlen ;
         }
@@ -132,7 +132,7 @@
                 pA_end = TaskList [taskid].pA_end ;
             }
             else
-            { 
+            {
                 // A coarse task operates on the entire vector A (:,j)
                 int64_t kA = (C_to_A == NULL) ? j : C_to_A [k] ;
                 if (kA >= 0)
@@ -147,7 +147,7 @@
             bool adense = (ajnz == len) ;
             int64_t iA_first = -1, iA_last = -1 ;
             if (ajnz > 0)
-            {
+            { 
                 // get the first and last indices in A(:,j) for this vector
                 iA_first = Ai [pA] ;
                 iA_last  = Ai [pA_end-1] ;
@@ -167,7 +167,7 @@
                 pB_end = TaskList [taskid].pB_end ;
             }
             else
-            { 
+            {
                 // A coarse task operates on the entire vector B (:,j)
                 int64_t kB = (C_to_B == NULL) ? j : C_to_B [k] ;
                 if (kB >= 0)
@@ -217,7 +217,7 @@
                 #endif
 
                 if (adense && bdense)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // A(:,j) and B(:,j) dense: thus C(:,j) dense
@@ -241,7 +241,7 @@
 
                 }
                 else if (adense)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // A(:,j) dense, B(:,j) sparse: thus C(:,j) dense
@@ -267,7 +267,7 @@
 
                 }
                 else if (bdense)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // A(:,j) sparse, B(:,j) dense: thus C(:,j) dense
@@ -293,7 +293,7 @@
 
                 }
                 else if (ajnz == 0)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // A(:,j) is empty
@@ -312,7 +312,7 @@
 
                 }
                 else if (bjnz == 0)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // B(:,j) is empty
@@ -331,7 +331,7 @@
 
                 }
                 else if (iA_last < iB_first)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // last entry of A(:,j) comes before first entry of B(:,j)
@@ -356,7 +356,7 @@
 
                 }
                 else if (iB_last < iA_first)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // last entry of B(:,j) comes before first entry of A(:,j)
@@ -383,7 +383,7 @@
 
                 #if defined ( GB_PHASE_1_OF_2 )
                 else if (ajnz > 32 * bjnz)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // A(:,j) is much denser than B(:,j)
@@ -404,7 +404,7 @@
 
                 }
                 else if (bjnz > 32 * ajnz)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // B(:,j) is must denser than A(:,j)
@@ -427,7 +427,7 @@
                 #endif
 
                 else
-                { 
+                {
 
                     //----------------------------------------------------------
                     // A(:,j) and B(:,j) have about the same # of entries

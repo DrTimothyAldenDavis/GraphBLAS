@@ -21,7 +21,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     FILE *f,                // file for output
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -43,17 +43,17 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
     GB_CHECK_MAGIC (op, "BinaryOp") ;
 
     if (pr > 0)
-    { 
+    {
         if (op->opcode == GB_USER_C_opcode)
-        {
+        { 
             GBPR ("(compile-time user-defined) ") ;
         }
         else if (op->opcode == GB_USER_R_opcode)
-        {
+        { 
             GBPR ("(run-time user-defined) ") ;
         }
         else
-        {
+        { 
             GBPR ("(built-in) ") ;
         }
     }

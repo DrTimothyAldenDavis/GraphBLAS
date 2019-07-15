@@ -375,7 +375,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
     }
     else
-    { 
+    {
 
         //----------------------------------------------------------------------
         // generic C=A*B or C<M>=A*B with any semiring, with any typecasting

@@ -59,7 +59,7 @@
             GB_GETB (djj, Dx, j) ;                  // djj = D (j,j)
             GB_PRAGMA_VECTORIZE
             for (int64_t p = pA_start ; p < pA_end ; p++)
-            {
+            { 
                 GB_GETA (aij, Ax, p) ;              // aij = A(i,j)
                 GB_BINOP (GB_CX (p), aij, djj) ;    // C(i,j) = aij * djj
             }

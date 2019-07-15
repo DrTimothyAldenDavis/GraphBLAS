@@ -199,7 +199,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         {
             int64_t s = 0 ;
             for (int taskid = 0 ; taskid < naslice ; taskid++)
-            {
+            { 
                 int64_t *restrict rowcount = Rowcounts [taskid] ;
                 int64_t c = rowcount [i] ;
                 rowcount [i] = s ;
@@ -220,7 +220,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
             int64_t *restrict rowcount = Rowcounts [0] ;
             rowcount [i] = s ;
             for (int taskid = 1 ; taskid < naslice ; taskid++)
-            {
+            { 
                 int64_t *restrict rowcount = Rowcounts [taskid] ;
                 rowcount [i] += s ;
             }

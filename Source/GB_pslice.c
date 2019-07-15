@@ -31,7 +31,7 @@ void GB_pslice                      // find how to slice Ap
     {
         // matrix is empty, or a single thread is used
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
-        {
+        { 
             Slice [taskid] = 0 ;
         }
     }

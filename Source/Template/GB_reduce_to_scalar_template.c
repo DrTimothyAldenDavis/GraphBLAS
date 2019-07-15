@@ -26,7 +26,7 @@
         // s = (ztype) Ax [0]
         GB_CAST_ARRAY_TO_SCALAR (s, Ax, 0) ;
         for (int64_t p = 1 ; p < anz ; p++)
-        {
+        { 
             // check for early exit
             GB_BREAK_IF_TERMINAL (s) ;
             // s = op (s, (ztype) Ax [p])
@@ -61,7 +61,7 @@
             GB_IF_NOT_EARLY_EXIT
             {
                 for (int64_t p = pstart+1 ; p < pend ; p++)
-                {
+                { 
                     // check for early exit
                     GB_PARALLEL_BREAK_IF_TERMINAL (t) ;
                     // t = op (t, (ztype) Ax [p]), with typecast
@@ -79,7 +79,7 @@
         // s = W [0], no typecast
         GB_COPY_ARRAY_TO_SCALAR (s, W, 0) ;
         for (int tid = 1 ; tid < ntasks ; tid++)
-        {
+        { 
             // s = op (s, W [tid]), no typecast
             GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;
         }

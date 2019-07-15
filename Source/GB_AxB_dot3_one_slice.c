@@ -211,7 +211,7 @@ GrB_Info GB_AxB_dot3_one_slice
                 ASSERT (ntasks < max_ntasks) ;
 
                 for (int tfine = 0 ; tfine < nfine ; tfine++)
-                {
+                { 
 
                     // this fine task operates on vector M(:,k)
                     TaskList [ntasks].kfirst = k ;

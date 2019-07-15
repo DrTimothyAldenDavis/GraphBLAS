@@ -13,7 +13,7 @@ bool GB_queue_remove_head       // remove matrix at the head of queue
 (
     GrB_Matrix *Ahandle         // return matrix or NULL if queue empty
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

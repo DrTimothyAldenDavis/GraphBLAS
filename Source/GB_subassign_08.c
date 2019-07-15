@@ -366,7 +366,7 @@ GrB_Info GB_subassign_08
 
             }
             else
-            { 
+            {
 
                 //----------------------------------------------------------
                 // A(:,j) and M(:,j) have about the same # of entries

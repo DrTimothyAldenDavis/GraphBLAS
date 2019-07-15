@@ -36,7 +36,7 @@
         GB_PARTITION (pstart, pend, bnz, tid, ntasks) ;
         GB_PRAGMA_VECTORIZE
         for (int64_t p = pstart ; p < pend ; p++)
-        {
+        { 
             int64_t i = Bi [p] ;                // get row index of B(i,j)
             GB_GETA (dii, Dx, i) ;              // dii = D(i,i)
             GB_GETB (bij, Bx, p) ;              // bij = B(i,j)

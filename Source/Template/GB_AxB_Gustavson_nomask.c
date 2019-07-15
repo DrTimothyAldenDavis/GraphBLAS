@@ -88,10 +88,10 @@
             // search using GB_lookup.
             bool found = false ;
             for ( ; kc < cnvec && Ch [kc] <= j ; kc++)
-            { 
+            {
                 found = (Ch [kc] == j) ;
                 if (found)
-                {
+                { 
                     pC_start = Cp [kc] ;
                     pC_end   = Cp [kc+1] ;
                     break ;

@@ -42,7 +42,7 @@
             {
                 // last partial panel
                 for (int64_t k = 0 ; k < anz-p ; k++)
-                {
+                { 
                     // Panel [k] = op (Panel [k], Ax [p+k]) ;
                     GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                 }
@@ -51,7 +51,7 @@
             {
                 // full panel
                 for (int64_t k = 0 ; k < GB_PANEL ; k++)
-                {
+                { 
                     // Panel [k] = op (Panel [k], Ax [p+k]) ;
                     GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                 }
@@ -66,7 +66,7 @@
                     for (int64_t k = 0 ; k < GB_PANEL ; k++)
                     {
                         if (Panel [k] == GB_TERMINAL_VALUE)
-                        {
+                        { 
                             early = true ;
                         }
                     }
@@ -77,7 +77,7 @@
         }
         s = Panel [0] ;
         for (int64_t k = 1 ; k < first_panel_size ; k++)
-        {
+        { 
             // s = op (s, Panel [k]) ;
             GB_ADD_ARRAY_TO_SCALAR (s, Panel, k) ;
         }
@@ -119,7 +119,7 @@
                 int64_t my_anz = pend - pstart ;
                 int64_t first_panel_size = GB_IMIN (GB_PANEL, my_anz) ;
                 for (int64_t k = 0 ; k < first_panel_size ; k++)
-                {
+                { 
                     Panel [k] = Ax [pstart + k] ;
                 }
                 #if GB_HAS_TERMINAL
@@ -130,7 +130,7 @@
                     if (p + GB_PANEL > pend)
                     {
                         for (int64_t k = 0 ; k < pend-p ; k++)
-                        {
+                        { 
                             // Panel [k] = op (Panel [k], Ax [p+k]) ;
                             GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                         }
@@ -138,7 +138,7 @@
                     else
                     {
                         for (int64_t k = 0 ; k < GB_PANEL ; k++)
-                        {
+                        { 
                             // Panel [k] = op (Panel [k], Ax [p+k]) ;
                             GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                         }
@@ -152,12 +152,12 @@
                             for (int64_t k = 0 ; k < GB_PANEL ; k++)
                             {
                                 if (Panel [k] == GB_TERMINAL_VALUE)
-                                {
+                                { 
                                     early = true ;
                                 }
                             }
                             if (early)
-                            {
+                            { 
                                 // tell all other tasks to exit early
                                 #pragma omp atomic write
                                 early_exit = true ;
@@ -169,7 +169,7 @@
                 }
                 t = Panel [0] ;
                 for (int64_t k = 1 ; k < first_panel_size ; k++)
-                {
+                { 
                     // t = op (t, Panel [k]) ;
                     GB_ADD_ARRAY_TO_SCALAR (t, Panel, k) ;
                 }
@@ -184,7 +184,7 @@
 
         s = W [0] ;
         for (int tid = 1 ; tid < ntasks ; tid++)
-        {
+        { 
             // s = op (s, W [tid]), no typecast
             GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;
         }

@@ -23,7 +23,7 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
     GrB_Type xtype,             // type of input x
     const char *name            // name of the function
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

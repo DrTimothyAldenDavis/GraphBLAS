@@ -55,7 +55,7 @@ GrB_Info GB_Sauna_alloc             // create a Sauna
     GB_MALLOC_MEMORY (Sauna->Sauna_Work, Sauna_n+1, Sauna_size) ;
 
     if (Sauna->Sauna_Mark == NULL || Sauna->Sauna_Work == NULL)
-    {
+    { 
         // out of memory
         GB_Sauna_free (Sauna_id) ;
         return (GrB_OUT_OF_MEMORY) ;

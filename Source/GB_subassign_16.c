@@ -128,7 +128,7 @@ GrB_Info GB_subassign_16
                     GB_NEXT (S) ;
                 }
                 else if (iA < iS)
-                { 
+                {
                     // S (i,j) is not present, A (i,j) is present
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     mij = !mij ;
@@ -141,7 +141,7 @@ GrB_Info GB_subassign_16
                     GB_NEXT (A) ;
                 }
                 else
-                { 
+                {
                     // both S (i,j) and A (i,j) present
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     mij = !mij ;
@@ -163,7 +163,7 @@ GrB_Info GB_subassign_16
 
             // while list A (:,j) has entries.  List S (:,j) exhausted
             while (pA < pA_end)
-            { 
+            {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
                 GB_MIJ_BINARY_SEARCH (iA) ;
@@ -262,7 +262,7 @@ GrB_Info GB_subassign_16
 
             // while list A (:,j) has entries.  List S (:,j) exhausted
             while (pA < pA_end)
-            { 
+            {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
                 GB_MIJ_BINARY_SEARCH (iA) ;

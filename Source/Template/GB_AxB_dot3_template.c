@@ -155,7 +155,7 @@
                     bool mij ;
                     cast_M (&mij, Mx +(pC*msize), 0) ;
                     if (mij)
-                    {
+                    { 
 
                         //------------------------------------------------------
                         // M(i,j) is true, so compute C(i,j)

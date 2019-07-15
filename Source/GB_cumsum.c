@@ -90,7 +90,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
                 GB_PARTITION (istart, iend, n, tid, nthreads) ;
                 int64_t s = 0 ;
                 for (int64_t i = istart ; i < iend ; i++)
-                {
+                { 
                     s += count [i] ;
                 }
                 ws [tid] = s ;
@@ -104,12 +104,15 @@ void GB_cumsum                  // compute the cumulative sum of an array
                     s += ws [i] ;
                 }
                 for (int64_t i = istart ; i < iend ; i++)
-                {
+                { 
                     int64_t c = count [i] ;
                     count [i] = s ;
                     s += c ;
                 }
-                if (iend == n) count [n] = s ;
+                if (iend == n)
+                { 
+                    count [n] = s ;
+                }
             }
 
         }
@@ -156,7 +159,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
                 int64_t k = 0 ;
                 int64_t s = 0 ;
                 for (int64_t i = istart ; i < iend ; i++)
-                {
+                { 
                     int64_t c = count [i] ;
                     if (c != 0) k++ ;
                     s += c ;
@@ -173,12 +176,15 @@ void GB_cumsum                  // compute the cumulative sum of an array
                     s += ws [i] ;
                 }
                 for (int64_t i = istart ; i < iend ; i++)
-                {
+                { 
                     int64_t c = count [i] ;
                     count [i] = s ;
                     s += c ;
                 }
-                if (iend == n) count [n] = s ;
+                if (iend == n)
+                { 
+                    count [n] = s ;
+                }
             }
 
             int64_t k = 0 ;
@@ -187,7 +193,6 @@ void GB_cumsum                  // compute the cumulative sum of an array
                 k += wk [tid] ;
             }
             (*kresult) = k ;
-
         }
     }
 }

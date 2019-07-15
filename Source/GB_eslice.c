@@ -21,7 +21,7 @@ void GB_eslice
 {
     Slice [0] = 0 ;
     for (int tid = 0 ; tid < ntasks ; tid++)
-    {
+    { 
         Slice [tid] = GB_PART (tid, e, ntasks) ;
     }
     Slice [ntasks] = e ;

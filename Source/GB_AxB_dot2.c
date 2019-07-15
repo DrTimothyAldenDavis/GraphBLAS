@@ -58,7 +58,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     ASSERT_OK (GB_check (A, "A for dot A'*B", GB0)) ;
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     {
-        // printf ("taskid %d\n", taskid) ;
         ASSERT_OK (GB_check (Aslice [taskid], "A slice for dot2 A'*B", GB0)) ;
         ASSERT (!GB_PENDING (Aslice [taskid])) ;
         ASSERT (!GB_ZOMBIES (Aslice [taskid])) ;
@@ -74,11 +73,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     ASSERT_OK (GB_check (semiring, "semiring for numeric A'*B", GB0)) ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
-
-//  printf ("dot2: nthreads %d naslice %d nbslice %d\n", nthreads,
-//      naslice, nbslice) ;
-
-//  double t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -116,7 +110,9 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
     (*Chandle) = NULL ;
 
-    // the dot method handles any mask, complemented or not complemented
+    // The dot2 method handles any mask, complemented or not complemented.
+    // However, see GB_AxB_dot3 for C<M>=A'*B when the mask is present and
+    // not complemented.
 
     //--------------------------------------------------------------------------
     // compute # of entries in each vector of C
@@ -136,7 +132,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     int64_t *C_counts [naslice] ;
 
     for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
-    {
+    { 
         C_counts [a_taskid] = NULL ;
     }
 
@@ -145,7 +141,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         int64_t *restrict C_count = NULL ;
         GB_CALLOC_MEMORY (C_count, B->nvec, sizeof (int64_t)) ;
         if (C_count == NULL)
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GrB_OUT_OF_MEMORY) ;
@@ -169,7 +165,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (B->is_hyper), B->hyper_ratio, cnvec, Context) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (info) ;
@@ -184,7 +180,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     {
         int64_t s = 0 ;
         for (int taskid = 0 ; taskid < naslice ; taskid++)
-        {
+        { 
             int64_t *restrict C_count = C_counts [taskid] ;
             int64_t c = C_count [k] ;
             C_count [k] = s ;
@@ -201,7 +197,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
     // C->h = B->h
     if (B->is_hyper)
-    {
+    { 
         GB_memcpy (C->h, B->h, cnvec * sizeof (int64_t), nthreads) ;
     }
 
@@ -221,10 +217,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
         GB_FREE_ALL ;
         return (info) ;
     }
-
-//  t = omp_get_wtime ( ) - t ;
-//  printf ("dot2: phase1 time: %g\n", t) ;
-//  t = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // C = A'*B, computing each entry with a dot product, via builtin semiring
@@ -420,9 +412,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
             #undef GB_MULTIPLY
         }
     }
-
-//  t = omp_get_wtime ( ) - t ;
-//  printf ("dot2 phase2: %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace and return result

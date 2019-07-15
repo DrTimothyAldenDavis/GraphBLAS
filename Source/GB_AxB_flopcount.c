@@ -207,7 +207,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         int64_t flops_so_far = 0 ;
         if (check_quick_return)
         {
-            {
+            { 
                 #pragma omp atomic read
                 flops_so_far = total_flops ;
             }
@@ -350,15 +350,15 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
             if (Bflops != NULL)
             { 
                 if (kk == kfirst)
-                {
+                { 
                     Wfirst [tid] = bjflops ;
                 }
                 else if (kk == klast)
-                {
+                { 
                     Wlast [tid] = bjflops ;
                 }
                 else
-                {
+                { 
                     Bflops [kk] = bjflops ;
                 }
             }
@@ -370,7 +370,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
         Flops [tid] = task_flops ;
         if (check_quick_return)
-        {
+        { 
             #pragma omp atomic update
             total_flops += task_flops ;
         }
@@ -383,7 +383,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     bool result ;
 
     if (check_quick_return)
-    {
+    { 
 
         // The only output of this function is the result of this test:
         result = (total_flops <= floplimit) ;
@@ -401,7 +401,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         result = (total_flops <= floplimit) ;
 
         if (Bflops != NULL)
-        { 
+        {
 
             //------------------------------------------------------------------
             // reduce the first and last vector of each slice

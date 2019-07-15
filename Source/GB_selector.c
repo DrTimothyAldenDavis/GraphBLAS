@@ -56,7 +56,7 @@ GrB_Info GB_selector
 
     GrB_Info info ;
     if (Chandle != NULL)
-    {
+    { 
         (*Chandle) = NULL ;
     }
 
@@ -109,7 +109,7 @@ GrB_Info GB_selector
         GB_Type_code tcode = Thunk->type->code ;
         ithunk = 0 ;
         if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_C_opcode)
-        {
+        { 
             // ithunk = (int64_t) Thunk (0)
             GB_cast_array ((GB_void *restrict) &ithunk,
                                     GB_INT64_code, Thunk->x, tcode, 1, NULL) ;
@@ -126,7 +126,7 @@ GrB_Info GB_selector
 
     GxB_select_function user_select = NULL ;
     if (op != NULL && opcode >= GB_USER_SELECT_C_opcode)
-    {
+    { 
         user_select = (GxB_select_function) (op->function) ;
     }
 
@@ -148,7 +148,7 @@ GrB_Info GB_selector
     GB_CALLOC_MEMORY (Cp, aplen+1, sizeof (int64_t)) ;
     int64_t cnz = 0 ;
     if (Cp == NULL)
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -180,7 +180,7 @@ GrB_Info GB_selector
     int64_t Wfirst [ntasks] ;
     int64_t Wlast  [ntasks] ;
     for (int tid = 0 ; tid < ntasks ; tid++)
-    {
+    { 
         Wfirst [tid] = 0 ;
         Wlast  [tid] = 0 ;
     }
@@ -190,7 +190,7 @@ GrB_Info GB_selector
         // allocate Zp
         GB_MALLOC_MEMORY (Zp, aplen, sizeof (int64_t)) ;
         if (Zp == NULL)
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GB_OUT_OF_MEMORY) ;
@@ -238,7 +238,7 @@ GrB_Info GB_selector
         int64_t k = kfirst_slice [taskid] ;
 
         if (kprior < k)
-        {
+        { 
             // Task taskid is the first one to do work on C(:,k), so it starts
             // at Cp [k], and it contributes Wfirst [taskid] entries to C(:,k)
             pC = Cp [k] ;
@@ -251,7 +251,7 @@ GrB_Info GB_selector
 
         int64_t klast = klast_slice [taskid] ;
         if (k < klast)
-        {
+        { 
             // Task taskid is the last to contribute to C(:,k).
             ASSERT (pC == Cp [k+1]) ;
             // Task taskid contributes the first Wlast [taskid] entries
@@ -269,18 +269,18 @@ GrB_Info GB_selector
     GB_MALLOC_MEMORY (Ci, cnz, sizeof (int64_t)) ;
 
     if (opcode == GB_EQ_ZERO_opcode)
-    {
+    { 
         // since Cx [0..cnz-1] is all zero, phase2 only needs to construct
         // the pattern in Ci
         GB_CALLOC_MEMORY (Cx, cnz, asize) ;
     }
     else
-    {
+    { 
         GB_MALLOC_MEMORY (Cx, cnz, asize) ;
     }
 
     if (Ci == NULL || Cx == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
@@ -330,7 +330,7 @@ GrB_Info GB_selector
             for (int64_t k = 0 ; k < anvec ; k++)
             {
                 if (Cp [k] < Cp [k+1])
-                {
+                { 
                     //printf ("keep k "GBd" j "GBd"\n", k, Ah [k]) ;
                     Ah [cnvec] = Ah [k] ;
                     Ap [cnvec] = Cp [k] ;
@@ -343,7 +343,7 @@ GrB_Info GB_selector
             GB_FREE_MEMORY (Cp, aplen+1, sizeof (int64_t)) ;
         }
         else
-        {
+        { 
             GB_FREE_MEMORY (Ap, aplen+1, sizeof (int64_t)) ;
             A->p = Cp ; Cp = NULL ;
         }
@@ -358,7 +358,7 @@ GrB_Info GB_selector
         A->nvec_nonempty = C_nvec_nonempty ;
 
         if (A->nzmax == 0)
-        {
+        { 
             GB_FREE_MEMORY (A->i, A->nzmax, sizeof (int64_t)) ;
             GB_FREE_MEMORY (A->x, A->nzmax, asize) ;
         }
@@ -383,7 +383,7 @@ GrB_Info GB_selector
         {
             GB_MALLOC_MEMORY (Ch, aplen, sizeof (int64_t)) ;
             if (Ch == NULL)
-            {
+            { 
                 // out of memoroy
                 GB_FREE_ALL ;
                 return (GB_OUT_OF_MEMORY) ;
@@ -394,7 +394,7 @@ GrB_Info GB_selector
             for (int64_t k = 0 ; k < anvec ; k++)
             {
                 if (Cp [k] < Cp [k+1])
-                {
+                { 
                     // printf ("keep k "GBd" j "GBd"\n", k, Ah [k]) ;
                     Ch [cnvec] = Ah [k] ;
                     Cp [cnvec] = Cp [k] ;
@@ -415,7 +415,7 @@ GrB_Info GB_selector
         C->nvec_nonempty = C_nvec_nonempty ;
 
         if (C->nzmax == 0)
-        {
+        { 
             GB_FREE_MEMORY (C->i, C->nzmax, sizeof (int64_t)) ;
             GB_FREE_MEMORY (C->x, C->nzmax, asize) ;
         }

@@ -60,7 +60,7 @@
 
             #if defined ( GB_PHASE_1_OF_2 )
             if (bjnz == bvlen)
-            {
+            { 
                 // C(i,j) is if A(:i) not empty
                 C_count [Iter_k] = A->nvec_nonempty ;
                 continue ;
@@ -91,7 +91,7 @@
 
             // for each vector A(:,i):
             GBI_for_each_vector_with_iter (Iter_A, A)
-            {
+            { 
                 GBI_jth_iteration_with_iter (Iter_A, i, pA, pA_end) ;
                 // C(i,j) = A(:,i)'*B(:,j)
                 #include "GB_AxB_dot_cij.c"

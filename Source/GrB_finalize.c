@@ -37,7 +37,7 @@ GrB_Info GrB_finalize ( )
     //--------------------------------------------------------------------------
 
     if (GB_Global_user_multithreaded_get ( ))
-    {
+    { 
 
         #if defined (USER_POSIX_THREADS)
         {

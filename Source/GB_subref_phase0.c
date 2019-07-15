@@ -53,7 +53,7 @@ static inline void GB_find_Ap_start_end
     //--------------------------------------------------------------------------
 
     if (ajnz == avlen)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // A (:,kA) is dense; use pA and pA_end as-is
@@ -64,7 +64,7 @@ static inline void GB_find_Ap_start_end
 
     }
     else if (ajnz == 0 || GB_Ai (pA) > imax || GB_Ai (pA_end-1) < imin)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // intersection of A(:,kA) and imin:imax is empty
@@ -84,7 +84,7 @@ static inline void GB_find_Ap_start_end
 
         // trim the leading part of A(:,kA)
         if (GB_Ai (pA) < imin)
-        {
+        { 
             bool found, is_zombie ;
             int64_t pright = pA_end - 1 ;
             GB_BINARY_SPLIT_ZOMBIE (imin, Ai, pA, pright, found, nzombies,
@@ -95,19 +95,19 @@ static inline void GB_find_Ap_start_end
         if (imin == imax)
         {
             if (GB_Ai (pA) == imin)
-            {
+            { 
                 // found the the single entry A (i,kA)
                 pA_end = pA + 1 ;
             }
             else
-            {
+            { 
                 // A (i,kA) has not been found
                 pA = -1 ;
                 pA_end = -1 ;
             }
         }
         else if (imax < GB_Ai (pA_end-1))
-        {
+        { 
             bool found, is_zombie ;
             int64_t pleft = pA ;
             int64_t pright = pA_end - 1 ;

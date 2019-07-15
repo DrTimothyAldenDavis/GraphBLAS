@@ -13,7 +13,7 @@ void GB_Pending_free        // free a list of pending tuples
 (
     GB_Pending *PHandle
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -27,7 +27,7 @@ void GB_Pending_free        // free a list of pending tuples
 
     GB_Pending Pending = (*PHandle) ;
     if (Pending != NULL)
-    {
+    { 
         GB_FREE_MEMORY (Pending->i, Pending->nmax, sizeof (int64_t)) ;
         GB_FREE_MEMORY (Pending->j, Pending->nmax, sizeof (int64_t)) ;
         GB_FREE_MEMORY (Pending->x, Pending->nmax, Pending->size) ;

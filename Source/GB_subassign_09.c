@@ -265,7 +265,7 @@ GrB_Info GB_subassign_09
                     GB_NEXT (M) ;
                 }
                 else
-                {
+                { 
                     // both S (i,j) and M (i,j) present
                     GB_NEXT (S) ;
                     GB_NEXT (M) ;

@@ -142,7 +142,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         cnz+1,  // add one to cnz for GB_cumsum
         true, Context) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (info) ;
@@ -172,7 +172,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     nthreads = GB_nthreads (cnvec, chunk, nthreads_max) ;
     GB_memcpy (Cp, Mp, (cnvec+1) * sizeof (int64_t), nthreads) ;
     if (M_is_hyper)
-    {
+    { 
         GB_memcpy (Ch, Mh, cnvec * sizeof (int64_t), nthreads) ;
     }
     C->magic = GB_MAGIC ;
@@ -207,7 +207,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         int64_t klast  = TaskList [taskid].klast ;
         bool fine_task = (klast == -1) ;
         if (fine_task)
-        {
+        { 
             // a fine task operates on a slice of a single vector
             klast = kfirst ;
         }
@@ -256,7 +256,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                 // be done, but it still takes unit work to flag each C(:,j) as
                 // a zombie
                 for ( ; pM < pM_end ; pM++)
-                {
+                { 
                     Cwork [pM] = 1 ;
                 }
             }
@@ -269,7 +269,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                     bool mij ;
                     cast_M (&mij, Mx +(pM*msize), 0) ;
                     if (mij)
-                    {
+                    { 
                         int64_t pA, pA_end, i = Mi [pM] ;
                         GB_lookup (A_is_hyper, Ah, Ap, &apleft, anvec-1, i,
                             &pA, &pA_end) ;

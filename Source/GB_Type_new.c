@@ -18,7 +18,7 @@ GrB_Info GB_Type_new
     size_t sizeof_ctype,        // size of the user type
     const char *name            // name of the type, as "sizeof (ctype)"
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

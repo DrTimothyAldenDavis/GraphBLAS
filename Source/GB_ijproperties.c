@@ -91,7 +91,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         ASSERT (Icolon [GxB_BEGIN] == imin) ;
         ASSERT (Icolon [GxB_INC  ] == 1) ;
         ASSERT (Icolon [GxB_END  ] == imax) ;
-        // printf ("GB_ALL "GBd":"GBd"\n", imin, imax) ;
 
     }
     else if ((*Ikind) == GB_RANGE)
@@ -117,7 +116,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
         }
-        // printf ("GB_RANGE "GBd":"GBd"\n", imin, imax) ;
 
     }
     else if ((*Ikind) == GB_STRIDE)
@@ -164,7 +162,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             Icolon [GxB_BEGIN] = imin ;
             Icolon [GxB_INC  ] = 1 ;
             Icolon [GxB_END  ] = imax ;
-            // printf ("GB_STRIDE converted to empty GB_RANGE\n") ;
 
         }
         else
@@ -175,7 +172,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             // check the limits
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
-            // printf ("GB_STRIDE "GBd":"GBd":"GBd"\n", ibegin, iinc, iend) ;
         }
 
     }
@@ -198,10 +194,6 @@ GrB_Info GB_ijproperties        // check I and determine its properties
 
         // scan I to find imin and imax, and validate the list. Also determine
         // if it is sorted or not, and contigous or not.
-
-        // printf ("GB_LIST length "GBd"\n", ni) ;
-        // for (int64_t k = 0 ; k < ni ; k++) printf (" "GBd, I [k]) ;
-        // printf ("\n") ;
 
         imin = limit ;
         imax = -1 ;
@@ -230,7 +222,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
                         I_unsorted = true ;
                     }
                     else if (i == ilast)
-                    {
+                    { 
                         // I has at least one duplicate entry.  If I is
                         // unsorted, then it is not known if I has duplicates
                         // or not.  But if I is sorted, but with duplicates,
@@ -279,14 +271,14 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         #endif
 
         if (ni > 0)
-        {
+        { 
             // check the limits
             GB_ICHECK (imin, limit) ;
             GB_ICHECK (imax, limit) ;
         }
 
         if (ni == 1)
-        {
+        { 
             // a single entry does not need to be sorted
             ASSERT (I [0] == imin) ;
             ASSERT (I [0] == imax) ;
@@ -294,7 +286,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             ASSERT (I_contig   == true) ;
         }
         if (ni == 0)
-        {
+        { 
             // the list is empty
             ASSERT (imin == limit && imax == -1) ;
         }
@@ -308,14 +300,12 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             // I is a contigous list of stride 1, imin:imax.
             // change Ikind to GB_ALL if 0:limit-1, or GB_RANGE otherwise
             if (imin == 0 && imax == limit-1)
-            {
+            { 
                 (*Ikind) = GB_ALL ;
-                // printf ("GB_LIST -> GB_ALL\n") ;
             }
             else
-            {
+            { 
                 (*Ikind) = GB_RANGE ;
-                // printf ("GB_LIST -> GB_RANGE "GBd":"GBd"\n", imin,imax) ;
             }
             Icolon [GxB_BEGIN] = imin ;
             Icolon [GxB_INC  ] = 1 ;

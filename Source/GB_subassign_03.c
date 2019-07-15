@@ -47,12 +47,10 @@ GrB_Info GB_subassign_03
     const int64_t *restrict Ch = C->h ;
     const int64_t *restrict Cp = C->p ;
     const int64_t Cnvec = C->nvec ;
-
     GB_GET_S ;
     const int64_t *restrict Sh = S->h ;
     const int64_t Snvec = S->nvec ;
     const bool S_is_hyper = S->is_hyper ;
-
     GB_GET_ACCUM_SCALAR ;
 
     //--------------------------------------------------------------------------

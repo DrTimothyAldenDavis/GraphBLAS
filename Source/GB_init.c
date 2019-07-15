@@ -113,7 +113,7 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_GrB_init_called_set (true) ;
 
     if (! (mode == GrB_BLOCKING || mode == GrB_NONBLOCKING))
-    {
+    { 
         // invalid mode
         return (GrB_INVALID_VALUE) ;
     }
@@ -152,7 +152,7 @@ GrB_Info GB_init            // start up GraphBLAS
     //--------------------------------------------------------------------------
 
     if (GB_Global_user_multithreaded_get ( ))
-    {
+    { 
 
         bool ok = true ;
 

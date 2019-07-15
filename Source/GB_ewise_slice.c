@@ -117,7 +117,7 @@ GrB_Info GB_ewise_slice
     const int64_t *restrict Mp = NULL ;
     const int64_t *restrict Mi = NULL ;
     if (M != NULL)
-    {
+    { 
         Mp = M->p ;
         Mi = M->i ;
         // Ch_is_Mh is true if either true on input (for GB_add, which denotes

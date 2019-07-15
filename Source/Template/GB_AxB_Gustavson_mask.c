@@ -214,7 +214,7 @@
             //------------------------------------------------------------------
 
             for ( ; pA < pA_end ; pA++)
-            { 
+            {
                 // Sauna_Work [i] += (A(i,k) * B(k,j)) .* M(i,j)
                 int64_t i = Ai [pA] ;
                 int64_t mark = Sauna_Mark [i] ;
@@ -231,7 +231,7 @@
                     Sauna_Mark [i] = hiwater + 1 ;
                 }
                 else
-                {
+                { 
                     // C(i,j) seen before, update it
                     // Sauna_Work [i] += A(i,k) * B(k,j)
                     GB_MULTADD (GB_SAUNA_WORK (i), aik, bkj) ;

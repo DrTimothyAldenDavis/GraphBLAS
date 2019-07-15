@@ -31,7 +31,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     const int64_t *restrict A_slice,    // defines how A is sliced
     int naslice                         // # of slices of A
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory

@@ -197,7 +197,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t tstart_slice [nthreads+1] ; // first tuple in each slice
     tstart_slice [0] = 0 ;
     for (int tid = 1 ; tid < nthreads ; tid++)
-    {
+    { 
         tstart_slice [tid] = GB_PART (tid, nvals, nthreads) ;
     }
     tstart_slice [nthreads] = nvals ;
@@ -573,7 +573,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         #endif
 
         if (vdim <= 1)
-        { 
+        {
 
             // all tuples appear in at most one vector, and there are no
             // duplicates, so there is no need to scan I_work or J_work.

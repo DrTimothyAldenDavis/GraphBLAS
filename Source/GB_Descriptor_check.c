@@ -48,9 +48,9 @@ static GrB_Info GB_dc
     }
 
     if (ok)
-    { 
+    {
         if (spec)
-        { 
+        {
             // descriptor field can be set to the default,
             // or one non-default value
             if (! (v == GxB_DEFAULT || v == nondefault))
@@ -59,7 +59,7 @@ static GrB_Info GB_dc
             }
         }
         else
-        { 
+        {
             // GxB_AxB_METHOD:
             if (! (v == GxB_DEFAULT || v == GxB_AxB_GUSTAVSON
                 || v == GxB_AxB_HEAP || v == GxB_AxB_DOT))
@@ -93,7 +93,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     FILE *f,                    // file for output
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -124,9 +124,9 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     info [4] = GB_dc (false, "AxB_method", D->axb,  GxB_DEFAULT, pr,f,Context) ;
 
     for (int i = 0 ; i < 5 ; i++)
-    { 
+    {
         if (info [i] != GrB_SUCCESS)
-        {
+        { 
             GBPR0 ("Descriptor field set to an invalid value\n") ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "Descriptor field set to an invalid value: [%s]", GB_NAME))) ;
@@ -140,20 +140,20 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     {
         GBPR ("D.nthreads = ") ;
         if (nthreads_max <= GxB_DEFAULT)
-        {
+        { 
             GBPR ("default\n") ;
         }
         else
-        {
+        { 
             GBPR ("%d\n", nthreads_max) ;
         }
         GBPR ("D.chunk = ") ;
         if (chunk <= GxB_DEFAULT)
-        {
+        { 
             GBPR ("default\n") ;
         }
         else
-        {
+        { 
             GBPR ("%g\n", chunk) ;
         }
     }

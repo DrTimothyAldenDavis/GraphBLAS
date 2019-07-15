@@ -16,7 +16,7 @@ GrB_Info GxB_Matrix_fprint          // print and check a GrB_Matrix
     GxB_Print_Level pr,             // print level
     FILE *f                         // file for output
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -40,7 +40,7 @@ GrB_Info GxB_Matrix_fprint          // print and check a GrB_Matrix
             "matrix invalid: indices out of order [%s]", GB_NAME))) ;
     }
     else
-    {
+    { 
         return (info) ;
     }
 }

@@ -101,7 +101,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         #endif
 
         if (malloc_tracking)
-        {
+        { 
             // brutal memory debug; pretend to fail if (count-- <= 0)
 
             #ifdef GB_PRINT_MALLOC
@@ -140,14 +140,14 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
         //----------------------------------------------------------------------
 
         if (pretend_to_fail)
-        {
+        { 
             #ifdef GB_PRINT_MALLOC
             printf ("pretend to fail\n") ;
             #endif
             pnew = NULL ;
         }
         else
-        {
+        { 
             // reallocate the space
             pnew = (void *) GB_Global_realloc_function (p, size) ;
         }
@@ -164,7 +164,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 // the old block is unchanged.  So pretend to succeed.
                 (*ok1) = true ;
                 if (malloc_tracking)
-                {
+                { 
                     // reduce the amount of memory in use
                     #undef  GB_CRITICAL_SECTION
                     #define GB_CRITICAL_SECTION                              \
@@ -176,7 +176,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                 }
             }
             else
-            {
+            { 
                 // out of memory
                 (*ok1) = false ;
             }
@@ -189,7 +189,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
             if (malloc_tracking)
             {
                 if (nitems_new < nitems_old)
-                {
+                { 
                     // decrease the amount of memory in use
                     #undef  GB_CRITICAL_SECTION
                     #define GB_CRITICAL_SECTION                              \
@@ -200,7 +200,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
                     #include "GB_critical_section.c"
                 }
                 else
-                {
+                { 
                     // increase the amount of memory in use
                     #undef  GB_CRITICAL_SECTION
                     #define GB_CRITICAL_SECTION                              \

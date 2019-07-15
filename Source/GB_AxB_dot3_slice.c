@@ -153,7 +153,7 @@ GrB_Info GB_AxB_dot3_slice
         int64_t plast  = Coarse [t+1] - 1 ;
 
         if (pfirst <= plast)
-        {
+        { 
             // find the first vector of the slice for task taskid: the
             // vector that owns the entry Ci [pfirst] and Cx [pfirst].
             int64_t kfirst = GB_search_for_vector (pfirst, Cp, 0, cnvec) ;
@@ -180,7 +180,7 @@ GrB_Info GB_AxB_dot3_slice
 
         }
         else
-        {
+        { 
             // This task is empty, which means the coarse task that computes
             // C(i,j) is doing too much work.
             // FUTURE:: Use ultra-fine tasks here instead, and split the work

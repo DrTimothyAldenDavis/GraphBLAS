@@ -215,7 +215,6 @@ void GB_ijlength            // get the length and kind of an index list I
         Icolon [GxB_END  ] = 0 ;
 
         (*nI) = ni ;
-
     }
 }
 

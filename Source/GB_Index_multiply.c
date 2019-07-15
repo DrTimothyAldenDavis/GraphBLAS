@@ -18,7 +18,7 @@ bool GB_Index_multiply      // true if ok, false if overflow
     const int64_t a,
     const int64_t b
 )
-{ 
+{
 
     ASSERT (c != NULL) ;
 

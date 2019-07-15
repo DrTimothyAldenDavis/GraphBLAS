@@ -124,7 +124,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
         // acquire a Sauna if Gustavson's method is being used
         int Sauna_id = -2 ;
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
-        {
+        { 
             GB_OK (GB_Sauna_acquire (1, &Sauna_id, AxB_method_used, Context)) ;
         }
 
@@ -135,7 +135,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
 
         // release the Sauna for Gustavson's method
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
-        {
+        { 
             // info is reset, so info1 is used above
             GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
         }
@@ -234,13 +234,13 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     Slice [0] = 0 ;
 
     if (!fine_slice)
-    {
+    { 
         // slice B by the flops needed for each vector
         GB_pslice (Slice, Bflops, bnvec, nthreads) ;
         GB_FREE_MEMORY (Bflops, bnvec+1, sizeof (int64_t)) ;
     }
     else
-    {
+    { 
         // slice B by the flops needed for each entry
         GB_pslice (Slice, Bflops_per_entry, bnz, nthreads) ;
         GB_FREE_MEMORY (Bflops_per_entry, bnz+1, sizeof (int64_t)) ;
@@ -416,7 +416,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     // stored by column.
 
     if (nthreads == 1)
-    {
+    { 
         // one thread, so only one slice: just copy Cslice[0] to C
         (*Chandle) = Cslice [0] ;
         Cslice [0] = NULL ;
@@ -430,7 +430,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
             Sauna_ids, Context)) ;
     }
     else
-    {
+    { 
         // C = [Cslice(0) Cslice(1) ... Cslice(nthreads-1)] concatenatied
         // horizontally.  Each slice contains entries that appear in a unique
         // and contiguous subset of the columns of C.

@@ -21,7 +21,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     FILE *f,                    // file for output
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

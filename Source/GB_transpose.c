@@ -652,7 +652,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // select qsort if the transpose will likely be hypersparse
@@ -784,7 +784,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 
             // numerical values: apply the op, typecast, or make shallow copy
             if (op != NULL)
-            {
+            { 
                 // Swork = op ((op->xtype) Ax)
                 GB_apply_op (Swork, op, Ax, atype, anz, Context) ;
                 // GB_builder will not need to typecast Swork to T->x, and it

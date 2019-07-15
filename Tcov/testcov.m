@@ -13,6 +13,8 @@ try
     debug_on ;
     gbcover ;
     testall ;
+    nthreads_set (2) ;
+    testall ;
 catch me
     debug_off ;
     rethrow (me) ;

@@ -142,7 +142,7 @@ GrB_Info GB_subref_slice
 
     GB_MALLOC_MEMORY (Cwork, Cnvec+1, sizeof (int64_t)) ;
     if (Cwork == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
@@ -163,7 +163,7 @@ GrB_Info GB_subref_slice
     #pragma omp parallel for num_threads(nthreads_for_Cwork) schedule(static) \
         reduction(||:need_I_inverse)
     for (int64_t kC = 0 ; kC < Cnvec ; kC++)
-    {
+    { 
         // jC is the (kC)th vector of C = A(I,J)
         // int64_t jC = (Ch == NULL) ? kC : Ch [kC] ;
         // C(:,kC) = A(I,kA) will be constructed
@@ -228,7 +228,7 @@ GrB_Info GB_subref_slice
 
     int64_t ndupl = 0 ;
     if (need_I_inverse)
-    {
+    { 
         GB_OK (GB_I_inverse (I, nI, avlen, &Mark, &Inext, &ndupl, Context)) ;
         ASSERT (Mark != NULL) ;
         ASSERT (Inext != NULL) ;
@@ -380,7 +380,7 @@ GrB_Info GB_subref_slice
                     Ikind, nI, I_inverse_ok, need_qsort, iinc, ndupl) ;
 
                 if (method == 10)
-                {
+                { 
                     // multiple fine tasks operate on a single vector C(:,kC)
                     // using method 10, and so a post-sort is needed.
                     post_sort = true ;
@@ -394,7 +394,7 @@ GrB_Info GB_subref_slice
                     nfine = GB_IMAX (nfine, 1) ;
 
                     for (int tfine = 0 ; tfine < nfine ; tfine++)
-                    {
+                    { 
                         // flag this as a fine task, and record the method.
                         // Methods 1, 2, and 6 slice I, not A(:,kA)
                         TaskList [ntasks].kfirst = k ;
@@ -424,7 +424,7 @@ GrB_Info GB_subref_slice
                     bool reverse = (method == 8 || method == 9) ;
 
                     for (int tfine = 0 ; tfine < nfine ; tfine++)
-                    {
+                    { 
                         // flag this as a fine task, and record the method.
                         // These methods slice A(:,kA).  Methods 8 and 9
                         // must do so in reverse order.

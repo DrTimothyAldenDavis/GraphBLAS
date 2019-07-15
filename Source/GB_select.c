@@ -84,7 +84,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     // check Thunk_in
     GB_Select_Opcode opcode = op->opcode ;
     if (opcode >= GB_NE_THUNK_opcode && opcode <= GB_LE_THUNK_opcode)
-    {
+    { 
         // Thunk_in must be present for these select operators
         GB_RETURN_IF_NULL (Thunk_in) ;
     }

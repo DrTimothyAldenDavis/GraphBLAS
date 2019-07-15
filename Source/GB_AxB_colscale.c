@@ -108,7 +108,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // allocate but do not initialize C->x
     info = GB_dup (Chandle, A, false, mult->ztype, Context) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         return (info) ;
     }

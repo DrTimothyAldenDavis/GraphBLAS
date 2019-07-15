@@ -314,7 +314,7 @@
                     #else
                     #if defined ( GB_SYMBOLIC )
                     if (nzombies == 0)
-                    {
+                    { 
                         memcpy (Ci + pC, Ai + pA, alen * sizeof (int64_t)) ;
                     }
                     else

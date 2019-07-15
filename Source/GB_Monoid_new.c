@@ -26,7 +26,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_Type_code idcode,        // identity and terminal type code
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

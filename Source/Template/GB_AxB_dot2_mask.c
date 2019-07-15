@@ -102,13 +102,13 @@
             // find vector j in M
             int64_t pM, pM_end, mjnz ;
             if (M_and_B_are_aliased)
-            {
+            { 
                 pM = pB_start ;
                 pM_end = pB_end ;
                 mjnz = bjnz ;
             }
             else
-            {
+            { 
                 int64_t mpleft = 0 ;
                 GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mnvec-1, j,
                     &pM, &pM_end) ;
@@ -134,7 +134,7 @@
 
                 // iterate over all entries in M(:,j)
                 for ( ; pM < pM_end ; pM++)
-                {
+                { 
 
                     // get the next entry M(i,j)
                     int64_t i = Mi [pM] ;
@@ -169,7 +169,7 @@
 
                 // advance pM to the first vector of A
                 if (im_first < ia_first)
-                {
+                { 
                     // search M(:,j) for the first vector of A
                     int64_t pright = pM_end - 1 ;
                     GB_BINARY_TRIM_SEARCH (ia_first, Mi, pM, pright) ;
@@ -185,7 +185,7 @@
                     // get the next entry M(i,j)
                     int64_t i = Mi [pM] ;
                     if (i > ia_last)
-                    {
+                    { 
                         // i is past last vector of A so the remainder of
                         // M(:,j) can be ignored
                         break ;
@@ -206,7 +206,7 @@
                     // get A(:,i), if it exists
                     int64_t pA, pA_end ;
                     if (A_is_slice)
-                    {
+                    { 
                         // A is a slice
                         int64_t ka = i - ia_first ;
                         ASSERT (ka >= 0 && ka < anvec) ;
@@ -214,7 +214,7 @@
                         pA_end = Ap [ka+1] ;
                     }
                     else
-                    {
+                    { 
                         // A is sparse, hypersparse, or hyperslice
                         GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, i,
                             &pA, &pA_end) ;
@@ -243,7 +243,7 @@
                     int64_t pright = pM_end - 1 ;
                     GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
                     if (found)
-                    {
+                    { 
                         cast_M (&mij, Mx +(pM*msize), 0) ;
                     }
                     if (mij)

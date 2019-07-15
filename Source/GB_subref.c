@@ -128,7 +128,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         A, I, ni, J, nj, must_sort, Context) ;
 
     if (info != GrB_SUCCESS)
-    {
+    { 
         // I,J invalid, or out of memory
         GB_FREE_WORK ;
         return (info) ;
@@ -150,7 +150,7 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
         A->vlen, GB_NNZ (A), I, Context) ;
 
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         GB_FREE_MEMORY (Ch, Cnvec, sizeof (int64_t)) ;
         GB_FREE_WORK ;

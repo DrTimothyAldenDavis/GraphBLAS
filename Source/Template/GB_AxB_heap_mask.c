@@ -301,12 +301,12 @@
                     GB_GETA (aik, Ax, pA) ;
                     GB_GETB (bkj, Bx, pB_start + kk) ;
                     if (klist == nlist-1)
-                    {
+                    { 
                         // first entry: cij = A(i,k) * B(k,j)
                         GB_MULT (cij, aik, bkj) ;
                     }
                     else
-                    {
+                    { 
                         // cij += A(i,k) * B(k,j)
                         GB_MULTADD (cij, aik, bkj) ;
                     }

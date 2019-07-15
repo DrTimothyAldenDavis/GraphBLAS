@@ -61,7 +61,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
     int64_t cnvec = 0 ;             // upper bound on # vectors in C
 
     for (int tid = 0 ; tid < nthreads ; tid++)
-    {
+    { 
         // compute the cumulative sum of the # entries and # vectors
         cnz   += GB_NNZ (Cslice [tid]) ;
         cnvec += (Cslice [tid])->nvec ;
@@ -78,7 +78,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         GB_FORCE_HYPER, GB_Global_hyper_ratio_get ( ), cnvec, cnz, true,
         Context) ;
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -196,14 +196,14 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         while (tfine+1 < nthreads)
         {
             if ((Cslice [tfine+1])->nvec == 0)
-            {
+            { 
                 // slice tfine+1 is empty; include it and keep looking
                 tfine++ ;
                 continue ;
             }
             int64_t first_vector = (Cslice [tfine+1])->h [0] ;
             if (last_vector == first_vector)
-            {
+            { 
                 // the last vector of Cslice [tid] is the same as the first
                 // vector of Cslice [tfine+1].  Add tfine+1 to the list, and
                 // continue looking for last_vector in subsequent slices.
@@ -211,7 +211,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
                 continue ;
             }
             else
-            {
+            { 
                 // Cslice [tfine+1] starts with a different vector than the
                 // last vector of Cslice [tid], so it is not part of the list.
                 break ;
@@ -260,10 +260,9 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
 
         // construct the column pointers of C (shift upwards by cnz)
         for (int64_t k = kfirst ; k < cnvec_slice ; k++)
-        {
+        { 
             Cp [cnvec++] = Cslicep [k] + cnz - pfirst ;
         }
-
 
         // entries and vectors have been appended to C
         cnz   += (cnz_slice - pfirst) ;
@@ -285,7 +284,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             int64_t pstart = Cslicep [cnvec_slice-1] ;
             int64_t pend   = Cslicep [cnvec_slice] ;
             for (int64_t p = pstart ; p < pend ; p++)
-            {
+            { 
                 int64_t i = Cslicei [p] ;
                 Sauna_Mark [i] = hiwater ;
                 // Sauna_Work [i] = Cslicex [p]
@@ -314,7 +313,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
                 {
                     int64_t i = Cslice2i [p] ;
                     if (Sauna_Mark [i] < hiwater)
-                    {
+                    { 
                         // first time row index i has been seen
                         Sauna_Mark [i] = hiwater ;
                         // Sauna_Work [i] = Cslice2x [p]
@@ -325,7 +324,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
                         unsorted = true ;
                     }
                     else
-                    {
+                    { 
                         // C(i,last_vector) += Cslice2 (i,last_vector)
                         fadd (Sauna_Work +(i*csize), Sauna_Work +(i*csize),
                               Cslice2x +(p*csize)) ;
@@ -361,7 +360,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
             //------------------------------------------------------------------
 
             for (int64_t pC = cnz_last ; pC < cnz ; pC++)
-            {
+            { 
                 int64_t i = Ci [pC] ;
                 // Cx [pC] = Sauna_Work [i]
                 memcpy (Cx +(pC*csize), Sauna_Work +(i*csize), csize) ;

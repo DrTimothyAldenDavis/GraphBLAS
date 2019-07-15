@@ -234,20 +234,20 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             int64_t j = (Ah == NULL) ? k : Ah [k] ;
             int64_t jnz = Ap [k+1] - Ap [k] ;
             if (jnz == 0)
-            {
+            { 
                 // A(:,j) is empty: T(j) is a zombie
                 Ti [k] = GB_FLIP (j) ;
                 nzombies++ ;
             }
             else
-            {
+            { 
                 // A(:,j) has at least one entry; T(j) is live
                 Ti [k] = j ;
             }
         }
 
         if (A->nvec_nonempty < 0)
-        {
+        { 
             A->nvec_nonempty = anvec - nzombies ;
         }
         ASSERT (A->nvec_nonempty == (anvec - nzombies)) ;
@@ -304,7 +304,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         //----------------------------------------------------------------------
 
         if (!done)
-        {
+        { 
 
             #define GB_ATYPE GB_void
             #define GB_CTYPE GB_void
@@ -360,7 +360,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         ASSERT_OK (GB_check (T, "T before wait", GB_FLIP (GB0)));
 
         if (nzombies > 0)
-        {
+        { 
             ASSERT (GB_VECTOR_OK (T)) ;
             ASSERT (!GB_PENDING (T)) ;
             ASSERT (GB_ZOMBIES (T)) ;
@@ -390,7 +390,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // used when A is very sparse.
 
         if (GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET (anz, n))
-        {
+        { 
 
             //------------------------------------------------------------------
             // qsort method
@@ -498,7 +498,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             //------------------------------------------------------------------
 
             if (!done)
-            {
+            { 
                 #include "GB_reduce_each_index.c"
             }
         }

@@ -279,7 +279,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         if (I_jumbled)
         { 
             // I2 = sort I_input and remove duplicates
-            // printf ("sort I_input and remove duplicates::::\n") ;
             ASSERT (Ikind == GB_LIST) ;
             GB_OK (GB_ijsort (I_input, &ni, &I2, &I2k, Context)) ;
             // Recheck the length and properties of the new I2.  This may
@@ -293,7 +292,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         if (J_jumbled)
         { 
             // J2 = sort J_input and remove duplicates
-            // printf ("sort J_input and remove duplicates::::\n") ;
             ASSERT (Jkind == GB_LIST) ;
             GB_OK (GB_ijsort (J_input, &nj, &J2, &J2k, Context)) ;
             // Recheck the length and properties of the new J2.  This may
@@ -307,7 +305,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         if (!scalar_expansion)
         { 
             // A2 = A (I2k, J2k)
-            // printf ("A2 = A (I2k, J2k):\n") ;
             GB_OK (GB_subref (&A2, A->is_csc, A,
                 I_jumbled ? I2k : GrB_ALL, ni,
                 J_jumbled ? J2k : GrB_ALL, nj, false, true, Context)) ;
@@ -317,7 +314,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         if (M != NULL)
         { 
             // M2 = M (I2k, J2k)
-            // printf ("M2 = M (I2k, J2k):\n") ;
             GB_OK (GB_subref (&M2, M->is_csc, M,
                 I_jumbled ? I2k : GrB_ALL, ni,
                 J_jumbled ? J2k : GrB_ALL, nj, false, true, Context)) ;
@@ -335,20 +331,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     ASSERT (! (I_unsorted || I_has_dupl)) ;
     ASSERT (! (J_unsorted || J_has_dupl)) ;
-
-//  printf ("I:  nI "GBd"\n", nI) ;
-//  for (int64_t i = 0 ; i < nI ; i++)
-//  {
-//      int64_t iC = GB_ijlist (I, i, Ikind, Icolon) ;
-//      printf (GBd": "GBd"\n", i, iC) ;
-//  }
-
-//  printf ("\nJ:  nJ "GBd"\n", nJ) ;
-//  for (int64_t j = 0 ; j < nJ ; j++)
-//  {
-//      int64_t jC = GB_ijlist (J, j, Jkind, Jcolon) ;
-//      printf (GBd": "GBd"\n", j, jC) ;
-//  }
 
     //--------------------------------------------------------------------------
     // determine the type and nnz of A (from a scalar or matrix)
@@ -591,7 +573,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool C_Mask_matrix = (!scalar_expansion && simple_mask) ;
 
     if (empty_mask)
-    {
+    { 
         // use Method 00: C(I,J) = empty
         S_Extraction = true ;
     }
@@ -603,12 +585,12 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     else if (C_Mask_matrix)
     {
         if (accum != NULL)
-        {
+        { 
             // C(I,J)<M> += A always uses method 08.  S is not constructed.
             S_Extraction = false ;
         }
         else
-        {
+        { 
             // C(I,J)<M> = A ;  use 06s (with S) or 06n (without S)
             // method 06s (with S) is faster when nnz (A) < nnz (M)
             S_Extraction = (anz < GB_NNZ (M)) ;
@@ -643,9 +625,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // in the same hypersparse form as C (unless S is empty, in which case
         // it is always returned as hypersparse). This also checks I and J.
 
-        // double t = omp_get_wtime ( ) ;
         GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, true, Context));
-        // t = omp_get_wtime ( ) - t ; printf ("\nsubref %g sec\n", t) ;
 
         ASSERT_OK (GB_check (C, "C for subref extraction", GB0)) ;
         ASSERT_OK (GB_check (S, "S for subref extraction", GB0)) ;
@@ -748,8 +728,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // FUTURE:: create a set of methods that operate on a dense matrix C.
     // The matrix S is not needed.
 
-    // double t = omp_get_wtime ( ) ;
-
     if (empty_mask)
     { 
 
@@ -832,7 +810,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 M, accum, A, Context)) ;
         }
         else if (S == NULL)
-        {
+        { 
             // Method 06n: C(I,J)<M> = A ; no S
             GB_OK (GB_subassign_06n (C,
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
@@ -1047,8 +1025,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // note that C(I,J)<M> += A always uses method 6b, without S.
         }
     }
-
-    // t = omp_get_wtime ( ) - t ; printf ("method %g sec\n", t) ;
 
     //--------------------------------------------------------------------------
     // free workspace

@@ -37,7 +37,7 @@
                 int64_t tstart = tstart_slice [tid] ;
                 int64_t tend   = tstart_slice [tid+1] ;
                 for (int64_t t = tstart ; t < tend ; t++)
-                {
+                { 
                     // Tx [t] = (ttype) S [t] ; with typecast
                     GB_CAST_ARRAY_TO_ARRAY (Tx, t, S, t) ;
                 }
@@ -53,7 +53,7 @@
                 int64_t tstart = tstart_slice [tid] ;
                 int64_t tend   = tstart_slice [tid+1] ;
                 for (int64_t t = tstart ; t < tend ; t++)
-                {
+                { 
                     // Tx [t] = (ttype) S [K_work [t]] ; with typecast
                     GB_CAST_ARRAY_TO_ARRAY (Tx, t, S, K_work [t]) ;
                 }
@@ -81,7 +81,7 @@
             // find the first unique tuple owned by this slice
             int64_t t ;
             for (t = tstart ; t < tend ; t++)
-            {
+            { 
                 // get the tuple and break if it is not a duplicate
                 if (I_work [t] >= 0) break ;
             }
@@ -101,7 +101,7 @@
                 // the first duplicates in the next slice(s) (up to but not
                 // including the first unique tuple in the subsequent slice(s)).
                 for ( ; t+1 < nvals && I_work [t+1] < 0 ; t++)
-                {
+                { 
                     // assemble the duplicate tuple
                     int64_t k = (K_work == NULL) ? (t+1) : K_work [t+1] ;
                     // Tx [my_tnz] += S [k] with typecast

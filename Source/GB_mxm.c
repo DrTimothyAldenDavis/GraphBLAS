@@ -81,7 +81,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     int64_t bnrows = (B_transpose) ? GB_NCOLS (B) : GB_NROWS (B) ;
     int64_t bncols = (B_transpose) ? GB_NROWS (B) : GB_NCOLS (B) ;
     if (ancols != bnrows || GB_NROWS (C) != anrows || GB_NCOLS (C) != bncols)
-    {
+    { 
         return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
             "Dimensions not compatible:\n"
             "output is "GBd"-by-"GBd"\n"

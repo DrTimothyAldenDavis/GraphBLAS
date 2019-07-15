@@ -285,13 +285,13 @@ GrB_Info GB_subassign_one_slice
                     TaskList [ntasks].pA_end = pA_end ;
 
                     if (jC_dense)
-                    {
+                    { 
                         // do not slice C(:,jC) if it is dense
                         TaskList [ntasks].pC     = pC_start ;
                         TaskList [ntasks].pC_end = pC_end ;
                     }
                     else
-                    {
+                    { 
 
                         // find where this task starts and ends in C(:,jC)
                         int64_t iA_start = Ai [pA] ;

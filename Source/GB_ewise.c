@@ -142,7 +142,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     if (A_transpose && B_transpose)
-    {
+    { 
         // T=A'+B' replaced with T=(A+B)'
         A_transpose = false ;
         B_transpose = false ;
@@ -169,7 +169,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // during GB_add and GB_emult to reduce memory and work.
         M1 = M ;
         if (C_is_csc != M_is_csc)
-        {
+        { 
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
             M1 = MT ;
         }
@@ -182,7 +182,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     GrB_Matrix A1 = A ;
     if (A_transpose)
-    {
+    { 
         // AT = A'
         // transpose: no typecast, no op, not in place
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
@@ -195,7 +195,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     GrB_Matrix B1 = B ;
     if (B_transpose)
-    {
+    { 
         // BT = B'
         // transpose: no typecast, no op, not in place
         GB_OK (GB_transpose (&BT, NULL, C_is_csc, B, NULL, Context)) ;

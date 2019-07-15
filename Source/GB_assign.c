@@ -255,13 +255,13 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 GB_WAIT_PENDING (C) ;
                 ASSERT_OK (GB_check (C, "waited C for quick mask", GB0)) ;
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
-                {
+                { 
                     // delete all entries in vector j
                     int64_t j = (col_assign) ? Cols [0] : Rows [0] ;
                     GB_assign_zombie1 (C, j, Context) ;
                 }
                 else
-                {
+                { 
                     // delete all entries in each vector with index i
                     int64_t i = (row_assign) ? Rows [0] : Cols [0] ;
                     GB_assign_zombie2 (C, i, Context) ;
@@ -362,7 +362,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // proceeds.
 
     if (!scalar_expansion && C_is_csc != A->is_csc)
-    {
+    { 
         // Flip the sense of A_transpose
         A_transpose = !A_transpose ;
     }
@@ -413,7 +413,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // no need to sort a list of length 0 or 1; it is already sorted
 
         if (Ikind == GB_LIST && ni > 1)
-        {
+        { 
             // ni and nI are reduced if there are duplicates
             I2_size = ni ;
             GB_OK (GB_ijsort (I, &ni, &I2, &I2k, Context)) ;
@@ -423,7 +423,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         }
 
         if (Jkind == GB_LIST && nj > 1)
-        {
+        { 
             // nj and nJ are reduced if there are duplicates
             J2_size = nj ;
             GB_OK (GB_ijsort (J, &nj, &J2, &J2k, Context)) ;
@@ -441,7 +441,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     // which is then quickly transposed to a hypersparse matrix.
 
     if (!scalar_expansion && A_transpose)
-    {
+    { 
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
@@ -538,7 +538,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             M_transpose = !M_transpose ;
         }
         if (M_transpose)
-        {
+        { 
             // MT = M' to conform M to the same CSR/CSC format as C.
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: typecast, no op, not in place
@@ -568,7 +568,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     if (C_aliased)
-    {
+    { 
         // Z2 = duplicate of C, which must be freed when done
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
@@ -641,7 +641,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         //----------------------------------------------------------------------
 
         if (GB_PENDING (Z))
-        {
+        { 
             GB_OK (GB_wait (Z, Context)) ;
         }
 
@@ -654,7 +654,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // M is the now all of M_in, not the SubMask, so it must be transposed
 
         if (M_transpose)
-        {
+        { 
             // MT = M' to conform M to the same CSR/CSC format as C.
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: typecast, no op, not in place
@@ -675,7 +675,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         ASSERT (GB_IMPLIES (J2 != NULL, (J == J2) && (J2_size > 1))) ;
 
         if (Ikind == GB_LIST && ni > 1 && I2 == NULL)
-        {
+        { 
             // ni and nI are reduced if there are duplicates
             I2_size = ni ;
             GB_OK (GB_ijsort (I, &ni, &I2, &I2k, Context)) ;
@@ -685,7 +685,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         }
 
         if (Jkind == GB_LIST && nj > 1 && J2 == NULL)
-        {
+        { 
             // nj and nJ are reduced if there are duplicates
             J2_size = nj ;
             GB_OK (GB_ijsort (J, &nj, &J2, &J2k, Context)) ;
@@ -699,7 +699,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         //----------------------------------------------------------------------
 
         if ((row_assign && !C->is_csc) || (col_assign && C->is_csc))
-        {
+        { 
 
             //------------------------------------------------------------------
             // vector assignment, examine all of M but just Z(:,j)
@@ -716,7 +716,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 Context) ;
         }
         else if ((row_assign && C->is_csc) || (col_assign && !C->is_csc))
-        {
+        { 
 
             //------------------------------------------------------------------
             // index assignment, examine just Z(i,:) and M
@@ -734,7 +734,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 Context) ;
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // Matrix/vector assignment: examine all of Z and M

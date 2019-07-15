@@ -83,7 +83,7 @@
     //--------------------------------------------------------------------------
 
     #else   // USER_OPENMP_THREADS or USER_NO_THREADS
-    {
+    { 
         // default: use a named OpenMP critical section.  If OpenMP is not
         // available, then the #pragma is ignored and this becomes vanilla,
         // single-threaded code.

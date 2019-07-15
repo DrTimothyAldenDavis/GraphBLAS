@@ -56,7 +56,7 @@ GrB_Info GB_error           // log an error in thread-local-storage
     //--------------------------------------------------------------------------
 
     if (Context == NULL)
-    {
+    { 
         // the error cannot be logged in the Context, inside a parallel region,
         // so just return the error.  The error will be logged when the
         // parallel region exits.
@@ -74,7 +74,7 @@ GrB_Info GB_error           // log an error in thread-local-storage
     //--------------------------------------------------------------------------
 
     if (p != NULL)
-    {
+    { 
         // p now points to thread-local storage (char array of size GB_RLEN+1)
         snprintf (p, GB_RLEN, "GraphBLAS error: %s\nfunction: %s\n%s\n",
             GB_status_code (info),
@@ -83,7 +83,7 @@ GrB_Info GB_error           // log an error in thread-local-storage
         return (info) ;
     }
     else
-    {
+    { 
         // If a failure occured or p is NULL then do not write to the string.
         // A GrB_PANIC will be returned.
         return (GrB_PANIC) ;

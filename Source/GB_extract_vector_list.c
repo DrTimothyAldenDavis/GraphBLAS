@@ -90,7 +90,7 @@ void GB_extract_vector_list     // construct vector indices J, for each entry
             //------------------------------------------------------------------
 
             for (int64_t p = pA_start ; p < pA_end ; p++)
-            {
+            { 
                 J [p] = j ;
             }
         }

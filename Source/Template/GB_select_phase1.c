@@ -60,24 +60,24 @@
             #endif
 
             if (i < ifirst)
-            {
+            { 
                 // all entries in A(:,k) come after i
                 ;
             }
             else if (i > ilast)
-            {
+            { 
                 // all entries in A(:,k) come before i
                 p = pA_end ;
             }
             else if (ajnz == avlen)
-            {
+            { 
                 // A(:,k) is dense
                 found = true ;
                 p += i ;
                 ASSERT (Ai [p] == i) ;
             }
             else
-            {
+            { 
                 // binary search for A (i,k)
                 int64_t pright = pA_end - 1 ;
                 GB_BINARY_SPLIT_SEARCH (i, Ai, p, pright, found) ;
@@ -94,7 +94,7 @@
                 // if found, keep pA_start to p
                 // else keep pA_start to p-1
                 if (found)
-                {
+                { 
                     p++ ;
                     // now in both cases, keep pA_start to p-1
                 }
@@ -115,7 +115,7 @@
                 // else keep pA_start to pA_end
                 cjnz = ajnz - found ;
                 if (!found)
-                {
+                { 
                     p = pA_end ;
                     // now just keep pA_start to p-1; p+1 to pA_end is 
                     // now empty
@@ -154,7 +154,7 @@
             int64_t pA_start = pstart_slice [tid] ;
             int64_t pA_end = GB_IMIN (Ap [kfirst+1], pstart_slice [tid+1]) ;
             if (pA_start < pA_end)
-            {
+            { 
                 #if defined ( GB_TRIL_SELECTOR )
 
                     // keep Zp [kfirst] to pA_end-1
@@ -194,7 +194,7 @@
             int64_t pA_start = Ap [klast] ;
             int64_t pA_end   = pstart_slice [tid+1] ;
             if (pA_start < pA_end)
-            {
+            { 
                 #if defined ( GB_TRIL_SELECTOR )
 
                     // keep Zp [klast] to pA_end-1

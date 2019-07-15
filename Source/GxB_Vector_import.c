@@ -47,7 +47,7 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     }
 
     if (nvals > 0)
-    {
+    { 
         GB_RETURN_IF_NULL (vi) ;
         GB_RETURN_IF_NULL (vx) ;
     }

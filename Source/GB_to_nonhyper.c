@@ -146,7 +146,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
 
                 int64_t jfin ;
                 if (jk >= jend)
-                {
+                { 
                     // This is the last iteration for this task.  This task
                     // does not own the kth vector.  However, it does own the
                     // vector indices jlast+1:jend-1, and these vectors must
@@ -155,7 +155,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
                     done = true ;
                 }
                 else
-                {
+                { 
                     // This task owns the kth vector, which is vector index jk.
                     // Ap must be set to pk for all vector indices jlast+1:jk.
                     jfin = jk ;
@@ -171,7 +171,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
                 // the intersection of jlast+1:jk with jstart:jend-1.
 
                 for (int64_t j = jlast+1 ; j <= jfin ; j++)
-                {
+                { 
                     Ap_new [j] = pk ;
                 }
 
@@ -188,7 +188,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
             //------------------------------------------------------------------
 
             if (tid == ntasks-1)
-            {
+            { 
                 ASSERT (jend == n) ;
                 Ap_new [n] = anz ;
             }

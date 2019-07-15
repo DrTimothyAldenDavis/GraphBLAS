@@ -79,7 +79,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
         int64_t bnvec_nonempty = 0 ;
 
         GBI_for_each_vector (B)
-        {
+        { 
 
             //------------------------------------------------------------------
             // get B(:,j)
@@ -105,7 +105,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
         }
 
         if (B->nvec_nonempty < 0)
-        {
+        { 
             B->nvec_nonempty = bnvec_nonempty ;
         }
         ASSERT (B->nvec_nonempty == GB_nvec_nonempty (B, NULL)) ;
@@ -128,7 +128,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
         // abnzmax = cvlen * cvdim, but check for overflow
         GrB_Index abnzmax ;
         if (GB_Index_multiply (&abnzmax, cvlen, cvdim))
-        {
+        { 
             // only do this if cvlen * cvdim does not overflow
             cnz_guess = GB_IMIN (cnz_guess, abnzmax) ;
         }

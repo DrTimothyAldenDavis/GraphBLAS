@@ -32,7 +32,7 @@ bool GB_queue_insert            // insert matrix at the head of queue
     bool ok = true ;
 
     if ((A->Pending != NULL || A->nzombies > 0) && !(A->enqueued))
-    {
+    { 
         // A is not in the queue yet, but needs to be there
 
         // define the work to do inside the critical section

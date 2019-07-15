@@ -42,7 +42,7 @@ GrB_Info GB_selector
 //------------------------------------------------------------------------------
 
 static inline bool GB_is_nonzero (const GB_void *value, int64_t size)
-{
+{ 
     for (int64_t i = 0 ; i < size ; i++)
     {
         if (value [i] != 0) return (true) ;

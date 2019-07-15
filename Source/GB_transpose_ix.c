@@ -27,7 +27,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     const int64_t *restrict A_slice,    // defines how A is sliced
     int naslice                         // # of slices of A
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory

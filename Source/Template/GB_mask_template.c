@@ -192,20 +192,14 @@
             bool cdense = (cjnz == len) && (cjnz > 0) ;
 
             #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DEBUG )
+            // get the first index in C(:,j) for this vector
             int64_t iC_first = -1 ;
-            if (cjnz > 0)
-            {
-                // get the first and last indices in C(:,j) for this vector
-                iC_first = Ci [pC] ;
-            }
+            if (cjnz > 0) iC_first = Ci [pC] ;
             #endif
 
             #ifdef GB_DEBUG
             int64_t iC_last = -1 ;
-            if (cjnz > 0)
-            {
-                iC_last  = Ci [pC_end-1] ;
-            }
+            if (cjnz > 0) iC_last  = Ci [pC_end-1] ;
             #endif
 
             //------------------------------------------------------------------
@@ -327,23 +321,23 @@
                 #else
                 ASSERT (rjnz == cjnz) ;
                 for (int64_t p = 0 ; p < cjnz ; p++)
-                { 
+                {
                     int64_t i = p + iC_first ;
                     Ri [pR + p] = i ;
                     int64_t iM = (pM < pM_end) ? Mi [pM] : INT64_MAX ;
                     bool mij = false ;
                     if (i == iM)
-                    {
+                    { 
                         cast_M (&mij, Mx +(pM*msize), 0) ;
                         pM++ ;
                     }
                     if (Mask_comp) mij = !mij ;
                     if (mij)
-                    {
+                    { 
                         memcpy (Rx +(pR+p)*rsize, Zx +(pZ+p)*rsize, rsize) ;
                     }
                     else
-                    {
+                    { 
                         memcpy (Rx +(pR+p)*rsize, Cx +(pC+p)*rsize, rsize) ;
                     }
                 }
