@@ -341,14 +341,16 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
 
     // for all threads in parallel, with no synchronization except for these
     // boolean reductions:
-    bool ok = true ;
-    bool panic = false ;
-    bool allmask = true ;
+    bool ok = true ;        // false if any thread's malloc or realloc fails
+    bool panic = false ;    // true if any critical section fails
+    bool allmask = true ;   // true if all threads apply the mask
 
     #pragma omp parallel for num_threads(nthreads) schedule(static,1) \
-        reduction(&&:ok,allmask) reduction(||:panic)
+        reduction(&&:allmask) reduction(||:panic) \
+        reduction(&&:ok)
     for (int tid = 0 ; tid < nthreads ; tid++)
     { 
+        // each thread allocates its output, using malloc and realloc
         bool thread_mask_applied = false ;
         GrB_Info thread_info = GB_AxB_saxpy_sequential (&(Cslice [tid]), M,
             Mask_comp, A, (nthreads == 1) ? B : Bslice [tid], semiring,

@@ -26,66 +26,22 @@
     size_t zsize = ttype->size ;
 
     //--------------------------------------------------------------------------
-    // reduce each slice in its own workspace
+    // allocate workspace for each thread
     //--------------------------------------------------------------------------
 
     GB_CTYPE *Works [nth] ;
     bool     *Marks [nth] ;
-    int64_t  Tnz [nth] ;
     bool ok = true ;
 
-    // each thread reduces its own slice in parallel
-    #pragma omp parallel for num_threads(nth) schedule(static) reduction(&&:ok)
+    #pragma omp parallel for num_threads(nth) schedule(static) \
+        reduction(&&:ok)
     for (int tid = 0 ; tid < nth ; tid++)
-    {
-
-        //----------------------------------------------------------------------
-        // allocate workspace for this thread
-        //----------------------------------------------------------------------
-
-        GB_CTYPE *restrict Work ;
-        bool     *restrict Mark ;
-        GB_MALLOC_MEMORY (Work, n, zsize) ;
-        GB_CALLOC_MEMORY (Mark, n, sizeof (bool)) ;
-        Works [tid] = Work ;
-        Marks [tid] = Mark ;
-        bool my_ok = (Mark != NULL && Work != NULL) ;
-        ok = ok && my_ok ;
-        int64_t my_tnz = 0 ;
-
-        //----------------------------------------------------------------------
-        // reduce the entries
-        //----------------------------------------------------------------------
-
-        if (my_ok)
-        {
-            for (int64_t p = pstart_slice [tid] ; p < pstart_slice [tid+1] ;p++)
-            {
-                int64_t i = Ai [p] ;
-                // ztype aij = (ztype) Ax [p], with typecast
-                GB_SCALAR (aij) ;
-                GB_CAST_ARRAY_TO_SCALAR (aij, Ax, p) ;
-                if (!Mark [i])
-                { 
-                    // first time index i has been seen
-                    // Work [i] = aij ; no typecast
-                    GB_COPY_SCALAR_TO_ARRAY (Work, i, aij) ;
-                    Mark [i] = true ;
-                    my_tnz++ ;
-                }
-                else
-                { 
-                    // Work [i] += aij ; no typecast
-                    GB_ADD_SCALAR_TO_ARRAY (Work, i, aij) ;
-                }
-            }
-            Tnz [tid] = my_tnz ;
-        }
+    { 
+        // each thread allocates its own workspace
+        GB_MALLOC_MEMORY (Works [tid], n, zsize) ;
+        GB_CALLOC_MEMORY (Marks [tid], n, sizeof (bool)) ;
+        ok = ok && (Works [tid] != NULL && Marks [tid] != NULL) ;
     }
-
-    //--------------------------------------------------------------------------
-    // handle out-of-memory condition
-    //--------------------------------------------------------------------------
 
     if (!ok)
     {
@@ -96,6 +52,52 @@
             GB_FREE_MEMORY (Marks [tid], n, sizeof (bool)) ;
         }
         return (GB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // reduce each slice in its own workspace
+    //--------------------------------------------------------------------------
+
+    int64_t  Tnz [nth] ;
+
+    // each thread reduces its own slice in parallel
+    #pragma omp parallel for num_threads(nth) schedule(static)
+    for (int tid = 0 ; tid < nth ; tid++)
+    {
+
+        //----------------------------------------------------------------------
+        // get the workspace for this thread
+        //----------------------------------------------------------------------
+
+        GB_CTYPE *restrict Work = Works [tid] ;
+        bool     *restrict Mark = Marks [tid] ;
+        int64_t my_tnz = 0 ;
+
+        //----------------------------------------------------------------------
+        // reduce the entries
+        //----------------------------------------------------------------------
+
+        for (int64_t p = pstart_slice [tid] ; p < pstart_slice [tid+1] ;p++)
+        {
+            int64_t i = Ai [p] ;
+            // ztype aij = (ztype) Ax [p], with typecast
+            GB_SCALAR (aij) ;
+            GB_CAST_ARRAY_TO_SCALAR (aij, Ax, p) ;
+            if (!Mark [i])
+            { 
+                // first time index i has been seen
+                // Work [i] = aij ; no typecast
+                GB_COPY_SCALAR_TO_ARRAY (Work, i, aij) ;
+                Mark [i] = true ;
+                my_tnz++ ;
+            }
+            else
+            { 
+                // Work [i] += aij ; no typecast
+                GB_ADD_SCALAR_TO_ARRAY (Work, i, aij) ;
+            }
+        }
+        Tnz [tid] = my_tnz ;
     }
 
     //--------------------------------------------------------------------------
@@ -267,7 +269,10 @@
         }
     }
 
+    //--------------------------------------------------------------------------
     // free workspace for thread 0 
+    //--------------------------------------------------------------------------
+
     GB_FREE_MEMORY (Work0, n, zsize) ;
     GB_FREE_MEMORY (Mark0, n, sizeof (bool)) ;
 }

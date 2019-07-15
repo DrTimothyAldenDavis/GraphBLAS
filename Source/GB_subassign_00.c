@@ -60,26 +60,31 @@ GrB_Info GB_subassign_00
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (snz, chunk, nthreads_max) ;
 
-    int64_t task_nzombies = C->nzombies ;
+    int64_t nzombies = C->nzombies ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
-        reduction(+:task_nzombies)
+        reduction(+:nzombies)
     for (int64_t pS = 0 ; pS < snz ; pS++)
     { 
         // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
-        GB_C_S_LOOKUP ;
+        int64_t pC = Sx [pS] ;
+        int64_t i = Ci [pC] ;
         // ----[X A 0] or [X . 0]-----------------------------------------------
         // action: ( X ): still a zombie
         // ----[C A 0] or [C . 0]-----------------------------------------------
         // action: C_repl: ( delete ): becomes a zombie
-        GB_DELETE_ENTRY ;
+        if (!GB_IS_ZOMBIE (i))
+        {
+            nzombies++ ;
+            Ci [pC] = GB_FLIP (i) ;
+        }
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    C->nzombies = task_nzombies ;
+    C->nzombies = nzombies ;
     return (GrB_SUCCESS) ;
 }
 
