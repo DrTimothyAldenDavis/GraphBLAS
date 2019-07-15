@@ -242,7 +242,6 @@ for k1 = k1_list % 1:length(mult_ops)
                 % C = A*B, no mask
                 % tic
                 if (ok)
-here = 1 ; save gunk Cin semiring A B dnn id here n
                 C1 = GB_mex_mxm  (Cin, [ ], [ ], semiring, A, B, dnn) ;
                 [t1 method1] = gbresults ; % toc ;
                 if (n < 200)
@@ -253,7 +252,6 @@ here = 1 ; save gunk Cin semiring A B dnn id here n
 
                 % C = A'*B, no mask
                 if (ok)
-here = 2 ; save gunk Cin semiring A B dtn id here n
                 C1 = GB_mex_mxm  (Cin, [ ], [ ], semiring, A, B, dtn);
                 [t2 method2] = gbresults ; % toc ;
                 if (n < 200)
@@ -264,7 +262,6 @@ here = 2 ; save gunk Cin semiring A B dtn id here n
 
                 % C = A*B', no mask
                 if (ok)
-here = 3 ; save gunk Cin semiring A B dnt id here n
                 C1 = GB_mex_mxm  (Cin, [ ], [ ], semiring, A, B, dnt);
                 [t3 method3] = gbresults ; % toc ;
                 if (n < 200)
@@ -275,7 +272,6 @@ here = 3 ; save gunk Cin semiring A B dnt id here n
 
                 % C = A'*B', no mask
                 if (ok)
-here = 4 ; save gunk Cin semiring A B dtt id here n
                 C1 = GB_mex_mxm  (Cin, [ ], [ ], semiring, A, B, dtt);
                 [t4 method4] = gbresults ; % toc ;
                 if (n < 200)
@@ -293,7 +289,6 @@ here = 4 ; save gunk Cin semiring A B dtt id here n
 
                 % C = A*B, with mask
                 % tic
-here = 5 ; save gunk Cin Mask semiring A B dnn id here n
                 C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dnn);
                 [t1 method1m] = gbresults ; % toc ;
                 if (n < 200)
@@ -303,7 +298,6 @@ here = 5 ; save gunk Cin Mask semiring A B dnn id here n
 
                 % C = A'*B, with mask
                 % tic
-here = 6 ; save gunk Cin Mask semiring A B dtn id here n
                 C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtn);
                 [t2 method2m] = gbresults ; % toc ;
                 if (n < 200)
@@ -313,7 +307,6 @@ here = 6 ; save gunk Cin Mask semiring A B dtn id here n
 
                 % C = A*B', with mask
                 % tic
-here = 7 ; save gunk Cin Mask semiring A B dnt id here n
                 C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dnt);
                 [t3 method3m] = gbresults ; % toc ;
                 if (n < 200)
@@ -323,7 +316,6 @@ here = 7 ; save gunk Cin Mask semiring A B dnt id here n
 
                 % C = A'*B', with mask
                 % tic
-here = 8 ; save gunk Cin Mask semiring A B dtt id here n
                 C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtt);
                 [t4 method4m] = gbresults ; % toc ;
                 if (n < 200)

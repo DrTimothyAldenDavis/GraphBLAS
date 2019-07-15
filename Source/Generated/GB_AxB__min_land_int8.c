@@ -25,6 +25,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__min_land_int8
 // A'*B function (dot):      GB_Adot2B__min_land_int8
+// A'*B function (dot3):     GB_Adot3B__min_land_int8
 // A*B function (heap):      GB_AheapB__min_land_int8
 
 // C type:   int8_t

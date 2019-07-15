@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__land_gt_bool
 // A'*B function (dot):      GB_Adot2B__land_gt_bool
+// A'*B function (dot3):     GB_Adot3B__land_gt_bool
 // A*B function (heap):      GB_AheapB__land_gt_bool
 
 // C type:   bool

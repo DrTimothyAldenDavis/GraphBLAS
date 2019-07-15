@@ -25,6 +25,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__plus_lor_uint8
 // A'*B function (dot):      GB_Adot2B__plus_lor_uint8
+// A'*B function (dot3):     GB_Adot3B__plus_lor_uint8
 // A*B function (heap):      GB_AheapB__plus_lor_uint8
 
 // C type:   uint8_t

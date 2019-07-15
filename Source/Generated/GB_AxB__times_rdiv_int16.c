@@ -25,6 +25,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__times_rdiv_int16
 // A'*B function (dot):      GB_Adot2B__times_rdiv_int16
+// A'*B function (dot3):     GB_Adot3B__times_rdiv_int16
 // A*B function (heap):      GB_AheapB__times_rdiv_int16
 
 // C type:   int16_t

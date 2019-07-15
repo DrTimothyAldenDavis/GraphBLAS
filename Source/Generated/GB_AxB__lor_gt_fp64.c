@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__lor_gt_fp64
 // A'*B function (dot):      GB_Adot2B__lor_gt_fp64
+// A'*B function (dot3):     GB_Adot3B__lor_gt_fp64
 // A*B function (heap):      GB_AheapB__lor_gt_fp64
 
 // C type:   bool

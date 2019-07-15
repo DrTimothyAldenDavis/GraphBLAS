@@ -25,6 +25,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__max_min_int8
 // A'*B function (dot):      GB_Adot2B__max_min_int8
+// A'*B function (dot3):     GB_Adot3B__max_min_int8
 // A*B function (heap):      GB_AheapB__max_min_int8
 
 // C type:   int8_t

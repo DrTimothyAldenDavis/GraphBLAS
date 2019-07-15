@@ -7,6 +7,7 @@ Since nearly all GraphBLAS tests are in MATLAB, I have taken the unusual step
 of creating a statement coverage mechanism to use within a MATLAB mexFunction.
 To compile GraphBLAS for statement coverage testing, and to run the tests, do:
 
+    gbmake
     testcov
 
 Statement coverage tests results will be saved in log.txt.  The entire test

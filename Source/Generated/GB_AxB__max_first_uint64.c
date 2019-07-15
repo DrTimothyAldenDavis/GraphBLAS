@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__max_first_uint64
 // A'*B function (dot):      GB_Adot2B__max_first_uint64
+// A'*B function (dot3):     GB_Adot3B__max_first_uint64
 // A*B function (heap):      GB_AheapB__max_first_uint64
 
 // C type:   uint64_t

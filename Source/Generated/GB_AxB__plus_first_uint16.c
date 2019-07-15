@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__plus_first_uint16
 // A'*B function (dot):      GB_Adot2B__plus_first_uint16
+// A'*B function (dot3):     GB_Adot3B__plus_first_uint16
 // A*B function (heap):      GB_AheapB__plus_first_uint16
 
 // C type:   uint16_t

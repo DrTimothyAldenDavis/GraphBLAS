@@ -25,6 +25,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__min_plus_int64
 // A'*B function (dot):      GB_Adot2B__min_plus_int64
+// A'*B function (dot3):     GB_Adot3B__min_plus_int64
 // A*B function (heap):      GB_AheapB__min_plus_int64
 
 // C type:   int64_t

@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__eq_le_int64
 // A'*B function (dot):      GB_Adot2B__eq_le_int64
+// A'*B function (dot3):     GB_Adot3B__eq_le_int64
 // A*B function (heap):      GB_AheapB__eq_le_int64
 
 // C type:   bool

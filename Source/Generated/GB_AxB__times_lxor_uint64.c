@@ -25,6 +25,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__times_lxor_uint64
 // A'*B function (dot):      GB_Adot2B__times_lxor_uint64
+// A'*B function (dot3):     GB_Adot3B__times_lxor_uint64
 // A*B function (heap):      GB_AheapB__times_lxor_uint64
 
 // C type:   uint64_t

@@ -25,6 +25,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__plus_lxor_uint32
 // A'*B function (dot):      GB_Adot2B__plus_lxor_uint32
+// A'*B function (dot3):     GB_Adot3B__plus_lxor_uint32
 // A*B function (heap):      GB_AheapB__plus_lxor_uint32
 
 // C type:   uint32_t

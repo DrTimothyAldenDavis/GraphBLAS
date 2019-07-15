@@ -150,7 +150,7 @@ GrB_Info GB_red_eachvec__max_int8
     int ntasks,
     int nthreads
 )
-{
+{ 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
@@ -173,7 +173,7 @@ GrB_Info GB_red_eachindex__max_int8
     int nthreads,
     GB_Context Context
 )
-{
+{ 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
@@ -206,7 +206,7 @@ GrB_Info GB_red_build__max_int8
     const int64_t *restrict tnz_slice,
     int nthreads
 )
-{
+{ 
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

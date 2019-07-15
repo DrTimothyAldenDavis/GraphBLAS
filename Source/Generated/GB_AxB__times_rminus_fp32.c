@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__times_rminus_fp32
 // A'*B function (dot):      GB_Adot2B__times_rminus_fp32
+// A'*B function (dot3):     GB_Adot3B__times_rminus_fp32
 // A*B function (heap):      GB_AheapB__times_rminus_fp32
 
 // C type:   float

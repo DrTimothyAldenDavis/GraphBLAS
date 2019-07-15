@@ -92,7 +92,7 @@ void GB_sel_phase1__nonzero_int32
     const int ntasks,
     const int nthreads
 )
-{
+{ 
     int64_t *restrict Tx = Cp ;
     ;
     #include "GB_select_phase1.c"
@@ -122,7 +122,7 @@ void GB_sel_phase2__nonzero_int32
     const int ntasks,
     const int nthreads
 )
-{
+{ 
     ;
     #include "GB_select_phase2.c"
 }

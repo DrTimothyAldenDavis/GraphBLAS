@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__lxor_gt_bool
 // A'*B function (dot):      GB_Adot2B__lxor_gt_bool
+// A'*B function (dot3):     GB_Adot3B__lxor_gt_bool
 // A*B function (heap):      GB_AheapB__lxor_gt_bool
 
 // C type:   bool

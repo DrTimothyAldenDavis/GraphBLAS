@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__times_times_fp64
 // A'*B function (dot):      GB_Adot2B__times_times_fp64
+// A'*B function (dot3):     GB_Adot3B__times_times_fp64
 // A*B function (heap):      GB_AheapB__times_times_fp64
 
 // C type:   double

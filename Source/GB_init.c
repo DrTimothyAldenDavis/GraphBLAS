@@ -62,6 +62,7 @@ mtx_t GB_sync ;
 #if defined (USER_POSIX_THREADS)
 // thread-local storage for POSIX THREADS
 pthread_key_t GB_thread_local_key ;
+char GB_thread_local_report [GB_RLEN+1] = "" ;
 
 #elif defined (USER_WINDOWS_THREADS)
 // for user applications that use Windows threads:
@@ -71,13 +72,13 @@ pthread_key_t GB_thread_local_key ;
 // for user applications that use ANSI C11 threads:
 // (this should work per the ANSI C11 specification but is not yet supported)
 _Thread_local
+char GB_thread_local_report [GB_RLEN+1] = "" ;
 
 #else // USER_OPENMP_THREADS, or USER_NO_THREADS
 // OpenMP user threads, or no user threads: this is the default
-#endif
-
 #pragma omp threadprivate(GB_thread_local_report)
 char GB_thread_local_report [GB_RLEN+1] = "" ;
+#endif
 
 //------------------------------------------------------------------------------
 // GB_init
@@ -287,7 +288,7 @@ char *GB_thread_local_access (void) // return pointer to thread-local storage
         return (NULL) ;
     }
     #endif
-
+    
     // USER_OPENMP_THREADS, USER_NO_THREADS, USER_ANSI_THREADS,
     // or USER_POSIX_THREADS but with GB_Global_user_multithreaded false.
     return (GB_thread_local_report) ;

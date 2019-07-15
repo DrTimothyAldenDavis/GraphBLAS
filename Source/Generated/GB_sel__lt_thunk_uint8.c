@@ -92,7 +92,7 @@ void GB_sel_phase1__lt_thunk_uint8
     const int ntasks,
     const int nthreads
 )
-{
+{ 
     int64_t *restrict Tx = Cp ;
     uint8_t thunk = (*xthunk) ;
     #include "GB_select_phase1.c"
@@ -122,7 +122,7 @@ void GB_sel_phase2__lt_thunk_uint8
     const int ntasks,
     const int nthreads
 )
-{
+{ 
     uint8_t thunk = (*xthunk) ;
     #include "GB_select_phase2.c"
 }

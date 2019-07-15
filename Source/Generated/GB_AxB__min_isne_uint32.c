@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__min_isne_uint32
 // A'*B function (dot):      GB_Adot2B__min_isne_uint32
+// A'*B function (dot3):     GB_Adot3B__min_isne_uint32
 // A*B function (heap):      GB_AheapB__min_isne_uint32
 
 // C type:   uint32_t

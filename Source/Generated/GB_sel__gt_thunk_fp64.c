@@ -92,7 +92,7 @@ void GB_sel_phase1__gt_thunk_fp64
     const int ntasks,
     const int nthreads
 )
-{
+{ 
     int64_t *restrict Tx = Cp ;
     double thunk = (*xthunk) ;
     #include "GB_select_phase1.c"
@@ -122,7 +122,7 @@ void GB_sel_phase2__gt_thunk_fp64
     const int ntasks,
     const int nthreads
 )
-{
+{ 
     double thunk = (*xthunk) ;
     #include "GB_select_phase2.c"
 }

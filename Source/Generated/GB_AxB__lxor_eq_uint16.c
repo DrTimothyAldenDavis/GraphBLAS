@@ -24,6 +24,7 @@
 
 // A*B function (Gustavon):  GB_AgusB__lxor_eq_uint16
 // A'*B function (dot):      GB_Adot2B__lxor_eq_uint16
+// A'*B function (dot3):     GB_Adot3B__lxor_eq_uint16
 // A*B function (heap):      GB_AheapB__lxor_eq_uint16
 
 // C type:   bool
