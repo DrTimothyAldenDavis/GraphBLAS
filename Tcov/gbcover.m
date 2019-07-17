@@ -1,4 +1,4 @@
-function gbcover
+function gbcover (what)
 %GBCOVER compile the ../Test mexFunctions for statement coverage testing
 %
 % This function compiles just the mexFunctions in ../Test.
@@ -10,6 +10,12 @@ function gbcover
 %  http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % compile the mexFunctions
+
+if (nargin < 1)
+    what = '' ;
+end
+
+make_all = (isequal (what, 'all')) ;
 
 % get a list of the GraphBLAS mexFunctions
 mexfunctions = dir ('../Test/GB_mex_*.c') ;
@@ -71,6 +77,20 @@ try
     end
 end
 
+libraries = sprintf ('-L%s -lgraphblas_tcov', pwd) ;
+
+if (ismac)
+    % Mac (do 'make install' for GraphBLAS first)
+%   flags = [ flags   ' CFLAGS="$CXXFLAGS -Xpreprocessor -fopenmp" ' ] ;
+%   flags = [ flags ' CXXFLAGS="$CXXFLAGS -Xpreprocessor -fopenmp" ' ] ;
+%   flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp"' ] ;
+else
+    % Linux
+    flags = [ flags   ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
+    flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
+    flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
+end
+
 dryrun = false ;
 
 % Find the last modification time of any hfile.
@@ -106,7 +126,7 @@ for k = 1:length (cfiles)
     end
 
     % compile the cfile if it is newer than its object file, or any hfile
-    if (tc > tobj || htime > tobj)
+    if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
         fprintf ('.', cfile) ;
         % fprintf ('%s\n', cfile) ;
@@ -122,8 +142,6 @@ end
 
 if (ismac)
     objlist = [objlist ' libgraphblas_tcov.dylib'] ;
-else
-    objlist = [objlist ' libgraphblas_tcov.so'] ;
 end
 
 % compile the mexFunctions
@@ -145,10 +163,10 @@ for k = 1:length (mexfunctions)
     end
 
     % compile if it is newer than its object file, or if any cfile was compiled
-    if (tc > tobj || any_c_compiled)
+    if (make_all || tc > tobj || any_c_compiled)
         % compile the mexFunction
-        mexcmd = sprintf ('mex %s -silent %s %s %s', ...
-            flags, inc, mexfunction, objlist) ;
+        mexcmd = sprintf ('mex -silent %s %s %s %s %s', ...
+            flags, inc, mexfunction, objlist, libraries) ;
         fprintf (':') ;
         % fprintf ('%s\n', mexfunction) ;
         if (dryrun)

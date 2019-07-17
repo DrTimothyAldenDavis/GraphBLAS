@@ -8,11 +8,11 @@
 #-------------------------------------------------------------------------------
 
 # pick your compiler:
-# CC = gcc
+  CC = gcc
 # CC = cc
 # CC = clang
 # CC = xlc
-  CC = gcc-8
+# CC = gcc-8
 # CC = icc
 
 SRC = tmp_source/*
@@ -42,7 +42,7 @@ default: $(SO_NAME)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $(notdir $@)
 
 $(SO_NAME): $(OBJ)
-	$(CC) $(SO_OPTS) $^ -o $@
+	$(CC) $(SO_OPTS) $^ -o $@ -lm
 
 .KEEP: $(OBJ)
 

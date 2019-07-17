@@ -37,3 +37,39 @@ function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 incompatible type for C=le_thunk(A,Thunk):
 input A type [int16_t] and Thunk type [user_int] not compatible
 
+GB_mex_errors, line 738:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+slice matrix invalid: unfinished [Aslice [0]]
+
+GB_mex_errors, line 744:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+invalid slice matrix structure [Aslice [0]]
+
+GB_mex_errors, line 749:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+non-shallow: invalid slice matrix [Aslice [0]
+
+
+GB_mex_errors, line 755:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+hfirst: invalid slice matrix [Aslice [0]]
+
+
+GB_mex_errors, line 738:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+slice matrix invalid: unfinished [Aslice [0]]
+
+GB_mex_errors, line 744:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+invalid slice matrix structure [Aslice [0]]
+
+GB_mex_errors, line 749:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+non-shallow: invalid slice matrix [Aslice [0]
+
+
+GB_mex_errors, line 755:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+hfirst: invalid slice matrix [Aslice [0]]
+
+
