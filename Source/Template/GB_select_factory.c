@@ -162,7 +162,8 @@ switch (opcode)
             case GB_UINT64_code : GB_SEL_WORKER (_ne_thunk, _uint64, uint64_t)
             case GB_FP32_code   : GB_SEL_WORKER (_ne_thunk, _fp32  , float   )
             case GB_FP64_code   : GB_SEL_WORKER (_ne_thunk, _fp64  , double  )
-            default             : GB_SEL_WORKER (_ne_thunk, _any   , GB_void )
+            default             :
+                GB_SEL_WORKER (_ne_thunk, _any   , GB_void )
         }
         break ;
 

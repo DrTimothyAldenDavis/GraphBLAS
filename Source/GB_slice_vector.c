@@ -123,14 +123,18 @@ void GB_slice_vector
             ASSERT (pA_start == 0) ;
             if (i < A_hfirst)
             { 
+                // i comes before the first entry, so it does not appear
                 pA = 0 ;
             }
             else if (A_hfirst + pA_end - 1 < i)
             { 
+GB_GOTCHA ; // Ai hyperlist
+                // i comes after the last entry, so it does not appear
                 pA = pA_end ;
             }
             else // (A_hfirst <= i && i <= A_hfirst + pA_end - 1)
             { 
+                // i is in the implicit hyperlist
                 pA = i - A_hfirst ;
                 ASSERT (GB_Ai (pA) == i) ;
             }
@@ -174,6 +178,7 @@ void GB_slice_vector
 
         if (b_empty)
         { 
+            // B(:,kB) is empty so i does not appear
             pB = -1 ;
         }
         else if (bknz == vlen)
@@ -184,6 +189,7 @@ void GB_slice_vector
         }
         else
         { 
+            // B(:,kB) is sparse, and not empty
             // printf ("i is "GBd" bknz "GBd"\n", i, bknz) ;
             ASSERT (bknz > 0) ;
             pB = pB_start ;
@@ -275,6 +281,7 @@ void GB_slice_vector
     }
     else
     { 
+        // M(:,kM) is sparse, and not empty
         ASSERT (mknz > 0) ;
         pM = pM_start ;
         bool mfound ;

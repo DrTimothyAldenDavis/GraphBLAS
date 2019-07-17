@@ -67,6 +67,8 @@
                     {
                         if (Panel [k] == GB_TERMINAL_VALUE)
                         { 
+GB_GOTCHA ;                 // early exit (1 thread)
+                            // early exit (1 thread)
                             early = true ;
                         }
                     }
@@ -153,11 +155,14 @@
                             {
                                 if (Panel [k] == GB_TERMINAL_VALUE)
                                 { 
+GB_GOTCHA ;                         // early exit (nthreads > 1)
+                                    // early exit (nthreads > 1)
                                     early = true ;
                                 }
                             }
                             if (early)
                             { 
+GB_GOTCHA ;                     // tell all other tasks to exit early
                                 // tell all other tasks to exit early
                                 #pragma omp atomic write
                                 early_exit = true ;

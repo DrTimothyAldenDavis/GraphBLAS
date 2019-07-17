@@ -109,6 +109,7 @@ GrB_Info GB_Sauna_acquire
     {
         if (Sauna_ids [tid] == -1)
         { 
+GB_GOTCHA ; // too many concurrent threads
             // thread tid needs a Sauna but did not get one.  There are too
             // many concurrent threads.  release all Sauna ids just acquired
             GrB_Info info = GB_Sauna_release (nthreads, Sauna_ids) ;

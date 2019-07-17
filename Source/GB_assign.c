@@ -470,12 +470,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             ASSERT (M->is_csc) ;
             if (C_is_csc)
             { 
+                // SubMask = Mask (J,:)
                 ASSERT (J == J2 || J == Cols) ;
                 GB_OK (GB_subref (&SubMask, true, M,
                     J, nj, GrB_ALL, 1, false, true, Context)) ;
             }
             else
             { 
+                // SubMask = Mask (I,:)
                 ASSERT (I == I2 || I == Cols) ;
                 GB_OK (GB_subref (&SubMask, true, M,
                     I, ni, GrB_ALL, 1, false, true, Context)) ;
@@ -489,12 +491,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             ASSERT (M->is_csc) ;
             if (C_is_csc)
             { 
+                // SubMask = Mask (I,:)
                 ASSERT (I == I2 || I == Rows) ;
                 GB_OK (GB_subref (&SubMask, true, M,
                     I, ni, GrB_ALL, 1, false, true, Context)) ;
             }
             else
             { 
+                // SubMask = Mask (J,:)
                 ASSERT (J == J2 || J == Rows) ;
                 GB_OK (GB_subref (&SubMask, true, M,
                     J, nj, GrB_ALL, 1, false, true, Context)) ;

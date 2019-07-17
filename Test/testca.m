@@ -4,6 +4,7 @@ function testca
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+fprintf ('testca: test complex mxm, mxv, and vxm\n') ;
 rng ('default') ;
 dnn = struct ;
 dnt = struct ('inp1', 'tran') ;

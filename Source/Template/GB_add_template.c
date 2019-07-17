@@ -407,7 +407,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // B(:,j) is must denser than A(:,j)
+                    // B(:,j) is much denser than A(:,j)
                     //----------------------------------------------------------
 
                     // cjnz = ajnz + bjnz - nnz in the intersection

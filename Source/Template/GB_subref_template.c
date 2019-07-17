@@ -322,6 +322,7 @@
                         // with zombies
                         for (int64_t k = 0 ; k < alen ; k++)
                         { 
+GB_GOTCHA ;                 // case 4 with zombies, symbolic case
                             int64_t i = GB_Ai (pA + k) ;
                             ASSERT (i == GB_ijlist (I, i, Ikind, Icolon)) ;
                             Ci [pC + k] = i ;
@@ -359,8 +360,8 @@
                 case 6 : // I is short vs nnz (A (:,kA)), use binary search
                 //--------------------------------------------------------------
 
-                    // Time: very slow unless I is very short and A(:,kA)
-                    // is very long.
+                    // Time: very slow unless I is very short and A(:,kA) is
+                    // very long.
 
                     // This case can handle any kind of I, and A(:,kA) of any
                     // properties.  For a fine task, A(:,kA) has not been

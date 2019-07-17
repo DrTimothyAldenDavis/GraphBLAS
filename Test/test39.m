@@ -1,10 +1,14 @@
-function test39
+function test39(use_ssget)
 %TEST39 performance test for GrB_transpose
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 fprintf ('\ntest39 performance tests : GrB_transpose \n') ;
+
+if (nargin < 1)
+    use_ssget = true ;
+end
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;
@@ -13,15 +17,22 @@ nthreads_set (nthreads, chunk) ;
 
 rng ('default') ;
 
-try
-    Prob = ssget (939)
-    A = Prob.A ;
-catch
+if (use_ssget)
+    try
+        Prob = ssget (939)
+        A = Prob.A ;
+    catch
+        use_ssget = false ;
+    end
+end
+
+if (~use_ssget)
     fprintf ('not using ssget\n') ;
-    n = 720000 ;
-    nz = 290e6 ;
+    n = 72000 ;
+    nz = 29e6 ;
     A = sprandn (n, n, nz/n^2) ;
 end
+
 [m n] = size (A) ;
 Cin = sprandn (n, m, 0.000001) ;
 A (1,2) =1 ;

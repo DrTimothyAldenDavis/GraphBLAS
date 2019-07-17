@@ -24,7 +24,7 @@
 // GxB_init is the same as GrB_init except that it also defines the
 // malloc/calloc/realloc/free functions to use.
 
-#include "GB.h"
+#include "GB_thread_local.h"
 
 //------------------------------------------------------------------------------
 // critical section for user threads
@@ -49,35 +49,6 @@ mtx_t GB_sync ;
 #else // USER_OPENMP_THREADS, or USER_NO_THREADS
 // nothing to do for OpenMP, or for no user threading
 
-#endif
-
-//------------------------------------------------------------------------------
-// Thread local storage
-//------------------------------------------------------------------------------
-
-// Thread local storage is used to to record the details of the last error
-// encountered for GrB_error.  If the user application is multi-threaded, each
-// thread that calls GraphBLAS needs its own private copy of this report.
-
-#if defined (USER_POSIX_THREADS)
-// thread-local storage for POSIX THREADS
-pthread_key_t GB_thread_local_key ;
-char GB_thread_local_report [GB_RLEN+1] = "" ;
-
-#elif defined (USER_WINDOWS_THREADS)
-// for user applications that use Windows threads:
-#error Windows threading not yet supported
-
-#elif defined (USER_ANSI_THREADS)
-// for user applications that use ANSI C11 threads:
-// (this should work per the ANSI C11 specification but is not yet supported)
-_Thread_local
-char GB_thread_local_report [GB_RLEN+1] = "" ;
-
-#else // USER_OPENMP_THREADS, or USER_NO_THREADS
-// OpenMP user threads, or no user threads: this is the default
-#pragma omp threadprivate(GB_thread_local_report)
-char GB_thread_local_report [GB_RLEN+1] = "" ;
 #endif
 
 //------------------------------------------------------------------------------
@@ -149,53 +120,47 @@ GrB_Info GB_init            // start up GraphBLAS
     #endif
 
     //--------------------------------------------------------------------------
-    // create the mutex for the critical section, and thread-local storage
+    // initialize thread-local storage
     //--------------------------------------------------------------------------
 
-    if (GB_Global_user_multithreaded_get ( ))
-    { 
+    if (!GB_thread_local_init (free_function)) GB_PANIC ;
 
-        bool ok = true ;
+    //--------------------------------------------------------------------------
+    // create the mutex for the critical section
+    //--------------------------------------------------------------------------
 
-        #if defined (USER_POSIX_THREADS)
-        {
-            // initialize the critical section for POSIX pthreads
-            int result = pthread_mutex_init (&GB_sync, NULL) ;
-            bool ok = (result == 0) ;
-            // initialize the key for thread-local storage, allocated in
-            // in GB_thread_local_access via GB_Global_calloc_function,
-            // and freed by GB_Global_free_function.
-            result = pthread_key_create (&GB_thread_local_key, free_function) ;
-            ok = ok && (result == 0) ;
-        }
-
-        #elif defined (USER_WINDOWS_THREADS)
-        {
-            // initialize the critical section for Microsoft Windows.
-            // This is not yet supported.  See:
-            // https://docs.microsoft.com/en-us/windows/desktop/sync
-            //  /using-critical-section-objects
-            ok = InitializeCriticalSectionAndSpinCount (&GB_sync, 0x00000400) ;
-            // also do whatever Windows needs for thread-local-storage
-        }
-
-        #elif defined (USER_ANSI_THREADS)
-        {
-            // initialize the critical section for ANSI C11 threads
-            // This should work but is not yet supported.
-            ok = (mtx_init (&GB_sync, mtx_plain) == thrd_success) ;
-        }
-
-        #else // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
-        {
-            // no need to initialize anything for OpenMP
-        }
-        #endif
-
+    #if defined (USER_POSIX_THREADS)
+    {
+        // initialize the critical section for POSIX pthreads
+        ok = (pthread_mutex_init (&GB_sync, NULL) == 0) ;
         if (!ok) GB_PANIC ;
     }
 
-    GB_thread_local_report [0] = '\0' ;
+    #elif defined (USER_WINDOWS_THREADS)
+    {
+        // initialize the critical section for Microsoft Windows.
+        // This is not yet supported.  See:
+        // https://docs.microsoft.com/en-us/windows/desktop/sync
+        //  /using-critical-section-objects
+        ok = InitializeCriticalSectionAndSpinCount (&GB_sync, 0x00000400) ;
+        // also do whatever Windows needs for thread-local-storage
+        if (!ok) GB_PANIC ;
+    }
+
+    #elif defined (USER_ANSI_THREADS)
+    {
+        // initialize the critical section for ANSI C11 threads
+        // This should work but is not yet supported.
+        ok = (mtx_init (&GB_sync, mtx_plain) == thrd_success) ;
+        if (!ok) GB_PANIC ;
+    }
+
+    #else // _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
+    { 
+        // no need to initialize anything for OpenMP
+        ;
+    }
+    #endif
 
     //--------------------------------------------------------------------------
     // initialize the global queue
@@ -246,51 +211,4 @@ GrB_Info GB_init            // start up GraphBLAS
 
     return (GrB_SUCCESS) ;
 }
-
-//------------------------------------------------------------------------------
-// GB_thread_local_access: get pointer to thread-local storage
-//------------------------------------------------------------------------------
-
-// This implementation is complete for user threading with POSIX threads,
-// OpenMP, and no user threads.  Windows and ANSI C11 threads are not yet
-// supported.
-
-char *GB_thread_local_access (void) // return pointer to thread-local storage
-{ 
-
-    //--------------------------------------------------------------------------
-    // get pointer to thread-local-storage
-    //--------------------------------------------------------------------------
-
-    #if defined (USER_POSIX_THREADS)
-    {
-        if (GB_Global_user_multithreaded_get ( ))
-        {
-            // thread-local storage for POSIX
-            char *p = pthread_getspecific (GB_thread_local_key) ;
-            bool ok = true ;
-            if (p == NULL)
-            {
-                // first time:  allocate the space for the report
-                p = (void *) GB_Global_calloc_function ((GB_RLEN+1),
-                    sizeof (char)) ;
-                ok = (p != NULL) ;
-                ok = ok && (pthread_setspecific (GB_thread_local_key, p) == 0) ;
-            }
-            // do not attempt to recover from a failure to allocate the space
-            return (p) ;
-        }
-    }
-    #elif defined (USER_WINDOWS_THREADS)
-    {
-        // for user applications that use Windows threads:
-        #error "Windows threads not yet supported"
-        return (NULL) ;
-    }
-    #endif
-    
-    // USER_OPENMP_THREADS, USER_NO_THREADS, USER_ANSI_THREADS,
-    // or USER_POSIX_THREADS but with GB_Global_user_multithreaded false.
-    return (GB_thread_local_report) ;
-} 
 

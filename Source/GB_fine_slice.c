@@ -148,9 +148,9 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         // Bslice->h hyperlist
         if (B->is_hyper)
         { 
-            // the columns of Bslice [tid] are B->h [bvec_first:bvec_last].
-            // Bslice [tid] is a hyperslice (with an explict h list, as a
-            // shallow pointer into B->h).
+            // B is hypersparse; the columns of Bslice [tid] are B->h
+            // [bvec_first:bvec_last].  Bslice [tid] is a hyperslice (with an
+            // explict h list, as a shallow pointer into B->h).
             ASSERT ((Bslice [tid])->h == NULL) ;
             (Bslice [tid])->h = B->h + bvec_first ;
             (Bslice [tid])->h_shallow = true ;
@@ -173,6 +173,7 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         (Bslice [tid])->p [0] = 0 ;
         for (int64_t k = 1 ; k < bslice_nvec ; k++)
         { 
+            // construct Bslice [tid]->p
             (Bslice [tid])->p [k] = B->p [bvec_first + k] - pfirst ;
         }
         (Bslice [tid])->p [bslice_nvec] = bslice_nz ;

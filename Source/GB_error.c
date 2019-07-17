@@ -22,11 +22,11 @@
 //      Template/GB_critical_section).
 
 //  (3) a failure to allocate thread-local storage for GrB_error
-//      (see GB_thread_local_access).
+//      (see GB_thread_local_get).
 
 //  (4) a failure to destroy the critical section in GrB_finalize.
 
-#include "GB.h"
+#include "GB_thread_local.h"
 
 GrB_Info GB_error           // log an error in thread-local-storage
 (
@@ -64,29 +64,21 @@ GrB_Info GB_error           // log an error in thread-local-storage
     }
 
     //--------------------------------------------------------------------------
-    // get pointer to thread-local-storage
+    // get pointer to thread-local storage
     //--------------------------------------------------------------------------
 
-    char *p = GB_thread_local_access ( ) ;
+    char *p = GB_thread_local_get ( ) ;
+    if (p == NULL) return (GrB_PANIC) ;
 
     //--------------------------------------------------------------------------
     // write the error to the string p
     //--------------------------------------------------------------------------
 
-    if (p != NULL)
-    { 
-        // p now points to thread-local storage (char array of size GB_RLEN+1)
-        snprintf (p, GB_RLEN, "GraphBLAS error: %s\nfunction: %s\n%s\n",
-            GB_status_code (info),
-            (Context == NULL) ? "" : Context->where,
-            (Context == NULL) ? "" : Context->details) ;
-        return (info) ;
-    }
-    else
-    { 
-        // If a failure occured or p is NULL then do not write to the string.
-        // A GrB_PANIC will be returned.
-        return (GrB_PANIC) ;
-    }
+    // p now points to thread-local storage (char array of size GB_RLEN+1)
+    snprintf (p, GB_RLEN, "GraphBLAS error: %s\nfunction: %s\n%s\n",
+        GB_status_code (info),
+        (Context == NULL) ? "" : Context->where,
+        (Context == NULL) ? "" : Context->details) ;
+    return (info) ;
 }
 

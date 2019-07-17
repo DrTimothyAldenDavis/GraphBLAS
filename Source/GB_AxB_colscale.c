@@ -146,6 +146,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         if (GB_binop_builtin (A, A_is_pattern, D, D_is_pattern, mult,
             flipxy, &opcode, &xycode, &zcode))
         { 
+            // C=A*D, colscale with built-in operator
             #include "GB_binop_factory.c"
         }
 

@@ -181,6 +181,7 @@
                 }
                 else
                 { 
+GB_GOTCHA ;         // Tx [klast] += Wlast [tid], no typecast
                     // Tx [klast] += Wlast [tid], no typecast
                     GB_ADD_ARRAY_TO_ARRAY (Tx, klast, Wlast, tid) ;
                 }

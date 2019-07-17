@@ -104,10 +104,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
             if (mjnz != 0) cplen++ ;
         }
 
-        if (B->nvec_nonempty < 0)
-        { 
-            B->nvec_nonempty = bnvec_nonempty ;
-        }
+        if (B->nvec_nonempty < 0) B->nvec_nonempty = bnvec_nonempty ;
         ASSERT (B->nvec_nonempty == GB_nvec_nonempty (B, NULL)) ;
 
     }
@@ -136,7 +133,7 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
         if (C_is_hyper)
         {
             if (B->nvec_nonempty < 0)
-            { 
+            {
                 B->nvec_nonempty = GB_nvec_nonempty (B, NULL) ;
             }
             cplen = B->nvec_nonempty ;

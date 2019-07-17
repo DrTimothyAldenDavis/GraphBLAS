@@ -240,6 +240,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     else if (info != GrB_NO_VALUE)
     { 
         // error condition
+        GB_GOTCHA ;     // Gustavson method failed
         return (info) ;
     }
 

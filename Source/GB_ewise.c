@@ -9,7 +9,7 @@
 
 // C<M> = accum (C,A+B), A.*B and variations.  The input matrices A and B are
 // optionally transposed.  Does the work for GrB_eWiseAdd_* and
-// GrB_eWiseMult_*.  Handles all cases the the mask.
+// GrB_eWiseMult_*.  Handles all cases of the mask.
 
 #include "GB_ewise.h"
 #include "GB_add.h"

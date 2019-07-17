@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "July 14, 2019 (4pm) (DRAFT)" )
+set ( GraphBLAS_DATE "July 16, 2019 (9pm) (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -178,8 +178,8 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # cmake 2.8 workaround: gcc needs to be told to do ANSI C11.
     # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas -fPIC " )
-    # check all warnings:
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
+    # check all warnings (uncomment for development only)
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
@@ -193,8 +193,8 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # The -g option is useful for the Intel VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
     # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
-    # check all warnings and remarks:
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
+    # check all warnings and remarks (uncomment for development only):
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
         message ( FATAL_ERROR "icc version must be at least 19.0" )
     endif ( )

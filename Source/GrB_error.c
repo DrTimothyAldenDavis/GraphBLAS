@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB.h"
+#include "GB_thread_local.h"
 
 // if dynamic allocation of memory for POSIX threads fails, use this string:
 const char panic [GB_RLEN+1] = "GraphBLAS error: GrB_PANIC\n"
@@ -15,7 +15,7 @@ const char panic [GB_RLEN+1] = "GraphBLAS error: GrB_PANIC\n"
 
 const char *GrB_error ( )       // return a string describing the last error
 { 
-    char *p = GB_thread_local_access ( ) ;
+    char *p = GB_thread_local_get ( ) ;
     return (p == NULL ? panic : p) ;
 }
 

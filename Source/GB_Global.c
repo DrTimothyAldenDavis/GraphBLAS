@@ -49,10 +49,7 @@ typedef struct
     // needs to traverse the whole list once and then the list is empty
     // afterwards.
 
-    // The access of these variables must be protected in a critical section,
-    // if the user application is multithreaded.
-
-    bool user_multithreaded ;   // true if user application may be multithreaded
+    // The access of these variables must be protected in a critical section.
 
     void *queue_head ;          // head pointer to matrix queue
 
@@ -141,13 +138,6 @@ extern GB_Global_struct GB_Global ;
 GB_Global_struct GB_Global =
 {
 
-    // user-level multithreading can be disabled for testing
-    #ifdef USER_NO_THREADS
-    .user_multithreaded = false,
-    #else
-    .user_multithreaded = true,
-    #endif
-
     // queued matrices with work to do
     .queue_head = NULL,         // pointer to first queued matrix
 
@@ -194,20 +184,6 @@ GB_Global_struct GB_Global =
 //==============================================================================
 // GB_Global access functions
 //==============================================================================
-
-//------------------------------------------------------------------------------
-// user_multithreaded
-//------------------------------------------------------------------------------
-
-void GB_Global_user_multithreaded_set (bool user_multithreaded)
-{ 
-    GB_Global.user_multithreaded = user_multithreaded ;
-}
-
-bool GB_Global_user_multithreaded_get (void)
-{ 
-    return (GB_Global.user_multithreaded) ;
-}
 
 //------------------------------------------------------------------------------
 // queue_head
@@ -357,8 +333,7 @@ void GB_Global_abort_function_set (void (* abort_function) (void))
 }
 
 void GB_Global_abort_function (void)
-{ 
-    // printf ("ABORT: %p %p\n", abort, GB_Global.abort_function) ;
+{
     GB_Global.abort_function ( ) ;
 }
 
@@ -376,7 +351,7 @@ void * GB_Global_malloc_function (size_t size)
     bool ok = true ;
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
-    { 
+    {
         p = GB_Global.malloc_function (size) ;
     }
     else
@@ -404,7 +379,7 @@ void * GB_Global_calloc_function (size_t count, size_t size)
     bool ok = true ;
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
-    { 
+    {
         p = GB_Global.calloc_function (count, size) ;
     }
     else
@@ -436,7 +411,7 @@ void * GB_Global_realloc_function (void *p, size_t size)
     bool ok = true ;
     void *pnew = NULL ;
     if (GB_Global.malloc_is_thread_safe)
-    { 
+    {
         pnew = GB_Global.realloc_function (p, size) ;
     }
     else
@@ -466,7 +441,7 @@ void GB_Global_free_function (void *p)
     bool ok = true ;
     #endif
     if (GB_Global.malloc_is_thread_safe)
-    { 
+    {
         GB_Global.free_function (p) ;
     }
     else
@@ -592,7 +567,7 @@ int64_t GB_Global_maxused_get (void)
 }
 
 //------------------------------------------------------------------------------
-// hack
+// hack: for setting an internal value for development only
 //------------------------------------------------------------------------------
 
 void GB_Global_hack_set (int64_t hack)
@@ -604,3 +579,4 @@ int64_t GB_Global_hack_get (void)
 { 
     return (GB_Global.hack) ;
 }
+

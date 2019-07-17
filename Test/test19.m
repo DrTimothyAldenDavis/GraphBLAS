@@ -10,7 +10,14 @@ end
 if (fulltest)
     nt = 3000 ;
 else
-    nt = 500 ;
+    % check if malloc debugging is enabled
+    d = stat ;
+    if (d)
+        % exhaustive malloc debugging
+        nt = 50 ; % was 500, which takes too long
+    else
+        nt = 500 ;
+    end
 end
 
 fprintf ('\nGxB_subassign and setElement test, many pending computations\n') ;

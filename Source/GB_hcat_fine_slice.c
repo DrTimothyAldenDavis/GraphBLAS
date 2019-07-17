@@ -118,6 +118,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
         info = GB_Sauna_alloc (Sauna_id, cvlen, csize) ;
         if (info != GrB_SUCCESS)
         { 
+            // out of memory
             GB_FREE_ALL ;
             GB_OK (GB_Sauna_release (1, &Sauna_id)) ;
             return (GB_OUT_OF_MEMORY) ;

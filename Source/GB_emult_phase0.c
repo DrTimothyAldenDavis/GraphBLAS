@@ -143,10 +143,12 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                     nvec = GB_IMIN (nvec, Mnvec) ;
                     if (nvec == Anvec)
                     { 
+GB_GOTCHA ;             // nvec == Anvec
                         Ch = Ah ;
                     }
                     else if (nvec == Bnvec)
                     { 
+GB_GOTCHA ;             // nvec == Bnvec
                         Ch = Bh ;
                     }
                     else // (nvec == Mnvec)
@@ -187,6 +189,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                     // Ch = smaller of Mh, Ah
                     if (Anvec <= Mnvec)
                     { 
+GB_GOTCHA ;             // (Anvec <= Mnvec)
                         Ch = Ah ;
                     }
                     else
@@ -223,6 +226,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
                     if (Bnvec <= Mnvec)
                     { 
+GB_GOTCHA ;             // (Bnvec <= Mnvec)
                         Ch = Bh ;
                     }
                     else
@@ -354,6 +358,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
     }
     else // Ch == NULL and C is standard
     { 
+GB_GOTCHA ;     // Ch == NULL
         Cnvec = n ;
     }
 
@@ -370,10 +375,12 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
     if (M_is_hyper && Ch != Mh)
     {
+GB_GOTCHA ;     // (M_is_hyper && Ch != Mh)
         // allocate C_to_M
         GB_MALLOC_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
         if (C_to_M == NULL)
         { 
+GB_GOTCHA ;         // M_is_hyper && Ch != Mh
             // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -385,6 +392,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < Cnvec ; k++)
         { 
+GB_GOTCHA ;         // M_is_hyper && Ch != Mh
             int64_t pM, pM_end, kM = 0 ;
             int64_t j = Ch [k] ;
             GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;
@@ -531,7 +539,7 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
 
         // see if M (:,j) exists
         if (Ch != NULL && M != NULL && Ch == M->h)
-        { 
+        {
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
             ASSERT (M->is_hyper) ;

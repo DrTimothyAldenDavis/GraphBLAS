@@ -136,6 +136,10 @@ GrB_Info GB_subref_slice
     bool post_sort = false ;
     int64_t iinc = Icolon [GxB_INC] ;
 
+    // printf ("nI "GBd" avlen "GBd" anz "GBd"\n", nI, avlen, anz) ;
+    // printf ("I_inverse_limit "GBd"\n", I_inverse_limit) ;
+    // printf ("I inverse ok: %d\n", I_inverse_ok) ;
+
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
@@ -328,6 +332,7 @@ GrB_Info GB_subref_slice
                 }
                 else
                 { 
+                    // break, k not in task tt
                     break ;
                 }
             }

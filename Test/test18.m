@@ -15,8 +15,16 @@ if (fulltest)
     k1test = 1:length(classes) ;
 else
     fprintf ('test18 ------------quick tests of GrB_eWiseAdd and eWiseMult\n') ;
-    k1test = [1 2 4 10 11] ;
+    % TODO was:
+    % k1test = [1 2 4 10 11] ;
+    k1test = [ 1 2 11 ] ;
 end
+
+% TODO was:
+%   mlist = [1 5 10] ; 
+%   nlist = [1 5 10] ; 
+    mlist = [10] ; 
+    nlist = [10] ; 
 
 rng ('default') ;
 
@@ -31,11 +39,7 @@ for k1 = k1test % 1:length (classes)
 
     fprintf ('\n%s:\n', clas) ;
 
-    if (fulltest)
-        k2test = 1:length(bin_ops) ;
-    else
-        k2test = randperm (length(bin_ops), 2) ;
-    end
+    k2test = 1:length(bin_ops) ;
 
     for k2 = k2test % 1:length(bin_ops)
         binop = bin_ops {k2}  ;
@@ -97,8 +101,8 @@ for k1 = k1test % 1:length (classes)
                         end
 
                         % try some matrices
-                        for m = [1 5 10 ]
-                            for n = [ 1 5 10 ]
+                        for m = mlist
+                            for n = nlist
 
                                 Amat = sparse (100 * sprandn (m,n, 0.2)) ;
                                 Bmat = sparse (100 * sprandn (m,n, 0.2)) ;
@@ -106,8 +110,48 @@ for k1 = k1test % 1:length (classes)
                                 w = sparse (100 * sprandn (m,1, 0.2)) ;
                                 uvec = sparse (100 * sprandn (m,1, 0.2)) ;
                                 vvec = sparse (100 * sprandn (m,1, 0.2)) ;
+
                                 Maskmat = sprandn (m,n,0.2) ~= 0 ;
                                 maskvec = sprandn (m,1,0.2) ~= 0 ;
+
+                                % create a very sparse matrix mask
+                                Maskmat2 = sparse (m,n) ;
+                                T = Amat .* Bmat ;
+                                [i j x] = find (T) ;
+                                if (length (i) > 0)
+                                    Maskmat2 (i(1), j(1)) = 1 ;
+                                end
+                                T = (Amat ~= 0) & (Bmat == 0) ;
+                                [i j x] = find (T) ;
+                                if (length (i) > 0)
+                                    Maskmat2 (i(1), j(1)) = 1 ;
+                                end
+                                T = (Amat == 0) & (Bmat ~= 0) ;
+                                [i j x] = find (T) ;
+                                if (length (i) > 0)
+                                    Maskmat2 (i(1), j(1)) = 1 ;
+                                end
+                                clear T i j x
+
+                                % create a very sparse vector mask
+                                maskvec2 = sparse (m,1) ;
+                                T = uvec .* vvec ;
+                                [i j x] = find (T) ;
+                                if (length (i) > 0)
+                                    maskvec2 (i(1), j(1)) = 1 ;
+                                end
+                                T = (uvec ~= 0) & (vvec == 0) ;
+                                [i j x] = find (T) ;
+                                if (length (i) > 0)
+                                    maskvec2 (i(1), j(1)) = 1 ;
+                                end
+                                T = (uvec == 0) & (vvec ~= 0) ;
+                                [i j x] = find (T) ;
+                                if (length (i) > 0)
+                                    maskvec2 (i(1), j(1)) = 1 ;
+                                end
+                                clear T i j x
+
                                 ATmat = Amat' ;
                                 BTmat = Bmat' ;
 
@@ -115,9 +159,9 @@ for k1 = k1test % 1:length (classes)
                                 for A_is_csc   = 0:1
                                 for B_is_hyper = 0:1
                                 for B_is_csc   = 0:1
+                                fprintf ('.') ;
                                 for C_is_hyper = 0 % 0:1
                                 for C_is_csc   = 0 % 0:1
-                                fprintf ('.') ;
 
                                 for native = 0:1
 
@@ -268,16 +312,20 @@ for k1 = k1test % 1:length (classes)
                                 % with mask
                                 %-----------------------------------------------
 
+                                for M_is_very_sparse = 0:1
                                 for M_is_hyper = 0:1
                                 for M_is_csc   = 0:1
 
-                                clear Mask
-                                Mask.matrix = Maskmat ;
+                                clear Mask mask
+                                if (M_is_very_sparse)
+                                    Mask.matrix = Maskmat2 ;
+                                    mask.matrix = maskvec2 ;
+                                else
+                                    Mask.matrix = Maskmat ;
+                                    mask.matrix = maskvec ;
+                                end
                                 Mask.is_hyper = M_is_hyper ;
                                 Mask.is_csc   = M_is_csc   ;
-
-                                clear mask
-                                mask.matrix = maskvec ;
                                 mask.is_csc = true ;
 
                                 %---------------------------------------
@@ -374,7 +422,7 @@ for k1 = k1test % 1:length (classes)
 
                                 end
                                 end
-
+                                end
                                 end
                                 end
                                 end

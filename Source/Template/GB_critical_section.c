@@ -25,17 +25,9 @@
 
     #if defined (USER_POSIX_THREADS)
     {
-        if (GB_Global_user_multithreaded_get ( ))
-        {
-            ok = (pthread_mutex_lock (&GB_sync) == 0) ;
-        }
-
+        ok = (pthread_mutex_lock (&GB_sync) == 0) ;
         GB_CRITICAL_SECTION ;
-
-        if (GB_Global_user_multithreaded_get ( ))
-        {
-            ok = ok && (pthread_mutex_unlock (&GB_sync) == 0) ;
-        }
+        ok = ok && (pthread_mutex_unlock (&GB_sync) == 0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -44,18 +36,10 @@
 
     #elif defined (USER_WINDOWS_THREADS)
     {
-        // This is not yet supported.
-        if (GB_Global_user_multithreaded_get ( ))
-        {
-            EnterCriticalSection (&GB_sync) ;
-        }
-
+        // This should work, per the Windows spec, but is not yet supported.
+        EnterCriticalSection (&GB_sync) ;
         GB_CRITICAL_SECTION ;
-
-        if (GB_Global_user_multithreaded_get ( ))
-        {
-            LeaveCriticalSection (&GB_sync) ;
-        }
+        LeaveCriticalSection (&GB_sync) ;
     }
 
     //--------------------------------------------------------------------------
@@ -65,17 +49,9 @@
     #elif defined (USER_ANSI_THREADS)
     {
         // This should work per the ANSI C11 Spec, but is not yet supported.
-        if (GB_Global_user_multithreaded_get ( ))
-        {
-            ok = (mtx_lock (&GB_sync) == thrd_success) ;
-        }
-
+        ok = (mtx_lock (&GB_sync) == thrd_success) ;
         GB_CRITICAL_SECTION ;
-
-        if (GB_Global_user_multithreaded_get ( ))
-        {
-            ok = ok && (mtx_unlock (&GB_sync) == thrd_success) ;
-        }
+        ok = ok && (mtx_unlock (&GB_sync) == thrd_success) ;
     }
 
     //--------------------------------------------------------------------------

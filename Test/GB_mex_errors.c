@@ -15,7 +15,6 @@
 
 #include "GB_mex.h"
 
-#undef CHECK
 #define USAGE "GB_mex_errors"
 
 #define FREE_ALL                                                   \
@@ -64,38 +63,8 @@
     GB_mx_put_global (true, 0) ;                                   \
 }
 
-#define FAIL(s)                                             \
-{                                                           \
-    fprintf (f,"\ntest failure: line %d\n", __LINE__) ;     \
-    fprintf (f,"%s\n", GB_STR(s)) ;                         \
-    fclose (f) ;                                            \
-    mexErrMsgTxt (GB_STR(s) " line: " GB_XSTR(__LINE__)) ;  \
-}
+#include "GB_mex_errors.h"
 
-#define CHECK(x)    if (!(x)) FAIL(x) ;
-#define CHECK2(x,s) if (!(x)) FAIL(s) ;
-
-// assert that a method should return a particular error code
-#define ERR(method)                                         \
-{                                                           \
-    info = method ;                                         \
-    fprintf (f,"GB_mex_errors, line %d:", __LINE__) ;       \
-    fprintf (f,"%s\n", GrB_error ( )) ;                     \
-    CHECK2 (info == expected, method) ;                     \
-}
-
-// assert that a method should succeed
-#define OK(method)                                          \
-{                                                           \
-    info = method ;                                         \
-    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))    \
-    {                                                       \
-        fprintf (f,"[%d] >>>>>>>>%s\n", info, GrB_error ( )) ;         \
-        printf ("[%d] %s\n", info, GrB_error ( )) ;                    \
-        FAIL (method) ;                                     \
-    }                                                       \
-}
- 
 void f1 (double *z, uint32_t *x) ;
 void f2 (int32_t *z, uint8_t *x, int16_t *y) ;
 void f3 (double complex *z, double complex *x, double *y) ;
@@ -141,7 +110,6 @@ void mexFunction
 
     GrB_Info info, expected  ;
 
-    GB_Global_user_multithreaded_set (false) ;
     GB_Global_GrB_init_called_set (false) ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
     OK (GrB_finalize ( )) ;

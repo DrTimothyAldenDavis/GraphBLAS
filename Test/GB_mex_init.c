@@ -23,7 +23,6 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    GB_Global_user_multithreaded_set (false) ;
     GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
     GB_WHERE (USAGE) ;
     GB_Global_abort_function_set (GB_mx_abort) ;

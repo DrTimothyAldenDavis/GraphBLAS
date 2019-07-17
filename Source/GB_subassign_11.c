@@ -158,6 +158,7 @@ GrB_Info GB_subassign_11
                     }
                     else
                     { 
+GB_GOTCHA ;             // delete entry
                         // ----[C A 0] or [X A 0]-------------------------------
                         // [X A 0]: action: ( X ): still a zombie
                         // [C A 0]: C_repl: action: ( delete ): becomes zombie

@@ -34,6 +34,10 @@ logstat ;             % start the log.txt
 %-------------------------------------------------------------------------------
 % quick tests for statement coverage
 
+logstat ('test126') ; %  test GrB_reduce to vector on a very sparse matrix 
+logstat ('test30b') ; % performance test GB_mex_assign, scalar expansion
+logstat ('test30') ;  % performance test GB_mex_subassign, scalar expansion
+logstat ('test124') ; % GrB_extract, case 6
 logstat ('test115') ; % GrB_assign with duplicate indices
 logstat ('test101') ; % GrB_*_import and export
 logstat ('test103') ; % GrB_transpose aliases
@@ -84,6 +88,8 @@ logstat ('test76') ;  % GxB_resize
 logstat ('test102');  % GB_AxB_flopcount
 logstat ('test27') ;  % quick test of GxB_select (band)
 logstat ('test74') ;  % test GrB_mxm on all semirings, just dot product method
+logstat ('test125') ; % test GrB_mxm: row and column scaling
+logstat ('test39(0)') ;  % tests of GrB_transpose, GB_*_add and eWiseAdd
 logstat ('test99') ;  % GB_mex_transpose with explicit zeros in the Mask
 logstat ('test19') ;  % GxB_subassign, many pending operators
 logstat ('test23') ;  % quick test of GB_*_build
@@ -91,6 +97,7 @@ logstat ('test96') ;  % A*B using dot product
 logstat ('test25') ;  % quick test of GxB_select
 logstat ('test53') ;  % quick test of GB_mex_Matrix_extract
 logstat ('test24') ;  % test of GrB_Matrix_reduce
+logstat ('test45(0)') ;  % test GB_mex_setElement and build
 logstat ('test10') ;  % GrB_apply
 logstat ('test90') ;  % test pre-compiled user-defined semirings
 logstat ('test21b') ; % quick test of GB_mex_assign
@@ -100,7 +107,20 @@ logstat ('test18') ;  % quick tests of GrB_eWiseAdd and eWiseMult
 logstat ('test75') ;  % test GrB_mxm A'*B on all semirings
 logstat ('test06') ;  % test GrB_mxm on all semirings
 logstat ('test19b') ; % GrB_assign, many pending operators
-logstat ('test20') ;  % quick test of GB_mex_mxm on a few semirings
+
+d = stat ;
+if (d)
+    % turn off malloc debugging for test19b
+    debug_off ; nthreads_set (2, 4096) ; logstat ('test19b') ;
+    debug_off ; nthreads_set (4, 1)    ; logstat ('test19b') ;
+    debug_on ;
+else
+    nthreads_set (2, 4096) ; logstat ('test19b') ;
+    nthreads_set (4, 1)    ; logstat ('test19b') ;
+end
+
+logstat ('test20') ;    % quick test of GB_mex_mxm on a few semirings
+logstat ('test20(1)') ; % long test of GB_mex_mxm on a few semirings
 
 %-------------------------------------------------------------------------------
 % The following tests are not required for statement coverage.  Some need
@@ -124,8 +144,6 @@ if (longtests)
     logstat ('test65') ;  % type casting
     logstat ('test66') ;  % quick test for GrB_Matrix_reduce
     logstat ('test67') ;  % quick test for GrB_apply
-    logstat ('test30') ;  % performance test GB_mex_subassign, scalar expansion
-    logstat ('test30b') ; % performance test GB_mex_assign, scalar expansion
     logstat ('test31') ;  % simple tests of GB_mex_transpose
     logstat ('test12(0)') ; % Wathen finite-element matrices (full test)
     logstat ('test58(0)') ; % longer GB_mex_eWiseAdd_Matrix performance test
@@ -145,7 +163,6 @@ if (longtests)
     logstat ('test53') ;  % exhaustive test of GB_mex_Matrix_extract
     logstat ('test62') ;  % exhaustive test of GrB_apply
     logstat ('test63') ;  % GB_mex_op and operator tests
-    logstat ('test45') ;  % test GB_mex_setElement and build
     logstat ('test46') ;  % performance test GB_mex_subassign
     logstat ('test46b') ; % performance test GB_mex_assign
     logstat ('test47') ;

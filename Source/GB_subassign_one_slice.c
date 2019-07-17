@@ -215,6 +215,7 @@ GrB_Info GB_subassign_one_slice
                 }
                 else
                 { 
+                    // break, k not in task tt
                     break ;
                 }
             }
@@ -292,7 +293,6 @@ GrB_Info GB_subassign_one_slice
                     }
                     else
                     { 
-
                         // find where this task starts and ends in C(:,jC)
                         int64_t iA_start = Ai [pA] ;
                         int64_t iC1 = GB_ijlist (I, iA_start, Ikind, Icolon) ;

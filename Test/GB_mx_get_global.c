@@ -63,7 +63,6 @@ bool GB_mx_get_global       // true if doing malloc_debug
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
-    GB_Global_user_multithreaded_set (false) ;
     GB_Global_GrB_init_called_set (false) ;
     GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
     ASSERT (GB_Global_nmalloc_get ( ) == 0) ;

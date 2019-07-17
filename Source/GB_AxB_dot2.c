@@ -253,14 +253,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     { 
         #include "GB_AxB_factory.c"
     }
-
-    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))
-    { 
-        // out of memory
-        GB_MATRIX_FREE (Chandle) ;
-        GB_FREE_ALL ;
-        return (info) ;
-    }
+    ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
 
 #endif
 

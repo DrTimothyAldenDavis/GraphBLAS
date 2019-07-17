@@ -171,7 +171,7 @@ GrB_Info GB_ijsort
         for (int64_t k = 1 ; k < ni ; k++)
         {
             if (I1 [ni1-1] != I1 [k])
-            { 
+            {
                 I1  [ni1] = I1  [k] ;
                 I1k [ni1] = I1k [k] ;
                 ni1++ ;

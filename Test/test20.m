@@ -12,7 +12,7 @@ if (nargin < 1)
     fulltest = 0 ;
 end
 
-if (fulltest)
+if (fulltest == 2)
     fprintf ('test20: lengthy tests of GrB_mxm, mxv, and vxm\n') ;
     n_semirings_max = inf ;
 else
@@ -28,14 +28,14 @@ kk = 1 ;
 % accumops = 0 ;                        % test with no accum
 aa = 1 ;
 
-if (n_semirings_max == 1)
-    k1_list = [ 8 ] ;   % times
-    k2_list = [ 3 ] ;   % plus
-    k3_list = [ 11 ] ;  % double
-else
+if (fulltest > 0)
     k1_list = 1:length(mult_ops) ;
     k2_list = 1:length(add_ops) ;
     k3_list = 1:length(classes) ;
+else
+    k1_list = [ 8 ] ;   % times
+    k2_list = [ 3 ] ;   % plus
+    k3_list = [ 11 ] ;  % double
 end
 
 kk = min (kk, length (classes)) ;

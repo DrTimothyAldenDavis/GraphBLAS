@@ -45,7 +45,7 @@ void *GB_realloc_memory     // pointer to reallocated block of memory, or
     size_t nitems_old,      // old number of items in the object
     size_t size_of_item,    // sizeof each item
     void *p,                // old object to reallocate
-    bool *ok1                // true if successful, false otherwise
+    bool *ok1               // true if successful, false otherwise
 )
 {
 

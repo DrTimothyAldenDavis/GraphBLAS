@@ -286,7 +286,7 @@ GrB_Info GB_ijproperties        // check I and determine its properties
             ASSERT (I_contig   == true) ;
         }
         if (ni == 0)
-        { 
+        {
             // the list is empty
             ASSERT (imin == limit && imax == -1) ;
         }

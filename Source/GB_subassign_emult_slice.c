@@ -200,7 +200,6 @@ GrB_Info GB_subassign_emult_slice
             }
             else
             { 
-
                 // find where this task starts and ends in C(:,jC)
                 int64_t iA_start = GB_IMIN (iA_first, iM_first) ;
                 int64_t iC1 = GB_ijlist (I, iA_start, Ikind, Icolon) ;

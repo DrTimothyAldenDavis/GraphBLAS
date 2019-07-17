@@ -1,10 +1,14 @@
-function test45
+function test45(use_ssget)
 %TEST45 test GrB_*_setElement and GrB_*_*build
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 fprintf ('\ntest45\n------------------ testing GrB_setElement and _build\n') ;
+
+if (nargin < 1)
+    use_ssget = true ;
+end
 
 rng ('default') ;
 A = sparse (rand (3,2)) ;
@@ -18,8 +22,12 @@ A = sparse (A)  ;
 C = GB_mex_setElement (A, uint64(1), uint64(1), 99) ;
 spok (C.matrix) ;
 
-Prob = ssget ('HB/west0067') ;
-A = Prob.A ;
+if (use_ssget)
+    Prob = ssget ('HB/west0067') ;
+    A = Prob.A ;
+else
+    A = sprand (67, 67, 0.1) ;
+end
 [m n] = size (A) ;
 
 ntuples = 1000 ;
@@ -45,8 +53,15 @@ assert (isequal (A3.matrix, A1)) ;
 % nnz (A3.matrix)
 % nnz (A) + ntuples
 
-Prob = ssget (2662)
-A = Prob.A ;
+if (use_ssget)
+    Prob = ssget (2662)
+    A = Prob.A ;
+else
+    n = 2999349 ;
+    nz = 14.3e6 ;
+    density = nz / (n^2) ;
+    A = sprandn (n, n, density) ;
+end
 [m n] = size (A) ;
 fprintf ('nnz(A) = %g\n', nnz (A)) ;
 
@@ -185,7 +200,7 @@ for trial = 1:3
     end
 
     tic
-    G=sparse(I,J,X) ;
+    G=sparse(I,J,X,blen,1) ;
     t3 = toc ;
     fprintf ('MATLAB sparse:        %g sec\n', t3) ;
 
@@ -196,8 +211,10 @@ for trial = 1:3
         t4, nnz (T.matrix)) ;
 
     % fprintf ('spok it 4\n') ;
-    assert (spok (T.matrix*1) == 1) ;
-    assert (isequal (G, T.matrix)) ;
+    T_matrix = T.matrix * 1 ;
+    assert (spok (T_matrix) == 1) ;
+    % assert (isequal (G, T.matrix)) ;
+    assert (norm (G -  T_matrix, 1) / norm (G,1) < 1e-12) ;
 
     tic
     T = GB_mex_Vector_build (I0, X, blen) ;
@@ -206,8 +223,9 @@ for trial = 1:3
         t4, nnz (T.matrix)) ;
 
     % fprintf ('spok it 4\n') ;
-    assert (spok (T.matrix*1) == 1) ;
-    assert (isequal (G, T.matrix)) ;
+    T_matrix = T.matrix * 1 ;
+    assert (spok (T_matrix) == 1) ;
+    assert (norm (G -  T_matrix, 1) / norm (G,1) < 1e-12) ;
 
 end
 

@@ -434,6 +434,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
                         }
                         else
                         { 
+                            // subsequent thread for B(:,kfirst)
                             Bflops [kfirst] += Wfirst [tid] ;
                         }
                         kprior = kfirst ;

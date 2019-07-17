@@ -35,7 +35,7 @@ GrB_Info GB_AxB_dot3_one_slice
     const GrB_Matrix M,             // matrix to slice
     GB_Context Context
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -170,6 +170,7 @@ GrB_Info GB_AxB_dot3_one_slice
                 }
                 else
                 { 
+                    // break, k not in task tt
                     break ;
                 }
             }

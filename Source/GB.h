@@ -527,90 +527,11 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // Global access functions
 //------------------------------------------------------------------------------
 
-void     GB_Global_user_multithreaded_set (bool user_multithreaded) ;
-bool     GB_Global_user_multithreaded_get (void) ;
+// These functions are available to all internal functions in
+// SuiteSparse:GraphBLAS, but the GB_Global struct is accessible only inside
+// GB_Global.c.
 
-void     GB_Global_queue_head_set (void *p) ;
-void  *  GB_Global_queue_head_get (void) ;
-
-void     GB_Global_mode_set (GrB_Mode mode) ;
-GrB_Mode GB_Global_mode_get (void) ;
-
-void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
-bool     GB_Global_GrB_init_called_get (void) ;
-
-void     GB_Global_nthreads_max_set (int nthreads_max) ;
-int      GB_Global_nthreads_max_get (void) ;
-
-int      GB_Global_omp_get_max_threads (void) ;
-
-void     GB_Global_chunk_set (double chunk) ;
-double   GB_Global_chunk_get (void) ;
-
-void     GB_Global_hyper_ratio_set (double hyper_ratio) ;
-double   GB_Global_hyper_ratio_get (void) ;
-
-void     GB_Global_is_csc_set (bool is_csc) ;
-double   GB_Global_is_csc_get (void) ;
-
-void     GB_Global_Saunas_set (int id, GB_Sauna Sauna) ;
-GB_Sauna GB_Global_Saunas_get (int id) ;
-
-bool     GB_Global_Sauna_in_use_get (int id) ;
-void     GB_Global_Sauna_in_use_set (int id, bool in_use) ;
-
-void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
-void     GB_Global_abort_function (void) ;
-
-void     GB_Global_malloc_function_set
-         (
-             void * (* malloc_function) (size_t)
-         ) ;
-void  *  GB_Global_malloc_function (size_t size) ;
-
-void     GB_Global_calloc_function_set
-         (
-             void * (* calloc_function) (size_t, size_t)
-         ) ;
-void  *  GB_Global_calloc_function (size_t count, size_t size) ;
-
-void     GB_Global_realloc_function_set
-         (
-             void * (* realloc_function) (void *, size_t)
-         ) ;
-void  *  GB_Global_realloc_function (void *p, size_t size) ;
-
-void     GB_Global_free_function_set (void (* free_function) (void *)) ;
-void     GB_Global_free_function (void *p) ;
-
-void     GB_Global_malloc_is_thread_safe_set
-         (
-            bool malloc_is_thread_safe
-         ) ;
-bool     GB_Global_malloc_is_thread_safe_get (void) ;
-
-void     GB_Global_malloc_tracking_set (bool malloc_tracking) ;
-bool     GB_Global_malloc_tracking_get (void) ;
-
-void     GB_Global_nmalloc_clear (void) ;
-int64_t  GB_Global_nmalloc_get (void) ;
-int64_t  GB_Global_nmalloc_increment (void) ;
-int64_t  GB_Global_nmalloc_decrement (void) ;
-
-void     GB_Global_malloc_debug_set (bool malloc_debug) ;
-bool     GB_Global_malloc_debug_get (void) ;
-
-void     GB_Global_malloc_debug_count_set (int64_t malloc_debug_count) ;
-bool     GB_Global_malloc_debug_count_decrement (void) ;
-
-void     GB_Global_inuse_clear (void) ;
-void     GB_Global_inuse_increment (int64_t s) ;
-void     GB_Global_inuse_decrement (int64_t s) ;
-int64_t  GB_Global_inuse_get (void) ;
-int64_t  GB_Global_maxused_get (void) ;
-
-void     GB_Global_hack_set (int64_t hack) ;
-int64_t  GB_Global_hack_get (void) ;
+#include "GB_Global.h"
 
 //------------------------------------------------------------------------------
 // debugging definitions
@@ -671,11 +592,12 @@ int64_t  GB_Global_hack_get (void) ;
 #define GB_IMPLIES(p,q) (!(p) || (q))
 
 // for finding tests that trigger statement coverage
-#define GB_GOTCHA                                           \
-{                                                           \
-    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
-    GB_Global_abort_function ( ) ;                          \
-}
+#define GB_GOTCHA ;
+//  #define GB_GOTCHA                                           \
+//  {                                                           \
+//      printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
+//      GB_Global_abort_function ( ) ;                          \
+//  }
 
 #define GB_HERE printf ("%2d: Here: " __FILE__ " line: %d\n",  \
     GB_OPENMP_THREAD_ID, __LINE__) ;
@@ -2074,39 +1996,6 @@ extern mtx_t GB_sync ;
 // nothing to do for OpenMP, or for no user threading
 
 #endif
-
-//------------------------------------------------------------------------------
-// Thread local storage
-//------------------------------------------------------------------------------
-
-// Thread local storage is used to to record the details of the last error
-// encountered (for GrB_error).  If the user application is multi-threaded,
-// each thread that calls GraphBLAS needs its own private copy of these
-// variables.  Thus, this method must match the user-thread model.
-
-#if defined (USER_POSIX_THREADS)
-// thread-local storage for POSIX THREADS
-extern pthread_key_t GB_thread_local_key ;
-
-#elif defined (USER_WINDOWS_THREADS)
-// for user applications that use Windows threads:
-#error "Windows threads not yet supported"
-
-#elif defined (USER_ANSI_THREADS)
-// for user applications that use ANSI C11 threads:
-// (this should work per the ANSI C11 specification but is not yet supported)
-_Thread_local
-
-#else
-// _OPENMP, USER_OPENMP_THREADS, or USER_NO_THREADS
-// This is the default.
-
-#endif
-
-extern char GB_thread_local_report [GB_RLEN+1] ;
-
-// return pointer to thread-local storage
-char *GB_thread_local_access (void) ;
 
 //------------------------------------------------------------------------------
 // boiler plate macros for checking inputs and returning if an error occurs

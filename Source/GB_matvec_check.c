@@ -115,6 +115,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
         if (! (A->nvec <= A->vdim && A->plen == A->nvec))
         { 
+            // invalid slice
             GBPR0 ("invalid slice %s structure\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "invalid slice %s structure [%s]", kind, GB_NAME))) ;
@@ -212,6 +213,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // a slice or hyperslice must have shallow i and x content
         if (!A->i_shallow || !A->x_shallow)
         { 
+            // bad slice: must have shallow i and x
             GBPR0 ("invalid non-shallow slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "non-shallow: invalid slice %s [%s\n", kind, GB_NAME))) ;
@@ -266,6 +268,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // hfirst is the first vector in a slice of a standard sparse matrix
         if (A->hfirst < 0 || A->hfirst + A->nvec > A->vdim)
         { 
+            // bad slice: hfirst invalid
             GBPR0 ("hfirst: invalid slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "hfirst: invalid slice %s [%s]\n", kind, GB_NAME))) ;
@@ -276,6 +279,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // only a standard slice can have a nonzero hfirst
         if (A->hfirst != 0)
         { 
+            // bad hyperslice: only a standard slice can have a nonzero hfirst
             GBPR0 ("hfirst: invalid slice %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "hfirst: invalid slice %s [%s]\n", kind, GB_NAME))) ;
@@ -382,10 +386,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (Pending != NULL || A->nzombies != 0)
     { 
-        GBPR0 ("pending tuples: "GBd" max pending: "GBd
-            " zombies: "GBd"\n", GB_Pending_n (A),
-            (Pending == NULL) ? 0 : (Pending->nmax),
-            A->nzombies) ;
         if (A->is_slice)
         { 
             // a slice or hyperslice cannot have pending work
@@ -393,6 +393,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "slice %s invalid: unfinished [%s]", kind, GB_NAME))) ;
         }
+        GBPR0 ("pending tuples: "GBd" max pending: "GBd
+            " zombies: "GBd"\n", GB_Pending_n (A),
+            (Pending == NULL) ? 0 : (Pending->nmax),
+            A->nzombies) ;
     }
 
     if (!ignore_queue_and_nzombies && (A->nzombies < 0 || A->nzombies > anz))

@@ -274,18 +274,8 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // A is hypersparse or a hyperslice, and B is hypersparse
         //----------------------------------------------------------------------
 
-        /*
-        printf ("Ah: %d %d Anvec: "GBd"\n", A_is_hyper, A_is_slice, Anvec) ;
-        for (int64_t k = 0 ; k < Anvec ; k++)
-        {
-            printf (GBd": "GBd"\n", k, GB_Ah (k)) ;
-        }
-        printf ("Bh: Bnvec: "GBd"\n", Bnvec) ;
-        for (int64_t k = 0 ; k < Bnvec ; k++)
-        {
-            printf (GBd": "GBd"\n", k, Bh [k]) ;
-        }
-        */
+        // Ch is the set union of Ah and Bh.  This is handled with a parallel
+        // merge, since Ah and Bh are both sorted lists.
 
         //----------------------------------------------------------------------
         // phase 0: create the tasks
@@ -306,6 +296,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
         for (int taskid = 1 ; taskid < ntasks ; taskid++)
         { 
+            // create tasks: A and B are both hyper
             double target_work = ((ntasks-taskid) * work) / ntasks ;
             GB_slice_vector (NULL, NULL,
                 &(kA_start [taskid]), &(kB_start [taskid]),
@@ -326,7 +317,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             // merge Ah and Bh into Ch
             int64_t kA = kA_start [taskid] ;
             int64_t kB = kB_start [taskid] ;
-            // printf ("%d: start kA "GBd" kB "GBd"\n", taskid, kA, kB) ;
             int64_t kA_end = kA_start [taskid+1] ;
             int64_t kB_end = kB_start [taskid+1] ;
             int64_t kC = 0 ;
@@ -361,14 +351,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         GB_cumsum (kC_start, ntasks, NULL, 1) ;
         Cnvec = kC_start [ntasks] ;
 
-        /*
-        printf ("\nkC:::\n") ;
-        for (int taskid = 0 ; taskid < ntasks ; taskid++)
-        {
-            printf ("%d: start kC "GBd"\n", taskid, kC_start [taskid]);
-        }
-        */
-
         //----------------------------------------------------------------------
         // allocate the result
         //----------------------------------------------------------------------
@@ -396,14 +378,12 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             int64_t kC = kC_start [taskid] ;
             int64_t kA_end = kA_start [taskid+1] ;
             int64_t kB_end = kB_start [taskid+1] ;
-            // printf ("taskid %d kC start "GBd"\n", taskid, kC) ;
 
             // merge Ah and Bh into Ch
             for ( ; kA < kA_end && kB < kB_end ; kC++)
             {
                 int64_t jA = GB_Ah (kA) ;
                 int64_t jB = Bh [kB] ;
-                // printf ("consider jA "GBd" jB "GBd"\n", jA, jB) ;
                 if (jA < jB)
                 { 
                     // append jA to Ch
@@ -433,7 +413,6 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
                 { 
                     // append jA to Ch
                     int64_t jA = GB_Ah (kA) ;
-                    // printf ("do jA "GBd"\n", jA) ;
                     Ch     [kC] = jA ;
                     C_to_A [kC] = kA ;
                     C_to_B [kC] = -1 ;
@@ -446,13 +425,11 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
                 { 
                     // append jB to Ch
                     int64_t jB = Bh [kB] ;
-                    // printf ("do jB "GBd"\n", jB) ;
                     Ch     [kC] = jB ;
                     C_to_A [kC] = -1 ;
                     C_to_B [kC] = kB ;
                 }
             }
-            // printf ("taskid %d kC done "GBd"\n", taskid, kC) ;
             ASSERT (kC == kC_start [taskid+1]) ;
         }
 
@@ -465,33 +442,26 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         int64_t kA = 0 ;
         int64_t kB = 0 ;
         int64_t kC = 0 ;
-        /*
-        for (int64_t k = 0 ; k < Cnvec ; k++)
-        {
-            printf (GBd": Ch: "GBd" C_to_A "GBd" C_to_B "GBd"\n",
-                k, Ch [k], C_to_A [k], C_to_B [k]) ;
-        }
-        */
         for ( ; kA < Anvec && kB < Bnvec ; kC++)
         {
             int64_t jA = GB_Ah (kA) ;
             int64_t jB = Bh [kB] ;
             if (jA < jB)
-            { 
+            {
                 // append jA to Ch
                 ASSERT (Ch     [kC] == jA) ;
                 ASSERT (C_to_A [kC] == kA) ; kA++ ;
                 ASSERT (C_to_B [kC] == -1) ;      // jA does not appear in B
             }
             else if (jB < jA)
-            { 
+            {
                 // append jB to Ch
                 ASSERT (Ch     [kC] == jB) ;
                 ASSERT (C_to_A [kC] == -1) ;       // jB does not appear in A
                 ASSERT (C_to_B [kC] == kB) ; kB++ ;
             }
             else
-            { 
+            {
                 // j appears in both A and B; append it to Ch
                 ASSERT (Ch     [kC] == jA) ;
                 ASSERT (C_to_A [kC] == kA) ; kA++ ;
@@ -502,7 +472,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         {
             // B is exhausted but A is not
             for ( ; kA < Anvec ; kA++, kC++)
-            { 
+            {
                 // append jA to Ch
                 int64_t jA = GB_Ah (kA) ;
                 ASSERT (Ch     [kC] == jA) ;
@@ -514,7 +484,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         {
             // A is exhausted but B is not
             for ( ; kB < Bnvec ; kB++, kC++)
-            { 
+            {
                 // append jB to Ch
                 int64_t jB = Bh [kB] ;
                 ASSERT (Ch     [kC] == jB) ;
@@ -742,7 +712,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
         // see if M (:,j) exists
         if (Ch_is_Mh)
-        { 
+        {
             // Ch is the same as Mh
             ASSERT (M != NULL) ;
             ASSERT (M->is_hyper) ;

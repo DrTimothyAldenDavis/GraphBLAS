@@ -127,6 +127,7 @@
             if (fine_task)
             { 
                 // A fine task operates on Ai,Ax [pA...pA_end-1], which is
+                // A fine task operates on Ai,Ax [pA...pA_end-1], which is
                 // a subset of the vector A(:,j)
                 pA     = TaskList [taskid].pA ;
                 pA_end = TaskList [taskid].pA_end ;
@@ -320,6 +321,7 @@
                         GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
                         if (found)
                         { 
+GB_GOTCHA ;                 // A(:,j) is much denser than B(:,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else
@@ -353,6 +355,7 @@
                         GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
                         if (found)
                         { 
+GB_GOTCHA ;                 // B(:,j) is much denser than A(:,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
                             #else

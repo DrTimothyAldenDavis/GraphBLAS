@@ -1,0 +1,75 @@
+GB_mex_errors, line 493:GraphBLAS error: GrB_INVALID_VALUE
+function: GxB_Global_Option_set (field, value)
+nthreads_max [7777777] must be < GxB_NTHREADS_MAX [2048]
+Recompile with a higher value of GxB_NTHREADS_MAX,
+using -DGxB_NTHREADS_MAX=7777777 (or higher, as needed)
+
+GB_mex_errors, line 567:GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Thunk must be a non-empty vector of length 1
+
+GB_mex_errors, line 572:GraphBLAS error: GrB_DIMENSION_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+Thunk must be a non-empty vector of length 1
+
+GB_mex_errors, line 579:GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+operator ge_thunk not defined for user-defined types
+
+GB_mex_errors, line 588:GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+operator ge_zero not defined for user-defined types
+
+GB_mex_errors, line 591:GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+operator gt_zero not defined for user-defined types
+
+GB_mex_errors, line 594:GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+operator lt_zero not defined for user-defined types
+
+GB_mex_errors, line 597:GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+operator le_zero not defined for user-defined types
+
+GB_mex_errors, line 600:GraphBLAS error: GrB_DOMAIN_MISMATCH
+function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
+incompatible type for C=le_thunk(A,Thunk):
+input A type [int16_t] and Thunk type [user_int] not compatible
+
+GB_mex_errors, line 738:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+slice matrix invalid: unfinished [Aslice [0]]
+
+GB_mex_errors, line 744:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+invalid slice matrix structure [Aslice [0]]
+
+GB_mex_errors, line 749:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+non-shallow: invalid slice matrix [Aslice [0]
+
+
+GB_mex_errors, line 755:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+hfirst: invalid slice matrix [Aslice [0]]
+
+
+GB_mex_errors, line 738:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+slice matrix invalid: unfinished [Aslice [0]]
+
+GB_mex_errors, line 744:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+invalid slice matrix structure [Aslice [0]]
+
+GB_mex_errors, line 749:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+non-shallow: invalid slice matrix [Aslice [0]
+
+
+GB_mex_errors, line 755:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Matrix_fprint (A, name, pr, f)
+hfirst: invalid slice matrix [Aslice [0]]
+
+

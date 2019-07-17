@@ -315,6 +315,7 @@ GrB_Info GB_ewise_slice
                 }
                 else
                 { 
+                    // break, k not in task tt
                     break ;
                 }
             }

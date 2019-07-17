@@ -55,14 +55,43 @@ void GB_Pending_free        // free a list of pending tuples
     GB_Pending *PHandle
 ) ;
 
-bool GB_Pending_ensure      // create or reallocate a list of pending tuples
+//------------------------------------------------------------------------------
+// GB_Pending_ensure: make sure the list of pending tuples is large enough
+//------------------------------------------------------------------------------
+
+// create or reallocate a list of pending tuples
+
+static inline bool GB_Pending_ensure
 (
     GB_Pending *PHandle,    // input/output
     GrB_Type type,          // type of pending tuples
     GrB_BinaryOp op,        // operator for assembling pending tuples
     bool is_matrix,         // true if Pending->j must be allocated
     int64_t nnew            // # of pending tuples to add
-) ;
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (PHandle != NULL) ;
+
+    //--------------------------------------------------------------------------
+    // ensure the list of pending tuples is large enough
+    //--------------------------------------------------------------------------
+
+    if ((*PHandle) == NULL)
+    {
+        return (GB_Pending_alloc (PHandle, type, op, is_matrix, nnew)) ;
+    }
+    else
+    {
+        return (GB_Pending_realloc (PHandle, nnew)) ;
+    }
+
+    return (true) ;
+}
 
 //------------------------------------------------------------------------------
 // GB_Pending_add:  add an entry A(i,j) to the list of pending tuples
@@ -85,37 +114,17 @@ static inline bool GB_Pending_add   // add a tuple to the list
     //--------------------------------------------------------------------------
 
     ASSERT (PHandle != NULL) ;
-    GB_Pending Pending = (*PHandle) ;
 
     //--------------------------------------------------------------------------
     // allocate the Pending tuples, or ensure existing list is large enough
     //--------------------------------------------------------------------------
 
-    int64_t n = 0 ;
-
-    if (Pending == NULL)
-    { 
-        // this is the first pending tuple: define the type of the pending
-        // tuples, and the operator to eventually be used to assemble them.
-        // If op is NULL, the implicit SECOND_Atype operator will be used.
-        if (!GB_Pending_alloc (PHandle, type, op, is_matrix, GB_PENDING_INIT))
-        {
-            return (false) ;
-        }
-        Pending = (*PHandle) ;
-    }
-    else
+    if (!GB_Pending_ensure (PHandle, type, op, is_matrix, 1))
     {
-        n = Pending->n ;
-        if (n == Pending->nmax)
-        { 
-            // reallocate the list so it can hold the new tuple
-            if (!GB_Pending_realloc (PHandle, 1))
-            {
-                return (false) ;
-            }
-        }
+        return (false) ;
     }
+    GB_Pending Pending = (*PHandle) ;
+    int64_t n = Pending->n ;
 
     ASSERT (Pending->type == type) ;
     ASSERT (Pending->nmax > 0 && n < Pending->nmax) ;
