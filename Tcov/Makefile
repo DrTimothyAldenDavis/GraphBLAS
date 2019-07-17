@@ -7,13 +7,20 @@
 
 #-------------------------------------------------------------------------------
 
+UNAME := $(shell uname)
+
 # pick your compiler:
-  CC = gcc
+# CC = gcc
 # CC = cc
 # CC = clang
 # CC = xlc
 # CC = gcc-8
 # CC = icc
+ifeq ($(UNAME),Darwin)
+    CC = gcc-8
+else
+    CC = gcc
+endif
 
 SRC = tmp_source/*
 INC = tmp_include/*
@@ -24,7 +31,6 @@ CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC -Wno-pragmas
 CPPFLAGS = -Itmp_include -DGBCOVER
 SO_OPTS = $(LDFLAGS)
 
-UNAME := $(shell uname)
 ifeq ($(UNAME),Darwin)
     # Mac
     CFLAGS += -fno-common
