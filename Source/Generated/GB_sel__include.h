@@ -255,7 +255,7 @@ void GB_sel_phase2__resize_any
 
 #if 0
 
-void GB_sel_phase1__nonzombie_bool
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -296,7 +296,7 @@ void GB_sel_phase2__nonzombie_bool
 
 #if 0
 
-void GB_sel_phase1__nonzombie_int8
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -337,7 +337,7 @@ void GB_sel_phase2__nonzombie_int8
 
 #if 0
 
-void GB_sel_phase1__nonzombie_int16
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -378,7 +378,7 @@ void GB_sel_phase2__nonzombie_int16
 
 #if 0
 
-void GB_sel_phase1__nonzombie_int32
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -419,7 +419,7 @@ void GB_sel_phase2__nonzombie_int32
 
 #if 0
 
-void GB_sel_phase1__nonzombie_int64
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -460,7 +460,7 @@ void GB_sel_phase2__nonzombie_int64
 
 #if 0
 
-void GB_sel_phase1__nonzombie_uint8
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -501,7 +501,7 @@ void GB_sel_phase2__nonzombie_uint8
 
 #if 0
 
-void GB_sel_phase1__nonzombie_uint16
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -542,7 +542,7 @@ void GB_sel_phase2__nonzombie_uint16
 
 #if 0
 
-void GB_sel_phase1__nonzombie_uint32
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -583,7 +583,7 @@ void GB_sel_phase2__nonzombie_uint32
 
 #if 0
 
-void GB_sel_phase1__nonzombie_uint64
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -624,7 +624,7 @@ void GB_sel_phase2__nonzombie_uint64
 
 #if 0
 
-void GB_sel_phase1__nonzombie_fp32
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,
@@ -665,7 +665,7 @@ void GB_sel_phase2__nonzombie_fp32
 
 #if 0
 
-void GB_sel_phase1__nonzombie_fp64
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,

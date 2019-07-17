@@ -335,7 +335,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
 
     if (semiring->object_kind == GB_USER_COMPILED)
-    {
+    { 
 GB_GOTCHA ; // dot3 user compiled
         // determine the required type of A and B for the user semiring
         GrB_Type atype_required, btype_required ;

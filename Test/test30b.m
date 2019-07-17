@@ -4,11 +4,6 @@ function test30b
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-% this test is too slow when debugging
-debug = GB_mex_debug ;
-
-if (debug == 0)
-
     [save save_chunk] = nthreads_get ;
     chunk = 4096 ;
     nthreads = feature ('numcores') ;
@@ -51,9 +46,4 @@ if (debug == 0)
     fprintf ('\ntest30b: all tests passed\n') ;
 
     nthreads_set (save, save_chunk) ;
-
-else
-    fprintf ('\ntest30b: tests skipped when debug enabled\n') ;
-end
-
 

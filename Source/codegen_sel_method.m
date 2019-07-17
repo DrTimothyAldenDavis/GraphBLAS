@@ -12,8 +12,14 @@ if (nargin < 4)
 end
 name = sprintf ('%s_%s', opname, aname) ;
 
+is_nonzombie = (isequal (opname, 'nonzombie') && ~isequal (atype, 'GB_void')) ;
+
 % function names
-fprintf (f, 'define(`GB_sel_phase1'', `GB_sel_phase1__%s'')\n', name) ;
+if (is_nonzombie)
+    fprintf (f, 'define(`GB_sel_phase1'', `GB_sel_phase1__(none)'')\n') ;
+else
+    fprintf (f, 'define(`GB_sel_phase1'', `GB_sel_phase1__%s'')\n', name) ;
+end
 fprintf (f, 'define(`GB_sel_phase2'', `GB_sel_phase2__%s'')\n', name) ;
 
 % the type of A (no typecasting)
@@ -39,7 +45,7 @@ else
 end
 
 % enable phase1
-if (isequal (opname, 'nonzombie') && ~isequal (atype, 'GB_void'))
+if (is_nonzombie)
     % nonzombie: phase1 uses a single worker
     fprintf (f, 'define(`if_phase1'', `#if 0'')\n') ;
     fprintf (f, 'define(`endif_phase1'', `#endif'')\n') ;

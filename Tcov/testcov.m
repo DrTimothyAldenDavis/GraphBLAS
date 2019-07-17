@@ -13,17 +13,6 @@ try
     cd ../../Tcov
     debug_on ;
     gbcover ;
-
-    f = fopen ('log.txt', 'a') ;
-    fprintf ('nthreads: 4, chunk: 1\n') ;
-    fclose (f) ;
-    nthreads_set (4,1) ;
-    testall ;
-
-    f = fopen ('log.txt', 'a') ;
-    fprintf ('nthreads: 1, chunk: 1\n') ;
-    fclose (f) ;
-    nthreads_set (1,1) ;
     testall ;
 catch me
     debug_off ;

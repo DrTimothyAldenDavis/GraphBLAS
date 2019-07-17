@@ -8,8 +8,8 @@ fprintf ('\ntest19b: GrB_assign and setElement, many pending computations\n') ;
 
 d = stat ;
 if (d)
-    % test skipped if malloc debugging enabled
-    return ;
+    % turn off malloc debugging for this test
+    debug_off
 end
 
 if (nargin < 1)
@@ -187,5 +187,8 @@ for problem = 0:2
     GB_spec_compare (C2, C3) ;
 end
 
+if (d)
+    debug_on
+end
 fprintf ('\ntest19b: all tests passed\n') ;
 

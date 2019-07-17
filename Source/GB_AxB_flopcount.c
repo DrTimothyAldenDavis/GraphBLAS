@@ -459,6 +459,8 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
                         }
                         else
                         { 
+GB_GOTCHA ;                 // subsequent thread to work on B(:,klast)
+                            // subsequent thread to work on B(:,klast)
                             Bflops [klast] += Wlast [tid] ;
                         }
                         kprior = klast ;

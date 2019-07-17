@@ -135,6 +135,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         if (op_is_positional &&
            !GB_Type_compatible (GrB_INT64, Thunk_in->type))
         { 
+GB_GOTCHA ; // Thunk not a built-in type, for a built-in select operator
             // Thunk not a built-in type, for a built-in select operator
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
                 "incompatible type for C=%s(A,Thunk):\n"

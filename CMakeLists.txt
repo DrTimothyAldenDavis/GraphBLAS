@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "July 16, 2019 (9pm) (DRAFT)" )
+set ( GraphBLAS_DATE "July 17, 2019 (10am) (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -84,6 +84,16 @@ include ( GNUInstallDirs )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )
+endif ( )
+
+# select "true" to build both dynamic and static libraries:
+# set ( BUILD_GRB_STATIC_LIBRARY true )
+  set ( BUILD_GRB_STATIC_LIBRARY false )
+
+if ( BUILD_GRB_STATIC_LIBRARY )
+    message ( STATUS "Building both static and dynamic GraphBLAS libraries" )
+else ( )
+    message ( STATUS "Building dynamic GraphBLAS library onlye" )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -251,14 +261,16 @@ set_property ( TARGET graphblas PROPERTY C_STANDARD 11 )
 # static graphblas library properties
 #-------------------------------------------------------------------------------
 
-#   add_library ( graphblas_static STATIC ${GRAPHBLAS_SOURCES} )
-#   SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
-#       VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
-#       OUTPUT_NAME graphblas
-#       SOVERSION ${GraphBLAS_VERSION_MAJOR}
-#       C_STANDARD_REQUIRED 11
-#       PUBLIC_HEADER "Include/GraphBLAS.h" )
-#   set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
+    if ( BUILD_GRB_STATIC_LIBRARY )
+add_library ( graphblas_static STATIC ${GRAPHBLAS_SOURCES} )
+   SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
+       VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+       OUTPUT_NAME graphblas
+       SOVERSION ${GraphBLAS_VERSION_MAJOR}
+       C_STANDARD_REQUIRED 11
+       PUBLIC_HEADER "Include/GraphBLAS.h" )
+   set_property ( TARGET graphblas_static PROPERTY C_STANDARD 11 )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # select the threading library 
@@ -293,25 +305,33 @@ if ( USE_OPENMP )
     # use OpenMP for user thread synchronization
     message ( STATUS "Using OpenMP to synchronize user threads" )
     target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
-#   target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+    if ( BUILD_GRB_STATIC_LIBRARY )
+        target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+    endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -DUSER_OPENMP_THREADS " )
 elseif ( USE_POSIX )
     # use POSIX for user thread synchronization
     message ( STATUS "Using POSIX pthreads to synchronize user threads" )
     target_link_libraries ( graphblas        m )
-#   target_link_libraries ( graphblas_static m )
+    if ( BUILD_GRB_STATIC_LIBRARY )
+        target_link_libraries ( graphblas_static m )
+    endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -pthread -DUSER_POSIX_THREADS " )
 else ( )
     # use no threading at all
     message ( WARNING "No support for user threads; GraphBLAS will not be thread-safe" )
     target_link_libraries ( graphblas        m )
-#   target_link_libraries ( graphblas_static m )
+    if ( BUILD_GRB_STATIC_LIBRARY )
+        target_link_libraries ( graphblas_static m )
+    endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DUSER_NO_THREADS " )
 endif ( )
 
 if ( CMAKE_THREAD_LIBS_INIT )
     target_link_libraries ( graphblas        ${CMAKE_THREAD_LIBS_INIT} )
-#   target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
+    if ( BUILD_GRB_STATIC_LIBRARY )
+        target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
+    endif ( )
 endif ( )
 
 if ( OPENMP_FOUND )
@@ -319,7 +339,9 @@ if ( OPENMP_FOUND )
     message ( STATUS "Using OpenMP for internal parallelism" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
     target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
-#   target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+    if ( BUILD_GRB_STATIC_LIBRARY )
+        target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+    endif ( )
 endif ( )
 
 if ( CMAKE_USE_PTHREADS_INIT )
@@ -354,14 +376,15 @@ add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-
-#     add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
-#     SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
-#         C_STANDARD_REQUIRED 11 )
-#     set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-
 target_link_libraries ( graphblasdemo         m graphblas )
-# target_link_libraries ( graphblasdemo_static  graphblas_static )
+
+if ( BUILD_GRB_STATIC_LIBRARY )
+    add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
+    SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
+        C_STANDARD_REQUIRED 11 )
+    set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
+    target_link_libraries ( graphblasdemo_static  graphblas_static )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # Demo programs
@@ -396,13 +419,20 @@ target_link_libraries ( import_demo   graphblas graphblasdemo )
 # graphblas installation location
 #-------------------------------------------------------------------------------
 
-#   install ( TARGETS graphblas  graphblas_static
-#        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-#        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+if ( BUILD_GRB_STATIC_LIBRARY )
 
-install ( TARGETS graphblas
-     LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
-     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-     ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+    # install both the dynamic and static libraries
+    install ( TARGETS graphblas  graphblas_static
+        LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 
+else ( )
+
+    # only install the dynamic library
+    install ( TARGETS graphblas
+         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+
+endif ( )

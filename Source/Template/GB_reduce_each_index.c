@@ -223,6 +223,11 @@
             // gather sparse T using multiple threads
             //------------------------------------------------------------------
 
+            // Some tasks may be completely empty and thus take no time at all;
+            // 256 tasks per thread are created for better load balancing.
+
+GB_GOTCHA ;     // parallel
+
             int ntasks = 256 * nthreads ;
             ntasks = GB_IMIN (ntasks, n) ;
             int64_t Count [ntasks+1] ;

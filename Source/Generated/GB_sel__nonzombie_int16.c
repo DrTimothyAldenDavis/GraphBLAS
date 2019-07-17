@@ -15,7 +15,7 @@
 
 // The selection is defined by the following types and operators:
 
-// phase1: GB_sel_phase1__nonzombie_int16
+// phase1: GB_sel_phase1__(none)
 // phase2: GB_sel_phase2__nonzombie_int16
 
 // A type:   int16_t
@@ -70,12 +70,12 @@
     int64_t s
 
 //------------------------------------------------------------------------------
-// GB_sel_phase1__nonzombie_int16
+// GB_sel_phase1__(none)
 //------------------------------------------------------------------------------
 
 #if 0
 
-void GB_sel_phase1__nonzombie_int16
+void GB_sel_phase1__(none)
 (
     int64_t *restrict Zp,
     int64_t *restrict Cp,

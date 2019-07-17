@@ -138,14 +138,14 @@ static void GB_quicksort_par    // sort A [0:n-1]
         for (int64_t k = 1 ; k < n ; k++)
         {
             for (int64_t j = k ; j > 0 && GB_lt (A, j, A, j-1) ; j--)
-            { 
+            {
                 // swap A [j-1] and A [j]
                 GB_swap (A, j-1, j) ;
             }
         }
     }
     else
-    { 
+    {
         // partition A [0:n-1] into A [0:k-1] and A [k:n-1]
         int64_t k = GB_partition (GB_arg (A), n, seed) ;
 

@@ -18,6 +18,10 @@
 // Given a sorted list X [kleft:kright], and a range imin:..., modify kleft so
 // that the smaller sublist X [kleft:kright] contains the range imin:...
 
+#if 0
+
+// no longer used
+
 static inline void GB_bracket_left
 (
     const int64_t imin,
@@ -26,6 +30,7 @@ static inline void GB_bracket_left
     const int64_t kright
 )
 {
+    ASSERT (DEAD_CODE) ;
     // tighten kleft
     int64_t len = kright - (*kleft) + 1 ;
     if (len > 0 && X [(*kleft)] < imin)
@@ -37,6 +42,8 @@ static inline void GB_bracket_left
         (*kleft) = pleft ;
     }
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // GB_bracket_right
@@ -75,6 +82,8 @@ static inline void GB_bracket_right
 
 // Zombies are not tolerated.
 
+#if 0
+
 static inline void GB_bracket
 (
     const int64_t imin,         // search for entries in the range imin:imax
@@ -86,6 +95,7 @@ static inline void GB_bracket
     int64_t *kright_new
 )
 { 
+    ASSERT (DEAD_CODE) ;
 
     int64_t kleft  = kleft_in ;
     int64_t kright = kright_in ;
@@ -114,5 +124,6 @@ static inline void GB_bracket
     (*kleft_new ) = kleft ;
     (*kright_new) = kright ;
 }
+#endif
 
 #endif

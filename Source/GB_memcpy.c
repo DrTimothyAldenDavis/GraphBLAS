@@ -28,6 +28,7 @@ void GB_memcpy                  // parallel memcpy
     }
     else
     {
+GB_GOTCHA ;     // parallel GB_memcpy
         nthreads = GB_IMIN (nthreads, n / GB_CHUNK) ;
         size_t nchunks = 1 + (n / GB_CHUNK) ;
         GB_void *pdest = dest ;

@@ -6,8 +6,15 @@ fprintf ('test107: reduce with built-in and  user-defined terminal monoids\n') ;
 rng ('default') ;
 
 save = nthreads_get ;
-nthreads_list = [1 2 4 8 16 20 40 64 160] ;
+if (nargin < 1)
+    fulltest = false ;
+end
 nthreads_max = GB_mex_omp_max_threads ;
+if (fulltest)
+    nthreads_list = [1 2 4 8 16 20 40 64 160] ;
+else
+    nthreads_list = [1 nthreads_max 2*nthreads_max] ;
+end
 
 % clear all
 % delete 'GB_mex_reduce_terminal.mex*'
@@ -32,7 +39,11 @@ ntrials = 10 ;
 %-------------------------------------------------------------------------------
 % big matrix ...
 fprintf ('\nbig matrix, no early exit\n') ;
-n = 6000 ;
+if (fulltest)
+    n = 6000 ;
+else
+    n = 1000 ;
+end
 A = sparse (rand (n)) ;
 
 tic

@@ -522,6 +522,7 @@
                     int64_t kM = -1 ;
                     if (Ch_is_Mh)
                     { 
+GB_GOTCHA ;             // Ch is the same as Mh (a deep copy)
                         // Ch is the same as Mh (a deep copy)
                         ASSERT (Ch != NULL) ;
                         ASSERT (M->h != NULL) ;
