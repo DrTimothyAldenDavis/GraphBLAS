@@ -14,6 +14,9 @@
 
 // Any variant of the mask is handled: C=A'*B, C<M>=A'*B, and C<!M>=A'*B.
 
+// TODO: the C<M>=A'*B computation is now computed by GB_AxB_dot3,
+// which is faster.  Remove that option from this version.
+
 #include "GB_mxm.h"
 #include "GB_iterator.h"
 #ifndef GBCOMPACT
