@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "July 17, 2019 (10am) (DRAFT)" )
+set ( GraphBLAS_DATE "July 17, 2019 (9pm) (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 0 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -93,7 +93,7 @@ endif ( )
 if ( BUILD_GRB_STATIC_LIBRARY )
     message ( STATUS "Building both static and dynamic GraphBLAS libraries" )
 else ( )
-    message ( STATUS "Building dynamic GraphBLAS library onlye" )
+    message ( STATUS "Building dynamic GraphBLAS library only" )
 endif ( )
 
 #-------------------------------------------------------------------------------

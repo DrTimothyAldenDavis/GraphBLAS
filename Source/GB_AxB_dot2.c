@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2: compute C<M> = A'*B in parallel, in place
+// GB_AxB_dot2: compute C=A'*B or C<!M>=A'*B in parallel, in place
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -12,10 +12,8 @@
 // the result C in place, and thus this method can be done in parallel for the
 // single matrix computation C=A'*B.
 
-// Any variant of the mask is handled: C=A'*B, C<M>=A'*B, and C<!M>=A'*B.
-
-// TODO: the C<M>=A'*B computation is now computed by GB_AxB_dot3,
-// which is faster.  Remove that option from this version.
+// Two variants are handled: C=A'*B and C<!M>=A'*B.
+// The C<M>=A'*B computation is now computed by GB_AxB_dot3.
 
 #include "GB_mxm.h"
 #include "GB_iterator.h"
@@ -34,8 +32,13 @@
 GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
+#if 0
+    // this is now always true for dot2
     const bool Mask_comp,           // if true, use !M
+#else
+    #define Mask_comp true
+#endif
     const GrB_Matrix *Aslice,       // input matrices (already sliced)
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -112,10 +115,6 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
     }
 
     (*Chandle) = NULL ;
-
-    // The dot2 method handles any mask, complemented or not complemented.
-    // However, see GB_AxB_dot3 for C<M>=A'*B when the mask is present and
-    // not complemented.
 
     //--------------------------------------------------------------------------
     // compute # of entries in each vector of C

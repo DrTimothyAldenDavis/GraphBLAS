@@ -11,8 +11,8 @@ if (fulltest)
     nt = 3000 ;
 else
     % check if malloc debugging is enabled
-    d = stat ;
-    if (d)
+    debug_status = stat ;
+    if (debug_status)
         % exhaustive malloc debugging
         nt = 50 ; % was 500, which takes too long
     else

@@ -6,8 +6,8 @@ function test19b(fulltest)
 
 fprintf ('\ntest19b: GrB_assign and setElement, many pending computations\n') ;
 
-d = stat ;
-if (d)
+debug_status = stat ;
+if (debug_status)
     % turn off malloc debugging for this test
     debug_off
 end
@@ -187,7 +187,7 @@ for problem = 0:2
     GB_spec_compare (C2, C3) ;
 end
 
-if (d)
+if (debug_status)
     debug_on
 end
 fprintf ('\ntest19b: all tests passed\n') ;

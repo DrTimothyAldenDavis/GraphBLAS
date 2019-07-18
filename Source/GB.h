@@ -592,12 +592,12 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 #define GB_IMPLIES(p,q) (!(p) || (q))
 
 // for finding tests that trigger statement coverage
-#define GB_GOTCHA ;
-// #define GB_GOTCHA                                           \
-// {                                                           \
-//     printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
-//     GB_Global_abort_function ( ) ;                          \
-// }
+// #define GB_GOTCHA ;
+#define GB_GOTCHA                                           \
+{                                                           \
+    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
+    GB_Global_abort_function ( ) ;                          \
+}
 
 #define GB_HERE printf ("%2d: Here: " __FILE__ " line: %d\n",  \
     GB_OPENMP_THREAD_ID, __LINE__) ;

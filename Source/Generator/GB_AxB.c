@@ -132,6 +132,8 @@ GrB_Info GB_Adot2B
     int nthreads, int naslice, int nbslice
 )
 { 
+    // C<M>=A'*B now uses dot3
+    ASSERT (GB_IMPLIES (M != NULL, Mask_comp)) ;
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// disable; now using GB_AxB_dot3.
+
+#if 0
 {
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) collapse(2)
@@ -256,3 +259,6 @@
         }
     }
 }
+#else
+#error "dot2 no longer used for C<M>=A'*B"
+#endif

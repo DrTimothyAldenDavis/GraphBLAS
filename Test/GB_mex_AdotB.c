@@ -63,18 +63,33 @@ GrB_Info adotb_complex (GB_Context Context)
     GrB_Matrix Aslice [1] ;
     Aslice [0] = Aconj ;
 
-    info = GB_AxB_dot2 (&C, Mask,
-        false,      // mask not complemented
-        Aslice, B,
-        #ifdef MY_COMPLEX
-            My_Complex_plus_times,
-        #else
-            Complex_plus_times,
-        #endif
-        false,
-        &mask_applied,
-        // single thread:
-        1, 1, 1, Context) ;
+    if (Mask != NULL)
+    {
+        // C<M> = A'*B using dot product method
+        info = GB_AxB_dot3 (&C, Mask, Aconj, B,
+            #ifdef MY_COMPLEX
+                My_Complex_plus_times,
+            #else
+                Complex_plus_times,
+            #endif
+            false   /* flipxy */,
+            Context) ;
+        mask_applied = true ;
+    }
+    else
+    {
+        // C = A'*B using dot product method
+        info = GB_AxB_dot2 (&C, NULL, Aslice, B,
+            #ifdef MY_COMPLEX
+                My_Complex_plus_times,
+            #else
+                Complex_plus_times,
+            #endif
+            false   /* flipxy */,
+            &mask_applied,
+            // single thread:
+            1, 1, 1, Context) ;
+    }
 
     #ifdef MY_COMPLEX
     // convert back to run-time complex type
@@ -104,14 +119,26 @@ GrB_Info adotb (GB_Context Context)
     bool mask_applied = false ;
     GrB_Matrix Aslice [1] ;
     Aslice [0] = A ;
-    info = GB_AxB_dot2 (&C, Mask,
-        false,      // mask not complemented
-        Aslice, B,
-        semiring /* GxB_PLUS_TIMES_FP64 */,
-        false,
-        &mask_applied,
-        // single thread:
-        1, 1, 1, Context) ;
+
+    if (Mask != NULL)
+    {
+        // C<M> = A'*B using dot product method
+        info = GB_AxB_dot3 (&C, Mask, A, B,
+            semiring /* GxB_PLUS_TIMES_FP64 */,
+            false    /* flipxy */,
+            Context) ;
+        mask_applied = true ;
+    }
+    else
+    {
+        info = GB_AxB_dot2 (&C, NULL, Aslice, B,
+            semiring /* GxB_PLUS_TIMES_FP64 */,
+            false    /* flipxy */,
+            &mask_applied,
+            // single thread:
+            1, 1, 1, Context) ;
+    }
+
     GrB_free (&add) ;
     GrB_free (&semiring) ;
     return (info) ;

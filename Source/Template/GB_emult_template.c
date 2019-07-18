@@ -321,6 +321,7 @@
                         GB_BINARY_SEARCH (i, Ai, pA, pright, found) ;
                         if (found)
                         { 
+printf ("GOTCHA %s %d\n",  __FILE__, __LINE__) ;
 GB_GOTCHA ;                 // A(:,j) is much denser than B(:,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;
@@ -355,6 +356,7 @@ GB_GOTCHA ;                 // A(:,j) is much denser than B(:,j)
                         GB_BINARY_SEARCH (i, Bi, pB, pright, found) ;
                         if (found)
                         { 
+printf ("GOTCHA %s %d\n",  __FILE__, __LINE__) ;
 GB_GOTCHA ;                 // B(:,j) is much denser than A(:,j)
                             #if defined ( GB_PHASE_1_OF_2 )
                             cjnz++ ;

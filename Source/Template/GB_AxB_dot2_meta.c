@@ -57,16 +57,22 @@
         const int64_t mnvec = M->nvec ;
         bool M_is_hyper = GB_IS_HYPER (M) ;
 
+        ASSERT (Mask_comp) ;
+
+#if 0
         if (Mask_comp)
         { 
+#endif
             // C<!M> = A'*B via dot products
             #include "GB_AxB_dot2_compmask.c"
+#if 0
         }
         else
         { 
             // C<M> = A'*B via dot products
             #include "GB_AxB_dot2_mask.c"
         }
+#endif
     }
 }
 

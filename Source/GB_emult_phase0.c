@@ -143,12 +143,10 @@ GrB_Info GB_emult_phase0        // find vectors in C for C=A.*B or C<M>=A.*B
                     nvec = GB_IMIN (nvec, Mnvec) ;
                     if (nvec == Anvec)
                     { 
-GB_GOTCHA ;             // nvec == Anvec
                         Ch = Ah ;
                     }
                     else if (nvec == Bnvec)
                     { 
-GB_GOTCHA ;             // nvec == Bnvec
                         Ch = Bh ;
                     }
                     else // (nvec == Mnvec)
@@ -189,7 +187,6 @@ GB_GOTCHA ;             // nvec == Bnvec
                     // Ch = smaller of Mh, Ah
                     if (Anvec <= Mnvec)
                     { 
-GB_GOTCHA ;             // (Anvec <= Mnvec)
                         Ch = Ah ;
                     }
                     else
@@ -226,7 +223,6 @@ GB_GOTCHA ;             // (Anvec <= Mnvec)
 
                     if (Bnvec <= Mnvec)
                     { 
-GB_GOTCHA ;             // (Bnvec <= Mnvec)
                         Ch = Bh ;
                     }
                     else
@@ -344,7 +340,12 @@ GB_GOTCHA ;             // (Bnvec <= Mnvec)
 
     int64_t Cnvec ;
 
-    if (Ch == Ah)
+    if (Ch == NULL)
+    {
+        // C is standard
+        Cnvec = n ;
+    }
+    else if (Ch == Ah)
     { 
         Cnvec = Anvec ;
     }
@@ -352,14 +353,9 @@ GB_GOTCHA ;             // (Bnvec <= Mnvec)
     { 
         Cnvec = Bnvec ;
     }
-    else if (Ch == Mh)
+    else // (Ch == Mh)
     { 
         Cnvec = Mnvec ;
-    }
-    else // Ch == NULL and C is standard
-    { 
-GB_GOTCHA ;     // Ch == NULL
-        Cnvec = n ;
     }
 
     //--------------------------------------------------------------------------
@@ -375,12 +371,10 @@ GB_GOTCHA ;     // Ch == NULL
 
     if (M_is_hyper && Ch != Mh)
     {
-GB_GOTCHA ;     // (M_is_hyper && Ch != Mh)
         // allocate C_to_M
         GB_MALLOC_MEMORY (C_to_M, Cnvec, sizeof (int64_t)) ;
         if (C_to_M == NULL)
         { 
-GB_GOTCHA ;         // M_is_hyper && Ch != Mh
             // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -392,7 +386,6 @@ GB_GOTCHA ;         // M_is_hyper && Ch != Mh
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int64_t k = 0 ; k < Cnvec ; k++)
         { 
-GB_GOTCHA ;         // M_is_hyper && Ch != Mh
             int64_t pM, pM_end, kM = 0 ;
             int64_t j = Ch [k] ;
             GB_lookup (true, Mh, Mp, &kM, Mnvec-1, j, &pM, &pM_end) ;

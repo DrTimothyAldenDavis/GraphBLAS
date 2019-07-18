@@ -204,8 +204,12 @@ GrB_Info GB_AxB_Gustavson_builtin
 GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix M,             // mask matrix for C<M>=A'*B or C<!M>=A'*B
+    const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
+#if 0
+    // for dot2, if the mask M is present, this is now always true.
+    // dot3 is used for C<M>=A'*B
     const bool Mask_comp,           // if true, use !M
+#endif
     const GrB_Matrix *Aslice,       // input matrices (already sliced)
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B

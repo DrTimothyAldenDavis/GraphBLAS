@@ -1975,7 +1975,7 @@ void mexFunction
     bool mask_applied = false ;
     GrB_Matrix Aslice [1] ;
     Aslice [0] = HugeRow ;
-    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, Aslice, HugeRow,
+    OK (GB_AxB_dot2 (&HugeMatrix, NULL, Aslice, HugeRow,
         GxB_PLUS_TIMES_FP64, false, &mask_applied, 1, 1, 1, Context)) ;
 
     GxB_fprint (HugeMatrix, GB3, ff) ;

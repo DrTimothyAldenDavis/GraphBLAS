@@ -7,6 +7,8 @@ function test24(fulltest)
 
 [accum_ops, ~, add_ops, classes, ~, ~] = GB_spec_opsall ;
 
+rng ('default') ;
+
 if (nargin < 1)
     fulltest = 0 ;
 end

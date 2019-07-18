@@ -18,6 +18,7 @@ for trial = 1:ntrials
     nthreads_and_chunk = threads {trial} ;
     nthreads = nthreads_and_chunk (1) ;
     chunk    = nthreads_and_chunk (2) ;
+    nthreads_set (nthreads, chunk) ;
 
     if (nargin == 0)
         f = fopen ('log.txt', 'a') ;
