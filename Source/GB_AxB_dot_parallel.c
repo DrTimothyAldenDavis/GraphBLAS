@@ -164,7 +164,6 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
 
     if (bnvec > 32 * nthreads || bnvec == 0)
     { 
-GB_GOTCHA ; // just slice B
         // just slice B
         nbslice = 32 * nthreads ;
         naslice = 1 ;

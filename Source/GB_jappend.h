@@ -103,6 +103,7 @@ static inline GrB_Info GB_jappend
                 Context) ;
             if (info != GrB_SUCCESS)
             { 
+                // out of memory
                 return (info) ;
             }
         }

@@ -7,7 +7,7 @@ function logstat (testscript, threads)
 [debug, compact, malloc, covered] = GB_mex_debug ;
 
 if (nargin < 2)
-    % [nthreads chunk] = nthreads_get ;
+    % by default, use 4 threads and a tiny chunk size of 1
     threads {1} = [4 1] ;
 end
 
@@ -40,7 +40,7 @@ for trial = 1:ntrials
         return
     end
 
-    fprintf ('\n======== test: %-8s ', testscript) ;
+    fprintf ('\n======== test: %-10s ', testscript) ;
 
     if (debug)
         fprintf (' [debug]') ;
@@ -57,15 +57,15 @@ for trial = 1:ntrials
     fprintf (' [nthreads: %d chunk: %g]', nthreads, chunk) ;
     fprintf ('\n') ;
 
-    t1 = cputime ;
+    t1 = tic ;
     runtest (testscript)
-    t = cputime - t1 ;
+    t = toc (t1) ;
 
     f = fopen ('log.txt', 'a') ;
 
     s = datestr (now) ;
-    fprintf (   '%s %-7s %7.1f sec ', s, testscript, t) ;
-    fprintf (f, '%s %-7s %7.1f sec ', s, testscript, t) ;
+    fprintf (   '%s %-10s %7.1f sec ', s, testscript, t) ;
+    fprintf (f, '%s %-10s %7.1f sec ', s, testscript, t) ;
 
     if (~isempty (strfind (pwd, 'Tcov')))
         global GraphBLAS_debug GraphBLAS_gbcov

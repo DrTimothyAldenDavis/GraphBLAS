@@ -11,6 +11,21 @@
 // method.  This method is used by GrB_mxm, GrB_vxm, and GrB_mxv.  For both of
 // the latter two methods, B on input will be an nrows-by-1 column vxector.
 
+// The strategy is to "slice" (or partition) B, as B = [B0 B1 ... B(t-1)] if
+// there are t threads.  Then each thread k computes C(k) = A*B(k), and then
+// the result is concatenated, as C = [C0 C1 ... C(t-1)].
+
+// Each thread k computes an independent output matrix C(k), doing both its
+// analysis and numeric phases.
+
+// This strategy works well for OpenMP, but it could also be written in a
+// purely inspector+executor style, like the GB_AxB_dot* methods.  Those
+// methods do the analysis in parallel, and first determine the size of the
+// output matrix C.  Then a parallel cumulative sum is computed, and the entire
+// output matrix is allocated.  Then each task of the the numeric phase
+// computes its part of the result C, without the need for any memory
+// allocation by individual threads.
+
 // This function, and the matrices C, M, A, and B are all CSR/CSC agnostic.
 // For this discussion, suppose they are CSC, with vlen = # of rows, and vdim =
 // # of columns.
@@ -43,7 +58,10 @@
 // multiple submatrix multiplications, and uses different methods on each
 // submatrix, then AxB_method_used is the method chosen by thread zero.
 
-// FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods.
+// FUTURE:: hash-based method, and multi-phase Gustavson and Heap methods,
+// which do not do any memory allocations in parallel, but instead use an
+// inspector+executur style (like GB_AxB_dot*).  This should work better on the
+// GPU.
 
 #include "GB_mxm.h"
 #include "GB_Sauna.h"
@@ -338,6 +356,19 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
     // compute each slice of C = A*B with optional mask M
     //--------------------------------------------------------------------------
+
+    // This is the only parallel region in which each thread allocates memory.
+    // The memory space is not known until the thread determines the size of
+    // its own output, in its analysis phase.  Note the "reduction(&&:ok)"
+    // clause.  This is the only place where a clause like that apppears in
+    // SuiteSparse:GraphBLAS.  This could be removed if C=A*B were to be
+    // computed with an inspector+exector style of algorithm.
+
+    // B has been "sliced"; in MATLAB notation, B = [B0 B1 B2 ... B(t-1] if
+    // there are t threads.  Then each k thread computes its own Ck = A*Bk,
+    // and the results are concatenated below, as C = [C0 C1 ... C(t-1)].
+    // If a 'fine slice' was used for B, then C = C0+C1+...+C(t-1) must be
+    // computed.
 
     // for all threads in parallel, with no synchronization except for these
     // boolean reductions:

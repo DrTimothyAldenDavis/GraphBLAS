@@ -314,14 +314,6 @@ GrB_Info GB_selector
         // transplant C back into A
         //----------------------------------------------------------------------
 
-        //    printf ("check for prune\n") ;
-        //    for (int64_t k = 0 ; k < anvec ; k++)
-        //    {
-        //        printf ("  k "GBd" j "GBd" Cp [k] = "GBd"\n",
-        //            k, (A->h == NULL) ? k : A->h [k], Cp [k]) ;
-        //    }
-        //    printf ("  Cp [anvec] "GBd"\n", Cp [anvec]) ;
-
         if (A->is_hyper && C_nvec_nonempty < anvec)
         {
             // prune empty vectors from Ah and Ap
@@ -384,7 +376,7 @@ GrB_Info GB_selector
             GB_MALLOC_MEMORY (Ch, aplen, sizeof (int64_t)) ;
             if (Ch == NULL)
             { 
-                // out of memoroy
+                // out of memory
                 GB_FREE_ALL ;
                 return (GB_OUT_OF_MEMORY) ;
             }

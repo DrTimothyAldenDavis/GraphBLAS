@@ -1,10 +1,10 @@
 function test61
-%TEST61 performance test of GrB_eMult
+%TEST61 performance test of GrB_eWiseMult
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\n----------------------------- eMult performance tests\n') ;
+fprintf ('\n----------------------------- eWiseMult performance tests\n') ;
 
 [save save_chunk] = nthreads_get ;
 chunk = 4096 ;

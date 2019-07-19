@@ -1,5 +1,5 @@
 function test123
-%TEST123
+%TEST123 test MIS on large matrix
 
 fprintf ('test123: test MIS on large matrix\n') ;
 

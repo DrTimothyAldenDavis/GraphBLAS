@@ -451,7 +451,6 @@
                                 cast_M (&mij, Mx +(pM*msize), 0) ;
                                 if (mij)
                                 { 
-GB_GOTCHA ;                         // Z(:,j) is much denser than M(:,j)
                                     int64_t i = Mi [pM] ;
                                     int64_t pright = pZ_end - 1 ;
                                     bool found ;
@@ -561,7 +560,6 @@ GB_GOTCHA ;                         // Z(:,j) is much denser than M(:,j)
                                 cast_M (&mij, Mx +(pM*msize), 0) ;
                                 if (mij)
                                 { 
-GB_GOTCHA ;                         // C(:,j) is much denser than M(:,j)
                                     int64_t i = Mi [pM] ;
                                     int64_t pright = pC_end - 1 ;
                                     bool found ;
@@ -580,7 +578,6 @@ GB_GOTCHA ;                         // C(:,j) is much denser than M(:,j)
 
                             for ( ; pC < pC_end ; pC++)
                             { 
-GB_GOTCHA ;                     // M(:,j) is much denser than C(:,j)
                                 int64_t i = Ci [pC] ;
                                 bool mij = false ;
                                 int64_t pright = pM_end - 1 ;

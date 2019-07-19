@@ -37,6 +37,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     //--------------------------------------------------------------------------
 
     #ifdef GB_DEBUG
+    // only one thread does this entire function
     GB_Context Context = NULL ;
     #endif
     ASSERT (Chandle != NULL) ;
@@ -218,7 +219,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
             done = true ;
             if (info != GrB_SUCCESS)
             { 
-                // out of memory or invalid semiring
+                // out of memory
                 GB_HEAP_FREE_WORK ;
                 return (info) ;
             }

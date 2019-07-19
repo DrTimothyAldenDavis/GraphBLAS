@@ -198,11 +198,10 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             }
             else if (!GB_op_is_second (C->Pending->op, ctype))
             { 
-GB_GOTCHA ;     // prior op is not SECOND
-                // setElement uses an implicit SECOND_Ctype operator, which
-                // must match the operator of the prior pending tuples.
-                // If it doesn't match, prior pending tuples must be
-                // assembled first.
+                // prior op is not SECOND: setElement uses an implicit
+                // SECOND_Ctype operator, which must match the operator of the
+                // prior pending tuples.  If it doesn't match, prior pending
+                // tuples must be assembled first.
                 wait = true ;
             }
         }

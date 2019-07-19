@@ -7,7 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// Select a saxpy method for each thread: Gustavons or heap-based method
+// Select a saxpy method for each thread: Gustavon's or heap-based method.
+// This method is called by GB_AxB_saxpy_parallel.
 
 #include "GB_mxm.h"
 #include "GB_iterator.h"
@@ -29,6 +30,7 @@ void GB_AxB_select                  // select method for A*B
     //--------------------------------------------------------------------------
 
     #ifdef GB_DEBUG
+    // only one thread does this entire function
     GB_Context Context = NULL ;
     #endif
     ASSERT_OK (GB_check (A, "A for AxB select", GB0)) ;

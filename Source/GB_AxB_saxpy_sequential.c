@@ -7,8 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-// sequential matrix-matrix multiply using a saxpy-based method.  See
-// GB_AxB_parallel for a description of the arguments.
+// Sequential matrix-matrix multiply using a saxpy-based method.  See
+// GB_AxB_parallel for a description of the arguments.  Only a single thread
+// does this work.
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
@@ -36,6 +37,7 @@ GrB_Info GB_AxB_saxpy_sequential    // single-threaded C<M>=A*B
     //--------------------------------------------------------------------------
 
     #ifdef GB_DEBUG
+    // only one thread does this entire function
     GB_Context Context = NULL ;
     #endif
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL

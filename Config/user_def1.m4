@@ -99,12 +99,12 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
         if (GB_AxB_method == GxB_AxB_GUSTAVSON)
         {
             if (GB_flipxy)
-            { 
+            {
                 GB_info = GB_AxB_user_gus_$1_flipxy
                     (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
             }
             else
-            { 
+            {
                 GB_info = GB_AxB_user_gus_$1
                     (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
             }
@@ -115,13 +115,13 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
             if (GB_Aslice == NULL)
             {
                 if (GB_flipxy)
-                { 
+                {
                     GB_info = GB_AxB_user_dot3_$1_flipxy
                         (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
                             GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
                 }
                 else
-                { 
+                {
                     GB_info = GB_AxB_user_dot3_$1
                         (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
                             GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
@@ -130,7 +130,7 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
             else
             {
                 if (GB_flipxy)
-                { 
+                {
                     GB_info = GB_AxB_user_dot_$1_flipxy
                         (*GB_Chandle, GB_M, GB_mask_comp,
                         GB_Aslice, false,
@@ -138,7 +138,7 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
                         GB_nbslice) ;
                 }
                 else
-                { 
+                {
                     GB_info = GB_AxB_user_dot_$1
                         (*GB_Chandle, GB_M, GB_mask_comp,
                         GB_Aslice, false,
@@ -150,13 +150,13 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
         else // (GB_AxB_method == GxB_AxB_HEAP)
         {
             if (GB_flipxy)
-            { 
+            {
                 GB_info = GB_AxB_user_heap_$1_flipxy
                     (GB_Chandle, GB_M, GB_A, false, GB_B, false,
                     GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
             }
             else
-            { 
+            {
                 GB_info = GB_AxB_user_heap_$1
                     (GB_Chandle, GB_M, GB_A, false, GB_B, false,
                     GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;

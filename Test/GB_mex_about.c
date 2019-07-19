@@ -740,9 +740,9 @@ void mexFunction
         OK (GxB_print (Aslice [0], GxB_SILENT)) ;
 
         int64_t a1save = Aslice [0]->nvec ;
-        Aslice [0]->nvec = 999999 ; 
+        Aslice [0]->nvec = 999999 ;
         ERR (GxB_print (Aslice [0], GxB_SHORT)) ;
-        Aslice [0]->nvec = a1save ; 
+        Aslice [0]->nvec = a1save ;
         OK (GxB_print (Aslice [0], GxB_SILENT)) ;
 
         Aslice [0]->i_shallow = false ;
@@ -759,7 +759,37 @@ void mexFunction
         GrB_free (&Aslice [0]) ;
         GrB_free (&Aslice [1]) ;
     }
-    
+
+    //--------------------------------------------------------------------------
+    // Sauna
+    //--------------------------------------------------------------------------
+
+    GrB_Desc_Value method = GxB_AxB_GUSTAVSON ;
+    info = GrB_SUCCESS ;
+    while (info == GrB_SUCCESS)
+    {
+        info = GB_Sauna_acquire (1, &id, &method, Context) ;
+    }
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (info) ;
+    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+
+    //--------------------------------------------------------------------------
+    // pending tuples
+    //--------------------------------------------------------------------------
+
+    GrB_free (&A) ;
+    OK (GrB_Matrix_new (&A, GrB_FP64, 8, 8)) ;
+
+    GrB_Index I [1] = { 0 }, J [1] = { 0 } ;
+    OK (GrB_assign (A, NULL, GrB_PLUS_FP64, (double) 2, I, 1, J, 1, NULL)) ;
+    GxB_print (A, GxB_COMPLETE) ;
+    OK (GrB_Matrix_setElement (A, (double) 3, 0, 0)) ;
+    GxB_print (A, GxB_COMPLETE) ;
+    OK (GrB_Matrix_nvals (&nvals, A)) ;
+    GxB_print (A, GxB_COMPLETE) ;
+
     GrB_free (&A) ;
 
     //--------------------------------------------------------------------------

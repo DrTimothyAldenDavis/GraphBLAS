@@ -1,4 +1,4 @@
-% function test126
+function test126
 %TEST126 test GrB_reduce to vector on a very sparse matrix 
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

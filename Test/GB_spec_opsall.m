@@ -134,7 +134,7 @@ end
 
 selops = { 'tril', 'triu', 'diag', 'offdiag', ...
     'nonzero',  'eq_zero',  'gt_zero',  'ge_zero',  'lt_zero',  'le_zero', ...
-    'ne_thunk', 'eq_thunk', 'gt_thunk', 'ge_thunk', 'lt_thunk', 'le_thunk' } ;
+    'ne_thunk', 'eq_thunk', 'gt_thunk', 'ge_thunk', 'lt_thunk', 'le_thunk' }' ;
 
 % fprintf ('semirings: %d\n', n) ;
 

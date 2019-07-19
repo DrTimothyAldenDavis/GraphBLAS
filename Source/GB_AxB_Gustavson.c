@@ -12,6 +12,9 @@
 
 // Does not log an error; returns GrB_SUCCESS, GrB_OUT_OF_MEMORY, or GrB_PANIC.
 
+// This work is done by a single thread, which is computing a submatrix of the
+// final result.  Parallelism is handled in GB_AxB_saxpy_parallel.
+
 #include "GB_mxm.h"
 #include "GB_Sauna.h"
 #include "GB_jappend.h"
@@ -48,6 +51,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     //--------------------------------------------------------------------------
 
     #ifdef GB_DEBUG
+    // only one thread does this entire function
     GB_Context Context = NULL ;
     #endif
     ASSERT (Chandle != NULL) ;
@@ -207,6 +211,9 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         ASSERT (M->vlen == C->vlen && M->vdim == C->vdim) ;
     }
 
+    // Gustavson's method cannot fail at this point.  C and the Sauna workspace
+    // have already been allocated above.
+
     //--------------------------------------------------------------------------
     // compute C = A*B for built-in types and operators
     //--------------------------------------------------------------------------
@@ -228,6 +235,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
     info = GB_AxB_Gustavson_builtin (C, M, A, A_is_pattern,
         B, B_is_pattern, semiring, flipxy, Sauna) ;
+    ASSERT (info == GrB_SUCCESS || info == GrB_NO_VALUE) ;
     if (info == GrB_SUCCESS)
     { 
         // C = A*B has been done via a hard-coded case
@@ -236,12 +244,6 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         ASSERT_SAUNA_IS_RESET ;
         (*mask_applied) = (M != NULL) ;
         return (GrB_SUCCESS) ;
-    }
-    else if (info != GrB_NO_VALUE)
-    { 
-        // error condition
-        GB_GOTCHA ;     // Gustavson method failed
-        return (info) ;
     }
 
 #endif

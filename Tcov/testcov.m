@@ -19,5 +19,6 @@ catch me
     rethrow (me) ;
 end
 
-t = toc (all_tcov_time)
+t = toc (all_tcov_time) ;
 fprintf ('\ntestcov: all tests passed, total time %g hours\n', t / 3600) ;
+

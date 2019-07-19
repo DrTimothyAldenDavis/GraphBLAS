@@ -1,7 +1,6 @@
-% function test93
-%TEST93 test dpagerank and ipagerank
+function test93b
+%TEST93B test dpagerank and ipagerank
 
-gbcover
 rng ('default') ;
 addpath ('../Test') ;
 addpath ('../Test/spok') ;
@@ -93,6 +92,6 @@ n = 10 ;
 
 end
 
-fprintf ('test93: all tests passed\n') ;
-
 %}
+
+fprintf ('test93b: all tests passed\n') ;

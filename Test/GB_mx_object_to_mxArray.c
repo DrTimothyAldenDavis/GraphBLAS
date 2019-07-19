@@ -37,7 +37,6 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     const bool create_struct        // if true, then return a struct
 )
 {
-    
     GB_WHERE ("GB_mx_object_to_mxArray") ;
 
     // get the inputs

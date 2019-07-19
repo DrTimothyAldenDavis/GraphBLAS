@@ -10,14 +10,28 @@ if (nargin < 1)
     fulltest = 0 ;
 end
 
-if (fulltest)
+if (fulltest == 2)
     fprintf ('test18 ----------lengthy tests of GrB_eWiseAdd and eWiseMult\n') ;
     k1test = 1:length(classes) ;
-else
-    fprintf ('test18 ------------quick tests of GrB_eWiseAdd and eWiseMult\n') ;
-    % TODO was:
+    k4test = randi([0,length(bin_ops)])
+    k6list = [false true] ;
+    k7list = [false true] ;
+    k8list = 0:1 ;
+elseif (fulltest == 1)
+    fprintf ('test18 ------------tests of GrB_eWiseAdd and eWiseMult\n') ;
     % k1test = [1 2 4 10 11] ;
     k1test = [ 1 2 11 ] ;
+    k4test = randi([0,length(bin_ops)])
+    k6list = [false true] ;
+    k7list = [false true] ;
+    k8list = 0:1 ;
+else
+    fprintf ('test18 ------------quick tests of GrB_eWiseAdd and eWiseMult\n') ;
+    k1test = [ 1 2 11 ] ;
+    k4test = 0 ;
+    k6list = [false] ;
+    k7list = [false] ;
+    k8list = 1 ;
 end
 
 % TODO was:
@@ -50,110 +64,110 @@ for k1 = k1test % 1:length (classes)
         op.opclass = clas ;
         fprintf (' binary op: [ %s %s ] ', binop, clas) ;
 
-        for k4 = randi([0,length(bin_ops)]) % 0:length(bin_ops)
+        % try some matrices
+        for m = mlist
+            for n = nlist
 
-            clear accum
-            if (k4 == 0)
-                accum = ''  ;
-                nclasses = 1 ;
-                fprintf ('accum: [ none ]') ;
-            else
-                accum.opname = bin_ops {k4}  ;
-                nclasses = length (classes) ;
-                fprintf ('accum: %s ', accum.opname) ;
-            end
+                Amat = sparse (100 * sprandn (m,n, 0.2)) ;
+                Bmat = sparse (100 * sprandn (m,n, 0.2)) ;
+                Cmat = sparse (100 * sprandn (m,n, 0.2)) ;
+                w = sparse (100 * sprandn (m,1, 0.2)) ;
+                uvec = sparse (100 * sprandn (m,1, 0.2)) ;
+                vvec = sparse (100 * sprandn (m,1, 0.2)) ;
 
-            for k5 = randi ([1 nclasses]) % nclasses
+                Maskmat = sprandn (m,n,0.2) ~= 0 ;
+                maskvec = sprandn (m,1,0.2) ~= 0 ;
 
-                if (k4 > 0)
-                    accum.opclass = classes {k5}  ;
-                    fprintf ('%s\n', accum.opclass) ;
-                else
-                    fprintf ('\n') ;
+                % create a very sparse matrix mask
+                Maskmat2 = sparse (m,n) ;
+                T = Amat .* Bmat ;
+                [i j x] = find (T) ;
+                if (length (i) > 0)
+                    Maskmat2 (i(1), j(1)) = 1 ;
                 end
+                T = (Amat ~= 0) & (Bmat == 0) ;
+                [i j x] = find (T) ;
+                if (length (i) > 0)
+                    Maskmat2 (i(1), j(1)) = 1 ;
+                end
+                T = (Amat == 0) & (Bmat ~= 0) ;
+                [i j x] = find (T) ;
+                if (length (i) > 0)
+                    Maskmat2 (i(1), j(1)) = 1 ;
+                end
+                clear T i j x
 
-                for Mask_complement = [false true]
+                % create a very sparse vector mask
+                maskvec2 = sparse (m,1) ;
+                T = uvec .* vvec ;
+                [i j x] = find (T) ;
+                if (length (i) > 0)
+                    maskvec2 (i(1), j(1)) = 1 ;
+                end
+                T = (uvec ~= 0) & (vvec == 0) ;
+                [i j x] = find (T) ;
+                if (length (i) > 0)
+                    maskvec2 (i(1), j(1)) = 1 ;
+                end
+                T = (uvec == 0) & (vvec ~= 0) ;
+                [i j x] = find (T) ;
+                if (length (i) > 0)
+                    maskvec2 (i(1), j(1)) = 1 ;
+                end
+                clear T i j x
 
-                    if (Mask_complement)
-                        dnn.mask = 'scmp' ;
-                        dtn.mask = 'scmp' ;
-                        dnt.mask = 'scmp' ;
-                        dtt.mask = 'scmp' ;
+                ATmat = Amat' ;
+                BTmat = Bmat' ;
+
+                for k4 = k4test
+
+                    clear accum
+                    if (k4 == 0)
+                        accum = ''  ;
+                        nclasses = 1 ;
+                        fprintf ('accum: [ none ]') ;
                     else
-                        dnn.mask = 'default' ;
-                        dtn.mask = 'default' ;
-                        dnt.mask = 'default' ;
-                        dtt.mask = 'default' ;
+                        accum.opname = bin_ops {k4}  ;
+                        nclasses = length (classes) ;
+                        fprintf ('accum: %s ', accum.opname) ;
                     end
 
-                    for C_replace = [false true]
+                    for k5 = randi ([1 nclasses]) % nclasses
 
-                        if (C_replace)
-                            dnn.outp = 'replace' ;
-                            dtn.outp = 'replace' ;
-                            dnt.outp = 'replace' ;
-                            dtt.outp = 'replace' ;
+                        if (k4 > 0)
+                            accum.opclass = classes {k5}  ;
+                            fprintf ('%s\n', accum.opclass) ;
                         else
-                            dnn.outp = 'default' ;
-                            dtn.outp = 'default' ;
-                            dnt.outp = 'default' ;
-                            dtt.outp = 'default' ;
+                            fprintf ('\n') ;
                         end
 
-                        % try some matrices
-                        for m = mlist
-                            for n = nlist
+                        for Mask_complement = k6list
 
-                                Amat = sparse (100 * sprandn (m,n, 0.2)) ;
-                                Bmat = sparse (100 * sprandn (m,n, 0.2)) ;
-                                Cmat = sparse (100 * sprandn (m,n, 0.2)) ;
-                                w = sparse (100 * sprandn (m,1, 0.2)) ;
-                                uvec = sparse (100 * sprandn (m,1, 0.2)) ;
-                                vvec = sparse (100 * sprandn (m,1, 0.2)) ;
+                            if (Mask_complement)
+                                dnn.mask = 'scmp' ;
+                                dtn.mask = 'scmp' ;
+                                dnt.mask = 'scmp' ;
+                                dtt.mask = 'scmp' ;
+                            else
+                                dnn.mask = 'default' ;
+                                dtn.mask = 'default' ;
+                                dnt.mask = 'default' ;
+                                dtt.mask = 'default' ;
+                            end
 
-                                Maskmat = sprandn (m,n,0.2) ~= 0 ;
-                                maskvec = sprandn (m,1,0.2) ~= 0 ;
+                            for C_replace = k7list
 
-                                % create a very sparse matrix mask
-                                Maskmat2 = sparse (m,n) ;
-                                T = Amat .* Bmat ;
-                                [i j x] = find (T) ;
-                                if (length (i) > 0)
-                                    Maskmat2 (i(1), j(1)) = 1 ;
+                                if (C_replace)
+                                    dnn.outp = 'replace' ;
+                                    dtn.outp = 'replace' ;
+                                    dnt.outp = 'replace' ;
+                                    dtt.outp = 'replace' ;
+                                else
+                                    dnn.outp = 'default' ;
+                                    dtn.outp = 'default' ;
+                                    dnt.outp = 'default' ;
+                                    dtt.outp = 'default' ;
                                 end
-                                T = (Amat ~= 0) & (Bmat == 0) ;
-                                [i j x] = find (T) ;
-                                if (length (i) > 0)
-                                    Maskmat2 (i(1), j(1)) = 1 ;
-                                end
-                                T = (Amat == 0) & (Bmat ~= 0) ;
-                                [i j x] = find (T) ;
-                                if (length (i) > 0)
-                                    Maskmat2 (i(1), j(1)) = 1 ;
-                                end
-                                clear T i j x
-
-                                % create a very sparse vector mask
-                                maskvec2 = sparse (m,1) ;
-                                T = uvec .* vvec ;
-                                [i j x] = find (T) ;
-                                if (length (i) > 0)
-                                    maskvec2 (i(1), j(1)) = 1 ;
-                                end
-                                T = (uvec ~= 0) & (vvec == 0) ;
-                                [i j x] = find (T) ;
-                                if (length (i) > 0)
-                                    maskvec2 (i(1), j(1)) = 1 ;
-                                end
-                                T = (uvec == 0) & (vvec ~= 0) ;
-                                [i j x] = find (T) ;
-                                if (length (i) > 0)
-                                    maskvec2 (i(1), j(1)) = 1 ;
-                                end
-                                clear T i j x
-
-                                ATmat = Amat' ;
-                                BTmat = Bmat' ;
 
                                 for A_is_hyper = 0:1
                                 for A_is_csc   = 0:1
@@ -163,7 +177,7 @@ for k1 = k1test % 1:length (classes)
                                 for C_is_hyper = 0 % 0:1
                                 for C_is_csc   = 0 % 0:1
 
-                                for native = 0:1
+                                for native = k8list
 
                                 clear A
                                 A.matrix = Amat ;

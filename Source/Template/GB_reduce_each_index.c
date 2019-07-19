@@ -33,11 +33,9 @@
     bool     *Marks [nth] ;
     bool ok = true ;
 
-    #pragma omp parallel for num_threads(nth) schedule(static) \
-        reduction(&&:ok)
+    // This does not need to be parallel.  The calloc does not take O(n) time.
     for (int tid = 0 ; tid < nth ; tid++)
     { 
-        // each thread allocates its own workspace
         GB_MALLOC_MEMORY (Works [tid], n, zsize) ;
         GB_CALLOC_MEMORY (Marks [tid], n, sizeof (bool)) ;
         ok = ok && (Works [tid] != NULL && Marks [tid] != NULL) ;
@@ -225,8 +223,6 @@
 
             // Some tasks may be completely empty and thus take no time at all;
             // 256 tasks per thread are created for better load balancing.
-
-GB_GOTCHA ;     // parallel
 
             int ntasks = 256 * nthreads ;
             ntasks = GB_IMIN (ntasks, n) ;
