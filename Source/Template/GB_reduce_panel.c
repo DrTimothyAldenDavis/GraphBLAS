@@ -20,22 +20,24 @@
     {
 
         //----------------------------------------------------------------------
-        // single thread
+        // load the Panel with the first entries
         //----------------------------------------------------------------------
 
         GB_ATYPE Panel [GB_PANEL] ;
-
-        // load the first entries into the panel
         int64_t first_panel_size = GB_IMIN (GB_PANEL, anz) ;
         for (int64_t k = 0 ; k < first_panel_size ; k++)
         {
             Panel [k] = Ax [k] ;
         }
+
         #if GB_HAS_TERMINAL
         int panel_count = 0 ;
         #endif
 
-        // reduce the rest of the entries into the panel
+        //----------------------------------------------------------------------
+        // reduce all entries to the Panel
+        //----------------------------------------------------------------------
+
         for (int64_t p = GB_PANEL ; p < anz ; p += GB_PANEL)
         {
             if (p + GB_PANEL > anz)
@@ -55,28 +57,30 @@
                     // Panel [k] = op (Panel [k], Ax [p+k]) ;
                     GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                 }
-                // check for early exit, if the monoid has a terminal value
                 #if GB_HAS_TERMINAL
-                panel_count++ ;
-                if (panel_count == 256)
+                panel_count-- ;
+                if (panel_count <= 0)
                 {
                     // check for early exit only every 256 panels
-                    panel_count = 0 ;
-                    bool early = false ;
+                    panel_count = 256 ;
+                    int count = 0 ;
                     for (int64_t k = 0 ; k < GB_PANEL ; k++)
                     {
-                        if (Panel [k] == GB_TERMINAL_VALUE)
-                        { 
-GB_GOTCHA ;                 // early exit (1 thread)
-                            // early exit (1 thread)
-                            early = true ;
-                        }
+                        count += (Panel [k] == GB_TERMINAL_VALUE) ;
                     }
-                    if (early) break ;
+                    if (count > 0)
+                    { 
+                        break ;
+                    }
                 }
                 #endif
             }
         }
+
+        //----------------------------------------------------------------------
+        // s = reduce (Panel)
+        //----------------------------------------------------------------------
+
         s = Panel [0] ;
         for (int64_t k = 1 ; k < first_panel_size ; k++)
         { 
@@ -94,6 +98,13 @@ GB_GOTCHA ;                 // early exit (1 thread)
 
         GB_CTYPE W [ntasks] ;
         ASSERT (ntasks <= anz) ;
+
+        //----------------------------------------------------------------------
+        // all tasks share a single early_exit flag
+        //----------------------------------------------------------------------
+
+        // If this flag gets set, all tasks can terminate early
+
         #if GB_HAS_TERMINAL
         bool early_exit = false ;
         #endif
@@ -105,9 +116,20 @@ GB_GOTCHA ;                 // early exit (1 thread)
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (int tid = 0 ; tid < ntasks ; tid++)
         {
+
+            //------------------------------------------------------------------
+            // determine the work for this task
+            //------------------------------------------------------------------
+
+            // Task tid reduces Ax [pstart:pend-1] to the scalar W [tid]
+
             int64_t pstart, pend ;
             GB_PARTITION (pstart, pend, anz, tid, ntasks) ;
             GB_ATYPE t = Ax [pstart] ;
+
+            //------------------------------------------------------------------
+            // skip this task if the terminal value has already been reached
+            //------------------------------------------------------------------
 
             #if GB_HAS_TERMINAL
             // check if another task has called for an early exit
@@ -116,7 +138,17 @@ GB_GOTCHA ;                 // early exit (1 thread)
             my_exit = early_exit ;
             if (!my_exit)
             #endif
+
+            //------------------------------------------------------------------
+            // do the reductions for this task
+            //------------------------------------------------------------------
+
             {
+
+                //--------------------------------------------------------------
+                // load the Panel with the first entries
+                //--------------------------------------------------------------
+
                 GB_ATYPE Panel [GB_PANEL] ;
                 int64_t my_anz = pend - pstart ;
                 int64_t first_panel_size = GB_IMIN (GB_PANEL, my_anz) ;
@@ -124,13 +156,20 @@ GB_GOTCHA ;                 // early exit (1 thread)
                 { 
                     Panel [k] = Ax [pstart + k] ;
                 }
+
                 #if GB_HAS_TERMINAL
                 int panel_count = 0 ;
                 #endif
+
+                //--------------------------------------------------------------
+                // reduce all entries to the Panel
+                //--------------------------------------------------------------
+
                 for (int64_t p = pstart + GB_PANEL ; p < pend ; p += GB_PANEL)
                 {
                     if (p + GB_PANEL > pend)
                     {
+                        // last partial panel
                         for (int64_t k = 0 ; k < pend-p ; k++)
                         { 
                             // Panel [k] = op (Panel [k], Ax [p+k]) ;
@@ -139,46 +178,56 @@ GB_GOTCHA ;                 // early exit (1 thread)
                     }
                     else
                     {
+                        // full panel
                         for (int64_t k = 0 ; k < GB_PANEL ; k++)
                         { 
                             // Panel [k] = op (Panel [k], Ax [p+k]) ;
                             GB_ADD_ARRAY_TO_ARRAY (Panel, k, Ax, p+k) ;
                         }
                         #if GB_HAS_TERMINAL
-                        panel_count++ ;
-                        if (panel_count == 256)
+                        panel_count-- ;
+                        if (panel_count <= 0)
                         {
-                            panel_count = 0 ;
-                            // check for early exit
-                            bool early = false ;
+                            // check for early exit only every 256 panels
+                            panel_count = 256 ;
+                            int count = 0 ;
                             for (int64_t k = 0 ; k < GB_PANEL ; k++)
                             {
-                                if (Panel [k] == GB_TERMINAL_VALUE)
-                                { 
-GB_GOTCHA ;                         // early exit (nthreads > 1)
-                                    // early exit (nthreads > 1)
-                                    early = true ;
-                                }
+                                count += (Panel [k] == GB_TERMINAL_VALUE) ;
                             }
-                            if (early)
+                            if (count > 0)
                             { 
-GB_GOTCHA ;                     // tell all other tasks to exit early
-                                // tell all other tasks to exit early
-                                #pragma omp atomic write
-                                early_exit = true ;
                                 break ;
                             }
                         }
                         #endif
                     }
                 }
+
+                //--------------------------------------------------------------
+                // t = reduce (Panel)
+                //--------------------------------------------------------------
+
                 t = Panel [0] ;
                 for (int64_t k = 1 ; k < first_panel_size ; k++)
                 { 
                     // t = op (t, Panel [k]) ;
                     GB_ADD_ARRAY_TO_SCALAR (t, Panel, k) ;
                 }
+
+                #if GB_HAS_TERMINAL
+                if (t == GB_TERMINAL_VALUE)
+                { 
+                    // tell all other tasks to exit early
+                    #pragma omp atomic write
+                    early_exit = true ;
+                }
+                #endif
             }
+
+            //------------------------------------------------------------------
+            // save the results of this task
+            //------------------------------------------------------------------
 
             W [tid] = t ;
         }

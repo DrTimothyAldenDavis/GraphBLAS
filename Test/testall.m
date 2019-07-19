@@ -165,6 +165,8 @@ logstat ('test107') ;   % monoids with terminal values
 logstat ('test103',t) ; % GrB_transpose aliases
 %3
 logstat ('test93',t) ;  % pagerank
+%3
+logstat ('test135',t) ; % reduce to scalar
 %2+2
 logstat ('test100',t) ; % GB_mex_isequal
 logstat ('test100',s);  % GB_mex_isequal

@@ -35,7 +35,9 @@ fclose (f) ;
 % instructions.  Reducing the panel to 64 bytes (512 bits), or increasing
 % the panel size, is slightly slower.
 
-% Panel sizes are optimal for gcc 8.3, on a MacBook.
+% Panel sizes are optimal for gcc 8.3, on a MacBook.  They are probably fine
+% for other architectures and compilers, too, but they haven't been tuned
+% except for gcc 8.3 on a Mac.
 
 % MIN: 10 monoids:  name      op   type        identity      terminal   panel
 fprintf ('\nmin    ') ;
@@ -99,13 +101,13 @@ codegen_red_method ('times',  op, 'double'  , '1'         , [ ]         , 32) ;
 
 % 4 boolean monoids
 fprintf ('\nlor    ') ;
-codegen_red_method ('lor' , 'zarg = (zarg || yarg)', 'bool','false', 'true' , 8);
+codegen_red_method ('lor' , 'zarg = (zarg || yarg)', 'bool','false', 'true' ,8);
 fprintf ('\nland   ') ;
-codegen_red_method ('land', 'zarg = (zarg && yarg)', 'bool','true' , 'false', 8);
+codegen_red_method ('land', 'zarg = (zarg && yarg)', 'bool','true' , 'false',8);
 fprintf ('\nlxor   ') ;
-codegen_red_method ('lxor', 'zarg = (zarg != yarg)', 'bool','false', [ ]    , 8);
+codegen_red_method ('lxor', 'zarg = (zarg != yarg)', 'bool','false', [ ]    ,8);
 fprintf ('\neq     ') ;
-codegen_red_method ('eq'  , 'zarg = (zarg == yarg)', 'bool','true' , [ ]    , 8);
+codegen_red_method ('eq'  , 'zarg = (zarg == yarg)', 'bool','true' , [ ]    ,8);
 
 %-------------------------------------------------------------------------------
 % FIRST and SECOND (not monoids; used for GB_red_build__[first,second]_[type])
