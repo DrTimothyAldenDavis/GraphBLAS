@@ -594,15 +594,17 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // for finding tests that trigger statement coverage.  If running a test
 // in GraphBLAS/Tcov, the test does not terminate.
 #ifdef GBTESTCOV
-#define GB_GOTCHA                                           \
-{                                                           \
-    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
+#define GB_GOTCHA                                                   \
+{                                                                   \
+    fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
+    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
 }
 #else
-#define GB_GOTCHA                                           \
-{                                                           \
-    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;  \
-    GB_Global_abort_function ( ) ;                          \
+#define GB_GOTCHA                                                   \
+{                                                                   \
+    fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
+    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
+    GB_Global_abort_function ( ) ;                                  \
 }
 #endif
 
