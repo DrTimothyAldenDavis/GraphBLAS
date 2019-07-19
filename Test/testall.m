@@ -212,8 +212,6 @@ logstat ('test125',t) ; % test GrB_mxm: row and column scaling
 logstat ('test53',t) ;  % quick test of GB_mex_Matrix_extract
 %37
 logstat ('test27',t) ;  % quick test of GxB_select (band)
-%55
-logstat ('test39(0)') ; % tests of GrB_transpose, GB_*_add and eWiseAdd
 %167
 logstat ('test74',t) ;  % test GrB_mxm on all semirings
 
@@ -303,6 +301,7 @@ logstat ('test36') ;       %      % performance test for GB_mex_Matrix_subref
 logstat ('test37') ;       %      % performance test for GrB_qsort1
 logstat ('test38',t) ;     %      % GB_mex_transpose with matrix collection
 logstat ('test39') ;       %      % GrB_transpose, GB_*_add and eWiseAdd
+logstat ('test39(0)') ;    %   55 % GrB_transpose, GB_*_add and eWiseAdd
 
 logstat ('test40',t) ;     %      % GrB_Matrix_extractElement, and Vector
 logstat ('test41',t) ;     %      % test of GB_mex_AxB

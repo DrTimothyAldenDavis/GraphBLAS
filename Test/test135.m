@@ -4,17 +4,20 @@ function test135
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+% shorter version of test90
+
 fprintf ('\n -------------- GB_AxB_meta with pre-compiled semiring\n') ;
 
 rng ('default') ;
+density = 0.10 ;
 
-for N = [10 100 ]
+for N = [ 10 100 ]
 
     N
 
     % create the problem
-    A = sprand (4*N, 5*N, 0.01) ;
-    B = sprand (5*N, 3*N, 0.01) ;
+    A = sprand (4*N, 5*N, density) ;
+    B = sprand (5*N, 3*N, density) ;
 
     [i j x] = find (A) ;
     [m n] = size (A) ;
@@ -69,8 +72,8 @@ for N = [10 100 ]
     %--------------------------------------------------------------------------
     fprintf ('\nextensive tests:\n') ;
 
-    A = sprand (n, n, 0.01) ;
-    B = sprand (n, n, 0.01) ;
+    A = sprand (n, n, density) ;
+    B = sprand (n, n, density) ;
     [i j x] = find (A) ;
     X = sparse (i, j, 1./x, n, n) ;
     [i j x] = find (B) ;
