@@ -34,7 +34,6 @@ else
     k8list = 1 ;
 end
 
-% TODO was:
 %   mlist = [1 5 10] ; 
 %   nlist = [1 5 10] ; 
     mlist = [10] ; 

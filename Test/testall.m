@@ -190,8 +190,6 @@ logstat ('test19b',s);  % GrB_assign, many pending operators (malloc debug off)
 
 %5
 logstat ('test00',s);   % GB_mex_mis (single threaded)
-%8
-logstat ('test00',t) ;  % GB_mex_mis
 %10
 logstat ('test76',t) ;  % GxB_resize
 %12
@@ -220,8 +218,7 @@ logstat ('test74',t) ;  % test GrB_mxm on all semirings
 %----------------------------------------
 
 %330
-% logstat ('test90',t) ;  % test pre-compiled user-defined semirings
-logstat ('test135',t) ;  % test pre-compiled user-defined semirings
+logstat ('test90',t) ;  % test pre-compiled user-defined semirings
 
 % Turn off malloc debugging
 malloc_debugging = stat ;
@@ -272,6 +269,7 @@ if (longtests)
 % test script              % time % description
 % ------------------------ % ---- % ------------------------------
 
+logstat ('test00',t) ;     %    8 % GB_mex_mis (multiple threads)
 logstat ('test06',t) ;     %  532 % test GrB_mxm on all semirings
 logstat ('test06(936)',t); %      % performance test GrB_mxm on all semirings
 logstat ('test08',t) ;     %   35 % quick test GB_mex_subassign
