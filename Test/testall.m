@@ -188,13 +188,14 @@ logstat ('test19b',s);  % GrB_assign, many pending operators (malloc debug off)
 % tests taking 10 to 200 seconds
 %----------------------------------------
 
+%5
+logstat ('test00',s);   % GB_mex_mis (single threaded)
+%8
+logstat ('test00',t) ;  % GB_mex_mis
 %10
 logstat ('test76',t) ;  % GxB_resize
 %12
 logstat ('test88',t) ;  % hypersparse matrices with heap-based method
-%8 + 5
-logstat ('test00',t) ;  % GB_mex_mis
-logstat ('test00',s);   % GB_mex_mis
 %13
 logstat ('test54',t) ;  % assign and extract with begin:inc:end
 %16
@@ -221,7 +222,8 @@ logstat ('test74',t) ;  % test GrB_mxm on all semirings
 %----------------------------------------
 
 %330
-logstat ('test90',t) ;  % test pre-compiled user-defined semirings
+% logstat ('test90',t) ;  % test pre-compiled user-defined semirings
+logstat ('test135',t) ;  % test pre-compiled user-defined semirings
 
 % Turn off malloc debugging
 malloc_debugging = stat ;
@@ -232,6 +234,9 @@ if (malloc_debugging)
     fprintf (f, '[malloc debugging turned off]\n') ;
     fclose (f) ;
 end
+
+%79
+logstat ('test134',t) ;  % quick test of GxB_select
 
 %80
 logstat ('test10',t) ;  % GrB_apply
@@ -256,9 +261,6 @@ logstat ('test75',t) ;  % test GrB_mxm A'*B on all semirings
 
 %430
 logstat ('test20',t) ;  % quick test of GB_mex_mxm on a few semirings
-
-%
-logstat ('test134',t) ;  % quick test of GxB_select
 
 %-------------------------------------------------------------------------------
 % The following tests are not required for statement coverage.  Some need
