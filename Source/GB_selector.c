@@ -98,23 +98,26 @@ GrB_Info GB_selector
     // It is also typecast to the same type as A (to the scalar athunk).  This
     // is used for gt, ge, lt, le, ne, eq to Thunk, for built-in types.
 
-    GB_void *restrict xthunk = NULL ;
-    GB_void athunk [asize] ;
+    // If Thunk is NULL, or has no entry, it is treated as a scalar value
+    // of zero.
 
-    if (Thunk != NULL)
+    GB_void athunk [asize] ;
+    memset (athunk, 0, asize) ;
+    GB_void *restrict xthunk = athunk ;
+
+    if (Thunk != NULL && GB_NNZ (Thunk) > 0)
     {
         // xthunk points to Thunk->x for user-defined select operators
         xthunk = Thunk->x ;
-        ASSERT (GB_NNZ (Thunk) == 1) ;
         GB_Type_code tcode = Thunk->type->code ;
         ithunk = 0 ;
         if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_C_opcode)
         { 
             // ithunk = (int64_t) Thunk (0)
             GB_cast_array ((GB_void *restrict) &ithunk,
-                                    GB_INT64_code, Thunk->x, tcode, 1, NULL) ;
+                                   GB_INT64_code, Thunk->x, tcode, 1, NULL) ;
             // athunk = (atype) Thunk (0)
-            GB_cast_array ( athunk, A->type->code, Thunk->x, tcode, 1, NULL) ;
+            GB_cast_array (athunk, A->type->code, Thunk->x, tcode, 1, NULL) ;
             // xthunk now points to the typecasted (atype) Thunk (0)
             xthunk = athunk ;
         }

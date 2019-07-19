@@ -80,9 +80,20 @@ GrB_Info GB_SelectOp_check  // check a GraphBLAS select operator
         GrB_Info info = GB_Type_check (op->xtype, "xtype", pr, f, Context) ;
         if (info != GrB_SUCCESS)
         { 
-            GBPR0 ("SelectOP has an invalid xtype\n") ;
+            GBPR0 ("SelectOp has an invalid xtype\n") ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "SelectOp has an invalid xtype: %s [%s]", GB_NAME, op->name))) ;
+        }
+    }
+
+    if (op->ttype != NULL)
+    { 
+        GrB_Info info = GB_Type_check (op->ttype, "ttype", pr, f, Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            GBPR0 ("SelectOp has an invalid ttype\n") ;
+            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
+                "SelectOp has an invalid ttype: %s [%s]", GB_NAME, op->name))) ;
         }
     }
 

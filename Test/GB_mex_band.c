@@ -39,20 +39,19 @@ typedef struct
 {
     int64_t lo ;
     int64_t hi ;
-} LoHi ; 
+} LoHi_type ; 
 
 bool band (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *k) ;
+    GrB_Index ncols, /* x is unused: */ const void *x, const LoHi_type *thunk) ;
 
 bool band (GrB_Index i, GrB_Index j, GrB_Index nrows,
-    GrB_Index ncols, const void *x, const void *k)
+    GrB_Index ncols, /* x is unused: */ const void *x, const LoHi_type *thunk)
 {
-    int64_t *lohi = (int64_t *) k ;
     int64_t i2 = (int64_t) i ;
     int64_t j2 = (int64_t) j ;
-//  printf ("i %lld j %lld lo %lld hi %lld\n", i2, j2, lohi [0], lohi [1]) ;
+//  printf ("i %lld j %lld lo %lld hi %lld\n", i2, j2, thunk->lo, thunk->hi) ;
 //  printf ("   j-i %lld\n", j2-i2) ;
-    return ((lohi [0] <= (j2-i2)) && ((j2-i2) <= lohi [1])) ;
+    return ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
 }
 
 void mexFunction
@@ -91,15 +90,21 @@ void mexFunction
         mexErrMsgTxt ("A failed") ;
     }
 
-    // get ho and hi
-    int64_t lohi [2] ;
-    lohi [0] = (int64_t) mxGetScalar (pargin [1]) ;
-    lohi [1] = (int64_t) mxGetScalar (pargin [2]) ;
-
     // create the Thunk
-    OK (GrB_Type_new (&Thunk_type, sizeof (LoHi))) ;
+    #ifdef MY_BAND
+    Thunk_type = My_bandwidth_type ;
+    my_bandwidth_type bandwidth ;
+    #else
+    LoHi_type bandwidth  ;
+    OK (GrB_Type_new (&Thunk_type, sizeof (LoHi_type))) ;
+    #endif
+
+    // get lo and hi
+    bandwidth.lo = (int64_t) mxGetScalar (pargin [1]) ;
+    bandwidth.hi = (int64_t) mxGetScalar (pargin [2]) ;
+
     OK (GrB_Vector_new (&Thunk, Thunk_type, 1)) ;
-    OK (GrB_Vector_setElement_UDT (Thunk, (void *) lohi, 0)) ;
+    OK (GrB_Vector_setElement_UDT (Thunk, (void *) &bandwidth, 0)) ;
     GrB_Index ignore ;
     OK (GrB_Vector_nvals (&ignore, Thunk)) ;
     // GxB_print (Thunk, 3) ;
@@ -130,7 +135,7 @@ void mexFunction
     if (op == NULL)
     {
         // use the run-time defined operator, from the band function
-        METHOD (GxB_SelectOp_new (&op, band, NULL)) ;
+        METHOD (GxB_SelectOp_new (&op, band, NULL, Thunk_type)) ;
     }
 
     // create result matrix C

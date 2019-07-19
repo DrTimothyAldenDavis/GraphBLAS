@@ -242,15 +242,18 @@ m4_define(`GxB_SelectOp_define', `
         GrB_Index nrows,
         GrB_Index ncols,
         const m4_ifelse(`$3', `NULL', `void', `GB_DEF_$3_type') *x,
-        const void *thunk
+        const m4_ifelse(`$4', `NULL', `void', `GB_DEF_$4_type') *thunk
     ) ;
     struct GB_SelectOp_opaque GB_opaque_$1 =
     {
-        GB_MAGIC,           // object is defined
+        GB_MAGIC,            // object is defined
         m4_ifelse(`$3', `NULL',
             `NULL,  // x not used',
-            `& GB_opaque_$3 // type of x')
-        $2,                 // pointer to the C function
+            `& GB_opaque_$3, // type of x')
+        m4_ifelse(`$4', `NULL',
+            `NULL,  // thunk not used',
+            `& GB_opaque_$4, // type of thunk')
+        $2,                  // pointer to the C function
         "$2",
         GB_USER_SELECT_C_opcode // user-defined at compile-time
     } ;

@@ -4,11 +4,27 @@ function test129
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\ntest25: GxB_select tests (tril and nonzero)\n') ;
+% This is a shorter version of test25
+
+fprintf ('\ntest129: GxB_select tests (tril and nonzero)\n') ;
 
 [~, ~, ~, classes, ~, select_ops] = GB_spec_opsall ;
 
 rng ('default') ;
+
+fprintf ('\n---------- Trigger an intentional error (domain mismatch):\n\n') ;
+try
+    % this must fail; thunk cannot be complex for tril
+    C = sparse (1i) ;
+    C = GB_mex_select (C, [ ], [ ], 'tril', C, C, [ ]) ;
+    % ack! The call to GB_mex_select was supposed to have failed.
+    ok = false ;
+catch
+    % GB_mex_select correctly returned an error
+    ok = true ;
+end
+assert (ok) ;
+fprintf ('---------- Domain mismatch error above is expected\n\n') ;
 
 m = 10 ;
 n = 6 ;
@@ -59,7 +75,7 @@ dt = struct ('inp0', 'tran') ;
         op = select_ops {k2} ;
         % fprintf ('%s ', op) ;
 
-        k = 0 ;
+        k = sparse (0) ;
 
             % no mask
             C1 = GB_spec_select (Cin, [], [], op, A, k, []) ;
@@ -110,6 +126,6 @@ dt = struct ('inp0', 'tran') ;
     end
     end
 
-fprintf ('\ntest25: all tests passed\n') ;
+fprintf ('\ntest129: all tests passed\n') ;
 
 

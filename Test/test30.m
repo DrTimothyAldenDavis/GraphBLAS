@@ -9,6 +9,7 @@ function test30
     nthreads = feature ('numcores') ;
     nthreads_set (nthreads, chunk) ;
 
+    % TODO: try a random matrix instead
     Prob = ssget (2662) ;
     A = Prob.A ;
 

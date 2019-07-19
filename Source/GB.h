@@ -312,7 +312,7 @@ typedef enum
     GB_LT_ZERO_opcode   = 10,
     GB_LE_ZERO_opcode   = 11,
 
-    // built-in select operators, thunk required
+    // built-in select operators, thunk optional; defaults to zero
     GB_NE_THUNK_opcode  = 12,
     GB_EQ_THUNK_opcode  = 13,
     GB_GT_THUNK_opcode  = 14,
@@ -364,6 +364,7 @@ struct GB_SelectOp_opaque   // content of GxB_SelectOp
 {
     int64_t magic ;         // for detecting uninitialized objects
     GrB_Type xtype ;        // type of x, or NULL if generic
+    GrB_Type ttype ;        // type of thunk, or NULL if not used or generic
     GxB_select_function function ;        // a pointer to the select function
     char name [GB_LEN] ;    // name of the select operator
     GB_Select_Opcode opcode ;   // operator opcode

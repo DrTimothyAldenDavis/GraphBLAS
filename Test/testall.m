@@ -63,12 +63,14 @@ logstat ;             % start the log.txt
 % test taking less than 1 second:
 %----------------------------------------
 
-%0.
+%0
 logstat ('test72',t) ;  % several special cases
 logstat ('test72',s) ;  % several special cases
 %0
 logstat ('test07',t) ;  % quick test GB_mex_subassign
 logstat ('test07',s) ;  % quick test GB_mex_subassign
+%0
+logstat ('test136',s) ; % GxB_subassign, method 08, special case (one thread)
 %0
 logstat ('test07b',t) ; % quick test GB_mex_assign
 %0
@@ -172,7 +174,7 @@ logstat ('test100',t) ; % GB_mex_isequal
 logstat ('test100',s);  % GB_mex_isequal
 %4
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
-%5
+%11
 logstat ('test30') ;    % performance test GB_mex_subassign, scalar expansion
 %5
 logstat ('test106',t) ; % GxB_subassign with alias
@@ -289,7 +291,7 @@ logstat ('test23(1)',t) ;  %      % exhaustive test of GB_*_build
 logstat ('test24',t) ;     %   42 % test of GrB_Matrix_reduce
 logstat ('test24(1)',t) ;  %      % exhaustive test of GrB_Matrix_reduce
 logstat ('test25',t) ;     %      % long test of GxB_select
-logstat ('test26(1)',t) ;  %      % performance test of GxB_select
+logstat ('test26(1)',t) ;  %      % performance test of GxB_select (use ssget)
 
 logstat ('test30b') ;      %    9 % performance GB_mex_assign, scalar expansion
 logstat ('test31',t) ;     %      % simple tests of GB_mex_transpose

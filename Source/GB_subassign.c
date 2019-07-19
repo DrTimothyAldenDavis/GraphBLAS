@@ -149,7 +149,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         if (mnrows != nRows || mncols != nCols)
         { 
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "M is "GBd"-by-"GBd"%s"
+                "M is "GBd"-by-"GBd"%s, "
                 "must match size of result C(I,J): "GBd"-by-"GBd"",
                 mnrows, mncols, M_transpose ? " (transposed)" : "",
                 nRows, nCols))) ;

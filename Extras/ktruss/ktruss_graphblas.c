@@ -83,7 +83,8 @@ GrB_Info ktruss_graphblas       // compute the k-truss of a graph
 
     // select operator
     int64_t support = (k-2) ;
-    OK (GxB_SelectOp_new (&supportop, support_function, GrB_INT64)) ;
+    OK (GxB_SelectOp_new (&supportop, support_function, GrB_INT64, GrB_INT64)) ;
+    OK (GrB_Vector_new (&Support, GrB_INT64, 1)) ;
     OK (GrB_Vector_setElement (Support, support, 0)) ;
 
     // last_cnz = nnz (A)

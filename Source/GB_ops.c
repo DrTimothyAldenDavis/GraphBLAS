@@ -188,82 +188,82 @@ GrB_BinaryOp GrB_LXOR = & GB_opaque_GxB_LXOR_BOOL ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_TRIL =
 {
-    GB_MAGIC, NULL, NULL, "tril", GB_TRIL_opcode
+    GB_MAGIC, NULL, NULL, NULL, "tril", GB_TRIL_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_TRIU =
 {
-    GB_MAGIC, NULL, NULL, "triu", GB_TRIU_opcode
+    GB_MAGIC, NULL, NULL, NULL, "triu", GB_TRIU_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_DIAG =
 {
-    GB_MAGIC, NULL, NULL, "diag", GB_DIAG_opcode
+    GB_MAGIC, NULL, NULL, NULL, "diag", GB_DIAG_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_OFFDIAG =
 {
-    GB_MAGIC, NULL, NULL, "offdiag", GB_OFFDIAG_opcode
+    GB_MAGIC, NULL, NULL, NULL, "offdiag", GB_OFFDIAG_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_NONZERO =
 {
-    GB_MAGIC, NULL, NULL, "nonzero", GB_NONZERO_opcode
+    GB_MAGIC, NULL, NULL, NULL, "nonzero", GB_NONZERO_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_EQ_ZERO =
 {
-    GB_MAGIC, NULL, NULL, "eq_zero", GB_EQ_ZERO_opcode
+    GB_MAGIC, NULL, NULL, NULL, "eq_zero", GB_EQ_ZERO_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_GT_ZERO =
 {
-    GB_MAGIC, NULL, NULL, "gt_zero", GB_GT_ZERO_opcode
+    GB_MAGIC, NULL, NULL, NULL, "gt_zero", GB_GT_ZERO_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_GE_ZERO =
 {
-    GB_MAGIC, NULL, NULL, "ge_zero", GB_GE_ZERO_opcode
+    GB_MAGIC, NULL, NULL, NULL, "ge_zero", GB_GE_ZERO_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_LT_ZERO =
 {
-    GB_MAGIC, NULL, NULL, "lt_zero", GB_LT_ZERO_opcode
+    GB_MAGIC, NULL, NULL, NULL, "lt_zero", GB_LT_ZERO_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_LE_ZERO =
 {
-    GB_MAGIC, NULL, NULL, "le_zero", GB_LE_ZERO_opcode
+    GB_MAGIC, NULL, NULL, NULL, "le_zero", GB_LE_ZERO_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_NE_THUNK =
 {
-    GB_MAGIC, NULL, NULL, "ne_thunk", GB_NE_THUNK_opcode
+    GB_MAGIC, NULL, NULL, NULL, "ne_thunk", GB_NE_THUNK_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_EQ_THUNK =
 {
-    GB_MAGIC, NULL, NULL, "eq_thunk", GB_EQ_THUNK_opcode
+    GB_MAGIC, NULL, NULL, NULL, "eq_thunk", GB_EQ_THUNK_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_GT_THUNK =
 {
-    GB_MAGIC, NULL, NULL, "gt_thunk", GB_GT_THUNK_opcode
+    GB_MAGIC, NULL, NULL, NULL, "gt_thunk", GB_GT_THUNK_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_GE_THUNK =
 {
-    GB_MAGIC, NULL, NULL, "ge_thunk", GB_GE_THUNK_opcode
+    GB_MAGIC, NULL, NULL, NULL, "ge_thunk", GB_GE_THUNK_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_LT_THUNK =
 {
-    GB_MAGIC, NULL, NULL, "lt_thunk", GB_LT_THUNK_opcode
+    GB_MAGIC, NULL, NULL, NULL, "lt_thunk", GB_LT_THUNK_opcode
 } ;
 
 struct GB_SelectOp_opaque GB_opaque_GxB_LE_THUNK =
 {
-    GB_MAGIC, NULL, NULL, "le_thunk", GB_LE_THUNK_opcode
+    GB_MAGIC, NULL, NULL, NULL, "le_thunk", GB_LE_THUNK_opcode
 } ;
 
 GxB_SelectOp GxB_TRIL     = & GB_opaque_GxB_TRIL ;

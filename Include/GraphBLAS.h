@@ -71,7 +71,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 17, 2019 (9pm) (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "July 19, 2019 (10pm) (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 0
 #define GxB_IMPLEMENTATION_SUB   0
@@ -979,18 +979,17 @@ extern GxB_SelectOp
     GxB_LE_THUNK ;  // C=A(A <= thunk)
 
 // For GxB_TRIL, GxB_TRIU, GxB_DIAG, and GxB_OFFDIAG, the parameter Thunk is a
-// GrB_Vector of length 1 of any built-in type.  If non-NULL, it must contain a
-// single entry thunk = (int64_t) Thunk (0).  The Thunk parameter to GxB_select
-// may be NULL, in which case thunk is zero.  These select operators do not
-// depend on the values of A, but just their position, and they work on
-// matrices of any type.
+// GrB_Vector of length 1 of any built-in type.  If GrB_NULL, or empty, Thunk
+// is treated as zero.  Otherwise, the single entry is typecasted as (int64_t)
+// Thunk (0).  These select operators do not depend on the values of A, but
+// just their position, and they work on matrices of any type.
 
 // For GxB_*ZERO, the result depends only on the value of A(i,j).  The Thunk
 // parameter to GxB_select is ignored and may be GrB_NULL.
 
-// For GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO, GxB_EQ_ZERO,
-// GxB_NE_THUNK, and GxB_EQ_THUNK, work on all built-in types and all
-// user-defined types.
+// The operators GxB_TRIL, GxB_TRIU, GxB_DIAG, GxB_OFFDIAG, GxB_NONZERO,
+// GxB_EQ_ZERO, GxB_NE_THUNK, and GxB_EQ_THUNK work on all built-in types and
+// all user-defined types.
 
 // GxB_GT_*, GxB_GE_*, GxB_LT_*, and GxB_LE_* only work on the 11 built-in
 // types.  They cannot be used for user-defined types.
@@ -1020,11 +1019,12 @@ GrB_Info GxB_SelectOp_new       // create a new user-defined select operator
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
-    GrB_Type xtype              // type of input x, or NULL if type-generic
+    GrB_Type xtype,             // type of input x, or NULL if type-generic
+    GrB_Type ttype              // type of thunk, or NULL if not used
 ) ;
 
 #ifndef NMACRO
-#define GxB_SelectOp_new(op,f,x) GB_SelectOp_new (op,f,x, GB_STR(f))
+#define GxB_SelectOp_new(op,f,x,t) GB_SelectOp_new (op,f,x,t, GB_STR(f))
 #endif
 
 GrB_Info GB_SelectOp_new        // not user-callable; use GxB_SelectOp_new
@@ -1032,12 +1032,19 @@ GrB_Info GB_SelectOp_new        // not user-callable; use GxB_SelectOp_new
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
     GrB_Type xtype,             // type of input x
+    GrB_Type ttype,             // type of thunk, or NULL if not used
     const char *name            // name of the underlying function
 ) ;
 
 GrB_Info GxB_SelectOp_xtype     // return the type of x
 (
     GrB_Type *xtype,            // return type of input x
+    GxB_SelectOp selectop       // select operator
+) ;
+
+GrB_Info GxB_SelectOp_ttype     // return the type of thunk
+(
+    GrB_Type *ttype,            // return type of input thunk
     GxB_SelectOp selectop       // select operator
 ) ;
 
@@ -6314,16 +6321,26 @@ extern GrB_Semiring My_Complex_plus_times ;
 
     #define MY_BAND
 
-    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
-        GrB_Index ncols, const void *x, const void *thunk)
+    typedef struct
     {
-        int64_t *lohi = (int64_t *) thunk ;
+        int64_t lo ;
+        int64_t hi ;
+    }
+    my_bandwidth_type ;
+
+    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
+        GrB_Index ncols, /* x is unused: */ const void *x,
+        const my_bandwidth_type *thunk)
+    {
         int64_t i2 = (int64_t) i ;
         int64_t j2 = (int64_t) j ;
-        return ((lohi [0] <= (j2-i2)) && ((j2-i2) <= lohi [1])) ;
+        return ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
     }
 
 #endif
+
+// The type of the thunk parameter
+extern GrB_Type My_bandwidth_type ;
 
 // Select operator to compute C = tril (triu (A, k1), k2)
 extern GxB_SelectOp My_band ;

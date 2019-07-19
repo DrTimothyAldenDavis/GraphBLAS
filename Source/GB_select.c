@@ -63,13 +63,13 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     ASSERT (opcode != GB_NONZOMBIE_opcode) ;
 
     // check if the op is a GT, GE, LT, or LE comparator
-    bool op_is_comparator =
+    bool op_is_ordered_comparator =
         opcode == GB_GT_ZERO_opcode || opcode == GB_GT_THUNK_opcode ||
         opcode == GB_GE_ZERO_opcode || opcode == GB_GE_THUNK_opcode ||
         opcode == GB_LT_ZERO_opcode || opcode == GB_LT_THUNK_opcode ||
         opcode == GB_LE_ZERO_opcode || opcode == GB_LE_THUNK_opcode ;
 
-    if (typecode >= GB_UCT_code && op_is_comparator)
+    if (typecode >= GB_UCT_code && op_is_ordered_comparator)
     { 
         // built-in GT, GE, LT, and LE operators cannot be used with
         // user-defined types
@@ -109,33 +109,30 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     bool op_is_positional =
         (opcode >= GB_TRIL_opcode && opcode <= GB_OFFDIAG_opcode) ;
 
-    // check Thunk_in
-    if (op_is_thunk_comparator)
-    { 
-        // Thunk_in must be present for (NE, EQ, GT, GE, LT, LE)_THUNK
-        GB_RETURN_IF_NULL (Thunk_in) ;
-    }
+    // check if op is user-defined
+    bool op_is_user_defined = (opcode >= GB_USER_SELECT_C_opcode) ;
+
+    int64_t nz_thunk = 0 ;
 
     if (Thunk_in != NULL)
     {
 
-        GB_WAIT (Thunk_in) ;   // so GB_NNZ (Thunk_in) can be checked
+        // finish any pending work on the Thunk
+        GB_WAIT (Thunk_in) ;
+        nz_thunk = GB_NNZ (Thunk_in) ;
 
-        // if present, Thunk_in must be 1-by-1 with exactly one entry
-        if (GB_NROWS (Thunk_in) != 1 || GB_NCOLS (Thunk_in) != 1
-            || GB_NNZ (Thunk_in) != 1)
+        // if present, Thunk_in must be 1-by-1
+        if (GB_NROWS (Thunk_in) != 1 || GB_NCOLS (Thunk_in) != 1)
         { 
             // Thunk present, but empty, or wrong dimensions
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "Thunk must be a non-empty vector of length 1"))) ;
+                "Thunk must be a vector of length 1"))) ;
         }
 
         // if op is TRIL, TRIU, DIAG, or OFFDIAG, Thunk_in must be
         // compatible with GrB_INT64
-        if (op_is_positional &&
-           !GB_Type_compatible (GrB_INT64, Thunk_in->type))
+        if (op_is_positional && !GB_Type_compatible (GrB_INT64, Thunk_in->type))
         { 
-GB_GOTCHA ; // Thunk not a built-in type, for a built-in select operator
             // Thunk not a built-in type, for a built-in select operator
             return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
                 "incompatible type for C=%s(A,Thunk):\n"
@@ -153,6 +150,43 @@ GB_GOTCHA ; // Thunk not a built-in type, for a built-in select operator
                 "incompatible type for C=%s(A,Thunk):\n"
                 "input A type [%s] and Thunk type [%s] not compatible",
                 op->name, A->type->name, Thunk_in->type->name))) ;
+        }
+    }
+
+    // if op is user-defined, Thunk must match the op->ttype exactly
+    if (op_is_user_defined)
+    {
+        if (op->ttype == NULL && Thunk_in != NULL)
+        { 
+            // select operator does not take a Thunk, but one is present
+            return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                "User-defined operator %s(A,Thunk) does not take a Thunk\n"
+                "input, but Thunk parameter is non-NULL", op->name))) ;
+        }
+        else if (op->ttype != NULL && Thunk_in == NULL)
+        { 
+            // select operator takes a Thunk, but Thunk parameter is missing
+            return (GB_ERROR (GrB_NULL_POINTER, (GB_LOG,
+                "Required argument is null: [Thunk]"))) ;
+        }
+        else if (op->ttype != NULL && Thunk_in != NULL)
+        {
+            // select operator takes a Thunk, and it is present on input.
+            // The types must match exactly.
+            if (op->ttype != Thunk_in->type)
+            { 
+                return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,
+                    "User-defined operator %s(A,Thunk) has a Thunk input\n"
+                    "type of [%s], which must exactly match the type of the\n"
+                    "Thunk parameter; parameter to GxB_select has type [%s]",
+                    op->name, op->ttype->name, Thunk_in->type->name))) ;
+            }
+            if (nz_thunk != 1)
+            { 
+                return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
+                    "User-defined operator %s(A,Thunk) has a Thunk input,\n"
+                    "which must not be empty", op->name))) ;
+            }
         }
     }
 
@@ -199,15 +233,13 @@ GB_GOTCHA ; // Thunk not a built-in type, for a built-in select operator
 
     // if A is boolean, get the value of Thunk typecasted to boolean
     bool bthunk = false ;
-    if (typecode == GB_BOOL_code && op_is_thunk_comparator)
+    if (typecode == GB_BOOL_code && op_is_thunk_comparator && nz_thunk > 0)
     { 
         GB_cast_array ((GB_void *) (&bthunk), GB_BOOL_code,
             Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
     }
 
-    bool use_Thunk_in = true ;
-    int64_t ithunk = 0 ;
-
+    int64_t ithunk = 0 ;        // ithunk = (int64_t) Thunk (0)
     bool use_dup = false ;
     bool is_empty = false ;
 
@@ -215,7 +247,7 @@ GB_GOTCHA ; // Thunk not a built-in type, for a built-in select operator
     {
 
         //----------------------------------------------------------------------
-        // tril, triu, diag, offdiag: handle the flip
+        // tril, triu, diag, offdiag: get k and handle the flip
         //----------------------------------------------------------------------
 
         // The built-in operators are modified so they can always work as if A
@@ -228,16 +260,17 @@ GB_GOTCHA ; // Thunk not a built-in type, for a built-in select operator
         // all others      Thunk is unchanged
         // userop(A)       row/col indices and dimensions are swapped
 
+        // if Thunk is not present, or has no entries, then k defaults to zero
+        if (nz_thunk > 0)
+        { 
+            // ithunk = - (int64_t) (Thunk_in (0)) ;
+            GB_cast_array ((GB_void *) &ithunk, GB_INT64_code,
+                Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
+        }
+
         if (flipij)
         {
-            if (Thunk_in != NULL)
-            { 
-                // ithunk = - (int64_t) (Thunk_in (0)) ;
-                GB_cast_array ((GB_void *) &ithunk, GB_INT64_code,
-                    Thunk_in->x, Thunk_in->type->code, 1, NULL) ;
-                ithunk = -ithunk ;
-                use_Thunk_in = false ;
-            }
+            ithunk = -ithunk ;
             if (opcode == GB_TRIL_opcode)
             { 
                 opcode = GB_TRIU_opcode ;
@@ -440,7 +473,8 @@ GB_GOTCHA ; // Thunk not a built-in type, for a built-in select operator
     { 
         // T = select (A, Thunk)
         GB_OK (GB_selector (&T, opcode, op, flipij, A, ithunk,
-            (use_Thunk_in) ? Thunk_in : NULL, Context)) ;
+            (op_is_thunk_comparator || op_is_user_defined) ?  Thunk_in : NULL,
+            Context)) ;
     }
 
     T->is_csc = A_csc ;

@@ -505,7 +505,7 @@ void mexFunction
 
     printf ("GxB_SelectOp-------------------------------------------------\n") ;
     CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64)) ;
+    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64, GrB_FP64)) ;
     OK (GxB_SelectOp_free (&selectop)) ;
     CHECK (selectop == NULL) ;
 
@@ -515,11 +515,20 @@ void mexFunction
     ERR (GxB_SelectOp_xtype (&T, selectop)) ;
     CHECK (T == NULL) ;
 
+    CHECK (T == NULL) ;
+    ERR (GxB_SelectOp_ttype (&T, selectop)) ;
+    CHECK (T == NULL) ;
+
     CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64)) ;
+    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64, GrB_FP64)) ;
 
     CHECK (T == NULL) ;
     OK (GxB_SelectOp_xtype (&T, selectop)) ;
+    CHECK (T == GrB_FP64) ;
+    T = NULL ;
+
+    CHECK (T == NULL) ;
+    OK (GxB_SelectOp_ttype (&T, selectop)) ;
     CHECK (T == GrB_FP64) ;
     T = NULL ;
 
@@ -527,7 +536,7 @@ void mexFunction
     CHECK (selectop == NULL) ;
 
     expected = GrB_NULL_POINTER ;
-    ERR (GxB_SelectOp_new (&selectop, NULL, GrB_FP64)) ;
+    ERR (GxB_SelectOp_new (&selectop, NULL, GrB_FP64, GrB_FP64)) ;
     CHECK (selectop == NULL) ;
 
     OK (GxB_SelectOp_free (&selectop)) ;
@@ -3119,7 +3128,7 @@ void mexFunction
 
     printf ("GxB_select---------------------------------------------------\n") ;
     CHECK (selectop == NULL) ;
-    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64)) ;
+    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64, GrB_FP64)) ;
     CHECK (selectop != NULL) ;
     OK (GB_SelectOp_check (selectop, "select op OK", GB3, NULL, Context)) ;
 
@@ -3134,7 +3143,7 @@ void mexFunction
     ERR (GxB_select (A , NULL, NULL, NULL, A , NULL, d0)) ;
 
     CHECK (selectopgunk == NULL) ;
-    OK (GxB_SelectOp_new (&selectopgunk, fselect, GrB_FP64)) ;
+    OK (GxB_SelectOp_new (&selectopgunk, fselect, GrB_FP64, GrB_FP64)) ;
     CHECK (selectopgunk != NULL) ;
     selectopgunk->magic = 22309483 ;
     expected = GrB_UNINITIALIZED_OBJECT ;
@@ -3711,7 +3720,7 @@ void mexFunction
     CHECK (selectop == NULL) ;
     // test the function instead of the macro:
     #undef GxB_SelectOp_new
-    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64)) ;
+    OK (GxB_SelectOp_new (&selectop, fselect, GrB_FP64, GrB_FP64)) ;
     CHECK (selectop != NULL) ;
 
     Context->where = "GB_SelectOp_check" ;

@@ -20,9 +20,10 @@ GrB_Info GxB_SelectOp_new       // create a new user-defined select operator
 (
     GxB_SelectOp *selectop,     // handle for the new select operator
     GxB_select_function function,// pointer to the select function
-    GrB_Type xtype              // type of input x, or NULL if type-generic
+    GrB_Type xtype,             // type of input x, or NULL if type-generic
+    GrB_Type ttype              // type of input thunk, or NULL if not used
 )
 { 
-    return (GB_SelectOp_new (selectop, function, xtype, "f")) ;
+    return (GB_SelectOp_new (selectop, function, xtype, ttype, "f")) ;
 }
 

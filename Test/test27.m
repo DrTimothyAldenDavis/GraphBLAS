@@ -22,6 +22,7 @@ for m = 1:10
                     C1 = GB_mex_band (A, lo, hi, 1, pre) ;
                     C2 = triu (tril (A',hi), lo) ;
                     assert (isequal (C1, C2)) ;
+
                 end
             end
         end

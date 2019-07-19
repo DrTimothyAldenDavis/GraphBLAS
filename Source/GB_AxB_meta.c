@@ -279,8 +279,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (btrans && !B_is_diagonal)
         {
             // B = B'
-            // with swap_rule == C_transpose || (A_transpose && B_transpose),
-            // this case will never occur
+            // with the swap_rule as defined above, this case will never occur.
+            // The code is left here in case swap_rule changes in the future.
             ASSERT (GB_DEAD_CODE) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             B = BT ;

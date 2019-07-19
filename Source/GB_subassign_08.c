@@ -204,7 +204,6 @@ GrB_Info GB_subassign_08
                     cast_M (&mij, Mx +(pM*msize), 0) ;
                     if (mij)
                     { 
-GB_GOTCHA ;             // A(:,j) is much denser than M(:,j)
                         int64_t iA = Mi [pM] ;
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
@@ -224,7 +223,6 @@ GB_GOTCHA ;             // A(:,j) is much denser than M(:,j)
 
                 for ( ; pA < pA_end ; pA++)
                 { 
-GB_GOTCHA ;         // M(:,j) is much denser than A(:,j)
                     int64_t iA = Ai [pA] ;
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij) GB_PHASE1_ACTION ;
@@ -232,7 +230,7 @@ GB_GOTCHA ;         // M(:,j) is much denser than A(:,j)
 
             }
             else
-            { 
+            {
 
                 //----------------------------------------------------------
                 // A(:,j) and M(:,j) have about the same # of entries
@@ -342,7 +340,6 @@ GB_GOTCHA ;         // M(:,j) is much denser than A(:,j)
                     cast_M (&mij, Mx +(pM*msize), 0) ;
                     if (mij)
                     { 
-GB_GOTCHA ;             // A(:,j) is much denser than M(:,j)
                         int64_t iA = Mi [pM] ;
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
@@ -362,7 +359,6 @@ GB_GOTCHA ;             // A(:,j) is much denser than M(:,j)
 
                 for ( ; pA < pA_end ; pA++)
                 { 
-GB_GOTCHA ;         // M(:,j) is much denser than A(:,j)
                     int64_t iA = Ai [pA] ;
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij) GB_PHASE2_ACTION ;

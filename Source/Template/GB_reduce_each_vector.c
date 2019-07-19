@@ -172,19 +172,24 @@
             int64_t pA_end   = pstart_slice [tid+1] ;
             if (pA_start < pA_end)
             {
-                if (kprior < klast)
+                /* if */ ASSERT (kprior < klast) ;
                 { 
                     // This thread is the first one that did work on
                     // A(:,klast), so use it to start the reduction.
                     // Tx [klast] = Wlast [tid], no typecast
                     GB_COPY_ARRAY_TO_ARRAY (Tx, klast, Wlast, tid) ;
                 }
+                /*
                 else
-                { 
-GB_GOTCHA ;         // Tx [klast] += Wlast [tid], no typecast
+                {
+                    // If kfirst < klast and A(:,klast is not empty, then this
+                    // task is always the first one to do work on A(:,klast),
+                    // so this case is never used.
+                    ASSERT (GB_DEAD_CODE) ;
                     // Tx [klast] += Wlast [tid], no typecast
                     GB_ADD_ARRAY_TO_ARRAY (Tx, klast, Wlast, tid) ;
                 }
+                */
                 kprior = klast ;
             }
         }

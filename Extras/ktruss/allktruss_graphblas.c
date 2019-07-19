@@ -113,8 +113,9 @@ GrB_Info allktruss_graphblas    // compute all k-trusses of a graph
     GrB_Index n ;
     OK (GrB_Matrix_nrows (&n, A)) ;
 
-    // create a unary operator for GrB_apply
-    OK (GxB_SelectOp_new (&supportop, support_function, GrB_INT64)) ;
+    // create a select operator for GxB_select
+    OK (GxB_SelectOp_new (&supportop, support_function, GrB_INT64, GrB_INT64)) ;
+    OK (GrB_Vector_new (&Support, GrB_INT64, 1)) ;
 
     //--------------------------------------------------------------------------
     // C<A> = A*A
@@ -133,8 +134,6 @@ GrB_Info allktruss_graphblas    // compute all k-trusses of a graph
     double t2 = omp_get_wtime ( ) ;
     printf ("cmult time: %g\n", t2-t1) ;
     tmult += (t2-t1) ;
-
-    OK (GrB_Vector_new (&Support, GrB_INT64, 1)) ;
 
     //--------------------------------------------------------------------------
     // find all k-trusses

@@ -11,6 +11,8 @@ Version 3.0.0, July TODO, 2019
     * changed thunk parameter of GxB_select:  was (const void *),
         now GrB_Vector of length 1.
         This change is not backward compatible with Version 2.x.
+    * added parameter to GxB_SelectOp_new: to specify the type of the Thunk.
+        This change is not backward compatible with Version 2.x.
     * added options to GxB_get: determine if a matrix is hypersparse or not,
         global library and API information.
     * new operators and semirings: RDIV (f(x,y)=y/x) and RMINUS (y-x)

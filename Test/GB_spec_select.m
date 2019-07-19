@@ -32,6 +32,7 @@ end
 
 [m n] = size (A.matrix) ;
 T.matrix = zeros (m, n, A.class) ;
+thunk = full (thunk) ;
 xthunk = GB_mex_cast (thunk, A.class) ;
 
 switch (opname)

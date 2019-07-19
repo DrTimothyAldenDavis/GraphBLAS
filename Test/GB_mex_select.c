@@ -37,7 +37,6 @@ void mexFunction
     GrB_Matrix M = NULL ;
     GrB_Matrix A = NULL ;
     GrB_Descriptor desc = NULL ;
-    int64_t k = 0 ;
     GrB_Vector Thunk = NULL ;
 
     // check inputs
@@ -94,8 +93,29 @@ void mexFunction
         mexErrMsgTxt ("SelectOp failed") ;
     }
 
-    // get k
-    k = (int64_t) mxGetScalar (pargin [5]) ;
+    // get Thunk (shallow copy)
+    if (nargin > 5)
+    {
+        if (mxIsSparse (pargin [5]))
+        {
+            Thunk = GB_mx_mxArray_to_Matrix (pargin [5], "Thunk input",
+                false, false) ;
+            if (Thunk == NULL)
+            {
+                FREE_ALL ;
+                mexErrMsgTxt ("Thunk failed") ;
+            }
+        }
+        else
+        {
+            // get k
+            int64_t k = (int64_t) mxGetScalar (pargin [5]) ;
+            GrB_Vector_new (&Thunk, GrB_INT64, 1) ;
+            GrB_Vector_setElement (Thunk, k, 0) ;
+            GrB_Index ignore ;
+            GrB_Vector_nvals (&ignore, Thunk) ;
+        }
+    }
 
     // get desc
     if (!GB_mx_mxArray_to_Descriptor (&desc, PARGIN (6), "desc"))
@@ -112,10 +132,7 @@ void mexFunction
         C->nvec_nonempty = -1 ;
     }
 
-    GrB_Vector_new (&Thunk, GrB_INT64, 1) ;
-    GrB_Vector_setElement (Thunk, k, 0) ;
-    GrB_Index ignore ;
-    GrB_Vector_nvals (&ignore, Thunk) ;
+    // GxB_print (op, 3) ;
     // GxB_print (Thunk, 3) ;
 
     // C<M> = accum(C,op(A))

@@ -24,6 +24,25 @@ GrB_Info ack (int64_t *stuff, GrB_Matrix GunkIt)
     return (GrB_SUCCESS) ;
 }
 
+bool select_plus_one (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const double *x, const double *thunk) ;
+
+bool select_nothing (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *thunk) ;
+
+bool select_plus_one (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const double *x, const double *thunk)
+{
+    // return true if x >= thunk+1
+    return ((*x) >= ((*thunk)+1)) ;
+}
+
+bool select_nothing (GrB_Index i, GrB_Index j, GrB_Index nrows,
+    GrB_Index ncols, const void *x, const void *thunk)
+{
+    return (false) ;
+}
+
 typedef int16_t user_int ;
 
 void mexFunction
@@ -569,8 +588,8 @@ void mexFunction
 
     GrB_Vector thunk = NULL ;
     OK (GrB_Vector_new (&thunk, user_type, 1)) ;
-    ERR (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, thunk, NULL)) ;
-    printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
+    OK (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, thunk, NULL)) ;
+    // printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
     value = (int64_t) 4 ;
     OK (GrB_Vector_setElement_UDT (thunk, &value, 0)) ;
@@ -791,6 +810,87 @@ void mexFunction
     GxB_print (A, GxB_COMPLETE) ;
 
     GrB_free (&A) ;
+
+    //--------------------------------------------------------------------------
+    // select error handling
+    //--------------------------------------------------------------------------
+
+    GxB_SelectOp selectop = NULL ;
+    OK (GxB_SelectOp_new (&selectop, select_plus_one, GrB_FP64, GrB_FP64)) ;
+    OK (GrB_Matrix_new (&A, GrB_FP64, 8, 8)) ;
+    OK (GrB_Matrix_new (&C, GrB_FP64, 8, 8)) ;
+    for (int i = 0 ; i < 8 ; i++)
+    {
+        OK (GrB_Matrix_setElement_FP64 (A, i, i, i)) ;
+    }
+    OK (GxB_print (A, 3)) ;
+    OK (GrB_Vector_new (&thunk, GrB_FP64, 1)) ;
+    OK (GrB_Vector_setElement_FP64 (thunk, 4, 0)) ;
+    OK (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
+    OK (GxB_print (C, 3)) ;
+
+    expected = GrB_NULL_POINTER ;
+    ERR (GxB_select (C, NULL, NULL, selectop, A, NULL, NULL)) ;
+    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+
+    expected = GrB_INVALID_VALUE ;
+    OK (GrB_Vector_clear (thunk)) ;
+    ERR (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
+    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+
+    expected = GrB_DOMAIN_MISMATCH ;
+    GrB_free (&thunk) ;
+    OK (GrB_Vector_new (&thunk, GrB_FP32, 1)) ;
+    ERR (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
+    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+
+    GrB_free (&selectop) ;
+    OK (GxB_SelectOp_new (&selectop, select_nothing, GrB_FP64, NULL)) ;
+    ERR (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
+    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+
+    expected = GrB_UNINITIALIZED_OBJECT ;
+    OK (GrB_Type_new (&user_type, sizeof (user_int))) ;
+    user_type->magic = 0xDEAD ;
+    ERR (GxB_print (user_type, GxB_COMPLETE)) ;
+    expected = GrB_INVALID_OBJECT ;
+    selectop->ttype = user_type ;
+    ERR (GxB_print (selectop, GxB_COMPLETE)) ;
+    user_type->magic = GB_MAGIC ;
+
+    GrB_free (&user_type) ;
+    GrB_free (&A) ;
+    GrB_free (&C) ;
+    GrB_free (&thunk) ;
+    GrB_free (&selectop) ;
+
+    //--------------------------------------------------------------------------
+    // slice vector
+    //--------------------------------------------------------------------------
+
+    // GB_wait constructs a slice, Aslice [1], that is then added to the
+    // pending tuples, B = T.  It then calls GB_add to compute Aslice [1] + T,
+    // where Aslice [1] can either be hypersparse or a hyperslice.  Need to
+    // trigger the condition that the index i appears after all entries in the
+    // implicit hyperlist Ah.  It's hard to test this case directly, via
+    // GB_wait and GB_add.
+
+    int64_t i, pA = -1, pB = -1 ;
+    int64_t Bh [10] ;
+    for (int i = 0 ; i < 10 ; i++)
+    {
+        Bh [i] = 1000 + i ;
+    }
+    GB_slice_vector (&i, NULL, &pA, &pB,
+        0, 0, NULL,     // Mi is empty
+        0, 10, NULL, 1, // Ah is an implicit hyperlist: [1 2 3 4 5 6 7 8 9 10]
+        0, 10, Bh,      // Bh is an explicit hyperlist
+        2001,           // n
+        (double) 10) ;  // target_work
+    printf ("slice_vector: i "GBd" pA "GBd" pB "GBd"\n", i, pA, pB) ;
+    OK (i == 1000) ;    // n is cut in half, i = floor ((0+(n-1))/2) 
+    OK (pA == 10) ;     // first task does all of A
+    OK (pB == 0) ;      // second task does all of B
 
     //--------------------------------------------------------------------------
     // wrapup

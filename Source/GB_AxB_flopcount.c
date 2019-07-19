@@ -233,7 +233,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
         {
 
             //------------------------------------------------------------------
-            // find the part of B(:,j) to be computed by this thread
+            // find the part of B(:,j) to be computed by this task
             //------------------------------------------------------------------
 
             int64_t pB, pB_end ;
@@ -407,13 +407,15 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
             // reduce the first and last vector of each slice
             //------------------------------------------------------------------
 
+            // See also Template/GB_reduce_each_vector.c
+
             int64_t kprior = -1 ;
 
             for (int tid = 0 ; tid < ntasks ; tid++)
             {
 
                 //--------------------------------------------------------------
-                // sum up the partial flops that thread tid computed for kfirst
+                // sum up the partial flops that task tid computed for kfirst
                 //--------------------------------------------------------------
 
                 int64_t kfirst = kfirst_slice [tid] ;
@@ -428,13 +430,13 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
                     {
                         if (kprior < kfirst)
                         { 
-                            // This thread is the first one that did work on
+                            // This task is the first one that did work on
                             // B(:,kfirst), so use it to start the reduction.
                             Bflops [kfirst] = Wfirst [tid] ;
                         }
                         else
                         { 
-                            // subsequent thread for B(:,kfirst)
+                            // subsequent task for B(:,kfirst)
                             Bflops [kfirst] += Wfirst [tid] ;
                         }
                         kprior = kfirst ;
@@ -442,7 +444,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
                 }
 
                 //--------------------------------------------------------------
-                // sum up the partial flops that thread tid computed for klast
+                // sum up the partial flops that task tid computed for klast
                 //--------------------------------------------------------------
 
                 if (kfirst < klast)
@@ -451,18 +453,23 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
                     int64_t pB_end   = pstart_slice [tid+1] ;
                     if (pB < pB_end)
                     {
-                        if (kprior < klast)
+                        /* if */ ASSERT (kprior < klast) ;
                         { 
-                            // This thread is the first one that did work on
+                            // This task is the first one that did work on
                             // B(:,klast), so use it to start the reduction.
                             Bflops [klast] = Wlast [tid] ;
                         }
+                        /*
                         else
-                        { 
-GB_GOTCHA ;                 // subsequent thread to work on B(:,klast)
-                            // subsequent thread to work on B(:,klast)
+                        {
+                            // If kfirst < klast and B(:,klast) is not empty,
+                            // then this task is always the first one to do
+                            // work on B(:,klast), so this case is never used.
+                            ASSERT (GB_DEAD_CODE) ;
+                            // subsequent task to work on B(:,klast)
                             Bflops [klast] += Wlast [tid] ;
                         }
+                        */
                         kprior = klast ;
                     }
                 }

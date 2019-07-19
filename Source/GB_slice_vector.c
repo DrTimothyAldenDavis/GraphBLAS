@@ -128,7 +128,6 @@ void GB_slice_vector
             }
             else if (A_hfirst + pA_end - 1 < i)
             { 
-GB_GOTCHA ; // Ai hyperlist: i comes after last entry
                 // i comes after the last entry, so it does not appear
                 pA = pA_end ;
             }
