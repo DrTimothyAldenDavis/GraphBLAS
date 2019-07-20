@@ -16,7 +16,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
     GxB_Print_Level pr,             // print level
     FILE *f                         // file for output
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -28,6 +28,22 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
     // print and check the object
     //--------------------------------------------------------------------------
 
-    return (GB_Scalar_check (s, name, pr, f, Context)) ;
+    GrB_Info info = GB_Scalar_check (s, name, pr, f, Context) ;
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    if (info == GrB_INDEX_OUT_OF_BOUNDS)
+    {   GB_cov[2622]++ ;
+// NOT COVERED (2622):
+        return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
+            "scalar invalid [%s]", GB_NAME))) ;
+    }
+    else
+    {   GB_cov[2623]++ ;
+// covered (2623): 6
+        return (info) ;
+    }
 }
 
