@@ -10,8 +10,6 @@
 // This function only computes C<M>=A'*B.  The mask must be present, and not
 // complemented.  The mask is always applied.
 
-#define GB_DEBUG
-
 #include "GB_mxm.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"

@@ -3,7 +3,6 @@ function testall (threads,longtests)
 %
 % Usage:
 % testall ;         % runs just the shorter tests (about 15 minutes)
-% testall([ ],1) ;  % runs all the tests (overnight).  Requires SuiteSparse.
 %
 % testall(threads) ;    % run with specific list of threads and chunk sizes
 %
@@ -25,7 +24,6 @@ if (nargin < 1)
 end
 if (isempty (threads))
     threads {1} = [4 1] ;
-    % threads {2} = [1 4096] ;
 end
 t = threads ;
 
@@ -64,13 +62,10 @@ logstat ;             % start the log.txt
 %----------------------------------------
 
 %0
+logstat ('test136',s) ; % subassignment special cases
+%0
 logstat ('test72',t) ;  % several special cases
 logstat ('test72',s) ;  % several special cases
-%0
-logstat ('test07',t) ;  % quick test GB_mex_subassign
-logstat ('test07',s) ;  % quick test GB_mex_subassign
-%0
-logstat ('test136',s) ; % GxB_subassign, method 08, special case (one thread)
 %0
 logstat ('test07b',t) ; % quick test GB_mex_assign
 %0
@@ -274,6 +269,8 @@ if (longtests)
 % ------------------------ % ---- % ------------------------------
 
 logstat ('test00',t) ;     %    8 % GB_mex_mis (multiple threads)
+logstat ('test07',t) ;     %    0 % quick test GB_mex_subassign
+logstat ('test07',s) ;     %    0 % quick test GB_mex_subassign
 logstat ('test06',t) ;     %  532 % test GrB_mxm on all semirings
 logstat ('test06(936)',t); %      % performance test GrB_mxm on all semirings
 logstat ('test08',t) ;     %   35 % quick test GB_mex_subassign
