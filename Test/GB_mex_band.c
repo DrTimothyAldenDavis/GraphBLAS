@@ -15,7 +15,7 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_VECTOR_FREE (&Thunk) ;           \
+    GB_SCALAR_FREE (&Thunk) ;           \
     GB_MATRIX_FREE (&C) ;               \
     GB_MATRIX_FREE (&A) ;               \
     GrB_free (&Thunk_type) ;            \
@@ -69,7 +69,7 @@ void mexFunction
     GxB_SelectOp op = NULL ;
     GrB_Info info ;
     GrB_Descriptor desc = NULL ;
-    GrB_Vector Thunk = NULL ;
+    GxB_Scalar Thunk = NULL ;
     GrB_Type Thunk_type = NULL ;
 
     #define GET_DEEP_COPY ;
@@ -103,10 +103,10 @@ void mexFunction
     bandwidth.lo = (int64_t) mxGetScalar (pargin [1]) ;
     bandwidth.hi = (int64_t) mxGetScalar (pargin [2]) ;
 
-    OK (GrB_Vector_new (&Thunk, Thunk_type, 1)) ;
-    OK (GrB_Vector_setElement_UDT (Thunk, (void *) &bandwidth, 0)) ;
+    OK (GxB_Scalar_new (&Thunk, Thunk_type)) ;
+    OK (GxB_Scalar_setElement_UDT (Thunk, (void *) &bandwidth)) ;
     GrB_Index ignore ;
-    OK (GrB_Vector_nvals (&ignore, Thunk)) ;
+    OK (GxB_Scalar_nvals (&ignore, Thunk)) ;
     // GxB_print (Thunk, 3) ;
 
     // get atranspose

@@ -16,7 +16,7 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Vector Thunk,         // optional input for select operator
+    const GxB_Scalar Thunk,         // optional input for select operator
     const GrB_Descriptor desc       // descriptor for w and mask
 )
 { 

@@ -89,8 +89,6 @@ static inline bool GB_Pending_ensure
     {
         return (GB_Pending_realloc (PHandle, nnew)) ;
     }
-
-    return (true) ;
 }
 
 //------------------------------------------------------------------------------

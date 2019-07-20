@@ -194,6 +194,9 @@
 // the GraphBLAS integer
 //------------------------------------------------------------------------------
 
+// GrB_Index: row or column index, or matrix dimension.  This typedef is used
+// for row and column indices, or matrix and vector dimensions.
+
 typedef uint64_t GrB_Index ;
 
 //------------------------------------------------------------------------------
@@ -915,21 +918,16 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 // not depend at all on the value aij.  In this case, x is passed to f as a
 // NULL pointer.
 
-// The optional Thunk parameter to GxB_select is a GrB_Vector of length 1.  If
-// present, it must contain exactly one entry.  For built-in select operators
-// (TRIL, TRIU, DIAG, and OFFDIAG), Thunk must have any built-in type, and
-// thunk = (int64_t) Thunk(0) is used to specific the diagonal for these
-// operators.  Thunk may be NULL, in which case thunk is zero.  The value of
-// Thunk (if present) is not modified by any built-in select operator.
+// The optional Thunk parameter to GxB_select is a GxB_Scalar.  For built-in
+// select operators (TRIL, TRIU, DIAG, and OFFDIAG), Thunk must have any
+// built-in type, and thunk = (int64_t) Thunk is used to specific the diagonal
+// for these operators.  Thunk may be NULL, in which case its value is treated
+// as zero, if it has a built-in type. The value of Thunk (if present) is not
+// modified by any built-in select operator.
 
-// For user-defined select operators, Thunk is not typecasted at all.  The
-// value of Thunk parameter is passed to the user-defined select operator as a
-// (const void *) pointer, thunk.  The user-defined select operator must treat
-// the thunk scalar as a read-only value.  Modifying it is not thread-safe, and
-// results are undefined if it is modified.  The purpose of the thunk is to
-// provide an additional optional input to the user-defined select operator,
-// similar to the use of the thunk parameter of the qsort_s function in the
-// ANSI C11 specification.
+// For user-defined select operators, Thunk is not typecasted at all.  If
+// the user operator is defined with a non-NULL Thunk input, then it must
+// be non-NULL and of the same type, when calling GxB_select.
 
 // GxB_SelectOp:  a function z=f(i,j,m,n,x,thunk) for the GxB_Select operation.
 // The function f must have the signature:
@@ -942,11 +940,11 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 // GxB_select as a const void * pointer.  However, this design was incompatible
 // with non-blocking mode, when the GxB_select is computed in parallel.  Thus,
 // in Version 3.0 and following of SuiteSparse:GraphBLAS, Thunk becomes a
-// GrB_Vector of length 1, with a single entry.  The function signature of the
-// user-defined select operator, f, remains the same.
+// GxB_Scalar.  The function signature of the user-defined select operator, f,
+// remains the same.
 
-// ADDED in V3.0:  thunk changed from (const void *) to a GrB_Vector.
-// This change is not backward compatible with SuiteSparse:GraphBLAS V2.x.
+// ADDED in V3.0:  thunk changed from (const void *) to a GxB_Scalar.  This
+// change is not backward compatible with SuiteSparse:GraphBLAS V2.x.
 
 typedef struct GB_SelectOp_opaque *GxB_SelectOp ;
 
@@ -979,10 +977,10 @@ extern GxB_SelectOp
     GxB_LE_THUNK ;  // C=A(A <= thunk)
 
 // For GxB_TRIL, GxB_TRIU, GxB_DIAG, and GxB_OFFDIAG, the parameter Thunk is a
-// GrB_Vector of length 1 of any built-in type.  If GrB_NULL, or empty, Thunk
-// is treated as zero.  Otherwise, the single entry is typecasted as (int64_t)
-// Thunk (0).  These select operators do not depend on the values of A, but
-// just their position, and they work on matrices of any type.
+// GxB_Scalar of any built-in type.  If GrB_NULL, or empty, Thunk is treated as
+// zero.  Otherwise, the single entry is typecasted as (int64_t) Thunk.
+// These select operators do not depend on the values of A, but just their
+// position, and they work on matrices of any type.
 
 // For GxB_*ZERO, the result depends only on the value of A(i,j).  The Thunk
 // parameter to GxB_select is ignored and may be GrB_NULL.
@@ -1411,7 +1409,7 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
 ) ;
 
 //==============================================================================
-//=== GraphBLAS Matrix and Vector objects ======================================
+//=== GraphBLAS Matrix, Vector, and Scalar objects =============================
 //==============================================================================
 
 // Sparse matrices and vectors are the primary objects in GraphBLAS.  All other
@@ -1425,15 +1423,296 @@ GrB_Info GrB_Semiring_free          // free a user-created semiring
 // GrB_Index, and they range from 0 to the dimesion minus 1.  That is, they are
 // zero-based.
 
-// Like all GraphBLAS objects, the GrB_Vector and GrB_Matrix are opaque to
-// the user; their structure may change in future releases.
-
-// GrB_Index: row or column index, or matrix dimension.  This typedef is used
-// for row and column indices, or matrix and vector dimensions.
+// Like all GraphBLAS objects, the GrB_Matrix, GrB_Vector, and GxB_Scalar are
+// opaque to the user; their internal structure may change in future releases.
 
 typedef struct GB_Matrix_opaque *GrB_Matrix ;
 
 typedef struct GB_Vector_opaque *GrB_Vector ;
+
+typedef struct GB_Scalar_opaque *GxB_Scalar ;
+
+//==============================================================================
+//=== GraphBLAS Scalar methods =================================================
+//==============================================================================
+
+// SPEC: the GxB_Scalar is an extension to the spec.  A GxB_Scalar acts just
+// like a GrB_Vector of length 1.  It can be sparse, so its entry need not be
+// present.
+
+// These methods create, free, copy, and clear a GxB_Scalar.  The nvals,
+// and type methods return basic information about a GxB_Scalar.
+
+GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entries
+(
+    GxB_Scalar *s,          // handle of GxB_Scalar to create
+    GrB_Type type           // type of GxB_Scalar to create
+) ;
+
+GrB_Info GxB_Scalar_dup     // make an exact copy of a GxB_Scalar
+(
+    GxB_Scalar *s,          // handle of output GxB_Scalar to create
+    const GxB_Scalar t      // input GxB_Scalar to copy
+) ;
+
+GrB_Info GxB_Scalar_clear   // clear a GxB_Scalar of its entry
+(                           // type and dimension remain unchanged.
+    GxB_Scalar s            // GxB_Scalar to clear
+) ;
+
+GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
+(
+    GrB_Index *nvals,       // GxB_Scalar has nvals entries (1 or 0)
+    const GxB_Scalar s      // GxB_Scalar to query
+) ;
+
+GrB_Info GxB_Scalar_type    // get the type of a GxB_Scalar
+(
+    GrB_Type *type,         // returns the type of the GxB_Scalar
+    const GxB_Scalar s      // GxB_Scalar to query
+) ;
+
+GrB_Info GxB_Scalar_free    // free a GxB_Scalar
+(
+    GxB_Scalar *s           // handle of GxB_Scalar to free
+) ;
+
+//------------------------------------------------------------------------------
+// GxB_Scalar_setElement
+//------------------------------------------------------------------------------
+
+// Set a single GxB_Scalar s, from a user scalar x: s = x, typecasting from the
+// type of x to the type of w as needed.
+
+GrB_Info GxB_Scalar_setElement_BOOL     // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    bool x                              // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_INT8     // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    int8_t x                            // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_UINT8    // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    uint8_t x                           // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_INT16    // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    int16_t x                           // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_UINT16   // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    uint16_t x                          // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_INT32    // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    int32_t x                           // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_UINT32   // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    uint32_t x                          // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_INT64    // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    int64_t x                           // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_UINT64   // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    uint64_t x                          // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_FP32     // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    float x                             // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_FP64     // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    double x                            // user scalar to assign to w
+) ;
+
+GrB_Info GxB_Scalar_setElement_UDT      // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    void *x                             // user scalar to assign to w
+) ;
+
+// Type-generic version:  x can be any supported C type or void * for a
+// user-defined type.
+
+/*
+
+GrB_Info GxB_Scalar_setElement          // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    <type> x                            // user scalar to assign to w
+) ;
+
+*/
+
+#define GxB_Scalar_setElement(s,x)                  \
+    _Generic                                        \
+    (                                               \
+        (x),                                        \
+        const bool      : GxB_Scalar_setElement_BOOL   ,  \
+              bool      : GxB_Scalar_setElement_BOOL   ,  \
+        const int8_t    : GxB_Scalar_setElement_INT8   ,  \
+              int8_t    : GxB_Scalar_setElement_INT8   ,  \
+        const uint8_t   : GxB_Scalar_setElement_UINT8  ,  \
+              uint8_t   : GxB_Scalar_setElement_UINT8  ,  \
+        const int16_t   : GxB_Scalar_setElement_INT16  ,  \
+              int16_t   : GxB_Scalar_setElement_INT16  ,  \
+        const uint16_t  : GxB_Scalar_setElement_UINT16 ,  \
+              uint16_t  : GxB_Scalar_setElement_UINT16 ,  \
+        const int32_t   : GxB_Scalar_setElement_INT32  ,  \
+              int32_t   : GxB_Scalar_setElement_INT32  ,  \
+        const uint32_t  : GxB_Scalar_setElement_UINT32 ,  \
+              uint32_t  : GxB_Scalar_setElement_UINT32 ,  \
+        const int64_t   : GxB_Scalar_setElement_INT64  ,  \
+              int64_t   : GxB_Scalar_setElement_INT64  ,  \
+        const uint64_t  : GxB_Scalar_setElement_UINT64 ,  \
+              uint64_t  : GxB_Scalar_setElement_UINT64 ,  \
+        const float     : GxB_Scalar_setElement_FP32   ,  \
+              float     : GxB_Scalar_setElement_FP32   ,  \
+        const double    : GxB_Scalar_setElement_FP64   ,  \
+              double    : GxB_Scalar_setElement_FP64   ,  \
+        const void *    : GxB_Scalar_setElement_UDT    ,  \
+              void *    : GxB_Scalar_setElement_UDT       \
+    )                                               \
+    (s, x)    
+
+//------------------------------------------------------------------------------
+// GxB_Scalar_extractElement
+//------------------------------------------------------------------------------
+
+// Extract a single entry from a GxB_scalar, x = s, typecasting from the type
+// of s to the type of x as needed.
+
+// Returns GrB_SUCCESS if s has an entry, and sets x to its value.
+// Returns GrB_NO_VALUE if s does not an entry, and x is unmodified.
+
+GrB_Info GxB_Scalar_extractElement_BOOL     // x = s
+(
+    bool *x,                        // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_INT8     // x = s
+(
+    int8_t *x,                      // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_UINT8    // x = s
+(
+    uint8_t *x,                     // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_INT16    // x = s
+(
+    int16_t *x,                     // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_UINT16   // x = s
+(
+    uint16_t *x,                    // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_INT32    // x = s
+(
+    int32_t *x,                     // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_UINT32   // x = s
+(
+    uint32_t *x,                    // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_INT64    // x = s
+(
+    int64_t *x,                     // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_UINT64   // x = s
+(
+    uint64_t *x,                    // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_FP32     // x = s
+(
+    float *x,                       // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_FP64     // x = s
+(
+    double *x,                      // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+GrB_Info GxB_Scalar_extractElement_UDT      // x = s
+(
+    void *x,                        // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+// Type-generic version:  x can be a pointer to any supported C type or void *
+// for a user-defined type.
+
+/*
+
+GrB_Info GxB_Scalar_extractElement  // x = s
+(
+    <type> *x,                      // user scalar extracted
+    const GxB_Scalar s              // GxB_Scalar to extract an entry from
+) ;
+
+*/
+
+#define GxB_Scalar_extractElement(x,s)                  \
+    _Generic                                            \
+    (                                                   \
+        (x),                                            \
+        bool     *: GxB_Scalar_extractElement_BOOL   ,  \
+        int8_t   *: GxB_ScalaGxB_Scalarlement_INT8   ,  \
+        uint8_t  *: GxB_Scalar_extractElement_UINT8  ,  \
+        int16_t  *: GxB_Scalar_extractElement_INT16  ,  \
+        uint16_t *: GxB_Scalar_extractElement_UINT16 ,  \
+        int32_t  *: GxB_Scalar_extractElement_INT32  ,  \
+        uint32_t *: GxB_Scalar_extractElement_UINT32 ,  \
+        int64_t  *: GxB_Scalar_extractElement_INT64  ,  \
+        uint64_t *: GxB_Scalar_extractElement_UINT64 ,  \
+        float    *: GxB_Scalar_extractElement_FP32   ,  \
+        double   *: GxB_Scalar_extractElement_FP64   ,  \
+        void     *: GxB_Scalar_extractElement_UDT       \
+    )                                                   \
+    (x, s)
 
 //==============================================================================
 //=== GraphBLAS Vector methods =================================================
@@ -1478,6 +1757,11 @@ GrB_Info GxB_Vector_type    // get the type of a vector
 (
     GrB_Type *type,         // returns the type of the vector
     const GrB_Vector v      // vector to query
+) ;
+
+GrB_Info GrB_Vector_free    // free a vector
+(
+    GrB_Vector *v           // handle of vector to free
 ) ;
 
 //------------------------------------------------------------------------------
@@ -2074,15 +2358,6 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
     )                                                   \
     (I, X, nvals, v)
 
-//------------------------------------------------------------------------------
-// GrB_Vector_free
-//------------------------------------------------------------------------------
-
-GrB_Info GrB_Vector_free    // free a vector
-(
-    GrB_Vector *v           // handle of vector to free
-) ;
-
 //==============================================================================
 //=== GraphBLAS Matrix methods =================================================
 //==============================================================================
@@ -2133,6 +2408,11 @@ GrB_Info GxB_Matrix_type    // get the type of a matrix
 (
     GrB_Type *type,         // returns the type of the matrix
     const GrB_Matrix A      // matrix to query
+) ;
+
+GrB_Info GrB_Matrix_free    // free a matrix
+(
+    GrB_Matrix *A           // handle of matrix to free
 ) ;
 
 //------------------------------------------------------------------------------
@@ -2775,15 +3055,6 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
     )                                                   \
     (I, J, X, nvals, A)
 
-//------------------------------------------------------------------------------
-// GrB_Matrix_free
-//------------------------------------------------------------------------------
-
-GrB_Info GrB_Matrix_free    // free a matrix
-(
-    GrB_Matrix *A           // handle of matrix to free
-) ;
-
 //==============================================================================
 //=== GraphBLAS Descriptor =====================================================
 //==============================================================================
@@ -3239,6 +3510,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
         GxB_SelectOp   *: GxB_SelectOp_free   ,  \
         GrB_Monoid     *: GrB_Monoid_free     ,  \
         GrB_Semiring   *: GrB_Semiring_free   ,  \
+        GxB_Scalar     *: GxB_Scalar_free     ,  \
         GrB_Vector     *: GrB_Vector_free     ,  \
         GrB_Matrix     *: GrB_Matrix_free     ,  \
         GrB_Descriptor *: GrB_Descriptor_free    \
@@ -4777,7 +5049,7 @@ GrB_Info GxB_Vector_select          // w<mask> = accum (w, op(u,k))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Vector Thunk,         // optional input for the select operator
+    const GxB_Scalar Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 
@@ -4788,7 +5060,7 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Vector Thunk,         // optional input for the select operator
+    const GxB_Scalar Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 
@@ -5815,6 +6087,14 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
     FILE *f                         // file for output
 ) ;
 
+GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
+(
+    GxB_Scalar s,                   // object to print and check
+    const char *name,               // name of the object
+    GxB_Print_Level pr,             // print level
+    FILE *f                         // file for output
+) ;
+
 #define GxB_fprint(object,pr,f)                         \
     _Generic                                            \
     (                                                   \
@@ -5831,6 +6111,8 @@ GrB_Info GxB_Vector_fprint          // print and check a GrB_Vector
               GrB_Monoid     : GxB_Monoid_fprint     ,  \
         const GrB_Semiring   : GxB_Semiring_fprint   ,  \
               GrB_Semiring   : GxB_Semiring_fprint   ,  \
+        const GxB_Scalar     : GxB_Scalar_fprint     ,  \
+              GxB_Scalar     : GxB_Scalar_fprint     ,  \
         const GrB_Vector     : GxB_Vector_fprint     ,  \
               GrB_Vector     : GxB_Vector_fprint     ,  \
         const GrB_Matrix     : GxB_Matrix_fprint     ,  \

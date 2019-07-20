@@ -15,7 +15,7 @@
 
 #define FREE_ALL                        \
 {                                       \
-    GB_VECTOR_FREE (&Thunk) ;           \
+    GB_SCALAR_FREE (&Thunk) ;           \
     GB_MATRIX_FREE (&C) ;               \
     GB_MATRIX_FREE (&M) ;               \
     GB_MATRIX_FREE (&A) ;               \
@@ -37,7 +37,7 @@ void mexFunction
     GrB_Matrix M = NULL ;
     GrB_Matrix A = NULL ;
     GrB_Descriptor desc = NULL ;
-    GrB_Vector Thunk = NULL ;
+    GxB_Scalar Thunk = NULL ;
 
     // check inputs
     GB_WHERE (USAGE) ;
@@ -98,8 +98,8 @@ void mexFunction
     {
         if (mxIsSparse (pargin [5]))
         {
-            Thunk = GB_mx_mxArray_to_Matrix (pargin [5], "Thunk input",
-                false, false) ;
+            Thunk = (GxB_Scalar) GB_mx_mxArray_to_Matrix (pargin [5],
+                "Thunk input", false, false) ;
             if (Thunk == NULL)
             {
                 FREE_ALL ;
@@ -110,10 +110,10 @@ void mexFunction
         {
             // get k
             int64_t k = (int64_t) mxGetScalar (pargin [5]) ;
-            GrB_Vector_new (&Thunk, GrB_INT64, 1) ;
-            GrB_Vector_setElement (Thunk, k, 0) ;
+            GxB_Scalar_new (&Thunk, GrB_INT64) ;
+            GxB_Scalar_setElement (Thunk, k) ;
             GrB_Index ignore ;
-            GrB_Vector_nvals (&ignore, Thunk) ;
+            GxB_Scalar_nvals (&ignore, Thunk) ;
         }
     }
 

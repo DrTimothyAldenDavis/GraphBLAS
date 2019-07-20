@@ -585,21 +585,21 @@ void mexFunction
     ERR (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, A, NULL)) ;
     printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
-    GrB_Vector thunk = NULL ;
-    OK (GrB_Vector_new (&thunk, user_type, 1)) ;
+    GxB_Scalar thunk = NULL ;
+    OK (GxB_Scalar_new (&thunk, user_type)) ;
     OK (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, thunk, NULL)) ;
     // printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
     value = (int64_t) 4 ;
-    OK (GrB_Vector_setElement_UDT (thunk, &value, 0)) ;
+    OK (GxB_Scalar_setElement_UDT (thunk, &value)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
     ERR (GxB_select (A, NULL, NULL, GxB_GE_THUNK, A, thunk, NULL)) ;
     printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
-    GrB_Vector thunk2 = NULL ;
-    OK (GrB_Vector_new (&thunk2, GrB_INT16, 1)) ;
-    OK (GrB_Vector_setElement (thunk2, 4, 0)) ;
+    GxB_Scalar thunk2 = NULL ;
+    OK (GxB_Scalar_new (&thunk2, GrB_INT16)) ;
+    OK (GxB_Scalar_setElement (thunk2, 4)) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
 
@@ -641,8 +641,8 @@ void mexFunction
 
     OK (GrB_Matrix_new (&A, GrB_BOOL, 10, 10)) ;
     OK (GrB_Matrix_new (&B, GrB_BOOL, 10, 10)) ;
-    OK (GrB_Vector_new (&thunk, GrB_BOOL, 1)) ;
-    OK (GrB_Vector_setElement (thunk, 0, 0)) ;
+    OK (GxB_Scalar_new (&thunk, GrB_BOOL)) ;
+    OK (GxB_Scalar_setElement (thunk, 0)) ;
     for (int i = 0 ; i < 10 ; i++)
     {
         OK (GrB_Matrix_setElement (A, (bool) (i % 2), i, i)) ;
@@ -823,8 +823,8 @@ void mexFunction
         OK (GrB_Matrix_setElement_FP64 (A, i, i, i)) ;
     }
     OK (GxB_print (A, 3)) ;
-    OK (GrB_Vector_new (&thunk, GrB_FP64, 1)) ;
-    OK (GrB_Vector_setElement_FP64 (thunk, 4, 0)) ;
+    OK (GxB_Scalar_new (&thunk, GrB_FP64)) ;
+    OK (GxB_Scalar_setElement_FP64 (thunk, 4)) ;
     OK (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
     OK (GxB_print (C, 3)) ;
 
@@ -833,13 +833,13 @@ void mexFunction
     printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
 
     expected = GrB_INVALID_VALUE ;
-    OK (GrB_Vector_clear (thunk)) ;
+    OK (GxB_Scalar_clear (thunk)) ;
     ERR (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
     printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
 
     expected = GrB_DOMAIN_MISMATCH ;
     GrB_free (&thunk) ;
-    OK (GrB_Vector_new (&thunk, GrB_FP32, 1)) ;
+    OK (GxB_Scalar_new (&thunk, GrB_FP32)) ;
     ERR (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
     printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
 

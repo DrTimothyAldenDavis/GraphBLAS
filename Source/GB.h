@@ -397,6 +397,11 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     GB_object_code object_kind ;   // built-in, user pre-compiled, or run-time
 } ;
 
+struct GB_Scalar_opaque     // content of GxB_Scalar: 1-by-1 standard CSC matrix
+{
+    #include "GB_matrix.h"
+} ;
+
 struct GB_Vector_opaque     // content of GrB_Vector: m-by-1 standard CSC matrix
 {
     #include "GB_matrix.h"
@@ -504,6 +509,9 @@ int64_t GB_Pending_n        // return # of pending tuples in A
     ((v)->nvec == 1) &&             \
     ((v)->h == NULL)                \
 )
+
+// A GxB_Vector is a GrB_Vector of length 1
+#define GB_SCALAR_OK(v) (GB_VECTOR_OK(v) && ((v)->vlen == 1))
 
 //------------------------------------------------------------------------------
 // GB_INDEX_MAX
@@ -1111,6 +1119,16 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
     GB_Context Context
 ) ;
 
+GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
+(
+    const GxB_Scalar v,     // GraphBLAS GxB_Scalar to print and check
+    const char *name,       // name of the GxB_Scalar
+    int pr,                 // 0: print nothing, 1: print header and errors,
+                            // 2: print brief, 3: print all
+    FILE *f,                // file for output
+    GB_Context Context
+) ;
+
 #define GB_check(x,name,pr)                             \
     _Generic                                            \
     (                                                   \
@@ -1131,6 +1149,8 @@ GrB_Info GB_Vector_check    // check a GraphBLAS vector
               GrB_Matrix     : GB_Matrix_check     ,    \
         const GrB_Vector     : GB_Vector_check     ,    \
               GrB_Vector     : GB_Vector_check     ,    \
+        const GxB_Scalar     : GB_Scalar_check     ,    \
+              GxB_Scalar     : GB_Scalar_check     ,    \
         const GrB_Descriptor : GB_Descriptor_check ,    \
               GrB_Descriptor : GB_Descriptor_check      \
     ) (x, name, pr, stdout, Context)
@@ -1567,6 +1587,14 @@ void GB_free_memory
     if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
 }
 
+#define GB_SCALAR_FREE(v)                                                     \
+{                                                                             \
+    if (v != NULL && *(v) != NULL)                                            \
+        printf ("\nscalar free:                  "                            \
+        "scalar_free (%s) line %d file %s\n", GB_STR(v), __LINE__, __FILE__) ;\
+    if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
+}
+
 #define GB_CALLOC_MEMORY(p,n,s)                                               \
     printf ("\nCalloc:                       "                                \
     "%s = calloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
@@ -1621,6 +1649,8 @@ void GB_free_memory
 }
 
 #define GB_VECTOR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
+
+#define GB_SCALAR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
 #define GB_CALLOC_MEMORY(p,n,s)                                               \
     p = GB_calloc_memory (n, s) ;

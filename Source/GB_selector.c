@@ -38,7 +38,7 @@ GrB_Info GB_selector
     const bool flipij,          // if true, flip i and j for user operator
     GrB_Matrix A,               // input matrix
     int64_t ithunk,             // (int64_t) Thunk, if Thunk is NULL
-    const GrB_Vector Thunk,     // optional input for select operator
+    const GxB_Scalar Thunk,     // optional input for select operator
     GB_Context Context
 )
 {

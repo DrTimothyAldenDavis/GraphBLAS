@@ -26,7 +26,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GxB_SelectOp op,          // operator to select the entries
     const GrB_Matrix A,             // input matrix
-    const GrB_Vector Thunk_in,      // optional input for select operator
+    const GxB_Scalar Thunk_in,      // optional input for select operator
     const bool A_transpose,         // A matrix descriptor
     GB_Context Context
 )

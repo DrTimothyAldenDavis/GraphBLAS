@@ -3177,9 +3177,9 @@ void mexFunction
 
     double thresh = 42 ;
 
-    GrB_Vector Thunk = NULL ;
-    OK (GrB_Vector_new (&Thunk, GrB_FP64, 1)) ;
-    OK (GrB_Vector_setElement (Thunk, thresh, 0)) ;
+    GxB_Scalar Thunk = NULL ;
+    OK (GxB_Scalar_new (&Thunk, GrB_FP64)) ;
+    OK (GxB_Scalar_setElement (Thunk, thresh)) ;
 
     ERR (GxB_select (A, Z   , NULL, selectop, A, Thunk, NULL)) ;
     ERR (GxB_select (A, NULL, o2  , selectop, A, Thunk, NULL)) ;
