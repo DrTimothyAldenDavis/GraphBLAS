@@ -55,10 +55,10 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "July 19, 2019 (10pm) (DRAFT)" )
+set ( GraphBLAS_DATE "July 19, 2019 (full test coverage) (DRAFT)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 0 )
-set ( GraphBLAS_VERSION_SUB   0 )
+set ( GraphBLAS_VERSION_SUB   1 )
 
 # GraphBLAS C API Specification version, at graphblas.org
 set ( GraphBLAS_API_DATE "May 18, 2018" )
@@ -87,7 +87,7 @@ if ( NOT CMAKE_BUILD_TYPE )
 endif ( )
 
 # select "true" to build both dynamic and static libraries:
-# set ( BUILD_GRB_STATIC_LIBRARY true )
+  set ( BUILD_GRB_STATIC_LIBRARY true )
   set ( BUILD_GRB_STATIC_LIBRARY false )
 
 if ( BUILD_GRB_STATIC_LIBRARY )
@@ -418,6 +418,8 @@ target_link_libraries ( import_demo   graphblas graphblasdemo )
 #-------------------------------------------------------------------------------
 # graphblas installation location
 #-------------------------------------------------------------------------------
+
+# note that the demo libraries are not installed
 
 if ( BUILD_GRB_STATIC_LIBRARY )
 

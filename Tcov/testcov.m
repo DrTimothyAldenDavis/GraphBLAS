@@ -20,5 +20,5 @@ catch me
 end
 
 t = toc (all_tcov_time) ;
-fprintf ('\ntestcov: all tests passed, total time %g hours\n', t / 3600) ;
+fprintf ('\ntestcov: all tests passed, total time %0.5g minutes\n', t / 60) ;
 

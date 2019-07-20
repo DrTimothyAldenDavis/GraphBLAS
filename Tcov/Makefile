@@ -56,7 +56,8 @@ clean:
 	$(RM) *.o
 
 distclean: clean
-	$(RM) *.mex* tmp*/* errlog.txt gbstat.mat fprint.txt libgraphblas_tcov.*
+	$(RM) *.mex* tmp*/* errlog*.txt gbstat.mat fprint.txt
+	$(RM) libgraphblas_tcov.*
 
 purge: distclean
 	$(RM) log.txt

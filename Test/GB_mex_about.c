@@ -455,7 +455,6 @@ void mexFunction
     GrB_Descriptor desc ;
     OK (GrB_Descriptor_new (&desc)) ;
     OK (GxB_Desc_set (desc, GxB_NTHREADS, 42)) ;
-    // TODO: user guide: add comment about (double) here:
     OK (GxB_Desc_set (desc, GxB_CHUNK, (double) 12345)) ;
     OK (GxB_Desc_get (desc, GxB_CHUNK, &chunk)) ;
     OK (GxB_Desc_get (desc, GxB_NTHREADS, &nthreads)) ;

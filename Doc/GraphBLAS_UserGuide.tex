@@ -5159,18 +5159,21 @@ Both parameters can be set in two ways:
 \begin{itemize}
 
 \item Globally:  If the following methods are used, then all subsequent
-GraphBLAS operations will use these settings.
+GraphBLAS operations will use these settings.  Note the typecast,
+\verb'(double)' \verb'chunk'.  This is necessary if a literal constant
+such as \verb'20000' is passed as this argument.  The type of the
+constant must be double.  This is true for all uses of \verb'GxB_set'.
 
     {\footnotesize
     \begin{verbatim}
     int nthreads_max = 40 ;
     GxB_set (GxB_NTHREADS, nthreads_max) ;
-    double chunk = 20000 ;
-    GxB_set (GxB_CHUNK, chunk) ; \end{verbatim} }
+    GxB_set (GxB_CHUNK, (double) 20000) ; \end{verbatim} }
 
 \item Per operation:  Most GraphBLAS operations take a \verb'GrB_Descriptor'
 input, and this can be modified to set the number of threads and chunk
-size for the operation that uses this descriptor.
+size for the operation that uses this descriptor.  Note that \verb'chunk'
+is a \verb'double'.
 
     {\footnotesize
     \begin{verbatim}

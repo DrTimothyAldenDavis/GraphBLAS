@@ -21,9 +21,13 @@ To run the tests you must first compile "spok":
     spok_install
 
 Next, compile and install GraphBLAS.  Then, in this directory, to compile and
-run all the tests (about 10 minutes):
+run all the tests:
 
     make ; testall
+
+If you get a linking problem on linux, add this directory to your
+LD_LIBRARY_PATCH, so that the libgraphblas.so constructed by gbmake can be
+found by the mexFunctions.
 
 Longer tests can be done as well (this can take a whole day):
 
