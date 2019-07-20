@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GrB_Vector_nvals: number of entries in a sparse vector
+// GxB_Scalar_dup: make a deep copy of a sparse GxB_Scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,12 +7,14 @@
 
 //------------------------------------------------------------------------------
 
+// s = t, making a deep copy
+
 #include "GB.h"
 
-GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
+GrB_Info GxB_Scalar_dup     // make an exact copy of a GxB_Scalar
 (
-    GrB_Index *nvals,       // number of entries
-    const GrB_Vector v      // vector to query
+    GxB_Scalar *s,          // handle of output GxB_Scalar to create
+    const GxB_Scalar t      // input GxB_Scalar to copy
 )
 { 
 
@@ -20,17 +22,15 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_WHERE ("GrB_Vector_nvals (&nvals, v)") ;
-    GB_RETURN_IF_NULL_OR_FAULTY (v) ;
-    ASSERT (GB_VECTOR_OK (v)) ;
-
-    // do not check if nvals is NULL; pending updates must be applied first, in
-    // GB_nvals, per Table 2.4 in the spec
+    GB_WHERE ("GxB_Scalar_dup (&s, t)") ;
+    GB_RETURN_IF_NULL (s) ;
+    GB_RETURN_IF_NULL_OR_FAULTY (t) ;
+    ASSERT (GB_SCALAR_OK (t)) ;
 
     //--------------------------------------------------------------------------
-    // get the number of entries
+    // duplicate the GxB_Scalar
     //--------------------------------------------------------------------------
 
-    return (GB_nvals (nvals, (GrB_Matrix) v, Context)) ;
+    return (GB_dup ((GrB_Matrix *) s, (GrB_Matrix) t, true, NULL, Context)) ;
 }
 
