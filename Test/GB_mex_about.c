@@ -587,6 +587,10 @@ void mexFunction
 
     GxB_Scalar thunk = NULL ;
     OK (GxB_Scalar_new (&thunk, user_type)) ;
+    GrB_Type type2 = NULL ;
+    OK (GxB_Scalar_type (&type2, thunk)) ;
+    CHECK (type2 == user_type) ;
+    OK (GxB_print (thunk, GxB_COMPLETE)) ;
     OK (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, thunk, NULL)) ;
     // printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
@@ -857,6 +861,12 @@ void mexFunction
     ERR (GxB_print (selectop, GxB_COMPLETE)) ;
     user_type->magic = GB_MAGIC ;
 
+    expected = GrB_UNINITIALIZED_OBJECT ;
+    thunk->magic = 0xDEAD ;
+    ERR (GxB_print (thunk, GxB_COMPLETE)) ;
+    thunk->magic = GB_MAGIC ;
+    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+
     GrB_free (&user_type) ;
     GrB_free (&A) ;
     GrB_free (&C) ;
@@ -890,6 +900,63 @@ void mexFunction
     OK (i == 1000) ;    // n is cut in half, i = floor ((0+(n-1))/2) 
     OK (pA == 10) ;     // first task does all of A
     OK (pB == 0) ;      // second task does all of B
+
+    //--------------------------------------------------------------------------
+    // GxB_Scalar
+    //--------------------------------------------------------------------------
+
+    GxB_Scalar scalar = NULL, scalar2 = NULL ;
+    OK (GxB_Scalar_new (&scalar, GrB_FP64)) ;
+    OK (GxB_Scalar_nvals (&nvals, scalar)) ;
+    CHECK (nvals == 0) ;
+
+    bool     b_8 = 0 ;
+    int8_t   i_8 = 0 ;
+    int16_t  i_16 = 0 ;
+    int32_t  i_32 = 0 ;
+    int64_t  i_64 = 0 ;
+    uint8_t  u_8 = 0 ;
+    uint16_t u_16 = 0 ;
+    uint32_t u_32 = 0 ;
+    uint64_t u_64 = 0 ;
+    float    x_32 = 0 ;
+    double   x_64 = 0 ;
+
+    OK (GxB_Scalar_setElement (scalar, (double) 1.25)) ;
+    OK (GxB_Scalar_nvals (&nvals, scalar)) ;
+    CHECK (nvals == 1) ;
+
+    OK (GxB_Scalar_dup (&scalar2, scalar)) ;
+    OK (GxB_print (scalar2, GxB_COMPLETE)) ;
+
+    OK (GxB_Scalar_extractElement (&b_8,  scalar)) ; CHECK (b_8 == 1) ;
+
+    OK (GxB_Scalar_extractElement (&i_8,  scalar)) ; CHECK (i_8  == 1) ;
+    OK (GxB_Scalar_extractElement (&i_16, scalar)) ; CHECK (i_16 == 1) ;
+    OK (GxB_Scalar_extractElement (&i_32, scalar)) ; CHECK (i_32 == 1) ;
+    OK (GxB_Scalar_extractElement (&i_64, scalar)) ; CHECK (i_64 == 1) ;
+
+    OK (GxB_Scalar_extractElement (&u_8,  scalar)) ; CHECK (u_8  == 1) ;
+    OK (GxB_Scalar_extractElement (&u_16, scalar)) ; CHECK (u_16 == 1) ;
+    OK (GxB_Scalar_extractElement (&u_32, scalar)) ; CHECK (u_32 == 1) ;
+    OK (GxB_Scalar_extractElement (&u_64, scalar)) ; CHECK (u_64 == 1) ;
+
+    OK (GxB_Scalar_extractElement (&x_32, scalar)) ; CHECK (x_32 == 1.25) ;
+    OK (GxB_Scalar_extractElement (&x_64, scalar)) ; CHECK (x_64 == 1.25) ;
+
+    OK (GxB_Scalar_clear (scalar)) ;
+    info = GxB_Scalar_extractElement (&x_64, scalar) ;
+    CHECK (info == GrB_NO_VALUE) ;
+    CHECK (x_64 == 1.25) ;
+
+    u_64 = 0 ;
+    nvals = 0 ;
+    OK (GxB_Scalar_extractElement (&u_64, scalar2)) ; CHECK (u_64 == 1) ;
+    OK (GxB_Scalar_nvals (&nvals, scalar2)) ;
+    CHECK (nvals == 1) ;
+
+    GrB_free (&scalar) ;
+    GrB_free (&scalar2) ;
 
     //--------------------------------------------------------------------------
     // wrapup

@@ -113,12 +113,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         // do the entire computation with a single thread
         GrB_Matrix Aslice [1] ;
         Aslice [0] = A ;
-        info = GB_AxB_dot2 (Chandle, M, 
-            #if 0
-            // now implicitly true if the mask M is present
-            Mask_comp,
-            #endif
-            Aslice, B, semiring, flipxy,
+        info = GB_AxB_dot2 (Chandle, M, Aslice, B, semiring, flipxy,
             mask_applied, 1, 1, 1, NULL) ;
         if (info == GrB_SUCCESS)
         { 
@@ -199,12 +194,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     // compute each slice of C = A'*B, with optional mask M
     //----------------------------------------------------------------------
 
-    GB_OK (GB_AxB_dot2 (Chandle, M, 
-        #if 0
-        // now implicitly true if the mask M is present
-        Mask_comp,
-        #endif
-        Aslice, B, semiring, flipxy,
+    GB_OK (GB_AxB_dot2 (Chandle, M, Aslice, B, semiring, flipxy,
         mask_applied, nthreads, naslice, nbslice, Context)) ;
 
     //--------------------------------------------------------------------------

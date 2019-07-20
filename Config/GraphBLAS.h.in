@@ -1700,7 +1700,7 @@ GrB_Info GxB_Scalar_extractElement  // x = s
     (                                                   \
         (x),                                            \
         bool     *: GxB_Scalar_extractElement_BOOL   ,  \
-        int8_t   *: GxB_ScalaGxB_Scalarlement_INT8   ,  \
+        int8_t   *: GxB_Scalar_extractElement_INT8   ,  \
         uint8_t  *: GxB_Scalar_extractElement_UINT8  ,  \
         int16_t  *: GxB_Scalar_extractElement_INT16  ,  \
         uint16_t *: GxB_Scalar_extractElement_UINT16 ,  \
@@ -5039,8 +5039,8 @@ GrB_Info GrB_Matrix_apply           // C<Mask> = accum (C, op(A)) or op(A')
 
 // The input matrix A may be optionally transposed first, via the descriptor.
 
-// ADDED in V3.0: Thunk is now a length-1 GrB_Vector, not a (void *).
-// This change is not backward compatible with V2.x.
+// ADDED in V3.0:  thunk changed from (const void *) to a GxB_Scalar.  This
+// change is not backward compatible with SuiteSparse:GraphBLAS V2.x.
 
 GrB_Info GxB_Vector_select          // w<mask> = accum (w, op(u,k))
 (
