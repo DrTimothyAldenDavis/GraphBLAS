@@ -1,5 +1,5 @@
 function test47
-%TEST47 performance test of GrB_vxm
+%TEST47 prformance test of GrB_vxm
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -59,4 +59,5 @@ for xnz = [100:100:1000 2000:1000:72000]
 end
 
 fprintf ('\ntest47: all tests passed\n') ;
+
 

@@ -1,3 +1,4 @@
+%TT test eWiseMult and A+B
 
 tic ;
 C = A + B ;

@@ -1,3 +1,4 @@
+%TESTALL2 run testall with different # of threads
 
 clear all
 make

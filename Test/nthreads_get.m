@@ -1,5 +1,5 @@
 function [nthreads chunk] = nthreads_get
-%GET_NTHREADS get # of threads and chunk to use in GraphBLAS
+%NTHREADS_GET get # of threads and chunk to use in GraphBLAS
 %
 % [nthreads chunk] = nthreads_get
 

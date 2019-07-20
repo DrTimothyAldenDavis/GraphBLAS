@@ -1,8 +1,8 @@
+%LONGTESTS very long tests
 
 nthreads_set (4,1) ;
 debug_off 
 
-% very long tests:
     test21(1) ;  % exhaustive test of GB_mex_subassign
     test23(1) ;  % exhaustive test of GB_*_build
     test24(1) ;  % exhaustive test of GrB_Matrix_reduce

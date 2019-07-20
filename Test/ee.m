@@ -1,3 +1,4 @@
+%EE eWiseMult and eWiseAdd performance tests
 clear all
 addpath ('~/ssget') ;
 addpath ('spok') ;
