@@ -7,16 +7,27 @@
 #include <stdio.h>
 #include "GB_qsort.h"
 
+// to dump output:
+// #define DUMP 1
+#define DUMP 0
+
+// to debug
+// #define DEBUG 1
+#define DEBUG 0
+
 #define ASSERT(x)                                                   \
 {                                                                   \
-    if (!(x)) printf ("\nhey! %s %d\n", __FILE__, __LINE__) ;      \
-    fflush (stdout) ; \
-    abort ( ) ;                                                     \
+    if (!(x))                                                       \
+    {                                                               \
+        printf ("\nhey! %s %d\n", __FILE__, __LINE__) ;             \
+        fflush (stdout) ;                                           \
+        abort ( ) ;                                                 \
+    }                                                               \
 }
 
 #ifndef BASECASE
-#define BASECASE (32)
-// #define BASECASE (32 * 1024)
+// #define BASECASE (32)
+#define BASECASE (1024 * 1024)
 #endif
 
 // prototypes:
@@ -40,9 +51,27 @@ void pmerge2                // parallel merge, where nbigger >= nsmaller
 
 void check_sort
 (
+    char *name,
     const Int S [ ],
     const long n
 ) ;
+
+void dump_list
+(
+    char *name,
+    const Int S [ ],
+    const long n
+)
+{
+    if (DUMP) printf ("dump list %s [%g]:", name, (double) n) ;
+    if (DUMP) if (n == 0) { printf ("\n") ; return ; }
+    if (DUMP) printf (" %g ", (double) S [0]) ;
+    for (int64_t k = 1 ; k < n ; k++)
+    {
+        if (DUMP) printf ("%g ", (double) S [k]) ;
+    }
+    if (DUMP) printf ("\n") ;
+}
 
 //------------------------------------------------------------------------------
 // check_sorted
@@ -50,17 +79,20 @@ void check_sort
 
 void check_sort
 (
+    char *name,
     const Int S [ ],
     const long n
 )
 {
-    printf ("check sort %g: %g ", (double) n, (double) S [0]) ;
+    if (DUMP) printf ("check sort %s [%g]:", name, (double) n) ;
+    if (DUMP) if (n == 0) { printf ("\n") ; return ; }
+    if (DUMP) printf (" %g ", (double) S [0]) ;
     for (int64_t k = 1 ; k < n ; k++)
     {
-        printf ("%g ", (double) S [k]) ;
+        if (DUMP) printf ("%g ", (double) S [k]) ;
         ASSERT (S [k-1] <= S [k]) ;
     }
-    printf ("\n") ;
+    if (DUMP) printf ("\n") ;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,10 +110,10 @@ void check_merge
 {
     long p, pleft, pright ;
 
-    check_sort (Left, nleft) ;
-    check_sort (Right, nleft) ;
-
-    printf ("check merge %g %g\n", (double) nleft, (double) nright) ;
+    if (DUMP) printf ("check merge %g %g\n", (double) nleft, (double) nright) ;
+    dump_list ("Left ", Left, nleft) ;
+    dump_list ("Right", Right, nright) ;
+    dump_list ("S    ", S, nleft+nright) ;
 
     /* merge the two inputs, Left and Right, while both inputs exist */
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
@@ -110,13 +142,8 @@ void check_merge
         pright++ ;
     }
 
-    check_sort (S, nleft+nleft) ;
+    check_sort ("S", S, nleft+nright) ;
 }
-
-//------------------------------------------------------------------------------
-// pmerge2: parallel merge
-//------------------------------------------------------------------------------
-
 
 /* -------------------------------------------------------------------------- */
 /* merge Left [0..nleft-1] and Right [0..nright-1] into S [0..nleft+nright-1] */
@@ -133,8 +160,11 @@ static void merge
 {
     long p, pleft, pright ;
 
-    check_sort (Left, nleft) ;
-    check_sort (Right, nleft) ;
+    #if DEBUG
+    if (DUMP) printf ("\nmerge %g %g\n", (double) nleft, (double) nright) ;
+    check_sort ("Left ", Left, nleft) ;
+    check_sort ("Right", Right, nright) ;
+    #endif
 
     /* merge the two inputs, Left and Right, while both inputs exist */
     for (p = 0, pleft = 0, pright = 0 ; pleft < nleft && pright < nright ; p++)
@@ -159,7 +189,9 @@ static void merge
         S [p] = Right [pright++] ;
     }
 
+    #if DEBUG
     check_merge (S, Left, nleft, Right, nright) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -180,8 +212,12 @@ void pmerge2
 )
 {
 
-    check_sort (Bigger, nbigger) ;
-    check_sort (Smaller, nsmaller) ;
+    #if DEBUG
+    if (DUMP) printf ("\npmerge2 %g %g\n", (double) nbigger, (double) nsmaller);
+    ASSERT (nbigger >= nsmaller) ;
+    check_sort ("Bigger ", Bigger, nbigger) ;
+    check_sort ("Smaller", Smaller, nsmaller) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // split the bigger input in half
@@ -190,16 +226,20 @@ void pmerge2
     // The first task will handle Bigger [0..nhalf-1], and the second task
     // will handle Bigger [nhalf..n-1].
 
-    long n = nbigger + nsmaller ;
-    long nhalf = n/2 ;
+    // long n = nbigger + nsmaller ;
+    long nhalf = nbigger/2 ;
     Int i = Bigger [nhalf] ;
 
+    #if DEBUG
     for (int64_t k = 0     ; k < nhalf   ; k++) ASSERT (Bigger [k] <= i) ;
     for (int64_t k = nhalf ; k < nbigger ; k++) ASSERT (Bigger [k] >= i) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // find where entry i appears in the smaller list
     //--------------------------------------------------------------------------
+
+    // This is done in the GB_BINARY_TRIM_SEARCH macro in GraphBLAS:
 
     // binary search of Smaller [0..nsmaller-1] for the integer i
 
@@ -254,8 +294,10 @@ void pmerge2
     //    Smaller [original_pleft ... pleft-1] < i and
     //    Smaller [pleft ... original_pright] >= i holds.
 
+    #if DEBUG
     for (int64_t k = 0     ; k < pleft    ; k++) ASSERT (Smaller [k] <= i) ;
     for (int64_t k = pleft ; k < nsmaller ; k++) ASSERT (Smaller [k] >= i) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // merge each part in parallel
@@ -276,20 +318,23 @@ void pmerge2
     // The entries in Bigger [nhalf..nbigger-1] and Smaller [pleft..nsmaller-1]
     // are all >= i.
 
-    Int *S1 = S ;
+    Int *S1 = S + nhalf + pleft ;
     const Int *Left1 = Bigger + nhalf ;
     long nleft1 = (nbigger - nhalf) ;
     const Int *Right1 = Smaller + pleft ;
     long nright1 = (nsmaller - pleft) ;
 
-    // #pragma omp task firstprivate(S0, Left0, nleft0, Right0, nright0)
+    #pragma omp task firstprivate(S0, Left0, nleft0, Right0, nright0)
     pmerge (S0, Left0, nleft0, Right0, nright0) ;
 
-    // #pragma omp task firstprivate(S1, Left1, nleft1, Right1, nright1)
+    #pragma omp task firstprivate(S1, Left1, nleft1, Right1, nright1)
     pmerge (S1, Left1, nleft1, Right1, nright1) ;
 
-    // #pragma omp taskwait
+    #pragma omp taskwait
+
+    #if DEBUG
     check_merge (S, Bigger, nbigger, Smaller, nsmaller) ;
+    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -326,7 +371,9 @@ void pmerge
         pmerge2 (S, Right, nright, Left, nleft) ;
     }
 
+    #if DEBUG
     check_merge (S, Left, nleft, Right, nright) ;
+    #endif
 }
 
 /* -------------------------------------------------------------------------- */
@@ -349,6 +396,9 @@ void pmergesort
 {
     if (n <= BASECASE)
     {
+        #if DEBUG
+        if (DUMP) printf ("sequential sort %g\n", (double) n) ;
+        #endif
         // sequential quicksort; no workspace needed
         GB_qsort_1a ((int64_t *) A, n) ;
         // sequential mergesort: using workspace W
@@ -360,6 +410,10 @@ void pmergesort
         /* ------------------------------------------------------------------ */
         /* recursive ssmergesort if A has length greater than BASECASE        */
         /* ------------------------------------------------------------------ */
+
+        #if DEBUG
+        if (DUMP) printf ("\nparallel mergsort %g\n", (double) n) ;
+        #endif
 
         long n1,  n2,  n3,  n4; /* length of each of the four sections of A */
         long n12, n123, n34;    
@@ -385,29 +439,29 @@ void pmergesort
         Int *W2 = W + n12 ;
         Int *W3 = W + n123 ;
 
-        // #pragma omp task firstprivate(A0,W0,n1)
+        #pragma omp task firstprivate(A0,W0,n1)
         pmergesort (A0, W0, n1) ;       /* sort A [0  ... n1-1] */
 
-        // #pragma omp task firstprivate(A1,W1,n2)
+        #pragma omp task firstprivate(A1,W1,n2)
         pmergesort (A1, W1, n2) ;       /* sort A [n1 ... n12-1] */
 
-        // #pragma omp task firstprivate(A2,W2,n3)
+        #pragma omp task firstprivate(A2,W2,n3)
         pmergesort (A2, W2, n3) ;       /* sort A [n12 ... n123-1] */
 
-        // #pragma omp task firstprivate(A3,W3,n4)
+        #pragma omp task firstprivate(A3,W3,n4)
         pmergesort (A3, W3, n4) ;       /* sort A [n123 ... n-1]  */
 
-        // #pragma omp taskwait
+        #pragma omp taskwait
         
         /* merge A [0 ... n1-1] and A [n1 ... n12-1] into W [0 ... n12-1] */
-        // #pragma omp task firstprivate(W0,A0,A1,n1,n2)
+        #pragma omp task firstprivate(W0,A0,A1,n1,n2)
         pmerge (W0, A0, n1, A1, n2) ;
 
         /* merge A [n12 ... n123-1] and A [n123 ... n-1] into W [n12 ... n-1] */
-        // #pragma omp task firstprivate(W2,A2,A3,n3,n4)
+        #pragma omp task firstprivate(W2,A2,A3,n3,n4)
         pmerge (W2, A2, n3, A3, n4) ;
 
-        // #pragma omp taskwait
+        #pragma omp taskwait
 
         /* merge W [0 ... n12-1] and W [n12 ... n-1] into A [0 ... n-1] */
         pmerge (A, W0, n12, W2, n34) ;
@@ -420,8 +474,8 @@ void parsort1(Int *A, Int *W, long n)
     pmergesort(A, W, n);
   else
   {
-    // #pragma omp parallel
-    // #pragma omp master
+    #pragma omp parallel
+    #pragma omp master
       pmergesort(A, W, n);
   }
 }

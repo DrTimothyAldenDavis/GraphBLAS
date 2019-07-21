@@ -32,6 +32,7 @@
 // sort function prototypes and the type "Int" which is set
 // to one of the standard C integer data types
 #include "sort.h"
+#include "GB_qsort.h"
 
 #define NDEFAULT  1024   
 // #define VERBOSE 1
@@ -76,16 +77,24 @@ int main(int argc, char **argv)
 //
    omp_set_dynamic(0);
    checksumOrig = 0;
+
+    // rand is not thread-safe
+    srand (1) ;
+    for (int i=0;i<N;i++) 
+    {
+        #define RANGE 100
+        amaster[i] = (Int) rand()% RANGE;
+        // amaster[i] = (Int)(N-1-i);
+    }
+
    #pragma omp parallel firstprivate(N) shared(checksumOrig, amaster)
    {
       #pragma omp single
-        printf("%d thrds to sort an array of %ld numbers\n",omp_get_num_threads(),N);
+      printf("%d thrds to sort an array of %ld numbers\n",omp_get_num_threads(),N);
 
       #pragma omp for reduction(+:checksumOrig)
       for (int i=0;i<N;i++) 
       {
-//          amaster[i] = (Int) rand()%N;
-          amaster[i] = (Int)(N-1-i);
           checksumOrig += amaster[i];
       }
    }
@@ -95,16 +104,26 @@ int main(int argc, char **argv)
 #endif    
 
 //
+// Serial quick Sort of the array
+//
+   copyArr(a, amaster, N);
+   timepoint = omp_get_wtime();
+   GB_qsort_1a (a, N);
+   double tq = (double) (omp_get_wtime() - timepoint) ;
+   printf("sequential quicksort complete in %f seconds\n", tq) ;
+   err = TestResults(N, checksumOrig, &checksumSorted, a);
+   if(err>0)printf("Errors in sort: %ld\n",err);
+
+//
 // Serial Sort of the array
 //
    copyArr(a, amaster, N);
    clrArr(work, N);
    timepoint = omp_get_wtime();
    ssmergesort(a, work, N);
-   printf(" sorting complete in %f seconds\n",(float)(omp_get_wtime() - timepoint));
-
+   double tm = (double) (omp_get_wtime() - timepoint) ;
+   printf("sequential mergesort complete in %f seconds\n", tm) ;
    err = TestResults(N, checksumOrig, &checksumSorted, a);
-
    if(err>0)printf("Errors in sort: %ld\n",err);
 
 #ifdef VERBOSE
@@ -119,11 +138,13 @@ int main(int argc, char **argv)
    clrArr(work, N);
    timepoint = omp_get_wtime();
    parsort1(a, work, N);
-   printf(" par 1 sorting complete in %g seconds\n",(double)(omp_get_wtime() - timepoint));
-
+   double t4 = (double)(omp_get_wtime() - timepoint);
+   printf(" par 1 sorting complete in %g seconds\n", t4) ;
    err = TestResults(N, checksumOrig, &checksumSorted, a);
-
    if(err>0)printf("%ld Errors in parsort1.\n",err);
+
+   printf ("speedup over sequential qsort     %g\n", tq / t4) ;
+   printf ("speedup over sequential mergesort %g\n", tm / t4) ;
 
 #ifdef VERBOSE
   debug_output(N, checksumSorted, a);
@@ -147,6 +168,10 @@ int main(int argc, char **argv)
   debug_output(N, checksumSorted, a);
 #endif    
 #endif
+
+    free (amaster) ;
+    free (a) ;
+    free (work) ;
 }
 
 //
