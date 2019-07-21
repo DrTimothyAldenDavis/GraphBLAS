@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     srand (1) ;
     for (int i=0;i<N;i++) 
     {
-        #define RANGE 100
+        #define RANGE INT32_MAX
         amaster[i] = (Int) rand()% RANGE;
         // amaster[i] = (Int)(N-1-i);
     }

@@ -355,6 +355,11 @@ void pmerge
     const long nright
 )
 {
+
+    // TODO: if nleft == 0 or nright == 0, it is possible that the
+    // one non-empty set is large.  Use a paralle move of the data.
+    // See GraphBLAS/Source/GB_memcpy.
+
     if (nleft + nright < BASECASE || nleft == 0 || nright == 0)
     {
         // sequential merge
