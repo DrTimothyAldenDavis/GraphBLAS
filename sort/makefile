@@ -8,7 +8,8 @@ include make.def
 
 EXES= testSort$(EXE) 
 
-SRT_OBJS = testSort.$(OBJ) sort.$(OBJ) parsort1.$(OBJ) parsort2.$(OBJ)
+SRT_OBJS = testSort.$(OBJ) sort.$(OBJ) parsort1.$(OBJ) parsort2.$(OBJ) \
+    GB_qsort_1a.$(OBJ)
 
 all: $(EXES)
 

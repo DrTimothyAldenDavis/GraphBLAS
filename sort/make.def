@@ -2,7 +2,8 @@
 # copy to make.def
 #CC          = icc -std=c11 -g
 # CC          = gcc-9 -g -Wall
-CC = gcc -g -Wall
+# CC = gcc -g -Wall
+CC = gcc-8 -g -Wall
 
 CLINKER     = $(CC)
 # OPTFLAGS    = -fopenmp -DAPPLE -O3
