@@ -64,6 +64,8 @@ logstat ;             % start the log.txt
 %0
 logstat ('test136',s) ; % subassignment special cases
 %0
+logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
+%0
 logstat ('test72',t) ;  % several special cases
 logstat ('test72',s) ;  % several special cases
 %0
@@ -164,9 +166,8 @@ logstat ('test103',t) ; % GrB_transpose aliases
 logstat ('test93',t) ;  % pagerank
 %3
 logstat ('test135',t) ; % reduce to scalar
-%2+2
+%2
 logstat ('test100',t) ; % GB_mex_isequal
-logstat ('test100',s);  % GB_mex_isequal
 %4
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
 %11
