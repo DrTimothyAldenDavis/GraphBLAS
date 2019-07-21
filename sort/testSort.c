@@ -90,7 +90,8 @@ int main(int argc, char **argv)
    #pragma omp parallel firstprivate(N) shared(checksumOrig, amaster)
    {
       #pragma omp single
-      printf("%d thrds to sort an array of %ld numbers\n",omp_get_num_threads(),N);
+      printf("%d thrds to sort an array of %ld numbers\n",
+        omp_get_num_threads(),N)  ;
 
       #pragma omp for reduction(+:checksumOrig)
       for (int i=0;i<N;i++) 
@@ -98,7 +99,11 @@ int main(int argc, char **argv)
           checksumOrig += amaster[i];
       }
    }
-    
+
+    printf ("# of numbers: %g million\n", (double) N / 1e6) ;
+    printf ("word size %g\n", (double) sizeof (Int)) ;
+    printf ("total memory size: %g GB\n", (double) N * sizeof (Int) / 1e9) ;
+
 #ifdef VERBOSE 
    debug_output(N, checksumOrig, amaster);
 #endif    

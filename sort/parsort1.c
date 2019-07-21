@@ -33,19 +33,19 @@
 // prototypes:
 void pmerge                 // sequential or parallel merge
 (
-    Int S [ ],              // S [0..nleft+nright-1]: output
-    const Int Left [ ],     // Left [0..nleft-1]: input on the left
+    Int *restrict S,              // S [0..nleft+nright-1]: output
+    const Int *restrict Left,     // Left [0..nleft-1]: input on the left
     const long nleft,
-    const Int Right [ ],    // Right [0..nright-1]: input on the righ
+    const Int *restrict Right,    // Right [0..nright-1]: input on the righ
     const long nright
 ) ;
 
 void pmerge2                // parallel merge, where nbigger >= nsmaller
 (
-    Int S [ ],              // S [0..nbigger+nsmaller-1]: output
-    const Int Bigger [ ],   // Bigger [0..nbigger-1]: larger input
+    Int *restrict S,              // S [0..nbigger+nsmaller-1]: output
+    const Int *restrict Bigger,   // Bigger [0..nbigger-1]: larger input
     const long nbigger,
-    const Int Smaller [ ],  // Smaller [0..nsmaller-1]: smaller input
+    const Int *restrict Smaller,  // Smaller [0..nsmaller-1]: smaller input
     const long nsmaller
 ) ;
 
@@ -151,10 +151,10 @@ void check_merge
 
 static void merge
 (
-    Int S [ ],              /* output of length nleft + nright */
-    const Int Left [ ],     /* left input of length nleft */
+    Int *restrict S,              /* output of length nleft + nright */
+    const Int *restrict Left,     /* left input of length nleft */
     const long nleft,
-    const Int Right [ ],    /* right input of length nright */
+    const Int *restrict Right,    /* right input of length nright */
     const long nright
 )
 {
@@ -204,10 +204,10 @@ static void merge
 
 void pmerge2
 (
-    Int S [ ],              // S [0..nbigger+nsmaller-1]: output
-    const Int Bigger [ ],   // Bigger [0..nbigger-1]: larger input
+    Int *restrict S,              // S [0..nbigger+nsmaller-1]: output
+    const Int *restrict Bigger,   // Bigger [0..nbigger-1]: larger input
     const long nbigger,
-    const Int Smaller [ ],  // Smaller [0..nsmaller-1]: smaller input
+    const Int *restrict Smaller,  // Smaller [0..nsmaller-1]: smaller input
     const long nsmaller
 )
 {
@@ -348,10 +348,10 @@ void pmerge2
 
 void pmerge
 (
-    Int S [ ],              // S [0..nleft+nright-1]: output
-    const Int Left [ ],     // Left [0..nleft-1]: input on the left
+    Int *restrict S,              // S [0..nleft+nright-1]: output
+    const Int *restrict Left,     // Left [0..nleft-1]: input on the left
     const long nleft,
-    const Int Right [ ],    // Right [0..nright-1]: input on the righ
+    const Int *restrict Right,    // Right [0..nright-1]: input on the righ
     const long nright
 )
 {
@@ -394,8 +394,8 @@ void pmerge
 
 void pmergesort
 (
-    Int A [ ],      /* array to sort, of size n */
-    Int W [ ],      /* workspace of size n */
+    Int *restrict A,      /* array to sort, of size n */
+    Int *restrict W,      /* workspace of size n */
     long n
 )
 {
@@ -473,7 +473,12 @@ void pmergesort
     }
 }
 
-void parsort1(Int *A, Int *W, long n)
+void parsort1
+(
+    Int *restrict A,
+    Int *restrict W,
+    long n
+)
 {
   if(omp_get_num_threads() >1)
     pmergesort(A, W, n);
