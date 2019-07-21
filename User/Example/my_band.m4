@@ -27,7 +27,7 @@
 #endif
 
 // The type of the thunk parameter
-GxB_Type_define(My_bandwith_type, my_bandwidth_type) ;
+GxB_Type_define(My_bandwidth_type, my_bandwidth_type) ;
 
 // Select operator to compute C = tril (triu (A, k1), k2)
 GxB_SelectOp_define(My_band, myband, NULL, My_bandwidth_type) ;

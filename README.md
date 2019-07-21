@@ -3,7 +3,7 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-VERSION 3.0.1, July 21, 2019 (6am) (DRAFT)
+VERSION 3.0.1, July 21, 2019 (7am) (DRAFT)
 
 SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -95,7 +95,7 @@ User:           user-defined objects at compile-time (.m4 files)
 build:          build directory for CMake, initially empty
 
 alternative:    an alternative to CMake; edit the alternative/Makefile and do
-                "make" or "make run" in this directory
+                "make" or "make run" in the 'alternative' directory.
 
 --------------------------------------------------------------------------------
 

@@ -4,5 +4,8 @@ TODO: create GB_mergesort_2 and GB_mergesort_3, which compute the same thing as
     the single-threaded GB_qsort_2 and GB_qsort_3 for sorting small sub-arrays,
     in the leaf nodes of the task tree.
 
-TODO: for production release, remove User/my*.m4
+TODO: Demo/go*out, using icc
 
+TODO: test46 results for user guide
+
+TODO: Doc/ChangeLog date
