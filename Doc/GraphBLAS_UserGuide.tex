@@ -8438,19 +8438,20 @@ Section~\ref{compare_assign}.  Consider assigning a large submatrix
 \verb'C(I,J)=A' where \verb'C' is derived from the \verb'Freescale2' matrix
 from the SuiteSparse Collection \cite{DavisHu11}, of size 3 million by 3
 million, with 14.3 million nonzeros.  The matrix \verb'C' is
-\verb'repmat(F,4,4)', if \verb'F' is the \verb'Freescale2' matrix.  With the
-vectors \verb'I=randperm(n,5500)' and \verb'J=randperm(n,7000)' and \verb'A' a
-random sparse matrix with 38,500 nonzeros, \verb'C(I,J)=A' takes about 30
-minutes in MATLAB.\footnote{All performance measurements in this document were
-done on a  MacBook Pro, 2.8 GHz Intel Core i7, 16 GB Ram, OSX 10.11.6, clang
-8.0.0, MATLAB R2018A.} The same computation takes TODO seconds in
-SuiteSparse:GraphBLAS, a speedup of over TODO.  This is after finishing all
-pending computations in GraphBLAS and returning result to MATLAB as a valid
-MATLAB sparse matrix.  The dominant time complexity for GraphBLAS is $O(n+c)$,
-where $n$ is the dimension of \verb'C' and $c$ is its number of nonzeros.  As a
-comparison, MATLAB takes just TODO seconds to compute \verb"C+C'" for this
-matrix, which also takes time linear in the size of the matrix data structure,
-$O(n+c)$.
+\verb'repmat(F,4,4)', if \verb'F' is the \verb'Freescale2' matrix, about 12
+million by 12 milion with 230 million nonzeros.  With the vectors
+\verb'I=randperm(n,5500)' and \verb'J=randperm(n,7000)' and \verb'A' a random
+sparse matrix with 38,500 nonzeros, \verb'C(I,J)=A' takes about 30 minutes in
+MATLAB.\footnote{This performance measurement was done on an NVIDIA DGX
+workstation, 2.2 GHz Intel Xeon E5-2698, with 256GB RAM, 20 hardware cores,
+Ubuntu 16.04, gcc 5.4.0, and MATLAB R2018a.} The same computation takes 0.74
+seconds with 40 threads in SuiteSparse:GraphBLAS, a speedup of 2,660x.  This is
+after finishing all pending computations in GraphBLAS and returning result to
+MATLAB as a valid MATLAB sparse matrix.  The dominant time complexity for
+GraphBLAS is $O(n+c)$, where $n$ is the dimension of \verb'C' and $c$ is its
+number of nonzeros.  As a comparison, MATLAB takes just 8.6 seconds to compute
+\verb"C+C'" for this matrix, which also takes time linear in the size of the
+matrix data structure, $O(n+c)$.
 
 The time for submatrix assignment can be greatly reduced if \verb'C' is
 hypersparse.  Let $\bar{n}$ be the number of non-empty rows, where $\bar{n}<n$,

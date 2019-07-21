@@ -1,220 +1,220 @@
 Wathen: nx 4 ny 4 n 65 nz 752 method 0, time: 0.000 sec
-MIS time in seconds:       0.009159
-MIS time in seconds:       0.001226
+MIS time in seconds:       0.012519
+MIS time in seconds:       0.001659
 independent set found: 13 of 65 nodes
 independent set found: 13 of 65 nodes
 isize: 13 13
-MIS time in seconds:       0.001306
-MIS time in seconds:       0.001232
+MIS time in seconds:       0.001710
+MIS time in seconds:       0.001685
 independent set found: 14 of 65 nodes
 independent set found: 14 of 65 nodes
 isize: 14 14
 random 5 by 5, nz: 18, method 1 time 0.000 sec
-MIS time in seconds:       0.003665
-MIS time in seconds:       0.000693
+MIS time in seconds:       0.011375
+MIS time in seconds:       0.000881
 independent set found: 1 of 5 nodes
 independent set found: 1 of 5 nodes
 isize: 1 1
-MIS time in seconds:       0.001144
-MIS time in seconds:       0.001130
+MIS time in seconds:       0.001773
+MIS time in seconds:       0.001059
 independent set found: 2 of 5 nodes
 independent set found: 2 of 5 nodes
 isize: 2 2
 matrix 3 by 3, 0 entries, from stdin
-MIS time in seconds:       0.003269
-MIS time in seconds:       0.000236
+MIS time in seconds:       0.003648
+MIS time in seconds:       0.000163
 independent set found: 3 of 3 nodes
 independent set found: 3 of 3 nodes
 isize: 3 3
-MIS time in seconds:       0.000170
-MIS time in seconds:       0.000168
+MIS time in seconds:       0.000167
+MIS time in seconds:       0.000264
 independent set found: 3 of 3 nodes
 independent set found: 3 of 3 nodes
 isize: 3 3
 matrix 4 by 4, 4 entries, from stdin
-MIS time in seconds:       0.003626
-MIS time in seconds:       0.000571
+MIS time in seconds:       0.012288
+MIS time in seconds:       0.001063
 independent set found: 2 of 4 nodes
 independent set found: 2 of 4 nodes
 isize: 2 2
-MIS time in seconds:       0.000634
-MIS time in seconds:       0.000534
+MIS time in seconds:       0.000669
+MIS time in seconds:       0.000626
 independent set found: 2 of 4 nodes
 independent set found: 2 of 4 nodes
 isize: 2 2
 matrix 4 by 4, 10 entries, from stdin
-MIS time in seconds:       0.004768
-MIS time in seconds:       0.001162
+MIS time in seconds:       0.011713
+MIS time in seconds:       0.001349
 independent set found: 2 of 4 nodes
 independent set found: 2 of 4 nodes
 isize: 2 2
-MIS time in seconds:       0.000656
-MIS time in seconds:       0.000603
+MIS time in seconds:       0.000584
+MIS time in seconds:       0.000574
 independent set found: 2 of 4 nodes
 independent set found: 2 of 4 nodes
 isize: 2 2
 matrix 7 by 7, 16 entries, from stdin
-MIS time in seconds:       0.004505
-MIS time in seconds:       0.001122
+MIS time in seconds:       0.011072
+MIS time in seconds:       0.001294
 independent set found: 4 of 7 nodes
 independent set found: 4 of 7 nodes
 isize: 4 4
-MIS time in seconds:       0.001299
-MIS time in seconds:       0.001165
+MIS time in seconds:       0.001301
+MIS time in seconds:       0.001266
 independent set found: 3 of 7 nodes
 independent set found: 3 of 7 nodes
 isize: 3 3
 matrix 304 by 304, 876 entries, from stdin
-MIS time in seconds:       0.004326
-MIS time in seconds:       0.001174
+MIS time in seconds:       0.011065
+MIS time in seconds:       0.002173
 independent set found: 215 of 304 nodes
 independent set found: 215 of 304 nodes
 isize: 215 215
-MIS time in seconds:       0.001301
-MIS time in seconds:       0.001329
+MIS time in seconds:       0.001564
+MIS time in seconds:       0.001517
 independent set found: 216 of 304 nodes
 independent set found: 216 of 304 nodes
 isize: 216 216
 matrix 48 by 48, 352 entries, from stdin
-MIS time in seconds:       0.004033
-MIS time in seconds:       0.001043
+MIS time in seconds:       0.005755
+MIS time in seconds:       0.001414
 independent set found: 12 of 48 nodes
 independent set found: 12 of 48 nodes
 isize: 12 12
-MIS time in seconds:       0.001268
-MIS time in seconds:       0.001041
+MIS time in seconds:       0.001402
+MIS time in seconds:       0.001323
 independent set found: 11 of 48 nodes
 independent set found: 11 of 48 nodes
 isize: 11 11
 matrix 4884 by 4884, 285494 entries, from stdin
-MIS time in seconds:       0.023244
-MIS time in seconds:       0.016292
+MIS time in seconds:       0.010930
+MIS time in seconds:       0.008743
 independent set found: 286 of 4884 nodes
 independent set found: 286 of 4884 nodes
 isize: 286 286
-MIS time in seconds:       0.016528
-MIS time in seconds:       0.015436
+MIS time in seconds:       0.009088
+MIS time in seconds:       0.009054
 independent set found: 284 of 4884 nodes
 independent set found: 284 of 4884 nodes
 isize: 284 284
 matrix 183 by 183, 1402 entries, from stdin
-MIS time in seconds:       0.004743
-MIS time in seconds:       0.001745
+MIS time in seconds:       0.012788
+MIS time in seconds:       0.002739
 independent set found: 91 of 183 nodes
 independent set found: 91 of 183 nodes
 isize: 91 91
-MIS time in seconds:       0.001645
-MIS time in seconds:       0.001580
+MIS time in seconds:       0.001902
+MIS time in seconds:       0.001907
 independent set found: 87 of 183 nodes
 independent set found: 87 of 183 nodes
 isize: 87 87
 matrix 63 by 63, 246 entries, from stdin
-MIS time in seconds:       0.005101
-MIS time in seconds:       0.001350
+MIS time in seconds:       0.011926
+MIS time in seconds:       0.001764
 independent set found: 23 of 63 nodes
 independent set found: 23 of 63 nodes
 isize: 23 23
-MIS time in seconds:       0.001062
-MIS time in seconds:       0.000887
+MIS time in seconds:       0.001232
+MIS time in seconds:       0.001150
 independent set found: 23 of 63 nodes
 independent set found: 23 of 63 nodes
 isize: 23 23
 matrix 63 by 63, 246 entries, from stdin
-MIS time in seconds:       0.004903
-MIS time in seconds:       0.001462
+MIS time in seconds:       0.004211
+MIS time in seconds:       0.001654
 independent set found: 25 of 63 nodes
 independent set found: 25 of 63 nodes
 isize: 25 25
-MIS time in seconds:       0.001128
-MIS time in seconds:       0.001106
+MIS time in seconds:       0.001389
+MIS time in seconds:       0.001360
 independent set found: 26 of 63 nodes
 independent set found: 26 of 63 nodes
 isize: 26 26
 matrix 78 by 78, 204 entries, from stdin
-MIS time in seconds:       0.004724
-MIS time in seconds:       0.001506
+MIS time in seconds:       0.012082
+MIS time in seconds:       0.001710
 independent set found: 51 of 78 nodes
 independent set found: 51 of 78 nodes
 isize: 51 51
-MIS time in seconds:       0.001760
-MIS time in seconds:       0.001765
+MIS time in seconds:       0.001745
+MIS time in seconds:       0.001724
 independent set found: 50 of 78 nodes
 independent set found: 50 of 78 nodes
 isize: 50 50
 matrix 982 by 982, 99840 entries, from stdin
-MIS time in seconds:       0.004674
-MIS time in seconds:       0.004122
+MIS time in seconds:       0.013204
+MIS time in seconds:       0.003757
 independent set found: 355 of 982 nodes
 independent set found: 355 of 982 nodes
 isize: 355 355
-MIS time in seconds:       0.006211
-MIS time in seconds:       0.004909
+MIS time in seconds:       0.003340
+MIS time in seconds:       0.003322
 independent set found: 362 of 982 nodes
 independent set found: 362 of 982 nodes
 isize: 362 362
 matrix 67 by 67, 574 entries, from stdin
-MIS time in seconds:       0.003911
-MIS time in seconds:       0.001310
+MIS time in seconds:       0.010014
+MIS time in seconds:       0.001706
 independent set found: 17 of 67 nodes
 independent set found: 17 of 67 nodes
 isize: 17 17
-MIS time in seconds:       0.001270
-MIS time in seconds:       0.001239
+MIS time in seconds:       0.001681
+MIS time in seconds:       0.001640
 independent set found: 17 of 67 nodes
 independent set found: 17 of 67 nodes
 isize: 17 17
-Wathen: nx 200 ny 200 n 120801 nz 1762400 method 0, time: 0.319 sec
-MIS time in seconds:       0.060210
-MIS time in seconds:       0.066144
+Wathen: nx 200 ny 200 n 120801 nz 1762400 method 0, time: 0.390 sec
+MIS time in seconds:       0.039796
+MIS time in seconds:       0.035534
 independent set found: 18220 of 120801 nodes
 independent set found: 18220 of 120801 nodes
 isize: 18220 18220
-MIS time in seconds:       0.063791
-MIS time in seconds:       0.054854
+MIS time in seconds:       0.036174
+MIS time in seconds:       0.037575
 independent set found: 18241 of 120801 nodes
 independent set found: 18241 of 120801 nodes
 isize: 18241 18241
-random 10000 by 10000, nz: 199768, method 0 time 0.062 sec
-MIS time in seconds:       0.029003
-MIS time in seconds:       0.030823
+random 10000 by 10000, nz: 199768, method 0 time 0.063 sec
+MIS time in seconds:       0.015629
+MIS time in seconds:       0.013256
 independent set found: 1677 of 10000 nodes
 independent set found: 1677 of 10000 nodes
 isize: 1677 1677
-MIS time in seconds:       0.028150
-MIS time in seconds:       0.024592
+MIS time in seconds:       0.012916
+MIS time in seconds:       0.014985
 independent set found: 1664 of 10000 nodes
 independent set found: 1664 of 10000 nodes
 isize: 1664 1664
-random 10000 by 10000, nz: 199768, method 1 time 0.047 sec
-MIS time in seconds:       0.027063
-MIS time in seconds:       0.028079
+random 10000 by 10000, nz: 199768, method 1 time 0.055 sec
+MIS time in seconds:       0.016153
+MIS time in seconds:       0.013245
 independent set found: 1677 of 10000 nodes
 independent set found: 1677 of 10000 nodes
 isize: 1677 1677
-MIS time in seconds:       0.022284
-MIS time in seconds:       0.024078
+MIS time in seconds:       0.012971
+MIS time in seconds:       0.012910
 independent set found: 1664 of 10000 nodes
 independent set found: 1664 of 10000 nodes
 isize: 1664 1664
-random 100000 by 100000, nz: 19980330, method 0 time 4.879 sec
-MIS time in seconds:       0.244507
-MIS time in seconds:       0.248614
+random 100000 by 100000, nz: 19980330, method 0 time 5.129 sec
+MIS time in seconds:       0.226988
+MIS time in seconds:       0.216336
 independent set found: 2799 of 100000 nodes
 independent set found: 2799 of 100000 nodes
 isize: 2799 2799
-MIS time in seconds:       0.249847
-MIS time in seconds:       0.250752
+MIS time in seconds:       0.222246
+MIS time in seconds:       0.224468
 independent set found: 2815 of 100000 nodes
 independent set found: 2815 of 100000 nodes
 isize: 2815 2815
-random 100000 by 100000, nz: 19980330, method 1 time 4.089 sec
-MIS time in seconds:       0.235010
-MIS time in seconds:       0.233406
+random 100000 by 100000, nz: 19980330, method 1 time 4.316 sec
+MIS time in seconds:       0.227949
+MIS time in seconds:       0.224245
 independent set found: 2799 of 100000 nodes
 independent set found: 2799 of 100000 nodes
 isize: 2799 2799
-MIS time in seconds:       0.256604
-MIS time in seconds:       0.300576
+MIS time in seconds:       0.226636
+MIS time in seconds:       0.228319
 independent set found: 2815 of 100000 nodes
 independent set found: 2815 of 100000 nodes
 isize: 2815 2815
