@@ -13,10 +13,8 @@
 // if A[i]<B[j].
 
 // All of these functions are static; there will be versions of them in each
-// variant of GB_qsort*, with the same names.  They are called only by the
-// GB_qsort* function in the #include'ing file.
- 
-// PARALLEL: TODO: needs tuning for smallest task size; fix segfault
+// variant of GB_qsort*, and given unique names via #define's in the
+// #include'ing file.
 
 //------------------------------------------------------------------------------
 // GB_partition: use a pivot to partition an array
@@ -117,91 +115,6 @@ static void GB_quicksort    // sort A [0:n-1]
         // sort each partition
         GB_quicksort (GB_arg (A), k, seed) ;                // sort A [0:k-1]
         GB_quicksort (GB_arg_offset (A, k), n-k, seed) ;    // sort A [k+1:n-1]
-    }
-}
-
-//------------------------------------------------------------------------------
-// GB_quicksort: recursive quicksort, parallel
-//------------------------------------------------------------------------------
-
-static void GB_quicksort_par    // sort A [0:n-1]
-(
-    GB_args (int64_t, A),   // array(s) to sort
-    const int64_t n,        // size of A
-    uint64_t *seed          // random number seed
-)
-{
-
-    if (n < 20)
-    {
-        // in-place insertion sort on A [0:n-1], where n is small
-        for (int64_t k = 1 ; k < n ; k++)
-        {
-            for (int64_t j = k ; j > 0 && GB_lt (A, j, A, j-1) ; j--)
-            {
-                // swap A [j-1] and A [j]
-                GB_swap (A, j-1, j) ;
-            }
-        }
-    }
-    else
-    {
-        // partition A [0:n-1] into A [0:k-1] and A [k:n-1]
-        int64_t k = GB_partition (GB_arg (A), n, seed) ;
-
-        // sort each partition
-        #pragma omp task firstprivate(k)
-        GB_quicksort (GB_arg (A), k, seed) ;                // sort A [0:k-1]
-        #pragma omp task firstprivate(k)
-        GB_quicksort (GB_arg_offset (A, k), n-k, seed) ;    // sort A [k+1:n-1]
-        #pragma omp taskwait
-    }
-}
-
-
-//------------------------------------------------------------------------------
-// GB_quicksort_main
-//------------------------------------------------------------------------------
-
-// non-recursive gateway function to GB_quicksort.
-
-static void GB_quicksort_main   // sort A [0:n-1]
-(
-    GB_args (int64_t, A),       // array(s) to sort
-    const int64_t n,            // size of A
-    uint64_t *seed,             // random number seed
-    GB_Context Context          // for # of threads; use one thread if NULL
-)
-{
-
-    //--------------------------------------------------------------------------
-    // determine the number of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (n, chunk, nthreads_max) ;
-
-nthreads = 1 ;  // TODO:  Tim M: remove to trigger bug in 'pragma omp single'
-
-    //--------------------------------------------------------------------------
-    // do the quicksort in parallel
-    //--------------------------------------------------------------------------
-
-    if (nthreads == 1)
-    {
-        // sort A [0:n-1] with a single thread
-        GB_quicksort (GB_arg (A), n, seed) ;
-    }
-    else
-    {
-        // sort A [0:n-1] with multiple threads
-        #pragma omp parallel num_threads(nthreads)
-        {
-            #pragma omp single
-            {
-                GB_quicksort_par (GB_arg (A), n, seed) ;
-            }
-        }
     }
 }
 

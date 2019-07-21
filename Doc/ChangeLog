@@ -1,15 +1,15 @@
-Version 3.0.0, July TODO, 2019
+Version 3.0.1, July TODO, 2019
 
     * version number: Two changes to the user-visible API are not
         backward-compatible with V2.x: the extra parameter to GxB_init, and the
         change in the type of the Thunk argument for GxB_select.  Thus, the SO
         version of SuiteSparse:GraphBLAS is now 3, no longer 2.
+    * added GxB_Scalar: acts like a GrB_Vector of length 1.
     * OpenMP parallelism: added nthreads and chunk parameters
     * added parameter to GxB_init: bool user_malloc_is_thread_safe,
         for MATLAB mexFunction interface.  mxMalloc is not thread-safe.
         This change is not backward compatible with Version 2.x.
-    * changed thunk parameter of GxB_select:  was (const void *),
-        now GrB_Vector of length 1.
+    * changed thunk parameter of GxB_select:  was (void *), now GxB_Scalar
         This change is not backward compatible with Version 2.x.
     * added parameter to GxB_SelectOp_new: to specify the type of the Thunk.
         This change is not backward compatible with Version 2.x.

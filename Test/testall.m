@@ -66,6 +66,8 @@ logstat ('test136',s) ; % subassignment special cases
 %0
 logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
 %0
+logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice
+%0
 logstat ('test72',t) ;  % several special cases
 logstat ('test72',s) ;  % several special cases
 %0
@@ -170,8 +172,6 @@ logstat ('test135',t) ; % reduce to scalar
 logstat ('test100',t) ; % GB_mex_isequal
 %4
 logstat ('test11',t) ;  % exhaustive test of GrB_extractTuples
-%11
-logstat ('test30') ;    % performance test GB_mex_subassign, scalar expansion
 %5
 logstat ('test106',t) ; % GxB_subassign with alias
 %6
@@ -291,6 +291,7 @@ logstat ('test24(1)',t) ;  %      % exhaustive test of GrB_Matrix_reduce
 logstat ('test25',t) ;     %      % long test of GxB_select
 logstat ('test26(1)',t) ;  %      % performance test of GxB_select (use ssget)
 
+logstat ('test30') ;       %   11 % GB_mex_subassign, scalar expansion
 logstat ('test30b') ;      %    9 % performance GB_mex_assign, scalar expansion
 logstat ('test31',t) ;     %      % simple tests of GB_mex_transpose
 logstat ('test32',t) ;     %      % quick GB_mex_mxm test

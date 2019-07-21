@@ -107,7 +107,7 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \item Version 3.0 (2019):  The version number is increased to 3.0, since
 this version is not backward compatible with V2.x.  The \verb'GxB_select'
 operation changes; the \verb'Thunk' parameter was formerly a
-\verb'const void *' pointer, and is now a \verb'GrB_Vector' of length 1.  A new
+\verb'const void *' pointer, and is now a \verb'GxB_Scalar'.  A new
 parameter is added to \verb'GxB_init', to specify whether or not the
 user-provided memory management functions are thread safe.
 
@@ -1306,6 +1306,7 @@ with an operator) acts on matrices and/or vectors in a semiring.
                     & that defines the ``multiply'' for an algebraic semiring \\
 \verb'GrB_Matrix'   & a 2D sparse matrix of any type \\
 \verb'GrB_Vector'   & a 1D sparse column vector of any type \\
+\verb'GxB_Scalar'   & a sparse scalar of any type \\
 \verb'GrB_Descriptor'& a collection of parameters that modify an operation \\
 \hline
 \end{tabular}
@@ -2796,6 +2797,14 @@ GrB_Info GrB_free                   // free a user-created semiring
 frees the \verb'semiring' and sets \verb'semiring' to \verb'NULL'.  It safely
 does nothing if passed a \verb'NULL' handle, or if \verb'semiring == NULL' on
 input.  It does nothing at all if passed a built-in semiring.
+
+\newpage
+%===============================================================================
+\subsection{GraphBLAS scalars: {\sf GxB\_Scalar}} %=============================
+%===============================================================================
+\label{scalar}
+
+{\bf TODO: describe \verb'GxB_Scalar'.  See GraphBLAS.h for details.}
 
 \newpage
 %===============================================================================
@@ -8363,7 +8372,7 @@ GrB_Info GxB_select                 // w<mask> = accum (w, op(u,k))
     const GrB_BinaryOp accum,       // optional accum for z=accum(w,t)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Vector u,             // first input:  vector u
-    const GrB_Vector Thunk,         // optional input for the select operator
+    const GxB_Scalar Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for w and mask
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -8399,7 +8408,7 @@ GrB_Info GxB_select                 // C<Mask> = accum (C, op(A,k)) or op(A',k)
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GxB_SelectOp op,          // operator to apply to the entries
     const GrB_Matrix A,             // first input:  matrix A
-    const GrB_Vector Thunk,         // optional input for the select operator
+    const GxB_Scalar Thunk,         // optional input for the select operator
     const GrB_Descriptor desc       // descriptor for C, mask, and A
 ) ;
 \end{verbatim} } \end{mdframed}
@@ -8422,9 +8431,9 @@ operator is applied to entries in the transposed matrix, \verb"A'".  If $z$ is
 returned as true, then the entry is copied into \verb'T', unchanged.  If it
 returns false, the entry does not appear in \verb'T'.
 
-If \verb'Thunk' is not \verb'NULL', it must be a vector of length 1.
-If it has no entry, it is treated as if it had a single entry equal to zero
-(even for user-defined types).
+If \verb'Thunk' is not \verb'NULL', it must be a valid \verb'GxB_Scalar'.
+If it has no entry, it is treated as if it had a single entry equal to zero,
+for built-in types (not user-defined types).
 
 For user-defined select operators, the entry
 is passed to the user-defined select operator, with no typecasting.
@@ -8435,13 +8444,13 @@ For the \verb'GxB_TRIL', \verb'GxB_TRIU', \verb'GxB_DIAG', and
 present but contain no entry.  In this case, these operators use the value of
 \verb'k=0', the main diagonal.  If present, the \verb'Thunk' can be any
 built-in type.  The value of this entry is typecasted:
-\verb'k = (int64_t) Thunk (0)'.  The value \verb'k=0' specifies the main
+\verb'k = (int64_t) Thunk'.  The value \verb'k=0' specifies the main
 diagonal of the matrix, \verb'k=1' is the +1 diagonal (the entries just above
 the main diagonal), \verb'k=-1' is the -1 diagonal, and so on.
 
 For the \verb'GxB_*ZERO' select operators, \verb'Thunk' is ignored, and may be
 \verb'NULL'.  For built-in types, with the \verb'GxB_*THUNK' operators, the
-value of \verb'Thunk(0)' is typecasted to the same type as the \verb'A' matrix.
+value of \verb'Thunk' is typecasted to the same type as the \verb'A' matrix.
 For user-defined types, \verb'Thunk' is passed to the select operator without
 typecasting.
 

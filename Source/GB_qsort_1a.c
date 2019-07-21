@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// This sort is not stable, but it is used in GraphBLAS only on lists with
-// unique integers.  So it does not need to be stable.
-
 #include "GB_qsort.h"
 
 // returns true if a < b
@@ -38,19 +35,16 @@
 
 #define GB_partition GB_partition_1a
 #define GB_quicksort GB_quicksort_1a
-#define GB_quicksort_par  GB_quicksort_par_1a
-#define GB_quicksort_main GB_quicksort_main_1a
 
 #include "GB_qsort_template.c"
 
 void GB_qsort_1a        // sort array A of size 1-by-n
 (
     int64_t A_0 [ ],    // size-n array
-    const int64_t n,
-    GB_Context Context  // for # of threads; use one thread if NULL
+    const int64_t n
 )
 { 
     uint64_t seed = n ;
-    GB_quicksort_main (GB_arg (A), n, &seed, Context) ;
+    GB_quicksort (GB_arg (A), n, &seed) ;
 }
 

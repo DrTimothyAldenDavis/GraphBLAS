@@ -549,7 +549,7 @@
                         // task are completed, below in the post sort.
                         pC = Cp [kC] ;
                         GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
-                            GB_CSIZE2, clen, NULL) ;
+                            GB_CSIZE2, clen) ;
                     }
                     #endif
                     break ;
@@ -666,7 +666,7 @@
                 int64_t pC = Cp [kC] ;
                 int64_t clen = Cp [kC+1] - pC ;
                 GB_qsort_1b (Ci + pC, (GB_void *) (Cx + pC*GB_CSIZE1),
-                    GB_CSIZE2, clen, NULL) ;
+                    GB_CSIZE2, clen) ;
             }
         }
     }

@@ -21,7 +21,6 @@ void mexFunction
 {
 
     // check inputs
-    GB_WHERE (USAGE) ;
     if (nargin != 1)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
@@ -40,9 +39,10 @@ void mexFunction
 
     GB_MEX_TIC ;
 
-    GB_qsort_1a (J, n, Context) ;
+    GB_qsort_1a (J, n) ;
 
     GB_MEX_TOC ;
+
     GB_mx_put_time (0) ;
 }
 

@@ -7,6 +7,9 @@
 
 //------------------------------------------------------------------------------
 
+// All of the GB_qsort_* functions are single-threaded, by design.  None of
+// them are stable, but they are always used in GraphBLAS with unique keys.
+
 #ifndef GB_QSORT_H
 #define GB_QSORT_H
 #include "GB.h"
@@ -14,8 +17,7 @@
 void GB_qsort_1a        // sort array A of size 1-by-n
 (
     int64_t A_0 [ ],    // size-n array
-    const int64_t n,
-    GB_Context Context  // for # of threads; use one thread if NULL
+    const int64_t n
 ) ;
 
 void GB_qsort_1b        // sort array A of size 2-by-n, using 1 key (A [0][])
@@ -23,16 +25,14 @@ void GB_qsort_1b        // sort array A of size 2-by-n, using 1 key (A [0][])
     int64_t A_0 [ ],    // size n array
     GB_void A_1 [ ],    // size n array
     const size_t xsize, // size of entries in A_1
-    const int64_t n,
-    GB_Context Context  // for # of threads; use one thread if NULL
+    const int64_t n
 ) ;
 
 void GB_qsort_2         // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t A_0 [ ],    // size n array
     int64_t A_1 [ ],    // size n array
-    const int64_t n,
-    GB_Context Context  // for # of threads; use one thread if NULL
+    const int64_t n
 ) ;
 
 void GB_qsort_3         // sort array A of size 3-by-n, using 3 keys (A [0:2][])
@@ -40,8 +40,7 @@ void GB_qsort_3         // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     int64_t A_0 [ ],    // size n array
     int64_t A_1 [ ],    // size n array
     int64_t A_2 [ ],    // size n array
-    const int64_t n,
-    GB_Context Context  // for # of threads; use one thread if NULL
+    const int64_t n
 ) ;
 
 //------------------------------------------------------------------------------

@@ -89,7 +89,7 @@ GrB_Info GB_ijsort
         I1k [k] = k ;
     }
 
-    GB_qsort_2 ((int64_t *) I1, (int64_t *) I1k, ni, Context) ;
+    GB_qsort_2 ((int64_t *) I1, (int64_t *) I1k, ni) ;
 
     //--------------------------------------------------------------------------
     // count unique entries in I1

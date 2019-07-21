@@ -352,7 +352,7 @@ GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
                 else
                 { 
                     // sort the nonzero indices in C(:,j)
-                    GB_qsort_1a (Ci + cnz_last, len, NULL) ;
+                    GB_qsort_1a (Ci + cnz_last, len) ;
                 }
             }
 

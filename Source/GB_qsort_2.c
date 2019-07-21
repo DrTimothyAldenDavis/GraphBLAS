@@ -7,11 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// This sort is not stable, but it is used in GraphBLAS only on lists with
-// unique tuples (i,k).  So it does not need to be stable.  Both entries i
-// and k in the tuples (i,k) are used as the sort key.  The value i may
-// appear in multiple tuples, but the value k is unique across all tuples.
-
 #include "GB_qsort.h"
 
 // returns true if a < b
@@ -60,8 +55,6 @@
 
 #define GB_partition GB_partition_2
 #define GB_quicksort GB_quicksort_2
-#define GB_quicksort_par  GB_quicksort_par_2
-#define GB_quicksort_main GB_quicksort_main_2
 
 #include "GB_qsort_template.c"
 
@@ -69,11 +62,10 @@ void GB_qsort_2         // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t A_0 [ ],    // size n array
     int64_t A_1 [ ],    // size n array
-    int64_t n,
-    GB_Context Context  // for # of threads; use one thread if NULL
+    int64_t n
 )
 { 
     uint64_t seed = n ;
-    GB_quicksort_main (GB_arg (A), n, &seed, Context) ;
+    GB_quicksort (GB_arg (A), n, &seed) ;
 }
 

@@ -1,14 +1,9 @@
-This is a draft version of GraphBLAS V3.0.0, not yet suitable for public
-release.  I've given access to a few people via the private
-github.tamu.edu/GraphBLAS site, and via my GraphBLAS_drafts/ folder on Dropbox.
+Instructions for the upcoming GraphBLAS Hackathon.
 
-Please ask me before posting performance results of this code.
-It's a work in progress, and in some posts to github, I may have enabled some
-scaffolding code that can greatly slow down the code.
-
-Tim Davis
-davis@tamu.edu
-
+There is one parallel loop in the code in which each thread allocates memory
+via malloc or realloc.  See the "reduction(&&:ok)" and comments in
+GraphBLAS/Source/GB_AxB_saxpy_parallel.c.  For all other cases, memory is never
+malloc/calloc/realloc/freed inside a parallel region.
 
 Please follow my coding style for the Hackathon.  If you break these rules,
 I'll need to go back over your modifications to the code to fix these stylistic

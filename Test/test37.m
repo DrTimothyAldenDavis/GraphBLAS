@@ -6,10 +6,10 @@ function test37
 
 fprintf ('\n------------ testing GB_mex_qsort performance\n') ;
 
-[save save_chunk] = nthreads_get ;
-chunk = 4096 ;
-nthreads = feature ('numcores') ;
-nthreads_set (nthreads, chunk) ;
+% [save save_chunk] = nthreads_get ;
+% chunk = 4096 ;
+% nthreads = feature ('numcores') ;
+% nthreads_set (nthreads, chunk) ;
 
 rng ('default')  ;
 
@@ -50,7 +50,7 @@ for n = [1 10 19 20 21 100 1000 1e5 1e6 1e7 1e8]
     end
 end
 
-nthreads_set (save, save_chunk) ;
+% nthreads_set (save, save_chunk) ;
 
 fprintf ('\ntest37: all tests passed\n') ;
 

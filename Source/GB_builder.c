@@ -526,16 +526,16 @@ GrB_Info GB_builder                 // build a matrix from tuples
             K_work [k] = k ;
         }
 
-        // sort all the tuples, in parallel
+        // sort all the tuples
         if (vdim > 1)
         { 
             // sort a set of (j,i,k) tuples
-            GB_qsort_3 (J_work, I_work, K_work, nvals, Context) ;
+            GB_qsort_3 (J_work, I_work, K_work, nvals) ;
         }
         else
         { 
             // sort a set of (i,k) tuples
-            GB_qsort_2 (I_work, K_work, nvals, Context) ;
+            GB_qsort_2 (I_work, K_work, nvals) ;
         }
     }
 
