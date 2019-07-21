@@ -13,7 +13,7 @@
 // single matrix computation C=A'*B.
 
 // Two variants are handled: C=A'*B and C<!M>=A'*B.
-// The C<M>=A'*B computation is now computed by GB_AxB_dot3.
+// The C<M>=A'*B computation is computed by GB_AxB_dot3.
 
 #include "GB_mxm.h"
 #include "GB_iterator.h"
@@ -29,16 +29,11 @@
     }                                                                   \
 }
 
-GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
+GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
-#if 0
-    // this is now always true for dot2
-    const bool Mask_comp,           // if true, use !M
-#else
-    #define Mask_comp true
-#endif
+                                    // if present, the mask is complemented
     const GrB_Matrix *Aslice,       // input matrices (already sliced)
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -236,7 +231,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        info = GB_Adot2B (add,mult,xyname) (C, M, Mask_comp,            \
+        info = GB_Adot2B (add,mult,xyname) (C, M,                       \
             Aslice, A_is_pattern, B, B_is_pattern,                      \
             C_counts, nthreads, naslice, nbslice) ;                     \
         done = (info != GrB_NO_VALUE) ;                                 \
@@ -287,8 +282,7 @@ GrB_Info GB_AxB_dot2                // C = A'*B using dot product method
                 flipxy,
                 /* heap: */ NULL, NULL, NULL, 0,
                 /* Gustavson: */ NULL,
-                /* dot: */ Aslice, Mask_comp, nthreads, naslice, nbslice,
-                           C_counts,
+                /* dot: */ Aslice, nthreads, naslice, nbslice, C_counts,
                 /* dot3: */ NULL, 0) ;
             done = true ;
         }

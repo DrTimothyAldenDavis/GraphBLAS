@@ -49,7 +49,6 @@
     // C and M have the same pattern, except some entries of C may become
     // zombies.
     int64_t nzombies = 0 ;
-    // printf ("ntasks %d Ch %p\n", ntasks, (void *) Ch) ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
@@ -66,8 +65,6 @@
         int64_t pC_last  = TaskList [taskid].pC_end ;
         int64_t task_nzombies = 0 ;
         int64_t bpleft = 0 ;
-        // printf ("task %d kfirst "GBd" klast "GBd"\n", taskid, kfirst, klast);
-        // printf ("pC_first "GBd" pC_last "GBd"\n", pC_first, pC_last) ;
 
         //----------------------------------------------------------------------
         // compute all vectors in this task
@@ -81,7 +78,6 @@
             //------------------------------------------------------------------
 
             int64_t j = (Ch == NULL) ? k : Ch [k] ;
-            // printf ("k "GBd" j "GBd"\n", k, j) ;
             int64_t pC_start, pC_end ;
             if (k == kfirst)
             { 
@@ -101,7 +97,6 @@
                 pC_start = Cp [k] ;
                 pC_end   = Cp [k+1] ;
             }
-            // printf ("pC_start "GBd" pC_end "GBd"\n", pC_start, pC_end) ;
 
             //------------------------------------------------------------------
             // get B(:,j)
@@ -111,7 +106,6 @@
             GB_lookup (B_is_hyper, Bh, Bp, &bpleft, bnvec-1, j,
                 &pB_start, &pB_end) ;
             int64_t bjnz = pB_end - pB_start ;
-            // printf ("pB_start "GBd" pB_end "GBd"\n", pB_start, pB_end) ;
 
             //------------------------------------------------------------------
             // C(:,j)<M(:,j)> = A(:,i)'*B(:,j)
@@ -128,7 +122,6 @@
                 for (int64_t pC = pC_start ; pC < pC_end ; pC++)
                 { 
                     // C(i,j) is a zombie
-                    // printf ("zombie  C ("GBd","GBd")\n", Mi [pC], j) ;
                     Ci [pC] = GB_FLIP (Mi [pC]) ;
                 }
             }
@@ -166,7 +159,6 @@
                         GB_lookup (A_is_hyper, Ah, Ap, &apleft, anvec-1, i,
                             &pA, &pA_end) ;
 
-                        // printf ("compute C ("GBd","GBd")\n", i, j) ;
                         // C(i,j) = A(:,i)'*B(:,j)
                         #include "GB_AxB_dot_cij.c"
                     }
@@ -177,7 +169,6 @@
                         // M(i,j) is false, so C(i,j) is a zombie
                         //------------------------------------------------------
 
-                        // printf ("zombie  C ("GBd","GBd")\n", i, j) ;
                         task_nzombies++ ;
                         Ci [pC] = GB_FLIP (i) ;
                     }

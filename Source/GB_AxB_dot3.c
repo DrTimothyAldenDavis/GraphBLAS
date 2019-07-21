@@ -358,7 +358,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                 flipxy,
                 /* heap: */ NULL, NULL, NULL, 0,
                 /* Gustavson: */ NULL,
-                /* dot: */ NULL, false, nthreads, 0, 0, NULL,
+                /* dot: */ NULL, nthreads, 0, 0, NULL,
                 /* dot3: */ TaskList, ntasks) ;
             done = true ;
         }

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot2_meta: C=A'*B or C<M>=A'*B via dot productes
+// GB_AxB_dot2_meta: C=A'*B or C<!M>=A'*B via dot productes
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -31,7 +31,7 @@
     GBI1_init (&Iter, B) ;
 
     //--------------------------------------------------------------------------
-    // C=A'*B, C<M>=A'*B, or C<!M>=A'*B via dot products
+    // C=A'*B or C<!M>=A'*B via dot products
     //--------------------------------------------------------------------------
 
     if (M == NULL)
@@ -57,22 +57,8 @@
         const int64_t mnvec = M->nvec ;
         bool M_is_hyper = GB_IS_HYPER (M) ;
 
-        ASSERT (Mask_comp) ;
-
-#if 0
-        if (Mask_comp)
-        { 
-#endif
-            // C<!M> = A'*B via dot products
-            #include "GB_AxB_dot2_compmask.c"
-#if 0
-        }
-        else
-        { 
-            // C<M> = A'*B via dot products
-            #include "GB_AxB_dot2_mask.c"
-        }
-#endif
+        // C<!M> = A'*B via dot products
+        #include "GB_AxB_dot2_compmask.c"
     }
 }
 

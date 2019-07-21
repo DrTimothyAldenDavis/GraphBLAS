@@ -1443,7 +1443,7 @@ typedef struct GB_Scalar_opaque *GxB_Scalar ;
 // These methods create, free, copy, and clear a GxB_Scalar.  The nvals,
 // and type methods return basic information about a GxB_Scalar.
 
-GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entries
+GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entry
 (
     GxB_Scalar *s,          // handle of GxB_Scalar to create
     GrB_Type type           // type of GxB_Scalar to create
@@ -1456,13 +1456,13 @@ GrB_Info GxB_Scalar_dup     // make an exact copy of a GxB_Scalar
 ) ;
 
 GrB_Info GxB_Scalar_clear   // clear a GxB_Scalar of its entry
-(                           // type and dimension remain unchanged.
+(                           // type remains unchanged.
     GxB_Scalar s            // GxB_Scalar to clear
 ) ;
 
 GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
 (
-    GrB_Index *nvals,       // GxB_Scalar has nvals entries (1 or 0)
+    GrB_Index *nvals,       // GxB_Scalar has nvals entries (0 or 1)
     const GxB_Scalar s      // GxB_Scalar to query
 ) ;
 
@@ -1487,73 +1487,73 @@ GrB_Info GxB_Scalar_free    // free a GxB_Scalar
 GrB_Info GxB_Scalar_setElement_BOOL     // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    bool x                              // user scalar to assign to w
+    bool x                              // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_INT8     // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    int8_t x                            // user scalar to assign to w
+    int8_t x                            // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_UINT8    // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    uint8_t x                           // user scalar to assign to w
+    uint8_t x                           // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_INT16    // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    int16_t x                           // user scalar to assign to w
+    int16_t x                           // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_UINT16   // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    uint16_t x                          // user scalar to assign to w
+    uint16_t x                          // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_INT32    // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    int32_t x                           // user scalar to assign to w
+    int32_t x                           // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_UINT32   // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    uint32_t x                          // user scalar to assign to w
+    uint32_t x                          // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_INT64    // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    int64_t x                           // user scalar to assign to w
+    int64_t x                           // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_UINT64   // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    uint64_t x                          // user scalar to assign to w
+    uint64_t x                          // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_FP32     // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    float x                             // user scalar to assign to w
+    float x                             // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_FP64     // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    double x                            // user scalar to assign to w
+    double x                            // user scalar to assign to s
 ) ;
 
 GrB_Info GxB_Scalar_setElement_UDT      // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    void *x                             // user scalar to assign to w
+    void *x                             // user scalar to assign to s
 ) ;
 
 // Type-generic version:  x can be any supported C type or void * for a
@@ -1564,7 +1564,7 @@ GrB_Info GxB_Scalar_setElement_UDT      // s = x
 GrB_Info GxB_Scalar_setElement          // s = x
 (
     GxB_Scalar s,                       // GxB_Scalar to modify
-    <type> x                            // user scalar to assign to w
+    <type> x                            // user scalar to assign to s
 ) ;
 
 */

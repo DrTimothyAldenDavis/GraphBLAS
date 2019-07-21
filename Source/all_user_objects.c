@@ -176,7 +176,7 @@
     #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
     #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
     #define GB_AgusB    GB_AxB_user_gus_My_Complex_plus_times
-    #define GB_Adot2B   GB_AxB_user_dot_My_Complex_plus_times
+    #define GB_Adot2B   GB_AxB_user_dot2_My_Complex_plus_times
     #define GB_Adot3B   GB_AxB_user_dot3_My_Complex_plus_times
     #define GB_AheapB   GB_AxB_user_heap_My_Complex_plus_times
     #define GB_MULTIPLY(z,x,y) GB_DEF_My_Complex_times_function (&(z), &(x), &(y))
@@ -192,7 +192,7 @@
     #undef GB_Adot3B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_My_Complex_plus_times_flipxy
-    #define GB_Adot2B   GB_AxB_user_dot_My_Complex_plus_times_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot2_My_Complex_plus_times_flipxy
     #define GB_Adot3B   GB_AxB_user_dot3_My_Complex_plus_times_flipxy
     #define GB_AheapB   GB_AxB_user_heap_My_Complex_plus_times_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_My_Complex_times_function (&(z), &(y), &(x))
@@ -427,7 +427,7 @@
     #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
     #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
     #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv2
-    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv2
+    #define GB_Adot2B   GB_AxB_user_dot2_My_plus_rdiv2
     #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv2
     #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv2
     #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv2_function (&(z), &(x), &(y))
@@ -443,7 +443,7 @@
     #undef GB_Adot3B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv2_flipxy
-    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv2_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot2_My_plus_rdiv2_flipxy
     #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv2_flipxy
     #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv2_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv2_function (&(z), &(y), &(x))
@@ -781,7 +781,7 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
     #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
     #define GB_AgusB    GB_AxB_user_gus_PageRank_semiring
-    #define GB_Adot2B   GB_AxB_user_dot_PageRank_semiring
+    #define GB_Adot2B   GB_AxB_user_dot2_PageRank_semiring
     #define GB_Adot3B   GB_AxB_user_dot3_PageRank_semiring
     #define GB_AheapB   GB_AxB_user_heap_PageRank_semiring
     #define GB_MULTIPLY(z,x,y) GB_DEF_PageRank_multiply_function (&(z), &(x), &(y))
@@ -797,7 +797,7 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     #undef GB_Adot3B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_PageRank_semiring_flipxy
-    #define GB_Adot2B   GB_AxB_user_dot_PageRank_semiring_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot2_PageRank_semiring_flipxy
     #define GB_Adot3B   GB_AxB_user_dot3_PageRank_semiring_flipxy
     #define GB_AheapB   GB_AxB_user_heap_PageRank_semiring_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_PageRank_multiply_function (&(z), &(y), &(x))
@@ -950,7 +950,7 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
     #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
     #define GB_AgusB    GB_AxB_user_gus_My_LOR_LAND
-    #define GB_Adot2B   GB_AxB_user_dot_My_LOR_LAND
+    #define GB_Adot2B   GB_AxB_user_dot2_My_LOR_LAND
     #define GB_Adot3B   GB_AxB_user_dot3_My_LOR_LAND
     #define GB_AheapB   GB_AxB_user_heap_My_LOR_LAND
     #define GB_MULTIPLY(z,x,y) GB_DEF_GrB_LAND_function (&(z), &(x), &(y))
@@ -966,7 +966,7 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     #undef GB_Adot3B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_My_LOR_LAND_flipxy
-    #define GB_Adot2B   GB_AxB_user_dot_My_LOR_LAND_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot2_My_LOR_LAND_flipxy
     #define GB_Adot3B   GB_AxB_user_dot3_My_LOR_LAND_flipxy
     #define GB_AheapB   GB_AxB_user_heap_My_LOR_LAND_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_GrB_LAND_function (&(z), &(y), &(x))
@@ -1131,7 +1131,7 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
     #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
     #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv
-    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv
+    #define GB_Adot2B   GB_AxB_user_dot2_My_plus_rdiv
     #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv
     #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv
     #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv_function (&(z), &(x), &(y))
@@ -1147,7 +1147,7 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     #undef GB_Adot3B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv_flipxy
-    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot2_My_plus_rdiv_flipxy
     #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv_flipxy
     #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv_function (&(z), &(y), &(x))
@@ -1189,7 +1189,7 @@ GrB_Info GB_AxB_user
 
     GrB_Matrix *GB_Chandle,
     const GrB_Matrix GB_M,
-    const GrB_Matrix GB_A,     // not used for dot method
+    const GrB_Matrix GB_A,          // not used for dot2 method
     const GrB_Matrix GB_B,
     bool GB_flipxy,
 
@@ -1203,12 +1203,11 @@ GrB_Info GB_AxB_user
     GB_Sauna GB_C_Sauna,
 
     // for dot method only:
-    const GrB_Matrix *GB_Aslice,
-    const bool GB_mask_comp,
-    const int GB_dot_nthreads,      // also for dot3
-    const int GB_naslice,
-    const int GB_nbslice,
-    int64_t **GB_C_counts,
+    const GrB_Matrix *GB_Aslice,    // for dot2 only
+    const int GB_dot_nthreads,      // for dot2 and dot3
+    const int GB_naslice,           // for dot2 only
+    const int GB_nbslice,           // for dot2 only
+    int64_t **GB_C_counts,          // for dot2 only
 
     // for dot3 method only:
     const GB_task_struct *restrict GB_TaskList,
@@ -1257,16 +1256,16 @@ GrB_Info GB_AxB_user
             {
                 if (GB_flipxy)
                 {
-                    GB_info = GB_AxB_user_dot_My_Complex_plus_times_flipxy
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_Complex_plus_times_flipxy
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
                 }
                 else
                 {
-                    GB_info = GB_AxB_user_dot_My_Complex_plus_times
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_Complex_plus_times
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
@@ -1326,16 +1325,16 @@ GrB_Info GB_AxB_user
             {
                 if (GB_flipxy)
                 {
-                    GB_info = GB_AxB_user_dot_My_plus_rdiv2_flipxy
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_plus_rdiv2_flipxy
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
                 }
                 else
                 {
-                    GB_info = GB_AxB_user_dot_My_plus_rdiv2
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_plus_rdiv2
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
@@ -1395,16 +1394,16 @@ GrB_Info GB_AxB_user
             {
                 if (GB_flipxy)
                 {
-                    GB_info = GB_AxB_user_dot_PageRank_semiring_flipxy
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_PageRank_semiring_flipxy
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
                 }
                 else
                 {
-                    GB_info = GB_AxB_user_dot_PageRank_semiring
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_PageRank_semiring
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
@@ -1464,16 +1463,16 @@ GrB_Info GB_AxB_user
             {
                 if (GB_flipxy)
                 {
-                    GB_info = GB_AxB_user_dot_My_LOR_LAND_flipxy
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_LOR_LAND_flipxy
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
                 }
                 else
                 {
-                    GB_info = GB_AxB_user_dot_My_LOR_LAND
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_LOR_LAND
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
@@ -1533,16 +1532,16 @@ GrB_Info GB_AxB_user
             {
                 if (GB_flipxy)
                 {
-                    GB_info = GB_AxB_user_dot_My_plus_rdiv_flipxy
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_plus_rdiv_flipxy
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;
                 }
                 else
                 {
-                    GB_info = GB_AxB_user_dot_My_plus_rdiv
-                        (*GB_Chandle, GB_M, GB_mask_comp,
+                    GB_info = GB_AxB_user_dot2_My_plus_rdiv
+                        (*GB_Chandle, GB_M,
                         GB_Aslice, false,
                         GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
                         GB_nbslice) ;

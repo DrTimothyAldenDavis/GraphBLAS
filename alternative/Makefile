@@ -18,12 +18,12 @@
 # note that -mp1 is essential for icc, for proper Inf and NaN behavior.
 
 SRC = ../Source/*.c ../Source/Generated/*.c
-INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h
+INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp
-CFLAGS = -g -std=c11 -fopenmp -fexceptions -fPIC
-CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated
+CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC
+CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator
 SO_OPTS = $(LDFLAGS)
 
 UNAME := $(shell uname)

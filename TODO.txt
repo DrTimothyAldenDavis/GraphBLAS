@@ -1,12 +1,8 @@
 
-TODO: dot3 has good performance: remove C<M>=A'*B variant from dot2
-
-TODO: create GB_mergesort_2 and GB_mergersort_3, which compute the same
-    thing as GB_qsort_2 and GB_qsort_3, but using a parallel merge sort.
-    They will call GB_qsort_2 and GB_qsort_3 for sorting small sub-arrays,
+TODO: create GB_mergesort_2 and GB_mergesort_3, which compute the same thing as
+    GB_qsort_2 and GB_qsort_3, but using a parallel merge sort.  They will call
+    the single-threaded GB_qsort_2 and GB_qsort_3 for sorting small sub-arrays,
     in the leaf nodes of the task tree.
-
-TODO: add GxB_Scalar to user guide
 
 TODO: for production release, remove User/my*.m4
 

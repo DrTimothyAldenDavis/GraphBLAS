@@ -107,9 +107,10 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 \item Version 3.0 (2019):  The version number is increased to 3.0, since
 this version is not backward compatible with V2.x.  The \verb'GxB_select'
 operation changes; the \verb'Thunk' parameter was formerly a
-\verb'const void *' pointer, and is now a \verb'GxB_Scalar'.  A new
-parameter is added to \verb'GxB_init', to specify whether or not the
-user-provided memory management functions are thread safe.
+\verb'const void *' pointer, and is now a \verb'GxB_Scalar'.  A new parameter
+is added to \verb'GxB_SelectOp_new', to define the expected type of
+\verb'Thunk'.  A new parameter is added to \verb'GxB_init', to specify whether
+or not the user-provided memory management functions are thread safe.
 
 The remaining changes add new features, and are upward compatible with V2.x.
 The major change is the addition of OpenMP parallelism.  This addition has no
@@ -2273,7 +2274,7 @@ If the select operator does not use this parameter, \verb'ttype' is returned as
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info GxB_free               // free a user-created select operator
+GrB_Info GrB_free               // free a user-created select operator
 (
     GxB_SelectOp *selectop      // handle of select operator to free
 ) ;
@@ -2804,7 +2805,250 @@ input.  It does nothing at all if passed a built-in semiring.
 %===============================================================================
 \label{scalar}
 
-{\bf TODO: describe \verb'GxB_Scalar'.  See GraphBLAS.h for details.}
+This section describes a set of methods that create, modify, query,
+and destroy a GraphBLAS sparse scalar, \verb'GxB_Scalar':
+
+\begin{spec}
+{\bf SPEC:} \verb'GxB_Scalar' is an extension to the spec.
+\end{spec}
+
+\vspace{0.2in}
+{\footnotesize
+\begin{tabular}{ll}
+\hline
+\verb'GxB_Scalar_new'            & create a sparse scalar \\
+\verb'GxB_Scalar_dup'            & copy a sparse scalar \\
+\verb'GxB_Scalar_clear'          & clear a sparse scalar of its entry \\
+\verb'GxB_Scalar_nvals'          & return the number of entries in a
+                                   sparse scalar (0 or 1) \\
+\verb'GxB_Scalar_type'           & return the type of a sparse scalar \\
+\verb'GxB_Scalar_setElement'     & set the single entry of a sparse scalar \\
+\verb'GxB_Scalar_extractElement' & get the single entry from a sparse scalar \\
+\verb'GxB_Scalar_free'           & free a sparse scalar \\
+\hline
+\end{tabular}
+}
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_new:} create a sparse scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_new}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entry
+(
+    GxB_Scalar *s,          // handle of GxB_Scalar to create
+    GrB_Type type           // type of GxB_Scalar to create
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Scalar_new' creates a new sparse scalar with no
+entry in it, of the given type.  This is analogous to MATLAB statement
+\verb'v = sparse (0)', except that GraphBLAS can create sparse scalars any
+type.  The pattern of the new scalar is empty.
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_dup:} copy a sparse scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_dup}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_dup     // make an exact copy of a GxB_Scalar
+(
+    GxB_Scalar *s,          // handle of output GxB_Scalar to create
+    const GxB_Scalar t      // input GxB_Scalar to copy
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Scalar_dup' makes a deep copy of a sparse scalar, like \verb's=t' in
+MATLAB.  In GraphBLAS, it is possible, and valid, to write the following:
+
+    {\footnotesize
+    \begin{verbatim}
+    GxB_Scalar t, s ;
+    GxB_Scalar_new (&t, GrB_FP64) ;
+    s = t ;                         // s is a shallow copy of t  \end{verbatim}}
+
+Then \verb's' and \verb't' can be used interchangeably.  However, only a pointer
+reference is made, and modifying one of them modifies both, and freeing one of
+them leaves the other as a dangling handle that should not be used.
+If two different sparse scalars are needed, then this should be used instead:
+
+    {\footnotesize
+    \begin{verbatim}
+    GxB_Scalar t, s ;
+    GxB_Scalar_new (&t, GrB_FP64) ;
+    GxB_Scalar_dup (&s, t) ;        // like s = t, but making a deep copy \end{verbatim}}
+
+Then \verb's' and \verb'g' are two different sparse scalars that currently have
+the same values, but they do not depend on each other.  Modifying one
+has no effect on the other.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_clear:} clear a sparse scalar of its entry}
+%-------------------------------------------------------------------------------
+\label{scalar_clear}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_clear   // clear a GxB_Scalar of its entry
+(                           // type remains unchanged.
+    GxB_Scalar s            // GxB_Scalar to clear
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Scalar_clear' clears the entry from a sparse scalar.  The pattern of
+\verb's' is empty, just as if it were created fresh with \verb'GxB_Sparse_new'.
+Analogous with \verb's = sparse (0)' in MATLAB.  The type of \verb's' does not
+change.  In SuiteSparse:GraphBLAS, any pending updates to the sparse scalar are
+discarded.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_nvals:} return the number of entries in a sparse scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_nvals}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_nvals   // get the number of entries in a GxB_Scalar
+(
+    GrB_Index *nvals,       // GxB_Scalar has nvals entries (0 or 1)
+    const GxB_Scalar s      // GxB_Scalar to query
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Scalar_nvals' returns the number of entries in a sparse scalar, which
+is either 0 or 1.  Roughly analogous to \verb'nvals = nnz(s)' in MATLAB, except
+that the implicit value in GraphBLAS need not be zero and \verb'nnz' (short for
+``number of nonzeros'') in MATLAB is better described as ``number of entries''
+in GraphBLAS.
+
+\paragraph{Forced completion:}
+All computations for the sparse scalar \verb's' are guaranteed to be finished
+when \verb'GxB_Scalar_nvals' method returns.
+%
+That is, it acts like an object-specific \verb'GrB_wait' for just this
+particular sparse scalar \verb's', which is a side-effect useful in its own
+right.  For example, suppose the computations required for \verb's' rely upon a
+user-defined operator that accesses a user-controlled global variable outside
+the scope or control of GraphBLAS.  If the user-application needs to modify or
+free the variable, \verb'GxB_Scalar_nvals' can be used to force all pending
+operations for this sparse scalar \verb's' to complete.  The user application
+can then safely modify the global variable.  A call to
+\verb'GxB_Scalar_nvals(&nvals,s)' only ensures that the computations require to
+compute \verb's' are finished; other pending computations for other objects may
+remain.  To ensure that all pending computations are complete for all GraphBLAS
+objects, use \verb'GrB_wait' instead.
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_type:} return the type of a sparse scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_type}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_type    // get the type of a GxB_Scalar
+(
+    GrB_Type *type,         // returns the type of the GxB_Scalar
+    const GxB_Scalar s      // GxB_Scalar to query
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Scalar_type' returns the type of a sparse scalar.  Analogous to
+\verb'type = class (s)' in MATLAB.
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_setElement:} set the single entry of a sparse scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_setElement}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_setElement          // s = x
+(
+    GxB_Scalar s,                       // GxB_Scalar to modify
+    <type> x                            // user scalar to assign to s
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Scalar_setElement' sets the single entry in a sparse scalar, like
+\verb's = sparse(x)' in MATLAB notation.  For further details of this function,
+see \verb'GxB_Matrix_setElement' in Section~\ref{matrix_setElement}.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_extractElement:} get the single entry from a sparse scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_extractElement}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_extractElement  // x = s
+(
+    <type> *x,                      // user scalar extracted
+    const GxB_Scalar s              // GxB_Sclar to extract an entry from
+) ;
+\end{verbatim} } \end{mdframed}
+
+\verb'GxB_Scalar_extractElement' extracts the single entry from a sparse
+scalar, like \verb'x = full(s)' in MATLAB.  Further details of this method are
+discussed in Section~\ref{matrix_extractElement}, which discusses
+\verb'GrB_Matrix_extractElement'.  {\bf NOTE: }  if no entry is present in the
+sparse scalar \verb's', then \verb'x' is not modified, and the return value of
+\verb'GxB_Scalar_extractElement' is \verb'GrB_NO_VALUE'.
+
+\paragraph{Forced completion:}
+All computations for the sparse scalar \verb's' are
+guaranteed to be finished when the method returns.
+
+% \newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GxB\_Scalar\_free:} free a sparse scalar}
+%-------------------------------------------------------------------------------
+\label{scalar_free}
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GrB_free           // free a GxB_Scalar
+(
+    GxB_Scalar *s           // handle of GxB_Scalar to free
+) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb'GxB_Scalar_free' frees a sparse scalar.  Either usage:
+
+    {\small
+    \begin{verbatim}
+    GxB_Scalar_free (&s) ;
+    GrB_free (&s) ; \end{verbatim}}
+
+\noindent
+frees the sparse scalar \verb's' and sets \verb's' to \verb'NULL'.  It safely
+does nothing if passed a \verb'NULL' handle, or if \verb's == NULL' on input.
+In SuiteSparse:GraphBLAS, any pending updates to the sparse scalar are
+abandoned.
 
 \newpage
 %===============================================================================
@@ -3200,7 +3444,6 @@ GrB_Info GrB_free           // free a vector
 frees the vector \verb'v' and sets \verb'v' to \verb'NULL'.  It safely does
 nothing if passed a \verb'NULL' handle, or if \verb'v == NULL' on input.
 In SuiteSparse:GraphBLAS, any pending updates to the vector are abandoned.
-
 
 \newpage
 %===============================================================================

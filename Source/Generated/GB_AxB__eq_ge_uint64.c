@@ -23,7 +23,7 @@
 // The C=A*B semiring is defined by the following types and operators:
 
 // A*B function (Gustavon):  GB_AgusB__eq_ge_uint64
-// A'*B function (dot):      GB_Adot2B__eq_ge_uint64
+// A'*B function (dot2):     GB_Adot2B__eq_ge_uint64
 // A'*B function (dot3):     GB_Adot3B__eq_ge_uint64
 // A*B function (heap):      GB_AheapB__eq_ge_uint64
 
@@ -120,19 +120,20 @@ GrB_Info GB_AgusB__eq_ge_uint64
 }
 
 //------------------------------------------------------------------------------
-// C<M>=A'*B, C<!M>=A'*B or C=A'*B: dot product (phase 2)
+// C=A'*B or C<!M>=A'*B: dot product (phase 2)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_Adot2B__eq_ge_uint64
 (
     GrB_Matrix C,
-    const GrB_Matrix M, const bool Mask_comp,
+    const GrB_Matrix M,
     const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int64_t *restrict *C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 
+    // C<M>=A'*B now uses dot3
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

@@ -10,7 +10,7 @@ GrB_Info GB_AgusB
 GrB_Info GB_Adot2B
 (
     GrB_Matrix C,
-    const GrB_Matrix M, const bool Mask_comp,
+    const GrB_Matrix M,
     const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     int64_t *restrict *C_counts,

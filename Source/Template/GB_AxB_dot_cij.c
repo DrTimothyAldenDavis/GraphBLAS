@@ -7,10 +7,19 @@
 
 //------------------------------------------------------------------------------
 
-// computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product
+// computes C(i,j) = A (:,i)'*B(:,j) via sparse dot product.  This template is
+// used for all three cases: C=A'*B and C<!M>=A'*B in dot2, and C<M>=A'*B in
+// dot3.
+
+// GB_AxB_dot2 defines either one of these, and uses this template twice:
 
 //      GB_PHASE_1_OF_2 ; determine if cij exists, and increment C_count
 //      GB_PHASE_2_OF_2 : 2nd phase, compute cij, no realloc of C
+
+// GB_AxB_dot3 defines GB_DOT3, and uses this template just once.
+
+// Only one of the three are #defined: either GB_PHASE_1_OF_2, GB_PHASE_2_OF_2,
+// or GB_DOT3.
 
 #undef GB_DOT_MERGE
 
@@ -46,7 +55,7 @@
     // declare the cij scalar
     //--------------------------------------------------------------------------
 
-    #if !defined ( GB_PHASE_1_OF_2 )
+    #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
     GB_CIJ_DECLARE (cij) ;
     #endif
 
@@ -83,7 +92,7 @@
 
         cij_exists = true ;
 
-        #if !defined ( GB_PHASE_1_OF_2 )
+        #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
         // cij = A(0,i) * B(0,j)
         GB_GETA (aki, Ax, pA) ;             // aki = A(0,i)
         GB_GETB (bkj, Bx, pB) ;             // bkj = B(0,j)
@@ -110,7 +119,7 @@
 
         cij_exists = true ;
 
-        #if !defined ( GB_PHASE_1_OF_2 )
+        #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
         int64_t k = Bi [pB] ;               // first row index of B(:,j)
         // cij = A(k,i) * B(k,j)
         GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
@@ -139,7 +148,7 @@
 
         cij_exists = true ;
 
-        #if !defined ( GB_PHASE_1_OF_2 )
+        #if defined ( GB_PHASE_2_OF_2 ) || defined ( GB_DOT3 )
         int64_t k = Ai [pA] ;               // first row index of A(:,i)
         // cij = A(k,i) * B(k,j)
         GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)
@@ -286,19 +295,23 @@
 
     #if defined ( GB_DOT3 )
 
+        // GB_AxB_dot3: computing C<M>=A'*B
         if (cij_exists)
         { 
+            // C(i,j) = cij
             GB_CIJ_SAVE (cij, pC) ;
             Ci [pC] = i ;
         }
         else
         { 
+            // C(i,j) becomes a zombie
             task_nzombies++ ;
             Ci [pC] = GB_FLIP (i) ;
         }
 
     #else
 
+        // GB_AxB_dot2: computing C=A'*B or C<!M>=A'*B
         if (cij_exists)
         { 
             // C(i,j) = cij
@@ -307,9 +320,7 @@
             #else
                 GB_CIJ_SAVE (cij, cnz) ;
                 Ci [cnz++] = i ;
-                #if defined ( GB_PHASE_2_OF_2 )
-                    if (cnz > cnz_last) break ;
-                #endif
+                if (cnz > cnz_last) break ;
             #endif
         }
 

@@ -1,21 +1,26 @@
 Version 3.0.1, July TODO, 2019
 
-    * version number: Two changes to the user-visible API are not
-        backward-compatible with V2.x: the extra parameter to GxB_init, and the
-        change in the type of the Thunk argument for GxB_select.  Thus, the SO
-        version of SuiteSparse:GraphBLAS is now 3, no longer 2.
+    * version number: Three changes to the user-visible API are not
+        backward-compatible with V2.x: the added parameters to GxB_init and
+        GxB_SelectOp_new, and the change in the type of the Thunk argument for
+        GxB_select.  Thus, the SO version of SuiteSparse:GraphBLAS is now 3, no
+        longer 2.  This change only affects SuiteSparse:GraphBLAS GxB_*
+        extenstions, not any GrB_* functions or definitions.
     * added GxB_Scalar: acts like a GrB_Vector of length 1.
-    * OpenMP parallelism: added nthreads and chunk parameters
+    * OpenMP parallelism: added nthreads and chunk parameters to GxB_set/get.
     * added parameter to GxB_init: bool user_malloc_is_thread_safe,
-        for MATLAB mexFunction interface.  mxMalloc is not thread-safe.
+        for the MATLAB mexFunction interface, or any other malloc library that
+        might not be thread-safe.  mxMalloc is not thread-safe.
         This change is not backward compatible with Version 2.x.
-    * changed thunk parameter of GxB_select:  was (void *), now GxB_Scalar
+    * changed thunk parameter of GxB_select:  was (void *), now GxB_Scalar.
         This change is not backward compatible with Version 2.x.
     * added parameter to GxB_SelectOp_new: to specify the type of the Thunk.
         This change is not backward compatible with Version 2.x.
     * added options to GxB_get: determine if a matrix is hypersparse or not,
-        global library and API information.
+        global library, API information, nthreads, and chunk.
+    * added options to GxB_set: nthreads, and chunk.
     * new operators and semirings: RDIV (f(x,y)=y/x) and RMINUS (y-x)
+        binary operators.
 
 Version 2.3.4, July 4, 2019
 
