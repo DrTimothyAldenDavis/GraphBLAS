@@ -1,5 +1,5 @@
 function [nthreads chunk] = nthreads_set (nthreads, chunk)
-%SET_NTHREADS set # of threads and chunk to use in GraphBLAS
+%NTHREADS_SET set # of threads and chunk to use in GraphBLAS
 %
 % [nthreads chunk] = nthreads_set (nthreads, chunk)
 %

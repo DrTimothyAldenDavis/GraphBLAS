@@ -1,5 +1,5 @@
 function codegen_sel_method (opname, func, atype, kind)
-%CODEGEN_SEL_METHOD create a seluction function, C = select (A,thunk)
+%CODEGEN_SEL_METHOD create a selection function, C = select (A,thunk)
 %
 % codegen_sel_method (opname, func, atype, kind)
 
@@ -88,4 +88,5 @@ cmd = sprintf (...
 system (cmd) ;
 
 delete ('control.m4') ;
+
 

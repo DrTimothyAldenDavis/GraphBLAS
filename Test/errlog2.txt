@@ -105,3 +105,7 @@ GB_mex_errors, line 866:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
 function: GxB_Scalar_fprint (s, name, pr, f)
 scalar is uninitialized: [thunk]
 
+GB_mex_errors, line 960:GraphBLAS error: GrB_INVALID_OBJECT
+function: GxB_Scalar_fprint (s, name, pr, f)
+GxB_Scalar is invalid [scalar2]
+

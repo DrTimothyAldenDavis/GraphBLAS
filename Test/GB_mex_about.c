@@ -955,6 +955,12 @@ void mexFunction
     OK (GxB_Scalar_nvals (&nvals, scalar2)) ;
     CHECK (nvals == 1) ;
 
+    expected = GrB_INVALID_OBJECT ;
+    scalar2->vlen = 2 ;
+    ERR (GxB_print (scalar2, GxB_COMPLETE)) ;
+    scalar2->vlen = 1 ;
+    OK (GxB_print (scalar2, GxB_COMPLETE)) ;
+
     GrB_free (&scalar) ;
     GrB_free (&scalar2) ;
 

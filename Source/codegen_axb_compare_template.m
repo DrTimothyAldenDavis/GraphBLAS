@@ -1,5 +1,5 @@
 function codegen_axb_compare_template (multop, bmult, mult)
-%CODEGEN_AXB_COMPARE_TEMPLATE create semiring with a TxT->bool multiplier
+%CODEGEN_AXB_COMPARE_TEMPLATE create a function for a semiring with a TxT->bool multiplier
 
 fprintf ('\n%-7s', multop) ;
 
@@ -66,4 +66,5 @@ codegen_axb_method ('eq', multop, add,  mult, 'bool', 'int64_t' , 'true', [ ]) ;
 codegen_axb_method ('eq', multop, add,  mult, 'bool', 'uint64_t', 'true', [ ]) ;
 codegen_axb_method ('eq', multop, add,  mult, 'bool', 'float'   , 'true', [ ]) ;
 codegen_axb_method ('eq', multop, add,  mult, 'bool', 'double'  , 'true', [ ]) ;
+
 

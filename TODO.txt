@@ -1,9 +1,9 @@
-TODO: tune performance of LAGraph_lcc with new GB_AxB_dot3
 
 TODO: dot3 has good performance: remove C<M>=A'*B variant from dot2
 
 TODO: test user-defined type with FIRST and SECOND ops (typecast skipped)
+
 TODO: qsort: make qsort sequential and keep all 4 versions
+
 TODO: add parallel merge sort in place of GB_qsort_2 and GB_qsort_3
 
-TODO: Test and Tcov Contents.m and help report

@@ -32,173 +32,6 @@
 
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_band.m4: example user built-in objects
-//------------------------------------------------------------------------------
-
-// user-defined functions for GxB_select, to choose entries within a band
-
-#ifdef GxB_USER_INCLUDE
-
-    #define MY_BAND
-
-    typedef struct
-    {
-        int64_t lo ;
-        int64_t hi ;
-    }
-    my_bandwidth_type ;
-
-    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
-        GrB_Index ncols, /* x is unused: */ const void *x,
-        const my_bandwidth_type *thunk)
-    {
-        int64_t i2 = (int64_t) i ;
-        int64_t j2 = (int64_t) j ;
-        return ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
-    }
-
-#endif
-
-// The type of the thunk parameter
-
-    #define GB_DEF_My_bandwidth_type_type my_bandwidth_type
-    struct GB_Type_opaque GB_opaque_My_bandwidth_type =
-    {
-        GB_MAGIC,           // object is defined
-        sizeof (my_bandwidth_type),        // size of the type
-        GB_UCT_code,        // user-defined at compile-time
-        "my_bandwidth_type"
-    } ;
-    GrB_Type My_bandwidth_type = & GB_opaque_My_bandwidth_type ;
-
-// Select operator to compute C = tril (triu (A, k1), k2)
-
-    #define GB_DEF_My_band_function myband
-    extern bool myband
-    (
-        GrB_Index i,
-        GrB_Index j,
-        GrB_Index nrows,
-        GrB_Index ncols,
-        const void *x,
-        const GB_DEF_My_bandwidth_type_type *thunk
-    ) ;
-    struct GB_SelectOp_opaque GB_opaque_My_band =
-    {
-        GB_MAGIC,            // object is defined
-        NULL,  // x not used
-        & GB_opaque_My_bandwidth_type, // type of thunk
-        myband,                  // pointer to the C function
-        "myband",
-        GB_USER_SELECT_C_opcode // user-defined at compile-time
-    } ;
-    GxB_SelectOp My_band = & GB_opaque_My_band ;
-
-//------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_terminal.m4: example user built-in objects
-//------------------------------------------------------------------------------
-
-// user-defined Boolean semiring.  This is just for testing.  The semiring
-// is identical to GxB_LOR_LAND_BOOL, and the monoid is identical to
-// GxB_LOR_BOOL_MONOID.  The only difference is that these objects are
-// user-defined.
-
-#ifdef GxB_USER_INCLUDE
-
-    #define MY_BOOL
-
-#endif
-
-// The LOR monoid, with identity = false and terminal = true
-
-    #define GB_DEF_My_LOR_add GB_DEF_GrB_LOR_function
-    #define GB_DEF_My_LOR_zsize sizeof (GB_DEF_GrB_LOR_ztype)
-    #define GB_DEF_My_LOR_is_user_terminal
-    GB_DEF_GrB_LOR_ztype GB_DEF_My_LOR_identity = false ;
-    GB_DEF_GrB_LOR_ztype GB_DEF_My_LOR_user_terminal = true ;
-    struct GB_Monoid_opaque GB_opaque_My_LOR =
-    {
-        GB_MAGIC,                   // object is defined
-        & GB_opaque_GrB_LOR,             // binary operator
-        & GB_DEF_My_LOR_identity,       // identity value
-        GB_DEF_My_LOR_zsize,            // identity and terminal size
-        GB_USER_COMPILED,           // user-defined at compile-time
-        & GB_DEF_My_LOR_user_terminal   // terminal value
-    } ;
-    GrB_Monoid My_LOR = & GB_opaque_My_LOR ;
-
-// The LOR_LAND semiring
- 
-    #undef GBCOMPACT
-    #define GB_ADD(z,y)    GB_DEF_My_LOR_add (&(z), &(z), &(y))
-    #define GB_MULTIPLY_ADD(c,a,b)  \
-    {                               \
-        GB_ctype t ;                \
-        GB_MULTIPLY(t,a,b) ;        \
-        GB_ADD(c,t) ;               \
-    }
-    #define GB_identity    GB_DEF_My_LOR_identity
-    #define GB_dot_simd    ;
-    #if defined ( GB_DEF_My_LOR_is_user_terminal )
-        #define GB_terminal if (memcmp (&cij, &GB_DEF_My_LOR_user_terminal, GB_DEF_My_LOR_zsize) == 0) break ;
-    #elif defined ( GB_DEF_My_LOR_terminal )
-        #define GB_terminal if (cij == GB_DEF_My_LOR_terminal) break ;
-    #else
-        #define GB_terminal ;
-    #endif
-    #define GB_ctype    GB_DEF_GrB_LAND_ztype
-    #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
-    #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
-    #define GB_AgusB    GB_AxB_user_gus_My_LOR_LAND
-    #define GB_Adot2B   GB_AxB_user_dot_My_LOR_LAND
-    #define GB_Adot3B   GB_AxB_user_dot3_My_LOR_LAND
-    #define GB_AheapB   GB_AxB_user_heap_My_LOR_LAND
-    #define GB_MULTIPLY(z,x,y) GB_DEF_GrB_LAND_function (&(z), &(x), &(y))
-    #define GB_atype    GB_DEF_GrB_LAND_xtype
-    #define GB_btype    GB_DEF_GrB_LAND_ytype
-    #include "GB_AxB.h"
-    #include "GB_AxB.c"
-    #undef GB_atype
-    #undef GB_btype
-    #undef GB_MULTIPLY
-    #undef GB_AgusB
-    #undef GB_Adot2B
-    #undef GB_Adot3B
-    #undef GB_AheapB
-    #define GB_AgusB    GB_AxB_user_gus_My_LOR_LAND_flipxy
-    #define GB_Adot2B   GB_AxB_user_dot_My_LOR_LAND_flipxy
-    #define GB_Adot3B   GB_AxB_user_dot3_My_LOR_LAND_flipxy
-    #define GB_AheapB   GB_AxB_user_heap_My_LOR_LAND_flipxy
-    #define GB_MULTIPLY(z,x,y) GB_DEF_GrB_LAND_function (&(z), &(y), &(x))
-    #define GB_atype    GB_DEF_GrB_LAND_ytype
-    #define GB_btype    GB_DEF_GrB_LAND_xtype
-    #include "GB_AxB.h"
-    #include "GB_AxB.c"
-    #undef GB_atype
-    #undef GB_btype
-    #undef GB_MULTIPLY
-    #undef GB_AgusB
-    #undef GB_Adot2B
-    #undef GB_Adot3B
-    #undef GB_AheapB
-    #undef GB_ADD
-    #undef GB_identity
-    #undef GB_dot_simd
-    #undef GB_terminal
-    #undef GB_ctype
-    #undef GB_geta
-    #undef GB_getb
-    struct GB_Semiring_opaque GB_opaque_My_LOR_LAND =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_My_LOR,     // add monoid
-        & GB_opaque_GrB_LAND,     // multiply operator
-        GB_USER_COMPILED    // user-defined at compile-time
-    } ;
-    GrB_Semiring My_LOR_LAND = & GB_opaque_My_LOR_LAND ;
-
-
-//------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_complex.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
@@ -391,70 +224,255 @@
     GrB_Semiring My_Complex_plus_times = & GB_opaque_My_Complex_plus_times ;
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_max.m4: example user built-in objects
+// GraphBLAS/User/Example/my_band.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
-// user-defined MAX functions for GxB_Monoid_terminal_new, to choose a
-// non-default terminal value
+// user-defined functions for GxB_select, to choose entries within a band
 
 #ifdef GxB_USER_INCLUDE
 
-    #define MY_MAX
+    #define MY_BAND
 
-    static inline void my_maxdouble
-    (
-        double *z,
-        const double *x,
-        const double *y
-    )
+    typedef struct
     {
-        // this is not safe with NaNs
-        (*z) = ((*x) > (*y)) ? (*x) : (*y) ;
+        int64_t lo ;
+        int64_t hi ;
+    }
+    my_bandwidth_type ;
+
+    static inline bool myband (GrB_Index i, GrB_Index j, GrB_Index nrows,
+        GrB_Index ncols, /* x is unused: */ const void *x,
+        const my_bandwidth_type *thunk)
+    {
+        int64_t i2 = (int64_t) i ;
+        int64_t j2 = (int64_t) j ;
+        return ((thunk->lo <= (j2-i2)) && ((j2-i2) <= thunk->hi)) ;
     }
 
 #endif
 
-// max operator
+// The type of the thunk parameter
 
-    #define GB_DEF_My_Max_function my_maxdouble
-    #define GB_DEF_My_Max_ztype GB_DEF_GrB_FP64_type
-    #define GB_DEF_My_Max_xtype GB_DEF_GrB_FP64_type
-    #define GB_DEF_My_Max_ytype GB_DEF_GrB_FP64_type
-    extern void my_maxdouble
+    #define GB_DEF_My_bandwidth_type_type my_bandwidth_type
+    struct GB_Type_opaque GB_opaque_My_bandwidth_type =
+    {
+        GB_MAGIC,           // object is defined
+        sizeof (my_bandwidth_type),        // size of the type
+        GB_UCT_code,        // user-defined at compile-time
+        "my_bandwidth_type"
+    } ;
+    GrB_Type My_bandwidth_type = & GB_opaque_My_bandwidth_type ;
+
+// Select operator to compute C = tril (triu (A, k1), k2)
+
+    #define GB_DEF_My_band_function myband
+    extern bool myband
     (
-        GB_DEF_My_Max_ztype *z,
-        const GB_DEF_My_Max_xtype *x,
-        const GB_DEF_My_Max_ytype *y
+        GrB_Index i,
+        GrB_Index j,
+        GrB_Index nrows,
+        GrB_Index ncols,
+        const void *x,
+        const GB_DEF_My_bandwidth_type_type *thunk
     ) ;
-    struct GB_BinaryOp_opaque GB_opaque_My_Max =
+    struct GB_SelectOp_opaque GB_opaque_My_band =
+    {
+        GB_MAGIC,            // object is defined
+        NULL,  // x not used
+        & GB_opaque_My_bandwidth_type, // type of thunk
+        myband,                  // pointer to the C function
+        "myband",
+        GB_USER_SELECT_C_opcode // user-defined at compile-time
+    } ;
+    GxB_SelectOp My_band = & GB_opaque_My_band ;
+
+//------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_scale.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined unary operator: z = f(x) = my_scalar*x and its global scalar
+
+#ifdef GxB_USER_INCLUDE
+
+    //--------------------------------------------------------------------------
+    // declarations: for GraphBLAS.h
+    //--------------------------------------------------------------------------
+
+    // The following are declarations that are enabled in GraphBLAS.h and
+    // appear in all user codes that #include "GraphBLAS.h", and also in all
+    // internal GraphBLAS codes.  All user declarations (not definitions)
+    // should appear here.
+
+    #define MY_SCALE
+
+    extern double my_scalar ;
+
+    static inline void my_scale
+    (
+        double *z,
+        const double *x
+    )
+    {
+        (*z) = my_scalar * (*x) ;
+    }
+
+#else
+
+    //--------------------------------------------------------------------------
+    // definitions: code appears just once, in Source/all_user_objects.c
+    //--------------------------------------------------------------------------
+
+    // The following defintions are enabled in only a single place:
+    // SuiteSparse/GraphBLAS/Source/all_user_objects.c.  This is the place
+    // where all user-defined global variables should be defined.
+
+    double my_scalar = 0 ;
+
+#endif
+
+
+//------------------------------------------------------------------------------
+// define/declare the GrB_UnaryOp My_scale
+//------------------------------------------------------------------------------
+
+// Unary operator to compute z = my_scalar*x
+
+
+    #define GB_DEF_My_scale_function my_scale
+    #define GB_DEF_My_scale_ztype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_scale_xtype GB_DEF_GrB_FP64_type
+    extern void my_scale
+    (
+        GB_DEF_My_scale_ztype *z,
+        const GB_DEF_My_scale_xtype *x
+    ) ;
+    struct GB_UnaryOp_opaque GB_opaque_My_scale =
     {
         GB_MAGIC,           // object is defined
         & GB_opaque_GrB_FP64,     // type of x
-        & GB_opaque_GrB_FP64,     // type of y
         & GB_opaque_GrB_FP64,     // type of z
-        my_maxdouble,                 // pointer to the C function
-        "my_maxdouble",
+        my_scale,                 // pointer to the C function
+        "my_scale",
         GB_USER_C_opcode    // user-defined at compile-time
     } ;
-    GrB_BinaryOp My_Max = & GB_opaque_My_Max ;
+    GrB_UnaryOp My_scale = & GB_opaque_My_scale ;
 
-// The max monoid, with terminal value of 1
+//------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_plus_rdiv2.m4: example user built-in objects
+//------------------------------------------------------------------------------
 
-    #define GB_DEF_My_Max_Terminal1_add GB_DEF_My_Max_function
-    #define GB_DEF_My_Max_Terminal1_zsize sizeof (GB_DEF_My_Max_ztype)
-    #define GB_DEF_My_Max_Terminal1_is_user_terminal
-    GB_DEF_My_Max_ztype GB_DEF_My_Max_Terminal1_identity = (-INFINITY) ;
-    GB_DEF_My_Max_ztype GB_DEF_My_Max_Terminal1_user_terminal = 1 ;
-    struct GB_Monoid_opaque GB_opaque_My_Max_Terminal1 =
+// This version tests the case when the user-defined multiply operator
+// has a different type for x and y.
+
+#ifdef GxB_USER_INCLUDE
+
+    #define MY_RDIV2
+
+    static inline void my_rdiv2
+    (
+        double *z,
+        const double *x,
+        const float *y
+    )
     {
-        GB_MAGIC,                   // object is defined
-        & GB_opaque_My_Max,             // binary operator
-        & GB_DEF_My_Max_Terminal1_identity,       // identity value
-        GB_DEF_My_Max_Terminal1_zsize,            // identity and terminal size
-        GB_USER_COMPILED,           // user-defined at compile-time
-        & GB_DEF_My_Max_Terminal1_user_terminal   // terminal value
+        (*z) = ((double) (*y)) / (*x) ;
+    }
+
+#endif
+
+// rdiv2 operator
+
+    #define GB_DEF_My_rdiv2_function my_rdiv2
+    #define GB_DEF_My_rdiv2_ztype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_rdiv2_xtype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_rdiv2_ytype GB_DEF_GrB_FP32_type
+    extern void my_rdiv2
+    (
+        GB_DEF_My_rdiv2_ztype *z,
+        const GB_DEF_My_rdiv2_xtype *x,
+        const GB_DEF_My_rdiv2_ytype *y
+    ) ;
+    struct GB_BinaryOp_opaque GB_opaque_My_rdiv2 =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_GrB_FP64,     // type of x
+        & GB_opaque_GrB_FP32,     // type of y
+        & GB_opaque_GrB_FP64,     // type of z
+        my_rdiv2,                 // pointer to the C function
+        "my_rdiv2",
+        GB_USER_C_opcode    // user-defined at compile-time
     } ;
-    GrB_Monoid My_Max_Terminal1 = & GB_opaque_My_Max_Terminal1 ;
+    GrB_BinaryOp My_rdiv2 = & GB_opaque_My_rdiv2 ;
+
+// plus-rdiv2 semiring
+ 
+    #undef GBCOMPACT
+    #define GB_ADD(z,y)    GB_DEF_GxB_PLUS_FP64_MONOID_add (&(z), &(z), &(y))
+    #define GB_MULTIPLY_ADD(c,a,b)  \
+    {                               \
+        GB_ctype t ;                \
+        GB_MULTIPLY(t,a,b) ;        \
+        GB_ADD(c,t) ;               \
+    }
+    #define GB_identity    GB_DEF_GxB_PLUS_FP64_MONOID_identity
+    #define GB_dot_simd    ;
+    #if defined ( GB_DEF_GxB_PLUS_FP64_MONOID_is_user_terminal )
+        #define GB_terminal if (memcmp (&cij, &GB_DEF_GxB_PLUS_FP64_MONOID_user_terminal, GB_DEF_GxB_PLUS_FP64_MONOID_zsize) == 0) break ;
+    #elif defined ( GB_DEF_GxB_PLUS_FP64_MONOID_terminal )
+        #define GB_terminal if (cij == GB_DEF_GxB_PLUS_FP64_MONOID_terminal) break ;
+    #else
+        #define GB_terminal ;
+    #endif
+    #define GB_ctype    GB_DEF_My_rdiv2_ztype
+    #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
+    #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
+    #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv2
+    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv2
+    #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv2
+    #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv2
+    #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv2_function (&(z), &(x), &(y))
+    #define GB_atype    GB_DEF_My_rdiv2_xtype
+    #define GB_btype    GB_DEF_My_rdiv2_ytype
+    #include "GB_AxB.h"
+    #include "GB_AxB.c"
+    #undef GB_atype
+    #undef GB_btype
+    #undef GB_MULTIPLY
+    #undef GB_AgusB
+    #undef GB_Adot2B
+    #undef GB_Adot3B
+    #undef GB_AheapB
+    #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv2_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv2_flipxy
+    #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv2_flipxy
+    #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv2_flipxy
+    #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv2_function (&(z), &(y), &(x))
+    #define GB_atype    GB_DEF_My_rdiv2_ytype
+    #define GB_btype    GB_DEF_My_rdiv2_xtype
+    #include "GB_AxB.h"
+    #include "GB_AxB.c"
+    #undef GB_atype
+    #undef GB_btype
+    #undef GB_MULTIPLY
+    #undef GB_AgusB
+    #undef GB_Adot2B
+    #undef GB_Adot3B
+    #undef GB_AheapB
+    #undef GB_ADD
+    #undef GB_identity
+    #undef GB_dot_simd
+    #undef GB_terminal
+    #undef GB_ctype
+    #undef GB_geta
+    #undef GB_getb
+    struct GB_Semiring_opaque GB_opaque_My_plus_rdiv2 =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_GxB_PLUS_FP64_MONOID,     // add monoid
+        & GB_opaque_My_rdiv2,     // multiply operator
+        GB_USER_COMPILED    // user-defined at compile-time
+    } ;
+    GrB_Semiring My_plus_rdiv2 = & GB_opaque_My_plus_rdiv2 ;
 
 //------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_pagerank.m4: PageRank semiring
@@ -877,6 +895,176 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     GrB_BinaryOp PageRank_diff = & GB_opaque_PageRank_diff ;
 
 //------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_terminal.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined Boolean semiring.  This is just for testing.  The semiring
+// is identical to GxB_LOR_LAND_BOOL, and the monoid is identical to
+// GxB_LOR_BOOL_MONOID.  The only difference is that these objects are
+// user-defined.
+
+#ifdef GxB_USER_INCLUDE
+
+    #define MY_BOOL
+
+#endif
+
+// The LOR monoid, with identity = false and terminal = true
+
+    #define GB_DEF_My_LOR_add GB_DEF_GrB_LOR_function
+    #define GB_DEF_My_LOR_zsize sizeof (GB_DEF_GrB_LOR_ztype)
+    #define GB_DEF_My_LOR_is_user_terminal
+    GB_DEF_GrB_LOR_ztype GB_DEF_My_LOR_identity = false ;
+    GB_DEF_GrB_LOR_ztype GB_DEF_My_LOR_user_terminal = true ;
+    struct GB_Monoid_opaque GB_opaque_My_LOR =
+    {
+        GB_MAGIC,                   // object is defined
+        & GB_opaque_GrB_LOR,             // binary operator
+        & GB_DEF_My_LOR_identity,       // identity value
+        GB_DEF_My_LOR_zsize,            // identity and terminal size
+        GB_USER_COMPILED,           // user-defined at compile-time
+        & GB_DEF_My_LOR_user_terminal   // terminal value
+    } ;
+    GrB_Monoid My_LOR = & GB_opaque_My_LOR ;
+
+// The LOR_LAND semiring
+ 
+    #undef GBCOMPACT
+    #define GB_ADD(z,y)    GB_DEF_My_LOR_add (&(z), &(z), &(y))
+    #define GB_MULTIPLY_ADD(c,a,b)  \
+    {                               \
+        GB_ctype t ;                \
+        GB_MULTIPLY(t,a,b) ;        \
+        GB_ADD(c,t) ;               \
+    }
+    #define GB_identity    GB_DEF_My_LOR_identity
+    #define GB_dot_simd    ;
+    #if defined ( GB_DEF_My_LOR_is_user_terminal )
+        #define GB_terminal if (memcmp (&cij, &GB_DEF_My_LOR_user_terminal, GB_DEF_My_LOR_zsize) == 0) break ;
+    #elif defined ( GB_DEF_My_LOR_terminal )
+        #define GB_terminal if (cij == GB_DEF_My_LOR_terminal) break ;
+    #else
+        #define GB_terminal ;
+    #endif
+    #define GB_ctype    GB_DEF_GrB_LAND_ztype
+    #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
+    #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
+    #define GB_AgusB    GB_AxB_user_gus_My_LOR_LAND
+    #define GB_Adot2B   GB_AxB_user_dot_My_LOR_LAND
+    #define GB_Adot3B   GB_AxB_user_dot3_My_LOR_LAND
+    #define GB_AheapB   GB_AxB_user_heap_My_LOR_LAND
+    #define GB_MULTIPLY(z,x,y) GB_DEF_GrB_LAND_function (&(z), &(x), &(y))
+    #define GB_atype    GB_DEF_GrB_LAND_xtype
+    #define GB_btype    GB_DEF_GrB_LAND_ytype
+    #include "GB_AxB.h"
+    #include "GB_AxB.c"
+    #undef GB_atype
+    #undef GB_btype
+    #undef GB_MULTIPLY
+    #undef GB_AgusB
+    #undef GB_Adot2B
+    #undef GB_Adot3B
+    #undef GB_AheapB
+    #define GB_AgusB    GB_AxB_user_gus_My_LOR_LAND_flipxy
+    #define GB_Adot2B   GB_AxB_user_dot_My_LOR_LAND_flipxy
+    #define GB_Adot3B   GB_AxB_user_dot3_My_LOR_LAND_flipxy
+    #define GB_AheapB   GB_AxB_user_heap_My_LOR_LAND_flipxy
+    #define GB_MULTIPLY(z,x,y) GB_DEF_GrB_LAND_function (&(z), &(y), &(x))
+    #define GB_atype    GB_DEF_GrB_LAND_ytype
+    #define GB_btype    GB_DEF_GrB_LAND_xtype
+    #include "GB_AxB.h"
+    #include "GB_AxB.c"
+    #undef GB_atype
+    #undef GB_btype
+    #undef GB_MULTIPLY
+    #undef GB_AgusB
+    #undef GB_Adot2B
+    #undef GB_Adot3B
+    #undef GB_AheapB
+    #undef GB_ADD
+    #undef GB_identity
+    #undef GB_dot_simd
+    #undef GB_terminal
+    #undef GB_ctype
+    #undef GB_geta
+    #undef GB_getb
+    struct GB_Semiring_opaque GB_opaque_My_LOR_LAND =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_My_LOR,     // add monoid
+        & GB_opaque_GrB_LAND,     // multiply operator
+        GB_USER_COMPILED    // user-defined at compile-time
+    } ;
+    GrB_Semiring My_LOR_LAND = & GB_opaque_My_LOR_LAND ;
+
+
+//------------------------------------------------------------------------------
+// GraphBLAS/User/Example/my_max.m4: example user built-in objects
+//------------------------------------------------------------------------------
+
+// user-defined MAX functions for GxB_Monoid_terminal_new, to choose a
+// non-default terminal value
+
+#ifdef GxB_USER_INCLUDE
+
+    #define MY_MAX
+
+    static inline void my_maxdouble
+    (
+        double *z,
+        const double *x,
+        const double *y
+    )
+    {
+        // this is not safe with NaNs
+        (*z) = ((*x) > (*y)) ? (*x) : (*y) ;
+    }
+
+#endif
+
+// max operator
+
+    #define GB_DEF_My_Max_function my_maxdouble
+    #define GB_DEF_My_Max_ztype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_Max_xtype GB_DEF_GrB_FP64_type
+    #define GB_DEF_My_Max_ytype GB_DEF_GrB_FP64_type
+    extern void my_maxdouble
+    (
+        GB_DEF_My_Max_ztype *z,
+        const GB_DEF_My_Max_xtype *x,
+        const GB_DEF_My_Max_ytype *y
+    ) ;
+    struct GB_BinaryOp_opaque GB_opaque_My_Max =
+    {
+        GB_MAGIC,           // object is defined
+        & GB_opaque_GrB_FP64,     // type of x
+        & GB_opaque_GrB_FP64,     // type of y
+        & GB_opaque_GrB_FP64,     // type of z
+        my_maxdouble,                 // pointer to the C function
+        "my_maxdouble",
+        GB_USER_C_opcode    // user-defined at compile-time
+    } ;
+    GrB_BinaryOp My_Max = & GB_opaque_My_Max ;
+
+// The max monoid, with terminal value of 1
+
+    #define GB_DEF_My_Max_Terminal1_add GB_DEF_My_Max_function
+    #define GB_DEF_My_Max_Terminal1_zsize sizeof (GB_DEF_My_Max_ztype)
+    #define GB_DEF_My_Max_Terminal1_is_user_terminal
+    GB_DEF_My_Max_ztype GB_DEF_My_Max_Terminal1_identity = (-INFINITY) ;
+    GB_DEF_My_Max_ztype GB_DEF_My_Max_Terminal1_user_terminal = 1 ;
+    struct GB_Monoid_opaque GB_opaque_My_Max_Terminal1 =
+    {
+        GB_MAGIC,                   // object is defined
+        & GB_opaque_My_Max,             // binary operator
+        & GB_DEF_My_Max_Terminal1_identity,       // identity value
+        GB_DEF_My_Max_Terminal1_zsize,            // identity and terminal size
+        GB_USER_COMPILED,           // user-defined at compile-time
+        & GB_DEF_My_Max_Terminal1_user_terminal   // terminal value
+    } ;
+    GrB_Monoid My_Max_Terminal1 = & GB_opaque_My_Max_Terminal1 ;
+
+//------------------------------------------------------------------------------
 // GraphBLAS/User/Example/my_plus_rdiv.m4: example user built-in objects
 //------------------------------------------------------------------------------
 
@@ -991,194 +1179,6 @@ double pagerank_teleport, pagerank_init_rank, pagerank_rsum ;
     GrB_Semiring My_plus_rdiv = & GB_opaque_My_plus_rdiv ;
 
 //------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_plus_rdiv2.m4: example user built-in objects
-//------------------------------------------------------------------------------
-
-// This version tests the case when the user-defined multiply operator
-// has a different type for x and y.
-
-#ifdef GxB_USER_INCLUDE
-
-    #define MY_RDIV2
-
-    static inline void my_rdiv2
-    (
-        double *z,
-        const double *x,
-        const float *y
-    )
-    {
-        (*z) = ((double) (*y)) / (*x) ;
-    }
-
-#endif
-
-// rdiv2 operator
-
-    #define GB_DEF_My_rdiv2_function my_rdiv2
-    #define GB_DEF_My_rdiv2_ztype GB_DEF_GrB_FP64_type
-    #define GB_DEF_My_rdiv2_xtype GB_DEF_GrB_FP64_type
-    #define GB_DEF_My_rdiv2_ytype GB_DEF_GrB_FP32_type
-    extern void my_rdiv2
-    (
-        GB_DEF_My_rdiv2_ztype *z,
-        const GB_DEF_My_rdiv2_xtype *x,
-        const GB_DEF_My_rdiv2_ytype *y
-    ) ;
-    struct GB_BinaryOp_opaque GB_opaque_My_rdiv2 =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_GrB_FP64,     // type of x
-        & GB_opaque_GrB_FP32,     // type of y
-        & GB_opaque_GrB_FP64,     // type of z
-        my_rdiv2,                 // pointer to the C function
-        "my_rdiv2",
-        GB_USER_C_opcode    // user-defined at compile-time
-    } ;
-    GrB_BinaryOp My_rdiv2 = & GB_opaque_My_rdiv2 ;
-
-// plus-rdiv2 semiring
- 
-    #undef GBCOMPACT
-    #define GB_ADD(z,y)    GB_DEF_GxB_PLUS_FP64_MONOID_add (&(z), &(z), &(y))
-    #define GB_MULTIPLY_ADD(c,a,b)  \
-    {                               \
-        GB_ctype t ;                \
-        GB_MULTIPLY(t,a,b) ;        \
-        GB_ADD(c,t) ;               \
-    }
-    #define GB_identity    GB_DEF_GxB_PLUS_FP64_MONOID_identity
-    #define GB_dot_simd    ;
-    #if defined ( GB_DEF_GxB_PLUS_FP64_MONOID_is_user_terminal )
-        #define GB_terminal if (memcmp (&cij, &GB_DEF_GxB_PLUS_FP64_MONOID_user_terminal, GB_DEF_GxB_PLUS_FP64_MONOID_zsize) == 0) break ;
-    #elif defined ( GB_DEF_GxB_PLUS_FP64_MONOID_terminal )
-        #define GB_terminal if (cij == GB_DEF_GxB_PLUS_FP64_MONOID_terminal) break ;
-    #else
-        #define GB_terminal ;
-    #endif
-    #define GB_ctype    GB_DEF_My_rdiv2_ztype
-    #define GB_geta(a,Ax,p) GB_atype a = Ax [p]
-    #define GB_getb(b,Bx,p) GB_btype b = Bx [p]
-    #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv2
-    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv2
-    #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv2
-    #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv2
-    #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv2_function (&(z), &(x), &(y))
-    #define GB_atype    GB_DEF_My_rdiv2_xtype
-    #define GB_btype    GB_DEF_My_rdiv2_ytype
-    #include "GB_AxB.h"
-    #include "GB_AxB.c"
-    #undef GB_atype
-    #undef GB_btype
-    #undef GB_MULTIPLY
-    #undef GB_AgusB
-    #undef GB_Adot2B
-    #undef GB_Adot3B
-    #undef GB_AheapB
-    #define GB_AgusB    GB_AxB_user_gus_My_plus_rdiv2_flipxy
-    #define GB_Adot2B   GB_AxB_user_dot_My_plus_rdiv2_flipxy
-    #define GB_Adot3B   GB_AxB_user_dot3_My_plus_rdiv2_flipxy
-    #define GB_AheapB   GB_AxB_user_heap_My_plus_rdiv2_flipxy
-    #define GB_MULTIPLY(z,x,y) GB_DEF_My_rdiv2_function (&(z), &(y), &(x))
-    #define GB_atype    GB_DEF_My_rdiv2_ytype
-    #define GB_btype    GB_DEF_My_rdiv2_xtype
-    #include "GB_AxB.h"
-    #include "GB_AxB.c"
-    #undef GB_atype
-    #undef GB_btype
-    #undef GB_MULTIPLY
-    #undef GB_AgusB
-    #undef GB_Adot2B
-    #undef GB_Adot3B
-    #undef GB_AheapB
-    #undef GB_ADD
-    #undef GB_identity
-    #undef GB_dot_simd
-    #undef GB_terminal
-    #undef GB_ctype
-    #undef GB_geta
-    #undef GB_getb
-    struct GB_Semiring_opaque GB_opaque_My_plus_rdiv2 =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_GxB_PLUS_FP64_MONOID,     // add monoid
-        & GB_opaque_My_rdiv2,     // multiply operator
-        GB_USER_COMPILED    // user-defined at compile-time
-    } ;
-    GrB_Semiring My_plus_rdiv2 = & GB_opaque_My_plus_rdiv2 ;
-
-//------------------------------------------------------------------------------
-// GraphBLAS/User/Example/my_scale.m4: example user built-in objects
-//------------------------------------------------------------------------------
-
-// user-defined unary operator: z = f(x) = my_scalar*x and its global scalar
-
-#ifdef GxB_USER_INCLUDE
-
-    //--------------------------------------------------------------------------
-    // declarations: for GraphBLAS.h
-    //--------------------------------------------------------------------------
-
-    // The following are declarations that are enabled in GraphBLAS.h and
-    // appear in all user codes that #include "GraphBLAS.h", and also in all
-    // internal GraphBLAS codes.  All user declarations (not definitions)
-    // should appear here.
-
-    #define MY_SCALE
-
-    extern double my_scalar ;
-
-    static inline void my_scale
-    (
-        double *z,
-        const double *x
-    )
-    {
-        (*z) = my_scalar * (*x) ;
-    }
-
-#else
-
-    //--------------------------------------------------------------------------
-    // definitions: code appears just once, in Source/all_user_objects.c
-    //--------------------------------------------------------------------------
-
-    // The following defintions are enabled in only a single place:
-    // SuiteSparse/GraphBLAS/Source/all_user_objects.c.  This is the place
-    // where all user-defined global variables should be defined.
-
-    double my_scalar = 0 ;
-
-#endif
-
-
-//------------------------------------------------------------------------------
-// define/declare the GrB_UnaryOp My_scale
-//------------------------------------------------------------------------------
-
-// Unary operator to compute z = my_scalar*x
-
-
-    #define GB_DEF_My_scale_function my_scale
-    #define GB_DEF_My_scale_ztype GB_DEF_GrB_FP64_type
-    #define GB_DEF_My_scale_xtype GB_DEF_GrB_FP64_type
-    extern void my_scale
-    (
-        GB_DEF_My_scale_ztype *z,
-        const GB_DEF_My_scale_xtype *x
-    ) ;
-    struct GB_UnaryOp_opaque GB_opaque_My_scale =
-    {
-        GB_MAGIC,           // object is defined
-        & GB_opaque_GrB_FP64,     // type of x
-        & GB_opaque_GrB_FP64,     // type of z
-        my_scale,                 // pointer to the C function
-        "my_scale",
-        GB_USER_C_opcode    // user-defined at compile-time
-    } ;
-    GrB_UnaryOp My_scale = & GB_opaque_My_scale ;
-
-//------------------------------------------------------------------------------
 // SuiteSparse/GraphBLAS/Config/user_def2.m4: code to call user semirings
 //------------------------------------------------------------------------------
 
@@ -1220,75 +1220,6 @@ GrB_Info GB_AxB_user
     {
         ;
     }
-    else if (GB_s == My_LOR_LAND)
-    {
-        if (GB_AxB_method == GxB_AxB_GUSTAVSON)
-        {
-            if (GB_flipxy)
-            {
-                GB_info = GB_AxB_user_gus_My_LOR_LAND_flipxy
-                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
-            }
-            else
-            {
-                GB_info = GB_AxB_user_gus_My_LOR_LAND
-                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
-            }
-        }
-        else if (GB_AxB_method == GxB_AxB_DOT)
-        {
-
-            if (GB_Aslice == NULL)
-            {
-                if (GB_flipxy)
-                {
-                    GB_info = GB_AxB_user_dot3_My_LOR_LAND_flipxy
-                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
-                }
-                else
-                {
-                    GB_info = GB_AxB_user_dot3_My_LOR_LAND
-                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
-                }
-            }
-            else
-            {
-                if (GB_flipxy)
-                {
-                    GB_info = GB_AxB_user_dot_My_LOR_LAND_flipxy
-                        (*GB_Chandle, GB_M, GB_mask_comp,
-                        GB_Aslice, false,
-                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
-                        GB_nbslice) ;
-                }
-                else
-                {
-                    GB_info = GB_AxB_user_dot_My_LOR_LAND
-                        (*GB_Chandle, GB_M, GB_mask_comp,
-                        GB_Aslice, false,
-                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
-                        GB_nbslice) ;
-                }
-            }
-        }
-        else // (GB_AxB_method == GxB_AxB_HEAP)
-        {
-            if (GB_flipxy)
-            {
-                GB_info = GB_AxB_user_heap_My_LOR_LAND_flipxy
-                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
-            }
-            else
-            {
-                GB_info = GB_AxB_user_heap_My_LOR_LAND
-                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
-            }
-        }
-    } 
     else if (GB_s == My_Complex_plus_times)
     {
         if (GB_AxB_method == GxB_AxB_GUSTAVSON)
@@ -1353,6 +1284,75 @@ GrB_Info GB_AxB_user
             else
             {
                 GB_info = GB_AxB_user_heap_My_Complex_plus_times
+                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+            }
+        }
+    } 
+    else if (GB_s == My_plus_rdiv2)
+    {
+        if (GB_AxB_method == GxB_AxB_GUSTAVSON)
+        {
+            if (GB_flipxy)
+            {
+                GB_info = GB_AxB_user_gus_My_plus_rdiv2_flipxy
+                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
+            }
+            else
+            {
+                GB_info = GB_AxB_user_gus_My_plus_rdiv2
+                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
+            }
+        }
+        else if (GB_AxB_method == GxB_AxB_DOT)
+        {
+
+            if (GB_Aslice == NULL)
+            {
+                if (GB_flipxy)
+                {
+                    GB_info = GB_AxB_user_dot3_My_plus_rdiv2_flipxy
+                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+                }
+                else
+                {
+                    GB_info = GB_AxB_user_dot3_My_plus_rdiv2
+                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+                }
+            }
+            else
+            {
+                if (GB_flipxy)
+                {
+                    GB_info = GB_AxB_user_dot_My_plus_rdiv2_flipxy
+                        (*GB_Chandle, GB_M, GB_mask_comp,
+                        GB_Aslice, false,
+                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                        GB_nbslice) ;
+                }
+                else
+                {
+                    GB_info = GB_AxB_user_dot_My_plus_rdiv2
+                        (*GB_Chandle, GB_M, GB_mask_comp,
+                        GB_Aslice, false,
+                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                        GB_nbslice) ;
+                }
+            }
+        }
+        else // (GB_AxB_method == GxB_AxB_HEAP)
+        {
+            if (GB_flipxy)
+            {
+                GB_info = GB_AxB_user_heap_My_plus_rdiv2_flipxy
+                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+            }
+            else
+            {
+                GB_info = GB_AxB_user_heap_My_plus_rdiv2
                     (GB_Chandle, GB_M, GB_A, false, GB_B, false,
                     GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
             }
@@ -1427,6 +1427,75 @@ GrB_Info GB_AxB_user
             }
         }
     } 
+    else if (GB_s == My_LOR_LAND)
+    {
+        if (GB_AxB_method == GxB_AxB_GUSTAVSON)
+        {
+            if (GB_flipxy)
+            {
+                GB_info = GB_AxB_user_gus_My_LOR_LAND_flipxy
+                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
+            }
+            else
+            {
+                GB_info = GB_AxB_user_gus_My_LOR_LAND
+                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
+            }
+        }
+        else if (GB_AxB_method == GxB_AxB_DOT)
+        {
+
+            if (GB_Aslice == NULL)
+            {
+                if (GB_flipxy)
+                {
+                    GB_info = GB_AxB_user_dot3_My_LOR_LAND_flipxy
+                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+                }
+                else
+                {
+                    GB_info = GB_AxB_user_dot3_My_LOR_LAND
+                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+                }
+            }
+            else
+            {
+                if (GB_flipxy)
+                {
+                    GB_info = GB_AxB_user_dot_My_LOR_LAND_flipxy
+                        (*GB_Chandle, GB_M, GB_mask_comp,
+                        GB_Aslice, false,
+                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                        GB_nbslice) ;
+                }
+                else
+                {
+                    GB_info = GB_AxB_user_dot_My_LOR_LAND
+                        (*GB_Chandle, GB_M, GB_mask_comp,
+                        GB_Aslice, false,
+                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
+                        GB_nbslice) ;
+                }
+            }
+        }
+        else // (GB_AxB_method == GxB_AxB_HEAP)
+        {
+            if (GB_flipxy)
+            {
+                GB_info = GB_AxB_user_heap_My_LOR_LAND_flipxy
+                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+            }
+            else
+            {
+                GB_info = GB_AxB_user_heap_My_LOR_LAND
+                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
+                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
+            }
+        }
+    } 
     else if (GB_s == My_plus_rdiv)
     {
         if (GB_AxB_method == GxB_AxB_GUSTAVSON)
@@ -1491,75 +1560,6 @@ GrB_Info GB_AxB_user
             else
             {
                 GB_info = GB_AxB_user_heap_My_plus_rdiv
-                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
-            }
-        }
-    } 
-    else if (GB_s == My_plus_rdiv2)
-    {
-        if (GB_AxB_method == GxB_AxB_GUSTAVSON)
-        {
-            if (GB_flipxy)
-            {
-                GB_info = GB_AxB_user_gus_My_plus_rdiv2_flipxy
-                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
-            }
-            else
-            {
-                GB_info = GB_AxB_user_gus_My_plus_rdiv2
-                    (*GB_Chandle, GB_M, GB_A, false, GB_B, false, GB_C_Sauna) ;
-            }
-        }
-        else if (GB_AxB_method == GxB_AxB_DOT)
-        {
-
-            if (GB_Aslice == NULL)
-            {
-                if (GB_flipxy)
-                {
-                    GB_info = GB_AxB_user_dot3_My_plus_rdiv2_flipxy
-                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
-                }
-                else
-                {
-                    GB_info = GB_AxB_user_dot3_My_plus_rdiv2
-                        (*GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                            GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
-                }
-            }
-            else
-            {
-                if (GB_flipxy)
-                {
-                    GB_info = GB_AxB_user_dot_My_plus_rdiv2_flipxy
-                        (*GB_Chandle, GB_M, GB_mask_comp,
-                        GB_Aslice, false,
-                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
-                        GB_nbslice) ;
-                }
-                else
-                {
-                    GB_info = GB_AxB_user_dot_My_plus_rdiv2
-                        (*GB_Chandle, GB_M, GB_mask_comp,
-                        GB_Aslice, false,
-                        GB_B, false, GB_C_counts, GB_dot_nthreads, GB_naslice,
-                        GB_nbslice) ;
-                }
-            }
-        }
-        else // (GB_AxB_method == GxB_AxB_HEAP)
-        {
-            if (GB_flipxy)
-            {
-                GB_info = GB_AxB_user_heap_My_plus_rdiv2_flipxy
-                    (GB_Chandle, GB_M, GB_A, false, GB_B, false,
-                    GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
-            }
-            else
-            {
-                GB_info = GB_AxB_user_heap_My_plus_rdiv2
                     (GB_Chandle, GB_M, GB_A, false, GB_B, false,
                     GB_List, GB_pA_pair, GB_Heap, GB_bjnz_max) ;
             }
