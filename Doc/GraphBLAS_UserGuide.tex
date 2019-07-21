@@ -2171,6 +2171,7 @@ The following methods operate on the \verb'GxB_SelectOp' object:
 \hline
 \verb'GxB_SelectOp_new'   & create a user-defined select operator  \\
 \verb'GxB_SelectOp_xtype' & return the type of the input $x$ \\
+\verb'GxB_SelectOp_ttype' & return the type of the input {\em thunk} \\
 \verb'GxB_SelectOp_free'  & free a user-defined select operator  \\
 \hline
 \end{tabular}
@@ -2213,11 +2214,9 @@ or user-defined, or it may even be \verb'GrB_NULL'.  If the \verb'xtype' is
 The type \verb'ttype' is the GraphBLAS type of the input {\em thunk} of the
 user-defined function $z=f(i,j,m,n,x,\mbox{thunk})$.  The type may be built-in
 or user-defined, or it may even be \verb'GrB_NULL'.  If the \verb'ttype' is
-\verb'GrB_NULL', then the \verb'selectop' is type-generic.
-
-For example, to delete all entries in a matrix equal to the additive identity
-of a monoid, use the \verb'GxB_NE_THUNK' select operator, and pass in
-the identity value as the \verb'Thunk' parameter to \verb'GxB_select'.
+\verb'GrB_NULL', then the \verb'selectop' does not access this parameter.
+The \verb'const void *thunk' parameter on input to the user \verb'function'
+will be passed as \verb'NULL'.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -2371,7 +2370,7 @@ SuiteSparse:GraphBLAS predefines each of the 44 unique monoids that can be
 constructed with built-in types and operators, with the naming convention
 \verb'GxB_op_type_MONOID'.  For the first 40, \verb'op' is \verb'MIN',
 \verb'MAX', \verb'PLUS', or \verb'TIMES', and \verb'type' is all but
-\verb'BOOL'.  The four Booolean monoids are \verb'GxB_LOR_BOOL_MONOID',
+\verb'BOOL'.  The four Boolean monoids are \verb'GxB_LOR_BOOL_MONOID',
 \verb'GxB_LAND_BOOL_MONOID', \verb'GxB_LXOR_BOOL_MONOID', and
 \verb'GxB_EQ_BOOL_MONOID'.
 
@@ -2490,7 +2489,7 @@ non-negative.  The annihilator value of \verb'MIN' is \verb'-INFINITY', but
 this will never be seen.  However, the computation could could terminate when
 finding the value zero.  This is an example of using a terminal value that is
 not actually an annihilator, but it functions like one since the monoid will
-operate stricly on non-negative values.  In this case, a monoid created with
+operate strictly on non-negative values.  In this case, a monoid created with
 \verb'GrB_MIN_FP32' will not terminate early.  To create a monoid that can
 terminate early, create a user-defined operator that computes the same thing as
 \verb'GrB_MIN_FP32', and then create a monoid based on this user-defined
@@ -2713,9 +2712,9 @@ always return the same result).
 SuiteSparse:GraphBLAS pre-defines all 1040 unique semirings that can be
 constructed from built-in types and operators, as an extension to the spec.
 The naming convention is \verb'GxB_add_mult_type', where \verb'add' is the
-operator of the addititive monoid, \verb'mult' is the multiply operator, and
+operator of the additive monoid, \verb'mult' is the multiply operator, and
 \verb'type' is the type of inputs to the multiply operator.  The name of the
-domain for the addititve monoid does not appear, since it always matches the
+domain for the additive monoid does not appear, since it always matches the
 type of the output of the \verb'mult' operator.  For example
 \verb'GxB_LAND_EQ_FP32' uses the \verb'GxB_LAND_BOOL_MONOID' as its additive
 monoid, and the \verb'GrB_EQ_FP32' as the binary multiplicative operator.
@@ -2829,7 +2828,6 @@ and destroy a GraphBLAS sparse scalar, \verb'GxB_Scalar':
 \end{tabular}
 }
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_new:} create a sparse scalar}
 %-------------------------------------------------------------------------------
@@ -2848,10 +2846,10 @@ GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entry
 
 \verb'GxB_Scalar_new' creates a new sparse scalar with no
 entry in it, of the given type.  This is analogous to MATLAB statement
-\verb'v = sparse (0)', except that GraphBLAS can create sparse scalars any
+\verb's = sparse (0)', except that GraphBLAS can create sparse scalars any
 type.  The pattern of the new scalar is empty.
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_dup:} copy a sparse scalar}
 %-------------------------------------------------------------------------------
@@ -2892,7 +2890,6 @@ Then \verb's' and \verb'g' are two different sparse scalars that currently have
 the same values, but they do not depend on each other.  Modifying one
 has no effect on the other.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_clear:} clear a sparse scalar of its entry}
 %-------------------------------------------------------------------------------
@@ -2909,7 +2906,7 @@ GrB_Info GxB_Scalar_clear   // clear a GxB_Scalar of its entry
 } \end{mdframed}
 
 \verb'GxB_Scalar_clear' clears the entry from a sparse scalar.  The pattern of
-\verb's' is empty, just as if it were created fresh with \verb'GxB_Sparse_new'.
+\verb's' is empty, just as if it were created fresh with \verb'GxB_Scalar_new'.
 Analogous with \verb's = sparse (0)' in MATLAB.  The type of \verb's' does not
 change.  In SuiteSparse:GraphBLAS, any pending updates to the sparse scalar are
 discarded.
@@ -2939,20 +2936,8 @@ in GraphBLAS.
 
 \paragraph{Forced completion:}
 All computations for the sparse scalar \verb's' are guaranteed to be finished
-when \verb'GxB_Scalar_nvals' method returns.
-%
-That is, it acts like an object-specific \verb'GrB_wait' for just this
-particular sparse scalar \verb's', which is a side-effect useful in its own
-right.  For example, suppose the computations required for \verb's' rely upon a
-user-defined operator that accesses a user-controlled global variable outside
-the scope or control of GraphBLAS.  If the user-application needs to modify or
-free the variable, \verb'GxB_Scalar_nvals' can be used to force all pending
-operations for this sparse scalar \verb's' to complete.  The user application
-can then safely modify the global variable.  A call to
-\verb'GxB_Scalar_nvals(&nvals,s)' only ensures that the computations require to
-compute \verb's' are finished; other pending computations for other objects may
-remain.  To ensure that all pending computations are complete for all GraphBLAS
-objects, use \verb'GrB_wait' instead.
+when \verb'GxB_Scalar_nvals' method returns.  See the discussion about
+\verb'GxB_Vector_nvals' in Section~\ref{vector_nvals} for more details.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -2994,7 +2979,6 @@ GrB_Info GxB_Scalar_setElement          // s = x
 \verb's = sparse(x)' in MATLAB notation.  For further details of this function,
 see \verb'GxB_Matrix_setElement' in Section~\ref{matrix_setElement}.
 
-\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_extractElement:} get the single entry from a sparse scalar}
 %-------------------------------------------------------------------------------
@@ -3242,6 +3226,7 @@ MATLAB is better described as ``number of entries'' in GraphBLAS.
 All computations for the vector \verb'v' are guaranteed to be finished when
 \verb'GrB_Vector_nvals' method returns.
 %
+See
 That is, it acts like an object-specific \verb'GrB_wait' for just this
 particular vector \verb'v', which is a side-effect useful in its own right.
 For example, suppose the computations required for \verb'v' rely upon a
@@ -5295,10 +5280,10 @@ future, this function will do nothing if passed a built-in descriptor.
 %===============================================================================
 \label{free}
 
-Each of the nine objects has \verb'GrB_*_new' and \verb'GrB_*_free' methods
+Each of the ten objects has \verb'GrB_*_new' and \verb'GrB_*_free' methods
 that are specific to each object.  They can also be accessed by a generic
-function, \verb'GrB_free', that works for all nine objects.  If \verb'G' is any
-of the nine objects, the statement
+function, \verb'GrB_free', that works for all ten objects.  If \verb'G' is any
+of the ten objects, the statement
 
     {\footnotesize
     \begin{verbatim}
@@ -5412,9 +5397,9 @@ Both parameters can be set in two ways:
 
 \item Globally:  If the following methods are used, then all subsequent
 GraphBLAS operations will use these settings.  Note the typecast,
-\verb'(double)' \verb'chunk'.  This is necessary if a literal constant
-such as \verb'20000' is passed as this argument.  The type of the
-constant must be double.  This is true for all uses of \verb'GxB_set'.
+\verb'(double)' \verb'chunk'.  This is necessary if a literal constant such as
+\verb'20000' is passed as this argument.  The type of the constant must be
+\verb'double'.  This is true for all uses of \verb'GxB_set'.
 
     {\footnotesize
     \begin{verbatim}
@@ -5522,8 +5507,7 @@ If this is done, and no other \verb'GxB_set' calls are made with
 \verb'GxB_FORMAT', all matrices will be stored by column.  Alternatively,
 SuiteSparse:GraphBLAS can be compiled with \verb'-DBYCOL', which changes the
 default format to \verb'GxB_BY_COL', with no calls to any \verb'GxB_*'
-function. {\bf NOTE: the default format is now \verb'GxB_BY_ROW' in this
-release; the default in Versions 2.1 and earlier was \verb'GxB_BY_COL'.}
+function.  The default format is now \verb'GxB_BY_ROW'.
 
 %-------------------------------------------------------------------------------
 \subsection{Hypersparse matrices}
@@ -5747,25 +5731,27 @@ following options:
     }
     GxB_Thread_Model ; \end{verbatim} }
 
-SuiteSparse:GraphBLAS is not yet multi-threaded, but it is thread-safe if it is
-compiled with OpenMP or POSIX pthreads, and if the user application threads do
-not operate on the same matrices at the same time.  Output matrices and vectors
-used by different threads must be different, and input matrices and vectors can
-be safely used only if any pending computations on them have finished, via
+SuiteSparse:GraphBLAS multi-threaded, using only OpenMP.  It is also
+thread-safe if it is compiled with OpenMP or POSIX pthreads, and if the user
+application threads do not operate on the same matrices at the same time.  The
+user threads may use OpenMP or POSIX pthreads.  If multiple user threads make
+simultaneous calls to GraphBLAS, then output matrices and vectors used by
+different threads must be different, and input matrices and vectors can be
+safely used only if any pending computations on them have finished, via
 \verb'GrB_wait' or the per-matrix methods, \verb'GrB_*_nvals',
 \verb'GrB_*_extractElement', \verb'GrB_*_extractTuples', and reduction to a
 scalar via \verb'GrB_*_reduce'.
 
 The \verb'GxB_THREAD_SAFETY' option returns the threading model used internally
-to synchronize user threads.  This is determine during installation (see
+to synchronize user threads.  This is determined during installation (see
 Section~\ref{sec:threads}).  Since \verb'GxB_THREAD_NONE' is zero, the
 following can be used:
 
 {\footnotesize
 \begin{verbatim}
-    GxB_Thread_Model safe ;
-    GxB_get (GxB_THREAD_SAFETY, &safe) ;
-    if (safe)
+    GxB_Thread_Model thread_safety ;
+    GxB_get (GxB_THREAD_SAFETY, &thread_safety) ;
+    if (thread_safety)
     {
         printf ("GraphBLAS is thread-safe\n") ;
     }
@@ -5777,11 +5763,23 @@ following can be used:
     }
 \end{verbatim} }
 
-The \verb'GxB_THREADING' option currently returns \verb'GxB_THREAD_NONE', but
-this will change when SuiteSparse:GraphBLAS exploits OpenMP for internal
-parallelism.  In this case, the \verb'GxB_THREADING' option will return either
-\verb'GxB_THREAD_NONE' (if OpenMP is not available) or \verb'GxB_THREAD_OPENMP'
-otherwise.
+The \verb'GxB_THREADING' option returns the internal parallelism used inside
+SuiteSparse:GraphBLAS, depending on how the library was compiled:
+
+\newpage
+{\footnotesize
+\begin{verbatim}
+    GxB_Thread_Model threading ;
+    GxB_get (GxB_THREADING, &threading) ;
+    if (threading == GxB_THREAD_NONE)
+    {
+        printf ("GraphBLAS is single-threaded, internally.\n") ;
+    }
+    else
+    {
+        printf ("GraphBLAS is multi-threaded, internally, using OpenMP.\n") ;
+    }
+\end{verbatim} }
 
 All threads in the same user application share the same global options,
 including hypersparsity and CSR/CSC format determined by \verb'GxB_set', the
@@ -5818,7 +5816,7 @@ No existing matrices are changed.
     GxB_set (GxB_HYPER, 0.2) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
     GxB_set (GxB_NTHREADS, 4) ;
-    GxB_set (GxB_CHUNK, 10000) ;
+    GxB_set (GxB_CHUNK, (double) 10000) ;
 \end{verbatim} }
 
 %===============================================================================
@@ -6698,7 +6696,7 @@ results in the fastest computation.
 %         select the heap or Gustavson method (see below)
 % if dot method:
 %     compute C<M>=A'*B
-% else if heap or Gustavon's method:
+% else if heap or Gustavson's method:
 %     A=A' ;
 %     compute C<M>=A*B \end{verbatim}}
 % 
@@ -6711,7 +6709,7 @@ results in the fastest computation.
 % if dot method (not selected automatically):
 %     A=A' ; B=B' ;
 %     compute C<M>=A'*B
-% else if heap or Gustavon's method:
+% else if heap or Gustavson's method:
 %     B=B' ;
 %     compute C<M>=A*B \end{verbatim}}
 % 
@@ -6724,7 +6722,7 @@ results in the fastest computation.
 % if dot method (not selected automatically):
 %     A=A' ;
 %     compute C<M>=A'*B
-% else if heap or Gustavon's method:
+% else if heap or Gustavson's method:
 %     compute C<M>=A*B \end{verbatim}}
 % 
 % \end{enumerate}
@@ -8432,23 +8430,27 @@ which only needs to examine the \verb'C(I,J)' submatrix.  Furthermore,
 
 \end{enumerate}
 
+% see GraphBLAS/Test/test46.m
+
 Submatrix assignment in SuiteSparse:GraphBLAS is extremely efficient, even
 without considering the advantages of non-blocking mode discussed in
 Section~\ref{compare_assign}.  Consider assigning a large submatrix
-\verb'C(I,J)=A' where \verb'C' is the \verb'Freescale2' matrix from the
-SuiteSparse Collection \cite{DavisHu11}, of size 3 million by 3 million, with
-14.3 million nonzeros.  With the vectors \verb'I=randperm(n,5500)' and
-\verb'J=randperm(n,7000)' and \verb'A' a random sparse matrix with 38,500
-nonzeros, \verb'C(I,J)=A' takes 87 seconds in MATLAB.\footnote{All performance
-measurements in this document were done on a  MacBook Pro, 2.8 GHz Intel Core
-i7, 16 GB Ram, OSX 10.11.6, clang 8.0.0, MATLAB R2017A.} The same computation
-takes 0.74 seconds in SuiteSparse:GraphBLAS, a speedup of over 100.  This is
-after finishing all pending computations in GraphBLAS and returning result to
-MATLAB as a valid MATLAB sparse matrix.  The dominant time complexity for
-GraphBLAS is $O(n+c)$, where $n$ is the dimension of \verb'C' and $c$ is its
-number of nonzeros.  As a comparison, MATLAB takes just 0.42 seconds to compute
-\verb"C+C'" for this matrix, which also takes time linear in the size of the
-matrix data structure, $O(n+c)$.
+\verb'C(I,J)=A' where \verb'C' is derived from the \verb'Freescale2' matrix
+from the SuiteSparse Collection \cite{DavisHu11}, of size 3 million by 3
+million, with 14.3 million nonzeros.  The matrix \verb'C' is
+\verb'repmat(F,4,4)', if \verb'F' is the \verb'Freescale2' matrix.  With the
+vectors \verb'I=randperm(n,5500)' and \verb'J=randperm(n,7000)' and \verb'A' a
+random sparse matrix with 38,500 nonzeros, \verb'C(I,J)=A' takes about 30
+minutes in MATLAB.\footnote{All performance measurements in this document were
+done on a  MacBook Pro, 2.8 GHz Intel Core i7, 16 GB Ram, OSX 10.11.6, clang
+8.0.0, MATLAB R2018A.} The same computation takes TODO seconds in
+SuiteSparse:GraphBLAS, a speedup of over TODO.  This is after finishing all
+pending computations in GraphBLAS and returning result to MATLAB as a valid
+MATLAB sparse matrix.  The dominant time complexity for GraphBLAS is $O(n+c)$,
+where $n$ is the dimension of \verb'C' and $c$ is its number of nonzeros.  As a
+comparison, MATLAB takes just TODO seconds to compute \verb"C+C'" for this
+matrix, which also takes time linear in the size of the matrix data structure,
+$O(n+c)$.
 
 The time for submatrix assignment can be greatly reduced if \verb'C' is
 hypersparse.  Let $\bar{n}$ be the number of non-empty rows, where $\bar{n}<n$,
@@ -9082,13 +9084,13 @@ T}$, as described in Section~\ref{accummask}.
 GraphBLAS objects.  This entire section is an extension to the specification.
 \end{spec}
 
-The 9 different objects handled by SuiteSparse:GraphBLAS are all opaque,
+The ten different objects handled by SuiteSparse:GraphBLAS are all opaque,
 although nearly all of their contents can be extracted via methods such as
 \verb'GrB_Matrix_extractTuples', \verb'GrB_Matrix_extractElement',
 \verb'GxB_Matrix_type', and so on.  The GraphBLAS C API has no mechanism for
 printing all the contents of GraphBLAS objects, but this is helpful for
-debugging.  Nine type-specific methods and two type-generic methods are
-provided, listed in the table below:
+debugging.  Ten type-specific methods and two type-generic methods are
+provided:
 
 \vspace{0.2in}
 {\footnotesize
@@ -9103,6 +9105,7 @@ provided, listed in the table below:
 \verb'GxB_Descriptor_fprint'  & print and check a \verb'GrB_Descriptor' \\
 \verb'GxB_Matrix_fprint'      & print and check a \verb'GrB_Matrix' \\
 \verb'GxB_Vector_fprint'      & print and check a \verb'GrB_Vector' \\
+\verb'GxB_Scalar_fprint'      & print and check a \verb'GxB_Scalar' \\
 \hline
 \verb'GxB_fprint'             & print/check any object to a file \\
 \verb'GxB_print'              & print/check any object to \verb'stdout' \\
@@ -9142,7 +9145,7 @@ typedef enum
 }
 GxB_Print_Level ; \end{verbatim}}
 
-The nine type-specific functions include an additional argument, the
+The ten type-specific functions include an additional argument, the
 \verb'name' string.  The \verb'name' is printed at the beginning of the display
 (assuming the print level is not \verb'GxB_SILENT') so that the object can be
 more easily identified in the output.  For the type-generic methods
@@ -9193,7 +9196,7 @@ GrB_Info GxB_fprint                 // print and check a GraphBLAS object
 ) ;
 \end{verbatim} } \end{mdframed}
 
-The \verb'GxB_fprint' function prints the contents of any of the 9 GraphBLAS
+The \verb'GxB_fprint' function prints the contents of any of the ten GraphBLAS
 objects to the file \verb'f'.  If \verb'f' is \verb'NULL', the results are
 printed to \verb'stdout'.  For example, to print the entire contents of a
 matrix \verb'A' to the file \verb'f', use
@@ -9407,6 +9410,27 @@ For example,
 \verb'GxB_Vector_fprint (v, "my vector", GxB_SHORT, f)'
 prints about 30 entries from the vector \verb'v' to the file \verb'f'.
 
+%===============================================================================
+\subsection{{\sf GxB\_Scalar\_fprint:} Print a {\sf GxB\_Scalar}}
+%===============================================================================
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+GrB_Info GxB_Scalar_fprint          // print and check a GrB_Scalar
+(
+    GxB_Sclarr s,                   // object to print and check
+    const char *name,               // name of the object
+    GxB_Print_Level pr,             // print level
+    FILE *f                         // file for output
+) ;
+\end{verbatim} } \end{mdframed}
+
+For example,
+\verb'GxB_Scalar_fprint (s, "my scalar", GxB_SHORT, f)'
+prints a short description of the sparse scalar \verb's' to the file \verb'f'.
+
+\newpage
 %===============================================================================
 \subsection{Performance and portability considerations}
 %===============================================================================
@@ -9927,7 +9951,7 @@ GxB_Semiring_define(GrB_Semiring semiring, GrB_Monoid add, GrB_BinaryOp mult) ;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-Six examples of how to use GraphBLAS are described below.  They all
+Several examples of how to use GraphBLAS are listed below.  They all
 appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
 
 \begin{enumerate}
@@ -9937,6 +9961,9 @@ appear in the \verb'Demo' folder of SuiteSparse:GraphBLAS.
 \item creating a finite-element matrix,
 \item reading a matrix from a file, and
 \item complex numbers as a user-defined type.
+\item triangle counting
+\item PageRank
+\item matrix import/export
 \end{enumerate}
 
 Additional examples appear in the newly created LAGraph project, currently in
@@ -9989,6 +10016,11 @@ Algorithms & description \\
 \verb'LAGraph_lcc'          & local clustering coefficient \\
 \verb'LAGraph_pagerank'     & PageRank \\
 \verb'LAGraph_tricount'     & triangle count \\
+\end{tabular}}
+
+\vspace{0.1in}
+{\small
+\begin{tabular}{ll}
 \hline
 \hline
 Utilities & description \\
@@ -10001,6 +10033,8 @@ Utilities & description \\
 \verb'LAGraph_finalize'         & ends LAGraph \\
 \verb'LAGraph_free'             & wrapper for \verb'free' \\
 \verb'LAGraph_free_global'      & frees objects created by \verb'_alloc_global'\\
+\verb'LAGraph_get_nthreads'     & get \# of threads used \\
+\verb'LAGraph_grread'           & read a binary matrix in Galois format \\
 \verb'LAGraph_init'             & starts LAGraph \\
 \verb'LAGraph_isall'            & tests 2 matrices with a binary operator \\
 \verb'LAGraph_isequal'          & tests if 2 matrices are equal \\
@@ -10014,6 +10048,7 @@ Utilities & description \\
 \verb'LAGraph_rand64'           & \verb'int64_t' random number generator \\
 \verb'LAGraph_random'           & random matrix generator \\
 \verb'LAGraph_randx'            & \verb'double' random number generator \\
+\verb'LAGraph_set_nthreads'     & set \# of threads to use \\
 \verb'LAGraph_tic'              & start a timer \\
 \verb'LAGraph_toc'              & end a timer \\
 \verb'LAGraph_tsvread'          & read a TSV file \\
@@ -11002,9 +11037,10 @@ be found at \url{http://faculty.cse.tamu.edu/davis/GraphBLAS/html}.
 \label{sec:threads}
 %----------------------------------------
 
-SuiteSparse:GraphBLAS is not yet parallel, but it is thread-safe if multiple
-simultaneous calls are made to GraphBLAS functions.  The output variables of
-those calls to GraphBLAS must be unique; you cannot safely modify one GraphBLAS
+SuiteSparse:GraphBLAS is parallel, based on OpenMP.  It is thread-safe if
+multiple simultaneous calls are made to GraphBLAS functions, from user threads
+that rely on either OpenMP or POSIX pthreads.  The output variables of those
+calls to GraphBLAS must be unique; you cannot safely modify one GraphBLAS
 object in parallel, with two or more simultaneous GraphBLAS functions operating
 on the same output object.  In addition, all pending operations of objects that
 appear in parallel calls to GraphBLAS must be complete.  This can be done for
@@ -11045,8 +11081,8 @@ one user thread.
 \begin{itemize}
 \item OpenMP: this is the default if your compiler supports OpenMP.
     It can also be specified with \verb'cmake -DUSER_OPENMP=1' in the
-    \verb'cmake' command line.  Internal parallelism in a future
-    SuiteSparse:GraphBLAS version will be based on OpenMP, but this is
+    \verb'cmake' command line.  Internal parallelism in
+    SuiteSparse:GraphBLAS version is based on OpenMP.  This is
     typically safe to use with any user threading models.
 
 \item POSIX: this is used if OpenMP is not available.
@@ -11225,8 +11261,8 @@ database module for Redis.  Based on SuiteSparse:GraphBLAS, RedisGraph is up
 \url{https://redislabs.com/blog/new-redisgraph-1-0-achieves-600x-faster-performance-graph-databases/}}).
 
 SuiteSparse:GraphBLAS was developed with support from
-NVIDIA, MIT Lincoln Lab, Intel, Redis Labs, and the National Science
-Foundation (1514406).
+NVIDIA, MIT Lincoln Lab, Intel, Redis Labs, IBM,
+and the National Science Foundation (1514406).
 
 \newpage
 %-------------------------------------------------------------------------------
