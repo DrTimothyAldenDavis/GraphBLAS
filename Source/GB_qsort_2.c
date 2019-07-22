@@ -7,43 +7,26 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_qsort.h"
+#include "GB_sort.h"
 
-// returns true if a < b
-#define GB_lt(A,a,B,b)                                                      \
-(                                                                           \
-    /* a and b are tuples of the form (i,k) where i is a row index and */   \
-    /* k is the original position in the input array of that entry. */      \
-    /* If a and b have the same index, compare their positions. */          \
-    (A ## _0 [a] < B ## _0 [b]) ?                                           \
-    (                                                                       \
-        true                                                                \
-    )                                                                       \
-    :                                                                       \
-    (                                                                       \
-        (A ## _0 [a] == B ## _0 [b]) ?                                      \
-        (                                                                   \
-            /* indices are same; check 2nd entry, which is unique */        \
-            (A ## _1 [a] < B ## _1 [b])                                     \
-        )                                                                   \
-        :                                                                   \
-        (                                                                   \
-            /* A ## _0 [a] > B ## _0 [b] */                                 \
-            false                                                           \
-        )                                                                   \
-    )                                                                       \
-)
+// returns true if A [a] < B [b]
+#define GB_lt(A,a,B,b)                  \
+    GB_lt_2 (A ## _0, A ## _1, a, B ## _0, B ## _1, b)
 
-// argument list
-#define GB_arg(A) A ## _0, A ## _1
+// argument list for calling a function
+#define GB_arg(A)                       \
+    A ## _0, A ## _1
 
-// argument list
-#define GB_args(type,A) type A ## _0 [ ], type A ## _1 [ ]
+// argument list for calling a function, with offset
+#define GB_arg_offset(A,x)              \
+    A ## _0 + (x), A ## _1 + (x)
 
-// argument list, with offset
-#define GB_arg_offset(A,x) A ## _0 + x, A ## _1 + x
+// argument list for defining a function
+#define GB_args(A)                      \
+    int64_t *restrict A ## _0,          \
+    int64_t *restrict A ## _1
 
-// sort a 2-by-n list
+// each entry has a 2-integer key
 #define GB_K 2
 
 // swap A [a] and A [b]
@@ -58,11 +41,11 @@
 
 #include "GB_qsort_template.c"
 
-void GB_qsort_2         // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+void GB_qsort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
-    int64_t A_0 [ ],    // size n array
-    int64_t A_1 [ ],    // size n array
-    int64_t n
+    int64_t *restrict A_0,      // size n array
+    int64_t *restrict A_1,      // size n array
+    const int64_t n
 )
 { 
     uint64_t seed = n ;

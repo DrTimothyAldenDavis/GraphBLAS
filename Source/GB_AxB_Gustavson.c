@@ -19,7 +19,7 @@
 #include "GB_Sauna.h"
 #include "GB_jappend.h"
 #include "GB_bracket.h"
-#include "GB_qsort.h"
+#include "GB_sort.h"
 #include "GB_iterator.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"

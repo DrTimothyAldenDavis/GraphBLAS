@@ -16,7 +16,8 @@ rng ('default')  ;
 for n = [1 10 19 20 21 100 1000 1e5 1e6 1e7 1e8]
 
     n
-    for trials = 1:10
+    ntrials = 2 ;
+    for trials = 1:2
         I = int64 (10 * n * rand (1,n)) ;
 
         tic

@@ -22,7 +22,7 @@
 #include "GB_add.h"
 #include "GB_subref.h"
 #include "GB_transpose.h"
-#include "GB_qsort.h"
+#include "GB_sort.h"
 #include "GB_apply.h"
 
 #include "demos.h"

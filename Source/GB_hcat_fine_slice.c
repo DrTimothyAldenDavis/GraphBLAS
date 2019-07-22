@@ -11,7 +11,7 @@
 
 #include "GB_mxm.h"
 #include "GB_Sauna.h"
-#include "GB_qsort.h"
+#include "GB_sort.h"
 
 GrB_Info GB_hcat_fine_slice // horizontal concatenation and sum of slices of C
 (

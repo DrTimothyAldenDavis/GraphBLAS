@@ -85,7 +85,7 @@
 // unsorted.
 
 #include "GB_build.h"
-#include "GB_qsort.h"
+#include "GB_sort.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif

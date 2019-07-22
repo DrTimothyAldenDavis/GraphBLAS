@@ -16,7 +16,7 @@
 #endif
 
 // to iterate across all entries in a bucket:
-#define GB_for_each_index_in_bucket(inew,i) \
+#define GB_for_each_index_in_bucket(inew,i)     \
     for (int64_t inew = Mark[i]-1 ; inew >= 0 ; inew = Inext [inew])
 
 // copy values from A(:,kA) to C(:,kC): Cx [pC:pC+len-1] = Ax [pA:pA+len-1].
@@ -37,7 +37,7 @@
         Cx [pC] = (pA) ;
 #else
     #define GB_COPY_ENTRY(pC,pA)                \
-        /* Cx [pC] = Ax [pA] ; */               \
+        /* Cx [pC] = Ax [pA] */                 \
         memcpy (Cx + (pC)*GB_CSIZE1, Ax + (pA)*GB_CSIZE1, GB_CSIZE2) ;
 #endif
 
@@ -50,9 +50,9 @@
 #define GB_CTYPE GB_void
 #define GB_CSIZE1 asize
 #define GB_CSIZE2 asize
-// If built-in types are used instead of generic, then GB_COPY_ENTRY can
-// become Cx [pC] = Ax [pA].  However, the generic GB_qsort_1b would also need
-// to be replaced with type-specific versions for each built-in type.  For
+// FUTURE: If built-in types are used instead of generic, then GB_COPY_ENTRY
+// can become Cx [pC] = Ax [pA].  However, the generic GB_qsort_1b would also
+// need to be replaced with type-specific versions for each built-in type.  For
 // A and C of type double, the #defines would be:
 // #define GB_CTYPE double
 // #define GB_CSIZE1 1

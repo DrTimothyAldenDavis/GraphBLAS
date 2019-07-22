@@ -6,9 +6,16 @@ function test44
 
 fprintf ('\ntest44\n------------------------------------- qsort tests\n') ;
 
+[save_nthreads save_chunk] = nthreads_get ;
+nthreads_max = feature ('numcores') ;
+
 rng ('default') ;
 
-n = 20e6 ;
+for n = [50e3 100e3 1e6 10e6 100e6 1e9]
+% n = 100e6 ;
+% n = 20e6 ;
+% n = 1e6 ;
+fprintf ('\n========================== n %g million\n', n / 1e6) ;
 
 fprintf ('\n----------------------- qsort 1a\n') ;
 
@@ -26,9 +33,9 @@ fprintf ('MATLAB: sort %g sec  qsort1a: %g  speedup: %g\n', t, t2, t/t2) ;
 
 assert (isequal (Iout, Iout1))
 
-fprintf ('\n----------------------- qsort 2a\n') ;
+fprintf ('\n----------------------- qsort 1b\n') ;
 
-% qsort2a is not stable; it used only when I has unique values
+% qsort1b is not stable; it used only when I has unique values
 I = int64 (randperm (n))' ;
 J = int64 ((n/10)* rand (n,1)) ;
 IJ = [I J] ;
@@ -58,10 +65,27 @@ t = toc ;
 tic
 [Iout, Jout] = GB_mex_qsort_2 (I, J) ;
 t2 = toc ;
-
-fprintf ('MATLAB: sortrows %g sec  qsort2a: %g  speedup: %g\n', t, t2, t/t2) ;
-
+t2_just = gbresults ;
 assert (isequal ([Iout Jout], IJout));
+
+fprintf ('MATLAB: sortrows %g sec  qsort2: %g %g speedup: %g\n', ...
+    t, t2, t2_just, t/t2) ;
+
+for nthreads = [1 2 4 8 16 20 32 40 64 128 256]
+    if (nthreads > 2*nthreads_max)
+        break ;
+    end
+    % tic
+    [Iout, Jout] = GB_mex_msort_2 (I, J, nthreads) ;
+    tp = gbresults ; % toc ;
+    if (nthreads == 1)
+        tp1 = tp ;
+    end
+    assert (isequal ([Iout Jout], IJout));
+    fprintf ('msort2: %3d: %10.4g ', nthreads, tp) ;
+    fprintf ('speedup vs 1: %8.3f ', tp1 / tp) ;
+    fprintf ('speedup vs MATLAB: %8.3f\n', t / tp) ;
+end
 
 fprintf ('\n----------------------- qsort 3\n') ;
 
@@ -78,9 +102,12 @@ tic
 [Iout, Jout, Kout] = GB_mex_qsort_3 (I, J, K) ;
 t2 = toc ;
 
-fprintf ('MATLAB: sortrows %g sec  qsort2a: %g  speedup: %g\n', t, t2, t/t2) ;
+fprintf ('MATLAB: sortrows %g sec  qsort3: %g  speedup: %g\n', t, t2, t/t2) ;
 
 assert (isequal ([Iout Jout Kout], IJKout))
 
+end
+
 fprintf ('\ntest44: all tests passed\n') ;
+nthreads_set (save_nthreads, save_chunk) ;
 

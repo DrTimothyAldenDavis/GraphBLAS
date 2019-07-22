@@ -1871,13 +1871,15 @@ GrB_Info GB_wait                // finish all pending computations
 #if defined ( _OPENMP )
 
     #include <omp.h>
-    #define GB_OPENMP_THREAD_ID    omp_get_thread_num ( )
-    #define GB_OPENMP_MAX_THREADS  omp_get_max_threads ( )
+    #define GB_OPENMP_THREAD_ID         omp_get_thread_num ( )
+    #define GB_OPENMP_MAX_THREADS       omp_get_max_threads ( )
+    #define GB_OPENMP_GET_NUM_THREADS   omp_get_num_threads ( )
 
 #else
 
-    #define GB_OPENMP_THREAD_ID    (0)
-    #define GB_OPENMP_MAX_THREADS  (1)
+    #define GB_OPENMP_THREAD_ID         (0)
+    #define GB_OPENMP_MAX_THREADS       (1)
+    #define GB_OPENMP_GET_NUM_THREADS   (1)
 
 #endif
 
