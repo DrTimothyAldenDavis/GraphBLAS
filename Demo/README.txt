@@ -76,9 +76,6 @@ icc 19.0.3.199 20190206 compiler, and GraphBLAS v3.0.1 (July 21, 2019, draft):
     wildtype_demo.out   output of wildtype_demo
     pagerank_demo.out   output of pagerank_demo
     import_demo.out     output of import_demo
-    go2.out             from ./go2 script, triangle counting (tri_demo)
-    go3.out             from ./go3 script, triangle counting (tri_demo)
-    go.out              from ./go  script, triangle counting (tri_demo)
 
 Output generated from an earlier version, MacBook Pro, gcc 8.3, Apr 11, 2019:
 

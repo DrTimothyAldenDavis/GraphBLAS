@@ -175,13 +175,13 @@ void GB_merge_parallel_2                // parallel merge
 
     // Modify pleft and pright:
     if (!found && (pleft == pright))
-    {
+    { 
         if (GB_lt_2 (Smaller_0, Smaller_1, pleft, Pivot_0, Pivot_1, 0))
-        { 
+        {
             pleft++ ;
         }
         else
-        { 
+        {
             pright++ ;
         }
     }
@@ -434,7 +434,7 @@ void GB_msort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 {
 
     if (GB_OPENMP_GET_NUM_THREADS > 1)
-    { 
+    {
 
         // ---------------------------------------------------------------------
         // parallel mergesort: already in parallel region

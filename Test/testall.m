@@ -142,6 +142,8 @@ logstat ('test133',t) ; % %test mask operations (GB_masker)
 % tests taking 1 to 10 seconds:
 %----------------------------------------
 
+% TODO
+logstat ('test44',t) ;  % test qsort
 %1
 logstat ('testc2(1)',t) ;  % complex tests (quick case)
 %1
@@ -231,7 +233,7 @@ if (malloc_debugging)
 end
 
 %79
-logstat ('test134',t) ;  % quick test of GxB_select
+logstat ('test134',t) ; % quick test of GxB_select
 
 %80
 logstat ('test10',t) ;  % GrB_apply
@@ -308,7 +310,6 @@ logstat ('test40',t) ;     %      % GrB_Matrix_extractElement, and Vector
 logstat ('test41',t) ;     %      % test of GB_mex_AxB
 logstat ('test42') ;       %      % performance tests for GB_mex_Matrix_build
 logstat ('test43',t) ;     %      % performance tests for GB_mex_Matrix_subref
-logstat ('test44',t) ;     %      % test qsort
 logstat ('test45(0)',t) ;  %  334 % test GB_mex_setElement and build
 logstat ('test46') ;       %      % performance test GB_mex_subassign
 logstat ('test46b') ;      %      % performance test GB_mex_assign

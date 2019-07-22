@@ -1,4 +1,4 @@
-function test44
+function test44(longtests)
 %TEST44 test qsort
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -6,12 +6,22 @@ function test44
 
 fprintf ('\ntest44\n------------------------------------- qsort tests\n') ;
 
+if (nargin < 1)
+    longtests = 0 ;
+end
+
+if (longtests)
+    nlist = [50e3 100e3 1e6 10e6 100e6] ;
+else
+    nlist = [1 5 100 50e3 100e3 1e6 ] ;
+end
+
 [save_nthreads save_chunk] = nthreads_get ;
 nthreads_max = feature ('numcores') ;
 
 rng ('default') ;
 
-for n = [50e3 100e3 1e6 10e6 100e6]
+for n = nlist
 % n = 100e6 ;
 % n = 20e6 ;
 % n = 1e6 ;

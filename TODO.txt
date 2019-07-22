@@ -1,6 +1,0 @@
-
-TODO: create GB_mergesort_2 and GB_mergesort_3, which compute the same thing as
-    GB_qsort_2 and GB_qsort_3, but using a parallel merge sort.  They will call
-    the single-threaded GB_qsort_2 and GB_qsort_3 for sorting small sub-arrays,
-    in the leaf nodes of the task tree.
-

@@ -2209,6 +2209,24 @@ constructed by dox_headers.m
 */
 
 
+/** \file GB_msort_2.c
+\brief  GB_msort_2: sort a 2-by-n list of integers, using A[0:1][ ] as the key
+
+\par
+ A parallel mergesort of an array of 2-by-n integers.  Each key consists
+ of two integers.
+*/
+
+
+/** \file GB_msort_3.c
+\brief  GB_msort_3: sort a 3-by-n list of integers, using A[0:2][ ] as the key
+
+\par
+ A parallel mergesort of an array of 3-by-n integers.  Each key consists
+ of three integers.
+*/
+
+
 /** \file GB_mxm.c
 \brief  GB_mxm: matrix-matrix multiply for GrB_mxm, GrB_mxv, and GrB_vxm
 
@@ -2335,17 +2353,8 @@ constructed by dox_headers.m
 */
 
 
-/** \file GB_qsort.h
-\brief  GB_qsort.h: definitions for sorting functions
-
-\par
- All of the GB_qsort_* functions are single-threaded, by design.  None of
- them are stable, but they are always used in GraphBLAS with unique keys.
-*/
-
-
 /** \file GB_qsort_1a.c
-\brief  GB_qsort_1a: sort an n-by-1 list of integers
+\brief  GB_qsort_1a: sort an 1-by-n list of integers
 
 */
 
@@ -2622,6 +2631,17 @@ constructed by dox_headers.m
  A_hfirst:A_hfirst+pA_end-1, inclusive.
 \par
  This macro defines the kth entry in the Ai list, for k = 0 to pA_end-1:
+*/
+
+
+/** \file GB_sort.h
+\brief  GB_sort.h: definitions for sorting functions
+
+\par
+ All of the GB_qsort_* functions are single-threaded, by design.  Both
+ GB_msort_* functions are parallel.  None of these sorting methods are
+ guaranteed to be stable, but they are always used in GraphBLAS with unique
+ keys.
 */
 
 
@@ -4960,13 +4980,13 @@ constructed by dox_headers.m
 
 
 /** \file GB_qsort_template.c
-\brief  GB_qsort_template: sort an n-by-GB_K list of integers
+\brief  GB_qsort_template: quicksort of a K-by-n array
 
 \par
- This file is \#include'd in GB_qsort*.c to create specific versions for GB_K
- = 1, 2, and 3.  Requires an inline or macro definition of the GB_lt
- function.  The GB_lt function has the form GB_lt (A,i,B,j) and returns true
- if A[i]\<B[j].
+ This file is \#include'd in GB_qsort*.c to create specific versions for
+ different kinds of sort keys and auxiliary arrays.  Requires an inline or
+ macro definition of the GB_lt function.  The GB_lt function has the form
+ GB_lt (A,i,B,j) and returns true if A[i] \< B[j].
 \par
  All of these functions are static; there will be versions of them in each
  variant of GB_qsort*, and given unique names via \#define's in the
