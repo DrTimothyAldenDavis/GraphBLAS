@@ -100,6 +100,9 @@
     GB_FREE_MEMORY (*J_work_handle, ijslen, sizeof (int64_t)) ; \
     GB_FREE_MEMORY (*S_work_handle, ijslen, ssize) ;            \
     GB_FREE_MEMORY (K_work,         nvals,  sizeof (int64_t)) ; \
+    GB_FREE_MEMORY (W0,             nvals,  sizeof (int64_t)) ; \
+    GB_FREE_MEMORY (W1,             nvals,  sizeof (int64_t)) ; \
+    GB_FREE_MEMORY (W1,             nvals,  sizeof (int64_t)) ; \
 }
 
 //------------------------------------------------------------------------------
@@ -178,6 +181,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
     int64_t *restrict I_work = (*I_work_handle) ;
     int64_t *restrict J_work = (*J_work_handle) ;
     int64_t *restrict K_work = NULL ;
+    int64_t *restrict W0 = NULL ;
+    int64_t *restrict W1 = NULL ;
+    int64_t *restrict W2 = NULL ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -528,14 +534,86 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         // sort all the tuples
         if (vdim > 1)
-        { 
+        {
+
+            //------------------------------------------------------------------
             // sort a set of (j,i,k) tuples
-            GB_qsort_3 (J_work, I_work, K_work, nvals) ;
+            //------------------------------------------------------------------
+
+            if (nthreads == 1)
+            { 
+
+                //--------------------------------------------------------------
+                // sequential quicksort
+                //--------------------------------------------------------------
+
+                GB_qsort_3 (J_work, I_work, K_work, nvals) ;
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // parallel mergesort
+                //--------------------------------------------------------------
+
+                GB_MALLOC_MEMORY (W0, nvals, sizeof (int64_t)) ;
+                GB_MALLOC_MEMORY (W1, nvals, sizeof (int64_t)) ;
+                GB_MALLOC_MEMORY (W2, nvals, sizeof (int64_t)) ;
+                if (W0 == NULL || W1 == NULL || W2 == NULL)
+                { 
+                    // out of memory
+                    GB_FREE_WORK ;
+                    return (GB_OUT_OF_MEMORY) ;
+                }
+
+                GB_msort_3 (J_work, I_work, K_work, W0, W1, W2, nvals,
+                    nthreads) ;
+
+                GB_FREE_MEMORY (W0, nvals, sizeof (int64_t)) ;
+                GB_FREE_MEMORY (W1, nvals, sizeof (int64_t)) ;
+                GB_FREE_MEMORY (W2, nvals, sizeof (int64_t)) ;
+            }
+
         }
         else
-        { 
+        {
+
+            //------------------------------------------------------------------
             // sort a set of (i,k) tuples
-            GB_qsort_2 (I_work, K_work, nvals) ;
+            //------------------------------------------------------------------
+
+            if (nthreads == 1)
+            { 
+
+                //--------------------------------------------------------------
+                // sequential quicksort
+                //--------------------------------------------------------------
+
+                GB_qsort_2 (I_work, K_work, nvals) ;
+
+            }
+            else
+            {
+
+                //--------------------------------------------------------------
+                // parallel mergesort
+                //--------------------------------------------------------------
+
+                GB_MALLOC_MEMORY (W0, nvals, sizeof (int64_t)) ;
+                GB_MALLOC_MEMORY (W1, nvals, sizeof (int64_t)) ;
+                if (W0 == NULL || W1 == NULL)
+                { 
+                    // out of memory
+                    GB_FREE_WORK ;
+                    return (GB_OUT_OF_MEMORY) ;
+                }
+
+                GB_msort_2 (I_work, K_work, W0, W1, nvals, nthreads) ;
+
+                GB_FREE_MEMORY (W0, nvals, sizeof (int64_t)) ;
+                GB_FREE_MEMORY (W1, nvals, sizeof (int64_t)) ;
+            }
         }
     }
 

@@ -9,7 +9,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "[I,J,K] = qsort (I,J,K)"
+#define USAGE "[I,J,K] = GB_mex_qsort_3 (I,J,K)"
 
 void mexFunction
 (

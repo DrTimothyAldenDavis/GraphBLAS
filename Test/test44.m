@@ -11,7 +11,7 @@ nthreads_max = feature ('numcores') ;
 
 rng ('default') ;
 
-for n = [50e3 100e3 1e6 10e6 100e6 1e9]
+for n = [50e3 100e3 1e6 10e6 100e6]
 % n = 100e6 ;
 % n = 20e6 ;
 % n = 1e6 ;
@@ -100,11 +100,27 @@ t = toc ;
 
 tic
 [Iout, Jout, Kout] = GB_mex_qsort_3 (I, J, K) ;
+t2_just = gbresults ;
 t2 = toc ;
+assert (isequal ([Iout Jout Kout], IJKout))
 
 fprintf ('MATLAB: sortrows %g sec  qsort3: %g  speedup: %g\n', t, t2, t/t2) ;
 
-assert (isequal ([Iout Jout Kout], IJKout))
+for nthreads = [1 2 4 8 16 20 32 40 64 128 256]
+    if (nthreads > 2*nthreads_max)
+        break ;
+    end
+    % tic
+    [Iout, Jout, Kout] = GB_mex_msort_3 (I, J, K, nthreads) ;
+    tp = gbresults ; % toc ;
+    if (nthreads == 1)
+        tp1 = tp ;
+    end
+    assert (isequal ([Iout Jout Kout], IJKout));
+    fprintf ('msort3: %3d: %10.4g ', nthreads, tp) ;
+    fprintf ('speedup vs 1: %8.3f ', tp1 / tp) ;
+    fprintf ('speedup vs MATLAB: %8.3f\n', t / tp) ;
+end
 
 end
 

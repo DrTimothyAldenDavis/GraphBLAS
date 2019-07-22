@@ -21,6 +21,8 @@
 
 #define GB_FREE_WORK                                    \
 {                                                       \
+    GB_FREE_MEMORY (W0,  ni, sizeof (GrB_Index)) ;      \
+    GB_FREE_MEMORY (W1,  ni, sizeof (GrB_Index)) ;      \
     GB_FREE_MEMORY (I1,  ni, sizeof (GrB_Index)) ;      \
     GB_FREE_MEMORY (I1k, ni, sizeof (GrB_Index)) ;      \
 }
@@ -53,6 +55,8 @@ GrB_Info GB_ijsort
     GrB_Index *restrict I1k = NULL ;
     GrB_Index *restrict I2  = NULL ;
     GrB_Index *restrict I2k = NULL ;
+    int64_t *restrict W0  = NULL ;
+    int64_t *restrict W1 = NULL ;
     int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
 
@@ -62,7 +66,6 @@ GrB_Info GB_ijsort
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (ni, chunk, nthreads_max) ;
-    // printf ("ni "GBd" chunk %g\n", ni, chunk) ;
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -78,7 +81,7 @@ GrB_Info GB_ijsort
     }
 
     //--------------------------------------------------------------------------
-    // copy I into I1 and sort it
+    // copy I into I1 and construct I1k
     //--------------------------------------------------------------------------
 
     GB_memcpy (I1, I, ni * sizeof (GrB_Index), nthreads) ;
@@ -89,7 +92,41 @@ GrB_Info GB_ijsort
         I1k [k] = k ;
     }
 
-    GB_qsort_2 ((int64_t *) I1, (int64_t *) I1k, ni) ;
+    //--------------------------------------------------------------------------
+    // sort [I1 I1k]
+    //--------------------------------------------------------------------------
+
+    if (nthreads == 1)
+    { 
+
+        //----------------------------------------------------------------------
+        // sequential quicksort
+        //----------------------------------------------------------------------
+
+        GB_qsort_2 ((int64_t *) I1, (int64_t *) I1k, ni) ;
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // parallel mergesort
+        //----------------------------------------------------------------------
+
+        GB_MALLOC_MEMORY (W0, ni, sizeof (int64_t)) ;
+        GB_MALLOC_MEMORY (W1, ni, sizeof (int64_t)) ;
+        if (W0 == NULL || W1 == NULL)
+        { 
+            // out of memory
+            GB_FREE_WORK ;
+            return (GB_OUT_OF_MEMORY) ;
+        }
+
+        GB_msort_2 ((int64_t *) I1, (int64_t *) I1k, W0, W1, ni, nthreads) ;
+
+        GB_FREE_MEMORY (W0, ni, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (W1, ni, sizeof (int64_t)) ;
+    }
 
     //--------------------------------------------------------------------------
     // count unique entries in I1
