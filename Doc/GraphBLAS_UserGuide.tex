@@ -270,12 +270,12 @@ background on sparse matrix algorithms, see also \cite{Davis06book} and
 \label{overview}
 
 GraphBLAS provides a collection of {\em methods} to create, query, and free its
-of objects: sparse matrices, sparse vectors, types, operators, monoids,
-semirings, and a descriptor object used for parameter settings.  Details are
-given in Section~\ref{objects}.  Once these objects are created they can be
-used in mathematical {\em operations} (not to be confused with the how the term
-{\em operator} is used in GraphBLAS).  A short summary of these operations and
-their nearest MATLAB analog is given in the table below.
+of objects: sparse matrices, sparse vectors, sparse scalars, types, operators,
+monoids, semirings, and a descriptor object used for parameter settings.
+Details are given in Section~\ref{objects}.  Once these objects are created
+they can be used in mathematical {\em operations} (not to be confused with the
+how the term {\em operator} is used in GraphBLAS).  A short summary of these
+operations and their nearest MATLAB analog is given in the table below.
 
 % \vspace{0.1in}
 \begin{tabular}{ll}
@@ -303,7 +303,7 @@ floating-point, and 8, 16, 32, and 64-bit signed and unsigned integers.  In
 addition, user-defined scalar types can be created from nearly any C
 \verb'typedef', as long as the entire type fits in a fixed-size contiguous
 block of memory (of arbitrary size).  All of these types can be used to create
-GraphBLAS sparse matrices or vectors.
+GraphBLAS sparse matrices, vectors, or scalars.
 
 The scalar addition of conventional matrix multiplication is replaced with a
 {\em monoid}.  A monoid is an associative and commutative binary operator
@@ -384,10 +384,10 @@ taking $O(nz^2)$ time:
     end\end{verbatim}}\end{mdframed}
 
 The above code is very easy read and simple to write, but exceedingly slow.  In
-MATLAB, the method below is preferred and is far faster, taking only $O(|{\bf
-A}|)$ time.  It can easily be a million times faster than the method above.
-Unfortunately the second method below is a little harder to read and a little
-less natural to write:
+MATLAB, the method below is preferred and is far faster, taking at most
+$O(|{\bf A}| \log |{\bf A}| +n)$ time.  It can easily be a million times faster
+than the method above.  Unfortunately the second method below is a little
+harder to read and a little less natural to write:
 
     \begin{mdframed}
     {\footnotesize
@@ -953,9 +953,9 @@ and \verb'GrB_*_reduce' (to scalar).  These methods only ensure that the
 computations for a single object are completed.  Use \verb'GrB_wait'
 to ensure that all computations are completed (see Section~\ref{wait}).
 
-SuiteSparse:GraphBLAS is not yet multithreaded, but it is safe to use in a
-multithreaded user application.  SuiteSparse:GraphBLAS must be compiled for
-each specific user threading model; see Section~\ref{sec:install} for details.
+SuiteSparse:GraphBLAS is multithreaded internally, via OpenMP, and it is also
+safe to use in a multithreaded user application.  See Section~\ref{sec:install}
+for details.
 
 User threads must not operate on the same matrices at the same time, with one
 exception.  Multiple threads can use the same matrices or vectors as read-only
@@ -1012,7 +1012,7 @@ These
 functions can only be set once, when GraphBLAS starts.   Either \verb'GrB_init'
 or \verb'GxB_init' must be called before any other GraphBLAS operation, but
 not both.  The last argument to \verb'GxB_init' informs GraphBLAS as to
-whether or not the functions are thread-safe.  The ANSI C and TBB
+whether or not the functions are thread-safe.  The ANSI C and Intel TBB
 functions are thread-safe, but the MATLAB \verb'mxMalloc' and related
 functions are not thread-safe.  If not thread-safe, GraphBLAS calls
 the functions from inside an OpenMP critical section.
@@ -1035,7 +1035,7 @@ use the MATLAB memory managers.  To do this, use the following instead of
     ...
     GxB_init (mode, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ; \end{verbatim}}
 
-As another example, the scalable TBB memory manager can be used:
+As another example, the scalable Intel TBB memory manager can be used:
 
     {\footnotesize
     \begin{verbatim}
@@ -1282,8 +1282,8 @@ GraphBLAS defines eight different objects to represent matrices and vectors,
 their scalar data type (or domain), binary and unary operators on scalar types,
 monoids, semirings, and a {\em descriptor} object used to specify optional
 parameters that modify the behavior of a GraphBLAS operation.
-SuiteSparse:GraphBLAS adds an operator for selecting entries from a matrix or
-vector.
+SuiteSparse:GraphBLAS adds two additional objects: a sparse scalar, and an
+operator for selecting entries from a matrix or vector.
 
 The GraphBLAS API makes a distinction between {\em methods} and {\em
 operations}.  A method is a function that works on a GraphBLAS object, creating
@@ -1572,8 +1572,8 @@ specific forms, the generic name is used instead (such as \verb'GrB_free').
 A unary operator is a scalar function of the form $z=f(x)$.  The domain (type)
 of $z$ and $x$ need not be the same.
 
-There are six kinds of built-in unary operators: one, identity,
-additive inverse, absolute value,
+There are six kinds of built-in unary operators:
+one, identity, additive inverse, absolute value,
 multiplicative inverse, and logical negation.  In the notation in the table
 below, $T$ is any of the 11 built-in types and is a place-holder for
 \verb'BOOL', \verb'INT8', \verb'UINT8', ...  \verb'FP32', or \verb'FP64'.   For
@@ -1678,10 +1678,11 @@ correct type, defined by \verb'ztype' and \verb'xtype', respectively, when the
 operator was created.
 % V2.1 and later:
 {\bf NOTE:}
-Currently, the pointers will be unique.  That is, the user function is not
-called with pointers that point to the same space.  Future versions of
-SuiteSparse:GraphBLAS may call the function with the pointers \verb'z' and
-\verb'x' equal to one another, in which case \verb'z=f(z)' should be computed.
+The pointers may not be unique.  That is, the user function may be
+called with multiple pointers that point to the same space, such as when
+\verb'z=f(z,y)' is to be computed by a binary operator, or \verb'z=f(z)' for a
+unary operator.  Any parameters passed to the user-callable function may be
+aliased to each other.
 
 % SPEC: the spec is silent on aliasing in user-defined functions
 
@@ -2138,14 +2139,14 @@ GraphBLAS name          & MATLAB            & description \\
 \verb'GxB_TRIU'         & \verb'C=triu(A,k)'   & true for \verb'A(i,j)' if \verb'(j-i) >= k' \\
 \verb'GxB_DIAG'         & \verb'C=diag(A,k)'   & true for \verb'A(i,j)' if \verb'(j-i) == k' \\
 \verb'GxB_OFFDIAG'      & \verb'C=A-diag(A,k)' & true for \verb'A(i,j)' if \verb'(j-i) != k' \\
-%
+\hline
 \verb'GxB_NONZERO'      & \verb'C=A(A~=0)'     & true if \verb'A(i,j)' is nonzero\\
 \verb'GxB_EQ_ZERO'      & \verb'C=A(A==0)'     & true if \verb'A(i,j)' is zero\\
 \verb'GxB_GT_ZERO'      & \verb'C=A(A>0)'      & true if \verb'A(i,j)' is greater than zero \\
 \verb'GxB_GE_ZERO'      & \verb'C=A(A>=0)'     & true if \verb'A(i,j)' is greater than or equal to zero \\
 \verb'GxB_LT_ZERO'      & \verb'C=A(A<0)'      & true if \verb'A(i,j)' is less than zero \\
 \verb'GxB_LE_ZERO'      & \verb'C=A(A<=0)'     & true if \verb'A(i,j)' is less than or equal to zero \\
-%
+\hline
 \verb'GxB_NE_THUNK'     & \verb'C=A(A~=k)'     & true if \verb'A(i,j)' is not equal to \verb'k'\\
 \verb'GxB_EQ_THUNK'     & \verb'C=A(A==k)'     & true if \verb'A(i,j)' is equal to \verb'k'\\
 \verb'GxB_GT_THUNK'     & \verb'C=A(A>k)'      & true if \verb'A(i,j)' is greater than \verb'k' \\
@@ -2263,7 +2264,7 @@ GrB_Info GxB_SelectOp_ttype     // return the type of thunk
 which is the type of {\em thunk} in the function $z=f(i,j,m,n,x,\mbox{thunk})$.
 If the select operator does not use this parameter, \verb'ttype' is returned as
 \verb'GrB_NULL'.  This is not an error condition, but simply indicates that the
-\verb'GxB_SelectOp' is type-generic.
+\verb'GxB_SelectOp' does not use this parameter.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_SelectOp\_free:} free a user-defined select operator}
@@ -2886,9 +2887,9 @@ If two different sparse scalars are needed, then this should be used instead:
     GxB_Scalar_new (&t, GrB_FP64) ;
     GxB_Scalar_dup (&s, t) ;        // like s = t, but making a deep copy \end{verbatim}}
 
-Then \verb's' and \verb'g' are two different sparse scalars that currently have
-the same values, but they do not depend on each other.  Modifying one
-has no effect on the other.
+Then \verb's' and \verb't' are two different sparse scalars that currently have
+the same value, but they do not depend on each other.  Modifying one has no
+effect on the other.
 
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Scalar\_clear:} clear a sparse scalar of its entry}
@@ -3226,7 +3227,6 @@ MATLAB is better described as ``number of entries'' in GraphBLAS.
 All computations for the vector \verb'v' are guaranteed to be finished when
 \verb'GrB_Vector_nvals' method returns.
 %
-See
 That is, it acts like an object-specific \verb'GrB_wait' for just this
 particular vector \verb'v', which is a side-effect useful in its own right.
 For example, suppose the computations required for \verb'v' rely upon a
@@ -3581,7 +3581,7 @@ GrB_Info GrB_Matrix_nrows   // get the number of rows of a matrix
 \end{verbatim} } \end{mdframed}
 
 \verb'GrB_Matrix_nrows' returns the number of rows of a matrix
-(\verb'nrow=size(A,1)' in MATLAB).
+(\verb'nrows=size(A,1)' in MATLAB).
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -3726,11 +3726,11 @@ This is a well-defined order but the user should not depend upon it when using
 other GraphBLAS implementations since the GraphBLAS API does not
 require this ordering.
 
-However, SuiteSparse:GraphBLAS guarantees this ordering, and with this
-well-defined order, several operators become very useful.  In particular, the
-\verb'SECOND' operator results in the last tuple overwriting the earlier ones.
-The \verb'FIRST' operator means the value of the first tuple is used and the
-others are discarded.
+However, SuiteSparse:GraphBLAS guarantees this ordering, even when it compute
+the result in parallel.  With this well-defined order, several operators become
+very useful.  In particular, the \verb'SECOND' operator results in the last
+tuple overwriting the earlier ones.  The \verb'FIRST' operator means the value
+of the first tuple is used and the others are discarded.
 
 The acronym \verb'dup' is used here for the name of binary function used for
 assembling duplicates, but this should not be confused with the \verb'_dup'
@@ -5047,8 +5047,12 @@ need not be an array:
     sometimes the workspace can be too large.  Assuming all matrices are stored
     by column, it computes \verb'C(:,j)=A*B(:,j)' with a sequence of {\em
     saxpy} operations (\verb'C(:,j)+=A(:,k)*B(k:,j)' for each nonzero
-    \verb'B(k,j)').  It requires workspace of size $m$, to the number of rows
-    of \verb'C', which is not suitable if the matrices are extremely sparse.
+    \verb'B(k,j)').  Each internal thread requires workspace of size $m$, to
+    the number of rows of \verb'C', which is not suitable if the matrices are
+    extremely sparse or if there are many threads.  If all matrices are stored
+    by row, then it computes \verb'C(i,:)=A(i,:)*B' in a sequence of sparse
+    {\em saxpy} operations, and using workspace of size $n$ per thread,
+    corresponding to the number of columns of \verb'C'.
 
     \item \verb'GxB_AxB_HEAP': a heap-based method, computing
     \verb'C(:,j)=A*B(:,j)' via a heap of size equal to the maximum number of
@@ -5060,25 +5064,19 @@ need not be an array:
     large gather/scatter workspace.  The heap has size $b$, equal to the
     maximum number of entries in any one vector of \verb'B'.
 
-    \item \verb'GxB_AxB_DOT': computes \verb"C(i,j)=A(:,i)'*B(:,j)", for each
+    \item \verb'GxB_AxB_DOT': computes \verb"C(i,j)=A(i,:)*B(j,:)'", for each
     entry \verb'C(i,j)'.  If the mask is present and not complemented, only
     entries for which \verb'M(i,j)=1' are computed.  This is a very specialized
     method that works well only if the mask is present, very sparse, and not
     complemented, or when \verb'C' is tiny.  For example, it works very well
-    when \verb'A' and \verb'B' are tall and thin, and \verb"C<M>=A'*B" or
-    \verb"C=A'*B" are computed.  It is impossibly slow if \verb'C' is large and
-    the mask is not present, since it takes $\Omega(mn)$ time if \verb'C' is
-    $m$-by-$n$ in that case.  It can work either without any workspace at all,
-    or with workspace of size $O(k)$, where $k$ is the inner dimension (the
-    number of rows of \verb'B' if the matrices are stored by column).
-    It does not need any workspace at all if \verb'A' or \verb'B' are
-    completely dense, and is the fastest method in this case.  Otherwise, the
-    method is faster if it has access to workspace, and thus it uses $O(k)$
-    workspace if $k < (|{\bf A}|+|{\bf B}|)$.  If this condition does not hold,
-    then the workspace could dominate the memory usage, so it foregoes the use
-    of any workspace.  Since it uses no workspace if $k \ge (|{\bf A}|+|{\bf
-    B}|)$, it can work very well for extremely sparse or hypersparse matrices,
-    when the mask is present and not complemented.
+    when \verb'A' and \verb'B' are tall and thin, and \verb"C<M>=A*B'" or
+    \verb"C=A*B'" are computed.  These expressions assume all matrices are in
+    CSR format.  If in CSC format, then the dot-product method used for
+    \verb"A'*B".  The method is impossibly slow if \verb'C' is large and the
+    mask is not present, since it takes $\Omega(mn)$ time if \verb'C' is
+    $m$-by-$n$ in that case.  It does not use any workspace at all.  Since it
+    uses no workspace, it can work very well for extremely sparse or
+    hypersparse matrices, when the mask is present and not complemented.
 
     \end{itemize}
 
@@ -5399,7 +5397,7 @@ Both parameters can be set in two ways:
 GraphBLAS operations will use these settings.  Note the typecast,
 \verb'(double)' \verb'chunk'.  This is necessary if a literal constant such as
 \verb'20000' is passed as this argument.  The type of the constant must be
-\verb'double'.  This is true for all uses of \verb'GxB_set'.
+\verb'double'.
 
     {\footnotesize
     \begin{verbatim}
@@ -5439,7 +5437,7 @@ For example, suppose \verb'omp_get_max_threads' reports 8 threads.  If \newline
 \verb'GxB_set (GxB_NTHREADS, 4)' is used, then the global setting is four
 threads, not eight.  If a descriptor is used but its \verb'GxB_NTHREADS' is not
 set, or set to \verb'GxB_DEFAULT', then any operation that uses this descriptor
-will use the global setting of four threads.
+
 
 %-------------------------------------------------------------------------------
 \subsection{Storing a matrix by row or by column}
@@ -5466,13 +5464,13 @@ MATLAB stores its sparse matrices by column, in ``non-hypersparse'' format, in
 what is called the Compressed Sparse Column format, or CSC for short.  An
 \verb'm'-by-\verb'n' matrix in MATLAB is represented as a set of \verb'n'
 column vectors, each with a sorted list of row indices and values of the
-nonzero entries in that column.  As a result, \verb'w=A(:,j)' is very fast,
-since the result is already held in the data structure a single list, the $j$th
-column vector.  However, \verb'w=A(i,:)' is very slow in MATLAB, since every
-column in the matrix has to be searched to see if it contains row \verb'i'.  In
-MATLAB, if many such accesses are made, it is much better to transpose the
-matrix (say \verb"AT=A'") and then use \verb"w=AT(:,i)" instead.  This can have
-a dramatic impact on the performance of MATLAB.
+nonzero entries in that column.  As a result, \verb'w=A(:,j)' is very fast in
+MATLAB, since the result is already held in the data structure a single list,
+the $j$th column vector.  However, \verb'w=A(i,:)' is very slow in MATLAB,
+since every column in the matrix has to be searched to see if it contains row
+\verb'i'.  In MATLAB, if many such accesses are made, it is much better to
+transpose the matrix (say \verb"AT=A'") and then use \verb"w=AT(:,i)" instead.
+This can have a dramatic impact on the performance of MATLAB.
 
 Likewise, if \verb'u' is a very sparse column vector and \verb'A' is stored by
 column, then \verb"w=u'*A" (via \verb'GrB_vxm') is slower than \verb'w=A*u'
@@ -5544,8 +5542,8 @@ since empty columns can be skipped.
 The \verb'hyper_ratio' parameter controls the hypersparsity of the internal
 data structure for a matrix.  The parameter is typically in the range 0 to 1.
 The default is \verb'hyper_ratio' = \verb'GxB_HYPER_DEFAULT', which is an
-\verb'extern' \verb'const' \verb'double' value, currently set to 0.0625.  This
-default ratio may change in the future.
+\verb'extern' \verb'const' \verb'double' value, currently set to 0.0625, or
+1/16.  This default ratio may change in the future.
 
 The \verb'hyper_ratio' determines how the matrix is converted between the
 hypersparse and non-hypersparse formats.  Let $n$ be the number of columns of a
@@ -5731,16 +5729,16 @@ following options:
     }
     GxB_Thread_Model ; \end{verbatim} }
 
-SuiteSparse:GraphBLAS multi-threaded, using only OpenMP.  It is also
-thread-safe if it is compiled with OpenMP or POSIX pthreads, and if the user
-application threads do not operate on the same matrices at the same time.  The
-user threads may use OpenMP or POSIX pthreads.  If multiple user threads make
-simultaneous calls to GraphBLAS, then output matrices and vectors used by
-different threads must be different, and input matrices and vectors can be
-safely used only if any pending computations on them have finished, via
-\verb'GrB_wait' or the per-matrix methods, \verb'GrB_*_nvals',
-\verb'GrB_*_extractElement', \verb'GrB_*_extractTuples', and reduction to a
-scalar via \verb'GrB_*_reduce'.
+SuiteSparse:GraphBLAS multi-threaded, using only OpenMP for its internal
+parallelism.  It is also thread-safe if it is compiled with OpenMP or POSIX
+pthreads, and if the user application threads do not operate on the same
+matrices at the same time.  The user threads may use OpenMP or POSIX pthreads.
+If multiple user threads make simultaneous calls to GraphBLAS, then output
+matrices and vectors used by different threads must be different, and input
+matrices and vectors can be safely used only if any pending computations on
+them have finished, via \verb'GrB_wait' or the per-matrix methods,
+\verb'GrB_*_nvals', \verb'GrB_*_extractElement', \verb'GrB_*_extractTuples',
+and reduction to a scalar via \verb'GrB_*_reduce'.
 
 The \verb'GxB_THREAD_SAFETY' option returns the threading model used internally
 to synchronize user threads.  This is determined during installation (see
@@ -9721,7 +9719,7 @@ that name conflicts with internal SuiteSparse:GraphBLAS variables, so
 included.  Undefining \verb'I' is permitted in the ANSI C11 specification
 for \verb'complex.h'.
 
-The six \verb'GxB_*_define' macros are presented below.  They all have
+The seven \verb'GxB_*_define' macros are presented below.  They all have
 essentially the same parameters in the same order as the corresponding
 \verb'GrB_*_new' methods, except that where the \verb'GrB_*_new' methods use
 pointers to the new objects, the corresponding \verb'GxB_*_define' macro uses
@@ -9738,7 +9736,7 @@ freed with \verb'GrB_free'.  Attempting to free them is safe, however.
 SuiteSparse:GraphBLAS will safely (and silently) do nothing if an attempt is
 made to free them.
 
-The next sections describe the following 6 macros:
+The next sections describe the following 7 macros:
 
 \vspace{0.2in}
 {\footnotesize
@@ -10144,6 +10142,16 @@ the BFS can terminate.
         \begin{verbatim}
         GrB_reduce (&successor, NULL, Lor, q, NULL) ; \end{verbatim}}
 
+The above call to \verb'GrB_reduce' looks costly, since it appears to be
+traversing an entire vector \verb'q', of size $\Omega(n)$.  However, the
+reduction need only iterate over the sparse entries that explicitly appear in
+\verb'q'.  So taking a second look, the reader might conclude the time is
+$\Omega(|q|)$, the number of entries in \verb'q'.  Both conclusions are
+incorrect.  Since the logical \verb'LOR' is a terminal monoid, the computation
+terminates as soon as any \verb'true' value is found.  Since all explicit
+entries in \verb'q' are \verb'true' in this algorithm, the time taken by the
+above call to \verb'GrB_reduce' is precisely $O(1)$.
+
 Another method for computing the BFS is in the \verb'bfs6' function in the
 \verb'Demo' folder.  It uses \verb'GrB_apply' and a unary operator to set the
 levels of the newly discovered nodes, instead of
@@ -10296,14 +10304,19 @@ candidate set:
 
 \verb'A' is a symmetric Boolean matrix and \verb'prob' is a sparse real vector
 (of type \verb'FP32'), where \verb'prob(i)' is nonzero only if node \verb'i' is
-a candidate.  The \verb'maxFirst' semiring uses \verb'z=FIRST(x,y)' as the
-multiplier operator.  The column \verb'A(:,j)' is the adjacency of node
-\verb'j', and the dot product \verb"prob'*A(:,j)" applies the \verb'FIRST'
-operator on all entries that appear in the intersection of \verb'prob' and
-\verb'A(:,j)', where \verb'z=FIRST(prob(i),A(i,j))' which is just
-\verb'prob(i)' if \verb'A(i,j)' is present.  If \verb'A(i,j)' not an explicit
-entry in the matrix, then this term is not computed and does not take part in
-the reduction by the \verb'MAX' monoid.
+a candidate.  The \verb'prob' vector is computed from a random vector computed
+by a utility function \verb'prand_xget', in the \verb'Demo' folder.  It uses
+two calls to \verb'GrB_apply' to construct \verb'n' random numbers in parallel,
+using a repeatable pseudo-random number generator.
+
+The \verb'maxFirst' semiring uses \verb'z=FIRST(x,y)' as the multiplier
+operator.  The column \verb'A(:,j)' is the adjacency of node \verb'j', and the
+dot product \verb"prob'*A(:,j)" applies the \verb'FIRST' operator on all
+entries that appear in the intersection of \verb'prob' and \verb'A(:,j)', where
+\verb'z=FIRST(prob(i),A(i,j))' which is just \verb'prob(i)' if \verb'A(i,j)' is
+present.  If \verb'A(i,j)' not an explicit entry in the matrix, then this term
+is not computed and does not take part in the reduction by the \verb'MAX'
+monoid.
 
 Thus, each term \verb'z=FIRST(prob(i),A(i,j))' is the score, \verb'prob(i)',
 of all neighbors \verb'i' of node \verb'j' that have a score.  Node \verb'i'
@@ -10334,11 +10347,11 @@ of those new members from the set of candidates.
 
 The resulting method is very efficient.  For the \verb'Freescale2' matrix, the
 algorithm finds an independent set of size 1.6 million in 1.7 seconds (on the
-same MacBook Pro referred to in Section~\ref{bfs}), taking four iterations of
-the \verb'while' loop.  For comparison, removing its diagonal entries (required
-for the algorithm to work) takes 0.3 seconds in GraphBLAS (see
-Section~\ref{transpose}), and simply transposing the matrix takes 0.24 seconds
-in both MATLAB and GraphBLAS.
+same MacBook Pro referred to in Section~\ref{bfs}, using a single core), taking
+four iterations of the \verb'while' loop.  For comparison, removing its
+diagonal entries (required for the algorithm to work) takes 0.3 seconds in
+GraphBLAS (see Section~\ref{transpose}), and simply transposing the matrix
+takes 0.24 seconds in both MATLAB and GraphBLAS.
 
 \newpage
 %-------------------------------------------------------------------------------
@@ -11238,7 +11251,10 @@ specification and for patiently answering my many questions while I was
 implementing it.
 
 I would like to thank Tim Mattson and Henry Gabb, Intel, Inc., for their
-collaboration and for the support of Intel.
+collaboration and for the support of Intel.  In particular, I would like to
+thank Tim Mattson for parallelizing the merge sort using OpenMP tasks.  The
+parallel merge sort is used for \verb'GrB_Matrix_build',
+\verb'GrB_Vector_build', and some instances of \verb'GrB_transpose'
 
 I would like to thank John Gilbert (UC Santa Barbara) for our many discussions
 on GraphBLAS, and for our decades-long conversation and collaboration on sparse
