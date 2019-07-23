@@ -189,8 +189,7 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # cmake 3.0 doesn't have this problem.
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas -fPIC " )
     # check all warnings (uncomment for development only)
-    # TODO
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
@@ -205,8 +204,7 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # removed in production.  Comment this line out if not in use:
     # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     # check all warnings and remarks (uncomment for development only):
-    # TODO
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )
         message ( FATAL_ERROR "icc version must be at least 19.0" )
     endif ( )
