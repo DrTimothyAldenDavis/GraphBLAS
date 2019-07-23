@@ -242,6 +242,7 @@
 %   ttt       - various tests
 %   xtest     - test GrB_extract
 %   ztest     - test zombie deletion
+%   testsort  - test qsort and msort
 
 % Helper functions
 
