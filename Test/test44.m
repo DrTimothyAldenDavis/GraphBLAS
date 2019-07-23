@@ -10,10 +10,10 @@ if (nargin < 1)
     longtests = 0 ;
 end
 
+nlist = [0 1 5 100 50e3 103e3 200e3 1e6 ] ;
 if (longtests)
-    nlist = [50e3 100e3 1e6 10e6 100e6] ;
+    nlist = [nlist 10e6 100e6] ;
 else
-    nlist = [1 5 100 50e3 100e3 1e6 ] ;
 end
 
 [save_nthreads save_chunk] = nthreads_get ;
@@ -22,9 +22,7 @@ nthreads_max = feature ('numcores') ;
 rng ('default') ;
 
 for n = nlist
-% n = 100e6 ;
-% n = 20e6 ;
-% n = 1e6 ;
+
 fprintf ('\n========================== n %g million\n', n / 1e6) ;
 
 fprintf ('\n----------------------- qsort 1a\n') ;

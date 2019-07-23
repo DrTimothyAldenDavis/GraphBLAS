@@ -68,6 +68,8 @@ logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
 %0
 logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice
 %0
+logstat ('test139',s) ; % merge sort, special cases
+%0
 logstat ('test72',t) ;  % several special cases
 logstat ('test72',s) ;  % several special cases
 %0
@@ -142,8 +144,6 @@ logstat ('test133',t) ; % %test mask operations (GB_masker)
 % tests taking 1 to 10 seconds:
 %----------------------------------------
 
-% TODO
-logstat ('test44',t) ;  % test qsort
 %1
 logstat ('testc2(1)',t) ;  % complex tests (quick case)
 %1
@@ -310,6 +310,7 @@ logstat ('test40',t) ;     %      % GrB_Matrix_extractElement, and Vector
 logstat ('test41',t) ;     %      % test of GB_mex_AxB
 logstat ('test42') ;       %      % performance tests for GB_mex_Matrix_build
 logstat ('test43',t) ;     %      % performance tests for GB_mex_Matrix_subref
+logstat ('test44',t) ;     %    5 % test qsort
 logstat ('test45(0)',t) ;  %  334 % test GB_mex_setElement and build
 logstat ('test46') ;       %      % performance test GB_mex_subassign
 logstat ('test46b') ;      %      % performance test GB_mex_assign

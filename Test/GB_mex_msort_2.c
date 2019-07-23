@@ -19,6 +19,7 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
+    bool malloc_debug = GB_mx_get_global (true) ;
 
     // check inputs
     if (nargin != 3 || nargout != 2)
@@ -68,6 +69,6 @@ void mexFunction
     mxFree (Work_0) ;
     mxFree (Work_1) ;
 
-    GB_mx_put_time (0) ;
+    GB_mx_put_global (true, 0) ;
 }
 

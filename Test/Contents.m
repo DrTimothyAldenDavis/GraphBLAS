@@ -204,6 +204,8 @@
 %   test135  - reduce-to-scalar, built-in monoids with terminal values
 %   test136  - GxB_subassign, method 08, 09, 11
 %   test137  - GrB_eWiseMult with FIRST and SECOND operators
+%   test138  - test assign, with coarse-only tasks in IxJ slice
+%   test139  - merge sort, special cases
 
 %   testc1   - test complex operators
 %   testc2   - test complex A*B, A'*B, A*B', A'*B', A+B
