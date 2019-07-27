@@ -1,4 +1,4 @@
-function gbmake
+function gbmake (what)
 %GBMAKE compile MATLAB interface for SuiteSparse:GraphBLAS
 %
 % Usage:
@@ -21,6 +21,12 @@ function gbmake
 if verLessThan ('matlab', '9.4')
     error ('MATLAB 9.4 (R2018a) or later is required') ;
 end
+
+if (nargin < 1)
+    what = '' ;
+end
+
+make_all = (isequal (what, 'all')) ;
 
 % use -R2018a for the new interleaved complex API
 flags = '-O -R2018a' ;
@@ -56,7 +62,17 @@ end
 
 inc = '-Iprivate -I../Include -I../Source -I../Source/Template' ;
 
+hfiles = [ dir('*.h') ; dir('private/*.h') ] ;
+
 cfiles = dir ('private/*.c') ;
+
+% Find the last modification time of any hfile.
+% These are #include'd into source files.
+htime = 0 ;
+for k = 1:length (hfiles)
+    t = datenum (hfiles (k).date) ;
+    htime = max (htime, t) ;
+end
 
 % compile any source files that need compiling
 any_c_compiled = false ;
@@ -83,7 +99,7 @@ for k = 1:length (cfiles)
     end
 
     % compile the cfile if it is newer than its object file, or any hfile
-    if (1) % (make_all || tc > tobj || htime > tobj)
+    if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
         % fprintf ('.', cfile) ;
         fprintf ('%s\n', cfile) ;
@@ -115,7 +131,7 @@ for k = 1:length (mexfunctions)
     end
 
     % compile if it is newer than its object file, or if any cfile was compiled
-    if (1) % (make_all || tc > tobj || any_c_compiled)
+    if (make_all || tc > tobj || any_c_compiled)
         % compile the mexFunction
         mexcmd = sprintf ('mex -silent %s %s %s %s %s', ...
             flags, inc, mexfunction, objlist, libraries) ;

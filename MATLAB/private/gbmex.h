@@ -82,3 +82,36 @@ void gb_usage       // check usage and make sure GxB_init has been called
     const char *message     // error message if usage is not correct
 ) ;
 
+void gb_find_dot            // find 1st and 2nd dot ('.') in a string
+(
+    int32_t position [2],   // positions of one or two dots
+    const char *s           // null-terminated string to search
+) ;
+
+GrB_Type gb_string_to_type      // return the GrB_Type from a string
+(
+    const char *classname
+) ;
+
+GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
+(
+    const mxArray *mxstring,            // MATLAB string
+    const GrB_Type default_type         // default type if not in the string
+) ;
+
+GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
+(
+    const char *opstring,               // string defining the operator
+    const GrB_Type default_type         // default type if not in the string
+) ;
+
+void gb_mxarray_to_indices      // convert a list of indices
+(
+    GrB_Index **I_result,       // index array returned
+    const mxArray *I_matlab,    // MATLAB mxArray to get
+    GrB_Index *ni,              // length of I, or special
+    GrB_Index Icolon [3],       // for all but GB_LIST
+    bool *I_is_list,            // true if GB_LIST
+    bool *I_is_allocated        // true if index array was allocated
+) ;
+

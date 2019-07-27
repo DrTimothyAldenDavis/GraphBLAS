@@ -3421,6 +3421,9 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      // see the GxB_NTHREADS_MAX discussion above
 //      GxB_set (GxB_NTHREADS, nthreads_max) ;
 //      GxB_get (GxB_NTHREADS, int *nthreads_max) ;
+//
+//      GxB_set (GxB_CHUNK, double chunk) ;
+//      GxB_get (GxB_CHUNK, double *chunk) ;
 
 // To get global options that can be queried but not modified:
 //

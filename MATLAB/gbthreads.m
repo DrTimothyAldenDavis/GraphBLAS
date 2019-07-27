@@ -27,6 +27,8 @@ function nthreads = gbthreads (nthreads)
 %   ncores = maxNumCompThreads ;    % same as feature ('numcores')
 %   gbthreads (2*ncores) ;          % GraphBLAS will use <= 2*ncores threads
 %
+% TODO add chunk
+%
 % See also feature, maxNumCompThreads.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

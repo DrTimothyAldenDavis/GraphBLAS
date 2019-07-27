@@ -12,6 +12,15 @@ function gbnew (arg1, arg2, arg3)
 %
 % Creates a new GraphBLAS sparse matrix A of the specified type.
 %
+% In its C-interface, SuiteSparse:GraphBLAS stores its matrices in CSR format,
+% by row, since that format tends to be fastest for graph algorithms, but it
+% can also use the CSC format (by column).  MATLAB sparse matrices only in CSC
+% format, and for better compatibility with MATLAB sparse matrices, the default
+% format for the MATLAB interface for SuiteSparse:GraphBLAS is CSC.  This
+% has performance implications, and algorithms should be designed accordingly.
+%
+% TODO allow GraphBLAS matrices to be in CSR or CSC format.
+%
 % The usage A = gbnew (m, n, type) is analgous to X = sparse (m, n), which
 % creates an empty MATLAB sparse matrix X.  The type parameter is a string,
 % which defaults to 'double' if not present.
@@ -39,6 +48,8 @@ function gbnew (arg1, arg2, arg3)
 %   'complex'   64-bit double complex.  In MATLAB, this is not a MATLAB class
 %               name, but instead a property of a MATLAB sparse double matrix.
 %               In GraphBLAS, 'complex' is treated as a type.
+%
+% To free a GraphBLAS sparse matrix X, simply use 'clear X'.
 %
 % See also gbsparse, sparse, class.
 
