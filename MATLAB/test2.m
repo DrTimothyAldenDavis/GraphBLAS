@@ -79,14 +79,6 @@ for k1 = 1:length(opnames)
         end
         fprintf ('\nop: [%s]\n', op) ;
 
-        % usage: A = gbbuild (I, J, X, m, n, dup, type)
-        try
-            gbbuild ([ ], [ ], X, 1, 1, op) ;
-        catch me
-            me
-            pause
-        end
     end
-    pause
 
 end

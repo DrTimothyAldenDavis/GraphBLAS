@@ -47,7 +47,7 @@
 
 GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
 (
-    const char *opstring,               // string defining the operator
+    char *opstring,                     // string defining the operator
     const GrB_Type default_type         // default type if not in the string
 )
 {
