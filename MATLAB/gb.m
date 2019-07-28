@@ -1,14 +1,14 @@
-function gbnew (arg1, arg2, arg3)
+function A = gb (arg1, arg2, arg3)
 %GBNEW create a new GraphBLAS sparse matrix
 %
 % Usage:
 %
-%   A = gbnew ;              empty 1-by-1 GraphBLAS double matrix
-%   A = gbnew (X) ;          GraphBLAS copy of a MATLAB sparse X, same type
-%   A = gbnew (type) ;       empty 1-by-1 GraphBLAS matrix of the given type
-%   A = gbnew (X, type) ;    GraphBLAS typecasted copy of a MATLAB sparse X
-%   A = gbnew (m, n) ;       empty m-by-n GraphBLAS double matrix
-%   A = gbnew (m, n, type) ; empty m-by-n GraphBLAS matrix of the given type
+%   A = gb ;              empty 1-by-1 GraphBLAS double matrix
+%   A = gb (X) ;          GraphBLAS copy of a MATLAB sparse X, same type
+%   A = gb (type) ;       empty 1-by-1 GraphBLAS matrix of the given type
+%   A = gb (X, type) ;    GraphBLAS typecasted copy of a MATLAB sparse X
+%   A = gb (m, n) ;       empty m-by-n GraphBLAS double matrix
+%   A = gb (m, n, type) ; empty m-by-n GraphBLAS matrix of the given type
 %
 % Creates a new GraphBLAS sparse matrix A of the specified type.
 %
@@ -21,11 +21,11 @@ function gbnew (arg1, arg2, arg3)
 %
 % TODO allow GraphBLAS matrices to be in CSR or CSC format.
 %
-% The usage A = gbnew (m, n, type) is analgous to X = sparse (m, n), which
+% The usage A = gb (m, n, type) is analgous to X = sparse (m, n), which
 % creates an empty MATLAB sparse matrix X.  The type parameter is a string,
 % which defaults to 'double' if not present.
 %
-% For the usage A = gbnew (X, type), X is either a MATLAB sparse matrix or a
+% For the usage A = gb (X, type), X is either a MATLAB sparse matrix or a
 % MATLAB struct that represents a GraphBLAS matrix.  A is created as a
 % GraphBLAS struct that contains a copy of X, typecasted to the given type if
 % the type string does not match the type of X.  If the type string is not
@@ -56,5 +56,5 @@ function gbnew (arg1, arg2, arg3)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-error ('gbnew mexFunction not found; use gbmake to compile GraphBLAS') ;
+error ('gb mexFunction not found; use gbmake to compile GraphBLAS') ;
 

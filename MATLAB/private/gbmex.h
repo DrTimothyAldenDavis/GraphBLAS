@@ -112,6 +112,7 @@ void gb_mxarray_to_indices      // convert a list of indices
     GrB_Index *ni,              // length of I, or special
     GrB_Index Icolon [3],       // for all but GB_LIST
     bool *I_is_list,            // true if GB_LIST
-    bool *I_is_allocated        // true if index array was allocated
+    bool *I_is_allocated,       // true if index array was allocated
+    int64_t *I_max              // largest entry 
 ) ;
 

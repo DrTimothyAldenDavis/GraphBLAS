@@ -35,12 +35,13 @@ void mexFunction
     GrB_Index nj, Jcolon [3], *J = NULL, J_is_list, J_is_allocated ;
 
     // TODO: if I,J allocated, also find max index
+    int64_t I_max, J_max ;
 
     gb_mxarray_to_indices (&I, pargin [0], &ni, Icolon, &I_is_list,
-        &I_is_allocated) ;
+        &I_is_allocated, &I_max) ;
 
     gb_mxarray_to_indices (&J, pargin [1], &nj, Jcolon, &J_is_list,
-        &J_is_allocated) ;
+        &J_is_allocated, &J_max) ;
 
     CHECK_ERROR (!I_is_list, "I must be a list of indices") ;
     CHECK_ERROR (!J_is_list, "J must be a list of indices") ;

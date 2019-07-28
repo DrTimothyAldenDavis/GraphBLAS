@@ -30,6 +30,7 @@ void gb_mxarray_to_indices      // convert a list of indices
     mxArray *X ;
     GrB_Index *I ;
 
+    (*I_max) = -1 ;
     (*I_result) = NULL ;
     (*I_is_allocated) = false ;
 
