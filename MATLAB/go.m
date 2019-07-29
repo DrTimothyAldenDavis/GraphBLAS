@@ -1,3 +1,0 @@
-clear all
-gbmake
-gbtest

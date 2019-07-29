@@ -10931,17 +10931,17 @@ case).  This gives 9 different combinations:
 User    & GraphBLAS & \verb'Demo/Output' file & comments \\
 applic. &           & & \\
 \hline
-none    & none      & \verb'user_none_gb_none.out'      & OK \\
-none    & OpenMP    & \verb'user_none_gb_openmp.out'    & OK \\
-none    & pthread   & \verb'user_none_gb_pthread.out'   & OK \\
+none    & none      & \verb'user_none_grb_none.out'      & OK \\
+none    & OpenMP    & \verb'user_none_grb_openmp.out'    & OK \\
+none    & pthread   & \verb'user_none_grb_pthread.out'   & OK \\
 \hline
-OpenMP  & none      & \verb'user_openmp_gb_none.out'    & fail \\
-OpenMP  & OpenMP    & \verb'user_openmp_gb_openmp.out'  & OK, random \\
-OpenMP  & pthread   & \verb'user_openmp_gb_pthread.out' & OK, random \\
+OpenMP  & none      & \verb'user_openmp_grb_none.out'    & fail \\
+OpenMP  & OpenMP    & \verb'user_openmp_grb_openmp.out'  & OK, random \\
+OpenMP  & pthread   & \verb'user_openmp_grb_pthread.out' & OK, random \\
 \hline
-pthread & none      & \verb'user_pthread_gb_none.out'   & fail \\
-pthread & OpenMP    & \verb'user_pthread_gb_openmp.out' & OK, random \\
-pthread & pthread   & \verb'user_pthread_gb_pthread.out'& OK, random \\
+pthread & none      & \verb'user_pthread_grb_none.out'   & fail \\
+pthread & OpenMP    & \verb'user_pthread_grb_openmp.out' & OK, random \\
+pthread & pthread   & \verb'user_pthread_grb_pthread.out'& OK, random \\
 \hline
 \end{tabular}}
 \vspace{0.1in}

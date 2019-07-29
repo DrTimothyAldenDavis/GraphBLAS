@@ -31,12 +31,12 @@ static GrB_Info GB_dc
     bool ok = true ;
     GrB_Info info = GrB_SUCCESS ;
 
-    GBPR0 ("D.%s = ", field) ;
+    GBPR0 ("d.%s = ", field) ;
     switch (v)
     {
         case GxB_DEFAULT       : GBPR0 ("default   ") ; break ;
-        case GrB_SCMP          : GBPR0 ("scmp      ") ; break ;
-        case GrB_TRAN          : GBPR0 ("tran      ") ; break ;
+        case GrB_SCMP          : GBPR0 ("complement") ; break ;
+        case GrB_TRAN          : GBPR0 ("transpose ") ; break ;
         case GrB_REPLACE       : GBPR0 ("replace   ") ; break ;
         case GxB_AxB_GUSTAVSON : GBPR0 ("Gustavson ") ; break ;
         case GxB_AxB_HEAP      : GBPR0 ("heap      ") ; break ;
@@ -117,11 +117,11 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     GBPR0 ("\n") ;
 
     GrB_Info info [5] ;
-    info [0] = GB_dc (true,  "output    ", D->out,  GrB_REPLACE, pr,f,Context) ;
-    info [1] = GB_dc (true,  "mask      ", D->mask, GrB_SCMP,    pr,f,Context) ;
-    info [2] = GB_dc (true,  "input0    ", D->in0,  GrB_TRAN,    pr,f,Context) ;
-    info [3] = GB_dc (true,  "input1    ", D->in1,  GrB_TRAN,    pr,f,Context) ;
-    info [4] = GB_dc (false, "AxB_method", D->axb,  GxB_DEFAULT, pr,f,Context) ;
+    info [0] = GB_dc (true,  "out     ", D->out,  GrB_REPLACE, pr,f,Context) ;
+    info [1] = GB_dc (true,  "mask    ", D->mask, GrB_SCMP,    pr,f,Context) ;
+    info [2] = GB_dc (true,  "in0     ", D->in0,  GrB_TRAN,    pr,f,Context) ;
+    info [3] = GB_dc (true,  "in1     ", D->in1,  GrB_TRAN,    pr,f,Context) ;
+    info [4] = GB_dc (false, "axb     ", D->axb,  GxB_DEFAULT, pr,f,Context) ;
 
     for (int i = 0 ; i < 5 ; i++)
     {
@@ -138,7 +138,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 
     if (pr > 0)
     {
-        GBPR ("D.nthreads = ") ;
+        GBPR ("d.nthreads = ") ;
         if (nthreads_max <= GxB_DEFAULT)
         { 
             GBPR ("default\n") ;
@@ -147,7 +147,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
         { 
             GBPR ("%d\n", nthreads_max) ;
         }
-        GBPR ("D.chunk = ") ;
+        GBPR ("d.chunk    = ") ;
         if (chunk <= GxB_DEFAULT)
         { 
             GBPR ("default\n") ;

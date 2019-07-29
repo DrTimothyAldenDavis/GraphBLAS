@@ -22,7 +22,7 @@ for n = [10 100 200 300 1000]
 
         C1 = A.matrix * B.matrix ;
         C2 = GB_mex_mxm (S, [ ], [ ], semiring, A, B, d) ;
-        [t method] = gbresults ;
+        [t method] = grbresults ;
         assert (isequal (method, 'heap')) ;
         assert (isequal_roundoff (C1, C2.matrix)) ;
     end

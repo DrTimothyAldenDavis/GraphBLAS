@@ -12,7 +12,7 @@ try
     spok_install ;
     cd ../../Tcov
     debug_on ;
-    gbcover ;
+    grbcover ;
     testall ;
 catch me
     debug_off ;
