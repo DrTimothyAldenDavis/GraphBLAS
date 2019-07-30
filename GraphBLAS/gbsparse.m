@@ -9,7 +9,7 @@ function A = gbsparse (X)
 % (if supported), then A has the same type.  Otherwise, X is typecasted to
 % double.
 %
-% See also gb.
+% See also gbnew.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

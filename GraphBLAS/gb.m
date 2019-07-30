@@ -1,62 +1,384 @@
-function A = gb (arg1, arg2, arg3)
-%GBNEW create a new SuiteSparse:GraphBLAS sparse matrix
+classdef gb
+%GB a GraphBLAS sparse matrix object
 %
-% Usage:
+% TODO discuss here
 %
-%   A = gb ;              empty 1-by-1 GraphBLAS double matrix
-%   A = gb (X) ;          GraphBLAS copy of a MATLAB sparse X, same type
-%   A = gb (type) ;       empty 1-by-1 GraphBLAS matrix of the given type
-%   A = gb (X, type) ;    GraphBLAS typecasted copy of a MATLAB sparse X
-%   A = gb (m, n) ;       empty m-by-n GraphBLAS double matrix
-%   A = gb (m, n, type) ; empty m-by-n GraphBLAS matrix of the given type
+% See also 'help gb.method', for each method listed below.  For example
+% 'help gb.gb' displays help on how GraphBLAS objects are created with
+% G = gb (args).  'help gb.sparse' describes A = sparse (G) for a
+% GraphBLAS matrix G.
 %
-% Creates a new GraphBLAS sparse matrix A of the specified type.
+% Methods:
 %
-% In its C-interface, SuiteSparse:GraphBLAS stores its matrices in CSR format,
-% by row, since that format tends to be fastest for graph algorithms, but it
-% can also use the CSC format (by column).  MATLAB sparse matrices are only in
-% CSC format, and for better compatibility with MATLAB sparse matrices, the
-% default format for the MATLAB interface for SuiteSparse:GraphBLAS is CSC.
-% This has performance implications, and algorithms should be designed
-% accordingly.
+%   gb          construct a GraphBLAS matrix from a MATLAB sparse matrix
+%   sparse      convert a GraphBLAS matrix to a MATLAB sparse matrix
+%   disp        dislpay the contents of a GraphBLAS matrix
+%   build       construct a GraphBLAS matrix from a list of entries
+%   clear       clear internal GraphBLAS workspace and settings
+%   descriptor  list the contents of a GraphBLAS descriptor
+%   threads     get/set the number of threads to use in GraphBLAS
+%   ...
 %
-% TODO allow GraphBLAS matrices to be in CSR or CSC format.
-%
-% The usage A = gb (m, n, type) is analgous to X = sparse (m, n), which
-% creates an empty MATLAB sparse matrix X.  The type parameter is a string,
-% which defaults to 'double' if not present.
-%
-% For the usage A = gb (X, type), X is either a MATLAB sparse matrix or a
-% MATLAB struct that represents a GraphBLAS matrix.  A is created as a
-% GraphBLAS struct that contains a copy of X, typecasted to the given type if
-% the type string does not match the type of X.  If the type string is not
-% present it defaults to 'double'.
-% 
-% Most of the valid type strings correspond to MATLAB class of the same name
-% (see 'help class'), with the addition of the 'complex' type:
-%
-%   'double'    64-bit floating-point (real, not complex)
-%   'single'    32-bit floating-point (real, not complex)
-%   'logical'   8-bit boolean
-%   'int8'      8-bit signed integer
-%   'int16'     16-bit signed integer
-%   'int32'     32-bit signed integer
-%   'int64'     64-bit signed integer
-%   'uint8'     8-bit unsigned integer
-%   'uint16'    16-bit unsigned integer
-%   'uint32'    32-bit unsigned integer
-%   'uint64'    64-bit unsigned integer
-%   'complex'   64-bit double complex.  In MATLAB, this is not a MATLAB class
-%               name, but instead a property of a MATLAB sparse double matrix.
-%               In GraphBLAS, 'complex' is treated as a type.
-%               TODO: complex not yet implemented
-%
-% To free a GraphBLAS sparse matrix X, simply use 'clear X'.
-%
-% See also gbsparse, sparse, class, clear.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+properties (SetAccess = private, GetAccess = private, Hidden = true)
+    % the object properties are a single struct, containing the opaque content
+    % of a GraphBLAS GrB_Matrix
+    opaque = [ ] ;
+end
 
-error ('gb mexFunction not found; use gbmake to compile GraphBLAS') ;
+%-------------------------------------------------------------------------------
+methods
+%-------------------------------------------------------------------------------
+
+    % TODO:
+    %   plus        a+b
+    %   minus       a-b
+    %   uminus      -a
+    %   uplus       +a
+    %   times       a.*b
+    %   mtimes      a*b
+    %   rdivide     a./b
+    %   ldivide     a.\b
+    %   mrdivide    a/b
+    %   mldivide    a\b
+    %   power       a.^b
+    %   mpower      a^b
+    %   lt          a<b
+    %   gt          a>b
+    %   le          a<=b
+    %   ge          a>=b
+    %   ne          a~=b
+    %   eq          a==b
+    %   and         a&b
+    %   or          a|b
+    %   not         ~a
+    %   ctranspose  a'
+    %   tranpose    a.'
+    %   horzcat     [a b]
+    %   vertcat     [a ; b]
+    %   subsref     a(i,j)
+    %   subsasgn    a(i,j)=b
+    %   subsindex   b(a)
+    %   end
+    %   permute
+    %   reshape
+
+    % do not do these:
+    %   colon       a:d:b, a:b
+    %   char
+    %   loadobj
+    %   saveobj
+
+    %--------------------------------------------------------------------------
+    % gb: construct a GraphBLAS sparse matrix object
+    %--------------------------------------------------------------------------
+
+    function G = gb (varargin)
+    %GB construct a GraphBLAS sparse matrix object.
+    % Usage: ...
+    % See 'help gbnew' for details. (TODO add the details here...)
+    if (nargin == 0)
+        G.opaque = gbnew ;
+    else
+        if (isa (varargin {1}, 'gb'))
+            varargin {1} = varargin {1}.opaque ;
+        end
+        G.opaque = gbnew (varargin {:}) ;
+    end
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.sparse: convert a GraphBLAS sparse matrix into a MATLAB sparse matrix
+    %--------------------------------------------------------------------------
+
+    function S = sparse (G)
+    %SPARSE convert a GraphBLAS matrix into a MATLAB sparse matrix
+    % See 'help gbsparse' for more details. TODO
+    S = gbsparse (G.opaque) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.double, etc: typecast a GraphBLAS sparse matrix to double, etc
+    %--------------------------------------------------------------------------
+
+    function A = double (G)
+    %DOUBLE typecast a GraphBLAS sparse matrix to double
+    A = gb (G, 'double') ;
+    end
+
+    function A = single (G)
+    %SINGLE typecast a GraphBLAS sparse matrix to single
+    A = gb (G, 'single') ;
+    end
+
+    function A = complex (G)
+    %COMPLEX typecast a GraphBLAS sparse matrix to complex
+    error ('complex type not yet supported') ;
+    end
+
+    function A = logical (G)
+    %LOGICAL typecast a GraphBLAS sparse matrix to logical
+    A = gb (G, 'logical') ;
+    end
+
+    function A = int8 (G)
+    %INT8 typecast a GraphBLAS sparse matrix to int8
+    A = gb (G, 'int8') ;
+    end
+
+    function A = int16 (G)
+    %INT16 typecast a GraphBLAS sparse matrix to int16
+    A = gb (G, 'int16') ;
+    end
+
+    function A = int32 (G)
+    %INT32 typecast a GraphBLAS sparse matrix to int32
+    A = gb (G, 'int32') ;
+    end
+
+    function A = int64 (G)
+    %INT64 typecast a GraphBLAS sparse matrix to int64
+    A = gb (G, 'int64') ;
+    end
+
+    function A = uint8 (G)
+    %UINT8 typecast a GraphBLAS sparse matrix to uint8
+    A = gb (G, 'uint8') ;
+    end
+
+    function A = uint16 (G)
+    %UINT16 typecast a GraphBLAS sparse matrix to uint16
+    A = gb (G, 'uint16') ;
+    end
+
+    function A = uint32 (G)
+    %UINT32 typecast a GraphBLAS sparse matrix to uint32
+    A = gb (G, 'uint32') ;
+    end
+
+    function A = uint64 (G)
+    %UINT64 typecast a GraphBLAS sparse matrix to uint64
+    A = gb (G, 'uint64') ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.type: get the type of GraphBLAS sparse matrix
+    %--------------------------------------------------------------------------
+
+    function s = type (G)
+    %TYPE get the type of a GraphBLAS matrix
+    s = gbtype (G.opaque) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.disp: display the contents of a GraphBLAS matrix
+    %--------------------------------------------------------------------------
+
+    function disp (G, level)
+    %DISP display the contents of a GraphBLAS object.
+    % Usage: G.disp (G, level)
+    % See 'help gbdisp' for more details. (TODO more here)
+    if (nargin < 2)
+        level = 3 ;
+    end
+    if (level > 0)
+        name = inputname (1) ;
+        if (~isempty (name))
+            fprintf ('\n%s =\n', name) ;
+        end
+    end
+    gbdisp (G.opaque, level) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.display: display the contents of a GraphBLAS matrix.
+    %--------------------------------------------------------------------------
+
+    function display (G)
+    %DISPLAY display the contents of a GraphBLAS object.
+    name = inputname (1) ;
+    if (~isempty (name))
+        fprintf ('\n%s =\n', name) ;
+    end
+    gbdisp (G.opaque, 3) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.numel: number of entries in a GraphBLAS matrix
+    %--------------------------------------------------------------------------
+
+    function nvals = numel (G)
+    nvals = gbnvals (G.opaque) ;
+    end
+
+    function nvals2 = nvals (G)
+    nvals2 = gbnvals (G.opaque) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.nnz: number of entries in a GraphBLAS matrix
+    %--------------------------------------------------------------------------
+
+    function nvals = nnz (G)
+    nvals = gbnvals (G.opaque) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.size: number of rows and columns in a GraphBLAS matrix
+    %--------------------------------------------------------------------------
+
+    function [arg1, n] = size (G)
+    if (nargout <= 1)
+        arg1 = gbsize (G.opaque) ;
+    else
+        [arg1, n] = gbsize (G.opaque) ;
+    end
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.is*: determine properties of a GraphBLAS matrix
+    %--------------------------------------------------------------------------
+
+    function s = ismatrix (G)
+    s = true ;
+    end
+
+    function s = isvector (G)
+    [m, n] = gbsize (G.opaque) ;
+    s = (m == 1) || (n == 1) ;
+    end
+
+    function s = isscalar (G)
+    [m, n] = gbsize (G.opaque) ;
+    s = (m == 1) && (n == 1) ;
+    end
+
+end
+
+%-------------------------------------------------------------------------------
+methods (Static)
+%-------------------------------------------------------------------------------
+
+    %--------------------------------------------------------------------------
+    % gb.empty: construct an empty GraphBLAS matrix
+    %--------------------------------------------------------------------------
+
+    function G = empty (arg1, arg2)
+    m = 0 ;
+    n = 0 ;
+    if (nargin == 1)
+        if (length (arg1) == 1)
+            m = arg1 (1) ;
+        elseif (length (arg1) == 2)
+            m = arg1 (1) ;
+            n = arg1 (2) ;
+        else
+            error ('invalid dimensions') ;
+        end
+    elseif (nargin == 2)
+        m = arg1 ;
+        n = arg2 ;
+    end
+    if (~ ((m == 0) || (n == 0)))
+        error ('At least one dimension must be zero') ;
+    end
+    G = gb (m, n) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.build: build a GraphBLAS sparse matrix from a list of entries
+    %--------------------------------------------------------------------------
+
+    function G = build (I, J, X, varargin)
+    %BUILD build a GraphBLAS sparse matrix from a list of entries
+    % Usage: G = build (I, J, X, m, n, dup, type)
+    % m and n default to the largest ... TODO
+    G = gb (gbbuild (I, J, X, varargin {:})) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.clear: clear all internal GraphBLAS workspace and settings
+    %--------------------------------------------------------------------------
+
+    function clear
+    %CLEAR clear all internal GraphBLAS workspace
+    gbclear ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.descriptor: list the contents of a GraphBLAS descriptor
+    %--------------------------------------------------------------------------
+
+    function descriptor (d)
+    %DESCRIPTOR list the contents of a GraphBLAS descriptor
+    if (nargin == 0)
+        gbdescriptor ;
+    else
+        gbdescriptor (d) ;
+    end
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.binop: list the details of a GraphBLAS binary operator
+    %--------------------------------------------------------------------------
+
+    function binop (s, type)
+    if (nargin < 2)
+        gbbinop (s) ;
+    else
+        gbbinop (s, type) ;
+    end
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.semiring: list the details of a GraphBLAS semiring
+    %--------------------------------------------------------------------------
+
+    function semiring (s, type)
+    if (nargin < 2)
+        gbsemiring (s) ;
+    else
+        gbsemiring (s, type) ;
+    end
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.threads: get/set the # of threads to use in GraphBLAS
+    %--------------------------------------------------------------------------
+
+    function nthreads = threads (varargin)
+    %THREADS set/get the # of threads used in GraphBLAS
+    nthreads = gbthreads (varargin {:}) ;
+    end
+
+    %--------------------------------------------------------------------------
+    % gb.mxm: sparse matrix-matrix multiply
+    %--------------------------------------------------------------------------
+
+    % TODO put gbmxm in ./private?
+
+    function G = mxm (varargin)
+    %MXM: sparse matrix-matrix multiply in GraphBLAS
+    % Usage:
+    %   Cout = gbmxm (semiring, A, B)
+    %   Cout = gbmxm (semiring, A, B, desc)
+    %   Cout = gbmxm (Cin, accum, semiring, A, B)
+    %   Cout = gbmxm (Cin, accum, semiring, A, B, desc)
+    %   Cout = gbmxm (Cin, Mask, semiring, A, B)
+    %   Cout = gbmxm (Cin, Mask, semiring, A, B, desc)
+    %   Cout = gbmxm (Cin, Mask, accum, semiring, A, B)
+    %   Cout = gbmxm (Cin, Mask, accum, semiring, A, B, desc)
+    %
+    % See 'help gbmxm' for more details.
+    for k = 1:nargin
+        if (isa (varargin {k}, 'gb'))
+            varargin {k} = varargin {k}.opaque ;
+        end
+    end
+    % TODO allow the descriptor to specify that G = gbsparse (...) instead?
+    G = gb (gbmxm (varargin {:})) ;
+    end
+
+end
+end
 

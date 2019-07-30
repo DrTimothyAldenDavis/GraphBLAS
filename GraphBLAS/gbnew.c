@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb: create a GraphBLAS matrix
+// gbnew: create a GraphBLAS matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -9,12 +9,12 @@
 
 // Usage:
 
-// A = gb ;              empty 1-by-1 GraphBLAS double matrix
-// A = gb (X) ;          GraphBLAS struct of a MATLAB sparse X, same type
-// A = gb (type) ;       empty 1-by-1 GraphBLAS matrix of the given type
-// A = gb (X, type) ;    GraphBLAS typecasted copy of a MATLAB sparse X
-// A = gb (m, n) ;       empty m-by-n GraphBLAS double matrix
-// A = gb (m, n, type) ; empty m-by-n GraphBLAS matrix of the given type
+// A = gbnew ;              empty 1-by-1 GraphBLAS double matrix
+// A = gbnew (X) ;          GraphBLAS struct of a MATLAB sparse X, same type
+// A = gbnew (type) ;       empty 1-by-1 GraphBLAS matrix of the given type
+// A = gbnew (X, type) ;    GraphBLAS typecasted copy of a MATLAB sparse X
+// A = gbnew (m, n) ;       empty m-by-n GraphBLAS double matrix
+// A = gbnew (m, n, type) ; empty m-by-n GraphBLAS matrix of the given type
 
 // X may be a MATLAB sparse matrix, or a MATLAB struct containing a GraphBLAS
 // matrix.  A is returned as a MATLAB struct containing a GraphBLAS matrix.
@@ -37,7 +37,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 3 && nargout <= 1,
-        "usage: A = gb (m,n,type) or A = gb (X,type)") ;
+        "usage: A = gbnew (m,n,type) or A = gbnew (X,type)") ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS matrix
@@ -49,7 +49,7 @@ void mexFunction
     {
 
         //----------------------------------------------------------------------
-        // A = gb ; empty 1-by-1 GraphBLAS double matrix
+        // A = gbnew ; empty 1-by-1 GraphBLAS double matrix
         //----------------------------------------------------------------------
 
         OK (GrB_Matrix_new (&A, GrB_FP64, 1, 1)) ;
@@ -62,7 +62,7 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // A = gb (type) ; empty 1-by-1 GraphBLAS matrix of given type
+            // A = gbnew (type) ; empty 1-by-1 GraphBLAS matrix of given type
             //------------------------------------------------------------------
 
             OK (GrB_Matrix_new (&A, gb_mxstring_to_type (pargin [0]), 1, 1)) ;
@@ -72,7 +72,7 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // A = gb (X) ; GraphBLAS copy of a MATLAB sparse X, same type
+            // A = gbnew (X) ; GraphBLAS copy of a MATLAB sparse X, same type
             //------------------------------------------------------------------
 
             A = gb_get_deep (pargin [0], NULL) ;
@@ -87,7 +87,7 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // A = gb (X, type) ; GraphBLAS typecasted copy of MATLAB X
+            // A = gbnew (X, type) ; GraphBLAS typecasted copy of MATLAB X
             //------------------------------------------------------------------
 
             A = gb_get_deep (pargin [0], gb_mxstring_to_type (pargin [1])) ;
@@ -97,7 +97,7 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // A = gb (m, n) ; empty m-by-n GraphBLAS double matrix
+            // A = gbnew (m, n) ; empty m-by-n GraphBLAS double matrix
             //------------------------------------------------------------------
 
             OK (GrB_Matrix_new (&A, GrB_FP64,
@@ -108,7 +108,7 @@ void mexFunction
         else
         {
 
-            USAGE ("usage: A = gb (m,n) or A = gb (X,type)") ;
+            USAGE ("usage: A = gbnew (m,n) or A = gbnew (X,type)") ;
         }
 
     }
@@ -116,13 +116,13 @@ void mexFunction
     {
 
         //----------------------------------------------------------------------
-        // A = gb (m, n, type) ; empty m-by-n GraphBLAS matrix of given type
+        // A = gbnew (m, n, type) ; empty m-by-n GraphBLAS matrix of given type
         //----------------------------------------------------------------------
 
         if (!IS_SCALAR (pargin [0]) || !IS_SCALAR (pargin [1]) || 
             !mxIsChar (pargin [2]))
         {
-            USAGE ("usage: A = gb (m,n,type) or A = gb (X,type)") ;
+            USAGE ("usage: A = gbnew (m,n,type) or A = gbnew (X,type)") ;
         }
 
         OK (GrB_Matrix_new (&A, gb_mxstring_to_type (pargin [2]),

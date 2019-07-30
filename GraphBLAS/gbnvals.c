@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// gbdescriptor: create a GraphBLAS descriptor and print it (for illustration)
+// gbnvals: number of entries in a GraphBLAS matrix struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// The input may be either a GraphBLAS matrix struct or a standard MATLAB
+// sparse matrix.
 
 #include "gb_matlab.h"
 
@@ -22,21 +25,16 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout == 0, "usage: gbdescriptor (d)") ;
+    gb_usage (nargin == 1 && nargout <= 1, "usage: nvals = gbnvals (X)") ;
 
     //--------------------------------------------------------------------------
-    // construct the GraphBLAS descriptor and print it
+    // get the # of entries in the matrix
     //--------------------------------------------------------------------------
 
-    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0]) ;
-
-    if (d == NULL)
-    {
-        printf ("\nDefault GraphBLAS descriptor:\n") ;
-        OK (GrB_Descriptor_new (&d)) ;
-    }
-
-    GxB_Descriptor_fprint (d, "", GxB_COMPLETE, stdout) ;
-    GrB_free (&d) ;
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    GrB_Index nvals ;
+    OK (GrB_Matrix_nvals (&nvals, X)) ;
+    pargout [0] = mxCreateDoubleScalar ((double) nvals) ;
+    gb_free_shallow (&X) ;
 }
 

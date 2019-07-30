@@ -23,7 +23,6 @@ mxArray *gb_matrix_to_mxarray   // return MATLAB sparse matrix of a GrB_Matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    GB_HERE ;
     CHECK_ERROR (X_handle == NULL || (*X_handle) == NULL, "internal error") ;
 
     //--------------------------------------------------------------------------
@@ -31,17 +30,8 @@ mxArray *gb_matrix_to_mxarray   // return MATLAB sparse matrix of a GrB_Matrix
     //--------------------------------------------------------------------------
 
     GrB_Matrix A ;              // A will always be deep
-    GB_HERE ;
-
     GrB_Type type ;
-
-    OK (GxB_print (*X_handle, 3)) ;
-
-    GB_HERE ;
-    
     OK (GxB_Matrix_type (&type, *X_handle)) ;
-
-    GB_HERE ;
 
     if (type == GrB_BOOL || type == GrB_FP64
         #ifdef GB_COMPLEX_TYPE
@@ -59,23 +49,16 @@ mxArray *gb_matrix_to_mxarray   // return MATLAB sparse matrix of a GrB_Matrix
         if (X_is_deep)
         {
             // X is already deep; just transplant it into A
-    GB_HERE ;
             A = (*X_handle) ;
-    GB_HERE ;
             (*X_handle) = NULL ;
-    GB_HERE ;
         }
         else
         {
             // X is shallow so make a deep copy
-    GB_HERE ;
             OK (GrB_Matrix_dup (&A, *X_handle)) ;
-    GB_HERE ;
             gb_free_shallow (X_handle) ;
-    GB_HERE ;
         }
 
-    GB_HERE ;
     }
     else
     {
@@ -84,29 +67,21 @@ mxArray *gb_matrix_to_mxarray   // return MATLAB sparse matrix of a GrB_Matrix
         // typecast X to double
         //----------------------------------------------------------------------
 
-    GB_HERE ;
         // MATLAB supports only logical, double, and double complex sparse
         // matrices.  These correspond to GrB_BOOL, GrB_FP64, and
         // gb_complex_type, respectively.  X is typecasted to double.
 
         A = gb_typecast (GrB_FP64, *X_handle) ;
-    GB_HERE ;
 
         if (X_is_deep)
         {
-    GB_HERE ;
             OK (GrB_free (X_handle)) ;
-    GB_HERE ;
         }
         else
         {
-    GB_HERE ;
             gb_free_shallow (X_handle) ;
-    GB_HERE ;
         }
     }
-
-    GB_HERE ;
 
     //--------------------------------------------------------------------------
     // export the content of A
@@ -217,7 +192,6 @@ mxArray *gb_matrix_to_mxarray   // return MATLAB sparse matrix of a GrB_Matrix
     // return the new MATLAB sparse matrix
     //--------------------------------------------------------------------------
 
-    GB_HERE ;
     return (S) ;
 }
 

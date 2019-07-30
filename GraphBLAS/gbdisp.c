@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbdescriptor: create a GraphBLAS descriptor and print it (for illustration)
+// gbprint: print a GraphBLAS matrix struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -22,21 +22,21 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout == 0, "usage: gbdescriptor (d)") ;
+    gb_usage (nargin <= 2 && nargout == 0, "usage: gbprint (X,level)") ;
 
-    //--------------------------------------------------------------------------
-    // construct the GraphBLAS descriptor and print it
-    //--------------------------------------------------------------------------
-
-    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0]) ;
-
-    if (d == NULL)
+    int level = 3 ;
+    if (nargin > 1)
     {
-        printf ("\nDefault GraphBLAS descriptor:\n") ;
-        OK (GrB_Descriptor_new (&d)) ;
+        CHECK_ERROR (!IS_SCALAR (pargin [1]), "level must be a scalar") ;
+        level = (int) mxGetScalar (pargin [1]) ;
     }
 
-    GxB_Descriptor_fprint (d, "", GxB_COMPLETE, stdout) ;
-    GrB_free (&d) ;
+    //--------------------------------------------------------------------------
+    // print the GraphBLAS matrix
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    GxB_Matrix_fprint (X, "", level, stdout) ;
+    gb_free_shallow (&X) ;
 }
 

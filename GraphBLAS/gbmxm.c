@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// TODO add desc.format = 'csr', 'csc', 'hcsr', 'hcsc', 'matlab', ...
+// TODO add desc.format = 'csr', 'csc', 'hcsr', 'hcsc', 'sparse', ...
 
 // gbmxm is an interface to GrB_mxm.
 
@@ -209,7 +209,6 @@ void mexFunction
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    // GxB_print (C, 3) ;
     pargout [0] = gb_matrix_to_mxstruct (&C) ;
-
 }
+

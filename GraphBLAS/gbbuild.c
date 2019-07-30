@@ -9,6 +9,17 @@
 
 // Usage:
 
+// A = gbbuild (I, J, X)
+// A = gbbuild (I, J, X, m)
+// A = gbbuild (I, J, X, m, n)
+// A = gbbuild (I, J, X, m, n, dup,
+// A = gbbuild (I, J, X, m, n, dup, type) ;
+
+// m and n default to the largest index in I and J, respectively.
+// dup defaults to 'plus.xtype' where xtype is the type of X.
+// If dup is given by without a type,  type of dup defaults to the type of X.
+// type is the type of A, which defaults to the type of X.
+
 #include "gb_matlab.h"
 
 void mexFunction
@@ -129,7 +140,6 @@ void mexFunction
 
     GrB_Matrix A ;
     OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
-    // GxB_print (A, 3) ;
 
     if (xtype == GrB_BOOL)
     {
@@ -143,19 +153,19 @@ void mexFunction
         if (dup == NULL) dup = GrB_PLUS_INT8 ;
         OK (GrB_Matrix_build_INT8 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_INT16)
+    else if (xtype == GrB_INT16)
     {
         int16_t *X = mxGetInt16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT16 ;
         OK (GrB_Matrix_build_INT16 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_INT32)
+    else if (xtype == GrB_INT32)
     {
         int32_t *X = mxGetInt32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT32 ;
         OK (GrB_Matrix_build_INT32 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_INT64)
+    else if (xtype == GrB_INT64)
     {
         int64_t *X = mxGetInt64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT64 ;
@@ -167,38 +177,38 @@ void mexFunction
         if (dup == NULL) dup = GrB_PLUS_UINT8 ;
         OK (GrB_Matrix_build_UINT8 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_UINT16)
+    else if (xtype == GrB_UINT16)
     {
         uint16_t *X = mxGetUint16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT16 ;
         OK (GrB_Matrix_build_UINT16 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_UINT32)
+    else if (xtype == GrB_UINT32)
     {
         uint32_t *X = mxGetUint32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT32 ;
         OK (GrB_Matrix_build_UINT32 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_UINT64)
+    else if (xtype == GrB_UINT64)
     {
         uint64_t *X = mxGetUint64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT64 ;
         OK (GrB_Matrix_build_UINT64 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_FP32)
+    else if (xtype == GrB_FP32)
     {
         float *X = mxGetSingles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP32 ;
         OK (GrB_Matrix_build_FP32 (A, I, J, X, nvals, dup)) ;
     }
-    else if (type == GrB_FP64)
+    else if (xtype == GrB_FP64)
     {
         double *X = mxGetDoubles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP64 ;
         OK (GrB_Matrix_build_FP64 (A, I, J, X, nvals, dup)) ;
     }
     #ifdef GB_COMPLEX_TYPE
-    else if (type == gb_complex_type)
+    else if (xtype == gb_complex_type)
     {
         double *X = mxGetComplexDoubles (pargin [2]) ;
         if (dup == NULL) dup = ... ;
@@ -214,7 +224,6 @@ void mexFunction
     // export the output matrix A back to MATLAB
     //--------------------------------------------------------------------------
 
-    // GxB_print (A, 3) ;
     pargout [0] = gb_matrix_to_mxstruct (&A) ;
-
 }
+

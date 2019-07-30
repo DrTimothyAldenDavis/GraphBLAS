@@ -10,7 +10,10 @@ function gbsemiring (semiring, type)
 % 'add.mult.type', where 'add' and 'mult' are binary operators.  The second
 % usage allows the type to be omitted from the first argument, as just
 % 'add.mult'.  This is valid for all GraphBLAS operations, since the type
-% defaults to the type of the input matrices.  However, the 
+% defaults to the type of the input matrices.  However, this function does
+% not have a default type and thus one must be provided, either in the
+% semiring as gbsemiring ('+.*.double'), or in the second argument,
+% gbsemiring ('+.*', 'double').
 %
 % The add operator must be a valid monoid, typically the operators plus, times,
 % min, max, or, and, ne, xor.  The binary operator z=f(x,y) of a monoid must be
@@ -27,16 +30,16 @@ function gbsemiring (semiring, type)
 % Example:
 %
 %   % valid semirings
-%   gbsemiring +.*.double
-%   gbsemiring min.1st.int32
+%   gbsemiring ('+.*.double') ;
+%   gbsemiring ('min.1st.int32') ;
 %
 %   % invalid semiring (generates an error)
-%   gbsemiring <.*.double
+%   gbsemiring ('<.*.double') ;
 %
 % gbsemiring generates an error for an invalid semiring, so user code can test
 % the validity of a semiring with the MATLAB try/catch mechanism.
 %
-% See also gbbinops, gb.
+% See also gbbinops, gbnew.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

@@ -1,8 +1,8 @@
-function [m n] = gbsize (X)
+function [m, n] = gbsize (X)
 %GBSIZE size of a SuiteSparse:GraphBLAS or MATLAB sparse matrix
 %
 % Usage
-%   [m n] = gbsize (X)
+%   [m, n] = gbsize (X)
 %
 % gbsize returns the dimensions m and n for an m-by-n MATLAB sparse matrix or
 % GraphBLAS sparse matrix.

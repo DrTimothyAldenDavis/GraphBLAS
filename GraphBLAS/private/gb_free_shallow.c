@@ -15,7 +15,7 @@ void gb_free_shallow        // free a shallow GrB_Matrix
 )
 {
 
-    CHECK_ERROR (S_handle == NULL, "internal gb error") ;
+    CHECK_ERROR (S_handle == NULL, "internal error") ;
 
     GrB_Matrix S = (*S_handle) ;
 

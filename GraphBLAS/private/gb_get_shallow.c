@@ -41,7 +41,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
     if (mxIsEmpty (X))
     {
-    GB_HERE ;
 
         //----------------------------------------------------------------------
         // matrix is empty
@@ -54,7 +53,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     }
     else if (mxIsSparse (X))
     {
-    GB_HERE ;
 
         //----------------------------------------------------------------------
         // construct a shallow GrB_Matrix copy of a MATLAB sparse matrix
@@ -102,7 +100,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     }
     else if (mxIsStruct (X))
     {
-    GB_HERE ;
 
         //----------------------------------------------------------------------
         // construct a shallow GrB_Matrix copy from a MATLAB struct
@@ -192,8 +189,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     // return the result
     //--------------------------------------------------------------------------
 
-    GB_HERE ;
-    OK (GxB_print (A, 3)) ;
     return (A) ;
 }
 

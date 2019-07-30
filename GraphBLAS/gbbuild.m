@@ -30,7 +30,7 @@ function A = gbbuild (I, J, X, m, n, dup, type)
 % the subsequent entries are ignored.  If dup is '2nd', then A(i,j)=X(k3),
 % and the preceding entries are ignored.
 %
-% type is a string that defines the type of A (see 'help gb' for a list of
+% type is a string that defines the type of A (see 'help gbnew' for a list of
 % types).  The type need not be the same type as the dup operator (unless
 % one has a type of 'complex', in which case both must be 'complex').  If the
 % type is not specified, it defaults to the type of X.

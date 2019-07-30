@@ -110,7 +110,7 @@ for k = 1:length (cfiles)
 end
 
 
-mexfunctions = dir ('gb*.c') ;
+mexfunctions = dir ('*.c') ;
 
 % compile the mexFunctions
 for k = 1:length (mexfunctions)

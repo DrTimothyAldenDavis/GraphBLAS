@@ -28,12 +28,10 @@ void mexFunction
     gb_usage (nargin == 1 && nargout <= 1, "usage: A = gbsparse (X)") ;
 
     //--------------------------------------------------------------------------
-    // convert the input matrix to a
+    // convert the input matrix to a MATLAB sparse matrix
     //--------------------------------------------------------------------------
 
-    GB_HERE ;
-    printf ("nargin %d nargout %d\n", nargin, nargout) ;
-    GrB_Matrix *X = gb_get_shallow (pargin [0]) ;
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
     pargout [0] = gb_matrix_to_mxarray (&X, false) ;
 }
 

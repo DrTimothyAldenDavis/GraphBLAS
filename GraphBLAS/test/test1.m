@@ -1,5 +1,5 @@
 function test
-%TEST1 test gb
+%TEST1 test gbnew
 
 rng ('default') ;
 X = 100 * sprand (3, 4, 0.4)
@@ -14,34 +14,34 @@ n = 3 ;
 for k = 1:length (types)
     type = types {k} ;
 
-    fprintf ('\n---- A = gb:\n') ;
-    A = gb
+    fprintf ('\n---- A = gbnew:\n') ;
+    A = gbnew
     Z = gbsparse (A)
 
-    fprintf ('\n---- A = gb (X) :\n') ;
-    A = gb (X)
+    fprintf ('\n---- A = gbnew (X) :\n') ;
+    A = gbnew (X)
     Z = gbsparse (A)
     assert (spok (Z) == 1) ;
     assert (isequal (Z, X)) ;
 
-    fprintf ('\n---- A = gb (''%s'') :\n', type) ;
-    A = gb (type)
+    fprintf ('\n---- A = gbnew (''%s'') :\n', type) ;
+    A = gbnew (type)
     Z = gbsparse (A)
 
-    fprintf ('\n---- A = gb (X, ''%s'') :\n', type) ;
-    A = gb (X, type)
+    fprintf ('\n---- A = gbnew (X, ''%s'') :\n', type) ;
+    A = gbnew (X, type)
     Z = gbsparse (A)
     if (isequal (type, 'logical'))
         assert (islogical (Z)) ;
         assert (isequal (Z, logical (X))) ;
     end
 
-    fprintf ('\n---- A = gb (%d, %d) :\n', m, n) ;
-    A = gb (m, n)
+    fprintf ('\n---- A = gbnew (%d, %d) :\n', m, n) ;
+    A = gbnew (m, n)
     Z = gbsparse (A)
 
-    fprintf ('\n---- A = gb (%d, %d, ''%s'') :\n', m, n, type) ;
-    A = gb (m, n, type)
+    fprintf ('\n---- A = gbnew (%d, %d, ''%s'') :\n', m, n, type) ;
+    A = gbnew (m, n, type)
     Z = gbsparse (A)
     if (isequal (type, 'logical'))
         assert (islogical (Z)) ;

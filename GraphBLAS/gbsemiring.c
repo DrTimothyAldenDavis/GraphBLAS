@@ -41,7 +41,6 @@ void mexFunction
     }
 
     GrB_Semiring semiring = gb_mxstring_to_semiring (pargin [0], type) ;
-    GxB_print (semiring, GxB_COMPLETE) ;
-    GrB_free (&semiring) ;
+    GxB_Semiring_fprint (semiring, "", GxB_COMPLETE, stdout) ;
 }
 

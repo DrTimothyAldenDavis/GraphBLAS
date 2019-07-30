@@ -136,8 +136,6 @@ void gb_mxarray_to_indices      // convert a list of indices
         for (int64_t k = 0 ; k < len ; k++)
         {
             I [k] = ((uint64_t) I_double [k]) - 1 ;
-            // printf ("index [%g] = %g %g\n", (double) k, (double) I [k],
-                // I_double [k]) ;
         }
 
     }

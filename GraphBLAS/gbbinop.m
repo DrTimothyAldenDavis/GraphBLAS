@@ -1,56 +1,35 @@
-function gbbinop
-%GBBINOP list all SuiteSparse:GraphBLAS binary operators
+function gbbinop (binop, type)
+%GBBINOP list the details of a GraphBLAS binary operator, for illustration only
 %
-% Usage:
+% Usage
 %
-%   gbbinop
+%   gbbinop (binop)
+%   gbbinop (binop, type)
 %
-% The MATLAB interface to GraphBLAS provides for 25 different operators, each
-% of which may be used with any of the 11 types, for a total of 25*11 = 275
-% valid binary operators.  Binary operators are defined by a string of the form
-% 'op.type', or just 'op'.  In the latter case, the type defaults to the the
-% type of the matrix inputs to the GraphBLAS operation.
+% For the first usage, the binop must be a string of the form 'op.type', where
+% 'op'.  The second usage allows the type to be omitted from the first
+% argument, as just 'op'.  This is valid for all GraphBLAS operations, since
+% the type defaults to the type of the input matrices.  However, this function
+% does not have a default type and thus one must be provided, either in the
+% binop as gbbinop ('+.double'), or in the second argument, gbbinop ('+',
+% 'double').
 %
-% The 6 comparator operators come in two flavors.  For the is* operators, the
-% result has the same type as the inputs, x and y, with 1 for true and 0 for
-% false.  For example isgt.double (pi, 3.0) is the double value 1.0.  For the
-% second second of 6 operators (eq, ne, gt, lt, ge, le), the result always has
-% a logical type (true or false).  In a semiring, the type of the add monoid
-% must exactly match the type of the output of the multiply operator, and thus
-% 'plus.iseq.double' is valid (counting how many terms are equal).  The
-% 'plus.eq.double' is valid, but the 'plus' has a logical type and is thus
-% equivalent to 'or.eq.double', which is true if any terms are equal and false
-% otherwise (it does not count the number of terms that are equal).
+% Example:
 %
-% The following operators are available.  Many have equivalent synonyms,
-% so that '1st' and 'first' both define the first(x,y) = x operator.
+%   % valid binary operators
+%   gbbinop ('+.*.double') ;
+%   gbbinop ('min.1st.int32') ;
 %
-%   operator name(s) f(x,y)         |   operator names(s) f(x,y)
-%   ---------------- ------         |   ----------------- ------
-%   1st first        x              |   iseq             x == y
-%   2nd second       y              |   isne             x != y
-%   min              min(x,y)       |   isgt             x > y
-%   max              max(x,y)       |   islt             x < y
-%   +   plus         x+y            |   isge             x >= y
-%   -   minus        x-y            |   isle             x <= y
-%   rminus           y-x            |   ==  =  eq        x == y
-%   *   times        x*y            |   !=  ~= ne        x != y
-%   /   div          x/y            |   >   gt           x > y
-%   \   rdiv         y/x            |   <   lt           x < y
-%   |   || or  lor   x | y          |   >=  ge           x >= y
-%   &   && and land  x & y          |   <=  le           x <= y
-%   xor lxor                        |
+%   % invalid binary operator (generates an error)
+%   gbbinop ('abs.double') ;
 %
-% The three logical operators, lor, land, and lxor, also come in 11 types.
-% z = lor.double (x,y) tests the condition (x != 0) || (y != 0), and returns
-% the double value 1.0 if true, or 0.0 if false.
+% gbbinop generates an error for an invalid binop, so user code can test
+% the validity of a binop with the MATLAB try/catch mechanism.
 %
-% See also gb, gbsemiring.
-
-% TODO add complex operators
+% See also gbbinops, gbnew.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-help gbbinop
+error ('gbbinop mexFunction not found; use gbmake to compile GraphBLAS') ;
 
