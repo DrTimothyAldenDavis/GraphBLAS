@@ -1,5 +1,5 @@
 function test5
-%TEST5 test gbdescriptor
+%TEST5 test gb.descriptor
 
 list_out  = { [ ], 'default', 'replace' } ;
 list_in   = { [ ], 'default', 'transpose' } ;
@@ -56,7 +56,7 @@ for k1 = 1:length (list_out)
                             end
 
                             d
-                            gbdescriptor (d) ;
+                            gb.descriptor (d) ;
                             ntrials = ntrials + 1 ;
                         end
                     end
@@ -71,7 +71,7 @@ fprintf ('test error handling (errors expected):\n') ;
 clear d
 d.in0 = 'crud'
 try
-    gbdescriptor (d) ;
+    gb.descriptor (d) ;
     ok = false ;
 catch me
     ok = true ;
@@ -82,7 +82,7 @@ assert (ok) ;
 clear d
 d.in0 = 42
 try
-    gbdescriptor (d) ;
+    gb.descriptor (d) ;
     ok = false ;
 catch me
     ok = true ;
@@ -93,7 +93,7 @@ assert (ok) ;
 clear d
 d.nthreads = 'something'
 try
-    gbdescriptor (d) ;
+    gb.descriptor (d) ;
     ok = false ;
 catch me
     ok = true ;
@@ -104,7 +104,7 @@ assert (ok) ;
 clear d
 d.chunk = 'something'
 try
-    gbdescriptor (d) ;
+    gb.descriptor (d) ;
     ok = false ;
 catch me
     ok = true ;

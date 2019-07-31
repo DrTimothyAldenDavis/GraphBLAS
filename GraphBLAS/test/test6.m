@@ -6,28 +6,28 @@ B = sparse (rand (2)) ;
 
 C = A*B ;
 
-G = gbmxm ('+.*', A, B) ;
-err = norm (C-G, 1)
+G = gb.mxm ('+.*', A, B) ;
+err = norm (C-sparse(G), 1)
 assert (err < 1e-12)
 
 d.kind = 'sparse' ;
 d.in0 = 'transpose' ;
 d
-G = gbmxm ('+.*', A, B, d) ;
+G = gb.mxm ('+.*', A, B, d) ;
 C = A'*B ;
 
-err = norm (C-G, 1)
+err = norm (C-sparse(G), 1)
 assert (err < 1e-12)
 
 d.kind = 'object' ;
-G = gbmxm ('+.*', A, B, d) ;
-G = sparse (gb (G)) ;
+G = gb.mxm ('+.*', A, B, d) ;
+G = sparse (G) ;
 err = norm (C-G, 1)
 
 E = sparse (rand (2)) ;
 C = E + A*B ;
-G = gbmxm (E, '+', '+.*', A, B) ; 
-C-G
+G = gb.mxm (E, '+', '+.*', A, B) ; 
+C-sparse(G)
 
 G = gb.mxm ('+.*', A, B)
 

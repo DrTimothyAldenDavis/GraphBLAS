@@ -16,7 +16,7 @@ for k1 = 1:length (ops)
             semiring = [add '.' mult '.' type] ;
 
             try
-                gbsemiring (semiring) ;
+                gb.semiring (semiring) ;
                 nsemirings = nsemirings + 1 ;
                 fprintf ('%s\n', semiring) ;
             catch me

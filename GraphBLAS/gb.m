@@ -15,8 +15,6 @@ classdef gb
 % The input X may be a MATLAB sparse matrix or a GraphBLAS sparse
 % matrix object. TODO allow X to be a MATLAB dense matrix.
 %
-% See 'help gbnew' for details. (TODO put the details here instead ...)
-%
 % See also 'help gb.method', for each method listed below.  For example 'help
 % gb.sparse' describes A = sparse (G) for a GraphBLAS matrix G.
 %
@@ -34,8 +32,6 @@ classdef gb
 %   gb.threads     get/set the number of threads to use in GraphBLAS
 %   gb.descriptor  list the contents of a GraphBLAS descriptor
 %   ... TODO
-
-% TODO: do I make gbmxm, gbbuild, etc all private?
 
 properties (SetAccess = private, GetAccess = private, Hidden = true)
     % the object properties are a single struct, containing the opaque content
@@ -80,6 +76,11 @@ methods %=======================================================================
     %   permute
     %   reshape
 
+    % tril, triu
+    % isequal
+
+    % diag? spdiags?
+
     % do not do these:
     %   colon       a:d:b, a:b
     %   char
@@ -121,7 +122,7 @@ methods %=======================================================================
     %SPARSE convert a GraphBLAS matrix into a MATLAB sparse matrix
     % Usage:
     %   S = sparse (G)
-    % See 'help gbsparse' for more details.
+
     S = gbsparse (G.opaque) ;
     end
 
@@ -206,7 +207,7 @@ methods %=======================================================================
     %DISP display the contents of a GraphBLAS object.
     % Usage:
     %     gb.disp (G, level)
-    % See 'help gbdisp' for more details. (TODO more here)
+
     if (nargin < 2)
         level = 3 ;
     end
@@ -303,7 +304,7 @@ methods (Static) %==============================================================
     function clear
     %CLEAR clear all internal GraphBLAS workspace
     % Usage: gb.clear
-    % See 'help gbclear' for more details.
+
     gbclear ;
     end
 
@@ -316,7 +317,7 @@ methods (Static) %==============================================================
     % Usage:
     %   gb.descriptor
     %   gb.descriptor (d)
-    % See 'help gbdescriptor' for more details.
+
     if (nargin == 0)
         gbdescriptor ;
     else
@@ -333,7 +334,7 @@ methods (Static) %==============================================================
     % Usage:
     %   gb.binop (s)
     %   gb.binop (s, type)
-    % See 'help gbbinop' for more details.
+
     if (nargin < 2)
         gbbinop (s) ;
     else
@@ -350,7 +351,7 @@ methods (Static) %==============================================================
     % Usage:
     %   gb.semiring (s)
     %   gb.semiring (s, type)
-    % See 'help gbsemiring' for more details.
+
     if (nargin < 2)
         gbsemiring (s) ;
     else
@@ -367,7 +368,7 @@ methods (Static) %==============================================================
     % Usage:
     %   gb.nthreads (t)
     %   t = gb.nthreads ;
-    % See 'help gbnthreads' for more details.
+
     nthreads = gbthreads (varargin {:}) ;
     end
 
@@ -425,8 +426,6 @@ methods (Static) %==============================================================
     % If desc.kind = 'object' then Cout is returned as GraphBLAS sparse matrix
     % object, which is the default for gb.mxm.  If desc.kind = 'sparse' then
     % Cout is returned as a MATLAB sparse matrix.
-    %
-    % See 'help gbmxm' for more details.
 
         [args G_is_object] = get_args (varargin {:}) ;
         if (G_is_object)
@@ -449,14 +448,48 @@ methods (Static) %==============================================================
     % If desc.kind = 'object', G is returned as a GraphBLAS sparse matrix,
     % which is the default for gb.build.  If desc.kind = 'sparse' then G is
     % returned as a MATLAB sparse matrix.
-    %
-    % See 'help gbbuild' for more details.
 
         [args G_is_object] = get_args (varargin {:}) ;
         if (G_is_object)
             G = gb (gbbuild (args {:})) ;
         else
             G = gbbuild (args {:}) ;
+        end
+    end
+
+    %---------------------------------------------------------------------------
+    % gb.select: sparse matrix-matrix multiply
+    %---------------------------------------------------------------------------
+
+    function G = select (varargin)
+    %SELECT: select entries from a GraphBLAS sparse matrix
+    % Usage:
+    %
+    %   Cout = gb.select (op, A)
+    %   Cout = gb.select (op, A, thunk)
+    %   Cout = gb.select (op, A, thunk, desc)
+    %
+    %   Cout = gb.select (Cin, accum, op, A)
+    %   Cout = gb.select (Cin, accum, op, A, thunk)
+    %   Cout = gb.select (Cin, accum, op, A, thunk, desc)
+    %
+    %   Cout = gb.select (Cin, M, op, A)
+    %   Cout = gb.select (Cin, M, op, A, thunk)
+    %   Cout = gb.select (Cin, M, op, A, thunk, desc)
+    %
+    %   Cout = gb.select (Cin, M, accum, op, A)
+    %   Cout = gb.select (Cin, M, accum, op, A, thunk)
+    %   Cout = gb.select (Cin, M, accum, op, A, thunk, desc)
+    %
+    % If desc.kind = 'object' then Cout is returned as GraphBLAS sparse matrix
+    % object, which is the default for gb.select.  If desc.kind = 'sparse' then
+    % Cout is returned as a MATLAB sparse matrix.
+
+        [args G_is_object] = get_args (varargin {:}) ;
+        if (G_is_object)
+            G = gb (gbselect (args {:})) ;
+        else
+            G = gbselect (args {:}) ;
         end
     end
 

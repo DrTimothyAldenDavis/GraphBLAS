@@ -7,19 +7,24 @@ A = sprand (m, n, 0.5) ;
 
 [i j x] = find (A) ;
 
-C = gbbuild (i, j, x, m, n) ;
+C = gb.build (i, j, x, m, n) ;
 
-S = gbsparse (C) ;
+S = sparse (C) ;
 assert (isequal (S, A)) ;
 
 % Prob = ssget (2662)
 % A = Prob.A ;
 fprintf ('Generating large test matrix; please wait ...\n') ;
-n = 1e6 ;
-nz = 50e6 ;
+% n = 1e6 ;
+% nz = 50e6 ;
+n = 1000 ;
+nz = 7000 ;
 density = nz / n^2 ;
 tic
 A = sprand (n, n, density) ;
+B = sprand (n, n, density) ;
+A = kron (A,B) ;
+clear B
 t = toc ;
 fprintf ('%12.4f sec : A = sprand(n,n,nz), n: %g nz %g\n', t, n, nnz (A)) ;
 
@@ -29,7 +34,7 @@ fprintf ('%12.4f sec : A = sprand(n,n,nz), n: %g nz %g\n', t, n, nnz (A)) ;
 i0 = uint64 (i) - 1 ;
 j0 = uint64 (j) - 1 ;
 
-nthreads = gbthreads ;
+nthreads = gb.threads ;
 fprintf ('using %d threads in GraphBLAS\n', nthreads) ;
 
 fprintf ('\nwith [I J] already sorted on input:\n') ;
@@ -40,19 +45,19 @@ t = toc ;
 fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
 
 tic
-A3 = gbbuild (i, j, x, m, n) ;
+A3 = gb.build (i, j, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gbbuild (i, j, x, m, n), same inputs as MATLAB\n', t) ;
+fprintf ('%12.4f sec : A = gb.build (i, j, x, m, n), same inputs as MATLAB\n', t) ;
 
 tic
-A2 = gbbuild (i0, j0, x, m, n) ;
+A2 = gb.build (i0, j0, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gbbuild (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
+fprintf ('%12.4f sec : A = gb.build (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
 
-A2 = gbsparse (A2) ;
-A3 = gbsparse (A3) ;
-assert (isequal (A1, A2)) ;
-assert (isequal (A1, A3)) ;
+A2 = sparse (A2) ;
+A3 = sparse (A3) ;
+assert (isequal (A1, sparse (A2))) ;
+assert (isequal (A1, sparse (A3))) ;
 
 fprintf ('\nwith [I J] jumbled so that a sort is required:\n') ;
 
@@ -68,19 +73,19 @@ t = toc ;
 fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
 
 tic
-A3 = gbbuild (i, j, x, m, n) ;
+A3 = gb.build (i, j, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gbbuild (i, j, x, m, n), same inputs as MATLAB\n', t) ;
+fprintf ('%12.4f sec : A = gb.build (i, j, x, m, n), same inputs as MATLAB\n', t) ;
 
 tic
-A2 = gbbuild (i0, j0, x, m, n) ;
+A2 = gb.build (i0, j0, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gbbuild (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
+fprintf ('%12.4f sec : A = gb.build (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
 
 tic
-A2 = gbsparse (A2) ;
+A2 = sparse (A2) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gbsparse (A) to convert from GraphBLAS to MATLAB\n', t); 
+fprintf ('%12.4f sec : A = gb.sparse (A) to convert from GraphBLAS to MATLAB\n', t); 
 
 assert (isequal (A1, A2)) ;
 
