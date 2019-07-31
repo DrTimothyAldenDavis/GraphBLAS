@@ -28,7 +28,8 @@ void mexFunction
     // construct the GraphBLAS descriptor and print it
     //--------------------------------------------------------------------------
 
-    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0]) ;
+    bool kind_is_object ;
+    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0], &kind_is_object) ;
 
     if (d == NULL)
     {
@@ -37,6 +38,7 @@ void mexFunction
     }
 
     GxB_Descriptor_fprint (d, "", GxB_COMPLETE, stdout) ;
+    printf ("d.kind = %s\n", (kind_is_object) ? "object" : "sparse") ;
     GrB_free (&d) ;
 }
 

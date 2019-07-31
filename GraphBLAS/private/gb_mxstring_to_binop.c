@@ -28,15 +28,13 @@ GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
         return (NULL) ;
     }
 
-    CHECK_ERROR (!mxIsChar (mxstring), "operator must be a string") ;
-
     //--------------------------------------------------------------------------
     // get the string
     //--------------------------------------------------------------------------
 
     #define LEN 256
     char opstring [LEN+2] ;
-    gb_mxstring_to_string (opstring, LEN, mxstring) ;
+    gb_mxstring_to_string (opstring, LEN, mxstring, "binary operator") ;
 
     //--------------------------------------------------------------------------
     // convert the string to a binary operator

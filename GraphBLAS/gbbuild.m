@@ -2,6 +2,7 @@ function A = gbbuild (I, J, X, m, n, dup, type)
 %GBBUILD construct a SuiteSparse:GraphBLAS sparse matrix from a list of entries.
 %
 % Usage
+%
 %   A = gbbuild (I, J, X, m, n, dup, type)
 %
 % gbbuild constructs an m-by-n GraphBLAS sparse matrix from a list of entries,

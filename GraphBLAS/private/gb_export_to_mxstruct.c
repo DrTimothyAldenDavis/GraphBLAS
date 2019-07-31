@@ -1,11 +1,16 @@
 //------------------------------------------------------------------------------
-// gb_matrix_to_mxstruct: create a MATLAB struct for a GraphBLAS matrix
+// gb_export_to_mxstruct: export a GrB_Matrix to a MATLAB struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// The input GrB_Matrix A is exported to a GraphBLAS matrix struct G, and freed.
+
+// The input GrB_Matrix A must be deep.  The output is a standard MATLAB sparse
+// matrix as an mxArray.
 
 #include "gb_matlab.h"
 
@@ -21,32 +26,46 @@ static const char *MatrixFields [NFIELDS] =
     "h"                 // 5: array of int64_t, size plen if hypersparse
 } ;
 
-// These components do not need to be exported: Pending, nzombies, queue_next,
-// queue_head, enqueued, *_shallow.
+//------------------------------------------------------------------------------
 
-mxArray *gb_matrix_to_mxstruct  // return a MATLAB struct
+mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 (
-    GrB_Matrix *A_Handle        // GrB_Matrix to convert to MATLAB struct
+    GrB_Matrix *A_handle        // matrix to export; freed on output
+    //, bool A_is_deep          // always true; A must be deep
 )
 {
 
-    CHECK_ERROR (A_Handle == NULL, "matrix missing") ;
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
 
-    GrB_Matrix A = (*A_Handle) ;
+    CHECK_ERROR (A_handle == NULL, "matrix missing") ;
+
+    GrB_Matrix A = (*A_handle) ;
 
     CHECK_ERROR (A->p_shallow || A->i_shallow || A->x_shallow || A->h_shallow,
         "invalid shallow matrix") ;
 
+    //--------------------------------------------------------------------------
     // make sure the matrix is finished
+    //--------------------------------------------------------------------------
+
     GrB_Index nvals ;
     OK (GrB_Matrix_nvals (&nvals, A)) ;
 
+    //--------------------------------------------------------------------------
     // construct the output struct
-    mxArray *X = mxCreateStructMatrix (1, 1,
+    //--------------------------------------------------------------------------
+
+    mxArray *G = mxCreateStructMatrix (1, 1,
         A->is_hyper ? NFIELDS : (NFIELDS-1), MatrixFields) ;
 
+    //--------------------------------------------------------------------------
+    // export content into the output struct
+    //--------------------------------------------------------------------------
+
     // export the GraphBLAS type
-    mxSetFieldByNumber (X, 0, 0, gb_type_to_mxstring (A->type)) ;
+    mxSetFieldByNumber (G, 0, 0, gb_type_to_mxstring (A->type)) ;
 
     // export the scalar content
     mxArray *opaque = mxCreateNumericMatrix (1, 9, mxDOUBLE_CLASS, mxREAL) ;
@@ -60,7 +79,10 @@ mxArray *gb_matrix_to_mxstruct  // return a MATLAB struct
     s [6] = (double) (A->is_hyper) ; 
     s [7] = (double) (A->is_csc) ; 
     s [8] = (double) (A->nzmax) ; 
-    mxSetFieldByNumber (X, 0, 1, opaque) ;
+    mxSetFieldByNumber (G, 0, 1, opaque) ;
+
+    // These components do not need to be exported: Pending, nzombies,
+    // queue_next, queue_head, enqueued, *_shallow.
 
     // export the pointers
     mxArray *Ap = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
@@ -69,7 +91,7 @@ mxArray *gb_matrix_to_mxstruct  // return a MATLAB struct
     if (p != NULL) mxFree (p) ;
     mxSetInt64s (Ap, A->p) ;
     A->p = NULL ;
-    mxSetFieldByNumber (X, 0, 2, Ap) ;
+    mxSetFieldByNumber (G, 0, 2, Ap) ;
 
     // export the indices
     mxArray *Ai = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
@@ -81,7 +103,7 @@ mxArray *gb_matrix_to_mxstruct  // return a MATLAB struct
         mxSetInt64s (Ai, A->i) ;
     }
     A->i = NULL ;
-    mxSetFieldByNumber (X, 0, 3, Ai) ;
+    mxSetFieldByNumber (G, 0, 3, Ai) ;
 
     // export the values as uint8
     mxArray *Ax = mxCreateNumericMatrix (1, 1, mxUINT8_CLASS, mxREAL) ;
@@ -93,7 +115,7 @@ mxArray *gb_matrix_to_mxstruct  // return a MATLAB struct
         mxSetUint8s (Ax, A->x) ;
     }
     A->x = NULL ;
-    mxSetFieldByNumber (X, 0, 4, Ax) ;
+    mxSetFieldByNumber (G, 0, 4, Ax) ;
 
     if (A->is_hyper)
     {
@@ -112,14 +134,20 @@ mxArray *gb_matrix_to_mxstruct  // return a MATLAB struct
             if (p != NULL) mxFree (p) ;
             mxSetInt64s (Ah, A->h) ;
         }
-        mxSetFieldByNumber (X, 0, 5, Ah) ;
+        mxSetFieldByNumber (G, 0, 5, Ah) ;
     }
     A->h = NULL ;
 
+    //--------------------------------------------------------------------------
     // free the header of A
-    GrB_Matrix_free (A_Handle) ;
+    //--------------------------------------------------------------------------
 
+    OK (GrB_Matrix_free (A_handle)) ;
+
+    //--------------------------------------------------------------------------
     // return the MATLAB struct
-    return (X) ;
+    //--------------------------------------------------------------------------
+
+    return (G) ;
 }
 

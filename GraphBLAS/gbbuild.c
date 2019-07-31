@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbbuild: build a GraphBLAS matrix
+// gbbuild: build a GraphBLAS matrix or a MATLAB sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -10,15 +10,29 @@
 // Usage:
 
 // A = gbbuild (I, J, X)
+// A = gbbuild (I, J, X, desc)
 // A = gbbuild (I, J, X, m)
+// A = gbbuild (I, J, X, m, desc)
 // A = gbbuild (I, J, X, m, n)
-// A = gbbuild (I, J, X, m, n, dup,
+// A = gbbuild (I, J, X, m, n, desc)
+// A = gbbuild (I, J, X, m, n, dup) ;
+// A = gbbuild (I, J, X, m, n, dup, desc) ;
 // A = gbbuild (I, J, X, m, n, dup, type) ;
+// A = gbbuild (I, J, X, m, n, dup, type, desc) ;
 
 // m and n default to the largest index in I and J, respectively.
 // dup defaults to 'plus.xtype' where xtype is the type of X.
 // If dup is given by without a type,  type of dup defaults to the type of X.
 // type is the type of A, which defaults to the type of X.
+
+// The descriptor should only be used by gb.m, not by the end-user, and thus
+// it is not documented in gbbuild.m.
+
+// desc.kind = 'object' or 'sparse' determines how the result is returned to
+// MATLAB.  If 'sparse' then the result is a MATLAB sparse matrix.  This is the
+// default if the descriptor is not present.  The classdef file gb.m uses
+// desc.kind = 'object', in which case this mexFunction returns a GraphBLAS
+// matrix in a struct.  The struct is then wrapped in an gb object.
 
 #include "gb_matlab.h"
 
@@ -35,8 +49,23 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargin != 4 && nargout <= 1,
+    gb_usage (nargin >= 3 && nargin <= 8 && nargout <= 1,
         "usage: A = gbbuild (I, J, X, m, n, dup, type)") ;
+
+    //--------------------------------------------------------------------------
+    // get the descriptor, if present
+    //--------------------------------------------------------------------------
+
+    bool kind_is_object = false ;
+    if (mxIsStruct (pargin [nargin-1]))
+    {
+        // get the descriptor, but only d.kind is needed
+        GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1],
+            &kind_is_object) ;
+        OK (GrB_free (&desc)) ;
+        // remove the descriptor from consideration
+        nargin-- ;
+    }
 
     //--------------------------------------------------------------------------
     // get I and J
@@ -70,8 +99,6 @@ void mexFunction
     CHECK_ERROR (!(mxIsNumeric (pargin [2]) || mxIsLogical (pargin [2])),
         "X must be a numeric or logical array") ;
     CHECK_ERROR (mxIsSparse (pargin [2]), "X cannot be sparse") ;
-
-    // void *X = mxGetData (pargin [2]) ;
 
     //--------------------------------------------------------------------------
     // get m and n if present
@@ -224,6 +251,6 @@ void mexFunction
     // export the output matrix A back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_matrix_to_mxstruct (&A) ;
+    pargout [0] = gb_export (&A, kind_is_object) ;
 }
 

@@ -20,8 +20,8 @@ function gbdescriptor (d)
 %   d.in0     'default' or 'transpose'    determines A or A' is used
 %   d.in1     'default' or 'transpose'    determines B or B' is used
 %   d.axb     'default', 'Gustavson', 'heap', or 'dot'
-%             determines the method used in gbmxm.  The default is to let
-%             GraphBLAS determine the method automatically, via a heuristic.
+%              determines the method used in gbmxm.  The default is to let
+%              GraphBLAS determine the method automatically, via a heuristic.
 %
 % These are scalar values:
 %

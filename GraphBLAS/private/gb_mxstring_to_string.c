@@ -16,7 +16,8 @@ void gb_mxstring_to_string  // copy a MATLAB string into a C string
 (
     char *string,           // size at least maxlen+1
     const size_t maxlen,    // length of string
-    const mxArray *S        // MATLAB mxArray containing a string
+    const mxArray *S,       // MATLAB mxArray containing a string
+    const char *name        // name of the mxArray
 )
 {
 
@@ -26,7 +27,7 @@ void gb_mxstring_to_string  // copy a MATLAB string into a C string
     {
         if (!mxIsChar (S))
         {
-            ERROR ("not a string") ;
+            ERROR2 ("%s must be a string", name) ;
         }
         len = mxGetNumberOfElements (S) ;
         if (len > 0)

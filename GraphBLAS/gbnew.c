@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// TODO put this in ./private.  Move private/gb_*c into util/
+
 // Usage:
 
 // A = gbnew ;              empty 1-by-1 GraphBLAS double matrix
@@ -134,7 +136,6 @@ void mexFunction
     // export the output matrix A back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_matrix_to_mxstruct (&A) ;
-
+    pargout [0] = gb_export_to_mxstruct (&A) ;
 }
 

@@ -22,6 +22,8 @@
 // error handling
 //------------------------------------------------------------------------------
 
+#define ERROR2(message, arg) \
+    mexErrMsgIdAndTxt ("GraphBLAS:error", message, arg) ;
 #define ERROR(message) mexErrMsgIdAndTxt ("GraphBLAS:error", message) ;
 #define USAGE(message) mexErrMsgIdAndTxt ("GraphBLAS:usage", message) ;
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
@@ -57,7 +59,8 @@ void gb_mxstring_to_string  // copy a MATLAB string into a C string
 (
     char *string,           // size at least maxlen+1
     const size_t maxlen,    // length of string
-    const mxArray *S        // MATLAB mxArray containing a string
+    const mxArray *S,       // MATLAB mxArray containing a string
+    const char *name        // name of the mxArray
 ) ;
 
 GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
@@ -74,11 +77,6 @@ GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a MATLAB X
 (
     const mxArray *X,       // input MATLAB matrix (sparse or struct)
     GrB_Type type           // typecast X to this type (NULL if no typecast)
-) ;
-
-mxArray *gb_matrix_to_mxstruct  // return a MATLAB struct
-(
-    GrB_Matrix *A_Handle        // GrB_Matrix to convert to MATLAB struct
 ) ;
 
 GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
@@ -159,13 +157,26 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
 
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
-    const mxArray *D_matlab         // MATLAB struct
+    const mxArray *D_matlab,        // MATLAB struct
+    bool *kind_is_object            // descriptor.kind = 'object' or 'sparse'
 ) ;
 
-mxArray *gb_matrix_to_mxarray   // return MATLAB sparse matrix of a GrB_Matrix
+mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 (
-    GrB_Matrix *X_handle,       // matrix to copy; freed on output
-    bool X_is_deep              // true if X is deep, false if shallow
+    GrB_Matrix *A_handle        // matrix to export; freed on output
+    //, bool A_is_deep          // always true; A must be deep
+) ;
+
+mxArray *gb_export_to_mxarray   // return exported MATLAB sparse matrix S
+(
+    GrB_Matrix *A_handle,       // matrix to export; freed on output
+    bool A_is_deep              // true if A is deep, false if shallow
+) ;
+
+mxArray *gb_export              // return the exported MATLAB matrix or struct
+(
+    GrB_Matrix *C_handle,       // GrB_Matrix to export and free
+    bool kind_is_object         // true if output is struct, false if sparse
 ) ;
 
 #endif

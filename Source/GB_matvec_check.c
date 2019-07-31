@@ -300,7 +300,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         { 
             GBPR0 ("invalid empty %s\n", kind) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
-                "%invalid empty %s: [%s]", kind, GB_NAME))) ;
+                "invalid empty %s: [%s]", kind, GB_NAME))) ;
         }
 
         // check the vector pointers

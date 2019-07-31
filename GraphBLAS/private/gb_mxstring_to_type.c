@@ -11,13 +11,13 @@
 
 GrB_Type gb_mxstring_to_type    // return the GrB_Type from a MATLAB string
 (
-    const mxArray *s
+    const mxArray *mxstring
 )
 {
 
     #define LEN 256
-    char classname [LEN+2] ;
-    gb_mxstring_to_string (classname, LEN, s) ;
-    return (gb_string_to_type (classname)) ;
+    char s [LEN+2] ;
+    gb_mxstring_to_string (s, LEN, mxstring, "type") ;
+    return (gb_string_to_type (s)) ;
 }
 

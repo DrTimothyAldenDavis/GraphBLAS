@@ -32,6 +32,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix X = gb_get_shallow (pargin [0]) ;
-    pargout [0] = gb_matrix_to_mxarray (&X, false) ;
+    pargout [0] = gb_export_to_mxarray (&X, false) ;
 }
 

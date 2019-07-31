@@ -1,7 +1,7 @@
 function A = gbnew (arg1, arg2, arg3)
 %GBNEW create a new SuiteSparse:GraphBLAS sparse matrix
 %
-% Usage:
+% Usage:        TODO make this private
 %
 %   A = gbnew ;              empty 1-by-1 GraphBLAS double matrix
 %   A = gbnew (X) ;          GraphBLAS copy of a MATLAB sparse X, same type

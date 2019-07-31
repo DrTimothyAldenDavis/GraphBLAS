@@ -27,15 +27,13 @@ GrB_Semiring gb_mxstring_to_semiring    // return semiring from a string
         return (NULL) ;
     }
 
-    CHECK_ERROR (!mxIsChar (mxstring), "semiring must be a string") ;
-
     //--------------------------------------------------------------------------
     // get the string
     //--------------------------------------------------------------------------
 
     #define LEN 256
     char semiring_string [LEN+2] ;
-    gb_mxstring_to_string (semiring_string, LEN, mxstring) ;
+    gb_mxstring_to_string (semiring_string, LEN, mxstring, "semiring") ;
 
     //--------------------------------------------------------------------------
     // convert the string to a semiring

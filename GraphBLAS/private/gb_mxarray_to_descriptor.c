@@ -11,17 +11,16 @@
 
 #include "gb_matlab.h"
 
+#define LEN 100
+
 static void get_descriptor
 (
     GrB_Descriptor D,               // GraphBLAS descriptor to modify
-    const mxArray *D_matlab,        // MATLAB struct with D.out, etc
+    const mxArray *D_matlab,        // MATLAB struct with d.out, etc
     const char *fieldname,          // fieldname to extract from D_matlab
     const GrB_Desc_Field field      // field to set in D
 )
 {
-
-    // if present, the MATLAB D must be a struct
-    CHECK_ERROR (!mxIsStruct (D_matlab), "descriptor must be a struct") ;
 
     // find the field in the MATLAB struct
     int fieldnumber = mxGetFieldNumber (D_matlab, fieldname) ;
@@ -35,7 +34,7 @@ static void get_descriptor
         {
 
             // nthreads must be a numeric scalar
-            CHECK_ERROR (!IS_SCALAR (value), "D.nthreads must be a scalar") ;
+            CHECK_ERROR (!IS_SCALAR (value), "d.nthreads must be a scalar") ;
             int nthreads_max = (int) mxGetScalar (value) ;
             OK (GxB_set (D, GxB_NTHREADS, nthreads_max)) ;
 
@@ -44,7 +43,7 @@ static void get_descriptor
         {
 
             // chunk must be a numeric scalar
-            CHECK_ERROR (!IS_SCALAR (value), "D.chunk must be a scalar") ;
+            CHECK_ERROR (!IS_SCALAR (value), "d.chunk must be a scalar") ;
             double chunk = mxGetScalar (value) ;
             OK (GxB_set (D, GxB_CHUNK, chunk)) ;
 
@@ -52,13 +51,9 @@ static void get_descriptor
         else
         {
 
-            // its value must be a string
-            CHECK_ERROR (!mxIsChar (value), "D.field must be a string") ;
-
             // get the string from the MATLAB field
-            #define LEN 100
             char s [LEN+2] ;
-            gb_mxstring_to_string (s, LEN, value) ;
+            gb_mxstring_to_string (s, LEN, value, "field") ;
 
             // convert the string to a Descriptor value, and set the value
             if (MATCH (s, "default"))
@@ -104,9 +99,14 @@ static void get_descriptor
 
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
-    const mxArray *D_matlab         // MATLAB struct
+    const mxArray *D_matlab,        // MATLAB struct
+    bool *kind_is_object            // descriptor.kind = 'object' or 'sparse'
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
 
     // a null descriptor is OK; the method will use defaults
     if (D_matlab == NULL || mxIsEmpty (D_matlab))
@@ -114,7 +114,13 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
         return (NULL) ;
     }
 
-    // the MATLAB desc is present and not empty, so create the GraphBLAS one
+    // if present, the MATLAB D must be a struct
+    CHECK_ERROR (!mxIsStruct (D_matlab), "descriptor must be a struct") ;
+
+    //--------------------------------------------------------------------------
+    // create the GraphBLAS descriptor
+    //--------------------------------------------------------------------------
+
     GrB_Descriptor D ;
     OK (GrB_Descriptor_new (&D)) ;
 
@@ -127,7 +133,39 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
     get_descriptor (D, D_matlab, "nthreads", GxB_NTHREADS) ;
     get_descriptor (D, D_matlab, "chunk"   , GxB_CHUNK) ;
 
+    //--------------------------------------------------------------------------
+    // get the desired kind of output
+    //--------------------------------------------------------------------------
+
+    // By default, gbmxm (...) returns a MATLAB sparse matrix.
+    // gb.mxm (...) returns an object.
+
+    (*kind_is_object) = false ;
+
+    mxArray *mxkind = mxGetField (D_matlab, 0, "kind") ;
+    if (mxkind != NULL)
+    {
+        // get the string from the MATLAB field
+        char s [LEN+2] ;
+        gb_mxstring_to_string (s, LEN, mxkind, "kind") ;
+        if (MATCH (s, "object"))
+        {
+            (*kind_is_object) = true ;
+        }
+        else if (MATCH (s, "sparse"))
+        {
+            (*kind_is_object) = false ;
+        }
+        else
+        {
+            ERROR ("invalid descriptor.kind") ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // return the non-null Descriptor to the caller
+    //--------------------------------------------------------------------------
+
     return (D) ;
 }
 

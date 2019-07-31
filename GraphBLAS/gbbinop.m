@@ -1,17 +1,17 @@
-function gbbinop (binop, type)
+function gbbinop (op, type)
 %GBBINOP list the details of a GraphBLAS binary operator, for illustration only
 %
 % Usage
 %
-%   gbbinop (binop)
-%   gbbinop (binop, type)
+%   gbbinop (op)
+%   gbbinop (op, type)
 %
-% For the first usage, the binop must be a string of the form 'op.type', where
+% For the first usage, the op must be a string of the form 'op.type', where
 % 'op'.  The second usage allows the type to be omitted from the first
 % argument, as just 'op'.  This is valid for all GraphBLAS operations, since
 % the type defaults to the type of the input matrices.  However, this function
 % does not have a default type and thus one must be provided, either in the
-% binop as gbbinop ('+.double'), or in the second argument, gbbinop ('+',
+% op as gbbinop ('+.double'), or in the second argument, gbbinop ('+',
 % 'double').
 %
 % Example:
@@ -23,8 +23,8 @@ function gbbinop (binop, type)
 %   % invalid binary operator (generates an error)
 %   gbbinop ('abs.double') ;
 %
-% gbbinop generates an error for an invalid binop, so user code can test
-% the validity of a binop with the MATLAB try/catch mechanism.
+% gbbinop generates an error for an invalid op, so user code can test
+% the validity of an op with the MATLAB try/catch mechanism.
 %
 % See also gbbinops, gbnew.
 

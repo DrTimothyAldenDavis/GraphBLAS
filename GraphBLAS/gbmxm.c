@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// TODO add desc.format = 'csr', 'csc', 'hcsr', 'hcsc', 'sparse', ...
+// TODO add desc.format = 'csr', 'csc', 'hcsr', 'hcsc', 'matlab', ...
 
 // gbmxm is an interface to GrB_mxm.
 
@@ -44,7 +44,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargin != 5 && nargout <= 1,
+    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 1,
         "usage: Cout = gbmxm (Cin, Mask, accum, semiring, A, B, desc)") ;
 
     //--------------------------------------------------------------------------
@@ -56,6 +56,7 @@ void mexFunction
     GrB_Semiring semiring ;
     GrB_Type atype, ctype ;
     GrB_Descriptor desc = NULL ;
+    bool kind_is_object = false ;
 
     if (mxIsChar (pargin [0]))
     {
@@ -70,7 +71,10 @@ void mexFunction
 
         A = gb_get_shallow (pargin [1]) ;
         B = gb_get_shallow (pargin [2]) ;
-        desc = (nargin > 3) ? gb_mxarray_to_descriptor (pargin [3]) : NULL  ;
+        if (nargin > 3)
+        {
+            desc = gb_mxarray_to_descriptor (pargin [3], &kind_is_object) ;
+        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [0], atype) ;
 
@@ -91,7 +95,10 @@ void mexFunction
         accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         A = gb_get_shallow (pargin [3]) ;
         B = gb_get_shallow (pargin [4]) ;
-        desc = (nargin > 5) ? gb_mxarray_to_descriptor (pargin [5]) : NULL  ;
+        if (nargin > 5)
+        {
+            desc = gb_mxarray_to_descriptor (pargin [5], &kind_is_object) ;
+        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [2], atype) ;
 
@@ -111,7 +118,10 @@ void mexFunction
         M = gb_get_shallow (pargin [1]) ;
         A = gb_get_shallow (pargin [3]) ;
         B = gb_get_shallow (pargin [4]) ;
-        desc = (nargin > 5) ? gb_mxarray_to_descriptor (pargin [5]) : NULL  ;
+        if (nargin > 5)
+        {
+            desc = gb_mxarray_to_descriptor (pargin [5], &kind_is_object) ;
+        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [2], atype) ;
 
@@ -133,7 +143,10 @@ void mexFunction
         accum = gb_mxstring_to_binop (pargin [2], ctype) ;
         A = gb_get_shallow (pargin [4]) ;
         B = gb_get_shallow (pargin [5]) ;
-        desc = (nargin > 6) ? gb_mxarray_to_descriptor (pargin [6]) : NULL  ;
+        if (nargin > 6)
+        {
+            desc = gb_mxarray_to_descriptor (pargin [6], &kind_is_object) ;
+        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [3], atype) ;
 
@@ -209,6 +222,6 @@ void mexFunction
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_matrix_to_mxstruct (&C) ;
+    pargout [0] = gb_export (&C, kind_is_object) ;
 }
 
