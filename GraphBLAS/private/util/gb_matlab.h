@@ -39,6 +39,17 @@
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
 //------------------------------------------------------------------------------
+// gb_double_to_integer: convert a double to int64_t and check conversion
+//------------------------------------------------------------------------------
+
+static inline int64_t gb_double_to_integer (double x)
+{
+    int64_t i = (int64_t) x ;
+    CHECK_ERROR (x != (double) i, "index must be integer") ;
+    return (i) ;
+}
+
+//------------------------------------------------------------------------------
 // function prototypes
 //------------------------------------------------------------------------------
 
@@ -117,17 +128,6 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
     const GrB_Type type         // type of the x,y inputs to the operator
 ) ;
 
-void gb_mxarray_to_indices      // convert a list of indices
-(
-    GrB_Index **I_result,       // index array returned
-    const mxArray *I_matlab,    // MATLAB mxArray to get
-    GrB_Index *ni,              // length of I, or special
-    GrB_Index Icolon [3],       // for all but GB_LIST
-    bool *I_is_list,            // true if GB_LIST
-    bool *I_is_allocated,       // true if index array was allocated
-    int64_t *I_max              // largest entry 
-) ;
-
 GrB_Semiring gb_mxstring_to_semiring    // return semiring from a string
 (
     const mxArray *mxstring,            // MATLAB string
@@ -158,9 +158,17 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     GrB_Matrix *A_handle        // matrix to export; freed on output
 ) ;
 
-mxArray *gb_export_to_mxarray   // return exported MATLAB sparse matrix S
+mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
 (
     GrB_Matrix *A_handle        // matrix to export; freed on output
+) ;
+
+mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
+(
+    void **X_handle,            // pointer to array to export
+    const GrB_Index nrows,      // dimensions of F
+    const GrB_Index ncols,
+    GrB_Type type               // type of the array
 ) ;
 
 mxArray *gb_export              // return the exported MATLAB matrix or struct
@@ -200,5 +208,38 @@ void gb_mxfree              // mxFree wrapper
 ) ;
 
 void gb_at_exit (void)  ;   // called when GraphBLAS is cleared by MATLAB
+
+int64_t *gb_mxarray_to_list     // return List of integers
+(
+    const mxArray *mxList,      // list to extract
+    bool *allocated,            // true if output list was allocated
+    int64_t *len                // length of list
+) ;
+
+GrB_Index *gb_mxcell_to_index   // return index list I
+(
+    const mxArray *I_cell,      // MATLAB cell array
+    const GrB_Index n,          // dimension of matrix being indexed
+    bool *I_allocated,          // true if output array I is allocated
+    GrB_Index *ni               // length (I)
+) ;
+
+void gb_matrix_assign_scalar
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_BinaryOp accum,
+    const GrB_Matrix A,
+    const GrB_Index *I,
+    const GrB_Index ni,
+    const GrB_Index *J,
+    const GrB_Index nj,
+    const GrB_Descriptor desc
+) ;
+
+GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
+(
+    const GrB_Type type
+) ;
 
 #endif

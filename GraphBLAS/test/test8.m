@@ -7,14 +7,14 @@ fprintf ('test8: select operators (tril, triu, diag, offdiag, ...)\n') ;
 %   diag
 %   offdiag
 
-%   nonzero     ne0         !=0   ~=0
-%   eqzero      eq0         ==0
-%   gtzero      gt0         >0
-%   gezero      ge0         >=0
-%   ltzero      lt0         <0
-%   lezero      le0         <=0
+%   nonzero     ~=0
+%   eqzero      ==0
+%   gtzero      >0
+%   gezero      >=0
+%   ltzero      <0
+%   lezero      <=0
 
-%   nethunk     !=thunk     ~=thunk
+%   nethunk     ~=thunk
 %   eqthunk     ==thunk
 %   gtthunk     >thunk
 %   gethunk     >=thunk
@@ -105,19 +105,13 @@ A (3,4) = thunk ;
     % so this does nothing.  A better test would be to compute a GraphBLAS
     % matrix with explicit zeros first.
 
-    %   nonzero     ne0         !=0   ~=0
+    %   nonzero     ~=0
 
     M = (A ~= 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('nonzero', A) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('ne0', A) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('!=0', A) ;
     assert (isequal (C1, sparse (C2)))
 
     C2 = gb.select ('~=0', A) ;
@@ -130,14 +124,11 @@ A (3,4) = thunk ;
     % all explicit entries in the MATLAB sparse matrix are nonzero,
     % so this does nothing.
 
-    %   eqzero      eq0         ==0
+    %   eqzero      ==0
 
     C1 = sparse (m,n) ;
 
     C2 = gb.select ('eqzero', A) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('eq0', A) ;
     assert (isequal (C1, sparse (C2)))
 
     C2 = gb.select ('==0', A) ;
@@ -147,16 +138,13 @@ A (3,4) = thunk ;
 % gtzero
 %-------------------------------------------------------------------------------
 
-    %   gtzero      gt0         >0
+    %   gtzero      >0
 
     M = (A > 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('gtzero', A) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('gt0', A) ;
     assert (isequal (C1, sparse (C2)))
 
     C2 = gb.select ('>0', A) ;
@@ -166,16 +154,13 @@ A (3,4) = thunk ;
 % gezero
 %-------------------------------------------------------------------------------
 
-    %   gezero      ge0         >=0
+    %   gezero      >=0
 
     M = (A >= 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('gezero', A) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('ge0', A) ;
     assert (isequal (C1, sparse (C2)))
 
     C2 = gb.select ('>=0', A) ;
@@ -185,16 +170,13 @@ A (3,4) = thunk ;
 % ltzero
 %-------------------------------------------------------------------------------
 
-    %   ltzero      lt0         <0
+    %   ltzero      <0
 
     M = (A < 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('ltzero', A) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('lt0', A) ;
     assert (isequal (C1, sparse (C2)))
 
     C2 = gb.select ('<0', A) ;
@@ -204,16 +186,13 @@ A (3,4) = thunk ;
 % lezero
 %-------------------------------------------------------------------------------
 
-    %   lezero      le0         <=0
+    %   lezero      <=0
 
     M = (A <= 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('lezero', A) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('le0', A) ;
     assert (isequal (C1, sparse (C2)))
 
     C2 = gb.select ('<=0', A) ;
@@ -224,16 +203,13 @@ A (3,4) = thunk ;
 % nonthunk
 %-------------------------------------------------------------------------------
 
-    %   nonthunk     !=thunk   ~=thunk
+    %   nonthunk     ~=thunk
 
     M = (A ~= thunk) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('nethunk', A, thunk) ;
-    assert (isequal (C1, sparse (C2)))
-
-    C2 = gb.select ('!=thunk', A, thunk) ;
     assert (isequal (C1, sparse (C2)))
 
     C2 = gb.select ('~=thunk', A, thunk) ;
@@ -252,7 +228,7 @@ A (3,4) = thunk ;
     C2 = gb.select ('eqthunk', A, thunk) ;
     assert (isequal (C1, sparse (C2)))
 
-    C2 = gb.select ('eqthunk', A, thunk) ;
+    C2 = gb.select ('==thunk', A, thunk) ;
     assert (isequal (C1, sparse (C2)))
 
 %-------------------------------------------------------------------------------

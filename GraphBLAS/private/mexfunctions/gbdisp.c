@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbclear: clear all internal GraphBLAS workspace
+// gbdisp: display a GraphBLAS matrix struct
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -22,12 +22,27 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 0 && nargout == 0, "usage: gbclear") ;
+    gb_usage (nargin <= 2 && nargout == 0, "usage: gb.disp (X,level)") ;
 
     //--------------------------------------------------------------------------
-    // finalize GraphBLAS
+    // get the level
     //--------------------------------------------------------------------------
 
-    gb_at_exit ( ) ;
+    int level = 3 ;
+    if (nargin > 1)
+    {
+        CHECK_ERROR (!gb_mxarray_is_scalar (pargin [1]),
+            "level must be a scalar") ;
+        level = (int) mxGetScalar (pargin [1]) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // print the GraphBLAS matrix
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    OK (GxB_Matrix_fprint (X, "", level, stdout)) ;
+    printf ("\n") ;
+    OK (GrB_free (&X)) ;
 }
 

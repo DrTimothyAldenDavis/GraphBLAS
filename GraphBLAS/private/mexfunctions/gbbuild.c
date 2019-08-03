@@ -9,15 +9,10 @@
 
 // Usage:
 
-// A = gbbuild (I, J, X)
 // A = gbbuild (I, J, X, desc)
-// A = gbbuild (I, J, X, m)
 // A = gbbuild (I, J, X, m, desc)
-// A = gbbuild (I, J, X, m, n)
 // A = gbbuild (I, J, X, m, n, desc)
-// A = gbbuild (I, J, X, m, n, dup) ;
 // A = gbbuild (I, J, X, m, n, dup, desc) ;
-// A = gbbuild (I, J, X, m, n, dup, type) ;
 // A = gbbuild (I, J, X, m, n, dup, type, desc) ;
 
 // m and n default to the largest index in I and J, respectively.
@@ -25,14 +20,7 @@
 // If dup is given by without a type,  type of dup defaults to the type of X.
 // type is the type of A, which defaults to the type of X.
 
-// The descriptor should only be used by gb.m, not by the end-user, and thus
-// it is not documented in gbbuild.m.
-
-// desc.kind = 'object' or 'sparse' determines how the result is returned to
-// MATLAB.  If 'sparse' then the result is a MATLAB sparse matrix.  This is the
-// default if the descriptor is not present.  The classdef file gb.m uses
-// desc.kind = 'object', in which case this mexFunction returns a GraphBLAS
-// matrix in a struct.  The struct is then wrapped in an gb object.
+// desc.kind = 'object' or 'sparse' is the only part used from the descriptor.
 
 #include "gb_matlab.h"
 
@@ -50,41 +38,37 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin >= 3 && nargin <= 8 && nargout <= 1,
-        "usage: A = gbbuild (I, J, X, m, n, dup, type)") ;
+        "usage: A = gb.build (I, J, X, m, n, dup, type)") ;
 
     //--------------------------------------------------------------------------
     // get the descriptor, if present
     //--------------------------------------------------------------------------
 
     bool kind_is_object = false ;
-    if (mxIsStruct (pargin [nargin-1]))
-    {
-        // get the descriptor, but only d.kind is needed
-        GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1],
-            &kind_is_object) ;
-        OK (GrB_free (&desc)) ;
-        // remove the descriptor from consideration
-        nargin-- ;
-    }
+    CHECK_ERROR (!mxIsStruct (pargin [nargin-1]), "descriptor missing") ;
+
+    // get the descriptor, but only d.kind is needed
+    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1],
+        &kind_is_object) ;
+    OK (GrB_free (&desc)) ;
+    // remove the descriptor from consideration
+    nargin-- ;
 
     //--------------------------------------------------------------------------
     // get I and J
     //--------------------------------------------------------------------------
 
-    GrB_Index ni, Icolon [3], *I = NULL, I_is_list, I_is_allocated ;
-    GrB_Index nj, Jcolon [3], *J = NULL, J_is_list, J_is_allocated ;
+    GrB_Index ni, nj ;
+    bool I_allocated, J_allocated ;
 
-    // TODO: if I,J allocated, also find max index
-    int64_t I_max, J_max ;
+    // TODO: if I,J allocated, also find max index in gb_mxarray_to_list
 
-    gb_mxarray_to_indices (&I, pargin [0], &ni, Icolon, &I_is_list,
-        &I_is_allocated, &I_max) ;
+    GrB_Index *I = (GrB_Index *) gb_mxarray_to_list (pargin [0],
+        &I_allocated, &ni) ;
 
-    gb_mxarray_to_indices (&J, pargin [1], &nj, Jcolon, &J_is_list,
-        &J_is_allocated, &J_max) ;
+    GrB_Index *J = (GrB_Index *) gb_mxarray_to_list (pargin [1],
+        &J_allocated, &nj) ;
 
-    CHECK_ERROR (!I_is_list, "I must be a list of indices") ;
-    CHECK_ERROR (!J_is_list, "J must be a list of indices") ;
     CHECK_ERROR (ni != nj, "I, J, and X must be the same size") ;
 
     //--------------------------------------------------------------------------
@@ -246,6 +230,13 @@ void mexFunction
     {
         ERROR ("unknown type") ;
     }
+
+    //--------------------------------------------------------------------------
+    // free workspace
+    //--------------------------------------------------------------------------
+
+    if (I_allocated) gb_mxfree (&I) ;
+    if (J_allocated) gb_mxfree (&J) ;
 
     //--------------------------------------------------------------------------
     // export the output matrix A back to MATLAB

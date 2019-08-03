@@ -1,11 +1,14 @@
 //------------------------------------------------------------------------------
-// gbthreads: get/set the maximum # of threads to use in GraphBLAS
+// gbsparse: convert a GraphBLAS matrix struct into a MATLAB sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
+
+// The input may be either a GraphBLAS matrix struct or a standard MATLAB
+// sparse matrix.  The output is a standard MATLAB sparse matrix.
 
 #include "gb_matlab.h"
 
@@ -22,29 +25,13 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout <= 1,
-        "ussage: nthreads = gbthreads ; or gbthreads (nthreads)") ;
+    gb_usage (nargin == 1 && nargout <= 1, "usage: A = sparse (X)") ;
 
     //--------------------------------------------------------------------------
-    // set the # of threads, if requested
+    // export the input matrix to a MATLAB sparse matrix
     //--------------------------------------------------------------------------
 
-    int nthreads_max ;
-
-    if (nargin > 0)
-    {
-        // set the # of threads
-        CHECK_ERROR (!gb_mxarray_is_scalar (pargin [0]),
-            "input must be a scalar") ;
-        nthreads_max = (int) mxGetScalar (pargin [0]) ;
-        OK (GxB_set (GxB_NTHREADS, nthreads_max)) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // return # of threads
-    //--------------------------------------------------------------------------
-
-    OK (GxB_get (GxB_NTHREADS, &nthreads_max)) ;
-    pargout [0] = mxCreateDoubleScalar (nthreads_max) ;
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    pargout [0] = gb_export_to_mxsparse (&X) ;
 }
 

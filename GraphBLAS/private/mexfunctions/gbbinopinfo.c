@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbbinop: create a GraphBLAS binary op and print it (for illustration only)
+// gbbinopinfo : print  aGraphBLAS binary op (for illustration only)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -9,8 +9,8 @@
 
 // Usage:
 
-// A = gbbinop (binop)
-// A = gbbinop (binop, type)
+// gbbinopinfo (binop)
+// gbbinopinfo (binop, type)
 
 #include "gb_matlab.h"
 
@@ -28,7 +28,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 2 && nargout == 0,
-        "usage: gbbinop (binop) or gbbinop (binop,type)") ;
+        "usage: gb.binopinfo (binop) or gb.binopinfo (binop,type)") ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS binary operator and print it

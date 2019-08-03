@@ -14,6 +14,10 @@ Y0 = sprandn (nfeatures, nneurons, 0.5) ;
 
 Y1 = dnn_matlab (W, bias, Y0) ;
 Y2 = dnn_gb     (W, bias, Y0) ;
+Y3 = dnn_gb_terse (W, bias, Y0) ;
+Y4 = dnn_gb_terse (W, bias, Y0, 'gb') ;
 
 err = norm (Y1-Y2,1)
+err = norm (Y1-Y3,1)
+err = norm (Y1-Y4,1)
 

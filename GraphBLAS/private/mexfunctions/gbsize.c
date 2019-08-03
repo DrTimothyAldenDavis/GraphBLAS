@@ -25,7 +25,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 2, "usage: [m n] = gbsize (X)") ;
+    gb_usage (nargin == 1 && nargout <= 2, "usage: [m n] = gb.size (X)") ;
 
     //--------------------------------------------------------------------------
     // get the # of rows and columns in a GraphBLAS matrix struct

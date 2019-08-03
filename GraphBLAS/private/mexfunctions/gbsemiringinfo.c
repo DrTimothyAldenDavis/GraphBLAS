@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbnvals: number of entries in a GraphBLAS matrix struct
+// gbsemiringinfo: print a GraphBLAS semiring (for illustration only)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,8 +7,10 @@
 
 //------------------------------------------------------------------------------
 
-// The input may be either a GraphBLAS matrix struct or a standard MATLAB
-// sparse matrix.
+// Usage:
+
+// gbsemiringinfo (semiring_string)
+// gbsemiringinfo (semiring_string, type)
 
 #include "gb_matlab.h"
 
@@ -25,16 +27,20 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: nvals = gbnvals (X)") ;
+    gb_usage (nargin <= 2 && nargout == 0,
+        "usage: gb.semiringinfo (semiring) or gb.semiringinfo (semiring,type)");
 
     //--------------------------------------------------------------------------
-    // get the # of entries in the matrix
+    // construct the GraphBLAS semiring and print it
     //--------------------------------------------------------------------------
 
-    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
-    GrB_Index nvals ;
-    OK (GrB_Matrix_nvals (&nvals, X)) ;
-    pargout [0] = mxCreateDoubleScalar ((double) nvals) ;
-    OK (GrB_free (&X)) ;
+    GrB_Type type = NULL ;
+    if (nargin == 2)
+    {
+        type = gb_mxstring_to_type (pargin [1]) ;
+    }
+
+    GrB_Semiring semiring = gb_mxstring_to_semiring (pargin [0], type) ;
+    OK (GxB_Semiring_fprint (semiring, "", GxB_COMPLETE, stdout)) ;
 }
 

@@ -60,38 +60,31 @@ GrB_BinaryOp gb_string_to_selectop      // return select operator from a string
     {
         return (GxB_OFFDIAG) ;
     }
-    else if (MATCH (opstring, "nonzero") || MATCH (opstring, "ne0") ||
-             MATCH (opstring, "!=0") || MATCH (opstring, "~=0"))
+    else if (MATCH (opstring, "nonzero") || MATCH (opstring, "~=0"))
     {
         return (GxB_NONZERO) ;
     }
-    else if (MATCH (opstring, "eqzero") || MATCH (opstring, "eq0") ||
-             MATCH (opstring, "==0"))
+    else if (MATCH (opstring, "eqzero") || MATCH (opstring, "==0"))
     {
         return (GxB_EQ_ZERO) ;
     }
-    else if (MATCH (opstring, "gtzero") || MATCH (opstring, "gt0") ||
-             MATCH (opstring, ">0"))
+    else if (MATCH (opstring, "gtzero") || MATCH (opstring, ">0"))
     {
         return (GxB_GT_ZERO) ;
     }
-    else if (MATCH (opstring, "gezero") || MATCH (opstring, "ge0") ||
-             MATCH (opstring, ">=0"))
+    else if (MATCH (opstring, "gezero") || MATCH (opstring, ">=0"))
     {
         return (GxB_GE_ZERO) ;
     }
-    else if (MATCH (opstring, "ltzero") || MATCH (opstring, "lt0") ||
-             MATCH (opstring, "<0"))
+    else if (MATCH (opstring, "ltzero") || MATCH (opstring, "<0"))
     {
         return (GxB_LT_ZERO) ;
     }
-    else if (MATCH (opstring, "lezero") || MATCH (opstring, "le0") ||
-             MATCH (opstring, "<=0"))
+    else if (MATCH (opstring, "lezero") || MATCH (opstring, "<=0"))
     {
         return (GxB_LE_ZERO) ;
     }
-    else if (MATCH (opstring, "nonzero") || MATCH (opstring, "nethunk") ||
-             MATCH (opstring, "!=thunk") || MATCH (opstring, "~=thunk"))
+    else if (MATCH (opstring, "nethunk") || MATCH (opstring, "~=thunk"))
     {
         return (GxB_NE_THUNK) ;
     }

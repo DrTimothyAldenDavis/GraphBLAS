@@ -22,7 +22,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
     }
     else
     {
-        return (gb_export_to_mxarray (C_handle)) ;
+        return (gb_export_to_mxsparse (C_handle)) ;
     }
 }
 

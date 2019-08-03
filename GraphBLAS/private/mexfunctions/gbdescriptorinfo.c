@@ -1,16 +1,11 @@
 //------------------------------------------------------------------------------
-// gbsemiring: create a GraphBLAS semiring and print it (for illustration only)
+// gbdescriptorinfo: print a GraphBLAS descriptor (for illustration only)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
-
-// Usage:
-
-// A = gbsemiring (semiring_string)
-// A = gbsemiring (semiring_string, type)
 
 #include "gb_matlab.h"
 
@@ -27,20 +22,25 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 2 && nargout == 0,
-        "usage: gbsemiring (semiring) or gbsemiring (semiring,type)") ;
+    gb_usage (nargin <= 1 && nargout == 0,
+        "usage: gb.descriptorinfo or gb.descriptorinfo (d)") ;
 
     //--------------------------------------------------------------------------
-    // construct the GraphBLAS semiring and print it
+    // construct the GraphBLAS descriptor and print it
     //--------------------------------------------------------------------------
 
-    GrB_Type type = NULL ;
-    if (nargin == 2)
+    // TODO make kind_is_object an enum: 'gb', 'sparse', 'full'
+    bool kind_is_object ;
+    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0], &kind_is_object) ;
+
+    if (d == NULL)
     {
-        type = gb_mxstring_to_type (pargin [1]) ;
+        printf ("\nDefault GraphBLAS descriptor:\n") ;
+        OK (GrB_Descriptor_new (&d)) ;
     }
 
-    GrB_Semiring semiring = gb_mxstring_to_semiring (pargin [0], type) ;
-    OK (GxB_Semiring_fprint (semiring, "", GxB_COMPLETE, stdout)) ;
+    OK (GxB_Descriptor_fprint (d, "", GxB_COMPLETE, stdout)) ;
+    printf ("d.kind     = %s\n", (kind_is_object) ? "object" : "sparse") ;
+    OK (GrB_free (&d)) ;
 }
 

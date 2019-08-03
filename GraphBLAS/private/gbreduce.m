@@ -1,11 +1,7 @@
 function Cout = gbreduce (Cin, M, accum, op, A, desc)
-%GBREDUCE reduce a matrix to a vector or scalar
-%
-% Usage:
-%
-%   Cout = gbreduce (Cin, M, accum, op, A, desc)
-%
-% TODO: separate functions for reduce-to-vector and reduce-to-scalar?
-%
-% See also sum, prod, accumarry, max, min.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+error ('gb mexFunction not found; use gbmake to compile GraphBLAS') ;
 

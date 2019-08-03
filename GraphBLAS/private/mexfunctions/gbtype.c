@@ -25,7 +25,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: type = gbtype (X)") ;
+    gb_usage (nargin == 1 && nargout <= 1, "usage: type = gb.type (X)") ;
 
     //--------------------------------------------------------------------------
     // get the # of entries in the matrix

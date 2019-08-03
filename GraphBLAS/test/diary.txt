@@ -1,0 +1,42 @@
+test9
+do not convert to gb single; leave as MATLAB double sparse
+  Name         Size            Bytes  Class     Attributes
+
+  W            1x4              7504  cell                
+  W1          16x16             1720  double    sparse    
+  Y0           6x16              680  double    sparse    
+  bias         1x4              2016  cell                
+  bias1       16x16              392  double    sparse    
+  i            1x1                 8  double              
+  layers       1x1                 8  double              
+  n            1x1                 8  double              
+
+convert to gb single
+  Name         Size            Bytes  Class     Attributes
+
+  W            1x4              9756  cell                
+  W1          16x16             2294  gb                  
+  Y0           6x16             1514  gb                  
+  bias         1x4              5640  cell                
+  bias1       16x16             1298  gb                  
+  i            1x1                 8  double              
+  layers       1x1                 8  double              
+  n            1x1                 8  double              
+  option       1x2                 4  char                
+
+
+err =
+
+   6.7001e-06
+
+
+err =
+
+     0
+
+
+err =
+
+   6.7001e-06
+
+diary off

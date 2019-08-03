@@ -51,65 +51,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         return (NULL) ;
 
     }
-    else if (mxIsSparse (X))
-    {
-
-        //----------------------------------------------------------------------
-        // construct a shallow GrB_Matrix copy of a MATLAB sparse matrix
-        //----------------------------------------------------------------------
-
-        GrB_Type type = gb_mxarray_type (X) ;
-        GrB_Index nrows = (GrB_Index) mxGetM (X) ;
-        GrB_Index ncols = (GrB_Index) mxGetN (X) ;
-        GrB_Index *Xp = (GrB_Index *) mxGetJc (X) ;
-        GrB_Index *Xi = (GrB_Index *) mxGetIr (X) ;
-        GrB_Index nzmax = (GrB_Index) mxGetNzmax (X) ;
-
-        void *Xx = NULL ;
-        if (type == GrB_FP64)
-        {
-            // MATLAB sparse double matrix
-            Xx = mxGetDoubles (X) ;
-        }
-        #ifdef GB_COMPLEX_TYPE
-        else if (type == gb_complex_type)
-        {
-            // MATLAB sparse double complex matrix
-            Xx = mxGetComplexDoubles (X) ;
-        }
-        #endif
-        else if (type == GrB_BOOL)
-        {
-            // MATLAB sparse logical matrix
-            Xx = mxGetPr (X) ;
-        }
-        else
-        {
-            // MATLAB does not support any other kinds of sparse matrices
-            ERROR ("type not supported") ;
-        }
-
-        CHECK_ERROR (Xp == NULL, "hey Xp NULL!") ;
-        CHECK_ERROR (Xi == NULL, "hey Xi NULL!") ;
-        CHECK_ERROR (Xx == NULL, "hey Xx NULL!") ;
-
-        // import the matrix.  This sets Xp, Xi, and Xx to NULL, but it does
-        // not change the MATLAB matrix they came from.
-        OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, -1,
-            &Xp, &Xi, &Xx, NULL)) ;
-
-        // tell GraphBLAS the matrix is shallow
-        A->p_shallow = true ;
-        A->i_shallow = (A->i != NULL) ;
-        A->x_shallow = (A->x != NULL) ;
-        A->h_shallow = (A->h != NULL) ;
-
-        // make sure the shallow copy remains standard, not hypersparse
-        OK (GxB_set (A, GxB_HYPER, GxB_NEVER_HYPER)) ;
-
-        // OK (GxB_Matrix_fprint (A, "A from sparse", 3, stdout)) ;
-
-    }
     else if (mxIsStruct (X))
     {
 
@@ -194,21 +135,133 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     {
 
         //----------------------------------------------------------------------
-        // X is a MATLAB dense matrix
+        // construct a shallow GrB_Matrix copy of a MATLAB matrix
         //----------------------------------------------------------------------
 
-        // TODO: create a partially shallow GrB_Matrix copy of X, by
-        // allocating the row indices Xi and pointers Xp.
+        // get the type and dimensions
+        bool X_is_sparse = mxIsSparse (X) ;
 
-        /*
-        A->p_shallow = false ;
-        A->i_shallow = false ;
+        GrB_Type type = gb_mxarray_type (X) ;
+        GrB_Index nrows = (GrB_Index) mxGetM (X) ;
+        GrB_Index ncols = (GrB_Index) mxGetN (X) ;
+
+        // get Xp, Xi, nzmax, or create them
+        GrB_Index *Xp, *Xi, nzmax ;
+        if (X_is_sparse)
+        {
+            // get the nzmax, Xp, and Xi from the MATLAB sparse matrix X
+            nzmax = (GrB_Index) mxGetNzmax (X) ;
+            Xp = (GrB_Index *) mxGetJc (X) ;
+            Xi = (GrB_Index *) mxGetIr (X) ;
+        }
+        else
+        {
+            // X is a MATLAB dense matrix; create a partially shallow
+            // GrB_Matrix copy by allocating the row indices Xi and pointers Xp
+            // but keeping Xx shallow.
+            nzmax = MAX (nrows * ncols, 1) ;
+            Xp = (GrB_Index *) mxMalloc ((ncols+1) * sizeof (GrB_Index)) ;
+            Xi = (GrB_Index *) mxMalloc (nzmax * sizeof (GrB_Index)) ;
+
+            // TODO do this in parallel
+            for (int64_t j = 0 ; j <= ncols ; j++)
+            {
+                Xp [j] = j * nrows ;
+            }
+            for (int64_t j = 0 ; j < ncols ; j++)
+            {
+                for (int64_t i = 0 ; i < nrows ; i++)
+                {
+                    Xi [j * nrows + i] = i ;
+                }
+            }
+        }
+
+        // get the numeric data
+        void *Xx = NULL ;
+        if (type == GrB_FP64)
+        {
+            // MATLAB sparse or dense double matrix
+            Xx = mxGetDoubles (X) ;
+        }
+        #ifdef GB_COMPLEX_TYPE
+        else if (type == gb_complex_type)
+        {
+            // MATLAB sparse or dense double complex matrix
+            Xx = mxGetComplexDoubles (X) ;
+        }
+        #endif
+        else if (type == GrB_BOOL)
+        {
+            // MATLAB sparse or dense logical matrix
+            Xx = mxGetData (X) ;
+        }
+        else
+        {
+            // MATLAB does not support any other kinds of sparse matrices
+            if (X_is_sparse)
+            {
+                ERROR ("type not supported") ;
+            }
+            else if (type == GrB_INT8)
+            {
+                Xx = mxGetInt8s (X) ;
+            }
+            else if (type == GrB_INT16)
+            {
+                Xx = mxGetInt16s (X) ;
+            }
+            else if (type == GrB_INT32)
+            {
+                Xx = mxGetInt32s (X) ;
+            }
+            else if (type == GrB_INT64)
+            {
+                Xx = mxGetInt64s (X) ;
+            }
+            else if (type == GrB_UINT8)
+            {
+                Xx = mxGetUint8s (X) ;
+            }
+            else if (type == GrB_UINT16)
+            {
+                Xx = mxGetUint16s (X) ;
+            }
+            else if (type == GrB_UINT32)
+            {
+                Xx = mxGetUint32s (X) ;
+            }
+            else if (type == GrB_UINT64)
+            {
+                Xx = mxGetUint64s (X) ;
+            }
+            else
+            {
+                ERROR ("unknown type") ;
+            }
+        }
+
+        // import the matrix.  This sets Xp, Xi, and Xx to NULL, but it does
+        // not change the MATLAB matrix they came from.
+        OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, -1,
+            &Xp, &Xi, &Xx, NULL)) ;
+
+        // tell GraphBLAS the matrix is shallow
+        if (X_is_sparse)
+        {
+            A->p_shallow = true ;
+            A->i_shallow = (A->i != NULL) ;
+        }
+        else
+        {
+            A->p_shallow = false ;
+            A->i_shallow = false ;
+        }
+        A->h_shallow = (A->h != NULL) ;
         A->x_shallow = (A->x != NULL) ;
-        A->h_shallow = false ;
-        */
 
-        ERROR ("TODO: dense matrices not yet supported") ;
-
+        // make sure the shallow copy remains standard, not hypersparse
+        OK (GxB_set (A, GxB_HYPER, GxB_NEVER_HYPER)) ;
     }
 
     //--------------------------------------------------------------------------

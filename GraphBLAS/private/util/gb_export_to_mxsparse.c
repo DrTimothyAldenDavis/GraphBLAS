@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_export_to_mxarray: export a GrB_Matrix to a MATLAB sparse matrix
+// gb_export_to_mxsparse: export a GrB_Matrix to a MATLAB sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -14,7 +14,7 @@
 
 #include "gb_matlab.h"
 
-mxArray *gb_export_to_mxarray   // return exported MATLAB sparse matrix S
+mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
 (
     GrB_Matrix *A_handle        // matrix to export; freed on output
 )
@@ -25,7 +25,6 @@ mxArray *gb_export_to_mxarray   // return exported MATLAB sparse matrix S
     //--------------------------------------------------------------------------
 
     CHECK_ERROR (A_handle == NULL || (*A_handle) == NULL, "internal error") ;
-    // OK (GxB_Matrix_fprint (*A_handle, "A to export as sparse", 3, stdout)) ;
 
     //--------------------------------------------------------------------------
     // typecast to a native MATLAB sparse type and free A

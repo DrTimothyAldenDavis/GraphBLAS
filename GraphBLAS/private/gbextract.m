@@ -1,10 +1,7 @@
 function Cout = gbextract (Cin, M, accum, A, I, J, desc)
-%GBEXTRACT extract sparse submatrix
-%
-% Usage:
-%
-%   Cout = gbextract (Cin, M, accum, A, I, J, desc)
-%
-% TODO
-%
-% See also subsref.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+error ('gb mexFunction not found; use gbmake to compile GraphBLAS') ;
+

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbdescriptor: create a GraphBLAS descriptor and print it (for illustration)
+// gbclear: clear all internal GraphBLAS workspace
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -22,23 +22,12 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 1 && nargout == 0, "usage: gbdescriptor (d)") ;
+    gb_usage (nargin == 0 && nargout == 0, "usage: gb.clear") ;
 
     //--------------------------------------------------------------------------
-    // construct the GraphBLAS descriptor and print it
+    // finalize GraphBLAS
     //--------------------------------------------------------------------------
 
-    bool kind_is_object ;
-    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0], &kind_is_object) ;
-
-    if (d == NULL)
-    {
-        printf ("\nDefault GraphBLAS descriptor:\n") ;
-        OK (GrB_Descriptor_new (&d)) ;
-    }
-
-    OK (GxB_Descriptor_fprint (d, "", GxB_COMPLETE, stdout)) ;
-    printf ("d.kind = %s\n", (kind_is_object) ? "object" : "sparse") ;
-    OK (GrB_free (&d)) ;
+    gb_at_exit ( ) ;
 }
 
