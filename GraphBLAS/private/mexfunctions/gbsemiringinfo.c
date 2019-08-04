@@ -38,6 +38,7 @@ void mexFunction
     if (nargin == 2)
     {
         type = gb_mxstring_to_type (pargin [1]) ;
+        CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
     GrB_Semiring semiring = gb_mxstring_to_semiring (pargin [0], type) ;

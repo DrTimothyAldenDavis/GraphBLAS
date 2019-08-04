@@ -11,7 +11,7 @@ S = sparse   (i, j, x, m, n)
 
 sparse (G)-S
 
-d.kind = 'object' ;
+d.kind = 'gb' ;
 G = gb.build (i, j, x, m, n, d) ;
 S - sparse (G)
 

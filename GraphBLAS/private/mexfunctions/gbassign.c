@@ -43,11 +43,8 @@ void mexFunction
     // get the descriptor
     //--------------------------------------------------------------------------
 
-    // the descriptor is always present as the last argument
-
-    bool kind_is_object = false ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind_is_object) ;
+    kind_enum_t kind ;
+    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
 
     //--------------------------------------------------------------------------
     // find the remaining arguents
@@ -195,6 +192,6 @@ void mexFunction
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&C, kind_is_object) ;
+    pargout [0] = gb_export (&C, kind) ;
 }
 

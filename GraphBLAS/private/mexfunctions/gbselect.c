@@ -25,8 +25,8 @@
 
 // If Cin is not present or is an empty matrix (Cin = [ ]) then it is
 // implicitly a matrix with no entries, of the right size (which depends on A,
-// and the descriptor).  The type if Cin, if not present, is determined by //
-// the ztype of the accum, if present, or otherwise it has the same time as A.
+// and the descriptor).  The type if Cin, if not present, is determined by the
+// ztype of the accum, if present, or otherwise it has the same time as A.
 
 #include "gb_matlab.h"
 
@@ -54,9 +54,9 @@ void mexFunction
     GrB_BinaryOp accum = NULL ;
     GxB_SelectOp op = NULL ;
     GrB_Type ctype ;
-    bool kind_is_object = false ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind_is_object) ;
+
+    kind_enum_t kind ;
+    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
 
     if (mxIsChar (pargin [0]))
     {
@@ -172,7 +172,6 @@ void mexFunction
             OK (GxB_Matrix_type (&ctype, A)) ;
         }
 
-        // TODO all the user to determine the CSR/CSC format
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
     }
 
@@ -195,7 +194,6 @@ void mexFunction
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    // OK (GxB_Matrix_fprint (C, "C selected to export", 3, stdout)) ;
-    pargout [0] = gb_export (&C, kind_is_object) ;
+    pargout [0] = gb_export (&C, kind) ;
 }
 

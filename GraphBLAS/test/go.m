@@ -6,6 +6,8 @@ addpath ../../Test/spok
 test1
 test2
 test3
+fprintf ('hit enter to continue: ') ;
+pause
 test4
 test5
 test6

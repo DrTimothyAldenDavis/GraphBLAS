@@ -2,8 +2,6 @@ function Y = dnn_gb_overload (W, bias, Y0)
 % Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
 % and bias vectors.  Returns result as a GraphBLAS matrix
 
-% THIS ONE DOESN'T WORK YET ... IT'S A DRAFT
-
 layers = length (W) ;
 n = size (Y0, 2) ;
 
@@ -17,7 +15,9 @@ n = size (Y0, 2) ;
         % build a gb GrB_FP32 matrix from tuples, using '+' as the dup operator
         bias {i} = gb.build (1:n, 1:n, bias {i}, n, n, '+', 'single') ;
         % change the default semiring
-        bias{i}.semiring = '+.+' ;
+        b = bias {i} ;
+        b.semiring = '+.+' ;
+        bias {i} = b ;
     end
 
 Y = Y0 ; % Initialize feature vectors.
@@ -32,7 +32,8 @@ for i=1:layers
     M = gb.select ('>thunk', Y, 32) ;
     if (nnz (M) > 0)
         % I think I can do this with MATLAB object overloading too:
-        Y (M) = 32 ;
+        % Y (M) = 32 ;
+        Y = gb.assign (Y, M, 32) ;
     end
 
 end

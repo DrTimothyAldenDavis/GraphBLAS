@@ -7,14 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-// TODO add option to create A as CSR/CSC, hypersparse/standard
-
 #include "gb_matlab.h"
 
 GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 (
-    GrB_Type type,          // if NULL, copy but do not typecast
-    GrB_Matrix S            // may be shallow or deep
+    GrB_Type type,              // if NULL, copy but do not typecast
+    GxB_Format_Value format,    // also convert to the requested format
+    GrB_Matrix S                // may be shallow
 )
 {
 
@@ -38,9 +37,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         // make a deep copy of the input
         //----------------------------------------------------------------------
 
-        // OK (GxB_Matrix_fprint (S, "S to dup", 3, stdout)) ;
         OK (GrB_Matrix_dup (&A, S)) ;
-        // OK (GxB_Matrix_fprint (A, "A to dupped", 3, stdout)) ;
 
     }
     else
@@ -50,8 +47,6 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         // typecast the input to the requested type
         //----------------------------------------------------------------------
 
-        // OK (GxB_Matrix_fprint (S, "S to typecast", 3, stdout)) ;
-        // OK (GxB_Type_fprint (type, "new type is:", 3, stdout)) ;
         GrB_Index nrows, ncols ;
         OK (GrB_Matrix_nrows (&nrows, S)) ;
         OK (GrB_Matrix_ncols (&ncols, S)) ;
@@ -66,14 +61,18 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         OK (GrB_transpose (A, NULL, NULL, S, d)) ;
 
         OK (GrB_free (&d)) ;
-        // OK (GxB_Matrix_fprint (A, "A typecasted", 3, stdout)) ;
     }
+
+    //--------------------------------------------------------------------------
+    // convert the matrix to the right format
+    //--------------------------------------------------------------------------
+
+    OK (GxB_set (A, GxB_FORMAT, format)) ;
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (gb_is_shallow (A), "Hey, A shallow!") ;
     return (A) ;
 }
 

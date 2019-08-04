@@ -17,9 +17,9 @@ GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a MATLAB X
 {
 
     GrB_Matrix S = gb_get_shallow (X) ;
-    // OK (GxB_Matrix_fprint (S, "got shallow S", 3, stdout)) ;
-    GrB_Matrix A = gb_typecast (type, S) ;
-    // OK (GxB_Matrix_fprint (A, "made deep A", 3, stdout)) ;
+    GxB_Format_Value format ;
+    OK (GxB_get (GxB_FORMAT, &format)) ;
+    GrB_Matrix A = gb_typecast (type, format, S) ;
     OK (GrB_free (&S)) ;
     return (A) ;
 }

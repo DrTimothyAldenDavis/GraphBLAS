@@ -26,16 +26,11 @@ GrB_Type gb_string_to_type      // return the GrB_Type from a string
     if (MATCH (classname, "uint64"  )) return (GrB_UINT64) ;
     if (MATCH (classname, "single"  )) return (GrB_FP32) ;
     if (MATCH (classname, "double"  )) return (GrB_FP64) ;
-    if (MATCH (classname, "complex" ))
-    {
-        #ifdef GB_COMPLEX_TYPE
-        return (gb_complex_type) ;
-        #else
-        ERROR ("complex not supported") ;
-        #endif
-    }
+    #ifdef GB_COMPLEX_TYPE
+    if (MATCH (classname, "complex" )) return (gb_complex_type) ;
+    #endif
 
-    ERROR ("unknown type") ;
+    // not a type
     return (NULL) ;
 }
 

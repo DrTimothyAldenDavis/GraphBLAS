@@ -25,63 +25,42 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 3 && nargout <= 1,
-        "usage: A = gb (m,n,type) or A = gb (X,type)") ;
+    gb_usage (nargin >= 1 && nargin <= 3 && nargout <= 1,
+        "usage: G = gb (m,n,type) or G = gb (X,type)") ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix A ;
+    GrB_Matrix G ;
 
-    if (nargin == 0)
+    if (nargin == 1)
     {
 
         //----------------------------------------------------------------------
-        // A = gbnew ; empty 1-by-1 GraphBLAS double matrix
+        // G = gb (X)
         //----------------------------------------------------------------------
 
-        OK (GrB_Matrix_new (&A, GrB_FP64, 1, 1)) ;
-
-    }
-    else if (nargin == 1)
-    {
-
-        if (mxIsChar (pargin [0]))
-        {
-
-            //------------------------------------------------------------------
-            // A = gb (type) ; empty 1-by-1 GraphBLAS matrix of given type
-            //------------------------------------------------------------------
-
-            OK (GrB_Matrix_new (&A, gb_mxstring_to_type (pargin [0]), 1, 1)) ;
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // A = gb (X) ; GraphBLAS copy of X, same type
-            //------------------------------------------------------------------
-
-            // X can be a MATLAB sparse or dense matrix, or a GraphBLAS struct
-
-            A = gb_get_deep (pargin [0], NULL) ;
-
-        }
+        // GraphBLAS copy of X, same type as X
+        G = gb_get_deep (pargin [0], NULL) ;
 
     }
     else if (nargin == 2)
     {
 
+        //----------------------------------------------------------------------
+        // G = gb (X, type)
+        // G = gb (m, n)
+        //----------------------------------------------------------------------
+
         if (mxIsChar (pargin [1]))
         {
 
             //------------------------------------------------------------------
-            // A = gb (X, type) ; GraphBLAS typecasted copy of MATLAB X
+            // G = gb (X, type)
             //------------------------------------------------------------------
 
-            A = gb_get_deep (pargin [0], gb_mxstring_to_type (pargin [1])) ;
+            G = gb_get_deep (pargin [0], gb_mxstring_to_type (pargin [1])) ;
 
         }
         else if (gb_mxarray_is_scalar (pargin [0]) &&
@@ -89,18 +68,18 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // A = gb (m, n) ; empty m-by-n GraphBLAS double matrix
+            // G = gb (m, n)
             //------------------------------------------------------------------
 
-            OK (GrB_Matrix_new (&A, GrB_FP64,
-                (int64_t) mxGetScalar (pargin [0]) , 
-                (int64_t) mxGetScalar (pargin [1]))) ;
+            // empty m-by-n GraphBLAS double
+            GrB_Index nrows = mxGetScalar (pargin [0]) ;
+            GrB_Index ncols = mxGetScalar (pargin [1]) ;
+            OK (GrB_Matrix_new (&G, GrB_FP64, nrows, ncols)) ;
 
         }
         else
         {
-
-            USAGE ("usage: A = gb (m,n) or A = gb (X,type)") ;
+            USAGE ("usage: G = gb(m,n), or G = gb(X,type)") ;
         }
 
     }
@@ -108,25 +87,30 @@ void mexFunction
     {
 
         //----------------------------------------------------------------------
-        // A = gb (m, n, type) ; empty m-by-n GraphBLAS matrix of given type
+        // G = gb (m, n, type)
         //----------------------------------------------------------------------
 
-        if (!gb_mxarray_is_scalar (pargin [0]) ||
-            !gb_mxarray_is_scalar (pargin [1]) || 
-            !mxIsChar (pargin [2]))
+        if (gb_mxarray_is_scalar (pargin [0]) &&
+            gb_mxarray_is_scalar (pargin [1]) && mxIsChar (pargin [2]))
         {
-            USAGE ("usage: A = gb (m,n,type)") ;
-        }
 
-        OK (GrB_Matrix_new (&A, gb_mxstring_to_type (pargin [2]),
-            (int64_t) mxGetScalar (pargin [0]) , 
-            (int64_t) mxGetScalar (pargin [1]))) ;
+            // create an empty m-by-n matrix of the desired type
+            GrB_Index nrows = mxGetScalar (pargin [0]) ;
+            GrB_Index ncols = mxGetScalar (pargin [1]) ;
+            GrB_Type type = gb_mxstring_to_type (pargin [2]) ;
+            OK (GrB_Matrix_new (&G, type, nrows, ncols)) ;
+
+        }
+        else
+        {
+            USAGE ("usage: G = gb (m,n,type)") ;
+        }
     }
 
     //--------------------------------------------------------------------------
     // export the output matrix A back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export_to_mxstruct (&A) ;
+    pargout [0] = gb_export (&G, KIND_GB) ;
 }
 

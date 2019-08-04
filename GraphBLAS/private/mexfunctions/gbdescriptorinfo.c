@@ -29,9 +29,8 @@ void mexFunction
     // construct the GraphBLAS descriptor and print it
     //--------------------------------------------------------------------------
 
-    // TODO make kind_is_object an enum: 'gb', 'sparse', 'full'
-    bool kind_is_object ;
-    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0], &kind_is_object) ;
+    kind_enum_t kind ;
+    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0], &kind) ;
 
     if (d == NULL)
     {
@@ -40,7 +39,15 @@ void mexFunction
     }
 
     OK (GxB_Descriptor_fprint (d, "", GxB_COMPLETE, stdout)) ;
-    printf ("d.kind     = %s\n", (kind_is_object) ? "object" : "sparse") ;
+
+    switch (kind)
+    {
+        case KIND_SPARSE: printf ("d.kind     = sparse\n") ;    break ;
+        case KIND_FULL:   printf ("d.kind     = full\n") ;      break ;
+        case KIND_GB:
+        default:          printf ("d.kind     = gb\n") ;        break ;
+    }
+
     OK (GrB_free (&d)) ;
 }
 

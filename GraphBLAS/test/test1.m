@@ -14,19 +14,11 @@ n = 3 ;
 for k = 1:length (types)
     type = types {k} ;
 
-    fprintf ('\n---- A = gb:\n') ;
-    A = gb
-    Z = sparse (A)
-
     fprintf ('\n---- A = gb (X) :\n') ;
     A = gb (X)
     Z = sparse (A)
     assert (spok (Z) == 1) ;
     assert (isequal (Z, X)) ;
-
-    fprintf ('\n---- A = gb (''%s'') :\n', type) ;
-    A = gb (type)
-    Z = sparse (A)
 
     fprintf ('\n---- A = gb (X, ''%s'') :\n', type) ;
     A = gb (X, type)

@@ -101,14 +101,18 @@ static void get_descriptor
 
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
-    const mxArray *D_matlab,        // MATLAB struct
-    bool *kind_is_object            // descriptor.kind = 'object' or 'sparse'
+    const mxArray *D_matlab,    // MATLAB struct
+    kind_enum_t *kind           // gb, sparse, or full
 )
 {
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+
+    // By default, all mexFunctions return a GraphBLAS struct, to be wrapped in
+    // a gb object in gb.m.
+    (*kind) = KIND_GB ;
 
     // a null descriptor is OK; the method will use defaults
     if (gb_mxarray_is_empty (D_matlab))
@@ -139,24 +143,23 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
     // get the desired kind of output
     //--------------------------------------------------------------------------
 
-    // By default, gbmxm (...) returns a MATLAB sparse matrix.
-    // gb.mxm (...) returns an object.
-
-    (*kind_is_object) = false ;
-
     mxArray *mxkind = mxGetField (D_matlab, 0, "kind") ;
     if (mxkind != NULL)
     {
         // get the string from the MATLAB field
         char s [LEN+2] ;
         gb_mxstring_to_string (s, LEN, mxkind, "kind") ;
-        if (MATCH (s, "object"))
+        if (MATCH (s, "gb") || MATCH (s, "default"))
         {
-            (*kind_is_object) = true ;
+            (*kind) = KIND_GB ;
         }
         else if (MATCH (s, "sparse"))
         {
-            (*kind_is_object) = false ;
+            (*kind) = KIND_SPARSE ;
+        }
+        else if (MATCH (s, "full"))
+        {
+            (*kind) = KIND_FULL ;
         }
         else
         {

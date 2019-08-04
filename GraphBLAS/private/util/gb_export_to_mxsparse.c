@@ -33,19 +33,19 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     GrB_Matrix T ;              // T will always be deep
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, *A_handle)) ;
+    GxB_Format_Value format ;
+    OK (GxB_get (*A_handle, GxB_FORMAT, &format)) ;
 
-    if (type == GrB_BOOL || type == GrB_FP64
+    if (format == GxB_BY_COL && (type == GrB_BOOL || type == GrB_FP64
         #ifdef GB_COMPLEX_TYPE
         || type == gb_complex_type
         #endif
-        )
+        ))
     {
 
         //----------------------------------------------------------------------
-        // A is already in a native MATLAB sparse matrix type
+        // A is already in a native MATLAB sparse matrix type, by column
         //----------------------------------------------------------------------
-
-        // TODO handle CSR and CSC
 
         if (gb_is_shallow (*A_handle))
         {
@@ -65,19 +65,19 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     {
 
         //----------------------------------------------------------------------
-        // typecast A to double
+        // typecast A to double, and format by column
         //----------------------------------------------------------------------
 
         // MATLAB supports only logical, double, and double complex sparse
         // matrices.  These correspond to GrB_BOOL, GrB_FP64, and
-        // gb_complex_type, respectively.  A is typecasted to double.
+        // gb_complex_type, respectively.  A is typecasted to double, and
+        // converted to CSC format if not already in that format.
 
-        T = gb_typecast (GrB_FP64, *A_handle) ;
+        T = gb_typecast (GrB_FP64, GxB_BY_COL, *A_handle) ;
         OK (GrB_free (A_handle)) ;
     }
 
     // ensure T is deep
-    // OK (GxB_Matrix_fprint (T, "T to export to sparse", 3, stdout)) ;
     CHECK_ERROR (gb_is_shallow (T), "internal error") ;
 
     //--------------------------------------------------------------------------

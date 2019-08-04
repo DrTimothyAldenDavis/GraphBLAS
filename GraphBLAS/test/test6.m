@@ -19,7 +19,7 @@ C = A'*B ;
 err = norm (C-sparse(G), 1)
 assert (err < 1e-12)
 
-d.kind = 'object' ;
+d.kind = 'gb' ;
 G = gb.mxm ('+.*', A, B, d) ;
 G = sparse (G) ;
 err = norm (C-G, 1)

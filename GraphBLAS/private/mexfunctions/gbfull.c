@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard MATLAB
-// sparse matrix.  The output is a standard MATLAB dense matrix.
+// sparse or dense matrix.  The output is a standard MATLAB dense matrix.
 
 #include "gb_matlab.h"
 
@@ -52,7 +52,7 @@ void mexFunction
     }
     else
     {
-        // assume the identity is zero, of the same time as X
+        // assume the identity is zero, of the same type as X
         OK (GrB_Matrix_new (&id, xtype, 1, 1)) ;
         OK (GrB_Matrix_setElement (id, 0, 0, 0)) ;
     }
@@ -84,16 +84,10 @@ void mexFunction
     OK (GrB_free (&X)) ;
 
     //--------------------------------------------------------------------------
-    // export C to a full MATLAB matrix
+    // export C to a MATLAB dense matrix
     //--------------------------------------------------------------------------
 
-    GrB_Index nzmax, *Cp, *Ci ;
-    int64_t nonempty ;
-    void *Cx ;
-    OK (GxB_Matrix_export_CSC (&C, &xtype, &nrows, &ncols, &nzmax, &nonempty,
-            &Cp, &Ci, &Cx, NULL)) ;
-    gb_mxfree (&Cp) ;
-    gb_mxfree (&Ci) ;
-    pargout [0] = gb_export_to_mxfull (&Cx, nrows, ncols, xtype) ;
+    pargout [0] = gb_export (&C, KIND_FULL) ;
+
 }
 

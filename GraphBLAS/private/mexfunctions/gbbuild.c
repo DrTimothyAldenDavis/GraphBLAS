@@ -20,7 +20,7 @@
 // If dup is given by without a type,  type of dup defaults to the type of X.
 // type is the type of A, which defaults to the type of X.
 
-// desc.kind = 'object' or 'sparse' is the only part used from the descriptor.
+// desc.kind is the only part used from the descriptor.
 
 #include "gb_matlab.h"
 
@@ -37,20 +37,17 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 8 && nargout <= 1,
+    gb_usage (nargin >= 4 && nargin <= 8 && nargout <= 1,
         "usage: A = gb.build (I, J, X, m, n, dup, type)") ;
 
     //--------------------------------------------------------------------------
-    // get the descriptor, if present
+    // get the descriptor
     //--------------------------------------------------------------------------
 
-    bool kind_is_object = false ;
-    CHECK_ERROR (!mxIsStruct (pargin [nargin-1]), "descriptor missing") ;
-
-    // get the descriptor, but only d.kind is needed
-    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1],
-        &kind_is_object) ;
+    kind_enum_t kind ;
+    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
     OK (GrB_free (&desc)) ;
+
     // remove the descriptor from consideration
     nargin-- ;
 
@@ -142,8 +139,12 @@ void mexFunction
     if (nargin > 6)
     {
         type = gb_mxstring_to_type (pargin [6]) ;
+        CHECK_ERROR (type == NULL, "unknown type") ;
     }
-    if (type == NULL) type = xtype ;
+    else
+    {
+        type = xtype ;
+    }
 
     //--------------------------------------------------------------------------
     // build the matrix
@@ -242,6 +243,6 @@ void mexFunction
     // export the output matrix A back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&A, kind_is_object) ;
+    pargout [0] = gb_export (&A, kind) ;
 }
 

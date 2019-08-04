@@ -32,6 +32,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix X = gb_get_shallow (pargin [0]) ;
-    pargout [0] = gb_export_to_mxsparse (&X) ;
+    pargout [0] = gb_export (&X, KIND_SPARSE) ;
 }
 

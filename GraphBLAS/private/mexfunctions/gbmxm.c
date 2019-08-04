@@ -7,29 +7,23 @@
 
 //------------------------------------------------------------------------------
 
-// TODO add desc.format = 'csr', 'csc', 'hcsr', 'hcsc', 'matlab', ...
-
 // gbmxm is an interface to GrB_mxm.
 
 // Usage:
 
-// Cout = gbmxm (semiring, A, B)
 // Cout = gbmxm (semiring, A, B, desc)
-
-// Cout = gbmxm (Cin, accum, semiring, A, B)
 // Cout = gbmxm (Cin, accum, semiring, A, B, desc)
-
-// Cout = gbmxm (Cin, Mask, semiring, A, B)
-// Cout = gbmxm (Cin, Mask, semiring, A, B, desc)
-
-// Cout = gbmxm (Cin, Mask, accum, semiring, A, B)
-// Cout = gbmxm (Cin, Mask, accum, semiring, A, B, desc)
+// Cout = gbmxm (Cin, M, semiring, A, B, desc)
+// Cout = gbmxm (Cin, M, accum, semiring, A, B, desc)
 
 // If Cin is not present or is an empty matrix (Cin = [ ]) then it is
 // implicitly a matrix with no entries, of the right size (which depends on A,
 // B, and the descriptor).
 
 #include "gb_matlab.h"
+
+// TODO HACK:
+#include "GB_Sauna.h"
 
 void mexFunction
 (
@@ -44,8 +38,8 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 1,
-        "usage: Cout = gb.mxm (Cin, Mask, accum, semiring, A, B, desc)") ;
+    gb_usage ((nargin == 4 || nargin == 6 || nargin == 7) && nargout <= 1,
+        "usage: Cout = gb.mxm (Cin, M, accum, semiring, A, B, desc)") ;
 
     //--------------------------------------------------------------------------
     // find the arguments
@@ -55,89 +49,60 @@ void mexFunction
     GrB_BinaryOp accum = NULL, add = NULL ;
     GrB_Semiring semiring ;
     GrB_Type atype, ctype ;
-    GrB_Descriptor desc = NULL ;
-    bool kind_is_object = false ;
 
-    if (mxIsChar (pargin [0]))
+    kind_enum_t kind ;
+    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
+
+    if (nargin == 4)
     {
-        // GB_HERE ;
 
         //----------------------------------------------------------------------
-        // Cout = gbmxm (semiring, A, B)
         // Cout = gbmxm (semiring, A, B, desc)
         //----------------------------------------------------------------------
 
-        gb_usage (nargin == 3 || nargin == 4,
-            "usage: Cout = gb.mxm (semiring, A, B, desc)") ;
-
         A = gb_get_shallow (pargin [1]) ;
         B = gb_get_shallow (pargin [2]) ;
-        if (nargin > 3)
-        {
-            desc = gb_mxarray_to_descriptor (pargin [3], &kind_is_object) ;
-        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [0], atype) ;
-        // GB_HERE ;
 
     }
-    else if (mxIsChar (pargin [1]) && mxIsChar (pargin [2]))
+    else if (nargin == 6 && mxIsChar (pargin [1]))
     {
 
         //----------------------------------------------------------------------
-        // Cout = gbmxm (Cin, accum, semiring, A, B)
         // Cout = gbmxm (Cin, accum, semiring, A, B, desc)
         //----------------------------------------------------------------------
-
-        gb_usage (nargin == 5 || nargin == 6,
-            "usage: Cout = gb.mxm (Cin, accum, semiring, A, B, desc)") ;
 
         C = gb_get_deep (pargin [0], NULL) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         A = gb_get_shallow (pargin [3]) ;
         B = gb_get_shallow (pargin [4]) ;
-        if (nargin > 5)
-        {
-            desc = gb_mxarray_to_descriptor (pargin [5], &kind_is_object) ;
-        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [2], atype) ;
 
     }
-    else if (mxIsChar (pargin [2]) && !mxIsChar (pargin [3]))
+    else if (nargin == 6 && !mxIsChar (pargin [1]))
     {
 
         //----------------------------------------------------------------------
-        // Cout = gbmxm (Cin, Mask, semiring, A, B)
-        // Cout = gbmxm (Cin, Mask, semiring, A, B, desc)
+        // Cout = gbmxm (Cin, M, semiring, A, B, desc)
         //----------------------------------------------------------------------
-
-        gb_usage (nargin == 5 || nargin == 6,
-            "usage: Cout = gb.mxm (Cin, Mask, semiring, A, B, desc)") ;
 
         C = gb_get_deep (pargin [0], NULL) ;
         M = gb_get_shallow (pargin [1]) ;
         A = gb_get_shallow (pargin [3]) ;
         B = gb_get_shallow (pargin [4]) ;
-        if (nargin > 5)
-        {
-            desc = gb_mxarray_to_descriptor (pargin [5], &kind_is_object) ;
-        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [2], atype) ;
 
     }
-    else if (mxIsChar (pargin [2]) && mxIsChar (pargin [3]))
+    else
     {
 
         //----------------------------------------------------------------------
-        // Cout = gbmxm (Cin, Mask, accum, semiring, A, B)
-        // Cout = gbmxm (Cin, Mask, accum, semiring, A, B, desc)
+        // Cout = gbmxm (Cin, M, accum, semiring, A, B, desc)
         //----------------------------------------------------------------------
-
-        gb_usage (nargin == 6 || nargin == 7,
-            "usage: Cout = gb.mxm (Cin, Mask, accum, semiring, A, B, desc)") ;
 
         C = gb_get_deep (pargin [0], NULL) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
@@ -145,17 +110,9 @@ void mexFunction
         accum = gb_mxstring_to_binop (pargin [2], ctype) ;
         A = gb_get_shallow (pargin [4]) ;
         B = gb_get_shallow (pargin [5]) ;
-        if (nargin > 6)
-        {
-            desc = gb_mxarray_to_descriptor (pargin [6], &kind_is_object) ;
-        }
         OK (GxB_Matrix_type (&atype, A)) ;
         semiring = gb_mxstring_to_semiring (pargin [3], atype) ;
 
-    }
-    else
-    {
-        USAGE ("Cout = gbmxm (Cin, Mask, accum, semiring, A, B, desc)") ;
     }
 
     //--------------------------------------------------------------------------
@@ -201,7 +158,6 @@ void mexFunction
             OK (GxB_BinaryOp_ztype (&ctype, add)) ;
         }
 
-        // TODO all the user to determine the CSR/CSC format
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
     }
 
@@ -209,21 +165,7 @@ void mexFunction
     // compute C<M> += A*B
     //--------------------------------------------------------------------------
 
-    // OK (GxB_Matrix_fprint (C, "C input", 3, stdout)) ;
-    // OK (GxB_Matrix_fprint (A, "A input", 3, stdout)) ;
-    // OK (GxB_Matrix_fprint (B, "B input", 3, stdout)) ;
-    // if (desc != NULL)
-        // OK (GxB_Descriptor_fprint (desc, "desc input", 3, stdout)) ;
-    // OK (GxB_Semiring_fprint (semiring, "semiring input", 3, stdout)) ;
-    // if (accum != NULL)
-        // OK (GxB_BinaryOp_fprint (accum, "accum input", 3, stdout)) ;
-    // if (M != NULL)
-        // OK (GxB_Matrix_fprint (M, "M input", 3, stdout)) ;
-        // GB_HERE ;
     OK (GrB_mxm (C, M, accum, semiring, A, B, desc)) ;
-        // GB_HERE ;
-
-    // OK (GxB_Matrix_fprint (C, "C from mxm", 3, stdout)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
@@ -238,10 +180,13 @@ void mexFunction
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&C, kind_is_object) ;
+    pargout [0] = gb_export (&C, kind) ;
 
-    // TODO: hack because Sauna is freed by MATLAB.  Must make it persistent...
-    gb_at_exit ( ) ;
+    // TODO: HACK because Sauna is freed by MATLAB.  Must make it persistent...
+    for (int Sauna_id = 0 ; Sauna_id < GxB_NTHREADS_MAX ; Sauna_id++)
+    { 
+        GB_Sauna_free (Sauna_id) ;
+    }
 
 }
 

@@ -1,16 +1,11 @@
 //------------------------------------------------------------------------------
-// gbbinopinfo : print  aGraphBLAS binary op (for illustration only)
+// gbchunk: get/set the chunk size to use in GraphBLAS
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
-
-// Usage:
-
-// gbbinopinfo (binop)
-// gbbinopinfo (binop, type)
 
 #include "gb_matlab.h"
 
@@ -27,21 +22,29 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 2 && nargout == 0,
-        "usage: gb.binopinfo (binop) or gb.binopinfo (binop,type)") ;
+    gb_usage (nargin <= 1 && nargout <= 1,
+        "ussage: c = gb.chunk ; or gb.chunk (c)") ;
 
     //--------------------------------------------------------------------------
-    // construct the GraphBLAS binary operator and print it
+    // set the chunk, if requested
     //--------------------------------------------------------------------------
 
-    GrB_Type type = NULL ;
-    if (nargin == 2)
+    double c ;
+
+    if (nargin > 0)
     {
-        type = gb_mxstring_to_type (pargin [1]) ;
-        CHECK_ERROR (type == NULL, "unknown type") ;
+        // set the chunk
+        CHECK_ERROR (!gb_mxarray_is_scalar (pargin [0]),
+            "input must be a scalar") ;
+        c = (double) mxGetScalar (pargin [0]) ;
+        OK (GxB_set (GxB_CHUNK, c)) ;
     }
 
-    GrB_BinaryOp op = gb_mxstring_to_binop (pargin [0], type) ;
-    OK (GxB_BinaryOp_fprint (op, "", GxB_COMPLETE, stdout)) ;
+    //--------------------------------------------------------------------------
+    // return the chunk
+    //--------------------------------------------------------------------------
+
+    OK (GxB_get (GxB_CHUNK, &c)) ;
+    pargout [0] = mxCreateDoubleScalar (c) ;
 }
 

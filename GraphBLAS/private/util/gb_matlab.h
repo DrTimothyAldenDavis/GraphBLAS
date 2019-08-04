@@ -39,6 +39,18 @@
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
 //------------------------------------------------------------------------------
+// typedefs
+//------------------------------------------------------------------------------
+
+typedef enum            // output of gb.methods
+{
+    KIND_GB = 0,        // return a MATLAB struct containing a GrB_Matrix
+    KIND_SPARSE = 1,    // return a MATLAB sparse matrix
+    KIND_FULL = 2       // return a MATLAB dense matrix
+}
+kind_enum_t ;
+
+//------------------------------------------------------------------------------
 // gb_double_to_integer: convert a double to int64_t and check conversion
 //------------------------------------------------------------------------------
 
@@ -89,8 +101,9 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
 
 GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 (
-    GrB_Type type,          // if NULL, copy but do not typecast
-    GrB_Matrix S            // may be shallow
+    GrB_Type type,              // if NULL, copy but do not typecast
+    GxB_Format_Value format,    // also convert to the requested format
+    GrB_Matrix S                // may be shallow
 ) ;
 
 void gb_usage       // check usage and make sure GxB_init has been called
@@ -149,8 +162,8 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
 
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
-    const mxArray *D_matlab,        // MATLAB struct
-    bool *kind_is_object            // descriptor.kind = 'object' or 'sparse'
+    const mxArray *D_matlab,    // MATLAB struct
+    kind_enum_t *kind           // gb, sparse, or full
 ) ;
 
 mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
@@ -174,7 +187,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
 mxArray *gb_export              // return the exported MATLAB matrix or struct
 (
     GrB_Matrix *C_handle,       // GrB_Matrix to export and free
-    bool kind_is_object         // true if output is struct, false if sparse
+    kind_enum_t kind            // gb, sparse, or full
 ) ;
 
 GrB_BinaryOp gb_string_to_selectop      // return select operator from a string

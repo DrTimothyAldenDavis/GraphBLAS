@@ -39,11 +39,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     //--------------------------------------------------------------------------
 
     CHECK_ERROR (A_handle == NULL, "matrix missing") ;
-
     GrB_Matrix A = (*A_handle) ;
-
-    // TODO could do dup here
-    // OK (GxB_Matrix_fprint (A, "A to export as struct", 3, stdout)) ;
     CHECK_ERROR (gb_is_shallow (A), "internal error") ;
 
     //--------------------------------------------------------------------------
