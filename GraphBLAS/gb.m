@@ -100,6 +100,42 @@ classdef gb
 %       s = isscalar (G)    true if G is a 1-by-1 gb matrix
 %       L = tril (G,k)      lower triangular part of gb matrix G
 %       U = triu (G,k)      upper triangular part of gb matrix G
+%       C = kron (A,B)      Kronecker product
+%       C = permute (A, order)  
+%       C = ipermute (A, order)
+%       result = isequal (A, B)
+%       C = repmat (A, varargin)
+%
+%   operator overloading:
+%
+%       C = plus (A, B)     C = A + B
+%       C = minus (A, B)    C = A - B
+%       C = uminus (A)      C = -A
+%       C = uplus (A)       C = +A
+%       C = times (A, B)    C = A .* B
+%       C = mtimes (A, B)   C = A * B
+%       C = rdivide (A, B)  C = A ./ B
+%       C = ldivide (A, B)  C = A .\ B
+%       C = mrdivide (A, B) C = A / B
+%       C = mldivide (A, B) C = A \ B
+%       C = power (A, B)    C = A .^ B
+%       C = mpower (A, B)   C = A ^ B
+%       C = lt (A, B)       C = A < B
+%       C = gt (A, B)       C = A > B
+%       C = le (A, B)       C = A <= B
+%       C = ge (A, B)       C = A >= B
+%       C = ne (A, B)       C = A ~= B
+%       C = eq (A, B)       C = A == B
+%       C = and (A, B)      C = A & B
+%       C = or (A, B)       C = A | B
+%       C = not (A)         C = ~A
+%       C = ctranspose (A)  C = A'
+%       C = transpose (A)   C = A.'
+%       C = horzcat (A, B)  C = [A , B]
+%       C = vertcat (A, B)  C = [A ; B]
+%       C = subsref (A, I, J)   C = A (I,J)
+%       C = subsasgn (A, I, J)  C(I,J) = A
+%       C = subsindex (A, B)    C = B (A)
 %
 % Static Methods:
 %
@@ -114,8 +150,8 @@ classdef gb
 %        
 %       gb.clear                    clear GraphBLAS workspace and settings
 %       gb.descriptorinfo (d)       list properties of a descriptor
-%       gb.binopinfo (s, type)      list properties of a binary operator
 %       gb.unopinfo (s, type)       list properties of a unary operator
+%       gb.binopinfo (s, type)      list properties of a binary operator
 %       gb.semiringinfo (s, type)   list properties of a semiring
 %       t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %       c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
@@ -141,10 +177,6 @@ classdef gb
 %                           sparse matrix assignment to a single column
 %       Cout = gb.rowassign (Cin, M, accum, u, i, J, desc)
 %                           sparse matrix assignment to a single row
-%       Cout = gb.extract (Cin, M, accum, A, I, J, desc)
-%                           extract submatrix, like C=A(I,J) in MATLAB
-%       Cout = gb.apply (Cin, M, accum, op, A, desc)
-%                           apply a unary operator
 %       Cout = gb.reduce (Cin, M, accum, op, A, desc)
 %                           reduce a matrix to a vector or scalar
 %       Cout = gb.gbkron (Cin, M, accum, op, A, B, desc)
@@ -155,6 +187,10 @@ classdef gb
 %                           element-wise addition
 %       Cout = gb.emult (Cin, M, accum, op, A, B, desc)
 %                           element-wise multiplication
+%       Cout = gb.apply (Cin, M, accum, op, A, desc)
+%                           apply a unary operator
+%       Cout = gb.extract (Cin, M, accum, A, I, J, desc)
+%                           extract submatrix, like C=A(I,J) in MATLAB
 %
 %       GraphBLAS operations (with Cout and Cin arguments) take the following
 %       form:
@@ -181,6 +217,9 @@ classdef gb
 %       can be modified; if zero, it cannot be modified by the operation.
 %
 % See also sparse.
+
+% The following methods are the only common ones that are not overloaded:
+% colon, char, loadobj, saveobj
 
 properties
     % The default semiring for overloaded operators is '+.*'.  The G.semiring
@@ -231,324 +270,27 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % plus: C = A + B
-    %---------------------------------------------------------------------------
-
-    function C = plus (A, B)
-    error ('TODO') ;
-    end
-
-    %---------------------------------------------------------------------------
-    % minus: C = A - B
-    %---------------------------------------------------------------------------
-
-    function C = minus (A, B)
-    C = A+(-B) ;
-    end
-
-    %---------------------------------------------------------------------------
-    % uminus: C = -A
-    %---------------------------------------------------------------------------
-
-    function C = uminus (A)
-    error ('TODO') ;
-    end
-
-    %---------------------------------------------------------------------------
-    % uplus: C = +A
-    %---------------------------------------------------------------------------
-
-    function C = uplus (A)
-    error ('TODO') ;
-    end
-
-    %---------------------------------------------------------------------------
-    % times: C = A .* B
-    %---------------------------------------------------------------------------
-
-    function C = times (A, B)
-    error ('TODO') ;
-    % C = gb.emult (gb_get_multop (B.semiring), A, B) ;
-    end
-
-    %---------------------------------------------------------------------------
-    % mtimes: C = A * B
-    %---------------------------------------------------------------------------
-
-    function C = mtimes (A, B)
-    if (isa (B, 'gb'))
-        C = gb.mxm (B.semiring, A, B) ;
-    elseif (isa (A, 'gb'))
-        C = gb.mxm (A.semiring, A, B) ;
-    else
-        C = gb.mxm ('+.*', A, B) ;
-    end
-    end
-
-    %---------------------------------------------------------------------------
-    % rdivide: C = A ./ B
-    %---------------------------------------------------------------------------
-
-    function C = rdivide (A, B)
-    % get the multiplicative operator of B.semiring.  If '+' use '-';
-    % if '*', use '/', for gb.emult (op, A, B)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % ldivide: C = A .\ B
-    %---------------------------------------------------------------------------
-
-    function C = ldivide (A, B)
-    % get the multiplicative operator of A.semiring.  If '+' use 'rminus';
-    % if '*', use '\', for gb.emult (op, A, B)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % mrdivide: C = A / B
-    %---------------------------------------------------------------------------
-
-    function C = mrdivide (A, B)
-    % typecast to double, leave complex as-is, and do
-    % C = sparse(A)/sparse(B)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % mldivide: C = A \ B
-    %---------------------------------------------------------------------------
-
-    function C = mldivide (A, B)
-    % typecast to double, leave complex as-is, and do
-    % C = sparse(A)\sparse(B)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % power: C = A .^ B
-    %---------------------------------------------------------------------------
-
-    function C = power (A, B)
-    % what should this be?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % mpower: C = A ^ B
-    %---------------------------------------------------------------------------
-
-    function C = mpower (A, B)
-    % what should this be?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % lt: C = (A < B)
-    %---------------------------------------------------------------------------
-
-    function C = lt (A, B)
-    % gb.emult ('<', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % gt: C = (A > B)
-    %---------------------------------------------------------------------------
-
-    function C = gt (A, B)
-    % gb.emult ('>', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % le: C = (A <= B)
-    %---------------------------------------------------------------------------
-
-    function C = le (A, B)
-    % gb.emult ('<=', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % ge: C = (A >= B)
-    %---------------------------------------------------------------------------
-
-    function C = ge (A, B)
-    % gb.emult ('>=', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % ne: C = (A ~= B)
-    %---------------------------------------------------------------------------
-
-    function C = ne (A, B)
-    % gb.emult ('~=', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % eq: C = (A == B)
-    %---------------------------------------------------------------------------
-
-    function C = eq (A, B)
-    % gb.emult ('~=', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % and: C = (A & B)
-    %---------------------------------------------------------------------------
-
-    function C = and (A, B)
-    % gb.emult ('&', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % or: C = (A | B)
-    %---------------------------------------------------------------------------
-
-    function C = or (A, B)
-    % gb.emult ('|', A, B)?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % not: C = (~A)
-    %---------------------------------------------------------------------------
-
-    function C = not (A)
-    % gb.apply ('not', A)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % ctranspose: C = A' 
-    %---------------------------------------------------------------------------
-
-    function C = ctranspose (A)
-    % gb.transpose (A) but use gb.apply ('conj', A) first if complex
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % transpose: C = A' 
-    %---------------------------------------------------------------------------
-
-    function C = transpose (A)
-    % gb.transpose (A)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % horzcat: C = [A , B]
-    %---------------------------------------------------------------------------
-
-    function C = horzcat (A, B)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % vertcat: C = [A ; B]
-    %---------------------------------------------------------------------------
-
-    function C = vertcat (A, B)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % subsref: C = A (I,J)
-    %---------------------------------------------------------------------------
-
-    function C = subsref (A, I, J)
-    % C = gb.extract (A, {I}, {J}) ;
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % subsasgn: C (I,J) = A
-    %---------------------------------------------------------------------------
-
-%   function C = subsasgn (A, I, J)
-%   % C = gb.assign (C, A, {I}, {J}) ;
-%   error ('TODO')
-%   end
-
-    %---------------------------------------------------------------------------
-    % subsindex: C = B (A)
-    %---------------------------------------------------------------------------
-
-    function C = subsindex (A, B)
-    % C = gb.assign using A as the mask?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % end: ??
-    %---------------------------------------------------------------------------
-
-    %---------------------------------------------------------------------------
-    % permute: C = permute (A, order)
-    %---------------------------------------------------------------------------
-
-    function C = permute (A, order)
-    % transpose?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % ipermute: C = ipermute (A, order)
-    %---------------------------------------------------------------------------
-
-    function C = ipermute (A, order)
-    % transpose?
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
-    % isequal:
-    %---------------------------------------------------------------------------
-
-    function result = isequal (A, B)
-    error ('TODO')
-    end
-
-    %---------------------------------------------------------------------------
     % repmat: C = repmat (A, ...)
     %---------------------------------------------------------------------------
 
     function C = repmat (A, varargin)
-    error ('TODO')
+    error ('TODO') ;    % repmat: use kron
     end
 
-    % TODO:
-    %
-    % abs, max, min, prod, sum, maxmax, minmin, sumsum, prodprod
-    % ceil, floor, fix
-    % sqrt? bsxfun?
-    % cummin? cummax? cumprod?
-    %
-    % diff?
-    % inv?
-    % isbanded, isdiag, isfinite, isinf, isnan, issorted, issortedrows
-    % istril, istriu, 
-    %
-    % reshape
-    % sort
-    %
-    % diag? spdiags?
-    %
-    % spones
-    %
-    % ... see 'methods double'
+    %---------------------------------------------------------------------------
 
-    % do not do these:
-    %   colon       a:d:b, a:b
-    %   char
-    %   loadobj
-    %   saveobj
+    % TODO: this can all be overloaded (not static) methods:
+    % TODO abs, max, min, prod, sum,
+    % TODO ceil, floor, fix
+    % TODO sqrt? bsxfun?  cummin? cummax? cumprod?  diff?  TODO inv?
+    % TODO isbanded, isdiag, isfinite, isinf, isnan, issorted, issortedrows
+    % TODO istril, istriu, reshape, sort
+    % TODO diag? spdiags?
+    % TODO spones
+    % TODO ... see 'methods double'
+
+    % gb.methods:
+    % gb.maxmax, gb.minmin, gb.sumsum, gb.prodprod
 
     %---------------------------------------------------------------------------
     % sparse: convert a GraphBLAS sparse matrix into a MATLAB sparse matrix
@@ -598,7 +340,7 @@ methods %=======================================================================
     function C = complex (G)
     %COMPLEX typecast a GraphBLAS sparse matrix to complex.
     % C = complex (G) typecasts the gb matrix G to complex.
-    error ('complex type not yet supported') ;
+    error ('complex type not yet supported') ;  % TODO
     end
 
     function C = logical (G)
@@ -829,8 +571,298 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = kron (A, B)
-    error ('TODO') ;
+    error ('TODO') ;        % kron: use gb.gbkron
     end
+
+    %---------------------------------------------------------------------------
+    % permute: C = permute (A, order)
+    %---------------------------------------------------------------------------
+
+    function C = permute (A, order)
+    % transpose?
+    error ('TODO') ;        % permute indices (use transpose)
+    end
+
+    %---------------------------------------------------------------------------
+    % ipermute: C = ipermute (A, order)
+    %---------------------------------------------------------------------------
+
+    function C = ipermute (A, order)
+    % transpose?
+    error ('TODO') ;        % permute indices (use transpose)
+    end
+
+    %---------------------------------------------------------------------------
+    % isequal:
+    %---------------------------------------------------------------------------
+
+    function result = isequal (A, B)
+    error ('TODO') ;        % isequal;  see LAGraph_isequal
+    end
+
+    %---------------------------------------------------------------------------
+    % plus: C = A + B
+    %---------------------------------------------------------------------------
+
+    function C = plus (A, B)
+    error ('TODO') ;        % plus
+    end
+
+    %---------------------------------------------------------------------------
+    % minus: C = A - B
+    %---------------------------------------------------------------------------
+
+    function C = minus (A, B)
+    C = A+(-B) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % uminus: C = -A
+    %---------------------------------------------------------------------------
+
+    function C = uminus (A)
+    error ('TODO') ;        % uminus
+    end
+
+    %---------------------------------------------------------------------------
+    % uplus: C = +A
+    %---------------------------------------------------------------------------
+
+    function C = uplus (A)
+    error ('TODO') ;        % uplus
+    end
+
+    %---------------------------------------------------------------------------
+    % times: C = A .* B
+    %---------------------------------------------------------------------------
+
+    function C = times (A, B)
+    error ('TODO') ;        % A.*B
+    % C = gb.emult (gb_get_multop (B.semiring), A, B) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % mtimes: C = A * B
+    %---------------------------------------------------------------------------
+
+    function C = mtimes (A, B)
+    %MTIMES sparse matrix-matrix multiplication over a semiring.
+    % TODO C=A*B: expand a scalar into a diagonal matrix
+    if (isa (B, 'gb'))
+        C = gb.mxm (B.semiring, A, B) ;
+    elseif (isa (A, 'gb'))
+        C = gb.mxm (A.semiring, A, B) ;
+    else
+        C = gb.mxm ('+.*', A, B) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % rdivide: C = A ./ B
+    %---------------------------------------------------------------------------
+
+    function C = rdivide (A, B)
+    % get the multiplicative operator of B.semiring.  If '+' use '-';
+    % if '*', use '/', for gb.emult (op, A, B)
+    error ('TODO') ;    % A ./ B
+    end
+
+    %---------------------------------------------------------------------------
+    % ldivide: C = A .\ B
+    %---------------------------------------------------------------------------
+
+    function C = ldivide (A, B)
+    % get the multiplicative operator of A.semiring.  If '+' use 'rminus';
+    % if '*', use '\', for gb.emult (op, A, B)
+    error ('TODO') ;    % A .\ B
+    end
+
+    %---------------------------------------------------------------------------
+    % mrdivide: C = A / B
+    %---------------------------------------------------------------------------
+
+    function C = mrdivide (A, B)
+    % typecast to double, leave complex as-is, and do
+    % C = sparse(A)/sparse(B)
+    error ('TODO') ;    % A/B
+    end
+
+    %---------------------------------------------------------------------------
+    % mldivide: C = A \ B
+    %---------------------------------------------------------------------------
+
+    function C = mldivide (A, B)
+    % typecast to double, leave complex as-is, and do
+    % C = sparse(A)\sparse(B)
+    error ('TODO') ;    % A\B
+    end
+
+    %---------------------------------------------------------------------------
+    % power: C = A .^ B
+    %---------------------------------------------------------------------------
+
+    function C = power (A, B)
+    % need a new binary operator for this
+    error ('TODO') ;    % A.^B
+    end
+
+    %---------------------------------------------------------------------------
+    % mpower: C = A ^ B
+    %---------------------------------------------------------------------------
+
+    function C = mpower (A, B)
+    % what should this be?
+    error ('TODO') ;    % A^B
+    end
+
+    %---------------------------------------------------------------------------
+    % lt: C = (A < B)
+    %---------------------------------------------------------------------------
+
+    function C = lt (A, B)
+    % gb.emult ('<', A, B)?
+    error ('TODO') ;    % A<B
+    end
+
+    %---------------------------------------------------------------------------
+    % gt: C = (A > B)
+    %---------------------------------------------------------------------------
+
+    function C = gt (A, B)
+    % gb.emult ('>', A, B)?
+    error ('TODO') ;    % A>B
+    end
+
+    %---------------------------------------------------------------------------
+    % le: C = (A <= B)
+    %---------------------------------------------------------------------------
+
+    function C = le (A, B)
+    % gb.emult ('<=', A, B)?
+    error ('TODO') ;    % A<=B
+    end
+
+    %---------------------------------------------------------------------------
+    % ge: C = (A >= B)
+    %---------------------------------------------------------------------------
+
+    function C = ge (A, B)
+    % gb.emult ('>=', A, B)?
+    error ('TODO') ;    % A>=B
+    end
+
+    %---------------------------------------------------------------------------
+    % ne: C = (A ~= B)
+    %---------------------------------------------------------------------------
+
+    function C = ne (A, B)
+    % gb.emult ('~=', A, B)?
+    error ('TODO') ;    % A~=B
+    end
+
+    %---------------------------------------------------------------------------
+    % eq: C = (A == B)
+    %---------------------------------------------------------------------------
+
+    function C = eq (A, B)
+    % gb.emult ('~=', A, B)?
+    error ('TODO') ;    % A==B
+    end
+
+    %---------------------------------------------------------------------------
+    % and: C = (A & B)
+    %---------------------------------------------------------------------------
+
+    function C = and (A, B)
+    % gb.emult ('&', A, B)?
+    error ('TODO') ;    % A&B
+    end
+
+    %---------------------------------------------------------------------------
+    % or: C = (A | B)
+    %---------------------------------------------------------------------------
+
+    function C = or (A, B)
+    % gb.emult ('|', A, B)?
+    error ('TODO') ;    % A|B
+    end
+
+    %---------------------------------------------------------------------------
+    % not: C = (~A)
+    %---------------------------------------------------------------------------
+
+    function C = not (A)
+    % gb.apply ('not', A)
+    error ('TODO') ;    % ~A
+    end
+
+    %---------------------------------------------------------------------------
+    % ctranspose: C = A' 
+    %---------------------------------------------------------------------------
+
+    function C = ctranspose (A)
+    % gb.transpose (A) but use gb.apply ('conj', A) first if complex
+    error ('TODO') ;    % A'
+    end
+
+    %---------------------------------------------------------------------------
+    % transpose: C = A' 
+    %---------------------------------------------------------------------------
+
+    function C = transpose (A)
+    % gb.transpose (A)
+    error ('TODO') ;    % A.'
+    end
+
+    %---------------------------------------------------------------------------
+    % horzcat: C = [A1, A2, ..., An]
+    %---------------------------------------------------------------------------
+
+    function C = horzcat (varargin)
+    nargin
+    args = varargin
+    length (args)
+    error ('TODO') ;    % [A B]
+    end
+
+    %---------------------------------------------------------------------------
+    % vertcat: C = [A1 ; A2 ; ... ; An]
+    %---------------------------------------------------------------------------
+
+    function C = vertcat (varargin)
+    error ('TODO') ;    % [A ; B]
+    end
+
+    %---------------------------------------------------------------------------
+    % subsref: C = A (I,J)
+    %---------------------------------------------------------------------------
+
+    function C = subsref (A, I, J)
+    % C = gb.extract (A, {I}, {J}) ;
+    error ('TODO') ;    % C=A(I,J)
+    end
+
+    %---------------------------------------------------------------------------
+    % subsasgn: C (I,J) = A
+    %---------------------------------------------------------------------------
+
+%   function C = subsasgn (A, I, J)
+%   % C = gb.assign (C, A, {I}, {J}) ;
+%   error ('TODO') ;    % C(I,J)=A
+%   end
+
+    %---------------------------------------------------------------------------
+    % subsindex: C = B (A)
+    %---------------------------------------------------------------------------
+
+    function C = subsindex (A, B)
+    % C = gb.assign using A as the mask?
+    error ('TODO') ;    % C = B(A)
+    end
+
+    %---------------------------------------------------------------------------
+    % end: ??
+    %---------------------------------------------------------------------------
 
 end
 
@@ -853,13 +885,14 @@ methods (Static) %==============================================================
     %
     %   gb.clear
     %
-    % This function is optional.  Simply terminating the MATLAB session, or
+    % This method is optional.  Simply terminating the MATLAB session, or
     % typing 'clear all' will do the same thing.  However, if you are finished
     % with GraphBLAS and wish to free its internal resources, but do not wish
     % to free everything else freed by 'clear all', then use this method.
-    % This function also clears any non-default setting of gb.threads.
+    % gb.clear also clears any non-default setting of gb.threads, gb.chunk,
+    % and gb.format.
     %
-    % See also: clear, gb.threads
+    % See also: clear, gb.threads, gb.chunk, gb.format
 
     gbclear ;
     end
@@ -979,6 +1012,8 @@ methods (Static) %==============================================================
     % the validity of an op with the MATLAB try/catch mechanism.
     %
     % See also gb, gb.binopinfo, gb.semiringinfo, gb.descriptorinfo.
+
+    % TODO gbunopinfo
 
     if (nargin == 0)
         help gb.unopinfo
@@ -1314,6 +1349,106 @@ methods (Static) %==============================================================
     end
 
     %---------------------------------------------------------------------------
+    % gb.build: build a GraphBLAS sparse matrix from a list of entries
+    %---------------------------------------------------------------------------
+
+    function G = build (varargin)
+    %GB.BUILD construct a GraphBLAS sparse matrix from a list of entries.
+    %
+    % Usage
+    %
+    %   G = gb.build (I, J, X, m, n, dup, type, desc)
+    %
+    % gb.build constructs an m-by-n GraphBLAS sparse matrix from a list of
+    % entries, analogous to A = sparse (I, J, X, m, n) to construct a MATLAB
+    % sparse matrix A.
+    %
+    % If not present or empty, m defaults to the largest row index in the list
+    % I, and n defaults to the largest column index in the list J.  dup
+    % defaults to '+', which gives the same behavior as the MATLAB sparse
+    % function: duplicate entries are added together.
+    %
+    % dup is a string that defines a binary function; see 'help gb.binopinfo'
+    % for a list of available binary operators.  The dup operator need not be
+    % associative.  If two entries in [I J X] have the same row and column
+    % index, the dup operator is applied to assemble them into a single entry.
+    % Suppose (i,j,x1), (i,j,x2), and (i,j,x3) appear in that order in [I J X],
+    % in any location (the arrays [I J] need not be sorted, and so these
+    % entries need not be adjacent).  That is, i = I(k1) = I(k2) = I(k3) and j
+    % = J(k1) = J(k2) = J(k3) for some k1 < k2 < k3.  Then G(i,j) is computed
+    % as follows, in order:
+    %
+    %   x = X (k1) ;
+    %   x = dup (x, X (k2)) ;
+    %   x = dup (x, X (k3)) ;
+    %   G (i,j) = x ;
+    %
+    % For example, if the dup operator is '1st', then G(i,j)=X(k1) is set, and
+    % the subsequent entries are ignored.  If dup is '2nd', then G(i,j)=X(k3),
+    % and the preceding entries are ignored.
+    %
+    % type is a string that defines the type of G (see 'help gb' for a list
+    % of types).  The type need not be the same type as the dup operator
+    % (unless one has a type of 'complex', in which case both must be
+    % 'complex').  If the type is not specified, it defaults to the type of X.
+    %
+    % The integer arrays I and J may be double, in which case they contain
+    % 1-based indices, in the range 1 to the dimension of the matrix.  This is
+    % the same behavior as the MATLAB sparse function.  They may instead be
+    % uint64 arrays, in which case they are treated as 0-based.  Entries in I
+    % are the range 0 to m-1, and J are in the range 0 to n-1.  If I, J, and X
+    % are double, the following examples construct the same MATLAB sparse
+    % matrix S:
+    %
+    %   S = sparse (I, J, X) ;
+    %   S = sparse (gb.build (I, J, X)) ;
+    %   S = sparse (gb.build (uint64(I)-1, uint64(J)-1, X)) ;
+    %
+    % Using uint64 integers for I and J is faster and uses less memory.  I and
+    % J need not be in any particular order, but gb.build is fastest if I and J
+    % are provided in column-major order.
+    %
+    % See also sparse (with 3 or more input arguments).
+
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        G = gb (gbbuild (args {:})) ;
+    else
+        G = gbbuild (args {:}) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % gb.find: extract all entries from a matrix
+    %---------------------------------------------------------------------------
+
+    function [I,J,X] = find (A, onebased)
+    %GB.FIND extract a list of entries from a matrix
+    %
+    % Usage:
+    %
+    %   [I J X] = gb.find (A)        % extract 1-based indices; I and J double
+    %   [I J X] = gb.find (A, 0) ;   % extract 0-based indices; I and J uint64
+    %   [I J X] = gb.find (A, 1) ;   % extract 1-based indices; I and J double
+    %
+    % gb.find extracts all entries from either a MATLAB matrix A or a GraphBLAS
+    % matrix A.  If A is a MATLAB sparse matrix, [I J X] = gb.find (A) is
+    % identical to [I J X] = find (A).
+    %
+    % An optional second argument determines the type of I and J.  It defaults
+    % to 1, and in this case, I and J are double, and reflect 1-based indices,
+    % just like the MATLAB statement [I J X] = find (A).  If zero, then I and J
+    % are returned as uint64 arrays, containing 0-based indices.
+    %
+    % This function corresponds to the GrB_*_extractTuples_* functions in
+    % GraphBLAS.
+    %
+    % See also find.
+
+    error ('gb.find not yet implemented') ; % TODO
+    end
+
+    %---------------------------------------------------------------------------
     % gb.mxm: sparse matrix-matrix multiply
     %---------------------------------------------------------------------------
 
@@ -1393,76 +1528,6 @@ methods (Static) %==============================================================
     end
 
     %---------------------------------------------------------------------------
-    % gb.build: build a GraphBLAS sparse matrix from a list of entries
-    %---------------------------------------------------------------------------
-
-    function G = build (varargin)
-    %GB.BUILD construct a GraphBLAS sparse matrix from a list of entries.
-    %
-    % Usage
-    %
-    %   G = gb.build (I, J, X, m, n, dup, type, desc)
-    %
-    % gb.build constructs an m-by-n GraphBLAS sparse matrix from a list of
-    % entries, analogous to A = sparse (I, J, X, m, n) to construct a MATLAB
-    % sparse matrix A.
-    %
-    % If not present or empty, m defaults to the largest row index in the list
-    % I, and n defaults to the largest column index in the list J.  dup
-    % defaults to '+', which gives the same behavior as the MATLAB sparse
-    % function: duplicate entries are added together.
-    %
-    % dup is a string that defines a binary function; see 'help gb.binopinfo'
-    % for a list of available binary operators.  The dup operator need not be
-    % associative.  If two entries in [I J X] have the same row and column
-    % index, the dup operator is applied to assemble them into a single entry.
-    % Suppose (i,j,x1), (i,j,x2), and (i,j,x3) appear in that order in [I J X],
-    % in any location (the arrays [I J] need not be sorted, and so these
-    % entries need not be adjacent).  That is, i = I(k1) = I(k2) = I(k3) and j
-    % = J(k1) = J(k2) = J(k3) for some k1 < k2 < k3.  Then G(i,j) is computed
-    % as follows, in order:
-    %
-    %   x = X (k1) ;
-    %   x = dup (x, X (k2)) ;
-    %   x = dup (x, X (k3)) ;
-    %   G (i,j) = x ;
-    %
-    % For example, if the dup operator is '1st', then G(i,j)=X(k1) is set, and
-    % the subsequent entries are ignored.  If dup is '2nd', then G(i,j)=X(k3),
-    % and the preceding entries are ignored.
-    %
-    % type is a string that defines the type of G (see 'help gb' for a list
-    % of types).  The type need not be the same type as the dup operator
-    % (unless one has a type of 'complex', in which case both must be
-    % 'complex').  If the type is not specified, it defaults to the type of X.
-    %
-    % The integer arrays I and J may be double, in which case they contain
-    % 1-based indices, in the range 1 to the dimension of the matrix.  This is
-    % the same behavior as the MATLAB sparse function.  They may instead be
-    % uint64 arrays, in which case they are treated as 0-based.  Entries in I
-    % are the range 0 to m-1, and J are in the range 0 to n-1.  If I, J, and X
-    % are double, the following examples construct the same MATLAB sparse
-    % matrix S:
-    %
-    %   S = sparse (I, J, X) ;
-    %   S = sparse (gb.build (I, J, X)) ;
-    %   S = sparse (gb.build (uint64(I)-1, uint64(J)-1, X)) ;
-    %
-    % Using uint64 integers for I and J is faster and uses less memory.  I and
-    % J need not be in any particular order, but gb.build is fastest if I and J
-    % are provided in column-major order.
-    %
-    % See also sparse (with 3 or more input arguments).
-
-    [args is_gb] = get_args (varargin {:}) ;
-    if (is_gb)
-        G = gb (gbbuild (args {:})) ;
-    else
-        G = gbbuild (args {:}) ;
-    end
-    end
-
-    %---------------------------------------------------------------------------
     % gb.select: select entries from a GraphBLAS sparse matrix
     %---------------------------------------------------------------------------
 
@@ -1499,6 +1564,7 @@ methods (Static) %==============================================================
     % The selectop is a string defining the operator:
     %
     %   operator    MATLAB equivalent                   alternative strings
+    %   --------    -----------------                   -------------------
     %   'tril'      C = tril (A,thunk)                  none
     %   'triu'      C = triu (A,thunk)                  none
     %   'diag'      C = diag (A,thunk), see note below  none
@@ -1668,54 +1734,29 @@ methods (Static) %==============================================================
     function Cout = subassign (varargin)
     %GB.SUBASSIGN subassign sparse submatrix
     %   Cout = gb.subassign (Cin, M, accum, A, I, J, desc)
-    % TODO
     % See also gb.assign, subsasgn.
 
-    error ('gb.subassign not yet implemented') ;
+    error ('gb.subassign not yet implemented') ;    % TODO
     end
+
+    %---------------------------------------------------------------------------
+    % gb.colassign: sparse matrix assignment to a single column
+    %---------------------------------------------------------------------------
 
     function Cout = colassign (varargin)
     %GB.COLASSIGN sparse matrix assignment to a single column
     %   Cout = gb.colassign (Cin, M, accum, u, I, j, desc)
-    % TODO
-    error ('gb.colassign not yet implemented') ;
+    error ('gb.colassign not yet implemented') ;    % TODO
     end
+
+    %---------------------------------------------------------------------------
+    % gb.rowassign: sparse matrix assignment to a single row
+    %---------------------------------------------------------------------------
 
     function Cout = rowassign (varargin)
     %GB.ROWASSIGN sparse matrix assignment to a single row
     %   Cout = gb.rowassign (Cin, M, accum, u, i, J, desc)
-    % TODO
-    error ('gb.rowassign not yet implemented') ;
-    end
-
-    %---------------------------------------------------------------------------
-    % gb.find: extract all entries from a matrix
-    %---------------------------------------------------------------------------
-
-    function [I,J,X] = find (A, onebased)
-    %GB.FIND extract a list of entries from a matrix
-    %
-    % Usage:
-    %
-    %   [I J X] = gb.find (A)        % extract 1-based indices; I and J double
-    %   [I J X] = gb.find (A, 0) ;   % extract 0-based indices; I and J uint64
-    %   [I J X] = gb.find (A, 1) ;   % extract 1-based indices; I and J double
-    %
-    % gb.find extracts all entries from either a MATLAB matrix A or a GraphBLAS
-    % matrix A.  If A is a MATLAB sparse matrix, [I J X] = gb.find (A) is
-    % identical to [I J X] = find (A).
-    %
-    % An optional second argument determines the type of I and J.  It defaults
-    % to 1, and in this case, I and J are double, and reflect 1-based indices,
-    % just like the MATLAB statement [I J X] = find (A).  If zero, then I and J
-    % are returned as uint64 arrays, containing 0-based indices.
-    %
-    % This function corresponds to the GrB_*_extractTuples_* functions in
-    % GraphBLAS.
-    %
-    % See also find.
-
-    error ('gb.find not yet implemented') ;
+    error ('gb.rowassign not yet implemented') ;    % TODO
     end
 
     %---------------------------------------------------------------------------
@@ -1733,7 +1774,7 @@ methods (Static) %==============================================================
     %
     % See also sum, prod, accumarry, max, min.
 
-    error ('gb.reduce not yet implemented') ;
+    error ('gb.reduce not yet implemented') ;   % TODO
     end
 
     %---------------------------------------------------------------------------
@@ -1746,10 +1787,8 @@ methods (Static) %==============================================================
     % Usage:
     %
     %   Cout = gb.gbkron (Cin, M, accum, op, A, B, desc)
-    %
-    % TODO
 
-    error ('gb.gbkron not yet implemented') ;
+    error ('gb.gbkron not yet implemented') ;   % TODO
     end
 
     %---------------------------------------------------------------------------
@@ -1765,7 +1804,7 @@ methods (Static) %==============================================================
     %
     % See also transpose, ctranspose.
 
-    error ('gb.gbtranspose not yet implemented') ;
+    error ('gb.gbtranspose not yet implemented') ;  % TODO
     end
 
     %---------------------------------------------------------------------------
@@ -1791,11 +1830,20 @@ methods (Static) %==============================================================
     %   else if (B(i,j) is present but A(i,j) is not)
     %       T(i,j) = B(i,j)
     %
+    % T is then accumulated into C via C<#M,replace> = accum (C,T).
+    %
     % Cin, M, accum, and the descriptor desc are the same as all other
     % gb.methods; see gb.mxm and gb.descriptorinfo for more details.  For the
-    % binary operator, see gb.binopinfo'
+    % binary operator, see gb.binopinfo.
+    %
+    % See also gb.emult.
 
-    error ('gb.eadd not yet implemented') ;
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        Cout = gb (gbeadd (args {:})) ;
+    else
+        Cout = gbeadd (args {:}) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -1809,13 +1857,32 @@ methods (Static) %==============================================================
     %
     %   Cout = gb.emult (Cin, M, accum, op, A, B, desc)
     %
-    % TODO
+    % gb.emult computes the element-wise 'multiplication' T=A.*B.  The result T
+    % has the pattern of the intersection of A and B. The operator is used
+    % where A(i,j) and B(i,j) are present.  Otherwise the entry does not
+    % appear in T.
+    %
+    %   if (A(i,j) and B(i,j) is present)
+    %       T(i,j) = op (A(i,j), B(i,j))
+    %
+    % T is then accumulated into C via C<#M,replace> = accum (C,T).
+    %
+    % Cin, M, accum, and the descriptor desc are the same as all other
+    % gb.methods; see gb.mxm and gb.descriptorinfo for more details.  For the
+    % binary operator, see gb.binopinfo.
+    %
+    % See also gb.eadd.
 
-    error ('gb.emult not yet implemented') ;
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        Cout = gb (gbemult (args {:})) ;
+    else
+        Cout = gbemult (args {:}) ;
+    end
     end
 
     %---------------------------------------------------------------------------
-    % gb.apply: appyl a unary operator to entries in a matrix
+    % gb.apply: apply a unary operator to entries in a matrix
     %---------------------------------------------------------------------------
 
     function Cout = apply (varargin)
@@ -1824,11 +1891,13 @@ methods (Static) %==============================================================
     % Usage:
     %
     %   Cout = gb.apply (Cin, M, accum, op, A, desc)
-    %
-    % TODO
 
-    error ('gb.apply not yet implemented') ;
+    error ('gb.apply not yet implemented') ;    % TODO
     end
+
+    %---------------------------------------------------------------------------
+    % gb.extract: extract a submatrix
+    %---------------------------------------------------------------------------
 
     function Cout = extract (varargin)
     %GB.EXTRACT extract sparse submatrix
@@ -1837,11 +1906,9 @@ methods (Static) %==============================================================
     %
     %   Cout = gb.extract (Cin, M, accum, A, I, J, desc)
     %
-    % TODO
-    %
     % See also subsref.
 
-    error ('gb.extract not yet implemented') ;
+    error ('gb.extract not yet implemented') ;  % TODO
     end
 
 end
