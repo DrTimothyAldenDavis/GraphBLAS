@@ -92,6 +92,7 @@ classdef gb
 %       C = uint16 (G)      typecast a gb matrix G to uint16 gb matrix C
 %       C = uint32 (G)      typecast a gb matrix G to uint32 gb matrix C
 %       C = uint64 (G)      typecast a gb matrix G to uint64 gb matrix C
+%       C = spones (G)      return pattern of gb matrix
 %       s = type (G)        get the type of a gb matrix G
 %       disp (G, level)     display a gb matrix G
 %       display (G)         display a gb matrix G; same as disp(G,2)
@@ -278,19 +279,18 @@ methods %=======================================================================
 
     %---------------------------------------------------------------------------
 
-    % TODO: this can all be overloaded (not static) methods:
-    % TODO: cast
-    % TODO abs, max, min, prod, sum,
+    % TODO: these can all be overloaded (not static) methods:
+    % TODO cast
+    % TODO abs, max, min, prod, sum
     % TODO ceil, floor, fix
-    % TODO sqrt? bsxfun?  cummin? cummax? cumprod?  diff?  TODO inv?
+    % TODO sqrt? bsxfun?  cummin? cummax? cumprod?  diff? ... inv??
     % TODO isbanded, isdiag, isfinite, isinf, isnan, issorted, issortedrows
     % TODO istril, istriu, reshape, sort
-    % TODO diag? spdiags?
-    % TODO spones
-    % TODO ... see 'methods double'
+    % TODO diag, spdiags
+    % TODO ... see 'methods double', 'help datatypes' for more options.
 
-    % gb.methods:
-    % gb.maxmax, gb.minmin, gb.sumsum, gb.prodprod
+    % add these gb.methods:
+    % TODO gb.maxmax, gb.minmin, gb.sumsum, gb.prodprod, ...
 
     %---------------------------------------------------------------------------
     % sparse: convert a GraphBLAS sparse matrix into a MATLAB sparse matrix
@@ -417,6 +417,21 @@ methods %=======================================================================
     %UINT64 typecast a GraphBLAS sparse matrix to uint64.
     % C = uint64 (G) typecasts the gb matrix G to uint64.
     C = gb (G, 'uint64') ;
+    end
+
+    %---------------------------------------------------------------------------
+    % spones: return pattern of GraphBLAS matrix
+    %---------------------------------------------------------------------------
+
+    function C = spones (G, type)
+    %SPONES return pattern of GraphBLAS matrix.
+    % The behavior of spones (G) for a gb matrix differs from spones (S) for
+    % MATLAB matrix S.  Explicit entries in G that have a value of zero are
+    % converted to C(i,j)=1; these entries never appear in spones (S) for a
+    % MATLAB matrix S.  C = spones (G) returns C as double (just like the
+    % MATLAB spones (S)).  C = spones (G,type) returns C in the requested type
+    % ('double', 'single', 'int8', ...).
+    error ('TODO') ; % spones
     end
 
     %---------------------------------------------------------------------------
@@ -630,7 +645,7 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = kron (A, B)
-    error ('TODO') ;        % kron: use gb.gbkron
+    error ('TODO') ; % kron
     end
 
     %---------------------------------------------------------------------------
@@ -1875,7 +1890,7 @@ methods (Static) %==============================================================
     end
 
     %---------------------------------------------------------------------------
-    % gb.kron: Kronecker product
+    % gb.gbkron: Kronecker product
     %---------------------------------------------------------------------------
 
     function Cout = gbkron (varargin)
@@ -1883,9 +1898,26 @@ methods (Static) %==============================================================
     %
     % Usage:
     %
+    %   Cout = gb.gbkron (op, A, B, desc)
+    %   Cout = gb.gbkron (Cin, accum, op, A, B, desc)
+    %   Cout = gb.gbkron (Cin, M, op, A, B, desc)
     %   Cout = gb.gbkron (Cin, M, accum, op, A, B, desc)
+    %
+    % gb.gbkron computes the Kronecker product, T=kron(A,B), using the given
+    % binary operator op, in place of the conventional '*' operator for the
+    % MATLAB built-in kron.  See also C = kron (A,B), which uses the default
+    % semiring operators if A and/or B are gb matrices.
+    %
+    % T is then accumulated into C via C<#M,replace> = accum (C,T).
+    %
+    % See also kron, gb/kron.
 
-    error ('gb.gbkron not yet implemented') ;   % TODO
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        Cout = gb (gbkron (args {:})) ;
+    else
+        Cout = gbkron (args {:}) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -1913,6 +1945,9 @@ methods (Static) %==============================================================
     %
     % Usage:
     %
+    %   Cout = gb.eadd (op, A, B, desc)
+    %   Cout = gb.eadd (Cin, accum, op, A, B, desc)
+    %   Cout = gb.eadd (Cin, M, op, A, B, desc)
     %   Cout = gb.eadd (Cin, M, accum, op, A, B, desc)
     %
     % gb.eadd computes the element-wise 'addition' T=A+B.  The result T has the
@@ -1952,6 +1987,9 @@ methods (Static) %==============================================================
     %
     % Usage:
     %
+    %   Cout = gb.emult (op, A, B, desc)
+    %   Cout = gb.emult (Cin, accum, op, A, B, desc)
+    %   Cout = gb.emult (Cin, M, op, A, B, desc)
     %   Cout = gb.emult (Cin, M, accum, op, A, B, desc)
     %
     % gb.emult computes the element-wise 'multiplication' T=A.*B.  The result T
