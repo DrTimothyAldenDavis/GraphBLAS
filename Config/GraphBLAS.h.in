@@ -786,7 +786,7 @@ extern GrB_BinaryOp
 // and y = true, then z = x + y = true + true = true.  DIV (x/y) is defined
 // below.  RDIV (y/x) is shown as \ in the table; it is the same as 2nd.
 
-//                                                     is  is  is  is  is  is
+//                                                   is  is  is  is  is  is
 //  x y  1st 2nd min max +   -   *   /   or  and xor eq  ne  gt  lt  ge  le rdiv
 //  0 0  0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   1  0
 //  0 1  0   1   0   1   1   1   0   0   1   0   1   0   1   0   1   0   1  1

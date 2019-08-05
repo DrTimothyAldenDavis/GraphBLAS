@@ -29,7 +29,7 @@ GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
     #ifdef GB_COMPLEX_TYPE
     else if (type == gb_complex_type)
     {
-        return (gb_first_complexx) ;
+        return (gb_first_complex) ;
     }
     #endif
     else

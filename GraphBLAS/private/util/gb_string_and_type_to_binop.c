@@ -44,7 +44,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
     const GrB_Type type         // type of the x,y inputs to the operator
 )
 {
-    
+
     CHECK_ERROR (type == NULL, "unknown type") ;
 
     if (MATCH (op_name, "1st") || MATCH (op_name, "first"))
@@ -527,7 +527,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
 
-    ERROR ("unknown binary operator") ;
+    ERROR2 ("unknown binary operator", op_name) ;
     return (NULL) ;
 }
 

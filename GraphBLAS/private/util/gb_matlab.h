@@ -22,6 +22,7 @@
 // error handling
 //------------------------------------------------------------------------------
 
+// TODO use VA_ARG for ERROR macro
 #define ERROR2(message, arg) \
     mexErrMsgIdAndTxt ("GraphBLAS:error", message, arg) ;
 #define ERROR(message) mexErrMsgIdAndTxt ("GraphBLAS:error", message) ;
@@ -125,6 +126,24 @@ GrB_Type gb_string_to_type      // return the GrB_Type from a string
     const char *classname
 ) ;
 
+GrB_UnaryOp gb_mxstring_to_unop         // return unary operator from a string
+(
+    const mxArray *mxstring,            // MATLAB string
+    const GrB_Type default_type         // default type if not in the string
+) ;
+
+GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
+(
+    char *opstring,                     // string defining the operator
+    const GrB_Type default_type         // default type if not in the string
+) ;
+
+GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
+(
+    const char *op_name,        // name of the operator, as a string
+    const GrB_Type type         // type of the x,y inputs to the operator
+) ;
+
 GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
 (
     const mxArray *mxstring,            // MATLAB string
@@ -192,12 +211,12 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
     kind_enum_t kind            // gb, sparse, or full
 ) ;
 
-GrB_BinaryOp gb_string_to_selectop      // return select operator from a string
+GxB_SelectOp gb_string_to_selectop      // return select operator from a string
 (
     char *opstring                      // string defining the operator
 ) ;
 
-GrB_BinaryOp gb_mxstring_to_selectop    // return select operator from a string
+GxB_SelectOp gb_mxstring_to_selectop    // return select operator from a string
 (
     const mxArray *mxstring             // MATLAB string
 ) ;

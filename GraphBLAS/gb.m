@@ -92,6 +92,7 @@ classdef gb
 %       C = uint16 (G)      typecast a gb matrix G to uint16 gb matrix C
 %       C = uint32 (G)      typecast a gb matrix G to uint32 gb matrix C
 %       C = uint64 (G)      typecast a gb matrix G to uint64 gb matrix C
+%       C = cast (G,...)    typecast a gb matrix G to any of the above
 %       C = spones (G)      return pattern of gb matrix
 %       s = type (G)        get the type of a gb matrix G
 %       disp (G, level)     display a gb matrix G
@@ -110,9 +111,9 @@ classdef gb
 %       L = tril (G,k)      lower triangular part of gb matrix G
 %       U = triu (G,k)      upper triangular part of gb matrix G
 %       C = kron (A,B)      Kronecker product
-%       C = permute (G, order)  
-%       C = ipermute (G, order)
-%       C = repmat (G, varargin)
+%       C = permute (G, order)      % TODO
+%       C = ipermute (G, order)     % TODO
+%       C = repmat (G, varargin)    % replicate and tile a GraphBLAS matrix
 %
 %   operator overloading:
 %
@@ -267,7 +268,7 @@ methods %=======================================================================
         %   G = gb (X) ;            gb copy of a matrix X, same type
         %   G = gb (X, type) ;      gb typecasted copy of a matrix X
         %   G = gb (m, n) ;         empty m-by-n gb double matrix
-        %   G = gb (m, n, type) ;   empty m-by-n gb matrix of give type
+        %   G = gb (m, n, type) ;   empty m-by-n gb matrix of given type
         if (isa (varargin {1}, 'gb'))
             % extract the contents of the gb object as its opaque struct so
             % the gbnew function can access it.
@@ -280,8 +281,9 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     % TODO: these can all be overloaded (not static) methods:
-    % TODO cast
-    % TODO abs, max, min, prod, sum
+    % TODO norm
+    % TODO abs, max, min, prod, sum, eps
+    % TODO sin, cos, tan, tanh, ... ??
     % TODO ceil, floor, fix
     % TODO sqrt? bsxfun?  cummin? cummax? cumprod?  diff? ... inv??
     % TODO isbanded, isdiag, isfinite, isinf, isnan, issorted, issortedrows
@@ -347,6 +349,9 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
     % double, single, etc: typecast a GraphBLAS sparse matrix to double, etc
     %---------------------------------------------------------------------------
+
+    % Note that these make the built-in 'cast' function work as well, with no
+    % further code.  Try C = cast (G, 'like', int16(1)), for example.
 
     function C = double (G)
     %DOUBLE typecast a GraphBLAS sparse matrix to double.
@@ -431,7 +436,14 @@ methods %=======================================================================
     % MATLAB matrix S.  C = spones (G) returns C as double (just like the
     % MATLAB spones (S)).  C = spones (G,type) returns C in the requested type
     % ('double', 'single', 'int8', ...).
-    error ('TODO') ; % spones
+    if (nargin == 1)
+        C = gb.apply ('1', G) ;
+    else
+        if (~ischar (type))
+            error ('invalid type') ;
+        end
+        C = gb.apply (['1.' type], G) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -645,7 +657,8 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = kron (A, B)
-    error ('TODO') ; % kron
+    %KRON Kronecker product
+    C = gb.gbkron (get_mult (get_semiring (A, B)), A, B) ;
     end
 
     %---------------------------------------------------------------------------
@@ -667,11 +680,24 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % repmat: C = repmat (A, ...)
+    % repmat: replicate and tile a GraphBLAS matrix
     %---------------------------------------------------------------------------
 
-    function C = repmat (A, varargin)
-    error ('TODO') ;    % repmat: use kron
+    function C = repmat (G, m, n)
+    %REPMAT Replicate and tile a GraphBLAS matrix.
+    % C = repmat (G, m, n)  % constructs an m-by-n tiling of the gb matrix A
+    % C = repmat (G, [m n]) % same as C = repmat (A, m, n)
+    % C = repmat (G, n)     % constructs an n-by-n tiling of the gb matrix G
+    % Only 2D matrices are supported.
+    %
+    % See also kron , gb.gbkron.
+    type = gbtype (G.opaque) ;
+    if (nargin == 3)
+        R = gb (ones (m, n)) ;
+    else
+        R = gb (ones (m)) ;
+    end
+    C = gb.gbkron ('2nd', R, G) ;
     end
 
     %---------------------------------------------------------------------------
@@ -679,7 +705,10 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = plus (A, B)
-    error ('TODO') ;        % plus
+    %PLUS sparse matrix-matrix element-wise 'addition' over a semiring.
+    % The pattern of C is the set union of A and B.  Entries not present in
+    % A or B are treated as being equal to the identity value of the monoid.
+    C = gb.eadd (get_monoid (get_semiring (A, B)), A, B) ;
     end
 
     %---------------------------------------------------------------------------
@@ -687,7 +716,55 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = minus (A, B)
-    C = A+(-B) ;
+    %MINUS sparse matrix subtraction, C=A-B.
+    % The computation C=A-B depends on the additive monoid of the semiring.
+    % The pattern of C is the set union of A and B.  Entries not present in
+    % A or B are treated as being equal to the identity value of the monoid.
+    %
+    % GraphBLAS has 8 valid monoids:
+    %   min, max, plus, times: for all but logical types.
+    %   and, or, xor, eq: for logical monoids.
+    %
+    % If the monoid is '+', then c(i,j) = a(i,j) - b(i,j), and entries not
+    % present in A or B are treated as zero (the monoid identity).
+    %
+    % If the monoid is '*', then c(i,j) = a(i,j)/b(i,j), and entries not
+    % present are treated as 1 (the monoid identity).  That is, if a(i,j) is
+    % present but not b(i,j), then c(i,j) = a(i,j)/1; or c(i,j) = 1/b(i,j) if
+    % b(i,j) is present but not a(i,j).
+    %
+    % A-B is not defined for max, min, and boolean monoids; an error will
+    % resut.
+
+    % TODO figure this out:
+    % For the 'or' boolean monoid, A-B is xor(A,B), which assumes a Galois
+    % Field 2.  Entries not present in A or B are 
+    %
+    % and: id = 1 or:  id = 0 xor: id = 
+    %
+    %               --GF2--
+    %       a b  or -b  or(a,-b))
+    %       0 0  0  1   1
+    %       0 1  1  0   0           ???
+    %       1 0  1  1   1
+    %       1 1  1  0   1
+
+    % get the additive monoid and its type
+    [op t] = get_op (get_monoid (get_semiring (A, [ ])), gbtype (A.opaque)) ;
+
+    % get the corresponding negation
+    if (isequal (op, '+'))
+        % arithmetic subtraction
+        minus = ['-.', t] ;
+%   elseif (isequal (op, 'or'))
+%       % logical subtraction
+%       minus = ['xor.', t] ;
+    elseif (isequal (op, '*'))
+        % multiplicative negation
+        neg = ['minv.', t] ;
+    else
+        error ('C=A-B not defined for monoid [%s]\n', op) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -695,7 +772,31 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = uminus (A)
-    error ('TODO') ;        % uminus
+    %UMINUS apply the negation of the additive monoid to a GraphBLAS matrix.
+    % C = -A applies the the negation of the additive monoid of A.semiring.  If
+    % this is '+' or 'plus', the negation is the additive inverse, C=-A.  If
+    % the monoid is 'or' (or its synonyms), then C = not(A) is computed.  If
+    % the monoid is '*' or 'times', then C = 1./A is computed.
+
+    % get the additive monoid and its type
+    [op t] = get_op (get_monoid (get_semiring (A, [ ])), gbtype (A.opaque)) ;
+
+    % get the corresponding negation
+    if (isequal (op, '+'))
+        % arithmetic negation
+        neg = ['-.', t] ;
+    elseif (isequal (op, 'or'))
+        % logical negation
+        neg = ['~.', t] ;
+    elseif (isequal (op, '*'))
+        % multiplicative negation
+        neg = ['minv.', t] ;
+    else
+        error ('negation not defined for monoid [%s]\n', op) ;
+    end
+
+    % apply the negation
+    C = gb.apply (neg, A) ;
     end
 
     %---------------------------------------------------------------------------
@@ -703,7 +804,7 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = uplus (A)
-    error ('TODO') ;        % uplus
+    C = A ;
     end
 
     %---------------------------------------------------------------------------
@@ -711,8 +812,9 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = times (A, B)
-    error ('TODO') ;        % A.*B
-    % C = gb.emult (gb_get_multop (B.semiring), A, B) ;
+    %TIMES sparse matrix-matrix element-wise 'multiplication' over a semiring.
+    % TODO C=A.*B: expand a scalar into a matrix via spones
+    C = gb.emult (get_mult (get_semiring (A, B)), A, B) ;
     end
 
     %---------------------------------------------------------------------------
@@ -722,13 +824,7 @@ methods %=======================================================================
     function C = mtimes (A, B)
     %MTIMES sparse matrix-matrix multiplication over a semiring.
     % TODO C=A*B: expand a scalar into a diagonal matrix
-    if (isa (B, 'gb'))
-        C = gb.mxm (B.semiring, A, B) ;
-    elseif (isa (A, 'gb'))
-        C = gb.mxm (A.semiring, A, B) ;
-    else
-        C = gb.mxm ('+.*', A, B) ;
-    end
+    C = gb.mxm (get_semiring (A, B), A, B) ;
     end
 
     %---------------------------------------------------------------------------
@@ -866,8 +962,13 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = not (A)
-    % gb.apply ('not', A)
-    error ('TODO') ;    % ~A
+    %NOT logical negation of a GraphBLAS matrix
+    % C = not (A) computes the logical negation of a GraphBLAS matrix A.  The
+    % A.semiring is ignored.  To negate only those entries in the pattern of A,
+    % use C = gb.apply ('~', A), which has the same pattern as A.
+    %
+    % See also gb.apply.
+    C = gb.select ('nonzero', gb.apply ('not.logical', full (A, 0))) ;
     end
 
     %---------------------------------------------------------------------------
@@ -893,9 +994,10 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = horzcat (varargin)
-    nargin
-    args = varargin
-    length (args)
+
+    % nargin
+    % args = varargin
+    % length (args)
     error ('TODO') ;    % [A B]
     end
 
@@ -922,6 +1024,7 @@ methods %=======================================================================
 
 %   function C = subsasgn (A, I, J)
 %   % C = gb.assign (C, A, {I}, {J}) ;
+%   also need to handle C.semiring
 %   error ('TODO') ;    % C(I,J)=A
 %   end
 
@@ -959,12 +1062,15 @@ methods (Static) %==============================================================
     %
     %   gb.clear
     %
+    % GraphBLAS keeps an internal workspace to speedup its operations.  It also
+    % uses several global settings.  These can both be cleared with gb.clear.
+    %
     % This method is optional.  Simply terminating the MATLAB session, or
     % typing 'clear all' will do the same thing.  However, if you are finished
-    % with GraphBLAS and wish to free its internal resources, but do not wish
+    % with GraphBLAS and wish to free its internal workspace, but do not wish
     % to free everything else freed by 'clear all', then use this method.
-    % gb.clear also clears any non-default setting of gb.threads, gb.chunk,
-    % and gb.format.
+    % gb.clear also clears any non-default setting of gb.threads, gb.chunk, and
+    % gb.format.
     %
     % See also: clear, gb.threads, gb.chunk, gb.format
 
@@ -1001,10 +1107,11 @@ methods (Static) %==============================================================
     %            determines the method used in gb.mxm.  The default is to let
     %            GraphBLAS determine the method automatically, via a
     %            heuristic.
-    %   d.kind  'default', 'gb', 'sparse', or 'full'.  The default is d.kind =
-    %            'gb', where the GraphBLAS operation returns an object, which
-    %            is preferred since GraphBLAS sparse matrices are faster and
-    %            can represent many more data types.  However, if you want a
+    %   d.kind   For most gb.methods, this is a string equal to 'default',
+    %            'gb', 'sparse', or 'full'.  The default is d.kind = 'gb',
+    %            where the GraphBLAS operation returns an object, which is
+    %            preferred since GraphBLAS sparse matrices are faster and can
+    %            represent many more data types.  However, if you want a
     %            standard MATLAB sparse matrix, use d.kind='sparse'.  Use
     %            d.kind='full' for a MATLAB dense matrix.  For any gb.method
     %            that takes a descriptor, the following uses are the same, but
@@ -1015,6 +1122,9 @@ methods (Static) %==============================================================
     %
     %               % with no d, or d.kind = 'default'
     %               S = sparse (gb.method (...)) :
+    %
+    %           [I, J, X] = gb.extracttuples (G,d) uses d.kind = 'one-based' or
+    %           'zero-based' to determine the type of I and J.
     %
     % These descriptor values are scalars:
     %
@@ -1365,6 +1475,8 @@ methods (Static) %==============================================================
     %
     %   f = format (G)
     %
+    % TODO G = gb.format (G, 'by row') ; to change the format of one matrix G
+    %
     % Examples:
     %
     %   A = sparse (rand (4))
@@ -1385,9 +1497,11 @@ methods (Static) %==============================================================
             % f = gb.format (f) ; set the global format for all future matrices
             f = gbformat (arg) ;
         end
-    else
+    elseif (nargin == 0)
         % f = gb.format ; get the global format
         f = gbformat ;
+    else
+        error ('usage: f = gb.format, gb.format (f), or gb.format (G)') ;
     end
     end
 
@@ -2025,9 +2139,17 @@ methods (Static) %==============================================================
     %
     % Usage:
     %
+    %   Cout = gb.apply (op, A, desc)
+    %   Cout = gb.apply (Cin, accum, op, A, desc)
+    %   Cout = gb.apply (Cin, M, op, A, desc)
     %   Cout = gb.apply (Cin, M, accum, op, A, desc)
 
-    error ('gb.apply not yet implemented') ;    % TODO
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        Cout = gb (gbapply (args {:})) ;
+    else
+        Cout = gbapply (args {:}) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -2104,6 +2226,122 @@ end
             args {end+1} = struct ('kind', 'gb') ;
             is_gb = true ;
         end
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % get_semiring: get the semiring for overloaded operators
+    %---------------------------------------------------------------------------
+
+    function s = get_semiring (A, B)
+    %GET_SEMIRING return the default semiring
+    % An overloaded method that uses two input matrices A and B uses
+    % B.semiring, if B is a gb matrix.  Otherwise, if A is a gb matrix, it uses
+    % A.semiring.  If neither A nor B are gb matrices, it uses the default
+    % semiring, '+.*'.  This function is only for overloaded operators,
+    % and methods that overload built-in MATLAB methods.
+    if (isa (B, 'gb'))
+        s = B.semiring ;
+    elseif (isa (A, 'gb'))
+        s = A.semiring ;
+    else
+        s = '+.*' ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % get_monoid: get the monoid of a semiring
+    %---------------------------------------------------------------------------
+
+    function op = get_monoid (s)
+    if (~ischar (s))
+        error ('semiring must be a string') ;
+    end
+    dot = find (s == '.') ;
+    if (length (dot) == 1)
+        op = s (1:dot-1) ;
+    elseif (length (dot) == 2)
+        op = [ s(1:dot(1)) s(dot(2)+1:end) ] ;
+    else
+        error ('invalid semiring: %s', s) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % get_mult: get the multiplicative operator of a semiring
+    %---------------------------------------------------------------------------
+
+    function op = mult (s)
+    if (~ischar (s))
+        error ('semiring must be a string') ;
+    end
+    dot = find (s == '.') ;
+    if (length (dot) == 1 || length (dot) == 2)
+        op = s (dot(1)+1:end) ;
+    else
+        error ('invalid semiring: %s', s) ;
+    end
+    end
+ 
+    %---------------------------------------------------------------------------
+    % get_op: get the name and type of a binary or unary operator
+    %---------------------------------------------------------------------------
+
+    function [opname optype] = get_op (op, atype)
+    dot = find (op == '.') ;
+    if (isempty (dot))
+        opname = op ;
+        optype = atype ;
+    elseif (length (dot) == 1)
+        opname = op (1:dot-1) ;
+        optype = op (dot+1:end) ;
+    else
+        error ('operator %s unknown\n', op) ;
+    end
+    % rename synonyms to a single name
+    switch opname
+        % binary operators
+        case { 'first' }
+            opname = '1st' ;
+        case { 'second' }
+            opname = '2nd' ;
+        case { 'plus' }
+            opname = '+' ;
+        case { 'minus' }
+            opname = '-' ;
+        case { 'times' }
+            opname = '*' ;
+        case { 'div' }
+            opname = '/' ;
+        case { 'rdiv' }
+            opname = '\' ;
+        case { '||', 'or', 'lor' }
+            opname = '|' ;
+        case { '&&', 'and', 'land' }
+            opname = '&' ;
+        case { 'lxor' }
+            opname = 'xor' ;
+        case { 'eq' }
+            opname = '==' ;
+        case { 'ne' }
+            opname = '~=' ;
+        case { 'gt' }
+            opname = '>' ;
+        case { 'lt' }
+            opname = '<' ;
+        case { 'ge' }
+            opname = '>=' ;
+        case { 'le' }
+            opname = '<=' ;
+        % unary operators
+        case { 'not', 'lnot' }
+            opname = '~' ;
+        case { 'ainv', 'negate' }
+            opname = '-' ;
+        case { 'one' }
+            opname = '1' ;
+        otherwise
+            % opname unchanged
     end
     end
 
