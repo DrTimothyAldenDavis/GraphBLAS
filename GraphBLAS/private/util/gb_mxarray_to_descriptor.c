@@ -102,7 +102,7 @@ static void get_descriptor
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
     const mxArray *D_matlab,    // MATLAB struct
-    kind_enum_t *kind           // gb, sparse, or full
+    kind_enum_t *kind           // gb, sparse, full, 0-based, or 1-based
 )
 {
 
@@ -160,6 +160,14 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
         else if (MATCH (s, "full"))
         {
             (*kind) = KIND_FULL ;
+        }
+        else if (MATCH (s, "zero-based"))
+        {
+            (*kind) = KIND_0BASED ;
+        }
+        else if (MATCH (s, "one-based"))
+        {
+            (*kind) = KIND_1BASED ;
         }
         else
         {

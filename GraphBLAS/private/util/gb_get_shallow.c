@@ -128,7 +128,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         // matrix is now initialized
         A->magic = GB_MAGIC ;
-        // OK (GxB_Matrix_fprint (A, "A from struct", 3, stdout)) ;
 
     }
     else
@@ -234,6 +233,10 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             else if (type == GrB_UINT64)
             {
                 Xx = mxGetUint64s (X) ;
+            }
+            else if (type == GrB_FP32)
+            {
+                Xx = mxGetSingles (X) ;
             }
             else
             {

@@ -46,7 +46,9 @@ typedef enum            // output of gb.methods
 {
     KIND_GB = 0,        // return a MATLAB struct containing a GrB_Matrix
     KIND_SPARSE = 1,    // return a MATLAB sparse matrix
-    KIND_FULL = 2       // return a MATLAB dense matrix
+    KIND_FULL = 2,      // return a MATLAB dense matrix
+    KIND_0BASED = 3,    // extract 0-based indices
+    KIND_1BASED = 4     // extract 1-based indices
 }
 kind_enum_t ;
 
@@ -163,7 +165,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
     const mxArray *D_matlab,    // MATLAB struct
-    kind_enum_t *kind           // gb, sparse, or full
+    kind_enum_t *kind           // gb, sparse, full, 0-based, or 1-based
 ) ;
 
 mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G

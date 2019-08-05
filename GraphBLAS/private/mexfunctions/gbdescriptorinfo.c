@@ -42,10 +42,14 @@ void mexFunction
 
     switch (kind)
     {
-        case KIND_SPARSE: printf ("d.kind     = sparse\n") ;    break ;
-        case KIND_FULL:   printf ("d.kind     = full\n") ;      break ;
+        // for gb.extractuples:
+        case KIND_0BASED: printf ("d.kind     = zero-based\n") ; break ;
+        case KIND_1BASED: printf ("d.kind     = one-based\n") ;  break ;
+        // for most gb.methods:
+        case KIND_SPARSE: printf ("d.kind     = sparse\n") ;     break ;
+        case KIND_FULL:   printf ("d.kind     = full\n") ;       break ;
         case KIND_GB:
-        default:          printf ("d.kind     = gb\n") ;        break ;
+        default:          printf ("d.kind     = gb\n") ;         break ;
     }
 
     OK (GrB_free (&d)) ;

@@ -72,9 +72,13 @@ classdef gb
 %           inverse, this is the conventional negation, -B.  If the monoid is
 %           '*', the operator computes the inverse 1/b(i,j).
 %
-% Methods for the gb class; these operate on GraphBLAS matrices only:
+% Methods for the gb class:
+%
+%   These methods operate on GraphBLAS matrices only, and they overload the
+%   existing MATLAB functions of the same name.
 %
 %       S = sparse (G)      convert a gb matrix G to a MATLAB sparse matrix
+%       [I,J,X] = find (G)  extract all entries from a gb matrix
 %       F = full (G)        convert a gb matrix G to a MATLAB dense matrix
 %       C = double (G)      typecast a gb matrix G to double gb matrix C
 %       C = single (G)      typecast a gb matrix G to single gb matrix C
@@ -92,19 +96,22 @@ classdef gb
 %       disp (G, level)     display a gb matrix G
 %       display (G)         display a gb matrix G; same as disp(G,2)
 %       mn = numel (G)      m*n for an m-by-n gb matrix G
-%       e = nvals (G)       number of entries in a gb matrix G
 %       e = nnz (G)         number of entries in a gb matrix G
 %       [m n] = size (G)    size of a gb matrix G
 %       s = ismatrix (G)    true for any gb matrix G
 %       s = isvector (G)    true if m=1 or n=1, for an m-by-n gb matrix G
 %       s = isscalar (G)    true if G is a 1-by-1 gb matrix
+%       s = isnumeric (G)   true for any gb matrix G
+%       s = isfloat (G)     true if gb matrix is double, single, or complex
+%       s = isreal (G)      true if gb matrix is not complex
+%       s = isinteger (G)   true if gb matrix is int8, int16, ..., uint64
+%       s = islogical (G)   true if gb matrix is logical
 %       L = tril (G,k)      lower triangular part of gb matrix G
 %       U = triu (G,k)      upper triangular part of gb matrix G
 %       C = kron (A,B)      Kronecker product
-%       C = permute (A, order)  
-%       C = ipermute (A, order)
-%       result = isequal (A, B)
-%       C = repmat (A, varargin)
+%       C = permute (G, order)  
+%       C = ipermute (G, order)
+%       C = repmat (G, varargin)
 %
 %   operator overloading:
 %
@@ -156,11 +163,12 @@ classdef gb
 %       t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %       c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
 %       f = gb.format (f)           set/get matrix format to use in GraphBLAS
+%       e = gb.nvals (A)            number of entries in a matrix
 %       G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %
 %       G = gb.build (I, J, X, m, n, dup, type, desc)
 %                           build a GraphBLAS matrix from a list of entries
-%       [I,J,X] = gb.find (A, onebased)
+%       [I,J,X] = gb.extracttuples (A, desc)
 %                           extract all entries from a matrix
 %
 %   GraphBLAS operations (as Static methods) with Cout, mask M, and accum:
@@ -192,10 +200,9 @@ classdef gb
 %       Cout = gb.extract (Cin, M, accum, A, I, J, desc)
 %                           extract submatrix, like C=A(I,J) in MATLAB
 %
-%       GraphBLAS operations (with Cout and Cin arguments) take the following
-%       form:
+%       GraphBLAS operations (with Cout, Cin arguments) take the following form:
 %
-%       C<#M,replace> = accum (C, operation (A,B))
+%           C<#M,replace> = accum (C, operation (A or A', B or B'))
 %
 %       C is both an input and output matrix.  In this MATLAB interface to
 %       GraphBLAS, it is split into Cin (the value of C on input) and Cout (the
@@ -216,7 +223,7 @@ classdef gb
 %       The mask M acts like MATLAB logical indexing.  If M(i,j)=1 then C(i,j)
 %       can be modified; if zero, it cannot be modified by the operation.
 %
-% See also sparse.
+% See also sparse, doc sparse, and https://twitter.com/DocSparse .
 
 % The following methods are the only common ones that are not overloaded:
 % colon, char, loadobj, saveobj
@@ -270,16 +277,9 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % repmat: C = repmat (A, ...)
-    %---------------------------------------------------------------------------
-
-    function C = repmat (A, varargin)
-    error ('TODO') ;    % repmat: use kron
-    end
-
-    %---------------------------------------------------------------------------
 
     % TODO: this can all be overloaded (not static) methods:
+    % TODO: cast
     % TODO abs, max, min, prod, sum,
     % TODO ceil, floor, fix
     % TODO sqrt? bsxfun?  cummin? cummax? cumprod?  diff?  TODO inv?
@@ -303,6 +303,29 @@ methods %=======================================================================
     % logical sparse matrices.  If G has a different type (int8, ... uint64),
     % it is typecasted to a MATLAB sparse double matrix.
     S = gbsparse (G.opaque) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % find: extract entries from a GraphBLAS matrix
+    %---------------------------------------------------------------------------
+
+    function [I, J, X] = find (G)
+    %FIND extract entries from a GraphBLAS matrix.
+    % [I, J, X] = find (G) extracts the entries from a GraphBLAS matrix G.
+    % X has the same type as G ('double', 'single', 'int8', ...).  I and J are
+    % returned as 1-based indices, the same as [I,J,X] = find (S) for a MATLAB
+    % matrix.  Use gb.extracttuples to return I and J as zero-based.  Linear 1D
+    % indexing (I = find (S) for the MATLAB matrix S) and find (G, k, ...) are
+    % not supported.
+    %
+    % See also gb.extracttuples.
+    if (nargout == 3)
+        [I, J, X] = gbextracttuples (G.opaque) ;
+    elseif (nargout == 2)
+        [I, J] = gbextracttuples (G.opaque) ;
+    else
+        I = gbextracttuples (G.opaque) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -404,7 +427,8 @@ methods %=======================================================================
     %TYPE get the type of a GraphBLAS matrix.
     % s = type (G) returns the type of G as a string: 'double', 'single',
     % 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64',
-    % 'logical', or 'complex'.
+    % 'logical', or 'complex'.  Note that 'complex' is treated as a type,
+    % not an attribute.
     %
     % See also class, gb.
     s = gbtype (G.opaque) ;
@@ -461,32 +485,15 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % nvals: number of entries in a GraphBLAS matrix
-    %---------------------------------------------------------------------------
-
-    function e = nvals (G)
-    %NVALS the number of entries in a GraphBLAS matrix.
-    % nvals (G) is the number of explicit entries in a GraphBLAS matrix.  Note
-    % that the entries can have any value, including zero.  MATLAB drops
-    % zero-valued entries from its sparse matrices.  This cannot be done in
-    % GraphBLAS because of the different semirings that may be used.  In a
-    % shortest-path problem, for example, and edge with weight zero is very
-    % different from no edge at all.
-    %
-    % See also gb.nnz, nnz.
-    e = gbnvals (G.opaque) ;
-    end
-
-    %---------------------------------------------------------------------------
     % nnz: number of entries in a GraphBLAS matrix
     %---------------------------------------------------------------------------
 
     function e = nnz (G)
     %NNZ the number of entries in a GraphBLAS matrix.
-    % nnz (G) is the same as nvals (G); some of the entries may actually be
+    % nnz (G) is the same as gb.nvals (G); some of the entries may actually be
     % explicit zero-valued entries.  See 'help gb.nvals' for more details.
     %
-    % See also gb.nvals, nnz.
+    % See also gb.nvals, nnz, numel.
     e = gbnvals (G.opaque) ;
     end
 
@@ -534,6 +541,58 @@ methods %=======================================================================
     % isscalar (G) is true for an m-by-n GraphBLAS matrix if m and n are 1.
     [m, n] = gbsize (G.opaque) ;
     s = (m == 1) && (n == 1) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % isnumeric: true for any GraphBLAS matrix
+    %---------------------------------------------------------------------------
+
+    function s = isnumeric (G)
+    %ISNUMERIC always true for any GraphBLAS matrix.
+    % isnumeric (G) is always true for any GraphBLAS matrix G, including
+    % logical matrices, since those matrices can be operated on in any
+    % semiring, just like any other GraphBLAS matrix.
+    s = true ;
+    end
+
+    %---------------------------------------------------------------------------
+    % isfloat: determine if a GraphBLAS matrix has a floating-point type
+    %---------------------------------------------------------------------------
+
+    function s = isfloat (G)
+    %ISFLOAT true for floating-point GraphBLAS matrices.
+    t = gbtype (G.opaque) ;
+    s = isequal (t, 'double') || isequal (t, 'single') || ...
+        isequal (t, 'complex') ;
+    end
+
+    %---------------------------------------------------------------------------
+    % isreal: determine if a GraphBLAS matrix is real (not complex)
+    %---------------------------------------------------------------------------
+
+    function s = isreal (G)
+    %ISREAL true for real GraphBLAS matrices.
+    s = ~isequal (gbtype (G.opaque), 'complex') ;
+    end
+
+    %---------------------------------------------------------------------------
+    % isinteger: determine if a GraphBLAS matrix has an integer type
+    %---------------------------------------------------------------------------
+
+    function s = isinteger (G)
+    %ISINTEGER true for integer GraphBLAS matrices.
+    t = gbtype (G.opaque) ;
+    s = isequal (t (1:3), 'int') || isequal (t, (1:4), 'uint') ;
+    end
+
+    %---------------------------------------------------------------------------
+    % islogical: determine if a GraphBLAS matrix has a logical type
+    %---------------------------------------------------------------------------
+
+    function s = islogical (G)
+    %ISINTEGER true for logical GraphBLAS matrices.
+    t = gbtype (G.opaque) ;
+    s = isequal (t, 'logical') ;
     end
 
     %---------------------------------------------------------------------------
@@ -593,11 +652,11 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % isequal:
+    % repmat: C = repmat (A, ...)
     %---------------------------------------------------------------------------
 
-    function result = isequal (A, B)
-    error ('TODO') ;        % isequal;  see LAGraph_isequal
+    function C = repmat (A, varargin)
+    error ('TODO') ;    % repmat: use kron
     end
 
     %---------------------------------------------------------------------------
@@ -1317,6 +1376,30 @@ methods (Static) %==============================================================
     end
     end
 
+    %---------------------------------------------------------------------------
+    % gb.nvals: number of entries in a GraphBLAS matrix
+    %---------------------------------------------------------------------------
+
+    function e = nvals (A)
+    %GB.NVALS the number of entries in a matrix.
+    % gb.nvals (A) is the number of explicit entries in a GraphBLAS matrix.
+    % Note that the entries can have any value, including zero.  MATLAB drops
+    % zero-valued entries from its sparse matrices.  This cannot be done in a
+    % GraphBLAS matrix because of the different semirings that may be used.  In
+    % a shortest-path problem, for example, and edge with weight zero is very
+    % different from no edge at all.
+    %
+    % For a MATLAB sparse matrix S, gb.nvals (S) and nnz (S) are the same.
+    % For a MATLAB dense matrix F, gb.nvals (F) and numel (F) are the same.
+    %
+    % See also nnz, numel
+    if (isa (A, 'gb'))
+        e = gbnvals (A.opaque) ;
+    else
+        e = gbnvals (A) ;
+    end
+    end
+
 %-------------------------------------------------------------------------------
 % Static methods that return a GraphBLAS matrix or a MATLAB matrix
 %-------------------------------------------------------------------------------
@@ -1370,9 +1453,9 @@ methods (Static) %==============================================================
     %
     % dup is a string that defines a binary function; see 'help gb.binopinfo'
     % for a list of available binary operators.  The dup operator need not be
-    % associative.  If two entries in [I J X] have the same row and column
+    % associative.  If two entries in [I,J,X] have the same row and column
     % index, the dup operator is applied to assemble them into a single entry.
-    % Suppose (i,j,x1), (i,j,x2), and (i,j,x3) appear in that order in [I J X],
+    % Suppose (i,j,x1), (i,j,x2), and (i,j,x3) appear in that order in [I,J,X],
     % in any location (the arrays [I J] need not be sorted, and so these
     % entries need not be adjacent).  That is, i = I(k1) = I(k2) = I(k3) and j
     % = J(k1) = J(k2) = J(k3) for some k1 < k2 < k3.  Then G(i,j) is computed
@@ -1395,10 +1478,10 @@ methods (Static) %==============================================================
     % The integer arrays I and J may be double, in which case they contain
     % 1-based indices, in the range 1 to the dimension of the matrix.  This is
     % the same behavior as the MATLAB sparse function.  They may instead be
-    % uint64 arrays, in which case they are treated as 0-based.  Entries in I
-    % are the range 0 to m-1, and J are in the range 0 to n-1.  If I, J, and X
-    % are double, the following examples construct the same MATLAB sparse
-    % matrix S:
+    % int64 or uint64 arrays, in which case they are treated as 0-based.
+    % Entries in I are the range 0 to m-1, and J are in the range 0 to n-1.  If
+    % I, J, and X are double, the following examples construct the same MATLAB
+    % sparse matrix S:
     %
     %   S = sparse (I, J, X) ;
     %   S = sparse (gb.build (I, J, X)) ;
@@ -1408,7 +1491,7 @@ methods (Static) %==============================================================
     % J need not be in any particular order, but gb.build is fastest if I and J
     % are provided in column-major order.
     %
-    % See also sparse (with 3 or more input arguments).
+    % See also sparse, find, gb.extractuples.
 
     [args is_gb] = get_args (varargin {:}) ;
     if (is_gb)
@@ -1419,33 +1502,47 @@ methods (Static) %==============================================================
     end
 
     %---------------------------------------------------------------------------
-    % gb.find: extract all entries from a matrix
+    % gb.extracttuples: extract all entries from a matrix
     %---------------------------------------------------------------------------
 
-    function [I,J,X] = find (A, onebased)
-    %GB.FIND extract a list of entries from a matrix
+    function [I,J,X] = extracttuples (varargin)
+    %GB.EXTRACTTUPLES extract a list of entries from a matrix
     %
     % Usage:
     %
-    %   [I J X] = gb.find (A)        % extract 1-based indices; I and J double
-    %   [I J X] = gb.find (A, 0) ;   % extract 0-based indices; I and J uint64
-    %   [I J X] = gb.find (A, 1) ;   % extract 1-based indices; I and J double
+    %   [I,J,X] = gb.extracttuples (A, desc)
     %
-    % gb.find extracts all entries from either a MATLAB matrix A or a GraphBLAS
-    % matrix A.  If A is a MATLAB sparse matrix, [I J X] = gb.find (A) is
-    % identical to [I J X] = find (A).
+    % gb.extracttuples extracts all entries from either a MATLAB matrix or a
+    % GraphBLAS matrix.  If A is a MATLAB sparse or dense matrix,
+    % [I,J,X] = gb.extracttuples (A) is identical to [I,J,X] = find (A).
     %
-    % An optional second argument determines the type of I and J.  It defaults
-    % to 1, and in this case, I and J are double, and reflect 1-based indices,
-    % just like the MATLAB statement [I J X] = find (A).  If zero, then I and J
-    % are returned as uint64 arrays, containing 0-based indices.
+    % The descriptor is optional.  d.base is a string, equal to 'default',
+    % 'zero-based', or 'one-based'.  This parameter determines the type of
+    % output for I and J.  The default is one-based, to be more compatible with
+    % MATLAB.  If one-based, then I and J are returned as MATLAB double column
+    % vectors, containing 1-based indices.  The indices in I are in the range 1
+    % to m, and the indices in J are in the range 1 to n, if A is m-by-n.  This
+    % usage is identical to [I,J,X] = find (A) for a MATLAB sparse or dense
+    % matrix.  The array X has the same type as A (double, single, int8, ...,
+    % uint8, or complex).
+    %
+    % The default is 'one based', but 'zero based' is faster and uses less
+    % memory.  In this case, I and J are returned as int64 arrays.  Entries in
+    % I are in the range 0 to m-1, and entries in J are in the range 0 to n-1.
     %
     % This function corresponds to the GrB_*_extractTuples_* functions in
     % GraphBLAS.
     %
-    % See also find.
+    % See also find, gb.build.
 
-    error ('gb.find not yet implemented') ; % TODO
+    [args, ~] = get_args (varargin {:}) ;
+    if (nargout == 3)
+        [I, J, X] = gbextracttuples (args {:}) ;
+    elseif (nargout == 2)
+        [I, J] = gbextracttuples (args {:}) ;
+    else
+        I = gbextracttuples (args {:}) ;
+    end
     end
 
     %---------------------------------------------------------------------------
