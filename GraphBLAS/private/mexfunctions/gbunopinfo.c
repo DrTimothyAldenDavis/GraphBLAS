@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbbinopinfo : print a GraphBLAS binary op (for illustration only)
+// gbunopinfo : print a GraphBLAS unary op (for illustration only)
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -9,8 +9,8 @@
 
 // Usage:
 
-// gbbinopinfo (binop)
-// gbbinopinfo (binop, type)
+// gbunopinfo (unop)
+// gbunopinfo (unop, type)
 
 #include "gb_matlab.h"
 
@@ -28,10 +28,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 2 && nargout == 0,
-        "usage: gb.binopinfo (binop) or gb.binopinfo (binop,type)") ;
+        "usage: gb.unopinfo (unop) or gb.unopinfo (unop,type)") ;
 
     //--------------------------------------------------------------------------
-    // construct the GraphBLAS binary operator and print it
+    // construct the GraphBLAS unary operator and print it
     //--------------------------------------------------------------------------
 
     GrB_Type type = NULL ;
@@ -41,7 +41,7 @@ void mexFunction
         CHECK_ERROR (type == NULL, "unknown type") ;
     }
 
-    GrB_BinaryOp op = gb_mxstring_to_binop (pargin [0], type) ;
-    OK (GxB_BinaryOp_fprint (op, "", GxB_COMPLETE, stdout)) ;
+    GrB_UnaryOp op = gb_mxstring_to_unop (pargin [0], type) ;
+    OK (GxB_UnaryOp_fprint (op, "", GxB_COMPLETE, stdout)) ;
 }
 

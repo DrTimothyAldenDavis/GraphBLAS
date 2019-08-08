@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbassign: assign entries into a GraphBLAS matrix
+// gbextract: extract entries into a GraphBLAS matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,22 +7,23 @@
 
 //------------------------------------------------------------------------------
 
-// gbassign is an interface to GrB_Matrix_assign and GrB_Matrix_assign_[TYPE],
+// gbextract is an interface to GrB_Matrix_extract and GrB_Matrix_extract_[TYPE],
 // computing the GraphBLAS expression:
 
-//      C<#M,replace>(I,J) = accum (C(I,J), A) or accum(C(I,J), A')
-
-// where A can be a matrix or a scalar.
+//      C<#M,replace> = accum (C, A (I,J)) or
+//      C<#M,replace> = accum (C, AT (I,J))
 
 // Usage:
 
-//      Cout = gbassign (Cin, M, accum, A, I, J, desc)
+//      Cout = gbextract (Cin, M, accum, A, I, J, desc)
 
-// Cin, A, and desc are required.  See gb.m for more details.
+// A and desc are required.  See gb.m for more details.
+// If accum or M is used, then Cin must appear.
 
-#define ASSIGN_USAGE "usage: Cout = gb.assign (Cin, M, accum, A, I, J, desc)"
+#define EXTRACT_USAGE "usage: Cout = gb.extract (Cin, M, accum, A, I, J, desc)"
 
 #include "gb_matlab.h"
+#include "GB_ij.h"
 
 void mexFunction
 (
@@ -37,7 +38,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 1, ASSIGN_USAGE) ;
+    gb_usage (nargin >= 2 && nargin <= 7 && nargout <= 1, EXTRACT_USAGE) ;
 
     //--------------------------------------------------------------------------
     // get the descriptor
@@ -91,7 +92,7 @@ void mexFunction
             if (nmatrix_args >= 3)
             {
                 // at most 3 matrix inputs are allowed
-                USAGE (ASSIGN_USAGE) ;
+                USAGE (EXTRACT_USAGE) ;
             }
             matrix_arg [nmatrix_args++] = k ;
         }
@@ -103,10 +104,20 @@ void mexFunction
 
     GrB_Matrix C = NULL, M = NULL, A = NULL ;
 
-    if (nmatrix_args < 2)
+    if (nmatrix_args < 1)
     {
-        // at least 2 matrix inputs are required
-        USAGE (ASSIGN_USAGE) ;
+        // at least 1 matrix input is required
+        USAGE (EXTRACT_USAGE) ;
+    }
+    else if (nmatrix_args == 1)
+    {
+        // with 1 matrix argument: A.  Cin does not appear so neither can accum
+        if (accum_arg >= 0)
+        {
+            // if both A and accum are present, then Cin must appear
+            USAGE (EXTRACT_USAGE) ;
+        }
+        A = gb_get_shallow (pargin [matrix_arg [0]]) ;
     }
     else if (nmatrix_args == 2)
     {
@@ -122,19 +133,27 @@ void mexFunction
         A = gb_get_shallow (pargin [matrix_arg [2]]) ;
     }
 
-    // get the size and type of Cin
-    GrB_Type ctype ;
-    GrB_Index cnrows, cncols ;
-    OK (GxB_Matrix_type (&ctype, C)) ;
-    OK (GrB_Matrix_nrows (&cnrows, C)) ;
-    OK (GrB_Matrix_ncols (&cncols, C)) ;
+    //--------------------------------------------------------------------------
+    // get the size and type of A
+    //--------------------------------------------------------------------------
 
-    // determine if A is a scalar (ignore the transpose descriptor)
-    GrB_Index anrows, ancols, anvals ;
-    OK (GrB_Matrix_nrows (&anrows, A)) ;
-    OK (GrB_Matrix_ncols (&ancols, A)) ;
-    OK (GrB_Matrix_nvals (&anvals, A)) ;
-    bool scalar_assignment = (anrows == 1) && (ancols == 1) && (anvals == 1) ;
+    GrB_Type atype ;
+    OK (GxB_Matrix_type (&atype, A)) ;
+    bool A_transpose ;
+    OK (GxB_get (desc, GrB_INP0, &A_transpose)) ;
+    GrB_Index anrows, ancols ;
+    if (A_transpose)
+    {
+        // T = AT (I,J) is to be extracted where AT = A'
+        OK (GrB_Matrix_nrows (&ancols, A)) ;
+        OK (GrB_Matrix_ncols (&anrows, A)) ;
+    }
+    else
+    {
+        // T = A (I,J) is to be extracted
+        OK (GrB_Matrix_nrows (&anrows, A)) ;
+        OK (GrB_Matrix_ncols (&ancols, A)) ;
+    }
 
     //--------------------------------------------------------------------------
     // get I and J
@@ -142,25 +161,52 @@ void mexFunction
 
     GrB_Index *I = (GrB_Index *) GrB_ALL ;
     GrB_Index *J = (GrB_Index *) GrB_ALL ;
-    GrB_Index ni = cnrows, nj = cncols ;
+    GrB_Index ni = anrows, nj = ancols ;
     bool I_allocated = false, J_allocated = false ;
 
     if (I_arg >= 0)
     {
         // I is present
-        I = gb_mxcell_to_index (pargin [I_arg], cnrows, &I_allocated, &ni) ;
+        I = gb_mxcell_to_index (pargin [I_arg], anrows, &I_allocated, &ni) ;
     }
 
     if (J_arg >= 0)
     {
         // both I and J are present
-        J = gb_mxcell_to_index (pargin [J_arg], cncols, &J_allocated, &nj) ;
+        J = gb_mxcell_to_index (pargin [J_arg], ancols, &J_allocated, &nj) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get C
+    //--------------------------------------------------------------------------
+
+    // get the type of Cin, and construct it if it does not appear
+    GrB_Type ctype = NULL ;
+
+    if (C == NULL)
+    {
+        // Cin is not present: determine its size, same type as A
+        // T = A(I,J) or AT(I,J) will be extracted.
+        // accum must be null
+        int I_kind, J_kind ;
+        int64_t I_colon [3], J_colon [3] ;
+        GrB_Index cnrows, cncols ;
+        GB_ijlength (I, ni, anrows, &cnrows, &I_kind, I_colon) ;
+        GB_ijlength (J, nj, ancols, &cncols, &J_kind, J_colon) ;
+        ctype = atype ;
+        OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
+    }
+    else
+    {
+        // Cin appears; get its type
+        OK (GxB_Matrix_type (&ctype, C)) ;
     }
 
     //--------------------------------------------------------------------------
     // get accum
     //--------------------------------------------------------------------------
 
+    // if accum appears, Cin must be present
     GrB_BinaryOp accum = NULL ;
     if (accum_arg >= 0)
     {
@@ -168,17 +214,36 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // compute C<M>(I,J) += A
+    // compute C<M> += A(I,J) or AT(I,J)
     //--------------------------------------------------------------------------
 
-    if (scalar_assignment)
-    {
-        gb_matrix_assign_scalar (C, M, accum, A, I, ni, J, nj, desc) ;
-    }
-    else
-    {
-        OK (GrB_assign (C, M, accum, A, I, ni, J, nj, desc)) ;
-    }
+    /*
+    GxB_print (A, 3) ;
+    printf ("ni "GBd"\n",  ni) ;
+    printf ("nj "GBd"\n",  nj) ;
+    printf ("ni is GxB_RANGE: %d GxB_STRIDE %d GxB_BACKWARDS %d\n",
+        ni == GxB_RANGE, ni == GxB_STRIDE, ni == GxB_BACKWARDS) ;
+    printf ("nj is GxB_RANGE: %d GxB_STRIDE %d GxB_BACKWARDS %d\n",
+        nj == GxB_RANGE, nj == GxB_STRIDE, nj == GxB_BACKWARDS) ;
+
+    if (ni == GxB_RANGE) printf ("I is "GBd":"GBd"\n", I [0], I [1]) ;
+    if (ni == GxB_STRIDE)
+        printf ("I is "GBd":"GBd":"GBd"\n", I[0], I[2], I[1]) ;
+    if (ni == GxB_BACKWARDS)
+        printf ("I is "GBd":-"GBd":"GBd"\n", I[0], I[2], I[1]) ;
+
+    if (nj == GxB_RANGE) printf ("J is "GBd":"GBd"\n", J [0], J [1]) ;
+    if (nj == GxB_STRIDE)
+        printf ("J is "GBd":"GBd":"GBd"\n", J[0], J[2], J[1]) ;
+    if (nj == GxB_BACKWARDS)
+        printf ("J is "GBd":-"GBd":"GBd"\n", J[0], J[2], J[1]) ;
+
+    GxB_print (C, 3) ;
+    GxB_print (desc, 3) ;
+    if (M != NULL) GxB_print (M, 3) ;
+    */
+
+    OK (GrB_extract (C, M, accum, A, I, ni, J, nj, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies

@@ -125,6 +125,8 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         int64_t nonempty, *Tp, *Ti ;
         void *Tx ;
 
+        // TODO drop zeros from T from
+
         OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols, &nzmax, &nonempty,
             &Tp, &Ti, &Tx, NULL)) ;
 

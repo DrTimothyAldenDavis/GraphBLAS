@@ -18,10 +18,13 @@ for k = 1:length(list)
     C = cast (A, xtype) ;
     G = gb (C) ;
     [I1, J1, X1] = find (G) ;
-    assert (isequal (C (:), X1)) ;
-    assert (isequal (I, I1)) ;
-    assert (isequal (J, J1)) ;
+    % find drops the zeros
+    nz = find (C (:) ~= 0) ;
+    assert (isequal (C (nz), X1)) ;
+    assert (isequal (I (nz), I1)) ;
+    assert (isequal (J (nz), J1)) ;
 
+    % gb.extracttuples returns the zeros
     [I0, J0, X0] = gb.extracttuples (G, d) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (I_0, I0)) ;

@@ -42,7 +42,15 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // GraphBLAS copy of X, same type as X
-        G = gb_get_deep (pargin [0], NULL) ;
+        if (gb_mxarray_is_empty (pargin [0]))
+        {
+            GrB_Type xtype = gb_mxarray_type (pargin [0]) ;
+            OK (GrB_Matrix_new (&G, xtype, 0, 0)) ;
+        }
+        else
+        {
+            G = gb_get_deep (pargin [0], NULL) ;
+        }
 
     }
     else if (nargin == 2)
@@ -60,7 +68,15 @@ void mexFunction
             // G = gb (X, type)
             //------------------------------------------------------------------
 
-            G = gb_get_deep (pargin [0], gb_mxstring_to_type (pargin [1])) ;
+            GrB_Type xtype = gb_mxstring_to_type (pargin [1]) ;
+            if (gb_mxarray_is_empty (pargin [0]))
+            {
+                OK (GrB_Matrix_new (&G, xtype, 0, 0)) ;
+            }
+            else
+            {
+                G = gb_get_deep (pargin [0], xtype) ;
+            }
 
         }
         else if (gb_mxarray_is_scalar (pargin [0]) &&
@@ -71,7 +87,7 @@ void mexFunction
             // G = gb (m, n)
             //------------------------------------------------------------------
 
-            // empty m-by-n GraphBLAS double
+            // m-by-n GraphBLAS double matrix with no entries
             GrB_Index nrows = mxGetScalar (pargin [0]) ;
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
             OK (GrB_Matrix_new (&G, GrB_FP64, nrows, ncols)) ;
@@ -94,7 +110,7 @@ void mexFunction
             gb_mxarray_is_scalar (pargin [1]) && mxIsChar (pargin [2]))
         {
 
-            // create an empty m-by-n matrix of the desired type
+            // create an m-by-n matrix of the desired type, with no entries
             GrB_Index nrows = mxGetScalar (pargin [0]) ;
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
             GrB_Type type = gb_mxstring_to_type (pargin [2]) ;

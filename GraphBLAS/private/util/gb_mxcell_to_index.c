@@ -104,7 +104,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         CHECK_ERROR (Item_len [0] != 1 || Item_len [1] != 1,
             "start and fini must be scalars for start:fini") ;
 
-        GrB_Index *I = mxCalloc (3, sizeof (GrB_Index)) ;
+        I = mxCalloc (3, sizeof (GrB_Index)) ;
         (*I_allocated) = true ;
 
         I [GxB_BEGIN] = Item [0][0] ;
@@ -124,10 +124,10 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         //----------------------------------------------------------------------
 
         CHECK_ERROR (Item_len [0] != 1 || Item_len [1] != 1 ||
-            Item_len [2] != 2,
+            Item_len [2] != 1,
             "start, inc, and fini must be scalars for start:inc:fini") ;
 
-        GrB_Index *I = mxCalloc (3, sizeof (GrB_Index)) ;
+        I = mxCalloc (3, sizeof (GrB_Index)) ;
         (*I_allocated) = true ;
 
         I [GxB_BEGIN] = Item [0][0] ;
@@ -149,7 +149,6 @@ GrB_Index *gb_mxcell_to_index   // return index list I
             (*ni) = GxB_STRIDE ;
         }
     }
-
 
     return (I) ;
 }
