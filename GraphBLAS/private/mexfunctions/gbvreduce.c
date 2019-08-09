@@ -1,5 +1,6 @@
+
 //------------------------------------------------------------------------------
-// gbeadd: sparse matrix addition
+// gbvreduce: reduce a matrix to a vector
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,17 +8,17 @@
 
 //------------------------------------------------------------------------------
 
-// gbeadd is an interface to GrB_eWiseAdd_Matrix_*.
+// gbvreduce is an interface to GrB_Matrix_reduce.
 
 // Usage:
 
-// Cout = gb.eadd (op, A, B, desc)
-// Cout = gb.eadd (Cin, accum, op, A, B, desc)
-// Cout = gb.eadd (Cin, M, op, A, B, desc)
-// Cout = gb.eadd (Cin, M, accum, op, A, B, desc)
+//  Cout = gb.vreduce (op, A, desc)
+//  Cout = gb.vreduce (Cin, M, op, A, desc)
+//  Cout = gb.vreduce (Cin, accum, op, A, desc)
+//  Cout = gb.vreduce (Cin, M, accum, op, A, desc)
 
-// If Cin is not present then it is implicitly a matrix with no entries, of
-// the right size (which depends on A, B, and the descriptor).
+// If Cin is not present then it is implicitly a matrix with no entries, of the
+// right size (which depends on A and the descriptor).
 
 #include "gb_matlab.h"
 
@@ -34,69 +35,67 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage ((nargin == 4 || nargin == 6 || nargin == 7) && nargout <= 1,
-        "usage: Cout = gb.eadd (Cin, M, accum, op, A, B, desc)") ;
+    gb_usage ((nargin == 3 || nargin == 5 || nargin == 6) && nargout <= 1,
+        "usage: Cout = gb.vreduce (Cin, M, accum, op, A, desc)") ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL, M = NULL, A, B ;
-    GrB_BinaryOp accum = NULL, op = NULL ;
+    GrB_Matrix C = NULL, M = NULL, A ;
+    GrB_BinaryOp accum = NULL ;
+    GrB_Monoid monoid = NULL ;
     GrB_Type atype, ctype ;
 
     kind_enum_t kind ;
     GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
 
-    if (nargin == 4)
+    if (nargin == 3)
     {
 
         //----------------------------------------------------------------------
-        // Cout = gb.eadd (op, A, B, desc)
+        // Cout = gb.vreduce (op, A, desc)
         //----------------------------------------------------------------------
 
         A = gb_get_shallow (pargin [1]) ;
-        B = gb_get_shallow (pargin [2]) ;
         OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_binop (pargin [0], atype) ;
+        monoid = gb_mxstring_to_monoid (pargin [0], atype) ;
 
     }
-    else if (nargin == 6 && mxIsChar (pargin [1]))
+    else if (nargin == 5 && mxIsChar (pargin [1]))
     {
 
         //----------------------------------------------------------------------
-        // Cout = gb.eadd (Cin, accum, op, A, B, desc)
+        // Cout = gb.vreduce (Cin, accum, op, A, desc)
         //----------------------------------------------------------------------
 
         C = gb_get_deep (pargin [0], NULL) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         A = gb_get_shallow (pargin [3]) ;
-        B = gb_get_shallow (pargin [4]) ;
         OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_binop (pargin [2], atype) ;
+        monoid = gb_mxstring_to_monoid (pargin [2], atype) ;
 
     }
-    else if (nargin == 6 && !mxIsChar (pargin [1]))
+    else if (nargin == 5 && !mxIsChar (pargin [1]))
     {
 
         //----------------------------------------------------------------------
-        // Cout = gb.eadd (Cin, M, op, A, B, desc)
+        // Cout = gb.vreduce (Cin, M, op, A, desc)
         //----------------------------------------------------------------------
 
         C = gb_get_deep (pargin [0], NULL) ;
         M = gb_get_shallow (pargin [1]) ;
         A = gb_get_shallow (pargin [3]) ;
-        B = gb_get_shallow (pargin [4]) ;
         OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_binop (pargin [2], atype) ;
+        monoid = gb_mxstring_to_monoid (pargin [2], atype) ;
 
     }
     else
     {
 
         //----------------------------------------------------------------------
-        // Cout = gb.eadd (Cin, M, accum, op, A, B, desc)
+        // Cout = gb.vreduce (Cin, M, accum, op, A, desc)
         //----------------------------------------------------------------------
 
         C = gb_get_deep (pargin [0], NULL) ;
@@ -104,9 +103,8 @@ void mexFunction
         M = gb_get_shallow (pargin [1]) ;
         accum = gb_mxstring_to_binop (pargin [2], ctype) ;
         A = gb_get_shallow (pargin [4]) ;
-        B = gb_get_shallow (pargin [5]) ;
         OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_binop (pargin [3], atype) ;
+        monoid = gb_mxstring_to_monoid (pargin [3], atype) ;
 
     }
 
@@ -130,9 +128,8 @@ void mexFunction
         OK (GrB_Matrix_nrows (&anrows, A)) ;
         OK (GrB_Matrix_ncols (&ancols, A)) ;
 
-        // determine the size of C
+        // determine the size of the vector C
         GrB_Index cnrows = (A_transpose) ? ancols : anrows ;
-        GrB_Index cncols = (A_transpose) ? anrows : ancols ;
 
         // determine the type of C
         if (accum != NULL)
@@ -142,18 +139,20 @@ void mexFunction
         }
         else
         {
-            // otherwise, use the ztype of the op as the type of C
-            OK (GxB_BinaryOp_ztype (&ctype, op)) ;
+            // otherwise, use the ztype of the monoid as the type of C
+            GrB_BinaryOp binop ;
+            OK (GxB_Monoid_operator (&binop, monoid)) ;
+            OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
         }
 
-        OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
+        OK (GrB_Matrix_new (&C, ctype, cnrows, 1)) ;
     }
 
     //--------------------------------------------------------------------------
-    // compute C<M> += A+B
+    // compute C<M> += reduce(A)
     //--------------------------------------------------------------------------
 
-    OK (GrB_eWiseAdd (C, M, accum, op, A, B, desc)) ;
+    OK (GrB_reduce (C, M, accum, monoid, A, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
@@ -161,7 +160,6 @@ void mexFunction
 
     OK (GrB_free (&M)) ;
     OK (GrB_free (&A)) ;
-    OK (GrB_free (&B)) ;
     OK (GrB_free (&desc)) ;
 
     //--------------------------------------------------------------------------

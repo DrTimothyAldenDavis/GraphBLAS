@@ -16,9 +16,8 @@
 // Cout = gb.emult (Cin, M, op, A, B, desc)
 // Cout = gb.emult (Cin, M, accum, op, A, B, desc)
 
-// If Cin is not present or is an empty matrix (Cin = [ ]) then it is
-// implicitly a matrix with no entries, of the right size (which depends on A,
-// B, and the descriptor).
+// If Cin is not present then it is implicitly a matrix with no entries, of the
+// right size (which depends on A, B, and the descriptor).
 
 #include "gb_matlab.h"
 
@@ -115,8 +114,8 @@ void mexFunction
     // construct C if not present on input
     //--------------------------------------------------------------------------
 
-    // If C is NULL, then it is either not present on input, or present but
-    // passed in as Cin = [ ].  Construct C of the right size and type.
+    // If C is NULL, then it is not present on input.
+    // Construct C of the right size and type.
 
     if (C == NULL)
     {

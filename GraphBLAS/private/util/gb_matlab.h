@@ -276,4 +276,21 @@ GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
     const GrB_Type type
 ) ;
 
+GrB_Monoid gb_binop_to_monoid           // return monoid from a binary op
+(
+    GrB_BinaryOp op
+) ;
+
+GrB_Monoid gb_string_to_monoid          // return monoid from a string
+(
+    char *opstring,                     // string defining the operator
+    const GrB_Type default_type         // default type if not in the string
+) ;
+
+GrB_Monoid gb_mxstring_to_monoid        // return monoid from a string
+(
+    const mxArray *mxstring,            // MATLAB string
+    const GrB_Type default_type         // default type if not in the string
+) ;
+
 #endif

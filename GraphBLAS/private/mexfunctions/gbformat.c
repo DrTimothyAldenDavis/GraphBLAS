@@ -70,6 +70,7 @@ void mexFunction
             // get the format of the input matrix G
             GrB_Matrix G = gb_get_shallow (pargin [0]) ;
             OK (GxB_get (G, GxB_FORMAT, &format)) ;
+            OK (GrB_free (&G)) ;
         }
 
     }

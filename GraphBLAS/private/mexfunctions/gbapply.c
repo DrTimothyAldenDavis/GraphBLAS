@@ -16,9 +16,8 @@
 // Cout = gb.apply (Cin, M, op, A, desc)
 // Cout = gb.apply (Cin, M, accum, op, A, desc)
 
-// If Cin is not present or is an empty matrix (Cin = [ ]) then it is
-// implicitly a matrix with no entries, of the right size (which depends on A,
-// B, and the descriptor).
+// If Cin is not present then it is implicitly a matrix with no entries, of the
+// right size (which depends on A, B, and the descriptor).
 
 #include "gb_matlab.h"
 
@@ -71,7 +70,7 @@ void mexFunction
 
         C = gb_get_deep (pargin [0], NULL) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
-        accum = gb_mxstring_to_unop (pargin [1], ctype) ;
+        accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         A = gb_get_shallow (pargin [3]) ;
         OK (GxB_Matrix_type (&atype, A)) ;
         op = gb_mxstring_to_unop (pargin [2], atype) ;
@@ -101,7 +100,7 @@ void mexFunction
         C = gb_get_deep (pargin [0], NULL) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         M = gb_get_shallow (pargin [1]) ;
-        accum = gb_mxstring_to_unop (pargin [2], ctype) ;
+        accum = gb_mxstring_to_binop (pargin [2], ctype) ;
         A = gb_get_shallow (pargin [4]) ;
         OK (GxB_Matrix_type (&atype, A)) ;
         op = gb_mxstring_to_unop (pargin [3], atype) ;
@@ -112,8 +111,8 @@ void mexFunction
     // construct C if not present on input
     //--------------------------------------------------------------------------
 
-    // If C is NULL, then it is either not present on input, or present but
-    // passed in as Cin = [ ].  Construct C of the right size and type.
+    // If C is NULL, then it is not present on input.
+    // Construct C of the right size and type.
 
     if (C == NULL)
     {

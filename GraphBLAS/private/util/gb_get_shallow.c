@@ -46,9 +46,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // matrix is empty
         //----------------------------------------------------------------------
 
-        // This is not an error, since some input matrices are optional,
-        // and can be specified as the empty matrix [ ].
-        return (NULL) ;
+        // return an empty matrix as 0-by-0, of the right type
+        OK (GrB_Matrix_new (&A, gb_mxarray_type (X), 0, 0)) ;
 
     }
     else if (mxIsStruct (X))

@@ -16,11 +16,10 @@
 // Cout = gb.gbtranspose (Cin, M, A, desc)
 // Cout = gb.gbtranspose (Cin, M, accum, A, desc)
 
-// If Cin is not present or is an empty matrix (Cin = [ ]) then it is
-// implicitly a matrix with no entries, of the right size (which depends on A
-// and the descriptor).  Note that if desc.in0 is 'transpose', then C<M>=A
-// or C<M>+=A is computed, with A not transposed, since the default behavior
-// is to transpose the input matrix.
+// If Cin is not present then it is implicitly a matrix with no entries, of the
+// right size (which depends on A and the descriptor).  Note that if desc.in0
+// is 'transpose', then C<M>=A or C<M>+=A is computed, with A not transposed,
+// since the default behavior is to transpose the input matrix.
 
 #include "gb_matlab.h"
 
@@ -105,8 +104,8 @@ void mexFunction
     // construct C if not present on input
     //--------------------------------------------------------------------------
 
-    // If C is NULL, then it is either not present on input, or present but
-    // passed in as Cin = [ ].  Construct C of the right size and type.
+    // If C is NULL, then it is not present on input.
+    // Construct C of the right size and type.
 
     if (C == NULL)
     {

@@ -53,6 +53,12 @@ classdef gb
 %               class name, but instead a property of a MATLAB sparse double
 %               matrix.  In GraphBLAS, 'complex' is treated as a type.
 %
+% Operations on integer values differs from MATLAB.  In MATLAB, uint9(255)+1
+% is 255, since the arithmetic saturates.  This is not possible in GraphBLAS,
+% since saturation of integer arithmetic would render most of the monoids
+% useless.  GraphBLAS instead computes a result modulo the word size, so that
+% gb(uint8(255))+1 is zero.
+%
 % To free a GraphBLAS sparse matrix G, simply use 'clear G'.
 %
 % Methods for the gb class:
@@ -84,6 +90,7 @@ classdef gb
 %       mn = numel (G)          m*n for an m-by-n gb matrix G
 %       e = nnz (G)             number of entries in a gb matrix G
 %       [m n] = size (G)        size of a gb matrix G
+%       s = issparse (G)        true for any gb matrix G
 %       s = ismatrix (G)        true for any gb matrix G
 %       s = isvector (G)        true if m=1 or n=1, for an m-by-n gb matrix G
 %       s = isscalar (G)        true if G is a 1-by-1 gb matrix
@@ -103,34 +110,50 @@ classdef gb
 %       s = isbanded (G,...)    true if G is banded
 %       s = isdiag (G)          true if G is diagonal
 %       [lo,hi] = bandwidth (G) determine the lower & upper bandwidth of G
+%       C = sqrt (G)            element-wise square root
+%       C = sum (G, option)     reduce via sum, to vector or scalar
+%       C = prod (G, option)    reduce via product, to vector or scalar
+%       s = norm (G, kind)      1-norm or inf-norm of a gb matrix
+%       s = max (G, ...)        reduce via max, to vector or scalar
+%       C = min (G, ...)        reduce via min, to vector or scalar
+%       s = eps (G)             floating-point spacing
+%       s = any (G, ...)        reduce via '|', to vector or scalar
+%       s = all (G, ...)        reduce via '&', to vector or scalar
+%       C = ceil (G)            round towards infinity
+%       C = floor (G)           round towards -infinity
+%       C = round (G)           round towards nearest
+%       C = fix (G)             round towards zero
+%       C = isfinite (G)        test if finite
+%       C = isinf (G)           test if infinite
+%       C = isnan (G)           test if NaN
 %
 %   operator overloading:
 %
-%       C = plus (A, B)     C = A + B
-%       C = minus (A, B)    C = A - B
-%       C = uminus (A)      C = -A
-%       C = uplus (A)       C = +A
-%       C = times (A, B)    C = A .* B
-%       C = mtimes (A, B)   C = A * B
-%       C = rdivide (A, B)  C = A ./ B
-%       C = ldivide (A, B)  C = A .\ B
-%       C = mrdivide (A, B) C = A / B
-%       C = mldivide (A, B) C = A \ B
-%       C = power (A, B)    C = A .^ B
-%       C = mpower (A, B)   C = A ^ B
-%       C = lt (A, B)       C = A < B
-%       C = gt (A, B)       C = A > B
-%       C = le (A, B)       C = A <= B
-%       C = ge (A, B)       C = A >= B
-%       C = ne (A, B)       C = A ~= B
-%       C = eq (A, B)       C = A == B
-%       C = and (A, B)      C = A & B
-%       C = or (A, B)       C = A | B
-%       C = not (A)         C = ~A
-%       C = ctranspose (A)  C = A'
-%       C = transpose (A)   C = A.'
-%       C = horzcat (A, B)  C = [A , B]
-%       C = vertcat (A, B)  C = [A ; B]
+%       C = plus (A, B)         C = A + B
+%       C = minus (A, B)        C = A - B
+%       C = uminus (A)          C = -A
+%       C = uplus (A)           C = +A
+%       C = times (A, B)        C = A .* B
+%       C = mtimes (A, B)       C = A * B
+%       C = rdivide (A, B)      C = A ./ B
+%       C = ldivide (A, B)      C = A .\ B
+%       C = mrdivide (A, B)     C = A / B
+%       C = mldivide (A, B)     C = A \ B
+%       C = power (A, B)        C = A .^ B
+%       C = mpower (A, B)       C = A ^ B
+%       C = lt (A, B)           C = A < B
+%       C = gt (A, B)           C = A > B
+%       C = le (A, B)           C = A <= B
+%       C = ge (A, B)           C = A >= B
+%       C = ne (A, B)           C = A ~= B
+%       C = eq (A, B)           C = A == B
+%       C = and (A, B)          C = A & B
+%       C = or (A, B)           C = A | B
+%       C = not (A)             C = ~A
+%       C = ctranspose (A)      C = A'
+%       C = transpose (A)       C = A.'
+%       C = horzcat (A, B)      C = [A , B]
+%       C = vertcat (A, B)      C = [A ; B]
 %       C = subsref (A, I, J)   C = A (I,J)
 %       C = subsasgn (A, I, J)  C(I,J) = A
 %       C = subsindex (A, B)    C = B (A)
@@ -151,6 +174,7 @@ classdef gb
 %       gb.descriptorinfo (d)       list properties of a descriptor
 %       gb.unopinfo (s, type)       list properties of a unary operator
 %       gb.binopinfo (s, type)      list properties of a binary operator
+%       gb.monoidinfo (s, type)     list properties of a monoid TODO
 %       gb.semiringinfo (s, type)   list properties of a semiring
 %       t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %       c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
@@ -177,8 +201,10 @@ classdef gb
 %                           sparse matrix assignment to a single column
 %       Cout = gb.rowassign (Cin, M, accum, u, i, J, desc)
 %                           sparse matrix assignment to a single row
-%       Cout = gb.reduce (Cin, M, accum, op, A, desc)
-%                           reduce a matrix to a vector or scalar
+%       Cout = gb.vreduce (Cin, M, accum, op, A, desc)
+%                           reduce a matrix to a vector
+%       Cout = gb.reduce (Cin, accum, op, A, desc)
+%                           reduce a matrix to a scalar
 %       Cout = gb.gbkron (Cin, M, accum, op, A, B, desc)
 %                           Kronecker product
 %       Cout = gb.gbtranspose (Cin, M, accum, A, desc)
@@ -226,9 +252,9 @@ end
 methods %=======================================================================
 %===============================================================================
 
-    %---------------------------------------------------------------------------
-    % gb: construct a GraphBLAS sparse matrix object
-    %---------------------------------------------------------------------------
+%===============================================================================
+% gb: construct a GraphBLAS sparse matrix object
+%===============================================================================
 
     function G = gb (varargin)
     %GB GraphBLAS constructor: create a GraphBLAS sparse matrix.
@@ -257,21 +283,9 @@ methods %=======================================================================
     end
     end
 
-    %---------------------------------------------------------------------------
-
-    % TODO: these can all be overloaded (not static) methods:
-    % TODO norm(G,1), norm(G,inf)
-    % TODO max, min, prod, sum, eps, any, all, inf, nan.
-    % TODO sin, cos, tan, tanh, ... 
-    % TODO ceil, floor, fix
-    % TODO sqrt, bsxfun, cummin, cummax, cumprod, diff, ... inv
-    % TODO isfinite, isinf, isnan, issorted, issortedrows
-    % TODO reshape, sort
-    % TODO diag, spdiags
-    % TODO ... see 'methods double', 'help datatypes' for more options.
-
-    % add these as gb.methods:
-    % TODO gb.maxmax, gb.minmin, gb.sumsum, gb.prodprod, ...
+%===============================================================================
+% basic methods ================================================================
+%===============================================================================
 
     %---------------------------------------------------------------------------
     % sparse: convert a GraphBLAS sparse matrix into a MATLAB sparse matrix
@@ -437,11 +451,10 @@ methods %=======================================================================
     % The behavior of spones (G) for a gb matrix differs from spones (S) for a
     % MATLAB matrix S.  An explicit entry G(i,j) that has a value of zero is
     % converted to the explicit entry C(i,j)=1; these entries never appear in
-    % spones (S) for a MATLAB matrix S.  C = spones (G) returns C as double
-    % (just like the MATLAB spones (S)).  C = spones (G,type) returns C in the
-    % requested type ('double', 'single', 'int8', ...).  For example, use
-    % C = spones (G, 'logical') to return the pattern of G as a sparse logical
-    % matrix.
+    % spones (S) for a MATLAB matrix S.  C = spones (G) returns C as the same
+    % type as G.  C = spones (G,type) returns C in the requested type
+    % ('double', 'single', 'int8', ...).  For example, use C = spones (G,
+    % 'logical') to return the pattern of G as a sparse logical matrix.
     if (nargin == 1)
         C = gb.apply ('1', G) ;
     else
@@ -464,7 +477,11 @@ methods %=======================================================================
     % not an attribute.
     %
     % See also class, gb.
-    s = gbtype (G.opaque) ;
+    if (isa (G, 'gb'))
+        s = gbtype (G.opaque) ;
+    else
+        s = gbtype (G) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -507,10 +524,11 @@ methods %=======================================================================
     % numel: number of elements in a GraphBLAS matrix, m * n
     %---------------------------------------------------------------------------
 
-    function mn = numel (G)
+    function result = numel (G)
     %NUMEL the maximum number of entries a GraphBLAS matrix can hold.
     % numel (G) is m*n for the m-by-n GraphBLAS matrix G.
-    mn = prod (size (G)) ;
+    [m, n] = size (G) ;
+    result = m*n ;
     end
 
     %---------------------------------------------------------------------------
@@ -771,7 +789,8 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function result = isbanded (G, lo, hi)
-    error ('TODO') ;
+    [Glo, Ghi] = bandwidth (G) ;
+    result = (Glo <= lo) & (Ghi <= hi) ;
     end
 
     %---------------------------------------------------------------------------
@@ -779,8 +798,7 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function result = isdiag (G)
-    [lo, hi] = bandwidth (G) ;
-    result = (lo == 0) && (hi == 0) ;
+    result = isbanded (G, 0, 0) ;
     end
 
     %---------------------------------------------------------------------------
@@ -788,10 +806,16 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function [arg1,arg2] = bandwidth (G,uplo)
-    [i j] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
-    b = j - i ;
-    hi =  double (max (b)) ;
-    lo = -double (min (b)) ;
+    if (gb.nvals (G) == 0)
+        % matrix is empty
+        hi = 0 ;
+        lo = 0 ;
+    else
+        [i j] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        b = j - i ;
+        hi = max (0, double (max (b))) ;
+        lo = max (0,-double (min (b))) ;
+    end
     if (nargin == 1)
        arg1 = lo ; 
        arg2 = hi ; 
@@ -807,6 +831,314 @@ methods %=======================================================================
         end
     end
     end
+
+    %---------------------------------------------------------------------------
+    % sqrt: element-wise square root
+    %---------------------------------------------------------------------------
+
+    function C = sqrt (G)
+    C = G.^(.5) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % sum: reduce a matrix to a vector or scalar, via the '+' operator
+    %---------------------------------------------------------------------------
+
+    function C = sum (G, option)
+    %SUM Sum of elements.
+    % C = sum (G), where G is an m-by-n GraphBLAS matrix, computes a 1-by-n row
+    % vector C where C(j) is the sum of all entries in G(:,j).  If G is a row
+    % or column vector, then sum (G) is a scalar sum of all the entries in the
+    % vector.
+    %
+    % C = sum (G,'all') sums all elements of G to a single scalar.
+    %
+    % C = sum (G,1) is the default when G is a matrix, which is to sum each
+    % column to a scalar, giving a 1-by-n row vector.  If G is already a row
+    % vector, then C = G.
+    %
+    % C = sum (G,2) sums each row to a scalar, resulting in an m-by-1 column
+    % vector C where C(i) is the sum of all entries in G(i,:).
+    %
+    % The MATLAB sum (A, ... type, nanflag) allows for different types of sums
+    % to be computed, and the NaN behavior can be specified.  The GraphBLAS
+    % sum (G,...) uses only a type of 'native', and a nanflag of 'includenan'.
+    % See 'help sum' for more details.
+
+    if (nargin == 1)
+        % C = sum (G); check if G is a row vector
+        if (isvector (G))
+            % C = sum (G) for a vector G results in a scalar C
+            C = gb.reduce ('+', G) ;
+        else
+            % C = sum (G) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('+', G, struct ('in0', 'transpose'))' ;
+            if (identity == 1)
+            end
+        end
+    elseif (isequal (option, 'all'))
+        % C = sum (G, 'all'), reducing all entries to a scalar
+        C = gb.reduce ('+', G) ;
+    elseif (isequal (option, 1))
+        % C = sum (G,1) reduces each column to a scalar,
+        % giving a 1-by-n row vector.
+        C = gb.vreduce ('+', G, struct ('in0', 'transpose'))' ;
+    elseif (isequal (option, 2))
+        % C = sum (G,2) reduces each row to a scalar,
+        % giving an m-by-1 column vector.
+        C = gb.vreduce ('+', G) ;
+    else
+        error ('unknown option') ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % prod: reduce a matrix to a vector or scalar, via the '*' operator
+    %---------------------------------------------------------------------------
+
+    function C = prod (G, option)
+    %PROD Product of elements.
+    % C = prod (G), where G is an m-by-n GraphBLAS matrix, computes a 1-by-n
+    % row vector C where C(j) is the product of all entries in G(:,j).  If G is
+    % a row or column vector, then prod (G) is a scalar product of all the
+    % entries in the vector.
+    %
+    % C = prod (G,'all') takes the product of all elements of G to a single
+    % scalar.
+    %
+    % C = prod (G,1) is the default when G is a matrix, which is to take the
+    % product of each column, giving a 1-by-n row vector.  If G is already a
+    % row vector, then C = G.
+    %
+    % C = prod (G,2) takes the product of each row, resulting in an m-by-1
+    % column vector C where C(i) is the product of all entries in G(i,:).
+    %
+    % The MATLAB prod (A, ... type, nanflag) allows for different types of
+    % products to be computed, and the NaN behavior can be specified.  The
+    % GraphBLAS prod (G,...) uses only a type of 'native', and a nanflag of
+    % 'includenan'.  See 'help prod' for more details.
+
+    [m n] = size (G) ;
+    d = struct ('in0', 'transpose') ;
+
+    if (nargin == 1)
+        % C = prod (G); check if G is a row vector
+        if (isvector (G))
+            % C = prod (G) for a vector G results in a scalar C
+            if (gb.nvals (G) < m*n)
+                C = gb (0, gb.type (C)) ;
+            else
+                C = gb.reduce ('*', G) ;
+            end
+        else
+            % C = prod (G) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = (gb.vreduce ('*', G, d) .* (col_degree (G) == m))' ;
+        end
+    elseif (isequal (option, 'all'))
+        % C = prod (G, 'all'), reducing all entries to a scalar
+        if (gb.nvals (G) < m*n)
+            C = gb (0, gb.type (C)) ;
+        else
+            C = gb.reduce ('*', G) ;
+        end
+    elseif (isequal (option, 1))
+        % C = prod (G,1) reduces each column to a scalar,
+        % giving a 1-by-n row vector.
+        C = (gb.vreduce ('*', G, d) .* (col_degree (G) == m))' ;
+    elseif (isequal (option, 2))
+        % C = prod (G,2) reduces each row to a scalar,
+        % giving an m-by-1 column vector.
+        C = gb.vreduce ('*', G) .* (row_degree (G) == n) ;
+    else
+        error ('unknown option') ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % norm: compute the 1-norm or inf-norm
+    %---------------------------------------------------------------------------
+
+    function s = norm (G,kind)
+    error ('TODO') ;    % norm
+    % need gb.reduce
+    end
+
+    %---------------------------------------------------------------------------
+    % max: reduce a matrix to a vector or scalar, via the 'max' operator
+    %---------------------------------------------------------------------------
+
+    function s = max (G,varargin)
+    error ('TODO') ;    % max
+    % need gb.reduce
+    end
+
+    %---------------------------------------------------------------------------
+    % min: reduce a matrix to a vector or scalar, via the 'min' operator
+    %---------------------------------------------------------------------------
+
+    function C = min (G,varargin)
+    error ('todo') ;
+    end
+
+    %---------------------------------------------------------------------------
+    % eps: spacing of floating-point numbers
+    %---------------------------------------------------------------------------
+
+    function s = eps (G)
+    error ('TODO') ;    % eps
+    % use gb.apply?
+    end
+
+    %---------------------------------------------------------------------------
+    % any: reduce a matrix to a vector or scalar, via the '|' operator
+    %---------------------------------------------------------------------------
+
+    function s = any (G)
+    error ('TODO') ;    % any
+    % use gb.reduce
+    end
+
+    %---------------------------------------------------------------------------
+    % all: reduce a matrix to a vector or scalar, via the '&' operator
+    %---------------------------------------------------------------------------
+
+    function s = all (G)
+    error ('TODO') ;    % all
+    % use gb.reduce
+    end
+
+    %---------------------------------------------------------------------------
+    % ceil: element-wise ceiling operator
+    %---------------------------------------------------------------------------
+
+    function C = ceil (G)
+    %CEIL round entries to the nearest integers towards infinity
+    % See also floor, round, fix.
+    if (isfloat (G) && gb.nvals (G) > 0)
+        [m n] = size (G) ;
+        [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        C = gb.build (i, j, ceil (x), m, n) ;
+    else
+        C = G ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % floor: element-wise floor operator
+    %---------------------------------------------------------------------------
+
+    function C = floor (G)
+    %FLOOR round entries to the nearest integers towards -infinity
+    % See also ceil, round, fix.
+    if (isfloat (G) && gb.nvals (G) > 0)
+        [m n] = size (G) ;
+        [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        C = gb.build (i, j, floor (x), m, n) ;
+    else
+        C = G ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % round: element-wise round operator
+    %---------------------------------------------------------------------------
+
+    function C = round (G)
+    %ROUND round entries to the nearest integers
+    % See also ceil, floor, fix.
+    if (isfloat (G) && gb.nvals (G) > 0)
+        [m n] = size (G) ;
+        [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        C = gb.build (i, j, round (x), m, n) ;
+    else
+        C = G ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % fix: element-wise fix operator
+    %---------------------------------------------------------------------------
+
+    function C = fix (G)
+    %FIX Round towards zero.
+    % See also ceil, floor, round.
+    if (isfloat (G) && gb.nvals (G) > 0)
+        [m n] = size (G) ;
+        [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        C = gb.build (i, j, fix (x), m, n) ;
+    else
+        C = G ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % isfinite: element-wise isfinite operator
+    %---------------------------------------------------------------------------
+
+    function C = isfinite (G)
+    %ISFINITE True for finite elements.
+    % See also isnan, isinf.
+    [m n] = size (G) ;
+    if (isfloat (G) && m > 0 && n > 0)
+        G = full (G) ;
+        [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        C = gb.build (i, j, isfinite (x), m, n) ;
+    else
+        % C is all true
+        C = gb (true (m, n)) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % isinf: element-wise isinf operator
+    %---------------------------------------------------------------------------
+
+    function C = isinf (G)
+    %ISINF True for infinite elements.
+    % See also isnan, isfinite.
+    [m n] = size (G) ;
+    if (isfloat (G) && gb.nvals (G) > 0)
+        [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        C = gb.build (i, j, isinf (x), m, n) ;
+    else
+        % C is all false
+        C = gb (m, n, 'logical') ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % isnan: element-wise isnan operator
+    %---------------------------------------------------------------------------
+
+    function C = isnan (G)
+    %ISNAN True for NaN elements.
+    % See also isinf, isfinite.
+    [m n] = size (G) ;
+    if (isfloat (G) && gb.nvals (G) > 0)
+        [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        C = gb.build (i, j, isnan (x), m, n) ;
+    else
+        % C is all false
+        C = gb (m, n, 'logical') ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % TODO: these can all be overloaded (not static) methods:
+    %---------------------------------------------------------------------------
+
+    % TODO bsxfun, cummin, cummax, cumprod, diff, ... inv
+    % TODO issorted, issortedrows
+    % TODO reshape, sort
+    % TODO diag, spdiags
+    % TODO rem, mod
+    % TODO ... see 'methods double', 'help datatypes' for more options.
+
+%===============================================================================
+% operator overloading =========================================================
+%===============================================================================
 
     %---------------------------------------------------------------------------
     % plus: C = A + B
@@ -1446,7 +1778,6 @@ methods %=======================================================================
     % will compute the complex conjugate transpose C=A' when A is complex.
     %
     % See also gb.gbtranspose, transpose.
-    A
     C = gb.gbtranspose (A) ;
     end
 
@@ -1458,7 +1789,6 @@ methods %=======================================================================
     %TRANSPOSE C = A.', array transpose of a GraphBLAS matrix.
     %
     % See also gb.gbtranspose, ctranspose.
-    A
     C = gb.gbtranspose (A) ;
     end
 
@@ -1547,9 +1877,9 @@ end
 methods (Static) %==============================================================
 %===============================================================================
 
-%-------------------------------------------------------------------------------
-% Static methods: user-accessible utility functions
-%-------------------------------------------------------------------------------
+%===============================================================================
+% Static methods: user-accessible utility functions ============================
+%===============================================================================
 
     %---------------------------------------------------------------------------
     % gb.clear: clear all internal GraphBLAS workspace and settings
@@ -2033,9 +2363,9 @@ methods (Static) %==============================================================
     end
     end
 
-%-------------------------------------------------------------------------------
-% Static methods that return a GraphBLAS matrix or a MATLAB matrix
-%-------------------------------------------------------------------------------
+%===============================================================================
+% Static methods that return a GraphBLAS matrix or a MATLAB matrix =============
+%===============================================================================
 
     %---------------------------------------------------------------------------
     % gb.empty: construct an empty GraphBLAS sparse matrix
@@ -2490,21 +2820,81 @@ methods (Static) %==============================================================
     end
 
     %---------------------------------------------------------------------------
-    % gb.reduce: reduce a matrix to a vector or scalar
+    % gb.vreduce: reduce a matrix to a vector
     %---------------------------------------------------------------------------
 
-    function Cout = reduce (varargin)
-    %GB.REDUCE reduce a matrix to a vector or scalar
+    function Cout = vreduce (varargin)
+    %GB.REDUCE reduce a matrix to a vector
     %
     % Usage:
     %
-    %   Cout = gb.reduce (Cin, M, accum, op, A, desc)
+    %   Cout = gb.vreduce (op, A)
+    %   Cout = gb.vreduce (op, A, desc)
+    %   Cout = gb.vreduce (Cin, M, op, A)
+    %   Cout = gb.vreduce (Cin, M, op, A, desc)
+    %   Cout = gb.vreduce (Cin, accum, op, A)
+    %   Cout = gb.vreduce (Cin, accum, op, A, desc)
+    %   Cout = gb.vreduce (Cin, M, accum, op, A)
+    %   Cout = gb.vreduce (Cin, M, accum, op, A, desc)
     %
-    % TODO: separate functions for reduce-to-vector and reduce-to-scalar?
+    % The op and A arguments are required.  All others are optional.
+    % The valid operators are: '+', '*', 'max', and 'min' for all but the 
+    % 'logical' type, and '|', '&', 'xor', and 'ne' for the 'logical' type.
     %
-    % See also sum, prod, accumarry, max, min.
+    % By default, each row of A is reduced to a scalar.  If Cin is not present,
+    % Cout (i) = reduce (A (i,:)).  In this case, Cin and Cout are column
+    % vectors of size m-by-1, where A is m-by-n.  If desc.in0 is 'transpose',
+    % then A.' is reduced to a column vector; Cout (j) = reduce (A (:,j)).
+    % In this case, Cin and Cout are column vectors of size n-by-1, if A is
+    % m-by-n.
+    %
+    % See also gb.reduce, sum, prod, max, min.
 
-    error ('gb.reduce not yet implemented') ;   % TODO
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        Cout = gb (gbvreduce (args {:})) ;
+    else
+        Cout = gbvreduce (args {:}) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % gb.reduce: reduce a matrix to a scalar
+    %---------------------------------------------------------------------------
+
+    function Cout = reduce (varargin)
+    %GB.REDUCE reduce a matrix to a scalar
+    %
+    % Usage:
+    %
+    %   cout = gb.reduce (op, A) 
+    %   cout = gb.reduce (op, A, desc) 
+    %   cout = gb.reduce (cin, accum, op, A) 
+    %   cout = gb.reduce (cin, accum, op, A, desc) 
+    %
+    % gb.reduce reduces a matrix to a scalar, using the given operator, op.
+    % The valid operators are: '+', '*', 'max', and 'min' for all but the 
+    % 'logical' type, and '|', '&', 'xor', and 'ne' for the 'logical' type.
+    %
+    % The op and A arguments are required.  All others are optional.  The op
+    % is applied to all entries of the matrix A to reduce them to a single
+    % scalar result.
+    %
+    % accum: an optional binary operator (see 'help gb.binopinfo' for a list).
+    %
+    % cin: an optional input scalar into which the result can be accumulated
+    %       with cout = accum (cin, result).  No mask may be used.
+    %
+    % See also gb.vreduce; sum, prod, max, min (with the 'all' parameter).
+
+    % TODO add complex monoids.
+
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        Cout = gb (gbreduce (args {:})) ;
+    else
+        Cout = gbreduce (args {:}) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -2659,6 +3049,18 @@ methods (Static) %==============================================================
     %   Cout = gb.apply (Cin, accum, op, A, desc)
     %   Cout = gb.apply (Cin, M, op, A, desc)
     %   Cout = gb.apply (Cin, M, accum, op, A, desc)
+    %
+    % gb.apply applies a unary operator to the entries in the input matrix A.
+    % See 'help gb.unopinfo' for a list of available unary operators.
+    %
+    % The op and A arguments are required.
+    %
+    % accum: a binary operator to accumulate the results.
+    %
+    % Cin, and the mask matrix M, and the accum operator are optional.  If
+    % either accum or M is present, then Cin is a required input. If desc.in0
+    % is 'transpose' then A is transposed before applying the operator, as
+    % C<M> = accum (C, f(A')) where f(...) is the unary operator.
 
     [args is_gb] = get_args (varargin {:}) ;
     if (is_gb)
@@ -2891,4 +3293,23 @@ end
     % expand A and B to full matrices with explicit zeros
     C = gb.select ('nonzero', gb.emult (op, full (A), full (B))) ;
     end
+
+    %---------------------------------------------------------------------------
+    % col_degree: count the number of entries in each column of G
+    %---------------------------------------------------------------------------
+
+    function D = col_degree (G)
+    % D(j) = # of entries in G(:,j)
+    D = gb.vreduce ('+', spones (G), struct ('in0', 'transpose')) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % row_degree: count the number of entries in each row of G
+    %---------------------------------------------------------------------------
+
+    function D = row_degree (G)
+    % D(i) = # of entries in G(i,:)
+    D = gb.vreduce ('+', spones (G)) ;
+    end
+
 

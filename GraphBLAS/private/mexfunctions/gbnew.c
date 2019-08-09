@@ -42,15 +42,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // GraphBLAS copy of X, same type as X
-        if (gb_mxarray_is_empty (pargin [0]))
-        {
-            GrB_Type xtype = gb_mxarray_type (pargin [0]) ;
-            OK (GrB_Matrix_new (&G, xtype, 0, 0)) ;
-        }
-        else
-        {
-            G = gb_get_deep (pargin [0], NULL) ;
-        }
+        G = gb_get_deep (pargin [0], NULL) ;
 
     }
     else if (nargin == 2)

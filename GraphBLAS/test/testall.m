@@ -1,9 +1,5 @@
 function testall
 
-% cd ../private
-% gbmake
-% cd ../test
-
 addpath ../../Test/spok
 test1
 test2
@@ -22,6 +18,11 @@ test14
 test15
 test16
 test17
+test18
+test19
+test20
+test21
+test22
 
 fprintf ('\ntestall: all tests passed\n') ;
 
