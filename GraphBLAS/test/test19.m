@@ -1,6 +1,7 @@
 function test19
 %TEST19 test mpower
 
+rng ('default') ;
 A = rand (4) ;
 G = gb (A) ;
 

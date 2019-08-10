@@ -62,7 +62,6 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
         // opaque content of the GrB_Matrix.
 
         return (gb_export_to_mxstruct (C_handle)) ;
-
     }
 }
 

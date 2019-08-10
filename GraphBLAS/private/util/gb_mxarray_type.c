@@ -45,7 +45,7 @@ GrB_Type gb_mxarray_type        // return the GrB_Type of a MATLAB matrix
         #ifdef GB_COMPLEX_TYPE
         type = gb_complex_type ;
         #else
-        ERROR ("complex not supported") ;
+        ERROR ("complex not yet supported") ;
         #endif
     }
 

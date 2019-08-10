@@ -81,6 +81,12 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     CHECK_ERROR (gb_is_shallow (T), "internal error") ;
 
     //--------------------------------------------------------------------------
+    // drop zeros from T
+    //--------------------------------------------------------------------------
+
+    OK (GxB_select (T, NULL, NULL, GxB_NONZERO, T, NULL, NULL)) ;
+
+    //--------------------------------------------------------------------------
     // create the new MATLAB sparse matrix
     //--------------------------------------------------------------------------
 
@@ -124,8 +130,6 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         GrB_Index nzmax ;
         int64_t nonempty, *Tp, *Ti ;
         void *Tx ;
-
-        // TODO drop zeros from T from
 
         OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols, &nzmax, &nonempty,
             &Tp, &Ti, &Tx, NULL)) ;

@@ -1,4 +1,4 @@
-% function test22
+function test22
 %TEST21 test reduce to scalar
 
 rng ('default') ;
@@ -12,14 +12,22 @@ for trial = 1:40
 
             c1 = sum (A, 'all') ;
             c2 = gb.reduce ('+', A) ;
+            c3 = sum (G, 'all') ;
             assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
 
             c1 = pi + sum (A, 'all') ;
             c2 = gb.reduce (pi, '+', '+', A) ;
+            c3 = pi + sum (G, 'all') ;
             assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
 
             c1 = prod (x, 'all') ;
             c2 = gb.reduce ('*', A) ;
+            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+
+            c1 = prod (A, 'all') ;
+            c2 = prod (G, 'all') ;
             assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
 
             c1 = pi + prod (x, 'all') ;
@@ -31,14 +39,18 @@ for trial = 1:40
             if (nnz (A) < m*n)
                 c2 = max (full (c2), 0) ;
             end
+            c3 = max (G, [ ], 'all') ;
             assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
 
             c1 = min (A, [ ], 'all') ;
             c2 = gb.reduce ('min', A) ;
             if (nnz (A) < m*n)
                 c2 = min (full (c2), 0) ;
             end
+            c3 = min (G, [ ], 'all') ;
             assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
 
             B = logical (A) ;
             G = gb (B) ;

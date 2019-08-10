@@ -34,7 +34,7 @@ classdef gb
 % matrix object that contains a copy of X, typecasted to the given type if the
 % type string does not match the type of X.  If the type string is not present
 % it defaults to 'double'.
-% 
+%
 % Most of the valid type strings correspond to MATLAB class of the same name
 % (see 'help class'), with the addition of the 'complex' type:
 %
@@ -84,12 +84,13 @@ classdef gb
 %       C = uint64 (G)          typecast a gb matrix G to uint64 gb matrix C
 %       C = cast (G,...)        typecast a gb matrix G to any of the above
 %       C = spones (G)          return pattern of gb matrix
-%       s = type (G)            get the type of a gb matrix G
 %       disp (G, level)         display a gb matrix G
 %       display (G)             display a gb matrix G; same as disp(G,2)
 %       mn = numel (G)          m*n for an m-by-n gb matrix G
 %       e = nnz (G)             number of entries in a gb matrix G
 %       [m n] = size (G)        size of a gb matrix G
+%       n = length (G)          length of a gb vector
+%       s = isempty (G)         true if any dimension of G is zero
 %       s = issparse (G)        true for any gb matrix G
 %       s = ismatrix (G)        true for any gb matrix G
 %       s = isvector (G)        true if m=1 or n=1, for an m-by-n gb matrix G
@@ -114,11 +115,11 @@ classdef gb
 %       C = sum (G, option)     reduce via sum, to vector or scalar
 %       C = prod (G, option)    reduce via product, to vector or scalar
 %       s = norm (G, kind)      1-norm or inf-norm of a gb matrix
-%       s = max (G, ...)        reduce via max, to vector or scalar
+%       C = max (G, ...)        reduce via max, to vector or scalar
 %       C = min (G, ...)        reduce via min, to vector or scalar
-%       s = eps (G)             floating-point spacing
-%       s = any (G, ...)        reduce via '|', to vector or scalar
-%       s = all (G, ...)        reduce via '&', to vector or scalar
+%       C = any (G, ...)        reduce via '|', to vector or scalar
+%       C = all (G, ...)        reduce via '&', to vector or scalar
+%       C = eps (G)             floating-point spacing
 %       C = ceil (G)            round towards infinity
 %       C = floor (G)           round towards -infinity
 %       C = round (G)           round towards nearest
@@ -169,19 +170,19 @@ classdef gb
 %       operations that use the mask/accum.
 %
 %   GraphBLAS basic functions:
-%        
+%
 %       gb.clear                    clear GraphBLAS workspace and settings
 %       gb.descriptorinfo (d)       list properties of a descriptor
-%       gb.unopinfo (s, type)       list properties of a unary operator
-%       gb.binopinfo (s, type)      list properties of a binary operator
-%       gb.monoidinfo (s, type)     list properties of a monoid TODO
+%       gb.unopinfo (op, type)      list properties of a unary operator
+%       gb.binopinfo (op, type)     list properties of a binary operator
+%       gb.monoidinfo (op, type)    list properties of a monoid
 %       gb.semiringinfo (s, type)   list properties of a semiring
 %       t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %       c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
 %       f = gb.format (f)           set/get matrix format to use in GraphBLAS
 %       e = gb.nvals (A)            number of entries in a matrix
 %       G = gb.empty (m, n)         return an empty GraphBLAS matrix
-%
+%       s = gb.type (X)             get the type of a MATLAB or gb matrix X
 %       G = gb.build (I, J, X, m, n, dup, type, desc)
 %                           build a GraphBLAS matrix from a list of entries
 %       [I,J,X] = gb.extracttuples (A, desc)
@@ -296,11 +297,15 @@ methods %=======================================================================
     % S = sparse (G) converts the GraphBLAS matrix G into a MATLAB sparse
     % matrix S, typecasting if needed.  Explicit zeros are dropped from G.
     % MATLAB supports double, complex, and logical sparse matrices.  If G has a
-    % different type (int8, ... uint64), it is typecasted to a MATLAB sparse
+    % different type: int8, ... uint64, it is typecasted to a MATLAB sparse
     % double matrix.
     %
     % See also issparse, full, gb.build, gb.extracttuples, find, gb.
-    S = gbselect ('nonzero', G.opaque, struct ('kind', 'sparse')) ;
+    if (isa (G, 'gb'))
+        S = gbsparse (G.opaque) ;
+    else
+        S = gbsparse (G) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -353,7 +358,7 @@ methods %=======================================================================
     % F.  It assumes the identity value is zero.  F = full (G,id) allows the
     % identity value to be specified, which defines the value of F(i,j) when
     % the entry G(i,j) is not present.  No typecasting is done; F and G have
-    % the same type ('double', 'single', 'int8', ...).
+    % the same type: 'double', 'single', 'int8', ...).
     %
     % See also issparse, sparse, gb.build.
     if (nargin == 2)
@@ -385,7 +390,7 @@ methods %=======================================================================
     function C = complex (G)
     %COMPLEX typecast a GraphBLAS sparse matrix to complex.
     % C = complex (G) typecasts the gb matrix G to complex.
-    error ('complex type not yet supported') ;  % TODO
+    error ('complex type not yet supported') ;
     end
 
     function C = logical (G)
@@ -466,25 +471,6 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % type: get the type of GraphBLAS sparse matrix
-    %---------------------------------------------------------------------------
-
-    function s = type (G)
-    %TYPE get the type of a GraphBLAS matrix.
-    % s = type (G) returns the type of G as a string: 'double', 'single',
-    % 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64',
-    % 'logical', or 'complex'.  Note that 'complex' is treated as a type,
-    % not an attribute.
-    %
-    % See also class, gb.
-    if (isa (G, 'gb'))
-        s = gbtype (G.opaque) ;
-    else
-        s = gbtype (G) ;
-    end
-    end
-
-    %---------------------------------------------------------------------------
     % disp: display the contents of a GraphBLAS matrix
     %---------------------------------------------------------------------------
 
@@ -558,6 +544,32 @@ methods %=======================================================================
     else
         [m n] = gbsize (G.opaque) ;
     end
+    end
+
+    %---------------------------------------------------------------------------
+    % length: length of a GraphBLAS vector
+    %---------------------------------------------------------------------------
+
+    function n = length (G)
+    %LENGTH the length of a GraphBLAS vector.
+    % length (G) is the length of the vector G.  For matrices, it is
+    % max (size (G)) if G is non-empty, or zero if G has any zero dimension.
+    [m n] = size (G) ;
+    if (m == 0 | n == 0)
+        n = 0 ;
+    else
+        n = max (m, n) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % isempty: true if any dimension of G is zero
+    %---------------------------------------------------------------------------
+
+    function s = isempty (G)
+    %ISEMPTY true for empty array.
+    [m n] = size (G) ;
+    s = (m == 0) | (n == 0) ;
     end
 
     %---------------------------------------------------------------------------
@@ -813,12 +825,12 @@ methods %=======================================================================
     else
         [i j] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
         b = j - i ;
-        hi = max (0, double (max (b))) ;
-        lo = max (0,-double (min (b))) ;
+        hi = max (0,  double (max (b))) ;
+        lo = max (0, -double (min (b))) ;
     end
     if (nargin == 1)
-       arg1 = lo ; 
-       arg2 = hi ; 
+       arg1 = lo ;
+       arg2 = hi ;
     else
         if (nargout > 1)
             error ('too many output arguments') ;
@@ -874,8 +886,6 @@ methods %=======================================================================
             % C = sum (G) reduces each column to a scalar,
             % giving a 1-by-n row vector.
             C = gb.vreduce ('+', G, struct ('in0', 'transpose'))' ;
-            if (identity == 1)
-            end
         end
     elseif (isequal (option, 'all'))
         % C = sum (G, 'all'), reducing all entries to a scalar
@@ -927,7 +937,7 @@ methods %=======================================================================
         if (isvector (G))
             % C = prod (G) for a vector G results in a scalar C
             if (gb.nvals (G) < m*n)
-                C = gb (0, gb.type (C)) ;
+                C = gb (0, gb.type (G)) ;
             else
                 C = gb.reduce ('*', G) ;
             end
@@ -939,7 +949,7 @@ methods %=======================================================================
     elseif (isequal (option, 'all'))
         % C = prod (G, 'all'), reducing all entries to a scalar
         if (gb.nvals (G) < m*n)
-            C = gb (0, gb.type (C)) ;
+            C = gb (0, gb.type (G)) ;
         else
             C = gb.reduce ('*', G) ;
         end
@@ -961,52 +971,432 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function s = norm (G,kind)
-    error ('TODO') ;    % norm
-    % need gb.reduce
+    %NORM norm of a GraphBLAS sparse matrix.
+    %
+    % If G is a matrix:
+    %
+    %   norm (G,1) is the maximum sum of the columns of abs (G).
+    %   norm (G,inf) is the maximum sum of the rows of abs (G).
+    %   norm (G,'fro') is the Frobenius norm of G: the sqrt of the sum of the
+    %       squares of the entries in G.
+    %   The 2-norm is not available for either MATLAB or GraphBLAS sparse
+    %       matrices.
+    %
+    % If G is a row or column vector:
+    %
+    %   norm (G,1) is the sum of abs (G)
+    %   norm (G,2) is the sqrt of the sum of G.^2
+    %   norm (G,inf) is the maximum of abs (G)
+    %   norm (G,-inf) is the minimum of abs (G)
+    %
+    % See also gb.reduce.
+
+    if (nargin == 1)
+        kind = 2 ;
+    end
+    if (kind == 0)
+        error ('unknown norm') ;
+    end
+    if (ischar (kind))
+        if (isequal (kind, 'fro'))
+            kind = 0 ;
+        else
+            error ('unknown norm') ;
+        end
+    end
+
+    if (isvector (G))
+        if (kind == 1)
+            s = sum (abs (G)) ;
+        elseif (kind == 2 | kind == 0)
+            s = sqrt (sum (G.^2)) ;
+        elseif (kind == inf)
+            s = max (abs (G)) ;
+        elseif (kind == -inf)
+            s = min (abs (G)) ;
+        else
+            error ('unknown norm') ;
+        end
+    else
+        if (kind == 1)
+            s = max (sum (abs (G))) ;
+        elseif (kind == 2)
+            error ('Sparse norm (G,2) is not available.') ;
+        elseif (kind == 0)
+            s = sqrt (sum (G.^2, 'all')) ;
+        elseif (kind == inf)
+            s = max (sum (abs (G), 2)) ;
+        elseif (kind == -inf)
+            error ('Sparse norm(G,-inf) is not available.') ;
+        else
+            error ('unknown norm') ;
+        end
+    end
+    s = full (s) ;
     end
 
     %---------------------------------------------------------------------------
     % max: reduce a matrix to a vector or scalar, via the 'max' operator
     %---------------------------------------------------------------------------
 
-    function s = max (G,varargin)
-    error ('TODO') ;    % max
-    % need gb.reduce
+    function C = max (varargin)
+    %MAX Maximum elements of a GraphBLAS or MATLAB matrix.
+    %
+    % C = max (G) is the largest entry in the vector G.  If G is a matrix,
+    % C is a row vector with C(j) = max (G (:,j)).
+    %
+    % C = max (A,B) is an array of the element-wise maximum of two matrices
+    % A and B, which either have the same size, or one can be a scalar.
+    % Either A and/or B can be GraphBLAS or MATLAB matrices.
+    %
+    % C = max (G, [ ], 'all') is a scalar, with the largest entry in G.
+    % C = max (G, [ ], 1) is a row vector with C(j) = max (G (:,j))
+    % C = max (G, [ ], 2) is a column vector with C(i) = max (G (i,:))
+    %
+    % The indices of the maximum entry, or [C,I] = max (...) in the MATLAB
+    % built-in max function, are not computed.  The max (..., nanflag) option
+    % is not available; only the 'includenan' behavior is supported.
+
+    G = varargin {1} ;
+    [m n] = size (varargin {1}) ;
+
+    if (nargin == 1)
+
+        % C = max (G)
+        if (isvector (G))
+            % C = max (G) for a vector G results in a scalar C
+            C = gb.reduce ('max', G) ;
+            if (gb.nvals (G) < m*n) ;
+                C = max (C, 0) ;
+            end
+        else
+            % C = max (G) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('max', G, struct ('in0', 'transpose')) ;
+            % if C(j) < 0, but the column is sparse, then assign C(j) = 0.
+            C = gb.assign (C, (C < 0) & (col_degree (G) < m), 0)' ;
+        end
+
+    elseif (nargin == 2)
+
+        % C = max (A,B)
+        A = varargin {1} ;
+        B = varargin {2} ;
+        if (isscalar (A))
+            if (isscalar (B))
+                % both A and B are scalars.  Result is also a scalar.
+                C = sparse_comparator ('max', A, B) ;
+            else
+                % A is a scalar, B is a matrix
+                if (get_scalar (A) > 0)
+                    % since A > 0, the result is full
+                    C = gb.eadd ('max', expand_scalar (A, true (size (B))), B) ;
+                else
+                    % since A <= 0, the result is sparse.  Expand the scalar A
+                    % to the pattern of B.
+                    C = gb.eadd ('max', expand_scalar (A, B), B) ;
+                end
+            end
+        else
+            if (isscalar (B))
+                % A is a matrix, B is a scalar
+                if (get_scalar (B) > 0)
+                    % since B > 0, the result is full
+                    C = gb.eadd ('max', A, expand_scalar (B, true (size (A)))) ;
+                else
+                    % since B <= 0, the result is sparse.  Expand the scalar B
+                    % to the pattern of A.
+                    C = gb.eadd ('max', A, expand_scalar (B, A)) ;
+                end
+            else
+                % both A and B are matrices.  Result is sparse.
+                C = sparse_comparator ('max', A, B) ;
+            end
+        end
+
+    elseif (nargin == 3)
+
+        % C = max (G, [ ], option)
+        option = varargin {3} ;
+        if (isequal (option, 'all'))
+            % C = max (G, [ ] 'all'), reducing all entries to a scalar
+            C = gb.reduce ('max', G) ;
+            if (gb.nvals (G) < m*n) ;
+                C = max (C, 0) ;
+            end
+        elseif (isequal (option, 1))
+            % C = max (G, [ ], 1) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('max', G, struct ('in0', 'transpose')) ;
+            % if C(j) < 0, but the column is sparse, then assign C(j) = 0.
+            C = gb.assign (C, (C < 0) & (col_degree (G) < m), 0)' ;
+        elseif (isequal (option, 2))
+            % C = max (G, [ ], 2) reduces each row to a scalar,
+            % giving an m-by-1 column vector.
+            C = gb.vreduce ('max', G) ;
+            % if C(i) < 0, but the row is sparse, then assign C(i) = 0.
+            C = gb.assign (C, (C < 0) & (row_degree (G) < n), 0) ;
+        else
+            error ('unknown option') ;
+        end
+
+    else
+        error ('invalid usage') ;
+    end
     end
 
     %---------------------------------------------------------------------------
     % min: reduce a matrix to a vector or scalar, via the 'min' operator
     %---------------------------------------------------------------------------
 
-    function C = min (G,varargin)
-    error ('todo') ;
+    function C = min (varargin)
+    %MIN Minimum elements of a GraphBLAS or MATLAB matrix.
+    %
+    % C = min (G) is the smallest entry in the vector G.  If G is a matrix,
+    % C is a row vector with C(j) = min (G (:,j)).
+    %
+    % C = min (A,B) is an array of the element-wise minimum of two matrices
+    % A and B, which either have the same size, or one can be a scalar.
+    % Either A and/or B can be GraphBLAS or MATLAB matrices.
+    %
+    % C = min (G, [ ], 'all') is a scalar, with the smallest entry in G.
+    % C = min (G, [ ], 1) is a row vector with C(j) = min (G (:,j))
+    % C = min (G, [ ], 2) is a column vector with C(i) = min (G (i,:))
+    %
+    % The indices of the minimum entry, or [C,I] = min (...) in the MATLAB
+    % built-in min function, are not computed.  The min (..., nanflag) option
+    % is not available; only the 'includenan' behavior is supported.
+
+    G = varargin {1} ;
+    [m n] = size (varargin {1}) ;
+
+    if (nargin == 1)
+
+        % C = min (G)
+        if (isvector (G))
+            % C = min (G) for a vector G results in a scalar C
+            C = gb.reduce ('min', G) ;
+            if (gb.nvals (G) < m*n) ;
+                C = min (C, 0) ;
+            end
+        else
+            % C = min (G) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('min', G, struct ('in0', 'transpose')) ;
+            % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
+            C = gb.assign (C, (C > 0) & (col_degree (G) < m), 0)' ;
+        end
+
+    elseif (nargin == 2)
+
+        % C = min (A,B)
+        A = varargin {1} ;
+        B = varargin {2} ;
+        if (isscalar (A))
+            if (isscalar (B))
+                % both A and B are scalars.  Result is also a scalar.
+                C = sparse_comparator ('min', A, B) ;
+            else
+                % A is a scalar, B is a matrix
+                if (get_scalar (A) < 0)
+                    % since A < 0, the result is full
+                    C = gb.eadd ('min', expand_scalar (A, true (size (B))), B) ;
+                else
+                    % since A >= 0, the result is sparse.  Expand the scalar A
+                    % to the pattern of B.
+                    C = gb.eadd ('min', expand_scalar (A, B), B) ;
+                end
+            end
+        else
+            if (isscalar (B))
+                % A is a matrix, B is a scalar
+                if (get_scalar (B) < 0)
+                    % since B < 0, the result is full
+                    C = gb.eadd ('min', A, expand_scalar (B, true (size (A)))) ;
+                else
+                    % since B >= 0, the result is sparse.  Expand the scalar B
+                    % to the pattern of A.
+                    C = gb.eadd ('min', A, expand_scalar (B, A)) ;
+                end
+            else
+                % both A and B are matrices.  Result is sparse.
+                C = sparse_comparator ('min', A, B) ;
+            end
+        end
+
+    elseif (nargin == 3)
+
+        % C = min (G, [ ], option)
+        option = varargin {3} ;
+        if (isequal (option, 'all'))
+            % C = min (G, [ ] 'all'), reducing all entries to a scalar
+            C = gb.reduce ('min', G) ;
+            if (gb.nvals (G) < m*n) ;
+                C = min (C, 0) ;
+            end
+        elseif (isequal (option, 1))
+            % C = min (G, [ ], 1) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('min', G, struct ('in0', 'transpose')) ;
+            % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
+            C = gb.assign (C, (C > 0) & (col_degree (G) < m), 0)' ;
+        elseif (isequal (option, 2))
+            % C = min (G, [ ], 2) reduces each row to a scalar,
+            % giving an m-by-1 column vector.
+            C = gb.vreduce ('min', G) ;
+            % if C(i) > 0, but the row is sparse, then assign C(i) = 0.
+            C = gb.assign (C, (C > 0) & (row_degree (G) < n), 0) ;
+        else
+            error ('unknown option') ;
+        end
+
+    else
+        error ('invalid usage') ;
     end
-
-    %---------------------------------------------------------------------------
-    % eps: spacing of floating-point numbers
-    %---------------------------------------------------------------------------
-
-    function s = eps (G)
-    error ('TODO') ;    % eps
-    % use gb.apply?
     end
 
     %---------------------------------------------------------------------------
     % any: reduce a matrix to a vector or scalar, via the '|' operator
     %---------------------------------------------------------------------------
 
-    function s = any (G)
-    error ('TODO') ;    % any
-    % use gb.reduce
+    function C = any (G, option)
+    %ANY True if any element is nonzero or true.
+    %
+    % C = any (G) is true if any entry in G is nonzero or true.  If G is a
+    % matrix, C is a row vector with C(j) = any (G (:,j)).
+    %
+    % C = any (G, 'all') is a scalar, true if any entry in G is nonzero or true.
+    % C = any (G, 1) is a row vector with C(j) = any (G (:,j))
+    % C = any (G, 2) is a column vector with C(i) = any (G (i,:))
+    %
+    % See also all, nnz, gb.nvals.
+
+    % this is equivalant, but slower:
+    % if (nargin == 1)
+    %     C = logical (max (spones (G))) ;
+    % elseif (nargin == 2)
+    %     C = logical (max (spones (G), [ ], option)) ;
+    % end
+
+    [m n] = size (G) ;
+
+    if (nargin == 1)
+
+        % C = any (G)
+        if (isvector (G))
+            % C = any (G) for a vector G results in a scalar C
+            C = gb.reduce ('|.logical', G) ;
+        else
+            % C = any (G) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('|.logical', G, struct ('in0', 'transpose'))' ;
+        end
+
+    elseif (nargin == 2)
+
+        % C = any (G, option)
+        if (isequal (option, 'all'))
+            % C = any (G, 'all'), reducing all entries to a scalar
+            C = gb.reduce ('|.logical', G) ;
+        elseif (isequal (option, 1))
+            % C = any (G, 1) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('|.logical', G, struct ('in0', 'transpose'))' ;
+        elseif (isequal (option, 2))
+            % C = any (G, 2) reduces each row to a scalar,
+            % giving an m-by-1 column vector.
+            C = gb.vreduce ('|.logical', G) ;
+        else
+            error ('unknown option') ;
+        end
+
+    else
+        error ('invalid usage') ;
+    end
     end
 
     %---------------------------------------------------------------------------
     % all: reduce a matrix to a vector or scalar, via the '&' operator
     %---------------------------------------------------------------------------
 
-    function s = all (G)
-    error ('TODO') ;    % all
-    % use gb.reduce
+    function C = all (G, option)
+    %ALL True if all elements are nonzero or true.
+    %
+    % C = all (G) is true if all entries G are nonzero or true.  If G is a
+    % matrix, C is a row vector with C(j) = all (G (:,j)).
+    %
+    % C = all (G, 'all') is a scalar, true if all entries G are nonzero or true.
+    % C = all (G, 1) is a row vector with C(j) = all (G (:,j))
+    % C = all (G, 2) is a column vector with C(i) = all (G (i,:))
+    %
+    % See also any, nnz, gb.nvals.
+
+    % this is equivalant, but slower:
+    % if (nargin == 1)
+    %     C = logical (min (spones (G))) ;
+    % elseif (nargin == 2)
+    %     C = logical (min (spones (G), [ ], option)) ;
+    % end
+
+    [m n] = size (G) ;
+    nvals = gb.nvals (G) ;
+
+    if (nargin == 1)
+
+        % C = all (G)
+        if (isvector (G))
+            % C = all (G) for a vector G results in a scalar C
+            if (nvals < m*n) ;
+                C = gb (false, 'logical') ;
+            else
+                C = gb.reduce ('&.logical', G) ;
+            end
+        else
+            % C = all (G) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
+            % if C(j) is true, but the column is sparse, then assign C(j) = 0.
+            C = gb.assign (C, C & (col_degree (G) < m), 0)' ;
+        end
+
+    elseif (nargin == 2)
+
+        % C = all (G, option)
+        if (isequal (option, 'all'))
+            % C = all (G, 'all'), reducing all entries to a scalar
+            if (nvals < m*n) ;
+                C = gb (false, 'logical') ;
+            else
+                C = gb.reduce ('&.logical', G) ;
+            end
+        elseif (isequal (option, 1))
+            % C = all (G, 1) reduces each column to a scalar,
+            % giving a 1-by-n row vector.
+            C = gb.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
+            % if C(j) is true, but the column is sparse, then assign C(j) = 0.
+            C = gb.assign (C, C & (col_degree (G) < m), 0)' ;
+        elseif (isequal (option, 2))
+            % C = all (G, 2) reduces each row to a scalar,
+            % giving an m-by-1 column vector.
+            C = gb.vreduce ('&.logical', G) ;
+            % if C(i) is true, but the row is sparse, then assign C(i) = 0.
+            C = gb.assign (C, C & (row_degree (G) < n), 0) ;
+        else
+            error ('unknown option') ;
+        end
+
+    else
+        error ('invalid usage') ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % eps: spacing of floating-point numbers
+    %---------------------------------------------------------------------------
+
+    function C = eps (G)
+    error ('TODO') ;    % eps
+    % use gb.apply?
     end
 
     %---------------------------------------------------------------------------
@@ -1126,15 +1516,12 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % TODO: these can all be overloaded (not static) methods:
+    % TODO: these can also be overloaded (not static) methods:
     %---------------------------------------------------------------------------
 
-    % TODO bsxfun, cummin, cummax, cumprod, diff, ... inv
-    % TODO issorted, issortedrows
-    % TODO reshape, sort
-    % TODO diag, spdiags
-    % TODO rem, mod
-    % TODO ... see 'methods double', 'help datatypes' for more options.
+    % bsxfun, cummin, cummax, cumprod, diff, inv, issorted, issortedrows,
+    % reshape, sort, diag, spdiags, rem, mod, ...  see 'methods double', 'help
+    % datatypes' for more options.
 
 %===============================================================================
 % operator overloading =========================================================
@@ -1151,7 +1538,7 @@ methods %=======================================================================
     % union of A and B.  If one of A or B is a scalar, the scalar is expanded
     % into a dense matrix the size of the other matrix, and the result is a
     % dense matrix.  If the type of A and B differ, the type of A is used, as:
-    % C = A + gb (B, type (gb (A))).
+    % C = A + gb (B, gb.type (A)).
     %
     % See also gb.eadd, minus, uminus.
     if (isscalar (A))
@@ -1184,7 +1571,7 @@ methods %=======================================================================
     % union of A and B.  If one of A or B is a scalar, the scalar is expanded
     % into a dense matrix the size of the other matrix, and the result is a
     % dense matrix.  If the type of A and B differ, the type of A is used, as:
-    % C = A + gb (B, type (gb (A))).
+    % C = A + gb (B, gb.type (A)).
     %
     % See also gb.eadd, plus, uminus.
     C = A + (-B) ;
@@ -1246,9 +1633,9 @@ methods %=======================================================================
     %MTIMES sparse matrix-matrix multiplication over the standard semiring.
     % C=A*B multiples two matrices using the standard '+.*' semiring, If the
     % type of A and B differ, the type of A is used.  That is, C=A*B is the
-    % same as C = gb.mxm (['+.*' type(gb(A))], A, B).  A and B can be GraphBLAS
+    % same as C = gb.mxm (['+.*' gb.type(A)], A, B).  A and B can be GraphBLAS
     % matrices or MATLAB sparse or full matrices, in any combination.
-    % 
+    %
     % See also gb.mxm.
     C = gb.mxm ('+.*', A, B) ;
     end
@@ -1406,7 +1793,7 @@ methods %=======================================================================
     if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
         if (b == 0)
             % C is identity, of the same type as A
-            C = gb.build (1:n, 1:n, ones (1, n, get_type (A)), n, n) ;
+            C = gb.build (1:n, 1:n, ones (1, n, gb.type (A)), n, n) ;
         else
             % C = A^b where b > 0 is an integer
             C = compute_mpower (A, b) ;
@@ -1740,7 +2127,7 @@ methods %=======================================================================
         if (isscalar (B))
             % A is a matrix, B is a scalar
             if (get_scalar (B) == 0)
-                % B is false, so C is A typecasted to logical 
+                % B is false, so C is A typecasted to logical
                 C = gb (gb.select ('nonzero', A), 'logical') ;
             else
                 % B is true, so C is a full matrix the same size as A
@@ -1769,7 +2156,7 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % ctranspose: C = A' 
+    % ctranspose: C = A'
     %---------------------------------------------------------------------------
 
     function C = ctranspose (A)
@@ -1782,7 +2169,7 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % transpose: C = A' 
+    % transpose: C = A'
     %---------------------------------------------------------------------------
 
     function C = transpose (A)
@@ -1965,7 +2352,7 @@ methods (Static) %==============================================================
     % checks if its contents are valid.  Also refer to the
     % SuiteSparse:GraphBLAS User Guide for more details.
     %
-    % See also gb, gb.unopinfo, gb.binopinfo, gb.semiringinfo.
+    % See also gb, gb.unopinfo, gb.binopinfo, gb.monoidinfo, gb.semiringinfo.
 
     if (nargin == 0)
         help gb.descriptorinfo
@@ -1978,7 +2365,7 @@ methods (Static) %==============================================================
     % gb.unopinfo: list the details of a GraphBLAS unary operator
     %---------------------------------------------------------------------------
 
-    function unopinfo (s, type)
+    function unopinfo (op, type)
     %GB.UNOPINFO list the details of a GraphBLAS unary operator
     %
     % Usage
@@ -2028,13 +2415,15 @@ methods (Static) %==============================================================
     % gb.unopinfo generates an error for an invalid op, so user code can test
     % the validity of an op with the MATLAB try/catch mechanism.
     %
-    % See also gb, gb.binopinfo, gb.semiringinfo, gb.descriptorinfo.
+    % See also gb, gb.binopinfo, gb.monoidinfo, gb.semiringinfo,
+    % gb.descriptorinfo.
+
     if (nargin == 0)
         help gb.unopinfo
     elseif (nargin == 1)
-        gbunopinfo (s) ;
+        gbunopinfo (op) ;
     else
-        gbunopinfo (s, type) ;
+        gbunopinfo (op, type) ;
     end
     end
 
@@ -2042,7 +2431,7 @@ methods (Static) %==============================================================
     % gb.binopinfo: list the details of a GraphBLAS binary operator
     %---------------------------------------------------------------------------
 
-    function binopinfo (s, type)
+    function binopinfo (op, type)
     %GB.BINOPINFO list the details of a GraphBLAS binary operator
     %
     % Usage
@@ -2069,9 +2458,9 @@ methods (Static) %==============================================================
     % The 6 comparator operators come in two flavors.  For the is* operators,
     % the result has the same type as the inputs, x and y, with 1 for true and
     % 0 for false.  For example isgt.double (pi, 3.0) is the double value 1.0.
-    % For the second set of 6 operators (eq, ne, gt, lt, ge, le), the result
-    % always has a logical type (true or false).  In a semiring, the type of
-    % the add monoid must exactly match the type of the output of the multiply
+    % For the second set of 6 operators (eq, ne, gt, lt, ge, le), the result is
+    % always logical (true or false).  In a semiring, the type of the add
+    % monoid must exactly match the type of the output of the multiply
     % operator, and thus 'plus.iseq.double' is valid (counting how many terms
     % are equal).  The 'plus.eq.double' semiring is valid, but not the same
     % semiring since the 'plus' of 'plus.eq.double' has a logical type and is
@@ -2122,9 +2511,60 @@ methods (Static) %==============================================================
     if (nargin == 0)
         help gb.binopinfo
     elseif (nargin == 1)
-        gbbinopinfo (s) ;
+        gbbinopinfo (op) ;
     else
-        gbbinopinfo (s, type) ;
+        gbbinopinfo (op, type) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % gb.monoidinfo: list the details of a GraphBLAS monoid
+    %---------------------------------------------------------------------------
+
+    function monoidinfo (monoid, type)
+    %GB.MONOIDINFO list the details of a GraphBLAS monoid
+    %
+    % Usage
+    %
+    %   gb.monoidinfo
+    %   gb.monoidinfo (monoid)
+    %   gb.monoidinfo (monoid, type)
+    %
+    % For gb.monoidinfo(op), the op must be a string of the form 'op.type',
+    % where 'op' is listed below.  The second usage allows the type to be
+    % omitted from the first argument, as just 'op'.  This is valid for all
+    % GraphBLAS operations, since the type defaults to the type of the input
+    % matrices.  However, gb.monoidinfo does not have a default type and thus
+    % one must be provided, either in the op as gb.monoidinfo ('+.double'), or
+    % in the second argument, gb.monoidinfo ('+', 'double').
+    %
+    % The MATLAB interface to GraphBLAS provides for 44 different monoids.
+    % The valid monoids are: '+', '*', 'max', and 'min' for all but the
+    % 'logical' type, and '|', '&', 'xor', and 'ne' for the 'logical' type.
+    %
+    % Example:
+    %
+    %   % valid monoids
+    %   gb.monoidinfo ('+.double') ;
+    %   gb.monoidinfo ('*.int32') ;
+    %
+    %   % invalid monoids
+    %   gb.monoidinfo ('1st.int32') ;
+    %   gb.monoidinfo ('abs.double') ;
+    %
+    % gb.monoidinfo generates an error for an invalid monoid, so user code can
+    % test the validity of an op with the MATLAB try/catch mechanism.
+    %
+    % See also gb.unopinfo, gb.binopinfo, gb.semiringinfo, gb.descriptorinfo.
+
+    % TODO add complex monoids
+
+    if (nargin == 0)
+        help gb.monoidinfo
+    elseif (nargin == 1)
+        gbmonoidinfo (monoid) ;
+    else
+        gbmonoidinfo (monoid, type) ;
     end
     end
 
@@ -2156,7 +2596,7 @@ methods (Static) %==============================================================
     % commutative, with an identity value id such that f(x,id) = f(id,x) = x.
     % Furthermore, the types of x, y, and z for the monoid operator f must all
     % be the same.  Thus, the '<.double' is not a valid monoid operator, since
-    % its output type (logical) does not match its inputs (double), and since
+    % its 'logical' output type does not match its 'double' inputs, and since
     % it is neither associative nor commutative.  Thus, <.*.double is not a
     % valid semiring.
     %
@@ -2395,6 +2835,25 @@ methods (Static) %==============================================================
     end
 
     %---------------------------------------------------------------------------
+    % gb.type: get the type of a MATLAB or GraphBLAS sparse matrix
+    %---------------------------------------------------------------------------
+
+    function s = type (X)
+    %TYPE get the type of a MATLAB or GraphBLAS matrix.
+    % s = type (X) returns the type of X as a string: 'double', 'single',
+    % 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64',
+    % 'logical', or 'complex'.  Note that 'complex' is treated as a type,
+    % not an attribute.
+    %
+    % See also class, gb.
+    if (isa (X, 'gb'))
+        s = gbtype (X.opaque) ;
+    else
+        s = gbtype (X) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
     % gb.build: build a GraphBLAS sparse matrix from a list of entries
     %---------------------------------------------------------------------------
 
@@ -2575,7 +3034,7 @@ methods (Static) %==============================================================
     %   C2 = gb.mxm (E, M, '+', '+.*', A, B) ;
     %   C3 = E ; AB = A*B ; C3 (M) = C3 (M) + AB (M) ;
     %   norm (sparse(C2)-C3,1)
-    %   
+    %
     %
     % See also gb.descriptorinfo, gb.add, mtimes.
 
@@ -2734,7 +3193,7 @@ methods (Static) %==============================================================
     %       implied, refering to all n columns of C, like C(I,:) in MATLAB
     %       notation.  1D indexing of a matrix C, as in C(I) = A, is not
     %       supported.
-    % 
+    %
     %       If neither I nor J are provided on input, then this implies
     %       both I = { } and J = { }, or C(:,:) in MATLAB notation,
     %       refering to all rows and columns of C.
@@ -2743,14 +3202,14 @@ methods (Static) %==============================================================
     %       is 'transpose'), or it is 1-by-1 for scalar assignment (like
     %       C(1:2,1:2)=pi, which assigns the scalar pi to the leading 2-by-2
     %       submatrix of C).  For scalar assignment, A must contain an entry;
-    %       it cannot be empty (for example, the MATLAB A = sparse (0)).  
+    %       it cannot be empty (for example, the MATLAB A = sparse (0)).
     %
     % accum: an optional binary operator, defined by a string ('+.double') for
     %       example.  This allows for C(I,J) = C(I,J) + A to be computed.  If
     %       not present, no accumulator is used and C(I,J)=A is computed.
     %
     % M: an optional mask matrix.
-    % 
+    %
     % Cin: a required input matrix, containing the initial content of the
     % matrix C.  Cout is the content of C after the assignment is made.
     %
@@ -2828,18 +3287,19 @@ methods (Static) %==============================================================
     %
     % Usage:
     %
-    %   Cout = gb.vreduce (op, A)
-    %   Cout = gb.vreduce (op, A, desc)
-    %   Cout = gb.vreduce (Cin, M, op, A)
-    %   Cout = gb.vreduce (Cin, M, op, A, desc)
-    %   Cout = gb.vreduce (Cin, accum, op, A)
-    %   Cout = gb.vreduce (Cin, accum, op, A, desc)
-    %   Cout = gb.vreduce (Cin, M, accum, op, A)
-    %   Cout = gb.vreduce (Cin, M, accum, op, A, desc)
+    %   Cout = gb.vreduce (monoid, A)
+    %   Cout = gb.vreduce (monoid, A, desc)
+    %   Cout = gb.vreduce (Cin, M, monoid, A)
+    %   Cout = gb.vreduce (Cin, M, monoid, A, desc)
+    %   Cout = gb.vreduce (Cin, accum, monoid, A)
+    %   Cout = gb.vreduce (Cin, accum, monoid, A, desc)
+    %   Cout = gb.vreduce (Cin, M, accum, monoid, A)
+    %   Cout = gb.vreduce (Cin, M, accum, monoid, A, desc)
     %
-    % The op and A arguments are required.  All others are optional.
-    % The valid operators are: '+', '*', 'max', and 'min' for all but the 
+    % The monoid and A arguments are required.  All others are optional.
+    % The valid monoids are: '+', '*', 'max', and 'min' for all but the
     % 'logical' type, and '|', '&', 'xor', and 'ne' for the 'logical' type.
+    % See 'help gb.monoidinfo' for more details.
     %
     % By default, each row of A is reduced to a scalar.  If Cin is not present,
     % Cout (i) = reduce (A (i,:)).  In this case, Cin and Cout are column
@@ -2867,23 +3327,24 @@ methods (Static) %==============================================================
     %
     % Usage:
     %
-    %   cout = gb.reduce (op, A) 
-    %   cout = gb.reduce (op, A, desc) 
-    %   cout = gb.reduce (cin, accum, op, A) 
-    %   cout = gb.reduce (cin, accum, op, A, desc) 
+    %   cout = gb.reduce (monoid, A)
+    %   cout = gb.reduce (monoid, A, desc)
+    %   cout = gb.reduce (cin, accum, monoid, A)
+    %   cout = gb.reduce (cin, accum, monoid, A, desc)
     %
-    % gb.reduce reduces a matrix to a scalar, using the given operator, op.
-    % The valid operators are: '+', '*', 'max', and 'min' for all but the 
-    % 'logical' type, and '|', '&', 'xor', and 'ne' for the 'logical' type.
+    % gb.reduce reduces a matrix to a scalar, using the given monoid.  The
+    % valid monoids are: '+', '*', 'max', and 'min' for all but the 'logical'
+    % type, and '|', '&', 'xor', and 'ne' for the 'logical' type.  See 'help
+    % gb.monoidinfo' for more details.
     %
-    % The op and A arguments are required.  All others are optional.  The op
-    % is applied to all entries of the matrix A to reduce them to a single
+    % The monoid and A arguments are required.  All others are optional.  The
+    % op is applied to all entries of the matrix A to reduce them to a single
     % scalar result.
     %
     % accum: an optional binary operator (see 'help gb.binopinfo' for a list).
     %
     % cin: an optional input scalar into which the result can be accumulated
-    %       with cout = accum (cin, result).  No mask may be used.
+    %       with cout = accum (cin, result).
     %
     % See also gb.vreduce; sum, prod, max, min (with the 'all' parameter).
 
@@ -2977,9 +3438,9 @@ methods (Static) %==============================================================
     %
     %   if (A(i,j) and B(i,j) is present)
     %       T(i,j) = op (A(i,j), B(i,j))
-    %   else if (A(i,j) is present but B(i,j) is not)
+    %   elseif (A(i,j) is present but B(i,j) is not)
     %       T(i,j) = A(i,j)
-    %   else if (B(i,j) is present but A(i,j) is not)
+    %   elseif (B(i,j) is present but A(i,j) is not)
     %       T(i,j) = B(i,j)
     %
     % T is then accumulated into C via C<#M,replace> = accum (C,T).
@@ -3121,7 +3582,7 @@ methods (Static) %==============================================================
     %       implied, refering to all n columns of A, like A(I,:) in MATLAB
     %       notation.  1D indexing of a matrix A, as in C = A(I), is not
     %       supported.
-    % 
+    %
     %       If neither I nor J are provided on input, then this implies
     %       both I = { } and J = { }, or A(:,:) in MATLAB notation,
     %       refering to all rows and columns of A.
@@ -3135,7 +3596,7 @@ methods (Static) %==============================================================
     %       example.  This allows for Cout = Cin + A(I,J) to be computed.  If
     %       not present, no accumulator is used and Cout=A(I,J) is computed.
     %       If accum is present then Cin is a required input.
-    % 
+    %
     % M: an optional mask matrix.
     %
     % Example:
@@ -3219,18 +3680,6 @@ end
     end
 
     %---------------------------------------------------------------------------
-    % get_type: type of a GraphBLAS or MATLAB matrix
-    %---------------------------------------------------------------------------
-
-    function t = get_type (A)
-    if (isa (A, 'gb'))
-        t = gbtype (A.opaque) ;
-    else
-        t = gbtype (A) ;
-    end
-    end
-
-    %---------------------------------------------------------------------------
     % expand_scalar: expand a scalar to a matrix
     %---------------------------------------------------------------------------
 
@@ -3238,7 +3687,7 @@ end
     % The scalar is expanded to the pattern of S, as in C = scalar*spones(S).
     % C has the same type as the scalar.  The numerical values of S are
     % ignored; only the pattern of S is used.
-    C = gb.gbkron (['1st.' get_type(scalar)], scalar, S) ;
+    C = gb.gbkron (['1st.' gb.type(scalar)], scalar, S) ;
     end
 
     %---------------------------------------------------------------------------
@@ -3311,5 +3760,4 @@ end
     % D(i) = # of entries in G(i,:)
     D = gb.vreduce ('+', spones (G)) ;
     end
-
 

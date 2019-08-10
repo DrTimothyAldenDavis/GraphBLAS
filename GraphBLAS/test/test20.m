@@ -1,6 +1,7 @@
 function test20
 %TEST20 test bandwidth, isdiag, ceil, floor, round, fix
 
+rng ('default') ;
 for trial = 1:40
     fprintf ('.') ;
     for m = 0:10
