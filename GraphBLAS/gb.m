@@ -96,14 +96,13 @@ classdef gb
 %       s = isvector (G)        true if m=1 or n=1, for an m-by-n gb matrix G
 %       s = isscalar (G)        true if G is a 1-by-1 gb matrix
 %       s = isnumeric (G)       true for any gb matrix G
-%       s = isfloat (G)         true if gb matrix is double, single, or complex %       s = isreal (G)          true if gb matrix is not complex
+%       s = isfloat (G)         true if gb matrix is double, single, or complex 
+%       s = isreal (G)          true if gb matrix is not complex
 %       s = isinteger (G)       true if gb matrix is int8, int16, ..., uint64
 %       s = islogical (G)       true if gb matrix is logical
 %       L = tril (G,k)          lower triangular part of gb matrix G
 %       U = triu (G,k)          upper triangular part of gb matrix G
 %       C = kron (A,B)          Kronecker product
-%       C = permute (G, ...)    TODO
-%       C = ipermute (G, ...)   TODO
 %       C = repmat (G, ...)     replicate and tile a GraphBLAS matrix
 %       C = abs (G)             absolute value
 %       s = istril (G)          true if G is lower triangular
@@ -156,7 +155,7 @@ classdef gb
 %       C = horzcat (A, B)      C = [A , B]
 %       C = vertcat (A, B)      C = [A ; B]
 %       C = subsref (A, I, J)   C = A (I,J)
-%       C = subsasgn (A, I, J)  C(I,J) = A
+%       C = subsasgn (A, I, J)  C (I,J) = A
 %       C = subsindex (A, B)    C = B (A)
 %
 % Static Methods:
@@ -243,6 +242,9 @@ classdef gb
 %       can be modified; if zero, it cannot be modified by the operation.
 %
 % See also sparse, doc sparse, and https://twitter.com/DocSparse .
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 properties (SetAccess = private, GetAccess = private)
     % The struct contains the entire opaque content of a GraphBLAS GrB_Matrix.
@@ -726,22 +728,6 @@ methods %=======================================================================
     %KRON sparse Kronecker product
     % C = kron (A,B) is the sparse Kronecker tensor product of A and B.
     C = gb.gbkron ('*', A, B) ;
-    end
-
-    %---------------------------------------------------------------------------
-    % permute: C = permute (A, order)
-    %---------------------------------------------------------------------------
-
-    function C = permute (A, order)
-    error ('permute(...) not yet implemented') ;    % TODO permute
-    end
-
-    %---------------------------------------------------------------------------
-    % ipermute: C = ipermute (A, order)
-    %---------------------------------------------------------------------------
-
-    function C = ipermute (A, order)
-    error ('ipermute(...) not yet implemented') ;   % TODO ipermute
     end
 
     %---------------------------------------------------------------------------
@@ -1395,8 +1381,13 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = eps (G)
-    error ('TODO') ;    % eps
-    % use gb.apply?
+    %EPS Spacing of floating-point numbers
+    if (~isfloat (G))
+        error ('Type must be ''single'', ''double'', or ''complex''') ;
+    end
+    [m n] = size (G) ;
+    [i j x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
+    C = gb.build (i, j, eps (x), m, n) ;
     end
 
     %---------------------------------------------------------------------------
