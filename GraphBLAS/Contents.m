@@ -124,10 +124,10 @@
 %
 %   Cout = gb.mxm (semiring, A, B)      C = A*B over a semiring
 %   Cout = gb.select (op, A, thunk)     select subset of entries
-%   Cout = gb.assign (A, I, J)          C (I,J) = A
-%   Cout = gb.subassign (A, I, J)       C (I,J) = A; M is different
-%   Cout = gb.colassign (u, I, j)       C (I,j) = u
-%   Cout = gb.rowassign (u, i, J)       C (i,J) = u'
+%   Cout = gb.assign (A, I, J)          C<M>(I,J) = A ; M and C same size
+%   Cout = gb.subassign (A, I, J)       C(I,J)<M> = A ; M and C(I,J) same size
+%   Cout = gb.colassign (u, I, j)       C<M>(I,j) = u
+%   Cout = gb.rowassign (u, i, J)       C<M'>(i,J) = u'
 %   Cout = gb.vreduce (op, A)           reduce to a vector
 %   Cout = gb.reduce (op, A)            reduce to a scalar (no mask M)
 %   Cout = gb.gbkron (op, A, B)         Kronecker product
@@ -138,5 +138,4 @@
 %   Cout = gb.extract (A, I, J)         C = A (I,J)            
 %
 % Tim Davis, Texas A&M University, http://faculty.cse.tamu.edu/davis/GraphBLAS
-%
 

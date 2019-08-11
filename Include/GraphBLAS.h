@@ -786,7 +786,7 @@ extern GrB_BinaryOp
 // and y = true, then z = x + y = true + true = true.  DIV (x/y) is defined
 // below.  RDIV (y/x) is shown as \ in the table; it is the same as 2nd.
 
-//                                                     is  is  is  is  is  is
+//                                                   is  is  is  is  is  is
 //  x y  1st 2nd min max +   -   *   /   or  and xor eq  ne  gt  lt  ge  le rdiv
 //  0 0  0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   1  0
 //  0 1  0   1   0   1   1   1   0   0   1   0   1   0   1   0   1   0   1  1
@@ -5375,8 +5375,9 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 // reduce matrix to vector:
 // GrB_Matrix_reduce_Monoid   (w,mask,acc,mo,A,d) // w<mask> = acc (w,reduce(A))
 // GrB_Matrix_reduce_BinaryOp (w,mask,acc,op,A,d) // w<mask> = acc (w,reduce(A))
-// GrB_Vector_reduce_[SCALAR] (c, acc,monoid,u, d)
-// GrB_Matrix_reduce_[SCALAR] (c, acc,monoid,A, d)
+// reduce matrix to scalar:
+// GrB_Vector_reduce_[SCALAR] (c,acc,monoid,u,d)  // c = acc (c,reduce(A))
+// GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))
 
 #define GrB_reduce(arg1,arg2,arg3,arg4,...)                 \
     _Generic                                                \

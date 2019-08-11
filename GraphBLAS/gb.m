@@ -476,6 +476,8 @@ methods %=======================================================================
     % disp: display the contents of a GraphBLAS matrix
     %---------------------------------------------------------------------------
 
+    % TODO simplify output of GxB_Matrix_print, ...
+
     function disp (G, level)
     %DISP display the contents of a GraphBLAS object.
     % disp (G, level) displays the GraphBLAS sparse matrix G.  Level controls
@@ -538,13 +540,16 @@ methods %=======================================================================
     % size: number of rows and columns in a GraphBLAS matrix
     %---------------------------------------------------------------------------
 
-    function [m n] = size (G)
+    function [arg1 n] = size (G, dim)
     %SIZE the dimensions of a GraphBLAS matrix.
     % [m n] = size (G) is the size of an m-by-n GraphBLAS sparse matrix.
     if (nargout <= 1)
-        m = gbsize (G.opaque) ;
+        arg1 = gbsize (G.opaque) ;
+        if (nargin == 2)
+            arg1 = arg1 (dim) ;
+        end
     else
-        [m n] = gbsize (G.opaque) ;
+        [arg1 n] = gbsize (G.opaque) ;
     end
     end
 
@@ -787,6 +792,8 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function result = isbanded (G, lo, hi)
+    %ISBANDED True if G is a banded matrix.
+    % isbanded (G, lo, hi) is true if the bandwidth of G is between lo and hi.
     [Glo, Ghi] = bandwidth (G) ;
     result = (Glo <= lo) & (Ghi <= hi) ;
     end
@@ -796,6 +803,7 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function result = isdiag (G)
+    %ISDIAG True if G is a diagonal matrix.
     result = isbanded (G, 0, 0) ;
     end
 
@@ -804,6 +812,12 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function [arg1,arg2] = bandwidth (G,uplo)
+    %BANDWIDTH Determine the bandwidth of a GraphBLAS matrix.
+    % [lo, hi] = bandwidth (G) returns the upper and lower bandwidth of G.
+    % lo = bandwidth (G, 'lower') returns just the lower bandwidth.
+    % hi = bandwidth (G, 'upper') returns just the upper bandwidth.
+    %
+    % See also isbanded, isdiag, istril, istriu.
     if (gb.nvals (G) == 0)
         % matrix is empty
         hi = 0 ;
@@ -835,6 +849,9 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = sqrt (G)
+    %SQRT Square root.
+    % SQRT (G) is the square root of the elements of the GraphBLAS matrix G.
+    % Complex matrices are not yet supported.
     C = G.^(.5) ;
     end
 
@@ -1257,13 +1274,6 @@ methods %=======================================================================
     %
     % See also all, nnz, gb.nvals.
 
-    % this is equivalant, but slower:
-    % if (nargin == 1)
-    %     C = logical (max (spones (G))) ;
-    % elseif (nargin == 2)
-    %     C = logical (max (spones (G), [ ], option)) ;
-    % end
-
     [m n] = size (G) ;
 
     if (nargin == 1)
@@ -1316,13 +1326,6 @@ methods %=======================================================================
     % C = all (G, 2) is a column vector with C(i) = all (G (i,:))
     %
     % See also any, nnz, gb.nvals.
-
-    % this is equivalant, but slower:
-    % if (nargin == 1)
-    %     C = logical (min (spones (G))) ;
-    % elseif (nargin == 2)
-    %     C = logical (min (spones (G), [ ], option)) ;
-    % end
 
     [m n] = size (G) ;
     nvals = gb.nvals (G) ;
@@ -1507,12 +1510,13 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % TODO: these can also be overloaded (not static) methods:
+    % FUTURE: these could also be overloaded (not static) methods:
     %---------------------------------------------------------------------------
 
     % bsxfun, cummin, cummax, cumprod, diff, inv, issorted, issortedrows,
-    % reshape, sort, diag, spdiags, rem, mod, ...  see 'methods double', 'help
-    % datatypes' for more options.
+    % reshape, sort, diag, spdiags, rem, mod, ...
+
+    % See 'methods double', 'help datatypes' for more options.
 
 %===============================================================================
 % operator overloading =========================================================
@@ -1658,14 +1662,13 @@ methods %=======================================================================
     else
         if (isscalar (B))
             % A is a matrix, B is a scalar
-            b = get_scalar (B) ;
-            if (b == 0 & isfloat (A))
+            if (get_scalar (B) == 0 & isfloat (A))
                 % 0/0 is Nan, and thus must be computed computed if A is
                 % floating-point.  The result is a dense matrix.
                 C = gb.eadd ('/', A, expand_scalar (B, true (size (A)))) ;
             else
-                % b is nonzero so just compute A/b in the pattern of A.
-                % The result is sparse (the pattern of A).
+                % The scalar B is nonzero so just compute A/B in the pattern of
+                % A.  The result is sparse (the pattern of A).
                 C = gb.emult ('/', A, expand_scalar (B, A)) ;
             end
         else
@@ -1747,8 +1750,8 @@ methods %=======================================================================
                 A = full (A) ;
                 B = expand_scalar (B, true (size (A))) ;
             else
-                % b is > 0, and thus 0.^b is zero.  The result is sparse.
-                % B is expanded to a matrix wit the same pattern as A.
+                % The scalar b is > 0, and thus 0.^b is zero.  The result is
+                % sparse.  B is expanded to a matrix wit the same pattern as A.
                 B = expand_scalar (B, A) ;
             end
         else
@@ -1760,6 +1763,7 @@ methods %=======================================================================
 
     % GraphBLAS does not have a binary operator f(x,y)=x^y.  It could be
     % constructed as a user-defined operator, but this is reasonably fast.
+    % FUTURE: create a binary operator f(x,y) = x^y.
     [m, n] = size (A) ;
     [I, J, Ax] = gb.extracttuples (A) ;
     [I, J, Bx] = gb.extracttuples (B) ;
@@ -1784,6 +1788,7 @@ methods %=======================================================================
     if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
         if (b == 0)
             % C is identity, of the same type as A
+            % TODO ones (...) needs to be 'double' of A is complex.
             C = gb.build (1:n, 1:n, ones (1, n, gb.type (A)), n, n) ;
         else
             % C = A^b where b > 0 is an integer
@@ -1869,7 +1874,6 @@ methods %=======================================================================
     %A > B
     % Element-by-element comparison of A and B.  One or both may be scalars.
     % Otherwise, A and B must have the same size.
-
     C = lt (B, A) ;
     end
 
@@ -1935,7 +1939,6 @@ methods %=======================================================================
     %A >= B
     % Element-by-element comparison of A and B.  One or both may be scalars.
     % Otherwise, A and B must have the same size.
-
     C = le (B, A) ;
     end
 
@@ -2154,7 +2157,6 @@ methods %=======================================================================
     %CTRANSPOSE C = A', matrix transpose a GraphBLAS matrix.
     % Note that complex matrices are not yet supported.  When they are, this
     % will compute the complex conjugate transpose C=A' when A is complex.
-    %
     % See also gb.gbtranspose, transpose.
     C = gb.gbtranspose (A) ;
     end
@@ -2165,7 +2167,6 @@ methods %=======================================================================
 
     function C = transpose (A)
     %TRANSPOSE C = A.', array transpose of a GraphBLAS matrix.
-    %
     % See also gb.gbtranspose, ctranspose.
     C = gb.gbtranspose (A) ;
     end
@@ -2175,7 +2176,57 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = horzcat (varargin)
-    error ('horzcat not yet implemented') ;    % TODO [A , B]
+    %HORZCAT Horizontal concatenation.
+    % [A B] or [A,B] is the horizontal concatenation of A and B.
+    % A and B may be GraphBLAS or MATLAB matrices, in any combination.
+    % Multiple matrices may be concatenated, as [A, B, C, ...].
+
+    % FUTURE: this would be much faster if it was a built-in GraphBLAS method.
+
+    % determine the size of each matrix and the size of the result
+    nmatrices = length (varargin) ;
+    nvals = zeros (1, nmatrices) ;
+    ncols = zeros (1, nmatrices) ;
+    A = varargin {1} ;
+    [m n] = size (A) ;
+    nvals (1) = gb.nvals (A) ;
+    ncols (1) = n ;
+    type = gb.type (A) ;
+    clear A
+    for k = 2:nmatrices
+        B = varargin {k} ;
+        [m2 n] = size (B) ;
+        if (m ~= m2)
+            error('Dimensions of arrays being concatenated are not consistent');
+        end
+        nvals (k) = gb.nvals (B) ;
+        ncols (k) = n ;
+        clear B ;
+    end
+    ncols = [0 cumsum(ncols)] ;
+    nvals = [0 cumsum(nvals)] ;
+    cnvals = nvals (end) ;
+    n = ncols (end) ;
+
+    % allocate the I,J,X arrays
+    I = zeros (cnvals, 1, 'int64') ;
+    J = zeros (cnvals, 1, 'int64') ;
+    X = zeros (cnvals, 1, type) ;
+
+    % fill the I,J,X arrays
+    d.kind = 'zero-based' ;
+    for k = 1:nmatrices
+        [i, j, x] = gb.extracttuples (varargin {k}, d) ;
+        noffset = int64 (ncols (k)) ;
+        koffset = nvals (k) ;
+        kvals = gb.nvals (varargin {k}) ;
+        I ((koffset+1):(koffset+kvals)) = i ;
+        J ((koffset+1):(koffset+kvals)) = j + noffset ;
+        X ((koffset+1):(koffset+kvals)) = x ;
+    end
+
+    % build the output matrix
+    C = gb.build (I, J, X, m, n) ;
     end
 
     %---------------------------------------------------------------------------
@@ -2183,7 +2234,57 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = vertcat (varargin)
-    error ('vertcat not yet implemented') ;    % TODO [A ; B]
+    %VERTCAT Vertical concatenation.
+    % [A ; B] is the vertical concatenation of A and B.
+    % A and B may be GraphBLAS or MATLAB matrices, in any combination.
+    % Multiple matrices may be concatenated, as [A ; B ; C ; ...].
+
+    % FUTURE: this would be much faster if it was a built-in GraphBLAS method.
+
+    % determine the size of each matrix and the size of the result
+    nmatrices = length (varargin) ;
+    nvals = zeros (1, nmatrices) ;
+    nrows = zeros (1, nmatrices) ;
+    A = varargin {1} ;
+    [m n] = size (A) ;
+    nvals (1) = gb.nvals (A) ;
+    nrows (1) = m ;
+    type = gb.type (A) ;
+    clear A
+    for k = 2:nmatrices
+        B = varargin {k} ;
+        [m n2] = size (B) ;
+        if (n ~= n2)
+            error('Dimensions of arrays being concatenated are not consistent');
+        end
+        nvals (k) = gb.nvals (B) ;
+        nrows (k) = m ;
+        clear B ;
+    end
+    nrows = [0 cumsum(nrows)] ;
+    nvals = [0 cumsum(nvals)] ;
+    cnvals = nvals (end) ;
+    m = nrows (end) ;
+
+    % allocate the I,J,X arrays
+    I = zeros (cnvals, 1, 'int64') ;
+    J = zeros (cnvals, 1, 'int64') ;
+    X = zeros (cnvals, 1, type) ;
+
+    % fill the I,J,X arrays
+    d.kind = 'zero-based' ;
+    for k = 1:nmatrices
+        [i, j, x] = gb.extracttuples (varargin {k}, d) ;
+        moffset = int64 (nrows (k)) ;
+        koffset = nvals (k) ;
+        kvals = gb.nvals (varargin {k}) ;
+        I ((koffset+1):(koffset+kvals)) = i + moffset ;
+        J ((koffset+1):(koffset+kvals)) = j ;
+        X ((koffset+1):(koffset+kvals)) = x ;
+    end
+
+    % build the output matrix
+    C = gb.build (I, J, X, m, n) ;
     end
 
     %---------------------------------------------------------------------------
@@ -2195,6 +2296,8 @@ methods %=======================================================================
     % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.
     % With a single index, C = A(I) is equivalent to C = A(I,:).  Linear
     % indexing is not supported.
+    %
+    % TODO: handle C = S (M) for a matrix M
     %
     % See also subsagn.
     if (~isequal (S.type, '()'))
@@ -2222,6 +2325,9 @@ methods %=======================================================================
     % C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix C.
     % With a single index, C(I) = A is equivalent to C(I,:) = A.  Linear
     % indexing is not supported.
+    %
+    % TODO: handle C (M) = S for a matrix M
+    %
     %
     % See also subsref.
     if (~isequal (S.type, '()'))
@@ -2605,6 +2711,8 @@ methods (Static) %==============================================================
     %
     % See also gb, gb.unopinfo, gb.binopinfo, gb.descriptorinfo.
 
+    % TODO add complex semirings
+
     if (nargin == 0)
         help gb.semiringinfo
     elseif (nargin == 1)
@@ -2834,7 +2942,7 @@ methods (Static) %==============================================================
     % s = type (X) returns the type of X as a string: 'double', 'single',
     % 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64',
     % 'logical', or 'complex'.  Note that 'complex' is treated as a type,
-    % not an attribute.
+    % not an attribute, which differs from the MATLAB convention.
     %
     % See also class, gb.
     if (isa (X, 'gb'))
@@ -3621,24 +3729,20 @@ end
     %---------------------------------------------------------------------------
 
     function [args is_gb] = get_args (varargin)
-    %GET_ARGS get the arguments and the descriptor for a gb.method.
-    %
-    % Any input arguments that are GraphBLAS sparse matrix objects are replaced
-    % with the struct arg.opaque so that they can be passed to the underlying
-    % mexFunction.
-    %
-    % Next, the descriptor is modified to change the default d.kind.
+    % Get the arguments and the descriptor for a gb.method.  Any input
+    % arguments that are GraphBLAS sparse matrix objects are replaced with the
+    % struct arg.opaque so that they can be passed to the underlying
+    % mexFunction.  Next, the descriptor is modified to change the default
+    % d.kind.
     %
     % All mexFunctions in private/mexFunction/*.c require the descriptor to be
     % present as the last argument.  They are not required for the user-
-    % accessible gb.methods.
-    %
-    % If the descriptor d is not present, then it is created and appended to
-    % the argument list, with d.kind = 'gb'.  If the descriptor is present and
-    % d.kind does not appear, then d.kind = 'gb' is set.  Finally, is_gb is set
-    % true if d.kind is 'gb'.  If d.kind is 'gb', then the underlying
-    % mexFunction returns a GraphBLAS struct, which is then converted above to
-    % a GraphBLAS object.  See for example G = gb (gbmxm (args {:})) above.
+    % accessible gb.methods.  If the descriptor d is not present, then it is
+    % created and appended to the argument list, with d.kind = 'gb'.  If the
+    % descriptor is present and d.kind does not appear, then d.kind = 'gb' is
+    % set.  Finally, is_gb is set true if d.kind is 'gb'.  If d.kind is 'gb',
+    % then the underlying mexFunction returns a GraphBLAS struct, which is then
+    % converted above to a GraphBLAS object.
 
     % get the args and extract any GraphBLAS matrix structs
     args = varargin ;
@@ -3739,7 +3843,7 @@ end
     %---------------------------------------------------------------------------
 
     function D = col_degree (G)
-    % D(j) = # of entries in G(:,j)
+    % D(j) = # of entries in G(:,j); result is a column vector
     D = gb.vreduce ('+', spones (G), struct ('in0', 'transpose')) ;
     end
 
@@ -3748,7 +3852,7 @@ end
     %---------------------------------------------------------------------------
 
     function D = row_degree (G)
-    % D(i) = # of entries in G(i,:)
+    % D(i) = # of entries in G(i,:); result is a column vector
     D = gb.vreduce ('+', spones (G)) ;
     end
 

@@ -31,7 +31,7 @@ static GrB_Info GB_dc
     bool ok = true ;
     GrB_Info info = GrB_SUCCESS ;
 
-    GBPR0 ("d.%s = ", field) ;
+    GBPR0 ("    d.%s = ", field) ;
     switch (v)
     {
         case GxB_DEFAULT       : GBPR0 ("default   ") ; break ;
@@ -99,7 +99,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     // check inputs
     //--------------------------------------------------------------------------
 
-    GBPR0 ("\nGraphBLAS Descriptor: %s ", GB_NAME) ;
+    GBPR0 ("\n    GraphBLAS Descriptor: %s ", GB_NAME) ;
 
     if (D == NULL)
     { 
@@ -127,7 +127,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
     {
         if (info [i] != GrB_SUCCESS)
         { 
-            GBPR0 ("Descriptor field set to an invalid value\n") ;
+            GBPR0 ("    Descriptor field set to an invalid value\n") ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "Descriptor field set to an invalid value: [%s]", GB_NAME))) ;
         }
@@ -138,7 +138,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
 
     if (pr > 0)
     {
-        GBPR ("d.nthreads = ") ;
+        GBPR ("    d.nthreads = ") ;
         if (nthreads_max <= GxB_DEFAULT)
         { 
             GBPR ("default\n") ;
@@ -147,7 +147,7 @@ GrB_Info GB_Descriptor_check    // check a GraphBLAS descriptor
         { 
             GBPR ("%d\n", nthreads_max) ;
         }
-        GBPR ("d.chunk    = ") ;
+        GBPR ("    d.chunk    = ") ;
         if (chunk <= GxB_DEFAULT)
         { 
             GBPR ("default\n") ;

@@ -130,6 +130,13 @@ typedef struct
 
     int64_t hack ;                  // for testing and development
 
+    //--------------------------------------------------------------------------
+    // printing control
+    //--------------------------------------------------------------------------
+
+    bool print_one_based ;          // if true, print 1-based indices
+    int print_format ;              // for printing values
+
 }
 GB_Global_struct ;
 
@@ -178,7 +185,10 @@ GB_Global_struct GB_Global =
     .maxused = 0,                // high water memory usage
 
     // for testing and development
-    .hack = 0
+    .hack = 0,
+
+    .print_one_based = false,       // if true, print 1-based indices
+    .print_format = 0               // for printing values
 } ;
 
 //==============================================================================
@@ -578,5 +588,29 @@ void GB_Global_hack_set (int64_t hack)
 int64_t GB_Global_hack_get (void)
 { 
     return (GB_Global.hack) ;
+}
+
+//------------------------------------------------------------------------------
+// print control:
+//------------------------------------------------------------------------------
+
+void GB_Global_print_one_based_set (bool onebased)
+{ 
+    GB_Global.print_one_based = onebased ;
+}
+
+bool GB_Global_print_one_based_get (void)
+{ 
+    return (GB_Global.print_one_based) ;
+}
+
+void GB_Global_print_format_set (int f)
+{ 
+    GB_Global.print_format = f ;
+}
+
+int GB_Global_print_format_get (void)
+{ 
+    return (GB_Global.print_format) ;
 }
 

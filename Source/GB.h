@@ -960,17 +960,6 @@ GrB_Info GB_error           // log an error in thread-local-storage
     }                               \
 }
 
-// check object->magic code
-#ifdef GB_DEVELOPER
-#define GBPR_MAGIC(pcode)                                               \
-{                                                                       \
-    char *p = (char *) &(pcode) ;                                       \
-    GBPR0 (" pcode: [ %d1 %s ] ", p [0], p) ;                           \
-}
-#else
-#define GBPR_MAGIC(pcode) ;
-#endif
-
 // check object->magic and print an error if invalid
 #define GB_CHECK_MAGIC(object,kind)                                     \
 {                                                                       \
@@ -978,19 +967,16 @@ GrB_Info GB_error           // log an error in thread-local-storage
     {                                                                   \
         case GB_MAGIC :                                                 \
             /* the object is valid */                                   \
-            GBPR_MAGIC (object->magic) ;                                \
             break ;                                                     \
                                                                         \
         case GB_FREED :                                                 \
             /* dangling pointer! */                                     \
-            GBPR_MAGIC (object->magic) ;                                \
             GBPR0 ("already freed!\n") ;                                \
             return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
                 "%s is freed: [%s]", kind, name))) ;                    \
                                                                         \
         case GB_MAGIC2 :                                                \
             /* invalid */                                               \
-            GBPR_MAGIC (object->magic) ;                                \
             GBPR0 ("invalid\n") ;                                       \
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
                 "%s is invalid: [%s]", kind, name))) ;                  \

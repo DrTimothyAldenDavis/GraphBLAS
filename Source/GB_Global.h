@@ -96,5 +96,10 @@ int64_t  GB_Global_maxused_get (void) ;
 void     GB_Global_hack_set (int64_t hack) ;
 int64_t  GB_Global_hack_get (void) ;
 
+void     GB_Global_print_one_based_set (bool onebased) ;
+bool     GB_Global_print_one_based_get (void) ;
+void     GB_Global_print_format_set (int print_format) ;
+int      GB_Global_print_format_get (void) ;
+
 #endif
 

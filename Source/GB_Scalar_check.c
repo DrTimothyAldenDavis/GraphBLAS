@@ -40,7 +40,7 @@ GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
 
     if (!GB_SCALAR_OK (s))
     { 
-        GBPR0 ("GxB_Scalar is invalid [%s]\n", name) ;
+        GBPR0 ("    GxB_Scalar is invalid [%s]\n", name) ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
             "GxB_Scalar is invalid [%s]", name))) ;
     }

@@ -42,6 +42,12 @@ void gb_usage       // check usage and make sure GxB_init has been called
 
         printf ("setting default format: BY COL\n") ;
         OK (GxB_set (GxB_FORMAT, GxB_BY_COL)) ;
+
+        // print short format by default
+        GB_Global_print_format_set (1) ;
+
+        // print 1-based indices
+        GB_Global_print_one_based_set (true) ;
     }
 
     //--------------------------------------------------------------------------
