@@ -16,7 +16,7 @@
 %   F = full (G)            convert a gb matrix G to a MATLAB dense matrix
 %   C = double (G)          typecast a gb matrix G to double gb matrix C
 %   C = single (G)          typecast a gb matrix G to single gb matrix C
-%   C = complex (G)         typecast a gb matrix G to complex gb matrix C
+%   C = complex (G)         FUTURE: typecast a gb matrix G to complex
 %   C = logical (G)         typecast a gb matrix G to logical gb matrix C
 %   C = int8 (G)            typecast a gb matrix G to int8 gb matrix C
 %   C = int16 (G)           typecast a gb matrix G to int16 gb matrix C
@@ -44,6 +44,7 @@
 %   s = isreal (G)          true if gb matrix is not complex
 %   s = isinteger (G)       true if gb matrix is int8, int16, ..., uint64
 %   s = islogical (G)       true if gb matrix is logical
+%   C = diag (G,k)          diagonal matrices and diagonals of a gb matrix G
 %   L = tril (G,k)          lower triangular part of gb matrix G
 %   U = triu (G,k)          upper triangular part of gb matrix G
 %   C = kron (A,B)          Kronecker product
@@ -134,7 +135,7 @@
 %   Cout = gb.eadd (op, A, B)           element-wise addition
 %   Cout = gb.emult (op, A, B)          element-wise multiplication
 %   Cout = gb.apply (op, A)             apply a unary operator
-%   Cout = gb.extract (A, I, J)         C = A (I,J)            
+%   Cout = gb.extract (A, I, J)         C = A (I,J)
 %
 % Tim Davis, Texas A&M University, http://faculty.cse.tamu.edu/davis/GraphBLAS
 

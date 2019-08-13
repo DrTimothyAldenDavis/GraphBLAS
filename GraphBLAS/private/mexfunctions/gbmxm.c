@@ -183,7 +183,7 @@ void mexFunction
 
     // TODO: HACK because Sauna is freed by MATLAB.  Must make it persistent...
     for (int Sauna_id = 0 ; Sauna_id < GxB_NTHREADS_MAX ; Sauna_id++)
-    { 
+    {
         GB_Sauna_free (Sauna_id) ;
     }
 

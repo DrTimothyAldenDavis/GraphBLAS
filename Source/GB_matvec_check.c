@@ -331,7 +331,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                     kind, j, A->p[j], GB_NAME))) ;
             }
         }
-        GBPR0 ("    empty\n") ;
     }
 
     //--------------------------------------------------------------------------
@@ -396,7 +395,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     int64_t anz = GB_NNZ (A) ;
     GBPR0 (", "GBd" entries\n", anz) ;
     #ifndef GB_DEVELOPER
-    GBPR0 ("\n") ;
+    if (anz > 0) GBPR0 ("\n") ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -539,7 +538,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     }
 
     #ifndef GB_DEVELOPER
-    if (pr == 2 && truncated) GBPR ("    ....\n") ;
+    if (pr == 2 && truncated) GBPR ("    ...\n") ;
     #endif
 
     //--------------------------------------------------------------------------

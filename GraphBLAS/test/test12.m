@@ -44,12 +44,12 @@ err = norm (D-H, 1)
 
 E = sparse (rand (2)) ;
 C = E + A+B ;
-G = gb.eadd (E, '+', '+', A, B) ; 
+G = gb.eadd (E, '+', '+', A, B) ;
 C-sparse(G)
 
 F = sparse (rand (2)) ;
 D = F + A.*B ;
-H = gb.emult (F, '+', '*', A, B) ; 
+H = gb.emult (F, '+', '*', A, B) ;
 D-sparse(H)
 assert (isequal (D, sparse (H))) ;
 

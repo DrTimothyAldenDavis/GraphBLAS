@@ -40,7 +40,12 @@ int64_t *gb_mxarray_to_list     // return List of integers
     // extract the contents and convert to int64_t
     //--------------------------------------------------------------------------
 
-    if (class == mxINT64_CLASS)
+    if (*len == 0)
+    {
+        (*allocated) = true ;
+        return ((int64_t *) mxCalloc (1, sizeof (int64_t))) ;
+    }
+    else if (class == mxINT64_CLASS)
     {
         // input list is int64; just return a shallow pointer
         (*allocated) = false ;
@@ -56,7 +61,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
     {
         // allocate an index array and copy double to GrB_Index; also
         // convert from 1-based to 0-based
-        int64_t *List = mxMalloc (MAX (*len, 1) * sizeof (int64_t)) ;
+        int64_t *List = mxMalloc ((*len) * sizeof (int64_t)) ;
         double *List_double = mxGetDoubles (mxList) ;
         (*List_max) = -1 ;
         bool ok = GB_matlab_helper3 (List, List_double, (*len), List_max) ;

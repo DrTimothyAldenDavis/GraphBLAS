@@ -11,8 +11,8 @@
 
 // Usage:
 
-//  cout = gb.reduce (op, A, desc) 
-//  cout = gb.reduce (cin, accum, op, A, desc) 
+//  cout = gb.reduce (op, A, desc)
+//  cout = gb.reduce (cin, accum, op, A, desc)
 
 // If cin is not present then it is implicitly a 1-by-1 matrix with no entries.
 

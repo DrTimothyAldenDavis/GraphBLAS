@@ -66,15 +66,15 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // export the scalar content
     mxArray *opaque = mxCreateNumericMatrix (1, 9, mxDOUBLE_CLASS, mxREAL) ;
     double *s = mxGetDoubles (opaque) ;
-    s [0] = A->hyper_ratio ; 
-    s [1] = (double) (A->plen) ; 
-    s [2] = (double) (A->vlen) ; 
-    s [3] = (double) (A->vdim) ; 
-    s [4] = (double) (A->nvec) ; 
-    s [5] = (double) (A->nvec_nonempty) ; 
-    s [6] = (double) (A->is_hyper) ; 
-    s [7] = (double) (A->is_csc) ; 
-    s [8] = (double) (A->nzmax) ; 
+    s [0] = A->hyper_ratio ;
+    s [1] = (double) (A->plen) ;
+    s [2] = (double) (A->vlen) ;
+    s [3] = (double) (A->vdim) ;
+    s [4] = (double) (A->nvec) ;
+    s [5] = (double) (A->nvec_nonempty) ;
+    s [6] = (double) (A->is_hyper) ;
+    s [7] = (double) (A->is_csc) ;
+    s [8] = (double) (A->nzmax) ;
     mxSetFieldByNumber (G, 0, 1, opaque) ;
 
     // These components do not need to be exported: Pending, nzombies,

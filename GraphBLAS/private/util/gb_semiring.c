@@ -160,9 +160,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_FIRST_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MIN_FIRST_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MIN_FIRST_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -178,9 +178,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_FIRST_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MAX_FIRST_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MAX_FIRST_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -196,9 +196,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_FIRST_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_PLUS_FIRST_FP32   ) ;
                             case GB_FP64_code  : return (GxB_PLUS_FIRST_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -214,9 +214,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_FIRST_UINT64) ;
                             case GB_FP32_code  : return (GxB_TIMES_FIRST_FP32  ) ;
                             case GB_FP64_code  : return (GxB_TIMES_FIRST_FP64  ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -240,9 +240,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_SECOND_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_MIN_SECOND_FP32   ) ;
                             case GB_FP64_code  : return (GxB_MIN_SECOND_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -258,9 +258,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_SECOND_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_MAX_SECOND_FP32   ) ;
                             case GB_FP64_code  : return (GxB_MAX_SECOND_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -276,9 +276,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_SECOND_UINT64) ;
                             case GB_FP32_code  : return (GxB_PLUS_SECOND_FP32  ) ;
                             case GB_FP64_code  : return (GxB_PLUS_SECOND_FP64  ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -294,9 +294,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_SECOND_UINT64) ;
                             case GB_FP32_code  : return (GxB_TIMES_SECOND_FP32 ) ;
                             case GB_FP64_code  : return (GxB_TIMES_SECOND_FP64 ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -320,9 +320,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_MIN_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MIN_MIN_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MIN_MIN_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -338,9 +338,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_MIN_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MAX_MIN_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MAX_MIN_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -356,9 +356,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_MIN_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_PLUS_MIN_FP32     ) ;
                             case GB_FP64_code  : return (GxB_PLUS_MIN_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -374,9 +374,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_MIN_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_TIMES_MIN_FP32    ) ;
                             case GB_FP64_code  : return (GxB_TIMES_MIN_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -400,9 +400,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_MAX_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MIN_MAX_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MIN_MAX_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -418,9 +418,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_MAX_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MAX_MAX_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MAX_MAX_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -436,9 +436,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_MAX_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_PLUS_MAX_FP32     ) ;
                             case GB_FP64_code  : return (GxB_PLUS_MAX_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -454,9 +454,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_MAX_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_TIMES_MAX_FP32    ) ;
                             case GB_FP64_code  : return (GxB_TIMES_MAX_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -480,9 +480,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_PLUS_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_PLUS_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_PLUS_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -498,9 +498,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_PLUS_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_PLUS_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_PLUS_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -516,9 +516,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_PLUS_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_PLUS_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_PLUS_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -534,9 +534,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_PLUS_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_PLUS_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_PLUS_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -560,9 +560,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_MINUS_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MIN_MINUS_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MIN_MINUS_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -578,9 +578,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_MINUS_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MAX_MINUS_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MAX_MINUS_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -596,9 +596,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_MINUS_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_PLUS_MINUS_FP32   ) ;
                             case GB_FP64_code  : return (GxB_PLUS_MINUS_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -614,9 +614,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_MINUS_UINT64) ;
                             case GB_FP32_code  : return (GxB_TIMES_MINUS_FP32  ) ;
                             case GB_FP64_code  : return (GxB_TIMES_MINUS_FP64  ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -640,9 +640,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_RMINUS_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MIN_RMINUS_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MIN_RMINUS_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -658,9 +658,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_RMINUS_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MAX_RMINUS_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MAX_RMINUS_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -676,9 +676,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_RMINUS_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_PLUS_RMINUS_FP32   ) ;
                             case GB_FP64_code  : return (GxB_PLUS_RMINUS_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -694,9 +694,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_RMINUS_UINT64) ;
                             case GB_FP32_code  : return (GxB_TIMES_RMINUS_FP32  ) ;
                             case GB_FP64_code  : return (GxB_TIMES_RMINUS_FP64  ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -720,9 +720,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_TIMES_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MIN_TIMES_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MIN_TIMES_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -738,9 +738,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_TIMES_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_MAX_TIMES_FP32    ) ;
                             case GB_FP64_code  : return (GxB_MAX_TIMES_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -756,9 +756,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_TIMES_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_PLUS_TIMES_FP32   ) ;
                             case GB_FP64_code  : return (GxB_PLUS_TIMES_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -774,9 +774,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_TIMES_UINT64) ;
                             case GB_FP32_code  : return (GxB_TIMES_TIMES_FP32  ) ;
                             case GB_FP64_code  : return (GxB_TIMES_TIMES_FP64  ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -800,9 +800,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_DIV_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MIN_DIV_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MIN_DIV_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -818,9 +818,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_DIV_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MAX_DIV_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MAX_DIV_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -836,9 +836,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_DIV_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_PLUS_DIV_FP32     ) ;
                             case GB_FP64_code  : return (GxB_PLUS_DIV_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -854,9 +854,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_DIV_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_TIMES_DIV_FP32    ) ;
                             case GB_FP64_code  : return (GxB_TIMES_DIV_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -880,9 +880,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_RDIV_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MIN_RDIV_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MIN_RDIV_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -898,9 +898,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_RDIV_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MAX_RDIV_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MAX_RDIV_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -916,9 +916,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_RDIV_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_PLUS_RDIV_FP32     ) ;
                             case GB_FP64_code  : return (GxB_PLUS_RDIV_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -934,9 +934,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_RDIV_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_TIMES_RDIV_FP32    ) ;
                             case GB_FP64_code  : return (GxB_TIMES_RDIV_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -960,9 +960,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_ISEQ_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_ISEQ_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_ISEQ_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -978,9 +978,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_ISEQ_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_ISEQ_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_ISEQ_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -996,9 +996,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_ISEQ_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_ISEQ_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_ISEQ_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1014,9 +1014,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_ISEQ_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_ISEQ_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_ISEQ_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1040,9 +1040,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_ISNE_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_ISNE_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_ISNE_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1058,9 +1058,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_ISNE_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_ISNE_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_ISNE_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1076,9 +1076,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_ISNE_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_ISNE_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_ISNE_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1094,9 +1094,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_ISNE_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_ISNE_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_ISNE_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1120,9 +1120,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_ISGT_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_ISGT_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_ISGT_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1138,9 +1138,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_ISGT_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_ISGT_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_ISGT_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1156,9 +1156,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_ISGT_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_ISGT_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_ISGT_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1174,9 +1174,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_ISGT_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_ISGT_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_ISGT_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1200,9 +1200,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_ISLT_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_ISLT_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_ISLT_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1218,9 +1218,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_ISLT_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_ISLT_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_ISLT_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1236,9 +1236,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_ISLT_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_ISLT_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_ISLT_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1254,9 +1254,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_ISLT_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_ISLT_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_ISLT_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1280,9 +1280,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_ISGE_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_ISGE_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_ISGE_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1298,9 +1298,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_ISGE_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_ISGE_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_ISGE_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1316,9 +1316,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_ISGE_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_ISGE_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_ISGE_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1334,9 +1334,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_ISGE_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_ISGE_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_ISGE_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1360,9 +1360,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_ISLE_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_ISLE_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_ISLE_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1378,9 +1378,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_ISLE_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_ISLE_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_ISLE_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1396,9 +1396,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_ISLE_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_ISLE_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_ISLE_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1414,9 +1414,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_ISLE_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_ISLE_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_ISLE_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1440,9 +1440,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_LOR_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MIN_LOR_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MIN_LOR_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1458,9 +1458,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_LOR_UINT64    ) ;
                             case GB_FP32_code  : return (GxB_MAX_LOR_FP32      ) ;
                             case GB_FP64_code  : return (GxB_MAX_LOR_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1476,9 +1476,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_LOR_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_PLUS_LOR_FP32     ) ;
                             case GB_FP64_code  : return (GxB_PLUS_LOR_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1494,9 +1494,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_LOR_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_TIMES_LOR_FP32    ) ;
                             case GB_FP64_code  : return (GxB_TIMES_LOR_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1520,9 +1520,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_LAND_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_LAND_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_LAND_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1538,9 +1538,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_LAND_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_LAND_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_LAND_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1556,9 +1556,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_LAND_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_LAND_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_LAND_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1574,9 +1574,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_LAND_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_LAND_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_LAND_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1600,9 +1600,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MIN_LXOR_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MIN_LXOR_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MIN_LXOR_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_MAX_opcode :
 
@@ -1618,9 +1618,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_MAX_LXOR_UINT64   ) ;
                             case GB_FP32_code  : return (GxB_MAX_LXOR_FP32     ) ;
                             case GB_FP64_code  : return (GxB_MAX_LXOR_FP64     ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_PLUS_opcode :
 
@@ -1636,9 +1636,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_PLUS_LXOR_UINT64  ) ;
                             case GB_FP32_code  : return (GxB_PLUS_LXOR_FP32    ) ;
                             case GB_FP64_code  : return (GxB_PLUS_LXOR_FP64    ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_TIMES_opcode :
 
@@ -1654,9 +1654,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_LXOR_UINT64 ) ;
                             case GB_FP32_code  : return (GxB_TIMES_LXOR_FP32   ) ;
                             case GB_FP64_code  : return (GxB_TIMES_LXOR_FP64   ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1695,9 +1695,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LOR_EQ_UINT64     ) ;
                             case GB_FP32_code  :  return (GxB_LOR_EQ_FP32       ) ;
                             case GB_FP64_code  :  return (GxB_LOR_EQ_FP64       ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LAND_opcode :
 
@@ -1713,9 +1713,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LAND_EQ_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LAND_EQ_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LAND_EQ_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LXOR_opcode :
 
@@ -1731,9 +1731,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LXOR_EQ_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LXOR_EQ_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LXOR_EQ_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_EQ_opcode :
 
@@ -1749,9 +1749,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_EQ_EQ_UINT64      ) ;
                             case GB_FP32_code  :  return (GxB_EQ_EQ_FP32        ) ;
                             case GB_FP64_code  :  return (GxB_EQ_EQ_FP64        ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1775,9 +1775,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LOR_NE_UINT64     ) ;
                             case GB_FP32_code  :  return (GxB_LOR_NE_FP32       ) ;
                             case GB_FP64_code  :  return (GxB_LOR_NE_FP64       ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LAND_opcode :
 
@@ -1793,9 +1793,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LAND_NE_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LAND_NE_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LAND_NE_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LXOR_opcode :
 
@@ -1811,9 +1811,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LXOR_NE_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LXOR_NE_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LXOR_NE_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_EQ_opcode :
 
@@ -1829,9 +1829,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_EQ_NE_UINT64      ) ;
                             case GB_FP32_code  :  return (GxB_EQ_NE_FP32        ) ;
                             case GB_FP64_code  :  return (GxB_EQ_NE_FP64        ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1855,9 +1855,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LOR_GT_UINT64     ) ;
                             case GB_FP32_code  :  return (GxB_LOR_GT_FP32       ) ;
                             case GB_FP64_code  :  return (GxB_LOR_GT_FP64       ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LAND_opcode :
 
@@ -1873,9 +1873,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LAND_GT_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LAND_GT_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LAND_GT_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LXOR_opcode :
 
@@ -1891,9 +1891,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LXOR_GT_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LXOR_GT_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LXOR_GT_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_EQ_opcode :
 
@@ -1909,9 +1909,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_EQ_GT_UINT64      ) ;
                             case GB_FP32_code  :  return (GxB_EQ_GT_FP32        ) ;
                             case GB_FP64_code  :  return (GxB_EQ_GT_FP64        ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -1935,9 +1935,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LOR_LT_UINT64     ) ;
                             case GB_FP32_code  :  return (GxB_LOR_LT_FP32       ) ;
                             case GB_FP64_code  :  return (GxB_LOR_LT_FP64       ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LAND_opcode :
 
@@ -1953,9 +1953,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LAND_LT_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LAND_LT_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LAND_LT_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LXOR_opcode :
 
@@ -1971,9 +1971,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LXOR_LT_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LXOR_LT_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LXOR_LT_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_EQ_opcode :
 
@@ -1989,9 +1989,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_EQ_LT_UINT64      ) ;
                             case GB_FP32_code  :  return (GxB_EQ_LT_FP32        ) ;
                             case GB_FP64_code  :  return (GxB_EQ_LT_FP64        ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -2015,9 +2015,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LOR_GE_UINT64     ) ;
                             case GB_FP32_code  :  return (GxB_LOR_GE_FP32       ) ;
                             case GB_FP64_code  :  return (GxB_LOR_GE_FP64       ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LAND_opcode :
 
@@ -2033,9 +2033,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LAND_GE_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LAND_GE_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LAND_GE_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LXOR_opcode :
 
@@ -2051,9 +2051,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LXOR_GE_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LXOR_GE_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LXOR_GE_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_EQ_opcode :
 
@@ -2069,9 +2069,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_EQ_GE_UINT64      ) ;
                             case GB_FP32_code  :  return (GxB_EQ_GE_FP32        ) ;
                             case GB_FP64_code  :  return (GxB_EQ_GE_FP64        ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }
@@ -2095,9 +2095,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LOR_LE_UINT64     ) ;
                             case GB_FP32_code  :  return (GxB_LOR_LE_FP32       ) ;
                             case GB_FP64_code  :  return (GxB_LOR_LE_FP64       ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LAND_opcode :
 
@@ -2113,9 +2113,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LAND_LE_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LAND_LE_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LAND_LE_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_LXOR_opcode :
 
@@ -2131,9 +2131,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_LXOR_LE_UINT64    ) ;
                             case GB_FP32_code  :  return (GxB_LXOR_LE_FP32      ) ;
                             case GB_FP64_code  :  return (GxB_LXOR_LE_FP64      ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     case GB_EQ_opcode :
 
@@ -2149,9 +2149,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
                             case GB_UINT64_code:  return (GxB_EQ_LE_UINT64      ) ;
                             case GB_FP32_code  :  return (GxB_EQ_LE_FP32        ) ;
                             case GB_FP64_code  :  return (GxB_EQ_LE_FP64        ) ;
-                            default : ; 
+                            default : ;
                         }
-                        break; 
+                        break;
 
                     default : ;
                 }

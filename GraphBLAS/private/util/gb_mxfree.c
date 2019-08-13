@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Usage: 
+// Usage:
 
 //  void *p = mxMalloc ( ... ) ;
 //  gb_mxfree (&p) ;                // frees p and sets p to NULL

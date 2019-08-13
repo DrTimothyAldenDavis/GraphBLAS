@@ -50,8 +50,9 @@ classdef gb
 %   'uint32'    32-bit unsigned integer
 %   'uint64'    64-bit unsigned integer
 %   'complex'   64-bit double complex.  In MATLAB, this is not a MATLAB
-%               class name, but instead a property of a MATLAB sparse double
-%               matrix.  In GraphBLAS, 'complex' is treated as a type.
+%               class name, but instead a property of a sparse double matrix.
+%               In GraphBLAS, 'complex' will be treated as a type, (once it is
+%               implemented).  Complex matrices are not yet supported.
 %
 % Operations on integer values differs from MATLAB.  In MATLAB, uint9(255)+1
 % is 255, since the arithmetic saturates.  This is not possible in GraphBLAS,
@@ -72,7 +73,7 @@ classdef gb
 %       F = full (G)            convert a gb matrix G to a MATLAB dense matrix
 %       C = double (G)          typecast a gb matrix G to double gb matrix C
 %       C = single (G)          typecast a gb matrix G to single gb matrix C
-%       C = complex (G)         typecast a gb matrix G to complex gb matrix C
+%       C = complex (G)         FUTURE: typecast a gb matrix G to complex gb
 %       C = logical (G)         typecast a gb matrix G to logical gb matrix C
 %       C = int8 (G)            typecast a gb matrix G to int8 gb matrix C
 %       C = int16 (G)           typecast a gb matrix G to int16 gb matrix C
@@ -96,10 +97,11 @@ classdef gb
 %       s = isvector (G)        true if m=1 or n=1, for an m-by-n gb matrix G
 %       s = isscalar (G)        true if G is a 1-by-1 gb matrix
 %       s = isnumeric (G)       true for any gb matrix G
-%       s = isfloat (G)         true if gb matrix is double, single, or complex 
+%       s = isfloat (G)         true if gb matrix is double, single, or complex
 %       s = isreal (G)          true if gb matrix is not complex
 %       s = isinteger (G)       true if gb matrix is int8, int16, ..., uint64
 %       s = islogical (G)       true if gb matrix is logical
+%       C = diag (G,k)          diagonal matrices and diagonals of a gb matrix G
 %       L = tril (G,k)          lower triangular part of gb matrix G
 %       U = triu (G,k)          upper triangular part of gb matrix G
 %       C = kron (A,B)          Kronecker product
@@ -299,7 +301,8 @@ methods %=======================================================================
     % matrix S, typecasting if needed.  Explicit zeros are dropped from G.
     % MATLAB supports double, complex, and logical sparse matrices.  If G has a
     % different type: int8, ... uint64, it is typecasted to a MATLAB sparse
-    % double matrix.
+    % double matrix.  Note that this MATLAB interface to GraphBLAS does not
+    % yet support complex matrices.
     %
     % See also issparse, full, gb.build, gb.extracttuples, find, gb.
     if (isa (G, 'gb'))
@@ -392,7 +395,7 @@ methods %=======================================================================
     function C = complex (G)
     %COMPLEX typecast a GraphBLAS sparse matrix to complex.
     % C = complex (G) typecasts the gb matrix G to complex.
-    error ('complex type not yet supported') ;
+    error ('complex type not yet supported (in progress)') ;
     end
 
     function C = logical (G)
@@ -687,6 +690,79 @@ methods %=======================================================================
     % See also isnumeric, isfloat, isreal, isinteger, type, gb.
     t = gbtype (G.opaque) ;
     s = isequal (t, 'logical') ;
+    end
+
+    %---------------------------------------------------------------------------
+    % diag: diagonal matrices and diagonals of a matrix
+    %---------------------------------------------------------------------------
+
+    function C = diag (G,k)
+    % DIAG Diagonal matrices and diagonals of a matrix.
+    % C = diag (v,k) when v is a GraphBLAS vector with n components is a square
+    % sparse GarphBLAS matrix of dimension n+abs(k), with the elements of v on
+    % the kth diagonal. The main diagonal is k = 0; k > 0 is above the
+    % diagonal, and k < 0 is below the main diagonal.  C = diag (v) is the
+    % same as C = diag (v,0).
+    %
+    % c = diag (G,k) when G is a GraphBLAS matrix returns a GraphBLAS column
+    % vector c formed the entries on the kth diagonal of G.  The main diagonal
+    % is c = diag(G).
+    %
+    % Examples:
+    %
+    %   C1 = diag (gb (1:10, 'uint8'), 2)
+    %   C2 = sparse (diag (1:10, 2))
+    %   nothing = sparse (C1-C2)
+    %
+    %   A = magic (8)
+    %   full ([diag(A,1) diag(gb(A),1)])
+    %
+    %   m = 5 ;
+    %   f = ones (2*m,1) ;
+    %   A = diag(-m:m) + diag(f,1) + diag(f,-1)
+    %   G = diag(gb(-m:m)) + diag(gb(f),1) + diag(gb(f),-1)
+    %   nothing = sparse (A-G)
+    %
+    % See also diag, spdiags, tril, triu, gb.select.
+
+    if (nargin < 2)
+        k = 0 ;
+    end
+    [am, an] = size (G) ;
+    isvec = (am == 1) || (an == 1) ;
+
+    if (isvec)
+        % C = diag (v,k) is an m-by-m matrix
+        if (am == 1)
+            % convert G to a column vector
+            v = G.' ;
+        else
+            v = G ;
+        end
+        n = length (v) ;
+        m = n + abs (k) ;
+        if (k >= 0)
+            [I, ~, X] = gb.extracttuples (v, struct ('kind', 'zero-based')) ;
+            J = I + int64 (k) ;
+        else
+            [J, ~, X] = gb.extracttuples (v, struct ('kind', 'zero-based')) ;
+            I = J - int64 (k) ;
+        end
+        C = gb.build (I, J, X, m, m) ;
+    else
+        % C = diag (G,k) is a column vector formed from the elements of the kth
+        % diagonal of G
+        C = gb.select ('diag', G, k) ;
+        if (k >= 0)
+            [I, ~, X] = gb.extracttuples (C, struct ('kind', 'zero-based')) ;
+            m = min (an-k, am) ;
+        else
+            [~, I, X] = gb.extracttuples (C, struct ('kind', 'zero-based')) ;
+            m = min (an, am+k) ;
+        end
+        J = zeros (length (X), 1, 'int64') ;
+        C = gb.build (I, J, X, m, 1) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -1511,10 +1587,9 @@ methods %=======================================================================
     % FUTURE: these could also be overloaded (not static) methods:
     %---------------------------------------------------------------------------
 
-    % bsxfun, cummin, cummax, cumprod, diff, inv, issorted, issortedrows,
-    % reshape, sort, diag, spdiags, rem, mod, ...
-
-    % See 'methods double', 'help datatypes' for more options.
+    % spdiags, blkdiag, bsxfun, cummin, cummax, cumprod, diff, inv, issorted,
+    % issortedrows, reshape, sort, rem, mod, mldivide, mrdivide, amd, dmperm,
+    % colamd, lu, chol, qr, ...  See 'methods double' for more options.
 
 %===============================================================================
 % operator overloading =========================================================
@@ -2243,6 +2318,7 @@ methods %=======================================================================
     % Multiple matrices may be concatenated, as [A ; B ; C ; ...].
 
     % FUTURE: this would be much faster if it was a built-in GraphBLAS method.
+    % The version below requires a sort in gb.build.
 
     % determine the size of each matrix and the size of the result
     nmatrices = length (varargin) ;
@@ -2296,24 +2372,43 @@ methods %=======================================================================
 
     function C = subsref (A, S)
     %SUBSREF C = A(I,J) or C = A(I); extract submatrix of a GraphBLAS matrix
-    % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.
-    % With a single index, C = A(I) is equivalent to C = A(I,:).  Linear
-    % indexing is not supported.  C = A(M) for a matrix M is not supported;
-    % see gb.assign for the GraphBLAS masked assignment.
+    % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.  With
+    % a single index, C = A(I) is equivalent to C = A(I,:).  Linear indexing of
+    % a matrix is not supported.  C = A(M) for a matrix M is also not
+    % supported; see gb.extract and gb.assign for the GraphBLAS masked
+    % extraction and assignment.
     %
-    % See also subsagn.
-    S
-    S.subs
+    % See also subsagn, gb.assign, gb.extract.
     if (~isequal (S.type, '()'))
         error ('index type %s not supported\n', S.type) ;
     end
     ndims = length (S.subs) ;
     if (ndims == 1)
+        if (~isvector (A))
+            error ('Linear indexing of a gb matrix is not yet supported\n') ;
+        end
         I = S.subs (1) ;
-        C = gb.extract (A, I) ;
+        whole_vector = isequal (I, {':'}) ;
+        if (whole_vector)
+            I = { } ;
+        end
+        if (size (A, 1) > 1)
+            C = gb.extract (A, I, { }) ;
+        else
+            C = gb.extract (A, { }, I) ;
+        end
+        if (whole_vector)
+            C = C.' ;
+        end
     elseif (ndims == 2)
         I = S.subs (1) ;
+        if (isequal (I, {':'}))
+            I = { } ;
+        end
         J = S.subs (2) ;
+        if (isequal (J, {':'}))
+            J = { } ;
+        end
         C = gb.extract (A, I, J) ;
     else
         error ('%dD indexing not supported\n', ndims) ;
@@ -2338,10 +2433,19 @@ methods %=======================================================================
     ndims = length (S.subs) ;
     if (ndims == 1)
         I = S.subs (1) ;
+        if (isequal (I, {':'}))
+            I = { } ;
+        end
         Cout = gb.assign (Cin, A, I) ;
     elseif (ndims == 2)
         I = S.subs (1) ;
         J = S.subs (2) ;
+        if (isequal (I, {':'}))
+            I = { } ;
+        end
+        if (isequal (J, {':'}))
+            J = { } ;
+        end
         Cout = gb.assign (Cin, A, I, J) ;
     else
         error ('%dD indexing not supported\n', ndims) ;
@@ -2845,8 +2949,10 @@ methods (Static) %==============================================================
     %TYPE get the type of a MATLAB or GraphBLAS matrix.
     % s = type (X) returns the type of X as a string: 'double', 'single',
     % 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64',
-    % 'logical', or 'complex'.  Note that 'complex' is treated as a type,
-    % not an attribute, which differs from the MATLAB convention.
+    % 'logical', or (in the future) 'complex'.  Note that 'complex' is treated
+    % as a type, not an attribute, which differs from the MATLAB convention.
+    %
+    % Note that complex matrices are not yet supported.
     %
     % See also class, gb.
     if (isa (X, 'gb'))
@@ -3006,7 +3112,7 @@ methods (Static) %==============================================================
     % J need not be in any particular order, but gb.build is fastest if I and J
     % are provided in column-major order.
     %
-    % See also sparse, find, gb.extractuples.
+    % See also sparse, find, gb.extracttuples.
 
     [args is_gb] = get_args (varargin {:}) ;
     if (is_gb)
@@ -3039,7 +3145,7 @@ methods (Static) %==============================================================
     % to m, and the indices in J are in the range 1 to n, if A is m-by-n.  This
     % usage is identical to [I,J,X] = find (A) for a MATLAB sparse or dense
     % matrix.  The array X has the same type as A (double, single, int8, ...,
-    % uint8, or complex).
+    % uint8, or (in the future) complex).
     %
     % The default is 'one based', but 'zero based' is faster and uses less
     % memory.  In this case, I and J are returned as int64 arrays.  Entries in
@@ -3102,8 +3208,9 @@ methods (Static) %==============================================================
     % form 'add.mult.type', where '.type' is optional.  For example,
     % '+.*.double' is the conventional semiring for numerical linear algebra,
     % used in MATLAB for C=A*B when A and B are double.  If A or B are complex,
-    % then the '+.*.complex' semiring is used.  GraphBLAS has many more
-    % semirings it can use.  See 'help gb.semiringinfo' for more details.
+    % then the '+.*.complex' semiring is used (once complex matrice are
+    % supported).  GraphBLAS has many more semirings it can use.  See 'help
+    % gb.semiringinfo' for more details.
     %
     % A and B are the input matrices.  They are transposed on input if
     % desc.in0 = 'transpose' (which transposes A), and/or
@@ -3194,8 +3301,8 @@ methods (Static) %==============================================================
     %   'ltthunk'   C = A (A <= thunk)                  '<thunk'
     %   'lethunk'   C = A (A >= thunk)                  '<=thunk'
     %
-    % Note that C = gb.select ('diag',A) does return a vector, but a diagonal
-    % matrix.
+    % Note that C = gb.select ('diag',A) does not returns a vector, but a
+    % diagonal matrix.
     %
     % Many of the operations have equivalent synonyms, as listed above.
     %

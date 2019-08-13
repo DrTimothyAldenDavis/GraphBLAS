@@ -162,74 +162,86 @@ void mexFunction
 
     if (xtype == GrB_BOOL)
     {
-        bool *X = mxGetData (pargin [2]) ;
+        bool empty = 0 ;
+        bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;
         if (dup == NULL) dup = GrB_LOR ;
         OK (GrB_Matrix_build_BOOL (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT8)
     {
-        int8_t *X = mxGetInt8s (pargin [2]) ;
+        int8_t empty = 0 ;
+        int8_t *X = (nvals == 0) ? &empty : mxGetInt8s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT8 ;
         OK (GrB_Matrix_build_INT8 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT16)
     {
-        int16_t *X = mxGetInt16s (pargin [2]) ;
+        int16_t empty = 0 ;
+        int16_t *X = (nvals == 0) ? &empty : mxGetInt16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT16 ;
         OK (GrB_Matrix_build_INT16 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT32)
     {
-        int32_t *X = mxGetInt32s (pargin [2]) ;
+        int32_t empty = 0 ;
+        int32_t *X = (nvals == 0) ? &empty : mxGetInt32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT32 ;
         OK (GrB_Matrix_build_INT32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT64)
     {
-        int64_t *X = mxGetInt64s (pargin [2]) ;
+        int64_t empty = 0 ;
+        int64_t *X = (nvals == 0) ? &empty : mxGetInt64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT64 ;
         OK (GrB_Matrix_build_INT64 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT8)
     {
-        uint8_t *X = mxGetUint8s (pargin [2]) ;
+        uint8_t empty = 0 ;
+        uint8_t *X = (nvals == 0) ? &empty : mxGetUint8s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT8 ;
         OK (GrB_Matrix_build_UINT8 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT16)
     {
-        uint16_t *X = mxGetUint16s (pargin [2]) ;
+        uint16_t empty = 0 ;
+        uint16_t *X = (nvals == 0) ? &empty : mxGetUint16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT16 ;
         OK (GrB_Matrix_build_UINT16 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT32)
     {
-        uint32_t *X = mxGetUint32s (pargin [2]) ;
+        uint32_t empty = 0 ;
+        uint32_t *X = (nvals == 0) ? &empty : mxGetUint32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT32 ;
         OK (GrB_Matrix_build_UINT32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT64)
     {
-        uint64_t *X = mxGetUint64s (pargin [2]) ;
+        uint64_t empty = 0 ;
+        uint64_t *X = (nvals == 0) ? &empty : mxGetUint64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT64 ;
         OK (GrB_Matrix_build_UINT64 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_FP32)
     {
-        float *X = mxGetSingles (pargin [2]) ;
+        float empty = 0 ;
+        float *X = (nvals == 0) ? &empty : mxGetSingles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP32 ;
         OK (GrB_Matrix_build_FP32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_FP64)
     {
-        double *X = mxGetDoubles (pargin [2]) ;
+        double empty = 0 ;
+        double *X = (nvals == 0) ? &empty : mxGetDoubles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP64 ;
         OK (GrB_Matrix_build_FP64 (A, I, J, X, nvals, dup)) ;
     }
     #ifdef GB_COMPLEX_TYPE
     else if (xtype == gb_complex_type)
     {
-        double *X = mxGetComplexDoubles (pargin [2]) ;
+        double empty = 0 ;
+        double *X = (nvals == 0) ? &empty : mxGetComplexDoubles (pargin [2]) ;
         if (dup == NULL) dup = ... ;
         OK (GrB_Matrix_build_UDT (A, I, J, X, nvals, dup)) ;
     }

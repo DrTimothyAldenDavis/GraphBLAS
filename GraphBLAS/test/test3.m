@@ -89,7 +89,7 @@ fprintf ('%12.4f sec : A = gb.build (i0, j0, x, m, n), with i0 and j0 uint64\n',
 tic
 A2 = sparse (A2) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.sparse (A) to convert from GraphBLAS to MATLAB\n', t); 
+fprintf ('%12.4f sec : A = gb.sparse (A) to convert from GraphBLAS to MATLAB\n', t);
 
 assert (isequal (A1, A2)) ;
 

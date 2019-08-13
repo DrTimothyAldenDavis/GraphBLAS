@@ -29,7 +29,7 @@ err = norm (C-G, 1)
 
 E = sparse (rand (8,24)) ;
 C = E + kron (A,B) ;
-G = gb.gbkron (E, '+', '*', A, B) ; 
+G = gb.gbkron (E, '+', '*', A, B) ;
 C-sparse(G)
 
 fprintf ('test14: all tests passed\n') ;
