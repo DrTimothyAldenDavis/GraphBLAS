@@ -17,7 +17,8 @@ int64_t *gb_mxarray_to_list     // return List of integers
 (
     const mxArray *mxList,      // list to extract
     bool *allocated,            // true if output list was allocated
-    int64_t *len                // length of list
+    int64_t *len,               // length of list
+    int64_t *List_max           // max entry in the list, if computed
 )
 {
 
@@ -57,11 +58,9 @@ int64_t *gb_mxarray_to_list     // return List of integers
         // convert from 1-based to 0-based
         int64_t *List = mxMalloc (MAX (*len, 1) * sizeof (int64_t)) ;
         double *List_double = mxGetDoubles (mxList) ;
-        // TODO do this in parallel
-        for (int64_t k = 0 ; k < (*len) ; k++)
-        {
-            List [k] = gb_double_to_integer (List_double [k]) - 1 ;
-        }
+        (*List_max) = -1 ;
+        bool ok = GB_matlab_helper3 (List, List_double, (*len), List_max) ;
+        CHECK_ERROR (!ok, "index must be integer") ;
         (*allocated) = true ;
         return (List) ;
     }

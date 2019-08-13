@@ -9,7 +9,7 @@
 
 // GrB_Vector: same as GrB_Matrix, except it has exactly one column
 
-#include "GB.h"
+#include "GB_printf.h"
 
 GrB_Info GB_Vector_check    // check a GraphBLAS vector
 (

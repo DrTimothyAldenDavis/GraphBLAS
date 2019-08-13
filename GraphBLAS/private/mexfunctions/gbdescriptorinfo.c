@@ -38,7 +38,7 @@ void mexFunction
         OK (GrB_Descriptor_new (&d)) ;
     }
 
-    OK (GxB_Descriptor_fprint (d, "", GxB_COMPLETE, stdout)) ;
+    OK (GxB_Descriptor_fprint (d, "", GxB_COMPLETE, NULL)) ;
     printf ("    d.kind     = ") ;
 
     switch (kind)

@@ -57,14 +57,13 @@ void mexFunction
 
     GrB_Index ni, nj ;
     bool I_allocated, J_allocated ;
-
-    // TODO: if I,J allocated, also find max index in gb_mxarray_to_list
+    int64_t Imax = -1, Jmax = -1 ;
 
     GrB_Index *I = (GrB_Index *) gb_mxarray_to_list (pargin [0],
-        &I_allocated, &ni) ;
+        &I_allocated, &ni, &Imax) ;
 
     GrB_Index *J = (GrB_Index *) gb_mxarray_to_list (pargin [1],
-        &J_allocated, &nj) ;
+        &J_allocated, &nj, &Jmax) ;
 
     CHECK_ERROR (ni != nj, "I, J, and X must be the same size") ;
 
@@ -73,7 +72,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type xtype = gb_mxarray_type (pargin [2]) ;
-
     GrB_Index nvals = mxGetNumberOfElements (pargin [2]) ;
 
     CHECK_ERROR (ni != nvals, "I, J, and X must be the same size") ;
@@ -90,11 +88,16 @@ void mexFunction
     if (nargin < 4)
     {
         // nrows = max entry in I + 1
-        for (int64_t k = 0 ; k < (int64_t) ni ; k++)
+        if (Imax > -1)
         {
-            nrows = MAX (nrows, I [k]) ;
+            // Imax already computed in gb_mxarray_to_list
+            nrows = Imax ;
         }
-        if (ni > 0) nrows++ ;
+        else
+        {
+            // nrows = max entry in I+1
+            nrows = GB_matlab_helper4 (I, ni) ;
+        }
     }
     else
     {
@@ -105,12 +108,16 @@ void mexFunction
 
     if (nargin < 5)
     {
-        // ncols = max entry in J
-        for (int64_t k = 0 ; k < (int64_t) ni ; k++)
+        if (Jmax > -1)
         {
-            ncols = MAX (ncols, I [k]) ;
+            // Jmax already computed in gb_mxarray_to_list
+            ncols = Jmax ;
         }
-        if (ni > 0) ncols++ ;
+        else
+        {
+            // ncols = max entry in J+1
+            ncols = GB_matlab_helper4 (J, nj) ;
+        }
     }
     else
     {

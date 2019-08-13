@@ -938,57 +938,6 @@ GrB_Info GB_error           // log an error in thread-local-storage
 // a NULL name is treated as the empty string
 #define GB_NAME ((name != NULL) ? name : "")
 
-// print to a file f, and check the result
-#define GBPR(...)                                                           \
-{                                                                           \
-    if (f != NULL)                                                          \
-    {                                                                       \
-        if (fprintf (f, __VA_ARGS__) < 0)                                   \
-        {                                                                   \
-            int err = errno ;                                               \
-            return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,                   \
-                "File output error (%d): %s", err, strerror (err)))) ;      \
-        }                                                                   \
-    }                                                                       \
-}
-
-#define GBPR0(...)                  \
-{                                   \
-    if (pr > 0)                     \
-    {                               \
-        GBPR (__VA_ARGS__) ;        \
-    }                               \
-}
-
-// check object->magic and print an error if invalid
-#define GB_CHECK_MAGIC(object,kind)                                     \
-{                                                                       \
-    switch (object->magic)                                              \
-    {                                                                   \
-        case GB_MAGIC :                                                 \
-            /* the object is valid */                                   \
-            break ;                                                     \
-                                                                        \
-        case GB_FREED :                                                 \
-            /* dangling pointer! */                                     \
-            GBPR0 ("already freed!\n") ;                                \
-            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
-                "%s is freed: [%s]", kind, name))) ;                    \
-                                                                        \
-        case GB_MAGIC2 :                                                \
-            /* invalid */                                               \
-            GBPR0 ("invalid\n") ;                                       \
-            return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,              \
-                "%s is invalid: [%s]", kind, name))) ;                  \
-                                                                        \
-        default :                                                       \
-            /* uninitialized */                                         \
-            GBPR0 ("uninititialized\n") ;                               \
-            return (GB_ERROR (GrB_UNINITIALIZED_OBJECT, (GB_LOG,        \
-                "%s is uninitialized: [%s]", kind, name))) ;            \
-    }                                                                   \
-}
-
 GrB_Info GB_entry_check     // print a single value
 (
     const GrB_Type type,    // type of value to print

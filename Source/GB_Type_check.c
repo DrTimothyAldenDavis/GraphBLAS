@@ -15,7 +15,7 @@
 // for additional diagnostics, use:
 // #define GB_DEVELOPER 1
 
-#include "GB.h"
+#include "GB_printf.h"
 
 GrB_Info GB_Type_check      // check a GraphBLAS Type
 (

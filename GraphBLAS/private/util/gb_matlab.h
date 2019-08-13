@@ -14,7 +14,7 @@
 #ifndef GB_MATLAB_H
 #define GB_MATLAB_H
 
-#include "GB.h"
+#include "GB_matlab_helper.h"
 #include "mex.h"
 #include <ctype.h>
 
@@ -247,7 +247,8 @@ int64_t *gb_mxarray_to_list     // return List of integers
 (
     const mxArray *mxList,      // list to extract
     bool *allocated,            // true if output list was allocated
-    int64_t *len                // length of list
+    int64_t *len,               // length of list
+    int64_t *List_max           // max entry in the list, if computed
 ) ;
 
 GrB_Index *gb_mxcell_to_index   // return index list I
@@ -291,6 +292,11 @@ GrB_Monoid gb_mxstring_to_monoid        // return monoid from a string
 (
     const mxArray *mxstring,            // MATLAB string
     const GrB_Type default_type         // default type if not in the string
+) ;
+
+GxB_Format_Value gb_mxstring_to_format  // GxB_BY_ROW or GxB_BY_COL
+(
+    const mxArray *mxformat             // MATLAB string, 'by row' or 'by col'
 ) ;
 
 #endif

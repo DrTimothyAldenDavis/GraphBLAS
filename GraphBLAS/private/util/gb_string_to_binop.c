@@ -13,9 +13,11 @@
 // GrB_PLUS_FP64 operator.  The type is optional.  If not present, it defaults
 // to the default_type parameter.
 
-// type: a MATLAB string defining one of 12 operator types:
+// type: a MATLAB string defining one of 11 operator types:
 //  'logical', 'int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32', 'int64',
-//  'uint64', 'single', 'double', 'complex' (TODO: complex)
+//  'uint64', 'single', and 'double'
+
+// FUTURE: The 'complex' type will be added.
 
 GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
 (

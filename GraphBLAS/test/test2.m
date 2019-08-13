@@ -1,12 +1,8 @@
-
-clear
+function test2
+%TEST2 test
 
 optype = list_types ;
-
-% TODO: 'complex' 
-
 opnames = list_binops ;
-
 
 X = 1 ;
 
@@ -22,7 +18,11 @@ for k1 = 1:length(opnames)
             op = [op '.' optype{k2}] ;
         end
         fprintf ('\nop: [%s]\n', op) ;
-
+        if (k2 > 0)
+            gb.binopinfo (op)
+        else
+            gb.binopinfo (op, 'double')
+        end
     end
-
 end
+

@@ -220,23 +220,16 @@ void mexFunction
         // export I and J as double one-based integers (default)
         //----------------------------------------------------------------------
 
-        // TODO do this in parallel
         if (extract_I)
         {
             double *I_double = mxMalloc (s * sizeof (double)) ;
-            for (int64_t k = 0 ; k < nvals ; k++)
-            {
-                I_double [k] = (double) (I [k] + 1) ;
-            }
+            GB_matlab_helper1 (I_double, I, (int64_t) nvals) ;
             pargout [0] = gb_export_to_mxfull (&I_double, nvals, 1, GrB_FP64) ;
         }
         if (extract_J)
         {
             double *J_double = mxMalloc (s * sizeof (double)) ;
-            for (int64_t k = 0 ; k < nvals ; k++)
-            {
-                J_double [k] = (double) (J [k] + 1) ;
-            }
+            GB_matlab_helper1 (J_double, J, (int64_t) nvals) ;
             pargout [1] = gb_export_to_mxfull (&J_double, nvals, 1, GrB_FP64) ;
         }
     }

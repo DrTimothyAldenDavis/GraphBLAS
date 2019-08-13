@@ -12,6 +12,7 @@
 
 #include "GB_Pending.h"
 #include "GB_iterator.h"
+#include "GB_printf.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
@@ -377,7 +378,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         for (int64_t k = 0 ; k < A->nvec ; k++)
         {
             int64_t j = A->h [k] ;
-            // printf ("Ah ["GBd"] = "GBd"\n", k, j) ;
             if (jlast >= j || j < 0 || j >= A->vdim)
             { 
                 GBPR0 ("->h ["GBd"] = "GBd" invalid\n", k, j) ;

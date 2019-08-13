@@ -10,7 +10,7 @@
 // for additional diagnostics, use:
 // #define GB_DEVELOPER 1
 
-#include "GB.h"
+#include "GB_printf.h"
 
 //------------------------------------------------------------------------------
 // GB_dc: check a single descriptor field

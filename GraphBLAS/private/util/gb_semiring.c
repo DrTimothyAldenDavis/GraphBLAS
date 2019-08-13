@@ -13,8 +13,6 @@
 // built-in semirings
 //------------------------------------------------------------------------------
 
-// TODO: add GB_COMPLEX_TYPE and its semirings
-
 // Using built-in types and operators, 1040 unique semirings can be built.  This
 // count excludes redundant Boolean operators (for example GxB_TIMES_BOOL and
 // GxB_LAND_BOOL are different operators but they are redundant since they
@@ -51,6 +49,8 @@
 // always the same.  This is the type T for the first set, and Boolean for
 // the second and third sets of semirings.
 
+// FUTURE: add GB_COMPLEX_TYPE and its semirings
+
 //------------------------------------------------------------------------------
 
 GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
@@ -85,7 +85,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     CHECK_ERROR (mult_opcode >= GB_USER_R_opcode, "invalid semiring") ;
 
     // this condition is true for all built-in operators, but not required for
-    // user-defined operators.  TODO likely true for complex semirings too.
+    // user-defined operators.  FUTURE: likely true for complex semirings too.
     CHECK_ERROR (mult->xtype != mult->ytype, "invalid semiring") ;
 
     //--------------------------------------------------------------------------
@@ -95,7 +95,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     GB_Type_code xycode = mult->xtype->code ;
     GB_Type_code zcode  = mult->ztype->code ;
 
-    // TODO: xycode and zcode may be GB_UCT_code with gb_complex_type
+    // FUTURE: xycode and zcode may be GB_UCT_code with gb_complex_type
     CHECK_ERROR (xycode >= GB_UDT_code, "invalid semiring") ;
     CHECK_ERROR (zcode  >= GB_UDT_code, "invalid semiring") ;
 
@@ -2286,7 +2286,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     }
 
     //--------------------------------------------------------------------------
-    // not a built-in semiring; TODO add complex semirings
+    // not a built-in semiring; FUTURE: add complex semirings
     //--------------------------------------------------------------------------
 
     ERROR ("invalid semiring")

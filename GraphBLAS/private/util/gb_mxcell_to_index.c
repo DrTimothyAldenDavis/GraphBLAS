@@ -35,7 +35,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
 (
     const mxArray *I_cell,      // MATLAB cell array
     const GrB_Index n,          // dimension of matrix being indexed
-    bool *I_allocated,            // true if output array I is allocated
+    bool *I_allocated,          // true if output array I is allocated
     GrB_Index *ni               // length (I)
 )
 {
@@ -55,13 +55,14 @@ GrB_Index *gb_mxcell_to_index   // return index list I
 
     bool Item_allocated [3] = { false, false, false } ;
     int64_t Item_len [3] = { 0, 0, 0 } ;
+    int64_t Item_max [3] = { -1, -1, -1 } ;
     GrB_Index *Item [3] = { NULL, NULL, NULL } ;
 
     for (int k = 0 ; k < len ; k++)
     {
         // convert I_cell {k} content to an integer list
         Item [k] = gb_mxarray_to_list (mxGetCell (I_cell, k),
-            &Item_allocated [k], &Item_len [k]) ;
+            &Item_allocated [k], &Item_len [k], &Item_max [k]) ;
     }
 
     //--------------------------------------------------------------------------

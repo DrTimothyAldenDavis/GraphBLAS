@@ -21,7 +21,7 @@
 
 #include "gb_matlab.h"
 
-// TODO HACK:
+// TODO HACK: Sauna
 #include "GB_Sauna.h"
 
 void mexFunction

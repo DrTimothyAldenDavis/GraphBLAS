@@ -20,5 +20,6 @@ types = {
     'uint64'
     } ;
 
-%    'complex' } ;  TODO
+% FUTURE: add 'complex'
+
 

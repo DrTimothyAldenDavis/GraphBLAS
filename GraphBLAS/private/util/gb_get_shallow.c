@@ -160,19 +160,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             nzmax = MAX (nrows * ncols, 1) ;
             Xp = (GrB_Index *) mxMalloc ((ncols+1) * sizeof (GrB_Index)) ;
             Xi = (GrB_Index *) mxMalloc (nzmax * sizeof (GrB_Index)) ;
-
-            // TODO do this in parallel
-            for (int64_t j = 0 ; j <= ncols ; j++)
-            {
-                Xp [j] = j * nrows ;
-            }
-            for (int64_t j = 0 ; j < ncols ; j++)
-            {
-                for (int64_t i = 0 ; i < nrows ; i++)
-                {
-                    Xi [j * nrows + i] = i ;
-                }
-            }
+            GB_matlab_helper2 (Xp, Xi, (int64_t) ncols, (int64_t) nrows) ;
         }
 
         // get the numeric data

@@ -23,7 +23,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 1 && nargout <= 1,
-        "usage: f = gb.format ; or gb.format (f)") ;
+        "usage: f = gb.format or gb.format (f)") ;
 
     //--------------------------------------------------------------------------
     // get/set the format
@@ -31,7 +31,19 @@ void mexFunction
 
     GxB_Format_Value format ;
 
-    if (nargin > 0)
+    if (nargin == 0)
+    {
+
+        //----------------------------------------------------------------------
+        // format = gb.format
+        //----------------------------------------------------------------------
+
+        // get the global format
+        GxB_Format_Value format ;
+        OK (GxB_get (GxB_FORMAT, &format)) ;
+
+    }
+    else // if (nargin == 1)
     {
 
         if (mxIsChar (pargin [0]))
@@ -42,21 +54,7 @@ void mexFunction
             //------------------------------------------------------------------
 
             // set the global format
-            #define LEN 256
-            char format_string [LEN+2] ;
-            gb_mxstring_to_string (format_string, LEN, pargin [0], "format") ;
-            if (MATCH (format_string, "by row"))
-            {
-                format = GxB_BY_ROW  ;
-            }
-            else if (MATCH (format_string, "by col"))
-            {
-                format = GxB_BY_COL  ;
-            }
-            else
-            {
-                ERROR ("unknown format") ;
-            }
+            format = gb_mxstring_to_format (pargin [0]) ;
             OK (GxB_set (GxB_FORMAT, format)) ;
 
         }
@@ -72,22 +70,10 @@ void mexFunction
             OK (GxB_get (G, GxB_FORMAT, &format)) ;
             OK (GrB_free (&G)) ;
         }
-
-    }
-    else
-    {
-
-        //----------------------------------------------------------------------
-        // format = gb.format
-        //----------------------------------------------------------------------
-
-        // get the global format
-        GxB_Format_Value format ;
-        OK (GxB_get (GxB_FORMAT, &format)) ;
     }
 
     //--------------------------------------------------------------------------
-    // return the format
+    // return result
     //--------------------------------------------------------------------------
 
     if (format == GxB_BY_ROW)

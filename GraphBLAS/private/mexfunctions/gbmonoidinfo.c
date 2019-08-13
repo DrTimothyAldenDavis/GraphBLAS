@@ -42,6 +42,6 @@ void mexFunction
     }
 
     GrB_Monoid op = gb_mxstring_to_monoid (pargin [0], type) ;
-    OK (GxB_Monoid_fprint (op, "", GxB_COMPLETE, stdout)) ;
+    OK (GxB_Monoid_fprint (op, "", GxB_COMPLETE, NULL)) ;
 }
 

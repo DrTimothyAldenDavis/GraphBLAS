@@ -9,7 +9,7 @@
 
 // Only built-in GraphBLAS types and operators are supported.
 
-// TODO: complex semirings
+// FUTURE: complex semirings
 
 #include "gb_matlab.h"
 

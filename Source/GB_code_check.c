@@ -9,7 +9,7 @@
 
 // Only prints entries of built-in types; user-defined types can't be printed.
 
-#include "GB.h"
+#include "GB_printf.h"
 
 GrB_Info GB_code_check          // print an entry using a type code
 (

@@ -35,8 +35,9 @@
 //      xor   lxor
 
 // Total # of ops: 25*11 = 275, not including GrB_LOR, GrB_LAND, GrB_XOR,
-// which are equivalent to the GxB_*_BOOL versions, and not including the
-// complex operators (TODO)
+// which are equivalent to the GxB_*_BOOL versions.
+
+// FUTURE: add complex operators
 
 GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 (

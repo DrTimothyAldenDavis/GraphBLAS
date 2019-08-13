@@ -178,10 +178,10 @@ classdef gb
 %       gb.semiringinfo (s, type)   list properties of a semiring
 %       t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %       c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
-%       f = gb.format (f)           set/get matrix format to use in GraphBLAS
 %       e = gb.nvals (A)            number of entries in a matrix
 %       G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %       s = gb.type (X)             get the type of a MATLAB or gb matrix X
+%       f = gb.format (f)           set/get matrix format to use in GraphBLAS
 %       G = gb.build (I, J, X, m, n, dup, type, desc)
 %                           build a GraphBLAS matrix from a list of entries
 %       [I,J,X] = gb.extracttuples (A, desc)
@@ -347,7 +347,8 @@ methods %=======================================================================
     % gb.extracttuples to return those entries.
     %
     % See also gb.extracttuples, find.
-    [~, ~, X] = find (G) ;  % TODO write gbnonzeros to extract just X
+    T = gbselect ('nonzero', G.opaque, struct ('kind', 'gb')) ;
+    X = gbextractvalues (T) ;
     end
 
     %---------------------------------------------------------------------------
@@ -475,8 +476,6 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
     % disp: display the contents of a GraphBLAS matrix
     %---------------------------------------------------------------------------
-
-    % TODO simplify output of GxB_Matrix_print, ...
 
     function disp (G, level)
     %DISP display the contents of a GraphBLAS object.
@@ -1630,9 +1629,14 @@ methods %=======================================================================
     % type of A and B differ, the type of A is used.  That is, C=A*B is the
     % same as C = gb.mxm (['+.*' gb.type(A)], A, B).  A and B can be GraphBLAS
     % matrices or MATLAB sparse or full matrices, in any combination.
+    % If either A or B are scalars, C=A*B is the same as C=A.*B.
     %
-    % See also gb.mxm.
-    C = gb.mxm ('+.*', A, B) ;
+    % See also gb.mxm, gb.emult, times.
+    if (isscalar (A) | isscalar (B))
+        C = A .* B ;
+    else
+        C = gb.mxm ('+.*', A, B) ;
+    end
     end
 
     %---------------------------------------------------------------------------
@@ -1788,7 +1792,7 @@ methods %=======================================================================
     if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
         if (b == 0)
             % C is identity, of the same type as A
-            % TODO ones (...) needs to be 'double' of A is complex.
+            % FUTURE: ones (...) needs to be 'double' if A is complex.
             C = gb.build (1:n, 1:n, ones (1, n, gb.type (A)), n, n) ;
         else
             % C = A^b where b > 0 is an integer
@@ -2295,11 +2299,12 @@ methods %=======================================================================
     %SUBSREF C = A(I,J) or C = A(I); extract submatrix of a GraphBLAS matrix
     % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.
     % With a single index, C = A(I) is equivalent to C = A(I,:).  Linear
-    % indexing is not supported.
-    %
-    % TODO: handle C = S (M) for a matrix M
+    % indexing is not supported.  C = A(M) for a matrix M is not supported;
+    % see gb.assign for the GraphBLAS masked assignment.
     %
     % See also subsagn.
+    S
+    S.subs
     if (~isequal (S.type, '()'))
         error ('index type %s not supported\n', S.type) ;
     end
@@ -2324,10 +2329,8 @@ methods %=======================================================================
     %SUBSAGN C(I,J) = A or C(I) = A; assign submatrix into a GraphBLAS matrix
     % C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix C.
     % With a single index, C(I) = A is equivalent to C(I,:) = A.  Linear
-    % indexing is not supported.
-    %
-    % TODO: handle C (M) = S for a matrix M
-    %
+    % indexing is not supported.  C(M) = A for a matrix M is not supported; see
+    % gb.assign for the GraphBLAS masked assignment.
     %
     % See also subsref.
     if (~isequal (S.type, '()'))
@@ -2347,22 +2350,17 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % subsindex: C = B (A)
+    % subsindex: C = B (G)
     %---------------------------------------------------------------------------
 
-    function C = subsindex (A, B)
-    error ('subsindex not yet implemented') ;    % TODO C = B(A)
-    % C = gb.assign using A as the mask?
+    function C = subsindex (G, B)
+    error ('subsindex not yet implemented') ;
     end
 
 end
 
 %===============================================================================
 methods (Static) %==============================================================
-%===============================================================================
-
-%===============================================================================
-% Static methods: user-accessible utility functions ============================
 %===============================================================================
 
     %---------------------------------------------------------------------------
@@ -2494,8 +2492,6 @@ methods (Static) %==============================================================
     %   ainv - negate       -x          |  one 1             1
     %   minv                1/x         |  abs               abs(x)
     %
-    % TODO add complex unary operators
-    %
     % The logical operator, lnot, also comes in 11 types.  z = lnot.double (x)
     % tests the condition (x ~= 0), and returns the double value 1.0 if true,
     % or 0.0 if false.
@@ -2514,6 +2510,8 @@ methods (Static) %==============================================================
     %
     % See also gb, gb.binopinfo, gb.monoidinfo, gb.semiringinfo,
     % gb.descriptorinfo.
+
+    % FUTURE: add complex unary operators
 
     if (nargin == 0)
         help gb.unopinfo
@@ -2585,8 +2583,6 @@ methods (Static) %==============================================================
     %   &   && and land  x & y          |   <=  le           x <= y
     %   xor lxor                        |
     %
-    % TODO add complex operators
-    %
     % The three logical operators, lor, land, and lxor, also come in 11 types.
     % z = lor.double (x,y) tests the condition (x ~= 0) || (y ~= 0), and returns
     % the double value 1.0 if true, or 0.0 if false.
@@ -2604,6 +2600,8 @@ methods (Static) %==============================================================
     % the validity of an op with the MATLAB try/catch mechanism.
     %
     % See also gb, gb.unopinfo, gb.semiringinfo, gb.descriptorinfo.
+
+    % FUTURE: add complex binary operators
 
     if (nargin == 0)
         help gb.binopinfo
@@ -2654,7 +2652,7 @@ methods (Static) %==============================================================
     %
     % See also gb.unopinfo, gb.binopinfo, gb.semiringinfo, gb.descriptorinfo.
 
-    % TODO add complex monoids
+    % FUTURE: add complex monoids
 
     if (nargin == 0)
         help gb.monoidinfo
@@ -2711,7 +2709,7 @@ methods (Static) %==============================================================
     %
     % See also gb, gb.unopinfo, gb.binopinfo, gb.descriptorinfo.
 
-    % TODO add complex semirings
+    % FUTURE: add complex semirings
 
     if (nargin == 0)
         help gb.semiringinfo
@@ -2789,95 +2787,6 @@ methods (Static) %==============================================================
     end
 
     %---------------------------------------------------------------------------
-    % format: get/set the default GraphBLAS matrix format
-    %---------------------------------------------------------------------------
-
-    function f = format (arg)
-    %GB.FORMAT get/set the default GraphBLAS matrix format.
-    %
-    % In its ANSI C interface, SuiteSparse:GraphBLAS stores its matrices by
-    % row, by default, since that format tends to be fastest for graph
-    % algorithms, but it can also store its matrices by column.  MATLAB sparse
-    % and dense sparse matrices are always stored by column.  For better
-    % compatibility with MATLAB sparse matrices, the default for the MATLAB
-    % interface for SuiteSparse:GraphBLAS is to store matrices by column.  This
-    % has performance implications, and algorithms should be designed
-    % accordingly.  The default format can be can changed via:
-    %
-    %   gb.format ('by row')
-    %   gb.format ('by col')
-    %
-    % The current default global format can be queried with
-    %
-    %   f = gb.format ;
-    %
-    % which returns the string 'by row' or 'by col'.
-    %
-    % Since MATLAB sparse and dense matrices are always 'by col', converting
-    % them to a gb matrix 'by row' requires an internal transpose of the
-    % format.  That is, if A is a MATLAB sparse or dense matrix,
-    %
-    %   gb.format ('by row')
-    %   G = gb (A)
-    %
-    % Constructs a double gb matrix G that is held by row, but this takes more
-    % work than if G is held by column:
-    %
-    %   gb.format ('by col')
-    %   G = gb (A)
-    %
-    % If a subsequent algorithm works better with its matrices held by row,
-    % then this transformation can save significant time in the long run.
-    % Graph algorithms tend to be faster with their matrices held by row,
-    % since the edge (i,j) is typically the entry G(i,j) in the matrix G,
-    % and most graph algorithms need to know the outgoing edges of node i.
-    % This is G(i,:), which is very fast if G is held by row, but very slow
-    % if G is held by column.
-    %
-    % When the gb.format (f) is changed, all subsequent matrices are created in
-    % the given format f.  All prior matrices created before gb.format (f) are
-    % kept in their same format; this setting only applies to new matrices.
-    % Operations on matrices can be done with any mix of with different
-    % formats.  The format only affects time and memory usage, not the results.
-    %
-    % This setting is reset to 'by col', by 'clear all' or by gb.clear.
-    %
-    % To query the format for a given GraphBLAS matrix G, use the following
-    % (which does not affect the global format setting):
-    %
-    %   f = format (G)
-    %
-    % TODO G = gb.format (G, 'by row') ; to change the format of one matrix G
-    %
-    % Examples:
-    %
-    %   A = sparse (rand (4))
-    %   gb.format ('by row') ;
-    %   G = gb (A)
-    %   gb.format (G)
-    %   gb.format ('by col') ;      % set the format to 'by col'
-    %   G = gb (A)
-    %   gb.format (G)               % query the format of G
-    %
-    % See also gb.
-
-    if (nargin == 1)
-        if (isa (arg, 'gb'))
-            % f = gb.format (G) ; get the format of the matrix G
-            f = gbformat (arg.opaque) ;
-        else
-            % f = gb.format (f) ; set the global format for all future matrices
-            f = gbformat (arg) ;
-        end
-    elseif (nargin == 0)
-        % f = gb.format ; get the global format
-        f = gbformat ;
-    else
-        error ('usage: f = gb.format, gb.format (f), or gb.format (G)') ;
-    end
-    end
-
-    %---------------------------------------------------------------------------
     % gb.nvals: number of entries in a GraphBLAS matrix
     %---------------------------------------------------------------------------
 
@@ -2901,10 +2810,6 @@ methods (Static) %==============================================================
         e = gbnvals (A) ;
     end
     end
-
-%===============================================================================
-% Static methods that return a GraphBLAS matrix or a MATLAB matrix =============
-%===============================================================================
 
     %---------------------------------------------------------------------------
     % gb.empty: construct an empty GraphBLAS sparse matrix
@@ -2949,6 +2854,96 @@ methods (Static) %==============================================================
         s = gbtype (X.opaque) ;
     else
         s = gbtype (X) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % gb.format: get/set the default GraphBLAS matrix format
+    %---------------------------------------------------------------------------
+
+    function f = format (arg)
+    %GB.FORMAT get/set the default GraphBLAS matrix format.
+    %
+    % In its ANSI C interface, SuiteSparse:GraphBLAS stores its matrices by
+    % row, by default, since that format tends to be fastest for graph
+    % algorithms, but it can also store its matrices by column.  MATLAB sparse
+    % and dense sparse matrices are always stored by column.  For better
+    % compatibility with MATLAB sparse matrices, the default for the MATLAB
+    % interface for SuiteSparse:GraphBLAS is to store matrices by column.  This
+    % has performance implications, and algorithms should be designed
+    % accordingly.  The default format can be can changed via:
+    %
+    %   gb.format ('by row')
+    %   gb.format ('by col')
+    %
+    % which changes the format of all subsequent GraphBLAS matrices.  Existing
+    % gb matrices are not affected.
+    %
+    % The current default global format can be queried with
+    %
+    %   f = gb.format ;
+    %
+    % which returns the string 'by row' or 'by col'.
+    %
+    % Since MATLAB sparse and dense matrices are always 'by col', converting
+    % them to a gb matrix 'by row' requires an internal transpose of the
+    % format.  That is, if A is a MATLAB sparse or dense matrix,
+    %
+    %   gb.format ('by row')
+    %   G = gb (A)
+    %
+    % Constructs a double gb matrix G that is held by row, but this takes more
+    % work than if G is held by column:
+    %
+    %   gb.format ('by col')
+    %   G = gb (A)
+    %
+    % If a subsequent algorithm works better with its matrices held by row,
+    % then this transformation can save significant time in the long run.
+    % Graph algorithms tend to be faster with their matrices held by row, since
+    % the edge (i,j) is typically the entry G(i,j) in the matrix G, and most
+    % graph algorithms need to know the outgoing edges of node i.  This is
+    % G(i,:), which is very fast if G is held by row, but very slow if G is
+    % held by column.
+    %
+    % When the gb.format (f) is changed, all subsequent matrices are created in
+    % the given format f.  All prior matrices created before gb.format (f) are
+    % kept in their same format; this setting only applies to new matrices.
+    % Operations on matrices can be done with any mix of with different
+    % formats.  The format only affects time and memory usage, not the results.
+    %
+    % This setting is reset to 'by col', by 'clear all' or by gb.clear.
+    %
+    % To query the format for a given GraphBLAS matrix G, use the following
+    % (which does not affect the global format setting):
+    %
+    %   f = gb.format (G)
+    %
+    % Examples:
+    %
+    %   A = sparse (rand (4))
+    %   gb.format ('by row') ;
+    %   G = gb (A)
+    %   gb.format (G)
+    %   gb.format ('by col') ;      % set the format to 'by col'
+    %   G = gb (A)
+    %   gb.format (G)               % query the format of G
+    %
+    % See also gb.
+
+    if (nargin == 0)
+        % f = gb.format ; get the global format
+        f = gbformat ;
+    elseif (nargin == 1)
+        if (isa (arg, 'gb'))
+            % f = gb.format (G) ; get the format of the matrix G
+            f = gbformat (arg.opaque) ;
+        else
+            % f = gb.format (f) ; set the global format for all future matrices
+            f = gbformat (arg) ;
+        end
+    else
+        error ('usage: f = gb.format or f = gb.format (f)') ;
     end
     end
 
@@ -3447,7 +3442,7 @@ methods (Static) %==============================================================
     %
     % See also gb.vreduce; sum, prod, max, min (with the 'all' parameter).
 
-    % TODO add complex monoids.
+    % FUTURE: add complex monoids.
 
     [args is_gb] = get_args (varargin {:}) ;
     if (is_gb)

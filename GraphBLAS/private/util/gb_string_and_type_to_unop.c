@@ -19,7 +19,7 @@
 
 // Total # of ops: 6*11 = 66, not including GrB_LNOT,
 // which is equivalent to GxB_LNOT_BOOL versions,
-// not including the TODO complex unary operators.
+// FUTURE: not including the complex unary operators.
 
 GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 (

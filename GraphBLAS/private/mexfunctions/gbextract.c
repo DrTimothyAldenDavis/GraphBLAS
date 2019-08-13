@@ -217,32 +217,6 @@ void mexFunction
     // compute C<M> += A(I,J) or AT(I,J)
     //--------------------------------------------------------------------------
 
-    /*
-    GxB_print (A, 3) ;
-    printf ("ni "GBd"\n",  ni) ;
-    printf ("nj "GBd"\n",  nj) ;
-    printf ("ni is GxB_RANGE: %d GxB_STRIDE %d GxB_BACKWARDS %d\n",
-        ni == GxB_RANGE, ni == GxB_STRIDE, ni == GxB_BACKWARDS) ;
-    printf ("nj is GxB_RANGE: %d GxB_STRIDE %d GxB_BACKWARDS %d\n",
-        nj == GxB_RANGE, nj == GxB_STRIDE, nj == GxB_BACKWARDS) ;
-
-    if (ni == GxB_RANGE) printf ("I is "GBd":"GBd"\n", I [0], I [1]) ;
-    if (ni == GxB_STRIDE)
-        printf ("I is "GBd":"GBd":"GBd"\n", I[0], I[2], I[1]) ;
-    if (ni == GxB_BACKWARDS)
-        printf ("I is "GBd":-"GBd":"GBd"\n", I[0], I[2], I[1]) ;
-
-    if (nj == GxB_RANGE) printf ("J is "GBd":"GBd"\n", J [0], J [1]) ;
-    if (nj == GxB_STRIDE)
-        printf ("J is "GBd":"GBd":"GBd"\n", J[0], J[2], J[1]) ;
-    if (nj == GxB_BACKWARDS)
-        printf ("J is "GBd":-"GBd":"GBd"\n", J[0], J[2], J[1]) ;
-
-    GxB_print (C, 3) ;
-    GxB_print (desc, 3) ;
-    if (M != NULL) GxB_print (M, 3) ;
-    */
-
     OK (GrB_extract (C, M, accum, A, I, ni, J, nj, desc)) ;
 
     //--------------------------------------------------------------------------

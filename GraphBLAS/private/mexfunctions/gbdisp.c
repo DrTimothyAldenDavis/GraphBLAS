@@ -41,7 +41,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Matrix X = gb_get_shallow (pargin [0]) ;
-    OK (GxB_Matrix_fprint (X, "", level, stdout)) ;
+    OK (GxB_Matrix_fprint (X, "", level, NULL)) ;
     printf ("\n") ;
     OK (GrB_free (&X)) ;
 }
