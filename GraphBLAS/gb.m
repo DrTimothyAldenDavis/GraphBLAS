@@ -156,7 +156,6 @@ classdef gb
 %       C = vertcat (A, B)      C = [A ; B]
 %       C = subsref (A, I, J)   C = A (I,J)
 %       C = subsasgn (A, I, J)  C (I,J) = A
-%       C = subsindex (A, B)    C = B (A)
 %
 % Static Methods:
 %

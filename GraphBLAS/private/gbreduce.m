@@ -1,7 +1,7 @@
-function Cout = gbreduce (Cin, M, accum, op, A, desc)
+function cout = gbreduce (cin, accum, op, A, desc)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-error ('gb mexFunction not found; use gbmake to compile GraphBLAS') ;
+error ('mexFunction not found; use gbmake to compile GraphBLAS') ;
 

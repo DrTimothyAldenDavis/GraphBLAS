@@ -33,6 +33,10 @@ mexFunctions:
     cd private
     gbmake
 
+To run a demo, go to the GraphBLAS/GraphBLAS/demo folder and type:
+
+    gbdemo
+
 To test your installation, go to GraphBLAS/GraphBLAS/test and type:
 
     testall

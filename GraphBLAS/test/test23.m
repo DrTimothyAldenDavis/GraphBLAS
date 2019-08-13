@@ -1,6 +1,9 @@
 function test23
 %TEST23 test min and max
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 rng ('default') ;
 for trial = 1:40
     for m = 1:10

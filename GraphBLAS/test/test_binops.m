@@ -1,8 +1,8 @@
-function [binops synonyms] = list_binops
-%LIST_BINOPS return a cell array of strings, listing all binary operators
-% Types are not included; see list_types.
+function [binops synonyms] = test_binops
+%TEST_BINOPS return a cell array of strings, listing all binary operators
+% Types are not included; see test_types.
 %
-% [binops synonyms] = list_binops ;
+% [binops synonyms] = test_binops ;
 %
 % returns a list of the names of the 25 operators in binops, and a list of
 % their synonyms in the 2nd output.
@@ -30,7 +30,7 @@ binops = {
     'isge'
     'isle'
     '=='
-    '!='
+    '~='
     '>'
     '<'
     '>='
@@ -60,6 +60,4 @@ synonyms = {
     'ge'
     'le'
     'lt'
-    'gt'
-    '~='
-    '=' } ;
+    'gt' } ;

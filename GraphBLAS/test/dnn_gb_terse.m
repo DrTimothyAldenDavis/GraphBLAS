@@ -2,6 +2,9 @@ function Y = dnn_gb_terse (W, bias, Y0, option)
 % Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
 % and bias vectors.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 layers = length (W) ;
 n = size (Y0, 2) ;
 

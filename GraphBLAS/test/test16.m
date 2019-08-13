@@ -1,4 +1,8 @@
-clear all
+function test16
+%TEST16 test gb.extract
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 
@@ -7,7 +11,6 @@ A = 100 * sprand (n, n, 0.5) ;
 AT = A' ;
 M = sparse (rand (n)) > 0.5 ;
 Cin = sprand (n, n, 0.5) ;
-
 
 Cout = gb.extract (Cin, A) ;
 assert (isequal (A, sparse (Cout))) ;

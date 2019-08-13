@@ -1,12 +1,15 @@
-function test
+function test1
 %TEST1 test gb
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 X = 100 * sprand (3, 4, 0.4)
 
 % types = { 'double' } ;
 
-types = list_types ;
+types = test_types ;
 
 m = 2 ;
 n = 3 ;
@@ -17,7 +20,6 @@ for k = 1:length (types)
     fprintf ('\n---- A = gb (X) :\n') ;
     A = gb (X)
     Z = sparse (A)
-    assert (spok (Z) == 1) ;
     assert (isequal (Z, X)) ;
 
     fprintf ('\n---- A = gb (X, ''%s'') :\n', type) ;
@@ -41,4 +43,6 @@ for k = 1:length (types)
     end
 
 end
+
+fprintf ('test1: all tests passed\n') ;
 

@@ -1,8 +1,10 @@
 function test13
 %TEST13 test find and gb.extracttuples
-% clear all
 
-list = list_types ;
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+list = test_types ;
 
 A = 100 * rand (3) ;
 [I, J, X] = find (A) ;

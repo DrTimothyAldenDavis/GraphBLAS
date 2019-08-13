@@ -1,5 +1,8 @@
-function test23
-%TEST23 test any, all
+function test24
+%TEST24 test any, all
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 for trial = 1:40

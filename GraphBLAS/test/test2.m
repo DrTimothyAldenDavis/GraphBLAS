@@ -1,10 +1,11 @@
 function test2
-%TEST2 test
+%TEST2 test binary operators
 
-optype = list_types ;
-opnames = list_binops ;
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-X = 1 ;
+optype = test_types ;
+opnames = test_binops ;
 
 for k1 = 1:length(opnames)
 
@@ -25,4 +26,6 @@ for k1 = 1:length(opnames)
         end
     end
 end
+
+fprintf ('test2: all tests passed\n') ;
 

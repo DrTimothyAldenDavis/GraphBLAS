@@ -1,4 +1,8 @@
-clear all
+function test9
+%TEST9 test dnn
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 levels = 4 ;
@@ -18,7 +22,13 @@ Y3 = dnn_gb_terse (W, bias, Y0) ;
 Y4 = dnn_gb_terse (W, bias, Y0, 'gb') ;
 % Y5 = dnn_gb_overload (W, bias, Y0) ;
 
-err = norm (Y1-Y2,1)
-err = norm (Y1-Y3,1)
-err = norm (Y1-Y4,1)
+err = norm (Y1-Y2,1) ;
+assert (err < 1e-5) ;
+err = norm (Y1-Y3,1) ;
+assert (err < 1e-5) ;
+err = norm (Y1-Y4,1) ;
+assert (err < 1e-5) ;
+
+fprintf ('test9: all tests passed\n') ;
+
 

@@ -1,7 +1,10 @@
 function test15
 %TEST15 unary operators
 
-types = list_types ;
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+types = test_types ;
 ops = { 'identity', '~', '-', '1', 'minv', 'abs' }
 
 for k1 = 1:length (ops)
@@ -11,4 +14,6 @@ for k1 = 1:length (ops)
         gb.unopinfo (op) ;
     end
 end
+
+fprintf ('test15: all tests passed\n') ;
 

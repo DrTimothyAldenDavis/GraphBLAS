@@ -1,6 +1,6 @@
 function Y = dnn_matlab (W, bias, Y0)
 % Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
-% and bias vectors.
+% and bias vectors.  Slightly revised from graphchallenge.org.
 Y = Y0 ; % Initialize feature vectors.
 for i=1:length(W) % Loop through each weight layer W{i}
     % Propagate through layer.

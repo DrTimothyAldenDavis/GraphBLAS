@@ -1,4 +1,8 @@
-clear all
+function test12
+%TEST12 test gb.eadd, gb.emult
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 A = sparse (rand (2)) ;
@@ -47,10 +51,15 @@ F = sparse (rand (2)) ;
 D = F + A.*B ;
 H = gb.emult (F, '+', '*', A, B) ; 
 D-sparse(H)
+assert (isequal (D, sparse (H))) ;
 
 G = gb.eadd ('+', A, B)
 C = A+B
+assert (isequal (C, sparse (G))) ;
 
 H = gb.emult ('*', A, B)
 D = A.*B
+assert (isequal (D, sparse (H))) ;
+
+fprintf ('test12: all tests passed\n') ;
 

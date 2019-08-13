@@ -1,6 +1,9 @@
 function testall
+%TESTALL test GraphBLAS MATLAB interface
 
-addpath ../../Test/spok
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 test1
 test2
 test3
@@ -23,6 +26,8 @@ test19
 test20
 test21
 test22
+test23
+test24
 
 fprintf ('\ntestall: all tests passed\n') ;
 

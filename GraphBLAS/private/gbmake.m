@@ -8,10 +8,11 @@ function gbmake (what)
 % GraphBLAS library must already be compiled and installed.  MATLAB 9.4
 % (R2018a) or later is required.
 %
-% For the Mac, the GraphBLAS library must be installed in /usr/local/lib/
-% as libgraphblas.dylib.  It cannot be used where it is created in ../build,
-% because of the security settings.  For Unix/Linux, the library used is
-% ../build/libgraph.so if found, or in /usr/local/lib if not found there.
+% For the Mac, the GraphBLAS library must be installed in /usr/local/lib/ as
+% libgraphblas.dylib.  It cannot be used where it is created in ../build,
+% because of the default Mac security settings.  For Unix/Linux, the library
+% used is ../build/libgraph.so if found, or in /usr/local/lib if not found
+% there.
 %
 % See also: mex, version
 

@@ -1,6 +1,9 @@
 function test20
 %TEST20 test bandwidth, isdiag, ceil, floor, round, fix
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 rng ('default') ;
 for trial = 1:40
     fprintf ('.') ;

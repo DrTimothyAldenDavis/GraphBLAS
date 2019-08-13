@@ -12,7 +12,7 @@
 // op_name: a MATLAB string defining the operator name (25 kinds):
 // 10: 1st, 2nd, min, max, +, -, rminus, *, /, \
 //  6: iseq, isne, isgt, islt, isge, isle,
-//  6: ==, !=, >, <, >=, <=,
+//  6: ==, ~=, >, <, >=, <=,
 //  3: ||, &&, xor
 
 // The following synonyms are allowed for specifying these operators:
@@ -24,8 +24,8 @@
 //      *     times
 //      /     div
 //      \     rdiv
-//      ==    =     eq
-//      !=    ~=    ne
+//      ==    eq
+//      ~=    ne
 //      >     gt
 //      <     lt
 //      >=    ge
@@ -352,8 +352,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
         #endif
 
     }
-    else if (MATCH (op_name, "==") || MATCH (op_name, "=")  ||
-             MATCH (op_name, "eq"))
+    else if (MATCH (op_name, "==") || MATCH (op_name, "eq"))
     {
 
         if (type == GrB_BOOL  ) return (GrB_EQ_BOOL  ) ;
@@ -372,8 +371,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
         #endif
 
     }
-    else if (MATCH (op_name, "!=") || MATCH (op_name, "~=") ||
-             MATCH (op_name, "ne"))
+    else if (MATCH (op_name, "~=") || MATCH (op_name, "ne"))
     {
 
         if (type == GrB_BOOL  ) return (GrB_NE_BOOL  ) ;

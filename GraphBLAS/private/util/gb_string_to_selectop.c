@@ -11,23 +11,6 @@
 
 //  select operators, with their equivalent aliases
 
-//  tril
-//  triu
-//  diag
-//  offdiag
-//  nonzero     ne0         !=0   ~=0
-//  eqzero      eq0         ==0
-//  gtzero      gt0         >0
-//  gezero      ge0         >=0
-//  ltzero      lt0         <0
-//  lezero      le0         <=0
-//  nethunk     !=thunk     ~=thunk
-//  eqthunk     ==thunk
-//  gtthunk     >thunk
-//  gethunk     >=thunk
-//  ltthunk     <thunk
-//  lethunk     <=thunk
-
 GxB_SelectOp gb_string_to_selectop      // return select operator from a string
 (
     char *opstring                      // string defining the operator

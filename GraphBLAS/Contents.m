@@ -100,7 +100,6 @@
 %   C = vertcat (A, B)      C = [A ; B]
 %   C = subsref (A, I, J)   C = A (I,J)
 %   C = subsasgn (A, I, J)  C (I,J) = A
-%   C = subsindex (A, B)    C = B (A)
 %
 % Static Methods:
 %
@@ -112,10 +111,10 @@
 %   gb.semiringinfo (s, type)   list properties of a semiring
 %   t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %   c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
-%   f = gb.format (f)           set/get matrix format to use in GraphBLAS
 %   e = gb.nvals (A)            number of entries in a matrix
 %   G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %   s = gb.type (X)             get the type of a MATLAB or gb matrix X
+%   f = gb.format (f)           set/get matrix format to use in GraphBLAS
 %   G = gb.build (...)          build a gb matrix from a list of entries
 %   [I,J,X] = gb.extracttuples (A) extract all entries from a matrix
 %

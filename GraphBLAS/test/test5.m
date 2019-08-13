@@ -1,6 +1,9 @@
 function test5
 %TEST5 test gb.descriptorinfo
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 list_out  = { [ ], 'default', 'replace' } ;
 list_in   = { [ ], 'default', 'transpose' } ;
 list_mask = { [ ], 'default', 'complement' } ;

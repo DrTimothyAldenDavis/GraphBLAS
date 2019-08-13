@@ -22,7 +22,6 @@
 // error handling
 //------------------------------------------------------------------------------
 
-// TODO use VA_ARG for ERROR macro
 #define ERROR2(message, arg) \
     mexErrMsgIdAndTxt ("GraphBLAS:error", message, arg) ;
 #define ERROR(message) mexErrMsgIdAndTxt ("GraphBLAS:error", message) ;

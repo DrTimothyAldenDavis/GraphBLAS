@@ -1,8 +1,12 @@
+function test4
 %TEST4 list all 1865 possible semirings
 % This count excludes operator synonyms
 
-types = list_types ;
-ops = list_binops ;
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+types = test_types ;
+ops = test_binops ;
 
 nsemirings = 0 ;
 
@@ -26,4 +30,6 @@ for k1 = 1:length (ops)
 end
 
 nsemirings
+
+fprintf ('\ntest4: all tests passed\n') ;
 

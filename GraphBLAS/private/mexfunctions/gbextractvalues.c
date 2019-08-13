@@ -112,7 +112,7 @@ void mexFunction
     #ifdef GB_COMPLEX_TYPE
     else if (xtype == gb_complex_type)
     {
-            double *X = mxMalloc (s * sizeof (double complex)) ;
+        double *X = mxMalloc (s * sizeof (double complex)) ;
         OK (GrB_Matrix_extractTuples_UDT (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, gb_complex_type) ;
     }

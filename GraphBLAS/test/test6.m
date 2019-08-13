@@ -1,4 +1,8 @@
-clear all
+function test6
+%TEST6 test gb.mxm
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 A = sparse (rand (2)) ;
@@ -7,7 +11,7 @@ B = sparse (rand (2)) ;
 C = A*B ;
 
 G = gb.mxm ('+.*', A, B) ;
-err = norm (C-sparse(G), 1)
+err = norm (C-G, 1) ;
 assert (err < 1e-12)
 
 d.kind = 'sparse' ;
@@ -16,18 +20,20 @@ d
 G = gb.mxm ('+.*', A, B, d) ;
 C = A'*B ;
 
-err = norm (C-sparse(G), 1)
+err = norm (C-G, 1) ;
 assert (err < 1e-12)
 
 d.kind = 'gb' ;
 G = gb.mxm ('+.*', A, B, d) ;
 G = sparse (G) ;
-err = norm (C-G, 1)
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
 
 E = sparse (rand (2)) ;
 C = E + A*B ;
-G = gb.mxm (E, '+', '+.*', A, B) ; 
-C-sparse(G)
+G = gb.mxm (E, '+', '+.*', A, B)
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
 
-G = gb.mxm ('+.*', A, B)
+fprintf ('test6: all tests passed\n') ;
 

@@ -1,4 +1,8 @@
 function test3
+%TEST3 test gb.build
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 m = 10 ;
@@ -90,3 +94,4 @@ fprintf ('%12.4f sec : A = gb.sparse (A) to convert from GraphBLAS to MATLAB\n',
 assert (isequal (A1, A2)) ;
 
 fprintf ('\ntest3: all tests passed\n') ;
+
