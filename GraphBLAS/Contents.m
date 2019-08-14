@@ -116,26 +116,27 @@
 %   G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %   s = gb.type (X)             get the type of a MATLAB or gb matrix X
 %   f = gb.format (f)           set/get matrix format to use in GraphBLAS
+%   C = expand (scalar, S)      expand a scalar (C = scalar*spones(S))
 %   G = gb.build (...)          build a gb matrix from a list of entries
 %   [I,J,X] = gb.extracttuples (A) extract all entries from a matrix
 %
-%   Static Methods with Cout, a mask M, and operator accum, of the form:
-%   Cout = gb.method (Cin, M, accum, ..., desc) where '...' is listed below.
+%   Static Methods with an optional mask M and/or operator accum, of the form:
+%   C = gb.method (Cin, M, accum, ..., desc) where '...' is listed below.
 %
-%   Cout = gb.mxm (semiring, A, B)      C = A*B over a semiring
-%   Cout = gb.select (op, A, thunk)     select subset of entries
-%   Cout = gb.assign (A, I, J)          C<M>(I,J) = A ; M and C same size
-%   Cout = gb.subassign (A, I, J)       C(I,J)<M> = A ; M and C(I,J) same size
-%   Cout = gb.colassign (u, I, j)       C<M>(I,j) = u
-%   Cout = gb.rowassign (u, i, J)       C<M'>(i,J) = u'
-%   Cout = gb.vreduce (op, A)           reduce to a vector
-%   Cout = gb.reduce (op, A)            reduce to a scalar (no mask M)
-%   Cout = gb.gbkron (op, A, B)         Kronecker product
-%   Cout = gb.gbtranspose (A)           transpose
-%   Cout = gb.eadd (op, A, B)           element-wise addition
-%   Cout = gb.emult (op, A, B)          element-wise multiplication
-%   Cout = gb.apply (op, A)             apply a unary operator
-%   Cout = gb.extract (A, I, J)         C = A (I,J)
+%   C = gb.mxm (semiring, A, B)      C = A*B over a semiring
+%   C = gb.select (op, A, thunk)     select subset of entries
+%   C = gb.assign (A, I, J)          C<M>(I,J) = A ; M and C same size
+%   C = gb.subassign (A, I, J)       C(I,J)<M> = A ; M and C(I,J) same size
+%   C = gb.colassign (u, I, j)       C<M>(I,j) = u
+%   C = gb.rowassign (u, i, J)       C<M'>(i,J) = u'
+%   C = gb.vreduce (op, A)           reduce to a vector
+%   C = gb.reduce (op, A)            reduce to a scalar (no mask M)
+%   C = gb.gbkron (op, A, B)         Kronecker product
+%   C = gb.gbtranspose (A)           transpose
+%   C = gb.eadd (op, A, B)           element-wise addition
+%   C = gb.emult (op, A, B)          element-wise multiplication
+%   C = gb.apply (op, A)             apply a unary operator
+%   C = gb.extract (A, I, J)         C = A (I,J)
 %
 % Tim Davis, Texas A&M University, http://faculty.cse.tamu.edu/davis/GraphBLAS
 

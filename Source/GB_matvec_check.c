@@ -60,7 +60,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (A == NULL)
     { 
         // GrB_error status not modified since this may be an optional argument
-        GBPR0 ("NULL\n") ;
+        GBPR0 (" NULL\n") ;
         return (GrB_NULL_POINTER) ;
     }
 

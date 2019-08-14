@@ -34,6 +34,10 @@ void mexFunction
     // construct the GraphBLAS monoid and print it
     //--------------------------------------------------------------------------
 
+    #define LEN 256
+    char opstring [LEN+2] ;
+    gb_mxstring_to_string (opstring, LEN, pargin [0], "binary operator") ;
+
     GrB_Type type = NULL ;
     if (nargin == 2)
     {
@@ -42,6 +46,6 @@ void mexFunction
     }
 
     GrB_Monoid op = gb_mxstring_to_monoid (pargin [0], type) ;
-    OK (GxB_Monoid_fprint (op, "", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Monoid_fprint (op, opstring, GxB_COMPLETE, NULL)) ;
 }
 

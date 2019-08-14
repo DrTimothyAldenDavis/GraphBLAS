@@ -437,7 +437,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             // workspace is O(n*nth), so limit the # of threads used so that at
             // most anz workspace is used.  Each thread takes a single task.
 
-            int nth = anz / n ;
+            int nth = (n > 0) ? (anz / n) : 1 ;
             nth = GB_IMIN (nth, nthreads) ;
             nth = GB_IMAX (nth, 1) ;
 

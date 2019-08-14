@@ -39,5 +39,5 @@ To run a demo, go to the GraphBLAS/GraphBLAS/demo folder and type:
 
 To test your installation, go to GraphBLAS/GraphBLAS/test and type:
 
-    testall
+    gbtestall
 

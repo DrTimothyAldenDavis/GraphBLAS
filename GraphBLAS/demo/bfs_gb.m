@@ -1,7 +1,7 @@
-function v = bfs_matlab (A, s)
-%BFS_MATLAB a simple breadth-first-search in MATLAB
+function v = bfs_gb (A, s)
+%BFS_GB a simple breadth-first-search using the MATLAB interface to GraphBLAS
 %
-% v = bfs_matlab (A, s)
+% v = bfs_gb (A, s)
 %
 % A is a square binary matrix, corresponding to the adjacency matrix of a
 % graph, with A(i,j)=1 denoting the edge (i,j).  Self loops are permitted, and
@@ -11,41 +11,33 @@ function v = bfs_matlab (A, s)
 % kth level, where the shortest path (in terms of # of edges) from  s to j has
 % length k+1.  The source node s defaults to 1.
 
-[m n] = size (A) ;
-if (m ~= n)
-    error ('A must be square') ;
-end
-n = size (A,1) ;
-v = zeros (n,1) ;
-
 if (nargin < 2)
     s = 1 ;
 end
 
-% ensure A is binary, and transpose it
-AT = spones (A') ;
+[m n] = size (A) ;
+if (m ~= n)
+    error ('A must be square') ;
+end
 
-q = zeros (n,1) ;
-q (s) = 1 ;         % q is the current level
+v = gb (zeros (n,1)) ;
+q = gb (n, 1, 'logical') ;
+q (s) = true ;
+if (~isequal (gb.type (A), 'logical'))
+    A = gb (A, 'logical') ;
+end
+d.mask = 'complement' ;
+d.out = 'replace' ;
+d.in0 = 'transpose' ;
 
 for level = 1:n
-
-    % assign the level to all nodes in q
-    v (q ~= 0) = level ;
-
-    % find all neighbors of q, as a binary vector
-    qnew = spones (AT * q) ;
-
-    % discard nodes in qnew that are already seen
-    qnew (v ~= 0) = 0 ;
-
-    % move to the new level
-    q = qnew ;
-
-    % stop if the new level is empty
-    if (~any (q))
+    % v<q> = level; assign level to all nodes in the queue q
+    v = gb.assign (v, q, level) ;
+    if (~full (any (q)))
+        % break if q is empty
         break ;
     end
-
+    % q<~v,replace> = A'*q, using the boolean semiring
+    q = gb.mxm (q, v, '|.&.logical', A, q, d) ;
 end
 

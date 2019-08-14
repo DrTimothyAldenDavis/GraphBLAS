@@ -34,6 +34,10 @@ void mexFunction
     // construct the GraphBLAS semiring and print it
     //--------------------------------------------------------------------------
 
+    #define LEN 256
+    char opstring [LEN+2] ;
+    gb_mxstring_to_string (opstring, LEN, pargin [0], "binary operator") ;
+
     GrB_Type type = NULL ;
     if (nargin == 2)
     {
@@ -42,6 +46,6 @@ void mexFunction
     }
 
     GrB_Semiring semiring = gb_mxstring_to_semiring (pargin [0], type) ;
-    OK (GxB_Semiring_fprint (semiring, "", GxB_COMPLETE, NULL)) ;
+    OK (GxB_Semiring_fprint (semiring, opstring, GxB_COMPLETE, NULL)) ;
 }
 

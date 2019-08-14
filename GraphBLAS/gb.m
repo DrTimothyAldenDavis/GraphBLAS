@@ -183,6 +183,8 @@ classdef gb
 %       G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %       s = gb.type (X)             get the type of a MATLAB or gb matrix X
 %       f = gb.format (f)           set/get matrix format to use in GraphBLAS
+%       C = expand (scalar, S)      expand a scalar (C = scalar*spones(S))
+%
 %       G = gb.build (I, J, X, m, n, dup, type, desc)
 %                           build a GraphBLAS matrix from a list of entries
 %       [I,J,X] = gb.extracttuples (A, desc)
@@ -243,6 +245,8 @@ classdef gb
 %       can be modified; if zero, it cannot be modified by the operation.
 %
 % See also sparse, doc sparse, and https://twitter.com/DocSparse .
+
+% TODO: gb.speye, gb.eye
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -1167,11 +1171,11 @@ methods %=======================================================================
                 % A is a scalar, B is a matrix
                 if (get_scalar (A) > 0)
                     % since A > 0, the result is full
-                    C = gb.eadd ('max', expand_scalar (A, true (size (B))), B) ;
+                    C = gb.eadd ('max', gb.expand (A, true (size (B))), B) ;
                 else
                     % since A <= 0, the result is sparse.  Expand the scalar A
                     % to the pattern of B.
-                    C = gb.eadd ('max', expand_scalar (A, B), B) ;
+                    C = gb.eadd ('max', gb.expand (A, B), B) ;
                 end
             end
         else
@@ -1179,11 +1183,11 @@ methods %=======================================================================
                 % A is a matrix, B is a scalar
                 if (get_scalar (B) > 0)
                     % since B > 0, the result is full
-                    C = gb.eadd ('max', A, expand_scalar (B, true (size (A)))) ;
+                    C = gb.eadd ('max', A, gb.expand (B, true (size (A)))) ;
                 else
                     % since B <= 0, the result is sparse.  Expand the scalar B
                     % to the pattern of A.
-                    C = gb.eadd ('max', A, expand_scalar (B, A)) ;
+                    C = gb.eadd ('max', A, gb.expand (B, A)) ;
                 end
             else
                 % both A and B are matrices.  Result is sparse.
@@ -1277,11 +1281,11 @@ methods %=======================================================================
                 % A is a scalar, B is a matrix
                 if (get_scalar (A) < 0)
                     % since A < 0, the result is full
-                    C = gb.eadd ('min', expand_scalar (A, true (size (B))), B) ;
+                    C = gb.eadd ('min', gb.expand (A, true (size (B))), B) ;
                 else
                     % since A >= 0, the result is sparse.  Expand the scalar A
                     % to the pattern of B.
-                    C = gb.eadd ('min', expand_scalar (A, B), B) ;
+                    C = gb.eadd ('min', gb.expand (A, B), B) ;
                 end
             end
         else
@@ -1289,11 +1293,11 @@ methods %=======================================================================
                 % A is a matrix, B is a scalar
                 if (get_scalar (B) < 0)
                     % since B < 0, the result is full
-                    C = gb.eadd ('min', A, expand_scalar (B, true (size (A)))) ;
+                    C = gb.eadd ('min', A, gb.expand (B, true (size (A)))) ;
                 else
                     % since B >= 0, the result is sparse.  Expand the scalar B
                     % to the pattern of A.
-                    C = gb.eadd ('min', A, expand_scalar (B, A)) ;
+                    C = gb.eadd ('min', A, gb.expand (B, A)) ;
                 end
             else
                 % both A and B are matrices.  Result is sparse.
@@ -1615,12 +1619,12 @@ methods %=======================================================================
             C = gb.eadd ('+', A, B) ;
         else
             % A is a scalar, B is a matrix.  Result is full.
-            C = gb.eadd ('+', expand_scalar (A, true (size (B))), B) ;
+            C = gb.eadd ('+', gb.expand (A, true (size (B))), B) ;
         end
     else
         if (isscalar (B))
             % A is a matrix, B is a scalar.  Result is full.
-            C = gb.eadd ('+', A, expand_scalar (B, true (size (A)))) ;
+            C = gb.eadd ('+', A, gb.expand (B, true (size (A)))) ;
         else
             % both A and B are matrices.  Result is sparse.
             C = gb.eadd ('+', A, B) ;
@@ -1680,12 +1684,12 @@ methods %=======================================================================
             C = gb.emult ('*', A, B) ;
         else
             % A is a scalar, B is a matrix
-            C = gb.emult ('*', expand_scalar (A, B), B) ;
+            C = gb.emult ('*', gb.expand (A, B), B) ;
         end
     else
         if (isscalar (B))
             % A is a matrix, B is a scalar
-            C = gb.emult ('*', A, expand_scalar (B, A)) ;
+            C = gb.emult ('*', A, gb.expand (B, A)) ;
         else
             % both A and B are matrices
             C = gb.emult ('*', A, B) ;
@@ -1735,7 +1739,7 @@ methods %=======================================================================
         else
             % A is a scalar, B is a matrix.  A is expanded to full.
             % The result is a dense gb matrix.
-            C = gb.eadd ('/', expand_scalar (A, true (size (B))), B) ;
+            C = gb.eadd ('/', gb.expand (A, true (size (B))), B) ;
         end
     else
         if (isscalar (B))
@@ -1743,11 +1747,11 @@ methods %=======================================================================
             if (get_scalar (B) == 0 & isfloat (A))
                 % 0/0 is Nan, and thus must be computed computed if A is
                 % floating-point.  The result is a dense matrix.
-                C = gb.eadd ('/', A, expand_scalar (B, true (size (A)))) ;
+                C = gb.eadd ('/', A, gb.expand (B, true (size (A)))) ;
             else
                 % The scalar B is nonzero so just compute A/B in the pattern of
                 % A.  The result is sparse (the pattern of A).
-                C = gb.emult ('/', A, expand_scalar (B, A)) ;
+                C = gb.emult ('/', A, gb.expand (B, A)) ;
             end
         else
             % both A and B are matrices.  The result is a dense matrix.
@@ -1817,7 +1821,7 @@ methods %=======================================================================
             B = full (B) ;
         else
             % A is a scalar, B is a matrix; expand A to the size of B
-            A = expand_scalar (A, true (size (B))) ;
+            A = gb.expand (A, true (size (B))) ;
             B = full (B) ;
         end
     else
@@ -1826,11 +1830,11 @@ methods %=======================================================================
             if (get_scalar (B) <= 0)
                 % so the result is full
                 A = full (A) ;
-                B = expand_scalar (B, true (size (A))) ;
+                B = gb.expand (B, true (size (A))) ;
             else
                 % The scalar b is > 0, and thus 0.^b is zero.  The result is
                 % sparse.  B is expanded to a matrix wit the same pattern as A.
-                B = expand_scalar (B, A) ;
+                B = gb.expand (B, A) ;
             end
         else
             % both A and B are matrices.
@@ -1914,7 +1918,7 @@ methods %=======================================================================
             if (get_scalar (A) < 0)
                 % since a < 0, entries not present in B result in a true value,
                 % so the result is dense.  Expand A to a dense matrix.
-                A = expand_scalar (A, true (size (B))) ;
+                A = gb.expand (A, true (size (B))) ;
                 C = gb.select ('nonzero', gb.emult ('<', A, full (B))) ;
             else
                 % since a >= 0, entries not present in B result in a false
@@ -1929,7 +1933,7 @@ methods %=======================================================================
             if (get_scalar (B) > 0)
                 % since b > 0, entries not present in A result in a true value,
                 % so the result is dense.  Expand B to a dense matrix.
-                B = expand_scalar (B, true (size (A))) ;
+                B = gb.expand (B, true (size (A))) ;
                 C = gb.select ('nonzero', gb.emult ('<', full (A), B)) ;
             else
                 % since b <= 0, entries not present in A result in a false
@@ -1979,7 +1983,7 @@ methods %=======================================================================
             if (get_scalar (A) <= 0)
                 % since a <= 0, entries not present in B result in a true value,
                 % so the result is dense.  Expand A to a dense matrix.
-                A = expand_scalar (A, true (size (B))) ;
+                A = gb.expand (A, true (size (B))) ;
                 C = gb.select ('nonzero', gb.emult ('<=', A, full (B))) ;
             else
                 % since a > 0, entries not present in B result in a false
@@ -1994,7 +1998,7 @@ methods %=======================================================================
             if (get_scalar (B) >= 0)
                 % since b >= 0, entries not present in A result in a true value,
                 % so the result is dense.  Expand B to a dense matrix.
-                B = expand_scalar (B, true (size (A))) ;
+                B = gb.expand (B, true (size (A))) ;
                 C = gb.select ('nonzero', gb.emult ('<=', full (A), B)) ;
             else
                 % since b < 0, entries not present in A result in a false
@@ -2045,7 +2049,7 @@ methods %=======================================================================
             if (get_scalar (A) ~= 0)
                 % since a ~= 0, entries not present in B result in a true value,
                 % so the result is dense.  Expand A to a dense matrix.
-                A = expand_scalar (A, true (size (B))) ;
+                A = gb.expand (A, true (size (B))) ;
                 C = gb.select ('nonzero', gb.emult ('~=', A, full (B))) ;
             else
                 % since a == 0, entries not present in B result in a false
@@ -2060,7 +2064,7 @@ methods %=======================================================================
             if (get_scalar (B) ~= 0)
                 % since b ~= 0, entries not present in A result in a true value,
                 % so the result is dense.  Expand B to a dense matrix.
-                B = expand_scalar (B, true (size (A))) ;
+                B = gb.expand (B, true (size (A))) ;
                 C = gb.select ('nonzero', gb.emult ('~=', full (A), B)) ;
             else
                 % since b == 0, entries not present in A result in a false
@@ -2100,7 +2104,7 @@ methods %=======================================================================
             if (get_scalar (A) == 0)
                 % since a == 0, entries not present in B result in a true value,
                 % so the result is dense.  Expand A to a dense matrix.
-                A = expand_scalar (A, true (size (B))) ;
+                A = gb.expand (A, true (size (B))) ;
                 C = gb.select ('nonzero', gb.emult ('==', A, full (B))) ;
             else
                 % since a ~= 0, entries not present in B result in a false
@@ -2115,7 +2119,7 @@ methods %=======================================================================
             if (get_scalar (B) == 0)
                 % since b == 0, entries not present in A result in a true value,
                 % so the result is dense.  Expand B to a dense matrix.
-                B = expand_scalar (B, true (size (A))) ;
+                B = gb.expand (B, true (size (A))) ;
                 C = gb.select ('nonzero', gb.emult ('==', full (A), B)) ;
             else
                 % since b ~= 0, entries not present in A result in a false
@@ -2584,7 +2588,7 @@ methods (Static) %==============================================================
     % operators, each of which may be used with any of the 11 types, for a
     % total of 6*11 = 66 valid unary operators.  Unary operators are defined by
     % a string of the form 'op.type', or just 'op'.  In the latter case, the
-    % type defaults to the the type of the matrix inputs to the GraphBLAS
+    % type defaults to the type of the matrix inputs to the GraphBLAS
     % operation.
     %
     % The following unary operators are available.
@@ -2650,8 +2654,8 @@ methods (Static) %==============================================================
     % operators, each of which may be used with any of the 11 types, for a
     % total of 25*11 = 275 valid binary operators.  Binary operators are
     % defined by a string of the form 'op.type', or just 'op'.  In the latter
-    % case, the type defaults to the the type of the matrix inputs to the
-    % GraphBLAS operation.
+    % case, the type defaults to the type of the matrix inputs to the GraphBLAS
+    % operation.
     %
     % The 6 comparator operators come in two flavors.  For the is* operators,
     % the result has the same type as the inputs, x and y, with 1 for true and
@@ -2684,7 +2688,7 @@ methods (Static) %==============================================================
     %   \   rdiv         y/x            |   <   lt           x < y
     %   |   || or  lor   x | y          |   >=  ge           x >= y
     %   &   && and land  x & y          |   <=  le           x <= y
-    %   xor lxor                        |
+    %   xor lxor         xor(x,y)       |
     %
     % The three logical operators, lor, land, and lxor, also come in 11 types.
     % z = lor.double (x,y) tests the condition (x ~= 0) || (y ~= 0), and returns
@@ -3050,6 +3054,18 @@ methods (Static) %==============================================================
     else
         error ('usage: f = gb.format or f = gb.format (f)') ;
     end
+    end
+
+    %---------------------------------------------------------------------------
+    % gb.expand: expand a scalar to a matrix
+    %---------------------------------------------------------------------------
+
+    function C = expand (scalar, S)
+    %GB.EXPAND expand a scalar to a matrix
+    % The scalar is expanded to the pattern of S, as in C = scalar*spones(S).
+    % C has the same type as the scalar.  The numerical values of S are
+    % ignored; only the pattern of S is used.
+    C = gb.gbkron (['1st.' gb.type(scalar)], scalar, S) ;
     end
 
     %---------------------------------------------------------------------------
@@ -3876,17 +3892,6 @@ end
     end
 
     %---------------------------------------------------------------------------
-    % expand_scalar: expand a scalar to a matrix
-    %---------------------------------------------------------------------------
-
-    function C = expand_scalar (scalar, S)
-    % The scalar is expanded to the pattern of S, as in C = scalar*spones(S).
-    % C has the same type as the scalar.  The numerical values of S are
-    % ignored; only the pattern of S is used.
-    C = gb.gbkron (['1st.' gb.type(scalar)], scalar, S) ;
-    end
-
-    %---------------------------------------------------------------------------
     % get_scalar: get the first scalar from a matrix
     %---------------------------------------------------------------------------
 
@@ -3916,8 +3921,8 @@ end
     % expand A and B to the set union of A and B, with explicit zeros.
     % The type of the '1st' operator is the type of the first argument of
     % gbeadd, so the 2nd argument can be boolean to save space.
-    A0 = gb.eadd ('1st', A, expand_scalar (false, B)) ;
-    B0 = gb.eadd ('1st', B, expand_scalar (false, A)) ;
+    A0 = gb.eadd ('1st', A, gb.expand (false, B)) ;
+    B0 = gb.eadd ('1st', B, gb.expand (false, A)) ;
     C = gb.select ('nonzero', gb.eadd (op, A0, B0)) ;
     end
 

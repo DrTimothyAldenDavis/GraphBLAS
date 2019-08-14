@@ -82,7 +82,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
     // print the identity value
     if (pr > 0)
     { 
-        GBPR ("identity: [ ") ;
+        GBPR ("    identity: [ ") ;
         info = GB_entry_check (monoid->op->ztype, monoid->identity, f,  
             Context) ;
         if (info != GrB_SUCCESS) return (info) ;
