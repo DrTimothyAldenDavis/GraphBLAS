@@ -1,5 +1,5 @@
 function gbtest4
-%TEST4 list all 1865 possible semirings
+%GBTEST4 list all 1865 possible semirings
 % This count excludes operator synonyms
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -20,16 +20,16 @@ for k1 = 1:length (ops)
             semiring = [add '.' mult '.' type] ;
 
             try
-                gb.semiring (semiring) ;
+                fprintf ('\n================================ %s\n', semiring) ;
+                gb.semiringinfo (semiring) ;
                 nsemirings = nsemirings + 1 ;
-                fprintf ('%s\n', semiring) ;
             catch me
             end
         end
     end
 end
 
-nsemirings
+assert (nsemirings == 1865)
 
 fprintf ('\ngbtest4: all tests passed\n') ;
 

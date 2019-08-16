@@ -25,13 +25,32 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 1 && nargout <= 1, "usage: A = sparse (X)") ;
+    gb_usage (nargin == 2 && nargout <= 1, "usage: A = gbsparse (X, type)") ;
+
+    //--------------------------------------------------------------------------
+    // get the input matrix
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    GrB_Type xtype ;
+    OK (GxB_Matrix_type (&xtype, X)) ;
+
+    //--------------------------------------------------------------------------
+    // get the desired type, and typecast if needed
+    //--------------------------------------------------------------------------
+
+    GrB_Type type = gb_mxstring_to_type (pargin [1]) ;
+    if (type != xtype)
+    {
+        GrB_Matrix T = gb_typecast (type, GxB_BY_COL, X) ;
+        OK (GrB_Matrix_free (&X)) ;
+        X = T ;
+    }
 
     //--------------------------------------------------------------------------
     // export the input matrix to a MATLAB sparse matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
     pargout [0] = gb_export (&X, KIND_SPARSE) ;
 }
 

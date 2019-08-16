@@ -1,9 +1,10 @@
 function gbtestall
-%TESTALL test GraphBLAS MATLAB interface
+%GBTESTALL test GraphBLAS MATLAB interface
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+% gbtest9 requires ../demo/dnn_gb.m and dnn_matlab.m
 addpath ../demo
 
 gbtest1
@@ -31,6 +32,9 @@ gbtest22
 gbtest23
 gbtest24
 gbtest25
+gbtest26
+gbtest27
+gbtest28
 
 fprintf ('\ngbtestall: all tests passed\n') ;
 

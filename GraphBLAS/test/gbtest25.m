@@ -1,5 +1,5 @@
 function gbtest25
-%TEST25 test diag
+%GBTEST25 test diag
 
 for trials = 1:40
     fprintf ('.') ;
@@ -11,11 +11,11 @@ for trials = 1:40
             for k = -m:n
                 B = diag (A, k) ;
                 C = diag (G, k) ;
-                assert (isequal (B, sparse (C))) ;
+                assert (isequal (B, double (C))) ;
             end
             B = diag (A) ;
             C = diag (G) ;
-            assert (isequal (B, sparse (C))) ;
+            assert (isequal (B, double (C))) ;
         end
     end
 
@@ -25,11 +25,11 @@ for trials = 1:40
         for k = -10:10
             B = diag (A, k) ;
             C = diag (G, k) ;
-            assert (isequal (B, sparse (C))) ;
+            assert (isequal (B, double (C))) ;
         end
         B = diag (A) ;
         C = diag (G) ;
-        assert (isequal (B, sparse (C))) ;
+        assert (isequal (B, double (C))) ;
     end
 end
 

@@ -1,5 +1,5 @@
 function gbtest21
-%TEST21 test isfinite, isinf, isnan
+%GBTEST21 test isfinite, isinf, isnan
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -14,9 +14,9 @@ for trial = 1:40
             A (2,2) = inf ;
             G = gb (A) ;
 
-            assert (isequal (isfinite (A), full (isfinite (G)))) ;
-            assert (isequal (isinf    (A), sparse (isinf    (G)))) ;
-            assert (isequal (isnan    (A), sparse (isnan    (G)))) ;
+            assert (isequal (isfinite (A), logical (isfinite (G)))) ;
+            assert (isequal (isinf    (A), logical (isinf    (G)))) ;
+            assert (isequal (isnan    (A), logical (isnan    (G)))) ;
         end
     end
 end

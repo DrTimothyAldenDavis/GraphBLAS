@@ -1,5 +1,5 @@
 function gbtest22
-%TEST21 test reduce to scalar
+%GBTEST22 test reduce to scalar
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -16,26 +16,26 @@ for trial = 1:40
             c1 = sum (A, 'all') ;
             c2 = gb.reduce ('+', A) ;
             c3 = sum (G, 'all') ;
-            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
-            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
+            assert (logical (norm (c1-c2,1) <= 1e-12 * norm (c1,1))) ;
+            assert (logical (norm (c1-c3,1) <= 1e-12 * norm (c1,1))) ;
 
             c1 = pi + sum (A, 'all') ;
             c2 = gb.reduce (pi, '+', '+', A) ;
             c3 = pi + sum (G, 'all') ;
-            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
-            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
+            assert (logical (norm (c1-c2,1) <= 1e-12 * norm (c1,1))) ;
+            assert (logical (norm (c1-c3,1) <= 1e-12 * norm (c1,1))) ;
 
             c1 = prod (x, 'all') ;
             c2 = gb.reduce ('*', A) ;
-            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+            assert (logical (norm (c1-c2,1) <= 1e-12 * norm (c1,1))) ;
 
             c1 = prod (A, 'all') ;
             c2 = prod (G, 'all') ;
-            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+            assert (logical (norm (c1-c2,1) <= 1e-12 * norm (c1,1))) ;
 
             c1 = pi + prod (x, 'all') ;
             c2 = gb.reduce (pi, '+', '*', A) ;
-            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
+            assert (logical (norm (c1-c2,1) <= 1e-12 * norm (c1,1))) ;
 
             c1 = max (A, [ ], 'all') ;
             c2 = gb.reduce ('max', A) ;
@@ -43,8 +43,8 @@ for trial = 1:40
                 c2 = max (full (c2), 0) ;
             end
             c3 = max (G, [ ], 'all') ;
-            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
-            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
+            assert (logical (norm (c1-c2,1) <= 1e-12 * norm (c1,1))) ;
+            assert (logical (norm (c1-c3,1) <= 1e-12 * norm (c1,1))) ;
 
             c1 = min (A, [ ], 'all') ;
             c2 = gb.reduce ('min', A) ;
@@ -52,20 +52,26 @@ for trial = 1:40
                 c2 = min (full (c2), 0) ;
             end
             c3 = min (G, [ ], 'all') ;
-            assert (norm (c1-sparse(c2),1) <= 1e-12 * norm (c1,1)) ;
-            assert (norm (c1-sparse(c3),1) <= 1e-12 * norm (c1,1)) ;
+            assert (logical (norm (c1-c2,1) <= 1e-12 * norm (c1,1))) ;
+            assert (logical (norm (c1-c3,1) <= 1e-12 * norm (c1,1))) ;
 
             B = logical (A) ;
             G = gb (B) ;
 
             c1 = any (A, 'all') ;
             c2 = gb.reduce ('|.logical', A) ;
-            assert (c1 == sparse (c2)) ;
+            c3 = any (G, 'all') ;
+            assert (logical (c1 == logical (c2))) ;
+            assert (logical (c1 == logical (c3))) ;
+
+            c1 = all (A, 'all') ;
+            c3 = all (G, 'all') ;
+            assert (logical (c1 == logical (c3))) ;
 
             [i j x] = find (A) ;
             c1 = all (x, 'all') ;
             c2 = gb.reduce ('&.logical', A) ;
-            assert (c1 == sparse (c2)) ;
+            assert (logical (c1 == logical (c2))) ;
 
         end
     end

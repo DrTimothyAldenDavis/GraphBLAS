@@ -1,5 +1,5 @@
 function gbtest7
-%TEST7 test gb.build
+%GBTEST7 test gb.build
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -13,26 +13,26 @@ A (n,n) = 5 ;
 
 G = gb.build (i, j, x, m, n)
 S = sparse   (i, j, x, m, n)
-
-sparse (G)-S
-assert (isequal (S, sparse (G)))
+S - G
+assert (isequal (S, double (G)))
 
 d.kind = 'gb' ;
 G = gb.build (i, j, x, m, n, d) ;
-S - sparse (G)
-assert (isequal (S, sparse (G)))
+S - G
+assert (isequal (S, double (G)))
 
+d.kind = 'sparse' ;
 G = gb.build (i, j, x, m, n, d)
-S - sparse (G)
-assert (isequal (S, sparse (G)))
+S - G
+assert (isequal (S, G))
 
 i0 = int64 (i) - 1 ;
 j0 = int64 (j) - 1 ;
 
 S
 G = gb.build (i0, j0, x)
-S - sparse (G)
-assert (isequal (S, sparse (G)))
+S - G
+assert (isequal (S, double (G)))
 
 fprintf ('gbtest7: all tests passed\n') ;
 

@@ -1,20 +1,31 @@
 function iset = mis_gb (A)
 %MIS_GB variant of Luby's maximal independent set algorithm, using GraphBLAS
 %
+% Usage:
+%
+%   iset = mis_gb (A) ;
+%
 % Given a logical n x n adjacency matrix A of an unweighted and undirected
 % graph (where the value true represents an edge), compute a maximal set of
 % independent nodes and return it in a boolean n-vector, 'iset' where iset(i)
 % of true implies node i is a member of the set.
 %
-% The graph cannot have any self edges, and it must be symmetric.  These
-% conditions are not checked.  Self-edges will cause the method to stall.
+% The graph A cannot have any self edges (no diagonal entries), and it must be
+% symmetric.  These conditions are not checked.  Self-edges will cause the
+% method to stall.
 %
 % Singletons require special treatment.  Since they have no neighbors, their
 % prob is never greater than the max of their neighbors, so they never get
 % selected and cause the method to stall.  To avoid this case they are removed
 % from the candidate set at the begining, and added to the iset.
 %
-% [Luby 1985] TODO cite
+% Reference: M Luby. 1985. A simple parallel algorithm for the maximal
+% independent set problem. In Proceedings of the seventeenth annual ACM
+% symposium on Theory of computing (STOC '85). ACM, New York, NY, USA, 1-10.
+% DOI: https://doi.org/10.1145/22145.22146
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m n] = size (A) ;
 if (m ~= n)
@@ -60,7 +71,8 @@ while (nvals > 0)
 
     % compute a random probability scaled by inverse of degree
     % NOTE: this is slower than it should be; rand may not be parallel,
-    % See GraphBLAS/Demo/Source/mis.c and the prand_* functions.
+    % See GraphBLAS/Demo/Source/mis.c and the prand_* functions for a better
+    % approach using user-defined types and operators.
     prob = 0.0001 + rand (n,1) ./ (1 + 2 * degrees) ;
     prob = gb.assign (prob, candidates, prob, r_desc) ;
 

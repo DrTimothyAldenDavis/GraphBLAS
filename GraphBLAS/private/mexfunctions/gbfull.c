@@ -25,8 +25,8 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 2 && nargout <= 1,
-        "usage: F = full (X) or full (X, identity") ;
+    gb_usage (nargin <= 4 && nargout <= 1,
+        "usage: F = gbfull (X, type, id, desc)") ;
 
     //--------------------------------------------------------------------------
     // get a shallow copy of the input matrix
@@ -34,46 +34,66 @@ void mexFunction
 
     GrB_Matrix X = gb_get_shallow (pargin [0]) ;
     GrB_Index nrows, ncols ;
-    GrB_Type xtype ;
     OK (GrB_Matrix_nrows (&nrows, X)) ;
     OK (GrB_Matrix_ncols (&ncols, X)) ;
-    OK (GxB_Matrix_type (&xtype, X)) ;
+
+    //--------------------------------------------------------------------------
+    // get the type of F
+    //--------------------------------------------------------------------------
+
+    GrB_Matrix type ;
+    if (nargin > 1)
+    {
+        type = gb_mxstring_to_type (pargin [1]) ;
+    }
+    else
+    {
+        // the type of F defaults to the type of X
+        OK (GxB_Matrix_type (&type, X)) ;
+    }
 
     //--------------------------------------------------------------------------
     // get the identity scalar
     //--------------------------------------------------------------------------
 
     GrB_Matrix id ;
-    if (nargin > 1)
+    if (nargin > 2)
     {
-        CHECK_ERROR (!mxIsScalar (pargin [1]), "identity must be a scalar") ;
-        CHECK_ERROR (mxIsSparse (pargin [1]), "identity must not be sparse") ;
-        id = gb_get_shallow (pargin [1]) ;
+        id = gb_get_shallow (pargin [2]) ;
     }
     else
     {
-        // assume the identity is zero, of the same type as X
-        OK (GrB_Matrix_new (&id, xtype, 1, 1)) ;
+        // assume the identity is zero, of the same type as F
+        OK (GrB_Matrix_new (&id, type, 1, 1)) ;
         OK (GrB_Matrix_setElement (id, 0, 0, 0)) ;
     }
 
     //--------------------------------------------------------------------------
-    // expand the identity into a matrix the same size as X
+    // get the descriptor (kind defaults to KIND_FULL)
+    //--------------------------------------------------------------------------
+
+    kind_enum_t kind = KIND_FULL ;
+    GrB_Descriptor desc = NULL ;
+    if (nargin > 3)
+    {
+        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // expand the identity into a dense matrix the same size as F
     //--------------------------------------------------------------------------
 
     GrB_Matrix Z ;
-    GrB_Type idtype ;
-    OK (GxB_Matrix_type (&idtype, id)) ;
-    OK (GrB_Matrix_new (&Z, idtype, nrows, ncols)) ;
+    OK (GrB_Matrix_new (&Z, type, nrows, ncols)) ;
     gb_matrix_assign_scalar (Z, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL) ;
 
     //--------------------------------------------------------------------------
-    // C = X + Z using the FIRST operator
+    // F = first (X, Z)
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C ;
-    OK (GrB_Matrix_new (&C, xtype, nrows, ncols)) ;
-    OK (GrB_eWiseAdd (C, NULL, NULL, gb_first_binop (xtype), X, Z, NULL)) ;
+    GrB_Matrix F ;
+    OK (GrB_Matrix_new (&F, type, nrows, ncols)) ;
+    OK (GrB_eWiseAdd (F, NULL, NULL, gb_first_binop (type), X, Z, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace
@@ -82,12 +102,12 @@ void mexFunction
     OK (GrB_free (&id)) ;
     OK (GrB_free (&Z)) ;
     OK (GrB_free (&X)) ;
+    OK (GrB_free (&desc)) ;
 
     //--------------------------------------------------------------------------
-    // export C to a MATLAB dense matrix
+    // export F to a MATLAB dense matrix
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&C, KIND_FULL) ;
-
+    pargout [0] = gb_export (&F, kind) ;
 }
 

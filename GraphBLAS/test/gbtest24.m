@@ -1,5 +1,5 @@
 function gbtest24
-%TEST24 test any, all
+%GBTEST24 test any, all
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -25,35 +25,35 @@ for trial = 1:40
 
             c1 = all (MA) ;
             c2 = all (GA) ;
-            assert (isequal (sparse (c1), sparse (c2))) ;
+            assert (isequal (c1, double (c2))) ;
 
             c1 = any (MA) ;
             c2 = any (GA) ;
-            assert (isequal (sparse (c1), sparse (c2))) ;
+            assert (isequal (c1, double (c2))) ;
 
             c1 = all (MA, 'all') ;
             c2 = all (GA, 'all') ;
-            assert (isequal (sparse (c1), sparse (c2))) ;
+            assert (isequal (c1, double (c2))) ;
 
             c1 = any (MA, 'all') ;
             c2 = any (GA, 'all') ;
-            assert (isequal (sparse (c1), sparse (c2))) ;
+            assert (isequal (c1, double (c2))) ;
 
             C1 = all (MA, 1) ;
             C2 = all (GA, 1) ;
-            assert (isequal (C1, sparse (C2))) ;
+            assert (isequal (C1, double (C2))) ;
 
             C1 = any (MA, 1) ;
             C2 = any (GA, 1) ;
-            assert (isequal (C1, sparse (C2))) ;
+            assert (isequal (C1, double (C2))) ;
 
             C1 = all (MA, 2) ;
             C2 = all (GA, 2) ;
-            assert (isequal (C1, sparse (C2))) ;
+            assert (isequal (C1, double (C2))) ;
 
             C1 = any (MA, 2) ;
             C2 = any (GA, 2) ;
-            assert (isequal (C1, sparse (C2))) ;
+            assert (isequal (C1, double (C2))) ;
 
         end
     end

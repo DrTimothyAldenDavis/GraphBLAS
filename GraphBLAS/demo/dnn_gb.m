@@ -34,12 +34,14 @@ for i=1:length(W) % Loop through each weight layer W{i}
 
     % Threshold maximum values.
     M = gb.select ('>thunk', Y, 32) ;
-    Y = gb.assign (Y, M, 32) ;
+    if (nnz (M) > 0)
+        Y = gb.assign (Y, M, 32) ;
+    end
 
     t = toc (t) ;
     fprintf ('layer: %4d, nnz (Y) %8d, time %g sec\n', i, nnz (Y), t) ;
 end
 
 % convert result back to MATLAB sparse matrix (also optional)
-Y = sparse (Y) ;
+Y = double (Y) ;
 

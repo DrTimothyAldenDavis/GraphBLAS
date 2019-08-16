@@ -40,6 +40,8 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
         // No typecasting is needed since MATLAB supports all the same types.
 
+        // TODO error if nvals(C) is not nrows*ncols
+
         GrB_Index nrows, ncols, nzmax, *Cp, *Ci ;
         int64_t nonempty ;
         void *Cx ;

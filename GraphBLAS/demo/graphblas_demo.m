@@ -6,8 +6,6 @@
 %
 % SuiteSparse:GraphBLAS, (c) 2017-2019, Tim Davis, Texas A&M University,
 % http://faculty.cse.tamu.edu/davis
-%
-% See also sparse, doc sparse, and https://twitter.com/DocSparse
 
 %% GraphBLAS provides faster and more general sparse matrices for MATLAB
 % GraphBLAS is not only useful for creating graph algorithms; it also supports
@@ -23,16 +21,15 @@
 % and uint64.  Complex matrices will be added in the future.
 
 clear all
-format compact
 rng ('default') ;
-X = 100 * rand (2)
+X = 100 * rand (2) ;
 G = gb (X)              % GraphBLAS copy of a matrix X, same type
 
 %% Sparse integer matrices
 % Here's an int8 version of the same matrix:
 
-S = sparse (G)          % convert a gb matrix to a MATLAB sparse matrix
-G = gb (X, 'int8')      % GraphBLAS typecasted copy of matrix X
+S = int8 (G)            % convert a gb matrix G to a full MATLAB int8 matrix
+G = gb (X, 'int8')      % a GraphBLAS sparse int8 matrix
 
 %% Sparse single-precision matrices
 % Matrix operations in GraphBLAS are typically as fast, or faster than MATLAB.
@@ -91,6 +88,7 @@ fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', matlab_time / gb_time) ;
 % semiring, 'sum' can be any monoid, which is an associative and commutative
 % operator that has an identity value.  For example, in the 'max.plus' tropical
 % algebra, C(i,j) for C=A*B is defined as C(i,j) = max (A(i,:).' + B(:,j)).
+% This can be computed in GraphBLAS with C = gb.mxm ('max.+', A, B).
 
 n = 3 ;
 A = rand (n) ;
@@ -102,7 +100,7 @@ for i = 1:n
     end
 end
 C2 = gb.mxm ('max.+', A, B) ;
-fprintf ('err = norm (C-C2,1) = %g\n', norm (C-C2,1)) ;
+fprintf ('\nerr = norm (C-C2,1) = %g\n', norm (C-C2,1)) ;
 
 %% The max.plus tropical semiring
 % Here are details of the "max.plus" tropical semiring.  The identity value
@@ -135,10 +133,12 @@ gb.type (C2)
 
 %% The GraphBLAS operators, monoids, and semirings
 % The C interface for SuiteSparse:GraphBLAS allows for arbitrary types and
-% operators to be constructed.  However, the MATLAB interface is restricted to
-% pre-defined types and operators.  See 'help gb.binopinfo' for a list of the
-% 25 binary operators, and 'help gb.monoidinfo' for the ones that can be used
-% as the additive monoid in a semiring.
+% operators to be constructed.  However, the MATLAB interface to
+% SuiteSparse:GraphBLAS is restricted to pre-defined types and operators.
+%
+% See 'help gb.binopinfo' for a list of the 25 binary operators, and 'help
+% gb.monoidinfo' for the ones that can be used as the additive monoid in a
+% semiring.
 
 %% 
 help gb.binopinfo
@@ -159,7 +159,7 @@ A = gb (sprand (3, 3, 0.5)) ;
 B = gb (sprand (3, 3, 0.5)) ;
 C1 = A + B
 C2 = gb.eadd ('+', A, B)
-sparse (C1-C2)
+C1-C2
 
 %% Subtracting two matrices
 % A-B and gb.eadd ('-', A, B) are not the same thing, since the '-' operator
@@ -173,7 +173,7 @@ C2 = gb.eadd ('-', A, B)
 
 C1 = A-B 
 C2 = gb.eadd ('+', A, gb.apply ('-', B))
-sparse (C1-C2)
+C1-C2
 
 %% Element-wise 'multiplication'
 % For C = A.*B, the result C is the set intersection of the pattern of A and B.
@@ -182,7 +182,7 @@ sparse (C1-C2)
 
 C1 = A.*B
 C2 = gb.emult ('*', A, B) 
-C3 = sparse(A) .* sparse (B)
+C3 = double (A) .* double (B)
 
 %%
 % Just as in gb.eadd, any operator can be used in gb.emult:
@@ -198,39 +198,39 @@ C2 = gb.emult ('max', A, B)
 %
 %   A+B    A-B   A*B    A.*B   A./B   A.\B   A.^b    A/b    C=A(I,J)
 %   -A     +A    ~A     A'     A.'    A&B    A|B     b\A    C(I,J)=A
-%   A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]
+%   A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]  A(1:end,1:end)
 %
-% For A/b and b\A, b must be a scalar.  For A^b, b must be a non-negative
-% integer.
+% For A^b, b must be a non-negative integer.
 
-C1 = [A B] ;
-C2 = [sparse(A) sparse(B)] ;
-assert (isequal (sparse (C1), C2))
-C1 = A^2 ;
-C2 = sparse (A)^2 ;
-assert (isequal (sparse (C1), C2))
-C1 = A (1:2,2:3)
-A = sparse (A) ;
-C2 = A (1:2,2:3)
+A
+B
+C1 = [A B]
+C2 = [double(A) double(B)] ;
+assert (isequal (double (C1), C2))
+C1 = A^2
+C2 = double (A)^2 ;
+assert (isequal (double (C1), C2))
+C1 = A (1:2,2:end)
+A = double (A) ;
+C2 = A (1:2,2:end) ;
+assert (isequal (double (C1), C2))
 
 %% Overloaded functions
 % Many MATLAB built-in functions can be used with GraphBLAS matrices:
 %
-% abs        display int16     isinf      issparse min      single  uint8
-% all        double  int32     isinteger  istril   nnz      size    uint16
-% any        eps     int64     islogical  istriu   nonzeros sparse  uint32
-% bandwidth  find    isbanded  ismatrix   isvector norm     spones  uint64
-% cast       fix     isdiag    isnan      kron     numel    sqrt   
-% ceil       floor   isempty   isnumeric  length   prod     sum       
-% diag       full    isfinite  isreal     logical  repmat   tril     
-% disp       int8    isfloat   isscalar   max      round    triu
-%
 % A few differences with the built-in functions:
-%   S = sparse (G)      convert a gb matrix G to a MATLAB sparse matrix
-%   F = full (G)        convert a gb matrix G to a MATLAB dense matrix
+%   S = sparse (G)      makes a copy of a gb matrix
+%   F = full (G)        adds explicit zeros to a gb matrix, so numel(F)==nnz(F)
+%   F = full (G,id)     adds explicit identity values to a gb matrix
 %   disp (G, level)     display a gb matrix G; level=2 is the default.
 %   e = nnz (G)         number of entries in a gb matrix G; some can be zero
 %   X = nonzeros (G)    all the entries of G; some can be zero
+%
+% In the list below, the first set of Methods are overloaded built-in methods.
+% They are used as-is on GraphBLAS matrices, such as C=abs(G).  The Static
+% methods are prefixed with "gb.", as in C = gb.apply ( ... ).
+
+methods gb
 
 %% Zeros are handled differently
 % Explicit zeros cannot be dropped from a GraphBLAS matrix.  In a shortest-path
@@ -238,11 +238,15 @@ C2 = A (1:2,2:3)
 % (the monoid identity of min(x,y) is +inf).  A zero edge weight A(i,j)=0 is
 % very different from an entry that is not present in A.  However, if a
 % GraphBLAS matrix is converted into a MATLAB sparse matrix, explicit zeros are
-% dropped, which is the convention for a MATLAB sparse matrix.
+% dropped, which is the convention for a MATLAB sparse matrix.  They can also
+% be dropped from a GraphBLAS matrix using the gb.select method.
 
-G = gb (magic (3)) - 1
-A = sparse (G)
-fprintf ('nnz (G): %d  nnz (A): %g\n', nnz (G), nnz (A)) ;
+G = gb (magic (3)) ;
+G (1,1) = 0           % G(1,1) still appears as an explicit entry
+A = double (G)        % but it's dropped when converted to MATLAB sparse
+H = gb.select ('nonzero', G)        % This drops the explicit zeros from G
+fprintf ('nnz (G): %d  nnz (A): %g nnz (H): %g\n', ...
+    nnz (G), nnz (A), nnz (H)) ;
 
 %% Displaying contents of a GraphBLAS matrix
 % Unlike MATLAB, the default is to display just a few entries of a gb matrix.
@@ -254,7 +258,8 @@ G = gb (rand (10)) ;
 disp (G,3)
 
 %%
-% That was disp(G,3), so every entry was printed.
+% That was disp(G,3), so every entry was printed.  It's a little long, so the
+% default is not to print everything.
 
 %%
 % With the default display (level = 2):
@@ -295,8 +300,12 @@ gb.format (G)
 gb.format ('by row') ;
 default_format_is = gb.format
 G = gb (C)
-default_format_is = gb.format ('by col')
-G = gb (C)
+The_format_for_G_is = gb.format (G)
+default_format_is_now_back_to = gb.format ('by col')
+H = gb (C)
+The_format_for_H_is = gb.format (H)
+But_G_is_still = gb.format (G)
+err = norm (H-G,1)
 
 %% Hypersparse matrices
 % SuiteSparse:GraphBLAS can use two kinds of sparse matrix data structures:
@@ -329,8 +338,8 @@ J = randperm (huge, 2) ;
 H (I,J) = 42 ;              % add 4 nonzeros to random locations in H
 H = (H' * 2) ;              % transpose H and double the entries
 K = gb.expand (pi, H) ;     % K = pi * spones (H)
-H = gb.eadd ('+', H, K)     % add pi to each entry in H
-numel (H)
+H = H + K                   % add pi to each entry in H
+numel (H)                   % this is huge^2, a really big number
 
 %%
 % All of these matrices take very little memory space:
@@ -350,7 +359,7 @@ whos
 C = rand (3) 
 C1 = gb.assign (C, C > 0.5, 3)      % in GraphBLAS
 C (C > .5) = 3                      % in MATLAB
-assert (isequal (sparse (C), sparse (C1)))
+err = norm (C - C1, 1)
 
 %% The descriptor
 % Most GraphBLAS functions of the form gb.method ( ... ) take an optional last
@@ -394,7 +403,7 @@ C1 = C * 40
 C2 = G * 40
 C3 = double (G) * 40 ;
 S = double (C1 < 255) ;
-assert (isequal (sparse (double (C1).*S), sparse (C2.*S)))
+assert (isequal (double (C1).*S, double (C2).*S))
 assert (isequal (nonzeros (C2), double (mod (nonzeros (C3), 256))))
 
 %% Example graph algorithm: breadth-first search in MATLAB and GraphBLAS
@@ -419,22 +428,24 @@ tic
 v2 = bfs_matlab (A, 1) ;
 matlab_time = toc ;
 
-assert (isequal (sparse (v1), sparse (v2)))
+assert (isequal (full (double (v1)), v2))
 fprintf ('\nnodes reached: %d of %d\n', nnz (v2), n) ;
 fprintf ('GraphBLAS time: %g sec\n', gb_time) ;
 fprintf ('MATLAB time:    %g sec\n', matlab_time) ;
 fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', matlab_time / gb_time) ;
 
 %% Example graph algorithm: Luby's method in GraphBLAS
-% The mis_gb.m function is variant of Luby's randomized algorithm [Luby 1985]. 
+% The mis_gb.m function is variant of Luby's randomized algorithm [Luby 1985].
 % It is a parallel method for finding an maximal independent set of nodes,
 % where no two nodes are adjacent.  See the GraphBLAS/demo/mis_gb.m function
-% for details.
+% for details.  The graph must be symmetric with a zero-free diagonal, so A is
+% symmetrized first and any diagona entries are removed.
 
 A = gb (A) ;
-A = A|A' ;              % the graph must be symmetric with a zero-free diagonal
+A = A|A' ;
 A = tril (A, -1) ;
 A = A|A' ;
+
 tic
 s = mis_gb (A) ;
 toc
@@ -448,13 +459,14 @@ assert (nnz (S) == 0)
 notp = find (s == 0) ;
 S = A (notp, p) ;
 deg = gb.vreduce ('+.int64', S) ;
-assert (full (all (deg > 0)))
+assert (logical (all (deg > 0)))
 
 %% Sparse deep neural network
-% The 2019 GraphChallenge (see http://graphchallenge.org) was to solve a
-% set of large sparse deep neural network problems.  In this demo, the MATLAB
-% reference solution is compared with a solution using GraphBLAS.  See the
-% dnn_gb.m and dnn_matlab.m functions for details.
+% The 2019 MIT GraphChallenge (see http://graphchallenge.org) is to solve a set
+% of large sparse deep neural network problems.  In this demo, the MATLAB
+% reference solution is compared with a solution using GraphBLAS, for a
+% randomly constructed neural network.  See the dnn_gb.m and dnn_matlab.m
+% functions for details.
 
 clear all
 rng ('default') ;
@@ -475,7 +487,6 @@ t_setup = toc ;
 fprintf ('construct problem time: %g sec\n', t_setup) ;
 
 %% Solving the sparse deep neural network problem with GraphbLAS
-%
 % Please wait ...
 
 tic
@@ -484,7 +495,6 @@ gb_time = toc ;
 fprintf ('total time in GraphBLAS: %g sec\n', gb_time) ;
 
 %% Solving the sparse deep neural network problem with MATLAB
-%
 % Please wait ...
 
 tic
@@ -501,15 +511,16 @@ err = norm (Y1-Y2,1)
 % has.  To run a demo illustrating a 500x or more speedup versus MATLAB,
 % run this demo:
 %
-%    gb_slow_demo
+%    gbdemo2
 %
 % It will illustrate an assignment C(I,J)=A that can take under a second in
 % GraphBLAS but several minutes in MATLAB.  To make the comparsion even more
 % dramatic, try:
 %
-%    gb_slow_demo (10000)
+%    gbdemo2 (20000)
 %
-% assuming you have enough memory.
+% assuming you have enough memory.  The gbdemo2 is not part of this demo since
+% it can take a long time.
 
 %% Limitations
 % GraphBLAS has a 'non-blocking' mode, in which operations can be left pending
@@ -522,11 +533,50 @@ err = norm (Y1-Y2,1)
 %
 % As mentioned earlier, GraphBLAS can operate on matrices with arbitrary
 % user-defined types and operators.  The only constraint is that the type be a
-% fixed sized.  However, in this MATLAB interface, SuiteSparse:GraphBLAS has
-% access to only predefined types, operators, and semirings.  Complex types and
-% operators will be added to this MATLAB in the future.  They already appear
-% in the C version of GraphBLAS, with "user-defined" operators in
-% GraphBLAS/Demo/Source/usercomplex.c.
+% fixed sized typedef that can be copied with the ANSI C memcpy; variable-sized
+% types are not yet supported.  However, in this MATLAB interface,
+% SuiteSparse:GraphBLAS has access to only predefined types, operators, and
+% semirings.  Complex types and operators will be added to this MATLAB in the
+% future.  They already appear in the C version of GraphBLAS, with
+% "user-defined" operators in GraphBLAS/Demo/Source/usercomplex.c.
+
+%% A few more limitations
+% Many built-in functions work with GraphBLAS matrices unmodified, but
+% sometimes things can break in odd ways.   gmres works fine:
+
+A = sparse (rand (4)) ;
+b = sparse (rand (4,1)) ;
+x = gmres (A,b)
+resid = A*x-b
+x = gmres (gb(A), gb(b))
+resid = A*x-b
+
+%%
+% Both of the following uses of minres (A,b) fail to converge because A is not
+% symmetric.  Both failures are correctly reported, and both the MATLAB version
+% and the GraphBLAS version return the same incorrect vector x.  So far so
+% good.
+
+x = minres (A, b)
+[x, flag] = minres (gb(A), gb(b))
+
+%%
+% But leaving off the flag output argument causes minres to try to print an
+% error using an internal MATLAB error message utility (see 'help message').
+% The error message fails in an obscure way, perhaps because sprintf ('%g',
+% gb(x)) fails for a GraphBLAS scalar x.  Overloading sprintf and fprintf might
+% fix this.
+%
+% x = minres (gb(A), gb(b))
+%
+%        Array with 2 dimensions not compatible with shape of
+%        matrix::typed_array<double>
+%
+% The error cannot be caught with 'try/catch' so it would terminate this demo,
+% and thus is not attempted here.  The MATLAB interface to GraphBLAS is a
+% work-in-progress.  My goal is to enable all MATLAB operations that work on
+% MATLAB sparse matrices to also work on GraphBLAS sparse matrices, but not all
+% methods are available yet, such as x=minres(G,b) for a GraphBLAS matrix G.
 
 %% GraphBLAS operations
 % In addition to the overloaded operators (such as C=A*B) and overloaded

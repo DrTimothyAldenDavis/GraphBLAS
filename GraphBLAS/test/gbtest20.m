@@ -1,5 +1,5 @@
 function gbtest20
-%TEST20 test bandwidth, isdiag, ceil, floor, round, fix
+%GBTEST20 test bandwidth, isdiag, ceil, floor, round, fix
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -19,10 +19,10 @@ for trial = 1:40
             d2 = isdiag (G) ;
             assert (isequal (d1, d2)) ;
 
-            assert (isequal (ceil  (A), sparse (ceil  (G)))) ;
-            assert (isequal (floor (A), sparse (floor (G)))) ;
-            assert (isequal (round (A), sparse (round (G)))) ;
-            assert (isequal (fix   (A), sparse (fix   (G)))) ;
+            assert (isequal (ceil  (A), double (ceil  (G)))) ;
+            assert (isequal (floor (A), double (floor (G)))) ;
+            assert (isequal (round (A), double (round (G)))) ;
+            assert (isequal (fix   (A), double (fix   (G)))) ;
         end
     end
 end

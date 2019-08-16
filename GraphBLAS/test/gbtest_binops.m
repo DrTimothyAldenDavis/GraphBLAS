@@ -1,5 +1,5 @@
 function [binops synonyms] = gbtest_binops
-%TEST_BINOPS return a cell array of strings, listing all binary operators
+%GBTEST_BINOPS return a cell array of strings, listing all binary operators
 % Types are not included; see gbtest_types.
 %
 % [binops synonyms] = gbtest_binops ;

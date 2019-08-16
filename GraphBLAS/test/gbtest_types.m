@@ -1,5 +1,5 @@
 function types = gbtest_types
-%TEST_TYPES return a cell array of strings, listing all types
+%GBTEST_TYPES return a cell array of strings, listing all types
 %
 % See also gbtest_binops.
 

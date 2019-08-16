@@ -1,5 +1,5 @@
 function gbtest3
-%TEST3 test gb.build
+%GBTEST3 test gb.build
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -13,7 +13,7 @@ A = sprand (m, n, 0.5) ;
 
 C = gb.build (i, j, x, m, n) ;
 
-S = sparse (C) ;
+S = double (C) ;
 assert (isequal (S, A)) ;
 
 % Prob = ssget (2662)
@@ -58,10 +58,10 @@ A2 = gb.build (i0, j0, x, m, n) ;
 t = toc ;
 fprintf ('%12.4f sec : A = gb.build (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
 
-A2 = sparse (A2) ;
-A3 = sparse (A3) ;
-assert (isequal (A1, sparse (A2))) ;
-assert (isequal (A1, sparse (A3))) ;
+A2 = double (A2) ;
+A3 = double (A3) ;
+assert (isequal (A1, A2)) ;
+assert (isequal (A1, A3)) ;
 
 fprintf ('\nwith [I J] jumbled so that a sort is required:\n') ;
 
@@ -87,9 +87,9 @@ t = toc ;
 fprintf ('%12.4f sec : A = gb.build (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
 
 tic
-A2 = sparse (A2) ;
+A2 = double (A2) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.sparse (A) to convert from GraphBLAS to MATLAB\n', t);
+fprintf ('%12.4f sec : A = double (A) to convert from GraphBLAS to MATLAB\n', t);
 
 assert (isequal (A1, A2)) ;
 

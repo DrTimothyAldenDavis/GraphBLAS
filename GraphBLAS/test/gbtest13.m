@@ -1,5 +1,5 @@
 function gbtest13
-%TEST13 test find and gb.extracttuples
+%GBTEST13 test find and gb.extracttuples
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

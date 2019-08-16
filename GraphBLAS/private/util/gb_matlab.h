@@ -28,6 +28,14 @@
 #define USAGE(message) mexErrMsgIdAndTxt ("GraphBLAS:usage", message) ;
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
 #define OK(method) CHECK_ERROR ((method) != GrB_SUCCESS, GrB_error ( )) ;
+#define OK2(method)                                         \
+{                                                           \
+    GrB_Info info = method ;                                \
+    if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))    \
+    {                                                       \
+        ERROR (GrB_error ( )) ;                             \
+    }                                                       \
+}
 
 //------------------------------------------------------------------------------
 // basic macros

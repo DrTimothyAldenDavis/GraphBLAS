@@ -1,5 +1,5 @@
 function gbtest5
-%TEST5 test gb.descriptorinfo
+%GBTEST5 test gb.descriptorinfo
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
