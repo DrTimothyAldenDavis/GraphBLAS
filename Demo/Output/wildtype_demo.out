@@ -1,5 +1,5 @@
 WildType size: 128
-GraphBLAS type: WildType run-time user-defined: [wildtype] size: 128
+    GraphBLAS type: WildType run-time user-defined: [wildtype] size: 128
 
 a wildtype scalar: scalar1 [this is from scalar1]
        0.0        1.0        2.0        3.0 
@@ -25,34 +25,28 @@ a wildtype scalar: scalar_identity for the monoid [identity]
        0.0        0.0        0.0        0.0 
        0.0        0.0        0.0        0.0 
 
-GraphBLAS Semiring: InTheWild (user-defined at run-time)
-GraphBLAS Monoid: semiring->add (user-defined at run-time)
-GraphBLAS BinaryOp: monoid->op (run-time user-defined) z=wildtype_add(x,y)
-GraphBLAS type: ztype run-time user-defined: [wildtype] size: 128
-GraphBLAS type: xtype run-time user-defined: [wildtype] size: 128
-GraphBLAS type: ytype run-time user-defined: [wildtype] size: 128
-identity: [ [user-defined value] ] 
+    GraphBLAS Semiring: InTheWild (user-defined at run-time)
+    GraphBLAS Monoid: semiring->add (user-defined at run-time)
+    GraphBLAS BinaryOp: monoid->op (run-time user-defined) z=wildtype_add(x,y)
+    GraphBLAS type: ztype run-time user-defined: [wildtype] size: 128
+    GraphBLAS type: xtype run-time user-defined: [wildtype] size: 128
+    GraphBLAS type: ytype run-time user-defined: [wildtype] size: 128
+    identity: [ [user-defined value] ] 
 
-GraphBLAS BinaryOp: semiring->multiply (run-time user-defined) z=wildtype_mult(x,y)
-GraphBLAS type: ztype run-time user-defined: [wildtype] size: 128
-GraphBLAS type: xtype run-time user-defined: [wildtype] size: 128
-GraphBLAS type: ytype run-time user-defined: [wildtype] size: 128
+    GraphBLAS BinaryOp: semiring->multiply (run-time user-defined) z=wildtype_mult(x,y)
+    GraphBLAS type: ztype run-time user-defined: [wildtype] size: 128
+    GraphBLAS type: xtype run-time user-defined: [wildtype] size: 128
+    GraphBLAS type: ytype run-time user-defined: [wildtype] size: 128
 
 multiplication C=A*B InTheWild semiring:
 
 Printing the matrix with GxB_Matrix_fprint:
 
-GraphBLAS matrix: input A 
-nrows: 10 ncols: 10 max # entries: 3
-format: standard CSR vlen: 10 nvec_nonempty: 2 nvec: 10 plen: 10 vdim: 10
-hyper_ratio 0.0625
-GraphBLAS type:  run-time user-defined: [wildtype] size: 128
-number of entries: 3 
-row: 2 : 2 entries [0:1]
-    column 4: [user-defined value]
-    column 7: [user-defined value]
-row: 3 : 1 entries [2:2]
-    column 7: [user-defined value]
+    10x10 GraphBLAS wildtype matrix: input A, standard CSR, 3 entries
+
+    (2,4) [user-defined value]
+    (2,7) [user-defined value]
+    (3,7) [user-defined value]
 
 
 ============= printing the WildType matrix: input A (10-by-10 with 3 entries)
@@ -85,20 +79,14 @@ a wildtype scalar:  [this is A(3,7)]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-GraphBLAS matrix: input B 
-nrows: 10 ncols: 10 max # entries: 0
-format: hypersparse CSR vlen: 10 nvec_nonempty: 0 nvec: 0 plen: 1 vdim: 10
-hyper_ratio 0.0625
-GraphBLAS type:  run-time user-defined: [wildtype] size: 128
-empty
-number of entries: 0 
-pending tuples: 3 max pending: 256 zombies: 0
-pending tuples:
-GraphBLAS type:  run-time user-defined: [wildtype] size: 128
-row: 7 col: 2 [user-defined value]
-row: 7 col: 5 [user-defined value]
-row: 4 col: 2 [user-defined value]
-pending operator: implicit 2nd
+    10x10 GraphBLAS wildtype matrix: input B, hypersparse CSR, 0 entries
+    pending tuples: 3 max pending: 256 zombies: 0
+    pending tuples:
+    GraphBLAS type:  run-time user-defined: [wildtype] size: 128
+    row: 7 col: 2 [user-defined value]
+    row: 7 col: 5 [user-defined value]
+    row: 4 col: 2 [user-defined value]
+    pending operator: implicit 2nd
 
 
 ============= printing the WildType matrix: input B (10-by-10 with 3 entries)
@@ -257,19 +245,12 @@ a wildtype scalar: z = x*y: [this was multiplied]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-GraphBLAS matrix: output C 
-nrows: 10 ncols: 10 max # entries: 4
-format: standard CSR vlen: 10 nvec_nonempty: 2 nvec: 10 plen: 10 vdim: 10
-hyper_ratio 0.0625
-GraphBLAS type:  run-time user-defined: [wildtype] size: 128
-last method used for GrB_mxm, vxm, or mxv: heap
-number of entries: 4 
-row: 2 : 2 entries [0:1]
-    column 2: [user-defined value]
-    column 5: [user-defined value]
-row: 3 : 2 entries [2:3]
-    column 2: [user-defined value]
-    column 5: [user-defined value]
+    10x10 GraphBLAS wildtype matrix: output C, standard CSR, 4 entries
+
+    (2,2) [user-defined value]
+    (2,5) [user-defined value]
+    (3,2) [user-defined value]
+    (3,5) [user-defined value]
 
 
 ============= printing the WildType matrix: output C (10-by-10 with 4 entries)
@@ -314,19 +295,12 @@ internal data structure.
 
 Printing the matrix with GxB_Matrix_fprint:
 
-GraphBLAS matrix: output C 
-nrows: 10 ncols: 10 max # entries: 4
-format: standard CSC vlen: 10 nvec_nonempty: 2 nvec: 10 plen: 10 vdim: 10
-hyper_ratio 0.0625
-GraphBLAS type:  run-time user-defined: [wildtype] size: 128
-last method used for GrB_mxm, vxm, or mxv: heap
-number of entries: 4 
-column: 2 : 2 entries [0:1]
-    row 2: [user-defined value]
-    row 3: [user-defined value]
-column: 5 : 2 entries [2:3]
-    row 2: [user-defined value]
-    row 3: [user-defined value]
+    10x10 GraphBLAS wildtype matrix: output C, standard CSC, 4 entries
+
+    (2,2) [user-defined value]
+    (3,2) [user-defined value]
+    (2,5) [user-defined value]
+    (3,5) [user-defined value]
 
 
 ============= printing the WildType matrix: output C (10-by-10 with 4 entries)
@@ -367,13 +341,7 @@ a wildtype scalar:  [this was multiplied]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-GraphBLAS matrix: D 
-nrows: 10 ncols: 10 max # entries: 0
-format: hypersparse CSR vlen: 10 nvec_nonempty: 0 nvec: 0 plen: 1 vdim: 10
-hyper_ratio 0.0625
-GraphBLAS type:  float size: 4
-empty
-number of entries: 0 
+    10x10 GraphBLAS float matrix: D, hypersparse CSR, 0 entries
 
 
 The matrix D is not wild enough to print.

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbassign: assign entries into a GraphBLAS matrix
+// gbsubassign: assign entries into a GraphBLAS matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,16 +7,16 @@
 
 //------------------------------------------------------------------------------
 
-// gbassign is an interface to GrB_Matrix_assign and GrB_Matrix_assign_[TYPE],
-// computing the GraphBLAS expression:
+// gbsubassign is an interface to GxB_Matrix_subassign and
+// GxB_Matrix_assign_[TYPE], computing the GraphBLAS expression:
 
-//      C<#M,replace>(I,J) = accum (C(I,J), A) or accum(C(I,J), A')
+//      C(I,J)<#M,replace> = accum (C(I,J), A) or accum(C(I,J), A')
 
 // where A can be a matrix or a scalar.
 
 // Usage:
 
-//      Cout = gbassign (Cin, M, accum, A, I, J, desc)
+//      Cout = gbsubassign (Cin, M, accum, A, I, J, desc)
 
 // Cin, A, and desc are required.  See gb.m for more details.
 
@@ -30,7 +30,7 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    gb_assign (nargout, pargout, nargin, pargin, false,
-        "usage: Cout = gb.assign (Cin, M, accum, A, I, J, desc)") ;
+    gb_assign (nargout, pargout, nargin, pargin, true,
+        "usage: Cout = gb.subassign (Cin, M, accum, A, I, J, desc)") ;
 }
 

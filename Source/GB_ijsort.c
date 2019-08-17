@@ -95,15 +95,6 @@ GrB_Info GB_ijsort
         I1k [k] = (ni-k) ;
     }
 
-    /*
-    printf ("\nIndex list length %g\n", (double) ni) ;
-    for (int64_t k = 0 ; k < ni ; k++)
-    {
-        printf ("before sort: %g: %g %g\n", (double) k,
-            (double) I1 [k], (double) I1k [k]) ;
-    }
-    */
-
     //--------------------------------------------------------------------------
     // sort [I1 I1k]
     //--------------------------------------------------------------------------
@@ -139,15 +130,6 @@ GrB_Info GB_ijsort
         GB_FREE_MEMORY (W0, ni, sizeof (int64_t)) ;
         GB_FREE_MEMORY (W1, ni, sizeof (int64_t)) ;
     }
-
-    /*
-    printf ("\nafter sort, Index list length %g\n", (double) ni) ;
-    for (int64_t k = 0 ; k < ni ; k++)
-    {
-        printf ("after sort: %g: %g %g\n", (double) k ,
-            (double) I1 [k], (double) I1k [k]) ;
-    }
-    */
 
     //--------------------------------------------------------------------------
     // count unique entries in I1
@@ -205,8 +187,6 @@ GrB_Info GB_ijsort
         { 
             // the first entry in I1 is never a duplicate
             I2  [k2] = I1  [0] ;
-            // old: I2k [k2] = I1k [0] ;
-            // new:
             I2k [k2] = (ni - I1k [0]) ;
             k2++ ;
         }
@@ -215,39 +195,11 @@ GrB_Info GB_ijsort
             if (I1 [k-1] != I1 [k])
             { 
                 I2  [k2] = I1  [k] ;
-                // old: I2k [k2] = I1k [k] ;
-                // new:
                 I2k [k2] = ni - I1k [k] ;
                 k2++ ;
             }
         }
     }
-
-    //--------------------------------------------------------------------------
-    // adjust the final key
-    //--------------------------------------------------------------------------
-
-#if 0
-    printf ("\nafter dupl removal, Index list length %g\n", (double) ni2) ;
-    for (int64_t k = 0 ; k < ni2 ; k++)
-    {
-        printf ("after sort: %g: %g %g\n", (double) k ,
-            (double) I2 [k], (double) I2k [k]) ;
-    }
-
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < ni2 ; k++)
-    {
-        I2k [k] = (ni - I2k [k]) ;
-    }
-
-    printf ("\nafter key fix , Index list length %g\n", (double) ni2) ;
-    for (int64_t k = 0 ; k < ni2 ; k++)
-    {
-        printf ("after sort: %g: %g %g\n", (double) k ,
-            (double) I2 [k], (double) I2k [k]) ;
-    }
-#endif
 
     //--------------------------------------------------------------------------
     // check result: compare with single-pass, single-threaded algorithm
@@ -266,13 +218,6 @@ GrB_Info GB_ijsort
                 ni1++ ;
             }
         }
-        // printf ("OK "GBd" "GBd"\n", ni1, ni) ;
-        /*
-        for (int64_t k = 0 ; k < ni1 ; k++)
-        {
-            I1k [k] = (ni - I1k [k]) ;
-        }
-        */
         ASSERT (ni1 == ni2) ;
         for (int64_t k = 0 ; k < ni1 ; k++)
         {

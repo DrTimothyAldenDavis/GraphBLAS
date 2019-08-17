@@ -7,7 +7,7 @@ The gb class provides an easy-to-use MATLAB interface to SuiteSparse:GraphBLAS.
 
 To install it for use in MATLAB, first compile the GraphBLAS library,
 -lgraphblas.  See the instructions in the top-level GraphBLAS folder for
-details.
+details.  Be sure to use OpenMP for best performance.
 
 Next, start MATLAB and go to this GraphBLAS/GraphBLAS folder.  Type
 
@@ -33,11 +33,17 @@ mexFunctions:
     cd private
     gbmake
 
-To run a demo, go to the GraphBLAS/GraphBLAS/demo folder and type:
+To run the demos, go to the GraphBLAS/GraphBLAS/demo folder and type:
 
     gbdemo
+    gbdemo2
+
+The output of these demos on a Dell XPS 13 laptop and an NVIDIA DGX Station can
+also be found in GraphBLAS/GraphBLAS/demo/html.
 
 To test your installation, go to GraphBLAS/GraphBLAS/test and type:
 
     gbtestall
+
+If everything is successful, it should report 'gbtestall: all tests passed'.
 

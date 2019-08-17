@@ -40,9 +40,15 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
         // No typecasting is needed since MATLAB supports all the same types.
 
-        // TODO error if nvals(C) is not nrows*ncols
+        // ensure nvals(C) is equal to nrows*ncols
+        GrB_Index nrows, ncols, nvals ;
+        OK (GrB_Matrix_nvals (&nvals, *C_handle)) ;
+        OK (GrB_Matrix_nrows (&nrows, *C_handle)) ;
+        OK (GrB_Matrix_ncols (&ncols, *C_handle)) ;
+        CHECK_ERROR ((double) nrows * (double) ncols != (double) nvals,
+            "matrix must be full to export as full matrix") ;
 
-        GrB_Index nrows, ncols, nzmax, *Cp, *Ci ;
+        GrB_Index nzmax, *Cp, *Ci ;
         int64_t nonempty ;
         void *Cx ;
         GrB_Type ctype ;
@@ -50,6 +56,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
             &nonempty, &Cp, &Ci, &Cx, NULL)) ;
         gb_mxfree (&Cp) ;
         gb_mxfree (&Ci) ;
+
         return (gb_export_to_mxfull (&Cx, nrows, ncols, ctype)) ;
 
     }

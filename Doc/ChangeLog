@@ -1,6 +1,15 @@
-Version 3.1.0 TODO
+Version 3.1.0, Aug [TODO], 2019
 
-    * added MATLAB interface
+    * added MATLAB interface: GraphBLAS/GraphBLAS is new.  In Source/, added
+        global pointer to printf for MATLAB mexPrintf, pointer to
+        mexMakeMemoryPersistent for Sauna workspace.  Changed how GraphBLAS
+        objects are printed with GxB_print.  Changed how duplicate indices are
+        handled in assign and extract, to match the MATLAB stadard.  Added
+        helper functions for MATLAB (GB_matlab_helper.[ch]).  Renamed existing
+        Test/*.m Tcov/*.m files and variabls so that gb*.m naming prefix is
+        reserved for MATLAB interface.
+    * bug fix to GB_reduce_to_vector: avoid integer divide-by-zero for
+        a matrix with n=0 columns.
 
 Version 3.0.1, July 26, 2019
 

@@ -21,9 +21,6 @@
 
 #include "gb_matlab.h"
 
-// TODO HACK: Sauna
-#include "GB_Sauna.h"
-
 void mexFunction
 (
     int nargout,
@@ -180,12 +177,5 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
-
-    // TODO: HACK because Sauna is freed by MATLAB.  Must make it persistent...
-    for (int Sauna_id = 0 ; Sauna_id < GxB_NTHREADS_MAX ; Sauna_id++)
-    {
-        GB_Sauna_free (Sauna_id) ;
-    }
-
 }
 

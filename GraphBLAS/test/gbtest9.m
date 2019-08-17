@@ -1,27 +1,38 @@
 function gbtest9
-%GBTEST9 test dnn
+%GBTEST9 test eye and speye
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+types = gbtest_types ;
 
-rng ('default') ;
-levels = 4 ;
-nfeatures = 6 ;
-nneurons = 16 ;
+for m = -1:10
+    fprintf ('.') ;
 
-for level = 1:levels
-    W {level} = sprand (nneurons, nneurons, 0.5) ;
-    bias {level} = -0.3 * ones (1, nneurons) ;
+    A = eye (m) ;
+    G = gb.eye (m) ;
+    assert (isequal (A, full (double (G)))) ;
+
+    for n = -1:10
+
+        A = eye (m, n) ;
+        G = gb.eye (m, n) ;
+        assert (isequal (A, full (double (G)))) ;
+
+        for k = 1:length (types)
+            type = types {k} ;
+
+            A = eye (m, n, type) ;
+            G = gb.eye (m, n, type) ;
+            assert (isequal (A, full (double (G)))) ;
+
+            A = eye ([m n], type) ;
+            G = gb.eye ([m n], type) ;
+            assert (isequal (A, full (double (G)))) ;
+
+            A = eye (m, type) ;
+            G = gb.eye (m, type) ;
+            assert (isequal (A, full (double (G)))) ;
+        end
+    end
 end
 
-Y0 = sprandn (nfeatures, nneurons, 0.5) ;
-
-Y1 = dnn_matlab (W, bias, Y0) ;
-Y2 = dnn_gb     (W, bias, Y0) ;
-
-err = norm (Y1-Y2,1) ;
-assert (logical (err < 1e-5)) ;
-
-fprintf ('gbtest9: all tests passed\n') ;
-
+fprintf ('\ngbtest9: all tests passed\n') ;
 

@@ -4,12 +4,11 @@
 % algebraic operations over semirings.  Its MATLAB interface provides faster
 % sparse matrix operations than the built-in methods in MATLAB, as well as
 % sparse integer and single-precision matrices, and operations with arbitrary
-% semirings.  Below is a short summary; see 'help gb' for details, for more
-% help on the 'gb' class.
+% semirings.  Below is a short summary; see 'help gb' for details.
 %
 % Methods:
 %
-%   G = gb (S)              construct a gb matrix.
+%   G = gb (S)              construct a gb matrix
 %   S = sparse (G)          makes a copy of a gb matrix
 %   F = full (G)            adds explicit zeros to a gb matrix
 %   F = full (G,id)         adds explicit identity values to a gb matrix
@@ -87,34 +86,10 @@
 %
 % Operator overloading:
 %
-%   C = plus (A, B)         C = A + B
-%   C = minus (A, B)        C = A - B
-%   C = uminus (A)          C = -A
-%   C = uplus (A)           C = +A
-%   C = times (A, B)        C = A .* B
-%   C = mtimes (A, B)       C = A * B
-%   C = rdivide (A, B)      C = A ./ B
-%   C = ldivide (A, B)      C = A .\ B
-%   C = mrdivide (A, B)     C = A / B
-%   C = mldivide (A, B)     C = A \ B
-%   C = power (A, B)        C = A .^ B
-%   C = mpower (A, B)       C = A ^ B
-%   C = lt (A, B)           C = A < B
-%   C = gt (A, B)           C = A > B
-%   C = le (A, B)           C = A <= B
-%   C = ge (A, B)           C = A >= B
-%   C = ne (A, B)           C = A ~= B
-%   C = eq (A, B)           C = A == B
-%   C = and (A, B)          C = A & B
-%   C = or (A, B)           C = A | B
-%   C = not (A)             C = ~A
-%   C = ctranspose (A)      C = A'
-%   C = transpose (A)       C = A.'
-%   C = horzcat (A, B)      C = [A , B]
-%   C = vertcat (A, B)      C = [A ; B]
-%   C = subsref (A, I, J)   C = A (I,J)
-%   C = subsasgn (A, I, J)  C (I,J) = A
-%   index = end (A, k, n)   for object indexing, A(1:end,1:end)
+%     A+B    A-B   A*B    A.*B   A./B   A.\B   A.^b    A/b    C=A(I,J)
+%     -A     +A    ~A     A'     A.'    A&B    A|B     b\A    C(I,J)=A
+%     A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]  
+%     A(1:end,1:end)
 %
 % Static Methods:
 %
@@ -140,9 +115,7 @@
 %   C = gb.mxm (semiring, A, B)      C = A*B over a semiring
 %   C = gb.select (op, A, thunk)     select subset of entries
 %   C = gb.assign (A, I, J)          C<M>(I,J) = A ; M and C same size
-%   C = gb.subassign (A, I, J)       C(I,J)<M> = A ; M and C(I,J) same size
-%   C = gb.colassign (u, I, j)       C<M>(I,j) = u
-%   C = gb.rowassign (u, i, J)       C<M'>(i,J) = u'
+%   C = gb.subassign (A, I, J)       C(I,J)<M> = A ; M and A same size
 %   C = gb.vreduce (op, A)           reduce to a vector
 %   C = gb.reduce (op, A)            reduce to a scalar (no mask M)
 %   C = gb.gbkron (op, A, B)         Kronecker product

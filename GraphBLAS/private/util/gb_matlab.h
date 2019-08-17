@@ -266,19 +266,6 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     GrB_Index *ni               // length (I)
 ) ;
 
-void gb_matrix_assign_scalar
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_BinaryOp accum,
-    const GrB_Matrix A,
-    const GrB_Index *I,
-    const GrB_Index ni,
-    const GrB_Index *J,
-    const GrB_Index nj,
-    const GrB_Descriptor desc
-) ;
-
 GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
 (
     const GrB_Type type
@@ -306,4 +293,29 @@ GxB_Format_Value gb_mxstring_to_format  // GxB_BY_ROW or GxB_BY_COL
     const mxArray *mxformat             // MATLAB string, 'by row' or 'by col'
 ) ;
 
+void gb_matrix_assign_scalar
+(
+    GrB_Matrix C,               // C can be of any type
+    const GrB_Matrix M,
+    const GrB_BinaryOp accum,
+    const GrB_Matrix A,
+    const GrB_Index *I,
+    const GrB_Index ni,
+    const GrB_Index *J,
+    const GrB_Index nj,
+    const GrB_Descriptor desc,
+    bool do_subassign           // true: use GxB_subassign, false: GrB_assign
+) ;
+
+void gb_assign                  // gbassign or gbsubassign mexFunctions
+(
+    int nargout,                // # output arguments for mexFunction
+    mxArray *pargout [ ],       // output arguments for mexFunction
+    int nargin,                 // # inpu arguments for mexFunction
+    const mxArray *pargin [ ],  // input arguments for mexFunction
+    bool do_subassign,          // true: do subassign, false: do assign
+    const char *usage           // usage string to print if error
+) ;
+
 #endif
+

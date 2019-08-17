@@ -71,7 +71,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "July 28, 2019 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "Aug 17, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3956,7 +3956,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 // SPEC: The GxB_*_subassign functions are extensions to the spec.
 
 // Each GxB_subassign function is very similar to its corresponding GrB_assign
-// function in the spec, but they differ in three ways:
+// function in the spec, but they differ in two ways:
 
 // (1) the mask in the GxB_subassign functions has the same dimensions as
 //      w(I) for vectors and C(I,J) for matrices.  In GrB_assign, the mask is
@@ -3984,16 +3984,6 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 //      is false.  With GrB_assign, it is not possible to change entries
 //      outside the submatrix C(I,J), except to delete them in this
 //      circumstance.
-
-// (3) They differ in how duplicate indices are treated in I and J.  For both
-//      assign and subassign operations, results are not defined for
-//      GrB_Matrix_*assign, GrB_Vector_*assign, GrB_Row_*assign, and
-//      GrB_Col_*assign when duplicate indices appear in I and J.  The scalar
-//      expansion operations, GrB_*_assign_TYPE, are well-defined if duplicate
-//      indices appear (the results are the same as if duplicates are removed
-//      first from I and J).  However, the subassign scalar expansion
-//      operations, GxB_*_subassign_TYPE are not well-defined if duplicate
-//      indices appear in I and J.
 
 // GxB_subassign and GrB_assign are identical if GrB_REPLACE is set to its
 // default value of false, or if the masks happen to be the same.  The two
@@ -4067,8 +4057,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 // vector u.
 
 // The GxB_subassign and GrB_assign functions have the same signatures; they
-// differ only in how they consider the Mask and the GrB_REPLACE descriptor,
-// and in how duplicate indices are treated for scalar expansion.
+// differ only in how they consider the Mask and the GrB_REPLACE descriptor.
 
 GrB_Info GxB_Vector_subassign       // w(I)<mask> = accum (w(I),u)
 (

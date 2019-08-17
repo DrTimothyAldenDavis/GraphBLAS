@@ -85,7 +85,8 @@ void mexFunction
 
     GrB_Matrix Z ;
     OK (GrB_Matrix_new (&Z, type, nrows, ncols)) ;
-    gb_matrix_assign_scalar (Z, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL) ;
+    gb_matrix_assign_scalar (Z, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL,
+        false) ;
 
     //--------------------------------------------------------------------------
     // F = first (X, Z)

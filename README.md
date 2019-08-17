@@ -3,7 +3,7 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-VERSION 3.1.0, July 28, 2019 (DRAFT)
+VERSION 3.1.0, Aug 17, 2019 (DRAFT)
 
 SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -57,6 +57,9 @@ Then do:
 
     make dox
 
+See the GraphBLAS/ subfolder for the MATLAB interface, which contains a
+README.md file with further details.
+
 --------------------------------------------------------------------------------
 ## Files and folders in this GraphBLAS directory:
 
@@ -75,6 +78,10 @@ Extras:         parallel methods: triangle counting, k-truss, and a
                 These are stand-along package that rely on GraphBLAS.  They
                 are not compiled by the cmake script.  See Extras/README.txt
                 for more details.
+
+GraphBLAS:      the MATLAB interface.  This folder is called 'GraphBLAS' so
+                that typing 'help graphblas' or 'doc graphblas' in the MATLAB
+                Command Window can locate the Contents.m file.
 
 Include:        user-accessible include file, GraphBLAS.h
 
@@ -108,3 +115,4 @@ keyword SPEC: in the code and in the User Guide, and in the Include/GraphBLAS.h
 file.  All functions, objects, and macros with the prefix GxB are extensions to
 the spec.  Functions, objects, and macros with prefix GB must not be accessed
 by user code.  They are for internal use in GraphBLAS only.
+

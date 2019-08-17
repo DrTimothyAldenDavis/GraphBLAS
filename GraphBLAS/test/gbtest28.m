@@ -1,37 +1,107 @@
 function gbtest28
-%GBTEST28 test eye and speye
+%GBTEST28 test gb.build
 
-types = gbtest_types ;
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-for m = -1:10
-    fprintf ('.') ;
+fprintf ('\ngbtest28: testing gb.build and compare with A=sparse(i,j,x)\n') ;
+nthreads = gb.threads ;
+fprintf ('using %d threads in GraphBLAS\n', nthreads) ;
 
-    A = eye (m) ;
-    G = gb.eye (m) ;
-    assert (isequal (A, full (double (G)))) ;
+rng ('default') ;
+m = 10 ;
+n = 5 ;
+A = sprand (m, n, 0.5) ;
 
-    for n = -1:10
+[i j x] = find (A) ;
 
-        A = eye (m, n) ;
-        G = gb.eye (m, n) ;
-        assert (isequal (A, full (double (G)))) ;
+C = gb.build (i, j, x, m, n) ;
 
-        for k = 1:length (types)
-            type = types {k} ;
+S = double (C) ;
+assert (isequal (S, A)) ;
 
-            A = eye (m, n, type) ;
-            G = gb.eye (m, n, type) ;
-            assert (isequal (A, full (double (G)))) ;
+fprintf ('\nGenerating large test matrix; please wait ...\n') ;
+n = 1000 ;
+nz = 7000 ;
+density = nz / n^2 ;
+tic
+A = sprand (n, n, density) ;
+B = sprand (n, n, density) ;
+A = kron (A,B) ;
+clear B
+t = toc ;
+n = size (A, 1) ;
+fprintf ('%12.4f sec : A n-by-n, whth n: %g nnz: %g\n', t, n, nnz (A)) ;
 
-            A = eye ([m n], type) ;
-            G = gb.eye ([m n], type) ;
-            assert (isequal (A, full (double (G)))) ;
+[i j x] = find (A) ;
+[m n] = size (A) ;
 
-            A = eye (m, type) ;
-            G = gb.eye (m, type) ;
-            assert (isequal (A, full (double (G)))) ;
-        end
-    end
-end
+i0 = uint64 (i) - 1 ;
+j0 = uint64 (j) - 1 ;
+
+fprintf ('\nwith [I J] already sorted on input:\n') ;
+
+tic
+A1 = sparse (i, j, x, m, n) ;
+t = toc ;
+fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
+
+tic
+A3 = gb.build (i, j, x, m, n) ;
+t = toc ;
+fprintf ('%12.4f sec : A = gb.build (...), same inputs as MATLAB\n', t) ;
+
+d.kind = 'sparse' ;
+
+tic
+A4 = gb.build (i, j, x, m, n, d) ;
+t = toc ;
+fprintf ('%12.4f sec : A = gb.build (...), same inputs/outputs as MATLAB\n', t);
+
+tic
+A2 = gb.build (i0, j0, x, m, n) ;
+t = toc ;
+fprintf ('%12.4f sec : A = gb.build (i0, j0, ...), with i0 and j0 uint64\n', t);
+
+A2 = double (A2) ;
+A3 = double (A3) ;
+assert (isequal (A1, A2)) ;
+assert (isequal (A1, A3)) ;
+assert (isequal (A1, A4)) ;
+
+fprintf ('\nwith [I J] jumbled so that a sort is required:\n') ;
+
+i = i (end:-1:1) ;
+j = j (end:-1:1) ;
+i (1:10) = i (randperm (10)) ;
+i0 = uint64 (i) - 1 ;
+j0 = uint64 (j) - 1 ;
+
+tic
+A1 = sparse (i, j, x, m, n) ;
+t = toc ;
+fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
+
+tic
+A3 = gb.build (i, j, x, m, n) ;
+t = toc ;
+fprintf ('%12.4f sec : A = gb.build (...), same inputs as MATLAB\n', t) ;
+
+tic
+A4 = gb.build (i, j, x, m, n, d) ;
+t = toc ;
+fprintf ('%12.4f sec : A = gb.build (...), same inputs/outputs as MATLAB\n', t);
+
+tic
+A2 = gb.build (i0, j0, x, m, n) ;
+t = toc ;
+fprintf ('%12.4f sec : A = gb.build (i0, j0, ...), with i0 and j0 uint64\n', t);
+
+A2 = double (A2) ;
+A3 = double (A3) ;
+assert (isequal (A1, A2)) ;
+assert (isequal (A1, A3)) ;
+assert (isequal (A1, A4)) ;
 
 fprintf ('\ngbtest28: all tests passed\n') ;
+

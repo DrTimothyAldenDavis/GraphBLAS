@@ -48,6 +48,15 @@ applied to sparse adjacency matrices, these algebraic operations are equivalent
 to computations on graphs.  GraphBLAS provides a powerful and expressive
 framework for creating graph algorithms based on the elegant mathematics of
 sparse matrix operations on a semiring.
+
+{\bf NOTE: This version of GraphBLAS is a pre-release draft, not yet even
+in beta status.  It is fairly stable, but may have a few lurking bugs since
+this version has not yet undergone my brutal testing.  I'm making this
+widely available to get feedback on the MATLAB interface.  This version
+should be just as fast as the latest stable version, V3.0.1, but there might
+be a performance bug here and there, so please use V3.0.1 if you would like
+to publish performance comparisons.  Use this pre-release version for
+evaluation only, not for production use.}
 \end{abstract}
 
 \newpage
@@ -104,7 +113,11 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
-\item Version 3.0 (2019):  The version number is increased to 3.0, since
+\item Version 3.1.0 (TODO: DRAFT, 2019).  MATLAB interface added.
+    See the \verb'GraphBLAS/GraphBLAS' folder for details and documentation.
+
+\item Version 3.0 (July 26, 2019):
+The version number is increased to 3.0, since
 this version is not backward compatible with V2.x.  The \verb'GxB_select'
 operation changes; the \verb'Thunk' parameter was formerly a
 \verb'const void *' pointer, and is now a \verb'GxB_Scalar'.  A new parameter
@@ -744,13 +757,62 @@ times.
 Reduction of a matrix ${\bf A}$ to a vector reduces the $i$th row of ${\bf A}$
 to a scalar $w_i$.  This is like \verb"w=sum(A')" since by default, MATLAB
 reduces down the columns, not across the rows.
-% Since the input matrix can be
-% optionally transposed, selecting this option obtains the behavior of \verb'sum'
-% in MATLAB.
 
-% Further details of each operation are given in Section~\ref{operations}.
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{MATLAB Interface} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{matlab}
 
+As of Version 3.1, a MATLAB interface is now available.  Refer to the
+documentation in the \verb'GraphBLAS/GraphBLAS' folder for details.  Start with
+the \verb'README.md' file in that directory.  An easy-to-read output of the
+MATLAB demos can be found in \verb'GraphBLAS/GraphBLAS/demo/html'.
 
+The MATLAB interface adds the \verb'gb' class, which is an opaque MATLAB object
+that contains a GraphBLAS matrix, either double or single precision, boolean,
+or any of the built-in integer types.  Complex matrix support will be added in
+the future.    MATLAB sparse and full matrices can be arbitrarily mixed with
+GraphBLAS matrices.  The following overloaded operators and methods all work as
+you would expect for any matrix.  The matrix multiplication \verb'A*B' uses the
+conventional \verb'PLUS_TIMES' semiring.
+
+{\footnotesize
+\begin{verbatim}
+A+B    A-B   A*B    A.*B   A./B   A.\B   A.^b    A/b    C=A(I,J)
+-A     +A    ~A     A'     A.'    A&B    A|B     b\A    C(I,J)=A
+A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]  A(1:end,1:end) \end{verbatim}}
+
+{\footnotesize
+\begin{verbatim}
+abs         double   int64        isreal       minus     prod       sum
+all         eig      int8         isscalar     mldivide  rdivide    symamd
+amd         end      isa          issparse     mpower    real       symrcm
+and         eps      isbanded     issymmetric  mrdivide  repmat     times
+any         eq       isdiag       istril       mtimes    round      transpose
+bandwidth   find     isempty      istriu       ne        sign       tril
+ceil        fix      isfinite     isvector     nnz       single     triu
+colamd      floor    isfloat      kron         nonzeros  size       uint16
+complex     full     ishermitian  ldivide      norm      sparse     uint32
+conj        gb       isinf        le           not       spfun      uint64
+ctranspose  ge       isinteger    length       numel     spones     uint8
+diag        gt       islogical    logical      nzmax     sqrt       uminus
+disp        horzcat  ismatrix     lt           or        subsasgn   uplus
+display     int16    isnan        max          plus      subsindex  vertcat
+dmperm      int32    isnumeric    min          power     subsref
+      \end{verbatim}}
+
+The static methods (used in the form \verb'gb.method') provide direct access
+to GraphBLAS functions and can be used on both MATLAB and GraphBLAS matrices.
+Type \verb'help graphblas' and \verb'help gb' for more help.
+
+{\footnotesize
+\begin{verbatim}
+apply      clear           expand         gbkron       reduce        threads
+assign     descriptorinfo  extract        gbtranspose  select        type
+binopinfo  eadd            extracttuples  monoidinfo   semiringinfo  unopinfo
+build      empty           eye            mxm          speye         vreduce
+chunk      emult           format         nvals        subassign \end{verbatim}}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7980,7 +8042,7 @@ if \verb'A' is transposed.
 % \end{spec}
 
 The \verb'GxB_subassign' and \verb'GrB_assign' operations are very similar, but
-they differ in three ways:
+they differ in two ways:
 
 \begin{enumerate}
 \item {\bf The Mask has a different size:}
@@ -8009,17 +8071,19 @@ they differ in three ways:
     \verb'C(I,J)' submatrix.  If the \verb'GrB_REPLACE' descriptor is
     true, \verb'GrB_assign' deletes this entry.
 
-\item {\bf Scalar expansion when duplicates appear in \verb'I' or \verb'J':} \\
-    They differ in how duplicate indices are treated in \verb'I' and \verb'J'.
-    For both \verb'assign' and \verb'subassign', results are not defined for
-    \verb'GrB_Matrix_*assign', \verb'GrB_Vector_*assign',
-    \verb'GrB_Row_*assign', and \verb'GrB_Col_*assign' when duplicate indices
-    appear in \verb'I' or \verb'J'.  The scalar expansion operations,
-    \verb'GrB_*_assign_<type>', are well-defined if duplicate indices appear
-    (the results are the same as if duplicates are removed first from \verb'I'
-    and \verb'J').  However, the scalar expansion operations
-    \verb'GxB_*_subassign_<type>' are not well-defined if duplicate indices
-    appear in \verb'I' or \verb'J'.
+% Duplicates are now handled in V3.0.1 and later, so this difference no
+% no longer exists.
+%\item {\bf Scalar expansion when duplicates appear in \verb'I' or \verb'J':} \\
+%   They differ in how duplicate indices are treated in \verb'I' and \verb'J'.
+%   For both \verb'assign' and \verb'subassign', results are not defined for
+%   \verb'GrB_Matrix_*assign', \verb'GrB_Vector_*assign',
+%   \verb'GrB_Row_*assign', and \verb'GrB_Col_*assign' when duplicate indices
+%   appear in \verb'I' or \verb'J'.  The scalar expansion operations,
+%   \verb'GrB_*_assign_<type>', are well-defined if duplicate indices appear
+%   (the results are the same as if duplicates are removed first from \verb'I'
+%   and \verb'J').  However, the scalar expansion operations
+%   \verb'GxB_*_subassign_<type>' are not well-defined if duplicate indices
+%   appear in \verb'I' or \verb'J'.
 
 \end{enumerate}
 
@@ -8028,8 +8092,10 @@ they differ in three ways:
 is set to its default value of false, and if the masks happen to be the same.
 The two masks can be the same in two cases:  either the \verb'Mask' input is
 \verb'NULL' (and it is not complemented via \verb'GrB_SCMP'), or \verb'I' and
-\verb'J' are both \verb'GrB_ALL'.  For scalar expansion, no duplicates can
-appear in the index lists \verb'I' and \verb'J'.  If all these conditions hold,
+\verb'J' are both \verb'GrB_ALL'.
+%For scalar expansion, no duplicates can
+% appear in the index lists \verb'I' and \verb'J'.
+If all these conditions hold,
 the two algorithms are identical and have the same performance.  Otherwise,
 \verb'GxB_subassign' is much faster than \verb'GrB_assign' when the latter
 must examine the entire matrix \verb'C' to delete entries (when
@@ -8070,8 +8136,8 @@ controls how \verb'C(i,j)' is modified by the subassign, from the value
 
 The \verb'GxB_subassign' and \verb'GrB_assign' functions have the same
 signatures; they differ only in how they consider the \verb'Mask' and the
-\verb'GrB_REPLACE' descriptor, and in how duplicate indices are treated for
-scalar expansion.
+\verb'GrB_REPLACE' descriptor
+% , and in how duplicate indices are treated for scalar expansion.
 
 Details of each step of the two operations are listed below:
 
@@ -8094,7 +8160,8 @@ ${\bf S} \odot {\bf A}$,
 described in Section~\ref{accummask}, is the same in both
 operations.  The result is simply ${\bf A}$ if \verb'accum' is \verb'NULL'.  It
 only applies to the submatrix ${\bf S}$, not the whole matrix.
-The result ${\bf S} \odot {\bf A}$ is used differently in the Mask/Replace phase.
+The result ${\bf S} \odot {\bf A}$ is used differently in the Mask/Replace
+phase.
 
 The Mask/Replace Phase, described in Section~\ref{accummask} is different:
 \begin{itemize}

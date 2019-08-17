@@ -1,97 +1,29 @@
 function gbtest3
-%GBTEST3 test gb.build
+%GBTEST3 test dnn
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+fprintf ('gbtest3: testing sparse deep neural network\n') ;
+help dnn_gb
+
 rng ('default') ;
-m = 10 ;
-n = 5 ;
-A = sprand (m, n, 0.5) ;
+levels = 4 ;
+nfeatures = 6 ;
+nneurons = 16 ;
 
-[i j x] = find (A) ;
+for level = 1:levels
+    W {level} = sprand (nneurons, nneurons, 0.5) ;
+    bias {level} = -0.3 * ones (1, nneurons) ;
+end
 
-C = gb.build (i, j, x, m, n) ;
+Y0 = sprandn (nfeatures, nneurons, 0.5) ;
 
-S = double (C) ;
-assert (isequal (S, A)) ;
+Y1 = dnn_matlab (W, bias, Y0) ;
+Y2 = dnn_gb     (W, bias, Y0) ;
 
-% Prob = ssget (2662)
-% A = Prob.A ;
-fprintf ('Generating large test matrix; please wait ...\n') ;
-% n = 1e6 ;
-% nz = 50e6 ;
-n = 1000 ;
-nz = 7000 ;
-density = nz / n^2 ;
-tic
-A = sprand (n, n, density) ;
-B = sprand (n, n, density) ;
-A = kron (A,B) ;
-clear B
-t = toc ;
-fprintf ('%12.4f sec : A = sprand(n,n,nz), n: %g nz %g\n', t, n, nnz (A)) ;
+err = norm (Y1-Y2,1) ;
+assert (logical (err < 1e-5)) ;
 
-[i j x] = find (A) ;
-[m n] = size (A) ;
-
-i0 = uint64 (i) - 1 ;
-j0 = uint64 (j) - 1 ;
-
-nthreads = gb.threads ;
-fprintf ('using %d threads in GraphBLAS\n', nthreads) ;
-
-fprintf ('\nwith [I J] already sorted on input:\n') ;
-
-tic
-A1 = sparse (i, j, x, m, n) ;
-t = toc ;
-fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
-
-tic
-A3 = gb.build (i, j, x, m, n) ;
-t = toc ;
-fprintf ('%12.4f sec : A = gb.build (i, j, x, m, n), same inputs as MATLAB\n', t) ;
-
-tic
-A2 = gb.build (i0, j0, x, m, n) ;
-t = toc ;
-fprintf ('%12.4f sec : A = gb.build (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
-
-A2 = double (A2) ;
-A3 = double (A3) ;
-assert (isequal (A1, A2)) ;
-assert (isequal (A1, A3)) ;
-
-fprintf ('\nwith [I J] jumbled so that a sort is required:\n') ;
-
-i = i (end:-1:1) ;
-j = j (end:-1:1) ;
-i (1:10) = i (randperm (10)) ;
-i0 = uint64 (i) - 1 ;
-j0 = uint64 (j) - 1 ;
-
-tic
-A1 = sparse (i, j, x, m, n) ;
-t = toc ;
-fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
-
-tic
-A3 = gb.build (i, j, x, m, n) ;
-t = toc ;
-fprintf ('%12.4f sec : A = gb.build (i, j, x, m, n), same inputs as MATLAB\n', t) ;
-
-tic
-A2 = gb.build (i0, j0, x, m, n) ;
-t = toc ;
-fprintf ('%12.4f sec : A = gb.build (i0, j0, x, m, n), with i0 and j0 uint64\n', t) ;
-
-tic
-A2 = double (A2) ;
-t = toc ;
-fprintf ('%12.4f sec : A = double (A) to convert from GraphBLAS to MATLAB\n', t);
-
-assert (isequal (A1, A2)) ;
-
-fprintf ('\ngbtest3: all tests passed\n') ;
+fprintf ('gbtest3: all tests passed\n') ;
 

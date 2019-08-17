@@ -69,7 +69,7 @@ for k1 = 1:length (list_out)
     end
 end
 
-fprintf ('test error handling (errors expected):\n') ;
+fprintf ('testing error handling (errors expected):\n') ;
 
 clear d
 d.in0 = 'crud'

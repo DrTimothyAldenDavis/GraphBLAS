@@ -54,6 +54,9 @@ void gb_usage       // check usage and make sure GxB_init has been called
 
         // print 1-based indices
         GB_Global_print_one_based_set (true) ;
+
+        // to make the Sauna workspace persistent
+        GB_Global_persist_function_set (mexMakeMemoryPersistent) ;
     }
 
     //--------------------------------------------------------------------------

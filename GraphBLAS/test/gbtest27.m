@@ -24,5 +24,5 @@ for k1 = 1:length (types)
     end
 end
 
-fprintf ('test27: all tests passed\n') ;
+fprintf ('gbtest27: all tests passed\n') ;
 

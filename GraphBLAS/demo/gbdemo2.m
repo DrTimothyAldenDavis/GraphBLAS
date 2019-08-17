@@ -1,36 +1,36 @@
 function gbdemo2 (bnz)
-%GBDEMO2 Extreme performance differences between GraphBLAS and MATLAB.
+%GBDEMO2 Extreme performance differences: GraphBLAS vs MATLAB.
 %
 % Usage:
+%
 %       gbdemo2             % uses a default bnz = 6000
 %       gbdemo2 (20000)     % uses bnz = 20000
 %
-% The GraphBLAS operations used in gbdemo are perhaps 3x to 50x faster than the
-% corresponding MATLAB operations, depending on how many cores your computer
-% has.  Here's an example where GraphBLAS is asymptotically far faster than
-% MATLAB R2019a: a simple assignment for a large matrix C:
+% The GraphBLAS operations used in gbdemo are perhaps 3x to 50x faster
+% than the corresponding MATLAB operations, depending on how many cores
+% your computer has.  Here's an example where GraphBLAS is asymptotically
+% far faster than MATLAB R2019a: a simple assignment for a large matrix
+% C:
 %
 %       C(I,J) = A
 %
-% The matrix C is constructed via C = kron (B,B) where nnz (B) is roughly the
-% bnz provided on input (with a default of bnz = 6000), so that C will have
-% about bnz^2 entries, or 36 million by default.  I and J are chosen randomly,
-% and A is 5000-by-5000.
+% The matrix C is constructed via C = kron (B,B) where nnz (B) is roughly
+% the bnz provided on input (with a default of bnz = 6000), so that C
+% will have about bnz^2 entries, or 36 million by default.  I and J are
+% chosen randomly, and A is 5000-by-5000.
 %
-%       Please be patient ... 
+% When the problem becomes large, MATLAB will take a very long time.  If
+% you have enough memory, and want to see higher speedups in GraphBLAS,
+% increase bnz (and be prepared to wait even longer).  With the default
+% bnz = 6000, this test takes about 4GB of RAM.
 %
-% When the problem becomes large, MATLAB will take a very long time.  If you
-% have enough memory, and want to see higher speedups in GraphBLAS, increase
-% bnz (and be prepared to wait even longer).  With the default bnz = 6000, this
-% test takes about 4GB of RAM.
-%
-% On my Dell XPS 4-core laptop (Intel(R) Core(TM) i7-8565U, 16GB RAM), using
-% MATLAB R2019a, when C becomes 9 million by 9 million, the computation
-% C(I,J)=A for MATLAB matrices C, I, J, and A takes several minutes, whereas
-% GraphBLAS takes less than a second, or about 500x faster than MATLAB.  On a
-% desktop with an Intel(R) Xeon(R) CPU E5-2698 v4 @ 2.20GHz with 20 hardware
-% cores, the speedup over MATLAB is even more dramatic (up to 2660x has been
-% observed).
+% On my Dell XPS 4-core laptop (Intel(R) Core(TM) i7-8565U, 16GB RAM),
+% using MATLAB R2019a, when C becomes 9 million by 9 million, the
+% computation C(I,J)=A for MATLAB matrices C, I, J, and A takes several
+% minutes, whereas GraphBLAS takes less than a second, or about 500x
+% faster than MATLAB.  On a desktop with an Intel(R) Xeon(R) CPU E5-2698
+% v4 @ 2.20GHz with 20 hardware cores, the speedup over MATLAB is even
+% more dramatic (up to 2,660x has been observed).
 %
 % See also gb.assign, subsasgn.
 
@@ -60,8 +60,9 @@ for n = [1000:1000:6000]
     G = gb (C) ;
     t_setup = toc ;
 
-    fprintf ('\nC(I,J)=A where C is %g million -by- %g million with %g million entries:\n\n', ...
-        cn /1e6, cn /1e6, nnz (C) / 1e6) ;
+    fprintf ('\nC(I,J)=A where C is %g million -by- %g million\n', ...
+        cn /1e6, cn /1e6) ;
+    fprintf ('with %g million entries:\n\n', nnz (C) / 1e6) ;
     fprintf ('    A is %d-by-%d with %d entries\n', k, k, nnz (A)) ;
     fprintf ('    setup time:     %g sec\n', t_setup) ;
 

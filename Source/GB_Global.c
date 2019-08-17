@@ -91,6 +91,7 @@ typedef struct
     void * (* calloc_function  ) (size_t, size_t) ;
     void * (* realloc_function ) (void *, size_t) ;
     void   (* free_function    ) (void *)         ;
+    void   (* persist_function ) (void *)         ;
     bool malloc_is_thread_safe ;   // default is true
 
     //--------------------------------------------------------------------------
@@ -174,6 +175,7 @@ GB_Global_struct GB_Global =
     .calloc_function  = calloc,
     .realloc_function = realloc,
     .free_function    = free,
+    .persist_function = NULL,
     .malloc_is_thread_safe = true,
 
     // malloc tracking, for testing, statistics, and debugging only
@@ -357,7 +359,7 @@ void GB_Global_malloc_function_set (void * (* malloc_function) (size_t))
 }
 
 void * GB_Global_malloc_function (size_t size)
-{
+{ 
     bool ok = true ;
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
@@ -365,7 +367,7 @@ void * GB_Global_malloc_function (size_t size)
         p = GB_Global.malloc_function (size) ;
     }
     else
-    { 
+    {
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
             p = GB_Global.malloc_function (size) ;              \
@@ -385,7 +387,7 @@ void GB_Global_calloc_function_set (void * (* calloc_function) (size_t, size_t))
 }
 
 void * GB_Global_calloc_function (size_t count, size_t size)
-{
+{ 
     bool ok = true ;
     void *p = NULL ;
     if (GB_Global.malloc_is_thread_safe)
@@ -393,7 +395,7 @@ void * GB_Global_calloc_function (size_t count, size_t size)
         p = GB_Global.calloc_function (count, size) ;
     }
     else
-    { 
+    {
         #undef  GB_CRITICAL_SECTION
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
@@ -417,7 +419,7 @@ void GB_Global_realloc_function_set
 }
 
 void * GB_Global_realloc_function (void *p, size_t size)
-{
+{ 
     bool ok = true ;
     void *pnew = NULL ;
     if (GB_Global.malloc_is_thread_safe)
@@ -425,7 +427,7 @@ void * GB_Global_realloc_function (void *p, size_t size)
         pnew = GB_Global.realloc_function (p, size) ;
     }
     else
-    { 
+    {
         #undef  GB_CRITICAL_SECTION
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
@@ -446,7 +448,7 @@ void GB_Global_free_function_set (void (* free_function) (void *))
 }
 
 void GB_Global_free_function (void *p)
-{
+{ 
     #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
     bool ok = true ;
     #endif
@@ -455,11 +457,51 @@ void GB_Global_free_function (void *p)
         GB_Global.free_function (p) ;
     }
     else
-    { 
+    {
         #undef  GB_CRITICAL_SECTION
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
             GB_Global.free_function (p) ;                       \
+        }
+        #include "GB_critical_section.c"
+    }
+}
+
+//------------------------------------------------------------------------------
+// persist_function
+//------------------------------------------------------------------------------
+
+// This is only needed by the MATLAB interface, so that mexMakeMemoryPersistent
+// can be called to keep the Saunas allocated between calls to the
+// mexFunctions.  By default, the global persist_function is NULL, so it is not
+// used except when set to mexMakeMemoryPersistent in the mexFunction
+// interface.  The function pointer should be set immediately after calling
+// GxB_init.
+
+void GB_Global_persist_function_set (void (* persist_function) (void *))
+{ 
+    GB_Global.persist_function = persist_function ;
+}
+
+void GB_Global_persist_function (void *p)
+{ 
+    if (GB_Global.persist_function == NULL)
+    { 
+        return ;
+    }
+    #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
+    bool ok = true ;
+    #endif
+    if (GB_Global.malloc_is_thread_safe)
+    {
+        GB_Global.persist_function (p) ;
+    }
+    else
+    {
+        #undef  GB_CRITICAL_SECTION
+        #define GB_CRITICAL_SECTION                             \
+        {                                                       \
+            GB_Global.persist_function (p) ;                    \
         }
         #include "GB_critical_section.c"
     }

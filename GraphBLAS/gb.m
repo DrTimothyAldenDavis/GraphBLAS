@@ -8,7 +8,7 @@ classdef gb
 %
 % The MATLAB gb class represents a GraphBLAS sparse matrix.  The gb method
 % creates a GraphBLAS sparse matrix from a MATLAB matrix.  Other methods also
-% generate gb matrices.  For example G = gb.assign (C, M, A) constructs a
+% generate gb matrices.  For example G = gb.subassign (C, M, A) constructs a
 % GraphBLAS matrix G, which is the result of C<M>=A in GraphBLAS notation (like
 % C(M)=A(M) in MATLAB).  The matrices used any gb.method may be MATLAB matrices
 % (sparse or dense) or GraphBLAS sparse matrices, in any combination.
@@ -54,13 +54,14 @@ classdef gb
 %               In GraphBLAS, 'complex' will be treated as a type, (once it is
 %               implemented).  Complex matrices are not yet supported.
 %
-% Operations on integer values differs from MATLAB.  In MATLAB, uint9(255)+1
-% is 255, since the arithmetic saturates.  This is not possible in GraphBLAS,
-% since saturation of integer arithmetic would render most of the monoids
-% useless.  GraphBLAS instead computes a result modulo the word size, so that
-% gb(uint8(255))+1 is zero.
-%
-% To free a GraphBLAS sparse matrix G, simply use 'clear G'.
+% Operations on integer values differ from MATLAB.  In MATLAB, uint9(255)+1 is
+% 255, since the arithmetic saturates.  This is not possible in matrix
+% operations such as C=A*B, since saturation of integer arithmetic would render
+% most of the monoids useless.  GraphBLAS instead computes a result modulo the
+% word size, so that gb(uint8(255))+1 is zero.  However, new unary and binary
+% operators could be added so that element-wise operations saturate.  The C
+% interface allows for arbitrary creation of user-defined operators, so this
+% could be added in the future.
 %
 % Methods for the gb class:
 %
@@ -218,10 +219,6 @@ classdef gb
 %                           sparse matrix assignment, such as C(I,J)=A
 %       Cout = gb.subassign (Cin, M, accum, A, I, J, desc)
 %                           sparse matrix assignment, such as C(I,J)=A
-%       Cout = gb.colassign (Cin, M, accum, u, I, j, desc)
-%                           sparse matrix assignment to a single column
-%       Cout = gb.rowassign (Cin, M, accum, u, i, J, desc)
-%                           sparse matrix assignment to a single row
 %       Cout = gb.vreduce (Cin, M, accum, op, A, desc)
 %                           reduce a matrix to a vector
 %       Cout = gb.reduce (Cin, accum, op, A, desc)
@@ -1155,6 +1152,10 @@ methods %=======================================================================
     % hi = bandwidth (G, 'upper') returns just the upper bandwidth.
     %
     % See also isbanded, isdiag, istril, istriu.
+
+    % FUTURE: this could be much faster if implemented as a built-in function,
+    % or in a mexFunction.
+
     if (gb.nvals (G) == 0)
         % matrix is empty
         hi = 0 ;
@@ -1432,7 +1433,7 @@ methods %=======================================================================
             % giving a 1-by-n row vector.
             C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
             % if C(j) < 0, but the column is sparse, then assign C(j) = 0.
-            C = gb.assign (C, (C < 0) & (col_degree (G) < m), 0)' ;
+            C = gb.subassign (C, (C < 0) & (col_degree (G) < m), 0)' ;
         end
 
     elseif (nargin == 2)
@@ -1487,13 +1488,13 @@ methods %=======================================================================
             % giving a 1-by-n row vector.
             C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
             % if C(j) < 0, but the column is sparse, then assign C(j) = 0.
-            C = gb.assign (C, (C < 0) & (col_degree (G) < m), 0)' ;
+            C = gb.subassign (C, (C < 0) & (col_degree (G) < m), 0)' ;
         elseif (isequal (option, 2))
             % C = max (G, [ ], 2) reduces each row to a scalar,
             % giving an m-by-1 column vector.
             C = gb.vreduce (op, G) ;
             % if C(i) < 0, but the row is sparse, then assign C(i) = 0.
-            C = gb.assign (C, (C < 0) & (row_degree (G) < n), 0) ;
+            C = gb.subassign (C, (C < 0) & (row_degree (G) < n), 0) ;
         else
             error ('unknown option') ;
         end
@@ -1529,7 +1530,7 @@ methods %=======================================================================
     [m n] = size (varargin {1}) ;
 
     if (isequal (gb.type (G), 'logical'))
-        op = '|.logical' ;
+        op = '&.logical' ;
     else
         op = 'min' ;
     end
@@ -1548,7 +1549,7 @@ methods %=======================================================================
             % giving a 1-by-n row vector.
             C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
             % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-            C = gb.assign (C, (C > 0) & (col_degree (G) < m), 0)' ;
+            C = gb.subassign (C, (C > 0) & (col_degree (G) < m), 0)' ;
         end
 
     elseif (nargin == 2)
@@ -1603,13 +1604,13 @@ methods %=======================================================================
             % giving a 1-by-n row vector.
             C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
             % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-            C = gb.assign (C, (C > 0) & (col_degree (G) < m), 0)' ;
+            C = gb.subassign (C, (C > 0) & (col_degree (G) < m), 0)' ;
         elseif (isequal (option, 2))
             % C = min (G, [ ], 2) reduces each row to a scalar,
             % giving an m-by-1 column vector.
             C = gb.vreduce (op, G) ;
             % if C(i) > 0, but the row is sparse, then assign C(i) = 0.
-            C = gb.assign (C, (C > 0) & (row_degree (G) < n), 0) ;
+            C = gb.subassign (C, (C > 0) & (row_degree (G) < n), 0) ;
         else
             error ('unknown option') ;
         end
@@ -1706,7 +1707,7 @@ methods %=======================================================================
             % giving a 1-by-n row vector.
             C = gb.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
             % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-            C = gb.assign (C, C & (col_degree (G) < m), 0)' ;
+            C = gb.subassign (C, C & (col_degree (G) < m), 0)' ;
         end
 
     elseif (nargin == 2)
@@ -1724,13 +1725,13 @@ methods %=======================================================================
             % giving a 1-by-n row vector.
             C = gb.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
             % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-            C = gb.assign (C, C & (col_degree (G) < m), 0)' ;
+            C = gb.subassign (C, C & (col_degree (G) < m), 0)' ;
         elseif (isequal (option, 2))
             % C = all (G, 2) reduces each row to a scalar,
             % giving an m-by-1 column vector.
             C = gb.vreduce ('&.logical', G) ;
             % if C(i) is true, but the row is sparse, then assign C(i) = 0.
-            C = gb.assign (C, C & (row_degree (G) < n), 0) ;
+            C = gb.subassign (C, C & (row_degree (G) < n), 0) ;
         else
             error ('unknown option') ;
         end
@@ -2756,10 +2757,10 @@ methods %=======================================================================
     % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.  With
     % a single index, C = A(I) is equivalent to C = A(I,:).  Linear indexing of
     % a matrix is not supported.  C = A(M) for a matrix M is also not
-    % supported; see gb.extract and gb.assign for the GraphBLAS masked
+    % supported; see gb.extract and gb.subassign for the GraphBLAS masked
     % extraction and assignment.
     %
-    % See also subsasgn, gb.assign, gb.extract.
+    % See also subsasgn, gb.subassign, gb.extract.
     if (~isequal (S.type, '()'))
         error ('index type %s not supported\n', S.type) ;
     end
@@ -2805,7 +2806,7 @@ methods %=======================================================================
     % C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix C.
     % With a single index, C(I) = A is equivalent to C(I,:) = A.  Linear
     % indexing is not supported.  C(M) = A for a matrix M is not supported; see
-    % gb.assign for the GraphBLAS masked assignment.
+    % gb.subassign for the GraphBLAS masked assignment.
     %
     % See also subsref.
     if (~isequal (S.type, '()'))
@@ -2817,7 +2818,7 @@ methods %=======================================================================
         if (isequal (I, {':'}))
             I = { } ;
         end
-        Cout = gb.assign (Cin, A, I) ;
+        Cout = gb.subassign (Cin, A, I) ;
     elseif (ndims == 2)
         I = S.subs (1) ;
         J = S.subs (2) ;
@@ -2827,7 +2828,7 @@ methods %=======================================================================
         if (isequal (J, {':'}))
             J = { } ;
         end
-        Cout = gb.assign (Cin, A, I, J) ;
+        Cout = gb.subassign (Cin, A, I, J) ;
     else
         error ('%dD indexing not supported\n', ndims) ;
     end
@@ -3035,33 +3036,35 @@ methods (Static) %==============================================================
     %   gb.binopinfo (op)
     %   gb.binopinfo (op, type)
     %
-    % For gb.binopinfo(op), the op must be a string of the form 'op.type',
-    % where 'op' is listed below.  The second usage allows the type to be
-    % omitted from the first argument, as just 'op'.  This is valid for all
-    % GraphBLAS operations, since the type defaults to the type of the input
-    % matrices.  However, gb.binopinfo does not have a default type and thus
-    % one must be provided, either in the op as gb.binopinfo ('+.double'), or
-    % in the second argument, gb.binopinfo ('+', 'double').
+    % For gb.binopinfo(op), the op must be a string of the form
+    % 'op.type', where 'op' is listed below.  The second usage allows the
+    % type to be omitted from the first argument, as just 'op'.  This is
+    % valid for all GraphBLAS operations, since the type defaults to the
+    % type of the input matrices.  However, gb.binopinfo does not have a
+    % default type and thus one must be provided, either in the op as
+    % gb.binopinfo ('+.double'), or in the second argument, gb.binopinfo
+    % ('+', 'double').
     %
     % The MATLAB interface to GraphBLAS provides for 25 different binary
-    % operators, each of which may be used with any of the 11 types, for a
-    % total of 25*11 = 275 valid binary operators.  Binary operators are
-    % defined by a string of the form 'op.type', or just 'op'.  In the latter
-    % case, the type defaults to the type of the matrix inputs to the GraphBLAS
-    % operation.
+    % operators, each of which may be used with any of the 11 types, for
+    % a total of 25*11 = 275 valid binary operators.  Binary operators
+    % are defined by a string of the form 'op.type', or just 'op'.  In
+    % the latter case, the type defaults to the type of the matrix inputs
+    % to the GraphBLAS operation.
     %
-    % The 6 comparator operators come in two flavors.  For the is* operators,
-    % the result has the same type as the inputs, x and y, with 1 for true and
-    % 0 for false.  For example isgt.double (pi, 3.0) is the double value 1.0.
-    % For the second set of 6 operators (eq, ne, gt, lt, ge, le), the result is
-    % always logical (true or false).  In a semiring, the type of the add
-    % monoid must exactly match the type of the output of the multiply
-    % operator, and thus 'plus.iseq.double' is valid (counting how many terms
-    % are equal).  The 'plus.eq.double' semiring is valid, but not the same
-    % semiring since the 'plus' of 'plus.eq.double' has a logical type and is
-    % thus equivalent to 'or.eq.double'.   The 'or.eq' is true if any terms are
-    % equal and false otherwise (it does not count the number of terms that are
-    % equal).
+    % The 6 comparator operators come in two flavors.  For the is*
+    % operators, the result has the same type as the inputs, x and y,
+    % with 1 for true and 0 for false.  For example isgt.double (pi, 3.0)
+    % is the double value 1.0.  For the second set of 6 operators (eq,
+    % ne, gt, lt, ge, le), the result is always logical (true or false).
+    % In a semiring, the type of the add monoid must exactly match the
+    % type of the output of the multiply operator, and thus
+    % 'plus.iseq.double' is valid (counting how many terms are equal).
+    % The 'plus.eq.double' semiring is valid, but not the same semiring
+    % since the 'plus' of 'plus.eq.double' has a logical type and is thus
+    % equivalent to 'or.eq.double'.   The 'or.eq' is true if any terms
+    % are equal and false otherwise (it does not count the number of
+    % terms that are equal).
     %
     % The following binary operators are available.  Many have equivalent
     % synonyms, so that '1st' and 'first' both define the first(x,y) = x
@@ -3083,9 +3086,9 @@ methods (Static) %==============================================================
     %   &   && and land  x & y          |   <=  le           x <= y
     %   xor lxor         xor(x,y)       |
     %
-    % The three logical operators, lor, land, and lxor, also come in 11 types.
-    % z = lor.double (x,y) tests the condition (x ~= 0) || (y ~= 0), and returns
-    % the double value 1.0 if true, or 0.0 if false.
+    % The three logical operators, lor, land, and lxor, also come in 11
+    % types.  z = lor.double (x,y) tests the condition (x~=0) || (y~=0),
+    % and returns the double value 1.0 if true, or 0.0 if false.
     %
     % Example:
     %
@@ -3093,11 +3096,11 @@ methods (Static) %==============================================================
     %   gb.binopinfo ('+.double') ;
     %   gb.binopinfo ('1st.int32') ;
     %
-    %   % invalid binary operator (generates an error; this is a unary op):
+    %   % invalid binary operator (an error; this is a unary op):
     %   gb.binopinfo ('abs.double') ;
     %
-    % gb.binopinfo generates an error for an invalid op, so user code can test
-    % the validity of an op with the MATLAB try/catch mechanism.
+    % gb.binopinfo generates an error for an invalid op, so user code can
+    % test the validity of an op with the MATLAB try/catch mechanism.
     %
     % See also gb, gb.unopinfo, gb.semiringinfo, gb.descriptorinfo.
 
@@ -3125,17 +3128,19 @@ methods (Static) %==============================================================
     %   gb.monoidinfo (monoid)
     %   gb.monoidinfo (monoid, type)
     %
-    % For gb.monoidinfo(op), the op must be a string of the form 'op.type',
-    % where 'op' is listed below.  The second usage allows the type to be
-    % omitted from the first argument, as just 'op'.  This is valid for all
-    % GraphBLAS operations, since the type defaults to the type of the input
-    % matrices.  However, gb.monoidinfo does not have a default type and thus
-    % one must be provided, either in the op as gb.monoidinfo ('+.double'), or
-    % in the second argument, gb.monoidinfo ('+', 'double').
+    % For gb.monoidinfo(op), the op must be a string of the form
+    % 'op.type', where 'op' is listed below.  The second usage allows the
+    % type to be omitted from the first argument, as just 'op'.  This is
+    % valid for all GraphBLAS operations, since the type defaults to the
+    % type of the input matrices.  However, gb.monoidinfo does not have a
+    % default type and thus one must be provided, either in the op as
+    % gb.monoidinfo ('+.double'), or in the second argument,
+    % gb.monoidinfo ('+', 'double').
     %
-    % The MATLAB interface to GraphBLAS provides for 44 different monoids.
-    % The valid monoids are: '+', '*', 'max', and 'min' for all but the
-    % 'logical' type, and '|', '&', 'xor', and 'ne' for the 'logical' type.
+    % The MATLAB interface to GraphBLAS provides for 44 different
+    % monoids.  The valid monoids are: '+', '*', 'max', and 'min' for all
+    % but the 'logical' type, and '|', '&', 'xor', and 'ne' for the
+    % 'logical' type.
     %
     % Example:
     %
@@ -3147,10 +3152,12 @@ methods (Static) %==============================================================
     %   gb.monoidinfo ('1st.int32') ;
     %   gb.monoidinfo ('abs.double') ;
     %
-    % gb.monoidinfo generates an error for an invalid monoid, so user code can
-    % test the validity of an op with the MATLAB try/catch mechanism.
+    % gb.monoidinfo generates an error for an invalid monoid, so user
+    % code can test the validity of an op with the MATLAB try/catch
+    % mechanism.
     %
-    % See also gb.unopinfo, gb.binopinfo, gb.semiringinfo, gb.descriptorinfo.
+    % See also gb.unopinfo, gb.binopinfo, gb.semiringinfo,
+    % gb.descriptorinfo.
 
     % FUTURE: add complex monoids
 
@@ -3239,9 +3246,9 @@ methods (Static) %==============================================================
     % Changing the number of threads with gb.threads(nthreads) causes all
     % subsequent GraphBLAS operations to use at most the given number of
     % threads.  GraphBLAS may use fewer threads, if the problem is small (see
-    % gb.chunk).  The setting persists for the current MATLAB session, or until
-    % 'clear all' or gb.clear is used, at which point the setting reverts to
-    % the default number of threads.
+    % gb.chunk).  The setting is kept for the remainder of the current MATLAB
+    % session, or until 'clear all' or gb.clear is used, at which point the
+    % setting reverts to the default number of threads.
     %
     % MATLAB can detect the number of physical and logical cores via an
     % undocumented builtin function: ncores = feature('numcores'), or via
@@ -3591,6 +3598,10 @@ methods (Static) %==============================================================
     % J need not be in any particular order, but gb.build is fastest if I and J
     % are provided in column-major order.
     %
+    % Note: S = sparse (I,J,X) allows either I or J, and X to be scalars.  This
+    % feature is not supported in gb.build.  All three arrays must be the same
+    % size.
+    %
     % See also sparse, find, gb.extracttuples.
 
     [args is_gb] = get_args (varargin {:}) ;
@@ -3887,7 +3898,7 @@ methods (Static) %==============================================================
     %       example.  This allows for C(I,J) = C(I,J) + A to be computed.  If
     %       not present, no accumulator is used and C(I,J)=A is computed.
     %
-    % M: an optional mask matrix.
+    % M: an optional mask matrix, the same size as C.
     %
     % Cin: a required input matrix, containing the initial content of the
     % matrix C.  Cout is the content of C after the assignment is made.
@@ -3930,31 +3941,52 @@ methods (Static) %==============================================================
     %---------------------------------------------------------------------------
 
     function Cout = subassign (varargin)
-    %GB.SUBASSIGN subassign sparse submatrix
+    %GB.SUBASSIGN: assign a submatrix into a matrix
+    %
+    % gb.subassign is an interface to GxB_Matrix_subassign and
+    % GxB_Matrix_subassign_[TYPE], computing the GraphBLAS expression:
+    %
+    %   C(I,J)<#M,replace> = accum (C(I,J), A) or accum(C(I,J), A')
+    %
+    % where A can be a matrix or a scalar.
+    %
+    % Usage:
+    %
     %   Cout = gb.subassign (Cin, M, accum, A, I, J, desc)
+    %
+    % gb.subassign is identical to gb.assign, with two key differences:
+    %
+    %   (1) The mask is different.
+    %       With gb.subassign, the mask M is length(I)-by-length(J),
+    %       and M(i,j) controls how A(i,j) is assigned into C(I(i),J(j)).
+    %       With gb.assign, the mask M has the same size as C,
+    %       and M(i,j) controls how C(i,j) is assigned.
+    %   (2) The d.out = 'replace' option differs.  gb.assign can clear
+    %       entries outside the C(I,J) submatrix; gb.subassign cannot.
+    %
+    % If there is no mask, or if I and J are ':', then the two methods are
+    % identical.  The examples shown in 'help gb.assign' also work with
+    % gb.subassign.  Otherwise, gb.subassign is faster.  The two methods are
+    % described below, where '+' is the optional accum operator.
+    %
+    %   step  | gb.assign       gb.subassign
+    %   ----  | ---------       ------------
+    %   1     | S = C(I,J)      S = C(I,J)
+    %   2     | S = S + A       S<M> = S + A
+    %   3     | Z = C           C(I,J) = S
+    %   4     | Z(I,J) = S
+    %   5     | C<M> = Z
+    %
+    % Refer to gb.assign for a description of the other input/outputs.
+    %
     % See also gb.assign, subsasgn.
 
-    error ('gb.subassign not yet implemented') ;    % TODO
+    [args is_gb] = get_args (varargin {:}) ;
+    if (is_gb)
+        Cout = gb (gbsubassign (args {:})) ;
+    else
+        Cout = gbsubassign (args {:}) ;
     end
-
-    %---------------------------------------------------------------------------
-    % gb.colassign: sparse matrix assignment to a single column
-    %---------------------------------------------------------------------------
-
-    function Cout = colassign (varargin)
-    %GB.COLASSIGN sparse matrix assignment to a single column
-    %   Cout = gb.colassign (Cin, M, accum, u, I, j, desc)
-    error ('gb.colassign not yet implemented') ;    % TODO
-    end
-
-    %---------------------------------------------------------------------------
-    % gb.rowassign: sparse matrix assignment to a single row
-    %---------------------------------------------------------------------------
-
-    function Cout = rowassign (varargin)
-    %GB.ROWASSIGN sparse matrix assignment to a single row
-    %   Cout = gb.rowassign (Cin, M, accum, u, i, J, desc)
-    error ('gb.rowassign not yet implemented') ;    % TODO
     end
 
     %---------------------------------------------------------------------------
@@ -4436,6 +4468,7 @@ end
     else
         T = compute_mpower (A, floor (b/2)) ;
         C = T*T ;
+        clear T ;
         if (mod (b, 2) == 1)
             C = C*A ;
         end
