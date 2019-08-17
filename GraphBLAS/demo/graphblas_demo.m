@@ -124,10 +124,10 @@ fprintf ('\nerr = norm (C-C2,1) = %g\n', norm (C-C2,1)) ;
 gb.semiringinfo ('max.+.double') ;
 
 %% A boolean semiring
-% MATLAB cannot multiply two logical matrices; it converts them to double
-% and uses the conventional +.*.double semiring instead.  In GraphBLAS,
-% this is the common Boolean 'or.and.logical' semiring, which is widely
-% used in linear algebraic graph algorithms.
+% MATLAB cannot multiply two logical matrices.  MATLAB R2019a converts
+% them to double and uses the conventional +.*.double semiring instead.
+% In GraphBLAS, this is the common Boolean 'or.and.logical' semiring,
+% which is widely used in linear algebraic graph algorithms.
 
 gb.semiringinfo ('|.&.logical') ;
 
@@ -137,7 +137,15 @@ A = sparse (rand (3) > 0.5)
 B = sparse (rand (3) > 0.2)
 
 %%
-C1 = A*B
+try
+    % MATLAB R2019a can do this
+    C1 = A*B
+catch
+    % MATLAB R2018a throws an error
+    fprintf ('MATLAB R2019a required for C=A*B with logical\n') ;
+    fprintf ('matrices.  Explicitly converting to double:\n') ;
+    C1 = double (A) * double (B)
+end
 C2 = gb (A) * gb (B)
 
 %%
