@@ -47,11 +47,13 @@ for trial = 1:40
             assert (isequal (C1, double (C3))) ;
             assert (isequal (C1, double (C4))) ;
 
-            c1 = max (MA, [ ], 'all') ;
+            % c1 = max (MA, [ ], 'all') ;
+            c1 = max (max (MA)) ;
             c2 = max (GA, [ ], 'all') ;
             assert (isequal (c1, double (c2))) ;
 
-            c1 = min (MA, [ ], 'all') ;
+            % c1 = min (MA, [ ], 'all') ;
+            c1 = min (min (MA)) ;
             c2 = min (GA, [ ], 'all') ;
             assert (isequal (c1, double (c2))) ;
 

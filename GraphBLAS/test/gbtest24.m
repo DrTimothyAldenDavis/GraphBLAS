@@ -31,11 +31,13 @@ for trial = 1:40
             c2 = any (GA) ;
             assert (isequal (c1, double (c2))) ;
 
-            c1 = all (MA, 'all') ;
+            % c1 = all (MA, 'all') ;
+            c1 = all (all (MA)) ;
             c2 = all (GA, 'all') ;
             assert (isequal (c1, double (c2))) ;
 
-            c1 = any (MA, 'all') ;
+            % c1 = any (MA, 'all') ;
+            c1 = any (any (MA)) ;
             c2 = any (GA, 'all') ;
             assert (isequal (c1, double (c2))) ;
 

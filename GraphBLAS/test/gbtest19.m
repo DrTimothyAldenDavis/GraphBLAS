@@ -11,8 +11,8 @@ G = gb (A) ;
 for k = 0:10
     C1 = A^k ;
     C2 = G^k ;
-    err = C1 - C2 ;
-    assert (logical (norm (err,1) < 1e-12))
+    err = norm (C1 - C2, 1) ;
+    assert (logical (norm (err,1) < 1e-10)) ;
 end
 
 fprintf ('gbtest19: all tests passed\n') ;
