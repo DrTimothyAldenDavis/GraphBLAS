@@ -138,7 +138,7 @@ B = sparse (rand (3) > 0.2)
 
 %%
 try
-    % MATLAB R2019a can do this
+    % MATLAB R2019a does this by casting A and B to double
     C1 = A*B
 catch
     % MATLAB R2018a throws an error
@@ -586,7 +586,8 @@ err = norm (Y1-Y2,1)
 %    gbdemo2 (20000)
 %
 % assuming you have enough memory.  The gbdemo2 is not part of this demo
-% since it can take a long time.
+% since it can take a long time; it tries a range of problem sizes,
+% and each one takes several minutes in MATLAB,
 
 %% Limitations and their future solutions
 % The MATLAB interface for SuiteSparse:GraphBLAS is a work-in-progress.
@@ -653,6 +654,7 @@ err = norm (Y1-Y2,1)
 % spfun, and A.^B.  These methods are currently implemented in
 % m-functions, not in efficient parallel C functions.
 
+clear
 A = sparse (rand (2000)) ;
 B = sparse (rand (2000)) ;
 tic
@@ -704,11 +706,11 @@ err = norm (C1-C2,1)
 % (7) Logical indexing in subsindex and subsasgn:
 %
 % The mask in GraphBLAS acts much like logical indexing in MATLAB, but it
-% is not quite the same.  Logical indexing takes the form:
+% is not quite the same.  MATLAB logical indexing takes the form:
 %
 %       C (M) = A (M)
 %
-% which computes the same thing as:
+% which computes the same thing as the GraphBLAS statement:
 %
 %       C = gb.assign (C, M, A)
 %
@@ -723,19 +725,23 @@ err = norm (C1-C2,1)
 % C(M) = ... syntax is not yet supported for GraphBLAS matrices.  Until I
 % resolve this syntax issue, use C = gb.assign (C,M,A) instead.
 %
-% On my 4-core Dell XPS-13 laptop, C=gb.assign(C,M,A) is several thousand
-% times faster than C(M)=A(M) in MATLAB R2019a, so the extra syntax is
-% well worth it.  First, in GraphBLAS:
+% On my 4-core Dell XPS-13 laptop, C=gb.assign(C,M,A) is about 24,000x
+% faster than C(M)=A(M) in MATLAB R2019a, so the extra syntax is well
+% worth it.  First, in GraphBLAS:
 
+clear
 n = 4000 ;
 tic
 C = sprand (n, n, 0.1) ;
-A = sparse (100 * sprand (n, n, 0.1)) ;
+A = 100 * sprand (n, n, 0.1) ;
 M = (C > 0.5) ;
 t_setup = toc ;
+fprintf ('nnz(C): %g, nnz(M): %g, nnz(A): %g\n', ...
+    nnz(C), nnz(M), nnz(A)) ;
 fprintf ('\nsetup time:     %g sec\n', t_setup) ;
 
-% even add in the time to convert C1 back to a MATLAB sparse matrix
+% even add in the time to convert C1 from a GraphBLAS
+% matrix to a MATLAB sparse matrix
 tic
 C1 = gb.assign (C, M, A) ;
 C1 = double (C1) ;
@@ -743,7 +749,7 @@ gb_time = toc ;
 fprintf ('\nGraphBLAS time: %g sec\n', gb_time) ;
 
 %%
-% Please wait, this will take a few minutes or so ...
+% Please wait, this will take about 10 minutes or so ...
 
 tic
 C (M) = A (M) ;
