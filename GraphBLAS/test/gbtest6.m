@@ -1,5 +1,5 @@
 function gbtest6
-%GBGBTEST6 test gb.mxm
+%GBTEST6 test gb.mxm
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

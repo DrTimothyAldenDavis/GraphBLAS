@@ -39,7 +39,7 @@ To run the demos, go to the GraphBLAS/GraphBLAS/demo folder and type:
     gbdemo2
 
 The output of these demos on a Dell XPS 13 laptop and an NVIDIA DGX Station can
-also be found in GraphBLAS/GraphBLAS/demo/html.
+also be found in GraphBLAS/GraphBLAS/demo/html, in both PDF and HTML formats.
 
 To test your installation, go to GraphBLAS/GraphBLAS/test and type:
 
