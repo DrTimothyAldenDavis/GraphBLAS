@@ -12,22 +12,25 @@
 
 #include "GB_matlab_helper.h"
 
+// determine the number of threads to use
+#define GB_NTHREADS(work)                                       \
+    int nthreads_max = GB_Global_nthreads_max_get ( ) ;         \
+    double chunk = GB_Global_chunk_get ( ) ;                    \
+    int nthreads = GB_nthreads (work, chunk, nthreads_max) ;
+
 //------------------------------------------------------------------------------
 // GB_matlab_helper1: convert 0-based indices to 1-based
 //------------------------------------------------------------------------------
 
-void GB_matlab_helper1      // convert zero-based indices to one-based
+void GB_matlab_helper1              // convert zero-based indices to one-based
 (
-    double *I_double,       // output array
-    const GrB_Index *I,     // input array
-    int64_t nvals           // size of input and output arrays
+    double *restrict I_double,      // output array
+    const GrB_Index *restrict I,    // input array
+    int64_t nvals                   // size of input and output arrays
 )
 {
 
-    // determine the number of threads to use
-    int nthreads_max = GB_Global_nthreads_max_get ( ) ;
-    double chunk = GB_Global_chunk_get ( ) ;
-    int nthreads = GB_nthreads (nvals, chunk, nthreads_max) ;
+    GB_NTHREADS (nvals) ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t k = 0 ; k < nvals ; k++)
@@ -40,19 +43,16 @@ void GB_matlab_helper1      // convert zero-based indices to one-based
 // GB_matlab_helper2: create structure for dense matrix
 //------------------------------------------------------------------------------
 
-void GB_matlab_helper2      // fill Xp and Xi for a dense matrix
+void GB_matlab_helper2              // fill Xp and Xi for a dense matrix
 (
-    GrB_Index *Xp,          // size ncols+1
-    GrB_Index *Xi,          // size nrows*ncols
+    GrB_Index *restrict Xp,         // size ncols+1
+    GrB_Index *restrict Xi,         // size nrows*ncols
     int64_t ncols,
     int64_t nrows
 )
 {
 
-    // determine the number of threads to use
-    int nthreads_max = GB_Global_nthreads_max_get ( ) ;
-    double chunk = GB_Global_chunk_get ( ) ;
-    int nthreads = GB_nthreads (ncols, chunk, nthreads_max) ;
+    GB_NTHREADS (ncols) ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (int64_t j = 0 ; j <= ncols ; j++)
@@ -78,19 +78,16 @@ void GB_matlab_helper2      // fill Xp and Xi for a dense matrix
 // GB_matlab_helper3: convert 1-based indices to 0-based
 //------------------------------------------------------------------------------
 
-bool GB_matlab_helper3          // return true if OK, false on error
+bool GB_matlab_helper3              // return true if OK, false on error
 (
-    int64_t *List,              // size len, output array
-    double *List_double,        // size len, input array
+    int64_t *restrict List,         // size len, output array
+    const double *restrict List_double, // size len, input array
     int64_t len,
-    int64_t *List_max           // also compute the max entry in the list
+    int64_t *List_max               // also compute the max entry in the list
 )
 {
 
-    // determine the number of threads to use
-    int nthreads_max = GB_Global_nthreads_max_get ( ) ;
-    double chunk = GB_Global_chunk_get ( ) ;
-    int nthreads = GB_nthreads (len, chunk, nthreads_max) ;
+    GB_NTHREADS (len) ;
 
     bool ok = true ;
     int64_t listmax = -1 ;
@@ -114,17 +111,14 @@ bool GB_matlab_helper3          // return true if OK, false on error
 // GB_matlab_helper4: find the max entry in an index list
 //------------------------------------------------------------------------------
 
-int64_t GB_matlab_helper4       // find max (I) + 1
+int64_t GB_matlab_helper4           // find max (I) + 1
 (
-    const GrB_Index *I,         // array of size len
+    const GrB_Index *restrict I,    // array of size len
     const int64_t len
 )
 {
 
-    // determine the number of threads to use
-    int nthreads_max = GB_Global_nthreads_max_get ( ) ;
-    double chunk = GB_Global_chunk_get ( ) ;
-    int nthreads = GB_nthreads (len, chunk, nthreads_max) ;
+    GB_NTHREADS (len) ;
 
     GrB_Index imax = 0 ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
@@ -135,5 +129,70 @@ int64_t GB_matlab_helper4       // find max (I) + 1
     }
     if (len > 0) imax++ ;
     return (imax) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_matlab_helper5: construct pattern of S for gblogassign
+//------------------------------------------------------------------------------
+
+void GB_matlab_helper5              // construct pattern of S
+(
+    GrB_Index *restrict Si,         // array of size anz
+    GrB_Index *restrict Sj,         // array of size anz
+    const GrB_Index *restrict Mi,   // array of size mnz
+    const GrB_Index *restrict Mj,   // array of size mnz
+    GrB_Index *restrict Ai,         // array of size anz
+    const GrB_Index anz
+)
+{
+
+    GB_NTHREADS (anz) ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (int64_t k = 0 ; k < anz ; k++)
+    {
+        Si [k] = Mi [Ai [k]] ;
+        Sj [k] = Mj [Ai [k]] ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_matlab_helper6: set bool array to all true gblogextract
+//------------------------------------------------------------------------------
+
+void GB_matlab_helper6              // set Gbool to all true
+(
+    bool *restrict Gbool,           // array of size gnvals
+    const GrB_Index gnvals
+)
+{
+
+    GB_NTHREADS (gnvals) ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (int64_t k = 0 ; k < gnvals ; k++)
+    {
+        Gbool [k] = true ;
+    }
+}
+
+//------------------------------------------------------------------------------
+// GB_matlab_helper7: Kx = uint64 (0:mnz-1), for gblogextract
+//------------------------------------------------------------------------------
+
+void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
+(
+    uint64_t *restrict Kx,          // array of size mnz
+    const GrB_Index mnz
+)
+{
+
+    GB_NTHREADS (mnz) ;
+
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (int64_t k = 0 ; k < mnz ; k++)
+    {
+        Kx [k] = k ;
+    }
 }
 

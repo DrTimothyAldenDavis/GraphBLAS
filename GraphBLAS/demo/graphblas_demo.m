@@ -23,6 +23,7 @@
 % future.
 
 clear all
+format compact
 rng ('default') ;
 X = 100 * rand (2) ;
 G = gb (X)              % GraphBLAS copy of a matrix X, same type
@@ -41,7 +42,7 @@ G = gb (X, 'int8')      % a GraphBLAS sparse int8 matrix
 %
 % Please wait ...
 
-n = 1e5 
+n = 1e5 ;
 X = spdiags (rand (n, 201), -100:100, n, n) ;
 G = gb (X, 'single') ;
 tic
@@ -244,9 +245,14 @@ B
 C1 = [A B]
 C2 = [double(A) double(B)] ;
 assert (isequal (double (C1), C2))
+
+%%
 C1 = A^2
 C2 = double (A)^2 ;
-assert (isequal (double (C1), C2))
+err = norm (C1 - C2, 1)
+assert (err < 1e-12)
+
+%%
 C1 = A (1:2,2:end)
 A = double (A) ;
 C2 = A (1:2,2:end) ;
@@ -324,7 +330,7 @@ disp (G,1)
 
 rng ('default') ;
 gb.clear ;                      % clear all prior GraphBLAS settings
-default_format_is = gb.format
+fprintf ('the default format is: %s\n', gb.format) ;
 C = sparse (rand (2))
 G = gb (C)
 gb.format (G)
@@ -340,13 +346,13 @@ gb.format (G)
 % subsequent graph algorithms can be faster.
 
 gb.format ('by row') ;
-default_format_is = gb.format
+fprintf ('the default format is: %s\n', gb.format) ;
 G = gb (C)
-The_format_for_G_is = gb.format (G)
-default_format_is_now_back_to = gb.format ('by col')
+fprintf ('the format of G is:    %s\n', gb.format (G)) ;
+fprintf ('default format now:    %s\n', gb.format ('by col')) ;
 H = gb (C)
-The_format_for_H_is = gb.format (H)
-But_G_is_still = gb.format (G)
+fprintf ('the format of H is:    %s\n', gb.format (H)) ;
+fprintf ('but G is still:        %s\n', gb.format (G)) ;
 err = norm (H-G,1)
 
 %% Hypersparse matrices
@@ -378,11 +384,13 @@ H = gb (huge, huge)         % this works in GraphBLAS too
 
 I = randperm (huge, 2) ;
 J = randperm (huge, 2) ;
-H (I,J) = 42 ;              % add 4 nonzeros to random locations in H
-H = (H' * 2) ;              % transpose H and double the entries
-K = gb.expand (pi, H) ;     % K = pi * spones (H)
-H = H + K                   % add pi to each entry in H
-numel (H)                   % this is huge^2, a really big number
+H (I,J) = magic (2) ;        % add 4 nonzeros to random locations in H
+H (I,I) = 10 * [1 2 ; 3 4] ; % so H^2 is not all zero
+H = H^2 ;                    % square H
+H = (H' * 2) ;               % transpose H and double the entries
+K = pi * spones (H) ;
+H = H + K                    % add pi to each entry in H
+numel (H)                    % this is huge^2, a really big number
 
 %%
 % All of these matrices take very little memory space:
@@ -587,7 +595,114 @@ err = norm (Y1-Y2,1)
 %
 % assuming you have enough memory.  The gbdemo2 is not part of this demo
 % since it can take a long time; it tries a range of problem sizes,
-% and each one takes several minutes in MATLAB,
+% and each one takes several minutes in MATLAB.
+
+%% Sparse logical indexing is much, much faster in GraphBLAS
+% The mask in GraphBLAS acts much like logical indexing in MATLAB, but it
+% is not quite the same.  MATLAB logical indexing takes the form:
+%
+%       C (M) = A (M)
+%
+% which computes the same thing as the GraphBLAS statement:
+%
+%       C = gb.assign (C, M, A)
+%
+% The gb.assign statement computes C(M)=A(M), and it is vastly faster
+% than C(M)=A(M), even if the time to convert the gb matrix back to a
+% MATLAB sparse matrix is included.
+%
+% GraphBLAS can also compute C (M) = A (M) using overloaded operators
+% for subsref and subsasgn, but C = gb.assign (C, M, A) is a bit faster.
+%
+% First, both methods in GraphBLAS (both are very fast):
+
+clear
+n = 4000 ;
+tic
+C = sprand (n, n, 0.1) ;
+A = 100 * sprand (n, n, 0.1) ;
+M = (C > 0.5) ;
+t_setup = toc ;
+fprintf ('nnz(C): %g, nnz(M): %g, nnz(A): %g\n', ...
+    nnz(C), nnz(M), nnz(A)) ;
+fprintf ('\nsetup time:     %g sec\n', t_setup) ;
+
+% include the time to convert C1 from a GraphBLAS
+% matrix to a MATLAB sparse matrix:
+tic
+C1 = gb.assign (C, M, A) ;
+C1 = double (C1) ;
+gb_time = toc ;
+fprintf ('\nGraphBLAS time: %g sec for gb.assign\n', gb_time) ;
+
+% now using overloaded operators, also include the time to
+% convert back to a MATLAB sparse matrix, for good measure:
+A2 = gb (A) ;
+C2 = gb (C) ;
+tic
+C2 (M) = A2 (M) ;
+C2 = double (C2) ;
+gb_time2 = toc ;
+fprintf ('\nGraphBLAS time: %g sec for C(M)=A(M)\n', gb_time2) ;
+
+%%
+% Please wait, this will take about 10 minutes or so ...
+
+tic
+C (M) = A (M) ;
+matlab_time = toc ;
+
+fprintf ('\nGraphBLAS time: %g sec (gb.assign)\n', gb_time) ;
+fprintf ('\nGraphBLAS time: %g sec (overloading)\n', gb_time2) ;
+fprintf ('MATLAB time:    %g sec\n', matlab_time) ;
+fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
+    matlab_time / gb_time2) ;
+
+% GraphBLAS computes the exact same result with both methods:
+assert (isequal (C1, C))
+assert (isequal (C2, C))
+C1 - C
+C2 - C
+
+%% GraphBLAS has better colon notation than MATLAB
+% The MATLAB notation C = A (start:inc:fini) is very handy, but in both
+% the built-in operators and the overloaded operators for objects, MATLAB
+% starts by creating the explicit index vector I = start:inc:fini.
+% That's fine if the matrix is modest in size, but GraphBLAS can
+% construct huge matrices (and MATLAB can build huge sparse vectors as
+% well).  The problem is that 1:n cannot be explicitly constructed when n
+% is huge.
+%
+% GraphBLAS can represent the colon notation start:inc:fini in an
+% implicit manner, and it can do the indexing without actually forming
+% the explicit list I = start:inc:fini.
+%
+% Unfortunately, this means that the elegant MATLAB colon notation
+% start:inc:fini cannot be used.  To compute C = A (start:inc:fini) for
+% very huge matrices, you need to use use a cell array to represent the
+% colon notation, as { start, inc, fini }, instead of start:inc:fini.
+% See 'help gb.extract' and 'help.gbsubassign' for, for C(I,J)=A.  The
+% syntax isn't conventional, but it is far faster than the MATLAB colon
+% notation, and takes far less memory when I is huge.
+
+n = 1e14 ;
+H = gb (n, n) ;            % a huge empty matrix
+I = [1 1e9 1e12 1e14] ;
+M = magic (4)
+H (I,I) = M ;
+J = {1, 1e13} ;            % represents 1:1e13 colon notation
+C1 = H (J, J)              % computes C1 = H (1:e13,1:1e13)
+c = nonzeros (C1) ;
+m = nonzeros (M (1:3, 1:3)) ;
+assert (isequal (c, m)) ;
+
+try
+    % try to compute the same thing with colon
+    % notation (1:1e13), but this fails:
+    C2 = H (1:1e13, 1:1e13)
+catch me
+    error_expected = me
+end
 
 %% Limitations and their future solutions
 % The MATLAB interface for SuiteSparse:GraphBLAS is a work-in-progress.
@@ -703,69 +818,7 @@ C2 = gb.mxm ('+.+', A, diag (gb (B)))
 err = norm (C1-C2,1)
 
 %%
-% (7) Logical indexing in subsindex and subsasgn:
-%
-% The mask in GraphBLAS acts much like logical indexing in MATLAB, but it
-% is not quite the same.  MATLAB logical indexing takes the form:
-%
-%       C (M) = A (M)
-%
-% which computes the same thing as the GraphBLAS statement:
-%
-%       C = gb.assign (C, M, A)
-%
-% The gb.assign statement computes C(M)=A(M), and it is vastly faster
-% than C(M)=A(M), even if the time to convert the gb matrix back to a
-% MATLAB sparse matrix is included.
-%
-% However, the syntax differs.  The overloaded subsasgn operator for
-% C(M)=A requires A(M) to be computed first, which becomes a 1D vector of
-% length equal to the number of entries in M.  The gb.assign function
-% requires the original A, not the linear vector A(M).  As a result, the
-% C(M) = ... syntax is not yet supported for GraphBLAS matrices.  Until I
-% resolve this syntax issue, use C = gb.assign (C,M,A) instead.
-%
-% On my 4-core Dell XPS-13 laptop, C=gb.assign(C,M,A) is about 24,000x
-% faster than C(M)=A(M) in MATLAB R2019a, so the extra syntax is well
-% worth it.  First, in GraphBLAS:
-
-clear
-n = 4000 ;
-tic
-C = sprand (n, n, 0.1) ;
-A = 100 * sprand (n, n, 0.1) ;
-M = (C > 0.5) ;
-t_setup = toc ;
-fprintf ('nnz(C): %g, nnz(M): %g, nnz(A): %g\n', ...
-    nnz(C), nnz(M), nnz(A)) ;
-fprintf ('\nsetup time:     %g sec\n', t_setup) ;
-
-% even add in the time to convert C1 from a GraphBLAS
-% matrix to a MATLAB sparse matrix
-tic
-C1 = gb.assign (C, M, A) ;
-C1 = double (C1) ;
-gb_time = toc ;
-fprintf ('\nGraphBLAS time: %g sec\n', gb_time) ;
-
-%%
-% Please wait, this will take about 10 minutes or so ...
-
-tic
-C (M) = A (M) ;
-matlab_time = toc ;
-
-fprintf ('\nGraphBLAS time: %g sec\n', gb_time) ;
-fprintf ('MATLAB time:    %g sec\n', matlab_time) ;
-fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
-    matlab_time / gb_time) ;
-
-% GraphBLAS computes the exact same result:
-assert (isequal (C1, C))
-C1 - C
-
-%%
-% (8) Other features are not yet in place, such as:
+% (7) Other features are not yet in place, such as:
 %
 % S = sparse (i,j,x) allows either i or j, and x, to be scalars, which
 % are implicitly expanded.  This is not yet supported by gb.build.

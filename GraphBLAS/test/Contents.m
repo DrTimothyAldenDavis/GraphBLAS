@@ -32,6 +32,8 @@
 %  gbtest26  - test typecasting
 %  gbtest27  - test conversion to full
 %  gbtest28  - test gb.build
+%  gbtest29  - test subsref and subsasgn with logical indexing
+%  gbtest30  - test colon notation
 %
 % Utility functions:
 %

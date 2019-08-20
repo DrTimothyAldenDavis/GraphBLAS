@@ -122,13 +122,13 @@ void mexFunction
     else if (nmatrix_args == 2)
     {
         // with 2 matrix arguments: Cin and A, in that order
-        C = gb_get_deep    (pargin [matrix_arg [0]], NULL) ;
+        C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         A = gb_get_shallow (pargin [matrix_arg [1]]) ;
     }
     else if (nmatrix_args == 3)
     {
         // with 3 matrix arguments: Cin, M, and A, in that order
-        C = gb_get_deep    (pargin [matrix_arg [0]], NULL) ;
+        C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         M = gb_get_shallow (pargin [matrix_arg [1]]) ;
         A = gb_get_shallow (pargin [matrix_arg [2]]) ;
     }

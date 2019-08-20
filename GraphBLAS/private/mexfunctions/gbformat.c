@@ -39,7 +39,6 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // get the global format
-        GxB_Format_Value format ;
         OK (GxB_get (GxB_FORMAT, &format)) ;
 
     }

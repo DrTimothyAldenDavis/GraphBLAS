@@ -65,7 +65,7 @@ void mexFunction
         // Cout = gb.reduce (cin, accum, monoid, A, desc)
         //----------------------------------------------------------------------
 
-        C = gb_get_deep (pargin [0], NULL) ;
+        C = gb_get_deep (pargin [0]) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         A = gb_get_shallow (pargin [3]) ;

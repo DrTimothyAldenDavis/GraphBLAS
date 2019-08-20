@@ -35,6 +35,8 @@ gbtest25
 gbtest26
 gbtest27
 gbtest28
+gbtest29
+gbtest30
 
 fprintf ('\ngbtestall: all tests passed\n') ;
 

@@ -85,7 +85,7 @@ void mexFunction
         gb_usage (nargin == 5 || nargin == 6,
             "usage: Cout = gb.select (Cin, accum, op, A, thunk, desc)") ;
 
-        C = gb_get_deep (pargin [0], NULL) ;
+        C = gb_get_deep (pargin [0]) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         op = gb_mxstring_to_selectop (pargin [2]) ;
@@ -104,7 +104,7 @@ void mexFunction
         gb_usage (nargin == 5 || nargin == 6,
             "usage: Cout = gb.select (Cin, M, op, A, thunk, desc)") ;
 
-        C = gb_get_deep (pargin [0], NULL) ;
+        C = gb_get_deep (pargin [0]) ;
         M = gb_get_shallow (pargin [1]) ;
         op = gb_mxstring_to_selectop (pargin [2]) ;
         A = gb_get_shallow (pargin [3]) ;
@@ -122,7 +122,7 @@ void mexFunction
         gb_usage (nargin == 6 || nargin == 7,
             "usage: Cout = gb.select (Cin, M, accum, op, A, thunk, desc)") ;
 
-        C = gb_get_deep (pargin [0], NULL) ;
+        C = gb_get_deep (pargin [0]) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         M = gb_get_shallow (pargin [1]) ;
         accum = gb_mxstring_to_binop (pargin [2], ctype) ;

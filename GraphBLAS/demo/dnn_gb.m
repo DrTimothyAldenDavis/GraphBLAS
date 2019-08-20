@@ -7,7 +7,7 @@ function Y = dnn_gb (W, bias, Y0)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 %-------------------------------------------------------------------------------
-% convert to GraphBLAS
+% convert to GraphBLAS matrices
 %-------------------------------------------------------------------------------
 
 % This is mostly optional since gb.* methods can take inputs that are either gb
@@ -23,6 +23,8 @@ function Y = dnn_gb (W, bias, Y0)
 % problem could be generated in GraphBLAS format to begin with.  In that case,
 % dnn_matlab.m would include this conversion code, to convert the problem from
 % GraphBLAS format to MATLAB sparse matrices.
+
+% In any case, the setup time is very low.
 
 t = tic ;
 n = size (Y0, 2) ;
@@ -49,17 +51,8 @@ for i=1:length(W)
     % Propagate through layer, apply bias, and threshold negative values.
     Y = gb.select ('>0', gb.mxm ('+.+', Y * W {i}, bias {i})) ;
 
-    % Threshold maximum values.
-    M = gb.select ('>thunk', Y, 32) ;
-    if (nnz (M) > 0)
-        Y = gb.assign (Y, M, 32) ;
-    end
-
-    % Alternatively, the above threshold can be done as follows, but it could
-    % be a bit slower if M is empty.  This would solve the entire problem in an
-    % inner loop just 2 lines of code:
-
-    % Y = gb.assign (Y, gb.select ('>thunk', Y, 32), 32) ;
+    % Threshold maximum values ... so this makes the inner loop 2 lines long.
+    Y (Y > 32) = 32 ;
 
     t = toc (t) ;
     fprintf ('layer: %4d, nnz (Y) %8d, time %g sec\n', i, nnz (Y), t) ;

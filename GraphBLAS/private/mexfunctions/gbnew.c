@@ -42,7 +42,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // GraphBLAS copy of X, same type as X
-        G = gb_get_deep (pargin [0], NULL) ;
+        G = gb_get_deep (pargin [0]) ;
 
     }
     else if (nargin == 2)
@@ -67,7 +67,12 @@ void mexFunction
             }
             else
             {
-                G = gb_get_deep (pargin [0], xtype) ;
+                // get a shallow copy and then typecast it to xtype
+                GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+                GxB_Format_Value format ;
+                OK (GxB_get (GxB_FORMAT, &format)) ;
+                G = gb_typecast (xtype, format, X) ;
+                OK (GrB_free (&X)) ;
             }
 
         }

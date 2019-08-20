@@ -18,8 +18,8 @@ classdef gb
 %
 %   G = gb (X) ;            GraphBLAS copy of a matrix X, same type
 %   G = gb (X, type) ;      GraphBLAS typecasted copy of matrix X
-%   G = gb (m, n) ;         empty m-by-n GraphBLAS double matrix
-%   G = gb (m, n, type) ;   empty m-by-n GraphBLAS matrix of given type
+%   G = gb (m, n) ;         m-by-n GraphBLAS double matrix with no entries
+%   G = gb (m, n, type) ;   m-by-n GraphBLAS matrix of given type, no entries
 %
 % The m and n parameters above are MATLAB scalars.  The type is a string.  The
 % default format is by column, to match the format used in MATLAB (see
@@ -51,8 +51,8 @@ classdef gb
 %   'uint64'    64-bit unsigned integer
 %   'complex'   64-bit double complex.  In MATLAB, this is not a MATLAB
 %               class name, but instead a property of a sparse double matrix.
-%               In GraphBLAS, 'complex' will be treated as a type, (once it is
-%               implemented).  Complex matrices are not yet supported.
+%               FUTURE: In GraphBLAS, 'complex' will be treated as a type, but
+%               complex matrices are not yet supported.
 %
 % Operations on integer values differ from MATLAB.  In MATLAB, uint9(255)+1 is
 % 255, since the arithmetic saturates.  This is not possible in matrix
@@ -110,6 +110,7 @@ classdef gb
 %       U = triu (G,k)          upper triangular part of gb matrix G
 %       C = kron (A,B)          Kronecker product
 %       C = repmat (G, ...)     replicate and tile a GraphBLAS matrix
+%       C = reshape (G, ...)    reshape a GraphBLAS matrix
 %       C = abs (G)             absolute value
 %       C = sign (G)            signum function
 %       s = istril (G)          true if G is lower triangular
@@ -172,7 +173,7 @@ classdef gb
 %       C = transpose (A)       C = A.'
 %       C = horzcat (A, B)      C = [A , B]
 %       C = vertcat (A, B)      C = [A ; B]
-%       C = subsref (A, I, J)   C = A (I,J)
+%       C = subsref (A, I, J)   C = A (I,J) or C = A (M)
 %       C = subsasgn (A, I, J)  C (I,J) = A
 %       index = end (A, k, n)   for object indexing, A(1:end,1:end)
 %
@@ -329,9 +330,9 @@ methods %=======================================================================
     %FULL convert a matrix into a GraphBLAS dense matrix.
     % F = full (X, type, identity) converts the matrix X into a GraphBLAS dense
     % matrix F of the given type, by inserting identity values.  The type may
-    % be any GraphBLAS type ('double', 'single', 'logical', 'int8' 'int16'
+    % be any GraphBLAS type: 'double', 'single', 'logical', 'int8' 'int16'
     % 'int32' 'int64' 'uint8' 'uint16' 'uint32' 'uint64', or in the future,
-    % 'complex').  If not present, the type defaults to the same type as G, and
+    % 'complex'.  If not present, the type defaults to the same type as G, and
     % the identity defaults to zero.  X may be any matrix (GraphBLAS, MATLAB
     % sparse or full).  To use this method for a MATLAB matrix A, use a
     % GraphBLAS identity value such as gb(0), or use F = full (gb (A)).  Note
@@ -402,7 +403,6 @@ methods %=======================================================================
     %
     % See also cast, gb, double, complex, single, int8, int16, int32, int64,
     % uint8, uint16, uint32, and uint64.
-
     C = gbsparse (G.opaque, 'logical') ;
     end
 
@@ -416,7 +416,6 @@ methods %=======================================================================
     %
     % See also cast, gb, double, single, logical, int8, int16, int32, int64,
     % uint8, uint16, uint32, and uint64.
-
     error ('complex type not yet supported') ;
     end
 
@@ -438,7 +437,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, logical, int8, int16, int32, int64, uint8,
     % uint16, uint32, and uint64.
-
     C = gbfull (G.opaque, 'single') ;
     end
 
@@ -452,7 +450,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int16, int32, int64,
     % uint8, uint16, uint32, and uint64.
-
     C = gbfull (G.opaque, 'int8') ;
     end
 
@@ -466,7 +463,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int32, int64,
     % uint8, uint16, uint32, and uint64.
-
     C = gbfull (G.opaque, 'int16') ;
     end
 
@@ -480,7 +476,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int16, int32, int64,
     % uint8, uint16, uint32, and uint64.
-
     C = gbfull (G.opaque, 'int32') ;
     end
 
@@ -494,7 +489,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int16, int32, uint8,
     % uint16, uint32, and uint64.
-
     C = gbfull (G.opaque, 'int64') ;
     end
 
@@ -508,7 +502,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int16, int32, int64,
     % uint16, uint32, and uint64.
-
     C = gbfull (G.opaque, 'uint8') ;
     end
 
@@ -522,7 +515,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int16, int32, int64,
     % uint8, uint32, and uint64.
-
     C = gbfull (G.opaque, 'uint16') ;
     end
 
@@ -536,7 +528,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int16, int32, int64,
     % uint8, uint16, and uint64.
-
     C = gbfull (G.opaque, 'uint32') ;
     end
 
@@ -550,7 +541,6 @@ methods %=======================================================================
     %
     % See also gb, double, complex, single, logical, int8, int16, int32, int64,
     % uint8, uint16, and uint32.
-
     C = gbfull (G.opaque, 'uint64') ;
     end
 
@@ -885,11 +875,11 @@ methods %=======================================================================
     elseif (isequal (classname, 'integer'))
         % GraphBLAS int* and uint* matrices are 'integer'
         s = isinteger (G) ;
-    elseif (isequal (gbtype (G.opaque), classname))
+    elseif (isequal (gb.type (G), classname))
         % specific cases, such as isa (G, 'double')
         s = true ;
     else
-        % catch-all for cases not handled above (char, cell, struct, ...)
+        % catch-all for cases not handled above
         s = builtin ('isa', G, classname) ;
     end
     end
@@ -909,6 +899,9 @@ methods %=======================================================================
     % c = diag (G,k) when G is a GraphBLAS matrix returns a GraphBLAS column
     % vector c formed the entries on the kth diagonal of G.  The main diagonal
     % is c = diag(G).
+    %
+    % The GraphBLAS diag function always constructs a GraphBLAS sparse matrix,
+    % unlike the the MATLAB diag, which always constructs a MATLAB full matrix.
     %
     % Examples:
     %
@@ -1027,7 +1020,59 @@ methods %=======================================================================
     else
         R = ones (m, 'logical') ;
     end
-    C = gb.gbkron (['2nd.' type(G)], R, G) ;
+    C = gb.gbkron (['2nd.' gb.type(G)], R, G) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % reshape: reshape a GraphBLAS matrix
+    %---------------------------------------------------------------------------
+
+    function C = reshape (G, arg1, arg2)
+    %RESHAPE Reshape a GraphBLAS matrix.
+    % C = reshape (G, m, n) or C = reshape (G, [m n]) returns the m-by-n
+    % matrix whose elements are taken columnwise from G.  The matrix G must
+    % have numel (G) == m*n.  That is numel (G) == numel (C) must be true.
+    [mold nold] = size (G) ;
+    mold = int64 (mold) ;
+    nold = int64 (nold) ;
+    if (nargin == 2)
+        if (length (arg1) ~= 2)
+            error ('reshape (G,s): s must have exactly two elements') ;
+        end
+        mnew = int64 (arg1 (1)) ;
+        nnew = int64 (arg1 (2)) ;
+    elseif (nargin == 3)
+        if (~isscalar (arg1) | ~isscalar (arg2))
+            error ('reshape (G,m,n): m and n must be scalars') ;
+        end
+        mnew = int64 (arg1) ;
+        nnew = int64 (arg2) ;
+    end
+    if (mold * nold ~= mnew * nnew)
+        error ('number of elements must not change') ;
+    end
+    if (isempty (G))
+        C = gb (mnew, nnew, gb.type (G)) ;
+    else
+        [iold jold x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+        % convert i and j from 2D (mold-by-nold) to 1D indices
+        k = convert_index_2d_to_1d (iold, jold, mold) ;
+        % convert k from 1D indices to 2D (mnew-by-nnew)
+        [inew jnew] = convert_index_1d_to_2d (k, mnew) ;
+        % rebuild the new matrix
+        C = gb.build (inew, jnew, x, mnew, nnew) ;
+    end
+    end
+
+    function k = convert_index_2d_to_1d (i, j, m)
+    % the indices must be zero-based
+    k = i + j * m ;
+    end
+
+    function [i j] = convert_index_1d_to_2d (k, m) ;
+    % the indices must be zero-based
+    i = rem (k, m) ;
+    j = (k - i) / m ;
     end
 
     %---------------------------------------------------------------------------
@@ -1061,6 +1106,8 @@ methods %=======================================================================
     % A GraphBLAS matrix G may have explicit zeros.  If these appear in the
     % upper triangular part of G, then istril (G) is false, but
     % istril (double (G)) can be true since double (G) drops those entries.
+
+    % FUTURE: this will be much faster when written as a mexFunction.
     result = (gb.nvals (triu (G, 1)) == 0) ;
     end
 
@@ -1073,6 +1120,8 @@ methods %=======================================================================
     % A GraphBLAS matrix G may have explicit zeros.  If these appear in the
     % lower triangular part of G, then istriu (G) is false, but
     % istriu (double (G)) can be true since the double (G) drops those entries.
+
+    % FUTURE: this will be much faster when written as a mexFunction.
     result = (gb.nvals (tril (G, -1)) == 0) ;
     end
 
@@ -1083,6 +1132,8 @@ methods %=======================================================================
     function result = isbanded (G, lo, hi)
     %ISBANDED True if G is a banded matrix.
     % isbanded (G, lo, hi) is true if the bandwidth of G is between lo and hi.
+
+    % FUTURE: this will be much faster when 'bandwidth' is a mexFunction.
     [Glo, Ghi] = bandwidth (G) ;
     result = (Glo <= lo) & (Ghi <= hi) ;
     end
@@ -1093,6 +1144,8 @@ methods %=======================================================================
 
     function result = isdiag (G)
     %ISDIAG True if G is a diagonal matrix.
+
+    % FUTURE: this will be much faster when 'bandwidth' is a mexFunction.
     result = isbanded (G, 0, 0) ;
     end
 
@@ -1105,6 +1158,8 @@ methods %=======================================================================
     % complex Hermitian.
     %
     % See also issymetric.
+
+    % FUTURE: this will be much faster.  See CHOLMOD/MATLAB/spsym.
     [m n] = size (G) ;
     if (m ~= n)
         result = false ;
@@ -1127,6 +1182,8 @@ methods %=======================================================================
     %ISHERMITIAN Determine if a GraphBLAS matrix is symmetric.
     %
     % See also ishermitian.
+
+    % FUTURE: this will be much faster.  See CHOLMOD/MATLAB/spsym.
     [m n] = size (G) ;
     if (m ~= n)
         result = false ;
@@ -1153,9 +1210,7 @@ methods %=======================================================================
     %
     % See also isbanded, isdiag, istril, istriu.
 
-    % FUTURE: this could be much faster if implemented as a built-in function,
-    % or in a mexFunction.
-
+    % FUTURE: this will be much faster when implemented in a mexFunction.
     if (gb.nvals (G) == 0)
         % matrix is empty
         hi = 0 ;
@@ -1223,7 +1278,6 @@ methods %=======================================================================
     else
         op = '+' ;
     end
-
     if (nargin == 1)
         % C = sum (G); check if G is a row vector
         if (isvector (G))
@@ -1278,13 +1332,11 @@ methods %=======================================================================
 
     [m n] = size (G) ;
     d = struct ('in0', 'transpose') ;
-
     if (isequal (gb.type (G), 'logical'))
         op = '&.logical' ;
     else
         op = '*' ;
     end
-
     if (nargin == 1)
         % C = prod (G); check if G is a row vector
         if (isvector (G))
@@ -1411,8 +1463,7 @@ methods %=======================================================================
     % is not available; only the 'includenan' behavior is supported.
 
     G = varargin {1} ;
-    [m n] = size (varargin {1}) ;
-
+    [m n] = size (G) ;
     if (isequal (gb.type (G), 'logical'))
         op = '|.logical' ;
     else
@@ -1527,7 +1578,7 @@ methods %=======================================================================
     % is not available; only the 'includenan' behavior is supported.
 
     G = varargin {1} ;
-    [m n] = size (varargin {1}) ;
+    [m n] = size (G) ;
 
     if (isequal (gb.type (G), 'logical'))
         op = '&.logical' ;
@@ -1747,6 +1798,8 @@ methods %=======================================================================
 
     function C = eps (G)
     %EPS Spacing of floating-point numbers
+
+    % FUTURE: this could be much faster as a mexFunction.
     if (~isfloat (G))
         error ('Type must be ''single'', ''double'', or ''complex''') ;
     end
@@ -1762,6 +1815,8 @@ methods %=======================================================================
     function C = ceil (G)
     %CEIL round entries to the nearest integers towards infinity
     % See also floor, round, fix.
+
+    % FUTURE: this could be much faster as a mexFunction.
     if (isfloat (G) && gb.nvals (G) > 0)
         [m n] = size (G) ;
         [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
@@ -1778,6 +1833,8 @@ methods %=======================================================================
     function C = floor (G)
     %FLOOR round entries to the nearest integers towards -infinity
     % See also ceil, round, fix.
+
+    % FUTURE: this could be much faster as a mexFunction.
     if (isfloat (G) && gb.nvals (G) > 0)
         [m n] = size (G) ;
         [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
@@ -1794,6 +1851,8 @@ methods %=======================================================================
     function C = round (G)
     %ROUND round entries to the nearest integers
     % See also ceil, floor, fix.
+
+    % FUTURE: this could be much faster as a mexFunction.
     if (isfloat (G) && gb.nvals (G) > 0)
         [m n] = size (G) ;
         [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
@@ -1810,6 +1869,8 @@ methods %=======================================================================
     function C = fix (G)
     %FIX Round towards zero.
     % See also ceil, floor, round.
+
+    % FUTURE: this could be much faster as a mexFunction.
     if (isfloat (G) && gb.nvals (G) > 0)
         [m n] = size (G) ;
         [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
@@ -1826,6 +1887,8 @@ methods %=======================================================================
     function C = isfinite (G)
     %ISFINITE True for finite elements.
     % See also isnan, isinf.
+
+    % FUTURE: this could be much faster as a mexFunction.
     [m n] = size (G) ;
     if (isfloat (G) && m > 0 && n > 0)
         [i j x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
@@ -1843,6 +1906,8 @@ methods %=======================================================================
     function C = isinf (G)
     %ISINF True for infinite elements.
     % See also isnan, isfinite.
+
+    % FUTURE: this could be much faster as a mexFunction.
     [m n] = size (G) ;
     if (isfloat (G) && gb.nvals (G) > 0)
         [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
@@ -1860,6 +1925,8 @@ methods %=======================================================================
     function C = isnan (G)
     %ISNAN True for NaN elements.
     % See also isinf, isfinite.
+
+    % FUTURE: this could be much faster as a mexFunction.
     [m n] = size (G) ;
     if (isfloat (G) && gb.nvals (G) > 0)
         [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
@@ -1877,6 +1944,9 @@ methods %=======================================================================
     function C = spfun (fun, G)
     %SPFUN Apply function to the entries of a GraphBLAS matrix.
     % C = spfun (fun, G) evaluates the function fun on the entries of G.
+
+    % FUTURE: this would be much faster as a mexFunction, but calling feval
+    % from inside a mexFunction would not be trivial.
     [m n] = size (G) ;
     [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
     x = feval (fun, x) ;
@@ -1987,8 +2057,8 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     % spdiags, blkdiag, bsxfun, cummin, cummax, cumprod, diff, inv, issorted,
-    % issortedrows, reshape, sort, rem, mod,
-    % lu, chol, qr, ...  See 'methods double' for more options.
+    % issortedrows, reshape, sort, rem, mod, lu, chol, qr, ...  See 'methods
+    % double' for more options.
 
 %===============================================================================
 % operator overloading =========================================================
@@ -2171,6 +2241,12 @@ methods %=======================================================================
 
     function C = mrdivide (A, B)
     % C = A/B, matrix right division
+    %
+    % If B is a scalar, then C = A./B is computed; see 'help rdivide'.
+    %
+    % Otherwise, C is computed by first converting A and B to MATLAB sparse
+    % matrices, and the result is converted back to a GraphBLAS double or
+    % complex matrix.
     if (isscalar (B))
         C = rdivide (A, B) ;
     else
@@ -2184,6 +2260,12 @@ methods %=======================================================================
 
     function C = mldivide (A, B)
     % C = A\B, matrix left division
+    %
+    % If A is a scalar, then C = A.\B is computed; see 'help ldivide'.
+    %
+    % Otherwise, C is computed by first converting A and B to MATLAB sparse
+    % matrices, and the result is converted back to a GraphBLAS double or
+    % complex matrix.
     if (isscalar (A))
         C = rdivide (B, A) ;
     else
@@ -2617,6 +2699,7 @@ methods %=======================================================================
     %CTRANSPOSE C = A', matrix transpose a GraphBLAS matrix.
     % Note that complex matrices are not yet supported.  When they are, this
     % will compute the complex conjugate transpose C=A' when A is complex.
+    %
     % See also gb.gbtranspose, transpose.
     C = gb.gbtranspose (A) ;
     end
@@ -2627,6 +2710,7 @@ methods %=======================================================================
 
     function C = transpose (A)
     %TRANSPOSE C = A.', array transpose of a GraphBLAS matrix.
+    %
     % See also gb.gbtranspose, ctranspose.
     C = gb.gbtranspose (A) ;
     end
@@ -2641,7 +2725,7 @@ methods %=======================================================================
     % A and B may be GraphBLAS or MATLAB matrices, in any combination.
     % Multiple matrices may be concatenated, as [A, B, C, ...].
 
-    % FUTURE: this would be much faster if it was a built-in GraphBLAS method.
+    % FUTURE: this will be much faster when it is a mexFunction.
 
     % determine the size of each matrix and the size of the result
     nmatrices = length (varargin) ;
@@ -2699,7 +2783,7 @@ methods %=======================================================================
     % A and B may be GraphBLAS or MATLAB matrices, in any combination.
     % Multiple matrices may be concatenated, as [A ; B ; C ; ...].
 
-    % FUTURE: this would be much faster if it was a built-in GraphBLAS method.
+    % FUTURE: this will be much faster when it is a mexFunction.
     % The version below requires a sort in gb.build.
 
     % determine the size of each matrix and the size of the result
@@ -2753,47 +2837,73 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function C = subsref (A, S)
-    %SUBSREF C = A(I,J) or C = A(I); extract submatrix of a GraphBLAS matrix
+    %SUBSREF C = A(I,J) or C = A(I); extract submatrix of a GraphBLAS matrix.
     % C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.  With
-    % a single index, C = A(I) is equivalent to C = A(I,:).  Linear indexing of
-    % a matrix is not supported.  C = A(M) for a matrix M is also not
-    % supported; see gb.extract and gb.subassign for the GraphBLAS masked
-    % extraction and assignment.
+    % a single index, C = A(I) extracts a subvector C of a vector A.  Linear
+    % indexing of a matrix is not yet supported.
     %
-    % See also subsasgn, gb.subassign, gb.extract.
+    % x = A (M) for a logical matrix M constructs an nnz(M)-by-1 vector x, for
+    % MATLAB-style logical indexing.  A or M may be MATLAB sparse or full
+    % matrices, or GraphBLAS matrices, in any combination.  M must be either a
+    % MATLAB logical matrix (sparse or dense), or a GraphBLAS logical matrix;
+    % that is, gb.type (M) must be 'logical'.
+    %
+    % NOTE: GraphBLAS can construct huge sparse matrices, but they cannot
+    % always be indexed with A(I,J), because of a limitation of the colon
+    % notation in the MATLAB subsref method.  A colon expression is expanded
+    % into an explicit vector, but can be too big.  Use gb.extract in this
+    % case, which can be passed the three integers start:inc:fini.
+    %
+    % Example:
+    %
+    %   n = 1e14 ;
+    %   H = gb (n, n)               % a huge empty matrix
+    %   I = [1 1e9 1e12 1e14] ;
+    %   M = magic (4)
+    %   H (I,I) = M
+    %   J = {1, 1e13} ;             % represents 1:1e13 colon notation
+    %   C = gb.extract (H, J, J)    % this is very fast
+    %   E = H (1:1e13, 1:1e13)      % but this is not possible 
+    %
+    % See also subsasgn, gb.subassign, gb.assign, gb.extract.
+
     if (~isequal (S.type, '()'))
-        error ('index type %s not supported\n', S.type) ;
+        error ('index type %s not supported', S.type) ;
     end
     ndims = length (S.subs) ;
     if (ndims == 1)
-        if (~isvector (A))
-            error ('Linear indexing of a gb matrix is not yet supported\n') ;
-        end
-        I = S.subs (1) ;
-        whole_vector = isequal (I, {':'}) ;
-        if (whole_vector)
-            I = { } ;
-        end
-        if (size (A, 1) > 1)
-            C = gb.extract (A, I, { }) ;
+        if (isequal (gb.type (S.subs {1}), 'logical'))
+            % C = A (M) for a logical indexing
+            M = S.subs {1} ;
+            if (isa (M, 'gb'))
+                M = M.opaque ;
+            end
+            if (isa (A, 'gb'))
+                A = A.opaque ;
+            end
+            C = gb (gblogextract (A, M)) ;
         else
-            C = gb.extract (A, { }, I) ;
-        end
-        if (whole_vector)
-            C = C.' ;
+            % C = A (I) for a vector A
+            if (~isvector (A))
+                error ('Linear indexing of a gb matrix is not yet supported') ;
+            end
+            [I, whole_vector] = get_index (S.subs (1)) ;
+            if (size (A, 1) > 1)
+                C = gb.extract (A, I, { }) ;
+            else
+                C = gb.extract (A, { }, I) ;
+            end
+            if (whole_vector & size (C,1) == 1)
+                C = C.' ;
+            end
         end
     elseif (ndims == 2)
-        I = S.subs (1) ;
-        if (isequal (I, {':'}))
-            I = { } ;
-        end
-        J = S.subs (2) ;
-        if (isequal (J, {':'}))
-            J = { } ;
-        end
+        % C = A (I,J)
+        I = get_index (S.subs (1)) ;
+        J = get_index (S.subs (2)) ;
         C = gb.extract (A, I, J) ;
     else
-        error ('%dD indexing not supported\n', ndims) ;
+        error ('%dD indexing not supported', ndims) ;
     end
     end
 
@@ -2802,35 +2912,78 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
 
     function Cout = subsasgn (Cin, S, A)
-    %SUBSAGN C(I,J) = A or C(I) = A; assign submatrix into a GraphBLAS matrix
+    %SUBSASGN C(I,J) = A or C(I) = A; assign submatrix into a GraphBLAS matrix.
     % C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix C.
-    % With a single index, C(I) = A is equivalent to C(I,:) = A.  Linear
-    % indexing is not supported.  C(M) = A for a matrix M is not supported; see
-    % gb.subassign for the GraphBLAS masked assignment.
+    % A must be either a matrix of size length(I)-by-length(J), or a scalar.
+    % Note that C(I,J) = 0 differs from C(I,J) = sparse (0).  The former places
+    % an explicit entry with value zero in all positions of C(I,J).  The latter
+    % deletes all entries in C(I,J).  With a MATLAB sparse matrix C, both
+    % statements delete all entries in C(I,J) since MATLAB never stores
+    % explicit zeros in its sparse matrices.
     %
-    % See also subsref.
+    % With a single index, C(I) = A, both C and A must be vectors; linear
+    % indexing is not yet supported.  In this case A must either be a vector
+    % of length the same as I, or a scalar.
+    %
+    % If M is a logical matrix, C (M) = x is an assignment via logical indexing,
+    % where C and M have the same size, and x(:) is either a vector of length
+    % nnz (M), or a scalar.
+    %
+    % Note that C (M) = A (M), where the same logical matrix M is used on both
+    % the sides of the assignment, is identical to C = gb.subassign (C, M, A).
+    % If C and A (or M) are GraphBLAS matrices, C (M) = A (M) uses GraphBLAS
+    % via operator overloading.  The statement C (M) = A (M) takes about twice
+    % the time as C = gb.subassign (C, M, A), so the latter is preferred for
+    % best performance.  However, both methods in GraphBLAS are many thousands
+    % of times faster than C (M) = A (M) using purely MATLAB sparse matrices C,
+    % M, and A, when the matrices are large.  So either method works fine,
+    % relatively speaking.
+    %
+    % If I or J are very large colon notation expressions, then C(I,J)=A is not
+    % possible, because MATLAB creates I and J as explicit lists first.  See
+    % gb.subassign instead.  See also the example with 'help gb.extract'.
+    %
+    % See also subsref, gb.assign, gb.subassign.
+
     if (~isequal (S.type, '()'))
-        error ('index type %s not supported\n', S.type) ;
+        error ('index type %s not supported', S.type) ;
     end
     ndims = length (S.subs) ;
     if (ndims == 1)
-        I = S.subs (1) ;
-        if (isequal (I, {':'}))
-            I = { } ;
+        if (isequal (gb.type (S.subs {1}), 'logical'))
+            % C (M) = A for logical assignment
+            M = S.subs {1} ;
+            if (isscalar (A))
+                % C (M) = scalar
+                Cout = gb.subassign (Cin, M, A) ;
+            else
+                % C (M) = A where A is a vector
+                if (isa (M, 'gb'))
+                    M = M.opaque ;
+                end
+                if (size (A, 2) ~= 1)
+                    % make sure A is a column vector of size mnz-by-1
+                    A = A (:) ;
+                end
+                if (isa (A, 'gb'))
+                    A = A.opaque ;
+                end
+                if (isa (Cin, 'gb'))
+                    Cin = Cin.opaque ;
+                end
+                Cout = gb (gblogassign (Cin, M, A)) ;
+            end
+        else
+            % C (I) = A where C and A are vectors
+            I = get_index (S.subs (1)) ;
+            Cout = gb.subassign (Cin, A, I) ;
         end
-        Cout = gb.subassign (Cin, A, I) ;
     elseif (ndims == 2)
-        I = S.subs (1) ;
-        J = S.subs (2) ;
-        if (isequal (I, {':'}))
-            I = { } ;
-        end
-        if (isequal (J, {':'}))
-            J = { } ;
-        end
+        I = get_index (S.subs (1)) ;
+        J = get_index (S.subs (2)) ;
         Cout = gb.subassign (Cin, A, I, J) ;
     else
-        error ('%dD indexing not supported\n', ndims) ;
+        error ('%dD indexing not supported', ndims) ;
     end
     end
 
@@ -2840,22 +2993,17 @@ methods %=======================================================================
 
     function index = end (G, k, ndims)
     %END Last index in an indexing expression for a GraphBLAS matrix.
-    [m n] = size (G) ;
-    if (k == 1)
-        index = m ;
-    elseif (k == 2)
-        index = n ;
+    if (ndims == 1)
+        if (~isvector (G))
+            error ('Linear indexing not supported') ;
+        end
+        index = length (G) ;
+    elseif (ndims == 2)
+        s = size (G) ;
+        index = s (k) ;
     else
-        error ('%dD indexing not supported\n', ndims) ;
+        error ('%dD indexing not supported', ndims) ;
     end
-    end
-
-    %---------------------------------------------------------------------------
-    % subsindex: C = B (G)
-    %---------------------------------------------------------------------------
-
-    function C = subsindex (G, B)
-    error ('subsindex not yet implemented') ;
     end
 
 end
@@ -3324,6 +3472,15 @@ methods (Static) %==============================================================
 
     function G = empty (arg1, arg2)
     %GB.EMPTY construct an empty GraphBLAS sparse matrix
+    % C = gb.empty is a 0-by-0 empty matrix.
+    % C = gb.empty (m) is an m-by-0 empty matrix.
+    % C = gb.empty ([m n]) or gb.empty (m,n) is an m-by-n empty matrix, where
+    % one of m or n must be zero.
+    %
+    % All matrices are constructed with the 'double' type.  Use gb (m,n,type)
+    % to construct empty single, int*, uint*, and logical m-by-n matrices.
+    %
+    % See also gb.
     m = 0 ;
     n = 0 ;
     if (nargin == 1)
@@ -3350,18 +3507,26 @@ methods (Static) %==============================================================
     %---------------------------------------------------------------------------
 
     function s = type (X)
-    %TYPE get the type of a MATLAB or GraphBLAS matrix.
-    % s = type (X) returns the type of X as a string: 'double', 'single',
-    % 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64',
-    % 'logical', or (in the future) 'complex'.  Note that 'complex' is treated
-    % as a type, not an attribute, which differs from the MATLAB convention.
+    %GB.TYPE get the type of a MATLAB or GraphBLAS matrix.
+    % s = gb.type (X) returns the type of a GraphBLAS matrix X as a string:
+    % 'double', 'single', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
+    % 'uint32', 'uint64', 'logical', or (in the future) 'complex'.  Note that
+    % 'complex' is treated as a type, not an attribute, which differs from the
+    % MATLAB convention.  Note that complex matrices are not yet supported.
     %
-    % Note that complex matrices are not yet supported.
+    % If X is not a GraphBLAS matrix, gb.type (X) is the same as class (X),
+    % except when X is a MATLAB double complex matrix, which case gb.type (X)
+    % will be 'complex' (in the future).
     %
     % See also class, gb.
     if (isa (X, 'gb'))
+        % extract the GraphBLAS opaque matrix struct and then get its type
         s = gbtype (X.opaque) ;
+    elseif (isobject (X))
+        % the gbtype mexFunction cannot handle object inputs, so use class (X)
+        s = class (X) ;
     else
+        % get the type of a MATLAB matrix, cell, char, function_handle, ...
         s = gbtype (X) ;
     end
     end
@@ -3479,11 +3644,11 @@ methods (Static) %==============================================================
     % C = gb.eye (m,n) or gb.eye ([m n]) is an m-by-n identity matrix.
     %
     % C = gb.eye (m,n,type) or gb.eye ([m n],type) creates a sparse m-by-n
-    % identity matrix C of the given GraphBLAS type ('double', 'single',
+    % identity matrix C of the given GraphBLAS type, either 'double', 'single',
     % 'logical', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
-    % 'uint32', 'uint64', or (in the future) 'complex').
+    % 'uint32', 'uint64', or (in the future) 'complex'.
     %
-    % See also spones, spdiags, speye, gb.speye.
+    % See also spones, spdiags, speye, gb.speye, gb.
 
     % get the type
     type = 'double' ;
@@ -3860,7 +4025,7 @@ methods (Static) %==============================================================
     %       0:   { }    This is the MATLAB ':', like C(:,J), refering to all m
     %                   rows, if C is m-by-n.
     %
-    %       1:   { Ilist }  1D list of row indices, like C(I,J) in MATLAB.
+    %       1:   { I }  1D list of row indices, like C(I,J) in MATLAB.
     %                   If I is double, then it contains 1-based indices, in
     %                   the range 1 to m if C is m-by-n, so that C(1,1) refers
     %                   to the entry in the first row and column of C.  If I is
@@ -3874,14 +4039,15 @@ methods (Static) %==============================================================
     %                   or uint64 scalars are treated as 0-based.
     %
     %       3:  { start,inc,fini } start, inc, and fini are scalars (double,
-    %       int64, or uint64).  This defines I = start:inc:fini in MATLAB
-    %       notation.  The start and fini are 1-based if double, 0-based if
-    %       int64 or uint64.
+    %                   int64, or uint64).  This defines I = start:inc:fini in
+    %                   MATLAB notation.  The start and fini are 1-based if
+    %                   double, 0-based if int64 or uint64.  inc is the same
+    %                   for any type.
     %
     %       The J argument is identical, except that it is a list of column
     %       indices of C.  If only one cell array is provided, J = {  } is
     %       implied, refering to all n columns of C, like C(I,:) in MATLAB
-    %       notation.  1D indexing of a matrix C, as in C(I) = A, is not
+    %       notation.  1D indexing of a matrix C, as in C(I) = A, is not yet
     %       supported.
     %
     %       If neither I nor J are provided on input, then this implies
@@ -4270,9 +4436,9 @@ methods (Static) %==============================================================
     %       0:   { }    This is the MATLAB ':', like A(:,J), refering to all m
     %                   rows, if A is m-by-n.
     %
-    %       1:   { Ilist }  1D list of row indices, like a(I,J) in MATLAB.
+    %       1:   { I }  1D list of row indices, like A(I,J) in MATLAB.
     %                   If I is double, then it contains 1-based indices, in
-    %                   the range 1 to m if a is m-by-n, so that A(1,1) refers
+    %                   the range 1 to m if A is m-by-n, so that A(1,1) refers
     %                   to the entry in the first row and column of A.  If I is
     %                   int64 or uint64, then it contains 0-based indices in
     %                   the range 0 to m-1, where A(0,0) is the same entry.
@@ -4284,14 +4450,15 @@ methods (Static) %==============================================================
     %                   or uint64 scalars are treated as 0-based.
     %
     %       3:  { start,inc,fini } start, inc, and fini are scalars (double,
-    %       int64, or uint64).  This defines I = start:inc:fini in MATLAB
-    %       notation.  The start and fini are 1-based if double, 0-based if
-    %       int64 or uint64.
+    %                   int64, or uint64).  This defines I = start:inc:fini in
+    %                   MATLAB notation.  The start and fini are 1-based if
+    %                   double, 0-based if int64 or uint64.  inc is the same
+    %                   for any type.
     %
     %       The J argument is identical, except that it is a list of column
     %       indices of A.  If only one cell array is provided, J = {  } is
     %       implied, refering to all n columns of A, like A(I,:) in MATLAB
-    %       notation.  1D indexing of a matrix A, as in C = A(I), is not
+    %       notation.  1D indexing of a matrix A, as in C = A(I), is not yet
     %       supported.
     %
     %       If neither I nor J are provided on input, then this implies
@@ -4308,7 +4475,7 @@ methods (Static) %==============================================================
     %       not present, no accumulator is used and Cout=A(I,J) is computed.
     %       If accum is present then Cin is a required input.
     %
-    % M: an optional mask matrix.
+    % M: an optional mask matrix, the same size as C.
     %
     % Example:
     %
@@ -4472,6 +4639,24 @@ end
         if (mod (b, 2) == 1)
             C = C*A ;
         end
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % get_index: helper function for subsref and subsasgn
+    %---------------------------------------------------------------------------
+
+    function [I, whole] = get_index (I_input)
+    whole = isequal (I_input, {':'}) ;
+    if (whole)
+        % C (:)
+        I = { } ;
+    elseif (iscell (I_input {1}))
+        % C ({ }), C ({ list }), C ({start,fini}), or C ({start,inc,fini}).
+        I = I_input {1} ;
+    else
+        % C (I) for an explicit list I, or MATLAB colon notation
+        I = I_input ;
     end
     end
 

@@ -73,7 +73,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     if (pr > 0)
     { 
         #ifdef GB_DEVELOPER
-        GBPR ("    max # entries: "GBd"\n", A->nzmax) ;
+        GBPR ("    max # entries: "GBd"", A->nzmax) ;
         #endif
 
         GBPR (", %s %s",
@@ -83,14 +83,13 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             A->is_csc ?   "CSC" : "CSR") ;
 
         #ifdef GB_DEVELOPER
-        GBPR (" vlen: "GBd, A->vlen) ;
+        GBPR ("\n    vlen: "GBd, A->vlen) ;
         if (A->nvec_nonempty != -1)
         { 
             GBPR (" nvec_nonempty: "GBd, A->nvec_nonempty) ;
         }
-        GBPR (" nvec: "GBd" plen: "GBd " vdim: "GBd"\n",
-            A->nvec, A->plen, A->vdim) ;
-        GBPR ("hyper_ratio %g", A->hyper_ratio) ;
+        GBPR (" nvec: "GBd" plen: "GBd " vdim: "GBd" hyper_ratio %g\n",
+            A->nvec, A->plen, A->vdim, A->hyper_ratio) ;
         #endif
     }
 
@@ -219,10 +218,10 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     #ifdef GB_DEVELOPER
-    if (pr > 1) GBPR ("->h: %p shallow: %d\n", A->h, A->h_shallow) ;
-    if (pr > 1) GBPR ("->p: %p shallow: %d\n", A->p, A->p_shallow) ;
-    if (pr > 1) GBPR ("->i: %p shallow: %d\n", A->i, A->i_shallow) ;
-    if (pr > 1) GBPR ("->x: %p shallow: %d\n", A->x, A->x_shallow) ;
+    if (pr > 1) GBPR ("    ->h: %p shallow: %d\n", A->h, A->h_shallow) ;
+    if (pr > 1) GBPR ("    ->p: %p shallow: %d\n", A->p, A->p_shallow) ;
+    if (pr > 1) GBPR ("    ->i: %p shallow: %d\n", A->i, A->i_shallow) ;
+    if (pr > 1) GBPR ("    ->x: %p shallow: %d\n", A->x, A->x_shallow) ;
     #endif
 
     if (A->is_slice)
@@ -339,7 +338,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (!A_empty && A->i == NULL)
     { 
-        GBPR0 ("->i is NULL, invalid %s\n", kind) ;
+        GBPR0 ("    ->i is NULL, invalid %s\n", kind) ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
             "%s contains a NULL A->i pointer: [%s]", kind, GB_NAME))) ;
     }
@@ -350,7 +349,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     if (A->is_slice ? (A->p [0] < 0) : (A->p [0] != 0))
     { 
-        GBPR0 ("->p [0] = "GBd" invalid\n", A->p [0]) ;
+        GBPR0 ("    ->p [0] = "GBd" invalid\n", A->p [0]) ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
             "%s A->p [0] = "GBd" invalid: [%s]", kind, A->p [0], GB_NAME))) ;
     }
@@ -359,7 +358,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     {
         if (A->p [j+1] < A->p [j] || A->p [j+1] > A->nzmax)
         { 
-            GBPR0 ("->p ["GBd"] = "GBd" invalid\n",
+            GBPR0 ("    ->p ["GBd"] = "GBd" invalid\n",
                 j+1, A->p [j+1]) ;
             return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                 "%s A->p ["GBd"] = "GBd" invalid: [%s]",
@@ -379,7 +378,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             int64_t j = A->h [k] ;
             if (jlast >= j || j < 0 || j >= A->vdim)
             { 
-                GBPR0 ("->h ["GBd"] = "GBd" invalid\n", k, j) ;
+                GBPR0 ("    ->h ["GBd"] = "GBd" invalid\n", k, j) ;
                 return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,
                     "%s A->h ["GBd"] = "GBd" invalid: [%s]",
                     kind, k, j, GB_NAME))) ;
@@ -393,10 +392,23 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     //--------------------------------------------------------------------------
 
     int64_t anz = GB_NNZ (A) ;
-    GBPR0 (", "GBd" entries\n", anz) ;
-    #ifndef GB_DEVELOPER
-    if (anz > 0) GBPR0 ("\n") ;
+    #ifdef GB_DEVELOPER
+    GBPR0 ("    ") ;
+    #else
+    GBPR0 (", ") ;
     #endif
+    if (anz == 0)
+    {
+        GBPR0 ("no entries\n") ;
+    }
+    else if (anz == 1)
+    {
+        GBPR0 ("1 entry\n\n") ;
+    }
+    else
+    {
+        GBPR0 (GBd" entries\n\n", anz) ;
+    }
 
     //--------------------------------------------------------------------------
     // report the number of pending tuples and zombies

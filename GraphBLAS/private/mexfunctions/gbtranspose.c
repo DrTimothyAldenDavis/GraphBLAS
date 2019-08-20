@@ -67,7 +67,7 @@ void mexFunction
         // Cout = gb.gbtranspose (Cin, accum, A, desc)
         //----------------------------------------------------------------------
 
-        C = gb_get_deep (pargin [0], NULL) ;
+        C = gb_get_deep (pargin [0]) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         A = gb_get_shallow (pargin [2]) ;
@@ -80,7 +80,7 @@ void mexFunction
         // Cout = gb.gbtranspose (Cin, M, A, desc)
         //----------------------------------------------------------------------
 
-        C = gb_get_deep (pargin [0], NULL) ;
+        C = gb_get_deep (pargin [0]) ;
         M = gb_get_shallow (pargin [1]) ;
         A = gb_get_shallow (pargin [2]) ;
 
@@ -92,7 +92,7 @@ void mexFunction
         // Cout = gb.gbtranspose (Cin, M, accum, A, desc)
         //----------------------------------------------------------------------
 
-        C = gb_get_deep (pargin [0], NULL) ;
+        C = gb_get_deep (pargin [0]) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         M = gb_get_shallow (pargin [1]) ;
         accum = gb_mxstring_to_binop (pargin [2], ctype) ;

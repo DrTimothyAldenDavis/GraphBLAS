@@ -51,6 +51,7 @@
 %   U = triu (G,k)          upper triangular part of gb matrix G
 %   C = kron (A,B)          Kronecker product
 %   C = repmat (G, ...)     replicate and tile a GraphBLAS matrix
+%   C = reshape (G, ...)    reshape a GraphBLAS matrix
 %   C = abs (G)             absolute value
 %   C = sign (G)            signum function
 %   s = istril (G)          true if G is lower triangular

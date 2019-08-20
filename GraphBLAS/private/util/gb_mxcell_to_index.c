@@ -27,7 +27,8 @@
 //      3:  { start,inc,fini } start, inc, and fini are scalars (double, int64,
 //                  or uint64).  This defines I = start:inc:fini in MATLAB
 //                  notation.  The start and fini are 1-based if double,
-//                  0-based if int64 or uint64.
+//                  0-based if int64 or uint64.  inc remains the same
+//                  regardless of its type.
 
 #include "gb_matlab.h"
 
@@ -134,6 +135,14 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         I [GxB_BEGIN] = Item [0][0] ;
         I [GxB_END  ] = Item [2][0] ;
         int64_t inc = Item [1][0] ;
+
+        if (Item_allocated [1])
+        {
+            // the 2nd item in the list is inc, and if it was passed in as
+            // a double scalar, it has been decremented.  So increment it to
+            // get back to the correct value.
+            inc++ ;
+        }
 
         if (Item_allocated [0]) gb_mxfree (& (Item [0])) ;
         if (Item_allocated [1]) gb_mxfree (& (Item [1])) ;

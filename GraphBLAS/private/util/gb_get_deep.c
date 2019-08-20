@@ -11,15 +11,14 @@
 
 GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a MATLAB X
 (
-    const mxArray *X,       // input MATLAB matrix (sparse or struct)
-    GrB_Type type           // typecast X to this type (NULL if no typecast)
+    const mxArray *X        // input MATLAB matrix (sparse or struct)
 )
 {
 
     GrB_Matrix S = gb_get_shallow (X) ;
     GxB_Format_Value format ;
     OK (GxB_get (GxB_FORMAT, &format)) ;
-    GrB_Matrix A = gb_typecast (type, format, S) ;
+    GrB_Matrix A = gb_typecast (NULL, format, S) ;
     OK (GrB_free (&S)) ;
     return (A) ;
 }

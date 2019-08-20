@@ -100,8 +100,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
 GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a MATLAB X
 (
-    const mxArray *X,       // input MATLAB matrix (sparse or struct)
-    GrB_Type type           // typecast X to this type (NULL if no typecast)
+    const mxArray *X        // input MATLAB matrix (sparse or struct)
 ) ;
 
 GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
@@ -315,6 +314,12 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     const mxArray *pargin [ ],  // input arguments for mexFunction
     bool do_subassign,          // true: do subassign, false: do assign
     const char *usage           // usage string to print if error
+) ;
+
+GrB_Matrix gb_by_col            // return the matrix by column
+(
+    GrB_Matrix *A_copy_handle,  // copy made of A, stored by column, or NULL
+    GrB_Matrix A_input          // input matrix, by row or column
 ) ;
 
 #endif

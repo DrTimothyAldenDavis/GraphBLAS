@@ -17,7 +17,9 @@
 
 //      C(I,J)<#M,replace> = accum (C(I,J), A) or accum(C(I,J), A')
 
-// A can be a matrix or a scalar.
+// A can be a matrix or a scalar.  If it is a scalar with nnz (A) == 0,
+// then it is first expanded to an empty matrix of size length(I)-by-length(J),
+// and G*B_Matrix_*assign is used (not GraphBLAS scalar assignment).
 
 // MATLAB Usage:
 
@@ -117,13 +119,13 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     else if (nmatrix_args == 2)
     {
         // with 2 matrix arguments: Cin and A, in that order
-        C = gb_get_deep    (pargin [matrix_arg [0]], NULL) ;
+        C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         A = gb_get_shallow (pargin [matrix_arg [1]]) ;
     }
     else if (nmatrix_args == 3)
     {
         // with 3 matrix arguments: Cin, M, and A, in that order
-        C = gb_get_deep    (pargin [matrix_arg [0]], NULL) ;
+        C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         M = gb_get_shallow (pargin [matrix_arg [1]]) ;
         A = gb_get_shallow (pargin [matrix_arg [2]]) ;
     }
@@ -134,13 +136,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     OK (GxB_Matrix_type (&ctype, C)) ;
     OK (GrB_Matrix_nrows (&cnrows, C)) ;
     OK (GrB_Matrix_ncols (&cncols, C)) ;
-
-    // determine if A is a scalar (ignore the transpose descriptor)
-    GrB_Index anrows, ancols, anvals ;
-    OK (GrB_Matrix_nrows (&anrows, A)) ;
-    OK (GrB_Matrix_ncols (&ancols, A)) ;
-    OK (GrB_Matrix_nvals (&anvals, A)) ;
-    bool scalar_assignment = (anrows == 1) && (ancols == 1) && (anvals == 1) ;
 
     //--------------------------------------------------------------------------
     // get I and J
@@ -171,6 +166,25 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     if (accum_arg >= 0)
     {
         accum = gb_mxstring_to_binop (pargin [accum_arg], ctype) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // determine if A is a scalar (ignore the transpose descriptor)
+    //--------------------------------------------------------------------------
+
+    GrB_Index anrows, ancols, anvals ;
+    OK (GrB_Matrix_nrows (&anrows, A)) ;
+    OK (GrB_Matrix_ncols (&ancols, A)) ;
+    OK (GrB_Matrix_nvals (&anvals, A)) ;
+    bool scalar_assignment = (anrows == 1) && (ancols == 1) ;
+
+    if (scalar_assignment && anvals == 0)
+    {
+        // A is a sparse scalar.  Expand it to an ni-by-nj sparse matrix with
+        // the same type as C, with no entries, and use matrix assignment.
+        OK (GrB_free (&A)) ;
+        OK (GrB_Matrix_new (&A, ctype, ni, nj)) ;
+        scalar_assignment = false ;
     }
 
     //--------------------------------------------------------------------------

@@ -65,7 +65,6 @@ void mexFunction
     {
         // assume the identity is zero, of the same type as F
         OK (GrB_Matrix_new (&id, type, 1, 1)) ;
-        OK (GrB_Matrix_setElement (id, 0, 0, 0)) ;
     }
 
     //--------------------------------------------------------------------------
