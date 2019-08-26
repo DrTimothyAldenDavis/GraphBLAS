@@ -27,8 +27,8 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
     // check inputs
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (X_handle == NULL || *X_handle == NULL || type == NULL,
-        "internal error") ;
+    CHECK_ERROR (X_handle == NULL, "internal error 3") ;
+    CHECK_ERROR (type == NULL, "internal error 11") ;
 
     //--------------------------------------------------------------------------
     // allocate an empty dense matrix of the right type, then set content
@@ -36,6 +36,14 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
 
     mxArray *F ;
     void *X = (*X_handle) ;
+    if (X == NULL)
+    {
+        // A GrB_Matrix C has a null C->x array, if C has no entries.  Since
+        // C has already been expanded to a full matrix, C->x can be NULL
+        // only if nrows or ncols is zero.
+        CHECK_ERROR (nrows > 0 && ncols > 0, "internal error 12") ;
+        X = mxMalloc (2 * sizeof (double)) ;
+    }
 
     if (type == GrB_BOOL)
     {

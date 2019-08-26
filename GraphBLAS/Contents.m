@@ -25,8 +25,8 @@
 %   C = uint32 (G)          cast gb matrix to MATLAB full uint32 matrix
 %   C = uint64 (G)          cast gb matrix to MATLAB full uint64 matrix
 %   C = cast (G,...)        cast gb matrix to MATLAB matrix (as above)
-%   [I,J,X] = find (G)      extract all entries from a gb matrix
 %   X = nonzeros (G)        extract all entries from a gb matrix
+%   [I,J,X] = find (G)      extract all entries from a gb matrix
 %   C = spones (G)          return pattern of gb matrix
 %   disp (G, level)         display a gb matrix G
 %   display (G)             display a gb matrix G; same as disp(G,2)

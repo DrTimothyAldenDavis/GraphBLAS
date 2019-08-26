@@ -68,9 +68,9 @@ classdef gb
 %   These methods operate on GraphBLAS matrices only, and they overload the
 %   existing MATLAB functions of the same name.
 %
+%       G = gb (...)            construct a GraphBLAS matrix
 %       S = sparse (G)          makes a copy of a gb matrix
-%       F = full (G)            adds explicit zeros to a gb matrix
-%       F = full (G,id)         adds explicit identity values to a gb matrix
+%       F = full (G, ...)       adds explicit zeros or id values to a gb matrix
 %       S = double (G)          cast gb matrix to MATLAB sparse double matrix
 %       C = logical (G)         cast gb matrix to MATLAB sparse logical matrix
 %       C = complex (G)         cast gb matrix to MATLAB sparse complex (FUTURE)
@@ -84,8 +84,8 @@ classdef gb
 %       C = uint32 (G)          cast gb matrix to MATLAB full uint32 matrix
 %       C = uint64 (G)          cast gb matrix to MATLAB full uint64 matrix
 %       C = cast (G,...)        cast gb matrix to MATLAB matrix (as above)
-%       [I,J,X] = find (G)      extract all entries from a gb matrix
 %       X = nonzeros (G)        extract all entries from a gb matrix
+%       [I,J,X] = find (G)      extract all entries from a gb matrix
 %       C = spones (G)          return pattern of gb matrix
 %       disp (G, level)         display a gb matrix G
 %       display (G)             display a gb matrix G; same as disp(G,2)
@@ -346,7 +346,7 @@ methods %=======================================================================
     %   F = full (G, 'double', inf)         % add explicit inf's
     %
     %   A = speye (2) ;
-    %   F = full (A, 'double', gb(0)) ;     % full gb matrix F, from A
+    %   F = full (A, 'double', 0) ;         % full gb matrix F, from A
     %   F = full (gb (A)) ;                 % same matrix F
     %
     % See also issparse, sparse, cast, gb.type, gb.
@@ -580,9 +580,9 @@ methods %=======================================================================
     % [I, J, X] = find (G) extracts the entries from a GraphBLAS matrix G.
     % X has the same type as G ('double', 'single', 'int8', ...).  I and J are
     % returned as 1-based indices, the same as [I,J,X] = find (S) for a MATLAB
-    % matrix.  Use gb.extracttuples to return I and J as zero-based.  Linear 1D
-    % indexing (I = find (S) for the MATLAB matrix S) and find (G, k, ...) are
-    % not supported.  G may contain explicit entries, but these are dropped
+    % matrix S.  Use gb.extracttuples to return I and J as zero-based.  Linear
+    % 1D indexing (I = find (S) for the MATLAB matrix S) and find (G, k, ...)
+    % are not supported.  G may contain explicit entries, but these are dropped
     % from the output [I,J,X].  Use gb.extracttuples to return those entries.
     %
     % See also sparse, gb.build, gb.extracttuples.
@@ -830,7 +830,7 @@ methods %=======================================================================
     %
     % See also isnumeric, isfloat, isreal, islogical, gb.type, isa, gb.
     t = gbtype (G.opaque) ;
-    s = isequal (t (1:3), 'int') || isequal (t, (1:4), 'uint') ;
+    s = isequal (t (1:3), 'int') || isequal (t (1:4), 'uint') ;
     end
 
     %---------------------------------------------------------------------------
@@ -1064,20 +1064,11 @@ methods %=======================================================================
     end
     end
 
-    function k = convert_index_2d_to_1d (i, j, m)
-    % the indices must be zero-based
-    k = i + j * m ;
-    end
-
-    function [i j] = convert_index_1d_to_2d (k, m) ;
-    % the indices must be zero-based
-    i = rem (k, m) ;
-    j = (k - i) / m ;
-    end
-
     %---------------------------------------------------------------------------
     % abs: absolute value
     %---------------------------------------------------------------------------
+
+% HERE
 
     function C = abs (G)
     %ABS Absolute value.
@@ -4658,5 +4649,24 @@ end
         % C (I) for an explicit list I, or MATLAB colon notation
         I = I_input ;
     end
+    end
+
+    %---------------------------------------------------------------------------
+    % convert_index_2d_to_1d: convert 2D indices to 1D
+    %---------------------------------------------------------------------------
+
+    function k = convert_index_2d_to_1d (i, j, m)
+    % the indices must be zero-based
+    k = i + j * m ;
+    end
+
+    %---------------------------------------------------------------------------
+    % convert_index_1d_to_2d: convert 1D indices to 2D
+    %---------------------------------------------------------------------------
+
+    function [i j] = convert_index_1d_to_2d (k, m) ;
+    % the indices must be zero-based
+    i = rem (k, m) ;
+    j = (k - i) / m ;
     end
 

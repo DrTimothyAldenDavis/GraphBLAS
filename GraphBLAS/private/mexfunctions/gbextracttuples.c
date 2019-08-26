@@ -33,6 +33,7 @@ void mexFunction
     // get the optional descriptor
     //--------------------------------------------------------------------------
 
+    // default is 1-based, for [I, J, X] = find (G)
     kind_enum_t kind = KIND_1BASED ;
     GrB_Descriptor desc = NULL ;
     if (nargin == 2)

@@ -24,7 +24,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     // check inputs
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (A_handle == NULL || (*A_handle) == NULL, "internal error") ;
+    CHECK_ERROR (A_handle == NULL || (*A_handle) == NULL, "internal error 2") ;
 
     //--------------------------------------------------------------------------
     // typecast to a native MATLAB sparse type and free A
@@ -78,7 +78,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     }
 
     // ensure T is deep
-    CHECK_ERROR (gb_is_shallow (T), "internal error") ;
+    CHECK_ERROR (gb_is_shallow (T), "internal error 7") ;
 
     //--------------------------------------------------------------------------
     // drop zeros from T
@@ -134,8 +134,9 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         OK (GxB_Matrix_export_CSC (&T, &type, &nrows, &ncols, &nzmax, &nonempty,
             &Tp, &Ti, &Tx, NULL)) ;
 
-        CHECK_ERROR (nzmax == 0, "internal error") ;
-        CHECK_ERROR (Tp == NULL || Ti == NULL || Tx == NULL, "internal error") ;
+        CHECK_ERROR (nzmax == 0, "internal error 8") ;
+        CHECK_ERROR (Tp == NULL || Ti == NULL || Tx == NULL,
+            "internal error 9") ;
 
         //----------------------------------------------------------------------
         // allocate an empty sparse matrix of the right type, then set content

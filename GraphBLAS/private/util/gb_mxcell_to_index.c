@@ -45,7 +45,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     // check inputs
     //--------------------------------------------------------------------------
 
-    CHECK_ERROR (I_cell == NULL || !mxIsCell (I_cell), "internal error") ;
+    CHECK_ERROR (I_cell == NULL || !mxIsCell (I_cell), "internal error 6") ;
 
     //--------------------------------------------------------------------------
     // get the contents of I_cell

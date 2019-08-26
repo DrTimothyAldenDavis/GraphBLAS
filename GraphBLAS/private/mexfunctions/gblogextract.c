@@ -194,7 +194,7 @@ void mexFunction
     uint64_t *Tx = T->x ;
 
     // gnvals and tnvals are identical, by construction
-    CHECK_ERROR (gnvals != tnvals, "internal error") ;
+    CHECK_ERROR (gnvals != tnvals, "internal error 1") ;
 
     //--------------------------------------------------------------------------
     // construct the result C

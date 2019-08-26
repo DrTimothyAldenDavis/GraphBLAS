@@ -40,7 +40,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
 
     CHECK_ERROR (A_handle == NULL, "matrix missing") ;
     GrB_Matrix A = (*A_handle) ;
-    CHECK_ERROR (gb_is_shallow (A), "internal error") ;
+    CHECK_ERROR (gb_is_shallow (A), "internal error 4") ;
 
     //--------------------------------------------------------------------------
     // make sure the matrix is finished

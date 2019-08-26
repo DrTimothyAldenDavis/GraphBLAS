@@ -28,12 +28,16 @@
 %  gbtest22  - test reduce to scalar
 %  gbtest23  - test min and max
 %  gbtest24  - test any, all
-%  gbtest25  - test diag
+%  gbtest25  - test diag, tril, triu
 %  gbtest26  - test typecasting
 %  gbtest27  - test conversion to full
 %  gbtest28  - test gb.build
 %  gbtest29  - test subsref and subsasgn with logical indexing
 %  gbtest30  - test colon notation
+%  gbtest31  - test gb and casting
+%  gbtest32  - test nonzeros
+%  gbtest33  - test spones, numel, nzmax, size, length, isempty, issparse, ...
+%  gbtest34  - test repmat
 %
 % Utility functions:
 %
