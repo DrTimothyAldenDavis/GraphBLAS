@@ -5,7 +5,7 @@
 %  gbtestall - test GraphBLAS MATLAB interface
 %
 %  gbtest1   - test gb
-%  gbtest2   - test binary operators
+%  gbtest2   - list all binary operators
 %  gbtest3   - test dnn
 %  gbtest4   - list all 1865 possible semirings
 %  gbtest5   - test gb.descriptorinfo
@@ -18,7 +18,7 @@
 %  gbtest12  - test gb.eadd, gb.emult
 %  gbtest13  - test find and gb.extracttuples
 %  gbtest14  - test gb.gbkron
-%  gbtest15  - unary operators
+%  gbtest15  - list all unary operators
 %  gbtest16  - test gb.extract
 %  gbtest17  - test gb.gbtranspose
 %  gbtest18  - test comparators
@@ -38,6 +38,9 @@
 %  gbtest32  - test nonzeros
 %  gbtest33  - test spones, numel, nzmax, size, length, isempty, issparse, ...
 %  gbtest34  - test repmat
+%  gbtest35  - test reshape
+%  gbtest36  - test abs, sign
+%  gbtest37  - test istril, istriu, isbanded, isdiag, ishermitian, ...
 %
 % Utility functions:
 %

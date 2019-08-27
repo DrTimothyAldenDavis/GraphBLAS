@@ -1068,8 +1068,6 @@ methods %=======================================================================
     % abs: absolute value
     %---------------------------------------------------------------------------
 
-% HERE
-
     function C = abs (G)
     %ABS Absolute value.
     C = gb.apply ('abs', G) ;
@@ -1154,15 +1152,16 @@ methods %=======================================================================
     [m n] = size (G) ;
     if (m ~= n)
         result = false ;
-    end
-    if (nargin < 2)
-        option = 'nonskew' ;
-    end
-    if (isequal (option, 'skew'))
-        result = (norm (G + G', 1) == 0) ;
     else
-        result = (norm (G - G', 1) == 0) ;
-    end
+        if (nargin < 2)
+            option = 'nonskew' ;
+        end
+        if (isequal (option, 'skew'))
+            result = (norm (G + G', 1) == 0) ;
+        else
+            result = (norm (G - G', 1) == 0) ;
+        end
+        end
     end
 
     %---------------------------------------------------------------------------
@@ -1178,15 +1177,16 @@ methods %=======================================================================
     [m n] = size (G) ;
     if (m ~= n)
         result = false ;
-    end
-    if (nargin < 2)
-        option = 'nonskew' ;
-    end
-    if (isequal (option, 'skew'))
-        result = (norm (G + G.', 1) == 0) ;
     else
-        result = (norm (G - G.', 1) == 0) ;
-    end
+        if (nargin < 2)
+            option = 'nonskew' ;
+        end
+        if (isequal (option, 'skew'))
+            result = (norm (G + G.', 1) == 0) ;
+        else
+            result = (norm (G - G.', 1) == 0) ;
+        end
+        end
     end
 
     %---------------------------------------------------------------------------
@@ -1231,6 +1231,8 @@ methods %=======================================================================
     %---------------------------------------------------------------------------
     % sqrt: element-wise square root
     %---------------------------------------------------------------------------
+
+% HERE
 
     function C = sqrt (G)
     %SQRT Square root.
