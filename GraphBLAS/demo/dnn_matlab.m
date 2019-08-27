@@ -1,11 +1,18 @@
 function Y = dnn_matlab (W, bias, Y0)
 %DNN_MATLAB Sparse deep neural network in pure MATLAB
 % Performs ReLU inference using input feature vector(s) Y0, DNN weights W,
-% and bias vectors.  Slightly revised from graphchallenge.org.
+% and bias vectors.
+%
+% Slightly revised from graphchallenge.org.
+%
+% Usage:
+%
+%   Y = dnn_matlab (W, bias, Y0)
+%
+% See also dnn_gb, dnn_mat2gb.
 
 Y = Y0 ;
 for i=1:length(W)
-    t = tic ;
 
     % Propagate through layer.
     Z = Y * W {i} ;
@@ -18,8 +25,5 @@ for i=1:length(W)
 
     % Threshold maximum values.
     Y (Y > 32) = 32 ;
-
-    t = toc (t) ;
-    fprintf ('layer: %4d, nnz (Y) %8d, time %g sec\n', i, nnz (Y), t) ;
 end
 

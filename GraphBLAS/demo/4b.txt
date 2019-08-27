@@ -1,0 +1,56 @@
+Problem: /raid/hyper/GraphChallenge/dnn_data/MATLAB/HPEC19_dnn_09.mat
+            number: 9
+          nneurons: 16384
+           nlayers: 1920
+    trueCategories: [1918x1 double]
+    featureVectors: [60000x16384 double]
+            layers: {1x1920 cell}
+              bias: {1x1920 cell}
+
+load time:                   58.00 sec
+total convert time:          10.73 sec
+threads:   1 time:   10381.39 sec speedup:     1.00 rate:       5.82 billion
+threads:   2 time:    5701.56 sec speedup:     1.82 rate:      10.59 billion
+threads:   4 time:    2979.18 sec speedup:     3.48 rate:      20.27 billion
+threads:   8 time:    1638.01 sec speedup:     6.34 rate:      36.87 billion
+threads:  16 time:     994.92 sec speedup:    10.43 rate:      60.71 billion
+threads:  20 time:     949.88 sec speedup:    10.93 rate:      63.58 billion
+threads:  32 time:     890.48 sec speedup:    11.66 rate:      67.83 billion
+threads:  40 time:     782.76 sec speedup:    13.26 rate:      77.16 billion
+problem 9 OK
+
+Problem: /raid/hyper/GraphChallenge/dnn_data/MATLAB/HPEC19_dnn_10.mat
+            number: 10
+          nneurons: 65536
+           nlayers: 120
+    trueCategories: [1994x1 double]
+    featureVectors: [60000x65536 double]
+            layers: {1x120 cell}
+              bias: {1x120 cell}
+
+load time:                   27.96 sec
+total convert time:           3.24 sec
+threads:   1 time:    3777.13 sec speedup:     1.00 rate:       4.00 billion
+threads:   2 time:    2021.85 sec speedup:     1.87 rate:       7.47 billion
+threads:   4 time:    1055.32 sec speedup:     3.58 rate:      14.31 billion
+threads:   8 time:     566.71 sec speedup:     6.66 rate:      26.64 billion
+threads:  16 time:     330.46 sec speedup:    11.43 rate:      45.69 billion
+threads:  20 time:     288.66 sec speedup:    13.09 rate:      52.31 billion
+threads:  32 time:     265.16 sec speedup:    14.24 rate:      56.94 billion
+threads:  40 time:     254.38 sec speedup:    14.85 rate:      59.36 billion
+problem 10 OK
+
+Problem: /raid/hyper/GraphChallenge/dnn_data/MATLAB/HPEC19_dnn_11.mat
+            number: 11
+          nneurons: 65536
+           nlayers: 480
+    trueCategories: [1994x1 double]
+    featureVectors: [60000x65536 double]
+            layers: {1x480 cell}
+              bias: {1x480 cell}
+
+load time:                   65.32 sec
+total convert time:           6.83 sec
+threads:   1 time:   13816.56 sec speedup:     1.00 rate:       4.37 billion
+
+  (still running ...)

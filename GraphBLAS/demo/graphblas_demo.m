@@ -559,11 +559,17 @@ end
 t_setup = toc ;
 fprintf ('construct problem time: %g sec\n', t_setup) ;
 
+% convert the problem from MATLAB to GraphBLAS
+t = tic ;
+[W_gb, bias_gb, Y0_gb] = dnn_mat2gb (W, bias, Y0) ;
+t = toc (t) ;
+fprintf ('setup time: %g sec\n', t) ;
+
 %% Solving the sparse deep neural network problem with GraphbLAS
 % Please wait ...
 
 tic
-Y1 = dnn_gb (W, bias, Y0) ;
+Y1 = dnn_gb (W_gb, bias_gb, Y0_gb) ;
 gb_time = toc ;
 fprintf ('total time in GraphBLAS: %g sec\n', gb_time) ;
 

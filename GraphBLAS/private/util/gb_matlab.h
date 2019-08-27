@@ -322,5 +322,15 @@ GrB_Matrix gb_by_col            // return the matrix by column
     GrB_Matrix A_input          // input matrix, by row or column
 ) ;
 
+void gb_tic /* returns current time in seconds and nanoseconds */
+(
+    double tic [2]      /* tic [0]: seconds, tic [1]: nanoseconds */
+) ;
+
+double gb_toc               /* returns time since last gb_tic */
+(
+    const double tic [2]    /* tic from last call to gb_tic */
+) ;
+
 #endif
 

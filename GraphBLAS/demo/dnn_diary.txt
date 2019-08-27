@@ -1,0 +1,46 @@
+disp(Problem)
+{Undefined function or variable 'Problem'.
+} 
+whos
+  Name                      Size                 Bytes  Class     Attributes
+
+  DNNedges                  1x1                      8  double              
+  NfeatureVectors           1x1                      8  double              
+  W                         1x120             48299040  cell                
+  Y                     60000x1024            22295996  gb                  
+  Y0                    60000x1024            76975032  gb                  
+  ans                       1x1                      8  double              
+  bias                      1x120              2587680  cell                
+  categories             1812x1                  14496  double              
+  challengeRunRate          1x1                      8  double              
+  challengeRunTime          1x1                      8  double              
+  fname                     1x60                   120  char                
+  id                        1x1                      8  double              
+  k                         1x1                      8  double              
+  ncores                    1x1                      8  double              
+  nlayers                   1x1                      8  double              
+  nthreads                  1x1                      8  double              
+  rootdir                   1x42                    84  char                
+  stats                     1x1                   2272  struct              
+  t1                        1x1                      8  double              
+  tload                     1x1                      8  double              
+  trueCat                1812x1                  14496  double              
+  tsetup                    1x1                      8  double              
+
+fname
+
+fname =
+
+    '/raid/hyper/GraphChallenge/dnn_data/MATLAB/HPEC19_dnn_01.mat'
+
+load (fname)
+disp (Problem)
+            number: 1
+          nneurons: 1024
+           nlayers: 120
+    trueCategories: [1812x1 double]
+    featureVectors: [60000x1024 double]
+            layers: {1x120 cell}
+              bias: {1x120 cell}
+
+diary off

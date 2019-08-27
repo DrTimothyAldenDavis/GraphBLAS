@@ -1,0 +1,133 @@
+dnn_run
+# of cores :  20
+
+Problem: /raid/hyper/GraphChallenge/dnn_data/MATLAB/HPEC19_dnn_01.mat
+            number: 1
+          nneurons: 1024
+           nlayers: 120
+    trueCategories: [1812x1 double]
+    featureVectors: [60000x1024 double]
+            layers: {1x120 cell}
+              bias: {1x120 cell}
+
+load time:                    0.44 sec
+total convert time:           0.09 sec
+Y*W : 19.082 sec
+Y+B : 1.09671 sec
+ReLU: 0.910353 sec
+Ymax: 2.40075 sec
+threads:   1 time:      23.49 sec speedup:     1.00 rate:      10.04 billion
+Y*W : 11.0112 sec
+Y+B : 0.689892 sec
+ReLU: 0.547787 sec
+Ymax: 1.34719 sec
+threads:   2 time:      13.60 sec speedup:     1.73 rate:      17.35 billion
+Y*W : 5.64893 sec
+Y+B : 0.393167 sec
+ReLU: 0.332687 sec
+Ymax: 0.776564 sec
+threads:   4 time:       7.15 sec speedup:     3.28 rate:      32.98 billion
+Y*W : 3.01102 sec
+Y+B : 0.262014 sec
+ReLU: 0.221016 sec
+Ymax: 0.48468 sec
+threads:   8 time:       3.98 sec speedup:     5.90 rate:      59.28 billion
+Y*W : 1.81046 sec
+Y+B : 0.228162 sec
+ReLU: 0.168776 sec
+Ymax: 0.365196 sec
+threads:  16 time:       2.57 sec speedup:     9.12 rate:      91.64 billion
+Y*W : 1.64628 sec
+Y+B : 0.228033 sec
+ReLU: 0.161903 sec
+Ymax: 0.346237 sec
+threads:  20 time:       2.38 sec speedup:     9.85 rate:      98.97 billion
+Y*W : 1.73415 sec
+Y+B : 0.256433 sec
+ReLU: 0.190552 sec
+Ymax: 0.415073 sec
+threads:  32 time:       2.60 sec speedup:     9.04 rate:      90.80 billion
+Y*W : 1.84964 sec
+Y+B : 0.274998 sec
+ReLU: 0.197 sec
+Ymax: 0.461556 sec
+threads:  40 time:       2.79 sec speedup:     8.43 rate:      84.69 billion
+problem 1 OK
+
+Problem: /raid/hyper/GraphChallenge/dnn_data/MATLAB/HPEC19_dnn_02.mat
+            number: 2
+          nneurons: 1024
+           nlayers: 480
+    trueCategories: [1812x1 double]
+    featureVectors: [60000x1024 double]
+            layers: {1x480 cell}
+              bias: {1x480 cell}
+
+load time:                    0.84 sec
+total convert time:           0.26 sec
+Y*W : 52.2215 sec
+Y+B : 2.39502 sec
+ReLU: 2.60533 sec
+Ymax: 10.1475 sec
+threads:   1 time:      67.37 sec speedup:     1.00 rate:      14.01 billion
+Y*W : 29.9816 sec
+Y+B : 1.68009 sec
+ReLU: 1.60388 sec
+Ymax: 5.68216 sec
+threads:   2 time:      38.95 sec speedup:     1.73 rate:      24.23 billion
+Y*W : 15.3768 sec
+Y+B : 0.940231 sec
+ReLU: 0.950454 sec
+Ymax: 3.2526 sec
+threads:   4 time:      20.52 sec speedup:     3.28 rate:      45.98 billion
+Y*W : 8.16705 sec
+Y+B : 0.627813 sec
+ReLU: 0.603488 sec
+Ymax: 2.01763 sec
+threads:   8 time:      11.42 sec speedup:     5.90 rate:      82.63 billion
+Y*W : 4.88189 sec
+Y+B : 0.572974 sec
+ReLU: 0.434923 sec
+Ymax: 1.51197 sec
+threads:  16 time:       7.41 sec speedup:     9.10 rate:     127.42 billion
+Y*W : 4.7535 sec
+Y+B : 0.580589 sec
+ReLU: 0.407777 sec
+Ymax: 1.42176 sec
+threads:  20 time:       7.17 sec speedup:     9.40 rate:     131.65 billion
+Y*W : 5.21338 sec
+Y+B : 0.651629 sec
+ReLU: 0.449883 sec
+Ymax: 1.5502 sec
+threads:  32 time:       7.87 sec speedup:     8.56 rate:     119.90 billion
+Y*W : 6.00145 sec
+Y+B : 0.748934 sec
+ReLU: 0.553726 sec
+Ymax: 1.8476 sec
+threads:  40 time:       9.16 sec speedup:     7.36 rate:     103.03 billion
+problem 2 OK
+
+Problem: /raid/hyper/GraphChallenge/dnn_data/MATLAB/HPEC19_dnn_03.mat
+            number: 3
+          nneurons: 1024
+           nlayers: 1920
+    trueCategories: [1812x1 double]
+    featureVectors: [60000x1024 double]
+            layers: {1x1920 cell}
+              bias: {1x1920 cell}
+
+load time:                    2.56 sec
+total convert time:           0.85 sec
+{Operation terminated by user during gb.mxm (line 3889)
+
+
+In * (line 2172)
+        C = gb.mxm ('+.*', A, B) ;
+
+In dnn_gb (line 28)
+    Y = Y * W {i} ;
+
+In dnn_run (line 45)
+        Y = dnn_gb (W, bias, Y0) ;
+} 
+diary off
