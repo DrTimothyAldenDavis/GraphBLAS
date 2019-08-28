@@ -41,6 +41,9 @@
 %  gbtest35  - test reshape
 %  gbtest36  - test abs, sign
 %  gbtest37  - test istril, istriu, isbanded, isdiag, ishermitian, ...
+%  gbtest38  - test sqrt, eps, ceil, floor, round, fix, real, conj, ...
+%  gbtest39  - test amd, colamd, symamd, symrcm, dmperm, etree
+%  gbtest40  - test sum, prod, max, min, any, all, norm
 %
 % Utility functions:
 %

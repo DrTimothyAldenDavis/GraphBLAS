@@ -17,6 +17,9 @@ for trial = 1:40
             assert (isequal (isfinite (A), logical (isfinite (G)))) ;
             assert (isequal (isinf    (A), logical (isinf    (G)))) ;
             assert (isequal (isnan    (A), logical (isnan    (G)))) ;
+
+            assert (isrow    (A) == isrow    (G)) ;
+            assert (iscolumn (A) == iscolumn (G)) ;
         end
     end
 end

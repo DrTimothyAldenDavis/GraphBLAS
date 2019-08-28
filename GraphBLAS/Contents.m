@@ -59,7 +59,6 @@
 %   s = isbanded (G,...)    true if G is banded
 %   s = isdiag (G)          true if G is diagonal
 %   [lo,hi] = bandwidth (G) determine the lower & upper bandwidth of G
-%   C = sqrt (G)            element-wise square root
 %   C = sum (G, option)     reduce via sum, to vector or scalar
 %   C = prod (G, option)    reduce via product, to vector or scalar
 %   s = norm (G, kind)      1-norm or inf-norm of a gb matrix
@@ -67,6 +66,7 @@
 %   C = min (G, ...)        reduce via min, to vector or scalar
 %   C = any (G, ...)        reduce via '|', to vector or scalar
 %   C = all (G, ...)        reduce via '&', to vector or scalar
+%   C = sqrt (G)            element-wise square root
 %   C = eps (G)             floating-point spacing
 %   C = ceil (G)            round towards infinity
 %   C = floor (G)           round towards -infinity
@@ -81,9 +81,11 @@
 %   p = symamd (G)          approximate minimum degree ordering
 %   p = symrcm (G)          reverse Cuthill-McKee ordering
 %   [...] = dmperm (G)      Dulmage-Mendelsohn permutation
+%   parent = etree (G)      elimination tree
 %   C = conj (G)            complex conjugate
 %   C = real (G)            real part of a complex GraphBLAS matrix
 %   [V, ...] = eig (G,...)  eigenvalues and eigenvectors
+%   assert (G)              generate an error if G is false
 %
 % Operator overloading:
 %

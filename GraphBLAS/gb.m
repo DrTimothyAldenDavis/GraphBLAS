@@ -98,6 +98,8 @@ classdef gb
 %       s = issparse (G)        true for any gb matrix G
 %       s = ismatrix (G)        true for any gb matrix G
 %       s = isvector (G)        true if m=1 or n=1, for an m-by-n gb matrix G
+%       s = iscolumn (G)        true if n=1, for an m-by-n gb matrix G
+%       s = isrow (G)           true if m=1, for an m-by-n gb matrix G
 %       s = isscalar (G)        true if G is a 1-by-1 gb matrix
 %       s = isnumeric (G)       true for any gb matrix G (even logical)
 %       s = isfloat (G)         true if gb matrix is double, single, or complex
@@ -120,7 +122,6 @@ classdef gb
 %       s = ishermitian (G)     true if G is Hermitian
 %       s = issymmetric (G)     true if G is symmetric
 %       [lo,hi] = bandwidth (G) determine the lower & upper bandwidth of G
-%       C = sqrt (G)            element-wise square root
 %       C = sum (G, option)     reduce via sum, to vector or scalar
 %       C = prod (G, option)    reduce via product, to vector or scalar
 %       s = norm (G, kind)      1-norm or inf-norm of a gb matrix
@@ -128,6 +129,7 @@ classdef gb
 %       C = min (G, ...)        reduce via min, to vector or scalar
 %       C = any (G, ...)        reduce via '|', to vector or scalar
 %       C = all (G, ...)        reduce via '&', to vector or scalar
+%       C = sqrt (G)            element-wise square root
 %       C = eps (G)             floating-point spacing
 %       C = ceil (G)            round towards infinity
 %       C = floor (G)           round towards -infinity
@@ -142,9 +144,11 @@ classdef gb
 %       p = symamd (G)          approximate minimum degree ordering
 %       p = symrcm (G)          reverse Cuthill-McKee ordering
 %       [...] = dmperm (G)      Dulmage-Mendelsohn permutation
+%       parent = etree (G)      elimination tree
 %       C = conj (G)            complex conjugate
 %       C = real (G)            real part of a complex GraphBLAS matrix
 %       [V, ...] = eig (G,...)  eigenvalues and eigenvectors
+%       assert (G)              generate an error if G is false
 %
 %   operator overloading:
 %
@@ -771,6 +775,12 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
+    % isrow, iscolumn: determine if row or column vector
+    %---------------------------------------------------------------------------
+
+    % isrow and iscolumn are implicitly defined, based on size (G)
+
+    %---------------------------------------------------------------------------
     % isscalar: determine if scalar
     %---------------------------------------------------------------------------
 
@@ -1226,19 +1236,6 @@ methods %=======================================================================
             error ('unrecognized input parameter') ;
         end
     end
-    end
-
-    %---------------------------------------------------------------------------
-    % sqrt: element-wise square root
-    %---------------------------------------------------------------------------
-
-% HERE
-
-    function C = sqrt (G)
-    %SQRT Square root.
-    % SQRT (G) is the square root of the elements of the GraphBLAS matrix G.
-    % Complex matrices are not yet supported.
-    C = G.^(.5) ;
     end
 
     %---------------------------------------------------------------------------
@@ -1786,6 +1783,17 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
+    % sqrt: element-wise square root
+    %---------------------------------------------------------------------------
+
+    function C = sqrt (G)
+    %SQRT Square root.
+    % SQRT (G) is the square root of the elements of the GraphBLAS matrix G.
+    % Complex matrices are not yet supported.
+    C = G.^(.5) ;
+    end
+
+    %---------------------------------------------------------------------------
     % eps: spacing of floating-point numbers
     %---------------------------------------------------------------------------
 
@@ -1931,7 +1939,7 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % spfun: apply a MATLAB function to the elmenents of a matrix
+    % spfun: apply a MATLAB function to the elements of a matrix
     %---------------------------------------------------------------------------
 
     function C = spfun (fun, G)
@@ -1997,6 +2005,17 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
+    % etree: elimination tree
+    %---------------------------------------------------------------------------
+
+    function [parent, varargout] = etree (G, varargin)
+    %ETREE Elimination tree
+    % See 'help etree' for details.
+    [parent, varargout{1:nargout-1}] = ...
+        builtin ('etree', logical (G), varargin {:}) ;
+    end
+
+    %---------------------------------------------------------------------------
     % conj: complex conjugate
     %---------------------------------------------------------------------------
 
@@ -2046,12 +2065,102 @@ methods %=======================================================================
     end
 
     %---------------------------------------------------------------------------
-    % FUTURE: these could also be overloaded (not static) methods:
+    % assert: generate an error when a condition is violated
     %---------------------------------------------------------------------------
 
-    % spdiags, blkdiag, bsxfun, cummin, cummax, cumprod, diff, inv, issorted,
-    % issortedrows, reshape, sort, rem, mod, lu, chol, qr, ...  See 'methods
-    % double' for more options.
+    function assert (G)
+    %ASSERT generate an error when a condition is violated
+    % G must be a scalar logical (either a MATLAB or GraphBLAS scalar)
+    builtin ('assert', logical (G)) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % implicitly-defined methods
+    %---------------------------------------------------------------------------
+
+    % The following methods work without any implemention needed here:
+    %
+    %   cast
+    %   isrow
+    %   iscolumn
+
+    %---------------------------------------------------------------------------
+    % FUTURE:: most these could also be overloaded:
+    %---------------------------------------------------------------------------
+
+    % methods 'double' that are not yet implemented here:
+    %
+    %    accumarray acos acosd acosh acot acotd acoth acsc acscd acsch airy
+    %    asec asecd asech asin asind asinh atan atan2 atan2d atand atanh
+    %    bernoulli besselh besseli besselj besselk bessely betainc betaincinv
+    %    bsxfun charpoly chebyshevT chebyshevU colon cos cosd cosh coshint
+    %    cosint cot cotd coth csc cscd csch cummax cummin cumprod cumsum dawson
+    %    delete det diff dilog dirac divisors ei ellipticCE ellipticCK
+    %    ellipticCPi ellipticE ellipticF ellipticK ellipticNome ellipticPi erf
+    %    erfc erfcinv erfcx erfi erfinv euler exp expm1 fresnelc fresnels gamma
+    %    gammainc gammaincinv gammaln gegenbauerC harmonic hermiteH hess hypot
+    %    ichol igamma ilu imag inv issorted issortedrows jacobiP jordan kummerU
+    %    laguerreL legendreP linsolve log log10 log1p log2 logint ltitr maxk
+    %    mink minpoly mod ordeig permute pochhammer poly2sym polylog pow2 psi
+    %    qrupdate rcond reallog realpow realsqrt rectangularPulse rem sec secd
+    %    sech signIm sin sind sinh sinhint sinint sort sortrowsc ssinint
+    %    superiorfloat tan tand tanh triangularPulse whittakerM whittakerW
+    %    wrightOmega xor zeta
+
+    % methods in MATLAB/matfun not implemented here:
+    %
+    %    balance cdf2rdf chol cholupdate condeig condest cond decomposition det
+    %    expm funm gsvd hess inv ldl linsolve logm lscov lsqminnorm ltitr lu
+    %    normest1 normest null ordeig ordqz ordschur orth pinv planerot polyeig
+    %    private qrdelete qrinsert qr qrupdate qz rank rcond rref rsf2csf schur
+    %    sqrtm svd sylvester trace vecnorm
+
+    % methods in MATLAB/sparsfun not implemented here:
+    %
+    %    md bicg bicgstabl bicgstab cgs colperm delsq dissect eigs etreeplot
+    %    gmres gplot ichol ilu lsqr minres nested numgrid pcg private qmr rjr
+    %    spalloc sparse spaugment spconvert spdiags spparms sprand sprandn
+    %    sprandsym sprank spy svds symbfact symmlq symrcm tfqmr treelayout
+    %    treeplot unmesh
+
+    % methods in MATLAB/elmat not implemented here:
+    %
+    %    accumarray blkdiag bsxfun cat circshift compan false flintmax flipdim
+    %    fliplr flip flipud freqspace gallery hadamard hankel hilb ind2sub inf
+    %    intmax intmin invhilb ipermute isequal isequaln isequalwithequalnans
+    %    linspace logspace magic meshgrid nan ndgrid ndims pascal permute pi
+    %    repelem rosser rot90 shiftdim squeeze sub2ind toeplitz vander
+    %    wilkinson
+
+    %---------------------------------------------------------------------------
+    % zeros: an all-zero matrix
+    %---------------------------------------------------------------------------
+
+    function C = zeros (varargin)
+    %ZEROS an all-zero matrix, the same type as G
+    % C = zeros (m, n, 'like', G)
+    % C = zeros ([m n], 'like', G)
+    G = varargin {end} ;
+    if (nargin == 4)
+        if (~isequal (varargin {3}, 'like'))
+            error ('usage: zeros (m, n, ''like'', G)') ;
+        end
+        m = varargin {1} ;
+        n = varargin {2} ;
+    elseif (nargin == 3)
+        if (~isequal (varargin {2}, 'like'))
+            error ('usage: zeros ([m n], ''like'', G)') ;
+        end
+        mn = varargin {1} ;
+        m = mn (1) ;
+        n = mn (2) ;
+    end
+    C = gb (m, n, gb.type (G)) ;
+    end
+
+    function C = false (varargin)
+    C = zeros (varargin {:}) ;
+    end
 
 %===============================================================================
 % operator overloading =========================================================
@@ -2429,8 +2538,8 @@ methods %=======================================================================
     % Zeroes are then dropped from C after it is computed.
     if (isscalar (A))
         if (isscalar (B))
-            % both A and B are scalars
-            C = gb.select ('nonzero', gb.emult ('<=', A, B)) ;
+            % both A and B are scalars.  C is full.
+            C = dense_comparator ('<=', A, B) ;
         else
             % A is a scalar, B is a matrix
             if (get_scalar (A) <= 0)
@@ -2495,8 +2604,8 @@ methods %=======================================================================
 
     if (isscalar (A))
         if (isscalar (B))
-            % both A and B are scalars
-            C = gb.select ('nonzero', gb.emult ('==', A, B)) ;
+            % both A and B are scalars.  C is full.
+            C = dense_comparator ('~=', A, B) ;
         else
             % A is a scalar, B is a matrix
             if (get_scalar (A) ~= 0)
@@ -2550,8 +2659,8 @@ methods %=======================================================================
 
     if (isscalar (A))
         if (isscalar (B))
-            % both A and B are scalars
-            C = gb.select ('nonzero', gb.emult ('==', A, B)) ;
+            % both A and B are scalars.  C is full.
+            C = dense_comparator ('==', A, B) ;
         else
             % A is a scalar, B is a matrix
             if (get_scalar (A) == 0)
@@ -2904,7 +3013,7 @@ methods %=======================================================================
     % subsasgn: C (I,J) = A
     %---------------------------------------------------------------------------
 
-    function Cout = subsasgn (Cin, S, A)
+    function C = subsasgn (C, S, A)
     %SUBSASGN C(I,J) = A or C(I) = A; assign submatrix into a GraphBLAS matrix.
     % C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix C.
     % A must be either a matrix of size length(I)-by-length(J), or a scalar.
@@ -2946,35 +3055,41 @@ methods %=======================================================================
         if (isequal (gb.type (S.subs {1}), 'logical'))
             % C (M) = A for logical assignment
             M = S.subs {1} ;
-            if (isscalar (A))
-                % C (M) = scalar
-                Cout = gb.subassign (Cin, M, A) ;
-            else
-                % C (M) = A where A is a vector
-                if (isa (M, 'gb'))
-                    M = M.opaque ;
+            % the 'all' syntax requires MATLAB R2019a
+            % if (any (M, 'all'))
+                if (isscalar (A))
+                    % C (M) = scalar
+                    C = gb.subassign (C, M, A) ;
+                else
+                    % C (M) = A where A is a vector
+                    if (isa (M, 'gb'))
+                        M = M.opaque ;
+                    end
+                    if (size (A, 2) ~= 1)
+                        % make sure A is a column vector of size mnz-by-1
+                        A = A (:) ;
+                    end
+                    if (isa (A, 'gb'))
+                        A = A.opaque ;
+                    end
+                    if (isa (C, 'gb'))
+                        C = C.opaque ;
+                    end
+                    C = gb (gblogassign (C, M, A)) ;
                 end
-                if (size (A, 2) ~= 1)
-                    % make sure A is a column vector of size mnz-by-1
-                    A = A (:) ;
-                end
-                if (isa (A, 'gb'))
-                    A = A.opaque ;
-                end
-                if (isa (Cin, 'gb'))
-                    Cin = Cin.opaque ;
-                end
-                Cout = gb (gblogassign (Cin, M, A)) ;
-            end
+            % else
+            %     % M is empty, so C does not change
+            % end
         else
             % C (I) = A where C and A are vectors
             I = get_index (S.subs (1)) ;
-            Cout = gb.subassign (Cin, A, I) ;
+            C = gb.subassign (C, A, I) ;
         end
     elseif (ndims == 2)
+        % C(I,J) = A where A is length(I)-by-length(J)
         I = get_index (S.subs (1)) ;
         J = get_index (S.subs (2)) ;
-        Cout = gb.subassign (Cin, A, I, J) ;
+        C = gb.subassign (C, A, I, J) ;
     else
         error ('%dD indexing not supported', ndims) ;
     end
