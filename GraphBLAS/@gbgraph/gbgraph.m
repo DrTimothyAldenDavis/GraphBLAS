@@ -54,7 +54,7 @@ methods
 
     end
 
-    H@gb (G) ;
+    H = H@gb (G) ;
     H.graphkind = graphkind ;
     end
 

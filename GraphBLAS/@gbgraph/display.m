@@ -6,12 +6,5 @@ function display (H)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-display@gb (H) ;
-[e d] = numedges (H) ;
-fprintf ('  GraphBLAS %s: %d nodes, %d edges', H.graphkind, numnodes (H), e)
-if (d == 0)
-    fprintf (' (no self edges).\n\n') ;
-else
-    fprintf (' (%d are self-edges).\n\n', d) ;
-end
+gbgraph_display (H, inputname (1), 2) ;
 

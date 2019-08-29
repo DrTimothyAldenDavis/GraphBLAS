@@ -375,11 +375,15 @@ methods %=======================================================================
 
 end
 
-methods (Static)
+methods (Access = protected, Hidden)
 
-    function gbdisplay (G)
-    display (G)
+    function disp_helper (G, level)
+    gbdisp (G.opaque, level) ;
     end
+
+end
+
+methods (Static)
 
     function clear
     %GB.CLEAR free all internal workspace in SuiteSparse:GraphBLAS
