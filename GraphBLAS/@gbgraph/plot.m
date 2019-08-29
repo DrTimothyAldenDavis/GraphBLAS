@@ -3,6 +3,8 @@ function H = plot (G, varargin)
 % If G is symmetric, G is plotted as an undirected graph.
 % If G is square and unsymmetric, G is plotted as a directed graph.
 % If G is rectangular, the bipartite graph is plotted.
+%
+% See also graph/plot, digraph/plot.
 
 % TODO test
 

@@ -5,6 +5,8 @@ function H = subgraph (G, I)
 % the range 1 to n, or a logical vector.  The latter case is the same as
 % subgraph (G, find(I)).  H is returned as a GraphBLAS matrix; use graph(H) or
 % digraph(H) to convert it into a MATLAB graph.
+%
+% See also graph/subgraph, digraph/subgraph.
 
 % TODO test
 

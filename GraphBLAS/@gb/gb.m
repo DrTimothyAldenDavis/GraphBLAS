@@ -276,7 +276,7 @@ classdef gb
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-properties (SetAccess = private, GetAccess = private)
+properties % (SetAccess = private, GetAccess = private)
     % The struct contains the entire opaque content of a GraphBLAS GrB_Matrix.
     opaque = [ ] ;
 end
@@ -298,7 +298,9 @@ methods %=======================================================================
     %   G = gb (m, n, type) ; empty m-by-n gb matrix of given type
     %
     % See also sparse.
-    if (nargin == 1 && ...
+    if (nargin < 1)
+        error ('not enough input arguments') ;
+    elseif (nargin == 1 && ...
         (isstruct (varargin {1}) && isfield (varargin {1}, 'GraphBLAS')))
         % G = gb (X), where the input X is a GraphBLAS struct as returned by
         % another gb* function, but this usage is not meant for the end-user.
@@ -371,25 +373,13 @@ methods %=======================================================================
     %    logspace meshgrid nan ndgrid ndims pascal permute pi repelem rosser
     %    rot90 shiftdim squeeze sub2ind toeplitz vander wilkinson
 
-    % methods for both classes graph and digraph not implemented here:
-    %
-    %    addedge addnode adjacency bfsearch centrality conncomp dfsearch
-    %    distances edgecount findedge findnode incidence isisomorphic
-    %    ismultigraph isomorphism maxflow nearest numedges numnodes outedges
-    %    plot reordernodes rmedge rmnode shortestpath shortestpathtree simplify
-
-    % methods for class graph (not in digraph class) not implemented here:
-    %
-    %    bctree biconncomp minspantree neighbors
-
-    % methods for class digraph (not in graph class) not implemented here:
-    %
-    %    condensation flipedge inedges isdag predecessors successors toposort
-    %    transclosure transreduction
-
 end
 
 methods (Static)
+
+    function gbdisplay (G)
+    display (G)
+    end
 
     function clear
     %GB.CLEAR free all internal workspace in SuiteSparse:GraphBLAS

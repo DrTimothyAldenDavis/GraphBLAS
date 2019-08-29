@@ -16,5 +16,5 @@ if (level > 0)
         fprintf ('\n%s =\n', name) ;
     end
 end
-gbdisp (G.opaque, level) ;
 
+gbdisp (G.opaque, level) ;

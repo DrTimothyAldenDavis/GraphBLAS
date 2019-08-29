@@ -1,9 +1,10 @@
-function C = graph (G,uplo)
-% C = graph (G) is the undirected MATLAB graph of the GraphBLAS matrix G.
-% G is used as the adjacency matrix of the graph C.  G must be square and
-% symmetric.  No weights are added if G is logical.
+function C = graph (H)
+% C = graph (H) is the undirected MATLAB graph of the GraphBLAS gbgraph H.
+% H is used as the adjacency matrix of the graph C.  H must be square.
+% If H is a digraph, C is constructed with the matrix H+H'.
+% No weights are added if H is logical.
 %
-% With a second argument, G may be unsymmetric.  C = graph (G, 'upper') uses
+% With a second argument, H may be unsymmetric.  C = graph (G, 'upper') uses
 % the upper triangular part of G.  If C = graph (G, 'lower') uses the lower
 % triangular part of G.
 

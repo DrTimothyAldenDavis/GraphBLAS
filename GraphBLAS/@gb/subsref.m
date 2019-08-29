@@ -32,6 +32,10 @@ function C = subsref (A, S)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+if (length (S) > 1)
+    error ('nested indexing not supported') ;
+end
+
 if (~isequal (S.type, '()'))
     error ('index type %s not supported', S.type) ;
 end

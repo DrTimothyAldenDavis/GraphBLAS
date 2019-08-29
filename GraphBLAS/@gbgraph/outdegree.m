@@ -3,7 +3,7 @@ function d = outdegree (G)
 % d = outdegree (G) is a vector of size m for an m-by-n GraphBLAS matrix G,
 % equal to d = sum (spones (G')).
 %
-% See also gb/degree, gb/indegree, graph/outdegree.
+% See also digraph/outdegree, gb/degree, gb/indegree.
 
 % TODO tests
 
