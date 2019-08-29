@@ -5,7 +5,9 @@ function gbtestall
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % gbtest9 requires ../demo/dnn_gb.m and dnn_matlab.m
+
 addpath ../demo
+addpath ..
 
 gbtest1
 gbtest2

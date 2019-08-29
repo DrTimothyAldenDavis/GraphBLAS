@@ -7,8 +7,8 @@ function gbtest22
 rng ('default') ;
 for trial = 1:40
     fprintf ('.') ;
-    for m = 0:10
-        for n = 0:10
+    for m = 0:5
+        for n = 0:5
             A = 100 * sprand (m, n, 0.5) ;
             G = gb (A) ;
             [i j x] = find (A) ;

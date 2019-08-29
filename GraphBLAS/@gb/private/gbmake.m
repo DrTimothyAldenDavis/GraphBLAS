@@ -53,7 +53,7 @@ try
     end
 end
 
-libraries = '-L../../build -L. -L/usr/local/lib -lgraphblas' ;
+libraries = '-L../../../build -L. -L/usr/local/lib -lgraphblas' ;
 
 if (~ismac && isunix)
     flags = [ flags   ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
@@ -61,7 +61,7 @@ if (~ismac && isunix)
     flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
 
-inc = '-Iutil -I../../Include -I../../Source -I../../Source/Template' ;
+inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Template' ;
 
 hfiles = [ dir('*.h') ; dir('util/*.h') ] ;
 

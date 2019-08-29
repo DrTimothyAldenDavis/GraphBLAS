@@ -4,8 +4,8 @@ function gbtest29
 rng ('default') ;
 for trial = 1:40
     fprintf ('.')
-    for m = 0:20
-        for n = 0:20
+    for m = 0:5
+        for n = 0:5
             A = sprand (m, n, 0.5) ;
             C = sprand (m, n, 0.5) ;
             M = sprand (m, n, 0.5) ~= 0 ;

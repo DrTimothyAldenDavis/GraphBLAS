@@ -7,8 +7,8 @@ function gbtest21
 rng ('default') ;
 for trial = 1:40
     fprintf ('.') ;
-    for m = 0:10
-        for n = 0:10
+    for m = 0:5
+        for n = 0:5
             A = 100 * sprand (m, n, 0.5) ;
             A (1,1) = nan ;
             A (2,2) = inf ;

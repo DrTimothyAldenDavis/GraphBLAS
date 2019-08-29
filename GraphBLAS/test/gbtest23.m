@@ -6,11 +6,9 @@ function gbtest23
 
 rng ('default') ;
 for trial = 1:40
-    for m = 1:10
-        if (mod (m,2) == 0)
-            fprintf ('.') ;
-        end
-        for n = 1:10
+    fprintf ('.') ;
+    for m = 1:5
+        for n = 1:5
 
             MA = sprand (m, n, 0.5) ;
             S = -(sprand (m, n, 0.5) > 0.5) ;

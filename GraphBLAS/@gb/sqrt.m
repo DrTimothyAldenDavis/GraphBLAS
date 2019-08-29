@@ -1,0 +1,10 @@
+function C = sqrt (G)
+%SQRT Square root.
+% SQRT (G) is the square root of the elements of the GraphBLAS matrix G.
+% Complex matrices are not yet supported.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+C = G.^(.5) ;
+
