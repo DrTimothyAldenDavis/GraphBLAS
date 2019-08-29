@@ -149,6 +149,9 @@ classdef gb
 %       C = real (G)            real part of a complex GraphBLAS matrix
 %       [V, ...] = eig (G,...)  eigenvalues and eigenvectors
 %       assert (G)              generate an error if G is false
+%       C = zeros (...,'like',G)   all-zero matrix, same type as G
+%       C = false (...,'like',G)   all-false logical matrix
+%       C = ones (...,'like',G)    matrix with all ones, same type as G
 %
 %   operator overloading:
 %
@@ -2125,12 +2128,11 @@ methods %=======================================================================
 
     % methods in MATLAB/elmat not implemented here:
     %
-    %    accumarray blkdiag bsxfun cat circshift compan false flintmax flipdim
-    %    fliplr flip flipud freqspace gallery hadamard hankel hilb ind2sub inf
-    %    intmax intmin invhilb ipermute isequal isequaln isequalwithequalnans
-    %    linspace logspace magic meshgrid nan ndgrid ndims pascal permute pi
-    %    repelem rosser rot90 shiftdim squeeze sub2ind toeplitz vander
-    %    wilkinson
+    %    accumarray blkdiag bsxfun cat circshift compan flintmax flipdim fliplr
+    %    flip flipud freqspace gallery hadamard hankel hilb ind2sub inf intmax
+    %    intmin invhilb ipermute isequal isequaln isequalwithequalnans linspace
+    %    logspace meshgrid nan ndgrid ndims pascal permute pi repelem rosser
+    %    rot90 shiftdim squeeze sub2ind toeplitz vander wilkinson
 
     %---------------------------------------------------------------------------
     % zeros: an all-zero matrix
@@ -2158,8 +2160,119 @@ methods %=======================================================================
     C = gb (m, n, gb.type (G)) ;
     end
 
+    %---------------------------------------------------------------------------
+    % false: an all-false logical matrix
+    %---------------------------------------------------------------------------
+
     function C = false (varargin)
+    %FALSE an all-false GraphBLAS matrix
+    % C = false (m, n, 'like', G)
+    % C = false ([m n], 'like', G)
+    arg1 = varargin {1} ;
+    if (length (arg1) == 2)
+        m = arg1 (1) ;
+        n = arg1 (2) ;
+    else
+        m = arg1 ;
+        n = varargin {2} ;
+    end
+    C = gb (m, n, 'logical') ;
+    end
+
+    %---------------------------------------------------------------------------
+    % ones: an all-one matrix
+    %---------------------------------------------------------------------------
+
+    function C = ones (varargin)
+    %ONES an all-zero matrix, the same type as G
+    % C = ones (m, n, 'like', G)
+    % C = ones ([m n], 'like', G)
     C = zeros (varargin {:}) ;
+    C = gb.subassign (C, 1, { }, { }) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % laplacian:  Graph Laplacian matrix
+    %---------------------------------------------------------------------------
+
+    function L = laplacian (G, type)
+    %LAPLACIAN Graph Laplacian matrix
+    % L = laplacian (G) is the graph Laplacian matrix of an n-by-n GraphBLAS
+    % matrix G.  G must be square. The diagonal of G is ignored.  If G is
+    % unsymmetric, the Laplacian of G+G' is returned.  The diagonal of L is the
+    % degree of the nodes.  That is, L(j,j) = sum (spones (G (:,j))).  L(i,j) =
+    % L(j,i) = -1 if the edge (i,j) exists in G.  The type of L defaults to
+    % double.  With a second argument, the type of L can be specified (see help
+    % gb.type), as L = laplacian (G,type).
+    %
+    % See also graph/laplacian.
+    [m n] = size (G) ;
+    if (m ~= n)
+        error ('G must be square') ;
+    end
+    if (nargin < 2)
+        type = 'double' ;
+    end
+    G = spones (G, type) ;
+    if (~issymmetric (G))
+        % make G symmetric
+        G = spones (G + G') ;
+    end
+    if (any (diag (G)))
+        % remove any diagonal entries
+        G = gb.select ('offdiag', G) ;
+    end
+    D = gb.vreduce ('+', G, struct ('in0', 'transpose')) ;
+    L = diag (D) - tril (G) - triu (G) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % degree: degree of nodes of a graph
+    %---------------------------------------------------------------------------
+
+    function D = degree (G)
+    %DEGREE degree of a GraphBLAS matrix
+    % d = degree (G) is a vector of size n for an n-by-n GraphBLAS symmetric
+    % matrix G, equal to the d = sum (spones (G')).  It is intended for
+    % symmetric matrices (undirected graphs).  For directed graphs (G is
+    % unsymmetric), the result depends on the format of G.  If gb.format(G) is
+    % 'by row' then d = degree (G) is the row degree of G (or outdegree (G)),
+    % where d(i) is the number of entries in G(i,:).  If 'by col', then
+    % d = degree (G) is the column degree of G (or indegree(G)), which is
+    % the number of entries in G(:,i).
+    %
+    % See also gb/indegree, gb/outdegree, graph/degree.
+    if (isequal (gb.format (G), 'by row'))
+        D = row_degree (G) ;
+    else
+        D = col_degree (G) ;
+    end
+    end
+
+    %---------------------------------------------------------------------------
+    % outdegree: out degree of nodes of a graph
+    %---------------------------------------------------------------------------
+
+    function D = outdegree (G)
+    %OUTDEGREE out-degree of a GraphBLAS matrix
+    % d = outdegree (G) is a vector of size m for an m-by-n GraphBLAS matrix G,
+    % equal to d = sum (spones (G')).
+    %
+    % See also gb/degree, gb/indegree, graph/outdegree.
+    D = row_degree (G) ;
+    end
+
+    %---------------------------------------------------------------------------
+    % indegree: indegree of nodes of a graph
+    %---------------------------------------------------------------------------
+
+    function D = indegree (G)
+    %INDEGREE in-degree of a GraphBLAS matrix
+    % d = indegree (G) is a vector of size n for an m-by-n GraphBLAS matrix G,
+    % equal to d = sum (spones (G)).
+    %
+    % See also gb/degree, gb/outdegree, graph/indegree.
+    D = col_degree (G) ;
     end
 
 %===============================================================================
@@ -3086,7 +3199,7 @@ methods %=======================================================================
             C = gb.subassign (C, A, I) ;
         end
     elseif (ndims == 2)
-        % C(I,J) = A where A is length(I)-by-length(J)
+        % C(I,J) = A where A is length(I)-by-length(J), or a scalar
         I = get_index (S.subs (1)) ;
         J = get_index (S.subs (2)) ;
         C = gb.subassign (C, A, I, J) ;

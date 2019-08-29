@@ -86,6 +86,9 @@
 %   C = real (G)            real part of a complex GraphBLAS matrix
 %   [V, ...] = eig (G,...)  eigenvalues and eigenvectors
 %   assert (G)              generate an error if G is false
+%   C = zeros (...,'like',G)   all-zero matrix, same type as G
+%   C = false (...,'like',G)   all-false logical matrix
+%   C = ones (...,'like',G)    matrix with all ones, same type as G
 %
 % Operator overloading:
 %

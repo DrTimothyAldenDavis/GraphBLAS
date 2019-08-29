@@ -20,7 +20,9 @@ end
 Y0 = sprandn (nfeatures, nneurons, 0.5) ;
 
 Y1 = dnn_matlab (W, bias, Y0) ;
-Y2 = dnn_gb     (W, bias, Y0) ;
+
+[W, bias, Y0] = dnn_mat2gb (W, bias, Y0) ;
+Y2 = dnn_gb (W, bias, Y0) ;
 
 err = norm (Y1-Y2,1) ;
 assert (logical (err < 1e-5)) ;
