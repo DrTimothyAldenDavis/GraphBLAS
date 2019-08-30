@@ -190,7 +190,8 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
     const mxArray *D_matlab,    // MATLAB struct
-    kind_enum_t *kind           // gb, sparse, full, 0-based, or 1-based
+    kind_enum_t *kind,          // gb, sparse, full, 0-based, or 1-based
+    GxB_Format_Value *fmt       // by row or by col
 ) ;
 
 mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
@@ -330,6 +331,26 @@ void gb_tic /* returns current time in seconds and nanoseconds */
 double gb_toc               /* returns time since last gb_tic */
 (
     const double tic [2]    /* tic from last call to gb_tic */
+) ;
+
+GxB_Format_Value gb_default_format      // GxB_BY_ROW or GxB_BY_COL
+(
+    GrB_Index nrows,        // row vectors are stored by row
+    GrB_Index ncols         // column vectors are stored by column
+) ;
+
+bool gb_is_vector               // true if A is a row or column vector
+(
+    GrB_Matrix A                // GrB_Matrix to query
+) ;
+
+GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
+(
+    GrB_Index cnrows,                   // C is cnrows-by-cncols
+    GrB_Index cncols,
+    GrB_Matrix A,                       // may be NULL
+    GrB_Matrix B,                       // may be NULL
+    GxB_Format_Value format_descriptor  // may be GxB_NO_FORMAT
 ) ;
 
 #endif

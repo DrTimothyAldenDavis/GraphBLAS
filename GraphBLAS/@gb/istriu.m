@@ -1,4 +1,4 @@
-function result = istriu (G)
+function s = istriu (G)
 %ISTRIU  Determine if a matrix is upper triangular.
 % A GraphBLAS matrix G may have explicit zeros.  If these appear in the
 % lower triangular part of G, then istriu (G) is false, but
@@ -9,5 +9,5 @@ function result = istriu (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-result = (gb.nvals (tril (G, -1)) == 0) ;
+s = (gb.nvals (tril (G, -1)) == 0) ;
 

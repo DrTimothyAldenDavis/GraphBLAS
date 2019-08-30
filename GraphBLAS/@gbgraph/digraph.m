@@ -1,27 +1,22 @@
-function C = digraph (G)
-% C = digraph (G) is the directed MATLAB graph of the GraphBLAS matrix G.
-% G is used as the adjacency matrix of the digraph C.  G must be square.
-% No weights are added if G is logical.
+function C = digraph (H)
+%DIGRAPH convert a gbgraph into a MATLAB digraph.
+% C = digraph (H) converts a gbgraph H into a directed MATLAB digraph.  H may
+% be directed or undirected.  No weights are added if H is logical.
 
 % TODO test
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[m n] = size (G) ;
-if (m ~= n)
-    error ('G must be square') ;
-end
-
-type = gb.type (G) ;
+type = gb.type (H) ;
 
 if (isequal (type, 'logical'))
-    C = digraph (logical (G)) ;
+    C = digraph (logical (H)) ;
 elseif (isequal (type, 'double'))
-    C = digraph (double (G)) ;
+    C = digraph (double (H)) ;
 else
     % all other types (int*, uint*, single)
-    [i, j, x] = gb.extracttuples (G) ;
+    [i, j, x] = gb.extracttuples (H) ;
     C = digraph (i, j, x) ;
 end
 

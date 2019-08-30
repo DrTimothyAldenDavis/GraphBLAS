@@ -1,4 +1,4 @@
-function result = issymmetric (G, option)
+function s = issymmetric (G, option)
 %ISHERMITIAN Determine if a GraphBLAS matrix is symmetric.
 %
 % See also ishermitian.
@@ -8,17 +8,19 @@ function result = issymmetric (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+% TODO use isequal, not norm
+
 [m n] = size (G) ;
 if (m ~= n)
-    result = false ;
+    s = false ;
 else
     if (nargin < 2)
         option = 'nonskew' ;
     end
     if (isequal (option, 'skew'))
-        result = (norm (G + G.', 1) == 0) ;
+        s = (norm (G + G.', 1) == 0) ;
     else
-        result = (norm (G - G.', 1) == 0) ;
+        s = (norm (G - G.', 1) == 0) ;
     end
 end
 

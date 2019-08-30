@@ -1,4 +1,4 @@
-function [arg1,arg2] = bandwidth (G,uplo)
+function [arg1, arg2] = bandwidth (G, uplo)
 %BANDWIDTH Determine the bandwidth of a GraphBLAS matrix.
 % [lo, hi] = bandwidth (G) returns the upper and lower bandwidth of G.
 % lo = bandwidth (G, 'lower') returns just the lower bandwidth.

@@ -1,4 +1,4 @@
-function result = numel (G)
+function s = numel (G)
 %NUMEL the maximum number of entries a GraphBLAS matrix can hold.
 % numel (G) is m*n for the m-by-n GraphBLAS matrix G.
 
@@ -6,5 +6,5 @@ function result = numel (G)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m, n] = size (G) ;
-result = m*n ;
+s = m*n ;
 

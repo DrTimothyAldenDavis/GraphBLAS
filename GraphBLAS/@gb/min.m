@@ -42,7 +42,7 @@ if (nargin == 1)
         % giving a 1-by-n row vector.
         C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-        C = gb.subassign (C, (C > 0) & (col_degree (G) < m), 0)' ;
+        C = gb.subassign (C, (C > 0) & (gb.coldegree (G) < m), 0)' ;
     end
 
 elseif (nargin == 2)
@@ -97,13 +97,13 @@ elseif (nargin == 3)
         % giving a 1-by-n row vector.
         C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-        C = gb.subassign (C, (C > 0) & (col_degree (G) < m), 0)' ;
+        C = gb.subassign (C, (C > 0) & (gb.coldegree (G) < m), 0)' ;
     elseif (isequal (option, 2))
         % C = min (G, [ ], 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         C = gb.vreduce (op, G) ;
         % if C(i) > 0, but the row is sparse, then assign C(i) = 0.
-        C = gb.subassign (C, (C > 0) & (row_degree (G) < n), 0) ;
+        C = gb.subassign (C, (C > 0) & (gb.rowdegree (G) < n), 0) ;
     else
         error ('unknown option') ;
     end

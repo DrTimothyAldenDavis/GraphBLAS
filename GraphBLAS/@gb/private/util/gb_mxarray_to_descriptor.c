@@ -102,7 +102,8 @@ static void get_descriptor
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
     const mxArray *D_matlab,    // MATLAB struct
-    kind_enum_t *kind           // gb, sparse, full, 0-based, or 1-based
+    kind_enum_t *kind,          // gb, sparse, full, 0-based, or 1-based
+    GxB_Format_Value *fmt       // by row or by col
 )
 {
 
@@ -172,6 +173,21 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
         else
         {
             ERROR ("invalid descriptor.kind") ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // get the desired format of output, if any
+    //--------------------------------------------------------------------------
+
+    (*fmt) = GxB_NO_FORMAT ;
+    mxArray *mxfmt = mxGetField (D_matlab, 0, "format") ;
+    if (mxfmt != NULL)
+    {
+        (*fmt) = gb_mxstring_to_format (mxfmt) ;
+        if ((*fmt) == GxB_NO_FORMAT)
+        {
+            ERROR ("unknown format") ;
         }
     }
 

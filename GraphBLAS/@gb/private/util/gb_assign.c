@@ -52,7 +52,9 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     //--------------------------------------------------------------------------
 
     kind_enum_t kind ;
-    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
+    GxB_Format_Value fmt ;
+    GrB_Descriptor desc = 
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     //--------------------------------------------------------------------------
     // find the remaining arguments
@@ -184,6 +186,8 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         // the same type as C, with no entries, and use matrix assignment.
         OK (GrB_free (&A)) ;
         OK (GrB_Matrix_new (&A, ctype, ni, nj)) ;
+        OK (GxB_get (C, GxB_FORMAT, &fmt)) ;
+        OK (GxB_set (A, GxB_FORMAT, fmt)) ;
         scalar_assignment = false ;
     }
 

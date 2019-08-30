@@ -1,4 +1,4 @@
-function result = isbanded (G, lo, hi)
+function s = isbanded (G, lo, hi)
 %ISBANDED True if G is a banded matrix.
 % isbanded (G, lo, hi) is true if the bandwidth of G is between lo and hi.
 
@@ -8,5 +8,5 @@ function result = isbanded (G, lo, hi)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [Glo, Ghi] = bandwidth (G) ;
-result = (Glo <= lo) & (Ghi <= hi) ;
+s = (Glo <= lo) & (Ghi <= hi) ;
 

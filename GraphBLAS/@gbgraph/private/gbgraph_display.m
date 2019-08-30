@@ -5,16 +5,13 @@ if (~isempty (name))
     fprintf ('\n%s = \n\n', name) ;
 end
 
+n = numnodes (H) ;
 [e d] = numedges (H) ;
-fprintf ('    GraphBLAS ') ;
-if (isequal (H.graphkind, 'graph'))
-    fprintf ('undirected graph') ;
-else
-    fprintf ('directed graph') ;
-end
-fprintf (': %d nodes, %d edges', numnodes (H), e) ;
+fprintf ('    GraphBLAS %s graph: %d nodes, %d edges', H.graphkind, n, e) ;
 if (d == 0)
     fprintf (' (no self edges).\n') ;
+elseif (d == 1)
+    fprintf (' (%d is a self-edge).\n', d) ;
 else
     fprintf (' (%d are self-edges).\n', d) ;
 end

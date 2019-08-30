@@ -71,7 +71,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Aug 26, 2019 (DRAFT)"
+#define GxB_IMPLEMENTATION_DATE "Aug 30, 2019 (DRAFT)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3318,7 +3318,8 @@ typedef enum            // for global options or matrix options
 typedef enum
 {
     GxB_BY_ROW = 0,     // CSR: compressed sparse row format
-    GxB_BY_COL = 1      // CSC: compressed sparse column format
+    GxB_BY_COL = 1,     // CSC: compressed sparse column format
+    GxB_NO_FORMAT = -1  // format not defined
 }
 GxB_Format_Value ;
 

@@ -30,7 +30,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     kind_enum_t kind ;
-    GrB_Descriptor d = gb_mxarray_to_descriptor (pargin [0], &kind) ;
+    GxB_Format_Value fmt ;
+    GrB_Descriptor d = 
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (d == NULL)
     {

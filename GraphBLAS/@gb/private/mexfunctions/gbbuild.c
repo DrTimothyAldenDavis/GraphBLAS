@@ -45,7 +45,10 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     kind_enum_t kind ;
-    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
+    GxB_Format_Value fmt ;
+    GrB_Descriptor desc = 
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
+
     OK (GrB_free (&desc)) ;
 
     // remove the descriptor from consideration
@@ -159,6 +162,8 @@ void mexFunction
 
     GrB_Matrix A ;
     OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
+    fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
+    OK (GxB_set (A, GxB_FORMAT, fmt)) ;
 
     if (xtype == GrB_BOOL)
     {

@@ -1,4 +1,4 @@
-function [arg1 n] = size (G, dim)
+function [arg1, n] = size (G, dim)
 %SIZE the dimensions of a GraphBLAS matrix.
 % [m n] = size (G) is the size of an m-by-n GraphBLAS sparse matrix.
 
@@ -11,6 +11,6 @@ if (nargout <= 1)
         arg1 = arg1 (dim) ;
     end
 else
-    [arg1 n] = gbsize (G.opaque) ;
+    [arg1, n] = gbsize (G.opaque) ;
 end
 

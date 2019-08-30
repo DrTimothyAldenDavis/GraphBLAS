@@ -30,7 +30,9 @@ GrB_Type gb_string_to_type      // return the GrB_Type from a string
     if (MATCH (classname, "complex" )) return (gb_complex_type) ;
     #endif
 
-    // not a type
+    // The string is not a type, but this is not an error here.  For example,
+    // G = gb (m,n,'double','by row') queries both its string input arguments
+    // with gb_mxstring_to_type and gb_mxstring_to_format, to parse its inputs.
     return (NULL) ;
 }
 

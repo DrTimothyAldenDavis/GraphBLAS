@@ -72,11 +72,15 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     kind_enum_t kind = KIND_FULL ;
+    GxB_Format_Value fmt = GxB_NO_FORMAT ;
     GrB_Descriptor desc = NULL ;
     if (nargin > 3)
     {
-        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
+        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
     }
+
+    // X determines the format of F, unless defined by the descriptor
+    fmt = gb_get_format (nrows, ncols, X, NULL, fmt) ;
 
     //--------------------------------------------------------------------------
     // expand the identity into a dense matrix the same size as F
@@ -84,6 +88,7 @@ void mexFunction
 
     GrB_Matrix Z ;
     OK (GrB_Matrix_new (&Z, type, nrows, ncols)) ;
+    OK (GxB_set (Z, GxB_FORMAT, fmt)) ;
     gb_matrix_assign_scalar (Z, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL,
         false) ;
 
@@ -93,6 +98,7 @@ void mexFunction
 
     GrB_Matrix F ;
     OK (GrB_Matrix_new (&F, type, nrows, ncols)) ;
+    OK (GxB_set (F, GxB_FORMAT, fmt)) ;
     OK (GrB_eWiseAdd (F, NULL, NULL, gb_first_binop (type), X, Z, NULL)) ;
 
     //--------------------------------------------------------------------------

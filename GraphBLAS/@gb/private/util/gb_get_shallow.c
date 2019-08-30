@@ -46,7 +46,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // matrix is empty
         //----------------------------------------------------------------------
 
-        // return an empty matrix as 0-by-0, of the right type
+        // return an empty matrix as 0-by-0, of the right type (default format)
         OK (GrB_Matrix_new (&A, gb_mxarray_type (X), 0, 0)) ;
 
     }
@@ -80,7 +80,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         A->nvec          = (int64_t) s [4] ;
         A->nvec_nonempty = (int64_t) s [5] ;
         A->is_hyper      = (int64_t) s [6] ;
-        A->is_csc        = (int64_t) s [7] ;
+        A->is_csc        = (int64_t) s [7] ;    // format already defined
         A->nzmax         = (int64_t) s [8] ;
 
         // get the pointers
@@ -231,8 +231,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
             }
         }
 
-        // import the matrix.  This sets Xp, Xi, and Xx to NULL, but it does
-        // not change the MATLAB matrix they came from.
+        // import the matrix in CSC format.  This sets Xp, Xi, and Xx to NULL,
+        // but it does not change the MATLAB matrix they came from.
         OK (GxB_Matrix_import_CSC (&A, type, nrows, ncols, nzmax, -1,
             &Xp, &Xi, &Xx, NULL)) ;
 

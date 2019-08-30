@@ -1,4 +1,4 @@
-function C = diag (G,k)
+function C = diag (G, k)
 % DIAG Diagonal matrices and diagonals of a matrix.
 % C = diag (v,k) when v is a GraphBLAS vector with n components is a square
 % sparse GarphBLAS matrix of dimension n+abs(k), with the elements of v on the

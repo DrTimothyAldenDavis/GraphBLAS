@@ -35,10 +35,11 @@ void mexFunction
 
     // default is 1-based, for [I, J, X] = find (G)
     kind_enum_t kind = KIND_1BASED ;
+    GxB_Format_Value fmt = GxB_NO_FORMAT ;
     GrB_Descriptor desc = NULL ;
     if (nargin == 2)
     {
-        desc = gb_mxarray_to_descriptor (pargin [1], &kind) ;
+        desc = gb_mxarray_to_descriptor (pargin [1], &kind, &fmt) ;
     }
     OK (GrB_free (&desc)) ;
 

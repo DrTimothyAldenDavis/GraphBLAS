@@ -42,7 +42,7 @@ if (nargin == 1)
     else
         % C = prod (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = (gb.vreduce (op, G, d) .* (col_degree (G) == m))' ;
+        C = (gb.vreduce (op, G, d) .* (gb.coldegree (G) == m))' ;
     end
 elseif (isequal (option, 'all'))
     % C = prod (G, 'all'), reducing all entries to a scalar
@@ -54,11 +54,11 @@ elseif (isequal (option, 'all'))
 elseif (isequal (option, 1))
     % C = prod (G,1) reduces each column to a scalar,
     % giving a 1-by-n row vector.
-    C = (gb.vreduce (op, G, d) .* (col_degree (G) == m))' ;
+    C = (gb.vreduce (op, G, d) .* (gb.coldegree (G) == m))' ;
 elseif (isequal (option, 2))
     % C = prod (G,2) reduces each row to a scalar,
     % giving an m-by-1 column vector.
-    C = gb.vreduce (op, G) .* (row_degree (G) == n) ;
+    C = gb.vreduce (op, G) .* (gb.rowdegree (G) == n) ;
 else
     error ('unknown option') ;
 end

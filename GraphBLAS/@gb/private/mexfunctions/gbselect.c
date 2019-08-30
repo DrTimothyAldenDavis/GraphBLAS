@@ -56,7 +56,9 @@ void mexFunction
     GrB_Type ctype ;
 
     kind_enum_t kind ;
-    GrB_Descriptor desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind) ;
+    GxB_Format_Value fmt ;
+    GrB_Descriptor desc = 
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (mxIsChar (pargin [0]))
     {
@@ -173,6 +175,8 @@ void mexFunction
         }
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
+        fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
+        OK (GxB_set (C, GxB_FORMAT, fmt)) ;
     }
 
     //--------------------------------------------------------------------------
