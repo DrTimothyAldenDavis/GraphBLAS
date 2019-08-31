@@ -1,6 +1,12 @@
 function C = mpower (A, B)
-%A^B
-% A must be a square matrix.  B must an integer >= 0.
+%A^B Matrix power.
+% C = A^B computes the matrix power of A raised to the B. A must be a
+% square matrix.  B must an integer >= 0.
+%
+% The inputs may be either GraphBLAS and/or MATLAB matrices/scalars, in
+% any combination.  C is returned as a GraphBLAS matrix.
+%
+% See also gb/power.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

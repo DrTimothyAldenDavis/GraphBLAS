@@ -249,9 +249,6 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
         A->h_shallow = (A->h != NULL) ;
         A->x_shallow = (A->x != NULL) ;
-
-        // make sure the shallow copy remains standard, not hypersparse
-        OK (GxB_set (A, GxB_HYPER, GxB_NEVER_HYPER)) ;
     }
 
     //--------------------------------------------------------------------------

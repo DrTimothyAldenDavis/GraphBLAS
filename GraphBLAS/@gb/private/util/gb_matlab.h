@@ -353,5 +353,18 @@ GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
     GxB_Format_Value format_descriptor  // may be GxB_NO_FORMAT
 ) ;
 
+bool gb_is_equal            // true if A == B, false if A ~= B
+(
+    GrB_Matrix A,
+    GrB_Matrix B
+) ;
+
+bool gb_is_all              // true if op (A,B) is all true, false otherwise
+(
+    GrB_Matrix A,
+    GrB_Matrix B,
+    GrB_BinaryOp op
+) ;
+
 #endif
 

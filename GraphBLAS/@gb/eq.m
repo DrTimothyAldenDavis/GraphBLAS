@@ -1,7 +1,10 @@
 function C = eq (A, B)
-%A == B
-% Element-by-element comparison of A and B.  One or both may be scalars.
-% Otherwise, A and B must have the same size.
+%A == B Equal.
+% C = (A == B) is an element-by-element comparison of A and B.  One or
+% both may be scalars.  Otherwise, A and B must have the same size.
+%
+% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
+% any combination.  C is returned as a GraphBLAS matrix.
 
 % The pattern of C depends on the type of inputs:
 % A scalar, B scalar:  C is scalar.
@@ -23,7 +26,7 @@ if (isscalar (A))
             % since a == 0, entries not present in B result in a true value,
             % so the result is dense.  Expand A to a dense matrix.
             A = gb.expand (A, true (size (B))) ;
-            C = gb.select ('nonzero', gb.emult ('==', A, full (B))) ;
+            C = gb.prune (gb.emult ('==', A, full (B))) ;
         else
             % since a ~= 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
@@ -38,7 +41,7 @@ else
             % since b == 0, entries not present in A result in a true value,
             % so the result is dense.  Expand B to a dense matrix.
             B = gb.expand (B, true (size (A))) ;
-            C = gb.select ('nonzero', gb.emult ('==', full (A), B)) ;
+            C = gb.prune (gb.emult ('==', full (A), B)) ;
         else
             % since b ~= 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  select all

@@ -2,6 +2,8 @@ function n = length (G)
 %LENGTH the length of a GraphBLAS vector.
 % length (G) is the length of the vector G.  For matrices, it is
 % max (size (G)) if G is non-empty, or zero if G has any zero dimension.
+%
+% See also size, numel.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

@@ -1,5 +1,8 @@
 function C = isfinite (G)
 %ISFINITE True for finite elements.
+% C = isfinite (G) returns a GraphBLAS logical matrix where C(i,j) = true
+% if G(i,j) is finite.
+%
 % See also isnan, isinf.
 
 % FUTURE: this could be much faster as a mexFunction.

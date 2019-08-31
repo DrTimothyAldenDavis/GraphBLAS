@@ -1,5 +1,5 @@
 function C = empty (arg1, arg2)
-%GB.EMPTY construct an empty GraphBLAS sparse matrix
+%GB.EMPTY construct an empty GraphBLAS sparse matrix.
 % C = gb.empty is a 0-by-0 empty matrix.
 % C = gb.empty (m) is an m-by-0 empty matrix.
 % C = gb.empty ([m n]) or gb.empty (m,n) is an m-by-n empty matrix, where
@@ -9,6 +9,9 @@ function C = empty (arg1, arg2)
 % to construct empty single, int*, uint*, and logical m-by-n matrices.
 %
 % See also gb.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 m = 0 ;
 n = 0 ;

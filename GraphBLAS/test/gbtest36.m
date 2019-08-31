@@ -18,11 +18,11 @@ for k = 1:length (types)
     end
     G = gb (A, type) ;
     B = cast (A, type) ;
-    assert (isequal (double (B), double (G)))
+    assert (gbtest_eq (B, G))
 
     H = abs (G) ;
     C = abs (B) ;
-    assert (isequal (double (C), double (H)))
+    assert (gbtest_eq (double (C), double (H)))
 
     H = sign (G) ;
     if (isequal (type, 'logical'))
@@ -31,7 +31,7 @@ for k = 1:length (types)
     else
         C = sign (B) ;
     end
-    assert (isequal (double (C), double (H)))
+    assert (gbtest_eq (C, H))
 
 end
 

@@ -18,38 +18,38 @@ for trial = 1:40
     err = norm (sqrt (A) - sqrt (G), 1) ; assert (err < 8 * eps ('double')) ;
     err = norm (sqrt (B) - sqrt (H), 1) ; assert (err < 8 * eps ('single')) ;
 
-    assert (isequal (eps (A), double (eps (G)))) ;
-    assert (isequal (eps (B), single (eps (H)))) ;
+    assert (gbtest_eq (eps (A), eps (G))) ;
+    assert (gbtest_eq (eps (B), eps (H))) ;
 
-    assert (isequal (ceil (A), double (ceil (G)))) ;
-    assert (isequal (ceil (B), single (ceil (H)))) ;
+    assert (gbtest_eq (ceil (A), ceil (G))) ;
+    assert (gbtest_eq (ceil (B), ceil (H))) ;
 
-    assert (isequal (floor (A), double (floor (G)))) ;
-    assert (isequal (floor (B), single (floor (H)))) ;
+    assert (gbtest_eq (floor (A), floor (G))) ;
+    assert (gbtest_eq (floor (B), floor (H))) ;
 
-    assert (isequal (round (A), double (round (G)))) ;
-    assert (isequal (round (B), single (round (H)))) ;
+    assert (gbtest_eq (round (A), round (G))) ;
+    assert (gbtest_eq (round (B), round (H))) ;
 
-    assert (isequal (fix (A), double (fix (G)))) ;
-    assert (isequal (fix (B), single (fix (H)))) ;
+    assert (gbtest_eq (fix (A), fix (G))) ;
+    assert (gbtest_eq (fix (B), fix (H))) ;
 
-    assert (isequal (real (A), double (real (G)))) ;
-    assert (isequal (real (B), single (real (H)))) ;
+    assert (gbtest_eq (real (A), real (G))) ;
+    assert (gbtest_eq (real (B), real (H))) ;
 
-    assert (isequal (conj (A), double (conj (G)))) ;
-    assert (isequal (conj (B), single (conj (H)))) ;
+    assert (gbtest_eq (conj (A), conj (G))) ;
+    assert (gbtest_eq (conj (B), conj (H))) ;
 
     C = A ;
     C (1,1) = inf ;
     C (2,2) = nan ;
     G = gb (C) ;
 
-    assert (isequal (isfinite (C), double (isfinite (G)))) ;
-    assert (isequal (isnan    (C), double (isnan    (G)))) ;
+    assert (gbtest_eq (isfinite (C), isfinite (G))) ;
+    assert (gbtest_eq (isnan    (C), isnan    (G))) ;
 
     A = sprand (10, 10, 0.5) ;
     G = gb (A) ;
-    assert (isequal (spfun (@exp, A), double (spfun (@exp, G)))) ;
+    assert (gbtest_eq (spfun (@exp, A), double (spfun (@exp, G)))) ;
 
     A = rand (10) ;
     G = gb (A) ;

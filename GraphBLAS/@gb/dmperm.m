@@ -1,5 +1,5 @@
 function [p, varargout] = dmperm (G)
-%DMPERM Dulmage-Mendelsohn permutation.
+%DMPERM Dulmage-Mendelsohn permutation of a GraphBLAS matrix.
 % See 'help dmperm' for details.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

@@ -1,5 +1,5 @@
 function Cout = extract (varargin)
-%GB.EXTRACT extract sparse submatrix
+%GB.EXTRACT extract sparse submatrix.
 %
 % gb.extract is an interface to GrB_Matrix_extract and
 % GrB_Matrix_extract_[TYPE], computing the GraphBLAS expression:
@@ -63,6 +63,10 @@ function Cout = extract (varargin)
 %
 % M: an optional mask matrix, the same size as C.
 %
+% All input matrices may be either GraphBLAS and/or MATLAB matrices, in
+% any combination.  Cout is returned as a GraphBLAS matrix, by default;
+% see 'help gb/descriptorinfo' for more options.
+%
 % Example:
 %
 %   A = sprand (5, 4, 0.5)
@@ -73,6 +77,9 @@ function Cout = extract (varargin)
 %   C2 - Cout
 %
 % See also subsref.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [args is_gb] = get_args (varargin {:}) ;
 if (is_gb)

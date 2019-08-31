@@ -19,7 +19,7 @@ for m = 1:6
                 n2 = mn / m2 ;
                 C1 = reshape (A, m2, n2) ;
                 C2 = reshape (G, m2, n2) ;
-                assert (isequal (C1, double (C2))) ;
+                assert (gbtest_eq (C1, C2)) ;
             end
         end
     end

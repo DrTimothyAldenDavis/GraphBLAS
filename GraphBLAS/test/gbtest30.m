@@ -31,8 +31,8 @@ tic
 y = G (1:2:k)
 toc
 
-assert (isequal (y, z)) ;
-assert (isequal (x, double (y))) ;
+assert (gbtest_eq (y, z)) ;
+assert (gbtest_eq (x, y)) ;
 
 % GraphBLAS can construct huge-by-huge matrices
 tic
@@ -44,7 +44,7 @@ H (I,I) = M
 M2 = H (I,I)
 t = toc ;
 fprintf ('\ntime to construct H: %g sec\n', t) ;
-assert (isequal (M, double (M2)))
+assert (gbtest_eq (M, M2))
 
 middle = ceil (median (I))
 

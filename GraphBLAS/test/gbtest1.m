@@ -20,14 +20,14 @@ for k = 1:length (types)
     fprintf ('\n---- A = gb (X) :\n') ;
     A = gb (X)
     Z = double (A)
-    assert (isequal (Z, X)) ;
+    assert (gbtest_eq (Z, X)) ;
 
     fprintf ('\n---- A = gb (X, ''%s'') :\n', type) ;
     A = gb (X, type)
     Z = logical (A)
     if (isequal (type, 'logical'))
         assert (islogical (Z)) ;
-        assert (isequal (Z, logical (X))) ;
+        assert (gbtest_eq (Z, logical (X))) ;
     end
 
     fprintf ('\n---- A = gb (%d, %d) :\n', m, n) ;
@@ -39,7 +39,7 @@ for k = 1:length (types)
     Z = logical (A)
     if (isequal (type, 'logical'))
         assert (islogical (Z)) ;
-        assert (isequal (Z, logical (sparse (m,n)))) ;
+        assert (gbtest_eq (Z, logical (sparse (m,n)))) ;
     end
 
 end

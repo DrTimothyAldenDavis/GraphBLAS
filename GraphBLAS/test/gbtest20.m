@@ -19,10 +19,10 @@ for trial = 1:40
             d2 = isdiag (G) ;
             assert (isequal (d1, d2)) ;
 
-            assert (isequal (ceil  (A), double (ceil  (G)))) ;
-            assert (isequal (floor (A), double (floor (G)))) ;
-            assert (isequal (round (A), double (round (G)))) ;
-            assert (isequal (fix   (A), double (fix   (G)))) ;
+            assert (gbtest_eq (ceil  (A), ceil  (G))) ;
+            assert (gbtest_eq (floor (A), floor (G))) ;
+            assert (gbtest_eq (round (A), round (G))) ;
+            assert (gbtest_eq (fix   (A), fix   (G))) ;
         end
     end
 end

@@ -17,8 +17,7 @@ A = sprand (m, n, 0.5) ;
 
 C = gb.build (i, j, x, m, n) ;
 
-S = double (C) ;
-assert (isequal (S, A)) ;
+assert (gbtest_eq (C, A)) ;
 
 fprintf ('\nGenerating large test matrix; please wait ...\n') ;
 n = 1000 ;
@@ -63,11 +62,9 @@ A2 = gb.build (i0, j0, x, m, n) ;
 t = toc ;
 fprintf ('%12.4f sec : A = gb.build (i0, j0, ...), with i0 and j0 uint64\n', t);
 
-A2 = double (A2) ;
-A3 = double (A3) ;
-assert (isequal (A1, A2)) ;
-assert (isequal (A1, A3)) ;
-assert (isequal (A1, A4)) ;
+assert (gbtest_eq (A1, A2)) ;
+assert (gbtest_eq (A1, A3)) ;
+assert (gbtest_eq (A1, A4)) ;
 
 fprintf ('\nwith [I J] jumbled so that a sort is required:\n') ;
 
@@ -97,11 +94,9 @@ A2 = gb.build (i0, j0, x, m, n) ;
 t = toc ;
 fprintf ('%12.4f sec : A = gb.build (i0, j0, ...), with i0 and j0 uint64\n', t);
 
-A2 = double (A2) ;
-A3 = double (A3) ;
-assert (isequal (A1, A2)) ;
-assert (isequal (A1, A3)) ;
-assert (isequal (A1, A4)) ;
+assert (gbtest_eq (A1, A2)) ;
+assert (gbtest_eq (A1, A3)) ;
+assert (gbtest_eq (A1, A4)) ;
 
 fprintf ('\ngbtest28: all tests passed\n') ;
 

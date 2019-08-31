@@ -1,5 +1,7 @@
 function s = isinteger (G)
 %ISINTEGER true for integer GraphBLAS matrices.
+% isinteger (G) is true if the GraphBLAS matrix G has an integer type
+% (int8, int16, int32, int64, uint8, uint16, uint32, or uint64).
 %
 % See also isnumeric, isfloat, isreal, islogical, gb.type, isa, gb.
 

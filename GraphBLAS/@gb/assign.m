@@ -1,5 +1,5 @@
 function Cout = assign (varargin)
-%GB.ASSIGN: assign a submatrix into a matrix
+%GB.ASSIGN: assign a submatrix into a matrix.
 %
 % gb.assign is an interface to GrB_Matrix_assign and
 % GrB_Matrix_assign_[TYPE], computing the GraphBLAS expression:
@@ -50,7 +50,7 @@ function Cout = assign (varargin)
 %       both I = { } and J = { }, or C(:,:) in MATLAB notation,
 %       refering to all rows and columns of C.
 %
-%  A: this argument either has size length(I)-by-length(J) (or A' if d.in0
+% A: this argument either has size length(I)-by-length(J) (or A' if d.in0
 %       is 'transpose'), or it is 1-by-1 for scalar assignment (like
 %       C(1:2,1:2)=pi, which assigns the scalar pi to the leading 2-by-2
 %       submatrix of C).  For scalar assignment, A must contain an entry;
@@ -64,6 +64,9 @@ function Cout = assign (varargin)
 %
 % Cin: a required input matrix, containing the initial content of the
 % matrix C.  Cout is the content of C after the assignment is made.
+%
+% All input matrices may be either GraphBLAS and/or MATLAB matrices, in any
+% combination.  Cout is returned as a GraphBLAS matrix.
 %
 % Example:
 %
@@ -89,6 +92,9 @@ function Cout = assign (varargin)
 %   C2 - sparse (Cout)
 %
 % See also gb.subassign, subsasgn
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [args is_gb] = get_args (varargin {:}) ;
 if (is_gb)

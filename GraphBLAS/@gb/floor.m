@@ -1,5 +1,8 @@
 function C = floor (G)
-%FLOOR round entries to the nearest integers towards -infinity
+%FLOOR round entries of a GraphBLAS matrix to the nearest ints to -inf.
+% C = floor (G) rounds the entries in the GraphBLAS matrix G to the
+% nearest integers towards -infinity.
+%
 % See also ceil, round, fix.
 
 % FUTURE: this could be much faster as a mexFunction.

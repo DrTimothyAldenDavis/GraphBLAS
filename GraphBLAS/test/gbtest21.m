@@ -14,9 +14,9 @@ for trial = 1:40
             A (2,2) = inf ;
             G = gb (A) ;
 
-            assert (isequal (isfinite (A), logical (isfinite (G)))) ;
-            assert (isequal (isinf    (A), logical (isinf    (G)))) ;
-            assert (isequal (isnan    (A), logical (isnan    (G)))) ;
+            assert (gbtest_eq (isfinite (A), isfinite (G))) ;
+            assert (gbtest_eq (isinf    (A), isinf    (G))) ;
+            assert (gbtest_eq (isnan    (A), isnan    (G))) ;
 
             assert (isrow    (A) == isrow    (G)) ;
             assert (iscolumn (A) == iscolumn (G)) ;

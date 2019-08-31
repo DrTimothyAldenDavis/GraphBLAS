@@ -1,9 +1,9 @@
 function C = sum (G, option)
 %SUM Sum of elements.
-% C = sum (G), where G is an m-by-n GraphBLAS matrix, computes a 1-by-n row
-% vector C where C(j) is the sum of all entries in G(:,j).  If G is a row
-% or column vector, then sum (G) is a scalar sum of all the entries in the
-% vector.
+% C = sum (G), where G is an m-by-n GraphBLAS matrix, computes a 1-by-n
+% row vector C where C(j) is the sum of all entries in G(:,j).  If G is a
+% row or column vector, then sum (G) is a scalar sum of all the entries
+% in the vector.
 %
 % C = sum (G,'all') sums all elements of G to a single scalar.
 %
@@ -14,10 +14,10 @@ function C = sum (G, option)
 % C = sum (G,2) sums each row to a scalar, resulting in an m-by-1 column
 % vector C where C(i) is the sum of all entries in G(i,:).
 %
-% The MATLAB sum (A, ... type, nanflag) allows for different types of sums
-% to be computed, and the NaN behavior can be specified.  The GraphBLAS
-% sum (G,...) uses only a type of 'native', and a nanflag of 'includenan'.
-% See 'help sum' for more details.
+% The MATLAB sum (A, ... type, nanflag) allows for different types of
+% sums to be computed, and the NaN behavior can be specified.  The
+% GraphBLAS sum (G,...) uses only a type of 'native', and a nanflag of
+% 'includenan'.  See 'help sum' for more details.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

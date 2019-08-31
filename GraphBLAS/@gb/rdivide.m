@@ -1,12 +1,14 @@
 function C = rdivide (A, B)
-%TIMES C = A./B, sparse matrix element-wise division
-% C = A./B when B is a matrix results in a dense matrix C, with all entries
-% present.  If A is a matrix and B is a scalar, then C has the pattern of
-% A, except if B is zero and A is double, single, or complex.  In that
-% case, since 0/0 is NaN, C is a dense matrix.  If the types of A and B
-% differ, C has the type of A, and B is typecasted into the type of A
-% before computing C=A./B.  A and B can be GraphBLAS matrices or MATLAB
-% sparse or full matrices, in any combination.
+%TIMES C = A./B, sparse matrix element-wise division.
+% C = A./B when B is a matrix results in a dense matrix C, with all
+% entries present.  If A is a matrix and B is a scalar, then C has the
+% pattern of A, except if B is zero and A is double, single, or complex.
+% In that case, since 0/0 is NaN, C is a dense matrix.  If the types of A
+% and B differ, C has the type of A, and B is typecasted into the type of
+% A before computing C=A./B.
+%
+% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
+% any combination.  C is returned as a GraphBLAS matrix.
 %
 % See also rdivide, gb.emult, gb.eadd.
 
@@ -30,8 +32,8 @@ else
             % floating-point.  The result is a dense matrix.
             C = gb.eadd ('/', A, gb.expand (B, true (size (A)))) ;
         else
-            % The scalar B is nonzero so just compute A/B in the pattern of
-            % A.  The result is sparse (the pattern of A).
+            % The scalar B is nonzero so just compute A/B in the pattern
+            % of A.  The result is sparse (the pattern of A).
             C = gb.emult ('/', A, gb.expand (B, A)) ;
         end
     else

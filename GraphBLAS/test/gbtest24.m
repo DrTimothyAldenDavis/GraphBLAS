@@ -23,37 +23,37 @@ for trial = 1:40
 
             c1 = all (MA) ;
             c2 = all (GA) ;
-            assert (isequal (c1, double (c2))) ;
+            assert (gbtest_eq (c1, c2)) ;
 
             c1 = any (MA) ;
             c2 = any (GA) ;
-            assert (isequal (c1, double (c2))) ;
+            assert (gbtest_eq (c1, c2)) ;
 
             % c1 = all (MA, 'all') ;
             c1 = all (all (MA)) ;
             c2 = all (GA, 'all') ;
-            assert (isequal (c1, double (c2))) ;
+            assert (gbtest_eq (c1, c2)) ;
 
             % c1 = any (MA, 'all') ;
             c1 = any (any (MA)) ;
             c2 = any (GA, 'all') ;
-            assert (isequal (c1, double (c2))) ;
+            assert (gbtest_eq (c1, c2)) ;
 
             C1 = all (MA, 1) ;
             C2 = all (GA, 1) ;
-            assert (isequal (C1, double (C2))) ;
+            assert (gbtest_eq (C1, C2)) ;
 
             C1 = any (MA, 1) ;
             C2 = any (GA, 1) ;
-            assert (isequal (C1, double (C2))) ;
+            assert (gbtest_eq (C1, C2)) ;
 
             C1 = all (MA, 2) ;
             C2 = all (GA, 2) ;
-            assert (isequal (C1, double (C2))) ;
+            assert (gbtest_eq (C1, C2)) ;
 
             C1 = any (MA, 2) ;
             C2 = any (GA, 2) ;
-            assert (isequal (C1, double (C2))) ;
+            assert (gbtest_eq (C1, C2)) ;
 
         end
     end

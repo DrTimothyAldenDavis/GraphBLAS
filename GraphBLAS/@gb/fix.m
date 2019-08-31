@@ -1,5 +1,8 @@
 function C = fix (G)
-%FIX Round towards zero.
+%FIX Round towards entries in a GraphBLAS matrix to zero.
+% C = fix (G) rounds the entries in the GraphBLAS matrix G to the
+% nearest integers towards zero.
+%
 % See also ceil, floor, round.
 
 % FUTURE: this could be much faster as a mexFunction.

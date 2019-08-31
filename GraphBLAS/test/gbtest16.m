@@ -13,42 +13,42 @@ M = sparse (rand (n)) > 0.5 ;
 Cin = sprand (n, n, 0.5) ;
 
 Cout = gb.extract (Cin, A) ;
-assert (isequal (A, double (Cout))) ;
+assert (gbtest_eq (A, Cout)) ;
 
 Cout = gb.extract (Cin, A, { }, { }) ;
-assert (isequal (A, double (Cout))) ;
+assert (gbtest_eq (A, Cout)) ;
 
 Cout = gb.extract (Cin, M, A) ;
 C2 = Cin ;
 C2 (M) = A (M) ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 Cout = gb.extract (Cin, '+', A) ;
 C2 = Cin + A ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 d.in0 = 'transpose' ;
 Cout = gb.extract (Cin, M, A, d) ;
 C2 = Cin ;
 C2 (M) = AT (M) ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 Cout = gb.extract (Cin, '+', A, d) ;
 C2 = Cin + AT ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 d.mask = 'complement' ;
 Cout = gb.extract (Cin, M, A, d) ;
 C2 = Cin ;
 C2 (~M) = AT (~M) ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 I = [2 1 5] ;
 J = [3 3 1 2] ;
 % B = sprandn (length (I), length (J), 0.5) ;
 Cout = gb.extract (A, {I}, {J}) ;
 C2 = A (I,J)  ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 fprintf ('gbtest16: all tests passed\n') ;
 

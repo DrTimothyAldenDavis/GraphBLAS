@@ -22,7 +22,7 @@ for trial = 1:40
             % Both those pages state that A(M) where M is a logical matrix
             % always returns a column vector.  GraphBLAS always returns a
             % column vector.  So x1(:) and x2(:) are compared below:
-            assert (isequal (x1 (:), double (x2 (:)))) ;
+            assert (gbtest_eq (x1 (:), x2 (:))) ;
 
             % Both GraphBLAS and MATLAB can accept either row or column vectors
             % x on input to C (M) = x.  MATLAB treats this as C(M)=x(:), and so
@@ -43,9 +43,9 @@ for trial = 1:40
             C4 = C ;
             C4 (M) = G (M) ;
 
-            assert (isequal (C1, double (C2))) ;
-            assert (isequal (C1, double (C3))) ;
-            assert (isequal (C1, C4)) ;
+            assert (gbtest_eq (C1, C2)) ;
+            assert (gbtest_eq (C1, C3)) ;
+            assert (gbtest_eq (C1, C4)) ;
 
             % also try with a gb mask matrix M.  In this case, A(M) where A
             % is a MATLAB matrix and M is a gb logical matrix fails.
@@ -57,7 +57,7 @@ for trial = 1:40
             C5 = gb (C) ;
             C5 (M) = G (M) ;
 
-            assert (isequal (C1, double (C5))) ;
+            assert (gbtest_eq (C1, C5)) ;
 
             % test scalar assigment with logical indexing
             K = logical (M) ;
@@ -67,10 +67,10 @@ for trial = 1:40
             C4 (K) = gb (pi) ;
             C5 (M) = pi ;
 
-            assert (isequal (C1, double (C2))) ;
-            assert (isequal (C1, double (C3))) ;
-            assert (isequal (C1, C4)) ;
-            assert (isequal (C1, double (C5))) ;
+            assert (gbtest_eq (C1, C2)) ;
+            assert (gbtest_eq (C1, C3)) ;
+            assert (gbtest_eq (C1, C4)) ;
+            assert (gbtest_eq (C1, C5)) ;
 
         end
     end

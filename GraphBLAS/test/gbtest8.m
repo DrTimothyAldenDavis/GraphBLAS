@@ -4,8 +4,6 @@ function gbtest8
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('gbtest8: select operators (tril, triu, diag, offdiag, ...)\n') ;
-
 %   tril
 %   triu
 %   diag
@@ -41,15 +39,15 @@ A (3,4) = thunk ;
 
     C1 = tril (A) ;
     C2 = gb.select ('tril', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = tril (A, k) ;
         C2 = gb.select ('tril', A, k) ;
-        assert (isequal (C1, double (C2)))
+        assert (gbtest_eq (C1, C2))
     end
     C1 = tril (A, 0) ;
     C2 = gb.select ('tril', A, 0) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % triu
@@ -57,15 +55,15 @@ A (3,4) = thunk ;
 
     C1 = triu (A) ;
     C2 = gb.select ('triu', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = triu (A, k) ;
         C2 = gb.select ('triu', A, k) ;
-        assert (isequal (C1, double (C2)))
+        assert (gbtest_eq (C1, C2))
     end
     C1 = triu (A, 0) ;
     C2 = gb.select ('triu', A, 0) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % diag
@@ -74,15 +72,15 @@ A (3,4) = thunk ;
     d = min (m,n) ;
     C1 = A .* spdiags (ones (d,1), 0, m, n) ;
     C2 = gb.select ('diag', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = A .* spdiags (ones (d,1), k, m, n) ;
         C2 = gb.select ('diag', A, k) ;
-        assert (isequal (C1, double (C2)))
+        assert (gbtest_eq (C1, C2))
     end
     C1 = A .* spdiags (ones (d,1), 0, m, n) ;
     C2 = gb.select ('diag', A, 0) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % offdiag
@@ -91,15 +89,15 @@ A (3,4) = thunk ;
     d = min (m,n) ;
     C1 = A .* (1 - spdiags (ones (d,1), 0, m, n)) ;
     C2 = gb.select ('offdiag', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = A .* (1 - spdiags (ones (d,1), k, m, n)) ;
         C2 = gb.select ('offdiag', A, k) ;
-        assert (isequal (C1, double (C2)))
+        assert (gbtest_eq (C1, C2))
     end
     C1 = A .* (1 - spdiags (ones (d,1), 0, m, n)) ;
     C2 = gb.select ('offdiag', A, 0) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % nonzero
@@ -116,10 +114,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('nonzero', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('~=0', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % eqzero
@@ -133,10 +131,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
 
     C2 = gb.select ('eqzero', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('==0', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % gtzero
@@ -149,10 +147,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('gtzero', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('>0', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % gezero
@@ -165,10 +163,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('gezero', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('>=0', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % ltzero
@@ -181,10 +179,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('ltzero', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('<0', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % lezero
@@ -197,10 +195,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('lezero', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('<=0', A) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 
 %-------------------------------------------------------------------------------
@@ -214,10 +212,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('nethunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('~=thunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % eqthunk
@@ -230,10 +228,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('eqthunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('==thunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % gtthunk
@@ -246,10 +244,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('gtthunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('>thunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % gethunk
@@ -262,10 +260,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('gethunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('>=thunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % ltthunk
@@ -278,10 +276,10 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('ltthunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('<thunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
 % lethunk
@@ -294,9 +292,9 @@ A (3,4) = thunk ;
     C1 (M) = A (M) ;
 
     C2 = gb.select ('lethunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
     C2 = gb.select ('<=thunk', A, thunk) ;
-    assert (isequal (C1, double (C2)))
+    assert (gbtest_eq (C1, C2))
 
 fprintf ('gbtest8: all tests passed\n') ;

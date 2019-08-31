@@ -1,6 +1,8 @@
 function p = symrcm (G)
-%SYMRCM Reverse Cuthill-McKee ordering.
+%SYMRCM Reverse Cuthill-McKee ordering of a GraphBLAS matrix.
 % See 'help symrcm' for details.
+%
+% See also symrcm, gb/amd, gb/colamd, gb/symamd.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

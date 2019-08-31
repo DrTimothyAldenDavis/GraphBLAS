@@ -14,35 +14,35 @@ M = sparse (rand (m,n)) > 0.5 ;
 Cin = sprand (m, n, 0.5) ;
 
 Cout = gb.gbtranspose (A) ;
-assert (isequal (AT, double (Cout))) ;
+assert (gbtest_eq (AT, Cout)) ;
 
 Cout = gb.gbtranspose (A) ;
-assert (isequal (AT, double (Cout))) ;
+assert (gbtest_eq (AT, Cout)) ;
 
 Cout = gb.gbtranspose (Cin, M, A) ;
 C2 = Cin ;
 C2 (M) = AT (M) ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 Cout = gb.gbtranspose (Cin, '+', A) ;
 C2 = Cin + AT ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 d.in0 = 'transpose' ;
 Cout = gb.gbtranspose (Cin', M', A, d) ;
 C2 = Cin' ;
 C2 (M') = A (M') ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 Cout = gb.gbtranspose (Cin', '+', A, d) ;
 C2 = Cin' + A ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 d.mask = 'complement' ;
 Cout = gb.gbtranspose (Cin', M', A, d) ;
 C2 = Cin' ;
 C2 (~M') = A (~M') ;
-assert (isequal (C2, double (Cout))) ;
+assert (gbtest_eq (C2, Cout)) ;
 
 fprintf ('gbtest17: all tests passed\n') ;
 

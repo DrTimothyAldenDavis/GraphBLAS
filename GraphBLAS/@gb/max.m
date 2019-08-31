@@ -15,6 +15,8 @@ function C = max (varargin)
 % The indices of the maximum entry, or [C,I] = max (...) in the MATLAB
 % built-in max function, are not computed.  The max (..., nanflag) option
 % is not available; only the 'includenan' behavior is supported.
+%
+% See also min.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

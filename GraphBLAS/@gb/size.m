@@ -1,6 +1,8 @@
 function [arg1, n] = size (G, dim)
 %SIZE the dimensions of a GraphBLAS matrix.
 % [m n] = size (G) is the size of an m-by-n GraphBLAS sparse matrix.
+%
+% See also gb/length, gb/numel.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

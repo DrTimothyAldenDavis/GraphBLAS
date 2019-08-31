@@ -1,5 +1,5 @@
 function nthreads = threads (varargin)
-%GB.THREADS get/set the max number of threads to use in GraphBLAS
+%GB.THREADS get/set the max number of threads to use in GraphBLAS.
 %
 % Usage:
 %   nthreads = gb.threads ;      % get the current maximum # of threads
@@ -26,9 +26,13 @@ function nthreads = threads (varargin)
 %   feature ('numcores') ;          % print info about cores
 %   ncores = feature ('numcores') ; % get # of logical cores MATLAB uses
 %   ncores = maxNumCompThreads ;    % same as feature ('numcores')
-%   gb.threads (2*ncores) ;         % GraphBLAS will use <= 2*ncores threads
+%   gb.threads (2*ncores) ;         % GraphBLAS will use at most 2*ncores
+%                                   % threads
 %
 % See also feature, maxNumCompThreads, gb.chunk.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 nthreads = gbthreads (varargin {:}) ;
 

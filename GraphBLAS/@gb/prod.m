@@ -1,8 +1,8 @@
 function C = prod (G, option)
 %PROD Product of elements.
 % C = prod (G), where G is an m-by-n GraphBLAS matrix, computes a 1-by-n
-% row vector C where C(j) is the product of all entries in G(:,j).  If G is
-% a row or column vector, then prod (G) is a scalar product of all the
+% row vector C where C(j) is the product of all entries in G(:,j).  If G
+% is a row or column vector, then prod (G) is a scalar product of all the
 % entries in the vector.
 %
 % C = prod (G,'all') takes the product of all elements of G to a single

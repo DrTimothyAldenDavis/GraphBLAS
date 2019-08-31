@@ -1,5 +1,6 @@
 function s = islogical (G)
-%ISINTEGER true for logical GraphBLAS matrices.
+%ISLOGICAL true for logical GraphBLAS matrices.
+% islogical (G) is true if the GraphBLAS matrix G has the logical type.
 %
 % See also isnumeric, isfloat, isreal, isinteger, gb.type, isa, gb.
 

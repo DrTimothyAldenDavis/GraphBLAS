@@ -82,63 +82,63 @@ for trial = 1:40
 
                         s1 = max (A) ;
                         s2 = max (G) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = max (A, [ ], 1) ;
                         s2 = max (G, [ ], 1) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = max (A, [ ], 2) ;
                         s2 = max (G, [ ], 2) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         if (old)
                             s1 = max (max (A)) ;
                         else
                             s1 = max (A,  [ ], 'all') ;
                         end
                         s2 = max (G,  [ ], 'all') ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
 
                         s1 = max (A, 0.5) ;
                         s2 = max (G, 0.5) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = max (A, -0.5) ;
                         s2 = max (G, -0.5) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = max (0.3, A) ;
                         s2 = max (0.3, G) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = max (-0.3, A) ;
                         s2 = max (-0.3, G) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
 
                         s1 = min (A) ;
                         s2 = min (G) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = min (A, [ ], 1) ;
                         s2 = min (G, [ ], 1) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = min (A, [ ], 2) ;
                         s2 = min (G, [ ], 2) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         if (old)
                             s1 = min (min (A)) ;
                         else
                             s1 = min (A,  [ ], 'all') ;
                         end
                         s2 = min (G,  [ ], 'all') ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
 
                         s1 = min (A, 0.5) ;
                         s2 = min (G, 0.5) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = min (A, -0.5) ;
                         s2 = min (G, -0.5) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = min (0.3, A) ;
                         s2 = min (0.3, G) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
                         s1 = min (-0.3, A) ;
                         s2 = min (-0.3, G) ;
-                        assert (isequal (s1, double (s2))) ;
+                        assert (gbtest_eq (s1, s2)) ;
 
                     end
 

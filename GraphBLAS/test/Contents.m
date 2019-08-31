@@ -21,7 +21,7 @@
 %  gbtest15  - list all unary operators
 %  gbtest16  - test gb.extract
 %  gbtest17  - test gb.gbtranspose
-%  gbtest18  - test comparators
+%  gbtest18  - test comparators (and, or, >, ...)
 %  gbtest19  - test mpower
 %  gbtest20  - test bandwidth, isdiag, ceil, floor, round, fix
 %  gbtest21  - test isfinite, isinf, isnan
@@ -44,6 +44,7 @@
 %  gbtest38  - test sqrt, eps, ceil, floor, round, fix, real, conj, ...
 %  gbtest39  - test amd, colamd, symamd, symrcm, dmperm, etree
 %  gbtest40  - test sum, prod, max, min, any, all, norm
+%  gbtest41  - test ones, zeros, false
 %
 % Utility functions:
 %

@@ -6,7 +6,12 @@ function C = power (A, B)
 % B is a positive scalar (greater than zero).  In that case, the pattern
 % of C is a subset of the pattern of A.
 %
+% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
+% any combination.  C is returned as a GraphBLAS matrix.
+%
 % Note that complex matrices are not yet supported.
+%
+% See also gb/mpower.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -30,7 +35,8 @@ else
             B = gb.expand (B, true (size (A))) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero.  The result is
-            % sparse.  B is expanded to a matrix wit the same pattern as A.
+            % sparse.  B is expanded to a matrix with the same pattern as
+            % A.
             B = gb.expand (B, A) ;
         end
     else
@@ -46,6 +52,6 @@ end
 [m, n] = size (A) ;
 [I, J, Ax] = gb.extracttuples (A) ;
 [I, J, Bx] = gb.extracttuples (B) ;
-C = gb.select ('nonzero', gb.build (I, J, (Ax .^ Bx), m, n)) ;
+C = gb.prune (gb.build (I, J, (Ax .^ Bx), m, n)) ;
 end
 

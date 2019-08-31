@@ -14,17 +14,17 @@ A (n,n) = 5 ;
 G = gb.build (i, j, x, m, n)
 S = sparse   (i, j, x, m, n)
 S - G
-assert (isequal (S, double (G)))
+assert (gbtest_eq (S, G))
 
 d.kind = 'gb' ;
 G = gb.build (i, j, x, m, n, d) ;
 S - G
-assert (isequal (S, double (G)))
+assert (gbtest_eq (S, G))
 
 d.kind = 'sparse' ;
 G = gb.build (i, j, x, m, n, d)
 S - G
-assert (isequal (S, G))
+assert (gbtest_eq (S, G))
 
 i0 = int64 (i) - 1 ;
 j0 = int64 (j) - 1 ;
@@ -32,7 +32,7 @@ j0 = int64 (j) - 1 ;
 S
 G = gb.build (i0, j0, x)
 S - G
-assert (isequal (S, double (G)))
+assert (gbtest_eq (S, G))
 
 fprintf ('gbtest7: all tests passed\n') ;
 

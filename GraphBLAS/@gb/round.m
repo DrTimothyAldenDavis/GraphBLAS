@@ -1,5 +1,8 @@
 function C = round (G)
-%ROUND round entries to the nearest integers
+%ROUND round entries of a GraphBLAS matrix to the nearest integers
+% C = round (G) rounds the entries in the GraphBLAS matrix G to the
+% nearest integers.
+%
 % See also ceil, floor, fix.
 
 % FUTURE: this could be much faster as a mexFunction.

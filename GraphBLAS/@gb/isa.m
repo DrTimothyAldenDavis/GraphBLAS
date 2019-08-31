@@ -4,8 +4,8 @@ function s = isa (G, classname)
 % For any GraphBLAS matrix G, isa (G, 'gb'), isa (G, 'numeric'), and isa
 % (G, 'object') are always true.
 %
-% isa (G, 'float') is the same as isfloat (G), and is true if the gb matrix
-% G has type 'double', 'single', or 'complex'.
+% isa (G, 'float') is the same as isfloat (G), and is true if the gb
+% matrix G has type 'double', 'single', or 'complex'.
 %
 % isa (G, 'integer') is the same as isinteger (G), and is true if the gb
 % matrix G has type 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',

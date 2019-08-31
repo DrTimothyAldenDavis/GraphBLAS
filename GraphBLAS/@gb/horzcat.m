@@ -3,6 +3,11 @@ function C = horzcat (varargin)
 % [A B] or [A,B] is the horizontal concatenation of A and B.
 % A and B may be GraphBLAS or MATLAB matrices, in any combination.
 % Multiple matrices may be concatenated, as [A, B, C, ...].
+%
+% The input matrices may be either GraphBLAS and/or MATLAB matrices, in
+% any combination.  C is returned as a GraphBLAS matrix.
+%
+% See also vercat, gb/vertcat.
 
 % FUTURE: this will be much faster when it is a mexFunction.
 

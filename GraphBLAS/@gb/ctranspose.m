@@ -1,5 +1,5 @@
 function C = ctranspose (G)
-%CTRANSPOSE C = G', matrix transpose a GraphBLAS matrix.
+%CTRANSPOSE C = G', transpose a GraphBLAS matrix.
 % Note that complex matrices are not yet supported.  When they are, this
 % will compute the complex conjugate transpose C=G' when G is complex.
 %

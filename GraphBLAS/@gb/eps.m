@@ -1,5 +1,5 @@
 function C = eps (G)
-%EPS Spacing of floating-point numbers
+%EPS Spacing of floating-point numbers in a GraphBLAS matrix.
 
 % FUTURE: this could be much faster as a mexFunction.
 

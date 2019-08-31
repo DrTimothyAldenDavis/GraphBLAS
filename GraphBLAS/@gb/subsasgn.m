@@ -1,34 +1,34 @@
 function C = subsasgn (C, S, A)
-%SUBSASGN C(I,J) = A or C(I) = A; assign submatrix into a GraphBLAS matrix.
-% C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix C.
-% A must be either a matrix of size length(I)-by-length(J), or a scalar.
-% Note that C(I,J) = 0 differs from C(I,J) = sparse (0).  The former places
-% an explicit entry with value zero in all positions of C(I,J).  The latter
-% deletes all entries in C(I,J).  With a MATLAB sparse matrix C, both
-% statements delete all entries in C(I,J) since MATLAB never stores
-% explicit zeros in its sparse matrices.
+%SUBSASGN C(I,J) = A or C(I) = A; assign submatrix into a GraphBLAS matrix
+% C(I,J) = A assigns A into the C(I,J) submatrix of the GraphBLAS matrix
+% C.  A must be either a matrix of size length(I)-by-length(J), or a
+% scalar.  Note that C(I,J) = 0 differs from C(I,J) = sparse (0).  The
+% former places an explicit entry with value zero in all positions of
+% C(I,J).  The latter deletes all entries in C(I,J).  With a MATLAB
+% sparse matrix C, both statements delete all entries in C(I,J) since
+% MATLAB never stores explicit zeros in its sparse matrices.
 %
 % With a single index, C(I) = A, both C and A must be vectors; linear
 % indexing is not yet supported.  In this case A must either be a vector
 % of length the same as I, or a scalar.
 %
-% If M is a logical matrix, C (M) = x is an assignment via logical indexing,
-% where C and M have the same size, and x(:) is either a vector of length
-% nnz (M), or a scalar.
+% If M is a logical matrix, C (M) = x is an assignment via logical
+% indexing, where C and M have the same size, and x(:) is either a vector
+% of length nnz (M), or a scalar.
 %
-% Note that C (M) = A (M), where the same logical matrix M is used on both
-% the sides of the assignment, is identical to C = gb.subassign (C, M, A).
-% If C and A (or M) are GraphBLAS matrices, C (M) = A (M) uses GraphBLAS
-% via operator overloading.  The statement C (M) = A (M) takes about twice
-% the time as C = gb.subassign (C, M, A), so the latter is preferred for
-% best performance.  However, both methods in GraphBLAS are many thousands
-% of times faster than C (M) = A (M) using purely MATLAB sparse matrices C,
-% M, and A, when the matrices are large.  So either method works fine,
-% relatively speaking.
+% Note that C (M) = A (M), where the same logical matrix M is used on
+% both the sides of the assignment, is identical to C = gb.subassign (C,
+% M, A).  If C and A (or M) are GraphBLAS matrices, C (M) = A (M) uses
+% GraphBLAS via operator overloading.  The statement C (M) = A (M) takes
+% about twice the time as C = gb.subassign (C, M, A), so the latter is
+% preferred for best performance.  However, both methods in GraphBLAS are
+% many thousands of times faster than C (M) = A (M) using purely MATLAB
+% sparse matrices C, M, and A, when the matrices are large.  So either
+% method works fine, relatively speaking.
 %
-% If I or J are very large colon notation expressions, then C(I,J)=A is not
-% possible, because MATLAB creates I and J as explicit lists first.  See
-% gb.subassign instead.  See also the example with 'help gb.extract'.
+% If I or J are very large colon notation expressions, then C(I,J)=A is
+% not possible, because MATLAB creates I and J as explicit lists first.
+% See gb.subassign instead.  See also the example with 'help gb.extract'.
 %
 % See also subsref, gb.assign, gb.subassign.
 

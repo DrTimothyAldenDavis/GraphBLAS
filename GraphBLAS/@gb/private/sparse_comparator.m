@@ -14,5 +14,5 @@ function C = sparse_comparator (op, A, B)
 
 A0 = gb.eadd ('1st', A, gb.expand (false, B)) ;
 B0 = gb.eadd ('1st', B, gb.expand (false, A)) ;
-C = gb.select ('nonzero', gb.eadd (op, A0, B0)) ;
+C = gb.prune (gb.eadd (op, A0, B0)) ;
 

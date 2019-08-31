@@ -1,5 +1,5 @@
 function C = conj (G)
-%CONJ complex conjugate.
+%CONJ complex conjugate of a GraphBLAS matrix.
 % Since all GraphBLAS matrices are currently real, conj (G) is just G.
 % Complex support will be added in the future.
 

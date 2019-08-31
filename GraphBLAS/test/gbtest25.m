@@ -1,6 +1,9 @@
 function gbtest25
 %GBTEST25 test diag, tril, triu
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 for trials = 1:40
     fprintf ('.') ;
 
@@ -11,17 +14,17 @@ for trials = 1:40
             for k = -m:n
                 B = diag (A, k) ;
                 C = diag (G, k) ;
-                assert (isequal (B, double (C))) ;
+                assert (gbtest_eq (B, C)) ;
                 B = tril (A, k) ;
                 C = tril (A, k) ;
-                assert (isequal (B, double (C))) ;
+                assert (gbtest_eq (B, C)) ;
                 B = triu (A, k) ;
                 C = triu (A, k) ;
-                assert (isequal (B, double (C))) ;
+                assert (gbtest_eq (B, C)) ;
             end
             B = diag (A) ;
             C = diag (G) ;
-            assert (isequal (B, double (C))) ;
+            assert (gbtest_eq (B, C)) ;
         end
     end
 
@@ -31,24 +34,24 @@ for trials = 1:40
         for k = -6:6
             B = diag (A, k) ;
             C = diag (G, k) ;
-            assert (isequal (B, double (C))) ;
+            assert (gbtest_eq (B, C)) ;
             B = tril (A, k) ;
             C = tril (G, k) ;
-            assert (isequal (B, double (C))) ;
+            assert (gbtest_eq (B, C)) ;
             B = triu (A, k) ;
             C = triu (G, k) ;
-            assert (isequal (B, double (C))) ;
+            assert (gbtest_eq (B, C)) ;
         end
 
         B = diag (A) ;
         C = diag (G) ;
-        assert (isequal (B, double (C))) ;
+        assert (gbtest_eq (B, C)) ;
         B = tril (A) ;
         C = tril (G) ;
-        assert (isequal (B, double (C))) ;
+        assert (gbtest_eq (B, C)) ;
         B = triu (A) ;
         C = triu (G) ;
-        assert (isequal (B, double (C))) ;
+        assert (gbtest_eq (B, C)) ;
     end
 end
 

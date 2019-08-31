@@ -1,5 +1,5 @@
 function binopinfo (op, type)
-%GB.BINOPINFO list the details of a GraphBLAS binary operator
+%GB.BINOPINFO list the details of a GraphBLAS binary operator.
 %
 % Usage
 %
@@ -76,6 +76,9 @@ function binopinfo (op, type)
 % See also gb, gb.unopinfo, gb.semiringinfo, gb.descriptorinfo.
 
 % FUTURE: add complex binary operators
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin == 0)
     help gb.binopinfo

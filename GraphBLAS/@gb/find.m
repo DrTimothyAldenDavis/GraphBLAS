@@ -1,12 +1,13 @@
 function [I, J, X] = find (G)
 %FIND extract entries from a GraphBLAS matrix.
-% [I, J, X] = find (G) extracts the entries from a GraphBLAS matrix G.
-% X has the same type as G ('double', 'single', 'int8', ...).  I and J are
-% returned as 1-based indices, the same as [I,J,X] = find (S) for a MATLAB
-% matrix S.  Use gb.extracttuples to return I and J as zero-based.  Linear
-% 1D indexing (I = find (S) for the MATLAB matrix S) and find (G, k, ...)
-% are not supported.  G may contain explicit entries, but these are dropped
-% from the output [I,J,X].  Use gb.extracttuples to return those entries.
+% [I, J, X] = find (G) extracts the entries from a GraphBLAS matrix G.  X
+% has the same type as G ('double', 'single', 'int8', ...).  I and J are
+% returned as 1-based indices, the same as [I,J,X] = find (S) for a
+% MATLAB matrix S.  Use gb.extracttuples to return I and J as zero-based.
+% Linear 1D indexing (I = find (S) for the MATLAB matrix S) and find (G,
+% k, ...) are not supported.  G may contain explicit entries, but these
+% are dropped from the output [I,J,X].  Use gb.extracttuples to return
+% those entries.
 %
 % See also sparse, gb.build, gb.extracttuples.
 

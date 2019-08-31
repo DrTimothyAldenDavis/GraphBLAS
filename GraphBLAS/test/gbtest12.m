@@ -12,11 +12,11 @@ C = A+B ;
 D = A.*B ;
 
 G = gb.eadd ('+', A, B) ;
-err = norm (C-sparse(G), 1)
+err = norm (C-G, 1)
 assert (logical (err < 1e-12))
 
 H = gb.emult ('*', A, B) ;
-err = norm (D-sparse(H), 1)
+err = norm (D-H, 1)
 assert (logical (err < 1e-12))
 
 d.kind = 'sparse' ;
@@ -25,12 +25,12 @@ d
 
 G = gb.eadd ('+', A, B, d) ;
 C = A'+B ;
-err = norm (C-sparse(G), 1)
+err = norm (C-G, 1)
 assert (logical (err < 1e-12))
 
 H = gb.emult ('*', A, B, d) ;
 D = A'.*B ;
-err = norm (H-sparse(D), 1)
+err = norm (H-D, 1)
 assert (logical (err < 1e-12))
 
 d.kind = 'gb' ;
@@ -43,21 +43,21 @@ err = norm (D-H, 1)
 E = sparse (rand (2)) ;
 C = E + A+B ;
 G = gb.eadd (E, '+', '+', A, B) ;
-C-sparse(G)
+C-G
 
 F = sparse (rand (2)) ;
 D = F + A.*B ;
 H = gb.emult (F, '+', '*', A, B) ;
-D-sparse(H)
-assert (isequal (D, double (H))) ;
+D-H
+assert (gbtest_eq (D, H)) ;
 
 G = gb.eadd ('+', A, B)
 C = A+B
-assert (isequal (C, double (G))) ;
+assert (gbtest_eq (C, G)) ;
 
 H = gb.emult ('*', A, B)
 D = A.*B
-assert (isequal (D, double (H))) ;
+assert (gbtest_eq (D, H)) ;
 
 fprintf ('gbtest12: all tests passed\n') ;
 

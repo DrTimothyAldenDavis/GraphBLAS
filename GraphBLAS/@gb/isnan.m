@@ -1,5 +1,8 @@
 function C = isnan (G)
 %ISNAN True for NaN elements.
+% C = isnan (G) for a GraphBLAS matrix G returns a GraphBLAS logical
+% matrix with C(i,j)=true if G(i,j) is NaN.
+%
 % See also isinf, isfinite.
 
 % FUTURE: this could be much faster as a mexFunction.

@@ -15,6 +15,8 @@ function C = min (varargin)
 % The indices of the minimum entry, or [C,I] = min (...) in the MATLAB
 % built-in min function, are not computed.  The min (..., nanflag) option
 % is not available; only the 'includenan' behavior is supported.
+%
+% See also max.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

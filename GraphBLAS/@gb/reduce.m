@@ -1,5 +1,5 @@
 function Cout = reduce (varargin)
-%GB.REDUCE reduce a matrix to a scalar
+%GB.REDUCE reduce a matrix to a scalar.
 %
 % Usage:
 %
@@ -17,14 +17,22 @@ function Cout = reduce (varargin)
 % op is applied to all entries of the matrix A to reduce them to a single
 % scalar result.
 %
-% accum: an optional binary operator (see 'help gb.binopinfo' for a list).
+% accum: an optional binary operator (see 'help gb.binopinfo' for a
+% list).
 %
 % cin: an optional input scalar into which the result can be accumulated
-%       with cout = accum (cin, result).
+% with cout = accum (cin, result).
+%
+% All input matrices may be either GraphBLAS and/or MATLAB matrices, in
+% any combination.  cout is returned as a GraphBLAS scalar, by default;
+% see 'help gb/descriptorinfo' for more options.
 %
 % See also gb.vreduce; sum, prod, max, min (with the 'all' parameter).
 
 % FUTURE: add complex monoids.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [args is_gb] = get_args (varargin {:}) ;
 if (is_gb)

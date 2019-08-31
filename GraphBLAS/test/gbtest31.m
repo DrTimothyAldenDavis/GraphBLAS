@@ -14,7 +14,7 @@ for k = 1:length (types)
             A = zeros (m, n, type) ;
             G = gb (m, n, type) ;
             C = cast (G, type) ;
-            assert (isequal (A, C)) ;
+            assert (gbtest_eq (A, C)) ;
         end
     end
 
@@ -23,14 +23,14 @@ for k = 1:length (types)
     G = gb (A) ;
 
     G2 = sparse (G) ;
-    assert (isequal (G, G2)) ;
+    assert (gbtest_eq (G, G2)) ;
 
     for k2 = 1:length (types)
         type2 = types {k} ;
         G2 = gb (G, type2) ;
         A2 = cast (A, type2) ;
         C = cast (G2, type2) ;
-        assert (isequal (A2, C)) ;
+        assert (gbtest_eq (A2, C)) ;
     end
 
     F = 100 * ones (5, 5) ;
@@ -47,10 +47,10 @@ for k = 1:length (types)
         type2 = types {k} ;
         G3 = full (G, type2, id) ;
         G4 = gb (G2, type2) ;
-        assert (isequal (G3, G4)) ;
-        assert (isequal (double (G3), double (G4))) ;
-        assert (isequal (single (G3), single (G4))) ;
-        assert (isequal (uint16 (G3), uint16 (G4))) ;
+        assert (gbtest_eq (G3, G4)) ;
+        assert (gbtest_eq (double (G3), double (G4))) ;
+        assert (gbtest_eq (single (G3), single (G4))) ;
+        assert (gbtest_eq (uint16 (G3), uint16 (G4))) ;
     end
 
 end

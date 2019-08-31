@@ -1,5 +1,5 @@
 function monoidinfo (monoid, type)
-%GB.MONOIDINFO list the details of a GraphBLAS monoid
+%GB.MONOIDINFO list the details of a GraphBLAS monoid.
 %
 % Usage
 %
@@ -39,6 +39,9 @@ function monoidinfo (monoid, type)
 % gb.descriptorinfo.
 
 % FUTURE: add complex monoids
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin == 0)
     help gb.monoidinfo

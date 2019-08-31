@@ -1,5 +1,5 @@
 function disp (G, level)
-%DISP display the contents of a GraphBLAS object.
+%DISP display the contents of a GraphBLAS matrix.
 % disp (G, level) displays the GraphBLAS sparse matrix G.  Level controls
 % how much is printed; 0: none, 1: terse, 2: a few entries, 3: all.  The
 % default is 2 if level is not present.
@@ -18,3 +18,4 @@ if (level > 0)
 end
 
 gbdisp (G.opaque, level) ;
+

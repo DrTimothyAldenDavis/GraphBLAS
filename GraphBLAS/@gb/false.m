@@ -1,9 +1,9 @@
 function C = false (varargin)
-%FALSE an all-false GraphBLAS matrix
-% C = false (m, n, 'like', G)
-% C = false ([m n], 'like', G)
-
-% TODO : test
+%FALSE an all-false GraphBLAS matrix.
+% C = false (m, n, 'like', G) or C = false ([m n], 'like', G) constructs
+% a logical GraphBLAS matrix of size m-by-n with no entries.
+%
+% See also ones, true, zeros.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

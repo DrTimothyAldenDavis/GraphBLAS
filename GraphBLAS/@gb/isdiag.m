@@ -1,5 +1,8 @@
 function s = isdiag (G)
-%ISDIAG True if G is a diagonal matrix.
+%ISDIAG True if the GraphBLAS matrix G is a diagonal matrix.
+% isdiag (G) is true if G is a diagonal matrix, and false otherwise.
+%
+% See also gb/isbanded.
 
 % FUTURE: this will be much faster when 'bandwidth' is a mexFunction.
 

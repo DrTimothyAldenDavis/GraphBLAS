@@ -1,5 +1,5 @@
 function C = ceil (G)
-%CEIL round entries to the nearest integers towards infinity
+%CEIL round entries of a GraphBLAS matrix to nearest integers towards inf.
 % See also floor, round, fix.
 
 % FUTURE: this could be much faster as a mexFunction.

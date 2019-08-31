@@ -1,6 +1,8 @@
 function s = ishermitian (G, option)
-%ISHERMITIAN Determine if a GraphBLAS matrix is real symmetric or
-% complex Hermitian.
+%ISHERMITIAN Determine if a GraphBLAS matrix is Hermitian, or real symmetric.
+% ishermitian (G) is true if G equals G' and false otherwise.
+% ishermitian (G, 'skew') is true if G equals -G' and false otherwise.
+% ishermitian (G, 'nonskew') is the same as ishermitian (G).
 %
 % See also issymetric.
 
@@ -8,8 +10,6 @@ function s = ishermitian (G, option)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
-% TODO use isequal, not norm
 
 [m n] = size (G) ;
 if (m ~= n)
@@ -22,6 +22,11 @@ else
         s = (norm (G + G', 1) == 0) ;
     else
         s = (norm (G - G', 1) == 0) ;
+    end
+    if (s)
+        % also check the pattern; G might have explicit zeros
+        S = logical (spones (G)) ;
+        s = isequal (S, S') ;
     end
 end
 

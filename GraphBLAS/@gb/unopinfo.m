@@ -1,5 +1,5 @@
 function unopinfo (op, type)
-%GB.UNOPINFO list the details of a GraphBLAS unary operator
+%GB.UNOPINFO list the details of a GraphBLAS unary operator.
 %
 % Usage
 %
@@ -11,15 +11,15 @@ function unopinfo (op, type)
 % where 'op' is listed below.  The second usage allows the type to be
 % omitted from the first argument, as just 'op'.  This is valid for all
 % GraphBLAS operations, since the type defaults to the type of the input
-% matrix.  However, gb.unopinfo does not have a default type and thus
-% one must be provided, either in the op as gb.unopinfo ('abs.double'), or
-% in the second argument, gb.unopinfo ('abs', 'double').
+% matrix.  However, gb.unopinfo does not have a default type and thus one
+% must be provided, either in the op as gb.unopinfo ('abs.double'), or in
+% the second argument, gb.unopinfo ('abs', 'double').
 %
 % The MATLAB interface to GraphBLAS provides for 6 different unary
 % operators, each of which may be used with any of the 11 types, for a
-% total of 6*11 = 66 valid unary operators.  Unary operators are defined by
-% a string of the form 'op.type', or just 'op'.  In the latter case, the
-% type defaults to the type of the matrix inputs to the GraphBLAS
+% total of 6*11 = 66 valid unary operators.  Unary operators are defined
+% by a string of the form 'op.type', or just 'op'.  In the latter case,
+% the type defaults to the type of the matrix inputs to the GraphBLAS
 % operation.
 %
 % The following unary operators are available.
@@ -50,6 +50,9 @@ function unopinfo (op, type)
 % gb.descriptorinfo.
 
 % FUTURE: add complex unary operators
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin == 0)
     help gb.unopinfo

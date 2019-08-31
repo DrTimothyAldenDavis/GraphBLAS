@@ -1,20 +1,21 @@
 function C = subsref (A, S)
 %SUBSREF C = A(I,J) or C = A(I); extract submatrix of a GraphBLAS matrix.
-% C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.  With
-% a single index, C = A(I) extracts a subvector C of a vector A.  Linear
-% indexing of a matrix is not yet supported.
+% C = A(I,J) extracts the A(I,J) submatrix of the GraphBLAS matrix A.
+% With a single index, C = A(I) extracts a subvector C of a vector A.
+% Linear indexing of a matrix is not yet supported.
 %
-% x = A (M) for a logical matrix M constructs an nnz(M)-by-1 vector x, for
-% MATLAB-style logical indexing.  A or M may be MATLAB sparse or full
-% matrices, or GraphBLAS matrices, in any combination.  M must be either a
-% MATLAB logical matrix (sparse or dense), or a GraphBLAS logical matrix;
-% that is, gb.type (M) must be 'logical'.
+% x = A (M) for a logical matrix M constructs an nnz(M)-by-1 vector x,
+% for MATLAB-style logical indexing.  A or M may be MATLAB sparse or full
+% matrices, or GraphBLAS matrices, in any combination.  M must be either
+% a MATLAB logical matrix (sparse or dense), or a GraphBLAS logical
+% matrix; that is, gb.type (M) must be 'logical'.
 %
-% NOTE: GraphBLAS can construct huge sparse matrices, but they cannot
-% always be indexed with A(I,J), because of a limitation of the colon
-% notation in the MATLAB subsref method.  A colon expression is expanded
-% into an explicit vector, but can be too big.  Use gb.extract in this
-% case, which can be passed the three integers start:inc:fini.
+% GraphBLAS can construct huge sparse matrices, but they cannot always be
+% indexed with A(lo:hi,lo:hi), because of a limitation of the MATLAB
+% colon notation.  A colon expression in MATLAB is expanded into an
+% explicit vector, but this can be too big.   Instead of the colon
+% notation start:inc:fini, use a cell array with three integers,
+% {start, inc, fini}.
 %
 % Example:
 %
@@ -24,7 +25,7 @@ function C = subsref (A, S)
 %   M = magic (4)
 %   H (I,I) = M
 %   J = {1, 1e13} ;             % represents 1:1e13 colon notation
-%   C = gb.extract (H, J, J)    % this is very fast
+%   C = H (J, J)                % this is very fast
 %   E = H (1:1e13, 1:1e13)      % but this is not possible 
 %
 % See also subsasgn, gb.subassign, gb.assign, gb.extract.

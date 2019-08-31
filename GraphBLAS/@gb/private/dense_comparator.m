@@ -8,5 +8,5 @@ function C = dense_comparator (op, A, B)
 %     in A        not in B    A(i,j) <= 0          true or false
 %     not in A    not in B    0 <= 0               true, in C
 
-C = gb.select ('nonzero', gb.emult (op, full (A), full (B))) ;
+C = gb.prune (gb.emult (op, full (A), full (B))) ;
 

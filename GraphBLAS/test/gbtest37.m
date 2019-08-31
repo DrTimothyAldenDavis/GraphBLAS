@@ -31,11 +31,11 @@ for trial = 1:40
                 GC = GA * GA' ;
             end
 
-            assert (isequal (A, double (GA))) ;
-            assert (isequal (L, double (GL))) ;
-            assert (isequal (U, double (GU))) ;
-            assert (isequal (D, double (GD))) ;
-            assert (isequal (C, double (GC))) ;
+            assert (gbtest_eq (A, GA)) ;
+            assert (gbtest_eq (L, GL)) ;
+            assert (gbtest_eq (U, GU)) ;
+            assert (gbtest_eq (D, GD)) ;
+            assert (gbtest_eq (C, GC)) ;
 
             assert (istril (A) == istril (GA)) ;
             assert (istril (L) == istril (GL)) ;

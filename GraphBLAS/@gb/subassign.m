@@ -1,5 +1,5 @@
 function Cout = subassign (varargin)
-%GB.SUBASSIGN: assign a submatrix into a matrix
+%GB.SUBASSIGN: assign a submatrix into a matrix.
 %
 % gb.subassign is an interface to GxB_Matrix_subassign and
 % GxB_Matrix_subassign_[TYPE], computing the GraphBLAS expression:
@@ -38,6 +38,9 @@ function Cout = subassign (varargin)
 % Refer to gb.assign for a description of the other input/outputs.
 %
 % See also gb.assign, subsasgn.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [args is_gb] = get_args (varargin {:}) ;
 if (is_gb)

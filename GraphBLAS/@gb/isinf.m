@@ -1,5 +1,8 @@
 function C = isinf (G)
 %ISINF True for infinite elements.
+% C = isinf (G) returns a GraphBLAS logical matrix where C(i,j) = true
+% if G(i,j) is infinite.
+%
 % See also isnan, isfinite.
 
 % FUTURE: this could be much faster as a mexFunction.

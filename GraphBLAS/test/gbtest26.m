@@ -11,7 +11,7 @@ for k1 = 1:length (types)
     A = cast (100 * rand (3), atype)
     H = gb (A) ;
     B = cast (H, atype) ;
-    assert (isequal (A, B)) ;
+    assert (gbtest_eq (A, B)) ;
 
     for k2 = 1:length (types)
 

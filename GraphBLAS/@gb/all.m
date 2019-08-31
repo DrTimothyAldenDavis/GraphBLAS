@@ -1,5 +1,5 @@
 function C = all (G, option)
-%ALL True if all elements are nonzero or true.
+%ALL True if all elements of a GraphBLAS matrix are nonzero or true.
 %
 % C = all (G) is true if all entries G are nonzero or true.  If G is a
 % matrix, C is a row vector with C(j) = all (G (:,j)).
