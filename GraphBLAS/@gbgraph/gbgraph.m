@@ -103,10 +103,9 @@ methods
                 kind = G.graphkind ;
             else
                 % C will be an directed or undirected gbgraph, per kind input
-                if (isequal (kind, 'undirected') & ...
-                    isequal (G.graphkind, 'directed'))
-                    % if converting from a directed gbgraph to an undirected
-                    % gbgraph, G must be symmetric.
+                if (isequal (kind, 'undirected') & isdirected (G))
+                    % if converting from a directed gbgraph G to an undirected
+                    % gbgraph H, G must be symmetric.
                     if (~issymmetric (G))
                         error ('G must be symmetric') ;
                     end
@@ -196,6 +195,11 @@ methods
     % the MATLAB graph and digraph.
 
     k = kind (H) ;
+    s = tricount (H, order) ;
+    s = isdirected (H) ;
+    s = isundirected (H) ;
+    H = byrow (H) ;
+    H = bycol (H) ;
 
     % FUTURE::
     %

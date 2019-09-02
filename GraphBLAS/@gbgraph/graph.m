@@ -37,8 +37,8 @@ if (nargin > 1)
 
 else
 
-    % C = graph (G)
-    if (isequal (H.graphkind, 'directed'))
+    % C = graph (H)
+    if (isdirected (H))
         H = H + H' ;
     end
 

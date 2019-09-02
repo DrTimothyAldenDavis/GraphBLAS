@@ -581,6 +581,8 @@ methods (Static)
     s = type (X) ;
     s = issigned (type) ;
     f = format (arg) ;
+    s = isbyrow (X) ;
+    s = isbycol (X) ;
     C = expand (scalar, S) ;
     C = prune (G, identity) ;
     C = eye (varargin) ;

@@ -15,12 +15,12 @@ function C = flipedge (H, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-kind = H.graphkind ;
-if (~isequal (kind, 'directed'))
+if (~isdirected (H))
     error ('H must be a directed graph') ;
 end
 
 if (nargin == 1)
+    % C = flipedge (H), flip all edges
     C = gbgraph (H', 'directed', false) ;
     return ;
 elseif (nargin == 2)

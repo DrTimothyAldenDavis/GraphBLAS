@@ -18,15 +18,19 @@ else
     if (nargin < 2)
         option = 'nonskew' ;
     end
-    if (isequal (option, 'skew'))
-        s = (norm (G + G.', 1) == 0) ;
+    if (islogical (G))
+        s = isequal (G, G') ;
     else
-        s = (norm (G - G.', 1) == 0) ;
-    end
-    if (s)
-        % also check the pattern; G might have explicit zeros
-        S = logical (spones (G)) ;
-        s = isequal (S, S') ;
+        if (isequal (option, 'skew'))
+            s = (norm (G + G.', 1) == 0) ;
+        else
+            s = (norm (G - G.', 1) == 0) ;
+        end
+        if (s)
+            % also check the pattern; G might have explicit zeros
+            S = logical (spones (G)) ;
+            s = isequal (S, S') ;
+        end
     end
 end
 

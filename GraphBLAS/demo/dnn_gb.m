@@ -25,35 +25,10 @@ for i=1:length(W)
     % Propagate through layer, apply bias, and threshold negative values.
     Y = gb.select ('>0', gb.mxm ('+.+', Y * W {i}, bias {i})) ;
      
-    %{
-    tt = tic ;
-    Y = Y * W {i} ;
-    t (1) = t (1) + toc (tt) ;
-
-    tt = tic ;
-    Y = gb.mxm ('+.+', Y, bias {i}) ;
-    t (2) = t (2) + toc (tt) ;
-
-    tt = tic ;
-    Y = gb.select ('>0', Y) ;
-    t (3) = t (3) + toc (tt) ;
-
-    % Threshold maximum values.
-    tt = tic ;
-    %}
     M = Y > 32 ;
     if (nnz (M) > 0)
         Y (M) = 32 ;
     end
-    %{
-    t (4) = t (4) + toc (tt) ;
-    %}
 
 end
 
-%{
-fprintf ('Y*W : %g sec\n', t (1)) ;
-fprintf ('Y+B : %g sec\n', t (2)) ;
-fprintf ('ReLU: %g sec\n', t (3)) ;
-fprintf ('Ymax: %g sec\n', t (4)) ;
-%}

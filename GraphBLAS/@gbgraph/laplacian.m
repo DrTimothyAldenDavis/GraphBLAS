@@ -23,7 +23,7 @@ function L = laplacian (H, type)
 if (nargin < 2)
     type = 'double' ;
 end
-kind = H.graphkind ;
+H_is_directed = isdirected (H) ;
 
 if (~ (isequal (type, 'double') || isequal (type, 'single') || ...
        isequal (type (1:3), 'int')))
@@ -32,7 +32,7 @@ if (~ (isequal (type, 'double') || isequal (type, 'single') || ...
 end
 
 H = spones (H, type) ;
-if (isequal (kind, 'directed'))
+if (H_is_directed)
     % make H symmetric
     H = spones (H + H') ;
 end

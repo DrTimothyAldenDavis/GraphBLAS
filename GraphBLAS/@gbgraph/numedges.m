@@ -16,7 +16,7 @@ function [e d] = numedges (H)
 
 e = nnz (H) ;
 
-if (isequal (H.graphkind, 'undirected'))
+if (isundirected (H))
     d = nnz (diag (H)) ;
     e = (e - d) / 2 + d ;
 elseif (nargout > 1)
