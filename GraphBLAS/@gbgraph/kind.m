@@ -1,6 +1,6 @@
-function k = kind (H)
+function k = kind (G)
 %KIND Return the kind of a gbgraph.
-% k = gbgraph.kind (H) returns the kind of the gbgraph H, either 'directed'
+% k = kind (G) returns the kind of the gbgraph G, either 'directed'
 % or 'undirected.'
 %
 % See also graph, digraph, gbgraph.
@@ -8,5 +8,5 @@ function k = kind (H)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-k = H.graphkind ;
+k = G.graphkind ;
 

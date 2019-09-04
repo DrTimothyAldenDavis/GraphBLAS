@@ -1,7 +1,7 @@
-function disp (H, level)
+function disp (G, level)
 %DISP display the contents of a gbgraph.
-% disp (H) displays the attributes and first few entries of a gbgraph.
-% Use disp(H,3) to display all of the content of H.
+% disp (G) displays the attributes and first few entries of a gbgraph.
+% Use disp(G,3) to display all of the content of G.
 %
 % See also gbgraph/display, gb/disp.
 
@@ -14,5 +14,5 @@ if (nargin < 2)
     level = 2 ;
 end
 
-gbgraph_display (H, inputname (1), level) ;
+gbgraph_display (G, inputname (1), level) ;
 

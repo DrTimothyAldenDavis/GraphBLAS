@@ -28,7 +28,7 @@ else
         end
         if (s)
             % also check the pattern; G might have explicit zeros
-            S = logical (spones (G)) ;
+            S = spones (G, 'logical') ;
             s = isequal (S, S') ;
         end
     end

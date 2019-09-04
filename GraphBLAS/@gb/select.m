@@ -40,14 +40,14 @@ function Cout = select (varargin)
 %   'eqzero'    C = A (A == 0)                      '==0'
 %   'gtzero'    C = A (A >  0)                      '>0'
 %   'gezero'    C = A (A >= 0)                      '>=0'
-%   'ltzero'    C = A (A <= 0)                      '<0'
+%   'ltzero'    C = A (A <  0)                      '<0'
 %   'lezero'    C = A (A <= 0)                      '<=0'
 %   'nethunk'   C = A (A ~= thunk)                  '~=thunk'
 %   'eqthunk'   C = A (A == thunk)                  '==thunk'
 %   'gtthunk'   C = A (A >  thunk)                  '>thunk'
 %   'gethunk'   C = A (A >= thunk)                  '>=thunk'
-%   'ltthunk'   C = A (A <= thunk)                  '<thunk'
-%   'lethunk'   C = A (A >= thunk)                  '<=thunk'
+%   'ltthunk'   C = A (A <  thunk)                  '<thunk'
+%   'lethunk'   C = A (A <= thunk)                  '<=thunk'
 %
 % Note that C = gb.select ('diag',A) does not returns a vector, but a
 % diagonal matrix.

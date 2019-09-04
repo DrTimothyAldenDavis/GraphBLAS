@@ -1,7 +1,7 @@
-function d = indegree (H)
+function d = indegree (G)
 %INDEGREE in-degree of a directed or undirected gbgraph.
-% d = indegree (H) is a vector of size n for gbgraph with n nodes equal to d =
-% sum (spones (H)).  d(i) is the number of entries in H(:,i).
+% d = indegree (G) is a vector of size n for gbgraph with n nodes equal to d =
+% sum (spones (G)).  d(i) is the number of entries in G(:,i).
 %
 % See also digraph/indegree, gb/degree, gb/outdegree,
 
@@ -10,9 +10,9 @@ function d = indegree (H)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isundirected (H))
-    d = degree (H) ;
+if (isundirected (G))
+    d = degree (G) ;
 else
-    d = gb.coldegree (H) ;
+    d = gb.coldegree (G) ;
 end
 

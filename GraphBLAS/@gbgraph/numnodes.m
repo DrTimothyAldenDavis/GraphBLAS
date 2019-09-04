@@ -1,6 +1,6 @@
-function n = numnodes (H)
+function n = numnodes (G)
 %NUMNODES Number of nodes in a gbgraph.
-% n = numnodes (H) is the number of nodes in the graph H.
+% n = numnodes (G) is the number of nodes in the graph G.
 %
 % See also graph/numnodes, gbgraph/numedges.
 
@@ -9,5 +9,5 @@ function n = numnodes (H)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-n = size (H, 1) ;
+n = size (G, 1) ;
 

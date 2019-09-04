@@ -1,7 +1,7 @@
-function d = degree (H)
+function d = degree (G)
 %DEGREE degree of a GraphBLAS gbgraph
-% d = degree (H) is a vector of size n for an n-by-n undirected GraphBLAS graph
-% H, equal to d = sum (spones (H)).
+% d = degree (G) is a vector of size n for an n-by-n undirected GraphBLAS graph
+% G, equal to d = sum (spones (G)).
 %
 % See also graph/degree, gbgraph/indegree, gbgraph/outdegree.
 
@@ -10,13 +10,13 @@ function d = degree (H)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isdirected (H))
-    error ('H must be an undirected graph') ;
+if (isdirected (G))
+    error ('G must be an undirected graph') ;
 end
 
-if (isequal (gb.format (H), 'by row'))
-    d = gb.rowdegree (H) ;
+if (gb.isbyrow (G))
+    d = gb.rowdegree (G) ;
 else
-    d = gb.coldegree (H) ;
+    d = gb.coldegree (G) ;
 end
 

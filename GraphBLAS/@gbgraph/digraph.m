@@ -1,22 +1,23 @@
-function C = digraph (H)
+function C = digraph (G)
 %DIGRAPH convert a gbgraph into a MATLAB digraph.
-% C = digraph (H) converts a gbgraph H into a directed MATLAB digraph.  H may
-% be directed or undirected.  No weights are added if H is logical.
+% C = digraph (G) converts a gbgraph G into a directed MATLAB digraph C.  G may
+% be directed or undirected.  No weights are added if G is logical.
 
 % TODO test
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-type = gb.type (H) ;
+type = gb.type (G) ;
 
 if (isequal (type, 'logical'))
-    C = digraph (logical (H)) ;
+    C = digraph (logical (G)) ;
 elseif (isequal (type, 'double'))
-    C = digraph (double (H)) ;
+    C = digraph (double (G)) ;
 else
     % all other types (int*, uint*, single)
-    [i, j, x] = gb.extracttuples (H) ;
-    C = digraph (i, j, x) ;
+    n = numnodes (G) ;
+    [i, j, x] = gb.extracttuples (G) ;
+    C = digraph (i, j, x, n) ;
 end
 

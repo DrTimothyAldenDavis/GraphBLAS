@@ -69,7 +69,7 @@ if (ndims == 1)
         %     % M is empty, so C does not change
         % end
     else
-        % C (I) = A where C and A are vectors
+        % C (I) = A where C is a vector
         I = get_index (S.subs (1)) ;
         C = gb.subassign (C, A, I) ;
     end

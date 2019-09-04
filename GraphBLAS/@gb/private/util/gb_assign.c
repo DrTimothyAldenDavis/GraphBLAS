@@ -72,10 +72,12 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
             // a cell array is either I or J
             if (I_arg == -1)
             {
+                // the first cell array is I
                 I_arg = k ;
             }
             else if (J_arg == -1)
             {
+                // the second cell array is J
                 J_arg = k ;
             }
             else
@@ -147,6 +149,13 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     GrB_Index *J = (GrB_Index *) GrB_ALL ;
     GrB_Index ni = cnrows, nj = cncols ;
     bool I_allocated = false, J_allocated = false ;
+
+    if (cnrows == 1 && I_arg >= 0 && J_arg == -1)
+    {
+        // C is a row vector, and only I is present.  Swap I and J
+        J_arg = I_arg ;
+        I_arg = -1 ;
+    }
 
     if (I_arg >= 0)
     {

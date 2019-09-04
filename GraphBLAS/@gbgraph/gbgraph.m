@@ -2,22 +2,34 @@ classdef gbgraph < gb
 %GBGRAPH a directed or undirected graph, based on GraphBLAS.
 %
 % gbgraph is a graph object based on a GraphBLAS adjacency matrix.  To
-% construct a gbgraph, use one of the following methods, where G is a square
+% construct a gbgraph, use one of the following methods, where X is a square
 % matrix (either a GraphBLAS matrix, or a MATLAB sparse or full matrix),
 % a MATLAB graph object, or a MATLAB digraph object.
 %
-%   H = gbgraph (G) ;
-%   H = gbgraph (G, 'undirected') ;
-%   H = gbgraph (G, 'directed') ;
+%   G = gbgraph (X) ;
+%   G = gbgraph (X, kind, format)
 %
-% If the 'undirected' option is specified, G must be symmetric, and an
-% undirected graph is created.  If not specified, H is constructed as an
-% undirected graph if G is symmetric, or as a directed graph otherwise.
+% One or two optional strings may given, in any order.  With an optional string
+% argument of 'undirected' or 'directed', the kind of graph can be specified.
+% The default is to construct an undirected graph if G is symmetric, or a
+% directed graph otherwise.  When constructing an undirected graph, G must be
+% symmetric.  Another optional string allows the format of G to be specified:
+% 'by row' or 'by col'.  With two strings, both parameters can be specified.
 %
-% Multigraphs, node properties, and edge properties of the MATLAB graph and
-% digraph objects are not yet supported.  However, GraphBLAS allows for
-% arbitrary linear algebra operations on its gbgraph objects.  This cannot be
-% done with the MATLAB graph and digraph objects.
+% A gbgraph has different methods available to it than the MATLAB graph and
+% digraph.  Multigraphs, node properties, and edge properties of the MATLAB
+% graph and digraph objects are not yet supported.  However, GraphBLAS allows
+% for arbitrary linear algebra operations on its gbgraph objects.  This cannot
+% be done with the MATLAB graph and digraph objects.
+%
+% Example:
+%
+%   A = sprand (5, 5, 0.5) ;
+%   A = A+A'
+%   G1 = gbgraph (A)
+%   G2 = gbgraph (A, 'directed', 'by row')
+%
+% See also graph, digraph, gb.
 
 % TODO tests
 
@@ -27,122 +39,131 @@ classdef gbgraph < gb
 properties
     graphkind = [ ] ;    % a string, either 'undirected' or 'directed'
 
-    % TODO add node names here
+    % TODO add node and edge properties?
 end
 
 methods
 
-    function H = gbgraph (G, kind, check)
+    function G = gbgraph (X, varargin)
     %GBGRAPH create a GraphBLAS directed or undirected graph.
     % Creates a directed or undirected graph, based on a square adjacency
-    % matrix G, or a MATLAB graph G or digraph.  The matrix G may be a
-    % GraphBLAS matrix or any MATLAB matrix (sparse or full).
+    % matrix X, or a MATLAB graph X or digraph.
     %
     % Usage:
     %
-    %   H = gbgraph (G) ;
-    %   H = gbgraph (G, 'undirected') ;
-    %   H = gbgraph (G, 'directed') ;
-    %
-    % With an optional second argument, the kind of graph can be specified.
-    % The default is to construct an undirected graph if G is symmetric, or
-    % a directed graph otherwise.  When constructing an undirected graph,
-    % G must be symmetric.
-    %
-    % See also graph, digraph, gb.
+    %   G = gbgraph (X) ;
+    %   G = gbgraph (X, kind, format, type) ;
 
-    if (nargin < 3)
-        % for internal use only; the default is to always check the inputs
-        check = true ;
+    % get the input arguments
+    type = '' ;
+    kind = '' ;
+    format = '' ;
+    check = true ;
+    for k = 1:nargin-1
+        arg = varargin {k} ;
+        switch (arg)
+            case { 'undirected', 'directed' }
+                kind = arg ;
+            case { 'by row', 'by col' }
+                format = arg ;
+            case { 'double', 'single', 'logical', 'complex', ...
+                   'int8', 'int16', 'int32', 'int64', ...
+                   'uint8', 'uint16', 'uint32', 'uint64' }
+                type = arg ;
+            case { true, false }
+                % for internal use in @gbgraph only:
+                check = arg ;
+            otherwise
+                error ('unknown input parameter') ;
+        end
     end
 
+    % check the inputs, if called by the user
     if (check)
 
-        % check the kind input parameter
-        if (nargin == 2)
-            if (~ (isequal (kind, 'undirected') | isequal (kind, 'directed')))
-                error ('unknown kind') ;
-            end
-        end
+        if (isa (X, 'graph'))
 
-        if (isa (G, 'graph'))
-
-            % C = gbgraph (G, ...) where G is a MATLAB undirected graph
-            G = adjacency (G, 'weighted') ;
-            if (nargin < 2)
-                % C will be an undirected gbgraph
+            % C = gbgraph (X, ...) where X is a MATLAB undirected graph
+            X = adjacency (X, 'weighted') ;
+            if (isempty (kind))
+                % C will be an undirected gbgraph, by default
                 kind = 'undirected' ;
-            else
-                % C will be an directed or undirected gbgraph, per kind input
-                ;
             end
 
-        elseif (isa (G, 'digraph'))
+        elseif (isa (X, 'digraph'))
 
-            % C = gbgraph (G, ...) where G is a MATLAB directed graph
-            G = adjacency (G, 'weighted') ;
-            if (nargin < 2)
-                % C will be a directed gbgraph
+            % C = gbgraph (X, ...) where X is a MATLAB directed graph
+            X = adjacency (X, 'weighted') ;
+            if (isempty (kind))
+                % C will be a directed gbgraph, by default
                 kind = 'directed' ;
             else
                 % C will be an directed or undirected gbgraph, per kind input
                 if (isequal (kind, 'undirected'))
-                    % if converting from a digraph to an undirected gbgraph, G
+                    % if converting from a digraph to an undirected gbgraph, X
                     % must be symmetric.
-                    if (~issymmetric (G))
-                        error ('G must be symmetric') ;
+                    if (~issymmetric (X))
+                        error ('X must be symmetric') ;
                     end
                 end
             end
 
-        elseif (isa (G, 'gbgraph'))
+        elseif (isa (X, 'gbgraph'))
 
-            % C = gbgraph (G, ...) where G is gbgraph.
-            if (nargin < 2)
-                % C will be an undirected or directed gbgraph, the same as G
-                kind = G.graphkind ;
+            % C = gbgraph (X, ...) where X is gbgraph.
+            if (isempty (kind))
+                % C will be an undirected or directed gbgraph, the same as X
+                kind = X.graphkind ;
             else
                 % C will be an directed or undirected gbgraph, per kind input
-                if (isequal (kind, 'undirected') & isdirected (G))
-                    % if converting from a directed gbgraph G to an undirected
-                    % gbgraph H, G must be symmetric.
-                    if (~issymmetric (G))
-                        error ('G must be symmetric') ;
+                if (isequal (kind, 'undirected') & isdirected (X))
+                    % if converting from a directed gbgraph X to an undirected
+                    % gbgraph G, X must be symmetric.
+                    if (~issymmetric (X))
+                        error ('X must be symmetric') ;
                     end
                 end
             end
 
         else
 
-            % C = gbgraph (G) where G is a matrix (GraphBLAS or MATLAB)
-            [m n] = size (G) ;
+            % C = gbgraph (X) where X is a matrix (GraphBLAS or MATLAB)
+            [m n] = size (X) ;
             if (m ~= n)
-                error ('G must be square') ;
+                error ('X must be square') ;
             end
-            if (nargin < 2)
-                % C = gbgraph (G)
-                if (issymmetric (G))
-                    % If G is symmetric, construct an undirected graph.
+            if (isempty (kind))
+                % C = gbgraph (X), either directed or undirected
+                if (issymmetric (X))
+                    % If X is symmetric, construct an undirected graph.
                     kind = 'undirected' ;
                 else
                     % otherwise, construct a directed graph
                     kind = 'directed' ;
                 end
             else
-                % C = gbgraph (G, kind) ;
+                % C = gbgraph (X, kind) ;
                 % Construct C according to the kind input.  For this case,
-                % if C is an undirected graph then G must be symmetric.
-                if (isequal (kind, 'undirected') & ~issymmetric (G))
-                    error ('G must be symmetric') ;
+                % if C is an undirected graph then X must be symmetric.
+                if (isequal (kind, 'undirected') & ~issymmetric (X))
+                    error ('X must be symmetric') ;
                 end
             end
 
         end
     end
 
+    % determine the matrix type and format
+    if (isempty (format))
+        format = gb.format (X) ;
+    end
+    if (isempty (type))
+        type = gb.type (X) ;
+    end
+
     % create the graph
-    H = H@gb (G) ;
-    H.graphkind = kind ;
+    G = G@gb (X, type, format) ;
+    G.graphkind = kind ;
     end
 
     %---------------------------------------------------------------------------
@@ -151,24 +172,25 @@ methods
 
     % methods in @gbgraph that overload the MATLAB graph and digraph methods:
 
-    d = degree (H) ;
-    C = digraph (H) ;
-    display (H) ;
-    disp (H, level) ;
-    c = edgecount (H, s, t) ;
-    C = graph (H, uplo) ;
-    d = indegree (H) ;
-    L = laplacian (H, type) ;
-    [e d] = numedges (H) ;
-    n = numnodes (H) ;
-    d = outdegree (H) ;
-    [handle titlehandle] = plot (H, varargin) ;
-    S = subgraph (H, I) ;
-    C = flipedge (H, varargin) ;
-    s = ismultigraph (H) ;
-    G = adjacency (H, arg) ;
-    G = incidence (H, type) ;
-    C = reordernodes (H, order) ;
+    s = isequal (G1, G2) ;
+    d = degree (G) ;
+    C = digraph (G) ;
+    display (G) ;
+    disp (G, level) ;
+    c = edgecount (G, s, t) ;
+    C = graph (G, uplo) ;
+    d = indegree (G) ;
+    L = laplacian (G, type) ;
+    [e d] = numedges (G) ;
+    n = numnodes (G) ;
+    d = outdegree (G) ;
+    [handle titlehandle] = plot (G, varargin) ;
+    S = subgraph (G, I) ;
+    C = flipedge (G, varargin) ;
+    s = ismultigraph (G) ;
+    C = adjacency (G, arg) ;
+    C = incidence (G, type) ;
+    C = reordernodes (G, order) ;
 
     % FUTURE::
     %
@@ -177,6 +199,8 @@ methods
     %    addedge addnode bfsearch centrality conncomp dfsearch distances
     %    findedge findnode isisomorphic isomorphism maxflow nearest outedges
     %    rmedge rmnode shortestpath shortestpathtree simplify
+    %
+    %    gbgraph/bfs is like graph/bfsearch and graph/shortestpathtree.
     %
     % methods for class graph (not in digraph class) not yet implemented:
     %
@@ -194,16 +218,23 @@ methods
     % The following methods in @gbgraph are in addition to methods defined for
     % the MATLAB graph and digraph.
 
-    k = kind (H) ;
-    s = tricount (H, order) ;
-    s = isdirected (H) ;
-    s = isundirected (H) ;
-    H = byrow (H) ;
-    H = bycol (H) ;
+    r = pagerank (G, opts) ;
+    C = prune (G, varargin) ;
+    G = pruneself (G) ;
+    e = nself (G) ;
+    C = ktruss (G, k) ;
+    [v, parent] = bfs_pushpull (G, GT, s) ;
+    [v, parent] = bfs (G, s) ;  % like bfsearch and shortestpathtree
+    k = kind (G) ;
+    s = tricount (G, order) ;
+    s = isdirected (G) ;
+    s = isundirected (G) ;
+    G = byrow (G) ;
+    G = bycol (G) ;
 
     % FUTURE::
     %
-    %   tricount, ktruss, dnn, ... (see LAGraph)
+    %   dnn, ... (see LAGraph)
 
 end
 
