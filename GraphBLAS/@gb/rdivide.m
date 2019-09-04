@@ -18,11 +18,10 @@ function C = rdivide (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars
-        C = gb.emult ('/', A, B) ;
     else
         % A is a scalar, B is a matrix.  A is expanded to full.
         % The result is a dense gb matrix.
-        C = gb.eadd ('/', gb.expand (A, true (size (B))), B) ;
+        A = gb.expand (A, true (size (B))) ;
     end
 else
     if (isscalar (B))
@@ -30,15 +29,22 @@ else
         if (get_scalar (B) == 0 & isfloat (A))
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
-            C = gb.eadd ('/', A, gb.expand (B, true (size (A)))) ;
+            B = gb.expand (B, true (size (A))) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).
-            C = gb.emult ('/', A, gb.expand (B, A)) ;
+            B = gb.expand (B, A) ;
         end
     else
         % both A and B are matrices.  The result is a dense matrix.
-        C = gb.eadd ('/', full (A), full (B)) ;
+        if (~gb.isfull (A))
+            A = full (A) ;
+        end
+        if (~gb.isfull (B))
+            B = full (B) ;
+        end
     end
 end
+
+C = gb.eadd ('/', A, B) ;
 

@@ -26,7 +26,10 @@ if (isscalar (A))
             % since a == 0, entries not present in B result in a true value,
             % so the result is dense.  Expand A to a dense matrix.
             A = gb.expand (A, true (size (B))) ;
-            C = gb.prune (gb.emult ('==', A, full (B))) ;
+            if (~gb.isfull (B))
+                B = full (B) ;
+            end
+            C = gb.prune (gb.emult ('==', A, B)) ;
         else
             % since a ~= 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
@@ -41,7 +44,10 @@ else
             % since b == 0, entries not present in A result in a true value,
             % so the result is dense.  Expand B to a dense matrix.
             B = gb.expand (B, true (size (A))) ;
-            C = gb.prune (gb.emult ('==', full (A), B)) ;
+            if (~gb.isfull (A))
+                A = full (A) ;
+            end
+            C = gb.prune (gb.emult ('==', A, B)) ;
         else
             % since b ~= 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  select all

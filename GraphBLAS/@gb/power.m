@@ -24,14 +24,18 @@ if (isscalar (A))
     else
         % A is a scalar, B is a matrix; expand A to the size of B
         A = gb.expand (A, true (size (B))) ;
-        B = full (B) ;
+        if (~gb.isfull (B))
+            B = full (B) ;
+        end
     end
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
         if (get_scalar (B) <= 0)
             % so the result is full
-            A = full (A) ;
+            if (~gb.isfull (A))
+                A = full (A) ;
+            end
             B = gb.expand (B, true (size (A))) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero.  The result is
@@ -41,8 +45,12 @@ else
         end
     else
         % both A and B are matrices.
-        A = full (A) ;
-        B = full (B) ;
+        if (~gb.isfull (A))
+            A = full (A) ;
+        end
+        if (~gb.isfull (B))
+            B = full (B) ;
+        end
     end
 end
 

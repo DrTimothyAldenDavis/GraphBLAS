@@ -2,14 +2,16 @@ function r = pagerank (G, opts)
 %PAGERANK PageRank of a gbgraph.
 % r = pagerank (G) computes the PageRank of a gbgraph G.
 % r = pagerank (G, options) allows for non-default options to be selected.
-% Defaults are identical to the MATLAB pagerank method in @graph/centrality:
+% For compatibility with MATLAB, defaults are identical to the MATLAB pagerank
+% method in @graph/centrality and @digraph/centrality:
 %
 %   opts.tol = 1e-4         stopping criterion
 %   opts.maxit = 100        maximum # of iterations to take
 %   opts.damp = 0.85        dampening factor
 %   opts.weighted = false   true: use edgeweights of G; false: use spones(G)
+%   opts.type = 'double'    compute in 'single' or 'double' precision
 
-% check inputs and get options
+% check inputs and set defaults
 if (nargin < 2)
     opts = struct ;
 end
@@ -25,78 +27,79 @@ end
 if (~isfield (opts, 'weighted'))
     opts.weighted = false ;
 end
+if (~isfield (opts, 'type'))
+    opts.type = 'double' ;
+end
 
+% get options
 tol = opts.tol ;
 maxit = opts.maxit ;
 damp = opts.damp ;
+type = opts.type ;
+weighted = opts.weighted ;
 
+% make sure G is stored by column, and of the right type
 n = numnodes (G) ;
-d = full (double (outdegree (G))) ;
-
-if (opts.weighted)
-    % use the weighted edges of G, but typecast to double first
-    G = gb (G, 'double', 'by col') ;
+if (weighted)
+    % use the weighted edges of G
+    d = outdegree (G) ;
+    G = gb (G, type, 'by col') ;
 else
-    % use the pattern of G
-    G = spones (G, 'double', 'by col') ;
+    % use the pattern of G 
+    G = bycol (G) ;
+    G = spones (G, type) ;
+    d = gb.vreduce ('+', G) ;
 end
 
-G
-d
+% G is now a gb matrix, and no longer a gbgraph
 
-% nodes with no out-going edges:
+d = full (cast (d, type)) ;
+
+% d (i) = outdegree of node i, or 1 if i is a sink
 sinks = find (d == 0) ;
-d (sinks) = 1 ;
+any_sinks = length (sinks) > 0 ;
+if (any_sinks > 0)
+    d (sinks) = 1 ;
+end
 
-teleport = (1 - damp) / n ;
+% place explicit zeros on the diagonal of G so that r remains full
+G = G + gb.build (1:n, 1:n, zeros (n, 1, type), n, n) ;
 
+% teleport factor
+tfactor = (1 - damp) / n ;
+
+% sink factor
+dn = damp / n ;
+
+% use G' in gb.mxm, and return the result as a MATLAB full vector
 desc.in0 = 'transpose' ;
+desc.kind = 'full' ;
 
-% initial PageRank
-r = ones (n, 1) / n ;
+% initial PageRank: all nodes have rank 1/n
+r = ones (n, 1, type) / n ;
 
-if (length (sinks) > 0)
+% prescale d with damp so it doesn't have to be done in each iteration
+d_damp = d / damp ;
 
-    % compute the PageRank
-    for iter = 1:maxit
-        rold = r ;
-        % r = damp * G * (r ./ d) + ((damp / n) * sum (r (sinks)) + (1-damp) / n) ;
-        sum (r (sinks))
+done = false ;
 
-        r = damp* gb.mxm ('+.*', G, r./d, desc) + damp/n*sum(r(sinks)) + teleport ;
-        if (norm (r - rold, inf) < tol)
-            break ;
-        end
+% compute the PageRank
+for iter = 1:maxit
+    rold = r ;
+    teleport = tfactor ;
+    if (any_sinks)
+        % add the teleport factor from all the sinks
+        teleport = teleport + dn * sum (r (sinks)) ;
     end
-
-else
-
-    % compute the PageRank, no sinks
-    for iter = 1:maxit
-        rold = r ;
-        % r = damp * G * (r ./ d) + ((damp / n) * sum (r (sinks)) + (1-damp) / n) ;
-        r = damp* gb.mxm ('+.*', G, r./d, desc) + teleport ;
-        if (norm (r - rold, inf) < tol)
-            break ;
-        end
+    % r = damp * G' * (r./d) + teleport
+    r = r ./ d_damp ;
+    r = gb.mxm ('+.*', G, r, desc) ;
+    r = r + teleport ;
+    if (norm (r - rold, inf) < tol)
+        % convergence has been reached
+        return ;
     end
-
 end
 
-%{
-        cnew = ones(n, 1)/n;
-        for ii=1:maxit
-            c = cnew;
-            cnew = damp*A*(c./d) + damp/n*sum(c(snks)) + (1 - damp)/n;
-            if norm(c - cnew, inf) <= tol
-                break;
-            end
-        end
-        
-        if ~(norm(c - cnew, inf) <= tol)
-            warning(message('MATLAB:graphfun:centrality:PageRankNoConv'));
-        end
-        c = cnew;
-        
-end
-%}
+warning ('gbgraph:pagerank', 'pagerank failed to converge') ;
+

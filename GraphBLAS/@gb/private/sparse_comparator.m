@@ -10,7 +10,7 @@ function C = sparse_comparator (op, A, B)
 %
 % expand A and B to the set union of A and B, with explicit zeros.
 % The type of the '1st' operator is the type of the first argument of
-% gbeadd, so the 2nd argument can be boolean to save space.
+% gb.eadd, so the 2nd argument can be boolean to save space.
 
 A0 = gb.eadd ('1st', A, gb.expand (false, B)) ;
 B0 = gb.eadd ('1st', B, gb.expand (false, A)) ;

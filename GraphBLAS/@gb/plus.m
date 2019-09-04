@@ -17,18 +17,17 @@ function C = plus (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars.  Result is also a scalar.
-        C = gb.eadd ('+', A, B) ;
     else
         % A is a scalar, B is a matrix.  Result is full.
-        C = gb.eadd ('+', gb.expand (A, true (size (B))), B) ;
+        A = gb.expand (A, true (size (B))) ;
     end
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar.  Result is full.
-        C = gb.eadd ('+', A, gb.expand (B, true (size (A)))) ;
+        B = gb.expand (B, true (size (A))) ;
     else
         % both A and B are matrices.  Result is sparse.
-        C = gb.eadd ('+', A, B) ;
     end
 end
 
+C = gb.eadd ('+', A, B) ;

@@ -8,5 +8,13 @@ function C = dense_comparator (op, A, B)
 %     in A        not in B    A(i,j) <= 0          true or false
 %     not in A    not in B    0 <= 0               true, in C
 
-C = gb.prune (gb.emult (op, full (A), full (B))) ;
+if (~gb.isfull (A))
+    A = full (A) ;
+end
+
+if (~gb.isfull (B))
+    B = full (B) ;
+end
+
+C = gb.prune (gb.emult (op, A, B)) ;
 

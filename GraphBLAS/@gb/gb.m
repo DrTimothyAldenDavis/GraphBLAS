@@ -580,6 +580,7 @@ methods (Static)
     C = empty (arg1, arg2) ;
     s = type (X) ;
     s = issigned (type) ;
+    s = isfull (A) ;
     f = format (arg) ;
     s = isbyrow (X) ;
     s = isbycol (X) ;

@@ -16,18 +16,18 @@ function C = times (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars
-        C = gb.emult ('*', A, B) ;
     else
         % A is a scalar, B is a matrix
-        C = gb.emult ('*', gb.expand (A, B), B) ;
+        A = gb.expand (A, B) ;
     end
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
-        C = gb.emult ('*', A, gb.expand (B, A)) ;
+        B = gb.expand (B, A) ;
     else
         % both A and B are matrices
-        C = gb.emult ('*', A, B) ;
     end
 end
+
+C = gb.emult ('*', A, B) ;
 

@@ -60,24 +60,26 @@ elseif (nargin == 2)
             % A is a scalar, B is a matrix
             if (get_scalar (A) < 0)
                 % since A < 0, the result is full
-                C = gb.eadd (op, gb.expand (A, true (size (B))), B) ;
+                A = gb.expand (A, true (size (B))) ;
             else
                 % since A >= 0, the result is sparse.  Expand the scalar A
                 % to the pattern of B.
-                C = gb.eadd (op, gb.expand (A, B), B) ;
+                A = gb.expand (A, B) ;
             end
+            C = gb.eadd (op, A, B) ;
         end
     else
         if (isscalar (B))
             % A is a matrix, B is a scalar
             if (get_scalar (B) < 0)
                 % since B < 0, the result is full
-                C = gb.eadd (op, A, gb.expand (B, true (size (A)))) ;
+                B = gb.expand (B, true (size (A))) ;
             else
                 % since B >= 0, the result is sparse.  Expand the scalar B
                 % to the pattern of A.
-                C = gb.eadd (op, A, gb.expand (B, A)) ;
+                B = gb.expand (B, A) ;
             end
+            C = gb.eadd (op, A, B) ;
         else
             % both A and B are matrices.  Result is sparse.
             C = sparse_comparator (op, A, B) ;
