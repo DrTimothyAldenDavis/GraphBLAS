@@ -10,6 +10,9 @@ function r = pagerank (G, opts)
 %   opts.damp = 0.85        dampening factor
 %   opts.weighted = false   true: use edgeweights of G; false: use spones(G)
 %   opts.type = 'double'    compute in 'single' or 'double' precision
+%
+% G can be stored by row or by column, but storing it by column is faster
+% for computing the pagerank.
 
 % check inputs and set defaults
 if (nargin < 2)
@@ -66,10 +69,10 @@ end
 G = G + gb.build (1:n, 1:n, zeros (n, 1, type), n, n) ;
 
 % teleport factor
-tfactor = (1 - damp) / n ;
+tfactor = cast ((1 - damp) / n, type) ;
 
 % sink factor
-dn = damp / n ;
+dn = cast (damp / n, type) ;
 
 % use G' in gb.mxm, and return the result as a MATLAB full vector
 desc.in0 = 'transpose' ;
@@ -79,9 +82,7 @@ desc.kind = 'full' ;
 r = ones (n, 1, type) / n ;
 
 % prescale d with damp so it doesn't have to be done in each iteration
-d_damp = d / damp ;
-
-done = false ;
+d = d / damp ;
 
 % compute the PageRank
 for iter = 1:maxit
@@ -92,7 +93,7 @@ for iter = 1:maxit
         teleport = teleport + dn * sum (r (sinks)) ;
     end
     % r = damp * G' * (r./d) + teleport
-    r = r ./ d_damp ;
+    r = r ./ d ;
     r = gb.mxm ('+.*', G, r, desc) ;
     r = r + teleport ;
     if (norm (r - rold, inf) < tol)
