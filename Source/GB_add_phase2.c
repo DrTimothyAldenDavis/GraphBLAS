@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_add_phase2: C=A+B, C<M>=A+B, or C<!M>=A+B
+// GB_add_phase2: C=A+B or C<M>=A+B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// GB_add_phase2 computes C=A+B, C<M>=A+B, or C<!M>=A+B.  It is preceded first
+// GB_add_phase2 computes C=A+B or C<M>=A+B.  It is preceded first
 // by GB_add_phase0, which computes the list of vectors of C to compute (Ch)
 // and their location in A and B (C_to_[AB]).  Next, GB_add_phase1 counts the
 // entries in each vector C(:,j) and computes Cp.
@@ -16,8 +16,8 @@
 // fully in parallel.
 
 // C, M, A, and B can be standard sparse or hypersparse, as determined by
-// GB_add_phase0.  All cases of the mask M are handled: not present, present
-// and not complemented, and present and complemented.
+// GB_add_phase0.  The mask can be either: not present, or present and
+// not complemented.  The complemented mask is not handled here.
 
 // This function either frees Cp and Ch, or transplants then into C, as C->p
 // and C->h.  Either way, the caller must not free them.

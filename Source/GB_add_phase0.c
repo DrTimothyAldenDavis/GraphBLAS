@@ -606,8 +606,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         }
         else
         {
-            // this case can occur only if M is present, complemented, and
-            // hypersparse, and C is standard.
+            // C is standard
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (int64_t j = 0 ; j < n ; j++)
             { 

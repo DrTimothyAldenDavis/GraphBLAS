@@ -17,8 +17,6 @@ function Y = dnn_gb (W, bias, Y0)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-t = zeros (4) ;
-
 Y = Y0 ;
 for i=1:length(W)
 
