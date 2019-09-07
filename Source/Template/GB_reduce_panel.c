@@ -96,7 +96,7 @@
         // create workspace for multiple threads
         //----------------------------------------------------------------------
 
-        GB_CTYPE W [ntasks] ;
+        GB_CTYPE W [ntasks] ;       // TODO
         ASSERT (ntasks <= anz) ;
 
         //----------------------------------------------------------------------

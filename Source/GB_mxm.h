@@ -83,8 +83,9 @@ GrB_Info GB_AxB_saxpy_sequential    // single-threaded C<M>=A*B
     const int Sauna_id              // Sauna to use, for Gustavson method only
 ) ;
 
-bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
+GrB_Info GB_AxB_flopcount
 (
+    bool *result,               // result of test (total_flops <= floplimit)
     int64_t *Bflops,            // size B->nvec+1 and all zero, if present
     int64_t *Bflops_per_entry,  // size nnz(B)+1 and all zero, if present
     const GrB_Matrix M,         // optional mask matrix

@@ -305,7 +305,7 @@ GrB_Info GB_subref_phase0
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = 1, ntasks = 1 ;
     int max_ntasks = nthreads_max * 8 ;
-    int64_t Count [max_ntasks+1] ;
+    int64_t Count [max_ntasks+1] ;      // TODO
 
     #define GB_GET_NTHREADS_AND_NTASKS(work)                    \
     {                                                           \

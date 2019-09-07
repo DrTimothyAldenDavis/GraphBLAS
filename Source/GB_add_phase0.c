@@ -286,9 +286,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
 
         int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
         ntasks = GB_IMIN (ntasks, work) ;
-        int64_t kA_start [ntasks+1] ;
-        int64_t kB_start [ntasks+1] ;
-        int64_t kC_start [ntasks+1] ;
+        int64_t kA_start [ntasks+1] ;       // TODO
+        int64_t kB_start [ntasks+1] ;       // TODO
+        int64_t kC_start [ntasks+1] ;       // TODO
         kA_start [0] = (Anvec == 0) ? -1 : 0 ;
         kB_start [0] = (Bnvec == 0) ? -1 : 0 ;
         kA_start [ntasks] = (Anvec == 0) ? -1 : Anvec ;

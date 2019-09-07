@@ -139,7 +139,7 @@ GrB_Info GB_ijsort
     ntasks = GB_IMIN (ntasks, ni) ;
     ntasks = GB_IMAX (ntasks, 1) ;
 
-    int64_t Count [ntasks+1] ;
+    int64_t Count [ntasks+1] ;      // TODO
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (int tid = 0 ; tid < ntasks ; tid++)

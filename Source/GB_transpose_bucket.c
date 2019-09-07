@@ -112,7 +112,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // initialze the row count arrays
     //--------------------------------------------------------------------------
 
-    int64_t *Rowcounts [naslice] ;
+    int64_t *Rowcounts [naslice] ;  // TODO
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     {
         Rowcounts [taskid] = NULL ;
@@ -157,7 +157,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     // create the iterator for A
     GBI_single_iterator Iter ;
-    int64_t A_slice [naslice+1] ;
+    int64_t A_slice [naslice+1] ;   // TODO
     GB_pslice (A_slice, /* A */ A->p, A->nvec, naslice) ;
     GBI1_init (&Iter, A) ;
 

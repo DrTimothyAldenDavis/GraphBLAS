@@ -80,8 +80,12 @@
 #include "GB_ek_slice.h"
 #include "GB_bracket.h"
 
-bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
+#define GB_FREE_WORK \
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
+
+GrB_Info GB_AxB_flopcount
 (
+    bool *result,               // result of test (total_flops <= floplimit)
     int64_t *Bflops,            // size B->nvec+1 and all zero, if present
     int64_t *Bflops_per_entry,  // size nnz(B)+1 and all zero, if present
     const GrB_Matrix M,         // optional mask matrix
@@ -182,17 +186,18 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
     ntasks = GB_IMIN (ntasks, bnz) ;
     ntasks = GB_IMAX (ntasks, 1) ;
-    int64_t pstart_slice [ntasks+1] ;
-    int64_t kfirst_slice [ntasks] ;
-    int64_t klast_slice  [ntasks] ;
-
-    GB_ek_slice (pstart_slice, kfirst_slice, klast_slice, B, ntasks) ;
+    int64_t *pstart_slice, *kfirst_slice, *klast_slice ;
+    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, B, ntasks))
+    {
+        // out of memory
+        return (GB_OUT_OF_MEMORY) ;
+    }
 
     //--------------------------------------------------------------------------
     // compute flop counts for C<M> = A*B
     //--------------------------------------------------------------------------
 
-    int64_t Wfirst [ntasks], Wlast [ntasks], Flops [ntasks+1] ;
+    int64_t Wfirst [ntasks], Wlast [ntasks], Flops [ntasks+1] ;     // TODO
     int64_t total_flops = 0 ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
@@ -380,13 +385,11 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     // finalize the results
     //--------------------------------------------------------------------------
 
-    bool result ;
-
     if (check_quick_return)
     { 
 
         // The only output of this function is the result of this test:
-        result = (total_flops <= floplimit) ;
+        (*result) = (total_flops <= floplimit) ;
 
     }
     else
@@ -398,7 +401,7 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
 
         GB_cumsum (Flops, ntasks, NULL, 1) ;
         int64_t total_flops = Flops [ntasks] ;
-        result = (total_flops <= floplimit) ;
+        (*result) = (total_flops <= floplimit) ;
 
         if (Bflops != NULL)
         {
@@ -497,9 +500,10 @@ bool GB_AxB_flopcount           // compute flops for C<M>=A*B or C=A*B
     }
 
     //--------------------------------------------------------------------------
-    // return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
-    return (result) ;
+    GB_FREE_WORK ;
+    return (GrB_SUCCESS) ;
 }
 

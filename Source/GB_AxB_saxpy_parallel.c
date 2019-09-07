@@ -177,6 +177,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     bool fine_slice = (nthreads > bnvec) ;
     int64_t *restrict Bflops = NULL ;
     int64_t *restrict Bflops_per_entry = NULL ;
+    bool flopresult ;
 
     if (!fine_slice)
     {
@@ -207,8 +208,8 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
 
         // Bflops [k] = # of flops to compute A*B(:,j) where j is the kth
         // vector in B
-        GB_AxB_flopcount (Bflops, NULL, (Mask_comp) ? NULL : M, A, B, 0,
-            Context) ;
+        GB_OK (GB_AxB_flopcount (&flopresult, Bflops, NULL,
+            (Mask_comp) ? NULL : M, A, B, 0, Context)) ;
 
         // reduce # of threads, based on flop count and the chunk size
         total_flops = Bflops [bnvec] ;
@@ -236,8 +237,8 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
 
         // Bflops_per_entry [p] = # of flops to compute A(:,k)*B(k,j)
         // where B(k,j) is in Bi [p] and Bx [p].
-        GB_AxB_flopcount (NULL, Bflops_per_entry, (Mask_comp) ? NULL : M,
-            A, B, 0, Context) ;
+        GB_OK (GB_AxB_flopcount (&flopresult, NULL, Bflops_per_entry,
+            (Mask_comp) ? NULL : M, A, B, 0, Context)) ;
 
         // reduce # of threads, based on flop count and the chunk size
         total_flops = Bflops_per_entry [bnz] ;
@@ -248,7 +249,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
 
     nthreads = GB_nthreads (total_flops, chunk, nthreads_max) ;
-    int64_t Slice [nthreads+1] ;
+    int64_t Slice [nthreads+1] ;    // TODO
     Slice [0] = 0 ;
 
     if (!fine_slice)
@@ -281,8 +282,8 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     // If the problem is small enough so that nthreads has been reduced to 1,
     // B is not sliced.
 
-    GrB_Matrix Cslice [nthreads] ;
-    GrB_Matrix Bslice [nthreads] ;
+    GrB_Matrix Cslice [nthreads] ;  // TODO
+    GrB_Matrix Bslice [nthreads] ;  // TODO
     for (int tid = 0 ; tid < nthreads ; tid++)
     { 
         Cslice [tid] = NULL ;
@@ -314,9 +315,9 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     // select the method for each slice
     //--------------------------------------------------------------------------
 
-    GrB_Desc_Value AxB_methods_used [nthreads] ;
-    int64_t bjnz_max [nthreads] ;
-    int Sauna_ids [nthreads] ;
+    GrB_Desc_Value AxB_methods_used [nthreads] ;    // TODO
+    int64_t bjnz_max [nthreads] ;   // TODO
+    int Sauna_ids [nthreads] ;  // TODO
 
     bool any_Gustavson = false ;
     #pragma omp parallel for num_threads(nthreads) schedule(static,1) \

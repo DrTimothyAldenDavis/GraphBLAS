@@ -90,7 +90,7 @@
 
     // declare a ztype array of size ntasks
     #define GB_REDUCTION_WORKSPACE(W,ntasks)        \
-        GB_ctype W [ntasks]   
+        GB_ctype W [/* TODO */ ntasks]
 
 // break the loop if terminal condition reached
 

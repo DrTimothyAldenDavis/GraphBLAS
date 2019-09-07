@@ -81,7 +81,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads
             //------------------------------------------------------------------
 
-            int64_t ws [nthreads+1] ;
+            int64_t ws [nthreads+1] ;   // TODO
             #pragma omp parallel num_threads(nthreads)
             {
                 // each thread sums up its own part
@@ -148,8 +148,8 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads, also compute k
             //------------------------------------------------------------------
 
-            int64_t ws [nthreads+1] ;
-            int64_t wk [nthreads+1] ;
+            int64_t ws [nthreads+1] ;   // TODO
+            int64_t wk [nthreads+1] ;   // TODO
             #pragma omp parallel num_threads(nthreads)
             {
                 // each thread sums up its own part

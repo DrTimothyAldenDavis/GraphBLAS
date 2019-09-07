@@ -542,7 +542,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 int ntasks = (nth == 1) ? 1 : (8 * nth) ;
                 ntasks = GB_IMIN (ntasks, avdim) ;
                 ntasks = GB_IMAX (ntasks, 1) ;
-                int64_t Count [ntasks+1] ;
+                int64_t Count [ntasks+1] ;      // TODO
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
                 for (int tid = 0 ; tid < ntasks ; tid++)
@@ -693,7 +693,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // must be done before Chandle is created below, since that step
             // destroys A.
 
-            GB_extract_vector_list (iwork, A, nthreads) ;
+            if (!GB_extract_vector_list (iwork, A, nthreads))
+            { 
+                // out of memory
+                GB_FREE_C ;
+                return (GB_OUT_OF_MEMORY) ;
+            }
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and S)

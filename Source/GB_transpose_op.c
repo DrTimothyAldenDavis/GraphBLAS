@@ -73,7 +73,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     #define GB_CAST_OP(pC,pA)                                       \
     {                                                               \
         /* xwork = (xtype) Ax [pA] */                               \
-        GB_void xwork [xsize] ;                                     \
+        GB_void xwork [GB_PGI(xsize)] ;                             \
         cast_A_to_X (xwork, Ax +(pA*asize), asize) ;                \
         /* Cx [pC] = fop (xwork) ; Cx is of type op->ztype */       \
         fop (Cx +(pC*zsize), xwork) ;                               \

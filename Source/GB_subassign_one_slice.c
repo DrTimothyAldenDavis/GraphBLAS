@@ -150,7 +150,7 @@ GrB_Info GB_subassign_one_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    int64_t Coarse [ntasks1+1] ;
+    int64_t Coarse [ntasks1+1] ;        // TODO
     GB_pslice (Coarse, /* A */ A->p, A->nvec, ntasks1) ;
 
     //--------------------------------------------------------------------------

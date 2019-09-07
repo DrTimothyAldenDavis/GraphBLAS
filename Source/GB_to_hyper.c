@@ -65,7 +65,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
         const int64_t *restrict Ap_old = A->p ;
         bool Ap_old_shallow = A->p_shallow ;
 
-        int64_t Count [ntasks+1] ;
+        int64_t Count [ntasks+1] ;      // TODO
 
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
         for (int tid = 0 ; tid < ntasks ; tid++)

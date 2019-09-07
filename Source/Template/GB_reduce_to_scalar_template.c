@@ -42,7 +42,7 @@
         //----------------------------------------------------------------------
 
         // ztype W [ntasks] ;
-        GB_REDUCTION_WORKSPACE (W, ntasks) ;
+        GB_REDUCTION_WORKSPACE (W, ntasks) ;        // TODO
         ASSERT (ntasks <= anz) ;
         bool early_exit = false ;
 

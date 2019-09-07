@@ -43,8 +43,8 @@
     //--------------------------------------------------------------------------
 
     // ztype Wfirst [ntasks], Wlast [ntasks] ;
-    GB_REDUCTION_WORKSPACE (Wfirst, ntasks) ;
-    GB_REDUCTION_WORKSPACE (Wlast , ntasks) ;
+    GB_REDUCTION_WORKSPACE (Wfirst, ntasks) ;       // TODO
+    GB_REDUCTION_WORKSPACE (Wlast , ntasks) ;       // TODO
 
     //--------------------------------------------------------------------------
     // reduce each slice

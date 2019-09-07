@@ -29,8 +29,8 @@
     // allocate workspace for each thread
     //--------------------------------------------------------------------------
 
-    GB_CTYPE *Works [nth] ;
-    bool     *Marks [nth] ;
+    GB_CTYPE *Works [nth] ; // TODO
+    bool     *Marks [nth] ; // TODO
     bool ok = true ;
 
     // This does not need to be parallel.  The calloc does not take O(n) time.
@@ -56,7 +56,7 @@
     // reduce each slice in its own workspace
     //--------------------------------------------------------------------------
 
-    int64_t  Tnz [nth] ;
+    int64_t  Tnz [nth] ;    // TODO
 
     // each thread reduces its own slice in parallel
     #pragma omp parallel for num_threads(nth) schedule(static)
@@ -226,7 +226,7 @@
 
             int ntasks = 256 * nthreads ;
             ntasks = GB_IMIN (ntasks, n) ;
-            int64_t Count [ntasks+1] ;
+            int64_t Count [ntasks+1] ;      // TODO
             #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
             for (int taskid = 0 ; taskid < ntasks ; taskid++)
             {

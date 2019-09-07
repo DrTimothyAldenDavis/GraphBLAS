@@ -58,8 +58,8 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     // zero, and their last entries are the total # entries and vectors in C,
     // respectively.
 
-    int64_t Cnzs   [nthreads+1] ;
-    int64_t Cnvecs [nthreads+1] ;
+    int64_t Cnzs   [nthreads+1] ;   // TODO
+    int64_t Cnvecs [nthreads+1] ;   // TODO
 
     // all the slices have the same type and dimension
     GrB_Type ctype = (Cslice [0])->type ;

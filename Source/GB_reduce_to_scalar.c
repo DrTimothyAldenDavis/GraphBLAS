@@ -90,7 +90,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
     // s = identity
-    GB_void s [zsize] ;
+    GB_void s [GB_PGI(zsize)] ;
     memcpy (s, reduce->identity, zsize) ;
 
     // get terminal value, if any
@@ -166,11 +166,11 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             // workspace for each thread
             #define GB_REDUCTION_WORKSPACE(W, ntasks)               \
-                GB_void W [ntasks*zsize]
+                GB_void W [/* TODO */ ntasks*zsize]
 
             // ztype t = identity
             #define GB_SCALAR_IDENTITY(t)                           \
-                GB_void t [zsize] ;                                 \
+                GB_void t [GB_PGI(zsize)] ;                         \
                 memcpy (t, reduce->identity, zsize) ;
 
             // t = W [tid], no typecast
@@ -214,7 +214,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             // ztype t ;
             #define GB_SCALAR(t)                                    \
-                GB_void t [zsize]
+                GB_void t [GB_PGI(zsize)]
 
             // t = (ztype) Ax [p], but no typecasting needed
             #define GB_CAST_ARRAY_TO_SCALAR(t,Ax,p)                 \
@@ -247,7 +247,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             // t += (ztype) Ax [p], with typecast
             #undef  GB_ADD_CAST_ARRAY_TO_SCALAR
             #define GB_ADD_CAST_ARRAY_TO_SCALAR(t,Ax,p)             \
-                GB_void awork [zsize] ;                             \
+                GB_void awork [GB_PGI(zsize)] ;                     \
                 cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
                 freduce (t, t, awork)
 

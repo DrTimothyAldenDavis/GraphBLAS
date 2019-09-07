@@ -108,7 +108,7 @@ GrB_Info GB_AxB_dot3_one_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    int64_t Coarse [ntasks1+1] ;
+    int64_t Coarse [ntasks1+1] ;        // TODO
     GB_pslice (Coarse, Mp, mnvec, ntasks1) ;
 
     //--------------------------------------------------------------------------

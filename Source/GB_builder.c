@@ -200,7 +200,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
     // Each thread handles about the same number of tuples.  This partition
     // depends only on nvals.
 
-    int64_t tstart_slice [nthreads+1] ; // first tuple in each slice
+    int64_t tstart_slice [nthreads+1] ; // first tuple in each slice    // TODO
     tstart_slice [0] = 0 ;
     for (int tid = 1 ; tid < nthreads ; tid++)
     { 
@@ -213,8 +213,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //                    counted as being in the first slice.
     // tnz_slice   [tid]: # of entries in a slice after removing duplicates
 
-    int64_t tnvec_slice [nthreads+1] ;
-    int64_t tnz_slice   [nthreads+1] ;
+    int64_t tnvec_slice [nthreads+1] ;  // TODO
+    int64_t tnz_slice   [nthreads+1] ;  // TODO
 
     // sentinel values for the final cumulative sum
     tnvec_slice [nthreads] = 0 ;
@@ -297,7 +297,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ASSERT (vdim >= 0) ;
             ASSERT (I_input != NULL) ;
 
-            int64_t kbad [nthreads] ;
+            int64_t kbad [nthreads] ;   // TODO
 
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(&&:known_sorted) reduction(&&:no_duplicates_found)
@@ -414,7 +414,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ASSERT (I_input != NULL) ;
             ASSERT (J_input == NULL) ;
             ASSERT (vdim == 1) ;
-            int64_t kbad [nthreads] ;
+            int64_t kbad [nthreads] ;   // TODO
 
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(&&:known_sorted) reduction(&&:no_duplicates_found)
@@ -710,7 +710,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // look for duplicates and count # vectors in each slice
         //----------------------------------------------------------------------
 
-        int64_t ilast_slice [nthreads] ;
+        int64_t ilast_slice [nthreads] ;    // TODO
         for (int tid = 0 ; tid < nthreads ; tid++)
         { 
             int64_t tstart = tstart_slice [tid] ;
@@ -1295,13 +1295,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
                 #define GB_ADD_CAST_ARRAY_TO_ARRAY(Tx,p,S,k)                \
                 {                                                           \
                     /* ywork = (ytype) S [k] */                             \
-                    GB_void ywork [ysize] ;                                 \
+                    GB_void ywork [GB_PGI(ysize)] ;                         \
                     cast_S_to_Y (ywork, S +((k)*ssize), ssize) ;            \
                     /* xwork = (xtype) Tx [p] */                            \
-                    GB_void xwork [xsize] ;                                 \
+                    GB_void xwork [GB_PGI(xsize)] ;                         \
                     cast_T_to_X (xwork, Tx +((p)*tsize), tsize) ;           \
                     /* zwork = f (xwork, ywork) */                          \
-                    GB_void zwork [zsize] ;                                 \
+                    GB_void zwork [GB_PGI(zsize)] ;                         \
                     fdup (zwork, xwork, ywork) ;                            \
                     /* Tx [tnz-1] = (ttype) zwork */                        \
                     cast_Z_to_T (Tx +((p)*tsize), zwork, zsize) ;           \

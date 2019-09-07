@@ -39,6 +39,40 @@
 // #define USER_NO_THREADS
 
 //------------------------------------------------------------------------------
+// PGI_COMPILER_BUG
+//------------------------------------------------------------------------------
+
+// If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
+// enabled for a bug in the PGI compiler.  The compiler does not correctly
+// handle automatic arrays of variable size.  If this bug is present, then
+// user-defined types are limited in size to 128 bytes or less.  Many of the
+// type-generic routines allocate workspace for a single scalar of variable
+// size, using a statement:
+//
+//      GB_void aij [xsize] ;
+// 
+// For example.  This is a valid ANSI C11 statement, but triggers a bug in the
+// PGI compiler.  The workaround is to use a fixed-size instead, when using the
+// PGI compiler:
+//
+//      GB_void aij [GB_PGI(xsize)] ;
+//
+// In this case, user-defined types are limited to a max of 128 bytes.
+//
+// grep for "PGI" to see what parts of the code are affected.
+
+#ifdef PGI_COMPILER_BUG
+
+    #define PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE 128
+    #define GB_PGI(s) PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE
+
+#else
+
+    #define GB_PGI(s) s
+
+#endif
+
+//------------------------------------------------------------------------------
 // manage compiler warnings
 //------------------------------------------------------------------------------
 
@@ -1745,11 +1779,11 @@ bool GB_size_t_multiply     // true if ok, false if overflow
     const size_t b
 ) ;
 
-void GB_extract_vector_list
+bool GB_extract_vector_list     // true if successful, false if out of memory
 (
     // output:
     int64_t *restrict J,        // size nnz(A) or more
-    // input
+    // input:
     const GrB_Matrix A,
     int nthreads
 ) ;
