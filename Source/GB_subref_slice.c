@@ -29,10 +29,17 @@
 // Compare this function with GB_ewise_slice, which constructs coarse/fine
 // tasks for the eWise operations (C=A+B, C=A.*B, and C<M>=Z).
 
+
+#define GB_FREE_WORK                                                    \
+{                                                                       \
+    GB_FREE_MEMORY (Coarse, ntasks1+1, sizeof (int64_t)) ;              \
+    GB_FREE_MEMORY (Cwork, Cnvec+1, sizeof (int64_t)) ;                 \
+}
+
 #define GB_FREE_ALL                                                     \
 {                                                                       \
+    GB_FREE_WORK ;                                                      \
     GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;  \
-    GB_FREE_MEMORY (Cwork, Cnvec+1, sizeof (int64_t)) ;                 \
     GB_FREE_MEMORY (Mark,  avlen, sizeof (int64_t)) ;                   \
     GB_FREE_MEMORY (Inext, nI,    sizeof (int64_t)) ;                   \
 }
@@ -86,9 +93,12 @@ GrB_Info GB_subref_slice
     (*p_Mark    ) = NULL ;
     (*p_Inext   ) = NULL ;
 
-    int64_t *restrict Cwork = NULL ;
     int64_t *restrict Mark = NULL ;
     int64_t *restrict Inext = NULL ;
+
+    int64_t *restrict Cwork = NULL ;
+    int64_t *restrict Coarse = NULL ;   // size ntasks1+1
+    int ntasks1 = 0 ;
 
     GrB_Info info ;
 
@@ -222,7 +232,7 @@ GrB_Info GB_subref_slice
 
     int nthreads = GB_nthreads (cwork, chunk, nthreads_max) ;
 
-    int ntasks1 = (nthreads == 1) ? 1 : (32 * nthreads) ;
+    ntasks1 = (nthreads == 1) ? 1 : (32 * nthreads) ;
     double target_task_size = cwork / (double) (ntasks1) ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
 
@@ -253,7 +263,7 @@ GrB_Info GB_subref_slice
         TaskList [0].klast  = Cnvec-1 ;
 
         // free workspace and return result
-        GB_FREE_MEMORY (Cwork, Cnvec+1, sizeof (int64_t)) ;
+        GB_FREE_WORK ;
         (*p_TaskList  ) = TaskList ;
         (*p_max_ntasks) = max_ntasks ;
         (*p_ntasks    ) = (Cnvec == 0) ? 0 : 1 ;
@@ -266,8 +276,12 @@ GrB_Info GB_subref_slice
     // slice the work into coarse tasks
     //--------------------------------------------------------------------------
 
-    int64_t Coarse [ntasks1+1] ;        // TODO
-    GB_pslice (Coarse, Cwork, Cnvec, ntasks1) ;
+    if (!GB_pslice (&Coarse, Cwork, Cnvec, ntasks1))
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GB_OUT_OF_MEMORY) ;
+    }
 
     //--------------------------------------------------------------------------
     // construct all tasks, both coarse and fine
@@ -463,7 +477,7 @@ GrB_Info GB_subref_slice
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    GB_FREE_MEMORY (Cwork, Cnvec+1, sizeof (int64_t)) ;
+    GB_FREE_WORK ;
     (*p_TaskList  ) = TaskList ;
     (*p_max_ntasks) = max_ntasks ;
     (*p_ntasks    ) = ntasks ;

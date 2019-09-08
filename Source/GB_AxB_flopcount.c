@@ -80,8 +80,13 @@
 #include "GB_ek_slice.h"
 #include "GB_bracket.h"
 
-#define GB_FREE_WORK \
-    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
+#define GB_FREE_WORK                                                        \
+{                                                                           \
+    GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ; \
+    GB_FREE_MEMORY (Wfirst, ntasks, sizeof (int64_t)) ;                     \
+    GB_FREE_MEMORY (Wlast,  ntasks, sizeof (int64_t)) ;                     \
+    GB_FREE_MEMORY (Flops,  ntasks+1, sizeof (int64_t)) ;                   \
+}
 
 GrB_Info GB_AxB_flopcount
 (
@@ -183,6 +188,10 @@ GrB_Info GB_AxB_flopcount
     // and vectors kfirst_slice [tid] to klast_slice [tid].  The first and
     // last vectors may be shared with prior slices and subsequent slices.
 
+    int64_t *restrict Wfirst = NULL ;       // size ntasks
+    int64_t *restrict Wlast = NULL ;        // size ntasks
+    int64_t *restrict Flops = NULL ;        // size ntasks+1
+
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
     ntasks = GB_IMIN (ntasks, bnz) ;
     ntasks = GB_IMAX (ntasks, 1) ;
@@ -190,6 +199,21 @@ GrB_Info GB_AxB_flopcount
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, B, ntasks))
     {
         // out of memory
+        GB_FREE_WORK ;
+        return (GB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    GB_MALLOC_MEMORY (Wfirst, ntasks, sizeof (int64_t)) ;
+    GB_MALLOC_MEMORY (Wlast,  ntasks, sizeof (int64_t)) ;
+    GB_MALLOC_MEMORY (Flops,  ntasks+1, sizeof (int64_t)) ;
+    if (Wfirst == NULL || Wlast == NULL || Flops == NULL)
+    {
+        // out of memory
+        GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;
     }
 
@@ -197,7 +221,6 @@ GrB_Info GB_AxB_flopcount
     // compute flop counts for C<M> = A*B
     //--------------------------------------------------------------------------
 
-    int64_t Wfirst [ntasks], Wlast [ntasks], Flops [ntasks+1] ;     // TODO
     int64_t total_flops = 0 ;
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)

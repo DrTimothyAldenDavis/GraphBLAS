@@ -39,40 +39,6 @@
 // #define USER_NO_THREADS
 
 //------------------------------------------------------------------------------
-// PGI_COMPILER_BUG
-//------------------------------------------------------------------------------
-
-// If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
-// enabled for a bug in the PGI compiler.  The compiler does not correctly
-// handle automatic arrays of variable size.  If this bug is present, then
-// user-defined types are limited in size to 128 bytes or less.  Many of the
-// type-generic routines allocate workspace for a single scalar of variable
-// size, using a statement:
-//
-//      GB_void aij [xsize] ;
-// 
-// For example.  This is a valid ANSI C11 statement, but triggers a bug in the
-// PGI compiler.  The workaround is to use a fixed-size instead, when using the
-// PGI compiler:
-//
-//      GB_void aij [GB_PGI(xsize)] ;
-//
-// In this case, user-defined types are limited to a max of 128 bytes.
-//
-// grep for "PGI" to see what parts of the code are affected.
-
-#ifdef PGI_COMPILER_BUG
-
-    #define PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE 128
-    #define GB_PGI(s) PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE
-
-#else
-
-    #define GB_PGI(s) s
-
-#endif
-
-//------------------------------------------------------------------------------
 // manage compiler warnings
 //------------------------------------------------------------------------------
 
@@ -149,6 +115,43 @@
 //------------------------------------------------------------------------------
 
 #include "GraphBLAS.h"
+
+//------------------------------------------------------------------------------
+// PGI_COMPILER_BUG
+//------------------------------------------------------------------------------
+
+// If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
+// enabled for a bug in the PGI compiler.  The compiler does not correctly
+// handle automatic arrays of variable size.  If this bug is present, then
+// user-defined types are limited in size to 128 bytes or less.  Many of the
+// type-generic routines allocate workspace for a single scalar of variable
+// size, using a statement:
+//
+//      GB_void aij [xsize] ;
+// 
+// For example.  This is a valid ANSI C11 statement, but triggers a bug in the
+// PGI compiler.  The workaround is to use a fixed-size instead, when using the
+// PGI compiler:
+//
+//      GB_void aij [GB_PGI(xsize)] ;
+//
+// In this case, user-defined types are limited to a max of 128 bytes.
+//
+// grep for "PGI" to see what parts of the code are affected.
+
+#ifdef PGI_COMPILER_BUG
+
+    #define PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE 128
+
+    #define GB_PGI(s) PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE
+    #define GB_PGI_NTHREADS(nthreads) GxB_NTHREADS_MAX
+
+#else
+
+    #define GB_PGI(s) s
+    #define GB_PGI_NTHREADS(nthreads) nthreads
+
+#endif
 
 //------------------------------------------------------------------------------
 // min, max, and NaN handling
@@ -1675,12 +1678,12 @@ GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
     GB_Context Context
 ) ;
 
-void GB_pslice                      // find how to slice Ap
+bool GB_pslice          // slice Ap; return true if ok, false if out of memory
 (
-    int64_t *Slice,                 // size ntasks+1
-    const int64_t *restrict Ap,     // array of size n+1
+    int64_t *restrict *Slice_handle,    // size ntasks+1
+    const int64_t *restrict Ap,         // array of size n+1
     const int64_t n,
-    const int ntasks                // # of tasks
+    const int ntasks                    // # of tasks
 ) ;
 
 void GB_eslice

@@ -19,12 +19,13 @@
 #include "GB_ij.h"
 #include "GB_sort.h"
 
-#define GB_FREE_WORK                                    \
-{                                                       \
-    GB_FREE_MEMORY (W0,  ni, sizeof (GrB_Index)) ;      \
-    GB_FREE_MEMORY (W1,  ni, sizeof (GrB_Index)) ;      \
-    GB_FREE_MEMORY (I1,  ni, sizeof (GrB_Index)) ;      \
-    GB_FREE_MEMORY (I1k, ni, sizeof (GrB_Index)) ;      \
+#define GB_FREE_WORK                                        \
+{                                                           \
+    GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;    \
+    GB_FREE_MEMORY (W0,  ni, sizeof (GrB_Index)) ;          \
+    GB_FREE_MEMORY (W1,  ni, sizeof (GrB_Index)) ;          \
+    GB_FREE_MEMORY (I1,  ni, sizeof (GrB_Index)) ;          \
+    GB_FREE_MEMORY (I1k, ni, sizeof (GrB_Index)) ;          \
 }
 
 GrB_Info GB_ijsort
@@ -59,6 +60,8 @@ GrB_Info GB_ijsort
     int64_t *restrict W1 = NULL ;
     int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
+    int64_t *restrict Count = NULL ;        // size ntasks+1
+    int ntasks = 0 ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -132,14 +135,28 @@ GrB_Info GB_ijsort
     }
 
     //--------------------------------------------------------------------------
-    // count unique entries in I1
+    // determine number of tasks to create
     //--------------------------------------------------------------------------
 
-    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
+    ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (ntasks, ni) ;
     ntasks = GB_IMAX (ntasks, 1) ;
 
-    int64_t Count [ntasks+1] ;      // TODO
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    GB_MALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
+    if (Count == NULL)
+    {
+        // out of memory
+        GB_FREE_WORK ;
+        return (GB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // count unique entries in I1
+    //--------------------------------------------------------------------------
 
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (int tid = 0 ; tid < ntasks ; tid++)

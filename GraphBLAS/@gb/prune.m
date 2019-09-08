@@ -1,5 +1,5 @@
 function C = prune (G, s)
-%GB.PRUNE remove explicit values from a GraphBLAS matrix.
+%GB.PRUNE remove explicit values from a matrix.
 % C = gb.prune (G) removes any explicit zeros from G.
 % C = gb.prune (G, s) removes entries equal to the given scalar s.
 %

@@ -86,12 +86,6 @@
     #define GB_ADD_SCALAR_TO_ARRAY(W,k,s)           \
         if ((s < W [k]) || (W [k] != W [k])) W [k] = s
 
-// workspace
-
-    // declare a ztype array of size ntasks
-    #define GB_REDUCTION_WORKSPACE(W,ntasks)        \
-        float W [ntasks]   
-
 // break the loop if terminal condition reached
 
     #define GB_HAS_TERMINAL                         \
@@ -147,6 +141,8 @@ GrB_Info GB_red_eachvec__min_fp32
     const int64_t *restrict kfirst_slice,
     const int64_t *restrict klast_slice,
     const int64_t *restrict pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
     int ntasks,
     int nthreads
 )

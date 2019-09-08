@@ -4,108 +4,108 @@ nthreads_max [7777777] must be < GxB_NTHREADS_MAX [2048]
 Recompile with a higher value of GxB_NTHREADS_MAX,
 using -DGxB_NTHREADS_MAX=7777777 (or higher, as needed)
 
-GB_mex_errors, line 585:GraphBLAS error: GrB_DIMENSION_MISMATCH
+GB_mex_errors, line 587:GraphBLAS error: GrB_DIMENSION_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 Thunk must be a vector of length 1
 
-GB_mex_errors, line 601:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 603:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 operator ge_thunk not defined for user-defined types
 
-GB_mex_errors, line 610:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 612:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 operator ge_zero not defined for user-defined types
 
-GB_mex_errors, line 613:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 615:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 operator gt_zero not defined for user-defined types
 
-GB_mex_errors, line 616:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 618:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 operator lt_zero not defined for user-defined types
 
-GB_mex_errors, line 619:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 621:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 operator le_zero not defined for user-defined types
 
-GB_mex_errors, line 622:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 624:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 incompatible type for C=le_thunk(A,Thunk):
 input A type [int16_t] and Thunk type [user_int] not compatible
 
-GB_mex_errors, line 760:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 763:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 slice matrix invalid: unfinished [Aslice [0]]
 
-GB_mex_errors, line 766:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 769:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 invalid slice matrix structure [Aslice [0]]
 
-GB_mex_errors, line 771:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 774:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 non-shallow: invalid slice matrix [Aslice [0]
 
 
-GB_mex_errors, line 777:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 780:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 hfirst: invalid slice matrix [Aslice [0]]
 
 
-GB_mex_errors, line 760:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 763:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 slice matrix invalid: unfinished [Aslice [0]]
 
-GB_mex_errors, line 766:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 769:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 invalid slice matrix structure [Aslice [0]]
 
-GB_mex_errors, line 771:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 774:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 non-shallow: invalid slice matrix [Aslice [0]
 
 
-GB_mex_errors, line 777:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 780:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Matrix_fprint (A, name, pr, f)
 hfirst: invalid slice matrix [Aslice [0]]
 
 
-GB_mex_errors, line 797:GraphBLAS error: GrB_INVALID_VALUE
+GB_mex_errors, line 800:GraphBLAS error: GrB_INVALID_VALUE
 function: GB_mex_about
 Too many concurrent threads
 
-GB_mex_errors, line 836:GraphBLAS error: GrB_NULL_POINTER
+GB_mex_errors, line 839:GraphBLAS error: GrB_NULL_POINTER
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 Required argument is null: [Thunk]
 
-GB_mex_errors, line 841:GraphBLAS error: GrB_INVALID_VALUE
+GB_mex_errors, line 844:GraphBLAS error: GrB_INVALID_VALUE
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 User-defined operator select_plus_one(A,Thunk) has a Thunk input,
 which must not be empty
 
-GB_mex_errors, line 847:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 850:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 User-defined operator select_plus_one(A,Thunk) has a Thunk input
 type of [double], which must exactly match the type of the
 Thunk parameter; parameter to GxB_select has type [float]
 
-GB_mex_errors, line 852:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 855:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 User-defined operator select_nothing(A,Thunk) does not take a Thunk
 input, but Thunk parameter is non-NULL
 
-GB_mex_errors, line 858:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
+GB_mex_errors, line 861:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
 function: GxB_Type_fprint (type, name, pr, f)
 Type is uninitialized: [user_type]
 
-GB_mex_errors, line 861:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 864:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_SelectOp_fprint (selectop, name, pr, f)
 SelectOp has an invalid ttype: selectop [select_nothing]
 
-GB_mex_errors, line 866:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
+GB_mex_errors, line 869:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
 function: GxB_Scalar_fprint (s, name, pr, f)
 scalar is uninitialized: [thunk]
 
-GB_mex_errors, line 960:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 963:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Scalar_fprint (s, name, pr, f)
 GxB_Scalar is invalid [scalar2]
 

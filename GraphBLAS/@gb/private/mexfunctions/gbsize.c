@@ -10,6 +10,9 @@
 // The input may be either a GraphBLAS matrix struct or a standard MATLAB
 // sparse matrix.
 
+// TODO results are returned as double, but this means that the dimensions
+// cannot be larger than about 2^52.  Use int64 or uint64 instead.
+
 #include "gb_matlab.h"
 
 void mexFunction

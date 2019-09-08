@@ -23,9 +23,9 @@
 bool GB_ek_slice        // true if successful, false if out of memory
 (
     // output:
-    int64_t **pstart_slice_handle, // size ntasks+1
-    int64_t **kfirst_slice_handle, // size ntasks
-    int64_t **klast_slice_handle,  // size ntasks
+    int64_t *restrict *pstart_slice_handle, // size ntasks+1
+    int64_t *restrict *kfirst_slice_handle, // size ntasks
+    int64_t *restrict *klast_slice_handle,  // size ntasks
     // input:
     GrB_Matrix A,                   // matrix to slize
     int ntasks                      // # of tasks
@@ -33,9 +33,9 @@ bool GB_ek_slice        // true if successful, false if out of memory
 
 void GB_ek_slice_free
 (
-    int64_t *restrict* pstart_slice_handle, // size ntasks+1
-    int64_t *restrict* kfirst_slice_handle, // size ntasks
-    int64_t *restrict* klast_slice_handle,  // size ntasks
+    int64_t *restrict *pstart_slice_handle, // size ntasks+1
+    int64_t *restrict *kfirst_slice_handle, // size ntasks
+    int64_t *restrict *klast_slice_handle,  // size ntasks
     int ntasks                              // # of tasks
 ) ;
 

@@ -5,6 +5,8 @@ function D = coldegree (X)
 %
 % See also gb/rowdegree, graph/degree, gbgraph/degree.
 
+% FUTURE: this will be faster as a dedicated mexFunction
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 

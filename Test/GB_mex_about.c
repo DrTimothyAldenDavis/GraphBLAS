@@ -515,9 +515,11 @@ void mexFunction
     // GB_pslice
     //--------------------------------------------------------------------------
 
-    int64_t Slice [4] ;
-    GB_pslice (Slice, NULL, 0, 4) ;
+    int64_t *Slice = NULL ;
+    GB_pslice (&Slice, NULL, 0, 4) ;
     for (int t = 0 ; t < 4 ; t++) CHECK (Slice [t] == 0) ;
+    GB_free_memory (Slice, 5, sizeof (int64_t)) ;
+    Slice = NULL ;
 
     //--------------------------------------------------------------------------
     // renamed boolean monoids
@@ -748,6 +750,7 @@ void mexFunction
         }
 
         GrB_Matrix Aslice [2] = { NULL, NULL } ;
+        int64_t Slice [8] ;
         Slice [0] = 0 ;
         Slice [1] = 4 ;
         Slice [2] = 8 ;

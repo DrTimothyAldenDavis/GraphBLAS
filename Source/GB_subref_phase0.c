@@ -144,6 +144,8 @@ static inline void GB_find_Ap_start_end
 // GB_subref_phase0
 //------------------------------------------------------------------------------
 
+#define GB_FREE_WORK GB_FREE_MEMORY (Count, max_ntasks+1, sizeof (int64_t)) ;
+
 GrB_Info GB_subref_phase0
 (
     // output
@@ -305,7 +307,7 @@ GrB_Info GB_subref_phase0
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = 1, ntasks = 1 ;
     int max_ntasks = nthreads_max * 8 ;
-    int64_t Count [max_ntasks+1] ;      // TODO
+    int64_t *restrict Count = NULL ;        // size max_ntasks+1
 
     #define GB_GET_NTHREADS_AND_NTASKS(work)                    \
     {                                                           \
@@ -313,6 +315,17 @@ GrB_Info GB_subref_phase0
         ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;         \
         ntasks = GB_IMIN (ntasks, work) ;                       \
         ntasks = GB_IMAX (ntasks, 1) ;                          \
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    GB_MALLOC_MEMORY (Count, max_ntasks+1, sizeof (int64_t)) ;
+    if (Count == NULL)
+    {
+        // out of memory
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -459,6 +472,7 @@ GrB_Info GB_subref_phase0
         GB_MALLOC_MEMORY (Ch, Cnvec, sizeof (int64_t)) ;
         if (Ch == NULL)
         { 
+            GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }
     }
@@ -470,6 +484,7 @@ GrB_Info GB_subref_phase0
         if (Ap_start == NULL || Ap_end == NULL)
         { 
             // out of memory
+            GB_FREE_WORK ;
             GB_FREE_MEMORY (Ch, Cnvec, sizeof (int64_t)) ;
             GB_FREE_MEMORY (Ap_start, Cnvec, sizeof (int64_t)) ;
             GB_FREE_MEMORY (Ap_end,   Cnvec, sizeof (int64_t)) ;
@@ -677,9 +692,10 @@ GrB_Info GB_subref_phase0
     #endif
 
     //--------------------------------------------------------------------------
-    // return result
+    // free workspace and return result
     //--------------------------------------------------------------------------
 
+    GB_FREE_WORK ;
     (*p_Ch        ) = Ch ;
     (*p_Ap_start  ) = Ap_start ;
     (*p_Ap_end    ) = Ap_end ;

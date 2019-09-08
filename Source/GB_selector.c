@@ -166,7 +166,9 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    int64_t *Wfirst = NULL, *Wlast = NULL, *C_pstart_slice = NULL ;
+    int64_t *restrict Wfirst = NULL ;
+    int64_t *restrict Wlast = NULL ;
+    int64_t *restrict C_pstart_slice = NULL ;
 
     GB_CALLOC_MEMORY (Wfirst, ntasks, sizeof (int64_t)) ;
     GB_CALLOC_MEMORY (Wlast, ntasks, sizeof (int64_t)) ;
@@ -222,7 +224,8 @@ GrB_Info GB_selector
     #define GB_sel1(opname,aname) GB_sel_phase1_ ## opname ## aname
     #define GB_SEL_WORKER(opname,aname,atype)                           \
     {                                                                   \
-        GB_sel1 (opname, aname) (Zp, Cp, Wfirst, Wlast,                 \
+        GB_sel1 (opname, aname) (Zp, Cp,                                \
+            (GB_void *) Wfirst, (GB_void *) Wlast,                      \
             A, kfirst_slice, klast_slice, pstart_slice, flipij, ithunk, \
             (atype *) xthunk, user_select, ntasks, nthreads) ;          \
     }                                                                   \

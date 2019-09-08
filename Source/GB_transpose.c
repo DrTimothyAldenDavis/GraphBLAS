@@ -430,9 +430,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
 
         // allocate new space for the values and pattern
-        GB_void *restrict Cx = NULL ;
         int64_t *restrict Cp ;
         int64_t *restrict Ci = NULL ;
+        GB_void *restrict Cx = NULL ;
         GB_CALLOC_MEMORY (Cp, 2, sizeof (int64_t)) ;
 
         bool allocate_new_Ci = (!A_is_hyper) ;
@@ -449,14 +449,20 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_MALLOC_MEMORY (Cx, anz, ctype->size) ;
         }
 
+        #undef  GB_FREE_ALL
+        #define GB_FREE_ALL                                     \
+        {                                                       \
+            GB_FREE_MEMORY (Cp, 2    , sizeof (int64_t)) ;      \
+            GB_FREE_MEMORY (Ci, anz  , sizeof (int64_t)) ;      \
+            GB_FREE_MEMORY (Cx, anz  , csize) ;                 \
+            GB_FREE_A_AND_C ;                                   \
+        }
+
         if (Cp == NULL || (allocate_new_Cx && (Cx == NULL))
                        || (allocate_new_Ci && (Ci == NULL)))
         { 
             // out of memory
-            GB_FREE_MEMORY (Cp, 2    , sizeof (int64_t)) ;
-            GB_FREE_MEMORY (Ci, anz  , sizeof (int64_t)) ;
-            GB_FREE_MEMORY (Cx, anz  , csize) ;
-            GB_FREE_A_AND_C ;
+            GB_FREE_ALL ;
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -542,7 +548,19 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 int ntasks = (nth == 1) ? 1 : (8 * nth) ;
                 ntasks = GB_IMIN (ntasks, avdim) ;
                 ntasks = GB_IMAX (ntasks, 1) ;
-                int64_t Count [ntasks+1] ;      // TODO
+                int64_t *restrict Count = NULL ;        // size ntasks+1
+
+                //--------------------------------------------------------------
+                // allocate workspace
+                //--------------------------------------------------------------
+
+                GB_MALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
+                if (Count == NULL)
+                {
+                    // out of memory
+                    GB_FREE_ALL ;
+                    return (GB_OUT_OF_MEMORY) ;
+                }
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
                 for (int tid = 0 ; tid < ntasks ; tid++)
@@ -575,6 +593,13 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                         }
                     }
                 }
+
+                //--------------------------------------------------------------
+                // free workspace
+                //--------------------------------------------------------------
+
+                #undef GB_FREE_ALL
+                GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
             }
 
             #ifdef GB_DEBUG
