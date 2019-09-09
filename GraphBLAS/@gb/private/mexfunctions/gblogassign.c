@@ -79,8 +79,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 3 && nargout <= 1,
-        "usage: Cout = gblogassign (Cin, M, A)") ;
+    gb_usage (nargin == 3 && nargout <= 1, "usage: C = gblogassign (C, M, A)") ;
 
     //--------------------------------------------------------------------------
     // get a deep copy of C

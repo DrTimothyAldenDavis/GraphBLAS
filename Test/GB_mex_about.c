@@ -833,7 +833,13 @@ void mexFunction
     OK (GxB_Scalar_new (&thunk, GrB_FP64)) ;
     OK (GxB_Scalar_setElement_FP64 (thunk, 4)) ;
     OK (GxB_select (C, NULL, NULL, selectop, A, thunk, NULL)) ;
+
+    printf ("\nprint in one-based, long format:\n") ;
+    GB_Global_print_one_based_set (true) ;
+    GB_Global_print_format_set (1) ;
     OK (GxB_print (C, 3)) ;
+    GB_Global_print_one_based_set (false) ;
+    GB_Global_print_format_set (0) ;
 
     expected = GrB_NULL_POINTER ;
     ERR (GxB_select (C, NULL, NULL, selectop, A, NULL, NULL)) ;

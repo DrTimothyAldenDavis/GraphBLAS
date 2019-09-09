@@ -116,6 +116,7 @@ GrB_Info GB_red_scalar__max_int32
 (
     int32_t *result,
     const GrB_Matrix A,
+    GB_void *restrict W_space,
     int ntasks,
     int nthreads
 )

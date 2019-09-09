@@ -23,7 +23,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 1 && nargout <= 1,
-        "ussage: c = gb.chunk ; or gb.chunk (c)") ;
+        "usage: c = gb.chunk ; or gb.chunk (c)") ;
 
     //--------------------------------------------------------------------------
     // set the chunk, if requested

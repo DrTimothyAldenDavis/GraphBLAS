@@ -8,10 +8,8 @@
 //------------------------------------------------------------------------------
 
 // The input may be either a GraphBLAS matrix struct or a standard MATLAB
-// sparse matrix.
-
-// TODO results are returned as double, but this means that the dimensions
-// cannot be larger than about 2^52.  Use int64 or uint64 instead.
+// sparse matrix.  Note that the output is int64, to accomodate huge
+// hypersparse matrices.
 
 #include "gb_matlab.h"
 
@@ -40,18 +38,51 @@ void mexFunction
     OK (GrB_Matrix_nrows (&nrows, X)) ;
     OK (GrB_Matrix_ncols (&ncols, X)) ;
 
-    if (nargout <= 1)
+    //--------------------------------------------------------------------------
+    // return result as int64 or double
+    //--------------------------------------------------------------------------
+
+    if (nrows > FLINTMAX || ncols > FLINTMAX)
     {
-        pargout [0] = mxCreateDoubleMatrix (1, 2, mxREAL) ;
-        double *p = mxGetDoubles (pargout [0]) ;
-        p [0] = (double) nrows ;
-        p [1] = (double) ncols ;
+        // output is int64 to avoid flint overflow
+        int64_t *p ;
+        if (nargout <= 1)
+        {
+            pargout [0] = mxCreateNumericMatrix (1, 2, mxINT64_CLASS, mxREAL) ;
+            p = mxGetInt64s (pargout [0]) ;
+            p [0] = (int64_t) nrows ;
+            p [1] = (int64_t) ncols ;
+        }
+        else
+        {
+            pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
+            p = mxGetInt64s (pargout [0]) ;
+            p [0] = (int64_t) nrows ;
+            pargout [1] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
+            p = mxGetInt64s (pargout [1]) ;
+            p [0] = (int64_t) ncols ;
+        }
     }
     else
     {
-        pargout [0] = mxCreateDoubleScalar ((double) nrows) ;
-        pargout [1] = mxCreateDoubleScalar ((double) ncols) ;
+        // output is double
+        if (nargout <= 1)
+        {
+            pargout [0] = mxCreateDoubleMatrix (1, 2, mxREAL) ;
+            double *p = mxGetDoubles (pargout [0]) ;
+            p [0] = (double) nrows ;
+            p [1] = (double) ncols ;
+        }
+        else
+        {
+            pargout [0] = mxCreateDoubleScalar ((double) nrows) ;
+            pargout [1] = mxCreateDoubleScalar ((double) ncols) ;
+        }
     }
+
+    //--------------------------------------------------------------------------
+    // free shallow copy of X
+    //--------------------------------------------------------------------------
 
     OK (GrB_free (&X)) ;
 }

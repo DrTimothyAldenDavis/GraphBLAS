@@ -1,6 +1,7 @@
 function [arg1, n] = size (G, dim)
 %SIZE the dimensions of a GraphBLAS matrix.
 % [m n] = size (G) is the size of an m-by-n GraphBLAS sparse matrix.
+% If any dimension exceeds flintmax (2^53), m and n are returned as int64.
 %
 % See also gb/length, gb/numel.
 

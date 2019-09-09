@@ -38,6 +38,9 @@
 // #define USER_OPENMP_THREADS
 // #define USER_NO_THREADS
 
+// to turn on memory usage debug printing, uncomment this line:
+// #define GB_PRINT_MALLOC 1
+
 //------------------------------------------------------------------------------
 // manage compiler warnings
 //------------------------------------------------------------------------------

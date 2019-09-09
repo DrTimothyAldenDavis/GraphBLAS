@@ -301,7 +301,8 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
                 flipxy,
                 /* heap: */ NULL, NULL, NULL, 0,
                 /* Gustavson: */ NULL,
-                /* dot: */ Aslice, nthreads, naslice, nbslice, C_counts,
+                /* dot2: */ Aslice, B_slice, nthreads, naslice, nbslice,
+                            C_counts,
                 /* dot3: */ NULL, 0) ;
             done = true ;
         }

@@ -28,7 +28,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, "usage: result = gbisequal (A, B)") ;
+    gb_usage (nargin == 2 && nargout <= 1, "usage: s = gb.isequal (A, B)") ;
 
     //--------------------------------------------------------------------------
     // get the arguments

@@ -29,6 +29,7 @@
 // Compare this function with GB_ewise_slice, which constructs coarse/fine
 // tasks for the eWise operations (C=A+B, C=A.*B, and C<M>=Z).
 
+#define GB_DEBUG 1
 
 #define GB_FREE_WORK                                                    \
 {                                                                       \
@@ -248,10 +249,6 @@ GrB_Info GB_subref_slice
         ASSERT (Inext != NULL) ;
     }
 
-    (*p_Mark       ) = Mark ;
-    (*p_Inext      ) = Inext ;
-    (*p_nduplicates) = ndupl ;
-
     //--------------------------------------------------------------------------
     // check for quick return for a single task
     //--------------------------------------------------------------------------
@@ -264,11 +261,14 @@ GrB_Info GB_subref_slice
 
         // free workspace and return result
         GB_FREE_WORK ;
-        (*p_TaskList  ) = TaskList ;
-        (*p_max_ntasks) = max_ntasks ;
-        (*p_ntasks    ) = (Cnvec == 0) ? 0 : 1 ;
-        (*p_nthreads  ) = 1 ;
-        (*p_post_sort ) = false ;
+        (*p_TaskList   ) = TaskList ;
+        (*p_max_ntasks ) = max_ntasks ;
+        (*p_ntasks     ) = (Cnvec == 0) ? 0 : 1 ;
+        (*p_nthreads   ) = 1 ;
+        (*p_post_sort  ) = false ;
+        (*p_Mark       ) = Mark ;
+        (*p_Inext      ) = Inext ;
+        (*p_nduplicates) = ndupl ;
         return (GrB_SUCCESS) ;
     }
 
@@ -478,11 +478,14 @@ GrB_Info GB_subref_slice
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    (*p_TaskList  ) = TaskList ;
-    (*p_max_ntasks) = max_ntasks ;
-    (*p_ntasks    ) = ntasks ;
-    (*p_nthreads  ) = nthreads ;
-    (*p_post_sort ) = post_sort ;
+    (*p_TaskList   ) = TaskList ;
+    (*p_max_ntasks ) = max_ntasks ;
+    (*p_ntasks     ) = ntasks ;
+    (*p_nthreads   ) = nthreads ;
+    (*p_post_sort  ) = post_sort ;
+    (*p_Mark       ) = Mark ;
+    (*p_Inext      ) = Inext ;
+    (*p_nduplicates) = ndupl ;
     return (GrB_SUCCESS) ;
 }
 

@@ -116,6 +116,7 @@ GrB_Info GB_red_scalar__plus_uint16
 (
     uint16_t *result,
     const GrB_Matrix A,
+    GB_void *restrict W_space,
     int ntasks,
     int nthreads
 )

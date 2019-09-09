@@ -120,7 +120,7 @@ classdef gb
 %   display (G)             display a gb matrix G; same as disp(G,2)
 %   mn = numel (G)          m*n for an m-by-n gb matrix G
 %   e = nnz (G)             number of entries in a gb matrix G
-%   = nzmax (G)           number of entries in a gb matrix G
+%   e = nzmax (G)           number of entries in a gb matrix G
 %   [m n] = size (G)        size of a gb matrix G
 %   n = length (G)          length of a gb vector
 %   s = isempty (G)         true if any dimension of G is zero

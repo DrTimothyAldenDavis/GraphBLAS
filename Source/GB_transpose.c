@@ -37,6 +37,52 @@
 #include "GB_build.h"
 #include "GB_apply.h"
 
+
+#define GB_FREE_WORK                                                        \
+{                                                                           \
+    GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;                    \
+}                                                                           \
+
+// free prior content of A, if transpose is done in place
+#define GB_FREE_IN_PLACE_A                                                  \
+{                                                                           \
+    if (in_place)                                                           \
+    {                                                                       \
+        /* A is being transposed in placed */                               \
+        /* free prior content of A but not &A itself */                     \
+        if (!Ap_shallow) GB_FREE_MEMORY (Ap, aplen+1, sizeof (int64_t)) ;   \
+        if (!Ah_shallow) GB_FREE_MEMORY (Ah, aplen  , sizeof (int64_t)) ;   \
+        if (!Ai_shallow) GB_FREE_MEMORY (Ai, anzmax , sizeof (int64_t)) ;   \
+        if (!Ax_shallow) GB_FREE_MEMORY (Ax, anzmax , asize) ;              \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* A is not modified; it is purely an input matrix */               \
+        ;                                                                   \
+    }                                                                       \
+}
+
+// free the new C matrix, unless C=A' is being done in place of A
+#define GB_FREE_C                                                           \
+{                                                                           \
+    if (!in_place_A)                                                        \
+    {                                                                       \
+        /* free all of C and all its contents &C */                         \
+        GB_MATRIX_FREE (Chandle) ;                                          \
+    }                                                                       \
+}
+
+// free both A (if in place) and C (if not in place of A)
+#define GB_FREE_A_AND_C                                                     \
+{                                                                           \
+    GB_FREE_IN_PLACE_A ;                                                    \
+    GB_FREE_C ;                                                             \
+}
+
+//------------------------------------------------------------------------------
+// GB_transpose
+//------------------------------------------------------------------------------
+
 GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
 (
     GrB_Matrix *Chandle,        // output matrix C, possibly modified in place
@@ -164,40 +210,27 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
     bool Ai_shallow = A->i_shallow ;
     bool Ax_shallow = A->x_shallow ;
 
-    // free prior content of A, if transpose is done in place
-    #define GB_FREE_IN_PLACE_A                                               \
-    {                                                                        \
-        if (in_place)                                                        \
-        {                                                                    \
-            /* A is being transposed in placed */                            \
-            /* free prior content of A but not &A itself */                  \
-            if (!Ap_shallow) GB_FREE_MEMORY (Ap, aplen+1, sizeof (int64_t)) ;\
-            if (!Ah_shallow) GB_FREE_MEMORY (Ah, aplen  , sizeof (int64_t)) ;\
-            if (!Ai_shallow) GB_FREE_MEMORY (Ai, anzmax , sizeof (int64_t)) ;\
-            if (!Ax_shallow) GB_FREE_MEMORY (Ax, anzmax , asize) ;           \
-        }                                                                    \
-        else                                                                 \
-        {                                                                    \
-            /* A is not modified; it is purely an input matrix */            \
-            ;                                                                \
-        }                                                                    \
-    }
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
 
-    // free the new C matrix, unless C=A' is being done in place of A
-    #define GB_FREE_C                                               \
-    {                                                               \
-        if (!in_place_A)                                            \
-        {                                                           \
-            /* free all of C and all its contents &C */             \
-            GB_MATRIX_FREE (Chandle) ;                              \
-        }                                                           \
-    }
+    int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
 
-    // free both A (if in place) and C (if not in place of A)
-    #define GB_FREE_A_AND_C                                         \
-    {                                                               \
-        GB_FREE_IN_PLACE_A ;                                        \
-        GB_FREE_C ;                                                 \
+    int ntasks = (nth == 1) ? 1 : (8 * nth) ;
+    ntasks = GB_IMIN (ntasks, avdim) ;
+    ntasks = GB_IMAX (ntasks, 1) ;
+    int64_t *restrict Count = NULL ;    // size ntasks+1, if allocated
+
+    if (anz > 0 && avdim != 1 && avlen == 1)
+    {
+        // Count is only used in one case below
+        GB_CALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
+        if (Count == NULL)
+        {
+            // out of memory
+            GB_FREE_C ;
+            return (GB_OUT_OF_MEMORY) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -266,6 +299,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         { 
             // out of memory
             GB_FREE_C ;
+            GB_FREE_WORK ;
             return (info) ;
         }
         ASSERT_OK (GB_check (*Chandle, "C transpose empty", GB0)) ;
@@ -300,6 +334,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // out of memory
             ASSERT (!in_place) ;    // cannot fail if in place
             GB_FREE_C ;
+            GB_FREE_WORK ;
             return (info) ;
         }
 
@@ -330,6 +365,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_FREE_MEMORY (Ci, anz  , sizeof (int64_t)) ;
             GB_FREE_MEMORY (Cx, anz  , csize) ;
             GB_FREE_A_AND_C ;
+            GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -417,6 +453,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // out of memory
             ASSERT (!in_place) ;        // cannot fail if in place
             GB_FREE_C ;
+            GB_FREE_WORK ;
             return (info) ;
         }
 
@@ -430,9 +467,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         }
 
         // allocate new space for the values and pattern
+        GB_void *restrict Cx = NULL ;
         int64_t *restrict Cp ;
         int64_t *restrict Ci = NULL ;
-        GB_void *restrict Cx = NULL ;
         GB_CALLOC_MEMORY (Cp, 2, sizeof (int64_t)) ;
 
         bool allocate_new_Ci = (!A_is_hyper) ;
@@ -449,20 +486,15 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             GB_MALLOC_MEMORY (Cx, anz, ctype->size) ;
         }
 
-        #undef  GB_FREE_ALL
-        #define GB_FREE_ALL                                     \
-        {                                                       \
-            GB_FREE_MEMORY (Cp, 2    , sizeof (int64_t)) ;      \
-            GB_FREE_MEMORY (Ci, anz  , sizeof (int64_t)) ;      \
-            GB_FREE_MEMORY (Cx, anz  , csize) ;                 \
-            GB_FREE_A_AND_C ;                                   \
-        }
-
         if (Cp == NULL || (allocate_new_Cx && (Cx == NULL))
                        || (allocate_new_Ci && (Ci == NULL)))
         { 
             // out of memory
-            GB_FREE_ALL ;
+            GB_FREE_MEMORY (Cp, 2    , sizeof (int64_t)) ;
+            GB_FREE_MEMORY (Ci, anz  , sizeof (int64_t)) ;
+            GB_FREE_MEMORY (Cx, anz  , csize) ;
+            GB_FREE_A_AND_C ;
+            GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }
 
@@ -518,8 +550,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             ASSERT (allocate_new_Ci) ;
             ASSERT (Ah == NULL) ;
 
-            int nth = GB_nthreads (avdim, chunk, nthreads_max) ;
-
             if (nth == 1)
             {
 
@@ -544,23 +574,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 //--------------------------------------------------------------
                 // construct Ci in parallel
                 //--------------------------------------------------------------
-
-                int ntasks = (nth == 1) ? 1 : (8 * nth) ;
-                ntasks = GB_IMIN (ntasks, avdim) ;
-                ntasks = GB_IMAX (ntasks, 1) ;
-                int64_t *restrict Count = NULL ;        // size ntasks+1
-
-                //--------------------------------------------------------------
-                // allocate workspace
-                //--------------------------------------------------------------
-
-                GB_MALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
-                if (Count == NULL)
-                {
-                    // out of memory
-                    GB_FREE_ALL ;
-                    return (GB_OUT_OF_MEMORY) ;
-                }
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
                 for (int tid = 0 ; tid < ntasks ; tid++)
@@ -593,13 +606,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                         }
                     }
                 }
-
-                //--------------------------------------------------------------
-                // free workspace
-                //--------------------------------------------------------------
-
-                #undef GB_FREE_ALL
-                GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
             }
 
             #ifdef GB_DEBUG
@@ -710,6 +716,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory
                 GB_FREE_C ;
+                GB_FREE_WORK ;
                 return (GB_OUT_OF_MEMORY) ;
             }
 
@@ -718,12 +725,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             // must be done before Chandle is created below, since that step
             // destroys A.
 
-            if (!GB_extract_vector_list (iwork, A, nthreads))
-            { 
-                // out of memory
-                GB_FREE_C ;
-                return (GB_OUT_OF_MEMORY) ;
-            }
+            GB_extract_vector_list (iwork, A, nthreads) ;
 
             //------------------------------------------------------------------
             // allocate the output matrix and additional space (jwork and S)
@@ -744,6 +746,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ASSERT (!in_place) ;        // cannot fail if in place
                 GB_FREE_MEMORY (iwork, anz, sizeof (int64_t)) ;
                 GB_FREE_C ;
+                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -788,6 +791,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 GB_FREE_MEMORY (jwork, anz, sizeof (int64_t)) ;
                 GB_FREE_MEMORY (Swork, anz, csize) ;
                 GB_FREE_A_AND_C ;
+                GB_FREE_WORK ;
                 return (GB_OUT_OF_MEMORY) ;
             }
 
@@ -895,6 +899,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory in GB_builder
                 GB_FREE_A_AND_C ;
+                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -937,6 +942,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             { 
                 // out of memory in GB_transpose_bucket
                 GB_FREE_C ;
+                GB_FREE_WORK ;
                 return (info) ;
             }
 
@@ -960,6 +966,12 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
             }
         }
     }
+
+    //--------------------------------------------------------------------------
+    // free workspace
+    //--------------------------------------------------------------------------
+
+    GB_FREE_WORK ;
 
     //--------------------------------------------------------------------------
     // conform the result to the desired hypersparsity of A

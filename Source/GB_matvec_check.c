@@ -85,7 +85,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         #ifdef GB_DEVELOPER
         GBPR ("\n    vlen: "GBd, A->vlen) ;
         if (A->nvec_nonempty != -1)
-        { 
+        {
             GBPR (" nvec_nonempty: "GBd, A->nvec_nonempty) ;
         }
         GBPR (" nvec: "GBd" plen: "GBd " vdim: "GBd" hyper_ratio %g\n",
@@ -204,9 +204,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         GBPR ("    last method used for GrB_mxm, vxm, or mxv: ") ;
         switch (A->AxB_method_used)
         {
-            case GxB_AxB_GUSTAVSON : GBPR ("Gustavson") ; break ;
-            case GxB_AxB_HEAP      : GBPR ("heap")      ; break ;
-            case GxB_AxB_DOT       : GBPR ("dot")       ; break ;
+            case GxB_AxB_GUSTAVSON: GBPR ("Gustavson") ; break ;
+            case GxB_AxB_HEAP:      GBPR ("heap")      ; break ;
+            case GxB_AxB_DOT:       GBPR ("dot")       ; break ;
             default: ;
         }
         GBPR ("\n") ;

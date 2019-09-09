@@ -188,6 +188,7 @@
         // out of memory
         GB_FREE_MEMORY (Work0, n, zsize) ;
         GB_FREE_MEMORY (Mark0, n, sizeof (bool)) ;
+        GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
         return (GB_OUT_OF_MEMORY) ;
     }
 

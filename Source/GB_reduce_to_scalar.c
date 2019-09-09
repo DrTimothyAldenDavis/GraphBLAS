@@ -86,6 +86,18 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    GB_void *restrict W = NULL ;
+    GB_MALLOC_MEMORY (W, ntasks, zsize) ;
+    if (W == NULL)
+    {
+        // out of memory
+        return (GB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
     // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
@@ -129,7 +141,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         #define GB_RED_WORKER(opname,aname,atype)                       \
         {                                                               \
-            info = GB_red (opname, aname) ((atype *) s, A, ntasks, nthreads) ; \
+            info = GB_red (opname, aname) ((atype *) s, A, W,           \
+                ntasks, nthreads) ;                                     \
             done = (info != GrB_NO_VALUE) ;                             \
         }                                                               \
         break ;
@@ -163,10 +176,6 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             // no panel used
             #define GB_PANEL 1
-
-            // workspace for each thread
-            #define GB_REDUCTION_WORKSPACE(W, ntasks)               \
-                GB_void W [/* TODO */ ntasks*zsize]
 
             // ztype t = identity
             #define GB_SCALAR_IDENTITY(t)                           \
@@ -295,6 +304,11 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         cast_zaccum_to_C (c, zaccum, ctype->size) ;
     }
 
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_MEMORY (W, ntasks, zsize) ;
     return (GrB_SUCCESS) ;
 }
 

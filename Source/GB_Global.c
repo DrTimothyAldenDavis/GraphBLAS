@@ -479,7 +479,7 @@ void GB_Global_free_function (void *p)
 // GxB_init.
 
 void GB_Global_persist_function_set (void (* persist_function) (void *))
-{ 
+{
     GB_Global.persist_function = persist_function ;
 }
 

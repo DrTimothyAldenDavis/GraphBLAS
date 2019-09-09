@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gbtranspose: sparse matrix transpose
+// gbtransposemex: sparse matrix transpose
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

@@ -23,7 +23,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 1 && nargout <= 1,
-        "ussage: nthreads = gb.threads ; or gb.threads (nthreads)") ;
+        "usage: nthreads = gb.threads ; or gb.threads (nthreads)") ;
 
     //--------------------------------------------------------------------------
     // set the # of threads, if requested

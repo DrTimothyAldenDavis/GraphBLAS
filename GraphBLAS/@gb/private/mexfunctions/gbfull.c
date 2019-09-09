@@ -26,7 +26,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 4 && nargout <= 1,
-        "usage: F = gbfull (X, type, id, desc)") ;
+        "usage: F = gb.full (X, type, id, desc)") ;
 
     //--------------------------------------------------------------------------
     // get a shallow copy of the input matrix

@@ -25,7 +25,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin == 2 && nargout <= 1, "usage: A = gbsparse (X, type)") ;
+    gb_usage (nargin == 2 && nargout <= 1, "usage: A = gb.sparse (X, type)") ;
 
     //--------------------------------------------------------------------------
     // get the input matrix
