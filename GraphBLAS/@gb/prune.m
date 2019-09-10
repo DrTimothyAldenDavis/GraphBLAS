@@ -3,7 +3,7 @@ function C = prune (G, s)
 % C = gb.prune (G) removes any explicit zeros from G.
 % C = gb.prune (G, s) removes entries equal to the given scalar s.
 %
-% See also gb/full.
+% See also gb/full, gb.select.
 
 if (nargin == 1)
     C = gb.select ('nonzero', G) ;

@@ -59,7 +59,8 @@ elseif (nargin == 2)
             % A is a scalar, B is a matrix
             if (get_scalar (A) > 0)
                 % since A > 0, the result is full
-                A = gb.expand (A, true (size (B))) ;
+                [m, n] = size (B) ;
+                A = gb.subassign (gb (m, n, gb.type (A)), A, { }, { }) ;
             else
                 % since A <= 0, the result is sparse.  Expand the scalar A
                 % to the pattern of B.
@@ -72,7 +73,8 @@ elseif (nargin == 2)
             % A is a matrix, B is a scalar
             if (get_scalar (B) > 0)
                 % since B > 0, the result is full
-                B = gb.expand (B, true (size (A))) ;
+                [m, n] = size (A) ;
+                B = gb.subassign (gb (m, n, gb.type (A)), B, { }, { }) ;
             else
                 % since B <= 0, the result is sparse.  Expand the scalar B
                 % to the pattern of A.

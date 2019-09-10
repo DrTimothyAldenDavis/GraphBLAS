@@ -70,8 +70,8 @@ if (ndims == 1)
         % end
     else
         % C (I) = A where C is a vector
-        I = get_index (S.subs (1)) ;
-        C = gb.subassign (C, A, I) ;
+        I = get_index (S.subs (1)) 
+        C = gb.subassign (C, A, I) 
     end
 elseif (ndims == 2)
     % C(I,J) = A where A is length(I)-by-length(J), or a scalar

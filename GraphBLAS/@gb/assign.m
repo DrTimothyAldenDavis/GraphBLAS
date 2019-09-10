@@ -11,6 +11,7 @@ function Cout = assign (varargin)
 % Usage:
 %
 %   Cout = gb.assign (Cin, M, accum, A, I, J, desc)
+%   TODO add all valid uses here
 %
 % Cin and A are required parameters.  All others are optional.
 %

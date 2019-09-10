@@ -13,7 +13,7 @@ function [W, bias, Y0] = dnn_mat2gb (W, bias, Y0)
 %
 % The bias{i} matrix differs, and this needs to be modified here (or in
 % dnn_matlab.m).  For dnn_matlab.m, bias{i} is a 1-by-n row vector.  For the
-% GraphBLAS semiring, it is an n-by-n diagonal matrix.  When comparing dnn_gb.m
+% GraphBLAS semiring, it is an n-by-n diagonal matrix.  When comparing gb.dnn
 % and dnn_matlab.m, this code should not be considered extra work, since the
 % problem could be generated in GraphBLAS format to begin with.  In that case,
 % dnn_matlab.m would include this conversion code, to convert the problem from
@@ -21,15 +21,16 @@ function [W, bias, Y0] = dnn_mat2gb (W, bias, Y0)
 %
 % In any case, the setup time is very low.
 %
-% See also dnn_gb, dnn_matlab.
+% See also gb.dnn, dnn_matlab.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+d = struct ('format', 'by row') ;
 n = size (Y0, 2) ;
-Y0 = gb (Y0, 'single') ;
-for i=1:length(W)
-    W {i} = gb (W {i}, 'single') ;
-    bias {i} = gb.build (1:n, 1:n, bias {i}, n, n, '+', 'single') ;
+Y0 = gb (Y0, 'single', 'by row') ;
+for k=1:length(W)
+    W {k} = gb (W {k}, 'single', 'by row') ;
+    bias {k} = gb.build (1:n, 1:n, bias {k}, n, n, '+', 'single', d) ;
 end
 

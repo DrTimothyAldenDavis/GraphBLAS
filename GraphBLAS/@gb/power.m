@@ -23,7 +23,8 @@ if (isscalar (A))
         B = full (B) ;
     else
         % A is a scalar, B is a matrix; expand A to the size of B
-        A = gb.expand (A, true (size (B))) ;
+        [m, n] = size (B) ;
+        A = gb.subassign (gb (m, n, gb.type (A)), A, { }, { }) ;
         if (~gb.isfull (B))
             B = full (B) ;
         end
@@ -36,11 +37,11 @@ else
             if (~gb.isfull (A))
                 A = full (A) ;
             end
-            B = gb.expand (B, true (size (A))) ;
+            [m, n] = size (A) ;
+            B = gb.subassign (gb (m, n, gb.type (B)), B, { }, { }) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero.  The result is
-            % sparse.  B is expanded to a matrix with the same pattern as
-            % A.
+            % sparse.  B is expanded to a matrix with the same pattern as A.
             B = gb.expand (B, A) ;
         end
     else

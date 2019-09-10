@@ -19,9 +19,9 @@ if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars
     else
-        % A is a scalar, B is a matrix.  A is expanded to full.
-        % The result is a dense gb matrix.
-        A = gb.expand (A, true (size (B))) ;
+        % A is a scalar, B is a matrix.  A is expanded to full
+        [m, n] = size (B) ;
+        A = gb.subassign (gb (m, n, gb.type (A)), A, { }, { }) ;
     end
 else
     if (isscalar (B))
@@ -29,7 +29,8 @@ else
         if (get_scalar (B) == 0 & isfloat (A))
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
-            B = gb.expand (B, true (size (A))) ;
+            [m, n] = size (A) ;
+            B = gb.subassign (gb (m, n, gb.type (A)), B, { }, { }) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).

@@ -9,6 +9,10 @@ function [I, J, X] = find (G)
 % are dropped from the output [I,J,X].  Use gb.extracttuples to return
 % those entries.
 %
+% For a column vector, I = find (G) returns I as a list of the row indices
+% of entries in G.  For a row vector, I = find (G) retusn I as a list of
+% the column indices of entries in G.
+%
 % See also sparse, gb.build, gb.extracttuples.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -17,9 +21,23 @@ function [I, J, X] = find (G)
 T = gbselect ('nonzero', G.opaque, struct ('kind', 'gb')) ;
 if (nargout == 3)
     [I, J, X] = gbextracttuples (T) ;
+    if (isrow (G))
+        I = I' ;
+        J = J' ;
+        X = X' ;
+    end
 elseif (nargout == 2)
     [I, J] = gbextracttuples (T) ;
+    if (isrow (G))
+        I = I' ;
+        J = J' ;
+    end
 else
-    I = gbextracttuples (T) ;
+    if (isrow (G))
+        [~, I] = gbextracttuples (T) ;
+        I = I' ;
+    else
+        I = gbextracttuples (T) ;
+    end
 end
 

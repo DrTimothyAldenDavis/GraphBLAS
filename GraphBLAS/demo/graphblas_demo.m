@@ -167,11 +167,11 @@ gb.type (C2)
 % near future.
 %
 % That gives you a lot of tools to create all kinds of interesting
-% graph algorithms.  In this GraphBLAS/demo folder are three of them:
+% graph algorithms.  For example:
 %
-%   bfs_gb    % breadth-first search
-%   dnn_gb    % sparse deep neural network (http://graphchallenge.org)
-%   mis_gb    % maximal independent set
+%   gb.bfs    % breadth-first search
+%   gb.dnn    % sparse deep neural network (http://graphchallenge.org)
+%   gb.mis    % maximal independent set
 %
 % See 'help gb.binopinfo' for a list of the binary operators, and
 % 'help gb.monoidinfo' for the ones that can be used as the additive
@@ -476,8 +476,8 @@ assert (isequal (nonzeros (C2), double (mod (nonzeros (C3), 256))))
 
 %% An example graph algorithm: breadth-first search
 % The breadth-first search of a graph finds all nodes reachable from the
-% source node, and their level, v.  v=bfs_gb(A,s) or v=bfs_matlab(A,s)
-% compute the same thing, but bfs_gb uses GraphBLAS matrices and
+% source node, and their level, v.  v=gb.bfs(A,s) or v=bfs_matlab(A,s)
+% compute the same thing, but gb.bfs uses GraphBLAS matrices and
 % operations, while bfs_matlab uses pure MATLAB operations.  v is defined
 % as v(s) = 1 for the source node, v(i) = 2 for nodes adjacent to the
 % source, and so on.
@@ -488,14 +488,14 @@ n = 1e5 ;
 A = logical (sprandn (n, n, 1e-3)) ;
 
 tic
-v1 = bfs_gb (A, 1) ;
+v1 = gb.bfs (A, 1) ;
 gb_time = toc ;
 
 tic
 v2 = bfs_matlab (A, 1) ;
 matlab_time = toc ;
 
-assert (isequal (full (double (v1)), v2))
+assert (isequal (double (v1'), v2))
 fprintf ('\nnodes reached: %d of %d\n', nnz (v2), n) ;
 fprintf ('GraphBLAS time: %g sec\n', gb_time) ;
 fprintf ('MATLAB time:    %g sec\n', matlab_time) ;
@@ -503,20 +503,18 @@ fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
     matlab_time / gb_time) ;
 
 %% Example graph algorithm: Luby's method in GraphBLAS
-% The mis_gb.m function is variant of Luby's randomized algorithm [Luby
+% The gb.mis.m function is variant of Luby's randomized algorithm [Luby
 % 1985].  It is a parallel method for finding an maximal independent set
 % of nodes, where no two nodes are adjacent.  See the
-% GraphBLAS/demo/mis_gb.m function for details.  The graph must be
+% GraphBLAS/@gb/gb.mis.m function for details.  The graph must be
 % symmetric with a zero-free diagonal, so A is symmetrized first and any
 % diagonal entries are removed.
 
 A = gb (A) ;
-A = A|A' ;
-A = tril (A, -1) ;
-A = A|A' ;
+A = gb.offdiag (A|A') ;
 
 tic
-s = mis_gb (A) ;
+s = gb.mis (A) ;
 toc
 fprintf ('# nodes in the graph: %g\n', size (A,1)) ;
 fprintf ('# edges: : %g\n', nnz (A) / 2) ;
@@ -524,7 +522,7 @@ fprintf ('size of maximal independent set found: %g\n', ...
     full (double (sum (s)))) ;
 
 % make sure it's independent
-p = find (s == 1) ;
+p = find (s) ;
 S = A (p,p) ;
 assert (nnz (S) == 0)
 
@@ -538,7 +536,7 @@ assert (logical (all (deg > 0)))
 % The 2019 MIT GraphChallenge (see http://graphchallenge.org) is to solve
 % a set of large sparse deep neural network problems.  In this demo, the
 % MATLAB reference solution is compared with a solution using GraphBLAS,
-% for a randomly constructed neural network.  See the dnn_gb.m and
+% for a randomly constructed neural network.  See the gb.dnn and
 % dnn_matlab.m functions for details.
 
 clear all
@@ -569,7 +567,7 @@ fprintf ('setup time: %g sec\n', t) ;
 % Please wait ...
 
 tic
-Y1 = dnn_gb (W_gb, bias_gb, Y0_gb) ;
+Y1 = gb.dnn (W_gb, bias_gb, Y0_gb) ;
 gb_time = toc ;
 fprintf ('total time in GraphBLAS: %g sec\n', gb_time) ;
 
@@ -814,7 +812,7 @@ end
 % However, it can be done with C = gb.mxm ('+.+', A, diag(gb(B))).
 % That's an nice example of the power of semirings, but it's not
 % immediately obvious, and not as clear a syntax as C=A+B.  The
-% GraphBLAS/demo/dnn_gb.m function uses this 'plus.plus' semiring to
+% GraphBLAS/@gb/dnn.m function uses this 'plus.plus' semiring to
 % apply the bias to each neuron.
 
 A = magic (4)

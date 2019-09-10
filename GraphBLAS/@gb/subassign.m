@@ -11,6 +11,7 @@ function Cout = subassign (varargin)
 % Usage:
 %
 %   Cout = gb.subassign (Cin, M, accum, A, I, J, desc)
+%   TODO add all valid uses here
 %
 % gb.subassign is identical to gb.assign, with two key differences:
 %

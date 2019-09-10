@@ -1,5 +1,5 @@
 function C = diag (G, k)
-% DIAG Diagonal matrices and diagonals of a GraphBLAS matrix.
+%DIAG Diagonal matrices and diagonals of a GraphBLAS matrix.
 % C = diag (v,k) when v is a GraphBLAS vector with n components is a
 % square sparse GarphBLAS matrix of dimension n+abs(k), with the elements
 % of v on the kth diagonal. The main diagonal is k = 0; k > 0 is above
@@ -29,7 +29,7 @@ function C = diag (G, k)
 %   G = diag(gb(-m:m)) + diag(gb(f),1) + diag(gb(f),-1)
 %   nothing = double (A-G)
 %
-% See also diag, spdiags, tril, triu, gb.select.
+% See also diag, spdiags, tril, triu, gb.select, gb.prunediag.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

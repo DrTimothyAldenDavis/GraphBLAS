@@ -1,11 +1,11 @@
-function C = full (X, type, identity)
+function C = full (A, type, identity)
 %FULL convert a matrix into a GraphBLAS dense matrix.
-% C = full (X, type, identity) converts the matrix X into a GraphBLAS
+% C = full (A, type, identity) converts the matrix A into a GraphBLAS
 % dense matrix C of the given type, by inserting identity values.  The
 % type may be any GraphBLAS type: 'double', 'single', 'logical', 'int8'
 % 'int16' 'int32' 'int64' 'uint8' 'uint16' 'uint32' 'uint64', or in the
 % future, 'complex'.  If not present, the type defaults to the same type
-% as G, and the identity defaults to zero.  X may be any matrix
+% as G, and the identity defaults to zero.  A may be any matrix
 % (GraphBLAS, MATLAB sparse or full).  To use this method for a MATLAB
 % matrix A, use a GraphBLAS identity value such as gb(0), or use C = full
 % (gb (A)).  Note that issparse (C) is true, since issparse (G) is true
@@ -26,11 +26,11 @@ function C = full (X, type, identity)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isa (X, 'gb'))
-    X = X.opaque ;
+if (isa (A, 'gb'))
+    A = A.opaque ;
 end
 if (nargin < 2)
-    type = gbtype (X) ;
+    type = gbtype (A) ;
 end
 if (nargin < 3)
     identity = 0 ;
@@ -39,5 +39,5 @@ if (isa (identity, 'gb'))
     identity = identity.opaque ;
 end
 
-C = gb (gbfull (X, type, identity, struct ('kind', 'gb'))) ;
+C = gb (gbfull (A, type, identity, struct ('kind', 'gb'))) ;
 

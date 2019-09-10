@@ -42,7 +42,7 @@ for id =  1:12
 
         % solve the DNN
         tic
-        Y = dnn_gb (W, bias, Y0) ;
+        Y = gb.dnn (W, bias, Y0) ;
         challengeRunTime = toc ;
         if (nthreads == 1)
             t1 = challengeRunTime ;

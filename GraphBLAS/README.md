@@ -25,12 +25,18 @@ to your startup.m file:
 where the path /whereever/GraphBLAS/GraphBLAS is the full path to this folder.
 The name "GraphBLAS/GraphBLAS" is used so that this can be done in MATLAB:
 
-    help GraphBLAS
+    help graphblas
 
-Next, go to the GraphBLAS/GraphBLAS/private folder and compile the MATLAB
-mexFunctions:
+To get additional help, type:
 
-    cd private
+    methods gb
+    help gb
+
+Next, go to the GraphBLAS/GraphBLAS/@gb/private folder and compile the MATLAB
+mexFunctions.  Assuming your working directory is GraphBLAS/GraphBLAS
+(where this README.md) file is located, do the following:
+
+    cd @gb/private
     gbmake
 
 To run the demos, go to the GraphBLAS/GraphBLAS/demo folder and type:

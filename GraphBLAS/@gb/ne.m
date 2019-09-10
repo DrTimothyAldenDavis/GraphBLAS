@@ -25,7 +25,8 @@ if (isscalar (A))
         if (get_scalar (A) ~= 0)
             % since a ~= 0, entries not present in B result in a true value,
             % so the result is dense.  Expand A to a dense matrix.
-            A = gb.expand (A, true (size (B))) ;
+            [m, n] = size (B) ;
+            A = gb.subassign (gb (m, n, gb.type (A)), A, { }, { }) ;
             if (~gb.isfull (B))
                 B = full (B) ;
             end
@@ -43,7 +44,8 @@ else
         if (get_scalar (B) ~= 0)
             % since b ~= 0, entries not present in A result in a true value,
             % so the result is dense.  Expand B to a dense matrix.
-            B = gb.expand (B, true (size (A))) ;
+            [m, n] = size (A) ;
+            B = gb.subassign (gb (m, n, gb.type (A)), B, { }, { }) ;
             if (~gb.isfull (A))
                 A = full (A) ;
             end

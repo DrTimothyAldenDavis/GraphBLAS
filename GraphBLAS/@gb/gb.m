@@ -16,10 +16,10 @@ classdef gb
 %
 % The gb constructor:
 %
-%   The gb constructor creates a GraphBLAS matrix.  The input X may be any
+%   The gb constructor creates a GraphBLAS matrix.  The input A may be any
 %   MATLAB or GraphBLAS matrix:
 %
-%   G = gb (X) ;            GraphBLAS copy of a matrix X, same type
+%   G = gb (A) ;            GraphBLAS copy of a matrix A, same type
 %   G = gb (m, n) ;         m-by-n GraphBLAS double matrix with no entries
 %   G = gb (..., type) ;    create or typecast to a different type
 %   G = gb (..., format) ;  create in a specified format
@@ -29,14 +29,14 @@ classdef gb
 %   format used in MATLAB (see also gb.format), but many graph algorithms
 %   are faster if the format is 'by row'.
 %
-%   The usage G = gb (m, n, type) is analgous to X = sparse (m, n), which
-%   creates an empty MATLAB sparse matrix X.  The type parameter is a
+%   The usage G = gb (m, n, type) is analgous to A = sparse (m, n), which
+%   creates an empty MATLAB sparse matrix A.  The type parameter is a
 %   string, which defaults to 'double' if not present.
 %
-%   For the usage G = gb (X, type), X is either a MATLAB sparse or dense
+%   For the usage G = gb (A, type), A is either a MATLAB sparse or dense
 %   matrix, or a GraphBLAS sparse matrix object.  G is created as a
-%   GraphBLAS sparse matrix object that contains a copy of X, typecasted
-%   to the given type if the type string does not match the type of X.
+%   GraphBLAS sparse matrix object that contains a copy of A, typecasted
+%   to the given type if the type string does not match the type of A.
 %   If the type string is not present it defaults to 'double'.
 %
 % Matrix types:
@@ -90,7 +90,6 @@ classdef gb
 %   could be added so that element-wise operations saturate.  The C
 %   interface allows for arbitrary creation of user-defined operators, so
 %   this could be added in the future.
-%
 %
 % Methods for the gb class:
 %
@@ -181,10 +180,6 @@ classdef gb
 %   C = zeros (...,'like',G)   all-zero matrix, same type as G
 %   C = false (...,'like',G)   all-false logical matrix
 %   C = ones (...,'like',G)    matrix with all ones, same type as G
-%   L = laplacian (G)       graph Laplacian matrix
-%   d = degree (G)          degree of G
-%   d = indegree (G)        in-degree of G
-%   d = outdegree (G)       out-degree of G
 %
 %   operator overloading:
 %
@@ -239,7 +234,7 @@ classdef gb
 %   c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
 %   e = gb.nvals (G)            number of entries in a matrix
 %   G = gb.empty (m, n)         return an empty GraphBLAS matrix
-%   s = gb.type (X)             get the type of a MATLAB or gb matrix X
+%   s = gb.type (A)             get the type of a MATLAB or gb matrix A
 %   s = gb.issigned (type)      true if type is signed
 %   f = gb.format (f)           set/get matrix format to use in GraphBLAS
 %   C = gb.expand (scalar, S)   expand a scalar (C = scalar*spones(S))
@@ -304,6 +299,17 @@ classdef gb
 %   C(i,j) can be modified; if zero, it cannot be modified by the
 %   operation.
 %
+% Static Methods for graph algorithms:
+%
+%   r = pagerank (A, opts) ;            % PageRank of a matrix
+%   C = ktruss (A, k, check) ;          % k-truss
+%   s = tricount (A, check) ;           % triangle count
+%   L = laplacian (A, type, check) ;    % Laplacian graph
+%   C = incidence (A, ...) ;            % incidence matrix
+%   [v, parent] = bfs (A, s, ...) ;     % breadth-first search
+%   iset = mis (A, check) ;             % maximal independent set
+%   Y = dnn (W, bias, Y0) ;             % deep neural network
+%
 % See also sparse, doc sparse, and https://twitter.com/DocSparse .
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -323,14 +329,14 @@ methods
     function G = gb (varargin)
     %GB GraphBLAS constructor: create a GraphBLAS sparse matrix.
     %
-    % G = gb (X) ;          gb copy of a matrix X, same type and format
+    % G = gb (A) ;          gb copy of a matrix A, same type and format
     %
-    % G = gb (X, type) ;    gb typecasted copy of a matrix X, same format
-    % G = gb (X, format) ;  gb copy of a matrix X, with given format
+    % G = gb (A, type) ;    gb typecasted copy of a matrix A, same format
+    % G = gb (A, format) ;  gb copy of a matrix A, with given format
     % G = gb (m, n) ;       empty m-by-n gb double matrix, default format
     %
-    % G = gb (X, type, format) ;   gb copy of X, new type and format
-    % G = gb (X, format, type) ;   ditto
+    % G = gb (A, type, format) ;   gb copy of A, new type and format
+    % G = gb (A, format, type) ;   ditto
     %
     % G = gb (m, n, type) ;   empty m-by-n gb type matrix, default format
     % G = gb (m, n, format) ; empty m-by-n gb double matrix of given format
@@ -343,7 +349,7 @@ methods
         error ('not enough input arguments') ;
     elseif (nargin == 1 && ...
         (isstruct (varargin {1}) && isfield (varargin {1}, 'GraphBLAS')))
-        % G = gb (X), where the input X is a GraphBLAS struct as returned by
+        % G = gb (A), where the input A is a GraphBLAS struct as returned by
         % another gb* function, but this usage is not meant for the end-user.
         % It is only used internally in @gb.  See for @gb/mxm, which uses G =
         % gb (gbmxm (args)), and the typecasting methods, C = double (G), etc.
@@ -426,16 +432,39 @@ methods
     %    pi freqspace flintmax intmax intmin squeeze realmin realmax i j magic
     %    rosser 
 
+    % methods for both classes graph and digraph not yet implemented:
+    %
+    %    addedge addnode bfsearch centrality conncomp dfsearch distances
+    %    findedge findnode isisomorphic isomorphism maxflow nearest outedges
+    %    rmedge rmnode shortestpath shortestpathtree simplify
+    %
+    %    gbgraph/bfs is like graph/bfsearch and graph/shortestpathtree.
+
+    % methods for class graph (not in digraph class) not yet implemented:
+    %
+    %    bctree biconncomp minspantree neighbors
+
+    % methods for class digraph (not in graph class) not yet implemented:
+    %
+    %    condensation inedges isdag predecessors successors toposort
+    %    transclosure transreduction
+
+    % methods in LAGraph:
+    %
+    %   dnn, ...
+
     %---------------------------------------------------------------------------
-    % overloaded methods
+    % Methods that overload built-in MATLAB functions:
     %---------------------------------------------------------------------------
 
     %   In the list below, G is always a GraphBLAS matrix.  The inputs A and B
     %   can be a mix of GraphBLAS and/or MATLAB matrices, but at least one will
     %   be a GraphBLAS matrix because these are all methods that are overloaded
     %   from the MATLAB versions.  If all inputs are MATLAB matrices, these
-    %   methods are not used.  The input X is a matrix of any kind (GraphBLAS
-    %   or MATLAB).
+    %   methods are not used.  The output matrix (C, L, or U) is always a
+    %   GraphBLAS matrix.  Lower case variables i, e, s, and n are scalars.
+    %   Outputs p, parent, I, J, and X are MATLAB vectors.  Graph is a MATLAB
+    %   undirected graph.  DiGraph is a MATLAB directed digraph.
 
     C = abs (G) ;
     C = all (G, option) ;
@@ -448,8 +477,8 @@ methods
     [p, varargout] = colamd (G, varargin) ;
     C = complex (A, B) ;
     C = conj (G) ;
-    C = ctranspose (G) ;
     C = diag (G, k) ;
+    DiGraph = digraph (G, option) ;
     display (G) ;
     disp (G, level) ;
     [p, varargout] = dmperm (G) ;
@@ -457,16 +486,13 @@ methods
     [V, varargout] = eig (G, varargin) ;
     i = end (G, k, ndims) ;
     C = eps (G) ;
-    C = eq (A, B) ;
     [parent, varargout] = etree (G, varargin) ;
     C = false (varargin) ;
     [I, J, X] = find (G) ;
     C = fix (G) ;
     C = floor (G) ;
-    C = full (X, type, identity) ;
-    C = ge (A, B) ;
-    C = gt (A, B) ;
-    C = horzcat (varargin) ;
+    C = full (A, type, identity) ;
+    Graph = graph (G, varargin) ;
     C = int16 (G) ;
     C = int32 (G) ;
     C = int64 (G) ;
@@ -493,31 +519,17 @@ methods
     s = istriu (G) ;
     s = isvector (G) ;
     C = kron (A, B) ;
-    C = ldivide (A, B) ;
-    C = le (A, B) ;
     n = length (G) ;
     C = logical (G) ;
-    C = lt (A, B) ;
     C = max (varargin) ;
     C = min (varargin) ;
-    C = minus (A, B) ;
-    C = mldivide (A, B) ;
-    C = mpower (A, B) ;
-    C = mrdivide (A, B) ;
-    C = mtimes (A, B) ;
-    C = ne (A, B) ;
     e = nnz (G) ;
     X = nonzeros (G) ;
     s = norm (G,kind) ;
-    C = not (G) ;
     s = numel (G) ;
     e = nzmax (G) ;
     C = ones (varargin) ;
-    C = or (A, B) ;
-    C = plus (A, B) ;
-    C = power (A, B) ;
     C = prod (G, option) ;
-    C = rdivide (A, B) ;
     C = real (G) ;
     C = repmat (G, m, n) ;
     C = reshape (G, arg1, arg2) ;
@@ -529,13 +541,9 @@ methods
     C = spfun (fun, G) ;
     C = spones (G, type) ;
     C = sqrt (G) ;
-    C = subsasgn (C, S, A) ;
-    C = subsref (A, S) ;
     C = sum (G, option) ;
     [p, varargout] = symamd (G, varargin) ;
     p = symrcm (G) ;
-    C = times (A, B) ;
-    C = transpose (G) ;
     L = tril (G, k) ;
     U = triu (G, k) ;
     C = true (varargin) ;
@@ -543,20 +551,39 @@ methods
     C = uint32 (G) ;
     C = uint64 (G) ;
     C = uint8 (G) ;
-    C = uminus (G) ;
-    C = uplus (G) ;
-    C = vertcat (varargin) ;
     C = xor (A, B) ;
     C = zeros (varargin) ;
 
-end
+    %---------------------------------------------------------------------------
+    % MATLAB operator overloading
+    %---------------------------------------------------------------------------
 
-methods (Access = protected, Hidden)
-
-    function disp_helper (G, level)
-    %DISP_HELPER display a GraphBLAS matrix for gbgraph/display
-    gbdisp (G.opaque, level) ;
-    end
+    C = ctranspose (A) ;            % C = A'
+    C = eq (A, B) ;                 % C = (A == B)
+    C = ge (A, B) ;                 % C = (A >= B)
+    C = gt (A, B) ;                 % C = (A > B)
+    C = horzcat (varargin) ;        % C = [A , B]
+    C = ldivide (A, B) ;            % C = A .\ B
+    C = le (A, B) ;                 % C = (A <= B)
+    C = lt (A, B) ;                 % C = (A < B)
+    C = minus (A, B) ;              % C = A - B
+    C = mldivide (A, B) ;           % C = A \ B
+    C = mpower (A, B) ;             % C = A^B
+    C = mrdivide (A, B) ;           % C = A / B
+    C = mtimes (A, B) ;             % C = A * B
+    C = ne (A, B) ;                 % C = (A ~= B)
+    C = not (G) ;                   % C = ~A
+    C = or (A, B) ;                 % C = (A | B)
+    C = plus (A, B) ;               % C = A + B
+    C = power (A, B) ;              % C = A .^ B
+    C = rdivide (A, B) ;            % C = A ./ B
+    C = subsasgn (C, S, A) ;        % C (I,J) = A
+    C = subsref (A, S) ;            % C = A (I,J)
+    C = times (A, B) ;              % C = A .* B
+    C = transpose (G) ;             % C = A.'
+    C = uminus (G) ;                % C = -A
+    C = uplus (G) ;                 % C = +A
+    C = vertcat (varargin) ;        % C = [A ; B]
 
 end
 
@@ -566,7 +593,10 @@ methods (Static)
     % Static Methods:
     %---------------------------------------------------------------------------
 
-    % All of these are used as gb.method (...), with the "gb." prefix.
+    % All of these are used as gb.method (...), with the "gb." prefix.  The
+    % input matrices (A, B, C, M, ...) are of any kind (GraphBLAS, MATLAB
+    % sparse, or MATLAB full).  The output matrix C or Cout is a GraphBLAS
+    % matrix.
 
     clear ;
     descriptorinfo (d) ;
@@ -576,20 +606,21 @@ methods (Static)
     semiringinfo (s, type) ;
     nthreads = threads (varargin) ;
     c = chunk (varargin) ;
-    e = nvals (X) ;
+    e = nvals (A) ;
     C = empty (arg1, arg2) ;
-    s = type (X) ;
+    s = type (A) ;
     s = issigned (type) ;
     s = isfull (A) ;
     f = format (arg) ;
-    s = isbyrow (X) ;
-    s = isbycol (X) ;
-    C = expand (scalar, S) ;
-    C = prune (G, identity) ;
+    s = isbyrow (A) ;
+    s = isbycol (A) ;
+    C = expand (scalar, A) ;
+    C = prune (A, identity) ;
+    C = offdiag (A) ;
     C = eye (varargin) ;
     C = speye (varargin) ;
-    D = coldegree (X) ;
-    D = rowdegree (X) ;
+    D = coldegree (A) ;
+    D = rowdegree (A) ;
     C = build (varargin) ;
     [I,J,X] = extracttuples (varargin) ;
     Cout = mxm (varargin) ;
@@ -604,6 +635,14 @@ methods (Static)
     Cout = emult (varargin) ;
     Cout = apply (varargin) ;
     Cout = extract (varargin) ;
+    r = pagerank (A, opts) ;
+    C = ktruss (A, k, check) ;
+    s = tricount (A, check) ;
+    L = laplacian (A, type, check) ;
+    C = incidence (A, varargin) ;
+    [v, parent] = bfs (A, s, varargin) ;
+    iset = mis (A, check) ;
+    Y = dnn (W, bias, Y0) ;
 
 end
 end
