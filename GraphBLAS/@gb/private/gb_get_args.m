@@ -1,4 +1,5 @@
-function [args is_gb] = get_args (varargin)
+function [args is_gb] = gb_get_args (varargin)
+%GB_GET_ARGS get arguments for a GraphBLAS method.
 % Get the arguments and the descriptor for a gb.method.  Any input
 % arguments that are GraphBLAS sparse matrix objects are replaced with the
 % struct arg.opaque so that they can be passed to the underlying

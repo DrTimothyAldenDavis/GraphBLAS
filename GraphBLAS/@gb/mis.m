@@ -84,10 +84,10 @@ candidates = gb.assign (candidates, degrees, true) ;
 iset = gb.assign (iset, degrees, true, sr_desc) ; 
 
 % Iterate while there are candidates to check.
-nvals = gb.nvals (candidates) ;
-last_nvals = nvals ;
+ncand = gb.entries (candidates) ;
+last_ncand = ncand ;
 
-while (nvals > 0)
+while (ncand > 0)
 
     % compute a random probability scaled by inverse of degree
     % NOTE: this is slower than it should be; rand may not be parallel,
@@ -110,8 +110,8 @@ while (nvals > 0)
     candidates = gb.apply (candidates, new_members, 'identity', ...
         candidates, sr_desc) ;
 
-    nvals = gb.nvals (candidates) ;
-    if (nvals == 0)
+    ncand = gb.entries (candidates) ;
+    if (ncand == 0)
         break ;                    % early exit condition
     end
 
@@ -122,13 +122,13 @@ while (nvals > 0)
     candidates = gb.apply (candidates, new_neighbors, 'identity', ...
         candidates, sr_desc) ;
 
-    nvals = gb.nvals (candidates) ;
+    ncand = gb.entries (candidates) ;
 
     % this will not occur, unless the input is corrupted somehow
-    if (last_nvals == nvals)
+    if (last_ncand == ncand)
         error ('stall!\n') ;
     end
-    last_nvals = nvals ;
+    last_ncand = ncand ;
 end
 
 % drop explicit false values

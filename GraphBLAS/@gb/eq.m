@@ -19,10 +19,10 @@ function C = eq (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars.  C is full.
-        C = dense_comparator ('==', A, B) ;
+        C = gb_dense_comparator ('==', A, B) ;
     else
         % A is a scalar, B is a matrix
-        if (get_scalar (A) == 0)
+        if (gb_get_scalar (A) == 0)
             % since a == 0, entries not present in B result in a true value,
             % so the result is dense.  Expand A to a dense matrix.
             [m, n] = size (B) ;
@@ -41,7 +41,7 @@ if (isscalar (A))
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
-        if (get_scalar (B) == 0)
+        if (gb_get_scalar (B) == 0)
             % since b == 0, entries not present in A result in a true value,
             % so the result is dense.  Expand B to a dense matrix.
             [m, n] = size (A) ;
@@ -58,7 +58,7 @@ else
         end
     else
         % both A and B are matrices.  C is full.
-        C = dense_comparator ('==', A, B) ;
+        C = gb_dense_comparator ('==', A, B) ;
     end
 end
 

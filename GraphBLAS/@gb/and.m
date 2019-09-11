@@ -15,7 +15,7 @@ if (isscalar (A))
         C = gb.prune (gb.emult ('&.logical', A, B)) ;
     else
         % A is a scalar, B is a matrix
-        if (get_scalar (A) == 0)
+        if (gb_get_scalar (A) == 0)
             % A is false, so C is empty, the same size as B
             [m n] = size (B) ;
             C = gb (m, n, 'logical') ;
@@ -27,7 +27,7 @@ if (isscalar (A))
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
-        if (get_scalar (B) == 0)
+        if (gb_get_scalar (B) == 0)
             % B is false, so C is empty, the same size as A
             [m n] = size (A) ;
             C = gb (m, n, 'logical') ;

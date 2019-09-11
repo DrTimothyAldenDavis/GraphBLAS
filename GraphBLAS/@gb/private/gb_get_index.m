@@ -1,5 +1,5 @@
-function [I, whole] = get_index (I_input)
-% get_index: helper function for subsref and subsasgn
+function [I, whole] = gb_get_index (I_input)
+%GB_GET_INDEX helper function for subsref and subsasgn
 
 whole = isequal (I_input, {':'}) ;
 if (whole)

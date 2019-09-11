@@ -32,7 +32,7 @@ function [I,J,X] = extracttuples (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[args, ~] = get_args (varargin {:}) ;
+[args, ~] = gb_get_args (varargin {:}) ;
 if (nargout == 3)
     [I, J, X] = gbextracttuples (args {:}) ;
 elseif (nargout == 2)

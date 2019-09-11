@@ -31,9 +31,9 @@ if (isempty (G))
 else
     [iold jold x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
     % convert i and j from 2D (mold-by-nold) to 1D indices
-    k = convert_index_2d_to_1d (iold, jold, mold) ;
+    k = gb_convert_index_2d_to_1d (iold, jold, mold) ;
     % convert k from 1D indices to 2D (mnew-by-nnew)
-    [inew jnew] = convert_index_1d_to_2d (k, mnew) ;
+    [inew jnew] = gb_convert_index_1d_to_2d (k, mnew) ;
     % rebuild the new matrix
     C = gb.build (inew, jnew, x, mnew, nnew) ;
 end

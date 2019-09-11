@@ -18,7 +18,7 @@ end
 if (~isscalar (B))
     error ('For C=A^B, B must be a non-negative integer scalar') ;
 end
-b = get_scalar (B) ;
+b = gb_get_scalar (B) ;
 if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
     if (b == 0)
         % C is identity, of the same type as A

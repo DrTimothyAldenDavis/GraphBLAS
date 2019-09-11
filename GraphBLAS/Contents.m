@@ -23,24 +23,24 @@
 %
 %   abs             fix             isreal          sign
 %   all             floor           isscalar        single
-%   amd             full            issparse        size
-%   and                             issymmetric     sparse
+%   amd             fprintf         issparse        size
+%   and             full            issymmetric     sparse
 %   any             graph           istril          spfun
 %   assert          int16           istriu          spones
-%   bandwidth       int32           isvector        sqrt
-%   ceil            int64           kron            sum
-%   colamd          int8            length          symamd
-%   complex         isa             logical         symrcm
-%   conj            isbanded        max             tril
-%   diag            isdiag          min             triu
-%   digraph         isempty         nnz             true
-%   disp            isequal         nonzeros        uint16
-%   display         isfinite        norm            uint32
-%   dmperm          isfloat         numel           uint64
-%   double          ishermitian     nzmax           uint8
-%   eig             isinf           ones            xor
-%   end             isinteger       prod            zeros
-%   eps             islogical       real
+%   bandwidth       int32           isvector        sprintf
+%   ceil            int64           kron            sqrt
+%   colamd          int8            length          sum
+%   complex         isa             logical         symamd
+%   conj            isbanded        max             symrcm
+%   diag            isdiag          min             tril
+%   digraph         isempty         nnz             triu
+%   disp            isequal         nonzeros        true
+%   display         isfinite        norm            uint16
+%   dmperm          isfloat         numel           uint32
+%   double          ishermitian     nzmax           uint64
+%   eig             isinf           ones            uint8
+%   end             isinteger       prod            xor
+%   eps             islogical       real            zeros
 %   etree           ismatrix        repmat
 %   false           isnan           reshape
 %   find            isnumeric       round
@@ -55,18 +55,18 @@
 % Static Methods: used as gb.method; inputs can be any GraphBLAS or
 % MATLAB matrix.
 %
-%   apply           emult           issigned        select
-%   assign          expand          ktruss          semiringinfo
-%   bfs             extract         laplacian       speye
-%   binopinfo       extracttuples   mis             subassign
-%   build           eye             monoidinfo      threads
-%   chunk           format          mxm             tricount
-%   clear           gbkron          nvals           type
-%   coldegree       gbtranspose     offdiag         unopinfo
-%   descriptorinfo  incidence       pagerank        vreduce
-%   dnn             isbycol         prune
-%   eadd            isbyrow         reduce
-%   empty           isfull          rowdegree
+%   apply           emult           isfull          select
+%   assign          entries         issigned        semiringinfo
+%   bfs             expand          ktruss          speye
+%   binopinfo       extract         laplacian       subassign
+%   build           extracttuples   mis             threads
+%   chunk           eye             monoidinfo      tricount
+%   clear           format          mxm             type
+%   compact         gbkron          nonz            unopinfo
+%   descriptorinfo  gbtranspose     offdiag         vreduce
+%   dnn             incidence       pagerank
+%   eadd            isbycol         prune
+%   empty           isbyrow         reduce
 %
 % Tim Davis, Texas A&M University, http://faculty.cse.tamu.edu/davis/GraphBLAS
 

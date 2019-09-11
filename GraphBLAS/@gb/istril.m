@@ -13,5 +13,5 @@ function s = istril (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-s = (gb.nvals (triu (G, 1)) == 0) ;
+s = (gb.entries (triu (G, 1)) == 0) ;
 

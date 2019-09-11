@@ -8,7 +8,7 @@ function C = any (G, option)
 % C = any (G, 1) is a row vector with C(j) = any (G (:,j))
 % C = any (G, 2) is a column vector with C(i) = any (G (i,:))
 %
-% See also all, nnz, gb.nvals.
+% See also all, nnz, gb/nnz, gb.entries, gb.nonz.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

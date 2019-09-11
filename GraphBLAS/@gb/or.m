@@ -15,7 +15,7 @@ if (isscalar (A))
         C = gb.prune (gb.emult ('|.logical', A, B)) ;
     else
         % A is a scalar, B is a matrix
-        if (get_scalar (A) == 0)
+        if (gb_get_scalar (A) == 0)
             % A is false, so C is B typecasted to logical
             C = gb (gb.prune (B), 'logical') ;
         else
@@ -26,7 +26,7 @@ if (isscalar (A))
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
-        if (get_scalar (B) == 0)
+        if (gb_get_scalar (B) == 0)
             % B is false, so C is A typecasted to logical
             C = gb (gb.prune (A), 'logical') ;
         else

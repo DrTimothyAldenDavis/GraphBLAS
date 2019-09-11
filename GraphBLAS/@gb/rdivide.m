@@ -26,7 +26,7 @@ if (isscalar (A))
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
-        if (get_scalar (B) == 0 & isfloat (A))
+        if (gb_get_scalar (B) == 0 & isfloat (A))
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
             [m, n] = size (A) ;

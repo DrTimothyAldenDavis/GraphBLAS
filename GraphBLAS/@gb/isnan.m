@@ -11,7 +11,7 @@ function C = isnan (G)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m n] = size (G) ;
-if (isfloat (G) && gb.nvals (G) > 0)
+if (isfloat (G) && gb.entries (G) > 0)
     [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
     C = gb.build (i, j, isnan (x), m, n) ;
 else

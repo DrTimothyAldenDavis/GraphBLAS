@@ -32,7 +32,7 @@ if (isscalar (A))
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
-        if (get_scalar (B) <= 0)
+        if (gb_get_scalar (B) <= 0)
             % so the result is full
             if (~gb.isfull (A))
                 A = full (A) ;

@@ -59,7 +59,7 @@ if (ndims == 1)
         if (~isvector (A))
             error ('Linear indexing of a gb matrix is not yet supported') ;
         end
-        [I, whole_vector] = get_index (S.subs (1)) ;
+        [I, whole_vector] = gb_get_index (S.subs (1)) ;
         if (size (A, 1) > 1)
             C = gb.extract (A, I, { }) ;
         else
@@ -71,8 +71,8 @@ if (ndims == 1)
     end
 elseif (ndims == 2)
     % C = A (I,J)
-    I = get_index (S.subs (1)) ;
-    J = get_index (S.subs (2)) ;
+    I = gb_get_index (S.subs (1)) ;
+    J = gb_get_index (S.subs (2)) ;
     C = gb.extract (A, I, J) ;
 else
     error ('%dD indexing not supported', ndims) ;

@@ -11,7 +11,7 @@ function [arg1, arg2] = bandwidth (G, uplo)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (gb.nvals (G) == 0)
+if (gb.entries (G) == 0)
     % matrix is empty
     hi = 0 ;
     lo = 0 ;

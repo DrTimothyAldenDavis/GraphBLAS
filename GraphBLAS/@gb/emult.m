@@ -31,7 +31,7 @@ function Cout = emult (varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[args is_gb] = get_args (varargin {:}) ;
+[args is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)
     Cout = gb (gbemult (args {:})) ;
 else

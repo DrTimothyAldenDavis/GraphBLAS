@@ -70,13 +70,13 @@ if (ndims == 1)
         % end
     else
         % C (I) = A where C is a vector
-        I = get_index (S.subs (1)) 
-        C = gb.subassign (C, A, I) 
+        I = gb_get_index (S.subs (1)) ;
+        C = gb.subassign (C, A, I) ;
     end
 elseif (ndims == 2)
     % C(I,J) = A where A is length(I)-by-length(J), or a scalar
-    I = get_index (S.subs (1)) ;
-    J = get_index (S.subs (2)) ;
+    I = gb_get_index (S.subs (1)) ;
+    J = gb_get_index (S.subs (2)) ;
     C = gb.subassign (C, A, I, J) ;
 else
     error ('%dD indexing not supported', ndims) ;

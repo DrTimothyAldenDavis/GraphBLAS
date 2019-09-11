@@ -232,7 +232,8 @@ classdef gb
 %   gb.semiringinfo (s, type)   list properties of a semiring
 %   t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %   c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
-%   e = gb.nvals (G)            number of entries in a matrix
+%   result = gb.entries (G,...) count or query entries in a matrix
+%   result = gb.nonz (G,...)    count or query nonzeros in a matrix
 %   G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %   s = gb.type (A)             get the type of a MATLAB or gb matrix A
 %   s = gb.issigned (type)      true if type is signed
@@ -240,8 +241,6 @@ classdef gb
 %   C = gb.expand (scalar, S)   expand a scalar (C = scalar*spones(S))
 %   C = gb.eye                  identity matrix of any type
 %   C = gb.speye                identity matrix (of type 'double')
-%   D = gb.coldegree (G)        column degree
-%   D = gb.rowdegree (G)        row degree
 %   G = gb.build (I, J, X, m, n, dup, type, desc)
 %                               build a gb matrix from list of entries
 %   [I,J,X] = gb.extracttuples (A, desc)
@@ -553,6 +552,8 @@ methods
     C = uint8 (G) ;
     C = xor (A, B) ;
     C = zeros (varargin) ;
+    c = fprintf (varargin) ;
+    c = sprintf (varargin) ;
 
     %---------------------------------------------------------------------------
     % MATLAB operator overloading
@@ -606,7 +607,6 @@ methods (Static)
     semiringinfo (s, type) ;
     nthreads = threads (varargin) ;
     c = chunk (varargin) ;
-    e = nvals (A) ;
     C = empty (arg1, arg2) ;
     s = type (A) ;
     s = issigned (type) ;
@@ -619,8 +619,6 @@ methods (Static)
     C = offdiag (A) ;
     C = eye (varargin) ;
     C = speye (varargin) ;
-    D = coldegree (A) ;
-    D = rowdegree (A) ;
     C = build (varargin) ;
     [I,J,X] = extracttuples (varargin) ;
     Cout = mxm (varargin) ;
@@ -643,6 +641,9 @@ methods (Static)
     [v, parent] = bfs (A, s, varargin) ;
     iset = mis (A, check) ;
     Y = dnn (W, bias, Y0) ;
+    result = entries (A, varargin) ;
+    result = nonz (A, varargin) ;
+    [C, I, J] = compact (A, id) ;
 
 end
 end

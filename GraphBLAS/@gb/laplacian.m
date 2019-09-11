@@ -21,8 +21,6 @@ function L = laplacian (A, type, check)
 %
 % See also graph/laplacian.
 
-% TODO: tests
-
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
@@ -47,7 +45,7 @@ if (check)
     if (~issymmetric (A))
         error ('A must be symmetric') ;
     end
-    if (gb.nvals (diag (A)) > 0)
+    if (gb.entries (diag (A)) > 0)
         error ('A must have no diagonal entries') ;
     end
 end

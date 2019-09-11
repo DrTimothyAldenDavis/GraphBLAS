@@ -22,7 +22,7 @@ function C = min (varargin)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 G = varargin {1} ;
-[m n] = size (G) ;
+[m,n] = size (G) ;
 
 if (isequal (gb.type (G), 'logical'))
     op = '&.logical' ;
@@ -36,7 +36,7 @@ if (nargin == 1)
     if (isvector (G))
         % C = min (G) for a vector G results in a scalar C
         C = gb.reduce (op, G) ;
-        if (gb.nvals (G) < m*n) ;
+        if (~gb.isfull (G))
             C = min (C, 0) ;
         end
     else
@@ -44,7 +44,8 @@ if (nargin == 1)
         % giving a 1-by-n row vector.
         C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-        C = gb.subassign (C, (C > 0) & (gb.coldegree (G) < m), 0)' ;
+        coldegree = gb.entries (G, 'col', 'degree') ;
+        C = gb.subassign (C, (C > 0) & (coldegree < m), 0)' ;
     end
 
 elseif (nargin == 2)
@@ -55,10 +56,10 @@ elseif (nargin == 2)
     if (isscalar (A))
         if (isscalar (B))
             % both A and B are scalars.  Result is also a scalar.
-            C = sparse_comparator (op, A, B) ;
+            C = gb_sparse_comparator (op, A, B) ;
         else
             % A is a scalar, B is a matrix
-            if (get_scalar (A) < 0)
+            if (gb_get_scalar (A) < 0)
                 % since A < 0, the result is full
                 [m, n] = size (B) ;
                 A = gb.subassign (gb (m, n, gb.type (A)), A, { }, { }) ;
@@ -72,7 +73,7 @@ elseif (nargin == 2)
     else
         if (isscalar (B))
             % A is a matrix, B is a scalar
-            if (get_scalar (B) < 0)
+            if (gb_get_scalar (B) < 0)
                 % since B < 0, the result is full
                 [m, n] = size (A) ;
                 B = gb.subassign (gb (m, n, gb.type (A)), B, { }, { }) ;
@@ -84,7 +85,7 @@ elseif (nargin == 2)
             C = gb.eadd (op, A, B) ;
         else
             % both A and B are matrices.  Result is sparse.
-            C = sparse_comparator (op, A, B) ;
+            C = gb_sparse_comparator (op, A, B) ;
         end
     end
 
@@ -95,7 +96,7 @@ elseif (nargin == 3)
     if (isequal (option, 'all'))
         % C = min (G, [ ] 'all'), reducing all entries to a scalar
         C = gb.reduce (op, G) ;
-        if (gb.nvals (G) < m*n) ;
+        if (~gb.isfull (G))
             C = min (C, 0) ;
         end
     elseif (isequal (option, 1))
@@ -103,13 +104,15 @@ elseif (nargin == 3)
         % giving a 1-by-n row vector.
         C = gb.vreduce (op, G, struct ('in0', 'transpose')) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
-        C = gb.subassign (C, (C > 0) & (gb.coldegree (G) < m), 0)' ;
+        coldegree = gb.entries (G, 'col', 'degree') ;
+        C = gb.subassign (C, (C > 0) & (coldegree < m), 0)' ;
     elseif (isequal (option, 2))
         % C = min (G, [ ], 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         C = gb.vreduce (op, G) ;
         % if C(i) > 0, but the row is sparse, then assign C(i) = 0.
-        C = gb.subassign (C, (C > 0) & (gb.rowdegree (G) < n), 0) ;
+        rowdegree = gb.entries (G, 'row', 'degree') ;
+        C = gb.subassign (C, (C > 0) & (rowdegree < n), 0) ;
     else
         error ('unknown option') ;
     end

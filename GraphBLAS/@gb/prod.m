@@ -34,7 +34,7 @@ if (nargin == 1)
     % C = prod (G); check if G is a row vector
     if (isvector (G))
         % C = prod (G) for a vector G results in a scalar C
-        if (gb.nvals (G) < m*n)
+        if (~gb.isfull (G))
             C = gb (0, gb.type (G)) ;
         else
             C = gb.reduce (op, G) ;
@@ -42,11 +42,12 @@ if (nargin == 1)
     else
         % C = prod (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = (gb.vreduce (op, G, d) .* (gb.coldegree (G) == m))' ;
+        coldegree = gb.entries (G, 'col', 'degree') ;
+        C = (gb.vreduce (op, G, d) .* (coldegree == m))' ;
     end
 elseif (isequal (option, 'all'))
     % C = prod (G, 'all'), reducing all entries to a scalar
-    if (gb.nvals (G) < m*n)
+    if (~gb.isfull (G))
         C = gb (0, gb.type (G)) ;
     else
         C = gb.reduce (op, G) ;
@@ -54,11 +55,13 @@ elseif (isequal (option, 'all'))
 elseif (isequal (option, 1))
     % C = prod (G,1) reduces each column to a scalar,
     % giving a 1-by-n row vector.
-    C = (gb.vreduce (op, G, d) .* (gb.coldegree (G) == m))' ;
+    coldegree = gb.entries (G, 'col', 'degree') ;
+    C = (gb.vreduce (op, G, d) .* (coldegree == m))' ;
 elseif (isequal (option, 2))
     % C = prod (G,2) reduces each row to a scalar,
     % giving an m-by-1 column vector.
-    C = gb.vreduce (op, G) .* (gb.rowdegree (G) == n) ;
+    rowdegree = gb.entries (G, 'row', 'degree') ;
+    C = gb.vreduce (op, G) .* (rowdegree == n) ;
 else
     error ('unknown option') ;
 end

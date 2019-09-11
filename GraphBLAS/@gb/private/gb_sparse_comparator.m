@@ -1,4 +1,5 @@
-function C = sparse_comparator (op, A, B)
+function C = gb_sparse_comparator (op, A, B)
+%GB_SPARSE_COMPARATOR compare two sparse matrices.
 % The pattern of C is the set union of A and B.  A and B must first be
 % expanded to include explicit zeros in the set union of A and B.  For
 % example, with A < B for two matrices A and B:

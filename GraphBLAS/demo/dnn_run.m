@@ -20,7 +20,7 @@ for id =  1:12
     clear Problem
     DNNedges = 0 ;
     for k = 1:nlayers
-        DNNedges = DNNedges + nnz (W {k}) ;
+        DNNedges = DNNedges + gb.entries (W {k}) ;
         bias {k} = full (bias {k}) ;
     end
     tload = toc ;

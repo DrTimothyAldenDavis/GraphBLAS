@@ -44,8 +44,18 @@ for k = 1:length(W)
      
     M = Y > 32 ;
     if (nnz (M) > 0)
-        Y (M) = 32 ;
+        % Y (M) = 32 ;
+        Y = gb.subassign (Y, M, 32) ;
     end
 
 end
+
+% NOTE: This is an odd MATLAB quirk.  When this function is not a gb.dnn
+% method, but a stand-alone function outside of @gb, the statement Y (M) = 32 ;
+% works just fine, using the @gb/subsasgn.m method for the overloaded operator.
+% M is a GraphBLAS logical matrix.  However, when incorporated into @gb, the
+% statement Y (M) = 32 generates an error: "Unable to use a value of type 'gb'
+% as an index", and the @gb/subsasgn.m method is never called.  Thus, the
+% statement is replaced with its equivalent, Y = gb.subassign (Y, M, 32),
+% above.
 

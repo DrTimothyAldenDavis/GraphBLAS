@@ -7,7 +7,7 @@ function C = incidence (A, varargin)
 % ignored.   Optional string arguments can appear after A:
 %
 %   C = gb.incidence (A, ..., 'directed') constructs a matrix C of size n-by-e
-%   where e = gb.nvals (gb.offdiag (A)).  Any entry in the upper or lower
+%   where e = gb.entries (gb.offdiag (A)).  Any entry in the upper or lower
 %   trianglar part of A results in a unique column of C.  The diagonal is
 %   ignored.  This is the default. 
 %   C = gb.incidence (A, ..., 'unsymmetric') is the same as 'directed'.

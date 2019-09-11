@@ -8,20 +8,19 @@ function C = all (G, option)
 % C = all (G, 1) is a row vector with C(j) = all (G (:,j))
 % C = all (G, 2) is a column vector with C(i) = all (G (i,:))
 %
-% See also any, nnz, gb.nvals.
+% See also any, nnz, gb.entries.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m n] = size (G) ;
-nvals = gb.nvals (G) ;
 
 if (nargin == 1)
 
     % C = all (G)
     if (isvector (G))
         % C = all (G) for a vector G results in a scalar C
-        if (nvals < m*n) ;
+        if (~gb.isfull (G))
             C = gb (false, 'logical') ;
         else
             C = gb.reduce ('&.logical', G) ;
@@ -31,7 +30,8 @@ if (nargin == 1)
         % giving a 1-by-n row vector.
         C = gb.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
         % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-        C = gb.subassign (C, C & (gb.coldegree (G) < m), 0)' ;
+        coldegree = gb.entries (G, 'col', 'degree') ;
+        C = gb.subassign (C, C & (coldegree < m), 0)' ;
     end
 
 elseif (nargin == 2)
@@ -39,7 +39,7 @@ elseif (nargin == 2)
     % C = all (G, option)
     if (isequal (option, 'all'))
         % C = all (G, 'all'), reducing all entries to a scalar
-        if (nvals < m*n) ;
+        if (~gb.isfull (G))
             C = gb (false, 'logical') ;
         else
             C = gb.reduce ('&.logical', G) ;
@@ -49,13 +49,15 @@ elseif (nargin == 2)
         % giving a 1-by-n row vector.
         C = gb.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
         % if C(j) is true, but the column is sparse, then assign C(j) = 0.
-        C = gb.subassign (C, C & (gb.coldegree (G) < m), 0)' ;
+        coldegree = gb.entries (G, 'col', 'degree') ;
+        C = gb.subassign (C, C & (coldegree < m), 0)' ;
     elseif (isequal (option, 2))
         % C = all (G, 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.
         C = gb.vreduce ('&.logical', G) ;
         % if C(i) is true, but the row is sparse, then assign C(i) = 0.
-        C = gb.subassign (C, C & (gb.rowdegree (G) < n), 0) ;
+        rowdegree = gb.entries (G, 'row', 'degree') ;
+        C = gb.subassign (C, C & (rowdegree < n), 0) ;
     else
         error ('unknown option') ;
     end

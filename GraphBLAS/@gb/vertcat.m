@@ -16,7 +16,7 @@ nvals = zeros (1, nmatrices) ;
 nrows = zeros (1, nmatrices) ;
 A = varargin {1} ;
 [m n] = size (A) ;
-nvals (1) = gb.nvals (A) ;
+nvals (1) = gb.entries (A) ;
 nrows (1) = m ;
 type = gb.type (A) ;
 clear A
@@ -26,7 +26,7 @@ for k = 2:nmatrices
     if (n ~= n2)
         error('Dimensions of arrays being concatenated are not consistent');
     end
-    nvals (k) = gb.nvals (B) ;
+    nvals (k) = gb.entries (B) ;
     nrows (k) = m ;
     clear B ;
 end
@@ -46,7 +46,7 @@ for k = 1:nmatrices
     [i, j, x] = gb.extracttuples (varargin {k}, d) ;
     moffset = int64 (nrows (k)) ;
     koffset = nvals (k) ;
-    kvals = gb.nvals (varargin {k}) ;
+    kvals = gb.entries (varargin {k}) ;
     I ((koffset+1):(koffset+kvals)) = i + moffset ;
     J ((koffset+1):(koffset+kvals)) = j ;
     X ((koffset+1):(koffset+kvals)) = x ;

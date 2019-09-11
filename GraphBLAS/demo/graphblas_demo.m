@@ -267,8 +267,6 @@ assert (isequal (double (C1), C2))
 %   F = full (G)        % adds explicit zeros, so numel(F)==nnz(F)
 %   F = full (G,id)     % adds explicit identity values to a gb matrix
 %   disp (G, level)     % display a gb matrix G; level=2 is the default.
-%   e = nnz (G)         % # of entries in a gb matrix G; some can be zero
-%   X = nonzeros (G)    % all the entries of G; some can be zero
 %
 % In the list below, the first set of Methods are overloaded built-in
 % methods.  They are used as-is on GraphBLAS matrices, such as C=abs(G).
@@ -517,14 +515,14 @@ tic
 s = gb.mis (A) ;
 toc
 fprintf ('# nodes in the graph: %g\n', size (A,1)) ;
-fprintf ('# edges: : %g\n', nnz (A) / 2) ;
+fprintf ('# edges: : %g\n', gb.entries (A) / 2) ;
 fprintf ('size of maximal independent set found: %g\n', ...
     full (double (sum (s)))) ;
 
 % make sure it's independent
 p = find (s) ;
 S = A (p,p) ;
-assert (nnz (S) == 0)
+assert (gb.entries (S) == 0)
 
 % make sure it's maximal
 notp = find (s == 0) ;
@@ -897,7 +895,7 @@ x = minres (A, b)
 %   gb.semiringinfo (s, type)   list properties of a semiring
 %   t = gb.threads (t)          set/get # of threads to use in GraphBLAS
 %   c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
-%   e = gb.nvals (A)            number of entries in a matrix
+%   e = gb.entries (A)          number of entries in a matrix
 %   G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %   s = gb.type (X)             get the type of a MATLAB or gb matrix X
 %   f = gb.format (f)           set/get matrix format to use in GraphBLAS
