@@ -1,4 +1,4 @@
-Version 3.1.0, Aug [TODO], 2019
+Version 3.1.0, Sept [TODO], 2019
 
     * added MATLAB interface: GraphBLAS/GraphBLAS is new.  In Source/, added
         global pointer to printf for MATLAB mexPrintf, pointer to
@@ -10,6 +10,9 @@ Version 3.1.0, Aug [TODO], 2019
         reserved for MATLAB interface.
     * bug fix to GB_reduce_to_vector: avoid integer divide-by-zero for
         a matrix with n=0 columns.
+    * 'make dox': for doxygen removed
+    * bug fix to GB_accum_mask: when C+=T if C has no entries except
+        pending tuples
 
 Version 3.0.1, July 26, 2019
 

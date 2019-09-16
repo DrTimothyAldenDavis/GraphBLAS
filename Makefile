@@ -42,11 +42,6 @@ install:
 docs:
 	( cd Doc ; $(MAKE) )
 
-# create the doxygen documentation in Doc/html (first run Doc/dox_headers
-# in MATLAB if you have editted the code)
-dox:
-	doxygen
-
 # remove any installed libraries and #include files
 uninstall:
 	- xargs rm < build/install_manifest.txt

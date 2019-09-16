@@ -280,7 +280,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // see GB_spec_accum.m for a description of this step.  If C is empty,
         // then the accumulator can be ignored.
 
-        if (accum == NULL || cnz == 0)
+        if (accum == NULL || (cnz + cnpending) == 0)
         { 
 
             //------------------------------------------------------------------
@@ -317,6 +317,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             {
                 M1 = M ;
             }
+
             GB_OK (GB_add (&Z, C->type, C->is_csc, M1, C, T, accum, Context)) ;
             GB_MATRIX_FREE (Thandle) ;
         }

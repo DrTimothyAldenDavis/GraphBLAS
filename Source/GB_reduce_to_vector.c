@@ -536,6 +536,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    return (GB_ACCUM_MASK (C, M, NULL, accum, &T, C_replace, Mask_comp)) ;
+    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
+        Context)) ;
 }
 

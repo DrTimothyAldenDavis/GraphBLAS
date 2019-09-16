@@ -11089,31 +11089,6 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
     JOBS=32 CC=gcc make \end{verbatim} }
 
 %----------------------------------------
-\subsection{Creating the Doxygen documentation}
-\label{sec:doxygen}
-%----------------------------------------
-
-SuiteSparse:GraphBLAS is equipped with a \verb'Doxyfile' that specifies how
-\verb'doxygen' can be used to create detailed documentation of each file,
-including call-graphs.  The \verb'doxygen' documentation is not meant for
-end-users of GraphBLAS, but for GraphBLAS developers instead.
-
-If you edit GraphBLAS, you must first run the MATLAB script
-\verb'dox_headers.m' in \verb'Doc/', in MATLAB.  This script parses all of the
-source code for structured comments, to create header files suitable for
-parsing by \verb'doxygen'.  Next, do the following in the top-level
-\verb'GraphBLAS' folder:
-
-    {\small
-    \begin{verbatim}
-    make dox\end{verbatim} }
-
-This creates the \verb'Doc/html/' folder, which is initially empty in
-the default distribution.  Open the file \verb'Doc/html/index.html' in
-any web browser.  Alternatively, a copy of the \verb'doxygen' documentation can
-be found at \url{http://faculty.cse.tamu.edu/davis/GraphBLAS/html}.
-
-%----------------------------------------
 \subsection{Thread-safety in multithreaded user applications}
 \label{sec:threads}
 %----------------------------------------
