@@ -87,8 +87,9 @@ if ( NOT CMAKE_BUILD_TYPE )
 endif ( )
 
 # select "true" to build both dynamic and static libraries:
-  set ( BUILD_GRB_STATIC_LIBRARY true )
-  set ( BUILD_GRB_STATIC_LIBRARY false )
+#  set ( BUILD_GRB_STATIC_LIBRARY true )
+#  set ( BUILD_GRB_STATIC_LIBRARY false )
+# or use cmake with -DBUILD_GRB_STATIC_LIBRARY=1
 
 if ( BUILD_GRB_STATIC_LIBRARY )
     message ( STATUS "Building both static and dynamic GraphBLAS libraries" )
@@ -254,6 +255,7 @@ endif ( )
 #       changing the already existing items)
 
 file ( GLOB GRAPHBLAS_SOURCES "Source/*.c" "Source/Generated/*.c" )
+
 add_library ( graphblas SHARED ${GRAPHBLAS_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblas PROPERTIES
     VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
@@ -266,9 +268,9 @@ set_property ( TARGET graphblas PROPERTY C_STANDARD 11 )
 # static graphblas library properties
 #-------------------------------------------------------------------------------
 
-    if ( BUILD_GRB_STATIC_LIBRARY )
-add_library ( graphblas_static STATIC ${GRAPHBLAS_SOURCES} )
-   SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
+if ( BUILD_GRB_STATIC_LIBRARY )
+    add_library ( graphblas_static STATIC ${GRAPHBLAS_SOURCES} )
+    SET_TARGET_PROPERTIES ( graphblas_static PROPERTIES
        VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
        OUTPUT_NAME graphblas
        SOVERSION ${GraphBLAS_VERSION_MAJOR}

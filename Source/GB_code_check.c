@@ -53,19 +53,36 @@ GrB_Info GB_code_check          // print an entry using a type code
         case GB_UINT32_code : u = *((uint32_t *) x) ; GBPR ("  "GBu, u) ; break ;
         case GB_INT64_code  : i = *((int64_t  *) x) ; GBPR ("  "GBd, i) ; break ;
         case GB_UINT64_code : u = *((uint64_t *) x) ; GBPR ("  "GBu, u) ; break ;
-        case GB_FP32_code   : s = *((float    *) x) ; GBPR ("   %.6g", (double) s) ; break ;
+
+        case GB_FP32_code   :
+            s = *((float *) x) ;
+            if (isnan (s))
+            {
+                GBPR ("   NaN") ;
+            }
+            else
+            {
+                GBPR ("   %.6g", (double) s) ;
+            }
+            break ;
+
         case GB_FP64_code   :
-            d = *((double   *) x) ;
-            if (GB_Global_print_format_get ( ) == 0)
+            d = *((double *) x) ;
+            if (isnan (d))
+            {
+                GBPR ("   NaN") ;
+            }
+            else if (GB_Global_print_format_get ( ) == 0)
             {
                 // long format (default)
-                GBPR ("   %.15g", d) ; break ;
+                GBPR ("   %.15g", d) ;
             }
             else
             {
                 // short format
-                GBPR ("   %.6g", d) ; break ;
+                GBPR ("   %.6g", d) ;
             }
+            break ;
         #endif
 
         case GB_UCT_code    :

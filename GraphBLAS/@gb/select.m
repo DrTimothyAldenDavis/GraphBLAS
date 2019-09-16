@@ -82,8 +82,6 @@ function Cout = select (varargin)
 % any combination.  Cout is returned as a GraphBLAS matrix, by default;
 % see 'help gb/descriptorinfo' for more options.
 %
-% TODO: the *thunk operators do not work properly when thunk is NaN
-%
 % See also tril, triu, diag.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

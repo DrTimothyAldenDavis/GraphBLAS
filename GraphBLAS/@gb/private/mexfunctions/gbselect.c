@@ -28,7 +28,39 @@
 // not present, is determined by the ztype of the accum, if present, or
 // otherwise it has the same time as A.
 
+// If op is 'eqthunk' or 'nethunk' and thunk is a NaN, and A has type GrB_FP32
+// or GrB_FP64, then a user-defined operator is used instead of GxB_EQ_THUNK or
+// GxB_NE_THUNK.
+
 #include "gb_matlab.h"
+
+bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
+    const void *x, const void *thunk)
+{
+    float aij = * ((float *) x) ;
+    return (isnan (aij)) ;
+}
+
+bool gb_isnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
+    const void *x, const void *thunk)
+{
+    double aij = * ((double *) x) ;
+    return (isnan (aij)) ;
+}
+
+bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
+    const void *x, const void *thunk)
+{
+    float aij = * ((float *) x) ;
+    return (!isnan (aij)) ;
+}
+
+bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
+    const void *x, const void *thunk)
+{
+    double aij = * ((double *) x) ;
+    return (!isnan (aij)) ;
+}
 
 void mexFunction
 (
@@ -180,10 +212,66 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
-    // compute C<M> += select (A, thunk)
+    // handle the NaN case
     //--------------------------------------------------------------------------
 
-    OK (GxB_select (C, M, accum, op, A, thunk, desc)) ;
+    // check if thunk is NaN
+    GrB_Type thunk_type ;
+    OK (GxB_Matrix_type (&thunk_type, thunk)) ;
+    bool thunk_is_nan = false ;
+    if (thunk_type == GrB_FP32)
+    {
+        float thunk_value = 0 ;
+        OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
+        thunk_is_nan = isnan (thunk_value) ;
+    }
+    else if (thunk_type == GrB_FP64)
+    {
+        double thunk_value = 0 ;
+        OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
+        thunk_is_nan = isnan (thunk_value) ;
+    }
+
+    GrB_BinaryOp nan_test = NULL ;
+    if (thunk_is_nan)
+    {
+        // thunk is NaN; create a new nan_test operator if it should be used
+        // instead of the built-in GxB_EQ_THUNK or GxB_NE_THUNK operators.
+        // These operators do not need a thunk input, since it is now known
+        // to be a NaN.
+        GrB_Type atype ;
+        OK (GxB_Matrix_type (&atype, A)) ;
+        if (op == GxB_EQ_THUNK && atype == GrB_FP32)
+        {
+            OK (GxB_SelectOp_new (&nan_test, gb_isnan32, GrB_FP32, NULL)) ;
+        }
+        else if (op == GxB_EQ_THUNK && atype == GrB_FP64)
+        {
+            OK (GxB_SelectOp_new (&nan_test, gb_isnan64, GrB_FP64, NULL)) ;
+        }
+        else if (op == GxB_NE_THUNK && atype == GrB_FP32)
+        {
+            OK (GxB_SelectOp_new (&nan_test, gb_isnotnan32, GrB_FP32, NULL)) ;
+        }
+        else if (op == GxB_NE_THUNK && atype == GrB_FP64)
+        {
+            OK (GxB_SelectOp_new (&nan_test, gb_isnotnan64, GrB_FP64, NULL)) ;
+        }
+    }
+
+    GrB_Matrix thnk = thunk ;
+    if (nan_test != NULL)
+    {
+        // use the new operator instead of the built-in one
+        op = nan_test ;
+        thnk = NULL ;
+    }
+
+    //--------------------------------------------------------------------------
+    // compute C<M> += select (A, thnk)
+    //--------------------------------------------------------------------------
+
+    OK (GxB_select (C, M, accum, op, A, thnk, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
@@ -193,6 +281,7 @@ void mexFunction
     OK (GrB_free (&A)) ;
     OK (GrB_free (&thunk)) ;
     OK (GrB_free (&desc)) ;
+    OK (GrB_free (&nan_test)) ;
 
     //--------------------------------------------------------------------------
     // export the output matrix C back to MATLAB

@@ -11,7 +11,19 @@ function Cout = subassign (varargin)
 % Usage:
 %
 %   Cout = gb.subassign (Cin, M, accum, A, I, J, desc)
-%   TODO add all valid uses here
+%
+%   Cin and A are required parameters.  All others are optional.
+%   The arguments are parsed according to their type.  Arguments
+%   with different types can appear in any order.
+%       Cin, M, A:  2 or 3 GraphBLAS or MATLAB sparse/full matrices.
+%                   The first three matrix inputs are Cin, M, and A.
+%                   If 2 matrix inputs are present, they are Cin and A.
+%       accum:      an optional string
+%       I,J:        cell arrays:  with no cell inputs: I = { } and J = { }.
+%                   with one cell input, I is present and J = { }.
+%                   with two cell inputs, I is the first cell input and J
+%                   is the second cell input.
+%       desc:       an optional struct.
 %
 % gb.subassign is identical to gb.assign, with two key differences:
 %

@@ -48,15 +48,6 @@ applied to sparse adjacency matrices, these algebraic operations are equivalent
 to computations on graphs.  GraphBLAS provides a powerful and expressive
 framework for creating graph algorithms based on the elegant mathematics of
 sparse matrix operations on a semiring.
-
-{\bf NOTE: This version of GraphBLAS is a pre-release draft, not yet even
-in beta status.  It is fairly stable, but may have a few lurking bugs since
-this version has not yet undergone my brutal testing.  I'm making this
-widely available to get feedback on the MATLAB interface.  This version
-should be just as fast as the latest stable version, V3.0.1, but there might
-be a performance bug here and there, so please use V3.0.1 if you would like
-to publish performance comparisons.  Use this pre-release version for
-evaluation only, not for production use.}
 \end{abstract}
 
 \newpage
@@ -8788,6 +8779,12 @@ and
 The comparators \verb'GxB_GT_*' \verb'GxB_GE_*' \verb'GxB_LT_*', and
 \verb'GxB_LE_*' only work for built-in types.  All other built-in select
 operators can be used for any type, both built-in and any user-defined type.
+
+MOTE: For floating-point values, comparisons with \verb'NaN' always return
+false.  The built-in select operators should not be used with a scalar
+\verb'thunk' that is equal to \verb'NaN'.  For this case, create a user-defined
+select operator that performs the test with the ANSI C \verb'isnan' function
+instead.
 
 \vspace{0.2in}
 {\small

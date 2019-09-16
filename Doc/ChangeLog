@@ -8,11 +8,13 @@ Version 3.1.0, Sept [TODO], 2019
         helper functions for MATLAB (GB_matlab_helper.[ch]).  Renamed existing
         Test/*.m Tcov/*.m files and variabls so that gb*.m naming prefix is
         reserved for MATLAB interface.
-    * bug fix to GB_reduce_to_vector: avoid integer divide-by-zero for
+    * 'make dox': for doxygen removed (not really that useful)
+    * bug fix to GB_reduce_to_vector: to avoid integer divide-by-zero for
         a matrix with n=0 columns.
-    * 'make dox': for doxygen removed
     * bug fix to GB_accum_mask: when C+=T if C has no entries except
         pending tuples
+    * bug fix to GB_resize: when pending tuples exist and vdim is growing
+        from vdim <= 1 to vdim > 1, GB_WAIT(A) is required first.
 
 Version 3.0.1, July 26, 2019
 

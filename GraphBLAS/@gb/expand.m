@@ -10,7 +10,7 @@ function C = expand (scalar, S)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-% TODO: this is slow.  Use a built-in mexFunction.
+% FUTURE: this is slow.  Use a built-in mexFunction.
 
 % FUTURE: as much as possible, replace scalar expansion with binary operators
 % used in a unary apply, when it becomes part of the C API.
