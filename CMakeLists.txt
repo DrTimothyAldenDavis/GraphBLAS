@@ -152,7 +152,7 @@ configure_file (
 
 include ( FindOpenMP  )
 include ( FindThreads )
-enable_language ( CUDA )
+# enable_language ( CUDA )
 
 # for nvcc, add -DGBCUDA
 
@@ -410,6 +410,7 @@ add_executable ( complex_demo  "Demo/Program/complex_demo.c" )
 add_executable ( kron_demo     "Demo/Program/kron_demo.c" )
 add_executable ( simple_demo   "Demo/Program/simple_demo.c" )
 add_executable ( wildtype_demo "Demo/Program/wildtype_demo.c" )
+add_executable ( reduce_demo   "Demo/Program/reduce_demo.c" )
 add_executable ( import_demo   "Demo/Program/import_demo.c" )
 
 # Libraries required for Demo programs
@@ -423,6 +424,7 @@ target_link_libraries ( complex_demo  graphblas graphblasdemo )
 target_link_libraries ( kron_demo     graphblas graphblasdemo )
 target_link_libraries ( simple_demo   graphblasdemo )
 target_link_libraries ( wildtype_demo graphblas )
+target_link_libraries ( reduce_demo   graphblas )
 target_link_libraries ( import_demo   graphblas graphblasdemo )
 
 #-------------------------------------------------------------------------------
