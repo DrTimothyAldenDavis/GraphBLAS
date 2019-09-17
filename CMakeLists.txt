@@ -152,6 +152,9 @@ configure_file (
 
 include ( FindOpenMP  )
 include ( FindThreads )
+enable_language ( CUDA )
+
+# for nvcc, add -DGBCUDA
 
 #-------------------------------------------------------------------------------
 # report status
