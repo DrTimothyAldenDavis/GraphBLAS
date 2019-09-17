@@ -10,9 +10,9 @@ function C = isfinite (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[m n] = size (G) ;
+[m, n] = size (G) ;
 if (isfloat (G) && m > 0 && n > 0)
-    [i j x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
+    [i, j, x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
     C = gb.build (i, j, isfinite (x), m, n) ;
 else
     % C is all true

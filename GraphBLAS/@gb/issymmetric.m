@@ -11,7 +11,7 @@ function s = issymmetric (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[m n] = size (G) ;
+[m, n] = size (G) ;
 if (m ~= n)
     s = false ;
 else
@@ -19,18 +19,17 @@ else
         option = 'nonskew' ;
     end
     if (islogical (G))
-        s = isequal (G, G') ;
+        G = gb (G, 'double') ;
+    end
+    if (isequal (option, 'skew'))
+        s = (norm (G + G.', 1) == 0) ;
     else
-        if (isequal (option, 'skew'))
-            s = (norm (G + G.', 1) == 0) ;
-        else
-            s = (norm (G - G.', 1) == 0) ;
-        end
-        if (s)
-            % also check the pattern; G might have explicit zeros
-            S = spones (G, 'logical') ;
-            s = isequal (S, S') ;
-        end
+        s = (norm (G - G.', 1) == 0) ;
+    end
+    if (s)
+        % also check the pattern; G might have explicit zeros
+        S = spones (G, 'logical') ;
+        s = isequal (S, S') ;
     end
 end
 

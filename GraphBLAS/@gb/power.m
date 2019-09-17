@@ -59,7 +59,7 @@ end
 % constructed as a user-defined operator, but this is reasonably fast.
 % FUTURE: create a binary operator f(x,y) = x^y.
 [m, n] = size (A) ;
-[I, J, Ax] = gb.extracttuples (A) ;
+[~, ~, Ax] = gb.extracttuples (A) ;
 [I, J, Bx] = gb.extracttuples (B) ;
 C = gb.prune (gb.build (I, J, (Ax .^ Bx), m, n)) ;
 end

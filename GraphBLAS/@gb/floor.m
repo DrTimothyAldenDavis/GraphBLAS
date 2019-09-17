@@ -11,8 +11,8 @@ function C = floor (G)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (isfloat (G) && gb.entries (G) > 0)
-    [m n] = size (G) ;
-    [i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+    [m, n] = size (G) ;
+    [i, j, x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
     C = gb.build (i, j, floor (x), m, n) ;
 else
     C = G ;

@@ -11,7 +11,7 @@ function C = mpower (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[m n] = size (A) ;
+[m, n] = size (A) ;
 if (m ~= n)
     error ('For C=A^B, A must be square') ;
 end

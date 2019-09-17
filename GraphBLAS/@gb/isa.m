@@ -19,7 +19,7 @@ function s = isa (G, classname)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isequal (classname, 'gb') | isequal (classname, 'numeric'))
+if (isequal (classname, 'gb') || isequal (classname, 'numeric'))
     % all GraphBLAS matrices are numeric, and have class name 'gb'
     s = true ;
 elseif (isequal (classname, 'float'))

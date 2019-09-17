@@ -17,7 +17,6 @@ function C = plus (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars.  Result is also a scalar.
-        C = gb.eadd ('+', A, B) ;
     else
         % A is a scalar, B is a matrix.  Result is full.
         [m, n] = size (B) ;
@@ -34,3 +33,4 @@ else
 end
 
 C = gb.eadd ('+', A, B) ;
+

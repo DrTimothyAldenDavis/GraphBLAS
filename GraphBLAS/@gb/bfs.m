@@ -79,6 +79,11 @@ d = struct ('out', 'replace', 'mask', 'complement') ;
 
 % determine the method to use, and convert A if necessary
 if (isequal (kind, 'undirected'))
+    if (check)
+        if (~issymmetric (A))
+            error ('A must be symmetric') ;
+        end
+    end
     if (gb.isbycol (A))
         % A is stored by column but undirected, so use q*A' instead of q*A
         d.in1 = 'transpose' ;

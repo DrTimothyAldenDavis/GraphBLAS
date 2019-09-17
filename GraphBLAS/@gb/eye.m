@@ -18,7 +18,7 @@ function C = eye (varargin)
 % get the type
 type = 'double' ;
 nargs = nargin ;
-if (nargs > 1 & ischar (varargin {nargs}))
+if (nargs > 1 && ischar (varargin {nargs}))
     type = varargin {nargs} ;
     nargs = nargs - 1 ;
 end

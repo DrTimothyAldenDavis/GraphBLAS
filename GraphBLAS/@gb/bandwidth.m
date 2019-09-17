@@ -16,7 +16,7 @@ if (gb.entries (G) == 0)
     hi = 0 ;
     lo = 0 ;
 else
-    [i j] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+    [i, j] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
     b = j - i ;
     hi = max (0,  double (max (b))) ;
     lo = max (0, -double (min (b))) ;

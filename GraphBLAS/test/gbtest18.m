@@ -11,8 +11,16 @@ for trial = 1:100
         fprintf ('.') ;
     end
 
-    MA = sprand (4,5, 0.5) ;    A (2,2) = 2 ;
-    MB = sprand (4,5, 0.5) ;    B (2,2) = 2 ;
+    if (mod (trial, 10) == 1)
+        m = 1 ;
+        n = 1 ;
+    else
+        m = 4 ;
+        n = 5 ;
+    end
+
+    MA = sprand (m,n, 0.5) ;    A (2,2) = 2 ;
+    MB = sprand (m,n, 0.5) ;    B (2,2) = 2 ;
     GA = gb (MA) ;
     GB = gb (MB) ;
 

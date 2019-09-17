@@ -29,7 +29,7 @@ function C = diag (G, k)
 %   G = diag(gb(-m:m)) + diag(gb(f),1) + diag(gb(f),-1)
 %   nothing = double (A-G)
 %
-% See also diag, spdiags, tril, triu, gb.select, gb.prunediag.
+% See also diag, spdiags, tril, triu, gb.select.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

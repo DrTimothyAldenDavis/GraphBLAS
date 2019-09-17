@@ -13,8 +13,6 @@ function C = any (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[m n] = size (G) ;
-
 if (nargin == 1)
 
     % C = any (G)

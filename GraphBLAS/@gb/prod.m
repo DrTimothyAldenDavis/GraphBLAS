@@ -23,7 +23,7 @@ function C = prod (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[m n] = size (G) ;
+[m, n] = size (G) ;
 d = struct ('in0', 'transpose') ;
 if (isequal (gb.type (G), 'logical'))
     op = '&.logical' ;
@@ -63,6 +63,6 @@ elseif (isequal (option, 2))
     rowdegree = gb.entries (G, 'row', 'degree') ;
     C = gb.vreduce (op, G) .* (rowdegree == n) ;
 else
-    error ('unknown option') ;
+    error ('gb:usage', 'unknown option') ;
 end
 

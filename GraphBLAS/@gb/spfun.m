@@ -8,8 +8,8 @@ function C = spfun (fun, G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[m n] = size (G) ;
-[i j x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
+[m, n] = size (G) ;
+[i, j, x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
 x = feval (fun, x) ;
 C = gb.build (i, j, x, m, n, '1st', gb.type (x)) ;
 

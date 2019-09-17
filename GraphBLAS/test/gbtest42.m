@@ -13,7 +13,7 @@ for trial = 1:40
     for k1 = 1:length(types)
         atype = types {k1} ;
         A = cast (full (sprand (4,4,0.5)), atype) ;
-        A (A > 0.5) = nan 
+        A (A > 0.5) = nan ;
 
         A_nan = zeros (4, 4) ;
         A_nan (isnan (A)) = nan ;

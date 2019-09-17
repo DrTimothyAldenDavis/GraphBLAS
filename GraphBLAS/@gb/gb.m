@@ -309,7 +309,7 @@ classdef gb
 %   iset = mis (A, check) ;             % maximal independent set
 %   Y = dnn (W, bias, Y0) ;             % deep neural network
 %
-% See also sparse, doc sparse, and https://twitter.com/DocSparse .
+% See also sparse.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

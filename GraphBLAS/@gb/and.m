@@ -17,7 +17,7 @@ if (isscalar (A))
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) == 0)
             % A is false, so C is empty, the same size as B
-            [m n] = size (B) ;
+            [m, n] = size (B) ;
             C = gb (m, n, 'logical') ;
         else
             % A is true, so C is B typecasted to logical
@@ -29,7 +29,7 @@ else
         % A is a matrix, B is a scalar
         if (gb_get_scalar (B) == 0)
             % B is false, so C is empty, the same size as A
-            [m n] = size (A) ;
+            [m, n] = size (A) ;
             C = gb (m, n, 'logical') ;
         else
             % B is true, so C is A typecasted to logical

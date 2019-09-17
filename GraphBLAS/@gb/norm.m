@@ -39,7 +39,7 @@ end
 if (isvector (G))
     if (kind == 1)
         s = sum (abs (G)) ;
-    elseif (kind == 2 | kind == 0)
+    elseif (kind == 2 || kind == 0)
         s = sqrt (sum (G.^2)) ;
     elseif (kind == inf)
         s = max (abs (G)) ;

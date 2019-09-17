@@ -9,7 +9,7 @@ function C = eps (G)
 if (~isfloat (G))
     error ('Type must be ''single'', ''double'', or ''complex''') ;
 end
-[m n] = size (G) ;
-[i j x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
+[m, n] = size (G) ;
+[i, j, x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
 C = gb.build (i, j, eps (x), m, n) ;
 

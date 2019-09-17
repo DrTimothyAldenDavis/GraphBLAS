@@ -22,7 +22,7 @@ function C = max (varargin)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 G = varargin {1} ;
-[m n] = size (G) ;
+[m, n] = size (G) ;
 if (isequal (gb.type (G), 'logical'))
     op = '|.logical' ;
 else

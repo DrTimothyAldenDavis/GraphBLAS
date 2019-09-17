@@ -31,7 +31,7 @@ function Y = dnn (W, bias, Y0)
 % All of the above conversion is optional, except for bias {k} since it is
 % changed from a row vector to a diagonal matrix.
 %
-% See also dnn_matlab, dnn_mat2gb in GraphBLAS/demo.
+% See also dnn_matlab, dnn_mat2gb.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

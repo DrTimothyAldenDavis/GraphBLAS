@@ -215,56 +215,62 @@ void mexFunction
     // handle the NaN case
     //--------------------------------------------------------------------------
 
-    // check if thunk is NaN
-    GrB_Type thunk_type ;
-    OK (GxB_Matrix_type (&thunk_type, thunk)) ;
-    bool thunk_is_nan = false ;
-    if (thunk_type == GrB_FP32)
-    {
-        float thunk_value = 0 ;
-        OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
-        thunk_is_nan = isnan (thunk_value) ;
-    }
-    else if (thunk_type == GrB_FP64)
-    {
-        double thunk_value = 0 ;
-        OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
-        thunk_is_nan = isnan (thunk_value) ;
-    }
-
     GrB_BinaryOp nan_test = NULL ;
-    if (thunk_is_nan)
-    {
-        // thunk is NaN; create a new nan_test operator if it should be used
-        // instead of the built-in GxB_EQ_THUNK or GxB_NE_THUNK operators.
-        // These operators do not need a thunk input, since it is now known
-        // to be a NaN.
-        GrB_Type atype ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        if (op == GxB_EQ_THUNK && atype == GrB_FP32)
-        {
-            OK (GxB_SelectOp_new (&nan_test, gb_isnan32, GrB_FP32, NULL)) ;
-        }
-        else if (op == GxB_EQ_THUNK && atype == GrB_FP64)
-        {
-            OK (GxB_SelectOp_new (&nan_test, gb_isnan64, GrB_FP64, NULL)) ;
-        }
-        else if (op == GxB_NE_THUNK && atype == GrB_FP32)
-        {
-            OK (GxB_SelectOp_new (&nan_test, gb_isnotnan32, GrB_FP32, NULL)) ;
-        }
-        else if (op == GxB_NE_THUNK && atype == GrB_FP64)
-        {
-            OK (GxB_SelectOp_new (&nan_test, gb_isnotnan64, GrB_FP64, NULL)) ;
-        }
-    }
-
     GrB_Matrix thnk = thunk ;
-    if (nan_test != NULL)
+
+    if (thunk != NULL)
     {
-        // use the new operator instead of the built-in one
-        op = nan_test ;
-        thnk = NULL ;
+        // check if thunk is NaN
+        GrB_Type thunk_type ;
+        OK (GxB_Matrix_type (&thunk_type, thunk)) ;
+        bool thunk_is_nan = false ;
+        if (thunk_type == GrB_FP32)
+        {
+            float thunk_value = 0 ;
+            OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
+            thunk_is_nan = isnan (thunk_value) ;
+        }
+        else if (thunk_type == GrB_FP64)
+        {
+            double thunk_value = 0 ;
+            OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
+            thunk_is_nan = isnan (thunk_value) ;
+        }
+
+        if (thunk_is_nan)
+        {
+            // thunk is NaN; create a new nan_test operator if it should be used
+            // instead of the built-in GxB_EQ_THUNK or GxB_NE_THUNK operators.
+            // These operators do not need a thunk input, since it is now known
+            // to be a NaN.
+            GrB_Type atype ;
+            OK (GxB_Matrix_type (&atype, A)) ;
+            if (op == GxB_EQ_THUNK && atype == GrB_FP32)
+            {
+                OK (GxB_SelectOp_new (&nan_test, gb_isnan32, GrB_FP32, NULL)) ;
+            }
+            else if (op == GxB_EQ_THUNK && atype == GrB_FP64)
+            {
+                OK (GxB_SelectOp_new (&nan_test, gb_isnan64, GrB_FP64, NULL)) ;
+            }
+            else if (op == GxB_NE_THUNK && atype == GrB_FP32)
+            {
+                OK (GxB_SelectOp_new (&nan_test, gb_isnotnan32, GrB_FP32,
+                    NULL)) ;
+            }
+            else if (op == GxB_NE_THUNK && atype == GrB_FP64)
+            {
+                OK (GxB_SelectOp_new (&nan_test, gb_isnotnan64, GrB_FP64,
+                    NULL)) ;
+            }
+        }
+
+        if (nan_test != NULL)
+        {
+            // use the new operator instead of the built-in one
+            op = nan_test ;
+            thnk = NULL ;
+        }
     }
 
     //--------------------------------------------------------------------------

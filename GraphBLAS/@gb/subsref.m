@@ -65,7 +65,7 @@ if (ndims == 1)
         else
             C = gb.extract (A, { }, I) ;
         end
-        if (whole_vector & size (C,1) == 1)
+        if (whole_vector && size (C,1) == 1)
             C = C.' ;
         end
     end

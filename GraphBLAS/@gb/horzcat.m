@@ -7,7 +7,7 @@ function C = horzcat (varargin)
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
 %
-% See also vercat, gb/vertcat.
+% See also vertcat, gb/vertcat.
 
 % FUTURE: this will be much faster when it is a mexFunction.
 
@@ -19,14 +19,14 @@ nmatrices = length (varargin) ;
 nvals = zeros (1, nmatrices) ;
 ncols = zeros (1, nmatrices) ;
 A = varargin {1} ;
-[m n] = size (A) ;
+[m, n] = size (A) ;
 nvals (1) = gb.entries (A) ;
 ncols (1) = n ;
 type = gb.type (A) ;
 clear A
 for k = 2:nmatrices
     B = varargin {k} ;
-    [m2 n] = size (B) ;
+    [m2, n] = size (B) ;
     if (m ~= m2)
         error('Dimensions of arrays being concatenated are not consistent');
     end

@@ -1,4 +1,4 @@
-function s = issparse (G)
+function s = issparse (G) %#ok<INUSD>
 %ISSPARSE always true for any GraphBLAS matrix.
 % issparse (G) is always true for any GraphBLAS matrix G.
 %

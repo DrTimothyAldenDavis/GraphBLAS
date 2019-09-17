@@ -5,7 +5,7 @@ function [V, varargout] = eig (G, varargin)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isreal (G) & issymmetric (G))
+if (isreal (G) && issymmetric (G))
     % G can be sparse if G is real and symmetric
     G = double (G) ;
 else

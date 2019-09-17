@@ -13,7 +13,7 @@ function C = mtimes (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isscalar (A) | isscalar (B))
+if (isscalar (A) || isscalar (B))
     C = A .* B ;
 else
     C = gb.mxm ('+.*', A, B) ;

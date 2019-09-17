@@ -1,4 +1,4 @@
-function s = isnumeric (G)
+function s = isnumeric (G) %#ok<INUSD>
 %ISNUMERIC always true for any GraphBLAS matrix.
 % isnumeric (G) is always true for any GraphBLAS matrix G, including
 % logical matrices, since those matrices can be operated on in any

@@ -1,4 +1,4 @@
-function display (G)
+function display (G) %#ok<DISPLAY>
 %DISPLAY display the contents of a GraphBLAS matrix.
 % display (G) displays the attributes and first few entries of a
 % GraphBLAS sparse matrix object.  Use disp(G,3) to display all of the

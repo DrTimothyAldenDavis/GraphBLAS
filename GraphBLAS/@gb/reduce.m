@@ -27,14 +27,14 @@ function Cout = reduce (varargin)
 % any combination.  cout is returned as a GraphBLAS scalar, by default;
 % see 'help gb/descriptorinfo' for more options.
 %
-% See also gb.vreduce; sum, prod, max, min (with the 'all' parameter).
+% See also gb.vreduce; sum, prod, max, min.
 
 % FUTURE: add complex monoids.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-[args is_gb] = gb_get_args (varargin {:}) ;
+[args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)
     Cout = gb (gbreduce (args {:})) ;
 else

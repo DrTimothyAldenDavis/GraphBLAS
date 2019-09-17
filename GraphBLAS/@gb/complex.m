@@ -1,4 +1,4 @@
-function C = complex (A, B)
+function C = complex (A, B) %#ok<STOUT,INUSD>
 %COMPLEX cast a GraphBLAS matrix to MATLAB sparse double complex matrix.
 % C = complex (G) will typecast the GraphBLAS matrix G to into a MATLAB
 % sparse logical matrix.

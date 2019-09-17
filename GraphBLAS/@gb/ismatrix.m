@@ -1,4 +1,4 @@
-function s = ismatrix (G)
+function s = ismatrix (G)    %#ok<INUSD>
 %ISMATRIX always true for any GraphBLAS matrix.
 % ismatrix (G) is always true for any GraphBLAS matrix G.
 %
