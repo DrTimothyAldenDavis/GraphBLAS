@@ -28,6 +28,7 @@ m = 8 ;
 A = sparse (10 * rand (m,n) - 5) .* sprand (m, n, 0.8) ;
 
 thunk = 0.5 ;
+desc.kind = 'sparse' ;
 
 A (1,1) = thunk ;
 A (2,2) = -thunk ;
@@ -43,7 +44,10 @@ A (3,4) = thunk ;
     for k = -m:n
         C1 = tril (A, k) ;
         C2 = gb.select ('tril', A, k) ;
+        C3 = gb.select ('tril', A, k, desc) ;
         assert (gbtest_eq (C1, C2))
+        assert (gbtest_eq (C1, C3))
+        assert (isequal (class (C3), 'double')) ;
     end
     C1 = tril (A, 0) ;
     C2 = gb.select ('tril', A, 0) ;

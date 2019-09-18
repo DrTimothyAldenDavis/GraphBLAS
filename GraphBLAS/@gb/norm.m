@@ -26,13 +26,14 @@ if (nargin == 1)
     kind = 2 ;
 end
 if (kind == 0)
-    error ('unknown norm') ;
-end
+    error ('gb:error', 'unknown norm') ;
+end     %#ok<UNRCH>
+
 if (ischar (kind))
     if (isequal (kind, 'fro'))
         kind = 0 ;
     else
-        error ('unknown norm') ;
+        error ('gb:error', 'unknown norm') ;
     end
 end
 
@@ -46,22 +47,22 @@ if (isvector (G))
     elseif (kind == -inf)
         s = min (abs (G)) ;
     else
-        error ('unknown norm') ;
+        error ('gb:error', 'unknown norm') ;
     end
 else
     if (kind == 1)
         s = max (sum (abs (G))) ;
     elseif (kind == 2)
-        error ('Sparse norm (G,2) is not available.') ;
+        error ('gb:error', 'Sparse norm (G,2) is not available.') ;
     elseif (kind == 0)
         s = sqrt (sum (G.^2, 'all')) ;
     elseif (kind == inf)
         s = max (sum (abs (G), 2)) ;
     elseif (kind == -inf)
-        error ('Sparse norm(G,-inf) is not available.') ;
+        error ('gb:error', 'Sparse norm(G,-inf) is not available.') ;
     else
-        error ('unknown norm') ;
-    end
+        error ('gb:error', 'unknown norm') ;
+    end     %#ok<UNRCH>
 end
 
 s = full (double (s)) ;

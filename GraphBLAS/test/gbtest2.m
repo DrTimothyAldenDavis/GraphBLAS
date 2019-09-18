@@ -27,5 +27,8 @@ for k1 = 1:length(opnames)
     end
 end
 
+fprintf ('\nhelp gb.binopinfo:\n') ;
+gb.binopinfo ;
+
 fprintf ('gbtest2: all tests passed\n') ;
 

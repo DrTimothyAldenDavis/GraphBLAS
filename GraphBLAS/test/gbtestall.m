@@ -52,6 +52,13 @@ gbtest40
 gbtest41
 gbtest42
 gbtest43
+gbtest44
+gbtest45
+gbtest46
+gbtest47
+gbtest48
+gbtest49
+gbtest50
 
 fprintf ('\ngbtestall: all tests passed\n') ;
 

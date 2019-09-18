@@ -36,8 +36,9 @@ function C = subsasgn (C, S, A)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (~isequal (S.type, '()'))
-    error ('index type %s not supported', S.type) ;
-end
+    error ('gb:unsupported', 'index type %s not supported', S.type) ;
+end     %#ok<UNRCH>
+
 ndims = length (S.subs) ;
 if (ndims == 1)
     if (isequal (gb.type (S.subs {1}), 'logical'))
@@ -79,6 +80,6 @@ elseif (ndims == 2)
     J = gb_get_index (S.subs (2)) ;
     C = gb.subassign (C, A, I, J) ;
 else
-    error ('%dD indexing not supported', ndims) ;
+    error ('gb:unsupported', '%dD indexing not supported', ndims) ;
 end
 

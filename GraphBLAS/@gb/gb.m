@@ -344,9 +344,7 @@ methods
     % G = gb (m, n, format, type) ;     ditto
     %
     % See also sparse.
-    if (nargin < 1)
-        error ('not enough input arguments') ;
-    elseif (nargin == 1 && ...
+    if (nargin == 1 && ...
         (isstruct (varargin {1}) && isfield (varargin {1}, 'GraphBLAS')))
         % G = gb (A), where the input A is a GraphBLAS struct as returned by
         % another gb* function, but this usage is not meant for the end-user.

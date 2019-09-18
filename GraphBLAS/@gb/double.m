@@ -6,18 +6,16 @@ function C = double (G)
 % To typecast the matrix G to a GraphBLAS sparse double (real) matrix
 % instead, use C = gb (G, 'double').
 %
-% To typecast the matrix G to a GraphBLAS sparse double (complex) matrix
-% instead, use C = gb (G, 'complex') (... not yet supported).
-%
 % See also cast, gb, complex, single, logical, int8, int16, int32, int64,
 % uint8, uint16, uint32, and uint64.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-if (isreal (G))
+% if (isreal (G))
     C = gbsparse (G.opaque, 'double') ;
-else
-    C = gbsparse (G.opaque, 'complex') ;
-end
+% else
+%     FUTURE: complex support
+%     C = gbsparse (G.opaque, 'complex') ;
+% end
 

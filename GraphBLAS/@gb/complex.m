@@ -12,5 +12,5 @@ function C = complex (A, B) %#ok<STOUT,INUSD>
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-error ('complex type not yet supported') ;
+error ('gb:unsupported', 'complex type not supported') ;
 

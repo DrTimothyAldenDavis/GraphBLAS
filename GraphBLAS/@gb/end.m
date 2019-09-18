@@ -6,13 +6,13 @@ function i = end (G, k, ndims)
 
 if (ndims == 1)
     if (~isvector (G))
-        error ('Linear indexing not supported') ;
+        error ('gb:unsupported', 'Linear indexing not supported') ;
     end
     i = length (G) ;
 elseif (ndims == 2)
     s = size (G) ;
     i = s (k) ;
 else
-    error ('%dD indexing not supported', ndims) ;
+    error ('gb:unsupported', '%dD indexing not supported', ndims) ;
 end
 

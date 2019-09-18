@@ -7,8 +7,9 @@ function C = eps (G)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (~isfloat (G))
-    error ('Type must be ''single'', ''double'', or ''complex''') ;
-end
+    error ('gb:error', 'Type must be ''single'', ''double'', or ''complex''') ;
+end     %#ok<UNRCH>
+
 [m, n] = size (G) ;
 [i, j, x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
 C = gb.build (i, j, eps (x), m, n) ;

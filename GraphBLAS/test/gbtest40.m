@@ -63,6 +63,15 @@ for trial = 1:40
                         s2 = norm (G,1) ;
                         assert (abs (s1 - s2) < 1e-12) ;
 
+                        if (isvector (A))
+                            s1 = norm (A,2) ;
+                            s2 = norm (G,2) ;
+                            assert (abs (s1 - s2) < 1e-12) ;
+                            s1 = norm (A) ;
+                            s2 = norm (G) ;
+                            assert (abs (s1 - s2) < 1e-12) ;
+                        end
+
                         s1 = norm (A,inf) ;
                         s2 = norm (G,inf) ;
                         assert (abs (s1 - s2) < 1e-12) ;

@@ -42,7 +42,7 @@ if (nargin < 2)
     k = 3 ;
 end
 if (k < 3)
-    error ('k-truss defined only for k >= 3') ;
+    error ('gb:error', 'k-truss defined only for k >= 3') ;
 end
 if (nargin < 3)
     check = false ;
@@ -51,7 +51,7 @@ else
 end
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('A must be square') ;
+    error ('gb:error', 'A must be square') ;
 end
 
 if (n > intmax ('int32'))
@@ -63,10 +63,10 @@ end
 if (check)
     % Do the costly checks.  These are optional.
     if (~issymmetric (C))
-        error ('A must have a symmetric pattern') ;
+        error ('gb:error', 'A must have a symmetric pattern') ;
     end
     if (nnz (diag (C) > 0))
-        error ('A must have a zero-free diagonal') ;
+        error ('gb:error', 'A must have a zero-free diagonal') ;
     end
 end
 

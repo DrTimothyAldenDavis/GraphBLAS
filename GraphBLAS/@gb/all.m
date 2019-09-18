@@ -34,7 +34,7 @@ if (nargin == 1)
         C = gb.subassign (C, C & (coldegree < m), 0)' ;
     end
 
-elseif (nargin == 2)
+else
 
     % C = all (G, option)
     if (isequal (option, 'all'))
@@ -59,10 +59,7 @@ elseif (nargin == 2)
         rowdegree = gb.entries (G, 'row', 'degree') ;
         C = gb.subassign (C, C & (rowdegree < n), 0) ;
     else
-        error ('unknown option') ;
+        error ('gb:error', 'unknown option') ;
     end
-
-else
-    error ('invalid usage') ;
 end
 

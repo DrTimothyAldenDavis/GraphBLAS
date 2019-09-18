@@ -55,8 +55,8 @@ function [v, parent] = bfs (A, s, varargin)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('A must be square') ;
-end
+    error ('gb:error', 'A must be square') ;
+end     %#ok<UNRCH>
 
 % get the string options
 kind = 'directed' ;
@@ -71,7 +71,7 @@ for k = 1:nargin-2
         case { 'check' }
             check = true ;
         otherwise
-            error ('unknown option') ;
+            error ('gb:error', 'unknown option') ;
     end
 end
 
@@ -79,11 +79,9 @@ d = struct ('out', 'replace', 'mask', 'complement') ;
 
 % determine the method to use, and convert A if necessary
 if (isequal (kind, 'undirected'))
-    if (check)
-        if (~issymmetric (A))
-            error ('A must be symmetric') ;
-        end
-    end
+    if (check && ~issymmetric (A))
+        error ('gb:error', 'A must be symmetric') ;
+    end     %#ok<UNRCH>
     if (gb.isbycol (A))
         % A is stored by column but undirected, so use q*A' instead of q*A
         d.in1 = 'transpose' ;
@@ -96,27 +94,24 @@ else
 end
 
 % determine the integer type to use, and initialize v as a full vector
+int_type = 'int64' ;
 if (n < intmax ('int32'))
     int_type = 'int32' ;
-else
-    int_type = 'int64' ;
 end
 v = full (gb (1, n, int_type)) ;
 
 % initialize the queue
 q = gb (1, n, int_type) ;                   % q = sparse (1,n)
-q = gb.subassign (q, { s }, 1) ;            % q (s) = 1
 
 if (nargout == 1)
 
     % just compute the level of each node
+    q = gb.subassign (q, { s }, 1) ;            % q (s) = 1
     for level = 1:n
         % assign the current level: v<q> = level
         v = gb.subassign (v, q, level) ;
-        if (~any (q))
-            % quit if q is empty
-            break ;
-        end
+        % quit if q is empty
+        if (~any (q)), break, end
         % move to the next level:  q<~v,replace> = q*A,
         % using the boolean semiring
         q = gb.mxm (q, v, '|.&.logical', q, A, d) ;
@@ -127,14 +122,12 @@ else
     % compute both the level and the parent
     parent = full (gb (1, n, int_type)) ;       % parent = zeros (1,n)
     parent = gb.subassign (parent, { s }, s) ;  % parent (s) = s
+    q = gb.subassign (q, { s }, s) ;            % q (s) = s
     id = gb (1:n, int_type) ;                   % id = 1:n
     for level = 1:n
         % assign the current level: v<q> = level
         v = gb.subassign (v, q, level) ;
-        if (~any (q))
-            % quit if q is empty
-            break ;
-        end
+        if (~any (q)), break, end
         % move to the next level:  q<~v,replace> = q*A,
         % using the min-first semiring
         q = gb.mxm (q, v, 'min.1st', q, A, d) ;

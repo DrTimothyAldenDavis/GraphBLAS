@@ -22,10 +22,9 @@
 // error handling
 //------------------------------------------------------------------------------
 
-#define ERROR2(message, arg) \
-    mexErrMsgIdAndTxt ("GraphBLAS:error", message, arg) ;
-#define ERROR(message) mexErrMsgIdAndTxt ("GraphBLAS:error", message) ;
-#define USAGE(message) mexErrMsgIdAndTxt ("GraphBLAS:usage", message) ;
+#define ERROR2(message, arg) mexErrMsgIdAndTxt ("gb:error", message, arg) ;
+#define ERROR(message) mexErrMsgIdAndTxt ("gb:error", message) ;
+#define USAGE(message) mexErrMsgIdAndTxt ("gb:usage", message) ;
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
 #define OK(method) CHECK_ERROR ((method) != GrB_SUCCESS, GrB_error ( )) ;
 #define OK2(method)                                         \

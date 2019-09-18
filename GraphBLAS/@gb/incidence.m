@@ -36,7 +36,7 @@ function C = incidence (A, varargin)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('A must be square') ;
+    error ('gb:error', 'A must be square') ;
 end
 
 % get the string options
@@ -51,12 +51,12 @@ for k = 1:nargin-1
         case { 'double', 'single', 'int8', 'int16', 'int32', 'int64' }
             type = arg ;
         otherwise
-            error ('unknown option') ;
+            error ('gb:error', 'unknown option') ;
     end
 end
 
 if (~gb.issigned (type))
-    error ('type must be a signed type') ;
+    error ('gb:error', 'type must be a signed type') ;
 end
 
 if (isequal (kind, 'directed') || isequal (kind, 'unsymmetric'))

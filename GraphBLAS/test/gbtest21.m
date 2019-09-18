@@ -10,8 +10,12 @@ for trial = 1:40
     for m = 0:5
         for n = 0:5
             A = 100 * sprand (m, n, 0.5) ;
-            A (1,1) = nan ;
-            A (2,2) = inf ;
+            if (rand < 0.1)
+                A = int32 (full (A)) ;
+            else
+                A (1,1) = nan ;
+                A (2,2) = inf ;
+            end
             G = gb (A) ;
 
             assert (gbtest_eq (isfinite (A), isfinite (G))) ;

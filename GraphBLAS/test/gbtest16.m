@@ -38,10 +38,15 @@ C2 = Cin + AT ;
 assert (gbtest_eq (C2, Cout)) ;
 
 d.mask = 'complement' ;
-Cout = gb.extract (Cin, M, A, d) ;
+d2 = d ;
+d2.kind = 'sparse' ;
+Cout  = gb.extract (Cin, M, A, d) ;
+Cout2 = gb.extract (Cin, M, A, d2) ;
 C2 = Cin ;
 C2 (~M) = AT (~M) ;
 assert (gbtest_eq (C2, Cout)) ;
+assert (gbtest_eq (C2, Cout2)) ;
+assert (isequal (class (Cout2), 'double')) ;
 
 I = [2 1 5] ;
 J = [3 3 1 2] ;

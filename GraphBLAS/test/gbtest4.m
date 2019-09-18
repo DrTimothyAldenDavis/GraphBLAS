@@ -17,11 +17,13 @@ for k1 = 1:length (ops)
         for k3 = 1:length (types)
             type = types {k3} ;
 
-            semiring = [add '.' mult '.' type] ;
+            s = [add '.' mult] ;
+            semiring = [s '.' type] ;
 
             try
                 fprintf ('\n================================ %s\n', semiring) ;
                 gb.semiringinfo (semiring) ;
+                gb.semiringinfo (s, type) ;
                 nsemirings = nsemirings + 1 ;
             catch me
             end
@@ -30,6 +32,7 @@ for k1 = 1:length (ops)
 end
 
 assert (nsemirings == 1865)
+gb.semiringinfo
 
 fprintf ('\ngbtest4: all tests passed\n') ;
 

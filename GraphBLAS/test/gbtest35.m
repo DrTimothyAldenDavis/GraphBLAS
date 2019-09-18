@@ -6,20 +6,29 @@ function gbtest35
 
 rng ('default')
 
-for m = 1:6
-    for n = 1:10
+for m = 0:6
+    for n = 0:10
         A = rand (m, n) ;
         G = gb (A) ;
         mn = m*n ;
-        f = factor (mn) ;
-        for k = 1:length (f)
-            S = nchoosek (f, k) ;
-            for i = 1:size(S,1)
-                m2 = prod (S (i,:)) ;
-                n2 = mn / m2 ;
-                C1 = reshape (A, m2, n2) ;
-                C2 = reshape (G, m2, n2) ;
-                assert (gbtest_eq (C1, C2)) ;
+        if (mn == 0)
+            C1 = reshape (A, n, m) ;
+            C2 = reshape (G, n, m) ;
+            assert (gbtest_eq (C1, C2)) ;
+        else
+            f = factor (mn) ;
+            for k = 1:length (f)
+                S = nchoosek (f, k) ;
+                for i = 1:size(S,1)
+                    m2 = prod (S (i,:)) ;
+                    n2 = mn / m2 ;
+                    C1 = reshape (A, m2, n2) ;
+                    C2 = reshape (G, m2, n2) ;
+                    assert (gbtest_eq (C1, C2)) ;
+                    C1 = reshape (A, [m2 n2]) ;
+                    C2 = reshape (G, [m2 n2]) ;
+                    assert (gbtest_eq (C1, C2)) ;
+                end
             end
         end
     end

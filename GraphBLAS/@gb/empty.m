@@ -22,14 +22,14 @@ if (nargin == 1)
         m = arg1 (1) ;
         n = arg1 (2) ;
     else
-        error ('invalid dimensions') ;
+        error ('gb:error', 'invalid dimensions') ;
     end
 elseif (nargin == 2)
     m = arg1 ;
     n = arg2 ;
 end
 if (~ ((m == 0) || (n == 0)))
-    error ('At least one dimension must be zero') ;
+    error ('gb:error', 'At least one dimension must be zero') ;
 end
 
 C = gb (m, n) ;

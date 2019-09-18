@@ -5,6 +5,8 @@ function gbtest22
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
+desc.kind = 'sparse' ;
+
 for trial = 1:40
     fprintf ('.') ;
     for m = 0:5
@@ -17,8 +19,11 @@ for trial = 1:40
             c1 = sum (sum (A)) ;
             c2 = gb.reduce ('+', A) ;
             c3 = sum (G, 'all') ;
+            c4 = gb.reduce ('+', A, desc) ;
             assert (norm (c1-c2,1) <= 1e-12 * norm (c1,1)) ;
             assert (norm (c1-c3,1) <= 1e-12 * norm (c1,1)) ;
+            assert (norm (c1-c4,1) <= 1e-12 * norm (c1,1)) ;
+            assert (isequal (class (c4), 'double')) ;
 
             % c1 = pi + sum (A, 'all') ;
             c1 = pi + sum (sum (A)) ;

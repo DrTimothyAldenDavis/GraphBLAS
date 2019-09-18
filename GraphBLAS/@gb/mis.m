@@ -26,7 +26,7 @@ function iset = mis (A, check)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('A must be square') ;
+    error ('gb:error', 'A must be square') ;
 end
 
 % convert A to logical
@@ -38,16 +38,16 @@ else
     if (isequal (check, 'check'))
         check = true ;
     else
-        error ('unknown option') ;
+        error ('gb:error', 'unknown option') ;
     end
 end
 
 if (check)
     if (nnz (diag (A)) > 0)
-        error ('A must not have any diagonal entries') ;
+        error ('gb:error', 'A must not have any diagonal entries') ;
     end
     if (~issymmetric (A))
-        error ('A must be symmetric') ;
+        error ('gb:error', 'A must be symmetric') ;
     end
 end
 
@@ -126,7 +126,7 @@ while (ncand > 0)
 
     % this will not occur, unless the input is corrupted somehow
     if (last_ncand == ncand)
-        error ('stall!\n') ;
+        error ('gb:error', 'stall!\n') ;
     end
     last_ncand = ncand ;
 end

@@ -1,5 +1,5 @@
 function gbtest29
-%GBTEST29 test logical indexing
+%GBTEST29 test subsref and subsasgn with logical indexing
 
 rng ('default') ;
 for trial = 1:40
@@ -77,4 +77,5 @@ for trial = 1:40
 end
 
 fprintf ('\ngbtest29: all tests passed\n') ;
+
 

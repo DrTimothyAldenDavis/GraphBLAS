@@ -92,7 +92,7 @@ function f = format (arg)
 if (nargin == 0)
     % f = gb.format ; get the global format
     f = gbformat ;
-elseif (nargin == 1)
+else
     if (isa (arg, 'gb'))
         % f = gb.format (G) ; get the format of the matrix G
         f = gbformat (arg.opaque) ;
@@ -100,7 +100,5 @@ elseif (nargin == 1)
         % f = gb.format (f) ; set the global format for all future matrices
         f = gbformat (arg) ;
     end
-else
-    error ('usage: f = gb.format or f = gb.format (f)') ;
 end
 

@@ -36,17 +36,17 @@ end
 if (~ (isequal (type, 'double') || isequal (type, 'single') || ...
        isequal (type (1:3), 'int')))
     % type must be 'double', 'single', 'int8', 'int16', 'int32', or 'int64'.
-    error ('invalid type') ;
+    error ('gb:error', 'invalid type') ;
 end
 
 A = gb.apply (['1.' type], A) ;
 
 if (check)
     if (~issymmetric (A))
-        error ('A must be symmetric') ;
+        error ('gb:error', 'A must be symmetric') ;
     end
     if (gb.entries (diag (A)) > 0)
-        error ('A must have no diagonal entries') ;
+        error ('gb:error', 'A must have no diagonal entries') ;
     end
 end
 

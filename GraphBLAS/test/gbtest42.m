@@ -33,6 +33,12 @@ for trial = 1:40
             X1 = full (double (G)) ;
             X2 = double (A_notnan) ;
             assert (isequaln (X1, X2)) ;
+
+            G = gb.prune (A, xnan) ;
+            X1 = full (double (G)) ;
+            X2 = double (A_notnan) ;
+            assert (isequaln (X1, X2)) ;
+
         end
     end
 

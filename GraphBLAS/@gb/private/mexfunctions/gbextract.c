@@ -141,9 +141,10 @@ void mexFunction
 
     GrB_Type atype ;
     OK (GxB_Matrix_type (&atype, A)) ;
-    bool A_transpose ;
-    OK (GxB_get (desc, GrB_INP0, &A_transpose)) ;
+    GrB_Desc_Value in0 ;
+    OK (GxB_get (desc, GrB_INP0, &in0)) ;
     GrB_Index anrows, ancols ;
+    bool A_transpose = (in0 == GrB_TRAN) ;
     if (A_transpose)
     {
         // T = AT (I,J) is to be extracted where AT = A'

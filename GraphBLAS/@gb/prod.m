@@ -63,6 +63,6 @@ elseif (isequal (option, 2))
     rowdegree = gb.entries (G, 'row', 'degree') ;
     C = gb.vreduce (op, G) .* (rowdegree == n) ;
 else
-    error ('gb:usage', 'unknown option') ;
+    error ('gb:error', 'unknown option') ;
 end
 

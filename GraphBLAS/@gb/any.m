@@ -25,7 +25,7 @@ if (nargin == 1)
         C = gb.vreduce ('|.logical', G, struct ('in0', 'transpose'))' ;
     end
 
-elseif (nargin == 2)
+else
 
     % C = any (G, option)
     if (isequal (option, 'all'))
@@ -40,10 +40,7 @@ elseif (nargin == 2)
         % giving an m-by-1 column vector.
         C = gb.vreduce ('|.logical', G) ;
     else
-        error ('unknown option') ;
+        error ('gb:error', 'unknown option') ;
     end
-
-else
-    error ('invalid usage') ;
 end
 

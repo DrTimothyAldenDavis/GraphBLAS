@@ -17,7 +17,7 @@
 %  gbtest11  - test gb, sparse
 %  gbtest12  - test gb.eadd, gb.emult
 %  gbtest13  - test find and gb.extracttuples
-%  gbtest14  - test gb.gbkron
+%  gbtest14  - test kron and gb.gbkron
 %  gbtest15  - list all unary operators
 %  gbtest16  - test gb.extract
 %  gbtest17  - test gb.gbtranspose
@@ -45,12 +45,23 @@
 %  gbtest39  - test amd, colamd, symamd, symrcm, dmperm, etree
 %  gbtest40  - test sum, prod, max, min, any, all, norm
 %  gbtest41  - test ones, zeros, false
+%  gbtest42  - test for nan
+%  gbtest43  - test error handling
+%  gbtest44  - test subsasgn, mtimes, plus, false, ...
+%  gbtest45  - test reduce to vector
+%  gbtest46  - test subassign
+%  gbtest47  - test gb.entries
+%  gbtest48  - test gb.apply
+%  gbtest49  - test gb.prune
+%  gbtest50  - test gb.bfs
 %
 % Utility functions:
 %
 %  gbtest_binops - return a cell array of strings, listing all binary operators
 %  gbtest_types  - return a cell array of strings, listing all types
+%  gbtest_eq     - tests if A and B are equal, after dropping zeros.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 

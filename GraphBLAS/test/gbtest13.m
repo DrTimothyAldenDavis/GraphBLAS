@@ -19,10 +19,16 @@ for k = 1:length(list)
     fprintf ('testing: %s\n', xtype) ;
     C = cast (A, xtype) ;
     G = gb (C) ;
+
     [I1, J1, X1] = find (G) ;
     % find drops the zeros
     nz = find (C (:) ~= 0) ;
     assert (isequal (C (nz), X1)) ;
+    assert (isequal (I (nz), I1)) ;
+    assert (isequal (J (nz), J1)) ;
+
+    [I1, J11] = find (G) ;
+    nz = find (C (:) ~= 0) ;
     assert (isequal (I (nz), I1)) ;
     assert (isequal (J (nz), J1)) ;
 
@@ -31,7 +37,26 @@ for k = 1:length(list)
     assert (isequal (C (:), X0)) ;
     assert (isequal (I_0, I0)) ;
     assert (isequal (J_0, J0)) ;
+
+    [I1] = gb.extracttuples (G, d) ;
+    assert (isequal (I1, I0)) ;
+
 end
+
+v = rand (1,3) ;
+[i1, j1, x1] = find (v) ;
+[i2, j2, x2] = find (gb (v)) ;
+assert (isequal (x1, x2)) ;
+assert (isequal (i1, i2)) ;
+assert (isequal (j1, j2)) ;
+
+[i2, j2] = find (gb (v)) ;
+assert (isequal (i1, i2)) ;
+assert (isequal (j1, j2)) ;
+
+j1 = find (v) ;
+j2 = find (gb (v)) ;
+assert (isequal (j1, j2)) ;
 
 fprintf ('gbtest13: all tests passed\n') ;
 

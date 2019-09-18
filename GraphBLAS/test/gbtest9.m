@@ -3,6 +3,10 @@ function gbtest9
 
 types = gbtest_types ;
 
+A = eye ;
+G = gb.eye ;
+assert (gbtest_eq (A, G)) ;
+
 for m = -1:10
     fprintf ('.') ;
 

@@ -12,12 +12,16 @@ function C = mpower (A, B)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m, n] = size (A) ;
+
 if (m ~= n)
-    error ('For C=A^B, A must be square') ;
-end
+    error ('gb:error', 'For C=A^B, A must be square') ;
+end     %#ok<UNRCH>
+
 if (~isscalar (B))
-    error ('For C=A^B, B must be a non-negative integer scalar') ;
-end
+    error ('gb:error', 'For C=A^B, B must be a non-negative integer scalar') ;
+end     %#ok<UNRCH>
+
+
 b = gb_get_scalar (B) ;
 if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
     if (b == 0)
@@ -29,8 +33,9 @@ if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
         C = compute_mpower (A, b) ;
     end
 else
-    error ('For C=A^B, B must be a non-negative integer scalar') ;
+    error ('gb:error', 'For C=A^B, B must be a non-negative integer scalar') ;
 end
+
 end
 
 function C = compute_mpower (A, b)

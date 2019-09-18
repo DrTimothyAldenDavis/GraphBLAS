@@ -50,6 +50,6 @@ elseif (isequal (option, 2))
     % giving an m-by-1 column vector.
     C = gb.vreduce (op, G) ;
 else
-    error ('unknown option') ;
+    error ('gb:error', 'unknown option') ;
 end
 

@@ -68,4 +68,7 @@ for k1 = 1:length(types)
     end
 end
 
-fprintf ('\ngbtest33: all tests passed\n') ;
+s = RandStream.getGlobalStream ;
+fprintf ('\nrandom stream has type: [%s]\n', gb.type (s)) ;
+fprintf ('gbtest33: all tests passed\n') ;
+

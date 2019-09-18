@@ -55,6 +55,19 @@ for trial = 1:40
     G = gb (A) ;
     assert (isequal (eig (A), double (eig (G)))) ;
 
+    A = sparse (A+A') ;
+    G = gb (A) ;
+    assert (isequal (eig (A), double (eig (G)))) ;
+
+    A = rand (10) ;
+    B = rand (10) ;
+    G = gb (A) ;
+    H = gb (B) ;
+    [V1,D1] = eig (A, B) ;
+    [V2,D2] = eig (G, H) ;
+    assert (isequal (V1, double (V2))) ;
+    assert (isequal (D1, double (D2))) ;
+
 end
 
 fprintf ('gbtest38: all tests passed\n') ;

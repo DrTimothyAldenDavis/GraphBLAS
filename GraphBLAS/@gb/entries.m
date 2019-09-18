@@ -59,7 +59,7 @@ for k = 1:nargin-1
         case { 'count', 'list', 'degree' }
             kind = arg ;
         otherwise
-            error ('unknown option') ;
+            error ('gb:error', 'unknown option') ;
     end
 end
 
@@ -78,7 +78,7 @@ if (isequal (dim, 'all'))
                 result = unique (gbextractvalues (A)) ;
             end
         otherwise
-            error ('options ''all'' and ''degree'' cannot be combined') ;
+            error ('gb:error', '''all'' and ''degree'' cannot be combined') ;
     end
 else
     desc = struct ;

@@ -39,14 +39,14 @@ elseif (nargs == 1)
         m = arg1 (1) ;
         n = arg1 (2) ;
     else
-        error ('only 2D arrays supported') ;
+        error ('gb:unsupported', 'only 2D arrays supported') ;
     end
 elseif (nargs == 2)
     % C = gb.eye (m,n)
     m = varargin {1} ;
     n = varargin {2} ;
 else
-    error ('incorrect usage; only 2D arrays supported') ;
+    error ('gb:unsupported', 'only 2D arrays supported') ;
 end
 
 % construct the m-by-n identity matrix of the given type

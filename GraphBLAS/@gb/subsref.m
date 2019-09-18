@@ -34,12 +34,12 @@ function C = subsref (A, S)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (length (S) > 1)
-    error ('nested indexing not supported') ;
-end
+    error ('gb:unsupported', 'nested indexing not supported') ;
+end     %#ok<UNRCH>
 
 if (~isequal (S.type, '()'))
-    error ('index type %s not supported', S.type) ;
-end
+    error ('gb:unsupported', 'index type %s not supported', S.type) ;
+end     %#ok<UNRCH>
 
 ndims = length (S.subs) ;
 
@@ -57,8 +57,8 @@ if (ndims == 1)
     else
         % C = A (I) for a vector A
         if (~isvector (A))
-            error ('Linear indexing of a gb matrix is not yet supported') ;
-        end
+            error ('gb:unsupported', 'Linear indexing not supported') ;
+        end     %#ok<UNRCH>
         [I, whole_vector] = gb_get_index (S.subs (1)) ;
         if (size (A, 1) > 1)
             C = gb.extract (A, I, { }) ;
@@ -75,6 +75,6 @@ elseif (ndims == 2)
     J = gb_get_index (S.subs (2)) ;
     C = gb.extract (A, I, J) ;
 else
-    error ('%dD indexing not supported', ndims) ;
+    error ('gb:unsupported', '%dD indexing not supported', ndims) ;
 end
 

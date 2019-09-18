@@ -39,10 +39,15 @@ C2 = Cin' + A ;
 assert (gbtest_eq (C2, Cout)) ;
 
 d.mask = 'complement' ;
-Cout = gb.gbtranspose (Cin', M', A, d) ;
+d2 = d ;
+d2.kind = 'sparse' ;
+Cout  = gb.gbtranspose (Cin', M', A, d) ;
+Cout2 = gb.gbtranspose (Cin', M', A, d2) ;
 C2 = Cin' ;
 C2 (~M') = A (~M') ;
 assert (gbtest_eq (C2, Cout)) ;
+assert (gbtest_eq (C2, Cout2)) ;
+assert (isequal (class (Cout2), 'double')) ;
 
 fprintf ('gbtest17: all tests passed\n') ;
 

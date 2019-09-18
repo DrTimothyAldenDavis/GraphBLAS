@@ -4,7 +4,7 @@
 
 #include "GraphBLAS.h"
 
-#define N 16384
+#define N 65536
 
 int main (void)
 {
@@ -17,11 +17,14 @@ int main (void)
     GrB_Matrix A ;
     GrB_Matrix_new (&A, GrB_INT32, nrows, ncols) ;
 
+    int64_t k = 0 ;
     for (int i = 0 ; i < nrows ; i++)
     {
         for (int j = 0 ; j < ncols ; j++)
         {
-            int x = (int) (rand ( ) & 0xFF) ;
+            // int x = (int) (rand ( ) & 0xFF) ;
+            int x = (int) (k & 0xFF) ;
+            k++ ;
             GrB_Matrix_setElement (A, x, i, j) ;
         }
     }
@@ -62,7 +65,7 @@ int main (void)
         #endif
     }
 
-    printf ("result %d\n", result) ;
+    printf ("result %"PRId64"\n", result) ;
 
     // free everyting
     GrB_free (&A) ;
