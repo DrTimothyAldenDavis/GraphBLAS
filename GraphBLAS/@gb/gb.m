@@ -368,7 +368,8 @@ methods
 
     % The following methods work without any implemention needed here:
     %
-    %   cast isrow iscolumn ndims
+    %   cast isrow iscolumn ndims sprank etreeplot spy bicgstabl bicgstab cgs
+    %   minres gmres bicg pcg qmr rjr tfqmr lsqr gplot 
 
     %---------------------------------------------------------------------------
     % FUTURE:: many these could also be overloaded:
@@ -384,71 +385,70 @@ methods
 
     % methods 'double' that are not yet implemented here:
     %
-    %    accumarray acos acosd acosh acot acotd acoth acsc acscd acsch airy
-    %    asec asecd asech asin asind asinh atan atan2 atan2d atand atanh
-    %    bernoulli besselh besseli besselj besselk bessely betainc betaincinv
-    %    bsxfun charpoly chebyshevT chebyshevU cos cosd cosh coshint cosint cot
-    %    cotd coth csc cscd csch cummax cummin cumprod cumsum dawson det diff
-    %    dilog dirac ei ellipticCE ellipticCK ellipticCPi ellipticE ellipticF
-    %    ellipticK ellipticNome ellipticPi erf erfc erfcinv erfcx erfi erfinv
-    %    euler exp expm1 fresnelc fresnels gamma gammainc gammaincinv gammaln
-    %    gegenbauerC harmonic hermiteH hess hypot ichol igamma ilu imag inv
-    %    issorted issortedrows jacobiP jordan kummerU laguerreL legendreP
-    %    linsolve log log10 log1p log2 logint ltitr maxk mink minpoly mod
-    %    ordeig permute pochhammer poly2sym polylog pow2 psi qrupdate rcond
-    %    reallog realpow realsqrt rem sec secd sech signIm sin sind sinh
-    %    sinhint sinint sort sortrowsc ssinint superiorfloat tan tand tanh
-    %    whittakerM whittakerW wrightOmega zeta
+    %   accumarray acos acosd acosh acot acotd acoth acsc acscd acsch airy asec
+    %   asecd asech asin asind asinh atan atan2 atan2d atand atanh bernoulli
+    %   besselh besseli besselj besselk bessely betainc betaincinv bsxfun
+    %   charpoly chebyshevT chebyshevU cos cosd cosh coshint cosint cot cotd
+    %   coth csc cscd csch cummax cummin cumprod cumsum dawson det diff dilog
+    %   dirac ei ellipticCE ellipticCK ellipticCPi ellipticE ellipticF
+    %   ellipticK ellipticNome ellipticPi erf erfc erfcinv erfcx erfi erfinv
+    %   euler exp expm1 fresnelc fresnels gamma gammainc gammaincinv gammaln
+    %   gegenbauerC harmonic hermiteH hess hypot ichol igamma ilu imag inv
+    %   issorted issortedrows jacobiP jordan kummerU laguerreL legendreP
+    %   linsolve log log10 log1p log2 logint ltitr maxk mink minpoly mod ordeig
+    %   permute pochhammer poly2sym polylog pow2 psi qrupdate rcond reallog
+    %   realpow realsqrt rem sec secd sech signIm sin sind sinh sinhint sinint
+    %   sort sortrowsc ssinint superiorfloat tan tand tanh whittakerM
+    %   whittakerW wrightOmega zeta
     %
-    %    double methods never needed: colon factor divisors delete
-    %    triangularPulse rectangularPulse 
+    %   not needed: colon factor divisors delete triangularPulse
+    %   rectangularPulse 
 
     % methods in MATLAB/matfun not implemented here:
     %
-    %    balance cdf2rdf chol cholupdate condeig condest cond decomposition det
-    %    expm funm gsvd hess inv ldl linsolve logm lscov lsqminnorm ltitr lu
-    %    normest1 normest null ordeig ordqz ordschur orth pinv planerot polyeig
-    %    qrdelete qrinsert qr qrupdate qz rank rcond rref rsf2csf schur sqrtm
-    %    svd sylvester trace vecnorm
+    %   balance cdf2rdf chol cholupdate condeig condest cond decomposition det
+    %   expm funm gsvd hess inv ldl linsolve logm lscov lsqminnorm ltitr lu
+    %   normest1 normest null ordeig ordqz ordschur orth pinv planerot polyeig
+    %   qrdelete qrinsert qr qrupdate qz rank rcond rref rsf2csf schur sqrtm
+    %   svd sylvester trace vecnorm
 
     % methods in MATLAB/sparsfun not implemented here:
     %
-    %    md bicg bicgstabl bicgstab cgs colperm delsq dissect eigs etreeplot
-    %    gmres gplot ichol ilu lsqr minres nested numgrid pcg qmr rjr spalloc
-    %    spaugment spconvert spdiags spparms sprand sprandn sprandsym sprank
-    %    spy svds symbfact symmlq symrcm tfqmr treelayout treeplot unmesh
+    %   colperm delsq dissect eigs ichol ilu spalloc spaugment spconvert
+    %   spdiags sprand sprandn sprandsym svds symbfact symmlq unmesh
+    %
+    %   not needed: treeplot treelayout numgrid nested spparms
 
     % methods in MATLAB/elmat not implemented here:
     %
-    %    accumarray blkdiag bsxfun cat circshift compan flipdim fliplr flip
-    %    flipud gallery hadamard hankel hilb inf invhilb ipermute isequaln
-    %    isequalwithequalnans nan ndgrid pascal permute repelem rot90 shiftdim
-    %    toeplitz vander wilkinson
+    %   accumarray blkdiag bsxfun cat circshift compan flipdim fliplr flip
+    %   flipud gallery hadamard hankel hilb inf invhilb ipermute isequaln
+    %   isequalwithequalnans nan ndgrid pascal permute repelem rot90 shiftdim
+    %   toeplitz vander wilkinson
     %
-    %    elmat methods never needed: linspace logspace ind2sub sub2ind meshgrid
-    %    pi freqspace flintmax intmax intmin squeeze realmin realmax i j magic
-    %    rosser 
+    %   not needed: linspace logspace ind2sub sub2ind meshgrid pi freqspace
+    %   flintmax intmax intmin squeeze realmin realmax i j magic rosser 
 
     % methods for both classes graph and digraph not yet implemented:
     %
-    %    addedge addnode bfsearch centrality conncomp dfsearch distances
-    %    findedge findnode isisomorphic isomorphism maxflow nearest outedges
-    %    rmedge rmnode shortestpath shortestpathtree simplify
+    %   addedge addnode bfsearch centrality conncomp dfsearch distances
+    %   findedge findnode isisomorphic isomorphism maxflow nearest outedges
+    %   rmedge rmnode shortestpath shortestpathtree simplify
     %
-    %    gbgraph/bfs is like graph/bfsearch and graph/shortestpathtree.
+    %   gbgraph/bfs is like graph/bfsearch and graph/shortestpathtree.
 
     % methods for class graph (not in digraph class) not yet implemented:
     %
-    %    bctree biconncomp minspantree neighbors
+    %   bctree biconncomp minspantree neighbors
 
     % methods for class digraph (not in graph class) not yet implemented:
     %
-    %    condensation inedges isdag predecessors successors toposort
-    %    transclosure transreduction
+    %   condensation inedges isdag predecessors successors toposort
+    %   transclosure transreduction
 
     % methods in LAGraph:
     %
-    %   dnn, ...
+    %   betweeness-centrality, etc ...
 
     %---------------------------------------------------------------------------
     % Methods that overload built-in MATLAB functions:
