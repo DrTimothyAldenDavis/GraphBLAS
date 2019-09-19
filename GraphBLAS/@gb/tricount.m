@@ -19,17 +19,14 @@ else
     check = isequal (check, 'check') ;
 end
 
-if (n > intmax ('int32'))
-    int_type = 'int64' ;
-else
+int_type = 'int64' ;
+if (n < intmax ('int32'))
     int_type = 'int32' ;
 end
 A = spones (A, int_type) ;
 
-if (check)
-    if (~issymmetric (A))
-        error ('gb:error', 'spones (A) must be symmetric') ;
-    end
+if (check && ~issymmetric (A))
+    error ('gb:error', 'spones (A) must be symmetric') ;
 end
 
 C = gb (n, n, int_type, gb.format (A)) ;

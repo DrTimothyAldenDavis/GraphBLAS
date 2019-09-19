@@ -120,6 +120,8 @@ void mexFunction
             "usage: Cout = gb.select (Cin, accum, op, A, thunk, desc)") ;
 
         C = gb_get_deep (pargin [0]) ;
+// printf ("here %d\n", __LINE__) ;
+// GxB_print (C, 2) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         accum = gb_mxstring_to_binop (pargin [1], ctype) ;
         op = gb_mxstring_to_selectop (pargin [2]) ;
@@ -157,6 +159,8 @@ void mexFunction
             "usage: Cout = gb.select (Cin, M, accum, op, A, thunk, desc)") ;
 
         C = gb_get_deep (pargin [0]) ;
+// printf ("here %d\n", __LINE__) ;
+// GxB_print (C, 2) ;
         OK (GxB_Matrix_type (&ctype, C)) ;
         M = gb_get_shallow (pargin [1]) ;
         accum = gb_mxstring_to_binop (pargin [2], ctype) ;
@@ -203,6 +207,8 @@ void mexFunction
         else
         {
             // otherwise, C has the same type as A
+// printf ("here %d\n", __LINE__) ;
+// GxB_print (A, 2) ;
             OK (GxB_Matrix_type (&ctype, A)) ;
         }
 
@@ -222,6 +228,8 @@ void mexFunction
     {
         // check if thunk is NaN
         GrB_Type thunk_type ;
+// printf ("here %d\n", __LINE__) ;
+// GxB_print (thunk, 2) ;
         OK (GxB_Matrix_type (&thunk_type, thunk)) ;
         bool thunk_is_nan = false ;
         if (thunk_type == GrB_FP32)
@@ -244,6 +252,8 @@ void mexFunction
             // These operators do not need a thunk input, since it is now known
             // to be a NaN.
             GrB_Type atype ;
+// printf ("here %d\n", __LINE__) ;
+// GxB_print (A, 2) ;
             OK (GxB_Matrix_type (&atype, A)) ;
             if (op == GxB_EQ_THUNK && atype == GrB_FP32)
             {
