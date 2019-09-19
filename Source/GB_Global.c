@@ -40,7 +40,7 @@ typedef struct
     // case the pending tuples are assembled for just that one matrix.  The
     // GrB_wait operation iterates through the entire list and assembles all
     // the pending tuples for all the matrices in the list, leaving the list
-    // emtpy.  A simple link list suffices for the list.  The links are in the
+    // empty.  A simple link list suffices for the list.  The links are in the
     // matrices themselves so no additional memory needs to be allocated.  The
     // list never needs to be searched; if a particular matrix is to be removed
     // from the list, the GraphBLAS operation already been given the matrix
@@ -336,7 +336,7 @@ bool GB_Global_Sauna_in_use_get (int id)
 }
 
 //------------------------------------------------------------------------------
-/// abort_function
+// abort_function
 //------------------------------------------------------------------------------
 
 void GB_Global_abort_function_set (void (* abort_function) (void))
