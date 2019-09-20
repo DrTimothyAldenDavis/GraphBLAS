@@ -31,11 +31,11 @@ int main (void)
     GrB_Index nrows = N ;
     GrB_Index ncols = N ;
     GrB_Matrix A ;
-    GrB_Matrix_new (&A, GrB_INT32, nrows, ncols) ;
+    GrB_Matrix_new (&A, GrB_INT64, nrows, ncols) ;
 
     GrB_Index *I = malloc (nrows * ncols * sizeof (GrB_Index)) ;
     GrB_Index *J = malloc (nrows * ncols * sizeof (GrB_Index)) ;
-    int32_t   *X = malloc (nrows * ncols * sizeof (int32_t)) ;
+    int64_t   *X = malloc (nrows * ncols * sizeof (int64_t)) ;
 
     #pragma omp parallel for num_threads(nthreads_max) collapse(2) \
         schedule(static)
@@ -53,7 +53,7 @@ int main (void)
     }
 
     GrB_Index nvals = N*N ;
-    GrB_Matrix_build (A, I, J, X, nvals, GrB_PLUS_INT32) ;
+    GrB_Matrix_build (A, I, J, X, nvals, GrB_PLUS_INT64) ;
 
     free (I) ;
     free (J) ;
@@ -76,7 +76,7 @@ int main (void)
         #if defined ( _OPENMP )
         double t = omp_get_wtime ( ) ;
         #endif
-        GrB_reduce (&result, NULL, GxB_PLUS_INT32_MONOID, A, NULL) ;
+        GrB_reduce (&result, NULL, GxB_PLUS_INT64_MONOID, A, NULL) ;
         #if defined ( _OPENMP )
         t = omp_get_wtime ( ) - t ;
         if (nthreads == 1) t1 = t ;
