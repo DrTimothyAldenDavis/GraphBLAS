@@ -39,7 +39,7 @@ function result = entries (A, varargin)
 %   gb.entries (A)              % all entries present in a MATLAB full matrix
 %   G = gb (A)                  % contains explicit zeros
 %   gb.entries (G)
-%   G (A > 18) = sparse (0)    % entries A>18 deleted, still has explicit zeros
+%   G (A > 18) = sparse (0)     % entries A>18 deleted, still has explicit zeros
 %   gb.entries (G)
 %   gb.entries (G, 'list')
 %   S = double (G)              % MATLAB sparse matrix; no explicit zeros
@@ -59,7 +59,7 @@ for k = 1:nargin-1
         case { 'count', 'list', 'degree' }
             kind = arg ;
         otherwise
-            error ('gb:error', 'unknown option') ;
+            gb_error ('unknown option') ;
     end
 end
 
@@ -78,7 +78,7 @@ if (isequal (dim, 'all'))
                 result = unique (gbextractvalues (A)) ;
             end
         otherwise
-            error ('gb:error', '''all'' and ''degree'' cannot be combined') ;
+            gb_error ('''all'' and ''degree'' cannot be combined') ;
     end
 else
     desc = struct ;

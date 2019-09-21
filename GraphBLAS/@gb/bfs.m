@@ -55,8 +55,8 @@ function [v, parent] = bfs (A, s, varargin)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('gb:error', 'A must be square') ;
-end     %#ok<UNRCH>
+    gb_error ('A must be square') ;
+end
 
 % get the string options
 kind = 'directed' ;
@@ -71,7 +71,7 @@ for k = 1:nargin-2
         case { 'check' }
             check = true ;
         otherwise
-            error ('gb:error', 'unknown option') ;
+            gb_error ('unknown option') ;
     end
 end
 
@@ -80,8 +80,8 @@ d = struct ('out', 'replace', 'mask', 'complement') ;
 % determine the method to use, and convert A if necessary
 if (isequal (kind, 'undirected'))
     if (check && ~issymmetric (A))
-        error ('gb:error', 'A must be symmetric') ;
-    end     %#ok<UNRCH>
+        gb_error ('A must be symmetric') ;
+    end
     if (gb.isbycol (A))
         % A is stored by column but undirected, so use q*A' instead of q*A
         d.in1 = 'transpose' ;

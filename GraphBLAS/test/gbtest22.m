@@ -7,7 +7,7 @@ function gbtest22
 rng ('default') ;
 desc.kind = 'sparse' ;
 
-for trial = 1:40
+for trial = 1:10
     fprintf ('.') ;
     for m = 0:5
         for n = 0:5

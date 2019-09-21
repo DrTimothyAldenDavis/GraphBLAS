@@ -65,7 +65,7 @@ void gb_usage       // check usage and make sure GxB_init has been called
 
     if (!ok)
     {
-        USAGE (message) ;
+        ERROR (message) ;
     }
 }
 

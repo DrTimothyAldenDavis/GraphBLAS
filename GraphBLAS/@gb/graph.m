@@ -29,7 +29,7 @@ function Graph = graph (G, varargin)
 type = gb.type (G) ;
 [m, n] = size (G) ;
 if (m ~= n)
-    error ('gb:error', 'G must be square') ;
+    gb_error ('G must be square') ;
 end
 
 % get the string options
@@ -43,7 +43,7 @@ for k = 1:nargin-1
         case { 'omitselfloops' }
             omitself = true ;
         otherwise
-            error ('gb:error', 'unknown option') ;
+            gb_error ('unknown option') ;
     end
 end
 

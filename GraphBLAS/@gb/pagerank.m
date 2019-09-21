@@ -43,7 +43,7 @@ weighted = opts.weighted ;
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('gb:error', 'A must be square') ;
+    gb_error ('A must be square') ;
 end
 
 % native, if A is already of the right type, and stored by column

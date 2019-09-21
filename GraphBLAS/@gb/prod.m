@@ -30,6 +30,7 @@ if (isequal (gb.type (G), 'logical'))
 else
     op = '*' ;
 end
+
 if (nargin == 1)
     % C = prod (G); check if G is a row vector
     if (isvector (G))
@@ -63,6 +64,6 @@ elseif (isequal (option, 2))
     rowdegree = gb.entries (G, 'row', 'degree') ;
     C = gb.vreduce (op, G) .* (rowdegree == n) ;
 else
-    error ('gb:error', 'unknown option') ;
+    gb_error ('unknown option') ;
 end
 

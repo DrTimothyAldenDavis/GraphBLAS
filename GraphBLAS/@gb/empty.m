@@ -17,19 +17,22 @@ m = 0 ;
 n = 0 ;
 if (nargin == 1)
     if (length (arg1) == 1)
-        m = arg1 (1) ;
+        m = 0 ;
+        n = arg1 (1) ;
     elseif (length (arg1) == 2)
         m = arg1 (1) ;
         n = arg1 (2) ;
     else
-        error ('gb:error', 'invalid dimensions') ;
+        gb_error ('invalid dimensions') ;
     end
 elseif (nargin == 2)
     m = arg1 ;
     n = arg2 ;
 end
+m = max (m, 0) ;
+n = max (n, 0) ;
 if (~ ((m == 0) || (n == 0)))
-    error ('gb:error', 'At least one dimension must be zero') ;
+    gb_error ('at least one dimension must be zero') ;
 end
 
 C = gb (m, n) ;

@@ -4,7 +4,8 @@ function gbtest25
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-for trials = 1:40
+rng ('default') ;
+for trials = 1:10
     fprintf ('.') ;
 
     for m = 2:6

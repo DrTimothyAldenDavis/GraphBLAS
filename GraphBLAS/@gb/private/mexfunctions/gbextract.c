@@ -94,7 +94,7 @@ void mexFunction
             if (nmatrix_args >= 3)
             {
                 // at most 3 matrix inputs are allowed
-                USAGE (EXTRACT_USAGE) ;
+                ERROR (EXTRACT_USAGE) ;
             }
             matrix_arg [nmatrix_args++] = k ;
         }
@@ -109,7 +109,7 @@ void mexFunction
     if (nmatrix_args < 1)
     {
         // at least 1 matrix input is required
-        USAGE (EXTRACT_USAGE) ;
+        ERROR (EXTRACT_USAGE) ;
     }
     else if (nmatrix_args == 1)
     {
@@ -117,7 +117,7 @@ void mexFunction
         if (accum_arg >= 0)
         {
             // if both A and accum are present, then Cin must appear
-            USAGE (EXTRACT_USAGE) ;
+            ERROR (EXTRACT_USAGE) ;
         }
         A = gb_get_shallow (pargin [matrix_arg [0]]) ;
     }
@@ -188,7 +188,7 @@ void mexFunction
 
     if (C == NULL)
     {
-        // Cin is not present: determine its size, same type as A
+        // Cin is not present: determine its size, same type as A.
         // T = A(I,J) or AT(I,J) will be extracted.
         // accum must be null
         int I_kind, J_kind ;
@@ -197,6 +197,7 @@ void mexFunction
         GB_ijlength (I, ni, anrows, &cnrows, &I_kind, I_colon) ;
         GB_ijlength (J, nj, ancols, &cncols, &J_kind, J_colon) ;
         ctype = atype ;
+
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
         OK (GxB_set (C, GxB_FORMAT, fmt)) ;

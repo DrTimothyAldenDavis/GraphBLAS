@@ -11,7 +11,7 @@
 // mxArray, which can either be a MATLAB sparse matrix (double, complex, or
 // logical) or a MATLAB struct that contains a GraphBLAS matrix.
 
-// X must not be NULL, but it be an empty matrix, as X = [ ] or even X = ''
+// X must not be NULL, but it can be an empty matrix, as X = [ ] or even X = ''
 // (the empty string).  In this case, A is returned as NULL.  This is not an
 // error here, since the caller might be getting an optional input matrix, such
 // as Cin or the Mask.
@@ -48,6 +48,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         // return an empty matrix as 0-by-0, of the right type (default format)
         OK (GrB_Matrix_new (&A, gb_mxarray_type (X), 0, 0)) ;
+        // TODO get the format of A
 
     }
     else if (mxIsStruct (X))

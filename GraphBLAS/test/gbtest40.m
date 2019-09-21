@@ -5,11 +5,10 @@ rng ('default')
 
 old = verLessThan ('matlab', '9.6') ;
 
-for trial = 1:40
-    fprintf ('.') ;
-
+for trial = 1:3
     for m = 1:3
         for n = 1:3
+            fprintf ('.') ;
             for d = [0.1 0.5 1]
                 for kind = 0:1
 

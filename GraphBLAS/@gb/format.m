@@ -22,18 +22,10 @@ function f = format (arg)
 %
 % which returns the string 'by row' or 'by col'.
 %
-% Since MATLAB sparse and dense matrices are always 'by col', converting
-% them to a gb matrix 'by row' requires an internal transpose of the
-% format.  That is, if A is a MATLAB sparse or dense matrix,
+% Converting a matrix to a specific format can be done with the following,
+% where A is either a GraphBLAS matrix or MATLAB matrix:
 %
-%   gb.format ('by row')
-%   G = gb (A)
-%
-% constructs a double gb matrix G that is held by row, but this takes
-% more work than if G is held by column, as follows:
-%
-%   gb.format ('by col')
-%   G = gb (A)
+%   G = gb (A, 'by row')
 %
 % If a subsequent algorithm works better with its matrices held by row,
 % then this transformation can save significant time in the long run.
@@ -44,24 +36,28 @@ function f = format (arg)
 % is held by column.
 %
 % When the gb.format (f) is changed, it becomes the default format for
-% all subsequent matrices.  All prior matrices created before gb.format
-% (f) are kept in their same format; this setting only applies to new
-% matrices.  Operations on matrices can be done with any mix of with
-% different formats.  The format only affects time and memory usage, not
-% the results.
+% all subsequent newly created matrices.
+%
+% All prior matrices created before gb.format (f) are kept in their same
+% format; this setting only applies to new matrices.  Operations on matrices
+% can be done with any mix of with different formats.  The format only affects
+% time and memory usage, not the results.
 %
 % The format of the output C of a GraphBLAS method is defined using the
 % following rules.  The first rule that holds is used:
 %
-%   (1) If the format is determined by the descriptor to the method, then
+%   (1) GraphBLAS operations of the form Cout = gb.method (Cin, ...)
+%       that take a Cin input matrix, use the format of Cin as the format
+%       for Cout, if Cin is provided on input.
+%   (2) If the format is determined by the descriptor to the method, then
 %       that determines the format of C.
-%   (2) If C is a column vector then C is stored by column.
-%   (3) If C is a row vector then C is stored by row.
-%   (4) If the method has a first matrix input (usually called A), and it
+%   (3) If C is a column vector then C is stored by column.
+%   (4) If C is a row vector then C is stored by row.
+%   (5) If the method has a first matrix input (usually called A), and it
 %       is not a row or column vector, then its format is used for C.
-%   (5) If the method has a second matrix input (usually called B), and
+%   (6) If the method has a second matrix input (usually called B), and
 %       it is not a row or column vector, then its format is used for C.
-%   (6) Otherwise, the global default format is used for C.
+%   (7) Otherwise, the global default format is used for C.
 %
 % The gb.format setting is reset to 'by col', by 'clear all' or by
 % gb.clear.
@@ -77,12 +73,12 @@ function f = format (arg)
 % Examples:
 %
 %   A = sparse (rand (4))
-%   gb.format ('by row') ;
-%   G = gb (A)
+%   G = gb (A)                  % format always 'by col'
+%   G = gb (A, 'by row')        % change to 'by row'
 %   gb.format (G)
-%   gb.format ('by col') ;      % set the default format to 'by col'
-%   G = gb (A)
-%   gb.format (G)               % query the format of G
+%   gb.format ('by row') ;      % set the default format to 'by row'
+%   G = gb.build (1:3, 1:3, 1:3)
+%   gb.format (G)               % query the format of G (which is 'by row')
 %
 % See also gb.
 

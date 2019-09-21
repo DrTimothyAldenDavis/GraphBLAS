@@ -103,7 +103,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
             if (nmatrix_args >= 3)
             {
                 // at most 3 matrix inputs are allowed
-                USAGE (usage) ;
+                ERROR (usage) ;
             }
             matrix_arg [nmatrix_args++] = k ;
         }
@@ -118,7 +118,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     if (nmatrix_args < 2)
     {
         // at least 2 matrix inputs are required
-        USAGE (usage) ;
+        ERROR (usage) ;
     }
     else if (nmatrix_args == 2)
     {

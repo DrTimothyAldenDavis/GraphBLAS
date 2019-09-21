@@ -23,8 +23,7 @@
 //------------------------------------------------------------------------------
 
 #define ERROR2(message, arg) mexErrMsgIdAndTxt ("gb:error", message, arg) ;
-#define ERROR(message) mexErrMsgIdAndTxt ("gb:error", message) ;
-#define USAGE(message) mexErrMsgIdAndTxt ("gb:usage", message) ;
+#define ERROR(message)       mexErrMsgIdAndTxt ("gb:error", message) ;
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
 #define OK(method) CHECK_ERROR ((method) != GrB_SUCCESS, GrB_error ( )) ;
 #define OK2(method)                                         \
@@ -113,7 +112,7 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
 GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 (
     GrB_Type type,              // if NULL, copy but do not typecast
-    GxB_Format_Value format,    // also convert to the requested format
+    GxB_Format_Value fmt,       // also convert to the requested format
     GrB_Matrix S                // may be shallow
 ) ;
 
@@ -352,7 +351,7 @@ GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
     GrB_Index cncols,
     GrB_Matrix A,                       // may be NULL
     GrB_Matrix B,                       // may be NULL
-    GxB_Format_Value format_descriptor  // may be GxB_NO_FORMAT
+    GxB_Format_Value fmt_descriptor     // may be GxB_NO_FORMAT
 ) ;
 
 bool gb_is_equal            // true if A == B, false if A ~= B

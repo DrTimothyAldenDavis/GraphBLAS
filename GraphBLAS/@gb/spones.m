@@ -19,8 +19,8 @@ if (nargin == 1)
     C = gb.apply ('1', G) ;
 else
     if (~ischar (type))
-        error ('gb:error', 'type must be a string') ;
-    end     %#ok<UNRCH>
+        gb_error ('type must be a string') ;
+    end
     C = gb.apply (['1.' type], G) ;
 end
 

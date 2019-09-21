@@ -9,5 +9,6 @@ function s = issigned (type)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 s = isequal (type, 'double') || isequal (type, 'single') || ...
-    isequal (type (1:3), 'int') ;
+    isequal (type, 'int8')   || isequal (type, 'int16')  || ...
+    isequal (type, 'int32')  || isequal (type, 'int64') ;
 

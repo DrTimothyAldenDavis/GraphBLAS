@@ -355,6 +355,61 @@ catch me
 end
 assert (ok) ;
 
-fprintf ('gbtest43: all tests passed\n') ;
+try
+    v = [G v] ;
+    ok = false
+catch me
+    me
+end
+assert (ok) ;
 
+try
+    v = [G ; v] ;
+    ok = false
+catch me
+    me
+end
+assert (ok) ;
+
+try
+    C = complex (gb (1), gb (1)) ;
+    ok = false
+catch me
+    me
+end
+assert (ok) ;
+
+try
+    C = gb.empty (4, 4) ;
+    ok = false
+catch me
+    me
+end
+assert (ok) ;
+
+try
+    C = gb.empty (0, 4, 4) ;
+    ok = false
+catch me
+    me
+end
+assert (ok) ;
+
+try
+    C = gb.empty ([0, 4, 4]) ;
+    ok = false
+catch me
+    me
+end
+assert (ok) ;
+
+try
+    c = gb.tricount (v) ;
+    ok = false
+catch me
+    me
+end
+assert (ok) ;
+
+fprintf ('gbtest43: all tests passed\n') ;
 

@@ -11,7 +11,7 @@ function s = tricount (A, check)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('gb:error', 'A must be square') ;
+    gb_error ('A must be square') ;
 end
 if (nargin < 2)
     check = false ;
@@ -26,7 +26,7 @@ end
 A = spones (A, int_type) ;
 
 if (check && ~issymmetric (A))
-    error ('gb:error', 'spones (A) must be symmetric') ;
+    gb_error ('spones (A) must be symmetric') ;
 end
 
 C = gb (n, n, int_type, gb.format (A)) ;

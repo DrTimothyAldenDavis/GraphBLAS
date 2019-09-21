@@ -20,7 +20,7 @@ function gbmake (what)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if verLessThan ('matlab', '9.4')
-    error ('gb:error', 'MATLAB 9.4 (R2018a) or later is required') ;
+    gb_error ('MATLAB 9.4 (R2018a) or later is required') ;
 end
 
 if (nargin < 1)

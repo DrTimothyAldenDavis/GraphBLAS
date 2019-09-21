@@ -14,12 +14,12 @@ function C = mpower (A, B)
 [m, n] = size (A) ;
 
 if (m ~= n)
-    error ('gb:error', 'For C=A^B, A must be square') ;
-end     %#ok<UNRCH>
+    gb_error ('For C=A^B, A must be square') ;
+end
 
 if (~isscalar (B))
-    error ('gb:error', 'For C=A^B, B must be a non-negative integer scalar') ;
-end     %#ok<UNRCH>
+    gb_error ('For C=A^B, B must be a non-negative integer scalar') ;
+end
 
 
 b = gb_get_scalar (B) ;
@@ -33,7 +33,7 @@ if (isreal (b) && isfinite (b) && round (b) == b && b >= 0)
         C = compute_mpower (A, b) ;
     end
 else
-    error ('gb:error', 'For C=A^B, B must be a non-negative integer scalar') ;
+    gb_error ('For C=A^B, B must be a non-negative integer scalar') ;
 end
 
 end

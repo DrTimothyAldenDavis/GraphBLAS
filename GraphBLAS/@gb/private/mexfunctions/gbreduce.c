@@ -101,6 +101,8 @@ void mexFunction
         }
 
         OK (GrB_Matrix_new (&C, ctype, 1, 1)) ;
+        fmt = gb_get_format (1, 1, A, NULL, fmt) ;
+        OK (GxB_set (C, GxB_FORMAT, fmt)) ;
     }
 
     //--------------------------------------------------------------------------

@@ -29,7 +29,7 @@ void mexFunction
     // get/set the format
     //--------------------------------------------------------------------------
 
-    GxB_Format_Value format ;
+    GxB_Format_Value fmt ;
 
     if (nargin == 0)
     {
@@ -39,7 +39,7 @@ void mexFunction
         //----------------------------------------------------------------------
 
         // get the global format
-        OK (GxB_get (GxB_FORMAT, &format)) ;
+        OK (GxB_get (GxB_FORMAT, &fmt)) ;
 
     }
     else // if (nargin == 1)
@@ -53,8 +53,8 @@ void mexFunction
             //------------------------------------------------------------------
 
             // set the global format
-            format = gb_mxstring_to_format (pargin [0]) ;
-            OK (GxB_set (GxB_FORMAT, format)) ;
+            fmt = gb_mxstring_to_format (pargin [0]) ;
+            OK (GxB_set (GxB_FORMAT, fmt)) ;
 
         }
         else
@@ -66,7 +66,7 @@ void mexFunction
 
             // get the format of the input matrix G
             GrB_Matrix G = gb_get_shallow (pargin [0]) ;
-            OK (GxB_get (G, GxB_FORMAT, &format)) ;
+            OK (GxB_get (G, GxB_FORMAT, &fmt)) ;
             OK (GrB_free (&G)) ;
         }
     }
@@ -75,7 +75,7 @@ void mexFunction
     // return result
     //--------------------------------------------------------------------------
 
-    if (format == GxB_BY_ROW)
+    if (fmt == GxB_BY_ROW)
     {
         pargout [0] = mxCreateString ("by row") ;
     }

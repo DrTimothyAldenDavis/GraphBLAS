@@ -16,8 +16,8 @@ function C = ktruss (A, k, check)
 %
 % To check the input A to make sure it has a symmetric pattern and has a
 % zero-free diagonal, use C = gb.ktruss (A, k, 'check').  This check is
-% optional since it adds extra time.  Results are undefined if A has an
-% unsymmetric pattern or entries on the diagonal.
+% optional since it adds extra time.  Results are undefined if 'check' is not
+% specified and A has an unsymmetric pattern or entries on the diagonal.
 %
 % The output C is symmetric with a zero-free diagonal.
 %
@@ -26,7 +26,7 @@ function C = ktruss (A, k, check)
 %   load west0479 ;
 %   A = gb.offdiag (west0479) ;
 %   A = A+A' ;
-%   C3  = gb.ktruss (A, 3) ;
+%   C3 = gb.ktruss (A, 3) ;
 %   ntriangles = sum (C3, 'all') / 6
 %   C4a = gb.ktruss (A, 4) ;
 %   C4b = gb.ktruss (C3, 4) ;          % this is faster
@@ -42,31 +42,34 @@ if (nargin < 2)
     k = 3 ;
 end
 if (k < 3)
-    error ('gb:error', 'k-truss defined only for k >= 3') ;
+    gb_error ('k-truss defined only for k >= 3') ;
 end
+
 if (nargin < 3)
     check = false ;
 else
     check = isequal (check, 'check') ;
 end
+
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('gb:error', 'A must be square') ;
+    gb_error ('A must be square') ;
 end
 
-if (n > intmax ('int32'))
-    C = spones (A, 'int64') ;
-else
-    C = spones (A, 'int32') ;
+int_type = 'int64' ;
+if (n < intmax ('int32'))
+    int_type = 'int32' ;
 end
+
+C = gb.apply (['1.' int_type], A) ;
 
 if (check)
     % Do the costly checks.  These are optional.
     if (~issymmetric (C))
-        error ('gb:error', 'A must have a symmetric pattern') ;
+        gb_error ('A must have a symmetric pattern') ;
     end
     if (nnz (diag (C) > 0))
-        error ('gb:error', 'A must have a zero-free diagonal') ;
+        gb_error ('A must have a zero-free diagonal') ;
     end
 end
 

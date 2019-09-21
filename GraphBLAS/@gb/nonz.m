@@ -31,6 +31,23 @@ function result = nonz (A, varargin)
 %   'zero' can be specified; d = gb.nonz (A, ..., id).  For example, to count
 %   all entries in A not equal to one, use gb.nonz (A, 1)
 %
+% Example:
+%
+%   A = magic (5) ;
+%   A (A < 10) = 0              % MATLAB full matrix with some explicit zeros
+%   nnz (A)
+%   gb.nonz (A)                 % same as nnz (A)
+%   G = gb (A)                  % contains explicit zeros
+%   gb.nonz (G)                 % same as nnz (A)
+%   G (A > 18) = sparse (0)     % entries A>18 deleted, still has explicit zeros
+%   gb.nonz (G)
+%   gb.nonz (G, 'list')
+%   S = double (G)              % MATLAB sparse matrix; no explicit zeros
+%   gb.nonz (S)
+%   gb.nonz (S, 'list')
+%
+% See also gb.nonz, nnz, gb/nnz, nonzeros, gb/nonzeros, gb.prune.
+%
 % See also gb.entries, nnz, gb/nnz, nonzeros, gb/nonzeros, gb.prune.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

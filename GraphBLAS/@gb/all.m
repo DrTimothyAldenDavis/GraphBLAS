@@ -59,7 +59,7 @@ else
         rowdegree = gb.entries (G, 'row', 'degree') ;
         C = gb.subassign (C, C & (rowdegree < n), 0) ;
     else
-        error ('gb:error', 'unknown option') ;
+        gb_error ('unknown option') ;
     end
 end
 

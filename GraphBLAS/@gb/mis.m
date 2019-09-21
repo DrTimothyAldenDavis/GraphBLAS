@@ -20,13 +20,15 @@ function iset = mis (A, check)
 % independent set problem. In Proceedings of the seventeenth annual ACM
 % symposium on Theory of computing (STOC '85). ACM, New York, NY, USA, 1-10.
 % DOI: https://doi.org/10.1145/22145.22146
+%
+% See also gb.offdiag.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('gb:error', 'A must be square') ;
+    gb_error ('A must be square') ;
 end
 
 % convert A to logical
@@ -38,16 +40,16 @@ else
     if (isequal (check, 'check'))
         check = true ;
     else
-        error ('gb:error', 'unknown option') ;
+        gb_error ('unknown option') ;
     end
 end
 
 if (check)
     if (nnz (diag (A)) > 0)
-        error ('gb:error', 'A must not have any diagonal entries') ;
+        gb_error ('A must not have any diagonal entries') ;
     end
     if (~issymmetric (A))
-        error ('gb:error', 'A must be symmetric') ;
+        gb_error ('A must be symmetric') ;
     end
 end
 
@@ -65,9 +67,6 @@ r_desc.out = 'replace' ;
 sr_desc.mask = 'complement' ;
 sr_desc.out  = 'replace' ;
 
-% create the mis_score binary operator
-% GrB_BinaryOp_new (&set_random, mis_score2, GrB_FP64, GrB_UINT32, GrB_FP64) ;
-
 % compute the degree of each nodes
 degrees = gb.vreduce ('+.double',  A) ;
 
@@ -76,11 +75,11 @@ degrees = gb.vreduce ('+.double',  A) ;
 % selected and cause the method to stall.  To avoid this case they are removed
 % from the candidate set at the begining, and added to the iset.
 
-% candidates[degree != 0] = 1
+% candidates (degree != 0) = true
 candidates = gb.assign (candidates, degrees, true) ;
 
 % add all singletons to iset
-% iset[degree == 0] = 1
+% iset (degree == 0) = 1
 iset = gb.assign (iset, degrees, true, sr_desc) ; 
 
 % Iterate while there are candidates to check.
@@ -126,7 +125,7 @@ while (ncand > 0)
 
     % this will not occur, unless the input is corrupted somehow
     if (last_ncand == ncand)
-        error ('gb:error', 'stall!\n') ;
+        gb_error ('method stalled; rerun with ''check'' option') ;
     end
     last_ncand = ncand ;
 end

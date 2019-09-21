@@ -7,22 +7,26 @@ function C = incidence (A, varargin)
 % ignored.   Optional string arguments can appear after A:
 %
 %   C = gb.incidence (A, ..., 'directed') constructs a matrix C of size n-by-e
-%   where e = gb.entries (gb.offdiag (A)).  Any entry in the upper or lower
-%   trianglar part of A results in a unique column of C.  The diagonal is
-%   ignored.  This is the default. 
+%       where e = gb.entries (gb.offdiag (A)).  Any entry in the upper or lower
+%       trianglar part of A results in a unique column of C.  The diagonal is
+%       ignored.  This is the default. 
+%
 %   C = gb.incidence (A, ..., 'unsymmetric') is the same as 'directed'.
 %
 %   C = gb.incidence (A, ..., 'undirected') assumes A is symmetric, and only
-%   creates columns of C based on entries in tril (A,-1).  The diagonal and
-%   upper triangular part of A are ignored.
+%       creates columns of C based on entries in tril (A,-1).  The diagonal and
+%       upper triangular part of A are ignored.
+%
 %   C = gb.incidence (A, ..., 'symmetric') is the same as 'undirected'.
+%
 %   C = gb.incidence (A, ..., 'lower') is the same as 'undirected'.
 %
 %   C = gb.incidence (A, ..., 'upper') is the same as 'undirected', except that
-%   only entries in triu (A,1) are used.
+%       only entries in triu (A,1) are used.
 %
 %   C = gb.incidence (A, ..., type) construct C with the type 'double',
-%   'single', 'int8', 'int16', 'int32', or 'int64'.  The default is 'double'
+%       'single', 'int8', 'int16', 'int32', or 'int64'.  The default is
+%       'double'.
 %
 % Examples:
 %
@@ -36,7 +40,7 @@ function C = incidence (A, varargin)
 
 [m, n] = size (A) ;
 if (m ~= n)
-    error ('gb:error', 'A must be square') ;
+    gb_error ('A must be square') ;
 end
 
 % get the string options
@@ -51,12 +55,8 @@ for k = 1:nargin-1
         case { 'double', 'single', 'int8', 'int16', 'int32', 'int64' }
             type = arg ;
         otherwise
-            error ('gb:error', 'unknown option') ;
+            gb_error ('unknown option') ;
     end
-end
-
-if (~gb.issigned (type))
-    error ('gb:error', 'type must be a signed type') ;
 end
 
 if (isequal (kind, 'directed') || isequal (kind, 'unsymmetric'))
@@ -78,5 +78,5 @@ end
 e = length (i) ;
 k = uint64 (0:e-1)' ;
 x = ones (e, 1, type) ;
-C = gb.build ([i ; j], [k ; k], [x ; -x], n, e) ;
+C = gb.build ([i ; j], [k ; k], [-x ; x], n, e) ;
 

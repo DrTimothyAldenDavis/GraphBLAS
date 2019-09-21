@@ -32,5 +32,17 @@ G = false ([3 4], 'like', H) ;
 C = sparse (false ([3 4])) ;
 assert (isequal (C, G))
 
+G = false (3, 4, 'like', H) ;
+C = sparse (false (3, 4)) ;
+assert (isequal (C, G))
+
+G = true ([3 4], 'like', H) ;
+C = sparse (true ([3 4])) ;
+assert (isequal (C, G))
+
+G = true (3, 4, 'like', H) ;
+C = sparse (true (3, 4)) ;
+assert (isequal (C, G))
+
 fprintf ('gbtest44: all tests passed\n') ;
 

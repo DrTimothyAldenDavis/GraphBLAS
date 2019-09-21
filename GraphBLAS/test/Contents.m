@@ -4,6 +4,7 @@
 %
 %  gbtestall - test GraphBLAS MATLAB interface
 %
+%  gbtest0   - test gb.clear
 %  gbtest1   - test gb
 %  gbtest2   - list all binary operators
 %  gbtest3   - test dnn
@@ -50,10 +51,26 @@
 %  gbtest44  - test subsasgn, mtimes, plus, false, ...
 %  gbtest45  - test reduce to vector
 %  gbtest46  - test subassign
-%  gbtest47  - test gb.entries
+%  gbtest47  - test gb.entries, gb.nonz, numel
 %  gbtest48  - test gb.apply
 %  gbtest49  - test gb.prune
 %  gbtest50  - test gb.bfs
+%  gbtest51  - test gb.tricount
+%  gbtest52  - test gb.format
+%  gbtest53  - test gb.monoidinfo
+%  gbtest54  - test gb.compact
+%  gbtest55  - test disp
+%  gbtest56  - test gb.empty
+%  gbtest57  - test fprintf and sprintf
+%  gbtest58  - test uplus
+%  gbtest59  - test end
+%  gbtest60  - test issigned
+%  gbtest61  - test gb.laplacian
+%  gbtest62  - test ldivide, rdivide, mldivide, mrdivide
+%  gbtest63  - test gb.ktruss and gb.tricount
+%  gbtest64  - test gb.pagerank
+%  gbtest65  - test gb.mis
+%  gbtest66  - test gb.incidence
 %
 % Utility functions:
 %

@@ -7,8 +7,8 @@
 
 //------------------------------------------------------------------------------
 
-// X may be a MATLAB sparse matrix, or a MATLAB struct containing a GraphBLAS
-// matrix.  G is returned as a MATLAB struct containing a GraphBLAS matrix.
+// A may be a MATLAB sparse matrix, or a MATLAB struct containing a GraphBLAS
+// matrix.  C is returned as a MATLAB struct containing a GraphBLAS matrix.
 
 #include "gb_matlab.h"
 
@@ -26,77 +26,78 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin >= 1 && nargin <= 4 && nargout <= 1,
-        "usage: G = gb (m,n,type,format) or G = gb (X,type,format)") ;
+        "usage: C = gb (m,n,type,format) or C = gb (A,type,format)") ;
 
     //--------------------------------------------------------------------------
     // construct the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix G ;
+    GrB_Matrix C ;
 
     if (nargin == 1)
     {
 
         //----------------------------------------------------------------------
-        // G = gb (X)
+        // C = gb (A)
         //----------------------------------------------------------------------
 
-        // GraphBLAS copy of X, same type and format as X
-        G = gb_get_deep (pargin [0]) ;
+        // GraphBLAS copy of A, same type and format as A
+        C = gb_get_deep (pargin [0]) ;
 
     }
     else if (nargin == 2)
     {
 
         //----------------------------------------------------------------------
-        // G = gb (X, type)
-        // G = gb (X, format)
-        // G = gb (m, n)
+        // C = gb (A, type)
+        // C = gb (A, format)
+        // C = gb (m, n)
         //----------------------------------------------------------------------
 
         if (mxIsChar (pargin [1]))
         {
 
             //------------------------------------------------------------------
-            // G = gb (X, type)
-            // G = gb (X, format)
+            // C = gb (A, type)
+            // C = gb (A, format)
             //------------------------------------------------------------------
 
             GrB_Type type = gb_mxstring_to_type (pargin [1]) ;
-            GxB_Format_Value format = gb_mxstring_to_format (pargin [1]) ;
+            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [1]) ;
 
             if (type != NULL)
             {
 
                 //--------------------------------------------------------------
-                // G = gb (X, type)
+                // C = gb (A, type)
                 //--------------------------------------------------------------
 
                 if (gb_mxarray_is_empty (pargin [0]))
                 {
-                    OK (GrB_Matrix_new (&G, type, 0, 0)) ;
+                    // TODO get the format of A
+                    OK (GrB_Matrix_new (&C, type, 0, 0)) ;
                 }
                 else
                 {
                     // get a shallow copy and then typecast it to type.
-                    // use the same format as X
-                    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
-                    OK (GxB_get (X, GxB_FORMAT, &format)) ;
-                    G = gb_typecast (type, format, X) ;
-                    OK (GrB_free (&X)) ;
+                    // use the same format as A
+                    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+                    OK (GxB_get (A, GxB_FORMAT, &fmt)) ;
+                    C = gb_typecast (type, fmt, A) ;
+                    OK (GrB_free (&A)) ;
                 }
 
             }
-            else if (format != GxB_NO_FORMAT)
+            else if (fmt != GxB_NO_FORMAT)
             {
 
                 //--------------------------------------------------------------
-                // G = gb (X, format)
+                // C = gb (A, format)
                 //--------------------------------------------------------------
 
-                // get a deep copy of X and convert it to the requested format
-                G = gb_get_deep (pargin [0]) ;
-                OK (GxB_set (G, GxB_FORMAT, format)) ;
+                // get a deep copy of A and convert it to the requested format
+                C = gb_get_deep (pargin [0]) ;
+                OK (GxB_set (C, GxB_FORMAT, fmt)) ;
 
             }
             else
@@ -110,22 +111,22 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // G = gb (m, n)
+            // C = gb (m, n)
             //------------------------------------------------------------------
 
             // m-by-n GraphBLAS double matrix, no entries, default format
             GrB_Index nrows = mxGetScalar (pargin [0]) ;
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
-            OK (GrB_Matrix_new (&G, GrB_FP64, nrows, ncols)) ;
+            OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
 
             // set to BY_COL if column vector, BY_ROW if row vector,
             // use global default format otherwise
-            OK (GxB_set (G, GxB_FORMAT, gb_default_format (nrows, ncols))) ;
+            OK (GxB_set (C, GxB_FORMAT, gb_default_format (nrows, ncols))) ;
 
         }
         else
         {
-            USAGE ("usage: G = gb(m,n), G = gb(X,type), or G = gb(X,format)") ;
+            ERROR ("usage: C = gb(m,n), C = gb(A,type), or C = gb(A,format)") ;
         }
 
     }
@@ -133,10 +134,10 @@ void mexFunction
     {
 
         //----------------------------------------------------------------------
-        // G = gb (m, n, format)
-        // G = gb (m, n, type)
-        // G = gb (X, type, format)
-        // G = gb (X, format, type)
+        // C = gb (m, n, format)
+        // C = gb (m, n, type)
+        // C = gb (A, type, format)
+        // C = gb (A, format, type)
         //----------------------------------------------------------------------
 
         if (gb_mxarray_is_scalar (pargin [0]) &&
@@ -144,32 +145,32 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // G = gb (m, n, format)
-            // G = gb (m, n, type)
+            // C = gb (m, n, format)
+            // C = gb (m, n, type)
             //------------------------------------------------------------------
 
             // create an m-by-n matrix with no entries
             GrB_Index nrows = mxGetScalar (pargin [0]) ;
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
             GrB_Type type = gb_mxstring_to_type (pargin [2]) ;
-            GxB_Format_Value format = gb_mxstring_to_format (pargin [2]) ;
+            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [2]) ;
 
             if (type != NULL)
             {
                 // create an m-by-n matrix of the desired type, no entries,
                 // use the default format.
-                OK (GrB_Matrix_new (&G, type, nrows, ncols)) ;
+                OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
 
                 // set to BY_COL if column vector, BY_ROW if row vector,
                 // use global default format otherwise
-                OK (GxB_set (G, GxB_FORMAT, gb_default_format (nrows, ncols))) ;
+                OK (GxB_set (C, GxB_FORMAT, gb_default_format (nrows, ncols))) ;
 
             }
-            else if (format != GxB_NO_FORMAT)
+            else if (fmt != GxB_NO_FORMAT)
             {
                 // create an m-by-n double matrix of the desired format
-                OK (GrB_Matrix_new (&G, GrB_FP64, nrows, ncols)) ;
-                OK (GxB_set (G, GxB_FORMAT, format)) ;
+                OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
+                OK (GxB_set (C, GxB_FORMAT, fmt)) ;
             }
             else
             {
@@ -181,40 +182,40 @@ void mexFunction
         {
 
             //------------------------------------------------------------------
-            // G = gb (X, type, format)
-            // G = gb (X, format, type)
+            // C = gb (A, type, format)
+            // C = gb (A, format, type)
             //------------------------------------------------------------------
 
             GrB_Type type = gb_mxstring_to_type (pargin [1]) ;
-            GxB_Format_Value format = gb_mxstring_to_format (pargin [2]) ;
+            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [2]) ;
 
-            if (type != NULL && format != GxB_NO_FORMAT)
+            if (type != NULL && fmt != GxB_NO_FORMAT)
             {
-                // G = gb (X, type, format)
+                // C = gb (A, type, format)
             }
             else
             {
-                // G = gb (X, format, type)
-                format = gb_mxstring_to_format (pargin [1]) ;
+                // C = gb (A, format, type)
+                fmt = gb_mxstring_to_format (pargin [1]) ;
                 type = gb_mxstring_to_type (pargin [2]) ;
             }
 
-            if (type == NULL || format == GxB_NO_FORMAT)
+            if (type == NULL || fmt == GxB_NO_FORMAT)
             {
                 ERROR ("unknown type and/or format") ;
             }
 
             if (gb_mxarray_is_empty (pargin [0]))
             {
-                OK (GrB_Matrix_new (&G, type, 0, 0)) ;
-                OK (GxB_set (G, GxB_FORMAT, format)) ;
+                OK (GrB_Matrix_new (&C, type, 0, 0)) ;
+                OK (GxB_set (C, GxB_FORMAT, fmt)) ;
             }
             else
             {
                 // get a shallow copy, typecast it, and set the format
-                GrB_Matrix X = gb_get_shallow (pargin [0]) ;
-                G = gb_typecast (type, format, X) ;
-                OK (GrB_free (&X)) ;
+                GrB_Matrix A = gb_get_shallow (pargin [0]) ;
+                C = gb_typecast (type, fmt, A) ;
+                OK (GrB_free (&A)) ;
             }
         }
         else
@@ -227,8 +228,8 @@ void mexFunction
     {
 
         //----------------------------------------------------------------------
-        // G = gb (m, n, type, format)
-        // G = gb (m, n, format, type)
+        // C = gb (m, n, type, format)
+        // C = gb (m, n, format, type)
         //----------------------------------------------------------------------
 
         if (gb_mxarray_is_scalar (pargin [0]) &&
@@ -242,26 +243,26 @@ void mexFunction
             GrB_Index ncols = mxGetScalar (pargin [1]) ;
 
             GrB_Type type = gb_mxstring_to_type (pargin [2]) ;
-            GxB_Format_Value format = gb_mxstring_to_format (pargin [3]) ;
+            GxB_Format_Value fmt = gb_mxstring_to_format (pargin [3]) ;
 
-            if (type != NULL && format != GxB_NO_FORMAT)
+            if (type != NULL && fmt != GxB_NO_FORMAT)
             {
-                // G = gb (m, n, type, format)
+                // C = gb (m, n, type, format)
             }
             else
             {
-                // G = gb (m, n, format, type)
-                format = gb_mxstring_to_format (pargin [2]) ;
+                // C = gb (m, n, format, type)
+                fmt = gb_mxstring_to_format (pargin [2]) ;
                 type = gb_mxstring_to_type (pargin [3]) ;
             }
 
-            if (type == NULL || format == GxB_NO_FORMAT)
+            if (type == NULL || fmt == GxB_NO_FORMAT)
             {
                 ERROR ("unknown type and/or format") ;
             }
 
-            OK (GrB_Matrix_new (&G, type, nrows, ncols)) ;
-            OK (GxB_set (G, GxB_FORMAT, format)) ;
+            OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
+            OK (GxB_set (C, GxB_FORMAT, fmt)) ;
 
         }
         else
@@ -272,13 +273,13 @@ void mexFunction
     }
     else
     {
-        USAGE ("unknown usage") ;
+        ERROR ("unknown usage") ;
     }
 
     //--------------------------------------------------------------------------
-    // export the output matrix A back to MATLAB
+    // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&G, KIND_GB) ;
+    pargout [0] = gb_export (&C, KIND_GB) ;
 }
 

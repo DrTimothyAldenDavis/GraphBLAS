@@ -19,22 +19,22 @@ classdef gb
 %   The gb constructor creates a GraphBLAS matrix.  The input A may be any
 %   MATLAB or GraphBLAS matrix:
 %
-%   G = gb (A) ;            GraphBLAS copy of a matrix A, same type
-%   G = gb (m, n) ;         m-by-n GraphBLAS double matrix with no entries
-%   G = gb (..., type) ;    create or typecast to a different type
-%   G = gb (..., format) ;  create in a specified format
+%   C = gb (A) ;            GraphBLAS copy of a matrix A, same type
+%   C = gb (m, n) ;         m-by-n GraphBLAS double matrix with no entries
+%   C = gb (..., type) ;    create or typecast to a different type
+%   C = gb (..., format) ;  create in a specified format
 %
 %   The m and n parameters above are MATLAB scalars.  The type and format
 %   parameters are strings.  The default format is 'by col', to match the
 %   format used in MATLAB (see also gb.format), but many graph algorithms
 %   are faster if the format is 'by row'.
 %
-%   The usage G = gb (m, n, type) is analgous to A = sparse (m, n), which
+%   The usage C = gb (m, n, type) is analgous to A = sparse (m, n), which
 %   creates an empty MATLAB sparse matrix A.  The type parameter is a
 %   string, which defaults to 'double' if not present.
 %
-%   For the usage G = gb (A, type), A is either a MATLAB sparse or dense
-%   matrix, or a GraphBLAS sparse matrix object.  G is created as a
+%   For the usage C = gb (A, type), A is either a MATLAB sparse or dense
+%   matrix, or a GraphBLAS sparse matrix object.  C is created as a
 %   GraphBLAS sparse matrix object that contains a copy of A, typecasted
 %   to the given type if the type string does not match the type of A.
 %   If the type string is not present it defaults to 'double'.
@@ -96,7 +96,7 @@ classdef gb
 %   These methods operate on GraphBLAS matrices only, and they overload
 %   the existing MATLAB functions of the same name.
 %
-%   G = gb (...)            construct a GraphBLAS matrix
+%   C = gb (...)            construct a GraphBLAS matrix
 %   C = sparse (G)          makes a copy of a gb matrix
 %   C = full (G, ...)       adds explicit zeros or id values to a gb matrix
 %   C = double (G)          cast gb matrix to MATLAB sparse double matrix
@@ -234,14 +234,20 @@ classdef gb
 %   c = gb.chunk (c)            set/get chunk size to use in GraphBLAS
 %   result = gb.entries (G,...) count or query entries in a matrix
 %   result = gb.nonz (G,...)    count or query nonzeros in a matrix
+%   C = gb.prune (A, id)        prune entries equal to id
+%   C = gb.offdiag (A)          prune diagonal entries
+%   s = gb.isfull (A)           true if all entries present
+%   [C,I,J] = gb.compact (A,id) remove empty rows and columns
 %   G = gb.empty (m, n)         return an empty GraphBLAS matrix
 %   s = gb.type (A)             get the type of a MATLAB or gb matrix A
 %   s = gb.issigned (type)      true if type is signed
 %   f = gb.format (f)           set/get matrix format to use in GraphBLAS
-%   C = gb.expand (scalar, S)   expand a scalar (C = scalar*spones(S))
+%   s = gb.isbyrow (A)          true if format f A is 'by row'
+%   s = gb.isbycol (A)          true if format f A is 'by col'
+%   C = gb.expand (scalar, A)   expand a scalar (C = scalar*spones(A))
 %   C = gb.eye                  identity matrix of any type
 %   C = gb.speye                identity matrix (of type 'double')
-%   G = gb.build (I, J, X, m, n, dup, type, desc)
+%   C = gb.build (I, J, X, m, n, dup, type, desc)
 %                               build a gb matrix from list of entries
 %   [I,J,X] = gb.extracttuples (A, desc)
 %                               extract all entries from a matrix
@@ -300,14 +306,14 @@ classdef gb
 %
 % Static Methods for graph algorithms:
 %
-%   r = pagerank (A, opts) ;            % PageRank of a matrix
-%   C = ktruss (A, k, check) ;          % k-truss
-%   s = tricount (A, check) ;           % triangle count
-%   L = laplacian (A, type, check) ;    % Laplacian graph
-%   C = incidence (A, ...) ;            % incidence matrix
-%   [v, parent] = bfs (A, s, ...) ;     % breadth-first search
-%   iset = mis (A, check) ;             % maximal independent set
-%   Y = dnn (W, bias, Y0) ;             % deep neural network
+%   r = gb.pagerank (A, opts) ;            % PageRank of a matrix
+%   C = gb.ktruss (A, k, check) ;          % k-truss
+%   s = gb.tricount (A, check) ;           % triangle count
+%   L = gb.laplacian (A, type, check) ;    % Laplacian graph
+%   C = gb.incidence (A, ...) ;            % incidence matrix
+%   [v, parent] = gb.bfs (A, s, ...) ;     % breadth-first search
+%   iset = gb.mis (A, check) ;             % maximal independent set
+%   Y = gb.dnn (W, bias, Y0) ;             % deep neural network
 %
 % See also sparse.
 
@@ -325,40 +331,40 @@ methods
     % gb: GraphBLAS matrix constructor
     %---------------------------------------------------------------------------
 
-    function G = gb (varargin)
+    function C = gb (varargin)
     %GB GraphBLAS constructor: create a GraphBLAS sparse matrix.
     %
-    % G = gb (A) ;          gb copy of a matrix A, same type and format
+    % C = gb (A) ;          gb copy of a matrix A, same type and format
     %
-    % G = gb (A, type) ;    gb typecasted copy of a matrix A, same format
-    % G = gb (A, format) ;  gb copy of a matrix A, with given format
-    % G = gb (m, n) ;       empty m-by-n gb double matrix, default format
+    % C = gb (A, type) ;    gb typecasted copy of a matrix A, same format
+    % C = gb (A, format) ;  gb copy of a matrix A, with given format
+    % C = gb (m, n) ;       empty m-by-n gb double matrix, default format
     %
-    % G = gb (A, type, format) ;   gb copy of A, new type and format
-    % G = gb (A, format, type) ;   ditto
+    % C = gb (A, type, format) ;   gb copy of A, new type and format
+    % C = gb (A, format, type) ;   ditto
     %
-    % G = gb (m, n, type) ;   empty m-by-n gb type matrix, default format
-    % G = gb (m, n, format) ; empty m-by-n gb double matrix of given format
+    % C = gb (m, n, type) ;   empty m-by-n gb type matrix, default format
+    % C = gb (m, n, format) ; empty m-by-n gb double matrix of given format
     %
-    % G = gb (m, n, type, format) ;     empty m-by-n matrix, given type & format
-    % G = gb (m, n, format, type) ;     ditto
+    % C = gb (m, n, type, format) ;     empty m-by-n matrix, given type & format
+    % C = gb (m, n, format, type) ;     ditto
     %
     % See also sparse.
     if (nargin == 1 && ...
         (isstruct (varargin {1}) && isfield (varargin {1}, 'GraphBLAS')))
-        % G = gb (A), where the input A is a GraphBLAS struct as returned by
+        % C = gb (A), where the input A is a GraphBLAS struct as returned by
         % another gb* function, but this usage is not meant for the end-user.
-        % It is only used internally in @gb.  See for @gb/mxm, which uses G =
-        % gb (gbmxm (args)), and the typecasting methods, C = double (G), etc.
-        % The output of gb is a GraphBLAS object.
-        G.opaque = varargin {1} ;
+        % It is only used internally in @gb.  See for @gb/mxm, which uses
+        % C = gb (gbmxm (args)), and the typecasting methods, C = double (C),
+        % etc.  The output of gb is a GraphBLAS object.
+        C.opaque = varargin {1} ;
     else
         if (isa (varargin {1}, 'gb'))
             % extract the contents of the gb object as its opaque struct so
             % the gbnew mexFunction can access it.
             varargin {1} = varargin {1}.opaque ;
         end
-        G.opaque = gbnew (varargin {:}) ;
+        C.opaque = gbnew (varargin {:}) ;
     end
     end
 

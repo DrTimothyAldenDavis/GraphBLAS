@@ -13,7 +13,7 @@ function C = isfinite (G)
 [m, n] = size (G) ;
 if (isfloat (G) && m > 0 && n > 0)
     [i, j, x] = gb.extracttuples (full (G), struct ('kind', 'zero-based')) ;
-    C = gb.build (i, j, isfinite (x), m, n) ;
+    C = gb.prune (gb.build (i, j, isfinite (x), m, n)) ;
 else
     % C is all true
     C = gb (true (m, n)) ;

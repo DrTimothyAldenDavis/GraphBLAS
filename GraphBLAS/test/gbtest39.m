@@ -7,7 +7,7 @@ function gbtest39
 for trial = 1:40
     fprintf ('.') ;
 
-    n = 100 ;
+    n = 20 ;
     A = sprand (n, n, 0.1) ;
     S = A + A' ;
     G = gb (A) ;

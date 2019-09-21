@@ -12,20 +12,20 @@ mold = int64 (mold) ;
 nold = int64 (nold) ;
 if (nargin == 2)
     if (length (arg1) ~= 2)
-        error ('gb:error', 'reshape (G,s): s must have exactly two elements') ;
-    end     %#ok<UNRCH>
+        gb_error ('reshape (G,s): s must have exactly two elements') ;
+    end
     mnew = int64 (arg1 (1)) ;
     nnew = int64 (arg1 (2)) ;
 elseif (nargin == 3)
     if (~isscalar (arg1) || ~isscalar (arg2))
-        error ('gb:error', 'reshape (G,m,n): m and n must be scalars') ;
-    end     %#ok<UNRCH>
+        gb_error ('reshape (G,m,n): m and n must be scalars') ;
+    end
     mnew = int64 (arg1) ;
     nnew = int64 (arg2) ;
 end
 if (mold * nold ~= mnew * nnew)
-    error ('gb:error', 'number of elements must not change') ;
-end     %#ok<UNRCH>
+    gb_error ('number of elements must not change') ;
+end
 if (isempty (G))
     C = gb (mnew, nnew, gb.type (G)) ;
 else

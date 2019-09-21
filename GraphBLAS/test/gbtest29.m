@@ -39,7 +39,7 @@ for trial = 1:40
             C3 (M) = G (M) ;        % C3(M) is gb, and G(M) is gb
 
             % this uses the MATLAB subasgn, after typecasting G(M) from class
-            % gb to class double, using the double(G) function in gb.m:
+            % gb to class double, using gb/double:
             C4 = C ;
             C4 (M) = G (M) ;
 
@@ -49,7 +49,7 @@ for trial = 1:40
 
             % also try with a gb mask matrix M.  In this case, A(M) where A
             % is a MATLAB matrix and M is a gb logical matrix fails.
-            % the subsref function in gb.m can handle this case, but MATLAB
+            % gb/subsref can handle this case, but MATLAB
             % doesn't call it.  It tries using the built-in subsref instead,
             % and it doesn't know what to do with a gb logical matrix M.
 

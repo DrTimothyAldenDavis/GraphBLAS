@@ -5,9 +5,9 @@ function gbtest24
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
-for trial = 1:40
-    fprintf ('.') ;
+for trial = 1:10
     for m = 1:5
+        fprintf ('.') ;
         for n = 1:5
 
             MA = sprand (m, n, 0.5) ;

@@ -33,20 +33,19 @@ else
     check = isequal (check, 'check') ;
 end
 
-if (~ (isequal (type, 'double') || isequal (type, 'single') || ...
-       isequal (type (1:3), 'int')))
-    % type must be 'double', 'single', 'int8', 'int16', 'int32', or 'int64'.
-    error ('gb:error', 'invalid type') ;
+if (~gb.issigned (type))
+    % type must be signed
+    gb_error ('invalid type') ;
 end
 
 A = gb.apply (['1.' type], A) ;
 
 if (check)
     if (~issymmetric (A))
-        error ('gb:error', 'A must be symmetric') ;
+        gb_error ('A must be symmetric') ;
     end
     if (gb.entries (diag (A)) > 0)
-        error ('gb:error', 'A must have no diagonal entries') ;
+        gb_error ('A must have no diagonal entries') ;
     end
 end
 

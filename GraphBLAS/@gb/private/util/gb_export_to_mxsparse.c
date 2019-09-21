@@ -33,10 +33,10 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
     GrB_Matrix T ;              // T will always be deep
     GrB_Type type ;
     OK (GxB_Matrix_type (&type, *A_handle)) ;
-    GxB_Format_Value format ;
-    OK (GxB_get (*A_handle, GxB_FORMAT, &format)) ;
+    GxB_Format_Value fmt ;
+    OK (GxB_get (*A_handle, GxB_FORMAT, &fmt)) ;
 
-    if (format == GxB_BY_COL && (type == GrB_BOOL || type == GrB_FP64
+    if (fmt == GxB_BY_COL && (type == GrB_BOOL || type == GrB_FP64
         #ifdef GB_COMPLEX_TYPE
         || type == gb_complex_type
         #endif

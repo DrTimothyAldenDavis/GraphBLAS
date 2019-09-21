@@ -11,6 +11,9 @@
 // computed from one or two input matrices A and B.  The following rules are
 // used, in order:
 
+// (1) GraphBLAS operations of the form Cout = gb.method (Cin, ...) use the
+//      format of Cin for the new matrix Cout.
+
 // (1) If the format is determined by the descriptor to the method, then that
 //      determines the format of C.
 
@@ -34,42 +37,42 @@ GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
     GrB_Index cncols,
     GrB_Matrix A,                       // may be NULL
     GrB_Matrix B,                       // may be NULL
-    GxB_Format_Value format_descriptor  // may be GxB_NO_FORMAT
+    GxB_Format_Value fmt_descriptor     // may be GxB_NO_FORMAT
 )
 {
 
-    GxB_Format_Value format ;
+    GxB_Format_Value fmt ;
 
-    if (format_descriptor != GxB_NO_FORMAT)
+    if (fmt_descriptor != GxB_NO_FORMAT)
     {
         // (1) the format is defined by the descriptor to the method
-        format = format_descriptor ;
+        fmt = fmt_descriptor ;
     }
     else if (cncols == 1)
     {
         // (2) column vectors are stored by column, by default
-        format = GxB_BY_COL ;
+        fmt = GxB_BY_COL ;
     }
     else if (cnrows == 1)
     {
         // (3) row vectors are stored by column, by default
-        format = GxB_BY_ROW ;
+        fmt = GxB_BY_ROW ;
     }
     else if (A != NULL && !gb_is_vector (A))
     {
         // (4) get the format of A
-        OK (GxB_get (A, GxB_FORMAT, &format)) ;
+        OK (GxB_get (A, GxB_FORMAT, &fmt)) ;
     }
     else if (B != NULL && !gb_is_vector (B))
     {
         // (5) get the format of B
-        OK (GxB_get (B, GxB_FORMAT, &format)) ;
+        OK (GxB_get (B, GxB_FORMAT, &fmt)) ;
     }
     else
     {
         // (6) get the global default format
-        OK (GxB_get (GxB_FORMAT, &format)) ;
+        OK (GxB_get (GxB_FORMAT, &fmt)) ;
     }
-    return (format) ;
+    return (fmt) ;
 }
 

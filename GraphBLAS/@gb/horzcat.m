@@ -28,7 +28,7 @@ for k = 2:nmatrices
     B = varargin {k} ;
     [m2, n] = size (B) ;
     if (m ~= m2)
-        error('Dimensions of arrays being concatenated are not consistent');
+        gb_error ('Dimensions of arrays being concatenated are not consistent');
     end
     nvals (k) = gb.entries (B) ;
     ncols (k) = n ;

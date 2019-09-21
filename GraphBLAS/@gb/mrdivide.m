@@ -16,3 +16,4 @@ if (isscalar (B))
 else
     C = gb (builtin ('mrdivide', double (A), double (B))) ;
 end
+

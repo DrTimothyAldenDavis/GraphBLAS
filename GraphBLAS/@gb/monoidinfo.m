@@ -18,7 +18,7 @@ function monoidinfo (monoid, type)
 %
 % The MATLAB interface to GraphBLAS provides for 44 different
 % monoids.  The valid monoids are: '+', '*', 'max', and 'min' for all
-% but the 'logical' type, and '|', '&', 'xor', and 'ne' for the
+% but the 'logical' type, and '|', '&', 'xor', and 'eq' for the
 % 'logical' type.
 %
 % Example:

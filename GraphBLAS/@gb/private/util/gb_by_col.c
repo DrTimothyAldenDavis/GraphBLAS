@@ -20,12 +20,12 @@ GrB_Matrix gb_by_col            // return the matrix by column
 {
 
     // get the format of A_input
-    GxB_Format_Value format ;
-    OK (GxB_get (A_input, GxB_FORMAT, &format)) ;
+    GxB_Format_Value fmt ;
+    OK (GxB_get (A_input, GxB_FORMAT, &fmt)) ;
 
     GrB_Matrix A_copy = NULL, A ;
 
-    if (format == GxB_BY_ROW)
+    if (fmt == GxB_BY_ROW)
     {
         // make a deep copy of A_input and change it to be stored by column
         OK (GrB_Matrix_dup (&A_copy, A_input)) ;

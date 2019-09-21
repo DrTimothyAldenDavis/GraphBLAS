@@ -26,19 +26,19 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage (nargin <= 4 && nargout <= 1,
-        "usage: F = gb.full (X, type, id, desc)") ;
+        "usage: C = gb.full (A, type, id, desc)") ;
 
     //--------------------------------------------------------------------------
     // get a shallow copy of the input matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
+    GrB_Matrix A = gb_get_shallow (pargin [0]) ;
     GrB_Index nrows, ncols ;
-    OK (GrB_Matrix_nrows (&nrows, X)) ;
-    OK (GrB_Matrix_ncols (&ncols, X)) ;
+    OK (GrB_Matrix_nrows (&nrows, A)) ;
+    OK (GrB_Matrix_ncols (&ncols, A)) ;
 
     //--------------------------------------------------------------------------
-    // get the type of F
+    // get the type of C
     //--------------------------------------------------------------------------
 
     GrB_Matrix type ;
@@ -48,8 +48,8 @@ void mexFunction
     }
     else
     {
-        // the type of F defaults to the type of X
-        OK (GxB_Matrix_type (&type, X)) ;
+        // the type of C defaults to the type of A
+        OK (GxB_Matrix_type (&type, A)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -63,7 +63,8 @@ void mexFunction
     }
     else
     {
-        // assume the identity is zero, of the same type as F
+        // Assume the identity is zero, of the same type as C.
+        // The format does not matter, since only id (0,0) will be used.
         OK (GrB_Matrix_new (&id, type, 1, 1)) ;
     }
 
@@ -79,41 +80,41 @@ void mexFunction
         desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
     }
 
-    // X determines the format of F, unless defined by the descriptor
-    fmt = gb_get_format (nrows, ncols, X, NULL, fmt) ;
+    // A determines the format of C, unless defined by the descriptor
+    fmt = gb_get_format (nrows, ncols, A, NULL, fmt) ;
 
     //--------------------------------------------------------------------------
-    // expand the identity into a dense matrix the same size as F
+    // expand the identity into a dense matrix B the same size as C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix Z ;
-    OK (GrB_Matrix_new (&Z, type, nrows, ncols)) ;
-    OK (GxB_set (Z, GxB_FORMAT, fmt)) ;
-    gb_matrix_assign_scalar (Z, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL,
+    GrB_Matrix B ;
+    OK (GrB_Matrix_new (&B, type, nrows, ncols)) ;
+    OK (GxB_set (B, GxB_FORMAT, fmt)) ;
+    gb_matrix_assign_scalar (B, NULL, NULL, id, GrB_ALL, 0, GrB_ALL, 0, NULL,
         false) ;
 
     //--------------------------------------------------------------------------
-    // F = first (X, Z)
+    // C = first (A, B)
     //--------------------------------------------------------------------------
 
-    GrB_Matrix F ;
-    OK (GrB_Matrix_new (&F, type, nrows, ncols)) ;
-    OK (GxB_set (F, GxB_FORMAT, fmt)) ;
-    OK (GrB_eWiseAdd (F, NULL, NULL, gb_first_binop (type), X, Z, NULL)) ;
+    GrB_Matrix C ;
+    OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
+    OK (GxB_set (C, GxB_FORMAT, fmt)) ;
+    OK (GrB_eWiseAdd (C, NULL, NULL, gb_first_binop (type), A, B, NULL)) ;
 
     //--------------------------------------------------------------------------
     // free workspace
     //--------------------------------------------------------------------------
 
     OK (GrB_free (&id)) ;
-    OK (GrB_free (&Z)) ;
-    OK (GrB_free (&X)) ;
+    OK (GrB_free (&B)) ;
+    OK (GrB_free (&A)) ;
     OK (GrB_free (&desc)) ;
 
     //--------------------------------------------------------------------------
-    // export F to a MATLAB dense matrix
+    // export C to a MATLAB dense matrix
     //--------------------------------------------------------------------------
 
-    pargout [0] = gb_export (&F, kind) ;
+    pargout [0] = gb_export (&C, kind) ;
 }
 

@@ -40,7 +40,7 @@ else
         % giving an m-by-1 column vector.
         C = gb.vreduce ('|.logical', G) ;
     else
-        error ('gb:error', 'unknown option') ;
+        gb_error ('unknown option') ;
     end
 end
 

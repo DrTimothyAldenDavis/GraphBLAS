@@ -26,13 +26,13 @@ if (nargin == 1)
    arg2 = hi ;
 else
     if (nargout > 1)
-        error ('gb:error', 'too many output arguments') ;
+        gb_error ('too many output arguments') ;
     elseif isequal (uplo, 'lower')
         arg1 = lo ;
     elseif isequal (uplo, 'upper')
         arg1 = hi ;
     else
-        error ('gb:error', 'unrecognized option') ;
+        gb_error ('unrecognized option') ;
     end
 end
 

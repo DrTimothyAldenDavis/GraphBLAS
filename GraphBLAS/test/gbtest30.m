@@ -58,7 +58,7 @@ toc
 
 % This is not possible, because 1:middle is too big:
 try
-    fprintf ('H2 = H (1:middle}, 1:middle) will fail:\n') ;
+    fprintf ('H2 = H (1:middle, 1:middle) will fail:\n') ;
     H2 = H (1:middle, 1:middle)
 catch me
     fprintf ('MATLAB colon notation 1:%d fails (too big!)\n\n', middle) ;

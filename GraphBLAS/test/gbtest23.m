@@ -5,7 +5,7 @@ function gbtest23
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
-for trial = 1:40
+for trial = 1:10
     fprintf ('.') ;
     for m = 1:5
         for n = 1:5

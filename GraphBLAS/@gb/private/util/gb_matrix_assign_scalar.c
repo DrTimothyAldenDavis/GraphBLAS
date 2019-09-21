@@ -20,7 +20,7 @@ void gb_matrix_assign_scalar
     GrB_Matrix C,               // C can be of any type
     const GrB_Matrix M,
     const GrB_BinaryOp op,
-    const GrB_Matrix A,
+    const GrB_Matrix A,         // the scalar is in A(0,0)
     const GrB_Index *I,
     const GrB_Index ni,
     const GrB_Index *J,

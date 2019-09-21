@@ -35,11 +35,11 @@ function C = subsref (A, S)
 
 if (length (S) > 1)
     error ('gb:unsupported', 'nested indexing not supported') ;
-end     %#ok<UNRCH>
+end
 
 if (~isequal (S.type, '()'))
     error ('gb:unsupported', 'index type %s not supported', S.type) ;
-end     %#ok<UNRCH>
+end
 
 ndims = length (S.subs) ;
 
@@ -58,7 +58,7 @@ if (ndims == 1)
         % C = A (I) for a vector A
         if (~isvector (A))
             error ('gb:unsupported', 'Linear indexing not supported') ;
-        end     %#ok<UNRCH>
+        end
         [I, whole_vector] = gb_get_index (S.subs (1)) ;
         if (size (A, 1) > 1)
             C = gb.extract (A, I, { }) ;

@@ -30,7 +30,7 @@ function DiGraph = digraph (G, option)
 type = gb.type (G) ;
 [m, n] = size (G) ;
 if (m ~= n)
-    error ('gb:error', 'G must be square') ;
+    gb_error ('G must be square') ;
 end
 
 % get the string options
@@ -39,7 +39,7 @@ if (nargin > 1)
     if (isequal (lower (option), 'omitselfloops'))
         omitself = true ;
     else
-        error ('gb:error', 'unknown option') ;
+        gb_error ('unknown option') ;
     end
 end
 

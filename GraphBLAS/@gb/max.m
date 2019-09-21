@@ -113,10 +113,10 @@ elseif (nargin == 3)
         rowdegree = gb.entries (G, 'row', 'degree') ;
         C = gb.subassign (C, (C < 0) & (rowdegree < n), 0) ;
     else
-        error ('gb:error', 'unknown option') ;
+        gb_error ('unknown option') ;
     end
 
 else
-    error ('gb:error', 'invalid usage') ;
+    gb_error ('invalid usage') ;
 end
 

@@ -7,7 +7,7 @@ function gbtest37
 
 rng ('default') ;
 nmax = 5 ;
-for trial = 1:40
+for trial = 1:10
     fprintf ('.') ;
 
     for m = 1:nmax

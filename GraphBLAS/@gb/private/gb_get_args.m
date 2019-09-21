@@ -1,4 +1,4 @@
-function [args is_gb] = gb_get_args (varargin)
+function [args, is_gb] = gb_get_args (varargin)
 %GB_GET_ARGS get arguments for a GraphBLAS method.
 % Get the arguments and the descriptor for a gb.method.  Any input
 % arguments that are GraphBLAS sparse matrix objects are replaced with the
@@ -25,7 +25,7 @@ end
 
 % find the descriptor
 is_gb = true ;
-if (length (args) > 0)
+if (~isempty (args))
     % get the last input argument and see if it is a GraphBLAS descriptor
     d = args {end} ;
     if (isstruct (d) && ~isfield (d, 'GraphBLAS'))

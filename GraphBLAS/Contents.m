@@ -9,10 +9,10 @@
 % The constructor method is gb.  If A is any matrix (GraphBLAS, MATLAB sparse
 % or full), then:
 %
-%   G = gb (A) ;            GraphBLAS copy of a matrix A, same type
-%   G = gb (m, n) ;         m-by-n GraphBLAS double matrix with no entries
-%   G = gb (..., type) ;    create or typecast to a different type
-%   G = gb (..., format) ;  create in a specified format
+%   C = gb (A) ;            GraphBLAS copy of a matrix A, same type
+%   C = gb (m, n) ;         m-by-n GraphBLAS double matrix with no entries
+%   C = gb (..., type) ;    create or typecast to a different type
+%   C = gb (..., format) ;  create in a specified format
 %
 % The type can be 'double', 'single', 'logical', 'int8', 'int16', 'int32',
 % 'int64', 'uint8', 'uint16', 'uint32', or 'uint64'.  The format is 'by row' or
@@ -52,8 +52,13 @@
 %     A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]  
 %     A(1:end,1:end)
 %
+% These built-in MATLAB methods also work with any GraphBLAS matrices:
+%
+%   cast isrow iscolumn ndims sprank etreeplot spy gplot
+%   bicgstabl bicgstab cgs minres gmres bicg pcg qmr rjr tfqmr lsqr
+%
 % Static Methods: used as gb.method; inputs can be any GraphBLAS or
-% MATLAB matrix.
+% MATLAB matrix, in any combination.
 %
 %   apply           emult           isfull          select
 %   assign          entries         issigned        semiringinfo

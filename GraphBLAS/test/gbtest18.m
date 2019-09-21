@@ -5,11 +5,9 @@ function gbtest18
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
-for trial = 1:100
+for trial = 1:21
 
-    if (mod (trial, 5) == 0)
-        fprintf ('.') ;
-    end
+    fprintf ('.') ;
 
     if (mod (trial, 10) == 1)
         m = 1 ;

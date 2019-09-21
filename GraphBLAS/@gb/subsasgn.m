@@ -37,7 +37,7 @@ function C = subsasgn (C, S, A)
 
 if (~isequal (S.type, '()'))
     error ('gb:unsupported', 'index type %s not supported', S.type) ;
-end     %#ok<UNRCH>
+end
 
 ndims = length (S.subs) ;
 if (ndims == 1)

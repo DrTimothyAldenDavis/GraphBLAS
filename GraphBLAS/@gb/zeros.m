@@ -11,19 +11,19 @@ function C = zeros (varargin)
 G = varargin {end} ;
 if (nargin == 4)
     if (~isequal (varargin {3}, 'like'))
-        error ('gb:error', 'usage: zeros (m, n, ''like'', G)') ;
-    end     %#ok<UNRCH>
+        gb_error ('usage: zeros (m, n, ''like'', G)') ;
+    end
     m = varargin {1} ;
     n = varargin {2} ;
 elseif (nargin == 3)
     if (~isequal (varargin {2}, 'like'))
-        error ('gb:error', 'usage: zeros ([m n], ''like'', G)') ;
-    end     %#ok<UNRCH>
+        gb_error ('usage: zeros ([m n], ''like'', G)') ;
+    end
     mn = varargin {1} ;
     m = mn (1) ;
     n = mn (2) ;
 else
-    error ('gb:error', 'usage: zeros (m, n, ''like'', G)') ;
+    gb_error ('usage: zeros (m, n, ''like'', G)') ;
 end
 
 C = gb (m, n, gb.type (G)) ;
