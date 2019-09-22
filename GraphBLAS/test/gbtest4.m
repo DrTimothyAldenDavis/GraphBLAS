@@ -25,7 +25,10 @@ for k1 = 1:length (ops)
                 gb.semiringinfo (semiring) ;
                 gb.semiringinfo (s, type) ;
                 nsemirings = nsemirings + 1 ;
-            catch me
+            catch
+                % this is an error, but it is expected since not all
+                % combinations operators and types can be used to construct a
+                % valid semiring.
             end
         end
     end

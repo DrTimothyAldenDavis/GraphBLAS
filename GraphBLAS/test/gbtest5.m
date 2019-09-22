@@ -71,50 +71,6 @@ end
 
 fprintf ('testing error handling (errors expected):\n') ;
 
-clear d
-d.in0 = 'crud'
-try
-    gb.descriptorinfo (d) ;
-    ok = false ;
-catch me
-    ok = true ;
-    me
-end
-assert (ok) ;
-
-clear d
-d.in0 = 42
-try
-    gb.descriptorinfo (d) ;
-    ok = false ;
-catch me
-    ok = true ;
-    me
-end
-assert (ok) ;
-
-clear d
-d.nthreads = 'something'
-try
-    gb.descriptorinfo (d) ;
-    ok = false ;
-catch me
-    ok = true ;
-    me
-end
-assert (ok) ;
-
-clear d
-d.chunk = 'something'
-try
-    gb.descriptorinfo (d) ;
-    ok = false ;
-catch me
-    ok = true ;
-    me
-end
-assert (ok) ;
-
 gb.descriptorinfo
 
 ntrials

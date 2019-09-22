@@ -38,33 +38,6 @@ for k = 1:6
     assert (isequal (L0, double (L2))) ;
 end
 
-ok = true ;
-try
-    L = gb.laplacian (G, 'uint8') ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-ok = true ;
-try
-    L = gb.laplacian (A, 'double', 'check') ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-ok = true ;
-try
-    L = gb.laplacian (S + speye (n), 'double', 'check') ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
 
 fprintf ('gbtest61: all tests passed\n') ;
 

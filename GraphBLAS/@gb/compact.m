@@ -9,7 +9,8 @@ function [C, I, J] = compact (A, id)
 % and gb.compact (A) are identical.
 %
 % To remove rows and colums with no entries, or with only entries equal to
-% a particular scalar value, use C = gb.compact (A, id).
+% a particular scalar value, use C = gb.compact (A, id), where id is the
+% scalar value.
 %
 % With two additional output arguments, [C,I,J] = gb.compact (A, ...),
 % the indices of non-empty rows and columns of A are returned, so that

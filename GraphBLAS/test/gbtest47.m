@@ -41,7 +41,8 @@ assert (c1 == c2) ;
 try
     x = vpa (1) ;
     have_symbolic = true ;
-catch me
+catch
+    % symbolic toolbox not available
     have_symbolic = false ;
 end
 

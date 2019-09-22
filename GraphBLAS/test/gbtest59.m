@@ -22,24 +22,5 @@ A = A (2:2:end) ;
 G = G (2:2:end) ;
 assert (isequal (G, A)) ;
 
-ok = true ;
-G = gb (magic (2)) ;
-try
-    G = G (2:end)
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok)
-
-ok = true ;
-try
-    G = G (2:end, 1:end, 1:end)
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok)
-
 fprintf ('gbtest59: all tests passed\n') ;
 

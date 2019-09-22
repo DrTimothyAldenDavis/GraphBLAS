@@ -1,67 +1,69 @@
 function gbtest63
-%GBTEST63 test gb.ktruss and gb.tricount
+%GBTEST63 test gb.incidence
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 
-load west0479 ;
-A = gb.offdiag (west0479) ;
-A = A+A' ;
-C3a  = gb.ktruss (A) ;
-C3  = gb.ktruss (A, 3) ;
-assert (isequal (C3a, C3)) ;
-C3  = gb.ktruss (A, 3, 'check') ;
-assert (isequal (C3a, C3)) ;
+for trial = 1:2
 
-ntriangles = sum (C3, 'all') / 6 ;
+    if (trial == 1)
+        ij = [
+        4 1
+        1 2
+        4 3
+        6 3
+        7 3
+        1 4
+        7 4
+        2 5
+        7 5
+        3 6
+        5 6
+        2 7 ] ;
+        W = sparse (ij (:,1), ij (:,2), ones (12,1), 8, 8) ;
+    else
+        load west0479 ;
+        W = west0479 ;
+    end
 
-C4a = gb.ktruss (A, 4) ;
-C4b = gb.ktruss (C3, 4) ;          % this is faster
-assert (isequal (C4a, C4b)) ;
+    W = spones (gb.offdiag (W)) ;
+    A = digraph (W) ;
+    G = gb (W) ;
 
-nt2 = gb.tricount (A) ;
-assert (ntriangles == nt2) ;
-assert (ntriangles == 235) ;
+    E0 = incidence (A) ;
+    E1 = gb.incidence (G) ;
+    % E0 and E1 are the same, except the columns are in different orders
+    E0 = sortrows (E0')' ;
+    E1 = double (E1) ;
+    E1 = sortrows (E1')' ;
+    assert (isequal (E0, E1)) ;
 
-ok = true ;
-try
-    C = gb.ktruss (A, 2) ;
-    ok = false ;
-catch expected_error
-    expected_error
+    E1 = gb.incidence (G, 'int8') ;
+    assert (isequal (gb.type (E1), 'int8')) ;
+    E1 = double (E1) ;
+    E1 = sortrows (E1')' ;
+    assert (isequal (E0, E1)) ;
+
+    W = W+W' ;
+    A = graph (W) ;
+    G = gb (W) ;
+
+    E0 = incidence (A) ;
+    E1 = gb.incidence (G, 'upper') ;
+    E0 = sortrows (E0')' ;
+    E1 = double (E1) ;
+    E1 = sortrows (E1')' ;
+    assert (isequal (E0, E1)) ;
+
+    E1 = gb.incidence (G, 'lower') ;
+    E1 = -E1 ;
+    E1 = double (E1) ;
+    E1 = sortrows (E1')' ;
+    assert (isequal (E0, E1)) ;
+
 end
-assert (ok) ;
-
-ok = true ;
-try
-    C = gb.ktruss (rand (3,4)) ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-A = west0479 ;
-ok = true ;
-try
-    C = gb.ktruss (A, 3, 'check') ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-A = A+A' ;
-ok = true ;
-try
-    C = gb.ktruss (A, 3, 'check') ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
 
 fprintf ('gbtest63: all tests passed\n') ;
 

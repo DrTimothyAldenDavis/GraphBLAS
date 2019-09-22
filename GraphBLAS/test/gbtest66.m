@@ -1,87 +1,87 @@
 function gbtest66
-%GBTEST66 test gb.incidence
+%GBTEST66 test graph
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
 
-ok = true ;
-try
-    E = gb.incidence (ones (4,3)) ;
-    ok = false ;
-catch expected_error
-    expected_error
+n = 32 ;
+for trial = 1:40
+    fprintf ('.') ;
+
+    A = sprand (n, n, 0.5) ;
+    A = A + A' ;
+    G = gb (A) ;
+
+    D1 = graph (A) ;
+    D2 = graph (G) ;
+    assert (isequal (D1, D2)) ;
+
+    D1 = graph (A, 'upper') ;
+    D2 = graph (G, 'upper') ;
+    D3 = graph (triu (A), 'upper') ;
+    D4 = graph (triu (G), 'upper') ;
+    assert (isequal (D1, D2)) ;
+    assert (isequal (D1, D3)) ;
+    assert (isequal (D1, D4)) ;
+
+    D1 = graph (A, 'lower') ;
+    D2 = graph (G, 'lower') ;
+    D3 = graph (tril (A), 'lower') ;
+    D4 = graph (tril (G), 'lower') ;
+    assert (isequal (D1, D2)) ;
+    assert (isequal (D1, D3)) ;
+    assert (isequal (D1, D4)) ;
+
+    D1 = graph (A, 'omitselfloops') ;
+    D2 = graph (G, 'omitselfloops') ;
+    assert (isequal (D1, D2)) ;
+
+    D1 = graph (A, 'lower', 'omitselfloops') ;
+    D2 = graph (G, 'lower', 'omitselfloops') ;
+    D3 = graph (tril (A), 'lower', 'omitselfloops') ;
+    D4 = graph (tril (G), 'lower', 'omitselfloops') ;
+    assert (isequal (D1, D2)) ;
+    assert (isequal (D1, D3)) ;
+    assert (isequal (D1, D4)) ;
+
+    D1 = graph (A, 'upper', 'omitselfloops') ;
+    D2 = graph (G, 'upper', 'omitselfloops') ;
+    D3 = graph (triu (A), 'upper', 'omitselfloops') ;
+    D4 = graph (triu (G), 'upper', 'omitselfloops') ;
+    assert (isequal (D1, D2)) ;
+    assert (isequal (D1, D3)) ;
+    assert (isequal (D1, D4)) ;
+
+    D1 = graph (logical (A)) ;
+    D2 = graph (gb (A, 'logical')) ;
+    assert (isequal (D1, D2)) ;
+
+    D1 = graph (logical (A), 'omitselfloops') ;
+    D2 = graph (gb (A, 'logical'), 'omitselfloops') ;
+    assert (isequal (D1, D2)) ;
 end
-assert (ok) ;
 
-ok = true ;
-try
-    E = gb.incidence (ones (4), 'gunk') ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
+types = gbtest_types ;
 
-for trial = 1:2
+for k = 1:length (types)
+    type = types {k} ;
 
-    if (trial == 1)
-        ij = [
-        4 1
-        1 2
-        4 3
-        6 3
-        7 3
-        1 4
-        7 4
-        2 5
-        7 5
-        3 6
-        5 6
-        2 7 ] ;
-        W = sparse (ij (:,1), ij (:,2), ones (12,1), 8, 8) ;
+    A = cast (rand (4), type) ;
+    A = A + A' ;
+    G = gb (A) ;
+
+    if (isequal (type, 'double') || isequal (type, 'single') || ...
+        isequal (type, 'logical'))
+        D1 = graph (A) ;
     else
-        load west0479 ;
-        W = west0479 ;
+        D1 = graph (double (A)) ;
     end
 
-    W = spones (gb.offdiag (W)) ;
-    A = digraph (W) ;
-    G = gb (W) ;
-
-    E0 = incidence (A) ;
-    E1 = gb.incidence (G) ;
-    % E0 and E1 are the same, except the columns are in different orders
-    E0 = sortrows (E0')' ;
-    E1 = double (E1) ;
-    E1 = sortrows (E1')' ;
-    assert (isequal (E0, E1)) ;
-
-    E1 = gb.incidence (G, 'int8') ;
-    assert (isequal (gb.type (E1), 'int8')) ;
-    E1 = double (E1) ;
-    E1 = sortrows (E1')' ;
-    assert (isequal (E0, E1)) ;
-
-    W = W+W' ;
-    A = graph (W) ;
-    G = gb (W) ;
-
-    E0 = incidence (A) ;
-    E1 = gb.incidence (G, 'upper') ;
-    E0 = sortrows (E0')' ;
-    E1 = double (E1) ;
-    E1 = sortrows (E1')' ;
-    assert (isequal (E0, E1)) ;
-
-    E1 = gb.incidence (G, 'lower') ;
-    E1 = -E1 ;
-    E1 = double (E1) ;
-    E1 = sortrows (E1')' ;
-    assert (isequal (E0, E1)) ;
-
+    D2 = graph (G) ;
+    assert (isequal (D1, D2)) ;
 end
 
-fprintf ('gbtest66: all tests passed\n') ;
+fprintf ('\ngbtest66: all tests passed\n') ;
 

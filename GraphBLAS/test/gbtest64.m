@@ -47,14 +47,5 @@ r1 = gb.pagerank (G, struct ('weighted', true)) ;
 r2 = gb.pagerank (R, struct ('weighted', true)) ;
 assert (norm (r1-r2) < 1e-12) ;
 
-ok = true ;
-try
-    r = gb.pagerank (rand (3,4)) ;
-    ok = false ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
 fprintf ('gbtest64: all tests passed\n') ;
 

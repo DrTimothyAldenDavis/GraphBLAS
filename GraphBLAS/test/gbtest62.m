@@ -84,12 +84,10 @@ for trial = 1:40
 
     C0 = A ./ B ;
     C1 = GA ./ GB ;
-    assert (isequal (isnan (C0), isnan (C1))) ;
     assert (isequal (gb.prune (C0, nan), gb.prune (C1, nan))) ;
 
     C0 = A .\ B ;
     C1 = GA .\ GB ;
-    assert (isequal (isnan (C0), isnan (C1))) ;
     assert (isequal (gb.prune (C0, nan), gb.prune (C1, nan))) ;
 
 end

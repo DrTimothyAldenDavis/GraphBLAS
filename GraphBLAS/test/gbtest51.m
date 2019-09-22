@@ -57,19 +57,8 @@ for k = 1:nfiles
     assert (c == valid_count (k)) ;
 end
 
-% error handling
 c = gb.tricount (G, 'check') ;
 assert (c == valid_count (end)) ;
-
-A = magic (5) ;
-G (5,1) = 0 ;
-G = gb.prune (G) ;
-try
-    % this should fail
-    c = gb.tricount (G, 'check') ;
-    assert (false) ;
-catch expected_error
-end
 
 fprintf ('\ngbtest51: all tests passed\n') ;
 

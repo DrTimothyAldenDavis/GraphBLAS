@@ -49,7 +49,10 @@ also be found in GraphBLAS/GraphBLAS/demo/html, in both PDF and HTML formats.
 
 To test your installation, go to GraphBLAS/GraphBLAS/test and type:
 
-    gbtestall
+    gbtest
 
-If everything is successful, it should report 'gbtestall: all tests passed'.
+If everything is successful, it should report 'gbtest: all tests passed'.
+Note that gbtest tests all features of the MATLAB interface to
+SuiteSparse/GraphBLAS, including error handling, so you can expect to see
+error messages during the test.  This is expected.
 

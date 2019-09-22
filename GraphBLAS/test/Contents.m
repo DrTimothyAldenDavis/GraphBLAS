@@ -1,8 +1,6 @@
 % SuiteSparse/GraphBLAS/GraphBLAS/test: tests for GraphBLAS MATLAB interface
 %
-% To run all the tests, just use gbtestall.
-%
-%  gbtestall - test GraphBLAS MATLAB interface
+%  gbtest    - test GraphBLAS MATLAB interface (runs all tests listed below)
 %
 %  gbtest0   - test gb.clear
 %  gbtest1   - test gb
@@ -54,7 +52,7 @@
 %  gbtest47  - test gb.entries, gb.nonz, numel
 %  gbtest48  - test gb.apply
 %  gbtest49  - test gb.prune
-%  gbtest50  - test gb.bfs
+%  gbtest50  - test gb.ktruss and gb.tricount
 %  gbtest51  - test gb.tricount
 %  gbtest52  - test gb.format
 %  gbtest53  - test gb.monoidinfo
@@ -67,10 +65,12 @@
 %  gbtest60  - test issigned
 %  gbtest61  - test gb.laplacian
 %  gbtest62  - test ldivide, rdivide, mldivide, mrdivide
-%  gbtest63  - test gb.ktruss and gb.tricount
+%  gbtest63  - test gb.incidence
 %  gbtest64  - test gb.pagerank
 %  gbtest65  - test gb.mis
-%  gbtest66  - test gb.incidence
+%  gbtest66  - test graph
+%  gbtest67  - test digraph
+%  gbtest99  - test gb.bfs and plot (graph (G))
 %
 % Utility functions:
 %
@@ -80,5 +80,4 @@
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
-
 

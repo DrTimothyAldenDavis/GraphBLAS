@@ -25,7 +25,7 @@ if (nargin == 1)
     else
         gb_error ('invalid dimensions') ;
     end
-elseif (nargin == 2)
+else
     m = arg1 ;
     n = arg2 ;
 end

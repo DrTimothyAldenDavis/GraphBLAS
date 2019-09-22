@@ -7,46 +7,6 @@ function gbtest65
 rng ('default') ;
 load west0479 ;
 
-ok = true ;
-try
-    iset = gb.mis (ones (3,4)) ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-ok = true ;
-try
-    iset = gb.mis (ones (3), 'gunk') ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-ok = true ;
-try
-    iset = gb.mis (ones (3), 'check') ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-ok = true ;
-try
-    iset = gb.mis (gb.offdiag (west0479), 'check') ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
-ok = true ;
-try
-    iset = gb.mis (ones (3)) ;
-catch expected_error
-    expected_error
-end
-assert (ok) ;
-
 A = gb.offdiag (spones (west0479)) ;
 A = A+A' ;
 

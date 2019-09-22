@@ -13,7 +13,7 @@ function C = isinf (G)
 [m, n] = size (G) ;
 if (isfloat (G) && gb.entries (G) > 0)
     [i, j, x] = gb.extracttuples (G, struct ('kind', 'zero-based')) ;
-    C = gb.prune (gb.build (i, j, isinf (x), m, n)) ;
+    C = gb.build (i, j, isinf (x), m, n) ;
 else
     % C is all false
     C = gb (m, n, 'logical') ;

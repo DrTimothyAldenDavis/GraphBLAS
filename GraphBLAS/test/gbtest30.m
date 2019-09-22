@@ -51,7 +51,6 @@ middle = ceil (median (I))
 % this is very fast:
 fprintf ('GraphBLAS colon notation:\nmiddle = %g\n\n', middle) ;
 fprintf ('H2 = H ({1, middle}, {1, middle}) works, and is very fast:\n') ;
-
 tic
 H2 = H ({1, middle}, {1, middle})
 toc
@@ -60,9 +59,9 @@ toc
 try
     fprintf ('H2 = H (1:middle, 1:middle) will fail:\n') ;
     H2 = H (1:middle, 1:middle)
-catch me
+catch expected_error
     fprintf ('MATLAB colon notation 1:%d fails (too big!)\n\n', middle) ;
-    expected_error = me
+    expected_error
 end
 
 fprintf ('gbtest30: all tests passed\n') ;

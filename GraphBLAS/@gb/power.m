@@ -62,5 +62,4 @@ end
 [~, ~, Ax] = gb.extracttuples (A) ;
 [I, J, Bx] = gb.extracttuples (B) ;
 C = gb.prune (gb.build (I, J, (Ax .^ Bx), m, n)) ;
-end
 
