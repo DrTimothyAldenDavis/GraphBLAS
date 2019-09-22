@@ -37,7 +37,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
     mxArray *F ;
     void *X = (*X_handle) ;
     if (X == NULL)
-    {
+    { 
         // A GrB_Matrix C has a null C->x array, if C has no entries.  Since
         // C has already been expanded to a full matrix, C->x can be NULL
         // only if nrows or ncols is zero.
@@ -46,57 +46,57 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
     }
 
     if (type == GrB_BOOL)
-    {
+    { 
         F = mxCreateLogicalMatrix (0, 0) ;
         mxSetData (F, X) ;
     }
     else if (type == GrB_FP32)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxSINGLE_CLASS, mxREAL) ;
         mxSetSingles (F, X) ;
     }
     else if (type == GrB_FP64)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxDOUBLE_CLASS, mxREAL) ;
         mxSetDoubles (F, X) ;
     }
     else if (type == GrB_INT8)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxINT8_CLASS, mxREAL) ;
         mxSetInt8s (F, X) ;
     }
     else if (type == GrB_INT16)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxINT16_CLASS, mxREAL) ;
         mxSetInt16s (F, X) ;
     }
     else if (type == GrB_INT32)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxINT32_CLASS, mxREAL) ;
         mxSetInt32s (F, X) ;
     }
     else if (type == GrB_INT64)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxINT64_CLASS, mxREAL) ;
         mxSetInt64s (F, X) ;
     }
     else if (type == GrB_UINT8)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxUINT8_CLASS, mxREAL) ;
         mxSetUint8s (F, X) ;
     }
     else if (type == GrB_UINT16)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxUINT16_CLASS, mxREAL) ;
         mxSetUint16s (F, X) ;
     }
     else if (type == GrB_UINT32)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxUINT32_CLASS, mxREAL) ;
         mxSetUint32s (F, X) ;
     }
     else if (type == GrB_UINT64)
-    {
+    { 
         F = mxCreateNumericMatrix (0, 0, mxUINT64_CLASS, mxREAL) ;
         mxSetUint64s (F, X) ;
     }
@@ -108,7 +108,7 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
     }
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 

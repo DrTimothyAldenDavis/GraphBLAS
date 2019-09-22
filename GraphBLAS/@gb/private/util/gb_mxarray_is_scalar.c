@@ -13,7 +13,7 @@ bool gb_mxarray_is_scalar   // true if MATLAB array is a scalar
 (
     const mxArray *S
 )
-{
+{ 
 
     return (S != NULL && mxIsScalar (S) && mxIsNumeric (S) && !mxIsSparse (S)) ;
 }

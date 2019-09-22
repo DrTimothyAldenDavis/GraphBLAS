@@ -44,67 +44,67 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     if (xtype == GrB_BOOL)
-    {
+    { 
         bool *X = mxMalloc (s * sizeof (bool)) ;
         OK (GrB_Matrix_extractTuples_BOOL (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_BOOL) ;
     }
     else if (xtype == GrB_INT8)
-    {
+    { 
         int8_t *X = mxMalloc (s * sizeof (int8_t)) ;
         OK (GrB_Matrix_extractTuples_INT8 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_INT8) ;
     }
     else if (xtype == GrB_INT16)
-    {
+    { 
         int16_t *X = mxMalloc (s * sizeof (int16_t)) ;
         OK (GrB_Matrix_extractTuples_INT16 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_INT16) ;
     }
     else if (xtype == GrB_INT32)
-    {
+    { 
         int32_t *X = mxMalloc (s * sizeof (int32_t)) ;
         OK (GrB_Matrix_extractTuples_INT32 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_INT32) ;
     }
     else if (xtype == GrB_INT64)
-    {
+    { 
         int64_t *X = mxMalloc (s * sizeof (int64_t)) ;
         OK (GrB_Matrix_extractTuples_INT64 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_INT64) ;
     }
     else if (xtype == GrB_UINT8)
-    {
+    { 
         uint8_t *X = mxMalloc (s * sizeof (uint8_t)) ;
         OK (GrB_Matrix_extractTuples_UINT8 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_UINT8) ;
     }
     else if (xtype == GrB_UINT16)
-    {
+    { 
         uint16_t *X = mxMalloc (s * sizeof (uint16_t)) ;
         OK (GrB_Matrix_extractTuples_UINT16 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_UINT16) ;
     }
     else if (xtype == GrB_UINT32)
-    {
+    { 
         uint32_t *X = mxMalloc (s * sizeof (uint32_t)) ;
         OK (GrB_Matrix_extractTuples_UINT32 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_UINT32) ;
     }
     else if (xtype == GrB_UINT64)
-    {
+    { 
         uint64_t *X = mxMalloc (s * sizeof (uint64_t)) ;
         OK (GrB_Matrix_extractTuples_UINT64 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_UINT64) ;
     }
     else if (xtype == GrB_FP32)
-    {
+    { 
         float *X = mxMalloc (s * sizeof (float)) ;
         OK (GrB_Matrix_extractTuples_FP32 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_FP32) ;
     }
     else if (xtype == GrB_FP64)
-    {
+    { 
         double *X = mxMalloc (s * sizeof (double)) ;
         OK (GrB_Matrix_extractTuples_FP64 (NULL, NULL, X, &nvals, A)) ;
         pargout [0] = gb_export_to_mxfull (&X, nvals, 1, GrB_FP64) ;
@@ -118,7 +118,7 @@ void mexFunction
     }
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 

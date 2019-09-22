@@ -60,7 +60,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     GrB_Index *Item [3] = { NULL, NULL, NULL } ;
 
     for (int k = 0 ; k < len ; k++)
-    {
+    { 
         // convert I_cell {k} content to an integer list
         Item [k] = gb_mxarray_to_list (mxGetCell (I_cell, k),
             &Item_allocated [k], &Item_len [k], &Item_max [k]) ;
@@ -73,7 +73,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     GrB_Index *I ;
 
     if (len == 0)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // I = { }
@@ -85,7 +85,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
 
     }
     else if (len == 1)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // I = { list }
@@ -97,7 +97,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
 
     }
     else if (len == 2)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // I = { start, fini }, defining start:fini
@@ -137,7 +137,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         int64_t inc = Item [1][0] ;
 
         if (Item_allocated [1])
-        {
+        { 
             // the 2nd item in the list is inc, and if it was passed in as
             // a double scalar, it has been decremented.  So increment it to
             // get back to the correct value.
@@ -149,12 +149,12 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         if (Item_allocated [2]) gb_mxfree (& (Item [2])) ;
 
         if (inc < 0)
-        {
+        { 
             I [GxB_INC] = (GrB_Index) (-inc) ;
             (*ni) = GxB_BACKWARDS ;
         }
         else
-        {
+        { 
             I [GxB_INC] = (GrB_Index) (inc) ;
             (*ni) = GxB_STRIDE ;
         }

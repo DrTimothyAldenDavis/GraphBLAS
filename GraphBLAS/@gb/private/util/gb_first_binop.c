@@ -13,7 +13,7 @@ GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
 (
     const GrB_Type type
 )
-{
+{ 
 
     if      (type == GrB_BOOL)   return (GrB_FIRST_BOOL) ;
     else if (type == GrB_INT8)   return (GrB_FIRST_INT8) ;
@@ -33,7 +33,7 @@ GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
     }
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 

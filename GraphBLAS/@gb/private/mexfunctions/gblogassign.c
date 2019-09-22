@@ -119,7 +119,7 @@ void mexFunction
     OK (GrB_Matrix_nrows (&anrows, A)) ;
     OK (GrB_Matrix_ncols (&ancols, A)) ;
     if (mnz > 0)
-    {
+    { 
         CHECK_ERROR (anrows != mnz || ancols != 1, "A must be nnz(M)-by-1") ;
     }
 
@@ -156,47 +156,47 @@ void mexFunction
     OK (GxB_set (S, GxB_FORMAT, GxB_BY_COL)) ;
 
     if (atype == GrB_BOOL)
-    {
+    { 
         OK (GrB_Matrix_build_BOOL (S, Si, Sj, Ax, anz, GrB_LOR)) ;
     }
     else if (atype == GrB_INT8)
-    {
+    { 
         OK (GrB_Matrix_build_INT8 (S, Si, Sj, Ax, anz, GrB_PLUS_INT8)) ;
     }
     else if (atype == GrB_INT16)
-    {
+    { 
         OK (GrB_Matrix_build_INT16 (S, Si, Sj, Ax, anz, GrB_PLUS_INT16)) ;
     }
     else if (atype == GrB_INT32)
-    {
+    { 
         OK (GrB_Matrix_build_INT32 (S, Si, Sj, Ax, anz, GrB_PLUS_INT32)) ;
     }
     else if (atype == GrB_INT64)
-    {
+    { 
         OK (GrB_Matrix_build_INT64 (S, Si, Sj, Ax, anz, GrB_PLUS_INT64)) ;
     }
     else if (atype == GrB_UINT8)
-    {
+    { 
         OK (GrB_Matrix_build_UINT8 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT8)) ;
     }
     else if (atype == GrB_UINT16)
-    {
+    { 
         OK (GrB_Matrix_build_UINT16 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT16)) ;
     }
     else if (atype == GrB_UINT32)
-    {
+    { 
         OK (GrB_Matrix_build_UINT32 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT32)) ;
     }
     else if (atype == GrB_UINT64)
-    {
+    { 
         OK (GrB_Matrix_build_UINT64 (S, Si, Sj, Ax, anz, GrB_PLUS_UINT64)) ;
     }
     else if (atype == GrB_FP32)
-    {
+    { 
         OK (GrB_Matrix_build_FP32 (S, Si, Sj, Ax, anz, GrB_PLUS_FP32)) ;
     }
     else if (atype == GrB_FP64)
-    {
+    { 
         OK (GrB_Matrix_build_FP64 (S, Si, Sj, Ax, anz, GrB_PLUS_FP64)) ;
     }
     #ifdef GB_COMPLEX_TYPE
@@ -206,7 +206,7 @@ void mexFunction
     }
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 

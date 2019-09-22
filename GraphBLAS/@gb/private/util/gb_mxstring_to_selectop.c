@@ -13,7 +13,7 @@ GxB_SelectOp gb_mxstring_to_selectop    // return select operator from a string
 (
     const mxArray *mxstring             // MATLAB string
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

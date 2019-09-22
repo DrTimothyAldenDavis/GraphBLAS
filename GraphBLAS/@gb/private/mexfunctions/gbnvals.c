@@ -19,7 +19,7 @@ void mexFunction
     int nargin,
     const mxArray *pargin [ ]
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

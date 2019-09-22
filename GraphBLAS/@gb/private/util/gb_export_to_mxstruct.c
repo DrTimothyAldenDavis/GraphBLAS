@@ -92,7 +92,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // export the indices
     mxArray *Ai = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
     if (A->nzmax > 0)
-    {
+    { 
         mxSetN (Ai, A->nzmax) ;
         p = mxGetInt64s (Ai) ;
         gb_mxfree (&p) ;
@@ -104,7 +104,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // export the values as uint8
     mxArray *Ax = mxCreateNumericMatrix (1, 1, mxUINT8_CLASS, mxREAL) ;
     if (A->nzmax > 0)
-    {
+    { 
         mxSetN (Ax, A->nzmax * A->type_size) ;
         p = mxGetUint8s (Ax) ;
         gb_mxfree (&p) ;
@@ -117,14 +117,14 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     {
         // export the hyperlist
         if (A->nvec < A->plen)
-        {
+        { 
             // This is unused space in A->h; it might contain garbage, so
             // set it to zero to simplify the view of the MATLAB struct.
             A->h [A->nvec] = 0 ;
         }
         mxArray *Ah = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
         if (A->plen > 0)
-        {
+        { 
             mxSetN (Ah, A->plen) ;
             p = mxGetInt64s (Ah) ;
             gb_mxfree (&p) ;

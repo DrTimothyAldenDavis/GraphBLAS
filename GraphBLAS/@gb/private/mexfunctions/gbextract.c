@@ -64,15 +64,15 @@ void mexFunction
         {
             // a cell array is either I or J
             if (I_arg == -1)
-            {
+            { 
                 I_arg = k ;
             }
             else if (J_arg == -1)
-            {
+            { 
                 J_arg = k ;
             }
             else
-            {
+            { 
                 ERROR ("only 2D indexing is supported") ;
             }
         }
@@ -80,11 +80,11 @@ void mexFunction
         {
             // a string array is only the accum operator
             if (accum_arg == -1)
-            {
+            { 
                 accum_arg = k ;
             }
             else
-            {
+            { 
                 ERROR ("only a single accum operator string allowed") ;
             }
         }
@@ -92,7 +92,7 @@ void mexFunction
         {
             // a matrix argument is C, M, or A
             if (nmatrix_args >= 3)
-            {
+            { 
                 // at most 3 matrix inputs are allowed
                 ERROR (EXTRACT_USAGE) ;
             }
@@ -107,7 +107,7 @@ void mexFunction
     GrB_Matrix C = NULL, M = NULL, A = NULL ;
 
     if (nmatrix_args < 1)
-    {
+    { 
         // at least 1 matrix input is required
         ERROR (EXTRACT_USAGE) ;
     }
@@ -115,20 +115,20 @@ void mexFunction
     {
         // with 1 matrix argument: A.  Cin does not appear so neither can accum
         if (accum_arg >= 0)
-        {
+        { 
             // if both A and accum are present, then Cin must appear
             ERROR (EXTRACT_USAGE) ;
         }
         A = gb_get_shallow (pargin [matrix_arg [0]]) ;
     }
     else if (nmatrix_args == 2)
-    {
+    { 
         // with 2 matrix arguments: Cin and A, in that order
         C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         A = gb_get_shallow (pargin [matrix_arg [1]]) ;
     }
     else if (nmatrix_args == 3)
-    {
+    { 
         // with 3 matrix arguments: Cin, M, and A, in that order
         C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         M = gb_get_shallow (pargin [matrix_arg [1]]) ;
@@ -146,13 +146,13 @@ void mexFunction
     GrB_Index anrows, ancols ;
     bool A_transpose = (in0 == GrB_TRAN) ;
     if (A_transpose)
-    {
+    { 
         // T = AT (I,J) is to be extracted where AT = A'
         OK (GrB_Matrix_nrows (&ancols, A)) ;
         OK (GrB_Matrix_ncols (&anrows, A)) ;
     }
     else
-    {
+    { 
         // T = A (I,J) is to be extracted
         OK (GrB_Matrix_nrows (&anrows, A)) ;
         OK (GrB_Matrix_ncols (&ancols, A)) ;
@@ -168,13 +168,13 @@ void mexFunction
     bool I_allocated = false, J_allocated = false ;
 
     if (I_arg >= 0)
-    {
+    { 
         // I is present
         I = gb_mxcell_to_index (pargin [I_arg], anrows, &I_allocated, &ni) ;
     }
 
     if (J_arg >= 0)
-    {
+    { 
         // both I and J are present
         J = gb_mxcell_to_index (pargin [J_arg], ancols, &J_allocated, &nj) ;
     }
@@ -187,7 +187,7 @@ void mexFunction
     GrB_Type ctype = NULL ;
 
     if (C == NULL)
-    {
+    { 
         // Cin is not present: determine its size, same type as A.
         // T = A(I,J) or AT(I,J) will be extracted.
         // accum must be null
@@ -203,7 +203,7 @@ void mexFunction
         OK (GxB_set (C, GxB_FORMAT, fmt)) ;
     }
     else
-    {
+    { 
         // Cin appears; get its type
         OK (GxB_Matrix_type (&ctype, C)) ;
     }
@@ -215,7 +215,7 @@ void mexFunction
     // if accum appears, Cin must be present
     GrB_BinaryOp accum = NULL ;
     if (accum_arg >= 0)
-    {
+    { 
         accum = gb_mxstring_to_binop (pargin [accum_arg], ctype) ;
     }
 

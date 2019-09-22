@@ -30,7 +30,7 @@ void mexFunction
 
     int level = 3 ;
     if (nargin > 1)
-    {
+    { 
         CHECK_ERROR (!gb_mxarray_is_scalar (pargin [1]),
             "level must be a scalar") ;
         level = (int) mxGetScalar (pargin [1]) ;

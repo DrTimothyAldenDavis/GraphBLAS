@@ -54,7 +54,7 @@ void mexFunction
         gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (nargin == 4)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.mxm (semiring, A, B, desc)
@@ -67,7 +67,7 @@ void mexFunction
 
     }
     else if (nargin == 6 && mxIsChar (pargin [1]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.mxm (Cin, accum, semiring, A, B, desc)
@@ -83,7 +83,7 @@ void mexFunction
 
     }
     else if (nargin == 6 && !mxIsChar (pargin [1]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.mxm (Cin, M, semiring, A, B, desc)
@@ -98,7 +98,7 @@ void mexFunction
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.mxm (Cin, M, accum, semiring, A, B, desc)
@@ -145,12 +145,12 @@ void mexFunction
 
         // determine the type of C
         if (accum != NULL)
-        {
+        { 
             // if accum is present, use its ztype to determine the type of C
             OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
         }
         else
-        {
+        { 
             // otherwise, use the semiring's additive monoid as the type of C
             GrB_Monoid add_monoid ;
             OK (GxB_Semiring_add (&add_monoid, semiring)) ;

@@ -41,24 +41,24 @@ int64_t *gb_mxarray_to_list     // return List of integers
     //--------------------------------------------------------------------------
 
     if (*len == 0)
-    {
+    { 
         (*allocated) = true ;
         return ((int64_t *) mxCalloc (1, sizeof (int64_t))) ;
     }
     else if (class == mxINT64_CLASS)
-    {
+    { 
         // input list is int64; just return a shallow pointer
         (*allocated) = false ;
         return ((int64_t *) mxGetInt64s (mxList)) ;
     }
     else if (class == mxUINT64_CLASS)
-    {
+    { 
         // input list is uint64; just return a shallow pointer
         (*allocated) = false ;
         return ((int64_t *) mxGetUint64s (mxList)) ;
     }
     else if (class == mxDOUBLE_CLASS)
-    {
+    { 
         // allocate an index array and copy double to GrB_Index; also
         // convert from 1-based to 0-based
         int64_t *List = mxMalloc ((*len) * sizeof (int64_t)) ;
@@ -70,7 +70,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
         return (List) ;
     }
     else
-    {
+    { 
         ERROR ("integer array must be double, int64, or uint64") ;
     }
 }

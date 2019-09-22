@@ -20,7 +20,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
     GrB_Matrix A ;
 
     if (S == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // S is null; nothing to do
@@ -31,7 +31,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 
     }
     else if (type == NULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // make a deep copy of the input
@@ -42,7 +42,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // typecast the input to the requested type and format

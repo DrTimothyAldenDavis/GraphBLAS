@@ -36,28 +36,28 @@
 
 bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk)
-{
+{ 
     float aij = * ((float *) x) ;
     return (isnan (aij)) ;
 }
 
 bool gb_isnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk)
-{
+{ 
     double aij = * ((double *) x) ;
     return (isnan (aij)) ;
 }
 
 bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk)
-{
+{ 
     float aij = * ((float *) x) ;
     return (!isnan (aij)) ;
 }
 
 bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk)
-{
+{ 
     double aij = * ((double *) x) ;
     return (!isnan (aij)) ;
 }
@@ -93,7 +93,7 @@ void mexFunction
         gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (mxIsChar (pargin [0]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gbselect (op, A, desc)
@@ -109,7 +109,7 @@ void mexFunction
 
     }
     else if (mxIsChar (pargin [1]) && mxIsChar (pargin [2]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gbselect (Cin, accum, op, A, desc)
@@ -128,7 +128,7 @@ void mexFunction
 
     }
     else if (mxIsChar (pargin [2]) && !mxIsChar (pargin [3]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gbselect (Cin, M, op, A, desc)
@@ -146,7 +146,7 @@ void mexFunction
 
     }
     else if (mxIsChar (pargin [2]) && mxIsChar (pargin [3]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gbselect (Cin, M, accum, op, A, desc)
@@ -166,7 +166,7 @@ void mexFunction
 
     }
     else
-    {
+    { 
         ERROR ("usage: Cout = gb.select (Cin, M, accum, op, A, thunk, desc)") ;
     }
 
@@ -196,12 +196,12 @@ void mexFunction
 
         // determine the type of C
         if (accum != NULL)
-        {
+        { 
             // if accum is present, use its ztype to determine the type of C
             OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
         }
         else
-        {
+        { 
             // otherwise, C has the same type as A
             OK (GxB_Matrix_type (&ctype, A)) ;
         }
@@ -225,13 +225,13 @@ void mexFunction
         OK (GxB_Matrix_type (&thunk_type, thunk)) ;
         bool thunk_is_nan = false ;
         if (thunk_type == GrB_FP32)
-        {
+        { 
             float thunk_value = 0 ;
             OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
             thunk_is_nan = isnan (thunk_value) ;
         }
         else if (thunk_type == GrB_FP64)
-        {
+        { 
             double thunk_value = 0 ;
             OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
             thunk_is_nan = isnan (thunk_value) ;
@@ -246,27 +246,27 @@ void mexFunction
             GrB_Type atype ;
             OK (GxB_Matrix_type (&atype, A)) ;
             if (op == GxB_EQ_THUNK && atype == GrB_FP32)
-            {
+            { 
                 OK (GxB_SelectOp_new (&nan_test, gb_isnan32, GrB_FP32, NULL)) ;
             }
             else if (op == GxB_EQ_THUNK && atype == GrB_FP64)
-            {
+            { 
                 OK (GxB_SelectOp_new (&nan_test, gb_isnan64, GrB_FP64, NULL)) ;
             }
             else if (op == GxB_NE_THUNK && atype == GrB_FP32)
-            {
+            { 
                 OK (GxB_SelectOp_new (&nan_test, gb_isnotnan32, GrB_FP32,
                     NULL)) ;
             }
             else if (op == GxB_NE_THUNK && atype == GrB_FP64)
-            {
+            { 
                 OK (GxB_SelectOp_new (&nan_test, gb_isnotnan64, GrB_FP64,
                     NULL)) ;
             }
         }
 
         if (nan_test != NULL)
-        {
+        { 
             // use the new operator instead of the built-in one
             op = nan_test ;
             thnk = NULL ;

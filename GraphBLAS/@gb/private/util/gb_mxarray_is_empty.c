@@ -13,7 +13,7 @@ bool gb_mxarray_is_empty    // true if MATLAB array is NULL, or 2D and 0-by-0
 (
     const mxArray *S
 )
-{
+{ 
 
     return ((S == NULL)
         || ((mxGetNumberOfDimensions (S) == 2) &&

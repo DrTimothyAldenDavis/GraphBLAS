@@ -31,7 +31,7 @@ GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
     //--------------------------------------------------------------------------
 
     if (opstring == NULL || opstring [0] == '\0')
-    {
+    { 
         // no operator is present, or present and empty; this is not yet an
         // error, since many uses of GraphBLAS functions use an optional accum
         // operator.
@@ -48,7 +48,7 @@ GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
     char *op_name = opstring ;
     char *op_typename = NULL ;
     if (position [0] >= 0)
-    {
+    { 
         opstring [position [0]] = '\0' ;
         op_typename = opstring + position [0] + 1 ;
     }
@@ -59,11 +59,11 @@ GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
 
     GrB_Type type ;
     if (op_typename == NULL)
-    {
+    { 
         type = default_type ;
     }
     else
-    {
+    { 
         type = gb_string_to_type (op_typename) ;
     }
 

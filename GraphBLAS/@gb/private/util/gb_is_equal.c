@@ -30,7 +30,7 @@ bool gb_is_equal            // true if A == B, false if A ~= B
     OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&btype, B)) ;
     if (atype != btype)
-    {
+    { 
         // types differ
         return (false) ;
     }
@@ -52,7 +52,7 @@ bool gb_is_equal            // true if A == B, false if A ~= B
     else if (atype == gb_complex_type) op = ... ;
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 

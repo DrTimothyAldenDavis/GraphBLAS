@@ -35,7 +35,7 @@ void mexFunction
     GrB_Matrix C ;
 
     if (nargin == 1)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C = gb (A)
@@ -73,12 +73,12 @@ void mexFunction
                 //--------------------------------------------------------------
 
                 if (gb_mxarray_is_empty (pargin [0]))
-                {
+                { 
                     // TODO get the format of A
                     OK (GrB_Matrix_new (&C, type, 0, 0)) ;
                 }
                 else
-                {
+                { 
                     // get a shallow copy and then typecast it to type.
                     // use the same format as A
                     GrB_Matrix A = gb_get_shallow (pargin [0]) ;
@@ -89,7 +89,7 @@ void mexFunction
 
             }
             else if (fmt != GxB_NO_FORMAT)
-            {
+            { 
 
                 //--------------------------------------------------------------
                 // C = gb (A, format)
@@ -101,14 +101,14 @@ void mexFunction
 
             }
             else
-            {
+            { 
                 ERROR ("unknown type or format") ;
             }
 
         }
         else if (gb_mxarray_is_scalar (pargin [0]) &&
                  gb_mxarray_is_scalar (pargin [1]))
-        {
+        { 
 
             //------------------------------------------------------------------
             // C = gb (m, n)
@@ -125,7 +125,7 @@ void mexFunction
 
         }
         else
-        {
+        { 
             ERROR ("usage: C = gb(m,n), C = gb(A,type), or C = gb(A,format)") ;
         }
 
@@ -156,7 +156,7 @@ void mexFunction
             GxB_Format_Value fmt = gb_mxstring_to_format (pargin [2]) ;
 
             if (type != NULL)
-            {
+            { 
                 // create an m-by-n matrix of the desired type, no entries,
                 // use the default format.
                 OK (GrB_Matrix_new (&C, type, nrows, ncols)) ;
@@ -167,13 +167,13 @@ void mexFunction
 
             }
             else if (fmt != GxB_NO_FORMAT)
-            {
+            { 
                 // create an m-by-n double matrix of the desired format
                 OK (GrB_Matrix_new (&C, GrB_FP64, nrows, ncols)) ;
                 OK (GxB_set (C, GxB_FORMAT, fmt)) ;
             }
             else
-            {
+            { 
                 ERROR ("unknown type or format") ;
             }
 
@@ -190,28 +190,28 @@ void mexFunction
             GxB_Format_Value fmt = gb_mxstring_to_format (pargin [2]) ;
 
             if (type != NULL && fmt != GxB_NO_FORMAT)
-            {
+            { 
                 // C = gb (A, type, format)
             }
             else
-            {
+            { 
                 // C = gb (A, format, type)
                 fmt = gb_mxstring_to_format (pargin [1]) ;
                 type = gb_mxstring_to_type (pargin [2]) ;
             }
 
             if (type == NULL || fmt == GxB_NO_FORMAT)
-            {
+            { 
                 ERROR ("unknown type and/or format") ;
             }
 
             if (gb_mxarray_is_empty (pargin [0]))
-            {
+            { 
                 OK (GrB_Matrix_new (&C, type, 0, 0)) ;
                 OK (GxB_set (C, GxB_FORMAT, fmt)) ;
             }
             else
-            {
+            { 
                 // get a shallow copy, typecast it, and set the format
                 GrB_Matrix A = gb_get_shallow (pargin [0]) ;
                 C = gb_typecast (type, fmt, A) ;
@@ -219,7 +219,7 @@ void mexFunction
             }
         }
         else
-        {
+        { 
             ERROR ("unknown usage") ;
         }
 
@@ -246,18 +246,18 @@ void mexFunction
             GxB_Format_Value fmt = gb_mxstring_to_format (pargin [3]) ;
 
             if (type != NULL && fmt != GxB_NO_FORMAT)
-            {
+            { 
                 // C = gb (m, n, type, format)
             }
             else
-            {
+            { 
                 // C = gb (m, n, format, type)
                 fmt = gb_mxstring_to_format (pargin [2]) ;
                 type = gb_mxstring_to_type (pargin [3]) ;
             }
 
             if (type == NULL || fmt == GxB_NO_FORMAT)
-            {
+            { 
                 ERROR ("unknown type and/or format") ;
             }
 
@@ -266,13 +266,13 @@ void mexFunction
 
         }
         else
-        {
+        { 
             ERROR ("unknown usage") ;
         }
 
     }
     else
-    {
+    { 
         ERROR ("unknown usage") ;
     }
 

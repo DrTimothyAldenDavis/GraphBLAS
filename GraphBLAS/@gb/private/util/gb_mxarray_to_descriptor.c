@@ -31,7 +31,7 @@ static void get_descriptor
         mxArray *value = mxGetFieldByNumber (D_matlab, 0, fieldnumber) ;
 
         if (MATCH (fieldname, "nthreads"))
-        {
+        { 
 
             // nthreads must be a numeric scalar
             CHECK_ERROR (!gb_mxarray_is_scalar (value),
@@ -41,7 +41,7 @@ static void get_descriptor
 
         }
         else if (MATCH (fieldname, "chunk"))
-        {
+        { 
 
             // chunk must be a numeric scalar
             CHECK_ERROR (!gb_mxarray_is_scalar (value),
@@ -59,35 +59,35 @@ static void get_descriptor
 
             // convert the string to a Descriptor value, and set the value
             if (MATCH (s, "default"))
-            {
+            { 
                 OK (GxB_set (D, field, GxB_DEFAULT)) ;
             }
             else if (MATCH (s, "transpose"))
-            {
+            { 
                 OK (GxB_set (D, field, GrB_TRAN)) ;
             }
             else if (MATCH (s, "complement"))
-            {
+            { 
                 OK (GxB_set (D, field, GrB_SCMP)) ;
             }
             else if (MATCH (s, "replace"))
-            {
+            { 
                 OK (GxB_set (D, field, GrB_REPLACE)) ;
             }
             else if (MATCH (s, "gustavson"))
-            {
+            { 
                 OK (GxB_set (D, field, GxB_AxB_GUSTAVSON)) ;
             }
             else if (MATCH (s, "dot"))
-            {
+            { 
                 OK (GxB_set (D, field, GxB_AxB_DOT)) ;
             }
             else if (MATCH (s, "heap"))
-            {
+            { 
                 OK (GxB_set (D, field, GxB_AxB_HEAP)) ;
             }
             else
-            {
+            { 
                 // the string must be one of the strings listed above
                 ERROR ("unrecognized descriptor value") ;
             }
@@ -117,7 +117,7 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 
     // a null descriptor is OK; the method will use defaults
     if (gb_mxarray_is_empty (D_matlab))
-    {
+    { 
         return (NULL) ;
     }
 
@@ -151,27 +151,27 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
         char s [LEN+2] ;
         gb_mxstring_to_string (s, LEN, mxkind, "kind") ;
         if (MATCH (s, "gb") || MATCH (s, "default"))
-        {
+        { 
             (*kind) = KIND_GB ;
         }
         else if (MATCH (s, "sparse"))
-        {
+        { 
             (*kind) = KIND_SPARSE ;
         }
         else if (MATCH (s, "full"))
-        {
+        { 
             (*kind) = KIND_FULL ;
         }
         else if (MATCH (s, "zero-based"))
-        {
+        { 
             (*kind) = KIND_0BASED ;
         }
         else if (MATCH (s, "one-based"))
-        {
+        { 
             (*kind) = KIND_1BASED ;
         }
         else
-        {
+        { 
             ERROR ("invalid descriptor.kind") ;
         }
     }
@@ -186,7 +186,7 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
     {
         (*fmt) = gb_mxstring_to_format (mxfmt) ;
         if ((*fmt) == GxB_NO_FORMAT)
-        {
+        { 
             ERROR ("unknown format") ;
         }
     }

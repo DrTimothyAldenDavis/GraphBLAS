@@ -51,7 +51,7 @@ void mexFunction
         gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (nargin == 4)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.gbkron (op, A, B, desc)
@@ -64,7 +64,7 @@ void mexFunction
 
     }
     else if (nargin == 6 && mxIsChar (pargin [1]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.gbkron (Cin, accum, op, A, B, desc)
@@ -80,7 +80,7 @@ void mexFunction
 
     }
     else if (nargin == 6 && !mxIsChar (pargin [1]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.gbkron (Cin, M, op, A, B, desc)
@@ -95,7 +95,7 @@ void mexFunction
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.gbkron (Cin, M, accum, op, A, B, desc)
@@ -132,22 +132,22 @@ void mexFunction
         // get the size of A and B
         GrB_Index anrows, ancols, bnrows, bncols ;
         if (A_transpose)
-        {
+        { 
             OK (GrB_Matrix_nrows (&ancols, A)) ;
             OK (GrB_Matrix_ncols (&anrows, A)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_nrows (&anrows, A)) ;
             OK (GrB_Matrix_ncols (&ancols, A)) ;
         }
         if (B_transpose)
-        {
+        { 
             OK (GrB_Matrix_nrows (&bncols, B)) ;
             OK (GrB_Matrix_ncols (&bnrows, B)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_nrows (&bnrows, B)) ;
             OK (GrB_Matrix_ncols (&bncols, B)) ;
         }
@@ -158,12 +158,12 @@ void mexFunction
 
         // determine the type of C
         if (accum != NULL)
-        {
+        { 
             // if accum is present, use its ztype to determine the type of C
             OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
         }
         else
-        {
+        { 
             // otherwise, use the ztype of the op as the type of C
             OK (GxB_BinaryOp_ztype (&ctype, op)) ;
         }

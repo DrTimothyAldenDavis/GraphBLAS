@@ -28,7 +28,7 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     OK (GrB_Matrix_nrows (&nrows1, A)) ;
     OK (GrB_Matrix_nrows (&nrows2, B)) ;
     if (nrows1 != nrows2)
-    {
+    { 
         // # of rows differ
         return (false) ;
     }
@@ -36,7 +36,7 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     OK (GrB_Matrix_ncols (&ncols1, A)) ;
     OK (GrB_Matrix_ncols (&ncols2, B)) ;
     if (ncols1 != ncols2)
-    {
+    { 
         // # of cols differ
         return (false) ;
     }
@@ -45,14 +45,14 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     OK (GrB_Matrix_nvals (&nvals1, A)) ;
     OK (GrB_Matrix_nvals (&nvals2, B)) ;
     if (nvals1 != nvals2)
-    {
+    { 
         // # of entries differ
         return (false) ;
     }
 
     // check if A and B both have no entries
     if (nvals1 == 0)
-    {
+    { 
         // A and B are empty matrices of the same size and type
         return (true) ;
     }
@@ -68,7 +68,7 @@ bool gb_is_all              // true if op (A,B) is all true, false otherwise
     // ensure C has the same number of entries as A and B
     OK (GrB_Matrix_nvals (&nvals, C)) ;
     if (nvals != nvals1)
-    {
+    { 
         // pattern of A and B are different
         GrB_free (&C) ;
         return (false) ;

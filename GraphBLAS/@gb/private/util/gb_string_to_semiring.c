@@ -26,7 +26,7 @@ GrB_Semiring gb_string_to_semiring      // return a semiring from a string
     //--------------------------------------------------------------------------
 
     if (semiring_string == NULL || semiring_string [0] == '\0')
-    {
+    { 
         // no semiring is present, or present and empty; this is not yet an
         // error, since the caller may have a default semiring to use instead.
         return (NULL) ;
@@ -51,7 +51,7 @@ GrB_Semiring gb_string_to_semiring      // return a semiring from a string
     char *mult_name = semiring_string + position [0] + 1 ;
     char *mult_typename = NULL ;
     if (position [1] >= 0)
-    {
+    { 
         semiring_string [position [1]] = '\0' ;
         mult_typename = semiring_string + position [1] + 1 ;
     }
@@ -62,11 +62,11 @@ GrB_Semiring gb_string_to_semiring      // return a semiring from a string
 
     GrB_Type mult_type ;
     if (mult_typename == NULL)
-    {
+    { 
         mult_type = default_type ;
     }
     else
-    {
+    { 
         mult_type = gb_string_to_type (mult_typename) ;
     }
 

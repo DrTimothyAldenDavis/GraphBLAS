@@ -37,11 +37,11 @@ void gb_matrix_assign_scalar
         bool x = false ;
         OK2 (GrB_Matrix_extractElement_BOOL (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_BOOL (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_BOOL (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -50,11 +50,11 @@ void gb_matrix_assign_scalar
         int8_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_INT8 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_INT8 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_INT8 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -63,11 +63,11 @@ void gb_matrix_assign_scalar
         int16_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_INT16 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_INT16 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_INT16 (C, M, op, x, I, ni, J, nj, desc));
         }
     }
@@ -76,11 +76,11 @@ void gb_matrix_assign_scalar
         int32_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_INT32 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_INT32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_INT32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -89,11 +89,11 @@ void gb_matrix_assign_scalar
         int64_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_INT64 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_INT64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_INT64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -102,11 +102,11 @@ void gb_matrix_assign_scalar
         uint8_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_UINT8 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_UINT8 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_UINT8 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -115,11 +115,11 @@ void gb_matrix_assign_scalar
         uint16_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_UINT16 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_UINT16 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_UINT16 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -128,11 +128,11 @@ void gb_matrix_assign_scalar
         uint32_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_UINT32 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_UINT32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_UINT32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -141,11 +141,11 @@ void gb_matrix_assign_scalar
         uint64_t x = 0 ;
         OK2 (GrB_Matrix_extractElement_UINT64 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_UINT64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_UINT64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -154,11 +154,11 @@ void gb_matrix_assign_scalar
         float x = 0 ;
         OK2 (GrB_Matrix_extractElement_FP32 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_FP32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_FP32 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -167,11 +167,11 @@ void gb_matrix_assign_scalar
         double x = 0 ;
         OK2 (GrB_Matrix_extractElement_FP64 (&x, A, 0, 0)) ;
         if (do_subassign)
-        {
+        { 
             OK (GxB_Matrix_subassign_FP64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_Matrix_assign_FP64 (C, M, op, x, I, ni, J, nj, desc)) ;
         }
     }
@@ -191,7 +191,7 @@ void gb_matrix_assign_scalar
     }
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 }

@@ -21,7 +21,7 @@ GrB_Monoid gb_mxstring_to_monoid        // return monoid from a string
     //--------------------------------------------------------------------------
 
     if (gb_mxarray_is_empty (mxstring))
-    {
+    { 
         ERROR ("monoid is missing") ;
         return (NULL) ;
     }

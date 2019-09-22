@@ -40,7 +40,7 @@ void mexFunction
 
     GrB_Type type = NULL ;
     if (nargin == 2)
-    {
+    { 
         type = gb_mxstring_to_type (pargin [1]) ;
         CHECK_ERROR (type == NULL, "unknown type") ;
     }

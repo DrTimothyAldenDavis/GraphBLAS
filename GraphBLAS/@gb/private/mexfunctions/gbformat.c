@@ -32,7 +32,7 @@ void mexFunction
     GxB_Format_Value fmt ;
 
     if (nargin == 0)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // format = gb.format
@@ -46,7 +46,7 @@ void mexFunction
     {
 
         if (mxIsChar (pargin [0]))
-        {
+        { 
 
             //------------------------------------------------------------------
             // gb.format (format)
@@ -58,7 +58,7 @@ void mexFunction
 
         }
         else
-        {
+        { 
 
             //------------------------------------------------------------------
             // gb.format (G)
@@ -76,11 +76,11 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     if (fmt == GxB_BY_ROW)
-    {
+    { 
         pargout [0] = mxCreateString ("by row") ;
     }
     else
-    {
+    { 
         pargout [0] = mxCreateString ("by col") ;
     }
 }

@@ -43,11 +43,11 @@ void mexFunction
 
     GrB_Matrix type ;
     if (nargin > 1)
-    {
+    { 
         type = gb_mxstring_to_type (pargin [1]) ;
     }
     else
-    {
+    { 
         // the type of C defaults to the type of A
         OK (GxB_Matrix_type (&type, A)) ;
     }
@@ -58,11 +58,11 @@ void mexFunction
 
     GrB_Matrix id ;
     if (nargin > 2)
-    {
+    { 
         id = gb_get_shallow (pargin [2]) ;
     }
     else
-    {
+    { 
         // Assume the identity is zero, of the same type as C.
         // The format does not matter, since only id (0,0) will be used.
         OK (GrB_Matrix_new (&id, type, 1, 1)) ;
@@ -76,7 +76,7 @@ void mexFunction
     GxB_Format_Value fmt = GxB_NO_FORMAT ;
     GrB_Descriptor desc = NULL ;
     if (nargin > 3)
-    {
+    { 
         desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
     }
 

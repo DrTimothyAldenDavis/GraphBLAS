@@ -40,7 +40,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     GrB_Matrix A ;
 
     if (gb_mxarray_is_empty (X))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // matrix is empty
@@ -52,7 +52,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
     }
     else if (mxIsStruct (X))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // construct a shallow GrB_Matrix copy from a MATLAB struct
@@ -110,7 +110,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         A->h = NULL ;
         if (A->is_hyper)
-        {
+        { 
             // get the hyperlist
             mxArray *Ah = mxGetField (X, 0, "h") ;
             IF (Ah == NULL, ".h missing") ;
@@ -147,14 +147,14 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // get Xp, Xi, nzmax, or create them
         GrB_Index *Xp, *Xi, nzmax ;
         if (X_is_sparse)
-        {
+        { 
             // get the nzmax, Xp, and Xi from the MATLAB sparse matrix X
             nzmax = (GrB_Index) mxGetNzmax (X) ;
             Xp = (GrB_Index *) mxGetJc (X) ;
             Xi = (GrB_Index *) mxGetIr (X) ;
         }
         else
-        {
+        { 
             // X is a MATLAB dense matrix; create a partially shallow
             // GrB_Matrix copy by allocating the row indices Xi and pointers Xp
             // but keeping Xx shallow.
@@ -167,7 +167,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         // get the numeric data
         void *Xx = NULL ;
         if (type == GrB_FP64)
-        {
+        { 
             // MATLAB sparse or dense double matrix
             Xx = mxGetDoubles (X) ;
         }
@@ -179,7 +179,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         }
         #endif
         else if (type == GrB_BOOL)
-        {
+        { 
             // MATLAB sparse or dense logical matrix
             Xx = mxGetData (X) ;
         }
@@ -187,47 +187,47 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         {
             // MATLAB does not support any other kinds of sparse matrices
             if (X_is_sparse)
-            {
+            { 
                 ERROR ("type not supported") ;
             }
             else if (type == GrB_INT8)
-            {
+            { 
                 Xx = mxGetInt8s (X) ;
             }
             else if (type == GrB_INT16)
-            {
+            { 
                 Xx = mxGetInt16s (X) ;
             }
             else if (type == GrB_INT32)
-            {
+            { 
                 Xx = mxGetInt32s (X) ;
             }
             else if (type == GrB_INT64)
-            {
+            { 
                 Xx = mxGetInt64s (X) ;
             }
             else if (type == GrB_UINT8)
-            {
+            { 
                 Xx = mxGetUint8s (X) ;
             }
             else if (type == GrB_UINT16)
-            {
+            { 
                 Xx = mxGetUint16s (X) ;
             }
             else if (type == GrB_UINT32)
-            {
+            { 
                 Xx = mxGetUint32s (X) ;
             }
             else if (type == GrB_UINT64)
-            {
+            { 
                 Xx = mxGetUint64s (X) ;
             }
             else if (type == GrB_FP32)
-            {
+            { 
                 Xx = mxGetSingles (X) ;
             }
             else
-            {
+            { 
                 ERROR ("unknown type") ;
             }
         }
@@ -239,12 +239,12 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
 
         // tell GraphBLAS the matrix is shallow
         if (X_is_sparse)
-        {
+        { 
             A->p_shallow = true ;
             A->i_shallow = (A->i != NULL) ;
         }
         else
-        {
+        { 
             A->p_shallow = false ;
             A->i_shallow = false ;
         }

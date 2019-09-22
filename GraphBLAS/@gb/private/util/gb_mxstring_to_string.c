@@ -26,7 +26,7 @@ void gb_mxstring_to_string  // copy a MATLAB string into a C string
     if (S != NULL && mxGetNumberOfElements (S) > 0)
     {
         if (!mxIsChar (S))
-        {
+        { 
             ERROR2 ("%s must be a string", name) ;
         }
         len = mxGetNumberOfElements (S) ;
@@ -36,7 +36,7 @@ void gb_mxstring_to_string  // copy a MATLAB string into a C string
             string [maxlen] = '\0' ;
             // convert the string to lower case
             for (int k = 0 ; k < maxlen && string [k] != '\0' ; k++)
-            {
+            { 
                 string [k] = tolower (string [k]) ;
             }
         }

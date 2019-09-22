@@ -38,7 +38,7 @@ void mexFunction
     {
         mxArray *mx_type = mxGetField (pargin [0], 0, "GraphBLAS") ;
         if (mx_type != NULL)
-        {
+        { 
             // X is a GraphBLAS G.opaque struct; get its type
             GrB_Type type = gb_mxstring_to_type (mx_type) ;
                  if (type == GrB_BOOL  ) c = mxCreateString ("logical") ;
@@ -66,27 +66,27 @@ void mexFunction
         {
             // a MATLAB sparse or dense matrix, valid for G = gb (X), or
             // for inputs to any gb.method.
-            case mxLOGICAL_CLASS : c = mxCreateString ("logical") ;  break ;
-            case mxINT8_CLASS    : c = mxCreateString ("int8") ;     break ;
-            case mxINT16_CLASS   : c = mxCreateString ("int16") ;    break ;
-            case mxINT32_CLASS   : c = mxCreateString ("int32") ;    break ;
-            case mxINT64_CLASS   : c = mxCreateString ("int64") ;    break ;
-            case mxUINT8_CLASS   : c = mxCreateString ("uint8") ;    break ;
-            case mxUINT16_CLASS  : c = mxCreateString ("uint16") ;   break ;
-            case mxUINT32_CLASS  : c = mxCreateString ("uint32") ;   break ;
-            case mxUINT64_CLASS  : c = mxCreateString ("uint64") ;   break ;
-            case mxSINGLE_CLASS  : c = mxCreateString ("single") ;   break ;
-            case mxDOUBLE_CLASS  : c = mxCreateString ("double") ;   break ;
+            case mxLOGICAL_CLASS  : c = mxCreateString ("logical") ;  break ;
+            case mxINT8_CLASS     : c = mxCreateString ("int8") ;     break ;
+            case mxINT16_CLASS    : c = mxCreateString ("int16") ;    break ;
+            case mxINT32_CLASS    : c = mxCreateString ("int32") ;    break ;
+            case mxINT64_CLASS    : c = mxCreateString ("int64") ;    break ;
+            case mxUINT8_CLASS    : c = mxCreateString ("uint8") ;    break ;
+            case mxUINT16_CLASS   : c = mxCreateString ("uint16") ;   break ;
+            case mxUINT32_CLASS   : c = mxCreateString ("uint32") ;   break ;
+            case mxUINT64_CLASS   : c = mxCreateString ("uint64") ;   break ;
+            case mxSINGLE_CLASS   : c = mxCreateString ("single") ;   break ;
+            case mxDOUBLE_CLASS   : c = mxCreateString ("double") ;   break ;
 
             // a MATLAB struct, cell, char, void, function, or unknown
-            case mxSTRUCT_CLASS  : c = mxCreateString ("struct") ;   break ;
-            case mxCELL_CLASS    : c = mxCreateString ("cell") ;     break ;
-            case mxCHAR_CLASS    : c = mxCreateString ("char") ;     break ;
-            case mxVOID_CLASS    : c = mxCreateString ("void") ;     break ;
-            case mxFUNCTION_CLASS: c = mxCreateString ("function_handle") ;
+            case mxSTRUCT_CLASS   : c = mxCreateString ("struct") ;   break ;
+            case mxCELL_CLASS     : c = mxCreateString ("cell") ;     break ;
+            case mxCHAR_CLASS     : c = mxCreateString ("char") ;     break ;
+            case mxVOID_CLASS     : c = mxCreateString ("void") ;     break ;
+            case mxFUNCTION_CLASS : c = mxCreateString ("function_handle") ;
                                    break ;
-            case mxUNKNOWN_CLASS :
-            default :              c = mxCreateString ("unknown") ;  break ;
+            case mxUNKNOWN_CLASS  :
+            default               : c = mxCreateString ("unknown") ;  break ;
         }
     }
 

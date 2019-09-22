@@ -776,34 +776,49 @@ A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]  A(1:end,1:end) \end{verb
 
 {\footnotesize
 \begin{verbatim}
-abs         double   int64        isreal       minus     prod       sum
-all         eig      int8         isscalar     mldivide  rdivide    symamd
-amd         end      isa          issparse     mpower    real       symrcm
-and         eps      isbanded     issymmetric  mrdivide  repmat     times
-any         eq       isdiag       istril       mtimes    round      transpose
-bandwidth   find     isempty      istriu       ne        sign       tril
-ceil        fix      isfinite     isvector     nnz       single     triu
-colamd      floor    isfloat      kron         nonzeros  size       uint16
-complex     full     ishermitian  ldivide      norm      sparse     uint32
-conj        gb       isinf        le           not       spfun      uint64
-ctranspose  ge       isinteger    length       numel     spones     uint8
-diag        gt       islogical    logical      nzmax     sqrt       uminus
-disp        horzcat  ismatrix     lt           or        subsasgn   uplus
-display     int16    isnan        max          plus      subsindex  vertcat
-dmperm      int32    isnumeric    min          power     subsref
-      \end{verbatim}}
+    abs             fix             isreal          sign
+    all             floor           isscalar        single
+    amd             fprintf         issparse        size
+    and             full            issymmetric     sparse
+    any             graph           istril          spfun
+    assert          int16           istriu          spones
+    bandwidth       int32           isvector        sprintf
+    ceil            int64           kron            sqrt
+    colamd          int8            length          sum
+    complex         isa             logical         symamd
+    conj            isbanded        max             symrcm
+    diag            isdiag          min             tril
+    digraph         isempty         nnz             triu
+    disp            isequal         nonzeros        true
+    display         isfinite        norm            uint16
+    dmperm          isfloat         numel           uint32
+    double          ishermitian     nzmax           uint64
+    eig             isinf           ones            uint8
+    end             isinteger       prod            xor
+    eps             islogical       real            zeros
+    etree           ismatrix        repmat
+    false           isnan           reshape
+    find            isnumeric       round \end{verbatim}}
 
+\newpage
 The static methods (used in the form \verb'gb.method') provide direct access
 to GraphBLAS functions and can be used on both MATLAB and GraphBLAS matrices.
 Type \verb'help graphblas' and \verb'help gb' for more help.
 
 {\footnotesize
 \begin{verbatim}
-apply      clear           expand         gbkron       reduce        threads
-assign     descriptorinfo  extract        gbtranspose  select        type
-binopinfo  eadd            extracttuples  monoidinfo   semiringinfo  unopinfo
-build      empty           eye            mxm          speye         vreduce
-chunk      emult           format         nvals        subassign \end{verbatim}}
+    apply           emult           isfull          select
+    assign          entries         issigned        semiringinfo
+    bfs             expand          ktruss          speye
+    binopinfo       extract         laplacian       subassign
+    build           extracttuples   mis             threads
+    chunk           eye             monoidinfo      tricount
+    clear           format          mxm             type
+    compact         gbkron          nonz            unopinfo
+    descriptorinfo  gbtranspose     offdiag         vreduce
+    dnn             incidence       pagerank
+    eadd            isbycol         prune
+    empty           isbyrow         reduce      \end{verbatim}}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

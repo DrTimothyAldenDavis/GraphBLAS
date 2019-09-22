@@ -48,13 +48,13 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         //----------------------------------------------------------------------
 
         if (gb_is_shallow (*A_handle))
-        {
+        { 
             // A is shallow so make a deep copy
             OK (GrB_Matrix_dup (&T, *A_handle)) ;
             OK (GrB_free (A_handle)) ;
         }
         else
-        {
+        { 
             // A is already deep; just transplant it into T
             T = (*A_handle) ;
             (*A_handle) = NULL ;
@@ -62,7 +62,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // typecast A to double, and format by column
@@ -105,7 +105,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         //----------------------------------------------------------------------
 
         if (type == GrB_BOOL)
-        {
+        { 
             S = mxCreateSparseLogicalMatrix (nrows, ncols, 1) ;
         }
         #ifdef GB_COMPLEX_TYPE
@@ -115,7 +115,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         }
         #endif
         else
-        {
+        { 
             S = mxCreateSparse (nrows, ncols, 1, mxREAL) ;
         }
 
@@ -143,7 +143,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         //----------------------------------------------------------------------
 
         if (type == GrB_BOOL)
-        {
+        { 
             S = mxCreateSparseLogicalMatrix (0, 0, 1) ;
         }
         #ifdef GB_COMPLEX_TYPE
@@ -153,7 +153,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         }
         #endif
         else
-        {
+        { 
             S = mxCreateSparse (0, 0, 1, mxREAL) ;
         }
 
@@ -174,7 +174,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
 
         // set the values
         if (type == GrB_BOOL)
-        {
+        { 
             p = mxGetData (S) ;
             gb_mxfree (&p) ;
             mxSetData (S, Tx) ;
@@ -188,7 +188,7 @@ mxArray *gb_export_to_mxsparse  // return exported MATLAB sparse matrix S
         }
         #endif
         else
-        {
+        { 
             p = mxGetDoubles (S) ;
             gb_mxfree (&p) ;
             mxSetDoubles (S, Tx) ;

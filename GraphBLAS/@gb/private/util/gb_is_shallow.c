@@ -16,12 +16,12 @@ bool gb_is_shallow              // true if any component of A is shallow
 {
 
     if (A == NULL)
-    {
+    { 
         // a NULL pointer is not shallow
         return (false) ;
     }
     else
-    {
+    { 
         // check if any component of A is shallow
         return (A->p_shallow || A->h_shallow || A->i_shallow || A->x_shallow) ;
     }

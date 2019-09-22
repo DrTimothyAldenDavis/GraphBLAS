@@ -21,7 +21,7 @@ GrB_BinaryOp gb_mxstring_to_binop       // return binary operator from a string
     //--------------------------------------------------------------------------
 
     if (gb_mxarray_is_empty (mxstring))
-    {
+    { 
         // no operator is present, or present and empty; this is not yet an
         // error, since many uses of GraphBLAS functions use an optional accum
         // operator.

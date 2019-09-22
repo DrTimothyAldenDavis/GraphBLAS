@@ -35,7 +35,7 @@ void mexFunction
         gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (d == NULL)
-    {
+    { 
         printf ("\nDefault GraphBLAS descriptor:\n") ;
         OK (GrB_Descriptor_new (&d)) ;
     }
@@ -46,13 +46,13 @@ void mexFunction
     switch (kind)
     {
         // for gb.extractuples:
-        case KIND_0BASED: printf ("zero-based\n") ; break ;
-        case KIND_1BASED: printf ("one-based\n") ;  break ;
+        case KIND_0BASED : printf ("zero-based\n") ; break ;
+        case KIND_1BASED : printf ("one-based\n") ;  break ;
         // for most gb.methods:
-        case KIND_SPARSE: printf ("sparse\n") ;     break ;
-        case KIND_FULL:   printf ("full\n") ;       break ;
-        case KIND_GB:
-        default:          printf ("gb\n") ;         break ;
+        case KIND_SPARSE : printf ("sparse\n") ;     break ;
+        case KIND_FULL   : printf ("full\n") ;       break ;
+        case KIND_GB     :
+        default          : printf ("gb\n") ;         break ;
     }
 
     OK (GrB_free (&d)) ;

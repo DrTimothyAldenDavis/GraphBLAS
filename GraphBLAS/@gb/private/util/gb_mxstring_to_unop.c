@@ -21,7 +21,7 @@ GrB_UnaryOp gb_mxstring_to_unop         // return unary operator from a string
     //--------------------------------------------------------------------------
 
     if (gb_mxarray_is_empty (mxstring))
-    {
+    { 
         ERROR ("missing unary operator") ;
         return (NULL) ;
     }

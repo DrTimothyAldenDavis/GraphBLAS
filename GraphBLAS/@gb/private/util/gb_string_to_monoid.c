@@ -25,7 +25,7 @@ GrB_Monoid gb_string_to_monoid          // return monoid from a string
     //--------------------------------------------------------------------------
 
     if (opstring == NULL || opstring [0] == '\0')
-    {
+    { 
         ERROR ("monoid is missing") ;
         return (NULL) ;
     }

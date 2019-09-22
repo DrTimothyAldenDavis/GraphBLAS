@@ -23,7 +23,7 @@ void gb_mxfree              // mxFree wrapper
     if (p_handle != NULL)
     {
         if (*p_handle != NULL)
-        {
+        { 
             // mxFree (*p_handle) ;
         }
         (*p_handle) = NULL ;

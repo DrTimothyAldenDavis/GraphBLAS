@@ -32,7 +32,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
     CHECK_ERROR (type == NULL, "unknown type") ;
 
     if (MATCH (op_name, "identity"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_IDENTITY_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_IDENTITY_INT8  ) ;
@@ -52,7 +52,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
     }
     else if (MATCH (op_name, "ainv") || MATCH (op_name, "-") ||
              MATCH (op_name, "negate"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_AINV_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_AINV_INT8  ) ;
@@ -71,7 +71,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 
     }
     else if (MATCH (op_name, "minv"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_MINV_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_MINV_INT8  ) ;
@@ -91,7 +91,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
     }
     else if (MATCH (op_name, "lnot") || MATCH (op_name, "~") ||
              MATCH (op_name, "not"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_LNOT_BOOL  ) ;  // == GrB_LNOT
         if (type == GrB_INT8  ) return (GxB_LNOT_INT8  ) ;
@@ -110,7 +110,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 
     }
     else if (MATCH (op_name, "one") || MATCH (op_name, "1"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ONE_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ONE_INT8  ) ;
@@ -129,7 +129,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 
     }
     else if (MATCH (op_name, "abs"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ABS_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ABS_INT8  ) ;

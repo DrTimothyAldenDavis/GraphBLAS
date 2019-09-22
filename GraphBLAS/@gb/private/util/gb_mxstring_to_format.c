@@ -20,15 +20,15 @@ GxB_Format_Value gb_mxstring_to_format  // GxB_BY_ROW or GxB_BY_COL
     char format_string [LEN+2] ;
     gb_mxstring_to_string (format_string, LEN, mxformat, "format") ;
     if (MATCH (format_string, "by row"))
-    {
+    { 
         fmt = GxB_BY_ROW  ;
     }
     else if (MATCH (format_string, "by col"))
-    {
+    { 
         fmt = GxB_BY_COL  ;
     }
     else
-    {
+    { 
         // The string is not a format string, but this is not an error here.
         // For example, G = gb (m,n,'double','by row') queries both its string
         // input arguments with this function and gb_mxstring_to_type, to parse

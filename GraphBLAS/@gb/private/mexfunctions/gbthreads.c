@@ -32,7 +32,7 @@ void mexFunction
     int nthreads_max ;
 
     if (nargin > 0)
-    {
+    { 
         // set the # of threads
         CHECK_ERROR (!gb_mxarray_is_scalar (pargin [0]),
             "input must be a scalar") ;

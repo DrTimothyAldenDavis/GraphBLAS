@@ -71,17 +71,17 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         {
             // a cell array is either I or J
             if (I_arg == -1)
-            {
+            { 
                 // the first cell array is I
                 I_arg = k ;
             }
             else if (J_arg == -1)
-            {
+            { 
                 // the second cell array is J
                 J_arg = k ;
             }
             else
-            {
+            { 
                 ERROR ("only 2D indexing is supported") ;
             }
         }
@@ -89,11 +89,11 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         {
             // a string array is only the accum operator
             if (accum_arg == -1)
-            {
+            { 
                 accum_arg = k ;
             }
             else
-            {
+            { 
                 ERROR ("only a single accum operator string allowed") ;
             }
         }
@@ -101,7 +101,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
         {
             // a matrix argument is C, M, or A
             if (nmatrix_args >= 3)
-            {
+            { 
                 // at most 3 matrix inputs are allowed
                 ERROR (usage) ;
             }
@@ -116,18 +116,18 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     GrB_Matrix C = NULL, M = NULL, A = NULL ;
 
     if (nmatrix_args < 2)
-    {
+    { 
         // at least 2 matrix inputs are required
         ERROR (usage) ;
     }
     else if (nmatrix_args == 2)
-    {
+    { 
         // with 2 matrix arguments: Cin and A, in that order
         C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         A = gb_get_shallow (pargin [matrix_arg [1]]) ;
     }
     else if (nmatrix_args == 3)
-    {
+    { 
         // with 3 matrix arguments: Cin, M, and A, in that order
         C = gb_get_deep    (pargin [matrix_arg [0]]) ;
         M = gb_get_shallow (pargin [matrix_arg [1]]) ;
@@ -151,20 +151,20 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     bool I_allocated = false, J_allocated = false ;
 
     if (cnrows == 1 && I_arg >= 0 && J_arg == -1)
-    {
+    { 
         // C is a row vector, and only I is present.  Swap I and J
         J_arg = I_arg ;
         I_arg = -1 ;
     }
 
     if (I_arg >= 0)
-    {
+    { 
         // I is present
         I = gb_mxcell_to_index (pargin [I_arg], cnrows, &I_allocated, &ni) ;
     }
 
     if (J_arg >= 0)
-    {
+    { 
         // both I and J are present
         J = gb_mxcell_to_index (pargin [J_arg], cncols, &J_allocated, &nj) ;
     }
@@ -175,7 +175,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 
     GrB_BinaryOp accum = NULL ;
     if (accum_arg >= 0)
-    {
+    { 
         accum = gb_mxstring_to_binop (pargin [accum_arg], ctype) ;
     }
 
@@ -190,7 +190,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     bool scalar_assignment = (anrows == 1) && (ancols == 1) ;
 
     if (scalar_assignment && anvals == 0)
-    {
+    { 
         // A is a sparse scalar.  Expand it to an ni-by-nj sparse matrix with
         // the same type as C, with no entries, and use matrix assignment.
         OK (GrB_free (&A)) ;
@@ -205,18 +205,18 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     //--------------------------------------------------------------------------
 
     if (scalar_assignment)
-    {
+    { 
         gb_matrix_assign_scalar (C, M, accum, A, I, ni, J, nj, desc,
             do_subassign) ;
     }
     else
     {
         if (do_subassign)
-        {
+        { 
             OK (GxB_subassign (C, M, accum, A, I, ni, J, nj, desc)) ;
         }
         else
-        {
+        { 
             OK (GrB_assign (C, M, accum, A, I, ni, J, nj, desc)) ;
         }
     }

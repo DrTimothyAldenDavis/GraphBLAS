@@ -49,7 +49,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
     CHECK_ERROR (type == NULL, "unknown type") ;
 
     if (MATCH (op_name, "1st") || MATCH (op_name, "first"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_FIRST_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_FIRST_INT8  ) ;
@@ -68,7 +68,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "2nd") || MATCH (op_name, "second"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_SECOND_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_SECOND_INT8  ) ;
@@ -87,7 +87,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "min"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_MIN_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_MIN_INT8  ) ;
@@ -106,7 +106,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "max"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_MAX_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_MAX_INT8  ) ;
@@ -125,7 +125,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "+") || MATCH (op_name, "plus"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_PLUS_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_PLUS_INT8  ) ;
@@ -144,7 +144,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "-") || MATCH (op_name, "minus"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_MINUS_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_MINUS_INT8  ) ;
@@ -163,7 +163,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "rminus"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_RMINUS_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_RMINUS_INT8  ) ;
@@ -182,7 +182,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "*") || MATCH (op_name, "times"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_TIMES_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_TIMES_INT8  ) ;
@@ -201,7 +201,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "/") || MATCH (op_name, "div"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_DIV_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_DIV_INT8  ) ;
@@ -220,7 +220,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "\\") || MATCH (op_name, "rdiv"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_RDIV_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_RDIV_INT8  ) ;
@@ -239,7 +239,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "iseq"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ISEQ_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ISEQ_INT8  ) ;
@@ -258,7 +258,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "isne"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ISNE_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ISNE_INT8  ) ;
@@ -277,7 +277,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "isgt"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ISGT_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ISGT_INT8  ) ;
@@ -296,7 +296,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "islt"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ISLT_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ISLT_INT8  ) ;
@@ -315,7 +315,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "isge"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ISGE_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ISGE_INT8  ) ;
@@ -334,7 +334,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "isle"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GxB_ISLE_BOOL  ) ;
         if (type == GrB_INT8  ) return (GxB_ISLE_INT8  ) ;
@@ -353,7 +353,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "==") || MATCH (op_name, "eq"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_EQ_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_EQ_INT8  ) ;
@@ -372,7 +372,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "~=") || MATCH (op_name, "ne"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_NE_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_NE_INT8  ) ;
@@ -391,7 +391,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, ">") || MATCH (op_name, "gt"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_GT_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_GT_INT8  ) ;
@@ -410,7 +410,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "<") || MATCH (op_name, "lt"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_LT_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_LT_INT8  ) ;
@@ -429,7 +429,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, ">=") || MATCH (op_name, "ge"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_GE_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_GE_INT8  ) ;
@@ -448,7 +448,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "<=") || MATCH (op_name, "le"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_LE_BOOL  ) ;
         if (type == GrB_INT8  ) return (GrB_LE_INT8  ) ;
@@ -468,7 +468,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
     }
     else if (MATCH (op_name, "||") || MATCH (op_name, "|")  ||
              MATCH (op_name, "or") || MATCH (op_name, "lor"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_LOR       ) ;
         if (type == GrB_INT8  ) return (GxB_LOR_INT8  ) ;
@@ -488,7 +488,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
     }
     else if (MATCH (op_name, "&&")  || MATCH (op_name, "&")   ||
              MATCH (op_name, "and") || MATCH (op_name, "land"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_LAND       ) ;
         if (type == GrB_INT8  ) return (GxB_LAND_INT8  ) ;
@@ -507,7 +507,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 
     }
     else if (MATCH (op_name, "xor") || MATCH (op_name, "lxor"))
-    {
+    { 
 
         if (type == GrB_BOOL  ) return (GrB_LXOR       ) ;
         if (type == GrB_INT8  ) return (GxB_LXOR_INT8  ) ;

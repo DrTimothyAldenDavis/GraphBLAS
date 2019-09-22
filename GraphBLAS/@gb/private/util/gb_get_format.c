@@ -44,32 +44,32 @@ GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
     GxB_Format_Value fmt ;
 
     if (fmt_descriptor != GxB_NO_FORMAT)
-    {
+    { 
         // (1) the format is defined by the descriptor to the method
         fmt = fmt_descriptor ;
     }
     else if (cncols == 1)
-    {
+    { 
         // (2) column vectors are stored by column, by default
         fmt = GxB_BY_COL ;
     }
     else if (cnrows == 1)
-    {
+    { 
         // (3) row vectors are stored by column, by default
         fmt = GxB_BY_ROW ;
     }
     else if (A != NULL && !gb_is_vector (A))
-    {
+    { 
         // (4) get the format of A
         OK (GxB_get (A, GxB_FORMAT, &fmt)) ;
     }
     else if (B != NULL && !gb_is_vector (B))
-    {
+    { 
         // (5) get the format of B
         OK (GxB_get (B, GxB_FORMAT, &fmt)) ;
     }
     else
-    {
+    { 
         // (6) get the global default format
         OK (GxB_get (GxB_FORMAT, &fmt)) ;
     }

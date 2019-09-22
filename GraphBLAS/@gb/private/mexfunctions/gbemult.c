@@ -51,7 +51,7 @@ void mexFunction
         gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (nargin == 4)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.emult (op, A, B, desc)
@@ -64,7 +64,7 @@ void mexFunction
 
     }
     else if (nargin == 6 && mxIsChar (pargin [1]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.emult (Cin, accum, op, A, B, desc)
@@ -80,7 +80,7 @@ void mexFunction
 
     }
     else if (nargin == 6 && !mxIsChar (pargin [1]))
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.emult (Cin, M, op, A, B, desc)
@@ -95,7 +95,7 @@ void mexFunction
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.emult (Cin, M, accum, op, A, B, desc)
@@ -138,12 +138,12 @@ void mexFunction
 
         // determine the type of C
         if (accum != NULL)
-        {
+        { 
             // if accum is present, use its ztype to determine the type of C
             OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
         }
         else
-        {
+        { 
             // otherwise, use the ztype of the op as the type of C
             OK (GxB_BinaryOp_ztype (&ctype, op)) ;
         }

@@ -47,14 +47,14 @@ void mexFunction
         // output is int64 to avoid flint overflow
         int64_t *p ;
         if (nargout <= 1)
-        {
+        { 
             pargout [0] = mxCreateNumericMatrix (1, 2, mxINT64_CLASS, mxREAL) ;
             p = mxGetInt64s (pargout [0]) ;
             p [0] = (int64_t) nrows ;
             p [1] = (int64_t) ncols ;
         }
         else
-        {
+        { 
             pargout [0] = mxCreateNumericMatrix (1, 1, mxINT64_CLASS, mxREAL) ;
             p = mxGetInt64s (pargout [0]) ;
             p [0] = (int64_t) nrows ;
@@ -67,14 +67,14 @@ void mexFunction
     {
         // output is double
         if (nargout <= 1)
-        {
+        { 
             pargout [0] = mxCreateDoubleMatrix (1, 2, mxREAL) ;
             double *p = mxGetDoubles (pargout [0]) ;
             p [0] = (double) nrows ;
             p [1] = (double) ncols ;
         }
         else
-        {
+        { 
             pargout [0] = mxCreateDoubleScalar ((double) nrows) ;
             pargout [1] = mxCreateDoubleScalar ((double) ncols) ;
         }

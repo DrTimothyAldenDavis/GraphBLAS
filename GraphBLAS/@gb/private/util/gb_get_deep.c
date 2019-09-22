@@ -13,7 +13,7 @@ GrB_Matrix gb_get_deep      // return a deep GrB_Matrix copy of a MATLAB X
 (
     const mxArray *X        // input MATLAB matrix (sparse or struct)
 )
-{
+{ 
 
     GrB_Matrix S = gb_get_shallow (X) ;
     GxB_Format_Value fmt ;

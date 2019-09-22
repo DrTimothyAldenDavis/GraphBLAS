@@ -32,7 +32,7 @@ void mexFunction
     double c ;
 
     if (nargin > 0)
-    {
+    { 
         // set the chunk
         CHECK_ERROR (!gb_mxarray_is_scalar (pargin [0]),
             "input must be a scalar") ;

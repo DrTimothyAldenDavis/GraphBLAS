@@ -13,7 +13,7 @@ GrB_Monoid gb_binop_to_monoid           // return monoid from a binary op
 (
     GrB_BinaryOp op
 )
-{
+{ 
 
     GrB_Monoid monoid ;
 
@@ -72,7 +72,7 @@ GrB_Monoid gb_binop_to_monoid           // return monoid from a binary op
     else if (op == GrB_EQ_BOOL     ) monoid = GxB_EQ_BOOL_MONOID ;
 
     else
-    {
+    { 
         ERROR ("not a valid monoid") ;
     }
 

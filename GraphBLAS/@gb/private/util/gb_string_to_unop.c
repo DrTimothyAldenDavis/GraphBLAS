@@ -31,7 +31,7 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
     //--------------------------------------------------------------------------
 
     if (opstring == NULL || opstring [0] == '\0')
-    {
+    { 
         // no operator is present, or present and empty
         ERROR ("missing unary operator") ;
         return (NULL) ;
@@ -47,7 +47,7 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
     char *op_name = opstring ;
     char *op_typename = NULL ;
     if (position [0] >= 0)
-    {
+    { 
         opstring [position [0]] = '\0' ;
         op_typename = opstring + position [0] + 1 ;
     }
@@ -58,11 +58,11 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
 
     GrB_Type type ;
     if (op_typename == NULL)
-    {
+    { 
         type = default_type ;
     }
     else
-    {
+    { 
         type = gb_string_to_type (op_typename) ;
     }
 

@@ -49,7 +49,7 @@ void mexFunction
         gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
 
     if (nargin == 3)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.reduce (monoid, A, desc)
@@ -61,7 +61,7 @@ void mexFunction
 
     }
     else if (nargin == 5)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // Cout = gb.reduce (cin, accum, monoid, A, desc)
@@ -88,12 +88,12 @@ void mexFunction
 
         // determine the type of C
         if (accum != NULL)
-        {
+        { 
             // if accum is present, use its ztype to determine the type of C
             OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
         }
         else
-        {
+        { 
             // otherwise, use the ztype of the monoid as the type of C
             GrB_BinaryOp binop ;
             OK (GxB_Monoid_operator (&binop, monoid)) ;
@@ -113,14 +113,14 @@ void mexFunction
     OK (GrB_Matrix_nrows (&cnrows, C)) ;
     OK (GrB_Matrix_ncols (&cncols, C)) ;
     if (cnrows != 1 || cncols != 1)
-    {
+    { 
         ERROR ("cin must be a scalar") ;
     }
 
     GrB_Index nvals ;
     OK (GrB_Matrix_nvals (&nvals, C)) ;
     if (nvals == 0)
-    {
+    { 
         // set C(0,0) to zero
         OK (GrB_Matrix_nvals (&nvals, C)) ;
         OK (GrB_Matrix_setElement (C, 0, 0, 0)) ;
@@ -131,77 +131,77 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     if (ctype == GrB_BOOL)
-    {
+    { 
         bool c = false ;
         OK (GrB_Matrix_extractElement_BOOL (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_BOOL (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_BOOL (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_INT8)
-    {
+    { 
         int8_t c = 0 ;
         OK (GrB_Matrix_extractElement_INT8 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_INT8 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_INT8 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_INT16)
-    {
+    { 
         int16_t c = 0 ;
         OK (GrB_Matrix_extractElement_INT16 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_INT16 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_INT16 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_INT32)
-    {
+    { 
         int32_t c = 0 ;
         OK (GrB_Matrix_extractElement_INT32 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_INT32 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_INT32 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_INT64)
-    {
+    { 
         int64_t c = 0 ;
         OK (GrB_Matrix_extractElement_INT64 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_INT64 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_INT64 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_UINT8)
-    {
+    { 
         uint8_t c = 0 ;
         OK (GrB_Matrix_extractElement_UINT8 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_UINT8 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_UINT8 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_UINT16)
-    {
+    { 
         uint16_t c = 0 ;
         OK (GrB_Matrix_extractElement_UINT16 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_UINT16 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_UINT16 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_UINT32)
-    {
+    { 
         uint32_t c = 0 ;
         OK (GrB_Matrix_extractElement_UINT32 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_UINT32 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_UINT32 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_UINT64)
-    {
+    { 
         uint64_t c = 0 ;
         OK (GrB_Matrix_extractElement_UINT64 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_UINT64 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_UINT64 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_FP32)
-    {
+    { 
         float c = 0 ;
         OK (GrB_Matrix_extractElement_FP32 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_FP32 (&c, accum, monoid, A, desc)) ;
         OK (GrB_Matrix_setElement_FP32 (C, c, 0, 0)) ;
     }
     else if (ctype == GrB_FP64)
-    {
+    { 
         double c = 0 ;
         OK (GrB_Matrix_extractElement_FP64 (&c, C, 0, 0)) ;
         OK (GrB_Matrix_reduce_FP64 (&c, accum, monoid, A, desc)) ;
@@ -217,7 +217,7 @@ void mexFunction
     }
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 

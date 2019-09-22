@@ -16,12 +16,12 @@ bool gb_is_vector               // true if A is a row or column vector
 {
 
     if (A == NULL)
-    {
+    { 
         // a NULL pointer is not a row or column vector
         return (false) ;
     }
     else
-    {
+    { 
         // check if A is m-by-1 or 1-by-n
         GrB_Index nrows, ncols ;
         OK (GrB_Matrix_nrows (&nrows, A)) ;

@@ -31,12 +31,12 @@ void gb_find_dot            // find 1st and 2nd dot ('.') in a string
         if (s [k] == '.')
         {
             if (position [0] == -1)
-            {
+            { 
                 // first dot has been found
                 position [0] = k ;
             }
             else
-            {
+            { 
                 // 2nd dot has been found; the search is done
                 position [1] = k ;
                 return ;

@@ -13,7 +13,7 @@ void gb_tic /* returns current time in seconds and nanoseconds */
 (
     double tic [2]      /* tic [0]: seconds, tic [1]: nanoseconds */
 )
-{
+{ 
 
     #if defined ( _OPENMP )
 
@@ -60,7 +60,7 @@ double gb_toc               /* returns time since last simple_tic */
 (
     const double tic [2]    /* tic from last call to simple_tic */
 )
-{
+{ 
 
     double toc [2] ;
     gb_tic (toc) ;

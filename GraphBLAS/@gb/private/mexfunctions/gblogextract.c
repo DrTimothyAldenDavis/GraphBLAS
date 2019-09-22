@@ -153,7 +153,7 @@ void mexFunction
     G->type = GrB_BOOL ;
     G->type_size = sizeof (bool) ;
     if (G->nzmax > 0)
-    {
+    { 
         G->x = mxMalloc (G->nzmax * sizeof (bool)) ;
         bool *Gbool = G->x ;
         GB_matlab_helper6 (Gbool, gnvals) ;

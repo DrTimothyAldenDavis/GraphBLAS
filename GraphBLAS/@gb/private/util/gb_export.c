@@ -20,7 +20,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 {
 
     if (kind == KIND_SPARSE)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // export C as a MATLAB sparse matrix
@@ -32,7 +32,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
     }
     else if (kind == KIND_FULL)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // export C as a MATLAB dense matrix
@@ -61,7 +61,7 @@ mxArray *gb_export              // return the exported MATLAB matrix or struct
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // export C as a MATLAB struct containing a verbatim GrB_Matrix

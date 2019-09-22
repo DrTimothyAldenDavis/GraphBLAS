@@ -13,7 +13,7 @@ GrB_Type gb_string_to_type      // return the GrB_Type from a string
 (
     const char *classname
 )
-{
+{ 
 
     if (MATCH (classname, "logical" )) return (GrB_BOOL) ;
     if (MATCH (classname, "int8"    )) return (GrB_INT8) ;

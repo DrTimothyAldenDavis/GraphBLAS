@@ -13,7 +13,7 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
 (
     const GrB_Type type
 )
-{
+{ 
 
     if      (type == GrB_BOOL)   return (mxCreateString ("logical")) ;
     else if (type == GrB_INT8)   return (mxCreateString ("int8")) ;
@@ -33,7 +33,7 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
     }
     #endif
     else
-    {
+    { 
         ERROR ("unknown type") ;
     }
 
