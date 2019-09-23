@@ -29,8 +29,6 @@ void mexFunction
     const mxArray *pargin [ ]
 )
 {
-    // double tt [2] ;
-    // gb_tic (tt) ;
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -167,12 +165,7 @@ void mexFunction
     // compute C<M> += A*B
     //--------------------------------------------------------------------------
 
-    // double t = gb_toc (tt) ;
-    // printf ("get inputs %g\n", t) ;
-    // gb_tic (tt) ;
     OK (GrB_mxm (C, M, accum, semiring, A, B, desc)) ;
-    // t = gb_toc (tt) ;
-    // printf ("mxm time %g\n", t) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
@@ -187,9 +180,7 @@ void mexFunction
     // export the output matrix C back to MATLAB
     //--------------------------------------------------------------------------
 
-    // gb_tic (tt) ;
     pargout [0] = gb_export (&C, kind) ;
-    // t = gb_toc (tt) ;
-    // printf ("export time %g\n", t) ;
+    GB_WRAPUP ;
 }
 

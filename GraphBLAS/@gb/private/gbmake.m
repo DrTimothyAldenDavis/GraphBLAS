@@ -89,7 +89,6 @@ for k = 1:length (cfiles)
     objfile = [ ofile(1:end-2) '.o' ] ;
 
     % get the object file modification time
-    ofiles {k} = objfile ;
     objlist = [ objlist ' ' objfile ] ;
     dobj = dir (objfile) ;
     if (isempty (dobj))

@@ -42,5 +42,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = mxCreateLogicalScalar (gb_is_equal (A, B)) ;
+    GB_WRAPUP ;
 }
 

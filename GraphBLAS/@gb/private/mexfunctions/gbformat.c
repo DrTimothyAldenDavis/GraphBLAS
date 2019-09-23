@@ -83,5 +83,6 @@ void mexFunction
     { 
         pargout [0] = mxCreateString ("by col") ;
     }
+    GB_WRAPUP ;
 }
 

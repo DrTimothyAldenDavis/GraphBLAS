@@ -47,5 +47,6 @@ void mexFunction
 
     GrB_BinaryOp op = gb_mxstring_to_binop (pargin [0], type) ;
     OK (GxB_BinaryOp_fprint (op, opstring, GxB_COMPLETE, NULL)) ;
+    GB_WRAPUP ;
 }
 

@@ -52,5 +52,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&X, KIND_SPARSE) ;
+    GB_WRAPUP ;
 }
 

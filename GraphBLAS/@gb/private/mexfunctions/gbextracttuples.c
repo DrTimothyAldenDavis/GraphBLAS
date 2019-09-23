@@ -235,5 +235,6 @@ void mexFunction
             pargout [1] = gb_export_to_mxfull (&J_double, nvals, 1, GrB_FP64) ;
         }
     }
+    GB_WRAPUP ;
 }
 

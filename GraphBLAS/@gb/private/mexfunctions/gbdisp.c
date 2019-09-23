@@ -44,5 +44,6 @@ void mexFunction
     OK (GxB_Matrix_fprint (X, "", level, NULL)) ;
     printf ("\n") ;
     OK (GrB_free (&X)) ;
+    GB_WRAPUP ;
 }
 

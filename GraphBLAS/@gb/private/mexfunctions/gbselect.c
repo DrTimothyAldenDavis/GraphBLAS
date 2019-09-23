@@ -100,7 +100,7 @@ void mexFunction
         // Cout = gbselect (op, A, thunk, desc)
         //----------------------------------------------------------------------
 
-        gb_usage (nargin == 3 || nargin == 4,
+        CHECK_ERROR (!(nargin == 3 || nargin == 4),
             "usage: Cout = gb.select (op, A, thunk, desc)") ;
 
         op = gb_mxstring_to_selectop (pargin [0]) ;
@@ -116,7 +116,7 @@ void mexFunction
         // Cout = gbselect (Cin, accum, op, A, thunk, desc)
         //----------------------------------------------------------------------
 
-        gb_usage (nargin == 5 || nargin == 6,
+        CHECK_ERROR (!(nargin == 5 || nargin == 6),
             "usage: Cout = gb.select (Cin, accum, op, A, thunk, desc)") ;
 
         C = gb_get_deep (pargin [0]) ;
@@ -135,7 +135,7 @@ void mexFunction
         // Cout = gbselect (Cin, M, op, A, thunk, desc)
         //----------------------------------------------------------------------
 
-        gb_usage (nargin == 5 || nargin == 6,
+        CHECK_ERROR (!(nargin == 5 || nargin == 6),
             "usage: Cout = gb.select (Cin, M, op, A, thunk, desc)") ;
 
         C = gb_get_deep (pargin [0]) ;
@@ -153,7 +153,7 @@ void mexFunction
         // Cout = gbselect (Cin, M, accum, op, A, thunk, desc)
         //----------------------------------------------------------------------
 
-        gb_usage (nargin == 6 || nargin == 7,
+        CHECK_ERROR (!(nargin == 6 || nargin == 7),
             "usage: Cout = gb.select (Cin, M, accum, op, A, thunk, desc)") ;
 
         C = gb_get_deep (pargin [0]) ;
@@ -294,5 +294,6 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
+    GB_WRAPUP ;
 }
 

@@ -56,5 +56,6 @@ void mexFunction
     }
 
     OK (GrB_free (&d)) ;
+    GB_WRAPUP ;
 }
 

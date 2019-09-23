@@ -379,5 +379,16 @@ bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
 bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk) ;
 
+#ifdef GBCOV
+#define GBCOV_MAX 1000
+extern int64_t gbcov [GBCOV_MAX] ;
+extern int gbcov_max ;
+void gbcov_get (void) ;
+void gbcov_put (void) ;
+#define GB_WRAPUP gbcov_put ( )
+#else
+#define GB_WRAPUP
+#endif
+
 #endif
 

@@ -46,5 +46,6 @@ void mexFunction
 
     OK (GxB_get (GxB_CHUNK, &c)) ;
     pargout [0] = mxCreateDoubleScalar (c) ;
+    GB_WRAPUP ;
 }
 

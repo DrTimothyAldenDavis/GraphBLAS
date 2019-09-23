@@ -67,5 +67,13 @@ void gb_usage       // check usage and make sure GxB_init has been called
     { 
         ERROR (message) ;
     }
+
+    //--------------------------------------------------------------------------
+    // get test coverage
+    //--------------------------------------------------------------------------
+
+    #ifdef GBCOV
+    gbcov_get ( ) ;
+    #endif
 }
 

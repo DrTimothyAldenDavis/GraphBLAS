@@ -1,29 +1,18 @@
-function count = grbcover_edit (infiles, count, outdir)
-%GBCOVER_EDIT create a version of GraphBLAS for statement coverage tests
+function count = gbcov_edit (infiles, count, outdir)
+%GBCOV_EDIT create a version of GraphBLAS for statement coverage tests
 %
 % Usage:
-% count = grbcover_edit (infiles, count)
+% count = gbcov_edit (infiles, count)
 %
 % The infiles argument can either be a struct from the 'dir' command, or it can
 % be a string with the name of a single file.  This function adds statement
 % coverage counters to a set of input files.  For each of them, a modified file
-% of the same name is placed in cover/, with statement coverage added.  The
+% of the same name is placed in outdir, with statement coverage added.  The
 % input files are modified in a simple way.  Each line that is all blank except
 % for "{ " at the end of the line is converted to:
 %
-%   { GB_cov [count]++ ;
-%
-% In a switch statement, a counter is added to each case and to the default,
-% but only if the colon has spaces on either side (" : ").
-%
-%       case stuff :  statement
-%       default :     statement
-%
-% are converted to:
-%
-%       case stuff :  GB_cov[count]++ ; statement
-%       default :     GB_cov[count]++ ; statement
-%
+%   { gbcov [count]++ ;
+
 %  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 %  http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
@@ -32,7 +21,6 @@ if (~isstruct (infiles))
     infiles = dir (infiles) ;
 end
 nfiles = length (infiles) ;
-enabled = true ;
 
 for k = 1:nfiles
 
@@ -62,39 +50,15 @@ for k = 1:nfiles
                 && (cline (len-1) == '{') && (cline (len) == ' '))
 
             % left curly brackect and space at the end of the line
-            % "{ " changes to "{   GB_cov[n]++ ; "
+            % "{ " changes to "{   gbcov [n]++ ; "
 
-            if (enabled)
-                fprintf (f_output, '%s  GB_cov[%d]++ ;\n', cline, count) ;
-                count = count + 1 ;
-            end
-
-        elseif ((~isempty (strfind (cline, ' case ')) || ...
-                 ~isempty (strfind (cline, ' default '))) && ...
-                 ~isempty (strfind (cline, ' : ')))
-
-            % a switch case statement, or "default : "
-            % "case stuff : statement" => "case stuff : GB_cov[n]++ ; statement"
-
-            if (enabled)
-                colon = find (cline == ':', 1) ;
-                fprintf (f_output, '%s : GB_cov[%d]++ ; %s\n', ...
-                    cline (1:colon-1), count, cline (colon+1:end)) ;
-                count = count+1 ;
-            end
+            fprintf (f_output, '%s  gbcov [%d]++ ;\n', cline, count) ;
+            count = count + 1 ;
 
         else
 
             % otherwise the line is copied as-is
             fprintf (f_output, '%s\n', cline) ;
-
-            % determine if the code is commented out
-            if (isequal (cline, '#if 0'))
-                % code coverage disabled
-                enabled = false ;
-            elseif (isequal (cline, '#endif'))
-                enabled = true ;
-            end
 
         end
 

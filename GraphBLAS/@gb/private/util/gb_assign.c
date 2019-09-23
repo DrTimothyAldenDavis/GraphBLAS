@@ -236,5 +236,6 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     //--------------------------------------------------------------------------
 
     pargout [0] = gb_export (&C, kind) ;
+    GB_WRAPUP ;
 }
 

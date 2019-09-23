@@ -47,5 +47,6 @@ void mexFunction
 
     GrB_UnaryOp op = gb_mxstring_to_unop (pargin [0], type) ;
     OK (GxB_UnaryOp_fprint (op, opstring, GxB_COMPLETE, NULL)) ;
+    GB_WRAPUP ;
 }
 
