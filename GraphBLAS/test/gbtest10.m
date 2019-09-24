@@ -52,5 +52,14 @@ C2 = Cin ;
 C2 (I,J) = B ;
 assert (gbtest_eq (C2, Cout)) ;
 
+A = rand (4) ;
+G = gb (A, 'by row') ;
+M = logical (eye (4)) ;
+B = rand (4) ;
+H = gb (B, 'by row') ;
+A (M) = B (M) ;
+G (M) = H (M) ;
+assert (isequal (A, G)) ;
+
 fprintf ('gbtest10: all tests passed\n') ;
 

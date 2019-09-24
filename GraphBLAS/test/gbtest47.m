@@ -6,6 +6,18 @@ function gbtest47
 
 rng ('default') ;
 
+A = 100 * rand (4) ;
+types = gbtest_types ;
+for k = 1:length (types)
+    type = types {k} ;
+    B = cast (A, type) ;
+    x1 = gb.entries (B, 'list') ;
+    x2 = unique (nonzeros (B)) ;
+    assert (isequal (x1, x2)) ;
+    assert (isequal (type, class (x1))) ;
+    assert (isequal (type, class (x2))) ;
+end
+
 A = magic (4) ;
 c0 = nnz (A) ;
 c1 = gb.nonz (A) ;

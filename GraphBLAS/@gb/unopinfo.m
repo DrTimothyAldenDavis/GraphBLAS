@@ -43,9 +43,6 @@ function unopinfo (op, type)
 %   % invalid unary operator (generates an error; this is a binary op):
 %   gb.unopinfo ('+.double') ;
 %
-% gb.unopinfo generates an error for an invalid op, so user code can test
-% the validity of an op with the MATLAB try/catch mechanism.
-%
 % See also gb, gb.binopinfo, gb.monoidinfo, gb.semiringinfo,
 % gb.descriptorinfo.
 

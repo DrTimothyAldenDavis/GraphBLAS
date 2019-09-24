@@ -27,17 +27,6 @@ GrB_UnaryOp gb_string_to_unop           // return unary operator from a string
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    if (opstring == NULL || opstring [0] == '\0')
-    { 
-        // no operator is present, or present and empty
-        ERROR ("missing unary operator") ;
-        return (NULL) ;
-    }
-
-    //--------------------------------------------------------------------------
     // get the string and parse it
     //--------------------------------------------------------------------------
 

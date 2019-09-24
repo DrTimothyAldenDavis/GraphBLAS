@@ -7,6 +7,21 @@ function gbtest22
 rng ('default') ;
 desc.kind = 'sparse' ;
 
+A = magic (3) ;
+types = gbtest_types ;
+for k = 1:length (types)
+    type = types {k} ;
+    if (isequal (type, 'logical'))
+        c = false ;
+        c = gb.reduce (c, '|', '|', cast (A, 'logical')) ;
+    else
+        c = ones (1, 1, type) ;
+        c = gb.reduce (c, '+', '+', cast (A, type)) ;
+        assert (c == sum (sum (A)) + 1) ;
+    end
+end
+
+
 for trial = 1:10
     fprintf ('.') ;
     for m = 0:5

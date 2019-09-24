@@ -22,17 +22,6 @@ GrB_Semiring gb_string_to_semiring      // return a semiring from a string
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    if (semiring_string == NULL || semiring_string [0] == '\0')
-    { 
-        // no semiring is present, or present and empty; this is not yet an
-        // error, since the caller may have a default semiring to use instead.
-        return (NULL) ;
-    }
-
-    //--------------------------------------------------------------------------
     // get the string and parse it
     //--------------------------------------------------------------------------
 

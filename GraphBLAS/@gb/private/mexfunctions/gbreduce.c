@@ -85,20 +85,10 @@ void mexFunction
 
     if (C == NULL)
     {
-
-        // determine the type of C
-        if (accum != NULL)
-        { 
-            // if accum is present, use its ztype to determine the type of C
-            OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
-        }
-        else
-        { 
-            // otherwise, use the ztype of the monoid as the type of C
-            GrB_BinaryOp binop ;
-            OK (GxB_Monoid_operator (&binop, monoid)) ;
-            OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
-        }
+        // use the ztype of the monoid as the type of C
+        GrB_BinaryOp binop ;
+        OK (GxB_Monoid_operator (&binop, monoid)) ;
+        OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
 
         OK (GrB_Matrix_new (&C, ctype, 1, 1)) ;
         fmt = gb_get_format (1, 1, A, NULL, fmt) ;
@@ -217,8 +207,8 @@ void mexFunction
     }
     #endif
     else
-    { 
-        ERROR ("unknown type") ;
+    {
+        ERROR ("unsupported type") ;
     }
 
     //--------------------------------------------------------------------------

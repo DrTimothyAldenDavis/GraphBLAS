@@ -2,6 +2,19 @@ function gbtest29
 %GBTEST29 test subsref and subsasgn with logical indexing
 
 rng ('default') ;
+
+types = gbtest_types ;
+for k = 1:length (types)
+    type = types {k} ;
+    C = cast (magic (3), type) ;
+    M = logical (C > 3) ;
+    A = cast (2 * magic (3), type) ;
+    C (M) = A (M) ;
+    G = gb (magic (3), type) ;
+    G (M) = A (M) ;
+    assert (isequal (G, C)) ;
+end
+
 for trial = 1:40
     fprintf ('.')
     for m = 0:5

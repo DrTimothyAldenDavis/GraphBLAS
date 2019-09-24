@@ -29,7 +29,7 @@ void mexFunction
     int nargin,
     const mxArray *pargin [ ]
 )
-{ 
+{
     gb_assign (nargout, pargout, nargin, pargin, false,
         "usage: Cout = gb.assign (Cin, M, accum, A, I, J, desc)") ;
 }

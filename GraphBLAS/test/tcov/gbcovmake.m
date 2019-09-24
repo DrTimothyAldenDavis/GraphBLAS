@@ -14,6 +14,7 @@ warning ('off', 'MATLAB:MKDIR:DirectoryExists') ;
 mkdir ('tmp/@gb/') ;
 mkdir ('tmp/@gb/private') ;
 mkdir ('tmp/@gb/util') ;
+mkdir ('tmp/cover') ;
 warning ('on', 'MATLAB:MKDIR:DirectoryExists') ;
 
 % copy all m-files into tmp/@gb

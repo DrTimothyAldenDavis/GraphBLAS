@@ -22,9 +22,7 @@ GrB_Semiring gb_mxstring_to_semiring    // return semiring from a string
 
     if (gb_mxarray_is_empty (mxstring))
     { 
-        // no semiring is present, or present and empty; this is not yet an
-        // error, since the caller may have a default semiring to use instead.
-        return (NULL) ;
+        ERROR ("semiring missing") ;
     }
 
     //--------------------------------------------------------------------------

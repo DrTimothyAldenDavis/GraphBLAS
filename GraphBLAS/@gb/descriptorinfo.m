@@ -77,6 +77,7 @@ function descriptorinfo (d)
 
 if (nargin == 0)
     help gb.descriptorinfo
+    gbdescriptorinfo ;
 else
     gbdescriptorinfo (d) ;
 end

@@ -13,6 +13,16 @@ for k1 = 1:length(types)
     type = types {k1} ;
     fprintf ('%s ', type) ;
 
+    H = gb (2^55, 2^55, type) ;
+    [m, n] = size (H) ;
+    assert (m == 2^55) ;
+    assert (n == 2^55) ;
+    assert (isequal (class (m), 'int64'))
+    assert (isequal (class (n), 'int64'))
+    s = size (H) ;
+    assert (isequal (s, [2^55 2^55])) ;
+    assert (isequal (class (s), 'int64'))
+
     for k2 = 1:length(types)
         type2 = types {k2} ;
 

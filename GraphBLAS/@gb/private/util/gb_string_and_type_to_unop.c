@@ -29,7 +29,7 @@ GrB_UnaryOp gb_string_and_type_to_unop  // return op from string and type
 )
 {
 
-    CHECK_ERROR (type == NULL, "unknown type") ;
+    CHECK_ERROR (type == NULL, "unsupported type") ;
 
     if (MATCH (op_name, "identity"))
     { 

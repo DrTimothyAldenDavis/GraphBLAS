@@ -35,10 +35,6 @@ function semiringinfo (s, type)
 %   % invalid semiring (generates an error; since '<' is not a monoid)
 %   gb.semiringinfo ('<.*.double') ;
 %
-% gb.semiringinfo generates an error for an invalid semiring, so user
-% code can test the validity of a semiring with the MATLAB try/catch
-% mechanism.
-%
 % See also gb, gb.unopinfo, gb.binopinfo, gb.descriptorinfo.
 
 % FUTURE: add complex semirings

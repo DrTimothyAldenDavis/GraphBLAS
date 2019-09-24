@@ -28,7 +28,7 @@ void gb_usage       // check usage and make sure GxB_init has been called
     //--------------------------------------------------------------------------
 
     if (!GB_Global_GrB_init_called_get ( ))
-    { 
+    {
 
         //----------------------------------------------------------------------
         // set the printf function
@@ -64,7 +64,7 @@ void gb_usage       // check usage and make sure GxB_init has been called
     //--------------------------------------------------------------------------
 
     if (!ok)
-    { 
+    {
         ERROR (message) ;
     }
 

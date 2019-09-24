@@ -141,20 +141,11 @@ void mexFunction
         GrB_Index cnrows = (A_transpose) ? ancols : anrows ;
         GrB_Index cncols = (B_transpose) ? bnrows : bncols ;
 
-        // determine the type of C
-        if (accum != NULL)
-        { 
-            // if accum is present, use its ztype to determine the type of C
-            OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
-        }
-        else
-        { 
-            // otherwise, use the semiring's additive monoid as the type of C
-            GrB_Monoid add_monoid ;
-            OK (GxB_Semiring_add (&add_monoid, semiring)) ;
-            OK (GxB_Monoid_operator (&add, add_monoid)) ;
-            OK (GxB_BinaryOp_ztype (&ctype, add)) ;
-        }
+        // use the semiring's additive monoid as the type of C
+        GrB_Monoid add_monoid ;
+        OK (GxB_Semiring_add (&add_monoid, semiring)) ;
+        OK (GxB_Monoid_operator (&add, add_monoid)) ;
+        OK (GxB_BinaryOp_ztype (&ctype, add)) ;
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, B, fmt) ;

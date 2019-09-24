@@ -19,18 +19,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 
     GrB_Matrix A ;
 
-    if (S == NULL)
-    { 
-
-        //----------------------------------------------------------------------
-        // S is null; nothing to do
-        //----------------------------------------------------------------------
-
-        // This is not an error since the input matrix may be optional.
-        A = NULL ;
-
-    }
-    else if (type == NULL)
+    if (type == NULL)
     { 
 
         //----------------------------------------------------------------------

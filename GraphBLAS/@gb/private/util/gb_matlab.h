@@ -19,13 +19,36 @@
 #include <ctype.h>
 
 //------------------------------------------------------------------------------
-// error handling
+// error handling and test coverage
 //------------------------------------------------------------------------------
 
-#define ERROR2(message, arg) mexErrMsgIdAndTxt ("gb:error", message, arg) ;
-#define ERROR(message)       mexErrMsgIdAndTxt ("gb:error", message) ;
+#ifdef GBCOV
+#define GBCOV_MAX 1000
+extern int64_t gbcov [GBCOV_MAX] ;
+extern int gbcov_max ;
+void gbcov_get (void) ;
+void gbcov_put (void) ;
+#define GB_WRAPUP gbcov_put ( )
+#else
+#define GB_WRAPUP
+#endif
+
+#define ERROR2(message, arg)                                \
+{                                                           \
+    GB_WRAPUP ;                                             \
+    mexErrMsgIdAndTxt ("gb:error", message, arg) ;          \
+}
+
+#define ERROR(message)                                      \
+{                                                           \
+    GB_WRAPUP ;                                             \
+    mexErrMsgIdAndTxt ("gb:error", message) ;               \
+}
+
 #define CHECK_ERROR(error,message) if (error) ERROR (message) ;
+
 #define OK(method) CHECK_ERROR ((method) != GrB_SUCCESS, GrB_error ( )) ;
+
 #define OK2(method)                                         \
 {                                                           \
     GrB_Info info = method ;                                \
@@ -324,16 +347,6 @@ GrB_Matrix gb_by_col            // return the matrix by column
     GrB_Matrix A_input          // input matrix, by row or column
 ) ;
 
-void gb_tic /* returns current time in seconds and nanoseconds */
-(
-    double tic [2]      /* tic [0]: seconds, tic [1]: nanoseconds */
-) ;
-
-double gb_toc               /* returns time since last gb_tic */
-(
-    const double tic [2]    /* tic from last call to gb_tic */
-) ;
-
 GxB_Format_Value gb_default_format      // GxB_BY_ROW or GxB_BY_COL
 (
     GrB_Index nrows,        // row vectors are stored by row
@@ -378,17 +391,6 @@ bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
 
 bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk) ;
-
-#ifdef GBCOV
-#define GBCOV_MAX 1000
-extern int64_t gbcov [GBCOV_MAX] ;
-extern int gbcov_max ;
-void gbcov_get (void) ;
-void gbcov_put (void) ;
-#define GB_WRAPUP gbcov_put ( )
-#else
-#define GB_WRAPUP
-#endif
 
 #endif
 

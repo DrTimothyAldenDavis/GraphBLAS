@@ -32,7 +32,10 @@ for k = 1:length (types)
 
     fprintf ('\n---- A = gb (%d, %d) :\n', m, n) ;
     A = gb (m, n)
-    Z = double (A)
+    Z = sparse (m, n)
+    assert (isequal (A, Z)) ;
+    A = gb (m, n, 'by row') ;
+    assert (isequal (A, Z)) ;
 
     fprintf ('\n---- A = gb (%d, %d, ''%s'') :\n', m, n, type) ;
     A = gb (m, n, type)
@@ -42,7 +45,20 @@ for k = 1:length (types)
         assert (gbtest_eq (Z, logical (sparse (m,n)))) ;
     end
 
+    Z = full (fix (X)) ;
+    A = gb (Z, 'by row', type) ;
+    Y = cast (Z, type) ;
+    assert (isequal (A, Y)) ;
+
 end
+
+X = [ ] ;
+A = gb (X, 'by row', 'double') ;
+assert (isequal (A, X)) ;
+
+A = gb (m, n, 'by row', 'double') ;
+X = sparse (m, n) ;
+assert (isequal (A, X)) ;
 
 fprintf ('gbtest1: all tests passed\n') ;
 

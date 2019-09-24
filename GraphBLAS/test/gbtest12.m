@@ -59,5 +59,41 @@ H = gb.emult ('*', A, B)
 D = A.*B
 assert (gbtest_eq (D, H)) ;
 
+m = 10 ;
+n = 12 ;
+A = sprand (m, n, 0.5) ;
+B = sprand (m, n, 0.5) ;
+M = logical (sprand (m, n, 0.5)) ;
+Cin = sprand (m, n, 0.5) ;
+G = gb (Cin) ;
+T = Cin + A .* B ;
+C = Cin ;
+C (M) = T (M) ;
+G = gb.emult (Cin, M, '+', '*', A, B) ;
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
+
+G = gb.eadd (Cin, M, '+', '+', A, B) ;
+C = Cin ;
+T = Cin + A + B ;
+C (M) = T (M) ;
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
+
+G = gb.eadd (Cin, M, '+', A, B) ;
+C = Cin ;
+T = A + B ;
+C (M) = T (M) ;
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
+
+C = sprand (m, n, 0.5) ;
+G = gb (C) ;
+T = A .* B ;
+C (M) = T (M) ;
+G = gb.emult (G, M, '*', A, B) ;
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
+
 fprintf ('gbtest12: all tests passed\n') ;
 

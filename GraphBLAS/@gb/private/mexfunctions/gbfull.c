@@ -25,7 +25,7 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 4 && nargout <= 1,
+    gb_usage (nargin >= 2 && nargin <= 4 && nargout <= 1,
         "usage: C = gb.full (A, type, id, desc)") ;
 
     //--------------------------------------------------------------------------
@@ -41,16 +41,7 @@ void mexFunction
     // get the type of C
     //--------------------------------------------------------------------------
 
-    GrB_Matrix type ;
-    if (nargin > 1)
-    { 
-        type = gb_mxstring_to_type (pargin [1]) ;
-    }
-    else
-    { 
-        // the type of C defaults to the type of A
-        OK (GxB_Matrix_type (&type, A)) ;
-    }
+    GrB_Matrix type = gb_mxstring_to_type (pargin [1]) ;
 
     //--------------------------------------------------------------------------
     // get the identity scalar

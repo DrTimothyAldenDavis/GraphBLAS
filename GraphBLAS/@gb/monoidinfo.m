@@ -31,10 +31,6 @@ function monoidinfo (monoid, type)
 %   gb.monoidinfo ('1st.int32') ;
 %   gb.monoidinfo ('abs.double') ;
 %
-% gb.monoidinfo generates an error for an invalid monoid, so user
-% code can test the validity of an op with the MATLAB try/catch
-% mechanism.
-%
 % See also gb.unopinfo, gb.binopinfo, gb.semiringinfo,
 % gb.descriptorinfo.
 

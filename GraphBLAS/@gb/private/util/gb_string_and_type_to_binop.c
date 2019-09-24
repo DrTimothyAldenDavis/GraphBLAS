@@ -46,7 +46,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
 )
 {
 
-    CHECK_ERROR (type == NULL, "unknown type") ;
+    CHECK_ERROR (type == NULL, "unsupported type") ;
 
     if (MATCH (op_name, "1st") || MATCH (op_name, "first"))
     { 

@@ -27,6 +27,24 @@ for trial = 1:40
     assert (isequal (class (C2), 'double')) ;
     assert (isequal (class (C3), 'double')) ;
 
+    M = logical (sprand (4, 4, 0.5)) ;
+    Cin = rand (4) ;
+    T = Cin + (-A) ;
+    C0 = Cin ;
+    C0 (M) = T (M) ;
+    C1 = gb.apply (Cin, M, '+', '-', A) ;
+    assert (isequal (C0, C1)) ;
+
+    C0 = Cin + (-A) ;
+    C1 = gb.apply (Cin, '+', '-', A) ;
+    assert (isequal (C0, C1)) ;
+
+    T = -A ;
+    C0 = Cin ;
+    C0 (M) = T (M) ;
+    C1 = gb.apply (Cin, M, '', '-', A) ;
+    assert (isequal (C0, C1)) ;
+
 end
 
 fprintf ('gbtest48: all tests passed\n') ;

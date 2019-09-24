@@ -27,18 +27,6 @@ GrB_BinaryOp gb_string_to_binop         // return binary operator from a string
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    if (opstring == NULL || opstring [0] == '\0')
-    { 
-        // no operator is present, or present and empty; this is not yet an
-        // error, since many uses of GraphBLAS functions use an optional accum
-        // operator.
-        return (NULL) ;
-    }
-
-    //--------------------------------------------------------------------------
     // get the string and parse it
     //--------------------------------------------------------------------------
 

@@ -18,6 +18,9 @@ assert (gbtest_eq (A, Cout)) ;
 Cout = gb.extract (Cin, A, { }, { }) ;
 assert (gbtest_eq (A, Cout)) ;
 
+Cout = gb.extract (A, {n, -1, 1}, {n, -1, 1}) ;
+assert (gbtest_eq (A (n:-1:1, n:-1:1), Cout)) ;
+
 Cout = gb.extract (Cin, M, A) ;
 C2 = Cin ;
 C2 (M) = A (M) ;

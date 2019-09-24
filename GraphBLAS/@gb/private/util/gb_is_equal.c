@@ -52,8 +52,8 @@ bool gb_is_equal            // true if A == B, false if A ~= B
     else if (atype == gb_complex_type) op = ... ;
     #endif
     else
-    { 
-        ERROR ("unknown type") ;
+    {
+        ERROR ("unsupported type") ;
     }
 
     // check the size, pattern, and values of A and B

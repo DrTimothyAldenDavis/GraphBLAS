@@ -28,6 +28,13 @@ Cout = gb.gbtranspose (Cin, '+', A) ;
 C2 = Cin + AT ;
 assert (gbtest_eq (C2, Cout)) ;
 
+M = logical (sprand (m, n, 0.5)) ;
+Cout = gb.gbtranspose (Cin, M, '+', A) ;
+T = Cin + A' ;
+C2 = Cin ;
+C2 (M) = T (M) ;
+assert (gbtest_eq (C2, Cout)) ;
+
 d.in0 = 'transpose' ;
 Cout = gb.gbtranspose (Cin', M', A, d) ;
 C2 = Cin' ;

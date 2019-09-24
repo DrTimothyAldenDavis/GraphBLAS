@@ -70,9 +70,6 @@ function binopinfo (op, type)
 %   % invalid binary operator (an error; this is a unary op):
 %   gb.binopinfo ('abs.double') ;
 %
-% gb.binopinfo generates an error for an invalid op, so user code can
-% test the validity of an op with the MATLAB try/catch mechanism.
-%
 % See also gb, gb.unopinfo, gb.semiringinfo, gb.descriptorinfo.
 
 % FUTURE: add complex binary operators

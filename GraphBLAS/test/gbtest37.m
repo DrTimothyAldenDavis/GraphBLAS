@@ -56,8 +56,8 @@ for trial = 1:10
             assert (gbtest_eq (C, GC)) ;
 
             if (~islogical (A))
-                % the MATLAB istril, istriu, isdiag
-                % functions are not defined when A is logical.
+                % MATLAB istril, istriu, and isdiag
+                % are not defined when A is logical.
                 assert (istril (A) == istril (GA)) ;
                 assert (istril (L) == istril (GL)) ;
                 assert (istril (U) == istril (GU)) ;

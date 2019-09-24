@@ -50,9 +50,9 @@ for k = 1:nfiles
                 && (cline (len-1) == '{') && (cline (len) == ' '))
 
             % left curly brackect and space at the end of the line
-            % "{ " changes to "{   gbcov [n]++ ; "
+            % "{ " changes to "{   gbcov[n]++ ; "
 
-            fprintf (f_output, '%s  gbcov [%d]++ ;\n', cline, count) ;
+            fprintf (f_output, '%s  gbcov[%d]++ ;\n', cline, count) ;
             count = count + 1 ;
 
         else

@@ -206,8 +206,8 @@ void mexFunction
     }
     #endif
     else
-    { 
-        ERROR ("unknown type") ;
+    {
+        ERROR ("unsupported type") ;
     }
 
     //--------------------------------------------------------------------------

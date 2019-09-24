@@ -47,8 +47,8 @@
 %  gbtest42  - test for nan
 %  gbtest43  - test error handling
 %  gbtest44  - test subsasgn, mtimes, plus, false, ...
-%  gbtest45  - test reduce to vector
-%  gbtest46  - test subassign
+%  gbtest45  - test gb.vreduce
+%  gbtest46  - test gb.subassign and gb.assign
 %  gbtest47  - test gb.entries, gb.nonz, numel
 %  gbtest48  - test gb.apply
 %  gbtest49  - test gb.prune
@@ -70,9 +70,10 @@
 %  gbtest65  - test gb.mis
 %  gbtest66  - test graph
 %  gbtest67  - test digraph
+%  gbtest68  - test isequal
 %  gbtest99  - test gb.bfs and plot (graph (G))
 %
-% Utility functions:
+% Utilities:
 %
 %  gbtest_binops - return a cell array of strings, listing all binary operators
 %  gbtest_types  - return a cell array of strings, listing all types

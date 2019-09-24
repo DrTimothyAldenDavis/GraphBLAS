@@ -38,6 +38,12 @@ for k = 1:length(list)
     assert (isequal (I_0, I0)) ;
     assert (isequal (J_0, J0)) ;
 
+    % gb.extracttuples returns the zeros
+    [I1, J1, X0] = gb.extracttuples (G, struct ('kind', 'one-based')) ;
+    assert (isequal (C (:), X0)) ;
+    assert (isequal (double (I_0+1), I1)) ;
+    assert (isequal (double (J_0+1), J1)) ;
+
     [I1] = gb.extracttuples (G, d) ;
     assert (isequal (I1, I0)) ;
 

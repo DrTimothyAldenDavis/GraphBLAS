@@ -27,16 +27,20 @@ G = gb.gbkron ('*', A, B, d) ;
 C = kron (A', B) ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
-
 G = kron (GA', GB) ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
-
 d.kind = 'gb' ;
 G = gb.gbkron ('*', A, B, d) ;
 err = norm (C-G, 1) ;
 
-G = kron (GA', GB) ;
+d2 = d ;
+d2.in1 = 'transpose' ;
+G = gb.gbkron ('*', A, B, d2) ;
+C = kron (A', B') ;
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
+G = kron (GA', GB') ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
 
@@ -45,8 +49,25 @@ C = E + kron (A,B) ;
 G = gb.gbkron (E, '+', '*', A, B) ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
-
 G = E + kron (GA, GB) ;
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
+
+[m, n] = size (G) ;
+M = logical (sprand (m, n, 0.5)) ;
+C = sprand (m, n, 0.5) ;
+G = gb (C) ;
+T = C + kron (A,B) ;
+C (M) = T (M) ;
+G = gb.gbkron (G, M, '+', '*', A, B) ;
+err = norm (C-G, 1) ;
+assert (err < 1e-12)
+
+C = sprand (m, n, 0.5) ;
+G = gb (C) ;
+T = kron (A,B) ;
+C (M) = T (M) ;
+G = gb.gbkron (G, M, '*', A, B) ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
 

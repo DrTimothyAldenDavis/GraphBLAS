@@ -108,8 +108,8 @@ mxArray *gb_export_to_mxfull    // return exported MATLAB dense matrix F
     }
     #endif
     else
-    { 
-        ERROR ("unknown type") ;
+    {
+        ERROR ("unsupported type") ;
     }
 
     // set the size

@@ -33,8 +33,8 @@ GrB_Type gb_type_to_mxstring    // return the MATLAB string from a GrB_Type
     }
     #endif
     else
-    { 
-        ERROR ("unknown type") ;
+    {
+        ERROR ("unsupported type") ;
     }
 
     return (NULL) ;

@@ -118,7 +118,6 @@ void mexFunction
 
     if (C == NULL)
     {
-
         // get the descriptor contents to determine if A is transposed
         GrB_Desc_Value in0 ;
         OK (GxB_get (desc, GrB_INP0, &in0)) ;
@@ -132,19 +131,10 @@ void mexFunction
         // determine the size of the vector C
         GrB_Index cnrows = (A_transpose) ? ancols : anrows ;
 
-        // determine the type of C
-        if (accum != NULL)
-        { 
-            // if accum is present, use its ztype to determine the type of C
-            OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
-        }
-        else
-        { 
-            // otherwise, use the ztype of the monoid as the type of C
-            GrB_BinaryOp binop ;
-            OK (GxB_Monoid_operator (&binop, monoid)) ;
-            OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
-        }
+        // use the ztype of the monoid as the type of C
+        GrB_BinaryOp binop ;
+        OK (GxB_Monoid_operator (&binop, monoid)) ;
+        OK (GxB_BinaryOp_ztype (&ctype, binop)) ;
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, 1)) ;
         fmt = gb_get_format (cnrows, 1, A, NULL, fmt) ;

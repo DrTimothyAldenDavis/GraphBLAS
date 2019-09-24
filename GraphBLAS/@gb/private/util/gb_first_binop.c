@@ -33,8 +33,8 @@ GrB_BinaryOp gb_first_binop         // return GrB_FIRST_[type] operator
     }
     #endif
     else
-    { 
-        ERROR ("unknown type") ;
+    {
+        ERROR ("unsupported type") ;
     }
 
     return (NULL) ;

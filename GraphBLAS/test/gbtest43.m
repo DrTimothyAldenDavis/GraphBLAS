@@ -704,5 +704,221 @@ catch expected_error
 end
 assert (ok) ;
 
+try
+    G = gb (A, 'gunk') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb (A, 'gunk', 'crud') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb (4, 3, 'gunk') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb (4, 3, 'gunk', 'crud') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb (A, A) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb (A, A, A) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb (A, A, A, A) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb.assign (A, {1}, {1}, {1}, pi) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb.assign (A, '+', '+', {1}, {1}, pi) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb.assign (A, A, A, A) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb.assign (A, {1}, {1}) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.semiringinfo ('') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = gb.mxm ('', 1, 1) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    c = gb.reduce (ones (2), '+', '+', 1) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.monoidinfo ('/', 'double') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.monoidinfo ('') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.apply ('',1) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract (pi, {1}, {1}, {1}) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract (pi, pi, '+', '+', pi) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract (pi, pi, pi, pi) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract ('+') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.build (int8(1), int8(1), pi)
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract ('+', pi) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.select (pi, pi) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract (1i, {1}, {1}) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract (pi, {1}, {1}, struct ('kind', 'gunk')) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    gb.extract (pi, {1}, {1}, struct ('format', 'gunk')) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
 fprintf ('gbtest43: all tests passed\n') ;
 

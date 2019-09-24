@@ -187,8 +187,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
         {
             // MATLAB does not support any other kinds of sparse matrices
             if (X_is_sparse)
-            { 
-                ERROR ("type not supported") ;
+            {
+                ERROR ("unsupported type") ;
             }
             else if (type == GrB_INT8)
             { 
@@ -227,8 +227,8 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
                 Xx = mxGetSingles (X) ;
             }
             else
-            { 
-                ERROR ("unknown type") ;
+            {
+                ERROR ("unsupported type") ;
             }
         }
 

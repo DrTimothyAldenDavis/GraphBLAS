@@ -191,8 +191,8 @@ void gb_matrix_assign_scalar
     }
     #endif
     else
-    { 
-        ERROR ("unknown type") ;
+    {
+        ERROR ("unsupported type") ;
     }
 }
 

@@ -115,14 +115,8 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
     // a gb object in gb.m.
     (*kind) = KIND_GB ;
 
-    // a null descriptor is OK; the method will use defaults
-    if (gb_mxarray_is_empty (D_matlab))
-    { 
-        return (NULL) ;
-    }
-
-    // if present, the MATLAB D must be a struct
-    CHECK_ERROR (!mxIsStruct (D_matlab), "descriptor must be a struct") ;
+    CHECK_ERROR (D_matlab == NULL || !mxIsStruct (D_matlab),
+        "descriptor must be a struct") ;
 
     //--------------------------------------------------------------------------
     // create the GraphBLAS descriptor

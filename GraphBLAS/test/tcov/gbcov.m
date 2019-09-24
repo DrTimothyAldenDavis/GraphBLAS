@@ -4,25 +4,21 @@ function gbcov
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+% compile the coverage-test version of the @gb mexFunctions
+clear all
+global gbcov_global
+
 gbcovmake
 addpath ('..') ;            % add the test folder to the path
 rmpath ('../..') ;          % remove the regular @gb class
 addpath ('tmp') ;           % add the modified @gb class
-path
-which gb
-pause
 
-try
-    gbtest ;
-catch me
-    me
-    disp (me.message) ;
-end
+% run the tests
+gbtest ;
 
-% addpath ('../..') ;         % add back the regular @gb class
-% rmpath ('tmp') ;            % remove the modified @gb class
-% which gb
+addpath ('../..') ;         % add back the regular @gb class
+rmpath ('tmp') ;            % remove the modified @gb class
 
-gbcovstat
-fprintf ('\ngbcov: all tests passed\n') ;
+% report the coverage
+gbcovshow ;
 

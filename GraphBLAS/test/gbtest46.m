@@ -7,6 +7,15 @@ function gbtest46
 rng ('default') ;
 d.kind = 'sparse' ;
 
+types = gbtest_types ;
+for k = 1:length (types)
+    type = types {k} ;
+    A = cast (rand (4) * 100, type) ;
+    C = gb.subassign (A, {1}, {1}, cast (pi, type)) ;
+    A (1,1) = pi ;
+    assert (isequal (A, C)) ;
+end
+
 for trial = 1:40
 
     A = rand (4) ;

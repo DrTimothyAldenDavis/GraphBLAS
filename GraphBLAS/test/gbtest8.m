@@ -23,6 +23,7 @@ function gbtest8
 %   ltthunk     <thunk
 %   lethunk     <=thunk
 
+rng ('default') ;
 n = 5 ;
 m = 8 ;
 A = sparse (10 * rand (m,n) - 5) .* sprand (m, n, 0.8) ;
@@ -301,4 +302,31 @@ A (3,4) = thunk ;
     C2 = gb.select ('<=thunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
+%-------------------------------------------------------------------------------
+% gtzero, with mask and accum
+%-------------------------------------------------------------------------------
+
+    Cin = sprand (m, n, 0.5) ;
+    C2 = gb.select (Cin, '+', '>0', A) ;
+    C1 = Cin ;
+    C1 (A > 0) = C1 (A > 0) + A (A > 0) ; 
+    assert (gbtest_eq (C1, C2))
+
+    M = logical (sprand (m, n, 0.5)) ;
+    Cin = sprand (m, n, 0.5) ;
+    C2 = gb.select (Cin, M, '>0', A) ;
+    C1 = Cin ;
+    T = sparse (m, n) ;
+    T (A > 0) = A (A > 0) ;
+    C1 (M) = T (M) ;
+    assert (gbtest_eq (C1, C2))
+
+    C2 = gb.select (Cin, M, '+', '>0', A) ;
+    C1 = Cin ;
+    T = sparse (m, n) ;
+    T (A > 0) = A (A > 0) ;
+    C1 (M) = C1 (M) + T (M) ;
+    assert (gbtest_eq (C1, C2))
+
 fprintf ('gbtest8: all tests passed\n') ;
+

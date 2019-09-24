@@ -111,7 +111,6 @@ void mexFunction
 
     if (C == NULL)
     {
-
         // get the descriptor contents to determine if A is transposed
         GrB_Desc_Value in0 ;
         OK (GxB_get (desc, GrB_INP0, &in0)) ;
@@ -126,17 +125,8 @@ void mexFunction
         GrB_Index cnrows = (A_transpose) ? anrows : ancols ;
         GrB_Index cncols = (A_transpose) ? ancols : anrows ;
 
-        // determine the type of C
-        if (accum != NULL)
-        { 
-            // if accum is present, use its ztype to determine the type of C
-            OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
-        }
-        else
-        { 
-            // otherwise, use the type of A
-            OK (GxB_Matrix_type (&ctype, A)) ;
-        }
+        // use the type of A
+        OK (GxB_Matrix_type (&ctype, A)) ;
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;

@@ -133,17 +133,8 @@ void mexFunction
         GrB_Index cnrows = (A_transpose) ? ancols : anrows ;
         GrB_Index cncols = (A_transpose) ? anrows : ancols ;
 
-        // determine the type of C
-        if (accum != NULL)
-        { 
-            // if accum is present, use its ztype to determine the type of C
-            OK (GxB_BinaryOp_ztype (&ctype, accum)) ;
-        }
-        else
-        { 
-            // otherwise, use the ztype of the op as the type of C
-            OK (GxB_UnaryOp_ztype (&ctype, op)) ;
-        }
+        // use the ztype of the op as the type of C
+        OK (GxB_UnaryOp_ztype (&ctype, op)) ;
 
         OK (GrB_Matrix_new (&C, ctype, cnrows, cncols)) ;
         fmt = gb_get_format (cnrows, cncols, A, NULL, fmt) ;
