@@ -48,6 +48,11 @@ function result = entries (A, varargin)
 %
 % See also gb.nonz, nnz, gb/nnz, nonzeros, gb/nonzeros, gb.prune.
 
+% FUTURE: if A is stored by row, then the row degree can be found quickly,
+% in a mexFunction that accesses A->p and A->h.  If stored by col, then
+% the col degree is the same thing.  Write a mexFunction that computes
+% the vector degree (by row or by column).
+
 % get the string arguments
 dim = 'all' ;           % 'all', 'row', or 'col'
 kind = 'count' ;        % 'count', 'list', or 'degree'

@@ -4,6 +4,9 @@ function i = end (G, k, ndims)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+% FUTURE: add linear indexing
+% FUTURE: use hypersparse matrices to implement multidimensionl nD arrays
+
 if (ndims == 1)
     if (~isvector (G))
         error ('gb:unsupported', 'Linear indexing not supported') ;

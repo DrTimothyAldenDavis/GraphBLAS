@@ -3,6 +3,8 @@ function C = vertcat (varargin)
 % [A ; B] is the vertical concatenation of A and B.
 % A and B may be GraphBLAS or MATLAB matrices, in any combination.
 % Multiple matrices may be concatenated, as [A ; B ; C ; ...].
+%
+% See also horzcat, gb/horzcat.
 
 % FUTURE: this will be much faster when it is a mexFunction.
 % The version below requires a sort in gb.build.

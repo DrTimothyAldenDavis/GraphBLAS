@@ -5,6 +5,11 @@ function C = eq (A, B)
 %
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
+%
+% See also gb/lt, gb/le, gb/gt, gb/ge, gb/ne.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % The pattern of C depends on the type of inputs:
 % A scalar, B scalar:  C is scalar.
@@ -12,9 +17,6 @@ function C = eq (A, B)
 % B scalar, A matrix:  C is full if B==0, otherwise C is a subset of A.
 % A matrix, B matrix:  C is full.
 % Zeroes are then dropped from C after it is computed.
-
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (isscalar (A))
     if (isscalar (B))

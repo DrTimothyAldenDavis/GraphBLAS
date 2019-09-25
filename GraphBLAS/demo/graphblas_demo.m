@@ -793,15 +793,19 @@ C2 - C
 % functions in GraphBLAS itself, and are typically as fast or faster than
 % the equivalent built-in operators and functions in MATLAB.
 %
-% There are few notable exceptions, the most important one being horzcat
-% and vertcat, used for [A B] and [A;B] when either A or B are GraphBLAS
-% matrices.
+% There are few notable exceptions; these will be addressed in the future.
+% Dense matrices and vectors held as GraphBLAS objects are slower than
+% their MATLAB counterparts.  horzcat and vertcat, for [A B] and [A;B]
+% when either A or B are GraphBLAS matrices, are also slow, as
+% illustrated below in the next example.
 %
-% Other methods that could be faster in the future include bandwidth,
+% Other methods that will be faster in the future include bandwidth,
 % istriu, istril, eps, ceil, floor, round, fix, isfinite, isinf, isnan,
 % spfun, and A.^B.  These methods are currently implemented in
-% m-functions, not in efficient parallel C functions.
+% m-files, not in efficient parallel C functions.
 
+%%
+% Here is an example that illustrates the performance of C = [A B]
 clear
 A = sparse (rand (2000)) ;
 B = sparse (rand (2000)) ;
@@ -1105,6 +1109,8 @@ err = norm (C1-C2,1)
 %   [v, parent] = gb.bfs (A, s, ...) ;     % breadth-first search
 %   iset = gb.mis (A, check) ;             % maximal independent set
 %   Y = gb.dnn (W, bias, Y0) ;             % deep neural network
+%
+%   More graph algorithms will be added in the future.
 %
 % Thanks for watching!
 %

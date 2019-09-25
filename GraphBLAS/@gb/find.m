@@ -15,6 +15,9 @@ function [I, J, X] = find (G)
 %
 % See also sparse, gb.build, gb.extracttuples.
 
+% FUTURE: add linear indexing
+% FUTURE: add find (G,k,'first') and find (G,k,'last')
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 

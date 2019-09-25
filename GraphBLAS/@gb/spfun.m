@@ -1,9 +1,11 @@
 function C = spfun (fun, G)
 %SPFUN Apply function to the entries of a GraphBLAS matrix.
 % C = spfun (fun, G) evaluates the function fun on the entries of G.
+%
+% See also gb.apply.
 
 % FUTURE: this would be much faster as a mexFunction, but calling feval
-% from inside a mexFunction would not be trivial.
+% from inside a mexFunction would not be trivial (perhaps not possible).
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

@@ -5,6 +5,8 @@ function C = lt (A, B)
 %
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
+%
+% See also gb/le, gb/gt, gb/ge, gb/ne, gb/eq.
 
 % The pattern of C depends on the type of inputs:
 % A scalar, B scalar:  C is scalar.

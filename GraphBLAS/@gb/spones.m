@@ -11,6 +11,8 @@ function C = spones (G, type)
 % C = spones (G,type) returns C in the requested type ('double',
 % 'single', 'int8', ...).  For example, use C = spones (G, 'logical') to
 % return the pattern of G as a sparse logical matrix.
+%
+% See also spfun, gb.apply.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

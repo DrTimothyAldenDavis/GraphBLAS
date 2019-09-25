@@ -25,8 +25,8 @@ function [v, parent] = bfs (A, s, varargin)
 %
 % For best performance, if A represents a directed graph, it should be a
 % GraphBLAS matrix stored by row on input.  That is, gb.format (A) should
-% report 'by row'.  (If A represents a directed graph but is stored 'by col' on
-% input, it is first converted to 'by row', which is costly).  If A is an
+% report 'by row'.  (If A represents a directed graph but is stored 'by col'
+% on input, it is first converted to 'by row', which is costly).  If A is an
 % undirected graph, then it can be stored in either format ('by row' or 'by
 % col').
 %

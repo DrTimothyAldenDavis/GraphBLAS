@@ -9,5 +9,8 @@ function s = isinteger (G)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 t = gbtype (G.opaque) ;
-s = isequal (t (1:3), 'int') || isequal (t (1:4), 'uint') ;
+s = isequal (t, 'int8'  ) || isequal (t, 'int16' ) || ...
+    isequal (t, 'int32' ) || isequal (t, 'int64' ) || ...
+    isequal (t, 'uint8' ) || isequal (t, 'uint16') || ...
+    isequal (t, 'uint32') || isequal (t, 'uint64') ;
 

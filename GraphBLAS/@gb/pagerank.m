@@ -13,6 +13,11 @@ function r = pagerank (A, opts)
 %
 % A can be a GraphBLAS or MATLAB matrix.  A can have any format ('by row' or
 % 'by col'), but gb.pagerank is slightly faster if A is 'by col'.
+%
+% See also centrality.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % check inputs and set defaults
 if (nargin < 2)
@@ -87,6 +92,7 @@ tfactor = cast ((1 - damp) / n, type) ;
 dn = cast (damp / n, type) ;
 
 % use G' in gb.mxm, and return the result as a MATLAB full vector
+% FUTURE: when GraphBLAS is fast for dense vector, use them instead
 desc.in0 = 'transpose' ;
 desc.kind = 'full' ;
 

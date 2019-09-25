@@ -5,7 +5,7 @@ ncores = maxNumCompThreads ;
 fprintf ('# of cores :  %d\n', ncores) ;
 gb.format ('by row') ;
 
-for id =  1:12
+for id = 1 % 1:12
     % load the problem
     tic ;
     fname = sprintf ('%s/HPEC19_dnn_%02d.mat', rootdir, id) ;

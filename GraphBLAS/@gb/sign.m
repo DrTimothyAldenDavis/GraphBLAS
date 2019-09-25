@@ -4,6 +4,8 @@ function C = sign (G)
 % GraphBLAS matrix G.  For each element of G, sign(G) returns 1 if the
 % element is greater than zero, 0 if it equals zero, and -1 if it is less
 % than zero.  The output C is a GraphBLAS matrix.
+%
+% See also abs.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

@@ -4,7 +4,7 @@ function C = or (A, B)
 % both may be scalars.  Otherwise, A and B must have the same size.
 % GraphBLAS and MATLAB matrices may be combined.
 %
-% See also gb/and.
+% See also gb/and, gb/xor.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

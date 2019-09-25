@@ -5,6 +5,8 @@ function C = gt (A, B)
 %
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
+%
+% See also gb/lt, gb/le, gb/ge, gb/ne, gb/eq.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

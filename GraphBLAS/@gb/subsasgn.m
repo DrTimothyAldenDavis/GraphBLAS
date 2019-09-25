@@ -32,6 +32,8 @@ function C = subsasgn (C, S, A)
 %
 % See also subsref, gb.assign, gb.subassign.
 
+% FUTURE: add linear indexing, and allow the matrix to grow in size.
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 

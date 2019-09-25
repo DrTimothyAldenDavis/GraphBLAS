@@ -30,6 +30,8 @@ function C = subsref (A, S)
 %
 % See also subsasgn, gb.subassign, gb.assign, gb.extract.
 
+% FUTURE: add linear indexing.
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 

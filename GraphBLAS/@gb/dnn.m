@@ -59,3 +59,6 @@ end
 % statement is replaced with its equivalent, Y = gb.subassign (Y, M, 32),
 % above.
 
+% FUTURE: find out why Y(M)=32 fails inside a @gb/method.m, but works fine
+% when used in an m-file not in @gb.
+

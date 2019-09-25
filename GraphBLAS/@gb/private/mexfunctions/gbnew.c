@@ -74,7 +74,9 @@ void mexFunction
 
                 if (gb_mxarray_is_empty (pargin [0]))
                 { 
-                    // TODO get the format of A
+                    // A is a 0-by-0 MATLAB matrix.  create a new 0-by-0
+                    // GraphBLAS matrix C of the given type, with the default
+                    // format.
                     OK (GrB_Matrix_new (&C, type, 0, 0)) ;
                 }
                 else
