@@ -1,5 +1,5 @@
 function gbtest45
-%GBTEST45 test gb.vreduce
+%GBTEST45 test GrB.vreduce
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -10,10 +10,10 @@ d.kind = 'sparse' ;
 for trial = 1:40
 
     A = rand (4) ;
-    G = gb (A) ;
-    x = gb.vreduce ('+', A) ;
-    y = gb.vreduce ('+', G) ;
-    t = gb.vreduce ('+', G, d) ;
+    G = GrB (A) ;
+    x = GrB.vreduce ('+', A) ;
+    y = GrB.vreduce ('+', G) ;
+    t = GrB.vreduce ('+', G, d) ;
     z = sum (G, 2) ;
     w = sum (A, 2) ;
     
@@ -25,18 +25,18 @@ for trial = 1:40
     assert (isequal (class (t), 'double')) ;
 
     cin = rand (4,1) ;
-    x = gb.vreduce (cin, '+', '+', A) ;
+    x = GrB.vreduce (cin, '+', '+', A) ;
     y = cin + sum (A, 2) ;
     assert (isequal (x, y)) ;
 
     m = logical (sprand (4, 1, 0.5)) ;
-    x = gb.vreduce (cin, m, '+', '+', A) ;
+    x = GrB.vreduce (cin, m, '+', '+', A) ;
     t = cin + sum (A, 2) ;
     y = cin ;
     y (m) = t (m) ;
     assert (isequal (x, y)) ;
 
-    x = gb.vreduce (cin, m, '+', A) ;
+    x = GrB.vreduce (cin, m, '+', A) ;
     t = sum (A, 2) ;
     y = cin ;
     y (m) = t (m) ;

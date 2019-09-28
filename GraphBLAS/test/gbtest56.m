@@ -1,5 +1,5 @@
 function gbtest56
-%GBTEST56 test gb.empty
+%GBTEST56 test GrB.empty
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -15,9 +15,9 @@ for m1 = -1:5
             continue
         end
 
-        C1 = gb.empty (m1, n1) ;
-        C2 = gb.empty ([m1, n1]) ;
-        C3 = gb (m, n) ;
+        C1 = GrB.empty (m1, n1) ;
+        C2 = GrB.empty ([m1, n1]) ;
+        C3 = GrB (m, n) ;
         C0 = sparse (m, n) ;
 
         assert (isequal (C0, C1)) ;
@@ -27,9 +27,9 @@ for m1 = -1:5
     end
 end
 
-C1 = gb.empty (0) ;
-C2 = gb.empty (-1) ;
-C3 = gb (0, 0) ;
+C1 = GrB.empty (0) ;
+C2 = GrB.empty (-1) ;
+C3 = GrB (0, 0) ;
 C0 = sparse (0, 0) ;
 assert (isequal (C0, C1)) ;
 assert (isequal (C0, C2)) ;

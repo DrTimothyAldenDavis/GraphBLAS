@@ -5,7 +5,7 @@ function gbtest59
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 A = rand (4,7) ;
-G = gb (A) ;
+G = GrB (A) ;
 
 A = A (2:end, 3:end) ;
 G = G (2:end, 3:end) ;
@@ -16,7 +16,7 @@ G = G (2:2:end, 3:2:end) ;
 assert (isequal (G, A)) ;
 
 A = rand (7, 1) ;
-G = gb (A) ;
+G = GrB (A) ;
 
 A = A (2:2:end) ;
 G = G (2:2:end) ;

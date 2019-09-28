@@ -11,13 +11,13 @@ for k1 = 1:length (ops)
     for k2 = 1:length (types)
         op = [ops{k1} '.' types{k2}] ;
         fprintf ('\nop: %s\n', op) ;
-        gb.unopinfo (op) ;
-        gb.unopinfo (ops {k1}, types {k2}) ;
+        GrB.unopinfo (op) ;
+        GrB.unopinfo (ops {k1}, types {k2}) ;
     end
 end
 
-fprintf ('\nhelp gb.unopinfo:\n') ;
-gb.unopinfo ;
+fprintf ('\nhelp GrB.unopinfo:\n') ;
+GrB.unopinfo ;
 
 fprintf ('gbtest15: all tests passed\n') ;
 

@@ -7,7 +7,7 @@ for d = 0:.1:1
     for n = 0:10
         A = sprandn (n, n, d) ;
         X = nonzeros (A) ;
-        G = gb (A) ;
+        G = GrB (A) ;
         Y = nonzeros (G) ;
         assert (isequal (X, Y)) ;
     end

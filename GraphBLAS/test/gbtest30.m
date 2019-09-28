@@ -12,7 +12,7 @@ A (k) = 87 ;
 A (n) = 92 ;
 
 A
-G = gb (A)
+G = GrB (A)
 
 % computes z = G (1:2:k), very quickly, without forming
 % the explicit vector 1:2:k
@@ -37,7 +37,7 @@ assert (gbtest_eq (x, y)) ;
 % GraphBLAS can construct huge-by-huge matrices
 tic
 [c huge] = computer
-H = gb (huge, huge)
+H = GrB (huge, huge)
 I = sort (randperm (huge, 4)) ;
 M = magic (4)
 H (I,I) = M

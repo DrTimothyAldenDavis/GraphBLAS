@@ -6,7 +6,7 @@ function gbtest19
 
 rng ('default') ;
 A = rand (4) ;
-G = gb (A) ;
+G = GrB (A) ;
 
 for k = 0:10
     C1 = A^k ;

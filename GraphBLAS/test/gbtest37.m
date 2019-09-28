@@ -39,14 +39,14 @@ for trial = 1:10
             U = triu (A) ;
             D = diag (diag (A)) ;
 
-            GA = gb (A) ;
+            GA = GrB (A) ;
             GL = tril (GA) ;
             GU = triu (GA) ;
             GD = diag (diag (GA)) ;
             if (m == n)
-                GC = gb.prune (GA + GA') ;
+                GC = GrB.prune (GA + GA') ;
             else
-                GC = gb.prune (GA * GA') ;
+                GC = GrB.prune (GA * GA') ;
             end
 
             assert (gbtest_eq (A, GA)) ;

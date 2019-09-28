@@ -33,9 +33,9 @@ function gbdemo2 (bnz)
 % speedup over MATLAB is even more dramatic (up to 2,660x has been
 % observed).
 %
-% See also gb.assign, subsasgn.
+% See also GrB.assign, subsasgn.
 
-nthreads = gb.threads ;
+nthreads = GrB.threads ;
 help gbdemo2
 fprintf ('\n# of threads used in GraphBLAS: %d\n\n', nthreads) ;
 
@@ -58,7 +58,7 @@ for n = [1000:1000:6000]
     cn = size (C,1) ;
     I = randperm (cn, k) ;
     J = randperm (cn, k) ;
-    G = gb (C) ;
+    G = GrB (C) ;
     t_setup = toc ;
 
     fprintf ('\nC(I,J)=A where C is %g million -by- %g million\n', ...

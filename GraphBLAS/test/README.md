@@ -8,7 +8,7 @@ To run this test, first compile the GraphBLAS library by typing 'make' in the
 top-level GraphBLAS folder, in your system shell.  That statement will use
 cmake to compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace
 '40' with the number of cores in your system).  Next, go to the
-GraphBLAS/GraphBLAS/@gb/private folder, and type the following in the MATLAB
+GraphBLAS/GraphBLAS/@GrB/private folder, and type the following in the MATLAB
 command window.
 
 # Usage:
@@ -17,7 +17,7 @@ command window.
    help GraphBLAS      % short description of the MATLAB interface to GraphBLAS
    addpath (pwd) ;
    savepath ;          % if this fails, edit your startup.m file instead
-   cd @gb/private
+   cd @GrB/private
    gbmake ;            % compile the MATLAB interface to GraphBLAS
    cd ../../test       % this folder
    gbtest

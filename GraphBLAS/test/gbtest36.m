@@ -16,7 +16,7 @@ for k = 1:length (types)
     if (type (1) == 'u')
         A = max (A, 0) ;
     end
-    G = gb (A, type) ;
+    G = GrB (A, type) ;
     B = cast (A, type) ;
     assert (gbtest_eq (B, G))
 

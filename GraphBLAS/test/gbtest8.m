@@ -1,5 +1,5 @@
 function gbtest8
-%GBTEST8 test gb.select
+%GBTEST8 test GrB.select
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -40,18 +40,18 @@ A (3,4) = thunk ;
 %-------------------------------------------------------------------------------
 
     C1 = tril (A) ;
-    C2 = gb.select ('tril', A) ;
+    C2 = GrB.select ('tril', A) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = tril (A, k) ;
-        C2 = gb.select ('tril', A, k) ;
-        C3 = gb.select ('tril', A, k, desc) ;
+        C2 = GrB.select ('tril', A, k) ;
+        C3 = GrB.select ('tril', A, k, desc) ;
         assert (gbtest_eq (C1, C2))
         assert (gbtest_eq (C1, C3))
         assert (isequal (class (C3), 'double')) ;
     end
     C1 = tril (A, 0) ;
-    C2 = gb.select ('tril', A, 0) ;
+    C2 = GrB.select ('tril', A, 0) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -59,15 +59,15 @@ A (3,4) = thunk ;
 %-------------------------------------------------------------------------------
 
     C1 = triu (A) ;
-    C2 = gb.select ('triu', A) ;
+    C2 = GrB.select ('triu', A) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = triu (A, k) ;
-        C2 = gb.select ('triu', A, k) ;
+        C2 = GrB.select ('triu', A, k) ;
         assert (gbtest_eq (C1, C2))
     end
     C1 = triu (A, 0) ;
-    C2 = gb.select ('triu', A, 0) ;
+    C2 = GrB.select ('triu', A, 0) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -76,15 +76,15 @@ A (3,4) = thunk ;
 
     d = min (m,n) ;
     C1 = A .* spdiags (ones (d,1), 0, m, n) ;
-    C2 = gb.select ('diag', A) ;
+    C2 = GrB.select ('diag', A) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = A .* spdiags (ones (d,1), k, m, n) ;
-        C2 = gb.select ('diag', A, k) ;
+        C2 = GrB.select ('diag', A, k) ;
         assert (gbtest_eq (C1, C2))
     end
     C1 = A .* spdiags (ones (d,1), 0, m, n) ;
-    C2 = gb.select ('diag', A, 0) ;
+    C2 = GrB.select ('diag', A, 0) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -93,15 +93,15 @@ A (3,4) = thunk ;
 
     d = min (m,n) ;
     C1 = A .* (1 - spdiags (ones (d,1), 0, m, n)) ;
-    C2 = gb.select ('offdiag', A) ;
+    C2 = GrB.select ('offdiag', A) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = A .* (1 - spdiags (ones (d,1), k, m, n)) ;
-        C2 = gb.select ('offdiag', A, k) ;
+        C2 = GrB.select ('offdiag', A, k) ;
         assert (gbtest_eq (C1, C2))
     end
     C1 = A .* (1 - spdiags (ones (d,1), 0, m, n)) ;
-    C2 = gb.select ('offdiag', A, 0) ;
+    C2 = GrB.select ('offdiag', A, 0) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -118,10 +118,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('nonzero', A) ;
+    C2 = GrB.select ('nonzero', A) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('~=0', A) ;
+    C2 = GrB.select ('~=0', A) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -135,10 +135,10 @@ A (3,4) = thunk ;
 
     C1 = sparse (m,n) ;
 
-    C2 = gb.select ('eqzero', A) ;
+    C2 = GrB.select ('eqzero', A) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('==0', A) ;
+    C2 = GrB.select ('==0', A) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -151,10 +151,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('gtzero', A) ;
+    C2 = GrB.select ('gtzero', A) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('>0', A) ;
+    C2 = GrB.select ('>0', A) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -167,10 +167,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('gezero', A) ;
+    C2 = GrB.select ('gezero', A) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('>=0', A) ;
+    C2 = GrB.select ('>=0', A) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -183,10 +183,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('ltzero', A) ;
+    C2 = GrB.select ('ltzero', A) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('<0', A) ;
+    C2 = GrB.select ('<0', A) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -199,10 +199,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('lezero', A) ;
+    C2 = GrB.select ('lezero', A) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('<=0', A) ;
+    C2 = GrB.select ('<=0', A) ;
     assert (gbtest_eq (C1, C2))
 
 
@@ -216,10 +216,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('nethunk', A, thunk) ;
+    C2 = GrB.select ('nethunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('~=thunk', A, thunk) ;
+    C2 = GrB.select ('~=thunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -232,10 +232,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('eqthunk', A, thunk) ;
+    C2 = GrB.select ('eqthunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('==thunk', A, thunk) ;
+    C2 = GrB.select ('==thunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -248,10 +248,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('gtthunk', A, thunk) ;
+    C2 = GrB.select ('gtthunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('>thunk', A, thunk) ;
+    C2 = GrB.select ('>thunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -264,10 +264,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('gethunk', A, thunk) ;
+    C2 = GrB.select ('gethunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('>=thunk', A, thunk) ;
+    C2 = GrB.select ('>=thunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -280,10 +280,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('ltthunk', A, thunk) ;
+    C2 = GrB.select ('ltthunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('<thunk', A, thunk) ;
+    C2 = GrB.select ('<thunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -296,10 +296,10 @@ A (3,4) = thunk ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = gb.select ('lethunk', A, thunk) ;
+    C2 = GrB.select ('lethunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select ('<=thunk', A, thunk) ;
+    C2 = GrB.select ('<=thunk', A, thunk) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
@@ -307,21 +307,21 @@ A (3,4) = thunk ;
 %-------------------------------------------------------------------------------
 
     Cin = sprand (m, n, 0.5) ;
-    C2 = gb.select (Cin, '+', '>0', A) ;
+    C2 = GrB.select (Cin, '+', '>0', A) ;
     C1 = Cin ;
     C1 (A > 0) = C1 (A > 0) + A (A > 0) ; 
     assert (gbtest_eq (C1, C2))
 
     M = logical (sprand (m, n, 0.5)) ;
     Cin = sprand (m, n, 0.5) ;
-    C2 = gb.select (Cin, M, '>0', A) ;
+    C2 = GrB.select (Cin, M, '>0', A) ;
     C1 = Cin ;
     T = sparse (m, n) ;
     T (A > 0) = A (A > 0) ;
     C1 (M) = T (M) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = gb.select (Cin, M, '+', '>0', A) ;
+    C2 = GrB.select (Cin, M, '+', '>0', A) ;
     C1 = Cin ;
     T = sparse (m, n) ;
     T (A > 0) = A (A > 0) ;

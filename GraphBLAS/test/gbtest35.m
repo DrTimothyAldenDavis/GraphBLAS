@@ -9,7 +9,7 @@ rng ('default')
 for m = 0:6
     for n = 0:10
         A = rand (m, n) ;
-        G = gb (A) ;
+        G = GrB (A) ;
         mn = m*n ;
         if (mn == 0)
             C1 = reshape (A, n, m) ;

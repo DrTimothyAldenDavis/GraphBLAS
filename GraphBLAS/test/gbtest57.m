@@ -5,15 +5,15 @@ function gbtest57
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 c1 = fprintf ('pi: %g\n', pi) ;
-c2 = fprintf ('pi: %g\n', gb (pi)) ;
+c2 = fprintf ('pi: %g\n', GrB (pi)) ;
 assert (c1 == c2) ;
 
 s1 = sprintf ('pi: %g\n', pi) ;
-s2 = sprintf ('pi: %g\n', gb (pi)) ;
+s2 = sprintf ('pi: %g\n', GrB (pi)) ;
 assert (isequal (s1, s2)) ;
 
 A = int16 (magic (4)) ;
-G = gb (A) ;
+G = GrB (A) ;
 
 c1 = fprintf ('%g\n', A) ;
 c2 = fprintf ('%g\n', G) ;
@@ -24,7 +24,7 @@ s2 = sprintf ('%g\n', G) ;
 assert (isequal (s1, s2)) ;
 
 A = speye (2) ;
-G = gb (A) ;
+G = GrB (A) ;
 
 c1 = fprintf ('%g\n', full (A)) ;
 c2 = fprintf ('%g\n', G) ;
@@ -35,7 +35,7 @@ s2 = sprintf ('%g\n', G) ;
 assert (isequal (s1, s2)) ;
 
 A = logical (A) ;
-G = gb (A) ;
+G = GrB (A) ;
 
 c1 = fprintf ('%g\n', full (A)) ;
 c2 = fprintf ('%g\n', G) ;

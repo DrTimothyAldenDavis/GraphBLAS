@@ -9,7 +9,7 @@ for k1 = 1:length (types)
     atype = types {k1} ;
     fprintf ('\n================================================ %s\n', atype) ;
     A = 100 * sprand (3, 3, 0.5) ;
-    H = gb (A, atype)
+    H = GrB (A, atype)
     G = full (H)
 
     for k2 = 1:length (types)

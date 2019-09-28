@@ -4,7 +4,7 @@ function gbtest
 % GraphBLAS folder, in your system shell.  That statement will use cmake to
 % compile GraphBLAS.  Use 'make JOBS=40' to compile in parallel (replace '40'
 % with the number of cores in your system).  Next, go to the
-% GraphBLAS/GraphBLAS/@gb/private folder, and type the following in the MATLAB
+% GraphBLAS/GraphBLAS/@GrB/private folder, and type the following in the MATLAB
 % command window:
 %
 % Example:
@@ -12,7 +12,7 @@ function gbtest
 %   cd GraphBLAS/GraphBLAS
 %   addpath (pwd) ;
 %   savepath ;          % if this fails, edit your startup.m file
-%   cd @gb/private
+%   cd @GrB/private
 %   gbmake ;            % compile the MATLAB interface to GraphBLAS
 %   cd ../../test
 %   gbtest              % run this test
@@ -22,7 +22,7 @@ function gbtest
 % are end statements that appear after an error ('...') statement, so they are
 % not reachable.
 %
-% See also gb.
+% See also GrB.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

@@ -16,10 +16,10 @@ for trial = 1:40
     b = rand (n, 1) ;
 
     r = rand ;
-    s = gb (r) ;
+    s = GrB (r) ;
 
-    GA = gb (A) ;
-    GB = gb (B) ;
+    GA = GrB (A) ;
+    GB = GrB (B) ;
 
     C0 = A ./ r ;
     C1 = GA ./ s ;
@@ -46,7 +46,7 @@ for trial = 1:40
     assert (isequal (C0, C1)) ;
 
     C0 = 2 ./ r ;
-    C1 = gb (2) ./ s ;
+    C1 = GrB (2) ./ s ;
     assert (isequal (C0, C1)) ;
 
     C0 = 2 ./ A ;
@@ -54,11 +54,11 @@ for trial = 1:40
     assert (isequal (C0, C1)) ;
 
     C0 = 2 .\ r ;
-    C1 = gb (2) .\ s ;
+    C1 = GrB (2) .\ s ;
     assert (isequal (C0, C1)) ;
 
     C0 = 2 \ r ;
-    C1 = gb (2) \ s ;
+    C1 = GrB (2) \ s ;
     assert (isequal (C0, C1)) ;
 
     C0 = A ./ B ;
@@ -79,16 +79,16 @@ for trial = 1:40
 
     A = sprand (n, n, 0.5) ;
     B = rand * A ;
-    GA = gb (A) ;
-    GB = gb (B) ;
+    GA = GrB (A) ;
+    GB = GrB (B) ;
 
     C0 = A ./ B ;
     C1 = GA ./ GB ;
-    assert (isequal (gb.prune (C0, nan), gb.prune (C1, nan))) ;
+    assert (isequal (GrB.prune (C0, nan), GrB.prune (C1, nan))) ;
 
     C0 = A .\ B ;
     C1 = GA .\ GB ;
-    assert (isequal (gb.prune (C0, nan), gb.prune (C1, nan))) ;
+    assert (isequal (GrB.prune (C0, nan), GrB.prune (C1, nan))) ;
 
 end
 

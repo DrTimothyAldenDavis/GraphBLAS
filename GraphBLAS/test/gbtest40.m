@@ -20,7 +20,7 @@ for trial = 1:3
                     if (kind == 1)
                         A = logical (A) ;
                     end
-                    G = gb (A) ;
+                    G = GrB (A) ;
 
                     s1 = sum (A) ;
                     s2 = sum (G) ;

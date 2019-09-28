@@ -1,5 +1,5 @@
 function gbtest5
-%GBTEST5 test gb.descriptorinfo
+%GBTEST5 test GrB.descriptorinfo
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -59,7 +59,7 @@ for k1 = 1:length (list_out)
                             end
 
                             d
-                            gb.descriptorinfo (d) ;
+                            GrB.descriptorinfo (d) ;
                             ntrials = ntrials + 1 ;
                         end
                     end
@@ -71,7 +71,7 @@ end
 
 fprintf ('testing error handling (errors expected):\n') ;
 
-gb.descriptorinfo
+GrB.descriptorinfo
 
 ntrials
 fprintf ('gbtest5: all tests passed\n') ;

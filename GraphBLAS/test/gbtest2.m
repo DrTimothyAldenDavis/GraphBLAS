@@ -20,15 +20,15 @@ for k1 = 1:length(opnames)
         end
         fprintf ('\nop: [%s]\n', op) ;
         if (k2 > 0)
-            gb.binopinfo (op)
+            GrB.binopinfo (op)
         else
-            gb.binopinfo (op, 'double')
+            GrB.binopinfo (op, 'double')
         end
     end
 end
 
-fprintf ('\nhelp gb.binopinfo:\n') ;
-gb.binopinfo ;
+fprintf ('\nhelp GrB.binopinfo:\n') ;
+GrB.binopinfo ;
 
 fprintf ('gbtest2: all tests passed\n') ;
 

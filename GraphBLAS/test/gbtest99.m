@@ -1,13 +1,13 @@
 function gbtest99
-%GBTEST99 test gb.bfs
+%GBTEST99 test GrB.bfs
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-save_threads = gb.threads ;
-save_chunk   = gb.chunk ;
-gb.threads (4) ;
-gb.chunk (2) ;
+save_threads = GrB.threads ;
+save_chunk   = GrB.chunk ;
+GrB.threads (4) ;
+GrB.chunk (2) ;
 
 %%MatrixMarket matrix coordinate pattern general
 %%GraphBLAS GrB_BOOL
@@ -39,15 +39,15 @@ clf ;
 for k1 = 1:2
     fmt = formats {k1} ;
 
-    A = gb (A, fmt) ;
-    H = gb (A, 'logical', fmt) ;
+    A = GrB (A, fmt) ;
+    H = GrB (A, 'logical', fmt) ;
     if (k1 == 1)
         subplot (1,2,1) ;
         plot (digraph (A)) ;
     end
 
-    v1 = gb.bfs (H, source) ;
-    [v pi] = gb.bfs (H, source) ;
+    v1 = GrB.bfs (H, source) ;
+    [v pi] = GrB.bfs (H, source) ;
     assert (isequal (v, v1)) ;
 
     v
@@ -64,18 +64,18 @@ for k1 = 1:2
     levels = full (double (v (v2))) ;
     assert (isequal (levels, sort (levels))) ;
 
-    [v pi] = gb.bfs (H, source, 'directed') ;
+    [v pi] = GrB.bfs (H, source, 'directed') ;
     assert (isequal (full (double (v)), vok)) ;
     assert (isequal (full (double (pi)), piok)) ;
 
-    [v pi] = gb.bfs (H, source, 'directed', 'check') ;
+    [v pi] = GrB.bfs (H, source, 'directed', 'check') ;
     assert (isequal (full (double (v)), vok)) ;
     assert (isequal (full (double (pi)), piok)) ;
 
 end
 
 A = A+A' ;
-[v pi] = gb.bfs (A, 2, 'undirected') ;
+[v pi] = GrB.bfs (A, 2, 'undirected') ;
 subplot (1,2,2) ;
 plot (graph (A))
 v
@@ -85,8 +85,8 @@ pi
 piok = [2 2 7 1 2 5 2 0] ;
 assert (isequal (full (double (pi)), piok)) ;
 
-gb.threads (save_threads) ;
-gb.chunk (save_chunk) ;
+GrB.threads (save_threads) ;
+GrB.chunk (save_chunk) ;
 
 fprintf ('gbtest99: all tests passed\n') ;
 

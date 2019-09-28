@@ -11,7 +11,7 @@ for trials = 1:10
     for m = 2:6
         for n = 2:6
             A = sprand (m, n, 0.5) ;
-            G = gb (A) ;
+            G = GrB (A) ;
             for k = -m:n
                 B = diag (A, k) ;
                 C = diag (G, k) ;
@@ -31,7 +31,7 @@ for trials = 1:10
 
     for m = 1:6
         A = sprandn (m, 1, 0.5) ;
-        G = gb (A) ;
+        G = GrB (A) ;
         for k = -6:6
             B = diag (A, k) ;
             C = diag (G, k) ;

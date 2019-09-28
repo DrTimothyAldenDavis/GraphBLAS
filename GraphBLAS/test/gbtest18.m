@@ -25,8 +25,8 @@ for trial = 1:21
         MB = logical (MB) ;
     end
 
-    GA = gb (MA) ;
-    GB = gb (MB) ;
+    GA = GrB (MA) ;
+    GB = GrB (MB) ;
 
     C1 = (MA < MB) ;
     C2 = (GA < GB) ;
@@ -136,7 +136,7 @@ for trial = 1:21
     if (islogical (MA))
         thunk = logical (thunk) ;
     end
-    gbthunk = gb (thunk) ;
+    gbthunk = GrB (thunk) ;
 
     assert (gbtest_eq (MA <  thunk, GA <  thunk)) ;
     assert (gbtest_eq (MA <= thunk, GA <= thunk)) ;
@@ -199,7 +199,7 @@ for trial = 1:21
     end
 
     k = (mod (trial,2) == 0) ;
-    gbk = gb (k) ;
+    gbk = GrB (k) ;
 
     C1 = (MA & k) ;
     C2 = (GA & gbk) ;

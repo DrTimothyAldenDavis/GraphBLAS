@@ -1,5 +1,5 @@
 function gbtest12
-%GBTEST12 test gb.eadd, gb.emult
+%GBTEST12 test GrB.eadd, GrB.emult
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -11,11 +11,11 @@ B = sparse (rand (2)) ;
 C = A+B ;
 D = A.*B ;
 
-G = gb.eadd ('+', A, B) ;
+G = GrB.eadd ('+', A, B) ;
 err = norm (C-G, 1)
 assert (logical (err < 1e-12))
 
-H = gb.emult ('*', A, B) ;
+H = GrB.emult ('*', A, B) ;
 err = norm (D-H, 1)
 assert (logical (err < 1e-12))
 
@@ -23,39 +23,39 @@ d.kind = 'sparse' ;
 d.in0 = 'transpose' ;
 d
 
-G = gb.eadd ('+', A, B, d) ;
+G = GrB.eadd ('+', A, B, d) ;
 C = A'+B ;
 err = norm (C-G, 1)
 assert (logical (err < 1e-12))
 
-H = gb.emult ('*', A, B, d) ;
+H = GrB.emult ('*', A, B, d) ;
 D = A'.*B ;
 err = norm (H-D, 1)
 assert (logical (err < 1e-12))
 
-d.kind = 'gb' ;
-G = gb.eadd ('+', A, B, d) ;
+d.kind = 'GrB' ;
+G = GrB.eadd ('+', A, B, d) ;
 err = norm (C-G, 1)
 
-H = gb.emult ('*', A, B, d) ;
+H = GrB.emult ('*', A, B, d) ;
 err = norm (D-H, 1)
 
 E = sparse (rand (2)) ;
 C = E + A+B ;
-G = gb.eadd (E, '+', '+', A, B) ;
+G = GrB.eadd (E, '+', '+', A, B) ;
 C-G
 
 F = sparse (rand (2)) ;
 D = F + A.*B ;
-H = gb.emult (F, '+', '*', A, B) ;
+H = GrB.emult (F, '+', '*', A, B) ;
 D-H
 assert (gbtest_eq (D, H)) ;
 
-G = gb.eadd ('+', A, B)
+G = GrB.eadd ('+', A, B)
 C = A+B
 assert (gbtest_eq (C, G)) ;
 
-H = gb.emult ('*', A, B)
+H = GrB.emult ('*', A, B)
 D = A.*B
 assert (gbtest_eq (D, H)) ;
 
@@ -65,22 +65,22 @@ A = sprand (m, n, 0.5) ;
 B = sprand (m, n, 0.5) ;
 M = logical (sprand (m, n, 0.5)) ;
 Cin = sprand (m, n, 0.5) ;
-G = gb (Cin) ;
+G = GrB (Cin) ;
 T = Cin + A .* B ;
 C = Cin ;
 C (M) = T (M) ;
-G = gb.emult (Cin, M, '+', '*', A, B) ;
+G = GrB.emult (Cin, M, '+', '*', A, B) ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
 
-G = gb.eadd (Cin, M, '+', '+', A, B) ;
+G = GrB.eadd (Cin, M, '+', '+', A, B) ;
 C = Cin ;
 T = Cin + A + B ;
 C (M) = T (M) ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
 
-G = gb.eadd (Cin, M, '+', A, B) ;
+G = GrB.eadd (Cin, M, '+', A, B) ;
 C = Cin ;
 T = A + B ;
 C (M) = T (M) ;
@@ -88,10 +88,10 @@ err = norm (C-G, 1) ;
 assert (err < 1e-12)
 
 C = sprand (m, n, 0.5) ;
-G = gb (C) ;
+G = GrB (C) ;
 T = A .* B ;
 C (M) = T (M) ;
-G = gb.emult (G, M, '*', A, B) ;
+G = GrB.emult (G, M, '*', A, B) ;
 err = norm (C-G, 1) ;
 assert (err < 1e-12)
 

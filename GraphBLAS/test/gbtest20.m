@@ -10,7 +10,7 @@ for trial = 1:10
     for m = 0:10
         for n = 0:10
             A = 100 * sprand (m, n, 0.5) ;
-            G = gb (A) ;
+            G = GrB (A) ;
             [lo1, hi1] = bandwidth (A) ;
             [lo2, hi2] = bandwidth (G) ;
             assert (isequal (lo1, lo2)) ;

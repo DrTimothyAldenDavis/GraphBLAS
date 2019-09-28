@@ -10,7 +10,7 @@ for k = 1:length (types)
     M = logical (C > 3) ;
     A = cast (2 * magic (3), type) ;
     C (M) = A (M) ;
-    G = gb (magic (3), type) ;
+    G = GrB (magic (3), type) ;
     G (M) = A (M) ;
     assert (isequal (G, C)) ;
 end
@@ -22,7 +22,7 @@ for trial = 1:40
             A = sprand (m, n, 0.5) ;
             C = sprand (m, n, 0.5) ;
             M = sprand (m, n, 0.5) ~= 0 ;
-            G = gb (A) ;
+            G = GrB (A) ;
 
             x1 = A (M) ;
             x2 = G (M) ;
@@ -45,14 +45,14 @@ for trial = 1:40
             C1 = C ;
             C1 (M) = A (M) ;        % C1(M) is MATLAB, A(M) is MATLAB
 
-            C2 = gb (C) ;
-            C2 (M) = A (M) ;        % C2(M) is gb, A(M) is MATLAB
+            C2 = GrB (C) ;
+            C2 (M) = A (M) ;        % C2(M) is GrB, A(M) is MATLAB
 
-            C3 = gb (C) ;
-            C3 (M) = G (M) ;        % C3(M) is gb, and G(M) is gb
+            C3 = GrB (C) ;
+            C3 (M) = G (M) ;        % C3(M) is GrB, and G(M) is GrB
 
             % this uses the MATLAB subasgn, after typecasting G(M) from class
-            % gb to class double, using gb/double:
+            % GrB to class double, using GrB/double:
             C4 = C ;
             C4 (M) = G (M) ;
 
@@ -60,14 +60,14 @@ for trial = 1:40
             assert (gbtest_eq (C1, C3)) ;
             assert (gbtest_eq (C1, C4)) ;
 
-            % also try with a gb mask matrix M.  In this case, A(M) where A
-            % is a MATLAB matrix and M is a gb logical matrix fails.
-            % gb/subsref can handle this case, but MATLAB
+            % also try with a GrB mask matrix M.  In this case, A(M) where A
+            % is a MATLAB matrix and M is a GrB logical matrix fails.
+            % GrB/subsref can handle this case, but MATLAB
             % doesn't call it.  It tries using the built-in subsref instead,
-            % and it doesn't know what to do with a gb logical matrix M.
+            % and it doesn't know what to do with a GrB logical matrix M.
 
-            M = gb (M) ;
-            C5 = gb (C) ;
+            M = GrB (M) ;
+            C5 = GrB (C) ;
             C5 (M) = G (M) ;
 
             assert (gbtest_eq (C1, C5)) ;
@@ -76,8 +76,8 @@ for trial = 1:40
             K = logical (M) ;
             C1 (K) = pi ;
             C2 (M) = pi ;
-            C3 (M) = gb (pi) ;
-            C4 (K) = gb (pi) ;
+            C3 (M) = GrB (pi) ;
+            C4 (K) = GrB (pi) ;
             C5 (M) = pi ;
 
             assert (gbtest_eq (C1, C2)) ;

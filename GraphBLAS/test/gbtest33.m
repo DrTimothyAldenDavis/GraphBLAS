@@ -13,7 +13,7 @@ for k1 = 1:length(types)
     type = types {k1} ;
     fprintf ('%s ', type) ;
 
-    H = gb (2^55, 2^55, type) ;
+    H = GrB (2^55, 2^55, type) ;
     [m, n] = size (H) ;
     assert (m == 2^55) ;
     assert (n == 2^55) ;
@@ -32,9 +32,9 @@ for k1 = 1:length(types)
                 A (A < 50) = 0 ;
                 S = sparse (A) ;
 
-                G = gb (S, type) ;
+                G = GrB (S, type) ;
                 G2 = spones (G, type2) ;
-                assert (isequal (gb.type (G2), type2)) ;
+                assert (isequal (GrB.type (G2), type2)) ;
 
                 C = double (G2) ;
                 assert (isequal (sparse (C), spones (S))) ;
@@ -67,18 +67,18 @@ for k1 = 1:length(types)
                 islog = isequal (type, 'logical') ;
                 assert (islogical (G) == islog) ;
 
-                assert (isa (G, 'gb')) ;
+                assert (isa (G, 'GrB')) ;
                 assert (isa (G, 'numeric')) ;
                 assert (isa (G, 'float') == isfl) ;
                 assert (isa (G, 'integer') == isint) ;
                 assert (isa (G, 'logical') == islog) ;
-                assert (isa (G, type) == isequal (gb.type (G), type)) ;
+                assert (isa (G, type) == isequal (GrB.type (G), type)) ;
             end
         end
     end
 end
 
 s = RandStream.getGlobalStream ;
-fprintf ('\nrandom stream has type: [%s]\n', gb.type (s)) ;
+fprintf ('\nrandom stream has type: [%s]\n', GrB.type (s)) ;
 fprintf ('gbtest33: all tests passed\n') ;
 

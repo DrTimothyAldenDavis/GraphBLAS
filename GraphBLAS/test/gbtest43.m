@@ -8,7 +8,7 @@ function gbtest43
 
 rng ('default') ;
 ok = true ;
-G = gb (magic (5)) ;
+G = GrB (magic (5)) ;
 
 try
     x = prod (G, 'gunk') ;
@@ -101,7 +101,7 @@ end
 assert (ok) ;
 
 try
-    x = gb.eye (1, 2, 3) ;
+    x = GrB.eye (1, 2, 3) ;
     ok = false
 catch expected_error
     expected_error
@@ -110,7 +110,7 @@ end
 assert (ok) ;
 
 try
-    x = gb.eye ([1, 2, 3]) ;
+    x = GrB.eye ([1, 2, 3]) ;
     ok = false
 catch expected_error
     expected_error
@@ -136,7 +136,7 @@ catch expected_error
 end
 assert (ok) ;
 
-H = gb (rand (4,3)) ;
+H = GrB (rand (4,3)) ;
 try
     C = H^H ;
     ok = false
@@ -218,7 +218,7 @@ catch expected_error
 end
 assert (ok) ;
 
-G = gb (magic (2), 'int16') ;
+G = GrB (magic (2), 'int16') ;
 try
     C = eps (G)
     ok = false
@@ -229,7 +229,7 @@ end
 assert (ok) ;
 
 try
-    C = gb.entries (G, 'gunk')
+    C = GrB.entries (G, 'gunk')
     ok = false
 catch expected_error
     expected_error
@@ -238,7 +238,7 @@ end
 assert (ok) ;
 
 try
-    C = gb.entries (G, 'all', 'degree')
+    C = GrB.entries (G, 'all', 'degree')
     ok = false
 catch expected_error
     expected_error
@@ -282,7 +282,7 @@ catch expected_error
 end
 assert (ok) ;
 
-v = gb (rand (4,1)) ;
+v = GrB (rand (4,1)) ;
 try
     C = norm (G, 42) ;
     ok = false
@@ -374,7 +374,7 @@ end
 assert (ok) ;
 
 try
-    v = gb.bfs (v, 1) ;
+    v = GrB.bfs (v, 1) ;
     ok = false
 catch expected_error
     expected_error
@@ -383,7 +383,7 @@ end
 assert (ok) ;
 
 try
-    v = gb.bfs (G, 1, 'gunk') ;
+    v = GrB.bfs (G, 1, 'gunk') ;
     ok = false
 catch expected_error
     expected_error
@@ -393,7 +393,7 @@ assert (ok) ;
 
 try
     % G must be symmetric
-    v = gb.bfs (G, 1, 'symmetric', 'check') ;
+    v = GrB.bfs (G, 1, 'symmetric', 'check') ;
     ok = false
 catch expected_error
     expected_error
@@ -420,7 +420,7 @@ end
 assert (ok) ;
 
 try
-    C = complex (gb (1), gb (1)) ;
+    C = complex (GrB (1), GrB (1)) ;
     ok = false
 catch expected_error
     expected_error
@@ -429,7 +429,7 @@ end
 assert (ok) ;
 
 try
-    C = gb.empty (4, 4) ;
+    C = GrB.empty (4, 4) ;
     ok = false
 catch expected_error
     expected_error
@@ -438,7 +438,7 @@ end
 assert (ok) ;
 
 try
-    C = gb.empty ([0, 4, 4]) ;
+    C = GrB.empty ([0, 4, 4]) ;
     ok = false
 catch expected_error
     expected_error
@@ -447,7 +447,7 @@ end
 assert (ok) ;
 
 try
-    c = gb.tricount (v) ;
+    c = GrB.tricount (v) ;
     ok = false
 catch expected_error
     expected_error
@@ -456,7 +456,7 @@ end
 assert (ok) ;
 
 try
-    r = gb.pagerank (rand (3,4)) ;
+    r = GrB.pagerank (rand (3,4)) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -466,9 +466,9 @@ assert (ok) ;
 
 A = magic (5) ;
 A (5,1) = 0 ;
-G = gb.prune (A) ;
+G = GrB.prune (A) ;
 try
-    c = gb.tricount (G, 'check') ;
+    c = GrB.tricount (G, 'check') ;
     assert (false) ;
 catch expected_error
     expected_error
@@ -479,10 +479,10 @@ n = 10 ;
 A = sprand (n, n, 0.4) ;
 S = tril (A, -1) ;
 S = S+S' ;
-G = gb (S) ;
+G = GrB (S) ;
 
 try
-    L = gb.laplacian (G, 'uint8') ;
+    L = GrB.laplacian (G, 'uint8') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -491,7 +491,7 @@ end
 assert (ok) ;
 
 try
-    L = gb.laplacian (A, 'double', 'check') ;
+    L = GrB.laplacian (A, 'double', 'check') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -500,7 +500,7 @@ end
 assert (ok) ;
 
 try
-    L = gb.laplacian (S + speye (n), 'double', 'check') ;
+    L = GrB.laplacian (S + speye (n), 'double', 'check') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -509,7 +509,7 @@ end
 assert (ok) ;
 
 try
-    DiGraph = digraph (gb (ones (4,3))) ;
+    DiGraph = digraph (GrB (ones (4,3))) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -518,7 +518,7 @@ end
 assert (ok );
 
 try
-    DiGraph = digraph (gb (ones (4)), 'crud') ;
+    DiGraph = digraph (GrB (ones (4)), 'crud') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -529,7 +529,7 @@ assert (ok );
 clear d
 d.in0 = 'crud' ;
 try
-    gb.descriptorinfo (d) ;
+    GrB.descriptorinfo (d) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -540,7 +540,7 @@ assert (ok) ;
 clear d
 d.in0 = 42 ;
 try
-    gb.descriptorinfo (d) ;
+    GrB.descriptorinfo (d) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -551,7 +551,7 @@ assert (ok) ;
 clear d
 d.nthreads = 'something' ;
 try
-    gb.descriptorinfo (d) ;
+    GrB.descriptorinfo (d) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -562,7 +562,7 @@ assert (ok) ;
 clear d
 d.chunk = 'something' ;
 try
-    gb.descriptorinfo (d) ;
+    GrB.descriptorinfo (d) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -571,7 +571,7 @@ end
 assert (ok) ;
 
 try
-    E = gb.incidence (ones (4,3)) ;
+    E = GrB.incidence (ones (4,3)) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -580,7 +580,7 @@ end
 assert (ok) ;
 
 try
-    E = gb.incidence (ones (4), 'gunk') ;
+    E = GrB.incidence (ones (4), 'gunk') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -589,7 +589,7 @@ end
 assert (ok) ;
 
 try
-    Graph = graph (gb (ones (4,3))) ;
+    Graph = graph (GrB (ones (4,3))) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -598,7 +598,7 @@ end
 assert (ok) ;
 
 try
-    Graph = graph (gb (ones (4)), 'crud') ;
+    Graph = graph (GrB (ones (4)), 'crud') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -607,7 +607,7 @@ end
 assert (ok) ;
 
 try
-    C = gb.ktruss (rand (4), 2) ;
+    C = GrB.ktruss (rand (4), 2) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -616,7 +616,7 @@ end
 assert (ok) ;
 
 try
-    C = gb.ktruss (rand (3,4)) ;
+    C = GrB.ktruss (rand (3,4)) ;
     ok = false ;
 catch expected_error
     expected_error
@@ -626,7 +626,7 @@ assert (ok) ;
 
 A = sprand (10, 10, 0.5) ;
 try
-    C = gb.ktruss (A, 3, 'check') ;
+    C = GrB.ktruss (A, 3, 'check') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -636,7 +636,7 @@ assert (ok) ;
 
 A = A+A' ;
 try
-    C = gb.ktruss (A, 3, 'check') ;
+    C = GrB.ktruss (A, 3, 'check') ;
     ok = false ;
 catch expected_error
     expected_error
@@ -644,7 +644,7 @@ catch expected_error
 end
 assert (ok) ;
 
-G = gb (magic (2)) ;
+G = GrB (magic (2)) ;
 try
     G = G (2:end)
     ok = false ;
@@ -664,7 +664,7 @@ end
 assert (ok)
 
 try
-    iset = gb.mis (ones (3,4)) ;
+    iset = GrB.mis (ones (3,4)) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -672,7 +672,7 @@ end
 assert (ok) ;
 
 try
-    iset = gb.mis (ones (3), 'gunk') ;
+    iset = GrB.mis (ones (3), 'gunk') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -680,7 +680,7 @@ end
 assert (ok) ;
 
 try
-    iset = gb.mis (ones (3), 'check') ;
+    iset = GrB.mis (ones (3), 'check') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -689,7 +689,7 @@ assert (ok) ;
 
 A = sprand (10, 10, 0.5) ;
 try
-    iset = gb.mis (gb.offdiag (A), 'check') ;
+    iset = GrB.mis (GrB.offdiag (A), 'check') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -697,7 +697,7 @@ end
 assert (ok) ;
 
 try
-    iset = gb.mis (ones (3)) ;
+    iset = GrB.mis (ones (3)) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -705,7 +705,7 @@ end
 assert (ok) ;
 
 try
-    G = gb (A, 'gunk') ;
+    G = GrB (A, 'gunk') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -713,7 +713,7 @@ end
 assert (ok) ;
 
 try
-    G = gb (A, 'gunk', 'crud') ;
+    G = GrB (A, 'gunk', 'crud') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -721,7 +721,7 @@ end
 assert (ok) ;
 
 try
-    G = gb (4, 3, 'gunk') ;
+    G = GrB (4, 3, 'gunk') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -729,7 +729,7 @@ end
 assert (ok) ;
 
 try
-    G = gb (4, 3, 'gunk', 'crud') ;
+    G = GrB (4, 3, 'gunk', 'crud') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -737,7 +737,7 @@ end
 assert (ok) ;
 
 try
-    G = gb (A, A) ;
+    G = GrB (A, A) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -745,7 +745,7 @@ end
 assert (ok) ;
 
 try
-    G = gb (A, A, A) ;
+    G = GrB (A, A, A) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -753,7 +753,7 @@ end
 assert (ok) ;
 
 try
-    G = gb (A, A, A, A) ;
+    G = GrB (A, A, A, A) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -761,7 +761,7 @@ end
 assert (ok) ;
 
 try
-    G = gb.assign (A, {1}, {1}, {1}, pi) ;
+    G = GrB.assign (A, {1}, {1}, {1}, pi) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -769,7 +769,7 @@ end
 assert (ok) ;
 
 try
-    G = gb.assign (A, '+', '+', {1}, {1}, pi) ;
+    G = GrB.assign (A, '+', '+', {1}, {1}, pi) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -777,7 +777,7 @@ end
 assert (ok) ;
 
 try
-    G = gb.assign (A, A, A, A) ;
+    G = GrB.assign (A, A, A, A) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -785,7 +785,7 @@ end
 assert (ok) ;
 
 try
-    G = gb.assign (A, {1}, {1}) ;
+    G = GrB.assign (A, {1}, {1}) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -793,7 +793,7 @@ end
 assert (ok) ;
 
 try
-    gb.semiringinfo ('') ;
+    GrB.semiringinfo ('') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -801,7 +801,7 @@ end
 assert (ok) ;
 
 try
-    G = gb.mxm ('', 1, 1) ;
+    G = GrB.mxm ('', 1, 1) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -809,7 +809,7 @@ end
 assert (ok) ;
 
 try
-    c = gb.reduce (ones (2), '+', '+', 1) ;
+    c = GrB.reduce (ones (2), '+', '+', 1) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -817,7 +817,7 @@ end
 assert (ok) ;
 
 try
-    gb.monoidinfo ('/', 'double') ;
+    GrB.monoidinfo ('/', 'double') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -825,7 +825,7 @@ end
 assert (ok) ;
 
 try
-    gb.monoidinfo ('') ;
+    GrB.monoidinfo ('') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -833,7 +833,7 @@ end
 assert (ok) ;
 
 try
-    gb.apply ('',1) ;
+    GrB.apply ('',1) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -841,7 +841,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract (pi, {1}, {1}, {1}) ;
+    GrB.extract (pi, {1}, {1}, {1}) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -849,7 +849,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract (pi, pi, '+', '+', pi) ;
+    GrB.extract (pi, pi, '+', '+', pi) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -857,7 +857,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract (pi, pi, pi, pi) ;
+    GrB.extract (pi, pi, pi, pi) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -865,7 +865,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract ('+') ;
+    GrB.extract ('+') ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -873,7 +873,7 @@ end
 assert (ok) ;
 
 try
-    gb.build (int8(1), int8(1), pi)
+    GrB.build (int8(1), int8(1), pi)
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -881,7 +881,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract ('+', pi) ;
+    GrB.extract ('+', pi) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -889,7 +889,7 @@ end
 assert (ok) ;
 
 try
-    gb.select (pi, pi) ;
+    GrB.select (pi, pi) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -897,7 +897,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract (1i, {1}, {1}) ;
+    GrB.extract (1i, {1}, {1}) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -905,7 +905,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract (pi, {1}, {1}, struct ('kind', 'gunk')) ;
+    GrB.extract (pi, {1}, {1}, struct ('kind', 'gunk')) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))
@@ -913,7 +913,7 @@ end
 assert (ok) ;
 
 try
-    gb.extract (pi, {1}, {1}, struct ('format', 'gunk')) ;
+    GrB.extract (pi, {1}, {1}, struct ('format', 'gunk')) ;
 catch expected_error
     expected_error
     disp (expected_error.stack (end-1))

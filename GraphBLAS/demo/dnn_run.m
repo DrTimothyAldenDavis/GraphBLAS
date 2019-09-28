@@ -3,7 +3,7 @@
 rootdir = '/raid/hyper/GraphChallenge/dnn_data/MATLAB' ;
 ncores = maxNumCompThreads ;
 fprintf ('# of cores :  %d\n', ncores) ;
-gb.format ('by row') ;
+GrB.format ('by row') ;
 
 for id = 1 % 1:12
     % load the problem
@@ -20,7 +20,7 @@ for id = 1 % 1:12
     clear Problem
     DNNedges = 0 ;
     for k = 1:nlayers
-        DNNedges = DNNedges + gb.entries (W {k}) ;
+        DNNedges = DNNedges + GrB.entries (W {k}) ;
         bias {k} = full (bias {k}) ;
     end
     tload = toc ;
@@ -38,11 +38,11 @@ for id = 1 % 1:12
         if (nthreads > 2*ncores)
             break ;
         end
-        gb.threads (nthreads) ;
+        GrB.threads (nthreads) ;
 
         % solve the DNN
         tic
-        Y = gb.dnn (W, bias, Y0) ;
+        Y = GrB.dnn (W, bias, Y0) ;
         challengeRunTime = toc ;
         if (nthreads == 1)
             t1 = challengeRunTime ;

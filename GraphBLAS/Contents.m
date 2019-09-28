@@ -4,15 +4,15 @@
 % algebraic operations over semirings.  Its MATLAB interface provides faster
 % sparse matrix operations than the built-in methods in MATLAB, as well as
 % sparse integer and single-precision matrices, and operations with arbitrary
-% semirings.  See 'help gb' for details.
+% semirings.  See 'help GrB' for details.
 %
-% The constructor method is gb.  If A is any matrix (GraphBLAS, MATLAB sparse
+% The constructor method is GrB.  If A is any matrix (GraphBLAS, MATLAB sparse
 % or full), then:
 %
-%   C = gb (A) ;            GraphBLAS copy of a matrix A, same type
-%   C = gb (m, n) ;         m-by-n GraphBLAS double matrix with no entries
-%   C = gb (..., type) ;    create or typecast to a different type
-%   C = gb (..., format) ;  create in a specified format
+%   C = GrB (A) ;            GraphBLAS copy of a matrix A, same type
+%   C = GrB (m, n) ;         m-by-n GraphBLAS double matrix with no entries
+%   C = GrB (..., type) ;    create or typecast to a different type
+%   C = GrB (..., format) ;  create in a specified format
 %
 % The type can be 'double', 'single', 'logical', 'int8', 'int16', 'int32',
 % 'int64', 'uint8', 'uint16', 'uint32', or 'uint64'.  The format is 'by row' or
@@ -57,7 +57,7 @@
 %   cast isrow iscolumn ndims sprank etreeplot spy gplot
 %   bicgstabl bicgstab cgs minres gmres bicg pcg qmr rjr tfqmr lsqr
 %
-% Static Methods: used as gb.method; inputs can be any GraphBLAS or
+% Static Methods: used as GrB.method; inputs can be any GraphBLAS or
 % MATLAB matrix, in any combination.
 %
 %   apply           emult           isfull          select
@@ -67,8 +67,8 @@
 %   build           extracttuples   mis             threads
 %   chunk           eye             monoidinfo      tricount
 %   clear           format          mxm             type
-%   compact         gbkron          nonz            unopinfo
-%   descriptorinfo  gbtranspose     offdiag         vreduce
+%   compact         kronecker       nonz            unopinfo
+%   descriptorinfo  trans           offdiag         vreduce
 %   dnn             incidence       pagerank
 %   eadd            isbycol         prune
 %   empty           isbyrow         reduce

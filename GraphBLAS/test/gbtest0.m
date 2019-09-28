@@ -1,12 +1,12 @@
 function gbtest0
-%GBTEST0 test gb.clear
+%GBTEST0 test GrB.clear
 
-gb.clear
+GrB.clear
 
-assert (isequal (gb.format, 'by col')) ;
-assert (isequal (gb.chunk, 4096)) ;
+assert (isequal (GrB.format, 'by col')) ;
+assert (isequal (GrB.chunk, 4096)) ;
 
-fprintf ('default # of threads: %d\n', gb.threads) ;
+fprintf ('default # of threads: %d\n', GrB.threads) ;
 
 fprintf ('gbtest0: all tests passed\n') ;
 

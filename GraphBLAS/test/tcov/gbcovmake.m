@@ -11,37 +11,37 @@ if verLessThan ('matlab', '9.4')
 end
 
 warning ('off', 'MATLAB:MKDIR:DirectoryExists') ;
-mkdir ('tmp/@gb/') ;
-mkdir ('tmp/@gb/private') ;
-mkdir ('tmp/@gb/util') ;
+mkdir ('tmp/@GrB/') ;
+mkdir ('tmp/@GrB/private') ;
+mkdir ('tmp/@GrB/util') ;
 mkdir ('tmp/cover') ;
 warning ('on', 'MATLAB:MKDIR:DirectoryExists') ;
 
-% copy all m-files into tmp/@gb
-mfiles = dir ('../../@gb/*.m') ;
+% copy all m-files into tmp/@GrB
+mfiles = dir ('../../@GrB/*.m') ;
 for k = 1:length (mfiles)
-    copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@gb/') ;
+    copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GrB/') ;
 end
 
-% copy all private m-files into tmp/@gb/private
-mfiles = dir ('../../@gb/private/*.m') ;
+% copy all private m-files into tmp/@GrB/private
+mfiles = dir ('../../@GrB/private/*.m') ;
 for k = 1:length (mfiles)
-    copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@gb/private') ;
+    copyfile ([(mfiles (k).folder) '/' (mfiles (k).name)], 'tmp/@GrB/private') ;
 end
 
 % copy the *.h files
-copyfile ('../../@gb/private/util/*.h', 'tmp/@gb/util') ;
+copyfile ('../../@GrB/private/util/*.h', 'tmp/@GrB/util') ;
 
 % copy and edit the mexfunction/*.c files
-cfiles = dir ('../../@gb/private/mexfunctions/*.c') ; 
-count = gbcov_edit (cfiles, 0, 'tmp/@gb/private') ;
+cfiles = dir ('../../@GrB/private/mexfunctions/*.c') ; 
+count = gbcov_edit (cfiles, 0, 'tmp/@GrB/private') ;
 
 % copy and edit the util/*.c files
-ufiles = [ dir('../../@gb/private/util/*.c') ; dir('*.c') ] ;
-count = gbcov_edit (ufiles, count, 'tmp/@gb/util') ;
+ufiles = [ dir('../../@GrB/private/util/*.c') ; dir('*.c') ] ;
+count = gbcov_edit (ufiles, count, 'tmp/@GrB/util') ;
 
-% create the gbfinish.c file and place in tmp/@gb/util
-f = fopen ('tmp/@gb/util/gbcovfinish.c', 'w') ;
+% create the gbfinish.c file and place in tmp/@GrB/util
+f = fopen ('tmp/@GrB/util/gbcovfinish.c', 'w') ;
 fprintf (f, '#include "gb_matlab.h"\n') ;
 fprintf (f, 'int64_t gbcov [GBCOV_MAX] ;\n') ;
 fprintf (f, 'int gbcov_max = %d ;\n', count) ;
@@ -85,7 +85,7 @@ inc = ...
 '-I. -I../util -I../../../../../../Include -I../../../../../../Source -I../../../../../../Source/Template' ;
 
 here = pwd ;
-cd tmp/@gb/private
+cd tmp/@GrB/private
 try
 
     % compile util files

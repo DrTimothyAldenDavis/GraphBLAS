@@ -24,17 +24,17 @@ for trial = 1:40
             xtype = types {k2} ;
             xnan = cast (nan, xtype) ;
 
-            G = gb.select ('eqthunk', A, xnan) ;
+            G = GrB.select ('eqthunk', A, xnan) ;
             X1 = full (double (G)) ;
             X2 = double (A_nan) ;
             assert (isequaln (X1, X2)) ;
 
-            G = gb.select ('nethunk', A, xnan) ;
+            G = GrB.select ('nethunk', A, xnan) ;
             X1 = full (double (G)) ;
             X2 = double (A_notnan) ;
             assert (isequaln (X1, X2)) ;
 
-            G = gb.prune (A, xnan) ;
+            G = GrB.prune (A, xnan) ;
             X1 = full (double (G)) ;
             X2 = double (A_notnan) ;
             assert (isequaln (X1, X2)) ;

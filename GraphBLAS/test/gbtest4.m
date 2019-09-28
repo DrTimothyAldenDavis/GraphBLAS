@@ -22,8 +22,8 @@ for k1 = 1:length (ops)
 
             try
                 fprintf ('\n================================ %s\n', semiring) ;
-                gb.semiringinfo (semiring) ;
-                gb.semiringinfo (s, type) ;
+                GrB.semiringinfo (semiring) ;
+                GrB.semiringinfo (s, type) ;
                 nsemirings = nsemirings + 1 ;
             catch
                 % this is an error, but it is expected since not all
@@ -35,7 +35,7 @@ for k1 = 1:length (ops)
 end
 
 assert (nsemirings == 1865)
-gb.semiringinfo
+GrB.semiringinfo
 
 fprintf ('\ngbtest4: all tests passed\n') ;
 

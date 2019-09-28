@@ -2,24 +2,24 @@
 %
 %  gbtest    - test GraphBLAS MATLAB interface (runs all tests listed below)
 %
-%  gbtest0   - test gb.clear
-%  gbtest1   - test gb
+%  gbtest0   - test GrB.clear
+%  gbtest1   - test GrB
 %  gbtest2   - list all binary operators
 %  gbtest3   - test dnn
 %  gbtest4   - list all 1865 possible semirings
-%  gbtest5   - test gb.descriptorinfo
-%  gbtest6   - test gb.mxm
-%  gbtest7   - test gb.build
-%  gbtest8   - test gb.select
+%  gbtest5   - test GrB.descriptorinfo
+%  gbtest6   - test GrB.mxm
+%  gbtest7   - test GrB.build
+%  gbtest8   - test GrB.select
 %  gbtest9   - test eye and speye
-%  gbtest10  - test gb.assign
-%  gbtest11  - test gb, sparse
-%  gbtest12  - test gb.eadd, gb.emult
-%  gbtest13  - test find and gb.extracttuples
-%  gbtest14  - test kron and gb.gbkron
+%  gbtest10  - test GrB.assign
+%  gbtest11  - test GrB, sparse
+%  gbtest12  - test GrB.eadd, GrB.emult
+%  gbtest13  - test find and GrB.extracttuples
+%  gbtest14  - test kron and GrB.kronecker
 %  gbtest15  - list all unary operators
-%  gbtest16  - test gb.extract
-%  gbtest17  - test gb.gbtranspose
+%  gbtest16  - test GrB.extract
+%  gbtest17  - test GrB.trans
 %  gbtest18  - test comparators (and, or, >, ...)
 %  gbtest19  - test mpower
 %  gbtest20  - test bandwidth, isdiag, ceil, floor, round, fix
@@ -30,10 +30,10 @@
 %  gbtest25  - test diag, tril, triu
 %  gbtest26  - test typecasting
 %  gbtest27  - test conversion to full
-%  gbtest28  - test gb.build
+%  gbtest28  - test GrB.build
 %  gbtest29  - test subsref and subsasgn with logical indexing
 %  gbtest30  - test colon notation
-%  gbtest31  - test gb and casting
+%  gbtest31  - test GrB and casting
 %  gbtest32  - test nonzeros
 %  gbtest33  - test spones, numel, nzmax, size, length, isempty, issparse, ...
 %  gbtest34  - test repmat
@@ -47,31 +47,31 @@
 %  gbtest42  - test for nan
 %  gbtest43  - test error handling
 %  gbtest44  - test subsasgn, mtimes, plus, false, ...
-%  gbtest45  - test gb.vreduce
-%  gbtest46  - test gb.subassign and gb.assign
-%  gbtest47  - test gb.entries, gb.nonz, numel
-%  gbtest48  - test gb.apply
-%  gbtest49  - test gb.prune
-%  gbtest50  - test gb.ktruss and gb.tricount
-%  gbtest51  - test gb.tricount
-%  gbtest52  - test gb.format
-%  gbtest53  - test gb.monoidinfo
-%  gbtest54  - test gb.compact
+%  gbtest45  - test GrB.vreduce
+%  gbtest46  - test GrB.subassign and GrB.assign
+%  gbtest47  - test GrB.entries, GrB.nonz, numel
+%  gbtest48  - test GrB.apply
+%  gbtest49  - test GrB.prune
+%  gbtest50  - test GrB.ktruss and GrB.tricount
+%  gbtest51  - test GrB.tricount
+%  gbtest52  - test GrB.format
+%  gbtest53  - test GrB.monoidinfo
+%  gbtest54  - test GrB.compact
 %  gbtest55  - test disp
-%  gbtest56  - test gb.empty
+%  gbtest56  - test GrB.empty
 %  gbtest57  - test fprintf and sprintf
 %  gbtest58  - test uplus
 %  gbtest59  - test end
 %  gbtest60  - test issigned
-%  gbtest61  - test gb.laplacian
+%  gbtest61  - test GrB.laplacian
 %  gbtest62  - test ldivide, rdivide, mldivide, mrdivide
-%  gbtest63  - test gb.incidence
-%  gbtest64  - test gb.pagerank
-%  gbtest65  - test gb.mis
+%  gbtest63  - test GrB.incidence
+%  gbtest64  - test GrB.pagerank
+%  gbtest65  - test GrB.mis
 %  gbtest66  - test graph
 %  gbtest67  - test digraph
 %  gbtest68  - test isequal
-%  gbtest99  - test gb.bfs and plot (graph (G))
+%  gbtest99  - test GrB.bfs and plot (graph (G))
 %
 % Utilities:
 %

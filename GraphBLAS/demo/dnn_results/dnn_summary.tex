@@ -14,7 +14,7 @@ respectively.
 \section{The MATLAB code}
 
 The MATLAB code (with GraphBLAS) is very simple, even simpler than the MATLAB
-reference implentation.  All MATLAB variables are GraphBLAS \verb'gb' objects.
+reference implentation.  All MATLAB variables are GraphBLAS \verb'GrB' objects.
 In this case, they represent sparse matrices with the \verb'GrB_FP32' floating
 point type, stored in CSR format (by row).
 
@@ -23,7 +23,7 @@ point type, stored in CSR format (by row).
 function Y = dnn_gb (W, bias, Y0)
 Y = Y0 ;
 for i=1:length(W)
-    Y = gb.select ('>0', gb.mxm ('+.+', Y * W {i}, bias {i})) ;
+    Y = GrB.select ('>0', GrB.mxm ('+.+', Y * W {i}, bias {i})) ;
     M = Y > 32 ;
     if (nnz (M) > 0)
         Y (M) = 32 ;
@@ -51,7 +51,7 @@ for i=1:length(W)
 end
 \end{verbatim}}
 
-The code to convert from MATLAB sparse matrices to GraphBLAS \verb'gb' objects
+The code to convert from MATLAB sparse matrices to GraphBLAS \verb'GrB' objects
 is shown below.  This time is not included since the problem could have been
 read in as GraphBLAS matrices to begin with.  In any case, the conversion time
 is trivial.  Problem 12 is converted from MATLAB to GraphBLAS in 30.4 seconds,
@@ -62,10 +62,10 @@ converted in 0.3 seconds.
 \begin{verbatim}
 function [W, bias, Y0] = dnn_mat2gb (W, bias, Y0)
 n = size (Y0, 2) ;
-Y0 = gb (Y0, 'single') ;
+Y0 = GrB (Y0, 'single') ;
 for i=1:length(W)
-    W {i} = gb (W {i}, 'single') ;
-    bias {i} = gb.build (1:n, 1:n, bias {i}, n, n, '+', 'single') ;
+    W {i} = GrB (W {i}, 'single') ;
+    bias {i} = GrB.build (1:n, 1:n, bias {i}, n, n, '+', 'single') ;
 end
 \end{verbatim}}
 

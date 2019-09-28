@@ -5,7 +5,7 @@ function gbtest58
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 A = 1 - 2 * rand (3) ;
-G = gb (A) ;
+G = GrB (A) ;
 G = +G ;
 A = +A ;
 

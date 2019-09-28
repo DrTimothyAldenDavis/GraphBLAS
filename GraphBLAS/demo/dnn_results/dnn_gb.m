@@ -9,7 +9,7 @@ function Y = dnn_gb (W, bias, Y0)
 %
 %   Y = dnn_gb (W, bias, Y0)
 %
-% The matrices can be stored by row or by column, but gb.format ('by row')
+% The matrices can be stored by row or by column, but GrB.format ('by row')
 % is significantly faster.
 %
 % See also dnn_matlab, dnn_mat2gb.
@@ -21,7 +21,7 @@ Y = Y0 ;
 for i=1:length(W)
 
     % Propagate through layer, apply bias, and threshold negative values.
-    Y = gb.select ('>0', gb.mxm ('+.+', Y * W {i}, bias {i})) ;
+    Y = GrB.select ('>0', GrB.mxm ('+.+', Y * W {i}, bias {i})) ;
      
     M = Y > 32 ;
     if (nnz (M) > 0)

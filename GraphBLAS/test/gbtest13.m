@@ -1,5 +1,5 @@
 function gbtest13
-%GBTEST13 test find and gb.extracttuples
+%GBTEST13 test find and GrB.extracttuples
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -18,7 +18,7 @@ for k = 1:length(list)
     xtype = list {k} ;
     fprintf ('testing: %s\n', xtype) ;
     C = cast (A, xtype) ;
-    G = gb (C) ;
+    G = GrB (C) ;
 
     [I1, J1, X1] = find (G) ;
     % find drops the zeros
@@ -32,36 +32,36 @@ for k = 1:length(list)
     assert (isequal (I (nz), I1)) ;
     assert (isequal (J (nz), J1)) ;
 
-    % gb.extracttuples returns the zeros
-    [I0, J0, X0] = gb.extracttuples (G, d) ;
+    % GrB.extracttuples returns the zeros
+    [I0, J0, X0] = GrB.extracttuples (G, d) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (I_0, I0)) ;
     assert (isequal (J_0, J0)) ;
 
-    % gb.extracttuples returns the zeros
-    [I1, J1, X0] = gb.extracttuples (G, struct ('kind', 'one-based')) ;
+    % GrB.extracttuples returns the zeros
+    [I1, J1, X0] = GrB.extracttuples (G, struct ('kind', 'one-based')) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (double (I_0+1), I1)) ;
     assert (isequal (double (J_0+1), J1)) ;
 
-    [I1] = gb.extracttuples (G, d) ;
+    [I1] = GrB.extracttuples (G, d) ;
     assert (isequal (I1, I0)) ;
 
 end
 
 v = rand (1,3) ;
 [i1, j1, x1] = find (v) ;
-[i2, j2, x2] = find (gb (v)) ;
+[i2, j2, x2] = find (GrB (v)) ;
 assert (isequal (x1, x2)) ;
 assert (isequal (i1, i2)) ;
 assert (isequal (j1, j2)) ;
 
-[i2, j2] = find (gb (v)) ;
+[i2, j2] = find (GrB (v)) ;
 assert (isequal (i1, i2)) ;
 assert (isequal (j1, j2)) ;
 
 j1 = find (v) ;
-j2 = find (gb (v)) ;
+j2 = find (GrB (v)) ;
 assert (isequal (j1, j2)) ;
 
 fprintf ('gbtest13: all tests passed\n') ;

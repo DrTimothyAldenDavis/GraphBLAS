@@ -9,7 +9,7 @@ function Y = dnn_matlab (W, bias, Y0)
 %
 %   Y = dnn_matlab (W, bias, Y0)
 %
-% See also gb.dnn, dnn_mat2gb.
+% See also GrB.dnn, dnn_mat2gb.
 
 Y = Y0 ;
 for i=1:length(W)

@@ -18,8 +18,8 @@ for trial = 1:10
             S = -(sprand (m, n, 0.5) > 0.5) ;
             MB = MB .* S ;
 
-            GA = gb (MA) ;
-            GB = gb (MB) ;
+            GA = GrB (MA) ;
+            GB = GrB (MB) ;
 
             c1 = all (MA) ;
             c2 = all (GA) ;

@@ -1,5 +1,5 @@
 function gbtest31
-%GBTEST31 test gb and casting
+%GBTEST31 test GrB and casting
 
 types = gbtest_types ;
 fprintf ('gbtest31: typecasting\n') ;
@@ -12,7 +12,7 @@ for k = 1:length (types)
     for m = 0:5
         for n = 0:5
             A = zeros (m, n, type) ;
-            G = gb (m, n, type) ;
+            G = GrB (m, n, type) ;
             C = cast (G, type) ;
             assert (gbtest_eq (A, C)) ;
         end
@@ -20,14 +20,14 @@ for k = 1:length (types)
 
     A = 100 * rand (5, 5) ;
     A = cast (A, type) ;
-    G = gb (A) ;
+    G = GrB (A) ;
 
     G2 = sparse (G) ;
     assert (gbtest_eq (G, G2)) ;
 
     for k2 = 1:length (types)
         type2 = types {k} ;
-        G2 = gb (G, type2) ;
+        G2 = GrB (G, type2) ;
         A2 = cast (A, type2) ;
         C = cast (G2, type2) ;
         assert (gbtest_eq (A2, C)) ;
@@ -39,15 +39,15 @@ for k = 1:length (types)
 
     A = 100 * sparse (diag (1:5)) ;
 
-    G = gb (A, type) ;
-    G2 = gb (F) ;
+    G = GrB (A, type) ;
+    G2 = GrB (F) ;
     G2 (logical (speye (5))) = 100:100:500 ;
 
     for k2 = 1:length (types)
         type2 = types {k} ;
         G3 = full (G, type2, id) ;
-        G5 = full (G, type2, gb (id)) ;
-        G4 = gb (G2, type2) ;
+        G5 = full (G, type2, GrB (id)) ;
+        G4 = GrB (G2, type2) ;
         assert (gbtest_eq (G3, G4)) ;
         assert (gbtest_eq (G3, G5)) ;
         assert (gbtest_eq (double (G3), double (G4))) ;

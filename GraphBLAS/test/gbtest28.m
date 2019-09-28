@@ -1,11 +1,11 @@
 function gbtest28
-%GBTEST28 test gb.build
+%GBTEST28 test GrB.build
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\ngbtest28: testing gb.build and compare with A=sparse(i,j,x)\n') ;
-nthreads = gb.threads ;
+fprintf ('\ngbtest28: testing GrB.build and compare with A=sparse(i,j,x)\n') ;
+nthreads = GrB.threads ;
 fprintf ('using %d threads in GraphBLAS\n', nthreads) ;
 
 rng ('default') ;
@@ -15,7 +15,7 @@ A = sprand (m, n, 0.5) ;
 
 [i j x] = find (A) ;
 
-C = gb.build (i, j, x, m, n) ;
+C = GrB.build (i, j, x, m, n) ;
 
 assert (gbtest_eq (C, A)) ;
 
@@ -46,21 +46,21 @@ t = toc ;
 fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
 
 tic
-A3 = gb.build (i, j, x, m, n) ;
+A3 = GrB.build (i, j, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.build (...), same inputs as MATLAB\n', t) ;
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs as MATLAB\n', t) ;
 
 d.kind = 'sparse' ;
 
 tic
-A4 = gb.build (i, j, x, m, n, d) ;
+A4 = GrB.build (i, j, x, m, n, d) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.build (...), same inputs/outputs as MATLAB\n', t);
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as MATLAB\n',t);
 
 tic
-A2 = gb.build (i0, j0, x, m, n) ;
+A2 = GrB.build (i0, j0, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.build (i0, j0, ...), with i0 and j0 uint64\n', t);
+fprintf ('%12.4f sec : A = GrB.build (i0, j0, ...), with i0 and j0 uint64\n',t);
 
 assert (gbtest_eq (A1, A2)) ;
 assert (gbtest_eq (A1, A3)) ;
@@ -80,19 +80,19 @@ t = toc ;
 fprintf ('%12.4f sec : A = sparse (i, j, x, m, n) ;\n', t) ;
 
 tic
-A3 = gb.build (i, j, x, m, n) ;
+A3 = GrB.build (i, j, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.build (...), same inputs as MATLAB\n', t) ;
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs as MATLAB\n', t) ;
 
 tic
-A4 = gb.build (i, j, x, m, n, d) ;
+A4 = GrB.build (i, j, x, m, n, d) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.build (...), same inputs/outputs as MATLAB\n', t);
+fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as MATLAB\n',t);
 
 tic
-A2 = gb.build (i0, j0, x, m, n) ;
+A2 = GrB.build (i0, j0, x, m, n) ;
 t = toc ;
-fprintf ('%12.4f sec : A = gb.build (i0, j0, ...), with i0 and j0 uint64\n', t);
+fprintf ('%12.4f sec : A = GrB.build (i0,j0,...), with i0 and j0 uint64\n', t) ;
 
 assert (gbtest_eq (A1, A2)) ;
 assert (gbtest_eq (A1, A3)) ;

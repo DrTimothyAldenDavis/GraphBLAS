@@ -5,7 +5,7 @@ function gbtest3
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 fprintf ('gbtest3: testing sparse deep neural network\n') ;
-help gb.dnn
+help GrB.dnn
 
 rng ('default') ;
 levels = 4 ;
@@ -22,7 +22,7 @@ Y0 = sprandn (nfeatures, nneurons, 0.5) ;
 Y1 = dnn_matlab (W, bias, Y0) ;
 
 [W, bias, Y0] = dnn_mat2gb (W, bias, Y0) ;
-Y2 = gb.dnn (W, bias, Y0) ;
+Y2 = GrB.dnn (W, bias, Y0) ;
 
 err = norm (Y1-Y2,1) ;
 assert (err < 1e-5) ;

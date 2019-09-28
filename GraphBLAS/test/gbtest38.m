@@ -12,8 +12,8 @@ for trial = 1:40
     A = 1e3 * rand (3) ;
     B = single (A) ;
 
-    G = gb (A) ;
-    H = gb (B) ;
+    G = GrB (A) ;
+    H = GrB (B) ;
 
     err = norm (sqrt (A) - sqrt (G), 1) ; assert (err < 8 * eps ('double')) ;
     err = norm (sqrt (B) - sqrt (H), 1) ; assert (err < 8 * eps ('single')) ;
@@ -42,27 +42,27 @@ for trial = 1:40
     C = A ;
     C (1,1) = inf ;
     C (2,2) = nan ;
-    G = gb (C) ;
+    G = GrB (C) ;
 
     assert (gbtest_eq (isfinite (C), isfinite (G))) ;
     assert (gbtest_eq (isnan    (C), isnan    (G))) ;
 
     A = sprand (10, 10, 0.5) ;
-    G = gb (A) ;
+    G = GrB (A) ;
     assert (gbtest_eq (spfun (@exp, A), double (spfun (@exp, G)))) ;
 
     A = rand (10) ;
-    G = gb (A) ;
+    G = GrB (A) ;
     assert (isequal (eig (A), double (eig (G)))) ;
 
     A = sparse (A+A') ;
-    G = gb (A) ;
+    G = GrB (A) ;
     assert (isequal (eig (A), double (eig (G)))) ;
 
     A = rand (10) ;
     B = rand (10) ;
-    G = gb (A) ;
-    H = gb (B) ;
+    G = GrB (A) ;
+    H = GrB (B) ;
     [V1,D1] = eig (A, B) ;
     [V2,D2] = eig (G, H) ;
     assert (isequal (V1, double (V2))) ;

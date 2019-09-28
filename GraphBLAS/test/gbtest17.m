@@ -1,5 +1,5 @@
 function gbtest17
-%GBTEST17 test gb.gbtranspose
+%GBTEST17 test GrB.trans
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -13,43 +13,43 @@ AT = A' ;
 M = sparse (rand (m,n)) > 0.5 ;
 Cin = sprand (m, n, 0.5) ;
 
-Cout = gb.gbtranspose (A) ;
+Cout = GrB.trans (A) ;
 assert (gbtest_eq (AT, Cout)) ;
 
-Cout = gb.gbtranspose (A) ;
+Cout = GrB.trans (A) ;
 assert (gbtest_eq (AT, Cout)) ;
 
-Cout = gb.gbtranspose (Cin, M, A) ;
+Cout = GrB.trans (Cin, M, A) ;
 C2 = Cin ;
 C2 (M) = AT (M) ;
 assert (gbtest_eq (C2, Cout)) ;
 
-Cout = gb.gbtranspose (Cin, '+', A) ;
+Cout = GrB.trans (Cin, '+', A) ;
 C2 = Cin + AT ;
 assert (gbtest_eq (C2, Cout)) ;
 
 M = logical (sprand (m, n, 0.5)) ;
-Cout = gb.gbtranspose (Cin, M, '+', A) ;
+Cout = GrB.trans (Cin, M, '+', A) ;
 T = Cin + A' ;
 C2 = Cin ;
 C2 (M) = T (M) ;
 assert (gbtest_eq (C2, Cout)) ;
 
 d.in0 = 'transpose' ;
-Cout = gb.gbtranspose (Cin', M', A, d) ;
+Cout = GrB.trans (Cin', M', A, d) ;
 C2 = Cin' ;
 C2 (M') = A (M') ;
 assert (gbtest_eq (C2, Cout)) ;
 
-Cout = gb.gbtranspose (Cin', '+', A, d) ;
+Cout = GrB.trans (Cin', '+', A, d) ;
 C2 = Cin' + A ;
 assert (gbtest_eq (C2, Cout)) ;
 
 d.mask = 'complement' ;
 d2 = d ;
 d2.kind = 'sparse' ;
-Cout  = gb.gbtranspose (Cin', M', A, d) ;
-Cout2 = gb.gbtranspose (Cin', M', A, d2) ;
+Cout  = GrB.trans (Cin', M', A, d) ;
+Cout2 = GrB.trans (Cin', M', A, d2) ;
 C2 = Cin' ;
 C2 (~M') = A (~M') ;
 assert (gbtest_eq (C2, Cout)) ;

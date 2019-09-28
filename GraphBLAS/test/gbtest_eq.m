@@ -4,5 +4,5 @@ function s = gbtest_eq (A, B)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-s = isequal (gb.prune (A), gb.prune (B)) ;
+s = isequal (GrB.prune (A), GrB.prune (B)) ;
 

@@ -1,5 +1,5 @@
 function gbtest51
-%GBTEST51 test gb.tricount
+%GBTEST51 test GrB.tricount
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -41,23 +41,23 @@ valid_count = [
 for k = 1:nfiles
     filename = files {k} ;
     T = load (fullfile (filepath, files {k})) ;
-    G = gb.build (int64 (T (:,1)), int64 (T (:,2)), T (:,3)) ;
+    G = GrB.build (int64 (T (:,1)), int64 (T (:,2)), T (:,3)) ;
     [m, n] = size (G) ;
     if (m ~= n)
-        G = [gb(m,m) G ; G' gb(n,n)] ;
+        G = [GrB(m,m) G ; G' GrB(n,n)] ;
     elseif (~issymmetric (G))
         G = G + G' ;
     end
-    c = gb.tricount (G) ;
+    c = GrB.tricount (G) ;
     fprintf ('triangle count: %-30s : # triangles %d\n', filename, c) ;
     assert (c == valid_count (k)) ;
 
-    G = gb (G, 'by row') ;
-    c = gb.tricount (G) ;
+    G = GrB (G, 'by row') ;
+    c = GrB.tricount (G) ;
     assert (c == valid_count (k)) ;
 end
 
-c = gb.tricount (G, 'check') ;
+c = GrB.tricount (G, 'check') ;
 assert (c == valid_count (end)) ;
 
 fprintf ('\ngbtest51: all tests passed\n') ;

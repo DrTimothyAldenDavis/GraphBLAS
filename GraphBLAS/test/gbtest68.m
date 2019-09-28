@@ -6,19 +6,19 @@ function gbtest68
 
 rng ('default') ;
 
-s = gb (pi) ;
+s = GrB (pi) ;
 
 assert (~isequal (s, magic (2))) ;
 assert (~isequal (s, [pi pi])) ;
 assert (~isequal (s, sparse (0))) ;
 
-A = gb (2,2) ;
-B = gb (2,2) ;
+A = GrB (2,2) ;
+B = GrB (2,2) ;
 A (1,1) = 1 ;
 B (2,2) = 1 ;
 assert (~isequal (A, B)) ;
 
-assert (~isequal (gb (A, 'int8'), gb (B, 'uint8'))) ;
+assert (~isequal (GrB (A, 'int8'), GrB (B, 'uint8'))) ;
 
 fprintf ('gbtest68: all tests passed\n') ;
 

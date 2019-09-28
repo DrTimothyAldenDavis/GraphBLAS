@@ -11,7 +11,7 @@ for trial = 1:40
     fprintf ('.') ;
 
     A = sprand (n, n, 0.5) ;
-    G = gb (A) ;
+    G = GrB (A) ;
 
     D1 = digraph (A) ;
     D2 = digraph (G) ;
@@ -22,11 +22,11 @@ for trial = 1:40
     assert (isequal (D1, D2)) ;
 
     D1 = digraph (logical (A)) ;
-    D2 = digraph (gb (A, 'logical')) ;
+    D2 = digraph (GrB (A, 'logical')) ;
     assert (isequal (D1, D2)) ;
 
     D1 = digraph (logical (A), 'omitselfloops') ;
-    D2 = digraph (gb (A, 'logical'), 'omitselfloops') ;
+    D2 = digraph (GrB (A, 'logical'), 'omitselfloops') ;
     assert (isequal (D1, D2)) ;
 
 end
@@ -37,7 +37,7 @@ for k = 1:length (types)
     type = types {k} ;
 
     A = cast (rand (4), type) ;
-    G = gb (A) ;
+    G = GrB (A) ;
 
     if (isequal (type, 'double') || isequal (type, 'single') || ...
         isequal (type, 'logical'))

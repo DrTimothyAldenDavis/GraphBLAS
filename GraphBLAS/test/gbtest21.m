@@ -16,7 +16,7 @@ for trial = 1:40
                 A (1,1) = nan ;
                 A (2,2) = inf ;
             end
-            G = gb (A) ;
+            G = GrB (A) ;
 
             assert (gbtest_eq (isfinite (A), isfinite (G))) ;
             assert (gbtest_eq (isinf    (A), isinf    (G))) ;

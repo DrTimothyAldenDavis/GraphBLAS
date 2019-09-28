@@ -7,7 +7,7 @@ function [binops synonyms] = gbtest_binops
 % returns a list of the names of the 25 operators in binops, and a list of
 % their synonyms in the 2nd output.
 %
-% See also gb.binopinfo.
+% See also GrB.binopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

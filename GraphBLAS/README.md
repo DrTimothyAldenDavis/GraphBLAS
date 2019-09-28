@@ -3,7 +3,7 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-The gb class provides an easy-to-use MATLAB interface to SuiteSparse:GraphBLAS.
+The GrB class provides an easy-to-use MATLAB interface to SuiteSparse:GraphBLAS.
 
 To install it for use in MATLAB, first compile the GraphBLAS library,
 -lgraphblas.  See the instructions in the top-level GraphBLAS folder for
@@ -29,14 +29,14 @@ The name "GraphBLAS/GraphBLAS" is used so that this can be done in MATLAB:
 
 To get additional help, type:
 
-    methods gb
-    help gb
+    methods GrB
+    help GrB
 
-Next, go to the GraphBLAS/GraphBLAS/@gb/private folder and compile the MATLAB
+Next, go to the GraphBLAS/GraphBLAS/@GrB/private folder and compile the MATLAB
 mexFunctions.  Assuming your working directory is GraphBLAS/GraphBLAS
 (where this README.md) file is located, do the following:
 
-    cd @gb/private
+    cd @GrB/private
     gbmake
 
 To run the demos, go to the GraphBLAS/GraphBLAS/demo folder and type:

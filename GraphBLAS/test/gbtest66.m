@@ -12,7 +12,7 @@ for trial = 1:40
 
     A = sprand (n, n, 0.5) ;
     A = A + A' ;
-    G = gb (A) ;
+    G = GrB (A) ;
 
     D1 = graph (A) ;
     D2 = graph (G) ;
@@ -55,11 +55,11 @@ for trial = 1:40
     assert (isequal (D1, D4)) ;
 
     D1 = graph (logical (A)) ;
-    D2 = graph (gb (A, 'logical')) ;
+    D2 = graph (GrB (A, 'logical')) ;
     assert (isequal (D1, D2)) ;
 
     D1 = graph (logical (A), 'omitselfloops') ;
-    D2 = graph (gb (A, 'logical'), 'omitselfloops') ;
+    D2 = graph (GrB (A, 'logical'), 'omitselfloops') ;
     assert (isequal (D1, D2)) ;
 end
 
@@ -70,7 +70,7 @@ for k = 1:length (types)
 
     A = cast (rand (4), type) ;
     A = A + A' ;
-    G = gb (A) ;
+    G = GrB (A) ;
 
     if (isequal (type, 'double') || isequal (type, 'single') || ...
         isequal (type, 'logical'))

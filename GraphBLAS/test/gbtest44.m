@@ -7,19 +7,19 @@ function gbtest44
 rng ('default') ;
 
 A = rand (4,1) ;
-G = gb (A) ;
+G = GrB (A) ;
 G (1) = pi ;
 A (1) = pi ;
 assert (isequal (A, G)) ;
 
 A = pi ;
-G = gb (pi) ;
+G = GrB (pi) ;
 C = A*G ;
 assert (isequal (C, pi^2))
 
 A = pi ;
 B = rand (2) ;
-G = gb (B) ;
+G = GrB (B) ;
 assert (isequal (A*B, A*G))
 assert (isequal (A.*B, A.*G))
 assert (isequal (B.*A, G.*A))

@@ -9,7 +9,7 @@ for k1 = 1:length (types)
     atype = types {k1} ;
     fprintf ('\n================================================ %s\n', atype) ;
     A = cast (100 * rand (3), atype)
-    H = gb (A) ;
+    H = GrB (A) ;
     B = cast (H, atype) ;
     assert (gbtest_eq (A, B)) ;
 
@@ -17,8 +17,8 @@ for k1 = 1:length (types)
 
         gtype = types {k2} ;
         fprintf ('\n------------ %s:\n', gtype) ;
-        G = gb (H, gtype)
-        K = gb (G, atype)
+        G = GrB (H, gtype)
+        K = GrB (G, atype)
         C = cast (G, atype)
     end
 end

@@ -10,8 +10,8 @@ for trial = 1:40
     n = 20 ;
     A = sprand (n, n, 0.1) ;
     S = A + A' ;
-    G = gb (A) ;
-    H = gb (S) ;
+    G = GrB (A) ;
+    H = GrB (S) ;
 
     assert (isequal (amd (A),    amd (G))) ;
     assert (isequal (amd (S),    amd (H))) ;

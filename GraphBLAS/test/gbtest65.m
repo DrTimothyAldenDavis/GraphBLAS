@@ -1,5 +1,5 @@
 function gbtest65
-%GBTEST65 test gb.mis
+%GBTEST65 test GrB.mis
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -7,7 +7,7 @@ function gbtest65
 rng ('default') ;
 load west0479 ;
 
-A = gb.offdiag (spones (west0479)) ;
+A = GrB.offdiag (spones (west0479)) ;
 A = A+A' ;
 
 maxisize = 0 ;
@@ -16,9 +16,9 @@ n = size (A, 1) ;
 for trial = 1:100
 
     if (mod (trial, 4) == 1)
-        iset  = gb.mis (A, 'check') ;
+        iset  = GrB.mis (A, 'check') ;
     else
-        iset  = gb.mis (A) ;
+        iset  = GrB.mis (A) ;
     end
 
     % assert that iset is an independent set
@@ -33,7 +33,7 @@ for trial = 1:100
 
     % assert that iset is maximal
     q = find (~iset) ;
-    d = gb.entries (A (p, q), 'col', 'degree') ;
+    d = GrB.entries (A (p, q), 'col', 'degree') ;
     assert (all (d > 0)) ;
 end
 
