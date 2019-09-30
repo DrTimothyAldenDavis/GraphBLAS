@@ -41,7 +41,6 @@ for k = 1:nargin-1
     if (ischar (arg))
         if (isequal (arg, 'uniform') || isequal (arg, 'normal'))
             have_dist = true ;
-            break ;
         end
     end
 end

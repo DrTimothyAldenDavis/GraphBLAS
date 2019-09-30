@@ -70,5 +70,18 @@ j1 = find (v) ;
 j2 = find (GrB (v)) ;
 assert (isequal (j1, j2)) ;
 
+G = GrB.prune (GrB (A, 'by row')) ;
+[i1, j1, x1] = find (A, 4) ;
+[i2, j2, x2] = find (G, 4) ;
+assert (isequal (x1, x2)) ;
+assert (isequal (i1, i2)) ;
+assert (isequal (j1, j2)) ;
+
+[i1, j1, x1] = find (A, 4, 'last') ;
+[i2, j2, x2] = find (G, 4, 'last') ;
+assert (isequal (x1, x2)) ;
+assert (isequal (i1, i2)) ;
+assert (isequal (j1, j2)) ;
+
 fprintf ('gbtest13: all tests passed\n') ;
 

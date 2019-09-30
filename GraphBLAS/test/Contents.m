@@ -71,6 +71,8 @@
 %  gbtest66  - test graph
 %  gbtest67  - test digraph
 %  gbtest68  - test isequal
+%  gbtest69  - test flip
+%  gbtest70  - test GrB.random
 %  gbtest99  - test GrB.bfs and plot (graph (G))
 %
 % Utilities:

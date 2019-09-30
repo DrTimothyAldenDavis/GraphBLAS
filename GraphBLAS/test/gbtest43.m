@@ -920,5 +920,69 @@ catch expected_error
 end
 assert (ok) ;
 
+try
+    [i,j,x] = find (G, [3 4]) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    [i,j,x] = find (G, 3, 'crud') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    [i,j,x] = find (G, -1, 'first') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    C = flip (G, -1) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    C = flip (G, [2 2]) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = GrB.random (10, 10, 0.5, 'crud') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = GrB.random (rand (4,5), 'symmetric') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = GrB.random (10, 10, 10, 0.5) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
 fprintf ('gbtest43: all tests passed\n') ;
 

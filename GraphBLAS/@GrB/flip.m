@@ -11,7 +11,11 @@ function C = flip (G, dim)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin < 2)
-    dim = 1 ;
+    if (isrow (G))
+        dim = 2 ;
+    else
+        dim = 1 ;
+    end
 end
 
 [m, n] = size (G) ;
