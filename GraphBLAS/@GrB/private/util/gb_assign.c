@@ -51,10 +51,11 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     // get the descriptor
     //--------------------------------------------------------------------------
 
+    base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
     GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
 
     //--------------------------------------------------------------------------
     // find the remaining arguments
@@ -160,13 +161,15 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     if (I_arg >= 0)
     { 
         // I is present
-        I = gb_mxcell_to_index (pargin [I_arg], cnrows, &I_allocated, &ni) ;
+        I = gb_mxcell_to_index (pargin [I_arg], base, cnrows,
+            &I_allocated, &ni) ;
     }
 
     if (J_arg >= 0)
     { 
         // both I and J are present
-        J = gb_mxcell_to_index (pargin [J_arg], cncols, &J_allocated, &nj) ;
+        J = gb_mxcell_to_index (pargin [J_arg], base, cncols,
+            &J_allocated, &nj) ;
     }
 
     //--------------------------------------------------------------------------

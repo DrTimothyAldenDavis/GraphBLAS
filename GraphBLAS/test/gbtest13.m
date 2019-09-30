@@ -12,7 +12,8 @@ I_0 = int64 (I) - 1 ;
 J_0 = int64 (J) - 1 ;
 A (1,1) = 0 ;
 
-d.kind = 'zero-based' ;
+desc0.base = 'zero-based' ;
+desc1.base = 'one-based' ;
 
 for k = 1:length(list)
     xtype = list {k} ;
@@ -20,33 +21,38 @@ for k = 1:length(list)
     C = cast (A, xtype) ;
     G = GrB (C) ;
 
-    [I1, J1, X1] = find (G) ;
-    % find drops the zeros
+    [I1, J1, X1] = find (GrB.prune (G)) ;
     nz = find (C (:) ~= 0) ;
     assert (isequal (C (nz), X1)) ;
     assert (isequal (I (nz), I1)) ;
     assert (isequal (J (nz), J1)) ;
 
-    [I1, J11] = find (G) ;
+    [I1, J1, X1] = find (G) ;
+    assert (isequal (C (:), X1)) ;
+    assert (isequal (I (:), I1)) ;
+    assert (isequal (J (:), J1)) ;
+
+    [I1, J1] = find (GrB.prune (G)) ;
     nz = find (C (:) ~= 0) ;
     assert (isequal (I (nz), I1)) ;
     assert (isequal (J (nz), J1)) ;
 
-    % GrB.extracttuples returns the zeros
-    [I0, J0, X0] = GrB.extracttuples (G, d) ;
+    [I1, J1] = find (G) ;
+    assert (isequal (I (:), I1)) ;
+    assert (isequal (J (:), J1)) ;
+
+    [I0, J0, X0] = GrB.extracttuples (G, desc0) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (I_0, I0)) ;
     assert (isequal (J_0, J0)) ;
 
-    % GrB.extracttuples returns the zeros
-    [I1, J1, X0] = GrB.extracttuples (G, struct ('kind', 'one-based')) ;
+    [I1, J1, X0] = GrB.extracttuples (G, desc1) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (double (I_0+1), I1)) ;
     assert (isequal (double (J_0+1), J1)) ;
 
-    [I1] = GrB.extracttuples (G, d) ;
+    [I1] = GrB.extracttuples (G, desc0) ;
     assert (isequal (I1, I0)) ;
-
 end
 
 v = rand (1,3) ;

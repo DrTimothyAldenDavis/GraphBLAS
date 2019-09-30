@@ -132,7 +132,7 @@ typedef struct
     int64_t hack ;                  // for testing and development
 
     //--------------------------------------------------------------------------
-    // printing control
+    // for MATLAB interface only
     //--------------------------------------------------------------------------
 
     bool print_one_based ;          // if true, print 1-based indices
@@ -189,6 +189,7 @@ GB_Global_struct GB_Global =
     // for testing and development
     .hack = 0,
 
+    // for MATLAB interface only
     .print_one_based = false,       // if true, print 1-based indices
     .print_format = 0               // for printing values
 } ;
@@ -633,7 +634,7 @@ int64_t GB_Global_hack_get (void)
 }
 
 //------------------------------------------------------------------------------
-// print control:
+// for MATLAB interface only
 //------------------------------------------------------------------------------
 
 void GB_Global_print_one_based_set (bool onebased)

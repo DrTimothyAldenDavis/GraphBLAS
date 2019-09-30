@@ -22,28 +22,38 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin <= 2 && nargout == 0, "usage: GrB.disp (X,level)") ;
+    gb_usage (nargin == 3 && nargout == 0, "usage: gbdisp (C,cnz,level)") ;
 
     //--------------------------------------------------------------------------
-    // get the level
+    // get cnz and level
     //--------------------------------------------------------------------------
 
-    int level = 3 ;
-    if (nargin > 1)
-    { 
-        CHECK_ERROR (!gb_mxarray_is_scalar (pargin [1]),
-            "level must be a scalar") ;
-        level = (int) mxGetScalar (pargin [1]) ;
+    int64_t cnz = (int64_t) mxGetScalar (pargin [1]) ;
+    int level = (int) mxGetScalar (pargin [2]) ;
+
+    #define LEN 256
+    char s [LEN+1] ;
+    if (cnz == 0)
+    {
+        sprintf (s, "no nonzeros") ;
+    }
+    else if (cnz == 1)
+    {
+        sprintf (s, "1 nonzero") ;
+    }
+    else
+    {
+        sprintf (s, GBd " nonzeros", cnz) ;
     }
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS matrix
     //--------------------------------------------------------------------------
 
-    GrB_Matrix X = gb_get_shallow (pargin [0]) ;
-    OK (GxB_Matrix_fprint (X, "", level, NULL)) ;
+    GrB_Matrix C = gb_get_shallow (pargin [0]) ;
+    OK (GxB_Matrix_fprint (C, s, level, NULL)) ;
     printf ("\n") ;
-    OK (GrB_free (&X)) ;
+    OK (GrB_free (&C)) ;
     GB_WRAPUP ;
 }
 

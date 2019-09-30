@@ -45,10 +45,11 @@ void mexFunction
     GrB_BinaryOp accum = NULL, op = NULL ;
     GrB_Type atype, ctype ;
 
+    base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
     GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
 
     if (nargin == 4)
     { 

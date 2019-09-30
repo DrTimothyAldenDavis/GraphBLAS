@@ -45,9 +45,9 @@ J = zeros (cnvals, 1, 'int64') ;
 X = zeros (cnvals, 1, type) ;
 
 % fill the I,J,X arrays
-d.kind = 'zero-based' ;
+desc.base = 'zero-based' ;
 for k = 1:nmatrices
-    [i, j, x] = GrB.extracttuples (varargin {k}, d) ;
+    [i, j, x] = GrB.extracttuples (varargin {k}, desc) ;
     noffset = int64 (ncols (k)) ;
     koffset = nvals (k) ;
     kvals = GrB.entries (varargin {k}) ;
@@ -57,5 +57,5 @@ for k = 1:nmatrices
 end
 
 % build the output matrix
-C = GrB.build (I, J, X, m, n) ;
+C = GrB.build (I, J, X, m, n, desc) ;
 

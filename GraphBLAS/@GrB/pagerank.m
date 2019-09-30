@@ -83,7 +83,8 @@ end
 
 % place explicit zeros on the diagonal of G so that r remains full
 I = int64 (0) : int64 (n-1) ;
-G = G + GrB.build (I, I, zeros (n, 1, type), n, n) ;
+desc0.base = 'zero-based' ;
+G = G + GrB.build (I, I, zeros (n, 1, type), n, n, desc0) ;
 
 % teleport factor
 tfactor = cast ((1 - damp) / n, type) ;

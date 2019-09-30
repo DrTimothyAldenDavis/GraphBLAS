@@ -7,7 +7,7 @@ function s = isequal (A, B)
 %
 % If A is a GraphBLAS matrix with an explicit entry equal to zero, but in B
 % that entry is not present, then isequal (A,B) returns false.  To drop them,
-% use isequal (GrB.prune (A), GrB.prune (B)) ;
+% use isequal (GrB.prune(A), GrB.prune(B)) ;
 %
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
 % any combination.  A and B do not have to be the same class.  For example,

@@ -102,8 +102,9 @@ static void get_descriptor
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
     const mxArray *D_matlab,    // MATLAB struct
-    kind_enum_t *kind,          // GrB, sparse, full, 0-based, or 1-based
-    GxB_Format_Value *fmt       // by row or by col
+    kind_enum_t *kind,          // GrB, sparse, or full
+    GxB_Format_Value *fmt,      // by row or by col
+    base_enum_t *base           // 0-based int, 1-based int, or 1-based double
 )
 {
 
@@ -156,14 +157,6 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
         { 
             (*kind) = KIND_FULL ;
         }
-        else if (MATCH (s, "zero-based"))
-        { 
-            (*kind) = KIND_0BASED ;
-        }
-        else if (MATCH (s, "one-based"))
-        { 
-            (*kind) = KIND_1BASED ;
-        }
         else
         { 
             ERROR ("invalid descriptor.kind") ;
@@ -182,6 +175,53 @@ GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
         if ((*fmt) == GxB_NO_FORMAT)
         { 
             ERROR ("unknown format") ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // get the desired base
+    //--------------------------------------------------------------------------
+
+    (*base) = BASE_DEFAULT ;
+    mxArray *mxbase = mxGetField (D_matlab, 0, "base") ;
+    if (mxbase != NULL)
+    {
+        // get the string from the MATLAB field
+        char s [LEN+2] ;
+        gb_mxstring_to_string (s, LEN, mxbase, "base") ;
+        if (MATCH (s, "default"))
+        { 
+            // The indices are one-based by default.  The type is determined
+            // automatically:  if I and J are outputs, then the type is double
+            // (BASE_1_DOUBLE) unless the indices can exceed flintmax (in which
+            // case BASE_1_INT64 is used)
+            (*base) = BASE_DEFAULT ;
+        }
+        else if (MATCH (s, "zero-based"))
+        { 
+            // zero-based indices are always int64.  This is performance
+            // purposes, internal to GrB methods.  The user may also use this
+            // to speed up GrB.build, GrB.extract, GrB.assign. and
+            // GrB.subassign.
+            (*base) = BASE_0_INT64 ;
+        }
+        else if (MATCH (s, "one-based int"))
+        { 
+            // one-based indices, but in int64.  These are important for
+            // indexing into matrices with dimension larger than flintmax.
+            (*base) = BASE_1_INT64 ;
+        }
+        else if (MATCH (s, "one-based") || MATCH (s, "one-based double"))
+        { 
+            // for 'one-based', the caller may change this to BASE_1_INT64,
+            // if I and J are inputs to the function are int64.  This is
+            // the typical default.
+            (*base) = BASE_1_DOUBLE ;
+        }
+
+        else
+        { 
+            ERROR ("invalid descriptor.base") ;
         }
     }
 

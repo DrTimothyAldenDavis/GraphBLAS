@@ -17,5 +17,5 @@ if (level > 0)
     end
 end
 
-gbdisp (G.opaque, level) ;
+gbdisp (G.opaque, nnz (G), level) ;
 

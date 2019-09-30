@@ -26,7 +26,7 @@ assert (gbtest_eq (S, G))
 i0 = int64 (i) - 1 ;
 j0 = int64 (j) - 1 ;
 
-G = GrB.build (i0, j0, x) ;
+G = GrB.build (i0, j0, x, struct ('base', 'zero-based')) ;
 assert (gbtest_eq (S, G)) ;
 
 G = GrB.build (1:3, 1:3, [1 1 1]) ;

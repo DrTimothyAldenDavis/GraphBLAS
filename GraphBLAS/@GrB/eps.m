@@ -11,6 +11,7 @@ if (~isfloat (G))
 end
 
 [m, n] = size (G) ;
-[i, j, x] = GrB.extracttuples (full (G), struct ('kind', 'zero-based')) ;
-C = GrB.build (i, j, eps (x), m, n) ;
+desc.base = 'zero-based' ;
+[i, j, x] = GrB.extracttuples (full (G), desc) ;
+C = GrB.build (i, j, eps (x), m, n, desc) ;
 

@@ -796,7 +796,7 @@ C2 - C
 %       C = GrB.eadd ('+saturate.int8', A, B)
 %
 % to compute the same thing as C=A+B in MATLAB for its full int8
-% matrices.  % Note that MATLAB can do this only for dense integer
+% matrices.  Note that MATLAB can do this only for dense integer
 % matrices, since it doesn't support sparse integer matrices.
 
 %%
@@ -850,7 +850,7 @@ end
 % but it could be added in the future.
 
 %%
-% (6) Implicit binary expansion 
+% (6) Implicit singleton dimension expansion 
 %
 % In MATLAB C=A+B where A is m-by-n and B is a 1-by-n row vector
 % implicitly expands B to a matrix, computing C(i,j)=A(i,j)+B(j).  This
@@ -866,12 +866,6 @@ B = 1000:1000:3000
 C1 = A + B
 C2 = GrB.mxm ('+.+', A, diag (GrB (B)))
 err = norm (C1-C2,1)
-
-%%
-% (7) Other features are not yet in place, such as:
-%
-% S = sparse (i,j,x) allows either i or j, and x, to be scalars, which
-% are implicitly expanded.  This is not yet supported by GrB.build.
 
 %% GraphBLAS operations
 % In addition to the overloaded operators (such as C=A*B) and overloaded

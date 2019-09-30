@@ -44,10 +44,11 @@ void mexFunction
     // get the descriptor
     //--------------------------------------------------------------------------
 
+    base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
     GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
 
     OK (GrB_free (&desc)) ;
 
@@ -62,25 +63,58 @@ void mexFunction
     bool I_allocated, J_allocated ;
     int64_t Imax = -1, Jmax = -1 ;
 
-    GrB_Index *I = (GrB_Index *) gb_mxarray_to_list (pargin [0],
+    GrB_Index *I = (GrB_Index *) gb_mxarray_to_list (pargin [0], base,
         &I_allocated, &ni, &Imax) ;
 
-    GrB_Index *J = (GrB_Index *) gb_mxarray_to_list (pargin [1],
+    GrB_Index *J = (GrB_Index *) gb_mxarray_to_list (pargin [1], base,
         &J_allocated, &nj, &Jmax) ;
-
-    CHECK_ERROR (ni != nj, "I, J, and X must be the same size") ;
 
     //--------------------------------------------------------------------------
     // get X
     //--------------------------------------------------------------------------
 
     GrB_Type xtype = gb_mxarray_type (pargin [2]) ;
-    GrB_Index nvals = mxGetNumberOfElements (pargin [2]) ;
+    GrB_Index nx = mxGetNumberOfElements (pargin [2]) ;
 
-    CHECK_ERROR (ni != nvals, "I, J, and X must be the same size") ;
+    //--------------------------------------------------------------------------
+    // check the sizes of I, J, and X, and the type of X
+    //--------------------------------------------------------------------------
+
+    GrB_Index nvals = MAX (ni, nj) ;
+    nvals = MAX (nvals, nx) ;
+
+    if (!(ni == 1 || ni == nvals) ||
+        !(nj == 1 || nj == nvals) ||
+        !(nx == 1 || nx == nvals))
+    { 
+        ERROR ("I, J, and X must have the same length") ;
+    }
+
     CHECK_ERROR (!(mxIsNumeric (pargin [2]) || mxIsLogical (pargin [2])),
         "X must be a numeric or logical array") ;
     CHECK_ERROR (mxIsSparse (pargin [2]), "X cannot be sparse") ;
+
+    //--------------------------------------------------------------------------
+    // expand any scalars
+    //--------------------------------------------------------------------------
+
+    if (ni == 1 && ni < nvals)
+    { 
+        GrB_Index *I2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
+        GB_matlab_helper8 (I2, I, nvals, sizeof (GrB_Index)) ;
+        if (I_allocated) gb_mxfree (&I) ;
+        I_allocated = true ;
+        I = I2 ;
+    }
+
+    if (nj == 1 && nj < nvals)
+    { 
+        GrB_Index *J2 = (GrB_Index *) mxMalloc (nvals * sizeof (GrB_Index)) ;
+        GB_matlab_helper8 (J2, J, nvals, sizeof (GrB_Index)) ;
+        if (J_allocated) gb_mxfree (&J) ;
+        J_allocated = true ;
+        J = J2 ;
+    }
 
     //--------------------------------------------------------------------------
     // get m and n if present
@@ -93,7 +127,7 @@ void mexFunction
         // nrows = max entry in I + 1
         if (Imax > -1)
         { 
-            // Imax already computed in gb_mxarray_to_list
+            // Imax already computed
             nrows = Imax ;
         }
         else
@@ -113,7 +147,7 @@ void mexFunction
     {
         if (Jmax > -1)
         { 
-            // Jmax already computed in gb_mxarray_to_list
+            // Jmax already computed
             ncols = Jmax ;
         }
         else
@@ -165,11 +199,21 @@ void mexFunction
     fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
     OK (GxB_set (A, GxB_FORMAT, fmt)) ;
 
+    // expandx is true if X must be expanded from a scalar to a vector
+    void *X2 = NULL ;
+    bool expandx = (nx == 1 && nx < nvals) ;
+
     if (xtype == GrB_BOOL)
     { 
         bool empty = 0 ;
         bool *X = (nvals == 0) ? &empty : mxGetData (pargin [2]) ;
         if (dup == NULL) dup = GrB_LOR ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (bool)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (bool)) ;
+            X = (bool *) X2 ;
+        }
         OK (GrB_Matrix_build_BOOL (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT8)
@@ -177,6 +221,12 @@ void mexFunction
         int8_t empty = 0 ;
         int8_t *X = (nvals == 0) ? &empty : mxGetInt8s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT8 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (int8_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (int8_t)) ;
+            X = (int8_t *) X2 ;
+        }
         OK (GrB_Matrix_build_INT8 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT16)
@@ -184,6 +234,12 @@ void mexFunction
         int16_t empty = 0 ;
         int16_t *X = (nvals == 0) ? &empty : mxGetInt16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT16 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (int16_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (int16_t)) ;
+            X = (int16_t *) X2 ;
+        }
         OK (GrB_Matrix_build_INT16 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT32)
@@ -191,6 +247,12 @@ void mexFunction
         int32_t empty = 0 ;
         int32_t *X = (nvals == 0) ? &empty : mxGetInt32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT32 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (int32_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (int32_t)) ;
+            X = (int32_t *) X2 ;
+        }
         OK (GrB_Matrix_build_INT32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_INT64)
@@ -198,6 +260,12 @@ void mexFunction
         int64_t empty = 0 ;
         int64_t *X = (nvals == 0) ? &empty : mxGetInt64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_INT64 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (int64_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (int64_t)) ;
+            X = (int64_t *) X2 ;
+        }
         OK (GrB_Matrix_build_INT64 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT8)
@@ -205,6 +273,12 @@ void mexFunction
         uint8_t empty = 0 ;
         uint8_t *X = (nvals == 0) ? &empty : mxGetUint8s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT8 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (uint8_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (uint8_t)) ;
+            X = (uint8_t *) X2 ;
+        }
         OK (GrB_Matrix_build_UINT8 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT16)
@@ -212,6 +286,12 @@ void mexFunction
         uint16_t empty = 0 ;
         uint16_t *X = (nvals == 0) ? &empty : mxGetUint16s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT16 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (uint16_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (uint16_t)) ;
+            X = (uint16_t *) X2 ;
+        }
         OK (GrB_Matrix_build_UINT16 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT32)
@@ -219,6 +299,12 @@ void mexFunction
         uint32_t empty = 0 ;
         uint32_t *X = (nvals == 0) ? &empty : mxGetUint32s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT32 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (uint32_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (uint32_t)) ;
+            X = (uint32_t *) X2 ;
+        }
         OK (GrB_Matrix_build_UINT32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_UINT64)
@@ -226,6 +312,12 @@ void mexFunction
         uint64_t empty = 0 ;
         uint64_t *X = (nvals == 0) ? &empty : mxGetUint64s (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_UINT64 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (uint64_t)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (uint64_t)) ;
+            X = (uint64_t *) X2 ;
+        }
         OK (GrB_Matrix_build_UINT64 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_FP32)
@@ -233,6 +325,12 @@ void mexFunction
         float empty = 0 ;
         float *X = (nvals == 0) ? &empty : mxGetSingles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP32 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (float)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (float)) ;
+            X = (float *) X2 ;
+        }
         OK (GrB_Matrix_build_FP32 (A, I, J, X, nvals, dup)) ;
     }
     else if (xtype == GrB_FP64)
@@ -240,6 +338,12 @@ void mexFunction
         double empty = 0 ;
         double *X = (nvals == 0) ? &empty : mxGetDoubles (pargin [2]) ;
         if (dup == NULL) dup = GrB_PLUS_FP64 ;
+        if (expandx)
+        { 
+            X2 = mxMalloc (nvals * sizeof (double)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (double)) ;
+            X = (double *) X2 ;
+        }
         OK (GrB_Matrix_build_FP64 (A, I, J, X, nvals, dup)) ;
     }
     #ifdef GB_COMPLEX_TYPE
@@ -248,6 +352,12 @@ void mexFunction
         double empty = 0 ;
         double *X = (nvals == 0) ? &empty : mxGetComplexDoubles (pargin [2]) ;
         if (dup == NULL) dup = ... ;
+        if (expandx)
+        {
+            X2 = mxMalloc (nvals * sizeof (double complex)) ;
+            GB_matlab_helper8 (X2, X, nvals, sizeof (double complex)) ;
+            X = (double complex *) X2 ;
+        }
         OK (GrB_Matrix_build_UDT (A, I, J, X, nvals, dup)) ;
     }
     #endif
@@ -260,6 +370,7 @@ void mexFunction
     // free workspace
     //--------------------------------------------------------------------------
 
+    if (X2 != NULL ) gb_mxfree (&X2) ;
     if (I_allocated) gb_mxfree (&I) ;
     if (J_allocated) gb_mxfree (&J) ;
 

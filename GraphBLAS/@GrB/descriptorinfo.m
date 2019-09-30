@@ -20,10 +20,11 @@ function descriptorinfo (d)
 %   d.mask  'default' or 'complement'   determines if M or !M is used
 %   d.in0   'default' or 'transpose'    determines A or A' is used
 %   d.in1   'default' or 'transpose'    determines B or B' is used
-%   d.axb   'default', 'Gustavson', 'heap', or 'dot'
-%            determines the method used in GrB.mxm.  The default is to let
-%            GraphBLAS determine the method automatically, via a
-%            heuristic.
+%
+%   d.axb   'default', 'Gustavson', 'heap', or 'dot'.  Determines the
+%            method used in GrB.mxm.  The default is to let GraphBLAS
+%            determine the method automatically, via a heuristic.
+%
 %   d.kind   For most GrB.methods, this is a string equal to 'default',
 %            'GrB', 'sparse', or 'full'.  The default is d.kind = 'GrB',
 %            where the GraphBLAS operation returns an object, which is
@@ -41,8 +42,10 @@ function descriptorinfo (d)
 %               % with no d, or d.kind = 'default'
 %               S = double (GrB.method (...)) :
 %
-%           [I, J, X] = GrB.extracttuples (G,d) uses d.kind = 'one-based'
-%           or 'zero-based' to determine the type of I and J.
+%   d.base  A string equal to 'default', 'zero-based', 'one-based',
+%           or 'one-based int'.  The default is 'one-based'.  If d.base is
+%           'zero-based', then indices are zero-based, in the range 0 to n-1,
+%           for a matrix of dimension n.
 %
 %   d.format a string, either 'by row' or 'by col', which defines the
 %           format of the GraphBLAS output matrix C.  The following rules

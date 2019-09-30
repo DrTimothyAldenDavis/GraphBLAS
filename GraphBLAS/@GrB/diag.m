@@ -39,6 +39,7 @@ if (nargin < 2)
 end
 [am, an] = size (G) ;
 isvec = (am == 1) || (an == 1) ;
+desc.base = 'zero-based' ;
 
 if (isvec)
     % C = diag (v,k) is an m-by-m matrix
@@ -51,25 +52,25 @@ if (isvec)
     n = length (v) ;
     m = n + abs (k) ;
     if (k >= 0)
-        [I, ~, X] = GrB.extracttuples (v, struct ('kind', 'zero-based')) ;
+        [I, ~, X] = GrB.extracttuples (v, desc) ;
         J = I + int64 (k) ;
     else
-        [J, ~, X] = GrB.extracttuples (v, struct ('kind', 'zero-based')) ;
+        [J, ~, X] = GrB.extracttuples (v, desc) ;
         I = J - int64 (k) ;
     end
-    C = GrB.build (I, J, X, m, m) ;
+    C = GrB.build (I, J, X, m, m, desc) ;
 else
     % C = diag (G,k) is a column vector formed from the elements of the kth
     % diagonal of G
     C = GrB.select ('diag', G, k) ;
     if (k >= 0)
-        [I, ~, X] = GrB.extracttuples (C, struct ('kind', 'zero-based')) ;
+        [I, ~, X] = GrB.extracttuples (C, desc) ;
         m = min (an-k, am) ;
     else
-        [~, I, X] = GrB.extracttuples (C, struct ('kind', 'zero-based')) ;
+        [~, I, X] = GrB.extracttuples (C, desc) ;
         m = min (an, am+k) ;
     end
     J = zeros (length (X), 1, 'int64') ;
-    C = GrB.build (I, J, X, m, 1) ;
+    C = GrB.build (I, J, X, m, 1, desc) ;
 end
 

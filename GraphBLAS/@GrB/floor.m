@@ -12,8 +12,9 @@ function C = floor (G)
 
 if (isfloat (G) && GrB.entries (G) > 0)
     [m, n] = size (G) ;
-    [i, j, x] = GrB.extracttuples (G, struct ('kind', 'zero-based')) ;
-    C = GrB.build (i, j, floor (x), m, n) ;
+    desc.base = 'zero-based' ;
+    [i, j, x] = GrB.extracttuples (G, desc) ;
+    C = GrB.build (i, j, floor (x), m, n, desc) ;
 else
     C = G ;
 end

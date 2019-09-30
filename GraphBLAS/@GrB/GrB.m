@@ -1,5 +1,5 @@
 classdef GrB
-%GRB GraphBLAS sparse matrices for MATLAB.
+%GrB GraphBLAS sparse matrices for MATLAB.
 %
 % GraphBLAS is a library for creating graph algorithms based on sparse
 % linear algebraic operations over semirings.  Visit http://graphblas.org
@@ -96,7 +96,7 @@ classdef GrB
 %   These methods operate on GraphBLAS matrices only, and they overload
 %   the existing MATLAB functions of the same name.
 %
-%   C = GrB (...)            construct a GraphBLAS matrix
+%   C = GrB (...)           construct a GraphBLAS matrix
 %   C = sparse (G)          makes a copy of a GrB matrix
 %   C = full (G, ...)       adds explicit zeros or id values to a GrB matrix
 %   C = double (G)          cast GrB matrix to MATLAB sparse double matrix
@@ -113,7 +113,7 @@ classdef GrB
 %   C = uint64 (G)          cast GrB matrix to MATLAB full uint64 matrix
 %   C = cast (G,...)        cast GrB matrix to MATLAB matrix (as above)
 %   X = nonzeros (G)        extract all entries from a GrB matrix
-%   [I,J,X] = find (G)      extract all entries from a GrB matrix
+%   [I,J,X] = find (G,...)  extract all entries from a GrB matrix
 %   C = spones (G)          return pattern of GrB matrix
 %   disp (G, level)         display a GrB matrix G
 %   display (G)             display a GrB matrix G; same as disp(G,2)
@@ -153,7 +153,7 @@ classdef GrB
 %   C = sum (G, option)     reduce via sum, to vector or scalar
 %   C = prod (G, option)    reduce via product, to vector or scalar
 %   s = norm (G, kind)      1-norm or inf-norm of a GrB matrix
-%   C = max (G, ...)        reduce via max, to vector or scalar
+%   [C,I] = max (G, ...)    reduce via max, to vector or scalar
 %   C = min (G, ...)        reduce via min, to vector or scalar
 %   C = any (G, ...)        reduce via '|', to vector or scalar
 %   C = all (G, ...)        reduce via '&', to vector or scalar
@@ -180,6 +180,12 @@ classdef GrB
 %   C = zeros (...,'like',G)   all-zero matrix, same type as G
 %   C = false (...,'like',G)   all-false logical matrix
 %   C = ones (...,'like',G)    matrix with all ones, same type as G
+%   c = fprintf (...)       print to a file or to the Command Window
+%   c = sprintf (...)       print to a string
+%   C = flip (G, dim)       flip the order of entries
+%   C = sprand (G)          random GraphBLAS matrix
+%   C = sprandn (G)         random GraphBLAS matrix, normal distribution
+%   C = sprandsym (G, ...)  random symmetric GraphBLAS matrix
 %
 %   operator overloading:
 %
@@ -234,7 +240,7 @@ classdef GrB
 %   c = GrB.chunk (c)            set/get chunk size to use in GraphBLAS
 %   result = GrB.entries (G,...) count or query entries in a matrix
 %   result = GrB.nonz (G,...)    count or query nonzeros in a matrix
-%   C = GrB.prune (A, id)        prune entries equal to id
+%   C = GrB.prune(A, id)         prune entries equal to id
 %   C = GrB.offdiag (A)          prune diagonal entries
 %   s = GrB.isfull (A)           true if all entries present
 %   [C,I,J] = GrB.compact (A,id) remove empty rows and columns
@@ -247,6 +253,7 @@ classdef GrB
 %   C = GrB.expand (scalar, A)   expand a scalar (C = scalar*spones(A))
 %   C = GrB.eye                  identity matrix of any type
 %   C = GrB.speye                identity matrix (of type 'double')
+%   C = GrB.random (varargin)    random GraphBLAS matrix
 %   C = GrB.build (I, J, X, m, n, dup, type, desc)
 %                               build a GrB matrix from list of entries
 %   [I,J,X] = GrB.extracttuples (A, desc)
@@ -374,8 +381,10 @@ methods
 
     % The following methods work without any implemention needed here:
     %
-    %   cast isrow iscolumn ndims sprank etreeplot spy bicgstabl bicgstab cgs
-    %   minres gmres bicg pcg qmr rjr tfqmr lsqr gplot 
+    %   flipdim fliplr flipud cast isrow iscolumn ndims sprank etreeplot spy
+    %   gplot
+    %
+    %   bicgstabl bicgstab cgs minres gmres bicg pcg qmr rjr tfqmr lsqr
 
     %---------------------------------------------------------------------------
     % FUTURE:: many these could also be overloaded:
@@ -386,8 +395,7 @@ methods
     % 'complex').  Others are not appropriate for sparse matrices (such as
     % svd), but the inputs to them could be typecasted to MATLAB full matrices
     % ('double', 'single', or 'complex').  Still more have no matrix inputs
-    % (sprand, linspace, ...) and thus cannot be overloaded, but GrB.sprand
-    % would be useful instead as a static method.
+    % (linspace, ...) and thus cannot be overloaded.
 
     % methods 'double' that are not yet implemented here:
     %
@@ -418,24 +426,23 @@ methods
     %   qrdelete qrinsert qr qrupdate qz rank rcond rref rsf2csf schur sqrtm
     %   svd sylvester trace vecnorm
 
-    % methods in MATLAB/sparsfun not implemented here:
+    % methods in MATLAB/sparfun not implemented here:
     %
     %   colperm delsq dissect eigs ichol ilu spalloc spaugment spconvert
-    %   spdiags sprand sprandn sprandsym svds symbfact symmlq unmesh
+    %   spdiags svds symbfact symmlq unmesh
     %
     %   not needed: treeplot treelayout numgrid nested spparms
 
     % methods in MATLAB/elmat not implemented here:
     %
-    %   accumarray blkdiag bsxfun cat circshift compan flipdim fliplr flip
-    %   flipud gallery hadamard hankel hilb inf invhilb ipermute isequaln
-    %   isequalwithequalnans nan ndgrid pascal permute repelem rot90 shiftdim
-    %   toeplitz vander wilkinson
+    %   accumarray blkdiag bsxfun cat circshift compan gallery hadamard hankel
+    %   hilb inf invhilb ipermute isequaln isequalwithequalnans nan ndgrid
+    %   pascal permute repelem rot90 shiftdim toeplitz vander wilkinson
     %
     %   not needed: linspace logspace ind2sub sub2ind meshgrid pi freqspace
     %   flintmax intmax intmin squeeze realmin realmax i j magic rosser 
 
-    % methods for both classes graph and digraph not yet implemented:
+    % methods for classes graph and digraph not yet implemented:
     %
     %   addedge addnode bfsearch centrality conncomp dfsearch distances
     %   findedge findnode isisomorphic isomorphism maxflow nearest outedges
@@ -491,9 +498,11 @@ methods
     C = eps (G) ;
     [parent, varargout] = etree (G, varargin) ;
     C = false (varargin) ;
-    [I, J, X] = find (G) ;
+    [I, J, X] = find (G, k, search) ;
     C = fix (G) ;
+    C = flip (G, dim) ;
     C = floor (G) ;
+    c = fprintf (varargin) ;
     C = full (A, type, identity) ;
     Graph = graph (G, varargin) ;
     C = int16 (G) ;
@@ -524,7 +533,7 @@ methods
     C = kron (A, B) ;
     n = length (G) ;
     C = logical (G) ;
-    C = max (varargin) ;
+    [C, I] = max (varargin) ;
     C = min (varargin) ;
     e = nnz (G) ;
     X = nonzeros (G) ;
@@ -543,6 +552,10 @@ methods
     C = sparse (G) ;
     C = spfun (fun, G) ;
     C = spones (G, type) ;
+    C = sprand (G) ;
+    C = sprandn (G) ;
+    C = sprandsym (G, varargin) ;
+    c = sprintf (varargin) ;
     C = sqrt (G) ;
     C = sum (G, option) ;
     [p, varargout] = symamd (G, varargin) ;
@@ -556,8 +569,6 @@ methods
     C = uint8 (G) ;
     C = xor (A, B) ;
     C = zeros (varargin) ;
-    c = fprintf (varargin) ;
-    c = sprintf (varargin) ;
 
     %---------------------------------------------------------------------------
     % MATLAB operator overloading
@@ -623,6 +634,7 @@ methods (Static)
     C = offdiag (A) ;
     C = eye (varargin) ;
     C = speye (varargin) ;
+    C = random (varargin) ;
     C = build (varargin) ;
     [I,J,X] = extracttuples (varargin) ;
     Cout = mxm (varargin) ;

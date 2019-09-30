@@ -39,26 +39,29 @@ function C = build (varargin)
 % 'complex').  If the type is not specified, it defaults to the type of
 % X.
 %
-% The integer arrays I and J may be double, in which case they contain
-% 1-based indices, in the range 1 to the dimension of the matrix.  This
-% is the same behavior as the MATLAB sparse function.  They may instead
-% be int64 or uint64 arrays, in which case they are treated as 0-based.
-% Entries in I are the range 0 to m-1, and J are in the range 0 to n-1.
+% The integer arrays I and J may be double, int64, or uint64:
 % If I, J, and X are double, the following examples construct the same
 % MATLAB sparse matrix S:
 %
 %   S = sparse (I, J, X) ;
 %   S = GrB.build (I, J, X, struct ('kind', 'sparse')) ;
 %   S = double (GrB.build (I, J, X)) ;
-%   S = double (GrB.build (uint64(I)-1, uint64(J)-1, X)) ;
+%   S = double (GrB.build (uint64(I), uint64(J), X)) ;
 %
-% Using uint64 integers for I and J is faster and uses less memory.  I
-% and J need not be in any particular order, but GrB.build is fastest if I
-% and J are provided in column-major order.
+% I and J need not be in any particular order, but GrB.build is fastest if I
+% and J are provided in column-major order if building a MATLAB sparse
+% matrix.  If desc.format is 'by row', then GrB.build is fastest if I and
+% J are in row-major order.
 %
-% Note: S = sparse (I,J,X) allows either I or J, and X to be scalars.
-% This feature is not supported in GrB.build.  All three arrays must be
-% the same size.
+% If desc.base is 'zero-based', then I and J are treated as zero-based,
+% where (0,0) is the first entry in the top left of S, and (m-1,n-1)
+% is the position in the bottom right corner of S.  GrB.build is fastest
+% if I and J are int64 or uint64, and desc.base is 'zero-based'.  The
+% default is the same as MATLAB, which is 'one-based'.
+%
+% If I, J, and/or X are scalars, and any of I, J, or X is a vector of
+% length e, the scalars are expanded into vectors of length e.  Any
+% vectors I, J, and X must all be the same size, e.
 %
 % See also sparse, find, GrB.extracttuples.
 

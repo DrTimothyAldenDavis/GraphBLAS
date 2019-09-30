@@ -6,23 +6,26 @@ function [I,J,X] = extracttuples (varargin)
 %   [I,J,X] = GrB.extracttuples (A, desc)
 %
 % GrB.extracttuples extracts all entries from either a MATLAB matrix or a
-% GraphBLAS matrix.  If A is a MATLAB sparse or dense matrix,
-% [I,J,X] = GrB.extracttuples (A) is identical to [I,J,X] = find (A).
+% GraphBLAS matrix.  If A is a MATLAB sparse or dense matrix, [I,J,X] =
+% GrB.extracttuples (A) is identical to [I,J,X] = find (A).
 %
-% The descriptor is optional.  d.base is a string, equal to 'default',
-% 'zero-based', or 'one-based'.  This parameter determines the type of
-% output for I and J.  The default is one-based, to be more compatible
-% with MATLAB.  If one-based, then I and J are returned as MATLAB double
-% column vectors, containing 1-based indices.  The indices in I are in
-% the range 1 to m, and the indices in J are in the range 1 to n, if A is
-% m-by-n.  This usage is identical to [I,J,X] = find (A) for a MATLAB
-% sparse or dense matrix.  The array X has the same type as A (double,
-% single, int8, ..., uint8, or (in the future) complex).
+% The descriptor is optional.  desc.base is a string, eithe 'default',
+% 'zero-based', 'one-based int', or 'one-based'.  This parameter
+% determines the type of output for I and J.  The default is one-based,
+% so that I and J are returned as double vectors, with one-based indices.
+% If max(size(A)) > flintmax, however, the default is 'one-based int', so
+% that I and J are int64 vectors with one-based indices.  One-based
+% indices in I are in the range 1 to m, and the indices in J are in the
+% range 1 to n, if A is m-by-n.  This is identical to [I,J,X] = find (A)
+% for a MATLAB sparse or dense matrix.
 %
-% The default is 'one based', but 'zero based' is faster and uses less
-% memory.  In this case, I and J are returned as int64 arrays.  Entries
-% in I are in the range 0 to m-1, and entries in J are in the range 0 to
-% n-1.
+% If 'zero-based', I and J are returned as int64 arrays, with zero-based
+% indices.  The entries in I and J are in the range 0 to m-1 and 0 to
+% n-1, respectively, if [m n] = size (A).  This usage is not the
+% conventional 1-based indexing in MATLAB, but it is the fastest method.
+%
+% The overloaded [I,J,X] = find (A) method for a GraphBLAS matrix A uses
+% desc.base of 'default'.
 %
 % This function corresponds to the GrB_*_extractTuples_* functions in
 % GraphBLAS.

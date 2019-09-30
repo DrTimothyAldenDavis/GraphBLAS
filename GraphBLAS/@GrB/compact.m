@@ -19,12 +19,13 @@ function [C, I, J] = compact (A, id)
 % Example:
 %
 %   n = 2^40 ;
-%   H = GrB (n,n)
-%   I = sort (randperm (n, 4))
-%   J = sort (randperm (n, 4))
+%   H = GrB (n,n) ;                 % create a huge hypersparse matrix
+%   I = sort (randperm (n, 4)) ;
+%   J = sort (randperm (n, 4)) ;
 %   A = magic (4) ;
 %   H (I,J) = A
 %   [C, I, J] = GrB.compact (H)
+%   assert (isequal (C, A)) ;       % C and A are the same
 %   H (I, J(1)) = 0
 %   [C, I, J] = GrB.compact (H, 0)
 %   norm (C - A (:,2:end), 1)

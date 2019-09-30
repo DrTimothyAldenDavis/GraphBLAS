@@ -44,10 +44,11 @@ void mexFunction
     // get the descriptor
     //--------------------------------------------------------------------------
 
+    base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
     GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
 
     //--------------------------------------------------------------------------
     // find the remaining arguments
@@ -170,13 +171,15 @@ void mexFunction
     if (I_arg >= 0)
     { 
         // I is present
-        I = gb_mxcell_to_index (pargin [I_arg], anrows, &I_allocated, &ni) ;
+        I = gb_mxcell_to_index (pargin [I_arg], base, anrows,
+            &I_allocated, &ni) ;
     }
 
     if (J_arg >= 0)
     { 
         // both I and J are present
-        J = gb_mxcell_to_index (pargin [J_arg], ancols, &J_allocated, &nj) ;
+        J = gb_mxcell_to_index (pargin [J_arg], base, ancols,
+            &J_allocated, &nj) ;
     }
 
     //--------------------------------------------------------------------------

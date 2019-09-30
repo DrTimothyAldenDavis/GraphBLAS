@@ -11,7 +11,8 @@ function C = spfun (fun, G)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m, n] = size (G) ;
-[i, j, x] = GrB.extracttuples (G, struct ('kind', 'zero-based')) ;
+desc.base = 'zero-based' ;
+[i, j, x] = GrB.extracttuples (G, desc) ;
 x = feval (fun, x) ;
-C = GrB.build (i, j, x, m, n, '1st', GrB.type (x)) ;
+C = GrB.build (i, j, x, m, n, '1st', GrB.type (x), desc) ;
 

@@ -4,7 +4,6 @@ function gbtest51
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-% the files in ../../Demo/Matrix with no .mtx extension are zero-based
 files =  {
 '../../Demo/Matrix/2blocks'
 '../../Demo/Matrix/ash219'
@@ -20,6 +19,10 @@ files =  {
 '../../Demo/Matrix/t2'
 '../../Demo/Matrix/west0067' } ;
 nfiles = length (files) ;
+
+% the files in ../../Demo/Matrix that do not have a .mtx filename
+% are zero-based.
+desc.base = 'zero-based' ;
 
 valid_count = [
            0
@@ -41,7 +44,7 @@ valid_count = [
 for k = 1:nfiles
     filename = files {k} ;
     T = load (fullfile (filepath, files {k})) ;
-    G = GrB.build (int64 (T (:,1)), int64 (T (:,2)), T (:,3)) ;
+    G = GrB.build (int64 (T (:,1)), int64 (T (:,2)), T (:,3), desc) ;
     [m, n] = size (G) ;
     if (m ~= n)
         G = [GrB(m,m) G ; G' GrB(n,n)] ;

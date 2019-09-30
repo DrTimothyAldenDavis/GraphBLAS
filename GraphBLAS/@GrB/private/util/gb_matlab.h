@@ -78,11 +78,44 @@ typedef enum            // output of GrB.methods
 {
     KIND_GRB = 0,       // return a MATLAB struct containing a GrB_Matrix
     KIND_SPARSE = 1,    // return a MATLAB sparse matrix
-    KIND_FULL = 2,      // return a MATLAB dense matrix
-    KIND_0BASED = 3,    // extract 0-based indices
-    KIND_1BASED = 4     // extract 1-based indices
+    KIND_FULL = 2       // return a MATLAB dense matrix
 }
 kind_enum_t ;
+
+// [I,J,X] = GrB.extracttuples (A, desc) can return I and J in three ways:
+//
+//      one-based double:   just like [I,J,X] = find (A)
+//      one-based int64:    I and J are one-based, just as in MATLAB, but
+//                          are int64.
+//      zero-based int64:   I and J are zero-based, and int64.  This is meant
+//                          for internal use in GrB methods, but it is also
+//                          the
+//
+// The descriptor is also used for GrB.build, GrB.extract, GrB.assign, and
+// GrB.subassign.  In that case, the type is determined by the input arrays I
+// and J.
+//
+// desc.base can be one of several strings:
+//
+//      'default'           the default is used
+//      'zero-based'        the type is always int64
+//      'one-based'         the type is inferred from the inputs I and J
+//      'one-based int'     the type is int64, and one-based
+//      'one-based double'  the type is double, and one-based
+//
+// Note that there is no option for zero-based double.
+
+typedef enum            // type of indices
+{
+    BASE_DEFAULT = 0,   // The type is determined automatically.  It is
+                        // BASE_1_DOUBLE, unless the dimensions are
+                        // too big for a flint (max(size(A)) > flintmax).  In
+                        // that case, BASE_1_INT64 is used.
+    BASE_0_INT64 = 1,   // indices are returned as zero-based int64 values
+    BASE_1_INT64 = 2,   // indices are returned as one-based int64
+    BASE_1_DOUBLE = 3   // this is the typical default: one-based double
+}
+base_enum_t ;
 
 //------------------------------------------------------------------------------
 // gb_double_to_integer: convert a double to int64_t and check conversion
@@ -214,8 +247,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
 GrB_Descriptor gb_mxarray_to_descriptor     // return a new descriptor
 (
     const mxArray *D_matlab,    // MATLAB struct
-    kind_enum_t *kind,          // GrB, sparse, full, 0-based, or 1-based
-    GxB_Format_Value *fmt       // by row or by col
+    kind_enum_t *kind,          // GrB, sparse, or full
+    GxB_Format_Value *fmt,      // by row or by col
+    base_enum_t *base           // 0-based int, 1-based int, or 1-based double
 ) ;
 
 mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
@@ -277,6 +311,7 @@ void gb_at_exit (void)  ;   // called when GraphBLAS is cleared by MATLAB
 int64_t *gb_mxarray_to_list     // return List of integers
 (
     const mxArray *mxList,      // list to extract
+    base_enum_t base,           // input is zero-based or one-based
     bool *allocated,            // true if output list was allocated
     int64_t *len,               // length of list
     int64_t *List_max           // max entry in the list, if computed
@@ -285,6 +320,7 @@ int64_t *gb_mxarray_to_list     // return List of integers
 GrB_Index *gb_mxcell_to_index   // return index list I
 (
     const mxArray *I_cell,      // MATLAB cell array
+    base_enum_t base,           // I is one-based or zero-based
     const GrB_Index n,          // dimension of matrix being indexed
     bool *I_allocated,          // true if output array I is allocated
     GrB_Index *ni               // length (I)

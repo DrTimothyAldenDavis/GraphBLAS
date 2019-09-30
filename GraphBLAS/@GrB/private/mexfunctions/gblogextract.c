@@ -51,8 +51,9 @@
     G = spones (G, 'logical') ;
 
     % K = symbolic structure of M, where the kth entry in K(:) is equal to k.
-    [mi, mj] = GrB.extracttuples (M, struct ('kind', 'zero-based')) ;
-    K = GrB.build (mi, mj, uint64 (0:mnz-1), m, n) ;
+    desc.base = 'zero-based' ;
+    [mi, mj] = GrB.extracttuples (M, desc) ;
+    K = GrB.build (mi, mj, int64 (0:mnz-1), m, n, desc) ;
 
     % T<G> = K
     T = GrB (m, n, 'uint64') ;

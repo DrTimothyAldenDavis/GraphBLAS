@@ -5,4 +5,3 @@ function [i j] = gb_convert_index_1d_to_2d (k, m) ;
 i = rem (k, m) ;
 j = (k - i) / m ;
 
-

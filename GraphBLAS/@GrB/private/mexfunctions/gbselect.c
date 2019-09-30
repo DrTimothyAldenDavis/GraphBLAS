@@ -87,10 +87,11 @@ void mexFunction
     GxB_SelectOp op = NULL ;
     GrB_Type ctype ;
 
+    base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
     GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
+        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
 
     if (mxIsChar (pargin [0]))
     { 

@@ -1,13 +1,14 @@
-function [I, J, X] = find (G)
+function [I, J, X] = find (G, k, search)
 %FIND extract entries from a GraphBLAS matrix.
 % [I, J, X] = find (G) extracts the entries from a GraphBLAS matrix G.  X
-% has the same type as G ('double', 'single', 'int8', ...).  I and J are
-% returned as 1-based indices, the same as [I,J,X] = find (S) for a
-% MATLAB matrix S.  Use GrB.extracttuples to return I and J as zero-based.
+% has the same type as G ('double', 'single', 'int8', ...).
+%
 % Linear 1D indexing (I = find (S) for the MATLAB matrix S) and find (G,
-% k, ...) are not supported.  G may contain explicit entries, but these
-% are dropped from the output [I,J,X].  Use GrB.extracttuples to return
-% those entries.
+% k, ...) are not supported.
+%
+% G may contain explicit zero entries, and by default these are returned
+% in the result.  Use find(GrB.prune(G), ...) to remove these explicit
+% zero entries.
 %
 % For a column vector, I = find (G) returns I as a list of the row indices
 % of entries in G.  For a row vector, I = find (G) retusn I as a list of
@@ -16,31 +17,79 @@ function [I, J, X] = find (G)
 % See also sparse, GrB.build, GrB.extracttuples.
 
 % FUTURE: add linear indexing
-% FUTURE: add find (G,k,'first') and find (G,k,'last')
+
+% FUTURE: find (G,k,'first') and find (G,k,'last') are slow, since as they are
+% currently implemented, all entries are extracted and then the first or last k
+% are selected from the extracted tuples..  It would be faster to use a
+% mexFunction that directly accesses the opaque content of G, instead of using
+% GrB_extractTuples, which always extracts the entire matrix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-T = gbselect ('nonzero', G.opaque, struct ('kind', 'GrB')) ;
+if (nargin > 1 && ~GrB.isbycol (G))
+    % find (G, k) assumes the matrix is stored by column, so reformat G
+    % if it is stored by row.
+    G = GrB (G, 'by col') ;
+end
+
 if (nargout == 3)
-    [I, J, X] = gbextracttuples (T) ;
+    [I, J, X] = GrB.extracttuples (G) ;
     if (isrow (G))
         I = I' ;
         J = J' ;
         X = X' ;
     end
 elseif (nargout == 2)
-    [I, J] = gbextracttuples (T) ;
+    [I, J] = GrB.extracttuples (G) ;
     if (isrow (G))
         I = I' ;
         J = J' ;
     end
 else
     if (isrow (G))
-        [~, I] = gbextracttuples (T) ;
+        [~, I] = GrB.extracttuples (G) ;
         I = I' ;
     else
-        I = gbextracttuples (T) ;
+        % FUTURE: this does not return the same thing
+        I = GrB.extracttuples (G) ;
+    end
+end
+
+if (nargin > 1)
+    % find (G, k, ...): get the first or last k entries
+    if (nargin == 2)
+        search = 'first' ;
+    end
+    if (~isscalar (k))
+        gb_error ('k must be a scalar') ;
+    end
+    k = ceil (double (k)) ;
+    if (k < 1)
+        gb_error ('k must be positive') ;
+    end
+    n = length (I) ;
+    k = min (k, n) ;
+    if (isequal (search, 'first'))
+        % find (G, k, 'first'): get the first k entries
+        I = I (1:k) ;
+        if (nargout > 1)
+            J = J (1:k) ;
+        end
+        if (nargout > 2)
+            X = X (1:k) ;
+        end
+    elseif (isequal (search, 'last'))
+        % find (G, k, 'last'): get the last k entries
+        I = I (n-k+1:n) ;
+        if (nargout > 1)
+            J = J (n-k+1:n) ;
+        end
+        if (nargout > 2)
+            X = X (n-k+1:n) ;
+        end
+    else
+        gb_error ('invalid search option; must be ''first'' or ''last''') ;
     end
 end
 

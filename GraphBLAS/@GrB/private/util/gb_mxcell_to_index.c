@@ -13,28 +13,20 @@
 //
 //      0:   { }    This is the MATLAB ':', like C(:,J), refering to all m rows,
 //                  if C is m-by-n.
-//      1:   { list }  A 1D list of row indices, like C(I,J) in MATLAB.  If the
-//                  list is double, then it contains 1-based indices, in the
-//                  range 1 to m if C is m-by-n, so that C(1,1) refers to the
-//                  entry in the first row and column of C.  If I is int64 or
-//                  uint64, then it contains 0-based indices in the range 0 to
-//                  m-1, where C(0,0) is the same entry.
+//      1:   { list }  A 1D list of row indices, like C(I,J) in MATLAB.
 //      2:  { start,fini }  start and fini are scalars (either double, int64,
-//                  or uint64).  This defines I = start:fini) in MATLAB index
-//                  notation.  Typically, start and fini have type double and
-//                  refer to 1-based indexing of C.  int64 or uint64 scalars
-//                  are treated as 0-based.
+//                  or uint64).  This defines I = start:fini in MATLAB colon
+//                  notation.
 //      3:  { start,inc,fini } start, inc, and fini are scalars (double, int64,
 //                  or uint64).  This defines I = start:inc:fini in MATLAB
-//                  notation.  The start and fini are 1-based if double,
-//                  0-based if int64 or uint64.  inc remains the same
-//                  regardless of its type.
+//                  notation.
 
 #include "gb_matlab.h"
 
 GrB_Index *gb_mxcell_to_index   // return index list I
 (
     const mxArray *I_cell,      // MATLAB cell array
+    base_enum_t base,           // I is one-based or zero-based
     const GrB_Index n,          // dimension of matrix being indexed
     bool *I_allocated,          // true if output array I is allocated
     GrB_Index *ni               // length (I)
@@ -62,7 +54,7 @@ GrB_Index *gb_mxcell_to_index   // return index list I
     for (int k = 0 ; k < len ; k++)
     { 
         // convert I_cell {k} content to an integer list
-        Item [k] = gb_mxarray_to_list (mxGetCell (I_cell, k),
+        Item [k] = gb_mxarray_to_list (mxGetCell (I_cell, k), base,
             &Item_allocated [k], &Item_len [k], &Item_max [k]) ;
     }
 
@@ -139,8 +131,8 @@ GrB_Index *gb_mxcell_to_index   // return index list I
         if (Item_allocated [1])
         { 
             // the 2nd item in the list is inc, and if it was passed in as
-            // a double scalar, it has been decremented.  So increment it to
-            // get back to the correct value.
+            // 1-based, it has been decremented.  So increment it to get back
+            // to the correct value.
             inc++ ;
         }
 

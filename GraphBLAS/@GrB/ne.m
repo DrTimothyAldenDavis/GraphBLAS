@@ -12,7 +12,7 @@ function C = ne (A, B)
 % A scalar, B scalar:  C is scalar.
 % A scalar, B matrix:  C is full if A~=0, otherwise C is a subset of B.
 % B scalar, A matrix:  C is full if B~=0, otherwise C is a subset of A.
-% A matrix, B matrix:  C is full.
+% A matrix, B matrix:  C is sparse, with the pattern of A+B.
 % Zeroes are then dropped from C after it is computed.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -20,8 +20,8 @@ function C = ne (A, B)
 
 if (isscalar (A))
     if (isscalar (B))
-        % both A and B are scalars.  C is full.
-        C = gb_dense_comparator ('~=', A, B) ;
+        % both A and B are scalars.  C is sparse.
+        C = gb_sparse_comparator ('~=', A, B) ;
     else
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) ~= 0)
@@ -59,8 +59,8 @@ else
             C = GrB.apply ('1.logical', GrB.prune (A)) ;
         end
     else
-        % both A and B are matrices.  C is full.
-        C = gb_dense_comparator ('~=', A, B) ;
+        % both A and B are matrices.  C is sparse.
+        C = gb_sparse_comparator ('~=', A, B) ;
     end
 end
 

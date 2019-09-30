@@ -23,23 +23,14 @@ function Cout = extract (varargin)
 %                   rows, if A is m-by-n.
 %
 %       1:   { I }  1D list of row indices, like A(I,J) in MATLAB.
-%                   If I is double, then it contains 1-based indices, in
-%                   the range 1 to m if A is m-by-n, so that A(1,1) refers
-%                   to the entry in the first row and column of A.  If I is
-%                   int64 or uint64, then it contains 0-based indices in
-%                   the range 0 to m-1, where A(0,0) is the same entry.
 %
 %       2:  { start,fini }  start and fini are scalars (either double,
 %                   int64, or uint64).  This defines I = start:fini in
-%                   MATLAB index notation.  Typically, start and fini have
-%                   type double and refer to 1-based indexing of A.  int64
-%                   or uint64 scalars are treated as 0-based.
+%                   MATLAB index notation.
 %
 %       3:  { start,inc,fini } start, inc, and fini are scalars (double,
 %                   int64, or uint64).  This defines I = start:inc:fini in
-%                   MATLAB notation.  The start and fini are 1-based if
-%                   double, 0-based if int64 or uint64.  inc is the same
-%                   for any type.
+%                   MATLAB notation.
 %
 %       The J argument is identical, except that it is a list of column
 %       indices of A.  If only one cell array is provided, J = {  } is
@@ -50,6 +41,11 @@ function Cout = extract (varargin)
 %       If neither I nor J are provided on input, then this implies
 %       both I = { } and J = { }, or A(:,:) in MATLAB notation,
 %       refering to all rows and columns of A.
+%
+%       If desc.base is 'zero-based', then I and J are interpretted as
+%       zero-based, where the rows and columns of A range from 0 to m-1 and
+%       n-1, respectively.  If desc.base is 'one-based' (which is the
+%       default), then indices are intrepetted as 1-based, just as in MATLAB.
 %
 % Cin: an optional input matrix, containing the initial content of the
 %       matrix C.  Cout is the content of C after the assignment is made.

@@ -12,8 +12,9 @@ function C = isnan (G)
 
 [m, n] = size (G) ;
 if (isfloat (G) && GrB.entries (G) > 0)
-    [i, j, x] = GrB.extracttuples (G, struct ('kind', 'zero-based')) ;
-    C = GrB.build (i, j, isnan (x), m, n) ;
+    desc.base = 'zero-based' ;
+    [i, j, x] = GrB.extracttuples (G, desc) ;
+    C = GrB.build (i, j, isnan (x), m, n, desc) ;
 else
     % C is all false
     C = GrB (m, n, 'logical') ;

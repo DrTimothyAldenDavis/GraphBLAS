@@ -12,8 +12,9 @@ function C = isfinite (G)
 
 [m, n] = size (G) ;
 if (isfloat (G) && m > 0 && n > 0)
-    [i, j, x] = GrB.extracttuples (full (G), struct ('kind', 'zero-based')) ;
-    C = GrB.build (i, j, isfinite (x), m, n) ;
+    desc.base = 'zero-based' ;
+    [i, j, x] = GrB.extracttuples (full (G), desc) ;
+    C = GrB.build (i, j, isfinite (x), m, n, desc) ;
 else
     % C is all true
     C = GrB (true (m, n)) ;

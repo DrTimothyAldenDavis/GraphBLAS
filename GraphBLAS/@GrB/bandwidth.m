@@ -16,7 +16,8 @@ if (GrB.entries (G) == 0)
     hi = 0 ;
     lo = 0 ;
 else
-    [i, j] = GrB.extracttuples (G, struct ('kind', 'zero-based')) ;
+    desc.base = 'zero-based' ;
+    [i, j] = GrB.extracttuples (G, desc) ;
     b = j - i ;
     hi = max (0,  double (max (b))) ;
     lo = max (0, -double (min (b))) ;

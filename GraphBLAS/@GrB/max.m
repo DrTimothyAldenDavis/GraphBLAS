@@ -1,4 +1,4 @@
-function C = max (varargin)
+function [C I] = max (varargin)
 %MAX Maximum elements of a GraphBLAS or MATLAB matrix.
 %
 % C = max (G) is the largest entry in the vector G.  If G is a matrix,
@@ -36,7 +36,7 @@ if (nargin == 1)
         % C = max (G) for a vector G results in a scalar C
         C = GrB.reduce (op, G) ;
         if (~GrB.isfull (G))
-            C = max (C, 0) ;
+            C = max (C, 0) ;    % recursively, on a scalar
         end
     else
         % C = max (G) reduces each column to a scalar,
@@ -96,7 +96,7 @@ elseif (nargin == 3)
         % C = max (G, [ ] 'all'), reducing all entries to a scalar
         C = GrB.reduce (op, G) ;
         if (~GrB.isfull (G))
-            C = max (C, 0) ;
+            C = max (C, 0) ;    % recursively, on a scalar
         end
     elseif (isequal (option, 1))
         % C = max (G, [ ], 1) reduces each column to a scalar,

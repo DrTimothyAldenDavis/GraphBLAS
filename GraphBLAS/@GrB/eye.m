@@ -52,7 +52,8 @@ end
 % construct the m-by-n identity matrix of the given type
 m = max (m, 0) ;
 n = max (n, 0) ;
-mn = min (m,n) ;
-I = int64 (0:mn-1) ;
-C = GrB.build (I, I, ones (mn, 1, type), m, n, '1st', type) ;
+mn = min (m, n) ;
+I = int64 (0) : int64 (mn-1) ;
+desc.base = 'zero-based' ;
+C = GrB.build (I, I, ones (mn, 1, type), m, n, '1st', type, desc) ;
 

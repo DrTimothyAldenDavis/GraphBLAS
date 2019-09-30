@@ -11,6 +11,12 @@
 
 // [I J X] = GrB.extracttuples (A, desc)
 
+// desc.base = 'zero-based':    I and J are returned as 0-based int64 indices
+// desc.base = 'one-based int': I and J are returned as 1-based int64 indices
+// desc.base = 'one-based':     I and J are returned as 1-based double indices
+// desc.base = 'default':       'one-based', unless max(size(A)) > flintmax,
+//                              in which case 'one-based int' is used.
+
 #include "gb_matlab.h"
 
 void mexFunction
@@ -33,13 +39,13 @@ void mexFunction
     // get the optional descriptor
     //--------------------------------------------------------------------------
 
-    // default is 1-based, for [I, J, X] = find (G)
-    kind_enum_t kind = KIND_1BASED ;
+    base_enum_t base = BASE_DEFAULT ;
+    kind_enum_t kind = KIND_GRB ;
     GxB_Format_Value fmt = GxB_NO_FORMAT ;
     GrB_Descriptor desc = NULL ;
     if (nargin == 2)
     { 
-        desc = gb_mxarray_to_descriptor (pargin [1], &kind, &fmt) ;
+        desc = gb_mxarray_to_descriptor (pargin [1], &kind, &fmt, &base) ;
     }
     OK (GrB_free (&desc)) ;
 
@@ -70,7 +76,7 @@ void mexFunction
     GrB_Index *J = extract_J ? mxMalloc (s * sizeof (GrB_Index)) : NULL ;
 
     //--------------------------------------------------------------------------
-    // extract the tuples
+    // extract the tuples and export X
     //--------------------------------------------------------------------------
 
     if (xtype == GrB_BOOL)
@@ -189,6 +195,27 @@ void mexFunction
     }
 
     //--------------------------------------------------------------------------
+    // determine if zero-based or one-based
+    //--------------------------------------------------------------------------
+
+    if (base == BASE_DEFAULT)
+    {
+        GrB_Index nrows, ncols ;
+        OK (GrB_Matrix_nrows (&nrows, A)) ;
+        OK (GrB_Matrix_ncols (&ncols, A)) ;
+        if (MAX (nrows, ncols) > FLINTMAX)
+        {
+            // the matrix is too large for I and J to be returned as double
+            base = BASE_1_INT64 ;
+        }
+        else
+        {
+            // this is the typical case
+            base = BASE_1_DOUBLE ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // free workspace
     //--------------------------------------------------------------------------
 
@@ -198,7 +225,7 @@ void mexFunction
     // export I and J
     //--------------------------------------------------------------------------
 
-    if (kind == KIND_0BASED)
+    if (base == BASE_0_INT64)
     { 
 
         //----------------------------------------------------------------------
@@ -209,32 +236,57 @@ void mexFunction
         { 
             pargout [0] = gb_export_to_mxfull (&I, nvals, 1, GrB_INT64) ;
         }
+
         if (extract_J)
         { 
             pargout [1] = gb_export_to_mxfull (&J, nvals, 1, GrB_INT64) ;
         }
 
     }
-    else
+    else if (base == BASE_1_DOUBLE)
     { 
 
         //----------------------------------------------------------------------
-        // export I and J as double one-based integers (default)
+        // export I and J as double one-based integers
         //----------------------------------------------------------------------
 
         if (extract_I)
         { 
             double *I_double = mxMalloc (s * sizeof (double)) ;
             GB_matlab_helper1 (I_double, I, (int64_t) nvals) ;
+            gb_mxfree (&I) ;
             pargout [0] = gb_export_to_mxfull (&I_double, nvals, 1, GrB_FP64) ;
         }
+
         if (extract_J)
         { 
             double *J_double = mxMalloc (s * sizeof (double)) ;
             GB_matlab_helper1 (J_double, J, (int64_t) nvals) ;
+            gb_mxfree (&J) ;
             pargout [1] = gb_export_to_mxfull (&J_double, nvals, 1, GrB_FP64) ;
         }
+
     }
+    else if (base == BASE_1_INT64)
+    { 
+
+        //----------------------------------------------------------------------
+        // export I and J as int64 one-based integers
+        //----------------------------------------------------------------------
+
+        if (extract_I)
+        { 
+            GB_matlab_helper1i ((int64_t *) I, (int64_t) nvals) ;
+            pargout [0] = gb_export_to_mxfull (&I, nvals, 1, GrB_INT64) ;
+        }
+
+        if (extract_J)
+        { 
+            GB_matlab_helper1i ((int64_t *) J, (int64_t) nvals) ;
+            pargout [1] = gb_export_to_mxfull (&J, nvals, 1, GrB_INT64) ;
+        }
+    }
+
     GB_WRAPUP ;
 }
 

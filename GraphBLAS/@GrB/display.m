@@ -11,5 +11,5 @@ name = inputname (1) ;
 if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
-gbdisp (G.opaque, 2) ;
+gbdisp (G.opaque, nnz (G), 2) ;
 

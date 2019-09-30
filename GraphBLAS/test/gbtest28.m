@@ -57,8 +57,9 @@ A4 = GrB.build (i, j, x, m, n, d) ;
 t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as MATLAB\n',t);
 
+desc0.base = 'zero-based' ;
 tic
-A2 = GrB.build (i0, j0, x, m, n) ;
+A2 = GrB.build (i0, j0, x, m, n, desc0) ;
 t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (i0, j0, ...), with i0 and j0 uint64\n',t);
 
@@ -90,7 +91,7 @@ t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (...), same inputs/outputs as MATLAB\n',t);
 
 tic
-A2 = GrB.build (i0, j0, x, m, n) ;
+A2 = GrB.build (i0, j0, x, m, n, desc0) ;
 t = toc ;
 fprintf ('%12.4f sec : A = GrB.build (i0,j0,...), with i0 and j0 uint64\n', t) ;
 

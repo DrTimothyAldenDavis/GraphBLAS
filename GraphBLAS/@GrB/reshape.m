@@ -29,12 +29,13 @@ end
 if (isempty (G))
     C = GrB (mnew, nnew, GrB.type (G)) ;
 else
-    [iold, jold, x] = GrB.extracttuples (G, struct ('kind', 'zero-based')) ;
+    desc.base = 'zero-based' ;
+    [iold, jold, x] = GrB.extracttuples (G, desc) ;
     % convert i and j from 2D (mold-by-nold) to 1D indices
     k = gb_convert_index_2d_to_1d (iold, jold, mold) ;
     % convert k from 1D indices to 2D (mnew-by-nnew)
     [inew, jnew] = gb_convert_index_1d_to_2d (k, mnew) ;
     % rebuild the new matrix
-    C = GrB.build (inew, jnew, x, mnew, nnew) ;
+    C = GrB.build (inew, jnew, x, mnew, nnew, desc) ;
 end
 

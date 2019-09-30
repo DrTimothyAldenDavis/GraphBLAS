@@ -63,12 +63,13 @@ void mexFunction
     // get the descriptor (kind defaults to KIND_FULL)
     //--------------------------------------------------------------------------
 
+    base_enum_t base = BASE_DEFAULT ;
     kind_enum_t kind = KIND_FULL ;
     GxB_Format_Value fmt = GxB_NO_FORMAT ;
     GrB_Descriptor desc = NULL ;
     if (nargin > 3)
     { 
-        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt) ;
+        desc = gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base);
     }
 
     // A determines the format of C, unless defined by the descriptor

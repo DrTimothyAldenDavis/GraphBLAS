@@ -29,27 +29,17 @@ function Cout = assign (varargin)
 %
 % I and J are cell arrays.  I contains 0, 1, 2, or 3 items:
 %
-%       0:   { }    This is the MATLAB ':', like C(:,J), refering to all m
+%       0:  { }     This is the MATLAB ':', like C(:,J), refering to all m
 %                   rows, if C is m-by-n.
 %
-%       1:   { I }  1D list of row indices, like C(I,J) in MATLAB.
-%                   If I is double, then it contains 1-based indices, in
-%                   the range 1 to m if C is m-by-n, so that C(1,1) refers
-%                   to the entry in the first row and column of C.  If I is
-%                   int64 or uint64, then it contains 0-based indices in
-%                   the range 0 to m-1, where C(0,0) is the same entry.
+%       1:  { I }   1D list of row indices, like C(I,J) in MATLAB.
 %
 %       2:  { start,fini }  start and fini are scalars (either double,
 %                   int64, or uint64).  This defines I = start:fini in
-%                   MATLAB index notation.  Typically, start and fini have
-%                   type double and refer to 1-based indexing of C.  int64
-%                   or uint64 scalars are treated as 0-based.
+%                   MATLAB index notation.
 %
 %       3:  { start,inc,fini } start, inc, and fini are scalars (double,
-%                   int64, or uint64).  This defines I = start:inc:fini in
-%                   MATLAB notation.  The start and fini are 1-based if
-%                   double, 0-based if int64 or uint64.  inc is the same
-%                   for any type.
+%                   int64, or uint64).
 %
 %       The J argument is identical, except that it is a list of column
 %       indices of C.  If only one cell array is provided, J = {  } is
@@ -60,6 +50,12 @@ function Cout = assign (varargin)
 %       If neither I nor J are provided on input, then this implies
 %       both I = { } and J = { }, or C(:,:) in MATLAB notation,
 %       refering to all rows and columns of C.
+%
+%       desc.base modifies how I, start, and fini are interpretted.
+%       If desc.base is 'zero-based' then they are interpretted as
+%       zero-based indices, where 0 is the first row or column.
+%       If desc.base is 'one-based' (which is the default), then
+%       indices are intrepetted as 1-based, just as in MATLAB.
 %
 % A: this argument either has size length(I)-by-length(J) (or A' if d.in0
 %       is 'transpose'), or it is 1-by-1 for scalar assignment (like
