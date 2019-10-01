@@ -63,7 +63,7 @@ end
 if (isequal (kind, 'directed') || isequal (kind, 'unsymmetric'))
     % create the incidence matrix of a directed graph, using all of A;
     % except that diagonal entries are ignored.
-    A = GrB.select ('offdiag', A) ;
+    A = GrB.offdiag (A) ;
 elseif (isequal (kind, 'upper'))
     % create the incidence matrix of an undirected graph, using only entries
     % in the strictly upper triangular part of A.

@@ -19,14 +19,16 @@ function Cout = select (varargin)
 %   Cout = GrB.select (Cin, M, accum, selectop, A, thunk)
 %   Cout = GrB.select (Cin, M, accum, selectop, A, thunk, desc)
 %
-% GrB.select selects a subset of entries from the matrix A, based on their
-% value or position.  For example, L = GrB.select ('tril', A) returns the
-% lower triangular part of the GraphBLAS or MATLAB matrix A, just like L
-% = tril (A) for a MATLAB matrix A.  The select operators can also depend
-% on the values of the entries.  The thunk parameter is an optional input
-% scalar, used in many of the select operators.  For example, L =
-% GrB.select ('tril', A, -1) is the same as L = tril (A, -1), which
-% returns the strictly lower triangular part of A.
+% GrB.select selects a subset of entries from the matrix A, based on
+% their value or position.  For example, L = GrB.select ('tril', A, 0)
+% returns the lower triangular part of the GraphBLAS or MATLAB matrix A,
+% just like L = tril (A) for a MATLAB matrix A.  The select operators can
+% also depend on the values of the entries.  The thunk parameter is an
+% input scalar, used in many of the select operators.  For example,
+% L = GrB.select ('tril', A, -1) is the same as L = tril (A, -1), which
+% returns the strictly lower triangular part of A.  The thunk scalar is
+% required for 'tril', 'triu', 'diag', 'offdiag' and the '*thunk'
+% operators.  It must not appear when using the '*zero' operators.
 %
 % The selectop is a string defining the operator:
 %
@@ -35,7 +37,7 @@ function Cout = select (varargin)
 %   'tril'      C = tril (A,thunk)                  none
 %   'triu'      C = triu (A,thunk)                  none
 %   'diag'      C = diag (A,thunk), see note below  none
-%   'offdiag'   C = entries not in diag(A,k)        none
+%   'offdiag'   C = entries not in diag(A,thunk)    none
 %   'nonzero'   C = A (A ~= 0)                      '~=0'
 %   'eqzero'    C = A (A == 0)                      '==0'
 %   'gtzero'    C = A (A >  0)                      '>0'
@@ -49,8 +51,8 @@ function Cout = select (varargin)
 %   'ltthunk'   C = A (A <  thunk)                  '<thunk'
 %   'lethunk'   C = A (A <= thunk)                  '<=thunk'
 %
-% Note that C = GrB.select ('diag',A) does not returns a vector, but a
-% diagonal matrix.
+% Note that C = GrB.select ('diag',A,thunk) does not returns a vector,
+% but a diagonal matrix.
 %
 % Many of the operations have equivalent synonyms, as listed above.
 %

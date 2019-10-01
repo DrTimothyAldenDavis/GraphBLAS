@@ -591,26 +591,27 @@ fprintf ('Speedup of GraphBLAS over MATLAB: %g\n', ...
 
 err = norm (Y1-Y2,1)
 
-%% GraphBLAS has better colon notation than MATLAB
-% The MATLAB notation C = A (start:inc:fini) is very handy, but in both
-% the built-in operators and the overloaded operators for objects, MATLAB
-% starts by creating the explicit index vector I = start:inc:fini.
-% That's fine if the matrix is modest in size, but GraphBLAS can
-% construct huge matrices (and MATLAB can build huge sparse vectors as
-% well).  The problem is that 1:n cannot be explicitly constructed when n
+%% For objects, GraphBLAS has better colon notation than MATLAB
+% The MATLAB notation C = A (start:inc:fini) is very handy, and
+% it works great if A is a MATLAB matrix.  But for objects like
+% the GraphBLAS matrix, MATLAB starts by creating the explicit
+% index vector I = start:inc:fini.  That's fine if the matrix is
+% modest in size, but GraphBLAS can construct huge matrices.
+% The problem is that 1:n cannot be explicitly constructed when n
 % is huge.
 %
-% GraphBLAS can represent the colon notation start:inc:fini in an
-% implicit manner, and it can do the indexing without actually forming
-% the explicit list I = start:inc:fini.
+% The C API for GraphBLAS can represent the colon notation 
+% start:inc:fini in an implicit manner, so it can do the indexing
+% without actually forming the explicit list I = start:inc:fini.
+% But there is no access to this method using the MATLAB notation
+% start:inc:fini.
 %
-% Unfortunately, this means that the elegant MATLAB colon notation
-% start:inc:fini cannot be used.  To compute C = A (start:inc:fini) for
-% very huge matrices, you need to use use a cell array to represent the
-% colon notation, as { start, inc, fini }, instead of start:inc:fini.
-% See 'help GrB.extract' and 'help.gbsubassign' for, for C(I,J)=A.  The
-% syntax isn't conventional, but it is far faster than the MATLAB colon
-% notation, and takes far less memory when I is huge.
+% Thus, to compute C = A (start:inc:fini) for very huge matrices,
+% you need to use use a cell array to represent the colon notation,
+% as { start, inc, fini }, instead of start:inc:fini. See
+% 'help GrB.extract' and 'help.gbsubassign' for, for C(I,J)=A.  The
+% syntax isn't conventional, but it is far faster than the MATLAB
+% colon notation for objects, and takes far less memory when I is huge.
 
 %%
 n = 1e14 ;

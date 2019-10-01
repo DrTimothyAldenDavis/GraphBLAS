@@ -23,8 +23,8 @@
 
 // MATLAB Usage:
 
-//      Cout = gbassign    (Cin, M, accum, A, I, J, desc)
-//      Cout = gbsubassign (Cin, M, accum, A, I, J, desc)
+//      Cout = GrB.assign    (Cin, M, accum, A, I, J, desc)
+//      Cout = GrB.subassign (Cin, M, accum, A, I, J, desc)
 
 // Cin, A, and desc are required.  See GrB.m for more details.
 
@@ -34,7 +34,7 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
 (
     int nargout,                // # output arguments for mexFunction
     mxArray *pargout [ ],       // output arguments for mexFunction
-    int nargin,                 // # inpu arguments for mexFunction
+    int nargin,                 // # input arguments for mexFunction
     const mxArray *pargin [ ],  // input arguments for mexFunction
     bool do_subassign,          // true: do subassign, false: do assign
     const char *usage           // usage string to print if error
@@ -48,97 +48,58 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 1, usage) ;
 
     //--------------------------------------------------------------------------
-    // get the descriptor
+    // find the arguments
     //--------------------------------------------------------------------------
 
+    mxArray *Matrix [4], *String [2], *Cell [2] ;
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+    int nmatrices, nstrings, ncells ;
+    GrB_Descriptor desc ;
+    gb_get_mxargs (nargin, pargin, usage, Matrix, &nmatrices, String, &nstrings,
+        Cell, &ncells, &desc, &base, &kind, &fmt) ;
+
+    CHECK_ERROR (nmatrices < 2 || nmatrices > 3 || nstrings > 1, usage) ;
 
     //--------------------------------------------------------------------------
-    // find the remaining arguments
+    // get the matrices
     //--------------------------------------------------------------------------
 
-    int I_arg = -1, J_arg = -1 ;            // cell arrays I and J
-    int matrix_arg [3] = {-1, -1, -1} ;     // C, M, and A matrices
-    int nmatrix_args = 0 ;                  // # of matrix arguments (C, M, A)
-    int accum_arg = -1 ;                    // accum string
+    GrB_Type atype, ctype ;
+    GrB_Matrix C, M = NULL, A ;
 
-    for (int k = 0 ; k < (nargin-1) ; k++)
-    {
-        if (mxIsCell (pargin [k]))
-        {
-            // a cell array is either I or J
-            if (I_arg == -1)
-            { 
-                // the first cell array is I
-                I_arg = k ;
-            }
-            else if (J_arg == -1)
-            { 
-                // the second cell array is J
-                J_arg = k ;
-            }
-            else
-            { 
-                ERROR ("only 2D indexing is supported") ;
-            }
-        }
-        else if (mxIsChar (pargin [k]))
-        {
-            // a string array is only the accum operator
-            if (accum_arg == -1)
-            { 
-                accum_arg = k ;
-            }
-            else
-            { 
-                ERROR ("only a single accum operator string allowed") ;
-            }
-        }
-        else
-        {
-            // a matrix argument is C, M, or A
-            if (nmatrix_args >= 3)
-            { 
-                // at most 3 matrix inputs are allowed
-                ERROR (usage) ;
-            }
-            matrix_arg [nmatrix_args++] = k ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // get the matrix arguments
-    //--------------------------------------------------------------------------
-
-    GrB_Matrix C = NULL, M = NULL, A = NULL ;
-
-    if (nmatrix_args < 2)
+    if (nmatrices == 2)
     { 
-        // at least 2 matrix inputs are required
-        ERROR (usage) ;
+        C = gb_get_deep    (Matrix [0]) ;
+        A = gb_get_shallow (Matrix [1]) ;
     }
-    else if (nmatrix_args == 2)
+    else // if (nmatrices == 3)
     { 
-        // with 2 matrix arguments: Cin and A, in that order
-        C = gb_get_deep    (pargin [matrix_arg [0]]) ;
-        A = gb_get_shallow (pargin [matrix_arg [1]]) ;
-    }
-    else if (nmatrix_args == 3)
-    { 
-        // with 3 matrix arguments: Cin, M, and A, in that order
-        C = gb_get_deep    (pargin [matrix_arg [0]]) ;
-        M = gb_get_shallow (pargin [matrix_arg [1]]) ;
-        A = gb_get_shallow (pargin [matrix_arg [2]]) ;
+        C = gb_get_deep    (Matrix [0]) ;
+        M = gb_get_shallow (Matrix [1]) ;
+        A = gb_get_shallow (Matrix [2]) ;
     }
 
-    // get the size and type of Cin
-    GrB_Type ctype ;
-    GrB_Index cnrows, cncols ;
+    OK (GxB_Matrix_type (&atype, A)) ;
     OK (GxB_Matrix_type (&ctype, C)) ;
+
+    //--------------------------------------------------------------------------
+    // get the operator
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp accum = NULL ;
+
+    if (nstrings == 1)
+    { 
+        accum = gb_mxstring_to_binop (String [0], ctype) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get the size of Cin
+    //--------------------------------------------------------------------------
+
+    GrB_Index cnrows, cncols ;
     OK (GrB_Matrix_nrows (&cnrows, C)) ;
     OK (GrB_Matrix_ncols (&cncols, C)) ;
 
@@ -151,35 +112,21 @@ void gb_assign                  // gbassign or gbsubassign mexFunctions
     GrB_Index ni = cnrows, nj = cncols ;
     bool I_allocated = false, J_allocated = false ;
 
-    if (cnrows == 1 && I_arg >= 0 && J_arg == -1)
+    if (cnrows == 1 && ncells == 1)
     { 
-        // C is a row vector, and only I is present.  Swap I and J
-        J_arg = I_arg ;
-        I_arg = -1 ;
+        // only J is present
+        J = gb_mxcell_to_index (Cell [0], base, cncols, &J_allocated, &nj) ;
     }
-
-    if (I_arg >= 0)
+    else if (ncells == 1)
     { 
-        // I is present
-        I = gb_mxcell_to_index (pargin [I_arg], base, cnrows,
-            &I_allocated, &ni) ;
+        // only I is present
+        I = gb_mxcell_to_index (Cell [0], base, cnrows, &I_allocated, &ni) ;
     }
-
-    if (J_arg >= 0)
+    else if (ncells == 2)
     { 
         // both I and J are present
-        J = gb_mxcell_to_index (pargin [J_arg], base, cncols,
-            &J_allocated, &nj) ;
-    }
-
-    //--------------------------------------------------------------------------
-    // get accum
-    //--------------------------------------------------------------------------
-
-    GrB_BinaryOp accum = NULL ;
-    if (accum_arg >= 0)
-    { 
-        accum = gb_mxstring_to_binop (pargin [accum_arg], ctype) ;
+        I = gb_mxcell_to_index (Cell [0], base, cnrows, &I_allocated, &ni) ;
+        J = gb_mxcell_to_index (Cell [1], base, cncols, &J_allocated, &nj) ;
     }
 
     //--------------------------------------------------------------------------

@@ -21,6 +21,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: Cout = GrB.mxm (Cin, M, accum, semiring, A, B, desc)"
+
 void mexFunction
 (
     int nargout,
@@ -35,83 +37,72 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage ((nargin == 4 || nargin == 6 || nargin == 7) && nargout <= 1,
-        "usage: Cout = GrB.mxm (Cin, M, accum, semiring, A, B, desc)") ;
+        USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL, M = NULL, A, B ;
-    GrB_BinaryOp accum = NULL, add = NULL ;
-    GrB_Semiring semiring ;
-    GrB_Type atype, ctype ;
-
+    mxArray *Matrix [4], *String [2], *Cell [2] ;
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+    int nmatrices, nstrings, ncells ;
+    GrB_Descriptor desc ;
+    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
+        Cell, &ncells, &desc, &base, &kind, &fmt) ;
 
-    if (nargin == 4)
+    CHECK_ERROR (nmatrices < 2 || nstrings < 1 || ncells > 0, USAGE) ;
+
+    //--------------------------------------------------------------------------
+    // get the matrices
+    //--------------------------------------------------------------------------
+
+    GrB_Type atype, ctype = NULL ;
+    GrB_Matrix C = NULL, M = NULL, A, B ;
+
+    if (nmatrices == 2)
     { 
-
-        //----------------------------------------------------------------------
-        // Cout = GrB.mxm (semiring, A, B, desc)
-        //----------------------------------------------------------------------
-
-        A = gb_get_shallow (pargin [1]) ;
-        B = gb_get_shallow (pargin [2]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        semiring = gb_mxstring_to_semiring (pargin [0], atype) ;
-
+        A = gb_get_shallow (Matrix [0]) ;
+        B = gb_get_shallow (Matrix [1]) ;
     }
-    else if (nargin == 6 && mxIsChar (pargin [1]))
+    else if (nmatrices == 3)
     { 
+        C = gb_get_deep    (Matrix [0]) ;
+        A = gb_get_shallow (Matrix [1]) ;
+        B = gb_get_shallow (Matrix [2]) ;
+    }
+    else // if (nmatrices == 4)
+    { 
+        C = gb_get_deep    (Matrix [0]) ;
+        M = gb_get_shallow (Matrix [1]) ;
+        A = gb_get_shallow (Matrix [2]) ;
+        B = gb_get_shallow (Matrix [3]) ;
+    }
 
-        //----------------------------------------------------------------------
-        // Cout = GrB.mxm (Cin, accum, semiring, A, B, desc)
-        //----------------------------------------------------------------------
-
-        C = gb_get_deep (pargin [0]) ;
+    OK (GxB_Matrix_type (&atype, A)) ;
+    if (C != NULL)
+    { 
         OK (GxB_Matrix_type (&ctype, C)) ;
-        accum = gb_mxstring_to_binop (pargin [1], ctype) ;
-        A = gb_get_shallow (pargin [3]) ;
-        B = gb_get_shallow (pargin [4]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        semiring = gb_mxstring_to_semiring (pargin [2], atype) ;
-
     }
-    else if (nargin == 6 && !mxIsChar (pargin [1]))
+
+    //--------------------------------------------------------------------------
+    // get the operators
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp accum = NULL ;
+    GrB_Semiring semiring ;
+
+    if (nstrings == 1)
     { 
-
-        //----------------------------------------------------------------------
-        // Cout = GrB.mxm (Cin, M, semiring, A, B, desc)
-        //----------------------------------------------------------------------
-
-        C = gb_get_deep (pargin [0]) ;
-        M = gb_get_shallow (pargin [1]) ;
-        A = gb_get_shallow (pargin [3]) ;
-        B = gb_get_shallow (pargin [4]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        semiring = gb_mxstring_to_semiring (pargin [2], atype) ;
-
+        semiring = gb_mxstring_to_semiring (String [0], atype) ;
     }
-    else
+    else 
     { 
-
-        //----------------------------------------------------------------------
-        // Cout = GrB.mxm (Cin, M, accum, semiring, A, B, desc)
-        //----------------------------------------------------------------------
-
-        C = gb_get_deep (pargin [0]) ;
-        OK (GxB_Matrix_type (&ctype, C)) ;
-        M = gb_get_shallow (pargin [1]) ;
-        accum = gb_mxstring_to_binop (pargin [2], ctype) ;
-        A = gb_get_shallow (pargin [4]) ;
-        B = gb_get_shallow (pargin [5]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        semiring = gb_mxstring_to_semiring (pargin [3], atype) ;
-
+        // if accum appears, then Cin must also appear
+        CHECK_ERROR (C == NULL, USAGE) ;
+        accum    = gb_mxstring_to_binop    (String [0], ctype) ;
+        semiring = gb_mxstring_to_semiring (String [1], atype) ;
     }
 
     //--------------------------------------------------------------------------
@@ -122,8 +113,7 @@ void mexFunction
     // Construct C of the right size and type.
 
     if (C == NULL)
-    {
-
+    { 
         // get the descriptor contents to determine if A and B are transposed
         GrB_Desc_Value in0, in1 ;
         OK (GxB_get (desc, GrB_INP0, &in0)) ;
@@ -144,6 +134,7 @@ void mexFunction
 
         // use the semiring's additive monoid as the type of C
         GrB_Monoid add_monoid ;
+        GrB_BinaryOp add ;
         OK (GxB_Semiring_add (&add_monoid, semiring)) ;
         OK (GxB_Monoid_operator (&add, add_monoid)) ;
         OK (GxB_BinaryOp_ztype (&ctype, add)) ;

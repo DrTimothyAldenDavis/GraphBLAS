@@ -40,7 +40,7 @@ A (3,4) = thunk ;
 %-------------------------------------------------------------------------------
 
     C1 = tril (A) ;
-    C2 = GrB.select ('tril', A) ;
+    C2 = GrB.select ('tril', A, 0) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = tril (A, k) ;
@@ -59,7 +59,7 @@ A (3,4) = thunk ;
 %-------------------------------------------------------------------------------
 
     C1 = triu (A) ;
-    C2 = GrB.select ('triu', A) ;
+    C2 = GrB.select ('triu', A, 0) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = triu (A, k) ;
@@ -76,7 +76,7 @@ A (3,4) = thunk ;
 
     d = min (m,n) ;
     C1 = A .* spdiags (ones (d,1), 0, m, n) ;
-    C2 = GrB.select ('diag', A) ;
+    C2 = GrB.select ('diag', A, 0) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = A .* spdiags (ones (d,1), k, m, n) ;
@@ -93,7 +93,7 @@ A (3,4) = thunk ;
 
     d = min (m,n) ;
     C1 = A .* (1 - spdiags (ones (d,1), 0, m, n)) ;
-    C2 = GrB.select ('offdiag', A) ;
+    C2 = GrB.select ('offdiag', A, 0) ;
     assert (gbtest_eq (C1, C2))
     for k = -m:n
         C1 = A .* (1 - spdiags (ones (d,1), k, m, n)) ;

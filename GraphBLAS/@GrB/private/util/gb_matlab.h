@@ -428,5 +428,25 @@ bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
 bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk) ;
 
+void gb_get_mxargs
+(
+    // input:
+    int nargin,                 // # input arguments for mexFunction
+    const mxArray *pargin [ ],  // input arguments for mexFunction
+    const char *usage,          // usage to print, if too many args appear
+
+    // output:
+    const mxArray *Matrix [4],  // matrix arguments
+    int *nmatrices,             // # of matrix arguments
+    const mxArray *String [2],  // string arguments
+    int *nstrings,              // # of string arguments
+    const mxArray *Cell [2],    // cell array arguments
+    int *ncells,                // # of cell array arguments
+    GrB_Descriptor *desc,       // last argument is always the descriptor
+    base_enum_t *base,          // desc.base
+    kind_enum_t *kind,          // desc.kind
+    GxB_Format_Value *fmt       // desc.format
+) ;
+
 #endif
 

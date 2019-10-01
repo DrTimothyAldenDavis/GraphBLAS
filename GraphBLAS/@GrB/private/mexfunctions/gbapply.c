@@ -21,6 +21,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: Cout = GrB.apply (Cin, M, accum, op, A, desc)"
+
 void mexFunction
 (
     int nargout,
@@ -35,79 +37,70 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     gb_usage ((nargin == 3 || nargin == 5 || nargin == 6) && nargout <= 1,
-        "usage: Cout = GrB.apply (Cin, M, accum, op, A, desc)") ;
+        USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL, M = NULL, A ;
-    GrB_BinaryOp accum = NULL ;
-    GrB_UnaryOp op = NULL ;
-    GrB_Type atype, ctype ;
-
+    mxArray *Matrix [4], *String [2], *Cell [2] ;
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+    int nmatrices, nstrings, ncells ;
+    GrB_Descriptor desc ;
+    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
+        Cell, &ncells, &desc, &base, &kind, &fmt) ;
 
-    if (nargin == 3)
+    CHECK_ERROR (nmatrices < 1 || nmatrices > 3 || nstrings < 1 || ncells > 0,
+        USAGE) ;
+
+    //--------------------------------------------------------------------------
+    // get the matrices
+    //--------------------------------------------------------------------------
+
+    GrB_Type atype, ctype = NULL ;
+    GrB_Matrix C = NULL, M = NULL, A ;
+
+    if (nmatrices == 1)
     { 
-
-        //----------------------------------------------------------------------
-        // Cout = GrB.apply (op, A, desc)
-        //----------------------------------------------------------------------
-
-        A = gb_get_shallow (pargin [1]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_unop (pargin [0], atype) ;
-
+        A = gb_get_shallow (Matrix [0]) ;
     }
-    else if (nargin == 5 && mxIsChar (pargin [1]))
+    else if (nmatrices == 2)
     { 
+        C = gb_get_deep    (Matrix [0]) ;
+        A = gb_get_shallow (Matrix [1]) ;
+    }
+    else // if (nmatrices == 3)
+    { 
+        C = gb_get_deep    (Matrix [0]) ;
+        M = gb_get_shallow (Matrix [1]) ;
+        A = gb_get_shallow (Matrix [2]) ;
+    }
 
-        //----------------------------------------------------------------------
-        // Cout = GrB.apply (Cin, accum, op, A, desc)
-        //----------------------------------------------------------------------
-
-        C = gb_get_deep (pargin [0]) ;
+    OK (GxB_Matrix_type (&atype, A)) ;
+    if (C != NULL)
+    { 
         OK (GxB_Matrix_type (&ctype, C)) ;
-        accum = gb_mxstring_to_binop (pargin [1], ctype) ;
-        A = gb_get_shallow (pargin [3]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_unop (pargin [2], atype) ;
-
     }
-    else if (nargin == 5 && !mxIsChar (pargin [1]))
+
+    //--------------------------------------------------------------------------
+    // get the operators
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp accum = NULL ;
+    GrB_UnaryOp op ;
+
+    if (nstrings == 1)
     { 
-
-        //----------------------------------------------------------------------
-        // Cout = GrB.apply (Cin, M, op, A, desc)
-        //----------------------------------------------------------------------
-
-        C = gb_get_deep (pargin [0]) ;
-        M = gb_get_shallow (pargin [1]) ;
-        A = gb_get_shallow (pargin [3]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_unop (pargin [2], atype) ;
-
+        op     = gb_mxstring_to_unop  (String [0], atype) ;
     }
-    else
+    else 
     { 
-
-        //----------------------------------------------------------------------
-        // Cout = GrB.apply (Cin, M, accum, op, A, desc)
-        //----------------------------------------------------------------------
-
-        C = gb_get_deep (pargin [0]) ;
-        OK (GxB_Matrix_type (&ctype, C)) ;
-        M = gb_get_shallow (pargin [1]) ;
-        accum = gb_mxstring_to_binop (pargin [2], ctype) ;
-        A = gb_get_shallow (pargin [4]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        op = gb_mxstring_to_unop (pargin [3], atype) ;
-
+        // if accum appears, then Cin must also appear
+        CHECK_ERROR (C == NULL, USAGE) ;
+        accum  = gb_mxstring_to_binop (String [0], ctype) ;
+        op     = gb_mxstring_to_unop  (String [1], atype) ;
     }
 
     //--------------------------------------------------------------------------
@@ -118,7 +111,7 @@ void mexFunction
     // Construct C of the right size and type.
 
     if (C == NULL)
-    {
+    { 
 
         // get the descriptor contents to determine if A is transposed
         GrB_Desc_Value in0 ;

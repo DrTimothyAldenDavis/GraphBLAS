@@ -18,6 +18,8 @@
 
 #include "gb_matlab.h"
 
+#define USAGE "usage: Cout = GrB.reduce (cin, accum, op, A, desc)"
+
 void mexFunction
 (
     int nargout,
@@ -31,50 +33,64 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage ((nargin == 3 || nargin == 5) && nargout <= 1,
-        "usage: Cout = GrB.reduce (cin, accum, op, A, desc)") ;
+    gb_usage ((nargin == 3 || nargin == 5) && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL, A ;
-    GrB_BinaryOp accum = NULL ;
-    GrB_Monoid monoid = NULL ;
-    GrB_Type atype, ctype ;
-
+    mxArray *Matrix [4], *String [2], *Cell [2] ;
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+    int nmatrices, nstrings, ncells ;
+    GrB_Descriptor desc ;
+    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
+        Cell, &ncells, &desc, &base, &kind, &fmt) ;
 
-    if (nargin == 3)
+    CHECK_ERROR (nmatrices < 1 || nmatrices > 2 || nstrings < 1 || ncells > 0,
+        USAGE) ;
+
+    //--------------------------------------------------------------------------
+    // get the matrices
+    //--------------------------------------------------------------------------
+
+    GrB_Type atype, ctype = NULL ;
+    GrB_Matrix C = NULL, A ;
+
+    if (nmatrices == 1)
     { 
-
-        //----------------------------------------------------------------------
-        // Cout = GrB.reduce (monoid, A, desc)
-        //----------------------------------------------------------------------
-
-        A = gb_get_shallow (pargin [1]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        monoid = gb_mxstring_to_monoid (pargin [0], atype) ;
-
+        A = gb_get_shallow (Matrix [0]) ;
     }
-    else if (nargin == 5)
+    else // if (nmatrices == 2)
     { 
+        C = gb_get_deep    (Matrix [0]) ;
+        A = gb_get_shallow (Matrix [1]) ;
+    }
 
-        //----------------------------------------------------------------------
-        // Cout = GrB.reduce (cin, accum, monoid, A, desc)
-        //----------------------------------------------------------------------
-
-        C = gb_get_deep (pargin [0]) ;
+    OK (GxB_Matrix_type (&atype, A)) ;
+    if (C != NULL)
+    { 
         OK (GxB_Matrix_type (&ctype, C)) ;
-        accum = gb_mxstring_to_binop (pargin [1], ctype) ;
-        A = gb_get_shallow (pargin [3]) ;
-        OK (GxB_Matrix_type (&atype, A)) ;
-        monoid = gb_mxstring_to_monoid (pargin [2], atype) ;
+    }
 
+    //--------------------------------------------------------------------------
+    // get the operators
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp accum = NULL ;
+    GrB_Monoid monoid ;
+
+    if (nstrings == 1)
+    { 
+        monoid = gb_mxstring_to_monoid (String [0], atype) ;
+    }
+    else 
+    { 
+        // if accum appears, then Cin must also appear
+        CHECK_ERROR (C == NULL, USAGE) ;
+        accum  = gb_mxstring_to_binop  (String [0], ctype) ;
+        monoid = gb_mxstring_to_monoid (String [1], atype) ;
     }
 
     //--------------------------------------------------------------------------
@@ -85,7 +101,7 @@ void mexFunction
     // Construct C of the right size and type.
 
     if (C == NULL)
-    {
+    { 
         // use the ztype of the monoid as the type of C
         GrB_BinaryOp binop ;
         OK (GxB_Monoid_operator (&binop, monoid)) ;

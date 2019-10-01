@@ -32,7 +32,12 @@
 // or GrB_FP64, then a user-defined operator is used instead of GxB_EQ_THUNK or
 // GxB_NE_THUNK.
 
+// The 'tril', 'triu', 'diag', 'offdiag', and '*thunk' operators all require
+// the thunk scalar.  The thunk must not appear for the '*0' operators.
+
 #include "gb_matlab.h"
+
+#define USAGE "usage: Cout = GrB.select (Cin, M, accum, op, A, thunk, desc)"
 
 bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
     const void *x, const void *thunk)
@@ -75,100 +80,107 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 1,
-        "usage: Cout = GrB.select (Cin, M, accum, op, A, thunk, desc)") ;
+    gb_usage (nargin >= 3 && nargin <= 7 && nargout <= 1, USAGE) ;
 
     //--------------------------------------------------------------------------
     // find the arguments
     //--------------------------------------------------------------------------
 
-    GrB_Matrix C = NULL, M = NULL, A, thunk = NULL ;
-    GrB_BinaryOp accum = NULL ;
-    GxB_SelectOp op = NULL ;
-    GrB_Type ctype ;
-
+    mxArray *Matrix [4], *String [2], *Cell [2] ;
     base_enum_t base ;
     kind_enum_t kind ;
     GxB_Format_Value fmt ;
-    GrB_Descriptor desc = 
-        gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
+    int nmatrices, nstrings, ncells ;
+    GrB_Descriptor desc ;
+    gb_get_mxargs (nargin, pargin, USAGE, Matrix, &nmatrices, String, &nstrings,
+        Cell, &ncells, &desc, &base, &kind, &fmt) ;
 
-    if (mxIsChar (pargin [0]))
-    { 
+    CHECK_ERROR (nmatrices < 1 || nstrings < 1 || ncells > 0, USAGE) ;
 
-        //----------------------------------------------------------------------
-        // Cout = gbselect (op, A, desc)
-        // Cout = gbselect (op, A, thunk, desc)
-        //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // get the select operator
+    //--------------------------------------------------------------------------
 
-        CHECK_ERROR (!(nargin == 3 || nargin == 4),
-            "usage: Cout = GrB.select (op, A, thunk, desc)") ;
+    GxB_SelectOp op = gb_mxstring_to_selectop (String [nstrings-1]) ;
+    bool thunk_required = 
+        (op == GxB_TRIL) || (op == GxB_TRIU) ||
+        (op == GxB_DIAG) || (op == GxB_OFFDIAG) ||
+        (op == GxB_NE_THUNK) || (op == GxB_EQ_THUNK) ||
+        (op == GxB_GT_THUNK) || (op == GxB_GE_THUNK) ||
+        (op == GxB_LT_THUNK) || (op == GxB_LE_THUNK) ;
 
-        op = gb_mxstring_to_selectop (pargin [0]) ;
-        A = gb_get_shallow (pargin [1]) ;
-        thunk = (nargin > 3) ? (GxB_Scalar) gb_get_shallow (pargin [2]) : NULL ;
+    //--------------------------------------------------------------------------
+    // get the matrices
+    //--------------------------------------------------------------------------
 
-    }
-    else if (mxIsChar (pargin [1]) && mxIsChar (pargin [2]))
-    { 
+    GrB_Type atype, ctype = NULL ;
+    GrB_Matrix C = NULL, M = NULL, A, thunk = NULL ;
 
-        //----------------------------------------------------------------------
-        // Cout = gbselect (Cin, accum, op, A, desc)
-        // Cout = gbselect (Cin, accum, op, A, thunk, desc)
-        //----------------------------------------------------------------------
-
-        CHECK_ERROR (!(nargin == 5 || nargin == 6),
-            "usage: Cout = GrB.select (Cin, accum, op, A, thunk, desc)") ;
-
-        C = gb_get_deep (pargin [0]) ;
-        OK (GxB_Matrix_type (&ctype, C)) ;
-        accum = gb_mxstring_to_binop (pargin [1], ctype) ;
-        op = gb_mxstring_to_selectop (pargin [2]) ;
-        A = gb_get_shallow (pargin [3]) ;
-        thunk = (nargin > 5) ? (GxB_Scalar) gb_get_shallow (pargin [4]) : NULL ;
-
-    }
-    else if (mxIsChar (pargin [2]) && !mxIsChar (pargin [3]))
-    { 
-
-        //----------------------------------------------------------------------
-        // Cout = gbselect (Cin, M, op, A, desc)
-        // Cout = gbselect (Cin, M, op, A, thunk, desc)
-        //----------------------------------------------------------------------
-
-        CHECK_ERROR (!(nargin == 5 || nargin == 6),
-            "usage: Cout = GrB.select (Cin, M, op, A, thunk, desc)") ;
-
-        C = gb_get_deep (pargin [0]) ;
-        M = gb_get_shallow (pargin [1]) ;
-        op = gb_mxstring_to_selectop (pargin [2]) ;
-        A = gb_get_shallow (pargin [3]) ;
-        thunk = (nargin > 5) ? (GxB_Scalar) gb_get_shallow (pargin [4]) : NULL ;
-
-    }
-    else if (mxIsChar (pargin [2]) && mxIsChar (pargin [3]))
-    { 
-
-        //----------------------------------------------------------------------
-        // Cout = gbselect (Cin, M, accum, op, A, desc)
-        // Cout = gbselect (Cin, M, accum, op, A, thunk, desc)
-        //----------------------------------------------------------------------
-
-        CHECK_ERROR (!(nargin == 6 || nargin == 7),
-            "usage: Cout = GrB.select (Cin, M, accum, op, A, thunk, desc)") ;
-
-        C = gb_get_deep (pargin [0]) ;
-        OK (GxB_Matrix_type (&ctype, C)) ;
-        M = gb_get_shallow (pargin [1]) ;
-        accum = gb_mxstring_to_binop (pargin [2], ctype) ;
-        op = gb_mxstring_to_selectop (pargin [3]) ;
-        A = gb_get_shallow (pargin [4]) ;
-        thunk = (nargin > 6) ? (GxB_Scalar) gb_get_shallow (pargin [5]) : NULL ;
-
+    if (thunk_required)
+    {
+        if (nmatrices == 1)
+        { 
+            ERROR ("select operator input is missing") ;
+        }
+        else if (nmatrices == 2)
+        { 
+            A     = gb_get_shallow (Matrix [0]) ;
+            thunk = gb_get_shallow (Matrix [1]) ;
+        }
+        else if (nmatrices == 3)
+        { 
+            C     = gb_get_deep    (Matrix [0]) ;
+            A     = gb_get_shallow (Matrix [1]) ;
+            thunk = gb_get_shallow (Matrix [2]) ;
+        }
+        else // if (nmatrices == 4)
+        { 
+            C     = gb_get_deep    (Matrix [0]) ;
+            M     = gb_get_shallow (Matrix [1]) ;
+            A     = gb_get_shallow (Matrix [2]) ;
+            thunk = gb_get_shallow (Matrix [3]) ;
+        }
     }
     else
+    {
+        if (nmatrices == 1)
+        { 
+            A     = gb_get_shallow (Matrix [0]) ;
+        }
+        else if (nmatrices == 2)
+        { 
+            C     = gb_get_deep    (Matrix [0]) ;
+            A     = gb_get_shallow (Matrix [1]) ;
+        }
+        else if (nmatrices == 3)
+        { 
+            C     = gb_get_deep    (Matrix [0]) ;
+            M     = gb_get_shallow (Matrix [1]) ;
+            A     = gb_get_shallow (Matrix [2]) ;
+        }
+        else // if (nmatrices == 4)
+        { 
+            ERROR (USAGE) ;
+        }
+    }
+
+    OK (GxB_Matrix_type (&atype, A)) ;
+    if (C != NULL)
     { 
-        ERROR ("usage: Cout = GrB.select (Cin, M, accum, op, A, thunk, desc)") ;
+        OK (GxB_Matrix_type (&ctype, C)) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get the accum operator
+    //--------------------------------------------------------------------------
+
+    GrB_BinaryOp accum = NULL ;
+
+    if (nstrings > 1)
+    { 
+        // if accum appears, then Cin must also appear
+        CHECK_ERROR (C == NULL, USAGE) ;
+        accum = gb_mxstring_to_binop (String [0], ctype) ;
     }
 
     //--------------------------------------------------------------------------
@@ -179,8 +191,7 @@ void mexFunction
     // Construct C of the right size and type.
 
     if (C == NULL)
-    {
-
+    { 
         // get the descriptor contents to determine if A is transposed
         GrB_Desc_Value in0 ;
         OK (GxB_get (desc, GrB_INP0, &in0)) ;
@@ -235,8 +246,6 @@ void mexFunction
             // instead of the built-in GxB_EQ_THUNK or GxB_NE_THUNK operators.
             // These operators do not need a thunk input, since it is now known
             // to be a NaN.
-            GrB_Type atype ;
-            OK (GxB_Matrix_type (&atype, A)) ;
             if (op == GxB_EQ_THUNK && atype == GrB_FP32)
             { 
                 OK (GxB_SelectOp_new (&nan_test, gb_isnan32, GrB_FP32, NULL)) ;
