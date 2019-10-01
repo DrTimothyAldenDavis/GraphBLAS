@@ -31,8 +31,8 @@ function monoidinfo (monoid, type)
 %   GrB.monoidinfo ('1st.int32') ;
 %   GrB.monoidinfo ('abs.double') ;
 %
-% See also GrB.unopinfo, GrB.binopinfo, GrB.semiringinfo,
-% GrB.descriptorinfo.
+% See also GrB.binopinfo, GrB.descriptorinfo, % GrB.selectopinfo,
+% GrB.semiringinfo, GrB.unopinfo.
 
 % FUTURE: add complex monoids
 

@@ -70,7 +70,8 @@ function binopinfo (op, type)
 %   % invalid binary operator (an error; this is a unary op):
 %   GrB.binopinfo ('abs.double') ;
 %
-% See also GrB, GrB.unopinfo, GrB.semiringinfo, GrB.descriptorinfo.
+% See also GrB.descriptorinfo, GrB.monoidinfo, GrB.selectopinfo,
+% GrB.semiringinfo, GrB.unopinfo.
 
 % FUTURE: add complex binary operators
 

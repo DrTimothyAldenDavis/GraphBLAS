@@ -35,16 +35,14 @@ function selectopinfo (op)
 %   GrB.selectopinfo ;
 %   GrB.selectopinfo ('tril') ;
 %
-% See also GrB.unopinfo, GrB.binopinfo, GrB.monoidinfo, GrB.semiringinfo,
-% GrB.descriptorinfo,
+% See also GrB.binopinfo, GrB.descriptorinfo, GrB.monoidinfo,
+% GrB.semiringinfo, GrB.unopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin == 0)
     help GrB.selectopinfo
-elseif (nargin == 1)
-    gbselectopinfo (op) ;
 else
     gbselectopinfo (op) ;
 end

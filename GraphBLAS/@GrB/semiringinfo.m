@@ -35,7 +35,8 @@ function semiringinfo (s, type)
 %   % invalid semiring (generates an error; since '<' is not a monoid)
 %   GrB.semiringinfo ('<.*.double') ;
 %
-% See also GrB, GrB.unopinfo, GrB.binopinfo, GrB.descriptorinfo.
+% See also GrB.binopinfo, GrB.descriptorinfo, GrB.monoidinfo,
+% GrB.selectopinfo, GrB.unopinfo.
 
 % FUTURE: add complex semirings
 

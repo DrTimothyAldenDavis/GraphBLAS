@@ -43,8 +43,8 @@ function unopinfo (op, type)
 %   % invalid unary operator (generates an error; this is a binary op):
 %   GrB.unopinfo ('+.double') ;
 %
-% See also GrB, GrB.binopinfo, GrB.monoidinfo, GrB.semiringinfo,
-% GrB.descriptorinfo.
+% See also GrB.binopinfo, GrB.descriptorinfo, GrB.monoidinfo,
+% GrB.selectopinfo, GrB.semiringinfo.
 
 % FUTURE: add complex unary operators
 

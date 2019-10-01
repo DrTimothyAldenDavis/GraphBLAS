@@ -73,7 +73,8 @@ function descriptorinfo (d)
 % checks if its contents are valid.  Also refer to the
 % SuiteSparse:GraphBLAS User Guide for more details.
 %
-% See also GrB, GrB.unopinfo, GrB.binopinfo, GrB.monoidinfo, GrB.semiringinfo.
+% See also GrB.binopinfo, GrB.monoidinfo, GrB.selectopinfo,
+% GrB.semiringinfo, GrB.unopinfo.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
