@@ -12,8 +12,10 @@ I_0 = int64 (I) - 1 ;
 J_0 = int64 (J) - 1 ;
 A (1,1) = 0 ;
 
+desc_default.base = 'default' ;
 desc0.base = 'zero-based' ;
 desc1.base = 'one-based' ;
+desc1_int.base = 'one-based int' ;
 
 for k = 1:length(list)
     xtype = list {k} ;
@@ -38,6 +40,16 @@ for k = 1:length(list)
     assert (isequal (J_0, J0)) ;
 
     [I1, J1, X0] = GrB.extracttuples (G, desc1) ;
+    assert (isequal (C (:), X0)) ;
+    assert (isequal (double (I_0+1), I1)) ;
+    assert (isequal (double (J_0+1), J1)) ;
+
+    [I1, J1, X0] = GrB.extracttuples (G, desc1_int) ;
+    assert (isequal (C (:), X0)) ;
+    assert (isequal (I_0+1, I1)) ;
+    assert (isequal (J_0+1, J1)) ;
+
+    [I1, J1, X0] = GrB.extracttuples (G, desc_default) ;
     assert (isequal (C (:), X0)) ;
     assert (isequal (double (I_0+1), I1)) ;
     assert (isequal (double (J_0+1), J1)) ;

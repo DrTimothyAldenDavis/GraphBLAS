@@ -58,5 +58,17 @@ Cout = GrB.extract (A, {I}, {J}) ;
 C2 = A (I,J)  ;
 assert (gbtest_eq (C2, Cout)) ;
 
+G = GrB.random (1, 10, inf) ;
+A = double (G) ;
+C0 = A (1:3) ;
+C1 = GrB.extract (G, { 1, 3}) ;
+assert (isequal (C0, C1)) ;
+
+G = GrB.random (10, 1, inf) ;
+A = double (G) ;
+C0 = A (1:3) ;
+C1 = GrB.extract (G, { 1, 3}) ;
+assert (isequal (C0, C1)) ;
+
 fprintf ('gbtest16: all tests passed\n') ;
 

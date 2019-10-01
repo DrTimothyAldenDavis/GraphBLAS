@@ -984,5 +984,53 @@ catch expected_error
 end
 assert (ok) ;
 
+try
+    G = GrB.mxm ('to', 'many', 'strings') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = GrB.mxm (G, G, G, G, G) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    G = GrB.build (1:3, 1:4, 1:4) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    GrB.select ('tril', A) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    GrB.select (A, A, A, A, 'zero') ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
+try
+    GrB.extracttuples (A, struct ('base', 'crud')) ;
+catch expected_error
+    expected_error
+    disp (expected_error.stack (end-1))
+end
+assert (ok) ;
+
 fprintf ('gbtest43: all tests passed\n') ;
 
