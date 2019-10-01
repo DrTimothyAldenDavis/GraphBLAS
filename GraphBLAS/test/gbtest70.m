@@ -38,6 +38,10 @@ for k = 1:length(types)
     G = GrB.random (30, 40, 0.6, 'normal') ;
     assert (isequal (GrB.type (G), 'double')) ;
 
+    G = GrB.random (30, 40, inf, 'normal') ;
+    assert (isequal (GrB.type (G), 'double')) ;
+    assert (nnz (G) == prod (size (G))) ;
+
     G = GrB.random (30, 40, 0.6, 'normal', 'range', r) ;
     assert (isequal (GrB.type (G), type)) ;
 
@@ -50,6 +54,11 @@ for k = 1:length(types)
     G = GrB.random (30, 0.6, 'symmetric') ;
     assert (issymmetric (G)) ;
     assert (isequal (GrB.type (G), 'double')) ;
+
+    G = GrB.random (30, inf, 'symmetric') ;
+    assert (issymmetric (G)) ;
+    assert (isequal (GrB.type (G), 'double')) ;
+    assert (nnz (G) == prod (size (G))) ;
 
     G = GrB.random (30, 30, 0.6, 'unsymmetric') ;
     assert (~issymmetric (G)) ;
