@@ -12,56 +12,56 @@
 // Usage:
 
 // Cout = gbselect (op, A, desc)
-// Cout = gbselect (op, A, thunk, desc)
+// Cout = gbselect (op, A, b, desc)
 
 // Cout = gbselect (Cin, accum, op, A, desc)
-// Cout = gbselect (Cin, accum, op, A, thunk, desc)
+// Cout = gbselect (Cin, accum, op, A, b, desc)
 
 // Cout = gbselect (Cin, M, op, A, desc)
-// Cout = gbselect (Cin, M, op, A, thunk, desc)
+// Cout = gbselect (Cin, M, op, A, b, desc)
 
 // Cout = gbselect (Cin, M, accum, op, A, desc)
-// Cout = gbselect (Cin, M, accum, op, A, thunk, desc)
+// Cout = gbselect (Cin, M, accum, op, A, b, desc)
 
 // If Cin is not present then it is implicitly a matrix with no entries, of the
 // right size (which depends on A, and the descriptor).  The type if Cin, if
 // not present, is determined by the ztype of the accum, if present, or
 // otherwise it has the same time as A.
 
-// If op is 'eqthunk' or 'nethunk' and thunk is a NaN, and A has type GrB_FP32
-// or GrB_FP64, then a user-defined operator is used instead of GxB_EQ_THUNK or
+// If op is '==' or '~=' and b is a NaN, and A has type GrB_FP32 or GrB_FP64,
+// then a user-defined operator is used instead of GxB_EQ_THUNK or
 // GxB_NE_THUNK.
 
-// The 'tril', 'triu', 'diag', 'offdiag', and '*thunk' operators all require
-// the thunk scalar.  The thunk must not appear for the '*0' operators.
+// The 'tril', 'triu', 'diag', 'offdiag', and 2-input operators all require
+// the b scalar.  The b scalar must not appear for the '*0' operators.
 
 #include "gb_matlab.h"
 
-#define USAGE "usage: Cout = GrB.select (Cin, M, accum, op, A, thunk, desc)"
+#define USAGE "usage: Cout = GrB.select (Cin, M, accum, op, A, b, desc)"
 
 bool gb_isnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *thunk)
+    const void *x, const void *b)
 { 
     float aij = * ((float *) x) ;
     return (isnan (aij)) ;
 }
 
 bool gb_isnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *thunk)
+    const void *x, const void *b)
 { 
     double aij = * ((double *) x) ;
     return (isnan (aij)) ;
 }
 
 bool gb_isnotnan32 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *thunk)
+    const void *x, const void *b)
 { 
     float aij = * ((float *) x) ;
     return (!isnan (aij)) ;
 }
 
 bool gb_isnotnan64 (GrB_Index i, GrB_Index j, GrB_Index nrows, GrB_Index ncols,
-    const void *x, const void *thunk)
+    const void *x, const void *b)
 { 
     double aij = * ((double *) x) ;
     return (!isnan (aij)) ;
@@ -102,7 +102,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GxB_SelectOp op = gb_mxstring_to_selectop (String [nstrings-1]) ;
-    bool thunk_required = 
+    bool b_required = 
         (op == GxB_TRIL) || (op == GxB_TRIU) ||
         (op == GxB_DIAG) || (op == GxB_OFFDIAG) ||
         (op == GxB_NE_THUNK) || (op == GxB_EQ_THUNK) ||
@@ -114,9 +114,9 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Type atype, ctype = NULL ;
-    GrB_Matrix C = NULL, M = NULL, A, thunk = NULL ;
+    GrB_Matrix C = NULL, M = NULL, A, b = NULL ;
 
-    if (thunk_required)
+    if (b_required)
     {
         if (nmatrices == 1)
         { 
@@ -124,39 +124,39 @@ void mexFunction
         }
         else if (nmatrices == 2)
         { 
-            A     = gb_get_shallow (Matrix [0]) ;
-            thunk = gb_get_shallow (Matrix [1]) ;
+            A = gb_get_shallow (Matrix [0]) ;
+            b = gb_get_shallow (Matrix [1]) ;
         }
         else if (nmatrices == 3)
         { 
-            C     = gb_get_deep    (Matrix [0]) ;
-            A     = gb_get_shallow (Matrix [1]) ;
-            thunk = gb_get_shallow (Matrix [2]) ;
+            C = gb_get_deep    (Matrix [0]) ;
+            A = gb_get_shallow (Matrix [1]) ;
+            b = gb_get_shallow (Matrix [2]) ;
         }
         else // if (nmatrices == 4)
         { 
-            C     = gb_get_deep    (Matrix [0]) ;
-            M     = gb_get_shallow (Matrix [1]) ;
-            A     = gb_get_shallow (Matrix [2]) ;
-            thunk = gb_get_shallow (Matrix [3]) ;
+            C = gb_get_deep    (Matrix [0]) ;
+            M = gb_get_shallow (Matrix [1]) ;
+            A = gb_get_shallow (Matrix [2]) ;
+            b = gb_get_shallow (Matrix [3]) ;
         }
     }
     else
     {
         if (nmatrices == 1)
         { 
-            A     = gb_get_shallow (Matrix [0]) ;
+            A = gb_get_shallow (Matrix [0]) ;
         }
         else if (nmatrices == 2)
         { 
-            C     = gb_get_deep    (Matrix [0]) ;
-            A     = gb_get_shallow (Matrix [1]) ;
+            C = gb_get_deep    (Matrix [0]) ;
+            A = gb_get_shallow (Matrix [1]) ;
         }
         else if (nmatrices == 3)
         { 
-            C     = gb_get_deep    (Matrix [0]) ;
-            M     = gb_get_shallow (Matrix [1]) ;
-            A     = gb_get_shallow (Matrix [2]) ;
+            C = gb_get_deep    (Matrix [0]) ;
+            M = gb_get_shallow (Matrix [1]) ;
+            A = gb_get_shallow (Matrix [2]) ;
         }
         else // if (nmatrices == 4)
         { 
@@ -219,32 +219,32 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_BinaryOp nan_test = NULL ;
-    GrB_Matrix thnk = thunk ;
+    GrB_Matrix b2 = b ;
 
-    if (thunk != NULL)
+    if (b != NULL)
     {
-        // check if thunk is NaN
-        GrB_Type thunk_type ;
-        OK (GxB_Matrix_type (&thunk_type, thunk)) ;
-        bool thunk_is_nan = false ;
-        if (thunk_type == GrB_FP32)
+        // check if b is NaN
+        GrB_Type b_type ;
+        OK (GxB_Matrix_type (&b_type, b)) ;
+        bool b_is_nan = false ;
+        if (b_type == GrB_FP32)
         { 
-            float thunk_value = 0 ;
-            OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
-            thunk_is_nan = isnan (thunk_value) ;
+            float b_value = 0 ;
+            OK (GrB_Matrix_extractElement (&b_value, b, 0, 0)) ;
+            b_is_nan = isnan (b_value) ;
         }
-        else if (thunk_type == GrB_FP64)
+        else if (b_type == GrB_FP64)
         { 
-            double thunk_value = 0 ;
-            OK (GrB_Matrix_extractElement (&thunk_value, thunk, 0, 0)) ;
-            thunk_is_nan = isnan (thunk_value) ;
+            double b_value = 0 ;
+            OK (GrB_Matrix_extractElement (&b_value, b, 0, 0)) ;
+            b_is_nan = isnan (b_value) ;
         }
 
-        if (thunk_is_nan)
+        if (b_is_nan)
         {
-            // thunk is NaN; create a new nan_test operator if it should be used
+            // b is NaN; create a new nan_test operator if it should be used
             // instead of the built-in GxB_EQ_THUNK or GxB_NE_THUNK operators.
-            // These operators do not need a thunk input, since it is now known
+            // These operators do not need a b input, since it is now known
             // to be a NaN.
             if (op == GxB_EQ_THUNK && atype == GrB_FP32)
             { 
@@ -270,15 +270,15 @@ void mexFunction
         { 
             // use the new operator instead of the built-in one
             op = nan_test ;
-            thnk = NULL ;
+            b2 = NULL ;
         }
     }
 
     //--------------------------------------------------------------------------
-    // compute C<M> += select (A, thnk)
+    // compute C<M> += select (A, b2)
     //--------------------------------------------------------------------------
 
-    OK (GxB_select (C, M, accum, op, A, thnk, desc)) ;
+    OK (GxB_select (C, M, accum, op, A, b2, desc)) ;
 
     //--------------------------------------------------------------------------
     // free shallow copies
@@ -286,7 +286,7 @@ void mexFunction
 
     OK (GrB_free (&M)) ;
     OK (GrB_free (&A)) ;
-    OK (GrB_free (&thunk)) ;
+    OK (GrB_free (&b)) ;
     OK (GrB_free (&desc)) ;
     OK (GrB_free (&nan_test)) ;
 

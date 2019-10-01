@@ -1,28 +1,33 @@
 function [I, J, X] = find (G, k, search)
 %FIND extract entries from a GraphBLAS matrix.
-% [I, J, X] = find (G) extracts the entries from a GraphBLAS matrix G.  X
-% has the same type as G ('double', 'single', 'int8', ...).
+% [I, J, X] = find (G) extracts the nonzeros from a GraphBLAS matrix G.
+% X has the same type as G ('double', 'single', 'int8', ...).
 %
-% Linear 1D indexing (I = find (S) for the MATLAB matrix S) and find (G,
-% k, ...) are not supported.
+% Linear 1D indexing (I = find (S) for the MATLAB matrix S).
 %
-% G may contain explicit zero entries, and by default these are returned
-% in the result.  Use find(GrB.prune(G), ...) to remove these explicit
+% G may contain explicit zero entries, and by default these are excluded
+% from the result.  Use GrB.extracttuples (G) to return these explicit
 % zero entries.
 %
-% For a column vector, I = find (G) returns I as a list of the row indices
-% of entries in G.  For a row vector, I = find (G) retusn I as a list of
-% the column indices of entries in G.
+% For a column vector, I = find (G) returns I as a list of the row
+% indices of nonzeros in G.  For a row vector, I = find (G) returns I as a
+% list of the column indices of nonzeros in G.
+%
+% [...] = find (G, k, 'first') returns the first k nonozeros of G.
+% [...] = find (G, k, 'last')  returns the last k nonozeros of G.
+% For this usage, the first and last k are in terms of nonzeros in the
+% column-major order.
 %
 % See also sparse, GrB.build, GrB.extracttuples.
 
 % FUTURE: add linear indexing
 
-% FUTURE: find (G,k,'first') and find (G,k,'last') are slow, since as they are
-% currently implemented, all entries are extracted and then the first or last k
-% are selected from the extracted tuples..  It would be faster to use a
-% mexFunction that directly accesses the opaque content of G, instead of using
-% GrB_extractTuples, which always extracts the entire matrix.
+% FUTURE: find (G,k,'first') and find (G,k,'last') are slow, since as
+% they are currently implemented, all entries are extracted and then the
+% first or last k are selected from the extracted tuples.  It would be
+% faster to use a mexFunction that directly accesses the opaque content
+% of G, instead of using GrB_extractTuples, which always extracts the
+% entire matrix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -31,6 +36,10 @@ if (nargin > 1 && ~GrB.isbycol (G))
     % find (G, k) assumes the matrix is stored by column, so reformat G
     % if it is stored by row.
     G = GrB (G, 'by col') ;
+end
+
+if (nnz (G) < GrB.entries (G))
+    G = GrB.prune (G) ;
 end
 
 if (nargout == 3)

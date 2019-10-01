@@ -78,7 +78,7 @@ sinks = find (d == 0) ;
 any_sinks = ~isempty (sinks) ;
 if (any_sinks)
     % d (sinks) = 1 ;
-    d = GrB.subassign (d, 1, { sinks }) ;
+    d = GrB.subassign (d, { sinks }, 1) ;
 end
 
 % place explicit zeros on the diagonal of G so that r remains full
@@ -112,9 +112,7 @@ for iter = 1:maxit
         teleport = teleport + dn * sum (r (sinks)) ;
     end
     % r = damp * G' * (r./d) + teleport
-    r = r ./ d ;
-    r = GrB.mxm ('+.*', G, r, desc) ;
-    r = r + teleport ;
+    r = GrB.mxm (G, '+.*', r ./ d, desc) + teleport ;
     if (norm (r - rold, inf) < tol)
         % convergence has been reached
         return ;

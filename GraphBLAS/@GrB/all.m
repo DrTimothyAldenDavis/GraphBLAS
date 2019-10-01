@@ -14,6 +14,7 @@ function C = all (G, option)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m, n] = size (G) ;
+desc = struct ('in0', 'transpose') ;
 
 if (nargin == 1)
 
@@ -28,7 +29,7 @@ if (nargin == 1)
     else
         % C = all (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = GrB.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
+        C = GrB.vreduce ('&.logical', G, desc) ;
         % if C(j) is true, but the column is sparse, then assign C(j) = 0.
         coldegree = GrB.entries (G, 'col', 'degree') ;
         C = GrB.subassign (C, C & (coldegree < m), 0)' ;
@@ -47,7 +48,7 @@ else
     elseif (isequal (option, 1))
         % C = all (G, 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = GrB.vreduce ('&.logical', G, struct ('in0', 'transpose')) ;
+        C = GrB.vreduce ('&.logical', G, desc) ;
         % if C(j) is true, but the column is sparse, then assign C(j) = 0.
         coldegree = GrB.entries (G, 'col', 'degree') ;
         C = GrB.subassign (C, C & (coldegree < m), 0)' ;

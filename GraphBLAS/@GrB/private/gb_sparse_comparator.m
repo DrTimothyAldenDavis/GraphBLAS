@@ -1,4 +1,4 @@
-function C = gb_sparse_comparator (op, A, B)
+function C = gb_sparse_comparator (A, op, B)
 %GB_SPARSE_COMPARATOR compare two sparse matrices.
 % The pattern of C is the set union of A and B.  A and B must first be
 % expanded to include explicit zeros in the set union of A and B.  For
@@ -15,5 +15,5 @@ function C = gb_sparse_comparator (op, A, B)
 
 A0 = GrB.eadd ('1st', A, GrB.expand (false, B)) ;
 B0 = GrB.eadd ('1st', B, GrB.expand (false, A)) ;
-C = GrB.prune (GrB.eadd (op, A0, B0)) ;
+C = GrB.eadd (A0, op, B0) ;
 

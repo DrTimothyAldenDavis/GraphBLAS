@@ -12,12 +12,12 @@ function C = xor (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % A and B are scalars
-        C = GrB.prune (GrB.emult ('xor.logical', A, B)) ;
+        C = GrB.emult (A, 'xor.logical', B) ;
     else
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) == 0)
             % A is false, so C is B typecasted to logical
-            C = GrB (GrB.prune (B), 'logical') ;
+            C = GrB (B, 'logical') ;
         else
             % A is true, so C is a full matrix the same size as B
             C = not (B) ;
@@ -28,14 +28,14 @@ else
         % A is a matrix, B is a scalar
         if (gb_get_scalar (B) == 0)
             % B is false, so C is A typecasted to logical
-            C = GrB (GrB.prune (A), 'logical') ;
+            C = GrB (A, 'logical') ;
         else
             % B is true, so C is a full matrix the same size as A
             C = not (A) ;
         end
     else
         % both A and B are matrices.  C is the set union of A and B
-        C = GrB.prune (GrB.eadd ('xor.logical', A, B)) ;
+        C = GrB.eadd (A, 'xor.logical', B) ;
     end
 end
 

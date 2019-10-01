@@ -40,7 +40,7 @@ Y = Y0 ;
 for k = 1:length(W)
 
     % Propagate through layer, apply bias, and threshold negative values.
-    Y = GrB.select ('>0', GrB.mxm ('+.+', Y * W {k}, bias {k})) ;
+    Y = GrB.select (GrB.mxm (Y * W {k}, '+.+', bias {k}), '>0') ;
 
     M = Y > 32 ;
     if (nnz (M) > 0)

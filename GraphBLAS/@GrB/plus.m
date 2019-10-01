@@ -20,17 +20,19 @@ if (isscalar (A))
     else
         % A is a scalar, B is a matrix.  Result is full.
         [m, n] = size (B) ;
-        A = GrB.subassign (GrB (m, n, GrB.type (A)), A, { }, { }) ;
+        % A (1:m,1:n) = A and cast to the type of B
+        A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
     end
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar.  Result is full.
         [m, n] = size (A) ;
-        B = GrB.subassign (GrB (m, n, GrB.type (A)), B, { }, { }) ;
+        % B (1:m,1:n) = B and cast to the type of A
+        B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
     else
         % both A and B are matrices.  Result is sparse.
     end
 end
 
-C = GrB.eadd ('+', A, B) ;
+C = GrB.eadd (A, '+', B) ;
 

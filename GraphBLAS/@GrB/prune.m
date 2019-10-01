@@ -9,8 +9,8 @@ function C = prune (G, id)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin == 1)
-    C = GrB.select ('nonzero', G) ;
+    C = GrB.select (G, 'nonzero') ;
 else
-    C = GrB.select ('nethunk', G, id) ;
+    C = GrB.select (G, '~=', id) ;
 end
 

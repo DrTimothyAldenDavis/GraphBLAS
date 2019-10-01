@@ -14,5 +14,6 @@ if (nargin == 3)
 else
     R = ones (m, 'logical') ;
 end
-C = GrB.kronecker (['2nd.' GrB.type(G)], R, G) ;
+op = ['2nd.' GrB.type(G)] ;
+C = GrB.kronecker (R, op, G) ;
 

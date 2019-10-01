@@ -77,7 +77,7 @@ lastnz = nnz (C) ;
 
 while (1)
     % C<C> = C*C using the plus-and semiring, then drop any < k-2.
-    C = GrB.select ('>=thunk', GrB.mxm (C, C, '+.&', C, C), k-2) ;
+    C = GrB.select (GrB.mxm (C, C, '+.&', C, C), '>=', k-2) ;
     nz = nnz (C) ;
     if (lastnz == nz)
         % quit when the matrix does not change

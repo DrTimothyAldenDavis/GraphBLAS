@@ -132,70 +132,70 @@ for trial = 1:21
     C2 = ~GA ;
     assert (gbtest_eq (C1, C2)) ;
 
-    thunk = (trial - 5) / 10 ;
+    b = (trial - 5) / 10 ;
     if (islogical (MA))
-        thunk = logical (thunk) ;
+        b = logical (b) ;
     end
-    gbthunk = GrB (thunk) ;
+    g = GrB (b) ;
 
-    assert (gbtest_eq (MA <  thunk, GA <  thunk)) ;
-    assert (gbtest_eq (MA <= thunk, GA <= thunk)) ;
-    assert (gbtest_eq (MA >  thunk, GA >  thunk)) ;
-    assert (gbtest_eq (MA >= thunk, GA >= thunk)) ;
-    assert (gbtest_eq (MA == thunk, GA == thunk)) ;
-    assert (gbtest_eq (MA ~= thunk, GA ~= thunk)) ;
+    assert (gbtest_eq (MA <  b, GA <  b)) ;
+    assert (gbtest_eq (MA <= b, GA <= b)) ;
+    assert (gbtest_eq (MA >  b, GA >  b)) ;
+    assert (gbtest_eq (MA >= b, GA >= b)) ;
+    assert (gbtest_eq (MA == b, GA == b)) ;
+    assert (gbtest_eq (MA ~= b, GA ~= b)) ;
     if (~islogical (MA))
-        assert (gbtest_eq (MA .^ thunk, GA .^ thunk)) ;
+        assert (gbtest_eq (MA .^ b, GA .^ b)) ;
     end
 
-    assert (gbtest_eq (MA <  thunk, GA <  gbthunk)) ;
-    assert (gbtest_eq (MA <= thunk, GA <= gbthunk)) ;
-    assert (gbtest_eq (MA >  thunk, GA >  gbthunk)) ;
-    assert (gbtest_eq (MA >= thunk, GA >= gbthunk)) ;
-    assert (gbtest_eq (MA == thunk, GA == gbthunk)) ;
-    assert (gbtest_eq (MA ~= thunk, GA ~= gbthunk)) ;
+    assert (gbtest_eq (MA <  b, GA <  g)) ;
+    assert (gbtest_eq (MA <= b, GA <= g)) ;
+    assert (gbtest_eq (MA >  b, GA >  g)) ;
+    assert (gbtest_eq (MA >= b, GA >= g)) ;
+    assert (gbtest_eq (MA == b, GA == g)) ;
+    assert (gbtest_eq (MA ~= b, GA ~= g)) ;
     if (~islogical (MA))
-        assert (gbtest_eq (MA .^ thunk, GA .^ gbthunk)) ;
+        assert (gbtest_eq (MA .^ b, GA .^ g)) ;
     end
 
-    assert (gbtest_eq (MA <  thunk, MA <  gbthunk)) ;
-    assert (gbtest_eq (MA <= thunk, MA <= gbthunk)) ;
-    assert (gbtest_eq (MA >  thunk, MA >  gbthunk)) ;
-    assert (gbtest_eq (MA >= thunk, MA >= gbthunk)) ;
-    assert (gbtest_eq (MA == thunk, MA == gbthunk)) ;
-    assert (gbtest_eq (MA ~= thunk, MA ~= gbthunk)) ;
+    assert (gbtest_eq (MA <  b, MA <  g)) ;
+    assert (gbtest_eq (MA <= b, MA <= g)) ;
+    assert (gbtest_eq (MA >  b, MA >  g)) ;
+    assert (gbtest_eq (MA >= b, MA >= g)) ;
+    assert (gbtest_eq (MA == b, MA == g)) ;
+    assert (gbtest_eq (MA ~= b, MA ~= g)) ;
     if (~islogical (MA))
-        assert (gbtest_eq (MA .^ thunk, MA .^ gbthunk)) ;
+        assert (gbtest_eq (MA .^ b, MA .^ g)) ;
     end
 
-    assert (gbtest_eq (thunk <  MA, thunk <  GA)) ;
-    assert (gbtest_eq (thunk <= MA, thunk <= GA)) ;
-    assert (gbtest_eq (thunk >  MA, thunk >  GA)) ;
-    assert (gbtest_eq (thunk >= MA, thunk >= GA)) ;
-    assert (gbtest_eq (thunk == MA, thunk == GA)) ;
-    assert (gbtest_eq (thunk ~= MA, thunk ~= GA)) ;
-    if (thunk >= 0 && ~islogical (MA))
-        assert (gbtest_eq (thunk .^ MA, thunk .^ GA)) ;
+    assert (gbtest_eq (b <  MA, b <  GA)) ;
+    assert (gbtest_eq (b <= MA, b <= GA)) ;
+    assert (gbtest_eq (b >  MA, b >  GA)) ;
+    assert (gbtest_eq (b >= MA, b >= GA)) ;
+    assert (gbtest_eq (b == MA, b == GA)) ;
+    assert (gbtest_eq (b ~= MA, b ~= GA)) ;
+    if (b >= 0 && ~islogical (MA))
+        assert (gbtest_eq (b .^ MA, b .^ GA)) ;
     end
 
-    assert (gbtest_eq (thunk <  MA, gbthunk <  GA)) ;
-    assert (gbtest_eq (thunk <= MA, gbthunk <= GA)) ;
-    assert (gbtest_eq (thunk >  MA, gbthunk >  GA)) ;
-    assert (gbtest_eq (thunk >= MA, gbthunk >= GA)) ;
-    assert (gbtest_eq (thunk == MA, gbthunk == GA)) ;
-    assert (gbtest_eq (thunk ~= MA, gbthunk ~= GA)) ;
-    if (thunk >= 0 && ~islogical (MA))
-        assert (gbtest_eq (thunk .^ MA, gbthunk .^ GA)) ;
+    assert (gbtest_eq (b <  MA, g <  GA)) ;
+    assert (gbtest_eq (b <= MA, g <= GA)) ;
+    assert (gbtest_eq (b >  MA, g >  GA)) ;
+    assert (gbtest_eq (b >= MA, g >= GA)) ;
+    assert (gbtest_eq (b == MA, g == GA)) ;
+    assert (gbtest_eq (b ~= MA, g ~= GA)) ;
+    if (b >= 0 && ~islogical (MA))
+        assert (gbtest_eq (b .^ MA, g .^ GA)) ;
     end
 
-    assert (gbtest_eq (thunk <  MA, gbthunk <  MA)) ;
-    assert (gbtest_eq (thunk <= MA, gbthunk <= MA)) ;
-    assert (gbtest_eq (thunk >  MA, gbthunk >  MA)) ;
-    assert (gbtest_eq (thunk >= MA, gbthunk >= MA)) ;
-    assert (gbtest_eq (thunk == MA, gbthunk == MA)) ;
-    assert (gbtest_eq (thunk ~= MA, gbthunk ~= MA)) ;
-    if (thunk >= 0 && ~islogical (MA))
-        assert (gbtest_eq (thunk .^ MA, gbthunk .^ MA)) ;
+    assert (gbtest_eq (b <  MA, g <  MA)) ;
+    assert (gbtest_eq (b <= MA, g <= MA)) ;
+    assert (gbtest_eq (b >  MA, g >  MA)) ;
+    assert (gbtest_eq (b >= MA, g >= MA)) ;
+    assert (gbtest_eq (b == MA, g == MA)) ;
+    assert (gbtest_eq (b ~= MA, g ~= MA)) ;
+    if (b >= 0 && ~islogical (MA))
+        assert (gbtest_eq (b .^ MA, g .^ MA)) ;
     end
 
     k = (mod (trial,2) == 0) ;

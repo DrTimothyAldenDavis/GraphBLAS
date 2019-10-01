@@ -16,6 +16,6 @@ function C = mtimes (A, B)
 if (isscalar (A) || isscalar (B))
     C = A .* B ;
 else
-    C = GrB.mxm ('+.*', A, B) ;
+    C = GrB.mxm (A, '+.*', B) ;
 end
 

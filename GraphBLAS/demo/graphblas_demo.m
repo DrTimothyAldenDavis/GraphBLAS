@@ -1058,7 +1058,7 @@ err = norm (C1-C2,1)
 %
 %   Cout = GrB.mxm (Cin, M, accum, semiring, A, B, desc)
 %                   sparse matrix-matrix multiplication over a semiring
-%   Cout = GrB.select (Cin, M, accum, op, A, thunk, desc)
+%   Cout = GrB.select (Cin, M, accum, op, A, b, desc)
 %                   select a subset of entries from a matrix
 %   Cout = GrB.assign (Cin, M, accum, A, I, J, desc)
 %                   sparse matrix assignment, such as C(I,J)=A

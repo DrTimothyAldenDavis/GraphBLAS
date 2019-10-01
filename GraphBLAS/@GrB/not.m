@@ -11,5 +11,5 @@ function C = not (G)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-C = GrB.prune (GrB.apply ('~.logical', full (G))) ;
+C = GrB.apply ('~.logical', full (G)) ;
 

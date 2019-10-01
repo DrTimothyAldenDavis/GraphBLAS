@@ -15,5 +15,6 @@ function C = expand (scalar, S)
 % FUTURE: as much as possible, replace scalar expansion with binary operators
 % used in a unary apply, when it becomes part of the C API.
 
-C = GrB.kronecker (['1st.' GrB.type(scalar)], scalar, S) ;
+op = ['1st.' GrB.type(scalar)] ;
+C = GrB.kronecker (scalar, op, S) ;
 

@@ -5,21 +5,23 @@ function iset = mis (A, check)
 %
 %   iset = GrB.mis (A) ;
 %
-% Given an n-by-n symmetric adjacency matrix A of an undirected graph, compute
-% a maximal set of independent nodes and return it in a boolean n-vector,
-% 'iset' where iset(i) of true implies node i is a member of the set.
+% Given an n-by-n symmetric adjacency matrix A of an undirected graph,
+% compute a maximal set of independent nodes and return it in a boolean
+% n-vector, 'iset' where iset(i) of true implies node i is a member of
+% the set.
 %
-% The matrix A must not have any diagonal entries (self edges), and it must be
-% symmetric.  These conditions are not checked by default, and results are
-% undefined if they do not hold.  In particular, diagonal entries will cause
-% the method to stall.  To check these conditions, use:
+% The matrix A must not have any diagonal entries (self edges), and it
+% must be symmetric.  These conditions are not checked by default, and
+% results are undefined if they do not hold.  In particular, diagonal
+% entries will cause the method to stall.  To check these conditions,
+% use:
 %
 %   iset = GrB.mis (A, 'check') ;
 %
 % Reference: M Luby. 1985. A simple parallel algorithm for the maximal
 % independent set problem. In Proceedings of the seventeenth annual ACM
-% symposium on Theory of computing (STOC '85). ACM, New York, NY, USA, 1-10.
-% DOI: https://doi.org/10.1145/22145.22146
+% symposium on Theory of computing (STOC '85). ACM, New York, NY, USA,
+% 1-10.  DOI: https://doi.org/10.1145/22145.22146
 %
 % See also GrB.offdiag.
 
@@ -100,10 +102,10 @@ while (ncand > 0)
         'max.second.double', A, prob, r_desc) ;
 
     % select node if its probability is > than all its active neighbors
-    new_members = GrB.eadd ('>', prob, neighbor_max) ;
+    new_members = GrB.eadd (prob, '>', neighbor_max) ;
 
     % add new members to independent set.
-    iset = GrB.eadd ('|', iset, new_members) ;
+    iset = GrB.eadd (iset, '|', new_members) ;
 
     % remove new members from set of candidates
     candidates = GrB.apply (candidates, new_members, 'identity', ...

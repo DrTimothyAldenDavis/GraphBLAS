@@ -29,5 +29,5 @@ else
     end
 end
 
-C = GrB.emult ('*', A, B) ;
+C = GrB.emult (A, '*', B) ;
 

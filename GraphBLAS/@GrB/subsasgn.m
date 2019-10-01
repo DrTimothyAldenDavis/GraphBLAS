@@ -74,13 +74,13 @@ if (ndims == 1)
     else
         % C (I) = A where C is a vector
         I = gb_get_index (S.subs (1)) ;
-        C = GrB.subassign (C, A, I) ;
+        C = GrB.subassign (C, I, A) ;
     end
 elseif (ndims == 2)
     % C(I,J) = A where A is length(I)-by-length(J), or a scalar
     I = gb_get_index (S.subs (1)) ;
     J = gb_get_index (S.subs (2)) ;
-    C = GrB.subassign (C, A, I, J) ;
+    C = GrB.subassign (C, I, J, A) ;
 else
     error ('GrB:unsupported', '%dD indexing not supported', ndims) ;
 end

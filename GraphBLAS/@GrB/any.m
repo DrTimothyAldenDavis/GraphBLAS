@@ -13,6 +13,8 @@ function C = any (G, option)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+desc = struct ('in0', 'transpose') ;
+
 if (nargin == 1)
 
     % C = any (G)
@@ -22,7 +24,7 @@ if (nargin == 1)
     else
         % C = any (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = GrB.vreduce ('|.logical', G, struct ('in0', 'transpose'))' ;
+        C = GrB.vreduce ('|.logical', G, desc)' ;
     end
 
 else
@@ -34,7 +36,7 @@ else
     elseif (isequal (option, 1))
         % C = any (G, 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = GrB.vreduce ('|.logical', G, struct ('in0', 'transpose'))' ;
+        C = GrB.vreduce ('|.logical', G, desc)' ;
     elseif (isequal (option, 2))
         % C = any (G, 2) reduces each row to a scalar,
         % giving an m-by-1 column vector.

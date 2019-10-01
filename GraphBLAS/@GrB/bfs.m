@@ -1,37 +1,39 @@
 function [v, parent] = bfs (A, s, varargin)
-%GRB.BFS breadth-first search of a graph, using its adjacency matrix.
-% v = GrB.bfs (A, s) computes the breadth-first search of the directed graph
-% represented by the square adjacency matrix A.  The breadth-first search
-% starts at node s.  The output v is a sparse vector of size n-by-1, with the
-% level of each node, where v(s)=1, and v(i)=k if the path with the fewest
-% edges from from s to i has k-1 edges.  If i is not reachable from s, then
-% v(i) is implicitly zero and does not appear in the pattern of v.
+%GRB.BFS breadth-first search of a graph, using its adjacency matrix.  v
+%= GrB.bfs (A, s) computes the breadth-first search of the directed graph
+%represented by the square adjacency matrix A.  The breadth-first search
+%starts at node s.  The output v is a sparse vector of size n-by-1, with
+%the level of each node, where v(s)=1, and v(i)=k if the path with the
+%fewest edges from from s to i has k-1 edges.  If i is not reachable from
+%s, then v(i) is implicitly zero and does not appear in the pattern of v.
 %
-% [v, parent] = GrB.bfs (A, s) also computes the parent vector, representing the
-% breadth-first search tree.  parent(s)=s denotes the root of the tree, and
-% parent(c)=p if node p is the parent of c in the tree.  The parent vector is
-% sparse, and parent (i) is not present if i is not found in the breadth-first
-% search.
+% [v, parent] = GrB.bfs (A, s) also computes the parent vector,
+% representing the breadth-first search tree.  parent(s)=s denotes the
+% root of the tree, and parent(c)=p if node p is the parent of c in the
+% tree.  The parent vector is sparse, and parent (i) is not present if i
+% is not found in the breadth-first search.
 %
 % Optional string arguments can be provided, after A and s:
 %
-%   'undirected' or 'symmetric':  A is assumed to be symmetric, and represents
-%       an undirected graph.  Results are undefined if A is unsymmetric,
-%       and 'check' is not specified.
-%   'directed' or 'unsymmetric':  A is assumed to be unsymmetric, and presents
-%       a directed graph.  This is the default.
+%   'undirected' or 'symmetric':  A is assumed to be symmetric, and
+%       represents an undirected graph.  Results are undefined if A is
+%       unsymmetric, and 'check' is not specified.
+%
+%   'directed' or 'unsymmetric':  A is assumed to be unsymmetric, and
+%       presents a directed graph.  This is the default.
+%
 %   'check': with the 'undirected' or 'symmetric' option, A is checked to
 %       ensure that it is symmetric.  The default is not to check.
 %
 % For best performance, if A represents a directed graph, it should be a
-% GraphBLAS matrix stored by row on input.  That is, GrB.format (A) should
-% report 'by row'.  (If A represents a directed graph but is stored 'by col'
-% on input, it is first converted to 'by row', which is costly).  If A is an
-% undirected graph, then it can be stored in either format ('by row' or 'by
-% col').
+% GraphBLAS matrix stored by row on input.  That is, GrB.format (A)
+% should report 'by row'.  (If A represents a directed graph but is
+% stored 'by col' on input, it is first converted to 'by row', which is
+% costly).  If A is an undirected graph, then it can be stored in either
+% format ('by row' or 'by col').
 %
-% A must be square.  Only the pattern, spones (A), is considered; the values of
-% its entries (the edge weights of the graph) are ignored. 
+% A must be square.  Only the pattern, spones (A), is considered; the
+% values of its entries (the edge weights of the graph) are ignored. 
 %
 % Example:
 %

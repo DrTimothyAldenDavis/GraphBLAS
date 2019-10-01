@@ -9,6 +9,9 @@ function [I,J,X] = extracttuples (varargin)
 % GraphBLAS matrix.  If A is a MATLAB sparse or dense matrix, [I,J,X] =
 % GrB.extracttuples (A) is identical to [I,J,X] = find (A).
 %
+% For a GraphBLAS matrix G, GrB.extracttuples (G) returns any explicit
+% zero entries in G, while find (G) excludes them.
+%
 % The descriptor is optional.  desc.base is a string, eithe 'default',
 % 'zero-based', 'one-based int', or 'one-based'.  This parameter
 % determines the type of output for I and J.  The default is one-based,

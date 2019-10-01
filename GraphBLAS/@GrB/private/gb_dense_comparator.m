@@ -1,4 +1,4 @@
-function C = gb_dense_comparator (op, A, B)
+function C = gb_dense_comparator (A, op, B)
 %GB_DENSE_COMPARATOR compare two matrices, first expanding them to full.
 % The pattern of C is a full matrix.  A and B must first be expanded to to
 % a full matrix with explicit zeros.  For example, with A <= B for two
@@ -17,5 +17,5 @@ if (~GrB.isfull (B))
     B = full (B) ;
 end
 
-C = GrB.prune (GrB.emult (op, A, B)) ;
+C = GrB.emult (A, op, B) ;
 

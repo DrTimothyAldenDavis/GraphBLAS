@@ -27,6 +27,7 @@ if (isequal (GrB.type (G), 'logical'))
 else
     op = '+' ;
 end
+desc = struct ('in0', 'transpose') ;
 
 if (nargin == 1)
     % C = sum (G); check if G is a row vector
@@ -36,7 +37,7 @@ if (nargin == 1)
     else
         % C = sum (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = GrB.vreduce (op, G, struct ('in0', 'transpose'))' ;
+        C = GrB.vreduce (op, G, desc)' ;
     end
 elseif (isequal (option, 'all'))
     % C = sum (G, 'all'), reducing all entries to a scalar
@@ -44,7 +45,7 @@ elseif (isequal (option, 'all'))
 elseif (isequal (option, 1))
     % C = sum (G,1) reduces each column to a scalar,
     % giving a 1-by-n row vector.
-    C = GrB.vreduce (op, G, struct ('in0', 'transpose'))' ;
+    C = GrB.vreduce (op, G, desc)' ;
 elseif (isequal (option, 2))
     % C = sum (G,2) reduces each row to a scalar,
     % giving an m-by-1 column vector.

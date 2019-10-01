@@ -13,5 +13,5 @@ function U = triu (G, k)
 if (nargin < 2)
     k = 0 ;
 end
-U = GrB.select ('triu', G.opaque, k) ;
+U = GrB.select ('triu', G, k) ;
 

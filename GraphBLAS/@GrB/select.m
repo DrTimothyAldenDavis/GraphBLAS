@@ -4,54 +4,54 @@ function Cout = select (varargin)
 % Usage:
 %
 %   Cout = GrB.select (selectop, A)
-%   Cout = GrB.select (selectop, A, thunk)
-%   Cout = GrB.select (selectop, A, thunk, desc)
+%   Cout = GrB.select (selectop, A, b)
+%   Cout = GrB.select (selectop, A, b, desc)
 %
 %   Cout = GrB.select (Cin, accum, selectop, A)
-%   Cout = GrB.select (Cin, accum, selectop, A, thunk)
-%   Cout = GrB.select (Cin, accum, selectop, A, thunk, desc)
+%   Cout = GrB.select (Cin, accum, selectop, A, b)
+%   Cout = GrB.select (Cin, accum, selectop, A, b, desc)
 %
 %   Cout = GrB.select (Cin, M, selectop, A)
-%   Cout = GrB.select (Cin, M, selectop, A, thunk)
-%   Cout = GrB.select (Cin, M, selectop, A, thunk, desc)
+%   Cout = GrB.select (Cin, M, selectop, A, b)
+%   Cout = GrB.select (Cin, M, selectop, A, b, desc)
 %
 %   Cout = GrB.select (Cin, M, accum, selectop, A)
-%   Cout = GrB.select (Cin, M, accum, selectop, A, thunk)
-%   Cout = GrB.select (Cin, M, accum, selectop, A, thunk, desc)
+%   Cout = GrB.select (Cin, M, accum, selectop, A, b)
+%   Cout = GrB.select (Cin, M, accum, selectop, A, b, desc)
 %
 % GrB.select selects a subset of entries from the matrix A, based on
 % their value or position.  For example, L = GrB.select ('tril', A, 0)
 % returns the lower triangular part of the GraphBLAS or MATLAB matrix A,
 % just like L = tril (A) for a MATLAB matrix A.  The select operators can
-% also depend on the values of the entries.  The thunk parameter is an
+% also depend on the values of the entries.  The b parameter is an
 % input scalar, used in many of the select operators.  For example,
 % L = GrB.select ('tril', A, -1) is the same as L = tril (A, -1), which
-% returns the strictly lower triangular part of A.  The thunk scalar is
-% required for 'tril', 'triu', 'diag', 'offdiag' and the '*thunk'
-% operators.  It must not appear when using the '*zero' operators.
+% returns the strictly lower triangular part of A.  The b scalar is
+% required for 'tril', 'triu', 'diag', 'offdiag' and the 2-input
+% operators.  It must not appear when using the '*0' operators.
 %
 % The selectop is a string defining the operator:
 %
-%   operator    MATLAB equivalent                   alternative strings
-%   --------    -----------------                   -------------------
-%   'tril'      C = tril (A,thunk)                  none
-%   'triu'      C = triu (A,thunk)                  none
-%   'diag'      C = diag (A,thunk), see note below  none
-%   'offdiag'   C = entries not in diag(A,thunk)    none
-%   'nonzero'   C = A (A ~= 0)                      '~=0'
-%   'eqzero'    C = A (A == 0)                      '==0'
-%   'gtzero'    C = A (A >  0)                      '>0'
-%   'gezero'    C = A (A >= 0)                      '>=0'
-%   'ltzero'    C = A (A <  0)                      '<0'
-%   'lezero'    C = A (A <= 0)                      '<=0'
-%   'nethunk'   C = A (A ~= thunk)                  '~=thunk'
-%   'eqthunk'   C = A (A == thunk)                  '==thunk'
-%   'gtthunk'   C = A (A >  thunk)                  '>thunk'
-%   'gethunk'   C = A (A >= thunk)                  '>=thunk'
-%   'ltthunk'   C = A (A <  thunk)                  '<thunk'
-%   'lethunk'   C = A (A <= thunk)                  '<=thunk'
+%   operator        MATLAB equivalent           alternative strings
+%   --------        -----------------           -------------------
+%   'tril'          C = tril (A,b)
+%   'triu'          C = triu (A,b)
+%   'diag'          C = diag (A,b), see note
+%   'offdiag'       C = entries not in diag(A,b)
+%   'nonzero'       C = A (A ~= 0)              '~=0'
+%   'zero'          C = A (A == 0)              '==0'
+%   'positive'      C = A (A >  0)              '>0'
+%   'nonnegative'   C = A (A >= 0)              '>=0'
+%   'negative'      C = A (A <  0)              '<0'
+%   'nonpositive'   C = A (A <= 0)              '<=0'
+%   '~='            C = A (A ~= b)
+%   '=='            C = A (A == b)
+%   '>'             C = A (A >  b)
+%   '>='            C = A (A >= b)
+%   '<'             C = A (A <  b)
+%   '<='            C = A (A <= b)
 %
-% Note that C = GrB.select ('diag',A,thunk) does not returns a vector,
+% Note that C = GrB.select ('diag',A,b) does not returns a vector,
 % but a diagonal matrix.
 %
 % Many of the operations have equivalent synonyms, as listed above.

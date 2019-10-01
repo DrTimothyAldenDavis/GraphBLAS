@@ -21,46 +21,48 @@ function C = le (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % both A and B are scalars.  C is full.
-        C = gb_dense_comparator ('<=', A, B) ;
+        C = gb_dense_comparator (A, '<=', B) ;
     else
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) <= 0)
-            % since a <= 0, entries not present in B result in a true value,
-            % so the result is dense.  Expand A to a dense matrix.
+            % since a <= 0, entries not present in B result in a true
+            % value, so the result is dense.  Expand A to a dense matrix.
             [m, n] = size (B) ;
-            A = GrB.subassign (GrB (m, n, GrB.type (A)), A, { }, { }) ;
+            % A (1:m,1:n) = A and cast to the type of B
+            A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
             if (~GrB.isfull (B))
                 B = full (B) ;
             end
-            C = GrB.prune (GrB.emult ('<=', A, B)) ;
+            C = GrB.emult (A, '<=', B) ;
         else
             % since a > 0, entries not present in B result in a false
             % value, so the result is a sparse subset of B.  select all
             % entries in B >= a, then convert to true.
-            C = GrB.apply ('1.logical', GrB.select ('>=thunk', B, A)) ;
+            C = GrB.apply ('1.logical', GrB.select (B, '>=', A)) ;
         end
     end
 else
     if (isscalar (B))
         % A is a matrix, B is a scalar
         if (gb_get_scalar (B) >= 0)
-            % since b >= 0, entries not present in A result in a true value,
-            % so the result is dense.  Expand B to a dense matrix.
+            % since b >= 0, entries not present in A result in a true
+            % value, so the result is dense.  Expand B to a dense matrix.
             [m, n] = size (A) ;
-            B = GrB.subassign (GrB (m, n, GrB.type (A)), B, { }, { }) ;
+            % B (1:m,1:n) = B and cast to the type of A
+            B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
             if (~GrB.isfull (A))
                 A = full (A) ;
             end
-            C = GrB.prune (GrB.emult ('<=', A, B)) ;
+            C = GrB.emult (A, '<=', B) ;
         else
             % since b < 0, entries not present in A result in a false
             % value, so the result is a sparse subset of A.  select all
             % entries in A <= b, then convert to true.
-            C = GrB.apply ('1.logical', GrB.select ('<=thunk', A, B)) ;
+            C = GrB.apply ('1.logical', GrB.select (A, '<=', B)) ;
         end
     else
         % both A and B are matrices.  C is full.
-        C = gb_dense_comparator ('<=', A, B) ;
+        C = gb_dense_comparator (A, '<=', B) ;
     end
 end
 

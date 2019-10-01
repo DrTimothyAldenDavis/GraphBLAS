@@ -13,5 +13,5 @@ function L = tril (G, k)
 if (nargin < 2)
     k = 0 ;
 end
-L = GrB.select ('tril', G.opaque, k) ;
+L = GrB.select ('tril', G, k) ;
 

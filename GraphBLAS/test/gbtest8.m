@@ -10,30 +10,30 @@ function gbtest8
 %   offdiag
 
 %   nonzero     ~=0
-%   eqzero      ==0
-%   gtzero      >0
-%   gezero      >=0
+%   zero        ==0
+%   positive    >0
+%   nonnegative >=0
 %   ltzero      <0
 %   lezero      <=0
 
-%   nethunk     ~=thunk
-%   eqthunk     ==thunk
-%   gtthunk     >thunk
-%   gethunk     >=thunk
-%   ltthunk     <thunk
-%   lethunk     <=thunk
+%   ~=
+%   ==
+%   >
+%   >=
+%   <
+%   <=
 
 rng ('default') ;
 n = 5 ;
 m = 8 ;
 A = sparse (10 * rand (m,n) - 5) .* sprand (m, n, 0.8) ;
 
-thunk = 0.5 ;
+b = 0.5 ;
 desc.kind = 'sparse' ;
 
-A (1,1) = thunk ;
-A (2,2) = -thunk ;
-A (3,4) = thunk ;
+A (1,1) = b ;
+A (2,2) = -b ;
+A (3,4) = b ;
 
 %-------------------------------------------------------------------------------
 % tril
@@ -112,8 +112,6 @@ A (3,4) = thunk ;
     % so this does nothing.  A better test would be to compute a GraphBLAS
     % matrix with explicit zeros first.
 
-    %   nonzero     ~=0
-
     M = (A ~= 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
@@ -124,182 +122,177 @@ A (3,4) = thunk ;
     C2 = GrB.select ('~=0', A) ;
     assert (gbtest_eq (C1, C2))
 
+    C2 = GrB.select (A, '~=0') ;
+    assert (gbtest_eq (C1, C2))
+
 %-------------------------------------------------------------------------------
-% eqzero
+% zero
 %-------------------------------------------------------------------------------
 
     % all explicit entries in the MATLAB sparse matrix are nonzero,
     % so this does nothing.
 
-    %   eqzero      ==0
-
     C1 = sparse (m,n) ;
 
-    C2 = GrB.select ('eqzero', A) ;
+    C2 = GrB.select ('zero', A) ;
     assert (gbtest_eq (C1, C2))
 
     C2 = GrB.select ('==0', A) ;
     assert (gbtest_eq (C1, C2))
 
-%-------------------------------------------------------------------------------
-% gtzero
-%-------------------------------------------------------------------------------
+    C2 = GrB.select (A, '==0') ;
+    assert (gbtest_eq (C1, C2))
 
-    %   gtzero      >0
+%-------------------------------------------------------------------------------
+% positive
+%-------------------------------------------------------------------------------
 
     M = (A > 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('gtzero', A) ;
+    C2 = GrB.select ('positive', A) ;
     assert (gbtest_eq (C1, C2))
 
     C2 = GrB.select ('>0', A) ;
     assert (gbtest_eq (C1, C2))
 
-%-------------------------------------------------------------------------------
-% gezero
-%-------------------------------------------------------------------------------
+    C2 = GrB.select (A, '>0') ;
+    assert (gbtest_eq (C1, C2))
 
-    %   gezero      >=0
+%-------------------------------------------------------------------------------
+% nonnegative
+%-------------------------------------------------------------------------------
 
     M = (A >= 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('gezero', A) ;
+    C2 = GrB.select ('nonnegative', A) ;
     assert (gbtest_eq (C1, C2))
 
     C2 = GrB.select ('>=0', A) ;
     assert (gbtest_eq (C1, C2))
 
-%-------------------------------------------------------------------------------
-% ltzero
-%-------------------------------------------------------------------------------
+    C2 = GrB.select (A, '>=0') ;
+    assert (gbtest_eq (C1, C2))
 
-    %   ltzero      <0
+%-------------------------------------------------------------------------------
+% negative
+%-------------------------------------------------------------------------------
 
     M = (A < 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('ltzero', A) ;
+    C2 = GrB.select ('negative', A) ;
     assert (gbtest_eq (C1, C2))
 
     C2 = GrB.select ('<0', A) ;
     assert (gbtest_eq (C1, C2))
 
-%-------------------------------------------------------------------------------
-% lezero
-%-------------------------------------------------------------------------------
+    C2 = GrB.select (A, '<0') ;
+    assert (gbtest_eq (C1, C2))
 
-    %   lezero      <=0
+%-------------------------------------------------------------------------------
+% nonpositive
+%-------------------------------------------------------------------------------
 
     M = (A <= 0) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('lezero', A) ;
+    C2 = GrB.select ('nonpositive', A) ;
     assert (gbtest_eq (C1, C2))
 
     C2 = GrB.select ('<=0', A) ;
     assert (gbtest_eq (C1, C2))
 
+    C2 = GrB.select (A, '<=0') ;
+    assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
-% nonthunk
+% ~=
 %-------------------------------------------------------------------------------
 
-    %   nonthunk     ~=thunk
-
-    M = (A ~= thunk) ;
+    M = (A ~= b) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('nethunk', A, thunk) ;
+    C2 = GrB.select ('~=', A, b) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = GrB.select ('~=thunk', A, thunk) ;
+    C2 = GrB.select (A, '~=', b) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
-% eqthunk
+% ==
 %-------------------------------------------------------------------------------
 
-    %   eqthunk      ==thunk
-
-    M = (A == thunk) ;
+    M = (A == b) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('eqthunk', A, thunk) ;
+    C2 = GrB.select ('==', A, b) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = GrB.select ('==thunk', A, thunk) ;
+    C2 = GrB.select (A, '==', b) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
-% gtthunk
+% >
 %-------------------------------------------------------------------------------
 
-    %   gtthunk      >thunk
-
-    M = (A > thunk) ;
+    M = (A > b) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('gtthunk', A, thunk) ;
+    C2 = GrB.select ('>', A, b) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = GrB.select ('>thunk', A, thunk) ;
+    C2 = GrB.select (A, '>', b) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
-% gethunk
+% >=
 %-------------------------------------------------------------------------------
 
-    %   gethunk      >=thunk
-
-    M = (A >= thunk) ;
+    M = (A >= b) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('gethunk', A, thunk) ;
+    C2 = GrB.select ('>=', A, b) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = GrB.select ('>=thunk', A, thunk) ;
+    C2 = GrB.select (A, '>=', b) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
-% ltthunk
+% <
 %-------------------------------------------------------------------------------
 
-    %   ltthunk      <thunk
-
-    M = (A < thunk) ;
+    M = (A < b) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('ltthunk', A, thunk) ;
+    C2 = GrB.select ('<', A, b) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = GrB.select ('<thunk', A, thunk) ;
+    C2 = GrB.select (A, '<', b) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------
-% lethunk
+% <=
 %-------------------------------------------------------------------------------
 
-    %   lethunk      <=thunk
-
-    M = (A <= thunk) ;
+    M = (A <= b) ;
     C1 = sparse (m,n) ;
     C1 (M) = A (M) ;
 
-    C2 = GrB.select ('lethunk', A, thunk) ;
+    C2 = GrB.select ('<=', A, b) ;
     assert (gbtest_eq (C1, C2))
 
-    C2 = GrB.select ('<=thunk', A, thunk) ;
+    C2 = GrB.select (A, '<=', b) ;
     assert (gbtest_eq (C1, C2))
 
 %-------------------------------------------------------------------------------

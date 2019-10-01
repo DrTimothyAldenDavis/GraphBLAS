@@ -102,6 +102,7 @@ gbtest67
 gbtest68
 gbtest69
 gbtest70
+gbtest71
 
 gbtest99    % last test since it creates a figure
 

@@ -29,6 +29,7 @@ if (isequal (GrB.type (G), 'logical'))
 else
     op = 'min' ;
 end
+desc = struct ('in0', 'transpose') ;
 
 if (nargin == 1)
 
@@ -42,7 +43,7 @@ if (nargin == 1)
     else
         % C = min (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = GrB.vreduce (op, G, struct ('in0', 'transpose')) ;
+        C = GrB.vreduce (op, G, desc) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
         coldegree = GrB.entries (G, 'col', 'degree') ;
         C = GrB.subassign (C, (C > 0) & (coldegree < m), 0)' ;
@@ -56,19 +57,20 @@ elseif (nargin == 2)
     if (isscalar (A))
         if (isscalar (B))
             % both A and B are scalars.  Result is also a scalar.
-            C = gb_sparse_comparator (op, A, B) ;
+            C = gb_sparse_comparator (A, op, B) ;
         else
             % A is a scalar, B is a matrix
             if (gb_get_scalar (A) < 0)
                 % since A < 0, the result is full
                 [m, n] = size (B) ;
-                A = GrB.subassign (GrB (m, n, GrB.type (A)), A, { }, { }) ;
+                % A (1:m,1:n) = A and cast to the type of B
+                A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
             else
                 % since A >= 0, the result is sparse.  Expand the scalar A
                 % to the pattern of B.
                 A = GrB.expand (A, B) ;
             end
-            C = GrB.eadd (op, A, B) ;
+            C = GrB.eadd (A, op, B) ;
         end
     else
         if (isscalar (B))
@@ -76,16 +78,17 @@ elseif (nargin == 2)
             if (gb_get_scalar (B) < 0)
                 % since B < 0, the result is full
                 [m, n] = size (A) ;
-                B = GrB.subassign (GrB (m, n, GrB.type (A)), B, { }, { }) ;
+                % B (1:m,1:n) = B and cast to the type of A
+                B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
             else
                 % since B >= 0, the result is sparse.  Expand the scalar B
                 % to the pattern of A.
                 B = GrB.expand (B, A) ;
             end
-            C = GrB.eadd (op, A, B) ;
+            C = GrB.eadd (A, op, B) ;
         else
             % both A and B are matrices.  Result is sparse.
-            C = gb_sparse_comparator (op, A, B) ;
+            C = gb_sparse_comparator (A, op, B) ;
         end
     end
 
@@ -102,7 +105,7 @@ elseif (nargin == 3)
     elseif (isequal (option, 1))
         % C = min (G, [ ], 1) reduces each column to a scalar,
         % giving a 1-by-n row vector.
-        C = GrB.vreduce (op, G, struct ('in0', 'transpose')) ;
+        C = GrB.vreduce (op, G, desc) ;
         % if C(j) > 0, but the column is sparse, then assign C(j) = 0.
         coldegree = GrB.entries (G, 'col', 'degree') ;
         C = GrB.subassign (C, (C > 0) & (coldegree < m), 0)' ;

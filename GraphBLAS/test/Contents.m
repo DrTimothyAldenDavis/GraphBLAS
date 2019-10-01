@@ -73,6 +73,7 @@
 %  gbtest68  - test isequal
 %  gbtest69  - test flip
 %  gbtest70  - test GrB.random
+%  gbtest71  - test GrB.selectopinfo
 %  gbtest99  - test GrB.bfs and plot (graph (G))
 %
 % Utilities:

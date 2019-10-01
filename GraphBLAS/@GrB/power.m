@@ -24,7 +24,8 @@ if (isscalar (A))
     else
         % A is a scalar, B is a matrix; expand A to the size of B
         [m, n] = size (B) ;
-        A = GrB.subassign (GrB (m, n, GrB.type (A)), A, { }, { }) ;
+        % A (1:m,1:n) = A, keeping its type
+        A = GrB.subassign (GrB (m, n, GrB.type (A)), A) ;
         if (~GrB.isfull (B))
             B = full (B) ;
         end
@@ -38,7 +39,8 @@ else
                 A = full (A) ;
             end
             [m, n] = size (A) ;
-            B = GrB.subassign (GrB (m, n, GrB.type (B)), B, { }, { }) ;
+            % B (1:m,1:n) = B, keeping its type
+            B = GrB.subassign (GrB (m, n, GrB.type (B)), B) ;
         else
             % The scalar b is > 0, and thus 0.^b is zero.  The result is
             % sparse.  B is expanded to a matrix with the same pattern as A.
@@ -61,5 +63,5 @@ end
 [m, n] = size (A) ;
 [~, ~, Ax] = GrB.extracttuples (A) ;
 [I, J, Bx] = GrB.extracttuples (B) ;
-C = GrB.prune (GrB.build (I, J, (Ax .^ Bx), m, n)) ;
+C = GrB.build (I, J, (Ax .^ Bx), m, n) ;
 

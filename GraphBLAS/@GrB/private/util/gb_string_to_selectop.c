@@ -47,47 +47,47 @@ GxB_SelectOp gb_string_to_selectop      // return select operator from a string
     { 
         return (GxB_NONZERO) ;
     }
-    else if (MATCH (opstring, "eqzero") || MATCH (opstring, "==0"))
+    else if (MATCH (opstring, "zero") || MATCH (opstring, "==0"))
     { 
         return (GxB_EQ_ZERO) ;
     }
-    else if (MATCH (opstring, "gtzero") || MATCH (opstring, ">0"))
+    else if (MATCH (opstring, "positive") || MATCH (opstring, ">0"))
     { 
         return (GxB_GT_ZERO) ;
     }
-    else if (MATCH (opstring, "gezero") || MATCH (opstring, ">=0"))
+    else if (MATCH (opstring, "nonnegative") || MATCH (opstring, ">=0"))
     { 
         return (GxB_GE_ZERO) ;
     }
-    else if (MATCH (opstring, "ltzero") || MATCH (opstring, "<0"))
+    else if (MATCH (opstring, "negative") || MATCH (opstring, "<0"))
     { 
         return (GxB_LT_ZERO) ;
     }
-    else if (MATCH (opstring, "lezero") || MATCH (opstring, "<=0"))
+    else if (MATCH (opstring, "nonpositive") || MATCH (opstring, "<=0"))
     { 
         return (GxB_LE_ZERO) ;
     }
-    else if (MATCH (opstring, "nethunk") || MATCH (opstring, "~=thunk"))
+    else if (MATCH (opstring, "~="))
     { 
         return (GxB_NE_THUNK) ;
     }
-    else if (MATCH (opstring, "eqthunk") || MATCH (opstring, "==thunk"))
+    else if (MATCH (opstring, "=="))
     { 
         return (GxB_EQ_THUNK) ;
     }
-    else if (MATCH (opstring, "gtthunk") || MATCH (opstring, ">thunk"))
+    else if (MATCH (opstring, ">"))
     { 
         return (GxB_GT_THUNK) ;
     }
-    else if (MATCH (opstring, "gethunk") || MATCH (opstring, ">=thunk"))
+    else if (MATCH (opstring, ">="))
     { 
         return (GxB_GE_THUNK) ;
     }
-    else if (MATCH (opstring, "ltthunk") || MATCH (opstring, "<thunk"))
+    else if (MATCH (opstring, "<"))
     { 
         return (GxB_LT_THUNK) ;
     }
-    else if (MATCH (opstring, "lethunk") || MATCH (opstring, "<=thunk"))
+    else if (MATCH (opstring, "<="))
     { 
         return (GxB_LE_THUNK) ;
     }

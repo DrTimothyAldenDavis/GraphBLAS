@@ -12,7 +12,7 @@ function C = and (A, B)
 if (isscalar (A))
     if (isscalar (B))
         % A and B are scalars
-        C = GrB.prune (GrB.emult ('&.logical', A, B)) ;
+        C = GrB.emult (A, '&.logical', B) ;
     else
         % A is a scalar, B is a matrix
         if (gb_get_scalar (A) == 0)
@@ -21,7 +21,7 @@ if (isscalar (A))
             C = GrB (m, n, 'logical') ;
         else
             % A is true, so C is B typecasted to logical
-            C = GrB (GrB.prune (B), 'logical') ;
+            C = GrB (B, 'logical') ;
         end
     end
 else
@@ -33,11 +33,11 @@ else
             C = GrB (m, n, 'logical') ;
         else
             % B is true, so C is A typecasted to logical
-            C = GrB (GrB.prune (A), 'logical') ;
+            C = GrB (A, 'logical') ;
         end
     else
         % both A and B are matrices.  C is the set intersection of A and B
-        C = GrB.prune (GrB.emult ('&.logical', A, B)) ;
+        C = GrB.emult (A, '&.logical', B) ;
     end
 end
 

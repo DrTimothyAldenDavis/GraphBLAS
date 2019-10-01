@@ -21,7 +21,8 @@ if (isscalar (A))
     else
         % A is a scalar, B is a matrix.  A is expanded to full
         [m, n] = size (B) ;
-        A = GrB.subassign (GrB (m, n, GrB.type (A)), A, { }, { }) ;
+        % A (1:m,1:n) = A and cast to the type of B
+        A = GrB.subassign (GrB (m, n, GrB.type (B)), A) ;
     end
 else
     if (isscalar (B))
@@ -30,7 +31,8 @@ else
             % 0/0 is Nan, and thus must be computed computed if A is
             % floating-point.  The result is a dense matrix.
             [m, n] = size (A) ;
-            B = GrB.subassign (GrB (m, n, GrB.type (A)), B, { }, { }) ;
+            % B (1:m,1:n) = B and cast to the type of A
+            B = GrB.subassign (GrB (m, n, GrB.type (A)), B) ;
         else
             % The scalar B is nonzero so just compute A/B in the pattern
             % of A.  The result is sparse (the pattern of A).
@@ -47,5 +49,5 @@ else
     end
 end
 
-C = GrB.eadd ('/', A, B) ;
+C = GrB.eadd (A, '/', B) ;
 

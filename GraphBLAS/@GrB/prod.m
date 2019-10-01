@@ -24,7 +24,7 @@ function C = prod (G, option)
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [m, n] = size (G) ;
-d = struct ('in0', 'transpose') ;
+desc = struct ('in0', 'transpose') ;
 if (isequal (GrB.type (G), 'logical'))
     op = '&.logical' ;
 else
@@ -44,7 +44,7 @@ if (nargin == 1)
         % C = prod (G) reduces each column to a scalar,
         % giving a 1-by-n row vector.
         coldegree = GrB.entries (G, 'col', 'degree') ;
-        C = (GrB.vreduce (op, G, d) .* (coldegree == m))' ;
+        C = (GrB.vreduce (op, G, desc) .* (coldegree == m))' ;
     end
 elseif (isequal (option, 'all'))
     % C = prod (G, 'all'), reducing all entries to a scalar
@@ -57,7 +57,7 @@ elseif (isequal (option, 1))
     % C = prod (G,1) reduces each column to a scalar,
     % giving a 1-by-n row vector.
     coldegree = GrB.entries (G, 'col', 'degree') ;
-    C = (GrB.vreduce (op, G, d) .* (coldegree == m))' ;
+    C = (GrB.vreduce (op, G, desc) .* (coldegree == m))' ;
 elseif (isequal (option, 2))
     % C = prod (G,2) reduces each row to a scalar,
     % giving an m-by-1 column vector.
