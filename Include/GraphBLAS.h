@@ -3451,19 +3451,31 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //
 //      GxB_set (GrB_Descriptor d, GrB_OUTP, GxB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GrB_OUTP, GrB_REPLACE) ;
+//      GxB_get (GrB_Descriptor d, GrB_OUTP, GrB_Desc_Value *v) ;
 //
 //      GxB_set (GrB_Descriptor d, GrB_MASK, GxB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_SCMP) ;
+//      GxB_get (GrB_Descriptor d, GrB_MASK, GrB_Desc_Value *v) ;
 //
 //      GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
-//      GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN ;
+//      GxB_set (GrB_Descriptor d, GrB_INP0, GrB_TRAN) ;
+//      GxB_get (GrB_Descriptor d, GrB_INP0, GrB_Desc_Value *v) ;
 //
 //      GxB_set (GrB_Descriptor d, GrB_INP1, GxB_DEFAULT) ;
-//      GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN ;
+//      GxB_set (GrB_Descriptor d, GrB_INP1, GrB_TRAN) ;
+//      GxB_get (GrB_Descriptor d, GrB_INP1, GrB_Desc_Value *v) ;
+//
+//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
+//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
+//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HEAP) ;
+//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;
+//      GxB_get (GrB_Descriptor d, GrB_AxB_METHOD, GrB_Desc_Value *v) ;
 //
 //      GxB_set (GrB_Descriptor d, GxB_NTHREADS, nthreads) ;
+//      GxB_get (GrB_Descriptor d, GxB_NTHREADS, int *nthreads) ;
 //
-//      GxB_get (GrB_Descriptor d, GrB_Desc_Field f, GrB_Desc_Value *v) ;
+//      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
+//      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
 
 #define GxB_set(arg1,...)                                   \
     _Generic                                                \
