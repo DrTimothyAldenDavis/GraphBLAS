@@ -42,7 +42,8 @@ multiplication C=A*B InTheWild semiring:
 
 Printing the matrix with GxB_Matrix_fprint:
 
-    10x10 GraphBLAS wildtype matrix: input A, standard CSR, 3 entries
+  10x10 GraphBLAS wildtype matrix, sparse by row:
+  input A, 3 entries
 
     (2,4) [user-defined value]
     (2,7) [user-defined value]
@@ -79,14 +80,15 @@ a wildtype scalar:  [this is A(3,7)]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-    10x10 GraphBLAS wildtype matrix: input B, hypersparse CSR, no entries
-    pending tuples: 3 max pending: 256 zombies: 0
-    pending tuples:
+  10x10 GraphBLAS wildtype matrix, hypersparse by row:
+  input B, no entries
+  pending tuples: 3 max pending: 256 zombies: 0
+  pending tuples:
     GraphBLAS type:  run-time user-defined: [wildtype] size: 128
     row: 7 col: 2 [user-defined value]
     row: 7 col: 5 [user-defined value]
     row: 4 col: 2 [user-defined value]
-    pending operator: implicit 2nd
+  pending operator: implicit 2nd
 
 
 ============= printing the WildType matrix: input B (10-by-10 with 3 entries)
@@ -245,7 +247,8 @@ a wildtype scalar: z = x*y: [this was multiplied]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-    10x10 GraphBLAS wildtype matrix: output C, standard CSR, 4 entries
+  10x10 GraphBLAS wildtype matrix, sparse by row:
+  output C, 4 entries
 
     (2,2) [user-defined value]
     (2,5) [user-defined value]
@@ -295,7 +298,8 @@ internal data structure.
 
 Printing the matrix with GxB_Matrix_fprint:
 
-    10x10 GraphBLAS wildtype matrix: output C, standard CSC, 4 entries
+  10x10 GraphBLAS wildtype matrix, sparse by col:
+  output C, 4 entries
 
     (2,2) [user-defined value]
     (3,2) [user-defined value]
@@ -341,7 +345,8 @@ a wildtype scalar:  [this was multiplied]
 
 Printing the matrix with GxB_Matrix_fprint:
 
-    10x10 GraphBLAS float matrix: D, hypersparse CSR, no entries
+  10x10 GraphBLAS float matrix, hypersparse by row:
+  D, no entries
 
 
 The matrix D is not wild enough to print.
