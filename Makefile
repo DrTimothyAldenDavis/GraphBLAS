@@ -57,7 +57,7 @@ distclean:
 	rm -rf Config/*.tmp Source/control.m4
 	rm -rf Doc/html/* Doc/*.tmp
 	( cd GraphBLAS/test/tcov ; $(MAKE) distclean )
-	( cd GraphBLAS/@gb/private ; $(MAKE) distclean )
+	( cd GraphBLAS/@GrB/private ; $(MAKE) distclean )
 	( cd Test ; $(MAKE) distclean )
 	( cd Tcov ; $(MAKE) distclean )
 	( cd Doc  ; $(MAKE) distclean )

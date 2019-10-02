@@ -27,18 +27,6 @@ B = sprandn (length (I), length (J), 0.5) ;
     J2  = J1  (~Jduplicate) 
     J2k = J1k (~Jduplicate) 
 
-%{
-Cout = gb.assign (Cin, B, {I}, {J}) ;
-C7 = Cin ;
-C7 (I,J) = B ;
-Cin_full = full (Cin) 
-Cout = sparse (Cout) ;
-B_full = full (B)
-C7_full = full (C7)
-Cout_full = full (Cout)
-[i j] = find (C7_full ~= Cout_full)
-%}
-
 I0 = uint64(I)-1 ;
 J0 = uint64(J)-1 ;
 
