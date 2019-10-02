@@ -18,12 +18,15 @@ This folder contains the following files:
     GraphBLAS_version.tex       this version of SuiteSparse:GraphBLAS
     License.txt                 the license: Apache 2.0
     README_Doc.txt              this file
-    toms_graphblas.pdf          current version of the ACM TOMS paper on
-                                SuiteSparse:GraphBLAS
 
-Note that Davis_HPEC18.pdf (IEEE HPEC'18) paper has been removed since it will
-be published by IEEE.  See http://faculty.cse.tamu.edu/davis/publications.html
-for a link to the paper.
+Papers on SuiteSparse:GraphBLAS.  See the User Guide for the full citations.
+
+    toms_graphblas.pdf          2019 ACM TOMS paper on SuiteSparse:GraphBLAS
+    CSC20_OpenMP_GraphBLAS.pdf  "Parallel GraphBLAS with OpenMP"
+    HPEC19.pdf                  "Write Quick, Run Fast: Sparse DNN ..."
+    Davis_HPEC18.pdf            "Graph algorithms via SuiteSparse:GraphBLAS..."
+    lagraph-grapl19.pdf         "LAGraph: a community effort to collect graph
+                                 algorithms built on top of the GraphBLAS"
 
 Additional installation notes are below.
 
@@ -72,7 +75,7 @@ The latter reports the following Caveat:
      
       -L/usr/local/opt/libomp/lib -I/usr/local/opt/libomp/include
      
-    For CMake, the following flags will cause the OpenMP::OpenMP_CXX target to
+     or CMake, the following flags will cause the OpenMP::OpenMP_CXX target to
     be set up correctly:
       -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp -I/usr/local/opt/libomp/include" -DOpenMP_CXX_LIB_NAMES="omp" -DOpenMP_omp_LIBRARY=/usr/local/opt/libomp/lib/libomp.dylib
     ==> Summary

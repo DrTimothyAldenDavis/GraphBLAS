@@ -841,12 +841,6 @@ void mexFunction
     GB_Global_print_one_based_set (false) ;
     GB_Global_print_format_set (0) ;
 
-    CHECK (!GB_Global_prune_get ( )) ;
-    GB_Global_prune_set (true) ;
-    CHECK (GB_Global_prune_get ( )) ;
-    GB_Global_prune_set (false) ;
-    CHECK (!GB_Global_prune_get ( )) ;
-
     expected = GrB_NULL_POINTER ;
     ERR (GxB_select (C, NULL, NULL, selectop, A, NULL, NULL)) ;
     printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;

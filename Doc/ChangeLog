@@ -1,13 +1,11 @@
-Version 3.1.0, Sept [TODO], 2019
+Version 3.1.0, Oct 2, 2019
 
     * added MATLAB interface: GraphBLAS/GraphBLAS is new.  In Source/, added
         global pointer to printf for MATLAB mexPrintf, pointer to
         mexMakeMemoryPersistent for Sauna workspace.  Changed how GraphBLAS
         objects are printed with GxB_print.  Changed how duplicate indices are
         handled in assign and extract, to match the MATLAB stadard.  Added
-        helper functions for MATLAB (GB_matlab_helper.[ch]).  Renamed existing
-        Test/*.m Tcov/*.m files and variabls so that gb*.m naming prefix is
-        reserved for MATLAB interface.
+        helper functions for MATLAB (GB_matlab_helper.[ch]).
     * 'make dox': for doxygen removed (not really that useful)
     * bug fix to GB_reduce_to_vector: to avoid integer divide-by-zero for
         a matrix with n=0 columns.
@@ -15,6 +13,7 @@ Version 3.1.0, Sept [TODO], 2019
         pending tuples
     * bug fix to GB_resize: when pending tuples exist and vdim is growing
         from vdim <= 1 to vdim > 1, GB_WAIT(A) is required first.
+    * bug fix to GB_subref_phase1: "int nI" parameter should be int64_t.
 
 Version 3.0.1, July 26, 2019
 

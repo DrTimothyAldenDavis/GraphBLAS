@@ -14,7 +14,6 @@
 \hyphenation{Suite-Sparse}
 \hyphenation{Graph-BLAS}
 \hyphenation{Suite-Sparse-Graph-BLAS}
-\hyphenation{Suite-Sparse-Graph-BLAS}
 
 \newenvironment{packed_itemize}{
 \begin{itemize}
@@ -80,8 +79,10 @@ GraphBLAS library.
 
 % API version and date are set by cmake (see GraphBLAS/CMakeLists.txt)
 
-See \cite{Davis18} for a journal article on SuiteSparse:GraphBLAS, and
-\cite{Davis18b} for a more recent conference paper.  A full and precise
+For more details on SuiteSparse:GraphBLAS, and its use in LAGraph, see
+\cite{Davis18,Davis18b,DavisAznavehKolodziej19,Davis20,Mattson19}.
+
+A full and precise
 definition of the GraphBLAS specification is provided in {\em The GraphBLAS C
 API Specification} by {Ayd\i n Bulu\c{c}, Timothy Mattson, Scott McMillan,
 Jos\'e Moreira, and Carl Yang} \cite{BulucMattsonMcMillanMoreiraYang17,spec},
@@ -104,10 +105,13 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
-\item Version 3.1.0 (TODO: DRAFT, 2019).  MATLAB interface added.
-    See the \verb'GraphBLAS/GraphBLAS' folder for details and documentation.
+\item Version 3.1.0 (Oct 1, 2019).  MATLAB interface added.
+    See the \newline
+    \verb'GraphBLAS/GraphBLAS' folder for details and documentation,
+    and Section~\ref{matlab}.
 
-\item Version 3.0 (July 26, 2019):
+\item Version 3.0 (July 26, 2019), with OpenMP parallelism.
+
 The version number is increased to 3.0, since
 this version is not backward compatible with V2.x.  The \verb'GxB_select'
 operation changes; the \verb'Thunk' parameter was formerly a
@@ -760,13 +764,13 @@ documentation in the \verb'GraphBLAS/GraphBLAS' folder for details.  Start with
 the \verb'README.md' file in that directory.  An easy-to-read output of the
 MATLAB demos can be found in \verb'GraphBLAS/GraphBLAS/demo/html'.
 
-The MATLAB interface adds the \verb'gb' class, which is an opaque MATLAB object
-that contains a GraphBLAS matrix, either double or single precision, boolean,
-or any of the built-in integer types.  Complex matrix support will be added in
-the future.    MATLAB sparse and full matrices can be arbitrarily mixed with
-GraphBLAS matrices.  The following overloaded operators and methods all work as
-you would expect for any matrix.  The matrix multiplication \verb'A*B' uses the
-conventional \verb'PLUS_TIMES' semiring.
+The MATLAB interface adds the \verb'GrB' class, which is an opaque MATLAB
+object that contains a GraphBLAS matrix, either double or single precision,
+boolean, or any of the built-in integer types.  Complex matrix support will be
+added in the future.    MATLAB sparse and full matrices can be arbitrarily
+mixed with GraphBLAS matrices.  The following overloaded operators and methods
+all work as you would expect for any matrix.  The matrix multiplication
+\verb'A*B' uses the conventional \verb'PLUS_TIMES' semiring.
 
 {\footnotesize
 \begin{verbatim}
@@ -776,49 +780,88 @@ A~=B   A>B   A==B   A<=B   A>=B   A<B    [A,B]   [A;B]  A(1:end,1:end) \end{verb
 
 {\footnotesize
 \begin{verbatim}
-    abs             fix             isreal          sign
-    all             floor           isscalar        single
-    amd             fprintf         issparse        size
-    and             full            issymmetric     sparse
-    any             graph           istril          spfun
-    assert          int16           istriu          spones
-    bandwidth       int32           isvector        sprintf
-    ceil            int64           kron            sqrt
-    colamd          int8            length          sum
-    complex         isa             logical         symamd
-    conj            isbanded        max             symrcm
-    diag            isdiag          min             tril
-    digraph         isempty         nnz             triu
-    disp            isequal         nonzeros        true
-    display         isfinite        norm            uint16
-    dmperm          isfloat         numel           uint32
-    double          ishermitian     nzmax           uint64
-    eig             isinf           ones            uint8
-    end             isinteger       prod            xor
-    eps             islogical       real            zeros
-    etree           ismatrix        repmat
-    false           isnan           reshape
-    find            isnumeric       round \end{verbatim}}
+                    fix             isreal          single
+    abs             flip            isscalar        size
+    all             floor           issparse        sparse
+    amd             fprintf         issymmetric     spfun
+    and             full            istril          spones
+    any             graph           istriu          sprand
+    assert          int16           isvector        sprandn
+    bandwidth       int32           kron            sprandsym
+    ceil            int64           length          sprintf
+    colamd          int8            logical         sqrt
+    complex         isa             max             sum
+    conj            isbanded        min             symamd
+    diag            isdiag          nnz             symrcm
+    digraph         isempty         nonzeros        tril
+    disp            isequal         norm            triu
+    display         isfinite        numel           true
+    dmperm          isfloat         nzmax           uint16
+    double          ishermitian     ones            uint32
+    eig             isinf           prod            uint64
+    end             isinteger       real            uint8
+    eps             islogical       repmat          xor
+    etree           ismatrix        reshape         zeros
+    false           isnan           round
+    find            isnumeric       sign \end{verbatim}}
 
 \newpage
-The static methods (used in the form \verb'gb.method') provide direct access
-to GraphBLAS functions and can be used on both MATLAB and GraphBLAS matrices.
-Type \verb'help graphblas' and \verb'help gb' for more help.
+The static methods (used in the form \verb'GrB.method') provide direct access
+to GraphBLAS functions and can be used on both MATLAB and GraphBLAS matrices,
+or any combination.  Once the \verb'GraphBLAS/GraphBLAS' folder is in your
+MATLAB path, type \verb'help graphblas' and \verb'help GrB' in MATLAB
+for more help.
 
 {\footnotesize
 \begin{verbatim}
-    apply           emult           isfull          select
-    assign          entries         issigned        semiringinfo
-    bfs             expand          ktruss          speye
-    binopinfo       extract         laplacian       subassign
-    build           extracttuples   mis             threads
-    chunk           eye             monoidinfo      tricount
-    clear           format          mxm             type
-    compact         gbkron          nonz            unopinfo
-    descriptorinfo  gbtranspose     offdiag         vreduce
-    dnn             incidence       pagerank
-    eadd            isbycol         prune
-    empty           isbyrow         reduce      \end{verbatim}}
+    apply           emult           kronecker       select          
+    assign          entries         ktruss          selectopinfo    
+    bfs             expand          laplacian       semiringinfo    
+    binopinfo       extract         mis             speye           
+    build           extracttuples   monoidinfo      subassign       
+    chunk           eye             mxm             threads         
+    clear           format          nonz            trans           
+    compact         incidence       offdiag         tricount        
+    descriptorinfo  isbycol         pagerank        type            
+    dnn             isbyrow         prune           unopinfo        
+    eadd            isfull          random          vreduce         
+    empty           issigned        reduce  \end{verbatim}}
+
+\subsection{Limitations}
+
+Some features for MATLAB sparse matrices are not yet available for
+GraphBLAS matrices.  Some of these may be added in future releases.
+
+\begin{packed_itemize}
+    \item Non-blocking mode is not exploited; this would require
+        a MATLAB mexFunction to modify its inputs, which is
+        technically possible but not permitted by the MATLAB API.
+    \item Linear indexing, or \verb'A(:)' for a 2D matrix, and
+        a single output of \verb'I=find(A)'.
+    \item Complex matrices.
+    \item The second output for \verb'min' and \verb'max',
+        and the \verb'includenan' option.
+    \item Singleton expansion.
+    \item Dynamically growing arrays, where \verb'C(i)=x' can increase
+        the size of \verb'C'.
+    \item Saturating element-wise binary and unary operators for integers.
+        For \verb'C=A+B' with MATLAB \verb'uint8' matrices, results
+        saturate if they exceed 255.  This is not compatible with
+        a monoid for \verb'C=A*B', and thus MATLAB does not support
+        matrix-matrix multiplication with \verb'uint8' matrices.
+        In GraphBLAS, \verb'uint8' addition acts in a modulo fashion.
+        Saturating binary operators could be added in the future,
+        so that \verb"GrB.eadd (A, '+saturate', B)" could return the
+        MATLAB result.
+    \item Solvers, so that \verb'x=A\b' could return a GF(2) solution,
+        for example.
+    \item Some methods are slower than MATLAB.  Dense vectors, for example,
+        are faster with MATLAB full vectors than GraphBLAS sparse vectors.
+        These issues will be addressed in a future version.
+    \item Sparse matrices with dimension higher than 2.  It would be
+        possible to map a N-dimensional matrix to a large 2D
+        hypersparse GraphBLAS matrix.
+\end{packed_itemize}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10074,6 +10117,8 @@ the GraphBLAS source could be placed anywhere, as long as
 Build \verb'GraphBLAS' first, then the \verb'LAGraph' library, and then the
 tests in \verb'LAGraph/Test'.
 
+Many of these algorithms are described in \cite{Davis20}.
+
 \vspace{0.1in}
 {\small
 \begin{tabular}{ll}
@@ -10089,7 +10134,7 @@ Algorithms & description \\
 \verb'LACC_GraphBLAS.c'     & connected components \\
 \verb'LAGraph_BF_*.c'       & two variants of Bellman-Ford \\
 \verb'LAGraph_allktruss'    & construct all $k$-trusses \\
-\verb'LAGraph_dnn'          & sparse deep neural network \\
+\verb'LAGraph_dnn'          & sparse deep neural network \cite{DavisAznavehKolodziej19} \\
 \verb'LAGraph_ktruss'       & construct a $k$-trusses \\
 \verb'LAGraph_lcc'          & local clustering coefficient \\
 \verb'LAGraph_pagerank'     & PageRank \\
