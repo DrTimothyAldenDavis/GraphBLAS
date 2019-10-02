@@ -3,7 +3,8 @@
 
 ========================= import_test: format 0
 
-    67x67 GraphBLAS double matrix: C to export, standard CSR, 294 entries
+  67x67 GraphBLAS double matrix, sparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -39,7 +40,8 @@
 
 ========================= import_test: format 1
 
-    67x67 GraphBLAS double matrix: C to export, standard CSR, 294 entries
+  67x67 GraphBLAS double matrix, sparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -75,7 +77,8 @@
 
 ========================= import_test: format 2
 
-    67x67 GraphBLAS double matrix: C to export, standard CSR, 294 entries
+  67x67 GraphBLAS double matrix, sparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -111,7 +114,8 @@
 
 ========================= import_test: format 3
 
-    67x67 GraphBLAS double matrix: C to export, standard CSR, 294 entries
+  67x67 GraphBLAS double matrix, sparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -149,7 +153,8 @@
 
 ========================= import_test: format 0
 
-    67x67 GraphBLAS double matrix: C to export, standard CSC, 294 entries
+  67x67 GraphBLAS double matrix, sparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186
@@ -185,7 +190,8 @@
 
 ========================= import_test: format 1
 
-    67x67 GraphBLAS double matrix: C to export, standard CSC, 294 entries
+  67x67 GraphBLAS double matrix, sparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186
@@ -221,7 +227,8 @@
 
 ========================= import_test: format 2
 
-    67x67 GraphBLAS double matrix: C to export, standard CSC, 294 entries
+  67x67 GraphBLAS double matrix, sparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186
@@ -257,7 +264,8 @@
 
 ========================= import_test: format 3
 
-    67x67 GraphBLAS double matrix: C to export, standard CSC, 294 entries
+  67x67 GraphBLAS double matrix, sparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186
@@ -295,7 +303,8 @@
 
 ========================= import_test: format 0
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSR, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -331,7 +340,8 @@
 
 ========================= import_test: format 1
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSR, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -367,7 +377,8 @@
 
 ========================= import_test: format 2
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSR, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -403,7 +414,8 @@
 
 ========================= import_test: format 3
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSR, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by row:
+  C to export, 294 entries
 
     (0,7)    -0.8341818
     (0,12)    1.265823
@@ -441,7 +453,8 @@
 
 ========================= import_test: format 0
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSC, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186
@@ -477,7 +490,8 @@
 
 ========================= import_test: format 1
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSC, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186
@@ -513,7 +527,8 @@
 
 ========================= import_test: format 2
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSC, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186
@@ -549,7 +564,8 @@
 
 ========================= import_test: format 3
 
-    67x67 GraphBLAS double matrix: C to export, hypersparse CSC, 294 entries
+  67x67 GraphBLAS double matrix, hypersparse by col:
+  C to export, 294 entries
 
     (4,0)    -0.2788416
     (5,0)    -0.2680186

@@ -2,88 +2,88 @@ Wathen: nx 4 ny 4 n 65 nz 817 method 0, time: 0.000 sec
 number of nodes: 65
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000115
+BFS time in seconds:       0.000292
 nodes reachable from node 0: 65 out of 65
 max BFS level: 5
 
 method 5: same but check each result
-BFS time in seconds:       0.000049
+BFS time in seconds:       0.000179
 nodes reachable from node 0: 65 out of 65
 max BFS level: 5
 
 method 6: apply unary operator
-BFS time in seconds:       0.000071
+BFS time in seconds:       0.000249
 nodes reachable from node 0: 65 out of 65
 max BFS level: 5
 
 method 6: same but check each result
-BFS time in seconds:       0.000065
+BFS time in seconds:       0.000234
 nodes reachable from node 0: 65 out of 65
 max BFS level: 5
 random 5 by 5, nz: 21, method 1 time 0.000 sec
 number of nodes: 5
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000080
+BFS time in seconds:       0.000213
 nodes reachable from node 0: 5 out of 5
 max BFS level: 3
 
 method 5: same but check each result
-BFS time in seconds:       0.000036
+BFS time in seconds:       0.000117
 nodes reachable from node 0: 5 out of 5
 max BFS level: 3
 
 method 6: apply unary operator
-BFS time in seconds:       0.000048
+BFS time in seconds:       0.000156
 nodes reachable from node 0: 5 out of 5
 max BFS level: 3
 
 method 6: same but check each result
-BFS time in seconds:       0.000044
+BFS time in seconds:       0.000143
 nodes reachable from node 0: 5 out of 5
 max BFS level: 3
 matrix 3 by 3, 3 entries, from stdin
 number of nodes: 3
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000056
+BFS time in seconds:       0.000228
 nodes reachable from node 0: 1 out of 3
 max BFS level: 1
 
 method 5: same but check each result
-BFS time in seconds:       0.000024
+BFS time in seconds:       0.000120
 nodes reachable from node 0: 1 out of 3
 max BFS level: 1
 
 method 6: apply unary operator
-BFS time in seconds:       0.000028
+BFS time in seconds:       0.000133
 nodes reachable from node 0: 1 out of 3
 max BFS level: 1
 
 method 6: same but check each result
-BFS time in seconds:       0.000031
+BFS time in seconds:       0.000122
 nodes reachable from node 0: 1 out of 3
 max BFS level: 1
 matrix 4 by 4, 8 entries, from stdin
 number of nodes: 4
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000061
+BFS time in seconds:       0.000204
 nodes reachable from node 0: 2 out of 4
 max BFS level: 2
 
 method 5: same but check each result
-BFS time in seconds:       0.000032
+BFS time in seconds:       0.000120
 nodes reachable from node 0: 2 out of 4
 max BFS level: 2
 
 method 6: apply unary operator
-BFS time in seconds:       0.000042
+BFS time in seconds:       0.000152
 nodes reachable from node 0: 2 out of 4
 max BFS level: 2
 
 method 6: same but check each result
-BFS time in seconds:       0.000036
+BFS time in seconds:       0.000194
 nodes reachable from node 0: 2 out of 4
 max BFS level: 2
 
@@ -99,22 +99,22 @@ matrix 4 by 4, 14 entries, from stdin
 number of nodes: 4
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000054
+BFS time in seconds:       0.000222
 nodes reachable from node 0: 4 out of 4
 max BFS level: 2
 
 method 5: same but check each result
-BFS time in seconds:       0.000028
+BFS time in seconds:       0.000162
 nodes reachable from node 0: 4 out of 4
 max BFS level: 2
 
 method 6: apply unary operator
-BFS time in seconds:       0.000034
+BFS time in seconds:       0.000156
 nodes reachable from node 0: 4 out of 4
 max BFS level: 2
 
 method 6: same but check each result
-BFS time in seconds:       0.000030
+BFS time in seconds:       0.000143
 nodes reachable from node 0: 4 out of 4
 max BFS level: 2
 
@@ -130,329 +130,329 @@ matrix 7 by 7, 16 entries, from stdin
 number of nodes: 7
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000067
+BFS time in seconds:       0.000164
 nodes reachable from node 0: 7 out of 7
 max BFS level: 5
 
 method 5: same but check each result
-BFS time in seconds:       0.000038
+BFS time in seconds:       0.000109
 nodes reachable from node 0: 7 out of 7
 max BFS level: 5
 
 method 6: apply unary operator
-BFS time in seconds:       0.000051
+BFS time in seconds:       0.000159
 nodes reachable from node 0: 7 out of 7
 max BFS level: 5
 
 method 6: same but check each result
-BFS time in seconds:       0.000049
+BFS time in seconds:       0.000144
 nodes reachable from node 0: 7 out of 7
 max BFS level: 5
 matrix 304 by 304, 876 entries, from stdin
 number of nodes: 304
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000204
+BFS time in seconds:       0.000448
 nodes reachable from node 0: 304 out of 304
 max BFS level: 17
 
 method 5: same but check each result
-BFS time in seconds:       0.000162
+BFS time in seconds:       0.000379
 nodes reachable from node 0: 304 out of 304
 max BFS level: 17
 
 method 6: apply unary operator
-BFS time in seconds:       0.000223
+BFS time in seconds:       0.000555
 nodes reachable from node 0: 304 out of 304
 max BFS level: 17
 
 method 6: same but check each result
-BFS time in seconds:       0.000217
+BFS time in seconds:       0.000773
 nodes reachable from node 0: 304 out of 304
 max BFS level: 17
 matrix 48 by 48, 400 entries, from stdin
 number of nodes: 48
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000090
+BFS time in seconds:       0.000177
 nodes reachable from node 0: 48 out of 48
 max BFS level: 4
 
 method 5: same but check each result
-BFS time in seconds:       0.000045
+BFS time in seconds:       0.000104
 nodes reachable from node 0: 48 out of 48
 max BFS level: 4
 
 method 6: apply unary operator
-BFS time in seconds:       0.000057
+BFS time in seconds:       0.000139
 nodes reachable from node 0: 48 out of 48
 max BFS level: 4
 
 method 6: same but check each result
-BFS time in seconds:       0.000051
+BFS time in seconds:       0.000132
 nodes reachable from node 0: 48 out of 48
 max BFS level: 4
 matrix 4884 by 4884, 290378 entries, from stdin
 number of nodes: 4884
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.001645
+BFS time in seconds:       0.003146
 nodes reachable from node 0: 4810 out of 4884
 max BFS level: 44
 
 method 5: same but check each result
-BFS time in seconds:       0.001435
+BFS time in seconds:       0.003059
 nodes reachable from node 0: 4810 out of 4884
 max BFS level: 44
 
 method 6: apply unary operator
-BFS time in seconds:       0.001789
+BFS time in seconds:       0.003773
 nodes reachable from node 0: 4810 out of 4884
 max BFS level: 44
 
 method 6: same but check each result
-BFS time in seconds:       0.001797
+BFS time in seconds:       0.003574
 nodes reachable from node 0: 4810 out of 4884
 max BFS level: 44
 matrix 183 by 183, 1585 entries, from stdin
 number of nodes: 183
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000111
+BFS time in seconds:       0.000297
 nodes reachable from node 0: 183 out of 183
 max BFS level: 4
 
 method 5: same but check each result
-BFS time in seconds:       0.000072
+BFS time in seconds:       0.000212
 nodes reachable from node 0: 183 out of 183
 max BFS level: 4
 
 method 6: apply unary operator
-BFS time in seconds:       0.000085
+BFS time in seconds:       0.000271
 nodes reachable from node 0: 183 out of 183
 max BFS level: 4
 
 method 6: same but check each result
-BFS time in seconds:       0.000083
+BFS time in seconds:       0.000258
 nodes reachable from node 0: 183 out of 183
 max BFS level: 4
 matrix 63 by 63, 246 entries, from stdin
 number of nodes: 63
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000086
+BFS time in seconds:       0.000208
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 
 method 5: same but check each result
-BFS time in seconds:       0.000051
+BFS time in seconds:       0.000149
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 
 method 6: apply unary operator
-BFS time in seconds:       0.000073
+BFS time in seconds:       0.000217
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 
 method 6: same but check each result
-BFS time in seconds:       0.000065
+BFS time in seconds:       0.000208
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 matrix 63 by 63, 246 entries, from stdin
 number of nodes: 63
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000104
+BFS time in seconds:       0.000205
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 
 method 5: same but check each result
-BFS time in seconds:       0.000059
+BFS time in seconds:       0.000149
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 
 method 6: apply unary operator
-BFS time in seconds:       0.000083
+BFS time in seconds:       0.000216
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 
 method 6: same but check each result
-BFS time in seconds:       0.000072
+BFS time in seconds:       0.000207
 nodes reachable from node 0: 63 out of 63
 max BFS level: 6
 matrix 78 by 78, 204 entries, from stdin
 number of nodes: 78
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000119
+BFS time in seconds:       0.000313
 nodes reachable from node 0: 78 out of 78
 max BFS level: 10
 
 method 5: same but check each result
-BFS time in seconds:       0.000078
+BFS time in seconds:       0.000235
 nodes reachable from node 0: 78 out of 78
 max BFS level: 10
 
 method 6: apply unary operator
-BFS time in seconds:       0.000108
+BFS time in seconds:       0.000348
 nodes reachable from node 0: 78 out of 78
 max BFS level: 10
 
 method 6: same but check each result
-BFS time in seconds:       0.000106
+BFS time in seconds:       0.000411
 nodes reachable from node 0: 78 out of 78
 max BFS level: 10
 matrix 982 by 982, 99840 entries, from stdin
 number of nodes: 982
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000403
+BFS time in seconds:       0.000806
 nodes reachable from node 0: 933 out of 982
 max BFS level: 5
 
 method 5: same but check each result
-BFS time in seconds:       0.000295
+BFS time in seconds:       0.000582
 nodes reachable from node 0: 933 out of 982
 max BFS level: 5
 
 method 6: apply unary operator
-BFS time in seconds:       0.000327
+BFS time in seconds:       0.000678
 nodes reachable from node 0: 933 out of 982
 max BFS level: 5
 
 method 6: same but check each result
-BFS time in seconds:       0.000343
+BFS time in seconds:       0.000641
 nodes reachable from node 0: 933 out of 982
 max BFS level: 5
 matrix 67 by 67, 576 entries, from stdin
 number of nodes: 67
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.000097
+BFS time in seconds:       0.000201
 nodes reachable from node 0: 67 out of 67
 max BFS level: 5
 
 method 5: same but check each result
-BFS time in seconds:       0.000060
+BFS time in seconds:       0.000124
 nodes reachable from node 0: 67 out of 67
 max BFS level: 5
 
 method 6: apply unary operator
-BFS time in seconds:       0.000078
+BFS time in seconds:       0.000174
 nodes reachable from node 0: 67 out of 67
 max BFS level: 5
 
 method 6: same but check each result
-BFS time in seconds:       0.000071
+BFS time in seconds:       0.000163
 nodes reachable from node 0: 67 out of 67
 max BFS level: 5
-Wathen: nx 200 ny 200 n 120801 nz 1883201 method 0, time: 0.102 sec
+Wathen: nx 200 ny 200 n 120801 nz 1883201 method 0, time: 0.084 sec
 number of nodes: 120801
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.063971
+BFS time in seconds:       0.092873
 nodes reachable from node 0: 120801 out of 120801
 max BFS level: 201
 
 method 5: same but check each result
-BFS time in seconds:       0.051884
+BFS time in seconds:       0.089280
 nodes reachable from node 0: 120801 out of 120801
 max BFS level: 201
 
 method 6: apply unary operator
-BFS time in seconds:       0.065305
+BFS time in seconds:       0.120832
 nodes reachable from node 0: 120801 out of 120801
 max BFS level: 201
 
 method 6: same but check each result
-BFS time in seconds:       0.066724
+BFS time in seconds:       0.123596
 nodes reachable from node 0: 120801 out of 120801
 max BFS level: 201
-random 10000 by 10000, nz: 199777, method 0 time 0.019 sec
+random 10000 by 10000, nz: 199777, method 0 time 0.046 sec
 number of nodes: 10000
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.003324
+BFS time in seconds:       0.006886
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
 
 method 5: same but check each result
-BFS time in seconds:       0.003002
+BFS time in seconds:       0.006159
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
 
 method 6: apply unary operator
-BFS time in seconds:       0.003082
+BFS time in seconds:       0.006411
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
 
 method 6: same but check each result
-BFS time in seconds:       0.003096
+BFS time in seconds:       0.006403
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
-random 10000 by 10000, nz: 199777, method 1 time 0.018 sec
+random 10000 by 10000, nz: 199777, method 1 time 0.034 sec
 number of nodes: 10000
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.003312
+BFS time in seconds:       0.006534
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
 
 method 5: same but check each result
-BFS time in seconds:       0.003063
+BFS time in seconds:       0.005678
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
 
 method 6: apply unary operator
-BFS time in seconds:       0.003315
+BFS time in seconds:       0.005877
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
 
 method 6: same but check each result
-BFS time in seconds:       0.003305
+BFS time in seconds:       0.005922
 nodes reachable from node 0: 10000 out of 10000
 max BFS level: 5
-random 100000 by 100000, nz: 19980256, method 0 time 2.024 sec
+random 100000 by 100000, nz: 19980256, method 0 time 2.134 sec
 number of nodes: 100000
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.069420
+BFS time in seconds:       0.112415
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
 
 method 5: same but check each result
-BFS time in seconds:       0.061485
+BFS time in seconds:       0.108608
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
 
 method 6: apply unary operator
-BFS time in seconds:       0.059788
+BFS time in seconds:       0.111228
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
 
 method 6: same but check each result
-BFS time in seconds:       0.059273
+BFS time in seconds:       0.110731
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
-random 100000 by 100000, nz: 19980256, method 1 time 1.591 sec
+random 100000 by 100000, nz: 19980256, method 1 time 1.370 sec
 number of nodes: 100000
 
 method 5: vector assign and reduce:
-BFS time in seconds:       0.066468
+BFS time in seconds:       0.113270
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
 
 method 5: same but check each result
-BFS time in seconds:       0.056884
+BFS time in seconds:       0.103206
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
 
 method 6: apply unary operator
-BFS time in seconds:       0.058223
+BFS time in seconds:       0.100382
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
 
 method 6: same but check each result
-BFS time in seconds:       0.058727
+BFS time in seconds:       0.100796
 nodes reachable from node 0: 100000 out of 100000
 max BFS level: 4
