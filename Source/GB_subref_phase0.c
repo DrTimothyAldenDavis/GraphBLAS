@@ -7,7 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-#define GB_DEBUG 1
 #include "GB_subref.h"
 
 #define GB_Ai(p) GB_UNFLIP (Ai [p])

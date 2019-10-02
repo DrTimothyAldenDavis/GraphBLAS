@@ -29,8 +29,6 @@
 // Compare this function with GB_ewise_slice, which constructs coarse/fine
 // tasks for the eWise operations (C=A+B, C=A.*B, and C<M>=Z).
 
-#define GB_DEBUG 1
-
 #define GB_FREE_WORK                                                    \
 {                                                                       \
     GB_FREE_MEMORY (Coarse, ntasks1+1, sizeof (int64_t)) ;              \
