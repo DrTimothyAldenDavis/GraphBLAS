@@ -702,10 +702,10 @@ denote the multiplication of two matrices over a semiring.
 \verb'GrB_mxv'       & matrix-vector multiply  & ${\bf w \langle m \rangle = w \odot Au}$ \\
 \hline
 \verb'GrB_eWiseMult' & element-wise,           & ${\bf C \langle M \rangle = C \odot (A \otimes B)}$ \\
-                     & set union               & ${\bf w \langle m \rangle = w \odot (u \otimes v)}$ \\
+                     & set intersection        & ${\bf w \langle m \rangle = w \odot (u \otimes v)}$ \\
 \hline
 \verb'GrB_eWiseAdd'  & element-wise,           & ${\bf C \langle M \rangle = C \odot (A \oplus  B)}$ \\
-                     & set intersection        & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
+                     & set union               & ${\bf w \langle m \rangle = w \odot (u \oplus  v)}$ \\
 \hline
 \verb'GrB_extract'   & extract submatrix       & ${\bf C \langle M \rangle = C \odot A(I,J)}$ \\
                      &                         & ${\bf w \langle m \rangle = w \odot u(i)}$ \\
@@ -8877,7 +8877,8 @@ the \verb'Mask' and \verb'accum', and provide a non-default descriptor
     GrB_Descriptor_set (desc, GrB_INP0, GrB_TRAN) ;
     GrB_transpose (C, NULL, NULL, A, desc) ; \end{verbatim}}
 
-If the types of \verb'C' and match, then the above two lines of code are the
+If the types of \verb'C' and \verb'A' match,
+then the above two lines of code are the
 same as \verb'GrB_Matrix_dup (&C, A)', except that for \verb'GrB_transpose' the
 matrix \verb'C' must already exist and be the right size.  If \verb'C' does not
 exist, the work of \verb'GrB_Matrix_dup' can be replicated with this:
