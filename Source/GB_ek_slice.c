@@ -25,7 +25,7 @@ bool GB_ek_slice        // true if successful, false if out of memory
     int64_t *restrict *kfirst_slice_handle, // size ntasks
     int64_t *restrict *klast_slice_handle,  // size ntasks
     // input:
-    GrB_Matrix A,                   // matrix to slize
+    GrB_Matrix A,                   // matrix to slice
     int ntasks                      // # of tasks
 )
 {
