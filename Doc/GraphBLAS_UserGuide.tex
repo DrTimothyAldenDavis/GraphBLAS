@@ -721,11 +721,11 @@ denote the multiplication of two matrices over a semiring.
 \verb'GrB_apply'     & apply unary operator    & ${\bf C \langle M \rangle = C \odot} f{\bf (A)}$ \\
                      &                         & ${\bf w \langle m \rangle = w \odot} f{\bf (u)}$ \\
 \hline
-\verb'GxB_select'    & apply select operator   & ${\bf C \langle M \rangle = C \odot} f{\bf (A,k)}$ \\
-                     &                         & ${\bf w \langle m \rangle = w \odot} f{\bf (u,k)}$ \\
+\verb'GxB_select'    & apply select operator   & ${\bf C \langle M \rangle = C \odot} f({\bf A},k)$ \\
+                     &                         & ${\bf w \langle m \rangle = w \odot} f({\bf u},k)$ \\
 \hline
 \verb'GrB_reduce'    & reduce to vector        & ${\bf w \langle m \rangle = w \odot} [{\oplus}_j {\bf A}(:,j)]$ \\
-                     & reduce to scalar        & $s = s \odot [{\oplus}_{ij}  {\bf A}(I,J)]$ \\
+                     & reduce to scalar        & $s = s \odot [{\oplus}_{ij}  {\bf A}(i,j)]$ \\
 \hline
 \verb'GrB_transpose' & transpose               & ${\bf C \langle M \rangle = C \odot A^{\sf T}}$ \\
 \hline
@@ -8630,7 +8630,7 @@ The comparators \verb'GxB_GT_*' \verb'GxB_GE_*' \verb'GxB_LT_*', and
 \verb'GxB_LE_*' only work for built-in types.  All other built-in select
 operators can be used for any type, both built-in and any user-defined type.
 
-MOTE: For floating-point values, comparisons with \verb'NaN' always return
+{\bf NOTE:} For floating-point values, comparisons with \verb'NaN' always return
 false.  The built-in select operators should not be used with a scalar
 \verb'thunk' that is equal to \verb'NaN'.  For this case, create a user-defined
 select operator that performs the test with the ANSI C \verb'isnan' function
