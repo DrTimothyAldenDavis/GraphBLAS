@@ -216,12 +216,8 @@ static inline int GB_subref_method  // return the method to use (1 to 12)
         method = 5 ;
         work = ajnz ;
     }
-    else if
-        (
-            (Ikind == GB_LIST && !I_inverse_ok)     // must do Case 6
-            ||
-            (64 * nI < ajnz)                        // Case 6 faster
-        )
+    else if ((Ikind == GB_LIST && !I_inverse_ok) ||  // must do Case 6
+        (64 * nI < ajnz))    // Case 6 faster
     { 
         // Case 6: nI not large; binary search of A(:,j) for each i in I
         method = 6 ;
