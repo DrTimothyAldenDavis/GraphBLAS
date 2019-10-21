@@ -59,6 +59,10 @@ Version 3.0.1, July 26, 2019
     * new operators and semirings: RDIV (f(x,y)=y/x) and RMINUS (y-x)
         binary operators.
 
+Version 2.3.5, Oct 20, 2019
+
+    * minor update: fix for tests in MATLAB R2019b
+
 Version 2.3.4, July 4, 2019
 
     * Collected Algorithm of the ACM
