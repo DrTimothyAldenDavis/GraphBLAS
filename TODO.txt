@@ -1,0 +1,2 @@
+
+Ewise add and emult: handle dense += sparse case efficiently

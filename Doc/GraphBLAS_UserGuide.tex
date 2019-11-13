@@ -6268,7 +6268,7 @@ full implementation of the MATLAB colon notation for integers,
 \verb'C=A(0:(n/2),0:(n/2))' in this example, with dimension $2^{59}$, probably
 taking just milliseconds on an old smartphone.
 
-The \verb'GrB_extract', \verb'GrB_assign', and \verb'GrB_subassign' operations
+The \verb'GrB_extract', \verb'GrB_assign', and \verb'GxB_subassign' operations
 (described in the Section~\ref{operations}) each have parameters that define a
 list of integer indices, using two parameters:
 
@@ -6289,7 +6289,12 @@ discussion applies equally to the row indices \verb'I' and the column indices
     notation, is handled by passing in \verb'I' as a pointer to an array of
     size 5, and passing \verb'ni=5' as the size of the list.
     The length of the explicit list is \verb'ni=|I|'.
-    Duplicates may appear.
+    Duplicates may appear, except that for some uses of \verb'GrB_assign'
+    and \verb'GxB_subassign', duplicates lead to undefined behavior
+    according to the GraphBLAS C API Specification.
+    SuiteSparse:GraphBLAS specifies how duplicates are handled in all cases,
+    as an addition to the specification.
+    See Section~\ref{duplicates} for details.
 
 \item To specify all rows of a matrix, use \verb'I = GrB_ALL'.  The
     parameter \verb'ni' is ignored.  This is equivalent to \verb'C=A(:,J)'
@@ -7325,7 +7330,8 @@ See Section~\ref{colon} for a description of the row indices
 
 \verb'GxB_subassign' is very similar to \verb'GrB_assign', described in
 Section~\ref{assign}.  The two operations are compared and contrasted in
-Section~\ref{compare_assign}.
+Section~\ref{compare_assign}.  For a discussion of how duplicate indices
+are handled in \verb'I' and \verb'J', see Section~\ref{duplicates}.
 
 \begin{spec}
 {\bf SPEC:} All variants of \verb'GxB_subassign' are extensions to the spec.
@@ -7472,9 +7478,6 @@ described for matrix extraction:
         end
     end \end{verbatim}}
 
-Results are not defined for any \verb'GxB_subassign' operation if duplicate
-indices appear in \verb'I' or \verb'J'.
-
 \paragraph{\bf Performance considerations:} % C(I,J) = A
 If \verb'A' is not transposed: if \verb'|I|' is small, then it is fastest if
 the format of \verb'C' is \verb'GxB_BY_ROW'; if \verb'|J|' is small, then it is
@@ -7583,9 +7586,6 @@ index for a vector is implicitly \verb'j=0'.  For further details of this
 function, see \verb'GxB_Matrix_subassign_<type>' in
 Section~\ref{subassign_matrix_scalar}.
 
-Unlike \verb'GrB_Vector_assign_<type>' (see Section~\ref{assign_vector_scalar}),
-results are not defined if \verb'I' contains duplicate indices.
-
 \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GxB\_Matrix\_subassign\_$<$type$>$:} assign a scalar to a submatrix}
@@ -7633,9 +7633,6 @@ If a \verb'void *' pointer is passed in and the type of the underlying scalar
 does not exactly match the user-defined type of \verb'C', then results are
 undefined.  No error status will be returned since GraphBLAS has no way of
 catching this error.
-Unlike \verb'GrB_Matrix_assign_<type>' (see
-Section~\ref{assign_vector_scalar}), results are not defined if \verb'I' or
-\verb'J' contain duplicate indices.
 
 \paragraph{\bf Performance considerations:} % C(I,J) = scalar
 If \verb'A' is not transposed: if \verb'|I|' is small, then it is fastest if
@@ -7856,8 +7853,9 @@ vector is implicitly \verb'j=0'.  The \verb'mask' vector has the same size as
 \verb'w'.  For further details of this function, see
 \verb'GrB_Matrix_assign_<type>' in the next section.
 
-In contrast to \verb'GxB_Vector_subassign_<type>', results are well-defined if
-\verb'I' contains duplicate indices.  Duplicate indices are simply ignored.
+Following the C API Specification, results are well-defined if \verb'I'
+contains duplicate indices.  Duplicate indices are simply ignored.  See
+Section~\ref{duplicates} for more details.
 
 % \newpage
 %-------------------------------------------------------------------------------
@@ -7910,15 +7908,147 @@ does not exactly match the user-defined type of \verb'C', then results are
 undefined.  No error status will be returned since GraphBLAS has no way of
 catching this error.
 
-In contrast to \verb'GxB_Matrix_subassign_<type>', results are well-defined if
-\verb'I' or \verb'J' contain duplicate indices.  Duplicate indices
-are simply ignored.
+Following the C API Specification, results are well-defined if \verb'I' or
+\verb'J' contain duplicate indices.  Duplicate indices are simply ignored.  See
+Section~\ref{duplicates} for more details.
 
 \paragraph{\bf Performance considerations:} % C(I,J) = scalar
 If \verb'A' is not transposed: if \verb'|I|' is small, then it is fastest if
 the format of \verb'C' is \verb'GxB_BY_ROW'; if \verb'|J|' is small, then it is
 fastest if the format of \verb'C' is \verb'GxB_BY_COL'.  The opposite is true
 if \verb'A' is transposed.
+
+\newpage
+%===============================================================================
+\subsection{Duplicate indices in {\sf GrB\_assign} and {\sf GxB\_subassign}}
+%===============================================================================
+\label{duplicates}
+
+According to the GraphBLAS C API Specification if the index vectors \verb'I' or
+\verb'J' contain duplicate indices, the results are undefined for
+\verb'GrB_Matrix_assign' \verb'GrB_Matrix_assign' \verb'GrB_Col_assign' and
+\verb'GrB_Row_assign'.  Only the scalar assignment operations
+(\verb'GrB_Matrix_assign_TYPE' and \verb'GrB_Matrix_assign_TYPE') are
+well-defined when duplicates appear in \verb'I' and \verb'J'.  In those two
+functions, duplicate indices are ignored.
+
+As an extension to the specification, SuiteSparse:GraphBLAS provides a
+definition of how duplicate indices are handled in all cases.  If \verb'I' has
+duplicate indices, they are ignored and the last unique entry in the list is
+used.  When no mask and no accumulator is present, the results are identical to
+how MATLAB handles duplicate indices in the built-in expression
+\verb'C(I,J)=A'.  Details of how this is done is shown below.
+
+{\small
+\begin{verbatim}
+    function C = subassign (C, I, J, A)
+    % submatrix assignment with pre-sort of I and J; and remove duplicates
+
+    % delete duplicates from I, keeping the last one seen
+    [I2 I2k] = sort (I) ;
+    Idupl = [(I2 (1:end-1) == I2 (2:end)), false] ;
+    I2  = I2  (~Idupl) ;
+    I2k = I2k (~Idupl) ;
+    assert (isequal (I2, unique (I)))
+
+    % delete duplicates from J, keeping the last one seen
+    [J2 J2k] = sort (J) ;
+    Jdupl = [(J2 (1:end-1) == J2 (2:end)), false] ;
+    J2  = J2  (~Jdupl) ;
+    J2k = J2k (~Jdupl) ;
+    assert (isequal (J2, unique (J)))
+
+    % do the submatrix assignment, with no duplicates in I2 or J2
+    C (I2,J2) = A (I2k,J2k) ;
+\end{verbatim}}
+
+If a mask is present, then it is replaced with \verb'M = M (I2k, J2k)' for
+\verb'GxB_subassign', or with \verb'M = M (I2, J2)' for \verb'GrB_assign'.
+If an accumulator operator is present, it is applied after the duplicates
+are removed, as (for example):
+
+{\small
+\begin{verbatim}
+    C (I2,J2) = C (I2,J2) + A (I2k,J2k) ;
+\end{verbatim}}
+
+These definitions allow the MATLAB interface to GraphBLAS to return the same
+results for \verb'C(I,J)=A' for a \verb'GrB' object as they do for built-in
+MATLAB matrices.  They also allow the assignment to be done in parallel.
+
+Results are always well-defined in SuiteSparse:GraphBLAS, but they might not be
+what you expect.  For example, suppose the \verb'MIN' operator is being used
+the following assigment to the vector \verb'x', and suppose \verb'I' contains
+the entries \verb'[0 0]'.  Suppose \verb'x' is initially empty, of length 1,
+and suppose \verb'y' is a vector of length 2 with the values \verb'[5 7]'.
+
+{\small
+\begin{verbatim}
+    #include "GraphBLAS.h"
+    #include <stdio.h>
+    int main (void)
+    {
+        GrB_init (GrB_NONBLOCKING) ;
+        GrB_Vector x, y ;
+        GrB_Vector_new (&x, GrB_INT32, 1) ;
+        GrB_Vector_new (&y, GrB_INT32, 2) ;
+        GrB_Index I [2] = {0, 0} ;
+        GrB_Vector_setElement (y, 5, 0) ;
+        GrB_Vector_setElement (y, 7, 1) ;
+        GrB_wait ( ) ;
+        GxB_print (x, 3) ;
+        GxB_print (y, 3) ;
+        GrB_assign (x, NULL, GrB_MIN_INT32, y, I, 2, NULL) ;
+        GrB_wait ( ) ;
+        GxB_print (x, 3) ;
+        GrB_finalize ( ) ;
+    }
+\end{verbatim}}
+
+You might (wrongly) expect the result to be the vector \verb'x(0)=5', since
+two entries seem to be assigned, and the min operator might be expected to
+take the minimum of the two.  This is not how SuiteSparse:GraphBLAS handles
+duplicates.
+
+Instead, the first duplicate index of \verb'I' is discarded
+(\verb'I [0] = 0', and \verb'y(0)=5').
+and only the second entry is used
+(\verb'I [1] = 0', and \verb'y(1)=7').
+The output of the above program is:
+
+{\small
+\begin{verbatim}
+
+  1x1 GraphBLAS int32_t vector, sparse by col:
+  x, no entries
+
+
+  2x1 GraphBLAS int32_t vector, sparse by col:
+  y, 2 entries
+
+    (0,0)   5
+    (1,0)   7
+
+
+  1x1 GraphBLAS int32_t vector, sparse by col:
+  x, 1 entry
+
+    (0,0)   7
+
+\end{verbatim}}
+
+You see that the result is \verb'x(0)=7', since the \verb'y(0)=5' entry
+has been ignored because of the duplicate indices in \verb'I'.
+
+\begin{spec}
+{\bf SPEC:} Providing a well-defined behavior for duplicate
+indices with matrix and vector assignment is an extension to the spec.
+The spec only defines the behavior when assigning a scalar into a matrix
+or vector, and states that duplicate indices otherwise lead to undefined
+results.
+\end{spec}
+
+
 
 \newpage
 %===============================================================================
@@ -7960,30 +8090,13 @@ they differ in two ways:
     \verb'C(I,J)' submatrix.  If the \verb'GrB_REPLACE' descriptor is
     true, \verb'GrB_assign' deletes this entry.
 
-% Duplicates are now handled in V3.0.1 and later, so this difference no
-% no longer exists.
-%\item {\bf Scalar expansion when duplicates appear in \verb'I' or \verb'J':} \\
-%   They differ in how duplicate indices are treated in \verb'I' and \verb'J'.
-%   For both \verb'assign' and \verb'subassign', results are not defined for
-%   \verb'GrB_Matrix_*assign', \verb'GrB_Vector_*assign',
-%   \verb'GrB_Row_*assign', and \verb'GrB_Col_*assign' when duplicate indices
-%   appear in \verb'I' or \verb'J'.  The scalar expansion operations,
-%   \verb'GrB_*_assign_<type>', are well-defined if duplicate indices appear
-%   (the results are the same as if duplicates are removed first from \verb'I'
-%   and \verb'J').  However, the scalar expansion operations
-%   \verb'GxB_*_subassign_<type>' are not well-defined if duplicate indices
-%   appear in \verb'I' or \verb'J'.
-
 \end{enumerate}
 
-% \newpage
 \verb'GxB_subassign' and \verb'GrB_assign' are identical if \verb'GrB_REPLACE'
 is set to its default value of false, and if the masks happen to be the same.
 The two masks can be the same in two cases:  either the \verb'Mask' input is
 \verb'NULL' (and it is not complemented via \verb'GrB_SCMP'), or \verb'I' and
 \verb'J' are both \verb'GrB_ALL'.
-%For scalar expansion, no duplicates can
-% appear in the index lists \verb'I' and \verb'J'.
 If all these conditions hold,
 the two algorithms are identical and have the same performance.  Otherwise,
 \verb'GxB_subassign' is much faster than \verb'GrB_assign' when the latter
@@ -8026,7 +8139,6 @@ controls how \verb'C(i,j)' is modified by the subassign, from the value
 The \verb'GxB_subassign' and \verb'GrB_assign' functions have the same
 signatures; they differ only in how they consider the \verb'Mask' and the
 \verb'GrB_REPLACE' descriptor
-% , and in how duplicate indices are treated for scalar expansion.
 
 Details of each step of the two operations are listed below:
 
@@ -11180,6 +11292,15 @@ database module for Redis.  Based on SuiteSparse:GraphBLAS, RedisGraph is up
 SuiteSparse:GraphBLAS was developed with support from
 NVIDIA, MIT Lincoln Lab, Intel, Redis Labs, IBM,
 and the National Science Foundation (1514406).
+
+%-------------------------------------------------------------------------------
+\section{Additional Resources}
+%-------------------------------------------------------------------------------
+
+See \url{http://graphblas.org} for the GraphBLAS community page.
+See
+\url{https://github.com/szarnyasg/graphblas-pointers} for an up-to-date list
+of additional resources on GraphBLAS.
 
 \newpage
 %-------------------------------------------------------------------------------

@@ -53,8 +53,6 @@ try
     end
 end
 
-libraries = '-L../../../build -L. -L/usr/local/lib -lgraphblas' ;
-
 if (~ismac && isunix)
     flags = [ flags   ' CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
     flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
@@ -131,8 +129,8 @@ for k = 1:length (mexfunctions)
     % compile if it is newer than its object file, or if any cfile was compiled
     if (make_all || tc > tobj || any_c_compiled)
         % compile the mexFunction
-        mexcmd = sprintf ('mex -silent %s %s %s %s %s', ...
-            flags, inc, mexfunction, objlist, libraries) ;
+        mexcmd = sprintf ('mex -silent %s %s %s %s -lgraphblas', ...
+            flags, inc, mexfunction, objlist) ;
         fprintf ('%s\n', mexfunction) ;
         eval (mexcmd) ;
     end

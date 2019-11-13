@@ -7,7 +7,35 @@ The GrB class provides an easy-to-use MATLAB interface to SuiteSparse:GraphBLAS.
 
 To install it for use in MATLAB, first compile the GraphBLAS library,
 -lgraphblas.  See the instructions in the top-level GraphBLAS folder for
-details.  Be sure to use OpenMP for best performance.
+details.  Be sure to use OpenMP for best performance.  The default installation
+process places the GraphBLAS library in /usr/local/lib.  If you do not have
+root access and cannot install GraphBLAS into /usr/local/lib, then follow the
+instructions below to modify your library path, but instead of /usr/local/lib,
+use /home/me/SuiteSparse/GraphBLAS/build, where
+"/home/me/SuiteSparse/GraphBLAS" is where you placed your copy of GraphBLAS.
+
+MATLAB needs to know where to find the compiled GraphBLAS library.  On
+Linux/Unix, if you are using the bash or korn shells, make sure that add the
+following to your login profile (typically .bash_profile for bash, or .profile
+for korn):
+
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+    export LD_LIBRARY_PATH
+
+On Linux/Unix with the csh, tcsh or related shells, use:
+
+    setenv PATH $PATH\:/usr/local/lib
+
+On the Mac, use the following:
+
+    DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/lib
+    export DYLD_LIBRARY_PATH
+
+If you modify your library path, above, you need to execute those commands as
+well, before you start MATLAB.
+
+For more details on setting your Linux/Unix/Mac library path for MATLAB see
+https://www.mathworks.com/help/matlab/matlab_external/building-on-unix-operating-systems.html
 
 Next, start MATLAB and go to this GraphBLAS/GraphBLAS folder.  Type
 
@@ -20,10 +48,11 @@ to add the GraphBLAS interface to your path.  Then do
 Or, if that function is not allowed because of file permissions, add a command
 to your startup.m file:
 
-    addpath /whereever/GraphBLAS/GraphBLAS
+    addpath /home/me/SuiteSparse/GraphBLAS/GraphBLAS
 
-where the path /whereever/GraphBLAS/GraphBLAS is the full path to this folder.
-The name "GraphBLAS/GraphBLAS" is used so that this can be done in MATLAB:
+where the path /home/me/SuiteSparse/GraphBLAS/GraphBLAS is the full path to
+this folder.  The name "GraphBLAS/GraphBLAS" is used so that this can be done
+in MATLAB:
 
     help graphblas
 
