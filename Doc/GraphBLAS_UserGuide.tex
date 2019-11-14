@@ -6742,7 +6742,7 @@ function \verb'GB_spec_accum_mask.m', discussed in Section~\ref{accummask}.
 \paragraph{\bf Performance considerations:}
 Suppose all matrices are in \verb'GxB_BY_COL' format, and \verb'B' is extremely
 sparse but \verb'A' is not as sparse.  Then computing \verb'C=A*B' is very
-fast, and much faster then when \verb'A' is extremely sparse.  For example, if
+fast, and much faster than when \verb'A' is extremely sparse.  For example, if
 \verb'A' is square and \verb'B' is a column vector that is all nonzero except
 for one entry \verb'B(j,0)=1', then \verb'C=A*B' is the same as extracting
 column \verb'A(:,j)'.  This is very fast if \verb'A' is stored by column but
