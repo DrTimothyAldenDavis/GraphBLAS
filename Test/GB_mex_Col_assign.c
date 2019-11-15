@@ -81,11 +81,11 @@ GrB_Info assign ( )
     GrB_Info info ;
 
     // printf ("\n--- assign:\n") ;
-    ASSERT_OK (GB_check (C, "C", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (Mask, "Mask", GB0)) ;
-    ASSERT_OK (GB_check (A, "A", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (desc, "desc", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (Mask, "Mask", GB0) ;
+    ASSERT_MATRIX_OK (A, "A", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum", GB0) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc", GB0) ;
 
     /*
     if (I == NULL)
@@ -152,7 +152,7 @@ GrB_Info assign ( )
             }
             #undef ASSIGN
 
-            ASSERT_OK (GB_check (C, "C after setElement", GB0)) ;
+            ASSERT_MATRIX_OK (C, "C after setElement", GB0) ;
 
         }
         if (C->vdim == 1)
@@ -249,7 +249,7 @@ GrB_Info assign ( )
         OK (GrB_assign (C, Mask, accum, A, I, ni, J, nj, desc)) ;
     }
 
-    ASSERT_OK (GB_check (C, "Final C before wait", GB0)) ;
+    ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
     OK (GrB_wait ( )) ;
     return (info) ;
 }
@@ -375,7 +375,7 @@ GrB_Info many_assign
         }
     }
 
-    ASSERT_OK (GB_check (C, "Final C before wait", GB0)) ;
+    ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
     OK (GrB_wait ( )) ;
     return (info) ;
 }

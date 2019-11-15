@@ -75,9 +75,9 @@ GrB_Info GB_AxD__ne_uint64
     GrB_Matrix C,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix D, bool D_is_pattern,
-    const int64_t *restrict kfirst_slice,
-    const int64_t *restrict klast_slice,
-    const int64_t *restrict pstart_slice,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
     const int ntasks,
     const int nthreads
 )
@@ -85,7 +85,7 @@ GrB_Info GB_AxD__ne_uint64
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    bool *restrict Cx = C->x ;
+    bool *GB_RESTRICT Cx = C->x ;
     #include "GB_AxB_colscale_meta.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -106,7 +106,7 @@ GrB_Info GB_DxB__ne_uint64
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    bool *restrict Cx = C->x ;
+    bool *GB_RESTRICT Cx = C->x ;
     #include "GB_AxB_rowscale_meta.c"
     return (GrB_SUCCESS) ;
     #endif
@@ -123,10 +123,10 @@ GrB_Info GB_AaddB__ne_uint64
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
     const int ntasks,
     const int nthreads
 )
@@ -149,10 +149,10 @@ GrB_Info GB_AemultB__ne_uint64
     const GrB_Matrix M,
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
-    const GB_task_struct *restrict TaskList,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
     const int ntasks,
     const int nthreads
 )

@@ -136,8 +136,8 @@ GrB_Info GB_mask                // C<M> = Z
     //--------------------------------------------------------------------------
 
     // C_result may be aliased with M
-    ASSERT_OK (GB_check (C_result, "C_result for GB_mask", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_mask", GB0)) ;
+    ASSERT_MATRIX_OK (C_result, "C_result for GB_mask", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mask", GB0) ;
 
     // C may be cleared anyway, without the need for finishing it
     ASSERT (GB_PENDING_OK (C_result)) ; ASSERT (GB_ZOMBIES_OK (C_result)) ;
@@ -149,7 +149,7 @@ GrB_Info GB_mask                // C<M> = Z
     GrB_Matrix Z = *Zhandle ;
 
     // Z has the same type as C_result, with no zombies or pending tuples
-    ASSERT_OK (GB_check (Z, "Z for GB_mask", GB0)) ;
+    ASSERT_MATRIX_OK (Z, "Z for GB_mask", GB0) ;
     ASSERT (!GB_PENDING (Z)) ;
     ASSERT (!GB_ZOMBIES (Z)) ;
     ASSERT (Z->type == C_result->type) ;

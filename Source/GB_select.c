@@ -42,12 +42,12 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     GB_RETURN_IF_FAULTY (Thunk_in) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
-    ASSERT_OK (GB_check (C, "C input for GB_select", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_select", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_select", GB0)) ;
-    ASSERT_OK (GB_check (op, "selectop for GB_select", GB0)) ;
-    ASSERT_OK (GB_check (A, "A input for GB_select", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (Thunk_in, "Thunk_in for GB_select", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_select", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_select", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_select", GB0) ;
+    ASSERT_SELECTOP_OK (op, "selectop for GB_select", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_select", GB0) ;
+    ASSERT_SCALAR_OK_OR_NULL (Thunk_in, "Thunk_in for GB_select", GB0) ;
 
     GrB_Matrix T = NULL ;
 
@@ -229,7 +229,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
 
     bool flipij = !A_csc ;
 
-    ASSERT_OK_OR_NULL (GB_check (Thunk_in, "Thunk_in now GB_select", GB0)) ;
+    ASSERT_SCALAR_OK_OR_NULL (Thunk_in, "Thunk_in now GB_select", GB0) ;
 
     // if A is boolean, get the value of Thunk typecasted to boolean
     bool bthunk = false ;
@@ -478,8 +478,8 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
     }
 
     T->is_csc = A_csc ;
-    ASSERT_OK (GB_check (T, "T=select(A,Thunk) output", GB0)) ;
-    ASSERT_OK (GB_check (C, "C for accum; T=select(A,Thunk) output", GB0)) ;
+    ASSERT_MATRIX_OK (T, "T=select(A,Thunk) output", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for accum; T=select(A,Thunk) output", GB0) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask

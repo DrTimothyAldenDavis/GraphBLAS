@@ -72,14 +72,14 @@ int main (int argc, char **argv)
     random_matrix (&A, false, false, m, k, 6, 0, true) ;
     random_matrix (&B, false, false, k, n, 8, 0, true) ;
 
-    GxB_fprint (A, GxB_SHORT, stderr) ;
-    GxB_fprint (B, GxB_SHORT, stderr) ;
+    GxB_Matrix_fprint (A, "C", GxB_SHORT, stderr) ;
+    GxB_Matrix_fprint (B, "C", GxB_SHORT, stderr) ;
 
     // C = A*B
     GrB_Matrix_new (&C, Complex, m, n) ;
     GrB_mxm (C, NULL, NULL, Complex_plus_times, A, B, NULL) ;
 
-    GxB_fprint (C, GxB_SHORT, stderr) ;
+    GxB_Matrix_fprint (C, "C", GxB_SHORT, stderr) ;
 
     // print the results
     printf ("\n%% run this output of this program as a script in MATLAB:\n") ;
@@ -92,9 +92,9 @@ int main (int argc, char **argv)
     printf ("assert (err < 1e-12)\n") ;
 
     // free all matrices
-    GrB_free (&A) ;
-    GrB_free (&B) ;
-    GrB_free (&C) ;
+    GrB_Matrix_free (&A) ;
+    GrB_Matrix_free (&B) ;
+    GrB_Matrix_free (&C) ;
 
     // free the Complex types, operators, monoids, and semiring
     Complex_finalize ( ) ;

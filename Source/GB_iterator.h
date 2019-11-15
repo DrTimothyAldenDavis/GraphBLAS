@@ -132,8 +132,8 @@
 
 typedef struct
 {
-    const int64_t *restrict p ; // vector pointer A->p of A
-    const int64_t *restrict h ; // A->h: hyperlist of vectors in A
+    const int64_t *GB_RESTRICT p ; // vector pointer A->p of A
+    const int64_t *GB_RESTRICT h ; // A->h: hyperlist of vectors in A
     int64_t nvec ;              // A->nvec: number of vectors in A
     int64_t hfirst ;            // A->hfirst: first vector in slice A
     bool is_hyper ;             // true if A is hypersparse

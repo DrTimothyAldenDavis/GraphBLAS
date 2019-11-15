@@ -32,12 +32,12 @@
     // get A and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
 
     #ifdef GB_HYPER_CASE
-    const int64_t *restrict Ah = A->h ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
     int64_t anvec = A->nvec ;
     #endif
 
@@ -45,12 +45,12 @@
     // get C (pattern already constructed)
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ci = C->i ;
-    const int64_t *restrict Cp = C->p ;
+    const int64_t *GB_RESTRICT Ci = C->i ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
     ASSERT (C->nvec <= B->nvec) ;
 
     #ifdef GB_HYPER_CASE
-    const int64_t *restrict Ch = C->h ;
+    const int64_t *GB_RESTRICT Ch = C->h ;
     int64_t cnvec = C->nvec ;
     int64_t kc = 0 ;
     #endif

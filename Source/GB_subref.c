@@ -102,18 +102,18 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A for C=A(I,J) subref", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for C=A(I,J) subref", GB0) ;
 
     //--------------------------------------------------------------------------
     // phase0: find vectors for C=A(I,J), and I,J properties
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Cp = NULL ;
-    int64_t *restrict Ch = NULL ;
-    int64_t *restrict Ap_start = NULL ;
-    int64_t *restrict Ap_end = NULL ;
-    int64_t *restrict Mark = NULL ;
-    int64_t *restrict Inext = NULL ;
+    int64_t *GB_RESTRICT Cp = NULL ;
+    int64_t *GB_RESTRICT Ch = NULL ;
+    int64_t *GB_RESTRICT Ap_start = NULL ;
+    int64_t *GB_RESTRICT Ap_end = NULL ;
+    int64_t *GB_RESTRICT Mark = NULL ;
+    int64_t *GB_RESTRICT Inext = NULL ;
     GB_task_struct *TaskList = NULL ;
     GrB_Matrix C = NULL ;
 
@@ -210,14 +210,14 @@ GrB_Info GB_subref              // C = A(I,J): either symbolic or numeric
 
     if (must_sort)
     {
-        ASSERT_OK (GB_check (C, "sorted C output for C=A(I,J)", GB0)) ;
+        ASSERT_MATRIX_OK (C, "sorted C output for C=A(I,J)", GB0) ;
     }
     else
     {
         // The matrix may have jumbled indices.  If it will be transposed in
         // GB_accum_mask, but needs sorting, then the sort is skipped since the
         // transpose will handle the sort.
-        ASSERT_OK_OR_JUMBLED (GB_check (C, "C output for C=A(I,J)", GB0)) ;
+        ASSERT_MATRIX_OK_OR_JUMBLED (C, "C output for C=A(I,J)", GB0) ;
     }
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;

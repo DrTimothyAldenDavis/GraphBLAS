@@ -53,10 +53,10 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A for add", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for add", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (op, "op for add", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for add", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for add", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for add", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (op, "op for add", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for add", GB0) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
     if (M != NULL)
     { 
@@ -182,7 +182,7 @@ GrB_Info GB_add             // C=A+B or C<M>=A+B
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "C output for add", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C output for add", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

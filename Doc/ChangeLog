@@ -1,3 +1,8 @@
+Version 3.1.2, Nov TODO, 2019
+
+    * compiler port: changes to allow GraphBLAS to be compiled with older
+        compilers (pre ANSI C11), and Microsoft Visual Studio.
+
 Version 3.1.1, Oct 21, 2019
 
     * minor edits: user guide and comments in code

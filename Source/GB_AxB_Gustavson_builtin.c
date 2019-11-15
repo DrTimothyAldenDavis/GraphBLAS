@@ -45,15 +45,15 @@ GrB_Info GB_AxB_Gustavson_builtin
     if (M == NULL)
     {
         // C contains the pattern of C=A*B
-        ASSERT_OK (GB_check (C, "C pattern for Gustavson A*B", GB0)) ;
+        ASSERT_MATRIX_OK (C, "C pattern for Gustavson A*B", GB0) ;
     }
-    ASSERT_OK (GB_check (A, "A for Gustavson A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for Gustavson A*B", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for Gustavson A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for Gustavson A*B", GB0) ;
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for Gustavson", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for Gustavson", GB0) ;
     ASSERT (C->type == semiring->add->op->ztype) ;
 
     GB_Opcode mult_opcode, add_opcode ;

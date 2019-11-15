@@ -15,7 +15,7 @@
 
 // macro used by OK(...) to free workspace if an error occurs
 #define FREE_ALL                \
-    GrB_free (&A) ;             \
+    GrB_Matrix_free (&A) ;             \
 
 int main (int argc, char **argv)
 {
@@ -53,8 +53,8 @@ int main (int argc, char **argv)
             for (int format = 0 ; format <= 3 ; format++)
             {
 
-                OK (GxB_set (A, GxB_HYPER, h)) ;
-                OK (GxB_set (A, GxB_FORMAT, f)) ;
+                OK (GxB_Matrix_Option_set (A, GxB_HYPER, h)) ;
+                OK (GxB_Matrix_Option_set (A, GxB_FORMAT, f)) ;
                 OK (import_test (&A, format, dump)) ;
             }
         }

@@ -33,11 +33,11 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A for colscale A*D", GB0)) ;
-    ASSERT_OK (GB_check (D, "D for colscale A*D", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for colscale A*D", GB0) ;
+    ASSERT_MATRIX_OK (D, "D for colscale A*D", GB0) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (D)) ; ASSERT (!GB_ZOMBIES (D)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for numeric A*D", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*D", GB0) ;
     ASSERT (A->vdim == D->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
 
@@ -184,7 +184,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         size_t aij_size = flipxy ? ysize : xsize ;
         size_t djj_size = flipxy ? xsize : ysize ;
 
-        GB_void *restrict Cx = C->x ;
+        GB_void *GB_RESTRICT Cx = C->x ;
 
         GB_cast_function cast_A, cast_D ;
         if (flipxy)
@@ -210,12 +210,12 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
         // aij = A(i,j), located in Ax [pA]
         #define GB_GETA(aij,Ax,pA)                                          \
-            GB_void aij [GB_PGI(aij_size)] ;                                \
+            GB_void aij [GB_VLA(aij_size)] ;                                \
             if (!A_is_pattern) cast_A (aij, Ax +((pA)*asize), asize) ;
 
         // dji = D(j,j), located in Dx [j]
         #define GB_GETB(djj,Dx,j)                                           \
-            GB_void djj [GB_PGI(djj_size)] ;                                \
+            GB_void djj [GB_VLA(djj_size)] ;                                \
             if (!D_is_pattern) cast_D (djj, Dx +((j)*dsize), dsize) ;
 
         // C(i,j) = A(i,j) * D(j,j)
@@ -250,7 +250,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "colscale: C = A*D output", GB0)) ;
+    ASSERT_MATRIX_OK (C, "colscale: C = A*D output", GB0) ;
     ASSERT (*Chandle == C) ;
     GB_FREE_WORK ;
     return (GrB_SUCCESS) ;

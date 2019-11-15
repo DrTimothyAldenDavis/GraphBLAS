@@ -14,7 +14,7 @@
 
 bool GB_Index_multiply      // true if ok, false if overflow
 (
-    GrB_Index *restrict c,  // c = a*b, or zero if overflow occurs
+    GrB_Index *GB_RESTRICT c,  // c = a*b, or zero if overflow occurs
     const int64_t a,
     const int64_t b
 )

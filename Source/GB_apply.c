@@ -38,11 +38,11 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
 
-    ASSERT_OK (GB_check (C, "C input for GB_apply", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_apply", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_apply", GB0)) ;
-    ASSERT_OK (GB_check (op, "op for GB_apply", GB0)) ;
-    ASSERT_OK (GB_check (A, "A input for GB_apply", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_apply", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_apply", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_apply", GB0) ;
+    ASSERT_UNARYOP_OK (op, "op for GB_apply", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_apply", GB0) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type T_type = op->ztype ;

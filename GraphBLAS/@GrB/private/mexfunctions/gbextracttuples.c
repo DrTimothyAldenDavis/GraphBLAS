@@ -47,7 +47,7 @@ void mexFunction
     { 
         desc = gb_mxarray_to_descriptor (pargin [1], &kind, &fmt, &base) ;
     }
-    OK (GrB_free (&desc)) ;
+    OK (GrB_Descriptor_free (&desc)) ;
 
     //--------------------------------------------------------------------------
     // get the matrix
@@ -219,7 +219,7 @@ void mexFunction
     // free workspace
     //--------------------------------------------------------------------------
 
-    OK (GrB_free (&A)) ;
+    OK (GrB_Matrix_free (&A)) ;
 
     //--------------------------------------------------------------------------
     // export I and J

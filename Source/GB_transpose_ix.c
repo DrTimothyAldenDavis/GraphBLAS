@@ -22,9 +22,9 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
-    int64_t *restrict *Rowcounts,       // Rowcounts [naslice]
+    int64_t *GB_RESTRICT *Rowcounts,       // Rowcounts [naslice]
     GBI_single_iterator Iter,           // iterator for the matrix A
-    const int64_t *restrict A_slice,    // defines how A is sliced
+    const int64_t *GB_RESTRICT A_slice,    // defines how A is sliced
     int naslice                         // # of slices of A
 )
 { 

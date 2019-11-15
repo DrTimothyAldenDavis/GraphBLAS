@@ -42,6 +42,27 @@
 #define GRAPHBLAS_H
 
 //------------------------------------------------------------------------------
+// compiler variations
+//------------------------------------------------------------------------------
+
+// GraphBLAS requires an ANSI C11 compiler for its polymorphic functions (using
+// the _Generic keyword), but it can be used in an C90 compiler if those
+// functions are disabled.
+
+// With ANSI C11 and later, _Generic keyword and polymorphic functions can be
+// used.  Earlier versions of the language do not have this feature.
+
+#ifdef __STDC_VERSION__
+// ANSI C11: 201112L
+// ANSI C99: 199901L
+// ANSI C95: 199409L
+#define GxB_STDC_VERSION __STDC_VERSION__
+#else
+// assume ANSI C90 / C89
+#define GxB_STDC_VERSION 199001L
+#endif
+
+//------------------------------------------------------------------------------
 // GraphBLAS version
 //------------------------------------------------------------------------------
 
@@ -71,7 +92,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Oct 22, 2019"
+#define GxB_IMPLEMENTATION_DATE "Nov TODO, 2019"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 1
 #define GxB_IMPLEMENTATION_SUB   2
@@ -1161,6 +1182,7 @@ GrB_Info GrB_Monoid_new             // create a monoid
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Monoid_new(monoid,op,identity)          \
     _Generic                                        \
     (                                               \
@@ -1191,6 +1213,7 @@ GrB_Info GrB_Monoid_new             // create a monoid
               void *   : GrB_Monoid_new_UDT         \
     )                                               \
     (monoid, op, identity) ;
+#endif
 
 // GxB_Monoid_terminal_new is identical to GrB_Monoid_new, except that a
 // terminal value can be specified.  The terminal may be NULL, which indicates
@@ -1307,6 +1330,7 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_Monoid_terminal_new(monoid,op,identity,terminal)    \
     _Generic                                                    \
     (                                                           \
@@ -1337,6 +1361,7 @@ GrB_Info GxB_Monoid_terminal_new             // create a monoid
               void *   : GxB_Monoid_terminal_new_UDT            \
     )                                                           \
     (monoid, op, identity, terminal) ;
+#endif
 
 // SPEC: GxB_Monoid_terminal_new is an extension to the spec
 
@@ -1569,6 +1594,7 @@ GrB_Info GxB_Scalar_setElement          // s = x
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_Scalar_setElement(s,x)                  \
     _Generic                                        \
     (                                               \
@@ -1599,6 +1625,7 @@ GrB_Info GxB_Scalar_setElement          // s = x
               void *    : GxB_Scalar_setElement_UDT       \
     )                                               \
     (s, x)    
+#endif
 
 //------------------------------------------------------------------------------
 // GxB_Scalar_extractElement
@@ -1695,6 +1722,7 @@ GrB_Info GxB_Scalar_extractElement  // x = s
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_Scalar_extractElement(x,s)                  \
     _Generic                                            \
     (                                                   \
@@ -1713,6 +1741,7 @@ GrB_Info GxB_Scalar_extractElement  // x = s
         void     *: GxB_Scalar_extractElement_UDT       \
     )                                                   \
     (x, s)
+#endif
 
 //==============================================================================
 //=== GraphBLAS Vector methods =================================================
@@ -1919,6 +1948,7 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_build(w,I,X,nvals,dup)               \
     _Generic                                            \
     (                                                   \
@@ -1949,6 +1979,7 @@ GrB_Info GrB_Vector_build           // build a vector from (I,X) tuples
               void      *: GrB_Vector_build_UDT         \
     )                                                   \
     (w, I, ((const void *) (X)), nvals, dup)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Vector_setElement
@@ -2055,6 +2086,7 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_setElement(w,x,i)                \
     _Generic                                        \
     (                                               \
@@ -2085,6 +2117,7 @@ GrB_Info GrB_Vector_setElement          // w(i) = x
               void *    : GrB_Vector_setElement_UDT       \
     )                                               \
     (w, x, i)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Vector_extractElement
@@ -2194,6 +2227,7 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_extractElement(x,v,i)                \
     _Generic                                            \
     (                                                   \
@@ -2212,6 +2246,7 @@ GrB_Info GrB_Vector_extractElement  // x = v(i)
         void     *: GrB_Vector_extractElement_UDT       \
     )                                                   \
     (x, v, i)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Vector_extractTuples
@@ -2339,6 +2374,7 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Vector_extractTuples(I,X,nvals,v)           \
     _Generic                                            \
     (                                                   \
@@ -2357,6 +2393,7 @@ GrB_Info GrB_Vector_extractTuples           // [I,~,X] = find (v)
         void     *: GrB_Vector_extractTuples_UDT        \
     )                                                   \
     (I, X, nvals, v)
+#endif
 
 //==============================================================================
 //=== GraphBLAS Matrix methods =================================================
@@ -2577,6 +2614,7 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_build(C,I,J,X,nvals,dup)             \
     _Generic                                            \
     (                                                   \
@@ -2607,6 +2645,7 @@ GrB_Info GrB_Matrix_build           // build a matrix from (I,J,X) tuples
               void      *: GrB_Matrix_build_UDT         \
     )                                                   \
     (C, I, J, ((const void *) (X)), nvals, dup)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_setElement
@@ -2726,6 +2765,7 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_setElement(C,x,i,j)                    \
     _Generic                                              \
     (                                                     \
@@ -2756,6 +2796,7 @@ GrB_Info GrB_Matrix_setElement          // C (i,j) = x
               void *    : GrB_Matrix_setElement_UDT       \
     )                                                     \
     (C, x, i, j)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_extractElement
@@ -2878,6 +2919,7 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_extractElement(x,A,i,j)              \
     _Generic                                            \
     (                                                   \
@@ -2896,6 +2938,7 @@ GrB_Info GrB_Matrix_extractElement      // x = A(i,j)
         void     *: GrB_Matrix_extractElement_UDT       \
     )                                                   \
     (x, A, i, j)
+#endif
 
 //------------------------------------------------------------------------------
 // GrB_Matrix_extractTuples
@@ -3036,6 +3079,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 
 */
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_Matrix_extractTuples(I,J,X,nvals,A)         \
     _Generic                                            \
     (                                                   \
@@ -3054,6 +3098,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
         void     *: GrB_Matrix_extractTuples_UDT        \
     )                                                   \
     (I, J, X, nvals, A)
+#endif
 
 //==============================================================================
 //=== GraphBLAS Descriptor =====================================================
@@ -3477,6 +3522,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Descriptor d, GxB_CHUNK, double chunk) ;
 //      GxB_get (GrB_Descriptor d, GxB_CHUNK, double *chunk) ;
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_set(arg1,...)                                   \
     _Generic                                                \
     (                                                       \
@@ -3502,6 +3548,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
               GrB_Descriptor   : GxB_Desc_get               \
     )                                                       \
     (arg1, __VA_ARGS__)
+#endif
 
 
 //==============================================================================
@@ -3516,6 +3563,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 // the GraphBLAS spec, GrB_*_free functions can return GrB_SUCCESS or
 // GrB_PANIC; in this implementation they never panic.
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_free(object)                         \
     _Generic                                     \
     (                                            \
@@ -3532,6 +3580,7 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
         GrB_Descriptor *: GrB_Descriptor_free    \
     )                                            \
     (object)
+#endif
 
 //==============================================================================
 //=== GraphBLAS operations =====================================================
@@ -3692,6 +3741,7 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
 // All 6 of the above type-specific functions are captured in a single
 // type-generic function, GrB_eWiseMult:
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_eWiseMult(C,Mask,accum,op,A,B,desc)                         \
     _Generic                                                            \
     (                                                                   \
@@ -3720,6 +3770,7 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<Mask> = accum (C, A.*B)
             )                                                           \
     )                                                                   \
     (C, Mask, accum, op, A, B, desc)
+#endif
 
 //------------------------------------------------------------------------------
 // element-wise matrix and vector operations: using set union
@@ -3811,6 +3862,7 @@ GrB_Info GrB_eWiseAdd_Matrix_BinaryOp       // C<Mask> = accum (C, A+B)
     const GrB_Descriptor desc       // descriptor for C, Mask, A, and B
 ) ;
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_eWiseAdd(C,Mask,accum,op,A,B,desc)                          \
     _Generic                                                            \
     (                                                                   \
@@ -3839,6 +3891,7 @@ GrB_Info GrB_eWiseAdd_Matrix_BinaryOp       // C<Mask> = accum (C, A+B)
             )                                                           \
     )                                                                   \
     (C, Mask, accum, op, A, B, desc)
+#endif
 
 //------------------------------------------------------------------------------
 // matrix and vector extract
@@ -3942,6 +3995,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 // GrB_Col_extract    (w,mask,acc,A,I,ni,j,d)    // w<m>    = acc (w, A(I,j))
 // GrB_Matrix_extract (C,Mask,acc,A,I,ni,J,nj,d) // C<Mask> = acc (C, A(I,J))
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_extract(arg1,Mask,accum,arg4,...) \
     _Generic                                                \
     (                                                       \
@@ -3958,6 +4012,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
         GrB_Matrix : GrB_Matrix_extract                     \
     )                                                       \
     (arg1, Mask, accum, arg4, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // matrix and vector subassign: C(I,J)<Mask> = accum (C(I,J), A)
@@ -4442,6 +4497,7 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
 // GxB_Vector_subassign_T (w,m,acc,x,I,ni,d)     // w(I)<m>   =acc(w(I),x)
 // GxB_Matrix_subassign_T (C,M,acc,x,I,ni,J,nj,d)// C(I,J)<M> =acc(C(I,J),x)
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_subassign(arg1,Mask,accum,arg4,arg5,...)               \
     _Generic                                                    \
     (                                                           \
@@ -4524,6 +4580,7 @@ GrB_Info GxB_Matrix_subassign_UDT      // C(I,J)<Mask> = accum (C(I,J),x)
             )                                                   \
     )                                                           \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // matrix and vector assign: C<Mask>(I,J) = accum (C(I,J), A)
@@ -4902,6 +4959,7 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
 // GrB_Vector_assign_T (w,mask,acc,x,I,ni,d)     // w<mask>(I)   =acc(w(I),x)
 // GrB_Matrix_assign_T (C,Mask,acc,x,I,ni,J,nj,d)// C<Mask>(I,J) =acc(C(I,J),x)
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_assign(arg1,Mask,accum,arg4,arg5,...)               \
     _Generic                                                    \
     (                                                           \
@@ -4984,7 +5042,7 @@ GrB_Info GrB_Matrix_assign_UDT      // C<Mask>(I,J) = accum (C(I,J),x)
             )                                                   \
     )                                                           \
     (arg1, Mask, accum, arg4, arg5, __VA_ARGS__)
-
+#endif
 
 //------------------------------------------------------------------------------
 // matrix and vector apply
@@ -5025,6 +5083,7 @@ GrB_Info GrB_Matrix_apply           // C<Mask> = accum (C, op(A)) or op(A')
 // GrB_Vector_apply (w,mask,acc,op,u,d)  // w<mask> = accum (w, op(u))
 // GrB_Matrix_apply (C,Mask,acc,op,A,d)  // C<Mask> = accum (C, op(A))
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_apply(C,Mask,accum,op,A,desc)       \
     _Generic                                    \
     (                                           \
@@ -5033,6 +5092,7 @@ GrB_Info GrB_Matrix_apply           // C<Mask> = accum (C, op(A)) or op(A')
         GrB_Matrix   : GrB_Matrix_apply         \
     )                                           \
     (C, Mask, accum, op, A, desc)
+#endif
 
 //------------------------------------------------------------------------------
 // matrix and vector selection
@@ -5079,6 +5139,7 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
 // GrB_Vector_select (w,mask,acc,op,u,k,d)  // w<mask> = accum (w, op(u,k))
 // GrB_Matrix_select (C,Mask,acc,op,A,k,d)  // C<Mask> = accum (C, op(A,k))
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_select(C,Mask,accum,op,A,Thunk,desc)    \
     _Generic                                        \
     (                                               \
@@ -5087,6 +5148,7 @@ GrB_Info GxB_Matrix_select          // C<Mask> = accum (C, op(A,k)) or op(A',k)
         GrB_Matrix   : GxB_Matrix_select            \
     )                                               \
     (C, Mask, accum, op, A, Thunk, desc)
+#endif
 
 //------------------------------------------------------------------------------
 // matrix and vector reduction
@@ -5381,6 +5443,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
 // GrB_Vector_reduce_[SCALAR] (c,acc,monoid,u,d)  // c = acc (c,reduce(A))
 // GrB_Matrix_reduce_[SCALAR] (c,acc,monoid,A,d)  // c = acc (c,reduce(A))
 
+#if GxB_STDC_VERSION >= 201112L
 #define GrB_reduce(arg1,arg2,arg3,arg4,...)                 \
     _Generic                                                \
     (                                                       \
@@ -5459,6 +5522,7 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
               GrB_BinaryOp : GrB_Matrix_reduce_BinaryOp     \
     )                                                       \
     (arg1, arg2, arg3, arg4, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // matrix transpose
@@ -5943,6 +6007,7 @@ GrB_Info GxB_Vector_resize      // change the size of a vector
 // GrB_Vector_resize (u,nrows_new)
 // GrB_Matrix_resize (A,nrows_new,ncols_new)
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_resize(arg1,...)                                \
     _Generic                                                \
     (                                                       \
@@ -5951,6 +6016,7 @@ GrB_Info GxB_Vector_resize      // change the size of a vector
               GrB_Matrix : GxB_Matrix_resize                \
     )                                                       \
     (arg1, __VA_ARGS__)
+#endif
 
 //------------------------------------------------------------------------------
 // GxB_kron:  Kronecker product
@@ -6101,6 +6167,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
     FILE *f                         // file for output
 ) ;
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_fprint(object,pr,f)                         \
     _Generic                                            \
     (                                                   \
@@ -6127,8 +6194,11 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
               GrB_Descriptor : GxB_Descriptor_fprint    \
     )                                                   \
     (object, GB_STR(object), pr, f)
+#endif
 
+#if GxB_STDC_VERSION >= 201112L
 #define GxB_print(object,pr) GxB_fprint(object,pr,stdout)
+#endif
 
 //==============================================================================
 // Matrix and vector import/export

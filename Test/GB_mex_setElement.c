@@ -268,7 +268,7 @@ void mexFunction
     }
 
     // only do debug checks after adding lots of tuples
-    if (ni > 1000) ASSERT_OK (GB_check (A, "A added pending tuples", GB0)) ;
+    if (ni > 1000) ASSERT_MATRIX_OK (A, "A added pending tuples", GB0) ;
 
     // return A to MATLAB as a struct and free the GraphBLAS A
     pargout [0] = GB_mx_Matrix_to_mxArray (&A, "A output", true) ;

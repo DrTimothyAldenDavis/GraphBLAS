@@ -108,11 +108,11 @@ GrB_Info GB_subassign_08
     const bool C_is_hyper = C->is_hyper ;
     const int64_t Cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
-    const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
+    const int64_t *GB_RESTRICT Ch = C->h ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
     GB_GET_MASK ;
     GB_GET_A ;
-    const int64_t *restrict Ah = A->h ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
     GB_GET_ACCUM ;
 
     //--------------------------------------------------------------------------

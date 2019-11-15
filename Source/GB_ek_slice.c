@@ -21,9 +21,9 @@
 bool GB_ek_slice        // true if successful, false if out of memory
 (
     // output:
-    int64_t *restrict *pstart_slice_handle, // size ntasks+1
-    int64_t *restrict *kfirst_slice_handle, // size ntasks
-    int64_t *restrict *klast_slice_handle,  // size ntasks
+    int64_t *GB_RESTRICT *pstart_slice_handle, // size ntasks+1
+    int64_t *GB_RESTRICT *kfirst_slice_handle, // size ntasks
+    int64_t *GB_RESTRICT *klast_slice_handle,  // size ntasks
     // input:
     GrB_Matrix A,                   // matrix to slice
     int ntasks                      // # of tasks
@@ -38,9 +38,9 @@ bool GB_ek_slice        // true if successful, false if out of memory
     (*kfirst_slice_handle) = NULL ;
     (*klast_slice_handle ) = NULL ;
 
-    int64_t *restrict pstart_slice = NULL ;
-    int64_t *restrict kfirst_slice = NULL ;
-    int64_t *restrict klast_slice  = NULL ;
+    int64_t *GB_RESTRICT pstart_slice = NULL ;
+    int64_t *GB_RESTRICT kfirst_slice = NULL ;
+    int64_t *GB_RESTRICT klast_slice  = NULL ;
 
     GB_CALLOC_MEMORY (pstart_slice, ntasks+1, sizeof (int64_t)) ;
     GB_CALLOC_MEMORY (kfirst_slice, ntasks, sizeof (int64_t)) ;

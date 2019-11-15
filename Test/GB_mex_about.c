@@ -136,66 +136,66 @@ void mexFunction
 
     GrB_Type t ;
 
-    GB_check (GrB_LNOT, "LNOT", GxB_COMPLETE) ;
+    GB_UnaryOp_chek (GrB_LNOT, "LNOT", GxB_COMPLETE) ;
     GxB_UnaryOp_ztype (&t, GrB_LNOT) ;
-    GB_check (t, "ztype", GxB_COMPLETE) ;
+    GB_UnaryOp_chek (t, "ztype", GxB_COMPLETE) ;
     GxB_UnaryOp_xtype (&t, GrB_LNOT) ;
-    GB_check (t, "xtype", GxB_COMPLETE) ;
+    GB_UnaryOp_chek (t, "xtype", GxB_COMPLETE) ;
 
-    GB_check (GxB_LNOT_FP32, "LNOT_FP32", GxB_COMPLETE) ;
+    GB_UnaryOp_chek (GxB_LNOT_FP32, "LNOT_FP32", GxB_COMPLETE) ;
     GxB_UnaryOp_ztype (&t, GxB_LNOT_FP32) ;
-    GB_check (t, "ztype", GxB_COMPLETE) ;
+    GB_UnaryOp_chek (t, "ztype", GxB_COMPLETE) ;
     GxB_UnaryOp_xtype (&t, GxB_LNOT_FP32) ;
-    GB_check (t, "xtype", GxB_COMPLETE) ;
+    GB_UnaryOp_chek (t, "xtype", GxB_COMPLETE) ;
 
-    GB_check (GxB_ISEQ_INT32, "ISEQ_INT32", GxB_COMPLETE) ;
+    GB_BinaryOp_check (GxB_ISEQ_INT32, "ISEQ_INT32", GxB_COMPLETE, stdout, Context) ;
     GxB_BinaryOp_ztype (&t, GxB_ISEQ_INT32) ;
-    GB_check (t, "ztype", GxB_COMPLETE) ;
+    GB_BinaryOp_check (t, "ztype", GxB_COMPLETE, stdout, Context) ;
     GxB_BinaryOp_xtype (&t, GxB_ISEQ_INT32) ;
-    GB_check (t, "xtype", GxB_COMPLETE) ;
+    GB_BinaryOp_check (t, "xtype", GxB_COMPLETE, stdout, Context) ;
     GxB_BinaryOp_ytype (&t, GxB_ISEQ_INT32) ;
-    GB_check (t, "ytype", GxB_COMPLETE) ;
+    GB_BinaryOp_check (t, "ytype", GxB_COMPLETE, stdout, Context) ;
 
-    GB_check (GrB_EQ_INT32, "EQ_INT32", GxB_COMPLETE) ;
+    GB_BinaryOp_check (GrB_EQ_INT32, "EQ_INT32", GxB_COMPLETE, stdout, Context) ;
     GxB_BinaryOp_ztype (&t, GrB_EQ_INT32) ;
-    GB_check (t, "ztype", GxB_COMPLETE) ;
+    GB_BinaryOp_check (t, "ztype", GxB_COMPLETE, stdout, Context) ;
     GxB_BinaryOp_xtype (&t, GrB_EQ_INT32) ;
-    GB_check (t, "xtype", GxB_COMPLETE) ;
+    GB_BinaryOp_check (t, "xtype", GxB_COMPLETE, stdout, Context) ;
     GxB_BinaryOp_ytype (&t, GrB_EQ_INT32) ;
-    GB_check (t, "ytype", GxB_COMPLETE) ;
+    GB_BinaryOp_check (t, "ytype", GxB_COMPLETE, stdout, Context) ;
 
     GrB_Monoid m ;
     GrB_BinaryOp op ;
 
     GrB_Monoid_new (&m, GrB_PLUS_UINT16, (uint16_t) 0) ;
-    GB_check (m, "plus uint16 monoid", GxB_COMPLETE) ;
+    GB_Monoid_check (m, "plus uint16 monoid", GxB_COMPLETE, stdout, Context) ;
     uint16_t id ;
     GxB_Monoid_identity (&id, m) ;
     printf ("id is %d\n", id) ;
     GxB_Monoid_operator (&op, m) ;
-    GB_check (op, "plus op from monoid", GxB_COMPLETE) ;
+    GB_Monoid_check (op, "plus op from monoid", GxB_COMPLETE, stdout, Context) ;
 
     GrB_free (&m) ;
 
     int16_t id0 = INT16_MIN ;
 
     GrB_Monoid_new (&m, GrB_MAX_INT16, id0) ;
-    GB_check (m, "max int16 monoid", GxB_COMPLETE) ;
+    GB_Monoid_check (m, "max int16 monoid", GxB_COMPLETE, stdout, Context) ;
     int16_t id1 ;
     GxB_Monoid_identity (&id1, m) ;
     printf ("id1 is %d\n", id1) ;
     GxB_Monoid_operator (&op, m) ;
-    GB_check (op, "plus op from monoid", GxB_COMPLETE) ;
+    GB_BinaryOp_check (op, "plus op from monoid", GxB_COMPLETE, stdout, Context) ;
 
     GrB_Semiring sem ;
     GrB_Semiring_new (&sem, m, GrB_TIMES_INT16) ;
-    GB_check (sem, "\nnew sem", GxB_COMPLETE) ;
+    GB_Semiring_check (sem, "\nnew sem", GxB_COMPLETE, stdout, Context) ;
 
     GrB_Monoid mm ;
     GxB_Semiring_add (&mm, sem) ;
-    GB_check (mm, "sem mm", GxB_COMPLETE) ;
+    GB_Monoid_check (mm, "sem mm", GxB_COMPLETE, stdout, Context) ;
     GxB_Semiring_multiply (&op, sem) ;
-    GB_check (op, "sem mult", GxB_COMPLETE) ;
+    GB_BinaryOp_check (op, "sem mult", GxB_COMPLETE, stdout, Context) ;
 
     GrB_free (&m) ;
     GrB_free (&sem) ;
@@ -207,12 +207,12 @@ void mexFunction
     info = ack (&morestuff, Gunk) ;
 
     GxB_Matrix_type (&t, Gunk) ;
-    GB_check (t, "matrix Gunk type is:", GxB_COMPLETE) ;
+    GB_Type_check (t, "matrix Gunk type is:", GxB_COMPLETE, stdout, Context) ;
 
     GrB_Vector victor ;
     GrB_Vector_new (&victor, GrB_UINT32, 43) ;
     GxB_Vector_type (&t, victor) ;
-    GB_check (t, "victor type is:", GxB_COMPLETE) ;
+    GB_Type_check (t, "victor type is:", GxB_COMPLETE, stdout, Context) ;
     GxB_Type_size (&s, t) ;
     printf ("and its size of type is %d\n", s) ;
     GrB_free (&victor) ;
@@ -225,35 +225,35 @@ void mexFunction
     GrB_Desc_Value val ;
 
     GrB_Descriptor_new (&Duh) ;
-    GB_check (Duh, "\n---------------------------------- Duh:", GxB_COMPLETE) ;
+    GB_Descriptor_check (Duh, "\n---------------------------------- Duh:", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
     GxB_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ;
 
     GxB_set (Duh, GrB_INP0, GrB_TRAN) ;
-    GB_check (Duh, "\n------------------------------- Duh set:", GxB_COMPLETE) ;
+    GB_Descriptor_check (Duh, "\n------------------------------- Duh set:", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
     GxB_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ;
 
     GxB_set (Duh, GrB_MASK, GrB_SCMP) ;
-    GB_check (Duh, "\n-----Duh set mask", GxB_COMPLETE) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set mask", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
     GxB_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ;
 
     GxB_set (Duh, GrB_OUTP, GrB_REPLACE) ;
-    GB_check (Duh, "\n-----Duh set out", GxB_COMPLETE) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set out", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
     GxB_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ;
 
     GxB_set (Duh, GrB_MASK, GxB_DEFAULT) ;
-    GB_check (Duh, "\n-----Duh set mask back", GxB_COMPLETE) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set mask back", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
@@ -261,7 +261,7 @@ void mexFunction
 
     info = GxB_set (Duh, GrB_INP1, GrB_REPLACE) ;
     printf ("%s\n", GrB_error () ) ;
-    GB_check (Duh, "\n-----Duh set in1", GxB_COMPLETE) ;
+    GB_Descriptor_check (Duh, "\n-----Duh set in1", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
@@ -286,7 +286,7 @@ void mexFunction
     Gunk->magic = GB_MAGIC ;
     GrB_free (&Gunk) ;
 
-    GB_check (Complex, "user Complex type", GxB_COMPLETE) ;
+    GB_Type_check (Complex, "user Complex type", GxB_COMPLETE, stdout, Context) ;
     GxB_Type_size (&s, Complex) ;
     printf ("size is %d\n", (int) s) ;
 
@@ -335,17 +335,17 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     printf ("built-in types:\n") ;
-    GB_check (GrB_BOOL, "bool", GxB_COMPLETE) ;
-    GB_check (GrB_INT8, "int8", GxB_COMPLETE) ;
-    GB_check (GrB_UINT8, "uint8", GxB_COMPLETE) ;
-    GB_check (GrB_INT16, "int16", GxB_COMPLETE) ;
-    GB_check (GrB_UINT16, "uint16", GxB_COMPLETE) ;
-    GB_check (GrB_INT32, "int32", GxB_COMPLETE) ;
-    GB_check (GrB_UINT32, "uint32", GxB_COMPLETE) ;
-    GB_check (GrB_INT64, "int64", GxB_COMPLETE) ;
-    GB_check (GrB_UINT64, "uint64", GxB_COMPLETE) ;
-    GB_check (GrB_FP32, "fp32", GxB_COMPLETE) ;
-    GB_check (GrB_FP64, "fp64", GxB_COMPLETE) ;
+    GB_Type_check (GrB_BOOL, "bool", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_INT8, "int8", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_UINT8, "uint8", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_INT16, "int16", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_UINT16, "uint16", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_INT32, "int32", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_UINT32, "uint32", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_INT64, "int64", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_UINT64, "uint64", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_FP32, "fp32", GxB_COMPLETE, stdout, Context) ;
+    GB_Type_check (GrB_FP64, "fp64", GxB_COMPLETE, stdout, Context) ;
 
     printf ("\nprinting built-in types:\n") ;
     bool       b = true ;

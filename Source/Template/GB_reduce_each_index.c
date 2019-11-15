@@ -20,8 +20,8 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *restrict Ax = A->x ;
-    const int64_t  *restrict Ai = A->i ;
+    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
+    const int64_t  *GB_RESTRICT Ai = A->i ;
     const int64_t n = A->vlen ;
     size_t zsize = ttype->size ;
 
@@ -32,10 +32,10 @@
     int ntasks = 256 * nthreads ;
     ntasks = GB_IMIN (ntasks, n) ;
 
-    GB_CTYPE *restrict *Works = NULL ;      // size nth
-    bool     *restrict *Marks = NULL ;      // size nth
-    int64_t  *restrict Tnz = NULL ;         // size nth
-    int64_t  *restrict Count = NULL ;       // size ntasks+1
+    GB_CTYPE *GB_RESTRICT *Works = NULL ;      // size nth
+    bool     *GB_RESTRICT *Marks = NULL ;      // size nth
+    int64_t  *GB_RESTRICT Tnz = NULL ;         // size nth
+    int64_t  *GB_RESTRICT Count = NULL ;       // size ntasks+1
 
     GB_CALLOC_MEMORY (Works, nth, sizeof (GB_CTYPE *)) ;
     GB_CALLOC_MEMORY (Marks, nth, sizeof (bool *)) ;
@@ -91,8 +91,8 @@
         // get the workspace for this thread
         //----------------------------------------------------------------------
 
-        GB_CTYPE *restrict Work = Works [tid] ;
-        bool     *restrict Mark = Marks [tid] ;
+        GB_CTYPE *GB_RESTRICT Work = Works [tid] ;
+        bool     *GB_RESTRICT Mark = Marks [tid] ;
         int64_t my_tnz = 0 ;
 
         //----------------------------------------------------------------------
@@ -126,8 +126,8 @@
     // reduce all workspace to Work [0] and count # entries in T
     //--------------------------------------------------------------------------
 
-    GB_CTYPE *restrict Work0 = Works [0] ;
-    bool     *restrict Mark0 = Marks [0] ;
+    GB_CTYPE *GB_RESTRICT Work0 = Works [0] ;
+    bool     *GB_RESTRICT Mark0 = Marks [0] ;
     int64_t tnz = Tnz [0] ;
 
     if (nth > 1)
@@ -138,11 +138,11 @@
         {
             for (int tid = 1 ; tid < nth ; tid++)
             {
-                const bool *restrict Mark = Marks [tid] ;
+                const bool *GB_RESTRICT Mark = Marks [tid] ;
                 if (Mark [i])
                 {
                     // thread tid has a contribution to index i
-                    const GB_CTYPE *restrict Work = Works [tid] ;
+                    const GB_CTYPE *GB_RESTRICT Work = Works [tid] ;
                     if (!Mark0 [i])
                     { 
                         // first time index i has been seen
@@ -194,8 +194,8 @@
 
     T->p [0] = 0 ;
     T->p [1] = tnz ;
-    int64_t  *restrict Ti = T->i ;
-    GB_CTYPE *restrict Tx = T->x ;
+    int64_t  *GB_RESTRICT Ti = T->i ;
+    GB_CTYPE *GB_RESTRICT Tx = T->x ;
     T->nvec_nonempty = (tnz > 0) ? 1 : 0 ;
 
     //--------------------------------------------------------------------------

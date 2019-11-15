@@ -90,7 +90,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     ASSERT (*Ap == NULL) ;
     ASSERT (*Aj == NULL) ;
     ASSERT (*Ax == NULL) ;
-    ASSERT_OK (GB_check (*A, "A CSR imported", GB0)) ;
+    ASSERT_MATRIX_OK ((*A), "A CSR imported", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

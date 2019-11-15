@@ -114,9 +114,9 @@ GrB_Info assign (GB_Context Context)
     int pr = 0 ;
     bool ph = (pr > 0) ;
 
-    ASSERT_OK (GB_check (C, "C before mex assign", pr)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for mex assign", pr)) ;
-    ASSERT_OK (GB_check (A, "A for mex assign", pr)) ;
+    ASSERT_MATRIX_OK (C, "C before mex assign", pr) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for mex assign", pr) ;
+    ASSERT_MATRIX_OK (A, "A for mex assign", pr) ;
 
     if (GB_NROWS (A) == 1 && GB_NCOLS (A) == 1 && GB_NNZ (A) == 1)
     {
@@ -277,7 +277,7 @@ GrB_Info assign (GB_Context Context)
         OK (GxB_subassign (C, M, accum, A, I, ni, J, nj, desc)) ;
     }
 
-    ASSERT_OK (GB_check (C, "C after assign", pr)) ;
+    ASSERT_MATRIX_OK (C, "C after assign", pr) ;
     return (info) ;
 }
 
@@ -653,7 +653,7 @@ void mexFunction
     // return C to MATLAB as a struct
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "Final C before wait", GB0)) ;
+    ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
     GrB_wait ( ) ;
     GB_MEX_TOC ;
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C assign result", true) ;

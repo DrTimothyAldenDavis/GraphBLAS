@@ -19,7 +19,7 @@
 bool GB_extract_vector_list     // true if successful, false if out of memory
 (
     // output:
-    int64_t *restrict J,        // size nnz(A) or more
+    int64_t *GB_RESTRICT J,        // size nnz(A) or more
     // input:
     const GrB_Matrix A,
     int nthreads
@@ -38,8 +38,8 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     // get A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
 
     //--------------------------------------------------------------------------
     // determine the # of tasks to use

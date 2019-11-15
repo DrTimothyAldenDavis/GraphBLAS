@@ -100,7 +100,7 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
     ASSERT (*Ap == NULL) ;
     ASSERT (*Ai == NULL) ;
     ASSERT (*Ax == NULL) ;
-    ASSERT_OK (GB_check (*A, "A hyper CSC imported", GB0)) ;
+    ASSERT_MATRIX_OK (*A, "A hyper CSC imported", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

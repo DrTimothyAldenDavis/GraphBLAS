@@ -27,7 +27,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         //----------------------------------------------------------------------
 
         OK (GrB_Matrix_dup (&A, S)) ;
-        OK (GxB_set (A, GxB_FORMAT, fmt)) ;
+        OK (GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
 
     }
     else
@@ -41,7 +41,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
         OK (GrB_Matrix_nrows (&nrows, S)) ;
         OK (GrB_Matrix_ncols (&ncols, S)) ;
         OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
-        OK (GxB_set (A, GxB_FORMAT, fmt)) ;
+        OK (GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
 
         // create a descriptor with d.trans = transpose
         GrB_Descriptor d ;
@@ -50,7 +50,7 @@ GrB_Matrix gb_typecast      // A = (type) S, where A is deep
 
         // A = (type) S
         OK (GrB_transpose (A, NULL, NULL, S, d)) ;
-        OK (GrB_free (&d)) ;
+        OK (GrB_Descriptor_free (&d)) ;
     }
 
     //--------------------------------------------------------------------------

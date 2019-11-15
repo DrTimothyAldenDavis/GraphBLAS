@@ -120,39 +120,81 @@
 #include "GraphBLAS.h"
 
 //------------------------------------------------------------------------------
+// compiler variations
+//------------------------------------------------------------------------------
+
+// Determine the restrict keyword, and whether or not variable-length arrays
+// are supported.
+
+#if ( _MSC_VER & !__INTEL_COMPILER )
+
+    // Microsoft Visual Studio does not have the restrict keyword, but it does
+    // support __restrict, which is equivalent.  Variable-length arrays are
+    // not supported.
+
+    #define GB_RESTRICT __restrict
+    #define GB_HAS_VLA  0
+
+#elif GxB_STDC_VERSION >= 199901L
+
+    // ANSI C99 and later have the restrict keyword and variable-length arrays.
+    #define GB_RESTRICT restrict
+    #define GB_HAS_VLA  1
+
+#else
+
+    // ANSI C95 and earlier have neither
+    #define GB_RESTRICT
+    #define GB_HAS_VLA  0
+
+#endif
+
+//------------------------------------------------------------------------------
 // PGI_COMPILER_BUG
 //------------------------------------------------------------------------------
 
 // If GraphBLAS is compiled with -DPGI_COMPILER_BUG, then a workaround is
 // enabled for a bug in the PGI compiler.  The compiler does not correctly
-// handle automatic arrays of variable size.  If this bug is present, then
-// user-defined types are limited in size to 128 bytes or less.  Many of the
-// type-generic routines allocate workspace for a single scalar of variable
-// size, using a statement:
-//
-//      GB_void aij [xsize] ;
-// 
-// For example.  This is a valid ANSI C11 statement, but triggers a bug in the
-// PGI compiler.  The workaround is to use a fixed-size instead, when using the
-// PGI compiler:
-//
-//      GB_void aij [GB_PGI(xsize)] ;
-//
-// In this case, user-defined types are limited to a max of 128 bytes.
-//
-// grep for "PGI" to see what parts of the code are affected.
+// handle automatic arrays of variable size.
 
 #ifdef PGI_COMPILER_BUG
 
-    #define PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE 128
+    // override the ANSI C compiler to turn off variable-length arrays
+    #undef  GB_HAS_VLA
+    #define GB_HAS_VLA  0
 
-    #define GB_PGI(s) PGI_COMPILER_BUG_MAXSIZE_FOR_ANY_GRB_TYPE
-    #define GB_PGI_NTHREADS(nthreads) GxB_NTHREADS_MAX
+#endif
+
+//------------------------------------------------------------------------------
+// variable-length arrays
+//------------------------------------------------------------------------------
+
+// If variable-length arrays are not supported, user-defined types are limited
+// in size to 128 bytes or less.  Many of the type-generic routines allocate
+// workspace for a single scalar of variable size, using a statement:
+//
+//      GB_void aij [xsize] ;
+// 
+// To support non-variable-length arrays in ANSI C95 or earlier, this is used:
+//
+//      GB_void aij [GB_VLA(xsize)] ;
+//
+// GB_VLA(xsize) is either defined as xsize (for ANSI C99 or later), or a fixed
+// size of 128, in which case user-defined types are limited to a max of 128
+// bytes.
+
+#if ( GB_HAS_VLA )
+
+    // variable-length arrays are allowed
+    #define GB_VLA(s) s
+    #define GB_VLA_NTHREADS(nthreads) nthreads
 
 #else
 
-    #define GB_PGI(s) s
-    #define GB_PGI_NTHREADS(nthreads) nthreads
+    // variable-length arrays are not allowed
+    #define GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE 128
+    #define GB_VLA(s) GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE
+    #define GB_VLA_NTHREADS(nthreads) GxB_NTHREADS_MAX
 
 #endif
 
@@ -623,8 +665,8 @@ int64_t GB_Pending_n        // return # of pending tuples in A
     }
 
     // call a GraphBLAS method and assert that it returns GrB_SUCCESS
-    // or GrB_INDEX_OUT_OF_BOUNDS.  Used by GB_check(A,...) when the indices
-    // in the vectors of A may be jumbled.
+    // or GrB_INDEX_OUT_OF_BOUNDS.  Used by GB_Matrix_check(A,...) when the
+    // indices in the vectors of A may be jumbled.
     #define ASSERT_OK_OR_JUMBLED(X)                                         \
     {                                                                       \
         GrB_Info Info = (X) ;                                               \
@@ -1107,6 +1149,7 @@ GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
     GB_Context Context
 ) ;
 
+/*
 #define GB_check(x,name,pr)                             \
     _Generic                                            \
     (                                                   \
@@ -1132,6 +1175,61 @@ GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
         const GrB_Descriptor : GB_Descriptor_check ,    \
               GrB_Descriptor : GB_Descriptor_check      \
     ) (x, name, pr, stdout, Context)
+*/
+
+#define ASSERT_TYPE_OK(t,name,pr)  \
+    ASSERT_OK (GB_Type_check (t, name, pr, stdout, Context))
+
+#define ASSERT_TYPE_OK_OR_NULL(t,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_Type_check (t, name, pr, stdout, Context))
+
+#define ASSERT_BINARYOP_OK(op,name,pr)  \
+    ASSERT_OK (GB_BinaryOp_check (op, name, pr, stdout, Context))
+
+#define ASSERT_BINARYOP_OK_OR_NULL(op,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_BinaryOp_check (op, name, pr, stdout, Context))
+
+#define ASSERT_UNARYOP_OK(op,name,pr)  \
+    ASSERT_OK (GB_UnaryOp_check (op, name, pr, stdout, Context))
+
+#define ASSERT_UNARYOP_OK_OR_NULL(op,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_UnaryOp_check (op, name, pr, stdout, Context))
+
+#define ASSERT_SELECTOP_OK(op,name,pr)  \
+    ASSERT_OK (GB_SelectOp_check (op, name, pr, stdout, Context))
+
+#define ASSERT_SELECTOP_OK_OR_NULL(op,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_SelectOp_check (op, name, pr, stdout, Context))
+
+#define ASSERT_MONOID_OK(mon,name,pr)  \
+    ASSERT_OK (GB_Monoid_check (mon, name, pr, stdout, Context))
+
+#define ASSERT_SEMIRING_OK(s,name,pr)  \
+    ASSERT_OK (GB_Semiring_check (s, name, pr, stdout, Context))
+
+#define ASSERT_MATRIX_OK(A,name,pr)  \
+    ASSERT_OK (GB_Matrix_check (A, name, pr, stdout, Context))
+
+#define ASSERT_MATRIX_OK_OR_NULL(A,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_Matrix_check (A, name, pr, stdout, Context))
+
+#define ASSERT_MATRIX_OK_OR_JUMBLED(A,name,pr)  \
+    ASSERT_OK_OR_JUMBLED (GB_Matrix_check (A, name, pr, stdout, Context))
+
+#define ASSERT_VECTOR_OK(v,name,pr)  \
+    ASSERT_OK (GB_Vector_check (v, name, pr, stdout, Context))
+
+#define ASSERT_SCALAR_OK(s,name,pr)  \
+    ASSERT_OK (GB_Scalar_check (s, name, pr, stdout, Context))
+
+#define ASSERT_SCALAR_OK_OR_NULL(s,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_Scalar_check (s, name, pr, stdout, Context))
+
+#define ASSERT_DESCRIPTOR_OK(d,name,pr)  \
+    ASSERT_OK (GB_Descriptor_check (d, name, pr, stdout, Context))
+
+#define ASSERT_DESCRIPTOR_OK_OR_NULL(d,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_Descriptor_check (d, name, pr, stdout, Context))
 
 //------------------------------------------------------------------------------
 // internal GraphBLAS functions
@@ -1303,9 +1401,9 @@ bool GB_code_compatible         // check if two types can be typecast
 
 void GB_cast_array              // typecast an array
 (
-    GB_void *restrict Cx,       // output array
+    GB_void *GB_RESTRICT Cx,       // output array
     const GB_Type_code code1,   // type code for Cx
-    const GB_void *restrict Ax, // input array
+    const GB_void *GB_RESTRICT Ax, // input array
     const GB_Type_code code2,   // type code for Ax
     const int64_t anz,          // number of entries in Cx and Ax
     GB_Context Context
@@ -1403,10 +1501,10 @@ GrB_Info GB_ewise_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const int64_t Cnvec,            // # of vectors of C
-    const int64_t *restrict Ch,     // vectors of C, if hypersparse
-    const int64_t *restrict C_to_M, // mapping of C to M
-    const int64_t *restrict C_to_A, // mapping of C to A
-    const int64_t *restrict C_to_B, // mapping of C to B
+    const int64_t *GB_RESTRICT Ch,     // vectors of C, if hypersparse
+    const int64_t *GB_RESTRICT C_to_M, // mapping of C to M
+    const int64_t *GB_RESTRICT C_to_A, // mapping of C to A
+    const int64_t *GB_RESTRICT C_to_B, // mapping of C to B
     bool Ch_is_Mh,                  // if true, then Ch == Mh; GB_add only
     const GrB_Matrix M,             // mask matrix to slice (optional)
     const GrB_Matrix A,             // matrix to slice
@@ -1424,14 +1522,14 @@ void GB_slice_vector
     // input:
     const int64_t pM_start,         // M(:,kM) starts at pM_start in Mi,Mx
     const int64_t pM_end,           // M(:,kM) ends at pM_end-1 in Mi,Mx
-    const int64_t *restrict Mi,     // indices of M (or NULL)
+    const int64_t *GB_RESTRICT Mi,     // indices of M (or NULL)
     const int64_t pA_start,         // A(:,kA) starts at pA_start in Ai,Ax
     const int64_t pA_end,           // A(:,kA) ends at pA_end-1 in Ai,Ax
-    const int64_t *restrict Ai,     // indices of A
+    const int64_t *GB_RESTRICT Ai,     // indices of A
     const int64_t A_hfirst,         // if Ai is an implicit hyperlist
     const int64_t pB_start,         // B(:,kB) starts at pB_start in Bi,Bx
     const int64_t pB_end,           // B(:,kB) ends at pB_end-1 in Bi,Bx
-    const int64_t *restrict Bi,     // indices of B
+    const int64_t *GB_RESTRICT Bi,     // indices of B
     const int64_t vlen,             // A->vlen and B->vlen
     const double target_work        // target work
 ) ;
@@ -1441,7 +1539,7 @@ void GB_task_cumsum
     int64_t *Cp,                        // size Cnvec+1
     const int64_t Cnvec,
     int64_t *Cnvec_nonempty,            // # of non-empty vectors in C
-    GB_task_struct *restrict TaskList,  // array of structs
+    GB_task_struct *GB_RESTRICT TaskList,  // array of structs
     const int ntasks,                   // # of tasks
     const int nthreads                  // # of threads
 ) ;
@@ -1683,8 +1781,8 @@ GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
 
 bool GB_pslice          // slice Ap; return true if ok, false if out of memory
 (
-    int64_t *restrict *Slice_handle,    // size ntasks+1
-    const int64_t *restrict Ap,         // array of size n+1
+    int64_t *GB_RESTRICT *Slice_handle,    // size ntasks+1
+    const int64_t *GB_RESTRICT Ap,         // array of size n+1
     const int64_t n,
     const int ntasks                    // # of tasks
 ) ;
@@ -1715,9 +1813,9 @@ bool GB_binop_builtin               // true if binary operator is builtin
 
 void GB_cumsum                  // compute the cumulative sum of an array
 (
-    int64_t *restrict count,    // size n+1, input/output
+    int64_t *GB_RESTRICT count,    // size n+1, input/output
     const int64_t n,
-    int64_t *restrict kresult,  // return k, if needed by the caller
+    int64_t *GB_RESTRICT kresult,  // return k, if needed by the caller
     int nthreads
 ) ;
 
@@ -1788,7 +1886,7 @@ bool GB_size_t_multiply     // true if ok, false if overflow
 bool GB_extract_vector_list     // true if successful, false if out of memory
 (
     // output:
-    int64_t *restrict J,        // size nnz(A) or more
+    int64_t *GB_RESTRICT J,        // size nnz(A) or more
     // input:
     const GrB_Matrix A,
     int nthreads
@@ -1982,8 +2080,8 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *restrict *p_Ap,        // size nvec+1
-    int64_t *restrict *p_Ah,        // size nvec
+    int64_t *GB_RESTRICT *p_Ap,        // size nvec+1
+    int64_t *GB_RESTRICT *p_Ah,        // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
@@ -2547,14 +2645,14 @@ extern mtx_t GB_sync ;
 static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 (
     const bool A_is_hyper,          // true if A is hypersparse
-    const int64_t *restrict Ah,     // A->h [0..A->nvec-1]: list of vectors
-    const int64_t *restrict Ap,     // A->p [0..A->nvec  ]: pointers to vectors
-    int64_t *restrict pleft,        // look only in A->h [pleft..pright]
+    const int64_t *GB_RESTRICT Ah,     // A->h [0..A->nvec-1]: list of vectors
+    const int64_t *GB_RESTRICT Ap,     // A->p [0..A->nvec  ]: pointers to vectors
+    int64_t *GB_RESTRICT pleft,        // look only in A->h [pleft..pright]
     int64_t pright,                 // normally A->nvec-1, but can be trimmed
 //  const int64_t nvec,             // A->nvec: number of vectors
     const int64_t j,                // vector to find, as j = Ah [k]
-    int64_t *restrict pstart,       // start of vector: Ap [k]
-    int64_t *restrict pend          // end of vector: Ap [k+1]
+    int64_t *GB_RESTRICT pstart,       // start of vector: Ap [k]
+    int64_t *GB_RESTRICT pend          // end of vector: Ap [k+1]
 )
 {
     if (A_is_hyper)

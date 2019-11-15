@@ -26,10 +26,10 @@
     //--------------------------------------------------------------------------
 
     #ifdef GB_MASK_CASE
-    const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = M->x ;
+    const int64_t *GB_RESTRICT Mp = M->p ;
+    const int64_t *GB_RESTRICT Mh = M->h ;
+    const int64_t *GB_RESTRICT Mi = M->i ;
+    const GB_void *GB_RESTRICT Mx = M->x ;
     GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
     size_t msize = M->type->size ;
     const int64_t mnvec = M->nvec ;
@@ -42,10 +42,10 @@
     // get A and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
     int64_t anvec = A->nvec ;
 
     // if A is hypersparse but all vectors are present, then
@@ -56,7 +56,7 @@
     // start the construction of C
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ci = C->i ;
+    int64_t *GB_RESTRICT Ci = C->i ;
 
     int64_t jlast, cnz, cnz_last ;
     GB_jstartup (C, &jlast, &cnz, &cnz_last) ;

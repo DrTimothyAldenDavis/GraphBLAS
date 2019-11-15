@@ -65,7 +65,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t avlen = A->vlen ;
 
     #if defined ( GB_SYMBOLIC )
@@ -73,7 +73,7 @@
     #endif
 
     #if defined ( GB_PHASE_2_OF_2 ) && defined ( GB_NUMERIC )
-    const GB_CTYPE *restrict Ax = A->x ;
+    const GB_CTYPE *GB_RESTRICT Ax = A->x ;
     const int64_t asize = A->type->size ;
     #endif
 
@@ -82,8 +82,8 @@
     //--------------------------------------------------------------------------
 
     #if defined ( GB_PHASE_2_OF_2 )
-    int64_t  *restrict Ci = C->i ;
-    GB_CTYPE *restrict Cx = C->x ;
+    int64_t  *GB_RESTRICT Ci = C->i ;
+    GB_CTYPE *GB_RESTRICT Cx = C->x ;
     #endif
 
     //--------------------------------------------------------------------------

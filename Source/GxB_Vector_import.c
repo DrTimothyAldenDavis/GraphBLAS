@@ -94,7 +94,7 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
 
     ASSERT (*vi == NULL) ;
     ASSERT (*vx == NULL) ;
-    ASSERT_OK (GB_check (*v, "v imported", GB0)) ;
+    ASSERT_VECTOR_OK (*v, "v imported", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

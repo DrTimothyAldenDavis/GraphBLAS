@@ -16,7 +16,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *restrict Ax = A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (anz > 0) ;
 

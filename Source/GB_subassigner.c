@@ -102,10 +102,10 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     GrB_Matrix A2 = NULL ;
     GrB_Matrix M2 = NULL ;
 
-    GrB_Index *restrict I2  = NULL ;
-    GrB_Index *restrict I2k = NULL ;
-    GrB_Index *restrict J2  = NULL ;
-    GrB_Index *restrict J2k = NULL ;
+    GrB_Index *GB_RESTRICT I2  = NULL ;
+    GrB_Index *GB_RESTRICT I2k = NULL ;
+    GrB_Index *GB_RESTRICT J2  = NULL ;
+    GrB_Index *GB_RESTRICT J2k = NULL ;
 
     /*
     GrB_Index *I2  = NULL ;
@@ -362,12 +362,12 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // is typecasted into C->type).  User-defined scalars cannot be
         // typecasted.
         atype = GB_code_type (scalar_code, C->type) ;
-        ASSERT_OK (GB_check (atype, "atype for scalar expansion", GB0)) ;
+        ASSERT_TYPE_OK (atype, "atype for scalar expansion", GB0) ;
     }
     else
     { 
         // A is an nI-by-nJ matrix, with no pending computations
-        ASSERT_OK (GB_check (A, "A for subassign kernel", GB0)) ;
+        ASSERT_MATRIX_OK (A, "A for subassign kernel", GB0) ;
         ASSERT (nI == A->vlen && nJ == A->vdim) ;
         ASSERT (!GB_PENDING (A)) ;   ASSERT (!GB_ZOMBIES (A)) ;
         ASSERT (scalar == NULL) ;
@@ -385,7 +385,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (M != NULL)
     { 
         // M can have no pending tuples nor zombies
-        ASSERT_OK (GB_check (M, "M for subassign kernel", GB0)) ;
+        ASSERT_MATRIX_OK (M, "M for subassign kernel", GB0) ;
         ASSERT (!GB_PENDING (M)) ;  ASSERT (!GB_ZOMBIES (M)) ;
         ASSERT (nI == M->vlen && nJ == M->vdim) ;
     }
@@ -523,12 +523,12 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // Prior computations are not compatible with this assignment, so all
         // prior work must be finished.  This potentially costly.
         // delete any lingering zombies and assemble any pending tuples
-        ASSERT_OK (GB_check (C, "C before wait", GB0)) ;
+        ASSERT_MATRIX_OK (C, "C before wait", GB0) ;
         GB_OK (GB_wait (C, Context)) ;
     }
 
-    ASSERT_OK (GB_check (C, "C before subassign", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for assign", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C before subassign", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for assign", GB0) ;
 
     //--------------------------------------------------------------------------
     // keep track of the current accum operator
@@ -629,12 +629,12 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         GB_OK (GB_subref (&S, C->is_csc, C, I, ni, J, nj, true, true, Context));
 
-        ASSERT_OK (GB_check (C, "C for subref extraction", GB0)) ;
-        ASSERT_OK (GB_check (S, "S for subref extraction", GB0)) ;
+        ASSERT_MATRIX_OK (C, "C for subref extraction", GB0) ;
+        ASSERT_MATRIX_OK (S, "S for subref extraction", GB0) ;
 
         #ifdef GB_DEBUG
-        const int64_t *restrict Si = S->i ;
-        const int64_t *restrict Sx = S->x ;
+        const int64_t *GB_RESTRICT Si = S->i ;
+        const int64_t *GB_RESTRICT Sx = S->x ;
         // this body of code explains what S contains.
         // S is nI-by-nJ where nI = length (I) and nJ = length (J)
         GBI_for_each_vector (S)
@@ -1064,7 +1064,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // finalize C and return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "C(I,J) result", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C(I,J) result", GB0) ;
     return (GB_block (C, Context)) ;
 }
 

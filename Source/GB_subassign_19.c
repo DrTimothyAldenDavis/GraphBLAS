@@ -46,13 +46,13 @@ GrB_Info GB_subassign_19
     GB_GET_C ;
     const bool C_is_hyper = C->is_hyper ;
     const int64_t Cnvec = C->nvec ;
-    const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
+    const int64_t *GB_RESTRICT Ch = C->h ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
     GB_GET_MASK ;
     const bool M_is_hyper = M->is_hyper ;
     const int64_t Mnvec = M->nvec ;
     GB_GET_S ;
-    const int64_t *restrict Sh = S->h ;
+    const int64_t *GB_RESTRICT Sh = S->h ;
     const int64_t Snvec = S->nvec ;
     const bool S_is_hyper = S->is_hyper ;
     GB_GET_ACCUM_SCALAR ;

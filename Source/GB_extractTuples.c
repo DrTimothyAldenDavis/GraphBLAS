@@ -53,7 +53,7 @@ GrB_Info GB_extractTuples       // extract all tuples from a matrix
             A->type->name, GB_code_string (xcode)))) ;
     }
 
-    ASSERT_OK (GB_check (A, "A to extract", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A to extract", GB0) ;
 
     int64_t anz = GB_NNZ (A) ;
 

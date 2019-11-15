@@ -116,7 +116,7 @@ GrB_Info GB_red_scalar__eq_bool
 (
     bool *result,
     const GrB_Matrix A,
-    GB_void *restrict W_space,
+    GB_void *GB_RESTRICT W_space,
     int ntasks,
     int nthreads
 )
@@ -137,11 +137,11 @@ GrB_Info GB_red_scalar__eq_bool
 
 GrB_Info GB_red_eachvec__eq_bool
 (
-    bool *restrict Tx,
+    bool *GB_RESTRICT Tx,
     GrB_Matrix A,
-    const int64_t *restrict kfirst_slice,
-    const int64_t *restrict klast_slice,
-    const int64_t *restrict pstart_slice,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
     GB_void *Wfirst_space,
     GB_void *Wlast_space,
     int ntasks,
@@ -165,7 +165,7 @@ GrB_Info GB_red_eachindex__eq_bool
     GrB_Matrix *Thandle,
     GrB_Type ttype,
     GrB_Matrix A,
-    const int64_t *restrict pstart_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
     int nth,
     int nthreads,
     GB_Context Context
@@ -192,15 +192,15 @@ GrB_Info GB_red_eachindex__eq_bool
 
 GrB_Info GB_red_build__eq_bool
 (
-    bool *restrict Tx,
-    int64_t  *restrict Ti,
-    const bool *restrict S,
+    bool *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const bool *GB_RESTRICT S,
     int64_t nvals,
     int64_t ndupl,
-    const int64_t *restrict I_work,
-    const int64_t *restrict K_work,
-    const int64_t *restrict tstart_slice,
-    const int64_t *restrict tnz_slice,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
     int nthreads
 )
 { 

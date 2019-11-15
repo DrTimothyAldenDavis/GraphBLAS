@@ -19,9 +19,9 @@
 
 void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
 (
-    GB_void *restrict Cx,           // output array, of type op->ztype
+    GB_void *GB_RESTRICT Cx,           // output array, of type op->ztype
     const GrB_UnaryOp op,           // operator to apply
-    const GB_void *restrict Ax,     // input array, of type Atype
+    const GB_void *GB_RESTRICT Ax,     // input array, of type Atype
     const GrB_Type Atype,           // type of Ax
     const int64_t anz,              // size of Ax and Cx
     GB_Context Context
@@ -88,7 +88,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     for (int64_t p = 0 ; p < anz ; p++)
     { 
         // xwork = (xtype) Ax [p]
-        GB_void xwork [GB_PGI(xsize)] ;
+        GB_void xwork [GB_VLA(xsize)] ;
         cast_A_to_X (xwork, Ax +(p*asize), asize) ;
         // Cx [p] = fop (xwork)
         fop (Cx +(p*zsize), xwork) ;

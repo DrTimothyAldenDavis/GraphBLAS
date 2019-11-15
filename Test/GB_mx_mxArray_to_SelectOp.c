@@ -77,7 +77,7 @@ bool GB_mx_mxArray_to_SelectOp          // true if successful
     }
 
     // return the op
-    ASSERT_OK (GB_check (op, name, GB0)) ;
+    ASSERT_SELECTOP_OK (op, name, GB0) ;
     (*handle) = op ;
     return (true) ;
 }

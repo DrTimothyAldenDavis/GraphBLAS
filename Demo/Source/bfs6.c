@@ -54,16 +54,16 @@ GrB_Info bfs6               // BFS of a graph (using unary operator)
 
     GrB_Matrix_nrows (&n, A) ;             // n = # of rows of A
     GrB_Vector_new (&v, GrB_INT32, n) ;    // Vector<int32_t> v(n) = 0
-    GrB_assign (v, NULL, NULL, 0, GrB_ALL, n, NULL) ;   // make v dense
+    GrB_Vector_assign_INT32 (v, NULL, NULL, 0, GrB_ALL, n, NULL) ; // make dense
     GrB_Vector_nvals (&n, v) ;             // finish pending work on v
 
     GrB_Vector_new (&q, GrB_BOOL, n) ;     // Vector<bool> q(n) = false
-    GrB_Vector_setElement (q, true, s) ;   // q[s] = true, false elsewhere
+    GrB_Vector_setElement_BOOL (q, true, s) ;   // q[s] = true, false elsewhere
 
     // Note the typecast to bool.  Otherwise an error is reported, since the
     // _Generic function selects the wrong function (int32, not boolean).  This
     // is because of default integer promotion of function arguments in C.
-    GrB_Monoid_new (&Lor, GrB_LOR, (bool) false) ;
+    GrB_Monoid_new_BOOL (&Lor, GrB_LOR, (bool) false) ;
 
     // The semiring uses "AND" as the multiply operator, and "OR" as the
     // addititive monoid.
@@ -88,27 +88,27 @@ GrB_Info bfs6               // BFS of a graph (using unary operator)
         // to the entries in q, which are the unvisited successors, and then
         // writes their levels to v, thus updating the levels of those nodes in
         // v.  The patterns of v and q are disjoint.
-        GrB_apply (v, NULL, GrB_PLUS_INT32, apply_level, q, NULL) ;
+        GrB_Vector_apply (v, NULL, GrB_PLUS_INT32, apply_level, q, NULL) ;
 
         // q<!v> = q ||.&& A ; finds all the unvisited
         // successors from current q, using !v as the mask
         GrB_vxm (q, v, NULL, Boolean, q, A, desc) ;
 
         // successor = ||(q)
-        GrB_reduce (&successor, NULL, Lor, q, NULL) ;
+        GrB_Vector_reduce_BOOL (&successor, NULL, Lor, q, NULL) ;
     }
 
     // make v sparse
     GrB_Descriptor_set (desc, GrB_MASK, GxB_DEFAULT) ;  // mask not inverted
-    GrB_assign (v, v, NULL, v, GrB_ALL, n, desc) ;
+    GrB_Vector_assign (v, v, NULL, v, GrB_ALL, n, desc) ;
 
     *v_output = v ;         // return result
 
-    GrB_free (&q) ;
-    GrB_free (&Lor) ;
-    GrB_free (&Boolean) ;
-    GrB_free (&desc) ;
-    GrB_free (&apply_level) ;
+    GrB_Vector_free (&q) ;
+    GrB_Monoid_free (&Lor) ;
+    GrB_Semiring_free (&Boolean) ;
+    GrB_Descriptor_free (&desc) ;
+    GrB_UnaryOp_free (&apply_level) ;
 
     return (GrB_SUCCESS) ;
 }

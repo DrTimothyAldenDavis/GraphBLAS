@@ -37,10 +37,10 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL (c) ;
 
-    ASSERT_OK (GB_check (ctype, "type of scalar c", GB0)) ;
-    ASSERT_OK (GB_check (reduce, "reduce for reduce_to_scalar", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for reduce_to_scalar", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for reduce_to_scalar", GB0)) ;
+    ASSERT_TYPE_OK (ctype, "type of scalar c", GB0) ;
+    ASSERT_MONOID_OK (reduce, "reduce for reduce_to_scalar", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_to_scalar", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for reduce_to_scalar", GB0) ;
 
     // check domains and dimensions for c = accum (c,s)
     GrB_Type ztype = reduce->op->ztype ;
@@ -89,7 +89,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    GB_void *restrict W = NULL ;
+    GB_void *GB_RESTRICT W = NULL ;
     GB_MALLOC_MEMORY (W, ntasks, zsize) ;
     if (W == NULL)
     {
@@ -102,11 +102,11 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     //--------------------------------------------------------------------------
 
     // s = identity
-    GB_void s [GB_PGI(zsize)] ;
+    GB_void s [GB_VLA(zsize)] ;
     memcpy (s, reduce->identity, zsize) ;
 
     // get terminal value, if any
-    GB_void *restrict terminal = reduce->terminal ;
+    GB_void *GB_RESTRICT terminal = reduce->terminal ;
 
     if (anz == 0)
     { 
@@ -179,7 +179,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             // ztype t = identity
             #define GB_SCALAR_IDENTITY(t)                           \
-                GB_void t [GB_PGI(zsize)] ;                         \
+                GB_void t [GB_VLA(zsize)] ;                         \
                 memcpy (t, reduce->identity, zsize) ;
 
             // t = W [tid], no typecast
@@ -223,7 +223,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
             // ztype t ;
             #define GB_SCALAR(t)                                    \
-                GB_void t [GB_PGI(zsize)]
+                GB_void t [GB_VLA(zsize)]
 
             // t = (ztype) Ax [p], but no typecasting needed
             #define GB_CAST_ARRAY_TO_SCALAR(t,Ax,p)                 \
@@ -256,7 +256,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
             // t += (ztype) Ax [p], with typecast
             #undef  GB_ADD_CAST_ARRAY_TO_SCALAR
             #define GB_ADD_CAST_ARRAY_TO_SCALAR(t,Ax,p)             \
-                GB_void awork [GB_PGI(zsize)] ;                     \
+                GB_void awork [GB_VLA(zsize)] ;                     \
                 cast_A_to_Z (awork, Ax +((p)*asize), asize) ;       \
                 freduce (t, t, awork)
 

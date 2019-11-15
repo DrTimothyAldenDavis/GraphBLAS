@@ -23,7 +23,7 @@ GrB_Info GxB_Semiring_add           // return the additive monoid of a semiring
     GB_WHERE ("GxB_Semiring_add (&add, semiring)") ;
     GB_RETURN_IF_NULL (add) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
-    ASSERT_OK (GB_check (semiring, "semiring for add", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for add", GB0) ;
 
     //--------------------------------------------------------------------------
     // return the ztype

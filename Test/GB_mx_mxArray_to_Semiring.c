@@ -127,7 +127,7 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
             return (false) ;
     }
 
-    ASSERT_OK (GB_check (multiply, "semiring multiply", GB0)) ;
+    ASSERT_BINARYOP_OK (multiply, "semiring multiply", GB0) ;
 
     // find the corresponding built-in GraphBLAS add operator
     GB_Opcode add_opcode ;
@@ -153,8 +153,8 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
         return (false) ;
     }
 
-    ASSERT_OK (GB_check (add, "semiring add", GB0)) ;
-    ASSERT_OK (GB_check (multiply, "semiring multiply", GB0)) ;
+    ASSERT_MONOID_OK (add, "semiring add", GB0) ;
+    ASSERT_BINARYOP_OK (multiply, "semiring multiply", GB0) ;
 
     // create the monoid with the add operator and its identity value
     GrB_Monoid monoid = GB_mx_builtin_monoid (add) ;
@@ -172,7 +172,7 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
         return (false) ;
     }
 
-    ASSERT_OK (GB_check (semiring, "semiring", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring", GB0) ;
 
     (*handle) = semiring ;
     return (true) ;

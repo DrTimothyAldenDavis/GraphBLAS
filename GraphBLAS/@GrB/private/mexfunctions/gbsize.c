@@ -84,7 +84,7 @@ void mexFunction
     // free shallow copy of X
     //--------------------------------------------------------------------------
 
-    OK (GrB_free (&X)) ;
+    OK (GrB_Matrix_free (&X)) ;
     GB_WRAPUP ;
 }
 

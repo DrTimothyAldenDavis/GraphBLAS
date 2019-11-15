@@ -56,13 +56,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK_OR_NULL (GB_check (M_in, "M for meta A*B", GB0)) ;
-    ASSERT_OK (GB_check (A_in, "A_in for meta A*B", GB0)) ;
-    ASSERT_OK (GB_check (B_in, "B_in for meta A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_in, "M for meta A*B", GB0) ;
+    ASSERT_MATRIX_OK (A_in, "A_in for meta A*B", GB0) ;
+    ASSERT_MATRIX_OK (B_in, "B_in for meta A*B", GB0) ;
     ASSERT (!GB_PENDING (M_in)) ; ASSERT (!GB_ZOMBIES (M_in)) ;
     ASSERT (!GB_PENDING (A_in)) ; ASSERT (!GB_ZOMBIES (A_in)) ;
     ASSERT (!GB_PENDING (B_in)) ; ASSERT (!GB_ZOMBIES (B_in)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for numeric A*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for numeric A*B", GB0) ;
     ASSERT (mask_applied != NULL) ;
     ASSERT (AxB_method_used != NULL) ;
     ASSERT (Chandle != NULL) ;
@@ -200,8 +200,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // C_transpose.
     ASSERT (!C_transpose) ;
 
-    ASSERT_OK (GB_check (A, "final A for A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "final B for A*B", GB0)) ;
+    ASSERT_MATRIX_OK (A, "final A for A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "final B for A*B", GB0) ;
 
     //--------------------------------------------------------------------------
     // explicitly transpose the mask
@@ -225,7 +225,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         M = M_in ;
     }
 
-    ASSERT_OK_OR_NULL (GB_check (M, "final M for A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "final M for A*B", GB0) ;
 
     //--------------------------------------------------------------------------
     // typecast A and B when transposing them, if needed
@@ -470,8 +470,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     GB_MATRIX_FREE (&AT) ;
     GB_MATRIX_FREE (&BT) ;
-    ASSERT_OK (GB_check (C, "C output for all C=A*B", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (MT, "MT if computed", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C output for all C=A*B", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (MT, "MT if computed", GB0) ;
 
     if (MT_handle != NULL)
     { 

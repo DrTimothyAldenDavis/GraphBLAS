@@ -31,7 +31,8 @@ void mexFunction
     GB_mx_mxArray_to_BinaryOp (&binaryop, pargin [0], "binaryop",
         GB_PLUS_opcode, mxDOUBLE_CLASS, false, false) ;
 
-    GrB_Info info = GB_check (binaryop, "binaryop", GxB_COMPLETE) ;
+    GrB_Info info = GB_BinaryOp_check (binaryop, "binaryop", GxB_COMPLETE,
+        stdout, Context) ;
     if (info != GrB_SUCCESS)
     {
         mexErrMsgTxt (GrB_error ( )) ;

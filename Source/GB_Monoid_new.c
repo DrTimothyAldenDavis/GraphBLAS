@@ -37,7 +37,7 @@ GrB_Info GB_Monoid_new          // create a monoid
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     ASSERT (identity != NULL) ;
 
-    ASSERT_OK (GB_check (op, "op for monoid", GB0)) ;
+    ASSERT_BINARYOP_OK (op, "op for monoid", GB0) ;
     ASSERT (idcode <= GB_UDT_code) ;
     ASSERT (idcode != GB_UCT_code) ;
 
@@ -356,7 +356,7 @@ GrB_Info GB_Monoid_new          // create a monoid
         }
     }
 
-    ASSERT_OK (GB_check (mon, "new monoid", GB0)) ;
+    ASSERT_MONOID_OK (mon, "new monoid", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

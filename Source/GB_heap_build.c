@@ -15,7 +15,7 @@
 
 void GB_heap_build
 (
-    GB_Element *restrict Heap,  // Heap [1..nheap]; modified
+    GB_Element *GB_RESTRICT Heap,  // Heap [1..nheap]; modified
     const int64_t nheap         // the number of nodes in the Heap
 )
 {

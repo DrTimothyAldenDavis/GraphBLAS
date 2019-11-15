@@ -74,8 +74,6 @@ GrB_Info axb (GB_Context Context)
     // printf ("using precompiled semiring %p\n", My_plus_rdiv2) ;
     #endif
 
-    // GB_check (My_plus_rdiv2, "My_plus_rdiv2", GB0) ;
-
     // C = A*B
     info = GB_AxB_meta (&C,
         true,       // CSC
@@ -188,8 +186,6 @@ void mexFunction
     // B must be completed for GB_AxB_meta to work
     GrB_Index nvals ;
     GrB_Matrix_nvals (&nvals, B) ;
-    // GB_check (B, "B float", GB0) ;
-    // GB_check (B64, "B64 double", GB0) ;
 
     METHOD (axb (Context)) ;
 

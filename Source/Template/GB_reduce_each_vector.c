@@ -30,10 +30,10 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const int64_t  *restrict Ap = A->p ;
-    const int64_t  *restrict Ah = A->h ;
-    const int64_t  *restrict Ai = A->i ;
-    const GB_ATYPE *restrict Ax = A->x ;
+    const int64_t  *GB_RESTRICT Ap = A->p ;
+    const int64_t  *GB_RESTRICT Ah = A->h ;
+    const int64_t  *GB_RESTRICT Ai = A->i ;
+    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
     size_t  asize = A->type->size ;
     int64_t avlen = A->vlen ;
     int64_t avdim = A->vdim ;
@@ -43,8 +43,8 @@
     //--------------------------------------------------------------------------
 
     // ztype Wfirst [ntasks], Wlast [ntasks] ;
-    GB_CTYPE *restrict Wfirst = (GB_CTYPE *) Wfirst_space ;
-    GB_CTYPE *restrict Wlast  = (GB_CTYPE *) Wlast_space ;
+    GB_CTYPE *GB_RESTRICT Wfirst = (GB_CTYPE *) Wfirst_space ;
+    GB_CTYPE *GB_RESTRICT Wlast  = (GB_CTYPE *) Wlast_space ;
 
     //--------------------------------------------------------------------------
     // reduce each slice

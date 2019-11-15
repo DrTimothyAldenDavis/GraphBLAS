@@ -29,7 +29,7 @@
 // macro used by OK(...) to free workspace if an error occurs
 #define FREE_ALL                    \
 {                                   \
-    GrB_free (&A) ;                 \
+    GrB_Matrix_free (&A) ;                 \
     if (Pd != NULL) free (Pd) ;     \
     if (Pi != NULL) free (Pi) ;     \
     if (P2 != NULL) free (P2) ;     \

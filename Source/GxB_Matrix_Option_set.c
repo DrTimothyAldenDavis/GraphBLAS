@@ -23,7 +23,7 @@ GrB_Info GxB_Matrix_Option_set      // set an option in a matrix
 
     GB_WHERE ("GxB_Matrix_Option_set (A, field, value)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    ASSERT_OK (GB_check (A, "A to set option", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A to set option", GB0) ;
 
     GB_WAIT (A) ;
 

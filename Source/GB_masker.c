@@ -66,9 +66,9 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     //--------------------------------------------------------------------------
 
     ASSERT (Rhandle != NULL) ;
-    ASSERT_OK (GB_check (M, "M for masker", GB0)) ;
-    ASSERT_OK (GB_check (C, "C for masker", GB0)) ;
-    ASSERT_OK (GB_check (Z, "Z for masker", GB0)) ;
+    ASSERT_MATRIX_OK (M, "M for masker", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for masker", GB0) ;
+    ASSERT_MATRIX_OK (Z, "Z for masker", GB0) ;
     ASSERT (C->vdim == Z->vdim && C->vlen == Z->vlen) ;
     ASSERT (C->vdim == M->vdim && C->vlen == M->vlen) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
@@ -189,7 +189,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (R, "R output for masker", GB0)) ;
+    ASSERT_MATRIX_OK (R, "R output for masker", GB0) ;
     (*Rhandle) = R ;
     return (GrB_SUCCESS) ;
 }

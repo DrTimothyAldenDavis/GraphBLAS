@@ -30,10 +30,10 @@
 // production use.
 
 #define FREE_ALL                \
-    GrB_free (&v) ;             \
-    GrB_free (&q) ;             \
-    GrB_free (&desc) ;          \
-    GrB_free (&apply_level) ;
+    GrB_Vector_free (&v) ;             \
+    GrB_Vector_free (&q) ;             \
+    GrB_Descriptor_free (&desc) ;          \
+    GrB_UnaryOp_free (&apply_level) ;
 
 #include "demos.h"
 
@@ -68,16 +68,16 @@ GrB_Info bfs6_check         // BFS of a graph (using unary operator)
 
     OK (GrB_Matrix_nrows (&n, A)) ;             // n = # of rows of A
     OK (GrB_Vector_new (&v, GrB_INT32, n)) ;    // Vector<int32_t> v(n) = 0
-    OK (GrB_assign (v, NULL, NULL, 0, GrB_ALL, n, NULL)) ;   // make v dense
+    OK (GrB_Vector_assign_INT32 (v, NULL, NULL, 0, GrB_ALL, n, NULL)) ;
     OK (GrB_Vector_nvals (&n, v)) ;              // finish pending work on v
 
     OK (GrB_Vector_new (&q, GrB_BOOL, n)) ;     // Vector<bool> q(n) = false
-    OK (GrB_Vector_setElement (q, true, s)) ;   // q[s] = true, false elsewhere
+    OK (GrB_Vector_setElement_BOOL (q, true, s)) ;   // q[s] = true
 
     // descriptor: invert the mask for vxm, and clear output before assignment
     OK (GrB_Descriptor_new (&desc)) ;
-    OK (GxB_set (desc, GrB_MASK, GrB_SCMP)) ;
-    OK (GxB_set (desc, GrB_OUTP, GrB_REPLACE)) ;
+    OK (GxB_Desc_set (desc, GrB_MASK, GrB_SCMP)) ;
+    OK (GxB_Desc_set (desc, GrB_OUTP, GrB_REPLACE)) ;
 
     // create a unary operator
     OK (GrB_UnaryOp_new (&apply_level, bfs_level, GrB_INT32, GrB_BOOL)) ;
@@ -93,19 +93,20 @@ GrB_Info bfs6_check         // BFS of a graph (using unary operator)
         // to the entries in q, which are the unvisited successors, and then
         // writes their levels to v, thus updating the levels of those nodes in
         // v.  The patterns of v and q are disjoint.
-        OK (GrB_apply (v, NULL, GrB_PLUS_INT32, apply_level, q, NULL)) ;
+        OK (GrB_Vector_apply (v, NULL, GrB_PLUS_INT32, apply_level, q, NULL)) ;
 
         // q'<!v> = q ||.&& A ; finds all the unvisited
         // successors from current q, using !v as the mask
         OK (GrB_vxm (q, v, NULL, GxB_LOR_LAND_BOOL, q, A, desc)) ;
 
         // successor = ||(q)
-        GrB_reduce (&successor, NULL, GxB_LOR_BOOL_MONOID, q, NULL) ;
+        GrB_Vector_reduce_BOOL (&successor, NULL, GxB_LOR_BOOL_MONOID,
+            q, NULL) ;
     }
 
     // make v sparse
     OK (GrB_Descriptor_set (desc, GrB_MASK, GxB_DEFAULT)) ; // mask not inverted
-    OK (GrB_assign (v, v, NULL, v, GrB_ALL, n, desc)) ;
+    OK (GrB_Vector_assign (v, v, NULL, v, GrB_ALL, n, desc)) ;
 
     *v_output = v ;         // return result
     v = NULL ;              // set to NULL so FREE_ALL doesn't free it

@@ -120,13 +120,13 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
 
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL
     ASSERT (*Chandle == NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for parallel A*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for parallel A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for parallel A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for parallel A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for parallel A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for parallel A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for parallel A*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for parallel A*B", GB0) ;
     ASSERT (AxB_method_used != NULL) ;
 
     GrB_Info info ;
@@ -163,16 +163,16 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     // initialize workspace
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Slice = NULL ;
-    int64_t *restrict Bflops = NULL ;
-    int64_t *restrict Bflops_per_entry = NULL ;
+    int64_t *GB_RESTRICT Slice = NULL ;
+    int64_t *GB_RESTRICT Bflops = NULL ;
+    int64_t *GB_RESTRICT Bflops_per_entry = NULL ;
 
     // workspaces each of size nthreads:
-    GrB_Desc_Value *restrict AxB_methods_used = NULL ;
-    int64_t *restrict bjnz_max = NULL ;
+    GrB_Desc_Value *GB_RESTRICT AxB_methods_used = NULL ;
+    int64_t *GB_RESTRICT bjnz_max = NULL ;
     int *Sauna_ids = NULL ;
-    GrB_Matrix *restrict Cslice = NULL ;
-    GrB_Matrix *restrict Bslice = NULL ;
+    GrB_Matrix *GB_RESTRICT Cslice = NULL ;
+    GrB_Matrix *GB_RESTRICT Bslice = NULL ;
 
     //==========================================================================
     // sequential C<M>=A*B
@@ -526,7 +526,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    ASSERT_OK (GB_check (*Chandle, "C for parallel A*B", GB0)) ;
+    ASSERT_MATRIX_OK (*Chandle, "C for parallel A*B", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

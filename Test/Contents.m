@@ -60,7 +60,7 @@
 %   test00   - test GB_mex_mis
 %   test01   - test GraphBLAS error handling
 %   test02   - test GrB_*_dup
-%   test03   - test GB_check functions
+%   test03   - test GB_*_check functions
 %   test04   - test and demo for accumulator/mask and transpose
 %   test05   - test GrB_*_setElement
 %   test06   - test GrB_mxm on all semirings

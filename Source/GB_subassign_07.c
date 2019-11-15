@@ -45,8 +45,8 @@ GrB_Info GB_subassign_07
     GB_GET_C ;
     int64_t zorig = C->nzombies ;
     const bool C_is_hyper = C->is_hyper ;
-    const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
+    const int64_t *GB_RESTRICT Ch = C->h ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
     const int64_t Cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
 

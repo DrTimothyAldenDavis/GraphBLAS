@@ -24,17 +24,17 @@
     // get A, B, M, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t vlen = A->vlen ;
 
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
 
-    const int64_t *restrict Mp = NULL ;
-    // const int64_t *restrict Mh = NULL ;
-    const int64_t *restrict Mi = NULL ;
-    const GB_void *restrict Mx = NULL ;
+    const int64_t *GB_RESTRICT Mp = NULL ;
+    // const int64_t *GB_RESTRICT Mh = NULL ;
+    const int64_t *GB_RESTRICT Mi = NULL ;
+    const GB_void *GB_RESTRICT Mx = NULL ;
     GB_cast_function cast_M = NULL ;
     size_t msize = 0 ;
     if (M != NULL)
@@ -48,12 +48,12 @@
     }
 
     #if defined ( GB_PHASE_2_OF_2 )
-    const GB_ATYPE *restrict Ax = A->x ;
-    const GB_ATYPE *restrict Bx = B->x ;
-    const int64_t  *restrict Cp = C->p ;
-    const int64_t  *restrict Ch = C->h ;
-          int64_t  *restrict Ci = C->i ;
-          GB_CTYPE *restrict Cx = C->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
+    const GB_ATYPE *GB_RESTRICT Bx = B->x ;
+    const int64_t  *GB_RESTRICT Cp = C->p ;
+    const int64_t  *GB_RESTRICT Ch = C->h ;
+          int64_t  *GB_RESTRICT Ci = C->i ;
+          GB_CTYPE *GB_RESTRICT Cx = C->x ;
     #endif
 
     //--------------------------------------------------------------------------

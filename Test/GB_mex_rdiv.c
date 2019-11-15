@@ -71,8 +71,6 @@ GrB_Info axb (GB_Context Context, bool cprint)
     // printf ("using precompiled semiring %p\n", My_plus_rdiv) ;
     #endif
 
-    // GB_check (My_plus_rdiv, "My_plus_rdiv", 3) ;
-
     // C = A*B
     info = GB_AxB_meta (&C,
         true,       // CSC

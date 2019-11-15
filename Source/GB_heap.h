@@ -30,7 +30,7 @@
 
 static inline bool GB_heap_check
 (
-    const GB_Element *restrict Heap,    // Heap [1..nheap], not modified
+    const GB_Element *GB_RESTRICT Heap,    // Heap [1..nheap], not modified
     const int64_t nheap                 // the number of nodes in the Heap
 )
 {
@@ -80,7 +80,7 @@ static inline bool GB_heap_check
 static inline bool GB_heap_pathcheck
 (
     int64_t p,                          // node to check, in range 1..nheap
-    const GB_Element *restrict Heap,    // Heap [1..nheap], not modified
+    const GB_Element *GB_RESTRICT Heap,    // Heap [1..nheap], not modified
     const int64_t nheap                 // the number of nodes in the Heap
 )
 {
@@ -117,7 +117,7 @@ static inline bool GB_heap_pathcheck
 static inline void GB_heapify
 (
     int64_t p,                      // node that needs to be heapified
-    GB_Element *restrict Heap,      // Heap [1..nheap]; modified
+    GB_Element *GB_RESTRICT Heap,      // Heap [1..nheap]; modified
     const int64_t nheap             // the number of nodes in the Heap
 )
 {
@@ -249,7 +249,7 @@ static inline void GB_heapify
 
 void GB_heap_build
 (
-    GB_Element *restrict Heap,  // Heap [1..nheap]; modified
+    GB_Element *GB_RESTRICT Heap,  // Heap [1..nheap]; modified
     const int64_t nheap         // the number of nodes in the Heap
 ) ;
 
@@ -260,8 +260,8 @@ void GB_heap_build
 void GB_heap_delete
 (
     int64_t p,                  // node that needs to be deleted
-    GB_Element *restrict Heap,  // Heap [1..nheap]
-    int64_t *restrict nheap     // the number of nodes in the Heap;
+    GB_Element *GB_RESTRICT Heap,  // Heap [1..nheap]
+    int64_t *GB_RESTRICT nheap     // the number of nodes in the Heap;
                                 // decremented on output
 ) ;
 
@@ -271,13 +271,13 @@ void GB_heap_delete
 
 int64_t GB_heap_getminlist      // returns Heap [1].key
 (
-    const GB_Element *restrict Heap,    // Heap [1..nheap], not modified
+    const GB_Element *GB_RESTRICT Heap,    // Heap [1..nheap], not modified
     const int64_t nheap,                // the number of nodes in the Heap
     // output
-    int64_t *restrict List,     // List [0..nlist-1] is a list of all nodes p
+    int64_t *GB_RESTRICT List,     // List [0..nlist-1] is a list of all nodes p
                                 // with Heap [p].key == Heap [1].key.  Node 1
                                 // is always in the list.  List has size nheap.
-    int64_t *restrict nlist     // the size of the List
+    int64_t *GB_RESTRICT nlist     // the size of the List
 ) ;
 
 #endif

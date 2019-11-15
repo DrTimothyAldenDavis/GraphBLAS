@@ -100,7 +100,7 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     ASSERT (*Ap == NULL) ;
     ASSERT (*Aj == NULL) ;
     ASSERT (*Ax == NULL) ;
-    ASSERT_OK (GB_check (*A, "A hyper CSR imported", GB0)) ;
+    ASSERT_MATRIX_OK (*A, "A hyper CSR imported", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

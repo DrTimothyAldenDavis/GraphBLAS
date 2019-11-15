@@ -27,7 +27,7 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK_OR_JUMBLED (GB_check (A, "A to conform", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A to conform", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     ASSERT (!GB_PENDING (A)) ;
 
@@ -67,7 +67,7 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK_OR_JUMBLED (GB_check (A, "A conformed", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A conformed", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

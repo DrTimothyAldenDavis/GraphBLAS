@@ -126,7 +126,7 @@ void mexFunction
     // free workspace
     //--------------------------------------------------------------------------
 
-    OK (GrB_free (&A)) ;
+    OK (GrB_Matrix_free (&A)) ;
     GB_WRAPUP ;
 }
 

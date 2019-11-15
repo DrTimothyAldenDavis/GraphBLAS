@@ -32,7 +32,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK_OR_JUMBLED (GB_check (A, "A converting to hypersparse", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converting to hypersparse", GB0) ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
@@ -62,10 +62,10 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
         ASSERT (A->h == NULL) ;
         ASSERT (A->nvec == A->plen && A->plen == n) ;
 
-        const int64_t *restrict Ap_old = A->p ;
+        const int64_t *GB_RESTRICT Ap_old = A->p ;
         bool Ap_old_shallow = A->p_shallow ;
 
-        int64_t *restrict Count ;
+        int64_t *GB_RESTRICT Count ;
         GB_MALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
         if (Count == NULL)
         {
@@ -98,8 +98,8 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
         // allocate the new A->p and A->h
         //----------------------------------------------------------------------
 
-        int64_t *restrict Ap_new ;
-        int64_t *restrict Ah_new ;
+        int64_t *GB_RESTRICT Ap_new ;
+        int64_t *GB_RESTRICT Ah_new ;
         GB_MALLOC_MEMORY (Ap_new, nvec_nonempty+1, sizeof (int64_t)) ;
         GB_MALLOC_MEMORY (Ah_new, nvec_nonempty,   sizeof (int64_t)) ;
         if (Ap_new == NULL || Ah_new == NULL)
@@ -165,7 +165,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
     //--------------------------------------------------------------------------
 
     ASSERT (anz == GB_NNZ (A)) ;
-    ASSERT_OK_OR_JUMBLED (GB_check (A, "A converted to hypersparse", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converted to hypersparse", GB0) ;
     ASSERT (A->is_hyper) ;
     return (GrB_SUCCESS) ;
 }

@@ -44,7 +44,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A to duplicate", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A to duplicate", GB0) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -95,12 +95,12 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     int64_t anvec = A->nvec ;
     C->nvec = anvec ;
     C->nvec_nonempty = A->nvec_nonempty ;
-    int64_t *restrict Cp = C->p ;
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Ci = C->i ;
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t *GB_RESTRICT Ci = C->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
 
     int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
     GB_memcpy (Cp, Ap, (anvec+1) * sizeof (int64_t), nthreads) ;
@@ -118,7 +118,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
 
     C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
     #ifdef GB_DEBUG
-    if (numeric) ASSERT_OK (GB_check (C, "C duplicate of A", GB0)) ;
+    if (numeric) ASSERT_MATRIX_OK (C, "C duplicate of A", GB0) ;
     #endif
 
     //--------------------------------------------------------------------------

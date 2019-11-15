@@ -55,14 +55,14 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     GB_Context Context = NULL ;
     #endif
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M_in, "M for Gustavson C<M>=A*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for Gustavson C=A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for Gustavson C=A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_in, "M for Gustavson C<M>=A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for Gustavson C=A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for Gustavson C=A*B", GB0) ;
     ASSERT (!GB_PENDING (M_in)) ; ASSERT (!GB_ZOMBIES (M_in)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (A->vdim == B->vlen) ;
-    ASSERT_OK (GB_check (semiring, "semiring for Gustavson A*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for Gustavson A*B", GB0) ;
     ASSERT (Sauna_id >= 0 && Sauna_id < GxB_NTHREADS_MAX) ;
     ASSERT (mask_applied != NULL) ;
 
@@ -134,7 +134,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
         Sauna = GB_Global_Saunas_get (Sauna_id) ;
     }
 
-    int64_t *restrict Sauna_Mark = Sauna->Sauna_Mark ;
+    int64_t *GB_RESTRICT Sauna_Mark = Sauna->Sauna_Mark ;
 
     // Sauna_Mark [0..cvlen-1] < hiwater holds
     ASSERT_SAUNA_IS_RESET ;
@@ -204,7 +204,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     C->x_shallow = false ;
 
     // Sauna_Work has size cvlen, each entry of size zsize.  Not initialized.
-    GB_void *restrict Sauna_Work = Sauna->Sauna_Work ;
+    GB_void *GB_RESTRICT Sauna_Work = Sauna->Sauna_Work ;
 
     if (M != NULL)
     { 
@@ -218,9 +218,9 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // compute C = A*B for built-in types and operators
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (A->type, "A type for Gustavson builtin", GB0)) ;
-    ASSERT_OK (GB_check (B->type, "B type for Gustavson builtin", GB0)) ;
-    ASSERT_OK (GB_check (C->type, "C type for Gustavson builtin", GB0)) ;
+    ASSERT_TYPE_OK (A->type, "A type for Gustavson builtin", GB0) ;
+    ASSERT_TYPE_OK (B->type, "B type for Gustavson builtin", GB0) ;
+    ASSERT_TYPE_OK (C->type, "C type for Gustavson builtin", GB0) ;
 
 #ifndef GBCOMPACT
 
@@ -239,7 +239,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     if (info == GrB_SUCCESS)
     { 
         // C = A*B has been done via a hard-coded case
-        ASSERT_OK (GB_check (C, "C hard-coded for Gustavson C=A*B", GB0)) ;
+        ASSERT_MATRIX_OK (C, "C hard-coded for Gustavson C=A*B", GB0) ;
         ASSERT (*Chandle == C) ;
         ASSERT_SAUNA_IS_RESET ;
         (*mask_applied) = (M != NULL) ;
@@ -331,8 +331,8 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
     GxB_binary_function fmult = mult->function ;
     GxB_binary_function fadd  = add->op->function ;
-    GB_void *restrict identity = add->identity ;
-    GB_void *restrict Cx = C->x ;
+    GB_void *GB_RESTRICT identity = add->identity ;
+    GB_void *GB_RESTRICT Cx = C->x ;
 
     #define GB_ATYPE GB_void
     #define GB_BTYPE GB_void
@@ -437,7 +437,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // if it could fail, do this:
     // GB_OK (info) ;     // check result and return if an error occurred
 
-    ASSERT_OK (GB_check (C, "C output for Gustavson C=A*B", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C output for Gustavson C=A*B", GB0) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
     return (GrB_SUCCESS) ;

@@ -49,7 +49,7 @@ void mexFunction
     int GET_SCALAR (1, int, pr, 1) ;
 
     // dump the matrix
-    GrB_Info info = GB_check (A, "", pr) ;
+    GrB_Info info = GB_Matrix_check (A, "", pr) ;
     if (info != GrB_SUCCESS)
     {
         mexErrMsgTxt (GrB_error ( )) ;

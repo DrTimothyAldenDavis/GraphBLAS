@@ -110,8 +110,8 @@ GrB_Info GB_AgusB
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_ctype *restrict Sauna_Work = Sauna->Sauna_Work ;
-    GB_ctype *restrict Cx = C->x ;
+    GB_ctype *GB_RESTRICT Sauna_Work = Sauna->Sauna_Work ;
+    GB_ctype *GB_RESTRICT Cx = C->x ;
     GrB_Info info = GrB_SUCCESS ;
     #include "GB_AxB_Gustavson_meta.c"
     return (info) ;
@@ -128,8 +128,8 @@ GrB_Info GB_Adot2B
     const GrB_Matrix M,
     const GrB_Matrix *Aslice, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    int64_t *restrict B_slice,
-    int64_t *restrict *C_counts,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
     int nthreads, int naslice, int nbslice
 )
 { 
@@ -154,7 +154,7 @@ GrB_Info GB_Adot3B
     const GrB_Matrix M,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    const GB_task_struct *restrict TaskList,
+    const GB_task_struct *GB_RESTRICT TaskList,
     const int ntasks,
     const int nthreads
 )
@@ -179,9 +179,9 @@ GrB_Info GB_AheapB
     const GrB_Matrix M,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    int64_t *restrict List,
-    GB_pointer_pair *restrict pA_pair,
-    GB_Element *restrict Heap,
+    int64_t *GB_RESTRICT List,
+    GB_pointer_pair *GB_RESTRICT pA_pair,
+    GB_Element *GB_RESTRICT Heap,
     const int64_t bjnz_max
 )
 { 
@@ -189,7 +189,7 @@ GrB_Info GB_AheapB
     return (GrB_NO_VALUE) ;
     #else
     GrB_Matrix C = (*Chandle) ;
-    GB_ctype *restrict Cx = C->x ;
+    GB_ctype *GB_RESTRICT Cx = C->x ;
     GB_ctype cij ;
     int64_t cvlen = C->vlen ;
     GrB_Info info = GrB_SUCCESS ;

@@ -37,8 +37,8 @@
 // free all workspace
 #define FREEWORK                \
 {                               \
-    GrB_free (&dout) ;          \
-    GrB_free (&D) ;             \
+    GrB_Vector_free (&dout) ;   \
+    GrB_Matrix_free (&D) ;      \
     if (I != NULL) free (I) ;   \
     if (X != NULL) free (X) ;   \
 }
@@ -46,7 +46,7 @@
 // error handler: free workspace and the output matrix C
 #define FREE_ALL                \
 {                               \
-    GrB_free (&C) ;             \
+    GrB_Matrix_free (&C) ;      \
     FREEWORK ;                  \
 }
 
@@ -82,7 +82,8 @@ GrB_Info irowscale          // GrB_SUCCESS or error condition
     //--------------------------------------------------------------------------
 
     OK (GrB_Vector_new (&dout, GrB_UINT64, n)) ;
-    OK (GrB_reduce (dout, NULL, NULL, GrB_PLUS_UINT64, A, NULL)) ;
+    OK (GrB_Matrix_reduce_BinaryOp (dout, NULL, NULL, GrB_PLUS_UINT64,
+        A, NULL)) ;
 
     //--------------------------------------------------------------------------
     // construct scaling matrix D
@@ -96,7 +97,7 @@ GrB_Info irowscale          // GrB_SUCCESS or error condition
     X = malloc ((n+1) * sizeof (uint64_t)) ;
     CHECK (I != NULL && X != NULL, GrB_OUT_OF_MEMORY) ;
     GrB_Index nvals = n ;
-    OK (GrB_Vector_extractTuples (I, X, &nvals, dout)) ;
+    OK (GrB_Vector_extractTuples_UINT64 (I, X, &nvals, dout)) ;
 
     // I and X exclude empty columns of A.  This condition is always true.
     CHECK (nvals <= n, GrB_PANIC) ;
@@ -111,7 +112,7 @@ GrB_Info irowscale          // GrB_SUCCESS or error condition
         if (y == 0) y = 1 ;
         X [i] = y ;
     }
-    OK (GrB_Matrix_build (D, I, I, X, nvals, GrB_PLUS_UINT64)) ;
+    OK (GrB_Matrix_build_UINT64 (D, I, I, X, nvals, GrB_PLUS_UINT64)) ;
 
     //--------------------------------------------------------------------------
     // C = diagonal matrix with explicit zeros on diagonal
@@ -126,7 +127,7 @@ GrB_Info irowscale          // GrB_SUCCESS or error condition
         X [i] = 0 ;
     }
     OK (GrB_Matrix_new (&C, GrB_UINT64, n, n)) ;
-    OK (GrB_Matrix_build (C, I, I, X, n, GrB_PLUS_UINT64)) ;
+    OK (GrB_Matrix_build_UINT64 (C, I, I, X, n, GrB_PLUS_UINT64)) ;
 
     //--------------------------------------------------------------------------
     // C += D*A

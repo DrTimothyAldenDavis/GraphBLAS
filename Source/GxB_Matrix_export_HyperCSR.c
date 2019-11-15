@@ -66,7 +66,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
         }
     }
 
-    ASSERT_OK (GB_check ((*A), "A export: hyper CSR", GB0)) ;
+    ASSERT_MATRIX_OK ((*A), "A export: hyper CSR", GB0) ;
     ASSERT (!((*A)->is_csc)) ;
     ASSERT ((*A)->is_hyper) ;
 

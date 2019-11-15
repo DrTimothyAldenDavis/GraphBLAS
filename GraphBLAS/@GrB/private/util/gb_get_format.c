@@ -61,17 +61,17 @@ GxB_Format_Value gb_get_format          // GxB_BY_ROW or GxB_BY_COL
     else if (A != NULL && !gb_is_vector (A))
     { 
         // (4) get the format of A
-        OK (GxB_get (A, GxB_FORMAT, &fmt)) ;
+        OK (GxB_Matrix_Option_get (A, GxB_FORMAT, &fmt)) ;
     }
     else if (B != NULL && !gb_is_vector (B))
     { 
         // (5) get the format of B
-        OK (GxB_get (B, GxB_FORMAT, &fmt)) ;
+        OK (GxB_Matrix_Option_get (B, GxB_FORMAT, &fmt)) ;
     }
     else
     { 
         // (6) get the global default format
-        OK (GxB_get (GxB_FORMAT, &fmt)) ;
+        OK (GxB_Global_Option_get (GxB_FORMAT, &fmt)) ;
     }
     return (fmt) ;
 }

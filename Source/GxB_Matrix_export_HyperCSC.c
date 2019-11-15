@@ -66,7 +66,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
         }
     }
 
-    ASSERT_OK (GB_check ((*A), "A export: hyper CSC", GB0)) ;
+    ASSERT_MATRIX_OK ((*A), "A export: hyper CSC", GB0) ;
     ASSERT ((*A)->is_csc) ;
     ASSERT ((*A)->is_hyper) ;
 

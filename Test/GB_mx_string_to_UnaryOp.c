@@ -321,7 +321,7 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
     if (opcode_return  != NULL) *opcode_return  = opcode ;
 
     // return the unary operator to the caller
-    ASSERT_OK (GB_check (op, "got unary op", GB0)) ;
+    ASSERT_UNARYOP_OK (op, "got unary op", GB0) ;
     (*handle) = op ;
     return (true) ;
 }

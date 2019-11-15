@@ -67,8 +67,8 @@ GrB_Info GB_subassign_one_slice
     ASSERT (p_max_ntasks != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
-    ASSERT_OK (GB_check (C, "C for 1_slice", GB0)) ;
-    ASSERT_OK (GB_check (A, "A/M for 1_slice", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C for 1_slice", GB0) ;
+    ASSERT_MATRIX_OK (A, "A/M for 1_slice", GB0) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
@@ -85,15 +85,15 @@ GrB_Info GB_subassign_one_slice
     // get A and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anz = GB_NNZ (A) ;
     const int64_t anvec = A->nvec ;
 
-    const int64_t *restrict Cp = C->p ;
-    const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Ci = C->i ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
+    const int64_t *GB_RESTRICT Ch = C->h ;
+    const int64_t *GB_RESTRICT Ci = C->i ;
     const bool C_is_hyper = C->is_hyper ;
     const int64_t nzombies = C->nzombies ;
     const int64_t Cnvec = C->nvec ;
@@ -103,10 +103,10 @@ GrB_Info GB_subassign_one_slice
     // allocate the initial TaskList
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Coarse = NULL ; // size ntasks1+1
+    int64_t *GB_RESTRICT Coarse = NULL ; // size ntasks1+1
     int ntasks1 = 0 ;
     int nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-    GB_task_struct *restrict TaskList = NULL ;
+    GB_task_struct *GB_RESTRICT TaskList = NULL ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
     int ntasks0 = (nthreads == 1) ? 1 : (32 * nthreads) ;

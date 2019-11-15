@@ -44,13 +44,13 @@ GrB_Info GB_AxB_saxpy_sequential    // single-threaded C<M>=A*B
     #endif
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL
     ASSERT (*Chandle == NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for sequential A*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for sequential A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for sequential A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for sequential A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for sequential A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for sequential A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for sequential A*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for sequential A*B", GB0) ;
     ASSERT (mask_applied != NULL) ;
     ASSERT (AxB_method != GxB_AxB_DOT) ;
 

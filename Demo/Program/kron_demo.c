@@ -26,9 +26,9 @@
 
 // macro used by OK(...) to free workspace if an error occurs
 #define FREE_ALL                \
-    GrB_free (&A) ;             \
-    GrB_free (&B) ;             \
-    GrB_free (&C) ;             \
+    GrB_Matrix_free (&A) ;             \
+    GrB_Matrix_free (&B) ;             \
+    GrB_Matrix_free (&C) ;             \
     if (Afile != NULL) fclose (Afile) ; \
     if (Bfile != NULL) fclose (Bfile) ; \
     if (Cfile != NULL) fclose (Cfile) ; \
@@ -102,8 +102,8 @@ int main (int argc, char **argv)
     OK (GxB_kron (C, NULL, NULL, GrB_TIMES_FP64, A, B, NULL)) ;
     t = simple_toc (tic) ;
 
-    OK (GrB_free (&A)) ;
-    OK (GrB_free (&B)) ;
+    OK (GrB_Matrix_free (&A)) ;
+    OK (GrB_Matrix_free (&B)) ;
 
     //--------------------------------------------------------------------------
     // report results
@@ -144,7 +144,7 @@ int main (int argc, char **argv)
         exit (1) ;
     }
 
-    OK (GrB_Matrix_extractTuples (I, J, X, &cnvals, C)) ;
+    OK (GrB_Matrix_extractTuples_FP64 (I, J, X, &cnvals, C)) ;
 
     for (int64_t k = 0 ; k < cnvals ; k++)
     {

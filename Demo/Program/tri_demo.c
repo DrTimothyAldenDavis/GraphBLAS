@@ -37,11 +37,11 @@
 
 // macro used by OK(...) to free workspace if an error occurs
 #define FREE_ALL                \
-    GrB_free (&Thunk) ;         \
-    GrB_free (&C) ;             \
-    GrB_free (&A) ;             \
-    GrB_free (&L) ;             \
-    GrB_free (&U) ;
+    GxB_Scalar_free (&Thunk) ;         \
+    GrB_Matrix_free (&C) ;             \
+    GrB_Matrix_free (&A) ;             \
+    GrB_Matrix_free (&L) ;             \
+    GrB_Matrix_free (&U) ;
 
 #include "demos.h"
 
@@ -70,18 +70,18 @@ int main (int argc, char **argv)
 
     // A = spones (C), and typecast to uint32
     OK (GrB_Matrix_new (&A, GrB_UINT32, n, n)) ;
-    OK (GrB_apply (A, NULL, NULL, GxB_ONE_UINT32, C, NULL)) ;
+    OK (GrB_Matrix_apply (A, NULL, NULL, GxB_ONE_UINT32, C, NULL)) ;
     double t_read = simple_toc (tic) ;
     printf ("\ntotal time to read A matrix: %14.6f sec\n", t_read) ;
-    GrB_free (&C) ;
+    GrB_Matrix_free (&C) ;
 
     OK (GxB_Scalar_new (&Thunk, GrB_INT64)) ;
 
     // U = triu (A,1)
     simple_tic (tic) ;
-    OK (GxB_Scalar_setElement (Thunk, (int64_t) 1)) ;
+    OK (GxB_Scalar_setElement_INT64 (Thunk, (int64_t) 1)) ;
     OK (GrB_Matrix_new (&U, GrB_UINT32, n, n)) ;
-    OK (GxB_select (U, NULL, NULL, GxB_TRIU, A, Thunk, NULL)) ;
+    OK (GxB_Matrix_select (U, NULL, NULL, GxB_TRIU, A, Thunk, NULL)) ;
     OK (GrB_Matrix_nvals (&nedges, U)) ;
     printf ("\nn %.16g # edges %.16g\n", (double) n, (double) nedges) ;
     double t_U = simple_toc (tic) ;
@@ -90,11 +90,11 @@ int main (int argc, char **argv)
     // L = tril (A,-1)
     simple_tic (tic) ;
     OK (GrB_Matrix_new (&L, GrB_UINT32, n, n)) ;
-    OK (GxB_Scalar_setElement (Thunk, (int64_t) (-1))) ;
-    OK (GxB_select (L, NULL, NULL, GxB_TRIL, A, Thunk, NULL)) ;
+    OK (GxB_Scalar_setElement_INT64 (Thunk, (int64_t) (-1))) ;
+    OK (GxB_Matrix_select (L, NULL, NULL, GxB_TRIL, A, Thunk, NULL)) ;
     double t_L = simple_toc (tic) ;
     printf ("L=tril(A) time:  %14.6f sec\n", t_L) ;
-    OK (GrB_free (&A)) ;
+    OK (GrB_Matrix_free (&A)) ;
 
     int nthreads_max = 1 ;
     #if defined ( _OPENMP )
@@ -112,7 +112,7 @@ int main (int argc, char **argv)
 
     for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
-        GxB_set (GxB_NTHREADS, nthreads) ;
+        GxB_Global_Option_set (GxB_NTHREADS, nthreads) ;
 
         double t_dot [2] ;
         OK (tricount (&(ntri2 [nthreads]), 5, NULL, NULL, L, U, t_dot)) ;
@@ -165,7 +165,7 @@ int main (int argc, char **argv)
 
     for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
-        GxB_set (GxB_NTHREADS, nthreads) ;
+        GxB_Global_Option_set (GxB_NTHREADS, nthreads) ;
 
         double t_dot [2] ;
         OK (tricount (&(ntri2 [nthreads]), 6, NULL, NULL, L, U, t_dot)) ;
@@ -216,7 +216,7 @@ int main (int argc, char **argv)
     // warmup
 //    int64_t ntri ;
 //    double tt [2] ;
-//    GxB_set (GxB_NTHREADS, 1) ;
+//    GxB_Global_Option_set (GxB_NTHREADS, 1) ;
 //    OK (tricount (&ntri, 3, NULL, NULL, L, NULL, tt)) ;
 //    // printf ("warmup %g %g\n", tt [0], tt [1]) ;
 
@@ -224,7 +224,7 @@ int main (int argc, char **argv)
 
     for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads *= 2)
     {
-        GxB_set (GxB_NTHREADS, nthreads) ;
+        GxB_Global_Option_set (GxB_NTHREADS, nthreads) ;
 
         double t_mark [2] = { 0, 0 } ;
         OK (tricount (&ntri1 [nthreads], 3, NULL, NULL, L, NULL, t_mark)) ;

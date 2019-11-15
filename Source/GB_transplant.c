@@ -36,8 +36,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     ASSERT (!GB_aliased (C, A)) ;
 
     ASSERT (C != NULL) ;
-    ASSERT_OK (GB_check (A, "A before transplant", GB0)) ;
-    ASSERT_OK (GB_check (ctype, "new type for C", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A before transplant", GB0) ;
+    ASSERT_TYPE_OK (ctype, "new type for C", GB0) ;
 
     // pending tuples may not appear in A
     ASSERT (!GB_PENDING (A)) ;
@@ -171,7 +171,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (anz == 0)
     { 
         // quick return if A has no entries
-        ASSERT_OK (GB_check (C, "C empty transplant", GB0)) ;
+        ASSERT_MATRIX_OK (C, "C empty transplant", GB0) ;
         GB_MATRIX_FREE (Ahandle) ;
         return (GrB_SUCCESS) ;
     }
@@ -218,8 +218,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // transplant or copy A->x numerical values
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C->type, "target C->type for values", GB0)) ;
-    ASSERT_OK (GB_check (A->type, "source A->type for values", GB0)) ;
+    ASSERT_TYPE_OK (C->type, "target C->type for values", GB0) ;
+    ASSERT_TYPE_OK (A->type, "source A->type for values", GB0) ;
 
     if (C->type == A->type)
     {
@@ -285,7 +285,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     //--------------------------------------------------------------------------
 
     GB_MATRIX_FREE (Ahandle) ;
-    ASSERT_OK (GB_check (C, "C after transplant", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C after transplant", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

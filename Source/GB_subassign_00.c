@@ -39,8 +39,8 @@ GrB_Info GB_subassign_00
     // get inputs
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ci = C->i ;
-    const int64_t *restrict Sx = S->x ;
+    int64_t *GB_RESTRICT Ci = C->i ;
+    const int64_t *GB_RESTRICT Sx = S->x ;
 
     //--------------------------------------------------------------------------
     // Method 00: C(I,J)<!,repl> = empty ; using S

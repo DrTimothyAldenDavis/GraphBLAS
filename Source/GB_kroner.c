@@ -40,9 +40,9 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A for kron (A,B)", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for kron (A,B)", GB0)) ;
-    ASSERT_OK (GB_check (op, "op for kron (A,B)", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for kron (A,B)", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for kron (A,B)", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for kron (A,B)", GB0) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
 
@@ -54,20 +54,20 @@ GrB_Info GB_kroner                  // C = kron (A,B)
 
     (*Chandle) = NULL ;
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
-    const GB_void *restrict Ax = A->x ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
+    const GB_void *GB_RESTRICT Ax = A->x ;
     const int64_t asize = A->type->size ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     int64_t anvec = A->nvec ;
     int64_t anz = GB_NNZ (A) ;
 
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const GB_void *restrict Bx = B->x ;
+    const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bh = B->h ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
+    const GB_void *GB_RESTRICT Bx = B->x ;
     const int64_t bsize = B->type->size ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
@@ -115,10 +115,10 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // get C
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Cp = C->p ;
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Ci = C->i ;
-    GB_void *restrict Cx = C->x ;
+    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t *GB_RESTRICT Ci = C->i ;
+    GB_void *GB_RESTRICT Cx = C->x ;
     const int64_t csize = C->type->size ;
 
     GxB_binary_function fmult = op->function ;
@@ -174,14 +174,14 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             int64_t pB_end   = Bp [kB+1] ;
             int64_t bknz = pB_start - pB_end ;
             if (bknz == 0) continue ;
-            GB_void bwork [GB_PGI(bsize)] ;
+            GB_void bwork [GB_VLA(bsize)] ;
             // get C(:,jC), the (kC)th vector of C
             int64_t kC = kA * bnvec + kB ;
             int64_t pC = Cp [kC] ;
             // get A(:,jA), the (kA)th vector of A
             int64_t pA_start = Ap [kA] ;
             int64_t pA_end   = Ap [kA+1] ;
-            GB_void awork [GB_PGI(asize)] ;
+            GB_void awork [GB_VLA(asize)] ;
             for (int64_t pA = pA_start ; pA < pA_end ; pA++)
             {
                 // awork = A(iA,jA), typecasted to op->xtype
@@ -210,8 +210,8 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     if (C_is_hyper && C->nvec_nonempty < cnvec)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors
-        int64_t *restrict Cp_new = NULL ;
-        int64_t *restrict Ch_new = NULL ;
+        int64_t *GB_RESTRICT Cp_new = NULL ;
+        int64_t *GB_RESTRICT Ch_new = NULL ;
         int64_t nvec_new ;
         info = GB_hyper_prune (&Cp_new, &Ch_new, &nvec_new, C->p, C->h, cnvec,
             Context) ;
@@ -237,7 +237,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "C=kron(A,B)", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C=kron(A,B)", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

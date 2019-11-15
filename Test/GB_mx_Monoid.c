@@ -188,7 +188,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             return (false) ;
     }
 
-    ASSERT_OK (GB_check (M, "monoid", GB0)) ;
+    ASSERT_MONOID_OK (M, "monoid", GB0) ;
     (*handle) = M ;
     return (true) ;
 }

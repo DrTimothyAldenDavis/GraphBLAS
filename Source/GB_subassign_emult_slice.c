@@ -38,9 +38,9 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *restrict *Zh_handle,     // Zh is A->h, M->h, or NULL
-    int64_t *restrict *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
-    int64_t *restrict *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
+    const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
+    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,
@@ -65,9 +65,9 @@ GrB_Info GB_subassign_emult_slice
     ASSERT (p_max_ntasks != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
-    ASSERT_OK (GB_check (C, "C for emult_slice", GB0)) ;
-    ASSERT_OK (GB_check (M, "M for emult_slice", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for emult_slice", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C for emult_slice", GB0) ;
+    ASSERT_MATRIX_OK (M, "M for emult_slice", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for emult_slice", GB0) ;
 
     ASSERT (p_Znvec != NULL) ;
     ASSERT (Zh_handle != NULL) ;
@@ -91,21 +91,21 @@ GrB_Info GB_subassign_emult_slice
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
-    int64_t *restrict Ci = C->i ;
+    int64_t *GB_RESTRICT Ci = C->i ;
     int64_t nzombies = C->nzombies ;
     const bool C_is_hyper = C->is_hyper ;
     const int64_t Cnvec = C->nvec ;
     const int64_t cvlen = C->vlen ;
-    const int64_t *restrict Ch = C->h ;
-    const int64_t *restrict Cp = C->p ;
+    const int64_t *GB_RESTRICT Ch = C->h ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
 
-    const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
+    const int64_t *GB_RESTRICT Mp = M->p ;
+    const int64_t *GB_RESTRICT Mh = M->h ;
+    const int64_t *GB_RESTRICT Mi = M->i ;
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
 
     //--------------------------------------------------------------------------
     // construct fine/coarse tasks for eWise multiply of A.*M
@@ -115,9 +115,9 @@ GrB_Info GB_subassign_emult_slice
     // function takes the place of B in GB_emult.
 
     int64_t Znvec ;
-    const int64_t *restrict Zh = NULL ;
-    int64_t *restrict Z_to_A = NULL ;
-    int64_t *restrict Z_to_M = NULL ;
+    const int64_t *GB_RESTRICT Zh = NULL ;
+    int64_t *GB_RESTRICT Z_to_A = NULL ;
+    int64_t *GB_RESTRICT Z_to_M = NULL ;
 
     GB_OK (GB_emult_phase0 (
         &Znvec, &Zh, NULL, &Z_to_A, &Z_to_M,

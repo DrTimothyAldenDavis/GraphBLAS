@@ -50,7 +50,7 @@ void mexFunction
     GrB_Descriptor desc = 
         gb_mxarray_to_descriptor (pargin [nargin-1], &kind, &fmt, &base) ;
 
-    OK (GrB_free (&desc)) ;
+    OK (GrB_Descriptor_free (&desc)) ;
 
     // remove the descriptor from consideration
     nargin-- ;
@@ -197,7 +197,7 @@ void mexFunction
     GrB_Matrix A ;
     OK (GrB_Matrix_new (&A, type, nrows, ncols)) ;
     fmt = gb_get_format (nrows, ncols, NULL, NULL, fmt) ;
-    OK (GxB_set (A, GxB_FORMAT, fmt)) ;
+    OK (GxB_Matrix_Option_set (A, GxB_FORMAT, fmt)) ;
 
     // expandx is true if X must be expanded from a scalar to a vector
     void *X2 = NULL ;

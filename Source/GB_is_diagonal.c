@@ -24,7 +24,7 @@ bool GB_is_diagonal             // true if A is diagonal
     //--------------------------------------------------------------------------
 
     ASSERT (A != NULL) ;
-    ASSERT_OK (GB_check (A, "A check diag", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A check diag", GB0) ;
 
     //--------------------------------------------------------------------------
     // trivial cases
@@ -66,8 +66,8 @@ bool GB_is_diagonal             // true if A is diagonal
     // examine each vector of A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
 
     int diagonal = true ;
 

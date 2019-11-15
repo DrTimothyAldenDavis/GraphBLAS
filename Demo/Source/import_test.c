@@ -15,7 +15,7 @@
 
 #define FREE_ALL                    \
 {                                   \
-    GrB_free (C_handle) ;           \
+    GrB_Matrix_free (C_handle) ;           \
     if (Ap != NULL) free (Ap) ;     \
     if (Ah != NULL) free (Ah) ;     \
     if (Ai != NULL) free (Ai) ;     \

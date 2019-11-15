@@ -23,7 +23,7 @@ GrB_Info GxB_Monoid_identity        // return the monoid identity
     GB_WHERE ("GxB_Monoid_identity (&identity, monoid)") ;
     GB_RETURN_IF_NULL (identity) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-    ASSERT_OK (GB_check (monoid, "monoid for identity", GB0)) ;
+    ASSERT_MONOID_OK (monoid, "monoid for identity", GB0) ;
 
     //--------------------------------------------------------------------------
     // return the identity

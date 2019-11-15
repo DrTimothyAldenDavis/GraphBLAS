@@ -17,8 +17,8 @@
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *restrict *p_Ap,        // size nvec+1
-    int64_t *restrict *p_Ah,        // size nvec
+    int64_t *GB_RESTRICT *p_Ap,        // size nvec+1
+    int64_t *GB_RESTRICT *p_Ah,        // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
@@ -53,7 +53,7 @@ GrB_Info GB_hyper_prune
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *restrict W ;
+    int64_t *GB_RESTRICT W ;
     GB_MALLOC_MEMORY (W, nvec_old+1, sizeof (int64_t)) ;
     if (W == NULL)
     {
@@ -79,8 +79,8 @@ GrB_Info GB_hyper_prune
     // allocate the result
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ap = NULL ;
-    int64_t *restrict Ah = NULL ;
+    int64_t *GB_RESTRICT Ap = NULL ;
+    int64_t *GB_RESTRICT Ah = NULL ;
     GB_MALLOC_MEMORY (Ap, nvec+1, sizeof (int64_t)) ;
     GB_MALLOC_MEMORY (Ah, nvec,   sizeof (int64_t)) ;
     if (Ap == NULL || Ah == NULL)

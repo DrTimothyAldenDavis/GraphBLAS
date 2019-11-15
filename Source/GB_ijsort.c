@@ -30,11 +30,11 @@
 
 GrB_Info GB_ijsort
 (
-    const GrB_Index *restrict I, // size ni, where ni > 1 always holds
-    int64_t *restrict p_ni,      // : size of I, output: # of indices in I2
-    GrB_Index *restrict *p_I2,   // size ni2, where I2 [0..ni2-1]
+    const GrB_Index *GB_RESTRICT I, // size ni, where ni > 1 always holds
+    int64_t *GB_RESTRICT p_ni,      // : size of I, output: # of indices in I2
+    GrB_Index *GB_RESTRICT *p_I2,   // size ni2, where I2 [0..ni2-1]
                         // contains the sorted indices with duplicates removed.
-    GrB_Index *restrict *p_I2k,  // output array of size ni2
+    GrB_Index *GB_RESTRICT *p_I2k,  // output array of size ni2
     GB_Context Context
 )
 {
@@ -52,15 +52,15 @@ GrB_Info GB_ijsort
     // get inputs
     //--------------------------------------------------------------------------
 
-    GrB_Index *restrict I1  = NULL ;
-    GrB_Index *restrict I1k = NULL ;
-    GrB_Index *restrict I2  = NULL ;
-    GrB_Index *restrict I2k = NULL ;
-    int64_t *restrict W0  = NULL ;
-    int64_t *restrict W1 = NULL ;
+    GrB_Index *GB_RESTRICT I1  = NULL ;
+    GrB_Index *GB_RESTRICT I1k = NULL ;
+    GrB_Index *GB_RESTRICT I2  = NULL ;
+    GrB_Index *GB_RESTRICT I2k = NULL ;
+    int64_t *GB_RESTRICT W0  = NULL ;
+    int64_t *GB_RESTRICT W1 = NULL ;
     int64_t ni = *p_ni ;
     ASSERT (ni > 1) ;
-    int64_t *restrict Count = NULL ;        // size ntasks+1
+    int64_t *GB_RESTRICT Count = NULL ;        // size ntasks+1
     int ntasks = 0 ;
 
     //--------------------------------------------------------------------------

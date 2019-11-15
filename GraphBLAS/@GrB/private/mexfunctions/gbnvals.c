@@ -35,7 +35,7 @@ void mexFunction
     GrB_Index nvals ;
     OK (GrB_Matrix_nvals (&nvals, X)) ;
     pargout [0] = mxCreateDoubleScalar ((double) nvals) ;
-    OK (GrB_free (&X)) ;
+    OK (GrB_Matrix_free (&X)) ;
     GB_WRAPUP ;
 }
 

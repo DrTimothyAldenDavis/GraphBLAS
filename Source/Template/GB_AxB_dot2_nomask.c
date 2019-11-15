@@ -19,16 +19,16 @@
         //----------------------------------------------------------------------
 
         GrB_Matrix A = Aslice [a_taskid] ;
-        const int64_t *restrict Ai = A->i ;
+        const int64_t *GB_RESTRICT Ai = A->i ;
 
         #if defined ( GB_PHASE_1_OF_2 )
-        int64_t *restrict C_count = C_counts [a_taskid] ;
+        int64_t *GB_RESTRICT C_count = C_counts [a_taskid] ;
         #else
-        int64_t *restrict C_count_start =
+        int64_t *GB_RESTRICT C_count_start =
             (a_taskid == 0) ?         NULL : C_counts [a_taskid] ;
-        int64_t *restrict C_count_end   =
+        int64_t *GB_RESTRICT C_count_end   =
             (a_taskid == naslice-1) ? NULL : C_counts [a_taskid+1] ;
-        const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
+        const GB_ATYPE *GB_RESTRICT Ax = A_is_pattern ? NULL : A->x ;
         #endif
 
         //----------------------------------------------------------------------

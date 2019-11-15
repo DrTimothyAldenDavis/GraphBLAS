@@ -19,7 +19,7 @@ int main (void)
     printf ("demo: reduce a matrix to a scalar\n") ;
 
     int nthreads_max ;
-    GxB_get (GxB_NTHREADS, &nthreads_max) ;
+    GxB_Global_Option_get (GxB_NTHREADS, &nthreads_max) ;
     printf ("# of threads: %d\n", nthreads_max) ;
 
     #if defined ( _OPENMP )
@@ -53,7 +53,7 @@ int main (void)
     }
 
     GrB_Index nvals = N*N ;
-    GrB_Matrix_build (A, I, J, X, nvals, GrB_PLUS_INT64) ;
+    GrB_Matrix_build_INT64 (A, I, J, X, nvals, GrB_PLUS_INT64) ;
 
     free (I) ;
     free (J) ;
@@ -72,11 +72,12 @@ int main (void)
 
     for (int nthreads = 1 ; nthreads <= nthreads_max ; nthreads++)
     {
-        GxB_set (GxB_NTHREADS, nthreads) ;
+        GxB_Global_Option_set (GxB_NTHREADS, nthreads) ;
         #if defined ( _OPENMP )
         double t = omp_get_wtime ( ) ;
         #endif
-        GrB_reduce (&result, NULL, GxB_PLUS_INT64_MONOID, A, NULL) ;
+        GrB_Matrix_reduce_UINT64 (&result, NULL, GxB_PLUS_INT64_MONOID,
+            A, NULL) ;
         #if defined ( _OPENMP )
         t = omp_get_wtime ( ) - t ;
         if (nthreads == 1) t1 = t ;
@@ -88,7 +89,7 @@ int main (void)
     printf ("result %"PRId64"\n", result) ;
 
     // free everyting
-    GrB_free (&A) ;
+    GrB_Matrix_free (&A) ;
     GrB_finalize ( ) ;
 }
 

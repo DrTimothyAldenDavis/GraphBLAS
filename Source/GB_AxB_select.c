@@ -33,9 +33,9 @@ void GB_AxB_select                  // select method for A*B
     // only one thread does this entire function
     GB_Context Context = NULL ;
     #endif
-    ASSERT_OK (GB_check (A, "A for AxB select", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for AxB select", GB0)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for AxB select", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for AxB select", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for AxB select", GB0) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for AxB select", GB0) ;
     ASSERT (AxB_method_used != NULL) ;
     (*AxB_method_used) = GxB_DEFAULT ;
 

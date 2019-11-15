@@ -26,8 +26,8 @@ function [I, J, X] = find (G, k, search)
 % they are currently implemented, all entries are extracted and then the
 % first or last k are selected from the extracted tuples.  It would be
 % faster to use a mexFunction that directly accesses the opaque content
-% of G, instead of using GrB_extractTuples, which always extracts the
-% entire matrix.
+% of G, instead of using GrB_Matrix_extractTuples_*, which always extracts
+% the entire matrix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

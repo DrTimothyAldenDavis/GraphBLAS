@@ -56,7 +56,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
         GB_OK (GB_to_nonhyper ((*A), Context)) ;
     }
 
-    ASSERT_OK (GB_check ((*A), "A export: standard CSC", GB0)) ;
+    ASSERT_MATRIX_OK ((*A), "A export: standard CSC", GB0) ;
     ASSERT ((*A)->is_csc) ;
     ASSERT (!((*A)->is_hyper)) ;
 

@@ -29,11 +29,11 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (D, "D for rowscale A*D", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for rowscale A*D", GB0)) ;
+    ASSERT_MATRIX_OK (D, "D for rowscale A*D", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for rowscale A*D", GB0) ;
     ASSERT (!GB_PENDING (D)) ; ASSERT (!GB_ZOMBIES (D)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for numeric D*A", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for numeric D*A", GB0) ;
     ASSERT (D->vlen == D->vdim) ;
     ASSERT (D->vlen == B->vlen) ;
     ASSERT (GB_is_diagonal (D, Context)) ;
@@ -157,7 +157,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         size_t dii_size = flipxy ? ysize : xsize ;
         size_t bij_size = flipxy ? xsize : ysize ;
 
-        GB_void *restrict Cx = C->x ;
+        GB_void *GB_RESTRICT Cx = C->x ;
 
         GB_cast_function cast_D, cast_B ;
         if (flipxy)
@@ -183,12 +183,12 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         // dii = D(i,i), located in Dx [i]
         #define GB_GETA(dii,Dx,i)                                           \
-            GB_void dii [GB_PGI(dii_size)] ;                                \
+            GB_void dii [GB_VLA(dii_size)] ;                                \
             if (!D_is_pattern) cast_D (dii, Dx +((i)*dsize), dsize) ;
 
         // bij = B(i,j), located in Bx [pB]
         #define GB_GETB(bij,Bx,pB)                                          \
-            GB_void bij [GB_PGI(bij_size)] ;                                \
+            GB_void bij [GB_VLA(bij_size)] ;                                \
             if (!B_is_pattern) cast_B (bij, Bx +((pB)*bsize), bsize) ;
 
         // C(i,j) = D(i,i) * B(i,j)
@@ -223,7 +223,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "rowscale: C = D*B output", GB0)) ;
+    ASSERT_MATRIX_OK (C, "rowscale: C = D*B output", GB0) ;
     ASSERT (*Chandle == C) ;
     return (GrB_SUCCESS) ;
 }

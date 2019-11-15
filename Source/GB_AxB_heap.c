@@ -41,13 +41,13 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     GB_Context Context = NULL ;
     #endif
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M_in, "M_in for heap A*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for heap A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for heap A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M_in, "M_in for heap A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for heap A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for heap A*B", GB0) ;
     ASSERT (!GB_PENDING (M_in)) ; ASSERT (!GB_ZOMBIES (M_in)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for heap A*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for heap A*B", GB0) ;
     ASSERT (A->vdim == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
 
@@ -254,7 +254,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         char bkj [flipxy ? xsize : ysize] ;
         char t [csize] ;
 
-        GB_void *restrict Cx = C->x ;
+        GB_void *GB_RESTRICT Cx = C->x ;
         GB_void *cij = Cx ;        // advances through each entry of C
 
         // GB_void *identity = add->identity ;
@@ -328,7 +328,7 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
     GB_HEAP_FREE_WORK ;
     info = GB_ix_realloc (C, GB_NNZ (C), true, NULL) ;
     ASSERT (info == GrB_SUCCESS) ;
-    ASSERT_OK (GB_check (C, "heap: C = A*B output", GB0)) ;
+    ASSERT_MATRIX_OK (C, "heap: C = A*B output", GB0) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
     return (GrB_SUCCESS) ;

@@ -17,10 +17,10 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
 (
     GrB_Matrix *Chandle,    // output matrix (unallocated on input)
     // from phase1:
-    const int64_t *restrict Cp,         // vector pointers for C
+    const int64_t *GB_RESTRICT Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // from phase0b:
-    const GB_task_struct *restrict TaskList,    // array of structs
+    const GB_task_struct *GB_RESTRICT TaskList,    // array of structs
     const int ntasks,                           // # of tasks
     const int nthreads,                         // # of threads to use
     const bool post_sort,               // true if post-sort needed
@@ -28,9 +28,9 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     const int64_t *Inext,               // for I inverse buckets, size nI
     const int64_t nduplicates,          // # of duplicates, if I inverted
     // from phase0:
-    const int64_t *restrict Ch,
-    const int64_t *restrict Ap_start,
-    const int64_t *restrict Ap_end,
+    const int64_t *GB_RESTRICT Ch,
+    const int64_t *GB_RESTRICT Ap_start,
+    const int64_t *GB_RESTRICT Ap_end,
     const int64_t Cnvec,
     const bool need_qsort,
     const int Ikind,
@@ -51,7 +51,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     //--------------------------------------------------------------------------
 
     ASSERT (Cp != NULL) ;
-    ASSERT_OK (GB_check (A, "A for subref phase2", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for subref phase2", GB0) ;
 
     //--------------------------------------------------------------------------
     // allocate the output matrix C
@@ -119,8 +119,8 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     if (C_is_hyper && C->nvec_nonempty < Cnvec)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors
-        int64_t *restrict Cp_new = NULL ;
-        int64_t *restrict Ch_new = NULL ;
+        int64_t *GB_RESTRICT Cp_new = NULL ;
+        int64_t *GB_RESTRICT Ch_new = NULL ;
         int64_t nvec_new ;
         info = GB_hyper_prune (&Cp_new, &Ch_new, &nvec_new, C->p, C->h, Cnvec,
             Context) ;
@@ -147,7 +147,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // caller must not free Cp or Ch.   The matrix may have jumbled indices.
     // If it will be transposed in GB_accum_mask, but needs sorting, then the
     // sort is skipped since the transpose will handle the sort.
-    ASSERT_OK_OR_JUMBLED (GB_check (C, "C output for subref phase2", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (C, "C output for subref phase2", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

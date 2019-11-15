@@ -26,7 +26,7 @@ GrB_Info GxB_Monoid_terminal        // return the monoid terminal
     GB_RETURN_IF_NULL (has_terminal) ;
     GB_RETURN_IF_NULL (terminal) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-    ASSERT_OK (GB_check (monoid, "monoid for terminal", GB0)) ;
+    ASSERT_MONOID_OK (monoid, "monoid for terminal", GB0) ;
 
     //--------------------------------------------------------------------------
     // return the terminal

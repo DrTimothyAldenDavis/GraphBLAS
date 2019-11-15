@@ -23,7 +23,7 @@ GrB_Info GxB_Monoid_operator        // return the monoid operator
     GB_WHERE ("GxB_Monoid_operator (&op, monoid)") ;
     GB_RETURN_IF_NULL (op) ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
-    ASSERT_OK (GB_check (monoid, "monoid for op", GB0)) ;
+    ASSERT_MONOID_OK (monoid, "monoid for op", GB0) ;
 
     //--------------------------------------------------------------------------
     // return the ztype

@@ -24,7 +24,7 @@ GrB_Info GB_resize              // change the size of a matrix
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (A, "A to resize", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A to resize", GB0) ;
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
@@ -65,7 +65,7 @@ GrB_Info GB_resize              // change the size of a matrix
         (GB_PENDING (A) && vdim_old <= 1 && vdim_new > 1))
     { 
         GB_WAIT (A) ;
-        ASSERT_OK (GB_check (A, "A to resize, wait", GB0)) ;
+        ASSERT_MATRIX_OK (A, "A to resize, wait", GB0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -94,8 +94,8 @@ GrB_Info GB_resize              // change the size of a matrix
 
     bool ok = true ;
 
-    int64_t *restrict Ah = A->h ;
-    int64_t *restrict Ap = A->p ;
+    int64_t *GB_RESTRICT Ah = A->h ;
+    int64_t *GB_RESTRICT Ap = A->p ;
     A->vdim = vdim_new ;
 
     if (A->is_hyper)
@@ -183,7 +183,7 @@ GrB_Info GB_resize              // change the size of a matrix
     //--------------------------------------------------------------------------
 
     A->vlen = vlen_new ;
-    ASSERT_OK (GB_check (A, "A vlen resized", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A vlen resized", GB0) ;
 
     //--------------------------------------------------------------------------
     // check for conversion to hypersparse or to non-hypersparse

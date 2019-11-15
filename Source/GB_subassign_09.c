@@ -46,10 +46,10 @@ GrB_Info GB_subassign_09
 
     GB_GET_C ;
     // GB_GET_MASK ;
-    const int64_t *restrict Mp = M->p ;
-//  const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = M->x ;
+    const int64_t *GB_RESTRICT Mp = M->p ;
+//  const int64_t *GB_RESTRICT Mh = M->h ;
+    const int64_t *GB_RESTRICT Mi = M->i ;
+    const GB_void *GB_RESTRICT Mx = M->x ;
     const size_t msize = M->type->size ;
     GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
     GB_GET_SCALAR ;

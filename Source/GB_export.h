@@ -43,7 +43,7 @@
 #define GB_EXPORT_CHECK                                         \
     GB_RETURN_IF_NULL (A) ;                                     \
     GB_RETURN_IF_NULL_OR_FAULTY (*A) ;                          \
-    ASSERT_OK (GB_check (*A, "A to export", GB0)) ;             \
+    ASSERT_MATRIX_OK (*A, "A to export", GB0) ;                 \
     /* finish any pending work */                               \
     GB_WAIT (*A) ;                                              \
     /* check these after forcing completion */                  \

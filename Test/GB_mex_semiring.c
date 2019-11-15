@@ -38,7 +38,7 @@ void mexFunction
     GB_mx_mxArray_to_Semiring (&semiring, pargin [0], "semiring",
         mxDOUBLE_CLASS) ;
 
-    GrB_Info info = GB_check (semiring, "semiring", GxB_COMPLETE) ;
+    GrB_Info info = GB_Semiring_check (semiring, "semiring", GxB_COMPLETE) ;
     if (info != GrB_SUCCESS)
     {
         mexErrMsgTxt (GrB_error ( )) ;

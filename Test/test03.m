@@ -1,5 +1,5 @@
 function test03
-%TEST03 test GB_check functions
+%TEST03 test GB_*_check functions
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

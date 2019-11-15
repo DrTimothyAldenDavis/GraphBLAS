@@ -22,7 +22,7 @@ GrB_Info GB_type            // get the type of a matrix
     //--------------------------------------------------------------------------
 
     GB_RETURN_IF_NULL (type) ;
-    ASSERT_OK (GB_check (A, "A for type", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for type", GB0) ;
 
     //--------------------------------------------------------------------------
     // return the type

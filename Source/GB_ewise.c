@@ -54,12 +54,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     GB_RETURN_IF_FAULTY (accum) ;
 
-    ASSERT_OK (GB_check (C, "C input for GB_ewise", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_ewise", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_ewise", GB0)) ;
-    ASSERT_OK (GB_check (op, "op for GB_ewise", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for GB_ewise", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for GB_ewise", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_ewise", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_ewise", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_ewise", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for GB_ewise", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for GB_ewise", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for GB_ewise", GB0) ;
 
     // T has the same type as the output z for z=op(a,b)
     GrB_Type T_type = op->ztype ;

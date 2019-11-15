@@ -28,24 +28,24 @@
 // free all workspace
 #define FREEWORK                    \
 {                                   \
-    GrB_free (&rdouble) ;           \
-    GrB_free (&r) ;                 \
-    GrB_free (&rnew) ;              \
-    GrB_free (&dout) ;              \
-    GrB_free (&rdiff) ;             \
-    GrB_free (&desc) ;              \
+    GrB_Vector_free (&rdouble) ;           \
+    GrB_Vector_free (&r) ;                 \
+    GrB_Vector_free (&rnew) ;              \
+    GrB_Vector_free (&dout) ;              \
+    GrB_Vector_free (&rdiff) ;             \
+    GrB_Descriptor_free (&desc) ;              \
     if (I != NULL) free (I) ;       \
     if (X != NULL) free (X) ;       \
-    GrB_free (&PageRank_accum) ;    \
-    GrB_free (&PageRank_add) ;      \
-    GrB_free (&PageRank_monoid) ;   \
-    GrB_free (&PageRank_multiply) ; \
-    GrB_free (&PageRank_semiring) ; \
-    GrB_free (&PageRank_diff) ;     \
-    GrB_free (&PageRank_type) ;     \
-    GrB_free (&PageRank_div) ;      \
-    GrB_free (&PageRank_get) ;      \
-    GrB_free (&PageRank_init) ;     \
+    GrB_BinaryOp_free (&PageRank_accum) ;    \
+    GrB_BinaryOp_free (&PageRank_add) ;      \
+    GrB_Monoid_free (&PageRank_monoid) ;   \
+    GrB_BinaryOp_free (&PageRank_multiply) ; \
+    GrB_Semiring_free (&PageRank_semiring) ; \
+    GrB_BinaryOp_free (&PageRank_diff) ;     \
+    GrB_Type_free (&PageRank_type) ;     \
+    GrB_UnaryOp_free (&PageRank_div) ;      \
+    GrB_UnaryOp_free (&PageRank_get) ;      \
+    GrB_UnaryOp_free (&PageRank_init) ;     \
 }
 
 // error handler: free output P and all workspace (used by CHECK and OK macros)
@@ -310,17 +310,17 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
 
     // dout = sum (A,2) ;       // dout(i) is the out-degree of node i
     OK (GrB_Vector_new (&dout, GrB_FP64, n)) ;
-    OK (GrB_reduce (dout, NULL, NULL, GrB_PLUS_FP64, A, NULL)) ;
+    OK (GrB_Matrix_reduce_BinaryOp (dout, NULL, NULL, GrB_PLUS_FP64, A, NULL)) ;
 
     // all nodes start with rank 1/n
     pagerank_init_rank = 1.0 / ((double) n) ;
 
     // initialize the page rank and inverse degree of each node
     OK (GrB_Vector_new (&r, PageRank_type, n)) ;
-    OK (GrB_apply (r, NULL, NULL, PageRank_init, dout, NULL)) ;
+    OK (GrB_Vector_apply (r, NULL, NULL, PageRank_init, dout, NULL)) ;
 
     // dout vector no longer needed
-    OK (GrB_free (&dout)) ;
+    OK (GrB_Vector_free (&dout)) ;
 
     // to jump to any random node in entire graph:
     pagerank_teleport = (1-PAGERANK_DAMPING) / n ;
@@ -331,8 +331,6 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     // create rdouble, a double vector of size n
     OK (GrB_Vector_new (&rdouble, GrB_FP64, n)) ;
 
-    // GxB_print (A, GxB_SUMMARY) ;
-
     // Note that dup is needed, since the invdegree is copied by the
     // PageRank_accum.
     OK (GrB_Vector_dup (&rnew, r)) ;
@@ -342,7 +340,7 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     if (method != GxB_DEFAULT)
     {
         OK (GrB_Descriptor_new (&desc)) ;
-        OK (GxB_set (desc, GxB_AxB_METHOD, method)) ;
+        OK (GxB_Desc_set (desc, GxB_AxB_METHOD, method)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -357,13 +355,14 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
             desc)) ;
 
         // compute pagerank_rdiff = sum ((r - rnew).^2)
-        OK (GrB_eWiseAdd (rdiff, NULL, NULL, PageRank_diff, r, rnew, NULL));
+        OK (GrB_eWiseAdd_Vector_BinaryOp (rdiff, NULL, NULL, PageRank_diff,
+            r, rnew, NULL)) ;
         pagerank_type rsum ;
-        OK (GrB_reduce (&rsum, NULL, PageRank_monoid, rdiff, NULL)) ;
+        OK (GrB_Vector_reduce_UDT (&rsum, NULL, PageRank_monoid, rdiff, NULL)) ;
 
         pagerank_rdiff = rsum.rank ;
 
-        // r = rnew, using a swap, which is faster than GrB_assign or dup
+        // r = rnew, using a swap, which is faster than assign or dup
         GrB_Vector rtemp = r ;
         r = rnew ;
         rnew = rtemp ;
@@ -374,20 +373,21 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     //--------------------------------------------------------------------------
 
     // rnew (for the safe version) is no longer needed
-    GrB_free (&rnew) ;
+    GrB_Vector_free (&rnew) ;
 
     // rdouble = pagerank_get_rank (r)
-    OK (GrB_apply (rdouble, NULL, NULL, PageRank_get, r, NULL)) ;
+    OK (GrB_Vector_apply (rdouble, NULL, NULL, PageRank_get, r, NULL)) ;
 
     // r no longer needed
-    GrB_free (&r) ;
+    GrB_Vector_free (&r) ;
 
     // pagerank_rsum = sum (rdouble)
-    OK (GrB_reduce (&pagerank_rsum, NULL, GxB_PLUS_FP64_MONOID, rdouble, NULL));
+    OK (GrB_Vector_reduce_FP64 (&pagerank_rsum, NULL, GxB_PLUS_FP64_MONOID,
+        rdouble, NULL)) ;
 
     // could also do this with GrB_vxm, with a 1-by-1 matrix
     // r = r / pagerank_rsum
-    OK (GrB_apply (rdouble, NULL, NULL, PageRank_div, rdouble, NULL)) ;
+    OK (GrB_Vector_apply (rdouble, NULL, NULL, PageRank_div, rdouble, NULL)) ;
 
     //--------------------------------------------------------------------------
     // sort the nodes by pagerank
@@ -404,10 +404,10 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     I = malloc (n * sizeof (GrB_Index)) ;
     CHECK (I != NULL && X != NULL, GrB_OUT_OF_MEMORY) ;
     GrB_Index nvals = n ;
-    OK (GrB_Vector_extractTuples (I, X, &nvals, rdouble)) ;
+    OK (GrB_Vector_extractTuples_FP64 (I, X, &nvals, rdouble)) ;
 
     // rdouble no longer needed
-    GrB_free (&rdouble) ;
+    GrB_Vector_free (&rdouble) ;
 
     // P = struct (X,I)
     P = malloc (n * sizeof (PageRank)) ;

@@ -11,9 +11,9 @@
 // matrix.  If reading from a file, the file is assumed to be 0-based.
 
 #define FREE_ALL        \
-    GrB_free (&A) ;     \
-    GrB_free (&desc) ;  \
-    GrB_free (&Mask) ;
+    GrB_Matrix_free (&A) ;     \
+    GrB_Descriptor_free (&desc) ;  \
+    GrB_Matrix_free (&Mask) ;
 
 #include "demos.h"
 
@@ -108,7 +108,7 @@ GrB_Info get_matrix         // get a matrix from stdin, or create random one
                 for (int64_t i = 0 ; i < nrows ; i++)
                 {
                     // Mask (i,i) = true
-                    OK (GrB_Matrix_setElement (Mask, (bool) true, i, i)) ;
+                    OK (GrB_Matrix_setElement_BOOL (Mask, (bool) true, i, i)) ;
                 }
                 // A<~Mask> = A, thus removing the diagonal.  GrB_transpose
                 // does C<Mask>=A', so setting inp0 to tran does C=A'', and
@@ -120,8 +120,8 @@ GrB_Info get_matrix         // get a matrix from stdin, or create random one
                 OK (GrB_Descriptor_set (desc, GrB_MASK, GrB_SCMP)) ;
                 OK (GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE)) ;
                 OK (GrB_transpose (A, Mask, NULL, A, desc)) ;
-                GrB_free (&Mask) ;
-                GrB_free (&desc) ;
+                GrB_Matrix_free (&Mask) ;
+                GrB_Descriptor_free (&desc) ;
             }
 
             // force completion, just to check timing

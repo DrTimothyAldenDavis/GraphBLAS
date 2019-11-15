@@ -32,7 +32,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK_OR_JUMBLED (GB_check (A, "A being converted to nonhyper", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A being converted to nonhyper", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
 
     //--------------------------------------------------------------------------
@@ -58,7 +58,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         // allocate the new Ap array, of size n+1
         //----------------------------------------------------------------------
 
-        int64_t *restrict Ap_new ;
+        int64_t *GB_RESTRICT Ap_new ;
         GB_MALLOC_MEMORY (Ap_new, n+1, sizeof (int64_t)) ;
         if (Ap_new == NULL)
         { 
@@ -78,8 +78,8 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         //----------------------------------------------------------------------
 
         int64_t nvec = A->nvec ;                // # of vectors in Ah_old
-        int64_t *restrict Ap_old = A->p ;       // size nvec+1
-        int64_t *restrict Ah_old = A->h ;       // size nvec
+        int64_t *GB_RESTRICT Ap_old = A->p ;       // size nvec+1
+        int64_t *GB_RESTRICT Ah_old = A->h ;       // size nvec
         int64_t nvec_nonempty = 0 ;             // recompute A->nvec_nonempty
         int64_t anz = GB_NNZ (A) ;
 
@@ -216,7 +216,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
     // A is now in non-hypersparse form
     //--------------------------------------------------------------------------
 
-    ASSERT_OK_OR_JUMBLED (GB_check (A, "A converted to nonhypersparse", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (A, "A converted to nonhypersparse", GB0) ;
     ASSERT (!(A->is_hyper)) ;
     return (GrB_SUCCESS) ;
 }

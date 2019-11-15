@@ -17,13 +17,13 @@
 
 int64_t GB_heap_getminlist      // returns Heap [1].key
 (
-    const GB_Element *restrict Heap,    // Heap [1..nheap], not modified
+    const GB_Element *GB_RESTRICT Heap,    // Heap [1..nheap], not modified
     const int64_t nheap,                // the number of nodes in the Heap
     // output
-    int64_t *restrict List,     // List [0..nlist-1] is a list of all nodes p
+    int64_t *GB_RESTRICT List,     // List [0..nlist-1] is a list of all nodes p
                                 // with Heap [p].key == Heap [1].key.  Node 1
                                 // is always in the list.  List has size nheap.
-    int64_t *restrict nlist     // the size of the List
+    int64_t *GB_RESTRICT nlist     // the size of the List
 )
 {
 

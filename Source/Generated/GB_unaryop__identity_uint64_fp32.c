@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__identity_uint64_fp32
 (
-    uint64_t *restrict Cx,
-    const float *restrict Ax,
+    uint64_t *GB_RESTRICT Cx,
+    const float *GB_RESTRICT Ax,
     int64_t anz,
     int nthreads
 )
@@ -91,9 +91,9 @@ GrB_Info GB_tran__identity_uint64_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
-    int64_t *restrict *Rowcounts,
+    int64_t *GB_RESTRICT *Rowcounts,
     GBI_single_iterator Iter,
-    const int64_t *restrict A_slice,
+    const int64_t *GB_RESTRICT A_slice,
     int naslice
 )
 { 

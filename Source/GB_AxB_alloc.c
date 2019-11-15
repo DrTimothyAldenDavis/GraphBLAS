@@ -37,9 +37,9 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
     #endif
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for alloc C=A*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for alloc C=A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for alloc C=A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for alloc C=A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for alloc C=A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for alloc C=A*B", GB0) ;
     ASSERT (M == NULL || !M->is_slice) ;
 
     GrB_Info info ;
@@ -70,8 +70,8 @@ GrB_Info GB_AxB_alloc           // estimate nnz(C) and allocate C for C=A*B
 
         // cnz_guess is a strict upper bound on nnz(C)
 
-        const int64_t *restrict Mp = M->p ;
-        const int64_t *restrict Mh = M->h ;
+        const int64_t *GB_RESTRICT Mp = M->p ;
+        const int64_t *GB_RESTRICT Mh = M->h ;
         const int64_t mnvec = M->nvec ;
         int64_t mpleft = 0 ;
         int64_t mpright = mnvec - 1 ;

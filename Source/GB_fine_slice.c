@@ -49,7 +49,7 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (B, "B to slice", GB0)) ;
+    ASSERT_MATRIX_OK (B, "B to slice", GB0) ;
     ASSERT (nthreads > 1) ;
     ASSERT (Bslice != NULL) ;
     ASSERT (Slice != NULL) ;
@@ -141,7 +141,7 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         // Bslice has shallow pointers into B->i and B->x
         (Bslice [tid])->i = B->i + pfirst ;
         (Bslice [tid])->i_shallow = true ;
-        GB_void *restrict Bx = B->x ;
+        GB_void *GB_RESTRICT Bx = B->x ;
         (Bslice [tid])->x = Bx + pfirst * B->type->size ;
         (Bslice [tid])->x_shallow = true ;
 
@@ -182,7 +182,7 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
         (Bslice [tid])->nzmax = bslice_nz ;
         (Bslice [tid])->magic = GB_MAGIC ;
 
-        ASSERT_OK (GB_check (Bslice [tid], "Bslice", GB0)) ;
+        ASSERT_MATRIX_OK (Bslice [tid], "Bslice", GB0) ;
     }
 
     //--------------------------------------------------------------------------

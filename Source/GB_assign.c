@@ -73,10 +73,10 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     GrB_Matrix MT = NULL ;
     GrB_Matrix Z = NULL ;
     GrB_Matrix Z2 = NULL ;
-    GrB_Index *restrict I2  = NULL ;
-    GrB_Index *restrict I2k = NULL ;
-    GrB_Index *restrict J2  = NULL ;
-    GrB_Index *restrict J2k = NULL ;
+    GrB_Index *GB_RESTRICT I2  = NULL ;
+    GrB_Index *GB_RESTRICT I2k = NULL ;
+    GrB_Index *GB_RESTRICT J2  = NULL ;
+    GrB_Index *GB_RESTRICT J2k = NULL ;
     int64_t I2_size = 0, J2_size = 0 ;
     GrB_Matrix SubMask = NULL ;
 
@@ -102,12 +102,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // GrB_*assign, not scalar:  The user's input matrix has been checked.
         // The pointer to the scalar is NULL.
         ASSERT (scalar == NULL) ;
-        ASSERT_OK (GB_check (A, "A for GB_assign", GB0)) ;
+        ASSERT_MATRIX_OK (A, "A for GB_assign", GB0) ;
     }
 
-    ASSERT_OK (GB_check (C, "C input for GB_assign", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_assign", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_assign", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_assign", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_assign", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_assign", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
     // only one of these three cases can be true:
@@ -248,12 +248,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
         if (C_replace)
         {
-            ASSERT_OK (GB_check (C, "C for quick mask", GB0)) ;
+            ASSERT_MATRIX_OK (C, "C for quick mask", GB0) ;
             if (row_assign || col_assign)
             {
                 // all pending tuples must first be assembled; zombies OK
                 GB_WAIT_PENDING (C) ;
-                ASSERT_OK (GB_check (C, "waited C for quick mask", GB0)) ;
+                ASSERT_MATRIX_OK (C, "waited C for quick mask", GB0) ;
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
                 { 
                     // delete all entries in vector j
@@ -283,7 +283,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             GB_CRITICAL (GB_queue_insert (C)) ;
         }
         // finalize C if blocking mode is enabled, and return result
-        ASSERT_OK (GB_check (C, "Final C for assign, quick mask", GB0)) ;
+        ASSERT_MATRIX_OK (C, "Final C for assign, quick mask", GB0) ;
         return (GB_block (C, Context)) ;
     }
 
@@ -457,12 +457,12 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // the mask M is the same for GB_assign and GB_subassign.  Either
         // both masks are NULL, or SubMask = M (:,:), and the two masks
         // are equivalent.
-        ASSERT_OK_OR_NULL (GB_check (SubMask, "SubMask is same as M", GB0)) ;
+        ASSERT_MATRIX_OK_OR_NULL (SubMask, "SubMask is same as M", GB0) ;
     }
     else
     {
         // extract M (I,J)
-        ASSERT_OK (GB_check (M, "big mask", GB0)) ;
+        ASSERT_MATRIX_OK (M, "big mask", GB0) ;
         if (row_assign)
         {
             // SubMask = M(Cols,:), but use I or J if they are the sorted I2, J2
@@ -520,7 +520,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             }
         }
         M = SubMask ;
-        ASSERT_OK (GB_check (M, "extracted submask M", GB0)) ;
+        ASSERT_MATRIX_OK (M, "extracted submask M", GB0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -637,8 +637,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         ASSERT (M != NULL) ;
         ASSERT (!GB_aliased (Z, M)) ;
 
-        ASSERT_OK (GB_check (Z, "Z for C-replace-phase", GB0)) ;
-        ASSERT_OK (GB_check (M, "M for C-replace-phase", GB0)) ;
+        ASSERT_MATRIX_OK (Z, "Z for C-replace-phase", GB0) ;
+        ASSERT_MATRIX_OK (M, "M for C-replace-phase", GB0) ;
 
         //----------------------------------------------------------------------
         // assemble any pending tuples
@@ -649,7 +649,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             GB_OK (GB_wait (Z, Context)) ;
         }
 
-        ASSERT_OK (GB_check (Z, "Z cleaned up for C-replace-phase", GB0)) ;
+        ASSERT_MATRIX_OK (Z, "Z cleaned up for C-replace-phase", GB0) ;
 
         //----------------------------------------------------------------------
         // get the original mask and transpose it if required
@@ -666,7 +666,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             M = MT ;
         }
 
-        ASSERT_OK (GB_check (M, "M transposed for C-replace-phase", GB0)) ;
+        ASSERT_MATRIX_OK (M, "M transposed for C-replace-phase", GB0) ;
 
         //----------------------------------------------------------------------
         // sort I and J, if they are GB_LIST, if not already done
@@ -752,7 +752,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         }
 
         // Z is valid, but it has zombies and it not in the queue.
-        ASSERT_OK (GB_check (Z, "Z for C-replace-phase done", GB_FLIP (GB0))) ;
+        ASSERT_MATRIX_OK (Z, "Z for C-replace-phase done", GB_FLIP (GB0)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -788,7 +788,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     // finalize C if blocking mode is enabled, and return result
 
-    ASSERT_OK (GB_check (C, "Final C for assign", GB0)) ;
+    ASSERT_MATRIX_OK (C, "Final C for assign", GB0) ;
     GB_FREE_ALL ;
     return (GB_block (C, Context)) ;
 }

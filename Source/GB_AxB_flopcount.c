@@ -105,9 +105,9 @@ GrB_Info GB_AxB_flopcount
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK_OR_NULL (GB_check (M, "M for flop count A*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for flop count A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for flop count A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for flop count A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for flop count A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for flop count A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
@@ -152,9 +152,9 @@ GrB_Info GB_AxB_flopcount
     // get the mask, if present
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mh = NULL ;
-    const int64_t *restrict Mp = NULL ;
-    const int64_t *restrict Mi = NULL ;
+    const int64_t *GB_RESTRICT Mh = NULL ;
+    const int64_t *GB_RESTRICT Mp = NULL ;
+    const int64_t *GB_RESTRICT Mi = NULL ;
     int64_t mnvec = 0 ;
     bool M_is_hyper = GB_IS_HYPER (M) ;
     if (M != NULL)
@@ -169,15 +169,15 @@ GrB_Info GB_AxB_flopcount
     // get A and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     int64_t anvec = A->nvec ;
     bool A_is_hyper = GB_IS_HYPER (A) ;
 
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Bh = B->h ;
+    const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
     bool B_is_hyper = GB_IS_HYPER (B) ;
 
     //--------------------------------------------------------------------------
@@ -188,9 +188,9 @@ GrB_Info GB_AxB_flopcount
     // and vectors kfirst_slice [tid] to klast_slice [tid].  The first and
     // last vectors may be shared with prior slices and subsequent slices.
 
-    int64_t *restrict Wfirst = NULL ;       // size ntasks
-    int64_t *restrict Wlast = NULL ;        // size ntasks
-    int64_t *restrict Flops = NULL ;        // size ntasks+1
+    int64_t *GB_RESTRICT Wfirst = NULL ;       // size ntasks
+    int64_t *GB_RESTRICT Wlast = NULL ;        // size ntasks
+    int64_t *GB_RESTRICT Flops = NULL ;        // size ntasks+1
 
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
     ntasks = GB_IMIN (ntasks, bnz) ;

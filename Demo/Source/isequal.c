@@ -27,8 +27,8 @@
     if (! (info == GrB_SUCCESS || info == GrB_NO_VALUE))    \
     {                                                       \
         /* error occured: free workspace and return */      \
-        GrB_free (&C) ;                                     \
-        GrB_free (&monoid) ;                                \
+        GrB_Matrix_free (&C) ;                              \
+        GrB_Monoid_free (&monoid) ;                         \
         return (info) ;                                     \
     }                                                       \
 }
@@ -85,14 +85,14 @@ GrB_Info isequal_type       // return GrB_SUCCESS if successful
 
     // C = A .* B, where the pattern of C is the intersection of A and B
     OK (GrB_Matrix_new (&C, GrB_BOOL, nrows1, ncols1)) ;
-    OK (GrB_eWiseMult (C, NULL, NULL, op, A, B, NULL)) ;
+    OK (GrB_eWiseMult_Matrix_BinaryOp (C, NULL, NULL, op, A, B, NULL)) ;
 
     // ensure C has the same number of entries as A and B
     OK (GrB_Matrix_nvals (&nvals, C)) ;
     if (nvals != nvals1)
     {
         // pattern of A and B are different
-        GrB_free (&C) ;
+        GrB_Matrix_free (&C) ;
         return (GrB_SUCCESS) ;
     }
 
@@ -104,11 +104,11 @@ GrB_Info isequal_type       // return GrB_SUCCESS if successful
     #endif
 
     // result = and (C)
-    OK (GrB_reduce (result, NULL, monoid, C, NULL)) ;
+    OK (GrB_Matrix_reduce_BOOL (result, NULL, monoid, C, NULL)) ;
 
     // free workspace and return result
-    GrB_free (&C) ;
-    GrB_free (&monoid) ;
+    GrB_Matrix_free (&C) ;
+    GrB_Monoid_free (&monoid) ;
     return (GrB_SUCCESS) ;
 }
 

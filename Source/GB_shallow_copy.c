@@ -34,7 +34,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A for shallow cast", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for shallow cast", GB0) ;
     ASSERT ((A->nzmax == 0) == (A->i == NULL && A->x == NULL)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
 
@@ -84,7 +84,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
         C->x = NULL ;
         C->i_shallow = false ;
         C->x_shallow = false ;
-        ASSERT_OK (GB_check (C, "C = quick copy of empty A", GB0)) ;
+        ASSERT_MATRIX_OK (C, "C = quick copy of empty A", GB0) ;
         (*Chandle) = C ;
         return (GrB_SUCCESS) ;
     }
@@ -103,7 +103,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     C->nzmax = A->nzmax ;
     C->x = A->x ;
     C->x_shallow = true ;       // C->x will not be freed when freeing C
-    ASSERT_OK (GB_check (C, "C = pure shallow (A)", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C = pure shallow (A)", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

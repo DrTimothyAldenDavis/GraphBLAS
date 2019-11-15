@@ -138,7 +138,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     // free the header of A
     //--------------------------------------------------------------------------
 
-    OK (GrB_free (A_handle)) ;
+    OK (GrB_Matrix_free (A_handle)) ;
 
     //--------------------------------------------------------------------------
     // return the MATLAB struct

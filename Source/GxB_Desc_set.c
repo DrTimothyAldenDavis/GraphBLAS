@@ -28,7 +28,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
 
     GB_WHERE ("GxB_Desc_set (desc, field, value)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
-    ASSERT_OK (GB_check (desc, "desc to set", GB0)) ;
+    ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
     //--------------------------------------------------------------------------
     // set the parameter

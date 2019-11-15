@@ -41,7 +41,7 @@ GrB_Info GB_slice       // slice B into nslices slices or hyperslices
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (B, "B to slice", GB0)) ;
+    ASSERT_MATRIX_OK (B, "B to slice", GB0) ;
     ASSERT (nslices >= 1) ;
     ASSERT (Bslice != NULL) ;
     ASSERT (Slice != NULL) ;
@@ -137,7 +137,7 @@ GrB_Info GB_slice       // slice B into nslices slices or hyperslices
         (Bslice [s])->nzmax = B->nzmax ;
         (Bslice [s])->magic = GB_MAGIC ;
 
-        ASSERT_OK (GB_check (Bslice [s], "Bslice", GB0)) ;
+        ASSERT_MATRIX_OK (Bslice [s], "Bslice", GB0) ;
     }
 
     //--------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 #define GB_FREE_ALL                                                     \
 {                                                                       \
     GB_FREE_WORK ;                                                      \
-    GrB_free (Chandle) ;                                                \
+    GB_MATRIX_FREE (Chandle) ;                                          \
 }
 
 GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
@@ -45,13 +45,13 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
-    ASSERT_OK (GB_check (M, "M for dot3 A'*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for dot3 A'*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for dot3 A'*B", GB0)) ;
+    ASSERT_MATRIX_OK (M, "M for dot3 A'*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for dot3 A'*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for dot3 A'*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for numeric A'*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
 
     int ntasks, max_ntasks = 0, nthreads ;
@@ -97,10 +97,10 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // get M, A, and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mh = M->h ;
-    const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = M->x ;
+    const int64_t *GB_RESTRICT Mp = M->p ;
+    const int64_t *GB_RESTRICT Mh = M->h ;
+    const int64_t *GB_RESTRICT Mi = M->i ;
+    const GB_void *GB_RESTRICT Mx = M->x ;
     const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
     const int64_t mvdim = M->vdim ;
@@ -109,18 +109,18 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const bool M_is_hyper = M->is_hyper ;
     GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    // const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    // const int64_t *GB_RESTRICT Ai = A->i ;
     // const int64_t avlen = A->vlen ;
     // const int64_t avdim = A->vdim ;
     // const int64_t anz = GB_NNZ (A) ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = A->is_hyper ;
 
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bh = B->h ;
-    // const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bh = B->h ;
+    // const int64_t *GB_RESTRICT Bi = B->i ;
     // const int64_t bvlen = B->vlen ;
     // const int64_t bvdim = B->vdim ;
     // const int64_t bnz = GB_NNZ (B) ;
@@ -150,9 +150,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GrB_Matrix C = (*Chandle) ;
 
-    int64_t *restrict Cp = C->p ;
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Cwork = C->i ;    // use C->i as workspace
+    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t *GB_RESTRICT Cwork = C->i ;    // use C->i as workspace
     // printf ("Ch is %p\n", (void *) Ch) ;
 
     //--------------------------------------------------------------------------
@@ -392,8 +392,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        // GB_void *restrict identity = add->identity ;
-        GB_void *restrict terminal = add->terminal ;
+        GB_void *GB_RESTRICT terminal = add->terminal ;
 
         GB_cast_function cast_A, cast_B ;
         if (flipxy)
@@ -419,12 +418,12 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         // aki = A(k,i), located in Ax [pA]
         #define GB_GETA(aki,Ax,pA)                                          \
-            GB_void aki [GB_PGI(aki_size)] ;                                \
+            GB_void aki [GB_VLA(aki_size)] ;                                \
             if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
-            GB_void bkj [GB_PGI(bkj_size)] ;                                \
+            GB_void bkj [GB_VLA(bkj_size)] ;                                \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         // break if cij reaches the terminal value
@@ -440,13 +439,13 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
-            GB_void zwork [GB_PGI(csize)] ;                                 \
+            GB_void zwork [GB_VLA(csize)] ;                                 \
             GB_MULTIPLY (zwork, aki, bkj) ;                                 \
             fadd (cij, cij, zwork) ;
 
         // define cij for each task
         #define GB_CIJ_DECLARE(cij)                                         \
-            GB_void cij [GB_PGI(csize)] ;
+            GB_void cij [GB_VLA(csize)] ;
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
@@ -487,7 +486,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     }
 
     GB_FREE_WORK ;
-    ASSERT_OK (GB_check (C, "dot3: C<M> = A'*B output", GB0)) ;
+    ASSERT_MATRIX_OK (C, "dot3: C<M> = A'*B output", GB0) ;
     ASSERT (*Chandle == C) ;
     ASSERT (GB_ZOMBIES_OK (C)) ;
     ASSERT (!GB_PENDING (C)) ;

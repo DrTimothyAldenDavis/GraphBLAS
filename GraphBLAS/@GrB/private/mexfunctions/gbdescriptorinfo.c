@@ -83,7 +83,7 @@ void mexFunction
     // free the descriptor
     //--------------------------------------------------------------------------
 
-    OK (GrB_free (&d)) ;
+    OK (GrB_Descriptor_free (&d)) ;
     GB_WRAPUP ;
 }
 

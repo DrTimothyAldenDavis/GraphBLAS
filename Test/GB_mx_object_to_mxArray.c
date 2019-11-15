@@ -44,7 +44,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     GrB_Matrix C = *handle ;
 
     // may have pending tuples
-    ASSERT_OK (GB_check (C, name, GB0)) ;
+    ASSERT_MATRIX_OK (C, name, GB0) ;
 
     // C must not be shallow
     ASSERT (!C->i_shallow && !C->x_shallow && !C->p_shallow && !C->h_shallow) ;
@@ -55,12 +55,12 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
     // must be done after GB_wait:
     int64_t cnz = GB_NNZ (C) ;
 
-    ASSERT_OK (GB_check (C, "TO MATLAB after assembling pending tuples", GB0)) ;
+    ASSERT_MATRIX_OK (C, "TO MATLAB after assembling pending tuples", GB0) ;
 
     // convert C to non-hypersparse
     GxB_set (C, GxB_HYPER, GxB_NEVER_HYPER) ;
 
-    ASSERT_OK (GB_check (C, "TO MATLAB, non-hyper", GB0)) ;
+    ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper", GB0) ;
     ASSERT (!C->is_hyper) ;
     ASSERT (C->h == NULL) ;
 
@@ -71,7 +71,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         GxB_set (C, GxB_FORMAT, GxB_BY_COL) ;
     }
 
-    ASSERT_OK (GB_check (C, "TO MATLAB, non-hyper CSC", GB0)) ;
+    ASSERT_MATRIX_OK (C, "TO MATLAB, non-hyper CSC", GB0) ;
     ASSERT (!C->is_hyper) ;
     ASSERT (C->is_csc) ;
 
@@ -96,16 +96,6 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         GB_CALLOC_MEMORY (C->p, C->vdim + 1, sizeof (int64_t)) ;
         C->p_shallow = false ;
     }
-
-    /*
-    // dump the values
-    for (int64_t kk = 0 ; kk < cnz ;  kk++)
-    {
-        printf (GBd": ", kk) ;
-        GB_code_check (C->type->code, C->x +kk*(C->type->size), stdout) ;
-        printf ("\n") ;
-    }
-    */
 
     C->nzmax = GB_IMAX (C->nzmax, 1) ;
 

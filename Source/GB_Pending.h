@@ -133,8 +133,8 @@ static inline bool GB_Pending_add   // add a tuple to the list
     // keep track of whether or not the pending tuples are already sorted
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Pending_i = Pending->i ;
-    int64_t *restrict Pending_j = Pending->j ;
+    int64_t *GB_RESTRICT Pending_i = Pending->i ;
+    int64_t *GB_RESTRICT Pending_j = Pending->j ;
 
     if (n > 0 && Pending->sorted)
     { 
@@ -153,7 +153,7 @@ static inline bool GB_Pending_add   // add a tuple to the list
         Pending_j [n] = j ;
     }
     size_t size = type->size ;
-    GB_void *restrict Pending_x = Pending->x ;
+    GB_void *GB_RESTRICT Pending_x = Pending->x ;
     memcpy (Pending_x +(n*size), scalar, size) ;
     Pending->n++ ;
 

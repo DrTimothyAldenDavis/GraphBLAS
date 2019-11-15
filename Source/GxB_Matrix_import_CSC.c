@@ -90,7 +90,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     ASSERT (*Ap == NULL) ;
     ASSERT (*Ai == NULL) ;
     ASSERT (*Ax == NULL) ;
-    ASSERT_OK (GB_check (*A, "A CSC imported", GB0)) ;
+    ASSERT_MATRIX_OK (*A, "A CSC imported", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

@@ -87,11 +87,11 @@ GrB_Info assign ( )
     int pr = 0 ;
     bool ph = (pr > 0) ;
 
-    ASSERT_OK (GB_check (C, "C for GB_mex_assign", pr)) ;
-    ASSERT_OK_OR_NULL (GB_check (Mask, "Mask for GB_mex_assign", pr)) ;
-    ASSERT_OK (GB_check (A, "A for GB_mex_assign", pr)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_mex_assign", pr)) ;
-    ASSERT_OK_OR_NULL (GB_check (desc, "desc for GB_mex_assign", pr)) ;
+    ASSERT_MATRIX_OK (C, "C for GB_mex_assign", pr) ;
+    ASSERT_MATRIX_OK_OR_NULL (Mask, "Mask for GB_mex_assign", pr) ;
+    ASSERT_MATRIX_OK (A, "A for GB_mex_assign", pr) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_mex_assign", pr) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for GB_mex_assign", pr) ;
 
     /*
     if (I == NULL)
@@ -139,8 +139,8 @@ GrB_Info assign ( )
         // test GrB_Row_assign
         ASSERT (GB_VECTOR_OK (A)) ;
         ASSERT (Mask == NULL || GB_VECTOR_OK (Mask)) ;
-        ASSERT_OK_OR_NULL (GB_check ((GrB_Vector) Mask, "row mask", GB0)) ;
-        ASSERT_OK (GB_check ((GrB_Vector) A, "row u", GB0)) ;
+        ASSERT_VECTOR_OK_OR_NULL ((GrB_Vector) Mask, "row mask", GB0) ;
+        ASSERT_VECTOR_OK ((GrB_Vector) A, "row u", GB0) ;
 
         OK (GrB_assign (C, (GrB_Vector) Mask, accum, (GrB_Vector) A,
             I [0], J, nj, desc)) ;
@@ -182,7 +182,7 @@ GrB_Info assign ( )
             }
             #undef ASSIGN
 
-            ASSERT_OK (GB_check (C, "C after setElement", GB0)) ;
+            ASSERT_MATRIX_OK (C, "C after setElement", GB0) ;
 
         }
         if (GB_VECTOR_OK (C) && (Mask == NULL || GB_VECTOR_OK (Mask)))
@@ -273,7 +273,7 @@ GrB_Info assign ( )
         OK (GrB_assign (C, Mask, accum, A, I, ni, J, nj, desc)) ;
     }
 
-    ASSERT_OK (GB_check (C, "Final C before wait", GB0)) ;
+    ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
     // double tt [2], t ; simple_tic (tt) ;
     OK (GrB_wait ( )) ;
     // t = simple_toc (tt) ; printf ("wait %g sec\n", t) ;
@@ -414,7 +414,7 @@ GrB_Info many_assign
         }
     }
 
-    ASSERT_OK (GB_check (C, "Final C before wait", GB0)) ;
+    ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
     OK (GrB_wait ( )) ;
     return (info) ;
 }

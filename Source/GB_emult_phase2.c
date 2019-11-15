@@ -33,18 +33,18 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const bool C_is_csc,                // format of output matrix C
     const GrB_BinaryOp op,              // op to perform C = op (A,B)
     // from phase1:
-    const int64_t *restrict Cp,         // vector pointers for C
+    const int64_t *GB_RESTRICT Cp,         // vector pointers for C
     const int64_t Cnvec_nonempty,       // # of non-empty vectors in C
     // tasks from phase0b:
-    const GB_task_struct *restrict TaskList,  // array of structs
+    const GB_task_struct *GB_RESTRICT TaskList,  // array of structs
     const int ntasks,                         // # of tasks
     const int nthreads,                       // # of threads to use
     // analysis from phase0:
     const int64_t Cnvec,
-    const int64_t *restrict Ch,         // Ch is NULL, or a shallow pointer
-    const int64_t *restrict C_to_M,
-    const int64_t *restrict C_to_A,
-    const int64_t *restrict C_to_B,
+    const int64_t *GB_RESTRICT Ch,         // Ch is NULL, or a shallow pointer
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
     // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
     const GrB_Matrix A,
@@ -58,10 +58,10 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     ASSERT (Cp != NULL) ;
-    ASSERT_OK (GB_check (op, "op for emult phase2", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for emult phase2", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for emult phase2", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for emult phase2", GB0)) ;
+    ASSERT_BINARYOP_OK (op, "op for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for emult phase2", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB0) ;
     ASSERT (A->vdim == B->vdim) ;
     ASSERT (GB_Type_compatible (ctype,   op->ztype)) ;
     ASSERT (GB_Type_compatible (A->type, op->xtype)) ;
@@ -169,19 +169,19 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
 
         // aij = (xtype) A(i,j), located in Ax [pA]
         #define GB_GETA(aij,Ax,pA)                                          \
-            GB_void aij [GB_PGI(xsize)] ;                                   \
+            GB_void aij [GB_VLA(xsize)] ;                                   \
             cast_A_to_X (aij, Ax +((pA)*asize), asize) ;
 
         // bij = (ytype) B(i,j), located in Bx [pB]
         #define GB_GETB(bij,Bx,pB)                                          \
-            GB_void bij [GB_PGI(ysize)] ;                                   \
+            GB_void bij [GB_VLA(ysize)] ;                                   \
             cast_B_to_Y (bij, Bx +((pB)*bsize), bsize) ;
 
         // C(i,j) = (ctype) (A(i,j) + B(i,j))
         // not used if op is null
         #define GB_BINOP(cij, aij, bij)                                     \
             ASSERT (op != NULL) ;                                           \
-            GB_void z [GB_PGI(zsize)] ;                                     \
+            GB_void z [GB_VLA(zsize)] ;                                     \
             fmult (z, aij, bij) ;                                           \
             cast_Z_to_C (cij, z, csize) ;
 
@@ -204,8 +204,8 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     if (C_is_hyper)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors
-        int64_t *restrict Cp_new = NULL ;
-        int64_t *restrict Ch_new = NULL ;
+        int64_t *GB_RESTRICT Cp_new = NULL ;
+        int64_t *GB_RESTRICT Ch_new = NULL ;
         int64_t nvec_new ;
         info = GB_hyper_prune (&Cp_new, &Ch_new, &nvec_new, C->p, C->h, Cnvec,
             Context) ;
@@ -232,7 +232,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     // caller must free C_to_M, C_to_A, and C_to_B, but not Cp or Ch
-    ASSERT_OK (GB_check (C, "C output for emult phase2", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C output for emult phase2", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

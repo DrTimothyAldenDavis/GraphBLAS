@@ -34,9 +34,9 @@ void GB_assign_zombie3
     // get Z (:,j)
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Zh = Z->h ;
-    const int64_t *restrict Zp = Z->p ;
-    int64_t *restrict Zi = Z->i ;
+    const int64_t *GB_RESTRICT Zh = Z->h ;
+    const int64_t *GB_RESTRICT Zp = Z->p ;
+    int64_t *GB_RESTRICT Zi = Z->i ;
     int64_t pZ_start, pZ_end, pleft = 0, pright = Z->nvec-1 ;
     GB_lookup (Z->is_hyper, Zh, Zp, &pleft, pright, j, &pZ_start, &pZ_end) ;
     int64_t nzombies = Z->nzombies ;
@@ -46,9 +46,9 @@ void GB_assign_zombie3
     // get M(:,0)
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = M->x ;
+    const int64_t *GB_RESTRICT Mp = M->p ;
+    const int64_t *GB_RESTRICT Mi = M->i ;
+    const GB_void *GB_RESTRICT Mx = M->x ;
     const size_t msize = M->type->size ;
     const GB_cast_function cast_M =
         GB_cast_factory (GB_BOOL_code, M->type->code) ;

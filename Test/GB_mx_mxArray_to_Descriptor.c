@@ -144,7 +144,7 @@ bool GB_mx_mxArray_to_Descriptor   // true if successful, false otherwise
     }
 
     // return the non-null Descriptor to the caller
-    ASSERT_OK (GB_check (D, name, GB0)) ;
+    ASSERT_DESCRIPTOR_OK (D, name, GB0) ;
     (*handle) = D ;
     return (true) ;
 }

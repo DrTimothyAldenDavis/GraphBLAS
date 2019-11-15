@@ -12,8 +12,8 @@
     // respectively.
     #include "GB_unused.h"
 
-    const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
-    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = A_is_pattern ? NULL : A->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
 
     bool A_is_hyper = GB_IS_HYPER (A) ;
     bool C_is_hyper = GB_IS_HYPER (C) ;

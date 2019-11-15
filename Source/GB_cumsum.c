@@ -22,9 +22,9 @@
 
 void GB_cumsum                  // compute the cumulative sum of an array
 (
-    int64_t *restrict count,    // size n+1, input/output
+    int64_t *GB_RESTRICT count,    // size n+1, input/output
     const int64_t n,
-    int64_t *restrict kresult,  // return k, if needed by the caller
+    int64_t *GB_RESTRICT kresult,  // return k, if needed by the caller
     int nthreads
 )
 {
@@ -81,7 +81,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads
             //------------------------------------------------------------------
 
-            int64_t ws [GB_PGI_NTHREADS(nthreads)+1] ;
+            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;
             #pragma omp parallel num_threads(nthreads)
             {
                 // each thread sums up its own part
@@ -148,8 +148,8 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads, also compute k
             //------------------------------------------------------------------
 
-            int64_t ws [GB_PGI_NTHREADS(nthreads)+1] ;
-            int64_t wk [GB_PGI_NTHREADS(nthreads)+1] ;
+            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;
+            int64_t wk [GB_VLA_NTHREADS(nthreads)+1] ;
 
             #pragma omp parallel num_threads(nthreads)
             {

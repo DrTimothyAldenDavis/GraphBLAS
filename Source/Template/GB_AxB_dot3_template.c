@@ -17,30 +17,30 @@
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Cp = C->p ;
-    const int64_t *restrict Ch = C->h ;
-    int64_t  *restrict Ci = C->i ;
-    GB_CTYPE *restrict Cx = C->x ;
+    const int64_t *GB_RESTRICT Cp = C->p ;
+    const int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t  *GB_RESTRICT Ci = C->i ;
+    GB_CTYPE *GB_RESTRICT Cx = C->x ;
 
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bh = B->h ;
-    const int64_t *restrict Bi = B->i ;
-    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
+    const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bh = B->h ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
+    const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
     const int64_t bvlen = B->vlen ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = B->is_hyper ;
 
-    const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = M->x ;
+    const int64_t *GB_RESTRICT Mi = M->i ;
+    const GB_void *GB_RESTRICT Mx = M->x ;
     GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
     const size_t msize = M->type->size ;
 
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = GB_IS_HYPER (A) ;
-    const GB_ATYPE *restrict Ax = A_is_pattern ? NULL : A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = A_is_pattern ? NULL : A->x ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B

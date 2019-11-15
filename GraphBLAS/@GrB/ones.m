@@ -6,8 +6,8 @@ function C = ones (varargin)
 %
 % See also zeros, false, true.
 
-% FUTURE: GrB_assign and GxB_subassign need to have a special case for this,
-% as the expansion of a scalar to a dense matrix.
+% FUTURE: GrB_*_assign and GxB_*_subassign need to have a special
+% case for this, as the expansion of a scalar to a dense matrix.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

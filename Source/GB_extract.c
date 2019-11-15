@@ -50,10 +50,10 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
     GB_RETURN_IF_NULL (Cols) ;
     GB_RETURN_IF_FAULTY (accum) ;
 
-    ASSERT_OK (GB_check (C, "C input for GB_Matrix_extract", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_Matrix_extract", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_Matrix_extract", GB0)) ;
-    ASSERT_OK (GB_check (A, "A input for GB_Matrix_extract", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_Matrix_extract", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_Matrix_extract", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_Matrix_extract", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GB_Matrix_extract", GB0) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Info info = GB_compatible (C->type, C, M, accum, A->type, Context) ;
@@ -176,11 +176,11 @@ GrB_Info GB_extract                 // C<M> = accum (C, A(I,J))
 
     if (must_sort)
     { 
-        ASSERT_OK (GB_check (T, "T extracted", GB0)) ;
+        ASSERT_MATRIX_OK (T, "T extracted", GB0) ;
     }
     else
     { 
-        ASSERT_OK_OR_JUMBLED (GB_check (T, "T extracted (jumbled OK)", GB0)) ;
+        ASSERT_MATRIX_OK_OR_JUMBLED (T, "T extracted (jumbled OK)", GB0) ;
     }
 
     //--------------------------------------------------------------------------

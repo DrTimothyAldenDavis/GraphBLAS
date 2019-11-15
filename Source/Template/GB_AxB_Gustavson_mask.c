@@ -41,20 +41,20 @@
     //--------------------------------------------------------------------------
 
     // clear Sauna_Mark and ensure hiwater+1 does not cause integer overflow
-    int64_t *restrict Sauna_Mark = Sauna->Sauna_Mark ;
+    int64_t *GB_RESTRICT Sauna_Mark = Sauna->Sauna_Mark ;
     int64_t hiwater = GB_Sauna_reset (Sauna, 1, 1) ;
 
     //--------------------------------------------------------------------------
     // get M
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Mp = M->p ;
-    const int64_t *restrict Mi = M->i ;
-    const GB_void *restrict Mx = M->x ;
+    const int64_t *GB_RESTRICT Mp = M->p ;
+    const int64_t *GB_RESTRICT Mi = M->i ;
+    const GB_void *GB_RESTRICT Mx = M->x ;
     GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
     size_t msize = M->type->size ;
     #ifdef GB_HYPER_CASE
-    const int64_t *restrict Mh = M->h ;
+    const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t mnvec = M->nvec ;
     int64_t mpleft = 0 ;
     int64_t mpright = mnvec - 1 ;
@@ -64,12 +64,12 @@
     // get A and B
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
 
     #ifdef GB_HYPER_CASE
-    const int64_t *restrict Ah = A->h ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
     int64_t anvec = A->nvec ;
     int64_t pleft = 0, pright = anvec-1 ;
     #endif
@@ -78,9 +78,9 @@
     // start the construction of C
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ci = C->i ;
+    int64_t *GB_RESTRICT Ci = C->i ;
     #ifndef GB_HYPER_CASE
-    int64_t *restrict Cp = C->p ;
+    int64_t *GB_RESTRICT Cp = C->p ;
     #endif
 
     int64_t jlast, cnz, cnz_last ;

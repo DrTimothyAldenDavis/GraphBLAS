@@ -77,12 +77,12 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
         // GrB_*assign, not scalar:  The user's input matrix has been checked.
         // The pointer to the scalar is NULL.
         ASSERT (scalar == NULL) ;
-        ASSERT_OK (GB_check (A, "A for GB_subassign", GB0)) ;
+        ASSERT_MATRIX_OK (A, "A for GB_subassign", GB0) ;
     }
 
-    ASSERT_OK (GB_check (C, "C input for GB_subassign", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_subassign", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_subassign", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_subassign", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_subassign", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_subassign", GB0) ;
     ASSERT (scalar_code <= GB_UDT_code) ;
 
     int64_t nRows, nCols, RowColon [3], ColColon [3] ;
@@ -326,7 +326,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     // free workspace, finalize C, and return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "Final C for subassign", GB0)) ;
+    ASSERT_MATRIX_OK (C, "Final C for subassign", GB0) ;
     GB_FREE_ALL ;
     return (GB_block (C, Context)) ;
 }

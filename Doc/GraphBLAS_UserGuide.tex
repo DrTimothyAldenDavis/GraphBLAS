@@ -105,6 +105,20 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
+\item Version 3.1.2 (Nov TODO, 2019).  Changes to allow SuiteSparse:GraphBLAS
+    to be compiled with Microsoft Visual Studio, and with pre-ANSI C11
+    compilers.  Prior versions could not be compiled at all with compilers that
+    do not support ANSI C11.  The polymorphic functions (such as
+    \verb'GrB_assign') are not available except in ANSI C11 (because of the
+    \verb'_Generic' keyword), so they have been removed from the Demo codes and
+    the MATLAB interface, and replaced with the equivalent non-polymorphic
+    functions.  When using a non-ANSI C11 compiler, variable-length arrays are
+    replaced with fixed-sized arrays, which limits user-defined types to a
+    maximum of 128 bytes.  These changes have no effect if you have an ANSI C11
+    compliant compiler.  Note that the tests in the \verb'Test' and \verb'Tcov'
+    folder require an ANSI C11 compiler, but the MATLAB interface and Demos do
+    not.
+
 \item Version 3.1.0 (Oct 1, 2019).  MATLAB interface added.
     See the \newline
     \verb'GraphBLAS/GraphBLAS' folder for details and documentation,

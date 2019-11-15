@@ -34,10 +34,10 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
-    ASSERT_OK (GB_check (C, "C input for GrB_transpose", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GrB_transpose", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GrB_transpose", GB0)) ;
-    ASSERT_OK (GB_check (A, "A input for GrB_transpose", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GrB_transpose", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GrB_transpose", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GrB_transpose", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for GrB_transpose", GB0) ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
@@ -131,8 +131,8 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     }
 
     ASSERT (T->is_csc == C->is_csc) ;
-    ASSERT_OK (GB_check (T, "T for GrB_transpose", GB0)) ;
-    ASSERT_OK (GB_check (C, "C for GrB_transpose", GB0)) ;
+    ASSERT_MATRIX_OK (T, "T for GrB_transpose", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for GrB_transpose", GB0) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask M

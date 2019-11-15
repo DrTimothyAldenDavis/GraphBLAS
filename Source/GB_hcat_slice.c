@@ -36,7 +36,7 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     ASSERT (Cslice != NULL) ;
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
-        ASSERT_OK (GB_check (Cslice [tid], "a slice of C", GB0)) ;
+        ASSERT_MATRIX_OK (Cslice [tid], "a slice of C", GB0) ;
         ASSERT (!GB_PENDING (Cslice [tid])) ;
         ASSERT (!GB_ZOMBIES (Cslice [tid])) ;
         ASSERT ((Cslice [tid])->is_hyper) ;
@@ -53,8 +53,8 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Cnzs   ;  // size nthreads+1
-    int64_t *restrict Cnvecs ;  // size nthreads+1
+    int64_t *GB_RESTRICT Cnzs   ;  // size nthreads+1
+    int64_t *GB_RESTRICT Cnvecs ;  // size nthreads+1
     GB_MALLOC_MEMORY (Cnzs,   nthreads+1, sizeof (int64_t)) ;
     GB_MALLOC_MEMORY (Cnvecs, nthreads+1, sizeof (int64_t)) ;
     if (Cnzs == NULL || Cnvecs == NULL)
@@ -119,10 +119,10 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
 
     GrB_Matrix C = (*Chandle) ;
 
-    int64_t *restrict Ch = C->h ;
-    int64_t *restrict Cp = C->p ;
-    int64_t *restrict Ci = C->i ;
-    GB_void *restrict Cx = C->x ;
+    int64_t *GB_RESTRICT Ch = C->h ;
+    int64_t *GB_RESTRICT Cp = C->p ;
+    int64_t *GB_RESTRICT Ci = C->i ;
+    GB_void *GB_RESTRICT Cx = C->x ;
     size_t csize = ctype->size ;
 
     C->nvec_nonempty = cnvec_nonempty ;
@@ -137,10 +137,10 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     for (int tid = 0 ; tid < nthreads ; tid++)
     {
         // get the Cslice [tid] and its position in C
-        int64_t *restrict Csliceh = (Cslice [tid])->h ;
-        int64_t *restrict Cslicep = (Cslice [tid])->p ;
-        int64_t *restrict Cslicei = (Cslice [tid])->i ;
-        GB_void *restrict Cslicex = (Cslice [tid])->x ;
+        int64_t *GB_RESTRICT Csliceh = (Cslice [tid])->h ;
+        int64_t *GB_RESTRICT Cslicep = (Cslice [tid])->p ;
+        int64_t *GB_RESTRICT Cslicei = (Cslice [tid])->i ;
+        GB_void *GB_RESTRICT Cslicex = (Cslice [tid])->x ;
         int64_t cnz         = Cnzs   [tid] ;
         int64_t cnz_slice   = Cnzs   [tid+1] - cnz ;
         int64_t cnvec       = Cnvecs [tid] ;
@@ -166,7 +166,7 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
 
     GB_FREE_WORK ;
     C->magic = GB_MAGIC ;
-    ASSERT_OK (GB_check (C, "C from horizontal concatenation", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C from horizontal concatenation", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

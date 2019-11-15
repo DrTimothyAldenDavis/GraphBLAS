@@ -37,9 +37,9 @@
 
 #define GB_GET_C                                                            \
     GrB_Info info ;                                                         \
-    ASSERT_OK (GB_check (C, "C for subassign kernel", GB0)) ;               \
-    int64_t *restrict Ci = C->i ;                                           \
-    GB_void *restrict Cx = C->x ;                                           \
+    ASSERT_MATRIX_OK (C, "C for subassign kernel", GB0) ;               \
+    int64_t *GB_RESTRICT Ci = C->i ;                                           \
+    GB_void *GB_RESTRICT Cx = C->x ;                                           \
     const size_t csize = C->type->size ;                                    \
     const GB_Type_code ccode = C->type->code ;                              \
     const int64_t cvdim = C->vdim ;                                         \
@@ -49,19 +49,19 @@
 //  const bool C_is_hyper = C->is_hyper ;
 //  const int64_t Cnvec = C->nvec ;
 //  const int64_t cvlen = C->vlen ;
-//  const int64_t *restrict Ch = C->h ;
-//  const int64_t *restrict Cp = C->p ;
+//  const int64_t *GB_RESTRICT Ch = C->h ;
+//  const int64_t *GB_RESTRICT Cp = C->p ;
 
 //------------------------------------------------------------------------------
 // GB_GET_MASK: get the mask matrix M
 //------------------------------------------------------------------------------
 
 #define GB_GET_MASK                                                         \
-    ASSERT_OK (GB_check (M, "M for assign", GB0)) ;                         \
-    const int64_t *restrict Mp = M->p ;                                     \
-    const int64_t *restrict Mh = M->h ;                                     \
-    const int64_t *restrict Mi = M->i ;                                     \
-    const GB_void *restrict Mx = M->x ;                                     \
+    ASSERT_MATRIX_OK (M, "M for assign", GB0) ;                         \
+    const int64_t *GB_RESTRICT Mp = M->p ;                                     \
+    const int64_t *GB_RESTRICT Mh = M->h ;                                     \
+    const int64_t *GB_RESTRICT Mi = M->i ;                                     \
+    const GB_void *GB_RESTRICT Mx = M->x ;                                     \
     const size_t msize = M->type->size ;                                    \
     GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
 
@@ -73,7 +73,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_ACCUM                                                        \
-    ASSERT_OK (GB_check (accum, "accum for assign", GB0)) ;                 \
+    ASSERT_BINARYOP_OK (accum, "accum for assign", GB0) ;                 \
     GxB_binary_function faccum = accum->function ;                          \
     GB_cast_function cast_A_to_Y = GB_cast_factory (accum->ytype->code, acode);\
     GB_cast_function cast_C_to_X = GB_cast_factory (accum->xtype->code, ccode);\
@@ -87,16 +87,16 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_A                                                            \
-    ASSERT_OK (GB_check (A, "A for assign", GB0)) ;                         \
+    ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                         \
     GrB_Type atype = A->type ;                                              \
     size_t asize = atype->size ;                                            \
     GB_Type_code acode = atype->code ;                                      \
-    const int64_t *restrict Ap = A->p ;                                     \
-    const int64_t *restrict Ai = A->i ;                                     \
-    const GB_void *restrict Ax = A->x ;                                     \
+    const int64_t *GB_RESTRICT Ap = A->p ;                                     \
+    const int64_t *GB_RESTRICT Ai = A->i ;                                     \
+    const GB_void *GB_RESTRICT Ax = A->x ;                                     \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
-//  const int64_t *restrict Ah = A->h ;
+//  const int64_t *GB_RESTRICT Ah = A->h ;
 //  const int64_t Anvec = A->nvec ;
 //  const bool A_is_hyper = A->is_hyper ;
 
@@ -105,11 +105,11 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_SCALAR                                                       \
-    ASSERT_OK (GB_check (atype, "atype for assign", GB0)) ;                 \
+    ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                 \
     size_t asize = atype->size ;                                            \
     GB_Type_code acode = atype->code ;                                      \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
-    GB_void cwork [GB_PGI(csize)] ;                                         \
+    GB_void cwork [GB_VLA(csize)] ;                                         \
     cast_A_to_C (cwork, scalar, asize) ;                                    \
 
 //------------------------------------------------------------------------------
@@ -119,7 +119,7 @@
 #define GB_GET_ACCUM_SCALAR                                                 \
     GB_GET_SCALAR ;                                                         \
     GB_GET_ACCUM ;                                                          \
-    GB_void ywork [GB_PGI(ysize)] ;                                         \
+    GB_void ywork [GB_VLA(ysize)] ;                                         \
     cast_A_to_Y (ywork, scalar, asize) ;
 
 //------------------------------------------------------------------------------
@@ -127,12 +127,12 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_S                                                            \
-    ASSERT_OK (GB_check (S, "S extraction", GB0)) ;                         \
-    const int64_t *restrict Sp = S->p ;                                     \
-    const int64_t *restrict Si = S->i ;                                     \
-    const int64_t *restrict Sx = S->x ;
+    ASSERT_MATRIX_OK (S, "S extraction", GB0) ;                         \
+    const int64_t *GB_RESTRICT Sp = S->p ;                                     \
+    const int64_t *GB_RESTRICT Si = S->i ;                                     \
+    const int64_t *GB_RESTRICT Sx = S->x ;
 
-//  const int64_t *restrict Sh = S->h ;
+//  const int64_t *GB_RESTRICT Sh = S->h ;
 //  const int64_t Snvec = S->nvec ;
 //  const bool S_is_hyper = S->is_hyper ;
 
@@ -259,9 +259,9 @@
     #define GB_ACCUMULATE                                                   \
     {                                                                       \
         /* C(iC,jC) = accum (C(iC,jC), ywork)                    */         \
-        GB_void xwork [GB_PGI(xsize)] ;                                     \
+        GB_void xwork [GB_VLA(xsize)] ;                                     \
         cast_C_to_X (xwork, Cx +(pC*csize), csize) ;                        \
-        GB_void zwork [GB_PGI(zsize)] ;                                     \
+        GB_void zwork [GB_VLA(zsize)] ;                                     \
         faccum (zwork, xwork, ywork) ;                                      \
         cast_Z_to_C (Cx +(pC*csize), zwork, csize) ;                        \
     }                                                                       \
@@ -678,7 +678,7 @@
             {                                                               \
                 /* ----[C A 1] with accum, scalar expansion              */ \
                 /* action: ( =C+A ): apply the accumulator               */ \
-                GB_void ywork [GB_PGI(ysize)] ;                             \
+                GB_void ywork [GB_VLA(ysize)] ;                             \
                 GB_COPY_aij_to_ywork ;                                      \
                 GB_ACCUMULATE ;                                             \
             }                                                               \
@@ -1497,7 +1497,7 @@ GrB_Info GB_subassign_20
 #define GB_EMPTY_TASKLIST                                                   \
     int ntasks = 0, max_ntasks = 0, nthreads ;                              \
     GB_task_struct *TaskList = NULL ;                                       \
-    int64_t *restrict Npending = NULL ;
+    int64_t *GB_RESTRICT Npending = NULL ;
 
 //------------------------------------------------------------------------------
 // GB_ALLOCATE_NPENDING: allocate Npending workspace
@@ -1541,9 +1541,9 @@ GrB_Info GB_subassign_20
 #define GB_SUBASSIGN_TWO_SLICE(X,S)                                         \
     GB_EMPTY_TASKLIST ;                                                     \
     int64_t Znvec ;                                                         \
-    int64_t *restrict Zh = NULL ;                                           \
-    int64_t *restrict Z_to_X = NULL ;                                       \
-    int64_t *restrict Z_to_S = NULL ;                                       \
+    int64_t *GB_RESTRICT Zh = NULL ;                                           \
+    int64_t *GB_RESTRICT Z_to_X = NULL ;                                       \
+    int64_t *GB_RESTRICT Z_to_S = NULL ;                                       \
     GB_OK (GB_add_phase0 (                                                  \
         &Znvec, &Zh, NULL, &Z_to_X, &Z_to_S, NULL,                          \
         NULL, X, S, Context)) ;                                             \
@@ -1572,9 +1572,9 @@ GrB_Info GB_subassign_20
 #define GB_SUBASSIGN_EMULT_SLICE(A,M)                                       \
     GB_EMPTY_TASKLIST ;                                                     \
     int64_t Znvec ;                                                         \
-    const int64_t *restrict Zh = NULL ;                                     \
-    int64_t *restrict Z_to_A = NULL ;                                       \
-    int64_t *restrict Z_to_M = NULL ;                                       \
+    const int64_t *GB_RESTRICT Zh = NULL ;                                     \
+    int64_t *GB_RESTRICT Z_to_A = NULL ;                                       \
+    int64_t *GB_RESTRICT Z_to_M = NULL ;                                       \
     GB_OK (GB_subassign_emult_slice (                                       \
         &TaskList, &max_ntasks, &ntasks, &nthreads,                         \
         &Znvec, &Zh, &Z_to_A, &Z_to_M,                                      \
@@ -1667,9 +1667,9 @@ GrB_Info GB_subassign_emult_slice
     int *p_ntasks,                  // # of tasks constructed
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
-    const int64_t *restrict *Zh_handle,     // Zh is A->h, M->h, or NULL
-    int64_t *restrict *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
-    int64_t *restrict *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
+    const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
+    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,
@@ -1852,7 +1852,7 @@ GrB_Info GB_subassign_emult_slice
         /* no pending tuples, so skip phase 2 */                            \
         GB_FREE_ALL ;                                                       \
         /* C is valid, but might not be in the queue; thus the FLIP */      \
-        ASSERT_OK (GB_check (C, "C, no pending tuples ", GB_FLIP (GB0))) ;  \
+        ASSERT_MATRIX_OK (C, "C, no pending tuples ", GB_FLIP (GB0)) ;  \
         return (GrB_SUCCESS) ;                                              \
     }                                                                       \
     /* ensure that C->Pending is large enough to handle nnew more tuples */ \
@@ -1862,9 +1862,9 @@ GrB_Info GB_subassign_emult_slice
         return (GB_OUT_OF_MEMORY) ;                                         \
     }                                                                       \
     GB_Pending Pending = C->Pending ;                                       \
-    int64_t *restrict Pending_i = Pending->i ;                              \
-    int64_t *restrict Pending_j = Pending->j ;                              \
-    GB_void *restrict Pending_x = Pending->x ;                              \
+    int64_t *GB_RESTRICT Pending_i = Pending->i ;                              \
+    int64_t *GB_RESTRICT Pending_j = Pending->j ;                              \
+    GB_void *GB_RESTRICT Pending_x = Pending->x ;                              \
     int64_t npending_orig = Pending->n ;                                    \
     bool pending_sorted = Pending->sorted ;
 
@@ -1931,7 +1931,7 @@ GrB_Info GB_subassign_emult_slice
     Pending->sorted = pending_sorted ;                                      \
     GB_FREE_ALL ;                                                           \
     /* C is valid, but might not be in the queue; thus the FLIP */          \
-    ASSERT_OK (GB_check (C, "C with pending tuples ", GB_FLIP (GB0))) ;     \
+    ASSERT_MATRIX_OK (C, "C with pending tuples ", GB_FLIP (GB0)) ;     \
     return (GrB_SUCCESS) ;
 
 #endif

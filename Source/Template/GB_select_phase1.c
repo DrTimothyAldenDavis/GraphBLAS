@@ -18,9 +18,9 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ah = A->h ;
-    const int64_t *restrict Ai = A->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ah = A->h ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     int64_t anvec = A->nvec ;
     int64_t avlen = A->vlen ;
 
@@ -143,8 +143,8 @@
     // Wfirst [0..ntasks-1] and Wlast [0..ntasks-1] are required for
     // constructing C_start_slice [0..ntasks-1] in GB_selector.
 
-    int64_t *restrict Wfirst = (int64_t *) Wfirst_space ;
-    int64_t *restrict Wlast  = (int64_t *) Wlast_space  ;
+    int64_t *GB_RESTRICT Wfirst = (int64_t *) Wfirst_space ;
+    int64_t *GB_RESTRICT Wlast  = (int64_t *) Wlast_space  ;
 
     for (int tid = 0 ; tid < ntasks ; tid++)
     {

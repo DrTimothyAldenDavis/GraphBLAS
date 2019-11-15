@@ -47,7 +47,7 @@ void gb_usage       // check usage and make sure GxB_init has been called
         // MATLAB matrices are stored by column
         //----------------------------------------------------------------------
 
-        OK (GxB_set (GxB_FORMAT, GxB_BY_COL)) ;
+        OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
 
         // print short format by default
         GB_Global_print_format_set (1) ;

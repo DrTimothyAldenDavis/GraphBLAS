@@ -59,7 +59,7 @@ GrB_Info GB_BinaryOp_new
     op->function = function ;
     strncpy (op->name, name, GB_LEN-1) ;
     op->opcode = GB_USER_R_opcode ;     // run-time user-defined operator
-    ASSERT_OK (GB_check (op, "new user-defined binary op", GB0)) ;
+    ASSERT_BINARYOP_OK (op, "new user-defined binary op", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

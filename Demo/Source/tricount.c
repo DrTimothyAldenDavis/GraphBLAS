@@ -51,10 +51,10 @@
 // dot product method if the matrices are stored by row.
 
 #define FREE_ALL                \
-    GrB_free (&Two) ;           \
-    GrB_free (&d) ;             \
-    GrB_free (&S) ;             \
-    GrB_free (&C) ;
+    GrB_UnaryOp_free (&Two) ;           \
+    GrB_Descriptor_free (&d) ;             \
+    GrB_Matrix_free (&S) ;             \
+    GrB_Matrix_free (&C) ;
 
 #include "demos.h"
 
@@ -105,14 +105,15 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_ncols (&ne, E)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, ne)) ;
             // mxm:  outer product method, no mask
-            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
             OK (GrB_mxm (C, NULL, NULL, GxB_PLUS_TIMES_UINT32, A, E, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
             OK (GrB_UnaryOp_new (&Two, two, GrB_UINT32, GrB_UINT32)) ;
             OK (GrB_Matrix_new (&S, GrB_UINT32, n, ne)) ;
-            OK (GrB_apply (S, NULL, NULL, Two, C, NULL)) ;
-            OK (GrB_reduce (&ntri, NULL, GxB_PLUS_INT64_MONOID, S, NULL)) ;
+            OK (GrB_Matrix_apply (S, NULL, NULL, Two, C, NULL)) ;
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+                S, NULL)) ;
             ntri /= 3 ;
             break ;
 
@@ -121,11 +122,12 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, A)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             // mxm:  outer product method, with mask
-            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
             OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, A, A, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_reduce (&ntri, NULL, GxB_PLUS_INT64_MONOID, C, NULL)) ;
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+                C, NULL)) ;
             ntri /= 6 ;
             break ;
 
@@ -134,11 +136,12 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, A)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             // mxm:  outer product method, with mask
-            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
             OK (GrB_mxm (C, A, NULL, GxB_PLUS_TIMES_UINT32, L, U, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_reduce (&ntri, NULL, GxB_PLUS_INT64_MONOID, C, NULL)) ;
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+                C, NULL)) ;
             ntri /= 2 ;
             break ;
 
@@ -146,11 +149,12 @@ GrB_Info tricount           // count # of triangles
 
             OK (GrB_Matrix_nrows (&n, L)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
-            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
             OK (GrB_mxm (C, L, NULL, GxB_PLUS_TIMES_UINT32, L, L, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_reduce (&ntri, NULL, GxB_PLUS_INT64_MONOID, C, NULL)) ;
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+                C, NULL)) ;
             break ;
 
         case 4:  // Sandia2:    ntri = sum (sum ((U * U) .* U))
@@ -158,11 +162,12 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, U)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             // mxm:  outer product method, with mask
-            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
             OK (GrB_mxm (C, U, NULL, GxB_PLUS_TIMES_UINT32, U, U, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_reduce (&ntri, NULL, GxB_PLUS_INT64_MONOID, C, NULL)) ;
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+                C, NULL)) ;
             break ;
 
         case 5:  // SandiaDot:  ntri = sum (sum ((L * U') .* L))
@@ -170,13 +175,14 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, U)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             OK (GrB_Descriptor_new (&d)) ;
-            OK (GxB_set (d, GrB_INP1, GrB_TRAN)) ;
+            OK (GxB_Desc_set (d, GrB_INP1, GrB_TRAN)) ;
             // mxm:  dot product method, with mask
-            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
             OK (GrB_mxm (C, L, NULL, GxB_PLUS_TIMES_UINT32, L, U, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_reduce (&ntri, NULL, GxB_PLUS_INT64_MONOID, C, NULL)) ;
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+                C, NULL)) ;
             break ;
 
         case 6:  // SandiaDot2: ntri = sum (sum ((U * L') .* U))
@@ -184,13 +190,14 @@ GrB_Info tricount           // count # of triangles
             OK (GrB_Matrix_nrows (&n, U)) ;
             OK (GrB_Matrix_new (&C, GrB_UINT32, n, n)) ;
             OK (GrB_Descriptor_new (&d)) ;
-            OK (GxB_set (d, GrB_INP1, GrB_TRAN)) ;
+            OK (GxB_Desc_set (d, GrB_INP1, GrB_TRAN)) ;
             // mxm:  dot product method, with mask
-            OK (GxB_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
+            OK (GxB_Desc_set (d, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
             OK (GrB_mxm (C, U, NULL, GxB_PLUS_TIMES_UINT32, U, L, d)) ;
             t [0] = simple_toc (tic) ;
             simple_tic (tic) ;
-            OK (GrB_reduce (&ntri, NULL, GxB_PLUS_INT64_MONOID, C, NULL)) ;
+            OK (GrB_Matrix_reduce_INT64 (&ntri, NULL, GxB_PLUS_INT64_MONOID,
+                C, NULL)) ;
             break ;
 
         default:    // invalid method

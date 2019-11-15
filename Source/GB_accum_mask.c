@@ -155,10 +155,10 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     GrB_Matrix M = M_in ;
     GrB_Matrix Z = NULL ;
 
-    ASSERT_OK (GB_check (C, "C input for C<M>=accum(C,T)", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_accum_mask", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (MT_in, "MT_in for GB_accum_mask", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_accum_mask", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for C<M>=accum(C,T)", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_accum_mask", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (MT_in, "MT_in for GB_accum_mask", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_accum_mask", GB0) ;
 
     // pending work in C may be abandoned, or it might not need to be
     // finished if GB_subassigner is used, so it is not finished here.
@@ -171,7 +171,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // GB_extract can pass in a matrix T that is jumbled, but it does so
     // only if T->is_csc and C->is_csc are different.  In that case, T is
     // transposed, so the sort can be skipped.
-    ASSERT_OK_OR_JUMBLED (GB_check (T, "[T = results of computation]", GB0)) ;
+    ASSERT_MATRIX_OK_OR_JUMBLED (T, "[T = results of computation]", GB0) ;
 
     //--------------------------------------------------------------------------
     // remove zombies and pending tuples from T
@@ -195,7 +195,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         T = (*Thandle) ;
     }
 
-    ASSERT_OK (GB_check (T, "[T = transposed]", GB0)) ;
+    ASSERT_MATRIX_OK (T, "[T = transposed]", GB0) ;
 
     if (M != NULL && C->is_csc != M->is_csc)
     {
@@ -325,7 +325,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         ASSERT (*Thandle == NULL) ;
 
         // C and Z have the same type
-        ASSERT_OK (GB_check (Z, "Z in accum_mask", GB0)) ;
+        ASSERT_MATRIX_OK (Z, "Z in accum_mask", GB0) ;
         ASSERT (Z->type == C->type) ;
 
         //----------------------------------------------------------------------
@@ -338,7 +338,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // the hypersparsity of C to that parameter.
 
         // apply the mask, storing the results back into C, and free Z.
-        ASSERT_OK (GB_check (C, "C<M>=Z input", GB0)) ;
+        ASSERT_MATRIX_OK (C, "C<M>=Z input", GB0) ;
         GB_OK (GB_mask (C, M, &Z, C_replace, Mask_comp, Context)) ;
         ASSERT (Z == NULL) ;
         ASSERT (!C->p_shallow && !C->h_shallow) ;
@@ -350,7 +350,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     //--------------------------------------------------------------------------
 
     GB_FREE_ALL ;
-    ASSERT_OK (GB_check (C, "C<M>=accum(C,T)", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

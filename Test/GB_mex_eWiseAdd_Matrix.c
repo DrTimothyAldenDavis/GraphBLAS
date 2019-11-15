@@ -116,17 +116,6 @@ void mexFunction
         C->nvec_nonempty = -1 ;
     }
 
-//      GB_check (A, "A for ewiseAdd", GB0) ;
-//      GB_check (B, "B for ewiseAdd", GB0) ;
-//      printf ("nvec_nonempty: %g %g\n",
-//          (double) A->nvec_nonempty,
-//          (double) B->nvec_nonempty) ;
-//      if (M != NULL)
-//      {
-//          GB_check (B, "B for ewiseAdd", GB0) ;
-//          printf ("M->nvec_nonempty: %g \n", (double) M->nvec_nonempty) ;
-//      }
-
     // C<M> = accum(C,A+B)
     METHOD (GrB_eWiseAdd (C, M, accum, add, A, B, desc)) ;
 

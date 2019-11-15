@@ -24,7 +24,7 @@ void GB_assign_zombie1
     // get C(:,j)
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ci = C->i ;
+    int64_t *GB_RESTRICT Ci = C->i ;
     int64_t pC_start, pC_end, pleft = 0, pright = C->nvec-1 ;
     GB_lookup (C->is_hyper, C->h, C->p, &pleft, pright, j, &pC_start, &pC_end) ;
     int64_t cjnz = pC_end - pC_start ;

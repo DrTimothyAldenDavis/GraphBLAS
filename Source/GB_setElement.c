@@ -161,7 +161,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         }
 
         // the check is fine but just costly even when debugging
-        // ASSERT_OK (GB_check (C, "did C for setElement (found)", GB0)) ;
+        // ASSERT_MATRIX_OK (C, "did C for setElement (found)", GB0) ;
         return (GrB_SUCCESS) ;
     }
     else
@@ -257,7 +257,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         ASSERT (C->Pending->size == stype->size) ;
 
         // this assert is fine, just costly even when debugging
-        // ASSERT_OK (GB_check (C, "did C for setElement (not found)", GB0)) ;
+        // ASSERT_MATRIX_OK (C, "did C for setElement (not found)", GB0) ;
         return (GB_block (C, Context)) ;
     }
 }

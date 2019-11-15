@@ -16,7 +16,7 @@
     // get A
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *restrict Ax = A->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
     int64_t anz = GB_NNZ (A) ;
     ASSERT (anz > 0) ;
 
@@ -25,7 +25,7 @@
     //--------------------------------------------------------------------------
 
     // ctype W [ntasks] ;
-    GB_CTYPE *restrict W = (GB_CTYPE *) W_space ;
+    GB_CTYPE *GB_RESTRICT W = (GB_CTYPE *) W_space ;
 
     //--------------------------------------------------------------------------
     // reduce A to a scalar

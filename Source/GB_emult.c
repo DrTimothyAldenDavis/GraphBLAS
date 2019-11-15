@@ -44,10 +44,10 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
 
     ASSERT (Chandle != NULL) ;
-    ASSERT_OK (GB_check (A, "A for emult phased", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for emult phased", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (op, "op for emult phased", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for emult phased", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for emult phased", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for emult phased", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (op, "op for emult phased", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phased", GB0) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
     ASSERT (A->vdim == B->vdim && A->vlen == B->vlen) ;
@@ -64,11 +64,11 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     GrB_Matrix C = NULL ;
     (*Chandle) = NULL ;
     int64_t Cnvec, Cnvec_nonempty ;
-    int64_t *restrict Cp = NULL ;
-    const int64_t *restrict Ch = NULL ;
-    int64_t *restrict C_to_M = NULL ;
-    int64_t *restrict C_to_A = NULL ;
-    int64_t *restrict C_to_B = NULL ;
+    int64_t *GB_RESTRICT Cp = NULL ;
+    const int64_t *GB_RESTRICT Ch = NULL ;
+    int64_t *GB_RESTRICT C_to_M = NULL ;
+    int64_t *GB_RESTRICT C_to_A = NULL ;
+    int64_t *GB_RESTRICT C_to_B = NULL ;
     int ntasks, max_ntasks, nthreads ;
     GB_task_struct *TaskList = NULL ;
 
@@ -168,7 +168,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     // return result
     //--------------------------------------------------------------------------
 
-    ASSERT_OK (GB_check (C, "C output for emult phased", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C output for emult phased", GB0) ;
     (*Chandle) = C ;
     return (GrB_SUCCESS) ;
 }

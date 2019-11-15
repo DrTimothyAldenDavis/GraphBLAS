@@ -27,9 +27,9 @@
     // start the construction of the pattern of C
     //--------------------------------------------------------------------------
 
-    int64_t *restrict Ci = C->i ;
+    int64_t *GB_RESTRICT Ci = C->i ;
     #ifndef GB_HYPER_CASE
-    int64_t *restrict Cp = C->p ;
+    int64_t *GB_RESTRICT Cp = C->p ;
     #endif
 
     int64_t jlast, cnz, cnz_last ;
@@ -272,6 +272,6 @@
 
     info = GB_ix_realloc (C, cnz, false, NULL) ;
     ASSERT (info == GrB_SUCCESS) ;
-    // ASSERT_OK (GB_check (C, "C symbolic Gustavson C=A*B", GB0)) ;
+    // ASSERT_MATRIX_OK (C, "C symbolic Gustavson C=A*B", GB0) ;
 }
 

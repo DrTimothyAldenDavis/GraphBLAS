@@ -44,12 +44,12 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     GB_RETURN_IF_NULL_OR_FAULTY (op) ;
     GB_RETURN_IF_FAULTY (accum) ;
 
-    ASSERT_OK (GB_check (C, "C input for GB_kron", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for GB_kron", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for GB_kron", GB0)) ;
-    ASSERT_OK (GB_check (op, "op for GB_kron", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for GB_kron", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for GB_kron", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for GB_kron", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_kron", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_kron", GB0) ;
+    ASSERT_BINARYOP_OK (op, "op for GB_kron", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for GB_kron", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for GB_kron", GB0) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Info info = GB_compatible (C->type, C, M, accum, op->ztype, Context) ;
@@ -126,8 +126,8 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         { 
             return (info) ;
         }
-        ASSERT_OK (GB_check (A , "A after AT kron", GB0)) ;
-        ASSERT_OK (GB_check (AT, "AT kron", GB0)) ;
+        ASSERT_MATRIX_OK (A , "A after AT kron", GB0) ;
+        ASSERT_MATRIX_OK (AT, "AT kron", GB0) ;
     }
 
     GrB_Matrix BT = NULL ;
@@ -141,7 +141,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
             GB_MATRIX_FREE (&AT) ;
             return (info) ;
         }
-        ASSERT_OK (GB_check (BT, "BT kron", GB0)) ;
+        ASSERT_MATRIX_OK (BT, "BT kron", GB0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -161,7 +161,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
         return (info) ;
     }
 
-    ASSERT_OK (GB_check (T, "T = kron(A,B)", GB0)) ;
+    ASSERT_MATRIX_OK (T, "T = kron(A,B)", GB0) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask

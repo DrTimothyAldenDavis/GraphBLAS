@@ -71,17 +71,17 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
 
     ASSERT (Chandle != NULL) ;          // C = (*Chandle) is NULL
     ASSERT (*Chandle == NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for parallel A*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for parallel A*B", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for parallel A*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for parallel A*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for parallel A*B", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for parallel A*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for parallel A*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for parallel A*B", GB0) ;
 
     int64_t naslice = 0 ;
     int64_t nbslice = 0 ;
-    int64_t *restrict Slice = NULL ;    // size naslice+1
+    int64_t *GB_RESTRICT Slice = NULL ;    // size naslice+1
     GrB_Matrix *Aslice = NULL ;         // size naslice+1
 
     if (M != NULL && !Mask_comp)
@@ -145,7 +145,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
                 mask_applied, 1, 1, 1, NULL) ;
             if (info == GrB_SUCCESS)
             { 
-                ASSERT_OK (GB_check (*Chandle, "C for sequential A*B", GB0)) ;
+                ASSERT_MATRIX_OK (*Chandle, "C for sequential A*B", GB0) ;
             }
             return ((info == GrB_OUT_OF_MEMORY) ? GB_OUT_OF_MEMORY : info) ;
         }
@@ -213,7 +213,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         //----------------------------------------------------------------------
 
         GB_FREE_ALL ;
-        ASSERT_OK (GB_check (*Chandle, "C for dot2 A'*B", GB0)) ;
+        ASSERT_MATRIX_OK (*Chandle, "C for dot2 A'*B", GB0) ;
         return (GrB_SUCCESS) ;
     }
 }

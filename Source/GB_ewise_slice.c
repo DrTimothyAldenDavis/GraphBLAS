@@ -39,10 +39,10 @@ GrB_Info GB_ewise_slice
     int *p_nthreads,                // # of threads for eWise operation
     // input:
     const int64_t Cnvec,            // # of vectors of C
-    const int64_t *restrict Ch,     // vectors of C, if hypersparse
-    const int64_t *restrict C_to_M, // mapping of C to M
-    const int64_t *restrict C_to_A, // mapping of C to A
-    const int64_t *restrict C_to_B, // mapping of C to B
+    const int64_t *GB_RESTRICT Ch,     // vectors of C, if hypersparse
+    const int64_t *GB_RESTRICT C_to_M, // mapping of C to M
+    const int64_t *GB_RESTRICT C_to_A, // mapping of C to A
+    const int64_t *GB_RESTRICT C_to_B, // mapping of C to B
     bool Ch_is_Mh,                  // if true, then Ch == Mh; GB_add only
     const GrB_Matrix M,             // mask matrix to slice (optional)
     const GrB_Matrix A,             // matrix to slice
@@ -59,16 +59,16 @@ GrB_Info GB_ewise_slice
     ASSERT (p_max_ntasks != NULL) ;
     ASSERT (p_ntasks != NULL) ;
     ASSERT (p_nthreads != NULL) ;
-    ASSERT_OK (GB_check (A, "A for ewise_slice", GB0)) ;
-    ASSERT_OK (GB_check (B, "B for ewise_slice", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A for ewise_slice", GB0) ;
+    ASSERT_MATRIX_OK (B, "B for ewise_slice", GB0) ;
 
     (*p_TaskList  ) = NULL ;
     (*p_max_ntasks) = 0 ;
     (*p_ntasks    ) = 0 ;
     (*p_nthreads  ) = 1 ;
 
-    int64_t *restrict Cwork = NULL ;
-    int64_t *restrict Coarse = NULL ; // size ntasks1+1
+    int64_t *GB_RESTRICT Cwork = NULL ;
+    int64_t *GB_RESTRICT Coarse = NULL ; // size ntasks1+1
     int ntasks1 = 0 ;
 
     //--------------------------------------------------------------------------
@@ -89,7 +89,7 @@ GrB_Info GB_ewise_slice
     // When the mask is present, it is often fastest to break the work up
     // into tasks, even when nthreads_max is 1.
 
-    GB_task_struct *restrict TaskList = NULL ;
+    GB_task_struct *GB_RESTRICT TaskList = NULL ;
     int max_ntasks = 0 ;
     int ntasks0 = (M == NULL && nthreads_max == 1) ? 1 : (32 * nthreads_max) ;
     GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
@@ -115,15 +115,15 @@ GrB_Info GB_ewise_slice
     //--------------------------------------------------------------------------
 
     const int64_t vlen = A->vlen ;
-    const int64_t *restrict Ap = A->p ;
-    const int64_t *restrict Ai = A->i ;
-    const int64_t *restrict Bp = B->p ;
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Ap = A->p ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *GB_RESTRICT Bp = B->p ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
     bool Ch_is_Ah = (Ch != NULL && A->h != NULL && Ch == A->h) ;
     bool Ch_is_Bh = (Ch != NULL && B->h != NULL && Ch == B->h) ;
 
-    const int64_t *restrict Mp = NULL ;
-    const int64_t *restrict Mi = NULL ;
+    const int64_t *GB_RESTRICT Mp = NULL ;
+    const int64_t *GB_RESTRICT Mi = NULL ;
     if (M != NULL)
     { 
         Mp = M->p ;

@@ -14,13 +14,13 @@
     //--------------------------------------------------------------------------
 
     #if defined ( GB_PHASE_2_OF_2)
-    int64_t  *restrict Cp = C->p ;
-    int64_t  *restrict Ci = C->i ;
-    GB_CTYPE *restrict Cx = C->x ;
-    const GB_BTYPE *restrict Bx = B_is_pattern ? NULL : B->x ;
+    int64_t  *GB_RESTRICT Cp = C->p ;
+    int64_t  *GB_RESTRICT Ci = C->i ;
+    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
     #endif
 
-    const int64_t *restrict Bi = B->i ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
     int64_t bvlen = B->vlen ;
 
     // create the iterator for B.  Since the iterator is a read-only object
@@ -46,10 +46,10 @@
         // get M
         //----------------------------------------------------------------------
 
-        const int64_t *restrict Mp = M->p ;
-        const int64_t *restrict Mh = M->h ;
-        const int64_t *restrict Mi = M->i ;
-        const GB_void *restrict Mx = M->x ;
+        const int64_t *GB_RESTRICT Mp = M->p ;
+        const int64_t *GB_RESTRICT Mh = M->h ;
+        const int64_t *GB_RESTRICT Mi = M->i ;
+        const GB_void *GB_RESTRICT Mx = M->x ;
         GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
         size_t msize = M->type->size ;
         const int64_t mnvec = M->nvec ;

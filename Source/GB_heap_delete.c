@@ -13,8 +13,8 @@
 void GB_heap_delete
 (
     int64_t p,                  // node that needs to be deleted
-    GB_Element *restrict Heap,  // Heap [1..nheap]
-    int64_t *restrict nheap     // the number of nodes in the Heap;
+    GB_Element *GB_RESTRICT Heap,  // Heap [1..nheap]
+    int64_t *GB_RESTRICT nheap     // the number of nodes in the Heap;
                                 // decremented on output
 )
 { 

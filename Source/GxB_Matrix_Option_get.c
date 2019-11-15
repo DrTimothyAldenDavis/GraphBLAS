@@ -23,7 +23,7 @@ GrB_Info GxB_Matrix_Option_get      // gets the current option of a matrix
 
     GB_WHERE ("GxB_Matrix_Option_get (A, field, &value)") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
-    ASSERT_OK (GB_check (A, "A to get option", GB0)) ;
+    ASSERT_MATRIX_OK (A, "A to get option", GB0) ;
 
     //--------------------------------------------------------------------------
     // get the option

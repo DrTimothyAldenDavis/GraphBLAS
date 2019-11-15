@@ -60,11 +60,11 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GrB_Matrix A = Aslice [0] ;     // just for type and dimensions
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for dot A'*B", GB0)) ;
-    ASSERT_OK (GB_check (A, "A for dot A'*B", GB0)) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for dot A'*B", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for dot A'*B", GB0) ;
     for (int taskid = 0 ; taskid < naslice ; taskid++)
     {
-        ASSERT_OK (GB_check (Aslice [taskid], "A slice for dot2 A'*B", GB0)) ;
+        ASSERT_MATRIX_OK (Aslice [taskid], "A slice for dot2 A'*B", GB0) ;
         ASSERT (!GB_PENDING (Aslice [taskid])) ;
         ASSERT (!GB_ZOMBIES (Aslice [taskid])) ;
         ASSERT ((Aslice [taskid])->vlen == B->vlen) ;
@@ -72,15 +72,15 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         ASSERT (A->vdim == (Aslice [taskid])->vdim) ;
         ASSERT (A->type == (Aslice [taskid])->type) ;
     }
-    ASSERT_OK (GB_check (B, "B for dot A'*B", GB0)) ;
+    ASSERT_MATRIX_OK (B, "B for dot A'*B", GB0) ;
     ASSERT (!GB_PENDING (M)) ; ASSERT (!GB_ZOMBIES (M)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT_OK (GB_check (semiring, "semiring for numeric A'*B", GB0)) ;
+    ASSERT_SEMIRING_OK (semiring, "semiring for numeric A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
     ASSERT (mask_applied != NULL) ;
 
-    int64_t *restrict B_slice = NULL ;
+    int64_t *GB_RESTRICT B_slice = NULL ;
     int64_t **C_counts = NULL ;
     int64_t cnvec = B->nvec ;
 
@@ -154,7 +154,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
     {
-        int64_t *restrict C_count = NULL ;
+        int64_t *GB_RESTRICT C_count = NULL ;
         GB_CALLOC_MEMORY (C_count, B->nvec, sizeof (int64_t)) ;
         if (C_count == NULL)
         { 
@@ -188,7 +188,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     }
 
     GrB_Matrix C = (*Chandle) ;
-    int64_t *restrict Cp = C->p ;
+    int64_t *GB_RESTRICT Cp = C->p ;
 
     // cumulative sum of counts in each column
     #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -197,7 +197,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         int64_t s = 0 ;
         for (int taskid = 0 ; taskid < naslice ; taskid++)
         { 
-            int64_t *restrict C_count = C_counts [taskid] ;
+            int64_t *GB_RESTRICT C_count = C_counts [taskid] ;
             int64_t c = C_count [k] ;
             C_count [k] = s ;
             s += c ;
@@ -336,8 +336,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         size_t aki_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
-        // GB_void *restrict identity = add->identity ;
-        GB_void *restrict terminal = add->terminal ;
+        GB_void *GB_RESTRICT terminal = add->terminal ;
 
         GB_cast_function cast_A, cast_B ;
         if (flipxy)
@@ -363,12 +362,12 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
         // aki = A(k,i), located in Ax [pA]
         #define GB_GETA(aki,Ax,pA)                                          \
-            GB_void aki [GB_PGI(aki_size)] ;                                \
+            GB_void aki [GB_VLA(aki_size)] ;                                \
             if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
-            GB_void bkj [GB_PGI(bkj_size)] ;                                \
+            GB_void bkj [GB_VLA(bkj_size)] ;                                \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
         // break if cij reaches the terminal value
@@ -384,13 +383,13 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
-            GB_void zwork [GB_PGI(csize)] ;                                 \
+            GB_void zwork [GB_VLA(csize)] ;                                 \
             GB_MULTIPLY (zwork, aki, bkj) ;                                 \
             fadd (cij, cij, zwork) ;
 
         // define cij for each task
         #define GB_CIJ_DECLARE(cij)                                         \
-            GB_void cij [GB_PGI(csize)] ;
+            GB_void cij [GB_VLA(csize)] ;
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
@@ -427,7 +426,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     GB_FREE_WORK ;
-    ASSERT_OK (GB_check (C, "dot: C = A'*B output", GB0)) ;
+    ASSERT_MATRIX_OK (C, "dot: C = A'*B output", GB0) ;
     ASSERT (*Chandle == C) ;
     (*mask_applied) = (M != NULL) ;
     return (GrB_SUCCESS) ;

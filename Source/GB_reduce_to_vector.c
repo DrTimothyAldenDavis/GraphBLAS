@@ -58,19 +58,19 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_FAULTY (desc) ;
 
-    ASSERT_OK (GB_check (C, "C input for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (M, "M for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (accum, "accum for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK (GB_check (reduce, "reduce for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK (GB_check (A, "A input for reduce_BinaryOp", GB0)) ;
-    ASSERT_OK_OR_NULL (GB_check (desc, "desc for reduce_BinaryOp", GB0)) ;
+    ASSERT_MATRIX_OK (C, "C input for reduce_BinaryOp", GB0) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for reduce_BinaryOp", GB0) ;
+    ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for reduce_BinaryOp", GB0) ;
+    ASSERT_BINARYOP_OK (reduce, "reduce for reduce_BinaryOp", GB0) ;
+    ASSERT_MATRIX_OK (A, "A input for reduce_BinaryOp", GB0) ;
+    ASSERT_DESCRIPTOR_OK_OR_NULL (desc, "desc for reduce_BinaryOp", GB0) ;
 
     GrB_Matrix T = NULL ;
     int ntasks = 0 ;
     size_t zsize = 0 ;
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    GB_void *restrict Wfirst_space = NULL ;
-    GB_void *restrict Wlast_space = NULL ;
+    GB_void *GB_RESTRICT Wfirst_space = NULL ;
+    GB_void *GB_RESTRICT Wlast_space = NULL ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
@@ -181,8 +181,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     size_t asize = A->type->size ;
     GB_Type_code acode = A->type->code ;
-    const int64_t *restrict Ai = A->i ;
-    const GB_void *restrict Ax = A->x ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
+    const GB_void *GB_RESTRICT Ax = A->x ;
     int64_t anvec = A->nvec ;
     int64_t anz = GB_NNZ (A) ;
 
@@ -225,8 +225,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
         T->p [0] = 0 ;
         T->p [1] = anvec ;
-        int64_t *restrict Ti = T->i ;
-        GB_void *restrict Tx = T->x ;
+        int64_t *GB_RESTRICT Ti = T->i ;
+        GB_void *GB_RESTRICT Tx = T->x ;
         T->nvec_nonempty = (anvec > 0) ? 1 : 0 ;
         T->magic = GB_MAGIC ;
 
@@ -238,8 +238,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // in T, but it is flagged as a zombie if it is empty.
 
         int64_t nzombies = 0 ;
-        const int64_t *restrict Ah = A->h ;
-        const int64_t *restrict Ap = A->p ;
+        const int64_t *GB_RESTRICT Ah = A->h ;
+        const int64_t *GB_RESTRICT Ap = A->p ;
 
         int nth = GB_nthreads (anvec, chunk, nthreads_max) ;
         #pragma omp parallel for num_threads(nth) schedule(static) \
@@ -333,7 +333,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             // ztype s ;
             #define GB_SCALAR(s)                                    \
-                GB_void s [GB_PGI(zsize)]
+                GB_void s [GB_VLA(zsize)]
 
             // ztype s = (ztype) Ax [p], with typecast
             #define GB_CAST_ARRAY_TO_SCALAR(s,Ax,p)                 \
@@ -341,7 +341,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             // s += (ztype) Ax [p], with typecast
             #define GB_ADD_CAST_ARRAY_TO_SCALAR(s, Ax, p)           \
-                GB_void awork [GB_PGI(zsize)] ;                     \
+                GB_void awork [GB_VLA(zsize)] ;                     \
                 cast_A_to_Z (awork, Ax +((p)*asize), zsize) ;       \
                 freduce (s, s, awork) ;
 
@@ -375,7 +375,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         // wrapup: delete any zombies
         //----------------------------------------------------------------------
 
-        ASSERT_OK (GB_check (T, "T before wait", GB_FLIP (GB0)));
+        ASSERT_MATRIX_OK (T, "T before wait", GB_FLIP (GB0)) ;
 
         if (nzombies > 0)
         { 
@@ -385,7 +385,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
             GB_OK (GB_wait (T, Context)) ;
         }
 
-        ASSERT_OK (GB_check (T, "T output = reduce_each_vector (A)", GB0)) ;
+        ASSERT_MATRIX_OK (T, "T output = reduce_each_vector (A)", GB0) ;
     }
     else
     {
@@ -528,7 +528,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
                 #include "GB_reduce_each_index.c"
             }
         }
-        ASSERT_OK (GB_check (T, "T output for T = reduce_each_index (A)", GB0));
+        ASSERT_MATRIX_OK (T, "T output for T = reduce_each_index (A)", GB0) ;
     }
 
     //--------------------------------------------------------------------------
