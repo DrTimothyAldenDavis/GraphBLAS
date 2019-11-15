@@ -11,7 +11,7 @@ function gbmake (what)
 % For the Mac, the GraphBLAS library must be installed in /usr/local/lib/ as
 % libgraphblas.dylib.  It cannot be used where it is created in ../build,
 % because of the default Mac security settings.  For Unix/Linux, the library
-% used is ../build/libgraph.so if found, or in /usr/local/lib if not found
+% used is ../build/libgraphblas.so if found, or in /usr/local/lib if not found
 % there.
 %
 % See also: mex, version
@@ -61,7 +61,7 @@ end
 
 inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Template' ;
 
-ldflags = '-L../../../build' ;
+ldflags = sprintf ('-L%s/../../../build', pwd) ;
 
 hfiles = [ dir('*.h') ; dir('util/*.h') ] ;
 
@@ -133,7 +133,7 @@ for k = 1:length (mexfunctions)
         % compile the mexFunction
         mexcmd = sprintf ('mex %s -silent %s %s %s %s -lgraphblas', ...
             ldflags, flags, inc, mexfunction, objlist) ;
-        fprintf ('%s\n', mexfunction) ;
+        fprintf ('%s\n', mexcmd) ;
         eval (mexcmd) ;
     end
 end
