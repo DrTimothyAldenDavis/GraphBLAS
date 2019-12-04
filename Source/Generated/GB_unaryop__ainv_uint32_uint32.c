@@ -74,8 +74,9 @@ GrB_Info GB_unop__ainv_uint32_uint32
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
+    int64_t p ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t p = 0 ; p < anz ; p++)
+    for (p = 0 ; p < anz ; p++)
     {
         GB_CAST_OP (p, p) ;
     }

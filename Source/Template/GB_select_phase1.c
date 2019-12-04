@@ -28,8 +28,9 @@
     // tril, triu, diag, offdiag, resize: binary search in each vector
     //--------------------------------------------------------------------------
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(guided)
-    for (int64_t k = 0 ; k < anvec ; k++)
+    for (k = 0 ; k < anvec ; k++)
     {
 
         //----------------------------------------------------------------------

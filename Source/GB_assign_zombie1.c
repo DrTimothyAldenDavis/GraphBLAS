@@ -41,9 +41,10 @@ void GB_assign_zombie1
     // C(:,j) = empty
     //--------------------------------------------------------------------------
 
+    int64_t pC ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(+:nzombies)
-    for (int64_t pC = pC_start ; pC < pC_end ; pC++)
+    for (pC = pC_start ; pC < pC_end ; pC++)
     {
         int64_t i = Ci [pC] ;
         if (!GB_IS_ZOMBIE (i))

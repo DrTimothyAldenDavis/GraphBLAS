@@ -258,8 +258,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // construct the mapping from C to A and B, if they are hypersparse
         if (A_is_hyper || B_is_hyper)
         {
+            int64_t k ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int64_t k = 0 ; k < Cnvec ; k++)
+            for (k = 0 ; k < Cnvec ; k++)
             {
                 int64_t j = Ch [k] ;
                 if (A_is_hyper)
@@ -333,8 +334,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         // phase 1: count the entries in the result of each task
         //----------------------------------------------------------------------
 
+        int taskid ;
         #pragma omp parallel for num_threads(nthreads) schedule (dynamic,1)
-        for (int taskid = 0 ; taskid < ntasks ; taskid++)
+        for (taskid = 0 ; taskid < ntasks ; taskid++)
         {
             // merge Ah and Bh into Ch
             int64_t kA = kA_start [taskid] ;
@@ -393,7 +395,7 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         //----------------------------------------------------------------------
 
         #pragma omp parallel for num_threads(nthreads) schedule (dynamic,1)
-        for (int taskid = 0 ; taskid < ntasks ; taskid++)
+        for (taskid = 0 ; taskid < ntasks ; taskid++)
         {
             // merge Ah and Bh into Ch
             int64_t kA = kA_start [taskid] ;
@@ -539,15 +541,17 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             return (GB_OUT_OF_MEMORY) ;
         }
 
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < n ; j++)
+        for (j = 0 ; j < n ; j++)
         { 
             C_to_A [j] = -1 ;
         }
 
         // scatter Ah into C_to_A
+        int64_t kA ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t kA = 0 ; kA < Anvec ; kA++)
+        for (kA = 0 ; kA < Anvec ; kA++)
         { 
             int64_t jA = GB_Ah (kA) ;
             C_to_A [jA] = kA ;
@@ -574,15 +578,17 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
             return (GB_OUT_OF_MEMORY) ;
         }
 
+        int64_t j ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t j = 0 ; j < n ; j++)
+        for (j = 0 ; j < n ; j++)
         { 
             C_to_B [j] = -1 ;
         }
 
         // scatter Bh into C_to_B
+        int64_t kB ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t kB = 0 ; kB < Bnvec ; kB++)
+        for (kB = 0 ; kB < Bnvec ; kB++)
         { 
             int64_t jB = Bh [kB] ;
             C_to_B [jB] = kB ;
@@ -620,8 +626,9 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         if (Ch != NULL)
         {
             // C is hypersparse
+            int64_t k ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int64_t k = 0 ; k < Cnvec ; k++)
+            for (k = 0 ; k < Cnvec ; k++)
             { 
                 int64_t j = Ch [k] ;
                 // C_to_M [k] = kM if Mh [kM] == j and M(:,j) is non-empty
@@ -633,14 +640,16 @@ GrB_Info GB_add_phase0          // find vectors in C for C=A+B or C<M>=A+B
         else
         {
             // C is standard
+            int64_t j ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int64_t j = 0 ; j < n ; j++)
+            for (j = 0 ; j < n ; j++)
             { 
                 C_to_M [j] = -1 ;
             }
             // scatter Mh into C_to_M
+            int64_t kM ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (int64_t kM = 0 ; kM < Mnvec ; kM++)
+            for (kM = 0 ; kM < Mnvec ; kM++)
             { 
                 int64_t jM = Mh [kM] ;
                 C_to_M [jM] = kM ;

@@ -1,2 +1,3 @@
 
 TODO Ewise add and emult: handle dense += sparse case efficiently
+TODO support for dense matrices (A->i and A->p as NULL pointers)

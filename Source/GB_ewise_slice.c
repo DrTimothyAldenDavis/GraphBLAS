@@ -150,8 +150,10 @@ GrB_Info GB_ewise_slice
     //--------------------------------------------------------------------------
 
     int nthreads_for_Cwork = GB_nthreads (Cnvec, chunk, nthreads_max) ;
+
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads_for_Cwork) schedule(static)
-    for (int64_t k = 0 ; k < Cnvec ; k++)
+    for (k = 0 ; k < Cnvec ; k++)
     {
 
         //----------------------------------------------------------------------

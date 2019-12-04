@@ -32,8 +32,9 @@ void GB_matlab_helper1              // convert zero-based indices to one-based
 
     GB_NTHREADS (nvals) ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < nvals ; k++)
+    for (k = 0 ; k < nvals ; k++)
     {
         I_double [k] = (double) (I [k] + 1) ;
     }
@@ -52,8 +53,9 @@ void GB_matlab_helper1i             // convert zero-based indices to one-based
 
     GB_NTHREADS (nvals) ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < nvals ; k++)
+    for (k = 0 ; k < nvals ; k++)
     {
         I [k] ++ ;
     }
@@ -74,8 +76,9 @@ void GB_matlab_helper2              // fill Xp and Xi for a dense matrix
 
     GB_NTHREADS (ncols) ;
 
+    int64_t j ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t j = 0 ; j <= ncols ; j++)
+    for (j = 0 ; j <= ncols ; j++)
     {
         Xp [j] = j * nrows ;
     }
@@ -83,14 +86,13 @@ void GB_matlab_helper2              // fill Xp and Xi for a dense matrix
     double work = ((double) ncols) * ((double) nrows) ;
     nthreads = GB_nthreads (work, chunk, nthreads_max) ;
 
-    #pragma omp parallel for num_threads(nthreads) schedule(static) \
-        collapse(2)
-    for (int64_t j = 0 ; j < ncols ; j++)
+    int64_t nel = nrows * ncols ;
+    int64_t k ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (k = 0 ; k < nel ; k++)
     {
-        for (int64_t i = 0 ; i < nrows ; i++)
-        {
-            Xi [j * nrows + i] = i ;
-        }
+        int64_t i = k % nrows ;
+        Xi [k] = i ;
     }
 }
 
@@ -112,9 +114,10 @@ bool GB_matlab_helper3              // return true if OK, false on error
     bool ok = true ;
     int64_t listmax = -1 ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(&&:ok) reduction(max:listmax)
-    for (int64_t k = 0 ; k < len ; k++)
+    for (k = 0 ; k < len ; k++)
     {
         double x = List_double [k] ;
         int64_t i = (int64_t) x ;
@@ -144,9 +147,10 @@ void GB_matlab_helper3i
 
     int64_t listmax = -1 ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(max:listmax)
-    for (int64_t k = 0 ; k < len ; k++)
+    for (k = 0 ; k < len ; k++)
     {
         int64_t i = List_int64 [k] ;
         listmax = GB_IMAX (listmax, i) ;
@@ -170,9 +174,11 @@ int64_t GB_matlab_helper4           // find max (I) + 1
     GB_NTHREADS (len) ;
 
     GrB_Index imax = 0 ;
+
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(max:imax)
-    for (int64_t k = 0 ; k < len ; k++)
+    for (k = 0 ; k < len ; k++)
     {
         imax = GB_IMAX (imax, I [k]) ;
     }
@@ -197,8 +203,9 @@ void GB_matlab_helper5              // construct pattern of S
 
     GB_NTHREADS (anz) ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < anz ; k++)
+    for (k = 0 ; k < anz ; k++)
     {
         Si [k] = Mi [Ai [k]] ;
         Sj [k] = Mj [Ai [k]] ;
@@ -218,8 +225,9 @@ void GB_matlab_helper6              // set Gbool to all true
 
     GB_NTHREADS (gnvals) ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < gnvals ; k++)
+    for (k = 0 ; k < gnvals ; k++)
     {
         Gbool [k] = true ;
     }
@@ -238,8 +246,9 @@ void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 
     GB_NTHREADS (mnz) ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < mnz ; k++)
+    for (k = 0 ; k < mnz ; k++)
     {
         Kx [k] = k ;
     }
@@ -260,8 +269,9 @@ void GB_matlab_helper8
 
     GB_NTHREADS (nvals) ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < nvals ; k++)
+    for (k = 0 ; k < nvals ; k++)
     {
         // C [k] = A [0]
         memcpy (C + k * s, A, s) ;

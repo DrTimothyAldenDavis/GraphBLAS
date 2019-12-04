@@ -68,9 +68,10 @@ void GB_assign_zombie4
     // The entry Z(i,j) is deleted if j is not in the J, and if M(0,j)=0 (if
     // the mask is not complemented) or M(0.j)=1 (if the mask is complemented.
 
+    int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
         int64_t kfirst, klast ;
         GB_PARTITION (kfirst, klast, Znvec, taskid, ntasks) ;

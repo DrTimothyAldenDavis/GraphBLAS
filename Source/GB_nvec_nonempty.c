@@ -51,9 +51,10 @@ int64_t GB_nvec_nonempty        // return # of non-empty vectors
     int64_t nvec_nonempty = 0 ;
     const int64_t *GB_RESTRICT Ap = A->p ;
 
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
             reduction(+:nvec_nonempty)
-    for (int64_t k = 0 ; k < anvec ; k++)
+    for (k = 0 ; k < anvec ; k++)
     { 
         if (Ap [k] < Ap [k+1]) nvec_nonempty++ ;
     }

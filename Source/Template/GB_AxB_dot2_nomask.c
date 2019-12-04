@@ -8,11 +8,14 @@
 //------------------------------------------------------------------------------
 
 {
+    int ntasks = naslice * nbslice ;
 
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) collapse(2)
-    for (int a_taskid = 0 ; a_taskid < naslice ; a_taskid++)
-    for (int b_taskid = 0 ; b_taskid < nbslice ; b_taskid++)
+    int taskid ;
+    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
+    for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
+        int a_taskid = taskid / nbslice ;
+        int b_taskid = taskid % nbslice ;
 
         //----------------------------------------------------------------------
         // get A

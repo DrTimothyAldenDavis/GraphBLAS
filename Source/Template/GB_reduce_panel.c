@@ -121,8 +121,9 @@
         // each thread reduces its own slice in parallel
         //----------------------------------------------------------------------
 
+        int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int tid = 0 ; tid < ntasks ; tid++)
+        for (tid = 0 ; tid < ntasks ; tid++)
         {
 
             //------------------------------------------------------------------
@@ -142,8 +143,15 @@
             #if GB_HAS_TERMINAL
             // check if another task has called for an early exit
             bool my_exit ;
-            #pragma omp atomic read
-            my_exit = early_exit ;
+
+            #if GB_MICROSOFT
+                #pragma omp critical (GB_reduce_panel)
+                my_exit = early_exit ;
+            #else
+                #pragma omp atomic read
+                my_exit = early_exit ;
+            #endif
+
             if (!my_exit)
             #endif
 
@@ -227,8 +235,13 @@
                 if (t == GB_TERMINAL_VALUE)
                 { 
                     // tell all other tasks to exit early
-                    #pragma omp atomic write
-                    early_exit = true ;
+                    #if GB_MICROSOFT
+                        #pragma omp critical (GB_reduce_panel)
+                        early_exit = true ;
+                    #else
+                        #pragma omp atomic write
+                        early_exit = true ;
+                    #endif
                 }
                 #endif
             }

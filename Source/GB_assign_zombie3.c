@@ -67,9 +67,10 @@ void GB_assign_zombie3
     // delete entries from Z(:,j) that are outside I, if the mask M allows it
     //--------------------------------------------------------------------------
 
+    int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
         int64_t p1, p2 ;
         GB_PARTITION (p1, p2, zjnz, taskid, ntasks) ;

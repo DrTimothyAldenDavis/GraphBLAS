@@ -71,8 +71,9 @@ bool GB_is_diagonal             // true if A is diagonal
 
     int diagonal = true ;
 
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
 
         //----------------------------------------------------------------------
@@ -81,8 +82,13 @@ bool GB_is_diagonal             // true if A is diagonal
 
         int diag = true ;
         { 
-            #pragma omp atomic read
-            diag = diagonal ;
+            #if GB_MICROSOFT
+                #pragma omp critical (GB_is_diagonal)
+                diag = diagonal ;
+            #else
+                #pragma omp atomic read
+                diag = diagonal ;
+            #endif
         }
         if (!diag) continue ;
 
@@ -115,8 +121,13 @@ bool GB_is_diagonal             // true if A is diagonal
 
         if (!diag)
         { 
-            #pragma omp atomic write
-            diagonal = false ;
+            #if GB_MICROSOFT
+                #pragma omp critical (GB_is_diagonal)
+                diagonal = false ;
+            #else
+                #pragma omp atomic write
+                diagonal = false ;
+            #endif
         }
     }
 

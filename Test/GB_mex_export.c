@@ -174,7 +174,7 @@ GrB_Info import_export (GB_Context Context)
                 nonempty, &Ap, &Ai, &Ax, desc)) ;
 
             OK (GB_Matrix_check (C, "C reimported",
-                dump ? GxB_COMPLETE : GxB_SILENT, stdout, Contest)) ;
+                dump ? GxB_COMPLETE : GxB_SILENT, stdout, Context)) ;
             break ;
 
         //----------------------------------------------------------------------

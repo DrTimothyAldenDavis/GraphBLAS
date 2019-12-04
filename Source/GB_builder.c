@@ -323,9 +323,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ASSERT (vdim >= 0) ;
             ASSERT (I_input != NULL) ;
 
+            int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(&&:known_sorted) reduction(&&:no_duplicates_found)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (tid = 0 ; tid < nthreads ; tid++)
             {
 
                 kbad [tid] = -1 ;
@@ -439,9 +440,10 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ASSERT (J_input == NULL) ;
             ASSERT (vdim == 1) ;
 
+            int tid ;
             #pragma omp parallel for num_threads(nthreads) schedule(static) \
                 reduction(&&:known_sorted) reduction(&&:no_duplicates_found)
-            for (int tid = 0 ; tid < nthreads ; tid++)
+            for (tid = 0 ; tid < nthreads ; tid++)
             {
 
                 kbad [tid] = -1 ;
@@ -549,8 +551,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // numerical value of the tuple can be found; it is in S[k] for the
         // tuple (i,k) or (j,i,k), regardless of where the tuple appears in the
         // list after it is sorted.
+        int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t k = 0 ; k < nvals ; k++)
+        for (k = 0 ; k < nvals ; k++)
         { 
             K_work [k] = k ;
         }
@@ -699,8 +702,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             if (!tnvec_and_tnz_slice_computed)
             {
 
+                int tid ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
-                for (int tid = 0 ; tid < nthreads ; tid++)
+                for (tid = 0 ; tid < nthreads ; tid++)
                 {
                     int64_t my_tnvec = 0 ;
                     int64_t tstart = tstart_slice [tid] ;
@@ -739,8 +743,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
             ilast_slice [tid] = GB_I_WORK (tstart-1) ;
         }
 
+        int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int tid = 0 ; tid < nthreads ; tid++)
+        for (tid = 0 ; tid < nthreads ; tid++)
         {
 
             int64_t my_tnvec = 0 ;
@@ -856,8 +861,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // no duplicates appear
         //----------------------------------------------------------------------
 
+        int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int tid = 0 ; tid < nthreads ; tid++)
+        for (tid = 0 ; tid < nthreads ; tid++)
         {
 
             int64_t my_tnvec = tnvec_slice [tid] ;
@@ -888,8 +894,9 @@ GrB_Info GB_builder                 // build a matrix from tuples
         // it is known that at least one duplicate appears
         //----------------------------------------------------------------------
 
+        int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int tid = 0 ; tid < nthreads ; tid++)
+        for (tid = 0 ; tid < nthreads ; tid++)
         {
 
             int64_t my_tnz   = tnz_slice [tid] ;

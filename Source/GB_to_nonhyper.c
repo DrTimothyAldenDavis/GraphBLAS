@@ -87,9 +87,10 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
         // construct the new vector pointers
         //----------------------------------------------------------------------
 
+        int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
             reduction(+:nvec_nonempty)
-        for (int tid = 0 ; tid < ntasks ; tid++)
+        for (tid = 0 ; tid < ntasks ; tid++)
         {
             int64_t jstart, jend, my_nvec_nonempty = 0 ;
             GB_PARTITION (jstart, jend, n, tid, ntasks) ;

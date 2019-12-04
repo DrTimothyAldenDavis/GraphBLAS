@@ -131,11 +131,13 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // compute the column counts of C, and C->h if C is hypersparse
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads) schedule(guided) collapse(2)
-    for (int64_t kA = 0 ; kA < anvec ; kA++)
+    int64_t kC ;
+    #pragma omp parallel for num_threads(nthreads) schedule(guided)
+    for (kC = 0 ; kC < cnvec ; kC++)
     {
-        for (int64_t kB = 0 ; kB < bnvec ; kB++)
-        {
+        int64_t kA = kC / bnvec ;
+        int64_t kB = kC % bnvec ;
+
             // get A(:,jA), the (kA)th vector of A
             int64_t jA = (Ah == NULL) ? kA : Ah [kA] ;
             int64_t aknz = Ap [kA+1] - Ap [kA] ;
@@ -143,13 +145,13 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             int64_t jB = (Bh == NULL) ? kB : Bh [kB] ;
             int64_t bknz = Bp [kB+1] - Bp [kB] ;
             // determine # entries in C(:,jC), the (kC)th vector of C
-            int64_t kC = kA * bnvec + kB ;
+            // int64_t kC = kA * bnvec + kB ;
             Cp [kC] = aknz * bknz ;
             if (C_is_hyper)
             { 
                 Ch [kC] = jA * bvdim + jB ;
             }
-        }
+
     }
 
     //--------------------------------------------------------------------------
@@ -164,11 +166,12 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // C = kron (A,B)
     //--------------------------------------------------------------------------
 
-    #pragma omp parallel for num_threads(nthreads) schedule(guided) collapse(2)
-    for (int64_t kA = 0 ; kA < anvec ; kA++)
+    #pragma omp parallel for num_threads(nthreads) schedule(guided)
+    for (kC = 0 ; kC < cnvec ; kC++)
     {
-        for (int64_t kB = 0 ; kB < bnvec ; kB++)
-        {
+        int64_t kA = kC / bnvec ;
+        int64_t kB = kC % bnvec ;
+
             // get B(:,jB), the (kB)th vector of B
             int64_t pB_start = Bp [kB] ;
             int64_t pB_end   = Bp [kB+1] ;
@@ -176,7 +179,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
             if (bknz == 0) continue ;
             GB_void bwork [GB_VLA(bsize)] ;
             // get C(:,jC), the (kC)th vector of C
-            int64_t kC = kA * bnvec + kB ;
+            // int64_t kC = kA * bnvec + kB ;
             int64_t pC = Cp [kC] ;
             // get A(:,jA), the (kA)th vector of A
             int64_t pA_start = Ap [kA] ;
@@ -200,7 +203,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
                     pC++ ;
                 }
             }
-        }
+
     }
 
     //--------------------------------------------------------------------------

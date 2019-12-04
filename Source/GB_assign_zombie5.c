@@ -88,9 +88,10 @@ GrB_Info GB_assign_zombie5
     // each task creates its own zombies
     //--------------------------------------------------------------------------
 
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
         reduction(+:nzombies)
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
 
         //----------------------------------------------------------------------

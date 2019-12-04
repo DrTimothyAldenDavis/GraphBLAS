@@ -69,8 +69,9 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
     // extract the vector index for each entry
     //--------------------------------------------------------------------------
 
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
 
         // if kfirst > klast then task tid does no work at all

@@ -216,21 +216,17 @@ void GB_merge_parallel_3                // parallel merge
     const int64_t *GB_RESTRICT Right_task1_2 = Smaller_2 + pleft ;
     const int64_t nright_task1 = (nsmaller - pleft) ;
 
-    #pragma omp task firstprivate(S_task0_0, S_task0_1,     \
-        Left_task0_0,  Left_task0_1,  nleft_task0,          \
-        Right_task0_0, Right_task0_1, nright_task0)
-    GB_merge_select_3 (S_task0_0, S_task0_1, S_task0_2,
+    GB_TASK (GB_merge_select_3,
+        S_task0_0, S_task0_1, S_task0_2,
         Left_task0_0,  Left_task0_1,  Left_task0_2,  nleft_task0,
         Right_task0_0, Right_task0_1, Right_task0_2, nright_task0) ;
 
-    #pragma omp task firstprivate(S_task1_0, S_task1_1,     \
-        Left_task1_0,  Left_task1_1,  nleft_task1,          \
-        Right_task1_0, Right_task1_1, nright_task1)
-    GB_merge_select_3 (S_task1_0, S_task1_1, S_task1_2,
+    GB_TASK (GB_merge_select_3,
+        S_task1_0, S_task1_1, S_task1_2,
         Left_task1_0,  Left_task1_1,  Left_task1_2,  nleft_task1,
         Right_task1_0, Right_task1_1, Right_task1_2, nright_task1) ;
 
-    #pragma omp taskwait
+    GB_TASK_WAIT
 }
 
 //------------------------------------------------------------------------------
@@ -373,39 +369,31 @@ void GB_mergesort_3 // sort array A of size 3-by-n, using 3 keys (A [0:1][])
         // sort each quarter of A in parallel, using W as workspace
         // ---------------------------------------------------------------------
 
-        #pragma omp task \
-           firstprivate(A_1st0, A_1st1, A_1st2, W_1st0, W_1st1, W_1st2, n1)
-        GB_mergesort_3 (A_1st0, A_1st1, A_1st2, W_1st0, W_1st1, W_1st2, n1) ;
+        GB_TASK (GB_mergesort_3,
+            A_1st0, A_1st1, A_1st2, W_1st0, W_1st1, W_1st2, n1) ;
 
-        #pragma omp task \
-           firstprivate(A_2nd0, A_2nd1, A_2nd2, W_2nd0, W_2nd1, W_2nd2, n2)
-        GB_mergesort_3 (A_2nd0, A_2nd1, A_2nd2, W_2nd0, W_2nd1, W_2nd2, n2) ;
+        GB_TASK (GB_mergesort_3,
+            A_2nd0, A_2nd1, A_2nd2, W_2nd0, W_2nd1, W_2nd2, n2) ;
 
-        #pragma omp task \
-           firstprivate(A_3rd0, A_3rd1, A_3rd2, W_3rd0, W_3rd1, W_3rd2, n3)
-        GB_mergesort_3 (A_3rd0, A_3rd1, A_3rd2, W_3rd0, W_3rd1, W_3rd2, n3) ;
+        GB_TASK (GB_mergesort_3,
+            A_3rd0, A_3rd1, A_3rd2, W_3rd0, W_3rd1, W_3rd2, n3) ;
 
-        #pragma omp task \
-           firstprivate(A_4th0, A_4th1, A_4th2, W_4th0, W_4th1, W_4th2, n4)
-        GB_mergesort_3 (A_4th0, A_4th1, A_4th2, W_4th0, W_4th1, W_4th2, n4) ;
+        GB_TASK (GB_mergesort_3,
+            A_4th0, A_4th1, A_4th2, W_4th0, W_4th1, W_4th2, n4) ;
 
-        #pragma omp taskwait
+        GB_TASK_WAIT
 
         // ---------------------------------------------------------------------
         // merge pairs of quarters of A into two halves of W, in parallel
         // ---------------------------------------------------------------------
 
-        #pragma omp task firstprivate(W_1st0, W_1st1, W_1st2, \
-            A_1st0, A_1st1, A_1st2, n1, A_2nd0, A_2nd1, A_2nd2, n2)
-        GB_merge_select_3 (W_1st0, W_1st1, W_1st2,
+        GB_TASK (GB_merge_select_3, W_1st0, W_1st1, W_1st2,
             A_1st0, A_1st1, A_1st2, n1, A_2nd0, A_2nd1, A_2nd2, n2) ;
 
-        #pragma omp task firstprivate(W_3rd0, W_3rd1, W_3rd2, \
-            A_3rd0, A_3rd1, A_3rd2, n3, A_4th0, A_4th1, A_4th2, n4)
-        GB_merge_select_3 (W_3rd0, W_3rd1, W_3rd2,
+        GB_TASK (GB_merge_select_3, W_3rd0, W_3rd1, W_3rd2,
             A_3rd0, A_3rd1, A_3rd2, n3, A_4th0, A_4th1, A_4th2, n4) ;
 
-        #pragma omp taskwait
+        GB_TASK_WAIT
 
         // ---------------------------------------------------------------------
         // merge the two halves of W into A
@@ -454,8 +442,7 @@ void GB_msort_3     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
         // parallel mergesort: start a parallel region
         // ---------------------------------------------------------------------
 
-        #pragma omp parallel num_threads(nthreads)
-        #pragma omp master
+        GB_TASK_MASTER (nthreads)
         GB_mergesort_3 (A_0, A_1, A_2, W_0, W_1, W_2, n) ;
 
     }

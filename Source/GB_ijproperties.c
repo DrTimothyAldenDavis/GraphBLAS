@@ -193,16 +193,17 @@ GrB_Info GB_ijproperties        // check I and determine its properties
         //----------------------------------------------------------------------
 
         // scan I to find imin and imax, and validate the list. Also determine
-        // if it is sorted or not, and contigous or not.
+        // if it is sorted or not, and contiguous or not.
 
         imin = limit ;
         imax = -1 ;
 
+        int tid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1) \
             reduction(||:I_unsorted) reduction(&&:I_contig) \
             reduction(min:imin) reduction(max:imax) \
             reduction(||:I_has_duplicates)
-        for (int tid = 0 ; tid < ntasks ; tid++)
+        for (tid = 0 ; tid < ntasks ; tid++)
         {
             int64_t istart, iend ;
             GB_PARTITION (istart, iend, ni, tid, ntasks) ;

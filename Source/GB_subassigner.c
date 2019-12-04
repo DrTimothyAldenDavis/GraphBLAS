@@ -558,7 +558,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // select the method to use
     //--------------------------------------------------------------------------
 
-    // TODO: add method 01n for C(:,:) = scalar when nnz (C) == 0.
+    // FUTURE: add method 01n for C(:,:) = scalar when nnz (C) == 0.
 
     bool S_Extraction = true ;
 
@@ -677,7 +677,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // (C_replace is effectively false if M=NULL and Mask_comp=false), or they
     // are not used (the last option, whether or not S is constructed, is
     // determined here; it is not a user input).  The first 5 options are
-    // determined by the input.  The table below has been collapsed to remove
+    // determined by the input.  The table below has been pruned to remove
     // combinations that are not used, or equivalent to other entries in the
     // table.  Only 22 unique combinations of the 64 combinations are needed.
 
