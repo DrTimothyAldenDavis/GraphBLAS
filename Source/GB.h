@@ -126,18 +126,16 @@
 // Determine the restrict keyword, and whether or not variable-length arrays
 // are supported.
 
-// #if ( _MSC_VER & !__INTEL_COMPILER )
-
-#if 1
+#if ( _MSC_VER && !__INTEL_COMPILER )
 
     // Microsoft Visual Studio does not have the restrict keyword, but it does
     // support __restrict, which is equivalent.  Variable-length arrays are
     // not supported.  OpenMP tasks are not available.
 
+    #define GB_MICROSOFT 1
     #define GB_RESTRICT __restrict
     #define GB_HAS_VLA  0
     #define GB_HAS_OPENMP_TASKS 0
-    #define GB_MICROSOFT 1
 
 #elif GxB_STDC_VERSION >= 199901L
 
@@ -161,8 +159,17 @@
 // OpenMP pragmas and tasks
 //------------------------------------------------------------------------------
 
-#define GB_PRAGMA(x) _Pragma (#x)
-#define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
+#if GB_MICROSOFT
+
+    #define GB_PRAGMA(x) __pragma (x)
+    #define GB_PRAGMA_SIMD
+
+#else
+
+    #define GB_PRAGMA(x) _Pragma (#x)
+    #define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
+
+#endif
 
 #if GB_HAS_OPENMP_TASKS
 

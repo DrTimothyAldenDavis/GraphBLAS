@@ -133,7 +133,8 @@ void mexFunction
         else
         { 
             // nrows = max entry in I+1
-            nrows = GB_matlab_helper4 (I, ni) ;
+            bool ok = GB_matlab_helper4 (I, ni, &nrows) ;
+            CHECK_ERROR (!ok, "out of memory") ;
         }
     }
     else
@@ -153,7 +154,8 @@ void mexFunction
         else
         { 
             // ncols = max entry in J+1
-            ncols = GB_matlab_helper4 (J, nj) ;
+            bool ok = GB_matlab_helper4 (J, nj, &ncols) ;
+            CHECK_ERROR (!ok, "out of memory") ;
         }
     }
     else

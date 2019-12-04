@@ -1,6 +1,6 @@
-Version 3.1.2, Dec 3, 2019
+Version 3.1.2, Dec 4, 2019
 
-    * bug fix for MATLAB interface: A(58) and A(:) were conflated.
+    * (14) bug fix for MATLAB interface: A(58) and A(:) were conflated.
     * compiler port: changes to allow GraphBLAS to be compiled with older
         compilers (pre ANSI C11), and Microsoft Visual Studio.
 

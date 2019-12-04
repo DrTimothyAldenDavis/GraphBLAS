@@ -314,9 +314,9 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         cast_zaccum_to_C = GB_cast_factory (ctype->code, accum->ztype->code) ;
 
         // scalar workspace
-        char xaccum [accum->xtype->size] ;
-        char yaccum [accum->ytype->size] ;
-        char zaccum [accum->ztype->size] ;
+        GB_void xaccum [GB_VLA(accum->xtype->size)] ;
+        GB_void yaccum [GB_VLA(accum->ytype->size)] ;
+        GB_void zaccum [GB_VLA(accum->ztype->size)] ;
 
         // xaccum = (accum->xtype) c
         cast_C_to_xaccum (xaccum, c, ctype->size) ;
