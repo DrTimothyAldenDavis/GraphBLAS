@@ -158,7 +158,6 @@ int main (int argc, char **argv)
     GrB_Matrix Aarray [NTHREADS] ;
 
     // create the threads
-    int id ;
     #pragma omp parallel for num_threads(NTHREADS) 
     for (id = 0 ; id < NTHREADS ; id++)
     {
@@ -177,7 +176,7 @@ int main (int argc, char **argv)
     // print an error message
     printf ("\n\n---- Master thread prints an error message:\n") ;
     GrB_Matrix_new (NULL, GrB_FP64, 1, 1) ;
-    printf ("master %d : Error: %s\n", id, GrB_error ( )) ;
+    printf ("Error: %s\n", GrB_error ( )) ;
 
     // finish GraphBLAS
     GrB_finalize ( ) ;
