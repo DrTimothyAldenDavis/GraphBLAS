@@ -215,8 +215,9 @@ GrB_Info prand_seed
     }
 
     // construct the tuples for the initial seeds
+    int64_t i, len = (int64_t) n  ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t i = 0 ; i < (int64_t) n ; i++)
+    for (i = 0 ; i < len ; i++)
     {
         I [i] = i ;
         for (int k = 0 ; k < 5 ; k++)

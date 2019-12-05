@@ -158,8 +158,9 @@ int main (int argc, char **argv)
     GrB_Matrix Aarray [NTHREADS] ;
 
     // create the threads
+    int id ;
     #pragma omp parallel for num_threads(NTHREADS) 
-    for (int id = 0 ; id < NTHREADS ; id++)
+    for (id = 0 ; id < NTHREADS ; id++)
     {
         worker (&Aarray [id], id) ;
     }
