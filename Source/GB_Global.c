@@ -301,10 +301,14 @@ double GB_Global_hyper_ratio_get (void)
 void GB_Global_is_csc_set (bool is_csc)
 { 
     GB_Global.is_csc = is_csc ;
+    // TODO remove printf
+    printf ("set GB_Global.is_csc to %d\n", (int) GB_Global.is_csc) ;
 }
 
-double GB_Global_is_csc_get (void)
+bool GB_Global_is_csc_get (void)
 { 
+    // TODO remove printf
+    printf ("get GB_Global.is_csc = %d\n", (int) GB_Global.is_csc) ;
     return (GB_Global.is_csc) ;
 }
 

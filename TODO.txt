@@ -1,3 +1,6 @@
 
 TODO Ewise add and emult: handle dense += sparse case efficiently
 TODO support for dense matrices (A->i and A->p as NULL pointers)
+TODO implement v1.3 of the API
+TODO add matrix I/O in binary format
+
