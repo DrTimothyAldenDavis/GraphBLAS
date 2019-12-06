@@ -11021,12 +11021,19 @@ These errors are to be expected if SuiteSparse:GraphBLAS is not thread-safe.
 %----------------------------------------
 
 GraphBLAS makes extensive use of features in the ANSI C11 standard, and thus a
-C compiler supporting this version of the C standard is required.  On the Mac
+C compiler supporting this version of the C standard is required to use
+all features of GraphBLAS.  On the Mac
 (OS X), \verb'clang' 8.0.0 in \verb'Xcode' version 8.2.1 is sufficient,
 although earlier versions of \verb'Xcode' may work as well.  For the GNU
 \verb'gcc' compiler, version 4.9 or later is required.  For the Intel
 \verb'icc' compiler, version 18.0 or later is required.  Version 2.8.12 or
 later of \verb'cmake' is required; version 3.0.0 is preferred.
+
+If you are using a pre-C11 ANSI C compiler, or Microsoft Visual Studio,
+then the \verb'_Generic' keyword is not available.  SuiteSparse:GraphBLAS
+will still compile, but you will not have access to polymorphic functions
+such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
+instead.
 
 To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'
 in the main GraphBLAS folder, which compiles the library.  To use a

@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 4, 2019" )
+set ( GraphBLAS_DATE "Dec 6, 2019" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   2 )
@@ -130,8 +130,8 @@ execute_process (
 #-------------------------------------------------------------------------------
 
 configure_file (
-    "Config/GraphBLAS.h.tmp" 
-    "${PROJECT_SOURCE_DIR}/Include/GraphBLAS.h" 
+    "Config/GraphBLAS.h.tmp"
+    "${PROJECT_SOURCE_DIR}/Include/GraphBLAS.h"
 )
 configure_file (
     "Config/GraphBLAS_version.tex.in"
@@ -219,6 +219,7 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     endif ( )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
     # options for MicroSoft Visual Studio
+    # set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ")
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "PGI" )
     # options for PGI pgcc compiler.  The compiler has a bug, and the
     # -DPGI_COMPILER_BUG causes GraphBLAS to use a workaround.
@@ -283,7 +284,7 @@ if ( BUILD_GRB_STATIC_LIBRARY )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# select the threading library 
+# select the threading library
 #-------------------------------------------------------------------------------
 
 if ( USER_OPENMP )
@@ -308,31 +309,41 @@ else ( )
 endif ( )
 
 #-------------------------------------------------------------------------------
+# select the math library (not required for Microsoft Visual Studio)
+#-------------------------------------------------------------------------------
+
+if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
+    set ( M_LIB "" )
+else ( )
+    set ( M_LIB "m" )
+endif ( )
+
+#-------------------------------------------------------------------------------
 # add the threading library
 #-------------------------------------------------------------------------------
 
 if ( USE_OPENMP )
     # use OpenMP for user thread synchronization
     message ( STATUS "Using OpenMP to synchronize user threads" )
-    target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas        ${M_LIB} ${OpenMP_C_LIBRARIES} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} )
     endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -DUSER_OPENMP_THREADS " )
 elseif ( USE_POSIX )
     # use POSIX for user thread synchronization
     message ( STATUS "Using POSIX pthreads to synchronize user threads" )
-    target_link_libraries ( graphblas        m )
+    target_link_libraries ( graphblas        ${M_LIB} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static m )
+        target_link_libraries ( graphblas_static ${M_LIB} )
     endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -pthread -DUSER_POSIX_THREADS " )
 else ( )
     # use no threading at all
     message ( WARNING "No support for user threads; GraphBLAS will not be thread-safe" )
-    target_link_libraries ( graphblas        m )
+    target_link_libraries ( graphblas        ${M_LIB} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static m )
+        target_link_libraries ( graphblas_static ${M_LIB} )
     endif ( )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DUSER_NO_THREADS " )
 endif ( )
@@ -348,9 +359,9 @@ if ( OPENMP_FOUND )
     # use OpenMP for internal parallelism
     message ( STATUS "Using OpenMP for internal parallelism" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
-    target_link_libraries ( graphblas        m ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas        ${M_LIB} ${OpenMP_C_LIBRARIES} )
     if ( BUILD_GRB_STATIC_LIBRARY )
-        target_link_libraries ( graphblas_static m ${OpenMP_C_LIBRARIES} )
+        target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} )
     endif ( )
 endif ( )
 
@@ -386,7 +397,7 @@ add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-target_link_libraries ( graphblasdemo         m graphblas )
+target_link_libraries ( graphblasdemo         ${M_LIB} graphblas )
 
 if ( BUILD_GRB_STATIC_LIBRARY )
     add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
