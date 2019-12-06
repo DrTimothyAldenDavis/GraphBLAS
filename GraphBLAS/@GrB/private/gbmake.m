@@ -59,6 +59,14 @@ if (~ismac && isunix)
     flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
 
+if ispc
+    % Windows
+    object_suffix = '.obj' ;
+else
+    % Linux, Mac
+    object_suffix = '.o' ;
+end
+
 inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Template' ;
 
 ldflags = sprintf ('-L%s/../../../build', pwd) ;
@@ -86,7 +94,7 @@ for k = 1:length (cfiles)
 
     % get the object file name
     ofile = cfiles(k).name ;
-    objfile = [ ofile(1:end-2) '.o' ] ;
+    objfile = [ ofile(1:end-2) object_suffix ] ;
 
     % get the object file modification time
     objlist = [ objlist ' ' objfile ] ;
