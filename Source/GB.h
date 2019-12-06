@@ -64,7 +64,7 @@
 //  2557: sign compare
 #pragma warning (disable: 144 181 869 1572 1599 2259 2282 2557 )
 
-// See GB_unused.h, for warnings 177 and 593, which are not globally 
+// See GB_unused.h, for warnings 177 and 593, which are not globally
 // disabled, but selectively by #include'ing GB_unused.h as needed.
 
 // resolved (warnings no longer disabled globally):
@@ -126,26 +126,68 @@
 // Determine the restrict keyword, and whether or not variable-length arrays
 // are supported.
 
-#if ( _MSC_VER & !__INTEL_COMPILER )
+#if ( _MSC_VER && !__INTEL_COMPILER )
 
     // Microsoft Visual Studio does not have the restrict keyword, but it does
     // support __restrict, which is equivalent.  Variable-length arrays are
-    // not supported.
+    // not supported.  OpenMP tasks are not available.
 
+    #define GB_MICROSOFT 1
     #define GB_RESTRICT __restrict
     #define GB_HAS_VLA  0
+    #define GB_HAS_OPENMP_TASKS 0
 
 #elif GxB_STDC_VERSION >= 199901L
 
     // ANSI C99 and later have the restrict keyword and variable-length arrays.
+    #define GB_MICROSOFT 0
     #define GB_RESTRICT restrict
     #define GB_HAS_VLA  1
+    #define GB_HAS_OPENMP_TASKS 1
 
 #else
 
     // ANSI C95 and earlier have neither
+    #define GB_MICROSOFT 0
     #define GB_RESTRICT
     #define GB_HAS_VLA  0
+    #define GB_HAS_OPENMP_TASKS 1
+
+#endif
+
+//------------------------------------------------------------------------------
+// OpenMP pragmas and tasks
+//------------------------------------------------------------------------------
+
+#if GB_MICROSOFT
+
+    #define GB_PRAGMA(x) __pragma (x)
+    #define GB_PRAGMA_SIMD
+
+#else
+
+    #define GB_PRAGMA(x) _Pragma (#x)
+    #define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
+
+#endif
+
+#if GB_HAS_OPENMP_TASKS
+
+    // Use OpenMP tasks
+    #define GB_TASK(func, ...)                          \
+        GB_PRAGMA(omp task firstprivate(__VA_ARGS__))   \
+        func (__VA_ARGS__)
+    #define GB_TASK_WAIT GB_PRAGMA (omp taskwait)
+    #define GB_TASK_MASTER(nthreads)                    \
+        GB_PRAGMA (omp parallel num_threads (nthreads)) \
+        GB_PRAGMA (omp master)
+
+#else
+
+    // OpenMP tasks not available
+    #define GB_TASK(func, ...) func (__VA_ARGS__)
+    #define GB_TASK_WAIT
+    #define GB_TASK_MASTER(nthreads)
 
 #endif
 
@@ -174,7 +216,7 @@
 // workspace for a single scalar of variable size, using a statement:
 //
 //      GB_void aij [xsize] ;
-// 
+//
 // To support non-variable-length arrays in ANSI C95 or earlier, this is used:
 //
 //      GB_void aij [GB_VLA(xsize)] ;
@@ -1218,6 +1260,9 @@ GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
 
 #define ASSERT_VECTOR_OK(v,name,pr)  \
     ASSERT_OK (GB_Vector_check (v, name, pr, stdout, Context))
+
+#define ASSERT_VECTOR_OK_OR_NULL(v,name,pr)  \
+    ASSERT_OK_OR_NULL (GB_Vector_check (v, name, pr, stdout, Context))
 
 #define ASSERT_SCALAR_OK(s,name,pr)  \
     ASSERT_OK (GB_Scalar_check (s, name, pr, stdout, Context))
@@ -2686,12 +2731,6 @@ static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
         return (true) ;
     }
 }
-
-
-
-#define GB_PRAGMA(x) _Pragma (#x)
-
-#define GB_PRAGMA_SIMD GB_PRAGMA (omp simd)
 
 //------------------------------------------------------------------------------
 // built-in unary and binary operators

@@ -102,8 +102,9 @@
     // phase1: count entries in each C(:,kC); phase2: compute C
     //--------------------------------------------------------------------------
 
+    int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------
@@ -653,8 +654,9 @@
     #if defined ( GB_PHASE_2_OF_2 )
     if (post_sort)
     {
+        int taskid ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-        for (int taskid = 0 ; taskid < ntasks ; taskid++)
+        for (taskid = 0 ; taskid < ntasks ; taskid++)
         {
             int64_t kC = TaskList [taskid].kfirst ;
             bool do_post_sort = (TaskList [taskid].len != 0) ;

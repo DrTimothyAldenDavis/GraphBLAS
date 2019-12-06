@@ -205,8 +205,9 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
         #include "GB_unaryop_transpose.c"
 
         // cumulative sum of the rowcounts across the slices
+        int64_t i ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t i = 0 ; i < vlen ; i++)
+        for (i = 0 ; i < vlen ; i++)
         {
             int64_t s = 0 ;
             for (int taskid = 0 ; taskid < naslice ; taskid++)
@@ -225,7 +226,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
         // add Cp back to all Rowcounts
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t i = 0 ; i < vlen ; i++)
+        for (i = 0 ; i < vlen ; i++)
         {
             int64_t s = Cp [i] ;
             int64_t *GB_RESTRICT rowcount = Rowcounts [0] ;

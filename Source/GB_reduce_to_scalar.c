@@ -201,25 +201,52 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                     if (memcmp (s, terminal, zsize) == 0) break ;   \
                 }
 
-            // skip the work for this task if early exit is reached
-            #define GB_IF_NOT_EARLY_EXIT                            \
-                bool my_exit ;                                      \
-                GB_PRAGMA (omp atomic read)                         \
-                my_exit = early_exit ;                              \
-                if (!my_exit)
 
-            // break if terminal value reached, inside parallel task
-            #define GB_PARALLEL_BREAK_IF_TERMINAL(s)                \
-                if (terminal != NULL)                               \
-                {                                                   \
-                    if (memcmp (s, terminal, zsize) == 0)           \
-                    {                                               \
-                        /* tell the other tasks to exit early */    \
-                        GB_PRAGMA (omp atomic write)                \
-                        early_exit = true ;                         \
-                        break ;                                     \
-                    }                                               \
-                }
+            #if GB_MICROSOFT
+
+                // skip the work for this task if early exit is reached
+                #define GB_IF_NOT_EARLY_EXIT                            \
+                    bool my_exit ;                                      \
+                    GB_PRAGMA (omp critical (GB_reduce_to_scalar))      \
+                    my_exit = early_exit ;                              \
+                    if (!my_exit)
+
+                // break if terminal value reached, inside parallel task
+                #define GB_PARALLEL_BREAK_IF_TERMINAL(s)                \
+                    if (terminal != NULL)                               \
+                    {                                                   \
+                        if (memcmp (s, terminal, zsize) == 0)           \
+                        {                                               \
+                            /* tell the other tasks to exit early */    \
+                            GB_PRAGMA (omp critical (GB_reduce_to_scalar))  \
+                            early_exit = true ;                         \
+                            break ;                                     \
+                        }                                               \
+                    }
+
+            #else
+
+                // skip the work for this task if early exit is reached
+                #define GB_IF_NOT_EARLY_EXIT                            \
+                    bool my_exit ;                                      \
+                    GB_PRAGMA (omp atomic read)                         \
+                    my_exit = early_exit ;                              \
+                    if (!my_exit)
+
+                // break if terminal value reached, inside parallel task
+                #define GB_PARALLEL_BREAK_IF_TERMINAL(s)                \
+                    if (terminal != NULL)                               \
+                    {                                                   \
+                        if (memcmp (s, terminal, zsize) == 0)           \
+                        {                                               \
+                            /* tell the other tasks to exit early */    \
+                            GB_PRAGMA (omp atomic write)                \
+                            early_exit = true ;                         \
+                            break ;                                     \
+                        }                                               \
+                    }
+
+            #endif
 
             // ztype t ;
             #define GB_SCALAR(t)                                    \
@@ -287,9 +314,9 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         cast_zaccum_to_C = GB_cast_factory (ctype->code, accum->ztype->code) ;
 
         // scalar workspace
-        char xaccum [accum->xtype->size] ;
-        char yaccum [accum->ytype->size] ;
-        char zaccum [accum->ztype->size] ;
+        GB_void xaccum [GB_VLA(accum->xtype->size)] ;
+        GB_void yaccum [GB_VLA(accum->ytype->size)] ;
+        GB_void zaccum [GB_VLA(accum->ztype->size)] ;
 
         // xaccum = (accum->xtype) c
         cast_C_to_xaccum (xaccum, c, ctype->size) ;

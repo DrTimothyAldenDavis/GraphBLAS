@@ -37,19 +37,18 @@ int main (void)
     GrB_Index *J = malloc (nrows * ncols * sizeof (GrB_Index)) ;
     int64_t   *X = malloc (nrows * ncols * sizeof (int64_t)) ;
 
-    #pragma omp parallel for num_threads(nthreads_max) collapse(2) \
-        schedule(static)
-    for (int64_t i = 0 ; i < nrows ; i++)
+    int64_t k ;
+    #pragma omp parallel for num_threads(nthreads_max) schedule(static)
+    for (k = 0 ; k < N*N ; k++)
     {
-        for (int64_t j = 0 ; j < ncols ; j++)
-        {
-            int64_t k = i * N + j ;
-            // int x = (int) (rand ( ) & 0xFF) ;
-            int x = (int) (k & 0xFF) ;
-            I [k] = i ;
-            J [k] = j ;
-            X [k] = x ;
-        }
+        // k = i * N + j ;
+        int64_t i = k / N ;
+        int64_t j = k % N ;
+        // int x = (int) (rand ( ) & 0xFF) ;
+        int x = (int) (k & 0xFF) ;
+        I [k] = i ;
+        J [k] = j ;
+        X [k] = x ;
     }
 
     GrB_Index nvals = N*N ;

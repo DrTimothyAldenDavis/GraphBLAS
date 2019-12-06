@@ -133,8 +133,9 @@ GrB_Info GB_hcat_slice      // horizontal concatenation of the slices of C
     // copy each slice into C
     //--------------------------------------------------------------------------
 
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(static,1)
-    for (int tid = 0 ; tid < nthreads ; tid++)
+    for (tid = 0 ; tid < nthreads ; tid++)
     {
         // get the Cslice [tid] and its position in C
         int64_t *GB_RESTRICT Csliceh = (Cslice [tid])->h ;

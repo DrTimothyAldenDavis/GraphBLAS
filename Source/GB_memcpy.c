@@ -43,8 +43,9 @@ void GB_memcpy                  // parallel memcpy
         GB_void *pdest = dest ;
         const GB_void *psrc = src ;
 
+        int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-        for (size_t k = 0 ; k < nchunks ; k++)
+        for (k = 0 ; k < nchunks ; k++)
         {
             size_t start = k * GB_CHUNK ;
             if (start < n)

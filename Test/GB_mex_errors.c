@@ -4447,16 +4447,16 @@ void mexFunction
 
     Context->where = "GB_*_check" ;
 
-    ERR (GB_Type_check (Tgunk, "", GB0)) ;
-    ERR (GB_UnaryOp_check (op1gunk, "", GB0)) ;
-    ERR (GB_BinaryOp_check (op2gunk, "", GB0)) ;
-    ERR (GB_Monoid_check (monoid_gunk, "", GB0)) ;
-    ERR (GB_Semiring_check (semigunk, "", GB0)) ;
-    ERR (GB_Vector_check (vgunk, "", GB0)) ;
-    ERR (GB_Matrix_check (Agunk, "", GB0)) ;
-    ERR (GB_Descriptor_check (dgunk, "", GB0)) ;
-    GB_SelectOp_check (selectopgunk, "", GB3) ;
-    ERR (GB_SelectOp_check (selectopgunk, "", GB0)) ;
+    ERR (GB_Type_check (Tgunk, "", GB0, NULL, Context)) ;
+    ERR (GB_UnaryOp_check (op1gunk, "", GB0, NULL, Context)) ;
+    ERR (GB_BinaryOp_check (op2gunk, "", GB0, NULL, Context)) ;
+    ERR (GB_Monoid_check (monoid_gunk, "", GB0, NULL, Context)) ;
+    ERR (GB_Semiring_check (semigunk, "", GB0, NULL, Context)) ;
+    ERR (GB_Vector_check (vgunk, "", GB0, NULL, Context)) ;
+    ERR (GB_Matrix_check (Agunk, "", GB0, NULL, Context)) ;
+    ERR (GB_Descriptor_check (dgunk, "", GB0, NULL, Context)) ;
+    GB_SelectOp_check (selectopgunk, "", GB3, NULL, Context) ;
+    ERR (GB_SelectOp_check (selectopgunk, "", GB0, NULL, Context)) ;
 
     ERR (GxB_Type_fprint (Tgunk, "crud", GB0, ff)) ;
     ERR (GxB_UnaryOp_fprint (op1gunk, "crud", GB0, ff)) ;
@@ -4481,15 +4481,15 @@ void mexFunction
     REMAGIC (selectopgunk)
     #undef REMAGIC
 
-    OK (GB_Type_check (Tgunk, "", GB0)) ;
-    OK (GB_UnaryOp_check (op1gunk, "", GB0)) ;
-    OK (GB_BinaryOp_check (op2gunk, "", GB0)) ;
-    OK (GB_Monoid_check (monoid_gunk, "", GB0)) ;
-    OK (GB_Semiring_check (semigunk, "", GB0)) ;
-    OK (GB_Vector_check (vgunk, "", GB0)) ;
-    OK (GB_Matrix_check (Agunk, "", GB0)) ;
-    OK (GB_Descriptor_check (dgunk, "", GB0)) ;
-    OK (GB_SelectOp_check (selectopgunk, "", GB0)) ;
+    OK (GB_Type_check (Tgunk, "", GB0, NULL, Context)) ;
+    OK (GB_UnaryOp_check (op1gunk, "", GB0, NULL, Context)) ;
+    OK (GB_BinaryOp_check (op2gunk, "", GB0, NULL, Context)) ;
+    OK (GB_Monoid_check (monoid_gunk, "", GB0, NULL, Context)) ;
+    OK (GB_Semiring_check (semigunk, "", GB0, NULL, Context)) ;
+    OK (GB_Vector_check (vgunk, "", GB0, NULL, Context)) ;
+    OK (GB_Matrix_check (Agunk, "", GB0, NULL, Context)) ;
+    OK (GB_Descriptor_check (dgunk, "", GB0, NULL, Context)) ;
+    OK (GB_SelectOp_check (selectopgunk, "", GB0, NULL, Context)) ;
 
     OK (GxB_fprint (Tgunk, GB0, ff)) ;
     OK (GxB_fprint (op1gunk, GB0, ff)) ;
@@ -4802,13 +4802,13 @@ void mexFunction
         printf ("\nGrB_extract ============================================\n");
 
         OK (GrB_Vector_dup (&v, u)) ;
-        GB_Vector_check (u, "start u ", GB3) ;
-        GB_Vector_check (v, "start v ", GB3) ;
+        GB_Vector_check (u, "start u ", GB3, NULL, Context) ;
+        GB_Vector_check (v, "start v ", GB3, NULL, Context) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
 
         OK (GrB_extract   (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
-        GB_Vector_check (u, "u to check", GB3) ;
-        GB_Vector_check (v, "v to check", GB3) ;
+        GB_Vector_check (u, "u to check", GB3, NULL, Context) ;
+        GB_Vector_check (v, "v to check", GB3, NULL, Context) ;
         CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
         GrB_free (&v) ;
 
@@ -5079,7 +5079,7 @@ void mexFunction
     ERR (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
         &nonempty, &nvecs, &Ah, &Ap, &Ai, NULL, desc)) ;
 
-    OK (GB_Matrix_check (A, "A still OK", GB1)) ;
+    OK (GB_Matrix_check (A, "A still OK", GB1, NULL, Context)) ;
 
     OK (GxB_Matrix_export_CSR (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Aj, &Ax, desc)) ;
@@ -5109,7 +5109,7 @@ void mexFunction
     OK (GxB_Matrix_import_CSR (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Aj, &Ax, desc)) ;
 
-    OK (GB_Matrix_check (A, "A still OK", GB1)) ;
+    OK (GB_Matrix_check (A, "A still OK", GB1, NULL, Context)) ;
 
     OK (GxB_Matrix_export_CSC (&A, &atype, &nrows, &ncols, &nvals, &nonempty,
         &Ap, &Ai, &Ax, desc)) ;
@@ -5137,7 +5137,7 @@ void mexFunction
     OK (GxB_Matrix_import_CSC (&A, atype, nrows, ncols, nvals, nonempty,
         &Ap, &Ai, &Ax, desc)) ;
 
-    OK (GB_Matrix_check (A, "A still OK", GB1)) ;
+    OK (GB_Matrix_check (A, "A still OK", GB1, NULL, Context)) ;
 
     OK (GxB_Matrix_export_HyperCSR (&A, &atype, &nrows, &ncols, &nvals,
         &nonempty, &nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
@@ -5171,7 +5171,7 @@ void mexFunction
     OK (GxB_Matrix_import_HyperCSR (&A, atype, nrows, ncols, nvals,
         nonempty, nvecs, &Ah, &Ap, &Aj, &Ax, desc)) ;
 
-    OK (GB_Matrix_check (A, "A still OK", GB1)) ;
+    OK (GB_Matrix_check (A, "A still OK", GB1, NULL, Context)) ;
 
     OK (GxB_Matrix_export_HyperCSC (&A, &atype, &nrows, &ncols, &nvals,
         &nonempty, &nvecs, &Ah, &Ap, &Ai, &Ax, desc)) ;

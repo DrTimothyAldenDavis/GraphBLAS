@@ -29,8 +29,9 @@
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (bnz, ntasks) ;
 
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
         int64_t pstart, pend ;
         GB_PARTITION (pstart, pend, bnz, tid, ntasks) ;

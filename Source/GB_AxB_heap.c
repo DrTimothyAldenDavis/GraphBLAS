@@ -250,9 +250,9 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
         // scalar workspace
         // flipxy false: aik = (xtype) A(i,k) and bkj = (ytype) B(k,j)
         // flipxy true:  aik = (ytype) A(i,k) and bkj = (xtype) B(k,j)
-        char aik [flipxy ? ysize : xsize] ;
-        char bkj [flipxy ? xsize : ysize] ;
-        char t [csize] ;
+        GB_void aik [GB_VLA(flipxy ? ysize : xsize)] ;
+        GB_void bkj [GB_VLA(flipxy ? xsize : ysize)] ;
+        GB_void t [GB_VLA(csize)] ;
 
         GB_void *GB_RESTRICT Cx = C->x ;
         GB_void *cij = Cx ;        // advances through each entry of C

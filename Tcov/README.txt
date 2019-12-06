@@ -13,7 +13,7 @@ this in the MATLAB command window.
     grbmake ; testcov
 
 If you get a linking problem on linux, add this directory to your
-LD_LIBRARY_PATCH, so that the libgraphblas_tcov.so constructed by grbmake can be
+LD_LIBRARY_PATH, so that the libgraphblas_tcov.so constructed by grbmake can be
 found by the mexFunctions.
 
 Statement coverage tests results will be saved in Tcov/log.txt.  Note that full

@@ -83,8 +83,9 @@
     //--------------------------------------------------------------------------
 
     // each thread reduces its own slice in parallel
+    int tid ;
     #pragma omp parallel for num_threads(nth) schedule(static)
-    for (int tid = 0 ; tid < nth ; tid++)
+    for (tid = 0 ; tid < nth ; tid++)
     {
 
         //----------------------------------------------------------------------
@@ -132,9 +133,10 @@
 
     if (nth > 1)
     {
+        int64_t i ;
         #pragma omp parallel for num_threads(nthreads) schedule(static) \
             reduction(+:tnz)
-        for (int64_t i = 0 ; i < n ; i++)
+        for (i = 0 ; i < n ; i++)
         {
             for (int tid = 1 ; tid < nth ; tid++)
             {
@@ -209,8 +211,9 @@
         // T is dense: transplant Work0 into T->x
         //----------------------------------------------------------------------
 
+        int64_t i ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t i = 0 ; i < n ; i++)
+        for (i = 0 ; i < n ; i++)
         { 
             Ti [i] = i ;
         }
@@ -257,8 +260,9 @@
             // Some tasks may be completely empty and thus take no time at all;
             // 256 tasks per thread are created for better load balancing.
 
+            int taskid ;
             #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
-            for (int taskid = 0 ; taskid < ntasks ; taskid++)
+            for (taskid = 0 ; taskid < ntasks ; taskid++)
             {
                 int64_t ifirst, ilast, p = 0 ;
                 GB_PARTITION (ifirst, ilast, n, taskid, ntasks) ;
@@ -272,7 +276,7 @@
             GB_cumsum (Count, ntasks, NULL, 1) ;
 
             #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
-            for (int64_t taskid = 0 ; taskid < ntasks ; taskid++)
+            for (taskid = 0 ; taskid < ntasks ; taskid++)
             {
                 int64_t ifirst, ilast, p = Count [taskid] ;
                 int64_t my_count = (Count [taskid+1] - p) ;

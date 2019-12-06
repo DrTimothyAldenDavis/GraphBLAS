@@ -410,8 +410,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         C->p = Cp ; C->p_shallow = false ;
 
         // fill the vector pointers C->p
+        int64_t k ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (int64_t k = 0 ; k <= anz ; k++)
+        for (k = 0 ; k <= anz ; k++)
         { 
             Cp [k] = k ;
         }
@@ -575,8 +576,9 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 // construct Ci in parallel
                 //--------------------------------------------------------------
 
+                int tid ;
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
-                for (int tid = 0 ; tid < ntasks ; tid++)
+                for (tid = 0 ; tid < ntasks ; tid++)
                 {
                     int64_t jstart, jend, k = 0 ;
                     GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;
@@ -594,7 +596,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
                 ASSERT (Count [ntasks] == anz) ;
 
                 #pragma omp parallel for num_threads(nth) schedule(dynamic,1)
-                for (int tid = 0 ; tid < ntasks ; tid++)
+                for (tid = 0 ; tid < ntasks ; tid++)
                 {
                     int64_t jstart, jend, k = Count [tid] ;
                     GB_PARTITION (jstart, jend, avdim, tid, ntasks) ;

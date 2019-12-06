@@ -17,45 +17,46 @@
 
 void GB_matlab_helper1              // convert zero-based indices to one-based
 (
-    double *GB_RESTRICT I_double,      // output array
-    const GrB_Index *GB_RESTRICT I,    // input array
+    double *GB_RESTRICT I_double,   // output array
+    const GrB_Index *GB_RESTRICT I, // input array
     int64_t nvals                   // size of input and output arrays
 ) ;
 
 void GB_matlab_helper1i             // convert zero-based indices to one-based
 (
-    int64_t *GB_RESTRICT I,            // input/output array
+    int64_t *GB_RESTRICT I,         // input/output array
     int64_t nvals                   // size of input/output array
 ) ;
 
 void GB_matlab_helper2              // fill Xp and Xi for a dense matrix
 (
-    GrB_Index *GB_RESTRICT Xp,         // size ncols+1
-    GrB_Index *GB_RESTRICT Xi,         // size nrows*ncols
+    GrB_Index *GB_RESTRICT Xp,      // size ncols+1
+    GrB_Index *GB_RESTRICT Xi,      // size nrows*ncols
     int64_t ncols,
     int64_t nrows
 ) ;
 
 bool GB_matlab_helper3              // return true if OK, false on error
 (
-    int64_t *GB_RESTRICT List,         // size len, output array
+    int64_t *GB_RESTRICT List,      // size len, output array
     const double *GB_RESTRICT List_double, // size len, input array
     int64_t len,
     int64_t *List_max               // also compute the max entry in the list
 ) ;
 
-void GB_matlab_helper3i
+bool GB_matlab_helper3i             // return true if OK, false on error
 (
-    int64_t *GB_RESTRICT List,         // size len, output array
+    int64_t *GB_RESTRICT List,      // size len, output array
     const int64_t *GB_RESTRICT List_int64, // size len, input array
     int64_t len,
     int64_t *List_max               // also compute the max entry in the list
 ) ;
 
-int64_t GB_matlab_helper4           // find max (I) + 1
+bool GB_matlab_helper4              // return true if OK, false on error
 (
-    const GrB_Index *GB_RESTRICT I,    // array of size len
-    const int64_t len
+    const GrB_Index *GB_RESTRICT I, // array of size len
+    const int64_t len,
+    GrB_Index *List_max             // find max (I) + 1
 ) ;
 
 void GB_matlab_helper5              // construct pattern of S
@@ -70,13 +71,13 @@ void GB_matlab_helper5              // construct pattern of S
 
 void GB_matlab_helper6              // set Gbool to all true
 (
-    bool *GB_RESTRICT Gbool,           // array of size gnvals
+    bool *GB_RESTRICT Gbool,        // array of size gnvals
     const GrB_Index gnvals
 ) ;
 
 void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 (
-    uint64_t *GB_RESTRICT Kx,          // array of size mnz
+    uint64_t *GB_RESTRICT Kx,       // array of size mnz
     const GrB_Index mnz
 ) ;
 

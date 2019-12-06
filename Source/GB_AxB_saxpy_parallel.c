@@ -370,9 +370,11 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     //--------------------------------------------------------------------------
 
     bool any_Gustavson = false ;
+
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(static,1) \
         reduction(||:any_Gustavson)
-    for (int tid = 0 ; tid < nthreads ; tid++)
+    for (tid = 0 ; tid < nthreads ; tid++)
     { 
         GrB_Desc_Value thread_method_to_use ;
         GB_AxB_select (A, (nthreads == 1) ? B : Bslice [tid], semiring,
@@ -430,7 +432,7 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
     #pragma omp parallel for num_threads(nthreads) schedule(static,1) \
         reduction(&&:allmask) reduction(||:panic) \
         reduction(&&:ok)
-    for (int tid = 0 ; tid < nthreads ; tid++)
+    for (tid = 0 ; tid < nthreads ; tid++)
     { 
         // each thread allocates its output, using malloc and realloc
         bool thread_mask_applied = false ;

@@ -1,5 +1,5 @@
 
-TODO: The following features are not yet supported for GraphBLAS matrices:
+TODO: The following features are not yet supported for GrB matrices in MATLAB:
 
     linear indexing
     complex matrices
@@ -13,5 +13,4 @@ TODO: The following features are not yet supported for GraphBLAS matrices:
     saturating element-wise binary and unary operators for integers 
 
 The last two features don't exist for MATLAB sparse matrices.
-
 

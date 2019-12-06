@@ -9,7 +9,7 @@
 
 // GB_AxB_dot2 does its computation in two phases.  The first phase counts the
 // number of entries in each column of C.  The second phase can then construct
-// the result C in place, and thus this method can be done in parallel for the
+// the result C in place, and thus this method can be done in parallel, for the
 // single matrix computation C=A'*B.
 
 // Two variants are handled: C=A'*B and C<!M>=A'*B.
@@ -191,8 +191,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     int64_t *GB_RESTRICT Cp = C->p ;
 
     // cumulative sum of counts in each column
+    int64_t k ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (int64_t k = 0 ; k < cnvec ; k++)
+    for (k = 0 ; k < cnvec ; k++)
     {
         int64_t s = 0 ;
         for (int taskid = 0 ; taskid < naslice ; taskid++)

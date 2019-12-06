@@ -173,9 +173,10 @@ GrB_Info GB_subref_slice
     for (int method = 0 ; method <= 12 ; method++) Hist [method] = 0 ;
     #endif
 
+    int64_t kC ;
     #pragma omp parallel for num_threads(nthreads_for_Cwork) schedule(static) \
         reduction(||:need_I_inverse)
-    for (int64_t kC = 0 ; kC < Cnvec ; kC++)
+    for (kC = 0 ; kC < Cnvec ; kC++)
     { 
         // jC is the (kC)th vector of C = A(I,J)
         // int64_t jC = (Ch == NULL) ? kC : Ch [kC] ;
@@ -199,7 +200,7 @@ GrB_Info GB_subref_slice
         GB_subref_method (&work, &this_needs_I_inverse, alen, avlen,
             Ikind, nI, I_inverse_ok, need_qsort, iinc, 0) ;
         #ifdef GB_DEBUG
-        #pragma omp atomic update
+        #pragma omp atomic
         Hist [method] ++ ;
         #endif
 

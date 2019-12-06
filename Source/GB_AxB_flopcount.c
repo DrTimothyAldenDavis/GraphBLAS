@@ -223,8 +223,9 @@ GrB_Info GB_AxB_flopcount
 
     int64_t total_flops = 0 ;
 
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
 
         //----------------------------------------------------------------------
@@ -236,8 +237,13 @@ GrB_Info GB_AxB_flopcount
         if (check_quick_return)
         {
             { 
-                #pragma omp atomic read
-                flops_so_far = total_flops ;
+                #if GB_MICROSOFT
+                    #pragma omp critical (GB_AxB_flopcount)
+                    flops_so_far = total_flops ;
+                #else
+                    #pragma omp atomic read
+                    flops_so_far = total_flops ;
+                #endif
             }
             if (flops_so_far > floplimit) continue ;
         }
@@ -399,8 +405,13 @@ GrB_Info GB_AxB_flopcount
         Flops [tid] = task_flops ;
         if (check_quick_return)
         { 
-            #pragma omp atomic update
-            total_flops += task_flops ;
+            #if GB_MICROSOFT
+                #pragma omp critical (GB_AxB_flopcount)
+                total_flops += task_flops ;
+            #else
+                #pragma omp atomic update
+                total_flops += task_flops ;
+            #endif
         }
     }
 

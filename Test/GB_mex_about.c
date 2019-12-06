@@ -136,17 +136,17 @@ void mexFunction
 
     GrB_Type t ;
 
-    GB_UnaryOp_chek (GrB_LNOT, "LNOT", GxB_COMPLETE) ;
+    GB_UnaryOp_check (GrB_LNOT, "LNOT", GxB_COMPLETE, stdout, Context) ;
     GxB_UnaryOp_ztype (&t, GrB_LNOT) ;
-    GB_UnaryOp_chek (t, "ztype", GxB_COMPLETE) ;
+    GB_UnaryOp_check (t, "ztype", GxB_COMPLETE, stdout, Context) ;
     GxB_UnaryOp_xtype (&t, GrB_LNOT) ;
-    GB_UnaryOp_chek (t, "xtype", GxB_COMPLETE) ;
+    GB_UnaryOp_check (t, "xtype", GxB_COMPLETE, stdout, Context) ;
 
-    GB_UnaryOp_chek (GxB_LNOT_FP32, "LNOT_FP32", GxB_COMPLETE) ;
+    GB_UnaryOp_check (GxB_LNOT_FP32, "LNOT_FP32", GxB_COMPLETE, stdout, Context) ;
     GxB_UnaryOp_ztype (&t, GxB_LNOT_FP32) ;
-    GB_UnaryOp_chek (t, "ztype", GxB_COMPLETE) ;
+    GB_UnaryOp_check (t, "ztype", GxB_COMPLETE, stdout, Context) ;
     GxB_UnaryOp_xtype (&t, GxB_LNOT_FP32) ;
-    GB_UnaryOp_chek (t, "xtype", GxB_COMPLETE) ;
+    GB_UnaryOp_check (t, "xtype", GxB_COMPLETE, stdout, Context) ;
 
     GB_BinaryOp_check (GxB_ISEQ_INT32, "ISEQ_INT32", GxB_COMPLETE, stdout, Context) ;
     GxB_BinaryOp_ztype (&t, GxB_ISEQ_INT32) ;

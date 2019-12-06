@@ -24,7 +24,7 @@
 
 #include "GB_mxm.h"
 
-#define GB_TASKS_PER_THREAD 256
+#define GB_NTASKS_PER_THREAD 256
 
 //------------------------------------------------------------------------------
 // GB_AxB_dot3_one_slice
@@ -82,7 +82,7 @@ GrB_Info GB_AxB_dot3_one_slice
     GB_task_struct *GB_RESTRICT TaskList = NULL ;
     int max_ntasks = 0 ;
     int ntasks = 0 ;
-    int ntasks0 = (nthreads == 1) ? 1 : (GB_TASKS_PER_THREAD * nthreads) ;
+    int ntasks0 = (nthreads == 1) ? 1 : (GB_NTASKS_PER_THREAD * nthreads) ;
     GB_REALLOC_TASK_LIST (TaskList, ntasks0, max_ntasks) ;
 
     //--------------------------------------------------------------------------

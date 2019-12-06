@@ -51,8 +51,9 @@
     //--------------------------------------------------------------------------
 
     // each thread reduces its own part in parallel
+    int tid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int tid = 0 ; tid < ntasks ; tid++)
+    for (tid = 0 ; tid < ntasks ; tid++)
     {
 
         // if kfirst > klast then thread tid does no work at all

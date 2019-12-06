@@ -194,8 +194,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     // The work to compute C(i,j) is held in Cwork [p], if C(i,j) appears in
     // as the pth entry in C.
 
+    int taskid;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
+    for (taskid = 0 ; taskid < ntasks ; taskid++)
     {
 
         //----------------------------------------------------------------------

@@ -191,7 +191,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     C->type = mult->ztype ;
     C->type_size = zsize ;
 
-    char t [zsize] ;
+    GB_void t [GB_VLA(zsize)] ;
 
     GB_MALLOC_MEMORY (C->x, C->nzmax, zsize) ;
     if (C->x == NULL)
@@ -326,8 +326,8 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     // scalar workspace (after typecasting, if needed)
     // flipxy false: aik = (xtype) A(i,k) and bkj = (ytype) B(k,j)
     // flipxy true:  aik = (ytype) A(i,k) and bkj = (xtype) B(k,j)
-    char aik [flipxy ? ysize : xsize] ;
-    char bkj [flipxy ? xsize : ysize] ;
+    GB_void aik [GB_VLA(flipxy ? ysize : xsize)] ;
+    GB_void bkj [GB_VLA(flipxy ? xsize : ysize)] ;
 
     GxB_binary_function fmult = mult->function ;
     GxB_binary_function fadd  = add->op->function ;

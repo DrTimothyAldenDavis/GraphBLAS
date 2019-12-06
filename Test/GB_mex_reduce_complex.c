@@ -49,11 +49,16 @@ void mexFunction
         mexErrMsgTxt ("A failed") ;
     }
     printf ("%p %p\n", A->type, Complex) ;
+    GxB_print (A, 2) ;
+    printf ("initially A->type is:\n") ;
     GxB_print (A->type, 3) ;
     GxB_print (Complex, 3) ;
     #ifdef MY_COMPLEX
     printf ("%p\n", My_Complex) ;
     GxB_print (My_Complex, 3) ;
+    if (A->type == Complex) A->type = My_Complex ;
+    printf ("now A->type is:\n") ;
+    GxB_print (A->type, 3) ;
     #endif
     if (A->type != Complex)
     {
@@ -65,7 +70,12 @@ void mexFunction
     double complex zero = CMPLX(0,0) ;
 
     // create the monoid
-    info = GxB_Monoid_terminal_new_UDT (&Times_terminal, Complex_times,
+    info = GxB_Monoid_terminal_new_UDT (&Times_terminal,
+        #ifdef MY_COMPLEX
+        My_Complex_times,
+        #else
+        Complex_times,
+        #endif
         &one, &zero) ;
     if (info != GrB_SUCCESS)
     {
@@ -88,6 +98,7 @@ void mexFunction
     info = GrB_Matrix_reduce_UDT (&c, NULL, Times_terminal, A, NULL) ;
     if (info != GrB_SUCCESS)
     {
+        printf ("Error:\n%s\n", GrB_error ( )) ;
         FREE_ALL ;
         mexErrMsgTxt ("reduce failed") ;
     }

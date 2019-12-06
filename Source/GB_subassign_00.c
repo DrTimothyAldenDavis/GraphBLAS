@@ -62,9 +62,10 @@ GrB_Info GB_subassign_00
 
     int64_t nzombies = C->nzombies ;
 
+    int64_t pS ;
     #pragma omp parallel for num_threads(nthreads) schedule(static) \
         reduction(+:nzombies)
-    for (int64_t pS = 0 ; pS < snz ; pS++)
+    for (pS = 0 ; pS < snz ; pS++)
     { 
         // S (inew,jnew) is a pointer back into C (I(inew), J(jnew))
         int64_t pC = Sx [pS] ;
