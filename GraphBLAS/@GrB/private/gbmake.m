@@ -14,13 +14,23 @@ function gbmake (what)
 % used is ../build/libgraphblas.so if found, or in /usr/local/lib if not found
 % there.
 %
-% See also: mex, version
+% If GraphBLAS has been initialized already, then gbmake must first finalize
+% GraphBLAS, just as GrB.clear does.  It then calls GrB.init to initialize
+% GraphBLAS.
+%
+% See also: mex, version, GrB.clear
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if verLessThan ('matlab', '9.4')
     gb_error ('MATLAB 9.4 (R2018a) or later is required') ;
+end
+
+% finish GraphBLAS
+try
+    GrB.finalize
+catch
 end
 
 if (nargin < 1)
@@ -144,5 +154,11 @@ for k = 1:length (mexfunctions)
         fprintf ('%s\n', mexcmd) ;
         eval (mexcmd) ;
     end
+end
+
+% start GraphBLAS
+try
+    GrB.init
+catch
 end
 

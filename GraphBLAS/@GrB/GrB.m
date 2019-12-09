@@ -244,6 +244,8 @@ classdef GrB
 % GraphBLAS basic functions:
 %---------------------------
 %
+%   GrB.init                     initialize GraphBLAS
+%   GrB.finalize                 finish GraphBLAS
 %   GrB.clear                    clear GraphBLAS workspace and settings
 %   GrB.descriptorinfo (d)       list properties of a descriptor
 %   GrB.unopinfo (op, type)      list properties of a unary operator
@@ -750,6 +752,8 @@ methods (Static)
     % MATLAB sparse, or MATLAB full).  The output matrix C or Cout is a
     % GraphBLAS matrix.
 
+    init ;
+    finalize ;
     clear ;
     descriptorinfo (d) ;
     unopinfo (op, type) ;

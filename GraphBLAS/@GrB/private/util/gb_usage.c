@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// gb_usage: check usage and make sure GxB_init has been called
+// gb_usage: check usage and make sure GrB.init has been called
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -8,9 +8,8 @@
 //------------------------------------------------------------------------------
 
 #include "gb_matlab.h"
-#include "GB_printf.h"
 
-void gb_usage       // check usage and make sure GxB_init has been called
+void gb_usage       // check usage and make sure GrB.init has been called
 (
     bool ok,                // if false, then usage is not correct
     const char *message     // error message if usage is not correct
@@ -18,45 +17,12 @@ void gb_usage       // check usage and make sure GxB_init has been called
 {
 
     //--------------------------------------------------------------------------
-    // register the function to clear GraphBLAS
-    //--------------------------------------------------------------------------
-
-    mexAtExit (gb_at_exit) ;
-
-    //--------------------------------------------------------------------------
-    // make sure GxB_init has been called
+    // make sure GrB.init has been called
     //--------------------------------------------------------------------------
 
     if (!GB_Global_GrB_init_called_get ( ))
     {
-
-        //----------------------------------------------------------------------
-        // set the printf function
-        //----------------------------------------------------------------------
-
-        GB_printf_function = mexPrintf ;
-
-        //----------------------------------------------------------------------
-        // initialize GraphBLAS
-        //----------------------------------------------------------------------
-
-        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
-            false)) ;
-
-        //----------------------------------------------------------------------
-        // MATLAB matrices are stored by column
-        //----------------------------------------------------------------------
-
-        OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
-
-        // print short format by default
-        GB_Global_print_format_set (1) ;
-
-        // print 1-based indices
-        GB_Global_print_one_based_set (true) ;
-
-        // to make the Sauna workspace persistent
-        GB_Global_persist_function_set (mexMakeMemoryPersistent) ;
+        ERROR ("GrB.init must called before using any GraphBLAS function") ;
     }
 
     //--------------------------------------------------------------------------

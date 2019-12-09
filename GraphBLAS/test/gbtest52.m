@@ -12,14 +12,27 @@ G = GrB (A)
 assert (isequal (f, GrB.format (G))) ;
 GrB.format ('by row')
 f = GrB.format
+
 H = GrB (5,5)
-% TODO reenable assert when this works
-% assert (isequal ('by row', GrB.format (H))) ;
-if (~isequal ('by row', GrB.format (H)))
-    fprintf ('ERROR: H should be by row') ;
-end
+assert (isequal ('by row', GrB.format (H))) ;
+
+H = GrB (5,5, 'by row')
+assert (isequal ('by row', GrB.format (H))) ;
+
+H = GrB (5,5, 'by col')
+assert (isequal ('by col', GrB.format (H))) ;
+
 GrB.format ('by col')
 f = GrB.format
+
+H = GrB (5,5)
+assert (isequal ('by col', GrB.format (H))) ;
+
+H = GrB (5,5, 'by row')
+assert (isequal ('by row', GrB.format (H))) ;
+
+H = GrB (5,5, 'by col')
+assert (isequal ('by col', GrB.format (H))) ;
 
 fprintf ('gbtest52: all tests passed\n') ;
 

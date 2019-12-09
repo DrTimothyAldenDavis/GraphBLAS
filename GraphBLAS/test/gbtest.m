@@ -31,6 +31,11 @@ function gbtest
 demo_folder = fullfile (fileparts (mfilename ('fullpath')), '../demo') ;
 addpath (demo_folder) ;
 
+try
+    GrB.init
+catch
+end
+
 gbtest0
 gbtest1
 gbtest2

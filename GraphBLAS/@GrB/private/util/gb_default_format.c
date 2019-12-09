@@ -31,9 +31,8 @@ GxB_Format_Value gb_default_format      // GxB_BY_ROW or GxB_BY_COL
     { 
         // get the default format
         OK (GxB_Global_Option_get (GxB_FORMAT, &fmt)) ;
-        // TODO remove printf
-        printf ("got global format: %d (by_row: %d, by_col: %d)\n",
-            fmt, GxB_BY_ROW, GxB_BY_COL) ;
+        // mexPrintf ("got global format: %d (by_row: %d, by_col: %d)\n",
+        //     fmt, GxB_BY_ROW, GxB_BY_COL) ;
     }
     return (fmt) ;
 }
