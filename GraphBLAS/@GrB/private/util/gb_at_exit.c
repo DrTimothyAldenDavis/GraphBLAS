@@ -10,7 +10,7 @@
 // Each mexFunction in the MATLAB interface to GraphBLAS registers this
 // function via mexAtExit, so that if the mexFunction is cleared, GraphBLAS is
 // finalized.  The global flag that keeps track of whether or not GrB_init has
-// been called is reset to false, to all further use of GraphBLAS in the same
+// been called is reset to false, to allow further use of GraphBLAS in the same
 // MATLAB session.
 
 #include "gb_matlab.h"
