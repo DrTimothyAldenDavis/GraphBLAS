@@ -117,6 +117,10 @@
 // include GraphBLAS.h (depends on user threading model)
 //------------------------------------------------------------------------------
 
+#ifndef MATLAB_MEX_FILE
+#define GB_LIBRARY
+#endif
+
 #include "GraphBLAS.h"
 
 //------------------------------------------------------------------------------
@@ -292,8 +296,8 @@
 
 #ifdef GBCOVER
 #define GBCOVER_MAX 10000
-extern int64_t GB_cov [GBCOVER_MAX] ;
-extern int GB_cover_max ;
+GB_PUBLIC int64_t GB_cov [GBCOVER_MAX] ;
+GB_PUBLIC int GB_cover_max ;
 #endif
 
 //------------------------------------------------------------------------------
@@ -555,7 +559,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
 // default options
 //------------------------------------------------------------------------------
 
-// These parameters define the content of extern const values that can be
+// These parameters define the content of values that can be
 // used as inputs to GxB_*Option_set.
 
 // The default format is by row (CSR), with a hyper_ratio of 1/16.
@@ -792,7 +796,7 @@ bool GB_aliased             // determine if A and B are aliased
 #define GB_MAGIC2 0x7265745f786f62ULL
 
 // predefined type objects
-extern struct GB_Type_opaque
+GB_PUBLIC struct GB_Type_opaque
     GB_opaque_GrB_BOOL   ,  // GrB_BOOL is a pointer to this object, etc.
     GB_opaque_GrB_INT8   ,
     GB_opaque_GrB_UINT8  ,
@@ -809,7 +813,7 @@ extern struct GB_Type_opaque
 // monoid structs
 //------------------------------------------------------------------------------
 
-extern struct GB_Monoid_opaque
+GB_PUBLIC struct GB_Monoid_opaque
 
     // MIN monoids:
     GB_opaque_GxB_MIN_INT8_MONOID,          // identity: INT8_MAX
@@ -869,7 +873,7 @@ extern struct GB_Monoid_opaque
 // select structs
 //------------------------------------------------------------------------------
 
-extern struct GB_SelectOp_opaque
+GB_PUBLIC struct GB_SelectOp_opaque
     GB_opaque_GxB_TRIL,
     GB_opaque_GxB_TRIU,
     GB_opaque_GxB_DIAG,
@@ -1909,6 +1913,7 @@ GrB_Info GB_BinaryOp_compatible     // check for domain mismatch
 // The qsort method is choosen if the following condition is true:
 #define GB_CHOOSE_QSORT_INSTEAD_OF_BUCKET(anz,n) ((16 * (anz)) < (n))
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 GB_Opcode GB_boolean_rename     // renamed opcode
 (
     const GB_Opcode opcode      // opcode to rename
@@ -2145,15 +2150,15 @@ GrB_Info GB_hyper_prune
 
 #if defined (USER_POSIX_THREADS)
 // for user applications that use POSIX pthreads
-extern pthread_mutex_t GB_sync ;
+GB_PUBLIC pthread_mutex_t GB_sync ;
 
 #elif defined (USER_WINDOWS_THREADS)
 // for user applications that use Windows threads (not yet supported)
-extern CRITICAL_SECTION GB_sync ;
+GB_PUBLIC CRITICAL_SECTION GB_sync ;
 
 #elif defined (USER_ANSI_THREADS)
 // for user applications that use ANSI C11 threads (not yet supported)
-extern mtx_t GB_sync ;
+GB_PUBLIC mtx_t GB_sync ;
 
 #else // USER_OPENMP_THREADS, or USER_NO_THREADS
 // nothing to do for OpenMP, or for no user threading

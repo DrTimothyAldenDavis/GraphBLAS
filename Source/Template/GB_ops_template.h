@@ -67,7 +67,7 @@ inline void GB (IDENTITY_f) (GB_Z_X_ARGS) { (*z) = (*x) ; }
     inline void GB (LNOT_f)     (GB_Z_X_ARGS) { (*z) = ! ((*x) != 0) ; }
 #endif
 
-extern struct GB_UnaryOp_opaque
+GB_PUBLIC struct GB_UnaryOp_opaque
     GB (opaque_GxB_ONE),
     GB (opaque_GrB_IDENTITY),
     GB (opaque_GrB_AINV),
@@ -140,7 +140,7 @@ inline void GB (TIMES_f)  (GB_Z_X_Y_ARGS) { (*z) = (*x) * (*y) ; }
     #endif
 #endif
 
-extern struct GB_BinaryOp_opaque
+GB_PUBLIC struct GB_BinaryOp_opaque
     GB (opaque_GrB_FIRST),
     GB (opaque_GrB_SECOND),
     GB (opaque_GrB_MIN),
@@ -163,7 +163,7 @@ inline void GB (ISLT_f)   (GB_Z_X_Y_ARGS) { (*z) = ((*x) <  (*y)) ; }
 inline void GB (ISGE_f)   (GB_Z_X_Y_ARGS) { (*z) = ((*x) >= (*y)) ; }
 inline void GB (ISLE_f)   (GB_Z_X_Y_ARGS) { (*z) = ((*x) <= (*y)) ; }
 
-extern struct GB_BinaryOp_opaque
+GB_PUBLIC struct GB_BinaryOp_opaque
     GB (opaque_GxB_ISEQ),
     GB (opaque_GxB_ISNE),
     GB (opaque_GxB_ISGT),
@@ -187,7 +187,7 @@ inline void GB (LAND_f) (GB_Z_X_Y_ARGS) { (*z) = (((*x) != 0) && ((*y) != 0)) ;}
 inline void GB (LXOR_f) (GB_Z_X_Y_ARGS) { (*z) = (((*x) != 0) != ((*y) != 0)) ;}
 #endif
 
-extern struct GB_BinaryOp_opaque
+GB_PUBLIC struct GB_BinaryOp_opaque
     GB (opaque_GxB_LOR),
     GB (opaque_GxB_LAND),
     GB (opaque_GxB_LXOR) ;
@@ -203,7 +203,7 @@ inline void GB (LT_f) (GB_Zbool_X_Y_ARGS) { (*z) = ((*x) <  (*y)) ; }
 inline void GB (GE_f) (GB_Zbool_X_Y_ARGS) { (*z) = ((*x) >= (*y)) ; }
 inline void GB (LE_f) (GB_Zbool_X_Y_ARGS) { (*z) = ((*x) <= (*y)) ; }
 
-extern struct GB_BinaryOp_opaque
+GB_PUBLIC struct GB_BinaryOp_opaque
     GB (opaque_GrB_EQ),
     GB (opaque_GrB_NE),
     GB (opaque_GrB_GT),

@@ -20,7 +20,9 @@ void  *  GB_Global_queue_head_get (void) ;
 void     GB_Global_mode_set (GrB_Mode mode) ;
 GrB_Mode GB_Global_mode_get (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
+GB_PUBLIC   // accessed by the MATLAB interface only
 bool     GB_Global_GrB_init_called_get (void) ;
 
 void     GB_Global_nthreads_max_set (int nthreads_max) ;
@@ -67,6 +69,7 @@ void  *  GB_Global_realloc_function (void *p, size_t size) ;
 void     GB_Global_free_function_set (void (* free_function) (void *)) ;
 void     GB_Global_free_function (void *p) ;
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_persist_function_set (void (* persist_function) (void *)) ;
 void     GB_Global_persist_function (void *p) ;
 
@@ -99,9 +102,13 @@ int64_t  GB_Global_maxused_get (void) ;
 void     GB_Global_hack_set (int64_t hack) ;
 int64_t  GB_Global_hack_get (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_print_one_based_set (bool onebased) ;
+GB_PUBLIC   // accessed by the MATLAB interface only
 bool     GB_Global_print_one_based_get (void) ;
+GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_print_format_set (int print_format) ;
+GB_PUBLIC   // accessed by the MATLAB interface only
 int      GB_Global_print_format_get (void) ;
 
 #endif

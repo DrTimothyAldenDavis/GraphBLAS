@@ -18,6 +18,7 @@
 #define GB_STRIDE 2
 #define GB_LIST 4
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_ijlength            // get the length and kind of an index list I
 (
     const GrB_Index *I,     // list of indices (actual or implicit)

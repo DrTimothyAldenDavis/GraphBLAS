@@ -54,6 +54,7 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     int naslice                         // # of slices of A
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 GrB_Info GB_shallow_copy    // create a purely shallow matrix
 (
     GrB_Matrix *Chandle,    // output matrix C

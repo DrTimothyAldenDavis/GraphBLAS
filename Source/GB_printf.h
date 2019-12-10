@@ -16,7 +16,7 @@
 
 #include "GB.h"
 
-extern int (* GB_printf_function ) (const char *format, ...) ;
+GB_PUBLIC int (* GB_printf_function ) (const char *format, ...) ;
 
 // print to a file f, and check the result
 #define GBPR(...)                                                           \

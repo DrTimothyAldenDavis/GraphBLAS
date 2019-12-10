@@ -15,6 +15,7 @@
 
 #include "GB.h"
 
+GB_PUBLIC
 void GB_matlab_helper1              // convert zero-based indices to one-based
 (
     double *GB_RESTRICT I_double,   // output array
@@ -22,12 +23,14 @@ void GB_matlab_helper1              // convert zero-based indices to one-based
     int64_t nvals                   // size of input and output arrays
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper1i             // convert zero-based indices to one-based
 (
     int64_t *GB_RESTRICT I,         // input/output array
     int64_t nvals                   // size of input/output array
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper2              // fill Xp and Xi for a dense matrix
 (
     GrB_Index *GB_RESTRICT Xp,      // size ncols+1
@@ -36,6 +39,7 @@ void GB_matlab_helper2              // fill Xp and Xi for a dense matrix
     int64_t nrows
 ) ;
 
+GB_PUBLIC
 bool GB_matlab_helper3              // return true if OK, false on error
 (
     int64_t *GB_RESTRICT List,      // size len, output array
@@ -44,6 +48,7 @@ bool GB_matlab_helper3              // return true if OK, false on error
     int64_t *List_max               // also compute the max entry in the list
 ) ;
 
+GB_PUBLIC
 bool GB_matlab_helper3i             // return true if OK, false on error
 (
     int64_t *GB_RESTRICT List,      // size len, output array
@@ -52,6 +57,7 @@ bool GB_matlab_helper3i             // return true if OK, false on error
     int64_t *List_max               // also compute the max entry in the list
 ) ;
 
+GB_PUBLIC
 bool GB_matlab_helper4              // return true if OK, false on error
 (
     const GrB_Index *GB_RESTRICT I, // array of size len
@@ -59,6 +65,7 @@ bool GB_matlab_helper4              // return true if OK, false on error
     GrB_Index *List_max             // find max (I) + 1
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper5              // construct pattern of S
 (
     GrB_Index *GB_RESTRICT Si,         // array of size anz
@@ -69,18 +76,21 @@ void GB_matlab_helper5              // construct pattern of S
     const GrB_Index anz
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper6              // set Gbool to all true
 (
     bool *GB_RESTRICT Gbool,        // array of size gnvals
     const GrB_Index gnvals
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper7              // Kx = uint64 (0:mnz-1)
 (
     uint64_t *GB_RESTRICT Kx,       // array of size mnz
     const GrB_Index mnz
 ) ;
 
+GB_PUBLIC
 void GB_matlab_helper8
 (
     GB_void *C,         // output array of size nvals * s

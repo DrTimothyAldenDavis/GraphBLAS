@@ -8,9 +8,9 @@
 //------------------------------------------------------------------------------
 
 // All Global storage is declared, initialized, and accessed here.  The
-// contents of the GB_Global are only accessible to functions in this file.
-// Global storage is used to record a list of matrices with pending operations
-// (for GrB_wait), to keep track of the GraphBLAS mode (blocking or
+// contents of the GB_Global struct are only accessible to functions in this
+// file.  Global storage is used to record a list of matrices with pending
+// operations (for GrB_wait), to keep track of the GraphBLAS mode (blocking or
 // non-blocking), to hold persistent Sauna workspace, for pointers to
 // malloc/calloc/realloc/free functions, global matrix options, and other
 // settings.
@@ -142,11 +142,7 @@ typedef struct
 }
 GB_Global_struct ;
 
-extern
-#if ( _MSC_VER && !__INTEL_COMPILER )
-__declspec ( dllexport )
-#endif
-GB_Global_struct GB_Global ;
+GB_PUBLIC GB_Global_struct GB_Global ;
 
 GB_Global_struct GB_Global =
 {
