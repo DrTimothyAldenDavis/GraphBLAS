@@ -142,7 +142,11 @@ typedef struct
 }
 GB_Global_struct ;
 
-extern GB_Global_struct GB_Global ;
+extern
+#if ( _MSC_VER && !__INTEL_COMPILER )
+__declspec ( dllexport )
+#endif
+GB_Global_struct GB_Global ;
 
 GB_Global_struct GB_Global =
 {
