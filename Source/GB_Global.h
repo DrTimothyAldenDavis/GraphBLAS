@@ -25,12 +25,16 @@ void     GB_Global_GrB_init_called_set (bool GrB_init_called) ;
 GB_PUBLIC   // accessed by the MATLAB interface only
 bool     GB_Global_GrB_init_called_get (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_nthreads_max_set (int nthreads_max) ;
+GB_PUBLIC   // accessed by the MATLAB interface only
 int      GB_Global_nthreads_max_get (void) ;
 
 int      GB_Global_omp_get_max_threads (void) ;
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_chunk_set (double chunk) ;
+GB_PUBLIC   // accessed by the MATLAB interface only
 double   GB_Global_chunk_get (void) ;
 
 void     GB_Global_hyper_ratio_set (double hyper_ratio) ;

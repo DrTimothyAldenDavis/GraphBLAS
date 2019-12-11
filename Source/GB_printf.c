@@ -13,5 +13,6 @@
 
 #include "GB.h"
 
+GB_PUBLIC
 int (* GB_printf_function ) (const char *format, ...) = NULL ;
 

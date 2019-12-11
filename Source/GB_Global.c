@@ -231,11 +231,13 @@ GrB_Mode GB_Global_mode_get (void)
 // GrB_init_called
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_GrB_init_called_set (bool GrB_init_called)
 { 
     GB_Global.GrB_init_called = GrB_init_called ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Global_GrB_init_called_get (void)
 { 
     return (GB_Global.GrB_init_called) ;
@@ -245,6 +247,7 @@ bool GB_Global_GrB_init_called_get (void)
 // nthreads_max
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_nthreads_max_set (int nthreads_max)
 { 
     nthreads_max = GB_IMIN (nthreads_max, GxB_NTHREADS_MAX) ;
@@ -252,6 +255,7 @@ void GB_Global_nthreads_max_set (int nthreads_max)
     GB_Global.nthreads_max = nthreads_max ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 int GB_Global_nthreads_max_get (void)
 { 
     return (GB_Global.nthreads_max) ;
@@ -270,12 +274,14 @@ int GB_Global_omp_get_max_threads (void)
 // chunk
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_chunk_set (double chunk)
 { 
     if (chunk <= GxB_DEFAULT) chunk = GB_CHUNK_DEFAULT ;
     GB_Global.chunk = chunk ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 double GB_Global_chunk_get (void)
 { 
     return (GB_Global.chunk) ;
@@ -644,21 +650,25 @@ int64_t GB_Global_hack_get (void)
 // for MATLAB interface only
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_print_one_based_set (bool onebased)
 { 
     GB_Global.print_one_based = onebased ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Global_print_one_based_get (void)
 { 
     return (GB_Global.print_one_based) ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_print_format_set (int f)
 { 
     GB_Global.print_format = f ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 int GB_Global_print_format_get (void)
 { 
     return (GB_Global.print_format) ;
