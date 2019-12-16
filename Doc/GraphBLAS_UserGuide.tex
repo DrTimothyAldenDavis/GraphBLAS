@@ -11084,8 +11084,21 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
 \subsection{On Microsoft Windows}
 %----------------------------------------
 
-These instructions apply to Windows 10, CMake 3.16, and
+SuiteSparse:GraphBLAS is now ported to Microsoft Visual Studio.  That compiler
+is not ANSI C11 compiler.  It does not support the \verb'_Generic' keyword,
+required for the polymorphic GraphBLAS functions.  So for example, you will
+need to use \verb'GrB_Matrix_free' instead of just \verb'GrB_free'.  Another
+limitation is the lack of support for OpenMP tasking, used in the parallel sort
+inside GraphBLAS.  With Microsoft Visual Studio, the sort is compiled to use
+just a single thread.  The sort is used for \verb'GrB_Matrix_build' and
+\verb'GrB_Vector_build', and for \verb'GrB_assign' and  \verb'GxB_subassign'
+when the index lists are unsorted on input.  In addition, variable-length
+arrays are not supported, so user-defined types are limited to 128 bytes in
+size.  These changes have no effect if you have an ANSI C11 compliant compiler.
+
+The following instructions apply to Windows 10, CMake 3.16, and
 Visual Studio 2019, but may work for earlier versions.
+
 
 \begin{enumerate}
 \item
