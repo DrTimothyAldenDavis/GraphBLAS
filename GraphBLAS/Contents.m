@@ -61,6 +61,7 @@
 % Static Methods: used as GrB.method; inputs can be any GraphBLAS or
 % MATLAB matrix, in any combination.
 %
+%   init            finalize
 %   apply           emult           kronecker       select          
 %   assign          entries         ktruss          selectopinfo    
 %   bfs             expand          laplacian       semiringinfo    

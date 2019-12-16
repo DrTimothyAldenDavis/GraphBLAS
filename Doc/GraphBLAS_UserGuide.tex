@@ -114,7 +114,7 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
     to 128 bytes in size.  These changes have no effect if you have an ANSI C11
     compliant compiler.
 
-    TODO: add discussion of \verb'GrB.init' for MATLAB interface.
+    MATLAB interface modified:  \verb'GrB.init' is now required.
 
 \item Version 3.1.0 (Oct 1, 2019).  MATLAB interface added.  See the \newline
     \verb'GraphBLAS/GraphBLAS' folder for details and documentation,
@@ -785,6 +785,10 @@ documentation in the \verb'GraphBLAS/GraphBLAS' folder for details.  Start with
 the \verb'README.md' file in that directory.  An easy-to-read output of the
 MATLAB demos can be found in \verb'GraphBLAS/GraphBLAS/demo/html'.
 
+Prior to using an \verb'GrB' object or method, you must first call
+\verb'GrB.init'.  The best place to put this is in your MATLAB \verb'startup.m'
+file, normally located in the user \verb'Documents/MATLAB' folder.
+
 The MATLAB interface adds the \verb'GrB' class, which is an opaque MATLAB
 object that contains a GraphBLAS matrix, either double or single precision,
 boolean, or any of the built-in integer types.  Complex matrix support will be
@@ -834,6 +838,7 @@ for more help.
 
 {\footnotesize
 \begin{verbatim}
+    init            finalize
     apply           emult           kronecker       select          
     assign          entries         ktruss          selectopinfo    
     bfs             expand          laplacian       semiringinfo    
@@ -11019,7 +11024,7 @@ These errors are to be expected if SuiteSparse:GraphBLAS is not thread-safe.
 \label{sec:install}
 
 %----------------------------------------
-\subsection{Required compiler}
+\subsection{On Linux and Mac}
 %----------------------------------------
 
 GraphBLAS makes extensive use of features in the ANSI C11 standard, and thus a
@@ -11074,6 +11079,62 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
     {\small
     \begin{verbatim}
     JOBS=32 CC=gcc make \end{verbatim} }
+
+%----------------------------------------
+\subsection{On Microsoft Windows}
+%----------------------------------------
+
+These instructions apply to Windows 10, CMake 3.16, and
+Visual Studio 2019, but may work for earlier versions.
+
+\begin{enumerate}
+\item
+Open a terminal window and type the following in the top-level
+SuiteSparse/GraphBLAS folder.
+
+    {\small
+    \begin{verbatim}
+    cmake .  \end{verbatim} }
+
+\item Open the generated \verb'GraphBLAS.sln' file in Visual Studio.
+Alternatively, type this command in the terminal window:
+
+    {\small
+    \begin{verbatim}
+    devenv graphblas.sln /build "release|x64" /project graphblas \end{verbatim} }
+
+    This should create a folder called \verb'Release' and place the
+    compiled DLL and LIB file there.
+
+\item Move the DLL and LIB files from the \verb'Release' folder
+    to the \verb'GraphBLAS/build' folder.
+
+\item Add the \verb'GraphBLAS/build' folder to the Windows System path.
+
+\end{enumerate}
+
+%----------------------------------------
+\subsection{Compiling the MATLAB interface}
+%----------------------------------------
+
+First, compile the SuiteSparse:GraphBLAS dynamic library
+(\verb'libgraphblas.so' for Linux, \verb'libgraphblas.dylib' for Mac,
+or \verb'graphblas.dll' for Windows), as described in the prior two
+subsections.  Next:
+
+\begin{enumerate}
+\item In the MATLAB command window:
+
+    {\small
+    \begin{verbatim}
+    cd GraphBLAS/GraphBLAS/@GrB/private
+    gbmake \end{verbatim} }
+
+\item Follow the remaining instructions in the
+    \verb'GraphBLAS/GraphBLAS/README.txt' file, to revise your
+    MATLAB path and \verb'startup.m' file.
+
+\end{enumerate}
 
 %----------------------------------------
 \subsection{Thread-safety in multithreaded user applications}
@@ -11305,6 +11366,9 @@ database module for Redis.  Based on SuiteSparse:GraphBLAS, RedisGraph is up
 600x faster than the fastest graph databases ({\footnotesize
 \url{https://youtu.be/9h3Qco_x0QE} \newline
 \url{https://redislabs.com/blog/new-redisgraph-1-0-achieves-600x-faster-performance-graph-databases/}}).
+
+I would like to thank Lucas Jarman, MathWorks (\url{http://mathworks.com}),
+for his help in porting GraphBLAS to Microsoft Windows.
 
 SuiteSparse:GraphBLAS was developed with support from
 NVIDIA, MIT Lincoln Lab, Intel, Redis Labs, IBM,

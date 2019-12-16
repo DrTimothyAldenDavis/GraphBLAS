@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Dec 10, 2019" )
+set ( GraphBLAS_DATE "Dec 16, 2019" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 1 )
 set ( GraphBLAS_VERSION_SUB   2 )
@@ -219,7 +219,7 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
     endif ( )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
     # options for MicroSoft Visual Studio
-    # set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -wd\"4244\" -wd\"4146\" -wd\"4018\" -wd\"4996\" -wd\"4047\" -wd\"4554\"")
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "PGI" )
     # options for PGI pgcc compiler.  The compiler has a bug, and the
     # -DPGI_COMPILER_BUG causes GraphBLAS to use a workaround.
@@ -461,4 +461,5 @@ else ( )
          ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 
 endif ( )
+
 

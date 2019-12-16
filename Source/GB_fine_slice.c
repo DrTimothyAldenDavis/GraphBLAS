@@ -34,6 +34,7 @@
 // not need to be parallel.
 
 #include "GB_mxm.h"
+#include "GB_ek_slice.h"
 
 GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
 (
@@ -81,25 +82,17 @@ GrB_Info GB_fine_slice  // slice B into nthreads fine hyperslices
 
             // find the first column of Bslice [tid]: the column that contains
             // the entry at Bi [pfirst] and Bx [pfirst]
-            int64_t pright = B->nvec ;
-            bool found ;
-            GB_BINARY_SPLIT_SEARCH (pfirst, B->p, bvec_first, pright, found) ;
-            if (!found)
-            { 
-                bvec_first-- ;
-            }
+
+            bvec_first = GB_search_for_vector (pfirst, B->p, 0, B->nvec) ;
+
             ASSERT (B->p [bvec_first] <= pfirst) ;
             ASSERT (pfirst <= B->p [bvec_first+1]) ;
 
             // find the last column of Bslice [tid]: the column that contains
             // the entry at Bi [plast] and Bx [plast]
-            int64_t bvec_last = bvec_first ;
-            pright = B->nvec ;
-            GB_BINARY_SPLIT_SEARCH (plast, B->p, bvec_last, pright, found) ;
-            if (!found)
-            { 
-                bvec_last-- ;
-            }
+
+            int64_t bvec_last = GB_search_for_vector (plast, B->p, 0, B->nvec) ;
+
             ASSERT (B->p [bvec_last] <= plast && plast < B->p [bvec_last+1]) ;
 
             // total number of vectors in B

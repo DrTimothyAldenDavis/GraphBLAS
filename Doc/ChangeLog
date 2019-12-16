@@ -1,5 +1,8 @@
-Version 3.1.2, Dec 10, 2019
+Version 3.1.2, Dec 16, 2019
 
+    * (15) bug fix in parallel matrix-matrix multiply: could occur when # of
+        threads is larger than the # of columns of B, for C=A*B, and when
+        B is a standard matrix with one or more empty vectors.
     * (14) bug fix for MATLAB interface: A(58) and A(:) were conflated.
     * compiler port: changes to allow GraphBLAS to be compiled with older
         compilers (pre ANSI C11), and Microsoft Visual Studio.

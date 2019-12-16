@@ -79,7 +79,7 @@ end
 
 inc = '-Iutil -I../../../Include -I../../../Source -I../../../Source/Template' ;
 
-ldflags = sprintf ('-L%s/../../../build', pwd) ;
+ldflags = sprintf ('-L''%s/../../../build''', pwd) ;
 
 hfiles = [ dir('*.h') ; dir('util/*.h') ] ;
 
@@ -120,7 +120,7 @@ for k = 1:length (cfiles)
     if (make_all || tc > tobj || htime > tobj)
         % compile the cfile
         fprintf ('%s\n', cfile) ;
-        mexcmd = sprintf ('mex -c %s -silent %s %s', flags, inc, cfile) ;
+        mexcmd = sprintf ('mex -c %s -silent %s ''%s''', flags, inc, cfile) ;
         eval (mexcmd) ;
         any_c_compiled = true ;
     end
@@ -149,7 +149,7 @@ for k = 1:length (mexfunctions)
     % compile if it is newer than its object file, or if any cfile was compiled
     if (make_all || tc > tobj || any_c_compiled)
         % compile the mexFunction
-        mexcmd = sprintf ('mex %s -silent %s %s %s %s -lgraphblas', ...
+        mexcmd = sprintf ('mex %s -silent %s %s ''%s'' %s -lgraphblas', ...
             ldflags, flags, inc, mexfunction, objlist) ;
         fprintf ('%s\n', mexcmd) ;
         eval (mexcmd) ;
