@@ -24,7 +24,7 @@ void gb_mxfree              // mxFree wrapper
     {
         if (*p_handle != NULL)
         { 
-            // mxFree (*p_handle) ;
+            mxFree (*p_handle) ;
         }
         (*p_handle) = NULL ;
     }
