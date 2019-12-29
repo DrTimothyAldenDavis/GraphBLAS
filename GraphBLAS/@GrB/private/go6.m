@@ -8,7 +8,9 @@ clear all
 GrB.init
 rng ('default') ;
 
-GrB.threads (4) ;
+nthreads_max = 2 * GrB.threads ;
+threads = [1 2 4 8 16 20 32 40 64] ;
+threads = threads (threads <= nthreads_max) ;
 
 % n = 6 ;
 % nz = 100 ;
@@ -24,7 +26,7 @@ n = size (A,2) ;
 B = spones (sprandn (n, 1, 0.1)) ;
 m = size (A,1) ;
 
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\nm %d =======================threads is %d nnz(B) is %d\n', ...
         m, nth, nnz(B)) ;
     htest (A, B, nth) ;
@@ -36,7 +38,7 @@ m = size (A,1) ;
 fprintf ('# of rows of A: %g million\n', m / 1e6) ;
 fprintf ('# of cols of A: %g million\n', n / 1e6) ;
 
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\nm %d =======================threads is %d nnz(B) is %d\n', ...
         m, nth, nnz(B)) ;
     htest (A, B, nth) ;

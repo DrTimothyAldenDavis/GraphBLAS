@@ -8,7 +8,9 @@ clear all
 GrB.init
 rng ('default') ;
 
-GrB.threads (4) ;
+nthreads_max = 2 * GrB.threads ;
+threads = [1 2 4 8 16 20 32 40 64] ;
+threads = threads (threads <= nthreads_max) ;
 
 % n = 6 ;
 % nz = 100 ;
@@ -23,27 +25,27 @@ clear Prob ;
 n = size (A,1) ;
 B = sparse (rand (n,1)) ;
 
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\n============================threads is %d nnz(B) is %d\n', nth, nnz(B)) ;
     htest (A, B, nth) ;
 end
 
 B = sprandn (n, 1, 0.1) ;
 B1 = B ;
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\n============================threads is %d nnz(B) is %d\n', nth, nnz(B)) ;
     htest (A, B, nth) ;
 end
 
 
 B = sprandn (n, 1, 0.01) ;
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\n============================threads is %d nnz(B) is %d\n', nth, nnz(B)) ;
     htest (A, B, nth) ;
 end
 
 B = sprandn (n, 1, 0.001) ;
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\n============================threads is %d nnz(B) is %d\n', nth, nnz(B)) ;
     htest (A, B, nth) ;
 end
@@ -53,7 +55,7 @@ m = size (A,1) ;
 fprintf ('\n::::: giving A %d rows ::::::::::::::::::::::::::::::::: \n',m ) ;
 
 B = B1 ;
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\n============================threads is %d nnz(B) is %d\n', nth, nnz(B)) ;
     htest (A, B, nth) ;
 end

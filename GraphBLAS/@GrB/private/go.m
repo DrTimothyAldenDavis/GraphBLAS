@@ -7,7 +7,9 @@ clear all
 GrB.init
 rng ('default') ;
 
-GrB.threads (4) ;
+nthreads_max = 2 * GrB.threads ;
+threads = [1 2 4 8 16 20 32 40 64] ;
+threads = threads (threads <= nthreads_max) ;
 
 n = 10000 ;
 nz = 1e6 ;
@@ -21,7 +23,7 @@ B = sprand (n,n,d) ;
 htest (A,B) ;
 
 B (:,end) = 1 ;
-for nth = [1 2 4 8 16]
+for nth = threads
     htest (A, B, nth) ;
 end
 
@@ -47,26 +49,29 @@ n = size (A, 1) ;
 
 fprintf ('\n========== A is Freescale, b is n-by-2 and dense\n') ;
 B = sparse (rand (n,2)) ;
-for nth = [1 2 4 8 16]
+for nth = threads
     htest (A, B, nth) ;
 end
 
 fprintf ('\n========== A is Freescale, b is n-by-2 and sparse\n') ;
 B = sprand (n,2, 0.1) ;
-for nth = [1 2 4 8 16]
+for nth = threads
+    if (nth > nthreads_max)
+        break ;
+    end
     htest (A, B, nth) ;
 end
 
 fprintf ('=================== A is Freescale, b is n-by-2 and very sparse\n') ;
 B = sprand (n,2, 0.01) ;
-for nth = [1 2 4 8 16]
+for nth = threads
     htest (A, B, nth) ;
 end
 
 fprintf ('=================== A is Freescale, b is almost diagonal\n') ;
 B = 2 * speye (n) ;
 B(1,2) = 1 ;
-for nth = [1 2 4 8 16]
+for nth = threads
     htest (A, B, nth) ;
 end
 
@@ -75,13 +80,13 @@ B = 2 * speye (n,10) ;
 B(1,2) = 1 ;
 B (2,1) = 1 ;
 A (:,1) = 1 ;
-for nth = [1 2 4 8 16]
+for nth = threads
     htest (A, B, nth) ;
 end
 
 fprintf ('\n==== A is Freescale + almost dense col, b is n-by-10\n') ;
 A (1,1:2) = 1 ;
-for nth = [1 2 4 8 16]
+for nth = threads
     htest (A, B, nth) ;
 end
 

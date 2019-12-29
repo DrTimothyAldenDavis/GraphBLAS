@@ -11,6 +11,10 @@ rng ('default') ;
 % n = 6 ;
 % nz = 100 ;
 
+nthreads_max = 2 * GrB.threads ;
+threads = [1 2 4 8 16 20 32 40 64] ;
+threads = threads (threads <= nthreads_max) ;
+
 desc = struct ;
 % desc.kind = 'sparse' ;
 
@@ -20,7 +24,7 @@ d = 1e-5 ;
 A = speye (n) + sprand (n, n, d) ;
 B = A ;
 
-for nth = [1 2 4 8]
+for nth = threads
     fprintf ('\nm %d =======================threads is %d nnz(B) is %d\n', ...
         m, nth, nnz(B)) ;
     htest (A, B, nth) ;
