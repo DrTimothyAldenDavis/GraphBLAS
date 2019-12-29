@@ -196,6 +196,18 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
             semiring, flipxy, *AxB_method_used, bjnz1max, true, mask_applied,
             Sauna_id) ;
 
+// TODO hack
+    {
+        int method = *AxB_method_used ;
+        printf ("thread %d method %d ", 0, method) ;
+        if (method == GxB_AxB_GUSTAVSON) printf ("gus\n") ;
+        else if (method == GxB_AxB_HEAP) printf ("heap\n") ;
+        else printf ("huh??\n") ;
+        // GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
+        // GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
+        // GxB_AxB_DOT       = 1003,   // dot product
+    }
+
         // release the Sauna for Gustavson's method
         if (*AxB_method_used == GxB_AxB_GUSTAVSON)
         { 
@@ -444,6 +456,19 @@ GrB_Info GB_AxB_saxpy_parallel      // parallel matrix-matrix multiply
         ok      = ok      && (thread_info == GrB_SUCCESS) ;
         allmask = allmask && (thread_mask_applied) ;
         panic   = panic   || (thread_info == GrB_PANIC) ;
+    }
+
+// TODO hack
+    for (tid = 0 ; tid < nthreads ; tid++)
+    {
+        int method = AxB_methods_used [tid] ;
+        printf ("thread %d method %d ", tid, method) ;
+        if (method == GxB_AxB_GUSTAVSON) printf ("gus\n") ;
+        else if (method == GxB_AxB_HEAP) printf ("heap\n") ;
+        else printf ("huh??\n") ;
+        // GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
+        // GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
+        // GxB_AxB_DOT       = 1003,   // dot product
     }
 
     //--------------------------------------------------------------------------

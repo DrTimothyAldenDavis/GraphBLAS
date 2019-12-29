@@ -47,6 +47,14 @@ void GB_qsort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
     const int64_t n
 ) ;
 
+void GB_msort_1     // sort array A of size n
+(
+    int64_t *GB_RESTRICT A_0,      // size n array
+    int64_t *GB_RESTRICT W_0,      // size n array, workspace
+    const int64_t n,
+    const int nthreads          // # of threads to use
+) ;
+
 void GB_msort_2     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
 (
     int64_t *GB_RESTRICT A_0,      // size n array
