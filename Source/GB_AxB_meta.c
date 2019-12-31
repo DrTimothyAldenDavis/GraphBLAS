@@ -372,11 +372,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
-            // C<M> = A'*B via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
-            GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, AT, B,
-                semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+
+//          // C = A'*B via saxpy3: Gustavson + Hash method
+            GB_OK (GB_AxB_saxpy3 (Chandle, AT, B, semiring, flipxy, Context)) ;
+
+//          // C<M> = A'*B via saxpy: Gustavson or heap method
+//          GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, AT, B,
+//              semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
+//              Context)) ;
+
         }
 
     }
@@ -409,11 +414,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
-            // C<M> = A*B' via saxpy: Gustavson or heap method
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
-            GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, BT,
-                semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+
+//          // C = A*B' via saxpy3: Gustavson + Hash method
+            GB_OK (GB_AxB_saxpy3 (Chandle, A, BT, semiring, flipxy, Context)) ;
+
+//          // C<M> = A*B' via saxpy: Gustavson or heap method
+//          GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, BT,
+//              semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
+//              Context)) ;
+
         }
 
     }
@@ -444,10 +454,15 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
-            // C<M> = A*B via saxpy: Gustavson or heap method
-            GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, B,
-                semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
-                Context)) ;
+
+            // C = A*B via saxpy3: Gustavson + Hash method
+            GB_OK (GB_AxB_saxpy3 (Chandle, A, B, semiring, flipxy, Context)) ;
+
+//          // C<M> = A*B via saxpy: Gustavson or heap method
+//          GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, B,
+//              semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
+//              Context)) ;
+
         }
     }
 

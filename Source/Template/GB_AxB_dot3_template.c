@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot3_template: C<M>=A'*B via dot productes
+// GB_AxB_dot3_template: C<M>=A'*B via dot products
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

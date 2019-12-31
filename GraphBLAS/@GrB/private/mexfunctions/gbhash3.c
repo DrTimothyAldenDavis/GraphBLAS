@@ -11,6 +11,8 @@
 
 // A and B must be double (GrB_FP64)
 
+// TODO: delete this prototype when done
+
 #include "gb_matlab.h"
 #include "myhash.h"
 

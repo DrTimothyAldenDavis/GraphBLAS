@@ -114,6 +114,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // prune empty vectors from Rh
     //--------------------------------------------------------------------------
 
+    // TODO use GB_hypermatrix_prune
     if (R_is_hyper && R->nvec_nonempty < Rnvec)
     {
         // create new Rp_new and Rh_new arrays, with no empty vectors

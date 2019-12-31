@@ -1,6 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_AxB_hash:  C = A*B using a mix of Gustavson's and Hash methods
+// myhash3.c:  C = A*B using a mix of Gustavson's and Hash methods
 //------------------------------------------------------------------------------
+
+// Prototype.  Assumes the plus-times-double semiring.
 
 // #define GB_DEBUG 1
 
@@ -17,7 +19,7 @@
 #define GB_FINE_WORK 2
 
 //------------------------------------------------------------------------------
-// GB_hashtask_struct: task descriptor for GB_AxB_hash
+// GB_hashtask_struct: task descriptor for myhash3
 //------------------------------------------------------------------------------
 
 // A coarse task computes C(:,j1:j2) = A*B(:,j1:j2), for a contiguous set of
@@ -147,7 +149,7 @@ int64_t myhash3
 {
 
     #if GB_TIMING
-    printf ("\n---------- parallel version 3\n") ;
+    printf ("\n---------- parallel version %s\n", __FILE__) ;
     double tic = omp_get_wtime ( ) ;
     #endif
 
@@ -202,7 +204,6 @@ int64_t myhash3
 
     int nth_flops = GB_nthreads (bnvec, chunk, nthreads_max) ;
 
-    // TODO use GB_AxB_flopcount
     #pragma omp parallel for num_threads(nth_flops) schedule(guided) \
         reduction(max:flmax) reduction(+:total_flops)
     for (int64_t j = 0 ; j < bnvec ; j++)
@@ -637,7 +638,6 @@ int64_t myhash3
 
     // add some padding to the end of each hash table, to avoid false
     // sharing of cache lines between the hash tables.
-    // TODO: is padding needed?
     #define GB_HASH_PAD (64 / (sizeof (double)))
 
     int64_t Hi_size_total = 1 ;
@@ -810,8 +810,8 @@ int64_t myhash3
                 //              Hx [i] is initialized.
                 // Hf [i] == 2: locked.  Hx [i] in an unknown state.
 
-                // TODO: for min, max, and user-defined monoids, the
-                // "if (f==1)" test and the if-part must be disabled.
+// for min, max, and user-defined monoids, the
+// "if (f==1)" test and the if-part must be disabled.
 
                 for (int64_t pB = pB_start ; pB <= pB_end ; pB++)
                 {
@@ -1308,7 +1308,7 @@ int64_t myhash3
                     // C(:,j) is sparse: count the work for this fine task
                     //----------------------------------------------------------
 
-                    // TODO this is slow if cjnz << cnrows
+                    // this is slow if cjnz << cnrows
 
                     uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
 
@@ -1332,7 +1332,7 @@ int64_t myhash3
                 // final numeric: hash method for fine task
                 //--------------------------------------------------------------
 
-                // TODO this is slow if cjnz << hash_size
+                // this is slow if cjnz << hash_size
 
                 int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
 
@@ -1899,7 +1899,7 @@ int64_t myhash3
             // final numeric gather: Gustavson's method for fine task
             //------------------------------------------------------------------
 
-            // TODO this is slow if cjnz << cnrows
+            // this is slow if cjnz << cnrows
 
             uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
 
@@ -1927,7 +1927,7 @@ int64_t myhash3
             // final numeric gather: hash method for fine task
             //------------------------------------------------------------------
 
-            // TODO this is slow if cjnz << hash_size
+            // this is slow if cjnz << hash_size
 
             int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
 

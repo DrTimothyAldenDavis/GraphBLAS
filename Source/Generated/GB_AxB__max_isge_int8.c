@@ -1,4 +1,6 @@
 
+
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -18,6 +20,8 @@
 #include "GB_jappend.h"
 #include "GB_bracket.h"
 #include "GB_iterator.h"
+#include "GB_sort.h"
+#include "GB_saxpy3.h"
 #include "GB_AxB__include.h"
 
 // The C=A*B semiring is defined by the following types and operators:
@@ -26,6 +30,7 @@
 // A'*B function (dot2):     GB_Adot2B__max_isge_int8
 // A'*B function (dot3):     GB_Adot3B__max_isge_int8
 // A*B function (heap):      GB_AheapB__max_isge_int8
+// A*B function (saxpy3):    GB_Asaxpy3B__max_isge_int8
 
 // C type:   int8_t
 // A type:   int8_t
@@ -33,6 +38,7 @@
 
 // Multiply: z = (aik >= bkj)
 // Add:      cij = GB_IMAX (cij, z)
+// atomic?   0
 // MultAdd:  cij = GB_IMAX (cij, (aik >= bkj))
 // Identity: INT8_MIN
 // Terminal: if (cij == INT8_MAX) break ;
@@ -83,13 +89,40 @@
 #define GB_CIJ_REACQUIRE(cij,cnz) ;
 
 // declare the cij scalar
-#define GB_CIJ_DECLARE(cij) ; \
+#define GB_CIJ_DECLARE(cij) \
     int8_t cij ;
 
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij ;
 
 #define GB_SAUNA_WORK(i) Sauna_Work [i]
+
+// For saxpy3:
+
+// Cx [p] = t
+#define GB_CIJ_WRITE(p,t) Cx [p] = t
+
+// C(i,j) += t
+#define GB_CIJ_UPDATE(p,t) \
+    Cx [p] = GB_IMAX (Cx [p], t)
+
+// Cx [p] = Hx [i]
+#define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+
+// Hx [i] += t
+#define GB_HX_UPDATE(i,t) \
+    Hx [i] = GB_IMAX (Hx [i], t)
+
+// Hx [i] = t
+#define GB_HX_WRITE(i,t) Hx [i] = t
+
+// 1 if monoid update can be done atomically, 0 otherwise
+#define GB_HAS_ATOMIC \
+    0
+
+// memcpy (&(Cx [pC]), &(Hx [i]), len)
+#define GB_CIJ_MEMCPY(pC,i,len) \
+    memcpy (Cx +(pC), Hx +(i), (len) * sizeof(int8_t))
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
@@ -164,6 +197,41 @@ GrB_Info GB_Adot3B__max_isge_int8
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot3_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C=A*B: saxpy3 method
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Asaxpy3B__max_isge_int8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    // get copies of these pointers for GB_FREE_ALL
+    GB_saxpy3task_struct *GB_RESTRICT TaskList = (*TaskList_handle) ;
+    GrB_Matrix C = (*Chandle) ;
+    int64_t *Hi_all = Work [0] ;
+    int64_t *Hf_all = Work [1] ;
+    GB_void *Hx_all = Work [2] ;
+    size_t Hi_size_total = Worksize [0] ;
+    size_t Hf_size_total = Worksize [1] ;
+    size_t Hx_size_total = Worksize [2] ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    #include "GB_AxB_saxpy3_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

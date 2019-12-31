@@ -2,26 +2,154 @@
 // GB_AxB_saxpy3: compute C = A*B in parallel
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
-// This function only computes C=A*B.  The mask is not applied.
+// This function computes C=A*B.  The mask is not applied.  A mix of
+// Gustavson's method [1] and the Hash method [2] is used, per task.
 
-#define GB_DEBUG
-#include "GB_AxB_saxpy3.h"
+// TODO add a method that exploits the mask.
 
-#define GB_FREE_WORK                                                    \
-{                                                                       \
-    GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;  \
+// References:
+
+// [1] Fred G. Gustavson. 1978. Two Fast Algorithms for Sparse
+// Matrices: Multiplication and Permuted Transposition. ACM Trans. Math. Softw.
+// 4, 3 (September 1978), 250–269. DOI:https://doi.org/10.1145/355791.355796
+
+// [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydın Buluç. 2018.
+// High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore
+// Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP ’18).
+// Association for Computing Machinery, New York, NY, USA, Article 34, 1–10.
+// DOI:https://doi.org/10.1145/3229710.3229720
+
+//------------------------------------------------------------------------------
+
+// #define GB_DEBUG
+
+#include "GB_mxm.h"
+#include "GB_bracket.h"
+#include "GB_sort.h"
+#ifndef GBCOMPACT
+#include "GB_AxB__include.h"
+#endif
+
+//------------------------------------------------------------------------------
+// control parameters for generating parallel tasks
+//------------------------------------------------------------------------------
+
+#define GB_NTASKS_PER_THREAD 2
+#define GB_COSTLY 1.2
+#define GB_FINE_WORK 2
+
+//------------------------------------------------------------------------------
+// free workspace
+//------------------------------------------------------------------------------
+
+// This workspace is not needed in the GB_Asaxpy3B* worker functions.
+#define GB_FREE_INITIAL_WORK                                                \
+{                                                                           \
+    GB_FREE_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;                \
+    GB_FREE_MEMORY (Coarse_initial, ntasks_initial+1, sizeof (int64_t)) ;   \
+    GB_FREE_MEMORY (Fine_slice, ntasks+1, sizeof (int64_t)) ;               \
 }
 
-#define GB_FREE_ALL                                                     \
-{                                                                       \
-    GB_FREE_WORK ;                                                      \
-    GB_MATRIX_FREE (Chandle) ;                                          \
+// See also GB_FREE_ALL in Template/GB_AxB_saxpy3_template.c, which must
+// match this definition, for the GB_Asaxpy3B* worker functions.
+#define GB_FREE_WORK                                                        \
+{                                                                           \
+    GB_FREE_INITIAL_WORK ;                                                  \
+    GB_FREE_MEMORY (*(TaskList_handle), ntasks, sizeof (GB_saxpy3task_struct));\
+    GB_FREE_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;              \
+    GB_FREE_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;              \
+    GB_FREE_MEMORY (Hx_all, Hx_size_total, 1) ;                             \
 }
+
+#define GB_FREE_ALL             \
+{                               \
+    GB_FREE_WORK ;              \
+    GB_MATRIX_FREE (Chandle) ;  \
+}
+
+//------------------------------------------------------------------------------
+// GB_hash_table_size
+//------------------------------------------------------------------------------
+
+// flmax is the max flop count for computing A*B(:,j), for any vector j that
+// this task computes.  GB_hash_table_size determines the hash table size for
+// this task, which is twice the smallest power of 2 larger than flmax.  If
+// flmax is large enough, the hash_size is returned as cvlen, so that
+// Gustavson's method will be used instead of the Hash method.
+
+static inline int64_t GB_hash_table_size
+(
+    int64_t flmax,      // max flop count for any vector computed by this task
+    int64_t cvlen       // vector length of C
+)
+{
+    // hash_size = 2 * (smallest power of 2 that is >= to flmax)
+    double hlog = log2 ((double) flmax) ;
+    int64_t hash_size = ((int64_t) 2) << ((int64_t) floor (hlog) + 1) ;
+    // use Gustavson's method if hash_size is too big
+    // TODO n/16 might be too big.  Use a parameter, and allow it to be
+    // controlled by the user.  Select Gustavson if hash_size >= cvlen*alpha.
+    // Limit alpha to between 0 and 1.
+    // alpha=0 means always use Gustavson.
+    // alpha=1 means always use Hash, unless the hash size is >= cvlen.
+    bool use_Gustavson = (hash_size >= cvlen/16) ;  // TODO use alpha param
+    if (use_Gustavson)
+    {
+        hash_size = cvlen ;
+    }
+    return (hash_size) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_create_coarse_task: create a single coarse task
+//------------------------------------------------------------------------------
+
+// Compute the max flop count for any vector in a coarse task, determine the
+// hash table size, and construct the coarse task.
+
+static inline void GB_create_coarse_task
+(
+    int64_t kfirst,     // coarse task consists of vectors kfirst:klast
+    int64_t klast,
+    GB_saxpy3task_struct *TaskList,
+    int taskid,         // taskid for this coarse task
+    int64_t *Bflops,    // size bnvec; cum sum of flop counts for vectors of B
+    int64_t cvlen,      // vector length of B and C
+    double chunk,
+    int nthreads_max
+)
+{
+    // find the max # of flops for any vector in this task
+    int64_t flmax = 1 ;
+    int nth = GB_nthreads (klast-kfirst+1, chunk, nthreads_max) ;
+    int64_t kk ;
+    #pragma omp parallel for num_threads(nth) schedule(static) \
+        reduction(max:flmax)
+    for (kk = kfirst ; kk <= klast ; kk++)
+    {
+        int64_t fl = Bflops [kk+1] - Bflops [kk] ;
+        flmax = GB_IMAX (flmax, fl) ;
+    }
+    // define the coarse task
+    TaskList [taskid].start  = kfirst ;
+    TaskList [taskid].end    = klast ;
+    TaskList [taskid].vector = -1 ;
+    TaskList [taskid].master = taskid ;
+    TaskList [taskid].hsize  = GB_hash_table_size (flmax, cvlen) ;
+    TaskList [taskid].flops  = Bflops [klast+1] - Bflops [kfirst] ;
+
+    // printf ("    create final coarse task "GBd":"GBd" flops "GBd"\n",
+    //     kfirst, klast, TaskList [taskid].flops) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy3: compute C = A*B in parallel
+//------------------------------------------------------------------------------
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
@@ -38,10 +166,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // check inputs
     //--------------------------------------------------------------------------
 
-    #if GB_TIMING
-    printf ("\n---------- parallel version saxpy3\n") ;
-    double tic = omp_get_wtime ( ) ;
-    #endif
+    // printf ("saxpy3 start, flipxy %d\n", flipxy) ;
 
     GrB_Info info ;
     ASSERT (Chandle != NULL) ;
@@ -57,11 +182,17 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t *GB_RESTRICT Hf_all = NULL ;
     GB_void *GB_RESTRICT Hx_all = NULL ;
     int64_t *GB_RESTRICT Coarse_initial = NULL ;    // initial coarse tasks
-    GB_hashtask_struct *GB_RESTRICT TaskList = NULL ;
-    int64_t *GB_RESTRICT Ci = NULL ;
-    GB_void *GB_RESTRICT Cx = NULL ;
-    int64_t *GB_RESTRICT W = NULL ;
+    GB_saxpy3task_struct *GB_RESTRICT TaskList = NULL ;
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle = &(TaskList) ;
+    int64_t *GB_RESTRICT Fine_slice = NULL ;
     int64_t *GB_RESTRICT Bflops2 = NULL ;
+
+    int ntasks = 0 ;
+    int ntasks_initial = 0 ;
+    size_t Hi_size_total = 0 ;
+    size_t Hf_size_total = 0 ;
+    size_t Hx_size_total = 0 ;
+    int64_t max_bjnz = 0 ;
 
     //--------------------------------------------------------------------------
     // get the semiring operators
@@ -114,7 +245,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
-    // const int64_t *GB_RESTRICT Bi = B->i ;
+    const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     // const int64_t bnz = GB_NNZ (B) ;
@@ -122,18 +253,27 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const bool B_is_hyper = B->is_hyper ;
 
     //--------------------------------------------------------------------------
-    // allocate C (but not C->i or C->x)
+    // determine the # of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+
+    // nthreads_max = 1 ;
+
+    //--------------------------------------------------------------------------
+    // allocate C (just C->p and C->h, but not C->i or C->x)
     //--------------------------------------------------------------------------
 
     GrB_Type ctype = add->op->ztype ;
+    size_t csize = ctype->size ;
     int64_t cvlen = avlen ;
     int64_t cvdim = bvdim ;
     int64_t cnz = 0 ;
     int64_t cnvec = bnvec ;
     bool C_is_hyper = (cvdim > 1) && (A_is_hyper || B_is_hyper) ;
 
-    GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
-        GB_SAME_HYPER_AS (C_is_hyper), B->hyper_ratio, cnvec, Context) ;
+    GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
+        GB_SAME_HYPER_AS (B_is_hyper), B->hyper_ratio, cnvec, Context) ;
     if (info != GrB_SUCCESS)
     { 
         // out of memory
@@ -141,17 +281,19 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         return (info) ;
     }
 
+    // TODO do not allocate C->h until the very end, in GB_hypermatrix_prune
+
     GrB_Matrix C = (*Chandle) ;
 
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
-    size_t csize = ctype->size ;
-
-    //--------------------------------------------------------------------------
-    // determine the # of threads to use
-    //--------------------------------------------------------------------------
-
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    if (B_is_hyper)
+    { 
+        // C has the same set of vectors as B
+        int nth = GB_nthreads (cnvec, chunk, nthreads_max) ;
+        GB_memcpy (Ch, Bh, cnvec * sizeof (int64_t), nth) ;
+        C->nvec = bnvec ;
+    }
 
     //==========================================================================
     // phase0: create parallel tasks
@@ -162,27 +304,32 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     int64_t *GB_RESTRICT Bflops = Cp ;  // Cp is used as workspace for Bflops
-    int64_t flmax = 1 ;
-    int64_t total_flops = 0 ;
-    bool flopresult ;
-
-    GB_OK (GB_AxB_flopcount (&flopresult, Bflops, NULL, A, B, 0, Context)) ;
+    bool ignore ;
+    GB_OK (GB_AxB_flopcount (&ignore, Bflops, NULL, NULL, A, B, 0, Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
 
-    #if GB_TIMING
-    double t1 = omp_get_wtime ( ) - tic ; ;
-    tic = omp_get_wtime ( ) ;
-    #endif
+    // printf ("total_flops "GBd"\n", total_flops) ;
+    // printf ("cnvec: "GBd" cplen "GBd"\n", cnvec, C->plen) ;
+    // for (int k = 0 ; k <= bnvec ; k++)
+    // {
+    //     printf ("Bflops [%d] = "GBd"\n", k, Bflops [k]) ;
+    // }
 
     //--------------------------------------------------------------------------
     // determine # of threads and # of initial coarse tasks
     //--------------------------------------------------------------------------
 
-    nthreads = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
-    int ntasks_initial = (nthreads == 1) ?
-        1 : (GB_NTASKS_PER_THREAD * nthreads) ;
+    int nthreads = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
+    ntasks_initial = (nthreads == 1) ?  1 : (GB_NTASKS_PER_THREAD * nthreads) ;
     double target_task_size = ((double) total_flops) / ntasks_initial ;
+    target_task_size = GB_IMAX (target_task_size, chunk) ;
     double target_fine_size = target_task_size / GB_FINE_WORK ;
+    target_fine_size = GB_IMAX (target_fine_size, chunk) ;
+
+    // printf ("nthreads %d\n", nthreads) ;
+    // printf ("chunk %g\n", chunk) ;
+    // printf ("target_task_size %g\n", target_task_size) ;
+    // printf ("target_fine_size %g\n", target_fine_size) ;
 
     //--------------------------------------------------------------------------
     // determine # of parallel tasks
@@ -190,7 +337,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     int nfine = 0 ;         // # of fine tasks
     int ncoarse = 0 ;       // # of coarse tasks
-    int64_t max_bjnz = 0 ;  // max (nnz (B (:,j))) of fine tasks
+    max_bjnz = 0 ;          // max (nnz (B (:,j))) of fine tasks
+
+    // FUTURE: also use ultra-fine tasks that compute A(i1:i2,k)*B(k,j)
 
     if (ntasks_initial > 1)
     {
@@ -213,56 +362,68 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         for (int taskid = 0 ; taskid < ntasks_initial ; taskid++)
         {
             // get the initial coarse task
-            int64_t j1 = Coarse_initial [taskid] ;
-            int64_t j2 = Coarse_initial [taskid+1] ;
-            int64_t task_ncols = j2 - j1 ;
-            int64_t task_flops = Bflops [j2] - Bflops [j1] ;
+            int64_t kfirst = Coarse_initial [taskid] ;
+            int64_t klast  = Coarse_initial [taskid+1] ;
+            int64_t task_ncols = klast - kfirst ;
+            int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
+
+            // printf ("init task %d\n", taskid) ;
+            // printf ("    kfirst "GBd" klast "GBd" ncols "GBd" flops "GBd"\n",
+            //     kfirst, klast, task_ncols, task_flops) ;
 
             if (task_ncols == 0)
             {
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
+                // printf ("   init coarse task is empty\n") ;
             }
             else if (task_flops > 2 * GB_COSTLY * target_task_size)
             {
                 // This coarse task is too costly, because it contains one or
                 // more costly vectors.  Split its vectors into a mixture of
                 // coarse and fine tasks.
+                // printf ("   init coarse task is costly\n") ;
 
-                int64_t jcoarse_start = j1 ;
+                int64_t kcoarse_start = kfirst ;
 
-                for (int64_t j = j1 ; j < j2 ; j++)
+                for (int64_t kk = kfirst ; kk < klast ; kk++)
                 {
                     // jflops = # of flops to compute a single vector A*B(:,j)
-                    double jflops = Bflops [j+1] - Bflops [j] ;
+                    // where j == (Bh == NULL) ? kk : Bh [kk].
+                    double jflops = Bflops [kk+1] - Bflops [kk] ;
                     // bjnz = nnz (B (:,j))
-                    int64_t bjnz = Bp [j+1] - Bp [j] ;
+                    int64_t bjnz = Bp [kk+1] - Bp [kk] ;
+
+                    // printf ("   jflops %g\n" , jflops) ;
+                    // printf ("   bjnz "GBd"\n" , bjnz) ;
 
                     if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
                     {
                         // A*B(:,j) is costly; split it into 2 or more fine
                         // tasks.  First flush the prior coarse task, if any.
-                        if (jcoarse_start < j)
+                        if (kcoarse_start < kk)
                         {
-                            // columns jcoarse_start to j-1 form a single
+                            // vectors kcoarse_start to kk-1 form a single
                             // coarse task
+                            // printf ("   flush prior coarse\n") ;
                             ncoarse++ ;
                         }
 
-                        // next coarse task (if any) starts at j+1
-                        jcoarse_start = j+1 ;
+                        // next coarse task (if any) starts at kk+1
+                        kcoarse_start = kk+1 ;
 
-                        // column j will be split into multiple fine tasks
+                        // vectors kk will be split into multiple fine tasks
                         max_bjnz = GB_IMAX (max_bjnz, bjnz) ;
                         int nfine_team_size = ceil (jflops / target_fine_size) ;
                         nfine += nfine_team_size ;
+                        // printf ("   team size %d\n", nfine_team_size) ;
                     }
                 }
 
                 // flush the last coarse task, if any
-                if (jcoarse_start < j2)
+                if (kcoarse_start < klast)
                 {
-                    // columns jcoarse_start to j2-1 form a single
+                    // vectors kcoarse_start to klast-1 form a single
                     // coarse task
                     ncoarse++ ;
                 }
@@ -271,6 +432,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             else
             {
                 // This coarse task is OK as-is.
+                // printf ("   init coarse task is OK\n") ;
                 ncoarse++ ;
             }
         }
@@ -282,24 +444,22 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // entire computation in a single coarse task
         //----------------------------------------------------------------------
 
+        // printf ("   just one task\n") ;
         nfine = 0 ;
         ncoarse = 1 ;
     }
 
-    int ntasks = ncoarse + nfine ;
+    ntasks = ncoarse + nfine ;
 
     //--------------------------------------------------------------------------
     // allocate the tasks, and workspace to construct fine tasks
     //--------------------------------------------------------------------------
 
-    GB_CALLOC_MEMORY (TaskList, ntasks, sizeof (GB_hashtask_struct)) ;
-    GB_MALLOC_MEMORY (W, ntasks+1, sizeof (int64_t)) ;
-    if (nfine > 0)
-    {
-        GB_MALLOC_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;
-    }
+    GB_CALLOC_MEMORY (TaskList, ntasks, sizeof (GB_saxpy3task_struct)) ;
+    GB_MALLOC_MEMORY (Fine_slice, ntasks+1, sizeof (int64_t)) ;
+    GB_MALLOC_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;
 
-    if (TaskList == NULL || W == NULL || (nfine > 0 && Bflops2 == NULL))
+    if (TaskList == NULL || Fine_slice == NULL || Bflops2 == NULL)
     {
         // out of memory
         GB_FREE_ALL ;
@@ -309,6 +469,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
     // create the tasks
     //--------------------------------------------------------------------------
+
+    // printf ("\n======= create the tasks (fine: %d, coarse: %d)\n",
+    //     nfine, ncoarse) ;
 
     if (ntasks_initial > 1)
     {
@@ -323,109 +486,143 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         for (int taskid = 0 ; taskid < ntasks_initial ; taskid++)
         {
             // get the initial coarse task
-            int64_t j1 = Coarse_initial [taskid] ;
-            int64_t j2 = Coarse_initial [taskid+1] ;
-            int64_t task_ncols = j2 - j1 ;
-            int64_t task_flops = Bflops [j2] - Bflops [j1] ;
+            int64_t kfirst = Coarse_initial [taskid] ;
+            int64_t klast  = Coarse_initial [taskid+1] ;
+            int64_t task_ncols = klast - kfirst ;
+            int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
+
+            // printf ("init task %d\n", taskid) ;
+            // printf ("    kfirst "GBd" klast "GBd" ncols "GBd" flops "GBd"\n",
+            //     kfirst, klast, task_ncols, task_flops) ;
 
             if (task_ncols == 0)
             {
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
+                // printf ("   init coarse task is empty\n") ;
             }
             else if (task_flops > 2 * GB_COSTLY * target_task_size)
             {
                 // This coarse task is too costly, because it contains one or
                 // more costly vectors.  Split its vectors into a mixture of
                 // coarse and fine tasks.
+                // printf ("   init coarse task is costly\n") ;
 
-                int64_t jcoarse_start = j1 ;
+                int64_t kcoarse_start = kfirst ;
 
-                for (int64_t j = j1 ; j < j2 ; j++)
+                for (int64_t kk = kfirst ; kk < klast ; kk++)
                 {
                     // jflops = # of flops to compute a single vector A*B(:,j)
-                    double jflops = Bflops [j+1] - Bflops [j] ;
+                    // where j == (Bh == NULL) ? kk : Bh [kk].
+                    double jflops = Bflops [kk+1] - Bflops [kk] ;
                     // bjnz = nnz (B (:,j))
-                    int64_t bjnz = Bp [j+1] - Bp [j] ;
+                    int64_t bjnz = Bp [kk+1] - Bp [kk] ;
+
+                    // printf ("   jflops %g\n" , jflops) ;
+                    // printf ("   bjnz "GBd"\n" , bjnz) ;
 
                     if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
                     {
                         // A*B(:,j) is costly; split it into 2 or more fine
                         // tasks.  First flush the prior coarse task, if any.
-                        if (jcoarse_start < j)
+                        if (kcoarse_start < kk)
                         {
-                            // jcoarse_start:j-1 form a single coarse task
-                            GB_create_coarse_task (jcoarse_start, j-1,
-                                TaskList, nc++, Bflops, cnrows,
+                            // kcoarse_start:kk-1 form a single coarse task
+                            GB_create_coarse_task (kcoarse_start, kk-1,
+                                TaskList, nc++, Bflops, cvlen,
                                 chunk, nthreads_max) ;
                         }
 
-                        // next coarse task (if any) starts at j+1
-                        jcoarse_start = j+1 ;
+                        // next coarse task (if any) starts at kk+1
+                        kcoarse_start = kk+1 ;
 
-                        // count the work for each B(k,j)
-                        int64_t pB_start = Bp [j] ;
+                        // count the work for each entry B(k,j)
+                        int64_t pB_start = Bp [kk] ;
                         int nth = GB_nthreads (bjnz, chunk, nthreads_max) ;
+                        int64_t s ;
                         #pragma omp parallel for num_threads(nth) \
                             schedule(static)
-                        for (int64_t s = 0 ; s < bjnz ; s++)
+                        for (s = 0 ; s < bjnz ; s++)
                         {
                             // get B(k,j)
                             int64_t k = Bi [pB_start + s] ;
-                            // flop count for just B(k,j)
-                            int64_t fl = (Ap [k+1] - Ap [k]) ;
+                            // fl = flop count for just A(:,k)*B(k,j)
+                            int64_t pA_start, pA_end ;
+                            int64_t pleft = 0 ;
+                            GB_lookup (A_is_hyper, Ah, Ap, &pleft, anvec-1, k,
+                                &pA_start, &pA_end) ;
+                            int64_t fl = pA_end - pA_start ;
                             Bflops2 [s] = fl ;
+                            ASSERT (fl >= 0) ;
                         }
+
+                        // for (s = 0 ; s < bjnz ; s++)
+                        // {
+                            // printf ("Bflops2 ["GBd"] = "GBd"\n", s, 
+                            // Bflops2 [s]) ;
+                        // }
 
                         // cumulative sum of flops to compute A*B(:,j)
                         GB_cumsum (Bflops2, bjnz, NULL, nth) ;
 
+                        // for (s = 0 ; s <= bjnz ; s++)
+                        // {
+                            // printf ("Bflops2 ["GBd"] = "GBd"\n", s, 
+                            // Bflops2 [s]) ;
+                        // }
+
+                        // printf ("\ncumsum:\n") ;
+                        // for (s = 0 ; s < bjnz ; s++)
+                        // {
+                        //     printf ("Bflops2 ["GBd"] = "GBd"\n", s, 
+                        //         Bflops2 [s]) ;
+                        // }
+
                         // slice B(:,j) into fine tasks
                         int nfine_team_size = ceil (jflops / target_fine_size) ;
-                        GB_pslice (&W, Bflops2, bjnz, nfine_team_size) ;
+                        ASSERT (Fine_slice != NULL) ;
+                        GB_pslice (&Fine_slice, Bflops2, bjnz, nfine_team_size);
 
-                        // hash table for all fine takes for C(:,j)
-                        int64_t hsize = GB_hash_table_size (jflops, cnrows) ;
+                        // shared hash table for all fine tasks for A*B(:,j)
+                        int64_t hsize = GB_hash_table_size (jflops, cvlen) ;
 
-                        // construct the fine tasks for B(:,j)
+                        // construct the fine tasks for C(:,j)=A*B(:,j)
                         int master = nf ;
                         for (int fid = 0 ; fid < nfine_team_size ; fid++)
                         {
-                            int64_t pstart = W [fid] ;
-                            int64_t pend   = W [fid+1] ;
+                            int64_t pstart = Fine_slice [fid] ;
+                            int64_t pend   = Fine_slice [fid+1] ;
                             int64_t fl = Bflops2 [pend] - Bflops2 [pstart] ;
                             TaskList [nf].start  = pB_start + pstart ;
                             TaskList [nf].end    = pB_start + pend - 1 ;
-                            TaskList [nf].vector = j ;
+                            TaskList [nf].vector = kk ;
                             TaskList [nf].hsize  = hsize ;
                             TaskList [nf].master = master ;
                             TaskList [nf].nfine_team_size = nfine_team_size ;
                             TaskList [nf].flops = fl ;
+//    printf ("    create final fine task "GBd":"GBd" flops "GBd"\n",
+//        pstart, pend, fl) ;
                             nf++ ;
                         }
                     }
                 }
 
                 // flush the last coarse task, if any
-                if (jcoarse_start < j2)
+                if (kcoarse_start < klast)
                 {
-                    // jcoarse_start:j-1 form a single coarse task
-                    GB_create_coarse_task (jcoarse_start, j2-1,
-                        TaskList, nc++, Bflops, cnrows, chunk, nthreads_max) ;
+                    // kcoarse_start:klast-1 form a single coarse task
+                    GB_create_coarse_task (kcoarse_start, klast-1,
+                        TaskList, nc++, Bflops, cvlen, chunk, nthreads_max) ;
                 }
 
             }
             else
             {
                 // This coarse task is OK as-is.
-                GB_create_coarse_task (j1, j2 - 1,
-                    TaskList, nc++, Bflops, cnrows, chunk, nthreads_max) ;
+                GB_create_coarse_task (kfirst, klast-1,
+                    TaskList, nc++, Bflops, cvlen, chunk, nthreads_max) ;
             }
         }
-
-        // free workspace
-        GB_FREE_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (Coarse_initial, ntasks_initial+1, sizeof (int64_t)) ;
 
     }
     else
@@ -435,19 +632,20 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // entire computation in a single coarse task
         //----------------------------------------------------------------------
 
-        TaskList [0].start  = 0 ;
-        TaskList [0].end    = bnvec - 1 ;
-        TaskList [0].vector = -1 ;
-        TaskList [0].hsize  = GB_hash_table_size (flmax, cnrows) ;
-        TaskList [0].flops  = total_flops ;
+        GB_create_coarse_task (0, bnvec-1,
+            TaskList, 0, Bflops, cvlen, chunk, nthreads_max) ;
     }
 
-    // free workspace
-    GB_FREE_MEMORY (W, ntasks+1, sizeof (int64_t)) ;
+    //--------------------------------------------------------------------------
+    // free workspace used to create the tasks
+    //--------------------------------------------------------------------------
 
-    #if GB_TIMING
-    double t2 = omp_get_wtime ( ) - tic ; ;
-    #endif
+    // Frees Bflops2, Coarse_initial, and Fine_slice.  These do not need to
+    // be freed in the GB_Asaxpy3B worker below.
+
+    GB_FREE_INITIAL_WORK ;
+
+    //--------------------------------------------------------------------------
 
 #if 0
     // dump the task descriptors
@@ -456,37 +654,40 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     for (int fid = 0 ; fid < nfine ; fid++)
     {
-        int64_t j  = TaskList [fid].vector ;
-        int64_t pB_start = Bp [j] ;
+        // computes C(:,j) += A*B(k1:k2,j)
+        // note that j = (Bh == NULL) ? kk : Bh [kk]
+        int64_t kk = TaskList [fid].vector ;
+        ASSERT (kk >= 0) ;
+        int64_t pB_start = Bp [kk] ;
         int64_t p1 = TaskList [fid].start - pB_start ;
         int64_t p2 = TaskList [fid].end   - pB_start ;
         int64_t hsize = TaskList [fid].hsize   ;
         int master = TaskList [fid].master ;
         double work = TaskList [fid].flops ;
         printf ("Fine %3d: ["GBd"] ("GBd" : "GBd") hsize/n %g master %d ",
-            fid, j, p1, p2, ((double) hsize) / ((double) cnrows),
+            fid, kk, p1, p2, ((double) hsize) / ((double) cvlen),
             master) ;
-        printf (" work %g work/n %g\n", work, work/cnrows) ;
-        // if (p1 > p2) printf (":::::::::::::::::: empty task\n") ;
-        if (j < 0 || j > cnvec) printf ("j bad\n") ;
+        printf (" work %g work/n %g\n", work, work/cvlen) ;
     }
 
     for (int cid = nfine ; cid < ntasks ; cid++)
     {
-        int64_t j1 = TaskList [cid].start ;
-        int64_t j2 = TaskList [cid].end ;
+        int64_t kfirst = TaskList [cid].start ;
+        int64_t klast = TaskList [cid].end ;
         int64_t hsize = TaskList [cid].hsize ;
         double work = TaskList [cid].flops ;
         printf ("Coarse %3d: ["GBd" : "GBd"] work/tot: %g hsize/n %g ",
-            cid, j1, j2, work / total_flops,
-            ((double) hsize) / ((double) cnrows)) ;
+            cid, kfirst, klast, work / total_flops,
+            ((double) hsize) / ((double) cvlen)) ;
         if (cid != TaskList [cid].master) printf ("hey master!\n") ;
-        printf (" work %g work/n %g\n", work, work/cnrows) ;
+        printf (" work %g work/n %g\n", work, work/cvlen) ;
+        int64_t kk = TaskList [cid].vector ;
+        ASSERT (kk < 0) ;
     }
 
 #endif
 
-    #if GB_TIMING
+    #if 1
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;
@@ -495,56 +696,63 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
         int64_t hash_size = TaskList [taskid].hsize ;
-        int64_t j = TaskList [taskid].vector ;
-        bool is_fine = (j >= 0) ;
-        bool use_Gustavson = (hash_size == cnrows) ;
+        int64_t kk = TaskList [taskid].vector ;
+        bool is_fine = (kk >= 0) ;
+        bool use_Gustavson = (hash_size == cvlen) ;
         if (is_fine)
         {
+            // fine task
             if (use_Gustavson)
             {
+                // fine Gustavson task
                 nfine_gus++ ;
             }
             else
             {
+                // fine hash task
                 nfine_hash++ ;
             }
         }
         else
         {
             // coarse task
-            int64_t j1 = TaskList [taskid].start ;
-            int64_t j2 = TaskList [taskid].end ;
-            int64_t nj = j2 - j1 + 1 ;
+            int64_t kfirst = TaskList [taskid].start ;
+            int64_t klast = TaskList [taskid].end ;
+            int64_t nk = klast - kfirst + 1 ;
             if (use_Gustavson)
             {
+                // coarse Gustavson task
                 ncoarse_gus++ ;
             }
-            else if (nj == 1)
+            else if (nk == 1)
             {
+                // 1-vector coarse hash task
                 ncoarse_1hash++ ;
             }
             else
             {
+                // multi-vector coarse hash task
                 ncoarse_hash++ ;
             }
         }
     }
+
+    printf ("nthreads %d ntasks %d coarse: (gus: %d 1hash: %d hash: %d)"
+        " fine: (gus: %d hash: %d)\n", nthreads, ntasks,
+        ncoarse_gus, ncoarse_1hash, ncoarse_hash,
+        nfine_gus, nfine_hash) ;
     #endif
 
     // Bflops is no longer needed as an alias for Cp
     Bflops = NULL ;
 
-    #if GB_TIMING
-    tic = omp_get_wtime ( ) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // allocate the hash tables
     //--------------------------------------------------------------------------
 
-    // If Gustavson's method is used (coarse tasks):
+    // If Gustavson's method is used (multi-vector coarse tasks):
     //
-    //      hash_size is cnrows.
+    //      hash_size is cvlen.
     //      Hi is not allocated.
     //      Hf and Hx are both of size hash_size.
     //
@@ -552,7 +760,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //      Hx [i] is the value of C(i,j) during the numeric phase.
     //
     //      Gustavson's method is used if the hash_size for the Hash method
-    //      is greater than or equal to cnrows/4.
+    //      is a significant fraction of cvlen. 
     //
     // If the Hash method is used (coarse tasks):
     //
@@ -560,11 +768,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //      the # of flops required for any column C(:,j) being computed.  This
     //      ensures that all entries have space in the hash table, and that the
     //      hash occupancy will never be more than 50%.  It is always smaller
-    //      than cnrows/4 (otherwise, Gustavson's method is used).
+    //      than cvlen (otherwise, Gustavson's method is used).
     //
     //      A hash function is used for the ith entry:
-    //          hash = (i * GB_HASH_FACTOR) % hash_size
-    //      If a collision occurs, linear probing is used.
+    //          hash = (i * GB_HASH_FACTOR) & (hash_size-1)
+    //      If a collision occurs, linear probing is used:
+    //          hash = (hash + 1) & (hashsize-1)
     //
     //      (Hf [hash] == mark) is true if the position is occupied.
     //      i = Hi [hash] gives the row index i that occupies that position.
@@ -578,70 +787,74 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     // add some padding to the end of each hash table, to avoid false
     // sharing of cache lines between the hash tables.
-    // TODO: is padding needed?
-    #define GB_HASH_PAD (64 / (sizeof (double)))
+    size_t hx_pad = 64 ;
+    size_t hi_pad = 64 / sizeof (int64_t) ;
 
-    int64_t Hi_size_total = 1 ;
-    int64_t Hf_size_total = 1 ;
-    int64_t Hx_size_total = 1 ;
+    Hi_size_total = 0 ;
+    Hf_size_total = 0 ;
+    Hx_size_total = 0 ;
 
     // determine the total size of all hash tables
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
         if (taskid != TaskList [taskid].master)
         {
-            // allocate a single hash table for all fine
+            // allocate a single shared hash table for all fine
             // tasks that compute a single C(:,j)
             continue ;
         }
 
         int64_t hash_size = TaskList [taskid].hsize ;
-        int64_t j = TaskList [taskid].vector ;
-        bool is_fine = (j >= 0) ;
-        bool use_Gustavson = (hash_size == cnrows) ;
-        int64_t j1 = TaskList [taskid].start ;
-        int64_t j2 = TaskList [taskid].end ;
-        int64_t nj = j2 - j1 + 1 ;
+        int64_t k = TaskList [taskid].vector ;
+        bool is_fine = (k >= 0) ;
+        bool use_Gustavson = (hash_size == cvlen) ;
+        int64_t kfirst = TaskList [taskid].start ;
+        int64_t klast = TaskList [taskid].end ;
+        int64_t nk = klast - kfirst + 1 ;
 
         if (is_fine && use_Gustavson)
         {
-            // Hf is uint8_t for the fine Gustavson method, but round up
+            // Hf is uint8_t for the fine Gustavson tasks, but round up
             // to the nearest number of int64_t values.
-            Hf_size_total +=
-                GB_CEIL ((hash_size + GB_HASH_PAD), sizeof (int64_t)) ;
+            Hf_size_total += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
         else
         {
-            Hf_size_total += (hash_size + GB_HASH_PAD) ;
+            // all other methods use Hf as int64_t
+            Hf_size_total += (hash_size + hi_pad) ;
         }
-        if (!is_fine && !use_Gustavson && nj > 1)
+        if (!is_fine && !use_Gustavson && nk > 1)
         {
-            // only large coarse hash tasks need Hi
-            Hi_size_total += (hash_size + GB_HASH_PAD) ;
+            // only multi-vector coarse hash tasks need Hi
+            Hi_size_total += (hash_size + hi_pad) ;
         }
-        Hx_size_total += (hash_size + GB_HASH_PAD) ;
+        // all tasks use an Hx array of size hash_size
+        Hx_size_total += (hash_size * csize + hx_pad) ;
     }
 
-    #if 1
-    printf ("Hi_size_total %g\n", (double) Hi_size_total) ;
-    printf ("Hf_size_total %g\n", (double) Hf_size_total) ;
-    printf ("Hx_size_total %g\n", (double) Hx_size_total) ;
+    #if 0
+    printf ("Hi_size_total "GBd" int64\n", Hi_size_total) ;
+    printf ("Hf_size_total "GBd" int64\n", Hf_size_total) ;
+    printf ("Hx_size_total "GBd" bytes\n", Hx_size_total) ;
+    printf ("csize: %g\n", (double) csize) ;
     #endif
 
     // allocate space for all hash tables
     GB_MALLOC_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;
     GB_CALLOC_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;
-    GB_MALLOC_MEMORY (Hx_all, Hx_size_total, sizeof (double)) ;
+    GB_MALLOC_MEMORY (Hx_all, Hx_size_total, 1) ;
 
-    if (0)
+    if (Hi_all == NULL || Hf_all == NULL || Hx_all == NULL)
     {
         // out of memory
+        GB_FREE_ALL ;
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     // split the space into separate hash tables
     int64_t *GB_RESTRICT Hi_split = Hi_all ;
     int64_t *GB_RESTRICT Hf_split = Hf_all ;
-    double  *GB_RESTRICT Hx_split = Hx_all ;
+    GB_void *GB_RESTRICT Hx_split = Hx_all ;
 
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
@@ -657,1398 +870,62 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         TaskList [taskid].Hx = Hx_split ;
 
         int64_t hash_size = TaskList [taskid].hsize ;
-        int64_t j = TaskList [taskid].vector ;
-        bool is_fine = (j >= 0) ;
-        bool use_Gustavson = (hash_size == cnrows) ;
-        int64_t j1 = TaskList [taskid].start ;
-        int64_t j2 = TaskList [taskid].end ;
-        int64_t nj = j2 - j1 + 1 ;
+        int64_t k = TaskList [taskid].vector ;
+        bool is_fine = (k >= 0) ;
+        bool use_Gustavson = (hash_size == cvlen) ;
+        int64_t kfirst = TaskList [taskid].start ;
+        int64_t klast = TaskList [taskid].end ;
+        int64_t nk = klast - kfirst + 1 ;
 
         if (is_fine && use_Gustavson)
         {
             // Hf is uint8_t for the fine Gustavson method
-            Hf_split += GB_CEIL ((hash_size + GB_HASH_PAD), sizeof (int64_t)) ;
+            Hf_split += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
         else
         {
             // Hf is int64_t for all other methods
-            Hf_split += (hash_size + GB_HASH_PAD) ;
+            Hf_split += (hash_size + hi_pad) ;
         }
-        if (!is_fine && !use_Gustavson && nj > 1)
+        if (!is_fine && !use_Gustavson && nk > 1)
         {
-            // only coarse hash tasks need Hi
-            Hi_split += (hash_size + GB_HASH_PAD) ;
+            // only multi-vector coarse hash tasks need Hi
+            Hi_split += (hash_size + hi_pad) ;
         }
-        Hx_split += (hash_size + GB_HASH_PAD) ;
+        // all tasks use an Hx array of size hash_size
+        Hx_split += (hash_size * csize + hx_pad) ;
     }
 
-    // assign hash tables to fine task teams
+    // assign shared hash tables to fine task teams
     for (int taskid = 0 ; taskid < nfine ; taskid++)
     {
         int master = TaskList [taskid].master ;
+        ASSERT (TaskList [master].vector >= 0) ;
         if (taskid != master)
         {
+            // this fine task (Gustavson or hash) shares its hash table
+            // with all other tasks in its team, for a single vector C(:,j).
+            ASSERT (TaskList [taskid].vector == TaskList [master].vector) ;
             TaskList [taskid].Hf = TaskList [master].Hf ;
             TaskList [taskid].Hx = TaskList [master].Hx ;
         }
     }
 
-    #if GB_TIMING
-    double t3 = omp_get_wtime ( ) - tic ; ;
-    tic = omp_get_wtime ( ) ;
-    #endif
-
     //==========================================================================
-    // phase1: count nnz(C(:,j)) for all tasks; do numeric work for fine tasks
+    // C = A*B, via saxpy3 method and built-in semiring
     //==========================================================================
-
-    // Coarse tasks: compute nnz (C(:,j1:j2)).
-    // Fine tasks: compute nnz (C(:,j)) and values in Hx, via atomics.
-
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
-
-        int64_t j = TaskList [taskid].vector ;
-        int64_t hash_size  = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cnrows) ;
-        bool is_fine = (j >= 0) ;
-
-        //----------------------------------------------------------------------
-        // do the symbolic task
-        //----------------------------------------------------------------------
-
-        if (is_fine)
-        {
-
-            //------------------------------------------------------------------
-            // fine task: compute nnz (C(:,j)) and values in Hx
-            //------------------------------------------------------------------
-
-            int64_t pB_start = TaskList [taskid].start ;
-            int64_t pB_end   = TaskList [taskid].end ;
-            int64_t my_cjnz = 0 ;
-            double *GB_RESTRICT Hx = TaskList [taskid].Hx ;
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // symbolic+numeric: Gustavson's method for fine task
-                //--------------------------------------------------------------
-
-                uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-
-                // All of Hf [...] is initially zero.
-
-                // Hf [i] == 0: unlocked, i has not been seen in C(:,j).
-                //              Hx [i] is not initialized.
-                // Hf [i] == 1: unlocked, i has been seen in C(:,j).
-                //              Hx [i] is initialized.
-                // Hf [i] == 2: locked.  Hx [i] in an unknown state.
-
-                // TODO: for min, max, and user-defined monoids, the
-                // "if (f==1)" test and the if-part must be disabled.
-
-                for (int64_t pB = pB_start ; pB <= pB_end ; pB++)
-                {
-                    // get B(k,j)
-                    int64_t k = Bi [pB] ;
-                    double bkj = Bx [pB] ;
-                    // scan A(:,k)
-                    for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                    {
-                        // get A(i,k)
-                        int64_t i = Ai [pA] ;
-                        double aik = Ax [pA] ;
-                        double t = aik * bkj ;          // MULTIPLY
-                        int64_t f ;
-                        // grab the entry from the hash table
-                        #pragma omp atomic read
-                        f = Hf [i] ;
-                        if (f == 1)
-                        {
-                            // C(i,j) is already initialized; update it
-                            #pragma omp atomic update
-                            Hx [i] += t ;           // MONOID
-                        }
-                        else
-                        {
-                            // lock the entry
-                            do
-                            {
-                                #pragma omp atomic capture
-                                {
-                                    f = Hf [i] ; Hf [i] = 2 ;
-                                }
-                            } while (f == 2) ;
-                            // the owner of the lock gets f == 0 if this is
-                            // the first time the entry has been seen, or
-                            // f == 1 if this is the 2nd time seen.  If f==2
-                            // is returned, the lock has not been obtained.
-                            if (f == 0)
-                            {
-                                // C(i,j) is a new entry in C(:,j)
-                                #pragma omp atomic write
-                                Hx [i] = t ;
-                            }
-                            else // f == 1
-                            {
-                                // C(i,j) already appears in C(:,j)
-                                #pragma omp atomic update
-                                Hx [i] += t ;           // MONOID
-                            }
-                            // unlock the entry
-                            #pragma omp atomic write
-                            Hf [i] = 1 ;
-                            if (f == 0)
-                            {
-                                // a new entry i has been found in C(:,j)
-                                my_cjnz++ ;
-                            }
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-
-                //--------------------------------------------------------------
-                // symbolic+numeric: hash method for fine task
-                //--------------------------------------------------------------
-
-                // Each hash entry Hf [hash] splits into two parts, (h,f).  f
-                // is the least significant bit.  h is 63 bits, and is the
-                // 1-based index i of the C(i,j) entry stored at that location
-                // in the hash table.
-
-                // All of Hf [...] is initially zero.
-
-                // Given Hf [hash] split into (h,f):
-                // h == 0, f == 0: unlocked, hash entry is unoccupied.
-                //                  Hx [hash] is not initialized.
-                // h == i+1, f == 0: unlocked, hash entry contains C(i,j).
-                //                  Hx [hash] is initialized.
-                // h == 0, f == 1: locked, hash entry is unoccupied.
-                //                  Hx [hash] is not initialized.
-                // h == i+1, f == 1: locked, hash entry contains C(i,j).
-                //                  Hx [hash] is initialized.
-
-                int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-
-                int64_t hash_bits = (hash_size-1) ;
-                for (int64_t pB = pB_start ; pB <= pB_end ; pB++)
-                {
-                    // get B(k,j)
-                    int64_t k = Bi [pB] ;
-                    double bkj = Bx [pB] ;
-                    // scan A(:,k)
-                    for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                    {
-                        // get A(i,k)
-                        int64_t i = Ai [pA] ;
-                        double aik = Ax [pA] ;
-                        double t = aik * bkj ;          // MULTIPLY
-                        int64_t i1 = i + 1 ;
-                        int64_t hf_i_unlocked = (i1 << 1) ;
-                        int64_t hf, h, f ;
-                        // C(i,j) += A(i,k)*B(k,j)
-                        int64_t hash = (i * GB_HASH_FACTOR) & (hash_bits) ;
-                        while (1)
-                        {
-                            // grab the entry from the hash table
-                            #pragma omp atomic read
-                            hf = Hf [hash] ;
-#if 1
-                            // [ only if += atomic update is supported:
-                            if (hf == hf_i_unlocked)
-                            {
-                                // C(i,j) is already initialized; update it.
-                                #pragma omp atomic update
-                                Hx [hash] += t ;        // MONOID
-                                break ;
-                            }
-                            // ]
-#endif
-                            h = (hf >> 1) ;
-                            if (h == 0 || h == i1)
-                            {
-                                // Hf [hash] not yet occupied, being
-                                // modified by another task, or already
-                                // occupied with entry i.  lock the entry.
-                                do
-                                {
-                                    #pragma omp atomic capture
-                                    {
-                                        hf = Hf [hash] ; Hf [hash] |= 1 ;
-                                    }
-                                } while (hf & 1) ;
-                                if (hf == 0)
-                                {
-                                    // hash table unoccupied.  claim it.
-                                    // C(i,j) has been seen for the first time.
-// #pragma omp flush
-#pragma omp atomic write
-                                    Hx [hash] = t ;
-// #pragma omp flush
-                                    // unlock the entry
-                                    #pragma omp atomic write
-                                    Hf [hash] = hf_i_unlocked ;
-                                    my_cjnz++ ;
-                                    break ;
-                                }
-                                else if (hf == hf_i_unlocked)
-                                {
-                                    // entry i is already in this hash entry.
-                                    // C(i,j) is already initialized; update it.
-// #pragma omp flush
-#pragma omp atomic update
-                                    Hx [hash] += t ;        // MONOID
-// #pragma omp flush
-                                    // unlock the entry
-                                    #pragma omp atomic write
-                                    Hf [hash] = hf_i_unlocked ;
-                                    break ;
-                                }
-                                else
-                                {
-                                    // Hf [hash] already occupied by different
-                                    // entry ; unlock with prior value.
-                                    #pragma omp atomic write
-                                    Hf [hash] = hf ;
-                                }
-                            }
-                            // linear probing for next entry.
-                            hash = (hash + 1) & (hash_bits) ;
-                        }
-                    }
-                }
-            }
-
-            TaskList [taskid].my_cjnz = my_cjnz ;
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // coarse task: compute nnz in each vector of A*B(:,j1:j2)
-            //------------------------------------------------------------------
-
-            int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-            int64_t j1 = TaskList [taskid].start ;
-            int64_t j2 = TaskList [taskid].end ;
-            int64_t mark = 0 ;
-            int64_t nj = j2 - j1 + 1 ;
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // symbolic: Gustavson's method for coarse task
-                //--------------------------------------------------------------
-
-                for (int64_t j = j1 ; j <= j2 ; j++)
-                {
-                    // count the entries in C(:,j)
-                    int64_t cjnz = 0 ;
-                    int64_t bjnz = Bp [j+1] - Bp [j] ;
-                    if (bjnz == 1)
-                    {
-                        // get B(k,j)
-                        int64_t k = Bi [Bp [j]] ;
-                        // C(:,j) = A(:,k)*B(k,j) for a single entry B(k,j)
-                        cjnz = Ap [k+1] - Ap [k] ;
-                    }
-                    else if (bjnz > 1)
-                    {
-                        mark++ ;
-                        for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                        {
-                            // get B(k,j)
-                            int64_t k = Bi [pB] ;
-                            // scan A(:,k)
-                            for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                            {
-                                // get A(i,k)
-                                int64_t i = Ai [pA] ;
-                                // add i to the gather/scatter workspace
-                                if (Hf [i] != mark)
-                                {
-                                    // C(i,j) is a new entry
-                                    Hf [i] = mark ;
-                                    cjnz++ ;
-                                }
-                            }
-                        }
-                    }
-                    Cp [j] = cjnz ;
-                }
-
-            }
-            else if (nj == 1)
-            {
-
-                //--------------------------------------------------------------
-                // symbolic: 1-column coarse hash task
-                //--------------------------------------------------------------
-
-                // Hi is not used.  Hf [hash] is zero if the hash entry is
-                // empty, or ((i+1) << 1) if it contains entry i.
-
-                int64_t hash_bits = (hash_size-1) ;
-                int64_t j = j1 ;
-
-                // count the entries in C(:,j)
-                int64_t cjnz = 0 ;
-                int64_t bjnz = Bp [j+1] - Bp [j] ;
-                if (bjnz == 1)
-                {
-                    // get B(k,j)
-                    int64_t k = Bi [Bp [j]] ;
-                    // C(:,j) = A(:,k)*B(k,j) for a single entry B(k,j)
-                    cjnz = Ap [k+1] - Ap [k] ;
-                }
-                else if (bjnz > 1)
-                {
-                    for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                    {
-                        // get B(k,j)
-                        int64_t k = Bi [pB] ;
-                        // scan A(:,k)
-                        int64_t pA_end = Ap [k+1] ;
-                        for (int64_t pA = Ap [k] ; pA < pA_end ; pA++)
-                        {
-                            // get A(i,k)
-                            int64_t i = Ai [pA] ;
-                            int64_t i1 = (i+1) << 1 ;
-                            // find i in the hash table
-                            int64_t hash = (i * GB_HASH_FACTOR) & (hash_bits) ;
-                            while (1)
-                            {
-                                int64_t h = Hf [hash] ;
-                                if (h == i1)
-                                {
-                                    // already in the hash table
-                                    break ;
-                                }
-                                else if (h == 0)
-                                {
-                                    // C(i,j) is a new entry.
-                                    // hash entry is not occupied;
-                                    // add i to the hash table
-                                    Hf [hash] = i1 ;
-                                    cjnz++ ;
-                                    break ;
-                                }
-                                else
-                                {
-                                    // linear probing
-                                    hash = (hash + 1) & (hash_bits) ;
-                                }
-                            }
-                        }
-                    }
-                }
-                Cp [j] = cjnz ;
-
-            }
-            else
-            {
-
-                //--------------------------------------------------------------
-                // symbolic: large coarse hash task
-                //--------------------------------------------------------------
-
-                int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
-
-                int64_t hash_bits = (hash_size-1) ;
-                for (int64_t j = j1 ; j <= j2 ; j++)
-                {
-                    // count the entries in C(:,j)
-                    int64_t cjnz = 0 ;
-                    int64_t bjnz = Bp [j+1] - Bp [j] ;
-                    if (bjnz == 1)
-                    {
-                        // get B(k,j)
-                        int64_t k = Bi [Bp [j]] ;
-                        // C(:,j) = A(:,k)*B(k,j) for a single entry B(k,j)
-                        cjnz = Ap [k+1] - Ap [k] ;
-                    }
-                    else if (bjnz > 1)
-                    {
-                        mark++ ;
-                        for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                        {
-                            // get B(k,j)
-                            int64_t k = Bi [pB] ;
-                            // scan A(:,k)
-                            int64_t pA_end = Ap [k+1] ;
-                            for (int64_t pA = Ap [k] ; pA < pA_end ; pA++)
-                            {
-                                // get A(i,k)
-                                int64_t i = Ai [pA] ;
-                                // find i in the hash table
-                                int64_t hash = (i * GB_HASH_FACTOR)
-                                               & (hash_bits) ;
-                                while (1)
-                                {
-                                    if (Hf [hash] == mark)
-                                    {
-                                        // hash entry is occupied
-                                        if (Hi [hash] == i)
-                                        {
-                                            // i already in the hash table
-                                            break ;
-                                        }
-                                        else
-                                        {
-                                            // linear probing
-                                            hash = (hash + 1) & (hash_bits) ;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // C(i,j) is a new entry.
-                                        // hash entry is not occupied;
-                                        // add i to the hash table
-                                        Hf [hash] = mark ;
-                                        Hi [hash] = i ;
-                                        cjnz++ ;
-                                        break ;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Cp [j] = cjnz ;
-                }
-            }
-        }
-    }
-
-    #if GB_TIMING
-    double t4 = omp_get_wtime ( ) - tic ; ;
-    tic = omp_get_wtime ( ) ;
-    #endif
-
-    //==========================================================================
-    // compute Cp with cumulative sum
-    //==========================================================================
-
-    // TaskList [taskid].my_cjnz is the # of unique entries found in C(:,j) by
-    // that task.  Sum these terms to compute total # of entries in C(:,j).
-
-    for (int taskid = 0 ; taskid < nfine ; taskid++)
-    {
-        int64_t j = TaskList [taskid].vector ;
-        Cp [j] = 0 ;
-    }
-
-    for (int taskid = 0 ; taskid < nfine ; taskid++)
-    {
-        int64_t j = TaskList [taskid].vector ;
-        int64_t my_cjnz = TaskList [taskid].my_cjnz ;
-        Cp [j] += my_cjnz ;
-        ASSERT (my_cjnz <= cnrows) ;
-    }
-
-    // Cp [j] is now nnz (C (:,j)), for all vectors j, whether computed by fine
-    // tasks or coarse tasks.
-
-    GB_cumsum (Cp, cncols, nonempty_result, nthreads) ;
-    int64_t cnz = Cp [cncols] ;
-
-    //==========================================================================
-    // allocate Ci and Cx
-    //==========================================================================
-
-    GB_MALLOC_MEMORY (Ci, cnz, sizeof (int64_t)) ;
-    GB_MALLOC_MEMORY (Cx, cnz, sizeof (double)) ;
-
-    if (0)
-    {
-        // out of memory
-    }
-
-    #if GB_TIMING
-    double t5 = omp_get_wtime ( ) - tic ;
-    tic = omp_get_wtime ( ) ;
-    #endif
-
-    //==========================================================================
-    // phase2: numeric phase for coarse tasks, prep for gather for fine tasks
-    //==========================================================================
-
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
-
-        double  *GB_RESTRICT Hx = TaskList [taskid].Hx ;
-        int64_t j = TaskList [taskid].vector ;
-        int64_t hash_size  = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cnrows) ;
-        bool is_fine = (j >= 0) ;
-
-        //----------------------------------------------------------------------
-        // do the numeric task
-        //----------------------------------------------------------------------
-
-        if (is_fine)
-        {
-
-            //------------------------------------------------------------------
-            // count nnz (C(:,j) for the final gather for this fine task
-            //------------------------------------------------------------------
-
-            int nfine_team_size = TaskList [taskid].nfine_team_size ;
-            int master     = TaskList [taskid].master ;
-            int my_teamid  = taskid - master ;
-            int64_t my_cjnz = 0 ;
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // final numeric: Gustavson's method for fine task
-                //--------------------------------------------------------------
-
-                int64_t pC = Cp [j] ;
-                int64_t cjnz = Cp [j+1] - pC ;
-                int64_t istart, iend ;
-                GB_PARTITION (istart, iend, cnrows, my_teamid, nfine_team_size);
-
-                if (cjnz == cnrows)
-                {
-
-                    //----------------------------------------------------------
-                    // C(:,j) is entirely dense: finish the work now
-                    //----------------------------------------------------------
-
-                    for (int64_t i = istart ; i < iend ; i++)
-                    {
-                        Ci [pC + i] = i ;
-                    }
-                    memcpy (Cx + pC + istart, Hx + istart,
-                        (iend-istart) * sizeof (double)) ;
-
-                }
-                else
-                {
-
-                    //----------------------------------------------------------
-                    // C(:,j) is sparse: count the work for this fine task
-                    //----------------------------------------------------------
-
-                    // TODO this is slow if cjnz << cnrows
-
-                    uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-
-                    // O(cnrows) linear scan of Hf to create the pattern of
-                    // C(:,j).  No sort is needed.
-
-                    for (int64_t i = istart ; i < iend ; i++)
-                    {
-                        if (Hf [i])
-                        {
-                            my_cjnz++ ;
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-
-                //--------------------------------------------------------------
-                // final numeric: hash method for fine task
-                //--------------------------------------------------------------
-
-                // TODO this is slow if cjnz << hash_size
-
-                int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-
-                int64_t hash_start, hash_end ;
-                GB_PARTITION (hash_start, hash_end, hash_size,
-                    my_teamid, nfine_team_size) ;
-
-                for (int64_t hash = hash_start ; hash < hash_end ; hash++)
-                {
-                    if (Hf [hash] != 0)
-                    {
-                        my_cjnz++ ;
-                    }
-                }
-            }
-
-            TaskList [taskid].my_cjnz = my_cjnz ;
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // numeric coarse task: compute C(:,j1:j2)
-            //------------------------------------------------------------------
-
-            int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-            int64_t j1 = TaskList [taskid].start ;
-            int64_t j2 = TaskList [taskid].end ;
-            int64_t nj = j2 - j1 + 1 ;
-            int64_t mark = nj + 1 ;
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // numeric: Gustavson's method for coarse task
-                //--------------------------------------------------------------
-
-                for (int64_t j = j1 ; j <= j2 ; j++)
-                {
-
-                    //----------------------------------------------------------
-                    // compute the pattern and values of C(:,j)
-                    //----------------------------------------------------------
-
-                    int64_t bjnz = Bp [j+1] - Bp [j] ;
-                    if (bjnz == 0)
-                    {
-                        // nothing to do
-                        continue ;
-                    }
-
-                    int64_t pC = Cp [j] ;
-                    int64_t cjnz = Cp [j+1] - pC ;
-
-                    if (bjnz == 1)
-                    {
-
-                        //------------------------------------------------------
-                        // C(:,j) = A(:,k)*B(k,j) for a single entry B(k,j)
-                        //------------------------------------------------------
-
-                        int64_t pB = Bp [j] ;
-                        // get B(k,j)
-                        int64_t k  = Bi [pB] ;
-                        double bkj = Bx [pB] ;
-                        // scan A(:,k)
-                        for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                        {
-                            // get A(i,k)
-                            int64_t i  = Ai [pA] ;
-                            double aik = Ax [pA] ;
-                            double t = aik * bkj ;      // MULTIPLY
-                            // update C(i,j) in gather/scatter work
-                            // C(i,j) = A(i,k) * B(k,j)
-                            Cx [pC] = t ;
-                            // log the row index in C(:,j)
-                            Ci [pC] = i ;
-                            pC++ ;
-                        }
-
-                    }
-                    else if (cjnz == cnrows)
-                    {
-
-                        //------------------------------------------------------
-                        // C(:,j) is dense; compute directly in Ci and Cx
-                        //------------------------------------------------------
-
-                        for (int64_t i = 0 ; i < cnrows ; i++)
-                        {
-                            Ci [pC + i] = i ;
-                            Cx [pC + i] = 0 ;
-                        }
-
-                        for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                        {
-                            // get B(k,j)
-                            int64_t k  = Bi [pB] ;
-                            double bkj = Bx [pB] ;
-                            // scan A(:,k)
-                            for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                            {
-                                // get A(i,k)
-                                int64_t i  = Ai [pA] ;
-                                double aik = Ax [pA] ;
-                                // C(i,j) += A(i,k) * B(k,j)
-                                Cx [pC + i] += aik * bkj ;  // MULTIPLY, MONOID
-                            }
-                        }
-
-                    }
-                    else if (cjnz > cnrows / 16)
-                    {
-
-                        //------------------------------------------------------
-                        // C(:,j) is not very sparse
-                        //------------------------------------------------------
-
-                        // compute C(:,j) in gather/scatter workspace
-                        mark++ ;
-                        for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                        {
-                            // get B(k,j)
-                            int64_t k  = Bi [pB] ;
-                            double bkj = Bx [pB] ;
-                            // scan A(:,k)
-                            for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                            {
-                                // get A(i,k)
-                                int64_t i  = Ai [pA] ;
-                                double aik = Ax [pA] ;
-                                double t = aik * bkj ;      // MULTIPLY
-                                // update C(i,j) in gather/scatter workspace
-                                if (Hf [i] != mark)
-                                {
-                                    // C(i,j) = A(i,k) * B(k,j)
-                                    Hf [i] = mark ;
-                                    Hx [i] = t ;
-                                }
-                                else
-                                {
-                                    // C(i,j) += A(i,k) * B(k,j)
-                                    Hx [i] += t ;           // MONOID
-                                }
-                            }
-                        }
-
-                        // gather the pattern and values into C(:,j)
-                        for (int64_t i = 0 ; i < cnrows ; i++)
-                        {
-                            if (Hf [i] == mark)
-                            {
-                                Ci [pC] = i ;
-                                Cx [pC] = Hx [i] ;
-                                pC++ ;
-                            }
-                        }
-
-                    }
-                    else
-                    {
-
-                        //------------------------------------------------------
-                        // C(:,j) is very sparse
-                        //------------------------------------------------------
-
-                        // compute C(:,j) in gather/scatter workspace
-                        mark++ ;
-                        for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                        {
-                            // get B(k,j)
-                            int64_t k  = Bi [pB] ;
-                            double bkj = Bx [pB] ;
-                            // scan A(:,k)
-                            for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                            {
-                                // get A(i,k)
-                                int64_t i  = Ai [pA] ;
-                                double aik = Ax [pA] ;
-                                double t = aik * bkj ;      // MULTIPLY
-                                // update C(i,j) in gather/scatter work
-                                if (Hf [i] != mark)
-                                {
-                                    // C(i,j) = A(i,k) * B(k,j)
-                                    Hf [i] = mark ;
-                                    Hx [i] = t ;
-                                    // log the row index in C(:,j)
-                                    Ci [pC++] = i ;
-                                }
-                                else
-                                {
-                                    // C(i,j) = A(i,k) * B(k,j)
-                                    Hx [i] += t ;           // MONOID
-                                }
-                            }
-                        }
-
-                        // sort the pattern of C(:,j)
-                        GB_qsort_1a (Ci + Cp [j], cjnz) ;   // coarse Gustavson
-
-                        // gather the values into C(:,j)
-                        for (int64_t p = Cp [j] ; p < Cp [j+1] ; p++)
-                        {
-                            int64_t i = Ci [p] ;
-                            Cx [p] = Hx [i] ;
-                        }
-                    }
-                }
-
-            }
-            else if (nj == 1)
-            {
-
-                //--------------------------------------------------------------
-                // 1-column coarse hash task
-                //--------------------------------------------------------------
-
-                int64_t hash_bits = (hash_size-1) ;
-                int64_t j = j1 ;
-
-                int64_t bjnz = Bp [j+1] - Bp [j] ;
-                if (bjnz == 0)
-                {
-                    // nothing to do
-                    continue ;
-                }
-
-                int64_t pC = Cp [j] ;
-                int64_t cjnz = Cp [j+1] - pC ;
-
-                if (bjnz == 1)
-                {
-                    int64_t pB = Bp [j] ;
-                    // get B(k,j)
-                    int64_t k  = Bi [pB] ;
-                    double bkj = Bx [pB] ;
-                    // scan A(:,k)
-                    for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                    {
-                        // get A(i,k)
-                        int64_t i  = Ai [pA] ;
-                        double aik = Ax [pA] ;
-                        double t = aik * bkj ;      // MULTIPLY
-                        // update C(i,j) in gather/scatter work
-                        // C(i,j) = A(i,k) * B(k,j)
-                        Cx [pC] = t ;
-                        // log the row index in C(:,j)
-                        Ci [pC] = i ;
-                        pC++ ;
-                    }
-
-                }
-                else
-                {
-
-                    // Hf [hash] has been set to (i+1)<<1 in the symbolic
-                    // phase, for all entries i in the pattern of C(:,j).
-                    // The first time Hf [hash] is seen, it is incremented
-                    // to ((i+1)<<1)+1 to denote it has been seen.
-
-                    for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                    {
-                        // get B(k,j)
-                        int64_t k  = Bi [pB] ;
-                        double bkj = Bx [pB] ;
-                        // scan A(:,k)
-                        int64_t pA_end = Ap [k+1] ;
-                        for (int64_t pA = Ap [k] ; pA < pA_end ; pA++)
-                        {
-                            // get A(i,k)
-                            int64_t i  = Ai [pA] ;
-                            int64_t i1 = (i+1) << 1 ;
-                            int64_t i2 = i1 + 1 ;
-                            double aik = Ax [pA] ;
-                            double t = aik * bkj ;      // MULTIPLY
-                            // find i in the hash table
-                            int64_t hash = (i * GB_HASH_FACTOR) & (hash_bits) ;
-                            while (1)
-                            {
-                                int64_t h = Hf [hash] ;
-                                if (h == i2)
-                                {
-                                    // C(i,j) has been seen before; update it.
-                                    // C(i,j) += A(i,k) * B(k,j)
-                                    Hx [hash] += t ; // MONOID
-                                    break ;
-                                }
-                                else if (h == i1)
-                                {
-                                    // first time C(i,j) seen in numeric phase
-                                    // C(i,j) = A(i,k) * B(k,j)
-                                    Hf [hash] = i2 ;
-                                    Hx [hash] = t ;
-                                    Ci [pC++] = i ;
-                                    break ;
-                                }
-                                else
-                                {
-                                    // linear probing
-                                    hash = (hash + 1) & (hash_bits) ;
-                                }
-                            }
-                        }
-                    }
-
-                    // sort the pattern of C(:,j)
-                    GB_qsort_1a (Ci + Cp [j], cjnz) ;   // coarse hash
-
-                    // gather the values of C(:,j)
-                    for (int64_t p = Cp [j] ; p < Cp [j+1] ; p++)
-                    {
-                        int64_t i = Ci [p] ;
-                        // find C(i,j) in the hash table
-                        int64_t hash = (i * GB_HASH_FACTOR) & (hash_bits) ;
-                        int64_t i2 = ((i+1) << 1) + 1 ;
-                        while (1)
-                        {
-                            if (Hf [hash] == i2)
-                            {
-                                // i found in the hash table
-                                Cx [p] = Hx [hash] ;
-                                break ;
-                            }
-                            else
-                            {
-                                // linear probing
-                                hash = (hash + 1) & (hash_bits) ;
-                            }
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-
-                //--------------------------------------------------------------
-                // hash method for large coarse task
-                //--------------------------------------------------------------
-
-                int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
-
-                int64_t hash_bits = (hash_size-1) ;
-
-                for (int64_t j = j1 ; j <= j2 ; j++)
-                {
-
-                    //----------------------------------------------------------
-                    // compute the pattern and values of C(:,j)
-                    //----------------------------------------------------------
-
-                    int64_t bjnz = Bp [j+1] - Bp [j] ;
-                    if (bjnz == 0)
-                    {
-                        // nothing to do
-                        continue ;
-                    }
-
-                    int64_t pC = Cp [j] ;
-                    int64_t cjnz = Cp [j+1] - pC ;
-
-                    if (bjnz == 1)
-                    {
-
-                        //------------------------------------------------------
-                        // C(:,j) = A(:,k)*B(k,j) for a single entry B(k,j)
-                        //------------------------------------------------------
-
-                        int64_t pB = Bp [j] ;
-                        // get B(k,j)
-                        int64_t k  = Bi [pB] ;
-                        double bkj = Bx [pB] ;
-                        // scan A(:,k)
-                        for (int64_t pA = Ap [k] ; pA < Ap [k+1] ; pA++)
-                        {
-                            // get A(i,k)
-                            int64_t i  = Ai [pA] ;
-                            double aik = Ax [pA] ;
-                            double t = aik * bkj ;      // MULTIPLY
-                            // update C(i,j) in gather/scatter work
-                            // C(i,j) = A(i,k) * B(k,j)
-                            Cx [pC] = t ;
-                            // log the row index in C(:,j)
-                            Ci [pC] = i ;
-                            pC++ ;
-                        }
-
-                    }
-                    else
-                    {
-
-                        //------------------------------------------------------
-                        // compute C(:,j) using the hash method
-                        //------------------------------------------------------
-
-                        mark++ ;
-                        for (int64_t pB = Bp [j] ; pB < Bp [j+1] ; pB++)
-                        {
-                            // get B(k,j)
-                            int64_t k  = Bi [pB] ;
-                            double bkj = Bx [pB] ;
-                            // scan A(:,k)
-                            int64_t pA_end = Ap [k+1] ;
-                            for (int64_t pA = Ap [k] ; pA < pA_end ; pA++)
-                            {
-                                // get A(i,k)
-                                int64_t i  = Ai [pA] ;
-                                double aik = Ax [pA] ;
-                                double t = aik * bkj ;      // MULTIPLY
-                                // find i in the hash table
-                                int64_t hash = (i * GB_HASH_FACTOR)
-                                               & (hash_bits) ;
-                                while (1)
-                                {
-                                    if (Hf [hash] == mark)
-                                    {
-                                        // hash entry is occupied
-                                        if (Hi [hash] == i)
-                                        {
-                                            // i already in the hash table,
-                                            // at Hi [hash]
-                                            // C(i,j) += A(i,k) * B(k,j)
-                                            Hx [hash] += t ; // MONOID
-                                            break ;
-                                        }
-                                        else
-                                        {
-                                            // linear probing
-                                            hash = (hash + 1) & (hash_bits) ;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // hash entry is not occupied;
-                                        // add i to the hash table
-                                        // C(i,j) = A(i,k) * B(k,j)
-                                        Hf [hash] = mark ;
-                                        Hi [hash] = i ;
-                                        Hx [hash] = t ;
-                                        Ci [pC++] = i ;
-                                        break ;
-                                    }
-                                }
-                            }
-                        }
-
-                        // sort the pattern of C(:,j)
-                        GB_qsort_1a (Ci + Cp [j], cjnz) ;   // coarse hash
-
-                        // gather the values of C(:,j)
-                        for (int64_t p = Cp [j] ; p < Cp [j+1] ; p++)
-                        {
-                            int64_t i = Ci [p] ;
-                            // find C(i,j) in the hash table
-                            int64_t hash = (i * GB_HASH_FACTOR) & (hash_bits) ;
-                            while (1)
-                            {
-                                if (Hi [hash] == i)
-                                {
-                                    // i found in the hash table
-                                    Cx [p] = Hx [hash] ;
-                                    break ;
-                                }
-                                else
-                                {
-                                    // linear probing
-                                    hash = (hash + 1) & (hash_bits) ;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    #if GB_TIMING
-    double t6 = omp_get_wtime ( ) - tic ; ;
-
-    #if 0
-    for (int taskid = 0 ; taskid < nfine ; taskid++)
-    {
-        int64_t j = TaskList [taskid].vector ;
-        int64_t hash_size  = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cnrows) ;
-        bool is_fine = (j >= 0) ;
-        if (is_fine)
-        {
-            int64_t my_cjnz = TaskList [taskid].my_cjnz ;
-            double fl       = TaskList [taskid].flops ;
-            printf ("fine count %d: my_cjnz "GBd"\n", taskid, my_cjnz) ;
-        }
-    }
-    #endif
-
-    tic = omp_get_wtime ( ) ;
-    #endif
-
-    // free workspace
-    GB_FREE_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;
-
-    //==========================================================================
-    // final numeric gather phase for fine tasks
-    //==========================================================================
-
-    // cumulative sum of nnz (C (:,j)) for each team of fine tasks
-    int64_t cjnz_sum = 0 ;
-    int64_t cjnz_max = 0 ;
-    for (int taskid = 0 ; taskid < nfine ; taskid++)
-    {
-        if (taskid == TaskList [taskid].master)
-        {
-            cjnz_sum = 0 ;
-            // also find the max (C (:,j)) for any fine hash tasks
-            int64_t hash_size = TaskList [taskid].hsize ;
-            bool use_Gustavson = (hash_size == cnrows) ;
-            if (!use_Gustavson)
-            {
-                int64_t j = TaskList [taskid].vector ;
-                int64_t cjnz = Cp [j+1] - Cp [j] ;
-                cjnz_max = GB_IMAX (cjnz_max, cjnz) ;
-            }
-        }
-        int64_t my_cjnz = TaskList [taskid].my_cjnz ;
-        TaskList [taskid].my_cjnz = cjnz_sum ;
-        cjnz_sum += my_cjnz ;
-    }
-
-    #if GB_TIMING
-    printf ("cjnz_max "GBd"\n", cjnz_max) ;
-    #endif
-
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (int taskid = 0 ; taskid < nfine ; taskid++)
-    {
-
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
-
-        int64_t j = TaskList [taskid].vector ;
-        double  *GB_RESTRICT Hx = TaskList [taskid].Hx ;
-        int64_t hash_size  = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cnrows) ;
-
-        int64_t pC = Cp [j] ;
-        int64_t cjnz = Cp [j+1] - pC ;
-        pC += TaskList [taskid].my_cjnz ;
-
-        int nfine_team_size = TaskList [taskid].nfine_team_size ;
-        int master     = TaskList [taskid].master ;
-        int my_teamid  = taskid - master ;
-
-        //----------------------------------------------------------------------
-        // gather the values into C(:,j)
-        //----------------------------------------------------------------------
-
-        if (use_Gustavson)
-        {
-
-            //------------------------------------------------------------------
-            // final numeric gather: Gustavson's method for fine task
-            //------------------------------------------------------------------
-
-            // TODO this is slow if cjnz << cnrows
-
-            uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-
-            if (cjnz < cnrows)
-            {
-                int64_t istart, iend ;
-                GB_PARTITION (istart, iend, cnrows, my_teamid, nfine_team_size);
-
-                for (int64_t i = istart ; i < iend ; i++)
-                {
-                    if (Hf [i])
-                    {
-                        Ci [pC] = i ;
-                        Cx [pC] = Hx [i] ;
-                        pC++ ;
-                    }
-                }
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // final numeric gather: hash method for fine task
-            //------------------------------------------------------------------
-
-            // TODO this is slow if cjnz << hash_size
-
-            int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-
-            int64_t hash_start, hash_end ;
-            GB_PARTITION (hash_start, hash_end, hash_size,
-                my_teamid, nfine_team_size) ;
-
-            for (int64_t hash = hash_start ; hash < hash_end ; hash++)
-            {
-                int64_t hf = Hf [hash] ;
-                if (hf != 0)
-                {
-                    int64_t i = (hf >> 1) - 1 ;
-                    Ci [pC++] = i ;
-                }
-            }
-        }
-    }
-
-    #if GB_TIMING
-    double t7 = omp_get_wtime ( ) - tic ; ;
-    tic = omp_get_wtime ( ) ;
-    #endif
-
-    //==========================================================================
-    // final numeric gather phase for fine tasks (hash method)
-    //==========================================================================
-
-    if (cjnz_max > 0)
-    {
-        bool parallel_sort = (cjnz_max > GB_BASECASE && nthreads_max > 1) ;
-
-        // allocate workspace
-        if (parallel_sort)
-        {
-            GB_MALLOC_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
-            if (0)
-            {
-                // out of memory
-            }
-        }
-
-        for (int taskid = 0 ; taskid < nfine ; taskid++)
-        {
-            int64_t hash_size  = TaskList [taskid].hsize ;
-            bool use_Gustavson = (hash_size == cnrows) ;
-
-            if (!use_Gustavson && taskid == TaskList [taskid].master)
-            {
-                int64_t j = TaskList [taskid].vector ;
-                int64_t hash_bits = (hash_size-1) ;
-                int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                double  *GB_RESTRICT Hx = TaskList [taskid].Hx ;
-                int64_t cjnz = Cp [j+1] - Cp [j] ;
-
-                //--------------------------------------------------------------
-                // sort the pattern of C(:,j)
-                //--------------------------------------------------------------
-
-                int nth = GB_nthreads (cjnz, chunk, nthreads_max) ;
-
-                #if GB_TIMING
-                double t9 = omp_get_wtime ( ) ;
-                #endif
-
-                if (parallel_sort && nth > 1)
-                {
-                    // parallel mergesort
-                    GB_msort_1 (Ci + Cp [j], W, cjnz, nth) ;   // fine hash
-                }
-                else
-                {
-                    // sequential quicksort
-                    GB_qsort_1a (Ci + Cp [j], cjnz) ;   // fine hash
-                }
-
-                #if GB_TIMING
-                t9 = omp_get_wtime ( ) - t9 ;
-                printf ("sort %d: j "GBd" cjnz "GBd" time: %g threads: %d\n",
-                    taskid, j, cjnz, t9, nth) ;
-                #endif
-
-                //--------------------------------------------------------------
-                // gather the values of C(:,j)
-                //--------------------------------------------------------------
-
-                #pragma omp parallel for num_threads(nth) schedule(static)
-                for (int64_t pC = Cp [j] ; pC < Cp [j+1] ; pC++)
-                {
-                    // get C(i,j)
-                    int64_t i = Ci [pC] ;
-                    int64_t i1 = i + 1 ;
-                    // find i in the hash table
-                    int64_t hash = (i * GB_HASH_FACTOR) & (hash_bits) ;
-                    while (1)
-                    {
-                        // Hf is not modified, so no atomic read is needed.
-                        int64_t hf ;
-                        {
-                            hf = Hf [hash] ;
-                        }
-                        int64_t h = (hf >> 1) ;
-                        if (h == i1)
-                        {
-                            // i already in the hash table, at Hf [hash]
-                            Cx [pC] = Hx [hash] ;
-                            break ;
-                        }
-                        else
-                        {
-                            // linear probing
-                            hash = (hash + 1) & (hash_bits) ;
-                        }
-                    }
-                }
-            }
-        }
-
-        // free workspace
-        GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
-    }
-
-    //==========================================================================
-    // free workspace and return result
-    //==========================================================================
-
-    #if GB_TIMING
-    double t8 = omp_get_wtime ( ) - tic ; ;
-    double tot = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 ;
-
-    printf ("ntasks %d ncoarse %d (gus: %d onehash: %d hash: %d)"
-        " nfine %d (gus: %d hash: %d)\n", ntasks,
-        ncoarse, ncoarse_gus, ncoarse_1hash, ncoarse_hash,
-        nfine, nfine_gus, nfine_hash) ;
-
-    printf ("t1: fl time        %16.6f (%10.2f)\n", t1, 100*t1/tot) ;
-    printf ("t2: task time      %16.6f (%10.2f)\n", t2, 100*t2/tot) ;
-    printf ("t3: alloc H time   %16.6f (%10.2f)\n", t3, 100*t3/tot) ;
-    printf ("t4: phase1         %16.6f (%10.2f)\n", t4, 100*t4/tot) ;
-    printf ("t5: cumsum time    %16.6f (%10.2f)\n", t5, 100*t5/tot) ;
-    printf ("t6: phase2         %16.6f (%10.2f)\n", t6, 100*t6/tot) ;
-    printf ("t7: fine gather1   %16.6f (%10.2f)\n", t7, 100*t7/tot) ;
-    printf ("t8: fine gather2   %16.6f (%10.2f)\n", t8, 100*t8/tot) ;
-
-    printf ("   total time                                 [[[ %g ]]]\n", tot) ;
-    printf ("   total flops %g\n", (double) total_flops) ;
-    #endif
-
-    (*Cp_handle) = Cp ;
-    (*Ci_handle) = Ci ;
-    (*Cx_handle) = Cx ;
-
-    GB_FREE_MEMORY (TaskList, ntasks, sizeof (GB_hashtask_struct)) ;
-    GB_FREE_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;
-    GB_FREE_MEMORY (Hx_all, Hx_size_total, sizeof (double)) ;
-
-    return (0) ;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //--------------------------------------------------------------------------
-    // C<M> = A'*B, via masked dot product method and built-in semiring
-    //--------------------------------------------------------------------------
 
     bool done = false ;
+
+    // pass the workspace to the worker, so it can be freed if any error occurs
+    void *Work [3] ;
+    size_t Worksize [3] ;
+    Work [0] = Hi_all ;
+    Work [1] = Hf_all ;
+    Work [2] = Hx_all ;
+    Worksize [0] = Hi_size_total ;
+    Worksize [1] = Hf_size_total ;
+    Worksize [2] = Hx_size_total ;
 
 #ifndef GBCOMPACT
 
@@ -2056,13 +933,14 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
-    #define GB_Adot3B(add,mult,xyname) GB_Adot3B_ ## add ## mult ## xyname
+    #define GB_Asaxpy3B(add,mult,xyname) GB_Asaxpy3B_ ## add ## mult ## xyname
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        info = GB_Adot3B (add,mult,xyname) (C, M,                       \
+        info = GB_Asaxpy3B (add,mult,xyname) (Chandle,                  \
             A, A_is_pattern, B, B_is_pattern,                           \
-            TaskList, ntasks, nthreads) ;                               \
+            TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \
+            Context) ;                                                  \
         done = (info != GrB_NO_VALUE) ;                                 \
     }                                                                   \
     break ;
@@ -2082,9 +960,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #endif
 
-    //--------------------------------------------------------------------------
-    // user semirings created at compile time
-    //--------------------------------------------------------------------------
+    //==========================================================================
+    // C = A*B, via user semirings created at compile time
+    //==========================================================================
 
     if (semiring->object_kind == GB_USER_COMPILED)
     { 
@@ -2106,25 +984,27 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         if (A->type == atype_required && B->type == btype_required)
         {
-            info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, A, B,
+            // TODO add Context, and use TaskList_handle for saxpy3
+            // add Work and Worksize parameters too
+            info = GB_AxB_user (GxB_DEFAULT, semiring, Chandle, NULL, A, B,
                 flipxy,
                 /* heap: */ NULL, NULL, NULL, 0,
                 /* Gustavson: */ NULL,
                 /* dot2: */ NULL, NULL, nthreads, 0, 0, NULL,
-                /* dot3: */ TaskList, ntasks) ;
+                /* dot3 and saxpy3: */ TaskList, ntasks) ;
             done = true ;
         }
     }
 
-    //--------------------------------------------------------------------------
-    // C = A*B, via saxpy3 method and typecasting
-    //--------------------------------------------------------------------------
+    //==========================================================================
+    // C = A*B, via the generic saxpy3 method, with typecasting
+    //==========================================================================
 
     if (!done)
     {
 
         //----------------------------------------------------------------------
-        // get operators, functions, workspace, contents of A, B, C, and M
+        // get operators, functions, workspace, contents of A, B, and C
         //----------------------------------------------------------------------
 
         GxB_binary_function fmult = mult->function ;
@@ -2139,12 +1019,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         // scalar workspace: because of typecasting, the x/y types need not
         // be the same as the size of the A and B types.
-        // flipxy false: aki = (xtype) A(k,i) and bkj = (ytype) B(k,j)
-        // flipxy true:  aki = (ytype) A(k,i) and bkj = (xtype) B(k,j)
-        size_t aki_size = flipxy ? ysize : xsize ;
+        // flipxy false: aik = (xtype) A(i,k) and bkj = (ytype) B(k,j)
+        // flipxy true:  aik = (ytype) A(i,k) and bkj = (xtype) B(k,j)
+        size_t aik_size = flipxy ? ysize : xsize ;
         size_t bkj_size = flipxy ? xsize : ysize ;
 
         GB_void *GB_RESTRICT terminal = add->terminal ;
+        GB_void *GB_RESTRICT identity = add->identity ;
 
         GB_cast_function cast_A, cast_B ;
         if (flipxy)
@@ -2165,77 +1046,93 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
 
         //----------------------------------------------------------------------
-        // C<M> = A'*B via dot products, function pointers, and typecasting
+        // C = A*B via saxpy3 method, function pointers, and typecasting
         //----------------------------------------------------------------------
 
-        // aki = A(k,i), located in Ax [pA]
-        #define GB_GETA(aki,Ax,pA)                                          \
-            GB_void aki [GB_VLA(aki_size)] ;                                \
-            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
+        #define GB_IDENTITY identity
+
+        // aik = A(i,k), located in Ax [pA]
+        #define GB_GETA(aik,Ax,pA)                                          \
+            GB_void aik [GB_VLA(aik_size)] ;                                \
+            if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize) ;
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
             GB_void bkj [GB_VLA(bkj_size)] ;                                \
             if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
 
-        // break if cij reaches the terminal value
-        #define GB_DOT_TERMINAL(cij)                                        \
-            if (terminal != NULL && memcmp (cij, terminal, csize) == 0)     \
-            {                                                               \
-                break ;                                                     \
-            }
+        // t = A(i,k) * B(k,j)
+        #define GB_MULT(t, aik, bkj)                                        \
+            GB_MULTIPLY (t, aik, bkj) ;                                     \
 
-        // C(i,j) = A(i,k) * B(k,j)
-        #define GB_MULT(cij, aki, bkj)                                      \
-            GB_MULTIPLY (cij, aki, bkj) ;                                   \
-
-        // C(i,j) += A(i,k) * B(k,j)
-        #define GB_MULTADD(cij, aki, bkj)                                   \
-            GB_void zwork [GB_VLA(csize)] ;                                 \
-            GB_MULTIPLY (zwork, aki, bkj) ;                                 \
-            fadd (cij, cij, zwork) ;
-
-        // define cij for each task
-        #define GB_CIJ_DECLARE(cij)                                         \
-            GB_void cij [GB_VLA(csize)] ;
+        // define t for each task
+        #define GB_CIJ_DECLARE(t)                                           \
+            GB_void t [GB_VLA(csize)] ;
 
         // address of Cx [p]
-        #define GB_CX(p) Cx +((p)*csize)
+        #define GB_CX(p) (Cx +((p)*csize))
 
-        // save the value of C(i,j)
-        #define GB_CIJ_SAVE(cij,p)                                          \
-            memcpy (GB_CX (p), cij, csize) ;
+        // Cx [p] = t
+        #define GB_CIJ_WRITE(p,t)                                           \
+            memcpy (GB_CX (p), t, csize) ;
+
+        // Cx [p] += t
+        #define GB_CIJ_UPDATE(p,t)                                          \
+            fadd (GB_CX (p), GB_CX (p), t)
+
+        // address of Hx [i]
+        #define GB_HX(i) (Hx +((i)*csize))
+
+        // atomic update not available for function pointers
+        #define GB_HAS_ATOMIC 0
+
+        // normal Hx [i] += t
+        #define GB_HX_UPDATE(i, t)                                          \
+            fadd (GB_HX (i), GB_HX (i), t) ;
+
+        // normal Hx [i] = t
+        #define GB_HX_WRITE(i, t)                                           \
+            memcpy (GB_HX (i), t, csize) ;
+
+        // Cx [p] = Hx [i]
+        #define GB_CIJ_GATHER(p,i)                                          \
+            memcpy (GB_CX (p), GB_HX(i), csize) ;
+
+        // memcpy (&(Cx [pC]), &(Hx [i]), len)
+        #define GB_CIJ_MEMCPY(pC,i,len) \
+            memcpy (Cx +((pC)*csize), Hx +((i)*csize), (len) * csize)
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
-        // loops with function pointers cannot be vectorized
-        #define GB_DOT_SIMD ;
+        // printf ("generic saxpy3\n") ;
 
         if (flipxy)
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
-            #include "GB_AxB_dot3_template.c"
+            #include "GB_AxB_saxpy3_template.c"
             #undef GB_MULTIPLY
         }
         else
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
-            #include "GB_AxB_dot3_template.c"
+            #include "GB_AxB_saxpy3_template.c"
             #undef GB_MULTIPLY
         }
     }
 
-    //--------------------------------------------------------------------------
-    // free workspace and return result
-    //--------------------------------------------------------------------------
+    //==========================================================================
+    // prune empty vectors, free workspace, and return result
+    //==========================================================================
 
     GB_FREE_WORK ;
     ASSERT_MATRIX_OK (C, "saxpy3: C = A*B output", GB0) ;
+    info = GB_hypermatrix_prune (C, Context) ;
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    return (GrB_SUCCESS) ;
+    // printf ("saxpy3 done\n") ;
+    return (info) ;
 }
 

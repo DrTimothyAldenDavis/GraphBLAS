@@ -41,7 +41,7 @@ GrB_Info GB_AxB_user
     const GrB_Semiring GB_s,
 
     GrB_Matrix *GB_Chandle,
-    const GrB_Matrix GB_M,
+    const GrB_Matrix GB_M,          // not yet used for saxpy3 method
     const GrB_Matrix GB_A,          // not used for dot2 method
     const GrB_Matrix GB_B,
     bool GB_flipxy,
@@ -58,13 +58,13 @@ GrB_Info GB_AxB_user
     // for dot method only:
     const GrB_Matrix *GB_Aslice,    // for dot2 only
     int64_t *GB_RESTRICT GB_B_slice,   // for dot2 only
-    const int GB_dot_nthreads,      // for dot2 and dot3
+    const int GB_dot_nthreads,      // for dot2, dot3, and saxpy3
     const int GB_naslice,           // for dot2 only
     const int GB_nbslice,           // for dot2 only
     int64_t **GB_C_counts,          // for dot2 only
 
-    // for dot3 method only:
-    const GB_task_struct *GB_RESTRICT GB_TaskList,
+    // for dot3 and saxpy3 methods only:
+    GB_void *GB_RESTRICT GB_TaskList,
     const int GB_ntasks
 )
 {

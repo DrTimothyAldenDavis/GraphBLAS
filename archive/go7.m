@@ -1,4 +1,4 @@
-
+% TODO move to Test, or delete
 
 try
     GrB.finalize

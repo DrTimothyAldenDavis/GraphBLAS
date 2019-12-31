@@ -14,3 +14,8 @@ TODO: The following features are not yet supported for GrB matrices in MATLAB:
 
 The last two features don't exist for MATLAB sparse matrices.
 
+For Windows: Microsoft Visual Studio does not support OpenMP tasking,
+    which means that the internal sort is not parallel, but sequential.
+    This affects GrB.build, and some uses of matrix subreferencing.
+    (C(I,J) when I and/or J are unsorted lists).
+

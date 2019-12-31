@@ -1,4 +1,4 @@
-function codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
+function codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal, atomic)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
 % codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
@@ -15,6 +15,7 @@ fprintf (f, 'define(`GB_AgusB'', `GB_AgusB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot2B'', `GB_Adot2B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot3B'', `GB_Adot3B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AheapB'', `GB_AheapB__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Asaxpy3B'', `GB_Asaxpy3B__%s'')\n', name) ;
 
 % type of C, A, and B
 fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
@@ -32,6 +33,9 @@ else
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
     fprintf (f, 'define(`GB_dot_simd'', `GB_PRAGMA_SIMD'')\n') ;
 end
+
+% atomic monoids
+fprintf (f, 'define(`GB_has_atomic'', `%d'')\n', atomic) ;
 
 % to get an entry from A
 is_second = isequal (multop, 'second') ;
@@ -86,7 +90,7 @@ else
     % use explicit typecasing to avoid ANSI C integer promotion.
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', 'x_op_y') ;
-    fprintf (f, 'define(`GB_ADD'', `%s'')\n', add2) ;
+    % fprintf (f, 'define(`GB_ADD'', `%s'')\n', add2) ;
     fprintf (f, 'define(`GB_MULTIPLY_ADD'', `%s x_op_y = %s ; %s'')\n', ...
         ztype, mult2, add2) ;
 end
@@ -106,6 +110,7 @@ disable = [disable (sprintf (' || GxB_NO_%s_%s_%s', ...
 fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 fclose (f) ;
 
+% To create GB_control.h
 % ff = fopen ('temp.h', 'a') ;
 % fprintf (ff, '// #define GxB_NO_%s\n', upper (addop)) ;
 % fprintf (ff, '// #define GxB_NO_%s\n', upper (multop)) ;

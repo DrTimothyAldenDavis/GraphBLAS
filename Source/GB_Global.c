@@ -278,7 +278,7 @@ GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_chunk_set (double chunk)
 { 
     if (chunk <= GxB_DEFAULT) chunk = GB_CHUNK_DEFAULT ;
-    GB_Global.chunk = chunk ;
+    GB_Global.chunk = fmax (chunk, 1) ;
 }
 
 GB_PUBLIC   // accessed by the MATLAB interface only

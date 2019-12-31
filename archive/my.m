@@ -1,4 +1,6 @@
-function gbmake (what)
+function my (what)
+%MY TODO delete this when done
+
 %GBMAKE compile MATLAB interface for SuiteSparse:GraphBLAS
 %
 % Usage:

@@ -256,6 +256,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
+    // TODO use GB_hypermatrix_prune
     if (C_is_hyper && C->nvec_nonempty < Cnvec)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors

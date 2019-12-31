@@ -1,4 +1,5 @@
 function htest (A, B, nthreads)
+% TODO delete when done
 if (nargin > 2)
     GrB.threads (nthreads) ;
 end

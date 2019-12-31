@@ -290,6 +290,9 @@
 #define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
 
+// ceiling of a/b for two integers a and b
+#define GB_CEIL(a,b) (((a) + (b) - 1) / (b))
+
 //------------------------------------------------------------------------------
 // for coverage tests in Tcov/
 //------------------------------------------------------------------------------
@@ -2130,13 +2133,19 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *GB_RESTRICT *p_Ap,        // size nvec+1
-    int64_t *GB_RESTRICT *p_Ah,        // size nvec
+    int64_t *GB_RESTRICT *p_Ap,     // size nvec+1
+    int64_t *GB_RESTRICT *p_Ah,     // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
     const int64_t *Ah_old,          // size nvec_old
     const int64_t nvec_old,         // original number of vectors
+    GB_Context Context
+) ;
+
+GrB_Info GB_hypermatrix_prune
+(
+    GrB_Matrix A,               // matrix to prune
     GB_Context Context
 ) ;
 
@@ -2695,14 +2704,14 @@ GB_PUBLIC mtx_t GB_sync ;
 static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 (
     const bool A_is_hyper,          // true if A is hypersparse
-    const int64_t *GB_RESTRICT Ah,     // A->h [0..A->nvec-1]: list of vectors
-    const int64_t *GB_RESTRICT Ap,     // A->p [0..A->nvec  ]: pointers to vectors
-    int64_t *GB_RESTRICT pleft,        // look only in A->h [pleft..pright]
+    const int64_t *GB_RESTRICT Ah,  // A->h [0..A->nvec-1]: list of vectors
+    const int64_t *GB_RESTRICT Ap,  // A->p [0..A->nvec  ]: pointers to vectors
+    int64_t *GB_RESTRICT pleft,     // look only in A->h [pleft..pright]
     int64_t pright,                 // normally A->nvec-1, but can be trimmed
 //  const int64_t nvec,             // A->nvec: number of vectors
     const int64_t j,                // vector to find, as j = Ah [k]
-    int64_t *GB_RESTRICT pstart,       // start of vector: Ap [k]
-    int64_t *GB_RESTRICT pend          // end of vector: Ap [k+1]
+    int64_t *GB_RESTRICT pstart,    // start of vector: Ap [k]
+    int64_t *GB_RESTRICT pend       // end of vector: Ap [k+1]
 )
 {
     if (A_is_hyper)

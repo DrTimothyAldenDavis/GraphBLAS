@@ -9,7 +9,9 @@
 
 #ifndef GB_MXM_H
 #define GB_MXM_H
-#include "GB.h"
+#include "GB_saxpy3.h"
+
+//------------------------------------------------------------------------------
 
 GrB_Info GB_mxm                     // C<M> = A*B
 (
@@ -261,7 +263,7 @@ GrB_Info GB_AxB_user
     const GrB_Semiring GB_s,
 
     GrB_Matrix *GB_Chandle,
-    const GrB_Matrix GB_M,
+    const GrB_Matrix GB_M,          // not yet used for saxpy3
     const GrB_Matrix GB_A,          // not used for dot2 method
     const GrB_Matrix GB_B,
     bool GB_flipxy,
@@ -278,13 +280,13 @@ GrB_Info GB_AxB_user
     // for dot method only:
     const GrB_Matrix *GB_Aslice,    // for dot2 only
     int64_t *GB_RESTRICT GB_B_slice,   // for dot2 only
-    const int GB_dot_nthreads,      // for dot2 and dot3
+    const int GB_dot_nthreads,      // for dot2, dot3, and saxpy3
     const int GB_naslice,           // for dot2 only
     const int GB_nbslice,           // for dot2 only
     int64_t **GB_C_counts,          // for dot2 only
 
-    // for dot3 method only:
-    const GB_task_struct *GB_RESTRICT GB_TaskList,
+    // for dot3 and saxpy3 methods only:
+    GB_void *GB_RESTRICT GB_TaskList,
     const int GB_ntasks
 ) ;
 
@@ -320,6 +322,16 @@ GrB_Info GB_AxB_dot3_one_slice
     int *p_nthreads,                // # of threads to use
     // input:
     const GrB_Matrix M,             // matrix to slice
+    GB_Context Context
+) ;
+
+GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
+(
+    GrB_Matrix *Chandle,            // output matrix
+    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix B,             // input matrix
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Context Context
 ) ;
 

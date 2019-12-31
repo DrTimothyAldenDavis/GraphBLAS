@@ -96,7 +96,22 @@ m4_define(`GB_semirings', `if (0)
 m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
     else if (GB_s == $1)
     {
-        if (GB_AxB_method == GxB_AxB_GUSTAVSON)
+        if (GB_AxB_method == GxB_AxB_DEFAULT)
+        {
+            if (GB_flipxy)
+            {
+                GB_info = GB_AxB_user_saxpy3_$1_flipxy
+                    (*GB_Chandle, GB_A, false, GB_B, false,
+                        GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+            }
+            else
+            {
+                GB_info = GB_AxB_user_saxpy3_$1
+                    (*GB_Chandle, GB_A, false, GB_B, false,
+                        GB_TaskList, GB_ntasks, GB_dot_nthreads) ;
+            }
+        }
+        else if (GB_AxB_method == GxB_AxB_GUSTAVSON)
         {
             if (GB_flipxy)
             {
@@ -111,7 +126,6 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
         }
         else if (GB_AxB_method == GxB_AxB_DOT)
         {
-
             if (GB_Aslice == NULL)
             {
                 if (GB_flipxy)
@@ -186,6 +200,7 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #define GB_AgusB    GB_AxB_user_gus_$1
     #define GB_Adot2B   GB_AxB_user_dot2_$1
     #define GB_Adot3B   GB_AxB_user_dot3_$1
+    #define GB_Asaxpy3B GB_AxB_user_saxpy3_$1
     #define GB_AheapB   GB_AxB_user_heap_$1
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(x), &(y))
     #define GB_atype    GB_DEF_$3_xtype
@@ -198,10 +213,12 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GB_AgusB
     #undef GB_Adot2B
     #undef GB_Adot3B
+    #undef GB_Asaxpy3B
     #undef GB_AheapB
     #define GB_AgusB    GB_AxB_user_gus_$1_flipxy
     #define GB_Adot2B   GB_AxB_user_dot2_$1_flipxy
     #define GB_Adot3B   GB_AxB_user_dot3_$1_flipxy
+    #define GB_Asaxpy3B   GB_AxB_user_saxpy3_$1_flipxy
     #define GB_AheapB   GB_AxB_user_heap_$1_flipxy
     #define GB_MULTIPLY(z,x,y) GB_DEF_$3_function (&(z), &(y), &(x))
     #define GB_atype    GB_DEF_$3_ytype
@@ -214,6 +231,7 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GB_AgusB
     #undef GB_Adot2B
     #undef GB_Adot3B
+    #undef GB_Asaxpy3B
     #undef GB_AheapB
     #undef GB_ADD
     #undef GB_identity

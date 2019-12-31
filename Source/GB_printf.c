@@ -13,6 +13,7 @@
 
 #include "GB.h"
 
+// TODO fix warning message
 GB_PUBLIC
 int (* GB_printf_function ) (const char *format, ...) = NULL ;
 
