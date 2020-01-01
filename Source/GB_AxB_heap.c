@@ -291,18 +291,18 @@ GrB_Info GB_AxB_heap                // C<M>=A*B or C=A*B using a heap
 
         // C(i,j) = A(i,k) * B(k,j)
         #define GB_MULT(cij, aik, bkj)                                      \
-            GB_MULTIPLY (cij, aik, bkj) ;                                   \
+            GB_MULTIPLY (cij, aik, bkj)
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aik, bkj)                                   \
             GB_MULTIPLY (t, aik, bkj) ;                                     \
-            fadd (cij, cij, t) ;
+            fadd (cij, cij, t)
 
         // C->x or cnz has moved so the pointer to cij needs to be recomputed
-        #define GB_CIJ_REACQUIRE(cij, cnz)  cij = Cx + cnz * csize ;
+        #define GB_CIJ_REACQUIRE(cij, cnz)  cij = Cx + (cnz) * csize
 
         // save the value of C(i,j) by advancing cij pointer to next value
-        #define GB_CIJ_SAVE(cij,p)          cij += csize ;
+        #define GB_CIJ_SAVE(cij,p)          cij += csize
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void

@@ -1,6 +1,9 @@
 
 
 
+
+
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -37,9 +40,10 @@
 // B type:   uint64_t
 
 // Multiply: z = (aik > bkj)
-// Add:      cij = (cij && z)
-// atomic?   0
-// MultAdd:  cij = (cij && (aik > bkj))
+// Add:      cij &= z
+//           atomic?        1
+//           OpenMP atomic? 1
+// MultAdd:  cij &= (aik > bkj)
 // Identity: true
 // Terminal: if (cij == false) break ;
 
@@ -63,15 +67,15 @@
 #define GB_CX(p) Cx [p]
 
 // multiply operator
-#define GB_MULT(z, x, y)        \
-    z = (x > y) ;
+#define GB_MULT(z, x, y) \
+    z = (x > y)
 
 // multiply-add
-#define GB_MULTADD(z, x, y)     \
-    z = (z && (x > y)) ;
+#define GB_MULTADD(z, x, y) \
+    z &= (x > y)
 
 // copy scalar
-#define GB_COPY_C(z,x) z = x ;
+#define GB_COPY_C(z,x) z = x
 
 // monoid identity value (Gustavson's method only, with no mask)
 #define GB_IDENTITY \
@@ -86,14 +90,14 @@
     ;
 
 // cij is not a pointer but a scalar; nothing to do
-#define GB_CIJ_REACQUIRE(cij,cnz) ;
+#define GB_CIJ_REACQUIRE(cij,cnz)
 
 // declare the cij scalar
 #define GB_CIJ_DECLARE(cij) \
-    bool cij ;
+    bool cij
 
 // save the value of C(i,j)
-#define GB_CIJ_SAVE(cij,p) Cx [p] = cij ;
+#define GB_CIJ_SAVE(cij,p) Cx [p] = cij
 
 #define GB_SAUNA_WORK(i) Sauna_Work [i]
 
@@ -104,25 +108,37 @@
 
 // C(i,j) += t
 #define GB_CIJ_UPDATE(p,t) \
-    Cx [p] = (Cx [p] && t)
+    Cx [p] &= t
 
 // Cx [p] = Hx [i]
 #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
 
 // Hx [i] += t
 #define GB_HX_UPDATE(i,t) \
-    Hx [i] = (Hx [i] && t)
+    Hx [i] &= t
+
+// x + y
+#define GB_ADD_FUNCTION(x,y) \
+    x & y
+
+// type with size of GB_CTYPE, and can be used in compare-and-swap
+#define GB_CTYPE_PUN \
+    bool
 
 // Hx [i] = t
 #define GB_HX_WRITE(i,t) Hx [i] = t
 
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
-    0
+    1
 
-// memcpy (&(Cx [pC]), &(Hx [i]), len)
-#define GB_CIJ_MEMCPY(pC,i,len) \
-    memcpy (Cx +(pC), Hx +(i), (len) * sizeof(bool))
+// 1 if monoid update can be done with a #pragma omp atomic update, 0 otherwise
+#define GB_HAS_OMP_ATOMIC \
+    1
+
+// memcpy (&(Cx [p]), &(Hx [i]), len)
+#define GB_CIJ_MEMCPY(p,i,len) \
+    memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool))
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

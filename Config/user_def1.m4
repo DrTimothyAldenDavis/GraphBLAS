@@ -178,12 +178,12 @@ m4_define(`GB_semiring', `m4_define(`GB_semirings', GB_semirings()
 
 m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GBCOMPACT
-    #define GB_ADD(z,y)    GB_DEF_$2_add (&(z), &(z), &(y))
-    #define GB_MULTIPLY_ADD(c,a,b)  \
+    #define GB_add_update(z,y)    GB_DEF_$2_add (&(z), &(z), &(y))
+    #define GB_multiply_add(c,a,b)  \
     {                               \
         GB_ctype t ;                \
         GB_MULTIPLY(t,a,b) ;        \
-        GB_ADD(c,t) ;               \
+        GB_add_update(c,t) ;        \
     }
     #define GB_identity    GB_DEF_$2_identity
     #define GB_dot_simd    ;
@@ -233,7 +233,7 @@ m4_define(`GxB_Semiring_define', `GB_semiring($1,`
     #undef GB_Adot3B
     #undef GB_Asaxpy3B
     #undef GB_AheapB
-    #undef GB_ADD
+    #undef GB_add_function
     #undef GB_identity
     #undef GB_dot_simd
     #undef GB_terminal

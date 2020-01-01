@@ -945,7 +945,7 @@ typedef GB_Context_struct *GB_Context ;
 // logged by the GB_WHERE macro.
 
 #ifndef GB_PANIC
-#define GB_PANIC return (GrB_PANIC) ;
+#define GB_PANIC return (GrB_PANIC)
 #endif
 
 #define GB_CONTEXT(where_string)                                    \
@@ -956,7 +956,7 @@ typedef GB_Context_struct *GB_Context ;
     Context->where = where_string ;                                 \
     /* get the default max # of threads and default chunk size */   \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
-    Context->chunk = GB_Global_chunk_get ( ) ;
+    Context->chunk = GB_Global_chunk_get ( )
 
 #define GB_WHERE(where_string)                                      \
     if (!GB_Global_GrB_init_called_get ( ))                         \
@@ -964,7 +964,7 @@ typedef GB_Context_struct *GB_Context ;
         /* GrB_init (or GxB_init) has not been called! */           \
         GB_PANIC ;                                                  \
     }                                                               \
-    GB_CONTEXT (where_string) ;
+    GB_CONTEXT (where_string)
 
 //------------------------------------------------------------------------------
 // GB_GET_NTHREADS_MAX:  determine max # of threads for OpenMP parallelism.
@@ -1409,9 +1409,7 @@ GrB_Info GB_ix_resize           // resize a matrix
 
 // free A->i and A->x and return if critical section fails
 #define GB_IX_FREE(A)                                                       \
-{                                                                           \
-    if (GB_ix_free (A) == GrB_PANIC) GB_PANIC ;                             \
-}
+    if (GB_ix_free (A) == GrB_PANIC) GB_PANIC
 
 GrB_Info GB_ix_free             // free A->i and A->x of a matrix
 (
@@ -1425,9 +1423,7 @@ void GB_ph_free                 // free A->p and A->h of a matrix
 
 // free all content, and return if critical section fails
 #define GB_PHIX_FREE(A)                                                     \
-{                                                                           \
-    if (GB_phix_free (A) == GrB_PANIC) GB_PANIC ;                           \
-}
+    if (GB_phix_free (A) == GrB_PANIC) GB_PANIC
 
 GrB_Info GB_phix_free           // free all content of a matrix
 (
@@ -1760,40 +1756,32 @@ void GB_free_memory
 #else
 
 #define GB_NEW(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,Context)         \
-{                                                                             \
     info = GB_new (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,     \
-        Context) ;                                                            \
-}
+        Context)
 
 #define GB_CREATE(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,anz,numeric,Context)  \
-{                                                                             \
     info = GB_create (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,  \
-        anz, numeric, Context) ;                                              \
-}
+        anz, numeric, Context)
 
 #define GB_MATRIX_FREE(A)                                                     \
-{                                                                             \
-    if (GB_free (A) == GrB_PANIC) GB_PANIC ;                                  \
-}
+    if (GB_free (A) == GrB_PANIC) GB_PANIC
 
 #define GB_VECTOR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
 #define GB_SCALAR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
 #define GB_CALLOC_MEMORY(p,n,s)                                               \
-    p = GB_calloc_memory (n, s) ;
+    p = GB_calloc_memory (n, s)
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
-    p = GB_malloc_memory (n, s) ;
+    p = GB_malloc_memory (n, s)
 
 #define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                   \
-    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok) ;
+    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok)
 
 #define GB_FREE_MEMORY(p,n,s)                                                 \
-{                                                                             \
     GB_free_memory ((void *) p, n, s) ;                                       \
-    (p) = NULL ;                                                              \
-}
+    (p) = NULL
 
 #endif
 
@@ -1994,8 +1982,7 @@ GrB_Info GB_wait                // finish all pending computations
 // thread tid will operate on the range k1:(k2-1)
 #define GB_PARTITION(k1,k2,n,tid,nthreads)                                  \
     k1 = ((tid) ==  0          ) ?  0  : GB_PART ((tid),  n, nthreads) ;    \
-    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads) ;
-
+    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads)
 
 #if defined ( _OPENMP )
 

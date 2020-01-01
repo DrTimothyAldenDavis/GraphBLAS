@@ -4,9 +4,6 @@ function codegen_axb
 % This function creates all files of the form GB_AxB__*.[ch], including all
 % built-in semirings (GB_AxB__*.c) and one include file, GB_AxB__include.h.
 
-% TODO add GB_HAS_ATOMIC for monoids that can be
-% done with #pragma omp atomic update
-
 fprintf ('\nsemirings:\n') ;
 
 f = fopen ('Generated/GB_AxB__include.h', 'w') ;

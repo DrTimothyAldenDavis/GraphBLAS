@@ -32,15 +32,15 @@ for id = matrices
 
     B = sparse (rand (n,1)) ;
     for nth = threads
-        fprintf ('\nm %d =======================threads is %d nnz(B) is %d\n', ...
-            m, nth, nnz(B)) ;
+        fprintf ('\nm %d n %d ==================threads is %d nnz(B) is %d\n', ...
+            m, n, nth, nnz(B)) ;
         htest (A, B, nth) ;
     end
 
     B = sprand (n, 1, 0.001) ;
     for nth = threads
-        fprintf ('\nm %d =======================threads is %d nnz(B) is %d\n', ...
-            m, nth, nnz(B)) ;
+        fprintf ('\nm %d n %d ==================threads is %d nnz(B) is %d\n', ...
+            m, n, nth, nnz(B)) ;
         htest (A, B, nth) ;
     end
 end

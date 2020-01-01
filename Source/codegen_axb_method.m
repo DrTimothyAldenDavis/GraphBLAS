@@ -1,7 +1,7 @@
-function codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal, atomic)
+function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
-% codegen_axb_method (addop, multop, add, mult, ztype, xytype, identity, terminal)
+% codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic)
 
 f = fopen ('control.m4', 'w') ;
 
@@ -34,8 +34,23 @@ else
     fprintf (f, 'define(`GB_dot_simd'', `GB_PRAGMA_SIMD'')\n') ;
 end
 
-% atomic monoids
-fprintf (f, 'define(`GB_has_atomic'', `%d'')\n', atomic) ;
+% all built-in monoids are atomic
+fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
+
+% only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
+fprintf (f, 'define(`GB_has_omp_atomic'', `%d'')\n', omp_atomic) ;
+
+% MIN and MAX for floating-point types need unsigned integer puns
+% pun for compare-and-swap of ztype
+if (isequal (ztype, 'float'))
+    pun = 'uint32_t' ;
+elseif (isequal (ztype, 'double'))
+    pun = 'uint64_t' ;
+else
+    % no type punning needed for compare-and-swap
+    pun = ztype ;
+end
+fprintf (f, 'define(`GB_ctype_pun'', `%s'')\n', pun) ;
 
 % to get an entry from A
 is_second = isequal (multop, 'second') ;
@@ -68,10 +83,15 @@ mult2 = strrep (mult,  'xarg', '`$2''') ;
 mult2 = strrep (mult2, 'yarg', '`$3''') ;
 fprintf (f, 'define(`GB_MULTIPLY'', `$1 = %s'')\n', mult2) ;
 
-% create the add operator
+% create the add operator, of the form w += t
 add2 = strrep (add,  'w', '`$1''') ;
 add2 = strrep (add2, 't', '`$2''') ;
-fprintf (f, 'define(`GB_ADD'', `%s'')\n', add2) ;
+fprintf (f, 'define(`GB_add_update'', `%s'')\n', add2) ;
+
+% create the add function, of the form w + t
+add2 = strrep (addfunc,  'w', '`$1''') ;
+add2 = strrep (add2,     't', '`$2''') ;
+fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
 
 % create the multiply-add operator
 if (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
@@ -85,13 +105,12 @@ if (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
     multadd = strrep (multadd, 'w', '`$1''') ;
     multadd = strrep (multadd, 'xarg', '`$2''') ;
     multadd = strrep (multadd, 'yarg', '`$3''') ;
-    fprintf (f, 'define(`GB_MULTIPLY_ADD'', `%s'')\n', multadd) ;
+    fprintf (f, 'define(`GB_multiply_add'', `%s'')\n', multadd) ;
 else
     % use explicit typecasing to avoid ANSI C integer promotion.
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', 'x_op_y') ;
-    % fprintf (f, 'define(`GB_ADD'', `%s'')\n', add2) ;
-    fprintf (f, 'define(`GB_MULTIPLY_ADD'', `%s x_op_y = %s ; %s'')\n', ...
+    fprintf (f, 'define(`GB_multiply_add'', `%s x_op_y = %s ; %s'')\n', ...
         ztype, mult2, add2) ;
 end
 

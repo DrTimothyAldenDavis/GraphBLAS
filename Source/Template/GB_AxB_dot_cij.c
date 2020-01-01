@@ -201,7 +201,7 @@
                 cij_exists = true ;
                 break ;
                 #else
-                GB_DOT_MERGE ;
+                GB_DOT_MERGE
                 GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
                 pA++ ;
                 pB++ ;
@@ -243,7 +243,7 @@
                 cij_exists = true ;
                 break ;
                 #else
-                GB_DOT_MERGE ;
+                GB_DOT_MERGE
                 GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
                 pA++ ;
                 pB++ ;
@@ -280,7 +280,7 @@
                 cij_exists = true ;
                 break ;
                 #else
-                GB_DOT_MERGE ;
+                GB_DOT_MERGE
                 GB_DOT_TERMINAL (cij) ;         // break if cij == terminal
                 pA++ ;
                 pB++ ;

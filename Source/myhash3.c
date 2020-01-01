@@ -4,8 +4,6 @@
 
 // Prototype.  Assumes the plus-times-double semiring.
 
-// #define GB_DEBUG 1
-
 #include "myhash.h"
 #include "GB_sort.h"
 
@@ -14,12 +12,12 @@
 
 #define GB_NTASKS_PER_THREAD 2
 #define GB_HASH_FACTOR 107
-#define GB_TIMING 1
+#define GB_TIMING 0
 #define GB_COSTLY 1.2
 #define GB_FINE_WORK 2
 
 //------------------------------------------------------------------------------
-// GB_hashtask_struct: task descriptor for myhash3
+// GB_hashtask_struct: task descriptor
 //------------------------------------------------------------------------------
 
 // A coarse task computes C(:,j1:j2) = A*B(:,j1:j2), for a contiguous set of
@@ -149,7 +147,7 @@ int64_t myhash3
 {
 
     #if GB_TIMING
-    printf ("\n---------- parallel version %s\n", __FILE__) ;
+    printf ("\n---------- version %s\n", __FILE__) ;
     double tic = omp_get_wtime ( ) ;
     #endif
 
@@ -681,7 +679,7 @@ int64_t myhash3
         Hx_size_total += (hash_size + GB_HASH_PAD) ;
     }
 
-    #if 1
+    #if 0
     printf ("Hi_size_total %g\n", (double) Hi_size_total) ;
     printf ("Hf_size_total %g\n", (double) Hf_size_total) ;
     printf ("Hx_size_total %g\n", (double) Hx_size_total) ;
@@ -809,9 +807,6 @@ int64_t myhash3
                 // Hf [i] == 1: unlocked, i has been seen in C(:,j).
                 //              Hx [i] is initialized.
                 // Hf [i] == 2: locked.  Hx [i] in an unknown state.
-
-// for min, max, and user-defined monoids, the
-// "if (f==1)" test and the if-part must be disabled.
 
                 for (int64_t pB = pB_start ; pB <= pB_end ; pB++)
                 {

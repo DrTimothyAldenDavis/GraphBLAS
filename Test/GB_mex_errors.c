@@ -4660,12 +4660,12 @@ void mexFunction
 
     E = A ;
     GrB_Matrix_dup (&A, A) ;
-    CHECK (GB_mx_isequal (A,E)) ;
+    CHECK (GB_mx_isequal (A, E, 0)) ;
     GrB_free (&E) ;
 
     z = u ;
     GrB_Vector_dup (&u, u) ;
-    CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) z)) ;
+    CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) z, 0)) ;
     GrB_free (&z) ;
 
     for (int what = 0 ; what <= 2 ; what++)
@@ -4699,20 +4699,20 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_mxm (B, Amask, NULL, GxB_PLUS_TIMES_FP64, A, A, NULL)) ;
         OK (GrB_mxm (A, Amask, NULL, GxB_PLUS_TIMES_FP64, A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_vxm (v, umask, NULL, GxB_PLUS_TIMES_FP64, u, A, NULL)) ;
 
         OK (GrB_vxm (u, umask, NULL, GxB_PLUS_TIMES_FP64, u, A, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_mxv (v, umask, NULL, GxB_PLUS_TIMES_FP64, A, u, NULL)) ;
         OK (GrB_mxv (u, umask, NULL, GxB_PLUS_TIMES_FP64, A, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         //----------------------------------------------------------------------
@@ -4722,37 +4722,37 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_eWiseMult (v, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
         OK (GrB_eWiseMult (u, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_eWiseMult (v, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
         OK (GrB_eWiseMult (u, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_eWiseMult (v, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
         OK (GrB_eWiseMult (u, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_eWiseMult (B, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
         OK (GrB_eWiseMult (A, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_eWiseMult (B, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
         OK (GrB_eWiseMult (A, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_eWiseMult (B, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
         OK (GrB_eWiseMult (A, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         //----------------------------------------------------------------------
@@ -4762,37 +4762,37 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_eWiseAdd  (v, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
         OK (GrB_eWiseAdd  (u, umask, NULL, GxB_PLUS_TIMES_FP64,  u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_eWiseAdd  (v, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
         OK (GrB_eWiseAdd  (u, umask, NULL, GxB_PLUS_FP64_MONOID, u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_eWiseAdd  (v, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
         OK (GrB_eWiseAdd  (u, umask, NULL, GrB_PLUS_FP64,        u, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_eWiseAdd  (B, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
         OK (GrB_eWiseAdd  (A, Amask, NULL, GxB_PLUS_TIMES_FP64,  A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_eWiseAdd  (B, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
         OK (GrB_eWiseAdd  (A, Amask, NULL, GxB_PLUS_FP64_MONOID, A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_eWiseAdd  (B, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
         OK (GrB_eWiseAdd  (A, Amask, NULL, GrB_PLUS_FP64,        A, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         //----------------------------------------------------------------------
@@ -4804,24 +4804,24 @@ void mexFunction
         OK (GrB_Vector_dup (&v, u)) ;
         GB_Vector_check (u, "start u ", GB3, NULL, Context) ;
         GB_Vector_check (v, "start v ", GB3, NULL, Context) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
 
         OK (GrB_extract   (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
         GB_Vector_check (u, "u to check", GB3, NULL, Context) ;
         GB_Vector_check (v, "v to check", GB3, NULL, Context) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_free (&v) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_extract   (B, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
         OK (GrB_extract   (A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_extract   (v, umask, NULL, A, GrB_ALL, n, 0, NULL)) ;
         OK (GrB_extract   (u, umask, NULL, A, GrB_ALL, n, 0, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_free (&v) ;
 
         //----------------------------------------------------------------------
@@ -4833,21 +4833,21 @@ void mexFunction
         OK (GxB_subassign (A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
 
         GB_wait (B, Context) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GxB_subassign (B, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
         OK (GxB_subassign (A, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
         GB_wait (B, Context) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_subassign (v, umask, NULL, u, GrB_ALL, n, NULL)) ;
         OK (GxB_subassign (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
         GB_wait ((GrB_Matrix) v, Context) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_free (&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
@@ -4855,7 +4855,7 @@ void mexFunction
         OK (GxB_subassign (u, umask, NULL, u, ilist, n, NULL)) ;
         GB_wait ((GrB_Matrix) v, Context) ;
         GB_wait ((GrB_Matrix) u, Context) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_free (&v) ;
 
         //----------------------------------------------------------------------
@@ -4865,7 +4865,7 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_assign (B, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
         OK (GrB_assign (A, Amask, NULL, A, GrB_ALL, n, GrB_ALL, n, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 
         OK (GrB_Matrix_dup (&B, A)) ;
@@ -4873,13 +4873,13 @@ void mexFunction
         OK (GrB_assign (A, Amask, NULL, A, ilist, n, jlist, n, NULL)) ;
         GB_wait (B, Context) ;
         GB_wait (A, Context) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_assign (v, umask, NULL, u, GrB_ALL, n, NULL)) ;
         OK (GrB_assign (u, umask, NULL, u, GrB_ALL, n, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_free (&v) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
@@ -4887,7 +4887,7 @@ void mexFunction
         OK (GrB_assign (u, umask, NULL, u, ilist, n, NULL)) ;
         GB_wait ((GrB_Matrix) v, Context) ;
         GB_wait ((GrB_Matrix) u, Context) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_free (&v) ;
 
         //----------------------------------------------------------------------
@@ -4897,13 +4897,13 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GrB_apply (B, Amask, NULL, GrB_AINV_FP64, A, NULL)) ;
         OK (GrB_apply (A, Amask, NULL, GrB_AINV_FP64, A, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 1e-14)) ;
         GrB_free (&B) ;
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GrB_apply (v, umask, NULL, GrB_AINV_FP64, u, NULL)) ;
         OK (GrB_apply (u, umask, NULL, GrB_AINV_FP64, u, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 1e-14)) ;
         GrB_free (&v) ;
 
         //----------------------------------------------------------------------
@@ -4913,14 +4913,14 @@ void mexFunction
         OK (GrB_Matrix_dup (&B, A)) ;
         OK (GxB_select (B, Amask, NULL, GxB_NONZERO, A, NULL, NULL)) ;
         OK (GxB_select (A, Amask, NULL, GxB_NONZERO, A, NULL, NULL)) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 
 
         OK (GrB_Vector_dup (&v, u)) ;
         OK (GxB_select (v, umask, NULL, GxB_NONZERO, u, NULL, NULL)) ;
         OK (GxB_select (u, umask, NULL, GxB_NONZERO, u, NULL, NULL)) ;
-        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v)) ;
+        CHECK (GB_mx_isequal ((GrB_Matrix) u, (GrB_Matrix) v, 0)) ;
         GrB_free (&v) ;
 
 
@@ -4937,7 +4937,7 @@ void mexFunction
         OK (GrB_Matrix_nvals (&ignore, B)) ;
         // GxB_print (A, GB3) ;
         // GxB_print (B, GB3) ;
-        CHECK (GB_mx_isequal (A,B)) ;
+        CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 
         if (what == 2)

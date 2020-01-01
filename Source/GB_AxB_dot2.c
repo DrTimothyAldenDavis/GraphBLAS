@@ -364,12 +364,12 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         // aki = A(k,i), located in Ax [pA]
         #define GB_GETA(aki,Ax,pA)                                          \
             GB_void aki [GB_VLA(aki_size)] ;                                \
-            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
+            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize)
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
             GB_void bkj [GB_VLA(bkj_size)] ;                                \
-            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
+            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
 
         // break if cij reaches the terminal value
         #define GB_DOT_TERMINAL(cij)                                        \
@@ -380,24 +380,24 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
         // C(i,j) = A(i,k) * B(k,j)
         #define GB_MULT(cij, aki, bkj)                                      \
-            GB_MULTIPLY (cij, aki, bkj) ;                                   \
+            GB_MULTIPLY (cij, aki, bkj)
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
             GB_void zwork [GB_VLA(csize)] ;                                 \
             GB_MULTIPLY (zwork, aki, bkj) ;                                 \
-            fadd (cij, cij, zwork) ;
+            fadd (cij, cij, zwork)
 
         // define cij for each task
         #define GB_CIJ_DECLARE(cij)                                         \
-            GB_void cij [GB_VLA(csize)] ;
+            GB_void cij [GB_VLA(csize)]
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
 
         // save the value of C(i,j)
         #define GB_CIJ_SAVE(cij,p)                                          \
-            memcpy (GB_CX (p), cij, csize) ;
+            memcpy (GB_CX (p), cij, csize)
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
@@ -406,7 +406,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         #define GB_PHASE_2_OF_2
 
         // loops with function pointers cannot be vectorized
-        #define GB_DOT_SIMD ;
+        #define GB_DOT_SIMD
 
         if (flipxy)
         { 

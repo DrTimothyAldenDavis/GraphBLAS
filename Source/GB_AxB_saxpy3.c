@@ -26,8 +26,6 @@
 
 //------------------------------------------------------------------------------
 
-// #define GB_DEBUG
-
 #include "GB_mxm.h"
 #include "GB_bracket.h"
 #include "GB_sort.h"
@@ -687,7 +685,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #endif
 
-    #if 1
+    #if 0
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;
@@ -1054,27 +1052,27 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // aik = A(i,k), located in Ax [pA]
         #define GB_GETA(aik,Ax,pA)                                          \
             GB_void aik [GB_VLA(aik_size)] ;                                \
-            if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize) ;
+            if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize)
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
             GB_void bkj [GB_VLA(bkj_size)] ;                                \
-            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
+            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
 
         // t = A(i,k) * B(k,j)
         #define GB_MULT(t, aik, bkj)                                        \
-            GB_MULTIPLY (t, aik, bkj) ;                                     \
+            GB_MULTIPLY (t, aik, bkj)
 
         // define t for each task
         #define GB_CIJ_DECLARE(t)                                           \
-            GB_void t [GB_VLA(csize)] ;
+            GB_void t [GB_VLA(csize)]
 
         // address of Cx [p]
         #define GB_CX(p) (Cx +((p)*csize))
 
         // Cx [p] = t
         #define GB_CIJ_WRITE(p,t)                                           \
-            memcpy (GB_CX (p), t, csize) ;
+            memcpy (GB_CX (p), t, csize)
 
         // Cx [p] += t
         #define GB_CIJ_UPDATE(p,t)                                          \
@@ -1088,15 +1086,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         // normal Hx [i] += t
         #define GB_HX_UPDATE(i, t)                                          \
-            fadd (GB_HX (i), GB_HX (i), t) ;
+            fadd (GB_HX (i), GB_HX (i), t)
 
         // normal Hx [i] = t
         #define GB_HX_WRITE(i, t)                                           \
-            memcpy (GB_HX (i), t, csize) ;
+            memcpy (GB_HX (i), t, csize)
 
         // Cx [p] = Hx [i]
         #define GB_CIJ_GATHER(p,i)                                          \
-            memcpy (GB_CX (p), GB_HX(i), csize) ;
+            memcpy (GB_CX (p), GB_HX(i), csize)
 
         // memcpy (&(Cx [pC]), &(Hx [i]), len)
         #define GB_CIJ_MEMCPY(pC,i,len) \

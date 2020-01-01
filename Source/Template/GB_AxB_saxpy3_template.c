@@ -38,20 +38,41 @@
 // prepare to iterate over the vector A(:,k)
 #define GB_GET_A_k                                                      \
     int64_t pA, pA_end ;                                                \
-    GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA, &pA_end) ;   \
+    GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA, &pA_end)     \
 
 // ctype t = A(i,k) * B(k,j)
 #define GB_T_EQ_AIK_TIMES_BKJ                               \
     GB_GETA (aik, Ax, pA) ;     /* aik = Ax [pA] ;  */      \
     GB_CIJ_DECLARE (t) ;        /* ctype t ;        */      \
-    GB_MULT (t, aik, bkj) ;     /* t = aik * bkj ;  */
+    GB_MULT (t, aik, bkj)       /* t = aik * bkj ;  */
 
 // atomic update
 #if GB_HAS_ATOMIC
     // Hx [i] += t via atomic update
-    #define GB_ATOMIC_UPDATE(i,t)       \
-        GB_PRAGMA (omp atomic update)   \
-        GB_HX_UPDATE (i, t) ;
+    #if GB_HAS_OMP_ATOMIC
+        // built-in PLUS, TIMES, LOR, LAND, LXOR monoids can be
+        // implemented with an OpenMP pragma
+        #define GB_ATOMIC_UPDATE(i,t)       \
+            GB_PRAGMA (omp atomic update)   \
+            GB_HX_UPDATE (i, t)
+    #else
+        // built-in MIN, MAX, and EQ monoids only, which cannot
+        // be implemented with an OpenMP pragma
+        #define GB_ATOMIC_UPDATE(i,t)                               \
+            GB_CTYPE xold, xnew, *px = Hx + (i) ;                   \
+            do                                                      \
+            {                                                       \
+                /* xold = Hx [i] via atomic read */                 \
+                GB_PRAGMA (omp atomic read)                         \
+                xold = (*px) ;                                      \
+                /* xnew = xold + t */                               \
+                xnew = GB_ADD_FUNCTION (xold, t) ;                  \
+            }                                                       \
+            while (!__sync_bool_compare_and_swap                    \
+                ((GB_CTYPE_PUN *) px,                               \
+                * ((GB_CTYPE_PUN *) (&xold)),                       \
+                * ((GB_CTYPE_PUN *) (&xnew))))
+    #endif
 #else
     // Hx [i] += t via critical section
     #define GB_ATOMIC_UPDATE(i,t)       \
@@ -65,7 +86,7 @@
     // Hx [i] = t via atomic write
     #define GB_ATOMIC_WRITE(i,t)       \
         GB_PRAGMA (omp atomic write)   \
-        GB_HX_WRITE (i, t) ;
+        GB_HX_WRITE (i, t)
 #else
     // Hx [i] = t via critical section
     #define GB_ATOMIC_WRITE(i,t)       \
@@ -192,7 +213,7 @@
                         if (f == 1)
                         { 
                             // C(i,j) is already initialized; update it
-                            GB_ATOMIC_UPDATE (i, t)     // Hx [i] += t
+                            GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
                         }
                         else
                         #endif
@@ -212,12 +233,12 @@
                             if (f == 0)
                             { 
                                 // C(i,j) is a new entry in C(:,j)
-                                GB_ATOMIC_WRITE (i, t)      // Hx [i] = t
+                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
                             }
                             else // f == 1
                             { 
                                 // C(i,j) already appears in C(:,j)
-                                GB_ATOMIC_UPDATE (i, t)     // Hx [i] += t
+                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
                             }
                             // unlock the entry
                             #pragma omp atomic write
@@ -281,7 +302,7 @@
                             if (hf == i_unlocked)
                             {
                                 // C(i,j) is already initialized; update it.
-                                GB_ATOMIC_UPDATE (hash, t)  // Hx [hash] += t
+                                GB_ATOMIC_UPDATE (hash, t) ;// Hx [hash] += t
                                 break ;
                             }
                             #endif
@@ -301,7 +322,7 @@
                                 if (hf == 0)
                                 { 
                                     // C(i,j) is a new entry in C(:,j)
-                                    GB_ATOMIC_WRITE (hash, t)   // Hx [hash] = t
+                                    GB_ATOMIC_WRITE (hash, t) ; // Hx [hash] = t
                                     // unlock the entry
                                     #pragma omp atomic write
                                     Hf [hash] = i_unlocked ;
@@ -311,7 +332,7 @@
                                 else if (hf == i_unlocked)
                                 { 
                                     // C(i,j) already appears in C(:,j)
-                                    GB_ATOMIC_UPDATE (hash, t)  // Hx[hash] += t
+                                    GB_ATOMIC_UPDATE (hash, t) ;// Hx[hash] += t
                                     // unlock the entry
                                     #pragma omp atomic write
                                     Hf [hash] = i_unlocked ;
@@ -344,7 +365,7 @@
             // coarse task: compute nnz in each vector of A*B(:,kfirst:klast)
             //------------------------------------------------------------------
 
-            // TODO make this a function
+            // TODO make this a single function used by all semirings
 
             int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
             int64_t kfirst = TaskList [taskid].start ;
@@ -520,7 +541,7 @@
     // phase2: compute Cp with cumulative sum and allocate C
     //==========================================================================
 
-    // TODO make this a function
+    // TODO make this a single function used by all semirings
 
     // TaskList [taskid].my_cjnz is the # of unique entries found in C(:,j) by
     // that task.  Sum these terms to compute total # of entries in C(:,j).
@@ -540,9 +561,9 @@
     }
 
     // Cp [kk] is now nnz (C (:,j)), for all vectors j, whether computed by
-    // fine tasks or coarse tasks.
+    // fine tasks or coarse tasks, and where j == (Bh == NULL) ? kk : Bh [kk].
 
-    int nth = 1 ; // GB_nthreads (cnvec, chunk, nthreads) ;
+    int nth = GB_nthreads (cnvec, chunk, nthreads) ;
     GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth) ;
     int64_t cnz = Cp [cnvec] ;
 
@@ -557,8 +578,6 @@
 
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
-
-    // printf ("ntasks %d nthreads %d (nfine %d)\n", ntasks, nthreads, nfine) ;
 
     //==========================================================================
     // phase3: numeric phase for coarse tasks, prep for gather for fine tasks
@@ -580,14 +599,16 @@
 
         if (is_fine)
         {
+            // TODO make this a single function used by all semirings
+            // Note the memcpy from Hx to Cx
 
             //------------------------------------------------------------------
             // count nnz (C(:,j) for the final gather for this fine task
             //------------------------------------------------------------------
 
             int nfine_team_size = TaskList [taskid].nfine_team_size ;
-            int master     = TaskList [taskid].master ;
-            int my_teamid  = taskid - master ;
+            int master    = TaskList [taskid].master ;
+            int my_teamid = taskid - master ;
             int64_t my_cjnz = 0 ;
 
             if (use_Gustavson)
@@ -600,7 +621,7 @@
                 int64_t pC = Cp [kk] ;
                 int64_t cjnz = Cp [kk+1] - pC ;
                 int64_t istart, iend ;
-                GB_PARTITION (istart, iend, cvlen, my_teamid, nfine_team_size);
+                GB_PARTITION (istart, iend, cvlen, my_teamid, nfine_team_size) ;
                 if (cjnz == cvlen)
                 {
                     // C(:,j) is entirely dense: finish the work now
@@ -670,7 +691,6 @@
                 // phase3: coarse Gustavson task
                 //--------------------------------------------------------------
 
-                // printf ("phase3: coarse Gustavson task\n") ;
                 for (int64_t kk = kfirst ; kk <= klast ; kk++)
                 {
                     // compute the pattern and values of C(:,j)
@@ -698,8 +718,8 @@
                     {
                         for (int64_t i = 0 ; i < cvlen ; i++)
                         { 
-                            Ci [pC + i] = i ;           // C(i,j) = 0
-                            GB_CIJ_WRITE (pC + i, GB_IDENTITY) ;
+                            Ci [pC + i] = i ;
+                            GB_CIJ_WRITE (pC + i, GB_IDENTITY) ; // C(i,j) = 0
                         }
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
@@ -715,7 +735,7 @@
                             }
                         }
                     }
-                    else if (cjnz > cvlen / 16) // C(:,j) is not very sparse
+                    else if (16 * cjnz > cvlen) // C(:,j) is not very sparse
                     {
                         mark++ ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
@@ -750,7 +770,7 @@
                             }
                         }
                     }
-                    else // C(:,j) is very sparse
+                    else if (cjnz > 0)  // C(:,j) is very sparse
                     {
                         mark++ ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
@@ -795,7 +815,6 @@
                 // phase3: 1-vector coarse hash task
                 //--------------------------------------------------------------
 
-                // printf ("phase3: 1-vector coarse hash task\n") ;
                 int64_t hash_bits = (hash_size-1) ;
                 int64_t kk = kfirst ;
                 GB_GET_B_j ;            // get B(:,j)
@@ -896,7 +915,6 @@
                 // phase3: multi-vector coarse task
                 //--------------------------------------------------------------
 
-                //printf ("%d phase3: multi-vector coarse hash task\n", taskid);
                 int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
                 for (int64_t kk = kfirst ; kk <= klast ; kk++)
@@ -994,7 +1012,6 @@
                     }
                     ASSERT (pC == Cp [kk+1]) ;
                 }
-                // printf ("%d phase3: multi-vector hash done\n", taskid) ;
             }
         }
     }
@@ -1002,8 +1019,6 @@
     //==========================================================================
     // phase4: gather phase for fine tasks
     //==========================================================================
-
-    // printf ("phase4\n") ;
 
     // cumulative sum of nnz (C (:,j)) for each team of fine tasks
     int64_t cjnz_sum = 0 ;
@@ -1101,8 +1116,6 @@
     // phase5: final gather phase for fine hash tasks
     //==========================================================================
 
-    // printf ("phase5\n") ;
-
     if (cjnz_max > 0)
     {
         int64_t *GB_RESTRICT W = NULL ;
@@ -1179,8 +1192,6 @@
         // free workspace
         GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
     }
-
-    // printf ("done phase5\n") ;
 }
 
 #undef GB_GET_B_j

@@ -315,7 +315,7 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
     #define GB_IDENTITY      identity
     #define GB_SAUNA_WORK(i) (Sauna_Work +((i)*zsize))
     #define GB_CX(p)         (Cx +((p)*zsize))
-    #define GB_COPY_C(z,x)   memcpy (z, x, zsize) ;
+    #define GB_COPY_C(z,x)   memcpy (z, x, zsize)
 
     size_t asize = A_is_pattern ? 0 : A->type->size ;
     size_t bsize = B_is_pattern ? 0 : B->type->size ;
@@ -339,12 +339,12 @@ GrB_Info GB_AxB_Gustavson           // C=A*B or C<M>=A*B, Gustavson's method
 
     // C(i,j) = A(i,k) * B(k,j)
     #define GB_MULT(cij, aik, bkj)                                      \
-        GB_MULTIPLY (cij, aik, bkj) ;                                   \
+        GB_MULTIPLY (cij, aik, bkj)
 
     // C(i,j) += A(i,k) * B(k,j)
     #define GB_MULTADD(cij, aik, bkj)                                   \
         GB_MULTIPLY (t, aik, bkj) ;                                     \
-        fadd (cij, cij, t) ;
+        fadd (cij, cij, t)
 
     #define GB_GENERIC
 

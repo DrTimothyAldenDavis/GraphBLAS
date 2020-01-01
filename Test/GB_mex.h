@@ -278,10 +278,31 @@ bool GB_mx_xsame    // true if arrays X and Y are the same (ignoring zombies)
     int64_t *I      // row indices (for zombies), same length as X and Y
 ) ;
 
+bool GB_mx_xsame32  // true if arrays X and Y are the same (ignoring zombies)
+(
+    float *X,
+    float *Y,
+    int64_t len,    // length of X and Y
+    int64_t *I,     // row indices (for zombies), same length as X and Y
+    float eps       // error tolerance allowed (eps > 0)
+) ;
+
+bool GB_mx_xsame64  // true if arrays X and Y are the same (ignoring zombies)
+(
+    double *X,
+    double *Y,
+    int64_t len,    // length of X and Y
+    int64_t *I,     // row indices (for zombies), same length as X and Y
+    double eps      // error tolerance allowed (eps > 0)
+) ;
+
 bool GB_mx_isequal  // true if A and B are exactly the same
 (
     GrB_Matrix A,
-    GrB_Matrix B
+    GrB_Matrix B,
+    double eps      // if A and B are both FP32 or FP64, and if eps > 0,
+                    // then the values are considered equal if their relative
+                    // difference is less than or equal to eps.
 ) ;
 
 int GB_mx_Sauna_nmalloc (void) ;  // return # of mallocs in Saunas in use
