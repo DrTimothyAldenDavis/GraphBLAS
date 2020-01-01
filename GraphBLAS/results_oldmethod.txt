@@ -1,0 +1,1243 @@
+go8
+
+################################################################################
+
+Prob = 
+
+  struct with fields:
+
+      name: 'GAP/GAP-twitter'
+     title: 'GAP benchmark: twitter'
+         A: [61578415x61578415 double]
+        id: 2852
+      date: '2017'
+    author: 'H. Kwak, C. Lee, H. Park, S. Moon'
+        ed: 'S. Beamer, K. Asanovic, D. Patterson'
+      kind: 'directed weighted graph'
+       aux: [1x1 struct]
+     notes: [106x69 char]
+
+Elapsed time is 107.885114 seconds.
+
+m 61578415 =======================threads is 1 nnz(B) is 61578415
+
+nthreads is 1
+MATLAB:
+Elapsed time is 59.132394 seconds.
+GrB:
+Elapsed time is 44.620400 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 55.556264 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0 0
+
+
+m 61578415 =======================threads is 2 nnz(B) is 61578415
+
+nthreads is 2
+MATLAB:
+Elapsed time is 59.108486 seconds.
+GrB:
+Elapsed time is 28.311243 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 22.043615 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0.000398387 2.83294e-15
+
+
+m 61578415 =======================threads is 4 nnz(B) is 61578415
+
+nthreads is 4
+MATLAB:
+Elapsed time is 59.290458 seconds.
+GrB:
+Elapsed time is 18.387238 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 11.632791 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0.000398143 2.72524e-15
+
+
+m 61578415 =======================threads is 8 nnz(B) is 61578415
+
+nthreads is 8
+MATLAB:
+Elapsed time is 59.092180 seconds.
+GrB:
+Elapsed time is 13.403538 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 6.344083 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0.000405255 2.93428e-15
+
+
+m 61578415 =======================threads is 16 nnz(B) is 61578415
+
+nthreads is 16
+MATLAB:
+Elapsed time is 59.148156 seconds.
+GrB:
+Elapsed time is 11.675378 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 3.774699 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0.000399992 2.71489e-15
+
+
+m 61578415 =======================threads is 20 nnz(B) is 61578415
+
+nthreads is 20
+MATLAB:
+Elapsed time is 59.120720 seconds.
+GrB:
+Elapsed time is 11.509576 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 3.294067 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0.00040272 2.89103e-15
+
+
+m 61578415 =======================threads is 32 nnz(B) is 61578415
+
+nthreads is 32
+MATLAB:
+Elapsed time is 59.309100 seconds.
+GrB:
+Elapsed time is 13.090648 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 2.959044 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0.000396898 2.91548e-15
+
+
+m 61578415 =======================threads is 40 nnz(B) is 61578415
+
+nthreads is 40
+MATLAB:
+Elapsed time is 59.164241 seconds.
+GrB:
+Elapsed time is 13.506473 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 2.802156 seconds.
+totnz/n      25.50 nnz C: 4.01033e+07 A: 1.46836e+09 B: 6.15784e+07
+err 0.000396735 3.02631e-15
+
+
+m 61578415 =======================threads is 1 nnz(B) is 61544
+
+nthreads is 1
+MATLAB:
+Elapsed time is 0.696008 seconds.
+GrB:
+Elapsed time is 0.257728 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.702887 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.46679e-08 0
+
+
+m 61578415 =======================threads is 2 nnz(B) is 61544
+
+nthreads is 2
+MATLAB:
+Elapsed time is 0.697999 seconds.
+GrB:
+Elapsed time is 0.218437 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.222685 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.24607e-08 7.18101e-17
+
+
+m 61578415 =======================threads is 4 nnz(B) is 61544
+
+nthreads is 4
+MATLAB:
+Elapsed time is 0.699112 seconds.
+GrB:
+Elapsed time is 0.188270 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.143184 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.19674e-08 7.2263e-17
+
+
+m 61578415 =======================threads is 8 nnz(B) is 61544
+
+nthreads is 8
+MATLAB:
+Elapsed time is 0.699872 seconds.
+GrB:
+Elapsed time is 0.172214 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.094756 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.16412e-08 8.4015e-17
+
+
+m 61578415 =======================threads is 16 nnz(B) is 61544
+
+nthreads is 16
+MATLAB:
+Elapsed time is 0.699304 seconds.
+GrB:
+Elapsed time is 0.172134 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.073082 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.07974e-08 8.82032e-17
+
+
+m 61578415 =======================threads is 20 nnz(B) is 61544
+
+nthreads is 20
+MATLAB:
+Elapsed time is 0.699891 seconds.
+GrB:
+Elapsed time is 0.168490 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.069113 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.11006e-08 8.34595e-17
+
+
+m 61578415 =======================threads is 32 nnz(B) is 61544
+
+nthreads is 32
+MATLAB:
+Elapsed time is 0.699939 seconds.
+GrB:
+Elapsed time is 0.172534 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.065052 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.08906e-08 8.96501e-17
+
+
+m 61578415 =======================threads is 40 nnz(B) is 61544
+
+nthreads is 40
+MATLAB:
+Elapsed time is 0.700559 seconds.
+GrB:
+Elapsed time is 0.190379 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.070377 seconds.
+totnz/n      23.86 nnz C: 817307 A: 1.46836e+09 B: 61544
+err 1.09141e-08 8.99582e-17
+
+
+################################################################################
+
+Prob = 
+
+  struct with fields:
+
+      name: 'GAP/GAP-web'
+     title: 'GAP benchmark: web'
+         A: [50636151x50636151 double]
+        id: 2853
+      date: '2017'
+    author: 'Laboratory for Web Algorithmics (LAW), Universita degli Studi di Milano, http://law.di.unimi.it/index.php'
+        ed: 'S. Beamer, K. Asanovic, D. Patterson'
+      kind: 'directed weighted graph'
+       aux: [1x1 struct]
+     notes: [130x69 char]
+
+Elapsed time is 108.725034 seconds.
+
+m 50636151 =======================threads is 1 nnz(B) is 50636151
+
+nthreads is 1
+MATLAB:
+Elapsed time is 11.259355 seconds.
+GrB:
+Elapsed time is 9.660615 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 9.396158 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 0 0
+
+
+m 50636151 =======================threads is 2 nnz(B) is 50636151
+
+nthreads is 2
+MATLAB:
+Elapsed time is 11.263937 seconds.
+GrB:
+Elapsed time is 7.931541 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 9.422176 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 3.96204e-06 2.58629e-17
+
+
+m 50636151 =======================threads is 4 nnz(B) is 50636151
+
+nthreads is 4
+MATLAB:
+Elapsed time is 11.259931 seconds.
+GrB:
+Elapsed time is 5.512622 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 4.848084 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 4.98949e-06 4.33533e-17
+
+
+m 50636151 =======================threads is 8 nnz(B) is 50636151
+
+nthreads is 8
+MATLAB:
+Elapsed time is 11.258535 seconds.
+GrB:
+Elapsed time is 4.357762 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 2.553505 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 7.14769e-06 4.70535e-17
+
+
+m 50636151 =======================threads is 16 nnz(B) is 50636151
+
+nthreads is 16
+MATLAB:
+Elapsed time is 11.259277 seconds.
+GrB:
+Elapsed time is 3.873840 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 1.401367 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 7.79816e-06 6.87188e-17
+
+
+m 50636151 =======================threads is 20 nnz(B) is 50636151
+
+nthreads is 20
+MATLAB:
+Elapsed time is 11.261736 seconds.
+GrB:
+Elapsed time is 3.735132 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 1.243102 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 7.10984e-06 7.35347e-17
+
+
+m 50636151 =======================threads is 32 nnz(B) is 50636151
+
+nthreads is 32
+MATLAB:
+Elapsed time is 11.259514 seconds.
+GrB:
+Elapsed time is 3.805816 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 1.191978 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 8.178e-06 1.14077e-16
+
+
+m 50636151 =======================threads is 40 nnz(B) is 50636151
+
+nthreads is 40
+MATLAB:
+Elapsed time is 11.221496 seconds.
+GrB:
+Elapsed time is 3.902013 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 1.136791 seconds.
+totnz/n      39.98 nnz C: 4.33995e+07 A: 1.93029e+09 B: 5.06362e+07
+err 9.1644e-06 1.33637e-16
+
+
+m 50636151 =======================threads is 1 nnz(B) is 50612
+
+nthreads is 1
+MATLAB:
+Elapsed time is 0.378740 seconds.
+GrB:
+Elapsed time is 0.117764 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.379766 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 8.25198e-11 0
+
+
+m 50636151 =======================threads is 2 nnz(B) is 50612
+
+nthreads is 2
+MATLAB:
+Elapsed time is 0.378333 seconds.
+GrB:
+Elapsed time is 0.169296 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.125625 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 8.1088e-11 3.73988e-21
+
+
+m 50636151 =======================threads is 4 nnz(B) is 50612
+
+nthreads is 4
+MATLAB:
+Elapsed time is 0.378466 seconds.
+GrB:
+Elapsed time is 0.157192 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.084710 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 1.52888e-10 3.49384e-21
+
+
+m 50636151 =======================threads is 8 nnz(B) is 50612
+
+nthreads is 8
+MATLAB:
+Elapsed time is 0.378534 seconds.
+GrB:
+Elapsed time is 0.153663 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.060545 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 1.75892e-10 6.594e-21
+
+
+m 50636151 =======================threads is 16 nnz(B) is 50612
+
+nthreads is 16
+MATLAB:
+Elapsed time is 0.378912 seconds.
+GrB:
+Elapsed time is 0.165712 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.046313 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 1.86387e-10 1.54098e-18
+
+
+m 50636151 =======================threads is 20 nnz(B) is 50612
+
+nthreads is 20
+MATLAB:
+Elapsed time is 0.407513 seconds.
+GrB:
+Elapsed time is 0.148150 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.043615 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 2.13359e-10 1.44797e-18
+
+
+m 50636151 =======================threads is 32 nnz(B) is 50612
+
+nthreads is 32
+MATLAB:
+Elapsed time is 0.385343 seconds.
+GrB:
+Elapsed time is 0.150917 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.040270 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 2.01873e-10 1.44197e-18
+
+
+m 50636151 =======================threads is 40 nnz(B) is 50612
+
+nthreads is 40
+MATLAB:
+Elapsed time is 0.385015 seconds.
+GrB:
+Elapsed time is 0.157356 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.040711 seconds.
+totnz/n      38.16 nnz C: 1.93183e+06 A: 1.93029e+09 B: 50612
+err 2.12567e-10 1.61283e-18
+
+
+################################################################################
+
+Prob = 
+
+  struct with fields:
+
+      name: 'GAP/GAP-road'
+     title: 'GAP benchmark: road'
+         A: [23947347x23947347 double]
+        id: 2854
+      date: '2017'
+    author: 'C. Demetrescu, A. V. Goldberg, D. S. Johnson'
+        ed: 'S. Beamer, K. Asanovic, D. Patterson'
+      kind: 'directed weighted graph'
+       aux: [1x1 struct]
+     notes: [103x71 char]
+
+Elapsed time is 5.060481 seconds.
+
+m 23947347 =======================threads is 1 nnz(B) is 23947347
+
+nthreads is 1
+MATLAB:
+Elapsed time is 3.387748 seconds.
+GrB:
+Elapsed time is 1.105198 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 1.169179 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 0 0
+
+
+m 23947347 =======================threads is 2 nnz(B) is 23947347
+
+nthreads is 2
+MATLAB:
+Elapsed time is 3.410806 seconds.
+GrB:
+Elapsed time is 2.117809 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.765610 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 3.88144e-08 5.4622e-18
+
+
+m 23947347 =======================threads is 4 nnz(B) is 23947347
+
+nthreads is 4
+MATLAB:
+Elapsed time is 3.369009 seconds.
+GrB:
+Elapsed time is 1.353214 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.427167 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 1.78793e-07 1.05564e-17
+
+
+m 23947347 =======================threads is 8 nnz(B) is 23947347
+
+nthreads is 8
+MATLAB:
+Elapsed time is 3.369467 seconds.
+GrB:
+Elapsed time is 1.018018 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.259641 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 4.52347e-07 7.83445e-18
+
+
+m 23947347 =======================threads is 16 nnz(B) is 23947347
+
+nthreads is 16
+MATLAB:
+Elapsed time is 3.368985 seconds.
+GrB:
+Elapsed time is 0.893254 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.189427 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 7.60372e-07 1.16653e-17
+
+
+m 23947347 =======================threads is 20 nnz(B) is 23947347
+
+nthreads is 20
+MATLAB:
+Elapsed time is 3.368683 seconds.
+GrB:
+Elapsed time is 0.879391 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.162919 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 7.89315e-07 1.0696e-17
+
+
+m 23947347 =======================threads is 32 nnz(B) is 23947347
+
+nthreads is 32
+MATLAB:
+Elapsed time is 3.371700 seconds.
+GrB:
+Elapsed time is 0.889386 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.151385 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 8.61263e-07 9.94354e-18
+
+
+m 23947347 =======================threads is 40 nnz(B) is 23947347
+
+nthreads is 40
+MATLAB:
+Elapsed time is 3.366921 seconds.
+GrB:
+Elapsed time is 0.870179 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.148612 seconds.
+totnz/n       4.41 nnz C: 2.39473e+07 A: 5.77086e+07 B: 2.39473e+07
+err 8.48299e-07 1.02581e-17
+
+
+m 23947347 =======================threads is 1 nnz(B) is 23939
+
+nthreads is 1
+MATLAB:
+Elapsed time is 0.158142 seconds.
+GrB:
+Elapsed time is 0.036629 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.008668 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+m 23947347 =======================threads is 2 nnz(B) is 23939
+
+nthreads is 2
+MATLAB:
+Elapsed time is 0.157350 seconds.
+GrB:
+Elapsed time is 0.035355 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.007265 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+m 23947347 =======================threads is 4 nnz(B) is 23939
+
+nthreads is 4
+MATLAB:
+Elapsed time is 0.157666 seconds.
+GrB:
+Elapsed time is 0.033898 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.006534 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+m 23947347 =======================threads is 8 nnz(B) is 23939
+
+nthreads is 8
+MATLAB:
+Elapsed time is 0.157784 seconds.
+GrB:
+Elapsed time is 0.033709 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.005881 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+m 23947347 =======================threads is 16 nnz(B) is 23939
+
+nthreads is 16
+MATLAB:
+Elapsed time is 0.157832 seconds.
+GrB:
+Elapsed time is 0.035076 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.005584 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+m 23947347 =======================threads is 20 nnz(B) is 23939
+
+nthreads is 20
+MATLAB:
+Elapsed time is 0.158291 seconds.
+GrB:
+Elapsed time is 0.033602 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.005555 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+m 23947347 =======================threads is 32 nnz(B) is 23939
+
+nthreads is 32
+MATLAB:
+Elapsed time is 0.158227 seconds.
+GrB:
+Elapsed time is 0.034352 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.005617 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+m 23947347 =======================threads is 40 nnz(B) is 23939
+
+nthreads is 40
+MATLAB:
+Elapsed time is 0.158272 seconds.
+GrB:
+Elapsed time is 0.034501 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.005646 seconds.
+totnz/n       2.41 nnz C: 57480 A: 5.77086e+07 B: 23939
+err 0 0
+
+
+################################################################################
+
+Prob = 
+
+  struct with fields:
+
+      name: 'GAP/GAP-kron'
+     title: 'GAP benchmark: kron'
+         A: [134217726x134217726 double]
+        id: 2855
+      date: '2017'
+    author: 'S. Beamer, K. Asanovic, D. Patterson'
+        ed: 'S. Beamer, K. Asanovic, D. Patterson'
+      kind: 'random undirected weighted graph'
+       aux: [1x1 struct]
+     notes: [60x71 char]
+
+Elapsed time is 312.162925 seconds.
+
+m 134217726 =======================threads is 1 nnz(B) is 134217726
+
+nthreads is 1
+MATLAB:
+Elapsed time is 211.166912 seconds.
+GrB:
+Elapsed time is 163.945804 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 204.937830 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0 0
+
+
+m 134217726 =======================threads is 2 nnz(B) is 134217726
+
+nthreads is 2
+MATLAB:
+Elapsed time is 212.879788 seconds.
+GrB:
+Elapsed time is 95.509047 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 77.797561 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0.00044851 9.71215e-16
+
+
+m 134217726 =======================threads is 4 nnz(B) is 134217726
+
+nthreads is 4
+MATLAB:
+Elapsed time is 212.987211 seconds.
+GrB:
+Elapsed time is 57.784359 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 40.413281 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0.000437502 1.01137e-15
+
+
+m 134217726 =======================threads is 8 nnz(B) is 134217726
+
+nthreads is 8
+MATLAB:
+Elapsed time is 212.923397 seconds.
+GrB:
+Elapsed time is 39.002827 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 21.117354 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0.000428135 1.04912e-15
+
+
+m 134217726 =======================threads is 16 nnz(B) is 134217726
+
+nthreads is 16
+MATLAB:
+Elapsed time is 212.948523 seconds.
+GrB:
+Elapsed time is 34.741207 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 14.081418 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0.000423881 1.04421e-15
+
+
+m 134217726 =======================threads is 20 nnz(B) is 134217726
+
+nthreads is 20
+MATLAB:
+Elapsed time is 212.952803 seconds.
+GrB:
+Elapsed time is 34.482162 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 12.763492 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0.000424363 1.04179e-15
+
+
+m 134217726 =======================threads is 32 nnz(B) is 134217726
+
+nthreads is 32
+MATLAB:
+Elapsed time is 210.956847 seconds.
+GrB:
+Elapsed time is 39.190303 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 11.436204 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0.000424287 9.46203e-16
+
+
+m 134217726 =======================threads is 40 nnz(B) is 134217726
+
+nthreads is 40
+MATLAB:
+Elapsed time is 211.237748 seconds.
+GrB:
+Elapsed time is 40.941730 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 10.760591 seconds.
+totnz/n      32.94 nnz C: 6.3074e+07 A: 4.22326e+09 B: 1.34218e+08
+err 0.000424084 1.08748e-15
+
+
+m 134217726 =======================threads is 1 nnz(B) is 134133
+
+nthreads is 1
+MATLAB:
+Elapsed time is 1.750256 seconds.
+GrB:
+Elapsed time is 0.832993 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 1.759018 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 1.50207e-08 0
+
+
+m 134217726 =======================threads is 2 nnz(B) is 134133
+
+nthreads is 2
+MATLAB:
+Elapsed time is 1.750067 seconds.
+GrB:
+Elapsed time is 0.669335 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.628171 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 1.32776e-08 2.32177e-17
+
+
+m 134217726 =======================threads is 4 nnz(B) is 134133
+
+nthreads is 4
+MATLAB:
+Elapsed time is 1.750627 seconds.
+GrB:
+Elapsed time is 0.532381 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.373011 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 1.23653e-08 2.92978e-17
+
+
+m 134217726 =======================threads is 8 nnz(B) is 134133
+
+nthreads is 8
+MATLAB:
+Elapsed time is 1.750228 seconds.
+GrB:
+Elapsed time is 0.501249 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.269451 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 1.10786e-08 2.71306e-17
+
+
+m 134217726 =======================threads is 16 nnz(B) is 134133
+
+nthreads is 16
+MATLAB:
+Elapsed time is 1.750305 seconds.
+GrB:
+Elapsed time is 0.452374 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.202734 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 9.97469e-09 2.84584e-17
+
+
+m 134217726 =======================threads is 20 nnz(B) is 134133
+
+nthreads is 20
+MATLAB:
+Elapsed time is 1.759811 seconds.
+GrB:
+Elapsed time is 0.454340 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.181067 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 9.54986e-09 2.91376e-17
+
+
+m 134217726 =======================threads is 32 nnz(B) is 134133
+
+nthreads is 32
+MATLAB:
+Elapsed time is 1.750713 seconds.
+GrB:
+Elapsed time is 0.450355 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.165664 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 8.82144e-09 3.05395e-17
+
+
+m 134217726 =======================threads is 40 nnz(B) is 134133
+
+nthreads is 40
+MATLAB:
+Elapsed time is 1.749719 seconds.
+GrB:
+Elapsed time is 0.458871 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.162435 seconds.
+totnz/n      31.48 nnz C: 2.18824e+06 A: 4.22326e+09 B: 134133
+err 8.23083e-09 3.1535e-17
+
+
+################################################################################
+
+Prob = 
+
+  struct with fields:
+
+      name: 'GAP/GAP-urand'
+     title: 'GAP benchmark: urand'
+         A: [134217728x134217728 double]
+        id: 2856
+      date: '2017'
+    author: 'S. Beamer, K. Asanovic, D. Patterson'
+        ed: 'S. Beamer, K. Asanovic, D. Patterson'
+      kind: 'random undirected weighted graph'
+       aux: [1x1 struct]
+     notes: [58x68 char]
+
+Elapsed time is 326.468535 seconds.
+
+m 134217728 =======================threads is 1 nnz(B) is 134217728
+
+nthreads is 1
+MATLAB:
+Elapsed time is 246.395304 seconds.
+GrB:
+Elapsed time is 176.232286 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 193.799566 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 0 0
+
+
+m 134217728 =======================threads is 2 nnz(B) is 134217728
+
+nthreads is 2
+MATLAB:
+Elapsed time is 246.204611 seconds.
+GrB:
+Elapsed time is 120.634594 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 91.729554 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 3.4886e-05 8.12196e-17
+
+
+m 134217728 =======================threads is 4 nnz(B) is 134217728
+
+nthreads is 4
+MATLAB:
+Elapsed time is 237.701954 seconds.
+GrB:
+Elapsed time is 76.254829 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 47.445668 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 3.67491e-05 9.3414e-17
+
+
+m 134217728 =======================threads is 8 nnz(B) is 134217728
+
+nthreads is 8
+MATLAB:
+Elapsed time is 236.963686 seconds.
+GrB:
+Elapsed time is 56.423564 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 24.640289 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 3.73315e-05 9.85305e-17
+
+
+m 134217728 =======================threads is 16 nnz(B) is 134217728
+
+nthreads is 16
+MATLAB:
+Elapsed time is 237.222899 seconds.
+GrB:
+Elapsed time is 52.856510 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 16.842513 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 3.62173e-05 1.01051e-16
+
+
+m 134217728 =======================threads is 20 nnz(B) is 134217728
+
+nthreads is 20
+MATLAB:
+Elapsed time is 236.996266 seconds.
+GrB:
+Elapsed time is 52.043071 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 17.076184 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 3.50663e-05 9.89625e-17
+
+
+m 134217728 =======================threads is 32 nnz(B) is 134217728
+
+nthreads is 32
+MATLAB:
+Elapsed time is 236.909078 seconds.
+GrB:
+Elapsed time is 57.303192 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 15.488958 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 3.13808e-05 9.4191e-17
+
+
+m 134217728 =======================threads is 40 nnz(B) is 134217728
+
+nthreads is 40
+MATLAB:
+Elapsed time is 236.967895 seconds.
+GrB:
+Elapsed time is 59.152078 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 14.897509 seconds.
+totnz/n      34.00 nnz C: 1.34218e+08 A: 4.29497e+09 B: 1.34218e+08
+err 2.91496e-05 1.02425e-16
+
+
+m 134217728 =======================threads is 1 nnz(B) is 134149
+
+nthreads is 1
+MATLAB:
+Elapsed time is 2.065682 seconds.
+GrB:
+Elapsed time is 1.247271 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 2.124332 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 3.35376e-12 0
+
+
+m 134217728 =======================threads is 2 nnz(B) is 134149
+
+nthreads is 2
+MATLAB:
+Elapsed time is 2.065010 seconds.
+GrB:
+Elapsed time is 1.045773 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.649657 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 2.64677e-12 1.7307e-21
+
+
+m 134217728 =======================threads is 4 nnz(B) is 134149
+
+nthreads is 4
+MATLAB:
+Elapsed time is 2.064016 seconds.
+GrB:
+Elapsed time is 0.777391 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.386795 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 1.95044e-12 2.66063e-21
+
+
+m 134217728 =======================threads is 8 nnz(B) is 134149
+
+nthreads is 8
+MATLAB:
+Elapsed time is 2.064956 seconds.
+GrB:
+Elapsed time is 0.712279 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.266530 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 1.09424e-12 2.02776e-21
+
+
+m 134217728 =======================threads is 16 nnz(B) is 134149
+
+nthreads is 16
+MATLAB:
+Elapsed time is 2.065754 seconds.
+GrB:
+Elapsed time is 0.655083 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.203663 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 6.11067e-13 1.96318e-21
+
+
+m 134217728 =======================threads is 20 nnz(B) is 134149
+
+nthreads is 20
+MATLAB:
+Elapsed time is 2.064682 seconds.
+GrB:
+Elapsed time is 0.636640 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.184114 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 6.60805e-13 2.93186e-21
+
+
+m 134217728 =======================threads is 32 nnz(B) is 134149
+
+nthreads is 32
+MATLAB:
+Elapsed time is 2.066208 seconds.
+GrB:
+Elapsed time is 0.623043 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.173710 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 4.61853e-13 2.58313e-21
+
+
+m 134217728 =======================threads is 40 nnz(B) is 134149
+
+nthreads is 40
+MATLAB:
+Elapsed time is 2.063524 seconds.
+GrB:
+Elapsed time is 0.621468 seconds.
+
+--------------------- GrB.hash3:
+Elapsed time is 0.170423 seconds.
+totnz/n      32.03 nnz C: 4.22475e+06 A: 4.29497e+09 B: 134149
+err 3.76588e-13 3.48723e-21
+
+2^31
+
+ans =
+
+   2.1475e+09
+
+format long
+ans
+
+ans =
+
+     2.147483648000000e+09
+
+format long g
+ans
+
+ans =
+
+                2147483648
+
+40/8
+
+ans =
+
+     5
+
+diary off
