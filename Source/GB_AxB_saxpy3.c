@@ -940,6 +940,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
+        printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname)));  \
         info = GB_Asaxpy3B (add,mult,xyname) (Chandle,                  \
             A, A_is_pattern, B, B_is_pattern,                           \
             TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \
@@ -1109,7 +1110,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
-        // printf ("generic saxpy3\n") ;
+        printf ("generic saxpy3\n") ;
 
         if (flipxy)
         { 

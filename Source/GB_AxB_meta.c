@@ -227,6 +227,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     ASSERT_MATRIX_OK_OR_NULL (M, "final M for A*B", GB0) ;
 
+    // TODO
+    if (M != NULL)
+    {
+        printf ("nnz(M) %g (%g %%) compl: %d\n",
+            (double) GB_NNZ (M),
+            100 * ((double) GB_NNZ (M)) /
+                  ((double) GB_NROWS (M) * (double) GB_NCOLS (M)),
+            Mask_comp) ;
+    }
+
     //--------------------------------------------------------------------------
     // typecast A and B when transposing them, if needed
     //--------------------------------------------------------------------------
