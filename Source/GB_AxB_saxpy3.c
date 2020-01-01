@@ -306,7 +306,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_OK (GB_AxB_flopcount (&ignore, Bflops, NULL, NULL, A, B, 0, Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
 
-    // printf ("total_flops "GBd"\n", total_flops) ;
+    printf ("saxpy3: nnz(A) %g (%g %%)  nnz(B) %g (%g %%) flops "GBd"\n",
+        (double) GB_NNZ (A),
+        100 * (double) GB_NNZ (A) / (((double) avlen) * ((double) avdim)),
+        (double) GB_NNZ (B),
+        100 * (double) GB_NNZ (B) / (((double) bvlen) * ((double) bvdim)),
+        total_flops) ;
     // printf ("cnvec: "GBd" cplen "GBd"\n", cnvec, C->plen) ;
     // for (int k = 0 ; k <= bnvec ; k++)
     // {
@@ -685,7 +690,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #endif
 
-    #if 0
+    #if 1
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;

@@ -366,6 +366,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (do_adotb)
         { 
             // C<M> = A'*B via dot product method
+            printf ("C=A'*B with dot\n") ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
@@ -375,6 +376,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
 
 //          // C = A'*B via saxpy3: Gustavson + Hash method
+            printf ("C=A'*B with saxpy3\n") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, AT, B, semiring, flipxy, Context)) ;
 
 //          // C<M> = A'*B via saxpy: Gustavson or heap method
@@ -406,6 +408,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B' via dot product
+            printf ("C=A*B' with dot\n") ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
@@ -417,6 +420,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
 
 //          // C = A*B' via saxpy3: Gustavson + Hash method
+            printf ("C=A*B' with saxpy3\n") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, A, BT, semiring, flipxy, Context)) ;
 
 //          // C<M> = A*B' via saxpy: Gustavson or heap method
@@ -447,6 +451,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B via dot product
+            printf ("C=A*B with dot\n") ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, B, semiring,
                 flipxy, mask_applied, Context)) ;
@@ -456,6 +461,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         { 
 
             // C = A*B via saxpy3: Gustavson + Hash method
+            printf ("C=A*B with saxpy3\n") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, A, B, semiring, flipxy, Context)) ;
 
 //          // C<M> = A*B via saxpy: Gustavson or heap method
