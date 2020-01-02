@@ -306,7 +306,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_OK (GB_AxB_flopcount (&ignore, Bflops, NULL, NULL, A, B, 0, Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
 
-    printf ("saxpy3: nnz(A) %g (%g %%)  nnz(B) %g (%g %%) flops "GBd"\n",
+    printf (" nnz(A) %g (%g %%)  nnz(B) %g (%g %%) flops "GBd"\n",
         (double) GB_NNZ (A),
         100 * (double) GB_NNZ (A) / (((double) avlen) * ((double) avdim)),
         (double) GB_NNZ (B),
@@ -940,7 +940,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname)));  \
+     /* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))); */  \
         info = GB_Asaxpy3B (add,mult,xyname) (Chandle,                  \
             A, A_is_pattern, B, B_is_pattern,                           \
             TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \
