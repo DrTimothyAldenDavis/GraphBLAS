@@ -278,6 +278,7 @@
                 int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
                 int64_t hash_bits = (hash_size-1) ;
                 int64_t pleft = 0, pright = anvec-1 ;
+
                 for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                 {
                     int64_t k = Bi [pB] ;       // get B(k,j)
@@ -289,9 +290,6 @@
                         GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k) * B(k,j)
                         int64_t i1 = i + 1 ;        // i1 = one-based index
                         int64_t i_unlocked = (i1 << 1) ;        // (i+1,0)
-                        #ifdef GB_DEBUG
-                        int64_t probe = 0 ;
-                        #endif
                         for (GB_HASH (i))           // find i in hash table
                         {
                             int64_t hf ;
@@ -346,10 +344,6 @@
                                     Hf [hash] = hf ;
                                 }
                             }
-                            #ifdef GB_DEBUG
-                            probe++ ;
-                            ASSERT (probe < cvlen) ;
-                            #endif
                         }
                     }
                 }
