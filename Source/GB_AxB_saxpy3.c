@@ -992,8 +992,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // add Work and Worksize parameters too
             info = GB_AxB_user (GxB_DEFAULT, semiring, Chandle, NULL, A, B,
                 flipxy,
-                /* heap: */ NULL, NULL, NULL, 0,
-                /* Gustavson: */ NULL,
                 /* dot2: */ NULL, NULL, nthreads, 0, 0, NULL,
                 /* dot3 and saxpy3: */ TaskList, ntasks) ;
             done = true ;

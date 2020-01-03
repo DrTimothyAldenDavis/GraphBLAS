@@ -19,8 +19,6 @@
 
 // FUTURE:: an outer-product method for C=A*B'
 
-// FUTURE:: a hash-based method for C=A*B
-
 #define GB_FREE_ALL             \
 {                               \
     GB_MATRIX_FREE (Chandle) ;  \
@@ -391,11 +389,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             printf (" C=A'*B saxpy3: ") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, AT, B, semiring, flipxy, Context)) ;
 
-//          // C<M> = A'*B via saxpy: Gustavson or heap method
-//          GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, AT, B,
-//              semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
-//              Context)) ;
-
         }
 
     }
@@ -436,11 +429,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             printf (" C=A*B' saxpy3: ") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, A, BT, semiring, flipxy, Context)) ;
 
-//          // C<M> = A*B' via saxpy: Gustavson or heap method
-//          GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, BT,
-//              semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
-//              Context)) ;
-
         }
 
     }
@@ -477,11 +465,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C = A*B via saxpy3: Gustavson + Hash method
             printf (" C=A*B saxpy3: ") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, A, B, semiring, flipxy, Context)) ;
-
-//          // C<M> = A*B via saxpy: Gustavson or heap method
-//          GB_OK (GB_AxB_saxpy_parallel (Chandle, M, Mask_comp, A, B,
-//              semiring, flipxy, AxB_method, AxB_method_used, mask_applied,
-//              Context)) ;
 
         }
     }

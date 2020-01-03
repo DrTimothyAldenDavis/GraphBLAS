@@ -46,15 +46,6 @@ GrB_Info GB_AxB_user
     const GrB_Matrix GB_B,
     bool GB_flipxy,
 
-    // for heap method only:
-    int64_t *GB_RESTRICT GB_List,
-    GB_pointer_pair *GB_RESTRICT GB_pA_pair,
-    GB_Element *GB_RESTRICT GB_Heap,
-    const int64_t GB_bjnz_max,
-
-    // for Gustavson's method only:
-    GB_Sauna GB_C_Sauna,
-
     // for dot method only:
     const GrB_Matrix *GB_Aslice,    // for dot2 only
     int64_t *GB_RESTRICT GB_B_slice,   // for dot2 only

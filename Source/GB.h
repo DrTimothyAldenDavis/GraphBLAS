@@ -313,8 +313,6 @@ typedef void (*GB_cast_function) (void *, const void *, size_t) ;
 
 #define GB_LEN 128
 
-typedef struct GB_Sauna_struct *GB_Sauna ;
-
 //------------------------------------------------------------------------------
 // pending tuples
 //------------------------------------------------------------------------------
@@ -1792,23 +1790,6 @@ GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
     const GB_Type_code code,    // type code to convert
     const GrB_Type type         // user type if code is GB_UDT_code
 ) ;
-
-// used in GB_AxB_heap for temporary workspace
-typedef struct
-{
-    int64_t start ;                 // first entry of A(:,k) is at Ai [start]
-    int64_t end ;                   // last entry of A(:,k) is at Ai [end-1]
-}
-GB_pointer_pair ;
-
-// used in GB_heap_*
-typedef struct
-{
-    int64_t key ;       // the key for this element, for ordering in the Heap
-    int64_t name ;      // the name of the element; not used in these functions
-                        // but required by the caller
-}
-GB_Element ;
 
 GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
 (

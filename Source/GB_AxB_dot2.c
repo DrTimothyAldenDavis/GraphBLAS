@@ -300,8 +300,6 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
         {
             info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, NULL, B,
                 flipxy,
-                /* heap: */ NULL, NULL, NULL, 0,
-                /* Gustavson: */ NULL,
                 /* dot2: */ Aslice, B_slice, nthreads, naslice, nbslice,
                             C_counts,
                 /* dot3: */ NULL, 0) ;

@@ -357,8 +357,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         {
             info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, A, B,
                 flipxy,
-                /* heap: */ NULL, NULL, NULL, 0,
-                /* Gustavson: */ NULL,
                 /* dot2: */ NULL, NULL, nthreads, 0, 0, NULL,
                 /* dot3: */ TaskList, ntasks) ;
             done = true ;

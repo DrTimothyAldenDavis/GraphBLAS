@@ -785,20 +785,24 @@ void mexFunction
         GrB_free (&Aslice [1]) ;
     }
 
-    //--------------------------------------------------------------------------
-    // Sauna
-    //--------------------------------------------------------------------------
 
-    GrB_Desc_Value method = GxB_AxB_GUSTAVSON ;
-    info = GrB_SUCCESS ;
-    while (info == GrB_SUCCESS)
-    {
-        info = GB_Sauna_acquire (1, &id, &method, Context) ;
-    }
+// OLD METHOD, disabled.
+#if 0
+//  //--------------------------------------------------------------------------
+//  // Sauna
+//  //--------------------------------------------------------------------------
 
-    expected = GrB_INVALID_VALUE ;
-    ERR (info) ;
-    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+//  GrB_Desc_Value method = GxB_AxB_GUSTAVSON ;
+//  info = GrB_SUCCESS ;
+//  while (info == GrB_SUCCESS)
+//  {
+//      info = GB_Sauna_acquire (1, &id, &method, Context) ;
+//  }
+
+//  expected = GrB_INVALID_VALUE ;
+//  ERR (info) ;
+//  printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
+#endif
 
     //--------------------------------------------------------------------------
     // pending tuples

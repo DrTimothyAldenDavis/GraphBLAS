@@ -105,8 +105,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // T = A*B, A'*B, A*B', or A'*B', also using the mask to cut time and memory
     //--------------------------------------------------------------------------
 
-    // the mask is used to cut time and memory usage for GB_AxB_meta,
-    // but only if it is not complemented.
     bool mask_applied = false ;
     bool C_is_csc = C->is_csc ;
     GrB_Matrix T, MT = NULL ;

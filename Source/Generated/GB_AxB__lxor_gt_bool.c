@@ -19,8 +19,6 @@
 #ifndef GBCOMPACT
 #include "GB_control.h"
 #include "GB_ek_slice.h"
-#include "GB_Sauna.h"
-#include "GB_jappend.h"
 #include "GB_bracket.h"
 #include "GB_iterator.h"
 #include "GB_sort.h"
@@ -29,10 +27,8 @@
 
 // The C=A*B semiring is defined by the following types and operators:
 
-// A*B function (Gustavon):  GB_AgusB__lxor_gt_bool
 // A'*B function (dot2):     GB_Adot2B__lxor_gt_bool
 // A'*B function (dot3):     GB_Adot3B__lxor_gt_bool
-// A*B function (heap):      GB_AheapB__lxor_gt_bool
 // A*B function (saxpy3):    GB_Asaxpy3B__lxor_gt_bool
 
 // C type:   bool
@@ -77,7 +73,7 @@
 // copy scalar
 #define GB_COPY_C(z,x) z = x
 
-// monoid identity value (Gustavson's method only, with no mask)
+// monoid identity value
 #define GB_IDENTITY \
     false
 
@@ -98,8 +94,6 @@
 
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij
-
-#define GB_SAUNA_WORK(i) Sauna_Work [i]
 
 // For saxpy3:
 
@@ -143,30 +137,6 @@
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_LXOR || GxB_NO_GT || GxB_NO_BOOL || GxB_NO_LXOR_BOOL || GxB_NO_GT_BOOL || GxB_NO_LXOR_GT_BOOL)
-
-//------------------------------------------------------------------------------
-// C<M>=A*B and C=A*B: gather/scatter saxpy-based method (Gustavson)
-//------------------------------------------------------------------------------
-
-GrB_Info GB_AgusB__lxor_gt_bool
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    GB_Sauna Sauna
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    bool *GB_RESTRICT Sauna_Work = Sauna->Sauna_Work ;
-    bool *GB_RESTRICT Cx = C->x ;
-    GrB_Info info = GrB_SUCCESS ;
-    #include "GB_AxB_Gustavson_meta.c"
-    return (info) ;
-    #endif
-}
 
 //------------------------------------------------------------------------------
 // C=A'*B or C<!M>=A'*B: dot product (phase 2)
@@ -249,37 +219,6 @@ GrB_Info GB_Asaxpy3B__lxor_gt_bool
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     #include "GB_AxB_saxpy3_template.c"
     return (GrB_SUCCESS) ;
-    #endif
-}
-
-//------------------------------------------------------------------------------
-// C<M>=A*B and C=A*B: heap saxpy-based method
-//------------------------------------------------------------------------------
-
-#include "GB_heap.h"
-
-GrB_Info GB_AheapB__lxor_gt_bool
-(
-    GrB_Matrix *Chandle,
-    const GrB_Matrix M,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    int64_t *GB_RESTRICT List,
-    GB_pointer_pair *GB_RESTRICT pA_pair,
-    GB_Element *GB_RESTRICT Heap,
-    const int64_t bjnz_max
-)
-{ 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
-    GrB_Matrix C = (*Chandle) ;
-    bool *GB_RESTRICT Cx = C->x ;
-    bool cij ;
-    int64_t cvlen = C->vlen ;
-    GrB_Info info = GrB_SUCCESS ;
-    #include "GB_AxB_heap_meta.c"
-    return (info) ;
     #endif
 }
 

@@ -43,12 +43,6 @@ double   GB_Global_hyper_ratio_get (void) ;
 void     GB_Global_is_csc_set (bool is_csc) ;
 bool     GB_Global_is_csc_get (void) ;
 
-void     GB_Global_Saunas_set (int id, GB_Sauna Sauna) ;
-GB_Sauna GB_Global_Saunas_get (int id) ;
-
-bool     GB_Global_Sauna_in_use_get (int id) ;
-void     GB_Global_Sauna_in_use_set (int id, bool in_use) ;
-
 void     GB_Global_abort_function_set (void (* abort_function) (void)) ;
 void     GB_Global_abort_function (void) ;
 

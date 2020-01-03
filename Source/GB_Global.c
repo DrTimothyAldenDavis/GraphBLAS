@@ -11,9 +11,8 @@
 // contents of the GB_Global struct are only accessible to functions in this
 // file.  Global storage is used to record a list of matrices with pending
 // operations (for GrB_wait), to keep track of the GraphBLAS mode (blocking or
-// non-blocking), to hold persistent Sauna workspace, for pointers to
-// malloc/calloc/realloc/free functions, global matrix options, and other
-// settings.
+// non-blocking), for pointers to malloc/calloc/realloc/free functions, global
+// matrix options, and other settings.
 
 #include "GB.h"
 #include "GB_printf.h"
@@ -60,13 +59,6 @@ typedef struct
 
     int nthreads_max ;          // max number of threads to use
     double chunk ;              // chunk size for determining # threads to use
-
-    //--------------------------------------------------------------------------
-    // Sauna: thread workspace for Gustavson's method
-    //--------------------------------------------------------------------------
-
-    GB_Sauna Saunas   [GxB_NTHREADS_MAX] ;
-    bool Sauna_in_use [GxB_NTHREADS_MAX] ;
 
     //--------------------------------------------------------------------------
     // hypersparsity and CSR/CSC format control
@@ -163,10 +155,6 @@ GB_Global_struct GB_Global =
     // default format
     .hyper_ratio = GB_HYPER_DEFAULT,
     .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
-
-    // Sauna workspace for Gustavson's method (one per thread)
-    .Saunas [0] = NULL,
-    .Sauna_in_use [0] = false,
 
     // abort function for debugging only
     .abort_function   = abort,
@@ -322,34 +310,6 @@ bool GB_Global_is_csc_get (void)
 }
 
 //------------------------------------------------------------------------------
-// Saunas [id]
-//------------------------------------------------------------------------------
-
-void GB_Global_Saunas_set (int id, GB_Sauna Sauna)
-{ 
-    GB_Global.Saunas [id] = Sauna ;
-}
-
-GB_Sauna GB_Global_Saunas_get (int id)
-{ 
-    return (GB_Global.Saunas [id]) ;
-}
-
-//------------------------------------------------------------------------------
-// Saunas_in_use [id]
-//------------------------------------------------------------------------------
-
-void GB_Global_Sauna_in_use_set (int id, bool in_use)
-{ 
-    GB_Global.Sauna_in_use [id] = in_use ;
-}
-
-bool GB_Global_Sauna_in_use_get (int id)
-{ 
-    return (GB_Global.Sauna_in_use [id]) ;
-}
-
-//------------------------------------------------------------------------------
 // abort_function
 //------------------------------------------------------------------------------
 
@@ -476,46 +436,6 @@ void GB_Global_free_function (void *p)
         #define GB_CRITICAL_SECTION                             \
         {                                                       \
             GB_Global.free_function (p) ;                       \
-        }
-        #include "GB_critical_section.c"
-    }
-}
-
-//------------------------------------------------------------------------------
-// persist_function
-//------------------------------------------------------------------------------
-
-// This is only needed by the MATLAB interface, so that mexMakeMemoryPersistent
-// can be called to keep the Saunas allocated between calls to the
-// mexFunctions.  By default, the global persist_function is NULL, so it is not
-// used except when set to mexMakeMemoryPersistent in the mexFunction
-// interface.  The function pointer should be set immediately after calling
-// GxB_init.
-
-void GB_Global_persist_function_set (void (* persist_function) (void *))
-{
-    GB_Global.persist_function = persist_function ;
-}
-
-void GB_Global_persist_function (void *p)
-{ 
-    if (GB_Global.persist_function == NULL)
-    { 
-        return ;
-    }
-    #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
-    bool ok = true ;
-    #endif
-    if (GB_Global.malloc_is_thread_safe)
-    {
-        GB_Global.persist_function (p) ;
-    }
-    else
-    {
-        #undef  GB_CRITICAL_SECTION
-        #define GB_CRITICAL_SECTION                             \
-        {                                                       \
-            GB_Global.persist_function (p) ;                    \
         }
         #include "GB_critical_section.c"
     }

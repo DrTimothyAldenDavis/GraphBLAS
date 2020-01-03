@@ -1,11 +1,3 @@
-GrB_Info GB_AgusB
-(
-    GrB_Matrix C,
-    const GrB_Matrix M,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    GB_Sauna Sauna
-) ;
 
 GrB_Info GB_Adot2B
 (
@@ -40,17 +32,5 @@ GrB_Info GB_Asaxpy3B
     const int nfine,
     const int nthreads,
     GB_Context Context
-) ;
-
-GrB_Info GB_AheapB
-(
-    GrB_Matrix *Chandle,
-    const GrB_Matrix M,
-    const GrB_Matrix A, bool A_is_pattern,
-    const GrB_Matrix B, bool B_is_pattern,
-    int64_t *GB_RESTRICT List,
-    GB_pointer_pair *GB_RESTRICT pA_pair,
-    GB_Element *GB_RESTRICT Heap,
-    const int64_t bjnz_max
 ) ;
 

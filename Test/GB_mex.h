@@ -18,7 +18,6 @@
 // #include "GB.h"
 #include "GB_mxm.h"
 #include "GB_Pending.h"
-#include "GB_Sauna.h"
 #include "GB_add.h"
 #include "GB_subref.h"
 #include "GB_transpose.h"
@@ -305,8 +304,6 @@ bool GB_mx_isequal  // true if A and B are exactly the same
                     // difference is less than or equal to eps.
 ) ;
 
-int GB_mx_Sauna_nmalloc (void) ;  // return # of mallocs in Saunas in use
-
 GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
 (
     char *arg_name,         // name of the output matrix
@@ -389,7 +386,6 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
     {                                                                       \
         /* brutal malloc debug */                                           \
         int nmalloc_start = (int) GB_Global_nmalloc_get ( ) ;               \
-        int nmalloc_Sauna_start = GB_mx_Sauna_nmalloc ( ) ;                 \
         for (int tries = 0 ; ; tries++)                                     \
         {                                                                   \
             /* give GraphBLAS the ability to do a # of mallocs, */          \
@@ -418,20 +414,15 @@ GrB_Matrix GB_mx_alias      // output matrix (NULL if no match found)
                 FREE_DEEP_COPY ;                                            \
                 GET_DEEP_COPY ;                                             \
                 int nmalloc_end = (int) GB_Global_nmalloc_get ( ) ;         \
-                int nmalloc_Sauna_end = GB_mx_Sauna_nmalloc ( ) ;           \
-                int nleak = ((nmalloc_end   - nmalloc_Sauna_end  ) -        \
-                             (nmalloc_start - nmalloc_Sauna_start)) ;       \
+                int nleak = nmalloc_end - nmalloc_start ;                   \
                 if (nleak > 0)                                              \
                 {                                                           \
                     /* memory leak */                                       \
                     printf ("Leak! tries %d : nleak %d\n"                   \
                         "nmalloc_end:        %d\n"                          \
-                        "nmalloc_Sauna_end   %d\n"                          \
                         "nmalloc_start:      %d\n"                          \
-                        "nmalloc_Sauna_start %d\n"                          \
                         "method [%s]\n",                                    \
-                        tries, nleak, nmalloc_end, nmalloc_Sauna_end,       \
-                        nmalloc_start, nmalloc_Sauna_start,                 \
+                        tries, nleak, nmalloc_end, nmalloc_start,           \
                         GB_STR (GRAPHBLAS_OPERATION)) ;                     \
                     mexWarnMsgIdAndTxt ("GB:leak", GrB_error ( )) ;         \
                     FREE_ALL ;                                              \

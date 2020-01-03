@@ -69,43 +69,39 @@ function: GxB_Matrix_fprint (A, name, pr, f)
 hfirst: invalid slice matrix [Aslice [0]]
 
 
-GB_mex_errors, line 800:GraphBLAS error: GrB_INVALID_VALUE
-function: GB_mex_about
-Too many concurrent threads
-
-GB_mex_errors, line 845:GraphBLAS error: GrB_NULL_POINTER
+GB_mex_errors, line 849:GraphBLAS error: GrB_NULL_POINTER
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 Required argument is null: [Thunk]
 
-GB_mex_errors, line 850:GraphBLAS error: GrB_INVALID_VALUE
+GB_mex_errors, line 854:GraphBLAS error: GrB_INVALID_VALUE
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 User-defined operator select_plus_one(A,Thunk) has a Thunk input,
 which must not be empty
 
-GB_mex_errors, line 856:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 860:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 User-defined operator select_plus_one(A,Thunk) has a Thunk input
 type of [double], which must exactly match the type of the
 Thunk parameter; parameter to GxB_select has type [float]
 
-GB_mex_errors, line 861:GraphBLAS error: GrB_DOMAIN_MISMATCH
+GB_mex_errors, line 865:GraphBLAS error: GrB_DOMAIN_MISMATCH
 function: GxB_Matrix_select (C, M, accum, op, A, Thunk, desc)
 User-defined operator select_nothing(A,Thunk) does not take a Thunk
 input, but Thunk parameter is non-NULL
 
-GB_mex_errors, line 867:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
+GB_mex_errors, line 871:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
 function: GxB_Type_fprint (type, name, pr, f)
 Type is uninitialized: [user_type]
 
-GB_mex_errors, line 870:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 874:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_SelectOp_fprint (selectop, name, pr, f)
 SelectOp has an invalid ttype: selectop [select_nothing]
 
-GB_mex_errors, line 875:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
+GB_mex_errors, line 879:GraphBLAS error: GrB_UNINITIALIZED_OBJECT
 function: GxB_Scalar_fprint (s, name, pr, f)
 scalar is uninitialized: [thunk]
 
-GB_mex_errors, line 969:GraphBLAS error: GrB_INVALID_OBJECT
+GB_mex_errors, line 973:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Scalar_fprint (s, name, pr, f)
 GxB_Scalar is invalid [scalar2]
 

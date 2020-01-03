@@ -2,7 +2,7 @@
 // GB_AxB_saxpy3_template: C=A*B, C<M>=A*B, or C<!M>=A*B via saxpy3 method
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -17,6 +17,67 @@
 // macros
 //------------------------------------------------------------------------------
 
+// prepare to iterate over the vector M(:,j), for the (kk)th vector of B
+#define GB_GET_M_j                                                      \
+    int64_t j = (Bh == NULL) ? kk : Bh [kk] ;                           \
+    int64_t mpleft = 0 ;                                                \
+    int64_t mpright = mnvec-1 ;                                         \
+    int64_t pM, pM_end ;                                                \
+    GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ; \
+    int64_t mjnz = pM_end - pM ;    /* nnz (M (:,j)) */
+
+// get the first and last indices in M(:,j)
+#define GB_GET_M_j_RANGE                                        \
+    int64_t im_first = -1, im_last = -1 ;                       \
+    if (mjnz > 0)                                               \
+    {                                                           \
+        im_first = Mi [pM] ;        /* get first M(:,j) */      \
+        im_last  = Mi [pM_end-1]    /* get last M(:,j) */       \
+    }
+
+// scatter M(:,j) for a coarse Gustavson task, C<M>=A*B or C<!M>=A*B
+#define GB_SCATTER_M_j                                          \
+    for ( ; pM < pM_end ; pM++) /* scan M(:,j) */               \
+    {                                                           \
+        GB_GET_M_ij (pM) ;              /* get M(i,j) */        \
+        if (mij) Hf [Mi [pM]] = mark ;  /* Hx [i] = M(i,j) */   \
+    }
+
+// hash M(:,j) into Hf and Hi for coarse hash task, C<M>=A*B or C<!M>=A*B
+#define GB_HASH_M_j                                             \
+    for ( ; pM < pM_end ; pM++) /* scan M(:,j) */               \
+    {                                                           \
+        GB_GET_M_ij (pM) ;      /* get M(i,j) */                \
+        if (!mij) continue ;    /* skip if M(i,j)=0 */          \
+        for (GB_HASH (i))       /* find i in hash */            \
+        {                                                       \
+            if (Hf [hash] < mark)                               \
+            {                                                   \
+                Hf [hash] = mark ;  /* insert M(i,j)=1 */       \
+                Hi [hash] = i ;                                 \
+                break ;                                         \
+            }                                                   \
+        }                                                       \
+    }
+
+// hash M(:,j) for a 1-vector coarse hash task, C<M>=A*B or C<!M>=A*B
+#define GB_HASH1_M_j                                            \
+    for ( ; pM < pM_end ; pM++) /* scan M(:,j) */               \
+    {                                                           \
+        GB_GET_M_ij (pM) ;      /* get M(i,j) */                \
+        if (!mij) continue ;    /* skip if M(i,j)=0 */          \
+        int64_t i = Mi [pM] ;                                   \
+        int64_t i_mark = ((i+1) << 2) + 1 ; /* (i+1,1) */       \
+        for (GB_HASH (i))       /* find i in hash table */      \
+        {                                                       \
+            if (Hf [hash] == 0) /* if true, entry unoccupied */ \
+            {                                                   \
+                Hf [hash] = i_mark ;    /* M(i,j) = 1 */        \
+                break ;                                         \
+            }                                                   \
+        }                                                       \
+    }
+
 // prepare to iterate over the vector B(:,j), the (kk)th vector in B,
 // where j == ((Bh == NULL) ? kk : Bh [kk]).  Note that j itself is never
 // needed; just kk.
@@ -29,11 +90,13 @@
     if (A_is_hyper && bjnz > 2)                                             \
     {                                                                       \
         /* trim Ah [0..pright] to remove any entries past last B(:,j), */   \
-        /* to speed up GB_lookup in GB_GET_A_k.  Note that this assumes */  \
-        /* the indices in B(:,j) are sorted.  If B is jumbled, this step */ \
-        /* must be skipped. */                                              \
+        /* to speed up GB_lookup in GB_GET_A_k. */                          \
         GB_bracket_right (Bi [pB_end-1], Ah, 0, &pright) ;                  \
     }
+
+// get B(k,j)
+#define GB_GET_B_kj \
+    GB_GETB (bkj, Bx, pB)       /* bkj = Bx [pB] */
 
 // prepare to iterate over the vector A(:,k)
 #define GB_GET_A_k                                                      \
@@ -42,14 +105,11 @@
     int64_t aknz = pA_end - pA ;    /* nnz (A (:,k)) */                 \
     if (aknz == 0) continue ;
 
-// prepare to iterate over the vector M(:,j), for the (kk)th vector of B
-#define GB_GET_M_j                                                      \
-    int64_t j = (Bh == NULL) ? kk : Bh [kk] ;                           \
-    int64_t mpleft = 0 ;                                                \
-    int64_t mpright = mnvec-1 ;                                         \
-    int64_t pM, pM_end ;                                                \
-    GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j, &pM, &pM_end) ; \
-    int64_t mjnz = pM_end - pM ;    /* nnz (M (:,j)) */
+// skip C(:,j)<M> += A(:,k)*B(k,j) if A(:,k) and M(:,j), for C<M>=A*B methods
+#define GB_SKIP_A_k_IF_DISJOINT_WITH_M_j                    \
+    int64_t alo = Ai [pA] ;     /* get first A(:,k) */      \
+    int64_t ahi = Ai [pA_end-1] ;   /* get last A(:,k) */   \
+    if (ahi < im_first || alo > im_last) continue
 
 #define GB_GET_M_ij(pM)                         \
     /* get M(i,j), at Mi [pM] and Mx [pM] */    \
@@ -57,10 +117,88 @@
     cast_M (&mij, Mx +((pM)*msize), 0)
 
 // ctype t = A(i,k) * B(k,j)
-#define GB_T_EQ_AIK_TIMES_BKJ                               \
+#define GB_MULT_A_ik_B_kj                                   \
     GB_GETA (aik, Ax, pA) ;     /* aik = Ax [pA] ;  */      \
     GB_CIJ_DECLARE (t) ;        /* ctype t ;        */      \
     GB_MULT (t, aik, bkj)       /* t = aik * bkj ;  */
+
+// compute C(:,j)=A*B(:,j) when C(:,j) is completely dense
+#define GB_COMPUTE_DENSE_C_j                                \
+    for (int64_t i = 0 ; i < cvlen ; i++)                   \
+    {                                                       \
+        Ci [pC + i] = i ;                                   \
+        GB_CIJ_WRITE (pC + i, GB_IDENTITY) ; /* C(i,j)=0 */ \
+    }                                                       \
+    for ( ; pB < pB_end ; pB++)     /* scan B(:,j) */       \
+    {                                                       \
+        int64_t k = Bi [pB] ;       /* get B(k,j) */        \
+        GB_GET_B_kj ;               /* bkj = B(k,j) */      \
+        GB_GET_A_k ;                /* get A(:,k) */        \
+        /* TODO handle the case when A(:,k) is dense */     \
+        for ( ; pA < pA_end ; pA++) /* scan A(:,k) */       \
+        {                                                   \
+            int64_t i = Ai [pA] ;   /* get A(i,k) */        \
+            GB_MULT_A_ik_B_kj ;     /* t = A(i,k)*B(k,j) */ \
+            GB_CIJ_UPDATE (pC + i, t) ; /* Cx [pC+i]+=t */  \
+        }                                                   \
+    }
+
+// C(:,j) = A(:,k)*B(k,j) when there is a single entry in B(:,j)
+#define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
+    int64_t k = Bi [pB] ;       /* get B(k,j) */                \
+    GB_GET_B_kj ;               /* bkj = B(k,j) */              \
+    GB_GET_A_k ;                /* get A(:,k) */                \
+    for ( ; pA < pA_end ; pA++) /* scan A(:,k) */               \
+    {                                                           \
+        int64_t i = Ai [pA] ;       /* get A(i,k) */            \
+        GB_MULT_A_ik_B_kj ;         /* t = A(i,k)*B(k,j) */     \
+        GB_CIJ_WRITE (pC, t) ;      /* Cx [pC] = t */           \
+        Ci [pC++] = i ;                                         \
+    }
+
+// gather the pattern and values of C(:,j) for a coarse Gustavson task (no sort)
+#define GB_GATHER_ALL_C_j(mark)                                 \
+    for (int64_t i = 0 ; i < cvlen ; i++)                       \
+    {                                                           \
+        if (Hf [i] == mark)                                     \
+        {                                                       \
+            GB_CIJ_GATHER (pC, i) ; /* Cx [pC] = Hx [i] */      \
+            Ci [pC++] = i ;                                     \
+        }                                                       \
+    }
+
+// sort the pattern of C(:,j) then gather the values for a coarse Gustavson task
+#define GB_SORT_AND_GATHER_C_j                              \
+    /* sort the pattern of C(:,j) */                        \
+    GB_qsort_1a (Ci + Cp [kk], cjnz) ;                      \
+    /* gather the values into C(:,j) */                     \
+    for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)      \
+    {                                                       \
+        int64_t i = Ci [pC] ;                               \
+        GB_CIJ_GATHER (pC, i) ;   /* Cx [pC] = Hx [i] */    \
+    }
+
+// sort the pattern of C(:,j) then gather the values for a coarse hash task
+#define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark,Hi_hash_equals_i)           \
+    /* sort the pattern of C(:,j) */                                        \
+    GB_qsort_1a (Ci + Cp [kk], cjnz) ;                                      \
+    /* gather the values of C(:,j) from Hf for 1-vector coarse hash tasks */\
+    /* or both Hf and Hi for multi-vector coarse hash tasks */              \
+    for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)                      \
+    {                                                                       \
+        int64_t i = Ci [pC] ;                                               \
+        int64_t marked = (hash_mark) ;                                      \
+        for (GB_HASH (i))           /* find i in hash table */              \
+        {                                                                   \
+            if (Hf [hash] == marked && (Hi_hash_equals_i))                  \
+            {                                                               \
+                /* i found in the hash table */                             \
+                /* Cx [pC] = Hx [hash] ; */                                 \
+                GB_CIJ_GATHER (pC, hash) ;                                  \
+                break ;                                                     \
+            }                                                               \
+        }                                                                   \
+    }
 
 // atomic update
 #if GB_HAS_ATOMIC
@@ -139,6 +277,9 @@
 
 {
 
+// FIXME hash table size must be defined by flops + nnz(M(:,j)),
+// for all hash methods.
+
     //--------------------------------------------------------------------------
     // get M, A, B, and C
     //--------------------------------------------------------------------------
@@ -149,7 +290,7 @@
     const int64_t cnvec = C->nvec ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
-    // const int64_t *GB_RESTRICT Bh = B->h ;
+    const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
     const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
     // const int64_t bvlen = B->vlen ;
@@ -171,7 +312,6 @@
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
     const bool M_is_hyper ;
-
     if (M != NULL)
     {
         Mp = M->p ;
@@ -189,19 +329,18 @@
     //==========================================================================
 
     // 3 cases:
-    //      Mask false and Mask_comp false: compute C=A*B
-    //      Mask true  and Mask_comp false: compute C<M>=A*B
-    //      Mask true  and Mask_comp true : compute C<!M>=A*B
+    //      M not present and Mask_comp false: compute C=A*B
+    //      M present     and Mask_comp false: compute C<M>=A*B
+    //      M present     and Mask_comp true : compute C<!M>=A*B
+    // If M is NULL on input, then Mask_comp is also false on input.
 
-    bool mask_is_M      = (M != NULL && !Mask_comp) ;
+    bool mask_is_M = (M != NULL && !Mask_comp) ;
 
-    // Note that if M is NULL on input, then Mask_comp is also false on input.
-    // This phase does not depend on Mask_comp, nor does it depend on the
-    // semiring or data types of C, A, and B.  TODO make it a function,
-    // and move coarse tasks symbolic work to this phase.  Then the whole
-    // phase is symbolic.
+    // phase0 does not depend on Mask_comp, nor does it depend on the semiring
+    // or data types of C, A, and B.
 
     // At this point, all of Hf [...] is zero, for all tasks.
+    // Hi and Hx are not initialized.
 
     if (M != NULL)
     {
@@ -217,9 +356,8 @@
             int64_t hash_size = TaskList [taskid].hsize ;
             bool use_Gustavson = (hash_size == cvlen) ;
 
-            GB_GET_M_j ;        // get M(:,j)
-
             // partition M(:,j)
+            GB_GET_M_j ;        // get M(:,j)
             int nfine_team_size = TaskList [taskid].nfine_team_size ;
             int master    = TaskList [taskid].master ;
             int my_teamid = taskid - master ;
@@ -252,9 +390,6 @@
                 //--------------------------------------------------------------
                 // phase0: fine hash task, C<M>=A*B or C<!M>=A*B
                 //--------------------------------------------------------------
-
-                // TODO hash table size must be defined by flops + nnz(M(:,j)),
-                // for all hash methods.
 
                 // The least significant 2 bits of Hf [hash] is the flag f, and
                 // the upper bits contain h, as a pair (h,f).  After this
@@ -378,12 +513,12 @@
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
                         GB_GET_A_k ;                // get A(:,k)
+                        GB_GET_B_kj ;               // bkj = B(k,j)
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;   // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ; // t = A(i,k) * B(k,j)
+                            GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                             uint8_t f ;
                             #if GB_HAS_ATOMIC
                             #pragma omp atomic read
@@ -434,15 +569,19 @@
                     // 2 -> 3 : to lock, if i seen already
                     // 3 -> 2 : to unlock; now i has been seen
 
+                    GB_GET_M_j ;                // get M(:,j)
+                    GB_GET_M_j_RANGE ;          // get first and last in M(:,j)
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB]
                         GB_GET_A_k ;                // get A(:,k)
+                        GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                        GB_GET_B_kj ;               // bkj = B(k,j)
+                        // TODO scan M(:,j) instead, if very sparse
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;   // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ; // t = A(i,k) * B(k,j)
+                            GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                             #pragma omp atomic read
                             uint8_t f = Hf [i] ;    // grab the entry
                             #if GB_HAS_ATOMIC
@@ -496,12 +635,12 @@
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB]
                         GB_GET_A_k ;                // get A(:,k)
+                        GB_GET_B_kj ;               // bkj = B(k,j)
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;   // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ; // t = A(i,k) * B(k,j)
+                            GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                             #pragma omp atomic read
                             uint8_t f = Hf [i] ;    // grab the entry
                             #if GB_HAS_ATOMIC
@@ -569,9 +708,6 @@
 
                 // h == (anything), f == 3: locked.
 
-                // The transitions of the flag f are the same as for the
-                // fine Gustavson task, above.
-
                 int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
                 int64_t hash_bits = (hash_size-1) ;
 
@@ -589,15 +725,19 @@
                     //                    Hx is initialized.
                     // h == ..., f == 3 : locked.
 
+                    // 0 -> 3 : to lock, if i seen for first time
+                    // 2 -> 3 : to lock, if i seen already
+                    // 3 -> 2 : to unlock; now i has been seen
+
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB]
                         GB_GET_A_k ;                // get A(:,k)
+                        GB_GET_B_kj ;               // bkj = B(k,j)
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;       // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k) * B(k,j)
+                            GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
                             int64_t i1 = i + 1 ;        // i1 = one-based index
                             int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
                             for (GB_HASH (i))           // find i in hash table
@@ -621,8 +761,8 @@
                                         {
                                             hf = Hf [hash] ; Hf [hash] |= 3 ;
                                         }
-                                    } while (hf & 3 == 3) ;
-                                    if (hf == 0)
+                                    } while (hf & 3 == 3) ; // owner: f=0 or 2
+                                    if (hf == 0) // f == 0
                                     { 
                                         // C(i,j) is a new entry in C(:,j)
                                         // Hx [hash] = t
@@ -632,7 +772,7 @@
                                         my_cjnz++ ;
                                         break ;
                                     }
-                                    if (hf == i_unlocked)
+                                    if (hf == i_unlocked) // f == 2
                                     { 
                                         // C(i,j) already appears in C(:,j)
                                         // Hx [hash] += t
@@ -667,15 +807,24 @@
                     //                    Hx is initialized.
                     // h == ..., f == 3 : locked.
 
+                    // 0 -> 0 : to ignore, if M(i,j)=0
+                    // 1 -> 3 : to lock, if i seen for first time
+                    // 2 -> 3 : to lock, if i seen already
+                    // 3 -> 2 : to unlock; now i has been seen
+
+                    GB_GET_M_j ;                // get M(:,j)
+                    GB_GET_M_j_RANGE ;          // get first and last in M(:,j)
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB]
                         GB_GET_A_k ;                // get A(:,k)
+                        GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                        GB_GET_B_kj ;               // bkj = B(k,j)
+                        GB_GET_B_kj ;               // bkj = B(k,j)
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;       // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k) * B(k,j)
+                            GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
                             int64_t i1 = i + 1 ;        // i1 = one-based index
                             int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
                             for (GB_HASH (i))           // find i in hash table
@@ -698,9 +847,9 @@
                                         {
                                             hf = Hf [hash] ; Hf [hash] |= 3 ;
                                         }
-                                    } while (hf & 3 == 3) ;
+                                    } while (hf & 3 == 3) ; // owner: f=1 or 2
                                     bool first_time = ((hf & 3) == 1) ;
-                                    if (first_time)
+                                    if (first_time) // f == 1
                                     { 
                                         // C(i,j) is a new entry in C(:,j)
                                         // Hx [hash] = t
@@ -739,15 +888,20 @@
 
                     // h == (anything), f == 3: locked.
 
+                    // 1 -> 1 : to ignore, if M(i,j)=1
+                    // 0 -> 3 : to lock, if i seen for first time
+                    // 2 -> 3 : to lock, if i seen already
+                    // 3 -> 2 : to unlock; now i has been seen
+
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB]
                         GB_GET_A_k ;                // get A(:,k)
+                        GB_GET_B_kj ;               // bkj = B(k,j)
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;       // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k) * B(k,j)
+                            GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
                             int64_t i1 = i + 1 ;        // i1 = one-based index
                             int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
                             int64_t i_masked   = (i1 << 2) + 1 ;    // (i+1,1)
@@ -773,8 +927,8 @@
                                         {
                                             hf = Hf [hash] ; Hf [hash] |= 3 ;
                                         }
-                                    } while (hf & 3 == 3) ;
-                                    if (hf == 0)
+                                    } while (hf & 3 == 3) ; // owner: f=0,1 or 2
+                                    if (hf == 0)    // f == 0
                                     { 
                                         // C(i,j) is a new entry in C(:,j)
                                         // Hx [hash] = t
@@ -784,7 +938,7 @@
                                         my_cjnz++ ;
                                         break ;
                                     }
-                                    if (hf == i_unlocked)
+                                    if (hf == i_unlocked)   // f == 2
                                     { 
                                         // C(i,j) already appears in C(:,j)
                                         // Hx [hash] += t
@@ -793,7 +947,8 @@
                                         Hf [hash] = i_unlocked ; // unlock entry
                                         break ;
                                     }
-                                    // hash table occupied, but not with i
+                                    // hash table occupied, but not with i,
+                                    // or with i but M(i,j)=1 so C(i,j) ignored
                                     #pragma omp atomic write
                                     Hf [hash] = hf ;  // unlock with prior value
                                 }
@@ -890,29 +1045,25 @@
                             Cp [kk] = 0 ;       // M(:,j) empty, so C(:,j) empty
                             continue ;
                         }
-                        im_first = Mi [pM] ;        // get first M(:,j)
-                        im_last  = Mi [pM_end-1] ;  // get last M(:,j)
+                        GB_GET_M_j_RANGE ;      // get first and last in M(:,j)
                         mark += 2 ;
-                        for ( ; pM < pM_end ; pM++) // scan M(:,j)
-                        {
-                            GB_GET_M_ij (pM) ;              // get M(i,j)
-                            if (mij) Hf [Mi [pM]] = mark ;  // Hx [i] = M(i,j)
-                        }
+                        int64_t mark1 = mark+1 ;
+                        GB_SCATTER_M_j ;        // scatter M(:,j)
                         int64_t cjnz = 0 ;
                         GB_GET_B_j ;                    // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
                             int64_t k = Bi [pB] ;       // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            int64_t alo = Ai [pA] ;     // get first A(:,k)
-                            int64_t ahi = Ai [pA_end-1] ;   // get last A(:,k)
-                            if (ahi < im_first || alo > im_last) continue ;
+                            GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                            // TODO scan M(:,j) instead, if very sparse.
+                            // Find A(i,k) via binary search. For C<M>=A*B only.
                             for ( ; pA < pA_end ; pA++) // scan A(:,k)
                             {
                                 int64_t i = Ai [pA] ;   // get A(i,k)
                                 if (Hf [i] == mark)     // if true, M(i,j) is 1
                                 { 
-                                    Hf [i] = mark+1 ;   // mark C(i,j) as seen
+                                    Hf [i] = mark1 ;    // mark C(i,j) as seen
                                     cjnz++ ;            // C(i,j) is a new entry
                                 }
                             }
@@ -938,11 +1089,8 @@
                     {
                         GB_GET_M_j ;            // get M(:,j)
                         mark += 2 ;
-                        for ( ; pM < pM_end ; pM++) // scan M(:,j)
-                        {
-                            GB_GET_M_ij (pM) ;              // get M(i,j)
-                            if (mij) Hf [Mi [pM]] = mark ;  // Hx [i] = M(i,j)
-                        }
+                        int64_t mark1 = mark+1 ;
+                        GB_SCATTER_M_j ;        // scatter M(:,j)
                         int64_t cjnz = 0 ;
                         GB_GET_B_j ;                    // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
@@ -954,7 +1102,7 @@
                                 int64_t i = Ai [pA] ;   // get A(i,k)
                                 if (Hf [i] < mark)      // if true, M(i,j) is 0
                                 { 
-                                    Hf [i] = mark+1 ;   // mark C(i,j) as seen
+                                    Hf [i] = mark1 ;    // mark C(i,j) as seen
                                     cjnz++ ;            // C(i,j) is a new entry
                                 }
                             }
@@ -977,7 +1125,6 @@
                 int64_t hash_bits = (hash_size-1) ;
                 int64_t kk = kfirst ;
                 int64_t cjnz = 0 ;
-                GB_GET_B_j ;            // get B(:,j)
 
                 if (M == NULL)
                 {
@@ -987,8 +1134,11 @@
                     //----------------------------------------------------------
 
                     // Hf is initially all zero.
-                    // Hf [i] is set to ((i+1),0) if C(i,j) is seen.
 
+                    // h == 0,   f == 0 : unoccupied
+                    // h == i+1, f == 2 : C(i,j) has been seen in phase1
+
+                    GB_GET_B_j ;            // get B(:,j)
                     if (bjnz == 1)
                     { 
                         int64_t k = Bi [pB] ;   // get B(k,j)
@@ -1004,14 +1154,14 @@
                             for ( ; pA < pA_end ; pA++) // scan A(:,k)
                             {
                                 int64_t i = Ai [pA] ;   // get A(i,k)
-                                int64_t i1 = (i+1) << 2 ;
+                                int64_t i_seen = ((i+1) << 2) + 2 ;
                                 for (GB_HASH (i))       // find i in hash table
                                 {
                                     int64_t h = Hf [hash] ;
-                                    if (h == i1) break ;  // C(i,j) already seen
+                                    if (h == i_seen) break ;  // already seen
                                     if (h == 0)           // if true, i is new
                                     { 
-                                        Hf [hash] = i1 ;  // mark C(i,j) as seen
+                                        Hf [hash] = i_seen ;  // mark as seen
                                         cjnz++ ;          // C(i,j) is new entry
                                         break ;
                                     }
@@ -1034,35 +1184,19 @@
 
                     // h == 0  , f == 0 : unoccupied.
                     // h == i+1, f == 1 : occupied by M(i,j)=1. C(i,j) not seen.
-                    // h == i+1, f == 2 : M(i,j)=1, and C(i,j) has been seen.
+                    // h == i+1, f == 2 : M(i,j)=1, and C(i,j) seen in phase1
 
                     GB_GET_M_j ;                // get M(:,j)
                     if (mjnz == 0) continue ;   // M(:,j) empty, so C(:,j) empty
-                    im_first = Mi [pM] ;        // get first M(:,j)
-                    im_last  = Mi [pM_end-1] ;  // get last M(:,j)
-                    for ( ; pM < pM_end ; pM++) // scan M(:,j)
-                    {
-                        GB_GET_M_ij (pM) ;      // get M(i,j)
-                        if (!mij) continue ;    // skip if M(i,j)=0
-                        int64_t i = Mi [pM] ;
-                        int64_t i_mark = ((i+1) << 2) + 1 ; // (i+1,1)
-                        for (GB_HASH (i))       // find i in hash table
-                        {
-                            if (Hf [hash] == 0) // if true, entry unoccupied
-                            { 
-                                Hf [hash] = i_mark ;    // M(i,j) = 1
-                                break ;
-                            }
-                        }
-                    }
+                    GB_GET_M_j_RANGE ;          // get first and last in M(:,j)
+                    GB_HASH1_M_j ;              // hash M(:,j)
                     GB_GET_B_j ;                // get B(:,j)
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
                         GB_GET_A_k ;                // get A(:,k)
-                        int64_t alo = Ai [pA] ;         // get first A(:,k)
-                        int64_t ahi = Ai [pA_end-1] ;   // get last A(:,k)
-                        if (ahi < im_first || alo > im_last) continue ;
+                        GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                        // TODO scan M(:,j) instead, if very sparse
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;       // get A(i,k)
@@ -1073,8 +1207,8 @@
                             {
                                 int64_t hf = Hf [hash] ;
                                 int64_t h = (hf >> 2) ;
-                                if (h == i1) break ;    // C(i,j) already seen
                                 if (h == 0) break ;     // M(i,j)=0, ignore i
+                                if (h == i1) break ;    // i already seen
                                 if (hf == i_mark)       // if true, M(i,j) is 1
                                 {
                                     Hf [hash] = i_seen ;  // mark C(i,j) as seen
@@ -1099,24 +1233,10 @@
 
                     // h == 0  , f == 0 : unoccupied.
                     // h == i+1, f == 1 : occupied by M(i,j)=1. C(i,j) ignored.
-                    // h == i+1, f == 2 : M(i,j)=0, and C(i,j) has been seen.
+                    // h == i+1, f == 2 : M(i,j)=0, and C(i,j) seen in phase1
 
                     GB_GET_M_j ;                // get M(:,j)
-                    for ( ; pM < pM_end ; pM++) // scan M(:,j)
-                    {
-                        GB_GET_M_ij (pM) ;      // get M(i,j)
-                        if (!mij) continue ;    // skip if M(i,j)=0
-                        int64_t i = Mi [pM] ;
-                        int64_t i_mark = ((i+1) << 2) + 1 ; // (i+1,1)
-                        for (GB_HASH (i))       // find i in hash table
-                        {
-                            if (Hf [hash] == 0)     // if true, entry unoccupied
-                            { 
-                                Hf [hash] = i_mark ;    // M(i,j) = 1
-                                break ;
-                            }
-                        }
-                    }
+                    GB_HASH1_M_j ;              // hash M(:,j)
                     GB_GET_B_j ;                // get B(:,j)
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
@@ -1131,7 +1251,7 @@
                             {
                                 int64_t hf = Hf [hash] ;
                                 int64_t h = (hf >> 2) ;
-                                if (h == i1) break ; // already seen or M(i,j)=1
+                                if (h == i1) break ; // i seen, or ignored
                                 if (h == 0)          // if true, M(i,j) is 0
                                 {
                                     Hf [hash] = i_seen ;  // mark C(i,j) as seen
@@ -1230,32 +1350,18 @@
                             Cp [kk] = 0 ;       // M(:,j) empty, so C(:,j) empty
                             continue ;
                         }
-                        im_first = Mi [pM] ;        // get first M(:,j)
-                        im_last  = Mi [pM_end-1] ;  // get last M(:,j)
+                        GB_GET_M_j_RANGE ;      // get first and last in M(:,j)
                         mark += 2 ;
-                        for ( ; pM < pM_end ; pM++) // scan M(:,j)
-                        {
-                            GB_GET_M_ij (pM) ;      // get M(i,j)
-                            if (!mij) continue ;    // skip if M(i,j)=0
-                            for (GB_HASH (i))       // find i in hash
-                            {
-                                if (Hf [hash] < mark)
-                                { 
-                                    Hf [hash] = mark ;  // insert M(i,j)=1
-                                    Hi [hash] = i ;
-                                    break ;
-                                }
-                            }
-                        }
+                        int64_t mark1 = mark+1 ;
+                        GB_HASH_M_j ;           // hash M(:,j)
                         int64_t cjnz = 0 ;
                         GB_GET_B_j ;                // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
                             int64_t k = Bi [pB] ;       // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
-                            int64_t alo = Ai [pA] ;     // get first A(:,k)
-                            int64_t ahi = Ai [pA_end-1] ;// get last A(:,k)
-                            if (ahi < im_first || alo > im_last) continue ;
+                            GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                            // TODO scan M(:,j) instead, if very sparse
                             for ( ; pA < pA_end ; pA++) // scan A(:,k)
                             {
                                 int64_t i = Ai [pA] ;   // get A(i,k)
@@ -1267,7 +1373,7 @@
                                     {
                                         if (f == mark)  // if true, i is new
                                         {
-                                            Hf [hash] = mark+1 ; // mark as seen
+                                            Hf [hash] = mark1 ; // mark as seen
                                             cjnz++ ;    // C(i,j) is a new entry
                                         }
                                         break ;
@@ -1297,20 +1403,8 @@
                     {
                         GB_GET_M_j ;            // get M(:,j)
                         mark += 2 ;
-                        for ( ; pM < pM_end ; pM++) // scan M(:,j)
-                        {
-                            GB_GET_M_ij (pM) ;      // get M(i,j)
-                            if (!mij) continue ;    // skip if M(i,j)=0
-                            for (GB_HASH (i))       // find i in hash
-                            {
-                                if (Hf [hash] < mark)
-                                { 
-                                    Hf [hash] = mark ;  // insert M(i,j)=1
-                                    Hi [hash] = i ;
-                                    break ;
-                                }
-                            }
-                        }
+                        int64_t mark1 = mark+1 ;
+                        GB_HASH_M_j ;           // hash M(:,j)
                         int64_t cjnz = 0 ;
                         GB_GET_B_j ;                // get B(:,j)
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
@@ -1324,7 +1418,7 @@
                                 {
                                     if (Hf [hash] < mark)   // if true, i is new
                                     {
-                                        Hf [hash] = mark+1 ; // mark C(i,j) seen
+                                        Hf [hash] = mark1 ; // mark C(i,j) seen
                                         Hi [hash] = i ;
                                         cjnz++ ;        // C(i,j) is a new entry
                                         break ;
@@ -1343,8 +1437,6 @@
     //==========================================================================
     // phase2: compute Cp with cumulative sum and allocate C
     //==========================================================================
-
-    // TODO make this a single function used by all semirings
 
     // TaskList [taskid].my_cjnz is the # of unique entries found in C(:,j) by
     // that task.  Sum these terms to compute total # of entries in C(:,j).
@@ -1404,7 +1496,7 @@
         {
 
             //------------------------------------------------------------------
-            // count nnz (C(:,j) for the final gather for this fine task
+            // count nnz (C(:,j)) for the final gather for this fine task
             //------------------------------------------------------------------
 
             int nfine_team_size = TaskList [taskid].nfine_team_size ;
@@ -1418,6 +1510,8 @@
                 //--------------------------------------------------------------
                 // phase3: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
                 //--------------------------------------------------------------
+
+                // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
 
                 int64_t pC = Cp [kk] ;
                 int64_t cjnz = Cp [kk+1] - pC ;
@@ -1437,8 +1531,7 @@
                 {
                     // C(:,j) is sparse: count the work for this fine task
                     uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                    // O(cvlen) linear scan of Hf to create the pattern of
-                    // C(:,j).  No sort is needed.
+                    // scan the hash table for entries in C(:,j)
                     for (int64_t i = istart ; i < iend ; i++)
                     {
                         if (Hf [i] == 2)
@@ -1453,8 +1546,11 @@
             {
 
                 //--------------------------------------------------------------
-                // phase3: fine hash task
+                // phase3: fine hash task, C=A*B, C<M>=A*B, or C<!M>=A*B
                 //--------------------------------------------------------------
+
+                // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
+                // and the index i of the entry is (Hf [hash] >> 2) - 1.
 
                 int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
                 int64_t hash_start, hash_end ;
@@ -1462,14 +1558,14 @@
                     my_teamid, nfine_team_size) ;
                 for (int64_t hash = hash_start ; hash < hash_end ; hash++)
                 {
-                    if (Hf [hash] != 0)
+                    if ((Hf [hash] & 3) == 2)
                     { 
                         my_cjnz++ ;
                     }
                 }
             }
 
-            TaskList [taskid].my_cjnz = my_cjnz ;
+            TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
 
         }
         else
@@ -1483,7 +1579,7 @@
             int64_t kfirst = TaskList [taskid].start ;
             int64_t klast = TaskList [taskid].end ;
             int64_t nk = klast - kfirst + 1 ;
-            int64_t mark = nk + 1 ;
+            int64_t mark = 2*nk + 1 ;
 
             if (use_Gustavson)
             {
@@ -1492,118 +1588,261 @@
                 // phase3: coarse Gustavson task
                 //--------------------------------------------------------------
 
-                for (int64_t kk = kfirst ; kk <= klast ; kk++)
+                if (M == NULL)
                 {
-                    // compute the pattern and values of C(:,j)
-                    GB_GET_B_j ;            // get B(:,j)
-                    if (bjnz == 0)
-                    { 
-                        continue ;          // nothing to do
-                    }
-                    int64_t pC = Cp [kk] ;
-                    int64_t cjnz = Cp [kk+1] - pC ;
-                    if (bjnz == 1)          // C(:,j) = A(:,k)*B(k,j)
+
+                    //----------------------------------------------------------
+                    // phase3: coarse Gustavson task, C=A*B
+                    //----------------------------------------------------------
+
+                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
-                        int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
-                        GB_GET_A_k ;                // get A(:,k)
-                        for ( ; pA < pA_end ; pA++) // scan A(:,k)
-                        { 
-                            int64_t i = Ai [pA] ;       // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k) * B(k,j)
-                            GB_CIJ_WRITE (pC, t) ;      // Cx [pC] = t
-                            Ci [pC++] = i ;
-                        }
-                    }
-                    else if (cjnz == cvlen)     // C(:,j) is dense
-                    {
-                        for (int64_t i = 0 ; i < cvlen ; i++)
-                        { 
-                            Ci [pC + i] = i ;
-                            GB_CIJ_WRITE (pC + i, GB_IDENTITY) ; // C(i,j) = 0
-                        }
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
+                        if (cjnz == 0) continue ;   // nothing to do
+                        if (cjnz == cvlen)          // C(:,j) is dense
                         {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
-                            GB_GET_A_k ;                // get A(:,k)
-                            // TODO handle the case when A(:,k) is dense
-                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
-                            { 
-                                int64_t i = Ai [pA] ;       // get A(i,k)
-                                GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k)*B(k,j)
-                                GB_CIJ_UPDATE (pC + i, t) ; // Cx [pC+i] += t
-                            }
+                            GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
+                            continue ;
                         }
-                    }
-                    else if (16 * cjnz > cvlen) // C(:,j) is not very sparse
-                    {
                         mark++ ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        GB_GET_B_j ;            // get B(:,j)
+                        if (bjnz == 1)          // C(:,j) = A(:,k)*B(k,j)
                         {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
-                            GB_GET_A_k ;                // get A(:,k)
-                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
-                            {
-                                int64_t i = Ai [pA] ;       // get A(i,k)
-                                GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k)*B(k,j)
-                                if (Hf [i] != mark)
-                                { 
-                                    // C(i,j) = A(i,k) * B(k,j)
-                                    Hf [i] = mark ;
-                                    GB_HX_WRITE (i, t) ;    // Hx [i] = t ;
-                                }
-                                else
-                                { 
-                                    // C(i,j) += A(i,k) * B(k,j)
-                                    GB_HX_UPDATE (i, t) ;   // Hx [i] += t ;
-                                }
-                            }
+                            GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
                         }
-                        // gather the pattern and values into C(:,j)
-                        for (int64_t i = 0 ; i < cvlen ; i++)
+                        else if (16 * cjnz > cvlen) // C(:,j) is not very sparse
                         {
-                            if (Hf [i] == mark)
-                            { 
-                                GB_CIJ_GATHER (pC, i) ;   // Cx [pC] = Hx [i] ;
-                                Ci [pC++] = i ;
+                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                            {
+                                int64_t k = Bi [pB] ;       // get B(k,j)
+                                GB_GET_A_k ;                // get A(:,k)
+                                GB_GET_B_kj ;               // bkj = B(k,j)
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                    if (Hf [i] != mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark ;
+                                        GB_HX_WRITE (i, t) ;    // Hx [i] = t
+                                    }
+                                    else
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
+                                    }
+                                }
                             }
+                            GB_GATHER_ALL_C_j(mark) ;   // gather into C(:,j) 
+                        }
+                        else    // C(:,j) is very sparse
+                        {
+                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                            {
+                                int64_t k = Bi [pB] ;       // get B(k,j)
+                                GB_GET_A_k ;                // get A(:,k)
+                                GB_GET_B_kj ;               // bkj = B(k,j)
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                    if (Hf [i] != mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark ;
+                                        GB_HX_WRITE (i, t) ;    // Hx [i] = t
+                                        Ci [pC++] = i ;
+                                    }
+                                    else
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
+                                    }
+                                }
+                            }
+                            GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
                         }
                     }
-                    else if (cjnz > 0)  // C(:,j) is very sparse
+
+                }
+                else if (mask_is_M)
+                {
+
+                    //----------------------------------------------------------
+                    // phase3: coarse Gustavson task, C<M>=A*B
+                    //----------------------------------------------------------
+
+                    // Initially, Hf [...] < mark for all of Hf.
+
+                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is ignored.
+                    // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
+                    // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
+
+                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
-                        mark++ ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
+                        if (cjnz == 0) continue ;   // nothing to do
+                        if (cjnz == cvlen)          // C(:,j) is dense
                         {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
-                            GB_GET_A_k ;                // get A(:,k)
-                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                            GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
+                            continue ;              // no need to examine M(:,j)
+                        }
+                        GB_GET_M_j ;            // get M(:,j)
+                        GB_GET_M_j_RANGE ;      // get first and last in M(:,j)
+                        mark += 2 ;
+                        int64_t mark1 = mark+1 ;
+                        GB_SCATTER_M_j ;        // scatter M(:,j)
+                        GB_GET_B_j ;            // get B(:,j)
+                        if (16 * cjnz > cvlen)  // C(:,j) is not very sparse
+                        {
+                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                             {
-                                int64_t i = Ai [pA] ;       // get A(i,k)
-                                GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k)*B(k,j)
-                                if (Hf [i] != mark)
-                                { 
-                                    // C(i,j) = A(i,k) * B(k,j)
-                                    Hf [i] = mark ;
-                                    GB_HX_WRITE (i, t) ;    // Hx [i] = t ;
-                                    Ci [pC++] = i ;
-                                }
-                                else
-                                { 
-                                    // C(i,j) += A(i,k) * B(k,j)
-                                    GB_HX_UPDATE (i, t) ;   // Hx [i] += t ;
+                                int64_t k = Bi [pB] ;       // get B(k,j)
+                                GB_GET_A_k ;                // get A(:,k)
+                                GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                                GB_GET_B_kj ;               // bkj = B(k,j)
+                                // TODO scan M(:,j) instead, if very sparse
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    int64_t hf = Hf [i] ;
+                                    if (hf == mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark1 ;     // mark as seen
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
+                                    }
+                                    else if (hf == mark1)
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_UPDATE (i, t) ;// Hx [i] += t
+                                    }
                                 }
                             }
+                            GB_GATHER_ALL_C_j(mark1) ;  // gather into C(:,j) 
                         }
-                        // sort the pattern of C(:,j)
-                        GB_qsort_1a (Ci + Cp [kk], cjnz) ;
-                        // gather the values into C(:,j)
-                        for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)
-                        { 
-                            int64_t i = Ci [pC] ;
-                            GB_CIJ_GATHER (pC, i) ;   // Cx [pC] = Hx [i] ;
+                        else    // C(:,j) is very sparse
+                        {
+                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                            {
+                                int64_t k = Bi [pB] ;       // get B(k,j)
+                                GB_GET_A_k ;                // get A(:,k)
+                                GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                                GB_GET_B_kj ;               // bkj = B(k,j)
+                                // TODO scan M(:,j) instead, if very sparse
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    int64_t hf = Hf [i] ;
+                                    if (hf == mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark1 ;     // mark as seen
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
+                                        Ci [pC++] = i ; // create C(:,j) pattern
+                                    }
+                                    else if (hf == mark1)
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_UPDATE (i, t) ;// Hx [i] += t
+                                    }
+                                }
+                            }
+                            GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
+                        }
+                    }
+
+                }
+                else
+                {
+
+                    //----------------------------------------------------------
+                    // phase3: coarse Gustavson task, C<!M>=A*B
+                    //----------------------------------------------------------
+
+                    // if !M:
+                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is not yet seen.
+                    // Hf [i] == mark   : M(i,j)=1, so C(i,j) is ignored.
+                    // Hf [i] == mark+1 : M(i,j)=0, and C(i,j) has been seen.
+
+                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
+                    {
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
+                        if (cjnz == 0) continue ;   // nothing to do
+                        if (cjnz == cvlen)          // C(:,j) is dense
+                        {
+                            GB_COMPUTE_DENSE_C_j ;  // C(:,j) = A*B(:,j)
+                            continue ;              // no need to examine M(:,j)
+                        }
+                        GB_GET_M_j ;            // get M(:,j)
+                        mark += 2 ;
+                        int64_t mark1 = mark+1 ;
+                        GB_SCATTER_M_j ;        // scatter M(:,j)
+                        GB_GET_B_j ;            // get B(:,j)
+                        if (16 * cjnz > cvlen)  // C(:,j) is not very sparse
+                        {
+                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                            {
+                                int64_t k = Bi [pB] ;       // get B(k,j)
+                                GB_GET_A_k ;                // get A(:,k)
+                                GB_GET_B_kj ;               // bkj = B(k,j)
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    int64_t hf = Hf [i] ;
+                                    if (hf < mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark1 ;     // mark as seen
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
+                                    }
+                                    else if (hf == mark1)
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_UPDATE (i, t) ;// Hx [i] += t
+                                    }
+                                }
+                            }
+                            GB_GATHER_ALL_C_j(mark1) ;  // gather into C(:,j) 
+                        }
+                        else    // C(:,j) is very sparse
+                        {
+                            for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                            {
+                                int64_t k = Bi [pB] ;       // get B(k,j)
+                                GB_GET_A_k ;                // get A(:,k)
+                                GB_GET_B_kj ;               // bkj = B(k,j)
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    int64_t hf = Hf [i] ;
+                                    if (hf == mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark1 ;        // mark as seen
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_WRITE (i, t) ;    // Hx [i] = t
+                                        Ci [pC++] = i ; // create C(:,j) pattern
+                                    }
+                                    else if (hf == mark1)
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_UPDATE (i, t) ;   // Hx [i] += t
+                                    }
+                                }
+                            }
+                            GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
                         }
                     }
                 }
@@ -1616,82 +1855,171 @@
                 // phase3: 1-vector coarse hash task
                 //--------------------------------------------------------------
 
+                // Hf has been initialized with the pattern of C(:,j), and
+                // M(:,j) for both C<M>=A*B and C<!M>=A*B.  In all three cases,
+                // the only case that needs to be considered here, on input,
+                // is the first one (h=i+1,f=2).
+
+                // h == i+1, f == 2 : C(i,j) seen in phase1; Hx not initialized
+                // h == i+1, f == 3 : C(i,j) seen in phase3; Hx initialized
+
                 int64_t hash_bits = (hash_size-1) ;
                 int64_t kk = kfirst ;
-                GB_GET_B_j ;            // get B(:,j)
-                if (bjnz == 0)
-                { 
-                    continue ;          // nothing to do
-                }
                 int64_t pC = Cp [kk] ;
                 int64_t cjnz = Cp [kk+1] - pC ;
-                if (bjnz == 1)          // C(:,j) = A(:,k)*B(k,j)
+                if (cjnz == 0) continue ;       // nothing to do
+                GB_GET_B_j ;                    // get B(:,j)
+
+                // compute the pattern and values of C(:,j)
+
+                if (M == NULL)
                 {
-                    int64_t k = Bi [pB] ;       // get B(k,j)
-                    GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
-                    GB_GET_A_k ;                // get A(:,k)
-                    for ( ; pA < pA_end ; pA++) // scan A(:,k)
-                    { 
-                        int64_t i = Ai [pA] ;       // get A(i,k)
-                        GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k) * B(k,j)
-                        GB_CIJ_WRITE (pC, t) ;      // Cx [pC] = t
-                        Ci [pC++] = i ;
+
+                    //----------------------------------------------------------
+                    // phase3: 1-vector coarse hash task, C=A*B
+                    //----------------------------------------------------------
+
+                    if (bjnz == 1)          // C(:,j) = A(:,k)*B(k,j)
+                    {
+                        GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
                     }
+                    else
+                    {
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                            {
+                                int64_t i = Ai [pA] ;       // get A(i,k)
+                                int64_t i1 = i + 1 ;
+                                int64_t i_phase1 = (i1 << 2) + 2 ;  // (i+1,2)
+                                int64_t i_phase2 = (i1 << 2) + 3 ;  // (i+1,3)
+                                GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                for (GB_HASH (i))       // find i in hash table
+                                {
+                                    int64_t h = Hf [hash] ;
+                                    if (h == i_phase2)
+                                    { 
+                                        // C(i,j) has been seen; update it.
+                                        GB_HX_UPDATE (hash, t) ; // Hx [hash]+=t
+                                        break ;
+                                    }
+                                    else if (h == i_phase1)
+                                    { 
+                                        // first time C(i,j) seen here
+                                        Hf [hash] = i_phase2 ;
+                                        GB_HX_WRITE (hash, t) ; // Hx [hash] = t
+                                        Ci [pC++] = i ;
+                                        break ;
+                                    }
+                                }
+                            }
+                        }
+                        // found i if: Hf [hash] == (((i+1) << 2) + 3)
+                        GB_SORT_AND_GATHER_HASHED_C_j (((i+1) << 2) + 3, true) ;
+                    }
+
                 }
-                else
+                else if (mask_is_M)
                 {
-                    // Hf [hash] has been set to ((i+1)<<1) in phase1, for all
-                    // entries i in the pattern of C(:,j).  The first time
-                    // Hf [hash] is seen here in phase3, it is incremented to
-                    // ((i+1)<<1)+1 to denote it has been seen here in phase3.
+
+                    //----------------------------------------------------------
+                    // phase3: 1-vector coarse hash task, C<M>=A*B
+                    //----------------------------------------------------------
+
+                    GB_GET_M_j ;                // get M(:,j)
+                    GB_GET_M_j_RANGE ;          // get first and last in M(:,j)
+                    GB_GET_B_j ;                // get B(:,j)
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
                         GB_GET_A_k ;                // get A(:,k)
+                        GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                        GB_GET_B_kj ;               // bkj = B(k,j)
+                        // TODO scan M(:,j) instead, if very sparse
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;       // get A(i,k)
-                            int64_t i1 = (i+1) << 1 ;
-                            int64_t i2 = i1 + 1 ;
-                            GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k)*B(k,j)
-                            for (GB_HASH (i))           // find i in hash table
+                            int64_t i1 = i + 1 ;
+                            int64_t i_phase1 = (i1 << 2) + 2 ;  // (i+1,2)
+                            int64_t i_phase2 = (i1 << 2) + 3 ;  // (i+1,3)
+                            for (GB_HASH (i))       // find i in hash table
                             {
-                                int64_t h = Hf [hash] ;
-                                if (h == i2)
+                                int64_t hf = Hf [hash] ;
+                                int64_t h = (hf >> 2) ;
+                                if (hf == i_phase2)
                                 { 
-                                    // C(i,j) has been seen before; update it.
-                                    GB_HX_UPDATE (hash, t) ; // Hx [hash] += t ;
+                                    // C(i,j) has been seen; update it.
+                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                    GB_HX_UPDATE (hash, t) ;// Hx [hash] += t
                                     break ;
                                 }
-                                else if (h == i1)
+                                else if (hf == i_phase1)
                                 { 
                                     // first time C(i,j) seen here
-                                    Hf [hash] = i2 ;
-                                    GB_HX_WRITE (hash, t) ; // Hx [hash] = t ;
+                                    Hf [hash] = i_phase2 ;
+                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                    GB_HX_WRITE (hash, t) ; // Hx [hash] = t
                                     Ci [pC++] = i ;
                                     break ;
                                 }
+                                else if (h == 0 || h == i1) break ; // ignore i
                             }
                         }
                     }
-                    // sort the pattern of C(:,j)
-                    GB_qsort_1a (Ci + Cp [kk], cjnz) ;
-                    // gather the values of C(:,j)
-                    for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)
+                    // found i if: Hf [hash] == (((i+1) << 2) + 3)
+                    GB_SORT_AND_GATHER_HASHED_C_j (((i+1) << 2) + 3, true) ;
+
+                }
+                else
+                {
+
+                    //----------------------------------------------------------
+                    // phase3: 1-vector coarse hash task, C<!M>=A*B
+                    //----------------------------------------------------------
+
+                    GB_GET_M_j ;                // get M(:,j)
+                    GB_GET_B_j ;                // get B(:,j)
+                    for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
-                        int64_t i = Ci [pC] ;
-                        int64_t i2 = ((i+1) << 1) + 1 ;
-                        for (GB_HASH (i))           // find i in hash table
+                        int64_t k = Bi [pB] ;       // get B(k,j)
+                        GB_GET_A_k ;                // get A(:,k)
+                        GB_GET_B_kj ;               // bkj = B(k,j)
+                        for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
-                            if (Hf [hash] == i2)
-                            { 
-                                // i found in the hash table
-                                GB_CIJ_GATHER (pC, hash) ;  // Cx[pC] = Hx[hash]
-                                break ;
+                            int64_t i = Ai [pA] ;       // get A(i,k)
+                            int64_t i1 = i + 1 ;
+                            int64_t i_phase1 = (i1 << 2) + 2 ;  // (i+1,2)
+                            int64_t i_phase2 = (i1 << 2) + 3 ;  // (i+1,3)
+                            for (GB_HASH (i))       // find i in hash table
+                            {
+                                int64_t hf = Hf [hash] ;
+                                int64_t h = (hf >> 2) ;
+                                if (hf == i_phase2)
+                                { 
+                                    // C(i,j) has been seen; update it.
+                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                    GB_HX_UPDATE (hash, t) ;// Hx [hash] += t
+                                    break ;
+                                }
+                                else if (hf == i_phase1)
+                                { 
+                                    // first time C(i,j) seen here
+                                    Hf [hash] = i_phase2 ;
+                                    GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                    GB_HX_WRITE (hash, t) ; // Hx [hash] = t
+                                    Ci [pC++] = i ;
+                                    break ;
+                                }
+                                else if (h == i1) break ; // ignore i
+                                ASSERT (h != 0) ;
                             }
                         }
                     }
+                    // found i if: Hf [hash] == (((i+1) << 2) + 3)
+                    GB_SORT_AND_GATHER_HASHED_C_j (((i+1) << 2) + 3, true) ;
                 }
 
             }
@@ -1699,48 +2027,46 @@
             {
 
                 //--------------------------------------------------------------
-                // phase3: multi-vector coarse task
+                // phase3: multi-vector coarse hash task
                 //--------------------------------------------------------------
 
                 int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
                 int64_t hash_bits = (hash_size-1) ;
-                for (int64_t kk = kfirst ; kk <= klast ; kk++)
+
+                if (M == NULL)
                 {
-                    // compute the pattern and values of C(:,j)
-                    GB_GET_B_j ;            // get B(:,j)
-                    if (bjnz == 0)
-                    { 
-                        continue ;          // nothing to do
-                    }
-                    int64_t pC = Cp [kk] ;
-                    int64_t cjnz = Cp [kk+1] - pC ;
-                    if (bjnz == 1)          // C(:,j) = A(:,k)*B(k,j)
+
+                    //----------------------------------------------------------
+                    // phase3: multi-vector coarse hash task, C=A*B
+                    //----------------------------------------------------------
+
+                    // Initially, Hf [...] < mark for all of Hf.
+                    // Let f = Hf [hash] and h = Hi [hash]
+
+                    // f < mark          : unoccupied.
+                    // h == i, f == mark : occupied with C(i,j)
+
+                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
-                        // C(:,j) = A(:,k)*B(k,j) for a single entry B(k,j)
-                        int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
-                        GB_GET_A_k ;                // get A(:,k)
-                        for ( ; pA < pA_end ; pA++) // scan A(:,k)
-                        { 
-                            int64_t i = Ai [pA] ;       // get A(i,k)
-                            GB_T_EQ_AIK_TIMES_BKJ ;     // t = A(i,k) * B(k,j)
-                            GB_CIJ_WRITE (pC, t) ;      // Cx [pC] = t
-                            Ci [pC++] = i ;
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
+                        if (cjnz == 0) continue ;   // nothing to do
+                        if (bjnz == 1)              // C(:,j) = A(:,k)*B(k,j)
+                        {
+                            GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE ;
+                            continue ;
                         }
-                    }
-                    else
-                    {
                         mark++ ;
                         for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
                             int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GETB (bkj, Bx, pB) ;     // bkj = Bx [pB] ;
                             GB_GET_A_k ;                // get A(:,k)
+                            GB_GET_B_kj ;               // bkj = B(k,j)
                             for ( ; pA < pA_end ; pA++) // scan A(:,k)
                             {
                                 int64_t i = Ai [pA] ;   // get A(i,k)
-                                GB_T_EQ_AIK_TIMES_BKJ ; // t = A(i,k)*B(k,j)
-                                for (GB_HASH (i))       // find i in hash table
+                                GB_MULT_A_ik_B_kj ;     // t = A(i,k)*B(k,j)
+                                for (GB_HASH (i))   // find i in hash table
                                 {
                                     if (Hf [hash] == mark)
                                     {
@@ -1758,32 +2084,143 @@
                                         // hash entry is not occupied
                                         Hf [hash] = mark ;
                                         Hi [hash] = i ;
-                                        GB_HX_WRITE (hash, t) ; // Hx [hash] = t
+                                        GB_HX_WRITE (hash, t) ;// Hx[hash]=t
                                         Ci [pC++] = i ;
                                         break ;
                                     }
                                 }
                             }
                         }
-                        // sort the pattern of C(:,j)
-                        GB_qsort_1a (Ci + Cp [kk], cjnz) ;
-                        // gather the values of C(:,j)
-                        for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)
+                        // found i if: Hf [hash] == mark and Hi [hash] == i
+                        GB_SORT_AND_GATHER_HASHED_C_j (mark, Hi [hash] == i)
+                    }
+
+                }
+                else if (mask_is_M)
+                {
+
+                    //----------------------------------------------------------
+                    // phase3: multi-vector coarse hash task, C<M>=A*B
+                    //----------------------------------------------------------
+
+                    // Initially, Hf [...] < mark for all of Hf.
+                    // Let h = Hi [hash] and f = Hf [hash].
+
+                    // f < mark            : M(i,j)=0, C(i,j) is ignored.
+                    // h == i, f == mark   : M(i,j)=1, and C(i,j) not yet seen.
+                    // h == i, f == mark+1 : M(i,j)=1, and C(i,j) has been seen.
+
+                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
+                    {
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
+                        if (cjnz == 0) continue ;   // nothing to do
+                        GB_GET_M_j ;                // get M(:,j)
+                        GB_GET_M_j_RANGE ;          // get 1st & last in M(:,j)
+                        mark += 2 ;
+                        int64_t mark1 = mark+1 ;
+                        GB_HASH_M_j ;               // hash M(:,j)
+                        GB_GET_B_j ;                // get B(:,j)
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
-                            int64_t i = Ci [pC] ;
-                            for (GB_HASH (i))       // find i in hash table
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            GB_SKIP_A_k_IF_DISJOINT_WITH_M_j ;
+                            // TODO scan M(:,j) instead, if very sparse
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
                             {
-                                if (Hi [hash] == i)
-                                { 
-                                    // i found in the hash table
-                                    // Cx [pC] = Hx [hash] ;
-                                    GB_CIJ_GATHER (pC, hash) ;
-                                    break ;
+                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                for (GB_HASH (i))       // find i in hash
+                                {
+                                    int64_t f = Hf [hash] ;
+                                    if (f < mark) break ;   // M(i,j)=0, ignore
+                                    if (Hi [hash] == i)
+                                    {
+                                        GB_MULT_A_ik_B_kj ; // t = A(i,k)*B(k,j)
+                                        if (f == mark)      // if true, i is new
+                                        {
+                                            // C(i,j) is new
+                                            Hf [hash] = mark1 ; // mark as seen
+                                            GB_HX_WRITE (hash, t) ;// Hx[hash]=t
+                                            Ci [pC++] = i ;
+                                        }
+                                        else
+                                        {
+                                            // C(i,j) has been seen; update it.
+                                            GB_HX_UPDATE (hash, t) ;
+                                        }
+                                        break ;
+                                    }
                                 }
                             }
                         }
+                        // found i if: Hf [hash] == mark1 and Hi [hash] == i
+                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, Hi [hash] == i) ;
                     }
-                    ASSERT (pC == Cp [kk+1]) ;
+
+                }
+                else
+                {
+
+                    //----------------------------------------------------------
+                    // phase3: multi-vector coarse hash task, C<!M>=A*B
+                    //----------------------------------------------------------
+
+                    // Initially, Hf [...] < mark for all of Hf.
+                    // Let h = Hi [hash] and f = Hf [hash].
+
+                    // f < mark: unoccupied, M(i,j)=0, and C(i,j) not yet seen.
+                    // h == i, f == mark   : M(i,j)=1. C(i,j) ignored.
+                    // h == i, f == mark+1 : M(i,j)=0, and C(i,j) has been seen.
+
+                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
+                    {
+                        int64_t pC = Cp [kk] ;
+                        int64_t cjnz = Cp [kk+1] - pC ;
+                        if (cjnz == 0) continue ;   // nothing to do
+                        GB_GET_M_j ;                // get M(:,j)
+                        mark += 2 ;
+                        int64_t mark1 = mark+1 ;
+                        GB_HASH_M_j ;               // hash M(:,j)
+                        GB_GET_B_j ;                // get B(:,j)
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                for (GB_HASH (i))       // find i in hash
+                                {
+                                    int64_t f = Hf [hash] ;
+                                    if (f < mark)   // if true, i is new
+                                    {
+                                        // C(i,j) is new
+                                        Hf [hash] = mark1 ; // mark C(i,j) seen
+                                        Hi [hash] = i ;
+                                        GB_MULT_A_ik_B_kj ; // t = A(i,k)*B(k,j)
+                                        GB_HX_WRITE (hash, t) ; // Hx [hash] = t
+                                        Ci [pC++] = i ;
+                                        break ;
+                                    }
+                                    if (Hi [hash] == i)
+                                    {
+                                        if (f == mark1)
+                                        {
+                                            // C(i,j) has been seen; update it.
+                                            GB_MULT_A_ik_B_kj ;//t=A(i,k)*B(k,j)
+                                            GB_HX_UPDATE (hash, t) ;//Hx[ ] += t
+                                        }
+                                        break ;
+                                    }
+                                }
+                            }
+                        }
+                        // found i if: Hf [hash] == mark1 and Hi [hash] == i
+                        GB_SORT_AND_GATHER_HASHED_C_j (mark1, Hi [hash] == i) ;
+                    }
                 }
             }
         }
@@ -1843,17 +2280,19 @@
         {
 
             //------------------------------------------------------------------
-            // phase4: fine Gustavson task
+            // phase4: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
             //------------------------------------------------------------------
 
+            // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
+
             uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-            if (cjnz < cvlen)
+            if (cjnz < cvlen)   // work done in phase3 if cjnz == cvlen
             {
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, nfine_team_size);
                 for (int64_t i = istart ; i < iend ; i++)
                 {
-                    if (Hf [i])
+                    if (Hf [i] == 2)
                     { 
                         GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
                         Ci [pC++] = i ;
@@ -1866,8 +2305,11 @@
         {
 
             //------------------------------------------------------------------
-            // phase4: fine hash task
+            // phase4: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
             //------------------------------------------------------------------
+
+            // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
+            // and the index i of the entry is (Hf [hash] >> 2) - 1.
 
             int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
             int64_t hash_start, hash_end ;
@@ -1876,9 +2318,9 @@
             for (int64_t hash = hash_start ; hash < hash_end ; hash++)
             {
                 int64_t hf = Hf [hash] ;
-                if (hf != 0)
+                if ((hf & 3) == 2)
                 { 
-                    int64_t i = (hf >> 1) - 1 ; // found C(i,j) in hash table
+                    int64_t i = (hf >> 2) - 1 ; // found C(i,j) in hash table
                     Ci [pC++] = i ;
                 }
             }
@@ -1913,8 +2355,11 @@
             {
 
                 //--------------------------------------------------------------
-                // phase5: fine hash task
+                // phase5: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
                 //--------------------------------------------------------------
+
+                // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
+                // and the index i of the entry is (Hf [hash] >> 2) - 1.
 
                 int64_t kk = TaskList [taskid].vector ;
                 int64_t hash_bits = (hash_size-1) ;
@@ -1944,7 +2389,8 @@
                     int64_t i1 = i + 1 ;
                     for (GB_HASH (i))       // find i in hash table
                     {
-                        if ((Hf [hash] >> 1) == i1)
+                        int64_t hf = Hf [hash] ;
+                        if ((hf & 3) == 2 && (hf >> 2) == i1)
                         { 
                             // found i in the hash table
                             GB_CIJ_GATHER (pC, hash) ; // Cx [pC] = Hx [hash]
@@ -1960,15 +2406,25 @@
     }
 }
 
-#undef GB_GET_B_j
-#undef GB_GET_A_k
 #undef GB_GET_M_j
-#undef GB_T_EQ_AIK_TIMES_BKJ
+#undef GB_GET_M_j_RANGE
+#undef GB_SCATTER_M_j
+#undef GB_HASH_M_j
+#undef GB_GET_B_j
+#undef GB_GET_B_kj
+#undef GB_GET_A_k
+#undef GB_SKIP_A_k_IF_DISJOINT_WITH_M_j
+#undef GB_GET_M_ij
+#undef GB_MULT_A_ik_B_kj
+#undef GB_COMPUTE_DENSE_C_j
+#undef GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE
+#undef GB_GATHER_ALL_C_j
+#undef GB_SORT_AND_GATHER_C_j
+#undef GB_SORT_AND_GATHER_HASHED_C_j
 #undef GB_ATOMIC_UPDATE
 #undef GB_ATOMIC_WRITE
 #undef GB_HASH_FUNCTION
 #undef GB_REHASH
 #undef GB_HASH
-#undef GB_PHASE1_FINE_TASK_INIT
-#undef GB_FREE_ALL
+#undef GB_FREE_ALL                                                         \
 

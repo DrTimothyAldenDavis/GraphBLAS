@@ -176,16 +176,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_mode_set (mode) ;
 
     //--------------------------------------------------------------------------
-    // clear Sauna workspaces
-    //--------------------------------------------------------------------------
-
-    for (int tid = 0 ; tid < GxB_NTHREADS_MAX ; tid++)
-    { 
-        GB_Global_Saunas_set (tid, NULL) ;
-        GB_Global_Sauna_in_use_set (tid, false) ;
-    }
-
-    //--------------------------------------------------------------------------
     // set the global default format
     //--------------------------------------------------------------------------
 
