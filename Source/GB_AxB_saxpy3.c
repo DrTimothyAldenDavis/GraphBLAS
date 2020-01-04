@@ -204,9 +204,6 @@ static inline void GB_create_coarse_task
     TaskList [taskid].master = taskid ;
     TaskList [taskid].hsize  = GB_hash_table_size (flmax, cvlen) ;
     TaskList [taskid].flops  = Bflops [klast+1] - Bflops [kfirst] ;
-
-    // printf ("    create final coarse task "GBd":"GBd" flops "GBd"\n",
-    //     kfirst, klast, TaskList [taskid].flops) ;
 }
 
 //------------------------------------------------------------------------------
@@ -231,10 +228,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // check inputs
     //--------------------------------------------------------------------------
 
-    // printf ("saxpy3 start, flipxy %d\n", flipxy) ;
-
     GrB_Info info ;
-    GrB_Matrix M = M_input ;
+    GrB_Matrix M = M_input ;        // use the mask M, until deciding otherwise
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
@@ -391,18 +386,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     {
         printf ("saxpy3: C<M>=A*B ") ;
     }
-    printf (" nnz(A) %g (%g %%)  nnz(B) %g (%g %%) flops "GBd"\n",
+    printf ("nnz(A) %g (%g %%)  nnz(B) %g (%g %%) flops "GBd"\n",
         (double) GB_NNZ (A),
         100 * (double) GB_NNZ (A) / (((double) avlen) * ((double) avdim)),
         (double) GB_NNZ (B),
         100 * (double) GB_NNZ (B) / (((double) bvlen) * ((double) bvdim)),
         total_flops) ;
-
-    // printf ("cnvec: "GBd" cplen "GBd"\n", cnvec, C->plen) ;
-    // for (int k = 0 ; k <= bnvec ; k++)
-    // {
-    //     printf ("Bflops [%d] = "GBd"\n", k, Bflops [k]) ;
-    // }
 
     //--------------------------------------------------------------------------
     // determine if the mask M should be applied, or done later
@@ -413,7 +402,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // the mask.  Tell the caller that the mask was not applied, so that it
     // will be applied later in GB_mxm.
 
-    // printf ("saxpy3 done\n") ;
     double mnz = (double) ((M == NULL) ? 0 : 2*GB_NNZ (M)) ;
     double totfl = (double) total_flops ;
     double axbflops = total_flops - Mwork ;
@@ -456,11 +444,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     double target_fine_size = target_task_size / GB_FINE_WORK ;
     target_fine_size = GB_IMAX (target_fine_size, chunk) ;
 
-    // printf ("nthreads %d\n", nthreads) ;
-    // printf ("chunk %g\n", chunk) ;
-    // printf ("target_task_size %g\n", target_task_size) ;
-    // printf ("target_fine_size %g\n", target_fine_size) ;
-
     //--------------------------------------------------------------------------
     // determine # of parallel tasks
     //--------------------------------------------------------------------------
@@ -497,22 +480,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             int64_t task_ncols = klast - kfirst ;
             int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
 
-            // printf ("init task %d\n", taskid) ;
-            // printf ("    kfirst "GBd" klast "GBd" ncols "GBd" flops "GBd"\n",
-            //     kfirst, klast, task_ncols, task_flops) ;
-
             if (task_ncols == 0)
             {
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
-                // printf ("   init coarse task is empty\n") ;
             }
             else if (task_flops > 2 * GB_COSTLY * target_task_size)
             {
                 // This coarse task is too costly, because it contains one or
                 // more costly vectors.  Split its vectors into a mixture of
                 // coarse and fine tasks.
-                // printf ("   init coarse task is costly\n") ;
 
                 int64_t kcoarse_start = kfirst ;
 
@@ -524,9 +501,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                     // bjnz = nnz (B (:,j))
                     int64_t bjnz = Bp [kk+1] - Bp [kk] ;
 
-                    // printf ("   jflops %g\n" , jflops) ;
-                    // printf ("   bjnz "GBd"\n" , bjnz) ;
-
                     if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
                     {
                         // A*B(:,j) is costly; split it into 2 or more fine
@@ -535,7 +509,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         {
                             // vectors kcoarse_start to kk-1 form a single
                             // coarse task
-                            // printf ("   flush prior coarse\n") ;
                             ncoarse++ ;
                         }
 
@@ -546,7 +519,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         max_bjnz = GB_IMAX (max_bjnz, bjnz) ;
                         int team_size = ceil (jflops / target_fine_size) ;
                         nfine += team_size ;
-                        // printf ("   team size %d\n", team_size) ;
                     }
                 }
 
@@ -562,7 +534,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             else
             {
                 // This coarse task is OK as-is.
-                // printf ("   init coarse task is OK\n") ;
                 ncoarse++ ;
             }
         }
@@ -574,7 +545,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // entire computation in a single coarse task
         //----------------------------------------------------------------------
 
-        // printf ("   just one task\n") ;
         nfine = 0 ;
         ncoarse = 1 ;
     }
@@ -600,9 +570,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // create the tasks
     //--------------------------------------------------------------------------
 
-    // printf ("\n======= create the tasks (fine: %d, coarse: %d)\n",
-    //     nfine, ncoarse) ;
-
     if (ntasks_initial > 1)
     {
 
@@ -621,22 +588,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             int64_t task_ncols = klast - kfirst ;
             int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
 
-            // printf ("init task %d\n", taskid) ;
-            // printf ("    kfirst "GBd" klast "GBd" ncols "GBd" flops "GBd"\n",
-            //     kfirst, klast, task_ncols, task_flops) ;
-
             if (task_ncols == 0)
             {
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
-                // printf ("   init coarse task is empty\n") ;
             }
             else if (task_flops > 2 * GB_COSTLY * target_task_size)
             {
                 // This coarse task is too costly, because it contains one or
                 // more costly vectors.  Split its vectors into a mixture of
                 // coarse and fine tasks.
-                // printf ("   init coarse task is costly\n") ;
 
                 int64_t kcoarse_start = kfirst ;
 
@@ -646,9 +607,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                     double jflops = Bflops [kk+1] - Bflops [kk] ;
                     // bjnz = nnz (B (:,j))
                     int64_t bjnz = Bp [kk+1] - Bp [kk] ;
-
-                    // printf ("   jflops %g\n" , jflops) ;
-                    // printf ("   bjnz "GBd"\n" , bjnz) ;
 
                     if (jflops > GB_COSTLY * target_task_size && bjnz > 1)
                     {
@@ -719,27 +677,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             ASSERT (fl >= 0) ;
                         }
 
-                        // for (s = 0 ; s < bjnz ; s++)
-                        // {
-                            // printf ("Bflops2 ["GBd"] = "GBd"\n", s, 
-                            // Bflops2 [s]) ;
-                        // }
-
                         // cumulative sum of flops to compute A*B(:,j)
                         GB_cumsum (Bflops2, bjnz, NULL, nth) ;
-
-                        // for (s = 0 ; s <= bjnz ; s++)
-                        // {
-                            // printf ("Bflops2 ["GBd"] = "GBd"\n", s, 
-                            // Bflops2 [s]) ;
-                        // }
-
-                        // printf ("\ncumsum:\n") ;
-                        // for (s = 0 ; s < bjnz ; s++)
-                        // {
-                        //     printf ("Bflops2 ["GBd"] = "GBd"\n", s, 
-                        //         Bflops2 [s]) ;
-                        // }
 
                         // slice B(:,j) into fine tasks
                         int team_size = ceil (jflops / target_fine_size) ;
@@ -763,8 +702,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             TaskList [nf].master = master ;
                             TaskList [nf].team_size = team_size ;
                             TaskList [nf].flops = fl ;
-//    printf ("    create final fine task "GBd":"GBd" flops "GBd"\n",
-//        pstart, pend, fl) ;
                             nf++ ;
                         }
                     }
@@ -850,7 +787,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #endif
 
-    #if 0
+    #if 1
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;
@@ -997,13 +934,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // all tasks use an Hx array of size hash_size
         Hx_size_total += (hash_size * csize + hx_pad) ;
     }
-
-    #if 0
-    printf ("Hi_size_total "GBd" int64\n", Hi_size_total) ;
-    printf ("Hf_size_total "GBd" int64\n", Hf_size_total) ;
-    printf ("Hx_size_total "GBd" bytes\n", Hx_size_total) ;
-    printf ("csize: %g\n", (double) csize) ;
-    #endif
 
     // allocate space for all hash tables
     GB_MALLOC_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;
@@ -1271,8 +1201,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
-        // printf ("generic saxpy3\n") ;
-
         if (flipxy)
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
@@ -1282,7 +1210,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         else
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
-            // printf ("not flipped\n") ;
             #include "GB_AxB_saxpy3_template.c"
             #undef GB_MULTIPLY
         }
