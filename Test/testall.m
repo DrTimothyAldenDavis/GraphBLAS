@@ -12,6 +12,13 @@ function testall (threads,longtests)
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
+try
+    GrB.finalize
+catch
+end
+clear mex
+GrB.init
+
 testall_time = tic ;
 
 if (nargin < 2)

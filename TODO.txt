@@ -1,10 +1,8 @@
-
 TODO Ewise add and emult: handle dense += sparse case efficiently
 TODO support for dense matrices (A->i and A->p as NULL pointers)
 TODO implement v1.3 of the API
 TODO add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
 TODO add Heap method to GB_AxB_saxpy3 (inspector-executor style)
 TODO archive myhash3* prototypes when done
-TODO when saxpy3 is added, archive prior Gustavson and Heap methods
 TODO allow matrices and vectors to be left jumbled (sort left pending)
-
+TODO user-controllable report setting to print stats to a log file

@@ -19,6 +19,8 @@
 
 // FUTURE:: an outer-product method for C=A*B'
 
+// TODO fix GxB_AxB_METHOD stats
+
 #define GB_FREE_ALL             \
 {                               \
     GB_MATRIX_FREE (Chandle) ;  \
@@ -225,11 +227,10 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     ASSERT_MATRIX_OK_OR_NULL (M, "final M for A*B", GB0) ;
 
-    // TODO
-    printf ("\n") ;
+    // TODO remove printfs
     if (M != NULL)
     {
-        printf ("nnz(M) %g (%g %%) compl: %d ",
+        printf ("[M present nnz(M) %g (%g %%) compl: %d] ",
             (double) GB_NNZ (M),
             100 * ((double) GB_NNZ (M)) /
                   ((double) GB_NROWS (M) * (double) GB_NCOLS (M)),
@@ -296,7 +297,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
 
         //----------------------------------------------------------------------
-        // select the method for C<M> = A'*B
+        // select the method for C<M>=A'*B
         //----------------------------------------------------------------------
 
         // A'*B is being computed: use the dot product without computing A'
@@ -308,7 +309,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // which M(i,j)=1 is computed via a dot product, C(i,j) =
         // A(:,i)'*B(:,j).  If the mask is not present, the dot-product method
         // is very slow in general, and thus the saxpy method is usually used
-        // instead (via Gustavson or heap).
+        // instead.
 
         bool do_rowscale = false ;
         bool do_colscale = false ;
@@ -329,7 +330,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // auto selection for A'*B
             if (M != NULL && !Mask_comp)
             { 
-                // C<M> = A'*B always uses the dot product method
+                // C<M>=A'*B always uses the dot product method
                 do_adotb = true ;
             }
             else if (A->vdim == 1 || B->vdim == 1)
@@ -358,7 +359,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
 
         //----------------------------------------------------------------------
-        // C<M> = A'*B
+        // C<M>=A'*B
         //----------------------------------------------------------------------
 
         if (do_rowscale)
@@ -386,8 +387,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
 
 //          // C = A'*B via saxpy3: Gustavson + Hash method
-            printf (" C=A'*B saxpy3: ") ;
-            GB_OK (GB_AxB_saxpy3 (Chandle, AT, B, semiring, flipxy, Context)) ;
+            printf (" C=A'*B : ") ;
+            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, AT, B, semiring,
+                flipxy, mask_applied, Context)) ;
 
         }
 
@@ -426,8 +428,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
 
 //          // C = A*B' via saxpy3: Gustavson + Hash method
-            printf (" C=A*B' saxpy3: ") ;
-            GB_OK (GB_AxB_saxpy3 (Chandle, A, BT, semiring, flipxy, Context)) ;
+            printf (" C=A*B' : ") ;
+            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, BT, semiring,
+                flipxy, mask_applied, Context)) ;
 
         }
 
@@ -463,8 +466,9 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         { 
 
             // C = A*B via saxpy3: Gustavson + Hash method
-            printf (" C=A*B saxpy3: ") ;
-            GB_OK (GB_AxB_saxpy3 (Chandle, A, B, semiring, flipxy, Context)) ;
+            printf (" C=A*B : ") ;
+            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, B, semiring,
+                flipxy, mask_applied, Context)) ;
 
         }
     }

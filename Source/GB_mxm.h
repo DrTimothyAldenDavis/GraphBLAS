@@ -9,6 +9,7 @@
 
 #ifndef GB_MXM_H
 #define GB_MXM_H
+// TODO remove GB_saxpy3.h from here.
 #include "GB_saxpy3.h"
 
 //------------------------------------------------------------------------------
@@ -46,13 +47,12 @@ GrB_Info GB_AxB_dot_parallel        // parallel C=A'*B
 
 GrB_Info GB_AxB_flopcount
 (
-    bool *result,               // result of test (total_flops <= floplimit)
-    int64_t *Bflops,            // size B->nvec+1 and all zero, if present
-    int64_t *Bflops_per_entry,  // size nnz(B)+1 and all zero, if present
+    int64_t *Mwork,             // amount of work to handle the mask M
+    int64_t *Bflops,            // size B->nvec+1 and all zero
     const GrB_Matrix M,         // optional mask matrix
+    const bool Mask_comp,       // if true, mask is complemented
     const GrB_Matrix A,
     const GrB_Matrix B,
-    int64_t floplimit,          // maximum flops to compute if Bflops NULL
     GB_Context Context
 ) ;
 
@@ -201,10 +201,13 @@ GrB_Info GB_AxB_dot3_one_slice
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix A,             // input matrix
-    const GrB_Matrix B,             // input matrix
+    GrB_Matrix M_input,             // optional mask matrix
+    const bool Mask_comp,           // if true, use !M
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    bool *mask_applied,             // if true, then mask was applied
     GB_Context Context
 ) ;
 

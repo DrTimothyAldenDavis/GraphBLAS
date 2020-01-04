@@ -2,7 +2,7 @@
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -64,9 +64,6 @@
 #define GB_MULTADD(z, x, y) \
     GB_multiply_add(z, x, y)
 
-// copy scalar
-#define GB_COPY_C(z,x) z = x
-
 // monoid identity value
 #define GB_IDENTITY \
     GB_identity
@@ -78,9 +75,6 @@
 // simd pragma for dot product
 #define GB_DOT_SIMD \
     GB_dot_simd
-
-// cij is not a pointer but a scalar; nothing to do
-#define GB_CIJ_REACQUIRE(cij,cnz)
 
 // declare the cij scalar
 #define GB_CIJ_DECLARE(cij) \
@@ -182,12 +176,13 @@ GrB_Info GB_Adot3B
 }
 
 //------------------------------------------------------------------------------
-// C=A*B: saxpy3 method
+// C=A*B, C<M>=A*B, C<!M>=A*B: saxpy3 method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
 GrB_Info GB_Asaxpy3B
 (
     GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
     GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,

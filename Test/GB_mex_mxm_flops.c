@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_mex_mxm_flops: compute flops to do C<M>=A*B or C=A*B
+// GB_mex_mxm_flops: compute flops to do C=A*B, C<M>=A*B or C<!M>=A*B
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -9,7 +9,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "[result bflops] = GB_mex_mxm (M, A, B, floplimit)"
+#define USAGE "[bflops mwork] = GB_mex_mxm_flops (M, Mask_comp, A, B)"
 
 #define FREE_ALL                            \
 {                                           \
@@ -35,7 +35,7 @@ void mexFunction
 
     // check inputs
     GB_WHERE (USAGE) ;
-    if (nargout > 2 || nargin < 3 || nargin > 4)
+    if (nargout > 2 || nargin != 4)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -47,52 +47,49 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("M failed") ;
     }
+    // if (M != NULL) GxB_print (M, 3) ;
+
+    // get Mask_comp
+    bool GET_SCALAR (1, bool, Mask_comp, 0) ;
+    // printf ("complement: %d\n", Mask_comp) ;
 
     // get A (shallow copy)
-    A = GB_mx_mxArray_to_Matrix (pargin [1], "A", false, true) ;
+    A = GB_mx_mxArray_to_Matrix (pargin [2], "A", false, true) ;
     if (A == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
+    // GxB_print (A, 3) ;
 
     // get B (shallow copy)
-    B = GB_mx_mxArray_to_Matrix (pargin [2], "B", false, true) ;
+    B = GB_mx_mxArray_to_Matrix (pargin [3], "B", false, true) ;
     if (B == NULL)
     {
         FREE_ALL ;
         mexErrMsgTxt ("B failed") ;
     }
+    // GxB_print (B, 3) ;
 
-    // get floplimit
-    int64_t GET_SCALAR (3, int64_t, floplimit, INT64_MAX) ;
-
-    // allocate Bflops, if it is to be computed
+    // allocate Bflops (note the calloc)
     int64_t bnvec = B->nvec ;
-    int64_t *Bflops = NULL ;
-    if (nargout > 1)
-    {
-        // note the calloc of Bflops
-        Bflops = mxCalloc ((bnvec+1), sizeof (int64_t)) ;
-    }
+    int64_t *Bflops = mxCalloc ((bnvec+1), sizeof (int64_t)) ;
 
     // compute the flop count
-    bool result ;
-    GB_AxB_flopcount (&result, Bflops, NULL, M, A, B, floplimit, Context) ;
+    int64_t Mwork = 0 ;
+
+    GB_AxB_flopcount (&Mwork, Bflops, M, Mask_comp, A, B, Context) ;
 
     // return result to MATLAB
-    pargout [0] = mxCreateDoubleScalar ((double) result) ;
-    if (nargout > 1)
+    pargout [0] = mxCreateDoubleMatrix (1, bnvec+1, mxREAL) ;
+    double *Bflops_matlab = mxGetPr (pargout [0]) ; 
+    for (int64_t kk = 0 ; kk <= bnvec ; kk++)
     {
-        pargout [1] = mxCreateDoubleMatrix (1, bnvec+1, mxREAL) ;
-        double *Bflops_matlab = mxGetPr (pargout [1]) ; 
-        for (int64_t kk = 0 ; kk <= bnvec ; kk++)
-        {
-            Bflops_matlab [kk] = (double) Bflops [kk] ;
-        }
-        mxFree (Bflops) ;
+        Bflops_matlab [kk] = (double) Bflops [kk] ;
     }
 
+    pargout [1] = mxCreateDoubleScalar (Mwork) ;
+    mxFree (Bflops) ;
     FREE_ALL ;
 }
 

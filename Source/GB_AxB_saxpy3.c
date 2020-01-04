@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3: compute C = A*B in parallel
+// GB_AxB_saxpy3: compute C=A*B, C<M>=A*B, or C<!M>=A*B in parallel
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -7,26 +7,89 @@
 
 //------------------------------------------------------------------------------
 
-// This function computes C=A*B.  The mask is not applied.  A mix of
-// Gustavson's method [1] and the Hash method [2] is used, per task.
+// GB_AxB_saxpy3 computes C=A*B, C<M>=A*B, or C<!M>=A*B in parallel.  If the
+// mask matrix M has too many entries compared to the work to compute A*B, then
+// it is not applied.  Instead, M is ignored and C=A*B is computed.  The mask
+// is applied later, in GB_mxm.
 
-// TODO add a method that exploits the mask.
+// For simplicity, this discussion and all comments in this code assume that
+// all matrices are in CSC format, but the algorithm is CSR/CSC agnostic.
+
+// The matrix B is split into two kinds of tasks: coarse and fine.  A coarse
+// task computes C(:,j1:j2) = A*B(:,j1:j2), for a unique set of vectors j1:j2.
+// Those vectors are not shared with any other tasks.  A fine task works with a
+// team of other fine tasks to compute C(:,j) for a single vector j.  Each fine
+// task computes A*B(k1:k2,j) for a unique range k1:k2, and sums its results
+// into C(:,j) via atomic operations.
+
+// Each coarse or fine task uses either Gustavson's method [1] or the Hash
+// method [2].  There are 5 kinds of tasks:
+
+//      fine Gustavson task
+//      fine hash task
+//      coarse Gustason task
+//      1-vector coarse hash task
+//      multi-vector coarse hash task
+
+// Each of the 5 kinds tasks are then subdivided into 3 variants, for C=A*B,
+// C<M>=A*B, and C<!M>=A*B, giving a total of 15 different types of tasks.
+
+// Fine tasks are used when there would otherwise be too much work for a single
+// task to compute the single vector C(:,j).  Fine tasks share all of their
+// workspace with the team of fine tasks computing C(:,j).  Coarse tasks are
+// prefered since they require less synchronization, but fine tasks allow for
+// better parallelization when B has only a few vectors.  If B consists of a
+// single vector (for GrB_mxv if A is in CSC format and not transposed, or
+// for GrB_vxm if A is in CSR format and not transpose), then the only way to
+// get parallelism is via fine tasks.  If a single thread is used for this
+// case, a single-vector coarse task is used.
+
+// To select between the Hash method or Gustavson's method for each task, the
+// hash table size is first found.  The hash table size for a hash task depends
+// on the maximum flop count for any vector in that task (which is just one
+// vector for the fine tasks and the 1-vector coarse hash task).  It is set to
+// twice the smallest power of 2 that is greater than the flop count to compute
+// that vector (plus the # of entries in M(:,j) for tasks that compute C<M>=A*B
+// or C<!M>=A*B).  This size ensures the results will fit in the hash table,
+// and with hopefully only a modest number of collisions.  If the hash table
+// size exceeds a threshold (currently m/16 if C is m-by-n), then Gustavson's
+// method is used instead, and the hash table size is set to m, to serve as
+// the gather/scatter workspace for Gustavson's method.
+
+// TODO m/16 may be too low; try other default values.
+// TODO give the user control over the 1/16 parameter.
+
+// The workspace allocated depends on the type of task.  Let s be the hash
+// table size for the task, and C is m-by-n (assuming all matrices are CSC; if
+// CSR, then m is replaced with n).
+//
+//      fine Gustavson task (shared):   uint8_t Hf [m] ; ctype Hx [m] ;
+//      fine hash task (shared):        int64_t Hf [s] ; ctype Hx [s] ;
+//      coarse Gustavson task:          int64_t Hf [m] ; ctype Hx [m] ;
+//      1-vector coarse hash task:      int64_t Hf [s] ; ctype Hx [s] ;
+//      multi-vector coarse hash task:  int64_t Hf [s] ; ctype Hx [s] ;
+//                                      int64_t Hi [s] ; 
+//
+// Note that the Hi array is needed only for the multi-vector coarse hash task.
+// Additional workspace is allocated to construct the list of tasks, but this
+// is freed before C is constructed.
 
 // References:
 
-// [1] Fred G. Gustavson. 1978. Two Fast Algorithms for Sparse
-// Matrices: Multiplication and Permuted Transposition. ACM Trans. Math. Softw.
-// 4, 3 (September 1978), 250–269. DOI:https://doi.org/10.1145/355791.355796
+// [1] Fred G. Gustavson. 1978. Two Fast Algorithms for Sparse Matrices:
+// Multiplication and Permuted Transposition. ACM Trans. Math. Softw.  4, 3
+// (Sept. 1978), 250–269. DOI:https://doi.org/10.1145/355791.355796
 
 // [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydın Buluç. 2018.
 // High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore
-// Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP ’18).
+// Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP '18).
 // Association for Computing Machinery, New York, NY, USA, Article 34, 1–10.
 // DOI:https://doi.org/10.1145/3229710.3229720
 
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
+#include "GB_saxpy3.h"
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #ifndef GBCOMPACT
@@ -75,10 +138,11 @@
 //------------------------------------------------------------------------------
 
 // flmax is the max flop count for computing A*B(:,j), for any vector j that
-// this task computes.  GB_hash_table_size determines the hash table size for
-// this task, which is twice the smallest power of 2 larger than flmax.  If
-// flmax is large enough, the hash_size is returned as cvlen, so that
-// Gustavson's method will be used instead of the Hash method.
+// this task computes.  If the mask M is present, flmax also includes the
+// number of entries in M(:,j).  GB_hash_table_size determines the hash table
+// size for this task, which is twice the smallest power of 2 larger than
+// flmax.  If flmax is large enough, the hash_size is returned as cvlen, so
+// that Gustavson's method will be used instead of the Hash method.
 
 static inline int64_t GB_hash_table_size
 (
@@ -146,16 +210,19 @@ static inline void GB_create_coarse_task
 }
 
 //------------------------------------------------------------------------------
-// GB_AxB_saxpy3: compute C = A*B in parallel
+// GB_AxB_saxpy3: compute C=A*B, C<M>=A*B, or C<!M>=A*B in parallel
 //------------------------------------------------------------------------------
 
 GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
     GrB_Matrix *Chandle,            // output matrix
-    const GrB_Matrix A,             // input matrix
-    const GrB_Matrix B,             // input matrix
+    const GrB_Matrix M_input,       // optional mask matrix
+    const bool Mask_comp,           // if true, use !M
+    const GrB_Matrix A,             // input matrix A
+    const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    bool *mask_applied,             // if true, then mask was applied
     GB_Context Context
 )
 {
@@ -167,8 +234,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // printf ("saxpy3 start, flipxy %d\n", flipxy) ;
 
     GrB_Info info ;
+    GrB_Matrix M = M_input ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
+    ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
     ASSERT_MATRIX_OK (A, "A for saxpy3 A*B", GB0) ;
     ASSERT_MATRIX_OK (B, "B for saxpy3 A*B", GB0) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
@@ -234,7 +303,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
-    // const int64_t *GB_RESTRICT Ai = A->i ;
+    const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t avlen = A->vlen ;
     const int64_t avdim = A->vdim ;
     // const int64_t anz = GB_NNZ (A) ;
@@ -255,8 +324,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-
-    // nthreads_max = 1 ;
 
     //--------------------------------------------------------------------------
     // allocate C (just C->p and C->h, but not C->i or C->x)
@@ -301,22 +368,82 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // compute flop counts for each vector of B and C
     //--------------------------------------------------------------------------
 
+    // TODO, use GB_Global_hack_set to control when to use the mask,
+    // and test in LAGraph for the GAP benchmark.
+
+    // TODO, for now, always use the mask M
+
+    int64_t Mwork = 0 ;
+
     int64_t *GB_RESTRICT Bflops = Cp ;  // Cp is used as workspace for Bflops
-    bool ignore ;
-    GB_OK (GB_AxB_flopcount (&ignore, Bflops, NULL, NULL, A, B, 0, Context)) ;
+    GB_OK (GB_AxB_flopcount (&Mwork, Bflops, M, Mask_comp, A, B, Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
 
+    if (M == NULL)
+    {
+        printf ("saxpy3: C=A*B ") ;
+    }
+    else if (Mask_comp)
+    {
+        printf ("saxpy3: C<!M>=A*B ") ;
+    }
+    else
+    {
+        printf ("saxpy3: C<M>=A*B ") ;
+    }
     printf (" nnz(A) %g (%g %%)  nnz(B) %g (%g %%) flops "GBd"\n",
         (double) GB_NNZ (A),
         100 * (double) GB_NNZ (A) / (((double) avlen) * ((double) avdim)),
         (double) GB_NNZ (B),
         100 * (double) GB_NNZ (B) / (((double) bvlen) * ((double) bvdim)),
         total_flops) ;
+
     // printf ("cnvec: "GBd" cplen "GBd"\n", cnvec, C->plen) ;
     // for (int k = 0 ; k <= bnvec ; k++)
     // {
     //     printf ("Bflops [%d] = "GBd"\n", k, Bflops [k]) ;
     // }
+
+    //--------------------------------------------------------------------------
+    // determine if the mask M should be applied, or done later
+    //--------------------------------------------------------------------------
+
+    // If M is very large as compared to A*B, then it is too costly to apply
+    // during the computation of A*B.  In this case, compute C=A*B, ignoring
+    // the mask.  Tell the caller that the mask was not applied, so that it
+    // will be applied later in GB_mxm.
+
+    // printf ("saxpy3 done\n") ;
+    double mnz = (double) ((M == NULL) ? 0 : 2*GB_NNZ (M)) ;
+    double totfl = (double) total_flops ;
+    double axbflops = total_flops - Mwork ;
+    printf ("nnz(M) %g  totfl %g mwork %g A*B flops: %g Use M: %d",
+        mnz, totfl, (double) Mwork, axbflops, M != NULL && Mwork <= axbflops) ;
+    if (Mwork > axbflops) printf ("###### HEY! MASK COSTLY !!") ;
+    printf ("\n") ;
+
+    // TODO if mask is costly, set M to NULL and redo GB_Axb_flopcount
+
+    bool mask_is_M = (M != NULL && !Mask_comp) ;
+    const int64_t *GB_RESTRICT Mp = NULL ;
+    const int64_t *GB_RESTRICT Mh = NULL ;
+    const int64_t *GB_RESTRICT Mi = NULL ;
+    // const GB_void *GB_RESTRICT Mx = NULL ;
+    // GB_cast_function cast_M = NULL ;
+    // size_t msize = 0 ;
+    int64_t mnvec = 0 ;
+    bool M_is_hyper = false ;
+    if (M != NULL)
+    {
+        Mp = M->p ;
+        Mh = M->h ;
+        Mi = M->i ;
+        // Mx = M->x ;
+        // cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
+        // msize = M->type->size ;
+        mnvec = M->nvec ;
+        M_is_hyper = M->is_hyper ;
+    }
 
     //--------------------------------------------------------------------------
     // determine # of threads and # of initial coarse tasks
@@ -417,9 +544,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
                         // vectors kk will be split into multiple fine tasks
                         max_bjnz = GB_IMAX (max_bjnz, bjnz) ;
-                        int nfine_team_size = ceil (jflops / target_fine_size) ;
-                        nfine += nfine_team_size ;
-                        // printf ("   team size %d\n", nfine_team_size) ;
+                        int team_size = ceil (jflops / target_fine_size) ;
+                        nfine += team_size ;
+                        // printf ("   team size %d\n", team_size) ;
                     }
                 }
 
@@ -516,7 +643,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 for (int64_t kk = kfirst ; kk < klast ; kk++)
                 {
                     // jflops = # of flops to compute a single vector A*B(:,j)
-                    // where j == (Bh == NULL) ? kk : Bh [kk].
                     double jflops = Bflops [kk+1] - Bflops [kk] ;
                     // bjnz = nnz (B (:,j))
                     int64_t bjnz = Bp [kk+1] - Bp [kk] ;
@@ -539,7 +665,34 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // next coarse task (if any) starts at kk+1
                         kcoarse_start = kk+1 ;
 
-                        // count the work for each entry B(k,j)
+                        // get the mask M(:,j), for C<M>=A*B
+                        int64_t im_first = -1, im_last = -1 ;
+                        if (mask_is_M)
+                        {
+                            int64_t j = (Bh == NULL) ? kk : Bh [kk] ;
+                            int64_t mpleft = 0 ;
+                            int64_t mpright = mnvec-1 ;
+                            int64_t pM, pM_end ;
+                            GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j,
+                                &pM, &pM_end) ;
+                            int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
+                            // For C<M>=A*B, if M(:,j) is empty, then there
+                            // would be no flops to compute C(:,j), and thus
+                            // no fine tasks constructed for C(:,j).
+                            // Thus mjnz > 0 must hold.
+                            ASSERT (mjnz > 0) ;
+                            if (mjnz > 0)   // but check any, just to be safe
+                            {
+                                im_first = Mi [pM] ;
+                                im_last  = Mi [pM_end-1] ;
+                            }
+                        }
+
+                        // count the work for each entry B(k,j).  Do not
+                        // include the work to scan M(:,j), since that will
+                        // be evenly divided between all tasks in this team.
+                        // Do check if M(:,j) and A(:,k) are disjoint, for
+                        // C<M>=A*B, when accounting for the flops for B(k,j).
                         int64_t pB_start = Bp [kk] ;
                         int nth = GB_nthreads (bjnz, chunk, nthreads_max) ;
                         int64_t s ;
@@ -550,11 +703,18 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             // get B(k,j)
                             int64_t k = Bi [pB_start + s] ;
                             // fl = flop count for just A(:,k)*B(k,j)
-                            int64_t pA_start, pA_end ;
+                            int64_t pA, pA_end ;
                             int64_t pleft = 0 ;
                             GB_lookup (A_is_hyper, Ah, Ap, &pleft, anvec-1, k,
-                                &pA_start, &pA_end) ;
-                            int64_t fl = pA_end - pA_start ;
+                                &pA, &pA_end) ;
+                            int64_t fl = pA_end - pA ;
+                            if (mask_is_M && fl > 0)
+                            {
+                                // no work if A(:,k) and M(:,j) disjoint
+                                int64_t alo = Ai [pA] ;      // get first A(:,k)
+                                int64_t ahi = Ai [pA_end-1] ;// get last A(:,k)
+                                if (ahi < im_first || alo > im_last) fl = 0 ;
+                            }
                             Bflops2 [s] = fl ;
                             ASSERT (fl >= 0) ;
                         }
@@ -582,16 +742,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // }
 
                         // slice B(:,j) into fine tasks
-                        int nfine_team_size = ceil (jflops / target_fine_size) ;
+                        int team_size = ceil (jflops / target_fine_size) ;
                         ASSERT (Fine_slice != NULL) ;
-                        GB_pslice (&Fine_slice, Bflops2, bjnz, nfine_team_size);
+                        GB_pslice (&Fine_slice, Bflops2, bjnz, team_size) ;
 
                         // shared hash table for all fine tasks for A*B(:,j)
                         int64_t hsize = GB_hash_table_size (jflops, cvlen) ;
 
                         // construct the fine tasks for C(:,j)=A*B(:,j)
                         int master = nf ;
-                        for (int fid = 0 ; fid < nfine_team_size ; fid++)
+                        for (int fid = 0 ; fid < team_size ; fid++)
                         {
                             int64_t pstart = Fine_slice [fid] ;
                             int64_t pend   = Fine_slice [fid+1] ;
@@ -601,7 +761,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             TaskList [nf].vector = kk ;
                             TaskList [nf].hsize  = hsize ;
                             TaskList [nf].master = master ;
-                            TaskList [nf].nfine_team_size = nfine_team_size ;
+                            TaskList [nf].team_size = team_size ;
                             TaskList [nf].flops = fl ;
 //    printf ("    create final fine task "GBd":"GBd" flops "GBd"\n",
 //        pstart, pend, fl) ;
@@ -690,7 +850,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #endif
 
-    #if 1
+    #if 0
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;
@@ -787,6 +947,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //      Hf starts out all zero (via calloc), and mark starts out as 1.  To
     //      clear all of Hf, mark is incremented, so that all entries in Hf are
     //      not equal to mark.
+
+    // TODO: try mallocing each array separately.  Might lead to better
+    // page to thread memory affinty.
 
     // add some padding to the end of each hash table, to avoid false
     // sharing of cache lines between the hash tables.
@@ -940,8 +1103,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-     /* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))); */  \
-        info = GB_Asaxpy3B (add,mult,xyname) (Chandle,                  \
+        /* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))) ; */ \
+        info = GB_Asaxpy3B (add,mult,xyname) (Chandle, M, Mask_comp,    \
             A, A_is_pattern, B, B_is_pattern,                           \
             TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \
             Context) ;                                                  \
@@ -1108,7 +1271,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
-        printf ("generic saxpy3\n") ;
+        // printf ("generic saxpy3\n") ;
 
         if (flipxy)
         { 
@@ -1119,6 +1282,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         else
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
+            // printf ("not flipped\n") ;
             #include "GB_AxB_saxpy3_template.c"
             #undef GB_MULTIPLY
         }
@@ -1129,12 +1293,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //==========================================================================
 
     GB_FREE_WORK ;
-    ASSERT_MATRIX_OK (C, "saxpy3: C = A*B output", GB0) ;
     info = GB_hypermatrix_prune (C, Context) ;
+    ASSERT_MATRIX_OK (C, "saxpy3: C = A*B output", GB0) ;
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;
-    // printf ("saxpy3 done\n") ;
+    (*mask_applied) = (M != NULL) ;
     return (info) ;
 }
 

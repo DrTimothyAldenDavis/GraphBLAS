@@ -370,6 +370,9 @@
                     // Use GB_BINARY_SPLIT_SEARCH so that pM can be used in
                     // the for loop with index pM in the wrapup phase.
 
+                    // TODO exploit a dense mask vector here to 
+                    // avoid the binary search
+
                     bool mij = false ;
                     int64_t pright = pM_end - 1 ;
                     bool found ;
@@ -468,6 +471,8 @@
                             // M(:,j) is much denser than Z(:,j)
                             //--------------------------------------------------
 
+                            // TODO handle a dense M(:,j)
+
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
                                 int64_t i = Zi [pZ] ;
@@ -520,6 +525,8 @@
                         //------------------------------------------------------
                         // complemented mask, and C(:,j) empty
                         //------------------------------------------------------
+
+                        // TODO exploit a dense M(:,j)
 
                         for ( ; pZ < pZ_end ; pZ++)
                         { 
@@ -577,6 +584,8 @@
                             // M(:,j) is much denser than C(:,j)
                             //--------------------------------------------------
 
+                            // TODO exploit a dense matrix
+
                             for ( ; pC < pC_end ; pC++)
                             { 
                                 int64_t i = Ci [pC] ;
@@ -629,6 +638,8 @@
                         //------------------------------------------------------
                         // non-complemented mask, and Z(:,j) empty
                         //------------------------------------------------------
+
+                        // TODO exploit a dense mask
 
                         for ( ; pC < pC_end ; pC++)
                         { 
