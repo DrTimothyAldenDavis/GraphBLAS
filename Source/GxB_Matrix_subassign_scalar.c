@@ -37,8 +37,11 @@ GrB_Info GxB_Matrix_subassign_ ## T /* C(Rows,Cols)<M> += x                 */ \
         " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                          \
     GB_RETURN_IF_FAULTY (M) ;                                                  \
-    return (GB_subassign_scalar (C, M, accum, ampersand x,                     \
-        GB_## T ## _code, Rows, nRows, Cols, nCols, desc, Context)) ;          \
+    GB_BURBLE_START ("[ GxB_subassign ") ;                                     \
+    GrB_Info info = GB_subassign_scalar (C, M, accum, ampersand x,             \
+        GB_## T ## _code, Rows, nRows, Cols, nCols, desc, Context) ;           \
+    GB_BURBLE_END ;                                                            \
+    return (info) ;                                                            \
 }
 
 GB_ASSIGN (bool     , BOOL   , &)

@@ -12,7 +12,6 @@
 #include "GB_ewise.h"
 
 #define GB_EWISE(op)                                                        \
-{                                                                           \
     /* check inputs */                                                      \
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                       \
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;                                       \
@@ -25,7 +24,7 @@
     /* get the descriptor */                                                \
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, xx1, xx2, xx3) ;   \
     /* C<M> = accum (C,T) where T = A+B, A'+B, A+B', or A'+B' */            \
-    return (GB_ewise (                                                      \
+    info = GB_ewise (                                                       \
         (GrB_Matrix) w, C_replace,  /* w and its descriptor        */       \
         (GrB_Matrix) M, Mask_comp,  /* mask and its descriptor     */       \
         accum,                      /* accumulate operator         */       \
@@ -33,8 +32,7 @@
         (GrB_Matrix) u, false,      /* u, never transposed         */       \
         (GrB_Matrix) v, false,      /* v, never transposed         */       \
         true,                       /* eWiseAdd                    */       \
-        Context)) ;                                                         \
-}
+        Context)
 
 //------------------------------------------------------------------------------
 // GrB_eWiseAdd_Vector_BinaryOp: vector addition
@@ -63,7 +61,10 @@ GrB_Info GrB_eWiseAdd_Vector_BinaryOp       // w<M> = accum (w, u+v)
     // apply the eWise kernel (using set union)
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_START ("[ GrB_eWiseAdd ") ;
     GB_EWISE (add) ;
+    GB_BURBLE_END ;
+    return (info) ;
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +94,10 @@ GrB_Info GrB_eWiseAdd_Vector_Monoid         // w<M> = accum (w, u+v)
     // eWise add using the monoid operator
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_START ("[ GrB_eWiseAdd ") ;
     GB_EWISE (monoid->op) ;
+    GB_BURBLE_END ;
+    return (info) ;
 }
 
 //------------------------------------------------------------------------------
@@ -124,6 +128,9 @@ GrB_Info GrB_eWiseAdd_Vector_Semiring       // w<M> = accum (w, u+v)
     // eWise add using the semiring monoid operator
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_START ("[ GrB_eWiseAdd ") ;
     GB_EWISE (semiring->add->op) ;
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

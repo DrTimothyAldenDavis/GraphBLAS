@@ -39,7 +39,9 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
     // select the entries and optionally transpose; assemble pending tuples
     //--------------------------------------------------------------------------
 
-    return (GB_select (
+    GB_BURBLE_START ("[ GxB_select ") ;
+
+    info = GB_select (
         C,      C_replace,          // C and its descriptor
         M,      Mask_comp,          // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
@@ -47,6 +49,8 @@ GrB_Info GxB_Matrix_select  // C<M> = accum (C, select(A,k)) or select(A',k)
         A,                          // first input: A
         Thunk,                      // optional input for select operator
         A_transpose,                // descriptor for A
-        Context)) ;
-}
+        Context) ;
 
+    GB_BURBLE_END ;
+    return (info) ;
+}

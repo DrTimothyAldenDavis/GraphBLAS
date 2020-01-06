@@ -42,11 +42,13 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
     // w(Rows)<M> = accum (w(Rows), u) and variations
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_START ("[ GrB_assign ") ;
+
     // construct the column index list Cols = [ 0 ] of length nCols = 1
     GrB_Index Cols [1] ;
     Cols [0] = 0 ;
 
-    return (GB_assign (
+    info = GB_assign (
         (GrB_Matrix) w,     C_replace,  // w vector and its descriptor
         (GrB_Matrix) M,     Mask_comp,  // mask matrix and its descriptor
         false,                          // do not transpose the mask
@@ -56,6 +58,9 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
         Cols, 1,                        // one column index, nCols = 1
         false, NULL, GB_ignore_code,    // no scalar expansion
         false, false,                   // not GrB_Col_assign nor GrB_Row_assign
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

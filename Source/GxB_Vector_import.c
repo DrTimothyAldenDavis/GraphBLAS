@@ -56,6 +56,8 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     // import the vector
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_START ("[ GxB_Vector_import ") ;
+
     GrB_Info info ;
 
     // allocate the header of the vector; allocate v->p of size 2 and clear it
@@ -95,6 +97,7 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     ASSERT (*vi == NULL) ;
     ASSERT (*vx == NULL) ;
     ASSERT_VECTOR_OK (*v, "v imported", GB0) ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

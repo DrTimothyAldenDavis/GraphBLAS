@@ -33,6 +33,8 @@ GrB_Info GxB_Vector_export  // export and free a vector
     GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
     ASSERT_VECTOR_OK (*v, "v to export", GB0) ;
 
+    GB_BURBLE_START ("[ GxB_Vector_export ") ;
+
     // finish any pending work
     GB_WAIT (*v) ;
 
@@ -74,6 +76,7 @@ GrB_Info GxB_Vector_export  // export and free a vector
     // which has already been removed above.
     GB_VECTOR_FREE (v) ;
     ASSERT (*v == NULL) ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

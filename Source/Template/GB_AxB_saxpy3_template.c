@@ -1069,7 +1069,7 @@
             int64_t kfirst = TaskList [taskid].start ;
             int64_t klast  = TaskList [taskid].end ;
             int64_t mark = 0 ;
-            int64_t nk = klast - kfirst + 1 ;
+            // int64_t nk = klast - kfirst + 1 ;
 
             if (use_Gustavson)
             {
@@ -1213,6 +1213,8 @@
                 }
 
             }
+
+            #if 0
             else if (nk == 1)
             {
 
@@ -1375,6 +1377,7 @@
                 Cp [kk] = cjnz ;    // count the entries in C(:,j)
 
             }
+            #endif
             else
             {
 
@@ -1970,6 +1973,7 @@
                 }
 
             }
+            #if 0
             else if (nk == 1)
             {
 
@@ -2149,6 +2153,7 @@
                 GB_SORT_AND_GATHER_HASHED_C_j (((i+1) << 2) + 3, true) ;
 
             }
+            #endif
             else
             {
 

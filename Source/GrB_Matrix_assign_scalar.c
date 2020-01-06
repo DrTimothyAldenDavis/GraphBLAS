@@ -39,8 +39,11 @@ GrB_Info GrB_Matrix_assign_ ## T    /* C<M>(Rows,Cols) += x                 */ \
         " (C, M, accum, x, Rows, nRows, Cols, nCols, desc)") ;                 \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                          \
     GB_RETURN_IF_FAULTY (M) ;                                                  \
-    return (GB_assign_scalar (C, M, accum, ampersand x, GB_## T ## _code,      \
-        Rows, nRows, Cols, nCols, desc, Context)) ;                            \
+    GB_BURBLE_START ("[ GrB_assign ") ;                                        \
+    GrB_Info info = GB_assign_scalar (C, M, accum, ampersand x,                \
+        GB_## T ## _code, Rows, nRows, Cols, nCols, desc, Context) ;           \
+    GB_BURBLE_END ;                                                            \
+    return (info) ;                                                            \
 }
 
 GB_ASSIGN (bool     , BOOL   , &)

@@ -30,6 +30,9 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
     // get the number of entries
     //--------------------------------------------------------------------------
 
-    return (GB_nvals (nvals, A, Context)) ;
+    GB_BURBLE_START ("[ GrB_Matrix_nvals ") ;
+    GrB_Info info = GB_nvals (nvals, A, Context) ;
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

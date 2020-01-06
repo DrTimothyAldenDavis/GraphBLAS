@@ -34,6 +34,7 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
 
     GB_WHERE ("GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols, nvals,"
         " nonempty, nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
+    GB_BURBLE_START ("[ GxB_Matrix_import_HyperCSR ") ;
     GB_IMPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ah) ;
@@ -101,6 +102,7 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
     ASSERT (*Aj == NULL) ;
     ASSERT (*Ax == NULL) ;
     ASSERT_MATRIX_OK (*A, "A hyper CSR imported", GB0) ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

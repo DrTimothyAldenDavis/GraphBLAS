@@ -40,13 +40,18 @@ GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))
     // do the work in GB_extract
     //--------------------------------------------------------------------------
 
-    return (GB_extract (
+    GB_BURBLE_START ("[ GrB_extract ") ;
+
+    info = GB_extract (
         C,      C_replace,          // output matrix C and its descriptor
         M,      Mask_comp,          // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
         A,      A_transpose,        // A and its descriptor
         I, ni,                      // row indices
         J, nj,                      // column indices
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

@@ -32,6 +32,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
 
     GB_WHERE ("GxB_Matrix_import_CSC (&A, type, nrows, ncols, nvals,"
         " nonempty, &Ap, &Ai, &Ax, desc)") ;
+    GB_BURBLE_START ("[ GxB_Matrix_import_CSC ") ;
     GB_IMPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ap) ;
@@ -91,6 +92,7 @@ GrB_Info GxB_Matrix_import_CSC      // import a CSC matrix
     ASSERT (*Ai == NULL) ;
     ASSERT (*Ax == NULL) ;
     ASSERT_MATRIX_OK (*A, "A CSC imported", GB0) ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

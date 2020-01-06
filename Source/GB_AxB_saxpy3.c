@@ -214,7 +214,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M_input,       // optional mask matrix
-    const bool Mask_comp,           // if true, use !M
+    const bool Mask_comp_input,     // if true, use !M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -229,7 +229,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
 
     GrB_Info info ;
+
     GrB_Matrix M = M_input ;        // use the mask M, until deciding otherwise
+    bool Mask_comp = Mask_comp_input ;
+
+    (*mask_applied) = false ;
     ASSERT (Chandle != NULL) ;
     ASSERT (*Chandle == NULL) ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for saxpy3 A*B", GB0) ;
@@ -363,35 +367,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // compute flop counts for each vector of B and C
     //--------------------------------------------------------------------------
 
-    // TODO, use GB_Global_hack_set to control when to use the mask,
-    // and test in LAGraph for the GAP benchmark.
-
-    // TODO, for now, always use the mask M
-
     int64_t Mwork = 0 ;
-
     int64_t *GB_RESTRICT Bflops = Cp ;  // Cp is used as workspace for Bflops
     GB_OK (GB_AxB_flopcount (&Mwork, Bflops, M, Mask_comp, A, B, Context)) ;
     int64_t total_flops = Bflops [bnvec] ;
-
-    if (M == NULL)
-    {
-        printf ("saxpy3: C=A*B ") ;
-    }
-    else if (Mask_comp)
-    {
-        printf ("saxpy3: C<!M>=A*B ") ;
-    }
-    else
-    {
-        printf ("saxpy3: C<M>=A*B ") ;
-    }
-    printf ("nnz(A) %g (%g %%)  nnz(B) %g (%g %%) flops "GBd"\n",
-        (double) GB_NNZ (A),
-        100 * (double) GB_NNZ (A) / (((double) avlen) * ((double) avdim)),
-        (double) GB_NNZ (B),
-        100 * (double) GB_NNZ (B) / (((double) bvlen) * ((double) bvdim)),
-        total_flops) ;
 
     //--------------------------------------------------------------------------
     // determine if the mask M should be applied, or done later
@@ -402,15 +381,30 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // the mask.  Tell the caller that the mask was not applied, so that it
     // will be applied later in GB_mxm.
 
-    double mnz = (double) ((M == NULL) ? 0 : 2*GB_NNZ (M)) ;
-    double totfl = (double) total_flops ;
     double axbflops = total_flops - Mwork ;
-    printf ("nnz(M) %g  totfl %g mwork %g A*B flops: %g Use M: %d",
-        mnz, totfl, (double) Mwork, axbflops, M != NULL && Mwork <= axbflops) ;
-    if (Mwork > axbflops) printf ("###### HEY! MASK COSTLY !!") ;
-    printf ("\n") ;
 
-    // TODO if mask is costly, set M to NULL and redo GB_Axb_flopcount
+//  double mnz = (double) ((M == NULL) ? 0 : 2*GB_NNZ (M)) ;
+//  double totfl = (double) total_flops ;
+//  printf ("\n    nnz(M) %g  totfl %g mwork %g A*B flops: %g Use M: %d",
+//      mnz, totfl, (double) Mwork, axbflops, M != NULL && Mwork <= axbflops) ;
+//  if (Mwork > axbflops) printf ("###### HEY! MASK COSTLY !!") ;
+//  printf ("\n") ;
+
+    if (axbflops < ((double) Mwork * 0.01))
+    {
+        // M is costly to use.  Do not use it during the computation of A*B.
+        // Instead, compute C=A*B and then apply the mask later.
+        M = NULL ;
+        Mask_comp = false ;
+
+        // redo the flop count analysis, without the mask
+        GB_OK (GB_AxB_flopcount (&Mwork, Bflops, NULL, false, A, B, Context)) ;
+        total_flops = Bflops [bnvec] ;
+    }
+
+    //--------------------------------------------------------------------------
+    // get M
+    //--------------------------------------------------------------------------
 
     bool mask_is_M = (M != NULL && !Mask_comp) ;
     const int64_t *GB_RESTRICT Mp = NULL ;
@@ -787,7 +781,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #endif
 
-    #if 1
+    #if GB_BURBLE
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;
@@ -818,17 +812,19 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // coarse task
             int64_t kfirst = TaskList [taskid].start ;
             int64_t klast = TaskList [taskid].end ;
-            int64_t nk = klast - kfirst + 1 ;
+            // int64_t nk = klast - kfirst + 1 ;
             if (use_Gustavson)
             {
                 // coarse Gustavson task
                 ncoarse_gus++ ;
             }
+            #if 0
             else if (nk == 1)
             {
                 // 1-vector coarse hash task
                 ncoarse_1hash++ ;
             }
+            #endif
             else
             {
                 // multi-vector coarse hash task
@@ -837,10 +833,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
     }
 
-    printf ("nthreads %d ntasks %d coarse: (gus: %d 1hash: %d hash: %d)"
-        " fine: (gus: %d hash: %d)\n", nthreads, ntasks,
-        ncoarse_gus, ncoarse_1hash, ncoarse_hash,
+//  GBBURB ("nthreads %d ntasks %d coarse: (gus: %d 1hash: %d hash: %d)"
+//      " fine: (gus: %d hash: %d) ", nthreads, ntasks,
+//      ncoarse_gus, ncoarse_1hash, ncoarse_hash,
+//      nfine_gus, nfine_hash) ;
+
+    GBBURB ("nthreads %d ntasks %d coarse: (Gus: %d hash: %d)"
+        " fine: (Gus: %d hash: %d) ", nthreads, ntasks,
+        ncoarse_gus, ncoarse_hash,
         nfine_gus, nfine_hash) ;
+
     #endif
 
     // Bflops is no longer needed as an alias for Cp
@@ -913,7 +915,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t kfirst = TaskList [taskid].start ;
         int64_t klast = TaskList [taskid].end ;
-        int64_t nk = klast - kfirst + 1 ;
+        // int64_t nk = klast - kfirst + 1 ;
 
         if (is_fine && use_Gustavson)
         {
@@ -926,7 +928,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // all other methods use Hf as int64_t
             Hf_size_total += (hash_size + hi_pad) ;
         }
-        if (!is_fine && !use_Gustavson && nk > 1)
+        if (!is_fine && !use_Gustavson /* && nk > 1 */)
         {
             // only multi-vector coarse hash tasks need Hi
             Hi_size_total += (hash_size + hi_pad) ;
@@ -971,7 +973,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t kfirst = TaskList [taskid].start ;
         int64_t klast = TaskList [taskid].end ;
-        int64_t nk = klast - kfirst + 1 ;
+        // int64_t nk = klast - kfirst + 1 ;
 
         if (is_fine && use_Gustavson)
         {
@@ -983,7 +985,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // Hf is int64_t for all other methods
             Hf_split += (hash_size + hi_pad) ;
         }
-        if (!is_fine && !use_Gustavson && nk > 1)
+        if (!is_fine && !use_Gustavson /* && nk > 1 */)
         {
             // only multi-vector coarse hash tasks need Hi
             Hi_split += (hash_size + hi_pad) ;

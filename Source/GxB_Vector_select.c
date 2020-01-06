@@ -37,7 +37,9 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
     // select the entries; do not transpose; assemble pending entries
     //--------------------------------------------------------------------------
 
-    return (GB_select (
+    GB_BURBLE_START ("[ GxB_select ") ;
+
+    info = GB_select (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor
         (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
         accum,                              // optional accum for Z=accum(C,T)
@@ -45,6 +47,9 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
         (GrB_Matrix) u,                     // first input: u
         Thunk,                              // optional input for select op
         false,                              // u, not transposed
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

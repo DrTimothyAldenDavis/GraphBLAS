@@ -31,6 +31,9 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     // get the number of entries
     //--------------------------------------------------------------------------
 
-    return (GB_nvals (nvals, (GrB_Matrix) v, Context)) ;
+    GB_BURBLE_START ("[ GrB_Vector_nvals ") ;
+    GrB_Info info = GB_nvals (nvals, (GrB_Matrix) v, Context) ;
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

@@ -32,6 +32,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
 
     GB_WHERE ("GxB_Matrix_import_CSR (&A, type, nrows, ncols, nvals,"
         " nonempty, &Ap, &Aj, &Ax, desc)") ;
+    GB_BURBLE_START ("[ GxB_Matrix_import_CSR ") ;
     GB_IMPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ap) ;
@@ -91,6 +92,7 @@ GrB_Info GxB_Matrix_import_CSR      // import a CSR matrix
     ASSERT (*Aj == NULL) ;
     ASSERT (*Ax == NULL) ;
     ASSERT_MATRIX_OK ((*A), "A CSR imported", GB0) ;
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

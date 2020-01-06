@@ -55,13 +55,18 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     // do the work in GB_extract
     //--------------------------------------------------------------------------
 
-    return (GB_extract (
+    GB_BURBLE_START ("[ GrB_extract ") ;
+
+    info = GB_extract (
         (GrB_Matrix) w,     C_replace,  // w as a matrix, and its descriptor
         (GrB_Matrix) M,     Mask_comp,  // mask matrix, and its descriptor
         accum,                          // optional accum for z=accum(w,t)
         (GrB_Matrix) u,     false,      // u as matrix; never transposed
         I, ni,                          // row indices I and length ni
         J, 1,                           // one column index, nj = 1
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

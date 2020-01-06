@@ -62,7 +62,8 @@ static GrB_Info GB_dc
         {
             // GxB_AxB_METHOD:
             if (! (v == GxB_DEFAULT || v == GxB_AxB_GUSTAVSON
-                || v == GxB_AxB_HEAP || v == GxB_AxB_DOT))
+                || v == GxB_AxB_HEAP || v == GxB_AxB_DOT
+                || v == GxB_AxB_HASH || v == GxB_AxB_SAXPY))
             { 
                 ok = false ;
             }

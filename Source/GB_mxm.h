@@ -70,7 +70,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool B_transpose,               // if true, use B', else B
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
-    const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
     GrB_Desc_Value *AxB_method_used,// method selected
     GB_Context Context
 ) ;

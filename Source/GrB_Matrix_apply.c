@@ -38,12 +38,17 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     // apply the operator and optionally transpose; assemble pending tuples
     //--------------------------------------------------------------------------
 
-    return (GB_apply (
+    GB_BURBLE_START ("[ GrB_apply ") ;
+
+    info = GB_apply (
         C,      C_replace,          // C and its descriptor
         M,      Mask_comp,          // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
         op,                         // operator to apply to the entries
         A,      A_transpose,        // A and its descriptor
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

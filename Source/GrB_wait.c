@@ -46,6 +46,8 @@ GrB_Info GrB_wait ( )       // finish all pending computations
     // assemble all matrices with lingering zombies and/or pending tuples
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_START ("[ GrB_wait ") ;
+
     GrB_Matrix A = NULL ;
     while (true)
     { 
@@ -61,6 +63,7 @@ GrB_Info GrB_wait ( )       // finish all pending computations
         GB_WAIT (A) ;
     }
 
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

@@ -64,10 +64,14 @@ GrB_Info GB_wait                // finish all pending computations
     ASSERT (A != NULL) ;
 
     // The matrix A might have pending operations but not be in the queue.
-    // GB_Matrix_check expects the matrix to be in the queue.  As a result, GB_Matrix_check
-    // can report an inconsistency, and thus this assert must be made
-    // with a negative pr.
+    // GB_Matrix_check expects the matrix to be in the queue.  As a result,
+    // GB_Matrix_check can report an inconsistency, and thus this assert must
+    // be made with a negative pr.
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
+
+    #if GB_BURBLE
+    GBBURB ("wait ") ;
+    #endif
 
     //--------------------------------------------------------------------------
     // determine the max # of threads to use

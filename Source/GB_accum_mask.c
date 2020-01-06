@@ -187,11 +187,15 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // ensure M and T have the same CSR/CSC format as C
     //--------------------------------------------------------------------------
 
+    bool T_transposed = false ;
+    bool M_transposed = false ;
+
     if (C->is_csc != T->is_csc)
     { 
         // transpose: no typecast, no op, in place of T, jumbled, but T
         // cannot have any zombies or pending tuples.
         GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL, NULL, Context)) ;
+        T_transposed = true ;
         T = (*Thandle) ;
     }
 
@@ -214,6 +218,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M, NULL, Context)) ;
             // use the transpose mask
             M = MT ;
+            M_transposed = true ;
         }
         else
         { 
@@ -254,8 +259,31 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
     // So in this case, GB_subassigner takes more work.
 
-    if ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
-        && !GB_aliased (C, M) && !GB_aliased (C, T))
+    bool use_subassigner =
+        ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
+            && !GB_aliased (C, M) && !GB_aliased (C, T)) ;
+
+    bool use_transplant = (!use_subassigner)
+        && (accum == NULL || (cnz + cnpending) == 0) ;
+
+    #if GB_BURBLE
+    if (!use_transplant)
+    {
+        printf ("[ C%s%s=Z via %s%s%s]",
+            ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
+            ((accum == NULL) ? "" : "+"),
+            ((use_subassigner) ? "assign" :
+                ((use_transplant) ? "transplant" : "add")),
+            (M_transposed ? "(M transposed)" : ""),
+            (T_transposed ? "(result transposed)" : "")) ;
+
+        // printf ("tnz       "GBd"\n", tnz) ;
+        // printf ("cnpending "GBd"\n", cnpending) ;
+        // printf ("cnz       "GBd"\n", cnz) ;
+    }
+    #endif
+
+    if (use_subassigner)
     { 
 
         //----------------------------------------------------------------------
@@ -280,7 +308,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // see GB_spec_accum.m for a description of this step.  If C is empty,
         // then the accumulator can be ignored.
 
-        if (accum == NULL || (cnz + cnpending) == 0)
+        if (use_transplant)
         { 
 
             //------------------------------------------------------------------

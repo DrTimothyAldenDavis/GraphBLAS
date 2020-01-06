@@ -42,11 +42,13 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
     // C<M'>(row,Cols) = accum (C(row,Cols), u')
     //--------------------------------------------------------------------------
 
+    GB_BURBLE_START ("[ GrB_assign ") ;
+
     // construct the row index list Rows = [ row ] of length nRows = 1
     GrB_Index Rows [1] ;
     Rows [0] = row ;
 
-    return (GB_assign (
+    info = GB_assign (
         C,                  C_replace,      // C matrix and its descriptor
         (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
         true,                               // transpose the mask
@@ -56,6 +58,9 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
         Cols, nCols,                        // column indices
         false, NULL, GB_ignore_code,        // no scalar expansion
         false, true,                        // GrB_Row_assign
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

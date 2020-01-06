@@ -33,9 +33,12 @@ GrB_Info GxB_Vector_subassign_ ## T /* w(Rows)<M> = accum (w(Rows),x)       */ \
     GB_RETURN_IF_FAULTY (M) ;                                                  \
     ASSERT (GB_VECTOR_OK (w)) ;                                                \
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;                        \
-    return (GB_subassign_scalar ((GrB_Matrix) w, (GrB_Matrix) M, accum,        \
-        ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc,          \
+    GB_BURBLE_START ("[ GxB_subassign ") ;                                     \
+    GrB_Info info = (GB_subassign_scalar ((GrB_Matrix) w, (GrB_Matrix) M,      \
+        accum, ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc,   \
         Context)) ;                                                            \
+    GB_BURBLE_END ;                                                            \
+    return (info) ;                                                            \
 }
 
 GB_ASSIGN (bool     , BOOL   , &)

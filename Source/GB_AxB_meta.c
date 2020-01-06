@@ -19,7 +19,8 @@
 
 // FUTURE:: an outer-product method for C=A*B'
 
-// TODO fix GxB_AxB_METHOD stats
+// TODO pass AxB_method to GB_AxB_saxpy3, to control
+// the selection of Gustavson vs hash.
 
 #define GB_FREE_ALL             \
 {                               \
@@ -46,7 +47,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool B_transpose,               // if true, use B', else B
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
-    const GrB_Desc_Value AxB_method,// for auto vs user selection of methods
+    GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
     GrB_Desc_Value *AxB_method_used,// method selected
     GB_Context Context
 )
@@ -81,6 +82,12 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     (*mask_applied) = false ;
     (*AxB_method_used) = GxB_DEFAULT ;
+
+    if (AxB_method == GxB_AxB_HEAP)
+    {
+        // TODO Heap method not yet reinstalled; use Hash instead
+        AxB_method = GxB_AxB_HASH ;
+    }
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC formats of C, M, A, and B
@@ -211,6 +218,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // transpose: typecast, no op, not in place
 
     GrB_Matrix M ;
+    bool M_transposed ;
 
     if (M_transpose && M_in != NULL)
     { 
@@ -218,24 +226,31 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         // unless an error occurs, but is returned to the caller.
         GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M_in, NULL, Context)) ;
         M = MT ;
+        M_transposed = true ;
     }
     else
     { 
         // M_in can be used as-is; it may be NULL
         M = M_in ;
+        M_transposed = false ;
     }
 
     ASSERT_MATRIX_OK_OR_NULL (M, "final M for A*B", GB0) ;
 
-    // TODO remove printfs
-    if (M != NULL)
-    {
-        printf ("[M present nnz(M) %g (%g %%) compl: %d] ",
-            (double) GB_NNZ (M),
-            100 * ((double) GB_NNZ (M)) /
-                  ((double) GB_NROWS (M) * (double) GB_NCOLS (M)),
-            Mask_comp) ;
-    }
+    //--------------------------------------------------------------------------
+    // burble
+    //--------------------------------------------------------------------------
+
+    #if GB_BURBLE
+    char *M_str = (M == NULL) ? "" : (Mask_comp ?  "<!M>" : "<M>") ;
+    #define GB_PROP_LEN 1024
+    char A_str [GB_PROP_LEN+1] ;
+    char B_str [GB_PROP_LEN+1] ;
+    snprintf (A_str, GB_PROP_LEN, "A: "GBd"-by-"GBd", %s, "GBd" entries",
+        GB_NROWS (A), GB_NCOLS (A), A->type->name, GB_NNZ (A)) ;
+    snprintf (B_str, GB_PROP_LEN, "B: "GBd"-by-"GBd", %s, "GBd" entries",
+        GB_NROWS (B), GB_NCOLS (B), B->type->name, GB_NNZ (B)) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // typecast A and B when transposing them, if needed
@@ -330,7 +345,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // auto selection for A'*B
             if (M != NULL && !Mask_comp)
             { 
-                // C<M>=A'*B always uses the dot product method
+                // C<M>=A'*B uses the masked dot product method
                 do_adotb = true ;
             }
             else if (A->vdim == 1 || B->vdim == 1)
@@ -365,32 +380,41 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (do_rowscale)
         { 
             // C = D*B
+            #if GB_BURBLE
+            printf ("C%s=A'*B, rowscale ", M_str) ;
+            #endif
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (do_colscale)
         { 
             // C = A'*D
+            #if GB_BURBLE
+            printf ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
+            #endif
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_colscale (Chandle, AT, B, semiring, flipxy, Context));
         }
         else if (do_adotb)
         { 
             // C<M> = A'*B via dot product method
-            printf ("C=A'*B with dot nnz(A) %g nnz (B) %g\n",
-                (double) GB_NNZ (A), (double) GB_NNZ (B)) ;
+            #if GB_BURBLE
+            printf ("C%s=A'*B, %sdot product ", M_str,
+                (M != NULL && !Mask_comp) ? "masked " : "") ;
+            #endif
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
         { 
+            // C = A'*B via saxpy3: Gustavson + Hash method
+            #if GB_BURBLE
+            printf ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
+            #endif
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
-
-//          // C = A'*B via saxpy3: Gustavson + Hash method
-            printf (" C=A'*B : ") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, AT, B, semiring,
                 flipxy, mask_applied, Context)) ;
-
+            (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
     }
@@ -404,19 +428,27 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D
+            #if GB_BURBLE
+            printf ("C%s=A*B', colscale ", M_str) ;
+            #endif
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B'
+            #if GB_BURBLE
+            printf ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
+            #endif
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, BT, semiring, flipxy, Context));
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B' via dot product
-            printf ("C=A*B' with dot nnz(A) %g nnz (B) %g\n",
-                (double) GB_NNZ (A), (double) GB_NNZ (B)) ;
+            #if GB_BURBLE
+            printf ("C%s=A*B', dot product (transposed %s) (transposed %s) ",
+                M_str, A_str, B_str) ;
+            #endif
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
@@ -425,13 +457,14 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
+            // C = A*B' via saxpy3: Gustavson + Hash method
+            #if GB_BURBLE
+            printf ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
+            #endif
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
-
-//          // C = A*B' via saxpy3: Gustavson + Hash method
-            printf (" C=A*B' : ") ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, BT, semiring,
                 flipxy, mask_applied, Context)) ;
-
+            (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
     }
@@ -445,18 +478,25 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D, column scale
+            #if GB_BURBLE
+            printf ("C%s=A*B, colscale ", M_str) ;
+            #endif
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B, row scale
+            #if GB_BURBLE
+            printf ("C%s=A*B, rowscale ", M_str) ;
+            #endif
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B via dot product
-            printf ("C=A*B with dot nnz(A) %g nnz (B) %g\n",
-                (double) GB_NNZ (A), (double) GB_NNZ (B)) ;
+            #if GB_BURBLE
+            printf ("C%s=A*B', dot product (transposed %s) ", M_str, A_str) ;
+            #endif
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, B, semiring,
                 flipxy, mask_applied, Context)) ;
@@ -464,14 +504,20 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else
         { 
-
             // C = A*B via saxpy3: Gustavson + Hash method
-            printf (" C=A*B : ") ;
+            #if GB_BURBLE
+            printf ("C%s=A*B, saxpy ", M_str) ;
+            #endif
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, mask_applied, Context)) ;
-
+            (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
     }
+
+    #if GB_BURBLE
+    if (M_transposed) printf ("(M transposed) ") ;
+    if ((M != NULL) && !(*mask_applied)) printf ("(M later) ") ;
+    #endif
 
     //--------------------------------------------------------------------------
     // handle C_transpose and assign the CSR/CSC format

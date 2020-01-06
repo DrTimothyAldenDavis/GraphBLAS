@@ -48,9 +48,10 @@ GrB_Info GrB_mxv                    // w<M> = accum (w, A*u)
     // w<M> = accum (w,A*u) and variations, using the mxm kernel
     //--------------------------------------------------------------------------
 
-    // w, M, and u are passed as matrices to GB_mxm.
+    GB_BURBLE_START ("[ GrB_mxv ") ;
 
-    return (GB_mxm (
+    // w, M, and u are passed as matrices to GB_mxm.
+    info = GB_mxm (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor
         (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
         accum,                              // for accum (w,t)
@@ -59,6 +60,9 @@ GrB_Info GrB_mxv                    // w<M> = accum (w, A*u)
         (GrB_Matrix) u,     false,          // u is never transposed
         false,                              // fmult(x,y), flipxy false
         AxB_method,                         // algorithm selector
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

@@ -3369,22 +3369,34 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //      except that floating-point roundoff may differ when working on
 //      floating-point data types.
 //
-//      GxB_AxB_GUSTAVSON:  Gustavon's method, computing C(:,j)=A*B(,j) via
-//          a gather/scatter workspace of size equal to the number of rows of A.
-//          Very good general-purpose method, but sometimes the workspace can be
-//          too large when many threads are used..
+//      GxB_AxB_SAXPY:  C(:,j)=A*B(:,j) is computed using a mix of Gustavson,
+//          Hash, and (in the future) the Heap method.  Each task in the
+//          parallel computation makes its own decision, via a heuristic.
 //
-//      GxB_AxB_HEAP: a heap-based method, computing C(:,j)=A*B(:,j) via a heap
-//          of size equal to the maximum number of entries in any column of B.
-//          Very good for hypersparse matrices, particularly when nnz(B) is
-//          less than the number of rows of A.
+//      GxB_AxB_GUSTAVSON:  This is the same as GxB_AxB_SAXPY, except that
+//          every task uses Gustavon's method, computing C(:,j)=A*B(:,j) via a
+//          gather/scatter workspace of size equal to the number of rows of A.
+//          Very good general-purpose method, but sometimes the workspace can
+//          be too large when many threads are used.
+//
+//      GxB_AxB_HEAP: a heap-based saxpy-style method, computing
+//          C(:,j)=A*B(:,j) via a heap of size equal to the maximum number of
+//          entries in any column of B.  Very good for hypersparse matrices,
+//          particularly when nnz(B) is less than the number of rows of A.
+//          TODO: this is no longer available in v3.2, so it is silently
+//          replaced with GxB_AxB_HASH.
+//
+//      GxB_AxB_HASH: This is the same as GxB_AxB_SAXPY, except that every
+//          task uses the Hash method.  Like the Heap method, it is very good
+//          for hypersparse matrices and uses very little workspace (but more
+//          workspace than the Heap method).
 //
 //      GxB_AxB_DOT: computes C(i,j) = A(:,i)'*B(:,j), for each entry C(i,j).
 //          A very specialized method that works well only if the mask is
-//          present, very sparse, and not complemented, or when C is tiny.
-//          It is impossibly slow if C is large and the mask is not present,
-//          since it takes Omega(m*n) time if C is m-by-n.  Uses a 2-phase
-//          method.  The first phase is symbolic, and the 2nd phase is numeric.
+//          present, very sparse, and not complemented, when C is a dense
+//          vector or matrix, or when C is tiny.  It is impossibly slow if C is
+//          large and the mask is not present, since it takes Omega(m*n) time
+//          if C is m-by-n.
 
 // GxB_NTHREADS and GxB_CHUNK are an enumerated value in both the
 // GrB_Desc_Field and the GxB_Option_Field.  They are defined with the same
@@ -3446,7 +3458,8 @@ typedef enum
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
     GxB_AxB_DOT       = 1003,   // dot product
-    GxB_AxB_HASH      = 1004    // hash-based saxpy method
+    GxB_AxB_HASH      = 1004,   // hash-based saxpy method
+    GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
 }
 GrB_Desc_Value ;
 

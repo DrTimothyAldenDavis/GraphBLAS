@@ -40,12 +40,17 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
     // apply the operator; do not transpose
     //--------------------------------------------------------------------------
 
-    return (GB_apply (
+    GB_BURBLE_START ("[ GrB_apply ") ;
+
+    info = GB_apply (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor
         (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
         accum,                              // optional accum for Z=accum(C,T)
         op,                                 // operator to apply to the entries
         (GrB_Matrix) u,     false,          // u, not transposed
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

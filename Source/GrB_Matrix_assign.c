@@ -41,7 +41,9 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     // C<M>(Rows,Cols) = accum (C(Rows,Cols), A) and variations
     //--------------------------------------------------------------------------
 
-    return (GB_assign (
+    GB_BURBLE_START ("[ GrB_assign ") ;
+
+    info = GB_assign (
         C,          C_replace,      // C matrix and its descriptor
         M,          Mask_comp,      // mask matrix and its descriptor
         false,                      // do not transpose the mask
@@ -51,6 +53,9 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
         Cols, nCols,                // column indices
         false, NULL, GB_ignore_code,// no scalar expansion
         false, false,               // not GrB_Col_assign nor GrB_row_assign
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

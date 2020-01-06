@@ -43,7 +43,9 @@ GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'
     // C(Rows,Cols)<M> = accum (C(Rows,Cols), A) and variations
     //--------------------------------------------------------------------------
 
-    return (GB_subassign (
+    GB_BURBLE_START ("[ GxB_subassign ") ;
+
+    info = GB_subassign (
         C,          C_replace,      // C matrix and its descriptor
         M,          Mask_comp,      // mask matrix and its descriptor
         false,                      // do not transpose the mask
@@ -52,6 +54,9 @@ GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'
         Rows, nRows,                // row indices
         Cols, nCols,                // column indices
         false, NULL, GB_ignore_code,// no scalar expansion
-        Context)) ;
+        Context) ;
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 

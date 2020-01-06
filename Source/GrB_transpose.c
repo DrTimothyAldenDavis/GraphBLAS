@@ -42,6 +42,8 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
 
+    GB_BURBLE_START ("[ GrB_transpose ") ;
+
     // check domains and dimensions for C<M> = accum (C,T)
     info = GB_compatible (C->type, C, M, accum, A->type, Context) ;
     if (info != GrB_SUCCESS)
@@ -138,7 +140,9 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // C<M> = accum (C,T): accumulate the results into C via the mask M
     //--------------------------------------------------------------------------
 
-    return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+    info = GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp, Context);
+
+    GB_BURBLE_END ;
+    return (info) ;
 }
 
