@@ -228,6 +228,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // check inputs
     //--------------------------------------------------------------------------
 
+    // double tic = omp_get_wtime ( ) ;
+
     GrB_Info info ;
 
     GrB_Matrix M = M_input ;        // use the mask M, until deciding otherwise
@@ -390,7 +392,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 //  if (Mwork > axbflops) printf ("###### HEY! MASK COSTLY !!") ;
 //  printf ("\n") ;
 
-    if (axbflops < ((double) Mwork * 0.01))
+    bool discard_mask = (M != NULL) && (axbflops < ((double) Mwork * 0.01)) ;
+//  printf ("axb %8.2e mw %8.2e d %d ", axbflops, (double) Mwork, discard_mask);
+
+    if (discard_mask) // (axbflops < ((double) Mwork * 0.01))
     {
         // M is costly to use.  Do not use it during the computation of A*B.
         // Instead, compute C=A*B and then apply the mask later.
@@ -779,7 +784,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #endif
 
-    #if GB_BURBLE
+    // #if GB_BURBLE
+    #if 0
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
     int ncoarse_hash = 0 ;
@@ -836,8 +842,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 //      ncoarse_gus, ncoarse_1hash, ncoarse_hash,
 //      nfine_gus, nfine_hash) ;
 
-    GBBURBLE ("nthreads %d ntasks %d coarse: (Gus: %d hash: %d)"
-        " fine: (Gus: %d hash: %d) ", nthreads, ntasks,
+    printf ("nthreads %d ntasks %d coarse: (Gus: %d hash: %d)"
+        " fine: (Gus: %d hash: %d) \n", nthreads, ntasks,
         ncoarse_gus, ncoarse_hash,
         nfine_gus, nfine_hash) ;
 
@@ -1007,6 +1013,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
     }
 
+    // tic = omp_get_wtime ( ) - tic ;
+    // printf ("init  : %g\n", tic) ;
+
     //==========================================================================
     // C = A*B, via saxpy3 method and built-in semiring
     //==========================================================================
@@ -1033,7 +1042,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        /* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))) ; */ \
+/* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))) ;  */  \
         info = GB_Asaxpy3B (add,mult,xyname) (Chandle, M, Mask_comp,    \
             A, A_is_pattern, B, B_is_pattern,                           \
             TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \

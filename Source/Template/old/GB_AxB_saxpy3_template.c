@@ -29,30 +29,29 @@
     int64_t mjnz = pM_end - pM ;    /* nnz (M (:,j)) */
 
 // get the first and last indices in M(:,j)
-#define GB_GET_M_j_RANGE(gamma)                                 \
+#define GB_GET_M_j_RANGE                                        \
     int64_t im_first = -1, im_last = -1 ;                       \
     if (mjnz > 0)                                               \
     {                                                           \
         im_first = Mi [pM] ;        /* get first M(:,j) */      \
         im_last  = Mi [pM_end-1] ;  /* get last M(:,j) */       \
-    }                                                           \
-    int64_t mjnz_much = mjnz * gamma
+    }
 
 // scatter M(:,j) for a coarse Gustavson task, C<M>=A*B or C<!M>=A*B
 #define GB_SCATTER_M_j                                          \
-    for (int64_t p = pM ; p < pM_end ; p++) /* scan M(:,j) */   \
+    for ( ; pM < pM_end ; pM++) /* scan M(:,j) */               \
     {                                                           \
-        GB_GET_M_ij (p) ;               /* get M(i,j) */        \
-        if (mij) Hf [Mi [p]] = mark ;   /* Hx [i] = M(i,j) */   \
+        GB_GET_M_ij (pM) ;              /* get M(i,j) */        \
+        if (mij) Hf [Mi [pM]] = mark ;  /* Hx [i] = M(i,j) */   \
     }
 
 // hash M(:,j) into Hf and Hi for coarse hash task, C<M>=A*B or C<!M>=A*B
 #define GB_HASH_M_j                                             \
-    for (int64_t p = pM ; p < pM_end ; p++) /* scan M(:,j) */   \
+    for ( ; pM < pM_end ; pM++) /* scan M(:,j) */               \
     {                                                           \
-        GB_GET_M_ij (p) ;       /* get M(i,j) */                \
+        GB_GET_M_ij (pM) ;      /* get M(i,j) */                \
         if (!mij) continue ;    /* skip if M(i,j)=0 */          \
-        int64_t i = Mi [p] ;                                    \
+        int64_t i = Mi [pM] ;                                   \
         for (GB_HASH (i))       /* find i in hash */            \
         {                                                       \
             if (Hf [hash] < mark)                               \
@@ -66,11 +65,11 @@
 
 // hash M(:,j) for a 1-vector coarse hash task, C<M>=A*B or C<!M>=A*B
 #define GB_HASH1_M_j                                            \
-    for (int64_t p = pM ; p < pM_end ; p++) /* scan M(:,j) */   \
+    for ( ; pM < pM_end ; pM++) /* scan M(:,j) */               \
     {                                                           \
-        GB_GET_M_ij (p) ;      /* get M(i,j) */                 \
+        GB_GET_M_ij (pM) ;      /* get M(i,j) */                \
         if (!mij) continue ;    /* skip if M(i,j)=0 */          \
-        int64_t i = Mi [p] ;                                    \
+        int64_t i = Mi [pM] ;                                   \
         int64_t i_mark = ((i+1) << 2) + 1 ; /* (i+1,1) */       \
         for (GB_HASH (i))       /* find i in hash table */      \
         {                                                       \
@@ -91,7 +90,7 @@
     int64_t pB = Bp [kk] ;                                                  \
     int64_t pB_end = Bp [kk+1] ;                                            \
     int64_t bjnz = pB_end - pB ;  /* nnz (B (:,j) */                        \
-    /* TODO can skip if mjnz == 0 for C<M>=A*B tasks */                     \
+    /* TODO can skip if mjnz == 0 for C<M>=A*B tasks */ \
     if (A_is_hyper && bjnz > 2)                                             \
     {                                                                       \
         /* trim Ah [0..pright] to remove any entries past last B(:,j), */   \
@@ -205,52 +204,7 @@
         }                                                                   \
     }
 
-// C(:,j)<M(:,j)>=A(:,k)*B(k,j) using one of two methods
-#define GB_SCAN_M_j_OR_A_k                                              \
-{                                                                       \
-    if (mjnz_much < aknz)                                               \
-    /* nnz(M(:,j)) much less than nnz(A(:,k)) */                        \
-    {                                                                   \
-        /* scan M(:,j), and do binary search for A(i,k) */              \
-        for (int64_t p = pM ; p < pM_end ; p++)                         \
-        {                                                               \
-            int64_t i = Mi [p] ;    /* get M(i,j) */                    \
-            GB_GET_M_ij (p) ;                                           \
-            if (!mij) continue ;    /* skip if M(i,j)=0 */              \
-            bool found ;            /* search for A(i,k) */             \
-            int64_t apright = pA_end - 1 ;                              \
-            GB_BINARY_SEARCH (i, Ai, pA, apright, found) ;              \
-            if (found)                                                  \
-            {                                                           \
-                /* C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method. */\
-                /* M(i,j) is now known to be equal to 1, so there are */\
-                /* cases in the GB_IKJ operation that can never */      \
-                /* occur.  This could be pruned from the GB_IKJ */      \
-                /* operation, but then this operation would differ */   \
-                /* from the GB_IKJ operation in the linear-time scan */ \
-                /* of A(:,j), below.  It's unlikely that pruning this */\
-                /* case would lead to much performance improvement. */  \
-                GB_IKJ ;                                                \
-            }                                                           \
-        }                                                               \
-    }                                                                   \
-    else                                                                \
-    {                                                                   \
-        /* scan A(:,k), and lookup M(i,j) */                            \
-        for ( ; pA < pA_end ; pA++)                                     \
-        {                                                               \
-            int64_t i = Ai [pA] ;   /* get A(i,k) */                    \
-            /* do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method */  \
-            /* M(i,j) may be 0 or 1, as given in the hash table */      \
-            GB_IKJ ;                                                    \
-        }                                                               \
-    }                                                                   \
-}
-
-//------------------------------------------------------------------------------
-// atomics
-//------------------------------------------------------------------------------
-
+// atomic update
 #if GB_HAS_ATOMIC
     // Hx [i] += t via atomic update
     #if GB_HAS_OMP_ATOMIC
@@ -300,17 +254,9 @@
         GB_PRAGMA (omp flush)
 #endif
 
-//------------------------------------------------------------------------------
-// hash
-//------------------------------------------------------------------------------
-
 // to iterate over the hash table, looking for index i:
 // for (GB_HASH (i)) { ... }
 #define GB_HASH(i) int64_t hash = GB_HASH_FUNCTION (i) ; ; GB_REHASH (hash,i)
-
-//------------------------------------------------------------------------------
-// free workspace
-//------------------------------------------------------------------------------
 
 // See also GB_FREE_ALL in GB_AxB_saxpy3.  It is #define'd here for the
 // hard-coded GB_Asaxpy3B* functions, and for the user-defined functions called
@@ -331,7 +277,6 @@
 //------------------------------------------------------------------------------
 
 {
-    // double tic = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
@@ -569,10 +514,6 @@
         #endif
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase0: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
-
     //==========================================================================
     // phase1: count nnz(C(:,j)) for all tasks; do numeric work for fine tasks
     //==========================================================================
@@ -710,50 +651,51 @@
 
 //                  printf ("%3d phase1: fine Gustavson C=<M>A*B\n", taskid) ;
                     GB_GET_M_j ;                // get M(:,j)
-                    GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
+                    GB_GET_M_j_RANGE ;          // get first and last in M(:,j)
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
                         GB_GET_A_k ;                // get A(:,k)
                         GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                         GB_GET_B_kj ;               // bkj = B(k,j)
-                        #define GB_IKJ                                         \
-                        {                                                      \
-                            GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
-                            uint8_t f ;                                        \
-                            GB_PRAGMA (omp atomic read)                        \
-                            f = Hf [i] ;            /* grab the entry */       \
-                            if (GB_HAS_ATOMIC && (f == 2))                     \
-                            {                                                  \
-                                /* C(i,j) already seen; update it */           \
-                                GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
-                                continue ;       /* C(i,j) has been updated */ \
-                            }                                                  \
-                            if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/\
-                            do  /* lock the entry */                           \
-                            {                                                  \
-                                GB_PRAGMA (omp atomic capture)                 \
-                                {                                              \
-                                    f = Hf [i] ; Hf [i] = 3 ;                  \
-                                }                                              \
-                            } while (f == 3) ; /* lock owner gets f=1 or 2 */  \
-                            bool first_time = (f == 1) ;                       \
-                            if (first_time)                                    \
-                            {                                                  \
-                                /* C(i,j) is a new entry */                    \
-                                GB_ATOMIC_WRITE (i, t) ;    /* Hx [i] = t */   \
-                            }                                                  \
-                            else /* f == 2 */                                  \
-                            {                                                  \
-                                /* C(i,j) already appears in C(:,j) */         \
-                                GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
-                            }                                                  \
-                            GB_PRAGMA (omp atomic write)                       \
-                            Hf [i] = 2 ;                /* unlock the entry */ \
-                            if (first_time) my_cjnz++ ; /* C(i,j) is new  */   \
+                        // TODO scan M(:,j) instead, if very sparse
+                        for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                        {
+                            int64_t i = Ai [pA] ;   // get A(i,k)
+                            GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
+                            uint8_t f ;
+                            #pragma omp atomic read
+                            f = Hf [i] ;            // grab the entry
+                            #if GB_HAS_ATOMIC
+                            if (f == 2)             // if true, update C(i,j)
+                            { 
+                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
+                                continue ;          // C(i,j) has been updated
+                            }
+                            #endif
+                            if (f == 0) continue ;  // M(i,j)=0; ignore C(i,j)
+                            do  // lock the entry
+                            {
+                                #pragma omp atomic capture
+                                {
+                                    f = Hf [i] ; Hf [i] = 3 ;
+                                }
+                            } while (f == 3) ; // lock owner gets f=1 or 2
+                            bool first_time = (f == 1) ;
+                            if (first_time)
+                            { 
+                                // C(i,j) is a new entry
+                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
+                            }
+                            else // f == 2
+                            { 
+                                // C(i,j) already appears in C(:,j)
+                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
+                            }
+                            #pragma omp atomic write
+                            Hf [i] = 2 ;                // unlock the entry
+                            if (first_time) my_cjnz++ ; // C(i,j) is a new entry
                         }
-                        GB_SCAN_M_j_OR_A_k ;
-                        #undef GB_IKJ
                     }
 
                 }
@@ -961,60 +903,61 @@
 
 //                  printf ("%3d phase1: fine hash C<M>=A*B\n", taskid) ;
                     GB_GET_M_j ;                // get M(:,j)
-                    GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
+                    GB_GET_M_j_RANGE ;          // get first and last in M(:,j)
                     for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                     {
                         int64_t k = Bi [pB] ;       // get B(k,j)
                         GB_GET_A_k ;                // get A(:,k)
                         GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                         GB_GET_B_kj ;               // bkj = B(k,j)
-                        #define GB_IKJ                                         \
-                        {                                                      \
-                            GB_MULT_A_ik_B_kj ;      /* t = A(i,k) * B(k,j) */ \
-                            int64_t i1 = i + 1 ;     /* i1 = one-based index */\
-                            int64_t i_unlocked = (i1 << 2) + 2 ;  /* (i+1,2) */\
-                            for (GB_HASH (i))        /* find i in hash table */\
-                            {                                                  \
-                                int64_t hf ;                                   \
-                                GB_PRAGMA (omp atomic read)                    \
-                                hf = Hf [hash] ;        /* grab the entry */   \
-                                if (GB_HAS_ATOMIC && (hf == i_unlocked))       \
-                                {                                              \
-                                    GB_ATOMIC_UPDATE (hash, t) ;/* Hx [.]+=t */\
-                                    break ;     /* C(i,j) has been updated */  \
-                                }                                              \
-                                if (hf == 0) break ; /* M(i,j)=0; ignore Cij */\
-                                if ((hf >> 2) == i1) /* if true, i found */    \
-                                {                                              \
-                                    do /* lock the entry */                    \
-                                    {                                          \
-                                        GB_PRAGMA (omp atomic capture)         \
-                                        {                                      \
-                                            hf = Hf [hash] ; Hf [hash] |= 3 ;  \
-                                        }                                      \
-                                    } while ((hf & 3) == 3) ; /* own: f=1,2 */ \
-                                    bool first_time = ((hf & 3) == 1) ;        \
-                                    if (first_time) /* f == 1 */               \
-                                    {                                          \
-                                        /* C(i,j) is a new entry in C(:,j) */  \
-                                        /* Hx [hash] = t */                    \
-                                        GB_ATOMIC_WRITE (hash, t) ;            \
-                                    }                                          \
-                                    else /* f == 2 */                          \
-                                    {                                          \
-                                        /* C(i,j) already appears in C(:,j) */ \
-                                        /* Hx [hash] += t */                   \
-                                        GB_ATOMIC_UPDATE (hash, t) ;           \
-                                    }                                          \
-                                    GB_PRAGMA (omp atomic write)               \
-                                    Hf [hash] = i_unlocked ; /* unlock entry */\
-                                    if (first_time) my_cjnz++ ;                \
-                                    break ;                                    \
-                                }                                              \
-                            }                                                  \
+                        for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                        {
+                            int64_t i = Ai [pA] ;       // get A(i,k)
+                            GB_MULT_A_ik_B_kj ;         // t = A(i,k) * B(k,j)
+                            int64_t i1 = i + 1 ;        // i1 = one-based index
+                            int64_t i_unlocked = (i1 << 2) + 2 ;    // (i+1,2)
+                            for (GB_HASH (i))           // find i in hash table
+                            {
+                                int64_t hf ;
+                                #pragma omp atomic read
+                                hf = Hf [hash] ;        // grab the entry
+                                #if GB_HAS_ATOMIC
+                                if (hf == i_unlocked)  // if true, update C(i,j)
+                                { 
+                                    GB_ATOMIC_UPDATE (hash, t) ;// Hx [hash]+=t
+                                    break ;         // C(i,j) has been updated
+                                }
+                                #endif
+                                if (hf == 0) break ; // M(i,j)=0; ignore C(i,j)
+                                if ((hf >> 2) == i1) // if true, entry i found
+                                {
+                                    do // lock the entry
+                                    {
+                                        #pragma omp atomic capture
+                                        {
+                                            hf = Hf [hash] ; Hf [hash] |= 3 ;
+                                        }
+                                    } while ((hf & 3) == 3) ; // owner: f=1 or 2
+                                    bool first_time = ((hf & 3) == 1) ;
+                                    if (first_time) // f == 1
+                                    { 
+                                        // C(i,j) is a new entry in C(:,j)
+                                        // Hx [hash] = t
+                                        GB_ATOMIC_WRITE (hash, t) ;
+                                    }
+                                    else // f == 2
+                                    { 
+                                        // C(i,j) already appears in C(:,j)
+                                        // Hx [hash] += t
+                                        GB_ATOMIC_UPDATE (hash, t) ;
+                                    }
+                                    #pragma omp atomic write
+                                    Hf [hash] = i_unlocked ; // unlock the entry
+                                    if (first_time) my_cjnz++ ;
+                                    break ;
+                                }
+                            }
                         }
-                        GB_SCAN_M_j_OR_A_k ;
-                        #undef GB_IKJ
                     }
 
                 }
@@ -1192,7 +1135,6 @@
                     // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
                     // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
 
-// HERE
 //                  printf ("%3d phase1: coarse Gustavson C<M>=A*B\n", taskid) ;
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
@@ -1200,7 +1142,7 @@
                         if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
                         GB_GET_M_j ;            // get M(:,j)
                         if (mjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
+                        GB_GET_M_j_RANGE ;      // get first and last in M(:,j)
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
                         GB_SCATTER_M_j ;        // scatter M(:,j)
@@ -1210,16 +1152,17 @@
                             int64_t k = Bi [pB] ;       // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                if (Hf [i] == mark)   /* if true, M(i,j) is 1*/\
-                                {                                              \
-                                    Hf [i] = mark1 ;  /* mark C(i,j) as seen */\
-                                    cjnz++ ;          /* C(i,j) is new */      \
-                                }                                              \
+                            // TODO scan M(:,j) instead, if very sparse.
+                            // Find A(i,k) via binary search. For C<M>=A*B only.
+                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                if (Hf [i] == mark)     // if true, M(i,j) is 1
+                                { 
+                                    Hf [i] = mark1 ;    // mark C(i,j) as seen
+                                    cjnz++ ;            // C(i,j) is a new entry
+                                }
                             }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ
                         }
                         Cp [kk] = cjnz ;    // count the entries in C(:,j)
                     }
@@ -1272,10 +1215,8 @@
             else if (nk == 1)
             {
 
-                // TODO: the C<M> or C<!M> case is broken, below
-
                 //--------------------------------------------------------------
-                // phase1: 1-vector coarse hash task (TODO
+                // phase1: 1-vector coarse hash task
                 //--------------------------------------------------------------
 
                 // The least 2 bits of Hf [hash] are used for f, and the upper
@@ -1517,7 +1458,7 @@
                         if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
                         GB_GET_M_j ;            // get M(:,j)
                         if (mjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
+                        GB_GET_M_j_RANGE ;      // get first and last in M(:,j)
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
                         GB_HASH_M_j ;           // hash M(:,j)
@@ -1527,25 +1468,25 @@
                             int64_t k = Bi [pB] ;       // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                for (GB_HASH (i))       /* find i in hash */   \
-                                {                                              \
-                                    int64_t f = Hf [hash] ;                    \
-                                    if (f < mark) break ; /* M(i,j)=0; ignore*/\
-                                    if (Hi [hash] == i)   /* if true, i found*/\
-                                    {                                          \
-                                        if (f == mark)  /* if true, i is new */\
-                                        {                                      \
-                                            Hf [hash] = mark1 ; /* mark seen */\
-                                            cjnz++ ;    /* C(i,j) is new */    \
-                                        }                                      \
-                                        break ;                                \
-                                    }                                          \
-                                }                                              \
+                            // TODO scan M(:,j) instead, if very sparse
+                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                for (GB_HASH (i))       // find i in hash
+                                {
+                                    int64_t f = Hf [hash] ;
+                                    if (f < mark) break ; // M(i,j)=0; ignore
+                                    if (Hi [hash] == i)   // if true, i found
+                                    {
+                                        if (f == mark)  // if true, i is new
+                                        { 
+                                            Hf [hash] = mark1 ; // mark as seen
+                                            cjnz++ ;    // C(i,j) is a new entry
+                                        }
+                                        break ;
+                                    }
+                                }
                             }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ
                         }
                         Cp [kk] = cjnz ;    // count the entries in C(:,j)
                     }
@@ -1602,10 +1543,6 @@
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase1: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
-
     //==========================================================================
     // phase2: compute Cp with cumulative sum and allocate C
     //==========================================================================
@@ -1649,10 +1586,6 @@
 
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
-
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase2: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase3: numeric phase for coarse tasks, prep for gather for fine tasks
@@ -1865,7 +1798,6 @@
                     // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
                     // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
 
-// HERE
 //                  printf ("%3d phase3: coarse Gustavson C<M>=A*B\n", taskid) ;
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
@@ -1879,7 +1811,7 @@
                             continue ;              // no need to examine M(:,j)
                         }
                         GB_GET_M_j ;            // get M(:,j)
-                        GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
+                        GB_GET_M_j_RANGE ;      // get first and last in M(:,j)
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
                         GB_SCATTER_M_j ;        // scatter M(:,j)
@@ -1891,25 +1823,25 @@
                                 GB_GET_A_k ;                // get A(:,k)
                                 GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
-                                #define GB_IKJ                                 \
-                                {                                              \
-                                    int64_t hf = Hf [i] ;                      \
-                                    if (hf == mark)                            \
-                                    {                                          \
-                                        /* C(i,j) = A(i,k) * B(k,j) */         \
-                                        Hf [i] = mark1 ;     /* mark as seen */\
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */  \
-                                    }                                          \
-                                    else if (hf == mark1)                      \
-                                    {                                          \
-                                        /* C(i,j) += A(i,k) * B(k,j) */        \
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
-                                    }                                          \
+                                // TODO scan M(:,j) instead, if very sparse
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    int64_t hf = Hf [i] ;
+                                    if (hf == mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark1 ;     // mark as seen
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
+                                    }
+                                    else if (hf == mark1)
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_UPDATE (i, t) ;// Hx [i] += t
+                                    }
                                 }
-                                GB_SCAN_M_j_OR_A_k ;
-                                #undef GB_IKJ
                             }
                             GB_GATHER_ALL_C_j(mark1) ;  // gather into C(:,j) 
                         }
@@ -1921,26 +1853,26 @@
                                 GB_GET_A_k ;                // get A(:,k)
                                 GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                                 GB_GET_B_kj ;               // bkj = B(k,j)
-                                #define GB_IKJ                                 \
-                                {                                              \
-                                    int64_t hf = Hf [i] ;                      \
-                                    if (hf == mark)                            \
-                                    {                                          \
-                                        /* C(i,j) = A(i,k) * B(k,j) */         \
-                                        Hf [i] = mark1 ;     /* mark as seen */\
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */  \
-                                        Ci [pC++] = i ; /* C(:,j) pattern */   \
-                                    }                                          \
-                                    else if (hf == mark1)                      \
-                                    {                                          \
-                                        /* C(i,j) += A(i,k) * B(k,j) */        \
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
-                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
-                                    }                                          \
+                                // TODO scan M(:,j) instead, if very sparse
+                                for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                                {
+                                    int64_t i = Ai [pA] ;   // get A(i,k)
+                                    int64_t hf = Hf [i] ;
+                                    if (hf == mark)
+                                    { 
+                                        // C(i,j) = A(i,k) * B(k,j)
+                                        Hf [i] = mark1 ;     // mark as seen
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_WRITE (i, t) ; // Hx [i] = t
+                                        Ci [pC++] = i ; // create C(:,j) pattern
+                                    }
+                                    else if (hf == mark1)
+                                    { 
+                                        // C(i,j) += A(i,k) * B(k,j)
+                                        GB_MULT_A_ik_B_kj ;  // t =A(i,k)*B(k,j)
+                                        GB_HX_UPDATE (i, t) ;// Hx [i] += t
+                                    }
                                 }
-                                GB_SCAN_M_j_OR_A_k ;
-                                #undef GB_IKJ
                             }
                             GB_SORT_AND_GATHER_C_j ;    // gather into C(:,j)
                         }
@@ -2316,7 +2248,7 @@
                         int64_t cjnz = Cp [kk+1] - pC ;
                         if (cjnz == 0) continue ;   // nothing to do
                         GB_GET_M_j ;                // get M(:,j)
-                        GB_GET_M_j_RANGE (64) ;     // get 1st & last in M(:,j)
+                        GB_GET_M_j_RANGE ;          // get 1st & last in M(:,j)
                         mark += 2 ;
                         int64_t mark1 = mark+1 ;
                         GB_HASH_M_j ;               // hash M(:,j)
@@ -2326,34 +2258,34 @@
                             int64_t k = Bi [pB] ;       // get B(k,j)
                             GB_GET_A_k ;                // get A(:,k)
                             GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                            // TODO scan M(:,j) instead, if very sparse
                             GB_GET_B_kj ;               // bkj = B(k,j)
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                for (GB_HASH (i))       /* find i in hash */   \
-                                {                                              \
-                                    int64_t f = Hf [hash] ;                    \
-                                    if (f < mark) break ; /* M(i,j)=0, ignore*/\
-                                    if (Hi [hash] == i)                        \
-                                    {                                          \
-                                        GB_MULT_A_ik_B_kj ; /* t = aik*bkj */  \
-                                        if (f == mark) /* if true, i is new */ \
-                                        {                                      \
-                                            /* C(i,j) is new */                \
-                                            Hf [hash] = mark1 ; /* mark seen */\
-                                            GB_HX_WRITE (hash, t) ;/*Hx[.]=t */\
-                                            Ci [pC++] = i ;                    \
-                                        }                                      \
-                                        else                                   \
-                                        {                                      \
-                                            /* C(i,j) has been seen; update */ \
-                                            GB_HX_UPDATE (hash, t) ;           \
-                                        }                                      \
-                                        break ;                                \
-                                    }                                          \
-                                }                                              \
+                            for ( ; pA < pA_end ; pA++) // scan A(:,k)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                for (GB_HASH (i))       // find i in hash
+                                {
+                                    int64_t f = Hf [hash] ;
+                                    if (f < mark) break ;   // M(i,j)=0, ignore
+                                    if (Hi [hash] == i)
+                                    {
+                                        GB_MULT_A_ik_B_kj ; // t = A(i,k)*B(k,j)
+                                        if (f == mark)      // if true, i is new
+                                        { 
+                                            // C(i,j) is new
+                                            Hf [hash] = mark1 ; // mark as seen
+                                            GB_HX_WRITE (hash, t) ;// Hx[hash]=t
+                                            Ci [pC++] = i ;
+                                        }
+                                        else
+                                        { 
+                                            // C(i,j) has been seen; update it.
+                                            GB_HX_UPDATE (hash, t) ;
+                                        }
+                                        break ;
+                                    }
+                                }
                             }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ
                         }
                         // found i if: Hf [hash] == mark1 and Hi [hash] == i
                         GB_SORT_AND_GATHER_HASHED_C_j (mark1, Hi [hash] == i) ;
@@ -2427,10 +2359,6 @@
             }
         }
     }
-
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase4: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase4: gather phase for fine tasks
@@ -2536,10 +2464,6 @@
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase5: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
-
     //==========================================================================
     // phase5: final gather phase for fine hash tasks
     //==========================================================================
@@ -2620,9 +2544,6 @@
         GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase5: %g\n", tic) ;
-
 //  printf ("phases done\n") ;
 }
 
@@ -2645,4 +2566,3 @@
 #undef GB_ATOMIC_WRITE
 #undef GB_HASH
 #undef GB_FREE_ALL
-

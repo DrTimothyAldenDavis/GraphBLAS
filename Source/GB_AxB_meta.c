@@ -32,6 +32,7 @@
 
 #include "GB_mxm.h"
 #include "GB_transpose.h"
+#include "GB_printf.h"
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
