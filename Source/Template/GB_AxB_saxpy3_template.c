@@ -208,7 +208,7 @@
 // C(:,j)<M(:,j)>=A(:,k)*B(k,j) using one of two methods
 #define GB_SCAN_M_j_OR_A_k                                              \
 {                                                                       \
-    if (mjnz_much < aknz)                                               \
+    if (aknz > 256 && mjnz_much < aknz)                                 \
     /* nnz(M(:,j)) much less than nnz(A(:,k)) */                        \
     {                                                                   \
         /* scan M(:,j), and do binary search for A(i,k) */              \
