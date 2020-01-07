@@ -26,7 +26,7 @@ for n = [10 100 200 300 1000]
         % v3.1:
         % assert (isequal (method, 'heap')) ;
         % v3.2:
-        assert (isequal (method, 'auto')) ;
+        assert (isequal (method, 'saxpy')) ;
         assert (isequal_roundoff (C1, C2.matrix)) ;
     end
 end

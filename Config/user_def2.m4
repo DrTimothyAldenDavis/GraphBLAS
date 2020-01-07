@@ -8,7 +8,7 @@ GrB_Info GB_AxB_user
     const GrB_Semiring GB_s,
 
     GrB_Matrix *GB_Chandle,
-    const GrB_Matrix GB_M,          // not yet used for saxpy3 method
+    const GrB_Matrix GB_M,
     const GrB_Matrix GB_A,          // not used for dot2 method
     const GrB_Matrix GB_B,
     bool GB_flipxy,

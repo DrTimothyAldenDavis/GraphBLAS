@@ -12,6 +12,10 @@ elseif method == 1002 || method == 5
     method = 'heap' ;
 elseif method == 1003 || method == 6
     method = 'dot' ;
+elseif method == 1004
+    method = 'hash' ;
+elseif method == 1005
+    method = 'saxpy' ;
 else
     error ('invalid method') ;
 end

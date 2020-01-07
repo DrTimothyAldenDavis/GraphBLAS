@@ -32,7 +32,6 @@
 
     const int64_t *GB_RESTRICT Mi = M->i ;
     const GB_void *GB_RESTRICT Mx = M->x ;
-    GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
     const size_t msize = M->type->size ;
 
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -146,9 +145,7 @@
 
                     // get the value of M(i,j)
                     int64_t i = Mi [pC] ;
-                    bool mij ;
-                    cast_M (&mij, Mx +(pC*msize), 0) ;
-                    if (mij)
+                    if (GB_mcast (Mx, pC, msize))   // note: Mx [pC], same as Cx
                     { 
 
                         //------------------------------------------------------

@@ -50,8 +50,6 @@ void GB_assign_zombie3
     const int64_t *GB_RESTRICT Mi = M->i ;
     const GB_void *GB_RESTRICT Mx = M->x ;
     const size_t msize = M->type->size ;
-    const GB_cast_function cast_M =
-        GB_cast_factory (GB_BOOL_code, M->type->code) ;
     int64_t pM_start = Mp [0] ;
     int64_t pM_end = Mp [1] ;
 
@@ -107,7 +105,7 @@ void GB_assign_zombie3
                     if (found)
                     { 
                         // found it
-                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        mij = GB_mcast (Mx, pM, msize) ;
                     }
                     if (Mask_comp)
                     { 

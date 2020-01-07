@@ -411,7 +411,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t *GB_RESTRICT Mh = NULL ;
     const int64_t *GB_RESTRICT Mi = NULL ;
     // const GB_void *GB_RESTRICT Mx = NULL ;
-    // GB_cast_function cast_M = NULL ;
     // size_t msize = 0 ;
     int64_t mnvec = 0 ;
     bool M_is_hyper = false ;
@@ -421,7 +420,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         Mh = M->h ;
         Mi = M->i ;
         // Mx = M->x ;
-        // cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
         // msize = M->type->size ;
         mnvec = M->nvec ;
         M_is_hyper = M->is_hyper ;
@@ -833,12 +831,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
     }
 
-//  GBBURB ("nthreads %d ntasks %d coarse: (gus: %d 1hash: %d hash: %d)"
+//  GBBURBLE ("nthreads %d ntasks %d coarse: (gus: %d 1hash: %d hash: %d)"
 //      " fine: (gus: %d hash: %d) ", nthreads, ntasks,
 //      ncoarse_gus, ncoarse_1hash, ncoarse_hash,
 //      nfine_gus, nfine_hash) ;
 
-    GBBURB ("nthreads %d ntasks %d coarse: (Gus: %d hash: %d)"
+    GBBURBLE ("nthreads %d ntasks %d coarse: (Gus: %d hash: %d)"
         " fine: (Gus: %d hash: %d) ", nthreads, ntasks,
         ncoarse_gus, ncoarse_hash,
         nfine_gus, nfine_hash) ;

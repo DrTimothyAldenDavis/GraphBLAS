@@ -224,6 +224,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     { 
         // AT = A', with no typecasting
         // transpose: no typecast, no op, not in place
+        GBBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
         A = AT ;
     }
@@ -251,6 +252,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
             // MT = M' to conform M to the same CSR/CSC format as C.
             // typecast to boolean, if a full matrix transpose is done.
             // transpose: no typecast, no op, not in place
+            GBBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
             M = MT ;
         }

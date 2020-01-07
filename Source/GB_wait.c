@@ -69,9 +69,7 @@ GrB_Info GB_wait                // finish all pending computations
     // be made with a negative pr.
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
 
-    #if GB_BURBLE
-    GBBURB ("wait ") ;
-    #endif
+    GBBURBLE ("wait ") ;
 
     //--------------------------------------------------------------------------
     // determine the max # of threads to use

@@ -56,14 +56,13 @@
 // GB_GET_MASK: get the mask matrix M
 //------------------------------------------------------------------------------
 
-#define GB_GET_MASK                                                         \
-    ASSERT_MATRIX_OK (M, "M for assign", GB0) ;                         \
+#define GB_GET_MASK                                                            \
+    ASSERT_MATRIX_OK (M, "M for assign", GB0) ;                                \
     const int64_t *GB_RESTRICT Mp = M->p ;                                     \
     const int64_t *GB_RESTRICT Mh = M->h ;                                     \
     const int64_t *GB_RESTRICT Mi = M->i ;                                     \
     const GB_void *GB_RESTRICT Mx = M->x ;                                     \
-    const size_t msize = M->type->size ;                                    \
-    GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
+    const size_t msize = M->type->size ;
 
 //  const bool M_is_hyper = M->is_hyper ;
 //  const int64_t Mnvec = M->nvec ;
@@ -1821,7 +1820,7 @@ GrB_Info GB_subassign_emult_slice
         GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;                       \
         if (found)                                                          \
         {                                                                   \
-            cast_M (&mij, Mx +(pM*msize), 0) ;                              \
+            mij = GB_mcast (Mx, pM, msize) ;                                \
         }                                                                   \
         else                                                                \
         {                                                                   \

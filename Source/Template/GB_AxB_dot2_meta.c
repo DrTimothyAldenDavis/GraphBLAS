@@ -50,7 +50,6 @@
         const int64_t *GB_RESTRICT Mh = M->h ;
         const int64_t *GB_RESTRICT Mi = M->i ;
         const GB_void *GB_RESTRICT Mx = M->x ;
-        GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
         size_t msize = M->type->size ;
         const int64_t mnvec = M->nvec ;
         bool M_is_hyper = GB_IS_HYPER (M) ;

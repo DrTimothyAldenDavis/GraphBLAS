@@ -90,6 +90,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
         // T = A', the default behavior.  This step may seem counter-intuitive,
         // but method computes C<M>=A' by default when A_transpose is false.
+        GBBURBLE ("(transpose) ") ;
 
         // Precasting:
         if (accum == NULL)
@@ -123,6 +124,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
         // typecasted eventually, into the type of C if the types of T and C
         // differ.  That can be postponed at no cost since the following step
         // is free.
+        GBBURBLE ("(cheap) ") ;
         info = GB_shallow_copy (&T, C_is_csc, A, Context) ;
     }
 

@@ -129,17 +129,10 @@ GrB_Info GB_subassign_05
                 {
 
                     //----------------------------------------------------------
-                    // consider the entry M(iA,j)
-                    //----------------------------------------------------------
-
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-
-                    //----------------------------------------------------------
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     { 
                         int64_t iA = Mi [pM] ;
                         GB_iC_DENSE_LOOKUP ;
@@ -163,17 +156,10 @@ GrB_Info GB_subassign_05
                 {
 
                     //----------------------------------------------------------
-                    // consider the entry M(iA,j)
-                    //----------------------------------------------------------
-
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-
-                    //----------------------------------------------------------
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     {
                         int64_t iA = Mi [pM] ;
                         GB_iC_BINARY_SEARCH ;
@@ -254,17 +240,10 @@ GrB_Info GB_subassign_05
                 {
 
                     //----------------------------------------------------------
-                    // consider the entry M(iA,j)
-                    //----------------------------------------------------------
-
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-
-                    //----------------------------------------------------------
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     {
                         int64_t iA = Mi [pM] ;
                         GB_iC_BINARY_SEARCH ;

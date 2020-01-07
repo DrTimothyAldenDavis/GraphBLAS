@@ -107,7 +107,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t mnz = GB_NNZ (M) ;
     const int64_t mnvec = M->nvec ;
     const bool M_is_hyper = M->is_hyper ;
-    GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -267,9 +266,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                 for ( ; pM < pM_end ; pM++)
                 {
                     int64_t work = 1 ;
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     { 
                         int64_t pA, pA_end, i = Mi [pM] ;
                         GB_lookup (A_is_hyper, Ah, Ap, &apleft, anvec-1, i,

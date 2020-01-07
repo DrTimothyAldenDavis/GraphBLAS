@@ -380,27 +380,21 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (do_rowscale)
         { 
             // C = D*B
-            #if GB_BURBLE
-            printf ("C%s=A'*B, rowscale ", M_str) ;
-            #endif
+            GBBURBLE ("C%s=A'*B, rowscale ", M_str) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (do_colscale)
         { 
             // C = A'*D
-            #if GB_BURBLE
-            printf ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
-            #endif
+            GBBURBLE ("C%s=A'*B, colscale (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_colscale (Chandle, AT, B, semiring, flipxy, Context));
         }
         else if (do_adotb)
         { 
             // C<M> = A'*B via dot product method
-            #if GB_BURBLE
-            printf ("C%s=A'*B, %sdot product ", M_str,
+            GBBURBLE ("C%s=A'*B, %sdot product ", M_str,
                 (M != NULL && !Mask_comp) ? "masked " : "") ;
-            #endif
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
@@ -408,9 +402,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else
         { 
             // C = A'*B via saxpy3: Gustavson + Hash method
-            #if GB_BURBLE
-            printf ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
-            #endif
+            GBBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, AT, B, semiring,
                 flipxy, mask_applied, Context)) ;
@@ -428,27 +420,21 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D
-            #if GB_BURBLE
-            printf ("C%s=A*B', colscale ", M_str) ;
-            #endif
+            GBBURBLE ("C%s=A*B', colscale ", M_str) ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B'
-            #if GB_BURBLE
-            printf ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
-            #endif
+            GBBURBLE ("C%s=A*B', rowscale (transposed %s) ", M_str, B_str) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, BT, semiring, flipxy, Context));
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B' via dot product
-            #if GB_BURBLE
-            printf ("C%s=A*B', dot product (transposed %s) (transposed %s) ",
+            GBBURBLE ("C%s=A*B', dot product (transposed %s) (transposed %s) ",
                 M_str, A_str, B_str) ;
-            #endif
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
@@ -458,9 +444,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else
         { 
             // C = A*B' via saxpy3: Gustavson + Hash method
-            #if GB_BURBLE
-            printf ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
-            #endif
+            GBBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, BT, semiring,
                 flipxy, mask_applied, Context)) ;
@@ -478,25 +462,19 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         if (M == NULL && GB_is_diagonal (B, Context))
         { 
             // C = A*D, column scale
-            #if GB_BURBLE
-            printf ("C%s=A*B, colscale ", M_str) ;
-            #endif
+            GBBURBLE ("C%s=A*B, colscale ", M_str) ;
             GB_OK (GB_AxB_colscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (M == NULL && GB_is_diagonal (A, Context))
         { 
             // C = D*B, row scale
-            #if GB_BURBLE
-            printf ("C%s=A*B, rowscale ", M_str) ;
-            #endif
+            GBBURBLE ("C%s=A*B, rowscale ", M_str) ;
             GB_OK (GB_AxB_rowscale (Chandle, A, B, semiring, flipxy, Context)) ;
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B via dot product
-            #if GB_BURBLE
-            printf ("C%s=A*B', dot product (transposed %s) ", M_str, A_str) ;
-            #endif
+            GBBURBLE ("C%s=A*B', dot product (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, B, semiring,
                 flipxy, mask_applied, Context)) ;
@@ -505,9 +483,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else
         { 
             // C = A*B via saxpy3: Gustavson + Hash method
-            #if GB_BURBLE
-            printf ("C%s=A*B, saxpy ", M_str) ;
-            #endif
+            GBBURBLE ("C%s=A*B, saxpy ", M_str) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_SAXPY ;
@@ -515,8 +491,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
 
     #if GB_BURBLE
-    if (M_transposed) printf ("(M transposed) ") ;
-    if ((M != NULL) && !(*mask_applied)) printf ("(M later) ") ;
+    if (M_transposed) GBBURBLE ("(M transposed) ") ;
+    if ((M != NULL) && !(*mask_applied)) GBBURBLE ("(M later) ") ;
     #endif
 
     //--------------------------------------------------------------------------

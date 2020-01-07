@@ -223,27 +223,6 @@ void mexFunction
     ERR (GxB_init (42, mxMalloc, mxCalloc, NULL     , mxFree, false)) ;
     ERR (GxB_init (42, mxMalloc, mxCalloc, mxRealloc, NULL  , false)) ;
 
-
-// OLD METHOD, disabled.
-#if 0
-//  //--------------------------------------------------------------------------
-//  // Sauna
-//  //--------------------------------------------------------------------------
-
-//  printf ("Sauna --------------------------------------------------\n") ;
-//  GB_Sauna Sauna = NULL ;
-//  CHECK (GB_mx_Sauna_nmalloc ( ) == 0) ;
-//  CHECK (GB_Sauna_alloc (0, 8, 8) == GrB_SUCCESS) ;
-//  CHECK (GB_mx_Sauna_nmalloc ( ) == 3) ;
-//  Sauna = GB_Global_Saunas_get (0) ;
-//  GB_Sauna_reset (Sauna, INT64_MAX/2, 0) ;
-//  GB_Sauna_reset (Sauna, INT64_MAX/2, 0) ;
-//  GB_Sauna_reset (Sauna, INT64_MAX/2, 0) ;
-//  GB_Sauna_free (0) ;
-//  CHECK (GB_Sauna_alloc (0, INT64_MAX, 8) == GrB_OUT_OF_MEMORY);
-//  CHECK (GB_mx_Sauna_nmalloc ( ) == 0) ;
-#endif
-
     //--------------------------------------------------------------------------
     // Type
     //--------------------------------------------------------------------------

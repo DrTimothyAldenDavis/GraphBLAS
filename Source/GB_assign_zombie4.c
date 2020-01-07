@@ -48,8 +48,6 @@ void GB_assign_zombie4
     const int64_t *GB_RESTRICT Mp = M->p ;
     const GB_void *GB_RESTRICT Mx = M->x ;
     const size_t msize = M->type->size ;
-    const GB_cast_function cast_M =
-        GB_cast_factory (GB_BOOL_code, M->type->code) ;
     const int64_t Mnvec = M->nvec ;
     const bool M_is_hyper = M->is_hyper ;
 
@@ -119,7 +117,7 @@ void GB_assign_zombie4
                     if (pM < pM_end)
                     { 
                         // found it
-                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        mij = GB_mcast (Mx, pM, msize) ;
                     }
                     if (Mask_comp)
                     { 

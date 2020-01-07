@@ -115,10 +115,9 @@
     int64_t ahi = Ai [pA_end-1] ;   /* get last A(:,k) */   \
     if (ahi < im_first || alo > im_last) continue
 
-#define GB_GET_M_ij(pM)                         \
-    /* get M(i,j), at Mi [pM] and Mx [pM] */    \
-    bool mij ;                                  \
-    cast_M (&mij, Mx +((pM)*msize), 0)
+#define GB_GET_M_ij(pM)                             \
+    /* get M(i,j), at Mi [pM] and Mx [pM] */        \
+    bool mij = GB_mcast (Mx, pM, msize)
 
 // ctype t = A(i,k) * B(k,j)
 #define GB_MULT_A_ik_B_kj                                   \
@@ -307,7 +306,6 @@
     const int64_t *GB_RESTRICT Mh = NULL ;
     const int64_t *GB_RESTRICT Mi = NULL ;
     const GB_void *GB_RESTRICT Mx = NULL ;
-    GB_cast_function cast_M = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
     bool M_is_hyper ;
@@ -317,7 +315,6 @@
         Mh = M->h ;
         Mi = M->i ;
         Mx = M->x ;
-        cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
         msize = M->type->size ;
         mnvec = M->nvec ;
         M_is_hyper = M->is_hyper ;

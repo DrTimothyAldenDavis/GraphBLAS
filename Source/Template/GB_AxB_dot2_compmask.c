@@ -96,7 +96,7 @@
                 GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
                 if (found)
                 {
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    mij = GB_mcast (Mx, pM, msize) ;
                 }
                 if (!mij)
                 { 

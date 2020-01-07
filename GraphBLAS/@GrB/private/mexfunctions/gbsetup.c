@@ -99,12 +99,6 @@ void mexFunction
         // print 1-based indices
         GB_Global_print_one_based_set (true) ;
 
-// OLD METHOD, disabled.
-#if 0
-        // to make the Sauna workspace persistent
-        GB_Global_persist_function_set (mexMakeMemoryPersistent) ;
-#endif
-
     }
     else if (MATCH (action, "finish"))
     { 

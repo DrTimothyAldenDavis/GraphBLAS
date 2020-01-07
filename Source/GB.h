@@ -318,6 +318,33 @@ typedef void (*GB_cast_function) (void *, const void *, size_t) ;
 #define GB_LEN 128
 
 //------------------------------------------------------------------------------
+// GB_mcast: cast a mask entry from any native type to boolean
+//------------------------------------------------------------------------------
+
+// The mask matrix M must be one of the native data types, which have size
+// 1, 2, 4, or 8 bytes.  The value could be properly typecasted to bool, but
+// this requires a function pointer to the proper GB_cast_function.  Instead,
+// it is faster to simply use type punning, based on the size of the data
+// type, and use the inline GB_mcast function instead.
+
+static inline bool GB_mcast         // return the value of M(i,j)
+(
+    const GB_void *GB_RESTRICT Mx,  // mask values
+    const int64_t pM,               // extract boolean value of Mx [pM]
+    const size_t msize              // size of each data type
+)
+{
+    switch (msize)
+    {
+        default:
+        case 1: return ((*(uint8_t  *) (Mx +((pM)*1))) != 0) ;
+        case 2: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
+        case 4: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
+        case 8: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
+    }
+}
+
+//------------------------------------------------------------------------------
 // pending tuples
 //------------------------------------------------------------------------------
 
@@ -688,7 +715,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 
 // define the printf function to use to burble
 #include "GB_printf.h"
-#define GBBURB(...)                             \
+#define GBBURBLE(...)                           \
     if (GB_printf_function != NULL)             \
     {                                           \
         GB_printf_function (__VA_ARGS__) ;      \
@@ -703,27 +730,28 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 
 // burble with timing
 #define GB_BURBLE_START(func)                   \
-    GBBURB (func) ;                             \
+    GBBURBLE (func) ;                           \
     double t_burble = omp_get_wtime ( ) ;
 
 #define GB_BURBLE_END                           \
     t_burble = omp_get_wtime ( ) - t_burble ;   \
-    GBBURB ("%.3g sec]\n", t_burble) ;         \
+    GBBURBLE ("%.3g sec]\n", t_burble) ;        \
 
 #else
 
 // burble with no timing
 #define GB_BURBLE_START(func)                   \
-    GBBURB (func) ;
+    GBBURBLE (func) ;
 
 #define GB_BURBLE_END                           \
-    GBBURB ("]\n") ;
+    GBBURBLE ("]\n") ;
 
 #endif
 
 #else
 
 // no burble
+#define GBBURBLE(...)
 #define GB_BURBLE_START(func)
 #define GB_BURBLE_END
 

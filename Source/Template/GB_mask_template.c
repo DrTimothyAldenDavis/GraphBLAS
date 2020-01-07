@@ -77,7 +77,6 @@
     // const int64_t *GB_RESTRICT Mh = NULL ;
     const int64_t *GB_RESTRICT Mi = NULL ;
     const GB_void *GB_RESTRICT Mx = NULL ;
-    GB_cast_function cast_M = NULL ;
     size_t msize = 0 ;
     // int64_t Mnvec = 0 ;
     // bool M_is_hyper = false ;
@@ -87,7 +86,6 @@
         // Mh = M->h ;
         Mi = M->i ;
         Mx = M->x ;
-        cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
         msize = M->type->size ;
         // Mnvec = M->nvec ;
         // M_is_hyper = M->is_hyper ;
@@ -329,7 +327,7 @@
                     bool mij = false ;
                     if (i == iM)
                     { 
-                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        mij = GB_mcast (Mx, pM, msize) ;
                         pM++ ;
                     }
                     if (Mask_comp) mij = !mij ;
@@ -379,7 +377,7 @@
                     GB_BINARY_SPLIT_SEARCH (i, Mi, pM, pright, found) ;
                     if (found)
                     {
-                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        mij = GB_mcast (Mx, pM, msize) ;
                         // increment pM for the wrapup phase below
                         pM++ ;
                     }
@@ -451,9 +449,7 @@
 
                             for ( ; pM < pM_end ; pM++)
                             {
-                                bool mij ;
-                                cast_M (&mij, Mx +(pM*msize), 0) ;
-                                if (mij)
+                                if (GB_mcast (Mx, pM, msize))
                                 { 
                                     int64_t i = Mi [pM] ;
                                     int64_t pright = pZ_end - 1 ;
@@ -480,7 +476,7 @@
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
                                 GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                                if (found) cast_M (&mij, Mx +(pM*msize), 0) ;
+                                if (found) mij = GB_mcast (Mx, pM, msize) ;
                                 if (mij) GB_COPY_Z ;
                             }
 
@@ -509,9 +505,7 @@
                                 else
                                 { 
                                     // both M(i,j) and Z(i,j) exist
-                                    bool mij ;
-                                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                                    if (mij) GB_COPY_Z ;
+                                    if (GB_mcast (Mx, pM, msize)) GB_COPY_Z ;
                                     pM++ ;
                                     pZ++ ;
                                 }
@@ -535,7 +529,7 @@
                             int64_t pright = pM_end - 1 ;
                             bool found ;
                             GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                            if (found) cast_M (&mij, Mx +(pM*msize), 0) ;
+                            if (found) mij = GB_mcast (Mx, pM, msize) ;
                             if (!mij) GB_COPY_Z ;   // mask is complemented
                         }
                     }
@@ -564,9 +558,7 @@
 
                             for ( ; pM < pM_end ; pM++)
                             {
-                                bool mij ;
-                                cast_M (&mij, Mx +(pM*msize), 0) ;
-                                if (mij)
+                                if (GB_mcast (Mx, pM, msize))
                                 { 
                                     int64_t i = Mi [pM] ;
                                     int64_t pright = pC_end - 1 ;
@@ -593,7 +585,7 @@
                                 int64_t pright = pM_end - 1 ;
                                 bool found ;
                                 GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                                if (found) cast_M (&mij, Mx +(pM*msize), 0) ;
+                                if (found) mij = GB_mcast (Mx, pM, msize) ;
                                 if (mij) GB_COPY_C ;
                             }
 
@@ -622,9 +614,7 @@
                                 else
                                 { 
                                     // both M(i,j) and C(i,j) exist
-                                    bool mij ;
-                                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                                    if (mij) GB_COPY_C ;
+                                    if (GB_mcast (Mx, pM, msize)) GB_COPY_C ;
                                     pM++ ;
                                     pC++ ;
                                 }
@@ -648,7 +638,7 @@
                             int64_t pright = pM_end - 1 ;
                             bool found ;
                             GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                            if (found) cast_M (&mij, Mx +(pM*msize), 0) ;
+                            if (found) mij = GB_mcast (Mx, pM, msize) ;
                             if (!mij) GB_COPY_C ;
                         }
                     }

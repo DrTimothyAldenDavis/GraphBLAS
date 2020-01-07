@@ -170,6 +170,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         M1 = M ;
         if (C_is_csc != M_is_csc)
         { 
+            GBBURBLE ("(M transpose) ") ;
             GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
             M1 = MT ;
         }
@@ -185,6 +186,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // AT = A'
         // transpose: no typecast, no op, not in place
+        GBBURBLE ("(A transpose) ") ;
         GB_OK (GB_transpose (&AT, NULL, C_is_csc, A, NULL, Context)) ;
         A1 = AT ;
     }
@@ -198,6 +200,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     { 
         // BT = B'
         // transpose: no typecast, no op, not in place
+        GBBURBLE ("(B transpose) ") ;
         GB_OK (GB_transpose (&BT, NULL, C_is_csc, B, NULL, Context)) ;
         B1 = BT ;
     }
