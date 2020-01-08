@@ -360,12 +360,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 // or B are dense, since the dot product method requires no
                 // workspace in that case and can exploit dense vectors of A
                 // and/or B.
-                GrB_Index bnzmax, anzmax ;
-                bool A_is_dense = GB_Index_multiply (&anzmax, A->vlen, A->vdim)
-                                  && (anzmax == GB_NNZ (A)) ;
-                bool B_is_dense = GB_Index_multiply (&bnzmax, B->vlen, B->vdim)
-                                  && (bnzmax == GB_NNZ (B)) ;
-                do_adotb = A_is_dense || B_is_dense ;
+                do_adotb = GB_is_dense (A) || GB_is_dense (B) ;
             }
         }
         else

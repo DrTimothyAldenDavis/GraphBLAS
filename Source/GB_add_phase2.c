@@ -159,7 +159,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     GB_Opcode opcode ;
     GB_Type_code xycode, zcode ;
 
-    if (GB_binop_builtin (A, false, B, false, op,
+    if (GB_binop_builtin (A->type, false, B->type, false, op,
         false, &opcode, &xycode, &zcode) && ccode == zcode)
     { 
         #include "GB_binop_factory.c"

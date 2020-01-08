@@ -269,7 +269,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     #if GB_BURBLE
     if (!use_transplant)
     {
-        GBBURBLE ("[ C%s%s=Z via %s%s%s]",
+        GBBURBLE ("(C%s%s=Z via %s%s%s) ",
             ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
             ((accum == NULL) ? "" : "+"),
             ((use_subassigner) ? "assign" :

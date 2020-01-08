@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-#define GB_DEVELOPER 1
+#undef  GB_DEVELOPER
 
 #include "GB_Pending.h"
 #include "GB_iterator.h"

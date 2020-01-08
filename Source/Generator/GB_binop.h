@@ -1,3 +1,21 @@
+GrB_Info GB_Cdense_accumA
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
 GrB_Info GB_AxD
 (
     GrB_Matrix C,

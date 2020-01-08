@@ -1,3 +1,5 @@
+
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -17,10 +19,12 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):    GB_AaddB__le_uint8
-// A.*B function (eWiseMult):  GB_AemultB__le_uint8
-// A*D function (colscale):    GB_AxD__le_uint8
-// D*A function (rowscale):    GB_DxB__le_uint8
+// A+B function (eWiseAdd):     GB_AaddB__le_uint8
+// A.*B function (eWiseMult):   GB_AemultB__le_uint8
+// A*D function (colscale):     GB_AxD__le_uint8
+// D*A function (rowscale):     GB_DxB__le_uint8
+// C+=A function (dense accum): GB_Cdense_accumA__le_uint8
+// C+=x function (dense accum): GB_Cdense_accumX__le_uint8
 
 // C type:   bool
 // A type:   uint8_t
@@ -65,6 +69,49 @@
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_LE || GxB_NO_UINT8 || GxB_NO_LE_UINT8)
+
+//------------------------------------------------------------------------------
+// C += A, accumulate a sparse matrix into a dense matrix
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Cdense_accumA__le_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_dense_accum_sparse_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C += x, accumulate a scalar into a dense matrix
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Cdense_accumX__le_uint8
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    bool ywork = (*((bool *) p_ywork)) ;
+    #include "GB_dense_accum_scalar_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
 
 //------------------------------------------------------------------------------
 // C = A*D, column scale with diagonal D matrix

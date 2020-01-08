@@ -76,8 +76,8 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     // check the multiply operator
     //--------------------------------------------------------------------------
 
-    return (GB_binop_builtin (A, A_is_pattern, B, B_is_pattern, mult, flipxy,
-        mult_opcode, xycode, zcode)) ;
+    return (GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
+        mult, flipxy, mult_opcode, xycode, zcode)) ;
 }
 
 #endif

@@ -122,8 +122,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         GB_Opcode opcode ;
         GB_Type_code xycode, zcode ;
 
-        if (GB_binop_builtin (D, D_is_pattern, B, B_is_pattern, mult,
-            flipxy, &opcode, &xycode, &zcode))
+        if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
+            mult, flipxy, &opcode, &xycode, &zcode))
         { 
             #include "GB_binop_factory.c"
         }

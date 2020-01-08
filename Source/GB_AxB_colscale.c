@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_colscale: C = A*D, column scale with diagonal matrix D
+// GB_dense_accum_sparse: C += A
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -148,8 +148,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
         GB_Opcode opcode ;
         GB_Type_code xycode, zcode ;
-        if (GB_binop_builtin (A, A_is_pattern, D, D_is_pattern, mult,
-            flipxy, &opcode, &xycode, &zcode))
+        if (GB_binop_builtin (A->type, A_is_pattern, D->type, D_is_pattern,
+            mult, flipxy, &opcode, &xycode, &zcode))
         { 
             // C=A*D, colscale with built-in operator
             #include "GB_binop_factory.c"

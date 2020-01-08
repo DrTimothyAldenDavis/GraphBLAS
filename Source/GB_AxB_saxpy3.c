@@ -1210,6 +1210,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
+        printf ("generic ") ;
+
         if (flipxy)
         { 
             #define GB_MULTIPLY(z,x,y) fmult (z,y,x)

@@ -14,6 +14,8 @@ fprintf (f, 'define(`GB_AaddB'', `GB_AaddB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AemultB'', `GB_AemultB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
 fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Cdense_accumA'', `GB_Cdense_accumA__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Cdense_accumX'', `GB_Cdense_accumX__%s'')\n', name) ;
 
 % type of C, A, and B
 if (iscompare)

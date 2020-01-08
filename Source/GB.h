@@ -23,8 +23,8 @@
 // #include "GB.h"
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
-   #define GB_BURBLE 0
-// #define GB_BURBLE 1
+// #define GB_BURBLE 0
+   #define GB_BURBLE 1
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // #define GB_DEBUG
@@ -1903,11 +1903,11 @@ void GB_eslice
 bool GB_binop_builtin               // true if binary operator is builtin
 (
     // inputs:
-    const GrB_Matrix A,
+    const GrB_Type A_type,
     const bool A_is_pattern,        // true if only the pattern of A is used
-    const GrB_Matrix B,
+    const GrB_Type B_type,
     const bool B_is_pattern,        // true if only the pattern of B is used
-    const GrB_BinaryOp op,          // binary operator
+    const GrB_BinaryOp op,          // binary operator; may be NULL
     const bool flipxy,              // true if z=op(y,x), flipping x and y
     // outputs, unused by caller if this function returns false
     GB_Opcode *opcode,              // opcode for the binary operator
@@ -2033,6 +2033,22 @@ GrB_Info GB_wait                // finish all pending computations
     GrB_Matrix A,               // matrix with pending computations
     GB_Context Context
 ) ;
+
+//------------------------------------------------------------------------------
+// GB_is_dense: check if a matrix is completely dense
+//------------------------------------------------------------------------------
+
+static inline bool GB_is_dense
+(
+    const GrB_Matrix A
+)
+{
+    // check if A is competely dense:  all entries present.
+    // zombies and pending tuples are not considered
+    GrB_Index anzmax ;
+    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
+    return (ok && (anzmax == GB_NNZ (A))) ;
+}
 
 //------------------------------------------------------------------------------
 // OpenMP definitions
