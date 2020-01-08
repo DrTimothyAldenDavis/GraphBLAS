@@ -23,8 +23,8 @@
 // #include "GB.h"
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
-// #define GB_BURBLE 0
-   #define GB_BURBLE 1
+   #define GB_BURBLE 0
+// #define GB_BURBLE 1
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // #define GB_DEBUG
