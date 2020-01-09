@@ -23,8 +23,7 @@
 // #include "GB.h"
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
-   #define GB_BURBLE 0
-// #define GB_BURBLE 1
+#define GB_BURBLE 0
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // #define GB_DEBUG
@@ -730,18 +729,18 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 
 // burble with timing
 #define GB_BURBLE_START(func)                   \
-    GBBURBLE (func) ;                           \
+    GBBURBLE (" [ " func " ") ;                 \
     double t_burble = omp_get_wtime ( ) ;
 
 #define GB_BURBLE_END                           \
     t_burble = omp_get_wtime ( ) - t_burble ;   \
-    GBBURBLE ("%.3g sec]\n", t_burble) ;        \
+    GBBURBLE ("%.3g sec ]\n", t_burble) ;        \
 
 #else
 
 // burble with no timing
 #define GB_BURBLE_START(func)                   \
-    GBBURBLE (func) ;
+    GBBURBLE (" [ " func " ") ;                 \
 
 #define GB_BURBLE_END                           \
     GBBURBLE ("]\n") ;

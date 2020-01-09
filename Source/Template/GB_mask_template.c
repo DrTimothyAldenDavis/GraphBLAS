@@ -226,6 +226,7 @@
 
             int64_t zjnz = pZ_end - pZ ;        // nnz in Z(:,j) for this slice
             bool zdense = (zjnz == len) && (zjnz > 0) ;
+
             #ifdef GB_DEBUG
             int64_t iZ_first = -1, iZ_last = -1 ;
             if (zjnz > 0)
@@ -257,7 +258,14 @@
                     pM_end = Mp [kM+1] ;
                 }
             }
+
             int64_t mjnz = pM_end - pM ;    // nnz (M (:,j))
+            bool mdense = (mjnz == len) && (mjnz > 0) ;
+
+            // get the first index in M(:,j) for this vector
+            int64_t iM_first = -1 ;
+            int64_t pM_first = pM ;
+            if (mjnz > 0) iM_first = Mi [pM_first] ;
 
             //------------------------------------------------------------------
             // phase1: count nnz (R(:,j)); phase2: compute R(:,j)
@@ -365,22 +373,39 @@
                     // get M(i,j)
                     //----------------------------------------------------------
 
-                    // Use GB_BINARY_SPLIT_SEARCH so that pM can be used in
-                    // the for loop with index pM in the wrapup phase.
-
-                    // TODO exploit a dense mask vector here to 
-                    // avoid the binary search
-
                     bool mij = false ;
-                    int64_t pright = pM_end - 1 ;
-                    bool found ;
-                    GB_BINARY_SPLIT_SEARCH (i, Mi, pM, pright, found) ;
-                    if (found)
+
+                    if (mdense)
                     {
+                        // mask is dense, lookup M(i,j)
+                        // iM_first == Mi [pM_first]
+                        // iM_first + delta == Mi [pM_first + delta]
+                        // let i = iM_first + delta
+                        // let pM = pM_first + delta
+                        // then delta = i - iM_first
+                        pM = pM_first + (i - iM_first) ;
+                        ASSERT (i == Mi [pM]) ;
                         mij = GB_mcast (Mx, pM, msize) ;
                         // increment pM for the wrapup phase below
                         pM++ ;
                     }
+
+                    else
+                    {
+                        // Use GB_BINARY_SPLIT_SEARCH so that pM can be used in
+                        // the for loop with index pM in the wrapup phase.
+                        int64_t pright = pM_end - 1 ;
+                        bool found ;
+                        GB_BINARY_SPLIT_SEARCH (i, Mi, pM, pright, found) ;
+                        if (found)
+                        {
+                            ASSERT (i == Mi [pM]) ;
+                            mij = GB_mcast (Mx, pM, msize) ;
+                            // increment pM for the wrapup phase below
+                            pM++ ;
+                        }
+                    }
+
                     if (Mask_comp) mij = !mij ;
 
                     //----------------------------------------------------------
@@ -467,16 +492,24 @@
                             // M(:,j) is much denser than Z(:,j)
                             //--------------------------------------------------
 
-                            // TODO handle a dense M(:,j)
-
                             for ( ; pZ < pZ_end ; pZ++)
                             { 
                                 int64_t i = Zi [pZ] ;
                                 bool mij = false ;
-                                int64_t pright = pM_end - 1 ;
-                                bool found ;
-                                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                                if (found) mij = GB_mcast (Mx, pM, msize) ;
+                                if (mdense)
+                                {
+                                    // mask is dense, lookup M(i,j)
+                                    pM = pM_first + (i - iM_first) ;
+                                    ASSERT (i == Mi [pM]) ;
+                                    mij = GB_mcast (Mx, pM, msize) ;
+                                }
+                                else
+                                {
+                                    int64_t pright = pM_end - 1 ;
+                                    bool found ;
+                                    GB_BINARY_SEARCH (i, Mi, pM, pright,found) ;
+                                    if (found) mij = GB_mcast (Mx, pM, msize) ;
+                                }
                                 if (mij) GB_COPY_Z ;
                             }
 
@@ -520,16 +553,24 @@
                         // complemented mask, and C(:,j) empty
                         //------------------------------------------------------
 
-                        // TODO exploit a dense M(:,j)
-
                         for ( ; pZ < pZ_end ; pZ++)
                         { 
                             int64_t i = Zi [pZ] ;
                             bool mij = false ;  // M(i,j) false if not present
-                            int64_t pright = pM_end - 1 ;
-                            bool found ;
-                            GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                            if (found) mij = GB_mcast (Mx, pM, msize) ;
+                            if (mdense)
+                            {
+                                // mask is dense, lookup M(i,j)
+                                pM = pM_first + (i - iM_first) ;
+                                ASSERT (i == Mi [pM]) ;
+                                mij = GB_mcast (Mx, pM, msize) ;
+                            }
+                            else
+                            {
+                                int64_t pright = pM_end - 1 ;
+                                bool found ;
+                                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                                if (found) mij = GB_mcast (Mx, pM, msize) ;
+                            }
                             if (!mij) GB_COPY_Z ;   // mask is complemented
                         }
                     }
@@ -576,17 +617,25 @@
                             // M(:,j) is much denser than C(:,j)
                             //--------------------------------------------------
 
-                            // TODO exploit a dense matrix
-
                             for ( ; pC < pC_end ; pC++)
                             { 
                                 int64_t i = Ci [pC] ;
                                 bool mij = false ;
-                                int64_t pright = pM_end - 1 ;
-                                bool found ;
-                                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                                if (found) mij = GB_mcast (Mx, pM, msize) ;
-                                if (mij) GB_COPY_C ;
+                                if (mdense)
+                                {
+                                    // mask is dense, lookup M(i,j)
+                                    pM = pM_first + (i - iM_first) ;
+                                    ASSERT (i == Mi [pM]) ;
+                                    mij = GB_mcast (Mx, pM, msize) ;
+                                }
+                                else
+                                {
+                                    int64_t pright = pM_end - 1 ;
+                                    bool found ;
+                                    GB_BINARY_SEARCH (i, Mi, pM, pright, found);
+                                    if (found) mij = GB_mcast (Mx, pM, msize) ;
+                                    if (mij) GB_COPY_C ;
+                                }
                             }
 
                         }
@@ -629,16 +678,24 @@
                         // non-complemented mask, and Z(:,j) empty
                         //------------------------------------------------------
 
-                        // TODO exploit a dense mask
-
                         for ( ; pC < pC_end ; pC++)
                         { 
                             int64_t i = Ci [pC] ;
                             bool mij = false ;  // M(i,j) false if not present
-                            int64_t pright = pM_end - 1 ;
-                            bool found ;
-                            GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
-                            if (found) mij = GB_mcast (Mx, pM, msize) ;
+                            if (mdense)
+                            {
+                                // mask is dense, lookup M(i,j)
+                                pM = pM_first + (i - iM_first) ;
+                                ASSERT (i == Mi [pM]) ;
+                                mij = GB_mcast (Mx, pM, msize) ;
+                            }
+                            else
+                            {
+                                int64_t pright = pM_end - 1 ;
+                                bool found ;
+                                GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
+                                if (found) mij = GB_mcast (Mx, pM, msize) ;
+                            }
                             if (!mij) GB_COPY_C ;
                         }
                     }

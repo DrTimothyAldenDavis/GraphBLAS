@@ -65,6 +65,8 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     // check inputs
     //--------------------------------------------------------------------------
 
+    GBBURBLE ("mask ") ;
+
     ASSERT (Rhandle != NULL) ;
     ASSERT_MATRIX_OK (M, "M for masker", GB0) ;
     ASSERT_MATRIX_OK (C, "C for masker", GB0) ;

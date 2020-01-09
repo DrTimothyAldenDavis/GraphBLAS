@@ -1272,10 +1272,8 @@
             else if (nk == 1)
             {
 
-                // TODO: the C<M> or C<!M> case is broken, below
-
                 //--------------------------------------------------------------
-                // phase1: 1-vector coarse hash task (TODO
+                // phase1: 1-vector coarse hash task (TODO: M or !M broken)
                 //--------------------------------------------------------------
 
                 // The least 2 bits of Hf [hash] are used for f, and the upper
@@ -1357,7 +1355,6 @@
                         int64_t k = Bi [pB] ;       // get B(k,j)
                         GB_GET_A_k ;                // get A(:,k)
                         GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
-                        // TODO scan M(:,j) instead, if very sparse
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;       // get A(i,k)
@@ -2128,7 +2125,6 @@
                         GB_GET_A_k ;                // get A(:,k)
                         GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                         GB_GET_B_kj ;               // bkj = B(k,j)
-                        // TODO scan M(:,j) instead, if very sparse
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;       // get A(i,k)

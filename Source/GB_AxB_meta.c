@@ -389,8 +389,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (do_adotb)
         { 
             // C<M> = A'*B via dot product method
-            GBBURBLE ("C%s=A'*B, %sdot product ", M_str,
-                (M != NULL && !Mask_comp) ? "masked " : "") ;
+            GBBURBLE ("C%s=A'*B, %sdot_product ", M_str,
+                (M != NULL && !Mask_comp) ? "masked_" : "") ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, A, B, semiring,
                 flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
@@ -429,7 +429,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B' via dot product
-            GBBURBLE ("C%s=A*B', dot product (transposed %s) (transposed %s) ",
+            GBBURBLE ("C%s=A*B', dot_product (transposed %s) (transposed %s) ",
                 M_str, A_str, B_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
@@ -470,7 +470,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         else if (AxB_method == GxB_AxB_DOT)
         { 
             // C<M> = A*B via dot product
-            GBBURBLE ("C%s=A*B', dot product (transposed %s) ", M_str, A_str) ;
+            GBBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, B, semiring,
                 flipxy, mask_applied, Context)) ;
@@ -488,7 +488,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     #if GB_BURBLE
     if (M_transposed) GBBURBLE ("(M transposed) ") ;
-    if ((M != NULL) && !(*mask_applied)) GBBURBLE ("(M later) ") ;
+    if ((M != NULL) && !(*mask_applied)) GBBURBLE ("(mask later) ") ;
     #endif
 
     //--------------------------------------------------------------------------

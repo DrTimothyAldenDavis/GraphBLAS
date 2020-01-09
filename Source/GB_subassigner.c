@@ -587,7 +587,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool C_dense_update = C_is_dense && whole_C_matrix && (M == NULL)
         && !C_replace && (accum != NULL) ;
 
-        // TODO if scalar: can ignore C_replace
+        // TODO if scalar: can ignore C_replace in the above expression;
+        // C_replace becomes effectively false.
 
     // check if an empty mask is complemented
     bool empty_mask = (Mask_comp && M == NULL) ;
