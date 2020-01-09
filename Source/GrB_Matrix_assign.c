@@ -29,6 +29,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
 
     GB_WHERE ("GrB_Matrix_assign"
         " (C, M, accum, A, Rows, nRows, Cols, nCols, desc)") ;
+    GB_BURBLE_START ("GrB_assign") ;
 
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
@@ -40,8 +41,6 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     //--------------------------------------------------------------------------
     // C<M>(Rows,Cols) = accum (C(Rows,Cols), A) and variations
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_assign ") ;
 
     info = GB_assign (
         C,          C_replace,      // C matrix and its descriptor

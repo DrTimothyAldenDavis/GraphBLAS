@@ -29,11 +29,10 @@ GrB_Info GxB_Vector_export  // export and free a vector
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Vector_export (&v, &type, &n, &nvals, &vi, &vx, desc)") ;
+    GB_BURBLE_START ("GxB_Vector_export") ;
     GB_RETURN_IF_NULL (v) ;
     GB_RETURN_IF_NULL_OR_FAULTY (*v) ;
     ASSERT_VECTOR_OK (*v, "v to export", GB0) ;
-
-    GB_BURBLE_START ("[ GxB_Vector_export ") ;
 
     // finish any pending work
     GB_WAIT (*v) ;

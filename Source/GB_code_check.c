@@ -28,7 +28,7 @@ GrB_Info GB_code_check          // print an entry using a type code
 
     switch (code)
     {
-        #ifdef GB_DEVELOPER
+        #if GB_DEVELOPER
 
         case GB_BOOL_code:   i = *((bool     *) x) ; GBPR ("bool "    GBd, i) ; break ;
         case GB_INT8_code:   i = *((int8_t   *) x) ; GBPR ("int8 "    GBd, i) ; break ;

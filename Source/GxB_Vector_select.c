@@ -26,6 +26,7 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Vector_select (w, M, accum, op, u, Thunk, desc)") ;
+    GB_BURBLE_START ("GxB_select") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
@@ -36,8 +37,6 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
     //--------------------------------------------------------------------------
     // select the entries; do not transpose; assemble pending entries
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GxB_select ") ;
 
     info = GB_select (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor

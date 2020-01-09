@@ -28,7 +28,7 @@ GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Matrix_extract (C, M, accum, A, I, ni, J, nj, desc)") ;
-
+    GB_BURBLE_START ("GrB_extract") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
@@ -39,8 +39,6 @@ GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))
     //--------------------------------------------------------------------------
     // do the work in GB_extract
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_extract ") ;
 
     info = GB_extract (
         C,      C_replace,          // output matrix C and its descriptor

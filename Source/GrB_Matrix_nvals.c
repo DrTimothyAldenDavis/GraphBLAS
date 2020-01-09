@@ -21,6 +21,7 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Matrix_nvals (&nvals, A)") ;
+    GB_BURBLE_START ("GrB_Matrix_nvals") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // do not check nvals; pending updates must be applied first, in
@@ -30,7 +31,6 @@ GrB_Info GrB_Matrix_nvals   // get the number of entries in a matrix
     // get the number of entries
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_Matrix_nvals ") ;
     GrB_Info info = GB_nvals (nvals, A, Context) ;
     GB_BURBLE_END ;
     return (info) ;

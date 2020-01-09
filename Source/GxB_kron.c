@@ -26,6 +26,7 @@ GrB_Info GxB_kron                   // C<M> = accum (C, kron(A,B))
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_kron (C, M, accum, op, A, B, desc)") ;
+    GB_BURBLE_START ("GxB_kron") ;
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_tran, B_tran, xx) ;
@@ -33,8 +34,6 @@ GrB_Info GxB_kron                   // C<M> = accum (C, kron(A,B))
     //--------------------------------------------------------------------------
     // C = kron(A,B)
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GxB_kron ") ;
 
     // C<M> = accum (C,T) where T = kron(A,B), or with A' and/or B'
     info = GB_kron (

@@ -52,13 +52,13 @@ GrB_Info GrB_eWiseMult_Matrix_BinaryOp       // C<M> = accum (C, A.*B)
 
     GB_WHERE ("GrB_eWiseMult_Matrix_BinaryOp (C, M, accum, mult, A, B,"
         " desc)") ;
+    GB_BURBLE_START ("GrB_eWiseMult") ;
     GB_RETURN_IF_NULL_OR_FAULTY (mult) ;
 
     //--------------------------------------------------------------------------
     // apply the eWise kernel (using set intersection)
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_eWiseMult ") ;
     GB_EWISE (mult) ;
     GB_BURBLE_END ;
     return (info) ;
@@ -87,13 +87,13 @@ GrB_Info GrB_eWiseMult_Matrix_Monoid         // C<M> = accum (C, A.*B)
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_eWiseMult_Matrix_Monoid (C, M, accum, monoid, A, B, desc)") ;
+    GB_BURBLE_START ("GrB_eWiseMult") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
     //--------------------------------------------------------------------------
     // eWise multiply using the monoid operator
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_eWiseMult ") ;
     GB_EWISE (monoid->op) ;
     GB_BURBLE_END ;
     return (info) ;
@@ -123,13 +123,13 @@ GrB_Info GrB_eWiseMult_Matrix_Semiring       // C<M> = accum (C, A.*B)
 
     GB_WHERE ("GrB_eWiseMult_Matrix_Semiring (C, M, accum, semiring, A, B,"
         " desc)") ;
+    GB_BURBLE_START ("GrB_eWiseMult") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
     //--------------------------------------------------------------------------
     // eWise multiply using the semiring multiply operator
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_eWiseMult ") ;
     GB_EWISE (semiring->multiply) ;
     GB_BURBLE_END ;
     return (info) ;

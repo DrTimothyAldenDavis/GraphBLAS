@@ -32,6 +32,7 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_mxm (C, M, accum, semiring, A, B, desc)") ;
+    GB_BURBLE_START ("GrB_mxm") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
@@ -44,8 +45,6 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
     //--------------------------------------------------------------------------
     // C<M> = accum (C,A*B) and variations, using the mxm kernel
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_mxm ") ;
 
     // C<M> = accum (C,T) where T = A*B, A'*B, A*B', or A'*B'
     info = GB_mxm (

@@ -21,6 +21,7 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Vector_nvals (&nvals, v)") ;
+    GB_BURBLE_START ("GrB_Vector_nvals") ;
     GB_RETURN_IF_NULL_OR_FAULTY (v) ;
     ASSERT (GB_VECTOR_OK (v)) ;
 
@@ -31,7 +32,6 @@ GrB_Info GrB_Vector_nvals   // get the number of entries in a vector
     // get the number of entries
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_Vector_nvals ") ;
     GrB_Info info = GB_nvals (nvals, (GrB_Matrix) v, Context) ;
     GB_BURBLE_END ;
     return (info) ;

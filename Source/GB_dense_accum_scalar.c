@@ -32,6 +32,7 @@ GrB_Info GB_dense_accum_scalar      // C += x where C is dense and x is a scalar
     ASSERT_MATRIX_OK (C, "C for C+=x", GB0) ;
     ASSERT (scalar != NULL) ;
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
+    ASSERT (GB_is_dense (C)) ;
     ASSERT_TYPE_OK (atype, "atype for C+=x", GB0) ;
     ASSERT_BINARYOP_OK (accum, "accum for C+=x", GB0) ;
 
@@ -58,10 +59,6 @@ GrB_Info GB_dense_accum_scalar      // C += x where C is dense and x is a scalar
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
-
-    int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
-    ntasks = GB_IMIN (ntasks, cnz) ;
-    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // typecast the scalar into the same type as Y

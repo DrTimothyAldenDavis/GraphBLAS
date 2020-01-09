@@ -26,6 +26,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Vector_extract (w, M, accum, u, I, ni, desc)") ;
+    GB_BURBLE_START ("GrB_extract") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
@@ -54,8 +55,6 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     //--------------------------------------------------------------------------
     // do the work in GB_extract
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_extract ") ;
 
     info = GB_extract (
         (GrB_Matrix) w,     C_replace,  // w as a matrix, and its descriptor

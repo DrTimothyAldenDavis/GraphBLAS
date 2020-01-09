@@ -31,7 +31,7 @@ GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'
 
     GB_WHERE ("GxB_Matrix_subassign"
         " (C, M, accum, A, Rows, nRows, Cols, nCols, desc)") ;
-
+    GB_BURBLE_START ("GxB_subassign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
@@ -42,8 +42,6 @@ GrB_Info GxB_Matrix_subassign       // C(Rows,Cols)<M> += A or A'
     //--------------------------------------------------------------------------
     // C(Rows,Cols)<M> = accum (C(Rows,Cols), A) and variations
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GxB_subassign ") ;
 
     info = GB_subassign (
         C,          C_replace,      // C matrix and its descriptor

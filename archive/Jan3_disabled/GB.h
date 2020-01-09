@@ -29,9 +29,6 @@
 // GraphBLAS will be slower:
 // #define GBCOMPACT 1
 
-// for code development only
-// #define GB_DEVELOPER 1
-
 // set these via cmake, or uncomment to select the user-thread model:
 
 // #define USER_POSIX_THREADS

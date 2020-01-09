@@ -34,7 +34,7 @@ GrB_Info GxB_Matrix_import_HyperCSR     // import a hypersparse CSR matrix
 
     GB_WHERE ("GxB_Matrix_import_HyperCSR (&A, type, nrows, ncols, nvals,"
         " nonempty, nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
-    GB_BURBLE_START ("[ GxB_Matrix_import_HyperCSR ") ;
+    GB_BURBLE_START ("GxB_Matrix_import_HyperCSR") ;
     GB_IMPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ah) ;

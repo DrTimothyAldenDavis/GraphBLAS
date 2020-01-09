@@ -33,7 +33,7 @@ GrB_Info GxB_Matrix_export_CSC  // export and free a CSC matrix
 
     GB_WHERE ("GxB_Matrix_export_CSC (&A, &type, &nrows, &ncols, &nvals,"
         " &nonempty, &Ap, &Ai, &Ax, desc)") ;
-    GB_BURBLE_START ("[ GxB_Matrix_export_CSC ") ;
+    GB_BURBLE_START ("GxB_Matrix_export_CSC") ;
     GB_EXPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ap) ;

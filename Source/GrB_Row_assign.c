@@ -29,6 +29,7 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Row_assign (C, M, accum, u, row, Cols, nCols, desc)") ;
+    GB_BURBLE_START ("GrB_assign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
@@ -41,8 +42,6 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
     //--------------------------------------------------------------------------
     // C<M'>(row,Cols) = accum (C(row,Cols), u')
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_assign ") ;
 
     // construct the row index list Rows = [ row ] of length nRows = 1
     GrB_Index Rows [1] ;

@@ -7,9 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// for additional diagnostics, use:
-// #define GB_DEVELOPER 1
-
 #include "GB_printf.h"
 
 GrB_Info GB_Semiring_check          // check a GraphBLAS semiring

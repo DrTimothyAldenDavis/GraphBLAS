@@ -34,7 +34,7 @@ GrB_Info GxB_Matrix_import_HyperCSC     // import a hypersparse CSC matrix
 
     GB_WHERE ("GxB_Matrix_import_HyperCSC (&A, type, nrows, ncols, nvals,"
         " nonempty, nvec, &Ah, &Ap, &Ai, &Ax, desc)") ;
-    GB_BURBLE_START ("[ GxB_Matrix_import_HyperCSC ") ;
+    GB_BURBLE_START ("GxB_Matrix_import_HyperCSC") ;
     GB_IMPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ah) ;

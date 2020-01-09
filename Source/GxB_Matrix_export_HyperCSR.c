@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_export_HyperCSR  // export and free a hypersparse CSR matrix
 
     GB_WHERE ("GxB_Matrix_export_HyperCSR (&A, &type, &nrows, &ncols, &nvals,"
         " &nonempty, &nvec, &Ah, &Ap, &Aj, &Ax, desc)") ;
-    GB_BURBLE_START ("[ GxB_Matrix_export_HyperCSR ") ;
+    GB_BURBLE_START ("GxB_Matrix_export_HyperCSR") ;
     GB_EXPORT_CHECK ;
 
     GB_RETURN_IF_NULL (nvec) ;

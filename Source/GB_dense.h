@@ -29,5 +29,13 @@ GrB_Info GB_dense_accum_scalar      // C += x where C is dense and x is a scalar
     GB_Context Context
 ) ;
 
+GrB_Info GB_dense_expand_scalar     // C(:,:) = x; C is a matrix and x a scalar
+(
+    GrB_Matrix C,                   // input/output matrix
+    const GB_void *scalar,          // input scalar
+    const GrB_Type atype,           // type of the input scalar
+    GB_Context Context
+) ;
+
 #endif
 

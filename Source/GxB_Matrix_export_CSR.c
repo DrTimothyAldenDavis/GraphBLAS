@@ -33,7 +33,7 @@ GrB_Info GxB_Matrix_export_CSR  // export and free a CSR matrix
 
     GB_WHERE ("GxB_Matrix_export_CSR (&A, &type, &nrows, &ncols, &nvals,"
         " &nonempty, &Ap, &Aj, &Ax, desc)") ;
-    GB_BURBLE_START ("[ GxB_Matrix_export_CSR ") ;
+    GB_BURBLE_START ("GxB_Matrix_export_CSR") ;
     GB_EXPORT_CHECK ;
 
     GB_RETURN_IF_NULL (Ap) ;

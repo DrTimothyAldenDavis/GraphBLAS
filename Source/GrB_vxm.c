@@ -32,6 +32,7 @@ GrB_Info GrB_vxm                    // w'<M> = accum (w, u'*A)
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_vxm (w, M, accum, semiring, u, A, desc)") ;
+    GB_BURBLE_START ("GrB_vxm") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
@@ -54,8 +55,6 @@ GrB_Info GrB_vxm                    // w'<M> = accum (w, u'*A)
     //      u'*A' == A*u
     // Since A and u are swapped, in all the matrix multiply kernels
     // fmult(y,x) must be used instead of fmult(x,y).
-
-    GB_BURBLE_START ("[ GrB_vxm ") ;
 
     info = GB_mxm (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor

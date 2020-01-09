@@ -29,6 +29,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     // C may be aliased with M and/or A
 
     GB_WHERE ("GrB_transpose (C, M, accum, A, desc)") ;
+    GB_BURBLE_START ("GrB_transpose") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_FAULTY (accum) ;
@@ -41,8 +42,6 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
 
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
-
-    GB_BURBLE_START ("[ GrB_transpose ") ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     info = GB_compatible (C->type, C, M, accum, A->type, Context) ;

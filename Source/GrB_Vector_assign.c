@@ -28,6 +28,7 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Vector_assign (w, M, accum, u, Rows, nRows, desc)") ;
+    GB_BURBLE_START ("GrB_assign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
@@ -41,8 +42,6 @@ GrB_Info GrB_Vector_assign          // w<M>(Rows) = accum (w(Rows),u)
     //--------------------------------------------------------------------------
     // w(Rows)<M> = accum (w(Rows), u) and variations
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_assign ") ;
 
     // construct the column index list Cols = [ 0 ] of length nCols = 1
     GrB_Index Cols [1] ;

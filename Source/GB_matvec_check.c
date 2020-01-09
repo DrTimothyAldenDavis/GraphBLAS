@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-#undef  GB_DEVELOPER
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB_iterator.h"
@@ -76,7 +76,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 (A->is_slice ? "slice" : "sparse")) ;
         GBPR (" %s:\n", A->is_csc ? "by col" : "by row") ;
 
-        #ifdef GB_DEVELOPER
+        #if GB_DEVELOPER
         GBPR ("  max # entries: "GBd"\n", A->nzmax) ;
         GBPR ("  vlen: "GBd, A->vlen) ;
         if (A->nvec_nonempty != -1)
@@ -157,7 +157,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     GB_Pending Pending = A->Pending ;
 
-    #ifdef GB_DEVELOPER
+    #if GB_DEVELOPER
     // a matrix contains 1 to 9 different allocated blocks
     int64_t nallocs = 1 +                       // header
         (A->h != NULL && !A->h_shallow) +       // A->h, if not shallow
@@ -175,7 +175,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check the type
     //--------------------------------------------------------------------------
 
-    #ifdef GB_DEVELOPER
+    #if GB_DEVELOPER
     int pr_type = pr ;
     #else
     int pr_type = 0 ;
@@ -193,7 +193,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // report last method used for C=A*B
     //--------------------------------------------------------------------------
 
-    #ifdef GB_DEVELOPER
+    #if GB_DEVELOPER
     if (pr > 1 && A->AxB_method_used != GxB_DEFAULT)
     {
         GBPR ("  last method used for GrB_mxm, vxm, or mxv: ") ;
@@ -212,7 +212,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // report shallow structure
     //--------------------------------------------------------------------------
 
-    #ifdef GB_DEVELOPER
+    #if GB_DEVELOPER
     if (pr > 1) GBPR ("  ->h: %p shallow: %d\n", A->h, A->h_shallow) ;
     if (pr > 1) GBPR ("  ->p: %p shallow: %d\n", A->p, A->p_shallow) ;
     if (pr > 1) GBPR ("  ->i: %p shallow: %d\n", A->i, A->i_shallow) ;
@@ -462,7 +462,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 // print the header for vector j
                 if (prcol)
                 { 
-                    #ifdef GB_DEVELOPER
+                    #if GB_DEVELOPER
                     GBPR ("  %s: "GBd" : "GBd" entries ["GBd":"GBd"]\n",
                         A->is_csc ? "column" : "row", j, pend - p, p, pend-1) ;
                     #endif
@@ -470,7 +470,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 else if (pr == 2 && jcount == GB_NBRIEF)
                 { 
                     truncated = true ;
-                    #ifdef GB_DEVELOPER
+                    #if GB_DEVELOPER
                     GBPR ("    ...\n") ;
                     #endif
                 }
@@ -484,7 +484,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
             { 
                 if ((pr > 1 && p < GB_NZBRIEF) || pr > 2)
                 { 
-                    #ifdef GB_DEVELOPER
+                    #if GB_DEVELOPER
                     GBPR ("    %s "GBd": ", A->is_csc ? "row":"column", i) ;
                     #else
                     if (A->is_csc)
@@ -500,7 +500,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
                 else if (pr == 2 && (ilast == -1 || p == GB_NZBRIEF))
                 { 
                     truncated = true ;
-                    #ifdef GB_DEVELOPER
+                    #if GB_DEVELOPER
                     GBPR ("        ...\n") ;
                     #endif
                 }
@@ -548,7 +548,9 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         }
     }
 
-    #ifndef GB_DEVELOPER
+    #if GB_DEVELOPER
+    // ... already printed
+    #else
     if (pr == 2 && truncated) GBPR ("    ...\n") ;
     #endif
 
@@ -570,7 +572,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // check and print the pending tuples
     //--------------------------------------------------------------------------
 
-    #ifdef GB_DEVELOPER
+    #if GB_DEVELOPER
     if (pr > 1) GBPR ("  Pending %p\n", Pending) ;
     #endif
 
@@ -581,7 +583,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
         // A has pending tuples
         //---------------------------------------------------------------------
 
-        #ifdef GB_DEVELOPER
+        #if GB_DEVELOPER
         if (pr > 1) GBPR ("  Pending->i %p\n", Pending->i) ;
         if (pr > 1) GBPR ("  Pending->j %p\n", Pending->j) ;
         if (pr > 1) GBPR ("  Pending->x %p\n", Pending->x) ;
@@ -684,7 +686,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
         GB_CRITICAL (GB_queue_status (A, &head, &prev, &next, &enqd)) ;
 
-        #ifdef GB_DEVELOPER
+        #if GB_DEVELOPER
         if (pr > 1) GBPR ("  queue head  %p\n", head) ;
         if (pr > 1) GBPR ("  queue prev  %p\n", prev) ;
         if (pr > 1) GBPR ("  queue next  %p\n", next) ;

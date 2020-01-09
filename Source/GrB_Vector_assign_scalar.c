@@ -27,11 +27,11 @@ GrB_Info GrB_Vector_assign_ ## T    /* w<M>(Rows) = accum (w(Rows),x)       */ \
 {                                                                              \
     GB_WHERE ("GrB_Vector_assign_" GB_STR(T)                                   \
         " (w, M, accum, x, Rows, nRows, desc)") ;                              \
+    GB_BURBLE_START ("GrB_assign") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;                                          \
     GB_RETURN_IF_FAULTY (M) ;                                                  \
     ASSERT (GB_VECTOR_OK (w)) ;                                                \
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;                        \
-    GB_BURBLE_START ("[ GrB_assign ") ;                                        \
     GrB_Info info = GB_assign_scalar ((GrB_Matrix) w, (GrB_Matrix) M, accum,   \
         ampersand x, GB_## T ## _code, Rows, nRows, GrB_ALL, 1, desc,          \
         Context) ;                                                             \

@@ -21,8 +21,8 @@ GrB_Info GrB_Matrix_build_ ## T     /* build a matrix from (I,J,X) tuples */  \
 )                                                                             \
 {                                                                             \
     GB_WHERE ("GrB_Matrix_build_" GB_STR(T) " (C, I, J, X, nvals, dup)") ;    \
+    GB_BURBLE_START ("GrB_Matrix_build") ;                                    \
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;                                         \
-    GB_BURBLE_START ("[ GrB_build ") ;                                        \
     GrB_Info info = GB_matvec_build (C, I, J, X, nvals, dup,                  \
         GB_ ## T ## _code, true, Context) ;                                   \
     GB_BURBLE_END ;                                                           \

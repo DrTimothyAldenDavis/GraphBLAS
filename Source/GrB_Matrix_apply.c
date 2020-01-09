@@ -27,6 +27,7 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Matrix_apply (C, M, accum, op, A, desc)") ;
+    GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
@@ -37,8 +38,6 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose; assemble pending tuples
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_apply ") ;
 
     info = GB_apply (
         C,      C_replace,          // C and its descriptor

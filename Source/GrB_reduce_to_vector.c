@@ -22,8 +22,8 @@ GrB_Info GrB_Matrix_reduce_ ## kind /* w<M> = accum (w,reduce(A))          */ \
 {                                                                             \
     GB_WHERE ("GrB_Matrix_reduce_" GB_STR(kind)                               \
         " (w, M, accum, reduce, A, desc)") ;                                  \
+    GB_BURBLE_START ("GrB_reduce") ;                                          \
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;                                    \
-    GB_BURBLE_START ("[ GrB_reduce ") ;                                       \
     GrB_Info info = GB_reduce_to_vector ((GrB_Matrix) w, (GrB_Matrix) M,      \
         accum, reduceop, terminal, A, desc, Context) ;                        \
     GB_BURBLE_END ;                                                           \

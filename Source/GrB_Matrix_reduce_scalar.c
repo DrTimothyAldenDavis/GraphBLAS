@@ -29,8 +29,8 @@ GrB_Info GrB_Matrix_reduce_ ## T    /* c = accum (c, reduce_to_scalar (A))  */ \
 )                                                                              \
 {                                                                              \
     GB_WHERE ("GrB_Matrix_reduce_" GB_STR(T) " (&c, accum, reduce, A, desc)") ;\
+    GB_BURBLE_START ("GrB_reduce") ;                                           \
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;                                          \
-    GB_BURBLE_START ("[ GrB_reduce ") ;                                        \
     GrB_Info info = GB_reduce_to_scalar (c, GrB_ ## T, accum, reduce, A,       \
         Context) ;                                                             \
     GB_BURBLE_END ;                                                            \
@@ -66,9 +66,9 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
     // Thus, the type of c must be the same as the reduce monoid.
 
     GB_WHERE ("GrB_Matrix_reduce_UDT (&c, accum, reduce, A, desc)") ;
+    GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
-    GB_BURBLE_START ("[ GrB_reduce ") ;
     GrB_Info info = GB_reduce_to_scalar (c, reduce->op->ztype, accum, reduce,           A, Context) ;
     GB_BURBLE_END ;
     return (info) ;

@@ -51,13 +51,13 @@ GrB_Info GrB_eWiseAdd_Matrix_BinaryOp       // C<M> = accum (C, A+B)
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_eWiseAdd_Matrix_BinaryOp (C, M, accum, add, A, B, desc)") ;
+    GB_BURBLE_START ("GrB_eWiseAdd") ;
     GB_RETURN_IF_NULL_OR_FAULTY (add) ;
 
     //--------------------------------------------------------------------------
     // apply the eWise kernel (using set union)
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_eWiseAdd ") ;
     GB_EWISE (add) ;
     GB_BURBLE_END ;
     return (info) ;
@@ -86,13 +86,13 @@ GrB_Info GrB_eWiseAdd_Matrix_Monoid         // C<M> = accum (C, A+B)
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_eWiseAdd_Matrix_Monoid (C, M, accum, monoid, A, B, desc)") ;
+    GB_BURBLE_START ("GrB_eWiseAdd") ;
     GB_RETURN_IF_NULL_OR_FAULTY (monoid) ;
 
     //--------------------------------------------------------------------------
     // eWiseAdd using the monoid operator
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_eWiseAdd ") ;
     GB_EWISE (monoid->op) ;
     GB_BURBLE_END ;
     return (info) ;
@@ -122,13 +122,13 @@ GrB_Info GrB_eWiseAdd_Matrix_Semiring       // C<M> = accum (C, A+B)
 
     GB_WHERE ("GrB_eWiseAdd_Matrix_Semiring (C, M, accum, semiring, A, B,"
         " desc)") ;
+    GB_BURBLE_START ("GrB_eWiseAdd") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
     //--------------------------------------------------------------------------
     // eWise add using the semiring monoid operator
     //--------------------------------------------------------------------------
 
-    GB_BURBLE_START ("[ GrB_eWiseAdd ") ;
     GB_EWISE (semiring->add->op) ;
     GB_BURBLE_END ;
     return (info) ;

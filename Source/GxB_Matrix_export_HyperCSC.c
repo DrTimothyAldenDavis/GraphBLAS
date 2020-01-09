@@ -35,7 +35,7 @@ GrB_Info GxB_Matrix_export_HyperCSC  // export and free a hypersparse CSC matrix
 
     GB_WHERE ("GxB_Matrix_export_HyperCSC (&A, &type, &nrows, &ncols, &nvals,"
         " &nonempty, &nvec, &Ah, &Ap, &Ai, &Ax, desc)") ;
-    GB_BURBLE_START ("[ GxB_Matrix_export_HyperCSC ") ;
+    GB_BURBLE_START ("GxB_Matrix_export_HyperCSC") ;
     GB_EXPORT_CHECK ;
 
     GB_RETURN_IF_NULL (nvec) ;

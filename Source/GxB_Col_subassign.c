@@ -29,7 +29,7 @@ GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Col_subassign (C, M, accum, u, Rows, nRows, col, desc)") ;
-
+    GB_BURBLE_START ("GxB_subassign") ;
     GB_RETURN_IF_NULL_OR_FAULTY (C) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
@@ -43,8 +43,6 @@ GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
     //--------------------------------------------------------------------------
     // C(Rows,col)<M> = accum (C(Rows,col), u) and variations
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GxB_subassign ") ;
 
     // construct the column index list Cols = [ col ] of length nCols = 1
     GrB_Index Cols [1] ;

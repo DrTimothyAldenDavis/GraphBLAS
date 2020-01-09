@@ -29,6 +29,7 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GxB_Vector_import (&v, type, n, nvals, &vi, &vx, desc)") ;
+    GB_BURBLE_START ("GxB_Vector_import") ;
     GB_RETURN_IF_NULL (v) ;
     (*v) = NULL ;
     GB_RETURN_IF_NULL_OR_FAULTY (type) ;
@@ -55,8 +56,6 @@ GrB_Info GxB_Vector_import  // import a vector in CSC format
     //--------------------------------------------------------------------------
     // import the vector
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GxB_Vector_import ") ;
 
     GrB_Info info ;
 

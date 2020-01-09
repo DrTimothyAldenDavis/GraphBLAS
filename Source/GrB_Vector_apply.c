@@ -25,6 +25,7 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_Vector_apply (w, M, accum, op, u, desc)") ;
+    GB_BURBLE_START ("GrB_apply") ;
     GB_RETURN_IF_NULL_OR_FAULTY (w) ;
     GB_RETURN_IF_FAULTY (M) ;
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
@@ -39,8 +40,6 @@ GrB_Info GrB_Vector_apply           // w<M> = accum (w, op(u))
     //--------------------------------------------------------------------------
     // apply the operator; do not transpose
     //--------------------------------------------------------------------------
-
-    GB_BURBLE_START ("[ GrB_apply ") ;
 
     info = GB_apply (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor
