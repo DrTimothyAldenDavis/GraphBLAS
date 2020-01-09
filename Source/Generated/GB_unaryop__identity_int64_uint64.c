@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__identity_int64_uint64
 (
-    int64_t *GB_RESTRICT Cx,
-    const uint64_t *GB_RESTRICT Ax,
+    int64_t *Cx,       // Cx and Ax may be aliased
+    uint64_t *Ax,
     int64_t anz,
     int nthreads
 )

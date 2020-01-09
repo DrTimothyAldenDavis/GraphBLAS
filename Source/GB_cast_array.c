@@ -18,9 +18,9 @@
 
 void GB_cast_array              // typecast an array
 (
-    GB_void *GB_RESTRICT Cx,       // output array
+    GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
-    const GB_void *GB_RESTRICT Ax, // input array
+    GB_void *Ax,                // input array
     const GB_Type_code code2,   // type code for Ax
     const int64_t anz,          // number of entries in Cx and Ax
     GB_Context Context
@@ -65,8 +65,8 @@ void GB_cast_array              // typecast an array
 
         #define GB_WORKER(ignore1,zname,ztype,xname,xtype)                  \
         {                                                                   \
-            GrB_Info info = GB_unop (zname,xname) ((ztype *GB_RESTRICT) Cx,    \
-                (const xtype *GB_RESTRICT) Ax, anz, nthreads) ;                \
+            GrB_Info info = GB_unop (zname,xname) ((ztype *) Cx,            \
+                (xtype *) Ax, anz, nthreads) ;                              \
             if (info == GrB_SUCCESS) return ;                               \
         }                                                                   \
         break ;

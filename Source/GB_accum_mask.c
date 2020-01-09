@@ -146,6 +146,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // check inputs
     //--------------------------------------------------------------------------
 
+GBBURBLE (" {accum/mask start: ") ;
+
     // C may be aliased with M_in
 
     ASSERT (Thandle != NULL) ;
@@ -375,6 +377,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
     GB_FREE_ALL ;
     ASSERT_MATRIX_OK (C, "C<M>=accum(C,T)", GB0) ;
+GBBURBLE (" accum/mask done} ") ;
     return (GrB_SUCCESS) ;
 }
 

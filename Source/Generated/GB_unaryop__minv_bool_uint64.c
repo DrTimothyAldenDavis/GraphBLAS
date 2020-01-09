@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__minv_bool_uint64
 (
-    bool *GB_RESTRICT Cx,
-    const uint64_t *GB_RESTRICT Ax,
+    bool *Cx,       // Cx and Ax may be aliased
+    uint64_t *Ax,
     int64_t anz,
     int nthreads
 )

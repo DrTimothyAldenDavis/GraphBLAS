@@ -23,7 +23,7 @@
 // #include "GB.h"
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
-#define GB_BURBLE 0
+#define GB_BURBLE 1
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // #define GB_DEBUG
@@ -1529,9 +1529,9 @@ bool GB_code_compatible         // check if two types can be typecast
 
 void GB_cast_array              // typecast an array
 (
-    GB_void *GB_RESTRICT Cx,       // output array
+    GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
-    const GB_void *GB_RESTRICT Ax, // input array
+    GB_void *Ax,                // input array
     const GB_Type_code code2,   // type code for Ax
     const int64_t anz,          // number of entries in Cx and Ax
     GB_Context Context
@@ -2121,7 +2121,7 @@ bool GB_queue_status            // get the queue status of a matrix
 GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 (
     GrB_Matrix C,                   // matrix to modify
-    const void *scalar,             // scalar to set
+    void *scalar,                   // scalar to set
     const GrB_Index row,            // row index
     const GrB_Index col,            // column index
     const GB_Type_code scalar_code, // type of the scalar

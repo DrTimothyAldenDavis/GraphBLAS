@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__ainv_int64_uint16
 (
-    int64_t *GB_RESTRICT Cx,
-    const uint16_t *GB_RESTRICT Ax,
+    int64_t *Cx,       // Cx and Ax may be aliased
+    uint16_t *Ax,
     int64_t anz,
     int nthreads
 )

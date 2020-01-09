@@ -194,6 +194,7 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas -fPIC " )
     # check all warnings (uncomment for development only)
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
@@ -206,7 +207,7 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -mp1 -fPIC" )
     # The -g option is useful for the Intel VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
-    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     # check all warnings and remarks (uncomment for development only):
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )

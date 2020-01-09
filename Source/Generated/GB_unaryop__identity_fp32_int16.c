@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__identity_fp32_int16
 (
-    float *GB_RESTRICT Cx,
-    const int16_t *GB_RESTRICT Ax,
+    float *Cx,       // Cx and Ax may be aliased
+    int16_t *Ax,
     int64_t anz,
     int nthreads
 )

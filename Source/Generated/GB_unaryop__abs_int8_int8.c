@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__abs_int8_int8
 (
-    int8_t *GB_RESTRICT Cx,
-    const int8_t *GB_RESTRICT Ax,
+    int8_t *Cx,       // Cx and Ax may be aliased
+    int8_t *Ax,
     int64_t anz,
     int nthreads
 )

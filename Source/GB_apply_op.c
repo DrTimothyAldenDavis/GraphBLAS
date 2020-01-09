@@ -9,6 +9,7 @@
 
 // Cx = op ((xtype) Ax)
 
+// Cx and Ax may be aliased.
 // Compare with GB_transpose_op.c
 
 #include "GB_apply.h"
@@ -19,11 +20,11 @@
 
 void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
 (
-    GB_void *GB_RESTRICT Cx,           // output array, of type op->ztype
-    const GrB_UnaryOp op,           // operator to apply
-    const GB_void *GB_RESTRICT Ax,     // input array, of type Atype
-    const GrB_Type Atype,           // type of Ax
-    const int64_t anz,              // size of Ax and Cx
+    GB_void *Cx,                // output array, of type op->ztype
+    const GrB_UnaryOp op,       // operator to apply
+    const GB_void *Ax,          // input array, of type Atype
+    const GrB_Type Atype,       // type of Ax
+    const int64_t anz,          // size of Ax and Cx
     GB_Context Context
 )
 {
@@ -60,7 +61,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     #define GB_WORKER(op,zname,ztype,aname,atype)                           \
     {                                                                       \
         GrB_Info info = GB_unop (op,zname,aname) ((ztype *) Cx,             \
-            (const atype *) Ax, anz, nthreads) ;                            \
+            (atype *) Ax, anz, nthreads) ;                                  \
         if (info == GrB_SUCCESS) return ;                                   \
     }                                                                       \
     break ;
@@ -76,6 +77,8 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     //--------------------------------------------------------------------------
     // generic worker: typecast and apply an operator
     //--------------------------------------------------------------------------
+
+    GBBURBLE ("generic ") ;
 
     size_t asize = Atype->size ;
     size_t zsize = op->ztype->size ;

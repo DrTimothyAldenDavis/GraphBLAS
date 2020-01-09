@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__identity_uint32_uint8
 (
-    uint32_t *GB_RESTRICT Cx,
-    const uint8_t *GB_RESTRICT Ax,
+    uint32_t *Cx,       // Cx and Ax may be aliased
+    uint8_t *Ax,
     int64_t anz,
     int nthreads
 )

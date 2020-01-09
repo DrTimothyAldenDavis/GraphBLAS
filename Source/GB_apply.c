@@ -101,14 +101,24 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
     { 
         // T = op (A'), typecasting to op->ztype
         // transpose: typecast, apply an op, not in place
-        GBBURBLE ("(transpose) ") ;
+        GBBURBLE ("(transpose-op) ") ;
         info = GB_transpose (&T, T_type, C_is_csc, A, op, Context) ;
+    }
+    else if (M == NULL && accum == NULL && (C == A) && C->type == op->ztype)
+    {
+        GBBURBLE ("(inplace-op) ") ;
+        // C = op (C), operating on the values in place, with no typecasting
+        // of the output of the operator with the matrix C.  Always succeeds.
+        // TODO also handle C += op(C), with accum
+        GB_apply_op (C->x, op, C->x, C->type, GB_NNZ (C), Context) ;
+        return (GrB_SUCCESS) ;
     }
     else
     { 
         // T = op (A), pattern is a shallow copy of A, type is op->ztype.  If
         // op is the built-in IDENTITY and A->type is op->xtype == op->ztype,
         // then a pure shallow copy is made.
+        GBBURBLE ("(shallow-op) ") ;
         info = GB_shallow_op (&T, C_is_csc, op, A, Context) ;
     }
 
@@ -126,5 +136,6 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
 
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
         Context)) ;
+
 }
 

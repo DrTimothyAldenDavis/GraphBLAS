@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__abs_bool_fp32
 (
-    bool *GB_RESTRICT Cx,
-    const float *GB_RESTRICT Ax,
+    bool *Cx,       // Cx and Ax may be aliased
+    float *Ax,
     int64_t anz,
     int nthreads
 )

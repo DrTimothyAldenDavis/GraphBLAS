@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__lnot_int64_int32
 (
-    int64_t *GB_RESTRICT Cx,
-    const int32_t *GB_RESTRICT Ax,
+    int64_t *Cx,       // Cx and Ax may be aliased
+    int32_t *Ax,
     int64_t anz,
     int nthreads
 )

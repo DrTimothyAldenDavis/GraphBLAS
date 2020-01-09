@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__abs_bool_int64
 (
-    bool *GB_RESTRICT Cx,
-    const int64_t *GB_RESTRICT Ax,
+    bool *Cx,       // Cx and Ax may be aliased
+    int64_t *Ax,
     int64_t anz,
     int nthreads
 )

@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__lnot_fp32_int8
 (
-    float *GB_RESTRICT Cx,
-    const int8_t *GB_RESTRICT Ax,
+    float *Cx,       // Cx and Ax may be aliased
+    int8_t *Ax,
     int64_t anz,
     int nthreads
 )

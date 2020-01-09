@@ -105,15 +105,15 @@ d = d / damp ;
 
 % compute the PageRank
 for iter = 1:maxit
-    rold = r ;
+    prior = r ;
     teleport = tfactor ;
     if (any_sinks)
         % add the teleport factor from all the sinks
         teleport = teleport + dn * sum (r (sinks)) ;
     end
-    % r = damp * G' * (r./d) + teleport
+    % r = G' * (r./d) + teleport
     r = GrB.mxm (G, '+.*', r ./ d, desc) + teleport ;
-    if (norm (r - rold, inf) < tol)
+    if (norm (r - prior, inf) < tol)
         % convergence has been reached
         return ;
     end

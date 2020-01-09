@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__ainv_bool_uint8
 (
-    bool *GB_RESTRICT Cx,
-    const uint8_t *GB_RESTRICT Ax,
+    bool *Cx,       // Cx and Ax may be aliased
+    uint8_t *Ax,
     int64_t anz,
     int nthreads
 )

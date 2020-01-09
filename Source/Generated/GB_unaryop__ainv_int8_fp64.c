@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__ainv_int8_fp64
 (
-    int8_t *GB_RESTRICT Cx,
-    const double *GB_RESTRICT Ax,
+    int8_t *Cx,       // Cx and Ax may be aliased
+    double *Ax,
     int64_t anz,
     int nthreads
 )
