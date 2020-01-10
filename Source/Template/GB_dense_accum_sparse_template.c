@@ -56,6 +56,9 @@
             // pC points to the start of C(:,j) if C is dense
             int64_t pC = j * cvlen ;
 
+            // TODO handle the case when A is dense, so that the pattern
+            // of A need not be accessed.
+
             //------------------------------------------------------------------
             // C(:,j) += A(:,j)
             //------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_accum_sparse: C += A
+// GB_AxB_colscale: C = A*D where D is diagonal
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.

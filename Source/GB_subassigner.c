@@ -396,16 +396,30 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     // whole_C_matrix is true if all of C(:,:) is being assigned to
-
     bool whole_C_matrix = (Ikind == GB_ALL) && (Jkind == GB_ALL) ;
 
-    // C(:,:) = x, expanding a scalar into an entire matrix
-    bool C_splat_scalar = whole_C_matrix && (M == NULL) && (accum == NULL) &&
-        scalar_expansion ;
+    bool C_splat_scalar = false ;   // C(:,:) = x
+    bool C_splat_matrix = false ;   // C(:,:) = A
 
-    if (C_splat_scalar)
+    bool C_splat = (whole_C_matrix && (M == NULL) && (accum == NULL)) ;
+    if (C_splat)
     {
-        // For C(:,:) = x, the prior content of C is discarded.
+        // C(:,:) = x or A
+        if (scalar_expansion)
+        {
+            // C(:,:) = x
+            C_splat_scalar = true ;
+        }
+        else
+        {
+            // C(:,:) = A
+            C_splat_matrix = true ;
+        }
+    }
+
+    if (C_splat)
+    {
+        // For C(:,:) = x or A, the prior content of C is discarded.
         // C_replace is effectively false.
         C_replace = false ;
         // free pending tuples early
@@ -583,12 +597,25 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // check if C is competely dense:  all entries present and no pending work
     bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C) && GB_is_dense (C) ;
 
-    // C(:,:) += x or += A
-    bool C_dense_update = C_is_dense && whole_C_matrix && (M == NULL)
-        && !C_replace && (accum != NULL) ;
+    // check if C(:,:) += x or += A
+    bool C_dense_update = false ;
 
-        // TODO if scalar: can ignore C_replace in the above expression;
-        // C_replace becomes effectively false.
+    if (C_is_dense && whole_C_matrix && (M == NULL) && (accum != NULL))
+    {
+        if (scalar_expansion)
+        {
+            // C(:,:) += x
+            // since x is a scalar, C_replace becomes effectively false
+            C_dense_update = true ;
+            C_replace = false ;
+        }
+        else
+        {
+            // C(:,:) += A
+            // C_replace must be false
+            C_dense_update = !C_replace ;
+        }
+    }
 
     // check if an empty mask is complemented
     bool empty_mask = (Mask_comp && M == NULL) ;
@@ -606,6 +633,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (C_splat_scalar)
     {
         // Method 21: C(:,:) = x where x is a scalar; C becomes dense
+        S_Extraction = false ;
+    }
+    else if (C_splat_matrix)
+    {
+        // Method 24: C(:,:) = A
         S_Extraction = false ;
     }
     else if (C_dense_update)
@@ -746,6 +778,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  =====================       ==============
 
         //  -   -   x   -   -   -       21:  C(:,:) = x, no S, C anything
+        //  -   -   x   -   A   -       24:  C(:,:) = A, no S, C and A anything
         //  -   -   -   +   -   -       22:  C(:,:) += x, no S, C dense
         //  -   -   -   +   A   -       23:  C(:,:) += A, no S, C dense
 
@@ -756,6 +789,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  -   -   r                        uses methods 01, 02, 03, 04
         //  -   c   -                   no work to do
         //  -   c   r           S       00:  C(I,J)<!,repl> = empty, with S
+
         //  M   -   -   -   -   -       05:  C(I,J)<M> = x, no S
         //  M   -   -   -   A   -       06n: C(I,J)<M> = A, no S
         //  M   -   -   -   A   S       06s: C(I,J)<M> = A, with S
@@ -765,6 +799,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   -   r   -   A   S       10:  C(I,J)<M,repl> = A, with S
         //  M   -   r   +   -   S       11:  C(I,J)<M,repl> += x, with S
         //  M   -   r   +   A   S       12:  C(I,J)<M,repl> += A, with S
+
         //  M   c   -   -   -   S       13:  C(I,J)<!M> = x, with S
         //  M   c   -   -   A   S       14:  C(I,J)<!M> = A, with S
         //  M   c   -   +   -   S       15:  C(I,J)<!M> += x, with S
@@ -789,17 +824,41 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         //  -   -   x   -   -   -       21:  C(:,:) = x, no S, C anything
 
-        ASSERT (C_is_dense) ;               // C is dense
         ASSERT (whole_C_matrix) ;           // C(:,:) is modified
         ASSERT (M == NULL) ;                // no mask present
         ASSERT (accum == NULL) ;            // accum is not present
-        ASSERT (!C_replace) ;               // C_replace is false
+        ASSERT (!C_replace) ;               // C_replace is effectively false
         ASSERT (S == NULL) ;                // S is not used
         ASSERT (scalar_expansion) ;         // x is a scalar
 
         // Method 21: C(:,:) = x where x is a scalar; C becomes dense
         GBBURBLE ("(dense C) = scalar ") ;
         GB_OK (GB_dense_expand_scalar (C, scalar, atype, Context)) ;
+
+    }
+    else if (C_splat_matrix)
+    {
+
+        //----------------------------------------------------------------------
+        // C(:,:) = A
+        //----------------------------------------------------------------------
+
+        //  =====================       ==============
+        //  M   cmp rpl acc A   S       method: action
+        //  =====================       ==============
+
+        //  -   -   x   -   A   -       24:  C(:,:) = A, no S, C and A anything
+
+        ASSERT (whole_C_matrix) ;           // C(:,:) is modified
+        ASSERT (M == NULL) ;                // no mask present
+        ASSERT (accum == NULL) ;            // accum is not present
+        ASSERT (!C_replace) ;               // C_replace is effectively false
+        ASSERT (S == NULL) ;                // S is not used
+        ASSERT (!scalar_expansion) ;        // A is a matrix
+
+        // Method 24: C(:,:) = A
+        GBBURBLE ("C = Z ") ;
+        GB_OK (GB_splat (C, A, Context)) ;
 
     }
     else if (C_dense_update)

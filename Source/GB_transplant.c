@@ -70,7 +70,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     bool A_is_dense = GB_is_dense (A) ;
 
-    bool keep_Cp_and_Ci =               // keep C->p and C-> if:
+    bool keep_Cp_and_Ci =               // keep C->p and C->i if:
         (
             GB_is_dense (C)             //      both A and C are dense
             && A_is_dense
@@ -98,6 +98,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // Keep C->p and C->i by removing them from C.  They already contain
         // the right pattern for a dense matrix C.  No need to free it and
         // recreate the same thing.
+        GBBURBLE ("(remains dense) ") ;
         Cp_keep = C->p ;
         Ci_keep = C->i ;
         cplen_keep = C->plen ;

@@ -23,7 +23,7 @@
 // #include "GB.h"
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
-#define GB_BURBLE 1
+#define GB_BURBLE 0
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // #define GB_DEBUG
@@ -1439,6 +1439,13 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     const GrB_Matrix A,     // input matrix to copy
     const bool numeric,     // if true, duplicate the numeric values
     const GrB_Type ctype,   // type of C, if numeric is false
+    GB_Context Context
+) ;
+
+GrB_Info GB_splat           // C = A, copy A into an existing matrix C
+(
+    GrB_Matrix C,           // output matrix to modify
+    const GrB_Matrix A,     // input matrix to copy
     GB_Context Context
 ) ;
 

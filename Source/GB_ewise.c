@@ -11,6 +11,9 @@
 // optionally transposed.  Does the work for GrB_eWiseAdd_* and
 // GrB_eWiseMult_*.  Handles all cases of the mask.
 
+// TODO handle the special case of an alias of C with A, or C with B, or both,
+// when C is dense, with no mask.  C can be operated on in-place.
+
 #include "GB_ewise.h"
 #include "GB_add.h"
 #include "GB_emult.h"
