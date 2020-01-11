@@ -1959,7 +1959,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     GrB_Index huge = GB_INDEX_MAX ;
-    GrB_Matrix HugeRow, HugeMatrix ;
+    GrB_Matrix HugeRow, HugeMatrix = NULL ;
     OK (GrB_Matrix_new (&HugeRow, GrB_FP64, 1, huge)) ;
     GB_Matrix_check (HugeRow, "huge row", GB3, NULL, Context) ;
     GxB_fprint (HugeRow, GB3, ff) ;

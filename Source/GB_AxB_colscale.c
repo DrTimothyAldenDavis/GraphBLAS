@@ -47,10 +47,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     int64_t anz   = GB_NNZ (A) ;
     int64_t anvec = A->nvec ;
-
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (ntasks, anz) ;
     ntasks = GB_IMAX (ntasks, 1) ;

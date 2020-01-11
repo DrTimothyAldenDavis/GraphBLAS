@@ -203,11 +203,6 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         B = B_in ; btrans = B_transpose ;
     }
 
-    // Assuming the swap_rule == C_transpose, C no longer needs to be
-    // transposed, but the following assertion only holds if swap_rule ==
-    // C_transpose.
-    ASSERT (!C_transpose) ;
-
     ASSERT_MATRIX_OK (A, "final A for A*B", GB0) ;
     ASSERT_MATRIX_OK (B, "final B for A*B", GB0) ;
 

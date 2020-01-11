@@ -53,7 +53,9 @@ for C_replace = [false true]
         end
 
         A = Z ;
-        fprintf ('C3 <no mask just with scmp> = C + A'' :\n') ;
+        fprintf ('C3 <no mask scmp:%d replace:%d> = C + A'' :\n', ...
+            Mask_scmp, C_replace) ;
+D
         C3 = GB_spec_transpose (C, [ ], 'plus', A, D) ;
         C5 = GB_mex_transpose  (sparse(C), [ ], 'plus', sparse(A), D);
         assert (isequal (C3.matrix, C5.matrix))

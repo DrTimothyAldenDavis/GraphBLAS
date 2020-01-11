@@ -126,7 +126,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         { 
             // Thunk present, but empty, or wrong dimensions
             return (GB_ERROR (GrB_DIMENSION_MISMATCH, (GB_LOG,
-                "Thunk must be a vector of length 1"))) ;
+                "Thunk must be a GrB_Scalar"))) ;
         }
 
         // if op is TRIL, TRIU, DIAG, or OFFDIAG, Thunk_in must be

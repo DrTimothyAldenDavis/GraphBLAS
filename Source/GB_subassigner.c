@@ -132,6 +132,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // delete any lingering zombies and assemble any pending tuples
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK (C, "C input for subassigner", GB0) ;
+
     // subassign tolerates both zombies and pending tuples in C, but not M or A
     GB_WAIT (M) ;
     GB_WAIT (A) ;
@@ -153,6 +155,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 // sub-case of C_replace=false is handled.  The C_replace=true
                 // sub-case needs to delete all entries in C(I,J), which is
                 // handled below in GB_subassign_00.
+                GBBURBLE ("quick ") ;
                 return (GrB_SUCCESS) ;
             }
         }
@@ -594,31 +597,31 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // select the method to use
     //--------------------------------------------------------------------------
 
+    // check if an empty mask is complemented
+    bool empty_mask = (Mask_comp && M == NULL) ;
+
     // check if C is competely dense:  all entries present and no pending work
     bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C) && GB_is_dense (C) ;
 
     // check if C(:,:) += x or += A
     bool C_dense_update = false ;
 
-    if (C_is_dense && whole_C_matrix && (M == NULL) && (accum != NULL))
+    if (C_is_dense && whole_C_matrix && (M == NULL) && !Mask_comp
+        && (accum != NULL))
     {
         if (scalar_expansion)
         {
-            // C(:,:) += x
-            // since x is a scalar, C_replace becomes effectively false
+            // C(:,:) += x where C is dense.
+            // Since x is a scalar, C_replace becomes effectively false.
             C_dense_update = true ;
             C_replace = false ;
         }
         else
         {
-            // C(:,:) += A
-            // C_replace must be false
+            // C(:,:) += A, where C is dense, but only if C_replace is false
             C_dense_update = !C_replace ;
         }
     }
-
-    // check if an empty mask is complemented
-    bool empty_mask = (Mask_comp && M == NULL) ;
 
     // simple_mask: C(I,J)<M> = ... ; or C(I,J)<M> += ...
     bool simple_mask = (!C_replace && M != NULL && !Mask_comp) ;

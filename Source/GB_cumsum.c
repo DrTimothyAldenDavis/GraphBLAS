@@ -18,6 +18,9 @@
 // sum (count [0..j-1]).  count [n] is implicitly zero on input.
 // On output, count [n] is the total sum.
 
+// TODO malloc in per-thread workspace for GB_cumsum instead of VLA;
+// not needed if nthreads is 1.
+
 #include "GB.h"
 
 void GB_cumsum                  // compute the cumulative sum of an array
@@ -81,7 +84,7 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads
             //------------------------------------------------------------------
 
-            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;
+            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;  // TODO
             #pragma omp parallel num_threads(nthreads)
             {
                 // each thread sums up its own part
@@ -148,8 +151,8 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads, also compute k
             //------------------------------------------------------------------
 
-            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;
-            int64_t wk [GB_VLA_NTHREADS(nthreads)+1] ;
+            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;  // TODO
+            int64_t wk [GB_VLA_NTHREADS(nthreads)+1] ;  // TODO
 
             #pragma omp parallel num_threads(nthreads)
             {

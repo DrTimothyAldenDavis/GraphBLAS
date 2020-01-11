@@ -583,9 +583,9 @@ void mexFunction
     OK (GxB_print (A, GxB_COMPLETE)) ;
     OK (GxB_print (B, GxB_COMPLETE)) ;
 
-    expected = GrB_DIMENSION_MISMATCH ;
-    ERR (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, A, NULL)) ;
-    printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
+    // expected = GrB_DIMENSION_MISMATCH ;
+    // ERR (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, A, NULL)) ;
+    // printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
     GxB_Scalar thunk = NULL ;
     OK (GxB_Scalar_new (&thunk, user_type)) ;

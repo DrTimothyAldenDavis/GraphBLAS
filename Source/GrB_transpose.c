@@ -142,6 +142,7 @@ GrB_Info GrB_transpose              // C<M> = accum(C,A') or accum(C,A)
     //--------------------------------------------------------------------------
 
     info = GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp, Context);
+    ASSERT (T == NULL) ;
 
     GB_BURBLE_END ;
     return (info) ;

@@ -75,6 +75,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
 
+printf ("descriptor A_transpose %d\n", A_transpose) ;
+
     // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
     ASSERT (GB_VECTOR_OK (C)) ;
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;
@@ -173,7 +175,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // as a GrB_Matrix so it can be passed to GB_accum_mask without
     // typecasting.
 
-    ASSERT (n == (A_transpose) ? A->vdim : A->vlen) ;
+    ASSERT (n == ((A_transpose) ? A->vdim : A->vlen)) ;
 
     //--------------------------------------------------------------------------
     // scalar workspace

@@ -66,6 +66,8 @@ GrB_Info GB_assign_zombie5
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (znz, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (64 * nthreads) ;
+    ntasks = GB_IMIN (ntasks, znz) ;
+    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

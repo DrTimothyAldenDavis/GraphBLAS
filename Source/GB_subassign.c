@@ -273,6 +273,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     if (C_aliased)
     { 
         // Z2 = duplicate of C, which must be freed when done
+        GBBURBLE ("(C aliased) ") ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
         GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;

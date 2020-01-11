@@ -159,10 +159,13 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     GB_void *GB_RESTRICT S_work = (*S_work_handle) ;
+
     const GB_void *GB_RESTRICT S = (S_work == NULL) ? S_input : S_work ;
     size_t tsize = ttype->size ;
     size_t ssize = GB_code_size (scode, tsize) ;
-    ASSERT (S != NULL) ;
+//  printf ("nvals "GBd" S_work %p S_input %p S %p\n",
+//      nvals, S_work, S_input, S) ;
+    ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
 
     //==========================================================================
     // symbolic phase of the build =============================================
@@ -1151,7 +1154,15 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
         GB_void *GB_RESTRICT Tx = T->x ;
 
-        if (copy_S_into_T)
+        ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
+
+        if (nvals == 0)
+        { 
+
+            // nothing to do
+
+        }
+        else if (copy_S_into_T)
         { 
 
             //------------------------------------------------------------------

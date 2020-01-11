@@ -138,7 +138,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GB_CREATE (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (M_is_hyper), M->hyper_ratio, cnvec,
-        cnz+1,  // add one to cnz for GB_cumsum
+        cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -152,7 +152,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
     int64_t *GB_RESTRICT Cwork = C->i ;    // use C->i as workspace
-    // printf ("Ch is %p\n", (void *) Ch) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use

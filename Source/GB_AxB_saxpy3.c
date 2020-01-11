@@ -338,6 +338,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t cnvec = bnvec ;
     bool C_is_hyper = (cvdim > 1) && (A_is_hyper || B_is_hyper) ;
 
+    // calloc Cp so it can be used as the Bflops workspace
     GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
         GB_SAME_HYPER_AS (B_is_hyper), B->hyper_ratio, cnvec, Context) ;
     if (info != GrB_SUCCESS)
@@ -393,7 +394,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 //  printf ("\n") ;
 
     bool discard_mask = (M != NULL) && (axbflops < ((double) Mwork * 0.01)) ;
-//  printf ("axb %8.2e mw %8.2e d %d ", axbflops, (double) Mwork, discard_mask);
 
     if (discard_mask) // (axbflops < ((double) Mwork * 0.01))
     {
@@ -401,6 +401,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // Instead, compute C=A*B and then apply the mask later.
         M = NULL ;
         Mask_comp = false ;
+
+        int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
+        int64_t kk ;
+        #pragma omp parallel for num_threads(nth) schedule(static)
+        // GB_AxB_flopcount results Bflops be set to zero here
+        for (int64_t kk = 0 ; kk <= bnvec ; kk++)
+        {
+            Bflops [kk] = 0 ;
+        }
 
         // redo the flop count analysis, without the mask
         GB_OK (GB_AxB_flopcount (&Mwork, Bflops, NULL, false, A, B, Context)) ;

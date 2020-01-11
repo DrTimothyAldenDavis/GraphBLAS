@@ -11,6 +11,9 @@
 // output z, casting as needed.  That is, it computes z = (type of z) x.
 // s is the size for user-defined types, which can only be copied.
 
+// If the operator is FIRST or SECOND, this function is called for the cast
+// function on the unused argument, but the result is then unused. 
+
 #include "GB.h"
 
 GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
@@ -19,14 +22,6 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
     const GB_Type_code code2       // the type of x, the input value
 )
 { 
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    ASSERT (GB_code_compatible (code1, code2)) ;
-    ASSERT (code1 <= GB_UDT_code) ;
-    ASSERT (code2 <= GB_UDT_code) ;
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory

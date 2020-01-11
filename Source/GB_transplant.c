@@ -251,6 +251,8 @@ GrB_Info GB_transplant          // transplant one matrix into another
     if (anz == 0)
     { 
         // quick return if A has no entries
+        // Ci_keep is not needed after all, since C is empty
+        GB_FREE_MEMORY (Ci_keep, cnzmax_keep, sizeof (int64_t)) ;
         ASSERT_MATRIX_OK (C, "C empty transplant", GB0) ;
         GB_MATRIX_FREE (Ahandle) ;
         return (GrB_SUCCESS) ;
@@ -283,6 +285,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     if (allocate_Ci)
     { 
+
         // allocate new C->i component
         GB_MALLOC_MEMORY (C->i, C->nzmax, sizeof (int64_t)) ;
         ok = ok && (C->i != NULL) ;
@@ -348,7 +351,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
         // keep existing C->i
         //----------------------------------------------------------------------
 
-        // C is dense; restore the prior C->i.  A-i will be freed
+        // C is dense; restore the prior C->i.  A->i will be freed
         C->i = Ci_keep ;
         Ci_keep = NULL ;
 

@@ -294,7 +294,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // returned.
         GB_CREATE (Chandle, ctype, avdim, avlen, GB_Ap_calloc,
             C_is_csc, GB_FORCE_HYPER, A_hyper_ratio, 1, 1, true, Context) ;
-
         if (info != GrB_SUCCESS)
         { 
             // out of memory

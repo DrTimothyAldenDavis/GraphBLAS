@@ -23,17 +23,17 @@
 // #include "GB.h"
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
-#define GB_BURBLE 0
+#define GB_BURBLE 1
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
-// #define GB_DEBUG
+#define GB_DEBUG
 
 // to reduce code size and for faster time to compile, uncomment this line;
 // GraphBLAS will be slower:
 // #define GBCOMPACT 1
 
 // for code development only
-// #define GB_DEVELOPER 1
+#define GB_DEVELOPER 1
 
 // set these via cmake, or uncomment to select the user-thread model:
 
@@ -1669,7 +1669,7 @@ void GB_slice_vector
     const double target_work        // target work
 ) ;
 
-void GB_task_cumsum
+void GB_task_cumsum                 // TODO return true/false
 (
     int64_t *Cp,                        // size Cnvec+1
     const int64_t Cnvec,
@@ -1921,7 +1921,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     GB_Type_code *zcode             // type code for z output
 ) ;
 
-void GB_cumsum                  // compute the cumulative sum of an array
+void GB_cumsum  // cumulative sum of an array TODO return true/false
 (
     int64_t *GB_RESTRICT count,    // size n+1, input/output
     const int64_t n,
