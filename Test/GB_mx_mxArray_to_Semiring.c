@@ -153,7 +153,7 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
         return (false) ;
     }
 
-    ASSERT_MONOID_OK (add, "semiring add", GB0) ;
+    ASSERT_BINARYOP_OK (add, "semiring add", GB0) ;
     ASSERT_BINARYOP_OK (multiply, "semiring multiply", GB0) ;
 
     // create the monoid with the add operator and its identity value
