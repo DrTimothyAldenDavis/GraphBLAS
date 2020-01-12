@@ -6,7 +6,7 @@ function [flops mwork] = flopcount (M,Mask_complement,A,B) ;
 % flops(j) is the flops to compute A*B(1:j-1), and flops(n+1) is the total
 % flopcount, if B is m-by-n.
 %
-% Each 'flop' counted is actually a multiply-add pair.  M can be [ ]. The
+% Each 'flop' counted is actually a multiply-add.  M can be [ ]. The
 % flopcount m-file returns the same thing as GB_AxB_flopcount.  Also
 % included in flops(j) is the work needed to access the mask M(:,j).
 

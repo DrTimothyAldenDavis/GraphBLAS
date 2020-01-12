@@ -10,7 +10,7 @@
 #include "GB_mex.h"
 
 // opname_mx: a MATLAB string defining the operator name (25 kinds):
-// 10: first, second, min, max, plus, minus, rminus, times, div, rdiv
+// 10: first, second, pair, min, max, plus, minus, rminus, times, div, rdiv
 //  6: iseq, isne, isgt, islt, isge, isle,
 //  6: eq, ne, gt, lt, ge, le,
 //  3: or, and, xor

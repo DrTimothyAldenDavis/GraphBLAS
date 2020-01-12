@@ -58,10 +58,12 @@ identity = GB_spec_identity (add_op) ;
 
 switch mult
 
-    % 10, the monoid has the same type as x, y, and z, all semiring.class
+    % 11, the monoid has the same type as x, y, and z, all semiring.class
     case 'first'      % z = x
          ;
     case 'second'     % z = y
+         ;
+    case 'pair'       % z = 1
          ;
     case 'min'        % z = min(x,y)
          ;

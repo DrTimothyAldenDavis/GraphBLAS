@@ -111,7 +111,7 @@ GrB_Info assign (GB_Context Context)
     bool at = (desc != NULL && desc->in0 == GrB_TRAN) ;
     GrB_Info info ;
 
-    int pr = 0 ;
+    int pr = GB0 ;
     bool ph = (pr > 0) ;
 
     ASSERT_MATRIX_OK (C, "C before mex assign", pr) ;

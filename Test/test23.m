@@ -14,6 +14,7 @@ end
 ops = {
 'first',  0, % z = x
 'second', 0, % z = y
+'pair',   1, % z = 1
 'min',    1, % z = min(x,y)
 'max',    1, % z = max(x,y)
 'plus',   1, % z = x + y

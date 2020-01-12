@@ -100,10 +100,10 @@ GrB_Info GB_splat           // C = A, copy A into an existing matrix C
 
         // [ create C; allocate C->p and do not initialize it
         // C has the exact same hypersparsity as A.
-        // keep the same new header for C
+        // keep the same new header for C.  C->is_csc is unchanged.
         GrB_Info info ;
         GB_CREATE (&C, A->type, A->vlen, A->vdim, GB_Ap_malloc,
-            A->is_csc, GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, A->plen,
+            C->is_csc, GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, A->plen,
             anz, true, Context) ;
         if (info != GrB_SUCCESS)
         { 

@@ -802,9 +802,6 @@ methods (Static)
     result = nonz (A, varargin) ;
     [C, I, J] = compact (A, id) ;
 
-    C = hash3 (A,B) ;        % TODO hack
-    C = hash3min (A,B) ;        % TODO hack
-
 end
 end
 

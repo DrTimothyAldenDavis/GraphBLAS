@@ -28,6 +28,8 @@ switch op
         z = x ;
     case 'second'
         z = y ;
+    case 'pair'
+        z = ones (size (x), class (x)) ;
     case 'min'
         z = min (x,y,'includenan') ;
     case 'max'

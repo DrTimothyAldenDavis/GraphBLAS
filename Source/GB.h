@@ -2086,8 +2086,8 @@ static inline bool GB_is_dense
 
 #endif
 
-// by default, give each thread at least 4096 units of work to do
-#define GB_CHUNK_DEFAULT 4096
+// by default, give each thread at least 64K units of work to do
+#define GB_CHUNK_DEFAULT (64*1024)
 
 //------------------------------------------------------------------------------
 // GB_queue operations

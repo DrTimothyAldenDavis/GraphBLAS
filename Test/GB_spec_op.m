@@ -9,7 +9,7 @@ function C = GB_spec_op (op, A, B)
 % op or op.opname is a string with just the operator name.  Valid names of
 % binary operators are 'first', 'second', 'min', 'max', 'plus', 'minus',
 % 'rminus', 'times', 'div', 'rdiv', 'eq', 'ne', 'gt', 'lt', 'ge', 'le', 'or',
-% 'and', 'xor'.  'iseq', 'isne', 'isgt', 'islt', 'isge', 'le'.
+% 'and', 'xor'.  'iseq', 'isne', 'isgt', 'islt', 'isge', 'le', 'pair'
 %
 % Unary operators are 'one', 'identity', 'ainv', 'abs', 'minv', and 'not'
 %
@@ -66,11 +66,13 @@ end
 
 switch opname
 
-    % 10 binary operators, result is opclass
+    % 11 binary operators, result is opclass
     case 'first'
         z = x ;
     case 'second'
         z = y ;
+    case 'pair'
+        z = ones (size (x), opclass) ;
     case 'min'
         % min(x,y) in SuiteSparse:GraphBLAS is min(x,y,'omitnan') in MATLAB.
         % see discussion in SuiteSparse/GraphBLAS/Source/GB.h

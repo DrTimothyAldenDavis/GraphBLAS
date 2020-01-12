@@ -10,6 +10,7 @@ mult_ops = {
 % 10 operators where x,y,z are all the same class
 'first',     % z = x
 'second',    % z = y
+'pair',      % z = 1
 'min',       % z = min(x,y)
 'max',       % z = max(x,y)
 'plus',      % z = x + y
@@ -94,9 +95,9 @@ nonbool = {
 
 n = 0 ;
 
-% 760: x,y,z all nonboolean:  (10+6+3)*4*10
-for mult = {'first', 'second', 'min', 'max', 'plus', 'minus', 'rminus', ...
-            'times', 'div', 'rdiv', ...
+% 800: x,y,z all nonboolean:  (10+6+3)*4*10
+for mult = {'first', 'second', 'pair', 'min', 'max', 'plus', 'minus', ...
+            'rminus', 'times', 'div', 'rdiv', ...
             'iseq', 'isne', 'isgt', 'islt', 'isge', 'isle', ...
             'or', 'and', 'xor', }
     for add = { 'min', 'max', 'plus', 'times' }
@@ -121,9 +122,10 @@ for mult = { 'eq', 'ne', 'gt', 'lt', 'ge', 'le' }
     end
 end
 
-% 40: x,y,z all boolean: 10 * 4
-for mult = { 'first', 'second', 'or', 'and', 'xor', 
-             'eq', 'gt', 'lt', 'ge', 'le' }
+%-------------------------------------------------------------------------------
+% 44: x,y,z all boolean: 10 * 4
+for mult = { 'first', 'second', 'pair', 'or', 'and', 'xor', ...
+    'eq', 'gt', 'lt', 'ge', 'le' }
     for add = { 'or', 'and', 'xor', 'eq' }
         n = n + 1 ;
         s = struct ('multiply', mult{1}, 'add', add{1}, 'class', c{1}) ;

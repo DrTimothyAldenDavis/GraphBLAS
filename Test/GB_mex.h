@@ -2,7 +2,7 @@
 // GB_mex.h: definitions for the MATLAB interface to GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -12,6 +12,9 @@
 
 #ifndef GB_MEXH
 #define GB_MEXH
+
+// TODO debug is on
+#define GB_DEBUG
 
 #define GB_PANIC mexErrMsgTxt ("panic") ;
 
