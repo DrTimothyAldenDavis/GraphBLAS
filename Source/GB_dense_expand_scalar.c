@@ -111,11 +111,7 @@ GrB_Info GB_dense_expand_scalar     // C(:,:) = x; C is a matrix and x a scalar
             Ci [pC] = pC % cvlen ;
         }
 
-        if (scalar_is_nonzero)
-        {
-            GB_MALLOC_MEMORY (C->x, cnzmax, csize) ;
-        }
-        else
+        if (!scalar_is_nonzero)
         {
             GBBURBLE ("calloc ") ;
             GB_CALLOC_MEMORY (C->x, cnzmax, csize) ;
@@ -189,6 +185,7 @@ GrB_Info GB_dense_expand_scalar     // C(:,:) = x; C is a matrix and x a scalar
         default:
             {
                 // worker for all user-defined types
+                GBBURBLE ("generic ") ;
                 GB_void *GB_RESTRICT Cx = C->x ;
                 #pragma (omp parallel for num_threads(nthreads) schedule(static)
                 for (pC = 0 ; pC < cnzmax ; pC++)

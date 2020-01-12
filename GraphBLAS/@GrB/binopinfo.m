@@ -56,6 +56,7 @@ function binopinfo (op, type)
 %   |   || or  lor   x | y          |   >=  ge           x >= y
 %   &   && and land  x & y          |   <=  le           x <= y
 %   xor lxor         xor(x,y)       |
+%   pair             1
 %
 % The three logical operators, lor, land, and lxor, also come in 11
 % types.  z = lor.double (x,y) tests the condition (x~=0) || (y~=0),

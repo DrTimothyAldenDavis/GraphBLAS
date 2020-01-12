@@ -109,6 +109,7 @@ GrB_Info GB_dense_accum_scalar      // C += x where C is dense and x is a scalar
 
     if (!done)
     {
+        GBBURBLE ("generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of x and C

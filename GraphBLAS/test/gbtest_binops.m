@@ -15,6 +15,7 @@ function [binops synonyms] = gbtest_binops
 binops = {
     '1st'
     '2nd'
+    'pair'
     'min'
     'max'
     '+'

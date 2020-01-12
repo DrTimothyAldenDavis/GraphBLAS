@@ -254,6 +254,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     bool op_is_first  = semiring->multiply->opcode == GB_FIRST_opcode ;
     bool op_is_second = semiring->multiply->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = semiring->multiply->opcode == GB_PAIR_opcode ;
     bool A_is_pattern = false ;
     bool B_is_pattern = false ;
 
@@ -261,16 +262,16 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     if (flipxy)
     { 
         // A is passed as y, and B as x, in z = mult(x,y)
-        A_is_pattern = op_is_first  ;
-        B_is_pattern = op_is_second ;
+        A_is_pattern = op_is_first  || op_is_pair ;
+        B_is_pattern = op_is_second || op_is_pair ;
         atype_required = A_is_pattern ? A->type : semiring->multiply->ytype ;
         btype_required = B_is_pattern ? B->type : semiring->multiply->xtype ;
     }
     else
     { 
         // A is passed as x, and B as y, in z = mult(x,y)
-        A_is_pattern = op_is_second ;
-        B_is_pattern = op_is_first  ;
+        A_is_pattern = op_is_second || op_is_pair ;
+        B_is_pattern = op_is_first  || op_is_pair ;
         atype_required = A_is_pattern ? A->type : semiring->multiply->xtype ;
         btype_required = B_is_pattern ? B->type : semiring->multiply->ytype ;
     }

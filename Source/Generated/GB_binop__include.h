@@ -2,7 +2,7 @@
 // GB_binop__include.h: definitions for GB_binop__*.c
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 // This file has been automatically generated from Generator/GB_binop.h
@@ -1512,6 +1512,765 @@ GrB_Info GB_AaddB__second_bool
 ) ;
 
 GrB_Info GB_AemultB__second_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_int8
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_int16
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_int32
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_int64
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_uint8
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_uint16
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_uint32
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_uint64
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_fp32
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_fp64
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+
+
+GrB_Info GB_Cdense_accumA__pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_accumX__pair_bool
+(
+    GrB_Matrix C,
+    const GB_void *p_ywork,
+    const int nthreads
+) ;
+
+GrB_Info GB_AxD__pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix D, bool D_is_pattern,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_DxB__pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix D, bool D_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int nthreads
+) ;
+
+GrB_Info GB_AaddB__pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const bool Ch_is_Mh,
+    const int64_t *GB_RESTRICT C_to_M,
+    const int64_t *GB_RESTRICT C_to_A,
+    const int64_t *GB_RESTRICT C_to_B,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_AemultB__pair_bool
 (
     GrB_Matrix C,
     const GrB_Matrix M,

@@ -20,6 +20,7 @@ fclose (f) ;
 
 codegen_axb_template ('first',  'xarg', 'xarg') ;
 codegen_axb_template ('second', 'yarg', 'yarg') ;
+codegen_axb_template ('pair',   '1', '1') ;
 
 codegen_axb_template ('min',    [ ], 'GB_IMIN (xarg, yarg)', 'fminf (xarg, yarg)', 'fmin (xarg, yarg)') ;
 codegen_axb_template ('max',    [ ], 'GB_IMAX (xarg, yarg)', 'fmaxf (xarg, yarg)', 'fmax (xarg, yarg)') ;

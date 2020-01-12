@@ -272,14 +272,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
     bool op_is_second = mult->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
     bool A_is_pattern = false ;
     bool B_is_pattern = false ;
 
     if (flipxy)
     { 
         // z = fmult (b,a) will be computed
-        A_is_pattern = op_is_first  ;
-        B_is_pattern = op_is_second ;
+        A_is_pattern = op_is_first  || op_is_pair ;
+        B_is_pattern = op_is_second || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->ytype))) ;
         ASSERT (GB_IMPLIES (!B_is_pattern,
@@ -288,8 +289,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     else
     { 
         // z = fmult (a,b) will be computed
-        A_is_pattern = op_is_second ;
-        B_is_pattern = op_is_first  ;
+        A_is_pattern = op_is_second || op_is_pair ;
+        B_is_pattern = op_is_first  || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->xtype))) ;
         ASSERT (GB_IMPLIES (!B_is_pattern,
@@ -1081,6 +1082,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (semiring->object_kind == GB_USER_COMPILED)
     { 
+        GBBURBLE ("user pre-compiled ") ;
+
         // determine the required type of A and B for the user semiring
         GrB_Type atype_required, btype_required ;
 
@@ -1115,6 +1118,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (!done)
     {
+        GBBURBLE ("generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, B, and C

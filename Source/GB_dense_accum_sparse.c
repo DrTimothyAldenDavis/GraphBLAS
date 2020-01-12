@@ -127,6 +127,8 @@ GrB_Info GB_dense_accum_sparse      // C += A where C is dense and A is sparse
         // get operators, functions, workspace, contents of A and C
         //----------------------------------------------------------------------
 
+        GBBURBLE ("generic ") ;
+
         GxB_binary_function fadd = accum->function ;
 
         size_t csize = C->type->size ;

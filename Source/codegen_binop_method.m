@@ -30,14 +30,16 @@ fprintf (f, 'define(`GB_atype'', `%s'')\n', xytype) ;
 fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 
 % to get an entry from A
-if (isequal (binop, 'second'))
+if (isequal (binop, 'second') || isequal (binop, 'pair'))
+    % the value of A is ignored
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xytype) ;
 end
 
 % to get an entry from B
-if (isequal (binop, 'first'))
+if (isequal (binop, 'first') || isequal (binop, 'pair'))
+    % the value of B is ignored
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', xytype) ;

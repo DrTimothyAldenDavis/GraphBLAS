@@ -62,6 +62,8 @@ void GB_transpose_op    // transpose, typecast, and apply operator to a matrix
     // generic worker: transpose, typecast, and apply an operator
     //--------------------------------------------------------------------------
 
+    GBBURBLE ("generic ") ;
+
     size_t asize = Atype->size ;
     size_t zsize = op->ztype->size ;
     size_t xsize = op->xtype->size ;

@@ -52,9 +52,12 @@ else
 end
 fprintf (f, 'define(`GB_ctype_pun'', `%s'')\n', pun) ;
 
+is_pair = isequal (multop, 'pair') ;
+
 % to get an entry from A
 is_second = isequal (multop, 'second') ;
-if (is_second)
+if (is_second || is_pair)
+    % value of A is ignored for the SECOND and PAIR operators
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_geta'', `%s $1 = $2 [$3]'')\n', xytype) ;
@@ -62,7 +65,8 @@ end
 
 % to get an entry from B
 is_first = isequal (multop, 'first') ;
-if (is_first)
+if (is_first || is_pair)
+    % value of B is ignored for the FIRST and PAIR operators
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_getb'', `%s $1 = $2 [$3]'')\n', xytype) ;
@@ -95,7 +99,7 @@ fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
 
 % create the multiply-add operator
 if (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
-    isequal (ztype, 'bool') || is_first || is_second || ...
+    isequal (ztype, 'bool') || is_first || is_second || is_pair || ...
     isequal (multop (1:2), 'is'))
     % float and double do not get promoted.
     % bool is OK since promotion of the result (0 or 1) to int is safe.

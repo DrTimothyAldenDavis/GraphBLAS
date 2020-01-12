@@ -10,7 +10,7 @@
 // All entries in C=D*B are computed fully in parallel. 
 
 {
-    // Bx is unused if the operator is FIRST
+    // Bx is unused if the operator is FIRST or PAIR
     #include "GB_unused.h"
 
     //--------------------------------------------------------------------------

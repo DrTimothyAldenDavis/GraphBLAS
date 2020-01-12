@@ -9,10 +9,10 @@
 
 // A template file #include'd in GB_AxB_factory.c
 
-// This file is used for 19 operators.  The multiply operator is combined here
+// This file is used for 20 operators.  The multiply operator is combined here
 // with 40 or 44 monoids to create 40 or 44 unique semiring workers.
 
-//      FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
+//      FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
 //      ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
 //      LAND, LOR, LXOR.
 

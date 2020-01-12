@@ -9,10 +9,10 @@
 
 // A template file #include'd in GB_binop_factory.c
 
-// This file is used for 19 operators.  The operator is combined here
+// This file is used for 20 operators.  The operator is combined here
 // with 10 or 11 types to create 10 or 11 unique workers.
 
-//      FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
+//      FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
 //      ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
 //      LAND, LOR, LXOR.
 

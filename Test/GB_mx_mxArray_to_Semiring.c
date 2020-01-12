@@ -89,9 +89,10 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
     bool zbool ;
     switch (multiply_opcode)
     {
-        // 10 z=f(x,y), all x,y,z the same type
+        // 11 z=f(x,y), all x,y,z the same type
         case GB_FIRST_opcode   : zbool = false ; break ;
         case GB_SECOND_opcode  : zbool = false ; break ;
+        case GB_PAIR_opcode    : zbool = false ; break ;
         case GB_MIN_opcode     : zbool = false ; break ;
         case GB_MAX_opcode     : zbool = false ; break ;
         case GB_PLUS_opcode    : zbool = false ; break ;

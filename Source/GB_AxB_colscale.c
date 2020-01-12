@@ -77,14 +77,15 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
     bool op_is_second = mult->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
     bool A_is_pattern = false ;
     bool D_is_pattern = false ;
 
     if (flipxy)
     { 
         // z = fmult (b,a) will be computed
-        A_is_pattern = op_is_first  ;
-        D_is_pattern = op_is_second ;
+        A_is_pattern = op_is_first  || op_is_pair ;
+        D_is_pattern = op_is_second || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->ytype))) ;
         ASSERT (GB_IMPLIES (!D_is_pattern,
@@ -93,8 +94,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     else
     { 
         // z = fmult (a,b) will be computed
-        A_is_pattern = op_is_second ;
-        D_is_pattern = op_is_first  ;
+        A_is_pattern = op_is_second || op_is_pair ;
+        D_is_pattern = op_is_first  || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->xtype))) ;
         ASSERT (GB_IMPLIES (!D_is_pattern,
@@ -165,6 +166,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, D, and C
         //----------------------------------------------------------------------
+
+        GBBURBLE ("generic ") ;
 
         GxB_binary_function fmult = mult->function ;
 

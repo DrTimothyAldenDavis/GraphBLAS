@@ -40,6 +40,7 @@ GB_UNARY_OP_DEFINE (GxB_, LNOT,     "not")
 
 extern void GB (FIRST_f)  (GB_Z_X_Y_ARGS) ;
 extern void GB (SECOND_f) (GB_Z_X_Y_ARGS) ;
+extern void GB (PAIR_f)   (GB_Z_X_Y_ARGS) ;
 extern void GB (MIN_f)    (GB_Z_X_Y_ARGS) ;
 extern void GB (MAX_f)    (GB_Z_X_Y_ARGS) ;
 extern void GB (PLUS_f)   (GB_Z_X_Y_ARGS) ;
@@ -51,6 +52,7 @@ extern void GB (RDIV_f)   (GB_Z_X_Y_ARGS) ;
 
 GB_BINARY_OP_DEFINE (GrB_, FIRST,  "first" )
 GB_BINARY_OP_DEFINE (GrB_, SECOND, "second")
+GB_BINARY_OP_DEFINE (GxB_, PAIR,   "pair"  )
 GB_BINARY_OP_DEFINE (GrB_, MIN,    "min"   )
 GB_BINARY_OP_DEFINE (GrB_, MAX,    "max"   )
 GB_BINARY_OP_DEFINE (GrB_, PLUS,   "plus"  )

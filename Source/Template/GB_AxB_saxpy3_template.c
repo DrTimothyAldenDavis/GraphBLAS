@@ -1276,6 +1276,32 @@
                 // phase1: 1-vector coarse hash task (TODO: M or !M broken)
                 //--------------------------------------------------------------
 
+/* without this method, single-thread performance can suffer.  The results
+   below are likely using coarse Gustavson, but might be faster with
+   the 1-thread coarse hash task.  Note the super-linear speedup.
+
+slash $ ./build/bfs_test ~/com-Orkut.grb 
+chunk: 65536
+threads:  1 2 3 4 7 8
+matrix: /home/davis/com-Orkut.grb
+[.grb]
+Reading binary file: /home/davis/com-Orkut.grb
+read time: 1.22315
+
+A is symmetric
+transpose time: 12.3188
+
+==========input graph: nodes: 3072441 edges: 234370166 ntrials: 64
+allpush (with tree):
+: 1:allpush   (w/ tree):        4.457 (sec), rate:  52.59
+: 2:allpush   (w/ tree):        0.929 (sec), rate: 252.20 speedup  4.8
+: 3:allpush   (w/ tree):        0.727 (sec), rate: 322.36 speedup  6.1
+: 4:allpush   (w/ tree):        0.621 (sec), rate: 377.35 speedup  7.2
+: 7:allpush   (w/ tree):        0.557 (sec), rate: 420.92 speedup  8.0
+: 8:allpush   (w/ tree):        0.551 (sec), rate: 425.11 speedup  8.1
+*/
+
+
                 // The least 2 bits of Hf [hash] are used for f, and the upper
                 // bits are used for h = i+1, the 1-based index for entry i.
 

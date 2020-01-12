@@ -81,6 +81,7 @@ fprintf ('//------------------------------------------------------\n\n') ;
 ops1 = {
 'FIRST',
 'SECOND',
+'PAIR',     % extension to the GraphBLAS C API
 'MIN',
 'MAX',
 'PLUS',

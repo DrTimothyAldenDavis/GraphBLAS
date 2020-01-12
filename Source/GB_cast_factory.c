@@ -11,8 +11,8 @@
 // output z, casting as needed.  That is, it computes z = (type of z) x.
 // s is the size for user-defined types, which can only be copied.
 
-// If the operator is FIRST or SECOND, this function is called for the cast
-// function on the unused argument, but the result is then unused. 
+// If the operator is FIRST, SECOND, or PAIR, this function is called for the
+// cast function on the unused argument, but the result is then unused. 
 
 #include "GB.h"
 

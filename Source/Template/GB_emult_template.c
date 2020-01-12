@@ -20,7 +20,7 @@
 
 {
 
-    // iB_first is unused if the operator is FIRST
+    // iB_first is unused if the operator is FIRST or PAIR
     #include "GB_unused.h"
 
     //--------------------------------------------------------------------------

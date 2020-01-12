@@ -3264,6 +3264,1634 @@ GrB_Info GB_Asaxpy3B__eq_second_bool
 ) ;
 
 
+GrB_Info GB_Adot2B__min_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_int8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_int16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_int32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_int64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_uint8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_uint16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_uint32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_uint64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_fp32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__min_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__min_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__min_pair_fp64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_int8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_int16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_int32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_int64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_uint8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_uint16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_uint32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_uint64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_fp32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__max_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__max_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__max_pair_fp64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_int8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_uint8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_int16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_uint16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_int32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_uint32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_int64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_uint64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_fp32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__plus_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__plus_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__plus_pair_fp64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_int8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_uint8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_uint8
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_int16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_int16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_uint16
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_uint16
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_int32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_uint32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_uint32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_int64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_int64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_uint64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_uint64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_fp32
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_fp32
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__times_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__times_pair_fp64
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__times_pair_fp64
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__lor_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__lor_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__lor_pair_bool
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__land_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__land_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__land_pair_bool
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__lxor_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__lxor_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__lxor_pair_bool
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
+GrB_Info GB_Adot2B__eq_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+) ;
+
+GrB_Info GB_Adot3B__eq_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+) ;
+
+GrB_Info GB_Asaxpy3B__eq_pair_bool
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
+
 GrB_Info GB_Adot2B__min_min_int8
 (
     GrB_Matrix C,

@@ -33,7 +33,7 @@
 // #define GBCOMPACT 1
 
 // for code development only
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 // set these via cmake, or uncomment to select the user-thread model:
 
@@ -405,49 +405,50 @@ typedef enum
     // TxT -> T
     //--------------------------------------------------------------------------
 
-    // 10 binary operators z=f(x,y) that return the same type as their inputs
+    // 11 binary operators z=f(x,y) that return the same type as their inputs
     GB_FIRST_opcode,    //  7: z = x
     GB_SECOND_opcode,   //  8: z = y
-    GB_MIN_opcode,      //  9: z = min(x,y)
-    GB_MAX_opcode,      // 10: z = max(x,y)
-    GB_PLUS_opcode,     // 11: z = x + y
-    GB_MINUS_opcode,    // 12: z = x - y
-    GB_RMINUS_opcode,   // 13: z = y - x
-    GB_TIMES_opcode,    // 14: z = x * y
-    GB_DIV_opcode,      // 15: z = x / y ; special cases for bool and ints
-    GB_RDIV_opcode,     // 16: z = y / x ; special cases for bool and ints
+    GB_PAIR_opcode,     //  9: z = 1
+    GB_MIN_opcode,      // 10: z = min(x,y)
+    GB_MAX_opcode,      // 11: z = max(x,y)
+    GB_PLUS_opcode,     // 12: z = x + y
+    GB_MINUS_opcode,    // 13: z = x - y
+    GB_RMINUS_opcode,   // 14: z = y - x
+    GB_TIMES_opcode,    // 15: z = x * y
+    GB_DIV_opcode,      // 16: z = x / y ; special cases for bool and ints
+    GB_RDIV_opcode,     // 17: z = y / x ; special cases for bool and ints
 
     // 6 binary operators z=f(x,y), x,y,z all the same type
-    GB_ISEQ_opcode,     // 17: z = (x == y)
-    GB_ISNE_opcode,     // 18: z = (x != y)
-    GB_ISGT_opcode,     // 19: z = (x >  y)
-    GB_ISLT_opcode,     // 20: z = (x <  y)
-    GB_ISGE_opcode,     // 21: z = (x >= y)
-    GB_ISLE_opcode,     // 22: z = (x <= y)
+    GB_ISEQ_opcode,     // 18: z = (x == y)
+    GB_ISNE_opcode,     // 19: z = (x != y)
+    GB_ISGT_opcode,     // 20: z = (x >  y)
+    GB_ISLT_opcode,     // 21: z = (x <  y)
+    GB_ISGE_opcode,     // 22: z = (x >= y)
+    GB_ISLE_opcode,     // 23: z = (x <= y)
 
     // 3 binary operators that work on purely boolean values
-    GB_LOR_opcode,      // 23: z = (x != 0) || (y != 0)
-    GB_LAND_opcode,     // 23: z = (x != 0) && (y != 0)
-    GB_LXOR_opcode,     // 25: z = (x != 0) != (y != 0)
+    GB_LOR_opcode,      // 24: z = (x != 0) || (y != 0)
+    GB_LAND_opcode,     // 25: z = (x != 0) && (y != 0)
+    GB_LXOR_opcode,     // 26: z = (x != 0) != (y != 0)
 
     //--------------------------------------------------------------------------
     // TxT -> bool
     //--------------------------------------------------------------------------
 
     // 6 binary operators z=f(x,y) that return bool (TxT -> bool)
-    GB_EQ_opcode,       // 26: z = (x == y)
-    GB_NE_opcode,       // 27: z = (x != y)
-    GB_GT_opcode,       // 28: z = (x >  y)
-    GB_LT_opcode,       // 29: z = (x <  y)
-    GB_GE_opcode,       // 30: z = (x >= y)
-    GB_LE_opcode,       // 31: z = (x <= y)
+    GB_EQ_opcode,       // 27: z = (x == y)
+    GB_NE_opcode,       // 28: z = (x != y)
+    GB_GT_opcode,       // 29: z = (x >  y)
+    GB_LT_opcode,       // 30: z = (x <  y)
+    GB_GE_opcode,       // 31: z = (x >= y)
+    GB_LE_opcode,       // 32: z = (x <= y)
 
     //--------------------------------------------------------------------------
     // user-defined: unary and binary operators
     //--------------------------------------------------------------------------
 
-    GB_USER_C_opcode,   // 32: compile-time user-defined operator
-    GB_USER_R_opcode    // 33: run-time user-defined operator
+    GB_USER_C_opcode,   // 33: compile-time user-defined operator
+    GB_USER_R_opcode    // 34: run-time user-defined operator
 }
 GB_Opcode ;
 

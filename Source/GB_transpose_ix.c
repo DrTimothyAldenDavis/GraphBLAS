@@ -62,6 +62,8 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     // generic worker: transpose and typecast
     //--------------------------------------------------------------------------
 
+    GBBURBLE ("generic ") ;
+
     size_t asize = A->type->size ;
     size_t csize = C->type->size ;
     GB_cast_function cast_A_to_X = GB_cast_factory (code1, code2) ;

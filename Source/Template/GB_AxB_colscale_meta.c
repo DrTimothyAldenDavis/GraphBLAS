@@ -12,7 +12,7 @@
 
 {
 
-    // Dx, j, and Ah are unused if the operator is FIRST
+    // Dx, j, and Ah are unused if the operator is FIRST or PAIR
     #include "GB_unused.h"
 
     //--------------------------------------------------------------------------

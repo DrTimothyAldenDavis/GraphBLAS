@@ -663,12 +663,12 @@ typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
 //------------------------------------------------------------------------------
 
 // There are three sets of built-in binary operators.  For the first set of
-// 19 kinds of operators, x,y,z all have the same type, and they are available
-// for all 11 types, for a total of 19*11 = 209 operators.  All of them have
+// 20 kinds of operators, x,y,z all have the same type, and they are available
+// for all 11 types, for a total of 20*11 = 220 operators.  All of them have
 // a "_TYPE" suffix that denotes the type of x,y,z:
 
-//      10 general: FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES,
-//              DIV, RDIV
+//      11 general: FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES,
+//              DIV, RDIV, PAIR
 //      6 comparison: ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE
 //      3 logical: LOR, LAND, LXOR
 
@@ -683,12 +683,12 @@ typedef struct GB_BinaryOp_opaque *GrB_BinaryOp ;
 
 //      3 logical: LOR, LAND, LXOR
 
-// Thus there are 209+66+3 = 278 built-in binary operators.  Some are redundant
+// Thus there are 220+66+3 = 289 built-in binary operators.  Some are redundant
 // but are included to keep the name space of operators uniform.
 
-// For 10 binary operators z=f(x,y), x, y, and z are all the same type:
-// FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV, for all 11
-// types.
+// For 11 binary operators z=f(x,y), x, y, and z are all the same type:
+// FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV, PAIR, for
+// all 11 types.
 
 GB_PUBLIC GrB_BinaryOp
     // z = x            z = y               z = min(x,y)        z = max (x,y)
@@ -717,18 +717,18 @@ GB_PUBLIC GrB_BinaryOp
     GrB_PLUS_FP32,      GrB_MINUS_FP32,     GrB_TIMES_FP32,     GrB_DIV_FP32,
     GrB_PLUS_FP64,      GrB_MINUS_FP64,     GrB_TIMES_FP64,     GrB_DIV_FP64,
 
-    // z = y-x          z = y/x
-    GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,      // ADDED in V3.0: RMINUS, RDIV
-    GxB_RMINUS_INT8,    GxB_RDIV_INT8,
-    GxB_RMINUS_UINT8,   GxB_RDIV_UINT8,
-    GxB_RMINUS_INT16,   GxB_RDIV_INT16,
-    GxB_RMINUS_UINT16,  GxB_RDIV_UINT16,
-    GxB_RMINUS_INT32,   GxB_RDIV_INT32,
-    GxB_RMINUS_UINT32,  GxB_RDIV_UINT32,
-    GxB_RMINUS_INT64,   GxB_RDIV_INT64,
-    GxB_RMINUS_UINT64,  GxB_RDIV_UINT64,
-    GxB_RMINUS_FP32,    GxB_RDIV_FP32,
-    GxB_RMINUS_FP64,    GxB_RDIV_FP64,
+    // z = y-x          z = y/x             z = 1
+    GxB_RMINUS_BOOL,    GxB_RDIV_BOOL,      GxB_PAIR_BOOL,
+    GxB_RMINUS_INT8,    GxB_RDIV_INT8,      GxB_PAIR_INT8,
+    GxB_RMINUS_UINT8,   GxB_RDIV_UINT8,     GxB_PAIR_UINT8,
+    GxB_RMINUS_INT16,   GxB_RDIV_INT16,     GxB_PAIR_INT16,
+    GxB_RMINUS_UINT16,  GxB_RDIV_UINT16,    GxB_PAIR_UINT16,
+    GxB_RMINUS_INT32,   GxB_RDIV_INT32,     GxB_PAIR_INT32,
+    GxB_RMINUS_UINT32,  GxB_RDIV_UINT32,    GxB_PAIR_UINT32,
+    GxB_RMINUS_INT64,   GxB_RDIV_INT64,     GxB_PAIR_INT64,
+    GxB_RMINUS_UINT64,  GxB_RDIV_UINT64,    GxB_PAIR_UINT64,
+    GxB_RMINUS_FP32,    GxB_RDIV_FP32,      GxB_PAIR_FP32,
+    GxB_RMINUS_FP64,    GxB_RDIV_FP64,      GxB_PAIR_FP64,
 
 // Six comparison operators z=f(x,y) return the same type as their inputs.
 // Each of them compute z = (x OP y), where x, y, and z all have the same type.
@@ -863,10 +863,11 @@ GB_PUBLIC GrB_BinaryOp
 // GrB_IDENTITY_BOOL, GrB_AINV_BOOL, and GrB_MINV_BOOL all give the same result
 // (z = x).
 
-// With this convention for boolean "division", there are 10 unique binary
+// With this convention for boolean "division", there are 11 unique binary
 // operators that are purely boolean; 13 *_BOOL operators are redundant but are
 // included in GraphBLAS so that the name space of operators is complete:
 
+//      z = 1           PAIR
 //      z = x           FIRST, DIV
 //      z = y           SECOND, RDIV
 //      z = (x && y)    AND, MIN, TIMES
@@ -5971,16 +5972,16 @@ GB_PUBLIC GrB_Monoid
 // built-in semirings
 //------------------------------------------------------------------------------
 
-// Using built-in types and operators, 960 unique semirings can be built.  This
-// count excludes redundant Boolean operators (for example GxB_TIMES_BOOL and
+// Using built-in types and operators, 1,084 semirings can be built.  This
+// count includes redundant Boolean operators (for example GxB_TIMES_BOOL and
 // GxB_LAND_BOOL are different operators but they are redundant since they
 // always return the same result):
 
-// 760 semirings with a multiply operator TxT -> T where T is non-Boolean, from
+// 800 semirings with a multiply operator TxT -> T where T is non-Boolean, from
 // the complete cross product of:
 
 //      4 add monoids (MIN, MAX, PLUS, TIMES)
-//      19 multiply operators:
+//      20 multiply operators:
 //          (FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
 //           ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
 //           LOR, LAND, LXOR)
@@ -5993,12 +5994,12 @@ GB_PUBLIC GrB_Monoid
 //      6 multiply operators: (EQ, NE, GT, LT, GE, LE)
 //      10 non-Boolean types, T
 
-// 40 semirings with purely Boolean types, bool x bool -> bool, from the
+// 44 semirings with purely Boolean types, bool x bool -> bool, from the
 // complete cross product of:
 
 //      4 Boolean add monoids (LAND, LOR, LXOR, EQ)
-//      10 multiply operators:
-//          (FIRST, SECOND, LOR, LAND, LXOR, EQ, GT, LT, GE, LE)
+//      11 multiply operators:
+//          (FIRST, SECOND, LOR, LAND, LXOR, EQ, GT, LT, GE, LE, PAIR)
 
 // In the names below, each semiring has a name of the form GxB_add_mult_T
 // where add is the additive monoid, mult is the multiply operator, and T is
@@ -6010,7 +6011,7 @@ GB_PUBLIC GrB_Monoid
 GB_PUBLIC GrB_Semiring
 
 //------------------------------------------------------------------------------
-// 680 non-Boolean semirings where all types are the same, given by suffix _T
+// 800 non-Boolean semirings where all types are the same, given by suffix _T
 //------------------------------------------------------------------------------
 
 // semirings with multiply op: z = FIRST (x,y), all types x,y,z the same:
@@ -6134,6 +6135,19 @@ GxB_MIN_RDIV_INT64     , GxB_MAX_RDIV_INT64     , GxB_PLUS_RDIV_INT64    , GxB_T
 GxB_MIN_RDIV_UINT64    , GxB_MAX_RDIV_UINT64    , GxB_PLUS_RDIV_UINT64   , GxB_TIMES_RDIV_UINT64  ,
 GxB_MIN_RDIV_FP32      , GxB_MAX_RDIV_FP32      , GxB_PLUS_RDIV_FP32     , GxB_TIMES_RDIV_FP32    ,
 GxB_MIN_RDIV_FP64      , GxB_MAX_RDIV_FP64      , GxB_PLUS_RDIV_FP64     , GxB_TIMES_RDIV_FP64    ,
+
+// semirings with multiply op: z = 1, all types x,y,z the same:
+// Note that MIN, MAX, and TIMES semirings are the same
+GxB_MIN_PAIR_INT8      , GxB_MAX_PAIR_INT8      , GxB_PLUS_PAIR_INT8     , GxB_TIMES_PAIR_INT8    ,
+GxB_MIN_PAIR_UINT8     , GxB_MAX_PAIR_UINT8     , GxB_PLUS_PAIR_UINT8    , GxB_TIMES_PAIR_UINT8   ,
+GxB_MIN_PAIR_INT16     , GxB_MAX_PAIR_INT16     , GxB_PLUS_PAIR_INT16    , GxB_TIMES_PAIR_INT16   ,
+GxB_MIN_PAIR_UINT16    , GxB_MAX_PAIR_UINT16    , GxB_PLUS_PAIR_UINT16   , GxB_TIMES_PAIR_UINT16  ,
+GxB_MIN_PAIR_INT32     , GxB_MAX_PAIR_INT32     , GxB_PLUS_PAIR_INT32    , GxB_TIMES_PAIR_INT32   ,
+GxB_MIN_PAIR_UINT32    , GxB_MAX_PAIR_UINT32    , GxB_PLUS_PAIR_UINT32   , GxB_TIMES_PAIR_UINT32  ,
+GxB_MIN_PAIR_INT64     , GxB_MAX_PAIR_INT64     , GxB_PLUS_PAIR_INT64    , GxB_TIMES_PAIR_INT64   ,
+GxB_MIN_PAIR_UINT64    , GxB_MAX_PAIR_UINT64    , GxB_PLUS_PAIR_UINT64   , GxB_TIMES_PAIR_UINT64  ,
+GxB_MIN_PAIR_FP32      , GxB_MAX_PAIR_FP32      , GxB_PLUS_PAIR_FP32     , GxB_TIMES_PAIR_FP32    ,
+GxB_MIN_PAIR_FP64      , GxB_MAX_PAIR_FP64      , GxB_PLUS_PAIR_FP64     , GxB_TIMES_PAIR_FP64    ,
 
 // semirings with multiply op: z = ISEQ (x,y), all types x,y,z the same:
 GxB_MIN_ISEQ_INT8      , GxB_MAX_ISEQ_INT8      , GxB_PLUS_ISEQ_INT8     , GxB_TIMES_ISEQ_INT8    ,
@@ -6320,12 +6334,13 @@ GxB_LOR_LE_FP32        , GxB_LAND_LE_FP32       , GxB_LXOR_LE_FP32       , GxB_E
 GxB_LOR_LE_FP64        , GxB_LAND_LE_FP64       , GxB_LXOR_LE_FP64       , GxB_EQ_LE_FP64         ,
 
 //------------------------------------------------------------------------------
-// 40 purely Boolean semirings
+// 44 purely Boolean semirings
 //------------------------------------------------------------------------------
 
 // purely boolean semirings (in the form GxB_(add monoid)_(multipy operator)_BOOL:
 GxB_LOR_FIRST_BOOL     , GxB_LAND_FIRST_BOOL    , GxB_LXOR_FIRST_BOOL    , GxB_EQ_FIRST_BOOL      ,
 GxB_LOR_SECOND_BOOL    , GxB_LAND_SECOND_BOOL   , GxB_LXOR_SECOND_BOOL   , GxB_EQ_SECOND_BOOL     ,
+GxB_LOR_PAIR_BOOL      , GxB_LAND_PAIR_BOOL     , GxB_LXOR_PAIR_BOOL     , GxB_EQ_PAIR_BOOL       ,
 GxB_LOR_LOR_BOOL       , GxB_LAND_LOR_BOOL      , GxB_LXOR_LOR_BOOL      , GxB_EQ_LOR_BOOL        ,
 GxB_LOR_LAND_BOOL      , GxB_LAND_LAND_BOOL     , GxB_LXOR_LAND_BOOL     , GxB_EQ_LAND_BOOL       ,
 GxB_LOR_LXOR_BOOL      , GxB_LAND_LXOR_BOOL     , GxB_LXOR_LXOR_BOOL     , GxB_EQ_LXOR_BOOL       ,

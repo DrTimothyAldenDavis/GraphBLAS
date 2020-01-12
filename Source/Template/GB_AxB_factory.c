@@ -50,6 +50,20 @@
             break ;
 
         //----------------------------------------------------------------------
+        case GB_PAIR_opcode   :    // z = 1
+        //----------------------------------------------------------------------
+
+            // TODO can rename min and max to times
+            // TODO also can rename some boolean (AND is the same as OR)
+            // TODO XOR same as EQ?
+
+            // 44 semirings: (min,max,plus,times) for non-boolean, and
+            // (or,and,xor,eq) for boolean
+            #define GB_MULT_NAME _pair
+            #include "GB_AxB_type_factory.c"
+            break ;
+
+        //----------------------------------------------------------------------
         case GB_MIN_opcode     :    // z = min(x,y)
         //----------------------------------------------------------------------
 

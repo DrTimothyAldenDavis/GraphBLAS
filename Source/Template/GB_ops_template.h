@@ -76,12 +76,13 @@ GB_PUBLIC struct GB_UnaryOp_opaque
     GB (opaque_GxB_LNOT) ;
 
 //------------------------------------------------------------------------------
-// 8 binary functions z=f(x,y) where x,y,z have the same type
+// binary functions z=f(x,y) where x,y,z have the same type
 //------------------------------------------------------------------------------
 
 // first, second, plus, minus, rminus, times
 inline void GB (FIRST_f)  (GB_Z_X_Y_ARGS) { (*z) = (*x) ; }
 inline void GB (SECOND_f) (GB_Z_X_Y_ARGS) { (*z) = (*y) ; }
+inline void GB (PAIR_f)   (GB_Z_X_Y_ARGS) { (*z) = 1 ; }
 inline void GB (PLUS_f)   (GB_Z_X_Y_ARGS) { (*z) = (*x) + (*y) ; }
 inline void GB (MINUS_f)  (GB_Z_X_Y_ARGS) { (*z) = (*x) - (*y) ; }
 inline void GB (RMINUS_f) (GB_Z_X_Y_ARGS) { (*z) = (*y) - (*x) ; }
@@ -143,6 +144,7 @@ inline void GB (TIMES_f)  (GB_Z_X_Y_ARGS) { (*z) = (*x) * (*y) ; }
 GB_PUBLIC struct GB_BinaryOp_opaque
     GB (opaque_GrB_FIRST),
     GB (opaque_GrB_SECOND),
+    GB (opaque_GxB_PAIR),
     GB (opaque_GrB_MIN),
     GB (opaque_GrB_MAX),
     GB (opaque_GrB_PLUS),

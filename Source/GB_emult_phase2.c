@@ -64,9 +64,11 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     ASSERT_MATRIX_OK_OR_NULL (M, "M for emult phase2", GB0) ;
     ASSERT (A->vdim == B->vdim) ;
     ASSERT (GB_Type_compatible (ctype,   op->ztype)) ;
-    ASSERT (GB_IMPLIES (op->opcode != GB_SECOND_opcode,
+    ASSERT (GB_IMPLIES (
+           !(op->opcode == GB_SECOND_opcode || op->opcode == GB_PAIR_opcode),
             GB_Type_compatible (A->type, op->xtype))) ;
-    ASSERT (GB_IMPLIES (op->opcode != GB_FIRST_opcode,
+    ASSERT (GB_IMPLIES (
+           !(op->opcode == GB_FIRST_opcode  || op->opcode == GB_PAIR_opcode),
             GB_Type_compatible (B->type, op->ytype))) ;
 
     //--------------------------------------------------------------------------
@@ -148,11 +150,13 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     #endif
 
     //--------------------------------------------------------------------------
-    // generic worker
+    // generic worker: with typecasting and arbitrary operators
     //--------------------------------------------------------------------------
 
     if (!done)
     { 
+        GBBURBLE ("generic ") ;
+
         GxB_binary_function fmult ;
         size_t csize, asize, bsize, xsize, ysize, zsize ;
         GB_cast_function cast_A_to_X, cast_B_to_Y, cast_Z_to_C ;

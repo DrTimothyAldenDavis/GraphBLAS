@@ -18,14 +18,14 @@
 // GxB_LAND_BOOL are different operators but they are redundant since they
 // always return the same result):
 
-// 760 semirings with a multiply operator TxT -> T where T is non-Boolean, from
+// 800 semirings with a multiply operator TxT -> T where T is non-Boolean, from
 // the complete cross product of:
 
 //      4 add monoids (MIN, MAX, PLUS, TIMES)
-//      19 multiply operators:
-//          (FIRST, SECOND, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
-//           ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
-//           LOR, LAND, LXOR)
+//      20 multiply operators:
+//         FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
+//         ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
+//         LOR, LAND, LXOR)
 //      10 non-Boolean types, T
 
 // 240 semirings with a comparison operator TxT -> bool, where T is
@@ -35,12 +35,12 @@
 //      6 multiply operators: (EQ, NE, GT, LT, GE, LE)
 //      10 non-Boolean types, T
 
-// 40 semirings with purely Boolean types, bool x bool -> bool, from the
+// 44 semirings with purely Boolean types, bool x bool -> bool, from the
 // complete cross product of:
 
 //      4 Boolean add monoids (LAND, LOR, LXOR, EQ)
-//      10 multiply operators:
-//          (FIRST, SECOND, LOR, LAND, LXOR, EQ, GT, LT, GE, LE)
+//      11 multiply operators:
+//          (FIRST, SECOND, PAIR, LOR, LAND, LXOR, EQ, GT, LT, GE, LE)
 
 // In the names below, each semiring has a name of the form GxB_add_mult_T
 // where add is the additive monoid, mult is the multiply operator, and T is
@@ -131,7 +131,7 @@ GrB_Semiring GB_mx_builtin_semiring // built-in semiring, or NULL if error
     {
 
         //----------------------------------------------------------------------
-        // 640 semirings with TxT->T multiply operators
+        // 800 semirings with TxT->T multiply operators
         //----------------------------------------------------------------------
 
         // x,y,z are all the same non-Boolean type
@@ -212,6 +212,86 @@ GrB_Semiring GB_mx_builtin_semiring // built-in semiring, or NULL if error
                             case GB_UINT64_code: return (GxB_TIMES_FIRST_UINT64) ;
                             case GB_FP32_code  : return (GxB_TIMES_FIRST_FP32  ) ;
                             case GB_FP64_code  : return (GxB_TIMES_FIRST_FP64  ) ;
+                            default : ; 
+                        }
+                        break; 
+
+                    default : ;
+                }
+
+            case GB_PAIR_opcode : // with (4 monoids) x (10 non-Boolean types)
+
+                switch (add_opcode)
+                {
+
+                    case GB_MIN_opcode :
+
+                        switch (zcode)
+                        {
+                            case GB_INT8_code  : return (GxB_MIN_PAIR_INT8    ) ;
+                            case GB_UINT8_code : return (GxB_MIN_PAIR_UINT8   ) ;
+                            case GB_INT16_code : return (GxB_MIN_PAIR_INT16   ) ;
+                            case GB_UINT16_code: return (GxB_MIN_PAIR_UINT16  ) ;
+                            case GB_INT32_code : return (GxB_MIN_PAIR_INT32   ) ;
+                            case GB_UINT32_code: return (GxB_MIN_PAIR_UINT32  ) ;
+                            case GB_INT64_code : return (GxB_MIN_PAIR_INT64   ) ;
+                            case GB_UINT64_code: return (GxB_MIN_PAIR_UINT64  ) ;
+                            case GB_FP32_code  : return (GxB_MIN_PAIR_FP32    ) ;
+                            case GB_FP64_code  : return (GxB_MIN_PAIR_FP64    ) ;
+                            default : ; 
+                        }
+                        break; 
+
+                    case GB_MAX_opcode :
+
+                        switch (zcode)
+                        {
+                            case GB_INT8_code  : return (GxB_MAX_PAIR_INT8    ) ;
+                            case GB_UINT8_code : return (GxB_MAX_PAIR_UINT8   ) ;
+                            case GB_INT16_code : return (GxB_MAX_PAIR_INT16   ) ;
+                            case GB_UINT16_code: return (GxB_MAX_PAIR_UINT16  ) ;
+                            case GB_INT32_code : return (GxB_MAX_PAIR_INT32   ) ;
+                            case GB_UINT32_code: return (GxB_MAX_PAIR_UINT32  ) ;
+                            case GB_INT64_code : return (GxB_MAX_PAIR_INT64   ) ;
+                            case GB_UINT64_code: return (GxB_MAX_PAIR_UINT64  ) ;
+                            case GB_FP32_code  : return (GxB_MAX_PAIR_FP32    ) ;
+                            case GB_FP64_code  : return (GxB_MAX_PAIR_FP64    ) ;
+                            default : ; 
+                        }
+                        break; 
+
+                    case GB_PLUS_opcode :
+
+                        switch (zcode)
+                        {
+                            case GB_INT8_code  : return (GxB_PLUS_PAIR_INT8   ) ;
+                            case GB_UINT8_code : return (GxB_PLUS_PAIR_UINT8  ) ;
+                            case GB_INT16_code : return (GxB_PLUS_PAIR_INT16  ) ;
+                            case GB_UINT16_code: return (GxB_PLUS_PAIR_UINT16 ) ;
+                            case GB_INT32_code : return (GxB_PLUS_PAIR_INT32  ) ;
+                            case GB_UINT32_code: return (GxB_PLUS_PAIR_UINT32 ) ;
+                            case GB_INT64_code : return (GxB_PLUS_PAIR_INT64  ) ;
+                            case GB_UINT64_code: return (GxB_PLUS_PAIR_UINT64 ) ;
+                            case GB_FP32_code  : return (GxB_PLUS_PAIR_FP32   ) ;
+                            case GB_FP64_code  : return (GxB_PLUS_PAIR_FP64   ) ;
+                            default : ; 
+                        }
+                        break; 
+
+                    case GB_TIMES_opcode :
+
+                        switch (zcode)
+                        {
+                            case GB_INT8_code  : return (GxB_TIMES_PAIR_INT8  ) ;
+                            case GB_UINT8_code : return (GxB_TIMES_PAIR_UINT8 ) ;
+                            case GB_INT16_code : return (GxB_TIMES_PAIR_INT16 ) ;
+                            case GB_UINT16_code: return (GxB_TIMES_PAIR_UINT16) ;
+                            case GB_INT32_code : return (GxB_TIMES_PAIR_INT32 ) ;
+                            case GB_UINT32_code: return (GxB_TIMES_PAIR_UINT32) ;
+                            case GB_INT64_code : return (GxB_TIMES_PAIR_INT64 ) ;
+                            case GB_UINT64_code: return (GxB_TIMES_PAIR_UINT64) ;
+                            case GB_FP32_code  : return (GxB_TIMES_PAIR_FP32  ) ;
+                            case GB_FP64_code  : return (GxB_TIMES_PAIR_FP64  ) ;
                             default : ; 
                         }
                         break; 
@@ -2161,7 +2241,7 @@ GrB_Semiring GB_mx_builtin_semiring // built-in semiring, or NULL if error
     {
 
         //----------------------------------------------------------------------
-        // 40 purely Boolean semirings
+        // 44 purely Boolean semirings
         //----------------------------------------------------------------------
 
         // x,y,z are all Boolean, and all operators are Boolean
@@ -2188,6 +2268,17 @@ GrB_Semiring GB_mx_builtin_semiring // built-in semiring, or NULL if error
                     case GB_LAND_opcode       :  return (GxB_LAND_SECOND_BOOL  ) ;
                     case GB_LXOR_opcode       :  return (GxB_LXOR_SECOND_BOOL  ) ;
                     case GB_EQ_opcode         :  return (GxB_EQ_SECOND_BOOL    ) ;
+                    default : ;
+                }
+
+            case GB_PAIR_opcode :
+
+                switch (add_opcode)
+                {
+                    case GB_LOR_opcode        :  return (GxB_LOR_PAIR_BOOL    ) ;
+                    case GB_LAND_opcode       :  return (GxB_LAND_PAIR_BOOL   ) ;
+                    case GB_LXOR_opcode       :  return (GxB_LXOR_PAIR_BOOL   ) ;
+                    case GB_EQ_opcode         :  return (GxB_EQ_PAIR_BOOL     ) ;
                     default : ;
                 }
 

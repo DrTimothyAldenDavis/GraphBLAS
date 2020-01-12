@@ -75,8 +75,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // get the descriptor
     GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
 
-printf ("descriptor A_transpose %d\n", A_transpose) ;
-
     // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
     ASSERT (GB_VECTOR_OK (C)) ;
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;
@@ -332,6 +330,8 @@ printf ("descriptor A_transpose %d\n", A_transpose) ;
         if (!done)
         { 
 
+            GBBURBLE ("generic ") ;
+
             #define GB_ATYPE GB_void
             #define GB_CTYPE GB_void
 
@@ -529,6 +529,7 @@ printf ("descriptor A_transpose %d\n", A_transpose) ;
 
             if (!done)
             { 
+                GBBURBLE ("generic ") ;
                 #include "GB_reduce_each_index.c"
             }
         }
