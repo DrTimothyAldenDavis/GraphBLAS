@@ -330,7 +330,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
         if (!done)
         { 
 
-            GBBURBLE ("generic ") ;
+            GB_BURBLE_MATRIX (A, "generic ") ;
 
             #define GB_ATYPE GB_void
             #define GB_CTYPE GB_void
@@ -529,7 +529,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             if (!done)
             { 
-                GBBURBLE ("generic ") ;
+                GB_BURBLE_MATRIX (A, "generic ") ;
                 #include "GB_reduce_each_index.c"
             }
         }

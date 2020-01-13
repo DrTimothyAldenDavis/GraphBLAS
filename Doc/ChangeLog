@@ -1,11 +1,11 @@
 Version 3.2.0, Jan TODO, 2020
 
+    * faster saxpy-based matrix multiply (about 5x for mxv and vxm):
+        removed Sauna workspace, Heap method removed (to be added back later).
+    * faster typecast of the mask matrix M: GB_mcast replaces cast_M
+    * added GB_BURBLE: for development diagnostics
     * changed default chunk size: from 4K to 64K
     * added the PAIR binary operator: f(x,y)=1
-    * faster saxpy-based matrix multiply: removed Sauna workspace,
-        Heap method removed (to be added back later)
-    * added GB_BURBLE: for development diagnostics
-    * faster typecast of the mask matrix M: GB_mcast replaces cast_M
 
 Version 3.1.2, Dec 16, 2019
 

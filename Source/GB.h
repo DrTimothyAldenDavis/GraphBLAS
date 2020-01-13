@@ -716,6 +716,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // define the printf function to use to burble
 #include "GB_printf.h"
 #define GBBURBLE(...)                           \
+{                                               \
     if (GB_printf_function != NULL)             \
     {                                           \
         GB_printf_function (__VA_ARGS__) ;      \
@@ -724,7 +725,8 @@ int64_t GB_Pending_n        // return # of pending tuples in A
     {                                           \
         printf (__VA_ARGS__) ;                  \
         fflush (stdout) ;                       \
-    }
+    }                                           \
+}
 
 #if defined ( _OPENMP )
 
@@ -735,7 +737,7 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 
 #define GB_BURBLE_END                           \
     t_burble = omp_get_wtime ( ) - t_burble ;   \
-    GBBURBLE ("%.3g sec ]\n", t_burble) ;        \
+    GBBURBLE ("%.3g sec ]\n", t_burble) ;       \
 
 #else
 
@@ -748,12 +750,20 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 
 #endif
 
+#define GB_BURBLE_N(n,...)                      \
+    if (n > 1) GBBURBLE (__VA_ARGS__)
+
+#define GB_BURBLE_MATRIX(A, ...)                \
+    if (!(A->vlen <= 1 && A->vdim <= 1)) GBBURBLE (__VA_ARGS__)
+
 #else
 
 // no burble
 #define GBBURBLE(...)
 #define GB_BURBLE_START(func)
 #define GB_BURBLE_END
+#define GB_BURBLE_N(n,...)
+#define GB_BURBLE_MATRIX(A,...)
 
 #endif
 

@@ -22,9 +22,9 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
 (
     GrB_Matrix C,                       // output matrix
     const GrB_Matrix A,                 // input matrix
-    int64_t *GB_RESTRICT *Rowcounts,       // Rowcounts [naslice]
+    int64_t *GB_RESTRICT *Rowcounts,    // Rowcounts [naslice]
     GBI_single_iterator Iter,           // iterator for the matrix A
-    const int64_t *GB_RESTRICT A_slice,    // defines how A is sliced
+    const int64_t *GB_RESTRICT A_slice, // defines how A is sliced
     int naslice                         // # of slices of A
 )
 { 
@@ -62,7 +62,7 @@ void GB_transpose_ix            // transpose the pattern and values of a matrix
     // generic worker: transpose and typecast
     //--------------------------------------------------------------------------
 
-    GBBURBLE ("generic ") ;
+    GB_BURBLE_MATRIX (A, "generic ") ;
 
     size_t asize = A->type->size ;
     size_t csize = C->type->size ;

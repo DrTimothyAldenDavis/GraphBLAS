@@ -168,7 +168,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         if (!done)
         { 
-            GBBURBLE ("generic ") ;
+            GB_BURBLE_MATRIX (A, "generic ") ;
 
             // the switch factory didn't handle this case
             GxB_binary_function freduce = reduce->op->function ;
@@ -272,7 +272,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         // generic worker: sum up the entries, with typecasting
         //----------------------------------------------------------------------
 
-        GBBURBLE ("generic ") ;
+        GB_BURBLE_MATRIX (A, "generic ") ;
 
         GxB_binary_function freduce = reduce->op->function ;
         GB_cast_function

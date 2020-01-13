@@ -13,9 +13,6 @@
 #ifndef GB_MEXH
 #define GB_MEXH
 
-// TODO debug is on
-#define GB_DEBUG
-
 #define GB_PANIC mexErrMsgTxt ("panic") ;
 
 // #include "GB.h"

@@ -1236,7 +1236,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (!done)
             {
-                GBBURBLE ("generic ") ;
+                GB_BURBLE_N (nvals, "generic ") ;
 
                 //--------------------------------------------------------------
                 // no typecasting, but use the fdup function pointer and memcpy
@@ -1288,7 +1288,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
             // assemble the values S into T, typecasting as needed
             //------------------------------------------------------------------
 
-            GBBURBLE ("generic ") ;
+            GB_BURBLE_N (nvals, "generic ") ;
 
             // S (either S_work or S_input) must be permuted and copied into
             // T->x, since the tuples had to be sorted, or duplicates appear.

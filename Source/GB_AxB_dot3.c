@@ -368,7 +368,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     if (!done)
     {
-        GBBURBLE ("generic ") ;
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, B, C, and M

@@ -109,7 +109,7 @@ GrB_Info GB_dense_accum_scalar      // C += x where C is dense and x is a scalar
 
     if (!done)
     {
-        GBBURBLE ("generic ") ;
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of x and C
@@ -135,8 +135,6 @@ GrB_Info GB_dense_accum_scalar      // C += x where C is dense and x is a scalar
 
         // no vectorization
         #define GB_PRAGMA_VECTORIZE
-
-        GBBURBLE ("generic ") ;
 
         #include "GB_dense_accum_scalar_template.c"
     }

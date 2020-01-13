@@ -174,7 +174,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
     if (!done)
     {
-        GBBURBLE ("generic ") ;
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         GxB_binary_function fadd ;
         size_t csize, asize, bsize, xsize, ysize, zsize ;

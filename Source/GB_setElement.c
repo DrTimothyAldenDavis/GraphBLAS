@@ -75,6 +75,14 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     // pending tuples and zombies are expected
     ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
 
+    #if GB_BURBLE
+    #if defined ( _OPENMP )
+    double t_burble ;
+    #endif
+    // do not burble when waiting on scalars or empty matrices
+    bool burble = (C->vlen > 1) || (C->vdim > 1) ;
+    #endif
+
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format
     //--------------------------------------------------------------------------
@@ -214,8 +222,26 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             // new tuple requires both conditions to hold.  All prior tuples
             // must be assembled before this new one can be added.
 
+            #if GB_BURBLE
+            if (burble)
+            {
+                GBBURBLE (" [ *_setElement ") ;
+                #if defined ( _OPENMP )
+                t_burble = omp_get_wtime ( ) ;
+                #endif
+            }
+            #endif
+
             // delete any lingering zombies and assemble the pending tuples
             GB_WAIT (C) ;
+
+            #if GB_BURBLE
+            if (burble)
+            {
+                GB_BURBLE_END ;
+            }
+            #endif
+
             ASSERT (C->Pending == NULL) ;
 
             // repeat the search since the C(i,j) entry may have been in
@@ -258,7 +284,29 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 
         // this assert is fine, just costly even when debugging
         // ASSERT_MATRIX_OK (C, "did C for setElement (not found)", GB0) ;
-        return (GB_block (C, Context)) ;
+
+        #if GB_BURBLE
+        // only burble if GB_wait will be called
+        burble = (burble && GB_shall_block (C)) ;
+        if (burble)
+        {
+            GBBURBLE (" [ *_setElement ") ;
+            #if defined ( _OPENMP )
+            t_burble = omp_get_wtime ( ) ;
+            #endif
+        }
+        #endif
+
+        GrB_Info info = GB_block (C, Context) ;
+
+        #if GB_BURBLE
+        if (burble)
+        {
+            GB_BURBLE_END ;
+        }
+        #endif
+
+        return (info) ;
     }
 }
 

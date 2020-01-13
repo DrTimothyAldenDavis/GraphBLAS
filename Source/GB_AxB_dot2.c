@@ -315,7 +315,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     if (!done)
     {
-        GBBURBLE ("generic ") ;
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, B, C, and M

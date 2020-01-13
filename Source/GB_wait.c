@@ -68,8 +68,8 @@ GrB_Info GB_wait                // finish all pending computations
     // GB_Matrix_check can report an inconsistency, and thus this assert must
     // be made with a negative pr.
     ASSERT_MATRIX_OK (A, "A to wait", GB_FLIP (GB0)) ;
-
-    GBBURBLE ("wait ") ;
+    GB_BURBLE_MATRIX (A, "wait (zombies: "GBd", pending: "GBd") ",
+        A->nzombies, GB_Pending_n (A)) ;
 
     //--------------------------------------------------------------------------
     // determine the max # of threads to use

@@ -78,7 +78,7 @@ void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
     // generic worker: typecast and apply an operator
     //--------------------------------------------------------------------------
 
-    GBBURBLE ("generic ") ;
+    GB_BURBLE_N (anz, "generic ") ;
 
     size_t asize = Atype->size ;
     size_t zsize = op->ztype->size ;

@@ -1118,7 +1118,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (!done)
     {
-        GBBURBLE ("generic ") ;
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, B, and C
@@ -1222,8 +1222,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
-
-        GBBURBLE ("generic ") ;
 
         if (flipxy)
         { 

@@ -83,7 +83,7 @@ void GB_cast_array              // typecast an array
     // generic worker: typecasting for compact case only
     //--------------------------------------------------------------------------
 
-    GBBURBLE ("generic ") ;
+    GB_BURBLE_N (anz, "generic ") ;
 
     int64_t csize = GB_code_size (code1, 1) ;
     int64_t asize = GB_code_size (code2, 1) ;

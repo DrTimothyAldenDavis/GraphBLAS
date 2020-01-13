@@ -139,8 +139,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     if (!done)
     {
-
-        GBBURBLE ("generic ") ;
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of D, B, and C
