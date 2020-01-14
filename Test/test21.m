@@ -140,6 +140,7 @@ for k1 = k1test
                                         % C(I,J) = accum (C (I,J),A)
                                         % Mask = [ ] ;
 
+save gunk C A I J dn scalar I0 J0 accum
                                         C0 = GB_spec_subassign (C, [ ], accum, A, I, J, dn, scalar);
                                         C1 = GB_mex_subassign  (C, [ ], accum, A, I0, J0, dn);
                                         GB_spec_compare (C0, C1) ;

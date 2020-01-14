@@ -978,7 +978,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
 
         TaskList [taskid].Hi = Hi_split ;
-        TaskList [taskid].Hf = Hf_split ;
+        TaskList [taskid].Hf = (void *) Hf_split ;
         TaskList [taskid].Hx = Hx_split ;
 
         int64_t hash_size = TaskList [taskid].hsize ;

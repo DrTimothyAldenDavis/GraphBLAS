@@ -404,24 +404,21 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool C_splat_scalar = false ;   // C(:,:) = x
     bool C_splat_matrix = false ;   // C(:,:) = A
 
-    bool C_splat = (whole_C_matrix && (M == NULL) && (accum == NULL)) ;
+    bool C_splat = whole_C_matrix && (M == NULL) && !Mask_comp
+        && (accum == NULL) ;
     if (C_splat)
     {
         // C(:,:) = x or A
         if (scalar_expansion)
-        {
+        { 
             // C(:,:) = x
             C_splat_scalar = true ;
         }
         else
-        {
+        { 
             // C(:,:) = A
             C_splat_matrix = true ;
         }
-    }
-
-    if (C_splat)
-    {
         // For C(:,:) = x or A, the prior content of C is discarded.
         // C_replace is effectively false.
         C_replace = false ;
@@ -610,14 +607,14 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         && (accum != NULL))
     {
         if (scalar_expansion)
-        {
+        { 
             // C(:,:) += x where C is dense.
             // Since x is a scalar, C_replace becomes effectively false.
             C_dense_update = true ;
             C_replace = false ;
         }
         else
-        {
+        { 
             // C(:,:) += A, where C is dense, but only if C_replace is false
             C_dense_update = !C_replace ;
         }
@@ -633,25 +630,25 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool C_Mask_matrix = (!scalar_expansion && simple_mask) ;
 
     bool S_Extraction ;
-    if (C_splat_scalar)
-    {
+    if (empty_mask)
+    { 
+        // use Method 00: C(I,J) = empty
+        S_Extraction = true ;
+    }
+    else if (C_splat_scalar)
+    { 
         // Method 21: C(:,:) = x where x is a scalar; C becomes dense
         S_Extraction = false ;
     }
     else if (C_splat_matrix)
-    {
+    { 
         // Method 24: C(:,:) = A
         S_Extraction = false ;
     }
     else if (C_dense_update)
-    {
+    { 
         // Methods 22 and 23: C(:,:) += x or A where C is dense
         S_Extraction = false ;
-    }
-    else if (empty_mask)
-    { 
-        // use Method 00: C(I,J) = empty
-        S_Extraction = true ;
     }
     else if (C_Mask_scalar)
     { 
@@ -673,7 +670,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
     }
     else
-    {
+    { 
         // all other methods require S
         S_Extraction = true ;
     }
@@ -814,8 +811,30 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     // For the single case C(I,J)<M>=A, two methods can be used: 06n and 06s.
 
-    if (C_splat_scalar)
-    {
+    if (empty_mask)
+    { 
+
+        //----------------------------------------------------------------------
+        // C(I,J)<!,repl> = empty
+        //----------------------------------------------------------------------
+
+        //  =====================       ==============
+        //  M   cmp rpl acc A   S       method: action
+        //  =====================       ==============
+        //  -   c   r           S       00:  C(I,J)<!,repl> = empty, with S
+
+        ASSERT (C_replace) ;
+        ASSERT (S != NULL) ;
+
+        // Method 00: C(I,J) = empty ; using S
+        GBBURBLE ("C(I,J) = empty ; using S ") ;
+        GB_OK (GB_subassign_00 (C,
+            I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
+            S, Context)) ;
+
+    }
+    else if (C_splat_scalar)
+    { 
 
         //----------------------------------------------------------------------
         // C(:,:) = x where x is a scalar; C becomes dense
@@ -840,7 +859,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     }
     else if (C_splat_matrix)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C(:,:) = A
@@ -865,7 +884,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     }
     else if (C_dense_update)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // C(:,:) += A or x where C is dense
@@ -896,28 +915,6 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             GBBURBLE ("(dense C) += Z ") ;
             GB_OK (GB_dense_accum_sparse (C, A, accum, Context)) ;
         }
-
-    }
-    else if (empty_mask)
-    { 
-
-        //----------------------------------------------------------------------
-        // C(I,J)<!,repl> = empty
-        //----------------------------------------------------------------------
-
-        //  =====================       ==============
-        //  M   cmp rpl acc A   S       method: action
-        //  =====================       ==============
-        //  -   c   r           S       00:  C(I,J)<!,repl> = empty, with S
-
-        ASSERT (C_replace) ;
-        ASSERT (S != NULL) ;
-
-        // Method 00: C(I,J) = empty ; using S
-        GBBURBLE ("C(I,J) = empty ; using S ") ;
-        GB_OK (GB_subassign_00 (C,
-            I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon,
-            S, Context)) ;
 
     }
     else if (C_Mask_scalar)
