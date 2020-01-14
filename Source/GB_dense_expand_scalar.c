@@ -187,7 +187,7 @@ GrB_Info GB_dense_expand_scalar     // C(:,:) = x; C is a matrix and x a scalar
                 // worker for all user-defined types
                 GB_BURBLE_N (cnzmax, "generic ") ;
                 GB_void *GB_RESTRICT Cx = C->x ;
-                #pragma (omp parallel for num_threads(nthreads) schedule(static)
+                #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (pC = 0 ; pC < cnzmax ; pC++)
                 {
                     memcpy (Cx +((pC)*csize), cwork, csize) ;
