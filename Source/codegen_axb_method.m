@@ -14,6 +14,7 @@ name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 fprintf (f, 'define(`GB_AgusB'', `GB_AgusB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot2B'', `GB_Adot2B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot3B'', `GB_Adot3B__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Adot4B'', `GB_Adot4B__%s'')\n', name) ;
 fprintf (f, 'define(`GB_AheapB'', `GB_AheapB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Asaxpy3B'', `GB_Asaxpy3B__%s'')\n', name) ;
 
@@ -143,14 +144,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +21 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +23 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +21 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +23 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

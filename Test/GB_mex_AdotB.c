@@ -48,7 +48,7 @@ GrB_Info adotb_complex (GB_Context Context)
         return (info) ;
     }
 
-    // force completion, since GB_AxB_meta expects its inputs to be finished
+    // force completion
     info = GrB_wait ( ) ;
     if (info != GrB_SUCCESS)
     {

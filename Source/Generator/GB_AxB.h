@@ -34,3 +34,12 @@ GrB_Info GB_Asaxpy3B
     GB_Context Context
 ) ;
 
+GrB_Info GB_Adot4B
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    int64_t *GB_RESTRICT A_slice, int naslice,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice, int nbslice,
+    const int nthreads
+) ;

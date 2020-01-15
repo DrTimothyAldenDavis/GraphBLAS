@@ -4,7 +4,7 @@ function test90
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\n -------------- GB_AxB_meta with pre-compiled semiring\n') ;
+fprintf ('\n -------------- A*B plus_rdiv (pre-compiled semiring)\n') ;
 
 rng ('default') ;
 

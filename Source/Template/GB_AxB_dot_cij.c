@@ -21,9 +21,8 @@
 // Only one of the three are #defined: either GB_PHASE_1_OF_2, GB_PHASE_2_OF_2,
 // or GB_DOT3.
 
-#undef GB_DOT_MERGE
-
 // cij += A(k,i) * B(k,j), for merge operation
+#undef  GB_DOT_MERGE
 #define GB_DOT_MERGE                                                \
 {                                                                   \
     GB_GETA (aki, Ax, pA) ;             /* aki = A(k,i) */          \

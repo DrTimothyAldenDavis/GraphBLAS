@@ -31,7 +31,7 @@
 
 GrB_Info info ;
 bool malloc_debug = false ;
-bool ignore = false ;
+bool ignore = false, ignore2 = false ;
 bool atranspose = false ;
 bool btranspose = false ;
 GrB_Matrix A = NULL, B = NULL, B64 = NULL, C = NULL ;
@@ -76,16 +76,20 @@ GrB_Info axb (GB_Context Context)
 
     // C = A*B
     info = GB_AxB_meta (&C,
+        NULL,       // not in place
+        false,      // C_replace
         true,       // CSC
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
+        NULL,       // no accum
         A, B,
         My_plus_rdiv2,
         atranspose,
         btranspose,
         flipxy,
         &ignore,    // mask_applied
+        &ignore2,    // mask_applied
         AxB_method, &AxB_method_used, Context) ;
 
     // does nothing if the objects are pre-compiled
@@ -183,7 +187,7 @@ void mexFunction
     GrB_Matrix_new (&B, GrB_FP32, bnrows, bncols) ;
     GrB_assign (B, NULL, NULL, B64, GrB_ALL, 0, GrB_ALL, 0, NULL) ;
 
-    // B must be completed for GB_AxB_meta to work
+    // B must be completed
     GrB_Index nvals ;
     GrB_Matrix_nvals (&nvals, B) ;
 

@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -24,6 +23,7 @@
 
 // A'*B function (dot2):     GB_Adot2B__max_isgt_int32
 // A'*B function (dot3):     GB_Adot3B__max_isgt_int32
+// C+=A'*B function (dot4):  GB_Adot4B__max_isgt_int32
 // A*B function (saxpy3):    GB_Asaxpy3B__max_isgt_int32
 
 // C type:   int32_t
@@ -83,6 +83,14 @@
 
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij
+
+// cij = Cx [pC]
+#define GB_GETC(cij,pC) \
+    cij = Cx [pC]
+
+// Cx [pC] = cij
+#define GB_PUTC(cij,pC) \
+    Cx [pC] = cij
 
 // For saxpy3:
 
@@ -172,6 +180,28 @@ GrB_Info GB_Adot3B__max_isgt_int32
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_AxB_dot3_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C+=A'*B: dense dot product
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot4B__max_isgt_int32
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    int64_t *GB_RESTRICT A_slice, int naslice,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice, int nbslice,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_dot4_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

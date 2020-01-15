@@ -31,10 +31,10 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_Context Context
 ) ;
 
-
-GrB_Info GB_AxB_dot_parallel        // parallel C=A'*B
+GrB_Info GB_AxB_dot_parallel        // parallel dot product
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
+    GrB_Matrix C_in_place,          // input/output matrix, if done in place
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
@@ -42,6 +42,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel C=A'*B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
+    bool *done_in_place,            // if true, C_in_place was computed in place
     GB_Context Context
 ) ;
 
@@ -58,11 +59,14 @@ GrB_Info GB_AxB_flopcount
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
-    GrB_Matrix *Chandle,            // output matrix C
+    GrB_Matrix *Chandle,            // output matrix (if not done in place)
+    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    bool C_replace,                 // C matrix descriptor
     const bool C_is_csc,            // desired CSR/CSC format of C
     GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
     const GrB_Matrix M_in,          // mask for C<M> (not complemented)
     const bool Mask_comp,           // if true, use !M
+    const GrB_BinaryOp accum,       // accum operator for C_input += A*B
     const GrB_Matrix A_in,          // input matrix
     const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -70,6 +74,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool B_transpose,               // if true, use B', else B
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
+    bool *done_in_place,            // if true, C was computed in place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
     GrB_Desc_Value *AxB_method_used,// method selected
     GB_Context Context
@@ -208,6 +213,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
+    GB_Context Context
+) ;
+
+GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
+(
+    GrB_Matrix C,                   // input/output matrix, must be dense
+    const GrB_Matrix A,             // input matrix
+    const GrB_Matrix B,             // input matrix
+    const GrB_Semiring semiring,    // semiring that defines C+=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     GB_Context Context
 ) ;
 

@@ -105,18 +105,32 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // T = A*B, A'*B, A*B', or A'*B', also using the mask to cut time and memory
     //--------------------------------------------------------------------------
 
+    // If C is dense (with no pending work), and the accum is present, then
+    // C+=A*B can be done in place (C_replace is effectively false).  If C is
+    // dense, M is present, and C_replace is false, then C<M>+=A*B or
+    // C<!M>+=A*B can also be done in place.  In all of these cases, C remains
+    // dense.
+
     bool mask_applied = false ;
-    bool C_is_csc = C->is_csc ;
-    GrB_Matrix T, MT = NULL ;
-    info = GB_AxB_meta (&T, C_is_csc, &MT, M, Mask_comp, A, B, semiring,
-        A_transpose, B_transpose, flipxy, &mask_applied, AxB_method,
-        &(C->AxB_method_used), Context) ;
+    bool done_in_place = false ;
+    GrB_Matrix T = NULL, MT = NULL ;
+    info = GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp, accum,
+        A, B, semiring, A_transpose, B_transpose, flipxy, &mask_applied,
+        &done_in_place, AxB_method, &(C->AxB_method_used), Context) ;
 
     if (info != GrB_SUCCESS)
     { 
         // out of memory
         ASSERT (T == NULL) ;
         ASSERT (MT == NULL) ;
+        return (info) ;
+    }
+
+    if (done_in_place)
+    { 
+        // C<...>+=A*B has been computed in place; no more work to do
+        GB_MATRIX_FREE (&MT) ;
+        ASSERT_MATRIX_OK (C, "C from GB_mxm (in place)", GB0) ;
         return (info) ;
     }
 

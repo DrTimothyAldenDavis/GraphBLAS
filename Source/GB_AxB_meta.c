@@ -12,7 +12,8 @@
 // matrix is present, it is not complemented, since this function can only
 // handle a non-complemented mask matrix.  A complemented mask is handled in
 // GB_accum_mask, after this matrix C is computed, in GB_mxm.  The result of
-// this matrix is the T matrix in GB_mxm.
+// this matrix is either the T matrix in GB_mxm, or (if done in-place),
+// the final output matrix C passed in from the user (C_in_place).
 
 // The method is chosen automatically:  a gather/scatter saxpy method
 // (Gustavson), a heap-based saxpy method, or a dot product method.
@@ -36,11 +37,14 @@
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
-    GrB_Matrix *Chandle,            // output matrix C
+    GrB_Matrix *Chandle,            // output matrix (if not done in place)
+    GrB_Matrix C_in_place,          // input/output matrix, if done in place
+    bool C_replace,                 // C matrix descriptor
     const bool C_is_csc,            // desired CSR/CSC format of C
     GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
     const GrB_Matrix M_in,          // mask for C<M> (not complemented)
     const bool Mask_comp,           // if true, use !M
+    const GrB_BinaryOp accum,       // accum operator for C_in_place += A*B
     const GrB_Matrix A_in,          // input matrix
     const GrB_Matrix B_in,          // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -48,6 +52,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     bool B_transpose,               // if true, use B', else B
     bool flipxy,                    // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
+    bool *done_in_place,            // if true, C was computed in place
     GrB_Desc_Value AxB_method,      // for auto vs user selection of methods
     GrB_Desc_Value *AxB_method_used,// method selected
     GB_Context Context
@@ -58,6 +63,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // check inputs
     //--------------------------------------------------------------------------
 
+    ASSERT_MATRIX_OK_OR_NULL (C_in_place, "C_in_place for meta A*B", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (M_in, "M for meta A*B", GB0) ;
     ASSERT_MATRIX_OK (A_in, "A_in for meta A*B", GB0) ;
     ASSERT_MATRIX_OK (B_in, "B_in for meta A*B", GB0) ;
@@ -82,12 +88,48 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     GrB_Matrix MT = NULL ;
 
     (*mask_applied) = false ;
+    (*done_in_place) = false ;
     (*AxB_method_used) = GxB_DEFAULT ;
 
     if (AxB_method == GxB_AxB_HEAP)
     {
         // TODO Heap method not yet reinstalled; use Hash instead
         AxB_method = GxB_AxB_HASH ;
+    }
+
+    //--------------------------------------------------------------------------
+    // see if the work can be done in place
+    //--------------------------------------------------------------------------
+
+    // C can be computed in place if it is already dense, and if it is
+    // guaranteed to remain dense after the computation is done.  This case
+    // requires the accum operator to be present and it must match the monoid
+    // of the semiring.  C_replace must be false, or effectively false.
+    // Finally, C must not transposed on output.
+
+    bool can_do_in_place = false ;
+    if (C_in_place != NULL && accum != NULL)
+    { 
+        // check if C_in_place is competely dense:  all entries present and no
+        // pending work
+        bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C_in_place)
+            && GB_is_dense (C_in_place) ;
+
+        // accum must be present, and must match the monoid of the semiring,
+        // and the ztype of the monoid must match the type of C
+        bool accum_is_monoid = (accum == semiring->add->op) 
+            && (C_in_place->type == accum->ztype) ;
+
+        // C += A*B with C_replace ignored (effectively false)
+        // C<M> += A*B with C_replace false
+        // C<!M> += A*B with C_replace false
+        can_do_in_place =
+            C_is_dense
+            && accum_is_monoid
+            && ((M_in == NULL) || (M_in != NULL && !C_replace)) ;
+
+        // C must also not be transposed on output; see below.
+        // Nor can it be aliased with any input matrix.
     }
 
     //--------------------------------------------------------------------------
@@ -232,6 +274,24 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     }
 
     ASSERT_MATRIX_OK_OR_NULL (M, "final M for A*B", GB0) ;
+
+    //--------------------------------------------------------------------------
+    // check additional conditions for in-place computation of C
+    //--------------------------------------------------------------------------
+
+    if (can_do_in_place)
+    { 
+        // C cannot be done in place if it is aliased with any input matrix.
+        // Also cannot compute C in place (yet) if it is to be transposed.
+        bool C_aliased =
+            GB_aliased (C_in_place, M) ||
+            GB_aliased (C_in_place, A) ||
+            GB_aliased (C_in_place, B) ;
+        if (C_transpose || C_aliased)
+        {
+            can_do_in_place = false ;
+        }
+    }
 
     //--------------------------------------------------------------------------
     // burble
@@ -384,11 +444,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (do_adotb)
         { 
-            // C<M> = A'*B via dot product method
+            // C<M>=A'*B via dot product, or C_in_place<M>+=A'*B if in place
             GBBURBLE ("C%s=A'*B, %sdot_product ", M_str,
                 (M != NULL && !Mask_comp) ? "masked_" : "") ;
-            GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, mask_applied, Context)) ;
+            GB_OK (GB_AxB_dot_parallel (Chandle,
+                (can_do_in_place) ? C_in_place : NULL,
+                M, Mask_comp, A, B, semiring, flipxy,
+                mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
@@ -424,13 +486,15 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
-            // C<M> = A*B' via dot product
+            // C<M>=A*B' via dot product, or C_in_place<M>+=A*B' if in place
             GBBURBLE ("C%s=A*B', dot_product (transposed %s) (transposed %s) ",
                 M_str, A_str, B_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
-            GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, BT, semiring,
-                flipxy, mask_applied, Context)) ;
+            GB_OK (GB_AxB_dot_parallel (Chandle,
+                (can_do_in_place) ? C_in_place : NULL,
+                M, Mask_comp, AT, BT, semiring, flipxy,
+                mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
@@ -465,11 +529,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
         else if (AxB_method == GxB_AxB_DOT)
         { 
-            // C<M> = A*B via dot product
+            // C<M>=A*B via dot product, or C_in_place<M>+=A*B if in place
             GBBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
-            GB_OK (GB_AxB_dot_parallel (Chandle, M, Mask_comp, AT, B, semiring,
-                flipxy, mask_applied, Context)) ;
+            GB_OK (GB_AxB_dot_parallel (Chandle,
+                (can_do_in_place) ? C_in_place : NULL,
+                M, Mask_comp, AT, B, semiring, flipxy,
+                mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
         }
         else
@@ -496,9 +562,19 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // applying the accum operator and/or writing the result back to the user's
     // C.
 
-    GrB_Matrix C = (*Chandle) ;
-    ASSERT (C != NULL) ;
-    C->is_csc = C_transpose ? !C_is_csc : C_is_csc ;
+    if (*done_in_place)
+    {
+        // C can be done in place only if C is not transpose on output
+        ASSERT_MATRIX_OK (C_in_place, "C_in_place output for all C=A*B", GB0) ;
+        ASSERT (C_in_place->is_csc == C_is_csc) ;
+    }
+    else
+    {
+        GrB_Matrix C = (*Chandle) ;
+        ASSERT (C != NULL) ;
+        C->is_csc = C_transpose ? !C_is_csc : C_is_csc ;
+        ASSERT_MATRIX_OK (C, "C output for all C=A*B", GB0) ;
+    }
 
     //--------------------------------------------------------------------------
     // free workspace and return result
@@ -506,9 +582,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     GB_MATRIX_FREE (&AT) ;
     GB_MATRIX_FREE (&BT) ;
-    ASSERT_MATRIX_OK (C, "C output for all C=A*B", GB0) ;
     ASSERT_MATRIX_OK_OR_NULL (MT, "MT if computed", GB0) ;
-
     if (MT_handle != NULL)
     { 
         // return MT to the caller, if computed and the caller wants it

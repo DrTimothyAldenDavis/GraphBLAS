@@ -29,7 +29,7 @@
 
 GrB_Info info ;
 bool malloc_debug = false ;
-bool ignore = false ;
+bool ignore = false, ignore2 = false ;
 bool cprint = false ;
 GrB_Matrix A = NULL, B = NULL, C = NULL ;
 int64_t anrows = 0 ;
@@ -73,16 +73,20 @@ GrB_Info axb (GB_Context Context, bool cprint)
 
     // C = A*B
     info = GB_AxB_meta (&C,
+        NULL,       // not in place
+        false,      // C_replace
         true,       // CSC
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
+        NULL,       // no accum
         A, B,
         My_plus_rdiv,
         false,      // no A transpose
         false,      // no B transpose
         false,      // no flipxy
         &ignore,    // mask_applied
+        &ignore2,   // done_in_place
         AxB_method, &AxB_method_used, Context) ;
 
     if (C != NULL)

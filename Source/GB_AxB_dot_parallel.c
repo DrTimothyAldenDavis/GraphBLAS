@@ -28,6 +28,10 @@
 // The output matrix C = *Chandle has not been allocated, so C is NULL on
 // input.  The mask M is optional.
 
+// If C is computed in place, Chandle is ignored, and the result is computed
+// in C_in_place instead.  This case requires the accum operator to match
+// the monoid of the semiring.
+
 // The semiring defines C=A*B.  flipxy modifies how the semiring multiply
 // operator is applied.  If false, then fmult(aik,bkj) is computed.  If true,
 // then the operands are swapped, and fmult(bkj,aij) is done instead.
@@ -54,6 +58,7 @@
 GrB_Info GB_AxB_dot_parallel        // parallel dot product
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
+    GrB_Matrix C_in_place,          // input/output matrix, if done in place
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
     const GrB_Matrix A,             // input matrix A
@@ -61,6 +66,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, mask was applied
+    bool *done_in_place,            // if true, C_in_place was computed in place
     GB_Context Context
 )
 {
@@ -119,6 +125,21 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
             A->nvec_nonempty = GB_nvec_nonempty (A, NULL) ;
         }
 
+        //======================================================================
+        // in place C+=A'*B
+        //======================================================================
+
+        if (C_in_place != NULL && M == NULL && !Mask_comp)
+        {
+            GBBURBLE ("dense, C+=A'*B in place ") ;
+            (*done_in_place) = true ;
+            return (GB_AxB_dot4 (C_in_place, A, B, semiring, flipxy, Context)) ;
+        }
+
+        //----------------------------------------------------------------------
+        // determine the number of threads to use
+        //----------------------------------------------------------------------
+
         int64_t anvec = A->nvec ;
         int64_t anz   = GB_NNZ (A) ;
 
@@ -126,10 +147,6 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         int64_t bnz   = GB_NNZ (B) ;
 
         ASSERT (A->vlen == B->vlen) ;
-
-        //----------------------------------------------------------------------
-        // determine the number of threads to use
-        //----------------------------------------------------------------------
 
         GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
         int nthreads = GB_nthreads (anz + bnz, chunk, nthreads_max) ;

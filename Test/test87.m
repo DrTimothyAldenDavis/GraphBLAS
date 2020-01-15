@@ -75,7 +75,7 @@ fprintf ('just A*B %g method %s (both A and B non-hypersparse)\n', tg1, method1)
 
 % this is slower than GB_mex_AxB (A',B) even though it uses the
 % same method, because the MATLAB A' above is non-hypersparse,
-% but the internal AT=A' in GB_AxB_meta is hypersparse.
+% but the internal AT=A' is hypersparse.
 
 fprintf ('GrB A''*B native (AT becomes hypersparse):\n') ;
 tic

@@ -31,7 +31,7 @@
 
 GrB_Info info ;
 bool malloc_debug = false ;
-bool ignore = false ;
+bool ignore = false, ignore2 = false ;
 bool atranspose = false ;
 bool btranspose = false ;
 GrB_Matrix A = NULL, B = NULL, C = NULL, Aconj = NULL, Bconj = NULL,
@@ -67,16 +67,20 @@ GrB_Info axb (GB_Context Context)
 
     // C = A*B, A'*B, A*B', or A'*B'
     info = GB_AxB_meta (&C,
+        NULL,       // not in place
+        false,      // C_replace
         true,       // CSC
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
+        NULL,       // no accum
         A, B,
         semiring,   // GrB_PLUS_TIMES_FP64
         atranspose,
         btranspose,
         false,      // flipxy
         &ignore,    // mask_applied
+        &ignore2,   // done_in_place
         AxB_method, &AxB_method_used, Context) ;
 
     GrB_free (&add) ;
@@ -128,7 +132,7 @@ GrB_Info axb_complex (GB_Context Context)
 
     }
 
-    // force completion, since GB_AxB_meta expects its inputs to be finished
+    // force completion
     info = GrB_wait ( ) ;
     if (info != GrB_SUCCESS)
     {
@@ -146,10 +150,13 @@ GrB_Info axb_complex (GB_Context Context)
     #endif
 
     info = GB_AxB_meta (&C,
+        NULL,       // not in place
+        false,      // C_replace
         true,       //CSC
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
+        NULL,       // no accum
         (atranspose) ? Aconj : A,
         (btranspose) ? Bconj : B,
         #ifdef MY_COMPLEX
@@ -161,6 +168,7 @@ GrB_Info axb_complex (GB_Context Context)
         btranspose,
         false,      // flipxy
         &ignore,    // mask_applied
+        &ignore2,   // done_in_place
         AxB_method, &AxB_method_used, Context) ;
 
     #ifdef MY_COMPLEX
@@ -192,6 +200,7 @@ void mexFunction
     info = GrB_SUCCESS ;
     malloc_debug = GB_mx_get_global (true) ;
     ignore = false ;
+    ignore2 = false ;
     A = NULL ;
     B = NULL ;
     C = NULL ;
