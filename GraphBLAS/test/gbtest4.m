@@ -37,6 +37,7 @@ for k1 = 1:length (ops)
     end
 end
 
+nsemirings
 assert (nsemirings == 1918)
 GrB.semiringinfo
 

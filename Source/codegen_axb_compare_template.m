@@ -20,6 +20,23 @@ codegen_axb_method ('lor', multop, add, addfunc,  mult, 'bool', 'uint64_t', 'fal
 codegen_axb_method ('lor', multop, add, addfunc,  mult, 'bool', 'float'   , 'false', 'true', 1) ;
 codegen_axb_method ('lor', multop, add, addfunc,  mult, 'bool', 'double'  , 'false', 'true', 1) ;
 
+% any monoid
+add = 'w = t' ;
+addfunc = 't' ;
+if (~isempty (bmult))
+codegen_axb_method ('any', multop, add, addfunc, bmult, 'bool', 'bool'    , 'false', '(any value)', 0) ;
+end
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'int8_t'  , 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'uint8_t' , 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'int16_t' , 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'uint16_t', 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'int32_t' , 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'uint32_t', 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'int64_t' , 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'uint64_t', 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'float'   , 'false', '(any value)', 0) ;
+codegen_axb_method ('any', multop, add, addfunc,  mult, 'bool', 'double'  , 'false', '(any value)', 0) ;
+
 % land monoid
 add = 'w &= t' ;
 addfunc = 'w & t' ;

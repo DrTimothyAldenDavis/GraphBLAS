@@ -10,6 +10,12 @@ f = fopen ('control.m4', 'w') ;
 
 name = sprintf ('%s_%s_%s', addop, multop, fname) ;
 
+is_first  = isequal (multop, 'first') ;
+is_second = isequal (multop, 'second') ;
+is_pair   = isequal (multop, 'pair') ;
+
+is_any    = isequal (addop, 'any') ;
+
 % function names
 fprintf (f, 'define(`GB_AgusB'', `GB_AgusB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Adot2B'', `GB_Adot2B__%s'')\n', name) ;
@@ -26,9 +32,12 @@ fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 % identity and terminal values for the monoid
 fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 
-if (~isempty (terminal))
-    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', ...
-        terminal) ;
+if (is_any)
+    % the ANY monoid terminates on the first entry seen
+    fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
+    fprintf (f, 'define(`GB_dot_simd'', `;'')\n') ;
+elseif (~isempty (terminal))
+    fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', terminal) ;
     fprintf (f, 'define(`GB_dot_simd'', `;'')\n') ;
 else
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
@@ -53,10 +62,7 @@ else
 end
 fprintf (f, 'define(`GB_ctype_pun'', `%s'')\n', pun) ;
 
-is_pair = isequal (multop, 'pair') ;
-
 % to get an entry from A
-is_second = isequal (multop, 'second') ;
 if (is_second || is_pair)
     % value of A is ignored for the SECOND and PAIR operators
     fprintf (f, 'define(`GB_geta'', `;'')\n') ;
@@ -65,7 +71,6 @@ else
 end
 
 % to get an entry from B
-is_first = isequal (multop, 'first') ;
 if (is_first || is_pair)
     % value of B is ignored for the FIRST and PAIR operators
     fprintf (f, 'define(`GB_getb'', `;'')\n') ;
@@ -101,7 +106,7 @@ fprintf (f, 'define(`GB_add_function'', `%s'')\n', add2) ;
 % create the multiply-add operator
 if (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
     isequal (ztype, 'bool') || is_first || is_second || is_pair || ...
-    isequal (multop (1:2), 'is'))
+    isequal (multop (1:2), 'is') || isequal (multop, 'any'))
     % float and double do not get promoted.
     % bool is OK since promotion of the result (0 or 1) to int is safe.
     % first and second are OK since no promotion occurs.
@@ -112,7 +117,7 @@ if (isequal (ztype, 'float') || isequal (ztype, 'double') || ...
     multadd = strrep (multadd, 'yarg', '`$3''') ;
     fprintf (f, 'define(`GB_multiply_add'', `%s'')\n', multadd) ;
 else
-    % use explicit typecasing to avoid ANSI C integer promotion.
+    % use explicit typecasting to avoid ANSI C integer promotion.
     add2 = strrep (add,  'w', '`$1''') ;
     add2 = strrep (add2, 't', 'x_op_y') ;
     fprintf (f, 'define(`GB_multiply_add'', `%s x_op_y = %s ; %s'')\n', ...

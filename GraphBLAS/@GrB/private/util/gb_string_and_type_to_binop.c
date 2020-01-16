@@ -85,7 +85,7 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
         #ifdef GB_COMPLEX_TYPE
         if (type == gb_complex_type) return (...) ;
         #endif
-    
+
     }
     else if (MATCH (op_name, "pair"))
     { 
@@ -101,6 +101,25 @@ GrB_BinaryOp gb_string_and_type_to_binop    // return op from string and type
         if (type == GrB_UINT64) return (GxB_PAIR_UINT64) ;
         if (type == GrB_FP32  ) return (GxB_PAIR_FP32  ) ;
         if (type == GrB_FP64  ) return (GxB_PAIR_FP64  ) ;
+        #ifdef GB_COMPLEX_TYPE
+        if (type == gb_complex_type) return (... ) ;
+        #endif
+
+    }
+    else if (MATCH (op_name, "any"))
+    { 
+
+        if (type == GrB_BOOL  ) return (GxB_ANY_BOOL  ) ;
+        if (type == GrB_INT8  ) return (GxB_ANY_INT8  ) ;
+        if (type == GrB_INT16 ) return (GxB_ANY_INT16 ) ;
+        if (type == GrB_INT32 ) return (GxB_ANY_INT32 ) ;
+        if (type == GrB_INT64 ) return (GxB_ANY_INT64 ) ;
+        if (type == GrB_UINT8 ) return (GxB_ANY_UINT8 ) ;
+        if (type == GrB_UINT16) return (GxB_ANY_UINT16) ;
+        if (type == GrB_UINT32) return (GxB_ANY_UINT32) ;
+        if (type == GrB_UINT64) return (GxB_ANY_UINT64) ;
+        if (type == GrB_FP32  ) return (GxB_ANY_FP32  ) ;
+        if (type == GrB_FP64  ) return (GxB_ANY_FP64  ) ;
         #ifdef GB_COMPLEX_TYPE
         if (type == gb_complex_type) return (... ) ;
         #endif

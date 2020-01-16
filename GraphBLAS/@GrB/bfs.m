@@ -38,8 +38,13 @@ function [v, parent] = bfs (A, s, varargin)
 % Example:
 %
 %   A = bucky ;
-%   [v pi] = GrB.bfs (A, 1)
-%   plot (graph (A))
+%   s = 1 ;
+%   [v pi] = GrB.bfs (A, s)
+%   figure (1) ;
+%   subplot (1,2,1) ; plot (graph (A)) ;
+%   pi2 = full (double (pi)) ;
+%   pi2 (s) = 0 ;
+%   subplot (1,2,2) ; treeplot (pi2) ; title ('BFS tree') ;
 %   n = size (A,1) ;
 %   for level = 1:n
 %       level
@@ -50,7 +55,7 @@ function [v, parent] = bfs (A, s, varargin)
 %       end
 %   end
 %
-% See also graph/bfsearch, graph/shortestpathtree.
+% See also graph/bfsearch, graph/shortestpathtree, treeplot.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

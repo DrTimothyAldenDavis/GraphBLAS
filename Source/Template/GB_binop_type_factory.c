@@ -9,20 +9,8 @@
 
 // A template file #include'd in GB_binop_factory.c
 
-// This file is used for 20 operators.  The operator is combined here
-// with 10 or 11 types to create 10 or 11 unique workers.
-
-//      FIRST, SECOND, PAIR, MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, RDIV,
-//      ISEQ, ISNE, ISGT, ISLT, ISGE, ISLE,
-//      LAND, LOR, LXOR.
-
-// For all of them, the types of x, y, and z are the same.  There are 10
-// non-boolean operators and 0 or 1 boolean operators defined here.
-
-// GB_NO_BOOLEAN is defined for 15 of these multiply operators in the
-// #include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*)
-// since those multiply operators are redundant and have been renamed.  For
-// these, the boolean operators are not needed.
+// GB_NO_BOOLEAN is defined for redundant boolean multiply operators in the
+// #include'ing file (min, max, plus, minus, rminus, times, div, rdiv, is*).
 
 {
     switch (xycode)

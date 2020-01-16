@@ -22,6 +22,10 @@ codegen_binop_template ('first',  0, 'xarg', 'xarg') ;
 codegen_binop_template ('second', 0, 'yarg', 'yarg') ;
 codegen_binop_template ('pair',   0, '1', '1') ;
 
+% The ANY operator is not used as a binary operator in the generated functions.
+% It can be used as the binary op in eWiseAdd, eWiseMult, etc, but has been
+% renamed to SECOND before calling the generated function.
+
 codegen_binop_template ('min',    0, [ ], 'GB_IMIN (xarg, yarg)', 'fminf (xarg, yarg)', 'fmin (xarg, yarg)') ;
 codegen_binop_template ('max',    0, [ ], 'GB_IMAX (xarg, yarg)', 'fmaxf (xarg, yarg)', 'fmax (xarg, yarg)') ;
 codegen_binop_template ('plus',   0, [ ], '(xarg + yarg)') ;

@@ -454,9 +454,9 @@
                 //--------------------------------------------------------------
 
                 // The least significant 2 bits of Hf [hash] is the flag f, and
-                // the upper bits contain h, as a pair (h,f).  After this
-                // phase0, if M(i,j)=1 then the hash table contains ((i+1),1)
-                // in Hf [hash] at some location.
+                // the upper bits contain h, as (h,f).  After this phase0, if
+                // M(i,j)=1 then the hash table contains ((i+1),1) in Hf [hash]
+                // at some location.
 
                 // Later, the flag values of f = 2 and 3 are also used.
                 // Only f=1 is set in this phase.

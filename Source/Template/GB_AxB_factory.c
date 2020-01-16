@@ -21,6 +21,10 @@
 //          operator is TxT->bool (for the comparison operators, LT, GT, etc),
 //          and where the monoid is bool x bool -> bool.
 
+// If the multiplicative operator is ANY, then it is replaced here by SECOND,
+// since that is faster for the saxpy-based methods (y is the value of B(k,j),
+// which is loaded less frequently from memory than A(i,k)).
+
 {
     //--------------------------------------------------------------------------
     // launch the switch factory
@@ -41,6 +45,7 @@
 
         //----------------------------------------------------------------------
         case GB_SECOND_opcode  :    // z = y
+        case GB_ANY_opcode     :    // z = y
         //----------------------------------------------------------------------
 
             // 44 semirings: (min,max,plus,times) for non-boolean, and

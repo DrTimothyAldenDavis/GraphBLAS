@@ -82,6 +82,7 @@ ops1 = {
 'FIRST',
 'SECOND',
 'PAIR',     % extension to the GraphBLAS C API
+'ANY',      % extension to the GraphBLAS C API
 'MIN',
 'MAX',
 'PLUS',
@@ -174,7 +175,8 @@ mons = {
 'MIN',
 'MAX',
 'PLUS',
-'TIMES' } ;
+'TIMES',
+'ANY' } ;
 
 for k = 1:length (mons)
     op = mons {k} ;

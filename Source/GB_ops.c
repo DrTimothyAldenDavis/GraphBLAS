@@ -387,6 +387,19 @@ GB_MONOID_DEFINE_TERM ( GrB_, TIMES_UINT64 , uint64_t , 1          , 0)
 GB_MONOID_DEFINE      ( GrB_, TIMES_FP32   , float    , 1          )
 GB_MONOID_DEFINE      ( GrB_, TIMES_FP64   , double   , 1          )
 
+// ANY monoids:
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_INT8     , int8_t   , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_INT16    , int16_t  , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_INT32    , int32_t  , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_INT64    , int64_t  , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_UINT8    , uint8_t  , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_UINT16   , uint16_t , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_UINT32   , uint32_t , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_UINT64   , uint64_t , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_FP32     , float    , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_FP64     , double   , 0, 0)
+GB_MONOID_DEFINE_TERM ( GxB_, ANY_BOOL     , bool     , 0, 0)
+
 // Boolean monoids:
 GB_MONOID_DEFINE_TERM ( GxB_, LOR_BOOL     , bool     , false      , true )
 GB_MONOID_DEFINE_TERM ( GxB_, LAND_BOOL    , bool     , true       , false)

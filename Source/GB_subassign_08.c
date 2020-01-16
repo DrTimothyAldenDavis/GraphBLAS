@@ -124,8 +124,8 @@ GrB_Info GB_subassign_08
     // M(:,j) or A(:,j) are very sparse compared to the other, then the shorter
     // is traversed with a linear-time scan and a binary search is used for the
     // other.  If the number of nonzeros is comparable, a linear-time scan is
-    // used for both.  Once a pair of entries M(i,j)=1 and A(i,j), is found,
-    // the entry A(i,j) is accumulated or inserted into C.
+    // used for both.  Once two entries M(i,j)=1 and A(i,j) are found with the
+    // same index i, the entry A(i,j) is accumulated or inserted into C.
 
     // The algorithm is very much like the eWise multiplication of A.*M, so the
     // parallel scheduling relies on GB_emult_phase0(AA and GB_ewise_slice.

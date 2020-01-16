@@ -30,11 +30,11 @@ GrB_Info GB_Type_new
 
     #if ( ! GB_HAS_VLA )
 
-        if (sizeof_ctype > GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE)
+        if (sizeof_ctype > GB_VLA_MAXSIZE)
         {
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG, "user-defined types"
                 " are limited to %d bytes (ANSI C99 or later is required)",
-                GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE))) ;
+                GB_VLA_MAXSIZE))) ;
         }
 
     #endif

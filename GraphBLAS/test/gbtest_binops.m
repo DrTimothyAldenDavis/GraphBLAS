@@ -4,7 +4,7 @@ function [binops synonyms] = gbtest_binops
 %
 % [binops synonyms] = gbtest_binops ;
 %
-% returns a list of the names of the 25 operators in binops, and a list of
+% returns a list of the names of the operators in binops, and a list of
 % their synonyms in the 2nd output.
 %
 % See also GrB.binopinfo.
@@ -16,6 +16,7 @@ binops = {
     '1st'
     '2nd'
     'pair'
+    'any'
     'min'
     'max'
     '+'

@@ -3,6 +3,8 @@ function codegen_binop_method (binop, op, iscompare, xytype)
 %
 % codegen_binop_method (binop, op, iscompare, xytype)
 
+assert (~isequal (binop, 'any')) ;
+
 f = fopen ('control.m4', 'w') ;
 
 [fname, unsigned, bits] = codegen_type (xytype) ;

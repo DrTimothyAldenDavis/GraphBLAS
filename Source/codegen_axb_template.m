@@ -61,6 +61,20 @@ add = 'w = fmax (w, t)' ;
 addfunc = 'fmax (w, t)' ;
 codegen_axb_method ('max', multop, add, addfunc, dmult, 'double'  , 'double'  , neginf64    , plusinf64   , 0) ;
 
+% ANY monoid: all are terminal.
+add = 'w = t' ;
+addfunc = 't' ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'int8_t'  , 'int8_t'  , '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'int16_t' , 'int16_t' , '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'int32_t' , 'int32_t' , '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'int64_t' , 'int64_t' , '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'uint8_t' , 'uint8_t' , '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'uint16_t', 'uint16_t', '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'uint32_t', 'uint32_t', '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, imult, 'uint64_t', 'uint64_t', '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, fmult, 'float'   , 'float'   , '0' , [ ], 0) ;
+codegen_axb_method ('any', multop, add, addfunc, dmult, 'double'  , 'double'  , '0' , [ ], 0) ;
+
 % PLUS monoid: none are terminal.  All can be done with OpenMP atomic update
 add = 'w += t' ;
 addfunc = 'w + t' ;
@@ -96,6 +110,7 @@ if (~isempty (bmult))
     codegen_axb_method ('lor',  multop, 'w |= t', 'w | t', bmult, 'bool', 'bool', 'false', 'true' , 1) ;
     codegen_axb_method ('land', multop, 'w &= t', 'w & t', bmult, 'bool', 'bool', 'true' , 'false', 1) ;
     codegen_axb_method ('lxor', multop, 'w ^= t', 'w ^ t', bmult, 'bool', 'bool', 'false', [ ]    , 1) ;
+    codegen_axb_method ('any' , multop, 'w = t' , 't'    , bmult, 'bool', 'bool', '0'    , [ ]    , 0) ;
     add = 'w = (w == t)' ;
     addfunc = 'w == t' ;
     codegen_axb_method ('eq',   multop, add,      addfunc, bmult, 'bool', 'bool', 'true' , [ ]    , 0) ;

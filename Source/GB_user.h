@@ -427,6 +427,62 @@
 #define GB_DEF_GxB_PAIR_FP64_xtype double
 #define GB_DEF_GxB_PAIR_FP64_ytype double
 
+// op: ANY
+#define GB_DEF_GxB_ANY_BOOL_function GB_ANY_f_BOOL
+#define GB_DEF_GxB_ANY_BOOL_ztype bool
+#define GB_DEF_GxB_ANY_BOOL_xtype bool
+#define GB_DEF_GxB_ANY_BOOL_ytype bool
+
+#define GB_DEF_GxB_ANY_INT8_function GB_ANY_f_INT8
+#define GB_DEF_GxB_ANY_INT8_ztype int8_t
+#define GB_DEF_GxB_ANY_INT8_xtype int8_t
+#define GB_DEF_GxB_ANY_INT8_ytype int8_t
+
+#define GB_DEF_GxB_ANY_UINT8_function GB_ANY_f_UINT8
+#define GB_DEF_GxB_ANY_UINT8_ztype uint8_t
+#define GB_DEF_GxB_ANY_UINT8_xtype uint8_t
+#define GB_DEF_GxB_ANY_UINT8_ytype uint8_t
+
+#define GB_DEF_GxB_ANY_INT16_function GB_ANY_f_INT16
+#define GB_DEF_GxB_ANY_INT16_ztype int16_t
+#define GB_DEF_GxB_ANY_INT16_xtype int16_t
+#define GB_DEF_GxB_ANY_INT16_ytype int16_t
+
+#define GB_DEF_GxB_ANY_UINT16_function GB_ANY_f_UINT16
+#define GB_DEF_GxB_ANY_UINT16_ztype uint16_t
+#define GB_DEF_GxB_ANY_UINT16_xtype uint16_t
+#define GB_DEF_GxB_ANY_UINT16_ytype uint16_t
+
+#define GB_DEF_GxB_ANY_INT32_function GB_ANY_f_INT32
+#define GB_DEF_GxB_ANY_INT32_ztype int32_t
+#define GB_DEF_GxB_ANY_INT32_xtype int32_t
+#define GB_DEF_GxB_ANY_INT32_ytype int32_t
+
+#define GB_DEF_GxB_ANY_UINT32_function GB_ANY_f_UINT32
+#define GB_DEF_GxB_ANY_UINT32_ztype uint32_t
+#define GB_DEF_GxB_ANY_UINT32_xtype uint32_t
+#define GB_DEF_GxB_ANY_UINT32_ytype uint32_t
+
+#define GB_DEF_GxB_ANY_INT64_function GB_ANY_f_INT64
+#define GB_DEF_GxB_ANY_INT64_ztype int64_t
+#define GB_DEF_GxB_ANY_INT64_xtype int64_t
+#define GB_DEF_GxB_ANY_INT64_ytype int64_t
+
+#define GB_DEF_GxB_ANY_UINT64_function GB_ANY_f_UINT64
+#define GB_DEF_GxB_ANY_UINT64_ztype uint64_t
+#define GB_DEF_GxB_ANY_UINT64_xtype uint64_t
+#define GB_DEF_GxB_ANY_UINT64_ytype uint64_t
+
+#define GB_DEF_GxB_ANY_FP32_function GB_ANY_f_FP32
+#define GB_DEF_GxB_ANY_FP32_ztype float
+#define GB_DEF_GxB_ANY_FP32_xtype float
+#define GB_DEF_GxB_ANY_FP32_ytype float
+
+#define GB_DEF_GxB_ANY_FP64_function GB_ANY_f_FP64
+#define GB_DEF_GxB_ANY_FP64_ztype double
+#define GB_DEF_GxB_ANY_FP64_xtype double
+#define GB_DEF_GxB_ANY_FP64_ytype double
+
 // op: SECOND
 #define GB_DEF_GrB_SECOND_BOOL_function GB_SECOND_f_BOOL
 #define GB_DEF_GrB_SECOND_BOOL_ztype bool

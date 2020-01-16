@@ -102,6 +102,11 @@
     #define GB_PANEL                                \
         32
 
+// special case for the ANY monoid
+
+    #define GB_IS_ANY_MONOID                        \
+        0
+
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_TIMES || GxB_NO_FP64 || GxB_NO_TIMES_FP64)

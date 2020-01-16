@@ -20,6 +20,11 @@
     int64_t anz = GB_NNZ (A) ;
     ASSERT (anz > 0) ;
 
+    #if GB_IS_ANY_MONOID
+    // the ANY monoid can take any entry, and terminate immediately
+    s = Ax [anz-1] ;
+    #else
+
     //--------------------------------------------------------------------------
     // typecast workspace
     //--------------------------------------------------------------------------
@@ -264,5 +269,6 @@
             GB_ADD_ARRAY_TO_SCALAR (s, W, tid) ;
         }
     }
+    #endif
 }
 

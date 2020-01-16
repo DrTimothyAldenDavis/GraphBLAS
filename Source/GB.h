@@ -241,8 +241,8 @@
 #else
 
     // variable-length arrays are not allowed
-    #define GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE 128
-    #define GB_VLA(s) GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE
+    #define GB_VLA_MAXSIZE 128
+    #define GB_VLA(s) GB_VLA_MAXSIZE
     #define GB_VLA_NTHREADS(nthreads) GxB_NTHREADS_MAX
 
 #endif
@@ -405,43 +405,44 @@ typedef enum
     // TxT -> T
     //--------------------------------------------------------------------------
 
-    // 11 binary operators z=f(x,y) that return the same type as their inputs
+    // 12 binary operators z=f(x,y) that return the same type as their inputs
     GB_FIRST_opcode,    //  7: z = x
     GB_SECOND_opcode,   //  8: z = y
     GB_PAIR_opcode,     //  9: z = 1
-    GB_MIN_opcode,      // 10: z = min(x,y)
-    GB_MAX_opcode,      // 11: z = max(x,y)
-    GB_PLUS_opcode,     // 12: z = x + y
-    GB_MINUS_opcode,    // 13: z = x - y
-    GB_RMINUS_opcode,   // 14: z = y - x
-    GB_TIMES_opcode,    // 15: z = x * y
-    GB_DIV_opcode,      // 16: z = x / y ; special cases for bool and ints
-    GB_RDIV_opcode,     // 17: z = y / x ; special cases for bool and ints
+    GB_ANY_opcode,      // 10: z = 1
+    GB_MIN_opcode,      // 11: z = min(x,y)
+    GB_MAX_opcode,      // 12: z = max(x,y)
+    GB_PLUS_opcode,     // 13: z = x + y
+    GB_MINUS_opcode,    // 14: z = x - y
+    GB_RMINUS_opcode,   // 15: z = y - x
+    GB_TIMES_opcode,    // 16: z = x * y
+    GB_DIV_opcode,      // 17: z = x / y ; special cases for bool and ints
+    GB_RDIV_opcode,     // 18: z = y / x ; special cases for bool and ints
 
     // 6 binary operators z=f(x,y), x,y,z all the same type
-    GB_ISEQ_opcode,     // 18: z = (x == y)
-    GB_ISNE_opcode,     // 19: z = (x != y)
-    GB_ISGT_opcode,     // 20: z = (x >  y)
-    GB_ISLT_opcode,     // 21: z = (x <  y)
-    GB_ISGE_opcode,     // 22: z = (x >= y)
-    GB_ISLE_opcode,     // 23: z = (x <= y)
+    GB_ISEQ_opcode,     // 19: z = (x == y)
+    GB_ISNE_opcode,     // 20: z = (x != y)
+    GB_ISGT_opcode,     // 21: z = (x >  y)
+    GB_ISLT_opcode,     // 22: z = (x <  y)
+    GB_ISGE_opcode,     // 23: z = (x >= y)
+    GB_ISLE_opcode,     // 24: z = (x <= y)
 
     // 3 binary operators that work on purely boolean values
-    GB_LOR_opcode,      // 24: z = (x != 0) || (y != 0)
-    GB_LAND_opcode,     // 25: z = (x != 0) && (y != 0)
-    GB_LXOR_opcode,     // 26: z = (x != 0) != (y != 0)
+    GB_LOR_opcode,      // 25: z = (x != 0) || (y != 0)
+    GB_LAND_opcode,     // 26: z = (x != 0) && (y != 0)
+    GB_LXOR_opcode,     // 27: z = (x != 0) != (y != 0)
 
     //--------------------------------------------------------------------------
     // TxT -> bool
     //--------------------------------------------------------------------------
 
     // 6 binary operators z=f(x,y) that return bool (TxT -> bool)
-    GB_EQ_opcode,       // 27: z = (x == y)
-    GB_NE_opcode,       // 28: z = (x != y)
-    GB_GT_opcode,       // 29: z = (x >  y)
-    GB_LT_opcode,       // 30: z = (x <  y)
-    GB_GE_opcode,       // 31: z = (x >= y)
-    GB_LE_opcode,       // 32: z = (x <= y)
+    GB_EQ_opcode,       // 28: z = (x == y)
+    GB_NE_opcode,       // 29: z = (x != y)
+    GB_GT_opcode,       // 30: z = (x >  y)
+    GB_LT_opcode,       // 31: z = (x <  y)
+    GB_GE_opcode,       // 32: z = (x >= y)
+    GB_LE_opcode,       // 33: z = (x <= y)
 
     //--------------------------------------------------------------------------
     // user-defined: unary and binary operators

@@ -22,6 +22,10 @@ codegen_axb_template ('first',  'xarg', 'xarg') ;
 codegen_axb_template ('second', 'yarg', 'yarg') ;
 codegen_axb_template ('pair',   '1', '1') ;
 
+% The ANY operator is not used as a multiplicative operator in the generated
+% functions.  It can be used as the multiplicative op in a semiring, but is
+% renamed to SECOND before calling the generated function.
+
 codegen_axb_template ('min',    [ ], 'GB_IMIN (xarg, yarg)', 'fminf (xarg, yarg)', 'fmin (xarg, yarg)') ;
 codegen_axb_template ('max',    [ ], 'GB_IMAX (xarg, yarg)', 'fmaxf (xarg, yarg)', 'fmax (xarg, yarg)') ;
 codegen_axb_template ('plus',   [ ], '(xarg + yarg)') ;

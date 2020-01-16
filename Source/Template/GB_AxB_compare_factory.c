@@ -117,6 +117,27 @@ ASSERT (zcode == GB_BOOL_code) ;
             }
             break ;
 
+        case GB_ANY_opcode    :
+
+            switch (xycode)
+            {
+                #ifndef GB_NO_BOOLEAN
+                case GB_BOOL_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _bool  )
+                #endif
+                case GB_INT8_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _int8  )
+                case GB_UINT8_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint8 )
+                case GB_INT16_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _int16 )
+                case GB_UINT16_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint16)
+                case GB_INT32_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _int32 )
+                case GB_UINT32_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint32)
+                case GB_INT64_code  : GB_AxB_WORKER (_any, GB_MULT_NAME, _int64 )
+                case GB_UINT64_code : GB_AxB_WORKER (_any, GB_MULT_NAME, _uint64)
+                case GB_FP32_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fp32  )
+                case GB_FP64_code   : GB_AxB_WORKER (_any, GB_MULT_NAME, _fp64  )
+                default: ;
+            }
+            break ;
+
         default: ;
     }
 }

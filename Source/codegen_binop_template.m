@@ -5,6 +5,8 @@ function codegen_binop_template (binop, iscompare, bfunc, ifunc, ffunc, dfunc)
 
 fprintf ('\n%-7s', binop) ;
 
+assert (~isequal (binop, 'any'))
+
 if (nargin < 5)
     ffunc = [ ] ;
 end
