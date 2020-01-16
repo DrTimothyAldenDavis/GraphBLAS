@@ -17,12 +17,14 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):     GB_AaddB
-// A.*B function (eWiseMult):   GB_AemultB
-// A*D function (colscale):     GB_AxD
-// D*A function (rowscale):     GB_DxB
-// C+=A function (dense accum): GB_Cdense_accumA
-// C+=x function (dense accum): GB_Cdense_accumX
+// A+B function (eWiseAdd):         GB_AaddB
+// A.*B function (eWiseMult):       GB_AemultB
+// A*D function (colscale):         GB_AxD
+// D*A function (rowscale):         GB_DxB
+// C+=A function (dense accum):     GB_Cdense_accumA
+// C+=x function (dense accum):     GB_Cdense_accumX
+// C+=A+B function (dense ewise3):  GB_Cdense_ewise3_accum
+// C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum
 
 // C type:   GB_ctype
 // A type:   GB_atype
@@ -46,6 +48,10 @@
 #define GB_GETB(bij,Bx,pB)  \
     GB_getb(bij,Bx,pB)
 
+// declare scalar of the same type as C
+#define GB_CTYPE_SCALAR(t)  \
+    GB_ctype t
+
 // cij = Ax [pA]
 #define GB_COPY_A_TO_C(cij,Ax,pA) cij = Ax [pA] ;
 
@@ -67,6 +73,55 @@
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
+
+//------------------------------------------------------------------------------
+// C += A+B, all 3 matrices dense
+//------------------------------------------------------------------------------
+
+if_is_binop_subset
+
+GrB_Info GB_Cdense_ewise3_accum
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_dense_ewise3_accum_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+endif_is_binop_subset
+
+//------------------------------------------------------------------------------
+// C = A+B, all 3 matrices dense
+//------------------------------------------------------------------------------
+
+if_is_binop_subset
+
+GrB_Info GB_Cdense_ewise3_noaccum
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_dense_ewise3_noaccum_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+endif_is_binop_subset
+
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

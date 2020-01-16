@@ -37,5 +37,23 @@ GrB_Info GB_dense_expand_scalar     // C(:,:) = x; C is a matrix and x a scalar
     GB_Context Context
 ) ;
 
+GrB_Info GB_dense_ewise3_accum      // C += A+B, all 3 matrices dense
+(
+    GrB_Matrix C,                   // input/output matrix
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_BinaryOp op,          // accum and op for A+B
+    GB_Context Context
+) ;
+
+GrB_Info GB_dense_ewise3_noaccum    // C = A+B, all 3 matrices dense
+(
+    GrB_Matrix C,                   // input/output matrix
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const GrB_BinaryOp op,
+    GB_Context Context
+) ;
+
 #endif
 

@@ -1,5 +1,4 @@
 
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -19,12 +18,14 @@
 
 // C=binop(A,B) is defined by the following types and operators:
 
-// A+B function (eWiseAdd):     GB_AaddB__isgt_int64
-// A.*B function (eWiseMult):   GB_AemultB__isgt_int64
-// A*D function (colscale):     GB_AxD__isgt_int64
-// D*A function (rowscale):     GB_DxB__isgt_int64
-// C+=A function (dense accum): GB_Cdense_accumA__isgt_int64
-// C+=x function (dense accum): GB_Cdense_accumX__isgt_int64
+// A+B function (eWiseAdd):         GB_AaddB__isgt_int64
+// A.*B function (eWiseMult):       GB_AemultB__isgt_int64
+// A*D function (colscale):         GB_AxD__isgt_int64
+// D*A function (rowscale):         GB_DxB__isgt_int64
+// C+=A function (dense accum):     GB_Cdense_accumA__isgt_int64
+// C+=x function (dense accum):     GB_Cdense_accumX__isgt_int64
+// C+=A+B function (dense ewise3):  (none)
+// C=A+B function (dense ewise3):   (none)
 
 // C type:   int64_t
 // A type:   int64_t
@@ -48,6 +49,10 @@
 #define GB_GETB(bij,Bx,pB)  \
     int64_t bij = Bx [pB]
 
+// declare scalar of the same type as C
+#define GB_CTYPE_SCALAR(t)  \
+    int64_t t
+
 // cij = Ax [pA]
 #define GB_COPY_A_TO_C(cij,Ax,pA) cij = Ax [pA] ;
 
@@ -69,6 +74,55 @@
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     (GxB_NO_ISGT || GxB_NO_INT64 || GxB_NO_ISGT_INT64)
+
+//------------------------------------------------------------------------------
+// C += A+B, all 3 matrices dense
+//------------------------------------------------------------------------------
+
+#if 0
+
+GrB_Info (none)
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_dense_ewise3_accum_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+#endif
+
+//------------------------------------------------------------------------------
+// C = A+B, all 3 matrices dense
+//------------------------------------------------------------------------------
+
+#if 0
+
+GrB_Info (none)
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_dense_ewise3_noaccum_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+#endif
+
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

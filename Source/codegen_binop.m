@@ -26,14 +26,14 @@ codegen_binop_template ('pair',   0, '1', '1') ;
 % It can be used as the binary op in eWiseAdd, eWiseMult, etc, but has been
 % renamed to SECOND before calling the generated function.
 
-codegen_binop_template ('min',    0, [ ], 'GB_IMIN (xarg, yarg)', 'fminf (xarg, yarg)', 'fmin (xarg, yarg)') ;
-codegen_binop_template ('max',    0, [ ], 'GB_IMAX (xarg, yarg)', 'fmaxf (xarg, yarg)', 'fmax (xarg, yarg)') ;
-codegen_binop_template ('plus',   0, [ ], '(xarg + yarg)') ;
-codegen_binop_template ('minus',  0, [ ], '(xarg - yarg)') ;
-codegen_binop_template ('rminus', 0, [ ], '(yarg - xarg)') ;
-codegen_binop_template ('times',  0, [ ], '(xarg * yarg)') ;
-codegen_binop_template ('div',    0, [ ], 'GB_IDIV (xarg, yarg)', '(xarg / yarg)') ;
-codegen_binop_template ('rdiv',   0, [ ], 'GB_IDIV (yarg, xarg)', '(yarg / xarg)') ;
+codegen_binop_template ('min',    0, [ ], 'GB_IMIN (xarg, yarg)', 'fminf (xarg, yarg)', 'fmin (xarg, yarg)', 1) ;
+codegen_binop_template ('max',    0, [ ], 'GB_IMAX (xarg, yarg)', 'fmaxf (xarg, yarg)', 'fmax (xarg, yarg)', 1) ;
+codegen_binop_template ('plus',   0, [ ], '(xarg + yarg)'       , [ ]                 , [ ]                , 1) ;
+codegen_binop_template ('minus',  0, [ ], '(xarg - yarg)'       , [ ]                 , [ ]                , 1) ;
+codegen_binop_template ('rminus', 0, [ ], '(yarg - xarg)'       , [ ]                 , [ ]                , 1) ;
+codegen_binop_template ('times',  0, [ ], '(xarg * yarg)'       , [ ]                 , [ ]                , 1) ;
+codegen_binop_template ('div',    0, [ ], 'GB_IDIV (xarg, yarg)', '(xarg / yarg)'     , [ ]                , 1) ;
+codegen_binop_template ('rdiv',   0, [ ], 'GB_IDIV (yarg, xarg)', '(yarg / xarg)'     , [ ]                , 1) ;
 
 codegen_binop_template ('iseq',   0, [ ], '(xarg == yarg)') ;
 codegen_binop_template ('isne',   0, [ ], '(xarg != yarg)') ;

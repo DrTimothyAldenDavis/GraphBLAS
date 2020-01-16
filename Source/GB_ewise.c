@@ -19,6 +19,7 @@
 #include "GB_emult.h"
 #include "GB_transpose.h"
 #include "GB_accum_mask.h"
+#include "GB_dense.h"
 
 #define GB_FREE_ALL         \
 {                           \
@@ -207,6 +208,64 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         GB_OK (GB_transpose (&BT, NULL, C_is_csc, B, NULL, Context)) ;
         B1 = BT ;
     }
+
+    //--------------------------------------------------------------------------
+    // special cases
+    //--------------------------------------------------------------------------
+
+    // TODO handle more special cases
+
+    #ifndef GBCOMPACT
+
+    if (GB_is_dense (C)                     // C, A, B all dense
+        && GB_is_dense (A1)
+        && GB_is_dense (B1)
+        && !GB_PENDING_OR_ZOMBIES (C)       // with no pending tuples
+        && (C != A1)                        // no alias (but could be handled)
+        && (C != B1)
+        && (A1 != B1)
+        && (M == NULL) && !Mask_comp        // no mask
+        && !C_replace                       // C_replace false
+        && (C->is_csc == C_is_csc)          // no transpose of C
+        && (op->ztype == C->type)           // no typecasting of C
+        && (op->xtype == A1->type)          // no typecasting of A or B
+        && (op->ytype == B1->type)
+        && (op->opcode >= GB_MIN_opcode)    // subset of binary operators
+        && (op->opcode <= GB_RDIV_opcode)
+        // && (op->ztype == op->xtype)      // implied by binary op subset
+        // && (op->ztype == op->ytype)
+        )
+    {
+
+        if (accum == op)                    // accum is same as the op
+        {
+
+            //------------------------------------------------------------------
+            // C += A+B where all 3 matrices are dense
+            //------------------------------------------------------------------
+
+            GBBURBLE ("dense C+=A+B ") ;
+            GB_dense_ewise3_accum (C, A1, B1, op, Context) ;
+            GB_FREE_ALL ;
+            return (GrB_SUCCESS) ;
+
+        }
+        else if (accum == NULL)             // no accum
+        {
+
+            //------------------------------------------------------------------
+            // C = A+B where all 3 matrices are dense
+            //------------------------------------------------------------------
+
+            // TODO can be done for all binary ops, not just subset
+            GBBURBLE ("dense C=A+B ") ;
+            GB_dense_ewise3_noaccum (C, A1, B1, op, Context) ;
+            GB_FREE_ALL ;
+            return (GrB_SUCCESS) ;
+        }
+    }
+
+    #endif
 
     //--------------------------------------------------------------------------
     // T = A+B or A.*B

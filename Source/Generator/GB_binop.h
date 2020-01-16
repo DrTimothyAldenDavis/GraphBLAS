@@ -1,3 +1,24 @@
+
+if_is_binop_subset
+
+GrB_Info GB_Cdense_ewise3_accum
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+) ;
+
+GrB_Info GB_Cdense_ewise3_noaccum
+(
+    GrB_Matrix C,
+    const GrB_Matrix A,
+    const GrB_Matrix B,
+    const int nthreads
+) ;
+
+endif_is_binop_subset
+
 GrB_Info GB_Cdense_accumA
 (
     GrB_Matrix C,

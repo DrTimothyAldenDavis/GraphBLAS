@@ -1,9 +1,13 @@
-function codegen_binop_method (binop, op, iscompare, xytype)
+function codegen_binop_method (binop, op, iscompare, xytype, is_binop_subset)
 %CODEGEN_BINOP_METHOD create a function to compute C=binop(A,B)
 %
 % codegen_binop_method (binop, op, iscompare, xytype)
 
 assert (~isequal (binop, 'any')) ;
+
+if (nargin < 5)
+    is_binop_subset = false ;
+end
 
 f = fopen ('control.m4', 'w') ;
 
@@ -18,6 +22,18 @@ fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
 fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumA'', `GB_Cdense_accumA__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumX'', `GB_Cdense_accumX__%s'')\n', name) ;
+
+if (is_binop_subset)
+    fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `GB_Cdense_ewise3_accum__%s'')\n', name) ;
+    fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
+    fprintf (f, 'define(`if_is_binop_subset'', `'')\n') ;
+    fprintf (f, 'define(`endif_is_binop_subset'', `'')\n') ;
+else
+    fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `(none)'')\n') ;
+    fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `(none)'')\n') ;
+    fprintf (f, 'define(`if_is_binop_subset'', `#if 0'')\n') ;
+    fprintf (f, 'define(`endif_is_binop_subset'', `#endif'')\n') ;
+end
 
 % type of C, A, and B
 if (iscompare)
@@ -76,14 +92,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.c | m4 | tail -n +12 > Generated/GB_binop__%s.c', ...
+'cat control.m4 Generator/GB_binop.c | m4 | tail -n +17 > Generated/GB_binop__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.h | m4 | tail -n +12 >> Generated/GB_binop__include.h') ;
+'cat control.m4 Generator/GB_binop.h | m4 | tail -n +17 >> Generated/GB_binop__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

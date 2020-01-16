@@ -18,6 +18,8 @@
     switch (opcode)
     {
 
+#ifndef GB_BINOP_SUBSET
+
         //----------------------------------------------------------------------
         case GB_FIRST_opcode   :    // z = x
         //----------------------------------------------------------------------
@@ -42,6 +44,8 @@
             #define GB_BINOP_NAME _pair
             #include "GB_binop_type_factory.c"
             break ;
+
+#endif
 
         //----------------------------------------------------------------------
         case GB_MIN_opcode     :    // z = min(x,y)
@@ -122,6 +126,8 @@
             #define GB_BINOP_NAME _rdiv
             #include "GB_binop_type_factory.c"
             break ;
+
+#ifndef GB_BINOP_SUBSET
 
         //----------------------------------------------------------------------
         case GB_ISEQ_opcode    :    // z = (x == y)
@@ -256,6 +262,7 @@
             #define GB_BINOP_NAME _lxor
             #include "GB_binop_type_factory.c"
             break ;
+#endif
 
         default: ;
     }

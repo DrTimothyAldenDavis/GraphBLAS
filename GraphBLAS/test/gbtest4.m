@@ -38,7 +38,7 @@ for k1 = 1:length (ops)
 end
 
 nsemirings
-assert (nsemirings == 1918)
+assert (nsemirings == 2204) ;   % TODO check this
 GrB.semiringinfo
 
 fprintf ('\ngbtest4: all tests passed\n') ;
