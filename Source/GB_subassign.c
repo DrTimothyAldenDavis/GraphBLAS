@@ -36,6 +36,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     const bool C_replace,           // descriptor for C
     const GrB_Matrix M_in,          // optional mask for C(Rows,Cols)
     const bool Mask_comp,           // true if mask is complemented
+    const bool Mask_struct,         // if true, use the only structure of M
     bool M_transpose,               // true if the mask should be transposed
     const GrB_BinaryOp accum,       // optional accum for accum(C,T)
     const GrB_Matrix A_in,          // input matrix
@@ -292,7 +293,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     GB_OK (GB_subassigner (
         Z,          C_replace,      // Z matrix and its descriptor
-        M,          Mask_comp,      // mask matrix and its descriptor
+        M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
         accum,                      // for accum (C(I,J),A)
         A,                          // A matrix, NULL for scalar expansion
         I, ni,                      // indices

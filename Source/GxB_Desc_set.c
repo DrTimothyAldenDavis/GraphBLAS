@@ -30,6 +30,12 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
     GB_RETURN_IF_NULL_OR_FAULTY (desc) ;
     ASSERT_DESCRIPTOR_OK (desc, "desc to set", GB0) ;
 
+    if (desc->predefined)
+    { 
+        return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
+            "predefined descriptors may not be modified"))) ;
+    }
+
     //--------------------------------------------------------------------------
     // set the parameter
     //--------------------------------------------------------------------------
@@ -62,14 +68,25 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
                 va_start (ap, field) ;
                 GrB_Desc_Value value = va_arg (ap, GrB_Desc_Value) ;
                 va_end (ap) ;
-                if (! (value == GxB_DEFAULT || value == GrB_SCMP))
+                if (! (value == GxB_DEFAULT ||
+                       value == GrB_COMP ||
+                       value == GrB_STRUCTURE ||
+                       value == (GrB_COMP + GrB_STRUCTURE)))
                 { 
                     return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                         "invalid descriptor value [%d] for GrB_MASK field;\n"
-                        "must be GxB_DEFAULT [%d] or GrB_SCMP [%d]",
-                        (int) value, (int) GxB_DEFAULT, (int) GrB_SCMP))) ;
+                        "must be GxB_DEFAULT [%d], GrB_COMP [%d],\n",
+                        "GrB_STRUCTURE [%d], or GrB_COMP+GrB_STRUCTURE [%d]",
+                        (int) value, (int) GxB_DEFAULT, (int) GrB_COMP,
+                        (int) GrB_STRUCTURE,
+                        (int) (GrB_COMP + GrB_STRUCTURE)))) ;
                 }
-                desc->mask = value ;
+                switch (value)
+                {
+                    case GrB_COMP:      desc->mask |= GrB_COMP ;      break ;
+                    case GrB_STRUCTURE: desc->mask |= GrB_STRUCTURE ; break ;
+                    default:            desc->mask = value ;          break ;
+                }
             }
             break ;
 

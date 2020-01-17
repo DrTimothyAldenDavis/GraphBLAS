@@ -29,7 +29,8 @@ GrB_Info GxB_kron                   // C<M> = accum (C, kron(A,B))
     GB_BURBLE_START ("GxB_kron") ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_tran, B_tran, xx) ;
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_tran, B_tran, xx) ;
 
     //--------------------------------------------------------------------------
     // C = kron(A,B)
@@ -38,7 +39,7 @@ GrB_Info GxB_kron                   // C<M> = accum (C, kron(A,B))
     // C<M> = accum (C,T) where T = kron(A,B), or with A' and/or B'
     info = GB_kron (
         C,          C_replace,      // C matrix and its descriptor
-        M,          Mask_comp,      // mask matrix and its descriptor
+        M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
         accum,                      // for accum (C,T)
         op,                         // operator that defines T=kron(A,B)
         A,          A_tran,         // A matrix and its descriptor

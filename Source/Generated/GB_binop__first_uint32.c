@@ -221,6 +221,7 @@ GrB_Info GB_AaddB__first_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const bool Ch_is_Mh,
@@ -248,6 +249,7 @@ GrB_Info GB_AemultB__first_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int64_t *GB_RESTRICT C_to_M,

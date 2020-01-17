@@ -41,6 +41,7 @@ GrB_Info GB_add_phase1                  // count nnz in each C(:,j)
     const bool Ch_is_Mh,                // if true, then Ch == M->h
     // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context

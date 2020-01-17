@@ -44,6 +44,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     GrB_Matrix *MT_handle,          // return MT = M' to caller, if computed
     const GrB_Matrix M_in,          // mask for C<M> (not complemented)
     const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // accum operator for C_in_place += A*B
     const GrB_Matrix A_in,          // input matrix
     const GrB_Matrix B_in,          // input matrix
@@ -449,7 +450,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 (M != NULL && !Mask_comp) ? "masked_" : "") ;
             GB_OK (GB_AxB_dot_parallel (Chandle,
                 (can_do_in_place) ? C_in_place : NULL,
-                M, Mask_comp, A, B, semiring, flipxy,
+                M, Mask_comp, Mask_struct, A, B, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
         }
@@ -458,8 +459,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C = A'*B via saxpy3: Gustavson + Hash method
             GBBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
-            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, AT, B, semiring,
-                flipxy, mask_applied, Context)) ;
+            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
+                AT, B, semiring, flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
@@ -493,7 +494,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle,
                 (can_do_in_place) ? C_in_place : NULL,
-                M, Mask_comp, AT, BT, semiring, flipxy,
+                M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
         }
@@ -502,8 +503,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C = A*B' via saxpy3: Gustavson + Hash method
             GBBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
-            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, BT, semiring,
-                flipxy, mask_applied, Context)) ;
+            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
+                A, BT, semiring, flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
@@ -534,7 +535,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_dot_parallel (Chandle,
                 (can_do_in_place) ? C_in_place : NULL,
-                M, Mask_comp, AT, B, semiring, flipxy,
+                M, Mask_comp, Mask_struct, AT, B, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
         }
@@ -542,8 +543,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         { 
             // C = A*B via saxpy3: Gustavson + Hash method
             GBBURBLE ("C%s=A*B, saxpy ", M_str) ;
-            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, A, B, semiring,
-                flipxy, mask_applied, Context)) ;
+            GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
+                A, B, semiring, flipxy, mask_applied, Context)) ;
             (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
     }

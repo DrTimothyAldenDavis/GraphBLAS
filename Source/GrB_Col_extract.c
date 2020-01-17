@@ -40,7 +40,8 @@ GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
     ASSERT (GB_IMPLIES (M != NULL, GB_VECTOR_OK (M))) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, xx1, xx2) ;
 
     GrB_Index ancols = (A_transpose ? GB_NROWS (A) : GB_NCOLS (A)) ;
     if (j >= ancols)
@@ -63,7 +64,7 @@ GrB_Info GrB_Col_extract        // w<M> = accum (w, A(I,j)) or (A(j,I))'
 
     info = GB_extract (
         (GrB_Matrix) w,    C_replace,   // w as a matrix, and descriptor
-        (GrB_Matrix) M,    Mask_comp,   // mask a matrix, and its descriptor
+        (GrB_Matrix) M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                          // optional accum for z=accum(w,t)
         A,                 A_transpose, // A and its descriptor
         I, ni,                          // row indices I and length ni

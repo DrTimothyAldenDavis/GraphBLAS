@@ -37,7 +37,8 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, xx1, xx2, xx3) ;
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        xx1, xx2, xx3) ;
 
     //--------------------------------------------------------------------------
     // C<M'>(row,Cols) = accum (C(row,Cols), u')
@@ -49,7 +50,7 @@ GrB_Info GrB_Row_assign             // C<M'>(row,Cols) += u'
 
     info = GB_assign (
         C,                  C_replace,      // C matrix and its descriptor
-        (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
+        (GrB_Matrix) M, Mask_comp, Mask_struct, // mask and its descriptor
         true,                               // transpose the mask
         accum,                              // for accum (C(Rows,col),u)
         (GrB_Matrix) u,     true,           // u as a matrix; always transposed

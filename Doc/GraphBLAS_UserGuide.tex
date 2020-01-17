@@ -515,7 +515,7 @@ of ${\bf C}$ nor ${\bf T}$ do not appear in the pattern of ${\bf Z}$.  That is:
     \> \> $z_{ij} = t_{ij}$
     \end{tabbing} }
 The Accumulator Phase is followed by the Mask/Replace Phase, ${\bf C \langle M \rangle = Z}$
-as controlled by the \verb'GrB_REPLACE' and \verb'GrB_SCMP' descriptor options:
+as controlled by the \verb'GrB_REPLACE' and \verb'GrB_COMP' descriptor options:
     \vspace{-0.2in}
     % mask/replace/scmp: C<M> = Z
     {\small
@@ -524,12 +524,12 @@ as controlled by the \verb'GrB_REPLACE' and \verb'GrB_SCMP' descriptor options:
     \>{\bf Mask/Replace Phase}: compute ${\bf C \langle M \rangle = Z}$: \\
     \> \> if (\verb'GrB_REPLACE') delete all entries in ${\bf C}$ \\
     \> \> if \verb'Mask' is \verb'NULL' \\
-    \> \>\>    if (\verb'GrB_SCMP') \\
+    \> \>\>    if (\verb'GrB_COMP') \\
     \> \>\>\>      ${\bf C}$ is not modified \\
     \> \>\>    else \\
     \> \>\>\>      ${\bf C = Z}$ \\
     \> \> else \\
-    \> \>\>    if (\verb'GrB_SCMP') \\
+    \> \>\>    if (\verb'GrB_COMP') \\
     \> \>\>\>      ${\bf C \langle \neg M \rangle  = Z}$ \\
     \> \>\>    else \\
     \> \>\>\>      ${\bf C \langle M \rangle  = Z}$
@@ -5102,7 +5102,8 @@ typedef enum
     // for GrB_OUTP only:
     GrB_REPLACE = 1,    // clear the output before assigning new values to it
     // for GrB_MASK only:
-    GrB_SCMP = 2,       // use the structural complement of the input
+    GrB_COMP = 2,       // use the complement of the mask
+    GrB_STRUCTURE = 4,  // use the structure of the mask
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
 
@@ -5144,7 +5145,7 @@ need not be an array:
     modified, even if \verb'Z(i,j)' is an entry with a different value; that
     value is simply discarded.
 
-    If the \verb'desc [GrB_MASK]' parameter is set to \verb'GrB_SCMP', then the
+    If the \verb'desc [GrB_MASK]' parameter is set to \verb'GrB_COMP', then the
     use of the mask is complemented.  In this case, if the mask is not present
     (\verb'Mask==NULL') then implicitly \verb'Mask(i,j)=0' for all \verb'i' and
     \verb'j'.  This means that none of ${\bf C}$ is modified and the entire
@@ -5157,6 +5158,16 @@ need not be an array:
     \verb'Mask(i,j)=1', then \verb'C(i,j)' is not modified, even if
     \verb'Z(i,j)' is an entry with a different value; that value is simply
     discarded.
+
+    If the \verb'desc [GrB_MASK]' parameter is set to \verb'GrB_STRUCTURE',
+    then the values of the mask are ignored, and just the pattern of the
+    entries is used.  Any entry \verb'M(i,j)' in the pattern is treated as if
+    it were true.
+
+    The \verb'GrB_COMP' and \verb'GrB_STRUCTURE' settings can be combined,
+    either by setting the mask option twice (once with each value), or by
+    setting the mask option to \verb'GrB_COMP+GrB_STRUCTURE' (the latter is an
+    extension to the spec).
 
     Using a parameter to complement the \verb'Mask' is very useful because
     constructing the actual complement of a very sparse mask is impossible
@@ -5275,8 +5286,12 @@ GrB_Info GrB_Descriptor_set     // set a parameter in a descriptor
 
 \verb'GrB_Descriptor_set' sets a descriptor field (\verb'GrB_OUTP',
 \verb'GrB_MASK', \verb'GrB_INP0', \verb'GrB_INP1', or \verb'GxB_AxB_METHOD') to
-a particular value (\verb'GxB_DEFAULT', \verb'GrB_SCMP', \verb'GrB_TRAN',
-\verb'GrB_REPLACE', \verb'GxB_AxB_GUSTAVSON', \verb'GxB_AxB_HEAP', or
+a particular value (\verb'GxB_DEFAULT', \verb'GrB_COMP',
+\verb'GrB_STRUCTURE', \verb'GrB_COMP+GrB_STRUCTURE', \verb'GrB_TRAN',
+\verb'GrB_REPLACE', \verb'GxB_AxB_GUSTAVSON', \verb'GxB_AxB_HEAP',
+\verb'GxB_AxB_HASH',
+\verb'GxB_AxB_SAXPY',
+or
 \verb'GxB_AxB_DOT').
 
 \vspace{0.2in}
@@ -5304,10 +5319,15 @@ field      & &  \\
     The Mask is not complemented.  \verb'Mask(i,j)=1' means the value $C_{ij}$
     can be modified by the operation, while \verb'Mask(i,j)=0' means the value
     $C_{ij}$ shall not be modified by the operation.
-    & \verb'GrB_SCMP':
+    & \verb'GrB_COMP':
     The Mask is complemented.  \verb'Mask(i,j)=0' means the value $C_{ij}$
     can be modified by the operation, while \verb'Mask(i,j)=1' means the value
     $C_{ij}$ shall not be modified by the operation. \\
+    & \verb'GrB_STRUCTURE':
+    The values of the Mask are ignored.  If \verb'Mask(i,j)' is an entry
+    in the \verb'Mask' matrix, it is treated as if \verb'Mask(i,j)=1'.
+    The two options \verb'GrB_COMP' and \verb'GrB_STRUCTURE' can be
+    combined.  \\
 
 \hline
 
@@ -6197,7 +6217,9 @@ To set/get a descriptor field:
     GxB_get (GrB_Descriptor d, GrB_OUTP, GrB_Desc_Value *v) ;
 
     GxB_set (GrB_Descriptor d, GrB_MASK, GxB_DEFAULT) ;
-    GxB_set (GrB_Descriptor d, GrB_MASK, GrB_SCMP) ;
+    GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP) ;
+    GxB_set (GrB_Descriptor d, GrB_MASK, GrB_STRUCTURE) ;
+    GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP+GrB_STRUCTURE) ;
     GxB_get (GrB_Descriptor d, GrB_MASK, GrB_Desc_Value *v) ;
 
     GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
@@ -8103,7 +8125,7 @@ they differ in two ways:
     the submatrix is ever modified.  In \verb'GrB_assign', it is possible to
     delete entries in \verb'C' outside the submatrix, but only in one specific
     manner.  Suppose the mask \verb'M' is present (or, suppose it is not
-    present but \verb'GrB_SCMP' is true).  After (optionally) complementing the
+    present but \verb'GrB_COMP' is true).  After (optionally) complementing the
     mask, the value of \verb'M(i,j)' can be 0 for some entry outside the
     \verb'C(I,J)' submatrix.  If the \verb'GrB_REPLACE' descriptor is
     true, \verb'GrB_assign' deletes this entry.
@@ -8113,7 +8135,7 @@ they differ in two ways:
 \verb'GxB_subassign' and \verb'GrB_assign' are identical if \verb'GrB_REPLACE'
 is set to its default value of false, and if the masks happen to be the same.
 The two masks can be the same in two cases:  either the \verb'Mask' input is
-\verb'NULL' (and it is not complemented via \verb'GrB_SCMP'), or \verb'I' and
+\verb'NULL' (and it is not complemented via \verb'GrB_COMP'), or \verb'I' and
 \verb'J' are both \verb'GrB_ALL'.
 If all these conditions hold,
 the two algorithms are identical and have the same performance.  Otherwise,
@@ -8146,7 +8168,7 @@ matrix and vector    assign & ${\bf C \langle M \rangle (I,J)} = {\bf C(I,J)} \o
 \end{tabular}
 \vspace{0.05in}
 
-This notation does not include the details of the \verb'GrB_SCMP' and
+This notation does not include the details of the \verb'GrB_COMP' and
 \verb'GrB_REPLACE' descriptors, but it does illustrate the difference in the
 \verb'Mask'.  In the subassign, \verb'Mask' is the same size as \verb'C(I,J)'
 and \verb'A'.  If \verb'I[0]=i' and \verb'J[0]=j', Then \verb'Mask(0,0)'
@@ -8221,7 +8243,7 @@ The {\em mask} column is 1 if the mask allows ${\bf C}$ to be modified, and 0
 otherwise.  This is $m_{ij}$ for \verb'GrB_assign', and $m_{i'j'}$ for
 \verb'GxB_subassign', to reflect the difference in the mask, but this
 difference is not reflected in the table.  The value 1 or 0 is the value of the
-entry in the mask after it is optionally complemented via the \verb'GrB_SCMP'
+entry in the mask after it is optionally complemented via the \verb'GrB_COMP'
 option.
 
 Finally, the last column is the action taken in this case.  It is left blank if
@@ -8286,7 +8308,7 @@ Table~\ref{outsubmatrix} illustrates how \verb'GrB_assign' and
 submatrix, but \verb'GrB_assign' can modify them in two cases listed in
 Table~\ref{outsubmatrix}.  When the \verb'GrB_REPLACE' option is selected, and
 when the \verb'Mask(i,j)' for an entry $c_{ij}$ is false (or if the
-\verb'Mask(i,j)' is true and \verb'GrB_SCMP' is enabled via the descriptor),
+\verb'Mask(i,j)' is true and \verb'GrB_COMP' is enabled via the descriptor),
 then the entry is deleted by \verb'GrB_assign'.
 
 The fourth column of Table~\ref{outsubmatrix} differs from
@@ -8357,7 +8379,7 @@ where all entries are present.
     \right]
 \]
 
-Suppose \verb'GrB_REPLACE' is true, and \verb'GrB_SCMP' is false.  Let the
+Suppose \verb'GrB_REPLACE' is true, and \verb'GrB_COMP' is false.  Let the
 \verb'Mask' be:
 
 \[
@@ -9065,7 +9087,7 @@ deleted from the copy \verb'C'.
     // C<~Mask> = A, clearing C first.  No transpose.
     GrB_Descriptor_new (&desc) ;
     GrB_Descriptor_set (desc, GrB_INP0, GrB_TRAN) ;
-    GrB_Descriptor_set (desc, GrB_MASK, GrB_SCMP) ;
+    GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP) ;
     GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE) ;
     GrB_transpose (A, Mask, NULL, A, desc) ; \end{verbatim}}
 
@@ -10237,7 +10259,7 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     GrB_Monoid_new (&Lor, GrB_LOR, (bool) false) ;
     GrB_Semiring_new (&Boolean, Lor, GrB_LAND) ;
     GrB_Descriptor_new (&desc) ;
-    GrB_Descriptor_set (desc, GrB_MASK, GrB_SCMP) ;     // invert the mask
+    GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP) ;     // invert the mask
     GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE) ;  // clear q first
 
     bool successor = true ; // true when some successor found

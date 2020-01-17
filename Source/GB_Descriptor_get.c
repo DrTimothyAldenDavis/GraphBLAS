@@ -20,19 +20,24 @@
 //      descriptor does not affect how C is used to compute the results.  If
 //      GxB_DEFAULT, then C is not cleared before doing C<M>=results.
 
-//  desc->mask                  GxB_DEFAULT or GrB_SCMP
+//  desc->mask                  GxB_DEFAULT, GrB_COMP, GrB_STRUCTURE, or
+//                              GrB_COMP + GrB_STRUCTURE
 
 //      An optional 'write mask' defines how the results are to be written back
 //      into C.  The boolean mask matrix M has the same size as C (M is
-//      typecasted to boolean if it has another type).  If the M input to
-//      the GraphBLAS method is NULL, then implicitly M(i,j)=1 for all i and
-//      j.  Let Z be the results to be written into C (the same dimension as
-//      C).  If desc->mask is GxB_DEFAULT, and M(i,j)=1, then C(i,j) is
-//      over-written with Z(i,j).  Otherwise, if M(i,j)=0 C(i,j) is left
-//      unmodified (it remains an implicit zero if it is so, or its value is
-//      unchanged if it has one).  If desc->mask is GrB_SCMP, then the use of
-//      M is negated: M(i,j)=0 means that C(i,j) is overwritten with
-//      Z(i,j), and M(i,j)=1 means that C(i,j) is left unchanged.
+//      typecasted to boolean if it has another type).  If the M input to the
+//      GraphBLAS method is NULL, then implicitly M(i,j)=1 for all i and j.
+//      Let Z be the results to be written into C (the same dimension as C).
+//      If desc->mask is GxB_DEFAULT, and M(i,j)=1, then C(i,j) is over-written
+//      with Z(i,j).  Otherwise, if M(i,j)=0 C(i,j) is left unmodified (it
+//      remains an implicit zero if it is so, or its value is unchanged if it
+//      has one).  If desc->mask is GrB_COMP, then the use of M is negated:
+//      M(i,j)=0 means that C(i,j) is overwritten with Z(i,j), and M(i,j)=1
+//      means that C(i,j) is left unchanged.  If the value is GrB_STRUCTURE,
+//      only the pattern is used; any entry present in the pattern has the
+//      value M(i,j)=1, and entries not in the pattern have the value M(i,j)=0.
+//      The GrB_COMP and GrB_STUCTURE options can be combined, as GrB_COMP +
+//      GrB_STRUCTURE.
 
 //      Writing results Z into C via the mask M is written as C<M>=Z in
 //      GraphBLAS notation.
@@ -75,6 +80,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
     bool *C_replace,            // if true replace C before C<M>=Z
     bool *Mask_comp,            // if true use logical negation of M
+    bool *Mask_struct,          // if true use the structure of M
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
@@ -108,7 +114,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     { 
         // get the contents
         C_desc    = desc->out ;   // DEFAULT or REPLACE
-        Mask_desc = desc->mask ;  // DEFAULT or SCMP
+        Mask_desc = desc->mask ;  // DEFAULT, COMP, STRUCTURE, or COMP+STRUCTURE
         In0_desc  = desc->in0 ;   // DEFAULT or TRAN
         In1_desc  = desc->in1 ;   // DEFAULT or TRAN
         AxB_desc  = desc->axb ;   // DEFAULT, GUSTAVSON, HEAP, or DOT
@@ -123,7 +129,8 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
 
     // check for valid values of each descriptor field
     if (!(C_desc    == GxB_DEFAULT || C_desc    == GrB_REPLACE) ||
-        !(Mask_desc == GxB_DEFAULT || Mask_desc == GrB_SCMP) ||
+        !(Mask_desc == GxB_DEFAULT   || Mask_desc == GrB_COMP ||
+          Mask_desc == GrB_STRUCTURE || Mask_desc == GrB_COMP+GrB_STRUCTURE) ||
         !(In0_desc  == GxB_DEFAULT || In0_desc  == GrB_TRAN) ||
         !(In1_desc  == GxB_DEFAULT || In1_desc  == GrB_TRAN) ||
         !(AxB_desc  == GxB_DEFAULT || AxB_desc  == GxB_AxB_GUSTAVSON ||
@@ -138,7 +145,13 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     }
     if (Mask_comp != NULL)
     { 
-        *Mask_comp = (Mask_desc == GrB_SCMP) ;
+        *Mask_comp = (Mask_desc == GrB_COMP)
+                  || (Mask_desc == GrB_COMP + GrB_STRUCTURE) ;
+    }
+    if (Mask_struct != NULL)
+    { 
+        *Mask_struct = (Mask_desc == GrB_STRUCTURE)
+                    || (Mask_desc == GrB_STRUCTURE + GrB_COMP) ;
     }
     if (In0_transpose != NULL)
     { 

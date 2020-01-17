@@ -21,6 +21,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     GrB_Matrix *Thandle,        // results of computation, freed when done
     const bool C_replace,       // if true, clear C first
     const bool Mask_comp,       // if true, complement the mask
+    const bool Mask_struct,     // if true, use the only structure of M
     GB_Context Context
 ) ;
 

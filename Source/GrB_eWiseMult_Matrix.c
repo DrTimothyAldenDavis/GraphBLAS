@@ -18,11 +18,12 @@
     GB_RETURN_IF_NULL_OR_FAULTY (B) ;                                       \
     GB_RETURN_IF_FAULTY (M) ;                                               \
     /* get the descriptor */                                                \
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_tran, B_tran, xx) ; \
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,       \
+        A_tran, B_tran, xx) ;                                               \
     /* C<M> = accum (C,T) where T = A.*B, A'.*B, A.*B', or A'.*B' */        \
     info = GB_ewise (                                                       \
         C,              C_replace,  /* C and its descriptor        */       \
-        M,              Mask_comp,  /* mask and its descriptor     */       \
+        M, Mask_comp, Mask_struct,  /* mask and its descriptor     */       \
         accum,                      /* accumulate operator         */       \
         op,                         /* operator that defines '.*'  */       \
         A,              A_tran,     /* A matrix and its descriptor */       \

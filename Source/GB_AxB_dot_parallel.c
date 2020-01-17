@@ -61,6 +61,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
     GrB_Matrix C_in_place,          // input/output matrix, if done in place
     GrB_Matrix M,                   // optional mask matrix
     const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -99,7 +100,8 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
 
         // use dot3 if M is present and not complemented
         (*mask_applied) = true ;
-        return (GB_AxB_dot3 (Chandle, M, A, B, semiring, flipxy, Context)) ;
+        return (GB_AxB_dot3 (Chandle, M, Mask_struct, A, B, semiring, flipxy,
+            Context)) ;
 
     }
     else
@@ -158,8 +160,8 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         if (nthreads == 1)
         { 
             // do the entire computation with a single thread
-            info = GB_AxB_dot2 (Chandle, M, &A, B, semiring, flipxy,
-                mask_applied, 1, 1, 1, NULL) ;
+            info = GB_AxB_dot2 (Chandle, M, Mask_struct, &A, B, semiring,
+                flipxy, mask_applied, 1, 1, 1, NULL) ;
             if (info == GrB_SUCCESS)
             { 
                 ASSERT_MATRIX_OK (*Chandle, "C for sequential A*B", GB0) ;
@@ -222,8 +224,8 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         // compute each slice of C = A'*B or C<!M> = A'*B
         //----------------------------------------------------------------------
 
-        GB_OK (GB_AxB_dot2 (Chandle, M, Aslice, B, semiring, flipxy,
-            mask_applied, nthreads, naslice, nbslice, Context)) ;
+        GB_OK (GB_AxB_dot2 (Chandle, M, Mask_struct, Aslice, B, semiring,
+            flipxy, mask_applied, nthreads, naslice, nbslice, Context)) ;
 
         //----------------------------------------------------------------------
         // free workspace and return result

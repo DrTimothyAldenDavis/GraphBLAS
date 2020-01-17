@@ -60,7 +60,7 @@ GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
     GrB_Monoid_new_BOOL (&Lor, GrB_LOR, (bool) false) ;
     GrB_Semiring_new (&Boolean, Lor, GrB_LAND) ;
     GrB_Descriptor_new (&desc) ;
-    GrB_Descriptor_set (desc, GrB_MASK, GrB_SCMP) ;     // invert the mask
+    GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP) ;     // invert the mask
     GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE) ;  // clear q first
 
     //--------------------------------------------------------------------------

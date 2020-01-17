@@ -38,6 +38,7 @@ GrB_Info GB_mask_phase1                 // count nnz in each R(:,j)
     // original input:
     const GrB_Matrix M,                 // required mask
     const bool Mask_comp,               // if true, then M is complemented
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix C,
     const GrB_Matrix Z,
     GB_Context Context

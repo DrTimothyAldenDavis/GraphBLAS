@@ -42,8 +42,8 @@ GrB_Info GrB_mxv                    // w<M> = accum (w, A*u)
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx,
-        AxB_method) ;
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, xx, AxB_method) ;
 
     //--------------------------------------------------------------------------
     // w<M> = accum (w,A*u) and variations, using the mxm kernel
@@ -52,7 +52,7 @@ GrB_Info GrB_mxv                    // w<M> = accum (w, A*u)
     // w, M, and u are passed as matrices to GB_mxm.
     info = GB_mxm (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor
-        (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
+        (GrB_Matrix) M, Mask_comp, Mask_struct,     // mask and its descriptor
         accum,                              // for accum (w,t)
         semiring,                           // definition of matrix multiply
         A,                  A_transpose,    // allow A to be transposed

@@ -73,7 +73,7 @@ GrB_Info bfs5m_check        // BFS of a graph (using vector assign & reduce)
 
     // descriptor: invert the mask for vxm, and clear output before assignment
     OK (GrB_Descriptor_new (&desc)) ;
-    OK (GxB_Desc_set (desc, GrB_MASK, GrB_SCMP)) ;
+    OK (GxB_Desc_set (desc, GrB_MASK, GrB_COMP)) ;
     OK (GxB_Desc_set (desc, GrB_OUTP, GrB_REPLACE)) ;
 
     //--------------------------------------------------------------------------

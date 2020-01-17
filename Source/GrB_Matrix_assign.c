@@ -36,7 +36,8 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, xx1, xx2) ;
 
     //--------------------------------------------------------------------------
     // C<M>(Rows,Cols) = accum (C(Rows,Cols), A) and variations
@@ -44,7 +45,7 @@ GrB_Info GrB_Matrix_assign          // C<M>(Rows,Cols) += A or A'
 
     info = GB_assign (
         C,          C_replace,      // C matrix and its descriptor
-        M,          Mask_comp,      // mask matrix and its descriptor
+        M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
         false,                      // do not transpose the mask
         accum,                      // for accum (C(Rows,Cols),A)
         A,          A_transpose,    // A and its descriptor (T=A or A')

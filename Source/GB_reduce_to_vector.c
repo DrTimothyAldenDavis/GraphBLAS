@@ -73,7 +73,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_void *GB_RESTRICT Wlast_space = NULL ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, xx1, xx2) ;
 
     // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
     ASSERT (GB_VECTOR_OK (C)) ;
@@ -542,6 +543,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     GB_FREE_WORK ;
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+        Mask_struct, Context)) ;
 }
 

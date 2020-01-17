@@ -31,7 +31,7 @@
     const bool B_is_hyper = B->is_hyper ;
 
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = M->x ;
+    const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
 
     const int64_t *GB_RESTRICT Ah = A->h ;

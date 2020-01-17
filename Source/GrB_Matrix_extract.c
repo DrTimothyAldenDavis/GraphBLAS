@@ -34,7 +34,8 @@ GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, xx1, xx2) ;
 
     //--------------------------------------------------------------------------
     // do the work in GB_extract
@@ -42,7 +43,7 @@ GrB_Info GrB_Matrix_extract     // C<M> = accum (C, A(I,J))
 
     info = GB_extract (
         C,      C_replace,          // output matrix C and its descriptor
-        M,      Mask_comp,          // mask and its descriptor
+        M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
         A,      A_transpose,        // A and its descriptor
         I, ni,                      // row indices

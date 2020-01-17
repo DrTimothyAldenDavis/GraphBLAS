@@ -33,6 +33,7 @@ GrB_Info GB_subassign_06s
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context

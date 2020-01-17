@@ -127,6 +127,7 @@ GrB_Info GB_mask                // C<M> = Z
                                 // Z is freed when done.
     const bool C_replace,       // true if clear(C) to be done first
     const bool Mask_comp,       // true if M is to be complemented
+    const bool Mask_struct,     // if true, use the only structure of M
     GB_Context Context
 )
 {
@@ -297,7 +298,8 @@ GrB_Info GB_mask                // C<M> = Z
         // R = masker (M, C, Z):  compute C<M>=Z, placing results in R
         //----------------------------------------------------------------------
 
-        GB_OK (GB_masker (&R, R_is_csc, M, Mask_comp, C, Z, Context)) ;
+        GB_OK (GB_masker (&R, R_is_csc, M, Mask_comp, Mask_struct, C, Z,
+            Context)) ;
 
         //----------------------------------------------------------------------
         // free temporary matrices Z and C_cleared

@@ -131,7 +131,7 @@ GrB_Info mis_check              // compute a maximal independent set
 
     // descriptor: C_replace + structural complement of mask
     OK (GrB_Descriptor_new (&sr_desc)) ;
-    OK (GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_SCMP)) ;
+    OK (GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_COMP)) ;
     OK (GrB_Descriptor_set (sr_desc, GrB_OUTP, GrB_REPLACE)) ;
 
     // create the mis_score binary operator

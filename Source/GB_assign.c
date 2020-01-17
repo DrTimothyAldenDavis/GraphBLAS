@@ -47,6 +47,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     const bool C_replace,           // descriptor for C
     const GrB_Matrix M_in,          // optional mask for C
     const bool Mask_comp,           // true if mask is complemented
+    const bool Mask_struct,         // if true, use the only structure of M
     bool M_transpose,               // true if the mask should be transposed
     const GrB_BinaryOp accum,       // optional accum for accum(C,T)
     const GrB_Matrix A_in,          // input matrix
@@ -594,7 +595,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 
     GB_OK (GB_subassigner (
         Z,          C_replace,      // Z matrix and its descriptor
-        M,          Mask_comp,      // mask matrix and its descriptor
+        M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
         accum,                      // for accum (C(I,J),A)
         A,                          // A matrix, NULL for scalar expansion
         I, ni,                      // indices
@@ -719,8 +720,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t j = J [0] ;
             ASSERT (j == GB_ijlist (J, 0, Jkind, Jcolon)) ;
 
-            GB_assign_zombie3 (Z, M, Mask_comp, j, I, nI, Ikind, Icolon,
-                Context) ;
+            GB_assign_zombie3 (Z, M, Mask_comp, Mask_struct,
+                j, I, nI, Ikind, Icolon, Context) ;
         }
         else if ((row_assign && C->is_csc) || (col_assign && !C->is_csc))
         { 
@@ -737,8 +738,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t i = I [0] ;
             ASSERT (i == GB_ijlist (I, 0, Ikind, Icolon)) ;
 
-            GB_assign_zombie4 (Z, M, Mask_comp, i, J, nJ, Jkind, Jcolon,
-                Context) ;
+            GB_assign_zombie4 (Z, M, Mask_comp, Mask_struct,
+                i, J, nJ, Jkind, Jcolon, Context) ;
         }
         else
         { 
@@ -750,7 +751,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // M has the same size as Z
             ASSERT (M->vlen == Z->vlen && M->vdim == Z->vdim) ;
 
-            GB_OK (GB_assign_zombie5 (Z, M, Mask_comp,
+            GB_OK (GB_assign_zombie5 (Z, M, Mask_comp, Mask_struct,
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Context)) ;
         }
 

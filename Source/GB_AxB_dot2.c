@@ -39,6 +39,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M,             // mask matrix for C<!M>=A'*B
                                     // if present, the mask is complemented
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix *Aslice,       // input matrices (already sliced)
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -252,7 +253,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        info = GB_Adot2B (add,mult,xyname) (C, M,                       \
+        info = GB_Adot2B (add,mult,xyname) (C, M, Mask_struct,          \
             Aslice, A_is_pattern, B, B_is_pattern, B_slice,             \
             C_counts, nthreads, naslice, nbslice) ;                     \
         done = (info != GrB_NO_VALUE) ;                                 \

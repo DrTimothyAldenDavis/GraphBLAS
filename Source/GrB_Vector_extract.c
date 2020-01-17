@@ -35,7 +35,8 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, xx1, xx2, xx3) ;
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        xx1, xx2, xx3) ;
 
     //--------------------------------------------------------------------------
     // extract entries
@@ -58,7 +59,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
 
     info = GB_extract (
         (GrB_Matrix) w,     C_replace,  // w as a matrix, and its descriptor
-        (GrB_Matrix) M,     Mask_comp,  // mask matrix, and its descriptor
+        (GrB_Matrix) M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                          // optional accum for z=accum(w,t)
         (GrB_Matrix) u,     false,      // u as matrix; never transposed
         I, ni,                          // row indices I and length ni

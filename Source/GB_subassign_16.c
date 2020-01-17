@@ -33,6 +33,7 @@ GrB_Info GB_subassign_16
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,

@@ -39,8 +39,8 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
     GB_RETURN_IF_NULL_OR_FAULTY (B) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose,
-        B_transpose, AxB_method) ;
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, B_transpose, AxB_method) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,A*B) and variations, using the mxm kernel
@@ -49,7 +49,7 @@ GrB_Info GrB_mxm                    // C<M> = accum (C, A*B)
     // C<M> = accum (C,T) where T = A*B, A'*B, A*B', or A'*B'
     info = GB_mxm (
         C,          C_replace,      // C matrix and its descriptor
-        M,          Mask_comp,      // mask matrix and its descriptor
+        M, Mask_comp, Mask_struct,  // mask matrix and its descriptor
         accum,                      // for accum (C,T)
         semiring,                   // semiring that defines T=A*B
         A,          A_transpose,    // A matrix and its descriptor

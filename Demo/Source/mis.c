@@ -87,7 +87,7 @@ GrB_Info mis                    // compute a maximal independent set
 
     // descriptor: C_replace + structural complement of mask
     GrB_Descriptor_new (&sr_desc) ;
-    GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_SCMP) ;
+    GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_COMP) ;
     GrB_Descriptor_set (sr_desc, GrB_OUTP, GrB_REPLACE) ;
 
     // create the mis_score binary operator

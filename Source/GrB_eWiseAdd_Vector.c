@@ -22,11 +22,12 @@
     ASSERT (GB_VECTOR_OK (v)) ;                                             \
     ASSERT (M == NULL || GB_VECTOR_OK (M)) ;                                \
     /* get the descriptor */                                                \
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, xx1, xx2, xx3) ;   \
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,       \
+        xx1, xx2, xx3) ;                                                    \
     /* C<M> = accum (C,T) where T = A+B, A'+B, A+B', or A'+B' */            \
     info = GB_ewise (                                                       \
         (GrB_Matrix) w, C_replace,  /* w and its descriptor        */       \
-        (GrB_Matrix) M, Mask_comp,  /* mask and its descriptor     */       \
+        (GrB_Matrix) M, Mask_comp, Mask_struct, /* mask and its descriptor */\
         accum,                      /* accumulate operator         */       \
         op,                         /* operator that defines '+'   */       \
         (GrB_Matrix) u, false,      /* u, never transposed         */       \

@@ -35,6 +35,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     const bool C_replace,           // if true, clear C before writing to it
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, complement the mask M
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // defines '+' for C=A+B, or .* for A.*B
     const GrB_Matrix A,             // input matrix
@@ -273,11 +274,13 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     if (eWiseAdd)
     { 
-        GB_OK (GB_add (&T, T_type, C_is_csc, M1, A1, B1, op, Context)) ;
+        GB_OK (GB_add (&T, T_type, C_is_csc, M1, Mask_struct, A1, B1, op,
+            Context)) ;
     }
     else
     { 
-        GB_OK (GB_emult (&T, T_type, C_is_csc, M1, A1, B1, op, Context)) ;
+        GB_OK (GB_emult (&T, T_type, C_is_csc, M1, Mask_struct, A1, B1, op,
+            Context)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -310,7 +313,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
-            Context) ;
+            Mask_struct, Context) ;
         GB_MATRIX_FREE (&MT) ;
         return (info) ;
     }

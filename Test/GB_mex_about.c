@@ -238,7 +238,7 @@ void mexFunction
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
     GxB_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ;
 
-    GxB_set (Duh, GrB_MASK, GrB_SCMP) ;
+    GxB_set (Duh, GrB_MASK, GrB_COMP) ;
     GB_Descriptor_check (Duh, "\n-----Duh set mask", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;

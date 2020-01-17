@@ -21,6 +21,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool C_replace,           // if true, clear C before writing to it
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Semiring semiring,    // defines '+' and '*' for C=A*B
     const GrB_Matrix A,             // input matrix
@@ -114,9 +115,10 @@ GrB_Info GB_mxm                     // C<M> = A*B
     bool mask_applied = false ;
     bool done_in_place = false ;
     GrB_Matrix T = NULL, MT = NULL ;
-    info = GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp, accum,
-        A, B, semiring, A_transpose, B_transpose, flipxy, &mask_applied,
-        &done_in_place, AxB_method, &(C->AxB_method_used), Context) ;
+    info = GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp,
+        Mask_struct, accum, A, B, semiring, A_transpose, B_transpose, flipxy,
+        &mask_applied, &done_in_place, AxB_method, &(C->AxB_method_used),
+        Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -171,7 +173,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
-            Context) ;
+            Mask_struct, Context) ;
         GB_MATRIX_FREE (&MT) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)

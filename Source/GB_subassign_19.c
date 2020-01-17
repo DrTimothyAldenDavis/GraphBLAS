@@ -31,6 +31,7 @@ GrB_Info GB_subassign_19
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,

@@ -33,7 +33,8 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, xx1, xx2) ;
 
     //--------------------------------------------------------------------------
     // apply the operator and optionally transpose; assemble pending tuples
@@ -41,7 +42,7 @@ GrB_Info GrB_Matrix_apply           // C<M> = accum (C, op(A)) or op(A')
 
     info = GB_apply (
         C,      C_replace,          // C and its descriptor
-        M,      Mask_comp,          // mask and its descriptor
+        M, Mask_comp, Mask_struct,  // mask and its descriptor
         accum,                      // optional accum for Z=accum(C,T)
         op,                         // operator to apply to the entries
         A,      A_transpose,        // A and its descriptor

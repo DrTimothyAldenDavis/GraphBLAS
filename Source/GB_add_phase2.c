@@ -52,6 +52,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
     const bool Ch_is_Mh,        // if true, then Ch == M->h
     // original input:
     const GrB_Matrix M,         // optional mask, may be NULL
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -146,7 +147,7 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
     #define GB_BINOP_WORKER(mult,xyname)                            \
     {                                                               \
-        info = GB_AaddB(mult,xyname) (C, M, A, B, Ch_is_Mh,         \
+        info = GB_AaddB(mult,xyname) (C, M, Mask_struct, A, B, Ch_is_Mh, \
             C_to_M, C_to_A, C_to_B, TaskList, ntasks, nthreads) ;   \
         done = (info != GrB_NO_VALUE) ;                             \
     }                                                               \

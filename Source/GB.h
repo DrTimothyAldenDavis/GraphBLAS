@@ -335,13 +335,25 @@ static inline bool GB_mcast         // return the value of M(i,j)
     const size_t msize              // size of each data type
 )
 {
-    switch (msize)
+    if (Mx == NULL)
     {
-        default:
-        case 1: return ((*(uint8_t  *) (Mx +((pM)*1))) != 0) ;
-        case 2: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
-        case 4: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
-        case 8: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
+        // If Mx is NULL, then values in the mask matrix M are ignored, and
+        // only the structural pattern is used.  This function is only called
+        // for entries M(i,j) in the structure of M, so the result is always
+        // true if Mx is NULL.
+        return (true) ;
+    }
+    else
+    {
+        // check the value of M(i,j)
+        switch (msize)
+        {
+            default:
+            case 1: return ((*(uint8_t  *) (Mx +((pM)*1))) != 0) ;
+            case 2: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
+            case 4: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
+            case 8: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
+        }
     }
 }
 
@@ -588,6 +600,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     GrB_Desc_Value axb ;    // for selecting the method for C=A*B
     int nthreads_max ;      // max # threads to use in this call to GraphBLAS
     double chunk ;          // chunk size for # of threads for small problems
+    bool predefined ;       // if true, descriptor is predefined
 } ;
 
 //------------------------------------------------------------------------------
@@ -1948,6 +1961,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
     bool *C_replace,            // if true replace C before C<M>=Z
     bool *Mask_comp,            // if true use logical negation of M
+    bool *Mask_struct,          // if true use the structure of M
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
@@ -2312,12 +2326,13 @@ GB_PUBLIC mtx_t GB_sync ;
 
 // check the descriptor and extract its contents; also copies
 // nthreads_max and chunk from the descriptor to the Context
-#define GB_GET_DESCRIPTOR(info,desc,dout,dm,d0,d1,dalgo)                     \
+#define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo)                \
     GrB_Info info ;                                                          \
-    bool dout, dm, d0, d1 ;                                                  \
+    bool dout, dmc, dms, d0, d1 ;                                            \
     GrB_Desc_Value dalgo ;                                                   \
     /* if desc is NULL then defaults are used.  This is OK */                \
-    info = GB_Descriptor_get (desc, &dout, &dm, &d0, &d1, &dalgo, Context) ; \
+    info = GB_Descriptor_get (desc, &dout, &dmc, &dms, &d0, &d1, &dalgo,     \
+        Context) ;                                                           \
     if (info != GrB_SUCCESS)                                                 \
     {                                                                        \
         /* desc not NULL, but uninitialized or an invalid object */          \

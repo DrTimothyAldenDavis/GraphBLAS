@@ -32,7 +32,8 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
     GB_RETURN_IF_NULL_OR_FAULTY (u) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, xx1, xx2, xx3) ;
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        xx1, xx2, xx3) ;
 
     //--------------------------------------------------------------------------
     // select the entries; do not transpose; assemble pending entries
@@ -40,7 +41,7 @@ GrB_Info GxB_Vector_select          // w<M> = accum (w, select(u,k))
 
     info = GB_select (
         (GrB_Matrix) w,     C_replace,      // w and its descriptor
-        (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
+        (GrB_Matrix) M, Mask_comp, Mask_struct, // mask and its descriptor
         accum,                              // optional accum for Z=accum(C,T)
         op,                                 // operator to select the entries
         (GrB_Matrix) u,                     // first input: u

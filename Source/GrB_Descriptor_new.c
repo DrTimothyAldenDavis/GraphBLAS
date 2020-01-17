@@ -44,9 +44,10 @@ GrB_Info GrB_Descriptor_new     // create a new descriptor
     desc->mask = GxB_DEFAULT ;     // descriptor for the mask input
     desc->in0  = GxB_DEFAULT ;     // descriptor for the first input
     desc->in1  = GxB_DEFAULT ;     // descriptor for the second input
-    desc->axb  = GxB_DEFAULT ;     // descriptor for C=A*B
-    desc->nthreads_max = GxB_DEFAULT ;
-    desc->chunk = GxB_DEFAULT ;
+    desc->axb  = GxB_DEFAULT ;     // descriptor for selecting the C=A*B method
+    desc->nthreads_max = GxB_DEFAULT ;  // max # of threads to use
+    desc->chunk = GxB_DEFAULT ;         // chunk for auto-tuning of # threads
+    desc->predefined = false ;     // user-defined
     return (GrB_SUCCESS) ;
 }
 

@@ -31,6 +31,7 @@ GrB_Info GB_subassign_13
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,

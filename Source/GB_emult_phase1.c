@@ -35,6 +35,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     const int64_t *GB_RESTRICT C_to_B,
     // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context

@@ -44,14 +44,6 @@
 // The descriptor affects how C and M are handled.  If the descriptor is
 // NULL, defaults are used.
 
-// desc [GB_MASK] = GxB_DEFAULT means to use M as-is
-
-// desc [GB_MASK] = GrB_SCMP means to use the logical negation of M
-
-// desc [GB_OUTP] = GxB_DEFAULT means to use C as-is.
-
-// desc [GB_OUTP] = GrB_REPLACE means to clear C before writing Z into C.
-
 #include "GB_subassign.h"
 #include "GB_add.h"
 #include "GB_mask.h"
@@ -138,6 +130,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     GrB_Matrix *Thandle,        // results of computation, freed when done
     const bool C_replace,       // if true, clear C first
     const bool Mask_comp,       // if true, complement the mask
+    const bool Mask_struct,     // if true, use the only structure of M
     GB_Context Context
 )
 {
@@ -286,7 +279,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // C(:,:)<M> = accum (C(:,:),T) via GB_subassigner
         //----------------------------------------------------------------------
 
-        GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, accum,
+        GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, Mask_struct, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, GB_ignore_code, Context)) ;
 
     }
@@ -342,7 +335,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
                 M1 = M ;
             }
 
-            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, C, T, accum, Context)) ;
+            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, Mask_struct, C, T,
+                accum, Context)) ;
             GB_MATRIX_FREE (Thandle) ;
         }
 
@@ -363,7 +357,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         // apply the mask, storing the results back into C, and free Z.
         ASSERT_MATRIX_OK (C, "C<M>=Z input", GB0) ;
-        GB_OK (GB_mask (C, M, &Z, C_replace, Mask_comp, Context)) ;
+        GB_OK (GB_mask (C, M, &Z, C_replace, Mask_comp, Mask_struct, Context)) ;
         ASSERT (Z == NULL) ;
         ASSERT (!C->p_shallow && !C->h_shallow) ;
         ASSERT (!C->i_shallow && !C->x_shallow) ;

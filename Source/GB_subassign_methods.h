@@ -61,7 +61,7 @@
     const int64_t *GB_RESTRICT Mp = M->p ;                                     \
     const int64_t *GB_RESTRICT Mh = M->h ;                                     \
     const int64_t *GB_RESTRICT Mi = M->i ;                                     \
-    const GB_void *GB_RESTRICT Mx = M->x ;                                     \
+    const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;            \
     const size_t msize = M->type->size ;
 
 //  const bool M_is_hyper = M->is_hyper ;
@@ -1120,6 +1120,7 @@ GrB_Info GB_subassign_05
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     GB_Context Context
@@ -1142,6 +1143,7 @@ GrB_Info GB_subassign_06n
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     GB_Context Context
 ) ;
@@ -1163,6 +1165,7 @@ GrB_Info GB_subassign_06s
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1185,6 +1188,7 @@ GrB_Info GB_subassign_07
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1208,6 +1212,7 @@ GrB_Info GB_subassign_08
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     GB_Context Context
@@ -1230,6 +1235,7 @@ GrB_Info GB_subassign_09
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -1253,6 +1259,7 @@ GrB_Info GB_subassign_10
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1275,6 +1282,7 @@ GrB_Info GB_subassign_11
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1299,6 +1307,7 @@ GrB_Info GB_subassign_12
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
@@ -1322,6 +1331,7 @@ GrB_Info GB_subassign_13
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -1345,6 +1355,7 @@ GrB_Info GB_subassign_14
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1367,6 +1378,7 @@ GrB_Info GB_subassign_15
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1391,6 +1403,7 @@ GrB_Info GB_subassign_16
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
@@ -1414,6 +1427,7 @@ GrB_Info GB_subassign_17
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -1437,6 +1451,7 @@ GrB_Info GB_subassign_18
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1459,6 +1474,7 @@ GrB_Info GB_subassign_19
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1483,6 +1499,7 @@ GrB_Info GB_subassign_20
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
@@ -1667,8 +1684,8 @@ GrB_Info GB_subassign_emult_slice
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
     const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
-    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
-    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output, size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output, size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,

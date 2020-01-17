@@ -66,9 +66,18 @@ static bool get_descriptor
         {
             info = GxB_set (D, field, GrB_TRAN) ;
         }
-        else if (MATCH (s, "scmp") || MATCH (s, "complement"))
+        else if (MATCH (s, "scmp") || MATCH (s, "complement")
+              || MATCH (s, "comp"))
         {
-            info = GxB_set (D, field, GrB_SCMP) ;
+            info = GxB_set (D, field, GrB_COMP) ;
+        }
+        else if (MATCH (s, "structure"))
+        {
+            info = GxB_set (D, field, GrB_STRUCTURE) ;
+        }
+        else if (MATCH (s, "structural complement"))
+        {
+            info = GxB_set (D, field, GrB_COMP + GrB_STRUCTURE) ;
         }
         else if (MATCH (s, "replace"))
         {

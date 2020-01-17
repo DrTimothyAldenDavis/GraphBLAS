@@ -215,6 +215,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M_input,       // optional mask matrix
     const bool Mask_comp_input,     // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix A
     const GrB_Matrix B,             // input matrix B
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -1054,7 +1055,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     {                                                                   \
 /* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))) ;  */  \
         info = GB_Asaxpy3B (add,mult,xyname) (Chandle, M, Mask_comp,    \
-            A, A_is_pattern, B, B_is_pattern,                           \
+            Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
             TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \
             Context) ;                                                  \
         done = (info != GrB_NO_VALUE) ;                                 \

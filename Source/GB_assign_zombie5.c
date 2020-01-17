@@ -24,6 +24,7 @@ GrB_Info GB_assign_zombie5
     GrB_Matrix Z,                   // the matrix C, or a copy
     const GrB_Matrix M,
     const bool Mask_comp,
+    const bool Mask_struct,
     const GrB_Index *I,
     const int64_t nI,
     const int Ikind,
@@ -54,7 +55,7 @@ GrB_Info GB_assign_zombie5
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = M->x ;
+    const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t Mnvec = M->nvec ;
     const bool M_is_hyper = M->is_hyper ;

@@ -3337,11 +3337,14 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //       In other words, C<Mask> = accum (C,T) is split into Z = accum(C,T) ;
 //       C=0 ; C<Mask> = Z.
 //
-// GrB_MASK: can be GxB_DEFAULT or GrB_SCMP.  If GxB_DEFAULT, the mask is used
+// GrB_MASK: can be GxB_DEFAULT, GrB_COMP, GrB_STRUCTURE, or set to both
+//      GrB_COMP and GrB_STRUCTURE.  If GxB_DEFAULT, the mask is used
 //      normally, where Mask(i,j)=1 means C(i,j) can be modified by C<Mask>=Z,
 //      and Mask(i,j)=0 means it cannot be modified even if Z(i,j) is has been
-//      computed and differs from C(i,j).  If GrB_SCMP, this is the same as
-//      taking the logical complement of the Mask.
+//      computed and differs from C(i,j).  If GrB_COMP, this is the same as
+//      taking the logical complement of the Mask.  If GrB_STRUCTURE is set,
+//      the value of the mask is not considered, just its pattern.  The
+//      GrB_COMP and GrB_STRUCTURE settings can be combined.
 //
 // GrB_INP0: can be GxB_DEFAULT or GrB_TRAN.  If GxB_DEFAULT, the first input
 //      is used as-is.  If GrB_TRAN, it is transposed.  Only matrices are
@@ -3438,8 +3441,10 @@ typedef enum
 }
 GrB_Desc_Field ;
 
-// SPEC: GxB_DEFAULT, GxB_NTHREADS, GxB_CHUNK and GxB_AxB_* are extensions
-// to the spec.
+// SPEC: GxB_DEFAULT, GxB_NTHREADS, GxB_CHUNK and GxB_AxB_* are extensions to
+// the spec.  In the spec, setting both GrB_COMP and GrB_STRUCTURE can be done
+// with two calls to GrB_Descriptor_set.  As an extension to the spec, they can
+// also be set with a single call, using the setting GrB_COMP+GrB_STRUCTURE.
 
 typedef enum
 {
@@ -3449,8 +3454,10 @@ typedef enum
     // for GrB_OUTP only:
     GrB_REPLACE = 1,    // clear the output before assigning new values to it
 
-    // for GrB_MASK only: these two options are identical
-    GrB_SCMP = 2,       // use the structural complement of the input
+    // for GrB_MASK only:
+    GrB_COMP = 2,       // use the structural complement of the input
+    GrB_SCMP = 2,       // same as GrB_COMP (deprecated; use GrB_COMP instead)
+    GrB_STRUCTURE = 4,  // use the only pattern of the mask, not its values
 
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
@@ -3534,6 +3541,63 @@ GrB_Info GrB_Descriptor_free    // free a descriptor
     GrB_Descriptor *descriptor  // handle of descriptor to free
 ) ;
 
+// Predefined descriptors and their values:
+
+GB_PUBLIC
+GrB_Descriptor     // OUTP         MASK           MASK       INP0      INP1
+                   //              structural     complement
+                   // ===========  ============== ========== ========  ========
+
+// GrB_NULL        // -            -              -          -         -
+GrB_DESC_T1      , // -            -              -          -         GrB_TRAN
+GrB_DESC_T0      , // -            -              -          GrB_TRAN  -       
+GrB_DESC_T0T1    , // -            -              -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_C       , // -            -              GrB_COMP   -         -       
+GrB_DESC_CT1     , // -            -              GrB_COMP   -         GrB_TRAN
+GrB_DESC_CT0     , // -            -              GrB_COMP   GrB_TRAN  -       
+GrB_DESC_CT0T1   , // -            -              GrB_COMP   GrB_TRAN  GrB_TRAN
+
+GrB_DESC_S       , // -            GrB_STRUCTURE  -          -         -       
+GrB_DESC_ST1     , // -            GrB_STRUCTURE  -          -         GrB_TRAN
+GrB_DESC_ST0     , // -            GrB_STRUCTURE  -          GrB_TRAN  -       
+GrB_DESC_ST0T1   , // -            GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_SC      , // -            GrB_STRUCTURE  GrB_COMP   -         -       
+GrB_DESC_SCT1    , // -            GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
+GrB_DESC_SCT0    , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -       
+GrB_DESC_SCT0T1  , // -            GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
+
+GrB_DESC_R       , // GrB_REPLACE  -              -          -         -       
+GrB_DESC_RT1     , // GrB_REPLACE  -              -          -         GrB_TRAN
+GrB_DESC_RT0     , // GrB_REPLACE  -              -          GrB_TRAN  -       
+GrB_DESC_RT0T1   , // GrB_REPLACE  -              -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_RC      , // GrB_REPLACE  -              GrB_COMP   -         -       
+GrB_DESC_RCT1    , // GrB_REPLACE  -              GrB_COMP   -         GrB_TRAN
+GrB_DESC_RCT0    , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  -       
+GrB_DESC_RCT0T1  , // GrB_REPLACE  -              GrB_COMP   GrB_TRAN  GrB_TRAN
+
+GrB_DESC_RS      , // GrB_REPLACE  GrB_STRUCTURE  -          -         -       
+GrB_DESC_RST1    , // GrB_REPLACE  GrB_STRUCTURE  -          -         GrB_TRAN
+GrB_DESC_RST0    , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  -       
+GrB_DESC_RST0T1  , // GrB_REPLACE  GrB_STRUCTURE  -          GrB_TRAN  GrB_TRAN
+
+GrB_DESC_RSC     , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         -       
+GrB_DESC_RSCT1   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   -         GrB_TRAN
+GrB_DESC_RSCT0   , // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  -       
+GrB_DESC_RSCT0T1 ; // GrB_REPLACE  GrB_STRUCTURE  GrB_COMP   GrB_TRAN  GrB_TRAN
+
+// GrB_NULL is the default descriptor, with all settings at their defaults:
+//
+//      OUTP: do not replace the output
+//      MASK: mask is valued and not complemented
+//      INP0: first input not transposed
+//      INP1: second input not transposed
+
+// Predefined descriptors may not be modified or freed.  Attempting to modify
+// them results in an error (GrB_INVALID_VALUE).  Attempts to free them are
+// silently ignored.
 
 //==============================================================================
 //=== SuiteSparse:GraphBLAS options ============================================
@@ -3748,7 +3812,8 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_get (GrB_Descriptor d, GrB_OUTP, GrB_Desc_Value *v) ;
 //
 //      GxB_set (GrB_Descriptor d, GrB_MASK, GxB_DEFAULT) ;
-//      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_SCMP) ;
+//      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_COMP) ;
+//      GxB_set (GrB_Descriptor d, GrB_MASK, GrB_STRUCTURE) ;
 //      GxB_get (GrB_Descriptor d, GrB_MASK, GrB_Desc_Value *v) ;
 //
 //      GxB_set (GrB_Descriptor d, GrB_INP0, GxB_DEFAULT) ;
@@ -4312,7 +4377,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 //      and no part of C outside the submatrix is ever modified.  In
 //      GrB_assign, it is possible to modify C outside the submatrix, but only
 //      in one specific manner.  Suppose the mask M is present (or, suppose it
-//      is not present but GrB_SCMP is true).  After (optionally) complementing
+//      is not present but GrB_COMP is true).  After (optionally) complementing
 //      the mask, the value of M(i,j) can be 0 for some entry outside the
 //      C(I,J) submatrix.  If the GrB_REPLACE descriptor is true, the
 //      GrB_assign deletes this entry.  This case does not occur if GrB_REPLACE
@@ -4322,7 +4387,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 
 // GxB_subassign and GrB_assign are identical if GrB_REPLACE is set to its
 // default value of false, or if the masks happen to be the same.  The two
-// masks can be the same in two cases:  either there is no mask (and GrB_SCMP
+// masks can be the same in two cases:  either there is no mask (and GrB_COMP
 // is false), or I and J are both GrB_ALL.  In this case, the two algorithms
 // are identical and have the same performance.
 
@@ -4344,7 +4409,7 @@ GrB_Info GrB_Col_extract            // w<mask> = accum (w, A(I,j))
 // matrix and vector subassign: C(I,J)<Mask> = accum (C(I,J), A)
 // matrix and vector    assign: C<Mask>(I,J) = accum (C(I,J), A)
 
-// This notation does not include the details of the GrB_SCMP and GrB_REPLACE
+// This notation does not include the details of the GrB_COMP and GrB_REPLACE
 // descriptors, but it does illustrate the difference in the Mask.  In the
 // subassign, Mask is the same size as C(I,J) and A.  If I[0]=i and J[0]=j,
 // Then Mask(0,0) controls how C(i,j) is modified by the subassign, from the

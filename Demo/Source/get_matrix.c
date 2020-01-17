@@ -117,7 +117,7 @@ GrB_Info get_matrix         // get a matrix from stdin, or create random one
                 // diagonal is not touched by C<~Mask>=A.
                 OK (GrB_Descriptor_new (&desc)) ;
                 OK (GrB_Descriptor_set (desc, GrB_INP0, GrB_TRAN)) ;
-                OK (GrB_Descriptor_set (desc, GrB_MASK, GrB_SCMP)) ;
+                OK (GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP)) ;
                 OK (GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE)) ;
                 OK (GrB_transpose (A, Mask, NULL, A, desc)) ;
                 GrB_Matrix_free (&Mask) ;

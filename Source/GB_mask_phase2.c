@@ -44,6 +44,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // original input:
     const GrB_Matrix M,         // required mask
     const bool Mask_comp,
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix C,
     const GrB_Matrix Z,
     GB_Context Context

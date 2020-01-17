@@ -38,7 +38,8 @@ GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
     ASSERT (GB_VECTOR_OK (u)) ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, xx1, xx2, xx3) ;
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        xx1, xx2, xx3) ;
 
     //--------------------------------------------------------------------------
     // C(Rows,col)<M> = accum (C(Rows,col), u) and variations
@@ -50,7 +51,7 @@ GrB_Info GxB_Col_subassign          // C(Rows,col)<M> = accum (C(Rows,col),u)
 
     info = GB_subassign (
         C,                  C_replace,      // C matrix and its descriptor
-        (GrB_Matrix) M,     Mask_comp,      // mask and its descriptor
+        (GrB_Matrix) M, Mask_comp, Mask_struct, // mask and its descriptor
         false,                              // do not transpose the mask
         accum,                              // for accum (C(Rows,col),u)
         (GrB_Matrix) u,     false,          // u as a matrix; never transposed
