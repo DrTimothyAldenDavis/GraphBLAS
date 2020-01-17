@@ -73,6 +73,7 @@ GrB_Info axb (GB_Context Context)
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
+        false,      // mask not structural
         NULL,       // no accum
         A, B,
         semiring,   // GrB_PLUS_TIMES_FP64
@@ -156,6 +157,7 @@ GrB_Info axb_complex (GB_Context Context)
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
+        false,      // mask not structural
         NULL,       // no accum
         (atranspose) ? Aconj : A,
         (btranspose) ? Bconj : B,

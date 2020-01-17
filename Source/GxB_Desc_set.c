@@ -75,7 +75,7 @@ GrB_Info GxB_Desc_set           // set a parameter in a descriptor
                 { 
                     return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
                         "invalid descriptor value [%d] for GrB_MASK field;\n"
-                        "must be GxB_DEFAULT [%d], GrB_COMP [%d],\n",
+                        "must be GxB_DEFAULT [%d], GrB_COMP [%d],\n"
                         "GrB_STRUCTURE [%d], or GrB_COMP+GrB_STRUCTURE [%d]",
                         (int) value, (int) GxB_DEFAULT, (int) GrB_COMP,
                         (int) GrB_STRUCTURE,

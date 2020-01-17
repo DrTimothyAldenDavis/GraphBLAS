@@ -79,6 +79,7 @@ GrB_Info axb (GB_Context Context, bool cprint)
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
+        false,      // mask not structural
         NULL,       // no accum
         A, B,
         My_plus_rdiv,

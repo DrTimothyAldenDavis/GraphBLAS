@@ -1967,7 +1967,7 @@ void mexFunction
     bool mask_applied = false ;
     GrB_Matrix Aslice [1] ;
     Aslice [0] = HugeRow ;
-    OK (GB_AxB_dot2 (&HugeMatrix, NULL, Aslice, HugeRow,
+    OK (GB_AxB_dot2 (&HugeMatrix, NULL, false, Aslice, HugeRow,
         GxB_PLUS_TIMES_FP64, false, &mask_applied, 1, 1, 1, Context)) ;
 
     GxB_fprint (HugeMatrix, GB3, ff) ;
@@ -4492,7 +4492,8 @@ void mexFunction
     dgunk->out = 999 ;
     x_bool = false ;
     Context->where = "GB_Descriptor_get" ;
-    ERR (GB_Descriptor_get (dgunk, &x_bool, NULL, NULL, NULL, NULL, Context)) ;
+    ERR (GB_Descriptor_get (dgunk, &x_bool, NULL, NULL, NULL, NULL, NULL,
+        Context)) ;
     CHECK (x_bool == false) ;
     dgunk->out = GxB_DEFAULT ;
 

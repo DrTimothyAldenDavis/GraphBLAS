@@ -79,13 +79,13 @@ GrB_Info adotb_complex (GB_Context Context)
     if (Mask != NULL)
     {
         // C<M> = A'*B using dot product method
-        info = GB_AxB_dot3 (&C, Mask, Aconj, B, semiring, flipxy, Context) ;
+        info = GB_AxB_dot3 (&C, Mask, false, Aconj, B, semiring, flipxy, Context);
         mask_applied = true ;
     }
     else
     {
         // C = A'*B using dot product method
-        info = GB_AxB_dot2 (&C, NULL, Aslice, B, semiring, flipxy,
+        info = GB_AxB_dot2 (&C, NULL, false, Aslice, B, semiring, flipxy,
             &mask_applied,
             /* single thread: */
             1, 1, 1, Context) ;
@@ -123,14 +123,14 @@ GrB_Info adotb (GB_Context Context)
     if (Mask != NULL)
     {
         // C<M> = A'*B using dot product method
-        info = GB_AxB_dot3 (&C, Mask, A, B,
+        info = GB_AxB_dot3 (&C, Mask, false, A, B,
             semiring /* GxB_PLUS_TIMES_FP64 */,
             flipxy, Context) ;
         mask_applied = true ;
     }
     else
     {
-        info = GB_AxB_dot2 (&C, NULL, Aslice, B,
+        info = GB_AxB_dot2 (&C, NULL, false, Aslice, B,
             semiring /* GxB_PLUS_TIMES_FP64 */,
             flipxy, &mask_applied,
             // single thread:
