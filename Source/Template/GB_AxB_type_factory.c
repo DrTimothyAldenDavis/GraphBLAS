@@ -21,6 +21,9 @@ if (zcode != GB_BOOL_code)
     switch (add_opcode)
     {
 
+        // MIN_PAIR, MAX_PAIR, and TIMES_PAIR have been renamed to ANY_PAIR
+        #ifndef GB_MULT_IS_PAIR_OPERATOR
+
         case GB_MIN_opcode:
 
             switch (zcode)
@@ -57,24 +60,6 @@ if (zcode != GB_BOOL_code)
             }
             break ;
 
-        case GB_PLUS_opcode:
-
-            switch (zcode)
-            {
-                case GB_INT8_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int8  )
-                case GB_UINT8_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint8 )
-                case GB_INT16_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int16 )
-                case GB_UINT16_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint16)
-                case GB_INT32_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int32 )
-                case GB_UINT32_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint32)
-                case GB_INT64_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int64 )
-                case GB_UINT64_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint64)
-                case GB_FP32_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp32  )
-                case GB_FP64_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp64  )
-                default: ;
-            }
-            break ;
-
         case GB_TIMES_opcode:
 
             switch (zcode)
@@ -89,6 +74,26 @@ if (zcode != GB_BOOL_code)
                 case GB_UINT64_code : GB_AxB_WORKER (_times, GB_MULT_NAME, _uint64)
                 case GB_FP32_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fp32  )
                 case GB_FP64_code   : GB_AxB_WORKER (_times, GB_MULT_NAME, _fp64  )
+                default: ;
+            }
+            break ;
+
+        #endif
+
+        case GB_PLUS_opcode:
+
+            switch (zcode)
+            {
+                case GB_INT8_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int8  )
+                case GB_UINT8_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint8 )
+                case GB_INT16_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int16 )
+                case GB_UINT16_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint16)
+                case GB_INT32_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int32 )
+                case GB_UINT32_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint32)
+                case GB_INT64_code  : GB_AxB_WORKER (_plus, GB_MULT_NAME, _int64 )
+                case GB_UINT64_code : GB_AxB_WORKER (_plus, GB_MULT_NAME, _uint64)
+                case GB_FP32_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp32  )
+                case GB_FP64_code   : GB_AxB_WORKER (_plus, GB_MULT_NAME, _fp64  )
                 default: ;
             }
             break ;
@@ -120,10 +125,13 @@ else
 {
         switch (add_opcode)
         {
+            // LOR_PAIR, LAND_PAIR, and EQ_PAIR have been renamed to ANY_PAIR
+            #ifndef GB_MULT_IS_PAIR_OPERATOR
             case GB_LOR_opcode  : GB_AxB_WORKER (_lor , GB_MULT_NAME, _bool)
             case GB_LAND_opcode : GB_AxB_WORKER (_land, GB_MULT_NAME, _bool)
-            case GB_LXOR_opcode : GB_AxB_WORKER (_lxor, GB_MULT_NAME, _bool)
             case GB_EQ_opcode   : GB_AxB_WORKER (_eq  , GB_MULT_NAME, _bool)
+            #endif
+            case GB_LXOR_opcode : GB_AxB_WORKER (_lxor, GB_MULT_NAME, _bool)
             case GB_ANY_opcode  : GB_AxB_WORKER (_any , GB_MULT_NAME, _bool)
             default: ;
         }

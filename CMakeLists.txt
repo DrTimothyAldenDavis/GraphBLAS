@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Jan 17, 2020 (DRAFT15)" )
+set ( GraphBLAS_DATE "Jan 18, 2020 (DRAFT16)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -194,7 +194,7 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -lm -Wno-pragmas -fPIC " )
     # check all warnings (uncomment for development only)
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror " )
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 4.9 )
         message ( FATAL_ERROR "gcc version must be at least 4.9" )
     endif ( )
@@ -204,10 +204,10 @@ elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # the -mp1 option is important for predictable floating-point results with
     # the icc compiler.  Without, ((float) 1.)/((float) 0.) produces NaN,
     # instead of the correct result, Inf.
-    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -mp1 -fPIC" )
+    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c11 -mp1 -fPIC" )
     # The -g option is useful for the Intel VTune tool, but it should be
     # removed in production.  Comment this line out if not in use:
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
+    # set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -g" )
     # check all warnings and remarks (uncomment for development only):
 #   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -w3 -Wremarks -Werror " )
     if ( CMAKE_C_COMPILER_VERSION VERSION_LESS 19.0 )

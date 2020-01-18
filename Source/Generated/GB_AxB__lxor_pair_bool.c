@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -32,6 +33,7 @@
 
 // Multiply: z = 1
 // Add:      cij ^= z
+//           any monoid?    0
 //           atomic?        1
 //           OpenMP atomic? 1
 // MultAdd:  cij ^= 1
@@ -101,13 +103,6 @@
 #define GB_CIJ_UPDATE(p,t) \
     Cx [p] ^= t
 
-// Cx [p] = Hx [i]
-#define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
-
-// Hx [i] += t
-#define GB_HX_UPDATE(i,t) \
-    Hx [i] ^= t
-
 // x + y
 #define GB_ADD_FUNCTION(x,y) \
     x ^ y
@@ -116,8 +111,9 @@
 #define GB_CTYPE_PUN \
     bool
 
-// Hx [i] = t
-#define GB_HX_WRITE(i,t) Hx [i] = t
+// 1 if monoid update can skipped entirely (the ANY monoid)
+#define GB_IS_ANY_MONOID \
+    0
 
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
@@ -127,9 +123,39 @@
 #define GB_HAS_OMP_ATOMIC \
     1
 
-// memcpy (&(Cx [p]), &(Hx [i]), len)
-#define GB_CIJ_MEMCPY(p,i,len) \
-    memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool))
+// 1 for the ANY_PAIR semirings
+#define GB_IS_ANY_PAIR_SEMIRING \
+    0
+
+// 1 if PAIR is the multiply operator 
+#define GB_IS_PAIR_MULTIPLIER \
+    1
+
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // result is purely symbolic; no numeric work to do.  Hx is not used.
+    #define GB_HX_WRITE(i,t)
+    #define GB_CIJ_GATHER(p,i)
+    #define GB_HX_UPDATE(i,t)
+    #define GB_CIJ_MEMCPY(p,i,len)
+
+#else
+
+    // Hx [i] = t
+    #define GB_HX_WRITE(i,t) Hx [i] = t
+
+    // Cx [p] = Hx [i]
+    #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+
+    // Hx [i] += t
+    #define GB_HX_UPDATE(i,t) \
+        Hx [i] ^= t
+
+    // memcpy (&(Cx [p]), &(Hx [i]), len)
+    #define GB_CIJ_MEMCPY(p,i,len) \
+        memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool))
+
+#endif
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

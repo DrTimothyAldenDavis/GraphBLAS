@@ -76,8 +76,29 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     // check the multiply operator
     //--------------------------------------------------------------------------
 
-    return (GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
-        mult, flipxy, mult_opcode, xycode, zcode)) ;
+    if (!GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
+        mult, flipxy, mult_opcode, xycode, zcode))
+    {
+        return (false) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // rename to ANY_PAIR
+    //--------------------------------------------------------------------------
+
+    if ((*mult_opcode) == GB_PAIR_opcode)
+    {
+        if (((*add_opcode) == GB_EQ_opcode) ||
+            ((*add_opcode) == GB_LAND_opcode) ||
+            ((*add_opcode) == GB_LOR_opcode) ||
+            ((*add_opcode) == GB_MAX_opcode) ||
+            ((*add_opcode) == GB_MIN_opcode) ||
+            ((*add_opcode) == GB_TIMES_opcode))
+        // rename to ANY_PAIR
+        (*add_opcode) = GB_PAIR_opcode ;
+    }
+
+    return (true) ;
 }
 
 #endif

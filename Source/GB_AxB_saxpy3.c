@@ -905,6 +905,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // TODO: try mallocing each array separately.  Might lead to better
     // page to thread memory affinty.
 
+    // TODO do not allocate Hx for the ANY_PAIR semiring
+
     // add some padding to the end of each hash table, to avoid false
     // sharing of cache lines between the hash tables.
     size_t hx_pad = 64 ;
@@ -1053,7 +1055,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-/* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))) ;  */  \
+/* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))) ;   */ \
         info = GB_Asaxpy3B (add,mult,xyname) (Chandle, M, Mask_comp,    \
             Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
             TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \
@@ -1219,6 +1221,18 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // memcpy (&(Cx [pC]), &(Hx [i]), len)
         #define GB_CIJ_MEMCPY(pC,i,len) \
             memcpy (Cx +((pC)*csize), Hx +((i)*csize), (len) * csize)
+
+        // 1 if monoid update can skipped entirely (the ANY monoid)
+        #define GB_IS_ANY_MONOID 0
+
+        // monoid update cannot be done with a #pragma omp atomic
+        #define GB_HAS_OMP_ATOMIC 0
+
+        // not an ANY_PAIR semiring
+        #define GB_IS_ANY_PAIR_SEMIRING 0
+
+        // not a PAIR multiply operator 
+        #define GB_IS_PAIR_MULTIPLIER 0
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void

@@ -32,6 +32,7 @@
 
 // Multiply: GB_MULTIPLY(z,aik,bkj)
 // Add:      GB_add_update(cij, z)
+//           any monoid?    GB_is_any_monoid
 //           atomic?        GB_has_atomic
 //           OpenMP atomic? GB_has_omp_atomic
 // MultAdd:  GB_multiply_add(cij,aik,bkj)
@@ -101,13 +102,6 @@
 #define GB_CIJ_UPDATE(p,t) \
     GB_add_update(Cx [p], t)
 
-// Cx [p] = Hx [i]
-#define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
-
-// Hx [i] += t
-#define GB_HX_UPDATE(i,t) \
-    GB_add_update(Hx [i], t)
-
 // x + y
 #define GB_ADD_FUNCTION(x,y) \
     GB_add_function(x, y)
@@ -116,8 +110,9 @@
 #define GB_CTYPE_PUN \
     GB_ctype_pun
 
-// Hx [i] = t
-#define GB_HX_WRITE(i,t) Hx [i] = t
+// 1 if monoid update can skipped entirely (the ANY monoid)
+#define GB_IS_ANY_MONOID \
+    GB_is_any_monoid
 
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
@@ -127,9 +122,39 @@
 #define GB_HAS_OMP_ATOMIC \
     GB_has_omp_atomic
 
-// memcpy (&(Cx [p]), &(Hx [i]), len)
-#define GB_CIJ_MEMCPY(p,i,len) \
-    memcpy (Cx +(p), Hx +(i), (len) * sizeof(GB_ctype))
+// 1 for the ANY_PAIR semirings
+#define GB_IS_ANY_PAIR_SEMIRING \
+    GB_is_any_pair_semiring
+
+// 1 if PAIR is the multiply operator 
+#define GB_IS_PAIR_MULTIPLIER \
+    GB_is_pair_multiplier
+
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // result is purely symbolic; no numeric work to do.  Hx is not used.
+    #define GB_HX_WRITE(i,t)
+    #define GB_CIJ_GATHER(p,i)
+    #define GB_HX_UPDATE(i,t)
+    #define GB_CIJ_MEMCPY(p,i,len)
+
+#else
+
+    // Hx [i] = t
+    #define GB_HX_WRITE(i,t) Hx [i] = t
+
+    // Cx [p] = Hx [i]
+    #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+
+    // Hx [i] += t
+    #define GB_HX_UPDATE(i,t) \
+        GB_add_update(Hx [i], t)
+
+    // memcpy (&(Cx [p]), &(Hx [i]), len)
+    #define GB_CIJ_MEMCPY(p,i,len) \
+        memcpy (Cx +(p), Hx +(i), (len) * sizeof(GB_ctype))
+
+#endif
 
 // disable this semiring and use the generic case if these conditions hold
 #define GB_DISABLE \

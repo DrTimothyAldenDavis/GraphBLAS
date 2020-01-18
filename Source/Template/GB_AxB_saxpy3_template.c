@@ -17,6 +17,10 @@
 // macros (TODO: put these in GB_AxB_saxpy3.h)
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+// GB_GET_M_j: prepare to iterate over M(:,j)
+//------------------------------------------------------------------------------
+
 // prepare to iterate over the vector M(:,j), for the (kk)th vector of B
 // TODO lookup all M(:,j) for all vectors in B, in a single pass,
 // and save the mapping (like C_to_M mapping in GB_ewise_slice)
@@ -28,7 +32,10 @@
         ((Bh == NULL) ? kk : Bh [kk]), &pM, &pM_end) ;          \
     int64_t mjnz = pM_end - pM ;    /* nnz (M (:,j)) */
 
-// get the first and last indices in M(:,j)
+//------------------------------------------------------------------------------
+// GB_GET_M_j_RANGE: get the first and last indices in M(:,j)
+//------------------------------------------------------------------------------
+
 #define GB_GET_M_j_RANGE(gamma)                                 \
     int64_t im_first = -1, im_last = -1 ;                       \
     if (mjnz > 0)                                               \
@@ -38,13 +45,21 @@
     }                                                           \
     int64_t mjnz_much = mjnz * gamma
 
+//------------------------------------------------------------------------------
+// GB_SCATTER_M_j: scatter M(:,j) for a coarse Gustavson task
+//------------------------------------------------------------------------------
+
 // scatter M(:,j) for a coarse Gustavson task, C<M>=A*B or C<!M>=A*B
 #define GB_SCATTER_M_j                                          \
     for (int64_t p = pM ; p < pM_end ; p++) /* scan M(:,j) */   \
     {                                                           \
         GB_GET_M_ij (p) ;               /* get M(i,j) */        \
-        if (mij) Hf [Mi [p]] = mark ;   /* Hx [i] = M(i,j) */   \
+        if (mij) Hf [Mi [p]] = mark ;   /* Hf [i] = M(i,j) */   \
     }
+
+//------------------------------------------------------------------------------
+// GB_HASH_M_j: scatter M(:,j) for a coarse hash task
+//------------------------------------------------------------------------------
 
 // hash M(:,j) into Hf and Hi for coarse hash task, C<M>=A*B or C<!M>=A*B
 #define GB_HASH_M_j                                             \
@@ -64,6 +79,10 @@
         }                                                       \
     }
 
+//------------------------------------------------------------------------------
+// GB_HASH1_M_j: scatter M(:,j) for a 1-vector coarse hash task
+//------------------------------------------------------------------------------
+
 // hash M(:,j) for a 1-vector coarse hash task, C<M>=A*B or C<!M>=A*B
 #define GB_HASH1_M_j                                            \
     for (int64_t p = pM ; p < pM_end ; p++) /* scan M(:,j) */   \
@@ -82,6 +101,10 @@
         }                                                       \
     }
 
+//------------------------------------------------------------------------------
+// GB_GET_B_j: prepare to iterate over B(:,j)
+//------------------------------------------------------------------------------
+
 // prepare to iterate over the vector B(:,j), the (kk)th vector in B,
 // where j == ((Bh == NULL) ? kk : Bh [kk]).  Note that j itself is never
 // needed; just kk.
@@ -99,15 +122,25 @@
         GB_bracket_right (Bi [pB_end-1], Ah, 0, &pright) ;                  \
     }
 
-// get B(k,j)
+//------------------------------------------------------------------------------
+// GB_GET_B_kj: get the numeric value of B(k,j)
+//------------------------------------------------------------------------------
+
 #define GB_GET_B_kj \
     GB_GETB (bkj, Bx, pB)       /* bkj = Bx [pB] */
 
-// prepare to iterate over the vector A(:,k)
+//------------------------------------------------------------------------------
+// GB_GET_A_k: prepare to iterate over the vector A(:,k)
+//------------------------------------------------------------------------------
+
 #define GB_GET_A_k                                                      \
     int64_t pA, pA_end ;                                                \
     GB_lookup (A_is_hyper, Ah, Ap, &pleft, pright, k, &pA, &pA_end) ;   \
     int64_t aknz = pA_end - pA ;    /* nnz (A (:,k)) */
+
+//------------------------------------------------------------------------------
+// GB_SKIP_IF_A_k_DISJOINT_WITH_M_j:  skip if A(:,k) and M(:,j) are disjoint
+//------------------------------------------------------------------------------
 
 // skip C(:,j)<M> += A(:,k)*B(k,j) if A(:,k) and M(:,j), for C<M>=A*B methods
 #define GB_SKIP_IF_A_k_DISJOINT_WITH_M_j                    \
@@ -116,94 +149,204 @@
     int64_t ahi = Ai [pA_end-1] ;   /* get last A(:,k) */   \
     if (ahi < im_first || alo > im_last) continue
 
+//------------------------------------------------------------------------------
+// GB_GET_M_ij: get the numeric value of M(i,j)
+//------------------------------------------------------------------------------
+
 #define GB_GET_M_ij(pM)                             \
     /* get M(i,j), at Mi [pM] and Mx [pM] */        \
     bool mij = GB_mcast (Mx, pM, msize)
 
-// ctype t = A(i,k) * B(k,j)
-#define GB_MULT_A_ik_B_kj                                   \
-    GB_GETA (aik, Ax, pA) ;     /* aik = Ax [pA] ;  */      \
-    GB_CIJ_DECLARE (t) ;        /* ctype t ;        */      \
-    GB_MULT (t, aik, bkj)       /* t = aik * bkj ;  */
+//------------------------------------------------------------------------------
+// GB_MULT_A_ik_B_kj: declare t and compute t = A(i,k) * B(k,j)
+//------------------------------------------------------------------------------
 
-// compute C(:,j)=A*B(:,j) when C(:,j) is completely dense
-#define GB_COMPUTE_DENSE_C_j                                \
-    for (int64_t i = 0 ; i < cvlen ; i++)                   \
-    {                                                       \
-        Ci [pC + i] = i ;                                   \
-        GB_CIJ_WRITE (pC + i, GB_IDENTITY) ; /* C(i,j)=0 */ \
-    }                                                       \
-    for ( ; pB < pB_end ; pB++)     /* scan B(:,j) */       \
-    {                                                       \
-        int64_t k = Bi [pB] ;       /* get B(k,j) */        \
-        GB_GET_A_k ;                /* get A(:,k) */        \
-        if (aknz == 0) continue ;                           \
-        GB_GET_B_kj ;               /* bkj = B(k,j) */      \
-        /* TODO handle the case when A(:,k) is dense */     \
-        for ( ; pA < pA_end ; pA++) /* scan A(:,k) */       \
-        {                                                   \
-            int64_t i = Ai [pA] ;   /* get A(i,k) */        \
-            GB_MULT_A_ik_B_kj ;     /* t = A(i,k)*B(k,j) */ \
-            GB_CIJ_UPDATE (pC + i, t) ; /* Cx [pC+i]+=t */  \
-        }                                                   \
-    }
+#if GB_IS_PAIR_MULTIPLIER
+
+    // PAIR multiplier: t is always 1; no numeric work to do to compute t.
+    // The LXOR_PAIR and PLUS_PAIR semirings need the value t = 1 to use in
+    // their monoid operator, however.
+    #define t 1
+    #define GB_MULT_A_ik_B_kj
+
+#else
+
+    // typical semiring
+    #define GB_MULT_A_ik_B_kj                                   \
+        GB_GETA (aik, Ax, pA) ;     /* aik = Ax [pA] ;  */      \
+        GB_CIJ_DECLARE (t) ;        /* ctype t ;        */      \
+        GB_MULT (t, aik, bkj)       /* t = aik * bkj ;  */
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_COMPUTE_DENSE_C_j: compute C(:,j)=A*B(:,j) when C(:,j) is completely dense
+//------------------------------------------------------------------------------
+
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // ANY_PAIR: result is purely symbolic; no numeric work to do
+    #define GB_COMPUTE_DENSE_C_j                                \
+        for (int64_t i = 0 ; i < cvlen ; i++)                   \
+        {                                                       \
+            Ci [pC + i] = i ;                                   \
+        }
+
+#else
+
+    // typical semiring
+    #define GB_COMPUTE_DENSE_C_j                                \
+        for (int64_t i = 0 ; i < cvlen ; i++)                   \
+        {                                                       \
+            Ci [pC + i] = i ;                                   \
+            GB_CIJ_WRITE (pC + i, GB_IDENTITY) ; /* C(i,j)=0 */ \
+        }                                                       \
+        for ( ; pB < pB_end ; pB++)     /* scan B(:,j) */       \
+        {                                                       \
+            int64_t k = Bi [pB] ;       /* get B(k,j) */        \
+            GB_GET_A_k ;                /* get A(:,k) */        \
+            if (aknz == 0) continue ;                           \
+            GB_GET_B_kj ;               /* bkj = B(k,j) */      \
+            /* TODO handle the case when A(:,k) is dense */     \
+            for ( ; pA < pA_end ; pA++) /* scan A(:,k) */       \
+            {                                                   \
+                int64_t i = Ai [pA] ;   /* get A(i,k) */        \
+                GB_MULT_A_ik_B_kj ;     /* t = A(i,k)*B(k,j) */ \
+                GB_CIJ_UPDATE (pC + i, t) ; /* Cx [pC+i]+=t */  \
+            }                                                   \
+        }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE: compute C(:,j) when nnz(B(:,j)) == 1
+//------------------------------------------------------------------------------
 
 // C(:,j) = A(:,k)*B(k,j) when there is a single entry in B(:,j)
-#define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
-    int64_t k = Bi [pB] ;       /* get B(k,j) */                \
-    GB_GET_A_k ;                /* get A(:,k) */                \
-    GB_GET_B_kj ;               /* bkj = B(k,j) */              \
-    for ( ; pA < pA_end ; pA++) /* scan A(:,k) */               \
-    {                                                           \
-        int64_t i = Ai [pA] ;       /* get A(i,k) */            \
-        GB_MULT_A_ik_B_kj ;         /* t = A(i,k)*B(k,j) */     \
-        GB_CIJ_WRITE (pC, t) ;      /* Cx [pC] = t */           \
-        Ci [pC++] = i ;                                         \
-    }
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // ANY_PAIR: result is purely symbolic; no numeric work to do
+    #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
+        int64_t k = Bi [pB] ;       /* get B(k,j) */                \
+        GB_GET_A_k ;                /* get A(:,k) */                \
+        memcpy (Ci + pC, Ai + pA, aknz * sizeof (int64_t)) ;
+
+#else
+
+    // typical semiring
+    #define GB_COMPUTE_C_j_WHEN_NNZ_B_j_IS_ONE                      \
+        int64_t k = Bi [pB] ;       /* get B(k,j) */                \
+        GB_GET_A_k ;                /* get A(:,k) */                \
+        GB_GET_B_kj ;               /* bkj = B(k,j) */              \
+        for ( ; pA < pA_end ; pA++) /* scan A(:,k) */               \
+        {                                                           \
+            int64_t i = Ai [pA] ;       /* get A(i,k) */            \
+            GB_MULT_A_ik_B_kj ;         /* t = A(i,k)*B(k,j) */     \
+            GB_CIJ_WRITE (pC, t) ;      /* Cx [pC] = t */           \
+            Ci [pC++] = i ;                                         \
+        }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_GATHER_ALL_C_j: gather the values and pattern of C(:,j)
+//------------------------------------------------------------------------------
 
 // gather the pattern and values of C(:,j) for a coarse Gustavson task (no sort)
-#define GB_GATHER_ALL_C_j(mark)                                 \
-    for (int64_t i = 0 ; i < cvlen ; i++)                       \
-    {                                                           \
-        if (Hf [i] == mark)                                     \
-        {                                                       \
-            GB_CIJ_GATHER (pC, i) ; /* Cx [pC] = Hx [i] */      \
-            Ci [pC++] = i ;                                     \
-        }                                                       \
-    }
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // ANY_PAIR: result is purely symbolic; no numeric work to do
+    #define GB_GATHER_ALL_C_j(mark)                                 \
+        for (int64_t i = 0 ; i < cvlen ; i++)                       \
+        {                                                           \
+            if (Hf [i] == mark)                                     \
+            {                                                       \
+                Ci [pC++] = i ;                                     \
+            }                                                       \
+        }
+
+#else
+
+    // typical semiring
+    #define GB_GATHER_ALL_C_j(mark)                                 \
+        for (int64_t i = 0 ; i < cvlen ; i++)                       \
+        {                                                           \
+            if (Hf [i] == mark)                                     \
+            {                                                       \
+                GB_CIJ_GATHER (pC, i) ; /* Cx [pC] = Hx [i] */      \
+                Ci [pC++] = i ;                                     \
+            }                                                       \
+        }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_SORT_AND_GATHER_C_j: sort the pattern of C(:,j) and gather values
+//------------------------------------------------------------------------------
 
 // sort the pattern of C(:,j) then gather the values for a coarse Gustavson task
-#define GB_SORT_AND_GATHER_C_j                              \
-    /* sort the pattern of C(:,j) */                        \
-    GB_qsort_1a (Ci + Cp [kk], cjnz) ;                      \
-    /* gather the values into C(:,j) */                     \
-    for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)      \
-    {                                                       \
-        int64_t i = Ci [pC] ;                               \
-        GB_CIJ_GATHER (pC, i) ;   /* Cx [pC] = Hx [i] */    \
-    }
+#if GB_IS_ANY_PAIR_SEMIRING
 
-// sort the pattern of C(:,j) then gather the values for a coarse hash task
-#define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark,Hi_hash_equals_i)           \
-    /* sort the pattern of C(:,j) */                                        \
-    GB_qsort_1a (Ci + Cp [kk], cjnz) ;                                      \
-    /* gather the values of C(:,j) from Hf for 1-vector coarse hash tasks */\
-    /* or both Hf and Hi for multi-vector coarse hash tasks */              \
-    for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)                      \
-    {                                                                       \
-        int64_t i = Ci [pC] ;                                               \
-        int64_t marked = (hash_mark) ;                                      \
-        for (GB_HASH (i))           /* find i in hash table */              \
+    // ANY_PAIR: result is purely symbolic; just sort the pattern
+    #define GB_SORT_AND_GATHER_C_j                              \
+        /* sort the pattern of C(:,j) */                        \
+        GB_qsort_1a (Ci + Cp [kk], cjnz) ;
+
+#else
+
+    // typical semiring
+    #define GB_SORT_AND_GATHER_C_j                              \
+        /* sort the pattern of C(:,j) */                        \
+        GB_qsort_1a (Ci + Cp [kk], cjnz) ;                      \
+        /* gather the values into C(:,j) */                     \
+        for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)      \
+        {                                                       \
+            int64_t i = Ci [pC] ;                               \
+            GB_CIJ_GATHER (pC, i) ;   /* Cx [pC] = Hx [i] */    \
+        }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_SORT_AND_GATHER_HASHED_C_j: sort pattern, gather values, for coarse hash 
+//------------------------------------------------------------------------------
+
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // ANY_PAIR: result is purely symbolic; just sort the pattern
+    #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark,Hi_hash_equals_i)       \
+        /* sort the pattern of C(:,j) */                                    \
+        GB_qsort_1a (Ci + Cp [kk], cjnz) ;
+
+#else
+
+    // sort the pattern of C(:,j) then gather the values for a coarse hash task
+    #define GB_SORT_AND_GATHER_HASHED_C_j(hash_mark,Hi_hash_equals_i)       \
+        /* sort the pattern of C(:,j) */                                    \
+        GB_qsort_1a (Ci + Cp [kk], cjnz) ;                                  \
+        /* gather the values of C(:,j) from Hf for 1-vector coarse hash */  \
+        /* tasks or both Hf and Hi for multi-vector coarse hash tasks */    \
+        for (int64_t pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)                  \
         {                                                                   \
-            if (Hf [hash] == marked && (Hi_hash_equals_i))                  \
+            int64_t i = Ci [pC] ;                                           \
+            int64_t marked = (hash_mark) ;                                  \
+            for (GB_HASH (i))           /* find i in hash table */          \
             {                                                               \
-                /* i found in the hash table */                             \
-                /* Cx [pC] = Hx [hash] ; */                                 \
-                GB_CIJ_GATHER (pC, hash) ;                                  \
-                break ;                                                     \
+                if (Hf [hash] == marked && (Hi_hash_equals_i))              \
+                {                                                           \
+                    /* i found in the hash table */                         \
+                    /* Cx [pC] = Hx [hash] ; */                             \
+                    GB_CIJ_GATHER (pC, hash) ;                              \
+                    break ;                                                 \
+                }                                                           \
             }                                                               \
-        }                                                                   \
-    }
+        }
+
+#endif
+
+//------------------------------------------------------------------------------
+// GB_SCAN_M_j_OR_A_k: compute C(:,j) using linear scan or binary search
+//------------------------------------------------------------------------------
 
 // C(:,j)<M(:,j)>=A(:,k)*B(k,j) using one of two methods
 #define GB_SCAN_M_j_OR_A_k                                              \
@@ -248,10 +391,16 @@
 }
 
 //------------------------------------------------------------------------------
-// atomics
+// GB_ATOMIC_UPDATE:  Hx [i] += t
 //------------------------------------------------------------------------------
 
-#if GB_HAS_ATOMIC
+#if GB_IS_ANY_MONOID
+
+    // The update Hx [i] += t can be skipped entirely, for the ANY monoid.
+    #define GB_ATOMIC_UPDATE(i,t)
+
+#elif GB_HAS_ATOMIC
+
     // Hx [i] += t via atomic update
     #if GB_HAS_OMP_ATOMIC
         // built-in PLUS, TIMES, LOR, LAND, LXOR monoids can be
@@ -278,26 +427,42 @@
                 * ((GB_CTYPE_PUN *) (&xold)),                       \
                 * ((GB_CTYPE_PUN *) (&xnew))))
     #endif
+
 #else
-    // Hx [i] += t via critical section
+
+    // Hx [i] += t can only be done inside the critical section
     #define GB_ATOMIC_UPDATE(i,t)       \
         GB_PRAGMA (omp flush)           \
         GB_HX_UPDATE (i, t) ;           \
         GB_PRAGMA (omp flush)
+
 #endif
 
-// atomic write
-#if GB_HAS_ATOMIC
-    // Hx [i] = t via atomic write
-    #define GB_ATOMIC_WRITE(i,t)       \
-        GB_PRAGMA (omp atomic write)   \
-        GB_HX_WRITE (i, t)
-#else
-    // Hx [i] = t via critical section
-    #define GB_ATOMIC_WRITE(i,t)       \
-        GB_PRAGMA (omp flush)          \
-        GB_HX_WRITE (i, t) ;           \
-        GB_PRAGMA (omp flush)
+//------------------------------------------------------------------------------
+// GB_ATOMIC_WRITE:  Hx [i] = t
+//------------------------------------------------------------------------------
+
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // ANY_PAIR: result is purely symbolic; no numeric work to do
+    #define GB_ATOMIC_WRITE(i,t)
+
+#else 
+
+    // atomic write
+    #if GB_HAS_ATOMIC
+        // Hx [i] = t via atomic write
+        #define GB_ATOMIC_WRITE(i,t)       \
+            GB_PRAGMA (omp atomic write)   \
+            GB_HX_WRITE (i, t)
+    #else
+        // Hx [i] = t via critical section
+        #define GB_ATOMIC_WRITE(i,t)       \
+            GB_PRAGMA (omp flush)          \
+            GB_HX_WRITE (i, t) ;           \
+            GB_PRAGMA (omp flush)
+    #endif
+
 #endif
 
 //------------------------------------------------------------------------------
@@ -605,7 +770,9 @@
             int64_t pB     = TaskList [taskid].start ;
             int64_t pB_end = TaskList [taskid].end + 1 ;
             int64_t my_cjnz = 0 ;
+            #if !GB_IS_ANY_PAIR_SEMIRING
             GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
+            #endif
             int64_t pleft = 0, pright = anvec-1 ;
 
             if (use_Gustavson)
@@ -1192,7 +1359,6 @@
                     // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
                     // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
 
-// HERE
 //                  printf ("%3d phase1: coarse Gustavson C<M>=A*B\n", taskid) ;
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
                     {
@@ -1673,6 +1839,31 @@ allpush (with tree):
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
 
+    #if GB_IS_ANY_PAIR_SEMIRING
+
+        // ANY_PAIR semiring: result is purely symbolic
+        int64_t pC ;
+        #pragma omp parallel for num_threads(nthreads) schedule(static)
+        for (pC = 0 ; pC < cnz ; pC++)
+        {
+            Cx [pC] = 1 ;
+        }
+
+        // Just a precaution; these variables are not used below.  Any attempt
+        // to access them will lead to a compile error.
+        #define Cx is not used
+        #define Hx is not used
+
+        // these have been renamed to ANY_PAIR:
+        // EQ_PAIR
+        // LAND_PAIR
+        // LOR_PAIR
+        // MAX_PAIR
+        // MIN_PAIR
+        // TIMES_PAIR
+
+    #endif
+
     // tic = omp_get_wtime ( ) - tic ;
     // printf ("phase2: %g\n", tic) ;
     // tic = omp_get_wtime ( ) ;
@@ -1691,7 +1882,9 @@ allpush (with tree):
         // get the task descriptor
         //----------------------------------------------------------------------
 
+        #if !GB_IS_ANY_PAIR_SEMIRING
         GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
+        #endif
         int64_t kk = TaskList [taskid].vector ;
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
@@ -1730,8 +1923,10 @@ allpush (with tree):
                     { 
                         Ci [pC + i] = i ;
                     }
+                    #if !GB_IS_ANY_PAIR_SEMIRING
                     // copy Hx [istart:iend-1] into Cx [pC+istart:pC+iend-1]
                     GB_CIJ_MEMCPY (pC + istart, istart, iend - istart) ;
+                    #endif
                 }
                 else
                 {
@@ -2492,7 +2687,9 @@ allpush (with tree):
         //----------------------------------------------------------------------
 
         int64_t kk = TaskList [taskid].vector ;
+        #if !GB_IS_ANY_PAIR_SEMIRING
         GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
+        #endif
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t pC = Cp [kk] ;
@@ -2525,7 +2722,9 @@ allpush (with tree):
                 {
                     if (Hf [i] == 2)
                     { 
+                        #if !GB_IS_ANY_PAIR_SEMIRING
                         GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
+                        #endif
                         Ci [pC++] = i ;
                     }
                 }
@@ -2601,7 +2800,6 @@ allpush (with tree):
                 int64_t kk = TaskList [taskid].vector ;
                 int64_t hash_bits = (hash_size-1) ;
                 int64_t  *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
                 int64_t cjnz = Cp [kk+1] - Cp [kk] ;
 
                 // sort the pattern of C(:,j)
@@ -2617,24 +2815,29 @@ allpush (with tree):
                     GB_qsort_1a (Ci + Cp [kk], cjnz) ;
                 }
 
-                // gather the values of C(:,j)
-                int64_t pC ;
-                #pragma omp parallel for num_threads(nth) schedule(static)
-                for (pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)
-                {
-                    int64_t i = Ci [pC] ;   // get C(i,j)
-                    int64_t i1 = i + 1 ;
-                    for (GB_HASH (i))       // find i in hash table
+                #if !GB_IS_ANY_PAIR_SEMIRING
+
+                    GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
+                    // gather the values of C(:,j)
+                    int64_t pC ;
+                    #pragma omp parallel for num_threads(nth) schedule(static)
+                    for (pC = Cp [kk] ; pC < Cp [kk+1] ; pC++)
                     {
-                        int64_t hf = Hf [hash] ;
-                        if ((hf & 3) == 2 && (hf >> 2) == i1)
-                        { 
-                            // found i in the hash table
-                            GB_CIJ_GATHER (pC, hash) ; // Cx [pC] = Hx [hash]
-                            break ;
+                        int64_t i = Ci [pC] ;   // get C(i,j)
+                        int64_t i1 = i + 1 ;
+                        for (GB_HASH (i))       // find i in hash table
+                        {
+                            int64_t hf = Hf [hash] ;
+                            if ((hf & 3) == 2 && (hf >> 2) == i1)
+                            { 
+                                // found i in the hash table
+                                GB_CIJ_GATHER (pC, hash) ; // Cx[pC] = Hx[hash]
+                                break ;
+                            }
                         }
                     }
-                }
+
+                #endif
             }
         }
 
@@ -2667,4 +2870,7 @@ allpush (with tree):
 #undef GB_ATOMIC_WRITE
 #undef GB_HASH
 #undef GB_FREE_ALL
+#undef t
+#undef Cx
+#undef Hx
 

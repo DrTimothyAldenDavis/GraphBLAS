@@ -3,18 +3,27 @@ function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, i
 %
 % codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic)
 
+is_first    = isequal (multop, 'first') ;
+is_second   = isequal (multop, 'second') ;
+is_pair     = isequal (multop, 'pair') ;
+is_any      = isequal (addop, 'any') ;
+is_any_pair = is_any && isequal (multop, 'pair') ;
+
+if (is_pair)
+    % these semirings are renamed to any_pair, and not thus created
+    if (isequal (addop, 'eq' ) || isequal (addop, 'land' ) || ...
+        isequal (addop, 'lor') || isequal (addop, 'max'  ) || ...
+        isequal (addop, 'min') || isequal (addop, 'times'))
+        return
+    end
+end
+
 f = fopen ('control.m4', 'w') ;
 
 [fname, unsigned, bits] = codegen_type (xytype) ;
 [zname, ~, ~] = codegen_type (ztype) ;
 
 name = sprintf ('%s_%s_%s', addop, multop, fname) ;
-
-is_first  = isequal (multop, 'first') ;
-is_second = isequal (multop, 'second') ;
-is_pair   = isequal (multop, 'pair') ;
-
-is_any    = isequal (addop, 'any') ;
 
 % function names
 fprintf (f, 'define(`GB_AgusB'', `GB_AgusB__%s'')\n', name) ;
@@ -32,14 +41,29 @@ fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 % identity and terminal values for the monoid
 fprintf (f, 'define(`GB_identity'', `%s'')\n', identity) ;
 
+if (is_any_pair)
+    fprintf (f, 'define(`GB_is_any_pair_semiring'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_any_pair_semiring'', `0'')\n') ;
+end
+
+if (is_pair)
+    fprintf (f, 'define(`GB_is_pair_multiplier'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_pair_multiplier'', `0'')\n') ;
+end
+
 if (is_any)
     % the ANY monoid terminates on the first entry seen
+    fprintf (f, 'define(`GB_is_any_monoid'', `1'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `break ;'')\n') ;
     fprintf (f, 'define(`GB_dot_simd'', `;'')\n') ;
 elseif (~isempty (terminal))
+    fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `if (cij == %s) break ;'')\n', terminal) ;
     fprintf (f, 'define(`GB_dot_simd'', `;'')\n') ;
 else
+    fprintf (f, 'define(`GB_is_any_monoid'', `0'')\n') ;
     fprintf (f, 'define(`GB_terminal'', `;'')\n') ;
     fprintf (f, 'define(`GB_dot_simd'', `GB_PRAGMA_SIMD'')\n') ;
 end
@@ -149,14 +173,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +23 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +25 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +23 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +25 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;
