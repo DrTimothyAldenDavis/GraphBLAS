@@ -34,8 +34,7 @@
 // (by slicing Bflops).
 
 // This algorithm does not look at the values of M, A, or B, just their
-// patterns.  If the mask is present, it is assumed to not be complemented.
-// The flop count of C=A*B, C<M>=A*B, or C<!M>=A*B is computed for a
+// patterns.  The flop count of C=A*B, C<M>=A*B, or C<!M>=A*B is computed for a
 // saxpy-based method; the work for A'*B for the dot product method is not
 // computed.
 

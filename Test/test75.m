@@ -128,6 +128,7 @@ for k1 = 1:length(mult_ops)
             fprintf ('.') ;
 
             % C = A'*B, with mask
+save gunk Cin Mask semiring A B dtn id
             tic
             C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtn);
             t2 = toc ;

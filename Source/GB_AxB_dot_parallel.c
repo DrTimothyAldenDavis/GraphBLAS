@@ -99,6 +99,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         //======================================================================
 
         // use dot3 if M is present and not complemented
+        GBBURBLE ("dot3 ") ;
         (*mask_applied) = true ;
         return (GB_AxB_dot3 (Chandle, M, Mask_struct, A, B, semiring, flipxy,
             Context)) ;

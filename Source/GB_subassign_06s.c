@@ -124,6 +124,7 @@ GrB_Info GB_subassign_06s
                 if (iS < iA)
                 {
                     // S (i,j) is present but A (i,j) is not
+                    // TODO exploit dense mask
                     GB_MIJ_BINARY_SEARCH (iS) ;
                     if (mij)
                     { 
@@ -138,6 +139,7 @@ GrB_Info GB_subassign_06s
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
+                    // TODO exploit dense mask
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
@@ -150,6 +152,7 @@ GrB_Info GB_subassign_06s
                 else
                 {
                     // both S (i,j) and A (i,j) present
+                    // TODO exploit dense mask
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
@@ -169,6 +172,7 @@ GrB_Info GB_subassign_06s
             {
                 // S (i,j) is present but A (i,j) is not
                 int64_t iS = Si [pS] ;
+                    // TODO exploit dense mask
                 GB_MIJ_BINARY_SEARCH (iS) ;
                 if (mij)
                 { 
@@ -186,6 +190,7 @@ GrB_Info GB_subassign_06s
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
+                    // TODO exploit dense mask
                 GB_MIJ_BINARY_SEARCH (iA) ;
                 if (mij)
                 { 
@@ -260,6 +265,7 @@ GrB_Info GB_subassign_06s
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
+                    // TODO exploit dense mask
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
@@ -283,6 +289,7 @@ GrB_Info GB_subassign_06s
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
+                    // TODO exploit dense mask
                 GB_MIJ_BINARY_SEARCH (iA) ;
                 if (mij)
                 { 

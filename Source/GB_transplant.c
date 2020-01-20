@@ -182,8 +182,11 @@ GrB_Info GB_transplant          // transplant one matrix into another
             }
 
             // copy A->p and A->h into the newly created C->p and C->h
+            // double tic = omp_get_wtime ( ) ;
             GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nth) ;
             GB_memcpy (C->h, A->h,  anvec    * sizeof (int64_t), nth) ;
+            // tic = omp_get_wtime ( ) - tic ;
+            // printf ("%d %s %g\n", __LINE__, __FILE__, tic) ;
         }
         else
         {
@@ -213,7 +216,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
             else
             {
                 // copy A->p into the newly created C->p
+                // double tic = omp_get_wtime ( ) ;
                 GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
+                // tic = omp_get_wtime ( ) - tic ;
+                // printf ("%d %s %g\n", __LINE__, __FILE__, tic) ;
             }
         }
 
@@ -313,7 +319,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
         if (A->x_shallow)
         { 
             // A is shallow so make a deep copy; no typecast needed
+            // double tic = omp_get_wtime ( ) ;
             GB_memcpy (C->x, A->x, anz * C->type->size, nthreads) ;
+            // tic = omp_get_wtime ( ) - tic ;
+            // printf ("%d %s %g\n", __LINE__, __FILE__, tic) ;
             A->x = NULL ;
         }
         else
@@ -377,7 +386,10 @@ GrB_Info GB_transplant          // transplant one matrix into another
         else
         {
             // copy A->i into C->i
+            // double tic = omp_get_wtime ( ) ;
             GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
+            // tic = omp_get_wtime ( ) - tic ;
+            // printf ("%d %s %g\n", __LINE__, __FILE__, tic) ;
         }
         A->i = NULL ;
         A->i_shallow = false ;

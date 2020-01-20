@@ -221,6 +221,8 @@ GrB_Info GB_subassign_08
                 // M(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
 
+                    // TODO exploit dense mask
+
                 for ( ; pA < pA_end ; pA++)
                 { 
                     int64_t iA = Ai [pA] ;
@@ -352,6 +354,8 @@ GrB_Info GB_subassign_08
                 //--------------------------------------------------------------
                 // M(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
+
+                    // TODO exploit dense mask
 
                 for ( ; pA < pA_end ; pA++)
                 { 

@@ -1,3 +1,271 @@
+
+//------------------------------------------------------------------------------
+// GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
+
+#include "GB.h"
+#ifndef GBCOMPACT
+#include "GB_control.h"
+#include "GB_ek_slice.h"
+#include "GB_bracket.h"
+#include "GB_iterator.h"
+#include "GB_sort.h"
+#include "GB_saxpy3.h"
+#include "GB_AxB__include.h"
+
+// The C=A*B semiring is defined by the following types and operators:
+
+// A'*B function (dot2):     GB_Adot2B__any_pair_bool
+// A'*B function (dot3):     GB_Adot3B__any_pair_bool
+// C+=A'*B function (dot4):  GB_Adot4B__any_pair_bool
+// A*B function (saxpy3):    GB_Asaxpy3B__any_pair_bool
+
+// C type:   bool
+// A type:   bool
+// B type:   bool
+
+// Multiply: z = 1
+// Add:      cij = z
+//           any monoid?    1
+//           atomic?        1
+//           OpenMP atomic? 0
+// MultAdd:  cij = 1
+// Identity: 0
+// Terminal: break ;
+
+#define GB_ATYPE \
+    bool
+
+#define GB_BTYPE \
+    bool
+
+#define GB_CTYPE \
+    bool
+
+// aik = Ax [pA]
+#define GB_GETA(aik,Ax,pA) \
+    ;
+
+// bkj = Bx [pB]
+#define GB_GETB(bkj,Bx,pB) \
+    ;
+
+#define GB_CX(p) Cx [p]
+
+// multiply operator
+#define GB_MULT(z, x, y) \
+    z = 1
+
+// multiply-add
+#define GB_MULTADD(z, x, y) \
+    z = 1
+
+// monoid identity value
+#define GB_IDENTITY \
+    0
+
+// break if cij reaches the terminal value (dot product only)
+#define GB_DOT_TERMINAL(cij) \
+    break ;
+
+// simd pragma for dot product
+#define GB_DOT_SIMD \
+    ;
+
+// declare the cij scalar
+#define GB_CIJ_DECLARE(cij) \
+    bool cij
+
+// save the value of C(i,j)
+#define GB_CIJ_SAVE(cij,p) Cx [p] = cij
+
+// cij = Cx [pC]
+#define GB_GETC(cij,pC) \
+    cij = Cx [pC]
+
+// Cx [pC] = cij
+#define GB_PUTC(cij,pC) \
+    Cx [pC] = cij
+
+// For saxpy3:
+
+// Cx [p] = t
+#define GB_CIJ_WRITE(p,t) Cx [p] = t
+
+// C(i,j) += t
+#define GB_CIJ_UPDATE(p,t) \
+    Cx [p] = t
+
+// x + y
+#define GB_ADD_FUNCTION(x,y) \
+    y
+
+// type with size of GB_CTYPE, and can be used in compare-and-swap
+#define GB_CTYPE_PUN \
+    bool
+
+// 1 if monoid update can skipped entirely (the ANY monoid)
+#define GB_IS_ANY_MONOID \
+    1
+
+// 1 if monoid update can be done atomically, 0 otherwise
+#define GB_HAS_ATOMIC \
+    1
+
+// 1 if monoid update can be done with a #pragma omp atomic update, 0 otherwise
+#define GB_HAS_OMP_ATOMIC \
+    0
+
+// 1 for the ANY_PAIR semirings
+#define GB_IS_ANY_PAIR_SEMIRING \
+    1
+
+// 1 if PAIR is the multiply operator 
+#define GB_IS_PAIR_MULTIPLIER \
+    1
+
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // result is purely symbolic; no numeric work to do.  Hx is not used.
+    #define GB_HX_WRITE(i,t)
+    #define GB_CIJ_GATHER(p,i)
+    #define GB_HX_UPDATE(i,t)
+    #define GB_CIJ_MEMCPY(p,i,len)
+
+#else
+
+    // Hx [i] = t
+    #define GB_HX_WRITE(i,t) Hx [i] = t
+
+    // Cx [p] = Hx [i]
+    #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+
+    // Hx [i] += t
+    #define GB_HX_UPDATE(i,t) \
+        Hx [i] = t
+
+    // memcpy (&(Cx [p]), &(Hx [i]), len)
+    #define GB_CIJ_MEMCPY(p,i,len) \
+        memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool))
+
+#endif
+
+// disable this semiring and use the generic case if these conditions hold
+#define GB_DISABLE \
+    (GxB_NO_ANY || GxB_NO_PAIR || GxB_NO_BOOL || GxB_NO_ANY_BOOL || GxB_NO_PAIR_BOOL || GxB_NO_ANY_PAIR_BOOL)
+
+//------------------------------------------------------------------------------
+// C=A'*B or C<!M>=A'*B: dot product (phase 2)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot2B__any_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+)
+{ 
+    // C<M>=A'*B now uses dot3
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #define GB_PHASE_2_OF_2
+    #include "GB_AxB_dot2_meta.c"
+    #undef GB_PHASE_2_OF_2
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C<M>=A'*B: masked dot product method (phase 2)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot3B__any_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_dot3_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C+=A'*B: dense dot product
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot4B__any_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    int64_t *GB_RESTRICT A_slice, int naslice,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice, int nbslice,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_dot4_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C=A*B, C<M>=A*B, C<!M>=A*B: saxpy3 method (Gustavson + Hash)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Asaxpy3B__any_pair_bool
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    // get copies of these pointers for GB_FREE_ALL
+    GB_saxpy3task_struct *GB_RESTRICT TaskList = (*TaskList_handle) ;
+    GrB_Matrix C = (*Chandle) ;
+    int64_t *Hi_all = Work [0] ;
+    int64_t *Hf_all = Work [1] ;
+    GB_void *Hx_all = Work [2] ;
+    size_t Hi_size_total = Worksize [0] ;
+    size_t Hf_size_total = Worksize [1] ;
+    size_t Hx_size_total = Worksize [2] ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    // #include "GB_AxB_saxpy3_template.c"
+    {
+
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy3_template: C=A*B, C<M>=A*B, or C<!M>=A*B via saxpy3 method
 //------------------------------------------------------------------------------
@@ -496,7 +764,7 @@
 //------------------------------------------------------------------------------
 
 {
-    // double tic = omp_get_wtime ( ) ;
+    double tic = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
@@ -591,6 +859,11 @@
             GB_PARTITION (mystart, myend, mjnz, my_teamid, team_size) ;
             mystart += pM ;
             myend   += pM ;
+            bool mjdense = (mjnz == cvlen) ;
+            // printf ("mjdense: %d\n", mjdense) ;
+
+
+// mjdense = false ;
 
             if (use_Gustavson)
             {
@@ -603,11 +876,57 @@
                 // since all indices i in M(;,j) are unique.
 
 //              printf ("%3d phase0: fine Gustavson\n", taskid) ;
-                uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                for (int64_t p = mystart ; p < myend ; p++) // scan my M(:,j)
-                { 
-                    GB_GET_M_ij (p) ;               // get M(i,j)
-                    if (mij) Hf [Mi [p]] = 1 ;      // Hf [i] = M(i,j)
+                if (!mjdense)
+                {
+
+                    uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
+
+                    switch (msize)
+                    {
+                        default:
+
+                        case 1: 
+                            {
+                                uint8_t *GB_RESTRICT Mz = (uint8_t *) Mx ;
+                                for (int64_t p = mystart ; p < myend ; p++) // scan my M(:,j)
+                                { 
+                                    if (Mz [p]) Hf [Mi [p]] = 1 ;      // Hf [i] = M(i,j)
+                                }
+                            }
+                            break ;
+
+                        case 2: 
+                            {
+                                uint16_t *GB_RESTRICT Mz = (uint16_t *) Mx ;
+                                for (int64_t p = mystart ; p < myend ; p++) // scan my M(:,j)
+                                { 
+                                    if (Mz [p]) Hf [Mi [p]] = 1 ;      // Hf [i] = M(i,j)
+                                }
+                            }
+                            break ;
+
+                        case 4: 
+                            {
+                                uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                                for (int64_t p = mystart ; p < myend ; p++) // scan my M(:,j)
+                                { 
+                                    if (Mz [p]) Hf [Mi [p]] = 1 ;      // Hf [i] = M(i,j)
+                                }
+                            }
+                            break ;
+
+                        case 8: 
+                            {
+                                uint64_t *GB_RESTRICT Mz = (uint64_t *) Mx ;
+                                for (int64_t p = mystart ; p < myend ; p++) // scan my M(:,j)
+                                { 
+                                    if (Mz [p]) Hf [Mi [p]] = 1 ;      // Hf [i] = M(i,j)
+                                }
+                            }
+                            break ;
+
+                    }
+
                 }
 
             }
@@ -734,9 +1053,9 @@
         #endif
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase0: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase0: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase1: count nnz(C(:,j)) for all tasks; do numeric work for fine tasks
@@ -823,20 +1142,10 @@
                         for ( ; pA < pA_end ; pA++) // scan A(:,k)
                         {
                             int64_t i = Ai [pA] ;   // get A(i,k)
+
+                            #if 0
                             GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                             uint8_t f ;
-
-                            #if GB_IS_ANY_MONOID
-
-                                // #pragma omp atomic read
-                                f = Hf [i] ;            // grab the entry
-                                if (f == 2) continue ;      // check if already updated
-                                // #pragma omp atomic write
-                                Hf [i] = 2 ;                // flag the entry
-                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
-
-                            #else
-
                             #if GB_HAS_ATOMIC
                             #pragma omp atomic read
                             f = Hf [i] ;            // grab the entry
@@ -864,11 +1173,10 @@
                                 // C(i,j) already appears in C(:,j)
                                 GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
                             }
+                            #endif
                             #pragma omp atomic write
                             Hf [i] = 2 ;                // unlock the entry
-
-                            #endif
-
+                            // if (first_time) my_cjnz++ ; // C(i,j) is a new entry
                         }
                     }
 
@@ -888,70 +1196,94 @@
                     // 2 -> 3 : to lock, if i seen already
                     // 3 -> 2 : to unlock; now i has been seen
 
+                    // check M(:,j) status
+
 //                  printf ("%3d phase1: fine Gustavson C=<M>A*B\n", taskid) ;
                     GB_GET_M_j ;                // get M(:,j)
-                    GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
-                    for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+
+                    #if 0
+                    bool mjdense = (mjnz == cvlen) ;
+                    if (mjdense)
                     {
-                        int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GET_A_k ;                // get A(:,k)
-                        GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
-                        GB_GET_B_kj ;               // bkj = B(k,j)
-
-                        #if GB_IS_ANY_MONOID
-
-                        #define GB_IKJ                                         \
-                            uint8_t f ;                                        \
-                            /* GB_PRAGMA (omp atomic read) */                  \
-                            f = Hf [i] ;            /* grab the entry */       \
-                            if (f == 0 || f == 2) continue ;                   \
-                            /* GB_PRAGMA (omp atomic write) */                 \
-                            Hf [i] = 2 ;                /* unlock the entry */ \
-                            GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
-                            GB_ATOMIC_WRITE (i, t) ;    /* Hx [i] = t */   \
-
-                        #else
-
-                        #define GB_IKJ                                         \
-                        {                                                      \
-                            GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
-                            uint8_t f ;                                        \
-                            GB_PRAGMA (omp atomic read)                        \
-                            f = Hf [i] ;            /* grab the entry */       \
-                            if (GB_HAS_ATOMIC && (f == 2))                     \
-                            {                                                  \
-                                /* C(i,j) already seen; update it */           \
-                                GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
-                                continue ;       /* C(i,j) has been updated */ \
-                            }                                                  \
-                            if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/\
-                            do  /* lock the entry */                           \
-                            {                                                  \
-                                GB_PRAGMA (omp atomic capture)                 \
-                                {                                              \
-                                    f = Hf [i] ; Hf [i] = 3 ;                  \
-                                }                                              \
-                            } while (f == 3) ; /* lock owner gets f=1 or 2 */  \
-                            bool first_time = (f == 1) ;                       \
-                            if (first_time)                                    \
-                            {                                                  \
-                                /* C(i,j) is a new entry */                    \
-                                GB_ATOMIC_WRITE (i, t) ;    /* Hx [i] = t */   \
-                            }                                                  \
-                            else /* f == 2 */                                  \
-                            {                                                  \
-                                /* C(i,j) already appears in C(:,j) */         \
-                                GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
-                            }                                                  \
-                            GB_PRAGMA (omp atomic write)                       \
-                            Hf [i] = 2 ;                /* unlock the entry */ \
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            // scan A(:,k), and lookup M(i,j)
+                            for ( ; pA < pA_end ; pA++)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k) 
+                                // do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method
+                                // M(i,j) may be 0 or 1, as given in the hash table
+                                GB_GET_M_ij (pM + i) ;     // get M(i,j)
+                                if (mij) Hf [i] = 2 ;      // Hf [i] = M(i,j)
+                            }
                         }
-                        #endif
-
-                        GB_SCAN_M_j_OR_A_k ;
-                        #undef GB_IKJ
                     }
+                    else
+                    #endif
 
+                    {
+
+                        GB_GET_M_j_RANGE (16) ;     // get first and last in M(:,j)
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+
+                            #define GB_IKJ                                         \
+                                uint8_t f ;                                        \
+                                GB_PRAGMA (omp atomic read)                        \
+                                f = Hf [i] ;            /* grab the entry */       \
+                                if (f == 1 || f == 2) continue ;                   \
+                                GB_PRAGMA (omp atomic write)                       \
+                                Hf [i] = 2 ;                /* unlock the entry */
+
+                            #if 0
+                            #define GB_IKJ                                         \
+                            {                                                      \
+                                GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
+                                uint8_t f ;                                        \
+                                GB_PRAGMA (omp atomic read)                        \
+                                f = Hf [i] ;            /* grab the entry */       \
+                                if (GB_HAS_ATOMIC && (f == 2))                     \
+                                {                                                  \
+                                    /* C(i,j) already seen; update it */           \
+                                    GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
+                                    continue ;       /* C(i,j) has been updated */ \
+                                }                                                  \
+                                if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/\
+                                do  /* lock the entry */                           \
+                                {                                                  \
+                                    GB_PRAGMA (omp atomic capture)                 \
+                                    {                                              \
+                                        f = Hf [i] ; Hf [i] = 3 ;                  \
+                                    }                                              \
+                                } while (f == 3) ; /* lock owner gets f=1 or 2 */  \
+                                bool first_time = (f == 1) ;                       \
+                                if (first_time)                                    \
+                                {                                                  \
+                                    /* C(i,j) is a new entry */                    \
+                                    GB_ATOMIC_WRITE (i, t) ;    /* Hx [i] = t */   \
+                                }                                                  \
+                                else /* f == 2 */                                  \
+                                {                                                  \
+                                    /* C(i,j) already appears in C(:,j) */         \
+                                    GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
+                                }                                                  \
+                                GB_PRAGMA (omp atomic write)                       \
+                                Hf [i] = 2 ;                /* unlock the entry */ \
+                                if (first_time) my_cjnz++ ; /* C(i,j) is new  */   \
+                            }
+                            #endif
+
+                            GB_SCAN_M_j_OR_A_k ;
+                            #undef GB_IKJ
+                        }
+                    }
                 }
                 else
                 {
@@ -968,61 +1300,117 @@
                     // 2 -> 3 : to lock, if i seen already
                     // 3 -> 2 : to unlock; now i has been seen
 
-//                  printf ("%3d phase1: fine Gustavson C=<!M>A*B\n", taskid) ;
-                    for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+// printf ("%3d phase1: fine Gustavson C=<!M>A*B\n", taskid) ;
+
+                    GB_GET_M_j ;                // get M(:,j)
+
+                    bool mjdense = (mjnz == cvlen) ;
+// mjdense  = false ;
+                    if (mjdense)
                     {
-                        int64_t k = Bi [pB] ;       // get B(k,j)
-                        GB_GET_A_k ;                // get A(:,k)
-                        if (aknz == 0) continue ;
-                        GB_GET_B_kj ;               // bkj = B(k,j)
-                        for ( ; pA < pA_end ; pA++) // scan A(:,k)
+printf ("%2d: "GBd"\n", taskid, pB_end - pB) ;
+                        uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
                         {
-                            int64_t i = Ai [pA] ;   // get A(i,k)
-                            GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
-                            uint8_t f ;
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            if (aknz == 0) continue ;
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            // scan A(:,k), and lookup M(i,j)
+                            int64_t  p ;
 
-                            #if GB_IS_ANY_MONOID
-
-                            // #pragma omp atomic read
-                            f = Hf [i] ;            // grab the entry
-                            if (f == 1 || f == 2) continue ;
-                            // #pragma omp atomic write
-                            Hf [i] = 2 ;                // unlock the entry
-                            GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
-
-                            #else
-
-                            #pragma omp atomic read
-                            f = Hf [i] ;            // grab the entry
-                            #if GB_HAS_ATOMIC
-                            if (f == 2)             // if true, update C(i,j)
-                            { 
-                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
-                                continue ;          // C(i,j) has been updated
-                            }
-                            #endif
-                            if (f == 1) continue ; // M(i,j)=1; ignore C(i,j)
-                            do  // lock the entry
+                            #pragma omp simd
+                            #pragma ivdep
+                            for (p = pA ; p < pA_end ; p += 4)
                             {
-                                #pragma omp atomic capture
-                                {
-                                    f = Hf [i] ; Hf [i] = 3 ;
-                                }
-                            } while (f == 3) ; // lock owner of gets f=0 or 2
-                            bool first_time = (f == 0) ;
-                            if (first_time)
-                            { 
-                                // C(i,j) is a new entry
-                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
+
+                                int64_t i0 = Ai [p + 0] ;   // get A(i,k) 
+                                int64_t i1 = Ai [p + 1] ;   // get A(i,k) 
+                                int64_t i2 = Ai [p + 2] ;   // get A(i,k) 
+                                int64_t i3 = Ai [p + 3] ;   // get A(i,k) 
+                                #if 0
+                                int64_t i4 = Ai [p + 4] ;   // get A(i,k) 
+                                int64_t i5 = Ai [p + 5] ;   // get A(i,k) 
+                                int64_t i6 = Ai [p + 6] ;   // get A(i,k) 
+                                int64_t i7 = Ai [p + 7] ;   // get A(i,k) 
+                                #endif
+
+                                // do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method
+                                // M(i,j) may be 0 or 1, as given in the hash table
+                                // GB_GET_M_ij (pM + i) ;     // get M(i,j)
+                                // if (!Mz [pM + i])
+
+                                if (Hf [i0] != 2) Hf [i0] = 2 ;      // Hf [i] = M(i,j)
+                                if (Hf [i1] != 2) Hf [i1] = 2 ;      // Hf [i] = M(i,j)
+                                if (Hf [i2] != 2) Hf [i2] = 2 ;      // Hf [i] = M(i,j)
+                                if (Hf [i3] != 2) Hf [i3] = 2 ;      // Hf [i] = M(i,j)
+                                #if 0
+                                if (Hf [i4] != 2) Hf [i4] = 2 ;      // Hf [i] = M(i,j)
+                                if (Hf [i5] != 2) Hf [i5] = 2 ;      // Hf [i] = M(i,j)
+                                if (Hf [i6] != 2) Hf [i6] = 2 ;      // Hf [i] = M(i,j)
+                                if (Hf [i7] != 2) Hf [i7] = 2 ;      // Hf [i] = M(i,j)
+                                #endif
+
                             }
-                            else // f == 2
-                            { 
-                                // C(i,j) already seen
-                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
+
+                            #pragma ivdep
+                            for ( ; p < pA_end ; p++)
+                            {
+                                int64_t i = Ai [p] ;   // get A(i,k) 
+                                // do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method
+                                // M(i,j) may be 0 or 1, as given in the hash table
+                                // GB_GET_M_ij (pM + i) ;     // get M(i,j)
+                                // if (!Mz [pM + i])
+                                if (Hf [i] != 2)
+                                Hf [i] = 2 ;      // Hf [i] = M(i,j)
                             }
-                            #pragma omp atomic write
-                            Hf [i] = 2 ;                // unlock the entry
+
+                        }
+                    }
+                    else
+
+                    {
+
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            if (aknz == 0) continue ;
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+
+                            #if 1
+                            for ( ; pA < pA_end ; pA ++) // scan A(:,k)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k)
+                                // GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
+                                uint8_t f ;
+                                f = Hf [i] ;            // grab the entry
+                                if (f == 1 || f == 2) continue ;
+                                Hf [i] = 2 ;                // unlock the entry
+                            }
                             #endif
+
+                            #if 0
+                            for ( ; pA < pA_end ; pA ++) // scan A(:,k)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k)
+
+                                // GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
+                                uint8_t f ;
+                                f = Hf [i] ;            // grab the entry
+                                if (f == 1 || f == 2) continue ;
+                                do  // lock the entry
+                                {
+                                    #pragma omp atomic capture
+                                    {
+                                        f = Hf [i] ; Hf [i] = 3 ;
+                                    }
+                                } while (f == 3) ; // lock owner of gets f=0 or 2
+                                if (f == 0) my_cjnz++ ;
+                                Hf [i] = 2 ;                // unlock the entry
+                            }
+                            #endif
+
                         }
                     }
                 }
@@ -1061,7 +1449,7 @@
 
                 int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
                 int64_t hash_bits = (hash_size-1) ;
-                int64_t my_cjnz = 0 ; // TODO count later?
+                int64_t my_cjnz = 0 ;
 
                 if (M == NULL)
                 {
@@ -1125,7 +1513,7 @@
                                         GB_ATOMIC_WRITE (hash, t) ;
                                         #pragma omp atomic write
                                         Hf [hash] = i_unlocked ; // unlock entry
-                                        my_cjnz++ ; // TODO count later?
+                                        my_cjnz++ ;
                                         break ;
                                     }
                                     if (hf == i_unlocked) // f == 2
@@ -1217,7 +1605,7 @@
                                     }                                          \
                                     GB_PRAGMA (omp atomic write)               \
                                     Hf [hash] = i_unlocked ; /* unlock entry */\
-                                    if (first_time) my_cjnz++ ; /* TODO count later? */ \
+                                    if (first_time) my_cjnz++ ;                \
                                     break ;                                    \
                                 }                                              \
                             }                                                  \
@@ -1295,7 +1683,7 @@
                                         GB_ATOMIC_WRITE (hash, t) ;
                                         #pragma omp atomic write
                                         Hf [hash] = i_unlocked ; // unlock entry
-                                        my_cjnz++ ; // TODO count later?
+                                        my_cjnz++ ;
                                         break ;
                                     }
                                     if (hf == i_unlocked)   // f == 2
@@ -1316,8 +1704,8 @@
                         }
                     }
                 }
-
-                TaskList [taskid].my_cjnz = my_cjnz ;   // TODO count later?
+            
+                TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
             }
 
 
@@ -1834,9 +2222,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase1a: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase1a: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
 
     // phase1b
@@ -1882,22 +2270,99 @@ allpush (with tree):
                 uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
                 // scan the hash table for entries in C(:,j)
 
-                for (int64_t i = istart ; i < iend ; i++)
+                if (M == NULL)
                 {
-                    if (Hf [i] == 2)
-                    { 
-                        my_cjnz++ ;
+                    for (int64_t i = istart ; i < iend ; i++)
+                    {
+                        if (Hf [i] == 2)
+                        { 
+                            my_cjnz++ ;
+                        }
                     }
                 }
+
+                #if 1
+                else if (mask_is_M)
+                {
+                    // TODO
+                    printf ("!!!!\n") ; abort ( ) ;
+                }
+                else
+                {
+
+#if 0
+                    bool mjdense = (mjnz == cvlen) ;
+                    if (mjdense)
+                    {
+printf (".") ;
+                        uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            if (aknz == 0) continue ;
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            // scan A(:,k), and lookup M(i,j)
+                            for ( ; pA < pA_end ; pA++)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k) 
+                                // do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method
+                                // M(i,j) may be 0 or 1, as given in the hash table
+                                // GB_GET_M_ij (pM + i) ;     // get M(i,j)
+                                if (!Mz [pM + i])
+                                Hf [i] = 2 ;      // Hf [i] = M(i,j)
+                            }
+                        }
+                    }
+                    else
+#endif
+
+                    GB_GET_M_j ;                // get M(:,j)
+                    bool mjdense = (mjnz == cvlen) ;
+// mjdense  = false ;
+                    if (mjdense)
+                    {
+// printf ("-") ;
+                        uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                            #pragma omp simd
+                        for (int64_t i = istart ; i < iend ; i++)
+                        {
+
+// GB_GET_M_ij (pM + i) ;     // get M(i,j)
+// if (mij != (Mz [pM + i] != 0)) { printf ("#") ; abort ( ) ; }
+
+                            // if (!Mz [pM + i] && Hf [i] == 2)
+                            // if (Hf [i] == 2)
+
+                            // if (!Mz [pM + i] && Hf [i] == 2)
+                            if (Hf [i] == 2 && !Mz [pM + i])
+                            { 
+                                my_cjnz++ ;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t i = istart ; i < iend ; i++)
+                        {
+                            if (Hf [i] == 2)
+                            { 
+                                my_cjnz++ ;
+                            }
+                        }
+                    }
+
+                }
+                #endif
 
                 TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
             }
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase1b: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase1b: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase2: compute Cp with cumulative sum and allocate C
@@ -1968,9 +2433,9 @@ allpush (with tree):
 
     #endif
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase2: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase2: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase3: numeric phase for coarse tasks, prep for gather for fine tasks
@@ -2754,9 +3219,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase3: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase3: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase4: gather phase for fine tasks
@@ -2825,17 +3290,92 @@ allpush (with tree):
             uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
             if (cjnz < cvlen)   // work done in phase3 if cjnz == cvlen
             {
+
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
-                for (int64_t i = istart ; i < iend ; i++)
+
+                if (M == NULL)
                 {
-                    if (Hf [i] == 2)
-                    { 
-                        #if !GB_IS_ANY_PAIR_SEMIRING
-                        GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
-                        #endif
-                        Ci [pC++] = i ;
+
+                    for (int64_t i = istart ; i < iend ; i++)
+                    {
+                        if (Hf [i] == 2)
+                        { 
+                            #if !GB_IS_ANY_PAIR_SEMIRING
+                            GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
+                            #endif
+                            Ci [pC++] = i ;
+                        }
                     }
+
+                }
+                else if (mask_is_M)
+                {
+                    // TODO
+
+                }
+                else
+                {
+
+#if 0
+                    bool mjdense = (mjnz == cvlen) ;
+                    if (mjdense)
+                    {
+printf (".") ;
+                        uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            if (aknz == 0) continue ;
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            // scan A(:,k), and lookup M(i,j)
+                            for ( ; pA < pA_end ; pA++)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k) 
+                                // do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method
+                                // M(i,j) may be 0 or 1, as given in the hash table
+                                // GB_GET_M_ij (pM + i) ;     // get M(i,j)
+                                if (!Mz [pM + i])
+                                Hf [i] = 2 ;      // Hf [i] = M(i,j)
+                            }
+                        }
+                    }
+                    else
+#endif
+
+                    GB_GET_M_j ;                // get M(:,j)
+                    bool mjdense = (mjnz == cvlen) ;
+                    if (mjdense)
+                    {
+// printf ("-") ;
+                        uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                        for (int64_t i = istart ; i < iend ; i++)
+                        {
+
+// GB_GET_M_ij (pM + i) ;     // get M(i,j)
+// if (mij != (Mz [pM + i] != 0)) { printf ("#") ; abort ( ) ; }
+
+                            // if (!Mz [pM + i] && Hf [i] == 2)
+                            // if (Hf [i] == 2)
+
+                            if (!Mz [pM + i] && Hf [i] == 2)
+                            { 
+                                Ci [pC++] = i ;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t i = istart ; i < iend ; i++)
+                        {
+                            if (Hf [i] == 2)
+                            { 
+                                Ci [pC++] = i ;
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -2866,9 +3406,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase4: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase4: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase5: final gather phase for fine hash tasks
@@ -2954,8 +3494,8 @@ allpush (with tree):
         GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase5: %g\n", tic) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase5: %g\n", tic) ;
 
 //  printf ("phases done\n") ;
 }
@@ -2982,4 +3522,11 @@ allpush (with tree):
 #undef t
 #undef Cx
 #undef Hx
+
+    }
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+#endif
 

@@ -135,6 +135,7 @@ GrB_Info GB_subassign_10
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
+                    // TODO exploit dense mask
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
@@ -147,6 +148,7 @@ GrB_Info GB_subassign_10
                 else
                 {
                     // both S (i,j) and A (i,j) present
+                    // TODO exploit dense mask
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     GB_C_S_LOOKUP ;
                     if (mij)
@@ -185,6 +187,7 @@ GrB_Info GB_subassign_10
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
+                    // TODO exploit dense mask
                 GB_MIJ_BINARY_SEARCH (iA) ;
                 if (mij)
                 { 
@@ -259,6 +262,7 @@ GrB_Info GB_subassign_10
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
+                    // TODO exploit dense mask
                     GB_MIJ_BINARY_SEARCH (iA) ;
                     if (mij)
                     { 
@@ -282,6 +286,7 @@ GrB_Info GB_subassign_10
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
+                    // TODO exploit dense mask
                 GB_MIJ_BINARY_SEARCH (iA) ;
                 if (mij)
                 { 

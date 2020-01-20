@@ -1878,7 +1878,9 @@ void GB_free_memory
         anz, numeric, Context)
 
 #define GB_MATRIX_FREE(A)                                                     \
-    if (GB_free (A) == GrB_PANIC) GB_PANIC
+{                                                                             \
+    if (GB_free (A) == GrB_PANIC) GB_PANIC ;                                  \
+}
 
 #define GB_VECTOR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
@@ -1894,8 +1896,10 @@ void GB_free_memory
     p = GB_realloc_memory (nnew, nold, s, (void *) p, ok)
 
 #define GB_FREE_MEMORY(p,n,s)                                                 \
+{                                                                             \
     GB_free_memory ((void *) p, n, s) ;                                       \
-    (p) = NULL
+    (p) = NULL ;                                                              \
+}
 
 #endif
 

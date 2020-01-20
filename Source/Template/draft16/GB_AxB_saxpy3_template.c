@@ -769,6 +769,7 @@
 
             int64_t pB     = TaskList [taskid].start ;
             int64_t pB_end = TaskList [taskid].end + 1 ;
+            int64_t my_cjnz = 0 ;
             #if !GB_IS_ANY_PAIR_SEMIRING
             GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
             #endif
@@ -778,7 +779,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase1a: fine Gustavson task
+                // phase1: fine Gustavson task
                 //--------------------------------------------------------------
 
                 // Hf [i] == 0: unlocked, i has not been seen in C(:,j).
@@ -804,7 +805,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase1a: fine Gustavson task, C=A*B
+                    // phase1: fine Gustavson task, C=A*B
                     //----------------------------------------------------------
 
                     // Hf [i] is initially 0.
@@ -825,18 +826,6 @@
                             int64_t i = Ai [pA] ;   // get A(i,k)
                             GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                             uint8_t f ;
-
-                            #if GB_IS_ANY_MONOID
-
-                                // #pragma omp atomic read
-                                f = Hf [i] ;            // grab the entry
-                                if (f == 2) continue ;      // check if already updated
-                                // #pragma omp atomic write
-                                Hf [i] = 2 ;                // flag the entry
-                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
-
-                            #else
-
                             #if GB_HAS_ATOMIC
                             #pragma omp atomic read
                             f = Hf [i] ;            // grab the entry
@@ -866,9 +855,7 @@
                             }
                             #pragma omp atomic write
                             Hf [i] = 2 ;                // unlock the entry
-
-                            #endif
-
+                            if (first_time) my_cjnz++ ; // C(i,j) is a new entry
                         }
                     }
 
@@ -877,7 +864,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase1a: fine Gustavson task, C<M>=A*B
+                    // phase1: fine Gustavson task, C<M>=A*B
                     //----------------------------------------------------------
 
                     // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
@@ -897,21 +884,6 @@
                         GB_GET_A_k ;                // get A(:,k)
                         GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
                         GB_GET_B_kj ;               // bkj = B(k,j)
-
-                        #if GB_IS_ANY_MONOID
-
-                        #define GB_IKJ                                         \
-                            uint8_t f ;                                        \
-                            /* GB_PRAGMA (omp atomic read) */                  \
-                            f = Hf [i] ;            /* grab the entry */       \
-                            if (f == 0 || f == 2) continue ;                   \
-                            /* GB_PRAGMA (omp atomic write) */                 \
-                            Hf [i] = 2 ;                /* unlock the entry */ \
-                            GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
-                            GB_ATOMIC_WRITE (i, t) ;    /* Hx [i] = t */   \
-
-                        #else
-
                         #define GB_IKJ                                         \
                         {                                                      \
                             GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
@@ -945,9 +917,8 @@
                             }                                                  \
                             GB_PRAGMA (omp atomic write)                       \
                             Hf [i] = 2 ;                /* unlock the entry */ \
+                            if (first_time) my_cjnz++ ; /* C(i,j) is new  */   \
                         }
-                        #endif
-
                         GB_SCAN_M_j_OR_A_k ;
                         #undef GB_IKJ
                     }
@@ -957,7 +928,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase1a: fine Gustavson task, C<!M>=A*B
+                    // phase1: fine Gustavson task, C<!M>=A*B
                     //----------------------------------------------------------
 
                     // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
@@ -980,18 +951,6 @@
                             int64_t i = Ai [pA] ;   // get A(i,k)
                             GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                             uint8_t f ;
-
-                            #if GB_IS_ANY_MONOID
-
-                            // #pragma omp atomic read
-                            f = Hf [i] ;            // grab the entry
-                            if (f == 1 || f == 2) continue ;
-                            // #pragma omp atomic write
-                            Hf [i] = 2 ;                // unlock the entry
-                            GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
-
-                            #else
-
                             #pragma omp atomic read
                             f = Hf [i] ;            // grab the entry
                             #if GB_HAS_ATOMIC
@@ -1022,7 +981,7 @@
                             }
                             #pragma omp atomic write
                             Hf [i] = 2 ;                // unlock the entry
-                            #endif
+                            if (first_time) my_cjnz++ ; // C(i,j) is a new entry
                         }
                     }
                 }
@@ -1061,7 +1020,6 @@
 
                 int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
                 int64_t hash_bits = (hash_size-1) ;
-                int64_t my_cjnz = 0 ; // TODO count later?
 
                 if (M == NULL)
                 {
@@ -1125,7 +1083,7 @@
                                         GB_ATOMIC_WRITE (hash, t) ;
                                         #pragma omp atomic write
                                         Hf [hash] = i_unlocked ; // unlock entry
-                                        my_cjnz++ ; // TODO count later?
+                                        my_cjnz++ ;
                                         break ;
                                     }
                                     if (hf == i_unlocked) // f == 2
@@ -1217,7 +1175,7 @@
                                     }                                          \
                                     GB_PRAGMA (omp atomic write)               \
                                     Hf [hash] = i_unlocked ; /* unlock entry */\
-                                    if (first_time) my_cjnz++ ; /* TODO count later? */ \
+                                    if (first_time) my_cjnz++ ;                \
                                     break ;                                    \
                                 }                                              \
                             }                                                  \
@@ -1295,7 +1253,7 @@
                                         GB_ATOMIC_WRITE (hash, t) ;
                                         #pragma omp atomic write
                                         Hf [hash] = i_unlocked ; // unlock entry
-                                        my_cjnz++ ; // TODO count later?
+                                        my_cjnz++ ;
                                         break ;
                                     }
                                     if (hf == i_unlocked)   // f == 2
@@ -1316,10 +1274,9 @@
                         }
                     }
                 }
-
-                TaskList [taskid].my_cjnz = my_cjnz ;   // TODO count later?
             }
 
+            TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
 
         }
         else
@@ -1835,68 +1792,7 @@ allpush (with tree):
     }
 
     // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase1a: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
-
-
-    // phase1b
-
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
-
-        int64_t kk = TaskList [taskid].vector ;
-        int64_t hash_size = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cvlen) ;
-        bool is_fine = (kk >= 0) ;      // TODO use this test: (taskid < nfine)
-
-        if (is_fine)
-        {
-
-            //------------------------------------------------------------------
-            // fine task: compute nnz (C(:,j)) and values in Hx
-            //------------------------------------------------------------------
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // phase1b: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
-                //--------------------------------------------------------------
-
-                // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
-
-                int team_size = TaskList [taskid].team_size ;
-                int master    = TaskList [taskid].master ;
-                int my_teamid = taskid - master ;
-                int64_t my_cjnz = 0 ;
-
-                int64_t istart, iend ;
-                GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
-
-                // C(:,j) is sparse: count the work for this fine task
-                uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                // scan the hash table for entries in C(:,j)
-
-                for (int64_t i = istart ; i < iend ; i++)
-                {
-                    if (Hf [i] == 2)
-                    { 
-                        my_cjnz++ ;
-                    }
-                }
-
-                TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
-            }
-        }
-    }
-
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase1b: %g\n", tic) ;
+    // printf ("phase1: %g\n", tic) ;
     // tic = omp_get_wtime ( ) ;
 
     //==========================================================================
@@ -2032,11 +1928,8 @@ allpush (with tree):
                     GB_CIJ_MEMCPY (pC + istart, istart, iend - istart) ;
                     #endif
                 }
-
-                #if 0
                 else
                 {
-
                     // C(:,j) is sparse: count the work for this fine task
                     uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
                     // scan the hash table for entries in C(:,j)
@@ -2047,9 +1940,7 @@ allpush (with tree):
                             my_cjnz++ ;
                         }
                     }
-
                 }
-                #endif
 
             }
             else
@@ -2073,9 +1964,9 @@ allpush (with tree):
                         my_cjnz++ ;
                     }
                 }
-
-                TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
             }
+
+            TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
 
         }
         else
@@ -2755,7 +2646,7 @@ allpush (with tree):
     }
 
     // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase3: %g\n", tic) ;
+    // printf ("phase4: %g\n", tic) ;
     // tic = omp_get_wtime ( ) ;
 
     //==========================================================================
@@ -2821,7 +2712,7 @@ allpush (with tree):
 
             // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
 
-            // printf ("%3d phase4: fine Gustavson\n", taskid) ;
+//          printf ("%3d phase4: fine Gustavson\n", taskid) ;
             uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
             if (cjnz < cvlen)   // work done in phase3 if cjnz == cvlen
             {
@@ -2867,7 +2758,7 @@ allpush (with tree):
     }
 
     // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase4: %g\n", tic) ;
+    // printf ("phase5: %g\n", tic) ;
     // tic = omp_get_wtime ( ) ;
 
     //==========================================================================

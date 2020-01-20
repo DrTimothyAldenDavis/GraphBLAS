@@ -334,6 +334,13 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         GB_WAIT (A) ;
     }
 
+    // TODO if C(:,:) is being assigned to (both (RowsKind == GB_ALL &&
+    // ColsKind == GB_ALL)), C_replace is true:
+
+    //      if C is not aliased to M or A, clear C now.
+    //      if C is aliased to M or A, then create a new empty matrix, C2,
+    //          and use it instead of C.  Then at the end, transplant C2 into C.
+
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format of C:
     //--------------------------------------------------------------------------

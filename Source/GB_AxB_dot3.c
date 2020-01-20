@@ -289,7 +289,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
         C, Context)) ;
 
-    // if (ntasks > 1) printf ("ntasks %d\n", ntasks) ;
+    GBBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and built-in semiring
@@ -307,6 +307,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
+        /* printf ("worker: %s\n", GB_STR(GB_Adot3B(add,mult,xyname))) ; */  \
         info = GB_Adot3B (add,mult,xyname) (C, M, Mask_struct,          \
             A, A_is_pattern, B, B_is_pattern,                           \
             TaskList, ntasks, nthreads) ;                               \
@@ -332,6 +333,9 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     //--------------------------------------------------------------------------
     // user semirings created at compile time
     //--------------------------------------------------------------------------
+
+#if 0
+    TODO enable user-defined pre-compiled semirings
 
     if (semiring->object_kind == GB_USER_COMPILED)
     { 
@@ -362,6 +366,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
             done = true ;
         }
     }
+#endif
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and typecasting

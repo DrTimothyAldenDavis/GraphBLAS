@@ -84,6 +84,7 @@ if (~ok_class || ~ok_pattern || ~ok_matrix)
     % C2
     fprintf ('matrix: %d pattern: %d class %d\n', ...
         ok_matrix, ok_pattern, ok_class) ;
+    norm (C1.matrix - C2.matrix, 1)
 end
 
 % with no output, just assert that ok is true

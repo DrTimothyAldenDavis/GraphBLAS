@@ -1,3 +1,271 @@
+
+//------------------------------------------------------------------------------
+// GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
+// If this file is in the Generated/ folder, do not edit it (auto-generated).
+
+#include "GB.h"
+#ifndef GBCOMPACT
+#include "GB_control.h"
+#include "GB_ek_slice.h"
+#include "GB_bracket.h"
+#include "GB_iterator.h"
+#include "GB_sort.h"
+#include "GB_saxpy3.h"
+#include "GB_AxB__include.h"
+
+// The C=A*B semiring is defined by the following types and operators:
+
+// A'*B function (dot2):     GB_Adot2B__any_pair_bool
+// A'*B function (dot3):     GB_Adot3B__any_pair_bool
+// C+=A'*B function (dot4):  GB_Adot4B__any_pair_bool
+// A*B function (saxpy3):    GB_Asaxpy3B__any_pair_bool
+
+// C type:   bool
+// A type:   bool
+// B type:   bool
+
+// Multiply: z = 1
+// Add:      cij = z
+//           any monoid?    1
+//           atomic?        1
+//           OpenMP atomic? 0
+// MultAdd:  cij = 1
+// Identity: 0
+// Terminal: break ;
+
+#define GB_ATYPE \
+    bool
+
+#define GB_BTYPE \
+    bool
+
+#define GB_CTYPE \
+    bool
+
+// aik = Ax [pA]
+#define GB_GETA(aik,Ax,pA) \
+    ;
+
+// bkj = Bx [pB]
+#define GB_GETB(bkj,Bx,pB) \
+    ;
+
+#define GB_CX(p) Cx [p]
+
+// multiply operator
+#define GB_MULT(z, x, y) \
+    z = 1
+
+// multiply-add
+#define GB_MULTADD(z, x, y) \
+    z = 1
+
+// monoid identity value
+#define GB_IDENTITY \
+    0
+
+// break if cij reaches the terminal value (dot product only)
+#define GB_DOT_TERMINAL(cij) \
+    break ;
+
+// simd pragma for dot product
+#define GB_DOT_SIMD \
+    ;
+
+// declare the cij scalar
+#define GB_CIJ_DECLARE(cij) \
+    bool cij
+
+// save the value of C(i,j)
+#define GB_CIJ_SAVE(cij,p) Cx [p] = cij
+
+// cij = Cx [pC]
+#define GB_GETC(cij,pC) \
+    cij = Cx [pC]
+
+// Cx [pC] = cij
+#define GB_PUTC(cij,pC) \
+    Cx [pC] = cij
+
+// For saxpy3:
+
+// Cx [p] = t
+#define GB_CIJ_WRITE(p,t) Cx [p] = t
+
+// C(i,j) += t
+#define GB_CIJ_UPDATE(p,t) \
+    Cx [p] = t
+
+// x + y
+#define GB_ADD_FUNCTION(x,y) \
+    y
+
+// type with size of GB_CTYPE, and can be used in compare-and-swap
+#define GB_CTYPE_PUN \
+    bool
+
+// 1 if monoid update can skipped entirely (the ANY monoid)
+#define GB_IS_ANY_MONOID \
+    1
+
+// 1 if monoid update can be done atomically, 0 otherwise
+#define GB_HAS_ATOMIC \
+    1
+
+// 1 if monoid update can be done with a #pragma omp atomic update, 0 otherwise
+#define GB_HAS_OMP_ATOMIC \
+    0
+
+// 1 for the ANY_PAIR semirings
+#define GB_IS_ANY_PAIR_SEMIRING \
+    1
+
+// 1 if PAIR is the multiply operator 
+#define GB_IS_PAIR_MULTIPLIER \
+    1
+
+#if GB_IS_ANY_PAIR_SEMIRING
+
+    // result is purely symbolic; no numeric work to do.  Hx is not used.
+    #define GB_HX_WRITE(i,t)
+    #define GB_CIJ_GATHER(p,i)
+    #define GB_HX_UPDATE(i,t)
+    #define GB_CIJ_MEMCPY(p,i,len)
+
+#else
+
+    // Hx [i] = t
+    #define GB_HX_WRITE(i,t) Hx [i] = t
+
+    // Cx [p] = Hx [i]
+    #define GB_CIJ_GATHER(p,i) Cx [p] = Hx [i]
+
+    // Hx [i] += t
+    #define GB_HX_UPDATE(i,t) \
+        Hx [i] = t
+
+    // memcpy (&(Cx [p]), &(Hx [i]), len)
+    #define GB_CIJ_MEMCPY(p,i,len) \
+        memcpy (Cx +(p), Hx +(i), (len) * sizeof(bool))
+
+#endif
+
+// disable this semiring and use the generic case if these conditions hold
+#define GB_DISABLE \
+    (GxB_NO_ANY || GxB_NO_PAIR || GxB_NO_BOOL || GxB_NO_ANY_BOOL || GxB_NO_PAIR_BOOL || GxB_NO_ANY_PAIR_BOOL)
+
+//------------------------------------------------------------------------------
+// C=A'*B or C<!M>=A'*B: dot product (phase 2)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot2B__any_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix *Aslice, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice,
+    int64_t *GB_RESTRICT *C_counts,
+    int nthreads, int naslice, int nbslice
+)
+{ 
+    // C<M>=A'*B now uses dot3
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #define GB_PHASE_2_OF_2
+    #include "GB_AxB_dot2_meta.c"
+    #undef GB_PHASE_2_OF_2
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C<M>=A'*B: masked dot product method (phase 2)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot3B__any_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix M, const bool Mask_struct,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GB_task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_dot3_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C+=A'*B: dense dot product
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Adot4B__any_pair_bool
+(
+    GrB_Matrix C,
+    const GrB_Matrix A, bool A_is_pattern,
+    int64_t *GB_RESTRICT A_slice, int naslice,
+    const GrB_Matrix B, bool B_is_pattern,
+    int64_t *GB_RESTRICT B_slice, int nbslice,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_AxB_dot4_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C=A*B, C<M>=A*B, C<!M>=A*B: saxpy3 method (Gustavson + Hash)
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Asaxpy3B__any_pair_bool
+(
+    GrB_Matrix *Chandle,
+    const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
+    void *Work [3], size_t Worksize [3],
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    // get copies of these pointers for GB_FREE_ALL
+    GB_saxpy3task_struct *GB_RESTRICT TaskList = (*TaskList_handle) ;
+    GrB_Matrix C = (*Chandle) ;
+    int64_t *Hi_all = Work [0] ;
+    int64_t *Hf_all = Work [1] ;
+    GB_void *Hx_all = Work [2] ;
+    size_t Hi_size_total = Worksize [0] ;
+    size_t Hf_size_total = Worksize [1] ;
+    size_t Hx_size_total = Worksize [2] ;
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+    // #include "GB_AxB_saxpy3_template.c"
+{
+
 //------------------------------------------------------------------------------
 // GB_AxB_saxpy3_template: C=A*B, C<M>=A*B, or C<!M>=A*B via saxpy3 method
 //------------------------------------------------------------------------------
@@ -496,7 +764,7 @@
 //------------------------------------------------------------------------------
 
 {
-    // double tic = omp_get_wtime ( ) ;
+    double tic = omp_get_wtime ( ) ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
@@ -734,9 +1002,9 @@
         #endif
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase0: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase0: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase1: count nnz(C(:,j)) for all tasks; do numeric work for fine tasks
@@ -992,6 +1260,7 @@
 
                             #else
 
+                            GB_MULT_A_ik_B_kj ;     // t = A(i,k) * B(k,j)
                             #pragma omp atomic read
                             f = Hf [i] ;            // grab the entry
                             #if GB_HAS_ATOMIC
@@ -1834,9 +2103,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase1a: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase1a: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
 
     // phase1b
@@ -1895,9 +2164,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase1b: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase1b: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase2: compute Cp with cumulative sum and allocate C
@@ -1968,9 +2237,9 @@ allpush (with tree):
 
     #endif
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase2: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase2: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase3: numeric phase for coarse tasks, prep for gather for fine tasks
@@ -2754,9 +3023,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase3: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase3: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase4: gather phase for fine tasks
@@ -2825,17 +3094,94 @@ allpush (with tree):
             uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
             if (cjnz < cvlen)   // work done in phase3 if cjnz == cvlen
             {
+
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
-                for (int64_t i = istart ; i < iend ; i++)
+
+                if (M == NULL)
                 {
-                    if (Hf [i] == 2)
-                    { 
-                        #if !GB_IS_ANY_PAIR_SEMIRING
-                        GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
-                        #endif
-                        Ci [pC++] = i ;
+
+                    for (int64_t i = istart ; i < iend ; i++)
+                    {
+                        if (Hf [i] == 2)
+                        { 
+                            #if !GB_IS_ANY_PAIR_SEMIRING
+                            GB_CIJ_GATHER (pC, i) ; // Cx [pC] = Hx [i]
+                            #endif
+                            Ci [pC++] = i ;
+                        }
                     }
+
+                }
+                else if (mask_is_M)
+                {
+                    // TODO
+
+                }
+                else
+                {
+
+#if 0
+                    bool mjdense = (mjnz == cvlen) ;
+                    if (mjdense)
+                    {
+printf (".") ;
+                        uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
+                        {
+                            int64_t k = Bi [pB] ;       // get B(k,j)
+                            GB_GET_A_k ;                // get A(:,k)
+                            if (aknz == 0) continue ;
+                            GB_GET_B_kj ;               // bkj = B(k,j)
+                            // scan A(:,k), and lookup M(i,j)
+                            for ( ; pA < pA_end ; pA++)
+                            {
+                                int64_t i = Ai [pA] ;   // get A(i,k) 
+                                // do C(i,j)<M(i,j)> += A(i,k) * B(k,j) for this method
+                                // M(i,j) may be 0 or 1, as given in the hash table
+                                // GB_GET_M_ij (pM + i) ;     // get M(i,j)
+                                if (!Mz [pM + i])
+                                Hf [i] = 2 ;      // Hf [i] = M(i,j)
+                            }
+                        }
+                    }
+                    else
+#endif
+
+                    GB_GET_M_j ;                // get M(:,j)
+#if 0
+                    bool mjdense = (mjnz == cvlen) ;
+                    if (mjdense)
+                    {
+// printf ("-") ;
+                        uint32_t *GB_RESTRICT Mz = (uint32_t *) Mx ;
+                        for (int64_t i = istart ; i < iend ; i++)
+                        {
+
+// GB_GET_M_ij (pM + i) ;     // get M(i,j)
+// if (mij != (Mz [pM + i] != 0)) { printf ("#") ; abort ( ) ; }
+
+                            // if (!Mz [pM + i] && Hf [i] == 2)
+                            // if (Hf [i] == 2)
+
+                            if (!Mz [pM + i] && Hf [i] == 2)
+                            { 
+                                Ci [pC++] = i ;
+                            }
+                        }
+                    }
+                    else
+#endif
+                    {
+                        for (int64_t i = istart ; i < iend ; i++)
+                        {
+                            if (Hf [i] == 2)
+                            { 
+                                Ci [pC++] = i ;
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -2866,9 +3212,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase4: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase4: %g\n", tic) ;
+    tic = omp_get_wtime ( ) ;
 
     //==========================================================================
     // phase5: final gather phase for fine hash tasks
@@ -2954,8 +3300,8 @@ allpush (with tree):
         GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
-    // printf ("phase5: %g\n", tic) ;
+    tic = omp_get_wtime ( ) - tic ;
+    printf ("phase5: %g\n", tic) ;
 
 //  printf ("phases done\n") ;
 }
@@ -2982,4 +3328,11 @@ allpush (with tree):
 #undef t
 #undef Cx
 #undef Hx
+
+    }
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+#endif
 
