@@ -141,7 +141,7 @@ GrB_Info GB_Cdense_accumA
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_dense_accum_sparse_template.c"
+    #include "GB_dense_subassign_23_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -161,7 +161,7 @@ GrB_Info GB_Cdense_accumX
     return (GrB_NO_VALUE) ;
     #else
     GB_ctype ywork = (*((GB_ctype *) p_ywork)) ;
-    #include "GB_dense_accum_scalar_template.c"
+    #include "GB_dense_subassign_22_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

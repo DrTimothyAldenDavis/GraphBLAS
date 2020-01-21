@@ -1,14 +1,11 @@
 //------------------------------------------------------------------------------
-// GB_dense_accum_sparse_template: C += A where C is dense and A is sparse
+// GB_dense_subassign_06d_template: C<A> = A where C is dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
-
-// All entries in C+=A are computed fully in parallel, using the same kind of
-// parallelism as Template/GB_AxB_colscale.c.
 
 {
 
@@ -19,13 +16,14 @@
     const int64_t  *GB_RESTRICT Ap = A->p ;
     const int64_t  *GB_RESTRICT Ah = A->h ;
     const int64_t  *GB_RESTRICT Ai = A->i ;
-    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
+    const GB_CTYPE *GB_RESTRICT Ax = A->x ;
+    const size_t asize = A->type->size ;
 
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
     const int64_t cvlen = C->vlen ;
 
     //--------------------------------------------------------------------------
-    // C += A
+    // C<A> = A
     //--------------------------------------------------------------------------
 
     int taskid ;
@@ -38,14 +36,14 @@
         int64_t klast  = klast_slice  [taskid] ;
 
         //----------------------------------------------------------------------
-        // C(:,kfirst:klast) += A(:,kfirst:klast)
+        // C<A(:,kfirst:klast)> = A(:,kfirst:klast)
         //----------------------------------------------------------------------
 
         for (int64_t k = kfirst ; k <= klast ; k++)
         {
 
             //------------------------------------------------------------------
-            // find the part of A(:,k) and C(:,k) to be operated on by this task
+            // find the part of A(:,k) to be operated on by this task
             //------------------------------------------------------------------
 
             int64_t j = (Ah == NULL) ? k : Ah [k] ;
@@ -56,19 +54,30 @@
             // pC points to the start of C(:,j) if C is dense
             int64_t pC = j * cvlen ;
 
-            // TODO handle the case when A is dense, so that the pattern
-            // of A need not be accessed.
-
             //------------------------------------------------------------------
-            // C(:,j) += A(:,j)
+            // C<A(:,j)> = A(:,j)
             //------------------------------------------------------------------
 
-            GB_PRAGMA_VECTORIZE
-            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-            { 
-                int64_t p = pC + Ai [pA] ;
-                GB_GETB (aij, Ax, pA) ;                     // aij = A(i,j)
-                GB_BINOP (GB_CX (p), GB_CX (p), aij) ;      // C(i,j) += aij
+            if (Mask_struct)
+            {
+                GB_PRAGMA_VECTORIZE
+                for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                { 
+                    int64_t p = pC + Ai [pA] ;
+                    GB_COPY_A_TO_C (Cx, p, Ax, pA) ;    // Cx [p] = Ax [pA]
+                }
+            }
+            else
+            {
+                GB_PRAGMA_VECTORIZE
+                for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+                { 
+                    if (GB_AX_MASK (Ax, pA, asize))
+                    {
+                        int64_t p = pC + Ai [pA] ;
+                        GB_COPY_A_TO_C (Cx, p, Ax, pA) ;    // Cx [p] = Ax [pA]
+                    }
+                }
             }
         }
     }

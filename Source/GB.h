@@ -1469,13 +1469,6 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     GB_Context Context
 ) ;
 
-GrB_Info GB_splat           // C = A, copy A into an existing matrix C
-(
-    GrB_Matrix C,           // output matrix to modify
-    const GrB_Matrix A,     // input matrix to copy
-    GB_Context Context
-) ;
-
 void GB_memcpy                  // parallel memcpy
 (
     void *dest,                 // destination
@@ -1491,7 +1484,7 @@ GrB_Info GB_nvals           // get the number of entries in a matrix
     GB_Context Context
 ) ;
 
-GrB_Info GB_type            // get the type of a matrix
+GrB_Info GB_matvec_type            // get the type of a matrix
 (
     GrB_Type *type,         // returns the type of the matrix
     const GrB_Matrix A,     // matrix to query

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_splat: make a deep copy of a sparse matrix
+// GB_dense_subassign_24: make a deep copy of a sparse matrix
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -10,9 +10,9 @@
 // C = A, making a deep copy into an existing non-shallow matrix C, but
 // possibly reusing parts of C if C is dense.  See also GB_dup.
 
-#include "GB.h"
+#include "GB_dense.h"
 
-GrB_Info GB_splat           // C = A, copy A into an existing matrix C
+GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
 (
     GrB_Matrix C,           // output matrix to modify
     const GrB_Matrix A,     // input matrix to copy
@@ -24,8 +24,8 @@ GrB_Info GB_splat           // C = A, copy A into an existing matrix C
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C for C_splat", GB0) ;
-    ASSERT_MATRIX_OK (A, "A for A_splat", GB0) ;
+    ASSERT_MATRIX_OK (C, "C for C_dense_subassign_24", GB0) ;
+    ASSERT_MATRIX_OK (A, "A for A_dense_subassign_24", GB0) ;
     ASSERT (GB_ZOMBIES_OK (A) && GB_PENDING_OK (A)) ;
     ASSERT (GB_ZOMBIES_OK (C) && GB_PENDING_OK (C)) ;
 
@@ -56,7 +56,7 @@ GrB_Info GB_splat           // C = A, copy A into an existing matrix C
             GB_is_dense (C)             //      both A and C are dense
             && GB_is_dense (A)
             && !GB_ZOMBIES (C)          //      C has no pending work
-            && !GB_PENDING (C)          // (TODO: could tolerate pending tupes
+            && !GB_PENDING (C)          // (TODO: could tolerate pending tuples)
 //          && !GB_ZOMBIES (A)          //      A has no pending work
 //          && !GB_PENDING (A)          //      (see GB_WAIT (A) above)
             && !(C->p_shallow)          //      C is not shallow
@@ -130,7 +130,7 @@ GrB_Info GB_splat           // C = A, copy A into an existing matrix C
     // return the result
     //--------------------------------------------------------------------------
 
-    ASSERT_MATRIX_OK (C, "C result for C_splat", GB0) ;
+    ASSERT_MATRIX_OK (C, "C result for C_dense_subassign_24", GB0) ;
     return (GrB_SUCCESS) ;
 }
 

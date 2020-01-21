@@ -86,13 +86,13 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_A                                                            \
-    ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                         \
+    ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                             \
     GrB_Type atype = A->type ;                                              \
     size_t asize = atype->size ;                                            \
     GB_Type_code acode = atype->code ;                                      \
-    const int64_t *GB_RESTRICT Ap = A->p ;                                     \
-    const int64_t *GB_RESTRICT Ai = A->i ;                                     \
-    const GB_void *GB_RESTRICT Ax = A->x ;                                     \
+    const int64_t *GB_RESTRICT Ap = A->p ;                                  \
+    const int64_t *GB_RESTRICT Ai = A->i ;                                  \
+    const GB_void *GB_RESTRICT Ax = A->x ;                                  \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
 //  const int64_t *GB_RESTRICT Ah = A->h ;
@@ -104,7 +104,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_SCALAR                                                       \
-    ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                 \
+    ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                       \
     size_t asize = atype->size ;                                            \
     GB_Type_code acode = atype->code ;                                      \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \

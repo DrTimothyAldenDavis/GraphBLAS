@@ -142,7 +142,7 @@ GrB_Info GB_Cdense_accumA__isge_int8
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_dense_accum_sparse_template.c"
+    #include "GB_dense_subassign_23_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -162,7 +162,7 @@ GrB_Info GB_Cdense_accumX__isge_int8
     return (GrB_NO_VALUE) ;
     #else
     int8_t ywork = (*((int8_t *) p_ywork)) ;
-    #include "GB_dense_accum_scalar_template.c"
+    #include "GB_dense_subassign_22_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

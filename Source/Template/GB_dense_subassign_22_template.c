@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_accum_scalar_template: C += x where C is dense and x is a scalar
+// GB_dense_subassign_22_template: C += x where C is dense and x is a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.

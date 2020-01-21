@@ -100,9 +100,10 @@
 // control parameters for generating parallel tasks
 //------------------------------------------------------------------------------
 
-#define GB_NTASKS_PER_THREAD 4
+#define GB_NTASKS_PER_THREAD 2
 #define GB_COSTLY 1.2
 #define GB_FINE_WORK 2
+#define GB_MWORK_ALPHA 0.01
 
 //------------------------------------------------------------------------------
 // free workspace
@@ -400,7 +401,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     double axbflops = total_flops - Mwork ;
     GBBURBLE ("axbflops %g Mwork %g ", axbflops, (double) Mwork) ;
 
-    if ((M != NULL) && (axbflops < ((double) Mwork)))
+    if ((M != NULL) && (axbflops < ((double) Mwork * GB_MWORK_ALPHA)))
     {
         // M is present but costly to use.  Do not use it during the
         // computation of A*B.  Instead, compute C=A*B and then apply the mask
@@ -460,8 +461,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // so that a single fine task is used instead.
 
     int nthreads = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
-//  ntasks_initial = (nthreads == 1) ?  1 : (GB_NTASKS_PER_THREAD * nthreads) ;
-    ntasks_initial = (GB_NTASKS_PER_THREAD * nthreads) ;
+    ntasks_initial = (nthreads == 1) ?  4 : (GB_NTASKS_PER_THREAD * nthreads) ;
+//     ntasks_initial = (GB_NTASKS_PER_THREAD * nthreads) ;
     double target_task_size = ((double) total_flops) / ntasks_initial ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
     double target_fine_size = target_task_size / GB_FINE_WORK ;

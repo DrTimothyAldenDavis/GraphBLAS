@@ -45,18 +45,14 @@ GrB_Info GxB_Vector_subassign       // w(Rows)<M> = accum (w(Rows),u)
     // w(Rows)<M> = accum (w(Rows), u) and variations
     //--------------------------------------------------------------------------
 
-    // construct the column index list Cols = [ 0 ] of length nCols = 1
-    GrB_Index Cols [1] ;
-    Cols [0] = 0 ;
-
     info = GB_subassign (
         (GrB_Matrix) w,     C_replace,  // w vector and its descriptor
         (GrB_Matrix) M, Mask_comp, Mask_struct, // mask and its descriptor
         false,                          // do not transpose the mask
-        accum,                          // for accum (C(Rows,Cols),A)
+        accum,                          // for accum (C(Rows,:),A)
         (GrB_Matrix) u,     false,      // u as a matrix; never transposed
         Rows, nRows,                    // row indices
-        Cols, 1,                        // one column index, nCols = 1
+        GrB_ALL, 1,                     // all column indices
         false, NULL, GB_ignore_code,    // no scalar expansion
         Context) ;
 

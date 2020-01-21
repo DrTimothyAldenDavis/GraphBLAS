@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_expand_scalar: C(:,:) = x where x is a scalar
+// GB_dense_subassign_21: C(:,:) = x where x is a scalar
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -13,7 +13,7 @@
 #include "GB_select.h"
 #include "GB_Pending.h"
 
-GrB_Info GB_dense_expand_scalar     // C(:,:) = x; C is a matrix and x a scalar
+GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
 (
     GrB_Matrix C,                   // input/output matrix
     const GB_void *scalar,          // input scalar
