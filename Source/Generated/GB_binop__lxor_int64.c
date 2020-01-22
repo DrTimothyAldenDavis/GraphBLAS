@@ -25,7 +25,7 @@
 // C+=A function (dense accum):     GB_Cdense_accumA__lxor_int64
 // C+=x function (dense accum):     GB_Cdense_accumX__lxor_int64
 // C+=A+B function (dense ewise3):  (none)
-// C=A+B function (dense ewise3):   (none)
+// C=A+B function (dense ewise3):   GB_Cdense_ewise3_noaccum__lxor_int64
 
 // C type:   int64_t
 // A type:   int64_t
@@ -65,6 +65,10 @@
 #define GB_BINOP(z, x, y)   \
     z = ((x != 0) != (y != 0)) ;
 
+// op is second
+#define GB_OP_IS_SECOND \
+    0
+
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
 
@@ -80,6 +84,9 @@
 //------------------------------------------------------------------------------
 
 #if 0
+
+// The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
+// TODO extend to IS*, LOR, LAND, LXOR.
 
 GrB_Info (none)
 (
@@ -103,9 +110,7 @@ GrB_Info (none)
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-#if 0
-
-GrB_Info (none)
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -120,9 +125,6 @@ GrB_Info (none)
     return (GrB_SUCCESS) ;
     #endif
 }
-
-#endif
-
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

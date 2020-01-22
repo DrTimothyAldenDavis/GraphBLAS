@@ -64,6 +64,10 @@
 #define GB_BINOP(z, x, y)   \
     GB_BINARYOP(z, x, y) ;
 
+// op is second
+#define GB_OP_IS_SECOND \
+    GB_op_is_second
+
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
 
@@ -79,6 +83,9 @@
 //------------------------------------------------------------------------------
 
 if_is_binop_subset
+
+// The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
+// TODO extend to IS*, LOR, LAND, LXOR.
 
 GrB_Info GB_Cdense_ewise3_accum
 (
@@ -102,8 +109,6 @@ endif_is_binop_subset
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-if_is_binop_subset
-
 GrB_Info GB_Cdense_ewise3_noaccum
 (
     GrB_Matrix C,
@@ -119,9 +124,6 @@ GrB_Info GB_Cdense_ewise3_noaccum
     return (GrB_SUCCESS) ;
     #endif
 }
-
-endif_is_binop_subset
-
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

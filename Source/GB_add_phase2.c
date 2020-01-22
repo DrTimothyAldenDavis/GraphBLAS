@@ -250,6 +250,9 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
 
         #define GB_PHASE_2_OF_2
 
+        // loops cannot be vectorized
+        #define GB_PRAGMA_VECTORIZE
+
         #include "GB_add_template.c"
 
     }

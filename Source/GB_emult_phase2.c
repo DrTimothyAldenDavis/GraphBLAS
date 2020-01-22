@@ -113,6 +113,23 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     GB_Type_code ccode = ctype->code ;
 
     //--------------------------------------------------------------------------
+    // check the types of A and B
+    //--------------------------------------------------------------------------
+
+    // With C = ewisemult (A,B), only the intersection of A and B is used.
+    // If op is SECOND or PAIR, the values of A are never accessed.
+    // If op is FIRST  or PAIR, the values of B are never accessed.
+    // If op is PAIR, the values of A and B are never accessed.
+    // Contrast with ewiseadd.
+
+    bool op_is_first  = op->opcode == GB_FIRST_opcode ;
+    bool op_is_second = op->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = op->opcode == GB_PAIR_opcode ;
+    // A is passed as x, and B as y, in z = op(x,y)
+    bool A_is_pattern = op_is_second || op_is_pair ;
+    bool B_is_pattern = op_is_first  || op_is_pair ;
+
+    //--------------------------------------------------------------------------
     // using a built-in binary operator
     //--------------------------------------------------------------------------
 
@@ -141,7 +158,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
         GB_Opcode opcode ;
         GB_Type_code xycode, zcode ;
 
-        if (GB_binop_builtin (A->type, false, B->type, false, op,
+        if (GB_binop_builtin (A->type, A_is_pattern, B->type, A_is_pattern, op,
             false, &opcode, &xycode, &zcode) && ccode == zcode)
         { 
             #include "GB_binop_factory.c"

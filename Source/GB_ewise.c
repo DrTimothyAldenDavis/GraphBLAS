@@ -42,7 +42,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool A_transpose,               // if true, use A' instead of A
     const GrB_Matrix B,             // input matrix
     bool B_transpose,               // if true, use B' instead of B
-    const bool eWiseAdd,            // if true, do set union (like A+B),
+    bool eWiseAdd,                  // if true, do set union (like A+B),
                                     // otherwise do intersection (like A.*B)
     GB_Context Context
 )
@@ -155,32 +155,66 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     }
 
     //--------------------------------------------------------------------------
+    // determine if any matrices are dense
+    //--------------------------------------------------------------------------
+
+    bool C_is_dense = GB_is_dense (C) && !GB_PENDING_OR_ZOMBIES (C) ;
+    bool A_is_dense = GB_is_dense (A) ;
+    bool B_is_dense = GB_is_dense (B) ;
+    bool M_is_dense = GB_is_dense (M) ;
+
+    if (C_is_dense) GBBURBLE ("(C dense) ") ;
+    if (A_is_dense) GBBURBLE ("(A dense) ") ;
+    if (B_is_dense) GBBURBLE ("(B dense) ") ;
+    if (M_is_dense) GBBURBLE ("(M dense) ") ;
+
+    //--------------------------------------------------------------------------
     // decide when to apply the mask
     //--------------------------------------------------------------------------
 
     // GB_add and GB_emult can apply any non-complemented mask, but it is
     // faster to exploit the mask in GB_add / GB_emult only when it is very
-    // sparse compared with A and B.
+    // sparse compared with A and B, or (in special cases) when it is easy
+    // to apply.
 
     // check the CSR/CSC format of M
     bool M_is_csc = (M == NULL) ? C_is_csc : M->is_csc ;
-
     bool mask_applied = false ;
     GrB_Matrix M1 = NULL ;
 
-    if (M != NULL && !Mask_comp && GB_MASK_VERY_SPARSE (M, A, B))
+    if (M != NULL && !Mask_comp)
     {
-        // the mask is present, not complemented, and very sparse; use it
-        // during GB_add and GB_emult to reduce memory and work.
-        M1 = M ;
-        if (C_is_csc != M_is_csc)
-        { 
-            GBBURBLE ("(M transpose) ") ;
-            GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
-            M1 = MT ;
+        // mask is present, not complemented; see if it is quick or easy to use.
+        // it may be a structural or valued mask.
+        bool mask_is_easy = (A_is_dense || (A == M))    // A is easy
+                         && (B_is_dense || (B == M)) ;  // and B is easy
+        bool mask_is_very_sparse = GB_MASK_VERY_SPARSE (M, A, B) ;
+        if (mask_is_easy || mask_is_very_sparse)
+        {
+            // the mask is present, not complemented, and very sparse or easy
+            // to exploit ; use it during GB_add and GB_emult to reduce memory
+            // and work.
+            M1 = M ;
+            if (C_is_csc != M_is_csc)
+            { 
+                GBBURBLE ("(M transpose) ") ;
+                GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
+                M1 = MT ;
+            }
+            mask_applied = true ;
+            if (mask_is_easy)
+            {
+                GBBURBLE ("(mask is easy) ") ;
+            }
+            else // mask_is_very_sparse
+            {
+                GBBURBLE ("(mask applied) ") ;
+            }
         }
-        mask_applied = true ;
-        GBBURBLE ("(mask applied) ") ;
+        else
+        {
+            GBBURBLE ("(mask later) ") ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -217,29 +251,57 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     // TODO handle more special cases
 
+    if (A_is_dense && B_is_dense)
+    {
+        // no need to use eWiseAdd if both A and B are dense
+        eWiseAdd = false ;
+    }
+
+    bool op_is_first  = op->opcode == GB_FIRST_opcode ;
+    bool op_is_second = op->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = op->opcode == GB_PAIR_opcode ;
+    bool A_is_pattern, B_is_pattern ;
+    // A is passed as x, and B as y, in z = op(x,y)
+    if (!eWiseAdd)
+    {
+        // op is only applied to the intersection of A and B.  Values of A and
+        // B outside the intersection are ignored already, and do not appear in
+        // C.  Thus, the SECOND operator ignores all values in A, and the FIRST
+        // operator ignores all values in B.  PAIR ignores both.
+        A_is_pattern = op_is_second || op_is_pair ;
+        B_is_pattern = op_is_first  || op_is_pair ;
+    }
+
+    bool no_typecast =
+        (op->ztype == C->type)              // no typecasting of C
+        && (op->xtype == A1->type)          // no typecasting of A
+        && (op->ytype == B1->type) ;        // no typecasting of B
+
     #ifndef GBCOMPACT
 
-    if (GB_is_dense (C)                     // C, A, B all dense
-        && GB_is_dense (A1)
-        && GB_is_dense (B1)
-        && !GB_PENDING_OR_ZOMBIES (C)       // with no pending tuples
+        // sssp12:
+        // C<A> = A+B where C is sparse and B is dense;
+        // mask is structural, not complemented, C_replace is false.
+        // C is not empty.  Use a kernel that computes T<A>=A+B
+        // where T starts out empty; just iterate over the entries in A.
+
+    if (C_is_dense                          // C, A, B all dense
+        && A_is_dense
+        && B_is_dense
         && (C != A1)                        // no alias (but could be handled)
         && (C != B1)
         && (A1 != B1)
         && (M == NULL) && !Mask_comp        // no mask
         && !C_replace                       // C_replace false
         && (C->is_csc == C_is_csc)          // no transpose of C
-        && (op->ztype == C->type)           // no typecasting of C
-        && (op->xtype == A1->type)          // no typecasting of A or B
-        && (op->ytype == B1->type)
-        && (op->opcode >= GB_MIN_opcode)    // subset of binary operators
-        && (op->opcode <= GB_RDIV_opcode)
-        // && (op->ztype == op->xtype)      // implied by binary op subset
-        // && (op->ztype == op->ytype)
+        && no_typecast                      // no typecasting
+        && (op->opcode < GB_USER_C_opcode)  // not a user-define operator
         )
     {
 
-        if (accum == op)                    // accum is same as the op
+        if (accum == op                     // accum is same as the op
+        && (op->opcode >= GB_MIN_opcode)    // subset of binary operators
+        && (op->opcode <= GB_RDIV_opcode))
         {
 
             //------------------------------------------------------------------
@@ -259,7 +321,6 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             // C = A+B where all 3 matrices are dense
             //------------------------------------------------------------------
 
-            // TODO can be done for all binary ops, not just subset
             GBBURBLE ("dense C=A+B ") ;
             GB_dense_ewise3_noaccum (C, A1, B1, op, Context) ;
             GB_FREE_ALL ;

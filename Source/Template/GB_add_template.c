@@ -143,6 +143,7 @@
             // ----
 
             int64_t ajnz = pA_end - pA ;        // nnz in A(:,j) for this slice
+            int64_t pA_start = pA ;
             bool adense = (ajnz == len) ;
             int64_t iA_first = -1, iA_last = -1 ;
             if (ajnz > 0)
@@ -178,6 +179,7 @@
             // ----
 
             int64_t bjnz = pB_end - pB ;        // nnz in B(:,j) for this slice
+            int64_t pB_start = pB ;
             bool bdense = (bjnz == len) ;
             int64_t iB_first = -1, iB_last = -1 ;
             if (bjnz > 0)
@@ -542,85 +544,238 @@
                 // C(:,j)<M(:,j)> = A(:,j) + B (:,j)
                 //--------------------------------------------------------------
 
-                for ( ; pM < pM_end ; pM++)
+                bool mask_is_easy = ((adense || A == M) && (bdense || B == M)) ;
+
+                if (mask_is_easy && Mask_struct)
                 {
 
                     //----------------------------------------------------------
-                    // get M(i,j) for A(i,j) + B (i,j)
+                    // special case: mask is very easy to use
                     //----------------------------------------------------------
 
-                    int64_t i = Mi [pM] ;
-                    bool mij = GB_mcast (Mx, pM, msize) ;
-                    if (!mij) continue ;
+                    // the mask M is structural, and every entry in the
+                    // mask is guaranteed to appear in A+B
 
-                    //----------------------------------------------------------
-                    // get A(i,j)
-                    //----------------------------------------------------------
+                    int64_t mjnz = pM_end - pM ;        // nnz (M (:,j))
 
-                    // TODO skip binary search if A(:,j) is dense
-                    // TODO special case if A == M (see LAGraph_sssp11)`
+                    #if defined ( GB_PHASE_1_OF_2 )
 
-                    int64_t apright = pA_end - 1 ;
-                    bool afound ;
-                    GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
+                    cjnz = mjnz ;
 
-                    //----------------------------------------------------------
-                    // get B(i,j)
-                    //----------------------------------------------------------
+                    #else
 
-                    // TODO skip binary search if B(:,j) is dense
-                    //  (B could be dense in LAGraph_sssp11 if t is dense).
-                    // TODO special case if B == M
+                    // copy the pattern into C (:,j)
+                    int64_t pC_start = pC ;
+                    int64_t pM_start = pM ;
+                    memcpy (Ci + pC, Mi + pM, mjnz * sizeof (int64_t)) ;
+                    int64_t pA_offset = pA_start - iA_first ;
+                    int64_t pB_offset = pB_start - iB_first ;
 
-                    int64_t bpright = pB_end - 1 ;
-                    bool bfound ;
-                    GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
-
-                    //----------------------------------------------------------
-                    // C(i,j) = A(i,j) + B(i,j)
-                    //----------------------------------------------------------
-
-                    if (afound && bfound)
+                    if (adense && bdense)
                     { 
-                        // C (i,j) = A (i,j) + B (i,j)
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        Ci [pC] = i ;
-                        GB_GETA (aij, Ax, pA) ;
-                        GB_GETB (bij, Bx, pB) ;
-                        GB_BINOP (GB_CX (pC), aij, bij) ;
-                        pC++ ;
-                        #endif
+
+                        //------------------------------------------------------
+                        // A and B both dense
+                        //------------------------------------------------------
+
+                        GB_PRAGMA_VECTORIZE
+                        for (int64_t p = 0 ; p < mjnz ; p++)
+                        {
+                            int64_t pM = p + pM_start ;
+                            int64_t pC = p + pC_start ;
+                            int64_t i = Mi [pM] ;
+                            ASSERT (GB_mcast (Mx, pM, msize)) ;
+                            ASSERT (Ai [pA_offset + i] == i) ;
+                            ASSERT (Bi [pB_offset + i] == i) ;
+                            GB_GETA (aij, Ax, pA_offset + i) ;
+                            GB_GETB (bij, Bx, pB_offset + i) ;
+                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                        }
+
                     }
-                    else if (afound)
+                    else if (adense)
                     { 
-                        // C (i,j) = A (i,j)
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        Ci [pC] = i ;
-                        GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
-                        pC++ ;
-                        #endif
+
+                        //------------------------------------------------------
+                        // A dense, B == M
+                        //------------------------------------------------------
+
+                        GB_PRAGMA_VECTORIZE
+                        for (int64_t p = 0 ; p < mjnz ; p++)
+                        {
+                            int64_t pM = p + pM_start ;
+                            int64_t pC = p + pC_start ;
+                            int64_t i = Mi [pM] ;
+                            ASSERT (GB_mcast (Mx, pM, msize)) ;
+                            ASSERT (Ai [pA_offset + i] == i) ;
+                            ASSERT (Bi [pM] == i) ;
+                            GB_GETA (aij, Ax, pA_offset + i) ;
+                            GB_GETB (bij, Bx, pM) ;
+                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                        }
+
                     }
-                    else if (bfound)
+                    else if (bdense)
                     { 
-                        // C (i,j) = B (i,j)
-                        #if defined ( GB_PHASE_1_OF_2 )
-                        cjnz++ ;
-                        #else
-                        Ci [pC] = i ;
-                        GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
-                        pC++ ;
-                        #endif
+
+                        //------------------------------------------------------
+                        // B dense, A == M
+                        //------------------------------------------------------
+
+                        GB_PRAGMA_VECTORIZE
+                        for (int64_t p = 0 ; p < mjnz ; p++)
+                        {
+                            int64_t pM = p + pM_start ;
+                            int64_t pC = p + pC_start ;
+                            int64_t i = Mi [pM] ;
+                            ASSERT (GB_mcast (Mx, pM, msize)) ;
+                            ASSERT (Ai [pM] == i) ;
+                            ASSERT (Bi [pB_offset + i] == i) ;
+                            GB_GETA (aij, Ax, pM) ;
+                            GB_GETB (bij, Bx, pB_offset + i) ;
+                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                        }
+
                     }
+                    else
+                    { 
+
+                        //------------------------------------------------------
+                        // A == M == B: all three matrices are the same
+                        //------------------------------------------------------
+
+                        GB_PRAGMA_VECTORIZE
+                        for (int64_t p = 0 ; p < mjnz ; p++)
+                        {
+                            int64_t pM = p + pM_start ;
+                            int64_t pC = p + pC_start ;
+                            #if GB_OP_IS_SECOND
+                            GB_GETB (t, Bx, pM) ;
+                            #else
+                            GB_GETA (t, Ax, pM) ;
+                            #endif
+                            GB_BINOP (GB_CX (pC), t, t) ;
+                        }
+                    }
+
+                    #endif
+
                 }
+                else
+                {
 
-                #if defined ( GB_PHASE_2_OF_2 )
-                ASSERT (pC == pC_end) ;
-                #endif
+                    //----------------------------------------------------------
+                    // scan M(:,j) and count nnz (C (:,j))
+                    //----------------------------------------------------------
 
+                    for ( ; pM < pM_end ; pM++)
+                    {
+
+                        //------------------------------------------------------
+                        // get M(i,j) for A(i,j) + B (i,j)
+                        //------------------------------------------------------
+
+                        int64_t i = Mi [pM] ;
+                        bool mij = GB_mcast (Mx, pM, msize) ;
+                        if (!mij) continue ;
+
+                        //------------------------------------------------------
+                        // get A(i,j)
+                        //------------------------------------------------------
+
+                        bool afound ;
+                        if (adense)
+                        {
+                            // A is dense; use quick lookup
+                            pA = pA_start + (i - iA_first) ;
+                            afound = true ;
+                        }
+                        else if (A == M)
+                        {
+                            // A is aliased to M
+                            pA = pM ;
+                            afound = true ;
+                        }
+                        else
+                        {
+                            // A is sparse; use binary search
+                            int64_t apright = pA_end - 1 ;
+                            GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
+                        }
+
+                        ASSERT (GB_IMPLIES (afound, Ai [pA] == i)) ;
+
+                        //------------------------------------------------------
+                        // get B(i,j)
+                        //------------------------------------------------------
+
+                        bool bfound ;
+                        if (bdense)
+                        {
+                            // B is dense; use quick lookup
+                            pB = pB_start + (i - iB_first) ;
+                            bfound = true ;
+                        }
+                        else if (B == M)
+                        {
+                            // B is aliased to M
+                            pB = pM ;
+                            bfound = true ;
+                        }
+                        else
+                        {
+                            // B is sparse; use binary search
+                            int64_t bpright = pB_end - 1 ;
+                            GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
+                        }
+
+                        ASSERT (GB_IMPLIES (bfound, Bi [pB] == i)) ;
+
+                        //------------------------------------------------------
+                        // C(i,j) = A(i,j) + B(i,j)
+                        //------------------------------------------------------
+
+                        if (afound && bfound)
+                        { 
+                            // C (i,j) = A (i,j) + B (i,j)
+                            #if defined ( GB_PHASE_1_OF_2 )
+                            cjnz++ ;
+                            #else
+                            Ci [pC] = i ;
+                            GB_GETA (aij, Ax, pA) ;
+                            GB_GETB (bij, Bx, pB) ;
+                            GB_BINOP (GB_CX (pC), aij, bij) ;
+                            pC++ ;
+                            #endif
+                        }
+                        else if (afound)
+                        { 
+                            // C (i,j) = A (i,j)
+                            #if defined ( GB_PHASE_1_OF_2 )
+                            cjnz++ ;
+                            #else
+                            Ci [pC] = i ;
+                            GB_COPY_A_TO_C (GB_CX (pC), Ax, pA) ;
+                            pC++ ;
+                            #endif
+                        }
+                        else if (bfound)
+                        { 
+                            // C (i,j) = B (i,j)
+                            #if defined ( GB_PHASE_1_OF_2 )
+                            cjnz++ ;
+                            #else
+                            Ci [pC] = i ;
+                            GB_COPY_B_TO_C (GB_CX (pC), Bx, pB) ;
+                            pC++ ;
+                            #endif
+                        }
+                    }
+
+                    #if defined ( GB_PHASE_2_OF_2 )
+                    ASSERT (pC == pC_end) ;
+                    #endif
+                }
             }
 
             //------------------------------------------------------------------

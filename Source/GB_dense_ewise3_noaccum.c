@@ -31,9 +31,9 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT (!GB_aliased (C, A)) ;
-    ASSERT (!GB_aliased (C, B)) ;
-    ASSERT (!GB_aliased (A, B)) ;
+    ASSERT (!GB_aliased (C, A)) ;   // TODO aliasing can be handled;
+    ASSERT (!GB_aliased (C, B)) ;   //      just remove const and GB_RESTRICT
+    ASSERT (!GB_aliased (A, B)) ;   //      from GB_Cdense_* workers.
     ASSERT (GB_is_dense (C)) ;
     ASSERT (GB_is_dense (A)) ;
     ASSERT (GB_is_dense (B)) ;
@@ -41,8 +41,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (op->ztype == C->type) ;
     ASSERT (op->xtype == A->type) ;
     ASSERT (op->ytype == B->type) ;
-    ASSERT (op->opcode >= GB_MIN_CODE) ;
-    ASSERT (op->opcode <= GB_RDIV_CODE) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -70,8 +68,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-    // TODO handle more operators?  Mix of 2 operators? Mix of types?
-
     #ifndef GBCOMPACT
 
         GB_Opcode opcode ;
@@ -79,7 +75,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
         if (GB_binop_builtin (A->type, false, B->type, false, op, false,
             &opcode, &xycode, &zcode))
         { 
-            #define GB_BINOP_SUBSET
             #include "GB_binop_factory.c"
         }
 

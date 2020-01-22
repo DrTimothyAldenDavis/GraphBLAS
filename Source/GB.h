@@ -24,7 +24,7 @@
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
 #ifndef GB_BURBLE
-#define GB_BURBLE 0
+#define GB_BURBLE 1
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
@@ -2076,6 +2076,7 @@ static inline bool GB_is_dense
 {
     // check if A is competely dense:  all entries present.
     // zombies and pending tuples are not considered
+    if (A == NULL) return (false) ;
     GrB_Index anzmax ;
     bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
     return (ok && (anzmax == GB_NNZ (A))) ;

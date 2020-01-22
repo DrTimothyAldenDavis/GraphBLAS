@@ -19,15 +19,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_int8
 (
@@ -110,15 +110,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_int16
 (
@@ -201,15 +201,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_int32
 (
@@ -292,15 +292,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_int64
 (
@@ -383,15 +383,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_uint8
 (
@@ -474,15 +474,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_uint16
 (
@@ -565,15 +565,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_uint32
 (
@@ -656,15 +656,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_uint64
 (
@@ -747,15 +747,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_fp32
 (
@@ -838,15 +838,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_fp64
 (
@@ -929,15 +929,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__first_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__first_bool
 (
@@ -1020,15 +1020,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_int8
 (
@@ -1111,15 +1111,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_int16
 (
@@ -1202,15 +1202,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_int32
 (
@@ -1293,15 +1293,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_int64
 (
@@ -1384,15 +1384,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_uint8
 (
@@ -1475,15 +1475,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_uint16
 (
@@ -1566,15 +1566,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_uint32
 (
@@ -1657,15 +1657,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_uint64
 (
@@ -1748,15 +1748,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_fp32
 (
@@ -1839,15 +1839,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_fp64
 (
@@ -1930,15 +1930,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__second_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__second_bool
 (
@@ -2021,15 +2021,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_int8
 (
@@ -2112,15 +2112,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_int16
 (
@@ -2203,15 +2203,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_int32
 (
@@ -2294,15 +2294,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_int64
 (
@@ -2385,15 +2385,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_uint8
 (
@@ -2476,15 +2476,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_uint16
 (
@@ -2567,15 +2567,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_uint32
 (
@@ -2658,15 +2658,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_uint64
 (
@@ -2749,15 +2749,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_fp32
 (
@@ -2840,15 +2840,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_fp64
 (
@@ -2931,15 +2931,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__pair_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__pair_bool
 (
@@ -3022,6 +3022,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_int8
 (
     GrB_Matrix C,
@@ -3029,8 +3031,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_int8
 (
@@ -3113,6 +3113,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_int16
 (
     GrB_Matrix C,
@@ -3120,8 +3122,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_int16
 (
@@ -3204,6 +3204,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_int32
 (
     GrB_Matrix C,
@@ -3211,8 +3213,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_int32
 (
@@ -3295,6 +3295,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_int64
 (
     GrB_Matrix C,
@@ -3302,8 +3304,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_int64
 (
@@ -3386,6 +3386,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_uint8
 (
     GrB_Matrix C,
@@ -3393,8 +3395,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_uint8
 (
@@ -3477,6 +3477,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_uint16
 (
     GrB_Matrix C,
@@ -3484,8 +3486,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_uint16
 (
@@ -3568,6 +3568,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_uint32
 (
     GrB_Matrix C,
@@ -3575,8 +3577,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_uint32
 (
@@ -3659,6 +3659,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_uint64
 (
     GrB_Matrix C,
@@ -3666,8 +3668,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_uint64
 (
@@ -3750,6 +3750,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_fp32
 (
     GrB_Matrix C,
@@ -3757,8 +3759,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_fp32
 (
@@ -3841,6 +3841,8 @@ GrB_Info GB_Cdense_ewise3_accum__min_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__min_fp64
 (
     GrB_Matrix C,
@@ -3848,8 +3850,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__min_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__min_fp64
 (
@@ -3932,6 +3932,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_int8
 (
     GrB_Matrix C,
@@ -3939,8 +3941,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_int8
 (
@@ -4023,6 +4023,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_int16
 (
     GrB_Matrix C,
@@ -4030,8 +4032,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_int16
 (
@@ -4114,6 +4114,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_int32
 (
     GrB_Matrix C,
@@ -4121,8 +4123,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_int32
 (
@@ -4205,6 +4205,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_int64
 (
     GrB_Matrix C,
@@ -4212,8 +4214,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_int64
 (
@@ -4296,6 +4296,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_uint8
 (
     GrB_Matrix C,
@@ -4303,8 +4305,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_uint8
 (
@@ -4387,6 +4387,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_uint16
 (
     GrB_Matrix C,
@@ -4394,8 +4396,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_uint16
 (
@@ -4478,6 +4478,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_uint32
 (
     GrB_Matrix C,
@@ -4485,8 +4487,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_uint32
 (
@@ -4569,6 +4569,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_uint64
 (
     GrB_Matrix C,
@@ -4576,8 +4578,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_uint64
 (
@@ -4660,6 +4660,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_fp32
 (
     GrB_Matrix C,
@@ -4667,8 +4669,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_fp32
 (
@@ -4751,6 +4751,8 @@ GrB_Info GB_Cdense_ewise3_accum__max_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__max_fp64
 (
     GrB_Matrix C,
@@ -4758,8 +4760,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__max_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__max_fp64
 (
@@ -4842,6 +4842,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_int8
 (
     GrB_Matrix C,
@@ -4849,8 +4851,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_int8
 (
@@ -4933,6 +4933,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_int16
 (
     GrB_Matrix C,
@@ -4940,8 +4942,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_int16
 (
@@ -5024,6 +5024,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_int32
 (
     GrB_Matrix C,
@@ -5031,8 +5033,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_int32
 (
@@ -5115,6 +5115,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_int64
 (
     GrB_Matrix C,
@@ -5122,8 +5124,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_int64
 (
@@ -5206,6 +5206,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_uint8
 (
     GrB_Matrix C,
@@ -5213,8 +5215,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_uint8
 (
@@ -5297,6 +5297,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_uint16
 (
     GrB_Matrix C,
@@ -5304,8 +5306,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_uint16
 (
@@ -5388,6 +5388,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_uint32
 (
     GrB_Matrix C,
@@ -5395,8 +5397,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_uint32
 (
@@ -5479,6 +5479,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_uint64
 (
     GrB_Matrix C,
@@ -5486,8 +5488,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_uint64
 (
@@ -5570,6 +5570,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_fp32
 (
     GrB_Matrix C,
@@ -5577,8 +5579,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_fp32
 (
@@ -5661,6 +5661,8 @@ GrB_Info GB_Cdense_ewise3_accum__plus_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__plus_fp64
 (
     GrB_Matrix C,
@@ -5668,8 +5670,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__plus_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__plus_fp64
 (
@@ -5752,6 +5752,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_int8
 (
     GrB_Matrix C,
@@ -5759,8 +5761,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_int8
 (
@@ -5843,6 +5843,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_int16
 (
     GrB_Matrix C,
@@ -5850,8 +5852,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_int16
 (
@@ -5934,6 +5934,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_int32
 (
     GrB_Matrix C,
@@ -5941,8 +5943,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_int32
 (
@@ -6025,6 +6025,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_int64
 (
     GrB_Matrix C,
@@ -6032,8 +6034,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_int64
 (
@@ -6116,6 +6116,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_uint8
 (
     GrB_Matrix C,
@@ -6123,8 +6125,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_uint8
 (
@@ -6207,6 +6207,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_uint16
 (
     GrB_Matrix C,
@@ -6214,8 +6216,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_uint16
 (
@@ -6298,6 +6298,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_uint32
 (
     GrB_Matrix C,
@@ -6305,8 +6307,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_uint32
 (
@@ -6389,6 +6389,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_uint64
 (
     GrB_Matrix C,
@@ -6396,8 +6398,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_uint64
 (
@@ -6480,6 +6480,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_fp32
 (
     GrB_Matrix C,
@@ -6487,8 +6489,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_fp32
 (
@@ -6571,6 +6571,8 @@ GrB_Info GB_Cdense_ewise3_accum__minus_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__minus_fp64
 (
     GrB_Matrix C,
@@ -6578,8 +6580,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__minus_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__minus_fp64
 (
@@ -6662,6 +6662,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_int8
 (
     GrB_Matrix C,
@@ -6669,8 +6671,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_int8
 (
@@ -6753,6 +6753,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_int16
 (
     GrB_Matrix C,
@@ -6760,8 +6762,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_int16
 (
@@ -6844,6 +6844,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_int32
 (
     GrB_Matrix C,
@@ -6851,8 +6853,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_int32
 (
@@ -6935,6 +6935,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_int64
 (
     GrB_Matrix C,
@@ -6942,8 +6944,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_int64
 (
@@ -7026,6 +7026,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint8
 (
     GrB_Matrix C,
@@ -7033,8 +7035,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_uint8
 (
@@ -7117,6 +7117,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint16
 (
     GrB_Matrix C,
@@ -7124,8 +7126,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_uint16
 (
@@ -7208,6 +7208,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint32
 (
     GrB_Matrix C,
@@ -7215,8 +7217,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_uint32
 (
@@ -7299,6 +7299,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint64
 (
     GrB_Matrix C,
@@ -7306,8 +7308,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_uint64
 (
@@ -7390,6 +7390,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_fp32
 (
     GrB_Matrix C,
@@ -7397,8 +7399,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_fp32
 (
@@ -7481,6 +7481,8 @@ GrB_Info GB_Cdense_ewise3_accum__rminus_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rminus_fp64
 (
     GrB_Matrix C,
@@ -7488,8 +7490,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rminus_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rminus_fp64
 (
@@ -7572,6 +7572,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_int8
 (
     GrB_Matrix C,
@@ -7579,8 +7581,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_int8
 (
@@ -7663,6 +7663,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_int16
 (
     GrB_Matrix C,
@@ -7670,8 +7672,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_int16
 (
@@ -7754,6 +7754,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_int32
 (
     GrB_Matrix C,
@@ -7761,8 +7763,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_int32
 (
@@ -7845,6 +7845,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_int64
 (
     GrB_Matrix C,
@@ -7852,8 +7854,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_int64
 (
@@ -7936,6 +7936,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_uint8
 (
     GrB_Matrix C,
@@ -7943,8 +7945,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_uint8
 (
@@ -8027,6 +8027,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_uint16
 (
     GrB_Matrix C,
@@ -8034,8 +8036,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_uint16
 (
@@ -8118,6 +8118,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_uint32
 (
     GrB_Matrix C,
@@ -8125,8 +8127,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_uint32
 (
@@ -8209,6 +8209,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_uint64
 (
     GrB_Matrix C,
@@ -8216,8 +8218,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_uint64
 (
@@ -8300,6 +8300,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_fp32
 (
     GrB_Matrix C,
@@ -8307,8 +8309,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_fp32
 (
@@ -8391,6 +8391,8 @@ GrB_Info GB_Cdense_ewise3_accum__times_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__times_fp64
 (
     GrB_Matrix C,
@@ -8398,8 +8400,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__times_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__times_fp64
 (
@@ -8482,6 +8482,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_int8
 (
     GrB_Matrix C,
@@ -8489,8 +8491,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_int8
 (
@@ -8573,6 +8573,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_int16
 (
     GrB_Matrix C,
@@ -8580,8 +8582,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_int16
 (
@@ -8664,6 +8664,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_int32
 (
     GrB_Matrix C,
@@ -8671,8 +8673,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_int32
 (
@@ -8755,6 +8755,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_int64
 (
     GrB_Matrix C,
@@ -8762,8 +8764,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_int64
 (
@@ -8846,6 +8846,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_uint8
 (
     GrB_Matrix C,
@@ -8853,8 +8855,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_uint8
 (
@@ -8937,6 +8937,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_uint16
 (
     GrB_Matrix C,
@@ -8944,8 +8946,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_uint16
 (
@@ -9028,6 +9028,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_uint32
 (
     GrB_Matrix C,
@@ -9035,8 +9037,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_uint32
 (
@@ -9119,6 +9119,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_uint64
 (
     GrB_Matrix C,
@@ -9126,8 +9128,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_uint64
 (
@@ -9210,6 +9210,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_fp32
 (
     GrB_Matrix C,
@@ -9217,8 +9219,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_fp32
 (
@@ -9301,6 +9301,8 @@ GrB_Info GB_Cdense_ewise3_accum__div_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__div_fp64
 (
     GrB_Matrix C,
@@ -9308,8 +9310,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__div_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__div_fp64
 (
@@ -9392,6 +9392,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_int8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int8
 (
     GrB_Matrix C,
@@ -9399,8 +9401,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_int8
 (
@@ -9483,6 +9483,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_int16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int16
 (
     GrB_Matrix C,
@@ -9490,8 +9492,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_int16
 (
@@ -9574,6 +9574,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_int32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int32
 (
     GrB_Matrix C,
@@ -9581,8 +9583,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_int32
 (
@@ -9665,6 +9665,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_int64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int64
 (
     GrB_Matrix C,
@@ -9672,8 +9674,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_int64
 (
@@ -9756,6 +9756,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_uint8
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint8
 (
     GrB_Matrix C,
@@ -9763,8 +9765,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint8
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_uint8
 (
@@ -9847,6 +9847,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_uint16
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint16
 (
     GrB_Matrix C,
@@ -9854,8 +9856,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint16
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_uint16
 (
@@ -9938,6 +9938,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_uint32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint32
 (
     GrB_Matrix C,
@@ -9945,8 +9947,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_uint32
 (
@@ -10029,6 +10029,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_uint64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint64
 (
     GrB_Matrix C,
@@ -10036,8 +10038,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_uint64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_uint64
 (
@@ -10120,6 +10120,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_fp32
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_fp32
 (
     GrB_Matrix C,
@@ -10127,8 +10129,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_fp32
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_fp32
 (
@@ -10211,6 +10211,8 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_fp64
     const int nthreads
 ) ;
 
+
+
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_fp64
 (
     GrB_Matrix C,
@@ -10218,8 +10220,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_fp64
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-
 
 GrB_Info GB_Cdense_accumA__rdiv_fp64
 (
@@ -10302,15 +10302,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_int8
 (
@@ -10393,15 +10393,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_int16
 (
@@ -10484,15 +10484,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_int32
 (
@@ -10575,15 +10575,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_int64
 (
@@ -10666,15 +10666,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_uint8
 (
@@ -10757,15 +10757,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_uint16
 (
@@ -10848,15 +10848,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_uint32
 (
@@ -10939,15 +10939,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_uint64
 (
@@ -11030,15 +11030,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_fp32
 (
@@ -11121,15 +11121,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__iseq_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__iseq_fp64
 (
@@ -11212,15 +11212,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_int8
 (
@@ -11303,15 +11303,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_int16
 (
@@ -11394,15 +11394,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_int32
 (
@@ -11485,15 +11485,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_int64
 (
@@ -11576,15 +11576,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_uint8
 (
@@ -11667,15 +11667,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_uint16
 (
@@ -11758,15 +11758,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_uint32
 (
@@ -11849,15 +11849,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_uint64
 (
@@ -11940,15 +11940,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_fp32
 (
@@ -12031,15 +12031,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isne_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isne_fp64
 (
@@ -12122,15 +12122,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_int8
 (
@@ -12213,15 +12213,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_int16
 (
@@ -12304,15 +12304,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_int32
 (
@@ -12395,15 +12395,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_int64
 (
@@ -12486,15 +12486,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_uint8
 (
@@ -12577,15 +12577,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_uint16
 (
@@ -12668,15 +12668,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_uint32
 (
@@ -12759,15 +12759,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_uint64
 (
@@ -12850,15 +12850,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_fp32
 (
@@ -12941,15 +12941,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isgt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isgt_fp64
 (
@@ -13032,15 +13032,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_int8
 (
@@ -13123,15 +13123,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_int16
 (
@@ -13214,15 +13214,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_int32
 (
@@ -13305,15 +13305,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_int64
 (
@@ -13396,15 +13396,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_uint8
 (
@@ -13487,15 +13487,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_uint16
 (
@@ -13578,15 +13578,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_uint32
 (
@@ -13669,15 +13669,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_uint64
 (
@@ -13760,15 +13760,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_fp32
 (
@@ -13851,15 +13851,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__islt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__islt_fp64
 (
@@ -13942,15 +13942,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_int8
 (
@@ -14033,15 +14033,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_int16
 (
@@ -14124,15 +14124,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_int32
 (
@@ -14215,15 +14215,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_int64
 (
@@ -14306,15 +14306,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_uint8
 (
@@ -14397,15 +14397,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_uint16
 (
@@ -14488,15 +14488,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_uint32
 (
@@ -14579,15 +14579,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_uint64
 (
@@ -14670,15 +14670,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_fp32
 (
@@ -14761,15 +14761,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isge_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isge_fp64
 (
@@ -14852,15 +14852,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_int8
 (
@@ -14943,15 +14943,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_int16
 (
@@ -15034,15 +15034,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_int32
 (
@@ -15125,15 +15125,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_int64
 (
@@ -15216,15 +15216,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_uint8
 (
@@ -15307,15 +15307,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_uint16
 (
@@ -15398,15 +15398,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_uint32
 (
@@ -15489,15 +15489,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_uint64
 (
@@ -15580,15 +15580,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_fp32
 (
@@ -15671,15 +15671,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__isle_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__isle_fp64
 (
@@ -15762,15 +15762,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_int8
 (
@@ -15853,15 +15853,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_int16
 (
@@ -15944,15 +15944,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_int32
 (
@@ -16035,15 +16035,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_int64
 (
@@ -16126,15 +16126,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_uint8
 (
@@ -16217,15 +16217,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_uint16
 (
@@ -16308,15 +16308,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_uint32
 (
@@ -16399,15 +16399,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_uint64
 (
@@ -16490,15 +16490,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_fp32
 (
@@ -16581,15 +16581,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_fp64
 (
@@ -16672,15 +16672,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__eq_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__eq_bool
 (
@@ -16763,15 +16763,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_int8
 (
@@ -16854,15 +16854,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_int16
 (
@@ -16945,15 +16945,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_int32
 (
@@ -17036,15 +17036,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_int64
 (
@@ -17127,15 +17127,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_uint8
 (
@@ -17218,15 +17218,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_uint16
 (
@@ -17309,15 +17309,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_uint32
 (
@@ -17400,15 +17400,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_uint64
 (
@@ -17491,15 +17491,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_fp32
 (
@@ -17582,15 +17582,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ne_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ne_fp64
 (
@@ -17673,15 +17673,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_int8
 (
@@ -17764,15 +17764,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_int16
 (
@@ -17855,15 +17855,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_int32
 (
@@ -17946,15 +17946,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_int64
 (
@@ -18037,15 +18037,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_uint8
 (
@@ -18128,15 +18128,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_uint16
 (
@@ -18219,15 +18219,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_uint32
 (
@@ -18310,15 +18310,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_uint64
 (
@@ -18401,15 +18401,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_fp32
 (
@@ -18492,15 +18492,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_fp64
 (
@@ -18583,15 +18583,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__gt_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__gt_bool
 (
@@ -18674,15 +18674,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_int8
 (
@@ -18765,15 +18765,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_int16
 (
@@ -18856,15 +18856,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_int32
 (
@@ -18947,15 +18947,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_int64
 (
@@ -19038,15 +19038,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_uint8
 (
@@ -19129,15 +19129,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_uint16
 (
@@ -19220,15 +19220,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_uint32
 (
@@ -19311,15 +19311,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_uint64
 (
@@ -19402,15 +19402,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_fp32
 (
@@ -19493,15 +19493,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_fp64
 (
@@ -19584,15 +19584,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lt_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lt_bool
 (
@@ -19675,15 +19675,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_int8
 (
@@ -19766,15 +19766,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_int16
 (
@@ -19857,15 +19857,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_int32
 (
@@ -19948,15 +19948,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_int64
 (
@@ -20039,15 +20039,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_uint8
 (
@@ -20130,15 +20130,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_uint16
 (
@@ -20221,15 +20221,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_uint32
 (
@@ -20312,15 +20312,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_uint64
 (
@@ -20403,15 +20403,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_fp32
 (
@@ -20494,15 +20494,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_fp64
 (
@@ -20585,15 +20585,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__ge_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__ge_bool
 (
@@ -20676,15 +20676,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_int8
 (
@@ -20767,15 +20767,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_int16
 (
@@ -20858,15 +20858,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_int32
 (
@@ -20949,15 +20949,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_int64
 (
@@ -21040,15 +21040,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_uint8
 (
@@ -21131,15 +21131,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_uint16
 (
@@ -21222,15 +21222,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_uint32
 (
@@ -21313,15 +21313,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_uint64
 (
@@ -21404,15 +21404,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_fp32
 (
@@ -21495,15 +21495,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_fp64
 (
@@ -21586,15 +21586,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__le_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__le_bool
 (
@@ -21677,15 +21677,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_int8
 (
@@ -21768,15 +21768,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_int16
 (
@@ -21859,15 +21859,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_int32
 (
@@ -21950,15 +21950,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_int64
 (
@@ -22041,15 +22041,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_uint8
 (
@@ -22132,15 +22132,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_uint16
 (
@@ -22223,15 +22223,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_uint32
 (
@@ -22314,15 +22314,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_uint64
 (
@@ -22405,15 +22405,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_fp32
 (
@@ -22496,15 +22496,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_fp64
 (
@@ -22587,15 +22587,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lor_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lor_bool
 (
@@ -22678,15 +22678,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_int8
 (
@@ -22769,15 +22769,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_int16
 (
@@ -22860,15 +22860,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_int32
 (
@@ -22951,15 +22951,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_int64
 (
@@ -23042,15 +23042,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_uint8
 (
@@ -23133,15 +23133,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_uint16
 (
@@ -23224,15 +23224,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_uint32
 (
@@ -23315,15 +23315,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_uint64
 (
@@ -23406,15 +23406,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_fp32
 (
@@ -23497,15 +23497,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_fp64
 (
@@ -23588,15 +23588,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__land_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__land_bool
 (
@@ -23679,15 +23679,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_int8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_int8
 (
@@ -23770,15 +23770,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_int16
 (
@@ -23861,15 +23861,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_int32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_int32
 (
@@ -23952,15 +23952,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_int64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_int64
 (
@@ -24043,15 +24043,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_uint8
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_uint8
 (
@@ -24134,15 +24134,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_uint16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_uint16
 (
@@ -24225,15 +24225,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_uint32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_uint32
 (
@@ -24316,15 +24316,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_uint64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_uint64
 (
@@ -24407,15 +24407,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_fp32
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_fp32
 (
@@ -24498,15 +24498,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_fp64
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_fp64
 (
@@ -24589,15 +24589,15 @@ GrB_Info (none)
     const int nthreads
 ) ;
 
-GrB_Info (none)
+#endif
+
+GrB_Info GB_Cdense_ewise3_noaccum__lxor_bool
 (
     GrB_Matrix C,
     const GrB_Matrix A,
     const GrB_Matrix B,
     const int nthreads
 ) ;
-
-#endif
 
 GrB_Info GB_Cdense_accumA__lxor_bool
 (

@@ -65,6 +65,10 @@
 #define GB_BINOP(z, x, y)   \
     z = GB_IDIV_SIGNED (y, x, 32) ;
 
+// op is second
+#define GB_OP_IS_SECOND \
+    0
+
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2
 
@@ -80,6 +84,9 @@
 //------------------------------------------------------------------------------
 
 
+
+// The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
+// TODO extend to IS*, LOR, LAND, LXOR.
 
 GrB_Info GB_Cdense_ewise3_accum__rdiv_int32
 (
@@ -103,8 +110,6 @@ GrB_Info GB_Cdense_ewise3_accum__rdiv_int32
 // C = A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-
-
 GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int32
 (
     GrB_Matrix C,
@@ -120,9 +125,6 @@ GrB_Info GB_Cdense_ewise3_noaccum__rdiv_int32
     return (GrB_SUCCESS) ;
     #endif
 }
-
-
-
 
 //------------------------------------------------------------------------------
 // C += A, accumulate a sparse matrix into a dense matrix

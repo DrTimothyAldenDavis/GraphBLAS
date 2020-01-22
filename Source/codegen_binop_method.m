@@ -22,17 +22,22 @@ fprintf (f, 'define(`GB_AxD'', `GB_AxD__%s'')\n', name) ;
 fprintf (f, 'define(`GB_DxB'', `GB_DxB__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumA'', `GB_Cdense_accumA__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumX'', `GB_Cdense_accumX__%s'')\n', name) ;
+fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
 
 if (is_binop_subset)
     fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `GB_Cdense_ewise3_accum__%s'')\n', name) ;
-    fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
     fprintf (f, 'define(`if_is_binop_subset'', `'')\n') ;
     fprintf (f, 'define(`endif_is_binop_subset'', `'')\n') ;
 else
     fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `(none)'')\n') ;
-    fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `(none)'')\n') ;
     fprintf (f, 'define(`if_is_binop_subset'', `#if 0'')\n') ;
     fprintf (f, 'define(`endif_is_binop_subset'', `#endif'')\n') ;
+end
+
+if (isequal (binop, 'second'))
+    fprintf (f, 'define(`GB_op_is_second'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_op_is_second'', `0'')\n') ;
 end
 
 % type of C, A, and B
@@ -90,16 +95,18 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
+trim = 18 ;
+
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.c | m4 | tail -n +17 > Generated/GB_binop__%s.c', ...
-name) ;
+'cat control.m4 Generator/GB_binop.c | m4 | tail -n +%d > Generated/GB_binop__%s.c', ...
+trim, name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_binop.h | m4 | tail -n +17 >> Generated/GB_binop__include.h') ;
+'cat control.m4 Generator/GB_binop.h | m4 | tail -n +%d >> Generated/GB_binop__include.h', trim) ;
 system (cmd) ;
 
 delete ('control.m4') ;

@@ -24,7 +24,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool A_transpose,               // if true, use A' instead of A
     const GrB_Matrix B,             // input matrix
     bool B_transpose,               // if true, use B' instead of B
-    const bool eWiseAdd,            // if true, do set union (like A+B),
+    bool eWiseAdd,                  // if true, do set union (like A+B),
                                     // otherwise do intersection (like A.*B)
     GB_Context Context
 ) ;
