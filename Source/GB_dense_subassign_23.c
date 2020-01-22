@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_subassign_23: C += A where C is dense and A is sparse
+// GB_dense_subassign_23: C += A where C is dense and A is sparse or dense
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
@@ -19,7 +19,7 @@
 #define GB_FREE_WORK \
     GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
 
-GrB_Info GB_dense_subassign_23      // C += A where C is dense and A is sparse 
+GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,             // input matrix
@@ -77,10 +77,20 @@ GrB_Info GB_dense_subassign_23      // C += A where C is dense and A is sparse
     // vectors may be shared with prior slices and subsequent slices.
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+    if (GB_is_dense (A))
     {
-        // out of memory
-        return (GB_OUT_OF_MEMORY) ;
+        // both C and A are dense; no need to construct tasks
+        GBBURBLE ("(A dense) ") ;
+    }
+    else
+    {
+        // create tasks to compute over the matrix A
+        if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice,
+            A, ntasks))
+        {
+            // out of memory
+            return (GB_OUT_OF_MEMORY) ;
+        }
     }
 
     //--------------------------------------------------------------------------

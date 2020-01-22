@@ -180,6 +180,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             M1 = MT ;
         }
         mask_applied = true ;
+        GBBURBLE ("(mask applied) ") ;
     }
 
     //--------------------------------------------------------------------------

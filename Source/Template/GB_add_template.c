@@ -557,6 +557,9 @@
                     // get A(i,j)
                     //----------------------------------------------------------
 
+                    // TODO skip binary search if A(:,j) is dense
+                    // TODO special case if A == M (see LAGraph_sssp11)`
+
                     int64_t apright = pA_end - 1 ;
                     bool afound ;
                     GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
@@ -564,6 +567,10 @@
                     //----------------------------------------------------------
                     // get B(i,j)
                     //----------------------------------------------------------
+
+                    // TODO skip binary search if B(:,j) is dense
+                    //  (B could be dense in LAGraph_sssp11 if t is dense).
+                    // TODO special case if B == M
 
                     int64_t bpright = pB_end - 1 ;
                     bool bfound ;

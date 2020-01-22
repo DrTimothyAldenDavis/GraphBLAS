@@ -13,8 +13,8 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    GB_ATYPE *GB_RESTRICT Ax = A->x ;
-    GB_BTYPE *GB_RESTRICT Bx = B->x ;
+    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
+    const GB_BTYPE *GB_RESTRICT Bx = B->x ;
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
     const int64_t cnz = GB_NNZ (C) ;
 

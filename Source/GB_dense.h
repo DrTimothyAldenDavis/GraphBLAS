@@ -31,10 +31,10 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B, all 3 matrices dense
 ) ;
 
 //------------------------------------------------------------------------------
-// GB_dense_subassign_23: C(:,:) += A where C is dense and A is sparse
+// GB_dense_subassign_23: C(:,:) += A where C is dense and A is sparse or dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_subassign_23      // C += A where C is dense and A is sparse 
+GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,             // input matrix
