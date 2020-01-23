@@ -44,7 +44,7 @@
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const bool C_replace,           // descriptor for C
+    bool C_replace,                 // descriptor for C
     const GrB_Matrix M_in,          // optional mask for C
     const bool Mask_comp,           // true if mask is complemented
     const bool Mask_struct,         // if true, use the only structure of M
@@ -122,6 +122,8 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     int RowsKind, ColsKind ;
     GB_ijlength (Rows, nRows_in, GB_NROWS (C), &nRows, &RowsKind, RowColon) ;
     GB_ijlength (Cols, nCols_in, GB_NCOLS (C), &nCols, &ColsKind, ColColon) ;
+
+    bool whole_C_matrix = (RowsKind == GB_ALL && ColsKind == GB_ALL) ;
 
     bool C_is_csc = C->is_csc ;
 
@@ -289,36 +291,36 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     //--------------------------------------------------------------------------
-    // allocate workspace for final C_replace phase
+    // determine if the final C_replace phase is needed
     //--------------------------------------------------------------------------
 
-    // whole_matrix is true if C(:,:)=A is being computed (the submatrix is
+    // whole_submatrix is true if C(:,:)=A is being computed (the submatrix is
     // all of C), or all that the operation can modify for row/col assign.
 
-    bool whole_matrix ;
+    bool whole_submatrix ;
     if (row_assign)
     { 
         // row assignment to the entire row
-        whole_matrix = (ColsKind == GB_ALL) ;
+        whole_submatrix = (ColsKind == GB_ALL) ;
     }
     else if (col_assign)
     { 
         // col assignment to the entire column
-        whole_matrix = (RowsKind == GB_ALL) ;
+        whole_submatrix = (RowsKind == GB_ALL) ;
     }
     else
     { 
         // matrix assignment to the entire matrix
-        whole_matrix = (RowsKind == GB_ALL && ColsKind == GB_ALL) ;
+        whole_submatrix = whole_C_matrix ;
     }
 
     // Mask_is_same is true if SubMask == M (:,:)
-    bool Mask_is_same = (M == NULL || whole_matrix) ;
+    bool Mask_is_same = (M == NULL || whole_submatrix) ;
 
     // C_replace_phase is true if a final pass over all of C is required
     // to delete entries outside the C(I,J) submatrix.
     bool C_replace_phase = (C_replace && !Mask_is_same) ;
-    ASSERT (!Mask_is_same == (M != NULL && !whole_matrix)) ;
+    ASSERT (!Mask_is_same == (M != NULL && !whole_submatrix)) ;
 
     //--------------------------------------------------------------------------
     // apply pending updates to A and M
@@ -333,13 +335,6 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     { 
         GB_WAIT (A) ;
     }
-
-    // TODO if C(:,:) is being assigned to (both (RowsKind == GB_ALL &&
-    // ColsKind == GB_ALL)), C_replace is true:
-
-    //      if C is not aliased to M or A, clear C now.
-    //      if C is aliased to M or A, then create a new empty matrix, C2,
-    //          and use it instead of C.  Then at the end, transplant C2 into C.
 
     //--------------------------------------------------------------------------
     // handle the CSR/CSC format of C:
@@ -582,17 +577,47 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
     }
 
     if (C_aliased)
-    { 
-        // Z2 = duplicate of C, which must be freed when done
+    {
+        // If C is aliased, it no longer has any pending work, A and M have
+        // been finished, above.  This also ensures GB_dup does not need to
+        // finish any pending work in C.
+        GBBURBLE ("(C aliased) ") ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
-        GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
+        if (whole_C_matrix && C_replace && accum == NULL)
+        { 
+            // C(:,:)<any mask, replace> = A or x, with C aliased to M or A.  C
+            // is about to be cleared in GB_subassigner anyway, but a duplicate
+            // is needed because C is aliased with M or A.  Instead of
+            // duplicating it, create an empty matrix Z2.  This also prevents
+            // the C_replace_phase from being needed.
+            GB_NEW (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc, C->is_csc,
+                GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio, 1, Context) ;
+            GB_OK (info)  ;
+            C_replace = false ;
+            C_replace_phase = false ;
+        }
+        else
+        { 
+            // Z2 = duplicate of C, which must be freed when done
+            GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
+        }
         Z = Z2 ;
     }
     else
     { 
         // GB_subassigner can safely operate on C in place and so can the
         // C_replace_phase below.
+        if (whole_C_matrix && C_replace && accum == NULL)
+        { 
+            // C(:,:)<any mask, replace> = A or x, with C not aliased to M or
+            // A.  C is about to be cleared in GB_subassigner anyway, so clear
+            // it now.  This also prevents the C_replace_phase from being
+            // needed.
+            GB_OK (GB_clear (C, Context)) ;
+            C_replace = false ;
+            C_replace_phase = false ;
+        }
         Z = C ;
     }
 
@@ -637,9 +662,9 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
         // M_in(I,J)=1 is true, so C_replace has no effect outside the Z(I,J)
         // submatrix.
 
-        // Also, if whole_matrix is true, then there is nothing outside the
-        // Z(I,J) submatrix to modify, so this phase is skipped if whole_matrix
-        // is true.
+        // Also, if whole_submatrix is true, then there is nothing outside the
+        // Z(I,J) submatrix to modify, so this phase is skipped if
+        // whole_submatrix is true.
 
         // This code requires Z and M_in not to be aliased to each other.
 

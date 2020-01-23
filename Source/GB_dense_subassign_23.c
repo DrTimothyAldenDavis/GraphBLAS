@@ -19,6 +19,9 @@
 #define GB_FREE_WORK \
     GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
 
+#undef  GB_FREE_ALL
+#define GB_FREE_ALL GB_FREE_WORK
+
 GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 (
     GrB_Matrix C,                   // input/output matrix

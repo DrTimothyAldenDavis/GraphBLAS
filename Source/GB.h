@@ -24,7 +24,7 @@
 
 // set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
 #ifndef GB_BURBLE
-#define GB_BURBLE 1
+#define GB_BURBLE 0
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
@@ -1463,6 +1463,15 @@ GrB_Info GB_clear           // clear a matrix, type and dimensions unchanged
 GrB_Info GB_dup             // make an exact copy of a matrix
 (
     GrB_Matrix *Chandle,    // handle of output matrix to create
+    const GrB_Matrix A,     // input matrix to copy
+    const bool numeric,     // if true, duplicate the numeric values
+    const GrB_Type ctype,   // type of C, if numeric is false
+    GB_Context Context
+) ;
+
+GrB_Info GB_dup2            // make an exact copy of a matrix
+(
+    GrB_Matrix *Chandle,    // handle of output matrix to create 
     const GrB_Matrix A,     // input matrix to copy
     const bool numeric,     // if true, duplicate the numeric values
     const GrB_Type ctype,   // type of C, if numeric is false

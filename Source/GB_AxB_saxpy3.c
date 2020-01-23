@@ -461,8 +461,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // so that a single fine task is used instead.
 
     int nthreads = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
+    // draft16:
+    ntasks_initial = (nthreads == 1) ?  1 : (GB_NTASKS_PER_THREAD * nthreads) ;
+    // draft18:
     ntasks_initial = (nthreads == 1) ?  4 : (GB_NTASKS_PER_THREAD * nthreads) ;
 //     ntasks_initial = (GB_NTASKS_PER_THREAD * nthreads) ;
+
     double target_task_size = ((double) total_flops) / ntasks_initial ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
     double target_fine_size = target_task_size / GB_FINE_WORK ;

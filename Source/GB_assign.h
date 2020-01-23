@@ -14,7 +14,7 @@
 GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const bool C_replace,           // descriptor for C
+    bool C_replace,                 // descriptor for C
     const GrB_Matrix M_in,          // optional mask for C
     const bool Mask_comp,           // true if mask is complemented
     const bool Mask_struct,         // if true, use the only structure of M

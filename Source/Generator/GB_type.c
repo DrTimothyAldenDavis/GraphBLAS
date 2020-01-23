@@ -93,5 +93,29 @@ GrB_Info GB_Cdense_06d
     #endif
 }
 
+//------------------------------------------------------------------------------
+// C<M>=A, when C is empty and A is dense
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Cdense_25
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_dense_subassign_25_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
 #endif
 

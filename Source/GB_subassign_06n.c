@@ -147,6 +147,7 @@ GrB_Info GB_subassign_06n
                         int64_t iA = Mi [pM] ;
                         GB_iC_DENSE_LOOKUP ;
 
+                        // TODO: if A(:,j) dense, use lookup
                         // find iA in A(:,j)
                         int64_t apright = pA_end - 1 ;
                         bool aij_found ;
@@ -190,6 +191,7 @@ GrB_Info GB_subassign_06n
                         int64_t iA = Mi [pM] ;
                         GB_iC_BINARY_SEARCH ;
 
+                        // TODO: if A(:,j) dense, use lookup
                         // find iA in A(:,j)
                         int64_t apright = pA_end - 1 ;
                         bool aij_found ;
@@ -297,6 +299,7 @@ GrB_Info GB_subassign_06n
                     {
                         int64_t iA = Mi [pM] ;
 
+                        // TODO: if A(:,j) dense, use lookup
                         // find iA in A(:,j)
                         int64_t apright = pA_end - 1 ;
                         bool aij_found ;

@@ -1,3 +1,4 @@
+
 //------------------------------------------------------------------------------
 // GB_type:  hard-coded functions for each built-in type
 //------------------------------------------------------------------------------
@@ -89,6 +90,30 @@ GrB_Info GB_Cdense_06d__int8
     return (GrB_NO_VALUE) ;
     #else
     #include "GB_dense_subassign_06d_template.c"
+    return (GrB_SUCCESS) ;
+    #endif
+}
+
+//------------------------------------------------------------------------------
+// C<M>=A, when C is empty and A is dense
+//------------------------------------------------------------------------------
+
+GrB_Info GB_Cdense_25__int8
+(
+    GrB_Matrix C,
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    const int ntasks,
+    const int nthreads
+)
+{ 
+    #if GB_DISABLE
+    return (GrB_NO_VALUE) ;
+    #else
+    #include "GB_dense_subassign_25_template.c"
     return (GrB_SUCCESS) ;
     #endif
 }

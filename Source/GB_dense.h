@@ -106,5 +106,18 @@ GrB_Info GB_dense_subassign_24   // C = A, copy A into an existing matrix C
     GB_Context Context
 ) ;
 
+//------------------------------------------------------------------------------
+// GB_dense_subassign_25: C<M> = A ; C is empty, A is dense, M is structural
+//------------------------------------------------------------------------------
+
+GrB_Info GB_dense_subassign_25
+(
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
+    const GrB_Matrix A,
+    GB_Context Context
+) ;
+
 #endif
 

@@ -33,7 +33,7 @@
 GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 (
     GrB_Matrix C,                   // input/output matrix for results
-    const bool C_replace,           // descriptor for C
+    bool C_replace,                 // descriptor for C
     const GrB_Matrix M_in,          // optional mask for C(Rows,Cols)
     const bool Mask_comp,           // true if mask is complemented
     const bool Mask_struct,         // if true, use the only structure of M
@@ -90,6 +90,8 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     int RowsKind, ColsKind ;
     GB_ijlength (Rows, nRows_in, GB_NROWS (C), &nRows, &RowsKind, RowColon) ;
     GB_ijlength (Cols, nCols_in, GB_NCOLS (C), &nCols, &ColsKind, ColColon) ;
+
+    bool whole_C_matrix = (RowsKind == GB_ALL && ColsKind == GB_ALL) ;
 
     GrB_Matrix AT = NULL ;
     GrB_Matrix MT = NULL ;
@@ -273,17 +275,42 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
 
     if (C_aliased)
     { 
-        // Z2 = duplicate of C, which must be freed when done
+        // If C is aliased, it no longer has any pending work, A and M have
+        // been finished, above.  This also ensures GB_dup does not need to
+        // finish any pending work in C.
         GBBURBLE ("(C aliased) ") ;
         ASSERT (!GB_ZOMBIES (C)) ;
         ASSERT (!GB_PENDING (C)) ;
-        GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
+        if (whole_C_matrix && C_replace && accum == NULL)
+        { 
+            // C(:,:)<any mask, replace> = A or x, with C aliased to M or A.  C
+            // is about to be cleared in GB_subassigner anyway, but a duplicate
+            // is need.  Instead of duplicating it, create an empty matrix Z2.
+            // This also prevents the C_replace_phase from being needed.
+            GB_NEW (&Z2, C->type, C->vlen, C->vdim, GB_Ap_calloc,
+                C->is_csc, GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio,
+                1, Context) ;
+            GB_OK (info)  ;
+            C_replace = false ;
+        }
+        else
+        { 
+            // Z2 = duplicate of C, which must be freed when done
+            GB_OK (GB_dup (&Z2, C, true, NULL, Context)) ;
+        }
         Z = Z2 ;
     }
     else
     { 
-        // GB_subassigner can safely operate on C in place and so can the
-        // C_replace_phase below.
+        // GB_subassigner can safely operate on C in place.
+        if (whole_C_matrix && C_replace && accum == NULL)
+        { 
+            // C(:,:)<any mask, replace> = A or x, with C not aliased to M or
+            // A.  C is about to be cleared in GB_subassigner anyway, so clear
+            // it now.
+            GB_OK (GB_clear (C, Context)) ;
+            C_replace = false ;
+        }
         Z = C ;
     }
 

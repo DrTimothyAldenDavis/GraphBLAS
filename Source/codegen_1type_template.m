@@ -10,6 +10,7 @@ f = fopen ('control.m4', 'w') ;
 % function names
 fprintf (f, 'define(`GB_Cdense_05d'', `GB_Cdense_05d__%s'')\n', fname) ;
 fprintf (f, 'define(`GB_Cdense_06d'', `GB_Cdense_06d__%s'')\n', fname) ;
+fprintf (f, 'define(`GB_Cdense_25'', `GB_Cdense_25__%s'')\n', fname) ;
 
 fprintf (f, 'define(`GB_ctype'', `%s'')\n', xtype) ;
 
