@@ -153,7 +153,7 @@
                 #pragma omp critical (GB_reduce_panel)
                 my_exit = early_exit ;
             #else
-                #pragma omp atomic read
+                GB_ATOMIC_READ
                 my_exit = early_exit ;
             #endif
 
@@ -244,7 +244,7 @@
                         #pragma omp critical (GB_reduce_panel)
                         early_exit = true ;
                     #else
-                        #pragma omp atomic write
+                        GB_ATOMIC_WRITE
                         early_exit = true ;
                     #endif
                 }

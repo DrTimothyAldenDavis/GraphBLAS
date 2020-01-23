@@ -14,6 +14,7 @@
 // result is the same if A is in CSR or CSC format.
 
 #include "GB_reduce.h"
+#include "GB_atomics.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
@@ -230,7 +231,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 // skip the work for this task if early exit is reached
                 #define GB_IF_NOT_EARLY_EXIT                            \
                     bool my_exit ;                                      \
-                    GB_PRAGMA (omp atomic read)                         \
+                    GB_ATOMIC_READ                                      \
                     my_exit = early_exit ;                              \
                     if (!my_exit)
 
@@ -241,7 +242,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                         if (memcmp (s, terminal, zsize) == 0)           \
                         {                                               \
                             /* tell the other tasks to exit early */    \
-                            GB_PRAGMA (omp atomic write)                \
+                            GB_ATOMIC_WRITE                             \
                             early_exit = true ;                         \
                             break ;                                     \
                         }                                               \

@@ -18,6 +18,7 @@
 #include "GB_iterator.h"
 #include "GB_sort.h"
 #include "GB_saxpy3.h"
+#include "GB_atomics.h"
 #include "GB_AxB__include.h"
 
 // The C=A*B semiring is defined by the following types and operators:
@@ -119,7 +120,7 @@
 #define GB_HAS_ATOMIC \
     1
 
-// 1 if monoid update can be done with a #pragma omp atomic update, 0 otherwise
+// 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
 #define GB_HAS_OMP_ATOMIC \
     1
 

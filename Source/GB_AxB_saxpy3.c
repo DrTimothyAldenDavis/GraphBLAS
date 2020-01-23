@@ -92,6 +92,7 @@
 #include "GB_saxpy3.h"
 #include "GB_bracket.h"
 #include "GB_sort.h"
+#include "GB_atomics.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -1264,7 +1265,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // 1 if monoid update can skipped entirely (the ANY monoid)
         #define GB_IS_ANY_MONOID 0
 
-        // monoid update cannot be done with a #pragma omp atomic
+        // user-defined monoid update cannot be done with an OpenMP atomic
         #define GB_HAS_OMP_ATOMIC 0
 
         // not an ANY_PAIR semiring

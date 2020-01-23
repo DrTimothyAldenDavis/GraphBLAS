@@ -11,6 +11,7 @@
 // present.  All pending tuples are ignored.  Zombies are treated as entries.
 
 #include "GB_mxm.h"
+#include "GB_atomics.h"
 
 bool GB_is_diagonal             // true if A is diagonal
 (
@@ -86,7 +87,7 @@ bool GB_is_diagonal             // true if A is diagonal
                 #pragma omp critical (GB_is_diagonal)
                 diag = diagonal ;
             #else
-                #pragma omp atomic read
+                GB_ATOMIC_READ
                 diag = diagonal ;
             #endif
         }
@@ -125,7 +126,7 @@ bool GB_is_diagonal             // true if A is diagonal
                 #pragma omp critical (GB_is_diagonal)
                 diagonal = false ;
             #else
-                #pragma omp atomic write
+                GB_ATOMIC_WRITE
                 diagonal = false ;
             #endif
         }

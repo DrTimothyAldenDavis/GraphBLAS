@@ -14,10 +14,6 @@
 // compile-time-constructed functions called by GB_AxB_user.
 
 //------------------------------------------------------------------------------
-// macros (TODO: put these in GB_AxB_saxpy3.h)
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // GB_GET_M_j: prepare to iterate over M(:,j)
 //------------------------------------------------------------------------------
 
@@ -391,13 +387,13 @@
 }
 
 //------------------------------------------------------------------------------
-// GB_ATOMIC_UPDATE:  Hx [i] += t
+// GB_ATOMIC_UPDATE_HX:  Hx [i] += t
 //------------------------------------------------------------------------------
 
 #if GB_IS_ANY_MONOID
 
     // The update Hx [i] += t can be skipped entirely, for the ANY monoid.
-    #define GB_ATOMIC_UPDATE(i,t)
+    #define GB_ATOMIC_UPDATE_HX(i,t)
 
 #elif GB_HAS_ATOMIC
 
@@ -405,18 +401,18 @@
     #if GB_HAS_OMP_ATOMIC
         // built-in PLUS, TIMES, LOR, LAND, LXOR monoids can be
         // implemented with an OpenMP pragma
-        #define GB_ATOMIC_UPDATE(i,t)       \
-            GB_PRAGMA (omp atomic update)   \
+        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
+            GB_ATOMIC_UPDATE                                        \
             GB_HX_UPDATE (i, t)
     #else
         // built-in MIN, MAX, and EQ monoids only, which cannot
         // be implemented with an OpenMP pragma
-        #define GB_ATOMIC_UPDATE(i,t)                               \
+        #define GB_ATOMIC_UPDATE_HX(i,t)                            \
             GB_CTYPE xold, xnew, *px = Hx + (i) ;                   \
             do                                                      \
             {                                                       \
                 /* xold = Hx [i] via atomic read */                 \
-                GB_PRAGMA (omp atomic read)                         \
+                GB_ATOMIC_READ                                      \
                 xold = (*px) ;                                      \
                 /* xnew = xold + t */                               \
                 xnew = GB_ADD_FUNCTION (xold, t) ;                  \
@@ -431,7 +427,7 @@
 #else
 
     // Hx [i] += t can only be done inside the critical section
-    #define GB_ATOMIC_UPDATE(i,t)       \
+    #define GB_ATOMIC_UPDATE_HX(i,t)       \
         GB_PRAGMA (omp flush)           \
         GB_HX_UPDATE (i, t) ;           \
         GB_PRAGMA (omp flush)
@@ -439,25 +435,25 @@
 #endif
 
 //------------------------------------------------------------------------------
-// GB_ATOMIC_WRITE:  Hx [i] = t
+// GB_ATOMIC_WRITE_HX:  Hx [i] = t
 //------------------------------------------------------------------------------
 
 #if GB_IS_ANY_PAIR_SEMIRING
 
     // ANY_PAIR: result is purely symbolic; no numeric work to do
-    #define GB_ATOMIC_WRITE(i,t)
+    #define GB_ATOMIC_WRITE_HX(i,t)
 
 #else 
 
     // atomic write
     #if GB_HAS_ATOMIC
         // Hx [i] = t via atomic write
-        #define GB_ATOMIC_WRITE(i,t)       \
-            GB_PRAGMA (omp atomic write)   \
+        #define GB_ATOMIC_WRITE_HX(i,t)       \
+            GB_ATOMIC_WRITE   \
             GB_HX_WRITE (i, t)
     #else
         // Hx [i] = t via critical section
-        #define GB_ATOMIC_WRITE(i,t)       \
+        #define GB_ATOMIC_WRITE_HX(i,t)       \
             GB_PRAGMA (omp flush)          \
             GB_HX_WRITE (i, t) ;           \
             GB_PRAGMA (omp flush)
@@ -642,7 +638,7 @@
                     {
                         int64_t hf ;
                         // swap my hash entry into the hash table
-                        #pragma omp atomic capture
+                        GB_ATOMIC_CAPTURE
                         {
                             hf = Hf [hash] ; Hf [hash] = i_mine ;
                         }
@@ -828,27 +824,27 @@
 
                             #if GB_IS_ANY_MONOID
 
-                                // #pragma omp atomic read
-                                f = Hf [i] ;            // grab the entry
-                                if (f == 2) continue ;      // check if already updated
-                                // #pragma omp atomic write
-                                Hf [i] = 2 ;                // flag the entry
-                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
+                            GB_ATOMIC_READ
+                            f = Hf [i] ;            // grab the entry
+                            if (f == 2) continue ;  // check if already updated
+                            GB_ATOMIC_WRITE
+                            Hf [i] = 2 ;                // flag the entry
+                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
 
                             #else
 
                             #if GB_HAS_ATOMIC
-                            #pragma omp atomic read
+                            GB_ATOMIC_READ
                             f = Hf [i] ;            // grab the entry
                             if (f == 2)             // if true, update C(i,j)
                             { 
-                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
+                                GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
                                 continue ;          // C(i,j) has been updated
                             }
                             #endif
                             do  // lock the entry
                             {
-                                #pragma omp atomic capture
+                                GB_ATOMIC_CAPTURE
                                 {
                                     f = Hf [i] ; Hf [i] = 3 ;
                                 }
@@ -857,14 +853,14 @@
                             if (first_time)
                             { 
                                 // C(i,j) is a new entry
-                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
+                                GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
                             }
                             else // f == 2
                             { 
                                 // C(i,j) already appears in C(:,j)
-                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
+                                GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
                             }
-                            #pragma omp atomic write
+                            GB_ATOMIC_WRITE
                             Hf [i] = 2 ;                // unlock the entry
 
                             #endif
@@ -902,13 +898,13 @@
 
                         #define GB_IKJ                                         \
                             uint8_t f ;                                        \
-                            /* GB_PRAGMA (omp atomic read) */                  \
+                            GB_ATOMIC_READ                                     \
                             f = Hf [i] ;            /* grab the entry */       \
                             if (f == 0 || f == 2) continue ;                   \
-                            /* GB_PRAGMA (omp atomic write) */                 \
+                            GB_ATOMIC_WRITE                                    \
                             Hf [i] = 2 ;                /* unlock the entry */ \
                             GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
-                            GB_ATOMIC_WRITE (i, t) ;    /* Hx [i] = t */   \
+                            GB_ATOMIC_WRITE_HX (i, t) ;    /* Hx [i] = t */    \
 
                         #else
 
@@ -916,18 +912,18 @@
                         {                                                      \
                             GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */  \
                             uint8_t f ;                                        \
-                            GB_PRAGMA (omp atomic read)                        \
+                            GB_ATOMIC_READ                                     \
                             f = Hf [i] ;            /* grab the entry */       \
                             if (GB_HAS_ATOMIC && (f == 2))                     \
                             {                                                  \
                                 /* C(i,j) already seen; update it */           \
-                                GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
+                                GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */ \
                                 continue ;       /* C(i,j) has been updated */ \
                             }                                                  \
                             if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/\
                             do  /* lock the entry */                           \
                             {                                                  \
-                                GB_PRAGMA (omp atomic capture)                 \
+                                GB_ATOMIC_CAPTURE                              \
                                 {                                              \
                                     f = Hf [i] ; Hf [i] = 3 ;                  \
                                 }                                              \
@@ -936,14 +932,14 @@
                             if (first_time)                                    \
                             {                                                  \
                                 /* C(i,j) is a new entry */                    \
-                                GB_ATOMIC_WRITE (i, t) ;    /* Hx [i] = t */   \
+                                GB_ATOMIC_WRITE_HX (i, t) ; /* Hx [i] = t */   \
                             }                                                  \
                             else /* f == 2 */                                  \
                             {                                                  \
                                 /* C(i,j) already appears in C(:,j) */         \
-                                GB_ATOMIC_UPDATE (i, t) ;   /* Hx [i] += t */  \
+                                GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */ \
                             }                                                  \
-                            GB_PRAGMA (omp atomic write)                       \
+                            GB_ATOMIC_WRITE                                    \
                             Hf [i] = 2 ;                /* unlock the entry */ \
                         }
                         #endif
@@ -983,28 +979,28 @@
 
                             #if GB_IS_ANY_MONOID
 
-                            // #pragma omp atomic read
+                            GB_ATOMIC_READ
                             f = Hf [i] ;            // grab the entry
                             if (f == 1 || f == 2) continue ;
-                            // #pragma omp atomic write
+                            GB_ATOMIC_WRITE
                             Hf [i] = 2 ;                // unlock the entry
-                            GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
+                            GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
 
                             #else
 
-                            #pragma omp atomic read
+                            GB_ATOMIC_READ
                             f = Hf [i] ;            // grab the entry
                             #if GB_HAS_ATOMIC
                             if (f == 2)             // if true, update C(i,j)
                             { 
-                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
+                                GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
                                 continue ;          // C(i,j) has been updated
                             }
                             #endif
                             if (f == 1) continue ; // M(i,j)=1; ignore C(i,j)
                             do  // lock the entry
                             {
-                                #pragma omp atomic capture
+                                GB_ATOMIC_CAPTURE
                                 {
                                     f = Hf [i] ; Hf [i] = 3 ;
                                 }
@@ -1013,14 +1009,14 @@
                             if (first_time)
                             { 
                                 // C(i,j) is a new entry
-                                GB_ATOMIC_WRITE (i, t) ;    // Hx [i] = t
+                                GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
                             }
                             else // f == 2
                             { 
                                 // C(i,j) already seen
-                                GB_ATOMIC_UPDATE (i, t) ;   // Hx [i] += t
+                                GB_ATOMIC_UPDATE_HX (i, t) ;   // Hx [i] += t
                             }
-                            #pragma omp atomic write
+                            GB_ATOMIC_WRITE
                             Hf [i] = 2 ;                // unlock the entry
                             #endif
                         }
@@ -1097,12 +1093,12 @@
                             for (GB_HASH (i))           // find i in hash table
                             {
                                 int64_t hf ;
-                                #pragma omp atomic read
+                                GB_ATOMIC_READ
                                 hf = Hf [hash] ;        // grab the entry
                                 #if GB_HAS_ATOMIC
                                 if (hf == i_unlocked)  // if true, update C(i,j)
                                 { 
-                                    GB_ATOMIC_UPDATE (hash, t) ;// Hx [hash]+=t
+                                    GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [hash]+=t
                                     break ;         // C(i,j) has been updated
                                 }
                                 #endif
@@ -1112,7 +1108,7 @@
                                     // h=0: unoccupied, h=i1: occupied by i
                                     do  // lock the entry
                                     {
-                                        #pragma omp atomic capture
+                                        GB_ATOMIC_CAPTURE
                                         {
                                             hf = Hf [hash] ; Hf [hash] |= 3 ;
                                         }
@@ -1122,8 +1118,8 @@
                                     { 
                                         // C(i,j) is a new entry in C(:,j)
                                         // Hx [hash] = t
-                                        GB_ATOMIC_WRITE (hash, t) ;
-                                        #pragma omp atomic write
+                                        GB_ATOMIC_WRITE_HX (hash, t) ;
+                                        GB_ATOMIC_WRITE
                                         Hf [hash] = i_unlocked ; // unlock entry
                                         my_cjnz++ ; // TODO count later?
                                         break ;
@@ -1132,13 +1128,13 @@
                                     { 
                                         // C(i,j) already appears in C(:,j)
                                         // Hx [hash] += t
-                                        GB_ATOMIC_UPDATE (hash, t) ;
-                                        #pragma omp atomic write
+                                        GB_ATOMIC_UPDATE_HX (hash, t) ;
+                                        GB_ATOMIC_WRITE
                                         Hf [hash] = i_unlocked ; // unlock entry
                                         break ;
                                     }
                                     // hash table occupied, but not with i
-                                    #pragma omp atomic write
+                                    GB_ATOMIC_WRITE
                                     Hf [hash] = hf ;  // unlock with prior value
                                 }
                             }
@@ -1185,11 +1181,11 @@
                             for (GB_HASH (i))        /* find i in hash table */\
                             {                                                  \
                                 int64_t hf ;                                   \
-                                GB_PRAGMA (omp atomic read)                    \
+                                GB_ATOMIC_READ                                 \
                                 hf = Hf [hash] ;        /* grab the entry */   \
                                 if (GB_HAS_ATOMIC && (hf == i_unlocked))       \
                                 {                                              \
-                                    GB_ATOMIC_UPDATE (hash, t) ;/* Hx [.]+=t */\
+                                    GB_ATOMIC_UPDATE_HX (hash, t) ;/* Hx [.]+=t */\
                                     break ;     /* C(i,j) has been updated */  \
                                 }                                              \
                                 if (hf == 0) break ; /* M(i,j)=0; ignore Cij */\
@@ -1197,7 +1193,7 @@
                                 {                                              \
                                     do /* lock the entry */                    \
                                     {                                          \
-                                        GB_PRAGMA (omp atomic capture)         \
+                                        GB_ATOMIC_CAPTURE                      \
                                         {                                      \
                                             hf = Hf [hash] ; Hf [hash] |= 3 ;  \
                                         }                                      \
@@ -1207,17 +1203,18 @@
                                     {                                          \
                                         /* C(i,j) is a new entry in C(:,j) */  \
                                         /* Hx [hash] = t */                    \
-                                        GB_ATOMIC_WRITE (hash, t) ;            \
+                                        GB_ATOMIC_WRITE_HX (hash, t) ;            \
                                     }                                          \
                                     else /* f == 2 */                          \
                                     {                                          \
                                         /* C(i,j) already appears in C(:,j) */ \
                                         /* Hx [hash] += t */                   \
-                                        GB_ATOMIC_UPDATE (hash, t) ;           \
+                                        GB_ATOMIC_UPDATE_HX (hash, t) ;           \
                                     }                                          \
-                                    GB_PRAGMA (omp atomic write)               \
+                                    GB_ATOMIC_WRITE                            \
                                     Hf [hash] = i_unlocked ; /* unlock entry */\
-                                    if (first_time) my_cjnz++ ; /* TODO count later? */ \
+                                    if (first_time) my_cjnz++ ;                \
+                                    /* TODO count later? */                    \
                                     break ;                                    \
                                 }                                              \
                             }                                                  \
@@ -1266,12 +1263,12 @@
                             for (GB_HASH (i))           // find i in hash table
                             {
                                 int64_t hf ;
-                                #pragma omp atomic read
+                                GB_ATOMIC_READ
                                 hf = Hf [hash] ;        // grab the entry
                                 #if GB_HAS_ATOMIC
                                 if (hf == i_unlocked)  // if true, update C(i,j)
                                 { 
-                                    GB_ATOMIC_UPDATE (hash, t) ;// Hx [hash]+=t
+                                    GB_ATOMIC_UPDATE_HX (hash, t) ;// Hx [hash]+=t
                                     break ;         // C(i,j) has been updated
                                 }
                                 #endif
@@ -1282,7 +1279,7 @@
                                     // h=0: unoccupied, h=i1: occupied by i
                                     do // lock the entry
                                     {
-                                        #pragma omp atomic capture
+                                        GB_ATOMIC_CAPTURE
                                         {
                                             hf = Hf [hash] ; Hf [hash] |= 3 ;
                                         }
@@ -1292,8 +1289,8 @@
                                     { 
                                         // C(i,j) is a new entry in C(:,j)
                                         // Hx [hash] = t
-                                        GB_ATOMIC_WRITE (hash, t) ;
-                                        #pragma omp atomic write
+                                        GB_ATOMIC_WRITE_HX (hash, t) ;
+                                        GB_ATOMIC_WRITE
                                         Hf [hash] = i_unlocked ; // unlock entry
                                         my_cjnz++ ; // TODO count later?
                                         break ;
@@ -1302,14 +1299,14 @@
                                     { 
                                         // C(i,j) already appears in C(:,j)
                                         // Hx [hash] += t
-                                        GB_ATOMIC_UPDATE (hash, t) ;
-                                        #pragma omp atomic write
+                                        GB_ATOMIC_UPDATE_HX (hash, t) ;
+                                        GB_ATOMIC_WRITE
                                         Hf [hash] = i_unlocked ; // unlock entry
                                         break ;
                                     }
                                     // hash table occupied, but not with i,
                                     // or with i but M(i,j)=1 so C(i,j) ignored
-                                    #pragma omp atomic write
+                                    GB_ATOMIC_WRITE
                                     Hf [hash] = hf ;  // unlock with prior value
                                 }
                             }
@@ -2975,8 +2972,8 @@ allpush (with tree):
 #undef GB_GATHER_ALL_C_j
 #undef GB_SORT_AND_GATHER_C_j
 #undef GB_SORT_AND_GATHER_HASHED_C_j
-#undef GB_ATOMIC_UPDATE
-#undef GB_ATOMIC_WRITE
+#undef GB_ATOMIC_UPDATE_HX
+#undef GB_ATOMIC_WRITE_HX
 #undef GB_HASH
 #undef GB_FREE_ALL
 #undef t
