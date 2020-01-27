@@ -5,6 +5,7 @@ GrB.clear
 
 assert (isequal (GrB.format, 'by col')) ;
 assert (isequal (GrB.chunk, 64*1024)) ;
+assert (!GrB.burble) ;
 
 fprintf ('default # of threads: %d\n', GrB.threads) ;
 

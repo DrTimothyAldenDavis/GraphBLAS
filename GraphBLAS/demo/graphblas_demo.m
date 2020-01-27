@@ -1034,6 +1034,7 @@ err = norm (C1-C2,1)
 %   GrB.semiringinfo (s, type)   list properties of a semiring
 %   t = GrB.threads (t)          set/get # of threads to use in GraphBLAS
 %   c = GrB.chunk (c)            set/get chunk size to use in GraphBLAS
+%   b = GrB.burble (b)           set/get burble (diagnostic output)
 %   result = GrB.entries (G,...) count or query entries in a matrix
 %   result = GrB.nonz (G,...)    count or query nonzeros in a matrix
 %   C = GrB.prune (A, id)        prune entries equal to id

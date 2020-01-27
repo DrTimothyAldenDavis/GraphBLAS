@@ -492,7 +492,7 @@
 //------------------------------------------------------------------------------
 
 {
-    // double tic = omp_get_wtime ( ) ;
+    // double tic = GB_OPENMP_GET_WTIME ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
@@ -730,9 +730,9 @@
         #endif
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
+    // tic = GB_OPENMP_GET_WTIME - tic ;
     // printf ("phase0: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    // tic = GB_OPENMP_GET_WTIME ;
 
     //==========================================================================
     // phase1: count nnz(C(:,j)) for all tasks; do numeric work for fine tasks
@@ -1831,9 +1831,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
+    // tic = GB_OPENMP_GET_WTIME - tic ;
     // printf ("phase1a: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    // tic = GB_OPENMP_GET_WTIME ;
 
 
     // phase1b
@@ -1892,9 +1892,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
+    // tic = GB_OPENMP_GET_WTIME - tic ;
     // printf ("phase1b: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    // tic = GB_OPENMP_GET_WTIME ;
 
     //==========================================================================
     // phase2: compute Cp with cumulative sum and allocate C
@@ -1965,9 +1965,9 @@ allpush (with tree):
 
     #endif
 
-    // tic = omp_get_wtime ( ) - tic ;
+    // tic = GB_OPENMP_GET_WTIME - tic ;
     // printf ("phase2: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    // tic = GB_OPENMP_GET_WTIME ;
 
     //==========================================================================
     // phase3: numeric phase for coarse tasks, prep for gather for fine tasks
@@ -2751,9 +2751,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
+    // tic = GB_OPENMP_GET_WTIME - tic ;
     // printf ("phase3: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    // tic = GB_OPENMP_GET_WTIME ;
 
     //==========================================================================
     // phase4: gather phase for fine tasks
@@ -2863,9 +2863,9 @@ allpush (with tree):
         }
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
+    // tic = GB_OPENMP_GET_WTIME - tic ;
     // printf ("phase4: %g\n", tic) ;
-    // tic = omp_get_wtime ( ) ;
+    // tic = GB_OPENMP_GET_WTIME ;
 
     //==========================================================================
     // phase5: final gather phase for fine hash tasks
@@ -2951,7 +2951,7 @@ allpush (with tree):
         GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
     }
 
-    // tic = omp_get_wtime ( ) - tic ;
+    // tic = GB_OPENMP_GET_WTIME - tic ;
     // printf ("phase5: %g\n", tic) ;
 
 //  printf ("phases done\n") ;

@@ -71,9 +71,9 @@
             {
                 GB_PRAGMA_VECTORIZE
                 for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                { 
+                {
                     if (GB_mcast (Mx, pM, msize))
-                    {
+                    { 
                         int64_t p = pC + Mi [pM] ;
                         GB_COPY_SCALAR_TO_C (p, cwork) ;    // Cx [p] = scalar
                     }

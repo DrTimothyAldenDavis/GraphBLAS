@@ -259,7 +259,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     bool use_transplant = (!use_subassigner)
         && (accum == NULL || (cnz + cnpending) == 0) ;
 
-    #if GB_BURBLE
     if (!use_transplant)
     {
         GBBURBLE ("(C%s%s=Z via %s%s%s) ",
@@ -270,7 +269,6 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             (M_transposed ? "(M transposed)" : ""),
             (T_transposed ? "(result transposed)" : "")) ;
     }
-    #endif
 
     if (use_subassigner)
     { 

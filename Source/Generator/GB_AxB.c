@@ -83,6 +83,10 @@
 #define GB_CIJ_DECLARE(cij) \
     GB_ctype cij
 
+// Hi Helen
+#define GB_HELEN \
+    GB_Helen
+
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij
 
@@ -224,6 +228,9 @@ GrB_Info GB_Adot4B
     const int nthreads
 )
 { 
+    #if GB_HELEN
+    printf ("Hi Helen, this is for the GAP, pagerank:\n %s\n", __FILE__) ;
+    #endif
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

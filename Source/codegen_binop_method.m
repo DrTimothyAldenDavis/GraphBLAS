@@ -3,13 +3,13 @@ function codegen_binop_method (binop, op, iscompare, xytype, is_binop_subset)
 %
 % codegen_binop_method (binop, op, iscompare, xytype)
 
+f = fopen ('control.m4', 'w') ;
+
 assert (~isequal (binop, 'any')) ;
 
 if (nargin < 5)
     is_binop_subset = false ;
 end
-
-f = fopen ('control.m4', 'w') ;
 
 [fname, unsigned, bits] = codegen_type (xytype) ;
 
@@ -38,6 +38,22 @@ if (isequal (binop, 'second'))
     fprintf (f, 'define(`GB_op_is_second'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_op_is_second'', `0'')\n') ;
+end
+
+% determine the names of the dense GB_cblas_* gateway routines to use
+is_fp32 = isequal (xytype, 'float') ;
+is_fp64 = isequal (xytype, 'double') ;
+is_real = is_fp32 || is_fp64 ;
+if (isequal (binop, 'plus') && is_real)
+    fprintf (f, 'define(`GB_op_is_plus_real'', `1'')\n') ;
+    if (is_fp32)
+        fprintf (f, 'define(`GB_cblas_axpy'', `GB_cblas_saxpy'')\n') ;
+    else
+        fprintf (f, 'define(`GB_cblas_axpy'', `GB_cblas_daxpy'')\n') ;
+    end
+else
+    fprintf (f, 'define(`GB_op_is_plus_real'', `0'')\n') ;
+    fprintf (f, 'define(`GB_cblas_axpy'', `(none)'')\n') ;
 end
 
 % type of C, A, and B

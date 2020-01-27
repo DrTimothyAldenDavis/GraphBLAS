@@ -100,6 +100,9 @@ int64_t  GB_Global_maxused_get (void) ;
 void     GB_Global_hack_set (int64_t hack) ;
 int64_t  GB_Global_hack_get (void) ;
 
+void     GB_Global_burble_set (bool burble) ;
+bool     GB_Global_burble_get (void) ;
+
 GB_PUBLIC   // accessed by the MATLAB interface only
 void     GB_Global_print_one_based_set (bool onebased) ;
 GB_PUBLIC   // accessed by the MATLAB interface only

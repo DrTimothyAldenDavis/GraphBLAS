@@ -26,7 +26,7 @@
     int64_t pC ;
     #pragma omp parallel for num_threads(nthreads) schedule(static)
     for (pC = 0 ; pC < cnz ; pC++)
-    {
+    { 
         GB_BINOP (GB_CX (pC), GB_CX (pC), ywork) ;
     }
 }

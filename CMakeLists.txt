@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Jan 22, 2020 (DRAFT20)" )
+set ( GraphBLAS_DATE "Jan 27, 2020 (DRAFT21)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -96,6 +96,14 @@ if ( BUILD_GRB_STATIC_LIBRARY )
     message ( STATUS "Building both static and dynamic GraphBLAS libraries" )
 else ( )
     message ( STATUS "Building dynamic GraphBLAS library only" )
+endif ( )
+
+# select "true" to enable burble, for GraphBLAS development only
+set ( GB_BURBLE true )
+# set ( GB_BURBLE false )
+
+if ( GB_BURBLE )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -153,6 +161,7 @@ configure_file (
 
 include ( FindOpenMP  )
 include ( FindThreads )
+include ( FindBLAS )
 # enable_language ( CUDA )
 
 # for nvcc, add -DGBCUDA
@@ -174,6 +183,16 @@ message ( STATUS "CMAKE thread library:      " ${CMAKE_THREAD_LIBS_INIT} )
 message ( STATUS "CMAKE have pthreads:       " ${CMAKE_USE_PTHREADS_INIT}  )
 message ( STATUS "CMAKE have Win32 pthreads: " ${CMAKE_USE_WIN32_THREADS_INIT} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
+
+if ( ${BLAS_FOUND} )
+    # BLAS_LINKER_FLAGS: uncached list of required linker flags
+    # (excluding -l and -L).
+    message ( STATUS "CBLAS linker flags: " ${BLAS_LINKER_FLAGS} )
+    # BLAS_LIBRARIES: list of libraries to link against (may be empty)
+    message ( STATUS "CBLAS libraries:    " ${BLAS_LIBRARIES} )
+else ( )
+    message ( STATUS "CBLAS : not found" )
+endif ( )
 
 #-------------------------------------------------------------------------------
 # include directories for both graphblas and graphblasdemo libraries
@@ -328,7 +347,7 @@ endif ( )
 if ( USE_OPENMP )
     # use OpenMP for user thread synchronization
     message ( STATUS "Using OpenMP to synchronize user threads" )
-    target_link_libraries ( graphblas        ${M_LIB} ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} )
     endif ( )
@@ -336,7 +355,7 @@ if ( USE_OPENMP )
 elseif ( USE_POSIX )
     # use POSIX for user thread synchronization
     message ( STATUS "Using POSIX pthreads to synchronize user threads" )
-    target_link_libraries ( graphblas        ${M_LIB} )
+    target_link_libraries ( graphblas ${M_LIB} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static ${M_LIB} )
     endif ( )
@@ -344,7 +363,7 @@ elseif ( USE_POSIX )
 else ( )
     # use no threading at all
     message ( WARNING "No support for user threads; GraphBLAS will not be thread-safe" )
-    target_link_libraries ( graphblas        ${M_LIB} )
+    target_link_libraries ( graphblas ${M_LIB} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static ${M_LIB} )
     endif ( )
@@ -352,7 +371,7 @@ else ( )
 endif ( )
 
 if ( CMAKE_THREAD_LIBS_INIT )
-    target_link_libraries ( graphblas        ${CMAKE_THREAD_LIBS_INIT} )
+    target_link_libraries ( graphblas ${CMAKE_THREAD_LIBS_INIT} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static ${CMAKE_THREAD_LIBS_INIT} )
     endif ( )
@@ -362,7 +381,7 @@ if ( OPENMP_FOUND )
     # use OpenMP for internal parallelism
     message ( STATUS "Using OpenMP for internal parallelism" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
-    target_link_libraries ( graphblas        ${M_LIB} ${OpenMP_C_LIBRARIES} )
+    target_link_libraries ( graphblas ${M_LIB} ${OpenMP_C_LIBRARIES} )
     if ( BUILD_GRB_STATIC_LIBRARY )
         target_link_libraries ( graphblas_static ${M_LIB} ${OpenMP_C_LIBRARIES} )
     endif ( )
@@ -374,6 +393,13 @@ endif ( )
 
 if ( CMAKE_USE_WIN32_THREADS_INIT )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DHAVE_WINDOWS_THREADS " )
+endif ( )
+
+if ( BLAS_FOUND )
+    # use the dense CBLAS
+    message ( STATUS "Using dense CBLAS " )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
+    target_link_libraries ( graphblas ${BLAS_LIBRARIES} )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -400,7 +426,7 @@ add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
 SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     C_STANDARD_REQUIRED 11 )
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
-target_link_libraries ( graphblasdemo         ${M_LIB} graphblas )
+target_link_libraries ( graphblasdemo ${M_LIB} graphblas )
 
 if ( BUILD_GRB_STATIC_LIBRARY )
     add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )

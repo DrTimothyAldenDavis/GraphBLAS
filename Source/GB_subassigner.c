@@ -872,6 +872,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     //      M           present or NULL
     //      Mask_comp   true or false
+    //      Mask_struct structural or valued mask
     //      C_replace   true or false
     //      accum       present or NULL
     //      A           scalar (x) or matrix (A)
@@ -925,10 +926,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
     // For the single case C(I,J)<M>=A, two methods can be used: 06n and 06s.
 
-    #if GB_BURBLE
-    const char *Istring = ((Ikind == GB_ALL) ? ":" : "I") ;
-    const char *Jstring = ((Jkind == GB_ALL) ? ":" : "I") ;
-    #endif
+    #define Istring ((Ikind == GB_ALL) ? ":" : "I")
+    #define Jstring ((Jkind == GB_ALL) ? ":" : "I")
 
     if (empty_mask)
     { 

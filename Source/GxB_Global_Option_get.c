@@ -297,6 +297,21 @@ GrB_Info GxB_Global_Option_get      // gets the current global option
             break ;
 
         //----------------------------------------------------------------------
+        // controlling diagnostic output, for development only
+        //----------------------------------------------------------------------
+
+        case GxB_BURBLE : 
+
+            {
+                va_start (ap, field) ;
+                bool *burble = va_arg (ap, bool *) ;
+                va_end (ap) ;
+                GB_RETURN_IF_NULL (burble) ;
+                (*burble) = GB_Global_burble_get ( ) ;
+            }
+            break ;
+
+        //----------------------------------------------------------------------
         // invalid option
         //----------------------------------------------------------------------
 

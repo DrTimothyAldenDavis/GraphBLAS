@@ -9,6 +9,8 @@
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -97,6 +99,8 @@ GrB_Info GB_AemultB__first_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -191,6 +195,8 @@ GrB_Info GB_AemultB__first_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -279,6 +285,8 @@ GrB_Info GB_AemultB__first_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -373,6 +381,8 @@ GrB_Info GB_AemultB__first_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -461,6 +471,8 @@ GrB_Info GB_AemultB__first_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -555,6 +567,8 @@ GrB_Info GB_AemultB__first_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -643,6 +657,8 @@ GrB_Info GB_AemultB__first_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -737,6 +753,8 @@ GrB_Info GB_AemultB__first_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -825,6 +843,8 @@ GrB_Info GB_AemultB__first_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -919,6 +939,8 @@ GrB_Info GB_AemultB__first_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -1007,6 +1029,8 @@ GrB_Info GB_AemultB__first_bool
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -1101,6 +1125,8 @@ GrB_Info GB_AemultB__second_int8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -1189,6 +1215,8 @@ GrB_Info GB_AemultB__second_int16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -1283,6 +1311,8 @@ GrB_Info GB_AemultB__second_int32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -1371,6 +1401,8 @@ GrB_Info GB_AemultB__second_int64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -1465,6 +1497,8 @@ GrB_Info GB_AemultB__second_uint8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -1553,6 +1587,8 @@ GrB_Info GB_AemultB__second_uint16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -1647,6 +1683,8 @@ GrB_Info GB_AemultB__second_uint32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -1735,6 +1773,8 @@ GrB_Info GB_AemultB__second_uint64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -1829,6 +1869,8 @@ GrB_Info GB_AemultB__second_fp32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -1917,6 +1959,8 @@ GrB_Info GB_AemultB__second_fp64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -2011,6 +2055,8 @@ GrB_Info GB_AemultB__second_bool
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -2099,6 +2145,8 @@ GrB_Info GB_AemultB__pair_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -2193,6 +2241,8 @@ GrB_Info GB_AemultB__pair_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -2281,6 +2331,8 @@ GrB_Info GB_AemultB__pair_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -2375,6 +2427,8 @@ GrB_Info GB_AemultB__pair_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -2463,6 +2517,8 @@ GrB_Info GB_AemultB__pair_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -2557,6 +2613,8 @@ GrB_Info GB_AemultB__pair_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -2645,6 +2703,8 @@ GrB_Info GB_AemultB__pair_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -2739,6 +2799,8 @@ GrB_Info GB_AemultB__pair_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -2830,6 +2892,8 @@ GrB_Info GB_AemultB__pair_fp32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -2918,6 +2982,8 @@ GrB_Info GB_AemultB__pair_fp64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -3014,6 +3080,8 @@ GrB_Info GB_AemultB__pair_bool
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__min_int8
 (
     GrB_Matrix C,
@@ -3100,6 +3168,8 @@ GrB_Info GB_AemultB__min_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -3196,6 +3266,8 @@ GrB_Info GB_AemultB__min_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__min_int32
 (
     GrB_Matrix C,
@@ -3282,6 +3354,8 @@ GrB_Info GB_AemultB__min_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -3378,6 +3452,8 @@ GrB_Info GB_AemultB__min_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__min_uint8
 (
     GrB_Matrix C,
@@ -3464,6 +3540,8 @@ GrB_Info GB_AemultB__min_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -3560,6 +3638,8 @@ GrB_Info GB_AemultB__min_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__min_uint32
 (
     GrB_Matrix C,
@@ -3646,6 +3726,8 @@ GrB_Info GB_AemultB__min_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -3742,6 +3824,8 @@ GrB_Info GB_AemultB__min_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__min_fp32
 (
     GrB_Matrix C,
@@ -3828,6 +3912,8 @@ GrB_Info GB_AemultB__min_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -3924,6 +4010,8 @@ GrB_Info GB_AemultB__min_fp64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__max_int8
 (
     GrB_Matrix C,
@@ -4010,6 +4098,8 @@ GrB_Info GB_AemultB__max_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -4106,6 +4196,8 @@ GrB_Info GB_AemultB__max_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__max_int32
 (
     GrB_Matrix C,
@@ -4192,6 +4284,8 @@ GrB_Info GB_AemultB__max_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -4288,6 +4382,8 @@ GrB_Info GB_AemultB__max_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__max_uint8
 (
     GrB_Matrix C,
@@ -4374,6 +4470,8 @@ GrB_Info GB_AemultB__max_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -4470,6 +4568,8 @@ GrB_Info GB_AemultB__max_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__max_uint32
 (
     GrB_Matrix C,
@@ -4556,6 +4656,8 @@ GrB_Info GB_AemultB__max_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -4652,6 +4754,8 @@ GrB_Info GB_AemultB__max_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__max_fp32
 (
     GrB_Matrix C,
@@ -4738,6 +4842,8 @@ GrB_Info GB_AemultB__max_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -4834,6 +4940,8 @@ GrB_Info GB_AemultB__max_fp64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__plus_int8
 (
     GrB_Matrix C,
@@ -4920,6 +5028,8 @@ GrB_Info GB_AemultB__plus_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -5016,6 +5126,8 @@ GrB_Info GB_AemultB__plus_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__plus_int32
 (
     GrB_Matrix C,
@@ -5102,6 +5214,8 @@ GrB_Info GB_AemultB__plus_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -5198,6 +5312,8 @@ GrB_Info GB_AemultB__plus_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__plus_uint8
 (
     GrB_Matrix C,
@@ -5284,6 +5400,8 @@ GrB_Info GB_AemultB__plus_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -5380,6 +5498,8 @@ GrB_Info GB_AemultB__plus_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__plus_uint32
 (
     GrB_Matrix C,
@@ -5466,6 +5586,8 @@ GrB_Info GB_AemultB__plus_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -5562,6 +5684,8 @@ GrB_Info GB_AemultB__plus_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__plus_fp32
 (
     GrB_Matrix C,
@@ -5648,6 +5772,8 @@ GrB_Info GB_AemultB__plus_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -5744,6 +5870,8 @@ GrB_Info GB_AemultB__plus_fp64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__minus_int8
 (
     GrB_Matrix C,
@@ -5830,6 +5958,8 @@ GrB_Info GB_AemultB__minus_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -5926,6 +6056,8 @@ GrB_Info GB_AemultB__minus_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__minus_int32
 (
     GrB_Matrix C,
@@ -6012,6 +6144,8 @@ GrB_Info GB_AemultB__minus_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -6108,6 +6242,8 @@ GrB_Info GB_AemultB__minus_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__minus_uint8
 (
     GrB_Matrix C,
@@ -6194,6 +6330,8 @@ GrB_Info GB_AemultB__minus_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -6290,6 +6428,8 @@ GrB_Info GB_AemultB__minus_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__minus_uint32
 (
     GrB_Matrix C,
@@ -6376,6 +6516,8 @@ GrB_Info GB_AemultB__minus_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -6472,6 +6614,8 @@ GrB_Info GB_AemultB__minus_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__minus_fp32
 (
     GrB_Matrix C,
@@ -6558,6 +6702,8 @@ GrB_Info GB_AemultB__minus_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -6654,6 +6800,8 @@ GrB_Info GB_AemultB__minus_fp64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rminus_int8
 (
     GrB_Matrix C,
@@ -6740,6 +6888,8 @@ GrB_Info GB_AemultB__rminus_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -6836,6 +6986,8 @@ GrB_Info GB_AemultB__rminus_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rminus_int32
 (
     GrB_Matrix C,
@@ -6922,6 +7074,8 @@ GrB_Info GB_AemultB__rminus_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -7018,6 +7172,8 @@ GrB_Info GB_AemultB__rminus_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rminus_uint8
 (
     GrB_Matrix C,
@@ -7104,6 +7260,8 @@ GrB_Info GB_AemultB__rminus_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -7200,6 +7358,8 @@ GrB_Info GB_AemultB__rminus_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rminus_uint32
 (
     GrB_Matrix C,
@@ -7286,6 +7446,8 @@ GrB_Info GB_AemultB__rminus_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -7382,6 +7544,8 @@ GrB_Info GB_AemultB__rminus_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rminus_fp32
 (
     GrB_Matrix C,
@@ -7468,6 +7632,8 @@ GrB_Info GB_AemultB__rminus_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -7564,6 +7730,8 @@ GrB_Info GB_AemultB__rminus_fp64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__times_int8
 (
     GrB_Matrix C,
@@ -7650,6 +7818,8 @@ GrB_Info GB_AemultB__times_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -7746,6 +7916,8 @@ GrB_Info GB_AemultB__times_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__times_int32
 (
     GrB_Matrix C,
@@ -7832,6 +8004,8 @@ GrB_Info GB_AemultB__times_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -7928,6 +8102,8 @@ GrB_Info GB_AemultB__times_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__times_uint8
 (
     GrB_Matrix C,
@@ -8014,6 +8190,8 @@ GrB_Info GB_AemultB__times_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -8110,6 +8288,8 @@ GrB_Info GB_AemultB__times_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__times_uint32
 (
     GrB_Matrix C,
@@ -8196,6 +8376,8 @@ GrB_Info GB_AemultB__times_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -8292,6 +8474,8 @@ GrB_Info GB_AemultB__times_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__times_fp32
 (
     GrB_Matrix C,
@@ -8378,6 +8562,8 @@ GrB_Info GB_AemultB__times_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -8474,6 +8660,8 @@ GrB_Info GB_AemultB__times_fp64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__div_int8
 (
     GrB_Matrix C,
@@ -8560,6 +8748,8 @@ GrB_Info GB_AemultB__div_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -8656,6 +8846,8 @@ GrB_Info GB_AemultB__div_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__div_int32
 (
     GrB_Matrix C,
@@ -8742,6 +8934,8 @@ GrB_Info GB_AemultB__div_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -8838,6 +9032,8 @@ GrB_Info GB_AemultB__div_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__div_uint8
 (
     GrB_Matrix C,
@@ -8924,6 +9120,8 @@ GrB_Info GB_AemultB__div_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -9020,6 +9218,8 @@ GrB_Info GB_AemultB__div_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__div_uint32
 (
     GrB_Matrix C,
@@ -9106,6 +9306,8 @@ GrB_Info GB_AemultB__div_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -9202,6 +9404,8 @@ GrB_Info GB_AemultB__div_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__div_fp32
 (
     GrB_Matrix C,
@@ -9288,6 +9492,8 @@ GrB_Info GB_AemultB__div_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -9384,6 +9590,8 @@ GrB_Info GB_AemultB__div_fp64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rdiv_int8
 (
     GrB_Matrix C,
@@ -9470,6 +9678,8 @@ GrB_Info GB_AemultB__rdiv_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -9566,6 +9776,8 @@ GrB_Info GB_AemultB__rdiv_int16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rdiv_int32
 (
     GrB_Matrix C,
@@ -9652,6 +9864,8 @@ GrB_Info GB_AemultB__rdiv_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -9748,6 +9962,8 @@ GrB_Info GB_AemultB__rdiv_int64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rdiv_uint8
 (
     GrB_Matrix C,
@@ -9834,6 +10050,8 @@ GrB_Info GB_AemultB__rdiv_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -9930,6 +10148,8 @@ GrB_Info GB_AemultB__rdiv_uint16
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rdiv_uint32
 (
     GrB_Matrix C,
@@ -10016,6 +10236,8 @@ GrB_Info GB_AemultB__rdiv_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -10112,6 +10334,8 @@ GrB_Info GB_AemultB__rdiv_uint64
 
 
 
+
+
 GrB_Info GB_Cdense_ewise3_accum__rdiv_fp32
 (
     GrB_Matrix C,
@@ -10198,6 +10422,8 @@ GrB_Info GB_AemultB__rdiv_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -10292,6 +10518,8 @@ GrB_Info GB_AemultB__rdiv_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -10380,6 +10608,8 @@ GrB_Info GB_AemultB__iseq_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -10474,6 +10704,8 @@ GrB_Info GB_AemultB__iseq_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -10562,6 +10794,8 @@ GrB_Info GB_AemultB__iseq_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -10656,6 +10890,8 @@ GrB_Info GB_AemultB__iseq_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -10744,6 +10980,8 @@ GrB_Info GB_AemultB__iseq_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -10838,6 +11076,8 @@ GrB_Info GB_AemultB__iseq_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -10926,6 +11166,8 @@ GrB_Info GB_AemultB__iseq_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -11020,6 +11262,8 @@ GrB_Info GB_AemultB__iseq_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -11108,6 +11352,8 @@ GrB_Info GB_AemultB__iseq_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -11202,6 +11448,8 @@ GrB_Info GB_AemultB__iseq_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -11290,6 +11538,8 @@ GrB_Info GB_AemultB__isne_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -11384,6 +11634,8 @@ GrB_Info GB_AemultB__isne_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -11472,6 +11724,8 @@ GrB_Info GB_AemultB__isne_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -11566,6 +11820,8 @@ GrB_Info GB_AemultB__isne_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -11654,6 +11910,8 @@ GrB_Info GB_AemultB__isne_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -11748,6 +12006,8 @@ GrB_Info GB_AemultB__isne_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -11836,6 +12096,8 @@ GrB_Info GB_AemultB__isne_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -11930,6 +12192,8 @@ GrB_Info GB_AemultB__isne_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -12018,6 +12282,8 @@ GrB_Info GB_AemultB__isne_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -12112,6 +12378,8 @@ GrB_Info GB_AemultB__isne_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -12200,6 +12468,8 @@ GrB_Info GB_AemultB__isgt_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -12294,6 +12564,8 @@ GrB_Info GB_AemultB__isgt_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -12382,6 +12654,8 @@ GrB_Info GB_AemultB__isgt_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -12476,6 +12750,8 @@ GrB_Info GB_AemultB__isgt_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -12564,6 +12840,8 @@ GrB_Info GB_AemultB__isgt_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -12658,6 +12936,8 @@ GrB_Info GB_AemultB__isgt_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -12746,6 +13026,8 @@ GrB_Info GB_AemultB__isgt_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -12840,6 +13122,8 @@ GrB_Info GB_AemultB__isgt_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -12928,6 +13212,8 @@ GrB_Info GB_AemultB__isgt_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -13022,6 +13308,8 @@ GrB_Info GB_AemultB__isgt_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -13110,6 +13398,8 @@ GrB_Info GB_AemultB__islt_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -13204,6 +13494,8 @@ GrB_Info GB_AemultB__islt_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -13292,6 +13584,8 @@ GrB_Info GB_AemultB__islt_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -13386,6 +13680,8 @@ GrB_Info GB_AemultB__islt_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -13474,6 +13770,8 @@ GrB_Info GB_AemultB__islt_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -13568,6 +13866,8 @@ GrB_Info GB_AemultB__islt_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -13656,6 +13956,8 @@ GrB_Info GB_AemultB__islt_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -13750,6 +14052,8 @@ GrB_Info GB_AemultB__islt_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -13838,6 +14142,8 @@ GrB_Info GB_AemultB__islt_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -13932,6 +14238,8 @@ GrB_Info GB_AemultB__islt_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -14020,6 +14328,8 @@ GrB_Info GB_AemultB__isge_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -14114,6 +14424,8 @@ GrB_Info GB_AemultB__isge_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -14202,6 +14514,8 @@ GrB_Info GB_AemultB__isge_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -14296,6 +14610,8 @@ GrB_Info GB_AemultB__isge_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -14384,6 +14700,8 @@ GrB_Info GB_AemultB__isge_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -14478,6 +14796,8 @@ GrB_Info GB_AemultB__isge_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -14566,6 +14886,8 @@ GrB_Info GB_AemultB__isge_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -14660,6 +14982,8 @@ GrB_Info GB_AemultB__isge_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -14748,6 +15072,8 @@ GrB_Info GB_AemultB__isge_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -14842,6 +15168,8 @@ GrB_Info GB_AemultB__isge_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -14930,6 +15258,8 @@ GrB_Info GB_AemultB__isle_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -15024,6 +15354,8 @@ GrB_Info GB_AemultB__isle_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -15112,6 +15444,8 @@ GrB_Info GB_AemultB__isle_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -15206,6 +15540,8 @@ GrB_Info GB_AemultB__isle_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -15294,6 +15630,8 @@ GrB_Info GB_AemultB__isle_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -15388,6 +15726,8 @@ GrB_Info GB_AemultB__isle_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -15476,6 +15816,8 @@ GrB_Info GB_AemultB__isle_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -15570,6 +15912,8 @@ GrB_Info GB_AemultB__isle_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -15658,6 +16002,8 @@ GrB_Info GB_AemultB__isle_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -15752,6 +16098,8 @@ GrB_Info GB_AemultB__isle_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -15840,6 +16188,8 @@ GrB_Info GB_AemultB__eq_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -15934,6 +16284,8 @@ GrB_Info GB_AemultB__eq_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -16022,6 +16374,8 @@ GrB_Info GB_AemultB__eq_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -16116,6 +16470,8 @@ GrB_Info GB_AemultB__eq_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -16204,6 +16560,8 @@ GrB_Info GB_AemultB__eq_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -16298,6 +16656,8 @@ GrB_Info GB_AemultB__eq_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -16386,6 +16746,8 @@ GrB_Info GB_AemultB__eq_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -16480,6 +16842,8 @@ GrB_Info GB_AemultB__eq_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -16568,6 +16932,8 @@ GrB_Info GB_AemultB__eq_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -16662,6 +17028,8 @@ GrB_Info GB_AemultB__eq_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -16750,6 +17118,8 @@ GrB_Info GB_AemultB__eq_bool
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -16844,6 +17214,8 @@ GrB_Info GB_AemultB__ne_int8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -16932,6 +17304,8 @@ GrB_Info GB_AemultB__ne_int16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -17026,6 +17400,8 @@ GrB_Info GB_AemultB__ne_int32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -17114,6 +17490,8 @@ GrB_Info GB_AemultB__ne_int64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -17208,6 +17586,8 @@ GrB_Info GB_AemultB__ne_uint8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -17296,6 +17676,8 @@ GrB_Info GB_AemultB__ne_uint16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -17390,6 +17772,8 @@ GrB_Info GB_AemultB__ne_uint32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -17478,6 +17862,8 @@ GrB_Info GB_AemultB__ne_uint64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -17572,6 +17958,8 @@ GrB_Info GB_AemultB__ne_fp32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -17660,6 +18048,8 @@ GrB_Info GB_AemultB__ne_fp64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -17754,6 +18144,8 @@ GrB_Info GB_AemultB__gt_int8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -17842,6 +18234,8 @@ GrB_Info GB_AemultB__gt_int16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -17936,6 +18330,8 @@ GrB_Info GB_AemultB__gt_int32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -18024,6 +18420,8 @@ GrB_Info GB_AemultB__gt_int64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -18118,6 +18516,8 @@ GrB_Info GB_AemultB__gt_uint8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -18206,6 +18606,8 @@ GrB_Info GB_AemultB__gt_uint16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -18300,6 +18702,8 @@ GrB_Info GB_AemultB__gt_uint32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -18388,6 +18792,8 @@ GrB_Info GB_AemultB__gt_uint64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -18482,6 +18888,8 @@ GrB_Info GB_AemultB__gt_fp32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -18570,6 +18978,8 @@ GrB_Info GB_AemultB__gt_fp64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -18664,6 +19074,8 @@ GrB_Info GB_AemultB__gt_bool
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -18752,6 +19164,8 @@ GrB_Info GB_AemultB__lt_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -18846,6 +19260,8 @@ GrB_Info GB_AemultB__lt_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -18934,6 +19350,8 @@ GrB_Info GB_AemultB__lt_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -19028,6 +19446,8 @@ GrB_Info GB_AemultB__lt_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -19116,6 +19536,8 @@ GrB_Info GB_AemultB__lt_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -19210,6 +19632,8 @@ GrB_Info GB_AemultB__lt_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -19298,6 +19722,8 @@ GrB_Info GB_AemultB__lt_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -19392,6 +19818,8 @@ GrB_Info GB_AemultB__lt_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -19480,6 +19908,8 @@ GrB_Info GB_AemultB__lt_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -19574,6 +20004,8 @@ GrB_Info GB_AemultB__lt_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -19662,6 +20094,8 @@ GrB_Info GB_AemultB__lt_bool
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -19756,6 +20190,8 @@ GrB_Info GB_AemultB__ge_int8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -19844,6 +20280,8 @@ GrB_Info GB_AemultB__ge_int16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -19938,6 +20376,8 @@ GrB_Info GB_AemultB__ge_int32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -20026,6 +20466,8 @@ GrB_Info GB_AemultB__ge_int64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -20120,6 +20562,8 @@ GrB_Info GB_AemultB__ge_uint8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -20208,6 +20652,8 @@ GrB_Info GB_AemultB__ge_uint16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -20302,6 +20748,8 @@ GrB_Info GB_AemultB__ge_uint32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -20390,6 +20838,8 @@ GrB_Info GB_AemultB__ge_uint64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -20484,6 +20934,8 @@ GrB_Info GB_AemultB__ge_fp32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -20572,6 +21024,8 @@ GrB_Info GB_AemultB__ge_fp64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -20666,6 +21120,8 @@ GrB_Info GB_AemultB__ge_bool
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -20754,6 +21210,8 @@ GrB_Info GB_AemultB__le_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -20848,6 +21306,8 @@ GrB_Info GB_AemultB__le_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -20936,6 +21396,8 @@ GrB_Info GB_AemultB__le_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -21030,6 +21492,8 @@ GrB_Info GB_AemultB__le_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -21118,6 +21582,8 @@ GrB_Info GB_AemultB__le_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -21212,6 +21678,8 @@ GrB_Info GB_AemultB__le_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -21300,6 +21768,8 @@ GrB_Info GB_AemultB__le_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -21394,6 +21864,8 @@ GrB_Info GB_AemultB__le_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -21482,6 +21954,8 @@ GrB_Info GB_AemultB__le_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -21576,6 +22050,8 @@ GrB_Info GB_AemultB__le_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -21664,6 +22140,8 @@ GrB_Info GB_AemultB__le_bool
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -21758,6 +22236,8 @@ GrB_Info GB_AemultB__lor_int8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -21846,6 +22326,8 @@ GrB_Info GB_AemultB__lor_int16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -21940,6 +22422,8 @@ GrB_Info GB_AemultB__lor_int32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -22028,6 +22512,8 @@ GrB_Info GB_AemultB__lor_int64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -22122,6 +22608,8 @@ GrB_Info GB_AemultB__lor_uint8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -22210,6 +22698,8 @@ GrB_Info GB_AemultB__lor_uint16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -22304,6 +22794,8 @@ GrB_Info GB_AemultB__lor_uint32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -22392,6 +22884,8 @@ GrB_Info GB_AemultB__lor_uint64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -22486,6 +22980,8 @@ GrB_Info GB_AemultB__lor_fp32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -22574,6 +23070,8 @@ GrB_Info GB_AemultB__lor_fp64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -22668,6 +23166,8 @@ GrB_Info GB_AemultB__lor_bool
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -22756,6 +23256,8 @@ GrB_Info GB_AemultB__land_int8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -22850,6 +23352,8 @@ GrB_Info GB_AemultB__land_int16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -22938,6 +23442,8 @@ GrB_Info GB_AemultB__land_int32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -23032,6 +23538,8 @@ GrB_Info GB_AemultB__land_int64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -23120,6 +23628,8 @@ GrB_Info GB_AemultB__land_uint8
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -23214,6 +23724,8 @@ GrB_Info GB_AemultB__land_uint16
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -23302,6 +23814,8 @@ GrB_Info GB_AemultB__land_uint32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -23396,6 +23910,8 @@ GrB_Info GB_AemultB__land_uint64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -23484,6 +24000,8 @@ GrB_Info GB_AemultB__land_fp32
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -23578,6 +24096,8 @@ GrB_Info GB_AemultB__land_fp64
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -23666,6 +24186,8 @@ GrB_Info GB_AemultB__land_bool
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -23760,6 +24282,8 @@ GrB_Info GB_AemultB__lxor_int8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -23848,6 +24372,8 @@ GrB_Info GB_AemultB__lxor_int16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -23942,6 +24468,8 @@ GrB_Info GB_AemultB__lxor_int32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -24030,6 +24558,8 @@ GrB_Info GB_AemultB__lxor_int64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -24124,6 +24654,8 @@ GrB_Info GB_AemultB__lxor_uint8
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -24212,6 +24744,8 @@ GrB_Info GB_AemultB__lxor_uint16
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -24306,6 +24840,8 @@ GrB_Info GB_AemultB__lxor_uint32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -24394,6 +24930,8 @@ GrB_Info GB_AemultB__lxor_uint64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 
@@ -24488,6 +25026,8 @@ GrB_Info GB_AemultB__lxor_fp32
 
 
 
+
+
 #if 0
 
 GrB_Info (none)
@@ -24576,6 +25116,8 @@ GrB_Info GB_AemultB__lxor_fp64
     const int ntasks,
     const int nthreads
 ) ;
+
+
 
 
 

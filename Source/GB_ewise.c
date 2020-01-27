@@ -11,9 +11,6 @@
 // optionally transposed.  Does the work for GrB_eWiseAdd_* and
 // GrB_eWiseMult_*.  Handles all cases of the mask.
 
-// TODO handle the special case of an alias of C with A, or C with B, or both,
-// when C is dense, with no mask.  C can be operated on in-place.
-
 #include "GB_ewise.h"
 #include "GB_add.h"
 #include "GB_emult.h"
@@ -285,21 +282,17 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         // C is not empty.  Use a kernel that computes T<A>=A+B
         // where T starts out empty; just iterate over the entries in A.
 
-    if (C_is_dense                          // C, A, B all dense
-        && A_is_dense
+    if (A_is_dense                          // A and B are dense
         && B_is_dense
-        && (C != A1)                        // no alias (but could be handled)
-        && (C != B1)
-        && (A1 != B1)
         && (M == NULL) && !Mask_comp        // no mask
-        && !C_replace                       // C_replace false
         && (C->is_csc == C_is_csc)          // no transpose of C
         && no_typecast                      // no typecasting
-        && (op->opcode < GB_USER_C_opcode)  // not a user-define operator
+        && (op->opcode < GB_USER_C_opcode)  // not a user-defined operator
         )
     {
 
-        if (accum == op                     // accum is same as the op
+        if (C_is_dense                      // C is dense
+        && accum == op                      // accum is same as the op
         && (op->opcode >= GB_MIN_opcode)    // subset of binary operators
         && (op->opcode <= GB_RDIV_opcode))
         {
@@ -308,6 +301,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             // C += A+B where all 3 matrices are dense
             //------------------------------------------------------------------
 
+            // C_replace is ignored
             GBBURBLE ("dense C+=A+B ") ;
             GB_dense_ewise3_accum (C, A1, B1, op, Context) ;
             GB_FREE_ALL ;
@@ -318,11 +312,12 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         {
 
             //------------------------------------------------------------------
-            // C = A+B where all 3 matrices are dense
+            // C = A+B where A and B are dense (C is anything)
             //------------------------------------------------------------------
 
+            // C_replace is ignored
             GBBURBLE ("dense C=A+B ") ;
-            GB_dense_ewise3_noaccum (C, A1, B1, op, Context) ;
+            GB_dense_ewise3_noaccum (C, C_is_dense, A1, B1, op, Context) ;
             GB_FREE_ALL ;
             return (GrB_SUCCESS) ;
         }

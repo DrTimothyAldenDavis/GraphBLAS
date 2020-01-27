@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_dense_ewise3_noaccum: C = A+B where all 3 matries are dense
+// GB_dense_ewise3_noaccum: C = A+B where A and B are dense, C is anything
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -12,9 +12,12 @@
 #include "GB_binop__include.h"
 #endif
 
+#define GB_FREE_ALL ;
+
 GrB_Info GB_dense_ewise3_noaccum    // C = A+B
 (
     GrB_Matrix C,                   // input/output matrix
+    const bool C_is_dense,          // true if C is dense
     const GrB_Matrix A,
     const GrB_Matrix B,
     const GrB_BinaryOp op,
@@ -31,10 +34,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT (!GB_aliased (C, A)) ;   // TODO aliasing can be handled;
-    ASSERT (!GB_aliased (C, B)) ;   //      just remove const and GB_RESTRICT
-    ASSERT (!GB_aliased (A, B)) ;   //      from GB_Cdense_* workers.
-    ASSERT (GB_is_dense (C)) ;
+    ASSERT (GB_IMPLIES (!C_is_dense, (C != A && C != B))) ;
     ASSERT (GB_is_dense (A)) ;
     ASSERT (GB_is_dense (B)) ;
     ASSERT_BINARYOP_OK (op, "op for dense C=A+B", GB0) ;
@@ -50,6 +50,22 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
+
+    //--------------------------------------------------------------------------
+    // if C not already dense, allocate it and create its pattern (same as A)
+    //--------------------------------------------------------------------------
+
+    // clear prior content and then create a copy of the pattern of A.  Keep
+    // the same type and CSR/CSC for C.  Allocate the values of C but do not
+    // initialize them.
+
+    if (!C_is_dense)
+    {
+        bool C_is_csc = C->is_csc ;
+        GB_PHIX_FREE (C) ;
+        GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;
+        C->is_csc = C_is_csc ;
+    }
 
     //--------------------------------------------------------------------------
     // define the worker for the switch factory

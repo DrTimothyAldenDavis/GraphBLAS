@@ -12,7 +12,7 @@
 #include "GB_binop__include.h"
 #endif
 
-GrB_Info GB_dense_ewise3_accum      // C += A+B
+GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,
@@ -31,9 +31,6 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
-    ASSERT (!GB_aliased (C, A)) ;
-    ASSERT (!GB_aliased (C, B)) ;
-    ASSERT (!GB_aliased (A, B)) ;
     ASSERT (GB_is_dense (C)) ;
     ASSERT (GB_is_dense (A)) ;
     ASSERT (GB_is_dense (B)) ;

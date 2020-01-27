@@ -255,6 +255,7 @@ classdef GrB
 %   GrB.selectopinfo (op)        list properties of a select operator
 %   t = GrB.threads (t)          set/get # of threads to use in GraphBLAS
 %   c = GrB.chunk (c)            set/get chunk size to use in GraphBLAS
+%   b = GrB.burble (b)           set/get burble (diagnostic output)
 %   result = GrB.entries (G,...) count or query entries in a matrix
 %   result = GrB.nonz (G,...)    count or query nonzeros in a matrix
 %   C = GrB.prune (A, id)        prune entries equal to id
@@ -763,6 +764,7 @@ methods (Static)
     semiringinfo (s, type) ;
     nthreads = threads (varargin) ;
     c = chunk (varargin) ;
+    b = burble (varargin) ;
     C = empty (arg1, arg2) ;
     s = type (A) ;
     s = issigned (type) ;

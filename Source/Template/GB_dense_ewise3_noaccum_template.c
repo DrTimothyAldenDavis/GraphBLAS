@@ -13,22 +13,89 @@
     // get A, B, and C
     //--------------------------------------------------------------------------
 
-    const GB_ATYPE *GB_RESTRICT Ax = A->x ;
-    const GB_BTYPE *GB_RESTRICT Bx = B->x ;
-    GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    // any matrix may be aliased to any other (C==A, C==B, and/or A==B)
+    GB_ATYPE *Ax = A->x ;
+    GB_BTYPE *Bx = B->x ;
+    GB_CTYPE *Cx = C->x ;
     const int64_t cnz = GB_NNZ (C) ;
-
-    //--------------------------------------------------------------------------
-    // C += x where C is dense and x is a scalar
-    //--------------------------------------------------------------------------
-
+    ASSERT (GB_is_dense (A)) ;
+    ASSERT (GB_is_dense (B)) ;
+    ASSERT (GB_is_dense (C)) ;
     int64_t p ;
-    #pragma omp parallel for num_threads(nthreads) schedule(static)
-    for (p = 0 ; p < cnz ; p++)
+
+    //--------------------------------------------------------------------------
+    // C = A+B where all 3 matrices are dense
+    //--------------------------------------------------------------------------
+
+    if (C == B)
     {
-        GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
-        GB_GETB (bij, Bx, p) ;                  // bij = Bx [p]
-        GB_BINOP (GB_CX (p), aij, bij) ;        // Cx [p] = aij + bij
+
+        //----------------------------------------------------------------------
+        // C = A+C
+        //----------------------------------------------------------------------
+
+        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+
+            GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Ax, Cx, nthreads) ;   // C += A
+
+        #else
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (p = 0 ; p < cnz ; p++)
+            {
+                GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
+                GB_BINOP (GB_CX (p), aij, GB_CX (p)) ;  // Cx [p] = aij + Cx [p]
+            }
+
+        #endif
+
+    }
+    else if (C == A)
+    {
+
+        //----------------------------------------------------------------------
+        // C = C+B
+        //----------------------------------------------------------------------
+
+        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+
+            GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
+
+        #else
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (p = 0 ; p < cnz ; p++)
+            {
+                GB_GETB (bij, Bx, p) ;                  // bij = Bx [p]
+                GB_BINOP (GB_CX (p), GB_CX (p), bij) ;  // Cx [p] += bij
+            }
+
+        #endif
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // C = A+B
+        //----------------------------------------------------------------------
+
+        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+
+            GB_memcpy (Cx, Ax, cnz * sizeof (GB_CTYPE), nthreads) ; // C = A
+            GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
+
+        #else
+
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (p = 0 ; p < cnz ; p++)
+            {
+                GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
+                GB_GETB (bij, Bx, p) ;                  // bij = Bx [p]
+                GB_BINOP (GB_CX (p), aij, bij) ;        // Cx [p] = aij + bij
+            }
+
+        #endif
     }
 }
 

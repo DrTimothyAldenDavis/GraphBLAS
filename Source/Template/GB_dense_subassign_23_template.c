@@ -18,6 +18,7 @@
 
     const GB_ATYPE *GB_RESTRICT Ax = A->x ;
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
+    ASSERT (GB_is_dense (C)) ;
 
     if (kfirst_slice == NULL)
     {
@@ -26,15 +27,36 @@
         // C += A when both C and A are dense
         //----------------------------------------------------------------------
 
+        ASSERT (GB_is_dense (A)) ;
         const int64_t cnz = GB_NNZ (C) ;
-        int64_t p ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (p = 0 ; p < cnz ; p++)
-        {
-            GB_GETB (aij, Ax, p) ;                  // aij = A(i,j)
-            GB_BINOP (GB_CX (p), GB_CX (p), aij) ;  // C(i,j) += aij
-        }
 
+        #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+
+            // C += A via GB_cblas_daxpy or GB_cblas_saxpy
+
+            // Helen: look here ...
+
+            GB_CBLAS_AXPY           // Y += alpha*X
+            (
+                cnz,                // length of X and Y (note: int64_t)
+                (GB_CTYPE) 1,       // alpha is 1.0
+                Ax,                 // X, always stride 1
+                Cx,                 // Y, always stride 1
+                nthreads            // maximum # of threads to use
+            ) ;
+
+        #else
+
+            // no CBLAS for this case ...
+            int64_t p ;
+            #pragma omp parallel for num_threads(nthreads) schedule(static)
+            for (p = 0 ; p < cnz ; p++)
+            {
+                GB_GETB (aij, Ax, p) ;                  // aij = A(i,j)
+                GB_BINOP (GB_CX (p), GB_CX (p), aij) ;  // C(i,j) += aij
+            }
+
+        #endif
     }
     else
     {
@@ -86,19 +108,50 @@
                 if (ajdense)
                 { 
 
-                    // both C(:,j) and A(:,j) are dense
-                    GB_PRAGMA_VECTORIZE
-                    for (int64_t pA = my_pA_start ; pA < my_pA_end ; pA++)
-                    { 
-                        int64_t i = pA - pA_start ;
+                    int64_t len = my_pA_end - my_pA_start ;
+
+                    #if GB_HAS_CBLAS && GB_OP_IS_PLUS_REAL
+
+                        // y += alpha * x via DAXPY or SAXPY
+
+                        // use a single thread since this is already in a
+                        // parallel region.
+
+                        // Helen: look here ... (this part needs no work;
+                        // but see Source/GB_cblas_*.c for controlling # of
+                        // threads)
+
+                        int64_t i = my_pA_start - pA_start ;
                         int64_t p = pC + i ;
-                        GB_GETB (aij, Ax, pA) ;                 // aij = A(i,j)
-                        GB_BINOP (GB_CX (p), GB_CX (p), aij) ;  // C(i,j) += aij
-                    }
+
+                        GB_CBLAS_AXPY           // Y += alpha*X
+                        (
+                            len,                // length of X and Y
+                            (GB_CTYPE) 1,       // alpha is 1.0
+                            Ax + my_pA_start,   // X, always stride 1
+                            Cx + p,             // Y, always stride 1
+                            1                   // use a single thread
+                        ) ;
+
+                    #else
+
+                        // both C(:,j) and A(:,j) are dense
+                        GB_PRAGMA_VECTORIZE
+                        for (int64_t pA = my_pA_start ; pA < my_pA_end ; pA++)
+                        { 
+                            int64_t i = pA - pA_start ;
+                            int64_t p = pC + i ;
+                            // aij = A(i,j)
+                            GB_GETB (aij, Ax, pA) ;
+                            // C(i,j) += aij
+                            GB_BINOP (GB_CX (p), GB_CX (p), aij) ;
+                        }
+
+                    #endif
 
                 }
                 else
-                { 
+                {
                     // C(:,j) is dense; A(:,j) is sparse 
                     GB_PRAGMA_VECTORIZE
                     for (int64_t pA = my_pA_start ; pA < my_pA_end ; pA++)
@@ -113,3 +166,4 @@
         }
     }
 }
+

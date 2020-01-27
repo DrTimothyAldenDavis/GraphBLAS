@@ -3,11 +3,19 @@ function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, i
 %
 % codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic)
 
+f = fopen ('control.m4', 'w') ;
+
 is_first    = isequal (multop, 'first') ;
 is_second   = isequal (multop, 'second') ;
 is_pair     = isequal (multop, 'pair') ;
 is_any      = isequal (addop, 'any') ;
 is_any_pair = is_any && isequal (multop, 'pair') ;
+
+if isequal (addop, 'plus') && isequal (multop, 'times') && isequal (ztype, 'float')
+    fprintf (f, 'define(`GB_Helen'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_Helen'', `0'')\n') ;
+end
 
 if (is_pair)
     % these semirings are renamed to any_pair, and not thus created
@@ -17,8 +25,6 @@ if (is_pair)
         return
     end
 end
-
-f = fopen ('control.m4', 'w') ;
 
 [fname, unsigned, bits] = codegen_type (xytype) ;
 [zname, ~, ~] = codegen_type (ztype) ;

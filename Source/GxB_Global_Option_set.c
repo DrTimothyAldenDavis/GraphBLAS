@@ -89,6 +89,16 @@ GrB_Info GxB_Global_Option_set      // set a global default option
             }
             break ;
 
+        case GxB_BURBLE :
+
+            {
+                va_start (ap, field) ;
+                bool burble = va_arg (ap, bool) ;
+                va_end (ap) ;
+                GB_Global_burble_set (burble) ;
+            }
+            break ;
+
         default : 
 
             return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,

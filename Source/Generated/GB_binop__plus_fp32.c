@@ -1,4 +1,6 @@
 
+
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -14,6 +16,7 @@
 #ifndef GBCOMPACT
 #include "GB_control.h"
 #include "GB_ek_slice.h"
+#include "GB_dense.h"
 #include "GB_binop__include.h"
 
 // C=binop(A,B) is defined by the following types and operators:
@@ -68,6 +71,14 @@
 // op is second
 #define GB_OP_IS_SECOND \
     0
+
+// op is plus_fp32 or plus_fp64
+#define GB_OP_IS_PLUS_REAL \
+    1
+
+// GB_cblas_*axpy gateway routine, if it exists for this operator and type:
+#define GB_CBLAS_AXPY \
+    GB_cblas_saxpy
 
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2

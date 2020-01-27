@@ -3664,7 +3664,8 @@ typedef enum            // for global options or matrix options
     GxB_API_VERSION = 16,           // API version (3 int's)
     GxB_API_DATE = 17,              // date of the API (char *)
     GxB_API_ABOUT = 18,             // about the API (char *)
-    GxB_API_URL = 19                // URL for the API (char *)
+    GxB_API_URL = 19,               // URL for the API (char *)
+    GxB_BURBLE = 20                 // development only (bool *)
 
 } GxB_Option_Field ;
 

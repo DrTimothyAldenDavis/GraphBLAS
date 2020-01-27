@@ -22,7 +22,9 @@
 // just before the statement:
 // #include "GB.h"
 
-// set GB_BURBLE to 1 to enable extensive diagnostic output to stdout.
+// set GB_BURBLE to 1 to enable extensive diagnostic output to stdout,
+// or compile with -DGB_BURBLE=1.  This setting can also be added at the top
+// of any individual Source/* files, before #including any other files.
 #ifndef GB_BURBLE
 #define GB_BURBLE 0
 #endif
@@ -127,6 +129,19 @@
 #endif
 
 #include "GraphBLAS.h"
+
+//------------------------------------------------------------------------------
+// include GraphBLAS dependencies
+//------------------------------------------------------------------------------
+
+// SuiteSparse:GraphBLAS can use the dense CBLAS, if it is available, to
+// operate on its matrices and vectors when they are dense (fully populated
+// with no entries missing), of type GrB_FP32 (float) or GrB_FP64 (double), and
+// when the conventional PLUS_TIMES_FP* semiring is being used.
+
+#if GB_HAS_CBLAS
+#include "cblas.h"
+#endif
 
 //------------------------------------------------------------------------------
 // compiler variations
@@ -725,44 +740,70 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // burble
 //------------------------------------------------------------------------------
 
-// GB_BURBLE is meant for development use, not production use.
+// GB_BURBLE is meant for development use, not production use.  To enable it,
+// set GB_BURBLE to 1, either with -DGB_BURBLE=1 as a compiler option, by
+// editting the setting above, or by adding the line
+//
+//      #define GB_BURBLE 1
+//
+// at the top of any source file, before #including any other file.  After
+// enabling it in the library, use GxB_set (GxB_BURBLE, true) to turn it on
+// at run time, and GxB_set (GxB_BURBLE, false) to turn it off.  By default,
+// the feature is not enabled when SuiteSparse:GraphBLAS is compiled, and
+// even then, the setting is set to false by GrB_init.
 
 #if GB_BURBLE
 
 // define the printf function to use to burble
 #include "GB_printf.h"
-#define GBBURBLE(...)                           \
-{                                               \
-    if (GB_printf_function != NULL)             \
-    {                                           \
-        GB_printf_function (__VA_ARGS__) ;      \
-    }                                           \
-    else                                        \
-    {                                           \
-        printf (__VA_ARGS__) ;                  \
-        fflush (stdout) ;                       \
-    }                                           \
+#define GBBURBLE(...)                               \
+{                                                   \
+    bool burble = GB_Global_burble_get ( ) ;        \
+    if (burble)                                     \
+    {                                               \
+        if (GB_printf_function != NULL)             \
+        {                                           \
+            GB_printf_function (__VA_ARGS__) ;      \
+        }                                           \
+        else                                        \
+        {                                           \
+            printf (__VA_ARGS__) ;                  \
+            fflush (stdout) ;                       \
+        }                                           \
+    }                                               \
 }
 
 #if defined ( _OPENMP )
 
 // burble with timing
-#define GB_BURBLE_START(func)                   \
-    GBBURBLE (" [ " func " ") ;                 \
-    double t_burble = omp_get_wtime ( ) ;
+#define GB_BURBLE_START(func)                       \
+double t_burble = 0 ;                               \
+bool burble = GB_Global_burble_get ( ) ;            \
+{                                                   \
+    if (burble)                                     \
+    {                                               \
+        GBBURBLE (" [ " func " ") ;                 \
+        t_burble = GB_OPENMP_GET_WTIME ;            \
+    }                                               \
+}
 
-#define GB_BURBLE_END                           \
-    t_burble = omp_get_wtime ( ) - t_burble ;   \
-    GBBURBLE ("%.3g sec ]\n", t_burble) ;       \
+#define GB_BURBLE_END                               \
+{                                                   \
+    if (burble)                                     \
+    {                                               \
+        t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
+        GBBURBLE ("%.3g sec ]\n", t_burble) ;       \
+    }                                               \
+}
 
 #else
 
 // burble with no timing
 #define GB_BURBLE_START(func)                   \
-    GBBURBLE (" [ " func " ") ;                 \
+    GBBURBLE (" [ " func " ")
 
 #define GB_BURBLE_END                           \
-    GBBURBLE ("]\n") ;
+    GBBURBLE ("]\n")
 
 #endif
 
@@ -2111,12 +2152,14 @@ static inline bool GB_is_dense
     #define GB_OPENMP_THREAD_ID         omp_get_thread_num ( )
     #define GB_OPENMP_MAX_THREADS       omp_get_max_threads ( )
     #define GB_OPENMP_GET_NUM_THREADS   omp_get_num_threads ( )
+    #define GB_OPENMP_GET_WTIME         omp_get_wtime ( )
 
 #else
 
     #define GB_OPENMP_THREAD_ID         (0)
     #define GB_OPENMP_MAX_THREADS       (1)
     #define GB_OPENMP_GET_NUM_THREADS   (1)
+    #define GB_OPENMP_GET_WTIME         (0)
 
 #endif
 

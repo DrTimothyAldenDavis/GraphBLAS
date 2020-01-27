@@ -76,11 +76,10 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
     ASSERT (GB_PENDING_OK (C)) ; ASSERT (GB_ZOMBIES_OK (C)) ;
 
     #if GB_BURBLE
-    #if defined ( _OPENMP )
-    double t_burble ;
-    #endif
+    bool burble = GB_Global_burble_get ( ) ;
+    double t_burble = 0 ;
     // do not burble when waiting on scalars or empty matrices
-    bool burble = (C->vlen > 1) || (C->vdim > 1) ;
+    burble = burble && ((C->vlen > 1) || (C->vdim > 1)) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -227,7 +226,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
             {
                 GBBURBLE (" [ *_setElement ") ;
                 #if defined ( _OPENMP )
-                t_burble = omp_get_wtime ( ) ;
+                t_burble = GB_OPENMP_GET_WTIME ;
                 #endif
             }
             #endif
@@ -292,7 +291,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         {
             GBBURBLE (" [ *_setElement ") ;
             #if defined ( _OPENMP )
-            t_burble = omp_get_wtime ( ) ;
+            t_burble = GB_OPENMP_GET_WTIME ;
             #endif
         }
         #endif

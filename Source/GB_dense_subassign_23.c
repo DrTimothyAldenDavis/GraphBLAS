@@ -97,23 +97,6 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     }
 
     //--------------------------------------------------------------------------
-    // check the types of C and A
-    //--------------------------------------------------------------------------
-
-    bool C_is_pattern = false ;
-    bool A_is_pattern = false ;
-
-    #if 0
-    // TODO
-    bool op_is_first  = op->opcode == GB_FIRST_opcode ;
-    bool op_is_second = op->opcode == GB_SECOND_opcode ;
-    bool op_is_pair   = op->opcode == GB_PAIR_opcode ;
-    // C is passed as x, and A as y, in z = op(x,y)
-    bool C_is_pattern = op_is_second || op_is_pair ;
-    bool A_is_pattern = op_is_first  || op_is_pair ;
-    #endif
-
-    //--------------------------------------------------------------------------
     // define the worker for the switch factory
     //--------------------------------------------------------------------------
 
@@ -137,7 +120,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 
         GB_Opcode opcode ;
         GB_Type_code xycode, zcode ;
-        if (GB_binop_builtin (C->type, C_is_pattern, A->type, A_is_pattern,
+        if (GB_binop_builtin (C->type, false, A->type, false,
             accum, false, &opcode, &xycode, &zcode))
         { 
             // accumulate sparse matrix into dense matrix with built-in operator

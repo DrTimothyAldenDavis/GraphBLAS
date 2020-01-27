@@ -107,7 +107,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Jan 22, 2020 (DRAFT20)"
+#define GxB_IMPLEMENTATION_DATE "Jan 27, 2020 (DRAFT21)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3664,7 +3664,8 @@ typedef enum            // for global options or matrix options
     GxB_API_VERSION = 16,           // API version (3 int's)
     GxB_API_DATE = 17,              // date of the API (char *)
     GxB_API_ABOUT = 18,             // about the API (char *)
-    GxB_API_URL = 19                // URL for the API (char *)
+    GxB_API_URL = 19,               // URL for the API (char *)
+    GxB_BURBLE = 20                 // development only (bool *)
 
 } GxB_Option_Field ;
 

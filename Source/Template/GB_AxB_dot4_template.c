@@ -55,6 +55,8 @@
     // C += A'*B
     //--------------------------------------------------------------------------
 
+    // TODO: check if B is entirely dense (GAP!)
+
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < ntasks ; taskid++)
@@ -142,6 +144,9 @@
                         //------------------------------------------------------
                         // A(:,i) is sparse and B(:,j) is dense
                         //------------------------------------------------------
+
+                        // HELEN: GAP pagerank is here
+                        // Helen; look here
 
                         GB_DOT_SIMD
                         for (int64_t p = pA ; p < pA_end ; p++)

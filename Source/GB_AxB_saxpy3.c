@@ -987,10 +987,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
 #if 0
 // HACK:
-    double tic = omp_get_wtime ( ) ;
+    double tic = GB_OPENMP_GET_WTIME ;
     memset (Hf_all, 1, Hf_size_total * sizeof (int64_t)) ;
     memset (Hf_all, 0, Hf_size_total * sizeof (int64_t)) ;
-    tic = omp_get_wtime ( ) - tic ;
+    tic = GB_OPENMP_GET_WTIME - tic ;
     printf ("(clear %g sec) ", tic) ;
 
     printf ("H: ("GBd" + "GBd" + "GBd") ",

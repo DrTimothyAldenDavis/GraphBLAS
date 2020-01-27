@@ -121,8 +121,11 @@ typedef struct
     int64_t maxused ;               // high water memory usage
 
     //--------------------------------------------------------------------------
+    // for testing and development
+    //--------------------------------------------------------------------------
 
-    int64_t hack ;                  // for testing and development
+    int64_t hack ;                  // ad hoc setting (for draft versions only)
+    bool burble ;                   // controls GBBURBLE output
 
     //--------------------------------------------------------------------------
     // for MATLAB interface only
@@ -177,6 +180,7 @@ GB_Global_struct GB_Global =
 
     // for testing and development
     .hack = 0,
+    .burble = false,
 
     // for MATLAB interface only
     .print_one_based = false,       // if true, print 1-based indices
@@ -564,6 +568,20 @@ void GB_Global_hack_set (int64_t hack)
 int64_t GB_Global_hack_get (void)
 { 
     return (GB_Global.hack) ;
+}
+
+//------------------------------------------------------------------------------
+// burble: for controlling the burble output
+//------------------------------------------------------------------------------
+
+void GB_Global_burble_set (bool burble)
+{ 
+    GB_Global.burble = burble ;
+}
+
+bool GB_Global_burble_get (void)
+{ 
+    return (GB_Global.burble) ;
 }
 
 //------------------------------------------------------------------------------

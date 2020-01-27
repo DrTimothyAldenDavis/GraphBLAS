@@ -11,7 +11,7 @@
 // both rely on this internal function.  If GraphBLAS is used by multiple user
 // threads, only one can call GrB_init or GxB_init.
 
-// Result are undefined in multiple user threads simultaneously
+// Result are undefined if multiple user threads simultaneously
 // call GrB_init (or GxB_init).
 
 // GrB_finalize must be called as the last GraphBLAS operation.
@@ -115,10 +115,6 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_nthreads_max_set (GB_Global_omp_get_max_threads ( )) ;
     GB_Global_chunk_set (GB_CHUNK_DEFAULT) ;
 
-    #if defined ( _OPENMP )
-    omp_set_nested (true) ;
-    #endif
-
     //--------------------------------------------------------------------------
     // initialize thread-local storage
     //--------------------------------------------------------------------------
@@ -194,6 +190,12 @@ GrB_Info GB_init            // start up GraphBLAS
     GB_Global_malloc_debug_set (false) ;
     GB_Global_malloc_debug_count_set (0) ;
     GB_Global_inuse_clear ( ) ;
+
+    //--------------------------------------------------------------------------
+    // development use only; controls diagnostic output
+    //--------------------------------------------------------------------------
+
+    GB_Global_burble_set (false) ;
 
     //--------------------------------------------------------------------------
     // return result
