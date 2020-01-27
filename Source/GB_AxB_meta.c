@@ -20,6 +20,8 @@
 
 // FUTURE:: an outer-product method for C=A*B'
 
+// #define GB_BURBLE 1
+
 // TODO pass AxB_method to GB_AxB_saxpy3, to control
 // the selection of Gustavson vs hash.
 

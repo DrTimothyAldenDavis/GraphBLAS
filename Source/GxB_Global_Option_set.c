@@ -93,9 +93,9 @@ GrB_Info GxB_Global_Option_set      // set a global default option
 
             {
                 va_start (ap, field) ;
-                bool burble = va_arg (ap, bool) ;
+                int burble = va_arg (ap, int) ;
                 va_end (ap) ;
-                GB_Global_burble_set (burble) ;
+                GB_Global_burble_set ((bool) burble) ;
             }
             break ;
 
