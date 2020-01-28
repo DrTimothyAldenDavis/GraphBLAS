@@ -3,9 +3,10 @@ clear all
 GrB.burble (1) ;
 max_nthreads = 40 ;
 threads = [1 2 4 8] %  16 20 40] ;
+desc = struct ('in0', 'transpose') ;
 
-n = 5e6 ;
-nz = 100e6 ;
+n = 1e6 ;
+nz = 2e6 ;
 d = nz / n^2 ;
 A = double (GrB.random (n,n,d)) ;
 G = GrB (A) ;
@@ -29,23 +30,24 @@ for test = 1:4
     end
 
     fprintf ('\n\n========================\n') ;
-    fprintf ('in MATLAB: y = A*x where x = %s\n', X) ;
+    fprintf ('in MATLAB: y = A''*x where x = %s\n', X) ;
 
     tic
     for trial = 1:ntrials
-        y = A*x ;
+        y = A'*x ;
     end
     tmatlab = toc ;
     fprintf ('MATLAB time: %8.4f sec\n', tmatlab) ;
     ymatlab = y ;
 
-    fprintf ('\nGrB: y = A*x where x = %s\n', X) ;
+    fprintf ('\nGrB: y = A''*x where x = %s\n', X) ;
 
     for nthreads = threads
         GrB.threads (nthreads) ;
         tic
         for trial = 1:ntrials
-            y = G*x ;
+            % y = G*x ;
+            y = GrB.mxm (G, '+.*', x, desc) ;
         end
         t = toc ;
         if (nthreads == 1)
