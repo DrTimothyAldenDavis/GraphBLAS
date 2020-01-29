@@ -1,17 +1,25 @@
 
 clear all
-GrB.burble (1) ;
+gbclear
 max_nthreads = 40 ;
 threads = [1 2 4 8] %  16 20 40] ;
 desc = struct ('in0', 'transpose') ;
+rng ('default') ;
 
-n = 1e6 ;
-nz = 2e6 ;
+n = 1e6 ; nz = 20e6 ;
+% n = 1e5 ; nz = 1e6 ;
 d = nz / n^2 ;
+% same as A = sprand (n,n,d), but faster:
 A = double (GrB.random (n,n,d)) ;
 G = GrB (A) ;
+% warmup to make sure the GrB library is loaded
+y = GrB (rand (2)) * GrB (rand (2)) ;
 
-ntrials = 10 ;
+degree = sum (spones (G)) ;
+nempty = length (find (degree == 0)) ;
+fprintf ('matrix: n: %d nnz: %d  # empty columns: %d\n', n, nnz (A), nempty) ;
+
+ntrials = 1 ;
 
 for test = 1:4
 
@@ -44,12 +52,36 @@ for test = 1:4
 
     for nthreads = threads
         GrB.threads (nthreads) ;
+        GrB.burble (1) ;
         tic
         for trial = 1:ntrials
-            % y = G*x ;
+            % y = G'*x ;
             y = GrB.mxm (G, '+.*', x, desc) ;
         end
         t = toc ;
+        GrB.burble (0) ;
+        if (nthreads == 1)
+            t1 = t ;
+        end
+        fprintf (...
+            'threads: %2d GrB time: %8.4f speedup vs MATLAB: %8.2f  vs: GrB(1 thread) %8.2f\n', ...
+            nthreads, t, tmatlab / t, t1 / t) ;
+        assert (norm (y-ymatlab, 1) / norm (ymatlab,1) < 1e-12)
+    end
+
+    fprintf ('\nGrB: y = zeros(n,1) + A''*x where x = %s\n', X) ;
+
+    for nthreads = threads
+        GrB.threads (nthreads) ;
+        GrB.burble (1) ;
+        tic
+        for trial = 1:ntrials
+            y = zeros (n,1) ;
+            % y = y + G'*x
+            y = GrB.mxm (y, '+', G, '+.*', x, desc) ;
+        end
+        t = toc ;
+        GrB.burble (0) ;
         if (nthreads == 1)
             t1 = t ;
         end
@@ -60,3 +92,5 @@ for test = 1:4
     end
 
 end
+
+GrB.burble (0) ;

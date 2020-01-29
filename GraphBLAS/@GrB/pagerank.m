@@ -77,14 +77,14 @@ end
 sinks = find (d == 0) ;
 any_sinks = ~isempty (sinks) ;
 if (any_sinks)
-    % d (sinks) = 1 ;
+    % d (sinks) = 1, to avoid divide-by-zero
     d = GrB.subassign (d, { sinks }, 1) ;
 end
 
 % place explicit zeros on the diagonal of G so that r remains full
-I = int64 (0) : int64 (n-1) ;
-desc0.base = 'zero-based' ;
-G = G + GrB.build (I, I, zeros (n, 1, type), n, n, desc0) ;
+% I = int64 (0) : int64 (n-1) ;
+% desc0.base = 'zero-based' ;
+% G = G + GrB.build (I, I, zeros (n, 1, type), n, n, desc0) ;
 
 % teleport factor
 tfactor = cast ((1 - damp) / n, type) ;
@@ -92,13 +92,12 @@ tfactor = cast ((1 - damp) / n, type) ;
 % sink factor
 dn = cast (damp / n, type) ;
 
-% use G' in GrB.mxm, and return the result as a MATLAB full vector
-% FUTURE: when GraphBLAS is fast for dense vector, use them instead
+% use G' in GrB.mxm
 desc.in0 = 'transpose' ;
-desc.kind = 'full' ;
+% desc.kind = 'full' ;
 
 % initial PageRank: all nodes have rank 1/n
-r = ones (n, 1, type) / n ;
+r = GrB.ones (n, 1, type) / n;
 
 % prescale d with damp so it doesn't have to be done in each iteration
 d = d / damp ;
@@ -111,8 +110,9 @@ for iter = 1:maxit
         % add the teleport factor from all the sinks
         teleport = teleport + dn * sum (r (sinks)) ;
     end
-    % r = G' * (r./d) + teleport
-    r = GrB.mxm (G, '+.*', r ./ d, desc) + teleport ;
+    r (1:n) = teleport ;
+    % r = r + G' * (r./d)
+    r = GrB.mxm (r, '+', G, '+.2nd', r ./ d, desc) ;
     if (norm (r - prior, inf) < tol)
         % convergence has been reached
         return ;

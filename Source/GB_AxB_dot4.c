@@ -46,6 +46,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
     ASSERT (!GB_PENDING (B)) ; ASSERT (!GB_ZOMBIES (B)) ;
+    ASSERT (GB_is_dense (C)) ;
     ASSERT_SEMIRING_OK (semiring, "semiring for in place += A'*B", GB0) ;
     ASSERT (A->vlen == B->vlen) ;
 

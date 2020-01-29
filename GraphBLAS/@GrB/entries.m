@@ -13,8 +13,8 @@ function result = entries (A, varargin)
 %
 % e = GrB.entries (A)         number of entries
 % e = GrB.entries (A, 'all')  number of entries
-% e = GrB.entries (A, 'row')  number of rows with at least one entries
-% e = GrB.entries (A, 'col')  number of columns with at least one entries
+% e = GrB.entries (A, 'row')  number of rows with at least one entry
+% e = GrB.entries (A, 'col')  number of columns with at least one entry
 %
 % X = GrB.entries (A, 'list')         list of values of unique entries
 % X = GrB.entries (A, 'all', 'list')  list of values of unique entries
@@ -91,6 +91,7 @@ else
     if (isequal (dim, 'col'))
         desc.in0 = 'transpose' ;
     end
+    % TODO: apply and vreduce is slow; write a special function
     degree = GrB.vreduce ('+', GrB.apply ('1.double', A), desc) ;
     switch kind
         case 'count'

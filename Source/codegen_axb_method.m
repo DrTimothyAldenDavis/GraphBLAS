@@ -10,11 +10,27 @@ is_second   = isequal (multop, 'second') ;
 is_pair     = isequal (multop, 'pair') ;
 is_any      = isequal (addop, 'any') ;
 is_any_pair = is_any && isequal (multop, 'pair') ;
+is_real     = isequal (ztype, 'float') || isequal (ztype, 'double') ;
+
+% special cases for the PAIR multiplier
+switch (ztype)
+    case { 'int8_t', 'uint8_t' }
+        bits = '0xffL' ;
+    case { 'int16_t', 'uint16_t' }
+        bits = '0xffffL' ;
+    case { 'int32_t', 'uint32_t' }
+        bits = '0xffffffffL' ;
+    case { 'int64_t', 'uint64_t' }
+        bits = '0' ;
+    case { 'bool' }
+        bits = '0x1L' ;
+    case { 'float', 'double' }
+        bits = '0' ;
+end
+fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
 
 if isequal (addop, 'plus') && isequal (multop, 'times') && isequal (ztype, 'float')
-    fprintf (f, 'define(`GB_Helen'', `1'')\n') ;
-else
-    fprintf (f, 'define(`GB_Helen'', `0'')\n') ;
+    % plus_times_fp32 semiring
 end
 
 if (is_pair)

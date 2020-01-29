@@ -408,7 +408,7 @@ void GB_mergesort_3 // sort array A of size 3-by-n, using 3 keys (A [0:1][])
 // GB_msort_3: gateway for parallel merge sort
 //------------------------------------------------------------------------------
 
-void GB_msort_3     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 (
     int64_t *GB_RESTRICT A_0,      // size n array
     int64_t *GB_RESTRICT A_1,      // size n array

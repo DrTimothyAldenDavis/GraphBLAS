@@ -85,10 +85,6 @@
 #define GB_CIJ_DECLARE(cij) \
     uint16_t cij
 
-// Hi Helen
-#define GB_HELEN \
-    0
-
 // save the value of C(i,j)
 #define GB_CIJ_SAVE(cij,p) Cx [p] = cij
 
@@ -230,9 +226,6 @@ GrB_Info GB_Adot4B__any_times_uint16
     const int nthreads
 )
 { 
-    #if GB_HELEN
-    printf ("Hi Helen, this is for the GAP, pagerank:\n %s\n", __FILE__) ;
-    #endif
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else

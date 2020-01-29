@@ -117,6 +117,39 @@
 
                     GB_CIJ_DECLARE (cij) ;          // declare the cij scalar
                     int64_t pC = i + pC_start ;     // C(i,j) is at Cx [pC]
+
+                    //----------------------------------------------------------
+                    // special cases for the PAIR multiplier
+                    //----------------------------------------------------------
+
+                    // Since B(:,j) is dense C(i,j) += A(:,i)'*B(:,j) is trivial
+                    // to compute with the PAIR multiplier.
+
+// TODO
+//                  #if GB_IS_PAIR_MULTIPLIER
+//
+//                      #if GB_IS_ANY_MONOID
+//                      // ANY monoid; take first entry found
+//                      cij = 1 ;
+//                      #else
+//                      // PLUS, LXOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i))
+//                      #if GB_CTYPE_BITS > 0
+//                      // LXOR bool, or PLUS with any 8-bit, 16-bit, or
+//                      // 32-bit integer
+//                      uint64_t t = ((uint64_t) cij) + ((uint64_t) ainz) ;
+//                      cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
+//                      #else
+//                      // PLUS monoid for int64_t, uint64_t, float, or double
+//                      cij += (GB_CTYPE) ainz ;
+//                      #endif
+//                      #endif
+//
+//                  #else
+
+                    //----------------------------------------------------------
+                    // general case
+                    //----------------------------------------------------------
+
                     int64_t pB = pB_start ;
                     GB_GETC (cij, pC) ;             // cij = Cx [pC]
 
@@ -145,8 +178,7 @@
                         // A(:,i) is sparse and B(:,j) is dense
                         //------------------------------------------------------
 
-                        // HELEN: GAP pagerank is here
-                        // Helen; look here
+                        // TODO: GAP pagerank can call sparse MKL here
 
                         GB_DOT_SIMD
                         for (int64_t p = pA ; p < pA_end ; p++)
@@ -160,6 +192,9 @@
                         }
 
                     }
+
+//                  #endif
+
                     GB_PUTC (cij, pC) ;                 // Cx [pC] = cij
                 }
 
@@ -206,6 +241,28 @@
                         //------------------------------------------------------
 
                         GB_GETC (cij, pC) ;                 // cij = Cx [pC]
+
+// TODO
+//                      #if GB_IS_PAIR_MULTIPLIER
+//
+//                          #if GB_IS_ANY_MONOID
+//                          // ANY monoid; take first entry found
+//                          cij = 1 ;
+//                          #else
+//                          // PLUS, LXOR monoids: A(:,i)'*B(:,j) is nnz(B(:,i))
+//                          #if GB_CTYPE_BITS > 0
+//                          // LXOR bool, or PLUS with any 8-bit, 16-bit, or
+//                          // 32-bit integer
+//                          uint64_t t = ((uint64_t) cij) + ((uint64_t) bjnz) ;
+//                          cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
+//                          #else
+//                          // PLUS monoid for int64_t, uint64_t, float, or double
+//                          cij += (GB_CTYPE) bjnz ;
+//                          #endif
+//                          #endif
+//
+//                      #else
+
                         GB_DOT_SIMD
                         for (int64_t p = pB ; p < pB_end ; p++)
                         { 
@@ -216,6 +273,9 @@
                             GB_GETB (bkj, Bx, p   ) ;       // bkj = B(k,j)
                             GB_MULTADD (cij, aki, bkj) ;    // cij += aki * bkj
                         }
+
+//                      #endif
+
                         GB_PUTC (cij, pC) ;                 // Cx [pC] = cij
 
                     }
