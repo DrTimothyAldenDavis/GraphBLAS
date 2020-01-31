@@ -28,11 +28,10 @@
 //      fine Gustavson task
 //      fine hash task
 //      coarse Gustason task
-//      1-vector coarse hash task
-//      multi-vector coarse hash task
+//      coarse hash task
 
 // Each of the 5 kinds tasks are then subdivided into 3 variants, for C=A*B,
-// C<M>=A*B, and C<!M>=A*B, giving a total of 15 different types of tasks.
+// C<M>=A*B, and C<!M>=A*B, giving a total of 12 different types of tasks.
 
 // Fine tasks are used when there would otherwise be too much work for a single
 // task to compute the single vector C(:,j).  Fine tasks share all of their
@@ -66,7 +65,6 @@
 //      fine Gustavson task (shared):   uint8_t Hf [m] ; ctype Hx [m] ;
 //      fine hash task (shared):        int64_t Hf [s] ; ctype Hx [s] ;
 //      coarse Gustavson task:          int64_t Hf [m] ; ctype Hx [m] ;
-//      1-vector coarse hash task:      int64_t Hf [s] ; ctype Hx [s] ;
 //      multi-vector coarse hash task:  int64_t Hf [s] ; ctype Hx [s] ;
 //                                      int64_t Hi [s] ; 
 //

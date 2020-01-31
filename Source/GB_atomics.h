@@ -13,6 +13,7 @@
 
 #if GB_MICROSOFT
 
+// TODO
 #define GB_ATOMIC_READ
 #define GB_ATOMIC_WRITE
 #define GB_ATOMIC_UPDATE  GB_PRAGMA (omp atomic)
