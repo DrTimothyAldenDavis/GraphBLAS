@@ -95,6 +95,8 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
 
         GBBURBLE ("(deep copy) ") ;
 
+        // TODO see GB_dup2
+
         // clear all prior content of C
         GB_PHIX_FREE (C) ;
 

@@ -49,5 +49,5 @@ else
     end
 end
 
-C = GrB.eadd (A, '/', B) ;
+C = GrB.emult (A, '/', B) ;
 

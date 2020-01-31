@@ -2,10 +2,10 @@
 clear all
 GrB.burble (1) ;
 max_nthreads = 40 ;
-threads = [1 2 4 8] %  16 20 40] ;
+threads = [1 2 4 8 16 20 40] ;
 
-n = 5e6 ;
-nz = 100e6 ;
+n = 1e5 ;
+nz = 2e6 ;
 d = nz / n^2 ;
 A = double (GrB.random (n,n,d)) ;
 G = GrB (A) ;

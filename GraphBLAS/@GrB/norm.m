@@ -19,7 +19,13 @@ function s = norm (G,kind)
 %
 % See also GrB.reduce.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% TODO this would be much faster as a mexFunction, since abs(G)
+% must return a large matrix back to MATLAB, but s is a scalar.
+
+% TODO also write a normdiff mexFunction, which computes
+% s = norm (A-B,kind)
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin == 1)

@@ -99,5 +99,14 @@ void GB_matlab_helper8
     size_t s            // size of each scalar
 ) ;
 
+GB_PUBLIC
+bool GB_matlab_helper9  // true if successful, false if out of memory
+(
+    GrB_Matrix A,       // input matrix
+    int64_t **degree,   // degree of each vector, size nvec
+    int64_t **list,     // list of non-empty vectors
+    int64_t **nvec      // # of non-empty vectors
+) ;
+
 #endif
 

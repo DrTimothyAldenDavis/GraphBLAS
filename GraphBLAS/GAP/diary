@@ -1,0 +1,98 @@
+GrB(1)
+
+ans =
+
+  1x1 GraphBLAS double matrix, sparse by col:
+  1 nonzero, 1 entry
+
+    (1,1)    1
+
+gap
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+
+BFS tests:
+source:  2338013  #visited 63032893  levels:        7 time: 11.9804
+source: 31997660  #visited 63032893  levels:        8 time: 13.1151
+source: 23590941  #visited 63032893  levels:        8 time: 12.5537
+source: 43400605  #visited 63032893  levels:        8 time: 11.928
+source: 75337938  #visited 63032893  levels:        8 time: 12.2409
+source:   169868  #visited 63032893  levels:        8 time: 12.0597
+source: 104041221  #visited 63032893  levels:        8 time: 11.5824
+source: 94177943  #visited 63032893  levels:        8 time: 12.8101
+source: 32871358  #visited 63032893  levels:        8 time: 11.5433
+source: 56230003  #visited 63032893  levels:        8 time: 11.5287
+source: 69883038  #visited 63032893  levels:        7 time: 12.8994
+source:  9346346  #visited 63032893  levels:        8 time: 13.6218
+source: 48915359  #visited 63032893  levels:        8 time: 11.5969
+source: 122571174  #visited 63032893  levels:        8 time: 13.985
+source:  6183280  #visited 63032893  levels:        8 time: 11.6904
+source: 86323664  #visited 63032893  levels:        8 time: 11.9029
+source: 106725781  #visited 63032893  levels:        8 time: 13.0111
+source: 92389939  #visited 63032893  levels:        7 time: 13.3765
+source: 16210739  #visited 63032893  levels:        7 time: 13.0869
+source: 59816701  #visited 63032893  levels:        8 time: 11.5087
+source: 111669930  #visited 63032893  levels:        8 time: 11.9688
+source: 102831412  #visited 63032893  levels:        8 time: 12.3683
+source: 113384801  #visited 63032893  levels:        8 time: 11.4581
+source: 43872565  #visited 63032893  levels:        7 time: 13.3941
+source: 80508828  #visited 63032893  levels:        8 time: 12.6831
+source: 26105649  #visited 63032893  levels:        8 time: 11.5272
+source:  8807517  #visited 63032893  levels:        8 time: 12.6516
+source: 118452456  #visited 63032893  levels:        7 time: 12.9072
+source: 121818860  #visited 63032893  levels:        8 time: 11.9792
+source: 42361929  #visited 63032893  levels:        8 time: 12.1821
+source: 29493054  #visited 63032893  levels:        8 time: 11.6728
+source: 98461504  #visited 63032893  levels:        8 time: 11.5658
+source: 71931338  #visited 63032893  levels:        8 time: 11.6396
+source: 103808469  #visited 63032893  levels:        8 time: 11.4809
+source:  4092346  #visited 63032893  levels:        8 time: 13.4996
+source: 115276242  #visited 63032893  levels:        8 time: 11.3972
+source:  4649344  #visited 63032893  levels:        7 time: 13.3512
+source: 76656190  #visited 63032893  levels:        8 time: 11.7392
+source: 31312002  #visited 63032893  levels:        8 time: 12.0945
+source: 111334128  #visited 63032893  levels:        7 time: 13.4119
+source: 100962919  #visited 63032893  levels:        8 time: 11.5595
+source: 41823216  #visited 63032893  levels:        8 time: 12.4369
+source: 22631241  #visited 63032893  levels:        8 time: 11.8854
+source: 42848462  #visited 63032893  levels:        9 time: 11.7832
+source: 79485149  #visited 63032893  levels:        8 time: 11.8699
+source: 106818743  #visited 63032893  levels:        8 time: 11.5261
+source: 73347975  #visited 63032893  levels:        8 time: 11.4501
+source: 78848446  #visited 63032893  levels:        8 time: 11.6104
+source: 109920511  #visited 63032893  levels:        7 time: 12.4434
+source: 121492134  #visited 63032893  levels:        8 time: 11.4906
+source: 101037297  #visited 63032893  levels:        8 time: 11.5044
+source: 15438601  #visited 63032893  levels:        8 time: 12.0268
+source:  4584785  #visited 63032893  levels:        8 time: 13.3939
+source: 124503846  #visited 63032893  levels:        9 time: 12.1667
+source: 87241744  #visited 63032893  levels:        7 time: 13.2984
+source: 108297009  #visited 63032893  levels:        8 time: 11.675
+source: 33955083  #visited 63032893  levels:        8 time: 12.266
+source: 79934824  #visited 63032893  levels:        7 time: 13.6092
+source:  8608482  #visited 63032893  levels:        8 time: 11.6573
+source: 82435064  #visited 63032893  levels:        8 time: 13.3003
+source: 46579272  #visited 63032893  levels:        8 time: 12.5046
+source:   515422  #visited 63032893  levels:        7 time: 13.0551
+source: 121530468  #visited 63032893  levels:        8 time: 12.972
+source: 127978737  #visited 63032893  levels:        8 time: 12.0746
+average bfs time: 12.2899 (64 trials)
+
+PageRank tests:
+pagerank time: 49.6121
+average pagerank time: 49.6121 (1 trials)
+
+Triangle Count tests:
+{Error using gbmxm
+Out of memory. Type HELP MEMORY for your options.
+
+Error in GrB.mxm (line 74)
+    Cout = GrB (gbmxm (args {:})) ;
+
+Error in GrB.tricount (line 41)
+    C = GrB.mxm (C, L, '+.*', L, U, struct ('in1', 'transpose')) ;
+
+Error in gap (line 118)
+        c = GrB.tricount (S, s) ;
+} 
+exit

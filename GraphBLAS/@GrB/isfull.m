@@ -5,7 +5,7 @@ function s = isfull (A)
 % full matrix.  GrB.isfull (A) is always true if A is a MATLAB full matrix.
 
 if (isa (A, 'GrB') || issparse (A))
-    s = (numel (A) == nnz (A)) ;
+    s = (numel (A) == GrB.entries (A)) ;
 else
     s = true ;
 end

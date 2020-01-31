@@ -1,0 +1,289 @@
+ssgrep (GAP)
+{Cannot find an exact (case-sensitive) match for 'GAP'
+
+The closest match is: gap in /home/faculty/davis/sparse/GraphBLAS/GraphBLAS/GAP/gap.m
+} 
+ssgrep GAP
+2852: GAP/GAP-twitter
+2853: GAP/GAP-web
+2854: GAP/GAP-road
+2855: GAP/GAP-kron
+2856: GAP/GAP-urand
+
+
+gap_pr
+hypersparse: 40 threads
+
+GAP/GAP-road: nodes: 23.9473 million  nvals: 57.7086 million
+load time: 5.17001 sec
+degree time: 0.54308 sec
+
+GAP PageRank tests:
+trial:  1 GAP pagerank time: 7.2853 iter: 39
+trial:  2 GAP pagerank time: 7.2512 iter: 39
+trial:  3 GAP pagerank time: 7.54494 iter: 39
+trial:  4 GAP pagerank time: 7.46671 iter: 39
+trial:  5 GAP pagerank time: 7.45176 iter: 39
+trial:  6 GAP pagerank time: 7.21099 iter: 39
+trial:  7 GAP pagerank time: 7.30513 iter: 39
+trial:  8 GAP pagerank time: 7.41035 iter: 39
+trial:  9 GAP pagerank time: 7.30629 iter: 39
+trial: 10 GAP pagerank time: 7.34409 iter: 39
+trial: 11 GAP pagerank time: 7.49733 iter: 39
+trial: 12 GAP pagerank time: 7.27436 iter: 39
+trial: 13 GAP pagerank time: 7.20169 iter: 39
+trial: 14 GAP pagerank time: 7.34179 iter: 39
+trial: 15 GAP pagerank time: 7.29866 iter: 39
+trial: 16 GAP pagerank time: 7.25587 iter: 39
+avg gap_pagerank time:  7.3404 (16 trials)
+
+GrB PageRank tests:
+trial:  1 GrB.pagerank time: 0.90284 = (0.520075 + 0.33365) iter: 1
+trial:  2 GrB.pagerank time: 0.993263 = (0.557244 + 0.365282) iter: 1
+trial:  3 GrB.pagerank time: 0.919508 = (0.532939 + 0.323391) iter: 1
+trial:  4 GrB.pagerank time: 0.905744 = (0.517538 + 0.325025) iter: 1
+trial:  5 GrB.pagerank time: 0.942486 = (0.536784 + 0.341129) iter: 1
+trial:  6 GrB.pagerank time: 0.917724 = (0.517194 + 0.328435) iter: 1
+trial:  7 GrB.pagerank time: 0.904278 = (0.515941 + 0.324633) iter: 1
+trial:  8 GrB.pagerank time: 0.909654 = (0.515386 + 0.330457) iter: 1
+trial:  9 GrB.pagerank time: 0.930004 = (0.512888 + 0.346074) iter: 1
+trial: 10 GrB.pagerank time: 0.903954 = (0.516897 + 0.323284) iter: 1
+trial: 11 GrB.pagerank time: 0.908099 = (0.519015 + 0.325327) iter: 1
+trial: 12 GrB.pagerank time: 0.911024 = (0.524834 + 0.323559) iter: 1
+trial: 13 GrB.pagerank time: 0.913848 = (0.526089 + 0.323947) iter: 1
+trial: 14 GrB.pagerank time: 0.933849 = (0.53175 + 0.338937) iter: 1
+trial: 15 GrB.pagerank time: 0.925186 = (0.515149 + 0.33845) iter: 1
+trial: 16 GrB.pagerank time: 0.903248 = (0.51639 + 0.324295) iter: 1
+avg GrB.pagerank time:  0.920294 (16 trials)
+
+Compare with built-in MATLAB pagerank:
+MATLAB time: 2.70682 sec (one trial)
+rank:  1 GrB: node   168186 (1.0701e-08) MATLAB: node   168186 (1.0701e-08) GAP: node 13556189 (1.5153e-08)
+rank:  2 GrB: node   168193 (1.0701e-08) MATLAB: node   168193 (1.0701e-08) GAP: node  7940165 (1.5381e-08)
+rank:  3 GrB: node   542819 (1.0701e-08) MATLAB: node   542819 (1.0701e-08) GAP: node 15118675 (1.5674e-08)
+rank:  4 GrB: node   555420 (1.0701e-08) MATLAB: node   555420 (1.0701e-08) GAP: node 23925838 (1.5864e-08)
+rank:  5 GrB: node  1216706 (1.0701e-08) MATLAB: node  1216706 (1.0701e-08) GAP: node  1374050 (1.5871e-08)
+rank:  6 GrB: node  1216713 (1.0701e-08) MATLAB: node  1216713 (1.0701e-08) GAP: node  8843037 (1.5878e-08)
+rank:  7 GrB: node  2920379 (1.0701e-08) MATLAB: node  2920379 (1.0701e-08) GAP: node 10550478 (1.5878e-08)
+rank:  8 GrB: node  3812129 (1.0701e-08) MATLAB: node  3812129 (1.0701e-08) GAP: node  7944368 (1.5896e-08)
+rank:  9 GrB: node  3892450 (1.0701e-08) MATLAB: node  3892450 (1.0701e-08) GAP: node  7352127 (1.5993e-08)
+rank: 10 GrB: node  3894986 (1.0701e-08) MATLAB: node  3894986 (1.0701e-08) GAP: node  3249421 (1.6026e-08)
+
+GAP/GAP-web: nodes: 50.6362 million  nvals: 1930.29 million
+load time: 112.108 sec
+degree time: 4.18294 sec
+
+GAP PageRank tests:
+trial:  1 GAP pagerank time: 17.0362 iter: 30
+trial:  2 GAP pagerank time: 17.0625 iter: 30
+trial:  3 GAP pagerank time: 17.023 iter: 30
+trial:  4 GAP pagerank time: 17.0471 iter: 30
+trial:  5 GAP pagerank time: 17.0436 iter: 30
+trial:  6 GAP pagerank time: 17.0613 iter: 30
+trial:  7 GAP pagerank time: 17.018 iter: 30
+trial:  8 GAP pagerank time: 17.0373 iter: 30
+trial:  9 GAP pagerank time: 17.0462 iter: 30
+trial: 10 GAP pagerank time: 17.0523 iter: 30
+trial: 11 GAP pagerank time: 17.0458 iter: 30
+trial: 12 GAP pagerank time: 17.0584 iter: 30
+trial: 13 GAP pagerank time: 17.0243 iter: 30
+trial: 14 GAP pagerank time: 17.0181 iter: 30
+trial: 15 GAP pagerank time: 17.0317 iter: 30
+trial: 16 GAP pagerank time: 17.0268 iter: 30
+avg gap_pagerank time:  17.0395 (16 trials)
+
+GrB PageRank tests:
+trial:  1 GrB.pagerank time: 9.83544 = (4.36589 + 5.37767) iter: 9
+trial:  2 GrB.pagerank time: 9.78317 = (4.34533 + 5.31892) iter: 9
+trial:  3 GrB.pagerank time: 9.77756 = (4.33111 + 5.32327) iter: 9
+trial:  4 GrB.pagerank time: 9.78001 = (4.3201 + 5.33979) iter: 9
+trial:  5 GrB.pagerank time: 9.80668 = (4.3258 + 5.3602) iter: 9
+trial:  6 GrB.pagerank time: 9.8194 = (4.34537 + 5.35347) iter: 9
+trial:  7 GrB.pagerank time: 9.78128 = (4.3101 + 5.35055) iter: 9
+trial:  8 GrB.pagerank time: 9.84276 = (4.36015 + 5.36203) iter: 9
+trial:  9 GrB.pagerank time: 9.8255 = (4.3505 + 5.3544) iter: 9
+trial: 10 GrB.pagerank time: 9.87635 = (4.39287 + 5.36308) iter: 9
+trial: 11 GrB.pagerank time: 9.83158 = (4.35162 + 5.35953) iter: 9
+trial: 12 GrB.pagerank time: 9.81543 = (4.34306 + 5.35189) iter: 9
+trial: 13 GrB.pagerank time: 9.8199 = (4.35557 + 5.34305) iter: 9
+trial: 14 GrB.pagerank time: 9.82826 = (4.33761 + 5.3694) iter: 9
+trial: 15 GrB.pagerank time: 9.80377 = (4.34748 + 5.337) iter: 9
+trial: 16 GrB.pagerank time: 9.77689 = (4.3156 + 5.34199) iter: 9
+avg GrB.pagerank time:  9.81275 (16 trials)
+
+Compare with built-in MATLAB pagerank:
+MATLAB time: 204.93 sec (one trial)
+rank:  1 GrB: node   784983 (4.2374e-09) MATLAB: node   784983 (4.2379e-09) GAP: node   784983 (2.9623e-09)
+rank:  2 GrB: node  1102070 (4.2374e-09) MATLAB: node  1102070 (4.2379e-09) GAP: node  1102070 (2.9623e-09)
+rank:  3 GrB: node  1306274 (4.2374e-09) MATLAB: node  1306274 (4.2379e-09) GAP: node  1306274 (2.9623e-09)
+rank:  4 GrB: node  1306276 (4.2374e-09) MATLAB: node  1306276 (4.2379e-09) GAP: node  1306276 (2.9623e-09)
+rank:  5 GrB: node  1725913 (4.2374e-09) MATLAB: node  1725913 (4.2379e-09) GAP: node  1725913 (2.9623e-09)
+rank:  6 GrB: node  1725914 (4.2374e-09) MATLAB: node  1725914 (4.2379e-09) GAP: node  1725914 (2.9623e-09)
+rank:  7 GrB: node  1749138 (4.2374e-09) MATLAB: node  1749138 (4.2379e-09) GAP: node  1749138 (2.9623e-09)
+rank:  8 GrB: node  1894827 (4.2374e-09) MATLAB: node  1894827 (4.2379e-09) GAP: node  1894827 (2.9623e-09)
+rank:  9 GrB: node  2039819 (4.2374e-09) MATLAB: node  2039819 (4.2379e-09) GAP: node  2039819 (2.9623e-09)
+rank: 10 GrB: node  2858340 (4.2374e-09) MATLAB: node  2858340 (4.2379e-09) GAP: node  2858340 (2.9623e-09)
+
+GAP/GAP-twitter: nodes: 61.5784 million  nvals: 1468.36 million
+load time: 110.515 sec
+degree time: 8.75168 sec
+
+GAP PageRank tests:
+trial:  1 GAP pagerank time: 24.1337 iter: 22
+trial:  2 GAP pagerank time: 24.1675 iter: 22
+trial:  3 GAP pagerank time: 24.1775 iter: 22
+trial:  4 GAP pagerank time: 24.1555 iter: 22
+trial:  5 GAP pagerank time: 24.151 iter: 22
+trial:  6 GAP pagerank time: 24.1659 iter: 22
+trial:  7 GAP pagerank time: 24.1858 iter: 22
+trial:  8 GAP pagerank time: 24.193 iter: 22
+trial:  9 GAP pagerank time: 24.1446 iter: 22
+trial: 10 GAP pagerank time: 24.1416 iter: 22
+trial: 11 GAP pagerank time: 24.1431 iter: 22
+trial: 12 GAP pagerank time: 24.1576 iter: 22
+trial: 13 GAP pagerank time: 24.2231 iter: 22
+trial: 14 GAP pagerank time: 24.2028 iter: 22
+trial: 15 GAP pagerank time: 24.1488 iter: 22
+trial: 16 GAP pagerank time: 24.1672 iter: 22
+avg gap_pagerank time:  24.1662 (16 trials)
+
+GrB PageRank tests:
+trial:  1 GrB.pagerank time: 13.0521 = (9.11393 + 3.82512) iter: 3
+trial:  2 GrB.pagerank time: 13.0604 = (9.09323 + 3.8201) iter: 3
+trial:  3 GrB.pagerank time: 13.0004 = (9.04573 + 3.81062) iter: 3
+trial:  4 GrB.pagerank time: 12.9972 = (9.03372 + 3.81656) iter: 3
+trial:  5 GrB.pagerank time: 13.0465 = (9.10347 + 3.79813) iter: 3
+trial:  6 GrB.pagerank time: 13.1008 = (9.14304 + 3.813) iter: 3
+trial:  7 GrB.pagerank time: 13.0661 = (9.10559 + 3.81546) iter: 3
+trial:  8 GrB.pagerank time: 13.0902 = (9.13249 + 3.81267) iter: 3
+trial:  9 GrB.pagerank time: 13.1989 = (9.25249 + 3.80119) iter: 3
+trial: 10 GrB.pagerank time: 13.0735 = (9.11216 + 3.81648) iter: 3
+trial: 11 GrB.pagerank time: 13.0649 = (9.09767 + 3.8224) iter: 3
+trial: 12 GrB.pagerank time: 13.0759 = (9.1042 + 3.82475) iter: 3
+trial: 13 GrB.pagerank time: 13.1643 = (9.17959 + 3.83709) iter: 3
+trial: 14 GrB.pagerank time: 13.0787 = (9.11888 + 3.81353) iter: 3
+trial: 15 GrB.pagerank time: 13.1095 = (9.14921 + 3.81374) iter: 3
+trial: 16 GrB.pagerank time: 13.0882 = (9.12637 + 3.81556) iter: 3
+avg GrB.pagerank time:  13.0792 (16 trials)
+
+Compare with built-in MATLAB pagerank:
+MATLAB time: 132.806 sec (one trial)
+rank:  1 GrB: node        1 (3.9968e-09) MATLAB: node        1 (3.9968e-09) GAP: node        1 (2.4359e-09)
+rank:  2 GrB: node        2 (3.9968e-09) MATLAB: node        2 (3.9968e-09) GAP: node        2 (2.4359e-09)
+rank:  3 GrB: node        3 (3.9968e-09) MATLAB: node        3 (3.9968e-09) GAP: node        3 (2.4359e-09)
+rank:  4 GrB: node        4 (3.9968e-09) MATLAB: node        4 (3.9968e-09) GAP: node        4 (2.4359e-09)
+rank:  5 GrB: node        5 (3.9968e-09) MATLAB: node        5 (3.9968e-09) GAP: node        5 (2.4359e-09)
+rank:  6 GrB: node        6 (3.9968e-09) MATLAB: node        6 (3.9968e-09) GAP: node        6 (2.4359e-09)
+rank:  7 GrB: node        7 (3.9968e-09) MATLAB: node        7 (3.9968e-09) GAP: node        7 (2.4359e-09)
+rank:  8 GrB: node        8 (3.9968e-09) MATLAB: node        8 (3.9968e-09) GAP: node        8 (2.4359e-09)
+rank:  9 GrB: node        9 (3.9968e-09) MATLAB: node        9 (3.9968e-09) GAP: node        9 (2.4359e-09)
+rank: 10 GrB: node       10 (3.9968e-09) MATLAB: node       10 (3.9968e-09) GAP: node       10 (2.4359e-09)
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+load time: 323.86 sec
+degree time: 30.0839 sec
+
+GAP PageRank tests:
+trial:  1 GAP pagerank time: 26.7617 iter: 7
+trial:  2 GAP pagerank time: 26.7933 iter: 7
+trial:  3 GAP pagerank time: 26.7958 iter: 7
+trial:  4 GAP pagerank time: 26.8361 iter: 7
+trial:  5 GAP pagerank time: 26.8219 iter: 7
+trial:  6 GAP pagerank time: 26.7748 iter: 7
+trial:  7 GAP pagerank time: 26.7893 iter: 7
+trial:  8 GAP pagerank time: 26.7667 iter: 7
+trial:  9 GAP pagerank time: 26.8073 iter: 7
+trial: 10 GAP pagerank time: 26.8062 iter: 7
+trial: 11 GAP pagerank time: 26.7714 iter: 7
+trial: 12 GAP pagerank time: 26.7993 iter: 7
+trial: 13 GAP pagerank time: 26.7796 iter: 7
+trial: 14 GAP pagerank time: 26.7932 iter: 7
+trial: 15 GAP pagerank time: 26.7626 iter: 7
+trial: 16 GAP pagerank time: 27.1901 iter: 7
+avg gap_pagerank time:  26.8156 (16 trials)
+
+GrB PageRank tests:
+trial:  1 GrB.pagerank time: 39.9399 = (31.2208 + 8.47742) iter: 2
+trial:  2 GrB.pagerank time: 39.7248 = (30.9873 + 8.43393) iter: 2
+trial:  3 GrB.pagerank time: 39.7338 = (30.9963 + 8.43421) iter: 2
+trial:  4 GrB.pagerank time: 39.7499 = (31.0118 + 8.43114) iter: 2
+trial:  5 GrB.pagerank time: 39.7563 = (30.9997 + 8.44922) iter: 2
+trial:  6 GrB.pagerank time: 39.8111 = (31.0797 + 8.42511) iter: 2
+trial:  7 GrB.pagerank time: 39.5789 = (30.8503 + 8.42167) iter: 2
+trial:  8 GrB.pagerank time: 39.789 = (31.0051 + 8.47734) iter: 2
+trial:  9 GrB.pagerank time: 39.7275 = (30.9695 + 8.45041) iter: 2
+trial: 10 GrB.pagerank time: 39.5713 = (30.7993 + 8.46879) iter: 2
+trial: 11 GrB.pagerank time: 39.6747 = (30.9198 + 8.44818) iter: 2
+trial: 12 GrB.pagerank time: 39.7691 = (31.0073 + 8.45517) iter: 2
+trial: 13 GrB.pagerank time: 39.6299 = (30.8657 + 8.4579) iter: 2
+trial: 14 GrB.pagerank time: 39.7232 = (30.972 + 8.44962) iter: 2
+trial: 15 GrB.pagerank time: 39.6551 = (30.9123 + 8.44072) iter: 2
+trial: 16 GrB.pagerank time: 39.7567 = (30.9324 + 8.52065) iter: 2
+avg GrB.pagerank time:  39.7244 (16 trials)
+
+Compare with built-in MATLAB pagerank:
+MATLAB time: 317.825 sec (one trial)
+rank:  1 GrB: node        1 (3.1336e-09) MATLAB: node        1 (3.1336e-09) GAP: node        1 (1.1176e-09)
+rank:  2 GrB: node        4 (3.1336e-09) MATLAB: node        4 (3.1336e-09) GAP: node        4 (1.1176e-09)
+rank:  3 GrB: node        5 (3.1336e-09) MATLAB: node        5 (3.1336e-09) GAP: node        5 (1.1176e-09)
+rank:  4 GrB: node        6 (3.1336e-09) MATLAB: node        6 (3.1336e-09) GAP: node        6 (1.1176e-09)
+rank:  5 GrB: node        7 (3.1336e-09) MATLAB: node        7 (3.1336e-09) GAP: node        7 (1.1176e-09)
+rank:  6 GrB: node        8 (3.1336e-09) MATLAB: node        8 (3.1336e-09) GAP: node        8 (1.1176e-09)
+rank:  7 GrB: node        9 (3.1336e-09) MATLAB: node        9 (3.1336e-09) GAP: node        9 (1.1176e-09)
+rank:  8 GrB: node       11 (3.1336e-09) MATLAB: node       11 (3.1336e-09) GAP: node       11 (1.1176e-09)
+rank:  9 GrB: node       13 (3.1336e-09) MATLAB: node       13 (3.1336e-09) GAP: node       13 (1.1176e-09)
+rank: 10 GrB: node       14 (3.1336e-09) MATLAB: node       14 (3.1336e-09) GAP: node       14 (1.1176e-09)
+
+GAP/GAP-urand: nodes: 134.218 million  nvals: 4294.97 million
+load time: 328.842 sec
+degree time: 33.2898 sec
+
+GAP PageRank tests:
+trial:  1 GAP pagerank time: 32.1552 iter: 6
+trial:  2 GAP pagerank time: 32.241 iter: 6
+trial:  3 GAP pagerank time: 32.2455 iter: 6
+trial:  4 GAP pagerank time: 32.2455 iter: 6
+trial:  5 GAP pagerank time: 32.2526 iter: 6
+trial:  6 GAP pagerank time: 32.2648 iter: 6
+trial:  7 GAP pagerank time: 32.2525 iter: 6
+trial:  8 GAP pagerank time: 32.2535 iter: 6
+trial:  9 GAP pagerank time: 32.2846 iter: 6
+trial: 10 GAP pagerank time: 32.2867 iter: 6
+trial: 11 GAP pagerank time: 32.2419 iter: 6
+trial: 12 GAP pagerank time: 32.2592 iter: 6
+trial: 13 GAP pagerank time: 32.25 iter: 6
+trial: 14 GAP pagerank time: 32.2533 iter: 6
+trial: 15 GAP pagerank time: 32.2634 iter: 6
+trial: 16 GAP pagerank time: 32.251 iter: 6
+avg gap_pagerank time:  32.25 (16 trials)
+
+GrB PageRank tests:
+trial:  1 GrB.pagerank time: 39.5744 = (33.4153 + 5.92872) iter: 1
+trial:  2 GrB.pagerank time: 39.5374 = (33.3062 + 5.92676) iter: 1
+trial:  3 GrB.pagerank time: 39.725 = (33.4796 + 5.94695) iter: 1
+trial:  4 GrB.pagerank time: 39.1104 = (32.8726 + 5.93587) iter: 1
+trial:  5 GrB.pagerank time: 39.5025 = (33.2689 + 5.93506) iter: 1
+trial:  6 GrB.pagerank time: 39.53 = (33.3054 + 5.92481) iter: 1
+trial:  7 GrB.pagerank time: 39.2132 = (32.9744 + 5.94308) iter: 1
+trial:  8 GrB.pagerank time: 39.3024 = (33.042 + 5.96138) iter: 1
+trial:  9 GrB.pagerank time: 39.2719 = (33.0319 + 5.94135) iter: 1
+trial: 10 GrB.pagerank time: 39.2983 = (33.0373 + 5.95812) iter: 1
+trial: 11 GrB.pagerank time: 39.4433 = (33.2045 + 5.94) iter: 1
+trial: 12 GrB.pagerank time: 39.7832 = (33.408 + 6.06894) iter: 1
+trial: 13 GrB.pagerank time: 39.6212 = (33.3786 + 5.94334) iter: 1
+trial: 14 GrB.pagerank time: 39.5985 = (33.3608 + 5.93303) iter: 1
+trial: 15 GrB.pagerank time: 39.2134 = (32.9695 + 5.94375) iter: 1
+trial: 16 GrB.pagerank time: 39.2357 = (32.9888 + 5.94792) iter: 1
+avg GrB.pagerank time:  39.435 (16 trials)
+
+Compare with built-in MATLAB pagerank:
+{Error using nonzeros
+Out of memory. Type HELP MEMORY for your options.
+
+Error in digraph (line 264)
+                    G.EdgeProperties = table(nonzeros(A.'), 'VariableNames', {'Weight'});
+
+Error in gap_pr (line 106)
+        G = digraph (double (A)) ;
+} 
+diary off

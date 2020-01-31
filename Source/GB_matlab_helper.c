@@ -223,16 +223,6 @@ bool GB_matlab_helper3i             // return true if OK, false on error
 
     GB_FREE_WORK (int64_t) ;
 
-//  int64_t k ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(static) \
-//      reduction(max:listmax)
-//  for (k = 0 ; k < len ; k++)
-//  {
-//      int64_t i = List_int64 [k] ;
-//      listmax = GB_IMAX (listmax, i) ;
-//      List [k] = i - 1 ;
-//  }
-
     (*List_max) = listmax ;
     return (true) ;
 }
@@ -276,14 +266,6 @@ bool GB_matlab_helper4              // return true if OK, false on error
     }
 
     GB_FREE_WORK (GrB_Index) ;
-
-//  int64_t k ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(static) \
-//      reduction(max:listmax)
-//  for (k = 0 ; k < len ; k++)
-//  {
-//      listmax = GB_IMAX (listmax, I [k]) ;
-//  }
 
     if (len > 0) listmax++ ;
     (*List_max) = listmax ;
@@ -380,5 +362,49 @@ void GB_matlab_helper8
         // C [k] = A [0]
         memcpy (C + k * s, A, s) ;
     }
+}
+
+//------------------------------------------------------------------------------
+// GB_matlab_helper9: compute the degree of each vector
+//------------------------------------------------------------------------------
+
+bool GB_matlab_helper9  // true if successful, false if out of memory
+(
+    GrB_Matrix A,       // input matrix
+    int64_t **degree,   // degree of each vector, size nvec
+    int64_t **list,     // list of non-empty vectors
+    int64_t **nvec      // # of non-empty vectors
+)
+{
+    int64_t anvec = A->nvec ;
+    GB_NTHREADS (anvec) ;
+
+    int64_t *List = NULL, *Degree = NULL ;
+    GB_MALLOC_MEMORY (List,   anvec, sizeof (int64_t)) ;
+    GB_MALLOC_MEMORY (Degree, anvec, sizeof (int64_t)) ;
+
+    if (List == NULL || Degree == NULL)
+    {
+        GB_FREE_MEMORY (List,   anvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Degree, anvec, sizeof (int64_t)) ;
+        return (false) ;
+    }
+
+    int64_t *Ah = A->h ;
+    int64_t *Ap = A->p ;
+
+    int64_t k ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (k = 0 ; k < anvec ; k++)
+    {
+        List [k] = (Ah == NULL) ? k : Ah [k] ;
+        Degree [k] = Ap [k+1] - Ap [k] ;
+    }
+
+    // return result
+    (*degree) = Degree ;
+    (*list) = List ;
+    (*nvec) = anvec ;
+    return (true) ;
 }
 

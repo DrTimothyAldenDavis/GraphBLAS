@@ -46,10 +46,10 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    int64_t cnz = GB_NNZ (C) ;
+    int64_t anz = GB_NNZ (A) ;
 
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
-    int nthreads = GB_nthreads (cnz, chunk, nthreads_max) ;
+    int nthreads = GB_nthreads (2 * anz, chunk, nthreads_max) ;
 
     //--------------------------------------------------------------------------
     // if C not already dense, allocate it and create its pattern (same as A)
@@ -97,40 +97,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     #endif
 
 #if 0
-
     TODO: extend to handle typecasting and generic operators
-
-    if (!done)
-    {
-        GB_BURBLE_MATRIX (C, "generic ") ;
-
-        //----------------------------------------------------------------------
-        // get operators, functions, workspace, contents of x and C
-        //----------------------------------------------------------------------
-
-        GxB_binary_function fadd = op->function ;
-
-        //----------------------------------------------------------------------
-        // C += x via function pointers, and typecasting
-        //----------------------------------------------------------------------
-
-        // C(i,j) = C(i,j) + scalar
-        #define GB_BINOP(cout_ij, cin_aij, ywork) \
-            GB_BINARYOP (cout_ij, cin_aij, ywork)
-
-        // binary operator
-        #define GB_BINARYOP(z,x,y) fadd (z,x,y)
-
-        // address of Cx [p]
-        #define GB_CX(p) Cx +((p)*csize)
-
-        #define GB_CTYPE GB_void
-
-        // no vectorization
-        #define GB_PRAGMA_VECTORIZE
-
-        #include "GB_dense_ewise3_noaccum_template.c"
-    }
 #endif
 
     //--------------------------------------------------------------------------

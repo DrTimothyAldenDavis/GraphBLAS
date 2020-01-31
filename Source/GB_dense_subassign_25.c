@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-// Method 25: C(:,:)<M,s> = Z ; C is empty, M structure, A dense
+// Method 25: C(:,:)<M,s> = A ; C is empty, M structure, A dense
 
 // M:           present
 // Mask_comp:   false
