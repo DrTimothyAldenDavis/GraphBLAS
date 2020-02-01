@@ -54,31 +54,14 @@ d = d / damp ;
 % compute the PageRank
 for iter = 1:maxit
     prior = r ;
-
-% GrB.burble (1) ;
-% tt = tic ;
-% fprintf ('r(:) = tfactor:\n') ;
+    % r(:) = tfactor
     r = GrB.expand (tfactor, r) ;
-    % r = r + A' * (prior./d)
-% toc (tt)
-
-% tt = tic ;
-% fprintf ('t = prior ./ d\n') ;
+    %i t = prior ./ d
     t = prior ./ d ;
-    % t = GrB.emult (prior, '/', d) ;
-% toc (tt)
-
-% tt = tic ;
-% fprintf ('mxm:\n') ;
+    % r = r + A' * (prior./d)
     r = GrB.mxm (r, '+', A, '+.2nd.single', t, desc) ;
-% toc (tt)
-
-% tt = tic ;
-% fprintf ('norm:\n') ;
+    % e = norm (r-prior,1)
     e = GrB.normdiff (r, prior, 1) ;
-% toc (tt)
-% GrB.burble (0) ;
-
     if (e < tol)
         niter = iter ;
         break ;
