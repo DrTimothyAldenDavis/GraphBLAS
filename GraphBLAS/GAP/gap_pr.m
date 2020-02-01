@@ -22,6 +22,7 @@ matrices = {
     } ;
 
 [status, result] = system ('hostname') ;
+clear status
 if (isequal (result (1:5), 'hyper'))
     fprintf ('hypersparse: %d threads\n', GrB.threads (40)) ;
 elseif (isequal (result (1:5), 'slash'))
@@ -29,6 +30,7 @@ elseif (isequal (result (1:5), 'slash'))
 else
     fprintf ('default: %d threads\n', GrB.threads) ;
 end
+clear result
 
 for k = 1:length(matrices)
 
@@ -49,7 +51,11 @@ for k = 1:length(matrices)
 
     t1 = tic ;
     d = GrB.entries (A, 'row', 'degree') ;
-    d (d == 0) = 1 ;
+    sinks = find (d == 0) ;
+    if (length (sinks) > 0)
+        d (sinks) = 1 ;
+    end
+    clear sinks
     d = GrB (d, 'single') ;
     t1 = toc (t1) ;
     fprintf ('degree time: %g sec\n', t1) ;
@@ -127,6 +133,6 @@ for k = 1:length(matrices)
         printf ('MATLAB failed\n') ;
     end
 
-    clear G r g rmatlab d
+    clear G r g rmatlab d A r1 r2 r3 i1 i2 i3
 end
 

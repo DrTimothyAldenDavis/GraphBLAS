@@ -75,7 +75,7 @@ for iter = 1:maxit
 
 % tt = tic ;
 % fprintf ('norm:\n') ;
-    e = GrB.normdiff (r, prior, inf) ;
+    e = GrB.normdiff (r, prior, 1) ;
 % toc (tt)
 % GrB.burble (0) ;
 
