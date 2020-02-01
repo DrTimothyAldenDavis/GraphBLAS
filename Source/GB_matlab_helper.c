@@ -165,18 +165,6 @@ bool GB_matlab_helper3              // return true if OK, false on error
 
     GB_FREE_WORK (int64_t) ;
 
-//  int64_t k ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(static) \
-//      reduction(&&:ok) reduction(max:listmax)
-//  for (k = 0 ; k < len ; k++)
-//  {
-//      double x = List_double [k] ;
-//      int64_t i = (int64_t) x ;
-//      ok = ok && (x == (double) i) ;
-//      listmax = GB_IMAX (listmax, i) ;
-//      List [k] = i - 1 ;
-//  }
-
     (*List_max) = listmax ;
     return (ok) ;
 }
@@ -372,14 +360,15 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 (
     GrB_Matrix A,       // input matrix
     int64_t **degree,   // degree of each vector, size nvec
-    int64_t **list,     // list of non-empty vectors
-    int64_t **nvec      // # of non-empty vectors
+    GrB_Index **list,   // list of non-empty vectors
+    GrB_Index *nvec     // # of non-empty vectors
 )
 {
     int64_t anvec = A->nvec ;
     GB_NTHREADS (anvec) ;
 
-    int64_t *List = NULL, *Degree = NULL ;
+    uint64_t *List = NULL ;
+    int64_t  *Degree = NULL ;
     GB_MALLOC_MEMORY (List,   anvec, sizeof (int64_t)) ;
     GB_MALLOC_MEMORY (Degree, anvec, sizeof (int64_t)) ;
 

@@ -11,6 +11,9 @@
 // semiring matches the accum operator, and the type of C matches the ztype of
 // accum.  That is, no typecasting can be done with C.
 
+// The PAIR operator as the multiplier provides important special cases.
+// See Template/GB_AxB_dot_cij.c for details.
+
 // cij += A(k,i) * B(k,j)
 #undef  GB_DOT_MERGE
 #define GB_DOT_MERGE                                                \
@@ -54,8 +57,6 @@
     //--------------------------------------------------------------------------
     // C += A'*B
     //--------------------------------------------------------------------------
-
-    // TODO: check if B is entirely dense (GAP!)
 
     int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
@@ -117,41 +118,41 @@
 
                     GB_CIJ_DECLARE (cij) ;          // declare the cij scalar
                     int64_t pC = i + pC_start ;     // C(i,j) is at Cx [pC]
+                    int64_t pB = pB_start ;
+                    GB_GETC (cij, pC) ;             // cij = Cx [pC]
 
                     //----------------------------------------------------------
                     // special cases for the PAIR multiplier
                     //----------------------------------------------------------
 
-                    // Since B(:,j) is dense C(i,j) += A(:,i)'*B(:,j) is trivial
-                    // to compute with the PAIR multiplier.
+                    // Since B(:,j) is dense, C(i,j) += A(:,i)'*B(:,j) is
+                    // trivial to compute with the PAIR multiplier.
 
-// TODO
-//                  #if GB_IS_PAIR_MULTIPLIER
-//
-//                      #if GB_IS_ANY_MONOID
-//                      // ANY monoid; take first entry found
-//                      cij = 1 ;
-//                      #else
-//                      // PLUS, LXOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i))
-//                      #if GB_CTYPE_BITS > 0
-//                      // LXOR bool, or PLUS with any 8-bit, 16-bit, or
-//                      // 32-bit integer
-//                      uint64_t t = ((uint64_t) cij) + ((uint64_t) ainz) ;
-//                      cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
-//                      #else
-//                      // PLUS monoid for int64_t, uint64_t, float, or double
-//                      cij += (GB_CTYPE) ainz ;
-//                      #endif
-//                      #endif
-//
-//                  #else
+                    #if GB_IS_PAIR_MULTIPLIER
+
+                        #if GB_IS_ANY_MONOID
+                        // ANY monoid: take the first entry found
+                        cij = 1 ;
+                        #elif GB_IS_EQ_MONOID
+                        // A(:,i)'*B(:j) is one, so this result must be
+                        // accumulated into cij, as cij += 1, where the
+                        // accumulator is the EQ operator.
+                        cij = (cij == 1) ;
+                        #elif (GB_CTYPE_BITS > 0)
+                        // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
+                        // for bool, 8-bit, 16-bit, or 32-bit integer
+                        uint64_t t = ((uint64_t) cij) + ainz ;
+                        cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
+                        #else
+                        // PLUS monoid for float, double, or 64-bit integers 
+                        cij += (GB_CTYPE) ainz ;
+                        #endif
+
+                    #else
 
                     //----------------------------------------------------------
                     // general case
                     //----------------------------------------------------------
-
-                    int64_t pB = pB_start ;
-                    GB_GETC (cij, pC) ;             // cij = Cx [pC]
 
                     if (ainz == bvlen)
                     {
@@ -178,8 +179,6 @@
                         // A(:,i) is sparse and B(:,j) is dense
                         //------------------------------------------------------
 
-                        // TODO: GAP pagerank can call sparse MKL here
-
                         GB_DOT_SIMD
                         for (int64_t p = pA ; p < pA_end ; p++)
                         { 
@@ -190,11 +189,9 @@
                             GB_GETB (bkj, Bx, pB+k) ;       // bkj = B(k,j)
                             GB_MULTADD (cij, aki, bkj) ;    // cij += aki * bkj
                         }
-
                     }
 
-//                  #endif
-
+                    #endif
                     GB_PUTC (cij, pC) ;                 // Cx [pC] = cij
                 }
 
@@ -242,39 +239,40 @@
 
                         GB_GETC (cij, pC) ;                 // cij = Cx [pC]
 
-// TODO
-//                      #if GB_IS_PAIR_MULTIPLIER
-//
-//                          #if GB_IS_ANY_MONOID
-//                          // ANY monoid; take first entry found
-//                          cij = 1 ;
-//                          #else
-//                          // PLUS, LXOR monoids: A(:,i)'*B(:,j) is nnz(B(:,i))
-//                          #if GB_CTYPE_BITS > 0
-//                          // LXOR bool, or PLUS with any 8-bit, 16-bit, or
-//                          // 32-bit integer
-//                          uint64_t t = ((uint64_t) cij) + ((uint64_t) bjnz) ;
-//                          cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
-//                          #else
-//                          // PLUS monoid for int64_t, uint64_t, float, or double
-//                          cij += (GB_CTYPE) bjnz ;
-//                          #endif
-//                          #endif
-//
-//                      #else
+                        #if GB_IS_PAIR_MULTIPLIER
 
-                        GB_DOT_SIMD
-                        for (int64_t p = pB ; p < pB_end ; p++)
-                        { 
-                            GB_DOT_TERMINAL (cij) ;         // break if terminal
-                            int64_t k = Bi [p] ;
-                            // cij += A(k,i) * B(k,j)
-                            GB_GETA (aki, Ax, pA+k) ;       // aki = A(k,i)
-                            GB_GETB (bkj, Bx, p   ) ;       // bkj = B(k,j)
-                            GB_MULTADD (cij, aki, bkj) ;    // cij += aki * bkj
-                        }
+                            #if GB_IS_ANY_MONOID
+                            // ANY monoid: take the first entry found
+                            cij = 1 ;
+                            #elif GB_IS_EQ_MONOID
+                            // A(:,i)'*B(:j) is one, so this result must be
+                            // accumulated into cij, as cij += 1, where the
+                            // accumulator is the EQ operator.
+                            cij = (cij == 1) ;
+                            #elif (GB_CTYPE_BITS > 0)
+                            // PLUS, XOR monoids: A(:,i)'*B(:,j) is nnz(A(:,i)),
+                            // for bool, 8-bit, 16-bit, or 32-bit integer
+                            uint64_t t = ((uint64_t) cij) + bjnz ;
+                            cij = (GB_CTYPE) (t & GB_CTYPE_BITS) ;
+                            #else
+                            // PLUS monoid for float, double, or 64-bit integers
+                            cij += (GB_CTYPE) bjnz ;
+                            #endif
 
-//                      #endif
+                        #else
+
+                            GB_DOT_SIMD
+                            for (int64_t p = pB ; p < pB_end ; p++)
+                            { 
+                                GB_DOT_TERMINAL (cij) ;   // break if terminal
+                                int64_t k = Bi [p] ;
+                                // cij += A(k,i) * B(k,j)
+                                GB_GETA (aki, Ax, pA+k) ;     // aki = A(k,i)
+                                GB_GETB (bkj, Bx, p   ) ;     // bkj = B(k,j)
+                                GB_MULTADD (cij, aki, bkj) ;  // cij += aki*bkj
+                            }
+
+                        #endif
 
                         GB_PUTC (cij, pC) ;                 // Cx [pC] = cij
 

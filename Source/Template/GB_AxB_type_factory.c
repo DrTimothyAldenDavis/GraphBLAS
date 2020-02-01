@@ -125,12 +125,12 @@ else
 {
         switch (add_opcode)
         {
-            // LOR_PAIR, LAND_PAIR, and EQ_PAIR have been renamed to ANY_PAIR
+            // LOR_PAIR, LAND_PAIR, been renamed to ANY_PAIR
             #ifndef GB_MULT_IS_PAIR_OPERATOR
             case GB_LOR_opcode  : GB_AxB_WORKER (_lor , GB_MULT_NAME, _bool)
             case GB_LAND_opcode : GB_AxB_WORKER (_land, GB_MULT_NAME, _bool)
-            case GB_EQ_opcode   : GB_AxB_WORKER (_eq  , GB_MULT_NAME, _bool)
             #endif
+            case GB_EQ_opcode   : GB_AxB_WORKER (_eq  , GB_MULT_NAME, _bool)
             case GB_LXOR_opcode : GB_AxB_WORKER (_lxor, GB_MULT_NAME, _bool)
             case GB_ANY_opcode  : GB_AxB_WORKER (_any , GB_MULT_NAME, _bool)
             default: ;

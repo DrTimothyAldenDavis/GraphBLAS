@@ -88,4 +88,3 @@ codegen_axb_method ('eq', multop, add, addfunc,  mult, 'bool', 'uint64_t', 'true
 codegen_axb_method ('eq', multop, add, addfunc,  mult, 'bool', 'float'   , 'true', [ ], 0) ;
 codegen_axb_method ('eq', multop, add, addfunc,  mult, 'bool', 'double'  , 'true', [ ], 0) ;
 
-

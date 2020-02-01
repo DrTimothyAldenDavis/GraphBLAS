@@ -12,7 +12,7 @@ function [r stats] = pagerank (A, opts)
 %   opts.type = 'double'    compute in 'single' or 'double' precision
 %
 % A can be a GraphBLAS or MATLAB matrix.  A can have any format ('by row' or
-% 'by col'), but GrB.pagerank is slightly faster if A is 'by col'.
+% 'by col'), but GrB.pagerank is faster if A is 'by col'.
 %
 % An optional 2nd output argument provides statistics:
 %   stats.tinit     initialization time
@@ -50,10 +50,16 @@ if (~isfield (opts, 'type'))
     opts.type = 'double' ;
 end
 
+if (~(isequal (opts.type, 'single') || isequal (opts.type, 'double')))
+    gb_error ('opts.type must be ''single'' or ''double''') ;
+end
+
 % get options
 tol = opts.tol ;
 maxit = opts.maxit ;
 damp = opts.damp ;
+damp = max (damp, 0) ;
+damp = min (damp, 1) ;
 type = opts.type ;
 weighted = opts.weighted ;
 
@@ -62,30 +68,31 @@ if (m ~= n)
     gb_error ('A must be square') ;
 end
 
-% construct the matrix G and outdegree d
+% select the semiring and determine if A is native
 if (weighted)
     % use the weighted edges of G
     % native, if A is already of the right type, and stored by column
     native = (GrB.isbycol (A) & isequal (GrB.type (A), type)) ;
     semiring = ['+.*.' type] ;
 else
-    % use the pattern of G 
+    % use just the pattern of G, so A can be of any type.
     % native, if A is already stored by column
     native = GrB.isbycol (A) ;
     semiring = ['+.2nd.' type] ;
 end
 
+% construct the matrix G, or use A as-is
 if (native)
     G = A ;
 else
     G = GrB (A, type, 'by col') ;
 end
 
+% select the accum operator, according to the type
 accum = ['+.' type] ;
 
 % d (i) = outdegree of node i, or 1 if i is a sink
-d = GrB.entries (G, 'row', 'degree') ;
-d = GrB (d, type) ;
+d = GrB (GrB.entries (A, 'row', 'degree'), type) ;
 sinks = find (d == 0) ;
 any_sinks = ~isempty (sinks) ;
 if (any_sinks)

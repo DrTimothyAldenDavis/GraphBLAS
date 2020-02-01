@@ -9,11 +9,14 @@ is_first    = isequal (multop, 'first') ;
 is_second   = isequal (multop, 'second') ;
 is_pair     = isequal (multop, 'pair') ;
 is_any      = isequal (addop, 'any') ;
+is_eq       = isequal (addop, 'eq') ;
 is_any_pair = is_any && isequal (multop, 'pair') ;
 is_real     = isequal (ztype, 'float') || isequal (ztype, 'double') ;
 
 % special cases for the PAIR multiplier
 switch (ztype)
+    case { 'bool' }
+        bits = '0x1L' ;
     case { 'int8_t', 'uint8_t' }
         bits = '0xffL' ;
     case { 'int16_t', 'uint16_t' }
@@ -22,10 +25,10 @@ switch (ztype)
         bits = '0xffffffffL' ;
     case { 'int64_t', 'uint64_t' }
         bits = '0' ;
-    case { 'bool' }
-        bits = '0x1L' ;
     case { 'float', 'double' }
         bits = '0' ;
+    otherwise
+        error ('unknown type') ;
 end
 fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
 
@@ -35,7 +38,7 @@ end
 
 if (is_pair)
     % these semirings are renamed to any_pair, and not thus created
-    if (isequal (addop, 'eq' ) || isequal (addop, 'land' ) || ...
+    if (isequal (addop, 'land' ) || ...
         isequal (addop, 'lor') || isequal (addop, 'max'  ) || ...
         isequal (addop, 'min') || isequal (addop, 'times'))
         return
@@ -73,6 +76,12 @@ if (is_pair)
     fprintf (f, 'define(`GB_is_pair_multiplier'', `1'')\n') ;
 else
     fprintf (f, 'define(`GB_is_pair_multiplier'', `0'')\n') ;
+end
+
+if (is_eq)
+    fprintf (f, 'define(`GB_is_eq_monoid'', `1'')\n') ;
+else
+    fprintf (f, 'define(`GB_is_eq_monoid'', `0'')\n') ;
 end
 
 if (is_any)

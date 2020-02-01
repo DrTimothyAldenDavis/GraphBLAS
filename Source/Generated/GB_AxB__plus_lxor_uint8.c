@@ -1,5 +1,6 @@
 
 
+
 //------------------------------------------------------------------------------
 // GB_AxB:  hard-coded functions for semiring: C<M>=A*B or A'*B
 //------------------------------------------------------------------------------
@@ -35,7 +36,7 @@
 
 // Multiply: z = ((aik != 0) != (bkj != 0))
 // Add:      cij += z
-//           any monoid?    0
+//           'any' monoid?  0
 //           atomic?        1
 //           OpenMP atomic? 1
 // MultAdd:  uint8_t x_op_y = ((aik != 0) != (bkj != 0)) ; cij += x_op_y
@@ -113,8 +114,16 @@
 #define GB_CTYPE_PUN \
     uint8_t
 
+// bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
+#define GB_CTYPE_BITS \
+    0xffL
+
 // 1 if monoid update can skipped entirely (the ANY monoid)
 #define GB_IS_ANY_MONOID \
+    0
+
+// 1 if monoid update is EQ
+#define GB_IS_EQ_MONOID \
     0
 
 // 1 if monoid update can be done atomically, 0 otherwise

@@ -102,8 +102,10 @@ for k = 1:length(matrices)
     %---------------------------------------------------------------------------
 
     % if (n < 24*1e6)
+    try
         fprintf ('\nCompare with built-in MATLAB pagerank:\n') ;
-        G = digraph (double (A)) ;
+        A = double (A) ;
+        G = digraph (A) ;
         clear A
         tic
         rmatlab = centrality (G, 'pagerank') ;
@@ -120,8 +122,11 @@ for k = 1:length(matrices)
             fprintf (' MATLAB: node %8d (%10.4e)', i2 (k), r2 (k)) ;
             fprintf (' GAP: node %8d (%10.4e)\n', i3 (k), r3 (k)) ;
         end
-    % end
+    catch me
+        me
+        printf ('MATLAB failed\n') ;
+    end
 
-    clear r g rmatlab d
+    clear G r g rmatlab d
 end
 

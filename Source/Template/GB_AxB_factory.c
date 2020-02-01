@@ -58,8 +58,8 @@
         case GB_PAIR_opcode   :    // z = 1
         //----------------------------------------------------------------------
 
-            // eq_pair, land_pair, lor_pair, max_pair, min_pair, times_pair
-            // all become any_pair
+            // land_pair, lor_pair, max_pair, min_pair, times_pair
+            // all become any_pair.
 
             // 44 semirings: (min,max,plus,times) for non-boolean, and
             // (or,and,xor,eq) for boolean

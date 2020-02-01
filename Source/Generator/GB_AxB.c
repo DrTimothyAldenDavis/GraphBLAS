@@ -33,7 +33,7 @@
 
 // Multiply: GB_MULTIPLY(z,aik,bkj)
 // Add:      GB_add_update(cij, z)
-//           any monoid?    GB_is_any_monoid
+//           'any' monoid?  GB_is_any_monoid
 //           atomic?        GB_has_atomic
 //           OpenMP atomic? GB_has_omp_atomic
 // MultAdd:  GB_multiply_add(cij,aik,bkj)
@@ -111,9 +111,17 @@
 #define GB_CTYPE_PUN \
     GB_ctype_pun
 
+// bit pattern for bool, 8-bit, 16-bit, and 32-bit integers
+#define GB_CTYPE_BITS \
+    GB_ctype_bits
+
 // 1 if monoid update can skipped entirely (the ANY monoid)
 #define GB_IS_ANY_MONOID \
     GB_is_any_monoid
+
+// 1 if monoid update is EQ
+#define GB_IS_EQ_MONOID \
+    GB_is_eq_monoid
 
 // 1 if monoid update can be done atomically, 0 otherwise
 #define GB_HAS_ATOMIC \
