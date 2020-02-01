@@ -138,7 +138,7 @@ for iter = 1:maxit
     % r = r + G' * t
     r = GrB.mxm (r, accum, G, semiring, t, desc) ;
     % e = norm (r-prior, inf)
-    e = GrB.reduce ('max', GrB.apply ('abs', GrB.emult (r, '-', prior))) ;
+    e = GrB.normdiff (r, prior, inf) ;
     if (e < tol)
         % convergence has been reached
         stats.trank = toc (tstart) ;

@@ -25,9 +25,15 @@ if (~native)
 end
 
 if (nargin < 2)
+    td = tic ;
     d = GrB.entries (A, 'row', 'degree') ;
-    d (d == 0) = 1 ;
+    sinks = find (d == 0) ;
+    if (length (sinks) > 0)
+        d (sinks) = 1 ;
+    end
     d = GrB (d, 'single') ;
+    t = toc (td) ;
+    fprintf ('degree time: %g\n', t) ;
 end
 
 % teleport factor
@@ -69,7 +75,7 @@ for iter = 1:maxit
 
 % tt = tic ;
 % fprintf ('norm:\n') ;
-    e = GrB.reduce ('+', GrB.apply ('abs', GrB.emult (r, '-', prior))) ;
+    e = GrB.normdiff (r, prior, inf) ;
 % toc (tt)
 % GrB.burble (0) ;
 

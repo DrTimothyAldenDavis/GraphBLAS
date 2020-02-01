@@ -448,5 +448,7 @@ void gb_get_mxargs
     GxB_Format_Value *fmt       // desc.format
 ) ;
 
+int64_t gb_norm_kind (const mxArray *arg) ;
+
 #endif
 

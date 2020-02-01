@@ -71,7 +71,7 @@ void mexFunction
         OK (GrB_Matrix_nrows (&nrows, X)) ;
         OK (GrB_Matrix_ncols (&ncols, X)) ;
         GxB_Format_Value fmt ;
-        OK (GxB_get (X, GxB_FORMAT, &fmt)) ;
+        OK (GxB_Matrix_Option_get (X, GxB_FORMAT, &fmt)) ;
         GrB_Vector y = NULL ;
 
         if (fmt == GxB_BY_COL)
@@ -96,7 +96,8 @@ void mexFunction
             {
                 // y = dense vector of size ncols-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, ncols)) ;
-                OK (GrB_assign (y, NULL, NULL, false, GrB_ALL, ncols, NULL)) ;
+                OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
+                    ncols, NULL)) ;
             }
 
             // d = X*y using the PLUS_PAIR semiring
@@ -126,7 +127,8 @@ void mexFunction
             {
                 // y = dense vector of size nrows-by-1; value is not relevant
                 OK (GrB_Vector_new (&y, GrB_BOOL, nrows)) ;
-                OK (GrB_assign (y, NULL, NULL, false, GrB_ALL, nrows, NULL)) ;
+                OK (GrB_Vector_assign_BOOL (y, NULL, NULL, false, GrB_ALL,
+                    nrows, NULL)) ;
             }
 
             // d = y*X using the PLUS_PAIR semiring
@@ -134,13 +136,14 @@ void mexFunction
             OK (GrB_vxm (d, NULL, NULL, GxB_PLUS_PAIR_INT64, y, X, NULL)) ;
         }
 
-        OK (GrB_free (&y)) ;
+        OK (GrB_Vector_free (&y)) ;
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
+    OK (GrB_Matrix_free (&X)) ;
     pargout [0] = gb_export (&d, KIND_GRB) ;
     GB_WRAPUP ;
 }

@@ -397,3 +397,212 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
     return (true) ;
 }
 
+//------------------------------------------------------------------------------
+// GB_matlab_helper10: compute norm (x-y,p) of two dense FP32 or FP64 vectors
+//------------------------------------------------------------------------------
+
+//        s = GB_matlab_helper10 (A->x, B->x, A->type, norm_kind, anrows) ;
+
+double GB_matlab_helper10        // norm (x-y,p)
+(
+    GB_void *x_arg,
+    GB_void *y_arg,
+    GrB_Type type,
+    int64_t p,
+    GrB_Index n
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (!(type == GrB_FP32 || type == GrB_FP64))
+    {
+        return (-1) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate workspace and determine # of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_NTHREADS (n) ;
+    GB_ALLOCATE_WORK (double) ;
+
+    //--------------------------------------------------------------------------
+    // each thread computes its partial norm
+    //--------------------------------------------------------------------------
+
+    int tid ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (tid = 0 ; tid < nthreads ; tid++)
+    {
+        int64_t k1, k2 ;
+        GB_PARTITION (k1, k2, n, tid, nthreads) ;
+
+        if (type == GrB_FP32)
+        {
+            float my_s = 0 ;
+            const float *x = (float *) x_arg ;
+            const float *y = (float *) y_arg ;
+            switch (p)
+            {
+                case 0:     // Frobenius norm
+                case 2:     // 2-norm: sqrt of sum of (x-y).^2
+                {
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        float t = (x [k] - y [k]) ;
+                        my_s += (t*t) ;
+                    }
+                }
+                break ;
+
+                case 1:     // 1-norm: sum (abs (x-y))
+                {
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        float t = (x [k] - y [k]) ;
+                        my_s += fabsf (t) ;
+                    }
+                }
+                break ;
+
+                case INT64_MAX:     // inf-norm: max (abs (x-y))
+                {
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        float t = (x [k] - y [k]) ;
+                        my_s = fmaxf (my_s, fabsf (t)) ;
+                    }
+                }
+                break ;
+
+                case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
+                {
+                    my_s = INFINITY ;
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        float t = (x [k] - y [k]) ;
+                        my_s = fminf (my_s, fabsf (t)) ;
+                    }
+                }
+                break ;
+
+                default: ;  // p-norm not yet supported
+            }
+            Work [tid] = (double) my_s ;
+
+        }
+        else
+        {
+
+            double my_s = 0 ;
+            const double *x = (double *) x_arg ;
+            const double *y = (double *) y_arg ;
+            switch (p)
+            {
+                case 0:     // Frobenius norm
+                case 2:     // 2-norm: sqrt of sum of (x-y).^2
+                {
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        double t = (x [k] - y [k]) ;
+                        my_s += (t*t) ;
+                    }
+                }
+                break ;
+
+                case 1:     // 1-norm: sum (abs (x-y))
+                {
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        my_s += fabs (x [k] - y [k]) ;
+                    }
+                }
+                break ;
+
+                case INT64_MAX:     // inf-norm: max (abs (x-y))
+                {
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        my_s = fmax (my_s, fabs (x [k] - y [k])) ;
+                    }
+                }
+                break ;
+
+                case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
+                {
+                    my_s = INFINITY ;
+                    for (int64_t k = k1 ; k < k2 ; k++)
+                    {
+                        my_s = fmin (my_s, fabs (x [k] - y [k])) ;
+                    }
+                }
+                break ;
+
+                default: ;  // p-norm not yet supported
+            }
+
+            Work [tid] = my_s ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // combine results of each thread
+    //--------------------------------------------------------------------------
+
+    double s = 0 ;
+    switch (p)
+    {
+        case 0:     // Frobenius norm
+        case 2:     // 2-norm: sqrt of sum of (x-y).^2
+        {
+            for (int64_t tid = 0 ; tid < nthreads ; tid++)
+            {
+                s += Work [tid] ;
+            }
+            s = sqrt (s) ;
+        }
+        break ;
+
+        case 1:     // 1-norm: sum (abs (x-y))
+        {
+            for (int64_t tid = 0 ; tid < nthreads ; tid++)
+            {
+                s += Work [tid] ;
+            }
+        }
+        break ;
+
+        case INT64_MAX:     // inf-norm: max (abs (x-y))
+        {
+            for (int64_t tid = 0 ; tid < nthreads ; tid++)
+            {
+                s = fmax (s, Work [tid]) ;
+            }
+        }
+        break ;
+
+        case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
+        {
+            s = Work [0] ;
+            for (int64_t tid = 1 ; tid < nthreads ; tid++)
+            {
+                s = fmin (s, Work [tid]) ;
+            }
+        }
+        break ;
+
+        default:    // p-norm not yet supported
+            s = -1 ;
+    }
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_WORK (double) ;
+    return (s) ;
+}
+

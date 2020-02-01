@@ -108,5 +108,15 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
     GrB_Index *nvec     // # of non-empty vectors
 ) ;
 
+GB_PUBLIC
+double GB_matlab_helper10        // norm (x-y,p)
+(
+    GB_void *x_arg,
+    GB_void *y_arg,
+    GrB_Type type,
+    int64_t p,
+    GrB_Index n
+) ;
+
 #endif
 

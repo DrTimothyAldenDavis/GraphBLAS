@@ -162,7 +162,7 @@ classdef GrB
 %   [lo,hi] = bandwidth (G) determine the lower & upper bandwidth of G
 %   C = sum (G, option)     reduce via sum, to vector or scalar
 %   C = prod (G, option)    reduce via product, to vector or scalar
-%   s = norm (G, kind)      1-norm or inf-norm of a GrB matrix
+%   s = norm (G, kind)      norm of a GrB matrix
 %   [C,I] = max (G, ...)    reduce via max, to vector or scalar
 %   C = min (G, ...)        reduce via min, to vector or scalar
 %   C = any (G, ...)        reduce via '|', to vector or scalar
@@ -276,6 +276,7 @@ classdef GrB
 %                               build a GrB matrix from list of entries
 %   [I,J,X] = GrB.extracttuples (A, desc)
 %                               extract all entries from a matrix
+%   s = GrB.normdiff (A, B, kind)   norm (A-B,kind)
 %
 %-------------------------------------
 % Static Methods for graph algorithms:
@@ -803,6 +804,7 @@ methods (Static)
     result = entries (A, varargin) ;
     result = nonz (A, varargin) ;
     [C, I, J] = compact (A, id) ;
+    s = normdiff (A, B, kind) ;
 
 end
 end
