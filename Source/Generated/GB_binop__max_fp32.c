@@ -97,7 +97,6 @@
 
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
-// TODO extend to IS*, LOR, LAND, LXOR.
 
 GrB_Info GB_Cdense_ewise3_accum__max_fp32
 (

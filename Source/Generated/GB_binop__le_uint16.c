@@ -97,7 +97,6 @@
 #if 0
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
-// TODO extend to IS*, LOR, LAND, LXOR.
 
 GrB_Info (none)
 (

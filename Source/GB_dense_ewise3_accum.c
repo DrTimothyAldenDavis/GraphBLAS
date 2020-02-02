@@ -43,6 +43,8 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
     ASSERT (op->opcode >= GB_MIN_CODE) ;
     ASSERT (op->opcode <= GB_RDIV_CODE) ;
 
+    // TODO handle IS*, LOR, LAND, LXOR operators
+
     //--------------------------------------------------------------------------
     // determine the number of threads to use
     //--------------------------------------------------------------------------

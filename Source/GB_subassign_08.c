@@ -112,6 +112,7 @@ GrB_Info GB_subassign_08
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
     GB_GET_MASK ;
+    const int64_t mvlen = M->vlen ;
     GB_GET_A ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     GB_GET_ACCUM ;
@@ -189,6 +190,7 @@ GrB_Info GB_subassign_08
             GB_GET_jC ;
             bool cjdense = (pC_end - pC_start == cvlen) ;
 
+
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> += A(:,j) ; no S
             //------------------------------------------------------------------
@@ -223,11 +225,12 @@ GrB_Info GB_subassign_08
                 //--------------------------------------------------------------
 
                     // TODO exploit dense mask
+                    bool mjdense = false ;
 
                 for ( ; pA < pA_end ; pA++)
                 { 
                     int64_t iA = Ai [pA] ;
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij) GB_PHASE1_ACTION ;
                 }
 
@@ -358,11 +361,12 @@ GrB_Info GB_subassign_08
                 //--------------------------------------------------------------
 
                     // TODO exploit dense mask
+                    bool mjdense = false ;
 
                 for ( ; pA < pA_end ; pA++)
                 { 
                     int64_t iA = Ai [pA] ;
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij) GB_PHASE2_ACTION ;
                 }
 

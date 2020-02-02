@@ -1838,16 +1838,22 @@ GrB_Info GB_subassign_emult_slice
     }
 
 //------------------------------------------------------------------------------
-// GB_MIJ_BINARY_SEARCH
+// GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP
 //------------------------------------------------------------------------------
 
-// TODO: if M(:,j) is dense, do not use binary search
+// mij = M(i,j)
 
-// mij = M(iA,j)
-
-#define GB_MIJ_BINARY_SEARCH(i)                                             \
+#define GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP(i)                             \
     bool mij ;                                                              \
+    if (mjdense)                                                            \
     {                                                                       \
+        /* M(:,j) is dense, no need for binary search */                    \
+        int64_t pM = pM_start + i ;                                         \
+        mij = GB_mcast (Mx, pM, msize) ;                                    \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* M(:,j) is sparse, binary search for M(i,j) */                    \
         int64_t pM     = pM_start ;                                         \
         int64_t pright = pM_end - 1 ;                                       \
         bool found ;                                                        \

@@ -48,6 +48,7 @@ GrB_Info GB_subassign_06s
     GB_GET_MASK ;
     const bool M_is_hyper = M->is_hyper ;
     const int64_t Mnvec = M->nvec ;
+    const int64_t mvlen = M->vlen ;
     GB_GET_A ;
     GB_GET_S ;
     GrB_BinaryOp accum = NULL ;
@@ -107,6 +108,7 @@ GrB_Info GB_subassign_06s
 
             int64_t pM_start, pM_end ;
             GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+            bool mjdense = (pM_end - pM_start) == mvlen ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and A(:,j)
@@ -124,8 +126,7 @@ GrB_Info GB_subassign_06s
                 if (iS < iA)
                 {
                     // S (i,j) is present but A (i,j) is not
-                    // TODO exploit dense mask
-                    GB_MIJ_BINARY_SEARCH (iS) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
                     if (mij)
                     { 
                         // ----[C . 1] or [X . 1]-------------------------------
@@ -139,8 +140,7 @@ GrB_Info GB_subassign_06s
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
-                    // TODO exploit dense mask
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -152,8 +152,7 @@ GrB_Info GB_subassign_06s
                 else
                 {
                     // both S (i,j) and A (i,j) present
-                    // TODO exploit dense mask
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij)
                     { 
                         // ----[C A 1] or [X A 1]-------------------------------
@@ -172,8 +171,7 @@ GrB_Info GB_subassign_06s
             {
                 // S (i,j) is present but A (i,j) is not
                 int64_t iS = Si [pS] ;
-                    // TODO exploit dense mask
-                GB_MIJ_BINARY_SEARCH (iS) ;
+                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
                 if (mij)
                 { 
                     // ----[C . 1] or [X . 1]-----------------------------------
@@ -190,8 +188,7 @@ GrB_Info GB_subassign_06s
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                    // TODO exploit dense mask
-                GB_MIJ_BINARY_SEARCH (iA) ;
+                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------
@@ -243,6 +240,7 @@ GrB_Info GB_subassign_06s
 
             int64_t pM_start, pM_end ;
             GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+            bool mjdense = (pM_end - pM_start) == mvlen ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and A(:,j)
@@ -265,8 +263,7 @@ GrB_Info GB_subassign_06s
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
-                    // TODO exploit dense mask
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     if (mij)
                     { 
                         // ----[. A 1]------------------------------------------
@@ -289,8 +286,7 @@ GrB_Info GB_subassign_06s
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                    // TODO exploit dense mask
-                GB_MIJ_BINARY_SEARCH (iA) ;
+                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                 if (mij)
                 { 
                     // ----[. A 1]----------------------------------------------
