@@ -17,11 +17,16 @@ function descriptorinfo (d)
 %
 %   d.out   'default' or 'replace'      determines if C is cleared before
 %                                         the accum/mask step
-%   d.mask  'default' or 'complement'   determines if M or !M is used
+%
+%   d.mask  'default'       use M as the mask (if present)
+%           'complement'    use ~M as the mask
+%           'structural' or 'structure'   use the pattern of M, not its values
+%           'structural complement'       use the pattern of ~M
+%
 %   d.in0   'default' or 'transpose'    determines A or A' is used
 %   d.in1   'default' or 'transpose'    determines B or B' is used
 %
-%   d.axb   'default', 'Gustavson', 'heap', or 'dot'.  Determines the
+%   d.axb   'default', 'Gustavson', 'heap', 'hash', or 'dot'.  Determines the
 %            method used in GrB.mxm.  The default is to let GraphBLAS
 %            determine the method automatically, via a heuristic.
 %

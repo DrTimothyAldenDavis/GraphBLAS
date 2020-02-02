@@ -1,0 +1,168 @@
+gap_bfs
+hypersparse: 40 threads
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+load time: 391.907 sec
+
+GrB.bfs  tests:
+trial:  1 source:  2338013 GrB.bfs  time:    8.374 visited: 63032893 depth:        7
+trial:  2 source: 31997660 GrB.bfs  time:    8.700 visited: 63032893 depth:        8
+trial:  3 source: 23590941 GrB.bfs  time:    8.730 visited: 63032893 depth:        8
+trial:  4 source: 43400605 GrB.bfs  time:    8.707 visited: 63032893 depth:        8
+trial:  5 source: 75337938 GrB.bfs  time:    8.736 visited: 63032893 depth:        8
+trial:  6 source:   169868 GrB.bfs  time:    8.671 visited: 63032893 depth:        8
+trial:  7 source: 104041221 GrB.bfs  time:    8.689 visited: 63032893 depth:        8
+trial:  8 source: 94177943 GrB.bfs  time:    8.694 visited: 63032893 depth:        8
+trial:  9 source: 32871358 GrB.bfs  time:    8.661 visited: 63032893 depth:        8
+trial: 10 source: 56230003 GrB.bfs  time:    8.719 visited: 63032893 depth:        8
+trial: 11 source: 69883038 GrB.bfs  time:    8.270 visited: 63032893 depth:        7
+trial: 12 source:  9346346 GrB.bfs  time:    8.639 visited: 63032893 depth:        8
+trial: 13 source: 48915359 GrB.bfs  time:    8.619 visited: 63032893 depth:        8
+trial: 14 source: 122571174 GrB.bfs  time:    8.756 visited: 63032893 depth:        8
+trial: 15 source:  6183280 GrB.bfs  time:    8.700 visited: 63032893 depth:        8
+trial: 16 source: 86323664 GrB.bfs  time:    8.813 visited: 63032893 depth:        8
+trial: 17 source: 106725781 GrB.bfs  time:    8.594 visited: 63032893 depth:        8
+trial: 18 source: 92389939 GrB.bfs  time:    8.340 visited: 63032893 depth:        7
+trial: 19 source: 16210739 GrB.bfs  time:    8.423 visited: 63032893 depth:        7
+trial: 20 source: 59816701 GrB.bfs  time:    8.834 visited: 63032893 depth:        8
+trial: 21 source: 111669930 GrB.bfs  time:    8.587 visited: 63032893 depth:        8
+trial: 22 source: 102831412 GrB.bfs  time:    8.730 visited: 63032893 depth:        8
+trial: 23 source: 113384801 GrB.bfs  time:    8.881 visited: 63032893 depth:        8
+trial: 24 source: 43872565 GrB.bfs  time:    8.379 visited: 63032893 depth:        7
+trial: 25 source: 80508828 GrB.bfs  time:    8.663 visited: 63032893 depth:        8
+trial: 26 source: 26105649 GrB.bfs  time:    8.635 visited: 63032893 depth:        8
+trial: 27 source:  8807517 GrB.bfs  time:    8.636 visited: 63032893 depth:        8
+trial: 28 source: 118452456 GrB.bfs  time:    8.295 visited: 63032893 depth:        7
+trial: 29 source: 121818860 GrB.bfs  time:    8.638 visited: 63032893 depth:        8
+trial: 30 source: 42361929 GrB.bfs  time:    8.514 visited: 63032893 depth:        8
+trial: 31 source: 29493054 GrB.bfs  time:    8.707 visited: 63032893 depth:        8
+trial: 32 source: 98461504 GrB.bfs  time:    8.618 visited: 63032893 depth:        8
+trial: 33 source: 71931338 GrB.bfs  time:    8.713 visited: 63032893 depth:        8
+trial: 34 source: 103808469 GrB.bfs  time:    8.614 visited: 63032893 depth:        8
+trial: 35 source:  4092346 GrB.bfs  time:    8.678 visited: 63032893 depth:        8
+trial: 36 source: 115276242 GrB.bfs  time:    8.596 visited: 63032893 depth:        8
+trial: 37 source:  4649344 GrB.bfs  time:    8.394 visited: 63032893 depth:        7
+trial: 38 source: 76656190 GrB.bfs  time:    8.721 visited: 63032893 depth:        8
+trial: 39 source: 31312002 GrB.bfs  time:    8.597 visited: 63032893 depth:        8
+trial: 40 source: 111334128 GrB.bfs  time:    8.310 visited: 63032893 depth:        7
+trial: 41 source: 100962919 GrB.bfs  time:    8.750 visited: 63032893 depth:        8
+trial: 42 source: 41823216 GrB.bfs  time:    8.724 visited: 63032893 depth:        8
+trial: 43 source: 22631241 GrB.bfs  time:    8.731 visited: 63032893 depth:        8
+trial: 44 source: 42848462 GrB.bfs  time:    8.976 visited: 63032893 depth:        9
+trial: 45 source: 79485149 GrB.bfs  time:    8.826 visited: 63032893 depth:        8
+trial: 46 source: 106818743 GrB.bfs  time:    8.596 visited: 63032893 depth:        8
+trial: 47 source: 73347975 GrB.bfs  time:    8.755 visited: 63032893 depth:        8
+trial: 48 source: 78848446 GrB.bfs  time:    8.611 visited: 63032893 depth:        8
+trial: 49 source: 109920511 GrB.bfs  time:    8.351 visited: 63032893 depth:        7
+trial: 50 source: 121492134 GrB.bfs  time:    8.755 visited: 63032893 depth:        8
+trial: 51 source: 101037297 GrB.bfs  time:    8.614 visited: 63032893 depth:        8
+trial: 52 source: 15438601 GrB.bfs  time:    8.657 visited: 63032893 depth:        8
+trial: 53 source:  4584785 GrB.bfs  time:    8.563 visited: 63032893 depth:        8
+trial: 54 source: 124503846 GrB.bfs  time:    9.058 visited: 63032893 depth:        9
+trial: 55 source: 87241744 GrB.bfs  time:    8.351 visited: 63032893 depth:        7
+trial: 56 source: 108297009 GrB.bfs  time:    8.748 visited: 63032893 depth:        8
+trial: 57 source: 33955083 GrB.bfs  time:    8.722 visited: 63032893 depth:        8
+trial: 58 source: 79934824 GrB.bfs  time:    8.453 visited: 63032893 depth:        7
+trial: 59 source:  8608482 GrB.bfs  time:    8.711 visited: 63032893 depth:        8
+trial: 60 source: 82435064 GrB.bfs  time:    8.622 visited: 63032893 depth:        8
+trial: 61 source: 46579272 GrB.bfs  time:    8.790 visited: 63032893 depth:        8
+trial: 62 source:   515422 GrB.bfs  time:    8.389 visited: 63032893 depth:        7
+trial: 63 source: 121530468 GrB.bfs  time:    8.788 visited: 63032893 depth:        8
+trial: 64 source: 127978737 GrB.bfs  time:    8.598 visited: 63032893 depth:        8
+avg GrB.bfs  time:  8.63614 (64 trials)
+
+Compare with built-in MATLAB bfs:
+trial:  1 source:  2338013 GrB.bfs  time:   94.393 visited: 63032893
+trial:  2 source: 31997660 GrB.bfs  time:   93.703 visited: 63032893
+trial:  3 source: 23590941 GrB.bfs  time:   94.794 visited: 63032893
+trial:  4 source: 43400605 GrB.bfs  time:   93.803 visited: 63032893
+trial:  5 source: 75337938 GrB.bfs  time:   94.062 visited: 63032893
+trial:  6 source:   169868 GrB.bfs  time:   93.646 visited: 63032893
+trial:  7 source: 104041221 GrB.bfs  time:   94.047 visited: 63032893
+trial:  8 source: 94177943 GrB.bfs  time:   93.950 visited: 63032893
+trial:  9 source: 32871358 GrB.bfs  time:   94.175 visited: 63032893
+trial: 10 source: 56230003 GrB.bfs  time:   93.867 visited: 63032893
+trial: 11 source: 69883038 GrB.bfs  time:   94.109 visited: 63032893
+trial: 12 source:  9346346 GrB.bfs  time:   93.817 visited: 63032893
+trial: 13 source: 48915359 GrB.bfs  time:   94.035 visited: 63032893
+trial: 14 source: 122571174 GrB.bfs  time:   93.807 visited: 63032893
+trial: 15 source:  6183280 GrB.bfs  time:   94.072 visited: 63032893
+trial: 16 source: 86323664 GrB.bfs  time:   93.971 visited: 63032893
+trial: 17 source: 106725781 GrB.bfs  time:   94.338 visited: 63032893
+trial: 18 source: 92389939 GrB.bfs  time:   93.695 visited: 63032893
+trial: 19 source: 16210739 GrB.bfs  time:   94.182 visited: 63032893
+trial: 20 source: 59816701 GrB.bfs  time:   93.683 visited: 63032893
+trial: 21 source: 111669930 GrB.bfs  time:   94.040 visited: 63032893
+trial: 22 source: 102831412 GrB.bfs  time:   92.299 visited: 63032893
+trial: 23 source: 113384801 GrB.bfs  time:   92.172 visited: 63032893
+trial: 24 source: 43872565 GrB.bfs  time:   91.876 visited: 63032893
+trial: 25 source: 80508828 GrB.bfs  time:   92.709 visited: 63032893
+trial: 26 source: 26105649 GrB.bfs  time:   91.810 visited: 63032893
+trial: 27 source:  8807517 GrB.bfs  time:   92.468 visited: 63032893
+trial: 28 source: 118452456 GrB.bfs  time:   92.282 visited: 63032893
+trial: 29 source: 121818860 GrB.bfs  time:   92.147 visited: 63032893
+trial: 30 source: 42361929 GrB.bfs  time:   91.832 visited: 63032893
+trial: 31 source: 29493054 GrB.bfs  time:   92.227 visited: 63032893
+trial: 32 source: 98461504 GrB.bfs  time:   91.924 visited: 63032893
+trial: 33 source: 71931338 GrB.bfs  time:   92.242 visited: 63032893
+trial: 34 source: 103808469 GrB.bfs  time:   91.890 visited: 63032893
+trial: 35 source:  4092346 GrB.bfs  time:   92.594 visited: 63032893
+trial: 36 source: 115276242 GrB.bfs  time:   91.793 visited: 63032893
+trial: 37 source:  4649344 GrB.bfs  time:   92.079 visited: 63032893
+trial: 38 source: 76656190 GrB.bfs  time:   91.838 visited: 63032893
+trial: 39 source: 31312002 GrB.bfs  time:   92.141 visited: 63032893
+trial: 40 source: 111334128 GrB.bfs  time:   91.877 visited: 63032893
+trial: 41 source: 100962919 GrB.bfs  time:   92.113 visited: 63032893
+trial: 42 source: 41823216 GrB.bfs  time:   91.835 visited: 63032893
+trial: 43 source: 22631241 GrB.bfs  time:   92.273 visited: 63032893
+trial: 44 source: 42848462 GrB.bfs  time:   91.877 visited: 63032893
+trial: 45 source: 79485149 GrB.bfs  time:   92.373 visited: 63032893
+trial: 46 source: 106818743 GrB.bfs  time:   91.794 visited: 63032893
+trial: 47 source: 73347975 GrB.bfs  time:   92.328 visited: 63032893
+trial: 48 source: 78848446 GrB.bfs  time:   92.337 visited: 63032893
+trial: 49 source: 109920511 GrB.bfs  time:   92.366 visited: 63032893
+trial: 50 source: 121492134 GrB.bfs  time:   91.862 visited: 63032893
+trial: 51 source: 101037297 GrB.bfs  time:   92.159 visited: 63032893
+trial: 52 source: 15438601 GrB.bfs  time:   91.867 visited: 63032893
+trial: 53 source:  4584785 GrB.bfs  time:   92.098 visited: 63032893
+trial: 54 source: 124503846 GrB.bfs  time:   94.521 visited: 63032893
+trial: 55 source: 87241744 GrB.bfs  time:   95.340 visited: 63032893
+trial: 56 source: 108297009 GrB.bfs  time:   94.955 visited: 63032893
+trial: 57 source: 33955083 GrB.bfs  time:   95.283 visited: 63032893
+trial: 58 source: 79934824 GrB.bfs  time:   94.850 visited: 63032893
+trial: 59 source:  8608482 GrB.bfs  time:   95.249 visited: 63032893
+trial: 60 source: 82435064 GrB.bfs  time:   95.342 visited: 63032893
+trial: 61 source: 46579272 GrB.bfs  time:   94.289 visited: 63032893
+trial: 62 source:   515422 GrB.bfs  time:   94.090 visited: 63032893
+trial: 63 source: 121530468 GrB.bfs  time:   94.448 visited: 63032893
+trial: 64 source: 127978737 GrB.bfs  time:   93.897 visited: 63032893
+avg bfsearch time:  93.1865 (64 trials)
+
+GAP/GAP-urand: nodes: 134.218 million  nvals: 4294.97 million
+load time: 399.925 sec
+
+GrB.bfs  tests:
+trial:  1 source: 27691420 GrB.bfs  time:   11.282 visited: 134217728 depth:        8
+trial:  2 source: 121280315 GrB.bfs  time:   11.071 visited: 134217728 depth:        8
+trial:  3 source:  2413432 GrB.bfs  time:   11.175 visited: 134217728 depth:        8
+trial:  4 source: 37512114 GrB.bfs  time:   11.177 visited: 134217728 depth:        8
+trial:  5 source: 38390878 GrB.bfs  time:   11.177 visited: 134217728 depth:        8
+trial:  6 source: 56651038 GrB.bfs  time:   11.136 visited: 134217728 depth:        8
+trial:  7 source: 128461249 GrB.bfs  time:   11.137 visited: 134217728 depth:        8
+trial:  8 source: 33029843 GrB.bfs  time:   11.174 visited: 134217728 depth:        8
+trial:  9 source: 71406329 GrB.bfs  time:   11.156 visited: 134217728 depth:        8
+trial: 10 source: 117872828 GrB.bfs  time:   11.441 visited: 134217728 depth:        8
+trial: 11 source: 24351939 GrB.bfs  time:   11.508 visited: 134217728 depth:        8
+trial: 12 source: 15444520 GrB.bfs  time:   11.599 visited: 134217728 depth:        8
+trial: 13 source: 127526282 GrB.bfs  time:   11.223 visited: 134217728 depth:        8
+trial: 14 source: 112279429 GrB.bfs  time:   11.195 visited: 134217728 depth:        8
+trial: 15 source: 13631650 GrB.bfs  time:   11.207 visited: 134217728 depth:        8
+trial: 16 source: 110379303 GrB.bfs  time:   11.173 visited: 134217728 depth:        8
+trial: 17 source: 44800624 GrB.bfs  time:   11.202 visited: 134217728 depth:        8
+trial: 18 source: 77768194 GrB.bfs  time:   11.160 visited: 134217728 depth:        8
+trial: 19 source:   175348 GrB.bfs  time:   11.069 visited: 134217728 depth:        8
+trial: 20 source: 107397390 GrB.bfs  time:   11.107 visited: 134217728 depth:        8
+trial: 21 source: 43457210 GrB.bfs  time:   11.085 visited: 134217728 depth:        8
+trial: 22 source: 97215941 GrB.bfs  time:   11.090 visited: 134217728 depth:        8
+trial: 23 source: 73575166 GrB.bfs  time:   11.117 visited: 134217728 depth:        8
+trial: 24 source: 44449716 GrB.bfs  time:   11.093 visi

@@ -107,7 +107,7 @@ else
             % number of non-empty rows/cols
             % e = GrB.entries (A, 'row')
             % e = GrB.entries (A, 'col')
-            result = GrB.entries (degree) ;
+            result = nnz (degree) ;
         case 'list'
             % list of non-empty rows/cols
             % I = GrB.entries (A, 'row', 'list')

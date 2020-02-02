@@ -14,11 +14,11 @@ matrices = { 'HB/west0067', 'LAW/indochina-2004' } ;
 
 % the GAP test matrices:
 matrices = {
-    'GAP/GAP-road'
-    'GAP/GAP-web'
-    'GAP/GAP-twitter'
     'GAP/GAP-kron'
     'GAP/GAP-urand'
+    'GAP/GAP-twitter'
+    'GAP/GAP-web'
+    'GAP/GAP-road'
     } ;
 
 [status, result] = system ('hostname') ;

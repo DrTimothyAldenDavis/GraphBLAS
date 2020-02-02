@@ -29,7 +29,7 @@ static GrB_Info GB_dc
     GrB_Info info = GrB_SUCCESS ;
 
     GBPR0 ("    d.%s = ", field) ;
-    switch (v)
+    switch ((int) v)
     {
         case GxB_DEFAULT       : GBPR0 ("default   ") ; break ;
         case GrB_COMP               : GBPR0 ("complement") ; break ;
@@ -39,6 +39,7 @@ static GrB_Info GB_dc
         case GrB_REPLACE       : GBPR0 ("replace   ") ; break ;
         case GxB_AxB_GUSTAVSON : GBPR0 ("Gustavson ") ; break ;
         case GxB_AxB_HEAP      : GBPR0 ("heap      ") ; break ;
+        case GxB_AxB_HASH      : GBPR0 ("hash      ") ; break ;
         case GxB_AxB_DOT       : GBPR0 ("dot       ") ; break ;
         default                : GBPR0 ("unknown   ") ;
             info = GrB_INVALID_OBJECT ;

@@ -70,7 +70,7 @@ static void get_descriptor
             { 
                 OK (GxB_Desc_set (D, field, GrB_COMP)) ;
             }
-            else if (MATCH (s, "structure"))
+            else if (MATCH (s, "structure") || MATCH (s, "structural"))
             { 
                 OK (GxB_Desc_set (D, field, GrB_STRUCTURE)) ;
             }
@@ -93,6 +93,10 @@ static void get_descriptor
             else if (MATCH (s, "heap"))
             { 
                 OK (GxB_Desc_set (D, field, GxB_AxB_HEAP)) ;
+            }
+            else if (MATCH (s, "hash"))
+            { 
+                OK (GxB_Desc_set (D, field, GxB_AxB_HASH)) ;
             }
             else
             { 

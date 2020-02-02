@@ -926,8 +926,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   +   -   S       19:  C(I,J)<!M,repl> += x, with S
         //  M   c   r   +   A   S       20:  C(I,J)<!M,repl> += A, with S
 
-        // TODO: C<C,s> = x      C == M, replace all values, C_replace ignored
-        // TODO: C<C,s> += x     C == M, update all values, C_replace ignored
+        // TODO: C<C,s> = x     C == M, replace all values, C_replace ignored
+        // TODO: C<C,s> += x    C == M, update all values, C_replace ignored
+        // TODO: C<C,s> = A     C == M, A dense, C_replace ignored
 
     // For the single case C(I,J)<M>=A, two methods can be used: 06n and 06s.
 
