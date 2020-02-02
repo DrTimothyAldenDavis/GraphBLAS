@@ -114,8 +114,6 @@ void GB_merge_parallel_3                // parallel merge
     // find where the Pivot appears in the smaller list
     //--------------------------------------------------------------------------
 
-    // This is like GB_BINARY_TRIM_SEARCH, but applied to a 3-by-n array.
-
     // binary search of Smaller [0..nsmaller-1] for the Pivot
 
     long pleft = 0, pright = nsmaller-1 ;

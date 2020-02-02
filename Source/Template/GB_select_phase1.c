@@ -82,7 +82,7 @@
             { 
                 // binary search for A (i,k)
                 int64_t pright = pA_end - 1 ;
-                GB_BINARY_SPLIT_SEARCH (i, Ai, p, pright, found) ;
+                GB_SPLIT_BINARY_SEARCH (i, Ai, p, pright, found) ;
             }
 
             #if defined ( GB_TRIL_SELECTOR )

@@ -258,7 +258,7 @@ GrB_Info GB_wait                // finish all pending computations
         int64_t pright = A->nvec - 1 ;
         bool found ;
         int64_t *GB_RESTRICT Ah = A->h ;
-        GB_BINARY_SPLIT_SEARCH (tjfirst, Ah, kA, pright, found) ;
+        GB_SPLIT_BINARY_SEARCH (tjfirst, Ah, kA, pright, found) ;
         // Ah [0 ... kA-1] excludes vector tjfirst.  The list
         // Ah [kA ... A->nvec-1] includes tjfirst.
         ASSERT (kA >= 0 && kA <= A->nvec) ;

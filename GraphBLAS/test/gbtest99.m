@@ -1,8 +1,12 @@
-function gbtest99
+function gbtest99 (doplots)
 %GBTEST99 test GrB.bfs
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+if (nargin < 1)
+    doplots = true ;
+end
 
 save_threads = GrB.threads ;
 save_chunk   = GrB.chunk ;
@@ -33,15 +37,17 @@ source = 1 ;
 A = sparse (ij (:,1), ij (:,2), ones (12,1), 8, 8) ;
 
 formats = { 'by row', 'by col' } ;
-figure (1) ;
-clf ;
+if (doplots)
+    figure (1) ;
+    clf ;
+end
 
 for k1 = 1:2
     fmt = formats {k1} ;
 
     A = GrB (A, fmt) ;
     H = GrB (A, 'logical', fmt) ;
-    if (k1 == 1)
+    if (k1 == 1 && doplots)
         subplot (1,2,1) ;
         plot (digraph (A)) ;
     end
@@ -50,13 +56,22 @@ for k1 = 1:2
     [v pi] = GrB.bfs (H, source) ;
     assert (isequal (v, v1)) ;
 
-    v
     vok = [1 2 3 2 3 4 3 0] ;
     assert (isequal (full (double (v)), vok)) ;
 
-    pi
-    piok = [1 1 4 1 2 3 2 0] ;
-    assert (isequal (full (double (pi)), piok)) ;
+    % there are 2 valid trees, and GrB.bfs can return either one
+    piok1 = [1 1 4 1 2 3 2 0] ;
+    piok2 = [1 1 4 1 2 5 2 0] ;
+    ok1 = isequal (full (double (pi)), piok1) ;
+    ok2 = isequal (full (double (pi)), piok2) ;
+    if (ok1)
+        % this tree is more commonly found
+        % fprintf ('.') ;
+    end
+    if (ok2)
+        % fprintf ('#') ;
+    end
+    assert (ok1 || ok2) ;
 
     G = digraph (H) ;
     v2 = bfsearch (G, source) ;
@@ -66,24 +81,58 @@ for k1 = 1:2
 
     [v pi] = GrB.bfs (H, source, 'directed') ;
     assert (isequal (full (double (v)), vok)) ;
-    assert (isequal (full (double (pi)), piok)) ;
+
+    ok1 = isequal (full (double (pi)), piok1) ;
+    ok2 = isequal (full (double (pi)), piok2) ;
+    if (ok1)
+        % this tree is more commonly found
+        % fprintf ('+') ;
+    end
+    if (ok2)
+        % this is also valid
+        % fprintf ('-') ;
+    end
+    assert (ok1 || ok2) ;
 
     [v pi] = GrB.bfs (H, source, 'directed', 'check') ;
     assert (isequal (full (double (v)), vok)) ;
-    assert (isequal (full (double (pi)), piok)) ;
+
+    ok1 = isequal (full (double (pi)), piok1) ;
+    ok2 = isequal (full (double (pi)), piok2) ;
+    if (ok1)
+        % this tree is more commonly found
+        % fprintf ('\\') ;
+    end
+    if (ok2)
+        % this is also valid
+        % fprintf ('/') ;
+    end
+    assert (ok1 || ok2) ;
 
 end
 
 A = A+A' ;
 [v pi] = GrB.bfs (A, 2, 'undirected') ;
-subplot (1,2,2) ;
-plot (graph (A))
-v
+if (doplots)
+    subplot (1,2,2) ;
+    plot (graph (A))
+end
 vok = [2 1 3 3 2 3 2 0] ;
 assert (isequal (full (double (v)), vok)) ;
-pi
-piok = [2 2 7 1 2 5 2 0] ;
-assert (isequal (full (double (pi)), piok)) ;
+% two valid trees:
+piok1 = [2 2 7 1 2 5 2 0] ;
+piok2 = [2 2 7 7 2 5 2 0] ;
+
+    ok1 = isequal (full (double (pi)), piok1) ;
+    ok2 = isequal (full (double (pi)), piok2) ;
+    if (ok1)
+        % this tree is more commonly found
+        % fprintf ('@') ;
+    end
+    if (ok2)
+        % fprintf ('_') ;
+    end
+    assert (ok1 || ok2) ;
 
 GrB.threads (save_threads) ;
 GrB.chunk (save_chunk) ;

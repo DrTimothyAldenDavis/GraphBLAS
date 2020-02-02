@@ -65,7 +65,7 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
             // just pick what the binary search comes up with.
             int64_t wtask = ((taskid * work) / (double) ntasks) ;
             int64_t pright = n ;
-            GB_BINARY_TRIM_SEARCH (wtask, Ap, k, pright) ;
+            GB_TRIM_BINARY_SEARCH (wtask, Ap, k, pright) ;
             Slice [taskid] = k ;
         }
     }

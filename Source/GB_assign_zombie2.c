@@ -60,7 +60,8 @@ void GB_assign_zombie2
             int64_t pC_end = Cp [k+1] ;
             int64_t pright = pC_end - 1 ;
             bool found, is_zombie ;
-            GB_BINARY_ZOMBIE (i, Ci, pC, pright, found, zorig, is_zombie) ;
+            GB_BINARY_SEARCH_ZOMBIE (i, Ci, pC, pright, found, zorig,
+                is_zombie) ;
 
             //------------------------------------------------------------------
             // if found and not a zombie, mark it as a zombie

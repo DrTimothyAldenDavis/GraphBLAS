@@ -2697,7 +2697,7 @@ GB_PUBLIC mtx_t GB_sync ;
 // The list X [pleft ... pright] is in ascending order.  It may have
 // duplicates.
 
-#define GB_BINARY_TRIM_SEARCH(i,X,pleft,pright)                             \
+#define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
     while (pleft < pright)                                                  \
@@ -2728,11 +2728,11 @@ GB_PUBLIC mtx_t GB_sync ;
 // The value X [pleft] may be either < or > i.
 #define GB_BINARY_SEARCH(i,X,pleft,pright,found)                            \
 {                                                                           \
-    GB_BINARY_TRIM_SEARCH (i, X, pleft, pright) ;                           \
+    GB_TRIM_BINARY_SEARCH (i, X, pleft, pright) ;                           \
     found = (pleft == pright && X [pleft] == i) ;                           \
 }
 
-// GB_BINARY_SPLIT_SEARCH
+// GB_SPLIT_BINARY_SEARCH
 // If found is true then X [pleft] == i.  If duplicates appear then X [pleft]
 //    is any one of the entries with value i in the list.
 // If found is false then
@@ -2741,7 +2741,7 @@ GB_PUBLIC mtx_t GB_sync ;
 // If X has no duplicates, then whether or not i is found,
 //    X [original_pleft ... pleft-1] < i and
 //    X [pleft ... original_pright] >= i holds.
-#define GB_BINARY_SPLIT_SEARCH(i,X,pleft,pright,found)                      \
+#define GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
 {                                                                           \
     GB_BINARY_SEARCH (i, X, pleft, pright, found)                           \
     if (!found && (pleft == pright))                                        \
@@ -2758,10 +2758,10 @@ GB_PUBLIC mtx_t GB_sync ;
 }
 
 //------------------------------------------------------------------------------
-// GB_BINARY_ZOMBIE
+// binary search in the presence of zombies
 //------------------------------------------------------------------------------
 
-#define GB_BINARY_TRIM_ZOMBIE(i,X,pleft,pright)                             \
+#define GB_TRIM_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright)                      \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
     while (pleft < pright)                                                  \
@@ -2783,11 +2783,11 @@ GB_PUBLIC mtx_t GB_sync ;
     ASSERT (pleft == pright || pleft == pright + 1) ;                       \
 }
 
-#define GB_BINARY_ZOMBIE(i,X,pleft,pright,found,nzombies,is_zombie)         \
+#define GB_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,nzombies,is_zombie)  \
 {                                                                           \
     if (nzombies > 0)                                                       \
     {                                                                       \
-        GB_BINARY_TRIM_ZOMBIE (i, X, pleft, pright) ;                       \
+        GB_TRIM_BINARY_SEARCH_ZOMBIE (i, X, pleft, pright) ;                \
         found = false ;                                                     \
         is_zombie = false ;                                                 \
         if (pleft == pright)                                                \
@@ -2808,11 +2808,11 @@ GB_PUBLIC mtx_t GB_sync ;
     }                                                                       \
 }
 
-#define GB_BINARY_SPLIT_ZOMBIE(i,X,pleft,pright,found,nzombies,is_zombie)   \
+#define GB_SPLIT_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,nzom,is_zombie) \
 {                                                                           \
-    if (nzombies > 0)                                                       \
+    if (nzom > 0)                                                           \
     {                                                                       \
-        GB_BINARY_TRIM_ZOMBIE (i, X, pleft, pright) ;                       \
+        GB_TRIM_BINARY_SEARCH_ZOMBIE (i, X, pleft, pright) ;                \
         found = false ;                                                     \
         is_zombie = false ;                                                 \
         if (pleft == pright)                                                \
@@ -2840,7 +2840,7 @@ GB_PUBLIC mtx_t GB_sync ;
     else                                                                    \
     {                                                                       \
         is_zombie = false ;                                                 \
-        GB_BINARY_SPLIT_SEARCH(i,X,pleft,pright,found)                      \
+        GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
     }                                                                       \
 }
 

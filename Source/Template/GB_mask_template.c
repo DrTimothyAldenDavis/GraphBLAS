@@ -392,11 +392,11 @@
 
                     else
                     {
-                        // Use GB_BINARY_SPLIT_SEARCH so that pM can be used in
+                        // Use GB_SPLIT_BINARY_SEARCH so that pM can be used in
                         // the for loop with index pM in the wrapup phase.
                         int64_t pright = pM_end - 1 ;
                         bool found ;
-                        GB_BINARY_SPLIT_SEARCH (i, Mi, pM, pright, found) ;
+                        GB_SPLIT_BINARY_SEARCH (i, Mi, pM, pright, found) ;
                         if (found)
                         {
                             ASSERT (i == Mi [pM]) ;

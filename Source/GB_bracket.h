@@ -38,7 +38,7 @@ static inline void GB_bracket_left
         // search for imin in X [kleft:kright]
         int64_t pleft = (*kleft) ;
         int64_t pright = kright ;
-        GB_BINARY_TRIM_SEARCH (imin, X, pleft, pright) ;
+        GB_TRIM_BINARY_SEARCH (imin, X, pleft, pright) ;
         (*kleft) = pleft ;
     }
 }
@@ -67,7 +67,7 @@ static inline void GB_bracket_right
         // search for imax in X [kleft:kright]
         int64_t pleft = kleft ;
         int64_t pright = (*kright) ;
-        GB_BINARY_TRIM_SEARCH (imax, X, pleft, pright) ;
+        GB_TRIM_BINARY_SEARCH (imax, X, pleft, pright) ;
         (*kright) = pleft ;
     }
 }

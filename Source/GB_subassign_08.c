@@ -208,6 +208,7 @@ GrB_Info GB_subassign_08
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
+                        // TODO exploit dense A(:,j)
                         GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
                         if (found) GB_PHASE1_ACTION ;
                     }
@@ -342,6 +343,7 @@ GrB_Info GB_subassign_08
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
+                        // TODO exploit dense A(:,j)
                         GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
                         if (found) GB_PHASE2_ACTION ;
                     }

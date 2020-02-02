@@ -473,6 +473,7 @@
 
                     int64_t apright = pA_end - 1 ;
                     bool afound ;
+                    // TODO do not do binary search if A(:,j) is dense
                     GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
                     if (!afound) continue ;
 
@@ -482,6 +483,7 @@
 
                     int64_t bpright = pB_end - 1 ;
                     bool bfound ;
+                    // TODO do not do binary search if B(:,j) is dense
                     GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
                     if (!bfound) continue ;
 

@@ -94,7 +94,8 @@ void GB_assign_zombie4
                 int64_t pZ_end = Zp [k+1] ;
                 int64_t pright = pZ_end - 1 ;
                 bool found, is_zombie ;
-                GB_BINARY_ZOMBIE (i, Zi, pZ, pright, found, zorig, is_zombie) ;
+                GB_BINARY_SEARCH_ZOMBIE (i, Zi, pZ, pright, found, zorig,
+                    is_zombie) ;
 
                 //--------------------------------------------------------------
                 // delete Z(i,j) if found, not a zombie, and M(0,j) allows it

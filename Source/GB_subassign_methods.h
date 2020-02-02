@@ -223,7 +223,8 @@
         int64_t pC = pC_start ;                                             \
         int64_t pright = pC_end - 1 ;                                       \
         bool cij_found, is_zombie ;                                         \
-        GB_BINARY_ZOMBIE (iC, Ci, pC, pright, cij_found, zorig, is_zombie) ;
+        GB_BINARY_SEARCH_ZOMBIE (iC, Ci, pC, pright, cij_found, zorig,      \
+            is_zombie) ;
 
     //--------------------------------------------------------------------------
     // for a 2-way or 3-way merge
@@ -1594,7 +1595,7 @@ GrB_Info GB_subassign_20
 // GB_SUBASSIGN_EMULT_SLICE: slice A.*M (just Method 08)
 //------------------------------------------------------------------------------
 
-// Method 08 only.  If C is dense, it is sliced for a fine task, so that
+// Method 08 only.  If C is sparse, it is sliced for a fine task, so that
 // it can do a binary search via GB_iC_BINARY_SEARCH.  But if C(:,jC) is dense,
 // C(:,jC) is not sliced, so the fine task must do a direct lookup via
 // GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
@@ -1833,12 +1834,14 @@ GrB_Info GB_subassign_emult_slice
     {                                                                       \
         int64_t pright = p ## X ## _end - 1 ;                               \
         bool found ;                                                        \
-        GB_BINARY_SPLIT_SEARCH (iA_start, X ## i, p ## X, pright, found) ;  \
+        GB_SPLIT_BINARY_SEARCH (iA_start, X ## i, p ## X, pright, found) ;  \
     }
 
 //------------------------------------------------------------------------------
 // GB_MIJ_BINARY_SEARCH
 //------------------------------------------------------------------------------
+
+// TODO: if M(:,j) is dense, do not use binary search
 
 // mij = M(iA,j)
 

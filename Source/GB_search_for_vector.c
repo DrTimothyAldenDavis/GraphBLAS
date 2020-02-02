@@ -34,7 +34,7 @@ int64_t GB_search_for_vector        // return the vector k that contains p
     int64_t k = kleft ;
     int64_t kright = anvec ;
     bool found ;
-    GB_BINARY_SPLIT_SEARCH (p, Ap, k, kright, found) ;
+    GB_SPLIT_BINARY_SEARCH (p, Ap, k, kright, found) ;
     if (found)
     {
         // Ap [k] == p has been found, but if k is an empty vector, then the

@@ -83,8 +83,8 @@ static inline void GB_find_Ap_start_end
         { 
             bool found, is_zombie ;
             int64_t pright = pA_end - 1 ;
-            GB_BINARY_SPLIT_ZOMBIE (imin, Ai, pA, pright, found, nzombies,
-                is_zombie) ;
+            GB_SPLIT_BINARY_SEARCH_ZOMBIE (imin, Ai,
+                pA, pright, found, nzombies, is_zombie) ;
         }
 
         // trim the trailing part of A (:,kA)
@@ -107,8 +107,8 @@ static inline void GB_find_Ap_start_end
             bool found, is_zombie ;
             int64_t pleft = pA ;
             int64_t pright = pA_end - 1 ;
-            GB_BINARY_SPLIT_ZOMBIE (imax, Ai, pleft, pright, found, nzombies,
-                is_zombie) ;
+            GB_SPLIT_BINARY_SEARCH_ZOMBIE (imax, Ai,
+                pleft, pright, found, nzombies, is_zombie) ;
             pA_end = (found) ? (pleft + 1) : pleft ;
         }
 
@@ -278,7 +278,7 @@ GrB_Info GB_subref_phase0
             bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            GB_BINARY_SPLIT_SEARCH (jmin, Ah, kleft, kright, found) ;
+            GB_SPLIT_BINARY_SEARCH (jmin, Ah, kleft, kright, found) ;
             Ah += kleft ;
             Ap += kleft ;
             anvec -= kleft ;
@@ -293,7 +293,7 @@ GrB_Info GB_subref_phase0
             bool found ;
             int64_t kleft = 0 ;
             int64_t kright = anvec-1 ;
-            GB_BINARY_SPLIT_SEARCH (jmax, Ah, kleft, kright, found) ;
+            GB_SPLIT_BINARY_SEARCH (jmax, Ah, kleft, kright, found) ;
             anvec = (found) ? (kleft + 1) : kleft ;
         }
 

@@ -313,14 +313,14 @@ GrB_Info GB_subassign_one_slice
                         int64_t pleft = pC_start ;
                         int64_t pright = pC_end - 1 ;
                         bool found, is_zombie ;
-                        GB_BINARY_SPLIT_ZOMBIE (iC_start, Ci, pleft, pright,
-                            found, nzombies, is_zombie) ;
+                        GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_start, Ci,
+                            pleft, pright, found, nzombies, is_zombie) ;
                         TaskList [ntasks].pC = pleft ;
 
                         pleft = pC_start ;
                         pright = pC_end - 1 ;
-                        GB_BINARY_SPLIT_ZOMBIE (iC_end, Ci, pleft, pright,
-                            found, nzombies, is_zombie) ;
+                        GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_end, Ci,
+                            pleft, pright, found, nzombies, is_zombie) ;
                         TaskList [ntasks].pC_end = (found) ? (pleft+1) : pleft ;
                     }
 

@@ -163,6 +163,8 @@ GrB_Info GB_subassign_05
                     if (GB_mcast (Mx, pM, msize))
                     {
                         int64_t iA = Mi [pM] ;
+
+                        // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
                         if (cij_found)
                         { 
@@ -247,6 +249,8 @@ GrB_Info GB_subassign_05
                     if (GB_mcast (Mx, pM, msize))
                     {
                         int64_t iA = Mi [pM] ;
+
+                        // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
                         if (!cij_found)
                         { 
