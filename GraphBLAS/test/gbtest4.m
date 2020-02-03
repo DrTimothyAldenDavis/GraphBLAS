@@ -1,8 +1,11 @@
 function gbtest4
-%GBTEST4 list all 1918 possible semirings
-% This count excludes operator synonyms
+%GBTEST4 list all 2204 possible semirings
+% This count excludes operator synonyms ('1st' and 'first', for example), but
+% it does include identical semirings with operators of different names.  For
+% example, the spec has many boolean operators with different names but they
+% compute the same thing.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 types = gbtest_types ;
@@ -38,7 +41,7 @@ for k1 = 1:length (ops)
 end
 
 nsemirings
-assert (nsemirings == 2204) ;   % TODO check this
+assert (nsemirings == 2204) ;
 GrB.semiringinfo
 
 fprintf ('\ngbtest4: all tests passed\n') ;

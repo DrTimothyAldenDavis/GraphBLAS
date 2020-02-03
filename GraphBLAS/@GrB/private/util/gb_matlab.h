@@ -450,5 +450,11 @@ void gb_get_mxargs
 
 int64_t gb_norm_kind (const mxArray *arg) ;
 
+double gb_norm              // compute norm (A,kind)
+(
+    GrB_Matrix A,
+    int64_t norm_kind       // 0, 1, 2, INT64_MAX, or INT64_MIN
+) ;
+
 #endif
 

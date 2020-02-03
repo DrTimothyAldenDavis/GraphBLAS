@@ -88,8 +88,8 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     else
     {
         // create tasks to compute over the matrix A
-        if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice,
-            A, ntasks))
+        if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A,
+            ntasks))
         {
             // out of memory
             return (GB_OUT_OF_MEMORY) ;

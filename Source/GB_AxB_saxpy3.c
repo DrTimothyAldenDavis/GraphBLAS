@@ -55,9 +55,6 @@
 // method is used instead, and the hash table size is set to m, to serve as
 // the gather/scatter workspace for Gustavson's method.
 
-// TODO m/16 may be too low; try other default values.
-// TODO give the user control over the 1/16 parameter.
-
 // The workspace allocated depends on the type of task.  Let s be the hash
 // table size for the task, and C is m-by-n (assuming all matrices are CSC; if
 // CSR, then m is replaced with n).
@@ -154,12 +151,12 @@ static inline int64_t GB_hash_table_size
     double hlog = log2 ((double) flmax) ;
     int64_t hash_size = ((int64_t) 2) << ((int64_t) floor (hlog) + 1) ;
     // use Gustavson's method if hash_size is too big
-    // TODO n/16 might be too big.  Use a parameter, and allow it to be
-    // controlled by the user.  Select Gustavson if hash_size >= cvlen*alpha.
+    // TODO n/16 might be too big.  Use a parameter, and give user control.
+    // Select Gustavson if hash_size >= cvlen*alpha.
     // Limit alpha to between 0 and 1.
     // alpha=0 means always use Gustavson.
     // alpha=1 means always use Hash, unless the hash size is >= cvlen.
-    bool use_Gustavson = (hash_size >= cvlen/16) ;  // TODO use alpha param
+    bool use_Gustavson = (hash_size >= cvlen/16) ;
     if (use_Gustavson)
     {
         hash_size = cvlen ;
@@ -198,12 +195,17 @@ static inline void GB_create_coarse_task
         flmax = GB_IMAX (flmax, fl) ;
     }
     // define the coarse task
-    TaskList [taskid].start  = kfirst ;
-    TaskList [taskid].end    = klast ;
-    TaskList [taskid].vector = -1 ;
-    TaskList [taskid].master = taskid ;
-    TaskList [taskid].hsize  = GB_hash_table_size (flmax, cvlen) ;
-    TaskList [taskid].flops  = Bflops [klast+1] - Bflops [kfirst] ;
+    TaskList [taskid].start   = kfirst ;
+    TaskList [taskid].end     = klast ;
+    TaskList [taskid].vector  = -1 ;
+    TaskList [taskid].hsize   = GB_hash_table_size (flmax, cvlen) ;
+    TaskList [taskid].Hi      = NULL ;      // assigned later
+    TaskList [taskid].Hf      = NULL ;      // assigned later
+    TaskList [taskid].Hx      = NULL ;      // assigned later
+    TaskList [taskid].my_cjnz = 0 ;         // unused
+    TaskList [taskid].flops   = Bflops [klast+1] - Bflops [kfirst] ;
+    TaskList [taskid].master  = taskid ;
+    TaskList [taskid].team_size = 1 ;
 }
 
 //------------------------------------------------------------------------------
@@ -327,7 +329,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t *GB_RESTRICT Bi = B->i ;
     const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
-    // const int64_t bnz = GB_NNZ (B) ;
+    const int64_t bnz = GB_NNZ (B) ;
     const int64_t bnvec = B->nvec ;
     const bool B_is_hyper = B->is_hyper ;
 
@@ -358,8 +360,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GB_FREE_ALL ;
         return (info) ;
     }
-
-    // TODO do not allocate C->h until the very end, in GB_hypermatrix_prune
 
     GrB_Matrix C = (*Chandle) ;
 
@@ -455,17 +455,10 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // determine # of threads and # of initial coarse tasks
     //--------------------------------------------------------------------------
 
-    // TODO one thread generates multiple tasks so that fine tasks are used
-    // instead of one coarse Gustavson task, for mxv and vxm.  Rework this
-    // so that a single fine task is used instead.
-
     int nthreads = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
-    // draft16:
     ntasks_initial = (nthreads == 1) ?  1 : (GB_NTASKS_PER_THREAD * nthreads) ;
-    // draft18:
-    ntasks_initial = (nthreads == 1) ?  4 : (GB_NTASKS_PER_THREAD * nthreads) ;
-//     ntasks_initial = (GB_NTASKS_PER_THREAD * nthreads) ;
-    // printf ("ntasks initial: %d\n", ntasks_initial) ;
+// draft18-25:
+//  ntasks_initial = (nthreads == 1) ?  4 : (GB_NTASKS_PER_THREAD * nthreads) ;
 
     double target_task_size = ((double) total_flops) / ntasks_initial ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
@@ -490,7 +483,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         //----------------------------------------------------------------------
 
         if (!GB_pslice (&Coarse_initial, Bflops, bnvec, ntasks_initial))
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GB_OUT_OF_MEMORY) ;
@@ -509,7 +502,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
 
             if (task_ncols == 0)
-            {
+            { 
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
             }
@@ -534,7 +527,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // A*B(:,j) is costly; split it into 2 or more fine
                         // tasks.  First flush the prior coarse task, if any.
                         if (kcoarse_start < kk)
-                        {
+                        { 
                             // vectors kcoarse_start to kk-1 form a single
                             // coarse task
                             ncoarse++ ;
@@ -552,7 +545,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
                 // flush the last coarse task, if any
                 if (kcoarse_start < klast)
-                {
+                { 
                     // vectors kcoarse_start to klast-1 form a single
                     // coarse task
                     ncoarse++ ;
@@ -560,7 +553,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
             }
             else
-            {
+            { 
                 // This coarse task is OK as-is.
                 ncoarse++ ;
             }
@@ -570,11 +563,22 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     {
 
         //----------------------------------------------------------------------
-        // entire computation in a single coarse task
+        // entire computation in a single fine or coarse task
         //----------------------------------------------------------------------
 
-        nfine = 0 ;
-        ncoarse = 1 ;
+        if (bnvec == 1)
+        { 
+            // If B is a single vector, and is computed by a single thread,
+            // then a single fine task is used.
+            nfine = 1 ;
+            ncoarse = 0 ;
+        }
+        else
+        { 
+            // One thread uses a single coarse task if B is not a vector.
+            nfine = 0 ;
+            ncoarse = 1 ;
+        }
     }
 
     ntasks = ncoarse + nfine ;
@@ -585,7 +589,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_CALLOC_MEMORY (TaskList, ntasks, sizeof (GB_saxpy3task_struct)) ;
     if (max_bjnz > 0)
-    {
+    { 
         // also allocate workspace to construct fine tasks
         GB_MALLOC_MEMORY (Fine_slice, ntasks+1, sizeof (int64_t)) ;
         GB_MALLOC_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;
@@ -593,7 +597,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     if (TaskList == NULL ||
         (max_bjnz > 0 && (Fine_slice == NULL || Bflops2 == NULL)))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
@@ -622,7 +626,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             int64_t task_flops = Bflops [klast] - Bflops [kfirst] ;
 
             if (task_ncols == 0)
-            {
+            { 
                 // This coarse task is empty, having been squeezed out by
                 // costly vectors in adjacent coarse tasks.
             }
@@ -646,7 +650,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // A*B(:,j) is costly; split it into 2 or more fine
                         // tasks.  First flush the prior coarse task, if any.
                         if (kcoarse_start < kk)
-                        {
+                        { 
                             // kcoarse_start:kk-1 form a single coarse task
                             GB_create_coarse_task (kcoarse_start, kk-1,
                                 TaskList, nc++, Bflops, cvlen,
@@ -659,7 +663,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // get the mask M(:,j), for C<M>=A*B
                         int64_t im_first = -1, im_last = -1 ;
                         if (mask_is_M)
-                        {
+                        { 
                             int64_t j = (Bh == NULL) ? kk : Bh [kk] ;
                             int64_t mpleft = 0 ;
                             int64_t mpright = mnvec-1 ;
@@ -673,7 +677,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             // Thus mjnz > 0 must hold.
                             ASSERT (mjnz > 0) ;
                             if (mjnz > 0)   // but check any, just to be safe
-                            {
+                            { 
                                 im_first = Mi [pM] ;
                                 im_last  = Mi [pM_end-1] ;
                             }
@@ -700,7 +704,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                                 &pA, &pA_end) ;
                             int64_t fl = pA_end - pA ;
                             if (mask_is_M && fl > 0)
-                            {
+                            { 
                                 // no work if A(:,k) and M(:,j) disjoint
                                 int64_t alo = Ai [pA] ;      // get first A(:,k)
                                 int64_t ahi = Ai [pA_end-1] ;// get last A(:,k)
@@ -724,7 +728,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // construct the fine tasks for C(:,j)=A*B(:,j)
                         int master = nf ;
                         for (int fid = 0 ; fid < team_size ; fid++)
-                        {
+                        { 
                             int64_t pstart = Fine_slice [fid] ;
                             int64_t pend   = Fine_slice [fid+1] ;
                             int64_t fl = Bflops2 [pend] - Bflops2 [pstart] ;
@@ -732,9 +736,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             TaskList [nf].end    = pB_start + pend - 1 ;
                             TaskList [nf].vector = kk ;
                             TaskList [nf].hsize  = hsize ;
+                            TaskList [nf].Hi = NULL ;   // assigned later
+                            TaskList [nf].Hf = NULL ;   // assigned later
+                            TaskList [nf].Hx = NULL ;   // assigned later
+                            TaskList [nf].my_cjnz = 0 ;
+                            TaskList [nf].flops = fl ;
                             TaskList [nf].master = master ;
                             TaskList [nf].team_size = team_size ;
-                            TaskList [nf].flops = fl ;
                             nf++ ;
                         }
                     }
@@ -742,7 +750,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
                 // flush the last coarse task, if any
                 if (kcoarse_start < klast)
-                {
+                { 
                     // kcoarse_start:klast-1 form a single coarse task
                     GB_create_coarse_task (kcoarse_start, klast-1,
                         TaskList, nc++, Bflops, cvlen, chunk, nthreads_max) ;
@@ -750,7 +758,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
             }
             else
-            {
+            { 
                 // This coarse task is OK as-is.
                 GB_create_coarse_task (kfirst, klast-1,
                     TaskList, nc++, Bflops, cvlen, chunk, nthreads_max) ;
@@ -762,11 +770,20 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     {
 
         //----------------------------------------------------------------------
-        // entire computation in a single coarse task
+        // entire computation in a single fine or coarse task
         //----------------------------------------------------------------------
 
-        GB_create_coarse_task (0, bnvec-1,
-            TaskList, 0, Bflops, cvlen, chunk, nthreads_max) ;
+        // create a single coarse task
+        GB_create_coarse_task (0, bnvec-1, TaskList, 0, Bflops, cvlen, 1, 1) ;
+
+        if (bnvec == 1)
+        { 
+            // convert the single coarse task into a single fine task
+            printf ("convert to single fine task\n") ;
+            TaskList [0].start  = 0 ;           // first entry in B(:,0)
+            TaskList [0].end    = bnz - 1 ;     // last entry in B(:,0)
+            TaskList [0].vector = 0 ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -776,11 +793,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // Frees Bflops2, Coarse_initial, and Fine_slice.  These do not need to
     // be freed in the GB_Asaxpy3B worker below.
 
+    printf ("free init work\n") ;
     GB_FREE_INITIAL_WORK ;
+    printf ("did init work\n") ;
 
     //--------------------------------------------------------------------------
 
-#if 0
+#if 1
     // dump the task descriptors
     printf ("\n================== final tasks: ncoarse %d nfine %d ntasks %d\n",
         ncoarse, nfine, ntasks) ;
@@ -829,8 +848,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
         int64_t hash_size = TaskList [taskid].hsize ;
-        int64_t kk = TaskList [taskid].vector ;
-        bool is_fine = (kk >= 0) ;
+        bool is_fine = (taskid < nfine) ;
         bool use_Gustavson = (hash_size == cvlen) ;
         if (is_fine)
         {
@@ -851,19 +869,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             // coarse task
             int64_t kfirst = TaskList [taskid].start ;
             int64_t klast = TaskList [taskid].end ;
-            // int64_t nk = klast - kfirst + 1 ;
             if (use_Gustavson)
             {
                 // coarse Gustavson task
                 ncoarse_gus++ ;
             }
-            #if 0
-            else if (nk == 1)
-            {
-                // 1-vector coarse hash task
-                ncoarse_1hash++ ;
-            }
-            #endif
             else
             {
                 // multi-vector coarse hash task
@@ -932,7 +942,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
         if (taskid != TaskList [taskid].master)
-        {
+        { 
             // allocate a single shared hash table for all fine
             // tasks that compute a single C(:,j)
             continue ;
@@ -944,27 +954,26 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t kfirst = TaskList [taskid].start ;
         int64_t klast = TaskList [taskid].end ;
-        // int64_t nk = klast - kfirst + 1 ;
 
         if (is_fine && use_Gustavson)
-        {
+        { 
             // Hf is uint8_t for the fine Gustavson tasks, but round up
             // to the nearest number of int64_t values.
             Hf_size_total += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
         else
-        {
+        { 
             // all other methods use Hf as int64_t
             Hf_size_total += (hash_size + hi_pad) ;
         }
-        if (!is_fine && !use_Gustavson /* && nk > 1 */)
-        {
+        if (!is_fine && !use_Gustavson)
+        { 
             // only multi-vector coarse hash tasks need Hi
             Hi_size_total += (hash_size + hi_pad) ;
         }
         // all tasks use an Hx array of size hash_size
         if (!is_any_pair_semiring)
-        {
+        { 
             // except that the ANY_PAIR semiring does not use Hx
             Hx_size_total += (hash_size * csize + hx_pad) ;
         }
@@ -972,15 +981,15 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     // allocate space for all hash tables
     if (Hi_size_total > 0)
-    {
+    { 
         GB_MALLOC_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;
     }
     if (Hf_size_total > 0)
-    {
+    { 
         GB_CALLOC_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;
     }
     if (Hx_size_total > 0)
-    {
+    { 
         GB_MALLOC_MEMORY (Hx_all, Hx_size_total, 1) ;
     }
 
@@ -999,7 +1008,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     if ((Hi_size_total > 0 && Hi_all == NULL) ||
         (Hf_size_total > 0 && Hf_all == NULL) || 
         (Hx_size_total > 0 && Hx_all == NULL))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
@@ -1013,7 +1022,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     for (int taskid = 0 ; taskid < ntasks ; taskid++)
     {
         if (taskid != TaskList [taskid].master)
-        {
+        { 
             // allocate a single hash table for all fine
             // tasks that compute a single C(:,j)
             continue ;
@@ -1029,26 +1038,25 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         bool use_Gustavson = (hash_size == cvlen) ;
         int64_t kfirst = TaskList [taskid].start ;
         int64_t klast = TaskList [taskid].end ;
-        // int64_t nk = klast - kfirst + 1 ;
 
         if (is_fine && use_Gustavson)
-        {
+        { 
             // Hf is uint8_t for the fine Gustavson method
             Hf_split += GB_CEIL ((hash_size + hi_pad), sizeof (int64_t)) ;
         }
         else
-        {
+        { 
             // Hf is int64_t for all other methods
             Hf_split += (hash_size + hi_pad) ;
         }
-        if (!is_fine && !use_Gustavson /* && nk > 1 */)
-        {
+        if (!is_fine && !use_Gustavson)
+        { 
             // only multi-vector coarse hash tasks need Hi
             Hi_split += (hash_size + hi_pad) ;
         }
         // all tasks use an Hx array of size hash_size
         if (!is_any_pair_semiring)
-        {
+        { 
             Hx_split += (hash_size * csize + hx_pad) ;
         }
     }
@@ -1059,7 +1067,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         int master = TaskList [taskid].master ;
         ASSERT (TaskList [master].vector >= 0) ;
         if (taskid != master)
-        {
+        { 
             // this fine task (Gustavson or hash) shares its hash table
             // with all other tasks in its team, for a single vector C(:,j).
             ASSERT (TaskList [taskid].vector == TaskList [master].vector) ;
@@ -1143,8 +1151,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         if (A->type == atype_required && B->type == btype_required)
         {
-            // TODO add Context, and use TaskList_handle for saxpy3
-            // add Work and Worksize parameters too
             info = GB_AxB_user (GxB_DEFAULT, semiring, Chandle, NULL, A, B,
                 flipxy,
                 /* dot2: */ NULL, NULL, nthreads, 0, 0, NULL,

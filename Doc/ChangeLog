@@ -1,15 +1,15 @@
-Version 3.2.0, Jan TODO, 2020
+Version 3.2.0, Feb TODO, 2020
 
-    * faster saxpy-based matrix multiply (about 5x for mxv and vxm):
-        removed Sauna workspace.  Heap method removed.
+    * faster saxpy-based matrix multiply (about 5x to 10x for mxv and vxm):
+        removed Sauna workspace.  Heap method removed.  Hash method added.
     * better performance for dense matrix and vectors
     * faster typecast of the mask matrix M: GB_mcast replaces cast_M
     * added GB_BURBLE: for development diagnostics
     * changed default chunk size: from 4K to 64K
     * added the PAIR binary operator: f(x,y)=1
     * added the ANY binary operator: f(x,y)=x, or f(x,y)=y ; arbitrary choice
-    * added structural mask
-    * added GrB_DESC_*: predefined descriptor
+    * added structural mask: from v1.3 C API Specification
+    * added GrB_DESC_*: predefined descriptor, from v1.3 C API Specification
 
 Version 3.1.2, Dec 16, 2019
 

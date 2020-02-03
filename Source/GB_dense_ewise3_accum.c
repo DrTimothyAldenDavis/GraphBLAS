@@ -40,8 +40,8 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
     ASSERT (op->ztype == B->type) ;
     ASSERT (op->ztype == op->xtype) ;
     ASSERT (op->ztype == op->ytype) ;
-    ASSERT (op->opcode >= GB_MIN_CODE) ;
-    ASSERT (op->opcode <= GB_RDIV_CODE) ;
+    ASSERT (op->opcode >= GB_MIN_opcode) ;
+    ASSERT (op->opcode <= GB_RDIV_opcode) ;
 
     // TODO handle IS*, LOR, LAND, LXOR operators
 

@@ -39,7 +39,6 @@ void GB_cblas_saxpy         // Y += alpha*X
     ASSERT (Y != NULL) ;
     ASSERT (X != NULL) ;
     ASSERT (nthreads >= 1) ;
-    ASSERT (GB_HAS_CBLAS) ;
 
     #if GB_HAS_CBLAS
 

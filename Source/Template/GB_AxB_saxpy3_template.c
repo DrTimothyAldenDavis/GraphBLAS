@@ -954,7 +954,7 @@
         for (taskid = 0 ; taskid < nfine ; taskid++)
         {
             int64_t kk = TaskList [taskid].vector ;
-            ASSERT (kk >= 0 && kk < cvlen) ;
+            ASSERT (kk >= 0 && kk < B->nvec) ;
             int64_t hash_size = TaskList [taskid].hsize ;
             bool use_Gustavson = (hash_size == cvlen) ;
             int master = TaskList [taskid].master ;
@@ -1130,8 +1130,7 @@
                                 f = Hf [i] ; Hf [i] = 3 ;
                             }
                         } while (f == 3) ; // lock owner gets f=0 or 2
-                        bool first_time = (f == 0) ;
-                        if (first_time)
+                        if (f == 0)
                         { 
                             // C(i,j) is a new entry
                             GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
@@ -1207,8 +1206,7 @@
                                 f = Hf [i] ; Hf [i] = 3 ;                  \
                             }                                              \
                         } while (f == 3) ; /* lock owner gets f=1 or 2 */  \
-                        bool first_time = (f == 1) ;                       \
-                        if (first_time)                                    \
+                        if (f == 1)                                        \
                         {                                                  \
                             /* C(i,j) is a new entry */                    \
                             GB_ATOMIC_WRITE_HX (i, t) ; /* Hx [i] = t */   \
@@ -1283,8 +1281,7 @@
                                 f = Hf [i] ; Hf [i] = 3 ;
                             }
                         } while (f == 3) ; // lock owner of gets f=0 or 2
-                        bool first_time = (f == 0) ;
-                        if (first_time)
+                        if (f == 0)
                         { 
                             // C(i,j) is a new entry
                             GB_ATOMIC_WRITE_HX (i, t) ;    // Hx [i] = t
@@ -1389,8 +1386,7 @@
                                         hf = Hf [hash] ; Hf [hash] |= 3 ;
                                     }
                                 } while ((hf & 3) == 3) ; // owner: f=0 or 2
-                                bool first_time = (hf == 0) ;
-                                if (first_time) // f == 0
+                                if (hf == 0) // f == 0
                                 { 
                                     // C(i,j) is a new entry in C(:,j)
                                     // Hx [hash] = t
@@ -1472,8 +1468,7 @@
                                         hf = Hf [hash] ; Hf [hash] |= 3 ;  \
                                     }                                      \
                                 } while ((hf & 3) == 3) ; /* own: f=1,2 */ \
-                                bool first_time = ((hf & 3) == 1) ;        \
-                                if (first_time) /* f == 1 */               \
+                                if ((hf & 3) == 1) /* f == 1 */            \
                                 {                                          \
                                     /* C(i,j) is a new entry in C(:,j) */  \
                                     /* Hx [hash] = t */                    \
@@ -1555,8 +1550,7 @@
                                         hf = Hf [hash] ; Hf [hash] |= 3 ;
                                     }
                                 } while ((hf & 3) == 3) ; // owner: f=0,1,2
-                                bool first_time = (hf == 0) ;
-                                if (first_time)    // f == 0
+                                if (hf == 0)            // f == 0
                                 { 
                                     // C(i,j) is a new entry in C(:,j)
                                     // Hx [hash] = t

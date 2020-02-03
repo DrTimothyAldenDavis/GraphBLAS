@@ -24,7 +24,7 @@ else
     if (isequal (option, 'skew'))
         s = (norm (G + G', 1) == 0) ;
     else
-        s = (norm (G - G', 1) == 0) ;
+        s = (GrB.normdiff (G, G', 1) == 0) ;
     end
     if (s)
         % also check the pattern; G might have explicit zeros

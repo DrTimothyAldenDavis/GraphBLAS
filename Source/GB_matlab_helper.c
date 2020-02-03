@@ -401,14 +401,20 @@ bool GB_matlab_helper9  // true if successful, false if out of memory
 // GB_matlab_helper10: compute norm (x-y,p) of two dense FP32 or FP64 vectors
 //------------------------------------------------------------------------------
 
-//        s = GB_matlab_helper10 (A->x, B->x, A->type, norm_kind, anrows) ;
+// p can be:
 
-double GB_matlab_helper10        // norm (x-y,p)
+//      0 or 2:     2-norm, sqrt (sum ((x-y).^2))
+//      1:          1-norm, sum (abs (x-y))
+//      INT64_MAX   inf-norm, max (abs (x-y))
+//      INT64_MIN   (-inf)-norm, min (abs (x-y))
+//      other:      p-norm not yet computed
+
+double GB_matlab_helper10       // norm (x-y,p), or -1 on error
 (
-    GB_void *x_arg,
-    GB_void *y_arg,
-    GrB_Type type,
-    int64_t p,
+    GB_void *x_arg,             // float or double, depending on type parameter
+    GB_void *y_arg,             // same type as x, treat as zero if NULL
+    GrB_Type type,              // GrB_FP32 or GrB_FP64
+    int64_t p,                  // 0, 1, 2, INT64_MIN, or INT64_MAX
     GrB_Index n
 )
 {
@@ -419,7 +425,13 @@ double GB_matlab_helper10        // norm (x-y,p)
 
     if (!(type == GrB_FP32 || type == GrB_FP64))
     {
-        return (-1) ;
+        // type of x and y must be GrB_FP32 or GrB_FP64
+        return ((double) -1) ;
+    }
+
+    if (n == 0)
+    {
+        return ((double) 0) ;
     }
 
     //--------------------------------------------------------------------------
@@ -442,6 +454,11 @@ double GB_matlab_helper10        // norm (x-y,p)
 
         if (type == GrB_FP32)
         {
+
+            //------------------------------------------------------------------
+            // FP32 case
+            //------------------------------------------------------------------
+
             float my_s = 0 ;
             const float *x = (float *) x_arg ;
             const float *y = (float *) y_arg ;
@@ -450,30 +467,59 @@ double GB_matlab_helper10        // norm (x-y,p)
                 case 0:     // Frobenius norm
                 case 2:     // 2-norm: sqrt of sum of (x-y).^2
                 {
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        float t = (x [k] - y [k]) ;
-                        my_s += (t*t) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            float t = x [k] ;
+                            my_s += (t*t) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            float t = (x [k] - y [k]) ;
+                            my_s += (t*t) ;
+                        }
                     }
                 }
                 break ;
 
                 case 1:     // 1-norm: sum (abs (x-y))
                 {
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        float t = (x [k] - y [k]) ;
-                        my_s += fabsf (t) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabsf (x [k]) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabsf (x [k] - y [k]) ;
+                        }
                     }
                 }
                 break ;
 
                 case INT64_MAX:     // inf-norm: max (abs (x-y))
                 {
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        float t = (x [k] - y [k]) ;
-                        my_s = fmaxf (my_s, fabsf (t)) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmaxf (my_s, fabsf (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmaxf (my_s, fabsf (x [k] - y [k])) ;
+                        }
                     }
                 }
                 break ;
@@ -481,10 +527,19 @@ double GB_matlab_helper10        // norm (x-y,p)
                 case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
                 {
                     my_s = INFINITY ;
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        float t = (x [k] - y [k]) ;
-                        my_s = fminf (my_s, fabsf (t)) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fminf (my_s, fabsf (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fminf (my_s, fabsf (x [k] - y [k])) ;
+                        }
                     }
                 }
                 break ;
@@ -497,6 +552,10 @@ double GB_matlab_helper10        // norm (x-y,p)
         else
         {
 
+            //------------------------------------------------------------------
+            // FP64 case
+            //------------------------------------------------------------------
+
             double my_s = 0 ;
             const double *x = (double *) x_arg ;
             const double *y = (double *) y_arg ;
@@ -505,28 +564,59 @@ double GB_matlab_helper10        // norm (x-y,p)
                 case 0:     // Frobenius norm
                 case 2:     // 2-norm: sqrt of sum of (x-y).^2
                 {
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        double t = (x [k] - y [k]) ;
-                        my_s += (t*t) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            double t = x [k] ;
+                            my_s += (t*t) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            double t = (x [k] - y [k]) ;
+                            my_s += (t*t) ;
+                        }
                     }
                 }
                 break ;
 
                 case 1:     // 1-norm: sum (abs (x-y))
                 {
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        my_s += fabs (x [k] - y [k]) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabs (x [k]) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabs (x [k] - y [k]) ;
+                        }
                     }
                 }
                 break ;
 
                 case INT64_MAX:     // inf-norm: max (abs (x-y))
                 {
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        my_s = fmax (my_s, fabs (x [k] - y [k])) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmax (my_s, fabs (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmax (my_s, fabs (x [k] - y [k])) ;
+                        }
                     }
                 }
                 break ;
@@ -534,9 +624,19 @@ double GB_matlab_helper10        // norm (x-y,p)
                 case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
                 {
                     my_s = INFINITY ;
-                    for (int64_t k = k1 ; k < k2 ; k++)
+                    if (y == NULL)
                     {
-                        my_s = fmin (my_s, fabs (x [k] - y [k])) ;
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmin (my_s, fabs (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmin (my_s, fabs (x [k] - y [k])) ;
+                        }
                     }
                 }
                 break ;

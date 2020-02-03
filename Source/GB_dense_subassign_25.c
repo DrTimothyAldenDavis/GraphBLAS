@@ -69,6 +69,8 @@ GrB_Info GB_dense_subassign_25
     int64_t mnz = GB_NNZ (M) ;
     int nthreads = GB_nthreads (mnz + M->nvec, chunk, nthreads_max) ;
     int ntasks = (nthreads == 1) ? 1 : (8 * nthreads) ;
+    ntasks = GB_IMIN (ntasks, mnz) ;
+    ntasks = GB_IMAX (ntasks, 1) ;
 
     //--------------------------------------------------------------------------
     // slice the entries for each task

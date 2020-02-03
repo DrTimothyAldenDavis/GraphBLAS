@@ -145,6 +145,7 @@
 
             int64_t ajnz = pA_end - pA ;        // nnz in A(:,j) for this slice
             bool adense = (ajnz == len) ;
+            int64_t pA_start = pA ;
 
             // get the first and last indices in A(:,j) for this vector
             int64_t iA_first = -1 ;
@@ -186,6 +187,7 @@
 
             int64_t bjnz = pB_end - pB ;        // nnz in B(:,j) for this slice
             bool bdense = (bjnz == len) ;
+            int64_t pB_start = pB ;
 
             // get the first and last indices in B(:,j) for this vector
             int64_t iB_first = -1 ;
@@ -471,21 +473,39 @@
                     // get A(i,j)
                     //----------------------------------------------------------
 
-                    int64_t apright = pA_end - 1 ;
-                    bool afound ;
-                    // TODO do not do binary search if A(:,j) is dense
-                    GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
-                    if (!afound) continue ;
+                    if (adense)
+                    {
+                        // A(:,j) is dense; use direct lookup for A(i,j)
+                        pA = pA_start + i - iA_first ;
+                    }
+                    else
+                    {
+                        // A(:,j) is sparse; use binary search for A(i,j)
+                        int64_t apright = pA_end - 1 ;
+                        bool afound ;
+                        GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
+                        if (!afound) continue ;
+                    }
+                    ASSERT (Ai [pA] == i) ;
 
                     //----------------------------------------------------------
                     // get B(i,j)
                     //----------------------------------------------------------
 
-                    int64_t bpright = pB_end - 1 ;
-                    bool bfound ;
-                    // TODO do not do binary search if B(:,j) is dense
-                    GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
-                    if (!bfound) continue ;
+                    if (bdense)
+                    {
+                        // B(:,j) is dense; use direct lookup for B(i,j)
+                        pB = pB_start + i - iB_first ;
+                    }
+                    else
+                    {
+                        // B(:,j) is sparse; use binary search for B(i,j)
+                        int64_t bpright = pB_end - 1 ;
+                        bool bfound ;
+                        GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;
+                        if (!bfound) continue ;
+                    }
+                    ASSERT (Bi [pB] == i) ;
 
                     //----------------------------------------------------------
                     // C(i,j) = A(i,j) .* B(i,j)

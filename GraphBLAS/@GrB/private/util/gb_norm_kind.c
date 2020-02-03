@@ -9,12 +9,11 @@
 
 #include "gb_matlab.h"
 
-// 0: Frobenius norm
-// 1: 1-norm
-// 2: 2-norm
-// INT64_MAX: inf-norm
-// INT64_MIM: (-inf)-norm
-// p: p-norm
+// 'fro':       Frobenius norm
+// 1:           1-norm
+// 2:           2-norm
+// INFINITY:    inf-norm
+// -INFINITY:   (-inf)-norm
 
 int64_t gb_norm_kind (const mxArray *arg)
 {
@@ -43,14 +42,13 @@ int64_t gb_norm_kind (const mxArray *arg)
         {
             return (INT64_MIN) ;
         }
-        else if (x < 0 || x != (int64_t) x || isnan (x))
+        else if (x == 1 || x == 2)
         {
-            // arg cannot be negative (unless -inf), NaN, or non-integer
-            ERROR ("unknown norm") ;
+            return ((int64_t) x) ;
         }
         else
         {
-            return ((int64_t) x) ;
+            ERROR ("unknown norm") ;
         }
     }
     else

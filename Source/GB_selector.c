@@ -64,6 +64,11 @@ GrB_Info GB_selector
         (*Chandle) = NULL ;
     }
 
+    int64_t *GB_RESTRICT Zp = NULL ;
+    int64_t *GB_RESTRICT Wfirst = NULL ;
+    int64_t *GB_RESTRICT Wlast = NULL ;
+    int64_t *GB_RESTRICT C_pstart_slice = NULL ;
+
     //--------------------------------------------------------------------------
     // determine the number of threads and tasks to use
     //--------------------------------------------------------------------------
@@ -139,12 +144,6 @@ GrB_Info GB_selector
     }
 
     //--------------------------------------------------------------------------
-    // workspace for tril, triu, diag, offdiage, and resize
-    //--------------------------------------------------------------------------
-
-    int64_t *GB_RESTRICT Zp = NULL ;
-
-    //--------------------------------------------------------------------------
     // allocate the new vector pointers of C
     //--------------------------------------------------------------------------
 
@@ -163,26 +162,6 @@ GrB_Info GB_selector
     Cp [anvec] = 0 ;
 
     //--------------------------------------------------------------------------
-    // allocate workspace for each task
-    //--------------------------------------------------------------------------
-
-    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
-    int64_t *GB_RESTRICT Wfirst = NULL ;
-    int64_t *GB_RESTRICT Wlast = NULL ;
-    int64_t *GB_RESTRICT C_pstart_slice = NULL ;
-
-    GB_CALLOC_MEMORY (Wfirst, ntasks, sizeof (int64_t)) ;
-    GB_CALLOC_MEMORY (Wlast, ntasks, sizeof (int64_t)) ;
-    GB_CALLOC_MEMORY (C_pstart_slice, ntasks, sizeof (int64_t)) ;
-
-    if (Wfirst == NULL || Wlast  == NULL || C_pstart_slice == NULL)
-    {
-        // out of memory
-        GB_FREE_ALL ;
-        return (GB_OUT_OF_MEMORY) ;
-    }
-
-    //--------------------------------------------------------------------------
     // slice the entries for each task
     //--------------------------------------------------------------------------
 
@@ -190,7 +169,23 @@ GrB_Info GB_selector
     // vectors kfirst_slice [tid] to klast_slice [tid].  The first and last
     // vectors may be shared with prior slices and subsequent slices.
 
+    int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GB_OUT_OF_MEMORY) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate workspace for each task
+    //--------------------------------------------------------------------------
+
+    GB_CALLOC_MEMORY (Wfirst, ntasks, sizeof (int64_t)) ;
+    GB_CALLOC_MEMORY (Wlast, ntasks, sizeof (int64_t)) ;
+    GB_CALLOC_MEMORY (C_pstart_slice, ntasks, sizeof (int64_t)) ;
+
+    if (Wfirst == NULL || Wlast  == NULL || C_pstart_slice == NULL)
     {
         // out of memory
         GB_FREE_ALL ;
