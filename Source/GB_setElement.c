@@ -142,7 +142,7 @@ GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
         // found C (i,j), assign its value
         size_t csize = ctype->size ;
         GB_void *Cx = C->x ;
-        if (scalar_code >= GB_UCT_code || scalar_code == ccode)
+        if (scalar_code >= GB_UDT_code || scalar_code == ccode)
         { 
             // copy the values without typecasting
             memcpy (Cx +(pleft*csize), scalar, csize) ;

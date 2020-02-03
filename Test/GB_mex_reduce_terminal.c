@@ -80,36 +80,23 @@ void mexFunction
 
     // printf ("\nterminal %g\n", terminal) ;
 
-    #ifdef MY_MAX
-    if (terminal == 1)
+    // create the Max operator
+    info = GrB_BinaryOp_new (&Max, maxdouble, GrB_FP64, GrB_FP64, GrB_FP64);
+    if (info != GrB_SUCCESS)
     {
-        // use pre-compiled monoid
-        // printf ("blazing!\n") ;
-        Max = My_Max ;
-        Max_Terminal = My_Max_Terminal1 ;
+        printf ("error: %d %s\n", info, GrB_error ( )) ;
+        mexErrMsgTxt ("Max failed") ;
     }
-    else
-    #endif
+
+    // printf ("create the monoid:\n") ;
+
+    // create the Max monoid
+    info = GxB_Monoid_terminal_new (&Max_Terminal, Max, (double) 0,
+        terminal) ;
+    if (info != GrB_SUCCESS)
     {
-
-        // create the Max operator
-        info = GrB_BinaryOp_new (&Max, maxdouble, GrB_FP64, GrB_FP64, GrB_FP64);
-        if (info != GrB_SUCCESS)
-        {
-            printf ("error: %d %s\n", info, GrB_error ( )) ;
-            mexErrMsgTxt ("Max failed") ;
-        }
-
-        // printf ("create the monoid:\n") ;
-
-        // create the Max monoid
-        info = GxB_Monoid_terminal_new (&Max_Terminal, Max, (double) 0,
-            terminal) ;
-        if (info != GrB_SUCCESS)
-        {
-            printf ("error: %d %s\n", info, GrB_error ( )) ;
-            mexErrMsgTxt ("Max_Terminal failed") ;
-        }
+        printf ("error: %d %s\n", info, GrB_error ( )) ;
+        mexErrMsgTxt ("Max_Terminal failed") ;
     }
 
     // printf ("\nmax fp64 monoid with new terminal value:\n") ;

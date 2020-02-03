@@ -55,7 +55,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     //--------------------------------------------------------------------------
 
     (*add_opcode) = add->opcode ;
-    if (*add_opcode >= GB_USER_C_opcode)
+    if (*add_opcode >= GB_USER_opcode)
     { 
         // semiring has a user-defined add operator for its monoid
         return (false) ;

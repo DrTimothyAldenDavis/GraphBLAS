@@ -44,7 +44,6 @@ bool flipxy = false ;
 
 GrB_Info axb (GB_Context Context) ;
 
-#ifndef MY_RDIV
 GrB_Semiring My_plus_rdiv2 = NULL ;
 GrB_BinaryOp My_rdiv2 = NULL ;
 
@@ -54,13 +53,11 @@ void my_rdiv2 (double *z, const double *x, const float *y)
 {
     (*z) = ((double) (*y)) / (*x) ;
 }
-#endif
 
 //------------------------------------------------------------------------------
 
 GrB_Info axb (GB_Context Context)
 {
-    #ifndef MY_RDIV
     // create the rdiv2 operator
     info = GrB_BinaryOp_new (&My_rdiv2, my_rdiv2, GrB_FP64, GrB_FP64, GrB_FP32);
     if (info != GrB_SUCCESS) return (info) ;
@@ -70,9 +67,6 @@ GrB_Info axb (GB_Context Context)
         GrB_free (&My_rdiv2) ;
         return (info) ;
     }
-    #else
-    // printf ("using precompiled semiring %p\n", My_plus_rdiv2) ;
-    #endif
 
     // C = A*B
     info = GB_AxB_meta (&C,
@@ -119,10 +113,8 @@ void mexFunction
     B64 = NULL ;
     C = NULL ;
 
-    #ifndef MY_RDIV
     My_rdiv2 = NULL ;
     My_plus_rdiv2 = NULL ;
-    #endif
 
     GB_WHERE (USAGE) ;
 

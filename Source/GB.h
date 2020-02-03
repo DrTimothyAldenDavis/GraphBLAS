@@ -400,8 +400,7 @@ typedef enum
     GB_UINT64_code  = 8,
     GB_FP32_code    = 9,
     GB_FP64_code    = 10,
-    GB_UCT_code     = 11,       // void *, compile-time user-defined type
-    GB_UDT_code     = 12        // void *, run-time user-defined type
+    GB_UDT_code     = 11        // void *, user-defined type
 }
 GB_Type_code ;                  // enumerated type code
 
@@ -477,8 +476,7 @@ typedef enum
     // user-defined: unary and binary operators
     //--------------------------------------------------------------------------
 
-    GB_USER_C_opcode,   // 33: compile-time user-defined operator
-    GB_USER_R_opcode    // 34: run-time user-defined operator
+    GB_USER_opcode      // 34: user-defined operator
 }
 GB_Opcode ;
 
@@ -514,8 +512,7 @@ typedef enum
     GB_LE_THUNK_opcode  = 17,
 
     // for all user-defined select operators:  thunk is optional
-    GB_USER_SELECT_C_opcode = 18,   // defined at compile-time
-    GB_USER_SELECT_R_opcode = 19    // defined at run-time
+    GB_USER_SELECT_opcode = 18
 }
 GB_Select_Opcode ;
 
@@ -567,7 +564,6 @@ struct GB_SelectOp_opaque   // content of GxB_SelectOp
 typedef enum
 {
     GB_BUILTIN,             // 0: built-in monoid or semiring
-    GB_USER_COMPILED,       // 1: pre-compiled user monoid or semiring
     GB_USER_RUNTIME         // 2: user monoid or semiring created a run-time
 }
 GB_object_code ;

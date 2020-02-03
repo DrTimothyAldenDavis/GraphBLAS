@@ -70,7 +70,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         opcode == GB_LT_ZERO_opcode || opcode == GB_LT_THUNK_opcode ||
         opcode == GB_LE_ZERO_opcode || opcode == GB_LE_THUNK_opcode ;
 
-    if (typecode >= GB_UCT_code && op_is_ordered_comparator)
+    if (typecode >= GB_UDT_code && op_is_ordered_comparator)
     { 
         // built-in GT, GE, LT, and LE operators cannot be used with
         // user-defined types
@@ -111,7 +111,7 @@ GrB_Info GB_select          // C<M> = accum (C, select(A,k)) or select(A',k)
         (opcode >= GB_TRIL_opcode && opcode <= GB_OFFDIAG_opcode) ;
 
     // check if op is user-defined
-    bool op_is_user_defined = (opcode >= GB_USER_SELECT_C_opcode) ;
+    bool op_is_user_defined = (opcode >= GB_USER_SELECT_opcode) ;
 
     int64_t nz_thunk = 0 ;
 

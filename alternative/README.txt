@@ -2,11 +2,11 @@ SuiteSparse/GraphBLAS/alternative/README.txt
 
 CMake is prefered for compiling SuiteSparse/GraphBLAS, but this folder provides
 a simple alternative, if you don't have CMake or if you prefer a simple
-Makefile build process.  The Makefile does not install any user-defined objects
-in ../User/*.m4, and it will typically require modifications before it will
-work on your system.  It assumes you have the Intel compiler (icc), but this
-can easily be changed by editting the Makefile.  See the ifeq (UNAME...)
-section in the Makefile to customize the settings for Linux or the Mac.
+Makefile build process.  The Makefile will typically require modifications
+before it will work on your system.  It assumes you have the GNU compiler
+(gcc), but this can easily be changed by editting the Makefile.  See the ifeq
+(UNAME...) section in the Makefile to customize the settings for Linux or the
+Mac.
 
 Files:
 

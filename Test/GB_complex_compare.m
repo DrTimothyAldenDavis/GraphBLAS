@@ -1,6 +1,5 @@
-function GB_user_compare (C1, C2, tol)
-%
-%GB_USER_COMPARE compare GraphBLAS results for complex types
+function GB_complex_compare (C1, C2, tol)
+%GB_COMPLEX_COMPARE compare GraphBLAS results for complex types
 %
 % compare two complex results, from GB_mex_op and GB_user_op
 

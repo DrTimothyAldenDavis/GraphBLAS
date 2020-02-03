@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 2, 2020 (DRAFT25)" )
+set ( GraphBLAS_DATE "Feb 3, 2020 (DRAFT26)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -107,7 +107,7 @@ if ( GB_BURBLE )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# find m4 and configure GraphBLAS with user-defined objects (if any)
+# configure GraphBLAS
 #-------------------------------------------------------------------------------
 
 find_program ( M4EXISTS m4 )
@@ -115,22 +115,10 @@ if ( NOT M4EXISTS )
     message ( FATAL_ERROR "m4 not found, but is required.  Install via your system package manager, or download at http://www.gnu.org/software/m4/m4.html or http://gnuwin32.sourceforge.net for Windows" )
 endif ( )
 
-# configure user-defined objects defined in User/*.m4
-file ( GLOB USER_M4 "User/*.m4" )
-set ( DEF0 "Config/user_def0.m4" )
-set ( DEF1 "Config/user_def1.m4" )
-set ( DEF2 "Config/user_def2.m4" )
-execute_process (
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMAND m4 -P ${DEF0} ${DEF1} ${USER_M4} ${DEF2}
-    OUTPUT_FILE "Source/all_user_objects.c"
-)
 set ( DEC0 "Config/GraphBLAS.h.in" )
-set ( DEC1 "Config/user_dec1.m4" )
-set ( DEC2 "Config/user_dec2.m4" )
 execute_process (
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMAND m4 -P ${DEC0} ${DEC1} ${USER_M4} ${DEC2}
+    COMMAND m4 -P ${DEC0}
     OUTPUT_FILE "Config/GraphBLAS.h.tmp"
 )
 

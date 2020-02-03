@@ -174,7 +174,6 @@ GrB_Info assign ( )
                 case GB_UINT64_code : ASSIGN (uint64_t) ;
                 case GB_FP32_code   : ASSIGN (float) ;
                 case GB_FP64_code   : ASSIGN (double) ;
-                case GB_UCT_code    :
                 case GB_UDT_code    :
                 default:
                     FREE_ALL ;
@@ -209,7 +208,6 @@ GrB_Info assign ( )
                 case GB_UINT64_code : ASSIGN (uint64_t) ;
                 case GB_FP32_code   : ASSIGN (float) ;
                 case GB_FP64_code   : ASSIGN (double) ;
-                case GB_UCT_code    :
                 case GB_UDT_code    :
                 {
                     OK (GrB_assign ((GrB_Vector) C, (GrB_Vector) Mask,
@@ -246,7 +244,6 @@ GrB_Info assign ( )
                 case GB_UINT64_code : ASSIGN (uint64_t) ;
                 case GB_FP32_code   : ASSIGN (float) ;
                 case GB_FP64_code   : ASSIGN (double) ;
-                case GB_UCT_code    :
                 case GB_UDT_code    :
                 {
                     OK (GrB_assign (C, Mask, accum, Ax, I, ni, J, nj, desc)) ;

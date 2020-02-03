@@ -193,7 +193,6 @@ void mexFunction
             }
             break;
 
-        case GB_UCT_code   :
         case GB_UDT_code   :
             {
                 // user-defined complex type

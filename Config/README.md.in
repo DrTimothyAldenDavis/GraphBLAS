@@ -85,8 +85,6 @@ Test:           Extensive tests, not meant for general usage.  To compile
                 SuiteSparse:GraphBLAS and test in MATLAB, go to this directory
                 and type make;testall in MATLAB.
 
-User:           user-defined objects at compile-time (.m4 files)
-
 build:          build directory for CMake, initially empty
 
 alternative:    an alternative to CMake; edit the alternative/Makefile and do

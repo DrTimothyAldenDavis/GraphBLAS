@@ -19,7 +19,7 @@ GrB_Info GxB_SelectOp_free          // free a user-created select operator
     {
         // only free a run-time user-defined operator
         GxB_SelectOp op = *selectop ;
-        if (op != NULL && op->opcode == GB_USER_SELECT_R_opcode)
+        if (op != NULL && op->opcode == GB_USER_SELECT_opcode)
         {
             if (op->magic == GB_MAGIC)
             { 

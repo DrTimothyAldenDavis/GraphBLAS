@@ -2,18 +2,18 @@
 # GraphBLAS/alternative/Makefile
 #-------------------------------------------------------------------------------
 
-#  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+#  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 #  http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 #-------------------------------------------------------------------------------
 
 # pick your compiler:
-# CC = gcc
+  CC = gcc
 # CC = cc
 # CC = clang
 # CC = xlc
 # CC = gcc-8
-  CC = icc -mp1
+# CC = icc -mp1
 
 # note that -mp1 is essential for icc, for proper Inf and NaN behavior.
 

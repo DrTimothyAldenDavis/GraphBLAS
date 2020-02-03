@@ -372,7 +372,6 @@ void mexFunction
     GB_code_check (GB_FP32_code,   &f32, stdout, Context) ; printf ("\n");
     GB_code_check (GB_FP64_code,   &f64, stdout, Context) ; printf ("\n");
     GB_code_check (GB_UDT_code,    &f64, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_UCT_code,    &f64, stdout, Context) ; printf ("\n");
 
     for (int i = 0 ; i <= GrB_PANIC + 1 ; i++)
     {
@@ -672,59 +671,6 @@ void mexFunction
     GrB_free (&B) ;
     GrB_free (&A) ;
     GrB_free (&thunk) ;
-
-    //--------------------------------------------------------------------------
-    // print user-defined objects
-    //--------------------------------------------------------------------------
-
-    #ifdef MY_BAND
-    GxB_print (My_band, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_BOOL
-    GxB_print (My_LOR, GxB_COMPLETE) ;
-    GxB_print (My_LOR_LAND, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_COMPLEX
-    GxB_print (My_Complex, GxB_COMPLETE) ;
-    GxB_print (My_Complex_plus, GxB_COMPLETE) ;
-    GxB_print (My_Complex_times, GxB_COMPLETE) ;
-    GxB_print (My_Complex_plus_monoid, GxB_COMPLETE) ;
-    GxB_print (My_Complex_plus_times, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_MAX
-    GxB_print (My_Max, GxB_COMPLETE) ;
-    GxB_print (My_Max_Terminal1, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef PAGERANK_PREDEFINED
-    GxB_print (PageRank_type, GxB_COMPLETE) ;
-    GxB_print (PageRank_init, GxB_COMPLETE) ;
-    GxB_print (PageRank_accum, GxB_COMPLETE) ;
-    GxB_print (PageRank_add, GxB_COMPLETE) ;
-    GxB_print (PageRank_monoid, GxB_COMPLETE) ;
-    GxB_print (PageRank_multiply, GxB_COMPLETE) ;
-    GxB_print (PageRank_semiring, GxB_COMPLETE) ;
-    GxB_print (PageRank_get, GxB_COMPLETE) ;
-    GxB_print (PageRank_div, GxB_COMPLETE) ;
-    GxB_print (PageRank_diff, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_RDIV
-    GxB_print (My_rdiv, GxB_COMPLETE) ;
-    GxB_print (My_plus_rdiv, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_RDIV2
-    GxB_print (My_rdiv2, GxB_COMPLETE) ;
-    GxB_print (My_plus_rdiv2, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_SCALE
-    GxB_print (My_scale, GxB_COMPLETE) ;
-    #endif
 
     //--------------------------------------------------------------------------
     // GxB_print for a slice or hyperslice

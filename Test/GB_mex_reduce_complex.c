@@ -53,13 +53,6 @@ void mexFunction
     printf ("initially A->type is:\n") ;
     GxB_print (A->type, 3) ;
     GxB_print (Complex, 3) ;
-    #ifdef MY_COMPLEX
-    printf ("%p\n", My_Complex) ;
-    GxB_print (My_Complex, 3) ;
-    if (A->type == Complex) A->type = My_Complex ;
-    printf ("now A->type is:\n") ;
-    GxB_print (A->type, 3) ;
-    #endif
     if (A->type != Complex)
     {
         FREE_ALL ;
@@ -71,12 +64,7 @@ void mexFunction
 
     // create the monoid
     info = GxB_Monoid_terminal_new_UDT (&Times_terminal,
-        #ifdef MY_COMPLEX
-        My_Complex_times,
-        #else
-        Complex_times,
-        #endif
-        &one, &zero) ;
+        Complex_times, &one, &zero) ;
     if (info != GrB_SUCCESS)
     {
         FREE_ALL ;

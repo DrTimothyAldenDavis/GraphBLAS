@@ -43,7 +43,6 @@ GB_cast_function GB_cast_factory   // returns pointer to function to cast x to z
     // user-defined types fall through the switch factory to here
     //--------------------------------------------------------------------------
 
-    // if code1 or code2 are GB_UDT_code or GB_UCT_code
     return (&GB_copy_user_user) ;
 }
 

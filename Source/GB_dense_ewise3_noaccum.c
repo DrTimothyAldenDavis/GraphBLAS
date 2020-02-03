@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+// FUTURE: extend to handle typecasting and generic operators.
+
 #include "GB_dense.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
@@ -95,10 +97,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
         }
 
     #endif
-
-#if 0
-    TODO: extend to handle typecasting and generic operators
-#endif
 
     //--------------------------------------------------------------------------
     // return result

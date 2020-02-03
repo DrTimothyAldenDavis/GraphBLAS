@@ -236,7 +236,6 @@ void mexFunction
             case GB_UINT64_code : METHOD (vset_UINT64 (A, Y, I, ni)) ; break ;
             case GB_FP32_code   : METHOD (vset_FP32   (A, Y, I, ni)) ; break ;
             case GB_FP64_code   : METHOD (vset_FP64   (A, Y, I, ni)) ; break ;
-            case GB_UCT_code    :
             case GB_UDT_code    : METHOD (vset_UDT    (A, Y, I, ni)) ; break ;
             default:
                 FREE_ALL ;
@@ -259,7 +258,6 @@ void mexFunction
             case GB_UINT64_code : METHOD (set_UINT64 (A, Y, I, J, ni)) ; break ;
             case GB_FP32_code   : METHOD (set_FP32   (A, Y, I, J, ni)) ; break ;
             case GB_FP64_code   : METHOD (set_FP64   (A, Y, I, J, ni)) ; break ;
-            case GB_UCT_code    :
             case GB_UDT_code    : METHOD (set_UDT    (A, Y, I, J, ni)) ; break ;
             default:
                 FREE_ALL ;

@@ -47,7 +47,7 @@
 %   GB_spec_subassign             - a MATLAB mimic of GxB_subassign
 %   GB_spec_transpose             - a MATLAB mimic of GrB_transpose
 %   GB_spec_vxm                   - a MATLAB mimic of GrB_vxm
-%   GB_user_compare               - compare GraphBLAS results for complex types
+%   GB_complex_compare            - compare GraphBLAS results for complex types
 %   GB_user_op                    - apply a complex binary and unary operator
 %   GB_user_opsall                - return list of complex operators
 %   accum_mask                    - apply the mask

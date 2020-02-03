@@ -287,7 +287,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && (M == NULL) && !Mask_comp        // no mask
         && (C->is_csc == C_is_csc)          // no transpose of C
         && no_typecast                      // no typecasting
-        && (op->opcode < GB_USER_C_opcode)  // not a user-defined operator
+        && (op->opcode < GB_USER_opcode)    // not a user-defined operator
         )
     {
 

@@ -105,7 +105,7 @@ GrB_Info GB_dense_subassign_06d
 
     #ifndef GBCOMPACT
 
-        if (C->type == A->type && ccode < GB_UCT_code)
+        if (C->type == A->type && ccode < GB_UDT_code)
         {
             // C<A> = A
             #include "GB_1type_factory.c"

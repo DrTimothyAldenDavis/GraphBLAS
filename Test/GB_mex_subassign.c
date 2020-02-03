@@ -148,7 +148,6 @@ GrB_Info assign (GB_Context Context)
                 case GB_UINT64_code : ASSIGN (uint64_t) ;
                 case GB_FP32_code   : ASSIGN (float) ;
                 case GB_FP64_code   : ASSIGN (double) ;
-                case GB_UCT_code    :
                 case GB_UDT_code    :
                 default:
                     FREE_ALL ;
@@ -182,7 +181,6 @@ GrB_Info assign (GB_Context Context)
                 case GB_UINT64_code : ASSIGN (uint64_t) ;
                 case GB_FP32_code   : ASSIGN (float) ;
                 case GB_FP64_code   : ASSIGN (double) ;
-                case GB_UCT_code    :
                 case GB_UDT_code    :
                 {
                     OK (GxB_subassign ((GrB_Vector) C, (GrB_Vector) M,
@@ -220,7 +218,6 @@ GrB_Info assign (GB_Context Context)
                 case GB_UINT64_code : ASSIGN (uint64_t) ;
                 case GB_FP32_code   : ASSIGN (float) ;
                 case GB_FP64_code   : ASSIGN (double) ;
-                case GB_UCT_code    :
                 case GB_UDT_code    :
                 {
                     OK (GxB_subassign (C, M, accum, Ax, I, ni, J, nj, desc)) ;

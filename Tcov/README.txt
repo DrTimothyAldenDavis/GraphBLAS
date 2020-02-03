@@ -16,12 +16,7 @@ If you get a linking problem on linux, add this directory to your
 LD_LIBRARY_PATH, so that the libgraphblas_tcov.so constructed by grbmake can be
 found by the mexFunctions.
 
-Statement coverage tests results will be saved in Tcov/log.txt.  Note that full
-coverage requires some or all of the GraphBLAS/User/Examples/*.m4 files to
-first be moved into the GraphBLAS/User/ directory (and then run "make cmake" in
-the shell before doing testcov in MATLAB).  The tests will work without this
-step, but some statements that handle compile-time user-defined semirings in
-the User/*m4 files will not be tested.
+Statement coverage tests results will be saved in Tcov/log.txt.
 
 To list the lines covered by the test, do this in MATLAB:
 

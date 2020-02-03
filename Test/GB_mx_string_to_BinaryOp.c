@@ -73,7 +73,7 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
         //----------------------------------------------------------------------
 
         // user-defined Complex binary operator
-        opcode  = GB_USER_R_opcode ;    // generic user-defined opcode
+        opcode  = GB_USER_opcode ;      // user-defined opcode
         opclass = mxDOUBLE_CLASS ;      // MATLAB class for complex
 
         if (len == 0)
@@ -176,7 +176,7 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
         {
             // z = complex(x,y) = x + i*y
             op = Complex_complex ;
-            opcode = GB_USER_R_opcode ;
+            opcode = GB_USER_opcode ;
             opclass = mxDOUBLE_CLASS ;
         }
 
@@ -186,7 +186,7 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
             return (false) ;
         }
 
-        if (opcode != GB_USER_R_opcode)
+        if (opcode != GB_USER_opcode)
         {
             // get the opclass from the opclass_mx string, if present
             opclass = GB_mx_string_to_classID (opclass, opclass_mx) ;
@@ -748,9 +748,8 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
                 }
                 break ;
 
-            case GB_NOP_opcode   :
-            case GB_USER_C_opcode   :
-            case GB_USER_R_opcode   :
+            case GB_NOP_opcode  :
+            case GB_USER_opcode :
 
                 // no operation is requested so return NULL, or user-defined
                 break ;

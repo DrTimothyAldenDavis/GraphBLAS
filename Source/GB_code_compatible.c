@@ -21,8 +21,8 @@ bool GB_code_compatible         // check if two types can be typecast
 )
 {
 
-    bool a_user = (acode == GB_UDT_code || acode == GB_UCT_code) ;
-    bool b_user = (bcode == GB_UDT_code || bcode == GB_UCT_code) ;
+    bool a_user = (acode == GB_UDT_code) ;
+    bool b_user = (bcode == GB_UDT_code) ;
 
     if (a_user || b_user)
     { 

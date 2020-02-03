@@ -45,10 +45,6 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
             GBPR0 ("(built-in)") ;
             break ;
 
-        case GB_USER_COMPILED :
-            GBPR0 ("(user-defined at compile-time)") ;
-            break ;
-
         case GB_USER_RUNTIME :
             GBPR0 ("(user-defined at run-time)") ;
             break ;

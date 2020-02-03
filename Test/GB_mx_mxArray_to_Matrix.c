@@ -291,11 +291,7 @@ GrB_Matrix GB_mx_mxArray_to_Matrix     // returns GraphBLAS version of A
                 return (NULL) ;
             }
         }
-        if ((atype_in == Complex)
-            #ifdef MY_COMPLEX
-            || (atype_in == My_Complex)
-            #endif
-            )
+        if (atype_in == Complex)
         {
             // copy the real part (Mx) and imaginary part (Mz) into A->x
             GB_mx_complex_merge (anz, (double *) (A->x), Amatrix) ;

@@ -124,11 +124,7 @@ mxArray *GB_mx_object_to_mxArray   // returns the MATLAB mxArray
         AS_IF_FREE (C->x) ;   // unlink C->x from C since it's now in MATLAB C
 
     }
-    else if (C->type == Complex
-        #ifdef MY_COMPLEX
-        || C->type == My_Complex
-        #endif
-        )
+    else if (C->type == Complex)
     {
 
         // user-defined Complex type

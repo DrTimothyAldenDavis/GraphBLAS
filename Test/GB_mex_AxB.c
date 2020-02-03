@@ -142,14 +142,6 @@ GrB_Info axb_complex (GB_Context Context)
         return (info) ;
     }
 
-    #ifdef MY_COMPLEX
-    // use the precompiled complex type
-    if (Aconj != NULL) Aconj->type = My_Complex ;
-    if (Bconj != NULL) Bconj->type = My_Complex ;
-    if (A     != NULL) A->type     = My_Complex ;
-    if (B     != NULL) B->type     = My_Complex ;
-    #endif
-
     info = GB_AxB_meta (&C,
         NULL,       // not in place
         false,      // C_replace
@@ -161,26 +153,13 @@ GrB_Info axb_complex (GB_Context Context)
         NULL,       // no accum
         (atranspose) ? Aconj : A,
         (btranspose) ? Bconj : B,
-        #ifdef MY_COMPLEX
-            My_Complex_plus_times,
-        #else
-            Complex_plus_times,
-        #endif
+        Complex_plus_times,
         atranspose,
         btranspose,
         false,      // flipxy
         &ignore,    // mask_applied
         &ignore2,   // done_in_place
         AxB_method, &AxB_method_used, Context) ;
-
-    #ifdef MY_COMPLEX
-    // convert back to run-time complex type
-    if (C     != NULL) C->type     = Complex ;
-    if (Aconj != NULL) Aconj->type = Complex ;
-    if (Bconj != NULL) Bconj->type = Complex ;
-    if (A     != NULL) A->type     = Complex ;
-    if (B     != NULL) B->type     = Complex ;
-    #endif
 
     GrB_free (&Bconj) ;
     GrB_free (&Aconj) ;

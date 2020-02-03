@@ -9,9 +9,8 @@
 
 // GB_AxB_saxpy3_template.c computes C=A*B for any semiring and matrix types.
 // It is #include'd in GB_AxB_saxpy3 to construct the generic method (for
-// arbitary run-time defined operators and/or typecasting), in the hard-coded
-// GB_Asaxpy3B* workers in the Generated/ folder, and in the
-// compile-time-constructed functions called by GB_AxB_user.
+// arbitary run-time defined operators and/or typecasting), and in the
+// hard-coded GB_Asaxpy3B* workers in the Generated/ folder.
 
 //------------------------------------------------------------------------------
 // GB_GET_M_j: prepare to iterate over M(:,j)
@@ -450,8 +449,7 @@
 //------------------------------------------------------------------------------
 
 // See also GB_FREE_ALL in GB_AxB_saxpy3.  It is #define'd here for the
-// hard-coded GB_Asaxpy3B* functions, and for the user-defined functions called
-// by GB_AxB_user.
+// hard-coded GB_Asaxpy3B* functions.
 #ifndef GB_FREE_ALL
 #define GB_FREE_ALL                                                         \
 {                                                                           \

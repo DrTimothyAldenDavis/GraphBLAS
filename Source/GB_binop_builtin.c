@@ -67,7 +67,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     if (!A_is_pattern)
     {
         if ((A_type != (flipxy ? op_ytype : op_xtype)) ||
-            (A_type->code >= GB_UCT_code))
+            (A_type->code >= GB_UDT_code))
         { 
             // A is a user-defined type, or its type does not match the input
             // to the operator
@@ -78,7 +78,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
     if (!B_is_pattern)
     {
         if ((B_type != (flipxy ? op_xtype : op_ytype)) ||
-            (B_type->code >= GB_UCT_code))
+            (B_type->code >= GB_UDT_code))
         { 
             // B is a user-defined type, or its type does not match the input
             // to the operator
@@ -95,7 +95,7 @@ bool GB_binop_builtin               // true if binary operator is builtin
         }
     }
 
-    if (*opcode >= GB_USER_C_opcode)
+    if (*opcode >= GB_USER_opcode)
     { 
         // the binary operator is user-defined
         return (false) ;

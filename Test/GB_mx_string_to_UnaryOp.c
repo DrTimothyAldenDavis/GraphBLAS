@@ -69,7 +69,7 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
         //----------------------------------------------------------------------
 
         // user-defined Complex unary operator
-        opcode  = GB_USER_R_opcode ;    // generic user-defined opcode
+        opcode  = GB_USER_opcode ;      // user-defined opcode
         opclass = mxDOUBLE_CLASS ;      // MATLAB class for complex
 
         if (len == 0)
@@ -128,37 +128,23 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
         { 
             // z = cmplx (x,0), convert x double to real part of Complex z
             op = Complex_complex_real ;
-            opcode = GB_USER_R_opcode ;
+            opcode = GB_USER_opcode ;
             opclass = mxDOUBLE_CLASS ;
         }
         else if (MATCH (opname, "complex_imag" ))
         { 
             // z = cmplx (0,x), convert x double to imag part of Complex z
             op = Complex_complex_imag ;
-            opcode = GB_USER_R_opcode ;
+            opcode = GB_USER_opcode ;
             opclass = mxDOUBLE_CLASS ;
         }
-
-        #ifdef MY_SCALE
-
-        else if (MATCH (opname, "my_scale" ))
-        { 
-            // z = my_scalar*x; default value of my_scalar is 2
-            op = My_scale ;
-            opcode = GB_USER_C_opcode ;
-            opclass = mxDOUBLE_CLASS ;
-            my_scalar = 2 ;
-        }
-
-        #endif
-
         else
         {
             mexWarnMsgIdAndTxt ("GB:warn", "unrecognised function name") ;
             return (false) ;
         }
 
-        if (opcode < GB_USER_C_opcode)
+        if (opcode < GB_USER_opcode)
         {
             // get the opclass from the opclass_mx string, if present
             opclass = GB_mx_string_to_classID (opclass, opclass_mx) ;
@@ -298,9 +284,8 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
                 }
                 break ;
 
-            case GB_NOP_opcode   :
-            case GB_USER_R_opcode   :
-            case GB_USER_C_opcode   :
+            case GB_NOP_opcode  :
+            case GB_USER_opcode :
 
                 // no operation is requested so return NULL, or user-defined
                 break ;

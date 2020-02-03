@@ -1100,12 +1100,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     size_t xsize = xtype->size ;
     size_t ysize = ytype->size ;
 
-    // so that tcode can match scode
-    GB_Type_code tcode2 = (tcode == GB_UCT_code) ? GB_UDT_code : tcode ;
-    GB_Type_code scode2 = (scode == GB_UCT_code) ? GB_UDT_code : scode ;
-
     // no typecasting if all 5 types are the same
-    bool nocasting = (tcode2 == scode2) &&
+    bool nocasting = (tcode == scode) &&
         (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
 
     //--------------------------------------------------------------------------

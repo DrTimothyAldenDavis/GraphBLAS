@@ -331,44 +331,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 #endif
 
     //--------------------------------------------------------------------------
-    // user semirings created at compile time
-    //--------------------------------------------------------------------------
-
-#if 0
-    TODO enable user-defined pre-compiled semirings
-
-    if (semiring->object_kind == GB_USER_COMPILED)
-    { 
-        GBBURBLE ("user pre-compiled ") ;
-
-        // determine the required type of A and B for the user semiring
-        GrB_Type atype_required, btype_required ;
-
-        if (flipxy)
-        { 
-            // A is passed as y, and B as x, in z = mult(x,y)
-            atype_required = mult->ytype ;
-            btype_required = mult->xtype ;
-        }
-        else
-        { 
-            // A is passed as x, and B as y, in z = mult(x,y)
-            atype_required = mult->xtype ;
-            btype_required = mult->ytype ;
-        }
-
-        if (A->type == atype_required && B->type == btype_required)
-        {
-            info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, A, B,
-                flipxy,
-                /* dot2: */ NULL, NULL, nthreads, 0, 0, NULL,
-                /* dot3: */ TaskList, ntasks) ;
-            done = true ;
-        }
-    }
-#endif
-
-    //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and typecasting
     //--------------------------------------------------------------------------
 

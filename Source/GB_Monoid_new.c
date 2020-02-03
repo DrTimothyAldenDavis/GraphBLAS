@@ -39,7 +39,6 @@ GrB_Info GB_Monoid_new          // create a monoid
 
     ASSERT_BINARYOP_OK (op, "op for monoid", GB0) ;
     ASSERT (idcode <= GB_UDT_code) ;
-    ASSERT (idcode != GB_UCT_code) ;
 
     //--------------------------------------------------------------------------
     // rename built-in binary operators
@@ -120,15 +119,11 @@ GrB_Info GB_Monoid_new          // create a monoid
     // and this can be rigourously checked.  For all user-defined types,
     // identity is a mere void * pointer, and its actual type cannot be
     // compared with the input op->ztype parameter.  Only the type code,
-    // GB_UDT_code or GB_UCT_code, can be checked to see if it matches.  In
+    // GB_UDT_code, can be checked to see if it matches.  In
     // that case, all that is known is that identity is a void * pointer that
     // points to something, hopefully a scalar of the proper user-defined type.
 
-    // UCT code is treated as UDT, since GB_Monoid_new is never called with
-    // an idcode of UCT.
     GB_Type_code zcode = op->ztype->code ;
-    if (zcode == GB_UCT_code) zcode = GB_UDT_code ;
-
     if (idcode != zcode)
     { 
         return (GB_ERROR (GrB_DOMAIN_MISMATCH, (GB_LOG,

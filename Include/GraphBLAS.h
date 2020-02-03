@@ -107,7 +107,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Feb 2, 2020 (DRAFT25)"
+#define GxB_IMPLEMENTATION_DATE "Feb 3, 2020 (DRAFT26)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3387,7 +3387,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //          C(:,j)=A*B(:,j) via a heap of size equal to the maximum number of
 //          entries in any column of B.  Very good for hypersparse matrices,
 //          particularly when nnz(B) is less than the number of rows of A.
-//          TODO: this is no longer available in v3.2, so it is silently
+//          The Heap method is no longer available in v3.2, so it is silently
 //          replaced with GxB_AxB_HASH.
 //
 //      GxB_AxB_HASH: This is the same as GxB_AxB_SAXPY, except that every
@@ -6051,10 +6051,10 @@ GB_PUBLIC GrB_Monoid
 // built-in semirings
 //------------------------------------------------------------------------------
 
-// Using built-in types and operators, TODO semirings can be built.  This
-// count includes redundant Boolean operators (for example GxB_TIMES_BOOL and
+// Using built-in types and operators, 1355 unique semirings can be built.
+// This count excludes redundant semirings (for example GxB_TIMES_BOOL and
 // GxB_LAND_BOOL are different operators but they are redundant since they
-// always return the same result):
+// always return the same result).
 
 // 1000 semirings with a multiply operator TxT -> T where T is non-Boolean,
 // from the complete cross product of:
@@ -7057,31 +7057,3 @@ GrB_Info GxB_Vector_export  // export and free a vector
 
 #endif
 
-//==============================================================================
-// user-defined objects defined by SuiteSparse/GraphBLAS/User/*.m4
-//==============================================================================
-
-// Declarations appended to SuiteSparse/GraphBLAS/Include/GraphBLAS.h.
-
-#if defined __INTEL_COMPILER
-#pragma warning (disable: 869 )
-#elif defined __GNUC__
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
-#ifndef GxB_USER_INCLUDE
-#define GxB_USER_INCLUDE
-#endif
-
-#ifndef GxB_USER_H
-#define GxB_USER_H
-
-
-
- 
-
-
-
-#endif
-
-#undef GxB_USER_INCLUDE

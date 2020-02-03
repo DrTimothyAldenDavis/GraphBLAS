@@ -56,20 +56,9 @@ GrB_Info adotb_complex (GB_Context Context)
         return (info) ;
     }
 
-    #ifdef MY_COMPLEX
-    // use the precompiled complex type
-    if (Aconj != NULL) Aconj->type = My_Complex ;
-    if (B     != NULL) B->type     = My_Complex ;
-    #endif
-
     bool mask_applied = false ;
 
-    GrB_Semiring semiring =
-        #ifdef MY_COMPLEX
-            My_Complex_plus_times ;
-        #else
-            Complex_plus_times ;
-        #endif
+    GrB_Semiring semiring = Complex_plus_times ;
 
     // GxB_print (semiring,3) ;
 
@@ -90,13 +79,6 @@ GrB_Info adotb_complex (GB_Context Context)
             /* single thread: */
             1, 1, 1, Context) ;
     }
-
-    #ifdef MY_COMPLEX
-    // convert back to run-time complex type
-    if (C     != NULL) C->type     = Complex ;
-    if (B     != NULL) B->type     = Complex ;
-    if (Aconj != NULL) Aconj->type = Complex ;
-    #endif
 
     GrB_free (&Aconj) ;
     return (info) ;

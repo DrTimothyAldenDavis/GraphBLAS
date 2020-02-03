@@ -56,7 +56,7 @@ GrB_Info GB_selector
     ASSERT_MATRIX_OK (A, "A input for GB_selector", GB_FLIP (GB0)) ;
     ASSERT_SELECTOP_OK_OR_NULL (op, "selectop for GB_selector", GB0) ;
     ASSERT_SCALAR_OK_OR_NULL (Thunk, "Thunk for GB_selector", GB0) ;
-    ASSERT (opcode >= 0 && opcode <= GB_USER_SELECT_R_opcode) ;
+    ASSERT (opcode >= 0 && opcode <= GB_USER_SELECT_opcode) ;
 
     GrB_Info info ;
     if (Chandle != NULL)
@@ -120,7 +120,7 @@ GrB_Info GB_selector
         xthunk = Thunk->x ;
         GB_Type_code tcode = Thunk->type->code ;
         ithunk = 0 ;
-        if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_C_opcode)
+        if (tcode <= GB_FP64_code && opcode < GB_USER_SELECT_opcode)
         { 
             // ithunk = (int64_t) Thunk (0)
             GB_cast_array ((GB_void *GB_RESTRICT) &ithunk,
@@ -137,7 +137,7 @@ GrB_Info GB_selector
     //--------------------------------------------------------------------------
 
     GxB_select_function user_select = NULL ;
-    if (op != NULL && opcode >= GB_USER_SELECT_C_opcode)
+    if (op != NULL && opcode >= GB_USER_SELECT_opcode)
     { 
         GB_BURBLE_MATRIX (A, "generic ") ;
         user_select = (GxB_select_function) (op->function) ;

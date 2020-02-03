@@ -41,13 +41,9 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 
     if (pr > 0)
     {
-        if (op->opcode == GB_USER_C_opcode)
+        if (op->opcode >= GB_USER_opcode)
         { 
-            GBPR ("(compile-time user-defined) ") ;
-        }
-        else if (op->opcode == GB_USER_R_opcode)
-        { 
-            GBPR ("(run-time user-defined) ") ;
+            GBPR ("(user-defined) ") ;
         }
         else
         { 
@@ -65,7 +61,7 @@ GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
             GB_NAME, op->name))) ;
     }
 
-    if (op->opcode < GB_FIRST_opcode || op->opcode > GB_USER_R_opcode)
+    if (op->opcode < GB_FIRST_opcode || op->opcode > GB_USER_opcode)
     { 
         GBPR0 ("    BinaryOp has an invalid opcode\n") ;
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG,

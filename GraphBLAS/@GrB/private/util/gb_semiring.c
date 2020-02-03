@@ -85,9 +85,9 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     // cases this function does not handle.  This function handles only
     // built-in operators or compile-time user-defined operators.
 
-    CHECK_ERROR (add_opcode  >= GB_USER_R_opcode,
+    CHECK_ERROR (add_opcode  >= GB_USER_opcode,
         "invalid semiring (add operator not built-in)") ;
-    CHECK_ERROR (mult_opcode >= GB_USER_R_opcode,
+    CHECK_ERROR (mult_opcode >= GB_USER_opcode,
         "invalid semiring (multiply operator not built-in)") ;
 
     // this condition is true for all built-in operators, but not required for
@@ -102,7 +102,6 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     GB_Type_code xycode = mult->xtype->code ;
     GB_Type_code zcode  = mult->ztype->code ;
 
-    // FUTURE: xycode and zcode may be GB_UCT_code with gb_complex_type
     CHECK_ERROR (xycode >= GB_UDT_code,
         "invalid semiring (x and y type not built-in)") ;
     CHECK_ERROR (zcode  >= GB_UDT_code,

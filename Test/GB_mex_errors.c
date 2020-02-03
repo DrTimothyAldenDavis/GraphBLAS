@@ -277,16 +277,9 @@ void mexFunction
     #undef FREE_DEEP_COPY
     #undef GET_DEEP_COPY
 
-    #ifdef MY_COMPLEX
-    printf ("My_complex pre-defined\n") ;
-    #endif
     for (GB_Type_code tcode = 0 ; tcode <= GB_UDT_code ; tcode++)
     {
-        #ifdef MY_COMPLEX
-        GrB_Type utype = My_Complex ;
-        #else
         GrB_Type utype = Complex ;
-        #endif
         GrB_Type ttype = GB_code_type (tcode, utype) ;
         printf ("\n----------------------------------tcode: %d\n", tcode) ;
         OK (GB_Type_check (ttype, "GB_code_type:", GB3, NULL, Context)) ;
@@ -3627,7 +3620,7 @@ void mexFunction
 
     op1b->opcode = 1024 ;
     ERR (GB_UnaryOp_check (op1b, "op1b invalid opcode", GB1, ff, Context)) ;
-    op1b->opcode = GB_USER_R_opcode ;
+    op1b->opcode = GB_USER_opcode ;
 
     op1b->ztype = NULL ;
     ERR (GB_UnaryOp_check (op1b, "op1b invalid ztype", GB1, ff, Context)) ;
@@ -3673,7 +3666,7 @@ void mexFunction
 
     op2b->opcode = 1024 ;
     ERR (GB_BinaryOp_check (op2b, "op2b invalid opcode", GB1, ff, Context)) ;
-    op2b->opcode = GB_USER_R_opcode ;
+    op2b->opcode = GB_USER_opcode ;
 
     op2b->ztype = NULL ;
     ERR (GB_BinaryOp_check (op2b, "op2b invalid ztype", GB1, ff, Context)) ;
@@ -3726,7 +3719,7 @@ void mexFunction
     selectop->opcode = 9999 ;
     ERR (GB_SelectOp_check (selectop, "selectop invalid opcode", GB1, ff,
         Context)) ;
-    selectop->opcode = GB_USER_SELECT_R_opcode ;
+    selectop->opcode = GB_USER_SELECT_opcode ;
 
     selectop->xtype = Tgunk ;
     ERR (GB_SelectOp_check (selectop, "selectop invalid xtype", GB1, ff,

@@ -182,7 +182,7 @@ tm3 = toc ;
 tic
 C1 = (Cin + B) + A ;
 toc
-tm4 = toc ;
+tm5 = toc ;
 
 tic
 C3 = GB_mex_eWiseAdd_Matrix (Cin, [ ], 'plus', 'plus', A, B) ;
@@ -224,7 +224,7 @@ C4 = GB_mex_AplusB (C4, A, 'plus') ;
 toc (tstart)
 tg2 = grbresults ;
 fprintf ('GraphBLAS time: %g\n', tg1+tg2) ;
-fprintf ('speedup over MATLAB: %g\n\n', tm4/(tg1+tg2)) ;
+fprintf ('speedup over MATLAB: %g\n\n', tm5/(tg1+tg2)) ;
 assert (isequal (C1, C4)) ;;
 
 nthreads_set (save, save_chunk) ;

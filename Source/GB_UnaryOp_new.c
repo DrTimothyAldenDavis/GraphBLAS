@@ -55,7 +55,7 @@ GrB_Info GB_UnaryOp_new             // create a new user-defined unary operator
     op->ztype = ztype ;
     op->function = function ;
     strncpy (op->name, name, GB_LEN-1) ;
-    op->opcode = GB_USER_R_opcode ;     // run-time user-defined operator
+    op->opcode = GB_USER_opcode ;     // user-defined operator
     ASSERT_UNARYOP_OK (op, "new user-defined unary op", GB0) ;
     return (GrB_SUCCESS) ;
 }

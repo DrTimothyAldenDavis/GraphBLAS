@@ -11,9 +11,7 @@
 // GB_printf_function has been set by the caller, then that function is used
 // when f is NULL.
 
-#include "GB.h"
+#include "GB_printf.h"
 
-// TODO fix warning message
-GB_PUBLIC
-int (* GB_printf_function ) (const char *format, ...) = NULL ;
+int (* GB_printf_function ) (const char *format, ...) = (void *) NULL ;
 

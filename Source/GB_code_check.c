@@ -85,7 +85,6 @@ GrB_Info GB_code_check          // print an entry using a type code
             break ;
         #endif
 
-        case GB_UCT_code    :
         case GB_UDT_code    :
             { 
                 GBPR ("[user-defined value]") ;
