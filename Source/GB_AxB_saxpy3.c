@@ -779,7 +779,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         if (bnvec == 1)
         { 
             // convert the single coarse task into a single fine task
-            printf ("convert to single fine task\n") ;
             TaskList [0].start  = 0 ;           // first entry in B(:,0)
             TaskList [0].end    = bnz - 1 ;     // last entry in B(:,0)
             TaskList [0].vector = 0 ;
@@ -793,13 +792,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // Frees Bflops2, Coarse_initial, and Fine_slice.  These do not need to
     // be freed in the GB_Asaxpy3B worker below.
 
-    printf ("free init work\n") ;
     GB_FREE_INITIAL_WORK ;
-    printf ("did init work\n") ;
 
     //--------------------------------------------------------------------------
 
-#if 1
+#if 0
     // dump the task descriptors
     printf ("\n================== final tasks: ncoarse %d nfine %d ntasks %d\n",
         ncoarse, nfine, ntasks) ;

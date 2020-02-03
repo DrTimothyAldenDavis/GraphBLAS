@@ -70,9 +70,6 @@ bool GB_mx_get_global       // true if doing malloc_debug
     GB_Global_malloc_tracking_set (true) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
 
-// TODO: burble is on
-    GxB_set (GxB_BURBLE, true) ;
-
     //--------------------------------------------------------------------------
     // get nthreads
     //--------------------------------------------------------------------------
