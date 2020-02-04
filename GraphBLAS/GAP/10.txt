@@ -153,4 +153,71 @@ load time: 483.865 sec
 
 GrB.tricount  tests:
 trial:  1 GrB.tricount  time:   39.195
-avg GrB.tricount time:      39.195 (1 
+avg GrB.tricount time:      39.195 (1 trials)
+degree: min: 6 max: 68 mean: 32 std: 5.65702
+ 3:     3.2940    32.6552 =    35.9492
+ 4:     3.3036    34.1890 =    37.4926
+ 7:    56.4464    32.1941 =    88.6404
+ 8:    57.0738    32.7820 =    89.8557
+
+ 3:    35.9492 relative:     1.0000 best
+ 4:    37.4926 relative:     1.0429 
+ 7:    88.6404 relative:     2.4657 
+ 8:    89.8557 relative:     2.4995 
+
+
+GAP/GAP-twitter: nodes: 61.5784 million  nvals: 2405.03 million
+load time: 152.221 sec
+
+GrB.tricount  tests:
+trial:  1 GrB.tricount  time:  291.530
+avg GrB.tricount time:     291.530 (1 trials)
+degree: min: 0 max: 2997487 mean: 39.0563 std: 2001.89
+ 3:     1.4260   527.0027 =   528.4288
+ 4:     1.4317   289.6054 =   291.0371
+ 7:    25.5254   221.4969 =   247.0223
+ 8:    25.1245   526.6536 =   551.7780
+
+ 3:   528.4288 relative:     2.1392 
+ 4:   291.0371 relative:     1.1782 
+ 7:   247.0223 relative:     1.0000 best
+ 8:   551.7780 relative:     2.2337 
+
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+load time: 463.391 sec
+
+GrB.tricount  tests:
+trial:  1 GrB.tricount  time: 1471.231
+avg GrB.tricount time:    1471.231 (1 trials)
+degree: min: 0 max: 1572838 mean: 31.4658 std: 695.008
+ 3:     2.3157  1551.7254 =  1554.0411
+ 4:     2.3246  1467.2289 =  1469.5535
+ 7:    50.1962   917.9959 =   968.1921
+ 8:    50.6440  2263.2905 =  2313.9346
+
+ 3:  1554.0411 relative:     1.6051 
+ 4:  1469.5535 relative:     1.5178 
+ 7:   968.1921 relative:     1.0000 best
+ 8:  2313.9346 relative:     2.3900 
+
+whos
+  Name           Size            Bytes  Class     Attributes
+
+  ans            1x1                 8  double              
+  best           1x1                 8  double              
+  c              1x1                 8  double              
+  k              1x1                 8  double              
+  matrices       1x7               962  cell                
+  n              1x1                 8  double              
+  name           1x12               24  char                
+  ntrials        1x1                 8  double              
+  s              1x1                 8  double              
+  t              1x1                 8  double              
+  t1             1x1                 8  double              
+  times         12x2               192  double              
+  tot            1x1                 8  double              
+  trial          1x1                 8  double              
+  tstart         1x1                 8  uint64              
+
+exit
