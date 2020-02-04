@@ -4,8 +4,8 @@ function s = tricount (A, check)
 % spones (A) must be symmetric; results are undefined if spones (A) is
 % unsymmetric.  Diagonal entries are ignored.
 %
-% To check the input matrix A, use GrB.tricount (A, 'check').  This check takes
-% additional time so by default the input is not checked.
+% To check the input matrix A, use GrB.tricount (A, 'check').  This check
+% takes additional time so by default the input is not checked.
 %
 % See also GrB.ktruss.
 
@@ -19,29 +19,29 @@ else
     check = isequal (check, 'check') ;
 end
 
-int_type = 'int64' ;
-if (n < intmax ('int32'))
-    int_type = 'int32' ;
-end
-A = spones (A, int_type) ;
-
-if (check && ~issymmetric (A))
-    gb_error ('spones (A) must be symmetric') ;
+if (check && ~issymmetric (spones (A)))
+    gb_error ('pattern of A must be symmetric') ;
 end
 
-C = GrB (n, n, int_type, GrB.format (A)) ;
+% C, L, and U will have the same format as A
+C = GrB (n, n, 'int64', GrB.format (A)) ;
 L = tril (A, -1) ;
 U = triu (A, 1) ;
 
 % Inside GraphBLAS, the methods below are identical.  For example, L stored by
-% row is the same data structure as U stored by column.
+% row is the same data structure as U stored by column.  Both use the SandiaDot
+% as defined in LAGraph (case 5).
+
+desc.mask = 'structural' ;
 
 if (GrB.isbyrow (A))
     % C<L> = L*U'
-    C = GrB.mxm (C, L, '+.*', L, U, struct ('in1', 'transpose')) ;
+    desc.in1 = 'transpose' ;
+    C = GrB.mxm (C, L, '+.pair.int64', L, U, desc) ;
 else
     % C<U> = L'*U
-    C = GrB.mxm (C, U, '+.*', L, U, struct ('in0', 'transpose')) ;
+    desc.in0 = 'transpose' ;
+    C = GrB.mxm (C, U, '+.pair.int64', L, U, desc) ;
 end
 
 s = full (double (GrB.reduce ('+.int64', C))) ;
