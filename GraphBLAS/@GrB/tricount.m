@@ -35,13 +35,13 @@ U = triu (A, 1) ;
 desc.mask = 'structural' ;
 
 if (GrB.isbyrow (A))
-    % C<L> = L*U'
+    % C<U> = U*L': SandiaDot2 method
     desc.in1 = 'transpose' ;
-    C = GrB.mxm (C, L, '+.pair.int64', L, U, desc) ;
+    C = GrB.mxm (C, U, '+.pair.int64', U, L, desc) ;
 else
-    % C<U> = L'*U
+    % C<L> = L'*U: SandiaDot2 method
     desc.in0 = 'transpose' ;
-    C = GrB.mxm (C, U, '+.pair.int64', L, U, desc) ;
+    C = GrB.mxm (C, L, '+.pair.int64', L, U, desc) ;
 end
 
 s = full (double (GrB.reduce ('+.int64', C))) ;

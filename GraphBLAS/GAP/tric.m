@@ -28,13 +28,16 @@ degree = full (double (GrB.entries (A, 'row', 'degree'))) ;
 fprintf ('degree: min: %d max: %d mean: %g std: %g\n', ...
     min (degree), max (degree), mean (degree), std (degree)) ;
 
-times = inf (12, 1) ;
+times = inf (12, 2) ;
 
-dot = [3 4 7 8 11 12] ;
-for trial = dot % 1:12
+dot = [3 4 7 8 ] ; % 13] ;
+trials = dot ;
+
+for trial = trials
 
     tstart = tic ;
     c = -1 ;
+    tprep = inf ;
 
     try
 
@@ -42,12 +45,14 @@ for trial = dot % 1:12
 
             % Sandia method: C<L>=L*L with saxpy method
             L = tril (A, -1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, L, desc_s) ;
 
         elseif (trial == 2)
 
             % Sandia2 method: C<U>=U*U with saxpy method
             U = triu (A, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, U, semiring, U, U, desc_s) ;
 
         elseif (trial == 3)
@@ -55,6 +60,7 @@ for trial = dot % 1:12
             % SandiaDot: C<L>=L*U': dot method
             L = tril (A, -1) ;
             U = triu (A, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
 
         elseif (trial == 4)
@@ -62,6 +68,7 @@ for trial = dot % 1:12
             % SandiaDot2: C<U>=U*L': dot method
             L = tril (A, -1) ;
             U = triu (A, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, U, semiring, U, L, desc_st) ;
 
 
@@ -71,6 +78,7 @@ for trial = dot % 1:12
             % sort degree, low to hi: saxpy method (Sandia)
             [~,p] = sort (degree, 'ascend') ;
             L = tril (A (p,p), -1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, L, desc_s) ;
 
         elseif (trial == 6)
@@ -78,6 +86,7 @@ for trial = dot % 1:12
             % sort degree, hi to low: saxpy method (Sandia)
             [~,p] = sort (degree, 'descend') ;
             L = tril (A (p,p), -1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, L, desc_s) ;
 
         elseif (trial == 7)
@@ -87,6 +96,7 @@ for trial = dot % 1:12
             S = A (p,p) ;
             L = tril (S, -1) ;
             U = triu (S, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
 
         elseif (trial == 8)
@@ -96,6 +106,7 @@ for trial = dot % 1:12
             S = A (p,p) ;
             L = tril (S, -1) ;
             U = triu (S, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
 
 
@@ -110,6 +121,7 @@ for trial = dot % 1:12
             i = i (keep) ;
             j = j (keep) ;
             S = GrB.build (i, j, 1, n, n, '|', 'logical') ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, S, semiring, S, S, desc_s) ;
 
         elseif (trial == 10)
@@ -123,6 +135,7 @@ for trial = dot % 1:12
             j = j (keep) ;
             S = GrB.build (i, j, 1, n, n, '|', 'logical') ;
             clear keep i j
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, S, semiring, S, S, desc_s) ;
 
         elseif (trial == 11)
@@ -140,6 +153,7 @@ for trial = dot % 1:12
             jhi = j (keep) ;
             U = GrB.build (ihi, jhi, 1, n, n, '|', 'logical') ;
             clear keep i j ilo jlo ihi jhi
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
 
         elseif (trial == 12)
@@ -157,6 +171,27 @@ for trial = dot % 1:12
             jhi = j (keep) ;
             U = GrB.build (ihi, jhi, 1, n, n, '|', 'logical') ;
             clear keep i j ilo jlo ihi jhi
+            tprep = toc (tstart) ; tstart = tic ; 
+            C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
+
+        elseif (trial == 13)
+
+            % sort via symrcm: dot method (SandiaDot)
+            p = symrcm (A) ;
+            S = A (p,p) ;
+            L = tril (S, -1) ;
+            U = triu (S, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
+            C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
+
+        elseif (trial == 14)
+
+            % sort via amd: dot method (SandiaDot)
+            p = amd (A) ;
+            S = A (p,p) ;
+            L = tril (S, -1) ;
+            U = triu (S, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
 
         end
@@ -170,22 +205,26 @@ for trial = dot % 1:12
     t = toc (tstart) ;
     if (c == -1)
         t = inf ;
+        tprep = inf ;
     else
         assert (c == cgood)
     end
 
-    times (trial) = t ;
-    fprintf ('%2d: %10.4f\n', trial, t) ;
+    times (trial,1) = tprep ;
+    times (trial,2) = t ;
+    fprintf ('%2d: %10.4f %10.4f = %10.4f\n', trial, tprep, t, t+tprep) ;
     clear C S L U ilo jlo ihi jhi keep i j p
 
 end
 
+all_time = sum (times, 2) ;
+
 fprintf ('\n') ;
-[tbest, best] = min (times) ;
+[tbest, best] = min (all_time) ;
 best = best (1) ;
 
-for trial = 1:12
-    t = times (trial) ;
+for trial = trials
+    t = sum (times (trial,1:2)) ;
     fprintf ('%2d: %10.4f relative: %10.4f ', trial, t, t / tbest) ;
     if (trial == best)
         fprintf ('best') ;

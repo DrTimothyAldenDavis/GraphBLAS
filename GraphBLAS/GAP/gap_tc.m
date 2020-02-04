@@ -11,18 +11,23 @@ clear C
 
 % the GAP test matrices:
 matrices = {
-    'GAP/GAP-kron'
+    'GAP/GAP-road'
+    'GAP/GAP-web'
     'GAP/GAP-urand'
     'GAP/GAP-twitter'
-    'GAP/GAP-web'
-    'GAP/GAP-road'
+    'GAP/GAP-kron'
     } ;
+
+matrices = { 'HB/west0067', 'SNAP/roadNet-CA' } ;
+    % 'SNAP/com-Orkut', 'LAW/indochina-2004', ...
 
 % smaller test matrices:
 matrices = { 'HB/west0067', 'SNAP/roadNet-CA', ...
-    'SNAP/com-Orkut', 'LAW/indochina-2004' } ;
-
-% matrices = { 'HB/west0067', 'SNAP/roadNet-CA' } ;
+    'GAP/GAP-road', ...
+    'GAP/GAP-web', ...
+    'GAP/GAP-urand', ...
+    'GAP/GAP-twitter', ...
+    'GAP/GAP-kron' }
 
 [status, result] = system ('hostname') ;
 clear status
@@ -61,7 +66,6 @@ for k = 1:length(matrices)
     % triangle count
     %---------------------------------------------------------------------------
 
-    % GrB.burble (1) ;
     fprintf ('\nGrB.tricount  tests:\n') ;
 
     tot = 0 ;
@@ -72,8 +76,8 @@ for k = 1:length(matrices)
         tot = tot + t ;
         fprintf ('trial: %2d GrB.tricount  time: %8.3f\n', trial, t) ;
     end
-    fprintf ('avg GrB.tricount time:  %10.3f (%d trials)\n', tot/ntrials, ntrials) ;
-    % GrB.burble (0) ;
+    fprintf ('avg GrB.tricount time:  %10.3f (%d trials)\n', ...
+        tot/ntrials, ntrials) ;
     fprintf ('% triangles: %d\n', full (s)) ;
 
     %---------------------------------------------------------------------------
