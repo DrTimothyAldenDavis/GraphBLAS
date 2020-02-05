@@ -29,8 +29,9 @@ L = tril (A, -1) ;
 U = triu (A, 1) ;
 
 % Inside GraphBLAS, the methods below are identical.  For example, L stored by
-% row is the same data structure as U stored by column.  Both use the SandiaDot
-% as defined in LAGraph (case 5).
+% row is the same data structure as U stored by column.  Both use the
+% SandiaDot2 method as defined in LAGraph (case 6), which is typically the
+% fastest of the methods in LAGraph_tricount.
 
 desc.mask = 'structural' ;
 
@@ -39,9 +40,9 @@ if (GrB.isbyrow (A))
     desc.in1 = 'transpose' ;
     C = GrB.mxm (C, U, '+.pair.int64', U, L, desc) ;
 else
-    % C<L> = L'*U: SandiaDot2 method
+    % C<U> = L'*U: SandiaDot2 method
     desc.in0 = 'transpose' ;
-    C = GrB.mxm (C, L, '+.pair.int64', L, U, desc) ;
+    C = GrB.mxm (C, U, '+.pair.int64', L, U, desc) ;
 end
 
 s = full (double (GrB.reduce ('+.int64', C))) ;

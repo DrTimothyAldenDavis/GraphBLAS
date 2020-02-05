@@ -28,9 +28,9 @@ degree = full (double (GrB.entries (A, 'row', 'degree'))) ;
 fprintf ('degree: min: %d max: %d mean: %g std: %g\n', ...
     min (degree), max (degree), mean (degree), std (degree)) ;
 
-times = inf (12, 2) ;
+times = inf (16, 2) ;
 
-dot = [3 4 7 8 ] ; % 13] ;
+dot = [3 4 7 8 15 16] ; % 13] ;
 trials = dot ;
 
 for trial = trials
@@ -193,6 +193,26 @@ for trial = trials
             U = triu (S, 1) ;
             tprep = toc (tstart) ; tstart = tic ; 
             C = GrB.mxm (Z, L, semiring, L, U, desc_st) ;
+
+        elseif (trial == 15)
+
+            % SandiaDot2: C<U>=U*L': dot method, sorted ascending
+            [~,p] = sort (degree, 'ascend') ;
+            S = A (p,p) ;
+            L = tril (S, -1) ;
+            U = triu (S, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
+            C = GrB.mxm (Z, U, semiring, U, L, desc_st) ;
+
+        elseif (trial == 16)
+
+            % SandiaDot2: C<U>=U*L': dot method, sorted descending
+            [~,p] = sort (degree, 'descend') ;
+            S = A (p,p) ;
+            L = tril (S, -1) ;
+            U = triu (S, 1) ;
+            tprep = toc (tstart) ; tstart = tic ; 
+            C = GrB.mxm (Z, U, semiring, U, L, desc_st) ;
 
         end
 

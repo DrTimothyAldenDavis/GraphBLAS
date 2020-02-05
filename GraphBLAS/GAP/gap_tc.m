@@ -2,7 +2,8 @@
 % gap_tc: run tricount for the GAP benchmark
 %-------------------------------------------------------------------------------
 
-clear
+diary on
+% clear
 rng ('default') ;
 
 % warmup, to make sure GrB library is loaded
@@ -18,9 +19,6 @@ matrices = {
     'GAP/GAP-kron'
     } ;
 
-matrices = { 'HB/west0067', 'SNAP/roadNet-CA' } ;
-    % 'SNAP/com-Orkut', 'LAW/indochina-2004', ...
-
 % smaller test matrices:
 matrices = { 'HB/west0067', 'SNAP/roadNet-CA', ...
     'GAP/GAP-road', ...
@@ -28,6 +26,14 @@ matrices = { 'HB/west0067', 'SNAP/roadNet-CA', ...
     'GAP/GAP-urand', ...
     'GAP/GAP-twitter', ...
     'GAP/GAP-kron' }
+
+matrices = { 'HB/west0067', 'SNAP/roadNet-CA' , ...
+    'SNAP/com-Orkut', 'LAW/indochina-2004' }
+
+index = ssget ;
+f = find (index.nrows == index.ncols & index.nnz > 5e6 & index.isReal) ;
+[~,i] = sort (index.nnz (f)) ;
+matrices = f (i) ;
 
 [status, result] = system ('hostname') ;
 clear status
@@ -40,19 +46,27 @@ else
 end
 clear result
 
-for k = 1:length(matrices)
+% winners = zeros (16,1) ;  
+% total   = zeros (16,1) ;  
+% tbest   = 0 ;
+
+for k = 152:length(matrices)
 
     %---------------------------------------------------------------------------
     % get the GAP problem
     %---------------------------------------------------------------------------
 
+try
+
+    id = matrices (k) ;
     GrB.burble (0) ;
     t1 = tic ;
     clear A Prob
-    Prob = ssget (matrices {k}) ;
+    Prob = ssget (id, index) ;
     A = GrB (Prob.A, 'by row', 'logical') ;
     name = Prob.name ;
     clear Prob
+    A = spones (A) ;
     A = A|A' ;
     n = size (A,1) ;
     fprintf ('\n%s: nodes: %g million  nvals: %g million\n', ...
@@ -60,7 +74,7 @@ for k = 1:length(matrices)
     t1 = toc (t1) ;
     fprintf ('load time: %g sec\n', t1) ;
 
-    ntrials = 1 ; % TODO 3 ;
+    ntrials = 1 ;
 
     %---------------------------------------------------------------------------
     % triangle count
@@ -78,14 +92,34 @@ for k = 1:length(matrices)
     end
     fprintf ('avg GrB.tricount time:  %10.3f (%d trials)\n', ...
         tot/ntrials, ntrials) ;
-    fprintf ('% triangles: %d\n', full (s)) ;
+    fprintf ('triangles: %d\n', full (s)) ;
 
     %---------------------------------------------------------------------------
     % triangle count with permutations
     %---------------------------------------------------------------------------
 
     [c times best] = tric (A, s) ;
-
     clear A
+
+    all_times = sum (times, 2) ;
+    total = total + all_times ;
+    winners (best) = winners (best) + 1 ;
+    tbest = tbest + all_times (best) ;
+
+    for k = 1:16
+        if (total (k) < inf)
+            fprintf ('%2d   %10.3f : %d\n', k, total (k), winners (k)) ;
+        end
+    end
+    fprintf ('best %10.3f\n', tbest) ;
+    save gap_tc_results winners total tbest k
+    diary off
+    diary on
+
+catch me
+    k
+    disp (me.message)
+end
+
 end
 
