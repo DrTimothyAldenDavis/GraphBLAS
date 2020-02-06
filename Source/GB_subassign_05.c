@@ -2,7 +2,7 @@
 // GB_subassign_05: C(I,J)<M> = scalar ; no S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ GrB_Info GB_subassign_05
     const int64_t Jcolon [3],
     const GrB_Matrix M,
     const bool Mask_struct,
-    const void *scalar,     // TODO change to GB_void
+    const void *scalar,
     const GrB_Type atype,
     GB_Context Context
 )

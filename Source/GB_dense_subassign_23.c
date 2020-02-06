@@ -2,13 +2,13 @@
 // GB_dense_subassign_23: C += A where C is dense and A is sparse or dense
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // C and A must have the same vector dimension and vector length.
-// TODO: the transposed case, C+=A' could easily be done.
+// FUTURE::: the transposed case, C+=A' could easily be done.
 // The parallelism used is identical to GB_AxB_colscale.
 
 #include "GB_dense.h"
@@ -159,7 +159,6 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 
         // aij = A(i,j), located in Ax [pA].  Note that GB_GETB is used,
         // since A appears as the 2nd input to z = fadd (x,y)
-        // TODO rename this function C+=B and use A throughout, not B.
         #define GB_GETB(aij,Ax,pA)                                          \
             GB_void aij [GB_VLA(ysize)] ;                                   \
             cast_A (aij, Ax +((pA)*asize), asize)

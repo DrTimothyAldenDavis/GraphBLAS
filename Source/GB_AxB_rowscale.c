@@ -2,7 +2,7 @@
 // GB_AxB_rowscale: C = D*B, row scale with diagonal matrix D
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -51,8 +51,6 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     GrB_BinaryOp mult = semiring->multiply ;
     ASSERT (mult->ztype == semiring->add->op->ztype) ;
-
-    // TODO make this a function:
 
     bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
     bool op_is_second = mult->opcode == GB_SECOND_opcode ;

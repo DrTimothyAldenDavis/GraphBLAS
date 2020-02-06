@@ -2,7 +2,7 @@
 // GB_Global.h: definitions for global variables
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -66,10 +66,6 @@ void  *  GB_Global_realloc_function (void *p, size_t size) ;
 
 void     GB_Global_free_function_set (void (* free_function) (void *)) ;
 void     GB_Global_free_function (void *p) ;
-
-GB_PUBLIC   // accessed by the MATLAB interface only
-void     GB_Global_persist_function_set (void (* persist_function) (void *)) ;
-void     GB_Global_persist_function (void *p) ;
 
 void     GB_Global_malloc_is_thread_safe_set
          (

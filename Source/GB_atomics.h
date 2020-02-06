@@ -13,7 +13,7 @@
 
 #if GB_MICROSOFT
 
-// TODO
+// TODO: figure out how to do atomics with MS Visual Studio
 #define GB_ATOMIC_READ
 #define GB_ATOMIC_WRITE
 #define GB_ATOMIC_UPDATE  GB_PRAGMA (omp atomic)
@@ -21,6 +21,7 @@
 
 #else
 
+// TODO try icc with non-atomic read/write
 #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
 #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
 #define GB_ATOMIC_UPDATE  GB_PRAGMA (omp atomic update)

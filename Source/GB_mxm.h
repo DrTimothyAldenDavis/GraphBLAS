@@ -2,15 +2,14 @@
 // GB_mxm.h: definitions for C=A*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 #ifndef GB_MXM_H
 #define GB_MXM_H
-// TODO remove GB_saxpy3.h from here.
-#include "GB_saxpy3.h"
+#include "GB_AxB_saxpy3.h"
 
 //------------------------------------------------------------------------------
 

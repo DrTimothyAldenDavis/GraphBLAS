@@ -14,8 +14,6 @@
 
 // X and Y can have any size, and will often be larger than 2^31.
 
-// Helen: look here ...
-
 #include "GB_dense.h"
 
 void GB_cblas_daxpy         // Y += alpha*X

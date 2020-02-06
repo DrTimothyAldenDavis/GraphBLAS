@@ -2,7 +2,7 @@
 // GB_Global: global values in GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -84,7 +84,6 @@ typedef struct
     void * (* calloc_function  ) (size_t, size_t) ;
     void * (* realloc_function ) (void *, size_t) ;
     void   (* free_function    ) (void *)         ;
-    void   (* persist_function ) (void *)         ;
     bool malloc_is_thread_safe ;   // default is true
 
     //--------------------------------------------------------------------------
@@ -167,7 +166,6 @@ GB_Global_struct GB_Global =
     .calloc_function  = calloc,
     .realloc_function = realloc,
     .free_function    = free,
-    .persist_function = NULL,
     .malloc_is_thread_safe = true,
 
     // malloc tracking, for testing, statistics, and debugging only

@@ -16,8 +16,8 @@
 #include "GB_bracket.h"
 #include "GB_iterator.h"
 #include "GB_sort.h"
-#include "GB_saxpy3.h"
 #include "GB_atomics.h"
+#include "GB_AxB_saxpy3.h"
 #include "GB_AxB__include.h"
 
 // The C=A*B semiring is defined by the following types and operators:
@@ -93,8 +93,6 @@
 // Cx [pC] = cij
 #define GB_PUTC(cij,pC) \
     Cx [pC] = cij
-
-// For saxpy3:
 
 // Cx [p] = t
 #define GB_CIJ_WRITE(p,t) Cx [p] = t

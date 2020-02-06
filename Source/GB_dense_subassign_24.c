@@ -2,7 +2,7 @@
 // GB_dense_subassign_24: make a deep copy of a sparse matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
             GB_is_dense (C)             //      both A and C are dense
             && GB_is_dense (A)
             && !GB_ZOMBIES (C)          //      C has no pending work
-            && !GB_PENDING (C)          // (TODO: could tolerate pending tuples)
+            && !GB_PENDING (C)          // (FUTURE::: tolerate pending tuples)
 //          && !GB_ZOMBIES (A)          //      A has no pending work
 //          && !GB_PENDING (A)          //      (see GB_WAIT (A) above)
             && !(C->p_shallow)          //      C is not shallow
@@ -95,10 +95,15 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
 
         GBBURBLE ("(deep copy) ") ;
 
-        // TODO see GB_dup2
-
-        // clear all prior content of C
+        // clear all prior content of C, but keep the CSR/CSC format
+        bool C_is_csc = C->is_csc ;
         GB_PHIX_FREE (C) ;
+
+        GB_dup2 (&C, A, true, A->type, Context) ;
+        C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
+
+#if 0
+        // now done by GB_dup2:
 
         // [ create C; allocate C->p and do not initialize it
         // C has the exact same hypersparsity as A.
@@ -126,6 +131,9 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
         GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
         GB_memcpy (C->x, A->x, anz * A->type->size, nthreads) ;
         C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
+
+#endif
+
     }
 
     //-------------------------------------------------------------------------

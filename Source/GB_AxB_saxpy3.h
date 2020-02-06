@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_saxpy3.h: definitions for C=A*B saxpy3 method
+// GB_AxB_saxpy3.h: definitions for C=A*B saxpy3 method
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -10,10 +10,8 @@
 // GB_AxB_saxpy3 method uses a mix of Gustavson's method and the Hash method,
 // combining the two for any given C=A*B computation.
 
-// TODO rename this GB_AxB_saxpy3.h
-
-#ifndef GB_SAXPY3_H
-#define GB_SAXPY3_H
+#ifndef GB_AXB_SAXPY3_H
+#define GB_AXB_SAXPY3_H
 #include "GB.h"
 
 //------------------------------------------------------------------------------

@@ -10,10 +10,10 @@ floats = { 'fp32', 'fp64' } ;
 nonbool = [ints floats] ;
 
 numeric     = { 'min', 'max', 'plus', 'times', 'any' } ;
-numeric_ids = { inf  , -inf ,  0    , 1      , 999   } ;
+numeric_ids = {  inf , -inf ,  0    ,  1     , 999   } ;
 
 boolean     = { 'lor', 'land', 'lxor', 'eq', 'any' } ;
-boolean_ids = { false, true, false, true, inf } ;
+boolean_ids = {  false, true,   false,  true, inf  } ;
 
 %-------------------------------------------------------------------------------
 % construct all built-in monoids for GraphBLAS.h

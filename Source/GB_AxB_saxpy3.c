@@ -84,7 +84,7 @@
 //------------------------------------------------------------------------------
 
 #include "GB_mxm.h"
-#include "GB_saxpy3.h"
+#include "GB_AxB_saxpy3.h"
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"

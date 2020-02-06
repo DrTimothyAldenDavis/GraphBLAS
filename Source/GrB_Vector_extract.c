@@ -2,7 +2,7 @@
 // GrB_Vector_extract: w<M> = accum (w, u(I))
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -49,6 +49,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     // not transposed.  All GrB_Matrix objects will be in CSC format, and no
     // matrices are transposed via the C_is_vector option in GB_extract.
 
+    // TODO use GrB_ALL instead of J [0] = 0
     // construct the column index list J = [ 0 ] of length nj = 1
     GrB_Index J [1] ;
     J [0] = 0 ;
