@@ -107,7 +107,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Feb 5, 2020 (DRAFT27)"
+#define GxB_IMPLEMENTATION_DATE "Feb 6, 2020 (DRAFT27)"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   0
@@ -3388,7 +3388,7 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 //          entries in any column of B.  Very good for hypersparse matrices,
 //          particularly when nnz(B) is less than the number of rows of A.
 //          The Heap method is no longer available in v3.2, so it is silently
-//          replaced with GxB_AxB_HASH.
+//          replaced with GxB_AxB_HASH.  It may reappear in a future version.
 //
 //      GxB_AxB_HASH: This is the same as GxB_AxB_SAXPY, except that every
 //          task uses the Hash method.  Like the Heap method, it is very good

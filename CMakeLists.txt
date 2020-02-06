@@ -55,7 +55,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 5, 2020 (DRAFT27)" )
+set ( GraphBLAS_DATE "Feb 6, 2020 (DRAFT27)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -149,6 +149,10 @@ configure_file (
 
 include ( FindOpenMP  )
 include ( FindThreads )
+
+# FUTURE: rely on the CBLAS (perferably vendor-specific such as the Intel MKL).
+# FUTURE: rely on CUDA
+
 # include ( FindBLAS )
 # enable_language ( CUDA )
 
@@ -208,7 +212,8 @@ if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     endif ( )
 elseif ( "${CMAKE_C_COMPILER_ID}" STREQUAL "Intel" )
     # options for icc: also needs -std=c11
-#   set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-report -qopt-report-phase=vec" )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -diag-disable 10397,15552 " )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -qopt-report=5 -qopt-report-phase=vec" )
     # the -mp1 option is important for predictable floating-point results with
     # the icc compiler.  Without, ((float) 1.)/((float) 0.) produces NaN,
     # instead of the correct result, Inf.

@@ -9,10 +9,6 @@
 
 // Also defines the identity of the monoid
 
-// See Source/GB_AxB_Gustavson_builtin.c for a description of the built-in
-// monoids.  This function can construct all 52 of them (note that 8 of those
-// are redudant).
-
 #define GET_DEEP_COPY ;
 #define FREE_DEEP_COPY ;
 #define FREE_ALL ;

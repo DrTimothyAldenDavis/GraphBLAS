@@ -11,10 +11,8 @@
 
 // opname_mx: a MATLAB string defining the operator name (built-in):
 //      'one', 'identity', 'ainv', 'abs', 'minv', 'not'
-// or a user-defined operator defined at run-time:
+// or a user-defined operator:
 //      'conj', 'real', 'imag', 'cabs', 'angle', 'complex_real', 'complex_imag'
-// or a user-defined operator defined at compile-time:
-//      'my_scale'
 
 // default_opcode: default if opname_mx is NULL
 

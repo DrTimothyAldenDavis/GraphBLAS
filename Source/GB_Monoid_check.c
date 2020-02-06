@@ -46,7 +46,7 @@ GrB_Info GB_Monoid_check        // check a GraphBLAS monoid
             break ;
 
         case GB_USER_RUNTIME :
-            GBPR0 ("(user-defined at run-time)") ;
+            GBPR0 ("(user-defined)") ;
             break ;
 
         default :

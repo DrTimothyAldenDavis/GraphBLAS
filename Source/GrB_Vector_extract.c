@@ -49,11 +49,6 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
     // not transposed.  All GrB_Matrix objects will be in CSC format, and no
     // matrices are transposed via the C_is_vector option in GB_extract.
 
-    // TODO use GrB_ALL instead of J [0] = 0
-    // construct the column index list J = [ 0 ] of length nj = 1
-    GrB_Index J [1] ;
-    J [0] = 0 ;
-
     //--------------------------------------------------------------------------
     // do the work in GB_extract
     //--------------------------------------------------------------------------
@@ -64,7 +59,7 @@ GrB_Info GrB_Vector_extract         // w<M> = accum (w, u(I))
         accum,                          // optional accum for z=accum(w,t)
         (GrB_Matrix) u,     false,      // u as matrix; never transposed
         I, ni,                          // row indices I and length ni
-        J, 1,                           // one column index, nj = 1
+        GrB_ALL, 1,                     // all columns
         Context) ;
 
     GB_BURBLE_END ;

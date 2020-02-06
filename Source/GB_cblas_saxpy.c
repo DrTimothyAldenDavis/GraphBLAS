@@ -14,7 +14,7 @@
 
 // X and Y can have any size, and will often be larger than 2^31.
 
-// Helen: look here ...
+// FUTURE: This is not yet enabled by default.  See GraphBLAS/CMakeLists.txt.
 
 #include "GB_dense.h"
 
@@ -57,16 +57,20 @@ void GB_cblas_saxpy         // Y += alpha*X
     // maximum.  So the solution cannot assume that this function is only being
     // called in parallel from a single GrB_* operation.
 
-    // TODO set the # of threads to use, in a thread-safe manner.  Do so in a
+    // FUTURE: set the # of threads to use, in a thread-safe manner.  Do so in a
     // portable manner, for any BLAS library.  #ifdef's may be used to handle
     // this, depending on which BLAS library is being used, as determined by
     // the CMake build system.
+
+    // Even if this function is called inside a parallel region, nthreads
+    // could be larger than one.  In that case, nested parallelism has been
+    // requested.
 
     //--------------------------------------------------------------------------
     // Y += alpha*X
     //--------------------------------------------------------------------------
 
-    // TODO if a vendor BLAS library can handle arrays of any size, then
+    // FUTURE: if a vendor BLAS library can handle arrays of any size, then
     // following could be #ifdef'd below.  The method below follows the CBLAS
     // specification, and should thus be kept if the reference CBLAS is in use.
 
@@ -74,7 +78,7 @@ void GB_cblas_saxpy         // Y += alpha*X
 
     // call saxpy in chunks of size 2^31 ... because of the int (ugh!)
     for (int64_t p = 0 ; p < n ; p += INT_MAX)
-    {  
+    {
         int chunk = (int) GB_IMIN (n - p, INT_MAX) ;
         cblas_saxpy     // y += alpha*x
         (

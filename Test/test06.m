@@ -204,9 +204,9 @@ for k1 = k1_list % 1:length(mult_ops)
                 end
 
                 if (method == 1)
-                    algo = 'heap' ;
+                    algo = 'hash' ;
                     if (n > 500)
-                        fprintf ('heap ') ;
+                        fprintf ('hash ') ;
                     end
                 elseif (method == 2)
                     algo = 'gustavson' ;
@@ -224,7 +224,6 @@ for k1 = k1_list % 1:length(mult_ops)
                         fprintf ('auto ') ;
                     end
                 end
-
                 if (isequal (algo, 'dot'))
                     ok = (n < 1000) ;
                 else

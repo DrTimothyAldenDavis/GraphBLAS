@@ -14,7 +14,7 @@ dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 dnn_Gus  = struct ( 'axb', 'gustavson' ) ;
-dnn_heap = struct ( 'axb', 'heap' ) ;
+dnn_hash = struct ( 'axb', 'heap' ) ;
 
 ntrials = 0 ;
 
@@ -93,8 +93,8 @@ for k0 = 1:size(m_list,2)
                 GB_spec_compare (C0, C1, identity) ;
 
                 % C = A*B, no Mask, no typecasting, heap
-                C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn_heap);
-                % C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn_heap);
+                C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn_hash);
+                % C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn_hash);
                 GB_spec_compare (C0, C1, identity) ;
 
             end

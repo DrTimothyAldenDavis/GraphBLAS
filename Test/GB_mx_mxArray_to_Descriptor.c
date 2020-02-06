@@ -95,6 +95,10 @@ static bool get_descriptor
         {
             info = GxB_set (D, field, GxB_AxB_HEAP) ;
         }
+        else if (MATCH (s, "hash"))
+        {
+            info = GxB_set (D, field, GxB_AxB_HASH) ;
+        }
         else
         {
             // the string must be one of the four strings listed above

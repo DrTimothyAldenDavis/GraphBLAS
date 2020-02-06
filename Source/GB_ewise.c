@@ -246,7 +246,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // special cases
     //--------------------------------------------------------------------------
 
-    // TODO handle more special cases
+    // FUTURE::: handle more special cases
 
     if (A_is_dense && B_is_dense)
     {

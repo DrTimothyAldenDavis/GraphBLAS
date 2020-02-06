@@ -83,7 +83,7 @@ GrB_Semiring gb_semiring            // built-in semiring, or NULL if error
     // The conditions above are true for any semiring and any A and B, whether
     // or not this function handles the semiring as hard-coded.  Now return for
     // cases this function does not handle.  This function handles only
-    // built-in operators or compile-time user-defined operators.
+    // built-in operators.
 
     CHECK_ERROR (add_opcode  >= GB_USER_opcode,
         "invalid semiring (add operator not built-in)") ;

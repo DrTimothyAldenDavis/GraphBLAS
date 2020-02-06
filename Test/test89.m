@@ -43,8 +43,8 @@ for do_real = 0:1
         % 1002: heap
         % 1003: dot
 
-    % GraphBLAS is slower than it could be because the complex type may be
-    % user-defined at run-time.  This uses the default method, which selects
+    % GraphBLAS is slower than it could be because the complex type is
+    % user-defined.  This uses the default method, which selects
     % Gustavson's method:
 
     C2 = GB_mex_AxB (A, B) ;

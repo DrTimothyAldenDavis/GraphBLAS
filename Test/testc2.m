@@ -51,7 +51,7 @@ semiring.class = 'complex' ;
 dtn.inp0 = 'tran' ;
 
 anum = [0 1001 1002 1003] ;
-algos = {'auto', 'gustavson', 'dot', 'heap'} ;
+algos = {'auto', 'gustavson', 'dot', 'hash'} ;
 
 seed = 1 ;
 
@@ -85,7 +85,7 @@ for m = nlist
                         B (2,3) = 4 ;
                     end
 
-                    for aa = 1:4
+                    for aa = 1:length(algos)
 
                         C = GB_mex_AxB (A, B, at, bt, anum (aa)) ;
 

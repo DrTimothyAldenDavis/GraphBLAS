@@ -360,13 +360,12 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         ASSERT (scalar != NULL) ;
         anz = mn ;
         A_is_dense = true ;
-        // a run-time or compile-time user-defined scalar is assumed to have
-        // the same type as C->type which is also user-defined (or else it
-        // would not be compatible).  Compatibility has already been checked in
-        // the caller.  The type of scalar for built-in types is determined by
-        // scalar_code, instead, since it can differ from C (in which case it
-        // is typecasted into C->type).  User-defined scalars cannot be
-        // typecasted.
+        // a user-defined scalar is assumed to have the same type as C->type
+        // which is also user-defined (or else it would not be compatible).
+        // Compatibility has already been checked in the caller.  The type of
+        // scalar for built-in types is determined by scalar_code, instead,
+        // since it can differ from C (in which case it is typecasted into
+        // C->type).  User-defined scalars cannot be typecasted.
         atype = GB_code_type (scalar_code, C->type) ;
         ASSERT_TYPE_OK (atype, "atype for scalar expansion", GB0) ;
     }
@@ -805,7 +804,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // extract symbolic structure S=C(I,J)
         //----------------------------------------------------------------------
 
-        // TODO if whole_C_matrix is true, then C(:,:) = ... then S == C,
+        // FUTURE::: if whole_C_matrix is true, then C(:,:) = ... and S == C,
         // except that S is zombie-free, read-only; and C collects zombies.
 
         // FUTURE:: the properties of I and J are already known, and thus do
@@ -926,9 +925,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  M   c   r   +   -   S       19:  C(I,J)<!M,repl> += x, with S
         //  M   c   r   +   A   S       20:  C(I,J)<!M,repl> += A, with S
 
-        // TODO: C<C,s> = x     C == M, replace all values, C_replace ignored
-        // TODO: C<C,s> += x    C == M, update all values, C_replace ignored
-        // TODO: C<C,s> = A     C == M, A dense, C_replace ignored
+        //----------------------------------------------------------------------
+        // FUTURE::: C<C,s> = x    C == M, replace all values, C_replace ignored
+        // FUTURE::: C<C,s> += x   C == M, update all values, C_replace ignored
+        // FUTURE::: C<C,s> = A    C == M, A dense, C_replace ignored
+        //----------------------------------------------------------------------
 
     // For the single case C(I,J)<M>=A, two methods can be used: 06n and 06s.
 

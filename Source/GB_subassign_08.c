@@ -190,7 +190,6 @@ GrB_Info GB_subassign_08
             GB_GET_jC ;
             bool cjdense = (pC_end - pC_start == cvlen) ;
 
-
             //------------------------------------------------------------------
             // C(I,jC)<M(:,j)> += A(:,j) ; no S
             //------------------------------------------------------------------
@@ -210,7 +209,7 @@ GrB_Info GB_subassign_08
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
-                        // TODO exploit dense A(:,j)
+                        // FUTURE::: exploit dense A(:,j)
                         GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
                         if (found) GB_PHASE1_ACTION ;
                     }
@@ -224,8 +223,8 @@ GrB_Info GB_subassign_08
                 // M(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
 
-                    // TODO exploit dense mask
-                    bool mjdense = false ;
+                // FUTURE::: exploit dense mask
+                bool mjdense = false ;
 
                 for ( ; pA < pA_end ; pA++)
                 { 
@@ -346,7 +345,7 @@ GrB_Info GB_subassign_08
                         // find iA in A(:,j)
                         int64_t pright = pA_end - 1 ;
                         bool found ;
-                        // TODO exploit dense A(:,j)
+                        // FUTURE::: exploit dense A(:,j)
                         GB_BINARY_SEARCH (iA, Ai, pA, pright, found) ;
                         if (found) GB_PHASE2_ACTION ;
                     }
@@ -360,8 +359,8 @@ GrB_Info GB_subassign_08
                 // M(:,j) is much denser than A(:,j)
                 //--------------------------------------------------------------
 
-                    // TODO exploit dense mask
-                    bool mjdense = false ;
+                // FUTURE::: exploit dense mask
+                bool mjdense = false ;
 
                 for ( ; pA < pA_end ; pA++)
                 { 

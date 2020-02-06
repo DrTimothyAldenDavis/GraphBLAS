@@ -10,6 +10,13 @@
 // These defintions are not visible to the user.  They are used only inside
 // GraphBLAS itself.
 
+// Future plans: (see also 'grep -r FUTURE')
+// FUTURE: support for dense matrices (A->i and A->p as NULL pointers)
+// FUTURE: implement v1.3 of the API
+// FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
+// FUTURE: add Heap method to GB_AxB_saxpy3 (inspector-executor style)
+// FUTURE: allow matrices and vectors to be left jumbled (sort left pending)
+
 #ifndef GB_H
 #define GB_H
 
@@ -53,6 +60,10 @@
 //------------------------------------------------------------------------------
 
 #if defined __INTEL_COMPILER
+
+//  10397: remark about where *.optrpt reports are placed
+//  15552: loop not vectorized
+#pragma warning (disable: 10397 15552 )
 
 // disable icc -w2 warnings
 //  191:  type qualifier meangingless
@@ -214,6 +225,8 @@
     #define GB_TASK_MASTER(nthreads)
 
 #endif
+
+#define GB_PRAGMA_IVDEP GB_PRAGMA(ivdep)
 
 //------------------------------------------------------------------------------
 // PGI_COMPILER_BUG
@@ -564,7 +577,7 @@ struct GB_SelectOp_opaque   // content of GxB_SelectOp
 typedef enum
 {
     GB_BUILTIN,             // 0: built-in monoid or semiring
-    GB_USER_RUNTIME         // 2: user monoid or semiring created a run-time
+    GB_USER_RUNTIME         // 2: user monoid or semiring
 }
 GB_object_code ;
 
@@ -574,7 +587,7 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid
     size_t op_ztype_size ;  // size of the type (also is op->ztype->size)
-    GB_object_code object_kind ;   // built-in, user pre-compiled, or run-time
+    GB_object_code object_kind ;   // built-in or user defined
     void *terminal ;        // value that triggers early-exit (NULL if no value)
 } ;
 
@@ -583,7 +596,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     int64_t magic ;         // for detecting uninitialized objects
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
-    GB_object_code object_kind ;   // built-in, user pre-compiled, or run-time
+    GB_object_code object_kind ;   // built-in or user defined
 } ;
 
 struct GB_Scalar_opaque     // content of GxB_Scalar: 1-by-1 standard CSC matrix

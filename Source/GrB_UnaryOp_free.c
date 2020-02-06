@@ -17,7 +17,7 @@ GrB_Info GrB_UnaryOp_free           // free a user-created unary operator
 
     if (unaryop != NULL)
     {
-        // only free a run-time user-defined operator
+        // only free a user-defined operator
         GrB_UnaryOp op = *unaryop ;
         if (op != NULL && op->opcode == GB_USER_opcode)
         {

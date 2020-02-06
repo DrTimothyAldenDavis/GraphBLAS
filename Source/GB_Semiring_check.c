@@ -46,7 +46,7 @@ GrB_Info GB_Semiring_check          // check a GraphBLAS semiring
             break ;
 
         case GB_USER_RUNTIME:
-            GBPR0 ("(user-defined at run-time)") ;
+            GBPR0 ("(user-defined)") ;
             break ;
 
         default:

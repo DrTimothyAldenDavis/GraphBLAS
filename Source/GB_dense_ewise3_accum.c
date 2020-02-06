@@ -43,7 +43,7 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
     ASSERT (op->opcode >= GB_MIN_opcode) ;
     ASSERT (op->opcode <= GB_RDIV_opcode) ;
 
-    // TODO handle IS*, LOR, LAND, LXOR operators
+    // FUTURE::: handle IS*, LOR, LAND, LXOR operators
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -71,8 +71,6 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-    // TODO handle more operators?  Mix of 2 operators? Mix of types?
-
     #ifndef GBCOMPACT
 
         GB_Opcode opcode ;
@@ -85,10 +83,6 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
         }
 
     #endif
-
-#if 0
-    TODO: extend to handle typecasting and generic operators
-#endif
 
     //--------------------------------------------------------------------------
     // return result

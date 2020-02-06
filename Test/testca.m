@@ -11,9 +11,9 @@ dnt = struct ('inp1', 'tran') ;
 dtn = struct ('inp0', 'tran') ;
 dtt = struct ('inp0', 'tran', 'inp1', 'tran') ;
 
-algos = {'auto', 'heap', 'gustavson', 'dot'} ;
+algos = {'auto', 'heap', 'gustavson', 'dot', 'hash', 'saxpy'} ;
 
-for kk = 1:4
+for kk = 1:length(algos)
 dnn.algo = algos {kk} ;
 dnt.algo = algos {kk} ;
 dtn.algo = algos {kk} ;

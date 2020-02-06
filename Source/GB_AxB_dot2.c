@@ -373,8 +373,9 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
         #define GB_PHASE_2_OF_2
 
-        // loops with function pointers cannot be vectorized
-        #define GB_DOT_SIMD
+        // no vectorization
+        #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_VECTORIZE_DOT
 
         if (flipxy)
         { 

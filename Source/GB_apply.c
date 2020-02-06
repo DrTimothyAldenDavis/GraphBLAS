@@ -110,7 +110,7 @@ GrB_Info GB_apply                   // C<M> = accum (C, op(A)) or op(A')
         GBBURBLE ("(inplace-op) ") ;
         // C = op (C), operating on the values in place, with no typecasting
         // of the output of the operator with the matrix C.  Always succeeds.
-        // TODO also handle C += op(C), with accum
+        // FUTURE::: also handle C += op(C), with accum
         GB_apply_op (C->x, op, C->x, C->type, GB_NNZ (C), Context) ;
         return (GrB_SUCCESS) ;
     }

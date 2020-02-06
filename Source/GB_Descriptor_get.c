@@ -67,6 +67,8 @@
 
 //      GxB_AxB_HEAP            heap-based saxpy method
 
+//      GxB_AxB_HASH            hash-based saxpy method
+
 //      GxB_AxB_DOT             dot product
 
 //  desc->nthreads_max          max # number of threads to use (auto if <= 0)
@@ -117,7 +119,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         Mask_desc = desc->mask ;  // DEFAULT, COMP, STRUCTURE, or COMP+STRUCTURE
         In0_desc  = desc->in0 ;   // DEFAULT or TRAN
         In1_desc  = desc->in1 ;   // DEFAULT or TRAN
-        AxB_desc  = desc->axb ;   // DEFAULT, GUSTAVSON, HEAP, or DOT
+        AxB_desc  = desc->axb ;   // DEFAULT, GUSTAVSON, HEAP, HASH, or DOT
 
         // default is zero.  if descriptor->nthreads_max <= 0, GraphBLAS selects
         // automatically: any value between 1 and the global nthreads_max.  If
@@ -134,7 +136,8 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
         !(In0_desc  == GxB_DEFAULT || In0_desc  == GrB_TRAN) ||
         !(In1_desc  == GxB_DEFAULT || In1_desc  == GrB_TRAN) ||
         !(AxB_desc  == GxB_DEFAULT || AxB_desc  == GxB_AxB_GUSTAVSON ||
-          AxB_desc  == GxB_AxB_DOT || AxB_desc  == GxB_AxB_HEAP))
+          AxB_desc  == GxB_AxB_DOT || AxB_desc  == GxB_AxB_HEAP ||
+          AxB_desc  == GxB_AxB_HASH || AxB_desc  == GxB_AxB_SAXPY))
     { 
         return (GB_ERROR (GrB_INVALID_OBJECT, (GB_LOG, "Descriptor invalid"))) ;
     }

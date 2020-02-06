@@ -7,21 +7,21 @@
 
 //------------------------------------------------------------------------------
 
-// C or C<M> = A*B, A'*B, A*B', or A'*B' : both symbolic and numeric, with the
-// optional mask matrix.  This function is called by GB_mxm only.  If the mask
-// matrix is present, it is not complemented, since this function can only
-// handle a non-complemented mask matrix.  A complemented mask is handled in
-// GB_accum_mask, after this matrix C is computed, in GB_mxm.  The result of
-// this matrix is either the T matrix in GB_mxm, or (if done in-place),
-// the final output matrix C passed in from the user (C_in_place).
+// C, C<M>, C<!M> = A*B, A'*B, A*B', or A'*B' : both symbolic and numeric, with
+// the optional mask matrix.  This function is called by GB_mxm only.  If the
+// mask matrix is present, it can be regular or complemented, and either valued
+// or structural.
+
+// This algorithm may decide that it is more efficient to apply the mask later,
+// in GB_accum_mask, after this matrix C is computed, in GB_mxm.  The result of
+// this matrix is either the T matrix in GB_mxm, or (if done in-place), the
+// final output matrix C passed in from the user (C_in_place).
 
 // The method is chosen automatically:  a gather/scatter saxpy method
-// (Gustavson), a heap-based saxpy method, or a dot product method.
+// (Gustavson), a heap-based saxpy method, or a dot product method.  The
+// AxB_method can modify this automatic choice, if set to a non-default value.
 
 // FUTURE:: an outer-product method for C=A*B'
-
-// TODO pass AxB_method to GB_AxB_saxpy3, to control
-// the selection of Gustavson vs hash.
 
 #define GB_FREE_ALL             \
 {                               \
@@ -33,7 +33,6 @@
 
 #include "GB_mxm.h"
 #include "GB_transpose.h"
-#include "GB_printf.h"
 
 GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 (
@@ -94,7 +93,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
 
     if (AxB_method == GxB_AxB_HEAP)
     {
-        // TODO Heap method not yet reinstalled; use Hash instead
+        // FUTURE::: Heap method not yet reinstalled; using Hash instead
         AxB_method = GxB_AxB_HASH ;
     }
 
@@ -460,7 +459,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GBBURBLE ("C%s=A'*B, saxpy (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
-                AT, B, semiring, flipxy, mask_applied, Context)) ;
+                AT, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
             (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
@@ -504,7 +503,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GBBURBLE ("C%s=A*B', saxpy (transposed %s) ", M_str, B_str) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
-                A, BT, semiring, flipxy, mask_applied, Context)) ;
+                A, BT, semiring, flipxy, mask_applied, AxB_method, Context)) ;
             (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
 
@@ -544,7 +543,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C = A*B via saxpy3: Gustavson + Hash method
             GBBURBLE ("C%s=A*B, saxpy ", M_str) ;
             GB_OK (GB_AxB_saxpy3 (Chandle, M, Mask_comp, Mask_struct,
-                A, B, semiring, flipxy, mask_applied, Context)) ;
+                A, B, semiring, flipxy, mask_applied, AxB_method, Context)) ;
             (*AxB_method_used) = GxB_AxB_SAXPY ;
         }
     }

@@ -17,7 +17,7 @@ GrB_Info GrB_BinaryOp_free          // free a user-created binary operator
 
     if (binaryop != NULL)
     {
-        // only free a run-time user-defined operator
+        // only free a user-defined operator
         GrB_BinaryOp op = *binaryop ;
         if (op != NULL && op->opcode == GB_USER_opcode)
         {

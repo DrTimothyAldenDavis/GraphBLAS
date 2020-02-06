@@ -14,9 +14,7 @@
 
 // This version operates on the original matrix A, without changing it.  The
 // entire computation is done via a set of user-defined objects:  a type,
-// several operators, a monoid, and a semiring.  If PAGERANK_PREEFINED is
-// defined at compile time, then the GraphBLAS PageRank_* objects are assumed
-// to be available as global objects.
+// several operators, a monoid, and a semiring.
 
 // Acknowledgements:  this method was written with input from Richard Veras,
 // Franz Franchetti, and Scott McMillan, Carnegie Mellon University.

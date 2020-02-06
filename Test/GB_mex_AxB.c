@@ -227,6 +227,8 @@ void mexFunction
     // 1001: Gustavson
     // 1002: heap
     // 1003: dot
+    // 1004: hash
+    // 1005: saxpy
     GET_SCALAR (4, GrB_Desc_Value, AxB_method, GxB_DEFAULT) ;
 
     if (! ((AxB_method == GxB_DEFAULT) ||

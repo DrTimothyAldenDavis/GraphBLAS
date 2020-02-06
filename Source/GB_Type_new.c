@@ -55,7 +55,7 @@ GrB_Info GB_Type_new
     GrB_Type t = *type ;
     t->magic = GB_MAGIC ;
     t->size = GB_IMAX (sizeof_ctype, 1) ;
-    t->code = GB_UDT_code ;     // run-time user-defined type
+    t->code = GB_UDT_code ;     // user-defined type
 
     //--------------------------------------------------------------------------
     // get the name

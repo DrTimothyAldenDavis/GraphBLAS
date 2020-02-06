@@ -14,6 +14,8 @@
 
 // X and Y can have any size, and will often be larger than 2^31.
 
+// FUTURE: This is not yet enabled by default.  See GraphBLAS/CMakeLists.txt.
+
 #include "GB_dense.h"
 
 void GB_cblas_daxpy         // Y += alpha*X
@@ -40,7 +42,7 @@ void GB_cblas_daxpy         // Y += alpha*X
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    // TODO see GB_cblas_saxpy for details
+    // FUTURE: see GB_cblas_saxpy for details
 
     //--------------------------------------------------------------------------
     // Y += alpha*X
@@ -49,7 +51,7 @@ void GB_cblas_daxpy         // Y += alpha*X
     GBBURBLE ("cblas ") ;
 
     for (int64_t p = 0 ; p < n ; p += INT_MAX)
-    {  
+    {
         int chunk = (int) GB_IMIN (n - p, INT_MAX) ;
         cblas_daxpy     // y += alpha*x
         (

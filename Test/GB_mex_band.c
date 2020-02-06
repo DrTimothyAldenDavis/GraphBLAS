@@ -116,7 +116,7 @@ void mexFunction
     GB_MEX_TIC ;
 
     // create operator
-    // use the run-time defined operator, from the band function
+    // use the user-defined operator, from the band function
     METHOD (GxB_SelectOp_new (&op, band, NULL, Thunk_type)) ;
 
     // create result matrix C

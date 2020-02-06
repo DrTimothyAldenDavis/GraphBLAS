@@ -132,7 +132,7 @@
                 GB_GETA (aki, Ax, pA) ;             // aki = A(0,i)
                 GB_GETB (bkj, Bx, pB) ;             // bkj = B(0,j)
                 GB_MULT (cij, aki, bkj) ;           // cij = aki * bkj
-                GB_DOT_SIMD
+                GB_PRAGMA_VECTORIZE_DOT
                 for (int64_t k = 1 ; k < bvlen ; k++)
                 { 
                     GB_DOT_TERMINAL (cij) ;             // break if cij terminal
@@ -178,7 +178,7 @@
                 GB_GETA (aki, Ax, pA+k) ;           // aki = A(k,i)
                 GB_GETB (bkj, Bx, pB  ) ;           // bkj = B(k,j)
                 GB_MULT (cij, aki, bkj) ;           // cij = aki * bkj
-                GB_DOT_SIMD
+                GB_PRAGMA_VECTORIZE_DOT
                 for (int64_t p = pB+1 ; p < pB_end ; p++)
                 { 
                     GB_DOT_TERMINAL (cij) ;             // break if cij terminal
@@ -224,7 +224,7 @@
                 GB_GETA (aki, Ax, pA  ) ;           // aki = A(k,i)
                 GB_GETB (bkj, Bx, pB+k) ;           // bkj = B(k,j)
                 GB_MULT (cij, aki, bkj) ;           // cij = aki * bkj
-                GB_DOT_SIMD
+                GB_PRAGMA_VECTORIZE_DOT
                 for (int64_t p = pA+1 ; p < pA_end ; p++)
                 { 
                     GB_DOT_TERMINAL (cij) ;             // break if cij terminal

@@ -93,3 +93,23 @@ Note that gbtest tests all features of the MATLAB interface to
 SuiteSparse/GraphBLAS, including error handling, so you can expect to see
 error messages during the test.  This is expected.
 
+# FUTURE: Not yet supported for GrB matrices in MATLAB:
+
+    linear indexing
+    complex matrices
+    2nd output for [x,i] = max (...) and [x,i] = min (...); needs
+        modified reduction methods inside GraphBLAS
+    'includenan' for min and max
+    singleton expansion
+    3D and higher dimensional matrices:
+        this might be done by converting the higher dimensioal
+        indices down to a large 2D space, ad relying on hypersparsity.
+    saturating element-wise binary and unary operators for integers 
+
+The last two features don't exist for MATLAB sparse matrices.
+
+For Windows: Microsoft Visual Studio does not support OpenMP tasking,
+    which means that the internal sort is not parallel, but sequential.
+    This affects GrB.build, and some uses of matrix subreferencing.
+    (C(I,J) when I and/or J are unsorted lists).
+

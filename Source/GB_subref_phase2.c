@@ -116,7 +116,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    // TODO use GB_hypermatrix_prune
+    // FUTURE::: use GB_hypermatrix_prune
     if (C_is_hyper && C->nvec_nonempty < Cnvec)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors

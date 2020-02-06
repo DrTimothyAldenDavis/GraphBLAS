@@ -206,6 +206,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         // no vectorization
         #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_VECTORIZE_DOT
 
         if (flipxy)
         { 

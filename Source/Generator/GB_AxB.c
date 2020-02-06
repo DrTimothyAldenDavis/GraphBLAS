@@ -75,9 +75,12 @@
 #define GB_DOT_TERMINAL(cij) \
     GB_terminal
 
-// simd pragma for dot product
-#define GB_DOT_SIMD \
-    GB_dot_simd
+// simd pragma for dot-product loop vectorization
+#define GB_PRAGMA_VECTORIZE_DOT \
+    GB_dot_simd_vectorize
+
+// simd pragma for other loop vectorization
+#define GB_PRAGMA_VECTORIZE GB_PRAGMA_SIMD
 
 // declare the cij scalar
 #define GB_CIJ_DECLARE(cij) \
@@ -241,6 +244,9 @@ GrB_Info GB_Adot4B
 //------------------------------------------------------------------------------
 // C=A*B, C<M>=A*B, C<!M>=A*B: saxpy3 method (Gustavson + Hash)
 //------------------------------------------------------------------------------
+
+#include "GB_AxB_saxpy3_header.h"
+#include "GB_AxB_saxpy3_template.h"
 
 GrB_Info GB_Asaxpy3B
 (

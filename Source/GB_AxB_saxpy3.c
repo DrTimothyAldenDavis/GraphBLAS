@@ -23,14 +23,14 @@
 // into C(:,j) via atomic operations.
 
 // Each coarse or fine task uses either Gustavson's method [1] or the Hash
-// method [2].  There are 5 kinds of tasks:
+// method [2].  There are 4 kinds of tasks:
 
 //      fine Gustavson task
 //      fine hash task
 //      coarse Gustason task
 //      coarse hash task
 
-// Each of the 5 kinds tasks are then subdivided into 3 variants, for C=A*B,
+// Each of the 4 kinds tasks are then subdivided into 3 variants, for C=A*B,
 // C<M>=A*B, and C<!M>=A*B, giving a total of 12 different types of tasks.
 
 // Fine tasks are used when there would otherwise be too much work for a single
@@ -46,14 +46,14 @@
 // To select between the Hash method or Gustavson's method for each task, the
 // hash table size is first found.  The hash table size for a hash task depends
 // on the maximum flop count for any vector in that task (which is just one
-// vector for the fine tasks and the 1-vector coarse hash task).  It is set to
-// twice the smallest power of 2 that is greater than the flop count to compute
-// that vector (plus the # of entries in M(:,j) for tasks that compute C<M>=A*B
-// or C<!M>=A*B).  This size ensures the results will fit in the hash table,
-// and with hopefully only a modest number of collisions.  If the hash table
-// size exceeds a threshold (currently m/16 if C is m-by-n), then Gustavson's
-// method is used instead, and the hash table size is set to m, to serve as
-// the gather/scatter workspace for Gustavson's method.
+// vector for the fine tasks).  It is set to twice the smallest power of 2 that
+// is greater than the flop count to compute that vector (plus the # of entries
+// in M(:,j) for tasks that compute C<M>=A*B or C<!M>=A*B).  This size ensures
+// the results will fit in the hash table, and with hopefully only a modest
+// number of collisions.  If the hash table size exceeds a threshold (currently
+// m/16 if C is m-by-n), then Gustavson's method is used instead, and the hash
+// table size is set to m, to serve as the gather/scatter workspace for
+// Gustavson's method.
 
 // The workspace allocated depends on the type of task.  Let s be the hash
 // table size for the task, and C is m-by-n (assuming all matrices are CSC; if
@@ -62,12 +62,12 @@
 //      fine Gustavson task (shared):   uint8_t Hf [m] ; ctype Hx [m] ;
 //      fine hash task (shared):        int64_t Hf [s] ; ctype Hx [s] ;
 //      coarse Gustavson task:          int64_t Hf [m] ; ctype Hx [m] ;
-//      multi-vector coarse hash task:  int64_t Hf [s] ; ctype Hx [s] ;
+//      coarse hash task:               int64_t Hf [s] ; ctype Hx [s] ;
 //                                      int64_t Hi [s] ; 
 //
-// Note that the Hi array is needed only for the multi-vector coarse hash task.
-// Additional workspace is allocated to construct the list of tasks, but this
-// is freed before C is constructed.
+// Note that the Hi array is needed only for the coarse hash task.  Additional
+// workspace is allocated to construct the list of tasks, but this is freed
+// before C is constructed.
 
 // References:
 
@@ -85,6 +85,7 @@
 
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
+#include "GB_AxB_saxpy3_header.h"
 #include "GB_bracket.h"
 #include "GB_sort.h"
 #include "GB_atomics.h"
@@ -106,28 +107,12 @@
 //------------------------------------------------------------------------------
 
 // This workspace is not needed in the GB_Asaxpy3B* worker functions.
+#undef  GB_FREE_INITIAL_WORK
 #define GB_FREE_INITIAL_WORK                                                \
 {                                                                           \
     GB_FREE_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;                \
     GB_FREE_MEMORY (Coarse_initial, ntasks_initial+1, sizeof (int64_t)) ;   \
     GB_FREE_MEMORY (Fine_slice, ntasks+1, sizeof (int64_t)) ;               \
-}
-
-// See also GB_FREE_ALL in Template/GB_AxB_saxpy3_template.c, which must
-// match this definition, for the GB_Asaxpy3B* worker functions.
-#define GB_FREE_WORK                                                        \
-{                                                                           \
-    GB_FREE_INITIAL_WORK ;                                                  \
-    GB_FREE_MEMORY (*(TaskList_handle), ntasks, sizeof (GB_saxpy3task_struct));\
-    GB_FREE_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;              \
-    GB_FREE_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;              \
-    GB_FREE_MEMORY (Hx_all, Hx_size_total, 1) ;                             \
-}
-
-#define GB_FREE_ALL             \
-{                               \
-    GB_FREE_WORK ;              \
-    GB_MATRIX_FREE (Chandle) ;  \
 }
 
 //------------------------------------------------------------------------------
@@ -141,22 +126,41 @@
 // flmax.  If flmax is large enough, the hash_size is returned as cvlen, so
 // that Gustavson's method will be used instead of the Hash method.
 
+// By default, Gustavson vs Hash is selected automatically.  AxB_method can be
+// selected via the descriptor or a global setting, as the non-default
+// GxB_AxB_GUSTAVSON or GxB_AxB_HASH settings, to enforce the selection of
+// either of those methods.  However, if Hash is selected by the hash table
+// exceeds cvlen, then Gustavson's method is used instead.
+
 static inline int64_t GB_hash_table_size
 (
     int64_t flmax,      // max flop count for any vector computed by this task
-    int64_t cvlen       // vector length of C
+    int64_t cvlen,      // vector length of C
+    const GrB_Desc_Value AxB_method     // Default, Gustavson, or Hash
 )
 {
-    // hash_size = 2 * (smallest power of 2 that is >= to flmax)
+    // hash_size = 2 * (smallest power of 2 >= flmax)
     double hlog = log2 ((double) flmax) ;
     int64_t hash_size = ((int64_t) 2) << ((int64_t) floor (hlog) + 1) ;
-    // use Gustavson's method if hash_size is too big
-    // TODO n/16 might be too big.  Use a parameter, and give user control.
-    // Select Gustavson if hash_size >= cvlen*alpha.
-    // Limit alpha to between 0 and 1.
-    // alpha=0 means always use Gustavson.
-    // alpha=1 means always use Hash, unless the hash size is >= cvlen.
-    bool use_Gustavson = (hash_size >= cvlen/16) ;
+    bool use_Gustavson ;
+
+    if (AxB_method == GxB_AxB_GUSTAVSON)
+    { 
+        // always use Gustavson's method
+        use_Gustavson = true ;
+    }
+    else if (AxB_method == GxB_AxB_HASH)
+    { 
+        // always use Hash method, unless the hash_size >= cvlen
+        use_Gustavson = (hash_size >= cvlen) ;
+    }
+    else
+    { 
+        // default: auto selection:
+        // use Gustavson's method if hash_size is too big
+        use_Gustavson = (hash_size >= cvlen/16) ;
+    }
+
     if (use_Gustavson)
     {
         hash_size = cvlen ;
@@ -180,7 +184,8 @@ static inline void GB_create_coarse_task
     int64_t *Bflops,    // size bnvec; cum sum of flop counts for vectors of B
     int64_t cvlen,      // vector length of B and C
     double chunk,
-    int nthreads_max
+    int nthreads_max,
+    const GrB_Desc_Value AxB_method     // Default, Gustavson, or Hash
 )
 {
     // find the max # of flops for any vector in this task
@@ -198,7 +203,7 @@ static inline void GB_create_coarse_task
     TaskList [taskid].start   = kfirst ;
     TaskList [taskid].end     = klast ;
     TaskList [taskid].vector  = -1 ;
-    TaskList [taskid].hsize   = GB_hash_table_size (flmax, cvlen) ;
+    TaskList [taskid].hsize   = GB_hash_table_size (flmax, cvlen, AxB_method) ;
     TaskList [taskid].Hi      = NULL ;      // assigned later
     TaskList [taskid].Hf      = NULL ;      // assigned later
     TaskList [taskid].Hx      = NULL ;      // assigned later
@@ -223,6 +228,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const GrB_Semiring semiring,    // semiring that defines C=A*B
     const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
     bool *mask_applied,             // if true, then mask was applied
+    const GrB_Desc_Value AxB_method,    // Default, Gustavson, or Hash
     GB_Context Context
 )
 {
@@ -303,9 +309,11 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     #else
     GB_Opcode mult_opcode, add_opcode ;
     GB_Type_code xycode, zcode ;
-    bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B, B_is_pattern,
-        semiring, flipxy, &mult_opcode, &add_opcode, &xycode, &zcode) ;
-    bool is_any_pair_semiring = builtin_semiring && (add_opcode == GB_ANY_opcode)
+    bool builtin_semiring = GB_AxB_semiring_builtin (A, A_is_pattern, B,
+        B_is_pattern, semiring, flipxy, &mult_opcode, &add_opcode, &xycode,
+        &zcode) ;
+    bool is_any_pair_semiring = builtin_semiring
+        && (add_opcode == GB_ANY_opcode)
         && (mult_opcode == GB_PAIR_opcode) ;
     #endif
 
@@ -411,9 +419,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
         int nth = GB_nthreads (bnvec, chunk, nthreads_max) ;
         int64_t kk ;
+        // GB_AxB_flopcount requires Bflops be set to zero here
         #pragma omp parallel for num_threads(nth) schedule(static)
-        // GB_AxB_flopcount results Bflops be set to zero here
-        for (int64_t kk = 0 ; kk <= bnvec ; kk++)
+        for (kk = 0 ; kk <= bnvec ; kk++)
         {
             Bflops [kk] = 0 ;
         }
@@ -457,8 +465,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     int nthreads = GB_nthreads ((double) total_flops, chunk, nthreads_max) ;
     ntasks_initial = (nthreads == 1) ?  1 : (GB_NTASKS_PER_THREAD * nthreads) ;
-// draft18-25:
-//  ntasks_initial = (nthreads == 1) ?  4 : (GB_NTASKS_PER_THREAD * nthreads) ;
 
     double target_task_size = ((double) total_flops) / ntasks_initial ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
@@ -654,7 +660,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             // kcoarse_start:kk-1 form a single coarse task
                             GB_create_coarse_task (kcoarse_start, kk-1,
                                 TaskList, nc++, Bflops, cvlen,
-                                chunk, nthreads_max) ;
+                                chunk, nthreads_max, AxB_method) ;
                         }
 
                         // next coarse task (if any) starts at kk+1
@@ -723,7 +729,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         GB_pslice (&Fine_slice, Bflops2, bjnz, team_size) ;
 
                         // shared hash table for all fine tasks for A*B(:,j)
-                        int64_t hsize = GB_hash_table_size (jflops, cvlen) ;
+                        int64_t hsize = 
+                            GB_hash_table_size (jflops, cvlen, AxB_method) ;
 
                         // construct the fine tasks for C(:,j)=A*B(:,j)
                         int master = nf ;
@@ -752,16 +759,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                 if (kcoarse_start < klast)
                 { 
                     // kcoarse_start:klast-1 form a single coarse task
-                    GB_create_coarse_task (kcoarse_start, klast-1,
-                        TaskList, nc++, Bflops, cvlen, chunk, nthreads_max) ;
+                    GB_create_coarse_task (kcoarse_start, klast-1, TaskList,
+                        nc++, Bflops, cvlen, chunk, nthreads_max, AxB_method) ;
                 }
 
             }
             else
             { 
                 // This coarse task is OK as-is.
-                GB_create_coarse_task (kfirst, klast-1,
-                    TaskList, nc++, Bflops, cvlen, chunk, nthreads_max) ;
+                GB_create_coarse_task (kfirst, klast-1, TaskList, nc++, Bflops,
+                    cvlen, chunk, nthreads_max, AxB_method) ;
             }
         }
 
@@ -774,7 +781,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         //----------------------------------------------------------------------
 
         // create a single coarse task
-        GB_create_coarse_task (0, bnvec-1, TaskList, 0, Bflops, cvlen, 1, 1) ;
+        GB_create_coarse_task (0, bnvec-1, TaskList, 0, Bflops, cvlen, 1, 1,
+            AxB_method) ;
 
         if (bnvec == 1)
         { 
@@ -873,7 +881,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             }
             else
             {
-                // multi-vector coarse hash task
+                // hash task
                 ncoarse_hash++ ;
             }
         }
@@ -891,7 +899,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     // allocate the hash tables
     //--------------------------------------------------------------------------
 
-    // If Gustavson's method is used (multi-vector coarse tasks):
+    // If Gustavson's method is used (coarse tasks):
     //
     //      hash_size is cvlen.
     //      Hi is not allocated.
@@ -965,7 +973,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
         if (!is_fine && !use_Gustavson)
         { 
-            // only multi-vector coarse hash tasks need Hi
+            // only coarse hash tasks need Hi
             Hi_size_total += (hash_size + hi_pad) ;
         }
         // all tasks use an Hx array of size hash_size
@@ -1048,7 +1056,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         }
         if (!is_fine && !use_Gustavson)
         { 
-            // only multi-vector coarse hash tasks need Hi
+            // only coarse hash tasks need Hi
             Hi_split += (hash_size + hi_pad) ;
         }
         // all tasks use an Hx array of size hash_size
@@ -1241,6 +1249,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
+
+        // no vectorization
+        #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_VECTORIZE_DOT
+
+        // definitions for GB_AxB_saxpy3_template.c
+        #include "GB_AxB_saxpy3_template.h"
 
         if (flipxy)
         { 

@@ -31,7 +31,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C = A+C
+        // C = A+C where A and C are dense
         //----------------------------------------------------------------------
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
@@ -54,7 +54,7 @@
     {
 
         //----------------------------------------------------------------------
-        // C = C+B
+        // C = C+B where B and C are dense
         //----------------------------------------------------------------------
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
@@ -77,8 +77,10 @@
     {
 
         //----------------------------------------------------------------------
-        // C = A+B
+        // C = A+B where all 3 matrices are dense
         //----------------------------------------------------------------------
+
+        // note that A and B may still be aliased to each other
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
 
@@ -87,23 +89,6 @@
 
         #else
 
-            #if 0
-            int taskid ;
-            #pragma omp parallel for num_threads(nthreads) schedule(static)
-            for (taskid = 0 ; taskid < nthreads ; taskid++)
-            {
-                int64_t p1, p2 ;
-                GB_PARTITION (p1, p2, cnz, taskid, nthreads) ;
-                GB_PRAGMA_VECTORIZE
-                for (int64_t p = p1 ; p < p2 ; p++)
-                {
-                    GB_GETA (aij, Ax, p) ;              // aij = Ax [p]
-                    GB_GETB (bij, Bx, p) ;              // bij = Bx [p]
-                    GB_BINOP (GB_CX (p), aij, bij) ;    // Cx [p] = aij + bij
-                }
-            }
-            #else
-
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
             {
@@ -111,8 +96,6 @@
                 GB_GETB (bij, Bx, p) ;              // bij = Bx [p]
                 GB_BINOP (GB_CX (p), aij, bij) ;    // Cx [p] = aij + bij
             }
-
-            #endif
 
         #endif
     }

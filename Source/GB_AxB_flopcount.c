@@ -66,7 +66,8 @@
                 if (intersection (alo:ahi, im_first:im_last) empty) continue
             end
             % numerical phase will compute: C(:,j)<#M(:,j)> += A(:,k)*B(k,j)
-            % where #M is no mask, M, or !M.  This takes aknz flops, so:
+            % where #M is no mask, M, or !M.  This typically takes aknz flops,
+            % or with a binary search if nnz(M(:,j)) << nnz(A(:,k)).
             Bflops (j) += aknz
         end
     end
@@ -245,13 +246,14 @@ GrB_Info GB_AxB_flopcount
 
             int64_t bjflops = 0 ;
             int64_t im_first = -1, im_last = -1 ;
+            int64_t mjnz = 0 ;
             if (M != NULL)
             { 
                 int64_t mpright = mnvec - 1 ;
                 int64_t pM, pM_end ;
                 GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j,
                     &pM, &pM_end) ;
-                int64_t mjnz = pM_end - pM ;
+                mjnz = pM_end - pM ;
                 // if M is not complemented: C(:,j) is empty if M(:,j) is empty
                 if (mjnz == 0 && !Mask_comp) continue ;
                 // M(:,j) has at least 1 entry; get 1st and last index in M(:,j)
@@ -269,6 +271,7 @@ GrB_Info GB_AxB_flopcount
                     task_Mwork += mjnz ;
                 }
             }
+            int64_t mjnz_much = 64 * mjnz ;
 
             //------------------------------------------------------------------
             // trim Ah on right
@@ -309,6 +312,8 @@ GrB_Info GB_AxB_flopcount
                 int64_t aknz = pA_end - pA ;
                 if (aknz == 0) continue ;
 
+                double bkjflops ;
+
                 // skip if intersection of A(:,k) and M(:,j) is empty
                 // and mask is not complemented (C<M>=A*B)
                 if (mask_is_M)
@@ -317,14 +322,26 @@ GrB_Info GB_AxB_flopcount
                     int64_t alo = Ai [pA] ;
                     int64_t ahi = Ai [pA_end-1] ;
                     if (ahi < im_first || alo > im_last) continue ;
+                    if (aknz > 256 && mjnz_much < aknz)
+                    {
+                        // scan M(:j), and do binary search for A(i,j)
+                        bkjflops = mjnz * (1 + 4 * log2 ((double) aknz)) ;
+                    }
+                    else
+                    {
+                        // scan A(:k), and lookup M(i,j)
+                        bkjflops = aknz ;
+                    }
                 }
-
-                // TODO change this work if a scan of M(:,j) is used, with a
-                // binary search of A(:,k), for C<M>=A*B.
+                else
+                {
+                    // A(:,k)*B(k,j) requires aknz flops
+                    bkjflops = aknz ;
+                }
 
                 // increment by flops for the single entry B(k,j)
                 // C(:,j)<#M(:,j)> += A(:,k)*B(k,j).
-                bjflops += aknz ;
+                bjflops += bkjflops ;
             }
 
             //------------------------------------------------------------------

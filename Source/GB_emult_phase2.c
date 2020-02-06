@@ -225,7 +225,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     // construct the final C->h
     //--------------------------------------------------------------------------
 
-    // TODO use GB_hypermatrix_prune?  but this is different
+    // FUTURE::: use GB_hypermatrix_prune?  but this is different
     if (C_is_hyper)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors
