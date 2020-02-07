@@ -165,7 +165,7 @@ void GB_cumsum                      // cumulative sum of an array
             { 
                 // out of memory; use a single thread instead
                 GB_cumsum (count, n, kresult, 1) ;
-                return (false) ;
+                return ;
             }
             int64_t *wk = ws + nthreads ;
 
