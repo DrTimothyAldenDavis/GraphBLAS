@@ -240,9 +240,7 @@ bool GB_Global_GrB_init_called_get (void)
 GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_nthreads_max_set (int nthreads_max)
 { 
-    nthreads_max = GB_IMIN (nthreads_max, GxB_NTHREADS_MAX) ;
-    nthreads_max = GB_IMAX (nthreads_max, 1) ;
-    GB_Global.nthreads_max = nthreads_max ;
+    GB_Global.nthreads_max = GB_IMAX (nthreads_max, 1) ;
 }
 
 GB_PUBLIC   // accessed by the MATLAB interface only

@@ -3409,16 +3409,9 @@ GrB_Info GrB_Matrix_extractTuples           // [I,J,X] = find (A)
 #define GxB_NTHREADS 5
 #define GxB_CHUNK 7
 
-// GxB_NTHREADS_MAX is a compile-time constant that gives the upper bound on
-// the number of threads that GraphBLAS can use.  This thread count is the sum
-// of the maximum number of user threads and the number of internal OpenMP
-// threads created inside GraphBLAS by each user thread (nthreads_max, which
-// can be set by GxB_set (GxB_NTHREADS, nthreads_max)).  It is the maximum
-// permitted value of the run-time value nthreads_max.  This constant can be
-// changed at compile-time by using -DGxB_NTHREADS_MAX=4096, for example.  The
-// upper limit below should be large enough...
+// GxB_NTHREADS_MAX is no longer used, as of v3.2.0.
 #ifndef GxB_NTHREADS_MAX
-#define GxB_NTHREADS_MAX 2048
+#define GxB_NTHREADS_MAX INT32_MAX
 #endif
 
 typedef enum
@@ -3778,7 +3771,6 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GxB_FORMAT, GxB_BY_COL) ;
 //      GxB_get (GxB_FORMAT, GxB_Format_Value *s) ;
 //
-//      // see the GxB_NTHREADS_MAX discussion above
 //      GxB_set (GxB_NTHREADS, nthreads_max) ;
 //      GxB_get (GxB_NTHREADS, int *nthreads_max) ;
 //

@@ -59,7 +59,7 @@ void GB_task_cumsum
     // replace Cp with its cumulative sum
     //--------------------------------------------------------------------------
 
-    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;  // TODO handle failure
+    GB_cumsum (Cp, Cnvec, Cnvec_nonempty, nthreads) ;
 
     //--------------------------------------------------------------------------
     // shift the cumulative sum of the fine tasks

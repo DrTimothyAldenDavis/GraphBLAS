@@ -18,16 +18,13 @@
 // sum (count [0..j-1]).  count [n] is implicitly zero on input.
 // On output, count [n] is the total sum.
 
-// TODO malloc in per-thread workspace for GB_cumsum instead of VLA;
-// not needed if nthreads is 1.
-
 #include "GB.h"
 
-void GB_cumsum                  // compute the cumulative sum of an array
+void GB_cumsum                      // cumulative sum of an array
 (
-    int64_t *GB_RESTRICT count,    // size n+1, input/output
+    int64_t *GB_RESTRICT count,     // size n+1, input/output
     const int64_t n,
-    int64_t *GB_RESTRICT kresult,  // return k, if needed by the caller
+    int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
     int nthreads
 )
 {
@@ -84,7 +81,16 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads
             //------------------------------------------------------------------
 
-            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;  // TODO
+            // allocate workspace
+            int64_t *ws = NULL ;
+            GB_MALLOC_MEMORY (ws, nthreads, sizeof (int64_t)) ;
+            if (ws == NULL)
+            { 
+                // out of memory; use a single thread instead
+                GB_cumsum (count, n, NULL, 1) ;
+                return ;
+            }
+
             #pragma omp parallel num_threads(nthreads)
             {
                 // each thread sums up its own part
@@ -118,6 +124,8 @@ void GB_cumsum                  // compute the cumulative sum of an array
                 }
             }
 
+            // free workspace
+            GB_FREE_MEMORY (ws, nthreads, sizeof (int64_t)) ;
         }
 
     }
@@ -151,8 +159,15 @@ void GB_cumsum                  // compute the cumulative sum of an array
             // cumsum with multiple threads, also compute k
             //------------------------------------------------------------------
 
-            int64_t ws [GB_VLA_NTHREADS(nthreads)+1] ;  // TODO
-            int64_t wk [GB_VLA_NTHREADS(nthreads)+1] ;  // TODO
+            int64_t *ws = NULL ;
+            GB_MALLOC_MEMORY (ws, 2*nthreads, sizeof (int64_t)) ;
+            if (ws == NULL)
+            { 
+                // out of memory; use a single thread instead
+                GB_cumsum (count, n, kresult, 1) ;
+                return (false) ;
+            }
+            int64_t *wk = ws + nthreads ;
 
             #pragma omp parallel num_threads(nthreads)
             {
@@ -197,6 +212,9 @@ void GB_cumsum                  // compute the cumulative sum of an array
                 k += wk [tid] ;
             }
             (*kresult) = k ;
+
+            // free workspace
+            GB_FREE_MEMORY (ws, 2*nthreads, sizeof (int64_t)) ;
         }
     }
 }

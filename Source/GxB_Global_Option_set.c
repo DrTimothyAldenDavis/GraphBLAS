@@ -66,15 +66,6 @@ GrB_Info GxB_Global_Option_set      // set a global default option
                 va_end (ap) ;
                 // if < 1, then treat it as if nthreads_max = 1
                 nthreads_max_new = GB_IMAX (1, nthreads_max_new) ;
-                if (nthreads_max_new > GxB_NTHREADS_MAX)
-                { 
-                    return (GB_ERROR (GrB_INVALID_VALUE, (GB_LOG,
-                        "nthreads_max [%d] must be < GxB_NTHREADS_MAX [%d]\n"
-                        "Recompile with a higher value of GxB_NTHREADS_MAX,\n"
-                        "using -DGxB_NTHREADS_MAX=%d (or higher, as needed)",
-                        nthreads_max_new, GxB_NTHREADS_MAX,
-                        nthreads_max_new))) ;
-                }
                 GB_Global_nthreads_max_set (nthreads_max_new) ;
             }
             break ;

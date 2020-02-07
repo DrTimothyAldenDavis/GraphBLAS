@@ -266,14 +266,12 @@
 
     // variable-length arrays are allowed
     #define GB_VLA(s) s
-    #define GB_VLA_NTHREADS(nthreads) nthreads
 
 #else
 
     // variable-length arrays are not allowed
     #define GB_VLA_MAXSIZE 128
     #define GB_VLA(s) GB_VLA_MAXSIZE
-    #define GB_VLA_NTHREADS(nthreads) GxB_NTHREADS_MAX
 
 #endif
 
@@ -1748,7 +1746,7 @@ void GB_slice_vector
     const double target_work        // target work
 ) ;
 
-void GB_task_cumsum                 // TODO return true/false
+void GB_task_cumsum
 (
     int64_t *Cp,                        // size Cnvec+1
     const int64_t Cnvec,
@@ -2004,11 +2002,11 @@ bool GB_binop_builtin               // true if binary operator is builtin
     GB_Type_code *zcode             // type code for z output
 ) ;
 
-void GB_cumsum  // cumulative sum of an array TODO return true/false
+void GB_cumsum                      // cumulative sum of an array
 (
-    int64_t *GB_RESTRICT count,    // size n+1, input/output
+    int64_t *GB_RESTRICT count,     // size n+1, input/output
     const int64_t n,
-    int64_t *GB_RESTRICT kresult,  // return k, if needed by the caller
+    int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
     int nthreads
 ) ;
 

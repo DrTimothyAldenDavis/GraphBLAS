@@ -21,8 +21,6 @@
 
 #else
 
-// TODO try icc with non-atomic read/write
-// for icc:
 #define GB_ATOMIC_READ    GB_PRAGMA (omp atomic read)
 #define GB_ATOMIC_WRITE   GB_PRAGMA (omp atomic write)
 #define GB_ATOMIC_UPDATE  GB_PRAGMA (omp atomic update)

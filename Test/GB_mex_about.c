@@ -507,8 +507,6 @@ void mexFunction
     CHECK (GB_Global_hack_get ( ) == 90123) ;
 
     GrB_Info expected = GrB_INVALID_VALUE ;
-    ERR (GxB_set (GxB_NTHREADS, 7777777)) ;
-    printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
     //--------------------------------------------------------------------------
     // GB_pslice
