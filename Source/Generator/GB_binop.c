@@ -73,6 +73,10 @@
 #define GB_OP_IS_PLUS_REAL \
     GB_op_is_plus_real
 
+// op is minus_fp32 or minus_fp64
+#define GB_OP_IS_MINUS_REAL \
+    GB_op_is_minus_real
+
 // GB_cblas_*axpy gateway routine, if it exists for this operator and type:
 #define GB_CBLAS_AXPY \
     GB_cblas_axpy

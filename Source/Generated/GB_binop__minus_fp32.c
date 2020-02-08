@@ -1,6 +1,7 @@
 
 
 
+
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -76,9 +77,13 @@
 #define GB_OP_IS_PLUS_REAL \
     0
 
+// op is minus_fp32 or minus_fp64
+#define GB_OP_IS_MINUS_REAL \
+    1
+
 // GB_cblas_*axpy gateway routine, if it exists for this operator and type:
 #define GB_CBLAS_AXPY \
-    (none)
+    GB_cblas_saxpy
 
 // do the numerical phases of GB_add and GB_emult
 #define GB_PHASE_2_OF_2

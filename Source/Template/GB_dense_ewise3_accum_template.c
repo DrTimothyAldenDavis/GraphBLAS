@@ -7,6 +7,10 @@
 
 //------------------------------------------------------------------------------
 
+// FUTURE: allow the accum and the 'plus' op to differ (as in C += A-B,
+// with PLUS as the accum and MINUS as the operator, so CBLAS can be used
+// for this combination.
+
 {
 
     //--------------------------------------------------------------------------
@@ -28,10 +32,16 @@
     {
 
         //----------------------------------------------------------------------
-        // C += 2*A where A and C are dense
+        // C += A+A where A and C are dense
         //----------------------------------------------------------------------
 
+        // If the op is PLUS, this becomes C += 2*A.  If the op is MINUS,
+        // almost nothing happens since C=C-(A-A) = C, except if A has Infs or
+        // NaNs.  In this case, don't bother to call the CBLAS if the op is
+        // MINUS.
+
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+printf ("C+=A+A via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 2, Ax, Cx, nthreads) ;   // C += 2*A
 
@@ -58,9 +68,17 @@
         //----------------------------------------------------------------------
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+printf ("C+=A+B via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Ax, Cx, nthreads) ;   // C += A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
+
+        #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+printf ("C-=A-B via axpy\n") ;
+
+            // C -= (A-B)
+            GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Ax, Cx, nthreads) ;  // C -= A
+            GB_CBLAS_AXPY (cnz, (GB_CTYPE)  1, Bx, Cx, nthreads) ;  // C += B
 
         #else
 

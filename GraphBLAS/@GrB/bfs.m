@@ -148,8 +148,6 @@ else
     id = GrB (1:n, int_type, 'by row') ;         % id = 1:n
     semiring = ['any.1st.' int_type] ;           % any.1st.integer semiring
     for level = 1:n
-% level
-% GrB.burble (1)
         % assign the current level: v<q> = level
         v = GrB.subassign (v, q, level, desc_s) ;
         % quit if q is empty
@@ -160,17 +158,7 @@ else
         % assign parents: parent<q> = q
         parent = GrB.assign (parent, q, q, desc_s) ;
         % q(i) = i for all entries in q, using q<q>=1:n
-% fprintf ('assign q:\n') ;
-% q
         q = GrB.assign (q, q, id, desc_s) ;
-% pause
-% GrB.burble (0)
-% v
-% q
-% parent
-% id
-% pause
-
     end
     % remove zeros from parent
     parent = GrB.prune (parent) ;

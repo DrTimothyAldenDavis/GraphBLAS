@@ -9,14 +9,11 @@
 
 // Y += alpha*X where are X and Y are dense arrays of stride 1, of type float.
 
-// Note that currently, alpha is always passed in as 1.0, but this could change
-// in the future, so alpha is passed in as a parameter to this function.
-
 // X and Y can have any size, and will often be larger than 2^31.
 
-// FUTURE: This is not yet enabled by default.  See GraphBLAS/CMakeLists.txt.
-
+#define GB_BURBLE 1
 #include "GB_dense.h"
+#include "GB_cblas.h"
 
 void GB_cblas_saxpy         // Y += alpha*X
 (
@@ -57,7 +54,7 @@ void GB_cblas_saxpy         // Y += alpha*X
     // maximum.  So the solution cannot assume that this function is only being
     // called in parallel from a single GrB_* operation.
 
-    // FUTURE: set the # of threads to use, in a thread-safe manner.  Do so in a
+    // Set the # of threads to use, in a thread-safe manner.  Do so in a
     // portable manner, for any BLAS library.  #ifdef's may be used to handle
     // this, depending on which BLAS library is being used, as determined by
     // the CMake build system.
@@ -66,30 +63,44 @@ void GB_cblas_saxpy         // Y += alpha*X
     // could be larger than one.  In that case, nested parallelism has been
     // requested.
 
+    #ifdef MKL_ILP64
+    int save_nthreads = mkl_set_num_threads_local (nthreads) ;
+    #endif
+
     //--------------------------------------------------------------------------
     // Y += alpha*X
     //--------------------------------------------------------------------------
 
-    // FUTURE: if a vendor BLAS library can handle arrays of any size, then
-    // following could be #ifdef'd below.  The method below follows the CBLAS
-    // specification, and should thus be kept if the reference CBLAS is in use.
+    printf ("cblas saxpy n: %ld nthreads: %d\n", n, nthreads) ;
 
-    GBBURBLE ("cblas ") ;
+    GB_CBLAS_INT stride1 = (GB_CBLAS_INT) 1 ;
 
-    // call saxpy in chunks of size 2^31 ... because of the int (ugh!)
-    for (int64_t p = 0 ; p < n ; p += INT_MAX)
+    // call *axpy in chunks of size GB_CBLAS_INT_MAX (2^31 or 2^63).
+    // If GB_CBLAS_INT_MAX is INT64_MAX, then this will iterate just once.
+//  for (int64_t p = 0 ; p < n ; p += GB_CBLAS_INT_MAX)
     {
-        int chunk = (int) GB_IMIN (n - p, INT_MAX) ;
+//      GB_CBLAS_INT chunk = (GB_CBLAS_INT) GB_IMIN (n - p, GB_CBLAS_INT_MAX) ;
+        #define chunk n
+        #define p 0
+
         cblas_saxpy     // y += alpha*x
         (
             chunk,      // length of x and y (this chunk)
             alpha,      // scale factor (typically 1.0)
             X + p,      // this chunk of x
-            (int) 1,    // x is stride 1
+            stride1,    // x is stride 1
             Y + p,      // this chunk of y
-            (int) 1     // y is stride 1
+            stride1     // y is stride 1
         ) ;
     }
+
+    //--------------------------------------------------------------------------
+    // restore the # of threads for the BLAS
+    //--------------------------------------------------------------------------
+
+    #ifdef MKL_ILP64
+    // mkl_set_num_threads_local (save_nthreads) ;
+    #endif
 
     #endif
 }

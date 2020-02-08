@@ -142,19 +142,6 @@
 #include "GraphBLAS.h"
 
 //------------------------------------------------------------------------------
-// include GraphBLAS dependencies
-//------------------------------------------------------------------------------
-
-// SuiteSparse:GraphBLAS can use the dense CBLAS, if it is available, to
-// operate on its matrices and vectors when they are dense (fully populated
-// with no entries missing), of type GrB_FP32 (float) or GrB_FP64 (double), and
-// when the conventional PLUS_TIMES_FP* semiring is being used.
-
-#if GB_HAS_CBLAS
-#include "cblas.h"
-#endif
-
-//------------------------------------------------------------------------------
 // compiler variations
 //------------------------------------------------------------------------------
 

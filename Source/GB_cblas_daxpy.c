@@ -9,14 +9,11 @@
 
 // Y += alpha*X where are X and Y are dense arrays of stride 1, of type double.
 
-// Note that currently, alpha is always passed in as 1.0, but this could change
-// in the future, so alpha is passed in as a parameter to this function.
-
 // X and Y can have any size, and will often be larger than 2^31.
 
-// FUTURE: This is not yet enabled by default.  See GraphBLAS/CMakeLists.txt.
-
+#define GB_BURBLE 1
 #include "GB_dense.h"
+#include "GB_cblas.h"
 
 void GB_cblas_daxpy         // Y += alpha*X
 (
@@ -42,27 +39,46 @@ void GB_cblas_daxpy         // Y += alpha*X
     // determine the number of threads to use
     //--------------------------------------------------------------------------
 
-    // FUTURE: see GB_cblas_saxpy for details
+    // See GB_cblas_saxpy.c for a discussion.
+
+    #ifdef MKL_ILP64
+    // int save_nthreads = mkl_set_num_threads_local (nthreads) ;
+    #endif
 
     //--------------------------------------------------------------------------
     // Y += alpha*X
     //--------------------------------------------------------------------------
 
-    GBBURBLE ("cblas ") ;
+    printf ("cblas daxpy n: %ld nthreads: %d\n", n, nthreads) ;
 
-    for (int64_t p = 0 ; p < n ; p += INT_MAX)
+    GB_CBLAS_INT stride1 = (GB_CBLAS_INT) 1 ;
+
+    // call *axpy in chunks of size GB_CBLAS_INT_MAX (2^31 or 2^63).
+    // If GB_CBLAS_INT_MAX is INT64_MAX, then this will iterate just once.
+    // for (int64_t p = 0 ; p < n ; p += GB_CBLAS_INT_MAX)
     {
-        int chunk = (int) GB_IMIN (n - p, INT_MAX) ;
+//      GB_CBLAS_INT chunk = (GB_CBLAS_INT) GB_IMIN (n - p, GB_CBLAS_INT_MAX) ;
+        #define chunk n
+        #define p 0
+
         cblas_daxpy     // y += alpha*x
         (
             chunk,      // length of x and y (this chunk)
             alpha,      // scale factor (typically 1.0)
             X + p,      // this chunk of x
-            (int) 1,    // x is stride 1
+            stride1,    // x is stride 1
             Y + p,      // this chunk of y
-            (int) 1     // y is stride 1
+            stride1     // y is stride 1
         ) ;
     }
+
+    //--------------------------------------------------------------------------
+    // restore the # of threads for the BLAS
+    //--------------------------------------------------------------------------
+
+    #ifdef MKL_ILP64
+    // mkl_set_num_threads_local (save_nthreads) ;
+    #endif
 
     #endif
 }

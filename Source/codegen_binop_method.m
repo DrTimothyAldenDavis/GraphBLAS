@@ -44,8 +44,16 @@ end
 is_fp32 = isequal (xytype, 'float') ;
 is_fp64 = isequal (xytype, 'double') ;
 is_real = is_fp32 || is_fp64 ;
-if (isequal (binop, 'plus') && is_real)
-    fprintf (f, 'define(`GB_op_is_plus_real'', `1'')\n') ;
+is_plus  = isequal (binop, 'plus') ;
+is_minus = isequal (binop, 'minus') ;
+if (is_real && (is_plus || is_minus))
+    if (is_plus)
+        fprintf (f, 'define(`GB_op_is_plus_real'', `1'')\n') ;
+        fprintf (f, 'define(`GB_op_is_minus_real'', `0'')\n') ;
+    else
+        fprintf (f, 'define(`GB_op_is_plus_real'', `0'')\n') ;
+        fprintf (f, 'define(`GB_op_is_minus_real'', `1'')\n') ;
+    end
     if (is_fp32)
         fprintf (f, 'define(`GB_cblas_axpy'', `GB_cblas_saxpy'')\n') ;
     else
@@ -53,6 +61,7 @@ if (isequal (binop, 'plus') && is_real)
     end
 else
     fprintf (f, 'define(`GB_op_is_plus_real'', `0'')\n') ;
+    fprintf (f, 'define(`GB_op_is_minus_real'', `0'')\n') ;
     fprintf (f, 'define(`GB_cblas_axpy'', `(none)'')\n') ;
 end
 

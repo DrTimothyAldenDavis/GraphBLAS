@@ -31,9 +31,9 @@
         const int64_t cnz = GB_NNZ (C) ;
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+printf ("C+=A via axpy\n") ;
 
             // C += A via GB_cblas_daxpy or GB_cblas_saxpy
-
             GB_CBLAS_AXPY           // Y += alpha*X
             (
                 cnz,                // length of X and Y (note: int64_t)
@@ -43,7 +43,28 @@
                 nthreads            // maximum # of threads to use
             ) ;
 
+// FIXME: uncomment this to enable the call to saxpy:
+        #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+
+double t = omp_get_wtime ( ) ;
+            // C -= A via GB_cblas_daxpy or GB_cblas_saxpy
+            GB_CBLAS_AXPY           // Y += alpha*X
+            (
+                cnz,                // length of X and Y (note: int64_t)
+                (GB_CTYPE) -1,      // alpha is -1.0
+                Ax,                 // X, always stride 1
+                Cx,                 // Y, always stride 1
+                // FIXME: if nthreads is 40, then pagerank
+                // takes 100 iterations on the road graph... ??
+                nthreads            // maximum # of threads to use
+            ) ;
+
+t = omp_get_wtime ( ) - t ;
+printf ("C-=A via axpy time: %g\n", t) ;
+
         #else
+
+double t = omp_get_wtime ( ) ;
 
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -52,6 +73,9 @@
                 GB_GETB (aij, Ax, p) ;                  // aij = A(i,j)
                 GB_BINOP (GB_CX (p), GB_CX (p), aij) ;  // C(i,j) += aij
             }
+
+t = omp_get_wtime ( ) - t ;
+printf ("C-=A via vanilla time: %g\n", t) ;
 
         #endif
     }
@@ -111,10 +135,10 @@
 
                     int64_t len = my_pA_end - my_pA_start ;
 
-                    #if GB_HAS_CBLAS && GB_OP_IS_PLUS_REAL
+                    #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
+printf ("C+=A via axpy (1 j)\n") ;
 
-                        // y += alpha * x via DAXPY or SAXPY
-
+                        // y += x via GB_cblas_daxpy or GB_cblas_saxpy.
                         // use a single thread since this is already in a
                         // parallel region.
 
@@ -125,6 +149,26 @@
                         (
                             len,                // length of X and Y
                             (GB_CTYPE) 1,       // alpha is 1.0
+                            Ax + my_pA_start,   // X, always stride 1
+                            Cx + p,             // Y, always stride 1
+                            1                   // use a single thread
+                        ) ;
+
+                    #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
+
+printf ("C-=A via axpy (1 j)\n") ;
+
+                        // y -= x via GB_cblas_daxpy or GB_cblas_saxpy.
+                        // use a single thread since this is already in a
+                        // parallel region.
+
+                        int64_t i = my_pA_start - pA_start ;
+                        int64_t p = pC + i ;
+
+                        GB_CBLAS_AXPY           // Y += alpha*X
+                        (
+                            len,                // length of X and Y
+                            (GB_CTYPE) -1,      // alpha is -1.0
                             Ax + my_pA_start,   // X, always stride 1
                             Cx + p,             // Y, always stride 1
                             1                   // use a single thread

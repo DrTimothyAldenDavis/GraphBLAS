@@ -46,16 +46,24 @@
 # get the version
 #-------------------------------------------------------------------------------
 
-# cmake 3.0 is preferred.
+# cmake 3.13 is preferred.
 cmake_minimum_required ( VERSION 2.8.12 )
+
+message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 
 if ( CMAKE_VERSION VERSION_GREATER "3.0" )
     cmake_policy ( SET CMP0042 NEW )
     cmake_policy ( SET CMP0048 NEW )
 endif ( )
 
+if ( CMAKE_VERSION VERSION_GREATER "3.13" )
+    message ( STATUS "Cmake is up-to-date (version 3.13 or later preferred)." )
+else ( )
+    message ( WARNING "\nWARNING: cmake is old. cmake 3.13 or later is preferred." )
+endif ( )
+
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 6, 2020 (DRAFT27)" )
+set ( GraphBLAS_DATE "Feb 7, 2020 (DRAFT28)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -150,10 +158,7 @@ configure_file (
 include ( FindOpenMP  )
 include ( FindThreads )
 
-# FUTURE: rely on the CBLAS (perferably vendor-specific such as the Intel MKL).
 # FUTURE: rely on CUDA
-
-# include ( FindBLAS )
 # enable_language ( CUDA )
 
 # for nvcc, add -DGBCUDA
@@ -176,14 +181,39 @@ message ( STATUS "CMAKE have pthreads:       " ${CMAKE_USE_PTHREADS_INIT}  )
 message ( STATUS "CMAKE have Win32 pthreads: " ${CMAKE_USE_WIN32_THREADS_INIT} )
 message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 
+#-------------------------------------------------------------------------------
+# find the BLAS
+#-------------------------------------------------------------------------------
+
+if ( CMAKE_VERSION VERSION_GREATER "3.13" )
+
+    # Look for the parallel 64-bit MKL BLAS by default
+    set ( BLA_VENDOR Intel10_64ilp )
+    include ( FindBLAS )
+
+    if ( ${BLAS_FOUND} )
+        set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DMKL_ILP64 " )
+
+    else ( )
+        message ( STATUS "CBLAS : Intel MKL not found" )
+
+        # FUTURE: enable other BLAS flavors here
+        # set ( BLA_VENDOR ... )
+        # include ( FindBLAS )
+
+    endif ( )
+
+endif ( )
+
 if ( ${BLAS_FOUND} )
     # BLAS_LINKER_FLAGS: uncached list of required linker flags
     # (excluding -l and -L).
-    message ( STATUS "CBLAS linker flags: " ${BLAS_LINKER_FLAGS} )
+    message ( STATUS "CBLAS:                     found" )
+    message ( STATUS "CBLAS linker flags:        " ${BLAS_LINKER_FLAGS} )
     # BLAS_LIBRARIES: list of libraries to link against (may be empty)
     message ( STATUS "CBLAS libraries:    " ${BLAS_LIBRARIES} )
 else ( )
-    message ( STATUS "CBLAS : not found" )
+    message ( STATUS "CBLAS:                     not found" )
 endif ( )
 
 #-------------------------------------------------------------------------------
@@ -390,9 +420,12 @@ endif ( )
 
 if ( BLAS_FOUND )
     # use the dense CBLAS
-    message ( STATUS "Using dense CBLAS " )
+    message ( STATUS "Using dense CBLAS for faster dense matrix/vector operations" )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_HAS_CBLAS " )
     target_link_libraries ( graphblas ${BLAS_LIBRARIES} )
+else ( )
+    message ( STATUS "NOT using dense CBLAS (dense matrix/vector operations could be faster if you had it)." )
+    message ( STATUS "(requires cmake 3.13 or later)" )
 endif ( )
 
 #-------------------------------------------------------------------------------
