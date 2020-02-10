@@ -42,14 +42,12 @@ void GB_cblas_daxpy         // Y += alpha*X
     // See GB_cblas_saxpy.c for a discussion.
 
     #ifdef MKL_ILP64
-    // int save_nthreads = mkl_set_num_threads_local (nthreads) ;
+    int save_nthreads = mkl_set_num_threads_local (nthreads) ;
     #endif
 
     //--------------------------------------------------------------------------
     // Y += alpha*X
     //--------------------------------------------------------------------------
-
-    printf ("cblas daxpy n: %ld nthreads: %d\n", n, nthreads) ;
 
     GB_CBLAS_INT stride1 = (GB_CBLAS_INT) 1 ;
 
@@ -77,7 +75,7 @@ void GB_cblas_daxpy         // Y += alpha*X
     //--------------------------------------------------------------------------
 
     #ifdef MKL_ILP64
-    // mkl_set_num_threads_local (save_nthreads) ;
+    mkl_set_num_threads_local (save_nthreads) ;
     #endif
 
     #endif

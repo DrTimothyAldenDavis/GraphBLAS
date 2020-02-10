@@ -115,7 +115,6 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     // return result
     //--------------------------------------------------------------------------
 
-    // if (ndupl > 0) printf ("duplicates: "GBd"\n", ndupl) ;
     (*p_Mark ) = Mark ;
     (*p_Inext) = Inext ;
     (*p_ndupl) = ndupl ;

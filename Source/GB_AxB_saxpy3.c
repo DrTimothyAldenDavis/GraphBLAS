@@ -804,46 +804,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     //--------------------------------------------------------------------------
 
-#if 0
-    // dump the task descriptors
-    printf ("\n================== final tasks: ncoarse %d nfine %d ntasks %d\n",
-        ncoarse, nfine, ntasks) ;
-
-    for (int fid = 0 ; fid < nfine ; fid++)
-    {
-        // computes C(:,j) += A*B(k1:k2,j)
-        // note that j = (Bh == NULL) ? kk : Bh [kk]
-        int64_t kk = TaskList [fid].vector ;
-        ASSERT (kk >= 0) ;
-        int64_t pB_start = Bp [kk] ;
-        int64_t p1 = TaskList [fid].start - pB_start ;
-        int64_t p2 = TaskList [fid].end   - pB_start ;
-        int64_t hsize = TaskList [fid].hsize   ;
-        int master = TaskList [fid].master ;
-        double work = TaskList [fid].flops ;
-        printf ("Fine %3d: ["GBd"] ("GBd" : "GBd") hsize/n %g master %d ",
-            fid, kk, p1, p2, ((double) hsize) / ((double) cvlen),
-            master) ;
-        printf (" work %g work/n %g\n", work, work/cvlen) ;
-    }
-
-    for (int cid = nfine ; cid < ntasks ; cid++)
-    {
-        int64_t kfirst = TaskList [cid].start ;
-        int64_t klast = TaskList [cid].end ;
-        int64_t hsize = TaskList [cid].hsize ;
-        double work = TaskList [cid].flops ;
-        printf ("Coarse %3d: ["GBd" : "GBd"] work/tot: %g hsize/n %g ",
-            cid, kfirst, klast, work / total_flops,
-            ((double) hsize) / ((double) cvlen)) ;
-        if (cid != TaskList [cid].master) printf ("hey master!\n") ;
-        printf (" work %g work/n %g\n", work, work/cvlen) ;
-        int64_t kk = TaskList [cid].vector ;
-        ASSERT (kk < 0) ;
-    }
-
-#endif
-
     #if GB_BURBLE
     int nfine_hash = 0 ;
     int nfine_gus = 0 ;
@@ -998,18 +958,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GB_MALLOC_MEMORY (Hx_all, Hx_size_total, 1) ;
     }
 
-#if 0
-// HACK:
-    double tic = GB_OPENMP_GET_WTIME ;
-    memset (Hf_all, 1, Hf_size_total * sizeof (int64_t)) ;
-    memset (Hf_all, 0, Hf_size_total * sizeof (int64_t)) ;
-    tic = GB_OPENMP_GET_WTIME - tic ;
-    printf ("(clear %g sec) ", tic) ;
-
-    printf ("H: ("GBd" + "GBd" + "GBd") ",
-        Hi_size_total, Hf_size_total, Hx_size_total) ;
-#endif
-
     if ((Hi_size_total > 0 && Hi_all == NULL) ||
         (Hf_size_total > 0 && Hf_all == NULL) || 
         (Hx_size_total > 0 && Hx_all == NULL))
@@ -1107,7 +1055,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        /* printf ("worker: %s\n", GB_STR(GB_Asaxpy3B(add,mult,xyname))) ; */ \
         info = GB_Asaxpy3B (add,mult,xyname) (Chandle, M, Mask_comp,    \
             Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
             TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \

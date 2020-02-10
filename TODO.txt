@@ -1,4 +1,4 @@
 TODO: test the DNN
 TODO: test performance with icc and no atomic read/write
 TODO: 100% test coverage in Tcov
-TODO: proofread user guide
+TODO: revise/proofread user guide

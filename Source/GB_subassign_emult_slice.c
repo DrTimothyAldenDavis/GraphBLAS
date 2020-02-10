@@ -215,12 +215,6 @@ GrB_Info GB_subassign_emult_slice
                 int64_t iC_start = GB_IMIN (iC1, iC2) ;
                 int64_t iC_end   = GB_IMAX (iC1, iC2) ;
 
-                // printf ("\niA_start "GBd"\n", iA_start) ;
-                // printf ("iA_end   "GBd"\n", iA_end) ;
-
-                // printf ("\niC_start "GBd"\n", iC_start) ;
-                // printf ("iC_end   "GBd"\n", iC_end) ;
-
                 // this task works on Ci,Cx [pC:pC_end-1]
                 int64_t pleft = pC_start ;
                 int64_t pright = pC_end - 1 ;

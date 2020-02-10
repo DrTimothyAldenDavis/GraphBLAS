@@ -71,8 +71,6 @@ void GB_cblas_saxpy         // Y += alpha*X
     // Y += alpha*X
     //--------------------------------------------------------------------------
 
-    printf ("cblas saxpy n: %ld nthreads: %d\n", n, nthreads) ;
-
     GB_CBLAS_INT stride1 = (GB_CBLAS_INT) 1 ;
 
     // call *axpy in chunks of size GB_CBLAS_INT_MAX (2^31 or 2^63).
@@ -99,7 +97,7 @@ void GB_cblas_saxpy         // Y += alpha*X
     //--------------------------------------------------------------------------
 
     #ifdef MKL_ILP64
-    // mkl_set_num_threads_local (save_nthreads) ;
+    mkl_set_num_threads_local (save_nthreads) ;
     #endif
 
     #endif

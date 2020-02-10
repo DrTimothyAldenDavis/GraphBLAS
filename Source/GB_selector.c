@@ -332,13 +332,11 @@ GrB_Info GB_selector
         if (A->is_hyper && C_nvec_nonempty < anvec)
         {
             // prune empty vectors from Ah and Ap
-            // printf ("prune empties\n") ;
             int64_t cnvec = 0 ;
             for (int64_t k = 0 ; k < anvec ; k++)
             {
                 if (Cp [k] < Cp [k+1])
                 { 
-                    //printf ("keep k "GBd" j "GBd"\n", k, Ah [k]) ;
                     Ah [cnvec] = Ah [k] ;
                     Ap [cnvec] = Cp [k] ;
                     cnvec++ ;
@@ -402,7 +400,6 @@ GrB_Info GB_selector
             {
                 if (Cp [k] < Cp [k+1])
                 { 
-                    // printf ("keep k "GBd" j "GBd"\n", k, Ah [k]) ;
                     Ch [cnvec] = Ah [k] ;
                     Cp [cnvec] = Cp [k] ;
                     cnvec++ ;

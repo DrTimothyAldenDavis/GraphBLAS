@@ -163,8 +163,6 @@ GrB_Info GB_builder                 // build a matrix from tuples
     const GB_void *GB_RESTRICT S = (S_work == NULL) ? S_input : S_work ;
     size_t tsize = ttype->size ;
     size_t ssize = GB_code_size (scode, tsize) ;
-//  printf ("nvals "GBd" S_work %p S_input %p S %p\n",
-//      nvals, S_work, S_input, S) ;
     ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
 
     //==========================================================================

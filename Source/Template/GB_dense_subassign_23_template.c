@@ -31,7 +31,6 @@
         const int64_t cnz = GB_NNZ (C) ;
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
-printf ("C+=A via axpy\n") ;
 
             // C += A via GB_cblas_daxpy or GB_cblas_saxpy
             GB_CBLAS_AXPY           // Y += alpha*X
@@ -43,10 +42,8 @@ printf ("C+=A via axpy\n") ;
                 nthreads            // maximum # of threads to use
             ) ;
 
-// FIXME: uncomment this to enable the call to saxpy:
         #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
 
-double t = omp_get_wtime ( ) ;
             // C -= A via GB_cblas_daxpy or GB_cblas_saxpy
             GB_CBLAS_AXPY           // Y += alpha*X
             (
@@ -55,16 +52,14 @@ double t = omp_get_wtime ( ) ;
                 Ax,                 // X, always stride 1
                 Cx,                 // Y, always stride 1
                 // FIXME: if nthreads is 40, then pagerank
-                // takes 100 iterations on the road graph... ??
+                // takes 100 iterations on the road graph... why ??
                 nthreads            // maximum # of threads to use
             ) ;
 
-t = omp_get_wtime ( ) - t ;
-printf ("C-=A via axpy time: %g\n", t) ;
-
         #else
 
-double t = omp_get_wtime ( ) ;
+            // FIXME: even with nthreads of 1, CBLAS is slower than
+            // the vanilla code below.
 
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
@@ -73,9 +68,6 @@ double t = omp_get_wtime ( ) ;
                 GB_GETB (aij, Ax, p) ;                  // aij = A(i,j)
                 GB_BINOP (GB_CX (p), GB_CX (p), aij) ;  // C(i,j) += aij
             }
-
-t = omp_get_wtime ( ) - t ;
-printf ("C-=A via vanilla time: %g\n", t) ;
 
         #endif
     }
@@ -136,7 +128,6 @@ printf ("C-=A via vanilla time: %g\n", t) ;
                     int64_t len = my_pA_end - my_pA_start ;
 
                     #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
-printf ("C+=A via axpy (1 j)\n") ;
 
                         // y += x via GB_cblas_daxpy or GB_cblas_saxpy.
                         // use a single thread since this is already in a
@@ -155,8 +146,6 @@ printf ("C+=A via axpy (1 j)\n") ;
                         ) ;
 
                     #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
-
-printf ("C-=A via axpy (1 j)\n") ;
 
                         // y -= x via GB_cblas_daxpy or GB_cblas_saxpy.
                         // use a single thread since this is already in a

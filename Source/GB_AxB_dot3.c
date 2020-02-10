@@ -307,7 +307,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        /* printf ("worker: %s\n", GB_STR(GB_Adot3B(add,mult,xyname))) ; */  \
         info = GB_Adot3B (add,mult,xyname) (C, M, Mask_struct,          \
             A, A_is_pattern, B, B_is_pattern,                           \
             TaskList, ntasks, nthreads) ;                               \
