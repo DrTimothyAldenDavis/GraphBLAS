@@ -1,7 +1,7 @@
 
 if_is_binop_subset
 
-GrB_Info GB_Cdense_ewise3_accum
+void GB_Cdense_ewise3_accum
 (
     GrB_Matrix C,
     const GrB_Matrix A,

@@ -13,5 +13,5 @@
 
 #include "GB_printf.h"
 
-int (* GB_printf_function ) (const char *format, ...) = (void *) NULL ;
+int (* GB_printf_function ) (const char *format, ...) = NULL ;
 

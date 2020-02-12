@@ -12,12 +12,13 @@
 // arbitary user-defined operators and/or typecasting), and in the hard-coded
 // GB_Asaxpy3B* workers in the Generated/ folder.
 
+#include "GB_unused.h"
+
 //------------------------------------------------------------------------------
 // template code for C=A*B via the saxpy3 method
 //------------------------------------------------------------------------------
 
 {
-    // double tic = GB_OPENMP_GET_WTIME ;
 
     //--------------------------------------------------------------------------
     // get M, A, B, and C
@@ -34,7 +35,7 @@
     const GB_BTYPE *GB_RESTRICT Bx = B_is_pattern ? NULL : B->x ;
     // const int64_t bvlen = B->vlen ;
     // const int64_t bnvec = B->nvec ;
-    const bool B_is_hyper = B->is_hyper ;
+    // const bool B_is_hyper = B->is_hyper ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -49,7 +50,7 @@
     const GB_void *GB_RESTRICT Mx = NULL ;
     size_t msize = 0 ;
     int64_t mnvec = 0 ;
-    bool M_is_hyper ;
+    bool M_is_hyper = false ;
     if (M != NULL)
     { 
         Mp = M->p ;
@@ -70,529 +71,13 @@
     bool mask_is_M = (M != NULL && !Mask_comp) ;
 
     //==========================================================================
-    // phase0: count nnz(C(:,j)) for coarse tasks, scatter M for fine tasks
+    // phase2: numeric work for fine tasks
     //==========================================================================
 
-    // phase0 is purely symbolic: make it a function for all semirings
-
-    // At this point, all of Hf [...] is zero, for all tasks.
-    // Hi and Hx are not initialized.
-
-    int taskid ;
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < ntasks ; taskid++)
-    {
-
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
-
-        int64_t hash_size = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cvlen) ;
-
-        if (taskid < nfine)
-        {
-
-            //------------------------------------------------------------------
-            // no work for fine tasks in phase0 if M is not present
-            //------------------------------------------------------------------
-
-            if (M == NULL) continue ;
-
-            //------------------------------------------------------------------
-            // get the task descriptor
-            //------------------------------------------------------------------
-        
-            int64_t kk = TaskList [taskid].vector ;
-            // partition M(:,j)
-            GB_GET_M_j ;        // get M(:,j)
-            int team_size = TaskList [taskid].team_size ;
-            int master    = TaskList [taskid].master ;
-            int my_teamid = taskid - master ;
-            int64_t mystart, myend ;
-            GB_PARTITION (mystart, myend, mjnz, my_teamid, team_size) ;
-            mystart += pM_start ;
-            myend   += pM_start ;
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // phase0: fine Gustavson task, C<M>=A*B or C<!M>=A*B
-                //--------------------------------------------------------------
-
-                // Scatter the values of M(:,j) into Hf.  No atomics needed
-                // since all indices i in M(;,j) are unique.
-
-                uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                GB_SCATTER_M_j (mystart, myend, 1) ;
-
-            }
-            else
-            {
-
-                //--------------------------------------------------------------
-                // phase0: fine hash task, C<M>=A*B or C<!M>=A*B
-                //--------------------------------------------------------------
-
-                // The least significant 2 bits of Hf [hash] is the flag f, and
-                // the upper bits contain h, as (h,f).  After this phase0, if
-                // M(i,j)=1 then the hash table contains ((i+1),1) in Hf [hash]
-                // at some location.
-
-                // Later, the flag values of f = 2 and 3 are also used.
-                // Only f=1 is set in this phase.
-
-                // h == 0,   f == 0: unoccupied and unlocked
-                // h == i+1, f == 1: occupied with M(i,j)=1
-
-                int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                int64_t hash_bits = (hash_size-1) ;
-                for (int64_t pM = mystart ; pM < myend ; pM++) // scan my M(:,j)
-                {
-                    GB_GET_M_ij ;                   // get M(i,j)
-                    if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = Mi [pM] ;
-                    int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
-                    for (GB_HASH (i))
-                    {
-                        int64_t hf ;
-                        // swap my hash entry into the hash table
-                        GB_ATOMIC_CAPTURE
-                        {
-                            hf = Hf [hash] ; Hf [hash] = i_mine ;
-                        }
-                        if (hf == 0) break ;        // success
-                        // i_mine has been inserted, but a prior entry was
-                        // already there.  It needs to be replaced, so take
-                        // ownership of this displaced entry, and keep
-                        // looking until a new empty slot is found for it.
-                        i_mine = hf ;
-                    }
-                }
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // coarse tasks: compute nnz in each vector of A*B(:,kfirst:klast)
-            //------------------------------------------------------------------
-
-            int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-            int64_t kfirst = TaskList [taskid].start ;
-            int64_t klast  = TaskList [taskid].end ;
-            int64_t mark = 0 ;
-            // int64_t nk = klast - kfirst + 1 ;
-
-            if (use_Gustavson)
-            {
-
-                //--------------------------------------------------------------
-                // phase0: coarse Gustavson task
-                //--------------------------------------------------------------
-
-                if (M == NULL)
-                {
-
-                    //----------------------------------------------------------
-                    // phase0: coarse Gustavson task, C=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all Hf.
-                    // Hf [i] is set to mark when C(i,j) is found.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        if (bjnz == 1)
-                        { 
-                            int64_t k = Bi [pB] ;   // get B(k,j)
-                            GB_GET_A_k ;            // get A(:,k)
-                            Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
-                            continue ;
-                        }
-                        mark++ ;
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            if (aknz == cvlen)
-                            { 
-                                cjnz = cvlen ;  // A(:,k) is dense
-                                break ;         // so nnz(C(:,j)) = cvlen
-                            }
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = Ai [pA] ;    // get A(i,k)
-                                if (Hf [i] != mark)     // if true, i is new
-                                { 
-                                    Hf [i] = mark ; // mark C(i,j) as seen
-                                    cjnz++ ;        // C(i,j) is a new entry
-                                }
-                            }
-                        }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
-                    }
-
-                }
-                else if (mask_is_M)
-                {
-
-                    //----------------------------------------------------------
-                    // phase0: coarse Gustavson task, C<M>=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all of Hf.
-
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is ignored.
-                    // Hf [i] == mark   : M(i,j)=1, and C(i,j) not yet seen.
-                    // Hf [i] == mark+1 : M(i,j)=1, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        // scatter M(:,j)
-                        GB_SCATTER_M_j (pM_start, pM_end, mark) ;
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
-                            #define GB_IKJ_VECTORIZE GB_PRAGMA_VECTORIZE
-                            #define GB_IKJ_IVDEP     GB_PRAGMA_IVDEP
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                if (Hf [i] == mark)   /* if true, M(i,j) is 1*/\
-                                {                                              \
-                                    Hf [i] = mark1 ;  /* mark C(i,j) as seen */\
-                                    cjnz++ ;          /* C(i,j) is new */      \
-                                }                                              \
-                            }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ_VECTORIZE
-                            #undef GB_IKJ_IVDEP
-                            #undef GB_IKJ
-                        }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
-                    }
-
-                }
-                else
-                {
-
-                    //----------------------------------------------------------
-                    // phase0: coarse Gustavson task, C<!M>=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all of Hf.
-
-                    // Hf [i] < mark    : M(i,j)=0, C(i,j) is not yet seen.
-                    // Hf [i] == mark   : M(i,j)=1, so C(i,j) is ignored.
-                    // Hf [i] == mark+1 : M(i,j)=0, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;                    // get B(:,j)
-                        if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j ;            // get M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        // scatter M(:,j)
-                        GB_SCATTER_M_j (pM_start, pM_end, mark) ;
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = Ai [pA] ;   // get A(i,k)
-                                if (Hf [i] < mark)      // if true, M(i,j) is 0
-                                { 
-                                    Hf [i] = mark1 ;    // mark C(i,j) as seen
-                                    cjnz++ ;            // C(i,j) is a new entry
-                                }
-                            }
-                        }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
-                    }
-                }
-
-            }
-            else
-            {
-
-                //--------------------------------------------------------------
-                // phase0: coarse hash task
-                //--------------------------------------------------------------
-
-                int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
-                int64_t hash_bits = (hash_size-1) ;
-
-                if (M == NULL)
-                {
-
-                    //----------------------------------------------------------
-                    // phase0: coarse hash task, C=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let f = Hf [hash] and h = Hi [hash]
-
-                    // f < mark          : unoccupied.
-                    // h == i, f == mark : occupied with C(i,j)
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        if (bjnz == 1)
-                        { 
-                            int64_t k = Bi [pB] ;   // get B(k,j)
-                            GB_GET_A_k ;            // get A(:,k)
-                            Cp [kk] = aknz ;        // nnz(C(:,j)) = nnz(A(:,k))
-                            continue ;
-                        }
-                        mark++ ;
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = Ai [pA] ;   // get A(i,k)
-                                for (GB_HASH (i))       // find i in hash
-                                {
-                                    if (Hf [hash] < mark)
-                                    { 
-                                        Hf [hash] = mark ; // insert C(i,j)
-                                        Hi [hash] = i ;
-                                        cjnz++ ;  // C(i,j) is a new entry.
-                                        break ;
-                                    }
-                                    if (Hi [hash] == i) break ;
-                                }
-                            }
-                        }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
-                    }
-
-                }
-                else if (mask_is_M)
-                {
-
-                    //----------------------------------------------------------
-                    // phase0: hash task, C<M>=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
-
-                    // f < mark: unoccupied, M(i,j)=0, C(i,j) ignored if
-                    //           this case occurs while scanning A(:,k)
-                    // h == i, f == mark   : M(i,j)=1, and C(i,j) not yet seen.
-                    // h == i, f == mark+1 : M(i,j)=1, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j ;            // get M(:,j)
-                        if (mjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j_RANGE (64) ; // get first and last in M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_HASH_M_j ;           // hash M(:,j)
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            GB_SKIP_IF_A_k_DISJOINT_WITH_M_j ;
-                            #define GB_IKJ_VECTORIZE
-                            #define GB_IKJ_IVDEP
-                            #define GB_IKJ                                     \
-                            {                                                  \
-                                for (GB_HASH (i))       /* find i in hash */   \
-                                {                                              \
-                                    int64_t f = Hf [hash] ;                    \
-                                    if (f < mark) break ; /* M(i,j)=0; ignore*/\
-                                    if (Hi [hash] == i)   /* if true, i found*/\
-                                    {                                          \
-                                        if (f == mark)  /* if true, i is new */\
-                                        {                                      \
-                                            Hf [hash] = mark1 ; /* mark seen */\
-                                            cjnz++ ;    /* C(i,j) is new */    \
-                                        }                                      \
-                                        break ;                                \
-                                    }                                          \
-                                }                                              \
-                            }
-                            GB_SCAN_M_j_OR_A_k ;
-                            #undef GB_IKJ_VECTORIZE
-                            #undef GB_IKJ_IVDEP
-                            #undef GB_IKJ
-                        }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
-                    }
-
-                }
-                else
-                {
-
-                    //----------------------------------------------------------
-                    // phase0: coarse hash task, C<!M>=A*B
-                    //----------------------------------------------------------
-
-                    // Initially, Hf [...] < mark for all of Hf.
-                    // Let h = Hi [hash] and f = Hf [hash].
-
-                    // f < mark: unoccupied, M(i,j)=0, and C(i,j) not yet seen.
-                    // h == i, f == mark   : M(i,j)=1. C(i,j) ignored.
-                    // h == i, f == mark+1 : M(i,j)=0, and C(i,j) has been seen.
-
-                    for (int64_t kk = kfirst ; kk <= klast ; kk++)
-                    {
-                        GB_GET_B_j ;            // get B(:,j)
-                        if (bjnz == 0) { Cp [kk] = 0 ; continue ; }
-                        GB_GET_M_j ;            // get M(:,j)
-                        mark += 2 ;
-                        int64_t mark1 = mark+1 ;
-                        GB_HASH_M_j ;           // hash M(:,j)
-                        int64_t cjnz = 0 ;
-                        for ( ; pB < pB_end ; pB++)     // scan B(:,j)
-                        {
-                            int64_t k = Bi [pB] ;       // get B(k,j)
-                            GB_GET_A_k ;                // get A(:,k)
-                            // scan A(:,k)
-                            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-                            {
-                                int64_t i = Ai [pA] ;   // get A(i,k)
-                                for (GB_HASH (i))       // find i in hash
-                                {
-                                    if (Hf [hash] < mark)   // if true, i is new
-                                    { 
-                                        Hf [hash] = mark1 ; // mark C(i,j) seen
-                                        Hi [hash] = i ;
-                                        cjnz++ ;        // C(i,j) is a new entry
-                                        break ;
-                                    }
-                                    if (Hi [hash] == i) break ;
-                                }
-                            }
-                        }
-                        Cp [kk] = cjnz ;    // count the entries in C(:,j)
-                    }
-                }
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // check result for phase0 for fine tasks
-    //--------------------------------------------------------------------------
-
-    #ifdef GB_DEBUG
-    if (M != NULL)
-    {
-        for (taskid = 0 ; taskid < nfine ; taskid++)
-        {
-            int64_t kk = TaskList [taskid].vector ;
-            ASSERT (kk >= 0 && kk < B->nvec) ;
-            int64_t hash_size = TaskList [taskid].hsize ;
-            bool use_Gustavson = (hash_size == cvlen) ;
-            int master = TaskList [taskid].master ;
-            if (master != taskid) continue ;
-            GB_GET_M_j ;        // get M(:,j)
-            int64_t mjcount2 = 0 ;
-            int64_t mjcount = 0 ;
-            for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-            {
-                GB_GET_M_ij ;           // get M(i,j)
-                if (mij) mjcount++ ;
-            }
-            if (use_Gustavson)
-            {
-                // phase0: fine Gustavson task, C<M>=A*B or C<!M>=A*B
-                uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                { 
-                    GB_GET_M_ij ;                    // get M(i,j)
-                    ASSERT (Hf [Mi [pM]] == mij) ;
-                }
-                for (int64_t i = 0 ; i < cvlen ; i++)
-                {
-                    ASSERT (Hf [i] == 0 || Hf [i] == 1) ;
-                    if (Hf [i] == 1) mjcount2++ ;
-                }
-                ASSERT (mjcount == mjcount2) ;
-            }
-            else
-            {
-                // phase0: fine hash task, C<M>=A*B or C<!M>=A*B
-                // h == 0,   f == 0: unoccupied and unlocked
-                // h == i+1, f == 1: occupied with M(i,j)=1
-                int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-                int64_t hash_bits = (hash_size-1) ;
-                for (int64_t pM = pM_start ; pM < pM_end ; pM++)
-                {
-                    GB_GET_M_ij ;                   // get M(i,j)
-                    if (!mij) continue ;            // skip if M(i,j)=0
-                    int64_t i = Mi [pM] ;
-                    int64_t i_mine = ((i+1) << 2) + 1 ;  // ((i+1),1)
-                    int64_t probe = 0 ;
-                    for (GB_HASH (i))
-                    {
-                        int64_t hf = Hf [hash] ;
-                        if (hf == i_mine) { mjcount2++ ; break ; }
-                        ASSERT (hf != 0) ;
-                        probe++ ;
-                        ASSERT (probe < cvlen) ;
-                    }
-                }
-                ASSERT (mjcount == mjcount2) ;
-                mjcount2 = 0 ;
-                for (int64_t hash = 0 ; hash < hash_size ; hash++)
-                {
-                    int64_t hf = Hf [hash] ;
-                    int64_t h = (hf >> 2) ;     // empty (0), or a 1-based 
-                    int64_t f = (hf & 3) ;      // 0 if empty or 1 if occupied
-                    if (f == 1) ASSERT (h >= 1 && h <= cvlen) ;
-                    ASSERT (hf == 0 || f == 1) ;
-                    if (f == 1) mjcount2++ ;
-                }
-                ASSERT (mjcount == mjcount2) ;
-            }
-        }
-    }
-    #endif
-
-    // tic = GB_OPENMP_GET_WTIME - tic ;
-    // printf ("phase0: %g\n", tic) ;
-    // tic = GB_OPENMP_GET_WTIME ;
-
-    //==========================================================================
-    // phase1: numeric work for fine tasks
-    //==========================================================================
-
-    // Coarse tasks: nothing to do in phase1.
+    // Coarse tasks: nothing to do in phase2.
     // Fine tasks: compute nnz (C(:,j)), and values in Hx via atomics.
 
+    int taskid ;
     #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
     for (taskid = 0 ; taskid < nfine ; taskid++)
     {
@@ -607,7 +92,7 @@
         int64_t pB     = TaskList [taskid].start ;
         int64_t pB_end = TaskList [taskid].end + 1 ;
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
+        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
         #endif
         int64_t pleft = 0, pright = anvec-1 ;
 
@@ -615,7 +100,7 @@
         {
 
             //------------------------------------------------------------------
-            // phase1: fine Gustavson task
+            // phase2: fine Gustavson task
             //------------------------------------------------------------------
 
             // Hf [i] == 0: unlocked, i has not been seen in C(:,j).
@@ -641,7 +126,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase1: fine Gustavson task, C=A*B
+                // phase2: fine Gustavson task, C=A*B
                 //--------------------------------------------------------------
 
                 // Hf [i] is initially 0.
@@ -712,7 +197,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase1: fine Gustavson task, C<M>=A*B
+                // phase2: fine Gustavson task, C<M>=A*B
                 //--------------------------------------------------------------
 
                 // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
@@ -794,7 +279,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase1: fine Gustavson task, C<!M>=A*B
+                // phase2: fine Gustavson task, C<!M>=A*B
                 //--------------------------------------------------------------
 
                 // Hf [i] is 0 if M(i,j) not present or M(i,j)=0.
@@ -868,7 +353,7 @@
         {
 
             //------------------------------------------------------------------
-            // phase1: fine hash task
+            // phase2: fine hash task
             //------------------------------------------------------------------
 
             // Each hash entry Hf [hash] splits into two parts, (h,f).  f
@@ -902,7 +387,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase1: fine hash task, C=A*B
+                // phase2: fine hash task, C=A*B
                 //--------------------------------------------------------------
 
                 // Given Hf [hash] split into (h,f)
@@ -983,7 +468,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase1: fine hash task, C<M>=A*B
+                // phase2: fine hash task, C<M>=A*B
                 //--------------------------------------------------------------
 
                 // Given Hf [hash] split into (h,f)
@@ -1065,7 +550,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase1: fine hash task, C<!M>=A*B
+                // phase2: fine hash task, C<!M>=A*B
                 //--------------------------------------------------------------
 
                 // Given Hf [hash] split into (h,f)
@@ -1151,113 +636,19 @@
         }
     }
 
-    // tic = GB_OPENMP_GET_WTIME - tic ;
-    // printf ("phase1: %g\n", tic) ;
-    // tic = GB_OPENMP_GET_WTIME ;
-
     //==========================================================================
-    // phase2: count nnz(C(:,j)) for fine tasks
+    // phase3/phase4: count nnz(C(:,j)) for fine tasks, cumsum of Cp
     //==========================================================================
 
-    // TODO phase2 is purely symbolic; make it a function for all semirings
-
-    #pragma omp parallel for num_threads(nthreads) schedule(dynamic,1)
-    for (taskid = 0 ; taskid < nfine ; taskid++)
-    {
-
-        //----------------------------------------------------------------------
-        // get the task descriptor
-        //----------------------------------------------------------------------
-
-        int64_t kk = TaskList [taskid].vector ;
-        int64_t hash_size = TaskList [taskid].hsize ;
-        bool use_Gustavson = (hash_size == cvlen) ;
-        int team_size = TaskList [taskid].team_size ;
-        int master    = TaskList [taskid].master ;
-        int my_teamid = taskid - master ;
-        int64_t my_cjnz = 0 ;
-
-        if (use_Gustavson)
-        {
-
-            //------------------------------------------------------------------
-            // phase2: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
-            //------------------------------------------------------------------
-
-            // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
-
-            uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-            int64_t istart, iend ;
-            GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
-            for (int64_t i = istart ; i < iend ; i++)
-            {
-                if (Hf [i] == 2)
-                { 
-                    my_cjnz++ ;
-                }
-            }
-
-        }
-        else
-        {
-
-            //------------------------------------------------------------------
-            // phase2: fine hash task, C=A*B, C<M>=A*B, or C<!M>=A*B
-            //------------------------------------------------------------------
-
-            // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
-            // and the index i of the entry is (Hf [hash] >> 2) - 1.
-
-            int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-            int64_t mystart, myend ;
-            GB_PARTITION (mystart, myend, hash_size, my_teamid, team_size) ;
-            for (int64_t hash = mystart ; hash < myend ; hash++)
-            {
-                if ((Hf [hash] & 3) == 2)
-                { 
-                    my_cjnz++ ;
-                }
-            }
-        }
-
-        TaskList [taskid].my_cjnz = my_cjnz ;   // count my nnz(C(:,j))
-    }
-
-    // tic = GB_OPENMP_GET_WTIME - tic ;
-    // printf ("phase2: %g\n", tic) ;
-    // tic = GB_OPENMP_GET_WTIME ;
+    int64_t cjnz_max = GB_AxB_saxpy3_cumsum (C, TaskList,
+        nfine, chunk, nthreads) ;
 
     //==========================================================================
-    // phase3: compute Cp with cumulative sum and allocate C
+    // phase5: numeric phase for coarse tasks, gather for fine tasks
     //==========================================================================
-
-    // TODO make this a function, shared by all semirings.
-
-    // TaskList [taskid].my_cjnz is the # of unique entries found in C(:,j) by
-    // that task.  Sum these terms to compute total # of entries in C(:,j).
-
-    for (taskid = 0 ; taskid < nfine ; taskid++)
-    { 
-        int64_t kk = TaskList [taskid].vector ;
-        Cp [kk] = 0 ;
-    }
-
-    for (taskid = 0 ; taskid < nfine ; taskid++)
-    { 
-        int64_t kk = TaskList [taskid].vector ;
-        int64_t my_cjnz = TaskList [taskid].my_cjnz ;
-        Cp [kk] += my_cjnz ;
-        ASSERT (my_cjnz <= cvlen) ;
-    }
-
-    // Cp [kk] is now nnz (C (:,j)), for all vectors j, whether computed by
-    // fine tasks or coarse tasks, and where j == (Bh == NULL) ? kk : Bh [kk].
-
-    int nth = GB_nthreads (cnvec, chunk, nthreads) ;
-    GB_cumsum (Cp, cnvec, &(C->nvec_nonempty), nth) ;
-    int64_t cnz = Cp [cnvec] ;
 
     // allocate Ci and Cx
+    int64_t cnz = Cp [cnvec] ;
     GrB_Info info = GB_ix_alloc (C, cnz, true, Context) ;
     if (info != GrB_SUCCESS)
     {
@@ -1265,37 +656,6 @@
         GB_FREE_ALL ;
         return (info) ;
     }
-
-    // cumulative sum of nnz (C (:,j)) for each team of fine tasks
-    int64_t cjnz_sum = 0 ;
-    int64_t cjnz_max = 0 ;
-    for (taskid = 0 ; taskid < nfine ; taskid++)
-    {
-        if (taskid == TaskList [taskid].master)
-        {
-            cjnz_sum = 0 ;
-            // also find the max (C (:,j)) for any fine hash tasks
-            int64_t hash_size = TaskList [taskid].hsize ;
-            bool use_Gustavson = (hash_size == cvlen) ;
-            if (!use_Gustavson)
-            { 
-                int64_t kk = TaskList [taskid].vector ;
-                int64_t cjnz = Cp [kk+1] - Cp [kk] ;
-                cjnz_max = GB_IMAX (cjnz_max, cjnz) ;
-            }
-        }
-        int64_t my_cjnz = TaskList [taskid].my_cjnz ;
-        TaskList [taskid].my_cjnz = cjnz_sum ;
-        cjnz_sum += my_cjnz ;
-    }
-
-    // tic = GB_OPENMP_GET_WTIME - tic ;
-    // printf ("phase3: %g\n", tic) ;
-    // tic = GB_OPENMP_GET_WTIME ;
-
-    //==========================================================================
-    // phase4: numeric phase for coarse tasks, gather for fine tasks
-    //==========================================================================
 
     int64_t  *GB_RESTRICT Ci = C->i ;
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
@@ -1334,7 +694,7 @@
         //----------------------------------------------------------------------
 
         #if !GB_IS_ANY_PAIR_SEMIRING
-        GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
+        GB_CTYPE *GB_RESTRICT Hx = (GB_CTYPE *) TaskList [taskid].Hx ;
         #endif
         int64_t hash_size = TaskList [taskid].hsize ;
         bool use_Gustavson = (hash_size == cvlen) ;
@@ -1356,7 +716,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase4: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
+                // phase5: fine Gustavson task, C=A*B, C<M>=A*B, or C<!M>=A*B
                 //--------------------------------------------------------------
 
                 // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
@@ -1398,7 +758,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase4: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
+                // phase5: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
                 //--------------------------------------------------------------
 
                 // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
@@ -1437,14 +797,14 @@
             {
 
                 //--------------------------------------------------------------
-                // phase4: coarse Gustavson task
+                // phase5: coarse Gustavson task
                 //--------------------------------------------------------------
 
                 if (M == NULL)
                 {
 
                     //----------------------------------------------------------
-                    // phase4: coarse Gustavson task, C=A*B
+                    // phase5: coarse Gustavson task, C=A*B
                     //----------------------------------------------------------
 
                     for (int64_t kk = kfirst ; kk <= klast ; kk++)
@@ -1526,7 +886,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase4: coarse Gustavson task, C<M>=A*B
+                    // phase5: coarse Gustavson task, C<M>=A*B
                     //----------------------------------------------------------
 
                     // Initially, Hf [...] < mark for all of Hf.
@@ -1628,7 +988,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase4: coarse Gustavson task, C<!M>=A*B
+                    // phase5: coarse Gustavson task, C<!M>=A*B
                     //----------------------------------------------------------
 
                     // if !M:
@@ -1721,7 +1081,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase4: coarse hash task
+                // phase5: coarse hash task
                 //--------------------------------------------------------------
 
                 int64_t *GB_RESTRICT Hi = TaskList [taskid].Hi ;
@@ -1731,7 +1091,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase4: coarse hash task, C=A*B
+                    // phase5: coarse hash task, C=A*B
                     //----------------------------------------------------------
 
                     // Initially, Hf [...] < mark for all of Hf.
@@ -1797,7 +1157,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase4: coarse hash task, C<M>=A*B
+                    // phase5: coarse hash task, C<M>=A*B
                     //----------------------------------------------------------
 
                     // Initially, Hf [...] < mark for all of Hf.
@@ -1865,7 +1225,7 @@
                 {
 
                     //----------------------------------------------------------
-                    // phase4: coarse hash task, C<!M>=A*B
+                    // phase5: coarse hash task, C<!M>=A*B
                     //----------------------------------------------------------
 
                     // Initially, Hf [...] < mark for all of Hf.
@@ -1929,12 +1289,8 @@
         }
     }
 
-    // tic = GB_OPENMP_GET_WTIME - tic ;
-    // printf ("phase4: %g\n", tic) ;
-    // tic = GB_OPENMP_GET_WTIME ;
-
     //==========================================================================
-    // phase5: final gather phase for fine hash tasks
+    // phase6: final gather phase for fine hash tasks
     //==========================================================================
 
     if (cjnz_max > 0)
@@ -1961,7 +1317,7 @@
             {
 
                 //--------------------------------------------------------------
-                // phase5: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
+                // phase6: fine hash task, C=A*B, C<M>=A*B, C<!M>=A*B
                 //--------------------------------------------------------------
 
                 // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
@@ -1987,7 +1343,8 @@
 
                 #if !GB_IS_ANY_PAIR_SEMIRING
 
-                    GB_CTYPE *GB_RESTRICT Hx = TaskList [taskid].Hx ;
+                    GB_CTYPE *GB_RESTRICT Hx =
+                        (GB_CTYPE *) TaskList [taskid].Hx ;
                     // gather the values of C(:,j)
                     int64_t pC ;
                     #pragma omp parallel for num_threads(nth) schedule(static)
@@ -2014,9 +1371,6 @@
         // free workspace
         GB_FREE_MEMORY (W, cjnz_max, sizeof (int64_t)) ;
     }
-
-    // tic = GB_OPENMP_GET_WTIME - tic ;
-    // printf ("phase5: %g\n", tic) ;
 }
 
 #undef Cx

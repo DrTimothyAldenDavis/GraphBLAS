@@ -684,7 +684,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // simple_mask: C(I,J)<M> = ... ; or C(I,J)<M> += ...
     bool simple_mask = (!C_replace && M != NULL && !Mask_comp) ;
 
-    if (C_is_dense) GBBURBLE ("(C dense) ") ;
+    if (C_is_dense) { GBBURBLE ("(C dense) ") ; }
 
     // check if C(:,:) += x or += A
     bool C_dense_update = false ;

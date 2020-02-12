@@ -260,12 +260,14 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
                 if ((row_assign && !C_is_csc) || (col_assign && C_is_csc))
                 { 
                     // delete all entries in vector j
+                    GBBURBLE ("C(:,j)=zombie ") ;
                     int64_t j = (col_assign) ? Cols [0] : Rows [0] ;
                     GB_assign_zombie1 (C, j, Context) ;
                 }
                 else
                 { 
                     // delete all entries in each vector with index i
+                    GBBURBLE ("C(i,:)=zombie ") ;
                     int64_t i = (row_assign) ? Rows [0] : Cols [0] ;
                     GB_assign_zombie2 (C, i, Context) ;
                 }
@@ -752,6 +754,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t j = J [0] ;
             ASSERT (j == GB_ijlist (J, 0, Jkind, Jcolon)) ;
 
+            GBBURBLE ("assign zombies outside C(I,j) ") ;
             GB_assign_zombie3 (Z, M, Mask_comp, Mask_struct,
                 j, I, nI, Ikind, Icolon, Context) ;
         }
@@ -770,6 +773,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             int64_t i = I [0] ;
             ASSERT (i == GB_ijlist (I, 0, Ikind, Icolon)) ;
 
+            GBBURBLE ("assign zombies outside C(i,J) ") ;
             GB_assign_zombie4 (Z, M, Mask_comp, Mask_struct,
                 i, J, nJ, Jkind, Jcolon, Context) ;
         }
@@ -783,6 +787,7 @@ GrB_Info GB_assign                  // C<M>(Rows,Cols) += A or A'
             // M has the same size as Z
             ASSERT (M->vlen == Z->vlen && M->vdim == Z->vdim) ;
 
+            GBBURBLE ("assign zombies outside C(I,J) ") ;
             GB_OK (GB_assign_zombie5 (Z, M, Mask_comp, Mask_struct,
                 I, nI, Ikind, Icolon, J, nJ, Jkind, Jcolon, Context)) ;
         }

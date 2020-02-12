@@ -41,6 +41,8 @@
 // equivalent to the ANY monoid.  With no accumulator, EQ is the same as ANY,
 // they differ for the C+=A'*B operation (see *dot4*).
 
+#include "GB_unused.h"
+
 // cij += A(k,i) * B(k,j), for merge operation
 #undef  GB_DOT_MERGE
 #define GB_DOT_MERGE                                                \

@@ -548,8 +548,8 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
         }
     }
 
-    if (M_transposed) GBBURBLE ("(M transposed) ") ;
-    if ((M != NULL) && !(*mask_applied)) GBBURBLE ("(mask later) ") ;
+    if (M_transposed) { GBBURBLE ("(M transposed) ") ; }
+    if ((M != NULL) && !(*mask_applied)) { GBBURBLE ("(mask later) ") ; }
 
     //--------------------------------------------------------------------------
     // handle C_transpose and assign the CSR/CSC format

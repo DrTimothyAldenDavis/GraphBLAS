@@ -10,6 +10,8 @@
 // All entries in C+=A are computed fully in parallel, using the same kind of
 // parallelism as Template/GB_AxB_colscale.c.
 
+#include "GB_unused.h"
+
 {
 
     //--------------------------------------------------------------------------
@@ -125,14 +127,13 @@
                     // both C(:,j) and A(:,j) are dense
                     //----------------------------------------------------------
 
-                    int64_t len = my_pA_end - my_pA_start ;
-
                     #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
 
                         // y += x via GB_cblas_daxpy or GB_cblas_saxpy.
                         // use a single thread since this is already in a
                         // parallel region.
 
+                        int64_t len = my_pA_end - my_pA_start ;
                         int64_t i = my_pA_start - pA_start ;
                         int64_t p = pC + i ;
 
@@ -151,6 +152,7 @@
                         // use a single thread since this is already in a
                         // parallel region.
 
+                        int64_t len = my_pA_end - my_pA_start ;
                         int64_t i = my_pA_start - pA_start ;
                         int64_t p = pC + i ;
 

@@ -35,6 +35,9 @@ function gbdemo2 (bnz)
 %
 % See also GrB.assign, subsasgn.
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 nthreads = GrB.threads ;
 help gbdemo2
 fprintf ('\n# of threads used in GraphBLAS: %d\n\n', nthreads) ;

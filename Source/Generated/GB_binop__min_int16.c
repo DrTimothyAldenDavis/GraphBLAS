@@ -103,7 +103,7 @@
 
 // The op must be MIN, MAX, PLUS, MINUS, RMINUS, TIMES, DIV, or RDIV.
 
-GrB_Info GB_Cdense_ewise3_accum__min_int16
+void GB_Cdense_ewise3_accum__min_int16
 (
     GrB_Matrix C,
     const GrB_Matrix A,
@@ -111,12 +111,7 @@ GrB_Info GB_Cdense_ewise3_accum__min_int16
     const int nthreads
 )
 { 
-    #if GB_DISABLE
-    return (GrB_NO_VALUE) ;
-    #else
     #include "GB_dense_ewise3_accum_template.c"
-    return (GrB_SUCCESS) ;
-    #endif
 }
 
 

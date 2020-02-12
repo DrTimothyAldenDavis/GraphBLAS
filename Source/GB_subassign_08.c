@@ -112,7 +112,7 @@ GrB_Info GB_subassign_08
     const int64_t *GB_RESTRICT Ch = C->h ;
     const int64_t *GB_RESTRICT Cp = C->p ;
     GB_GET_MASK ;
-    const int64_t mvlen = M->vlen ;
+    // const int64_t mvlen = M->vlen ;
     GB_GET_A ;
     const int64_t *GB_RESTRICT Ah = A->h ;
     GB_GET_ACCUM ;

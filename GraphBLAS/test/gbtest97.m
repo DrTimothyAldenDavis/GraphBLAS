@@ -1,14 +1,16 @@
+function gbtest97
+%GBTEST97 test A*x performance
 
-clear all
-GrB.burble (1) ;
-max_nthreads = 40 ;
-threads = [1 2 4 8 16 20 40] ;
+max_nthreads = GrB.threads ;
+threads = [1 2 4 8 16 20 32 40 64] ;
 
 n = 1e5 ;
 nz = 2e6 ;
 d = nz / n^2 ;
-A = double (GrB.random (n,n,d)) ;
-G = GrB (A) ;
+G = GrB.random (n,n,d) ;
+A = double (G) ;
+% warmup to make sure the GrB library is loaded
+y = GrB (rand (2)) * GrB (rand (2)) ;
 
 ntrials = 10 ;
 
@@ -42,6 +44,9 @@ for test = 1:4
     fprintf ('\nGrB: y = A*x where x = %s\n', X) ;
 
     for nthreads = threads
+        if (threads > max_nthreads)
+            break ;
+        end
         GrB.threads (nthreads) ;
         tic
         for trial = 1:ntrials

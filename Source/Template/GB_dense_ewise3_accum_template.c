@@ -41,7 +41,6 @@
         // MINUS.
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
-printf ("C+=A+A via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 2, Ax, Cx, nthreads) ;   // C += 2*A
 
@@ -68,13 +67,11 @@ printf ("C+=A+A via axpy\n") ;
         //----------------------------------------------------------------------
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
-printf ("C+=A+B via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Ax, Cx, nthreads) ;   // C += A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
 
         #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
-printf ("C-=A-B via axpy\n") ;
 
             // C -= (A-B)
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Ax, Cx, nthreads) ;  // C -= A

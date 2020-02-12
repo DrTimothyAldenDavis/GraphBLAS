@@ -3820,6 +3820,8 @@ GrB_Info GxB_Global_Option_get      // gets the current global default option
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HEAP) ;
+//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HASH) ;
+//      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_SAXPY) ;
 //      GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;
 //      GxB_get (GrB_Descriptor d, GrB_AxB_METHOD, GrB_Desc_Value *v) ;
 //
@@ -5965,9 +5967,9 @@ GrB_Info GrB_transpose              // C<Mask> = accum (C, A')
 // built-in monoids
 //------------------------------------------------------------------------------
 
-// 44 unique monoids can be constructed using built-in types and operators, all
-// of which are defined below.  Four operators (min, max, plus, times) are
-// available for each of the 10 non-Boolean types, and four purely Boolean
+// 55 monoids can be constructed using built-in types and operators, all of
+// which are defined below.  Five operators (min, max, plus, times, any) are
+// available for each of the 10 non-Boolean types, plus five purely Boolean
 // monoids are available.
 
 GB_PUBLIC GrB_Monoid
@@ -6021,7 +6023,6 @@ GB_PUBLIC GrB_Monoid
     GxB_TIMES_FP64_MONOID,        // identity: 1            terminal: none
 
     // ANY monoids:
-    GxB_ANY_BOOL_MONOID,          // identity: any value    terminal: any value
     GxB_ANY_INT8_MONOID,          // identity: any value    terminal: any value
     GxB_ANY_INT16_MONOID,         // identity: any value    terminal: any value
     GxB_ANY_INT32_MONOID,         // identity: any value    terminal: any value
@@ -6034,6 +6035,7 @@ GB_PUBLIC GrB_Monoid
     GxB_ANY_FP64_MONOID,          // identity: any value    terminal: any value
 
     // Boolean monoids:
+    GxB_ANY_BOOL_MONOID,          // identity: any value    terminal: any value
     GxB_LOR_BOOL_MONOID,          // identity: false        terminal: true
     GxB_LAND_BOOL_MONOID,         // identity: true         terminal: false
     GxB_LXOR_BOOL_MONOID,         // identity: false

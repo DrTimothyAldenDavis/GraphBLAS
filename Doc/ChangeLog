@@ -2,7 +2,8 @@ Version 3.2.0, Feb TODO, 2020
 
     * GxB_*_define for user-defined compile-time objects: removed.  Not
         compatible with the faster kernels for mxm and dense matrices/vectors.
-        Use the GraphBLAS C API Specification instead.
+        Use the GrB_*_new functions in the GraphBLAS C API Specification
+        instead.
     * faster saxpy-based matrix multiply (about 5x to 10x for mxv and vxm):
         removed Sauna workspace.  Heap method removed.  Hash method added.
     * better performance for dense matrix and vectors

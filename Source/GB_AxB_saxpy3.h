@@ -82,5 +82,36 @@ typedef struct
 }
 GB_saxpy3task_struct ;
 
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy3_symbolic: symbolic analysis for GB_AxB_saxpy3
+//------------------------------------------------------------------------------
+
+void GB_AxB_saxpy3_symbolic
+(
+    GrB_Matrix C,               // Cp [k] is computed for coarse tasks
+    const GrB_Matrix M,         // mask matrix M
+    bool Mask_comp,             // M complemented, or not
+    bool Mask_struct,           // M structural, or not
+    const GrB_Matrix A,         // A matrix; only the pattern is accessed
+    const GrB_Matrix B,         // B matrix; only the pattern is accessed
+    GB_saxpy3task_struct *TaskList,     // list of tasks, and workspace
+    int ntasks,                 // total number of tasks
+    int nfine,                  // number of fine tasks
+    int nthreads                // number of threads
+) ;
+
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy3_cumsum: cumulative sum of C->p for GB_AxB_saxpy3
+//------------------------------------------------------------------------------
+
+int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
+(
+    GrB_Matrix C,               // finalize C->p
+    GB_saxpy3task_struct *TaskList, // list of tasks, and workspace
+    int nfine,                  // number of fine tasks
+    double chunk,               // chunk size
+    int nthreads                // number of threads
+) ;
+
 #endif
 

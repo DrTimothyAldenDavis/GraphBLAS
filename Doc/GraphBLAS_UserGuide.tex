@@ -105,11 +105,14 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
-\item Version 3.2.0 (Feb 2020 DRAFT).  Faster
-    \verb'GrB_mxm', \verb'GrB_mxv', and \verb'GrB_vxm', and faster
-    operations on dense matrices/vectors.
-    Removed compile-time user objects (\verb'GxB_*_define');
-    not compatible with the faster matrix operations.
+\item Version 3.2.0 (Feb, 2020).  Faster \verb'GrB_mxm', \verb'GrB_mxv', and
+    \verb'GrB_vxm', and faster operations on dense matrices/vectors.  Removed
+    compile-time user objects (\verb'GxB_*_define'), since these were not
+    compatible with the faster matrix operations.  Added the \verb'ANY' and
+    \verb'PAIR' operators.  Added the predefined descriptor, \verb'GrB_DESC_*'.
+    Added the structural mask option.  Changed default chunk size to 65,536.
+    Note that v3.2.0 is not compatible with the MS Visual Studio compiler; use
+    v3.1.2 instead.
 
 \item Version 3.1.2 (Dec, 2019).  Changes to allow SuiteSparse:GraphBLAS
     to be compiled with the Microsoft Visual Studio compiler.  This compiler
@@ -351,9 +354,9 @@ The user application can create any semiring based on any types, monoids,
 and multiply operators, as long these few rules are followed.
 
 Just considering built-in types and operators, GraphBLAS can perform
-\verb'C=A*B' in 1040 unique semirings.  With typecasting, any of these 1040
+\verb'C=A*B' in 1355 unique semirings.  With typecasting, any of these 1355
 semirings can be applied to matrices \verb'C', \verb'A', and \verb'B' of any of
-the 11 types, in any combination.  This gives $1040 \times 11^3 = 1,384,240$
+the 11 types, in any combination.  This gives $1355 \times 11^3 = 1,803,505$
 possible kinds of sparse matrix multiplication supported by GraphBLAS, and this
 is counting just built-in types and operators.  By contrast, MATLAB provides
 just two semirings for its sparse matrix multiplication \verb'C=A*B':
@@ -886,11 +889,8 @@ GraphBLAS matrices.  Some of these may be added in future releases.
         MATLAB result.
     \item Solvers, so that \verb'x=A\b' could return a GF(2) solution,
         for example.
-    \item Some methods are slower than MATLAB.  Dense vectors, for example,
-        are faster with MATLAB full vectors than GraphBLAS sparse vectors.
-        These issues will be addressed in a future version.
     \item Sparse matrices with dimension higher than 2.  It would be
-        possible to map a N-dimensional matrix to a large 2D
+        possible to map an N-dimensional matrix to a large 2D
         hypersparse GraphBLAS matrix.
 \end{packed_itemize}
 
@@ -1479,8 +1479,8 @@ back to GraphBLAS which will do the work.  Assigning one handle to another
 is valid but it does not make a copy of the underlying object.
 
 GraphBLAS provides 11 built-in types and 157 built-in operators;
-SuiteSparse:GraphBLAS adds 121 additional built-in operators.  With these,
-44 unique monoids and 1040 unique semirings can be constructed.
+SuiteSparse:GraphBLAS adds 143 additional built-in operators.  With these,
+55 unique monoids and 1355 unique semirings can be constructed.
 
 \begin{spec}
 {\bf SPEC:} SuiteSparse:GraphBLAS predefines all unique monoids and semirings
@@ -1930,11 +1930,11 @@ It does nothing at all if passed a built-in unary operator.
 A binary operator is a scalar function of the form $z=f(x,y)$.  The types of
 $z$, $x$, and $y$ need not be the same.
 
-SuiteSparse:GraphBLAS has 19 kinds of built-in binary operators of the form $T
-\times T \rightarrow T$ that work on all 11 of the built-in types, $T$, for a
-total of 209 binary operators of this form.  These are listed in the table
+SuiteSparse:GraphBLAS has 21 kinds of built-in binary operators of the form $T
+\times T \rightarrow T$ that work on all 11 of the built-in types, $T$.
+These are listed in the table
 below.  For each of these operators, all domains (types) of the three operands
-are the same.  The six comparison operators and three logical operators all
+are the same.  The six comparison operators and the logical operators all
 return a result one for true and zero for false, in the same domain $T$ as
 their inputs.  These six comparison operators are useful as ``multiply''
 operators for creating semirings with non-Boolean monoids.
@@ -1946,9 +1946,11 @@ operators for creating semirings with non-Boolean monoids.
 GraphBLAS             & types (domains)            & expression      & description \\
 name                  &                            & $z=f(x,y)$      & \\
 \hline
-% 10 numeric TxT->T
+% numeric TxT->T
 \verb'GrB_FIRST_'$T$  & $T \times T \rightarrow T$ & $z = x$         & first argument \\
 \verb'GrB_SECOND_'$T$ & $T \times T \rightarrow T$ & $z = y$         & second argument \\
+\verb'GxB_ANY_'$T$    & $T \times T \rightarrow T$ & $z = x$ or $y$  & pick $x$ or $y$ arbitrarily \\
+\verb'GxB_PAIR_'$T$   & $T \times T \rightarrow T$ & $z = 1$         & one \\
 \verb'GrB_MIN_'$T$    & $T \times T \rightarrow T$ & $z = \min(x,y)$ & minimum \\
 \verb'GrB_MAX_'$T$    & $T \times T \rightarrow T$ & $z = \max(x,y)$ & maximum \\
 \verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & addition \\
@@ -1958,7 +1960,7 @@ name                  &                            & $z=f(x,y)$      & \\
 \verb'GrB_DIV_'$T$    & $T \times T \rightarrow T$ & $z = x/y$       & division \\
 \verb'GxB_RDIV_'$T$   & $T \times T \rightarrow T$ & $z = y/x$       & reverse division \\
 \hline
-% 6 new TxT->T comparison
+% TxT->T comparison
 \verb'GxB_ISEQ_'$T$   & $T \times T \rightarrow T$ & $z = (x == y)$  & equal \\
 \verb'GxB_ISNE_'$T$   & $T \times T \rightarrow T$ & $z = (x \ne y)$ & not equal \\
 \verb'GxB_ISGT_'$T$   & $T \times T \rightarrow T$ & $z = (x >   y)$ & greater than \\
@@ -1966,7 +1968,7 @@ name                  &                            & $z=f(x,y)$      & \\
 \verb'GxB_ISGE_'$T$   & $T \times T \rightarrow T$ & $z = (x \ge y)$ & greater than or equal \\
 \verb'GxB_ISLE_'$T$   & $T \times T \rightarrow T$ & $z = (x \le y)$ & less than or equal  \\
 \hline
-% 3 TxT->T logical
+% TxT->T logical
 \verb'GxB_LOR_'$T$    & $T \times T \rightarrow T$ & $z = (x \ne 0) \vee    (y \ne 0) $ & logical OR \\
 \verb'GxB_LAND_'$T$   & $T \times T \rightarrow T$ & $z = (x \ne 0) \wedge  (y \ne 0) $ & logical AND \\
 \verb'GxB_LXOR_'$T$   & $T \times T \rightarrow T$ & $z = (x \ne 0) \veebar (y \ne 0) $ & logical XOR \\
@@ -1978,11 +1980,14 @@ name                  &                            & $z=f(x,y)$      & \\
 \begin{spec}
 {\bf SPEC:} The \verb'GxB_IS*_'$T$
 \verb'GxB_RMINUS_'$T$,
-and
 \verb'GxB_RDIV_'$T$
+\verb'GxB_ANY_'$T$,
+and
+\verb'GxB_PAIR_'$T$,
 operators, and the Boolean \verb'GxB_L*_'$T$ are extensions to the spec.
 \end{spec}
 
+\newpage
 Another set of six kinds of built-in comparison operators have the form $T
 \times T \rightarrow $\verb'bool'.  They are defined for all eleven built-in
 types, for a total of 66 binary operators.  Note that when $T$ is \verb'bool',
@@ -2034,11 +2039,6 @@ name                  &                            & $z=f(x,y)$      & \\
 \end{tabular}
 }
 \vspace{0.2in}
-
-This gives a total of 278 built-in binary operators listed in the tables above:
-209 of the form $T \times T \rightarrow T$, 66 of the form $T \times T
-\rightarrow $ \verb'bool', and three purely Boolean.  There are 260 unique
-operators since 18 of the 28 Boolean operators are redundant.
 
 There are two sets of built-in comparison operators in SuiteSparse:Graph\-BLAS,
 but they are not redundant.  They are identical except for the type (domain) of
@@ -2251,6 +2251,54 @@ frees the \verb'op' and sets \verb'op' to \verb'NULL'.
 It safely does nothing if passed a \verb'NULL'
 handle, or if \verb'op == NULL' on input.
 It does nothing at all if passed a built-in binary operator.
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf ANY} and {\sf PAIR} operators}
+%-------------------------------------------------------------------------------
+\label{any_pair}
+
+SuiteSparse:GraphBLAS v3.2.0 adds two new operators, \verb'ANY' and
+\verb'PAIR'.
+
+The \verb'PAIR' operator is simple to describe: just $f(x,y)=1$.  It is called
+the \verb'PAIR' operator since it returns 1 in a semiring when a pair of
+entries $a_{ik}$ and $b_{kj}$ is found in the matrix multiply.  This operator
+is simple yet very useful.  It allows purely symbolic computations to be
+performed on matrices of any type, without having to typecast them to Boolean
+with all values being true.  Typecasting need not be performed on the inputs to
+the \verb'PAIR' operator, and the \verb'PAIR' operator does not have to access
+the values of the matrix, so it is a very fast operator to use.
+
+The \verb'ANY' operator is very unusual, but very powerful.  It is the function
+$f(x,y)=x$, or $y$, where GraphBLAS has to freedom to select either $x$, or
+$y$, at its own discretion.  Do not confuse the \verb'ANY' operator with the
+\verb'any' function in MATLAB, which computes a reduction using the logical OR
+operator.
+
+The \verb'ANY' function is associative and commutative, and can thus serve as
+an operator for a monoid.  The selection of $x$ are $y$ is not randomized.
+Instead, SuiteSparse:GraphBLAS uses this freedom to compute as fast a result as
+possible.  When used in a dot product, \[ c_{ij} = \sum_k a_{ik} b_{kj} \] for
+example, the computation can terminate as soon as any matching pair of entries
+is found.  When used in a parallel saxpy-style computation, the \verb'ANY'
+operator allows for a relaxed form of synchronization to be used, resulting
+in a fast benign race condition.
+
+The result of the \verb'ANY' monoid is non-deterministic, unless it is
+coupled with the \verb'PAIR' multiplicative operator.  In this case,
+the \verb'ANY_PAIR' semiring will return a deterministic result,
+since $f(1,1)$ is always 1, for the \verb'ANY' operator.
+
+When paired with a different operator, the results are non-deterministic.  This
+gives a powerful method when computing results for which any value selected by
+the \verb'ANY' operator is valid.  One such example is the breadth-first-search
+tree.  Suppose node $j$ is at level $v$, and there are multiple nodes $i$ at
+level $v-1$ for which edge $(i,j)$ exists in the graph.  Any of these nodes $i$
+can serve as a valid parent in the BFS tree.  Using the \verb'ANY' operator,
+GraphBLAS can quickly compute a valid BFS tree; if it used again on the
+same inputs, it might return a different, yet still valid, BFS tree, due to
+the non-deterministic nature of intra-thread synchronization.
 
 \newpage
 %===============================================================================
@@ -2466,21 +2514,20 @@ operator $f(x,y)$ is one for which the condition $f(a, f(b,c)) = f(f (a,b),c)$
 always holds.  That is, operator can be applied in any order and the results
 remain the same.
 
-Four kinds of built-in operators (\verb'MIN', \verb'MAX', \verb'PLUS',
-\verb'TIMES') can be used to form monoids for each of the ten non-Boolean
-built-in types, and 12 can be used for Boolean monoids, all of which are listed
-in the table below.  This is a total of 52 valid monoids that can be
-constructed from built-in types and operators, although 8 of the 12 Boolean
+Five kinds of built-in operators (\verb'MIN', \verb'MAX', \verb'PLUS',
+\verb'TIMES', and \verb'ANY') can be used to form monoids for each of the ten
+non-Boolean built-in types, and 12 can be used for Boolean monoids, all of
+which are listed in the table below.  These are the valid monoids that can be
+constructed from built-in types and operators, although 8 of the 13 Boolean
 monoids are redundant (the four remaining being \verb'OR', \verb'AND',
-\verb'XOR', and \verb'EQ').  There are thus a total of 44 unique monoids that
-can be constructed using built-in binary operators.  Since the built-in monoids
-are also commutative, all of them can be used to create a semiring.  Recall
-that a commutative operator $f(x,y)$ is one for which the condition
+\verb'XOR', \verb'EQ', and \verb'ANY').  There are a total of 55 unique monoids
+that can be constructed using built-in binary operators: five for each of the
+the 10 non-Boolean types, and 5 more for Boolean types.  Since the built-in
+monoids are also commutative, all of them can be used to create a semiring.
+Recall that a commutative operator $f(x,y)$ is one for which the condition
 $f(a,b)=f(b,a)$ always holds.  That is, the two operands can be swapped and the
 results remain the same.  One of the components of a semiring is a commutative
 monoid.
-
-% All 44 monoids are defined in \verb'GraphBLAS.h' file.
 
 \vspace{0.2in}
 {\footnotesize
@@ -2489,13 +2536,14 @@ monoid.
 GraphBLAS             & types (domains)            & expression      & identity  & terminal \\
 operator              &                            & $z=f(x,y)$      &           & \\
 \hline
-% 8 numeric TxT->T
+% numeric TxT->T
 \verb'GrB_MIN_'$T$    & $T \times T \rightarrow T$ & $z = \min(x,y)$ & $+\infty$ & $-\infty$ \\
 \verb'GrB_MAX_'$T$    & $T \times T \rightarrow T$ & $z = \max(x,y)$ & $-\infty$ & $+\infty$ \\
 \verb'GrB_PLUS_'$T$   & $T \times T \rightarrow T$ & $z = x+y$       & 0         & none \\
 \verb'GrB_TIMES_'$T$  & $T \times T \rightarrow T$ & $z = xy$        & 1         & 0 (not fp) \\
+\verb'GxB_ANY_'$T$    & $T \times T \rightarrow T$ & $z = x$ or $y$  & any       & any        \\
 \hline
-% 4 bool x bool -> bool
+% bool x bool -> bool
 \verb'GrB_LOR'        & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \vee    y $ & false & true  \\
 \verb'GrB_LAND'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \wedge  y $ & true  & false \\
 \verb'GrB_LXOR'       & \verb'bool' $\times$ \verb'bool' $\rightarrow$ \verb'bool' & $z = x \veebar y $ & false & none \\
@@ -2520,18 +2568,20 @@ change.  This value is called the terminal value instead of the annihilator,
 since a user-defined operator can be created with a terminal value that is not
 an annihilator.  See Section~\ref{monoid_terminal_new} for an example.
 
+The \verb'GxB_ANY_*' monoid can terminate as soon as it finds any value at all.
+
 The \verb'GrB_TIMES_FP*' operators do not have a terminal value of zero, since
 they comply with the IEEE 754 standard, and \verb'0*NaN' is not zero, but
 \verb'NaN'.  Technically, their terminal value is \verb'NaN', but this value is
 rare in practice and thus the terminal condition is not worth checking.
 
-SuiteSparse:GraphBLAS predefines each of the 44 unique monoids that can be
+SuiteSparse:GraphBLAS predefines each of the 55 unique monoids that can be
 constructed with built-in types and operators, with the naming convention
-\verb'GxB_op_type_MONOID'.  For the first 40, \verb'op' is \verb'MIN',
-\verb'MAX', \verb'PLUS', or \verb'TIMES', and \verb'type' is all but
-\verb'BOOL'.  The four Boolean monoids are \verb'GxB_LOR_BOOL_MONOID',
-\verb'GxB_LAND_BOOL_MONOID', \verb'GxB_LXOR_BOOL_MONOID', and
-\verb'GxB_EQ_BOOL_MONOID'.
+\verb'GxB_op_type_MONOID'.  For the first 50, \verb'op' is \verb'MIN',
+\verb'MAX', \verb'PLUS', \verb'TIMES', or \verb'ANY', and \verb'type' is all
+but \verb'BOOL'.  The five Boolean monoids are \verb'GxB_LOR_BOOL_MONOID',
+\verb'GxB_LAND_BOOL_MONOID', \verb'GxB_LXOR_BOOL_MONOID',
+\verb'GxB_EQ_BOOL_MONOID', and \verb'GxB_ANY_BOOL_MONOID'.
 
 The next sections define the following methods for the \verb'GrB_Monoid'
 object:
@@ -2555,7 +2605,7 @@ object:
 {\bf SPEC:} The predefined monoids are an extension to the spec.
 \end{spec}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Monoid\_new:} create a monoid}
 %-------------------------------------------------------------------------------
@@ -2779,7 +2829,7 @@ A {\em semiring} defines all the operators required to define the
 multiplication of two sparse matrices in GraphBLAS, ${\bf C=AB}$.  The ``add''
 operator is a commutative and associative monoid, and the binary ``multiply''
 operator defines a function $z=fmult(x,y)$ where the type of $z$ matches the
-exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1040
+exactly with the monoid type.  SuiteSparse:GraphBLAS includes 1355
 predefined built-in semirings, which are all those that can be constructed
 from built-in types and operators.  The next sections define the following
 methods for the \verb'GrB_Semiring' object:
@@ -2819,21 +2869,21 @@ additive monoid and \verb'multiply' being the binary ``multiply'' operator.  In
 addition to the standard error cases, the function returns
 \verb'GrB_DOMAIN_MISMATCH' if the output (\verb'ztype') domain of
 \verb'multiply' does not match the domain of the \verb'add' monoid.  Using
-built-in types and operators, 1040 unique semirings can be built.  This count
+built-in types and operators, 1355 semirings can be built.  This count
 excludes redundant Boolean operators (for example \verb'GrB_TIMES_BOOL' and
 \verb'GrB_LAND' are different operators but they are redundant since they
 always return the same result).
 
 \vspace{-0.05in}
 \begin{itemize}
-\item 760 semirings with a multiplier $T \times T \rightarrow T$ where $T$ is
+\item 1000 semirings with a multiplier $T \times T \rightarrow T$ where $T$ is
     non-Boolean, from the complete cross product of:
 
     \vspace{-0.05in}
     \begin{itemize}
-    \item 4 add monoids (\verb'MIN', \verb'MAX', \verb'PLUS', \verb'TIMES')
-    \item 19 multiply operators
-    (\verb'FIRST', \verb'SECOND', \verb'MIN', \verb'MAX',
+    \item 5 add monoids (\verb'MIN', \verb'MAX', \verb'PLUS', \verb'TIMES', \verb'ANY')
+    \item 20 multiply operators
+    (\verb'FIRST', \verb'SECOND', \verb'PAIR', \verb'MIN', \verb'MAX',
     \verb'PLUS', \verb'MINUS', \verb'RMINUS', \verb'TIMES', \verb'DIV', \verb'RDIV',
     \verb'ISEQ', \verb'ISNE', \verb'ISGT',
     \verb'ISLT', \verb'ISGE', \verb'ISLE',
@@ -2841,34 +2891,34 @@ always return the same result).
     \item 10 non-Boolean types, $T$
     \end{itemize}
 
-\item 240 semirings with a comparison operator $T \times T \rightarrow$
+\item 300 semirings with a comparison operator $T \times T \rightarrow$
     \verb'bool', where $T$ is non-Boolean, from the complete cross product of:
 
     \vspace{-0.05in}
     \begin{itemize}
-    \item 4 Boolean add monoids
-    (\verb'LAND', \verb'LOR', \verb'LXOR', \verb'EQ')
+    \item 5 Boolean add monoids
+    (\verb'LAND', \verb'LOR', \verb'LXOR', \verb'EQ', \verb'ANY')
     \item 6 multiply operators
     (\verb'EQ', \verb'NE', \verb'GT', \verb'LT', \verb'GE', \verb'LE')
     \item 10 non-Boolean types, $T$
     \end{itemize}
 
-\item 40 semirings with purely Boolean types, \verb'bool' $\times$ \verb'bool'
+\item 55 semirings with purely Boolean types, \verb'bool' $\times$ \verb'bool'
     $\rightarrow$ \verb'bool', from the complete cross product of:
 
     \vspace{-0.05in}
     \begin{itemize}
-    \item 4 Boolean add monoids
-    (\verb'LAND', \verb'LOR', \verb'LXOR', \verb'EQ')
-    \item 10 multiply operators
-    (\verb'FIRST', \verb'SECOND', \verb'LOR', \verb'LAND', \verb'LXOR',
+    \item 5 Boolean add monoids
+    (\verb'LAND', \verb'LOR', \verb'LXOR', \verb'EQ', \verb'ANY')
+    \item 11 multiply operators
+    (\verb'FIRST', \verb'SECOND', \verb'PAIR', \verb'LOR', \verb'LAND', \verb'LXOR',
     \verb'EQ', \verb'GT', \verb'LT', \verb'GE', \verb'LE')
     \end{itemize}
 
 \end{itemize}
 
 \vspace{-0.05in}
-SuiteSparse:GraphBLAS pre-defines all 1040 unique semirings that can be
+SuiteSparse:GraphBLAS pre-defines all 1355 unique semirings that can be
 constructed from built-in types and operators, as an extension to the spec.
 The naming convention is \verb'GxB_add_mult_type', where \verb'add' is the
 operator of the additive monoid, \verb'mult' is the multiply operator, and
@@ -5069,12 +5119,6 @@ If the descriptor is \verb'GrB_NULL', defaults are used.
 % No GraphBLAS method (Section~\ref{objects}) is modified by a descriptor, and
 % neither are any unary or binary operators.
 
-\begin{spec}
-{\bf SPEC:} \verb'GxB_DEFAULT', \verb'GxB_NTHRADS', \verb'GxB_CHUNK',
-\verb'GxB_AxB_METHOD', and \verb'GxB_AxB_*'
-are extensions to the spec.
-\end{spec}
-
 The access to these parameters and their values is governed
 by two \verb'enum' types, \verb'GrB_Desc_Field' and \verb'GrB_Desc_Value':
 
@@ -5094,11 +5138,7 @@ typedef enum
     GxB_AxB_METHOD = 1000, // descriptor for selecting C=A*B algorithm
 }
 GrB_Desc_Field ;
-\end{verbatim} } \end{mdframed}
 
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
 typedef enum
 {
     // for all GrB_Descriptor fields:
@@ -5110,16 +5150,24 @@ typedef enum
     GrB_STRUCTURE = 4,  // use the structure of the mask
     // for GrB_INP0 and GrB_INP1 only:
     GrB_TRAN = 3,       // use the transpose of the input
-
     // for GxB_AxB_METHOD only:
     GxB_AxB_GUSTAVSON = 1001,   // gather-scatter saxpy method
     GxB_AxB_HEAP      = 1002,   // heap-based saxpy method
-    GxB_AxB_DOT       = 1003    // dot product
+    GxB_AxB_DOT       = 1003,   // dot product
+    GxB_AxB_HASH      = 1004,   // hash-based saxpy method
+    GxB_AxB_SAXPY     = 1005    // saxpy method (any kind)
 }
 GrB_Desc_Value ;
 \end{verbatim} } \end{mdframed}
 
 \newpage
+
+\begin{spec}
+{\bf SPEC:} \verb'GxB_DEFAULT', \verb'GxB_NTHRADS', \verb'GxB_CHUNK',
+\verb'GxB_AxB_METHOD', and \verb'GxB_AxB_*'
+are extensions to the spec.
+\end{spec}
+
 The internal representation is opaque to the user, but in this User Guide the
 five descriptor fields of a descriptor \verb'desc' are illustrated as an array
 of five items, as described in the list below.  The underlying implementation
@@ -5211,6 +5259,11 @@ need not be an array:
 
     \item \verb'GxB_DEFAULT' means that a method is selected automatically.
 
+    \item \verb'GxB_AxB_SAXPY': select any saxpy-based method:
+        \verb'GxB_AxB_GUSTAVSON', \verb'GxB_AxB_HEAP', and/or
+        \verb'GxB_AxB_HASH', or any mix of the three,
+        in contrast to the dot-product method.
+
     \item \verb'GxB_AxB_GUSTAVSON':  an extended version of Gustavson's method
     \cite{Gustavson78}, which is a very good general-purpose method, but
     sometimes the workspace can be too large.  Assuming all matrices are stored
@@ -5223,15 +5276,30 @@ need not be an array:
     {\em saxpy} operations, and using workspace of size $n$ per thread,
     corresponding to the number of columns of \verb'C'.
 
-    \item \verb'GxB_AxB_HEAP': a heap-based method, computing
-    \verb'C(:,j)=A*B(:,j)' via a heap of size equal to the maximum number of
-    entries in any column of \verb'B'.  The method is very good for hypersparse
-    matrices, particularly when $|{\bf B}|$ is less than the number of rows of
-    \verb'C'.  The method used is similar to Algorithm II in
-    \cite{BulucGilbert08} (see also \cite{BulucGilbert12}).  It computes
-    \verb'C' in the same order as Gustavson's method, using a heap instead of a
-    large gather/scatter workspace.  The heap has size $b$, equal to the
-    maximum number of entries in any one vector of \verb'B'.
+    \item \verb'GxB_AxB_HEAP':
+        no longer appears in v3.2.0, but will likely
+        be reintroduced in a future version.  This is silently replaced
+        with \verb'GxB_AxB_HASH'.
+
+%   a heap-based method, computing
+%   \verb'C(:,j)=A*B(:,j)' via a heap of size equal to the maximum number of
+%   entries in any column of \verb'B'.  The method is very good for hypersparse
+%   matrices, particularly when $|{\bf B}|$ is less than the number of rows of
+%   \verb'C'.  The method used is similar to Algorithm II in
+%   \cite{BulucGilbert08} (see also \cite{BulucGilbert12}).  It computes
+%   \verb'C' in the same order as Gustavson's method, using a heap instead of a
+%   large gather/scatter workspace.  The heap has size $b$, equal to the
+%   maximum number of entries in any one vector of \verb'B'.
+
+    \item \verb'GxB_AxB_HASH':  a hash-based method, based on 
+        \cite{10.1145/3229710.3229720}.  Very efficient for hypersparse
+        matrices, matrix-vector-multiply, and when $|{\bf B}|$ is small.
+
+% [2] Yusuke Nagasaka, Satoshi Matsuoka, Ariful Azad, and Aydın Buluç. 2018.
+% High-Performance Sparse Matrix-Matrix Products on Intel KNL and Multicore
+% Architectures. In Proc. 47th Intl. Conf. on Parallel Processing (ICPP '18).
+% Association for Computing Machinery, New York, NY, USA, Article 34, 1–10.
+% DOI:https://doi.org/10.1145/3229710.3229720
 
     \item \verb'GxB_AxB_DOT': computes \verb"C(i,j)=A(i,:)*B(j,:)'", for each
     entry \verb'C(i,j)'.  If the mask is present and not complemented, only
@@ -5251,7 +5319,7 @@ need not be an array:
 
 \end{itemize}
 
-% \newpage
+\newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_new:}  create a new descriptor}
 %-------------------------------------------------------------------------------
@@ -5271,7 +5339,7 @@ their defaults (output is not replaced, mask is not complemented, neither
 input matrix is transposed, and the method used in \verb'C=A*B' is
 selected automatically).
 
-\newpage
+% \newpage
 %-------------------------------------------------------------------------------
 \subsubsection{{\sf GrB\_Descriptor\_set:}  set a parameter in a descriptor}
 %-------------------------------------------------------------------------------
@@ -5327,6 +5395,7 @@ field      & &  \\
     The Mask is complemented.  \verb'Mask(i,j)=0' means the value $C_{ij}$
     can be modified by the operation, while \verb'Mask(i,j)=1' means the value
     $C_{ij}$ shall not be modified by the operation. \\
+    &
     & \verb'GrB_STRUCTURE':
     The values of the Mask are ignored.  If \verb'Mask(i,j)' is an entry
     in the \verb'Mask' matrix, it is treated as if \verb'Mask(i,j)=1'.
@@ -5447,8 +5516,72 @@ frees the \verb'descriptor' and sets \verb'descriptor' to \verb'NULL'.  It
 safely does nothing if passed a \verb'NULL' handle, or if
 \verb'descriptor == NULL' on input.
 
-There are currently no predefined descriptors, but if these are added in the
-future, this function will do nothing if passed a built-in descriptor.
+\newpage
+%-------------------------------------------------------------------------------
+\subsubsection{{\sf GrB\_DESC\_*:}  predefined descriptors}
+%-------------------------------------------------------------------------------
+\label{descriptor_predefined}
+
+Version 1.3 of the GraphBLAS C API Specification adds predefined descriptors,
+and these have been added as of v3.2.0 of SuiteSparse:GraphBLAS.  They are
+listed in the table below.  These descriptors may not be modified or freed.
+Attempts to modify them result in an error (\verb'GrB_INVALID_VALUE'); attempts
+to free them are silently ignored.
+\verb'GrB_NULL' is the default descriptor, with all settings at their defaults:
+\verb'OUTP': do not replace the output,
+\verb'MASK': mask is valued and not complemented,
+\verb'INP0': first input not transposed, and
+\verb'INP1': second input not transposed.
+
+\vspace{0.02in}
+\noindent
+{\footnotesize
+\begin{tabular}{|l|lllll|}
+\hline
+Descriptor              &  \verb'OUTP'          & \verb'MASK'           & \verb'MASK'       & \verb'INP0'       & \verb'INP1'       \\
+                        &                       & structural            & complement        & & \\
+\hline
+\verb'GrB_NULL'         &   -                   & -                     & -                 & -                 & -                 \\
+\verb'GrB_DESC_T1'      &   -                   & -                     & -                 & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_T0'      &   -                   & -                     & -                 & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_T0T1'    &   -                   & -                     & -                 & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\verb'GrB_DESC_C'       &   -                   & -                     & \verb'GrB_COMP'   & -                 & -                 \\
+\verb'GrB_DESC_CT1'     &   -                   & -                     & \verb'GrB_COMP'   & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_CT0'     &   -                   & -                     & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_CT0T1'   &   -                   & -                     & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\verb'GrB_DESC_S'       &   -                   & \verb'GrB_STRUCTURE'  & -                 & -                 & -                 \\
+\verb'GrB_DESC_ST1'     &   -                   & \verb'GrB_STRUCTURE'  & -                 & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_ST0'     &   -                   & \verb'GrB_STRUCTURE'  & -                 & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_ST0T1'   &   -                   & \verb'GrB_STRUCTURE'  & -                 & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\verb'GrB_DESC_SC'      &   -                   & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & -                 & -                 \\
+\verb'GrB_DESC_SCT1'    &   -                   & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_SCT0'    &   -                   & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_SCT0T1'  &   -                   & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\verb'GrB_DESC_R'       &   \verb'GrB_REPLACE'  & -                     & -                 & -                 & -                 \\
+\verb'GrB_DESC_RT1'     &   \verb'GrB_REPLACE'  & -                     & -                 & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_RT0'     &   \verb'GrB_REPLACE'  & -                     & -                 & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_RT0T1'   &   \verb'GrB_REPLACE'  & -                     & -                 & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\verb'GrB_DESC_RC'      &   \verb'GrB_REPLACE'  & -                     & \verb'GrB_COMP'   & -                 & -                 \\
+\verb'GrB_DESC_RCT1'    &   \verb'GrB_REPLACE'  & -                     & \verb'GrB_COMP'   & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_RCT0'    &   \verb'GrB_REPLACE'  & -                     & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_RCT0T1'  &   \verb'GrB_REPLACE'  & -                     & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\verb'GrB_DESC_RS'      &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & -                 & -                 & -                 \\
+\verb'GrB_DESC_RST1'    &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & -                 & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_RST0'    &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & -                 & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_RST0T1'  &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & -                 & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\verb'GrB_DESC_RSC'     &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & -                 & -                 \\
+\verb'GrB_DESC_RSCT1'   &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & -                 & \verb'GrB_TRAN'   \\
+\verb'GrB_DESC_RSCT0'   &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & -                 \\
+\verb'GrB_DESC_RSCT0T1' &   \verb'GrB_REPLACE'  & \verb'GrB_STRUCTURE'  & \verb'GrB_COMP'   & \verb'GrB_TRAN'   & \verb'GrB_TRAN'   \\
+\hline
+\end{tabular}}
 
 \newpage
 %===============================================================================
@@ -5560,11 +5693,11 @@ problems, GraphBLAS may choose to use fewer threads, using two parameters: the
 maximum number of threads to use (which may differ from the
 \verb'omp_get_max_threads' value), and a parameter called the \verb'chunk'.
 Suppose \verb'work' is a measure of the work an operation needs to perform (say
-the number of nonzeros in the two input matrices for \verb'GrB_eWiseAdd').  No
+the number of entries in the two input matrices for \verb'GrB_eWiseAdd').  No
 more than \verb'floor(work/chunk)' threads will be used (or one thread if the
 ratio is less than 1).
 
-The default \verb'chunk' value is 4096, but this may change in future versions,
+The default \verb'chunk' value is 65,536, but this may change in future versions,
 or it may be modified when GraphBLAS is installed on a particular machine.
 
 Both parameters can be set in two ways:
@@ -5605,7 +5738,7 @@ zero or less.
 
 If either parameter is set to \verb'GxB_DEFAULT', then default values are used.
 The default for \verb'nthreads_max' is the return value from
-\verb'omp_get_max_threads', and the default chunk size is currently 4096.
+\verb'omp_get_max_threads', and the default chunk size is currently 65,536.
 
 If a descriptor value for either parameter is left at its default, or set to
 \verb'GxB_DEFAULT', then the global setting is used.  This global setting may
@@ -5855,10 +5988,9 @@ This changes the matrix \verb'A' so that it is stored by row, and it is
 converted from non-hypersparse to hypersparse format if it has fewer than 10\%
 non-empty columns.  If it is hypersparse, it is a candidate for conversion to
 non-hypersparse if has 20\% or more non-empty columns.  If it has between 10\%
-and 20\% non-empty columns, it remains in whatever format it is currently in.
-
+and 20\% non-empty columns, it remains in its current format.
 MATLAB only supports a non-hypersparse CSC format.  The format in
-SuiteSparse:GraphBLAS that is equivalent to the MATLAB format is given below:
+SuiteSparse:GraphBLAS that is equivalent to the MATLAB format is:
 
 {\footnotesize
 \begin{verbatim}
@@ -5942,7 +6074,6 @@ following can be used:
 The \verb'GxB_THREADING' option returns the internal parallelism used inside
 SuiteSparse:GraphBLAS, depending on how the library was compiled:
 
-\newpage
 {\footnotesize
 \begin{verbatim}
     GxB_Thread_Model threading ;
@@ -6237,6 +6368,8 @@ To set/get a descriptor field:
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_DEFAULT) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HEAP) ;
+    GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_HASH) ;
+    GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_SAXPY) ;
     GxB_set (GrB_Descriptor d, GxB_AxB_METHOD, GxB_AxB_DOT) ;
     GxB_get (GrB_Descriptor d, GrB_AxB_METHOD, GrB_Desc_Value *v) ;
 
@@ -9528,13 +9661,14 @@ zombies} in the output report.
 
 Most of the rest of the report is self-explanatory.
 
-\newpage
+% \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Creating user-defined objects at compile-time (feature removed)} %%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{precompile}
 
-This feature has been removed as of SuiteSparse:GraphBLAS v3.2.0.  They are not
+This feature has been removed as of SuiteSparse:GraphBLAS v3.2.0.  User
+objects defined with \verb'GxB_*_define' when GraphBLAS is compiled are not
 compatible with the faster matrix operations.  Use the run-time definitions
 instead, from the GraphBLAS C API Specification (\verb'GrB_Type_new' instead of
 \verb'GxB_Type_define' in the \verb'GraphBLAS/User/*.m4' script.
@@ -9666,19 +9800,22 @@ Utilities & description \\
 \label{bfs}
 
 The \verb'bfs' examples in the \verb'Demo' folder provide several examples of
-how to compute a breadth-first search (BFS) in GraphBLAS.  The \verb'bfs5m'
-function starts at a given source node \verb's' of an undirected graph with
-\verb'n' nodes.  The graph is represented as an \verb'n'-by-\verb'n'
-Boolean matrix, \verb'A', where \verb'A(i,j)' is the edge $(i,j)$.  The matrix
-\verb'A' can actually have any type; if it is not Boolean (\verb'bool' in C, or
-\verb'GrB_BOOL' in GraphBLAS), it is typecasted to Boolean by the semiring,
-where zero is false and nonzero is true.
+how to compute a breadth-first search (BFS) in GraphBLAS.  Additional BFS
+examples are in LAGraph, shown below.  The \verb'LAGraph_bfs_simple' function
+starts at a given source node \verb's' of an undirected graph with \verb'n'
+nodes.  The graph is represented as an \verb'n'-by-\verb'n' matrix, \verb'A',
+where \verb'A(i,j)' is the edge $(i,j)$.  The matrix \verb'A' can have any type
+(even a user-defined type), since the \verb'PAIR' operator does not access its
+values.  No typecasting will be done.
 
-The vector \verb'v' of size \verb'n' holds the level of each node in the
-BFS, where \verb'v(i)=0' if the node has not yet been seen.  This particular
-value makes \verb'v' useful for another role.  It can be used as a Boolean
-mask, since \verb'0' is \verb'false' and nonzero is \verb'true'.
-Initially the entire \verb'v' vector is zero.
+The vector \verb'v' of size \verb'n' holds the level of each node in the BFS,
+where \verb'v(i)=0' if the node has not yet been seen.  This particular value
+makes \verb'v' useful for another role.  It can be used as a Boolean mask,
+since \verb'0' is \verb'false' and nonzero is \verb'true'.  Initially the
+entire \verb'v' vector is zero.  It is initialized as a dense vector, with all
+entries present, to improve performance (otherwise, it will slowly grow,
+incrementally, and this will take a lot of time if the number of BFS levels is
+high).
 
 The vector \verb'q' is the set of nodes just discovered at the current level,
 where \verb'q(i)=true' if node \verb'i' is in the current level.  It starts out
@@ -9686,15 +9823,12 @@ with just a single entry set to true, \verb'q(s)', the starting node.
 
 Each iteration of the BFS consists of three calls to GraphBLAS.  The first one
 uses \verb'q' as a mask.  It modifies all positions in \verb'v' where \verb'q'
-is true, setting them all to the current \verb'level'.  No accumulator or
-descriptor are used.  Since \verb'GrB_REPLACE' is not used and
-\verb'I=GrB_ALL', \verb'GxB_subassign' and \verb'GrB_assign' are identical;
-either can be used in this step:
+has an entry, setting them all to the current \verb'level'.
 
         {\footnotesize
         \begin{verbatim}
         // v<q> = level, using vector assign with q as the mask
-        GrB_assign (v, q, NULL, level, GrB_ALL, n, NULL) ; \end{verbatim}}
+        GrB_assign (v, q, NULL, level, GrB_ALL, n, GrB_DESC_S) ; \end{verbatim}}
 
 The next call to GraphBLAS is the heart of the algorithm:
 
@@ -9702,14 +9836,15 @@ The next call to GraphBLAS is the heart of the algorithm:
         \begin{verbatim}
         // q<!v> = q ||.&& A ; finds all the unvisited
         // successors from current q, using !v as the mask
-        GrB_vxm (q, v, NULL, Boolean, q, A, desc) ; \end{verbatim}}
+        GrB_vxm (q, v, NULL, GxB_ANY_PAIR_BOOL, q, A, GrB_DESC_RC) ; \end{verbatim}}
 
 The vector \verb'q' is all the set of nodes at the current level.  Suppose
 \verb'q(j)' is true, and it has a neighbor \verb'i'.  Then \verb'A(i,j)=1', and
-the dot product of \verb'A(i,:)*q' using the \verb'OR-AND' semiring will use
-the \verb'AND' multiplier on these two terms, \verb'A(i,j) AND q(j)', resulting
-in a value \verb'true'.  The \verb'OR' monoid will ``sum'' up all the results
-in this single row \verb'i'.  If the result is a column vector \verb't=A*q',
+the dot product of \verb'A(i,:)*q' using the \verb'ANY_PAIR' semiring will use
+the \verb'PAIR' multiplier on these two terms, \verb'f (A(i,j), q(j))', resulting
+in a value \verb'1'.  The \verb'ANY' monoid will ``sum'' up all the results
+in this single row \verb'i'; note that the \verb'OR' monoid would compute the
+same thing.  If the result is a column vector \verb't=A*q',
 then this \verb't(i)' will be true.  The vector \verb't' will be true for
 any node adjacent to any node in the set \verb'q'.
 
@@ -9738,77 +9873,53 @@ level of the BFS.  It contains all those nodes (and only those nodes)
 that are neighbors of the prior set and that have not already been seen in
 any prior level.
 
-Finally, a single call to GraphBLAS computes the \verb'OR' for all entries
-in \verb'q', into a single scalar, \verb'successor'.  This value is true if
-\verb'q' contains any value true, or false otherwise.  If it is false,
-the BFS can terminate.
-
-        {\footnotesize
-        \begin{verbatim}
-        GrB_reduce (&successor, NULL, Lor, q, NULL) ; \end{verbatim}}
-
-The above call to \verb'GrB_reduce' looks costly, since it appears to be
-traversing an entire vector \verb'q', of size $\Omega(n)$.  However, the
-reduction need only iterate over the sparse entries that explicitly appear in
-\verb'q'.  So taking a second look, the reader might conclude the time is
-$\Omega(|q|)$, the number of entries in \verb'q'.  Both conclusions are
-incorrect.  Since the logical \verb'LOR' is a terminal monoid, the computation
-terminates as soon as any \verb'true' value is found.  Since all explicit
-entries in \verb'q' are \verb'true' in this algorithm, the time taken by the
-above call to \verb'GrB_reduce' is precisely $O(1)$.
-
-Another method for computing the BFS is in the \verb'bfs6' function in the
-\verb'Demo' folder.  It uses \verb'GrB_apply' and a unary operator to set the
-levels of the newly discovered nodes, instead of
-\verb'GrB_assign'.
+A single call to \verb'GrB_Vector_nvals' finds how many entries are in the
+current level.  If this is zero, the BFS can terminate.
 
 \newpage
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
+#include "LAGraph_internal.h"
+#define LAGRAPH_FREE_ALL { GrB_free (&v) ; GrB_free (&q) ; }
+
+GrB_Info LAGraph_bfs_simple     // push-only BFS
 (
-    GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
-    const GrB_Matrix A,     // input graph, treated as if boolean in semiring
-    GrB_Index s             // starting node of the BFS
+    GrB_Vector *v_output,   // v(i) is the BFS level of node i in the graph
+    GrB_Matrix A,           // input graph, treated as if boolean in semiring
+    GrB_Index source        // starting node of the BFS
 )
 {
-    GrB_Index n ;                          // # of nodes in the graph
-    GrB_Vector q = NULL ;                  // nodes visited at each level
-    GrB_Vector v = NULL ;                  // result vector
-    GrB_Monoid Lor = NULL ;                // Logical-or monoid
-    GrB_Semiring Boolean = NULL ;          // Boolean semiring
-    GrB_Descriptor desc = NULL ;           // Descriptor for vxm
-    GrB_Matrix_nrows (&n, A) ;             // n = # of rows of A
-    GrB_Vector_new (&v, GrB_INT32, n) ;    // Vector<int32_t> v(n) = 0
-    GrB_assign (v, NULL, NULL, 0, GrB_ALL, n, NULL) ;   // make v dense
-    GrB_Vector_new (&q, GrB_BOOL, n) ;     // Vector<bool> q(n) = false
-    GrB_Vector_setElement (q, true, s) ;   // q[s] = true, false elsewhere
-    GrB_Monoid_new (&Lor, GrB_LOR, (bool) false) ;
-    GrB_Semiring_new (&Boolean, Lor, GrB_LAND) ;
-    GrB_Descriptor_new (&desc) ;
-    GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP) ;     // invert the mask
-    GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE) ;  // clear q first
-
-    bool successor = true ; // true when some successor found
-    for (int32_t level = 1 ; successor && level <= n ; level++)
+    GrB_Info info ;
+    GrB_Vector q = NULL ;           // nodes visited at each level
+    GrB_Vector v = NULL ;           // result vector
+    if (v_output == NULL) LAGRAPH_ERROR ("argument missing", GrB_NULL_POINTER) ;
+    GrB_Index n, nvals ;
+    GrB_Matrix_nrows (&n, A) ;
+    // create an empty vector v, and make it dense
+    GrB_Vector_new (&v, (n > INT32_MAX) ? GrB_INT64 : GrB_INT32, n) ;
+    GrB_assign (v, NULL, NULL, 0, GrB_ALL, n, NULL) ;
+    // create a boolean vector q, and set q(source) to true
+    GrB_Vector_new (&q, GrB_BOOL, n) ;
+    GrB_Vector_setElement (q, true, source) ;
+    // BFS traversal and label the nodes
+    for (int64_t level = 1 ; level <= n ; level++)
     {
-        // v<q> = level, using vector assign with q as the mask
-        GrB_assign (v, q, NULL, level, GrB_ALL, n, NULL) ;
-        // q<!v> = q ||.&& A ; finds all the unvisited successors from current
-        // q, using !v as the mask
-        GrB_vxm (q, v, NULL, Boolean, q, A, desc) ;
-        // successor = ||(q)
-        GrB_reduce (&successor, NULL, Lor, q, NULL) ;
+        // v<q> = level
+        GrB_assign (v, q, NULL, level, GrB_ALL, n, GrB_DESC_S) ;
+        // break if q is empty
+        GrB_Vector_nvals (&nvals, q) ;
+        if (nvals == 0) break ;
+        // q'<!v> = q'*A
+        GrB_vxm (q, v, NULL, GxB_ANY_PAIR_BOOL, q, A, GrB_DESC_RC) ;
     }
-
-    GrB_Descriptor_set (desc, GrB_MASK, GxB_DEFAULT) ;  // mask not inverted
-    GrB_assign (v, v, NULL, v, GrB_ALL, n, desc) ;      // make v sparse
-    *v_output = v ;         // return result
-    // free workspace
-    GrB_free (&q) ; GrB_free (&Lor) ; GrB_free (&Boolean) ; GrB_free (&desc) ;
+    // free workspace and return result
+    (*v_output) = v ;       // return result
+    v = NULL ;              // set to NULL so LAGRAPH_FREE_ALL doesn't free it
+    LAGRAPH_FREE_ALL ;      // free all workspace (except for result v)
     return (GrB_SUCCESS) ;
-} \end{verbatim}}
+}
+\end{verbatim}}
 \end{mdframed}
 
 \newpage
@@ -10229,7 +10340,11 @@ uses GraphBLAS to implement the two methods above, and two additional ones.
 \label{read}
 
 {\bf NOTE:} see also \verb'LAGraph_mmread' and \verb'LAGraph_mmwrite', which
-can read and write any matrix in Matrix Market format.
+can read and write any matrix in Matrix Market format, and
+\verb'LAGraph_binread' and \verb'LAGraph_binwrite', which read/write a matrix
+from a binary file.  The binary file I/O functions are much faster than
+the \verb'read_matrix' function described here, and also much faster than
+\verb'LAGraph_mmread' and \verb'LAGraph_mmwrite'.
 
 The \verb'read_matrix' function in the \verb'Demo' reads in a triplet matrix
 from a file, one line per entry, and then uses \verb'GrB_Matrix_build' to
@@ -10621,24 +10736,24 @@ to use 32 parallel jobs and the \verb'gcc' compiler, do the following:
     JOBS=32 CC=gcc make \end{verbatim} }
 
 %----------------------------------------
-\subsection{On Microsoft Windows}
+\subsection{On Microsoft Windows (v3.1.2 only)}
 %----------------------------------------
 
-SuiteSparse:GraphBLAS is now ported to Microsoft Visual Studio.  That compiler
-is not ANSI C11 compiler.  It does not support the \verb'_Generic' keyword,
-required for the polymorphic GraphBLAS functions.  So for example, you will
-need to use \verb'GrB_Matrix_free' instead of just \verb'GrB_free'.  Another
-limitation is the lack of support for OpenMP tasking, used in the parallel sort
-inside GraphBLAS.  With Microsoft Visual Studio, the sort is compiled to use
-just a single thread.  The sort is used for \verb'GrB_Matrix_build' and
-\verb'GrB_Vector_build', and for \verb'GrB_assign' and  \verb'GxB_subassign'
-when the index lists are unsorted on input.  In addition, variable-length
-arrays are not supported, so user-defined types are limited to 128 bytes in
-size.  These changes have no effect if you have an ANSI C11 compliant compiler.
+SuiteSparse:GraphBLAS v3.1.2 is now ported to Microsoft Visual Studio.  That
+compiler is not ANSI C11 compliant.  It does not support the \verb'_Generic'
+keyword, required for the polymorphic GraphBLAS functions.  So for example, you
+will need to use \verb'GrB_Matrix_free' instead of just \verb'GrB_free'.
+Another limitation is the lack of support for OpenMP tasking, used in the
+parallel sort inside GraphBLAS.  With Microsoft Visual Studio, the sort is
+compiled to use just a single thread.  The sort is used for
+\verb'GrB_Matrix_build' and \verb'GrB_Vector_build', and for \verb'GrB_assign'
+and  \verb'GxB_subassign' when the index lists are unsorted on input.  In
+addition, variable-length arrays are not supported, so user-defined types are
+limited to 128 bytes in size.  These changes have no effect if you have an ANSI
+C11 compliant compiler.
 
 The following instructions apply to Windows 10, CMake 3.16, and
 Visual Studio 2019, but may work for earlier versions.
-
 
 \begin{enumerate}
 \item

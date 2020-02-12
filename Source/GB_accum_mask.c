@@ -180,15 +180,19 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // ensure M and T have the same CSR/CSC format as C
     //--------------------------------------------------------------------------
 
+    #if GB_BURBLE
     bool T_transposed = false ;
     bool M_transposed = false ;
+    #endif
 
     if (C->is_csc != T->is_csc)
     { 
         // transpose: no typecast, no op, in place of T, jumbled, but T
         // cannot have any zombies or pending tuples.
         GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL, NULL, Context)) ;
+        #if GB_BURBLE
         T_transposed = true ;
+        #endif
         T = (*Thandle) ;
     }
 
@@ -211,7 +215,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M, NULL, Context)) ;
             // use the transpose mask
             M = MT ;
+            #if GB_BURBLE
             M_transposed = true ;
+            #endif
         }
         else
         { 

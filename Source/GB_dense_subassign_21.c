@@ -39,7 +39,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
 
     int64_t cvdim = C->vdim ;
     int64_t cvlen = C->vlen ;
-    int64_t cnzmax ;
+    GrB_Index cnzmax ;
     bool ok = GB_Index_multiply (&cnzmax, cvlen, cvdim) ;
     if (!ok)
     {

@@ -17,7 +17,6 @@
     const int64_t  *GB_RESTRICT Ah = A->h ;
     const int64_t  *GB_RESTRICT Ai = A->i ;
     const GB_CTYPE *GB_RESTRICT Ax = A->x ;
-    const size_t asize = A->type->size ;
 
     GB_CTYPE *GB_RESTRICT Cx = C->x ;
     const int64_t cvlen = C->vlen ;

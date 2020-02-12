@@ -478,6 +478,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int nfine = 0 ;         // # of fine tasks
     int ncoarse = 0 ;       // # of coarse tasks
     max_bjnz = 0 ;          // max (nnz (B (:,j))) of fine tasks
+    int taskid ;
 
     // FUTURE: also use ultra-fine tasks that compute A(i1:i2,k)*B(k,j)
 
@@ -917,8 +918,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         int64_t k = TaskList [taskid].vector ;
         bool is_fine = (k >= 0) ;
         bool use_Gustavson = (hash_size == cvlen) ;
-        int64_t kfirst = TaskList [taskid].start ;
-        int64_t klast = TaskList [taskid].end ;
+        // int64_t kfirst = TaskList [taskid].start ;
+        // int64_t klast = TaskList [taskid].end ;
 
         if (is_fine && use_Gustavson)
         { 
@@ -989,8 +990,8 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         int64_t k = TaskList [taskid].vector ;
         bool is_fine = (k >= 0) ;
         bool use_Gustavson = (hash_size == cvlen) ;
-        int64_t kfirst = TaskList [taskid].start ;
-        int64_t klast = TaskList [taskid].end ;
+        // int64_t kfirst = TaskList [taskid].start ;
+        // int64_t klast = TaskList [taskid].end ;
 
         if (is_fine && use_Gustavson)
         { 
@@ -1028,6 +1029,13 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
             TaskList [taskid].Hx = TaskList [master].Hx ;
         }
     }
+
+    //==========================================================================
+    // phase1: symbolic analysis
+    //==========================================================================
+
+    GB_AxB_saxpy3_symbolic (C, M, Mask_comp, Mask_struct, A, B, TaskList,
+        ntasks, nfine, nthreads) ;
 
     //==========================================================================
     // C = A*B, via saxpy3 method and built-in semiring

@@ -16,12 +16,12 @@
 // GB_dense_ewise3_accum: C += A+B, all 3 matrices dense
 //------------------------------------------------------------------------------
 
-GrB_Info GB_dense_ewise3_accum      // C += A+B, all 3 matrices dense
+void GB_dense_ewise3_accum          // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,
     const GrB_Matrix B,
-    const GrB_BinaryOp op,          // accum and op for A+B
+    const GrB_BinaryOp op,
     GB_Context Context
 ) ;
 

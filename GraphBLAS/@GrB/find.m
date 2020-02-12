@@ -29,7 +29,7 @@ function [I, J, X] = find (G, k, search)
 % of G, instead of using GrB_Matrix_extractTuples_*, which always extracts
 % the entire matrix.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (nargin > 1 && ~GrB.isbycol (G))

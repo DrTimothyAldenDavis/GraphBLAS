@@ -160,10 +160,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     bool B_is_dense = GB_is_dense (B) ;
     bool M_is_dense = GB_is_dense (M) ;
 
-    if (C_is_dense) GBBURBLE ("(C dense) ") ;
-    if (A_is_dense) GBBURBLE ("(A dense) ") ;
-    if (B_is_dense) GBBURBLE ("(B dense) ") ;
-    if (M_is_dense) GBBURBLE ("(M dense) ") ;
+    if (C_is_dense) { GBBURBLE ("(C dense) ") ; }
+    if (A_is_dense) { GBBURBLE ("(A dense) ") ; }
+    if (B_is_dense) { GBBURBLE ("(B dense) ") ; }
+    if (M_is_dense) { GBBURBLE ("(M dense) ") ; }
 
     //--------------------------------------------------------------------------
     // decide when to apply the mask
@@ -254,6 +254,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         eWiseAdd = false ;
     }
 
+    #if 0
     bool op_is_first  = op->opcode == GB_FIRST_opcode ;
     bool op_is_second = op->opcode == GB_SECOND_opcode ;
     bool op_is_pair   = op->opcode == GB_PAIR_opcode ;
@@ -268,6 +269,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         A_is_pattern = op_is_second || op_is_pair ;
         B_is_pattern = op_is_first  || op_is_pair ;
     }
+    #endif
 
     bool no_typecast =
         (op->ztype == C->type)              // no typecasting of C

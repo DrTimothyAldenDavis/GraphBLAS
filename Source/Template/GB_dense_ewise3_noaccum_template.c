@@ -7,6 +7,8 @@
 
 //------------------------------------------------------------------------------
 
+#include "GB_unused.h"
+
 {
 
     //--------------------------------------------------------------------------
@@ -35,12 +37,10 @@
         //----------------------------------------------------------------------
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
-printf ("C=A+C via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Ax, Cx, nthreads) ;   // C += A
 
         #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
-printf ("C=A-C via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Ax, Cx, nthreads) ;  // C -= A
 
@@ -64,12 +64,10 @@ printf ("C=A-C via axpy\n") ;
         //----------------------------------------------------------------------
 
         #if GB_HAS_CBLAS & GB_OP_IS_PLUS_REAL
-printf ("C=C+B via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
 
         #elif GB_HAS_CBLAS & GB_OP_IS_MINUS_REAL
-printf ("C=C-B via axpy\n") ;
 
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Bx, Cx, nthreads) ;  // C -= B
 
@@ -95,13 +93,11 @@ printf ("C=C-B via axpy\n") ;
         // note that A and B may still be aliased to each other
 
         #if GB_HAS_CBLAS && GB_OP_IS_PLUS_REAL
-printf ("C=A+B via axpy\n") ;
 
             GB_memcpy (Cx, Ax, cnz * sizeof (GB_CTYPE), nthreads) ; // C = A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) 1, Bx, Cx, nthreads) ;   // C += B
 
         #elif GB_HAS_CBLAS && GB_OP_IS_MINUS_REAL
-printf ("C=A-B via axpy\n") ;
 
             GB_memcpy (Cx, Ax, cnz * sizeof (GB_CTYPE), nthreads) ; // C = A
             GB_CBLAS_AXPY (cnz, (GB_CTYPE) -1, Bx, Cx, nthreads) ;  // C -= B

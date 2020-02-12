@@ -248,6 +248,7 @@ GrB_Info GB_Adot4B__any_rminus_fp32
 // C=A*B, C<M>=A*B, C<!M>=A*B: saxpy3 method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
+#include "GB_AxB_saxpy3_header.h"
 #include "GB_AxB_saxpy3_template.h"
 
 GrB_Info GB_Asaxpy3B__any_rminus_fp32

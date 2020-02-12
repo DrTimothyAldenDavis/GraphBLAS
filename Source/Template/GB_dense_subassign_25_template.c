@@ -23,7 +23,6 @@
     const int64_t *GB_RESTRICT Mi = M->i ;
 
     const GB_CTYPE *GB_RESTRICT Ax = A->x ;
-    const size_t asize = A->type->size ;
     const int64_t avlen = A->vlen ;
 
     //--------------------------------------------------------------------------

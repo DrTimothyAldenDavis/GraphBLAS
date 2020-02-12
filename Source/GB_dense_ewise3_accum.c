@@ -12,7 +12,7 @@
 #include "GB_binop__include.h"
 #endif
 
-GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
+void GB_dense_ewise3_accum          // C += A+B, all matrices dense
 (
     GrB_Matrix C,                   // input/output matrix
     const GrB_Matrix A,
@@ -26,7 +26,6 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
     // check inputs
     //--------------------------------------------------------------------------
 
-    GrB_Info info ;
     ASSERT_MATRIX_OK (C, "C for dense C+=A+B", GB0) ;
     ASSERT (!GB_PENDING (C)) ; ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (A)) ; ASSERT (!GB_ZOMBIES (A)) ;
@@ -63,7 +62,7 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
 
     #define GB_BINOP_WORKER(op,xyname)                                      \
     {                                                                       \
-        info = GB_Cdense_ewise3_accum(op,xyname) (C, A, B, nthreads) ;      \
+        GB_Cdense_ewise3_accum(op,xyname) (C, A, B, nthreads) ;             \
     }                                                                       \
     break ;
 
@@ -71,24 +70,19 @@ GrB_Info GB_dense_ewise3_accum      // C += A+B, all matrices dense
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-    #ifndef GBCOMPACT
-
-        GB_Opcode opcode ;
-        GB_Type_code xycode, zcode ;
-        if (GB_binop_builtin (A->type, false, B->type, false, op, false,
-            &opcode, &xycode, &zcode))
-        { 
-            #define GB_BINOP_SUBSET
-            #include "GB_binop_factory.c"
-        }
-
-    #endif
+    GB_Opcode opcode ;
+    GB_Type_code xycode, zcode ;
+    if (GB_binop_builtin (A->type, false, B->type, false, op, false,
+        &opcode, &xycode, &zcode))
+    { 
+        #define GB_BINOP_SUBSET
+        #include "GB_binop_factory.c"
+    }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
     ASSERT_MATRIX_OK (C, "C+=A+B output", GB0) ;
-    return (GrB_SUCCESS) ;
 }
 

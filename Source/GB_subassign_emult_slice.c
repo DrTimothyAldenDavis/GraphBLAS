@@ -22,6 +22,8 @@
 
 #include "GB_subassign_methods.h"
 #include "GB_emult.h"
+// Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
+#include "GB_unused.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                                         \
@@ -39,8 +41,8 @@ GrB_Info GB_subassign_emult_slice
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
     const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
-    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
-    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,

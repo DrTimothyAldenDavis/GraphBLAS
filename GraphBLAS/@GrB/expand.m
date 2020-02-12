@@ -7,7 +7,7 @@ function C = expand (scalar, S)
 % MATLAB matrices/scalars, in any combination.  C is returned as a
 % GraphBLAS matrix.
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % FUTURE: as much as possible, replace scalar expansion with binary operators

@@ -13,7 +13,7 @@
 
 #if GB_MICROSOFT
 
-// TODO: figure out how to do atomics with MS Visual Studio
+// FUTURE::: atomics with MS Visual Studio
 #define GB_ATOMIC_READ
 #define GB_ATOMIC_WRITE
 #define GB_ATOMIC_UPDATE  GB_PRAGMA (omp atomic)
