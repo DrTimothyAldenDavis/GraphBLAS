@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------
 
 // to turn on Debug for a single file of GraphBLAS, add:
-#define GB_DEBUG
+// #define GB_DEBUG
 // just before the statement:
 // #include "GB.h"
 
