@@ -150,10 +150,10 @@ int main (int argc, char **argv)
 
         r1 = 1e-6*nedges / (t_dot [0] + t_dot [1] + t_U + t_L) ;
         r2 = 1e-6*nedges / (t_dot [0] + t_dot [1]) ;
-        printf ("rate %10.2f million edges/sec (incl time for U=triu(A))\n",r1);
-        printf ("rate %10.2f million edges/sec (just tricount itself)\n", r2);
+        printf ("rate %8.2f million edges/sec (incl time for U=triu(A))\n",r1);
+        printf ("rate %8.2f million edges/sec (just tricount itself)\n", r2);
         fprintf (stderr, "GrB: C<L>=L*U' (dot)   "
-                "rate %10.2f (with prep), %10.2f (tri)", r1, r2) ;
+                "rate %8.2f (w/ prep), %8.2f (tri)", r1, r2) ;
         if (nthreads > 1) fprintf (stderr, " speedup: %6.2f", t1/ t_dot [0]) ;
         fprintf (stderr, "\n") ;
     }
@@ -199,10 +199,10 @@ int main (int argc, char **argv)
 
         r1 = 1e-6*nedges / (t_dot [0] + t_dot [1] + t_U + t_L) ;
         r2 = 1e-6*nedges / (t_dot [0] + t_dot [1]) ;
-        printf ("rate %10.2f million edges/sec (incl time for U=triu(A))\n",r1);
-        printf ("rate %10.2f million edges/sec (just tricount itself)\n", r2);
+        printf ("rate %8.2f million edges/sec (incl time for U=triu(A))\n",r1);
+        printf ("rate %8.2f million edges/sec (just tricount itself)\n", r2);
         fprintf (stderr, "GrB: C<U>=U*L' (dot)   "
-                "rate %10.2f (with prep), %10.2f (tri)", r1, r2) ;
+                "rate %8.2f (w/ prep), %8.2f (tri)", r1, r2) ;
         if (nthreads > 1) fprintf (stderr, " speedup: %6.2f", t1/ t_dot [0]) ;
         fprintf (stderr, "\n") ;
     }
@@ -255,10 +255,10 @@ int main (int argc, char **argv)
 
         r1 = 1e-6*((double)nedges) / (t_mark [0] + t_mark [1] + t_L) ;
         r2 = 1e-6*((double)nedges) / (t_mark [0] + t_mark [1]) ;
-        printf ("rate %10.2f million edges/sec (incl time for L=tril(A))\n",r1);
-        printf ("rate %10.2f million edges/sec (just tricount itself)\n", r2);
+        printf ("rate %8.2f million edges/sec (incl time for L=tril(A))\n",r1);
+        printf ("rate %8.2f million edges/sec (just tricount itself)\n", r2);
         fprintf (stderr, "GrB: C<L>=L*L (saxpy)  "
-                "rate %10.2f (with prep), %10.2f (tri)", r1, r2) ;
+                "rate %8.2f (w/ prep), %8.2f (tri)", r1, r2) ;
         if (nthreads > 1) fprintf (stderr, " speedup: %6.2f", t1/ t_mark [0]) ;
         fprintf (stderr, "\n") ;
     }
