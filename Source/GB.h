@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------
 
 // to turn on Debug for a single file of GraphBLAS, add:
-// #define GB_DEBUG
+#define GB_DEBUG
 // just before the statement:
 // #include "GB.h"
 
@@ -316,7 +316,7 @@
 //------------------------------------------------------------------------------
 
 #ifdef GBCOVER
-#define GBCOVER_MAX 10000
+#define GBCOVER_MAX 20000
 GB_PUBLIC int64_t GB_cov [GBCOVER_MAX] ;
 GB_PUBLIC int GB_cover_max ;
 #endif

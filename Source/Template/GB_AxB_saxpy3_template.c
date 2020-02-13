@@ -21,6 +21,12 @@
 {
 
     //--------------------------------------------------------------------------
+    // get the chunk size
+    //--------------------------------------------------------------------------
+
+    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
+
+    //--------------------------------------------------------------------------
     // get M, A, B, and C
     //--------------------------------------------------------------------------
 
@@ -653,8 +659,7 @@
     if (info != GrB_SUCCESS)
     {
         // out of memory
-        GB_FREE_ALL ;
-        return (info) ;
+        return (GrB_OUT_OF_MEMORY) ;
     }
 
     int64_t  *GB_RESTRICT Ci = C->i ;
@@ -1304,8 +1309,7 @@
             if (W == NULL)
             { 
                 // out of memory
-                GB_FREE_ALL ;
-                return (GB_OUT_OF_MEMORY) ;
+                return (GrB_OUT_OF_MEMORY) ;
             }
         }
 

@@ -22,12 +22,11 @@ GrB_Info GB_Adot3B
 
 GrB_Info GB_Asaxpy3B
 (
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,
     const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
-    void *Work [3], size_t Worksize [3],
+    GB_saxpy3task_struct *GB_RESTRICT TaskList,
     const int ntasks,
     const int nfine,
     const int nthreads,

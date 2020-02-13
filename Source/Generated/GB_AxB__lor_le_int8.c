@@ -248,17 +248,15 @@ GrB_Info GB_Adot4B__lor_le_int8
 // C=A*B, C<M>=A*B, C<!M>=A*B: saxpy3 method (Gustavson + Hash)
 //------------------------------------------------------------------------------
 
-#include "GB_AxB_saxpy3_header.h"
 #include "GB_AxB_saxpy3_template.h"
 
 GrB_Info GB_Asaxpy3B__lor_le_int8
 (
-    GrB_Matrix *Chandle,
+    GrB_Matrix C,
     const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
     const GrB_Matrix A, bool A_is_pattern,
     const GrB_Matrix B, bool B_is_pattern,
-    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle,
-    void *Work [3], size_t Worksize [3],
+    GB_saxpy3task_struct *GB_RESTRICT TaskList,
     const int ntasks,
     const int nfine,
     const int nthreads,
@@ -268,16 +266,6 @@ GrB_Info GB_Asaxpy3B__lor_le_int8
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    // get copies of these pointers for GB_FREE_ALL
-    GB_saxpy3task_struct *GB_RESTRICT TaskList = (*TaskList_handle) ;
-    GrB_Matrix C = (*Chandle) ;
-    int64_t *Hi_all = Work [0] ;
-    int64_t *Hf_all = Work [1] ;
-    GB_void *Hx_all = Work [2] ;
-    size_t Hi_size_total = Worksize [0] ;
-    size_t Hf_size_total = Worksize [1] ;
-    size_t Hx_size_total = Worksize [2] ;
-    GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     #include "GB_AxB_saxpy3_template.c"
     return (GrB_SUCCESS) ;
     #endif

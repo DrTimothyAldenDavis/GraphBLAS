@@ -113,5 +113,24 @@ int64_t GB_AxB_saxpy3_cumsum    // return cjnz_max for fine tasks
     int nthreads                // number of threads
 ) ;
 
+//------------------------------------------------------------------------------
+// GB_AxB_saxpy3_generic: for any types and operators
+//------------------------------------------------------------------------------
+
+GrB_Info GB_AxB_saxpy3_generic
+(
+    GrB_Matrix C,
+    const GrB_Matrix M, bool Mask_comp, const bool Mask_struct,
+    const GrB_Matrix A, bool A_is_pattern,
+    const GrB_Matrix B, bool B_is_pattern,
+    const GrB_Semiring semiring,    // semiring that defines C=A*B
+    const bool flipxy,              // if true, do z=fmult(b,a) vs fmult(a,b)
+    GB_saxpy3task_struct *GB_RESTRICT TaskList,
+    const int ntasks,
+    const int nfine,
+    const int nthreads,
+    GB_Context Context
+) ;
+
 #endif
 

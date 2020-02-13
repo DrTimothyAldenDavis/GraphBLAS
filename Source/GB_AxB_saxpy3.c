@@ -85,10 +85,6 @@
 
 #include "GB_mxm.h"
 #include "GB_AxB_saxpy3.h"
-#include "GB_AxB_saxpy3_header.h"
-#include "GB_bracket.h"
-#include "GB_sort.h"
-#include "GB_atomics.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"
 #endif
@@ -107,12 +103,26 @@
 //------------------------------------------------------------------------------
 
 // This workspace is not needed in the GB_Asaxpy3B* worker functions.
-#undef  GB_FREE_INITIAL_WORK
 #define GB_FREE_INITIAL_WORK                                                \
 {                                                                           \
     GB_FREE_MEMORY (Bflops2, max_bjnz+1, sizeof (int64_t)) ;                \
     GB_FREE_MEMORY (Coarse_initial, ntasks_initial+1, sizeof (int64_t)) ;   \
     GB_FREE_MEMORY (Fine_slice, ntasks+1, sizeof (int64_t)) ;               \
+}
+
+#define GB_FREE_WORK                                                        \
+{                                                                           \
+    GB_FREE_INITIAL_WORK ;                                                  \
+    GB_FREE_MEMORY (TaskList, ntasks, sizeof (GB_saxpy3task_struct)) ;      \
+    GB_FREE_MEMORY (Hi_all, Hi_size_total, sizeof (int64_t)) ;              \
+    GB_FREE_MEMORY (Hf_all, Hf_size_total, sizeof (int64_t)) ;              \
+    GB_FREE_MEMORY (Hx_all, Hx_size_total, 1) ;                             \
+}
+
+#define GB_FREE_ALL                                                         \
+{                                                                           \
+    GB_FREE_WORK ;                                                          \
+    GB_MATRIX_FREE (Chandle) ;                                              \
 }
 
 //------------------------------------------------------------------------------
@@ -258,7 +268,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     GB_void *GB_RESTRICT Hx_all = NULL ;
     int64_t *GB_RESTRICT Coarse_initial = NULL ;    // initial coarse tasks
     GB_saxpy3task_struct *GB_RESTRICT TaskList = NULL ;
-    GB_saxpy3task_struct *GB_RESTRICT *TaskList_handle = &(TaskList) ;
     int64_t *GB_RESTRICT Fine_slice = NULL ;
     int64_t *GB_RESTRICT Bflops2 = NULL ;
 
@@ -1043,16 +1052,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     bool done = false ;
 
-    // pass the workspace to the worker, so it can be freed if any error occurs
-    void *Work [3] ;
-    size_t Worksize [3] ;
-    Work [0] = Hi_all ;
-    Work [1] = Hf_all ;
-    Work [2] = Hx_all ;
-    Worksize [0] = Hi_size_total ;
-    Worksize [1] = Hf_size_total ;
-    Worksize [2] = Hx_size_total ;
-
 #ifndef GBCOMPACT
 
     //--------------------------------------------------------------------------
@@ -1063,10 +1062,9 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        info = GB_Asaxpy3B (add,mult,xyname) (Chandle, M, Mask_comp,    \
+        info = GB_Asaxpy3B (add,mult,xyname) (C, M, Mask_comp,          \
             Mask_struct, A, A_is_pattern, B, B_is_pattern,              \
-            TaskList_handle, Work, Worksize, ntasks, nfine, nthreads,   \
-            Context) ;                                                  \
+            TaskList, ntasks, nfine, nthreads, Context) ;               \
         done = (info != GrB_NO_VALUE) ;                                 \
     }                                                                   \
     break ;
@@ -1089,141 +1087,16 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     if (!done)
     {
         GB_BURBLE_MATRIX (C, "generic ") ;
+        info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
+            A, A_is_pattern, B, B_is_pattern, semiring, flipxy,
+            TaskList, ntasks, nfine, nthreads, Context) ;
+    }
 
-        //----------------------------------------------------------------------
-        // get operators, functions, workspace, contents of A, B, and C
-        //----------------------------------------------------------------------
-
-        GxB_binary_function fmult = mult->function ;
-        GxB_binary_function fadd  = add->op->function ;
-
-        size_t csize = C->type->size ;
-        size_t asize = A_is_pattern ? 0 : A->type->size ;
-        size_t bsize = B_is_pattern ? 0 : B->type->size ;
-
-        size_t xsize = mult->xtype->size ;
-        size_t ysize = mult->ytype->size ;
-
-        // scalar workspace: because of typecasting, the x/y types need not
-        // be the same as the size of the A and B types.
-        // flipxy false: aik = (xtype) A(i,k) and bkj = (ytype) B(k,j)
-        // flipxy true:  aik = (ytype) A(i,k) and bkj = (xtype) B(k,j)
-        size_t aik_size = flipxy ? ysize : xsize ;
-        size_t bkj_size = flipxy ? xsize : ysize ;
-
-        GB_void *GB_RESTRICT terminal = add->terminal ;
-        GB_void *GB_RESTRICT identity = add->identity ;
-
-        GB_cast_function cast_A, cast_B ;
-        if (flipxy)
-        { 
-            // A is typecasted to y, and B is typecasted to x
-            cast_A = A_is_pattern ? NULL : 
-                     GB_cast_factory (mult->ytype->code, A->type->code) ;
-            cast_B = B_is_pattern ? NULL : 
-                     GB_cast_factory (mult->xtype->code, B->type->code) ;
-        }
-        else
-        { 
-            // A is typecasted to x, and B is typecasted to y
-            cast_A = A_is_pattern ? NULL :
-                     GB_cast_factory (mult->xtype->code, A->type->code) ;
-            cast_B = B_is_pattern ? NULL :
-                     GB_cast_factory (mult->ytype->code, B->type->code) ;
-        }
-
-        //----------------------------------------------------------------------
-        // C = A*B via saxpy3 method, function pointers, and typecasting
-        //----------------------------------------------------------------------
-
-        #define GB_IDENTITY identity
-
-        // aik = A(i,k), located in Ax [pA]
-        #define GB_GETA(aik,Ax,pA)                                          \
-            GB_void aik [GB_VLA(aik_size)] ;                                \
-            if (!A_is_pattern) cast_A (aik, Ax +((pA)*asize), asize)
-
-        // bkj = B(k,j), located in Bx [pB]
-        #define GB_GETB(bkj,Bx,pB)                                          \
-            GB_void bkj [GB_VLA(bkj_size)] ;                                \
-            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
-
-        // t = A(i,k) * B(k,j)
-        #define GB_MULT(t, aik, bkj)                                        \
-            GB_MULTIPLY (t, aik, bkj)
-
-        // define t for each task
-        #define GB_CIJ_DECLARE(t)                                           \
-            GB_void t [GB_VLA(csize)]
-
-        // address of Cx [p]
-        #define GB_CX(p) (Cx +((p)*csize))
-
-        // Cx [p] = t
-        #define GB_CIJ_WRITE(p,t)                                           \
-            memcpy (GB_CX (p), t, csize)
-
-        // Cx [p] += t
-        #define GB_CIJ_UPDATE(p,t)                                          \
-            fadd (GB_CX (p), GB_CX (p), t)
-
-        // address of Hx [i]
-        #define GB_HX(i) (Hx +((i)*csize))
-
-        // atomic update not available for function pointers
-        #define GB_HAS_ATOMIC 0
-
-        // normal Hx [i] += t
-        #define GB_HX_UPDATE(i, t)                                          \
-            fadd (GB_HX (i), GB_HX (i), t)
-
-        // normal Hx [i] = t
-        #define GB_HX_WRITE(i, t)                                           \
-            memcpy (GB_HX (i), t, csize)
-
-        // Cx [p] = Hx [i]
-        #define GB_CIJ_GATHER(p,i)                                          \
-            memcpy (GB_CX (p), GB_HX(i), csize)
-
-        // memcpy (&(Cx [pC]), &(Hx [i]), len)
-        #define GB_CIJ_MEMCPY(pC,i,len) \
-            memcpy (Cx +((pC)*csize), Hx +((i)*csize), (len) * csize)
-
-        // 1 if monoid update can skipped entirely (the ANY monoid)
-        #define GB_IS_ANY_MONOID 0
-
-        // user-defined monoid update cannot be done with an OpenMP atomic
-        #define GB_HAS_OMP_ATOMIC 0
-
-        // not an ANY_PAIR semiring
-        #define GB_IS_ANY_PAIR_SEMIRING 0
-
-        // not a PAIR multiply operator 
-        #define GB_IS_PAIR_MULTIPLIER 0
-
-        #define GB_ATYPE GB_void
-        #define GB_BTYPE GB_void
-        #define GB_CTYPE GB_void
-
-        // no vectorization
-        #define GB_PRAGMA_VECTORIZE
-        #define GB_PRAGMA_VECTORIZE_DOT
-
-        // definitions for GB_AxB_saxpy3_template.c
-        #include "GB_AxB_saxpy3_template.h"
-
-        if (flipxy)
-        { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,y,x)
-            #include "GB_AxB_saxpy3_template.c"
-            #undef GB_MULTIPLY
-        }
-        else
-        { 
-            #define GB_MULTIPLY(z,x,y) fmult (z,x,y)
-            #include "GB_AxB_saxpy3_template.c"
-            #undef GB_MULTIPLY
-        }
+    if (info != GrB_SUCCESS)
+    {
+        // out of memory
+        GB_FREE_ALL ;
+        return (GB_OUT_OF_MEMORY) ;
     }
 
     //==========================================================================
