@@ -78,7 +78,7 @@ GrB_Info GB_dense_subassign_06d
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -106,7 +106,7 @@ GrB_Info GB_dense_subassign_06d
     #ifndef GBCOMPACT
 
         if (C->type == A->type && ccode < GB_UDT_code)
-        {
+        { 
             // C<A> = A
             #include "GB_1type_factory.c"
         }
@@ -118,7 +118,7 @@ GrB_Info GB_dense_subassign_06d
     //--------------------------------------------------------------------------
 
     if (!done)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A and C

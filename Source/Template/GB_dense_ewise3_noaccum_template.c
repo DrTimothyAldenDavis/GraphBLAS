@@ -48,7 +48,7 @@
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
                 GB_BINOP (GB_CX (p), aij, GB_CX (p)) ;  // Cx [p] = aij + Cx [p]
             }
@@ -75,7 +75,7 @@
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 GB_GETB (bij, Bx, p) ;                  // bij = Bx [p]
                 GB_BINOP (GB_CX (p), GB_CX (p), bij) ;  // Cx [p] += bij
             }
@@ -106,7 +106,7 @@
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 GB_GETA (aij, Ax, p) ;              // aij = Ax [p]
                 GB_GETB (bij, Bx, p) ;              // bij = Bx [p]
                 GB_BINOP (GB_CX (p), aij, bij) ;    // Cx [p] = aij + bij

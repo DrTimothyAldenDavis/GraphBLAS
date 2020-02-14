@@ -76,7 +76,7 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
         ) ;
 
     if (copy_dense_A_to_C)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // copy the values from A to C; nothing else changes
@@ -88,7 +88,7 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // copy a sparse matrix from A to C

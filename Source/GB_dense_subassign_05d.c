@@ -83,7 +83,7 @@ GrB_Info GB_dense_subassign_05d
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, M, ntasks))
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -120,7 +120,7 @@ GrB_Info GB_dense_subassign_05d
     //--------------------------------------------------------------------------
 
     if (!done)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A and C

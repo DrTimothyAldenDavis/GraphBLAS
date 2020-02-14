@@ -49,7 +49,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     //--------------------------------------------------------------------------
 
     if (accum->opcode == GB_FIRST_opcode)
-    {
+    { 
         // nothing to do
         return (GrB_SUCCESS) ;
     }
@@ -81,7 +81,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (GB_is_dense (A))
-    {
+    { 
         // both C and A are dense; no need to construct tasks
         GBBURBLE ("(A dense) ") ;
     }
@@ -90,7 +90,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
         // create tasks to compute over the matrix A
         if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A,
             ntasks))
-        {
+        { 
             // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -134,7 +134,7 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     //--------------------------------------------------------------------------
 
     if (!done)
-    {
+    { 
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A and C

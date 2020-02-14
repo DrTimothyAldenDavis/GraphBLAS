@@ -41,7 +41,7 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
     //--------------------------------------------------------------------------
 
     if (accum->opcode == GB_FIRST_opcode)
-    {
+    { 
         // nothing to do
         return (GrB_SUCCESS) ;
     }

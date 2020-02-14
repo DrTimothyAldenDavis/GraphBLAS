@@ -62,7 +62,7 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // initialize them.
 
     if (!C_is_dense)
-    {
+    { 
         bool C_is_csc = C->is_csc ;
         GB_PHIX_FREE (C) ;
         GB_OK (GB_dup2 (&C, A, false, C->type, Context)) ;

@@ -42,7 +42,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
     GrB_Index cnzmax ;
     bool ok = GB_Index_multiply (&cnzmax, cvlen, cvdim) ;
     if (!ok)
-    {
+    { 
         // problem too large
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -84,7 +84,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
             GB_FORCE_NONHYPER, C->hyper_ratio, C->vdim, cnzmax,
             scalar_is_nonzero, Context) ;
         if (info != GrB_SUCCESS)
-        {
+        { 
             // out of memory
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -98,7 +98,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         int64_t k ;
         #pragma omp parallel for num_threads(nth) schedule(static)
         for (k = 0 ; k <= cvdim ; k++)
-        {
+        { 
             Cp [k] = k * cvlen ;
         }
 
@@ -107,25 +107,25 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
 
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (pC = 0 ; pC < cnzmax ; pC++)
-        {
+        { 
             Ci [pC] = pC % cvlen ;
         }
 
         if (!scalar_is_nonzero)
-        {
+        { 
             GBBURBLE ("calloc ") ;
             GB_CALLOC_MEMORY (C->x, cnzmax, csize) ;
         }
 
         if (C->x == NULL)
-        {
+        { 
             // out of memory
             GB_PHIX_FREE (C) ;
             return (GB_OUT_OF_MEMORY) ;
         }
 
         if (!scalar_is_nonzero)
-        {
+        { 
             // quick return if the scalar is zero
             ASSERT_MATRIX_OK (C, "C(:,:)=0 output", GB0) ;
             return (GrB_SUCCESS) ;
@@ -142,7 +142,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
         int64_t *GB_RESTRICT Ci = C->i ;
         #pragma omp parallel for num_threads(nthreads) schedule(static)
         for (pC = 0 ; pC < cnzmax ; pC++)
-        {
+        { 
             Ci [pC] = pC % cvlen ;
         }
         C->nzombies = 0 ;
@@ -189,7 +189,7 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
                 GB_void *GB_RESTRICT Cx = C->x ;
                 #pragma omp parallel for num_threads(nthreads) schedule(static)
                 for (pC = 0 ; pC < cnzmax ; pC++)
-                {
+                { 
                     memcpy (Cx +((pC)*csize), cwork, csize) ;
                 }
             }

@@ -49,7 +49,7 @@
             // C += A+A
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
                 GB_CTYPE_SCALAR (t) ;                   // declare scalar t
                 GB_BINOP (t, aij, aij) ;                // t = aij + aij
@@ -81,7 +81,7 @@
 
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 GB_GETA (aij, Ax, p) ;                  // aij = Ax [p]
                 GB_GETB (bij, Bx, p) ;                  // bij = Bx [p]
                 GB_CTYPE_SCALAR (t) ;                   // declare scalar t

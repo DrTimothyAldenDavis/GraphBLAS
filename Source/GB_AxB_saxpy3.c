@@ -172,7 +172,7 @@ static inline int64_t GB_hash_table_size
     }
 
     if (use_Gustavson)
-    {
+    { 
         hash_size = cvlen ;
     }
     return (hash_size) ;
@@ -205,7 +205,7 @@ static inline void GB_create_coarse_task
     #pragma omp parallel for num_threads(nth) schedule(static) \
         reduction(max:flmax)
     for (kk = kfirst ; kk <= klast ; kk++)
-    {
+    { 
         int64_t fl = Bflops [kk+1] - Bflops [kk] ;
         flmax = GB_IMAX (flmax, fl) ;
     }
@@ -431,7 +431,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         // GB_AxB_flopcount requires Bflops be set to zero here
         #pragma omp parallel for num_threads(nth) schedule(static)
         for (kk = 0 ; kk <= bnvec ; kk++)
-        {
+        { 
             Bflops [kk] = 0 ;
         }
 
@@ -441,7 +441,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
         GBBURBLE ("(discard mask) ") ;
     }
     else if (M != NULL)
-    {
+    { 
         GBBURBLE ("(use mask) ") ;
     }
 
@@ -458,7 +458,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int64_t mnvec = 0 ;
     bool M_is_hyper = false ;
     if (M != NULL)
-    {
+    { 
         Mp = M->p ;
         Mh = M->h ;
         Mi = M->i ;
@@ -679,7 +679,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                         // get the mask M(:,j), for C<M>=A*B
                         int64_t im_first = -1, im_last = -1 ;
                         if (mask_is_M)
-                        { 
+                        {
                             int64_t j = (Bh == NULL) ? kk : Bh [kk] ;
                             int64_t mpleft = 0 ;
                             int64_t mpright = mnvec-1 ;
@@ -692,7 +692,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
                             // no fine tasks constructed for C(:,j).
                             // Thus mjnz > 0 must hold.
                             ASSERT (mjnz > 0) ;
-                            if (mjnz > 0)   // but check any, just to be safe
+                            if (mjnz > 0)   // but check anyway, just to be safe
                             { 
                                 im_first = Mi [pM] ;
                                 im_last  = Mi [pM_end-1] ;
@@ -1085,7 +1085,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //==========================================================================
 
     if (!done)
-    {
+    { 
         GB_BURBLE_MATRIX (C, "generic ") ;
         info = GB_AxB_saxpy3_generic (C, M, Mask_comp, Mask_struct,
             A, A_is_pattern, B, B_is_pattern, semiring, flipxy,
@@ -1093,7 +1093,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     }
 
     if (info != GrB_SUCCESS)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

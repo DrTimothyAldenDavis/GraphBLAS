@@ -66,7 +66,7 @@
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (p = 0 ; p < cnz ; p++)
-            {
+            { 
                 GB_GETB (aij, Ax, p) ;                  // aij = A(i,j)
                 GB_BINOP (GB_CX (p), GB_CX (p), aij) ;  // C(i,j) += aij
             }
