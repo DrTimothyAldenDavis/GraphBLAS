@@ -11,6 +11,7 @@
 // possibly reusing parts of C if C is dense.  See also GB_dup.
 
 #include "GB_dense.h"
+#define GB_FREE_ALL ;
 
 GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
 (
@@ -93,52 +94,13 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
         // copy a sparse matrix from A to C
         //----------------------------------------------------------------------
 
-        GBBURBLE ("(deep copy) ") ;
-
         // clear all prior content of C, but keep the CSR/CSC format
+        GBBURBLE ("(deep copy) ") ;
+        GrB_Info info ;
         bool C_is_csc = C->is_csc ;
         GB_PHIX_FREE (C) ;
-
-        GrB_Info info = GB_dup2 (&C, A, true, A->type, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            return (info) ;
-        }
+        GB_OK (GB_dup2 (&C, A, true, A->type, Context)) ;
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
-
-#if 0
-        // now done by GB_dup2:
-
-        // [ create C; allocate C->p and do not initialize it
-        // C has the exact same hypersparsity as A.
-        // keep the same new header for C.  C->is_csc is unchanged.
-        GrB_Info info ;
-        GB_CREATE (&C, A->type, A->vlen, A->vdim, GB_Ap_malloc,
-            C->is_csc, GB_SAME_HYPER_AS (A->is_hyper), A->hyper_ratio, A->plen,
-            anz, true, Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            return (info) ;
-        }
-
-        // copy the contents of A into C
-        int64_t anvec = A->nvec ;
-        C->nvec = anvec ;
-        C->nvec_nonempty = A->nvec_nonempty ;
-        int nthreads = GB_nthreads (anvec, chunk, nthreads_max) ;
-        GB_memcpy (C->p, A->p, (anvec+1) * sizeof (int64_t), nthreads) ;
-        if (A->is_hyper)
-        { 
-            GB_memcpy (C->h, A->h, anvec * sizeof (int64_t), nthreads) ;
-        }
-        nthreads = GB_nthreads (anz, chunk, nthreads_max) ;
-        GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
-        GB_memcpy (C->x, A->x, anz * A->type->size, nthreads) ;
-        C->magic = GB_MAGIC ;      // C->p and C->h are now initialized ]
-
-#endif
-
     }
 
     //-------------------------------------------------------------------------
