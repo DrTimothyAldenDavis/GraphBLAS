@@ -3,7 +3,8 @@ function [I, J, X] = find (G, k, search)
 % [I, J, X] = find (G) extracts the nonzeros from a GraphBLAS matrix G.
 % X has the same type as G ('double', 'single', 'int8', ...).
 %
-% Linear 1D indexing (I = find (S) for the MATLAB matrix S).
+% Linear 1D indexing (I = find (S) for the MATLAB matrix S) is not yet
+% supported.
 %
 % G may contain explicit zero entries, and by default these are excluded
 % from the result.  Use GrB.extracttuples (G) to return these explicit
