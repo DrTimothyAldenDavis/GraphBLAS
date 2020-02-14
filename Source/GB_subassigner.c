@@ -147,9 +147,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             { 
                 // No work to do.  This the same as the GB_RETURN_IF_QUICK_MASK
                 // case in other GraphBLAS functions, except here only the
-                // sub-case of C_replace=false is handled.  The C_replace=true
-                // sub-case needs to delete all entries in C(I,J), which is
-                // handled below in GB_subassign_00.
+                // sub-case of C_replace == false is handled.  The C_replace ==
+                // true sub-case needs to delete all entries in C(I,J), which
+                // is handled below in GB_subassign_00.
                 GBBURBLE ("quick ") ;
                 return (GrB_SUCCESS) ;
             }
@@ -162,6 +162,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // effectively false" means that either C_replace is false on
             // input, or the mask is empty and not complemented and thus
             // C_replace is set to false here.
+            GBBURBLE ("(no mask: C_replace effectively false) ") ;
             C_replace = false ;
         }
     }
@@ -170,6 +171,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (C_is_empty)
     {
         // C is completely empty.  C_replace is irrelevant, so set it to false.
+        GBBURBLE ("(C empty: C_replace effectively false) ") ;
         C_replace = false ;
     }
 
@@ -427,6 +429,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         // For C(:,:) = x or A, the prior content of C is discarded.
         // C_replace is effectively false.
+        GBBURBLE ("(C(:,:) assigment: C_replace effectively false) ") ;
         C_replace = false ;
         // free pending tuples early but do not clear all of C.  If it is
         // already dense then its pattern can be reused.
@@ -453,6 +456,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // need to be cleared and then recreated.
 
         GB_OK (GB_clear (C, Context)) ;
+
+        GBBURBLE ("(C(:,:)<any mask>: C cleared early) ") ;
         C_replace = false ;
 
         // By clearing C now and setting C_replace to false, the following
@@ -644,6 +649,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     if (C_is_empty)
     {
         // C is completely empty.  C_replace is irrelevant, so set it to false.
+        GBBURBLE ("(C empty: C_replace effectively false) ") ;
         C_replace = false ;
     }
 
@@ -699,6 +705,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 // C(:,:) += x where C is dense.
                 // Since x is a scalar, C_replace becomes effectively false.
                 C_dense_update = true ;
+                GBBURBLE ("(C+=x: C_replace effectively false) ") ;
                 C_replace = false ;
             }
             else
@@ -948,7 +955,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  =====================       ==============
         //  -   c   r           S       00:  C(I,J)<!,repl> = empty, with S
 
-        ASSERT (C_replace) ;
+        // C_replace may be reset to 'effectively false' by this point.
         ASSERT (S != NULL) ;
 
         // Method 00: C(I,J) = empty ; using S

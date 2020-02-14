@@ -195,7 +195,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             if (C_is_csc != M_is_csc)
             { 
                 GBBURBLE ("(M transpose) ") ;
-                GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context)) ;
+                GB_OK (GB_transpose (&MT, GrB_BOOL, C_is_csc, M, NULL, Context));
                 M1 = MT ;
             }
             mask_applied = true ;
@@ -305,8 +305,9 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBBURBLE ("dense C+=A+B ") ;
-            GB_dense_ewise3_accum (C, A1, B1, op, Context) ;
+            GB_dense_ewise3_accum (C, A1, B1, op, Context) ;    // cannot fail
             GB_FREE_ALL ;
+            ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C+=A+B", GB0) ;
             return (GrB_SUCCESS) ;
 
         }
@@ -319,9 +320,13 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBBURBLE ("dense C=A+B ") ;
-            GB_dense_ewise3_noaccum (C, C_is_dense, A1, B1, op, Context) ;
+            info = GB_dense_ewise3_noaccum (C, C_is_dense, A1, B1, op, Context) ;
             GB_FREE_ALL ;
-            return (GrB_SUCCESS) ;
+            if (info == GrB_SUCCESS)
+            {
+                ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C=A+B", GB0) ;
+            }
+            return (info) ;
         }
     }
 

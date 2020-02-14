@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------
 
 // to turn on Debug for a single file of GraphBLAS, add:
-// #define GB_DEBUG
+#define GB_DEBUG
 // just before the statement:
 // #include "GB.h"
 
@@ -33,7 +33,7 @@
 // or compile with -DGB_BURBLE=1.  This setting can also be added at the top
 // of any individual Source/* files, before #including any other files.
 #ifndef GB_BURBLE
-#define GB_BURBLE 0
+#define GB_BURBLE 1
 #endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:

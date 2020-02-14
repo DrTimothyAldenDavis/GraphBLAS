@@ -57,7 +57,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Feb 11, 2020 (DRAFT29)" )
+set ( GraphBLAS_DATE "Feb 14, 2020 (DRAFT30)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   0 )
@@ -82,7 +82,8 @@ endif ( )
 include ( GNUInstallDirs )
 
 # Uncomment this line for for development only, not for end-users:
-# set ( CMAKE_BUILD_TYPE Debug )
+# TODO Debug is on
+set ( CMAKE_BUILD_TYPE Debug )
 
 if ( NOT CMAKE_BUILD_TYPE )
     set ( CMAKE_BUILD_TYPE Release )

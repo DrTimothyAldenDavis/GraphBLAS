@@ -52,6 +52,7 @@ GrB_Info GB_dup2            // make an exact copy of a matrix
         anz, true, Context) ;
     if (info != GrB_SUCCESS)
     { 
+        // out of memory
         return (info) ;
     }
 

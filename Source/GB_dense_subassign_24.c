@@ -99,7 +99,12 @@ GrB_Info GB_dense_subassign_24      // C = A, copy A into an existing matrix C
         bool C_is_csc = C->is_csc ;
         GB_PHIX_FREE (C) ;
 
-        GB_dup2 (&C, A, true, A->type, Context) ;
+        GrB_Info info = GB_dup2 (&C, A, true, A->type, Context) ;
+        if (info != GrB_SUCCESS)
+        { 
+            // out of memory
+            return (info) ;
+        }
         C->is_csc = C_is_csc ;      // do not change the CSR/CSC format of C
 
 #if 0
