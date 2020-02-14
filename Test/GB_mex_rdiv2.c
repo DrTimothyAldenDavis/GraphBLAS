@@ -87,7 +87,6 @@ GrB_Info axb (GB_Context Context)
         &ignore2,    // mask_applied
         AxB_method, &AxB_method_used, Context) ;
 
-    // does nothing if the objects are pre-compiled
     GrB_free (&My_rdiv2) ;
     GrB_free (&My_plus_rdiv2) ;
 

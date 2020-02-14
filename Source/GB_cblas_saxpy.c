@@ -11,7 +11,6 @@
 
 // X and Y can have any size, and will often be larger than 2^31.
 
-#define GB_BURBLE 1
 #include "GB_dense.h"
 #include "GB_cblas.h"
 

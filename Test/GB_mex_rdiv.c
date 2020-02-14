@@ -89,7 +89,6 @@ GrB_Info axb (GB_Context Context, bool cprint)
         if (cprint) GxB_print (C, GxB_COMPLETE) ;
     }
 
-    // does nothing if the objects are pre-compiled
     GrB_free (&My_rdiv) ;
     GrB_free (&My_plus_rdiv) ;
 

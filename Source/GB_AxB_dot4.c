@@ -11,8 +11,6 @@
 // the input matrix C, which is already dense.  The mask M is not handled by
 // this function.
 
-// #define GB_BURBLE 1
-
 #include "GB_mxm.h"
 #ifndef GBCOMPACT
 #include "GB_AxB__include.h"

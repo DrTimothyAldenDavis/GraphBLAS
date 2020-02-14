@@ -1,10 +1,10 @@
 function test90
-%TEST90 test AxB with pre-compiled semirings: plus_rdiv and plus_rdiv2
+%TEST90 test AxB with user-defined semirings: plus_rdiv and plus_rdiv2
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-fprintf ('\n -------------- A*B plus_rdiv (pre-compiled semiring)\n') ;
+fprintf ('\n -------------- A*B plus_rdiv (user-defined semiring)\n') ;
 
     % 1001: Gustavson
     % 1002: heap

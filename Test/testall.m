@@ -227,7 +227,7 @@ logstat ('test74',t) ;  % test GrB_mxm on all semirings
 %----------------------------------------
 
 %330
-logstat ('test90',t) ;  % test pre-compiled user-defined semirings
+logstat ('test90',t) ;  % test user-defined semirings
 
 % Turn off malloc debugging
 malloc_debugging = stat ;

@@ -155,7 +155,7 @@
 %   test87   - performance test of GrB_mxm
 %   test88   - test hypersparse matrices with heap-based method
 %   test89   - performance test of complex A*B
-%   test90   - test AxB with pre-compiled semirings: plus_rdiv and plus_rdiv2
+%   test90   - test AxB with user-defined semirings: plus_rdiv and plus_rdiv2
 %   test91   - test subref performance on dense vectors
 %   test92   - test GB_subref (symbolic case)
 %   test93   - test dpagerank and ipagerank
