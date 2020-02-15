@@ -23,7 +23,7 @@ function [multiply_op add_op identity zclass] = GB_spec_semiring (semiring)
 %               'uint16', 'int32', 'uint32', 'int64', 'uint64', 'single' (FP43
 %               in GraphBLAS), 'double' (FP64 in GraphBLAS).
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % set the default semiring
@@ -122,7 +122,7 @@ end
 
 zbool = isequal (zclass, 'logical') ;
 
-% min, max, plus, times monoids: valid for all 11 classes
+% min, max, plus, times, any monoids: valid for all 11 classes
 % or, and, xor, eq monoids:  valid only for logical
 switch add_opname
     case 'min'
@@ -132,6 +132,8 @@ switch add_opname
     case 'plus'
         ok = 1 ;
     case 'times'
+        ok = 1 ;
+    case 'any'
         ok = 1 ;
     case 'or'
         ok = zbool ;

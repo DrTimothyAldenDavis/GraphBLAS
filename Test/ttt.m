@@ -1,5 +1,8 @@
 %TTT various tests
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 test53 ;  % quick test of GB_mex_Matrix_extract
 test24 ;  % test of GrB_Matrix_reduce
 test10 ;  % GrB_apply

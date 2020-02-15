@@ -2,7 +2,7 @@
 // GB_mx_string_to_UnaryOp.c: get a GraphBLAS operator from MATLAB strings
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
         }
         else
         {
-            mexWarnMsgIdAndTxt ("GB:warn", "unrecognised function name") ;
+            mexWarnMsgIdAndTxt ("GB:warn", "unrecognized function name") ;
             return (false) ;
         }
 
@@ -148,7 +148,7 @@ bool GB_mx_string_to_UnaryOp           // true if successful, false otherwise
             opclass = GB_mx_string_to_classID (opclass, opclass_mx) ;
             if (opclass == mxUNKNOWN_CLASS)
             {
-                mexWarnMsgIdAndTxt ("GB:warn", "unrecognised op class") ;
+                mexWarnMsgIdAndTxt ("GB:warn", "unrecognized op class") ;
                 return (false) ;
             }
         }

@@ -3,7 +3,7 @@ function [mult_ops unary_ops add_ops classes semirings selops] = GB_spec_opsall
 %
 % [mult_ops unary_ops add_ops classes semirings select_ops] = GB_spec_opsall
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 mult_ops = {
@@ -57,6 +57,7 @@ add_ops = {
 'max',       % z = max(x,y) : identity is -inf
 'plus',      % z = x + y    : identity is 0
 'times',     % z = x * y    : identity is 1
+'any',       % z = pick x or y: both sets
 %----------------------------
 % 4 monoids for just boolean
 'or',        % z = x || y   : identity is 0 (false)

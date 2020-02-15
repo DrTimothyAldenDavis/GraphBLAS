@@ -1,6 +1,5 @@
 function [C_replace Mask_comp Atrans Btrans descriptor] = ...
     GB_spec_descriptor (descriptor)
-%
 %GB_SPEC_DESCRIPTOR return components of a descriptor
 %
 % Returns the components of the descriptor struct.  Defaults are used if not
@@ -13,7 +12,7 @@ function [C_replace Mask_comp Atrans Btrans descriptor] = ...
 % inp0:  'default' or 'tran'
 % inp1:  'default' or 'tran'
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 if (isempty (descriptor))

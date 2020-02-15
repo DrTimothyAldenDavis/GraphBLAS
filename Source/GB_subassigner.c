@@ -154,7 +154,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 return (GrB_SUCCESS) ;
             }
         }
-        else
+        else if (C_replace)
         { 
             // The mask is empty and not complemented.  In this case, C_replace
             // is effectively false.  Disable it, since it can force pending
@@ -168,7 +168,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     }
 
     bool C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
-    if (C_is_empty)
+    if (C_is_empty && C_replace)
     {
         // C is completely empty.  C_replace is irrelevant, so set it to false.
         GBBURBLE ("(C empty: C_replace effectively false) ") ;
@@ -429,8 +429,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         }
         // For C(:,:) = x or A, the prior content of C is discarded.
         // C_replace is effectively false.
-        GBBURBLE ("(C(:,:) assigment: C_replace effectively false) ") ;
-        C_replace = false ;
+        if (C_replace)
+        { 
+            GBBURBLE ("(C(:,:) assigment: C_replace effectively false) ") ;
+            C_replace = false ;
+        }
         // free pending tuples early but do not clear all of C.  If it is
         // already dense then its pattern can be reused.
         GB_Pending_free (&(C->Pending)) ;
@@ -457,8 +460,11 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
 
         GB_OK (GB_clear (C, Context)) ;
 
-        GBBURBLE ("(C(:,:)<any mask>: C cleared early) ") ;
-        C_replace = false ;
+        if (C_replace)
+        { 
+            GBBURBLE ("(C(:,:)<any mask>: C cleared early) ") ;
+            C_replace = false ;
+        }
 
         // By clearing C now and setting C_replace to false, the following
         // methods are used: 09 becomes 05, 10 becomes 06n or 06s, 17
@@ -646,8 +652,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // GB_clear or GB_wait, above, may have deleted all the zombies in C, so
     // check if C is now empty.
     C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
-    if (C_is_empty)
-    {
+    if (C_is_empty && C_replace)
+    { 
         // C is completely empty.  C_replace is irrelevant, so set it to false.
         GBBURBLE ("(C empty: C_replace effectively false) ") ;
         C_replace = false ;
@@ -695,24 +701,26 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // check if C(:,:) += x or += A
     bool C_dense_update = false ;
 
-    if (C_is_dense && whole_C_matrix)
+    // C(:,:) += assignment where C is dense, no typecasting of C
+    if (C_is_dense && whole_C_matrix && no_Mask && (accum != NULL)
+        && C->type == accum->ztype && C->type == accum->xtype)
     {
-        // C(:,:) assignment where C is dense
-        if (no_Mask && (accum != NULL))
-        {
-            if (scalar_expansion)
+        if (scalar_expansion)
+        { 
+            // C(:,:) += x where C is dense.
+            C_dense_update = true ;
+            if (C_replace)
             { 
-                // C(:,:) += x where C is dense.
                 // Since x is a scalar, C_replace becomes effectively false.
-                C_dense_update = true ;
                 GBBURBLE ("(C+=x: C_replace effectively false) ") ;
                 C_replace = false ;
             }
-            else
-            { 
-                // C(:,:) += A, where C is dense, but only if C_replace is false
-                C_dense_update = !C_replace ;
-            }
+        }
+        else
+        { 
+            // C(:,:) += A, where C is dense: use the C_dense_update method,
+            // but only if C_replace is false
+            C_dense_update = !C_replace ;
         }
     }
 

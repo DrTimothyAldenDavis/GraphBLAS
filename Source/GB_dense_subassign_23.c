@@ -11,6 +11,11 @@
 // FUTURE::: the transposed case, C+=A' could easily be done.
 // The parallelism used is identical to GB_AxB_colscale.
 
+// The type of C must match the type of x and z for the accum function, since
+// C(i,j) = accum (C(i,j), A(i,j)) is handled.  The generic case here can
+// typecast A(i,j) but not C(i,j).  The case for typecasting of C is handled by
+// Method 04.
+
 #include "GB_dense.h"
 #ifndef GBCOMPACT
 #include "GB_binop__include.h"
@@ -55,8 +60,8 @@ GrB_Info GB_dense_subassign_23      // C += A; C is dense, A is sparse or dense
     }
 
     // C = accum (C,A) will be computed
-    ASSERT (GB_Type_compatible (C->type, accum->ztype)) ;
-    ASSERT (GB_Type_compatible (C->type, accum->xtype)) ;
+    ASSERT (C->type == accum->ztype) ;
+    ASSERT (C->type == accum->xtype) ;
     ASSERT (GB_Type_compatible (A->type, accum->ytype)) ;
 
     //--------------------------------------------------------------------------

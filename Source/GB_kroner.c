@@ -172,38 +172,37 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         int64_t kA = kC / bnvec ;
         int64_t kB = kC % bnvec ;
 
-            // get B(:,jB), the (kB)th vector of B
-            int64_t pB_start = Bp [kB] ;
-            int64_t pB_end   = Bp [kB+1] ;
-            int64_t bknz = pB_start - pB_end ;
-            if (bknz == 0) continue ;
-            GB_void bwork [GB_VLA(bsize)] ;
-            // get C(:,jC), the (kC)th vector of C
-            // int64_t kC = kA * bnvec + kB ;
-            int64_t pC = Cp [kC] ;
-            // get A(:,jA), the (kA)th vector of A
-            int64_t pA_start = Ap [kA] ;
-            int64_t pA_end   = Ap [kA+1] ;
-            GB_void awork [GB_VLA(asize)] ;
-            for (int64_t pA = pA_start ; pA < pA_end ; pA++)
-            {
-                // awork = A(iA,jA), typecasted to op->xtype
-                int64_t iA = Ai [pA] ;
-                int64_t iAblock = iA * bvlen ;
-                cast_A (awork, Ax +(pA*asize), asize) ;
-                for (int64_t pB = pB_start ; pB < pB_end ; pB++)
-                { 
-                    // bwork = B(iB,jB), typecasted to op->ytype
-                    int64_t iB = Bi [pB] ;
-                    cast_B (bwork, Bx +(pB*bsize), bsize) ;
-                    // C(iC,jC) = A(iA,jA) * B(iB,jB)
-                    int64_t iC = iAblock + iB ;
-                    Ci [pC] = iC ;
-                    fmult (Cx +(pC*csize), awork, bwork) ;
-                    pC++ ;
-                }
+        // get B(:,jB), the (kB)th vector of B
+        int64_t pB_start = Bp [kB] ;
+        int64_t pB_end   = Bp [kB+1] ;
+        int64_t bknz = pB_start - pB_end ;
+        if (bknz == 0) continue ;
+        GB_void bwork [GB_VLA(bsize)] ;
+        // get C(:,jC), the (kC)th vector of C
+        // int64_t kC = kA * bnvec + kB ;
+        int64_t pC = Cp [kC] ;
+        // get A(:,jA), the (kA)th vector of A
+        int64_t pA_start = Ap [kA] ;
+        int64_t pA_end   = Ap [kA+1] ;
+        GB_void awork [GB_VLA(asize)] ;
+        for (int64_t pA = pA_start ; pA < pA_end ; pA++)
+        {
+            // awork = A(iA,jA), typecasted to op->xtype
+            int64_t iA = Ai [pA] ;
+            int64_t iAblock = iA * bvlen ;
+            cast_A (awork, Ax +(pA*asize), asize) ;
+            for (int64_t pB = pB_start ; pB < pB_end ; pB++)
+            { 
+                // bwork = B(iB,jB), typecasted to op->ytype
+                int64_t iB = Bi [pB] ;
+                cast_B (bwork, Bx +(pB*bsize), bsize) ;
+                // C(iC,jC) = A(iA,jA) * B(iB,jB)
+                int64_t iC = iAblock + iB ;
+                Ci [pC] = iC ;
+                fmult (Cx +(pC*csize), awork, bwork) ;
+                pC++ ;
             }
-
+        }
     }
 
     //--------------------------------------------------------------------------

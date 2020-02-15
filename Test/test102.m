@@ -1,6 +1,9 @@
 function test102
 %TEST102 test GB_AxB_flopcount
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 fprintf ('\ntest102: testing GB_AxB_flopcount\n') ;
 
 rng ('default') ;

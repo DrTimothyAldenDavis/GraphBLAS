@@ -2,7 +2,7 @@
 // GB_mx_string_to_BinaryOp.c: get a GraphBLAS operator from MATLAB strings
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -137,10 +137,11 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
             opcode = default_opcode ;
         }
 
-        // 11 binary operators z=f(x,y), all x,y,z of the same type
+        // 12 binary operators z=f(x,y), all x,y,z of the same type
         else if (MATCH (opname, "first"   )) { opcode = GB_FIRST_opcode ; }
         else if (MATCH (opname, "second"  )) { opcode = GB_SECOND_opcode ; }
         else if (MATCH (opname, "pair"    )) { opcode = GB_PAIR_opcode ; }
+        else if (MATCH (opname, "any"     )) { opcode = GB_ANY_opcode ; }
         else if (MATCH (opname, "min"     )) { opcode = GB_MIN_opcode ; }
         else if (MATCH (opname, "max"     )) { opcode = GB_MAX_opcode ; }
         else if (MATCH (opname, "plus"    )) { opcode = GB_PLUS_opcode ; }
@@ -182,7 +183,7 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
 
         else
         {
-            mexWarnMsgIdAndTxt ("GB:warn", "unrecognised function name") ;
+            mexWarnMsgIdAndTxt ("GB:warn", "unrecognized function name") ;
             return (false) ;
         }
 
@@ -192,7 +193,7 @@ bool GB_mx_string_to_BinaryOp          // true if successful, false otherwise
             opclass = GB_mx_string_to_classID (opclass, opclass_mx) ;
             if (opclass == mxUNKNOWN_CLASS)
             {
-                mexWarnMsgIdAndTxt ("GB:warn", "unrecognised op class") ;
+                mexWarnMsgIdAndTxt ("GB:warn", "unrecognized op class") ;
                 return (false) ;
             }
         }

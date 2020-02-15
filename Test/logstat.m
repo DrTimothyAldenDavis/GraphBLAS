@@ -1,8 +1,8 @@
 function logstat (testscript, threads)
 %LOGSTAT run a GraphBLAS test and log the results to log.txt 
 
-%  SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
-%  http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 [debug, compact, malloc, covered] = GB_mex_debug ;
 

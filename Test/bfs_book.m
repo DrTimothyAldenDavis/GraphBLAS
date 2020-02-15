@@ -1,3 +1,5 @@
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 % graph on the cover of the book, 'Graph Algorithms in the language
 % of linear algebra'.  The source node is node 4.

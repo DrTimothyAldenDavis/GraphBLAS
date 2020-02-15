@@ -10,6 +10,9 @@ function [flops mwork] = flopcount (M,Mask_complement,A,B) ;
 % flopcount m-file returns the same thing as GB_AxB_flopcount.  Also
 % included in flops(j) is the work needed to access the mask M(:,j).
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 n = size (B,2) ;
 flops = zeros (1,n) ;
 mwork = 0 ;
