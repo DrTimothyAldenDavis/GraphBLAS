@@ -148,6 +148,9 @@ int main (void)
 
     // start GraphBLAS
     GrB_init (GrB_NONBLOCKING) ;
+    int nthreads ;
+    GxB_get (GxB_NTHREADS, &nthreads) ;
+    fprintf (stderr, "wildtype demo: nthreads %d\n", nthreads) ;
 
     /* alternative method via #defines:
     fprintf (stderr, LINE2 "SuiteSparse:GraphBLAS Version %d.%d.%d, %s\n" LINE2

@@ -120,6 +120,9 @@ int main (int argc, char **argv)
 
     // start GraphBLAS
     OK (GrB_init (GrB_NONBLOCKING)) ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "openmp demo, nthreads %d\n", nthreads) ;
 
     // Determine which user-threading model is being used.
     GxB_Thread_Model thread_safety ;

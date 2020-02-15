@@ -7,8 +7,12 @@
 
 #-------------------------------------------------------------------------------
 
+VER1 = 3
+VER2 = 2
+VER3 = 0
+
 # pick your compiler:
-  CC = gcc -Wno-unknown-pragmas -Wno-pragmas
+  CC = gcc
 # CC = cc
 # CC = clang
 # CC = xlc
@@ -22,7 +26,7 @@ INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h 
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
 LDFLAGS = -fopenmp -lm
-CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC
+CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC -DUSER_OPENMP_THREADS
 CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator
 SO_OPTS = $(LDFLAGS)
 
@@ -30,11 +34,17 @@ UNAME := $(shell uname)
 ifeq ($(UNAME),Darwin)
     # Mac
     CFLAGS += -fno-common
-    SO_NAME = libgraphblas.dylib
+    SO_NAME = libgraphblas.dylib.$(VER1).$(VER2).$(VER3)
+    SO_NAME0 = libgraphblas.dylib
+    SO_NAME1 = libgraphblas.dylib.$(VER1)
+    SO_NAME2 = libgraphblas.dylib.$(VER1).$(VER2)
     SO_OPTS += -dynamiclib -shared -undefined dynamic_lookup
 else
     # Linux
-    SO_NAME = libgraphblas.so
+    SO_NAME = libgraphblas.so.$(VER1).$(VER2).$(VER3)
+    SO_NAME0 = libgraphblas.so
+    SO_NAME1 = libgraphblas.so.$(VER1)
+    SO_NAME2 = libgraphblas.so.$(VER1).$(VER2)
     SO_OPTS += -shared -Wl,-soname -Wl,$(SO_NAME)
 endif
 
@@ -58,8 +68,11 @@ libgraphblas.a: $(OBJ)
 	- ranlib $@
 
 install: $(SO_NAME)
-	$(CP) $(SO_NAME) /usr/local/lib
-	$(CP) ../Include/GraphBLAS.h  /usr/local/include
+	cp $(SO_NAME) /usr/local/lib
+	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME0)
+	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME1)
+	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME2)
+	cp ../Include/GraphBLAS.h  /usr/local/include
 
 DINC = ../Demo/Include/*.h $(INC)
 DSRC = ../Demo/Source/*.c

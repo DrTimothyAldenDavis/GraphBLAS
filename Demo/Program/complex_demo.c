@@ -64,7 +64,9 @@ int main (int argc, char **argv)
 
     // initialize GraphBLAS and create the user-defined Complex type
     GrB_init (GrB_NONBLOCKING) ;
-    fprintf (stderr, "complex_demo:\n") ;
+    int nthreads ;
+    GxB_get (GxB_NTHREADS, &nthreads) ;
+    fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;
     Complex_init ( ) ;
 
     // generate random matrices A and B

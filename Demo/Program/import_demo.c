@@ -22,7 +22,9 @@ int main (int argc, char **argv)
     GrB_Matrix A = NULL ;
     GrB_Info info ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "import_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "import_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // get a matrix

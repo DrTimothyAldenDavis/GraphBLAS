@@ -54,7 +54,9 @@ int main (int argc, char **argv)
     int64_t nlevel0 = -1 ;
     double tic [2], t ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "bfs_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "bfs_demo: nthreads %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // read a matrix from stdin

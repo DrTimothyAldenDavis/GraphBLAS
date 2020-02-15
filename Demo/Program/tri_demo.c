@@ -52,7 +52,9 @@ int main (int argc, char **argv)
     GrB_Info info ;
     double tic [2], r1, r2 ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "tri_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "tri_demo: nthreads %d\n", nthreads) ;
     printf ("--------------------------------------------------------------\n");
 
     //--------------------------------------------------------------------------

@@ -51,8 +51,10 @@ int main (int argc, char **argv)
 
     double tic [2], t ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "\npagerank_demo:\n") ;
-    printf  (        "\npagerank_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "\npagerank_demo: nthreads: %d\n", nthreads) ;
+    printf  (        "\npagerank_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // read a matrix from stdin

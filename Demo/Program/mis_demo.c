@@ -177,7 +177,9 @@ int main (int argc, char **argv)
 
     double tic [2], t1, t2 ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "\nmis_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "\nmis_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // get a symmetric matrix with no self edges
