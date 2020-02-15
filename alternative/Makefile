@@ -8,7 +8,7 @@
 #-------------------------------------------------------------------------------
 
 # pick your compiler:
-  CC = gcc
+  CC = gcc -Wno-unknown-pragmas -Wno-pragmas
 # CC = cc
 # CC = clang
 # CC = xlc
@@ -21,7 +21,7 @@ SRC = ../Source/*.c ../Source/Generated/*.c
 INC = ../Include/*.h ../Source/*.h ../Source/Template/* ../Source/Generated/*.h ../Source/Generator/*.h 
 SRC2 = $(notdir $(wildcard $(SRC)))
 OBJ = $(SRC2:.c=.o)
-LDFLAGS = -fopenmp
+LDFLAGS = -fopenmp -lm
 CFLAGS = -O3 -std=c11 -fopenmp -fexceptions -fPIC
 CPPFLAGS = -I../Include -I../Source -I../Source/Template -I../Source/Generated -I../Source/Generator
 SO_OPTS = $(LDFLAGS)
@@ -35,7 +35,7 @@ ifeq ($(UNAME),Darwin)
 else
     # Linux
     SO_NAME = libgraphblas.so
-    SO_OPTS += -shared -Wl,-soname -Wl,$(SO_NAME) -Wl,--no-undefined
+    SO_OPTS += -shared -Wl,-soname -Wl,$(SO_NAME)
 endif
 
 %.o: ../Source/%.c $(INC)

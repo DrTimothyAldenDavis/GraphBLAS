@@ -128,7 +128,7 @@ for k1 = 1:length(mult_ops)
             fprintf ('.') ;
 
             % C = A'*B, with mask
-save gunk Cin Mask semiring A B dtn id
+
             tic
             C1 = GB_mex_mxm  (Cin, Mask, [ ], semiring, A, B, dtn);
             t2 = toc ;
@@ -141,6 +141,8 @@ save gunk Cin Mask semiring A B dtn id
             t2 = toc ;
             C2 = GB_spec_vxm (Xin, mask, [ ], semiring, X, A, [ ]);
             GB_spec_compare (C1, C2, id) ;
+
+            % TODO add accum, and Cin dense, for dot product (test dot4)
 
             if (k3 == 1)
                 % repeat but with typecasing, to test generic A'*B
