@@ -225,50 +225,50 @@
 
                     #if GB_IS_ANY_MONOID
 
-                    #define GB_IKJ                                              \
-                        uint8_t f ;                                             \
-                        GB_ATOMIC_READ                                          \
-                        f = Hf [i] ;            /* grab the entry */            \
-                        if (f == 0 || f == 2) continue ;                        \
-                        GB_ATOMIC_WRITE                                         \
-                        Hf [i] = 2 ;            /* unlock the entry */          \
-                        GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */       \
-                        GB_ATOMIC_WRITE_HX (i, t) ;    /* Hx [i] = t */         \
+                    #define GB_IKJ                                             \
+                        uint8_t f ;                                            \
+                        GB_ATOMIC_READ                                         \
+                        f = Hf [i] ;            /* grab the entry */           \
+                        if (f == 0 || f == 2) continue ;                       \
+                        GB_ATOMIC_WRITE                                        \
+                        Hf [i] = 2 ;            /* unlock the entry */         \
+                        GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */      \
+                        GB_ATOMIC_WRITE_HX (i, t) ;    /* Hx [i] = t */
 
                     #else
 
-                    #define GB_IKJ                                              \
-                    {                                                           \
-                        GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */       \
-                        uint8_t f ;                                             \
-                        GB_ATOMIC_READ                                          \
-                        f = Hf [i] ;            /* grab the entry */            \
-                        if (GB_HAS_ATOMIC && (f == 2))                          \
-                        {                                                       \
-                            /* C(i,j) already seen; update it */                \
-                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */      \
-                            continue ;       /* C(i,j) has been updated */      \
-                        }                                                       \
-                        if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/     \
-                        do  /* lock the entry */                                \
-                        {                                                       \
-                            GB_ATOMIC_CAPTURE                                   \
-                            {                                                   \
-                                f = Hf [i] ; Hf [i] = 3 ;                       \
-                            }                                                   \
-                        } while (f == 3) ; /* lock owner gets f=1 or 2 */       \
-                        if (f == 1)                                             \
-                        {                                                       \
-                            /* C(i,j) is a new entry */                         \
-                            GB_ATOMIC_WRITE_HX (i, t) ; /* Hx [i] = t */        \
-                        }                                                       \
-                        else /* f == 2 */                                       \
-                        {                                                       \
-                            /* C(i,j) already appears in C(:,j) */              \
-                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */      \
-                        }                                                       \
-                        GB_ATOMIC_WRITE                                         \
-                        Hf [i] = 2 ;                /* unlock the entry */      \
+                    #define GB_IKJ                                             \
+                    {                                                          \
+                        GB_MULT_A_ik_B_kj ;     /* t = A(i,k) * B(k,j) */      \
+                        uint8_t f ;                                            \
+                        GB_ATOMIC_READ                                         \
+                        f = Hf [i] ;            /* grab the entry */           \
+                        if (GB_HAS_ATOMIC && (f == 2))                         \
+                        {                                                      \
+                            /* C(i,j) already seen; update it */               \
+                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */     \
+                            continue ;       /* C(i,j) has been updated */     \
+                        }                                                      \
+                        if (f == 0) continue ; /* M(i,j)=0; ignore C(i,j)*/    \
+                        do  /* lock the entry */                               \
+                        {                                                      \
+                            GB_ATOMIC_CAPTURE                                  \
+                            {                                                  \
+                                f = Hf [i] ; Hf [i] = 3 ;                      \
+                            }                                                  \
+                        } while (f == 3) ; /* lock owner gets f=1 or 2 */      \
+                        if (f == 1)                                            \
+                        {                                                      \
+                            /* C(i,j) is a new entry */                        \
+                            GB_ATOMIC_WRITE_HX (i, t) ; /* Hx [i] = t */       \
+                        }                                                      \
+                        else /* f == 2 */                                      \
+                        {                                                      \
+                            /* C(i,j) already appears in C(:,j) */             \
+                            GB_ATOMIC_UPDATE_HX (i, t) ; /* Hx [i] += t */     \
+                        }                                                      \
+                        GB_ATOMIC_WRITE                                        \
+                        Hf [i] = 2 ;                /* unlock the entry */     \
                     }
                     #endif
 
@@ -502,48 +502,49 @@
                     GB_GET_B_kj ;               // bkj = B(k,j)
                     #define GB_IKJ_VECTORIZE
                     #define GB_IKJ_IVDEP
-                    #define GB_IKJ                                              \
-                    {                                                           \
-                        GB_MULT_A_ik_B_kj ;      /* t = A(i,k) * B(k,j) */      \
-                        int64_t i1 = i + 1 ;     /* i1 = one-based index */     \
-                        int64_t i_unlocked = (i1 << 2) + 2 ;  /* (i+1,2) */     \
-                        for (GB_HASH (i))        /* find i in hash table */     \
-                        {                                                       \
-                            int64_t hf ;                                        \
-                            GB_ATOMIC_READ                                      \
-                            hf = Hf [hash] ;        /* grab the entry */        \
-                            if (GB_HAS_ATOMIC && (hf == i_unlocked))            \
-                            {                                                   \
-                                GB_ATOMIC_UPDATE_HX (hash, t) ;/* Hx[hash]+=t */\
-                                break ;     /* C(i,j) has been updated */       \
-                            }                                                   \
-                            if (hf == 0) break ; /* M(i,j)=0; ignore Cij */     \
-                            if ((hf >> 2) == i1) /* if true, i found */         \
-                            {                                                   \
-                                do /* lock the entry */                         \
-                                {                                               \
-                                    GB_ATOMIC_CAPTURE                           \
-                                    {                                           \
-                                        hf = Hf [hash] ; Hf [hash] |= 3 ;       \
-                                    }                                           \
-                                } while ((hf & 3) == 3) ; /* own: f=1,2 */      \
-                                if ((hf & 3) == 1) /* f == 1 */                 \
-                                {                                               \
-                                    /* C(i,j) is a new entry in C(:,j) */       \
-                                    /* Hx [hash] = t */                         \
-                                    GB_ATOMIC_WRITE_HX (hash, t) ;              \
-                                }                                               \
-                                else /* f == 2 */                               \
-                                {                                               \
-                                    /* C(i,j) already appears in C(:,j) */      \
-                                    /* Hx [hash] += t */                        \
-                                    GB_ATOMIC_UPDATE_HX (hash, t) ;             \
-                                }                                               \
-                                GB_ATOMIC_WRITE                                 \
-                                Hf [hash] = i_unlocked ; /* unlock entry */     \
-                                break ;                                         \
-                            }                                                   \
-                        }                                                       \
+                    #define GB_IKJ                                             \
+                    {                                                          \
+                        GB_MULT_A_ik_B_kj ;      /* t = A(i,k) * B(k,j) */     \
+                        int64_t i1 = i + 1 ;     /* i1 = one-based index */    \
+                        int64_t i_unlocked = (i1 << 2) + 2 ;  /* (i+1,2) */    \
+                        for (GB_HASH (i))        /* find i in hash table */    \
+                        {                                                      \
+                            int64_t hf ;                                       \
+                            GB_ATOMIC_READ                                     \
+                            hf = Hf [hash] ;        /* grab the entry */       \
+                            if (GB_HAS_ATOMIC && (hf == i_unlocked))           \
+                            {                                                  \
+                                /* Hx [hash] += t */                           \
+                                GB_ATOMIC_UPDATE_HX (hash, t) ;                \
+                                break ;     /* C(i,j) has been updated */      \
+                            }                                                  \
+                            if (hf == 0) break ; /* M(i,j)=0; ignore Cij */    \
+                            if ((hf >> 2) == i1) /* if true, i found */        \
+                            {                                                  \
+                                do /* lock the entry */                        \
+                                {                                              \
+                                    GB_ATOMIC_CAPTURE                          \
+                                    {                                          \
+                                        hf = Hf [hash] ; Hf [hash] |= 3 ;      \
+                                    }                                          \
+                                } while ((hf & 3) == 3) ; /* own: f=1,2 */     \
+                                if ((hf & 3) == 1) /* f == 1 */                \
+                                {                                              \
+                                    /* C(i,j) is a new entry in C(:,j) */      \
+                                    /* Hx [hash] = t */                        \
+                                    GB_ATOMIC_WRITE_HX (hash, t) ;             \
+                                }                                              \
+                                else /* f == 2 */                              \
+                                {                                              \
+                                    /* C(i,j) already appears in C(:,j) */     \
+                                    /* Hx [hash] += t */                       \
+                                    GB_ATOMIC_UPDATE_HX (hash, t) ;            \
+                                }                                              \
+                                GB_ATOMIC_WRITE                                \
+                                Hf [hash] = i_unlocked ; /* unlock entry */    \
+                                break ;                                        \
+                            }                                                  \
+                        }                                                      \
                     }
                     GB_SCAN_M_j_OR_A_k ;
                     #undef GB_IKJ_VECTORIZE
@@ -927,22 +928,22 @@
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ_VECTORIZE GB_PRAGMA_VECTORIZE
                                 #define GB_IKJ_IVDEP     GB_PRAGMA_IVDEP
-                                #define GB_IKJ                                  \
-                                {                                               \
-                                    int64_t hf = Hf [i] ;                       \
-                                    if (hf == mark)                             \
-                                    {                                           \
-                                        /* C(i,j) = A(i,k) * B(k,j) */          \
-                                        Hf [i] = mark1 ;     /* mark as seen */ \
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */  \
-                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */   \
-                                    }                                           \
-                                    else if (hf == mark1)                       \
-                                    {                                           \
-                                        /* C(i,j) += A(i,k) * B(k,j) */         \
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */  \
-                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */  \
-                                    }                                           \
+                                #define GB_IKJ                                 \
+                                {                                              \
+                                    int64_t hf = Hf [i] ;                      \
+                                    if (hf == mark)                            \
+                                    {                                          \
+                                        /* C(i,j) = A(i,k) * B(k,j) */         \
+                                        Hf [i] = mark1 ;     /* mark as seen */\
+                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
+                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */  \
+                                    }                                          \
+                                    else if (hf == mark1)                      \
+                                    {                                          \
+                                        /* C(i,j) += A(i,k) * B(k,j) */        \
+                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
+                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
+                                    }                                          \
                                 }
                                 GB_SCAN_M_j_OR_A_k ;
                                 #undef GB_IKJ_VECTORIZE
@@ -961,23 +962,23 @@
                                 GB_GET_B_kj ;               // bkj = B(k,j)
                                 #define GB_IKJ_VECTORIZE GB_PRAGMA_VECTORIZE
                                 #define GB_IKJ_IVDEP     GB_PRAGMA_IVDEP
-                                #define GB_IKJ                                  \
-                                {                                               \
-                                    int64_t hf = Hf [i] ;                       \
-                                    if (hf == mark)                             \
-                                    {                                           \
-                                        /* C(i,j) = A(i,k) * B(k,j) */          \
-                                        Hf [i] = mark1 ;     /* mark as seen */ \
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */  \
-                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */   \
-                                        Ci [pC++] = i ; /* C(:,j) pattern */    \
-                                    }                                           \
-                                    else if (hf == mark1)                       \
-                                    {                                           \
-                                        /* C(i,j) += A(i,k) * B(k,j) */         \
-                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */  \
-                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */  \
-                                    }                                           \
+                                #define GB_IKJ                                 \
+                                {                                              \
+                                    int64_t hf = Hf [i] ;                      \
+                                    if (hf == mark)                            \
+                                    {                                          \
+                                        /* C(i,j) = A(i,k) * B(k,j) */         \
+                                        Hf [i] = mark1 ;     /* mark as seen */\
+                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
+                                        GB_HX_WRITE (i, t) ; /* Hx [i] = t */  \
+                                        Ci [pC++] = i ; /* C(:,j) pattern */   \
+                                    }                                          \
+                                    else if (hf == mark1)                      \
+                                    {                                          \
+                                        /* C(i,j) += A(i,k) * B(k,j) */        \
+                                        GB_MULT_A_ik_B_kj ;  /* t = aik*bkj */ \
+                                        GB_HX_UPDATE (i, t) ;/* Hx [i] += t */ \
+                                    }                                          \
                                 }
                                 GB_SCAN_M_j_OR_A_k ;
                                 #undef GB_IKJ_VECTORIZE
@@ -1191,30 +1192,30 @@
                             GB_GET_B_kj ;               // bkj = B(k,j)
                             #define GB_IKJ_VECTORIZE
                             #define GB_IKJ_IVDEP
-                            #define GB_IKJ                                      \
-                            {                                                   \
-                                for (GB_HASH (i))       /* find i in hash */    \
-                                {                                               \
-                                    int64_t f = Hf [hash] ;                     \
-                                    if (f < mark) break ; /* M(i,j)=0, ignore*/ \
-                                    if (Hi [hash] == i)                         \
-                                    {                                           \
-                                        GB_MULT_A_ik_B_kj ; /* t = aik*bkj */   \
-                                        if (f == mark) /* if true, i is new */  \
-                                        {                                       \
-                                            /* C(i,j) is new */                 \
-                                            Hf [hash] = mark1 ; /* mark seen */ \
-                                            GB_HX_WRITE (hash, t) ;/*Hx[.]=t */ \
-                                            Ci [pC++] = i ;                     \
-                                        }                                       \
-                                        else                                    \
-                                        {                                       \
-                                            /* C(i,j) has been seen; update */  \
-                                            GB_HX_UPDATE (hash, t) ;            \
-                                        }                                       \
-                                        break ;                                 \
-                                    }                                           \
-                                }                                               \
+                            #define GB_IKJ                                     \
+                            {                                                  \
+                                for (GB_HASH (i))       /* find i in hash */   \
+                                {                                              \
+                                    int64_t f = Hf [hash] ;                    \
+                                    if (f < mark) break ; /* M(i,j)=0, ignore*/\
+                                    if (Hi [hash] == i)                        \
+                                    {                                          \
+                                        GB_MULT_A_ik_B_kj ; /* t = aik*bkj */  \
+                                        if (f == mark) /* if true, i is new */ \
+                                        {                                      \
+                                            /* C(i,j) is new */                \
+                                            Hf [hash] = mark1 ; /* mark seen */\
+                                            GB_HX_WRITE (hash, t) ;/*Hx[.]=t */\
+                                            Ci [pC++] = i ;                    \
+                                        }                                      \
+                                        else                                   \
+                                        {                                      \
+                                            /* C(i,j) has been seen; update */ \
+                                            GB_HX_UPDATE (hash, t) ;           \
+                                        }                                      \
+                                        break ;                                \
+                                    }                                          \
+                                }                                              \
                             }
                             GB_SCAN_M_j_OR_A_k ;
                             #undef GB_IKJ_VECTORIZE

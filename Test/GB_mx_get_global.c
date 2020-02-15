@@ -44,7 +44,6 @@ bool GB_mx_get_global       // true if doing malloc_debug
         // if (malloc_debug) printf ("GraphBLAS malloc debug enabled\n") ;
     }
 
-
     //--------------------------------------------------------------------------
     // clear the time
     //--------------------------------------------------------------------------
@@ -63,14 +62,14 @@ bool GB_mx_get_global       // true if doing malloc_debug
     // initialize GraphBLAS
     //--------------------------------------------------------------------------
 
-    bool burble = GB_Global_burble_get ( ) ;
+    bool burble = GB_Global_burble_get ( ) ;            // save current burble
     GB_Global_GrB_init_called_set (false) ;
     GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree, false) ;
     ASSERT (GB_Global_nmalloc_get ( ) == 0) ;
     GB_Global_abort_function_set (GB_mx_abort) ;
     GB_Global_malloc_tracking_set (true) ;
     GxB_set (GxB_FORMAT, GxB_BY_COL) ;
-    GxB_set (GxB_BURBLE, burble) ;
+    GxB_set (GxB_BURBLE, burble) ;                      // restore the burble
 
     //--------------------------------------------------------------------------
     // get nthreads
