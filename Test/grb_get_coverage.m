@@ -1,5 +1,5 @@
 function c = grb_get_coverage
-%GRB_GET_COVERAGE: return current statement coverage
+%GRB_GET_COVERAGE return current statement coverage
 
 c = 0 ;
 try

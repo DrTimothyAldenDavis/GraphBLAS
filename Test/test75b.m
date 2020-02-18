@@ -1,5 +1,5 @@
 function test75b
-%TEST75B test GrB_mxm and GrB_vxm on all semirings (shorter test than test75)
+%TEST75B GrB_mxm and GrB_vxm on all semirings (shorter test than test75)
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -226,4 +226,5 @@ n_semirings
 % save saveme2 cc ccall
 
 fprintf ('\ntest75b: all tests passed\n') ;
+
 

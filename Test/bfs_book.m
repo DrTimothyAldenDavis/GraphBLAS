@@ -1,3 +1,5 @@
+%BFS_BOOK run BFS on a small graph
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
@@ -32,3 +34,4 @@ for s = 1:n
 end
 
 fprintf ('bfs_book test passed\n') ;
+
