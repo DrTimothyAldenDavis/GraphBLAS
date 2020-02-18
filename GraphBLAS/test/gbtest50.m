@@ -6,7 +6,7 @@ function gbtest50
 
 rng ('default') ;
 
-load west0479 ;
+load west0479 ; %#ok<*LOAD>
 A = GrB.offdiag (west0479) ;
 A = A+A' ;
 C3a  = GrB.ktruss (A) ;

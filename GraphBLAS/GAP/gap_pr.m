@@ -1,8 +1,6 @@
-%-------------------------------------------------------------------------------
-% gap_pr: run pagerank for the GAP benchmark
-%-------------------------------------------------------------------------------
+function gap_pr
+%GAP_PR run pagerank for the GAP benchmark
 
-clear
 rng ('default') ;
 
 % warmup, to make sure GrB library is loaded

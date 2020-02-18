@@ -39,7 +39,7 @@ valid_count = [
            0
          120 ] ;
 
-[filepath, name, ext] = fileparts (mfilename ('fullpath')) ;
+[filepath, name, ext] = fileparts (mfilename ('fullpath')) ; %#ok<*ASGLU>
 
 for k = 1:nfiles
     filename = files {k} ;
@@ -47,7 +47,7 @@ for k = 1:nfiles
     G = GrB.build (int64 (T (:,1)), int64 (T (:,2)), T (:,3), desc) ;
     [m, n] = size (G) ;
     if (m ~= n)
-        G = [GrB(m,m) G ; G' GrB(n,n)] ;
+        G = [GrB(m,m) G ; G' GrB(n,n)] ; %#ok<*AGROW>
     elseif (~issymmetric (G))
         G = G + G' ;
     end

@@ -51,7 +51,7 @@ assert (c0 == c1) ;
 assert (c1 == c2) ;
 
 try
-    x = vpa (1) ;
+    x = vpa (1) ; %#ok<*NASGU>
     have_symbolic = true ;
 catch
     % symbolic toolbox not available

@@ -12,7 +12,7 @@ C = A+B ;
 D = A.*B ;
 
 G = GrB.eadd ('+', A, B) ;
-err = norm (C-G, 1)
+err = norm (C-G, 1) %#ok<*NOPRT>
 assert (logical (err < 1e-12))
 
 H = GrB.emult ('*', A, B) ;
@@ -35,7 +35,7 @@ assert (logical (err < 1e-12))
 
 d.kind = 'GrB' ;
 G = GrB.eadd ('+', A, B, d) ;
-err = norm (C-G, 1)
+err = norm (C-G, 1) %#ok<*NASGU>
 
 H = GrB.emult ('*', A, B, d) ;
 err = norm (D-H, 1)
@@ -43,7 +43,7 @@ err = norm (D-H, 1)
 E = sparse (rand (2)) ;
 C = E + A+B ;
 G = GrB.eadd (E, '+', '+', A, B) ;
-C-G
+C-G %#ok<*MNEFF>
 
 F = sparse (rand (2)) ;
 D = F + A.*B ;

@@ -10,8 +10,8 @@ n = 5 ;
 A = sprand (n, n, 0.5) ;
 A (n,n) = 5 ;
 
-[i j x] = find (A) ;
-[m n] = size (A) ;
+[i, j, x] = find (A) ;
+[m, n] = size (A) ;
 
 G = GrB.build (i, j, x, m, n) ;
 S = sparse   (i, j, x, m, n) ;

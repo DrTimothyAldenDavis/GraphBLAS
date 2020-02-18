@@ -1,4 +1,4 @@
-function [r stats] = pagerank (A, opts)
+function [r, stats] = pagerank (A, opts)
 %GRB.PAGERANK PageRank of a graph.
 % r = GrB.pagerank (A) computes the PageRank of a graph with adjacency matrix
 % A.  r = GrB.pagerank (A, options) allows for non-default options to be

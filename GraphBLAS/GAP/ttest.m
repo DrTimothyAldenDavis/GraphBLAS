@@ -1,3 +1,4 @@
+%TTEST run triangle counting tests
 
 index = ssget ;
 f = find (index.nnz > 1e6 & index.nrows == index.ncols) ;
@@ -31,4 +32,5 @@ for k = 1:nmat
     end
 
 end
+
 

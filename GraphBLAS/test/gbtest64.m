@@ -4,7 +4,7 @@ function gbtest64
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-load west0479 ;
+load west0479 ; %#ok<*LOAD>
 W = abs (west0479) ;
 W (1,:) = 0 ;
 
@@ -29,7 +29,7 @@ warning ('off', 'MATLAB:graphfun:centrality:PageRankNoConv') ;
 warning ('off', 'GrB:pagerank') ;
 
 r1 = centrality (A, 'pagerank', 'MaxIterations', 2) ;
-[msg, id] = lastwarn ;
+[msg, id] = lastwarn ; %#ok<*ASGLU>
 assert (isequal (id, 'MATLAB:graphfun:centrality:PageRankNoConv')) ;
 
 r2 = GrB.pagerank (G, struct ('maxit', 2)) ;

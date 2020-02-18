@@ -7,7 +7,7 @@ function gbtest13
 list = gbtest_types ;
 
 A = 100 * rand (3) ;
-[I, J, X] = find (A) ;
+[I, J, X] = find (A) ; %#ok<*ASGLU>
 I_0 = int64 (I) - 1 ;
 J_0 = int64 (J) - 1 ;
 A (1,1) = 0 ;

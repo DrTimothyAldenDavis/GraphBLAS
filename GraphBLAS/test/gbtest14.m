@@ -33,6 +33,7 @@ assert (err < 1e-12)
 d.kind = 'GrB' ;
 G = GrB.kronecker ('*', A, B, d) ;
 err = norm (C-G, 1) ;
+assert (err < 1e-12) ;
 
 d2 = d ;
 d2.in1 = 'transpose' ;

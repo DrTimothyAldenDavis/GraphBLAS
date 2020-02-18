@@ -5,7 +5,7 @@ function gbtest1
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 rng ('default') ;
-X = 100 * sprand (3, 4, 0.4)
+X = 100 * sprand (3, 4, 0.4) %#ok<*NOPRT>
 
 % types = { 'double' } ;
 

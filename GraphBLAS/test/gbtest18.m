@@ -17,7 +17,7 @@ for trial = 1:21
         n = 5 ;
     end
 
-    MA = sprand (m,n, 0.5) ;    A (2,2) = 2 ;
+    MA = sprand (m,n, 0.5) ;    A (2,2) = 2 ; %#ok<*NASGU>
     MB = sprand (m,n, 0.5) ;    B (2,2) = 2 ;
 
     if (rand < 0.1)

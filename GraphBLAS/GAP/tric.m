@@ -1,4 +1,5 @@
 function [c times best] = tric (A, cgood)
+%TRIC triangle countting tests
 % A must be logical, symmetric, and stored by row
 
 assert (GrB.isbyrow (A)) ;
@@ -253,4 +254,5 @@ for trial = trials
 end
 
 fprintf ('\n') ;
+
 

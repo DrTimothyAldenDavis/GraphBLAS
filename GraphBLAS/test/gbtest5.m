@@ -11,7 +11,7 @@ list_axb  = { [ ], 'default', 'gustavson', 'heap', 'dot' } ;
 
 ntrials = 0;
 
-d = struct
+d = struct %#ok<*NASGU,*NOPRT>
 
 for k1 = 1:length (list_out)
     out = list_out {k1} ;

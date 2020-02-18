@@ -44,7 +44,7 @@ for test = 1:4
     fprintf ('\nGrB: y = A*x where x = %s\n', X) ;
 
     for nthreads = threads
-        if (threads > max_nthreads)
+        if (nthreads > max_nthreads)
             break ;
         end
         GrB.threads (nthreads) ;

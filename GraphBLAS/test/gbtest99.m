@@ -53,7 +53,7 @@ for k1 = 1:2
     end
 
     v1 = GrB.bfs (H, source) ;
-    [v pi] = GrB.bfs (H, source) ;
+    [v, pi] = GrB.bfs (H, source) ;
     assert (isequal (v, v1)) ;
 
     vok = [1 2 3 2 3 4 3 0] ;
@@ -79,7 +79,7 @@ for k1 = 1:2
     levels = full (double (v (v2))) ;
     assert (isequal (levels, sort (levels))) ;
 
-    [v pi] = GrB.bfs (H, source, 'directed') ;
+    [v, pi] = GrB.bfs (H, source, 'directed') ;
     assert (isequal (full (double (v)), vok)) ;
 
     ok1 = isequal (full (double (pi)), piok1) ;
@@ -94,7 +94,7 @@ for k1 = 1:2
     end
     assert (ok1 || ok2) ;
 
-    [v pi] = GrB.bfs (H, source, 'directed', 'check') ;
+    [v, pi] = GrB.bfs (H, source, 'directed', 'check') ;
     assert (isequal (full (double (v)), vok)) ;
 
     ok1 = isequal (full (double (pi)), piok1) ;
@@ -112,7 +112,7 @@ for k1 = 1:2
 end
 
 A = A+A' ;
-[v pi] = GrB.bfs (A, 2, 'undirected') ;
+[v, pi] = GrB.bfs (A, 2, 'undirected') ;
 if (doplots)
     subplot (1,2,2) ;
     plot (graph (A))

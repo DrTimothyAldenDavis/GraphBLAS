@@ -1,9 +1,7 @@
-%-------------------------------------------------------------------------------
-% gap_tc: run tricount for the GAP benchmark
-%-------------------------------------------------------------------------------
+function gap_tc
+%GAP_TC run tricount for the GAP benchmark
 
 diary on
-% clear
 rng ('default') ;
 
 % warmup, to make sure GrB library is loaded
@@ -122,4 +120,5 @@ catch me
 end
 
 end
+
 

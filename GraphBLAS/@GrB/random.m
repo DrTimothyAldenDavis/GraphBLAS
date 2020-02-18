@@ -125,7 +125,7 @@ if (firstchar == 2)
     % C = GrB.random (A, ...) ;
     A = varargin {1} ;
     [m, n] = size (A) ;
-    if (symmetric & (m ~= n))
+    if (symmetric && (m ~= n))
         gb_error ('input matrix must be square') ;
     end
     [I, J] = GrB.extracttuples (A, desc) ;

@@ -793,7 +793,7 @@ methods (Static)
     Cout = emult (varargin) ;
     Cout = apply (varargin) ;
     Cout = extract (varargin) ;
-    [r stats] = pagerank (A, opts) ;
+    [r, stats] = pagerank (A, opts) ;
     C = ktruss (A, k, check) ;
     s = tricount (A, check) ;
     L = laplacian (A, type, check) ;

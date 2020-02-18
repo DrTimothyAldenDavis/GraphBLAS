@@ -12,7 +12,6 @@ types = gbtest_types ;
 ops = gbtest_binops ;
 
 nsemirings = 0 ;
-npair = 0 ;
 
 for k1 = 1:length (ops)
     add = ops {k1} ;
@@ -29,18 +28,16 @@ for k1 = 1:length (ops)
                 GrB.semiringinfo (semiring) ;
                 GrB.semiringinfo (s, type) ;
                 nsemirings = nsemirings + 1 ;
-                ok = true ;
             catch
                 % this is an error, but it is expected since not all
                 % combinations operators and types can be used to construct a
                 % valid semiring.
-                ok = false ;
             end
         end
     end
 end
 
-nsemirings
+nsemirings %#ok<*NOPRT>
 assert (nsemirings == 2204) ;
 GrB.semiringinfo
 

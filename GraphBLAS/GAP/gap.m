@@ -1,3 +1,4 @@
+%GAP run GAP benchmarks
 
 clear all
 rng ('default') ;
@@ -125,3 +126,4 @@ for k = 1:length(matrices)
     clear S
 
 end
+

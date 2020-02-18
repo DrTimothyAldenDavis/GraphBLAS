@@ -45,12 +45,12 @@ for k = 1:nfiles
         fprintf (f_output, '%s\n', cline) ;
 
         if (~isempty (strfind (cline, 'gbcov[')) && ...
-            ~isempty (strfind (cline, '++')))
+            ~isempty (strfind (cline, '++'))) %#ok<*STREMP>
             % got one; get the count
             k1 = strfind (cline, '[') ;
             k2 = strfind (cline, ']') ;
             s = cline (k1+1:k2-1) ;
-            i = str2num (s) + 1 ;
+            i = str2num (s) + 1 ; %#ok<*ST2NM>
             c = gbcov_global (i) ;
             if (c == 0)
                 fprintf (f_output, '// NOT COVERED:\n') ;

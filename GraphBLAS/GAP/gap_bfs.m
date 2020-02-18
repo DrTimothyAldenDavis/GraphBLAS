@@ -1,8 +1,6 @@
-%-------------------------------------------------------------------------------
-% gap_bfs: run bfs for the GAP benchmark
-%-------------------------------------------------------------------------------
+function gap_bfs
+%GAP_BFS run bfs for the GAP benchmark
 
-clear
 rng ('default') ;
 
 % warmup, to make sure GrB library is loaded

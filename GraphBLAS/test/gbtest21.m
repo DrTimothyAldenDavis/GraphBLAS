@@ -13,7 +13,7 @@ for trial = 1:40
             if (rand < 0.1)
                 A = int32 (full (A)) ;
             else
-                A (1,1) = nan ;
+                A (1,1) = nan ; %#ok<*SPRIX>
                 A (2,2) = inf ;
             end
             G = GrB (A) ;

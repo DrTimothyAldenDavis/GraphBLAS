@@ -74,6 +74,8 @@
 %  gbtest69  - test flip
 %  gbtest70  - test GrB.random
 %  gbtest71  - test GrB.selectopinfo
+%  gbtest72  - test any-pair semiring
+%  gbtest73  - test GrB.normdiff
 %  gbtest97  - test A*x performance
 %  gbtest98  - test A'*x performance
 %  gbtest99  - test GrB.bfs and plot (graph (G))

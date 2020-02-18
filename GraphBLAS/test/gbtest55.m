@@ -6,7 +6,7 @@ function gbtest55
 
 rng ('default') ;
 
-H = GrB (rand (6))
+H = GrB (rand (6)) %#ok<*NOPRT>
 
 fprintf ('default:\n') ;
 disp (H) ;

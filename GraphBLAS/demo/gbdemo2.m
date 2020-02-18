@@ -50,7 +50,7 @@ k = 5000 ;
 anz = 50000 ;
 A = sprandn (k, k, anz / k^2) ;
 
-for n = [1000:1000:6000]
+for n = 1000:1000:6000
 
     % reset the random number generator for repeatable results
     rng ('default') ;

@@ -61,6 +61,7 @@ try
             end
         end
     end
+catch
 end
 
 if (~ismac && isunix)
@@ -107,7 +108,7 @@ for k = 1:length (cfiles)
     objfile = [ ofile(1:end-2) object_suffix ] ;
 
     % get the object file modification time
-    objlist = [ objlist ' ' objfile ] ;
+    objlist = [ objlist ' ' objfile ] ;     %#ok
     dobj = dir (objfile) ;
     if (isempty (dobj))
         % there is no object file; the cfile must be compiled

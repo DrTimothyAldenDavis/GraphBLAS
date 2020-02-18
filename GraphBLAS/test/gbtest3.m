@@ -13,7 +13,7 @@ nfeatures = 6 ;
 nneurons = 16 ;
 
 for level = 1:levels
-    W {level} = sprand (nneurons, nneurons, 0.5) ;
+    W {level} = sprand (nneurons, nneurons, 0.5) ; %#ok<*AGROW>
     bias {level} = -0.3 * ones (1, nneurons) ;
 end
 

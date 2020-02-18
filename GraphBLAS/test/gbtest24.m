@@ -19,7 +19,7 @@ for trial = 1:10
             MB = MB .* S ;
 
             GA = GrB (MA) ;
-            GB = GrB (MB) ;
+            GB = GrB (MB) ; %#ok<*NASGU>
 
             c1 = all (MA) ;
             c2 = all (GA) ;

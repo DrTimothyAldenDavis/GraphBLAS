@@ -6,12 +6,12 @@ function gbtest52
 
 GrB.format
 GrB.format ('by col') ;
-f = GrB.format
+f = GrB.format %#ok<*NOPRT>
 A = magic (4)
 G = GrB (A)
 assert (isequal (f, GrB.format (G))) ;
 GrB.format ('by row')
-f = GrB.format
+f = GrB.format %#ok<*NASGU>
 
 H = GrB (5,5)
 assert (isequal ('by row', GrB.format (H))) ;

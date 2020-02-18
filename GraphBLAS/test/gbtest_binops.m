@@ -1,4 +1,4 @@
-function [binops synonyms] = gbtest_binops
+function [binops, synonyms] = gbtest_binops
 %GBTEST_BINOPS return a cell array of strings, listing all binary operators
 % Types are not included; see gbtest_types.
 %

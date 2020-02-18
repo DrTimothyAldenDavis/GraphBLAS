@@ -11,7 +11,7 @@ I = sort (randperm (n, 4)) ;
 J = sort (randperm (n, 4)) ;
 A = magic (4) ;
 H (I,J) = A ;
-[C, I, J] = GrB.compact (H) ;
+[C, I, J] = GrB.compact (H) ; %#ok<*ASGLU>
 H (I, J(1)) = 0 ;
 [C, I, J] = GrB.compact (H, 0) ;
 assert (isequal (C, A (:,2:end))) ;

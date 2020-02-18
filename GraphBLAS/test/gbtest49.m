@@ -20,7 +20,7 @@ for trial = 1:40
     assert (isequal (C0, C2)) ;
 
     C0 = sparse (A) ;
-    C0 (1,1) = 0 ;
+    C0 (1,1) = 0 ; %#ok<*SPRIX>
     C1 = GrB.prune (A, 1) ;
     C2 = GrB.prune (G, 1) ;
     assert (isequal (C0, double (C1))) ;

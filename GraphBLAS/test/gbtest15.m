@@ -5,7 +5,7 @@ function gbtest15
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 types = gbtest_types ;
-ops = { 'identity', '~', '-', '1', 'minv', 'abs' }
+ops = { 'identity', '~', '-', '1', 'minv', 'abs' } ;
 
 for k1 = 1:length (ops)
     for k2 = 1:length (types)

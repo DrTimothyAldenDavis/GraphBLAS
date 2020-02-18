@@ -16,7 +16,7 @@ for k1 = 1:length(opnames)
 
         op = opname ;
         if (k2 > 0)
-            op = [op '.' optype{k2}] ;
+            op = [op '.' optype{k2}] ; %#ok<*AGROW>
         end
         fprintf ('\nop: [%s]\n', op) ;
         if (k2 > 0)
