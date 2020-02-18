@@ -1,4 +1,4 @@
-Version 3.2.0, Feb TODO, 2020
+Version 3.2.0, Feb 18, 2020
 
     * GxB_*_define for user-defined compile-time objects: removed.  Not
         compatible with the faster kernels for mxm and dense matrices/vectors.

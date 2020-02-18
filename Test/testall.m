@@ -187,11 +187,14 @@ logstat ('test10',t) ;  % GrB_apply
 %79
 logstat ('test134',t) ; % quick test of GxB_select
 
-%92
-logstat ('test16',t) ;  % user-defined complex operators
+%292
+logstat ('test75b',t) ;  % test GrB_mxm A'*B (quicker than test75)
 
 %96: only single-threaded is needed
 logstat ('test21',s) ;  % quick test of GB_mex_subassign
+
+%92
+logstat ('test16',t) ;  % user-defined complex operators
 
 %103
 logstat ('test81',t) ;  % GrB_Matrix_extract with stride, range, backwards
@@ -199,14 +202,11 @@ logstat ('test81',t) ;  % GrB_Matrix_extract with stride, range, backwards
 %102
 logstat ('test21b',t) ; % quick test of GB_mex_assign
 
-%200
+%149
 logstat ('test18',t) ;  % quick tests of GrB_eWiseAdd and eWiseMult
 
-%430
+%322 seconds, 11 statements covered
 logstat ('test20',t) ;  % quick test of GB_mex_mxm on a few semirings
-
-%292
-logstat ('test75b',t) ;  % test GrB_mxm A'*B on all semirings
 
 %-------------------------------------------------------------------------------
 % The following tests are not required for statement coverage.  Some need
@@ -220,6 +220,7 @@ if (longtests)
 % test script              % time % description
 % ------------------------ % ---- % ------------------------------
 
+logstat ('test75',t) ;     %      % test GrB_mxm A'*B on all semirings
 logstat ('test00',t) ;     %    8 % GB_mex_mis (multiple threads)
 logstat ('test07',t) ;     %    0 % quick test GB_mex_subassign
 logstat ('test07',s) ;     %    0 % quick test GB_mex_subassign

@@ -215,16 +215,10 @@ GrB_Info GB_wait                // finish all pending computations
 
     // Finally check the status of the builder.  The pending tuples, must
     // be freed (just above), whether or not the builder is successful.
-    // GB_OK (info) ;
     if (info != GrB_SUCCESS)
-    {
-        // TODO see test132: invalid read of size 8 in GB_free:
-        // if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
-        GB_PHIX_FREE (A) ;
-        GB_MATRIX_FREE (&T) ;
-        GB_MATRIX_FREE (&S) ;
-        GB_MATRIX_FREE (&(Aslice [0])) ;
-        GB_MATRIX_FREE (&(Aslice [1])) ;
+    { 
+        // out of memory in GB_builder
+        GB_FREE_ALL ;
         return (info) ;
     }
 
