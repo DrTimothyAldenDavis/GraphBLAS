@@ -48,11 +48,7 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    printf ("%p %p\n", A->type, Complex) ;
-    GxB_print (A, 2) ;
-    printf ("initially A->type is:\n") ;
-    GxB_print (A->type, 3) ;
-    GxB_print (Complex, 3) ;
+
     if (A->type != Complex)
     {
         FREE_ALL ;
@@ -71,14 +67,11 @@ void mexFunction
         mexErrMsgTxt ("Times_terminal failed") ;
     }
 
-    // GxB_print (Times_terminal, 3) ;
-
     int64_t GET_SCALAR (1, int64_t, hack, -1) ;
     if (hack >= 0)
     {
         double complex *Ax = A->x ;
         Ax [hack] = 0 ;
-        // GxB_print (A, 2) ;
     }
 
     // reduce to a scalar

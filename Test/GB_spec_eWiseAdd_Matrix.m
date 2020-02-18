@@ -22,8 +22,9 @@ C = GB_spec_matrix (C) ;
 A = GB_spec_matrix (A) ;
 B = GB_spec_matrix (B) ;
 [add_op xyclass zclass] = GB_spec_operator (add, C.class) ;
-Mask = GB_spec_getmask (Mask) ;
-[C_replace Mask_comp Atrans Btrans] = GB_spec_descriptor (descriptor) ;
+[C_replace Mask_comp Atrans Btrans Mask_struct] = ...
+    GB_spec_descriptor (descriptor) ;
+Mask = GB_spec_getmask (Mask, Mask_struct) ;
 
 %-------------------------------------------------------------------------------
 % do the work via a clean MATLAB interpretation of the entire GraphBLAS spec

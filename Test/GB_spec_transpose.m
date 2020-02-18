@@ -26,7 +26,11 @@ function C = GB_spec_transpose (C, Mask, accum, A, descriptor)
 % descriptor is a optional struct.  Defaults are used if empty or not present.
 %       descriptor.outp = 'replace' (clear C first) or 'default' (use C as-is)
 %       descriptor.inp0 = 'tran' (do C=A) or 'default' (do C=A')
-%       descriptor.mask = 'scmp' (use ~Mask) or 'default' (use Mask)
+%       descriptor.mask =
+%               'default': use Mask
+%               'complement' or 'scmp': use ~Mask
+%               'structural': use spones(Mask)
+%               'structural complement': use ~spones(Mask)
 %
 % GB_spec_transpose implements the entire specification of GrB_transpose, with
 % a few exceptions.
@@ -66,8 +70,9 @@ end
 
 C = GB_spec_matrix (C) ;
 A = GB_spec_matrix (A) ;
-Mask = GB_spec_getmask (Mask) ;
-[C_replace Mask_comp Atrans Btrans] = GB_spec_descriptor (descriptor) ;
+[C_replace Mask_comp Atrans Btrans Mask_struct] = ...
+    GB_spec_descriptor (descriptor) ;
+Mask = GB_spec_getmask (Mask, Mask_struct) ;
 
 %-------------------------------------------------------------------------------
 % do the work via a clean MATLAB interpretation of the entire GraphBLAS spec

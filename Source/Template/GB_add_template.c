@@ -544,7 +544,13 @@
                 // C(:,j)<M(:,j)> = A(:,j) + B (:,j)
                 //--------------------------------------------------------------
 
-                bool mask_is_easy = ((adense || A == M) && (bdense || B == M)) ;
+                // A and B cannot both be dense, because GB_ewise converts
+                // eWiseAdd(A,B) into eWiseMult(A,B) in that case.
+
+                bool mask_is_easy = 
+                    (adense && B == M) ||
+                    (bdense && A == M) ||
+                    (A == M && B == M) ;
 
                 if (mask_is_easy && Mask_struct)
                 {
@@ -571,29 +577,7 @@
                     int64_t pA_offset = pA_start - iA_first ;
                     int64_t pB_offset = pB_start - iB_first ;
 
-                    if (adense && bdense)
-                    { 
-
-                        //------------------------------------------------------
-                        // A and B both dense
-                        //------------------------------------------------------
-
-                        GB_PRAGMA_VECTORIZE
-                        for (int64_t p = 0 ; p < mjnz ; p++)
-                        {
-                            int64_t pM = p + pM_start ;
-                            int64_t pC = p + pC_start ;
-                            int64_t i = Mi [pM] ;
-                            ASSERT (GB_mcast (Mx, pM, msize)) ;
-                            ASSERT (Ai [pA_offset + i] == i) ;
-                            ASSERT (Bi [pB_offset + i] == i) ;
-                            GB_GETA (aij, Ax, pA_offset + i) ;
-                            GB_GETB (bij, Bx, pB_offset + i) ;
-                            GB_BINOP (GB_CX (pC), aij, bij) ;
-                        }
-
-                    }
-                    else if (adense)
+                    if (adense && B == M)
                     { 
 
                         //------------------------------------------------------
@@ -615,7 +599,7 @@
                         }
 
                     }
-                    else if (bdense)
+                    else if (bdense && A == M)
                     { 
 
                         //------------------------------------------------------
@@ -637,7 +621,7 @@
                         }
 
                     }
-                    else
+                    else // (A == M) && (B == M)
                     { 
 
                         //------------------------------------------------------
@@ -685,19 +669,19 @@
 
                         bool afound ;
                         if (adense)
-                        {
+                        { 
                             // A is dense; use quick lookup
                             pA = pA_start + (i - iA_first) ;
                             afound = true ;
                         }
                         else if (A == M)
-                        {
+                        { 
                             // A is aliased to M
                             pA = pM ;
                             afound = true ;
                         }
                         else
-                        {
+                        { 
                             // A is sparse; use binary search
                             int64_t apright = pA_end - 1 ;
                             GB_BINARY_SEARCH (i, Ai, pA, apright, afound) ;
@@ -711,19 +695,19 @@
 
                         bool bfound ;
                         if (bdense)
-                        {
+                        { 
                             // B is dense; use quick lookup
                             pB = pB_start + (i - iB_first) ;
                             bfound = true ;
                         }
                         else if (B == M)
-                        {
+                        { 
                             // B is aliased to M
                             pB = pM ;
                             bfound = true ;
                         }
                         else
-                        {
+                        { 
                             // B is sparse; use binary search
                             int64_t bpright = pB_end - 1 ;
                             GB_BINARY_SEARCH (i, Bi, pB, bpright, bfound) ;

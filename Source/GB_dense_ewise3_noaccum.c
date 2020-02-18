@@ -9,10 +9,9 @@
 
 // FUTURE: extend to handle typecasting and generic operators.
 
-#include "GB_dense.h"
 #ifndef GBCOMPACT
+#include "GB_dense.h"
 #include "GB_binop__include.h"
-#endif
 
 #define GB_FREE_ALL ;
 
@@ -86,17 +85,13 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     // launch the switch factory
     //--------------------------------------------------------------------------
 
-    #ifndef GBCOMPACT
-
-        GB_Opcode opcode ;
-        GB_Type_code xycode, zcode ;
-        if (GB_binop_builtin (A->type, false, B->type, false, op, false,
-            &opcode, &xycode, &zcode))
-        { 
-            #include "GB_binop_factory.c"
-        }
-
-    #endif
+    GB_Opcode opcode ;
+    GB_Type_code xycode, zcode ;
+    if (GB_binop_builtin (A->type, false, B->type, false, op, false,
+        &opcode, &xycode, &zcode))
+    { 
+        #include "GB_binop_factory.c"
+    }
 
     //--------------------------------------------------------------------------
     // return result
@@ -105,4 +100,6 @@ GrB_Info GB_dense_ewise3_noaccum    // C = A+B
     ASSERT_MATRIX_OK (C, "C=A+B output", GB0) ;
     return (GrB_SUCCESS) ;
 }
+
+#endif
 

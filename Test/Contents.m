@@ -206,6 +206,16 @@
 %   test137  - GrB_eWiseMult with FIRST and SECOND operators
 %   test138  - test assign, with coarse-only tasks in IxJ slice
 %   test139  - merge sort, special cases
+%   test140  - test assign with duplicates
+%   test141  - test GrB_eWiseAdd (all types and operators) for dense matrices
+%   test142  - test GrB_assign for dense matrices
+%   test143  - test special cases for C<!M>=A*B and C<M>=A*B
+%   test144  - test GB_cumsum
+%   test145  - test dot4
+%   test146  - test C<M,struct> = scalar
+%   test147  - test C<M>A*B with very sparse M
+%   test148  - eWiseAdd with aliases
+%   test149  - test fine hash method for C<!M>=A*B
 
 %   testc1   - test complex operators
 %   testc2   - test complex A*B, A'*B, A*B', A'*B', A+B

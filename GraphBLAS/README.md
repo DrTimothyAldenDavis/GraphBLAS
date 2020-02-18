@@ -71,7 +71,7 @@ To get additional help, type:
 
 Next, go to the GraphBLAS/GraphBLAS/@GrB/private folder and compile the MATLAB
 mexFunctions.  Assuming your working directory is GraphBLAS/GraphBLAS
-(where this README.md) file is located, do the following:
+(where this README.md file is located), do the following:
 
     cd @GrB/private
     gbmake

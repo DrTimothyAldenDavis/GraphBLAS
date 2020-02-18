@@ -37,6 +37,9 @@ end
 
 % get the identity
 identity = GB_spec_identity (reduce_op, reduce_class) ;
+if (isempty (identity))
+    identity = 0 ;
+end
 
 % get the input matrix
 A = GB_spec_matrix (A, identity) ;

@@ -41,7 +41,7 @@ GrB_Info GB_AxB_dot3_one_slice
     const GrB_Matrix M,             // matrix to slice
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs
@@ -115,7 +115,7 @@ GrB_Info GB_AxB_dot3_one_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, Mp, mnvec, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

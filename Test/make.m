@@ -42,8 +42,6 @@ make_all = (isequal (what, 'all')) ;
 %  flags = '-g' ;
    flags = '-O' ;
 
-flags = [flags ' -largeArrayDims'] ;
-
 try
     if (strncmp (computer, 'GLNX', 4))
         % remove -ansi from CFLAGS and replace it with -std=c11
@@ -100,6 +98,8 @@ else
     flags = [ flags ' CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas" '] ;
     flags = [ flags  ' LDFLAGS="$LDFLAGS  -fopenmp -fPIC" '] ;
 end
+
+flags = [flags ' -largeArrayDims'] ;
 
 %-------------------------------------------------------------------------------
 

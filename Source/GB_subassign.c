@@ -291,6 +291,7 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
                 C->is_csc, GB_SAME_HYPER_AS (C->is_hyper), C->hyper_ratio,
                 1, Context) ;
             GB_OK (info)  ;
+            GBBURBLE ("(C alias cleared; C_replace early) ") ;
             C_replace = false ;
         }
         else
@@ -303,12 +304,15 @@ GrB_Info GB_subassign               // C(Rows,Cols)<M> += A or A'
     else
     { 
         // GB_subassigner can safely operate on C in place.
+        // FUTURE:  if C is dense and will remain so,
+        // it would be faster to delay the clearing of C.
         if (whole_C_matrix && C_replace && accum == NULL)
         { 
             // C(:,:)<any mask, replace> = A or x, with C not aliased to M or
             // A.  C is about to be cleared in GB_subassigner anyway, so clear
             // it now.
             GB_OK (GB_clear (C, Context)) ;
+            GBBURBLE ("(C(:,:)<any mask>: C_replace early) ") ;
             C_replace = false ;
         }
         Z = C ;

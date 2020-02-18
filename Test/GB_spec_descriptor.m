@@ -1,4 +1,4 @@
-function [C_replace Mask_comp Atrans Btrans descriptor] = ...
+function [C_replace Mask_comp Atrans Btrans Mask_struct descriptor] = ...
     GB_spec_descriptor (descriptor)
 %GB_SPEC_DESCRIPTOR return components of a descriptor
 %
@@ -38,8 +38,23 @@ if (~isfield (descriptor, 'inp1'))
 end
 
 C_replace = isequal (descriptor.outp, 'replace') ;
-Mask_comp = isequal (descriptor.mask, 'scmp') ;
 Atrans    = isequal (descriptor.inp0, 'tran') ;
 Btrans    = isequal (descriptor.inp1, 'tran') ;
+
+switch (descriptor.mask)
+    case {'scmp', 'complement'}
+        Mask_comp = true ;
+        Mask_struct = false ;
+    case {'structural'}
+        Mask_comp = false ;
+        Mask_struct = true ;
+    case {'structural complement'}
+        Mask_comp = true ;
+        Mask_struct = true ;
+    otherwise
+        Mask_comp = false ;
+        Mask_struct = false ;
+    end
+end
 
 

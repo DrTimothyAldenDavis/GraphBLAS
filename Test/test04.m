@@ -12,15 +12,15 @@ Z = magic (4)
 Mask = mod (Z,2) == 0
 
 for C_replace = [false true]
-    for Mask_scmp = [false true]
-        fprintf ('Use Mask.  C_replace: %d Mask_scmp: %d\n', ...
-            C_replace, Mask_scmp) ;
-        Cresult = GB_spec_mask (C, Mask, Z, C_replace, Mask_scmp)
-        % C2 =  apply_mask_sparse (C, Z, Mask, C_replace, Mask_scmp) ;
+    for Mask_comp = [false true]
+        fprintf ('Use Mask.  C_replace: %d Mask_comp: %d\n', ...
+            C_replace, Mask_comp) ;
+        Cresult = GB_spec_mask (C, Mask, Z, C_replace, Mask_comp) ;
+        % C2 =  apply_mask_sparse (C, Z, Mask, C_replace, Mask_comp) ;
         % assert (isequal (Cresult, C2))
 
         D = [ ] ;
-        if (Mask_scmp)
+        if (Mask_comp)
             D.mask = 'scmp' ;
         end
         if (C_replace)
@@ -37,15 +37,15 @@ for C_replace = [false true]
 end
 
 for C_replace = [false true]
-    for Mask_scmp = [false true]
-        fprintf ('No Mask.  C_replace: %d Mask_scmp: %d\n', ...
-            C_replace, Mask_scmp) ;
-        Cresult = GB_spec_mask (C, [ ], Z, C_replace, Mask_scmp)
-        % C2 = apply_mask_sparse  (C, Z, [ ], C_replace, Mask_scmp) ;
+    for Mask_comp = [false true]
+        fprintf ('No Mask.  C_replace: %d Mask_comp: %d\n', ...
+            C_replace, Mask_comp) ;
+        Cresult = GB_spec_mask (C, [ ], Z, C_replace, Mask_comp) ;
+        % C2 = apply_mask_sparse  (C, Z, [ ], C_replace, Mask_comp) ;
         % assert (isequal (Cresult, C2))
 
         D = [ ] ;
-        if (Mask_scmp)
+        if (Mask_comp)
             D.mask = 'scmp' ;
         end
         if (C_replace)
@@ -54,7 +54,7 @@ for C_replace = [false true]
 
         A = Z ;
         fprintf ('C3 <no mask scmp:%d replace:%d> = C + A'' :\n', ...
-            Mask_scmp, C_replace) ;
+            Mask_comp, C_replace) ;
 D
         C3 = GB_spec_transpose (C, [ ], 'plus', A, D) ;
         C5 = GB_mex_transpose  (sparse(C), [ ], 'plus', sparse(A), D);

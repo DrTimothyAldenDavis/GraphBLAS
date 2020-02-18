@@ -69,7 +69,8 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
 
     int64_t pC ;
 
-    if (GB_NNZ (C) < cnzmax || C->x_shallow || C->i_shallow || C->is_hyper)
+    if (GB_NNZ (C) < cnzmax || C->x_shallow || C->i_shallow || C->is_hyper
+        || GB_ZOMBIES (C))
     {
 
         //----------------------------------------------------------------------
@@ -130,22 +131,6 @@ GrB_Info GB_dense_subassign_21      // C(:,:) = x; C is a matrix and x a scalar
             ASSERT_MATRIX_OK (C, "C(:,:)=0 output", GB0) ;
             return (GrB_SUCCESS) ;
         }
-
-    }
-    else if (GB_ZOMBIES (C))
-    {
-
-        //----------------------------------------------------------------------
-        // prior content is the right size, but zombies need killing
-        //----------------------------------------------------------------------
-
-        int64_t *GB_RESTRICT Ci = C->i ;
-        #pragma omp parallel for num_threads(nthreads) schedule(static)
-        for (pC = 0 ; pC < cnzmax ; pC++)
-        { 
-            Ci [pC] = pC % cvlen ;
-        }
-        C->nzombies = 0 ;
     }
 
     //--------------------------------------------------------------------------

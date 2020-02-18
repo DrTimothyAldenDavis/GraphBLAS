@@ -62,6 +62,9 @@
         prand_finalize ( ) ;            // free the prand types and operators
 */
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 #include "GraphBLAS.h"
 
 // prand_init:  create the random seed type and its operators

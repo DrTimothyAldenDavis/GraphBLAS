@@ -37,14 +37,12 @@ ifeq ($(UNAME),Darwin)
     SO_NAME = libgraphblas.dylib.$(VER1).$(VER2).$(VER3)
     SO_NAME0 = libgraphblas.dylib
     SO_NAME1 = libgraphblas.dylib.$(VER1)
-    SO_NAME2 = libgraphblas.dylib.$(VER1).$(VER2)
     SO_OPTS += -dynamiclib -shared -undefined dynamic_lookup
 else
     # Linux
     SO_NAME = libgraphblas.so.$(VER1).$(VER2).$(VER3)
     SO_NAME0 = libgraphblas.so
     SO_NAME1 = libgraphblas.so.$(VER1)
-    SO_NAME2 = libgraphblas.so.$(VER1).$(VER2)
     SO_OPTS += -shared -Wl,-soname -Wl,$(SO_NAME)
 endif
 
@@ -71,7 +69,6 @@ install: $(SO_NAME)
 	cp $(SO_NAME) /usr/local/lib
 	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME0)
 	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME1)
-	ln -s $(SO_NAME) /usr/local/lib/$(SO_NAME2)
 	cp ../Include/GraphBLAS.h  /usr/local/include
 
 DINC = ../Demo/Include/*.h $(INC)

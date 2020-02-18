@@ -1105,7 +1105,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
 
     GB_FREE_WORK ;
     info = GB_hypermatrix_prune (C, Context) ;
-    ASSERT_MATRIX_OK (C, "saxpy3: C = A*B output", GB0) ;
+    if (info == GrB_SUCCESS) { ASSERT_MATRIX_OK (C, "saxpy3: output", GB0) ; }
     ASSERT (*Chandle == C) ;
     ASSERT (!GB_ZOMBIES (C)) ;
     ASSERT (!GB_PENDING (C)) ;

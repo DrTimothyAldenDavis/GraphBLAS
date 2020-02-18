@@ -51,7 +51,7 @@ GrB_Info GB_I_inverse           // invert the I list for C=A(I,:)
     GB_CALLOC_MEMORY (Mark,  avlen, sizeof (int64_t)) ;
     GB_MALLOC_MEMORY (Inext, nI,    sizeof (int64_t)) ;
     if (Inext == NULL || Mark == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_MEMORY (Mark,  avlen, sizeof (int64_t)) ;
         GB_FREE_MEMORY (Inext, nI,    sizeof (int64_t)) ;

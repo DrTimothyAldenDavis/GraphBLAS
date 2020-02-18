@@ -127,7 +127,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&B_slice, /* B */ B->p, B->nvec, nbslice))
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;
@@ -148,7 +148,7 @@ GrB_Info GB_AxB_dot2                // C=A'*B or C<!M>=A'*B, dot product method
 
     GB_CALLOC_MEMORY (C_counts, naslice, sizeof (int64_t *)) ;
     if (C_counts == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GrB_OUT_OF_MEMORY) ;

@@ -23,7 +23,7 @@ GrB_Info GB_hypermatrix_prune
     ASSERT (A != NULL) ;
     ASSERT (GB_ZOMBIES_OK (A)) ;
     if (!A->is_hyper)
-    {
+    { 
         // nothing to do
         return (GrB_SUCCESS) ;
     }
@@ -42,7 +42,7 @@ GrB_Info GB_hypermatrix_prune
     //--------------------------------------------------------------------------
 
     if (A->nvec_nonempty < A->nvec)
-    {
+    { 
         // create new Ap_new and Ah_new arrays, with no empty vectors
         int64_t *GB_RESTRICT Ap_new = NULL ;
         int64_t *GB_RESTRICT Ah_new = NULL ;

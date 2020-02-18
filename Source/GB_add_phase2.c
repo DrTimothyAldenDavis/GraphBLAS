@@ -254,36 +254,18 @@ GrB_Info GB_add_phase2      // C=A+B or C<M>=A+B
         #define GB_PRAGMA_VECTORIZE
 
         #include "GB_add_template.c"
-
     }
 
     //--------------------------------------------------------------------------
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    // FUTURE::: use GB_hypermatrix_prune
-    if (C_is_hyper && C->nvec_nonempty < Cnvec)
-    {
-        // create new Cp_new and Ch_new arrays, with no empty vectors
-        int64_t *GB_RESTRICT Cp_new = NULL ;
-        int64_t *GB_RESTRICT Ch_new = NULL ;
-        int64_t nvec_new ;
-        info = GB_hyper_prune (&Cp_new, &Ch_new, &nvec_new, C->p, C->h, Cnvec,
-            Context) ;
-        if (info != GrB_SUCCESS)
-        { 
-            // out of memory
-            GB_MATRIX_FREE (&C) ;
-            return (info) ;
-        }
-        // transplant the new hyperlist into C
-        GB_FREE_MEMORY (C->p, Cnvec+1, sizeof (int64_t)) ;
-        GB_FREE_MEMORY (C->h, Cnvec,   sizeof (int64_t)) ;
-        C->p = Cp_new ;
-        C->h = Ch_new ;
-        C->nvec = nvec_new ;
-        C->plen = nvec_new ;
-        ASSERT (C->nvec == C->nvec_nonempty) ;
+    info = GB_hypermatrix_prune (C, Context) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_MATRIX_FREE (&C) ;
+        return (info) ;
     }
 
     //--------------------------------------------------------------------------

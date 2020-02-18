@@ -60,8 +60,6 @@ GrB_Info adotb_complex (GB_Context Context)
 
     GrB_Semiring semiring = Complex_plus_times ;
 
-    // GxB_print (semiring,3) ;
-
     GrB_Matrix Aslice [1] ;
     Aslice [0] = Aconj ;
 
@@ -182,7 +180,6 @@ void mexFunction
 
         GrB_Matrix_nrows (&mnrows, Mask) ;
         GrB_Matrix_ncols (&mncols, Mask) ;
-        // GxB_print (Mask, 3) ;
 
         if (!Mask->is_csc)
         {

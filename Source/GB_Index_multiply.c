@@ -37,7 +37,7 @@ bool GB_Index_multiply      // true if ok, false if overflow
     double da = ceil (log2 ((double) a)) ;
     double db = ceil (log2 ((double) b)) ;
     if (da + db > 60)
-    {
+    { 
         // a * b may overflow
         return (false) ;
     }

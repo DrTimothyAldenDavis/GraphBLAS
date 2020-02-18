@@ -216,7 +216,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     if (tstart_slice == NULL || tnvec_slice == NULL || tnz_slice == NULL ||
         kbad == NULL || ilast_slice == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;
@@ -971,7 +971,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->i == NULL)
         { 
             // out of memory
-            GB_MATRIX_FREE (&T) ;
+            GB_MATRIX_FREE (Thandle) ;
             GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -1141,7 +1141,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->x == NULL)
         { 
             // out of memory
-            GB_MATRIX_FREE (&T) ;
+            GB_MATRIX_FREE (Thandle) ;
             GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }

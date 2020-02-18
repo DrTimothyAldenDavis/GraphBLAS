@@ -31,7 +31,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     GB_Context Context
 ) ;
 
-GrB_Info GB_AxB_dot_parallel        // parallel dot product
+GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix C_in_place,          // input/output matrix, if done in place

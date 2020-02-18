@@ -50,23 +50,36 @@ void GB_cblas_daxpy         // Y += alpha*X
 
     GB_CBLAS_INT stride1 = (GB_CBLAS_INT) 1 ;
 
-    // call *axpy in chunks of size GB_CBLAS_INT_MAX (2^31 or 2^63).
-    // If GB_CBLAS_INT_MAX is INT64_MAX, then this will iterate just once.
-    // for (int64_t p = 0 ; p < n ; p += GB_CBLAS_INT_MAX)
+    if (sizeof (GB_CBLAS_INT) == sizeof (int64_t))
     {
-//      GB_CBLAS_INT chunk = (GB_CBLAS_INT) GB_IMIN (n - p, GB_CBLAS_INT_MAX) ;
-        #define chunk n
-        #define p 0
-
+        // call *axpy in a single chunk
         cblas_daxpy     // y += alpha*x
         (
-            chunk,      // length of x and y (this chunk)
+            n,          // length of x and y
             alpha,      // scale factor (typically 1.0)
-            X + p,      // this chunk of x
+            X,
             stride1,    // x is stride 1
-            Y + p,      // this chunk of y
+            Y,
             stride1     // y is stride 1
         ) ;
+    }
+    else
+    {
+        // call *axpy in chunks of size GB_CBLAS_INT_MAX
+        for (int64_t p = 0 ; p < n ; p += GB_CBLAS_INT_MAX)
+        {
+            GB_CBLAS_INT chunk =
+                (GB_CBLAS_INT) GB_IMIN (n - p, GB_CBLAS_INT_MAX) ;
+            cblas_daxpy     // y += alpha*x
+            (
+                chunk,      // length of x and y (this chunk)
+                alpha,      // scale factor (typically 1.0)
+                X + p,      // this chunk of x
+                stride1,    // x is stride 1
+                Y + p,      // this chunk of y
+                stride1     // y is stride 1
+            ) ;
+        }
     }
 
     //--------------------------------------------------------------------------

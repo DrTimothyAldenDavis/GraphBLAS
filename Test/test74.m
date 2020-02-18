@@ -14,26 +14,28 @@ dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
 dnn_Gus  = struct ( 'axb', 'gustavson' ) ;
-dnn_hash = struct ( 'axb', 'heap' ) ;
+dnn_hash = struct ( 'axb', 'hash' ) ;
 
 ntrials = 0 ;
 
 rng ('default') ;
 
-m_list = [ 1  2    9] ;
-n_list = [ 1  2   10] ;
-k_list = [ 20 100 12] ;
+m_list = [ 1  2    9  ] ;
+n_list = [ 1  2   10  ] ;
+k_list = [ 20 100 12  ] ;
+d_list = [0.3 0.3 0.3 ] ;
 
 for k0 = 1:size(m_list,2)
 
     m = m_list (k0) ;
     n = n_list (k0) ;
     k = k_list (k0) ;
+    density = d_list (k0) ;
 
     n_semirings = 0 ;
-    A = GB_spec_random (m,k,0.3,100,'none') ;
-    B = GB_spec_random (k,n,0.3,100,'none') ;
-    C = GB_spec_random (m,n,0.3,100,'none') ;
+    A = GB_spec_random (m,k,density,100,'none') ;
+    B = GB_spec_random (k,n,density,100,'none') ;
+    C = GB_spec_random (m,n,density,100,'none') ;
     M = spones (sprandn (m, n, 0.3)) ;
 
     clear AT
@@ -92,7 +94,7 @@ for k0 = 1:size(m_list,2)
                 % C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn_Gus);
                 GB_spec_compare (C0, C1, identity) ;
 
-                % C = A*B, no Mask, no typecasting, heap
+                % C = A*B, no Mask, no typecasting, Hash
                 C1 = GB_mex_mxm  (C, [ ], [ ], semiring, A, B, dnn_hash);
                 % C0 = GB_spec_mxm (C, [ ], [ ], semiring, A, B, dnn_hash);
                 GB_spec_compare (C0, C1, identity) ;

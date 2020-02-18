@@ -72,8 +72,8 @@ mask = sparse (ones (n,1)) ;
 
 dnn = struct ;
 dtn = struct ( 'inp0', 'tran' ) ;
-dtn_dot   = struct ( 'inp0', 'tran', 'method', 'dot' ) ;
-dtn_saxpy = struct ( 'inp0', 'tran', 'method', 'saxpy' ) ;
+dtn_dot   = struct ( 'inp0', 'tran', 'axb', 'dot' ) ;
+dtn_saxpy = struct ( 'inp0', 'tran', 'axb', 'saxpy' ) ;
 dnt = struct ( 'inp1', 'tran' ) ;
 dtt = struct ( 'inp0', 'tran', 'inp1', 'tran' ) ;
 
@@ -114,7 +114,7 @@ for k1 = 1:length(mult_ops)
             B.class = clas ;
             X.class = clas ;
             Y.class = clas ;
-            D.class = clas ;
+            D.class = add_op.opclass ;
 
             n_semirings = n_semirings + 1 ;
             fprintf ('.') ;

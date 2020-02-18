@@ -138,7 +138,7 @@ GrB_Info GB_AxB_dot3_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, Cwork, cnz, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

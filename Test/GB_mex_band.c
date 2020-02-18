@@ -102,7 +102,6 @@ void mexFunction
     OK (GxB_Scalar_setElement_UDT (Thunk, (void *) &bandwidth)) ;
     GrB_Index ignore ;
     OK (GxB_Scalar_nvals (&ignore, Thunk)) ;
-    // GxB_print (Thunk, 3) ;
 
     // get atranspose
     bool atranspose = false ;

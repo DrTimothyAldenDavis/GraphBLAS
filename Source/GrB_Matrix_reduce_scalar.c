@@ -69,7 +69,8 @@ GrB_Info GrB_Matrix_reduce_UDT      // c = accum (c, reduce_to_scalar (A))
     GB_BURBLE_START ("GrB_reduce") ;
     GB_RETURN_IF_NULL_OR_FAULTY (A) ;
     GB_RETURN_IF_NULL_OR_FAULTY (reduce) ;
-    GrB_Info info = GB_reduce_to_scalar (c, reduce->op->ztype, accum, reduce,           A, Context) ;
+    GrB_Info info = GB_reduce_to_scalar (c, reduce->op->ztype, accum, reduce,
+        A, Context) ;
     GB_BURBLE_END ;
     return (info) ;
 }

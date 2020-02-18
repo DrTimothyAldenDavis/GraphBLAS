@@ -93,7 +93,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     GB_void *GB_RESTRICT W = NULL ;
     GB_MALLOC_MEMORY (W, ntasks, zsize) ;
     if (W == NULL)
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }

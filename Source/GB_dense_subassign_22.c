@@ -47,9 +47,9 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
     }
 
     // C = accum (C,x) will be computed
-    ASSERT (GB_Type_compatible (C->type, accum->ztype)) ;
-    ASSERT (GB_Type_compatible (C->type, accum->xtype)) ;
-    ASSERT (GB_Type_compatible (atype,   accum->ytype)) ;
+    ASSERT (C->type == accum->ztype) ;
+    ASSERT (C->type == accum->xtype) ;
+    ASSERT (GB_Type_compatible (atype, accum->ytype)) ;
 
     //--------------------------------------------------------------------------
     // determine the number of threads to use
@@ -108,7 +108,7 @@ GrB_Info GB_dense_subassign_22      // C += x where C is dense and x is a scalar
     //--------------------------------------------------------------------------
 
     if (!done)
-    {
+    { 
         GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------

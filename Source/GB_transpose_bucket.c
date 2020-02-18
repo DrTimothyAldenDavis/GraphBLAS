@@ -138,7 +138,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
 
     GB_CALLOC_MEMORY (Rowcounts, naslice, sizeof (int64_t *)) ;
     if (Rowcounts == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
@@ -164,7 +164,7 @@ GrB_Info GB_transpose_bucket    // bucket transpose; typecast and apply op
     // create the iterator for A
     GBI_single_iterator Iter ;
     if (!GB_pslice (&A_slice, /* A */ A->p, A->nvec, naslice))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

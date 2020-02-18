@@ -112,7 +112,7 @@ GrB_Info GB_AxB_dot4                // C+=A'*B, dot product method
 
     if (!GB_pslice (&A_slice, A->p, anvec, naslice)  ||
         !GB_pslice (&B_slice, B->p, bnvec, nbslice))
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;

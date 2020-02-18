@@ -17,7 +17,7 @@ GrB_Info GxB_Scalar_new     // create a new GxB_Scalar with no entries
     GxB_Scalar *s,          // handle of GxB_Scalar to create
     GrB_Type type           // type of GxB_Scalar to create
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

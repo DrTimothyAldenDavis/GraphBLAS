@@ -459,7 +459,7 @@
                 //--------------------------------------------------------------
 
                 for ( ; pM < pM_end ; pM++)
-                { 
+                {
 
                     //----------------------------------------------------------
                     // get M(i,j) for A(i,j) .* B (i,j)
@@ -474,12 +474,12 @@
                     //----------------------------------------------------------
 
                     if (adense)
-                    {
+                    { 
                         // A(:,j) is dense; use direct lookup for A(i,j)
                         pA = pA_start + i - iA_first ;
                     }
                     else
-                    {
+                    { 
                         // A(:,j) is sparse; use binary search for A(i,j)
                         int64_t apright = pA_end - 1 ;
                         bool afound ;
@@ -493,12 +493,12 @@
                     //----------------------------------------------------------
 
                     if (bdense)
-                    {
+                    { 
                         // B(:,j) is dense; use direct lookup for B(i,j)
                         pB = pB_start + i - iB_first ;
                     }
                     else
-                    {
+                    { 
                         // B(:,j) is sparse; use binary search for B(i,j)
                         int64_t bpright = pB_end - 1 ;
                         bool bfound ;

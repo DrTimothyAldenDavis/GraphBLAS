@@ -133,5 +133,14 @@ for probs = 1:nprobs
     end
 end
 
+ok = true ;
+A = sparse (ones (4)) ;
+try
+    C = GB_mex_select (A, [ ], [ ], 'tril', A, A, [ ]) ;
+    ok = false ;
+catch me
+    fprintf ('\nexpected error: %s\n', me.message) ;
+end
+
 nthreads_set (save_nthreads, save_chunk) ;
 fprintf ('test26: all tests passed\n') ;

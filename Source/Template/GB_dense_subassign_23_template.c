@@ -53,15 +53,10 @@
                 (GB_CTYPE) -1,      // alpha is -1.0
                 Ax,                 // X, always stride 1
                 Cx,                 // Y, always stride 1
-                // FIXME: if nthreads is 40, then pagerank
-                // takes 100 iterations on the road graph... why ??
                 nthreads            // maximum # of threads to use
             ) ;
 
         #else
-
-            // FIXME: even with nthreads of 1, CBLAS is slower than
-            // the vanilla code below.
 
             int64_t p ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)

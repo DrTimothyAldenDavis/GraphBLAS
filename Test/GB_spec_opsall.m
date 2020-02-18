@@ -7,7 +7,7 @@ function [mult_ops unary_ops add_ops classes semirings selops] = GB_spec_opsall
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 mult_ops = {
-% 10 operators where x,y,z are all the same class
+% 11 operators where x,y,z are all the same class
 'first',     % z = x
 'second',    % z = y
 'pair',      % z = 1

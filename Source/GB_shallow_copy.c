@@ -27,7 +27,7 @@ GrB_Info GB_shallow_copy    // create a purely shallow matrix
     const GrB_Matrix A,     // input matrix
     GB_Context Context
 )
-{ 
+{
 
     //--------------------------------------------------------------------------
     // check inputs

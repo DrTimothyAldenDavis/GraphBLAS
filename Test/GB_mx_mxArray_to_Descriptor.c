@@ -71,7 +71,7 @@ static bool get_descriptor
         {
             info = GxB_set (D, field, GrB_COMP) ;
         }
-        else if (MATCH (s, "structure"))
+        else if (MATCH (s, "structure") || MATCH (s, "structural"))
         {
             info = GxB_set (D, field, GrB_STRUCTURE) ;
         }
@@ -82,6 +82,10 @@ static bool get_descriptor
         else if (MATCH (s, "replace"))
         {
             info = GxB_set (D, field, GrB_REPLACE) ;
+        }
+        else if (MATCH (s, "saxpy"))
+        {
+            info = GxB_set (D, field, GxB_AxB_SAXPY) ;
         }
         else if (MATCH (s, "gustavson"))
         {

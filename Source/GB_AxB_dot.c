@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// GB_AxB_dot_parallel: C<M>=A'*B, or C=A'*B using dot products
+// GB_AxB_dot: C<M>=A'*B using dot products
 //------------------------------------------------------------------------------
 
 // SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
@@ -23,7 +23,7 @@
 // if C is m-by-n.  It is thus only suitable for cases when A and B are large,
 // and C is small.  GB_AxB_dot3 computes C<M>=A'*B, and it only needs to
 // examine entries in M, taking Omega(nnz(M)) time.  It can thus be used for
-// very large matrices C.
+// very large matrices C.  GB_AxB_dot4 computes C+=A'*B when C is dense.
 
 // The output matrix C = *Chandle has not been allocated, so C is NULL on
 // input.  The mask M is optional.
@@ -55,7 +55,7 @@
     GB_FREE_MEMORY (Aslice, naslice+1, sizeof (int64_t)) ;      \
 }
 
-GrB_Info GB_AxB_dot_parallel        // parallel dot product
+GrB_Info GB_AxB_dot                 // dot product (multiple methods)
 (
     GrB_Matrix *Chandle,            // output matrix, NULL on input
     GrB_Matrix C_in_place,          // input/output matrix, if done in place
@@ -133,7 +133,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         //======================================================================
 
         if (C_in_place != NULL && M == NULL && !Mask_comp)
-        {
+        { 
             GBBURBLE ("dense, C+=A'*B in place ") ;
             (*done_in_place) = true ;
             return (GB_AxB_dot4 (C_in_place, A, B, semiring, flipxy, Context)) ;
@@ -159,7 +159,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
         //======================================================================
 
         if (nthreads == 1)
-        { 
+        {
             // do the entire computation with a single thread
             info = GB_AxB_dot2 (Chandle, M, Mask_struct, &A, B, semiring,
                 flipxy, mask_applied, 1, 1, 1, NULL) ;
@@ -209,7 +209,7 @@ GrB_Info GB_AxB_dot_parallel        // parallel dot product
 
         GB_CALLOC_MEMORY (Aslice, naslice+1, sizeof (GrB_Matrix)) ;
         if (Aslice == NULL || !GB_pslice (&Slice, A->p, A->nvec, naslice))
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GB_OUT_OF_MEMORY) ;

@@ -146,11 +146,15 @@ GrB_Info GB_Cdense_accumA
     const int ntasks,
     const int nthreads
 )
-{ 
+{
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_dense_subassign_23_template.c"
+    if_C_dense_update
+    { 
+        #include "GB_dense_subassign_23_template.c"
+    }
+    endif_C_dense_update
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -165,12 +169,17 @@ GrB_Info GB_Cdense_accumX
     const GB_void *p_ywork,
     const int nthreads
 )
-{ 
+{
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    GB_ctype ywork = (*((GB_ctype *) p_ywork)) ;
-    #include "GB_dense_subassign_22_template.c"
+    if_C_dense_update
+    { 
+        GB_ctype ywork = (*((GB_ctype *) p_ywork)) ;
+        #include "GB_dense_subassign_22_template.c"
+        return (GrB_SUCCESS) ;
+    }
+    endif_C_dense_update
     return (GrB_SUCCESS) ;
     #endif
 }

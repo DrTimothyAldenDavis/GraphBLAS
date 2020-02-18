@@ -134,53 +134,62 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     GB_WAIT (A) ;
 
     //--------------------------------------------------------------------------
-    // check empty mask conditions
+    // check mask conditions
     //--------------------------------------------------------------------------
+
+    bool empty_mask = false ;   // true if mask not present and complemented
+    bool no_mask = false ;      // true if mask not present and not complemented
 
     if (M == NULL)
     {
-        // the mask is empty
+        // the mask is not present
         if (Mask_comp)
         {
-            // an empty mask is complemented
+            // empty_mask:  mask is not present, and complemented
+            empty_mask = true ;
             if (!C_replace)
             { 
                 // No work to do.  This the same as the GB_RETURN_IF_QUICK_MASK
                 // case in other GraphBLAS functions, except here only the
                 // sub-case of C_replace == false is handled.  The C_replace ==
                 // true sub-case needs to delete all entries in C(I,J), which
-                // is handled below in GB_subassign_00.
+                // is handled below in GB_subassign_00.  This "quick" case is
+                // checked again if C_replace becomes effectively false, below.
                 GBBURBLE ("quick ") ;
                 return (GrB_SUCCESS) ;
             }
         }
-        else if (C_replace)
-        { 
-            // The mask is empty and not complemented.  In this case, C_replace
-            // is effectively false.  Disable it, since it can force pending
-            // tuples to be assembled.  In the comments below "C_replace
-            // effectively false" means that either C_replace is false on
-            // input, or the mask is empty and not complemented and thus
-            // C_replace is set to false here.
-            GBBURBLE ("(no mask: C_replace effectively false) ") ;
-            C_replace = false ;
+        else
+        {
+            // no_mask:  mask is not present, and not complemented
+            no_mask = true ;
+            if (C_replace)
+            { 
+                // The mask is not present and not complemented.  In this case,
+                // C_replace is effectively false.  Disable it, since it can
+                // force pending tuples to be assembled.  In the comments below
+                // "C_replace effectively false" means that either C_replace is
+                // false on input, or the mask is not present and not
+                // complemented and thus C_replace is set to false here.
+                GBBURBLE ("(no mask: C_replace effectively false) ") ;
+                C_replace = false ;
+            }
         }
     }
 
+    //--------------------------------------------------------------------------
+    // check if C is empty
+    //--------------------------------------------------------------------------
+
     bool C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
-    if (C_is_empty && C_replace)
-    {
+    if (C_is_empty)
+    { 
         // C is completely empty.  C_replace is irrelevant, so set it to false.
-        GBBURBLE ("(C empty: C_replace effectively false) ") ;
+        // The burble for this case occurs below, after GB_wait (C), since C
+        // may become empty if it contains nothing but zombies, or after the
+        // GB_clear (C) below.
         C_replace = false ;
     }
-
-    // C_replace now has its effective value: can only be true if true on
-    // input and if the mask is present, or empty and complemented.  C_replace
-    // is false if it is false on input, or if the mask is empty and not
-    // complemented.  It is also false if C is empty.
-
-    ASSERT (GB_IMPLIES (M == NULL && !Mask_comp, C_replace == false)) ;
 
     //--------------------------------------------------------------------------
     // get the C matrix
@@ -407,10 +416,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool C_splat_scalar = false ;   // C(:,:) = x
     bool C_splat_matrix = false ;   // C(:,:) = A
 
-    // no_Mask:  C(I,J) = or += ... with no mask, not complemented
-    bool no_Mask = (M == NULL) && !Mask_comp ;
-
-    if (whole_C_matrix && no_Mask && (accum == NULL))
+    if (whole_C_matrix && no_mask && (accum == NULL))
     {
 
         //----------------------------------------------------------------------
@@ -427,13 +433,9 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
             // Method 24: C(:,:) = A
             C_splat_matrix = true ;
         }
-        // For C(:,:) = x or A, the prior content of C is discarded.
-        // C_replace is effectively false.
-        if (C_replace)
-        { 
-            GBBURBLE ("(C(:,:) assigment: C_replace effectively false) ") ;
-            C_replace = false ;
-        }
+        // C_replace is already effectively false (see no_mask case above)
+        ASSERT (C_replace == false) ;
+
         // free pending tuples early but do not clear all of C.  If it is
         // already dense then its pattern can be reused.
         GB_Pending_free (&(C->Pending)) ;
@@ -454,15 +456,10 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // since the wait on C can be skipped, below.  It also simplifies the
         // kernels.  If S is constructed, it is just an empty matrix.
 
-        // If C is dense, it still cleared now.  FUTURE::  It might be better
-        // to decide this later.  If C remains dense, then its pattern does not
-        // need to be cleared and then recreated.
-
         GB_OK (GB_clear (C, Context)) ;
-
         if (C_replace)
         { 
-            GBBURBLE ("(C(:,:)<any mask>: C cleared early) ") ;
+            GBBURBLE ("(C cleared early) ") ;
             C_replace = false ;
         }
 
@@ -470,10 +467,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         // methods are used: 09 becomes 05, 10 becomes 06n or 06s, 17
         // becomes 13, and 18 becomes 14.  The S matrix for methods 06s,
         // 13, and 14 is still created, but it is very fast to construct
-        // and traverse since C is empty.
+        // and traverse since C is empty.  Method 00 can be skipped since
+        // C is already empty (see "quick" case below).
 
         // prior time             new  time           action
         // ----- ----             ---  ----           ------
+
+        // 00:  O(S)              nothing, O(1)       C already cleared
 
         // 09:  O(M+S)            05:  O(M)           C<M> = x, no S
 
@@ -650,13 +650,29 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     //--------------------------------------------------------------------------
 
     // GB_clear or GB_wait, above, may have deleted all the zombies in C, so
-    // check if C is now empty.
+    // check again if C is empty.
     C_is_empty = (GB_NNZ (C) == 0 && !GB_PENDING (C) && !GB_ZOMBIES (C)) ;
-    if (C_is_empty && C_replace)
+    if (C_is_empty)
     { 
         // C is completely empty.  C_replace is irrelevant, so set it to false.
-        GBBURBLE ("(C empty: C_replace effectively false) ") ;
+        GBBURBLE ("(C empty) ") ;
         C_replace = false ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check "quick" case again
+    //--------------------------------------------------------------------------
+
+    if (empty_mask && !C_replace)
+    { 
+        // The mask is empty (not present, but complemented), and C_replace is
+        // now effectively false.  If C_replace was false on input, then the
+        // "quick" case above has already been triggered.  However, if C is now
+        // empty (either cleared with GB_clear, empty on input, or empty after
+        // GB_wait), then C_replace is now effectively false.  In this case,
+        // the "quick" case can be checked again.  No more work to do.
+        GBBURBLE ("quick ") ;
+        return (GrB_SUCCESS) ;
     }
 
     //--------------------------------------------------------------------------
@@ -687,45 +703,22 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     // select the method to use
     //--------------------------------------------------------------------------
 
-    // check if an empty mask is complemented
-    bool empty_mask = (Mask_comp && M == NULL) ;
-
     // check if C is competely dense:  all entries present and no pending work.
     bool C_is_dense = !GB_PENDING_OR_ZOMBIES (C) && GB_is_dense (C) ;
-
-    // simple_mask: C(I,J)<M> = ... ; or C(I,J)<M> += ...
-    bool simple_mask = (!C_replace && M != NULL && !Mask_comp) ;
-
-    if (C_is_dense) { GBBURBLE ("(C dense) ") ; }
-
-    // check if C(:,:) += x or += A
     bool C_dense_update = false ;
-
-    // C(:,:) += assignment where C is dense, no typecasting of C
-    if (C_is_dense && whole_C_matrix && no_Mask && (accum != NULL)
-        && C->type == accum->ztype && C->type == accum->xtype)
-    {
-        if (scalar_expansion)
+    if (C_is_dense)
+    { 
+        GBBURBLE ("(C dense) ") ;
+        if (whole_C_matrix && no_mask && (accum != NULL)
+            && (C->type == accum->ztype) && (C->type == accum->xtype))
         { 
-            // C(:,:) += x where C is dense.
+            // C(:,:) += x or A, where C is dense, no typecasting of C
             C_dense_update = true ;
-            if (C_replace)
-            { 
-                // Since x is a scalar, C_replace becomes effectively false.
-                GBBURBLE ("(C+=x: C_replace effectively false) ") ;
-                C_replace = false ;
-            }
-        }
-        else
-        { 
-            // C(:,:) += A, where C is dense: use the C_dense_update method,
-            // but only if C_replace is false
-            C_dense_update = !C_replace ;
         }
     }
 
     // simple_mask: C(I,J)<M> = ... ; or C(I,J)<M> += ...
-    simple_mask = (!C_replace && M != NULL && !Mask_comp) ;
+    bool simple_mask = (!C_replace && M != NULL && !Mask_comp) ;
 
     // C_Mask_scalar: C(I,J)<M> = scalar or += scalar
     bool C_Mask_scalar = (scalar_expansion && simple_mask) ;
@@ -736,7 +729,8 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
     bool S_Extraction ;
     if (empty_mask)
     { 
-        // Method 00: C(I,J) = empty
+        // The mask is not present, but complemented.
+        // Method 00: C(I,J)<!,repl> = empty
         S_Extraction = true ;
     }
     else if (C_splat_scalar)
@@ -963,7 +957,7 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
         //  =====================       ==============
         //  -   c   r           S       00:  C(I,J)<!,repl> = empty, with S
 
-        // C_replace may be reset to 'effectively false' by this point.
+        ASSERT (C_replace) ;
         ASSERT (S != NULL) ;
 
         // Method 00: C(I,J) = empty ; using S
@@ -1145,13 +1139,13 @@ GrB_Info GB_subassigner             // C(I,J)<#M> = A or accum (C (I,J), A)
                 M, Mask_struct, accum, A, Context)) ;
         }
         else if (C_is_dense && whole_C_matrix && M == A)
-        {
+        { 
             // Method 06d: C(:,:)<A> = A ; no S, C dense
             GBBURBLE ("Method 06d: (C dense)<Z> = Z ") ;
             GB_OK (GB_dense_subassign_06d (C, A, Mask_struct, Context)) ;
         }
         else if (C_is_empty && whole_C_matrix && A_is_dense && Mask_struct)
-        {
+        { 
             GBBURBLE ("Method 25: (C empty)<M> = (Z dense) ") ;
             GB_OK (GB_dense_subassign_25 (C, M, A, Context)) ;
         }

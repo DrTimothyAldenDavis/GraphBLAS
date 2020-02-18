@@ -137,9 +137,13 @@ GrB_Info GB_red_scalar
     #endif
 }
 
+endif_is_monoid
+
 //------------------------------------------------------------------------------
 // reduce to each vector: each vector A(:,k) reduces to a scalar Tx (k)
 //------------------------------------------------------------------------------
+
+if_is_monoid
 
 GrB_Info GB_red_eachvec
 (
@@ -162,9 +166,13 @@ GrB_Info GB_red_eachvec
     #endif
 }
 
+endif_is_monoid
+
 //------------------------------------------------------------------------------
 // reduce to each index: each A(i,:) reduces to a scalar T (i)
 //------------------------------------------------------------------------------
+
+if_is_monoid
 
 GrB_Info GB_red_eachindex
 (

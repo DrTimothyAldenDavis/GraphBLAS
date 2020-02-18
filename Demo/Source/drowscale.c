@@ -2,6 +2,11 @@
 // drowscale: scale the rows of an adjacency matrix by out-degree
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // on input, A is a square unsymmetric binary matrix of size n-by-n, of any
 // built-in type.  On output, C is a rowscaled version of A, of type
 // GrB_FP64, with C = D*A + I.  The diagonal matrix D has diagonal entries

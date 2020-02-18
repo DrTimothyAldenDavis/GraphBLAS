@@ -39,7 +39,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             // 11 MIN monoids
             switch (add->xtype->code)
             {
-                // bool case redudandt with AND
+                // bool case redundant with AND
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new (&M, add, (bool    ) true)) ;        break ;
                 case GB_INT8_code   : METHOD (GrB_Monoid_new (&M, add, (int8_t  ) INT8_MAX)) ;    break ;
                 case GB_UINT8_code  : METHOD (GrB_Monoid_new (&M, add, (uint8_t ) UINT8_MAX)) ;   break ;
@@ -62,7 +62,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             // 11 MAX monoids
             switch (add->xtype->code)
             {
-                // bool case redudandt with OR
+                // bool case redundant with OR
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new (&M, add, (bool    ) false)) ;       break ;
                 case GB_INT8_code   : METHOD (GrB_Monoid_new (&M, add, (int8_t  ) INT8_MIN)) ;    break ;
                 case GB_UINT8_code  : METHOD (GrB_Monoid_new (&M, add, (uint8_t ) 0)) ;           break ;
@@ -85,7 +85,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             // 11 PLUS monoids
             switch (add->xtype->code)
             {
-                // bool case redudandt with OR
+                // bool case redundant with OR
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new (&M, add, (bool    ) 0)) ;           break ;
                 case GB_INT8_code   : METHOD (GrB_Monoid_new (&M, add, (int8_t  ) 0)) ;           break ;
                 case GB_UINT8_code  : METHOD (GrB_Monoid_new (&M, add, (uint8_t ) 0)) ;           break ;
@@ -108,7 +108,7 @@ bool GB_mx_Monoid               // true if successful, false otherwise
             // 11 TIMES monoids
             switch (add->xtype->code)
             {
-                // bool case redudandt with AND
+                // bool case redundant with AND
                 case GB_BOOL_code   : METHOD (GrB_Monoid_new (&M, add, (bool    ) true)) ;        break ;
                 case GB_INT8_code   : METHOD (GrB_Monoid_new (&M, add, (int8_t  ) 1)) ;           break ;
                 case GB_UINT8_code  : METHOD (GrB_Monoid_new (&M, add, (uint8_t ) 1)) ;           break ;
@@ -120,6 +120,28 @@ bool GB_mx_Monoid               // true if successful, false otherwise
                 case GB_UINT64_code : METHOD (GrB_Monoid_new (&M, add, (uint64_t) 1)) ;           break ;
                 case GB_FP32_code   : METHOD (GrB_Monoid_new (&M, add, (float   ) 1)) ;           break ;
                 case GB_FP64_code   : METHOD (GrB_Monoid_new (&M, add, (double  ) 1)) ;           break ;
+                default: 
+                    mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
+                    return (false) ;
+            }
+            break ;
+
+        case GB_ANY_opcode   :
+
+            // 11 ANY monoids
+            switch (add->xtype->code)
+            {
+                case GB_BOOL_code   : METHOD (GrB_Monoid_new (&M, add, (bool    ) false)) ;       break ;
+                case GB_INT8_code   : METHOD (GrB_Monoid_new (&M, add, (int8_t  ) 0)) ;           break ;
+                case GB_UINT8_code  : METHOD (GrB_Monoid_new (&M, add, (uint8_t ) 0)) ;           break ;
+                case GB_INT16_code  : METHOD (GrB_Monoid_new (&M, add, (int16_t ) 0)) ;           break ;
+                case GB_UINT16_code : METHOD (GrB_Monoid_new (&M, add, (uint16_t) 0)) ;           break ;
+                case GB_INT32_code  : METHOD (GrB_Monoid_new (&M, add, (int32_t ) 0)) ;           break ;
+                case GB_UINT32_code : METHOD (GrB_Monoid_new (&M, add, (uint32_t) 0)) ;           break ;
+                case GB_INT64_code  : METHOD (GrB_Monoid_new (&M, add, (int64_t ) 0)) ;           break ;
+                case GB_UINT64_code : METHOD (GrB_Monoid_new (&M, add, (uint64_t) 0)) ;           break ;
+                case GB_FP32_code   : METHOD (GrB_Monoid_new (&M, add, (float   ) 0)) ;           break ;
+                case GB_FP64_code   : METHOD (GrB_Monoid_new (&M, add, (double  ) 0)) ;           break ;
                 default: 
                     mexWarnMsgIdAndTxt ("GB:warn", "unknown type") ;
                     return (false) ;

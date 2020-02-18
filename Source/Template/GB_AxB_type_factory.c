@@ -9,10 +9,13 @@
 
 // A template file #include'd in GB_AxB_factory.c
 
-// GB_NO_BOOLEAN is defined for 15 multiply operators in the #include'ing file
+// GB_NO_BOOLEAN is defined for multiply operators in the #include'ing file
 // (min, max, plus, minus, rminus, times, div, rdiv, is*) since those multiply
 // operators are redundant and have been renamed.  For these, the boolean
 // monoids are not needed.
+
+// For the PAIR multiply operator, the monoids MIN, MAX, TIMES, EQ, LAND, 
+// and LOR have been renamed to ANY_PAIR.  See GB_AxB_semiring_builtin.c.
 
 ASSERT (zcode == xycode) ;
 
@@ -125,12 +128,12 @@ else
 {
         switch (add_opcode)
         {
-            // LOR_PAIR, LAND_PAIR, been renamed to ANY_PAIR
+            // EQ_PAIR, LOR_PAIR, LAND_PAIR, been renamed to ANY_PAIR
             #ifndef GB_MULT_IS_PAIR_OPERATOR
             case GB_LOR_opcode  : GB_AxB_WORKER (_lor , GB_MULT_NAME, _bool)
             case GB_LAND_opcode : GB_AxB_WORKER (_land, GB_MULT_NAME, _bool)
-            #endif
             case GB_EQ_opcode   : GB_AxB_WORKER (_eq  , GB_MULT_NAME, _bool)
+            #endif
             case GB_LXOR_opcode : GB_AxB_WORKER (_lxor, GB_MULT_NAME, _bool)
             case GB_ANY_opcode  : GB_AxB_WORKER (_any , GB_MULT_NAME, _bool)
             default: ;

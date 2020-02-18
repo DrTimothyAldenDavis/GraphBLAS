@@ -171,7 +171,7 @@ GrB_Info GB_selector
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
@@ -186,7 +186,7 @@ GrB_Info GB_selector
     GB_CALLOC_MEMORY (C_pstart_slice, ntasks, sizeof (int64_t)) ;
 
     if (Wfirst == NULL || Wlast  == NULL || C_pstart_slice == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

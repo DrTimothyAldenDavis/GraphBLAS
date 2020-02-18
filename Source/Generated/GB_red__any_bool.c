@@ -137,9 +137,13 @@ GrB_Info GB_red_scalar__any_bool
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // reduce to each vector: each vector A(:,k) reduces to a scalar Tx (k)
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB_red_eachvec__any_bool
 (
@@ -162,9 +166,13 @@ GrB_Info GB_red_eachvec__any_bool
     #endif
 }
 
+
+
 //------------------------------------------------------------------------------
 // reduce to each index: each A(i,:) reduces to a scalar T (i)
 //------------------------------------------------------------------------------
+
+
 
 GrB_Info GB_red_eachindex__any_bool
 (

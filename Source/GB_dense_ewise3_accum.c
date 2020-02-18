@@ -7,10 +7,9 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_dense.h"
 #ifndef GBCOMPACT
+#include "GB_dense.h"
 #include "GB_binop__include.h"
-#endif
 
 void GB_dense_ewise3_accum          // C += A+B, all matrices dense
 (
@@ -85,4 +84,6 @@ void GB_dense_ewise3_accum          // C += A+B, all matrices dense
 
     ASSERT_MATRIX_OK (C, "C+=A+B output", GB0) ;
 }
+
+#endif
 

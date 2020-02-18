@@ -14,7 +14,7 @@
 
 #include "GB_mex.h"
 
-#define USAGE "C = GB_mex_AxB (A, B, atrans, btrans, axb_method, flipxy)"
+#define USAGE "C = GB_mex_rdiv2 (A, B, atrans, btrans, axb_method, flipxy, C_scalar)"
 
 #define FREE_ALL                        \
 {                                       \
@@ -22,6 +22,7 @@
     GB_MATRIX_FREE (&B) ;               \
     GB_MATRIX_FREE (&B64) ;             \
     GB_MATRIX_FREE (&C) ;               \
+    GB_MATRIX_FREE (&T) ;               \
     GrB_free (&My_rdiv2) ;              \
     GrB_free (&My_plus_rdiv2) ;         \
     GB_mx_put_global (true, 0) ;        \
@@ -34,13 +35,15 @@ bool malloc_debug = false ;
 bool ignore = false, ignore2 = false ;
 bool atranspose = false ;
 bool btranspose = false ;
-GrB_Matrix A = NULL, B = NULL, B64 = NULL, C = NULL ;
+GrB_Matrix A = NULL, B = NULL, B64 = NULL, C = NULL, T = NULL ;
 int64_t anrows = 0 ;
 int64_t ancols = 0 ;
 int64_t bnrows = 0 ;
 int64_t bncols = 0 ;
 GrB_Desc_Value AxB_method = GxB_DEFAULT, AxB_method_used ;
 bool flipxy = false ;
+bool done_in_place = false ;
+double C_scalar = 0 ;
 
 GrB_Info axb (GB_Context Context) ;
 
@@ -68,24 +71,72 @@ GrB_Info axb (GB_Context Context)
         return (info) ;
     }
 
-    // C = A*B
-    info = GB_AxB_meta (&C,
-        NULL,       // not in place
+    bool do_in_place = (C_scalar != 0) ;
+    C = NULL ;
+
+    if (do_in_place)
+    {
+        // construct the result matrix and fill it with the scalar
+        GrB_Index cnrows = anrows ;
+        GrB_Index cncols = bncols ;
+        info = GrB_Matrix_new (&C, GrB_FP64, cnrows, cncols) ;
+        if (info != GrB_SUCCESS)
+        {
+            GrB_free (&My_rdiv2) ;
+            GrB_free (&My_plus_rdiv2) ;
+            return (info) ;
+        }
+        info = GrB_assign (C, NULL, NULL, C_scalar,
+            GrB_ALL, cnrows, GrB_ALL, cncols, NULL) ;
+        if (info != GrB_SUCCESS) 
+        {
+            GrB_free (&My_rdiv2) ;
+            GrB_free (&My_plus_rdiv2) ;
+            GrB_free (&C) ;
+            return (info) ;
+        }
+        // GxB_print (C, 3) ;
+    }
+
+    // C = A*B or C += A*B
+    info = GB_AxB_meta (
+        &T,
+        C,
         false,      // C_replace
         true,       // CSC
         NULL,       // no MT returned
         NULL,       // no Mask
         false,      // mask not complemented
         false,      // mask not structural
-        NULL,       // no accum
+        (do_in_place) ? GrB_PLUS_FP64 : NULL,   // accum
         A, B,
         My_plus_rdiv2,
         atranspose,
         btranspose,
         flipxy,
         &ignore,    // mask_applied
-        &ignore2,    // mask_applied
+        &done_in_place,
         AxB_method, &AxB_method_used, Context) ;
+
+    if (info == GrB_SUCCESS)
+    {
+        if (done_in_place != do_in_place)
+        {
+            printf ("done in place: %d %d\n", do_in_place, done_in_place) ;
+            mexErrMsgTxt ("failure: not in place as expected\n") ;
+        }
+        if (!done_in_place)
+        {
+            GrB_free (&C) ;
+            C = T ;
+            T = NULL ;
+        }
+    }
+    else
+    {
+        GrB_free (&C) ;
+        GrB_free (&T) ;
+    }
 
     GrB_free (&My_rdiv2) ;
     GrB_free (&My_plus_rdiv2) ;
@@ -118,7 +169,7 @@ void mexFunction
     GB_WHERE (USAGE) ;
 
     // check inputs
-    if (nargout > 1 || nargin < 2 || nargin > 6)
+    if (nargout > 1 || nargin < 2 || nargin > 7)
     {
         mexErrMsgTxt ("Usage: " USAGE) ;
     }
@@ -168,6 +219,10 @@ void mexFunction
     // get the flipxy option
     GET_SCALAR (5, bool, flipxy, false) ;
 
+    // get the C_scalar
+    GET_SCALAR (6, double, C_scalar, 0) ;
+    // printf ("C scalar: %g\n", C_scalar) ;
+
     // determine the dimensions
     anrows = (atranspose) ? GB_NCOLS (A) : GB_NROWS (A) ;
     ancols = (atranspose) ? GB_NROWS (A) : GB_NCOLS (A) ;
@@ -177,6 +232,12 @@ void mexFunction
     {
         FREE_ALL ;
         mexErrMsgTxt ("invalid dimensions") ;
+    }
+
+    if (atranspose && btranspose && C_scalar != 0)
+    {
+        printf ("C=A'*B'; ignoring C_scalar!\n") ;
+        C_scalar = 0 ;
     }
 
     // convert B64 (double) to B (float)

@@ -260,7 +260,7 @@ GrB_Info GB_ewise_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, Cwork, Cnvec, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

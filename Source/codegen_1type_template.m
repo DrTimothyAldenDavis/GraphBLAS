@@ -21,14 +21,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_type.c | m4 | tail -n +5 > Generated/GB_type__%s.c', ...
+'cat control.m4 Generator/GB_type.c | m4 | tail -n +6 > Generated/GB_type__%s.c', ...
 fname) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_type.h | m4 | tail -n +5 >> Generated/GB_type__include.h') ;
+'cat control.m4 Generator/GB_type.h | m4 | tail -n +6 >> Generated/GB_type__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

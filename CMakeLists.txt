@@ -179,7 +179,12 @@ message ( STATUS "CMAKE have OpenMP:         " ${OPENMP_FOUND} )
 # find the BLAS
 #-------------------------------------------------------------------------------
 
-# FIXME: CBLAS disabled for now because of performance penalty when using it
+# FUTURE: CBLAS disabled for now because of a linking issue.  The problem is
+# that GraphBLAS gets linked with both libgomp and libiomp, when the MKL BLAS
+# is used.  The FindOpenMP includes libgomp and FindBLAS with BLA_VENDOR set to
+# Intel10_64ilp includes libiomp.  When this happens, incorrect results are
+# obtained from cblas_saxpy and cblas_daxpy.  The Intel MKL can work with
+# libgomp, but not when libiomp is also included.
 
 #   if ( CMAKE_VERSION VERSION_GREATER "3.13" )
 #       # Look for the parallel 64-bit MKL BLAS by default

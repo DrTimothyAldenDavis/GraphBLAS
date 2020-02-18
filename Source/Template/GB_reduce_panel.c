@@ -46,7 +46,7 @@
         GB_ATYPE Panel [GB_PANEL] ;
         int64_t first_panel_size = GB_IMIN (GB_PANEL, anz) ;
         for (int64_t k = 0 ; k < first_panel_size ; k++)
-        {
+        { 
             Panel [k] = Ax [k] ;
         }
 

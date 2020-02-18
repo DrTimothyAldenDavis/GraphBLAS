@@ -95,3 +95,15 @@ GB_mex_errors, line 898:GraphBLAS error: GrB_INVALID_OBJECT
 function: GxB_Scalar_fprint (s, name, pr, f)
 GxB_Scalar is invalid [scalar2]
 
+GB_mex_errors, line 955:GraphBLAS error: GrB_INVALID_VALUE
+function: GxB_Desc_set (desc, field, value)
+predefined descriptors may not be modified
+
+GB_mex_errors, line 958:GraphBLAS error: GrB_INVALID_VALUE
+function: GrB_Descriptor_set (desc, field, value)
+predefined descriptors may not be modified
+
+GB_mex_errors, line 999:GraphBLAS error: GrB_OUT_OF_MEMORY
+function: GrB_Matrix_assign_FP64 (C, M, accum, x, Rows, nRows, Cols, nCols, desc)
+out of memory
+

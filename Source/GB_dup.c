@@ -37,7 +37,7 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     const GrB_Type ctype,   // type of C, if numeric is false
     GB_Context Context
 )
-{
+{ 
 
     //--------------------------------------------------------------------------
     // check inputs

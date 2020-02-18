@@ -53,10 +53,12 @@ end
 
 switch opname
 
-    % 11 binary operators, result is opclass
+    % 12 binary operators, result is opclass
     case 'first'
         z = x ;
     case 'second'
+        z = y ;
+    case 'any'
         z = y ;
     case 'pair'
         z = ones (size (x), opclass) ;

@@ -32,14 +32,14 @@ bool GB_pslice          // slice Ap; return true if ok, false if out of memory
         (*Slice_handle) = NULL ;
         GB_MALLOC_MEMORY (Slice, ntasks+1, sizeof (int64_t)) ;
         if (Slice == NULL)
-        {
+        { 
             // out of memory
             return (false) ;
         }
         (*Slice_handle) = Slice ;
     }
     else
-    {
+    { 
         Slice = (*Slice_handle) ;
     }
 

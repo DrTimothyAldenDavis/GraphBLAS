@@ -116,7 +116,16 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    // FUTURE::: use GB_hypermatrix_prune
+    info = GB_hypermatrix_prune (C, Context) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_MATRIX_FREE (&C) ;
+        return (info) ;
+    }
+
+#if 0
+    // see GB_hypermatrix_prune
     if (C_is_hyper && C->nvec_nonempty < Cnvec)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors
@@ -140,6 +149,7 @@ GrB_Info GB_subref_phase2   // C=A(I,J)
         C->plen = nvec_new ;
         ASSERT (C->nvec == C->nvec_nonempty) ;
     }
+#endif
 
     //--------------------------------------------------------------------------
     // return result

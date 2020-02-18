@@ -4912,8 +4912,6 @@ void mexFunction
         GrB_Index ignore ;
         OK (GrB_Matrix_nvals (&ignore, A)) ;
         OK (GrB_Matrix_nvals (&ignore, B)) ;
-        // GxB_print (A, GB3) ;
-        // GxB_print (B, GB3) ;
         CHECK (GB_mx_isequal (A, B, 0)) ;
         GrB_free (&B) ;
 

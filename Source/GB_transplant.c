@@ -94,7 +94,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     int64_t cnzmax_keep = 0 ;
 
     if (keep_Cp_and_Ci)
-    {
+    { 
         // Keep C->p and C->i by removing them from C.  They already contain
         // the right pattern for a dense matrix C.  No need to free it and
         // recreate the same thing.
@@ -211,7 +211,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
                 }
             }
             else
-            {
+            { 
                 // copy A->p into the newly created C->p
                 GB_memcpy (C->p, A->p, (avdim+1) * sizeof (int64_t), nth) ;
             }
@@ -357,7 +357,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
 
     }
     else if (A->i_shallow)
-    { 
+    {
 
         //----------------------------------------------------------------------
         // A->i is a shallow copy of another matrix, so we need a deep copy
@@ -370,12 +370,12 @@ GrB_Info GB_transplant          // transplant one matrix into another
             int64_t pC ;
             #pragma omp parallel for num_threads(nthreads) schedule(static)
             for (pC = 0 ; pC < anz ; pC++)
-            {
+            { 
                 Ci [pC] = pC % avlen ;
             }
         }
         else
-        {
+        { 
             // copy A->i into C->i
             GB_memcpy (C->i, A->i, anz * sizeof (int64_t), nthreads) ;
         }

@@ -142,7 +142,7 @@ GrB_Info GB_subassign_one_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, /* A */ A->p, A->nvec, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

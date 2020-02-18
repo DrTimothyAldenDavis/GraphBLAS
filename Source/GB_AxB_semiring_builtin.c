@@ -78,7 +78,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
 
     if (!GB_binop_builtin (A->type, A_is_pattern, B->type, B_is_pattern,
         mult, flipxy, mult_opcode, xycode, zcode))
-    {
+    { 
         return (false) ;
     }
 
@@ -87,7 +87,7 @@ bool GB_AxB_semiring_builtin        // true if semiring is builtin
     //--------------------------------------------------------------------------
 
     if ((*mult_opcode) == GB_PAIR_opcode)
-    {
+    { 
         if (((*add_opcode) == GB_EQ_opcode) ||
             ((*add_opcode) == GB_LAND_opcode) ||
             ((*add_opcode) == GB_LOR_opcode) ||

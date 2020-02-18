@@ -177,7 +177,7 @@ GrB_Info GB_AxB_flopcount
     ntasks = GB_IMAX (ntasks, 1) ;
     int64_t *pstart_slice, *kfirst_slice, *klast_slice ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, B, ntasks))
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;
@@ -190,7 +190,7 @@ GrB_Info GB_AxB_flopcount
     GB_MALLOC_MEMORY (Wfirst, ntasks, sizeof (int64_t)) ;
     GB_MALLOC_MEMORY (Wlast,  ntasks, sizeof (int64_t)) ;
     if (Wfirst == NULL || Wlast == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;
@@ -248,7 +248,7 @@ GrB_Info GB_AxB_flopcount
             int64_t im_first = -1, im_last = -1 ;
             int64_t mjnz = 0 ;
             if (M != NULL)
-            { 
+            {
                 int64_t mpright = mnvec - 1 ;
                 int64_t pM, pM_end ;
                 GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j,
@@ -260,7 +260,7 @@ GrB_Info GB_AxB_flopcount
                 im_first = Mi [pM] ;
                 im_last  = Mi [pM_end-1] ;
                 if (pB == Bp [kk])
-                {
+                { 
                     // this task owns the top part of B(:,j), so it can
                     // account for the work to access M(:,j), without the work
                     // being duplicated by other tasks working on B(:,j)
@@ -317,24 +317,24 @@ GrB_Info GB_AxB_flopcount
                 // skip if intersection of A(:,k) and M(:,j) is empty
                 // and mask is not complemented (C<M>=A*B)
                 if (mask_is_M)
-                { 
+                {
                     // A(:,k) is non-empty; get first and last index of A(:,k)
                     int64_t alo = Ai [pA] ;
                     int64_t ahi = Ai [pA_end-1] ;
                     if (ahi < im_first || alo > im_last) continue ;
                     if (aknz > 256 && mjnz_much < aknz)
-                    {
+                    { 
                         // scan M(:j), and do binary search for A(i,j)
                         bkjflops = mjnz * (1 + 4 * log2 ((double) aknz)) ;
                     }
                     else
-                    {
+                    { 
                         // scan A(:k), and lookup M(i,j)
                         bkjflops = aknz ;
                     }
                 }
                 else
-                {
+                { 
                     // A(:,k)*B(k,j) requires aknz flops
                     bkjflops = aknz ;
                 }

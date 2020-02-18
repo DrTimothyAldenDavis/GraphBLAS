@@ -522,6 +522,7 @@ void mexFunction
             mexErrMsgTxt ("C failed") ;
         }
         mxClassID cclass = GB_mx_Type_to_classID (C->type) ;
+        // GxB_print (C, 2) ;
 
         // get accum; default: NOP, default class is class(C)
         accum = NULL ;

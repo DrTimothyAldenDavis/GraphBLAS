@@ -149,7 +149,7 @@ GrB_Info GB_ijsort
 
     GB_MALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
     if (Count == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;

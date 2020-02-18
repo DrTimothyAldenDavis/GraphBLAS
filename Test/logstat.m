@@ -6,6 +6,8 @@ function logstat (testscript, threads)
 
 [debug, compact, malloc, covered] = GB_mex_debug ;
 
+clast = grb_get_coverage ;
+
 if (nargin < 2)
     % by default, use 4 threads and a tiny chunk size of 1
     threads {1} = [4 1] ;
@@ -77,8 +79,17 @@ for trial = 1:ntrials
         if (~isempty (GraphBLAS_grbcov))
             c = sum (GraphBLAS_grbcov > 0) ;
             n = length (GraphBLAS_grbcov) ;
-            fprintf (   'coverage: %5d of %5d (%5.1f%%)', c, n, 100 * (c/n)) ;
-            fprintf (f, 'coverage: %5d of %5d (%5.1f%%)', c, n, 100 * (c/n)) ;
+            if (c == n)
+                fprintf (   'coverage: %5d :   all %5d (full 100%% rate: %8.2f/sec)', ...
+                    c - clast, n, (c-clast) / t) ;
+                fprintf (f, 'coverage: %5d :   all %5d (full 100%% rate: %8.2f/sec)', ...
+                    c - clast, n, (c-clast) / t) ;
+            else
+                fprintf (   'coverage: %5d : %5d of %5d (%5.1f%% rate: %8.2f/sec)', ...
+                    c - clast, c, n, 100 * (c/n), (c-clast) / t) ;
+                fprintf (f, 'coverage: %5d : %5d of %5d (%5.1f%% rate: %8.2f/sec)', ...
+                    c - clast, c, n, 100 * (c/n), (c-clast) / t) ;
+            end
             if (debug)
                 fprintf (' [debug]') ;
             end

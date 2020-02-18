@@ -171,7 +171,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     //--------------------------------------------------------------------------
 
     if (GB_PENDING_OR_ZOMBIES (T))
-    {
+    { 
         // if this fails, *Thandle must be freed
         GB_OK (GB_wait (T, Context)) ;
     }
@@ -266,7 +266,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         && (accum == NULL || (cnz + cnpending) == 0) ;
 
     if (!use_transplant)
-    {
+    { 
         GBBURBLE ("(C%s%s=Z via %s%s%s) ",
             ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
             ((accum == NULL) ? "" : "+"),

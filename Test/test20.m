@@ -33,7 +33,7 @@ if (fulltest > 0)
     k2_list = 1:length(add_ops) ;
     k3_list = 1:length(classes) ;
 else
-    k1_list = [ 8 ] ;   % times
+    k1_list = [ 9 ] ;   % times
     k2_list = [ 3 ] ;   % plus
     k3_list = [ 11 ] ;  % double
 end

@@ -69,12 +69,6 @@ void mexFunction
         mexErrMsgTxt ("A must be double precision") ;
     }
 
-    // printf ("\ninput matrix:\n") ;
-    // GxB_print (A, GxB_COMPLETE) ;
-
-    // printf ("\nbuilt-in max fp64 monoid:\n") ;
-    // GxB_print (GxB_MAX_FP64_MONOID, GxB_COMPLETE) ;
-
     // get the terminal value, if present.  Default is 1.
     double GET_SCALAR (1, double, terminal, 1) ;
 
@@ -98,9 +92,6 @@ void mexFunction
         printf ("error: %d %s\n", info, GrB_error ( )) ;
         mexErrMsgTxt ("Max_Terminal failed") ;
     }
-
-    // printf ("\nmax fp64 monoid with new terminal value:\n") ;
-    // GxB_print (Max_Terminal, GxB_COMPLETE) ;
 
     // reduce to a scalar
     double c ;

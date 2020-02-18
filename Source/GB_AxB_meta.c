@@ -13,13 +13,15 @@
 // or structural.
 
 // This algorithm may decide that it is more efficient to apply the mask later,
-// in GB_accum_mask, after this matrix C is computed, in GB_mxm.  The result of
-// this matrix is either the T matrix in GB_mxm, or (if done in-place), the
-// final output matrix C passed in from the user (C_in_place).
+// in GB_accum_mask, after this matrix C is computed, in GB_mxm.  The result is
+// either the T matrix in GB_mxm, or (if done in-place), the final output
+// matrix C passed in from the user (C_in_place).
 
 // The method is chosen automatically:  a gather/scatter saxpy method
 // (Gustavson), a heap-based saxpy method, or a dot product method.  The
 // AxB_method can modify this automatic choice, if set to a non-default value.
+// AxB_method_used is DOT, SAXPY, or DEFAULT (the latter denotes the row/col
+// scaling methods).
 
 // FUTURE:: an outer-product method for C=A*B'
 
@@ -92,7 +94,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     (*AxB_method_used) = GxB_DEFAULT ;
 
     if (AxB_method == GxB_AxB_HEAP)
-    {
+    { 
         // FUTURE::: Heap method not yet reinstalled; using Hash instead
         AxB_method = GxB_AxB_HASH ;
     }
@@ -280,7 +282,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     //--------------------------------------------------------------------------
 
     if (can_do_in_place)
-    { 
+    {
         // C cannot be done in place if it is aliased with any input matrix.
         // Also cannot compute C in place (yet) if it is to be transposed.
         bool C_aliased =
@@ -288,7 +290,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             GB_aliased (C_in_place, A) ||
             GB_aliased (C_in_place, B) ;
         if (C_transpose || C_aliased)
-        {
+        { 
             can_do_in_place = false ;
         }
     }
@@ -447,8 +449,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C<M>=A'*B via dot product, or C_in_place<M>+=A'*B if in place
             GBBURBLE ("C%s=A'*B, %sdot_product ", M_str,
                 (M != NULL && !Mask_comp) ? "masked_" : "") ;
-            GB_OK (GB_AxB_dot_parallel (Chandle,
-                (can_do_in_place) ? C_in_place : NULL,
+            GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
                 M, Mask_comp, Mask_struct, A, B, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
@@ -491,8 +492,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
                 M_str, A_str, B_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
             GB_OK (GB_transpose (&BT, btype_required, true, B, NULL, Context)) ;
-            GB_OK (GB_AxB_dot_parallel (Chandle,
-                (can_do_in_place) ? C_in_place : NULL,
+            GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
                 M, Mask_comp, Mask_struct, AT, BT, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
@@ -532,8 +532,7 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
             // C<M>=A*B via dot product, or C_in_place<M>+=A*B if in place
             GBBURBLE ("C%s=A*B', dot_product (transposed %s) ", M_str, A_str) ;
             GB_OK (GB_transpose (&AT, atype_required, true, A, NULL, Context)) ;
-            GB_OK (GB_AxB_dot_parallel (Chandle,
-                (can_do_in_place) ? C_in_place : NULL,
+            GB_OK (GB_AxB_dot (Chandle, (can_do_in_place) ? C_in_place : NULL,
                 M, Mask_comp, Mask_struct, AT, B, semiring, flipxy,
                 mask_applied, done_in_place, Context)) ;
             (*AxB_method_used) = GxB_AxB_DOT ;
@@ -561,13 +560,13 @@ GrB_Info GB_AxB_meta                // C<M>=A*B meta algorithm
     // C.
 
     if (*done_in_place)
-    {
-        // C can be done in place only if C is not transpose on output
+    { 
+        // C can be done in place only if C is not transposed on output
         ASSERT_MATRIX_OK (C_in_place, "C_in_place output for all C=A*B", GB0) ;
         ASSERT (C_in_place->is_csc == C_is_csc) ;
     }
     else
-    {
+    { 
         GrB_Matrix C = (*Chandle) ;
         ASSERT (C != NULL) ;
         C->is_csc = C_transpose ? !C_is_csc : C_is_csc ;

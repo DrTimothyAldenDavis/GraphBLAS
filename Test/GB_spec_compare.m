@@ -12,10 +12,13 @@ function ok = GB_spec_compare (C_spec, C_mex, identity, tol)
 
 % get the semiring identity
 if (nargin < 3)
-    identity = [ ] ;
+    identity = 0 ;
 end
 if (isempty (identity))
-    identity = 0 ;
+    % results from the ANY monoid or operator cannot be checked with
+    % this function, since many results are possible.
+    ok = true ;
+    return
 end
 
 if (nargin < 4)
@@ -78,13 +81,9 @@ end
 %}
 
 if (~ok_class || ~ok_pattern || ~ok_matrix)
-    % C_spec
-    % % C_mex
-    % C1
-    % C2
     fprintf ('matrix: %d pattern: %d class %d\n', ...
         ok_matrix, ok_pattern, ok_class) ;
-    norm (C1.matrix - C2.matrix, 1)
+    norm (double (C1.matrix) - double (C2.matrix), 1)
 end
 
 % with no output, just assert that ok is true

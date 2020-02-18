@@ -47,7 +47,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("M failed") ;
     }
-    // if (M != NULL) GxB_print (M, 3) ;
 
     // get Mask_comp
     bool GET_SCALAR (1, bool, Mask_comp, 0) ;
@@ -60,7 +59,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("A failed") ;
     }
-    // GxB_print (A, 3) ;
 
     // get B (shallow copy)
     B = GB_mx_mxArray_to_Matrix (pargin [3], "B", false, true) ;
@@ -69,7 +67,6 @@ void mexFunction
         FREE_ALL ;
         mexErrMsgTxt ("B failed") ;
     }
-    // GxB_print (B, 3) ;
 
     // allocate Bflops (note the calloc)
     int64_t bnvec = B->nvec ;

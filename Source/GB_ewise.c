@@ -200,16 +200,16 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
             }
             mask_applied = true ;
             if (mask_is_easy)
-            {
+            { 
                 GBBURBLE ("(mask is easy) ") ;
             }
             else // mask_is_very_sparse
-            {
+            { 
                 GBBURBLE ("(mask applied) ") ;
             }
         }
         else
-        {
+        { 
             GBBURBLE ("(mask later) ") ;
         }
     }
@@ -249,27 +249,10 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
     // FUTURE::: handle more special cases
 
     if (A_is_dense && B_is_dense)
-    {
+    { 
         // no need to use eWiseAdd if both A and B are dense
         eWiseAdd = false ;
     }
-
-    #if 0
-    bool op_is_first  = op->opcode == GB_FIRST_opcode ;
-    bool op_is_second = op->opcode == GB_SECOND_opcode ;
-    bool op_is_pair   = op->opcode == GB_PAIR_opcode ;
-    bool A_is_pattern, B_is_pattern ;
-    // A is passed as x, and B as y, in z = op(x,y)
-    if (!eWiseAdd)
-    {
-        // op is only applied to the intersection of A and B.  Values of A and
-        // B outside the intersection are ignored already, and do not appear in
-        // C.  Thus, the SECOND operator ignores all values in A, and the FIRST
-        // operator ignores all values in B.  PAIR ignores both.
-        A_is_pattern = op_is_second || op_is_pair ;
-        B_is_pattern = op_is_first  || op_is_pair ;
-    }
-    #endif
 
     bool no_typecast =
         (op->ztype == C->type)              // no typecasting of C
@@ -278,7 +261,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
     #ifndef GBCOMPACT
 
-        // sssp12:
+        // FUTURE: for sssp12:
         // C<A> = A+B where C is sparse and B is dense;
         // mask is structural, not complemented, C_replace is false.
         // C is not empty.  Use a kernel that computes T<A>=A+B
@@ -297,7 +280,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
         && accum == op                      // accum is same as the op
         && (op->opcode >= GB_MIN_opcode)    // subset of binary operators
         && (op->opcode <= GB_RDIV_opcode))
-        {
+        { 
 
             //------------------------------------------------------------------
             // C += A+B where all 3 matrices are dense
@@ -312,7 +295,7 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
         }
         else if (accum == NULL)             // no accum
-        {
+        { 
 
             //------------------------------------------------------------------
             // C = A+B where A and B are dense (C is anything)
@@ -320,11 +303,11 @@ GrB_Info GB_ewise                   // C<M> = accum (C, A+B) or A.*B
 
             // C_replace is ignored
             GBBURBLE ("dense C=A+B ") ;
-            info = GB_dense_ewise3_noaccum (C, C_is_dense, A1, B1, op, Context) ;
+            info = GB_dense_ewise3_noaccum (C, C_is_dense, A1, B1, op, Context);
             GB_FREE_ALL ;
             if (info == GrB_SUCCESS)
             {
-                ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C=A+B", GB0) ;
+                ASSERT_MATRIX_OK (C, "C output for GB_ewise, dense C=A+B", GB0);
             }
             return (info) ;
         }

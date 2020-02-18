@@ -2,6 +2,11 @@
 // GraphBLAS/Demo/Program/pthread_demo: example of user multithreading
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // This demo requires pthreads, and should work if GraphBLAS is compiled to
 // use either OpenMP or pthreads to synchronize multiple user threadds.
 

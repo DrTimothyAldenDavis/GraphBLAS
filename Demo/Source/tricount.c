@@ -2,6 +2,11 @@
 // GraphBLAS/Demo/Source/tricount.c: count the number of triangles in a graph
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // Given a symmetric graph A with no-self edges, tricount counts the exact
 // number of triangles in the graph.
 

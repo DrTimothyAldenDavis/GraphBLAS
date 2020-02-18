@@ -178,13 +178,16 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         int64_t bknz = pB_start - pB_end ;
         if (bknz == 0) continue ;
         GB_void bwork [GB_VLA(bsize)] ;
+
         // get C(:,jC), the (kC)th vector of C
         // int64_t kC = kA * bnvec + kB ;
         int64_t pC = Cp [kC] ;
+
         // get A(:,jA), the (kA)th vector of A
         int64_t pA_start = Ap [kA] ;
         int64_t pA_end   = Ap [kA+1] ;
         GB_void awork [GB_VLA(asize)] ;
+
         for (int64_t pA = pA_start ; pA < pA_end ; pA++)
         {
             // awork = A(iA,jA), typecasted to op->xtype
@@ -209,7 +212,16 @@ GrB_Info GB_kroner                  // C = kron (A,B)
     // remove empty vectors from C, if hypersparse
     //--------------------------------------------------------------------------
 
-    // FUTURE::: use GB_hypermatrix_prune
+    info = GB_hypermatrix_prune (C, Context) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_MATRIX_FREE (&C) ;
+        return (info) ;
+    }
+
+#if 0
+    // see GB_hypermatrix_prune
     if (C_is_hyper && C->nvec_nonempty < cnvec)
     {
         // create new Cp_new and Ch_new arrays, with no empty vectors
@@ -233,6 +245,7 @@ GrB_Info GB_kroner                  // C = kron (A,B)
         C->plen = nvec_new ;
         ASSERT (C->nvec == C->nvec_nonempty) ;
     }
+#endif
 
     ASSERT (C->nvec_nonempty == GB_nvec_nonempty (C, Context)) ;
 

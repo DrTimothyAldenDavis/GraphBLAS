@@ -14,7 +14,7 @@ fprintf ('\n -------------- A*B plus_rdiv (user-defined semiring)\n') ;
 
 rng ('default') ;
 
-for N = [10 100 1000]
+for N = [10 100] % 1000]
 
     N
 

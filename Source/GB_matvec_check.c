@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // for additional diagnostics, use:
-#define GB_DEVELOPER 1
+// #define GB_DEVELOPER 1
 
 #include "GB_Pending.h"
 #include "GB_iterator.h"
@@ -388,22 +388,22 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 
     GBPR0 ("  ") ;
     if (name != NULL && strlen (name) > 0)
-    {
+    { 
         GBPR0 ("%s, ", GB_NAME) ;
     }
 
     // # of entries cannot be computed until all the tests above are OK
     int64_t anz = GB_NNZ (A) ;
     if (anz == 0)
-    {
+    { 
         GBPR0 ("no entries\n") ;
     }
     else if (anz == 1)
-    {
+    { 
         GBPR0 ("1 entry\n") ;
     }
     else
-    {
+    { 
         GBPR0 (GBd" entries\n", anz) ;
     }
 

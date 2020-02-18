@@ -1,7 +1,3 @@
-
-
-
-
 //------------------------------------------------------------------------------
 // GB_binop:  hard-coded functions for each built-in binary operator
 //------------------------------------------------------------------------------
@@ -150,11 +146,15 @@ GrB_Info GB_Cdense_accumA__second_fp64
     const int ntasks,
     const int nthreads
 )
-{ 
+{
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    #include "GB_dense_subassign_23_template.c"
+    
+    { 
+        #include "GB_dense_subassign_23_template.c"
+    }
+    
     return (GrB_SUCCESS) ;
     #endif
 }
@@ -169,12 +169,17 @@ GrB_Info GB_Cdense_accumX__second_fp64
     const GB_void *p_ywork,
     const int nthreads
 )
-{ 
+{
     #if GB_DISABLE
     return (GrB_NO_VALUE) ;
     #else
-    double ywork = (*((double *) p_ywork)) ;
-    #include "GB_dense_subassign_22_template.c"
+    
+    { 
+        double ywork = (*((double *) p_ywork)) ;
+        #include "GB_dense_subassign_22_template.c"
+        return (GrB_SUCCESS) ;
+    }
+    
     return (GrB_SUCCESS) ;
     #endif
 }

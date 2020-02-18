@@ -92,7 +92,7 @@ GrB_Info GB_wait                // finish all pending computations
     int64_t npending = GB_Pending_n (A) ;
 
     if (nzombies > 0 || npending > 0)
-    {
+    { 
         GB_BURBLE_MATRIX (A, "wait (zombies: "GBd", pending: "GBd") ",
             nzombies, npending) ;
     }
@@ -215,7 +215,18 @@ GrB_Info GB_wait                // finish all pending computations
 
     // Finally check the status of the builder.  The pending tuples, must
     // be freed (just above), whether or not the builder is successful.
-    GB_OK (info) ;
+    // GB_OK (info) ;
+    if (info != GrB_SUCCESS)
+    {
+        // TODO see test132: invalid read of size 8 in GB_free:
+        // if (A != NULL && (A->magic == GB_MAGIC || A->magic == GB_MAGIC2))
+        GB_PHIX_FREE (A) ;
+        GB_MATRIX_FREE (&T) ;
+        GB_MATRIX_FREE (&S) ;
+        GB_MATRIX_FREE (&(Aslice [0])) ;
+        GB_MATRIX_FREE (&(Aslice [1])) ;
+        return (info) ;
+    }
 
     ASSERT_MATRIX_OK (T, "T = matrix of pending tuples", GB0) ;
     ASSERT (!GB_PENDING (T)) ;

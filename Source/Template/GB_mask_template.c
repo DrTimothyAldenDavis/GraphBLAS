@@ -125,7 +125,7 @@
             len = TaskList [taskid].len ;
         }
         else
-        {
+        { 
             // a coarse task operates on one or more whole vectors
             len = vlen ;
         }

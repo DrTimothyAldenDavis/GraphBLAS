@@ -24,6 +24,7 @@ fprintf (f, 'define(`GB_Cdense_accumA'', `GB_Cdense_accumA__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_accumX'', `GB_Cdense_accumX__%s'')\n', name) ;
 fprintf (f, 'define(`GB_Cdense_ewise3_noaccum'', `GB_Cdense_ewise3_noaccum__%s'')\n', name) ;
 
+% subset of operators for ewise3_accum
 if (is_binop_subset)
     fprintf (f, 'define(`GB_Cdense_ewise3_accum'', `GB_Cdense_ewise3_accum__%s'')\n', name) ;
     fprintf (f, 'define(`if_is_binop_subset'', `'')\n') ;
@@ -77,6 +78,17 @@ fprintf (f, 'define(`GB_ctype'', `%s'')\n', ztype) ;
 fprintf (f, 'define(`GB_atype'', `%s'')\n', xytype) ;
 fprintf (f, 'define(`GB_btype'', `%s'')\n', xytype) ;
 
+% C_dense_update: operators z=f(x,y) where ztype and xtype match, and op is not 'first'
+if (isequal (xytype, ztype) && ~isequal (binop, 'first'))
+    fprintf (f, 'define(`GB_C_dense_update'', `1'')\n') ;
+    fprintf (f, 'define(`if_C_dense_update'', `'')\n') ;
+    fprintf (f, 'define(`endif_C_dense_update'', `'')\n') ;
+else
+    fprintf (f, 'define(`GB_C_dense_update'', `0'')\n') ;
+    fprintf (f, 'define(`if_C_dense_update'', `#if 0'')\n') ;
+    fprintf (f, 'define(`endif_C_dense_update'', `#endif'')\n') ;
+end
+
 % to get an entry from A
 if (isequal (binop, 'second') || isequal (binop, 'pair'))
     % the value of A is ignored
@@ -120,7 +132,7 @@ fprintf (f, 'define(`GB_disable'', `(%s)'')\n', disable) ;
 
 fclose (f) ;
 
-trim = 18 ;
+trim = 25 ;
 
 % construct the *.c file
 cmd = sprintf (...

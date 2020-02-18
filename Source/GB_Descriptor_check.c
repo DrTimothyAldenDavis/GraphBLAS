@@ -31,17 +31,18 @@ static GrB_Info GB_dc
     GBPR0 ("    d.%s = ", field) ;
     switch ((int) v)
     {
-        case GxB_DEFAULT       : GBPR0 ("default   ") ; break ;
+        case GxB_DEFAULT            : GBPR0 ("default   ") ; break ;
         case GrB_COMP               : GBPR0 ("complement") ; break ;
         case GrB_STRUCTURE          : GBPR0 ("structure ") ; break ;
         case GrB_COMP+GrB_STRUCTURE : GBPR0 ("structural complement") ; break ;
-        case GrB_TRAN          : GBPR0 ("transpose ") ; break ;
-        case GrB_REPLACE       : GBPR0 ("replace   ") ; break ;
-        case GxB_AxB_GUSTAVSON : GBPR0 ("Gustavson ") ; break ;
-        case GxB_AxB_HEAP      : GBPR0 ("heap      ") ; break ;
-        case GxB_AxB_HASH      : GBPR0 ("hash      ") ; break ;
-        case GxB_AxB_DOT       : GBPR0 ("dot       ") ; break ;
-        default                : GBPR0 ("unknown   ") ;
+        case GrB_TRAN               : GBPR0 ("transpose ") ; break ;
+        case GrB_REPLACE            : GBPR0 ("replace   ") ; break ;
+        case GxB_AxB_SAXPY          : GBPR0 ("saxpy     ") ; break ;
+        case GxB_AxB_GUSTAVSON      : GBPR0 ("Gustavson ") ; break ;
+        case GxB_AxB_HEAP           : GBPR0 ("heap      ") ; break ;
+        case GxB_AxB_HASH           : GBPR0 ("hash      ") ; break ;
+        case GxB_AxB_DOT            : GBPR0 ("dot       ") ; break ;
+        default                     : GBPR0 ("unknown   ") ;
             info = GrB_INVALID_OBJECT ;
             ok = false ;
             break ;

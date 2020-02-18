@@ -8,7 +8,6 @@
 // This file has been automatically generated from Generator/GB_type.h
 
 
-
 GrB_Info GB_Cdense_05d__bool
 (
     GrB_Matrix C,
@@ -45,7 +44,6 @@ GrB_Info GB_Cdense_25__bool
     const int ntasks,
     const int nthreads
 ) ;
-
 
 
 GrB_Info GB_Cdense_05d__int8
@@ -86,7 +84,6 @@ GrB_Info GB_Cdense_25__int8
 ) ;
 
 
-
 GrB_Info GB_Cdense_05d__int16
 (
     GrB_Matrix C,
@@ -123,7 +120,6 @@ GrB_Info GB_Cdense_25__int16
     const int ntasks,
     const int nthreads
 ) ;
-
 
 
 GrB_Info GB_Cdense_05d__int32
@@ -164,7 +160,6 @@ GrB_Info GB_Cdense_25__int32
 ) ;
 
 
-
 GrB_Info GB_Cdense_05d__int64
 (
     GrB_Matrix C,
@@ -201,7 +196,6 @@ GrB_Info GB_Cdense_25__int64
     const int ntasks,
     const int nthreads
 ) ;
-
 
 
 GrB_Info GB_Cdense_05d__uint8
@@ -242,7 +236,6 @@ GrB_Info GB_Cdense_25__uint8
 ) ;
 
 
-
 GrB_Info GB_Cdense_05d__uint16
 (
     GrB_Matrix C,
@@ -279,7 +272,6 @@ GrB_Info GB_Cdense_25__uint16
     const int ntasks,
     const int nthreads
 ) ;
-
 
 
 GrB_Info GB_Cdense_05d__uint32
@@ -320,7 +312,6 @@ GrB_Info GB_Cdense_25__uint32
 ) ;
 
 
-
 GrB_Info GB_Cdense_05d__uint64
 (
     GrB_Matrix C,
@@ -359,7 +350,6 @@ GrB_Info GB_Cdense_25__uint64
 ) ;
 
 
-
 GrB_Info GB_Cdense_05d__fp32
 (
     GrB_Matrix C,
@@ -396,7 +386,6 @@ GrB_Info GB_Cdense_25__fp32
     const int ntasks,
     const int nthreads
 ) ;
-
 
 
 GrB_Info GB_Cdense_05d__fp64

@@ -289,7 +289,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
         if (Wfirst_space == NULL || Wlast_space == NULL ||
            !GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GB_OUT_OF_MEMORY) ;
@@ -474,7 +474,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             GB_MALLOC_MEMORY (pstart_slice, ntasks+1, sizeof (int64_t)) ;
             if (pstart_slice == NULL)
-            {
+            { 
                 // out of memory
                 GB_FREE_ALL ;
                 return (GB_OUT_OF_MEMORY) ;
@@ -530,6 +530,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             if (!done)
             { 
+                // if this fails, the template frees all workspace with the
+                // GB_FREE_ALL macro, defined above.
                 GB_BURBLE_MATRIX (A, "generic ") ;
                 #include "GB_reduce_each_index.c"
             }

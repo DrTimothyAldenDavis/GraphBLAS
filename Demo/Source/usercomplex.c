@@ -2,6 +2,11 @@
 // GraphBLAS/Demo/Source/usercomplex.c:  complex numbers as a user-defined type
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 #include "usercomplex.h"
 
 #if defined __INTEL_COMPILER

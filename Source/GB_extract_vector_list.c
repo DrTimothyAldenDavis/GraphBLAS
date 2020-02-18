@@ -60,7 +60,7 @@ bool GB_extract_vector_list     // true if successful, false if out of memory
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
-    {
+    { 
         // out of memory
         return (false) ;
     }

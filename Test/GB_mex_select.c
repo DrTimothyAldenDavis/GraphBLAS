@@ -132,9 +132,6 @@ void mexFunction
         C->nvec_nonempty = -1 ;
     }
 
-    // GxB_print (op, 3) ;
-    // GxB_print (Thunk, 3) ;
-
     // C<M> = accum(C,op(A))
     if (C->vdim == 1 && (desc == NULL || desc->in0 == GxB_DEFAULT))
     {

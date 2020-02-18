@@ -55,7 +55,7 @@ void GB_cumsum                      // cumulative sum of an array
     //--------------------------------------------------------------------------
 
     if (kresult == NULL)
-    { 
+    {
 
         if (nthreads <= 2)
         {
@@ -130,7 +130,7 @@ void GB_cumsum                      // cumulative sum of an array
 
     }
     else
-    { 
+    {
 
         if (nthreads <= 2)
         {
