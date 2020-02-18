@@ -7,6 +7,8 @@ function C = mrdivide (A, B)
 %
 % The input matrices may be either GraphBLAS and/or MATLAB matrices, in
 % any combination.  C is returned as a GraphBLAS matrix.
+%
+% See also GrB/mldivide.
 
 % FUTURE: add solvers over a group (GF(2) for example).
 

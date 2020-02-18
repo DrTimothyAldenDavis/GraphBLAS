@@ -3,6 +3,8 @@ function display (G) %#ok<DISPLAY>
 % display (G) displays the attributes and first few entries of a
 % GraphBLAS sparse matrix object.  Use disp(G,3) to display all of the
 % content of G.
+%
+% See also disp.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.

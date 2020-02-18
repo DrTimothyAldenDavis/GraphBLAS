@@ -18,6 +18,8 @@ function C = sum (G, option)
 % sums to be computed, and the NaN behavior can be specified.  The
 % GraphBLAS sum (G,...) uses only a type of 'native', and a nanflag of
 % 'includenan'.  See 'help sum' for more details.
+%
+% See also GrB/prod, GrB/max, GrB/min.
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
