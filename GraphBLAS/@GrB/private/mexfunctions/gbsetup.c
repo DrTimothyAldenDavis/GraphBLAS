@@ -117,7 +117,7 @@ void mexFunction
 
     }
     else
-    { 
+    {
         ERROR ("gbsetup: unknown action") ;
     }
 

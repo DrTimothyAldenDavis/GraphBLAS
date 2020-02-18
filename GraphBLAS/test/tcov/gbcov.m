@@ -15,6 +15,7 @@ addpath ('tmp') ;           % add the modified @GrB class
 
 % run the tests
 gbtest ;
+GrB.finalize ;
 
 addpath ('../..') ;         % add back the regular @GrB class
 rmpath ('tmp') ;            % remove the modified @GrB class

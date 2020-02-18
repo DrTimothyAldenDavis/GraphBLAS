@@ -90,6 +90,10 @@ static void get_descriptor
             { 
                 OK (GxB_Desc_set (D, field, GxB_AxB_DOT)) ;
             }
+            else if (MATCH (s, "saxpy"))
+            { 
+                OK (GxB_Desc_set (D, field, GxB_AxB_SAXPY)) ;
+            }
             else if (MATCH (s, "heap"))
             { 
                 OK (GxB_Desc_set (D, field, GxB_AxB_HEAP)) ;

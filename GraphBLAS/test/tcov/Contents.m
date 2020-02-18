@@ -6,6 +6,9 @@
 % all temporary files, use 'make distclean' or remove the tmp/* files and
 % folders.
 %
+% To run these tests, if GraphBLAS/@GrB is initialized, first use
+% GrB.finalize.  Then gbcov can load the modified MATLAB interface.
+%
 %   gbcov      - run all GraphBLAS tests, with statement coverage
 %
 % Utilities:

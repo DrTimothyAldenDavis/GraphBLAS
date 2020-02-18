@@ -6,8 +6,10 @@ function gbtest5
 
 list_out  = { [ ], 'default', 'replace' } ;
 list_in   = { [ ], 'default', 'transpose' } ;
-list_mask = { [ ], 'default', 'complement' } ;
-list_axb  = { [ ], 'default', 'gustavson', 'heap', 'dot' } ;
+list_mask = { [ ], 'default', 'complement', ...
+                   'structural complement', 'structure' } ;
+list_axb  = { [ ], 'default', 'gustavson', 'heap', 'dot', 'hash', 'saxpy' } ;
+list_kind = { [ ], 'sparse', 'full', 'grb', 'default' } ;
 
 ntrials = 0;
 
@@ -23,44 +25,51 @@ for k1 = 1:length (list_out)
                 mask = list_mask {k4} ;
                 for k5 = 1:length (list_axb)
                     axb = list_axb {k5} ;
+                    for k6 = 1:length (list_kind)
+                        kind = list_kind {k6} ;
 
-                    for nthreads = [0 2]
-                        for chunk = [0 10000]
+                        for nthreads = [0 2]
+                            for chunk = [0 10000]
 
-                            clear d
-                            d = struct ;
+                                clear d
+                                d = struct ;
 
-                            if (~isempty (out))
-                                d.out = out ;
+                                if (~isempty (out))
+                                    d.out = out ;
+                                end
+
+                                if (~isempty (mask))
+                                    d.mask = mask ;
+                                end
+
+                                if (~isempty (in0))
+                                    d.in0 = in0 ;
+                                end
+
+                                if (~isempty (in1))
+                                    d.in1 = in1 ;
+                                end
+
+                                if (~isempty (axb))
+                                    d.axb = axb ;
+                                end
+
+                                if (~isempty (kind))
+                                    d.kind = kind ;
+                                end
+
+                                if (nthreads > 0)
+                                    d.nthreads = nthreads ;
+                                end
+
+                                if (chunk > 0)
+                                    d.chunk = chunk ;
+                                end
+
+                                d
+                                GrB.descriptorinfo (d) ;
+                                ntrials = ntrials + 1 ;
                             end
-
-                            if (~isempty (mask))
-                                d.mask = mask ;
-                            end
-
-                            if (~isempty (in0))
-                                d.in0 = in0 ;
-                            end
-
-                            if (~isempty (in1))
-                                d.in1 = in1 ;
-                            end
-
-                            if (~isempty (axb))
-                                d.axb = axb ;
-                            end
-
-                            if (nthreads > 0)
-                                d.nthreads = nthreads ;
-                            end
-
-                            if (chunk > 0)
-                                d.chunk = chunk ;
-                            end
-
-                            d
-                            GrB.descriptorinfo (d) ;
-                            ntrials = ntrials + 1 ;
                         end
                     end
                 end

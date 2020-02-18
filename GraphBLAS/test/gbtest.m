@@ -30,6 +30,7 @@ function gbtest
 % gbtest3 requires ../demo/dnn_matlab.m and ../demo/dnn_mat2gb.m.
 demo_folder = fullfile (fileparts (mfilename ('fullpath')), '../demo') ;
 addpath (demo_folder) ;
+rng ('default') ;
 
 try
     GrB.init
@@ -112,9 +113,6 @@ gbtest72  % test any-pair semiring
 gbtest73  % test GrB.normdiff
 
 gbtest99  % test GrB.bfs and plot (graph (G))
-
-GrB.finalize ;
-GrB.init ;
 
 fprintf ('\ngbtest: all tests passed\n') ;
 
