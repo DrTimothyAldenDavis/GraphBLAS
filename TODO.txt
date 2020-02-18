@@ -1,4 +1,3 @@
 TODO: test the DNN
 TODO: test performance with icc and no atomic read/write
-TODO: matlab coverage, status reports
 TODO: figure out why G^2 is slower in double, versus v3.1.2, in gbdemo
