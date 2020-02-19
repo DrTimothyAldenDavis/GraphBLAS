@@ -15,8 +15,14 @@
 
 #define FREE_ALL                        \
 {                                       \
+    bool A_is_M = (A == M) ;            \
+    bool A_is_C = (A == C) ;            \
+    bool C_is_M = (C == M) ;            \
     GB_MATRIX_FREE (&A) ;               \
+    if (A_is_C) C = NULL ;              \
+    if (A_is_M) M = NULL ;              \
     GB_MATRIX_FREE (&C) ;               \
+    if (C_is_M) M = NULL ;              \
     GB_MATRIX_FREE (&M) ;               \
     GrB_free (&desc) ;                  \
     GB_mx_put_global (true, 0) ;        \
@@ -109,7 +115,10 @@ void mexFunction
     METHOD (GrB_transpose (C, M, accum, A, desc)) ;
 
     // return C to MATLAB as a struct and free the GraphBLAS C
+    if (C == A) A = NULL ;      // do not free A if it is aliased to C
+    if (C == M) M = NULL ;      // do not free M if it is aliased to C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C output", true) ;
+    // C is now NULL
 
     FREE_ALL ;
 }
