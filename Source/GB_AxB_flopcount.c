@@ -254,21 +254,25 @@ GrB_Info GB_AxB_flopcount
                 GB_lookup (M_is_hyper, Mh, Mp, &mpleft, mpright, j,
                     &pM, &pM_end) ;
                 mjnz = pM_end - pM ;
-                // if M is not complemented: C(:,j) is empty if M(:,j) is empty
+                // If M not complemented: C(:,j) is empty if M(:,j) is empty.
                 if (mjnz == 0 && !Mask_comp) continue ;
-                // M(:,j) has at least 1 entry; get 1st and last index in M(:,j)
-                im_first = Mi [pM] ;
-                im_last  = Mi [pM_end-1] ;
-                if (pB == Bp [kk])
-                { 
-                    // this task owns the top part of B(:,j), so it can
-                    // account for the work to access M(:,j), without the work
-                    // being duplicated by other tasks working on B(:,j)
-                    bjflops = mjnz ;
-                    // keep track of total work spent examining the mask.  If
-                    // any B(:,j) is empty, M(:,j) can be ignored.  So
-                    // total_Mwork will be <= nnz (M).
-                    task_Mwork += mjnz ;
+                if (mjnz > 0)
+                {
+                    // M(:,j) not empty; get 1st and last index in M(:,j)
+                    im_first = Mi [pM] ;
+                    im_last  = Mi [pM_end-1] ;
+                    if (pB == Bp [kk])
+                    { 
+                        // this task owns the top part of B(:,j), so it can
+                        // account for the work to access M(:,j), without the
+                        // work being duplicated by other tasks working on
+                        // B(:,j)
+                        bjflops = mjnz ;
+                        // keep track of total work spent examining the mask.
+                        // If any B(:,j) is empty, M(:,j) can be ignored.  So
+                        // total_Mwork will be <= nnz (M).
+                        task_Mwork += mjnz ;
+                    }
                 }
             }
             int64_t mjnz_much = 64 * mjnz ;
