@@ -39,26 +39,39 @@
 
 #define FREE_ALL                        \
 {                                       \
+    bool A_is_M = (A == M) ;            \
+    bool A_is_C = (A == C) ;            \
+    bool C_is_M = (C == M) ;            \
     GB_MATRIX_FREE (&A) ;               \
-    GB_MATRIX_FREE (&M) ;               \
+    if (A_is_C) C = NULL ;              \
+    if (A_is_M) M = NULL ;              \
     GB_MATRIX_FREE (&C) ;               \
+    if (C_is_M) M = NULL ;              \
+    GB_MATRIX_FREE (&M) ;               \
     GrB_free (&desc) ;                  \
     if (!reduce_is_complex) GrB_free (&reduce) ;                \
     GB_mx_put_global (true, 0) ;        \
 }
 
-#define GET_DEEP_COPY \
+#define GET_DEEP_COPY                                                   \
+{                                                                       \
     C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
     if (nargin > 2 && mxIsChar (pargin [1]))                            \
     {                                                                   \
-        M = GB_mx_alias ("M", pargin [1], "C",C, "A",A) ;               \
+        M = GB_mx_alias ("M", pargin [1], "C", C, "A", A) ;             \
     }                                                                   \
     if (nargin > 3 && mxIsChar (pargin [3]))                            \
     {                                                                   \
-        A = GB_mx_alias ("A", pargin [3], "C",C, "M",M) ;               \
-    }
+        A = GB_mx_alias ("A", pargin [3], "C", C, "M", M) ;             \
+    }                                                                   \
+}
 
-#define FREE_DEEP_COPY GB_MATRIX_FREE (&C) ;
+#define FREE_DEEP_COPY          \
+{                               \
+    if (A == C) A = NULL ;      \
+    if (M == C) M = NULL ;      \
+    GB_MATRIX_FREE (&C) ;       \
+}
 
 GrB_Matrix C = NULL ;
 GrB_Matrix M = NULL ;
@@ -654,7 +667,11 @@ void mexFunction
     ASSERT_MATRIX_OK (C, "Final C before wait", GB0) ;
     GrB_wait ( ) ;
     GB_MEX_TOC ;
+
+    if (C == A) A = NULL ;      // do not free A if it is aliased to C
+    if (C == M) M = NULL ;      // do not free M if it is aliased to C
     pargout [0] = GB_mx_Matrix_to_mxArray (&C, "C assign result", true) ;
+
     FREE_ALL ;
 }
 

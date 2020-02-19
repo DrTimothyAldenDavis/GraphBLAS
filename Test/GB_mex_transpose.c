@@ -73,12 +73,30 @@ void mexFunction
     }
 
     // get C (make a deep copy) and get any aliases for M and A
-    #define GET_DEEP_COPY \
-    C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;          \
-    if (nargin > 5 && C != NULL) C->nvec_nonempty = -1 ;  /* for testing */    \
-    if (mxIsChar (pargin [1])) M = GB_mx_alias ("M", pargin [1], "C",C, "A",A);\
-    if (mxIsChar (pargin [3])) A = GB_mx_alias ("A", pargin [3], "C",C, "M",M);
-    #define FREE_DEEP_COPY GB_MATRIX_FREE (&C) ;
+    #define GET_DEEP_COPY                                                   \
+    {                                                                       \
+        C = GB_mx_mxArray_to_Matrix (pargin [0], "C input", true, true) ;   \
+        if (nargin > 5 && C != NULL)                                        \
+        {                                                                   \
+            C->nvec_nonempty = -1 ;  /* for testing */                      \
+        }                                                                   \
+        if (mxIsChar (pargin [1]))                                          \
+        {                                                                   \
+            M = GB_mx_alias ("M", pargin [1], "C", C, "A", A) ;             \
+        }                                                                   \
+        if (mxIsChar (pargin [3]))                                          \
+        {                                                                   \
+            A = GB_mx_alias ("A", pargin [3], "C", C, "M", M) ;             \
+        }                                                                   \
+    }
+
+    #define FREE_DEEP_COPY          \
+    {                               \
+        if (A == C) A = NULL ;      \
+        if (M == C) M = NULL ;      \
+        GB_MATRIX_FREE (&C) ;       \
+    }
+
     GET_DEEP_COPY ;
     if (C == NULL)
     {
