@@ -336,15 +336,12 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t *GB_RESTRICT Ai = A->i ;
     const int64_t avlen = A->vlen ;
-    const int64_t avdim = A->vdim ;
-    // const int64_t anz = GB_NNZ (A) ;
     const int64_t anvec = A->nvec ;
     const bool A_is_hyper = A->is_hyper ;
 
     const int64_t *GB_RESTRICT Bp = B->p ;
     const int64_t *GB_RESTRICT Bh = B->h ;
     const int64_t *GB_RESTRICT Bi = B->i ;
-    const int64_t bvlen = B->vlen ;
     const int64_t bvdim = B->vdim ;
     const int64_t bnz = GB_NNZ (B) ;
     const int64_t bnvec = B->nvec ;
@@ -364,9 +361,7 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     size_t csize = ctype->size ;
     int64_t cvlen = avlen ;
     int64_t cvdim = bvdim ;
-    int64_t cnz = 0 ;
     int64_t cnvec = bnvec ;
-    bool C_is_hyper = (cvdim > 1) && (A_is_hyper || B_is_hyper) ;
 
     // calloc Cp so it can be used as the Bflops workspace
     GB_NEW (Chandle, ctype, cvlen, cvdim, GB_Ap_calloc, true,
@@ -397,8 +392,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     //--------------------------------------------------------------------------
     // compute flop counts for each vector of B and C
     //--------------------------------------------------------------------------
-
-    bool M_is_dense = (M != NULL) && GB_is_dense (M) ;
 
     int64_t Mwork = 0 ;
     int64_t *GB_RESTRICT Bflops = Cp ;  // Cp is used as workspace for Bflops
@@ -487,7 +480,6 @@ GrB_Info GB_AxB_saxpy3              // C = A*B using Gustavson+Hash
     int nfine = 0 ;         // # of fine tasks
     int ncoarse = 0 ;       // # of coarse tasks
     max_bjnz = 0 ;          // max (nnz (B (:,j))) of fine tasks
-    int taskid ;
 
     // FUTURE: also use ultra-fine tasks that compute A(i1:i2,k)*B(k,j)
 
