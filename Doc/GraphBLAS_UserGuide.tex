@@ -10698,6 +10698,12 @@ will still compile, but you will not have access to polymorphic functions
 such as \verb'GrB_assign'.  You will need to use the non-polymorphic functions
 instead.
 
+{\bf NOTE: icc is generally an excellent compiler, but it will generate slower
+code than gcc for v3.2.0.  This is merely because of how the two compilers
+treat \verb'#pragma omp atomic read' and \verb'#pragma omp atomic write'.  The
+use of gcc for SuiteSparse:GraphBLAS v3.2.0 is recommended.  This difference in
+performance should be resolved in a future version.}
+
 To compile SuiteSparse:GraphBLAS and the demo programs, simply type \verb'make'
 in the main GraphBLAS folder, which compiles the library.  To use a
 non-default compiler:
