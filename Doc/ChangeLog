@@ -1,4 +1,4 @@
-Version 3.2.0, Feb 18, 2020
+Version 3.2.0, Feb 19, 2020
 
     * GxB_*_define for user-defined compile-time objects: removed.  Not
         compatible with the faster kernels for mxm and dense matrices/vectors.
@@ -14,6 +14,11 @@ Version 3.2.0, Feb 18, 2020
     * added the ANY binary operator: f(x,y)=x, or f(x,y)=y ; arbitrary choice
     * added structural mask: from v1.3 C API Specification
     * added GrB_DESC_*: predefined descriptor, from v1.3 C API Specification
+    * many atomics added: for the faster matrix multiply.  These changes have
+        not been ported to Microsoft Visual Studio, which only supports a
+        subset of "#pragma omp atomic" statements.  This will be resolved in a
+        future version; in the meantime, use v3.1.2 with MS Visual Studio
+        instead of v3.2.0.
 
 Version 3.1.2, Dec 16, 2019
 
