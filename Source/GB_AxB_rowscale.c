@@ -2,7 +2,7 @@
 // GB_AxB_rowscale: C = D*B, row scale with diagonal matrix D
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -54,14 +54,15 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
     bool op_is_second = mult->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
     bool D_is_pattern = false ;
     bool B_is_pattern = false ;
 
     if (flipxy)
     { 
         // z = fmult (b,a) will be computed
-        D_is_pattern = op_is_first  ;
-        B_is_pattern = op_is_second ;
+        D_is_pattern = op_is_first  || op_is_pair ;
+        B_is_pattern = op_is_second || op_is_pair ;
         ASSERT (GB_IMPLIES (!D_is_pattern,
             GB_Type_compatible (D->type, mult->ytype))) ;
         ASSERT (GB_IMPLIES (!B_is_pattern,
@@ -70,8 +71,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
     else
     { 
         // z = fmult (a,b) will be computed
-        D_is_pattern = op_is_second ;
-        B_is_pattern = op_is_first  ;
+        D_is_pattern = op_is_second || op_is_pair ;
+        B_is_pattern = op_is_first  || op_is_pair ;
         ASSERT (GB_IMPLIES (!D_is_pattern,
             GB_Type_compatible (D->type, mult->xtype))) ;
         ASSERT (GB_IMPLIES (!B_is_pattern,
@@ -122,8 +123,8 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
         GB_Opcode opcode ;
         GB_Type_code xycode, zcode ;
 
-        if (GB_binop_builtin (D, D_is_pattern, B, B_is_pattern, mult,
-            flipxy, &opcode, &xycode, &zcode))
+        if (GB_binop_builtin (D->type, D_is_pattern, B->type, B_is_pattern,
+            mult, flipxy, &opcode, &xycode, &zcode))
         { 
             #include "GB_binop_factory.c"
         }
@@ -136,6 +137,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
     if (!done)
     {
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of D, B, and C
@@ -204,6 +206,7 @@ GrB_Info GB_AxB_rowscale            // C = D*B, row scale with diagonal D
 
         // no vectorization
         #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_VECTORIZE_DOT
 
         if (flipxy)
         { 

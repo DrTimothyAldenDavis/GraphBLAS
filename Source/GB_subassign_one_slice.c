@@ -2,7 +2,7 @@
 // GB_subassign_one_slice: slice the entries and vectors for subassign
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ GrB_Info GB_subassign_one_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, /* A */ A->p, A->nvec, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
@@ -184,7 +184,6 @@ GrB_Info GB_subassign_one_slice
             GB_REALLOC_TASK_LIST (TaskList, ntasks + 1, max_ntasks) ;
             TaskList [ntasks].kfirst = k ;
             TaskList [ntasks].klast  = klast ;
-            // printf ("%d: coarse "GBd":"GBd"\n", ntasks, k, klast) ;
             ntasks++ ;
 
         }
@@ -222,8 +221,6 @@ GrB_Info GB_subassign_one_slice
             ASSERT (k >= 0 && k < anvec) ;
             int64_t j = (Ah == NULL) ? k : Ah [k] ;
             ASSERT (j >= 0 && j < nJ) ;
-            // printf ("J %p j "GBd" jkind %d Jcolon "GBd" "GBd" "GBd"\n",
-            //     J, j, Jkind, Jcolon [0], Jcolon [1], Jcolon [2]) ;
             int64_t GB_LOOKUP_jC ;
 
             bool jC_dense = (pC_end - pC_start == cvlen) ;
@@ -252,7 +249,6 @@ GrB_Info GB_subassign_one_slice
 
                 TaskList [ntasks].kfirst = k ;
                 TaskList [ntasks].klast  = k ;
-                // printf ("%d: thin coarse "GBd":"GBd"\n", ntasks, k, k) ;
                 ntasks++ ;
 
             }
@@ -303,32 +299,20 @@ GrB_Info GB_subassign_one_slice
                         int64_t iC_start = GB_IMIN (iC1, iC2) ;
                         int64_t iC_end   = GB_IMAX (iC1, iC2) ;
 
-                        // printf ("\niA_start "GBd"\n", iA_start) ;
-                        // printf ("iA_end   "GBd"\n", iA_end) ;
-
-                        // printf ("\niC_start "GBd"\n", iC_start) ;
-                        // printf ("iC_end   "GBd"\n", iC_end) ;
-
                         // this task works on Ci,Cx [pC:pC_end-1]
                         int64_t pleft = pC_start ;
                         int64_t pright = pC_end - 1 ;
                         bool found, is_zombie ;
-                        GB_BINARY_SPLIT_ZOMBIE (iC_start, Ci, pleft, pright,
-                            found, nzombies, is_zombie) ;
+                        GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_start, Ci,
+                            pleft, pright, found, nzombies, is_zombie) ;
                         TaskList [ntasks].pC = pleft ;
 
                         pleft = pC_start ;
                         pright = pC_end - 1 ;
-                        GB_BINARY_SPLIT_ZOMBIE (iC_end, Ci, pleft, pright,
-                            found, nzombies, is_zombie) ;
+                        GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_end, Ci,
+                            pleft, pright, found, nzombies, is_zombie) ;
                         TaskList [ntasks].pC_end = (found) ? (pleft+1) : pleft ;
                     }
-
-                    // printf ("%d: fine "GBd": pA "GBd" pA_end "GBd
-                    //    " pC "GBd" pC_end "GBd"\n",
-                    //    ntasks, k,
-                    //    TaskList [ntasks].pA, TaskList [ntasks].pA_end,
-                    //    TaskList [ntasks].pC, TaskList [ntasks].pC_end) ;
 
                     ASSERT (TaskList [ntasks].pA <= TaskList [ntasks].pA_end) ;
                     ASSERT (TaskList [ntasks].pC <= TaskList [ntasks].pC_end) ;

@@ -2,6 +2,11 @@
 // GraphBLAS/Demo/Program/wildtype_demo: an arbitrary user-defined type
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // Each "scalar" entry of this type consists of a 4x4 matrix and a string of
 // length 64.
 
@@ -148,6 +153,9 @@ int main (void)
 
     // start GraphBLAS
     GrB_init (GrB_NONBLOCKING) ;
+    int nthreads ;
+    GxB_get (GxB_NTHREADS, &nthreads) ;
+    fprintf (stderr, "wildtype demo: nthreads %d\n", nthreads) ;
 
     /* alternative method via #defines:
     fprintf (stderr, LINE2 "SuiteSparse:GraphBLAS Version %d.%d.%d, %s\n" LINE2

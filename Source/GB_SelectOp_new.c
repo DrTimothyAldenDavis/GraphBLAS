@@ -2,7 +2,7 @@
 // GB_SelectOp_new: create a new select operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ GrB_Info GB_SelectOp_new        // create a new user-defined select operator
     op->ttype = ttype ;
     op->function = function ;
     strncpy (op->name, name, GB_LEN-1) ;
-    op->opcode = GB_USER_SELECT_R_opcode ;
+    op->opcode = GB_USER_SELECT_opcode ;
     ASSERT_SELECTOP_OK (op, "new user-defined select op", GB0) ;
     return (GrB_SUCCESS) ;
 }

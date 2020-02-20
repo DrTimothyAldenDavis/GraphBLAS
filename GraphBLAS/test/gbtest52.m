@@ -1,17 +1,17 @@
 function gbtest52
 %GBTEST52 test GrB.format
 
-% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 GrB.format
 GrB.format ('by col') ;
-f = GrB.format
+f = GrB.format %#ok<*NOPRT>
 A = magic (4)
 G = GrB (A)
 assert (isequal (f, GrB.format (G))) ;
 GrB.format ('by row')
-f = GrB.format
+f = GrB.format %#ok<*NASGU>
 
 H = GrB (5,5)
 assert (isequal ('by row', GrB.format (H))) ;

@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
-// GB_AxB_colscale: C = A*D, column scale with diagonal matrix D
+// GB_AxB_colscale: C = A*D where D is diagonal
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -47,10 +47,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     int64_t anz   = GB_NNZ (A) ;
     int64_t anvec = A->nvec ;
-
     GB_GET_NTHREADS_MAX (nthreads_max, chunk, Context) ;
     int nthreads = GB_nthreads (anz + anvec, chunk, nthreads_max) ;
-
     int ntasks = (nthreads == 1) ? 1 : (32 * nthreads) ;
     ntasks = GB_IMIN (ntasks, anz) ;
     ntasks = GB_IMAX (ntasks, 1) ;
@@ -65,7 +63,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     int64_t *pstart_slice = NULL, *kfirst_slice = NULL, *klast_slice = NULL ;
     if (!GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -79,14 +77,15 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
     bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
     bool op_is_second = mult->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
     bool A_is_pattern = false ;
     bool D_is_pattern = false ;
 
     if (flipxy)
     { 
         // z = fmult (b,a) will be computed
-        A_is_pattern = op_is_first  ;
-        D_is_pattern = op_is_second ;
+        A_is_pattern = op_is_first  || op_is_pair ;
+        D_is_pattern = op_is_second || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->ytype))) ;
         ASSERT (GB_IMPLIES (!D_is_pattern,
@@ -95,8 +94,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
     else
     { 
         // z = fmult (a,b) will be computed
-        A_is_pattern = op_is_second ;
-        D_is_pattern = op_is_first  ;
+        A_is_pattern = op_is_second || op_is_pair ;
+        D_is_pattern = op_is_first  || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->xtype))) ;
         ASSERT (GB_IMPLIES (!D_is_pattern,
@@ -148,8 +147,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
         GB_Opcode opcode ;
         GB_Type_code xycode, zcode ;
-        if (GB_binop_builtin (A, A_is_pattern, D, D_is_pattern, mult,
-            flipxy, &opcode, &xycode, &zcode))
+        if (GB_binop_builtin (A->type, A_is_pattern, D->type, D_is_pattern,
+            mult, flipxy, &opcode, &xycode, &zcode))
         { 
             // C=A*D, colscale with built-in operator
             #include "GB_binop_factory.c"
@@ -167,6 +166,8 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, D, and C
         //----------------------------------------------------------------------
+
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         GxB_binary_function fmult = mult->function ;
 
@@ -231,6 +232,7 @@ GrB_Info GB_AxB_colscale            // C = A*D, column scale with diagonal D
 
         // no vectorization
         #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_VECTORIZE_DOT
 
         if (flipxy)
         { 

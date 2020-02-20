@@ -2,7 +2,7 @@
 // GB_emult.h: definitions for GB_emult
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -17,6 +17,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask, unused if NULL.  Not complemented
+    const bool Mask_struct, // if true, use the only structure of M
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
@@ -53,6 +54,7 @@ GrB_Info GB_emult_phase1                // count nnz in each C(:,j)
     const int64_t *GB_RESTRICT C_to_B,
     // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
+    const bool Mask_struct, // if true, use the only structure of M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context
@@ -79,6 +81,7 @@ GrB_Info GB_emult_phase2                // C=A.*B or C<M>=A.*B
     const int64_t *GB_RESTRICT C_to_B,
     // original input:
     const GrB_Matrix M,                 // optional mask, may be NULL
+    const bool Mask_struct, // if true, use the only structure of M
     const GrB_Matrix A,
     const GrB_Matrix B,
     GB_Context Context

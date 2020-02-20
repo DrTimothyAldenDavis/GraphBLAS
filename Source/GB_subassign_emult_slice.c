@@ -2,7 +2,7 @@
 // GB_subassign_emult_slice: slice the entries and vectors for GB_subassign_08
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -22,6 +22,8 @@
 
 #include "GB_subassign_methods.h"
 #include "GB_emult.h"
+// Npending is set to NULL by the GB_EMPTY_TASKLIST macro, but unused here.
+#include "GB_unused.h"
 
 #undef  GB_FREE_ALL
 #define GB_FREE_ALL                                                         \
@@ -39,8 +41,8 @@ GrB_Info GB_subassign_emult_slice
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
     const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
-    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
-    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,
@@ -215,23 +217,17 @@ GrB_Info GB_subassign_emult_slice
                 int64_t iC_start = GB_IMIN (iC1, iC2) ;
                 int64_t iC_end   = GB_IMAX (iC1, iC2) ;
 
-                // printf ("\niA_start "GBd"\n", iA_start) ;
-                // printf ("iA_end   "GBd"\n", iA_end) ;
-
-                // printf ("\niC_start "GBd"\n", iC_start) ;
-                // printf ("iC_end   "GBd"\n", iC_end) ;
-
                 // this task works on Ci,Cx [pC:pC_end-1]
                 int64_t pleft = pC_start ;
                 int64_t pright = pC_end - 1 ;
                 bool found, is_zombie ;
-                GB_BINARY_SPLIT_ZOMBIE (iC_start, Ci, pleft, pright,
+                GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_start, Ci, pleft, pright,
                     found, nzombies, is_zombie) ;
                 TaskList [taskid].pC = pleft ;
 
                 pleft = pC_start ;
                 pright = pC_end - 1 ;
-                GB_BINARY_SPLIT_ZOMBIE (iC_end, Ci, pleft, pright,
+                GB_SPLIT_BINARY_SEARCH_ZOMBIE (iC_end, Ci, pleft, pright,
                     found, nzombies, is_zombie) ;
                 TaskList [taskid].pC_end = (found) ? (pleft+1) : pleft ;
             }

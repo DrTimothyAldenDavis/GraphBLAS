@@ -2,7 +2,7 @@
 // GB_ewise_slice: slice the entries and vectors for an ewise operation
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -260,7 +260,7 @@ GrB_Info GB_ewise_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, Cwork, Cnvec, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

@@ -2,8 +2,10 @@
 // isequal: check two matrices for exact equality
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
 
 // isequal: check if two matrices are identically equal (same size,type,
 // pattern, size, and values).  Checking for the same type requires a function

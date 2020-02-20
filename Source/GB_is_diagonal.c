@@ -2,7 +2,7 @@
 // GB_is_diagonal: check if A is a diagonal matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,7 @@
 // present.  All pending tuples are ignored.  Zombies are treated as entries.
 
 #include "GB_mxm.h"
+#include "GB_atomics.h"
 
 bool GB_is_diagonal             // true if A is diagonal
 (
@@ -86,7 +87,7 @@ bool GB_is_diagonal             // true if A is diagonal
                 #pragma omp critical (GB_is_diagonal)
                 diag = diagonal ;
             #else
-                #pragma omp atomic read
+                GB_ATOMIC_READ
                 diag = diagonal ;
             #endif
         }
@@ -125,7 +126,7 @@ bool GB_is_diagonal             // true if A is diagonal
                 #pragma omp critical (GB_is_diagonal)
                 diagonal = false ;
             #else
-                #pragma omp atomic write
+                GB_ATOMIC_WRITE
                 diagonal = false ;
             #endif
         }

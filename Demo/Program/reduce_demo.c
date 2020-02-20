@@ -2,6 +2,11 @@
 // GraphBLAS/Demo/Program/reduce_demo: reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 #include "GraphBLAS.h"
 
 // #define N 65536
@@ -16,7 +21,9 @@ int main (void)
 
     // start GraphBLAS
     GrB_init (GrB_NONBLOCKING) ;
-    printf ("demo: reduce a matrix to a scalar\n") ;
+    int nthreads ;
+    GxB_get (GxB_NTHREADS, &nthreads) ;
+    printf ("demo: reduce a matrix to a scalar, nthreads: %d\n", nthreads) ;
 
     int nthreads_max ;
     GxB_Global_Option_get (GxB_NTHREADS, &nthreads_max) ;

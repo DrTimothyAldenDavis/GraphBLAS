@@ -2,7 +2,7 @@
 // GB_red__include.h: definitions for GB_red__*.c
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txargt for license.
 
 // This file has been automatically generated from Generator/GB_red.h
@@ -1018,6 +1018,567 @@ GrB_Info GB_red_build__max_fp64
     double *GB_RESTRICT Tx,
     int64_t  *GB_RESTRICT Ti,
     const double *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_int8
+(
+    int8_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_int8
+(
+    int8_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_int8
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_int8
+(
+    int8_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const int8_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_int16
+(
+    int16_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_int16
+(
+    int16_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_int16
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_int16
+(
+    int16_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const int16_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_int32
+(
+    int32_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_int32
+(
+    int32_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_int32
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_int32
+(
+    int32_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const int32_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_int64
+(
+    int64_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_int64
+(
+    int64_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_int64
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_int64
+(
+    int64_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const int64_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_uint8
+(
+    uint8_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_uint8
+(
+    uint8_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_uint8
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_uint8
+(
+    uint8_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const uint8_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_uint16
+(
+    uint16_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_uint16
+(
+    uint16_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_uint16
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_uint16
+(
+    uint16_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const uint16_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_uint32
+(
+    uint32_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_uint32
+(
+    uint32_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_uint32
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_uint32
+(
+    uint32_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const uint32_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_uint64
+(
+    uint64_t *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_uint64
+(
+    uint64_t *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_uint64
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_uint64
+(
+    uint64_t *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const uint64_t *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_fp32
+(
+    float *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_fp32
+(
+    float *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_fp32
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_fp32
+(
+    float *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const float *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_fp64
+(
+    double *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_fp64
+(
+    double *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_fp64
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_fp64
+(
+    double *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const double *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_bool
+(
+    bool *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_bool
+(
+    bool *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_bool
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_bool
+(
+    bool *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const bool *GB_RESTRICT S,
     int64_t nvals,
     int64_t ndupl,
     const int64_t *GB_RESTRICT I_work,
@@ -2238,6 +2799,57 @@ GrB_Info GB_red_eachindex__eq_bool
 
 
 GrB_Info GB_red_build__eq_bool
+(
+    bool *GB_RESTRICT Tx,
+    int64_t  *GB_RESTRICT Ti,
+    const bool *GB_RESTRICT S,
+    int64_t nvals,
+    int64_t ndupl,
+    const int64_t *GB_RESTRICT I_work,
+    const int64_t *GB_RESTRICT K_work,
+    const int64_t *GB_RESTRICT tstart_slice,
+    const int64_t *GB_RESTRICT tnz_slice,
+    int nthreads
+) ;
+
+
+
+GrB_Info GB_red_scalar__any_bool
+(
+    bool *result,
+    const GrB_Matrix A,
+    GB_void *GB_RESTRICT W_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachvec__any_bool
+(
+    bool *GB_RESTRICT Tx,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT kfirst_slice,
+    const int64_t *GB_RESTRICT klast_slice,
+    const int64_t *GB_RESTRICT pstart_slice,
+    GB_void *Wfirst_space,
+    GB_void *Wlast_space,
+    int ntasks,
+    int nthreads
+) ;
+
+GrB_Info GB_red_eachindex__any_bool
+(
+    GrB_Matrix *Thandle,
+    GrB_Type ttype,
+    GrB_Matrix A,
+    const int64_t *GB_RESTRICT pstart_slice,
+    int nth,
+    int nthreads,
+    GB_Context Context
+) ;
+
+
+
+GrB_Info GB_red_build__any_bool
 (
     bool *GB_RESTRICT Tx,
     int64_t  *GB_RESTRICT Ti,

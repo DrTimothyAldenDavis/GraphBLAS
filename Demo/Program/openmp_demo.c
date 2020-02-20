@@ -2,6 +2,11 @@
 // GraphBLAS/Demo/Program/openmp_demo: example of user multithreading
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // This demo uses OpenMP, and should work if GraphBLAS is compiled to
 // use either OpenMP or pthreads to synchronize multiple user threadds.
 // If OpenMP is not available, this program will work fine without it, in a
@@ -120,6 +125,9 @@ int main (int argc, char **argv)
 
     // start GraphBLAS
     OK (GrB_init (GrB_NONBLOCKING)) ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "openmp demo, nthreads %d\n", nthreads) ;
 
     // Determine which user-threading model is being used.
     GxB_Thread_Model thread_safety ;

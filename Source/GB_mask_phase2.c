@@ -2,7 +2,7 @@
 // GB_mask_phase2: phase2 for R = masker (M,C,Z)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -44,6 +44,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // original input:
     const GrB_Matrix M,         // required mask
     const bool Mask_comp,
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix C,
     const GrB_Matrix Z,
     GB_Context Context
@@ -114,6 +115,16 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // prune empty vectors from Rh
     //--------------------------------------------------------------------------
 
+    info = GB_hypermatrix_prune (R, Context) ;
+    if (info != GrB_SUCCESS)
+    { 
+        // out of memory
+        GB_MATRIX_FREE (&R) ;
+        return (info) ;
+    }
+
+#if 0
+    // see GB_hypermatrix_prune
     if (R_is_hyper && R->nvec_nonempty < Rnvec)
     {
         // create new Rp_new and Rh_new arrays, with no empty vectors
@@ -137,6 +148,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
         R->plen = nvec_new ;
         ASSERT (R->nvec == R->nvec_nonempty) ;
     }
+#endif
 
     //--------------------------------------------------------------------------
     // return result

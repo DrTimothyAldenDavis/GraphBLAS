@@ -2,7 +2,7 @@
 // GB_reduce_each_index: T(i)=reduce(A(i,:)), reduce a matrix to a vector
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -13,6 +13,11 @@
 // reduction only depends on the indices.  Next, the threads cooperate to
 // reduce all workspaces to the workspace of thread 0.  Finally, this last
 // workspace is collected into T.
+
+// If an out-of-memory condition occurs, the macro GB_FREE_ALL frees any
+// workspace.  This has no effect on the built-in workers (GB_FREE_ALL does
+// nothing), and the workspace is freed in the caller.  For the generic worker,
+// the GB_FREE_ALL macro defined in GB_reduce_to_vector frees all workspace.
 
 {
 
@@ -75,6 +80,7 @@
         GB_FREE_MEMORY (Marks, nth, sizeof (bool *)) ;
         GB_FREE_MEMORY (Tnz, nth, sizeof (int64_t)) ;
         GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
+        GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
     }
 
@@ -191,6 +197,7 @@
         GB_FREE_MEMORY (Work0, n, zsize) ;
         GB_FREE_MEMORY (Mark0, n, sizeof (bool)) ;
         GB_FREE_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
+        GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;
     }
 

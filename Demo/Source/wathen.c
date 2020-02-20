@@ -2,6 +2,11 @@
 // GraphBLAS/Demo/Source/wathen.c: a finite-element matrix on a regular mesh
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 #include "demos.h"
 
 // Create a finite-element matrix on an nx-by-ny 2D mesh, as computed by

@@ -2,7 +2,7 @@
 // GB_to_nonhyper: convert a matrix to non-hypersparse form
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
 
             // task tid computes Ap_new [jstart:jend-1] from Ap_old, Ah_old.
 
-            // GB_BINARY_SPLIT_SEARCH of Ah_old [0..nvec-1] for jstart:
+            // GB_SPLIT_BINARY_SEARCH of Ah_old [0..nvec-1] for jstart:
             // If found is true then Ah_old [k] == jstart.
             // If found is false, and nvec > 0 then
             //    Ah_old [0 ... k-1] < jstart <  Ah_old [k ... nvec-1]
@@ -110,7 +110,7 @@ GrB_Info GB_to_nonhyper     // convert a matrix to non-hypersparse
 
             int64_t k = 0, pright = nvec-1 ;
             bool found ;
-            GB_BINARY_SPLIT_SEARCH (jstart, Ah_old, k, pright, found) ;
+            GB_SPLIT_BINARY_SEARCH (jstart, Ah_old, k, pright, found) ;
             ASSERT (k >= 0 && k <= nvec) ;
             ASSERT (GB_IMPLIES (nvec == 0, !found && k == 0)) ;
             ASSERT (GB_IMPLIES (found, jstart == Ah_old [k])) ;

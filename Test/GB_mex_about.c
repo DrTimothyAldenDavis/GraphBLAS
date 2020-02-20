@@ -2,7 +2,7 @@
 // GB_mex_about: print the 'about' information
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ void mexFunction
     GxB_get (Duh, GrB_INP0, &val) ; printf ("got inp0 %d\n", val) ;
     GxB_get (Duh, GrB_INP1, &val) ; printf ("got inp1 %d\n", val) ;
 
-    GxB_set (Duh, GrB_MASK, GrB_SCMP) ;
+    GxB_set (Duh, GrB_MASK, GrB_COMP) ;
     GB_Descriptor_check (Duh, "\n-----Duh set mask", GxB_COMPLETE, stdout, Context) ;
     GxB_get (Duh, GrB_OUTP, &val) ; printf ("got outp %d\n", val) ;
     GxB_get (Duh, GrB_MASK, &val) ; printf ("got mask %d\n", val) ;
@@ -372,7 +372,6 @@ void mexFunction
     GB_code_check (GB_FP32_code,   &f32, stdout, Context) ; printf ("\n");
     GB_code_check (GB_FP64_code,   &f64, stdout, Context) ; printf ("\n");
     GB_code_check (GB_UDT_code,    &f64, stdout, Context) ; printf ("\n");
-    GB_code_check (GB_UCT_code,    &f64, stdout, Context) ; printf ("\n");
 
     for (int i = 0 ; i <= GrB_PANIC + 1 ; i++)
     {
@@ -508,8 +507,6 @@ void mexFunction
     CHECK (GB_Global_hack_get ( ) == 90123) ;
 
     GrB_Info expected = GrB_INVALID_VALUE ;
-    ERR (GxB_set (GxB_NTHREADS, 7777777)) ;
-    printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
     //--------------------------------------------------------------------------
     // GB_pslice
@@ -583,9 +580,9 @@ void mexFunction
     OK (GxB_print (A, GxB_COMPLETE)) ;
     OK (GxB_print (B, GxB_COMPLETE)) ;
 
-    expected = GrB_DIMENSION_MISMATCH ;
-    ERR (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, A, NULL)) ;
-    printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
+    // expected = GrB_DIMENSION_MISMATCH ;
+    // ERR (GxB_select (A, NULL, NULL, GxB_NE_THUNK, A, A, NULL)) ;
+    // printf ("Expected error: info: %d\n%s\n", info, GrB_error ( )) ;
 
     GxB_Scalar thunk = NULL ;
     OK (GxB_Scalar_new (&thunk, user_type)) ;
@@ -674,59 +671,6 @@ void mexFunction
     GrB_free (&thunk) ;
 
     //--------------------------------------------------------------------------
-    // print user-defined objects
-    //--------------------------------------------------------------------------
-
-    #ifdef MY_BAND
-    GxB_print (My_band, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_BOOL
-    GxB_print (My_LOR, GxB_COMPLETE) ;
-    GxB_print (My_LOR_LAND, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_COMPLEX
-    GxB_print (My_Complex, GxB_COMPLETE) ;
-    GxB_print (My_Complex_plus, GxB_COMPLETE) ;
-    GxB_print (My_Complex_times, GxB_COMPLETE) ;
-    GxB_print (My_Complex_plus_monoid, GxB_COMPLETE) ;
-    GxB_print (My_Complex_plus_times, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_MAX
-    GxB_print (My_Max, GxB_COMPLETE) ;
-    GxB_print (My_Max_Terminal1, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef PAGERANK_PREDEFINED
-    GxB_print (PageRank_type, GxB_COMPLETE) ;
-    GxB_print (PageRank_init, GxB_COMPLETE) ;
-    GxB_print (PageRank_accum, GxB_COMPLETE) ;
-    GxB_print (PageRank_add, GxB_COMPLETE) ;
-    GxB_print (PageRank_monoid, GxB_COMPLETE) ;
-    GxB_print (PageRank_multiply, GxB_COMPLETE) ;
-    GxB_print (PageRank_semiring, GxB_COMPLETE) ;
-    GxB_print (PageRank_get, GxB_COMPLETE) ;
-    GxB_print (PageRank_div, GxB_COMPLETE) ;
-    GxB_print (PageRank_diff, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_RDIV
-    GxB_print (My_rdiv, GxB_COMPLETE) ;
-    GxB_print (My_plus_rdiv, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_RDIV2
-    GxB_print (My_rdiv2, GxB_COMPLETE) ;
-    GxB_print (My_plus_rdiv2, GxB_COMPLETE) ;
-    #endif
-
-    #ifdef MY_SCALE
-    GxB_print (My_scale, GxB_COMPLETE) ;
-    #endif
-
-    //--------------------------------------------------------------------------
     // GxB_print for a slice or hyperslice
     //--------------------------------------------------------------------------
 
@@ -784,21 +728,6 @@ void mexFunction
         GrB_free (&Aslice [0]) ;
         GrB_free (&Aslice [1]) ;
     }
-
-    //--------------------------------------------------------------------------
-    // Sauna
-    //--------------------------------------------------------------------------
-
-    GrB_Desc_Value method = GxB_AxB_GUSTAVSON ;
-    info = GrB_SUCCESS ;
-    while (info == GrB_SUCCESS)
-    {
-        info = GB_Sauna_acquire (1, &id, &method, Context) ;
-    }
-
-    expected = GrB_INVALID_VALUE ;
-    ERR (info) ;
-    printf ("Error expected: %d\n%s\n", info, GrB_error ( )) ;
 
     //--------------------------------------------------------------------------
     // pending tuples
@@ -972,6 +901,104 @@ void mexFunction
 
     GrB_free (&scalar) ;
     GrB_free (&scalar2) ;
+
+    //--------------------------------------------------------------------------
+    // predefined descriptors
+    //--------------------------------------------------------------------------
+
+    OK (GxB_print (GrB_DESC_T1      , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_T0      , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_T0T1    , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_C       , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_CT1     , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_CT0     , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_CT0T1   , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_S       , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_ST1     , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_ST0     , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_ST0T1   , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_SC      , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_SCT1    , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_SCT0    , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_SCT0T1  , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_R       , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RT1     , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RT0     , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RT0T1   , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RC      , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RCT1    , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RCT0    , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RCT0T1  , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RS      , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RST1    , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RST0    , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RST0T1  , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RSC     , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RSCT1   , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RSCT0   , GxB_COMPLETE)) ;
+    OK (GxB_print (GrB_DESC_RSCT0T1 , GxB_COMPLETE)) ;
+
+    GrB_Descriptor_new (&Duh) ;
+    OK (GxB_set (Duh, GxB_AxB_METHOD, GxB_AxB_SAXPY)) ;
+    OK (GxB_print (Duh, GxB_COMPLETE)) ;
+    OK (GxB_set (Duh, GxB_AxB_METHOD, GxB_AxB_HASH)) ;
+    OK (GxB_print (Duh, GxB_COMPLETE)) ;
+    OK (GxB_set (Duh, GxB_AxB_METHOD, GxB_AxB_HEAP)) ;
+    OK (GxB_print (Duh, GxB_COMPLETE)) ;
+    OK (GxB_set (Duh, GxB_AxB_METHOD, GxB_AxB_GUSTAVSON)) ;
+    OK (GxB_print (Duh, GxB_COMPLETE)) ;
+    OK (GxB_set (Duh, GxB_AxB_METHOD, GxB_AxB_DOT)) ;
+    OK (GxB_print (Duh, GxB_COMPLETE)) ;
+    GrB_free (&Duh) ;
+
+    expected = GrB_INVALID_VALUE ;
+    ERR (GxB_set (GrB_DESC_S, GrB_INP0, GrB_TRAN)) ;
+    printf ("\nExpected error: %s\n", GrB_error ( )) ;
+
+    ERR (GrB_Descriptor_set (GrB_DESC_S, GrB_INP0, GrB_TRAN)) ;
+    printf ("\nExpected error: %s\n", GrB_error ( )) ;
+
+    //--------------------------------------------------------------------------
+    // burble
+    //--------------------------------------------------------------------------
+
+    bool burble ;
+    OK (GxB_get (GxB_BURBLE, &burble)) ;
+    printf ("burble: %d\n", burble) ;
+
+    //--------------------------------------------------------------------------
+    // select ops
+    //--------------------------------------------------------------------------
+
+    OK (GxB_print (GxB_TRIL, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_TRIU, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_DIAG, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_OFFDIAG, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_NONZERO, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_EQ_ZERO, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_GT_ZERO, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_GE_ZERO, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_LT_ZERO, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_LE_ZERO, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_NE_THUNK, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_EQ_THUNK, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_GT_THUNK, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_GE_THUNK, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_LT_THUNK, GxB_COMPLETE)) ;
+    OK (GxB_print (GxB_LE_THUNK, GxB_COMPLETE)) ;
+
+    //--------------------------------------------------------------------------
+    // assign scalar into hypersparse
+    //--------------------------------------------------------------------------
+
+    GrB_Index n = INT32_MAX ;
+    n = n * 1024 ;
+    OK (GrB_Matrix_new (&A, GrB_FP64, n, n)) ;
+    expected = GrB_OUT_OF_MEMORY ;
+    ERR (GrB_Matrix_assign_FP64 (A, NULL, NULL, (double) 1,
+        GrB_ALL, n, GrB_ALL, n, NULL)) ;
+    printf ("\nproblem too large, expected error: %s\n", GrB_error ( )) ;
+    OK (GrB_free (&A)) ;
 
     //--------------------------------------------------------------------------
     // wrapup

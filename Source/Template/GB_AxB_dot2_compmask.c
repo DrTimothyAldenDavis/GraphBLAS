@@ -2,7 +2,7 @@
 // GB_AxB_dot2_compmask:  C<!M>=A'*B via dot products
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -96,7 +96,7 @@
                 GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;
                 if (found)
                 {
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    mij = GB_mcast (Mx, pM, msize) ;
                 }
                 if (!mij)
                 { 

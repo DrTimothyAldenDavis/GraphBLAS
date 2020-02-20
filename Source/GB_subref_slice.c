@@ -2,7 +2,7 @@
 // GB_subref_slice: construct coarse/fine tasks for C = A(I,J)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -145,10 +145,6 @@ GrB_Info GB_subref_slice
     bool post_sort = false ;
     int64_t iinc = Icolon [GxB_INC] ;
 
-    // printf ("nI "GBd" avlen "GBd" anz "GBd"\n", nI, avlen, anz) ;
-    // printf ("I_inverse_limit "GBd"\n", I_inverse_limit) ;
-    // printf ("I inverse ok: %d\n", I_inverse_ok) ;
-
     //--------------------------------------------------------------------------
     // allocate workspace
     //--------------------------------------------------------------------------
@@ -166,12 +162,6 @@ GrB_Info GB_subref_slice
     //--------------------------------------------------------------------------
 
     int nthreads_for_Cwork = GB_nthreads (Cnvec, chunk, nthreads_max) ;
-
-    #ifdef GB_DEBUG
-    // For debugging only: record the methods used for each vector.
-    int64_t Hist [13] ;
-    for (int method = 0 ; method <= 12 ; method++) Hist [method] = 0 ;
-    #endif
 
     int64_t kC ;
     #pragma omp parallel for num_threads(nthreads_for_Cwork) schedule(static) \
@@ -194,30 +184,13 @@ GrB_Info GB_subref_slice
         // must be created.  The # of duplicates has no impact on the I inverse
         // decision, and a minor effect on the work (which is ignored).
 
-        #ifdef GB_DEBUG
-        int method =
-        #endif
         GB_subref_method (&work, &this_needs_I_inverse, alen, avlen,
             Ikind, nI, I_inverse_ok, need_qsort, iinc, 0) ;
-        #ifdef GB_DEBUG
-        #pragma omp atomic
-        Hist [method] ++ ;
-        #endif
 
         // log the result
         need_I_inverse = need_I_inverse || this_needs_I_inverse ;
         Cwork [kC] = work ;
     }
-
-    #ifdef GB_DEBUG
-    for (int method = 0 ; method <= 12 ; method++)
-    {
-        if (Hist [method] > 0)
-        {
-            // printf ("method %2d : "GBd"\n", method, Hist [method]) ;
-        }
-    }
-    #endif
 
     //--------------------------------------------------------------------------
     // replace Cwork with its cumulative sum

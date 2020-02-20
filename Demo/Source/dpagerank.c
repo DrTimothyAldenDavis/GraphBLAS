@@ -2,6 +2,11 @@
 // SuiteSparse/GraphBLAS/Demo/Source/dpagerank: pagerank using a real semiring
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // A is a square unsymmetric binary matrix of size n-by-n, where A(i,j) is the
 // edge (i,j).  Self-edges are OK.  A can be of any built-in type.
 

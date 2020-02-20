@@ -2,7 +2,7 @@
 // GB_mx_mxArray_to_Semiring
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -89,9 +89,10 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
     bool zbool ;
     switch (multiply_opcode)
     {
-        // 10 z=f(x,y), all x,y,z the same type
+        // 11 z=f(x,y), all x,y,z the same type
         case GB_FIRST_opcode   : zbool = false ; break ;
         case GB_SECOND_opcode  : zbool = false ; break ;
+        case GB_PAIR_opcode    : zbool = false ; break ;
         case GB_MIN_opcode     : zbool = false ; break ;
         case GB_MAX_opcode     : zbool = false ; break ;
         case GB_PLUS_opcode    : zbool = false ; break ;
@@ -153,7 +154,7 @@ bool GB_mx_mxArray_to_Semiring         // true if successful
         return (false) ;
     }
 
-    ASSERT_MONOID_OK (add, "semiring add", GB0) ;
+    ASSERT_BINARYOP_OK (add, "semiring add", GB0) ;
     ASSERT_BINARYOP_OK (multiply, "semiring multiply", GB0) ;
 
     // create the monoid with the add operator and its identity value

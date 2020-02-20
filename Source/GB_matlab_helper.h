@@ -2,7 +2,7 @@
 // GB_matlab_helper.h: helper functions for MATLAB interface
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -97,6 +97,25 @@ void GB_matlab_helper8
     GB_void *A,         // input scalar of size s
     GrB_Index nvals,    // size of C
     size_t s            // size of each scalar
+) ;
+
+GB_PUBLIC
+bool GB_matlab_helper9  // true if successful, false if out of memory
+(
+    GrB_Matrix A,       // input matrix
+    int64_t **degree,   // degree of each vector, size nvec
+    GrB_Index **list,   // list of non-empty vectors
+    GrB_Index *nvec     // # of non-empty vectors
+) ;
+
+GB_PUBLIC
+double GB_matlab_helper10       // norm (x-y,p)
+(
+    GB_void *x_arg,             // float or double, depending on type parameter
+    GB_void *y_arg,             // same type as x, treat as zero if NULL
+    GrB_Type type,              // GrB_FP32 or GrB_FP64
+    int64_t p,                  // 0, 1, 2, INT64_MIN, or INT64_MAX
+    GrB_Index n
 ) ;
 
 #endif

@@ -2,7 +2,7 @@
 // GB_transpose:  C=A' or C=op(A'), with typecasting
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // Count is only used in one case below
         GB_CALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
         if (Count == NULL)
-        {
+        { 
             // out of memory
             GB_FREE_C ;
             return (GB_OUT_OF_MEMORY) ;
@@ -294,7 +294,6 @@ GrB_Info GB_transpose           // C=A', C=(ctype)A or C=op(A')
         // returned.
         GB_CREATE (Chandle, ctype, avdim, avlen, GB_Ap_calloc,
             C_is_csc, GB_FORCE_HYPER, A_hyper_ratio, 1, 1, true, Context) ;
-
         if (info != GrB_SUCCESS)
         { 
             // out of memory

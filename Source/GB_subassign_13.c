@@ -2,7 +2,7 @@
 // GB_subassign_13: C(I,J)<!M> = scalar ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ GrB_Info GB_subassign_13
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -136,7 +137,7 @@ GrB_Info GB_subassign_13
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    mij = GB_mcast (Mx, pM, msize) ;
                     GB_NEXT (M) ;
                 }
                 else
@@ -253,7 +254,7 @@ GrB_Info GB_subassign_13
                 if (i == iM)
                 { 
                     // mij = (bool) M [pM]
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
+                    mij = GB_mcast (Mx, pM, msize) ;
                     GB_NEXT (M) ;
                 }
                 else

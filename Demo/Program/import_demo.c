@@ -2,7 +2,7 @@
 // GraphBLAS/Demo/Program/import_demo.c: test import/export
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -22,7 +22,9 @@ int main (int argc, char **argv)
     GrB_Matrix A = NULL ;
     GrB_Info info ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "import_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "import_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // get a matrix

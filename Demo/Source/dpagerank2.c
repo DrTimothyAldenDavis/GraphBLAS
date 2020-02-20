@@ -2,6 +2,11 @@
 // SuiteSparse/GraphBLAS/Demo/Source/dpagerank2: pagerank using a real semiring
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // PageRank via EXTREME GraphBLAS-ing!
 
 // A is a square unsymmetric binary matrix of size n-by-n, where A(i,j) is the
@@ -14,9 +19,7 @@
 
 // This version operates on the original matrix A, without changing it.  The
 // entire computation is done via a set of user-defined objects:  a type,
-// several operators, a monoid, and a semiring.  If PAGERANK_PREEFINED is
-// defined at compile time, then the GraphBLAS PageRank_* objects are assumed
-// to be available as global objects.
+// several operators, a monoid, and a semiring.
 
 // Acknowledgements:  this method was written with input from Richard Veras,
 // Franz Franchetti, and Scott McMillan, Carnegie Mellon University.
@@ -60,8 +63,6 @@
 //------------------------------------------------------------------------------
 // scalar types and operators
 //------------------------------------------------------------------------------
-
-#ifndef PAGERANK_PREDEFINED
 
 // each node has a rank value, and a constant which is 1/outdegree
 typedef struct
@@ -196,8 +197,6 @@ void pagerank_diff
     z->rank = delta * delta ;
 }
 
-#endif
-
 //------------------------------------------------------------------------------
 // comparison function for qsort
 //------------------------------------------------------------------------------
@@ -248,11 +247,6 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     // create the new type, operators, monoid, and semiring
     //--------------------------------------------------------------------------
 
-    #ifndef PAGERANK_PREDEFINED
-
-    // PageRank_* objects are not defined at compile time (my_pagerank.m4 is
-    // not in the User/ directory).  Define them here at run-time:
-
     GrB_Type PageRank_type = NULL ;
     GrB_UnaryOp PageRank_div = NULL, PageRank_get = NULL, PageRank_init = NULL ;
     GrB_BinaryOp PageRank_accum = NULL, PageRank_add = NULL,
@@ -293,11 +287,6 @@ GrB_Info dpagerank2         // GrB_SUCCESS or error condition
     // create PageRank_diff operator
     OK (GrB_BinaryOp_new (&PageRank_diff, pagerank_diff,
         PageRank_type, PageRank_type, PageRank_type)) ;
-
-    printf ("dpagerank2: pagerank objects defined at run-time\n") ;
-    #else
-    printf ("dpagerank2: pagerank objects defined at compile-time\n") ;
-    #endif
 
     //--------------------------------------------------------------------------
     // initializations

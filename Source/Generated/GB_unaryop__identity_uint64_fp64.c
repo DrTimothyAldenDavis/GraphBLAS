@@ -2,7 +2,7 @@
 // GB_unaryop:  hard-coded functions for each built-in unary operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -42,8 +42,8 @@
     z = x ;
 
 // casting
-#define GB_CASTING(z, x)   \
-    uint64_t z ; GB_CAST_UNSIGNED(z,x,64) ;
+#define GB_CASTING(z, aij) \
+    uint64_t z ; GB_CAST_UNSIGNED(z,aij,64) ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
@@ -51,8 +51,8 @@
     /* aij = Ax [pA] */             \
     GB_GETA (aij, Ax, pA) ;         \
     /* Cx [pC] = op (cast (aij)) */ \
-    GB_CASTING (x, aij) ;           \
-    GB_OP (GB_CX (pC), x) ;         \
+    GB_CASTING (z, aij) ;           \
+    GB_OP (GB_CX (pC), z) ;         \
 }
 
 // disable this operator and use the generic case if these conditions hold
@@ -65,8 +65,8 @@
 
 GrB_Info GB_unop__identity_uint64_fp64
 (
-    uint64_t *GB_RESTRICT Cx,
-    const double *GB_RESTRICT Ax,
+    uint64_t *Cx,       // Cx and Ax may be aliased
+    double *Ax,
     int64_t anz,
     int nthreads
 )

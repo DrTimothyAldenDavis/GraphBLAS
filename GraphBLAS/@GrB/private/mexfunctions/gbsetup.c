@@ -2,24 +2,19 @@
 // gbsetup: initialize or finalize GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
-// The gbsetup mexFunction is the only mexFunction that locks itself into
-// MATLAB working memory.  gbsetup ('start') locks this mexFunction, and then
-// initializes GraphBLAS by setting all GraphBLAS global variables and calling
-// GxB_init.  gbsetup ('finish') unlocks this mexFunction, and finalizes
-// GraphBLAS by calling GrB_finalize.
+// gbsetup initializes GraphBLAS by calling GxB_init and by setting
+// all GraphBLAS global variables to their MATLAB defaults.
 
 // Usage:
 
-// gbsetup ('start') ;
-// gbsetup ('finish') ;
+// gbsetup ;
 
 #include "gb_matlab.h"
-#include "GB_printf.h"
 
 void mexFunction
 (
@@ -39,90 +34,25 @@ void mexFunction
     #endif
 
     //--------------------------------------------------------------------------
-    // register the function to clear GraphBLAS
+    // finalize GraphBLAS, if it is already started
     //--------------------------------------------------------------------------
 
-    mexAtExit (gb_at_exit) ;
-
-    //--------------------------------------------------------------------------
-    // check inputs
-    //--------------------------------------------------------------------------
-
-    if (nargin != 1 || nargout != 0 || !mxIsChar (pargin [0]))
+    if (GB_Global_GrB_init_called_get ( ))
     {
-        ERROR ("usage: gbsetup (action)") ;
+        GrB_finalize ( ) ;
     }
 
     //--------------------------------------------------------------------------
-    // get the action
+    // allow GraphBLAS to be called again
     //--------------------------------------------------------------------------
 
-    #define LEN 256
-    char action [LEN+2] ;
-    gb_mxstring_to_string (action, LEN, pargin [0], "action") ;
+    GB_Global_GrB_init_called_set (false) ;
 
-    if (MATCH (action, "start"))
-    { 
+    //--------------------------------------------------------------------------
+    // initialize GraphBLAS
+    //--------------------------------------------------------------------------
 
-        //----------------------------------------------------------------------
-        // initialize GraphBLAS
-        //----------------------------------------------------------------------
-
-        if (mexIsLocked ( ) || GB_Global_GrB_init_called_get ( ))
-        {
-            ERROR ("GrB.init already called") ;
-        }
-        mexLock ( ) ;
-
-        //----------------------------------------------------------------------
-        // set the printf function
-        //----------------------------------------------------------------------
-
-        GB_printf_function = mexPrintf ;
-
-        //----------------------------------------------------------------------
-        // initialize GraphBLAS
-        //----------------------------------------------------------------------
-
-        OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
-            false)) ;
-
-        //----------------------------------------------------------------------
-        // MATLAB matrices are stored by column
-        //----------------------------------------------------------------------
-
-        OK (GxB_Global_Option_set (GxB_FORMAT, GxB_BY_COL)) ;
-
-        // print short format by default
-        GB_Global_print_format_set (1) ;
-
-        // print 1-based indices
-        GB_Global_print_one_based_set (true) ;
-
-        // to make the Sauna workspace persistent
-        GB_Global_persist_function_set (mexMakeMemoryPersistent) ;
-
-    }
-    else if (MATCH (action, "finish"))
-    { 
-
-        //----------------------------------------------------------------------
-        // finalize GraphBLAS
-        //----------------------------------------------------------------------
-
-        if (!mexIsLocked ( ))
-        {
-            ERROR ("GrB.finalize can only be called after GrB.init") ;
-        }
-        mexUnlock ( ) ;
-
-        gb_at_exit ( ) ;
-
-    }
-    else
-    { 
-        ERROR ("gbsetup: unknown action") ;
-    }
+    gb_usage (true, "start") ;
 
     //--------------------------------------------------------------------------
     // save test coverage

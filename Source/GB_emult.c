@@ -2,7 +2,7 @@
 // GB_emult: C = A.*B or C<M>=A.*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -32,6 +32,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     const GrB_Type ctype,   // type of output matrix C
     const bool C_is_csc,    // format of output matrix C
     const GrB_Matrix M,     // optional mask, unused if NULL.  Not complemented
+    const bool Mask_struct, // if true, use the only structure of M
     const GrB_Matrix A,     // input A matrix
     const GrB_Matrix B,     // input B matrix
     const GrB_BinaryOp op,  // op to perform C = op (A,B)
@@ -42,6 +43,8 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+
+    GBBURBLE ((M == NULL) ? "emult " : "masked_emult ") ;
 
     ASSERT (Chandle != NULL) ;
     ASSERT_MATRIX_OK (A, "A for emult phased", GB0) ;
@@ -121,7 +124,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,
         // original input:
-        M, A, B, Context) ;
+        M, Mask_struct, A, B, Context) ;
 
     if (info != GrB_SUCCESS)
     { 
@@ -150,7 +153,7 @@ GrB_Info GB_emult           // C=A.*B or C<M>=A.*B
         // from phase0:
         Cnvec, Ch, C_to_M, C_to_A, C_to_B,
         // original input:
-        M, A, B, Context) ;
+        M, Mask_struct, A, B, Context) ;
 
     // free workspace
     GB_FREE_MEMORY (TaskList, max_ntasks+1, sizeof (GB_task_struct)) ;

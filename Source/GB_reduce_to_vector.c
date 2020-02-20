@@ -2,7 +2,7 @@
 // GB_reduce_to_vector: reduce a matrix to a vector using a binary op
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -73,7 +73,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     GB_void *GB_RESTRICT Wlast_space = NULL ;
 
     // get the descriptor
-    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, A_transpose, xx1, xx2);
+    GB_GET_DESCRIPTOR (info, desc, C_replace, Mask_comp, Mask_struct,
+        A_transpose, xx1, xx2) ;
 
     // C and M are n-by-1 GrB_Vector objects, typecasted to GrB_Matrix
     ASSERT (GB_VECTOR_OK (C)) ;
@@ -173,7 +174,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
     // as a GrB_Matrix so it can be passed to GB_accum_mask without
     // typecasting.
 
-    ASSERT (n == (A_transpose) ? A->vdim : A->vlen) ;
+    ASSERT (n == ((A_transpose) ? A->vdim : A->vlen)) ;
 
     //--------------------------------------------------------------------------
     // scalar workspace
@@ -288,7 +289,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
         if (Wfirst_space == NULL || Wlast_space == NULL ||
            !GB_ek_slice (&pstart_slice, &kfirst_slice, &klast_slice, A, ntasks))
-        {
+        { 
             // out of memory
             GB_FREE_ALL ;
             return (GB_OUT_OF_MEMORY) ;
@@ -329,6 +330,8 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
         if (!done)
         { 
+
+            GB_BURBLE_MATRIX (A, "generic ") ;
 
             #define GB_ATYPE GB_void
             #define GB_CTYPE GB_void
@@ -471,7 +474,7 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             GB_MALLOC_MEMORY (pstart_slice, ntasks+1, sizeof (int64_t)) ;
             if (pstart_slice == NULL)
-            {
+            { 
                 // out of memory
                 GB_FREE_ALL ;
                 return (GB_OUT_OF_MEMORY) ;
@@ -527,6 +530,9 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
             if (!done)
             { 
+                // if this fails, the template frees all workspace with the
+                // GB_FREE_ALL macro, defined above.
+                GB_BURBLE_MATRIX (A, "generic ") ;
                 #include "GB_reduce_each_index.c"
             }
         }
@@ -539,6 +545,6 @@ GrB_Info GB_reduce_to_vector        // C<M> = accum (C,reduce(A))
 
     GB_FREE_WORK ;
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+        Mask_struct, Context)) ;
 }
 

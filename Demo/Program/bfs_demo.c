@@ -2,7 +2,7 @@
 // GraphBLAS/Demo/Program/bfs_demo.c: breadth first search using vxm with a mask
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -54,7 +54,9 @@ int main (int argc, char **argv)
     int64_t nlevel0 = -1 ;
     double tic [2], t ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "bfs_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "bfs_demo: nthreads %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // read a matrix from stdin

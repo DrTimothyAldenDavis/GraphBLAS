@@ -2,7 +2,7 @@
 // GB_mask: definitions for GB_mask and related functions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -19,6 +19,7 @@ GrB_Info GB_mask                // C<M> = Z
                                 // Z is freed when done.
     const bool C_replace,       // true if clear(C) to be done first
     const bool Mask_comp,       // true if M is to be complemented
+    const bool Mask_struct,     // if true, use the only structure of M
     GB_Context Context
 ) ;
 
@@ -28,6 +29,7 @@ GrB_Info GB_masker          // R = masker (M, C, Z)
     const bool R_is_csc,    // format of output matrix R
     const GrB_Matrix M,     // required input mask
     const bool Mask_comp,   // descriptor for M
+    const bool Mask_struct, // if true, use the only structure of M
     const GrB_Matrix C,     // input C matrix
     const GrB_Matrix Z,     // input Z matrix
     GB_Context Context
@@ -50,6 +52,7 @@ GrB_Info GB_mask_phase1                 // count nnz in each R(:,j)
     // original input:
     const GrB_Matrix M,                 // required mask
     const bool Mask_comp,               // if true, then M is complemented
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix C,
     const GrB_Matrix Z,
     GB_Context Context
@@ -75,6 +78,7 @@ GrB_Info GB_mask_phase2     // phase2 for R = masker (M,C,Z)
     // original input:
     const GrB_Matrix M,         // required mask
     const bool Mask_comp,
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix C,
     const GrB_Matrix Z,
     GB_Context Context

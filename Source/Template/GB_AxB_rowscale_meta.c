@@ -2,7 +2,7 @@
 // GB_AxB_rowscale_meta: C=D*B where D is a square diagonal matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
 // All entries in C=D*B are computed fully in parallel. 
 
 {
-    // Bx is unused if the operator is FIRST
+    // Bx is unused if the operator is FIRST or PAIR
     #include "GB_unused.h"
 
     //--------------------------------------------------------------------------

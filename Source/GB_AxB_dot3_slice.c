@@ -2,7 +2,7 @@
 // GB_AxB_dot3_slice: slice the entries and vectors for C<M>=A'*B
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -130,6 +130,7 @@ GrB_Info GB_AxB_dot3_slice
     double target_task_size = total_work / (double) (ntasks0) ;
     target_task_size = GB_IMAX (target_task_size, chunk) ;
     ntasks1 = total_work / target_task_size ;
+    ntasks1 = GB_IMIN (ntasks1, cnz) ;
     ntasks1 = GB_IMAX (ntasks1, 1) ;
 
     //--------------------------------------------------------------------------
@@ -137,7 +138,7 @@ GrB_Info GB_AxB_dot3_slice
     //--------------------------------------------------------------------------
 
     if (!GB_pslice (&Coarse, Cwork, cnz, ntasks1))
-    {
+    { 
         // out of memory
         GB_FREE_ALL ;
         return (GB_OUT_OF_MEMORY) ;

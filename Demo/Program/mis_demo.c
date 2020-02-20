@@ -2,7 +2,7 @@
 // GraphBLAS/Demo/Program/mis_demo.c: maximal independent set
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -177,7 +177,9 @@ int main (int argc, char **argv)
 
     double tic [2], t1, t2 ;
     OK (GrB_init (GrB_NONBLOCKING)) ;
-    fprintf (stderr, "\nmis_demo:\n") ;
+    int nthreads ;
+    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    fprintf (stderr, "\nmis_demo: nthreads: %d\n", nthreads) ;
 
     //--------------------------------------------------------------------------
     // get a symmetric matrix with no self edges

@@ -2,7 +2,7 @@
 // GraphBLAS/Demo/Source/get_matrix.c: get matrix from file, or create random
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ GrB_Info get_matrix         // get a matrix from stdin, or create random one
                 // diagonal is not touched by C<~Mask>=A.
                 OK (GrB_Descriptor_new (&desc)) ;
                 OK (GrB_Descriptor_set (desc, GrB_INP0, GrB_TRAN)) ;
-                OK (GrB_Descriptor_set (desc, GrB_MASK, GrB_SCMP)) ;
+                OK (GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP)) ;
                 OK (GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE)) ;
                 OK (GrB_transpose (A, Mask, NULL, A, desc)) ;
                 GrB_Matrix_free (&Mask) ;

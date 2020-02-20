@@ -2,9 +2,17 @@
 // GraphBLAS/Demo/Source/bfs6.c: breadth first search (vxm and apply)
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // Modified from the GraphBLAS C API Specification, by Aydin Buluc, Timothy
 // Mattson, Scott McMillan, Jose' Moreira, Carl Yang.  Based on "GraphBLAS
 // Mathematics" by Jeremy Kepner.
+
+// No copyright claim is made for this particular file; the above copyright
+// applies to all of SuiteSparse:GraphBLAS, not this file.
 
 // This method has been updated as of Version 2.2 of SuiteSparse:GraphBLAS.
 // It now assumes the matrix is held by row (GxB_BY_ROW) and uses GrB_vxm
@@ -70,7 +78,7 @@ GrB_Info bfs6               // BFS of a graph (using unary operator)
     GrB_Semiring_new (&Boolean, Lor, GrB_LAND) ;
 
     GrB_Descriptor_new (&desc) ;
-    GrB_Descriptor_set (desc, GrB_MASK, GrB_SCMP) ;     // invert the mask
+    GrB_Descriptor_set (desc, GrB_MASK, GrB_COMP) ;     // invert the mask
     GrB_Descriptor_set (desc, GrB_OUTP, GrB_REPLACE) ;  // clear q first
 
     // create a unary operator

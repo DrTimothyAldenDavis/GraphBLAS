@@ -2,7 +2,7 @@
 // gb_mxarray_to_descriptor: get the contents of a GraphBLAS Descriptor
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -66,9 +66,17 @@ static void get_descriptor
             { 
                 OK (GxB_Desc_set (D, field, GrB_TRAN)) ;
             }
-            else if (MATCH (s, "complement"))
+            else if (MATCH (s, "complement") || MATCH (s, "comp"))
             { 
-                OK (GxB_Desc_set (D, field, GrB_SCMP)) ;
+                OK (GxB_Desc_set (D, field, GrB_COMP)) ;
+            }
+            else if (MATCH (s, "structure") || MATCH (s, "structural"))
+            { 
+                OK (GxB_Desc_set (D, field, GrB_STRUCTURE)) ;
+            }
+            else if (MATCH (s, "structural complement"))
+            { 
+                OK (GxB_Desc_set (D, field, GrB_COMP + GrB_STRUCTURE)) ;
             }
             else if (MATCH (s, "replace"))
             { 
@@ -82,9 +90,17 @@ static void get_descriptor
             { 
                 OK (GxB_Desc_set (D, field, GxB_AxB_DOT)) ;
             }
+            else if (MATCH (s, "saxpy"))
+            { 
+                OK (GxB_Desc_set (D, field, GxB_AxB_SAXPY)) ;
+            }
             else if (MATCH (s, "heap"))
             { 
                 OK (GxB_Desc_set (D, field, GxB_AxB_HEAP)) ;
+            }
+            else if (MATCH (s, "hash"))
+            { 
+                OK (GxB_Desc_set (D, field, GxB_AxB_HASH)) ;
             }
             else
             { 

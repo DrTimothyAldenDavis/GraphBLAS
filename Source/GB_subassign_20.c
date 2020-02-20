@@ -2,7 +2,7 @@
 // GB_subassign_20: C(I,J)<!M,repl> += A ; using S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ GrB_Info GB_subassign_20
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
@@ -48,6 +49,7 @@ GrB_Info GB_subassign_20
     GB_GET_MASK ;
     const bool M_is_hyper = M->is_hyper ;
     const int64_t Mnvec = M->nvec ;
+    const int64_t mvlen = M->vlen ;
     GB_GET_A ;
     GB_GET_S ;
     GB_GET_ACCUM ;
@@ -105,6 +107,7 @@ GrB_Info GB_subassign_20
 
             int64_t pM_start, pM_end ;
             GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+            bool mjdense = (pM_end - pM_start) == mvlen ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and A(:,j)
@@ -122,7 +125,7 @@ GrB_Info GB_subassign_20
                 if (iS < iA)
                 {
                     // S (i,j) is present but A (i,j) is not
-                    GB_MIJ_BINARY_SEARCH (iS) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
                     mij = !mij ;
                     if (!mij)
                     { 
@@ -137,7 +140,7 @@ GrB_Info GB_subassign_20
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     mij = !mij ;
                     if (mij)
                     { 
@@ -150,7 +153,7 @@ GrB_Info GB_subassign_20
                 else
                 {
                     // both S (i,j) and A (i,j) present
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     mij = !mij ;
                     GB_C_S_LOOKUP ;
                     if (mij)
@@ -177,7 +180,7 @@ GrB_Info GB_subassign_20
             while (pS < pS_end)
             {
                 int64_t iS = Si [pS] ;
-                GB_MIJ_BINARY_SEARCH (iS) ;
+                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iS) ;
                 mij = !mij ;
                 if (!mij)
                 { 
@@ -195,7 +198,7 @@ GrB_Info GB_subassign_20
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                GB_MIJ_BINARY_SEARCH (iA) ;
+                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                 mij = !mij ;
                 if (mij)
                 { 
@@ -248,6 +251,7 @@ GrB_Info GB_subassign_20
 
             int64_t pM_start, pM_end ;
             GB_VECTOR_LOOKUP (pM_start, pM_end, M, j) ;
+            bool mjdense = (pM_end - pM_start) == mvlen ;
 
             //------------------------------------------------------------------
             // do a 2-way merge of S(:,j) and A(:,j)
@@ -270,7 +274,7 @@ GrB_Info GB_subassign_20
                 else if (iA < iS)
                 {
                     // S (i,j) is not present, A (i,j) is present
-                    GB_MIJ_BINARY_SEARCH (iA) ;
+                    GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                     mij = !mij ;
                     if (mij)
                     { 
@@ -294,7 +298,7 @@ GrB_Info GB_subassign_20
             {
                 // S (i,j) is not present, A (i,j) is present
                 int64_t iA = Ai [pA] ;
-                GB_MIJ_BINARY_SEARCH (iA) ;
+                GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP (iA) ;
                 mij = !mij ;
                 if (mij)
                 { 

@@ -2,7 +2,7 @@
 // GB_assign_zombie3: delete entries in C(:,j) for C_replace_phase
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ void GB_assign_zombie3
     GrB_Matrix Z,                   // the matrix C, or a copy
     const GrB_Matrix M,
     const bool Mask_comp,
+    const bool Mask_struct,
     const int64_t j,                // vector index with entries to delete
     const GrB_Index *I,
     const int64_t nI,
@@ -48,10 +49,8 @@ void GB_assign_zombie3
 
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = M->x ;
+    const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
-    const GB_cast_function cast_M =
-        GB_cast_factory (GB_BOOL_code, M->type->code) ;
     int64_t pM_start = Mp [0] ;
     int64_t pM_end = Mp [1] ;
 
@@ -107,7 +106,7 @@ void GB_assign_zombie3
                     if (found)
                     { 
                         // found it
-                        cast_M (&mij, Mx +(pM*msize), 0) ;
+                        mij = GB_mcast (Mx, pM, msize) ;
                     }
                     if (Mask_comp)
                     { 

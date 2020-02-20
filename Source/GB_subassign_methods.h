@@ -2,7 +2,7 @@
 // GB_subassign_methods.h: definitions for GB_subassign methods
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -56,14 +56,13 @@
 // GB_GET_MASK: get the mask matrix M
 //------------------------------------------------------------------------------
 
-#define GB_GET_MASK                                                         \
-    ASSERT_MATRIX_OK (M, "M for assign", GB0) ;                         \
+#define GB_GET_MASK                                                            \
+    ASSERT_MATRIX_OK (M, "M for assign", GB0) ;                                \
     const int64_t *GB_RESTRICT Mp = M->p ;                                     \
     const int64_t *GB_RESTRICT Mh = M->h ;                                     \
     const int64_t *GB_RESTRICT Mi = M->i ;                                     \
-    const GB_void *GB_RESTRICT Mx = M->x ;                                     \
-    const size_t msize = M->type->size ;                                    \
-    GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
+    const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;            \
+    const size_t msize = M->type->size ;
 
 //  const bool M_is_hyper = M->is_hyper ;
 //  const int64_t Mnvec = M->nvec ;
@@ -87,13 +86,13 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_A                                                            \
-    ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                         \
+    ASSERT_MATRIX_OK (A, "A for assign", GB0) ;                             \
     GrB_Type atype = A->type ;                                              \
     size_t asize = atype->size ;                                            \
     GB_Type_code acode = atype->code ;                                      \
-    const int64_t *GB_RESTRICT Ap = A->p ;                                     \
-    const int64_t *GB_RESTRICT Ai = A->i ;                                     \
-    const GB_void *GB_RESTRICT Ax = A->x ;                                     \
+    const int64_t *GB_RESTRICT Ap = A->p ;                                  \
+    const int64_t *GB_RESTRICT Ai = A->i ;                                  \
+    const GB_void *GB_RESTRICT Ax = A->x ;                                  \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;
 
 //  const int64_t *GB_RESTRICT Ah = A->h ;
@@ -105,7 +104,7 @@
 //------------------------------------------------------------------------------
 
 #define GB_GET_SCALAR                                                       \
-    ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                 \
+    ASSERT_TYPE_OK (atype, "atype for assign", GB0) ;                       \
     size_t asize = atype->size ;                                            \
     GB_Type_code acode = atype->code ;                                      \
     GB_cast_function cast_A_to_C = GB_cast_factory (ccode, acode) ;         \
@@ -224,7 +223,8 @@
         int64_t pC = pC_start ;                                             \
         int64_t pright = pC_end - 1 ;                                       \
         bool cij_found, is_zombie ;                                         \
-        GB_BINARY_ZOMBIE (iC, Ci, pC, pright, cij_found, zorig, is_zombie) ;
+        GB_BINARY_SEARCH_ZOMBIE (iC, Ci, pC, pright, cij_found, zorig,      \
+            is_zombie) ;
 
     //--------------------------------------------------------------------------
     // for a 2-way or 3-way merge
@@ -1121,6 +1121,21 @@ GrB_Info GB_subassign_05
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
+    const void *scalar,
+    const GrB_Type atype,
+    GB_Context Context
+) ;
+
+//------------------------------------------------------------------------------
+// GB_subassign_05e: C(:,:)<M,struct> = scalar ; no S, C empty
+//------------------------------------------------------------------------------
+
+GrB_Info GB_subassign_05e
+(
+    GrB_Matrix C,
+    // input:
+    const GrB_Matrix M,
     const void *scalar,
     const GrB_Type atype,
     GB_Context Context
@@ -1143,6 +1158,7 @@ GrB_Info GB_subassign_06n
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     GB_Context Context
 ) ;
@@ -1164,6 +1180,7 @@ GrB_Info GB_subassign_06s
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1186,6 +1203,7 @@ GrB_Info GB_subassign_07
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1209,6 +1227,7 @@ GrB_Info GB_subassign_08
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     GB_Context Context
@@ -1231,6 +1250,7 @@ GrB_Info GB_subassign_09
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -1254,6 +1274,7 @@ GrB_Info GB_subassign_10
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1276,6 +1297,7 @@ GrB_Info GB_subassign_11
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1300,6 +1322,7 @@ GrB_Info GB_subassign_12
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
@@ -1323,6 +1346,7 @@ GrB_Info GB_subassign_13
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -1346,6 +1370,7 @@ GrB_Info GB_subassign_14
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1368,6 +1393,7 @@ GrB_Info GB_subassign_15
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1392,6 +1418,7 @@ GrB_Info GB_subassign_16
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
@@ -1415,6 +1442,7 @@ GrB_Info GB_subassign_17
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const void *scalar,
     const GrB_Type atype,
     const GrB_Matrix S,
@@ -1438,6 +1466,7 @@ GrB_Info GB_subassign_18
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     const GrB_Matrix S,
     GB_Context Context
@@ -1460,6 +1489,7 @@ GrB_Info GB_subassign_19
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const void *scalar,
     const GrB_Type atype,
@@ -1484,6 +1514,7 @@ GrB_Info GB_subassign_20
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_BinaryOp accum,
     const GrB_Matrix A,
     const GrB_Matrix S,
@@ -1564,7 +1595,7 @@ GrB_Info GB_subassign_20
 // GB_SUBASSIGN_EMULT_SLICE: slice A.*M (just Method 08)
 //------------------------------------------------------------------------------
 
-// Method 08 only.  If C is dense, it is sliced for a fine task, so that
+// Method 08 only.  If C is sparse, it is sliced for a fine task, so that
 // it can do a binary search via GB_iC_BINARY_SEARCH.  But if C(:,jC) is dense,
 // C(:,jC) is not sliced, so the fine task must do a direct lookup via
 // GB_iC_DENSE_LOOKUP.  Otherwise a race condition will occur.
@@ -1668,8 +1699,8 @@ GrB_Info GB_subassign_emult_slice
     int *p_nthreads,                // # of threads to use
     int64_t *p_Znvec,               // # of vectors to compute in Z
     const int64_t *GB_RESTRICT *Zh_handle,     // Zh is A->h, M->h, or NULL
-    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output of size Znvec, or NULL
-    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output of size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_A_handle, // Z_to_A: output, size Znvec, or NULL
+    int64_t *GB_RESTRICT *Z_to_M_handle, // Z_to_M: output, size Znvec, or NULL
     // input:
     const GrB_Matrix C,             // output matrix C
     const GrB_Index *I,
@@ -1803,25 +1834,33 @@ GrB_Info GB_subassign_emult_slice
     {                                                                       \
         int64_t pright = p ## X ## _end - 1 ;                               \
         bool found ;                                                        \
-        GB_BINARY_SPLIT_SEARCH (iA_start, X ## i, p ## X, pright, found) ;  \
+        GB_SPLIT_BINARY_SEARCH (iA_start, X ## i, p ## X, pright, found) ;  \
     }
 
 //------------------------------------------------------------------------------
-// GB_MIJ_BINARY_SEARCH
+// GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP
 //------------------------------------------------------------------------------
 
-// mij = M(iA,j)
+// mij = M(i,j)
 
-#define GB_MIJ_BINARY_SEARCH(i)                                             \
+#define GB_MIJ_BINARY_SEARCH_OR_DENSE_LOOKUP(i)                             \
     bool mij ;                                                              \
+    if (mjdense)                                                            \
     {                                                                       \
+        /* M(:,j) is dense, no need for binary search */                    \
+        int64_t pM = pM_start + i ;                                         \
+        mij = GB_mcast (Mx, pM, msize) ;                                    \
+    }                                                                       \
+    else                                                                    \
+    {                                                                       \
+        /* M(:,j) is sparse, binary search for M(i,j) */                    \
         int64_t pM     = pM_start ;                                         \
         int64_t pright = pM_end - 1 ;                                       \
         bool found ;                                                        \
         GB_BINARY_SEARCH (i, Mi, pM, pright, found) ;                       \
         if (found)                                                          \
         {                                                                   \
-            cast_M (&mij, Mx +(pM*msize), 0) ;                              \
+            mij = GB_mcast (Mx, pM, msize) ;                                \
         }                                                                   \
         else                                                                \
         {                                                                   \

@@ -2,7 +2,7 @@
 // GraphBLAS/Demo/Program/complex_demo.c: demo for user-defined complex type
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -64,7 +64,9 @@ int main (int argc, char **argv)
 
     // initialize GraphBLAS and create the user-defined Complex type
     GrB_init (GrB_NONBLOCKING) ;
-    fprintf (stderr, "complex_demo:\n") ;
+    int nthreads ;
+    GxB_get (GxB_NTHREADS, &nthreads) ;
+    fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;
     Complex_init ( ) ;
 
     // generate random matrices A and B

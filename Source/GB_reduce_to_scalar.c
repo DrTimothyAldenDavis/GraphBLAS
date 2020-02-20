@@ -2,7 +2,7 @@
 // GB_reduce_to_scalar: reduce a matrix to a scalar
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -14,6 +14,7 @@
 // result is the same if A is in CSR or CSC format.
 
 #include "GB_reduce.h"
+#include "GB_atomics.h"
 #ifndef GBCOMPACT
 #include "GB_red__include.h"
 #endif
@@ -92,7 +93,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
     GB_void *GB_RESTRICT W = NULL ;
     GB_MALLOC_MEMORY (W, ntasks, zsize) ;
     if (W == NULL)
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }
@@ -168,6 +169,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
 
         if (!done)
         { 
+            GB_BURBLE_MATRIX (A, "generic ") ;
 
             // the switch factory didn't handle this case
             GxB_binary_function freduce = reduce->op->function ;
@@ -229,7 +231,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                 // skip the work for this task if early exit is reached
                 #define GB_IF_NOT_EARLY_EXIT                            \
                     bool my_exit ;                                      \
-                    GB_PRAGMA (omp atomic read)                         \
+                    GB_ATOMIC_READ                                      \
                     my_exit = early_exit ;                              \
                     if (!my_exit)
 
@@ -240,7 +242,7 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
                         if (memcmp (s, terminal, zsize) == 0)           \
                         {                                               \
                             /* tell the other tasks to exit early */    \
-                            GB_PRAGMA (omp atomic write)                \
+                            GB_ATOMIC_WRITE                             \
                             early_exit = true ;                         \
                             break ;                                     \
                         }                                               \
@@ -270,6 +272,8 @@ GrB_Info GB_reduce_to_scalar    // s = reduce_to_scalar (A)
         //----------------------------------------------------------------------
         // generic worker: sum up the entries, with typecasting
         //----------------------------------------------------------------------
+
+        GB_BURBLE_MATRIX (A, "generic ") ;
 
         GxB_binary_function freduce = reduce->op->function ;
         GB_cast_function

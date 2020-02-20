@@ -2,13 +2,20 @@
 // GB.h: definitions visible only inside GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
 
 // These defintions are not visible to the user.  They are used only inside
 // GraphBLAS itself.
+
+// Future plans: (see also 'grep -r FUTURE')
+// FUTURE: support for dense matrices (A->i and A->p as NULL pointers)
+// FUTURE: implement v1.3 of the API
+// FUTURE: add matrix I/O in binary format (see draft LAGraph_binread/binwrite)
+// FUTURE: add Heap method to GB_AxB_saxpy3 (inspector-executor style)
+// FUTURE: allow matrices and vectors to be left jumbled (sort left pending)
 
 #ifndef GB_H
 #define GB_H
@@ -21,6 +28,13 @@
 // #define GB_DEBUG
 // just before the statement:
 // #include "GB.h"
+
+// set GB_BURBLE to 1 to enable extensive diagnostic output to stdout,
+// or compile with -DGB_BURBLE=1.  This setting can also be added at the top
+// of any individual Source/* files, before #including any other files.
+#ifndef GB_BURBLE
+#define GB_BURBLE 0
+#endif
 
 // to turn on Debug for all of GraphBLAS, uncomment this line:
 // #define GB_DEBUG
@@ -46,6 +60,10 @@
 //------------------------------------------------------------------------------
 
 #if defined __INTEL_COMPILER
+
+//  10397: remark about where *.optrpt reports are placed
+//  15552: loop not vectorized
+#pragma warning (disable: 10397 15552 )
 
 // disable icc -w2 warnings
 //  191:  type qualifier meangingless
@@ -84,7 +102,7 @@
 #elif defined __GNUC__
 
 // disable warnings for gcc 8.2:
-#pragma GCC diagnostic ignored "-Wunknown-warning-option"
+// #pragma GCC diagnostic ignored "-Wunknown-warning-option"
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 #pragma GCC diagnostic ignored "-Wformat-truncation="
 
@@ -195,6 +213,8 @@
 
 #endif
 
+#define GB_PRAGMA_IVDEP GB_PRAGMA(ivdep)
+
 //------------------------------------------------------------------------------
 // PGI_COMPILER_BUG
 //------------------------------------------------------------------------------
@@ -233,14 +253,12 @@
 
     // variable-length arrays are allowed
     #define GB_VLA(s) s
-    #define GB_VLA_NTHREADS(nthreads) nthreads
 
 #else
 
     // variable-length arrays are not allowed
-    #define GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE 128
-    #define GB_VLA(s) GB_VLA_MAXSIZE_FOR_ANY_GRB_TYPE
-    #define GB_VLA_NTHREADS(nthreads) GxB_NTHREADS_MAX
+    #define GB_VLA_MAXSIZE 128
+    #define GB_VLA(s) GB_VLA_MAXSIZE
 
 #endif
 
@@ -290,12 +308,15 @@
 #define GB_IMAX(x,y) (((x) > (y)) ? (x) : (y))
 #define GB_IMIN(x,y) (((x) < (y)) ? (x) : (y))
 
+// ceiling of a/b for two integers a and b
+#define GB_CEIL(a,b) (((a) + (b) - 1) / (b))
+
 //------------------------------------------------------------------------------
 // for coverage tests in Tcov/
 //------------------------------------------------------------------------------
 
 #ifdef GBCOVER
-#define GBCOVER_MAX 10000
+#define GBCOVER_MAX 20000
 GB_PUBLIC int64_t GB_cov [GBCOVER_MAX] ;
 GB_PUBLIC int GB_cover_max ;
 #endif
@@ -310,7 +331,44 @@ typedef void (*GB_cast_function) (void *, const void *, size_t) ;
 
 #define GB_LEN 128
 
-typedef struct GB_Sauna_struct *GB_Sauna ;
+//------------------------------------------------------------------------------
+// GB_mcast: cast a mask entry from any native type to boolean
+//------------------------------------------------------------------------------
+
+// The mask matrix M must be one of the native data types, which have size
+// 1, 2, 4, or 8 bytes.  The value could be properly typecasted to bool, but
+// this requires a function pointer to the proper GB_cast_function.  Instead,
+// it is faster to simply use type punning, based on the size of the data
+// type, and use the inline GB_mcast function instead.
+
+static inline bool GB_mcast         // return the value of M(i,j)
+(
+    const GB_void *GB_RESTRICT Mx,  // mask values
+    const int64_t pM,               // extract boolean value of Mx [pM]
+    const size_t msize              // size of each data type
+)
+{
+    if (Mx == NULL)
+    {
+        // If Mx is NULL, then values in the mask matrix M are ignored, and
+        // only the structural pattern is used.  This function is only called
+        // for entries M(i,j) in the structure of M, so the result is always
+        // true if Mx is NULL.
+        return (true) ;
+    }
+    else
+    {
+        // check the value of M(i,j)
+        switch (msize)
+        {
+            default:
+            case 1: return ((*(uint8_t  *) (Mx +((pM)*1))) != 0) ;
+            case 2: return ((*(uint16_t *) (Mx +((pM)*2))) != 0) ;
+            case 4: return ((*(uint32_t *) (Mx +((pM)*4))) != 0) ;
+            case 8: return ((*(uint64_t *) (Mx +((pM)*8))) != 0) ;
+        }
+    }
+}
 
 //------------------------------------------------------------------------------
 // pending tuples
@@ -340,8 +398,7 @@ typedef enum
     GB_UINT64_code  = 8,
     GB_FP32_code    = 9,
     GB_FP64_code    = 10,
-    GB_UCT_code     = 11,       // void *, compile-time user-defined type
-    GB_UDT_code     = 12        // void *, run-time user-defined type
+    GB_UDT_code     = 11        // void *, user-defined type
 }
 GB_Type_code ;                  // enumerated type code
 
@@ -374,49 +431,50 @@ typedef enum
     // TxT -> T
     //--------------------------------------------------------------------------
 
-    // 10 binary operators z=f(x,y) that return the same type as their inputs
+    // 12 binary operators z=f(x,y) that return the same type as their inputs
     GB_FIRST_opcode,    //  7: z = x
     GB_SECOND_opcode,   //  8: z = y
-    GB_MIN_opcode,      //  9: z = min(x,y)
-    GB_MAX_opcode,      // 10: z = max(x,y)
-    GB_PLUS_opcode,     // 11: z = x + y
-    GB_MINUS_opcode,    // 12: z = x - y
-    GB_RMINUS_opcode,   // 13: z = y - x
-    GB_TIMES_opcode,    // 14: z = x * y
-    GB_DIV_opcode,      // 15: z = x / y ; special cases for bool and ints
-    GB_RDIV_opcode,     // 16: z = y / x ; special cases for bool and ints
+    GB_PAIR_opcode,     //  9: z = 1
+    GB_ANY_opcode,      // 10: z = 1
+    GB_MIN_opcode,      // 11: z = min(x,y)
+    GB_MAX_opcode,      // 12: z = max(x,y)
+    GB_PLUS_opcode,     // 13: z = x + y
+    GB_MINUS_opcode,    // 14: z = x - y
+    GB_RMINUS_opcode,   // 15: z = y - x
+    GB_TIMES_opcode,    // 16: z = x * y
+    GB_DIV_opcode,      // 17: z = x / y ; special cases for bool and ints
+    GB_RDIV_opcode,     // 18: z = y / x ; special cases for bool and ints
 
     // 6 binary operators z=f(x,y), x,y,z all the same type
-    GB_ISEQ_opcode,     // 17: z = (x == y)
-    GB_ISNE_opcode,     // 18: z = (x != y)
-    GB_ISGT_opcode,     // 19: z = (x >  y)
-    GB_ISLT_opcode,     // 20: z = (x <  y)
-    GB_ISGE_opcode,     // 21: z = (x >= y)
-    GB_ISLE_opcode,     // 22: z = (x <= y)
+    GB_ISEQ_opcode,     // 19: z = (x == y)
+    GB_ISNE_opcode,     // 20: z = (x != y)
+    GB_ISGT_opcode,     // 21: z = (x >  y)
+    GB_ISLT_opcode,     // 22: z = (x <  y)
+    GB_ISGE_opcode,     // 23: z = (x >= y)
+    GB_ISLE_opcode,     // 24: z = (x <= y)
 
     // 3 binary operators that work on purely boolean values
-    GB_LOR_opcode,      // 23: z = (x != 0) || (y != 0)
-    GB_LAND_opcode,     // 23: z = (x != 0) && (y != 0)
-    GB_LXOR_opcode,     // 25: z = (x != 0) != (y != 0)
+    GB_LOR_opcode,      // 25: z = (x != 0) || (y != 0)
+    GB_LAND_opcode,     // 26: z = (x != 0) && (y != 0)
+    GB_LXOR_opcode,     // 27: z = (x != 0) != (y != 0)
 
     //--------------------------------------------------------------------------
     // TxT -> bool
     //--------------------------------------------------------------------------
 
     // 6 binary operators z=f(x,y) that return bool (TxT -> bool)
-    GB_EQ_opcode,       // 26: z = (x == y)
-    GB_NE_opcode,       // 27: z = (x != y)
-    GB_GT_opcode,       // 28: z = (x >  y)
-    GB_LT_opcode,       // 29: z = (x <  y)
-    GB_GE_opcode,       // 30: z = (x >= y)
-    GB_LE_opcode,       // 31: z = (x <= y)
+    GB_EQ_opcode,       // 28: z = (x == y)
+    GB_NE_opcode,       // 29: z = (x != y)
+    GB_GT_opcode,       // 30: z = (x >  y)
+    GB_LT_opcode,       // 31: z = (x <  y)
+    GB_GE_opcode,       // 32: z = (x >= y)
+    GB_LE_opcode,       // 33: z = (x <= y)
 
     //--------------------------------------------------------------------------
     // user-defined: unary and binary operators
     //--------------------------------------------------------------------------
 
-    GB_USER_C_opcode,   // 32: compile-time user-defined operator
-    GB_USER_R_opcode    // 33: run-time user-defined operator
+    GB_USER_opcode      // 34: user-defined operator
 }
 GB_Opcode ;
 
@@ -452,8 +510,7 @@ typedef enum
     GB_LE_THUNK_opcode  = 17,
 
     // for all user-defined select operators:  thunk is optional
-    GB_USER_SELECT_C_opcode = 18,   // defined at compile-time
-    GB_USER_SELECT_R_opcode = 19    // defined at run-time
+    GB_USER_SELECT_opcode = 18
 }
 GB_Select_Opcode ;
 
@@ -505,8 +562,7 @@ struct GB_SelectOp_opaque   // content of GxB_SelectOp
 typedef enum
 {
     GB_BUILTIN,             // 0: built-in monoid or semiring
-    GB_USER_COMPILED,       // 1: pre-compiled user monoid or semiring
-    GB_USER_RUNTIME         // 2: user monoid or semiring created a run-time
+    GB_USER_RUNTIME         // 2: user monoid or semiring
 }
 GB_object_code ;
 
@@ -516,7 +572,7 @@ struct GB_Monoid_opaque     // content of GrB_Monoid
     GrB_BinaryOp op ;       // binary operator of the monoid
     void *identity ;        // identity of the monoid
     size_t op_ztype_size ;  // size of the type (also is op->ztype->size)
-    GB_object_code object_kind ;   // built-in, user pre-compiled, or run-time
+    GB_object_code object_kind ;   // built-in or user defined
     void *terminal ;        // value that triggers early-exit (NULL if no value)
 } ;
 
@@ -525,7 +581,7 @@ struct GB_Semiring_opaque   // content of GrB_Semiring
     int64_t magic ;         // for detecting uninitialized objects
     GrB_Monoid add ;        // add operator of the semiring
     GrB_BinaryOp multiply ; // multiply operator of the semiring
-    GB_object_code object_kind ;   // built-in, user pre-compiled, or run-time
+    GB_object_code object_kind ;   // built-in or user defined
 } ;
 
 struct GB_Scalar_opaque     // content of GxB_Scalar: 1-by-1 standard CSC matrix
@@ -553,6 +609,7 @@ struct GB_Descriptor_opaque // content of GrB_Descriptor
     GrB_Desc_Value axb ;    // for selecting the method for C=A*B
     int nthreads_max ;      // max # threads to use in this call to GraphBLAS
     double chunk ;          // chunk size for # of threads for small problems
+    bool predefined ;       // if true, descriptor is predefined
 } ;
 
 //------------------------------------------------------------------------------
@@ -672,6 +729,94 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 // GB_Global.c.
 
 #include "GB_Global.h"
+
+//------------------------------------------------------------------------------
+// burble
+//------------------------------------------------------------------------------
+
+// GB_BURBLE is meant for development use, not production use.  To enable it,
+// set GB_BURBLE to 1, either with -DGB_BURBLE=1 as a compiler option, by
+// editting the setting above, or by adding the line
+//
+//      #define GB_BURBLE 1
+//
+// at the top of any source file, before #including any other file.  After
+// enabling it in the library, use GxB_set (GxB_BURBLE, true) to turn it on
+// at run time, and GxB_set (GxB_BURBLE, false) to turn it off.  By default,
+// the feature is not enabled when SuiteSparse:GraphBLAS is compiled, and
+// even then, the setting is set to false by GrB_init.
+
+#if GB_BURBLE
+
+// define the printf function to use to burble
+#include "GB_printf.h"
+#define GBBURBLE(...)                               \
+{                                                   \
+    bool burble = GB_Global_burble_get ( ) ;        \
+    if (burble)                                     \
+    {                                               \
+        if (GB_printf_function != NULL)             \
+        {                                           \
+            GB_printf_function (__VA_ARGS__) ;      \
+        }                                           \
+        else                                        \
+        {                                           \
+            printf (__VA_ARGS__) ;                  \
+            fflush (stdout) ;                       \
+        }                                           \
+    }                                               \
+}
+
+#if defined ( _OPENMP )
+
+// burble with timing
+#define GB_BURBLE_START(func)                       \
+double t_burble = 0 ;                               \
+bool burble = GB_Global_burble_get ( ) ;            \
+{                                                   \
+    if (burble)                                     \
+    {                                               \
+        GBBURBLE (" [ " func " ") ;                 \
+        t_burble = GB_OPENMP_GET_WTIME ;            \
+    }                                               \
+}
+
+#define GB_BURBLE_END                               \
+{                                                   \
+    if (burble)                                     \
+    {                                               \
+        t_burble = GB_OPENMP_GET_WTIME - t_burble ; \
+        GBBURBLE ("%.3g sec ]\n", t_burble) ;       \
+    }                                               \
+}
+
+#else
+
+// burble with no timing
+#define GB_BURBLE_START(func)                   \
+    GBBURBLE (" [ " func " ")
+
+#define GB_BURBLE_END                           \
+    GBBURBLE ("]\n")
+
+#endif
+
+#define GB_BURBLE_N(n,...)                      \
+    if (n > 1) GBBURBLE (__VA_ARGS__)
+
+#define GB_BURBLE_MATRIX(A, ...)                \
+    if (!(A->vlen <= 1 && A->vdim <= 1)) GBBURBLE (__VA_ARGS__)
+
+#else
+
+// no burble
+#define GBBURBLE(...)
+#define GB_BURBLE_START(func)
+#define GB_BURBLE_END
+#define GB_BURBLE_N(n,...)
+#define GB_BURBLE_MATRIX(A,...)
+
+#endif
 
 //------------------------------------------------------------------------------
 // debugging definitions
@@ -942,7 +1087,7 @@ typedef GB_Context_struct *GB_Context ;
 // logged by the GB_WHERE macro.
 
 #ifndef GB_PANIC
-#define GB_PANIC return (GrB_PANIC) ;
+#define GB_PANIC return (GrB_PANIC)
 #endif
 
 #define GB_CONTEXT(where_string)                                    \
@@ -953,7 +1098,7 @@ typedef GB_Context_struct *GB_Context ;
     Context->where = where_string ;                                 \
     /* get the default max # of threads and default chunk size */   \
     Context->nthreads_max = GB_Global_nthreads_max_get ( ) ;        \
-    Context->chunk = GB_Global_chunk_get ( ) ;
+    Context->chunk = GB_Global_chunk_get ( )
 
 #define GB_WHERE(where_string)                                      \
     if (!GB_Global_GrB_init_called_get ( ))                         \
@@ -961,7 +1106,7 @@ typedef GB_Context_struct *GB_Context ;
         /* GrB_init (or GxB_init) has not been called! */           \
         GB_PANIC ;                                                  \
     }                                                               \
-    GB_CONTEXT (where_string) ;
+    GB_CONTEXT (where_string)
 
 //------------------------------------------------------------------------------
 // GB_GET_NTHREADS_MAX:  determine max # of threads for OpenMP parallelism.
@@ -1359,6 +1504,15 @@ GrB_Info GB_dup             // make an exact copy of a matrix
     GB_Context Context
 ) ;
 
+GrB_Info GB_dup2            // make an exact copy of a matrix
+(
+    GrB_Matrix *Chandle,    // handle of output matrix to create 
+    const GrB_Matrix A,     // input matrix to copy
+    const bool numeric,     // if true, duplicate the numeric values
+    const GrB_Type ctype,   // type of C, if numeric is false
+    GB_Context Context
+) ;
+
 void GB_memcpy                  // parallel memcpy
 (
     void *dest,                 // destination
@@ -1374,7 +1528,7 @@ GrB_Info GB_nvals           // get the number of entries in a matrix
     GB_Context Context
 ) ;
 
-GrB_Info GB_type            // get the type of a matrix
+GrB_Info GB_matvec_type            // get the type of a matrix
 (
     GrB_Type *type,         // returns the type of the matrix
     const GrB_Matrix A,     // matrix to query
@@ -1406,9 +1560,7 @@ GrB_Info GB_ix_resize           // resize a matrix
 
 // free A->i and A->x and return if critical section fails
 #define GB_IX_FREE(A)                                                       \
-{                                                                           \
-    if (GB_ix_free (A) == GrB_PANIC) GB_PANIC ;                             \
-}
+    if (GB_ix_free (A) == GrB_PANIC) GB_PANIC
 
 GrB_Info GB_ix_free             // free A->i and A->x of a matrix
 (
@@ -1422,9 +1574,7 @@ void GB_ph_free                 // free A->p and A->h of a matrix
 
 // free all content, and return if critical section fails
 #define GB_PHIX_FREE(A)                                                     \
-{                                                                           \
-    if (GB_phix_free (A) == GrB_PANIC) GB_PANIC ;                           \
-}
+    if (GB_phix_free (A) == GrB_PANIC) GB_PANIC
 
 GrB_Info GB_phix_free           // free all content of a matrix
 (
@@ -1450,9 +1600,9 @@ bool GB_code_compatible         // check if two types can be typecast
 
 void GB_cast_array              // typecast an array
 (
-    GB_void *GB_RESTRICT Cx,       // output array
+    GB_void *Cx,                // output array
     const GB_Type_code code1,   // type code for Cx
-    const GB_void *GB_RESTRICT Ax, // input array
+    GB_void *Ax,                // input array
     const GB_Type_code code2,   // type code for Ax
     const int64_t anz,          // number of entries in Cx and Ax
     GB_Context Context
@@ -1757,16 +1907,12 @@ void GB_free_memory
 #else
 
 #define GB_NEW(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,Context)         \
-{                                                                             \
     info = GB_new (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,     \
-        Context) ;                                                            \
-}
+        Context)
 
 #define GB_CREATE(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,anz,numeric,Context)  \
-{                                                                             \
     info = GB_create (A, type, vlen, vdim, Ap_option, is_csc, hopt, h, plen,  \
-        anz, numeric, Context) ;                                              \
-}
+        anz, numeric, Context)
 
 #define GB_MATRIX_FREE(A)                                                     \
 {                                                                             \
@@ -1778,13 +1924,13 @@ void GB_free_memory
 #define GB_SCALAR_FREE(v) GB_MATRIX_FREE ((GrB_Matrix *) v)
 
 #define GB_CALLOC_MEMORY(p,n,s)                                               \
-    p = GB_calloc_memory (n, s) ;
+    p = GB_calloc_memory (n, s)
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
-    p = GB_malloc_memory (n, s) ;
+    p = GB_malloc_memory (n, s)
 
 #define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                   \
-    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok) ;
+    p = GB_realloc_memory (nnew, nold, s, (void *) p, ok)
 
 #define GB_FREE_MEMORY(p,n,s)                                                 \
 {                                                                             \
@@ -1801,23 +1947,6 @@ GrB_Type GB_code_type           // return the GrB_Type corresponding to the code
     const GB_Type_code code,    // type code to convert
     const GrB_Type type         // user type if code is GB_UDT_code
 ) ;
-
-// used in GB_AxB_heap for temporary workspace
-typedef struct
-{
-    int64_t start ;                 // first entry of A(:,k) is at Ai [start]
-    int64_t end ;                   // last entry of A(:,k) is at Ai [end-1]
-}
-GB_pointer_pair ;
-
-// used in GB_heap_*
-typedef struct
-{
-    int64_t key ;       // the key for this element, for ordering in the Heap
-    int64_t name ;      // the name of the element; not used in these functions
-                        // but required by the caller
-}
-GB_Element ;
 
 GrB_Info GB_slice       // slice B into nthreads slices or hyperslices
 (
@@ -1848,11 +1977,11 @@ void GB_eslice
 bool GB_binop_builtin               // true if binary operator is builtin
 (
     // inputs:
-    const GrB_Matrix A,
+    const GrB_Type A_type,
     const bool A_is_pattern,        // true if only the pattern of A is used
-    const GrB_Matrix B,
+    const GrB_Type B_type,
     const bool B_is_pattern,        // true if only the pattern of B is used
-    const GrB_BinaryOp op,          // binary operator
+    const GrB_BinaryOp op,          // binary operator; may be NULL
     const bool flipxy,              // true if z=op(y,x), flipping x and y
     // outputs, unused by caller if this function returns false
     GB_Opcode *opcode,              // opcode for the binary operator
@@ -1860,11 +1989,11 @@ bool GB_binop_builtin               // true if binary operator is builtin
     GB_Type_code *zcode             // type code for z output
 ) ;
 
-void GB_cumsum                  // compute the cumulative sum of an array
+void GB_cumsum                      // cumulative sum of an array
 (
-    int64_t *GB_RESTRICT count,    // size n+1, input/output
+    int64_t *GB_RESTRICT count,     // size n+1, input/output
     const int64_t n,
-    int64_t *GB_RESTRICT kresult,  // return k, if needed by the caller
+    int64_t *GB_RESTRICT kresult,   // return k, if needed by the caller
     int nthreads
 ) ;
 
@@ -1873,6 +2002,7 @@ GrB_Info GB_Descriptor_get      // get the contents of a descriptor
     const GrB_Descriptor desc,  // descriptor to query, may be NULL
     bool *C_replace,            // if true replace C before C<M>=Z
     bool *Mask_comp,            // if true use logical negation of M
+    bool *Mask_struct,          // if true use the structure of M
     bool *In0_transpose,        // if true transpose first input
     bool *In1_transpose,        // if true transpose second input
     GrB_Desc_Value *AxB_method, // method for C=A*B
@@ -1980,6 +2110,23 @@ GrB_Info GB_wait                // finish all pending computations
 ) ;
 
 //------------------------------------------------------------------------------
+// GB_is_dense: check if a matrix is completely dense
+//------------------------------------------------------------------------------
+
+static inline bool GB_is_dense
+(
+    const GrB_Matrix A
+)
+{
+    // check if A is competely dense:  all entries present.
+    // zombies and pending tuples are not considered
+    if (A == NULL) return (false) ;
+    GrB_Index anzmax ;
+    bool ok = GB_Index_multiply (&anzmax, A->vlen, A->vdim) ;
+    return (ok && (anzmax == GB_NNZ (A))) ;
+}
+
+//------------------------------------------------------------------------------
 // OpenMP definitions
 //------------------------------------------------------------------------------
 
@@ -1991,8 +2138,7 @@ GrB_Info GB_wait                // finish all pending computations
 // thread tid will operate on the range k1:(k2-1)
 #define GB_PARTITION(k1,k2,n,tid,nthreads)                                  \
     k1 = ((tid) ==  0          ) ?  0  : GB_PART ((tid),  n, nthreads) ;    \
-    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads) ;
-
+    k2 = ((tid) == (nthreads)-1) ? (n) : GB_PART ((tid)+1,n, nthreads)
 
 #if defined ( _OPENMP )
 
@@ -2000,17 +2146,19 @@ GrB_Info GB_wait                // finish all pending computations
     #define GB_OPENMP_THREAD_ID         omp_get_thread_num ( )
     #define GB_OPENMP_MAX_THREADS       omp_get_max_threads ( )
     #define GB_OPENMP_GET_NUM_THREADS   omp_get_num_threads ( )
+    #define GB_OPENMP_GET_WTIME         omp_get_wtime ( )
 
 #else
 
     #define GB_OPENMP_THREAD_ID         (0)
     #define GB_OPENMP_MAX_THREADS       (1)
     #define GB_OPENMP_GET_NUM_THREADS   (1)
+    #define GB_OPENMP_GET_WTIME         (0)
 
 #endif
 
-// by default, give each thread at least 4096 units of work to do
-#define GB_CHUNK_DEFAULT 4096
+// by default, give each thread at least 64K units of work to do
+#define GB_CHUNK_DEFAULT (64*1024)
 
 //------------------------------------------------------------------------------
 // GB_queue operations
@@ -2052,7 +2200,7 @@ bool GB_queue_status            // get the queue status of a matrix
 GrB_Info GB_setElement              // set a single entry, C(row,col) = scalar
 (
     GrB_Matrix C,                   // matrix to modify
-    const void *scalar,             // scalar to set
+    void *scalar,                   // scalar to set
     const GrB_Index row,            // row index
     const GrB_Index col,            // column index
     const GB_Type_code scalar_code, // type of the scalar
@@ -2130,13 +2278,19 @@ GrB_Info GB_to_hyper_conform    // conform a matrix to its desired format
 GrB_Info GB_hyper_prune
 (
     // output, not allocated on input:
-    int64_t *GB_RESTRICT *p_Ap,        // size nvec+1
-    int64_t *GB_RESTRICT *p_Ah,        // size nvec
+    int64_t *GB_RESTRICT *p_Ap,     // size nvec+1
+    int64_t *GB_RESTRICT *p_Ah,     // size nvec
     int64_t *p_nvec,                // # of vectors, all nonempty
     // input, not modified
     const int64_t *Ap_old,          // size nvec_old+1
     const int64_t *Ah_old,          // size nvec_old
     const int64_t nvec_old,         // original number of vectors
+    GB_Context Context
+) ;
+
+GrB_Info GB_hypermatrix_prune
+(
+    GrB_Matrix A,               // matrix to prune
     GB_Context Context
 ) ;
 
@@ -2216,12 +2370,13 @@ GB_PUBLIC mtx_t GB_sync ;
 
 // check the descriptor and extract its contents; also copies
 // nthreads_max and chunk from the descriptor to the Context
-#define GB_GET_DESCRIPTOR(info,desc,dout,dm,d0,d1,dalgo)                     \
+#define GB_GET_DESCRIPTOR(info,desc,dout,dmc,dms,d0,d1,dalgo)                \
     GrB_Info info ;                                                          \
-    bool dout, dm, d0, d1 ;                                                  \
+    bool dout, dmc, dms, d0, d1 ;                                            \
     GrB_Desc_Value dalgo ;                                                   \
     /* if desc is NULL then defaults are used.  This is OK */                \
-    info = GB_Descriptor_get (desc, &dout, &dm, &d0, &d1, &dalgo, Context) ; \
+    info = GB_Descriptor_get (desc, &dout, &dmc, &dms, &d0, &d1, &dalgo,     \
+        Context) ;                                                           \
     if (info != GrB_SUCCESS)                                                 \
     {                                                                        \
         /* desc not NULL, but uninitialized or an invalid object */          \
@@ -2536,7 +2691,7 @@ GB_PUBLIC mtx_t GB_sync ;
 // The list X [pleft ... pright] is in ascending order.  It may have
 // duplicates.
 
-#define GB_BINARY_TRIM_SEARCH(i,X,pleft,pright)                             \
+#define GB_TRIM_BINARY_SEARCH(i,X,pleft,pright)                             \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
     while (pleft < pright)                                                  \
@@ -2567,11 +2722,11 @@ GB_PUBLIC mtx_t GB_sync ;
 // The value X [pleft] may be either < or > i.
 #define GB_BINARY_SEARCH(i,X,pleft,pright,found)                            \
 {                                                                           \
-    GB_BINARY_TRIM_SEARCH (i, X, pleft, pright) ;                           \
+    GB_TRIM_BINARY_SEARCH (i, X, pleft, pright) ;                           \
     found = (pleft == pright && X [pleft] == i) ;                           \
 }
 
-// GB_BINARY_SPLIT_SEARCH
+// GB_SPLIT_BINARY_SEARCH
 // If found is true then X [pleft] == i.  If duplicates appear then X [pleft]
 //    is any one of the entries with value i in the list.
 // If found is false then
@@ -2580,7 +2735,7 @@ GB_PUBLIC mtx_t GB_sync ;
 // If X has no duplicates, then whether or not i is found,
 //    X [original_pleft ... pleft-1] < i and
 //    X [pleft ... original_pright] >= i holds.
-#define GB_BINARY_SPLIT_SEARCH(i,X,pleft,pright,found)                      \
+#define GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
 {                                                                           \
     GB_BINARY_SEARCH (i, X, pleft, pright, found)                           \
     if (!found && (pleft == pright))                                        \
@@ -2597,10 +2752,10 @@ GB_PUBLIC mtx_t GB_sync ;
 }
 
 //------------------------------------------------------------------------------
-// GB_BINARY_ZOMBIE
+// binary search in the presence of zombies
 //------------------------------------------------------------------------------
 
-#define GB_BINARY_TRIM_ZOMBIE(i,X,pleft,pright)                             \
+#define GB_TRIM_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright)                      \
 {                                                                           \
     /* binary search of X [pleft ... pright] for integer i */               \
     while (pleft < pright)                                                  \
@@ -2622,11 +2777,11 @@ GB_PUBLIC mtx_t GB_sync ;
     ASSERT (pleft == pright || pleft == pright + 1) ;                       \
 }
 
-#define GB_BINARY_ZOMBIE(i,X,pleft,pright,found,nzombies,is_zombie)         \
+#define GB_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,nzombies,is_zombie)  \
 {                                                                           \
     if (nzombies > 0)                                                       \
     {                                                                       \
-        GB_BINARY_TRIM_ZOMBIE (i, X, pleft, pright) ;                       \
+        GB_TRIM_BINARY_SEARCH_ZOMBIE (i, X, pleft, pright) ;                \
         found = false ;                                                     \
         is_zombie = false ;                                                 \
         if (pleft == pright)                                                \
@@ -2647,11 +2802,11 @@ GB_PUBLIC mtx_t GB_sync ;
     }                                                                       \
 }
 
-#define GB_BINARY_SPLIT_ZOMBIE(i,X,pleft,pright,found,nzombies,is_zombie)   \
+#define GB_SPLIT_BINARY_SEARCH_ZOMBIE(i,X,pleft,pright,found,nzom,is_zombie) \
 {                                                                           \
-    if (nzombies > 0)                                                       \
+    if (nzom > 0)                                                           \
     {                                                                       \
-        GB_BINARY_TRIM_ZOMBIE (i, X, pleft, pright) ;                       \
+        GB_TRIM_BINARY_SEARCH_ZOMBIE (i, X, pleft, pright) ;                \
         found = false ;                                                     \
         is_zombie = false ;                                                 \
         if (pleft == pright)                                                \
@@ -2679,7 +2834,7 @@ GB_PUBLIC mtx_t GB_sync ;
     else                                                                    \
     {                                                                       \
         is_zombie = false ;                                                 \
-        GB_BINARY_SPLIT_SEARCH(i,X,pleft,pright,found)                      \
+        GB_SPLIT_BINARY_SEARCH(i,X,pleft,pright,found)                      \
     }                                                                       \
 }
 
@@ -2695,14 +2850,14 @@ GB_PUBLIC mtx_t GB_sync ;
 static inline bool GB_lookup        // find j = Ah [k] in a hyperlist
 (
     const bool A_is_hyper,          // true if A is hypersparse
-    const int64_t *GB_RESTRICT Ah,     // A->h [0..A->nvec-1]: list of vectors
-    const int64_t *GB_RESTRICT Ap,     // A->p [0..A->nvec  ]: pointers to vectors
-    int64_t *GB_RESTRICT pleft,        // look only in A->h [pleft..pright]
+    const int64_t *GB_RESTRICT Ah,  // A->h [0..A->nvec-1]: list of vectors
+    const int64_t *GB_RESTRICT Ap,  // A->p [0..A->nvec  ]: pointers to vectors
+    int64_t *GB_RESTRICT pleft,     // look only in A->h [pleft..pright]
     int64_t pright,                 // normally A->nvec-1, but can be trimmed
 //  const int64_t nvec,             // A->nvec: number of vectors
     const int64_t j,                // vector to find, as j = Ah [k]
-    int64_t *GB_RESTRICT pstart,       // start of vector: Ap [k]
-    int64_t *GB_RESTRICT pend          // end of vector: Ap [k+1]
+    int64_t *GB_RESTRICT pstart,    // start of vector: Ap [k]
+    int64_t *GB_RESTRICT pend       // end of vector: Ap [k+1]
 )
 {
     if (A_is_hyper)

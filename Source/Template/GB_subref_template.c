@@ -2,7 +2,7 @@
 // GB_subref_template: C = A(I,J), or C = pattern (A(I,J))
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -393,7 +393,7 @@
                         int64_t pright = pA_end - 1 ;
                         #if defined ( GB_SYMBOLIC )
                         bool is_zombie ;
-                        GB_BINARY_ZOMBIE (i, Ai, pleft, pright, found,
+                        GB_BINARY_SEARCH_ZOMBIE (i, Ai, pleft, pright, found,
                             nzombies, is_zombie) ;
                         #else
                         GB_BINARY_SEARCH (i, Ai, pleft, pright, found) ;

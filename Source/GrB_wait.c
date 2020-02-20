@@ -2,7 +2,7 @@
 // GrB_wait: finish all pending computations
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -41,6 +41,7 @@ GrB_Info GrB_wait ( )       // finish all pending computations
     //--------------------------------------------------------------------------
 
     GB_WHERE ("GrB_wait ( )") ;
+    GB_BURBLE_START ("GrB_wait") ;
 
     //--------------------------------------------------------------------------
     // assemble all matrices with lingering zombies and/or pending tuples
@@ -61,6 +62,7 @@ GrB_Info GrB_wait ( )       // finish all pending computations
         GB_WAIT (A) ;
     }
 
+    GB_BURBLE_END ;
     return (GrB_SUCCESS) ;
 }
 

@@ -2,7 +2,7 @@
 // GB_to_hyper: convert a matrix to hyperspasre
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ GrB_Info GB_to_hyper        // convert a matrix to hypersparse
         int64_t *GB_RESTRICT Count ;
         GB_MALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
         if (Count == NULL)
-        {
+        { 
             // out of memory
             GB_PHIX_FREE (A) ;
             return (GB_OUT_OF_MEMORY) ;

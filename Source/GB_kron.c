@@ -2,7 +2,7 @@
 // GB_kron: C<M> = accum (C, kron(A,B))
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     const bool C_replace,           // if true, clear C before writing to it
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_BinaryOp op,          // defines '*' for kron(A,B)
     const GrB_Matrix A,             // input matrix
@@ -121,6 +122,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     {
         // AT = A' and typecast to op->xtype
         // transpose: typecast, no op, not in place
+        GBBURBLE ("(A transpose) ") ;
         info = GB_transpose (&AT, op->xtype, is_csc, A, NULL, Context) ;
         if (info != GrB_SUCCESS)
         { 
@@ -135,6 +137,7 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     {
         // BT = B' and typecast to op->ytype
         // transpose: typecast, no op, not in place
+        GBBURBLE ("(B transpose) ") ;
         info = GB_transpose (&BT, op->ytype, is_csc, B, NULL, Context) ;
         if (info != GrB_SUCCESS)
         { 
@@ -168,6 +171,6 @@ GrB_Info GB_kron                    // C<M> = accum (C, kron(A,B))
     //--------------------------------------------------------------------------
 
     return (GB_accum_mask (C, M, NULL, accum, &T, C_replace, Mask_comp,
-        Context)) ;
+        Mask_struct, Context)) ;
 }
 

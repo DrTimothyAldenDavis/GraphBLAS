@@ -2,7 +2,7 @@
 // GB_builder: build a matrix from tuples
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -159,10 +159,11 @@ GrB_Info GB_builder                 // build a matrix from tuples
     //--------------------------------------------------------------------------
 
     GB_void *GB_RESTRICT S_work = (*S_work_handle) ;
+
     const GB_void *GB_RESTRICT S = (S_work == NULL) ? S_input : S_work ;
     size_t tsize = ttype->size ;
     size_t ssize = GB_code_size (scode, tsize) ;
-    ASSERT (S != NULL) ;
+    ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
 
     //==========================================================================
     // symbolic phase of the build =============================================
@@ -215,7 +216,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
     if (tstart_slice == NULL || tnvec_slice == NULL || tnz_slice == NULL ||
         kbad == NULL || ilast_slice == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;
@@ -970,7 +971,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->i == NULL)
         { 
             // out of memory
-            GB_MATRIX_FREE (&T) ;
+            GB_MATRIX_FREE (Thandle) ;
             GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }
@@ -1097,12 +1098,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
     size_t xsize = xtype->size ;
     size_t ysize = ytype->size ;
 
-    // so that tcode can match scode
-    GB_Type_code tcode2 = (tcode == GB_UCT_code) ? GB_UDT_code : tcode ;
-    GB_Type_code scode2 = (scode == GB_UCT_code) ? GB_UDT_code : scode ;
-
     // no typecasting if all 5 types are the same
-    bool nocasting = (tcode2 == scode2) &&
+    bool nocasting = (tcode == scode) &&
         (ttype == xtype) && (ttype == ytype) && (ttype == ztype) ;
 
     //--------------------------------------------------------------------------
@@ -1144,14 +1141,22 @@ GrB_Info GB_builder                 // build a matrix from tuples
         if (T->x == NULL)
         { 
             // out of memory
-            GB_MATRIX_FREE (&T) ;
+            GB_MATRIX_FREE (Thandle) ;
             GB_FREE_WORK ;
             return (GB_OUT_OF_MEMORY) ;
         }
 
         GB_void *GB_RESTRICT Tx = T->x ;
 
-        if (copy_S_into_T)
+        ASSERT (GB_IMPLIES (nvals > 0, S != NULL)) ;
+
+        if (nvals == 0)
+        { 
+
+            // nothing to do
+
+        }
+        else if (copy_S_into_T)
         { 
 
             //------------------------------------------------------------------
@@ -1225,6 +1230,7 @@ GrB_Info GB_builder                 // build a matrix from tuples
 
             if (!done)
             {
+                GB_BURBLE_N (nvals, "generic ") ;
 
                 //--------------------------------------------------------------
                 // no typecasting, but use the fdup function pointer and memcpy
@@ -1275,6 +1281,8 @@ GrB_Info GB_builder                 // build a matrix from tuples
             //------------------------------------------------------------------
             // assemble the values S into T, typecasting as needed
             //------------------------------------------------------------------
+
+            GB_BURBLE_N (nvals, "generic ") ;
 
             // S (either S_work or S_input) must be permuted and copied into
             // T->x, since the tuples had to be sorted, or duplicates appear.

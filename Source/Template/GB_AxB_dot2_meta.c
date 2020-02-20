@@ -2,7 +2,7 @@
 // GB_AxB_dot2_meta: C=A'*B or C<!M>=A'*B via dot productes
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -40,7 +40,7 @@
 
     }
     else
-    {
+    { 
 
         //----------------------------------------------------------------------
         // get M
@@ -49,8 +49,7 @@
         const int64_t *GB_RESTRICT Mp = M->p ;
         const int64_t *GB_RESTRICT Mh = M->h ;
         const int64_t *GB_RESTRICT Mi = M->i ;
-        const GB_void *GB_RESTRICT Mx = M->x ;
-        GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code);
+        const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;
         size_t msize = M->type->size ;
         const int64_t mnvec = M->nvec ;
         bool M_is_hyper = GB_IS_HYPER (M) ;

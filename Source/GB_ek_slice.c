@@ -2,7 +2,7 @@
 // GB_ek_slice: slice the entries and vectors of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -46,8 +46,8 @@ bool GB_ek_slice        // true if successful, false if out of memory
     GB_CALLOC_MEMORY (kfirst_slice, ntasks, sizeof (int64_t)) ;
     GB_CALLOC_MEMORY (klast_slice, ntasks, sizeof (int64_t)) ;
 
-    if (pstart_slice == NULL || kfirst_slice == NULL | klast_slice == NULL)
-    {
+    if (pstart_slice == NULL || kfirst_slice == NULL || klast_slice == NULL)
+    { 
         GB_ek_slice_free (&pstart_slice, &kfirst_slice, &klast_slice, ntasks) ;
         return (false) ;
     }

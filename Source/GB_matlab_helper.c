@@ -2,7 +2,7 @@
 // GB_matlab_helper.c: helper functions for MATLAB interface
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -165,18 +165,6 @@ bool GB_matlab_helper3              // return true if OK, false on error
 
     GB_FREE_WORK (int64_t) ;
 
-//  int64_t k ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(static) \
-//      reduction(&&:ok) reduction(max:listmax)
-//  for (k = 0 ; k < len ; k++)
-//  {
-//      double x = List_double [k] ;
-//      int64_t i = (int64_t) x ;
-//      ok = ok && (x == (double) i) ;
-//      listmax = GB_IMAX (listmax, i) ;
-//      List [k] = i - 1 ;
-//  }
-
     (*List_max) = listmax ;
     return (ok) ;
 }
@@ -223,16 +211,6 @@ bool GB_matlab_helper3i             // return true if OK, false on error
 
     GB_FREE_WORK (int64_t) ;
 
-//  int64_t k ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(static) \
-//      reduction(max:listmax)
-//  for (k = 0 ; k < len ; k++)
-//  {
-//      int64_t i = List_int64 [k] ;
-//      listmax = GB_IMAX (listmax, i) ;
-//      List [k] = i - 1 ;
-//  }
-
     (*List_max) = listmax ;
     return (true) ;
 }
@@ -276,14 +254,6 @@ bool GB_matlab_helper4              // return true if OK, false on error
     }
 
     GB_FREE_WORK (GrB_Index) ;
-
-//  int64_t k ;
-//  #pragma omp parallel for num_threads(nthreads) schedule(static) \
-//      reduction(max:listmax)
-//  for (k = 0 ; k < len ; k++)
-//  {
-//      listmax = GB_IMAX (listmax, I [k]) ;
-//  }
 
     if (len > 0) listmax++ ;
     (*List_max) = listmax ;
@@ -380,5 +350,359 @@ void GB_matlab_helper8
         // C [k] = A [0]
         memcpy (C + k * s, A, s) ;
     }
+}
+
+//------------------------------------------------------------------------------
+// GB_matlab_helper9: compute the degree of each vector
+//------------------------------------------------------------------------------
+
+bool GB_matlab_helper9  // true if successful, false if out of memory
+(
+    GrB_Matrix A,       // input matrix
+    int64_t **degree,   // degree of each vector, size nvec
+    GrB_Index **list,   // list of non-empty vectors
+    GrB_Index *nvec     // # of non-empty vectors
+)
+{
+    int64_t anvec = A->nvec ;
+    GB_NTHREADS (anvec) ;
+
+    uint64_t *List = NULL ;
+    int64_t  *Degree = NULL ;
+    GB_MALLOC_MEMORY (List,   anvec, sizeof (int64_t)) ;
+    GB_MALLOC_MEMORY (Degree, anvec, sizeof (int64_t)) ;
+
+    if (List == NULL || Degree == NULL)
+    {
+        GB_FREE_MEMORY (List,   anvec, sizeof (int64_t)) ;
+        GB_FREE_MEMORY (Degree, anvec, sizeof (int64_t)) ;
+        return (false) ;
+    }
+
+    int64_t *Ah = A->h ;
+    int64_t *Ap = A->p ;
+
+    int64_t k ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (k = 0 ; k < anvec ; k++)
+    {
+        List [k] = (Ah == NULL) ? k : Ah [k] ;
+        Degree [k] = Ap [k+1] - Ap [k] ;
+    }
+
+    // return result
+    (*degree) = Degree ;
+    (*list) = List ;
+    (*nvec) = anvec ;
+    return (true) ;
+}
+
+//------------------------------------------------------------------------------
+// GB_matlab_helper10: compute norm (x-y,p) of two dense FP32 or FP64 vectors
+//------------------------------------------------------------------------------
+
+// p can be:
+
+//      0 or 2:     2-norm, sqrt (sum ((x-y).^2))
+//      1:          1-norm, sum (abs (x-y))
+//      INT64_MAX   inf-norm, max (abs (x-y))
+//      INT64_MIN   (-inf)-norm, min (abs (x-y))
+//      other:      p-norm not yet computed
+
+double GB_matlab_helper10       // norm (x-y,p), or -1 on error
+(
+    GB_void *x_arg,             // float or double, depending on type parameter
+    GB_void *y_arg,             // same type as x, treat as zero if NULL
+    GrB_Type type,              // GrB_FP32 or GrB_FP64
+    int64_t p,                  // 0, 1, 2, INT64_MIN, or INT64_MAX
+    GrB_Index n
+)
+{
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (!(type == GrB_FP32 || type == GrB_FP64))
+    {
+        // type of x and y must be GrB_FP32 or GrB_FP64
+        return ((double) -1) ;
+    }
+
+    if (n == 0)
+    {
+        return ((double) 0) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate workspace and determine # of threads to use
+    //--------------------------------------------------------------------------
+
+    GB_NTHREADS (n) ;
+    GB_ALLOCATE_WORK (double) ;
+
+    //--------------------------------------------------------------------------
+    // each thread computes its partial norm
+    //--------------------------------------------------------------------------
+
+    int tid ;
+    #pragma omp parallel for num_threads(nthreads) schedule(static)
+    for (tid = 0 ; tid < nthreads ; tid++)
+    {
+        int64_t k1, k2 ;
+        GB_PARTITION (k1, k2, n, tid, nthreads) ;
+
+        if (type == GrB_FP32)
+        {
+
+            //------------------------------------------------------------------
+            // FP32 case
+            //------------------------------------------------------------------
+
+            float my_s = 0 ;
+            const float *x = (float *) x_arg ;
+            const float *y = (float *) y_arg ;
+            switch (p)
+            {
+                case 0:     // Frobenius norm
+                case 2:     // 2-norm: sqrt of sum of (x-y).^2
+                {
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            float t = x [k] ;
+                            my_s += (t*t) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            float t = (x [k] - y [k]) ;
+                            my_s += (t*t) ;
+                        }
+                    }
+                }
+                break ;
+
+                case 1:     // 1-norm: sum (abs (x-y))
+                {
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabsf (x [k]) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabsf (x [k] - y [k]) ;
+                        }
+                    }
+                }
+                break ;
+
+                case INT64_MAX:     // inf-norm: max (abs (x-y))
+                {
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmaxf (my_s, fabsf (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmaxf (my_s, fabsf (x [k] - y [k])) ;
+                        }
+                    }
+                }
+                break ;
+
+                case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
+                {
+                    my_s = INFINITY ;
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fminf (my_s, fabsf (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fminf (my_s, fabsf (x [k] - y [k])) ;
+                        }
+                    }
+                }
+                break ;
+
+                default: ;  // p-norm not yet supported
+            }
+            Work [tid] = (double) my_s ;
+
+        }
+        else
+        {
+
+            //------------------------------------------------------------------
+            // FP64 case
+            //------------------------------------------------------------------
+
+            double my_s = 0 ;
+            const double *x = (double *) x_arg ;
+            const double *y = (double *) y_arg ;
+            switch (p)
+            {
+                case 0:     // Frobenius norm
+                case 2:     // 2-norm: sqrt of sum of (x-y).^2
+                {
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            double t = x [k] ;
+                            my_s += (t*t) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            double t = (x [k] - y [k]) ;
+                            my_s += (t*t) ;
+                        }
+                    }
+                }
+                break ;
+
+                case 1:     // 1-norm: sum (abs (x-y))
+                {
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabs (x [k]) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s += fabs (x [k] - y [k]) ;
+                        }
+                    }
+                }
+                break ;
+
+                case INT64_MAX:     // inf-norm: max (abs (x-y))
+                {
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmax (my_s, fabs (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmax (my_s, fabs (x [k] - y [k])) ;
+                        }
+                    }
+                }
+                break ;
+
+                case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
+                {
+                    my_s = INFINITY ;
+                    if (y == NULL)
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmin (my_s, fabs (x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        for (int64_t k = k1 ; k < k2 ; k++)
+                        {
+                            my_s = fmin (my_s, fabs (x [k] - y [k])) ;
+                        }
+                    }
+                }
+                break ;
+
+                default: ;  // p-norm not yet supported
+            }
+
+            Work [tid] = my_s ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // combine results of each thread
+    //--------------------------------------------------------------------------
+
+    double s = 0 ;
+    switch (p)
+    {
+        case 0:     // Frobenius norm
+        case 2:     // 2-norm: sqrt of sum of (x-y).^2
+        {
+            for (int64_t tid = 0 ; tid < nthreads ; tid++)
+            {
+                s += Work [tid] ;
+            }
+            s = sqrt (s) ;
+        }
+        break ;
+
+        case 1:     // 1-norm: sum (abs (x-y))
+        {
+            for (int64_t tid = 0 ; tid < nthreads ; tid++)
+            {
+                s += Work [tid] ;
+            }
+        }
+        break ;
+
+        case INT64_MAX:     // inf-norm: max (abs (x-y))
+        {
+            for (int64_t tid = 0 ; tid < nthreads ; tid++)
+            {
+                s = fmax (s, Work [tid]) ;
+            }
+        }
+        break ;
+
+        case INT64_MIN:     // (-inf)-norm: min (abs (x-y))
+        {
+            s = Work [0] ;
+            for (int64_t tid = 1 ; tid < nthreads ; tid++)
+            {
+                s = fmin (s, Work [tid]) ;
+            }
+        }
+        break ;
+
+        default:    // p-norm not yet supported
+            s = -1 ;
+    }
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
+    GB_FREE_WORK (double) ;
+    return (s) ;
 }
 

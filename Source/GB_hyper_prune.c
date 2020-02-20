@@ -2,7 +2,7 @@
 // GB_hyper_prune: remove empty vectors from a hypersparse Ap, Ah list
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ GrB_Info GB_hyper_prune
     int64_t *GB_RESTRICT W ;
     GB_MALLOC_MEMORY (W, nvec_old+1, sizeof (int64_t)) ;
     if (W == NULL)
-    {
+    { 
         // out of memory
         return (GB_OUT_OF_MEMORY) ;
     }

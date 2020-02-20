@@ -2,7 +2,7 @@
 // GB_resize: change the size of a matrix
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ GrB_Info GB_resize              // change the size of a matrix
             int64_t pleft = 0 ;
             int64_t pright = GB_IMIN (A->nvec, vdim_new) - 1 ;
             bool found ;
-            GB_BINARY_SPLIT_SEARCH (vdim_new, Ah, pleft, pright, found) ;
+            GB_SPLIT_BINARY_SEARCH (vdim_new, Ah, pleft, pright, found) ;
             A->nvec = pleft ;
         }
     }

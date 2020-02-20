@@ -2,7 +2,7 @@
 // GB_accum_mask: accumulate results via the mask and accum operator
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -43,14 +43,6 @@
 
 // The descriptor affects how C and M are handled.  If the descriptor is
 // NULL, defaults are used.
-
-// desc [GB_MASK] = GxB_DEFAULT means to use M as-is
-
-// desc [GB_MASK] = GrB_SCMP means to use the logical negation of M
-
-// desc [GB_OUTP] = GxB_DEFAULT means to use C as-is.
-
-// desc [GB_OUTP] = GrB_REPLACE means to clear C before writing Z into C.
 
 #include "GB_subassign.h"
 #include "GB_add.h"
@@ -138,6 +130,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     GrB_Matrix *Thandle,        // results of computation, freed when done
     const bool C_replace,       // if true, clear C first
     const bool Mask_comp,       // if true, complement the mask
+    const bool Mask_struct,     // if true, use the only structure of M
     GB_Context Context
 )
 {
@@ -178,7 +171,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     //--------------------------------------------------------------------------
 
     if (GB_PENDING_OR_ZOMBIES (T))
-    {
+    { 
         // if this fails, *Thandle must be freed
         GB_OK (GB_wait (T, Context)) ;
     }
@@ -187,11 +180,19 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // ensure M and T have the same CSR/CSC format as C
     //--------------------------------------------------------------------------
 
+    #if GB_BURBLE
+    bool T_transposed = false ;
+    bool M_transposed = false ;
+    #endif
+
     if (C->is_csc != T->is_csc)
     { 
         // transpose: no typecast, no op, in place of T, jumbled, but T
         // cannot have any zombies or pending tuples.
         GB_OK (GB_transpose (Thandle, NULL, C->is_csc, NULL, NULL, Context)) ;
+        #if GB_BURBLE
+        T_transposed = true ;
+        #endif
         T = (*Thandle) ;
     }
 
@@ -214,6 +215,9 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
             GB_OK (GB_transpose (&MT, GrB_BOOL, C->is_csc, M, NULL, Context)) ;
             // use the transpose mask
             M = MT ;
+            #if GB_BURBLE
+            M_transposed = true ;
+            #endif
         }
         else
         { 
@@ -254,15 +258,32 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
     // GB_transplant for Z=T and GB_transplant_conform in GB_mask for C=Z).
     // So in this case, GB_subassigner takes more work.
 
-    if ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
-        && !GB_aliased (C, M) && !GB_aliased (C, T))
+    bool use_subassigner =
+        ((M != NULL || accum != NULL) && (tnz + cnpending <= cnz)
+            && !GB_aliased (C, M) && !GB_aliased (C, T)) ;
+
+    bool use_transplant = (!use_subassigner)
+        && (accum == NULL || (cnz + cnpending) == 0) ;
+
+    if (!use_transplant)
+    { 
+        GBBURBLE ("(C%s%s=Z via %s%s%s) ",
+            ((M == NULL) ? "" : ((Mask_comp) ? "<!M>" : "<M>")),
+            ((accum == NULL) ? "" : "+"),
+            ((use_subassigner) ? "assign" :
+                ((use_transplant) ? "transplant" : "add")),
+            (M_transposed ? "(M transposed)" : ""),
+            (T_transposed ? "(result transposed)" : "")) ;
+    }
+
+    if (use_subassigner)
     { 
 
         //----------------------------------------------------------------------
         // C(:,:)<M> = accum (C(:,:),T) via GB_subassigner
         //----------------------------------------------------------------------
 
-        GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, accum,
+        GB_OK (GB_subassigner (C, C_replace, M, Mask_comp, Mask_struct, accum,
             T, GrB_ALL, 0, GrB_ALL, 0, false, NULL, GB_ignore_code, Context)) ;
 
     }
@@ -280,7 +301,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
         // see GB_spec_accum.m for a description of this step.  If C is empty,
         // then the accumulator can be ignored.
 
-        if (accum == NULL || (cnz + cnpending) == 0)
+        if (use_transplant)
         { 
 
             //------------------------------------------------------------------
@@ -318,7 +339,8 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
                 M1 = M ;
             }
 
-            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, C, T, accum, Context)) ;
+            GB_OK (GB_add (&Z, C->type, C->is_csc, M1, Mask_struct, C, T,
+                accum, Context)) ;
             GB_MATRIX_FREE (Thandle) ;
         }
 
@@ -339,7 +361,7 @@ GrB_Info GB_accum_mask          // C<M> = accum (C,T)
 
         // apply the mask, storing the results back into C, and free Z.
         ASSERT_MATRIX_OK (C, "C<M>=Z input", GB0) ;
-        GB_OK (GB_mask (C, M, &Z, C_replace, Mask_comp, Context)) ;
+        GB_OK (GB_mask (C, M, &Z, C_replace, Mask_comp, Mask_struct, Context)) ;
         ASSERT (Z == NULL) ;
         ASSERT (!C->p_shallow && !C->h_shallow) ;
         ASSERT (!C->i_shallow && !C->x_shallow) ;

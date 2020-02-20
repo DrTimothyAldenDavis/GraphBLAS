@@ -2,7 +2,7 @@
 // GB_AxB_dot3: compute C<M> = A'*B in parallel
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -30,6 +30,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 (
     GrB_Matrix *Chandle,            // output matrix
     const GrB_Matrix M,             // mask matrix
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_Matrix A,             // input matrix
     const GrB_Matrix B,             // input matrix
     const GrB_Semiring semiring,    // semiring that defines C=A*B
@@ -67,14 +68,15 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     bool op_is_first  = mult->opcode == GB_FIRST_opcode ;
     bool op_is_second = mult->opcode == GB_SECOND_opcode ;
+    bool op_is_pair   = mult->opcode == GB_PAIR_opcode ;
     bool A_is_pattern = false ;
     bool B_is_pattern = false ;
 
     if (flipxy)
     { 
         // z = fmult (b,a) will be computed
-        A_is_pattern = op_is_first  ;
-        B_is_pattern = op_is_second ;
+        A_is_pattern = op_is_first  || op_is_pair ;
+        B_is_pattern = op_is_second || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->ytype))) ;
         ASSERT (GB_IMPLIES (!B_is_pattern,
@@ -83,8 +85,8 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     else
     { 
         // z = fmult (a,b) will be computed
-        A_is_pattern = op_is_second ;
-        B_is_pattern = op_is_first  ;
+        A_is_pattern = op_is_second || op_is_pair ;
+        B_is_pattern = op_is_first  || op_is_pair ;
         ASSERT (GB_IMPLIES (!A_is_pattern,
             GB_Type_compatible (A->type, mult->xtype))) ;
         ASSERT (GB_IMPLIES (!B_is_pattern,
@@ -100,14 +102,13 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     const int64_t *GB_RESTRICT Mp = M->p ;
     const int64_t *GB_RESTRICT Mh = M->h ;
     const int64_t *GB_RESTRICT Mi = M->i ;
-    const GB_void *GB_RESTRICT Mx = M->x ;
+    const GB_void *GB_RESTRICT Mx = (Mask_struct ? NULL : (M->x)) ;
     const size_t msize = M->type->size ;
     const int64_t mvlen = M->vlen ;
     const int64_t mvdim = M->vdim ;
     const int64_t mnz = GB_NNZ (M) ;
     const int64_t mnvec = M->nvec ;
     const bool M_is_hyper = M->is_hyper ;
-    GB_cast_function cast_M = GB_cast_factory (GB_BOOL_code, M->type->code) ;
 
     const int64_t *GB_RESTRICT Ap = A->p ;
     const int64_t *GB_RESTRICT Ah = A->h ;
@@ -139,7 +140,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     GB_CREATE (Chandle, ctype, cvlen, cvdim, GB_Ap_malloc, true,
         GB_SAME_HYPER_AS (M_is_hyper), M->hyper_ratio, cnvec,
-        cnz+1,  // add one to cnz for GB_cumsum
+        cnz+1,  // add one to cnz for GB_cumsum of Cwork in GB_AxB_dot3_slice
         true, Context) ;
     if (info != GrB_SUCCESS)
     { 
@@ -153,7 +154,6 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     int64_t *GB_RESTRICT Cp = C->p ;
     int64_t *GB_RESTRICT Ch = C->h ;
     int64_t *GB_RESTRICT Cwork = C->i ;    // use C->i as workspace
-    // printf ("Ch is %p\n", (void *) Ch) ;
 
     //--------------------------------------------------------------------------
     // determine the # of threads to use
@@ -267,9 +267,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
                 for ( ; pM < pM_end ; pM++)
                 {
                     int64_t work = 1 ;
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     { 
                         int64_t pA, pA_end, i = Mi [pM] ;
                         GB_lookup (A_is_hyper, Ah, Ap, &apleft, anvec-1, i,
@@ -291,7 +289,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
     GB_OK (GB_AxB_dot3_slice (&TaskList, &max_ntasks, &ntasks, &nthreads,
         C, Context)) ;
 
-    // if (ntasks > 1) printf ("ntasks %d\n", ntasks) ;
+    GBBURBLE ("nthreads %d ntasks %d ", nthreads, ntasks) ;
 
     //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and built-in semiring
@@ -309,7 +307,7 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
     #define GB_AxB_WORKER(add,mult,xyname)                              \
     {                                                                   \
-        info = GB_Adot3B (add,mult,xyname) (C, M,                       \
+        info = GB_Adot3B (add,mult,xyname) (C, M, Mask_struct,          \
             A, A_is_pattern, B, B_is_pattern,                           \
             TaskList, ntasks, nthreads) ;                               \
         done = (info != GrB_NO_VALUE) ;                                 \
@@ -332,45 +330,12 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 #endif
 
     //--------------------------------------------------------------------------
-    // user semirings created at compile time
-    //--------------------------------------------------------------------------
-
-    if (semiring->object_kind == GB_USER_COMPILED)
-    { 
-        // determine the required type of A and B for the user semiring
-        GrB_Type atype_required, btype_required ;
-
-        if (flipxy)
-        { 
-            // A is passed as y, and B as x, in z = mult(x,y)
-            atype_required = mult->ytype ;
-            btype_required = mult->xtype ;
-        }
-        else
-        { 
-            // A is passed as x, and B as y, in z = mult(x,y)
-            atype_required = mult->xtype ;
-            btype_required = mult->ytype ;
-        }
-
-        if (A->type == atype_required && B->type == btype_required)
-        {
-            info = GB_AxB_user (GxB_AxB_DOT, semiring, Chandle, M, A, B,
-                flipxy,
-                /* heap: */ NULL, NULL, NULL, 0,
-                /* Gustavson: */ NULL,
-                /* dot2: */ NULL, NULL, nthreads, 0, 0, NULL,
-                /* dot3: */ TaskList, ntasks) ;
-            done = true ;
-        }
-    }
-
-    //--------------------------------------------------------------------------
     // C<M> = A'*B, via masked dot product method and typecasting
     //--------------------------------------------------------------------------
 
     if (!done)
     {
+        GB_BURBLE_MATRIX (C, "generic ") ;
 
         //----------------------------------------------------------------------
         // get operators, functions, workspace, contents of A, B, C, and M
@@ -420,12 +385,12 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
         // aki = A(k,i), located in Ax [pA]
         #define GB_GETA(aki,Ax,pA)                                          \
             GB_void aki [GB_VLA(aki_size)] ;                                \
-            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize) ;
+            if (!A_is_pattern) cast_A (aki, Ax +((pA)*asize), asize)
 
         // bkj = B(k,j), located in Bx [pB]
         #define GB_GETB(bkj,Bx,pB)                                          \
             GB_void bkj [GB_VLA(bkj_size)] ;                                \
-            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize) ;
+            if (!B_is_pattern) cast_B (bkj, Bx +((pB)*bsize), bsize)
 
         // break if cij reaches the terminal value
         #define GB_DOT_TERMINAL(cij)                                        \
@@ -436,31 +401,32 @@ GrB_Info GB_AxB_dot3                // C<M> = A'*B using dot product method
 
         // C(i,j) = A(i,k) * B(k,j)
         #define GB_MULT(cij, aki, bkj)                                      \
-            GB_MULTIPLY (cij, aki, bkj) ;                                   \
+            GB_MULTIPLY (cij, aki, bkj)
 
         // C(i,j) += A(i,k) * B(k,j)
         #define GB_MULTADD(cij, aki, bkj)                                   \
             GB_void zwork [GB_VLA(csize)] ;                                 \
             GB_MULTIPLY (zwork, aki, bkj) ;                                 \
-            fadd (cij, cij, zwork) ;
+            fadd (cij, cij, zwork)
 
         // define cij for each task
         #define GB_CIJ_DECLARE(cij)                                         \
-            GB_void cij [GB_VLA(csize)] ;
+            GB_void cij [GB_VLA(csize)]
 
         // address of Cx [p]
         #define GB_CX(p) Cx +((p)*csize)
 
         // save the value of C(i,j)
         #define GB_CIJ_SAVE(cij,p)                                          \
-            memcpy (GB_CX (p), cij, csize) ;
+            memcpy (GB_CX (p), cij, csize)
 
         #define GB_ATYPE GB_void
         #define GB_BTYPE GB_void
         #define GB_CTYPE GB_void
 
-        // loops with function pointers cannot be vectorized
-        #define GB_DOT_SIMD ;
+        // no vectorization
+        #define GB_PRAGMA_VECTORIZE
+        #define GB_PRAGMA_VECTORIZE_DOT
 
         if (flipxy)
         { 

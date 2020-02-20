@@ -2,7 +2,7 @@
 // GB_mxm: matrix-matrix multiply for GrB_mxm, GrB_mxv, and GrB_vxm
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     const bool C_replace,           // if true, clear C before writing to it
     const GrB_Matrix M,             // optional mask for C, unused if NULL
     const bool Mask_comp,           // if true, use !M
+    const bool Mask_struct,         // if true, use the only structure of M
     const GrB_BinaryOp accum,       // optional accum for Z=accum(C,T)
     const GrB_Semiring semiring,    // defines '+' and '*' for C=A*B
     const GrB_Matrix A,             // input matrix
@@ -105,20 +106,33 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // T = A*B, A'*B, A*B', or A'*B', also using the mask to cut time and memory
     //--------------------------------------------------------------------------
 
-    // the mask is used to cut time and memory usage for GB_AxB_meta,
-    // but only if it is not complemented.
+    // If C is dense (with no pending work), and the accum is present, then
+    // C+=A*B can be done in place (C_replace is effectively false).  If C is
+    // dense, M is present, and C_replace is false, then C<M>+=A*B or
+    // C<!M>+=A*B can also be done in place.  In all of these cases, C remains
+    // dense.
+
     bool mask_applied = false ;
-    bool C_is_csc = C->is_csc ;
-    GrB_Matrix T, MT = NULL ;
-    info = GB_AxB_meta (&T, C_is_csc, &MT, M, Mask_comp, A, B, semiring,
-        A_transpose, B_transpose, flipxy, &mask_applied, AxB_method,
-        &(C->AxB_method_used), Context) ;
+    bool done_in_place = false ;
+    GrB_Matrix T = NULL, MT = NULL ;
+    info = GB_AxB_meta (&T, C, C_replace, C->is_csc, &MT, M, Mask_comp,
+        Mask_struct, accum, A, B, semiring, A_transpose, B_transpose, flipxy,
+        &mask_applied, &done_in_place, AxB_method, &(C->AxB_method_used),
+        Context) ;
 
     if (info != GrB_SUCCESS)
     { 
         // out of memory
         ASSERT (T == NULL) ;
         ASSERT (MT == NULL) ;
+        return (info) ;
+    }
+
+    if (done_in_place)
+    { 
+        // C<...>+=A*B has been computed in place; no more work to do
+        GB_MATRIX_FREE (&MT) ;
+        ASSERT_MATRIX_OK (C, "C from GB_mxm (in place)", GB0) ;
         return (info) ;
     }
 
@@ -143,6 +157,25 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
         GB_MATRIX_FREE (&MT) ;
+        if (GB_ZOMBIES (T) && T->type != C->type)
+        { 
+            // T = A*B can be constructed with zombies, using the dot3 method.
+            // Since its type differs from C, its values will be typecasted
+            // from T->type to C->type.  The zombies are killed before
+            // typecasting.  Otherwise, if they were not killed, uninitialized
+            // values in T->x for these zombies will get typecasted into C->x.
+            // Typecasting a zombie is safe, since the values of all zombies
+            // are ignored.  But valgrind complains about it, so they are
+            // killed now.  Also see the discussion in GB_transplant.
+            GBBURBLE ("(wait, so zombies are not typecasted) ") ;
+            info = GB_wait (T, Context) ;
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory
+                GB_MATRIX_FREE (&T) ;
+                return (info) ;
+            }
+        }
         info = GB_transplant_conform (C, C->type, &T, Context) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)
@@ -159,7 +192,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // C<M> = accum (C,T)
         // GB_accum_mask also conforms C to its desired hypersparsity
         info = GB_accum_mask (C, M, MT, accum, &T, C_replace, Mask_comp,
-            Context) ;
+            Mask_struct, Context) ;
         GB_MATRIX_FREE (&MT) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)

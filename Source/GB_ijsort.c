@@ -2,7 +2,7 @@
 // GB_ijsort:  sort an index array I and remove duplicates
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ GrB_Info GB_ijsort
 
     GB_MALLOC_MEMORY (Count, ntasks+1, sizeof (int64_t)) ;
     if (Count == NULL)
-    {
+    { 
         // out of memory
         GB_FREE_WORK ;
         return (GB_OUT_OF_MEMORY) ;

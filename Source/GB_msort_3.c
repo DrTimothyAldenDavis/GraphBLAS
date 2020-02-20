@@ -2,7 +2,7 @@
 // GB_msort_3: sort a 3-by-n list of integers, using A[0:2][ ] as the key
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -113,8 +113,6 @@ void GB_merge_parallel_3                // parallel merge
     //--------------------------------------------------------------------------
     // find where the Pivot appears in the smaller list
     //--------------------------------------------------------------------------
-
-    // This is like GB_BINARY_TRIM_SEARCH, but applied to a 3-by-n array.
 
     // binary search of Smaller [0..nsmaller-1] for the Pivot
 
@@ -408,7 +406,7 @@ void GB_mergesort_3 // sort array A of size 3-by-n, using 3 keys (A [0:1][])
 // GB_msort_3: gateway for parallel merge sort
 //------------------------------------------------------------------------------
 
-void GB_msort_3     // sort array A of size 2-by-n, using 2 keys (A [0:1][])
+void GB_msort_3     // sort array A of size 3-by-n, using 3 keys (A [0:2][])
 (
     int64_t *GB_RESTRICT A_0,      // size n array
     int64_t *GB_RESTRICT A_1,      // size n array

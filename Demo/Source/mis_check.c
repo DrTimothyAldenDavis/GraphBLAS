@@ -2,9 +2,17 @@
 // GraphBLAS/Demo/Source/mis_check.c: maximal independent set, w/error checking
 //------------------------------------------------------------------------------
 
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+// http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+//------------------------------------------------------------------------------
+
 // Modified from the GraphBLAS C API Specification, by Aydin Buluc, Timothy
 // Mattson, Scott McMillan, Jose' Moreira, Carl Yang.  Based on "GraphBLAS
 // Mathematics" by Jeremy Kepner.
+
+// No copyright claim is made for this particular file; the above copyright
+// applies to all of SuiteSparse:GraphBLAS, not this file.
 
 // This method has been updated as of Version 2.2 of SuiteSparse:GraphBLAS.  It
 // now uses GrB_vxm instead of GrB_mxv.
@@ -131,7 +139,7 @@ GrB_Info mis_check              // compute a maximal independent set
 
     // descriptor: C_replace + structural complement of mask
     OK (GrB_Descriptor_new (&sr_desc)) ;
-    OK (GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_SCMP)) ;
+    OK (GrB_Descriptor_set (sr_desc, GrB_MASK, GrB_COMP)) ;
     OK (GrB_Descriptor_set (sr_desc, GrB_OUTP, GrB_REPLACE)) ;
 
     // create the mis_score binary operator

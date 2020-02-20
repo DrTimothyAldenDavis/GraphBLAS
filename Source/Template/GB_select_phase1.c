@@ -2,7 +2,7 @@
 // GB_select_count: count entries in eacn vector for C=select(A,thunk)
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@
             { 
                 // binary search for A (i,k)
                 int64_t pright = pA_end - 1 ;
-                GB_BINARY_SPLIT_SEARCH (i, Ai, p, pright, found) ;
+                GB_SPLIT_BINARY_SEARCH (i, Ai, p, pright, found) ;
             }
 
             #if defined ( GB_TRIL_SELECTOR )

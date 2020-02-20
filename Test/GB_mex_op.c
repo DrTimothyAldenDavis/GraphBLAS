@@ -2,7 +2,7 @@
 // GB_mex_op: apply a built-in GraphBLAS operator to MATLAB arrays
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void mexFunction
         op_ztype = op1->ztype ; op_zsize = op_ztype->size ;
         op_xtype = op1->xtype ; op_xsize = op_xtype->size ;
         op_ytype = NULL       ; op_ysize = 1 ;
-        ASSERT_BINARYOP_OK (op1, "unary op", GB0) ;
+        ASSERT_UNARYOP_OK (op1, "unary op", GB0) ;
     }
 
     ASSERT_TYPE_OK (op_ztype, "Z type", GB0) ;

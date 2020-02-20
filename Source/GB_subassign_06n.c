@@ -2,7 +2,7 @@
 // GB_subassign_06n: C(I,J)<M> = A ; no S
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ GrB_Info GB_subassign_06n
     const int Jkind,
     const int64_t Jcolon [3],
     const GrB_Matrix M,
+    const bool Mask_struct,
     const GrB_Matrix A,
     GB_Context Context
 )
@@ -52,6 +53,7 @@ GrB_Info GB_subassign_06n
     const int64_t *GB_RESTRICT Ah = A->h ;
     const int64_t Anvec = A->nvec ;
     const bool A_is_hyper = A->is_hyper ;
+    const int64_t avlen = A->vlen ;
     GrB_BinaryOp accum = NULL ;
 
     //--------------------------------------------------------------------------
@@ -113,6 +115,8 @@ GrB_Info GB_subassign_06n
             int64_t pA, pA_end ;
             GB_VECTOR_LOOKUP (pA, pA_end, A, j) ;
             int64_t ajnz = pA_end - pA ;
+            bool ajdense = (ajnz == avlen) ;
+            int64_t pA_start = pA ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C
@@ -127,35 +131,59 @@ GrB_Info GB_subassign_06n
             // C(I,jC)<M(:,j)> = A(:,j) ; no S
             //------------------------------------------------------------------
 
-            if (cjdense)
+            if (cjdense && ajdense)
             {
 
                 //--------------------------------------------------------------
-                // C(:,jC) is dense so the binary search of C is not needed
+                // C(:,jC) and A(:,j) are both dense
                 //--------------------------------------------------------------
 
                 for ( ; pM < pM_end ; pM++)
                 {
 
                     //----------------------------------------------------------
-                    // consider the entry M(iA,j)
-                    //----------------------------------------------------------
-
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-
-                    //----------------------------------------------------------
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     { 
                         int64_t iA = Mi [pM] ;
                         GB_iC_DENSE_LOOKUP ;
 
                         // find iA in A(:,j)
-                        int64_t apright = pA_end - 1 ;
+                        // A(:,j) is dense; no need for binary search
+                        pA = pA_start + iA ;
+                        ASSERT (Ai [pA] == iA) ;
+                        // ----[C A 1] or [X A 1]-----------------------
+                        // [C A 1]: action: ( =A ): copy A to C, no acc
+                        // [X A 1]: action: ( undelete ): zombie lives
+                        GB_noaccum_C_A_1_matrix ;
+                    }
+                }
+
+            }
+            else if (cjdense)
+            {
+
+                //--------------------------------------------------------------
+                // C(:,jC) is dense, A(:,j) is sparse
+                //--------------------------------------------------------------
+
+                for ( ; pM < pM_end ; pM++)
+                {
+
+                    //----------------------------------------------------------
+                    // update C(iC,jC), but only if M(iA,j) allows it
+                    //----------------------------------------------------------
+
+                    if (GB_mcast (Mx, pM, msize))
+                    { 
+                        int64_t iA = Mi [pM] ;
+                        GB_iC_DENSE_LOOKUP ;
+
+                        // find iA in A(:,j)
                         bool aij_found ;
+                        int64_t apright = pA_end - 1 ;
                         GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
 
                         if (!aij_found)
@@ -169,9 +197,52 @@ GrB_Info GB_subassign_06n
                         else
                         { 
                             // ----[C A 1] or [X A 1]---------------------------
+                            // [C A 1]: action: ( =A ): copy A to C, no accum
+                            // [X A 1]: action: ( undelete ): zombie lives
+                            GB_noaccum_C_A_1_matrix ;
+                        }
+                    }
+                }
+
+            }
+            else if (ajdense)
+            {
+
+                //--------------------------------------------------------------
+                // C(:,jC) is sparse, A(:,j) is dense
+                //--------------------------------------------------------------
+
+                for ( ; pM < pM_end ; pM++)
+                {
+
+                    //----------------------------------------------------------
+                    // update C(iC,jC), but only if M(iA,j) allows it
+                    //----------------------------------------------------------
+
+                    if (GB_mcast (Mx, pM, msize))
+                    {
+                        int64_t iA = Mi [pM] ;
+
+                        // find C(iC,jC) in C(:,jC)
+                        GB_iC_BINARY_SEARCH ;
+
+                        // lookup iA in A(:,j)
+                        pA = pA_start + iA ;
+                        ASSERT (Ai [pA] == iA) ;
+
+                        if (cij_found)
+                        { 
+                            // ----[C A 1] or [X A 1]---------------------------
                             // [C A 1]: action: ( =A ): copy A into C, no accum
                             // [X A 1]: action: ( undelete ): zombie lives
                             GB_noaccum_C_A_1_matrix ;
+                        }
+                        else
+                        { 
+                            // C (iC,jC) is not present, A (i,j) is present
+                            // ----[. A 1]--------------------------------------
+                            // [. A 1]: action: ( insert )
+                            task_pending++ ;
                         }
                     }
                 }
@@ -181,31 +252,26 @@ GrB_Info GB_subassign_06n
             {
 
                 //--------------------------------------------------------------
-                // C(:,jC) is sparse; use binary search for C
+                // C(:,jC) and A(:,j) are both sparse
                 //--------------------------------------------------------------
 
                 for ( ; pM < pM_end ; pM++)
                 {
 
                     //----------------------------------------------------------
-                    // consider the entry M(iA,j)
-                    //----------------------------------------------------------
-
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-
-                    //----------------------------------------------------------
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     {
                         int64_t iA = Mi [pM] ;
+
+                        // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
 
                         // find iA in A(:,j)
-                        int64_t apright = pA_end - 1 ;
                         bool aij_found ;
+                        int64_t apright = pA_end - 1 ;
                         GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
 
                         if (cij_found && aij_found)
@@ -280,6 +346,8 @@ GrB_Info GB_subassign_06n
             GB_VECTOR_LOOKUP (pA, pA_end, A, j) ;
             int64_t ajnz = pA_end - pA ;
             if (ajnz == 0) continue ;
+            bool ajdense = (ajnz == avlen) ;
+            int64_t pA_start = pA ;
 
             //------------------------------------------------------------------
             // get jC, the corresponding vector of C
@@ -303,26 +371,30 @@ GrB_Info GB_subassign_06n
                 {
 
                     //----------------------------------------------------------
-                    // consider the entry M(iA,j)
-                    //----------------------------------------------------------
-
-                    bool mij ;
-                    cast_M (&mij, Mx +(pM*msize), 0) ;
-
-                    //----------------------------------------------------------
                     // update C(iC,jC), but only if M(iA,j) allows it
                     //----------------------------------------------------------
 
-                    if (mij)
+                    if (GB_mcast (Mx, pM, msize))
                     {
                         int64_t iA = Mi [pM] ;
 
                         // find iA in A(:,j)
-                        int64_t apright = pA_end - 1 ;
-                        bool aij_found ;
-                        GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
-                        if (!aij_found) continue ;
+                        if (ajdense)
+                        {
+                            // A(:,j) is dense; no need for binary search
+                            pA = pA_start + iA ;
+                            ASSERT (Ai [pA] == iA) ;
+                        }
+                        else
+                        {
+                            // A(:,j) is sparse; use binary search
+                            int64_t apright = pA_end - 1 ;
+                            bool aij_found ;
+                            GB_BINARY_SEARCH (iA, Ai, pA, apright, aij_found) ;
+                            if (!aij_found) continue ;
+                        }
 
+                        // find C(iC,jC) in C(:,jC)
                         GB_iC_BINARY_SEARCH ;
                         if (!cij_found)
                         { 

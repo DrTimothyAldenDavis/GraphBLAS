@@ -2,7 +2,7 @@
 // GB_red:  hard-coded functions for reductions
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -11,6 +11,7 @@
 
 #include "GB.h"
 #ifndef GBCOMPACT
+#include "GB_atomics.h"
 #include "GB_ek_slice.h"
 #include "GB_control.h" 
 #include "GB_red__include.h"
@@ -102,6 +103,11 @@
     #define GB_PANEL                                \
         GB_panel
 
+// special case for the ANY monoid
+
+    #define GB_IS_ANY_MONOID                        \
+        GB_is_any_monoid
+
 // disable this operator and use the generic case if these conditions hold
 #define GB_DISABLE \
     GB_disable
@@ -131,9 +137,13 @@ GrB_Info GB_red_scalar
     #endif
 }
 
+endif_is_monoid
+
 //------------------------------------------------------------------------------
 // reduce to each vector: each vector A(:,k) reduces to a scalar Tx (k)
 //------------------------------------------------------------------------------
+
+if_is_monoid
 
 GrB_Info GB_red_eachvec
 (
@@ -156,9 +166,13 @@ GrB_Info GB_red_eachvec
     #endif
 }
 
+endif_is_monoid
+
 //------------------------------------------------------------------------------
 // reduce to each index: each A(i,:) reduces to a scalar T (i)
 //------------------------------------------------------------------------------
+
+if_is_monoid
 
 GrB_Info GB_red_eachindex
 (

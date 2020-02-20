@@ -2,7 +2,7 @@
 // GB_Global: global values in GraphBLAS
 //------------------------------------------------------------------------------
 
-// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2019, All Rights Reserved.
+// SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 // http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
 //------------------------------------------------------------------------------
@@ -11,9 +11,8 @@
 // contents of the GB_Global struct are only accessible to functions in this
 // file.  Global storage is used to record a list of matrices with pending
 // operations (for GrB_wait), to keep track of the GraphBLAS mode (blocking or
-// non-blocking), to hold persistent Sauna workspace, for pointers to
-// malloc/calloc/realloc/free functions, global matrix options, and other
-// settings.
+// non-blocking), for pointers to malloc/calloc/realloc/free functions, global
+// matrix options, and other settings.
 
 #include "GB.h"
 #include "GB_printf.h"
@@ -62,13 +61,6 @@ typedef struct
     double chunk ;              // chunk size for determining # threads to use
 
     //--------------------------------------------------------------------------
-    // Sauna: thread workspace for Gustavson's method
-    //--------------------------------------------------------------------------
-
-    GB_Sauna Saunas   [GxB_NTHREADS_MAX] ;
-    bool Sauna_in_use [GxB_NTHREADS_MAX] ;
-
-    //--------------------------------------------------------------------------
     // hypersparsity and CSR/CSC format control
     //--------------------------------------------------------------------------
 
@@ -92,7 +84,6 @@ typedef struct
     void * (* calloc_function  ) (size_t, size_t) ;
     void * (* realloc_function ) (void *, size_t) ;
     void   (* free_function    ) (void *)         ;
-    void   (* persist_function ) (void *)         ;
     bool malloc_is_thread_safe ;   // default is true
 
     //--------------------------------------------------------------------------
@@ -129,8 +120,11 @@ typedef struct
     int64_t maxused ;               // high water memory usage
 
     //--------------------------------------------------------------------------
+    // for testing and development
+    //--------------------------------------------------------------------------
 
-    int64_t hack ;                  // for testing and development
+    int64_t hack ;                  // ad hoc setting (for draft versions only)
+    bool burble ;                   // controls GBBURBLE output
 
     //--------------------------------------------------------------------------
     // for MATLAB interface only
@@ -164,10 +158,6 @@ GB_Global_struct GB_Global =
     .hyper_ratio = GB_HYPER_DEFAULT,
     .is_csc = (GB_FORMAT_DEFAULT != GxB_BY_ROW),    // default is GxB_BY_ROW
 
-    // Sauna workspace for Gustavson's method (one per thread)
-    .Saunas [0] = NULL,
-    .Sauna_in_use [0] = false,
-
     // abort function for debugging only
     .abort_function   = abort,
 
@@ -176,7 +166,6 @@ GB_Global_struct GB_Global =
     .calloc_function  = calloc,
     .realloc_function = realloc,
     .free_function    = free,
-    .persist_function = NULL,
     .malloc_is_thread_safe = true,
 
     // malloc tracking, for testing, statistics, and debugging only
@@ -189,6 +178,7 @@ GB_Global_struct GB_Global =
 
     // for testing and development
     .hack = 0,
+    .burble = false,
 
     // for MATLAB interface only
     .print_one_based = false,       // if true, print 1-based indices
@@ -250,9 +240,7 @@ bool GB_Global_GrB_init_called_get (void)
 GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_nthreads_max_set (int nthreads_max)
 { 
-    nthreads_max = GB_IMIN (nthreads_max, GxB_NTHREADS_MAX) ;
-    nthreads_max = GB_IMAX (nthreads_max, 1) ;
-    GB_Global.nthreads_max = nthreads_max ;
+    GB_Global.nthreads_max = GB_IMAX (nthreads_max, 1) ;
 }
 
 GB_PUBLIC   // accessed by the MATLAB interface only
@@ -278,7 +266,7 @@ GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_chunk_set (double chunk)
 { 
     if (chunk <= GxB_DEFAULT) chunk = GB_CHUNK_DEFAULT ;
-    GB_Global.chunk = chunk ;
+    GB_Global.chunk = fmax (chunk, 1) ;
 }
 
 GB_PUBLIC   // accessed by the MATLAB interface only
@@ -319,34 +307,6 @@ bool GB_Global_is_csc_get (void)
     // GB_Context Context = NULL ;
     // GBPR ("get GB_Global.is_csc = %d\n", (int) GB_Global.is_csc) ;
     return (GB_Global.is_csc) ;
-}
-
-//------------------------------------------------------------------------------
-// Saunas [id]
-//------------------------------------------------------------------------------
-
-void GB_Global_Saunas_set (int id, GB_Sauna Sauna)
-{ 
-    GB_Global.Saunas [id] = Sauna ;
-}
-
-GB_Sauna GB_Global_Saunas_get (int id)
-{ 
-    return (GB_Global.Saunas [id]) ;
-}
-
-//------------------------------------------------------------------------------
-// Saunas_in_use [id]
-//------------------------------------------------------------------------------
-
-void GB_Global_Sauna_in_use_set (int id, bool in_use)
-{ 
-    GB_Global.Sauna_in_use [id] = in_use ;
-}
-
-bool GB_Global_Sauna_in_use_get (int id)
-{ 
-    return (GB_Global.Sauna_in_use [id]) ;
 }
 
 //------------------------------------------------------------------------------
@@ -482,46 +442,6 @@ void GB_Global_free_function (void *p)
 }
 
 //------------------------------------------------------------------------------
-// persist_function
-//------------------------------------------------------------------------------
-
-// This is only needed by the MATLAB interface, so that mexMakeMemoryPersistent
-// can be called to keep the Saunas allocated between calls to the
-// mexFunctions.  By default, the global persist_function is NULL, so it is not
-// used except when set to mexMakeMemoryPersistent in the mexFunction
-// interface.  The function pointer should be set immediately after calling
-// GxB_init.
-
-void GB_Global_persist_function_set (void (* persist_function) (void *))
-{
-    GB_Global.persist_function = persist_function ;
-}
-
-void GB_Global_persist_function (void *p)
-{ 
-    if (GB_Global.persist_function == NULL)
-    { 
-        return ;
-    }
-    #if defined (USER_POSIX_THREADS) || defined (USER_ANSI_THREADS)
-    bool ok = true ;
-    #endif
-    if (GB_Global.malloc_is_thread_safe)
-    {
-        GB_Global.persist_function (p) ;
-    }
-    else
-    {
-        #undef  GB_CRITICAL_SECTION
-        #define GB_CRITICAL_SECTION                             \
-        {                                                       \
-            GB_Global.persist_function (p) ;                    \
-        }
-        #include "GB_critical_section.c"
-    }
-}
-
-//------------------------------------------------------------------------------
 // malloc_is_thread_safe
 //------------------------------------------------------------------------------
 
@@ -644,6 +564,20 @@ void GB_Global_hack_set (int64_t hack)
 int64_t GB_Global_hack_get (void)
 { 
     return (GB_Global.hack) ;
+}
+
+//------------------------------------------------------------------------------
+// burble: for controlling the burble output
+//------------------------------------------------------------------------------
+
+void GB_Global_burble_set (bool burble)
+{ 
+    GB_Global.burble = burble ;
+}
+
+bool GB_Global_burble_get (void)
+{ 
+    return (GB_Global.burble) ;
 }
 
 //------------------------------------------------------------------------------
