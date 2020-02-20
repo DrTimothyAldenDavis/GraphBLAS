@@ -38,7 +38,7 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     if (GB_Global_GrB_init_called_get ( ))
-    { 
+    {
         GrB_finalize ( ) ;
     }
 
