@@ -8,5 +8,5 @@ when running OpenMP inside MATLAB).
 
 v310: output from GraphBLAS v3.1.0
 v312: output from GraphBLAS v3.1.2 (draft, Nov 15, 2019)
-v320: output from GraphBLAS v3.2.0 (draft, Feb 11, 2019)
+v320: output from GraphBLAS v3.2.0 (Feb 20, 2020)
 

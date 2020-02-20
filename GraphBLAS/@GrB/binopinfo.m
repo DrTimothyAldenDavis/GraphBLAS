@@ -16,7 +16,7 @@ function binopinfo (op, type)
 % GrB.binopinfo ('+.double'), or in the second argument, GrB.binopinfo
 % ('+', 'double').
 %
-% The MATLAB interface to GraphBLAS provides for 25 different binary
+% The MATLAB interface to GraphBLAS provides for 27 different binary
 % operators, each of which may be used with any of the 11 types, for
 % a total of 27*11 = 297 valid binary operators.  Binary operators
 % are defined by a string of the form 'op.type', or just 'op'.  In

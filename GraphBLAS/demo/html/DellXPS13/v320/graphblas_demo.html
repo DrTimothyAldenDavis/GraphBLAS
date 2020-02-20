@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>GraphBLAS: graph algorithms in the language of linear algebra</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-11"><meta name="DC.source" content="graphblas_demo.m"><style type="text/css">
+      --><title>GraphBLAS: graph algorithms in the language of linear algebra</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-02-20"><meta name="DC.source" content="graphblas_demo.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -113,9 +113,9 @@ fprintf (<span class="string">'MATLAB time:    %g sec (in double)\n'</span>, mat
 fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <span class="keyword">...</span>
     matlab_time / gb_time) ;
 </pre><pre class="codeoutput">
-GraphBLAS time: 1.76041 sec (in single)
-MATLAB time:    6.06309 sec (in double)
-Speedup of GraphBLAS over MATLAB: 3.44413
+GraphBLAS time: 1.88612 sec (in single)
+MATLAB time:    6.23295 sec (in double)
+Speedup of GraphBLAS over MATLAB: 3.30465
 </pre><h2 id="4">Mixing MATLAB and GraphBLAS matrices</h2><p>The error in the last computation is about eps('single') since GraphBLAS did its computation in single precision, while MATLAB used double precision.  MATLAB and GraphBLAS matrices can be easily combined, as in X2-G2.  The sparse single precision matrices take less memory space.</p><pre class="codeinput">err = norm (X2 - G2, 1) / norm (X2,1)
 eps (<span class="string">'single'</span>)
 whos <span class="string">G</span> <span class="string">G2</span> <span class="string">X</span> <span class="string">X2</span>
@@ -143,9 +143,9 @@ fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <
 </pre><pre class="codeoutput">err =
      0
 
-GraphBLAS time: 2.3504 sec (in double)
-MATLAB time:    6.06309 sec (in double)
-Speedup of GraphBLAS over MATLAB: 2.5796
+GraphBLAS time: 2.50213 sec (in double)
+MATLAB time:    6.23295 sec (in double)
+Speedup of GraphBLAS over MATLAB: 2.49105
 </pre><h2 id="6">A wide range of semirings</h2><p>MATLAB can only compute C=A*B using the standard '+.*.double' and '+.*.complex' semirings.  A semiring is defined in terms of a string, 'add.mult.type', where 'add' is a monoid that takes the place of the additive operator, 'mult' is the multiplicative operator, and 'type' is the data type for the two inputs to the mult operator (the type defaults to the type of A for C=A*B).</p><p>In the standard semiring, C=A*B is defined as:</p><pre class="language-matlab">C(i,j) = sum (A(i,:).' .* B(:,j))
 </pre><p>using 'plus' as the monoid and 'times' as the multiplicative operator. But in a more general semiring, 'sum' can be any monoid, which is an associative and commutative operator that has an identity value.  For example, in the 'max.plus' tropical algebra, C(i,j) for C=A*B is defined as:</p><pre class="language-matlab">C(i,j) = max (A(i,:).' + B(:,j))
 </pre><p>This can be computed in GraphBLAS with:</p><pre class="language-matlab">C = GrB.mxm (<span class="string">'max.+'</span>, A, B)
@@ -278,7 +278,7 @@ GrB.mis    <span class="comment">% maximal independent set</span>
   GrB.binopinfo ('+.double'), or in the second argument, GrB.binopinfo
   ('+', 'double').
  
-  The MATLAB interface to GraphBLAS provides for 25 different binary
+  The MATLAB interface to GraphBLAS provides for 27 different binary
   operators, each of which may be used with any of the 11 types, for
   a total of 27*11 = 297 valid binary operators.  Binary operators
   are defined by a string of the form 'op.type', or just 'op'.  In
@@ -1033,9 +1033,9 @@ fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <
     matlab_time / gb_time) ;
 </pre><pre class="codeoutput">
 nodes reached: 100000 of 100000
-GraphBLAS time: 0.555115 sec
-MATLAB time:    0.447321 sec
-Speedup of GraphBLAS over MATLAB: 0.805817
+GraphBLAS time: 0.761582 sec
+MATLAB time:    0.472689 sec
+Speedup of GraphBLAS over MATLAB: 0.620667
 </pre><h2 id="49">Example graph algorithm: Luby's method in GraphBLAS</h2><p>The GrB.mis.m function is variant of Luby's randomized algorithm [Luby 1985].  It is a parallel method for finding an maximal independent set of nodes, where no two nodes are adjacent.  See the GraphBLAS/@GrB/GrB.mis.m function for details.  The graph must be symmetric with a zero-free diagonal, so A is symmetrized first and any diagonal entries are removed.</p><pre class="codeinput">A = GrB (A) ;
 A = GrB.offdiag (A|A') ;
 
@@ -1057,7 +1057,7 @@ notp = find (s == 0) ;
 S = A (notp, p) ;
 deg = GrB.vreduce (<span class="string">'+.int64'</span>, S) ;
 assert (logical (all (deg &gt; 0)))
-</pre><pre class="codeoutput">Elapsed time is 0.505272 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.497827 seconds.
 # nodes in the graph: 100000
 # edges: : 9.9899e+06
 size of maximal independent set found: 2811
@@ -1087,13 +1087,13 @@ fprintf (<span class="string">'setup time: %g sec\n'</span>, t) ;
 </pre><pre class="codeoutput"># layers:   16
 # neurons:  4096
 # features: 30000
-construct problem time: 5.94162 sec
-setup time: 0.261628 sec
+construct problem time: 6.19643 sec
+setup time: 0.428007 sec
 </pre><h2 id="51">Solving the sparse deep neural network problem with GraphbLAS</h2><p>Please wait ...</p><pre class="codeinput">tic
 Y1 = GrB.dnn (W_gb, bias_gb, Y0_gb) ;
 gb_time = toc ;
 fprintf (<span class="string">'total time in GraphBLAS: %g sec\n'</span>, gb_time) ;
-</pre><pre class="codeoutput">total time in GraphBLAS: 9.61276 sec
+</pre><pre class="codeoutput">total time in GraphBLAS: 10.0564 sec
 </pre><h2 id="52">Solving the sparse deep neural network problem with MATLAB</h2><p>Please wait ...</p><pre class="codeinput">tic
 Y2 = dnn_matlab (W, bias, Y0) ;
 matlab_time = toc ;
@@ -1102,8 +1102,8 @@ fprintf (<span class="string">'Speedup of GraphBLAS over MATLAB: %g\n'</span>, <
     matlab_time / gb_time) ;
 
 err = norm (Y1-Y2,1)
-</pre><pre class="codeoutput">total time in MATLAB:    103.186 sec
-Speedup of GraphBLAS over MATLAB: 10.7343
+</pre><pre class="codeoutput">total time in MATLAB:    85.9198 sec
+Speedup of GraphBLAS over MATLAB: 8.54381
 err =
      0
 </pre><h2 id="53">For objects, GraphBLAS has better colon notation than MATLAB</h2><p>The MATLAB notation C = A (start:inc:fini) is very handy, and it works great if A is a MATLAB matrix.  But for objects like the GraphBLAS matrix, MATLAB starts by creating the explicit index vector I = start:inc:fini.  That's fine if the matrix is modest in size, but GraphBLAS can construct huge matrices. The problem is that 1:n cannot be explicitly constructed when n is huge.</p><p>The C API for GraphBLAS can represent the colon notation start:inc:fini in an implicit manner, so it can do the indexing without actually forming the explicit list I = start:inc:fini. But there is no access to this method using the MATLAB notation start:inc:fini.</p><p>Thus, to compute C = A (start:inc:fini) for very huge matrices, you need to use use a cell array to represent the colon notation, as { start, inc, fini }, instead of start:inc:fini. See 'help GrB.extract' and 'help.gbsubassign' for, for C(I,J)=A.  The syntax isn't conventional, but it is far faster than the MATLAB colon notation for objects, and takes far less memory when I is huge.</p><pre class="codeinput">n = 1e14 ;
@@ -1265,11 +1265,11 @@ gb_time2 = toc ;
 fprintf (<span class="string">'\nGraphBLAS time: %g sec for C(M)=A(M)\n'</span>, gb_time2) ;
 </pre><pre class="codeoutput">nnz(C): 1.5226e+06, nnz(M): 761163, nnz(A): 1.52245e+06
 
-setup time:     1.44522 sec
+setup time:     1.00999 sec
 
-GraphBLAS time: 0.044993 sec for GrB.assign
+GraphBLAS time: 0.026364 sec for GrB.assign
 
-GraphBLAS time: 0.17285 sec for C(M)=A(M)
+GraphBLAS time: 0.125608 sec for C(M)=A(M)
 </pre><p>Please wait, this will take about 10 minutes or so ...</p><pre class="codeinput">tic
 C (M) = A (M) ;
 matlab_time = toc ;
@@ -1286,11 +1286,11 @@ assert (isequal (C2, C))
 C1 - C
 C2 - C
 </pre><pre class="codeoutput">
-GraphBLAS time: 0.044993 sec (GrB.assign)
+GraphBLAS time: 0.026364 sec (GrB.assign)
 
-GraphBLAS time: 0.17285 sec (overloading)
-MATLAB time:    771.109 sec
-Speedup of GraphBLAS over MATLAB: 4461.14
+GraphBLAS time: 0.125608 sec (overloading)
+MATLAB time:    641.779 sec
+Speedup of GraphBLAS over MATLAB: 5109.38
 ans =
    All zero sparse: 4000x4000
 ans =
@@ -1318,8 +1318,8 @@ fprintf (<span class="string">'\nMATLAB: %g sec, GraphBLAS: %g sec\n'</span>, <s
 </pre><pre class="codeoutput">err =
      0
 
-MATLAB: 0.067452 sec, GraphBLAS: 0.202641 sec
-GraphBLAS is slower by a factor of 3.00423
+MATLAB: 0.039108 sec, GraphBLAS: 0.117829 sec
+GraphBLAS is slower by a factor of 3.01291
 </pre><p>(5) Linear indexing:</p><p>If A is an m-by-n 2D MATLAB matrix, with n &gt; 1, A(:) is a column vector of length m*n.  The index operation A(i) accesses the ith entry in the vector A(:).  This is called linear indexing in MATLAB.  It is not yet available for GraphBLAS matrices in this MATLAB interface to GraphBLAS, but it could be added in the future.</p><p>(6) Implicit singleton dimension expansion</p><p>In MATLAB C=A+B where A is m-by-n and B is a 1-by-n row vector implicitly expands B to a matrix, computing C(i,j)=A(i,j)+B(j).  This implicit expansion is not yet suported in GraphBLAS with C=A+B. However, it can be done with C = GrB.mxm ('+.+', A, diag(GrB(B))). That's an nice example of the power of semirings, but it's not immediately obvious, and not as clear a syntax as C=A+B.  The GraphBLAS/@GrB/dnn.m function uses this 'plus.plus' semiring to apply the bias to each neuron.</p><pre class="codeinput">A = magic (3)
 B = 1000:1000:3000
 C1 = A + B
