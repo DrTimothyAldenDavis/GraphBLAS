@@ -80,6 +80,7 @@ logstat ('test84',t) ;  % GrB_assign (row and column with C in CSR format)
 logstat ('test85',t) ;  % GrB_transpose (1-by-n with typecasting)
 logstat ('test02',t) ;  % matrix copy and dup tests
 logstat ('test148',t) ; % ewise with alias
+logstat ('test150',t) ; % mxm with zombies and typecasting
 
 logstat ('test137',s) ; % GrB_eWiseMult with FIRST and SECOND operators
 logstat ('test138',s) ; % test assign, with coarse-only tasks in IxJ slice

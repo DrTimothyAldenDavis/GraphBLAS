@@ -39,8 +39,8 @@ end
 
 make_all = (isequal (what, 'all')) ;
 
-   flags = '-g' ;
-%  flags = '-O' ;
+% flags = '-g' ;
+  flags = '-O' ;
 
 try
     if (strncmp (computer, 'GLNX', 4))
@@ -61,6 +61,7 @@ try
             end
         end
     end
+catch
 end
 
 mexfunctions = dir ('GB_mex_*.c') ;

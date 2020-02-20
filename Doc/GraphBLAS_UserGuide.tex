@@ -105,7 +105,7 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
 
 \begin{itemize}
 
-\item Version 3.2.0 (Feb, 2020).  Faster \verb'GrB_mxm', \verb'GrB_mxv', and
+\item Version 3.2.0 (Feb 20, 2020).  Faster \verb'GrB_mxm', \verb'GrB_mxv', and
     \verb'GrB_vxm', and faster operations on dense matrices/vectors.  Removed
     compile-time user objects (\verb'GxB_*_define'), since these were not
     compatible with the faster matrix operations.  Added the \verb'ANY' and
@@ -113,6 +113,7 @@ macros with a name of the form \verb'GxB_*' are extensions to the spec.
     Added the structural mask option.  Changed default chunk size to 65,536.
     Note that v3.2.0 is not compatible with the MS Visual Studio compiler; use
     v3.1.2 instead.
+    MATLAB interface modified:  \verb'GrB.init' is now optional.
 
 \item Version 3.1.2 (Dec, 2019).  Changes to allow SuiteSparse:GraphBLAS
     to be compiled with the Microsoft Visual Studio compiler.  This compiler
@@ -6766,7 +6767,7 @@ MATLAB \verb'GB_spec' function  & purpose \\
 \verb'GB_spec_descriptor.m'     & mimics a GraphBLAS descriptor \\
 \verb'GB_spec_identity.m'       & returns the identity of a monoid \\
 \verb'GB_spec_matrix.m'         & conforms a MATLAB sparse matrix to GraphBLAS \\
-\verb'GB_define*.m'             & creates draft of \verb'GraphBLAS.h' \\
+\verb'GB_define.m'              & creates draft of \verb'GraphBLAS.h' \\
 \hline
 \end{tabular}
 }
@@ -9671,7 +9672,7 @@ This feature has been removed as of SuiteSparse:GraphBLAS v3.2.0.  User
 objects defined with \verb'GxB_*_define' when GraphBLAS is compiled are not
 compatible with the faster matrix operations.  Use the run-time definitions
 instead, from the GraphBLAS C API Specification (\verb'GrB_Type_new' instead of
-\verb'GxB_Type_define' in the \verb'GraphBLAS/User/*.m4' script.
+\verb'GxB_Type_define' in the \verb'GraphBLAS/User/*.m4' script).
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10799,7 +10800,7 @@ subsections.  Next:
     gbmake \end{verbatim} }
 
 \item Follow the remaining instructions in the
-    \verb'GraphBLAS/GraphBLAS/README.txt' file, to revise your
+    \verb'GraphBLAS/GraphBLAS/README.md' file, to revise your
     MATLAB path and \verb'startup.m' file.
 
 \end{enumerate}

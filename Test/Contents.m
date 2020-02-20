@@ -217,6 +217,7 @@
 %   test147  - test C<M>A*B with very sparse M
 %   test148  - eWiseAdd with aliases
 %   test149  - test fine hash method for C<!M>=A*B
+%   test150  - test GrB_mxm with typecasting and zombies (dot3)
 
 %   testc1   - test complex operators
 %   testc2   - test complex A*B, A'*B, A*B', A'*B', A+B

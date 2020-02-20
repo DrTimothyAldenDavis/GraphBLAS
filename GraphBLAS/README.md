@@ -45,22 +45,17 @@ to add the GraphBLAS interface to your path.  Then do
 
     savepath
 
-Or, if that function is not allowed because of file permissions, add these
-commands to your startup.m file:
+Or, if that function is not allowed because of file permissions, add this
+command to your startup.m file:
 
     % add the MATLAB interface to the MATLAB path
     addpath ('/home/me/SuiteSparse/GraphBLAS/GraphBLAS') :
-    try
-        GrB.init
-        fprintf ('GraphBLAS initialized\n') ;
-    catch
-        fprintf ('GraphBLAS not initialized\n') ;
-    end
 
 where the path /home/me/SuiteSparse/GraphBLAS/GraphBLAS is the full path to
-this folder.  The code that calls GrB.init should be added to your startup.m in
-all cases.  The name "GraphBLAS/GraphBLAS" is used so that this can be done in
-MATLAB:
+this folder.
+
+The name "GraphBLAS/GraphBLAS" is used for this folder so that this can be done
+in MATLAB:
 
     help graphblas
 
