@@ -14,7 +14,7 @@ JOBS ?= 1
 
 default: library
 
-# just build the static and dynamic libraries; do not run the demo
+# just build the dynamic library; do not run the demo
 library:
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; $(MAKE) --jobs=$(JOBS) )
 
@@ -30,7 +30,7 @@ remake:
 cmake:
 	( cd build ; cmake $(CMAKE_OPTIONS) .. ; )
 
-# the same as "make library"
+# build both the static and dynamic libraries do not run the demo
 static:
 	( cd build ; cmake $(CMAKE_OPTIONS) -DBUILD_GRB_STATIC_LIBRARY=1 .. ; $(MAKE) --jobs=$(JOBS) )
 

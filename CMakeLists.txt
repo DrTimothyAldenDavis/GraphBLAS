@@ -89,8 +89,8 @@ if ( NOT CMAKE_BUILD_TYPE )
 endif ( )
 
 # select "true" to build both dynamic and static libraries:
-set ( BUILD_GRB_STATIC_LIBRARY true )
-#  set ( BUILD_GRB_STATIC_LIBRARY false )
+# set ( BUILD_GRB_STATIC_LIBRARY true )
+# set ( BUILD_GRB_STATIC_LIBRARY false )
 # or use cmake with -DBUILD_GRB_STATIC_LIBRARY=1
 
 if ( BUILD_GRB_STATIC_LIBRARY )
