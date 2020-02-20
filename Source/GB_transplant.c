@@ -304,6 +304,13 @@ GrB_Info GB_transplant          // transplant one matrix into another
     // transplant or copy A->x numerical values
     //--------------------------------------------------------------------------
 
+    // Note that A may contain zombies, and the values of these zombies may be
+    // uninitialized values in A->x.  All entries are typecasted or memcpy'ed
+    // from A->x to C->x, both zombies and live entries alike.  valgrind may
+    // complain about typecasting these uninitialized values, but these
+    // warnings are false positives.  The output of the typecasting is itself a
+    // zombie, and the values of all zombies are ignored.
+
     ASSERT_TYPE_OK (C->type, "target C->type for values", GB0) ;
     ASSERT_TYPE_OK (A->type, "source A->type for values", GB0) ;
 
@@ -325,7 +332,7 @@ GrB_Info GB_transplant          // transplant one matrix into another
     }
     else
     {
-        // types differ, must typecast from A to C
+        // types differ, must typecast from A to C.
         GB_cast_array (C->x, C->type->code, A->x, A->type->code, anz, Context) ;
         if (!A->x_shallow)
         { 

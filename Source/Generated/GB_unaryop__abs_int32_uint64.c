@@ -42,8 +42,8 @@
     z = GB_IABS (x) ;
 
 // casting
-#define GB_CASTING(z, x)   \
-    int32_t z = (int32_t) x ;
+#define GB_CASTING(z, aij) \
+    int32_t z = (int32_t) aij ;
 
 // cij = op (cast (aij))
 #define GB_CAST_OP(pC,pA)           \
@@ -51,8 +51,8 @@
     /* aij = Ax [pA] */             \
     GB_GETA (aij, Ax, pA) ;         \
     /* Cx [pC] = op (cast (aij)) */ \
-    GB_CASTING (x, aij) ;           \
-    GB_OP (GB_CX (pC), x) ;         \
+    GB_CASTING (z, aij) ;           \
+    GB_OP (GB_CX (pC), z) ;         \
 }
 
 // disable this operator and use the generic case if these conditions hold

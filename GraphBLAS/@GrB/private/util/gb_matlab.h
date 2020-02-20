@@ -306,8 +306,6 @@ void gb_mxfree              // mxFree wrapper
     void **p_handle         // handle to pointer to be freed
 ) ;
 
-void gb_at_exit (void)  ;   // called when GraphBLAS is cleared by MATLAB
-
 int64_t *gb_mxarray_to_list     // return List of integers
 (
     const mxArray *mxList,      // list to extract

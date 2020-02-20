@@ -10,11 +10,11 @@
 // CALLS:     GB_builder
 
 // This function is typically called via the GB_WAIT(A) macro, except for
-// GB_assign and GB_subassign.
+// GB_assign, GB_subassign, and GB_mxm.
 
 // The matrix A has zombies and/or pending tuples placed there by
-// GrB_setElement and GrB_*assign.  Zombies must now be deleted, and pending
-// tuples must now be assembled together and added into the matrix.
+// GrB_setElement, GrB_*assign, or GB_mxm.  Zombies must now be deleted, and
+// pending tuples must now be assembled together and added into the matrix.
 
 // When the function returns, the matrix has been removed from the queue
 // and all pending tuples and zombies have been deleted.  This is true even

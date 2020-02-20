@@ -157,6 +157,25 @@ GrB_Info GB_mxm                     // C<M> = A*B
         // and is a pure transplant.  Also conform C to its desired
         // hypersparsity.
         GB_MATRIX_FREE (&MT) ;
+        if (GB_ZOMBIES (T) && T->type != C->type)
+        { 
+            // T = A*B can be constructed with zombies, using the dot3 method.
+            // Since its type differs from C, its values will be typecasted
+            // from T->type to C->type.  The zombies are killed before
+            // typecasting.  Otherwise, if they were not killed, uninitialized
+            // values in T->x for these zombies will get typecasted into C->x.
+            // Typecasting a zombie is safe, since the values of all zombies
+            // are ignored.  But valgrind complains about it, so they are
+            // killed now.  Also see the discussion in GB_transplant.
+            GBBURBLE ("(wait, so zombies are not typecasted) ") ;
+            info = GB_wait (T, Context) ;
+            if (info != GrB_SUCCESS)
+            { 
+                // out of memory
+                GB_MATRIX_FREE (&T) ;
+                return (info) ;
+            }
+        }
         info = GB_transplant_conform (C, C->type, &T, Context) ;
         #ifdef GB_DEBUG
         if (info == GrB_SUCCESS)
