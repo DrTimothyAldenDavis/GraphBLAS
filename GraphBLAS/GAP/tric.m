@@ -2,6 +2,9 @@ function [c times best] = tric (A, cgood)
 %TRIC triangle countting tests
 % A must be logical, symmetric, and stored by row
 
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
 assert (GrB.isbyrow (A)) ;
 assert (isequal (GrB.type (A), 'logical')) ;
 

@@ -1,5 +1,5 @@
-function gap_tc
-%GAP_TC run tricount for the GAP benchmark
+function gap_bc
+%GAP_BC run centrality for the GAP benchmark
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
@@ -11,14 +11,10 @@ rng ('default') ;
 C = GrB (1) * GrB (1) + 1 ;
 clear C
 
-% the GAP test matrices:
-matrices = {
-    'GAP/GAP-road'
-    'GAP/GAP-web'
-    'GAP/GAP-urand'
-    'GAP/GAP-twitter'
-    'GAP/GAP-kron'
-    } ;
+index = ssget ;
+f = find (index.nrows == index.ncols & index.nnz > 5e6 & index.isReal) ;
+[~,i] = sort (index.nnz (f)) ;
+matrices = f (i) ;
 
 % smaller test matrices:
 matrices = { 'HB/west0067', 'SNAP/roadNet-CA', ...
@@ -31,10 +27,14 @@ matrices = { 'HB/west0067', 'SNAP/roadNet-CA', ...
 matrices = { 'HB/west0067', 'SNAP/roadNet-CA' , ...
     'SNAP/com-Orkut', 'LAW/indochina-2004' }
 
-index = ssget ;
-f = find (index.nrows == index.ncols & index.nnz > 5e6 & index.isReal) ;
-[~,i] = sort (index.nnz (f)) ;
-matrices = f (i) ;
+% the GAP test matrices:
+matrices = {
+    'GAP/GAP-kron'
+    'GAP/GAP-urand'
+    'GAP/GAP-twitter'
+    'GAP/GAP-web'
+    'GAP/GAP-road'
+    } ;
 
 [status, result] = system ('hostname') ;
 clear status
@@ -47,11 +47,7 @@ else
 end
 clear result
 
-% winners = zeros (16,1) ;  
-% total   = zeros (16,1) ;  
-% tbest   = 0 ;
-
-for k = 152:length(matrices)
+for k = 1:length(matrices)
 
     %---------------------------------------------------------------------------
     % get the GAP problem
@@ -64,56 +60,45 @@ try
     t1 = tic ;
     clear A Prob
     Prob = ssget (id, index) ;
+    sources = Prob.aux.sources ;
     A = GrB (Prob.A, 'by row', 'logical') ;
     name = Prob.name ;
     clear Prob
     A = spones (A) ;
-    A = A|A' ;
+    AT = A' ;
     n = size (A,1) ;
     fprintf ('\n%s: nodes: %g million  nvals: %g million\n', ...
         name, n / 1e6, nnz (A) / 1e6) ;
     t1 = toc (t1) ;
     fprintf ('load time: %g sec\n', t1) ;
 
-    ntrials = 1 ;
-
     %---------------------------------------------------------------------------
-    % triangle count
+    % compute the centrality for each batch of 4
     %---------------------------------------------------------------------------
 
-    fprintf ('\nGrB.tricount  tests:\n') ;
+    fprintf ('\ngap_centrality  tests:\n') ;
+
+    good = '~/LAGraph/Test/BetweennessCentrality/batch_%02d_%d.mtx' ;
 
     tot = 0 ;
-    for trial = 1:ntrials
+    for k = 1:4:length(sources)
+        src = sources (k:k+4) ;
+
         tstart = tic ;
-        s = GrB.tricount (A) ;
+        c = gap_centrality (src, A, AT) ;
         t = toc (tstart) ;
         tot = tot + t ;
-        fprintf ('trial: %2d GrB.tricount  time: %8.3f\n', trial, t) ;
+        fprintf ('trial: %2d GrB centrality time: %8.3f\n', trial, t) ;
+
+        % check result
+        cgood = load (sprintf (good, k-1, n)) ;
+        err = norm (cgood - c) ;
+        fprintf ('err: %g\n', err) ;
     end
-    fprintf ('avg GrB.tricount time:  %10.3f (%d trials)\n', ...
+
+    fprintf ('avg GrB centrality time:  %10.3f (%d trials)\n', ...
         tot/ntrials, ntrials) ;
-    fprintf ('triangles: %d\n', full (s)) ;
 
-    %---------------------------------------------------------------------------
-    % triangle count with permutations
-    %---------------------------------------------------------------------------
-
-    [c times best] = tric (A, s) ;
-    clear A
-
-    all_times = sum (times, 2) ;
-    total = total + all_times ;
-    winners (best) = winners (best) + 1 ;
-    tbest = tbest + all_times (best) ;
-
-    for k = 1:16
-        if (total (k) < inf)
-            fprintf ('%2d   %10.3f : %d\n', k, total (k), winners (k)) ;
-        end
-    end
-    fprintf ('best %10.3f\n', tbest) ;
-    save gap_tc_results winners total tbest k
     diary off
     diary on
 
