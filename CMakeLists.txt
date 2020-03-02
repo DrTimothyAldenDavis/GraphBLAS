@@ -107,6 +107,10 @@ if ( GB_BURBLE )
     set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGB_BURBLE=1 " )
 endif ( )
 
+if ( GBCOMPACT )
+    set ( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DGBCOMPACT=1 " )
+endif ( )
+
 #-------------------------------------------------------------------------------
 # configure GraphBLAS
 #-------------------------------------------------------------------------------
