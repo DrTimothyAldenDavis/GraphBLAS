@@ -108,6 +108,7 @@ for k = 1:length(matrices)
     % PageRank with MATLAB
     %---------------------------------------------------------------------------
 
+%{
     % if (n < 24*1e6)
     try
         fprintf ('\nCompare with built-in MATLAB pagerank:\n') ;
@@ -135,5 +136,7 @@ for k = 1:length(matrices)
     end
 
     clear G r g rmatlab d A r1 r2 r3 i1 i2 i3
+%}
+
 end
 

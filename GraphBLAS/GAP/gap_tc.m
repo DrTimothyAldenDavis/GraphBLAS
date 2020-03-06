@@ -4,21 +4,11 @@ function gap_tc
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-diary on
 rng ('default') ;
 
 % warmup, to make sure GrB library is loaded
 C = GrB (1) * GrB (1) + 1 ;
 clear C
-
-% the GAP test matrices:
-matrices = {
-    'GAP/GAP-road'
-    'GAP/GAP-web'
-    'GAP/GAP-urand'
-    'GAP/GAP-twitter'
-    'GAP/GAP-kron'
-    } ;
 
 % smaller test matrices:
 matrices = { 'HB/west0067', 'SNAP/roadNet-CA', ...
@@ -36,6 +26,15 @@ f = find (index.nrows == index.ncols & index.nnz > 5e6 & index.isReal) ;
 [~,i] = sort (index.nnz (f)) ;
 matrices = f (i) ;
 
+% the GAP test matrices:
+matrices = {
+    'GAP/GAP-road'
+    'GAP/GAP-web'
+    'GAP/GAP-urand'
+    'GAP/GAP-twitter'
+    'GAP/GAP-kron'
+    } ;
+
 [status, result] = system ('hostname') ;
 clear status
 if (isequal (result (1:5), 'hyper'))
@@ -51,13 +50,11 @@ clear result
 % total   = zeros (16,1) ;  
 % tbest   = 0 ;
 
-for k = 152:length(matrices)
+for k = 1:length(matrices)
 
     %---------------------------------------------------------------------------
     % get the GAP problem
     %---------------------------------------------------------------------------
-
-try
 
     id = matrices (k) ;
     GrB.burble (0) ;
@@ -99,6 +96,7 @@ try
     % triangle count with permutations
     %---------------------------------------------------------------------------
 
+    %{
     [c times best] = tric (A, s) ;
     clear A
 
@@ -114,13 +112,7 @@ try
     end
     fprintf ('best %10.3f\n', tbest) ;
     save gap_tc_results winners total tbest k
-    diary off
-    diary on
-
-catch me
-    k
-    disp (me.message)
-end
+    %}
 
 end
 

@@ -1,10 +1,9 @@
-% function gap_bc
+function gap_bc
 %GAP_BC run centrality for the GAP benchmark
 
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-diary on
 rng ('default') ;
 
 % warmup, to make sure GrB library is loaded
@@ -54,8 +53,6 @@ for k = 1:length(matrices)
     %---------------------------------------------------------------------------
     % get the GAP problem
     %---------------------------------------------------------------------------
-
-% try
 
     id = matrices {k} ;
     fprintf ('\nmatrix: %s\n', id) ;
@@ -121,14 +118,6 @@ for k = 1:length(matrices)
     ntrials = trial ;
     fprintf ('avg GrB centrality time:  %10.3f (%d trials)\n', ...
         tot/ntrials, ntrials) ;
-
-    diary off
-    diary on
-
-% catch me
-%     k
-%     disp (me.message)
-% end
 
 end
 

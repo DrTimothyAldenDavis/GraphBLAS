@@ -8,6 +8,8 @@ function s = tricount (A, check)
 % takes additional time so by default the input is not checked.
 %
 % See also GrB.ktruss.
+%
+% TODO: sort if warranted.  See LAGraph_tricount.
 
 [m, n] = size (A) ;
 if (m ~= n)

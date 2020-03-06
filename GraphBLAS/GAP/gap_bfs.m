@@ -83,6 +83,7 @@ for k = 1:length(matrices)
     % BFS with MATLAB
     %---------------------------------------------------------------------------
 
+%{
     % if (n < 24*1e6)
     try
         fprintf ('\nCompare with built-in MATLAB bfs:\n') ;
@@ -112,6 +113,8 @@ for k = 1:length(matrices)
         printf ('MATLAB failed\n') ;
     end
 
-    % clear G table parent v nodes edgetonew
+    clear G table parent v nodes edgetonew
+%}
+
 end
 

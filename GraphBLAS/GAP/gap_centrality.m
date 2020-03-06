@@ -1,5 +1,5 @@
 function centrality = gap_centrality (sources, A, AT)
-%GAP_BC: batch betweenness centrality of a graph, via GraphBLAS
+%GAP_CENTRALITY batch betweenness centrality of a graph, via GraphBLAS
 %
 % Given a set of source nodes s (an array of integers in the range 1 to n) and
 % an adjacency matrix A, c=gap_centrality(s,A) computes the betweenness
@@ -36,6 +36,7 @@ if (m ~= n)
     error ('A must be square') ;
 end
 if (~isequal (GrB.format (A), 'by row'))
+    % FUTURE: handle the case when A is stored by column
     error ('A must be a GrB matrix stored by row') ;
 end
 if (nargin < 3)
