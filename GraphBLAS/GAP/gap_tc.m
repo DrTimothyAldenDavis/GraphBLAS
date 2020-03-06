@@ -71,6 +71,7 @@ for k = 1:length(matrices)
         name, n / 1e6, nnz (A) / 1e6) ;
     t1 = toc (t1) ;
     fprintf ('load time: %g sec\n', t1) ;
+    d = GrB.entries (A, 'row', 'degree') ;
 
     ntrials = 1 ;
 
@@ -83,7 +84,8 @@ for k = 1:length(matrices)
     tot = 0 ;
     for trial = 1:ntrials
         tstart = tic ;
-        s = GrB.tricount (A) ;
+        % s = GrB.tricount (A) ;
+        s = tricount (A, d) ;
         t = toc (tstart) ;
         tot = tot + t ;
         fprintf ('trial: %2d GrB.tricount  time: %8.3f\n', trial, t) ;
