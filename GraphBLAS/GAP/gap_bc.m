@@ -110,9 +110,6 @@ for k = 1:length(matrices)
         fprintf ('err: %g (time %g sec) entries %d %d diff %d\n', err, t, ...
             GrB.entries (c),  GrB.entries (cgood), ...
             GrB.entries (c) - GrB.entries (cgood)) ;
-        % 'hit'
-        % pause
-        % clear c good
     end
 
     ntrials = trial ;

@@ -15,6 +15,15 @@ f = find (index.nrows == index.ncols & index.nnz > 5e6 & index.isReal) ;
 [~,i] = sort (index.nnz (f)) ;
 matrices = f (i) ;
 
+% tiny test matrices:
+matrices = { 'cover', 'HB/jagmesh7' } ;
+deltas = [ 100 100 ] ;
+
+% test matrices for laptop:
+matrices = { 'HB/west0067', 'SNAP/roadNet-CA' , ...
+    'SNAP/com-Orkut', 'LAW/indochina-2004' } ;
+deltas = [ 100 100 100 100 ] ;
+
 % the GAP test matrices:
 matrices = {
     'GAP/GAP-kron'
@@ -24,15 +33,6 @@ matrices = {
     'GAP/GAP-road'
     } ;
 deltas = [ 27 35 51 150 200000 ] ;
-
-% tiny test matrices:
-matrices = { 'cover', 'HB/jagmesh7' } ;
-deltas = [ 100 100 ] ;
-
-% test matrices for laptop:
-matrices = { 'HB/west0067', 'SNAP/roadNet-CA' , ...
-    'SNAP/com-Orkut', 'LAW/indochina-2004' } ;
-deltas = [ 100 100 100 100 ] ;
 
 [status, result] = system ('hostname') ;
 clear status

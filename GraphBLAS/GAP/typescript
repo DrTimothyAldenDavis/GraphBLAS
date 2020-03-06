@@ -1,0 +1,24 @@
+Script started on Fri 06 Mar 2020 11:51:17 AM CST
+Intel Suite:
+Copyright (C) 2009-2019 Intel Corporation. All rights reserved.
+Intel(R) VTune(TM) Amplifier 2019 (build 591499)
+[0;36mhypersparse $[0m matlab -nodesktop
+MATLAB is selecting SOFTWARE OPENGL rendering.
+[?1h=
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+using development version of SuiteSparse
+
+ans =
+
+    '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/GAP'
+
+GraphBLAS initialized
+>> gap
