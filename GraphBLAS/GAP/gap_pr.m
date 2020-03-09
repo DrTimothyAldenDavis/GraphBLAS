@@ -28,10 +28,15 @@ if (isequal (result (1:5), 'hyper'))
     fprintf ('hypersparse: %d threads\n', GrB.threads (40)) ;
 elseif (isequal (result (1:5), 'slash'))
     fprintf ('slash: %d threads\n', GrB.threads (8)) ;
+elseif (isequal (result (1:9), 'backslash'))
+    fprintf ('slash: %d threads\n', GrB.threads (24)) ;
 else
     fprintf ('default: %d threads\n', GrB.threads) ;
 end
 clear result
+
+threads = GrB.threads ;
+threads = [threads threads/2]
 
 for k = 1:length(matrices)
 
@@ -68,16 +73,19 @@ for k = 1:length(matrices)
     % PageRank with gap_pagerank
     %---------------------------------------------------------------------------
 
-    fprintf ('\nGAP PageRank tests:\n') ;
-    tot = 0 ;
-    for trial = 1:ntrials
-        tstart = tic ;
-        [g, iter] = gap_pagerank (A, d) ;
-        t = toc (tstart) ;
-        tot = tot + t ;
-        fprintf ('trial: %2d GAP pagerank time: %g iter: %d\n', trial, t, iter);
+    for nthreads = threads
+        GrB.threads (nthreads) ;
+        fprintf ('\nGAP PageRank tests: %d threads\n', nthreads) ;
+        tot = 0 ;
+        for trial = 1:ntrials
+            tstart = tic ;
+            [g, iter] = gap_pagerank (A, d) ;
+            t = toc (tstart) ;
+            tot = tot + t ;
+            fprintf ('trial: %2d GAP pagerank time: %g iter: %d\n', trial, t, iter);
+        end
+        fprintf ('avg gap_pagerank time:  %g (%d trials)\n', tot/ntrials, ntrials) ;
     end
-    fprintf ('avg gap_pagerank time:  %g (%d trials)\n', tot/ntrials, ntrials) ;
 
     clear d
 
@@ -90,6 +98,7 @@ for k = 1:length(matrices)
     % matches the MATLAB @graph/centrality (A, 'pagerank') method, which
     % handles such nodes properly.
 
+%{
     fprintf ('\nGrB PageRank tests:\n') ;
     opts.type = 'single' ;
 
@@ -103,6 +112,7 @@ for k = 1:length(matrices)
             trial, t, stats.tinit, stats.trank, stats.iter) ;
     end
     fprintf ('avg GrB.pagerank time:  %g (%d trials)\n', tot/ntrials, ntrials) ;
+%}
 
     %---------------------------------------------------------------------------
     % PageRank with MATLAB

@@ -1,6 +1,8 @@
 function gap_tc
 %GAP_TC run tricount for the GAP benchmark
 
+help gap_tc
+
 % SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 % http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
@@ -15,11 +17,11 @@ matrices = { 'HB/west0067', 'SNAP/roadNet-CA', ...
     'GAP/GAP-road', ...
     'GAP/GAP-web', ...
     'GAP/GAP-urand', ...
-    'GAP/GAP-twitter', ...
-    'GAP/GAP-kron' }
+    'GAP/GAP-twitter', ... 
+    'GAP/GAP-kron' } ;
 
 matrices = { 'HB/west0067', 'SNAP/roadNet-CA' , ...
-    'SNAP/com-Orkut', 'LAW/indochina-2004' }
+    'SNAP/com-Orkut', 'LAW/indochina-2004' } ;
 
 index = ssget ;
 f = find (index.nrows == index.ncols & index.nnz > 5e6 & index.isReal) ;
@@ -33,7 +35,13 @@ matrices = {
     'GAP/GAP-urand'
     'GAP/GAP-twitter'
     'GAP/GAP-kron'
-    } ;
+    }
+
+% the GAP test matrices that need sorting:
+matrices = {
+    'GAP/GAP-twitter'
+    'GAP/GAP-kron'
+    }
 
 [status, result] = system ('hostname') ;
 clear status
@@ -41,10 +49,15 @@ if (isequal (result (1:5), 'hyper'))
     fprintf ('hypersparse: %d threads\n', GrB.threads (40)) ;
 elseif (isequal (result (1:5), 'slash'))
     fprintf ('slash: %d threads\n', GrB.threads (8)) ;
+elseif (isequal (result (1:9), 'backslash'))
+    fprintf ('slash: %d threads\n', GrB.threads (24)) ;
 else
     fprintf ('default: %d threads\n', GrB.threads) ;
 end
 clear result
+
+threads = GrB.threads ;
+threads = [threads threads/2]
 
 % winners = zeros (16,1) ;  
 % total   = zeros (16,1) ;  
@@ -56,7 +69,7 @@ for k = 1:length(matrices)
     % get the GAP problem
     %---------------------------------------------------------------------------
 
-    id = matrices (k) ;
+    id = matrices {k} ;
     GrB.burble (0) ;
     t1 = tic ;
     clear A Prob
@@ -71,28 +84,31 @@ for k = 1:length(matrices)
         name, n / 1e6, nnz (A) / 1e6) ;
     t1 = toc (t1) ;
     fprintf ('load time: %g sec\n', t1) ;
-    d = GrB.entries (A, 'row', 'degree') ;
+    d = double (GrB.entries (A, 'row', 'degree')) ;
 
-    ntrials = 1 ;
+    ntrials = 3 ;
 
     %---------------------------------------------------------------------------
     % triangle count
     %---------------------------------------------------------------------------
 
-    fprintf ('\nGrB.tricount  tests:\n') ;
+    for nthreads = threads
+        GrB.threads (nthreads) ;
+        fprintf ('\nGAP tricount  tests: %d threads\n', nthreads) ;
 
-    tot = 0 ;
-    for trial = 1:ntrials
-        tstart = tic ;
-        % s = GrB.tricount (A) ;
-        s = tricount (A, d) ;
-        t = toc (tstart) ;
-        tot = tot + t ;
-        fprintf ('trial: %2d GrB.tricount  time: %8.3f\n', trial, t) ;
+        tot = 0 ;
+        for trial = 1:ntrials
+            tstart = tic ;
+            % s = GrB.tricount (A) ;
+            s = tricount (A, d) ;
+            t = toc (tstart) ;
+            tot = tot + t ;
+            fprintf ('trial: %2d GrB.tricount  time: %8.3f\n', trial, t) ;
+        end
+        fprintf ('avg GrB.tricount time:  %10.3f (%d trials)\n', ...
+            tot/ntrials, ntrials) ;
+        fprintf ('triangles: %d\n', full (s)) ;
     end
-    fprintf ('avg GrB.tricount time:  %10.3f (%d trials)\n', ...
-        tot/ntrials, ntrials) ;
-    fprintf ('triangles: %d\n', full (s)) ;
 
     %---------------------------------------------------------------------------
     % triangle count with permutations

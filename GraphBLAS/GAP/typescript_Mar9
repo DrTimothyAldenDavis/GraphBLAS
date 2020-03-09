@@ -1,0 +1,82 @@
+Script started on Mon 09 Mar 2020 12:27:17 PM CDT
+Intel Suite:
+Copyright (C) 2009-2019 Intel Corporation. All rights reserved.
+Intel(R) VTune(TM) Amplifier 2019 (build 591499)
+[0;36mhypersparse $[0m matlab -nodesktop
+[?1h=
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+using development version of SuiteSparse
+
+ans =
+
+    '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/GAP'
+
+GraphBLAS initialized
+>> gap_bsf  gfs   fs_urand
+[?1h=hypersparse: 40 threads
+
+GAP/GAP-urand: nodes: 134.218 million  nvals: 4294.97 million
+load time: 407.296 sec
+
+GrB.bfs  tests:
+trial:  1 source: 27691420 GrB.bfs  time:   13.974 visited: 134217728 depth:        8
+trial:  2 source: 121280315 GrB.bfs  time:   13.394 visited: 134217728 depth:        8
+trial:  3 source:  2413432 GrB.bfs  time:   13.340 visited: 134217728 depth:        8
+trial:  4 source: 37512114 GrB.bfs  time:   13.587 visited: 134217728 depth:        8
+trial:  5 source: 38390878 GrB.bfs  time:   13.289 visited: 134217728 depth:        8
+trial:  6 source: 56651038 GrB.bfs  time:   12.999 visited: 134217728 depth:        8
+trial:  7 source: 128461249 GrB.bfs  time:   13.372 visited: 134217728 depth:        8
+trial:  8 source: 33029843 GrB.bfs  time:   13.204 visited: 134217728 depth:        8
+trial:  9 source: 71406329 GrB.bfs  time:   13.302 visited: 134217728 depth:        8
+trial: 10 source: 117872828 GrB.bfs  time:   13.332 visited: 134217728 depth:        8
+trial: 11 source: 24351939 GrB.bfs  time:   13.230 visited: 134217728 depth:        8
+trial: 12 source: 15444520 GrB.bfs  time:   13.057 visited: 134217728 depth:        8
+trial: 13 source: 127526282 GrB.bfs  time:   13.090 visited: 134217728 depth:        8
+trial: 14 source: 112279429 GrB.bfs  time:   12.955 visited: 134217728 depth:        8
+trial: 15 source: 13631650 GrB.bfs  time:   13.058 visited: 134217728 depth:        8
+trial: 16 source: 110379303 GrB.bfs  time:   13.014 visited: 134217728 depth:        8
+trial: 17 source: 44800624 GrB.bfs  time:   13.371 visited: 134217728 depth:        8
+trial: 18 source: 77768194 GrB.bfs  time:   13.200 visited: 134217728 depth:        8
+trial: 19 source:   175348 GrB.bfs  time:   13.431 visited: 134217728 depth:        8
+trial: 20 source: 107397390 GrB.bfs  time:   13.178 visited: 134217728 depth:        8
+trial: 21 source: 43457210 GrB.bfs  time:   13.261 visited: 134217728 depth:        8
+trial: 22 source: 97215941 GrB.bfs  time:   13.079 visited: 134217728 depth:        8
+trial: 23 source: 73575166 GrB.bfs  time:   13.116 visited: 134217728 depth:        8
+trial: 24 source: 44449716 GrB.bfs  time:   12.970 visited: 134217728 depth:        8
+trial: 25 source: 33931725 GrB.bfs  time:   13.016 visited: 134217728 depth:        8
+trial: 26 source: 55526611 GrB.bfs  time:   12.910 visited: 134217728 depth:        8
+trial: 27 source: 14422052 GrB.bfs  time:   12.933 visited: 134217728 depth:        8
+trial: 28 source: 58043874 GrB.bfs  time:   12.976 visited: 134217728 depth:        8
+trial: 29 source: 72137330 GrB.bfs  time:   13.069 visited: 134217728 depth:        8
+trial: 30 source:  9647841 GrB.bfs  time:   13.130 visited: 134217728 depth:        8
+trial: 31 source: 15940696 GrB.bfs  time:   12.973 visited: 134217728 depth:        8
+trial: 32 source: 14209953 GrB.bfs  time:   13.324 visited: 134217728 depth:        8
+trial: 33 source: 49020884 GrB.bfs  time:   13.128 visited: 134217728 depth:        8
+trial: 34 source: 28901139 GrB.bfs  time:   12.952 visited: 134217728 depth:        8
+trial: 35 source: 50493274 GrB.bfs  time:   12.989 visited: 134217728 depth:        8
+trial: 36 source: 49150070 GrB.bfs  time:   12.998 visited: 134217728 depth:        8
+trial: 37 source: 126525083 GrB.bfs  time:   13.270 visited: 134217728 depth:        8
+{Operation terminated by user during GrB.mxm (line 74)
+
+
+In GrB.bfs (line 157)
+        q = GrB.mxm (q, v, semiring, q, A, desc_rc) ;
+
+In gap_bfs_urand (line 77)
+        [v, parent] = GrB.bfs (A, s) ;
+} 
+>> exit
+[?1l>[0;36mhypersparse $[0m 
+[0;36mhypersparse $[0m 
+[0;36mhypersparse $[0m exit
+exit
+
+Script done on Mon 09 Mar 2020 12:43:45 PM CDT

@@ -47,19 +47,23 @@ if (check && ~issymmetric (spones (A)))
     gb_error ('pattern of A must be symmetric') ;
 end
 
+if (isequal (class (d), 'GrB'))
+    d = double (d) ;
+end
+
 % determine if A should be sorted first
 if (n > 1000 && GrB.entries (A) >= 10*n)
     if (isempty (d))
         % compute the degree of each node, if not provided on input
         if (GrB.isbyrow (A))
-            d = GrB.entries (A, 'row', 'degree') ;
+            d = double (GrB.entries (A, 'row', 'degree')) ;
         else
-            d = GrB.entries (A, 'col', 'degree') ;
+            d = double (GrB.entries (A, 'col', 'degree')) ;
         end
     end
     % sample the degree
     p = randperm (n, 1000) ;
-    sample = double (d (randperm (n, 1000))) ;
+    sample = d (randperm (n, 1000)) ;
     dmean = full (mean (sample)) ;
     dmed  = full (median (sample)) ;
     fprintf ('mean degree: %g median: %g\n', dmean, dmed) ;

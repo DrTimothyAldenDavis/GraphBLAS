@@ -1,0 +1,735 @@
+Script started on Fri 06 Mar 2020 12:50:42 PM CST
+Intel Suite:
+Copyright (C) 2009-2019 Intel Corporation. All rights reserved.
+Intel(R) VTune(TM) Amplifier 2019 (build 591499)
+[0;36mhypersparse $[0m matlab -nodesktop
+MATLAB is selecting SOFTWARE OPENGL rendering.
+[?1h=
+                                                           < M A T L A B (R) >
+                                                 Copyright 1984-2018 The MathWorks, Inc.
+                                                 R2018a (9.4.0.813654) 64-bit (glnxa64)
+                                                            February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+using development version of SuiteSparse
+
+ans =
+
+    '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/GAP'
+
+
+me = 
+
+  MException with properties:
+
+    identifier: 'GrB:mex'
+       message: 'mexFunction not found; use gbmake to compile GraphBLAS'
+         cause: {0x1 cell}
+         stack: [3x1 struct]
+
+GraphBLAS not initialized
+>> pwd
+
+ans =
+
+    '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/GAP'
+
+>> cd ../@Gr   @GrB/pri   private/
+>> gbmake
+[?1h=[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_assign.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_binop_to_monoid.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_by_col.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_default_format.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export_to_mxfull.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export_to_mxsparse.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export_to_mxstruct.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_find_dot.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_first_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_deep.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_format.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_mxargs.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_shallow.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_all.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_equal.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_shallow.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_vector.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_matrix_assign_scalar.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_is_empty.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_is_scalar.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_to_descriptor.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_to_list.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_type.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxcell_to_index.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxfree.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_format.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_monoid.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_selectop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_semiring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_string.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_type.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_unop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_norm.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_norm_kind.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_semiring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_and_type_to_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_and_type_to_unop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_monoid.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_selectop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_semiring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_type.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_unop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_type_to_mxstring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_typecast.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_usage.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbapply.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbassign.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbbinopinfo.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a
+list of currently supported compilers see: https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h={Error using mex
+'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/gbbinopinfo.mexa64' is not a MEX file. For more information, see <a href="matlab: helpview([docroot
+'/matlab/helptargets.map'],'ENOTMEX')">File is not a MEX file</a>.
+
+Error in gbmake (line 158)
+        eval (mexcmd) ;
+} 
+>> pwd
+
+ans =
+
+    '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private'
+
+>> gbmake
+[?1h=[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_assign.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_binop_to_monoid.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_by_col.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_default_format.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export_to_mxfull.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export_to_mxsparse.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_export_to_mxstruct.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_find_dot.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_first_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_deep.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_format.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_mxargs.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_get_shallow.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_all.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_equal.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_shallow.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_is_vector.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_matrix_assign_scalar.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_is_empty.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_is_scalar.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_to_descriptor.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_to_list.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxarray_type.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxcell_to_index.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxfree.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_format.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_monoid.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_selectop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_semiring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_string.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_type.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_mxstring_to_unop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_norm.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_norm_kind.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_semiring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_and_type_to_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_and_type_to_unop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_binop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_monoid.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_selectop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_semiring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_type.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_string_to_unop.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_type_to_mxstring.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_typecast.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/util/gb_usage.c
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 127)] 
+[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbapply.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbassign.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbbinopinfo.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbbuild.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbburble.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbchunk.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbdegree.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbdescriptorinfo.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbdisp.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbeadd.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbemult.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbextract.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbextracttuples.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbextractvalues.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbformat.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbfull.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbisequal.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbkronecker.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gblogassign.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gblogextract.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbmonoidinfo.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbmxm.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbnew.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbnorm.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbnormdiff.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbnvals.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbreduce.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbselect.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbselectopinfo.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbsemiringinfo.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbsetup.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbsize.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbsparse.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbsubassign.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbthreads.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbtrans.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbtype.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbunopinfo.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=mex -L'/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/../../../build' -silent -g -R2018a CFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  CXXFLAGS="$CXXFLAGS -fopenmp -fPIC -Wno-pragmas"  LDFLAGS="$LDFLAGS  -fopenmp -fPIC"  -Iutil -I../../../Include -I../../../Source -I../../../Source/Template '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private/mexfunctions/gbvreduce.c'  gb_assign.o gb_binop_to_monoid.o gb_by_col.o gb_default_format.o gb_export.o gb_export_to_mxfull.o gb_export_to_mxsparse.o gb_export_to_mxstruct.o gb_find_dot.o gb_first_binop.o gb_get_deep.o gb_get_format.o gb_get_mxargs.o gb_get_shallow.o gb_is_all.o gb_is_equal.o gb_is_shallow.o gb_is_vector.o gb_matrix_assign_scalar.o gb_mxarray_is_empty.o gb_mxarray_is_scalar.o gb_mxarray_to_descriptor.o gb_mxarray_to_list.o gb_mxarray_type.o gb_mxcell_to_index.o gb_mxfree.o gb_mxstring_to_binop.o gb_mxstring_to_format.o gb_mxstring_to_monoid.o gb_mxstring_to_selectop.o gb_mxstring_to_semiring.o gb_mxstring_to_string.o gb_mxstring_to_type.o gb_mxstring_to_unop.o gb_norm.o gb_norm_kind.o gb_semiring.o gb_string_and_type_to_binop.o gb_string_and_type_to_unop.o gb_string_to_binop.o gb_string_to_monoid.o gb_string_to_selectop.o gb_string_to_semiring.o gb_string_to_type.o gb_string_to_unop.o gb_type_to_mxstring.o gb_typecast.o gb_usage.o -lgraphblas
+[?1h=[?1h=[?1h=[Warning: You are using gcc version '5.4.0'. The version of gcc is not supported. The version currently supported with MEX is '6.3.x'. For a list of currently supported compilers see:
+https://www.mathworks.com/support/compilers/current_release.] 
+[> In gbmake (line 158)] 
+[?1h=[?1h=[?1h=>> pwd
+
+ans =
+
+    '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/@GrB/private'
+
+>> cd ../..GA  /GAP
+>> dir
+
+.                   Contents.m          cover.mtx           gap_bc.m            gap_centrality.m    gap_pr.m            gap_sssp12.m        gap_tc.m            tric.m              typescript          
+..                  bctest.m            gap.m               gap_bfs.m           gap_pagerank.m      gap_sssp.m          gap_sssp12c.m       gap_tc_results.mat  ttest.m             typescript2         
+
+>> gap_bfs_urand
+[?1h=hypersparse: 40 threads
+
+GAP/GAP-urand: nodes: 134.218 million  nvals: 4294.97 million
+load time: 410.272 sec
+
+GrB.bfs  tests:
+trial:  1 source: 27691420 GrB.bfs  time:   13.310 visited: 134217728 depth:        8
+trial:  2 source: 121280315 GrB.bfs  time:   13.190 visited: 134217728 depth:        8
+trial:  3 source:  2413432 GrB.bfs  time:   13.275 visited: 134217728 depth:        8
+trial:  4 source: 37512114 GrB.bfs  time:   13.320 visited: 134217728 depth:        8
+trial:  5 source: 38390878 GrB.bfs  time:   13.351 visited: 134217728 depth:        8
+trial:  6 source: 56651038 GrB.bfs  time:   13.168 visited: 134217728 depth:        8
+trial:  7 source: 128461249 GrB.bfs  time:   13.251 visited: 134217728 depth:        8
+trial:  8 source: 33029843 GrB.bfs  time:   13.186 visited: 134217728 depth:        8
+trial:  9 source: 71406329 GrB.bfs  time:   13.215 visited: 134217728 depth:        8
+trial: 10 source: 117872828 GrB.bfs  time:   13.275 visited: 134217728 depth:        8
+trial: 11 source: 24351939 GrB.bfs  time:   13.209 visited: 134217728 depth:        8
+trial: 12 source: 15444520 GrB.bfs  time:   13.450 visited: 134217728 depth:        8
+trial: 13 source: 127526282 GrB.bfs  time:   13.273 visited: 134217728 depth:        8
+trial: 14 source: 112279429 GrB.bfs  time:   13.137 visited: 134217728 depth:        8
+trial: 15 source: 13631650 GrB.bfs  time:   13.373 visited: 134217728 depth:        8
+trial: 16 source: 110379303 GrB.bfs  time:   13.382 visited: 134217728 depth:        8
+trial: 17 source: 44800624 GrB.bfs  time:   13.248 visited: 134217728 depth:        8
+trial: 18 source: 77768194 GrB.bfs  time:   13.292 visited: 134217728 depth:        8
+trial: 19 source:   175348 GrB.bfs  time:   13.287 visited: 134217728 depth:        8
+trial: 20 source: 107397390 GrB.bfs  time:   13.232 visited: 134217728 depth:        8
+trial: 21 source: 43457210 GrB.bfs  time:   13.150 visited: 134217728 depth:        8
+trial: 22 source: 97215941 GrB.bfs  time:   13.202 visited: 134217728 depth:        8
+{Operation terminated by user during GrB.assign (line 108)
+
+
+In GrB.bfs (line 159)
+        parent = GrB.assign (parent, q, q, desc_s) ;
+
+In gap_bfs_urand (line 77)
+        [v, parent] = GrB.bfs (A, s) ;
+} 
+>> gap_bfs
+[?1h=hypersparse: 40 threads
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+load time: 395.462 sec
+
+GrB.bfs  tests:
+trial:  1 source:  2338013 GrB.bfs  time:   10.684 visited: 63032893 depth:        7
+trial:  2 source: 31997660 GrB.bfs  time:   10.538 visited: 63032893 depth:        8
+trial:  3 source: 23590941 GrB.bfs  time:   10.331 visited: 63032893 depth:        8
+trial:  4 source: 43400605 GrB.bfs  time:   10.291 visited: 63032893 depth:        8
+trial:  5 source: 75337938 GrB.bfs  time:   10.295 visited: 63032893 depth:        8
+trial:  6 source:   169868 GrB.bfs  time:   10.356 visited: 63032893 depth:        8
+trial:  7 source: 104041221 GrB.bfs  time:   10.270 visited: 63032893 depth:        8
+trial:  8 source: 94177943 GrB.bfs  time:   10.274 visited: 63032893 depth:        8
+trial:  9 source: 32871358 GrB.bfs  time:   10.242 visited: 63032893 depth:        8
+trial: 10 source: 56230003 GrB.bfs  time:   10.326 visited: 63032893 depth:        8
+trial: 11 source: 69883038 GrB.bfs  time:    9.966 visited: 63032893 depth:        7
+trial: 12 source:  9346346 GrB.bfs  time:   10.736 visited: 63032893 depth:        8
+trial: 13 source: 48915359 GrB.bfs  time:   10.182 visited: 63032893 depth:        8
+trial: 14 source: 122571174 GrB.bfs  time:   10.563 visited: 63032893 depth:        8
+trial: 15 source:  6183280 GrB.bfs  time:   10.216 visited: 63032893 depth:        8
+trial: 16 source: 86323664 GrB.bfs  time:   10.287 visited: 63032893 depth:        8
+trial: 17 source: 106725781 GrB.bfs  time:   10.323 visited: 63032893 depth:        8
+trial: 18 source: 92389939 GrB.bfs  time:   10.054 visited: 63032893 depth:        7
+trial: 19 source: 16210739 GrB.bfs  time:   10.028 visited: 63032893 depth:        7
+trial: 20 source: 59816701 GrB.bfs  time:   10.201 visited: 63032893 depth:        8
+trial: 21 source: 111669930 GrB.bfs  time:   10.250 visited: 63032893 depth:        8
+trial: 22 source: 102831412 GrB.bfs  time:   10.339 visited: 63032893 depth:        8
+trial: 23 source: 113384801 GrB.bfs  time:   10.177 visited: 63032893 depth:        8
+trial: 24 source: 43872565 GrB.bfs  time:   10.178 visited: 63032893 depth:        7
+trial: 25 source: 80508828 GrB.bfs  time:   10.443 visited: 63032893 depth:        8
+trial: 26 source: 26105649 GrB.bfs  time:   10.172 visited: 63032893 depth:        8
+trial: 27 source:  8807517 GrB.bfs  time:   10.327 visited: 63032893 depth:        8
+trial: 28 source: 118452456 GrB.bfs  time:    9.997 visited: 63032893 depth:        7
+trial: 29 source: 121818860 GrB.bfs  time:   10.429 visited: 63032893 depth:        8
+trial: 30 source: 42361929 GrB.bfs  time:   10.281 visited: 63032893 depth:        8
+trial: 31 source: 29493054 GrB.bfs  time:   10.310 visited: 63032893 depth:        8
+trial: 32 source: 98461504 GrB.bfs  time:   10.190 visited: 63032893 depth:        8
+trial: 33 source: 71931338 GrB.bfs  time:   10.180 visited: 63032893 depth:        8
+trial: 34 source: 103808469 GrB.bfs  time:   10.165 visited: 63032893 depth:        8
+trial: 35 source:  4092346 GrB.bfs  time:   10.469 visited: 63032893 depth:        8
+trial: 36 source: 115276242 GrB.bfs  time:   10.199 visited: 63032893 depth:        8
+trial: 37 source:  4649344 GrB.bfs  time:   10.293 visited: 63032893 depth:        7
+trial: 38 source: 76656190 GrB.bfs  time:   10.315 visited: 63032893 depth:        8
+trial: 39 source: 31312002 GrB.bfs  time:   10.590 visited: 63032893 depth:        8
+trial: 40 source: 111334128 GrB.bfs  time:   10.614 visited: 63032893 depth:        7
+trial: 41 source: 100962919 GrB.bfs  time:   10.665 visited: 63032893 depth:        8
+trial: 42 source: 41823216 GrB.bfs  time:   10.286 visited: 63032893 depth:        8
+trial: 43 source: 22631241 GrB.bfs  time:   10.302 visited: 63032893 depth:        8
+trial: 44 source: 42848462 GrB.bfs  time:   10.992 visited: 63032893 depth:        9
+trial: 45 source: 79485149 GrB.bfs  time:   10.403 visited: 63032893 depth:        8
+trial: 46 source: 106818743 GrB.bfs  time:   10.293 visited: 63032893 depth:        8
+trial: 47 source: 73347975 GrB.bfs  time:   10.249 visited: 63032893 depth:        8
+trial: 48 source: 78848446 GrB.bfs  time:   10.229 visited: 63032893 depth:        8
+trial: 49 source: 109920511 GrB.bfs  time:   10.227 visited: 63032893 depth:        7
+trial: 50 source: 121492134 GrB.bfs  time:   10.275 visited: 63032893 depth:        8
+trial: 51 source: 101037297 GrB.bfs  time:   10.210 visited: 63032893 depth:        8
+trial: 52 source: 15438601 GrB.bfs  time:   10.318 visited: 63032893 depth:        8
+trial: 53 source:  4584785 GrB.bfs  time:   10.408 visited: 63032893 depth:        8
+trial: 54 source: 124503846 GrB.bfs  time:   10.681 visited: 63032893 depth:        9
+trial: 55 source: 87241744 GrB.bfs  time:   10.048 visited: 63032893 depth:        7
+trial: 56 source: 108297009 GrB.bfs  time:   10.314 visited: 63032893 depth:        8
+trial: 57 source: 33955083 GrB.bfs  time:   10.273 visited: 63032893 depth:        8
+trial: 58 source: 79934824 GrB.bfs  time:   10.256 visited: 63032893 depth:        7
+trial: 59 source:  8608482 GrB.bfs  time:   10.220 visited: 63032893 depth:        8
+trial: 60 source: 82435064 GrB.bfs  time:   10.390 visited: 63032893 depth:        8
+trial: 61 source: 46579272 GrB.bfs  time:   10.296 visited: 63032893 depth:        8
+trial: 62 source:   515422 GrB.bfs  time:    9.980 visited: 63032893 depth:        7
+trial: 63 source: 121530468 GrB.bfs  time:   10.366 visited: 63032893 depth:        8
+trial: 64 source: 127978737 GrB.bfs  time:   10.327 visited: 63032893 depth:        8
+avg GrB.bfs  time:  10.3139 (64 trials)
+
+GAP/GAP-urand: nodes: 134.218 million  nvals: 4294.97 million
+load time: 403.507 sec
+
+GrB.bfs  tests:
+trial:  1 source: 27691420 GrB.bfs  time:   13.359 visited: 134217728 depth:        8

@@ -47,6 +47,9 @@ else
 end
 clear result
 
+threads = GrB.threads ;
+threads = [threads threads/2]
+
 good = '/home/davis/sparse/LAGraph/Test/SSSP/' ;
 
 for k = 1:length(matrices)
@@ -94,7 +97,7 @@ for k = 1:length(matrices)
     [i, j, x] = find (A) ;
     % figure (1)
     % histogram (x)
-    drawnow
+    % drawnow
     fprintf ('edgeweights: min: %g med: %g max: %g\n', ...  
         min (x), median (x), max (x)) ;
     clear i j x
@@ -106,69 +109,85 @@ for k = 1:length(matrices)
     % compute the SSSP for each source node
     %---------------------------------------------------------------------------
 
-    fprintf ('\ngap_sssp tests:\n') ;
-
-    tot12 = 0 ;
-    tot12c = 0 ;
-    for trial = 1:length(sources)
-        source = sources (trial)  ;
-        % fprintf ('source: %d\n', source) ;
-
-        % gap_sssp12c
-        tstart = tic ;
-        path_length = gap_sssp12c (source, A, delta) ;
-        t = toc (tstart) ;
-        tot12c = tot12c + t ;
-        fprintf ('trial: %2d source: %8d GrB SSSP12c time: %8.3f\n', ...
-            trial, source, t) ;
-        path_length = GrB.prune (path_length) ;
-
-        % check result
-        try
-            tstart = tic ;
-            pgood = GrB (mread (sprintf ('%s/pathlen_%02d_%d.mtx', ...
-                good, trial-1, n))) ;
-            pgood = pgood' ;
-            err = norm (pgood - path_length) / norm (pgood) ;
-            t = toc (tstart) ;
-            nzdiff = GrB.entries (path_length) - GrB.entries (pgood) ;
-        catch
-            err = 0 ;
-            nzdiff = 0 ;
-        end
-%       fprintf ('err: %g (time %g sec) entries %d %d diff %d\n', err, t, ...
-%           GrB.entries (path_length),  GrB.entries (pgood), ...
-%           GrB.entries (path_length) - GrB.entries (pgood)) ;
-        assert (err == 0) ;
-        assert (nzdiff == 0) ;
-
-        % gap_sssp12
-        tstart = tic ;
-        path_len2 = gap_sssp12 (source, A, delta) ;
-        t = toc (tstart) ;
-        tot12 = tot12 + t ;
-        fprintf ('trial: %2d source: %8d GrB SSSP12  time: %8.3f\n', ...
-            trial, source, t) ;
-        path_len2 = GrB.prune (path_len2) ;
-        try
-            err = norm (pgood - path_len2) / norm (pgood) ;
-            nzdiff = GrB.entries (path_len2) - GrB.entries (pgood) ;
-        catch
-        end
-        assert (err == 0) ;
-        assert (nzdiff == 0) ;
-        assert (isequal (path_length, path_len2)) ;
-
-        clear path_length path_len2 pgood
+    if (isequal (id, 'GAP/GAP-road'))
+        threads_list = threads (end) ;
+    else
+        threads_list = threads ;
     end
 
-    ntrials = trial ;
+    for nthreads = threads_list
+        GrB.threads (nthreads) ;
 
-    fprintf ('avg GrB SSSP12c time:  %10.3f (%d trials)\n', ...
-        tot12c/ntrials, ntrials) ;
+        fprintf ('\ngap_sssp tests: %d threads\n', nthreads) ;
 
-    fprintf ('avg GrB SSSP12  time:  %10.3f (%d trials)\n', ...
-        tot12/ntrials, ntrials) ;
+        tot12 = 0 ;
+        tot12c = 0 ;
+        for trial = 1:length(sources)
+            source = sources (trial)  ;
+            % fprintf ('source: %d\n', source) ;
 
+            % gap_sssp12c
+            %{
+            tstart = tic ;
+            path_length = gap_sssp12c (source, A, delta) ;
+            t = toc (tstart) ;
+            tot12c = tot12c + t ;
+            fprintf ('trial: %2d source: %8d GrB SSSP12c time: %8.3f\n', ...
+                trial, source, t) ;
+            path_length = GrB.prune (path_length) ;
+
+            % check result
+            try
+                tstart = tic ;
+                pgood = GrB (mread (sprintf ('%s/pathlen_%02d_%d.mtx', ...
+                    good, trial-1, n))) ;
+                pgood = pgood' ;
+                err = norm (pgood - path_length) / norm (pgood) ;
+                t = toc (tstart) ;
+                nzdiff = GrB.entries (path_length) - GrB.entries (pgood) ;
+            catch
+                err = 0 ;
+                nzdiff = 0 ;
+            end
+    %       fprintf ('err: %g (time %g sec) entries %d %d diff %d\n', err, t, ...
+    %           GrB.entries (path_length),  GrB.entries (pgood), ...
+    %           GrB.entries (path_length) - GrB.entries (pgood)) ;
+            assert (err == 0) ;
+            assert (nzdiff == 0) ;
+            %}
+
+            % gap_sssp12
+            tstart = tic ;
+            path_len2 = gap_sssp12 (source, A, delta) ;
+            t = toc (tstart) ;
+            tot12 = tot12 + t ;
+            fprintf ('trial: %2d source: %8d GrB SSSP12  time: %8.3f\n', ...
+                trial, source, t) ;
+            path_len2 = GrB.prune (path_len2) ;
+            %{
+            try
+                err = norm (pgood - path_len2) / norm (pgood) ;
+                nzdiff = GrB.entries (path_len2) - GrB.entries (pgood) ;
+            catch
+            end
+            assert (err == 0) ;
+            assert (nzdiff == 0) ;
+            assert (isequal (path_length, path_len2)) ;
+            %}
+
+            clear path_length path_len2 pgood
+        end
+
+        ntrials = trial ;
+
+        fprintf ('avg GrB SSSP12c time:  %10.3f (%d trials)\n', ...
+            tot12c/ntrials, ntrials) ;
+
+        fprintf ('avg GrB SSSP12  time:  %10.3f (%d trials)\n', ...
+            tot12/ntrials, ntrials) ;
+
+    end
+
+    clear A
 end
 

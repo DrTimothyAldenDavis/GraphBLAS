@@ -1,0 +1,251 @@
+Script started on Fri 06 Mar 2020 03:01:28 PM CST
+Intel Suite:
+Copyright (C) 2009-2019 Intel Corporation. All rights reserved.
+Intel(R) VTune(TM) Amplifier 2019 (build 591499)
+[0;36mhypersparse $[0m matlab -nodesktop
+[?1h=
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+using development version of SuiteSparse
+
+ans =
+
+    '/home/faculty/davis/sparse/GraphBLAS/GraphBLAS/GAP'
+
+GraphBLAS initialized
+>> gap_bfs
+[?1h=hypersparse: 40 threads
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+load time: 390.774 sec
+
+GrB.bfs  tests:
+trial:  1 source:  2338013 GrB.bfs  time:   10.130 visited: 63032893 depth:        7
+trial:  2 source: 31997660 GrB.bfs  time:   10.304 visited: 63032893 depth:        8
+trial:  3 source: 23590941 GrB.bfs  time:   10.320 visited: 63032893 depth:        8
+trial:  4 source: 43400605 GrB.bfs  time:   10.378 visited: 63032893 depth:        8
+trial:  5 source: 75337938 GrB.bfs  time:   10.347 visited: 63032893 depth:        8
+trial:  6 source:   169868 GrB.bfs  time:   10.460 visited: 63032893 depth:        8
+trial:  7 source: 104041221 GrB.bfs  time:   10.462 visited: 63032893 depth:        8
+trial:  8 source: 94177943 GrB.bfs  time:   10.308 visited: 63032893 depth:        8
+trial:  9 source: 32871358 GrB.bfs  time:   10.272 visited: 63032893 depth:        8
+trial: 10 source: 56230003 GrB.bfs  time:   10.370 visited: 63032893 depth:        8
+trial: 11 source: 69883038 GrB.bfs  time:    9.969 visited: 63032893 depth:        7
+trial: 12 source:  9346346 GrB.bfs  time:   10.572 visited: 63032893 depth:        8
+trial: 13 source: 48915359 GrB.bfs  time:   10.203 visited: 63032893 depth:        8
+trial: 14 source: 122571174 GrB.bfs  time:   10.788 visited: 63032893 depth:        8
+trial: 15 source:  6183280 GrB.bfs  time:   10.073 visited: 63032893 depth:        8
+trial: 16 source: 86323664 GrB.bfs  time:   10.312 visited: 63032893 depth:        8
+trial: 17 source: 106725781 GrB.bfs  time:   10.676 visited: 63032893 depth:        8
+trial: 18 source: 92389939 GrB.bfs  time:   10.493 visited: 63032893 depth:        7
+trial: 19 source: 16210739 GrB.bfs  time:   10.376 visited: 63032893 depth:        7
+trial: 20 source: 59816701 GrB.bfs  time:   10.069 visited: 63032893 depth:        8
+trial: 21 source: 111669930 GrB.bfs  time:   10.477 visited: 63032893 depth:        8
+trial: 22 source: 102831412 GrB.bfs  time:   10.470 visited: 63032893 depth:        8
+trial: 23 source: 113384801 GrB.bfs  time:   10.269 visited: 63032893 depth:        8
+trial: 24 source: 43872565 GrB.bfs  time:   10.010 visited: 63032893 depth:        7
+trial: 25 source: 80508828 GrB.bfs  time:   10.335 visited: 63032893 depth:        8
+trial: 26 source: 26105649 GrB.bfs  time:   10.054 visited: 63032893 depth:        8
+trial: 27 source:  8807517 GrB.bfs  time:   10.247 visited: 63032893 depth:        8
+trial: 28 source: 118452456 GrB.bfs  time:    9.911 visited: 63032893 depth:        7
+trial: 29 source: 121818860 GrB.bfs  time:   10.143 visited: 63032893 depth:        8
+trial: 30 source: 42361929 GrB.bfs  time:   10.449 visited: 63032893 depth:        8
+trial: 31 source: 29493054 GrB.bfs  time:   10.201 visited: 63032893 depth:        8
+trial: 32 source: 98461504 GrB.bfs  time:   10.186 visited: 63032893 depth:        8
+trial: 33 source: 71931338 GrB.bfs  time:   10.304 visited: 63032893 depth:        8
+trial: 34 source: 103808469 GrB.bfs  time:   10.216 visited: 63032893 depth:        8
+trial: 35 source:  4092346 GrB.bfs  time:   10.679 visited: 63032893 depth:        8
+trial: 36 source: 115276242 GrB.bfs  time:   10.025 visited: 63032893 depth:        8
+trial: 37 source:  4649344 GrB.bfs  time:    9.981 visited: 63032893 depth:        7
+trial: 38 source: 76656190 GrB.bfs  time:    9.925 visited: 63032893 depth:        8
+trial: 39 source: 31312002 GrB.bfs  time:   10.381 visited: 63032893 depth:        8
+trial: 40 source: 111334128 GrB.bfs  time:    9.982 visited: 63032893 depth:        7
+trial: 41 source: 100962919 GrB.bfs  time:   10.012 visited: 63032893 depth:        8
+trial: 42 source: 41823216 GrB.bfs  time:   10.251 visited: 63032893 depth:        8
+trial: 43 source: 22631241 GrB.bfs  time:   10.315 visited: 63032893 depth:        8
+trial: 44 source: 42848462 GrB.bfs  time:   10.247 visited: 63032893 depth:        9
+trial: 45 source: 79485149 GrB.bfs  time:    9.984 visited: 63032893 depth:        8
+trial: 46 source: 106818743 GrB.bfs  time:   10.326 visited: 63032893 depth:        8
+trial: 47 source: 73347975 GrB.bfs  time:   10.341 visited: 63032893 depth:        8
+trial: 48 source: 78848446 GrB.bfs  time:   10.292 visited: 63032893 depth:        8
+trial: 49 source: 109920511 GrB.bfs  time:    9.919 visited: 63032893 depth:        7
+trial: 50 source: 121492134 GrB.bfs  time:    9.966 visited: 63032893 depth:        8
+trial: 51 source: 101037297 GrB.bfs  time:   10.342 visited: 63032893 depth:        8
+trial: 52 source: 15438601 GrB.bfs  time:   10.521 visited: 63032893 depth:        8
+trial: 53 source:  4584785 GrB.bfs  time:   10.602 visited: 63032893 depth:        8
+trial: 54 source: 124503846 GrB.bfs  time:   10.454 visited: 63032893 depth:        9
+trial: 55 source: 87241744 GrB.bfs  time:   10.083 visited: 63032893 depth:        7
+trial: 56 source: 108297009 GrB.bfs  time:   10.156 visited: 63032893 depth:        8
+trial: 57 source: 33955083 GrB.bfs  time:   10.283 visited: 63032893 depth:        8
+trial: 58 source: 79934824 GrB.bfs  time:   10.083 visited: 63032893 depth:        7
+trial: 59 source:  8608482 GrB.bfs  time:    9.956 visited: 63032893 depth:        8
+trial: 60 source: 82435064 GrB.bfs  time:   10.550 visited: 63032893 depth:        8
+trial: 61 source: 46579272 GrB.bfs  time:   10.284 visited: 63032893 depth:        8
+trial: 62 source:   515422 GrB.bfs  time:    9.921 visited: 63032893 depth:        7
+trial: 63 source: 121530468 GrB.bfs  time:   10.110 visited: 63032893 depth:        8
+trial: 64 source: 127978737 GrB.bfs  time:   10.456 visited: 63032893 depth:        8
+avg GrB.bfs  time:  10.2591 (64 trials)
+
+GAP/GAP-urand: nodes: 134.218 million  nvals: 4294.97 million
+load time: 409.929 sec
+
+GrB.bfs  tests:
+trial:  1 source: 27691420 GrB.bfs  time:   13.410 visited: 134217728 depth:        8
+
+--------------------------------------------------------------------------------
+       Segmentation violation detected at Fri Mar 06 15:26:43 2020 -0600
+--------------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding           : Disabled - No sandbox or build area path
+  Crash Mode               : continue (default)
+  Default Encoding         : UTF-8
+  Deployed                 : false
+  Desktop Environment      : Unity
+  GNU C Library            : 2.23 stable
+  Graphics Driver          : Unknown hardware 
+  Java Version             : Java 1.8.0_144-b01 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+  MATLAB Architecture      : glnxa64
+  MATLAB Entitlement ID    : 1447812
+  MATLAB Root              : /opt/coe/matlabR2018a
+  MATLAB Version           : 9.4.0.813654 (R2018a)
+  OpenGL                   : hardware
+  Operating System         : Linux 4.15.0-88-generic #88~16.04.1-Ubuntu SMP Wed Feb 12 04:19:15 UTC 2020 x86_64
+  Process ID               : 28433
+  Processor ID             : x86 Family 6 Model 79 Stepping 1, GenuineIntel
+  Session Key              : 29249653-16c6-4662-83f8-66e309b6156b
+  Static TLS mitigation    : Enabled: Full
+  Window System            : The X.Org Foundation (11906000), display :0
+
+Fault Count: 4
+
+
+Abnormal termination
+
+Register State (from fault):
+  RAX = 00007f88b30a4738  RBX = 00007f88c34d4d00
+  RCX = 00000000000023af  RDX = 00007f88c335e3c0
+  RSP = 00007f87726d3290  RBP = 0000000000000015
+  RSI = 00000000000000c0  RDI = 0000000000000015
+
+   R8 = 0000000000000002   R9 = 0000000000000028
+  R10 = 0000000000000000  R11 = 00007f88c335e3c0
+  R12 = 00007f88c335e3c0  R13 = 0000000000000000
+  R14 = 0000000000000000  R15 = 00000000000000c0
+
+  RIP = 00007f88b2ddf868  EFL = 0000000000010246
+
+   CS = 0033   FS = 0000   GS = 0000
+
+Stack Trace (from fault):
+[  0] 0x00007f88b2ddf868 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00690280
+[  1] 0x00007f88b2de0113 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00692499
+[  2] 0x00007f88b2d8f13e /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00360766
+[  3] 0x00007f88b2d908a1 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00366753
+[  4] 0x00007f88b2dba920 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00538912
+[  5] 0x00007f88b2dec133 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00741683
+[  6] 0x00007f88d10196ba              /lib/x86_64-linux-gnu/libpthread.so.0+00030394
+[  7] 0x00007f88d28e041d                    /lib/x86_64-linux-gnu/libc.so.6+01078301 clone+00000109
+[  8] 0x0000000000000000                                   <unknown-module>+00000000
+
+
+Abnormal termination
+
+Register State (from fault):
+  RAX = 00007f88b30a4738  RBX = 00007f88c34d4d00
+  RCX = 00000000000023ab  RDX = 00007f88c335ecc0
+  RSP = 00007f873873f010  RBP = 0000000000000021
+  RSI = 00000000000000c0  RDI = 0000000000000021
+
+   R8 = 0000000000000004   R9 = 0000000000000028
+  R10 = 0000000000000000  R11 = 00007f88c335ecc0
+  R12 = 00007f88c335ecc0  R13 = 0000000000000000
+  R14 = 0000000000000000  R15 = 00000000000000c0
+
+  RIP = 00007f88b2ddf868  EFL = 0000000000010246
+
+   CS = 0033   FS = 0000   GS = 0000
+
+Stack Trace (from fault):
+[  0] 0x00007f88b2ddf868 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00690280
+[  1] 0x00007f88b2de0113 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00692499
+[  2] 0x00007f88b2d8f13e /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00360766
+[  3] 0x00007f88b2d908a1 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00366753
+[  4] 0x00007f88b2dba920 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00538912
+[  5] 0x00007f88b2dec133 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00741683
+[  6] 0x00007f88d10196ba              /lib/x86_64-linux-gnu/libpthread.so.0+00030394
+[  7] 0x00007f88d28e041d                    /lib/x86_64-linux-gnu/libc.so.6+01078301 clone+00000109
+[  8] 0x0000000000000000                                   <unknown-module>+00000000
+
+
+Abnormal termination
+
+Register State (from fault):
+  RAX = 00007f88b30a4738  RBX = 00007f88c34d4d00
+  RCX = 00000000000023b1  RDX = 00007f88c335e600
+  RSP = 00007f8784eae1d0  RBP = 0000000000000018
+  RSI = 00000000000000c0  RDI = 0000000000000018
+
+   R8 = 0000000000000002   R9 = 0000000000000028
+  R10 = 0000000000000000  R11 = 00007f88c335e600
+  R12 = 00007f88c335e600  R13 = 0000000000000000
+  R14 = 0000000000000000  R15 = 00000000000000c0
+
+  RIP = 00007f88b2ddf868  EFL = 0000000000010246
+
+   CS = 0033   FS = 0000   GS = 0000
+
+Stack Trace (from fault):
+[  0] 0x00007f88b2ddf868 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00690280
+[  1] 0x00007f88b2de0113 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00692499
+[  2] 0x00007f88b2d8f13e /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00360766
+[  3] 0x00007f88b2d908a1 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00366753
+[  4] 0x00007f88b2dba920 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00538912
+[  5] 0x00007f88b2dec133 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00741683
+[  6] 0x00007f88d10196ba              /lib/x86_64-linux-gnu/libpthread.so.0+00030394
+[  7] 0x00007f88d28e041d                    /lib/x86_64-linux-gnu/libc.so.6+01078301 clone+00000109
+[  8] 0x0000000000000000                                   <unknown-module>+00000000
+
+
+Abnormal termination
+
+Register State (from fault):
+  RAX = 00007f88b30a4738  RBX = 00007f88c34d4d00
+  RCX = 00000000000023b6  RDX = 00007f88c335ea80
+  RSP = 00007f87706d9050  RBP = 000000000000001e
+  RSI = 00000000000000c0  RDI = 000000000000001e
+
+   R8 = 0000000000000002   R9 = 0000000000000028
+  R10 = 0000000000000000  R11 = 00007f88c335ea80
+  R12 = 00007f88c335ea80  R13 = 0000000000000000
+  R14 = 0000000000000000  R15 = 00000000000000c0
+
+  RIP = 00007f88b2ddf868  EFL = 0000000000010246
+
+   CS = 0033   FS = 0000   GS = 0000
+
+Stack Trace (from fault):
+[  0] 0x00007f88b2ddf868 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00690280
+[  1] 0x00007f88b2de0113 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00692499
+[  2] 0x00007f88b2d8f13e /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00360766
+[  3] 0x00007f88b2d908a1 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00366753
+[  4] 0x00007f88b2dba920 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00538912
+[  5] 0x00007f88b2dec133 /opt/coe/matlabR2018a/bin/glnxa64/../../sys/os/glnxa64/libiomp5.so+00741683
+[  6] 0x00007f88d10196ba              /lib/x86_64-linux-gnu/libpthread.so.0+00030394
+[  7] 0x00007f88d28e041d                    /lib/x86_64-linux-gnu/libc.so.6+01078301 clone+00000109
+[  8] 0x0000000000000000                                   <unknown-module>+00000000
+
+** This crash report has been saved to disk as /home/faculty/davis/matlab_crash_dump.28433-4 **
+
+
+
+MATLAB is exiting because of fatal error
+Killed
+[0;36mhypersparse $[0m 

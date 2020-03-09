@@ -48,6 +48,9 @@ else
 end
 clear result
 
+threads = GrB.threads ;
+threads = [threads threads/2]
+
 for k = 1:length(matrices)
 
     %---------------------------------------------------------------------------
@@ -80,42 +83,49 @@ for k = 1:length(matrices)
     % compute the centrality for each batch of 4
     %---------------------------------------------------------------------------
 
-    fprintf ('\ngap_centrality  tests:\n') ;
+    for nthreads = threads
+        GrB.threads (nthreads) ;
+        fprintf ('\ngap_centrality  tests: %d threads\n', nthreads) ;
 
-    % good = '~/LAGraph/Test/BetweennessCentrality/batch_%02d_%d.mtx' ;
-    good = '/raid/GAP/batch_%02d_%d.mtx' ;
+        % good = '~/LAGraph/Test/BetweennessCentrality/batch_%02d_%d.mtx' ;
+        good = '/raid/GAP/batch_%02d_%d.mtx' ;
 
-    tot = 0 ;
-    trial = 0 ;
-    for k = 1:4:length(sources)
-        src = sources (k:k+3)  ;
-        fprintf ('sources: ') ;
-        fprintf ('%d ', src) ;
-        fprintf ('\n') ;
-        trial = trial + 1 ;
+        tot = 0 ;
+        trial = 0 ;
+        for k = 1:4:length(sources)
+            src = sources (k:k+3)  ;
+            fprintf ('sources: ') ;
+            fprintf ('%d ', src) ;
+            fprintf ('\n') ;
+            trial = trial + 1 ;
 
-        tstart = tic ;
-        c = gap_centrality (src, A, AT) ;
-        t = toc (tstart) ;
-        tot = tot + t ;
-        fprintf ('trial: %2d GrB centrality time: %8.3f\n', trial, t) ;
+            tstart = tic ;
+            c = gap_centrality (src, A, AT) ;
+            t = toc (tstart) ;
+            tot = tot + t ;
+            fprintf ('trial: %2d GrB centrality time: %8.3f\n', trial, t) ;
 
-        c = GrB.prune (c) ;
+            c = GrB.prune (c) ;
 
-        % check result
-        tstart = tic ;
-        cgood = GrB (mread (sprintf (good, k-1, n))) ;
-        err = norm (cgood - c) / norm (cgood);
-        t = toc (tstart) ;
-        fprintf ('err: %g (time %g sec) entries %d %d diff %d\n', err, t, ...
-            GrB.entries (c),  GrB.entries (cgood), ...
-            GrB.entries (c) - GrB.entries (cgood)) ;
+            % check result
+            try
+                tstart = tic ;
+                cgood = GrB (mread (sprintf (good, k-1, n))) ;
+                err = norm (cgood - c) / norm (cgood);
+                t = toc (tstart) ;
+                fprintf ('err: %g (time %g sec) entries %d %d diff %d\n', err, t, ...
+                    GrB.entries (c),  GrB.entries (cgood), ...
+                    GrB.entries (c) - GrB.entries (cgood)) ;
+            catch
+            end
+
+            ntrials = trial ;
+            fprintf ('avg GrB centrality time:  %10.3f (%d trials)\n', ...
+                tot/ntrials, ntrials) ;
+        end
     end
 
-    ntrials = trial ;
-    fprintf ('avg GrB centrality time:  %10.3f (%d trials)\n', ...
-        tot/ntrials, ntrials) ;
+    clear A AT
 
 end
-
 
