@@ -1206,4 +1206,163 @@ gap_bc         % run centrality for the GAP benchmark
 >> 
 >> 
 >> 
+>> whos
+  Name      Size            Bytes  Class         Attributes
+
+  ans       1x6                12  char                    
+  me        1x1              1957  MException              
+
+>> me
+
+me = 
+
+  MException with properties:
+
+    identifier: 'GrB:mex'
+       message: 'mexFunction not found; use gbmake to compile GraphBLAS'
+         cause: {0x1 cell}
+         stack: [3x1 struct]
+
+>> clear all
+>> GrB(1)
+
+ans =
+
+  1x1 GraphBLAS double matrix, sparse by col:
+  1 nonzero, 1 entry
+
+    (1,1)    1
+
 >> 
+>> 
+>> 
+>> typeu     
+>> 
+>> 
+>> gap
+
+function gap
+%GAP run 5 GAP benchmarks (BFS, PR, BC, TC, SSSP; not CC)
+%
+% CC has not yet been implemented.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+type gap
+gap_bc         % run centrality for the GAP benchmark
+gap_sssp       % run SSSP for the GAP benchmark
+gap_pr         % run pagerank for the GAP benchmark
+gap_tc         % run tricount for the GAP benchmark
+gap_bfs        % run bfs for the GAP benchmark
+
+[?1h=hypersparse: 40 threads
+
+threads =
+
+    40    20
+
+
+matrix: GAP/GAP-kron
+load time: 314 sec
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+init time: 141.433 sec
+  Name                  Size                         Bytes  Class     Attributes
+
+  A             134217726x134217726            39083124578  GrB                 
+  AT            134217726x134217726            39083124578  GrB                 
+  ans                   1x1                              8  double              
+  f                     1x245                         1960  double              
+  i                     1x245                         1960  double              
+  id                    1x12                            24  char                
+  index                 1x1                        1411276  struct              
+  k                     1x1                              8  double              
+  matrices              5x1                            686  cell                
+  n                     1x1                              8  double              
+  name                  1x12                            24  char                
+  sources              64x1                            512  double              
+  t1                    1x1                              8  double              
+  threads               1x2                             16  double              
+
+
+gap_centrality  tests: 40 threads
+sources: 2338013 31997660 23590941 43400605 
+trial:  1 GrB centrality time:   52.381
+avg GrB centrality time:      52.381 (1 trials)
+sources: 75337938 169868 104041221 94177943 
+trial:  2 GrB centrality time:   47.053
+avg GrB centrality time:      49.717 (2 trials)
+sources: 32871358 56230003 69883038 9346346 
+trial:  3 GrB centrality time:   50.057
+avg GrB centrality time:      49.830 (3 trials)
+sources: 48915359 122571174 6183280 86323664 
+trial:  4 GrB centrality time:   49.176
+avg GrB centrality time:      49.667 (4 trials)
+sources: 106725781 92389939 16210739 59816701 
+trial:  5 GrB centrality time:   52.219
+avg GrB centrality time:      50.177 (5 trials)
+sources: 111669930 102831412 113384801 43872565 
+trial:  6 GrB centrality time:   48.770
+avg GrB centrality time:      49.943 (6 trials)
+sources: 80508828 26105649 8807517 118452456 
+trial:  7 GrB centrality time:   50.615
+avg GrB centrality time:      50.039 (7 trials)
+sources: 121818860 42361929 29493054 98461504 
+trial:  8 GrB centrality time:   44.478
+avg GrB centrality time:      49.344 (8 trials)
+sources: 71931338 103808469 4092346 115276242 
+trial:  9 GrB centrality time:   46.895
+avg GrB centrality time:      49.072 (9 trials)
+sources: 4649344 76656190 31312002 111334128 
+trial: 10 GrB centrality time:   51.789
+avg GrB centrality time:      49.343 (10 trials)
+sources: 100962919 41823216 22631241 42848462 
+trial: 11 GrB centrality time:   52.616
+avg GrB centrality time:      49.641 (11 trials)
+sources: 79485149 106818743 73347975 78848446 
+trial: 12 GrB centrality time:   44.445
+avg GrB centrality time:      49.208 (12 trials)
+sources: 109920511 121492134 101037297 15438601 
+{Operation terminated by user during GrB.mxm (line 74)
+
+
+In gap_centrality (line 87)
+    frontier = GrB.mxm (frontier, paths, '+.first.single', frontier, A, ...
+
+In gap_bc (line 103)
+            c = gap_centrality (src, A, AT) ;
+
+In gap (line 10)
+gap_bc         % run centrality for the GAP benchmark
+} 
+>> type gap
+
+function gap
+%GAP run 5 GAP benchmarks (BFS, PR, BC, TC, SSSP; not CC)
+%
+% CC has not yet been implemented.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+type gap
+gap_bc         % run centrality for the GAP benchmark
+gap_sssp       % run SSSP for the GAP benchmark
+gap_pr         % run pagerank for the GAP benchmark
+gap_tc         % run tricount for the GAP benchmark
+gap_bfs        % run bfs for the GAP benchmark
+
+>> 
+>> 
+>> 
+>> 
+>> 
+>> gap   whos
+  Name      Size            Bytes  Class    Attributes
+
+  ans       1x1               996  GrB                
+
+>> gap   clear ans
+>> gap   whos
+>> gap

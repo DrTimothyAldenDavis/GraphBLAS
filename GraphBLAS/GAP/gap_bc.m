@@ -118,11 +118,11 @@ for k = 1:length(matrices)
                     GrB.entries (c) - GrB.entries (cgood)) ;
             catch
             end
-
-            ntrials = trial ;
-            fprintf ('avg GrB centrality time:  %10.3f (%d trials)\n', ...
-                tot/ntrials, ntrials) ;
         end
+
+        ntrials = trial ;
+        fprintf ('avg GrB centrality time:  %10.3f (%d trials)\n', ...
+            tot/ntrials, ntrials) ;
     end
 
     clear A AT
