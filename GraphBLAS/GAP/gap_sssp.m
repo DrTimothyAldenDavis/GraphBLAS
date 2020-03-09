@@ -109,12 +109,6 @@ for k = 1:length(matrices)
     % compute the SSSP for each source node
     %---------------------------------------------------------------------------
 
-    if (isequal (id, 'GAP/GAP-road'))
-        threads_list = threads (end) ;
-    else
-        threads_list = threads ;
-    end
-
     for nthreads = threads_list
         GrB.threads (nthreads) ;
 

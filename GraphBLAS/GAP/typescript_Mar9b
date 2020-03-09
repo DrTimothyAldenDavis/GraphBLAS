@@ -1366,3 +1366,120 @@ gap_bfs        % run bfs for the GAP benchmark
 >> gap   clear ans
 >> gap   whos
 >> gap
+
+function gap
+%GAP run 5 GAP benchmarks (BFS, PR, BC, TC, SSSP; not CC)
+%
+% CC has not yet been implemented.
+
+% SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
+% http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
+
+type gap
+gap_bc         % run centrality for the GAP benchmark
+gap_sssp       % run SSSP for the GAP benchmark
+gap_pr         % run pagerank for the GAP benchmark
+gap_tc         % run tricount for the GAP benchmark
+gap_bfs        % run bfs for the GAP benchmark
+
+[?1h=hypersparse: 40 threads
+
+threads =
+
+    40    20
+
+
+matrix: GAP/GAP-kron
+load time: 313.92 sec
+
+GAP/GAP-kron: nodes: 134.218 million  nvals: 4223.26 million
+init time: 141.313 sec
+  Name                  Size                         Bytes  Class     Attributes
+
+  A             134217726x134217726            39083124578  GrB                 
+  AT            134217726x134217726            39083124578  GrB                 
+  ans                   1x1                              8  double              
+  f                     1x245                         1960  double              
+  i                     1x245                         1960  double              
+  id                    1x12                            24  char                
+  index                 1x1                        1411276  struct              
+  k                     1x1                              8  double              
+  matrices              5x1                            686  cell                
+  n                     1x1                              8  double              
+  name                  1x12                            24  char                
+  sources              64x1                            512  double              
+  t1                    1x1                              8  double              
+  threads               1x2                             16  double              
+
+
+gap_centrality  tests: 40 threads
+sources: 2338013 31997660 23590941 43400605 
+trial:  1 GrB centrality time:   51.827
+sources: 75337938 169868 104041221 94177943 
+trial:  2 GrB centrality time:   47.058
+sources: 32871358 56230003 69883038 9346346 
+trial:  3 GrB centrality time:   50.140
+sources: 48915359 122571174 6183280 86323664 
+trial:  4 GrB centrality time:   48.988
+sources: 106725781 92389939 16210739 59816701 
+trial:  5 GrB centrality time:   52.296
+sources: 111669930 102831412 113384801 43872565 
+trial:  6 GrB centrality time:   48.998
+sources: 80508828 26105649 8807517 118452456 
+trial:  7 GrB centrality time:   50.716
+sources: 121818860 42361929 29493054 98461504 
+trial:  8 GrB centrality time:   44.442
+sources: 71931338 103808469 4092346 115276242 
+trial:  9 GrB centrality time:   47.029
+sources: 4649344 76656190 31312002 111334128 
+trial: 10 GrB centrality time:   51.742
+sources: 100962919 41823216 22631241 42848462 
+trial: 11 GrB centrality time:   52.785
+sources: 79485149 106818743 73347975 78848446 
+trial: 12 GrB centrality time:   44.429
+sources: 109920511 121492134 101037297 15438601 
+trial: 13 GrB centrality time:   47.359
+sources: 4584785 124503846 87241744 108297009 
+trial: 14 GrB centrality time:   57.655
+sources: 33955083 79934824 8608482 82435064 
+trial: 15 GrB centrality time:   50.922
+sources: 46579272 515422 121530468 127978737 
+trial: 16 GrB centrality time:   49.329
+avg GrB centrality time:      49.732 (16 trials)
+
+gap_centrality  tests: 20 threads
+sources: 2338013 31997660 23590941 43400605 
+trial:  1 GrB centrality time:   84.277
+sources: 75337938 169868 104041221 94177943 
+trial:  2 GrB centrality time:   52.390
+sources: 32871358 56230003 69883038 9346346 
+trial:  3 GrB centrality time:   61.139
+sources: 48915359 122571174 6183280 86323664 
+trial:  4 GrB centrality time:   61.742
+sources: 106725781 92389939 16210739 59816701 
+trial:  5 GrB centrality time:   58.653
+sources: 111669930 102831412 113384801 43872565 
+trial:  6 GrB centrality time:   60.821
+sources: 80508828 26105649 8807517 118452456 
+trial:  7 GrB centrality time:   59.518
+sources: 121818860 42361929 29493054 98461504 
+trial:  8 GrB centrality time:   50.100
+sources: 71931338 103808469 4092346 115276242 
+trial:  9 GrB centrality time:   52.982
+sources: 4649344 76656190 31312002 111334128 
+trial: 10 GrB centrality time:   60.601
+sources: 100962919 41823216 22631241 42848462 
+trial: 11 GrB centrality time:   76.994
+sources: 79485149 106818743 73347975 78848446 
+trial: 12 GrB centrality time:   49.766
+sources: 109920511 121492134 101037297 15438601 
+trial: 13 GrB centrality time:   54.285
+sources: 4584785 124503846 87241744 108297009 
+trial: 14 GrB centrality time:   66.291
+sources: 33955083 79934824 8608482 82435064 
+trial: 15 GrB centrality time:   61.748
+sources: 46579272 515422 121530468 127978737 
+trial: 16 GrB centrality time:   57.766
+avg GrB centrality time:      60.567 (16 trials)
+
+matrix: GAP/GAP-urand
