@@ -1,4 +1,4 @@
-function s = tricount (A, check)
+function s = tricount (A, arg2, arg3)
 %GRB.TRICOUNT count triangles in a matrix.
 % s = GrB.tricount (A) counts the number of triangles in the matrix A.
 % spones (A) must be symmetric; results are undefined if spones (A) is
@@ -7,22 +7,73 @@ function s = tricount (A, check)
 % To check the input matrix A, use GrB.tricount (A, 'check').  This check
 % takes additional time so by default the input is not checked.
 %
-% See also GrB.ktruss.
+% If d is a vector of length n with d(i) equal to the degree of node i,
+% then s = tricount (A, d) can be used.  Otherwise, tricount must compute
+% the degrees first.
 %
-% TODO: sort if warranted.  See LAGraph_tricount.
+% See also GrB.ktruss, GrB.entries.
+%
+% ADDED: sort if warranted.  See LAGraph_tricount.
 
 [m, n] = size (A) ;
 if (m ~= n)
     gb_error ('A must be square') ;
 end
-if (nargin < 2)
-    check = false ;
-else
-    check = isequal (check, 'check') ;
+
+d = [ ] ;
+check = false ;
+
+if (nargin == 2)
+    if (ischar (arg2))
+        % s = tricount (A, 'check')
+        check = isequal (arg2, 'check') ;
+    else
+        % s = tricount (A, d)
+        d = arg2 ;
+    end
+elseif (nargin == 3)
+    if (ischar (arg2))
+        % s = tricount (A, 'check', d)
+        check = isequal (arg2, 'check') ;
+        d = arg3 ;
+    else
+        % s = tricount (A, d, 'check')
+        d = arg2 ;
+        check = isequal (arg3, 'check') ;
+    end
 end
 
 if (check && ~issymmetric (spones (A)))
     gb_error ('pattern of A must be symmetric') ;
+end
+
+if (isequal (class (d), 'GrB'))
+    d = double (d) ;
+end
+
+% determine if A should be sorted first
+if (n > 1000 && GrB.entries (A) >= 10*n)
+    if (isempty (d))
+        % compute the degree of each node, if not provided on input
+        if (GrB.isbyrow (A))
+            d = double (GrB.entries (A, 'row', 'degree')) ;
+        else
+            d = double (GrB.entries (A, 'col', 'degree')) ;
+        end
+    end
+    % sample the degree
+    p = randperm (n, 1000) ;
+    sample = d (randperm (n, 1000)) ;
+    dmean = full (mean (sample)) ;
+    dmed  = full (median (sample)) ;
+    % fprintf ('mean degree: %g median: %g\n', dmean, dmed) ;
+    if (dmean > 4 * dmed)
+        % sort if the average degree is very high compared to the median
+        % fprintf ('sorting A first\n') ;
+        [~, p] = sort (d, 'descend') ;
+        A = A (p,p) ;
+        clear p
+    end
 end
 
 % C, L, and U will have the same format as A
