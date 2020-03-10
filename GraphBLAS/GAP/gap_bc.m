@@ -105,10 +105,9 @@ for k = 1:length(matrices)
             tot = tot + t ;
             fprintf ('trial: %2d GrB centrality time: %8.3f\n', trial, t) ;
 
-            c = GrB.prune (c) ;
-
             % check result
             try
+                c = GrB.prune (c) ;
                 tstart = tic ;
                 cgood = GrB (mread (sprintf (good, k-1, n))) ;
                 err = norm (cgood - c) / norm (cgood);
@@ -118,6 +117,7 @@ for k = 1:length(matrices)
                     GrB.entries (c) - GrB.entries (cgood)) ;
             catch
             end
+            clear c
         end
 
         ntrials = trial ;

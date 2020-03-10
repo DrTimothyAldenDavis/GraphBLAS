@@ -109,7 +109,7 @@ for k = 1:length(matrices)
     % compute the SSSP for each source node
     %---------------------------------------------------------------------------
 
-    for nthreads = threads_list
+    for nthreads = threads
         GrB.threads (nthreads) ;
 
         fprintf ('\ngap_sssp tests: %d threads\n', nthreads) ;
