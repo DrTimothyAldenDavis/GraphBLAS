@@ -1986,3 +1986,484 @@ trial: 22 source: 102831412 GrB SSSP12  time:   33.092
 trial: 23 source: 113384801 GrB SSSP12  time:   31.347
 trial: 24 source: 43872565 GrB SSSP12  time:   32.625
 trial: 25 source: 80508828 GrB SSSP12  time:   32.457
+trial: 26 source: 26105649 GrB SSSP12  time:   32.374
+trial: 27 source:  8807517 GrB SSSP12  time:   31.927
+trial: 28 source: 118452456 GrB SSSP12  time:   32.259
+trial: 29 source: 121818860 GrB SSSP12  time:   32.317
+trial: 30 source: 42361929 GrB SSSP12  time:   31.678
+trial: 31 source: 29493054 GrB SSSP12  time:   31.414
+trial: 32 source: 98461504 GrB SSSP12  time:   32.692
+trial: 33 source: 71931338 GrB SSSP12  time:   30.937
+trial: 34 source: 103808469 GrB SSSP12  time:   32.577
+trial: 35 source:  4092346 GrB SSSP12  time:   31.464
+trial: 36 source: 115276242 GrB SSSP12  time:   32.343
+trial: 37 source:  4649344 GrB SSSP12  time:   31.979
+trial: 38 source: 76656190 GrB SSSP12  time:   32.343
+trial: 39 source: 31312002 GrB SSSP12  time:   32.637
+trial: 40 source: 111334128 GrB SSSP12  time:   31.969
+trial: 41 source: 100962919 GrB SSSP12  time:   33.149
+trial: 42 source: 41823216 GrB SSSP12  time:   31.895
+trial: 43 source: 22631241 GrB SSSP12  time:   30.906
+trial: 44 source: 42848462 GrB SSSP12  time:   31.749
+trial: 45 source: 79485149 GrB SSSP12  time:   32.187
+trial: 46 source: 106818743 GrB SSSP12  time:   32.411
+trial: 47 source: 73347975 GrB SSSP12  time:   33.841
+trial: 48 source: 78848446 GrB SSSP12  time:   30.909
+trial: 49 source: 109920511 GrB SSSP12  time:   32.462
+trial: 50 source: 121492134 GrB SSSP12  time:   31.917
+trial: 51 source: 101037297 GrB SSSP12  time:   32.185
+trial: 52 source: 15438601 GrB SSSP12  time:   32.576
+trial: 53 source:  4584785 GrB SSSP12  time:   34.311
+trial: 54 source: 124503846 GrB SSSP12  time:   32.677
+trial: 55 source: 87241744 GrB SSSP12  time:   31.360
+trial: 56 source: 108297009 GrB SSSP12  time:   32.570
+trial: 57 source: 33955083 GrB SSSP12  time:   31.914
+trial: 58 source: 79934824 GrB SSSP12  time:   31.853
+trial: 59 source:  8608482 GrB SSSP12  time:   31.211
+trial: 60 source: 82435064 GrB SSSP12  time:   31.412
+trial: 61 source: 46579272 GrB SSSP12  time:   31.571
+trial: 62 source:   515422 GrB SSSP12  time:   33.963
+trial: 63 source: 121530468 GrB SSSP12  time:   31.647
+trial: 64 source: 127978737 GrB SSSP12  time:   32.716
+avg GrB SSSP12c time:       0.000 (64 trials)
+avg GrB SSSP12  time:      32.235 (64 trials)
+
+gap_sssp tests: 20 threads
+trial:  1 source:  2338013 GrB SSSP12  time:   34.101
+trial:  2 source: 31997660 GrB SSSP12  time:   34.226
+trial:  3 source: 23590941 GrB SSSP12  time:   33.920
+trial:  4 source: 43400605 GrB SSSP12  time:   34.884
+trial:  5 source: 75337938 GrB SSSP12  time:   33.270
+trial:  6 source:   169868 GrB SSSP12  time:   34.246
+trial:  7 source: 104041221 GrB SSSP12  time:   34.979
+trial:  8 source: 94177943 GrB SSSP12  time:   34.237
+trial:  9 source: 32871358 GrB SSSP12  time:   34.456
+trial: 10 source: 56230003 GrB SSSP12  time:   35.006
+trial: 11 source: 69883038 GrB SSSP12  time:   35.117
+trial: 12 source:  9346346 GrB SSSP12  time:   34.815
+trial: 13 source: 48915359 GrB SSSP12  time:   34.592
+trial: 14 source: 122571174 GrB SSSP12  time:   35.108
+trial: 15 source:  6183280 GrB SSSP12  time:   34.504
+trial: 16 source: 86323664 GrB SSSP12  time:   34.017
+trial: 17 source: 106725781 GrB SSSP12  time:   33.519
+trial: 18 source: 92389939 GrB SSSP12  time:   35.385
+trial: 19 source: 16210739 GrB SSSP12  time:   34.346
+trial: 20 source: 59816701 GrB SSSP12  time:   33.919
+trial: 21 source: 111669930 GrB SSSP12  time:   34.594
+trial: 22 source: 102831412 GrB SSSP12  time:   35.020
+trial: 23 source: 113384801 GrB SSSP12  time:   33.130
+trial: 24 source: 43872565 GrB SSSP12  time:   34.550
+trial: 25 source: 80508828 GrB SSSP12  time:   34.319
+trial: 26 source: 26105649 GrB SSSP12  time:   34.114
+trial: 27 source:  8807517 GrB SSSP12  time:   33.678
+trial: 28 source: 118452456 GrB SSSP12  time:   34.169
+trial: 29 source: 121818860 GrB SSSP12  time:   34.234
+trial: 30 source: 42361929 GrB SSSP12  time:   33.678
+trial: 31 source: 29493054 GrB SSSP12  time:   33.331
+trial: 32 source: 98461504 GrB SSSP12  time:   34.706
+trial: 33 source: 71931338 GrB SSSP12  time:   32.821
+trial: 34 source: 103808469 GrB SSSP12  time:   34.620
+trial: 35 source:  4092346 GrB SSSP12  time:   33.412
+trial: 36 source: 115276242 GrB SSSP12  time:   34.354
+trial: 37 source:  4649344 GrB SSSP12  time:   33.796
+trial: 38 source: 76656190 GrB SSSP12  time:   34.462
+trial: 39 source: 31312002 GrB SSSP12  time:   34.677
+trial: 40 source: 111334128 GrB SSSP12  time:   33.997
+trial: 41 source: 100962919 GrB SSSP12  time:   35.299
+trial: 42 source: 41823216 GrB SSSP12  time:   33.835
+trial: 43 source: 22631241 GrB SSSP12  time:   32.714
+trial: 44 source: 42848462 GrB SSSP12  time:   35.707
+trial: 45 source: 79485149 GrB SSSP12  time:   34.588
+trial: 46 source: 106818743 GrB SSSP12  time:   34.296
+trial: 47 source: 73347975 GrB SSSP12  time:   35.143
+trial: 48 source: 78848446 GrB SSSP12  time:   32.927
+trial: 49 source: 109920511 GrB SSSP12  time:   34.629
+trial: 50 source: 121492134 GrB SSSP12  time:   34.069
+trial: 51 source: 101037297 GrB SSSP12  time:   34.467
+trial: 52 source: 15438601 GrB SSSP12  time:   34.843
+trial: 53 source:  4584785 GrB SSSP12  time:   36.789
+trial: 54 source: 124503846 GrB SSSP12  time:   35.010
+trial: 55 source: 87241744 GrB SSSP12  time:   33.694
+trial: 56 source: 108297009 GrB SSSP12  time:   34.926
+trial: 57 source: 33955083 GrB SSSP12  time:   34.020
+trial: 58 source: 79934824 GrB SSSP12  time:   34.002
+trial: 59 source:  8608482 GrB SSSP12  time:   33.420
+trial: 60 source: 82435064 GrB SSSP12  time:   33.564
+trial: 61 source: 46579272 GrB SSSP12  time:   33.744
+trial: 62 source:   515422 GrB SSSP12  time:   36.473
+trial: 63 source: 121530468 GrB SSSP12  time:   33.869
+trial: 64 source: 127978737 GrB SSSP12  time:   35.022
+avg GrB SSSP12c time:       0.000 (64 trials)
+avg GrB SSSP12  time:      34.334 (64 trials)
+
+matrix: GAP/GAP-urand
+load time: 329.435 sec
+
+GAP/GAP-urand: nodes: 134.218 million  nvals: 4294.97 million
+init time: 102.475 sec
+edgeweights: min: 1 med: 128 max: 255
+delta for this matrix: 35
+
+gap_sssp tests: 40 threads
+trial:  1 source: 27691420 GrB SSSP12  time:   40.295
+trial:  2 source: 121280315 GrB SSSP12  time:   40.955
+trial:  3 source:  2413432 GrB SSSP12  time:   41.152
+trial:  4 source: 37512114 GrB SSSP12  time:   41.356
+trial:  5 source: 38390878 GrB SSSP12  time:   41.414
+trial:  6 source: 56651038 GrB SSSP12  time:   41.015
+trial:  7 source: 128461249 GrB SSSP12  time:   41.220
+trial:  8 source: 33029843 GrB SSSP12  time:   41.314
+trial:  9 source: 71406329 GrB SSSP12  time:   41.048
+trial: 10 source: 117872828 GrB SSSP12  time:   40.880
+trial: 11 source: 24351939 GrB SSSP12  time:   41.078
+trial: 12 source: 15444520 GrB SSSP12  time:   41.327
+trial: 13 source: 127526282 GrB SSSP12  time:   41.289
+trial: 14 source: 112279429 GrB SSSP12  time:   40.898
+trial: 15 source: 13631650 GrB SSSP12  time:   41.535
+trial: 16 source: 110379303 GrB SSSP12  time:   40.528
+trial: 17 source: 44800624 GrB SSSP12  time:   40.859
+trial: 18 source: 77768194 GrB SSSP12  time:   42.162
+trial: 19 source:   175348 GrB SSSP12  time:   41.017
+trial: 20 source: 107397390 GrB SSSP12  time:   40.637
+trial: 21 source: 43457210 GrB SSSP12  time:   41.482
+trial: 22 source: 97215941 GrB SSSP12  time:   41.296
+trial: 23 source: 73575166 GrB SSSP12  time:   41.822
+trial: 24 source: 44449716 GrB SSSP12  time:   41.127
+trial: 25 source: 33931725 GrB SSSP12  time:   41.677
+trial: 26 source: 55526611 GrB SSSP12  time:   41.591
+trial: 27 source: 14422052 GrB SSSP12  time:   41.319
+trial: 28 source: 58043874 GrB SSSP12  time:   42.432
+trial: 29 source: 72137330 GrB SSSP12  time:   40.984
+trial: 30 source:  9647841 GrB SSSP12  time:   41.552
+trial: 31 source: 15940696 GrB SSSP12  time:   41.486
+trial: 32 source: 14209953 GrB SSSP12  time:   41.464
+trial: 33 source: 49020884 GrB SSSP12  time:   40.804
+trial: 34 source: 28901139 GrB SSSP12  time:   41.119
+trial: 35 source: 50493274 GrB SSSP12  time:   41.012
+trial: 36 source: 49150070 GrB SSSP12  time:   41.662
+trial: 37 source: 126525083 GrB SSSP12  time:   41.445
+trial: 38 source:  6382741 GrB SSSP12  time:   41.405
+trial: 39 source: 89108298 GrB SSSP12  time:   40.532
+trial: 40 source:  9239736 GrB SSSP12  time:   41.674
+trial: 41 source: 110168549 GrB SSSP12  time:   41.502
+trial: 42 source: 95370260 GrB SSSP12  time:   41.436
+trial: 43 source: 116653531 GrB SSSP12  time:   40.904
+trial: 44 source: 123410704 GrB SSSP12  time:   40.975
+trial: 45 source: 16733666 GrB SSSP12  time:   41.300
+trial: 46 source: 49030283 GrB SSSP12  time:   41.113
+trial: 47 source: 108545122 GrB SSSP12  time:   40.530
+trial: 48 source: 99095666 GrB SSSP12  time:   41.049
+trial: 49 source: 133850078 GrB SSSP12  time:   41.373
+trial: 50 source: 63499302 GrB SSSP12  time:   41.458
+trial: 51 source: 21541383 GrB SSSP12  time:   42.095
+trial: 52 source:  6230752 GrB SSSP12  time:   41.345
+trial: 53 source: 89077457 GrB SSSP12  time:   40.783
+trial: 54 source: 70392766 GrB SSSP12  time:   41.542
+trial: 55 source:  6670456 GrB SSSP12  time:   41.263
+trial: 56 source: 61746272 GrB SSSP12  time:   40.547
+trial: 57 source: 83349536 GrB SSSP12  time:   41.468
+trial: 58 source: 115272185 GrB SSSP12  time:   41.799
+trial: 59 source: 20129909 GrB SSSP12  time:   41.645
+trial: 60 source: 106148554 GrB SSSP12  time:   41.046
+trial: 61 source: 117042376 GrB SSSP12  time:   42.053
+trial: 62 source: 71431188 GrB SSSP12  time:   41.521
+trial: 63 source: 45287809 GrB SSSP12  time:   41.383
+trial: 64 source: 107702121 GrB SSSP12  time:   41.173
+avg GrB SSSP12c time:       0.000 (64 trials)
+avg GrB SSSP12  time:      41.268 (64 trials)
+
+gap_sssp tests: 20 threads
+trial:  1 source: 27691420 GrB SSSP12  time:   42.517
+trial:  2 source: 121280315 GrB SSSP12  time:   43.338
+trial:  3 source:  2413432 GrB SSSP12  time:   44.558
+trial:  4 source: 37512114 GrB SSSP12  time:   43.349
+trial:  5 source: 38390878 GrB SSSP12  time:   43.643
+trial:  6 source: 56651038 GrB SSSP12  time:   43.356
+trial:  7 source: 128461249 GrB SSSP12  time:   43.605
+trial:  8 source: 33029843 GrB SSSP12  time:   43.686
+trial:  9 source: 71406329 GrB SSSP12  time:   43.425
+trial: 10 source: 117872828 GrB SSSP12  time:   43.116
+trial: 11 source: 24351939 GrB SSSP12  time:   43.727
+trial: 12 source: 15444520 GrB SSSP12  time:   43.614
+trial: 13 source: 127526282 GrB SSSP12  time:   43.758
+trial: 14 source: 112279429 GrB SSSP12  time:   43.142
+trial: 15 source: 13631650 GrB SSSP12  time:   43.812
+trial: 16 source: 110379303 GrB SSSP12  time:   42.756
+trial: 17 source: 44800624 GrB SSSP12  time:   42.773
+trial: 18 source: 77768194 GrB SSSP12  time:   43.676
+trial: 19 source:   175348 GrB SSSP12  time:   43.301
+trial: 20 source: 107397390 GrB SSSP12  time:   42.893
+trial: 21 source: 43457210 GrB SSSP12  time:   43.720
+trial: 22 source: 97215941 GrB SSSP12  time:   43.704
+trial: 23 source: 73575166 GrB SSSP12  time:   44.293
+trial: 24 source: 44449716 GrB SSSP12  time:   43.348
+trial: 25 source: 33931725 GrB SSSP12  time:   43.856
+trial: 26 source: 55526611 GrB SSSP12  time:   43.959
+trial: 27 source: 14422052 GrB SSSP12  time:   43.501
+trial: 28 source: 58043874 GrB SSSP12  time:   44.681
+trial: 29 source: 72137330 GrB SSSP12  time:   43.413
+trial: 30 source:  9647841 GrB SSSP12  time:   43.830
+trial: 31 source: 15940696 GrB SSSP12  time:   43.809
+trial: 32 source: 14209953 GrB SSSP12  time:   43.912
+trial: 33 source: 49020884 GrB SSSP12  time:   43.099
+trial: 34 source: 28901139 GrB SSSP12  time:   43.265
+trial: 35 source: 50493274 GrB SSSP12  time:   43.372
+trial: 36 source: 49150070 GrB SSSP12  time:   43.836
+trial: 37 source: 126525083 GrB SSSP12  time:   43.485
+trial: 38 source:  6382741 GrB SSSP12  time:   43.425
+trial: 39 source: 89108298 GrB SSSP12  time:   42.600
+trial: 40 source:  9239736 GrB SSSP12  time:   43.707
+trial: 41 source: 110168549 GrB SSSP12  time:   43.553
+trial: 42 source: 95370260 GrB SSSP12  time:   43.383
+trial: 43 source: 116653531 GrB SSSP12  time:   43.002
+trial: 44 source: 123410704 GrB SSSP12  time:   43.140
+trial: 45 source: 16733666 GrB SSSP12  time:   43.447
+trial: 46 source: 49030283 GrB SSSP12  time:   44.701
+trial: 47 source: 108545122 GrB SSSP12  time:   42.549
+trial: 48 source: 99095666 GrB SSSP12  time:   43.005
+trial: 49 source: 133850078 GrB SSSP12  time:   43.274
+trial: 50 source: 63499302 GrB SSSP12  time:   43.368
+trial: 51 source: 21541383 GrB SSSP12  time:   44.016
+trial: 52 source:  6230752 GrB SSSP12  time:   43.247
+trial: 53 source: 89077457 GrB SSSP12  time:   42.998
+trial: 54 source: 70392766 GrB SSSP12  time:   43.612
+trial: 55 source:  6670456 GrB SSSP12  time:   43.351
+trial: 56 source: 61746272 GrB SSSP12  time:   42.457
+trial: 57 source: 83349536 GrB SSSP12  time:   43.596
+trial: 58 source: 115272185 GrB SSSP12  time:   43.855
+trial: 59 source: 20129909 GrB SSSP12  time:   43.673
+trial: 60 source: 106148554 GrB SSSP12  time:   43.215
+trial: 61 source: 117042376 GrB SSSP12  time:   44.041
+trial: 62 source: 71431188 GrB SSSP12  time:   43.680
+trial: 63 source: 45287809 GrB SSSP12  time:   43.290
+trial: 64 source: 107702121 GrB SSSP12  time:   43.164
+avg GrB SSSP12c time:       0.000 (64 trials)
+avg GrB SSSP12  time:      43.476 (64 trials)
+
+matrix: GAP/GAP-twitter
+load time: 139.349 sec
+
+GAP/GAP-twitter: nodes: 61.5784 million  nvals: 1468.36 million
+init time: 26.4982 sec
+edgeweights: min: 1 med: 128 max: 255
+delta for this matrix: 51
+
+gap_sssp tests: 40 threads
+trial:  1 source: 12441073 GrB SSSP12  time:   17.871
+trial:  2 source: 54488258 GrB SSSP12  time:   19.484
+trial:  3 source: 25451916 GrB SSSP12  time:   19.935
+trial:  4 source: 57714474 GrB SSSP12  time:   19.128
+trial:  5 source: 14839495 GrB SSSP12  time:   18.986
+trial:  6 source: 32081105 GrB SSSP12  time:   18.315
+trial:  7 source: 52957358 GrB SSSP12  time:   18.976
+trial:  8 source: 50444381 GrB SSSP12  time:   19.423
+trial:  9 source: 49590702 GrB SSSP12  time:   18.785
+trial: 10 source: 20127817 GrB SSSP12  time:   18.533
+trial: 11 source: 34939334 GrB SSSP12  time:   20.150
+trial: 12 source: 48251002 GrB SSSP12  time:   19.719
+trial: 13 source: 19524254 GrB SSSP12  time:   18.418
+trial: 14 source: 43676727 GrB SSSP12  time:   19.457
+trial: 15 source: 33055509 GrB SSSP12  time:   18.958
+trial: 16 source: 15244688 GrB SSSP12  time:   18.596
+trial: 17 source: 24946739 GrB SSSP12  time:   20.622
+trial: 18 source:  6479473 GrB SSSP12  time:   19.004
+trial: 19 source: 26077683 GrB SSSP12  time:   19.600
+trial: 20 source: 22023876 GrB SSSP12  time:   19.874
+trial: 21 source: 22081916 GrB SSSP12  time:   19.361
+trial: 22 source: 40034163 GrB SSSP12  time:   17.757
+trial: 23 source: 49496015 GrB SSSP12  time:   19.809
+trial: 24 source: 42847508 GrB SSSP12  time:   21.258
+trial: 25 source: 52409558 GrB SSSP12  time:   19.165
+trial: 26 source: 55445389 GrB SSSP12  time:   17.672
+trial: 27 source: 22028098 GrB SSSP12  time:   19.322
+trial: 28 source: 48766649 GrB SSSP12  time:   19.281
+trial: 29 source: 44521242 GrB SSSP12  time:   19.088
+trial: 30 source: 60135543 GrB SSSP12  time:   17.898
+trial: 31 source: 28528672 GrB SSSP12  time:   17.932
+trial: 32 source:  9678013 GrB SSSP12  time:   18.773
+trial: 33 source: 40020307 GrB SSSP12  time:   19.662
+trial: 34 source: 31625736 GrB SSSP12  time:   19.120
+trial: 35 source: 37446893 GrB SSSP12  time:   19.409
+trial: 36 source: 51788953 GrB SSSP12  time:   19.115
+trial: 37 source: 52584256 GrB SSSP12  time:   18.979
+trial: 38 source: 20346697 GrB SSSP12  time:   18.952
+trial: 39 source: 48387910 GrB SSSP12  time:   18.695
+trial: 40 source: 37337428 GrB SSSP12  time:   18.080
+trial: 41 source: 50501085 GrB SSSP12  time:   18.615
+trial: 42 source: 30130062 GrB SSSP12  time:   19.205
+trial: 43 source: 41185894 GrB SSSP12  time:   19.664
+trial: 44 source: 56495704 GrB SSSP12  time:   18.510
+trial: 45 source: 45663306 GrB SSSP12  time:   18.995
+trial: 46 source: 33359461 GrB SSSP12  time:   19.028
+trial: 47 source: 48143059 GrB SSSP12  time:   18.473
+trial: 48 source: 33291514 GrB SSSP12  time:   17.957
+trial: 49 source: 53461446 GrB SSSP12  time:   18.888
+trial: 50 source: 29340611 GrB SSSP12  time:   18.432
+trial: 51 source: 34148499 GrB SSSP12  time:   18.900
+trial: 52 source: 49171807 GrB SSSP12  time:   19.393
+trial: 53 source: 35550697 GrB SSSP12  time:   19.808
+trial: 54 source: 14521508 GrB SSSP12  time:   19.388
+trial: 55 source: 51633219 GrB SSSP12  time:   19.607
+trial: 56 source: 46823383 GrB SSSP12  time:   18.835
+trial: 57 source: 19396274 GrB SSSP12  time:   19.455
+trial: 58 source: 19871751 GrB SSSP12  time:   19.367
+trial: 59 source: 36862678 GrB SSSP12  time:   20.257
+trial: 60 source: 49539127 GrB SSSP12  time:   20.080
+trial: 61 source: 34016453 GrB SSSP12  time:   18.133
+trial: 62 source: 36567396 GrB SSSP12  time:   18.791
+trial: 63 source: 55487794 GrB SSSP12  time:   18.723
+trial: 64 source: 14391371 GrB SSSP12  time:   20.228
+avg GrB SSSP12c time:       0.000 (64 trials)
+avg GrB SSSP12  time:      19.092 (64 trials)
+
+gap_sssp tests: 20 threads
+trial:  1 source: 12441073 GrB SSSP12  time:   18.598
+trial:  2 source: 54488258 GrB SSSP12  time:   20.177
+trial:  3 source: 25451916 GrB SSSP12  time:   20.702
+trial:  4 source: 57714474 GrB SSSP12  time:   19.961
+trial:  5 source: 14839495 GrB SSSP12  time:   19.870
+trial:  6 source: 32081105 GrB SSSP12  time:   19.068
+trial:  7 source: 52957358 GrB SSSP12  time:   19.735
+trial:  8 source: 50444381 GrB SSSP12  time:   20.132
+trial:  9 source: 49590702 GrB SSSP12  time:   19.444
+trial: 10 source: 20127817 GrB SSSP12  time:   19.143
+trial: 11 source: 34939334 GrB SSSP12  time:   20.895
+trial: 12 source: 48251002 GrB SSSP12  time:   20.489
+trial: 13 source: 19524254 GrB SSSP12  time:   19.021
+trial: 14 source: 43676727 GrB SSSP12  time:   20.218
+trial: 15 source: 33055509 GrB SSSP12  time:   19.641
+trial: 16 source: 15244688 GrB SSSP12  time:   19.241
+trial: 17 source: 24946739 GrB SSSP12  time:   21.483
+trial: 18 source:  6479473 GrB SSSP12  time:   19.682
+trial: 19 source: 26077683 GrB SSSP12  time:   20.296
+trial: 20 source: 22023876 GrB SSSP12  time:   20.626
+trial: 21 source: 22081916 GrB SSSP12  time:   20.004
+trial: 22 source: 40034163 GrB SSSP12  time:   18.395
+trial: 23 source: 49496015 GrB SSSP12  time:   20.716
+trial: 24 source: 42847508 GrB SSSP12  time:   22.194
+trial: 25 source: 52409558 GrB SSSP12  time:   19.948
+trial: 26 source: 55445389 GrB SSSP12  time:   18.259
+trial: 27 source: 22028098 GrB SSSP12  time:   20.097
+trial: 28 source: 48766649 GrB SSSP12  time:   20.004
+trial: 29 source: 44521242 GrB SSSP12  time:   19.804
+trial: 30 source: 60135543 GrB SSSP12  time:   18.608
+trial: 31 source: 28528672 GrB SSSP12  time:   18.568
+trial: 32 source:  9678013 GrB SSSP12  time:   19.637
+trial: 33 source: 40020307 GrB SSSP12  time:   20.728
+trial: 34 source: 31625736 GrB SSSP12  time:   20.139
+trial: 35 source: 37446893 GrB SSSP12  time:   20.437
+trial: 36 source: 51788953 GrB SSSP12  time:   20.109
+trial: 37 source: 52584256 GrB SSSP12  time:   19.869
+trial: 38 source: 20346697 GrB SSSP12  time:   19.865
+trial: 39 source: 48387910 GrB SSSP12  time:   19.568
+trial: 40 source: 37337428 GrB SSSP12  time:   18.913
+trial: 41 source: 50501085 GrB SSSP12  time:   19.512
+trial: 42 source: 30130062 GrB SSSP12  time:   20.146
+trial: 43 source: 41185894 GrB SSSP12  time:   20.662
+trial: 44 source: 56495704 GrB SSSP12  time:   19.279
+trial: 45 source: 45663306 GrB SSSP12  time:   19.772
+trial: 46 source: 33359461 GrB SSSP12  time:   19.758
+trial: 47 source: 48143059 GrB SSSP12  time:   19.204
+trial: 48 source: 33291514 GrB SSSP12  time:   18.703
+trial: 49 source: 53461446 GrB SSSP12  time:   19.731
+trial: 50 source: 29340611 GrB SSSP12  time:   19.178
+trial: 51 source: 34148499 GrB SSSP12  time:   19.665
+trial: 52 source: 49171807 GrB SSSP12  time:   19.996
+trial: 53 source: 35550697 GrB SSSP12  time:   20.138
+trial: 54 source: 14521508 GrB SSSP12  time:   20.276
+trial: 55 source: 51633219 GrB SSSP12  time:   20.601
+trial: 56 source: 46823383 GrB SSSP12  time:   19.718
+trial: 57 source: 19396274 GrB SSSP12  time:   20.451
+trial: 58 source: 19871751 GrB SSSP12  time:   20.318
+trial: 59 source: 36862678 GrB SSSP12  time:   21.272
+trial: 60 source: 49539127 GrB SSSP12  time:   20.943
+trial: 61 source: 34016453 GrB SSSP12  time:   18.909
+trial: 62 source: 36567396 GrB SSSP12  time:   19.595
+trial: 63 source: 55487794 GrB SSSP12  time:   19.514
+trial: 64 source: 14391371 GrB SSSP12  time:   21.106
+avg GrB SSSP12c time:       0.000 (64 trials)
+avg GrB SSSP12  time:      19.886 (64 trials)
+
+matrix: GAP/GAP-web
+load time: 115.031 sec
+
+GAP/GAP-web: nodes: 50.6362 million  nvals: 1930.29 million
+init time: 14.9171 sec
+edgeweights: min: 1 med: 128 max: 255
+delta for this matrix: 150
+
+gap_sssp tests: 40 threads
+trial:  1 source: 10219453 GrB SSSP12  time:   47.082
+trial:  2 source: 44758212 GrB SSSP12  time:   47.549
+trial:  3 source:   890672 GrB SSSP12  time:   51.964
+trial:  4 source: 13843757 GrB SSSP12  time:    5.749
+trial:  5 source: 14168063 GrB SSSP12  time:   48.015
+trial:  6 source: 20906931 GrB SSSP12  time:   48.066
+trial:  7 source: 12189585 GrB SSSP12  time:   48.371
+trial:  8 source: 26352336 GrB SSSP12  time:    7.249
+trial:  9 source: 43500687 GrB SSSP12  time:   47.585
+trial: 10 source:  8987025 GrB SSSP12  time:   46.505
+trial: 11 source:  5699763 GrB SSSP12  time:    5.022
+trial: 12 source: 41436456 GrB SSSP12  time:   48.629
+trial: 13 source:  5030728 GrB SSSP12  time:   48.098
+trial: 14 source: 40735219 GrB SSSP12  time:   48.580
+trial: 15 source: 16533564 GrB SSSP12  time:   46.880
+trial: 16 source: 28700167 GrB SSSP12  time:   47.163
+trial: 17 source:    64712 GrB SSSP12  time:   46.332
+trial: 18 source: 39634751 GrB SSSP12  time:   47.601
+trial: 19 source: 16037780 GrB SSSP12  time:   47.190
+trial: 20 source: 27152740 GrB SSSP12  time:   46.895
+trial: 21 source: 16404062 GrB SSSP12  time:   48.305
+trial: 22 source: 20491964 GrB SSSP12  time:   47.839
+trial: 23 source:  5322424 GrB SSSP12  time:   49.146
+trial: 24 source: 21420954 GrB SSSP12  time:   47.523
+trial: 25 source: 26622110 GrB SSSP12  time:   47.947
+trial: 26 source:  5882876 GrB SSSP12  time:   47.578
+trial: 27 source: 18091041 GrB SSSP12  time:   47.473
+trial: 28 source: 10665897 GrB SSSP12  time:    5.516
+trial: 29 source: 18634423 GrB SSSP12  time:   46.058
+trial: 30 source: 18138716 GrB SSSP12  time:   48.143
+trial: 31 source:  2355536 GrB SSSP12  time:   47.802
+trial: 32 source: 32885206 GrB SSSP12  time:    6.302
+trial: 33 source: 40657441 GrB SSSP12  time:   47.386
+trial: 34 source: 35196168 GrB SSSP12  time:   47.644
+trial: 35 source: 45544427 GrB SSSP12  time:   46.045
+trial: 36 source:  6175520 GrB SSSP12  time:    4.603
+trial: 37 source: 40058319 GrB SSSP12  time:   47.572
+trial: 38 source: 50626231 GrB SSSP12  time:   47.830
+trial: 39 source: 36571020 GrB SSSP12  time:   47.559
+trial: 40 source: 49397053 GrB SSSP12  time:   47.395
+trial: 41 source: 23434266 GrB SSSP12  time:   46.424
+trial: 42 source:  2299445 GrB SSSP12  time:   48.281
+trial: 43 source: 32873824 GrB SSSP12  time:    6.084
+trial: 44 source: 25978283 GrB SSSP12  time:   47.592
+trial: 45 source:  2461716 GrB SSSP12  time:    5.717
+trial: 46 source: 22787315 GrB SSSP12  time:   47.340
+trial: 47 source: 30759948 GrB SSSP12  time:   46.565
+trial: 48 source:  7428895 GrB SSSP12  time:    3.148
+trial: 49 source: 39173871 GrB SSSP12  time:    3.004
+trial: 50 source: 43194210 GrB SSSP12  time:    4.462
+trial: 51 source: 26361510 GrB SSSP12  time:    7.011
+trial: 52 source: 39747212 GrB SSSP12  time:    3.021
+trial: 53 source: 30670030 GrB SSSP12  time:   47.099
+trial: 54 source: 41483034 GrB SSSP12  time:   49.001
+trial: 55 source:  9358667 GrB SSSP12  time:   48.264
+trial: 56 source:  9945009 GrB SSSP12  time:   48.862
+trial: 57 source:  3355245 GrB SSSP12  time:   47.903
+trial: 58 source: 33831270 GrB SSSP12  time:   47.305
+trial: 59 source: 45124745 GrB SSSP12  time:   45.730
+trial: 60 source: 16137878 GrB SSSP12  time:    6.299
+trial: 61 source: 11235449 GrB SSSP12  time:   47.534
+trial: 62 source: 37509145 GrB SSSP12  time:   47.602
+trial: 63 source: 27402415 GrB SSSP12  time:   47.956
+trial: 64 source: 39546084 GrB SSSP12  time:   46.528
+avg GrB SSSP12c time:       0.000 (64 trials)
+avg GrB SSSP12  time:      38.358 (64 trials)
+
+gap_sssp tests: 20 threads
+trial:  1 source: 10219453 GrB SSSP12  time:   47.509
+trial:  2 source: 44758212 GrB SSSP12  time:   47.789
+trial:  3 source:   890672 GrB SSSP12  time:   53.437
+trial:  4 source: 13843757 GrB SSSP12  time:    6.140
+trial:  5 source: 14168063 GrB SSSP12  time:   48.050
+trial:  6 source: 20906931 GrB SSSP12  time:   48.837
