@@ -13,24 +13,37 @@ is_eq       = isequal (addop, 'eq') ;
 is_any_pair = is_any && isequal (multop, 'pair') ;
 is_real     = isequal (ztype, 'float') || isequal (ztype, 'double') ;
 
-% special cases for the PAIR multiplier
 switch (ztype)
     case { 'bool' }
+        nbits = 8 ;
         bits = '0x1L' ;
     case { 'int8_t', 'uint8_t' }
+        nbits = 8 ;
         bits = '0xffL' ;
     case { 'int16_t', 'uint16_t' }
+        nbits = 16 ;
         bits = '0xffffL' ;
     case { 'int32_t', 'uint32_t' }
+        nbits = 32 ;
         bits = '0xffffffffL' ;
     case { 'int64_t', 'uint64_t' }
+        nbits = 64 ;
         bits = '0' ;
-    case { 'float', 'double' }
+    case { 'float' }
+        nbits = 32 ;
+        bits = '0' ;
+    case { 'double' }
+        nbits = 64 ;
         bits = '0' ;
     otherwise
         error ('unknown type') ;
 end
+
+% bits: special cases for the PAIR multiplier
 fprintf (f, 'define(`GB_ctype_bits'', `%s'')\n', bits) ;
+
+% nbits: # of bits in the type, needed for the atomic compare-exchange:
+fprintf (f, 'define(`GB_atomic_compare_exchange'', `GB_ATOMIC_COMPARE_EXCHANGE_%d'')\n', nbits) ;
 
 if isequal (addop, 'plus') && isequal (multop, 'times') && isequal (ztype, 'float')
     % plus_times_fp32 semiring
@@ -204,14 +217,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +28 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +29 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +28 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +29 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

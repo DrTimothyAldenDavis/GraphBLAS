@@ -171,11 +171,10 @@ void GB_AxB_saxpy3_symbolic
                     for (GB_HASH (i))
                     { 
                         int64_t hf ;
-                        // swap my hash entry into the hash table
-                        GB_ATOMIC_CAPTURE
-                        {
-                            hf = Hf [hash] ; Hf [hash] = i_mine ;
-                        }
+                        // swap my hash entry into the hash table;
+                        // does the following using an atomic capture:
+                        // { hf = Hf [hash] ; Hf [hash] = i_mine ; }
+                        GB_ATOMIC_CAPTURE_INT64 (hf, Hf [hash], i_mine) ;
                         if (hf == 0) break ;        // success
                         // i_mine has been inserted, but a prior entry was
                         // already there.  It needs to be replaced, so take

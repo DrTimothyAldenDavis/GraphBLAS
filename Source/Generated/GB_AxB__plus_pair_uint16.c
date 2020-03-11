@@ -140,6 +140,10 @@
 #define GB_IS_PAIR_MULTIPLIER \
     1
 
+// atomic compare-exchange
+#define GB_ATOMIC_COMPARE_EXCHANGE(target, expected, desired) \
+    GB_ATOMIC_COMPARE_EXCHANGE_16 (target, expected, desired)
+
 #if GB_IS_ANY_PAIR_SEMIRING
 
     // result is purely symbolic; no numeric work to do.  Hx is not used.
