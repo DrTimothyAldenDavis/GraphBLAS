@@ -423,7 +423,7 @@ break ;
                 /* xnew = xold + t */                               \
                 xnew = GB_ADD_FUNCTION (xold, t) ;                  \
             }                                                       \
-            while (GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew))
+            while (!GB_ATOMIC_COMPARE_EXCHANGE (px, xold, xnew))
 
     #endif
 
