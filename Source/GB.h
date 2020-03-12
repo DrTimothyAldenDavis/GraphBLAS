@@ -1340,34 +1340,6 @@ GrB_Info GB_Scalar_check    // check a GraphBLAS GxB_Scalar
     GB_Context Context
 ) ;
 
-/*
-#define GB_check(x,name,pr)                             \
-    _Generic                                            \
-    (                                                   \
-        (x),                                            \
-        const GrB_Type       : GB_Type_check       ,    \
-              GrB_Type       : GB_Type_check       ,    \
-        const GrB_BinaryOp   : GB_BinaryOp_check   ,    \
-              GrB_BinaryOp   : GB_BinaryOp_check   ,    \
-        const GxB_SelectOp   : GB_SelectOp_check   ,    \
-              GxB_SelectOp   : GB_SelectOp_check   ,    \
-        const GrB_UnaryOp    : GB_UnaryOp_check    ,    \
-              GrB_UnaryOp    : GB_UnaryOp_check    ,    \
-        const GrB_Monoid     : GB_Monoid_check     ,    \
-              GrB_Monoid     : GB_Monoid_check     ,    \
-        const GrB_Semiring   : GB_Semiring_check   ,    \
-              GrB_Semiring   : GB_Semiring_check   ,    \
-        const GrB_Matrix     : GB_Matrix_check     ,    \
-              GrB_Matrix     : GB_Matrix_check     ,    \
-        const GrB_Vector     : GB_Vector_check     ,    \
-              GrB_Vector     : GB_Vector_check     ,    \
-        const GxB_Scalar     : GB_Scalar_check     ,    \
-              GxB_Scalar     : GB_Scalar_check     ,    \
-        const GrB_Descriptor : GB_Descriptor_check ,    \
-              GrB_Descriptor : GB_Descriptor_check      \
-    ) (x, name, pr, stdout, Context)
-*/
-
 #define ASSERT_TYPE_OK(t,name,pr)  \
     ASSERT_OK (GB_Type_check (t, name, pr, stdout, Context))
 

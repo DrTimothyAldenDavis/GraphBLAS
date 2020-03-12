@@ -106,7 +106,7 @@ by user code.  They are for internal use in GraphBLAS only.
 --------------------------------------------------------------------------------
 ## For Windows users:
 
-This version is not compatible with Microsoft Visual Studio.  Use another
-compiler, or use SuiteSparse:GraphBLAS v3.1.2 instead.  See the User Guide
-for more details.
+Version v3.2.1 is not compatible with Microsoft Visual Studio on Windows.
+TODO v3.2.2 should work on Windows (in progress).
+See the User Guide for more details.
 
