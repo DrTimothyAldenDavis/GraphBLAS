@@ -20,11 +20,11 @@
 
 void GB_apply_op            // apply a unary operator, Cx = op ((xtype) Ax)
 (
-    GB_void *Cx,                // output array, of type op->ztype
-    const GrB_UnaryOp op,       // operator to apply
-    const GB_void *Ax,          // input array, of type Atype
-    const GrB_Type Atype,       // type of Ax
-    const int64_t anz,          // size of Ax and Cx
+    GB_void *GB_RESTRICT Cx,        // output array, of type op->ztype
+    const GrB_UnaryOp op,           // operator to apply
+    const GB_void *GB_RESTRICT Ax,  // input array, of type Atype
+    const GrB_Type Atype,           // type of Ax
+    const int64_t anz,              // size of Ax and Cx
     GB_Context Context
 )
 {

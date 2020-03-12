@@ -54,6 +54,7 @@ message ( STATUS "CMake version: " ${CMAKE_VERSION} )
 if ( CMAKE_VERSION VERSION_GREATER "3.0" )
     cmake_policy ( SET CMP0042 NEW )
     cmake_policy ( SET CMP0048 NEW )
+    cmake_policy ( SET CMP0054 NEW )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS

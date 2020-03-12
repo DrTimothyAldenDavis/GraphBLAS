@@ -106,7 +106,8 @@ by user code.  They are for internal use in GraphBLAS only.
 --------------------------------------------------------------------------------
 ## For Windows users:
 
-Version v3.2.1 is not compatible with Microsoft Visual Studio on Windows.
-TODO v3.2.2 should work on Windows (in progress).
-See the User Guide for more details.
+Version v3.1.2 is compatible with Microsoft Visual Studio on Windows, but
+Version v3.2.1 is not.  The next version v3.2.2 (in progress) will be
+compatible, once it is completed.  In the meantime if you use Windows with
+Microsoft Visual Studio, use v3.1.2.  See the User Guide for more details.
 

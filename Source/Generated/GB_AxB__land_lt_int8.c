@@ -129,8 +129,13 @@
     1
 
 // 1 if monoid update can be done with an OpenMP atomic update, 0 otherwise
-#define GB_HAS_OMP_ATOMIC \
-    1
+#if GB_MICROSOFT
+    #define GB_HAS_OMP_ATOMIC \
+        0
+#else
+    #define GB_HAS_OMP_ATOMIC \
+        1
+#endif
 
 // 1 for the ANY_PAIR semirings
 #define GB_IS_ANY_PAIR_SEMIRING \

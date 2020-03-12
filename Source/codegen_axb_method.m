@@ -1,7 +1,7 @@
-function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic)
+function codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
 %CODEGEN_AXB_METHOD create a function to compute C=A*B over a semiring
 %
-% codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic)
+% codegen_axb_method (addop, multop, add, addfunc, mult, ztype, xytype, identity, terminal, omp_atomic, omp_microsoft_atomic)
 
 f = fopen ('control.m4', 'w') ;
 
@@ -116,7 +116,10 @@ end
 fprintf (f, 'define(`GB_has_atomic'', `1'')\n') ;
 
 % only PLUS, TIMES, LOR, LAND, and LXOR can be done with OpenMP atomics
+% in gcc and icc.  However, only PLUS and TIMES work with OpenMP atomics
+% in Microsoft Visual Studio; the LOR, LAND, and LXOR atomics don't compile.
 fprintf (f, 'define(`GB_has_omp_atomic'', `%d'')\n', omp_atomic) ;
+fprintf (f, 'define(`GB_microsoft_has_omp_atomic'', `%d'')\n', omp_microsoft_atomic) ;
 
 % MIN and MAX for floating-point types need unsigned integer puns
 % pun for compare-and-swap of ztype
@@ -217,14 +220,14 @@ fclose (f) ;
 
 % construct the *.c file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +29 > Generated/GB_AxB__%s.c', ...
+'cat control.m4 Generator/GB_AxB.c | m4 | tail -n +30 > Generated/GB_AxB__%s.c', ...
 name) ;
 fprintf ('.') ;
 system (cmd) ;
 
 % append to the *.h file
 cmd = sprintf (...
-'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +29 >> Generated/GB_AxB__include.h') ;
+'cat control.m4 Generator/GB_AxB.h | m4 | tail -n +30 >> Generated/GB_AxB__include.h') ;
 system (cmd) ;
 
 delete ('control.m4') ;

@@ -126,7 +126,8 @@
 
             // Hf [i] == 3: locked.  Hx [i] cannot be accessed.
 
-            uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
+            uint8_t *GB_RESTRICT
+                Hf = (uint8_t *GB_RESTRICT) TaskList [taskid].Hf ;
 
             if (M == NULL)
             {
@@ -383,7 +384,8 @@
 
             // h == (anything), f == 3: locked.
 
-            int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
+            int64_t *GB_RESTRICT
+                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
             int64_t hash_bits = (hash_size-1) ;
 
             if (M == NULL)
@@ -720,8 +722,8 @@
                 //--------------------------------------------------------------
 
                 // Hf [i] == 2 if C(i,j) is an entry in C(:,j)
-                uint8_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
-
+                uint8_t *GB_RESTRICT
+                    Hf = (uint8_t *GB_RESTRICT) TaskList [taskid].Hf ;
                 int64_t cjnz = Cp [kk+1] - pC ;
                 int64_t istart, iend ;
                 GB_PARTITION (istart, iend, cvlen, my_teamid, team_size) ;
@@ -764,7 +766,8 @@
                 // (Hf [hash] & 3) == 2 if C(i,j) is an entry in C(:,j),
                 // and the index i of the entry is (Hf [hash] >> 2) - 1.
 
-                int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
+                int64_t *GB_RESTRICT
+                    Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
                 int64_t mystart, myend ;
                 GB_PARTITION (mystart, myend, hash_size, my_teamid, team_size) ;
                 pC += TaskList [taskid].my_cjnz ;
@@ -787,7 +790,8 @@
             // numeric coarse task: compute C(:,kfirst:klast)
             //------------------------------------------------------------------
 
-            int64_t *GB_RESTRICT Hf = TaskList [taskid].Hf ;
+            int64_t *GB_RESTRICT
+                Hf = (int64_t *GB_RESTRICT) TaskList [taskid].Hf ;
             int64_t kfirst = TaskList [taskid].start ;
             int64_t klast = TaskList [taskid].end ;
             int64_t nk = klast - kfirst + 1 ;
@@ -1324,7 +1328,8 @@
 
                 int64_t kk = TaskList [taskid].vector ;
                 int64_t hash_bits = (hash_size-1) ;
-                int64_t  *GB_RESTRICT Hf = TaskList [taskid].Hf ;
+                int64_t  *GB_RESTRICT
+                    Hf = (int64_t  *GB_RESTRICT) TaskList [taskid].Hf ;
                 int64_t cjnz = Cp [kk+1] - Cp [kk] ;
 
                 // sort the pattern of C(:,j)
