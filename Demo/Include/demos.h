@@ -57,14 +57,14 @@
 GrB_Info bfs5m              // BFS of a graph (using vector assign & reduce)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
-    GrB_Matrix A,           // input graph, treated as if boolean in semiring
+    const GrB_Matrix A,     // input graph, treated as if boolean in semiring
     GrB_Index s             // starting node of the BFS
 ) ;
 
 GrB_Info bfs5m_check        // BFS of a graph (using vector assign & reduce)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
-    GrB_Matrix A,           // input graph, treated as if boolean in semiring
+    const GrB_Matrix A,     // input graph, treated as if boolean in semiring
     GrB_Index s             // starting node of the BFS
 ) ;
 
@@ -107,12 +107,12 @@ GrB_Info mis_check              // compute a maximal independent set
     int64_t seed                // random number seed
 ) ;
 
-void mis_score (double *result, uint32_t *degree) ;
-void mis_score2 (double *result, uint32_t *degree, double *xrand) ;
+void mis_score  (void *result, const void *degree) ;
+void mis_score2 (void *result, const void *degree, const void *xrand) ;
 
-extern int32_t level ;
+GB_PUBLIC int32_t level ;
 
-void bfs_level (int32_t *result, bool *element) ;
+void bfs_level (void *result, const void *element) ;
 
 GrB_Info random_matrix      // create a random double-precision matrix
 (

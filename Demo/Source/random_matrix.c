@@ -53,6 +53,7 @@ GrB_Info random_matrix      // create a random double-precision matrix
 
     if (A_complex)
     {
+        #if HAVE_COMPLEX
         // Areal = real random matrix
         OK (random_matrix (&Areal, make_symmetric, no_self_edges, nrows,
             ncols, nedges, method, false)) ;
@@ -69,6 +70,10 @@ GrB_Info random_matrix      // create a random double-precision matrix
         A = NULL ;
         FREE_ALL ;
         return (GrB_SUCCESS) ;
+        #else
+        printf ("complex data type not available\n") ;
+        return (GrB_INVALID_VALUE) ;
+        #endif
     }
 
     //--------------------------------------------------------------------------

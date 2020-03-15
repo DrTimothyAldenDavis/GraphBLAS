@@ -13,6 +13,7 @@
 // Compare with GB_transpose_op.c
 
 #include "GB_apply.h"
+#include "GB_unused.h"
 #ifndef GBCOMPACT
 #include "GB_iterator.h"
 #include "GB_unaryop__include.h"

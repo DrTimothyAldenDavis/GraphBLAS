@@ -3,7 +3,7 @@
 SuiteSparse:GraphBLAS, Timothy A. Davis, (c) 2017-2020, All Rights Reserved.
 http://suitesparse.com   See GraphBLAS/Doc/License.txt for license.
 
-VERSION 3.2.2, Mar 11, 2020
+VERSION 3.2.2, Mar 14, 2020
 
 SuiteSparse:GraphBLAS is an full implementation of the GraphBLAS standard,
 which defines a set of sparse matrix operations on an extended algebra of
@@ -101,13 +101,4 @@ keyword SPEC: in the code and in the User Guide, and in the Include/GraphBLAS.h
 file.  All functions, objects, and macros with the prefix GxB are extensions to
 the spec.  Functions, objects, and macros with prefix GB must not be accessed
 by user code.  They are for internal use in GraphBLAS only.
-
-
---------------------------------------------------------------------------------
-## For Windows users:
-
-Version v3.1.2 is compatible with Microsoft Visual Studio on Windows, but
-Version v3.2.1 is not.  The next version v3.2.2 (in progress) will be
-compatible, once it is completed.  In the meantime if you use Windows with
-Microsoft Visual Studio, use v3.1.2.  See the User Guide for more details.
 

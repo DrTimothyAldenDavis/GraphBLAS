@@ -1,3 +1,8 @@
+Version 3.2.2, TODO, 2020
+
+    * port to Microsoft Visual Studio: including the GraphBLAS/Demos, which had
+        not been ported in v3.1.2.
+
 Version 3.2.1, Mar 10, 2020
 
     * GAP benchmarks in MATLAB: in GraphBLAS/GraphBLAS/GAP (all but CC).

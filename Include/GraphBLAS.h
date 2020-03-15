@@ -77,6 +77,10 @@
 #define GxB_STDC_VERSION 199001L
 #endif
 
+// TODO HACK
+#undef  GxB_STDC_VERSION
+#define GxB_STDC_VERSION 0
+
 //------------------------------------------------------------------------------
 // GraphBLAS version
 //------------------------------------------------------------------------------
@@ -107,7 +111,7 @@
 
 // The version of this implementation, and the GraphBLAS API version:
 #define GxB_IMPLEMENTATION_NAME "SuiteSparse:GraphBLAS"
-#define GxB_IMPLEMENTATION_DATE "Mar 11, 2020"
+#define GxB_IMPLEMENTATION_DATE "Mar 14, 2020"
 #define GxB_IMPLEMENTATION_MAJOR 3
 #define GxB_IMPLEMENTATION_MINOR 2
 #define GxB_IMPLEMENTATION_SUB   2
