@@ -12,9 +12,7 @@
 
 #include "GraphBLAS.h"
 
-// #if ( _MSC_VER && !__INTEL_COMPILER )
-
-#if 1
+#if ( _MSC_VER && !__INTEL_COMPILER )
 // See the following link for C complex math support in Microsoft Visual Studio.
 // https://docs.microsoft.com/en-us/cpp/c-runtime-library/complex-math-support?view=vs-2019
 // The complex data type is not supported for this demo, in MS Visual Studio.
