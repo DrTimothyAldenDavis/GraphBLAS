@@ -77,10 +77,6 @@
 #define GxB_STDC_VERSION 199001L
 #endif
 
-// TODO HACK
-#undef  GxB_STDC_VERSION
-#define GxB_STDC_VERSION 0
-
 //------------------------------------------------------------------------------
 // GraphBLAS version
 //------------------------------------------------------------------------------
