@@ -31,13 +31,13 @@
 
 int32_t level = 0 ;
 
-void bfs_level (int32_t *result, bool *element)
+void bfs_level (void *result, const void *element)
 {
     // Note this function does not depend on its input.  It returns the value
     // of the global variable level for all inputs.  It is applied to the
     // vector q via GrB_apply, which only applies the unary operator to entries
     // in the pattern.  Entries not in the pattern remain implicit (zero in
     // this case), and then are not added by the GrB_PLUS_INT32 accum function.
-    (*result) = level ;
+    (* ((int32_t *) result)) = level ;
 }
 

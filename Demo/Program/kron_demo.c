@@ -52,7 +52,7 @@ int main (int argc, char **argv)
 
     OK (GrB_init (GrB_NONBLOCKING)) ;
     int nthreads ;
-    OK (GxB_get (GxB_NTHREADS, &nthreads)) ;
+    OK (GxB_Global_Option_get (GxB_NTHREADS, &nthreads)) ;
     fprintf (stderr, "kron demo: nthreads %d\n", nthreads) ;
 
     // printf ("argc %d\n", argc) ;

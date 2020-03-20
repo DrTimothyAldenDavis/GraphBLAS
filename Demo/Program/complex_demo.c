@@ -13,6 +13,8 @@
 
 #include "demos.h"
 
+#if HAVE_COMPLEX
+
 //------------------------------------------------------------------------------
 // print a complex matrix
 //------------------------------------------------------------------------------
@@ -65,7 +67,7 @@ int main (int argc, char **argv)
     // initialize GraphBLAS and create the user-defined Complex type
     GrB_init (GrB_NONBLOCKING) ;
     int nthreads ;
-    GxB_get (GxB_NTHREADS, &nthreads) ;
+    GxB_Global_Option_get (GxB_NTHREADS, &nthreads) ;
     fprintf (stderr, "complex_demo: nthreads: %d\n", nthreads) ;
     Complex_init ( ) ;
 
@@ -104,4 +106,19 @@ int main (int argc, char **argv)
     // finalize GraphBLAS
     GrB_finalize ( ) ;
 }
+
+//------------------------------------------------------------------------------
+
+#else
+
+// See the following link for C complex math support in Microsoft Visual Studio.
+// https://docs.microsoft.com/en-us/cpp/c-runtime-library/complex-math-support?view=vs-2019
+// The complex data type is not supported for this demo, in MS Visual Studio.
+
+int main ( )
+{
+    printf ("complex data type not available\n") ;
+}
+
+#endif
 

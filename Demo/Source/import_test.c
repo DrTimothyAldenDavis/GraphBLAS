@@ -72,11 +72,11 @@ GrB_Info import_test (GrB_Matrix *C_handle, int format, bool dump)
     int8_t   *Ax_int8   = NULL ;
     int16_t  *Ax_int16  = NULL ;
     int32_t  *Ax_int32  = NULL ;
-    int32_t  *Ax_int64  = NULL ;
+    int64_t  *Ax_int64  = NULL ;
     uint8_t  *Ax_uint8  = NULL ;
     uint16_t *Ax_uint16 = NULL ;
     uint32_t *Ax_uint32 = NULL ;
-    uint32_t *Ax_uint64 = NULL ;
+    uint64_t *Ax_uint64 = NULL ;
     float    *Ax_fp32   = NULL ;
     double   *Ax_fp64   = NULL ;
 

@@ -55,7 +55,7 @@
 // v should be empty on input.)  The graph A need not be Boolean on input;
 // if it isn't Boolean, the semiring will properly typecast it to Boolean.
 
-GrB_Info bfs6_check         // BFS of a graph (using unary operator)
+GrB_Info bfs6_check         // BFS of a graph (using apply)
 (
     GrB_Vector *v_output,   // v [i] is the BFS level of node i in the graph
     const GrB_Matrix A,     // input graph, treated as if boolean in semiring

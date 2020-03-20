@@ -26,7 +26,7 @@
 #define FREEWORK                \
 {                               \
     GrB_Matrix_free (&C) ;      \
-    GrB_Matrix_free (&r) ;             \
+    GrB_Vector_free (&r) ;             \
     if (I != NULL) free (I) ;   \
     if (X != NULL) free (X) ;   \
     GrB_UnaryOp_free (&op_scale) ;      \

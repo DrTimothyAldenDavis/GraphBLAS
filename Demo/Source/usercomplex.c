@@ -9,6 +9,8 @@
 
 #include "usercomplex.h"
 
+#if HAVE_COMPLEX
+
 #if defined __INTEL_COMPILER
 #pragma warning (disable: 58 167 144 161 177 181 186 188 589 593 869 981 1418 1419 1572 1599 2259 2282 2557 2547 3280 )
 #elif defined __GNUC__
@@ -17,6 +19,7 @@
 #endif
 
 #define C double complex
+
 #define X *x
 #define Y *y
 #define Z *z
@@ -441,4 +444,6 @@ GrB_Info Complex_finalize ( )
 
     return (GrB_SUCCESS) ;
 }
+
+#endif
 
