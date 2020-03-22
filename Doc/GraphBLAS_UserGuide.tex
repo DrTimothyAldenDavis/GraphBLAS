@@ -868,6 +868,14 @@ Some features for MATLAB sparse matrices are not yet available for
 GraphBLAS matrices.  Some of these may be added in future releases.
 
 \begin{packed_itemize}
+    \item Saving a GrB matrix object from MATLAB can be done, but the
+        resulting \verb'*.mat' file must be read in by the same version
+        of GraphBLAS.
+    \item \verb'GrB' matrices with dimension larger than \verb'2^53' do not
+        display properly in the MATLAB \verb'whos' command.  MATLAB gets this
+        information from \verb'size(A)', which returns a correct result, but
+        MATLAB rounds it to double before displaying it.  The size is displayed
+        correctly with \verb'disp' or \verb'display'.
     \item Non-blocking mode is not exploited; this would require
         a MATLAB mexFunction to modify its inputs, which is
         technically possible but not permitted by the MATLAB API.
