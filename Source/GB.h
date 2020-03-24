@@ -2029,6 +2029,7 @@ GB_Opcode GB_boolean_rename     // renamed opcode
     const GB_Opcode opcode      // opcode to rename
 ) ;
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 bool GB_Index_multiply      // true if ok, false if overflow
 (
     GrB_Index *GB_RESTRICT c,  // c = a*b, or zero if overflow occurs
