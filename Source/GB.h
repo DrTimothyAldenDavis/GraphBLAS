@@ -101,15 +101,20 @@
 
 #elif defined __GNUC__
 
-// disable warnings for gcc 8.2:
+// disable warnings for gcc 5.x and higher:
+#if (__GNUC__ > 4)
+// disable warnings
 // #pragma GCC diagnostic ignored "-Wunknown-warning-option"
 #pragma GCC diagnostic ignored "-Wint-in-bool-context"
 #pragma GCC diagnostic ignored "-Wformat-truncation="
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+// enable these warnings as errors
+#pragma GCC diagnostic error "-Wmisleading-indentation"
+#endif
 
 // disable warnings from -Wall -Wextra -Wpendantic
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
 // See GB_unused.h, where these two pragmas are used:
@@ -123,7 +128,6 @@
 // #pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 
 // enable these warnings as errors
-#pragma GCC diagnostic error "-Wmisleading-indentation"
 #pragma GCC diagnostic error "-Wswitch-default"
 #pragma GCC diagnostic error "-Wmissing-prototypes"
 
