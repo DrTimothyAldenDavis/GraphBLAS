@@ -31,12 +31,14 @@ On the Mac, use the following:
     DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/lib
     export DYLD_LIBRARY_PATH
 
-On Windows 10, on the Search bar type env and hit enter.  Select "Edit the
-system environment variables", then "Environment Variables".  Under "System
-Variables" select "Path" and click "Edit".  These "New" to add a path and then
-"Browse".  Browse to the folder (for example: 
-C:/Users/me/Documents/SuiteSparse/GraphBLAS/build/Release) and add it to your
-path.  Then close the editor, sign out of Windows and sign back in again.
+On Windows 10, on the Search bar type env and hit enter; (or you can
+right-click My Computer or This PC and select Properties, and then select
+Advanced System Settings).  Select "Edit the system environment variables",
+then "Environment Variables".  Under "System Variables" select "Path" and click
+"Edit".  These "New" to add a path and then "Browse".  Browse to the folder
+(for example: C:/Users/me/Documents/SuiteSparse/GraphBLAS/build/Release) and
+add it to your path.  Then close the editor, sign out of Windows and sign back
+in again.
 
 For more details on setting your Linux/Unix/Mac library path for MATLAB see
 https://www.mathworks.com/help/matlab/matlab_external/building-on-unix-operating-systems.html
