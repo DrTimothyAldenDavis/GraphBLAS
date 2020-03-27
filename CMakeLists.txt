@@ -58,7 +58,7 @@ if ( CMAKE_VERSION VERSION_GREATER "3.0" )
 endif ( )
 
 # version of SuiteSparse:GraphBLAS
-set ( GraphBLAS_DATE "Mar 22, 2020 (draft)" )
+set ( GraphBLAS_DATE "Mar 27, 2020 (draft)" )
 set ( GraphBLAS_VERSION_MAJOR 3 )
 set ( GraphBLAS_VERSION_MINOR 2 )
 set ( GraphBLAS_VERSION_SUB   2 )
@@ -113,27 +113,11 @@ if ( GBCOMPACT )
 endif ( )
 
 #-------------------------------------------------------------------------------
-# configure GraphBLAS
-#-------------------------------------------------------------------------------
-
-find_program ( M4EXISTS m4 )
-if ( NOT M4EXISTS )
-    message ( FATAL_ERROR "m4 not found, but is required.  Install via your system package manager, or download at http://www.gnu.org/software/m4/m4.html or http://gnuwin32.sourceforge.net for Windows" )
-endif ( )
-
-set ( DEC0 "Config/GraphBLAS.h.in" )
-execute_process (
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMAND m4 -P ${DEC0}
-    OUTPUT_FILE "Config/GraphBLAS.h.tmp"
-)
-
-#-------------------------------------------------------------------------------
 # Configure Include/GraphBLAS.h and documentation with version number
 #-------------------------------------------------------------------------------
 
 configure_file (
-    "Config/GraphBLAS.h.tmp"
+    "Config/GraphBLAS.h.in"
     "${PROJECT_SOURCE_DIR}/Include/GraphBLAS.h"
 )
 configure_file (
