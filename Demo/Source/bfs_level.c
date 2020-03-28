@@ -29,6 +29,7 @@
 // on all matrices, and also methods that force completion on individual
 // matries (GrB_Matrix_nvals in particular).
 
+GB_PUBLIC
 int32_t level = 0 ;
 
 void bfs_level (void *result, const void *element)
