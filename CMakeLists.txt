@@ -476,12 +476,10 @@ target_link_libraries ( import_demo   graphblas graphblasdemo )
 # graphblas installation location
 #-------------------------------------------------------------------------------
 
-# note that the demo libraries are not installed
-
 if ( BUILD_GRB_STATIC_LIBRARY )
 
     # install both the dynamic and static libraries
-    install ( TARGETS graphblas  graphblas_static
+    install ( TARGETS graphblas  graphblas_static graphblasdemo
         LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
@@ -489,11 +487,10 @@ if ( BUILD_GRB_STATIC_LIBRARY )
 else ( )
 
     # only install the dynamic library
-    install ( TARGETS graphblas
+    install ( TARGETS graphblas graphblasdemo
          LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
          ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 
 endif ( )
-
 
