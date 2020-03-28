@@ -91,7 +91,7 @@ if ispc
     % folder, do:
     %
     %   gbmake
-    library = sprintf ('%s/../../../build/Release', pwd) ;
+    library = sprintf ('%s/../../../build/Debug', pwd) ;    % TODO HACK
 else
     % First do one the following in GraphBLAS (use JOBS=n for a parallel
     % build, which is faster):
