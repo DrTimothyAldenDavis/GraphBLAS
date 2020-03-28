@@ -16,6 +16,7 @@
 
 #include "GB_mxm.h"
 #include "GB_accum_mask.h"
+#include "GB_printf.h"
 
 GrB_Info GB_mxm                     // C<M> = A*B
 (
@@ -41,7 +42,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     //--------------------------------------------------------------------------
 
     // C may be aliased with M, A, and/or B
-    printf ("what gives?\n") ;
+    GBPR ("what gives?\n") ;
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
@@ -52,6 +53,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     ASSERT_SEMIRING_OK (semiring, "semiring for GB_mxm", GB3) ;
     ASSERT_MATRIX_OK (A, "A for GB_mxm", GB3) ;
     ASSERT_MATRIX_OK (B, "B for GB_mxm", GB3) ;
+    ASSERT (0) ;
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type T_type = semiring->add->op->ztype ;
