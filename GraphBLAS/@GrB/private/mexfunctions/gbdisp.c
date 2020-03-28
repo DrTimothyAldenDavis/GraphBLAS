@@ -31,7 +31,7 @@ void mexFunction
 
     printf ("get cnz:\n") ;
     int64_t cnz = (int64_t) mxGetScalar (pargin [1]) ;
-    printf ("cnz: %g\n", cnz) ;
+    printf ("cnz: %ld\n", cnz) ;
     int level = (int) mxGetScalar (pargin [2]) ;
     printf ("level: %d\n", level) ;
 
