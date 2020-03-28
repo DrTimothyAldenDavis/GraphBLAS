@@ -6655,7 +6655,7 @@ GrB_Info GxB_Scalar_fprint          // print and check a GxB_Scalar
 #endif
 
 #if GxB_STDC_VERSION >= 201112L
-#define GxB_print(object,pr) GxB_fprint(object,pr,stdout)
+#define GxB_print(object,pr) GxB_fprint(object,pr,NULL)
 #endif
 
 //==============================================================================

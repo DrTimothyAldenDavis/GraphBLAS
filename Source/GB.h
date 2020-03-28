@@ -29,9 +29,9 @@
 // just before the statement:
 // #include "GB.h"
 
-// set GB_BURBLE to 1 to enable extensive diagnostic output to stdout,
-// or compile with -DGB_BURBLE=1.  This setting can also be added at the top
-// of any individual Source/* files, before #including any other files.
+// set GB_BURBLE to 1 to enable extensive diagnostic output, or compile with
+// -DGB_BURBLE=1.  This setting can also be added at the top of any individual
+// Source/* files, before #including any other files.
 // TODO Burble is on
 #ifndef GB_BURBLE
 #define GB_BURBLE 1
@@ -749,19 +749,22 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 
 #include "GB_printf.h"
 
+#if GB_MICROSOFT
+#define GB_FLUSH_STDOUT
+#else
+#define GB_FLUSH_STDOUT fflush (stdout)
+#endif
+
 #define GBPRINT(...)                            \
 {                                               \
     if (GB_printf_function != NULL)             \
     {                                           \
-        GB_printf_function (".") ;              \
         GB_printf_function (__VA_ARGS__) ;      \
     }                                           \
     else                                        \
     {                                           \
-        GB_Global_abort_function () ; \
-        printf (":") ;                          \
         printf (__VA_ARGS__) ;                  \
-        fflush (stdout) ;                       \
+        GB_FLUSH_STDOUT ;                       \
     }                                           \
 }
 

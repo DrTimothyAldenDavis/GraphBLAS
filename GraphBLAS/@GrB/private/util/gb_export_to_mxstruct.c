@@ -64,7 +64,7 @@ mxArray *gb_export_to_mxstruct  // return exported MATLAB struct G
     mxSetFieldByNumber (G, 0, 0, gb_type_to_mxstring (A->type)) ;
 
     // export the scalar content
-    mxArray *opaque = mxCreateNumericMatrix (1, 9, mxINT64_CLASS, mxREAL) ;
+    mxArray *opaque = mxCreateNumericMatrix (1, 8, mxINT64_CLASS, mxREAL) ;
     int64_t *s = mxGetInt64s (opaque) ;
     s [0] = A->plen ;
     s [1] = A->vlen ;

@@ -7,10 +7,6 @@
 
 //------------------------------------------------------------------------------
 
-// GxB_*_fprintf with f == NULL prints nothing by default.  However, if
-// GB_printf_function has been set by the caller, then that function is used
-// when f is NULL.
-
 #ifndef GB_PRINTF_H
 #define GB_PRINTF_H
 
@@ -20,7 +16,7 @@ GB_PUBLIC int (* GB_printf_function ) (const char *format, ...) ;
 #define GBPR(...)                                                           \
 {                                                                           \
     int printf_result = 0 ;                                                 \
-    if (f == NULL || f == stdout)                                           \
+    if (f == NULL)                                                          \
     {                                                                       \
         if (GB_printf_function != NULL)                                     \
         {                                                                   \
