@@ -32,9 +32,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
-    GBPRINT ("print level %d\n", pr) ;      // TODO
-    GBPRINT ("f is %p\n", f) ;      // TODO
-
     bool ignore_queue_and_nzombies = false ;
     if (pr < 0)
     { 
@@ -777,8 +774,6 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // cases (it would require workspace to do so).  See the
     // ASSERT_OK_OR_JUMBLED macro.
 
-    GBPRINT ("finally %d\n", jumbled) ; // TODO
-    GBPR  ("huh?\n") ;  // TODO
     return (jumbled ? GrB_INDEX_OUT_OF_BOUNDS : GrB_SUCCESS) ;
 }
 

@@ -41,7 +41,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     //--------------------------------------------------------------------------
 
     // C may be aliased with M, A, and/or B
-    GBBURBLE ("what gives here?\n") ;        // TODO
+    GBBURBLE ("what goes here?\n") ;        // TODO
 
     GBPRINT ("chek if accum is null\n") ;
     GB_RETURN_IF_FAULTY (accum) ;
