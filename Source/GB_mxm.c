@@ -41,9 +41,11 @@ GrB_Info GB_mxm                     // C<M> = A*B
     //--------------------------------------------------------------------------
 
     // C may be aliased with M, A, and/or B
-    GBBURBLE ("what gives?\n") ;        // TODO
+    GBBURBLE ("what gives here?\n") ;        // TODO
 
+    GBPRINT ("chek if accum is null\n") ;
     GB_RETURN_IF_FAULTY (accum) ;
+    GBPRINT ("chek if semiring is null\n") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
     GBPRINT ("chek C\n") ;
