@@ -744,6 +744,27 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 #include "GB_Global.h"
 
 //------------------------------------------------------------------------------
+// GB_printf: printing control
+//------------------------------------------------------------------------------
+
+#include "GB_printf.h"
+
+#define GBPRINT(...)                            \
+{                                               \
+    if (GB_printf_function != NULL)             \
+    {                                           \
+        GB_printf_function (".") ;              \
+        GB_printf_function (__VA_ARGS__) ;      \
+    }                                           \
+    else                                        \
+    {                                           \
+        printf (":") ;                          \
+        printf (__VA_ARGS__) ;                  \
+        fflush (stdout) ;                       \
+    }                                           \
+}
+
+//------------------------------------------------------------------------------
 // burble
 //------------------------------------------------------------------------------
 
@@ -762,21 +783,12 @@ int64_t GB_Pending_n        // return # of pending tuples in A
 #if GB_BURBLE
 
 // define the printf function to use to burble
-#include "GB_printf.h"
 #define GBBURBLE(...)                               \
 {                                                   \
     bool burble = GB_Global_burble_get ( ) ;        \
     if (burble)                                     \
     {                                               \
-        if (GB_printf_function != NULL)             \
-        {                                           \
-            GB_printf_function (__VA_ARGS__) ;      \
-        }                                           \
-        else                                        \
-        {                                           \
-            printf (__VA_ARGS__) ;                  \
-            fflush (stdout) ;                       \
-        }                                           \
+        GBPRINT (__VA_ARGS__) ;                     \
     }                                               \
 }
 
@@ -847,7 +859,7 @@ bool burble = GB_Global_burble_get ( ) ;            \
     {                                                                       \
         if (!(X))                                                           \
         {                                                                   \
-            printf ("assert(" GB_STR(X) ") failed: "                        \
+            GBPRINT ("assert(" GB_STR(X) ") failed: "                       \
                 __FILE__ " line %d\n", __LINE__) ;                          \
             GB_Global_abort_function ( ) ;                                  \
         }                                                                   \
@@ -895,18 +907,18 @@ bool burble = GB_Global_burble_get ( ) ;            \
 #define GB_GOTCHA                                                   \
 {                                                                   \
     fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
+    GBPRINT ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;         \
 }
 #else
 #define GB_GOTCHA                                                   \
 {                                                                   \
     fprintf (stderr, "gotcha: " __FILE__ " line: %d\n", __LINE__) ; \
-    printf ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;          \
+    GBPRINT ("gotcha: " __FILE__ " line: %d\n", __LINE__) ;         \
     GB_Global_abort_function ( ) ;                                  \
 }
 #endif
 
-#define GB_HERE printf ("%2d: Here: " __FILE__ " line: %d\n",  \
+#define GB_HERE GBPRINT ("%2d: Here: " __FILE__ " line: %d\n",  \
     GB_OPENMP_THREAD_ID, __LINE__) ;
 
 // ASSERT (GB_DEAD_CODE) marks code that is intentionally dead, leftover from
@@ -1811,7 +1823,7 @@ void GB_free_memory
 
 #define GB_NEW(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,Context)         \
 {                                                                             \
-    printf ("\nmatrix new:                   %s = new (%s, vlen = "GBd        \
+    GBPRINT("\nmatrix new:                   %s = new (%s, vlen = "GBd        \
         ", vdim = "GBd", Ap:%d, csc:%d, hyper:%d %g, plen:"GBd")"             \
         " line %d file %s\n", GB_STR(A), GB_STR(type),                        \
         (int64_t) vlen, (int64_t) vdim, Ap_option, is_csc, hopt, h,           \
@@ -1822,7 +1834,7 @@ void GB_free_memory
 
 #define GB_CREATE(A,type,vlen,vdim,Ap_option,is_csc,hopt,h,plen,anz,numeric,Context)  \
 {                                                                             \
-    printf ("\nmatrix create:                %s = new (%s, vlen = "GBd        \
+    GBPRINT("\nmatrix create:                %s = new (%s, vlen = "GBd        \
         ", vdim = "GBd", Ap:%d, csc:%d, hyper:%d %g, plen:"GBd", anz:"GBd     \
         " numeric:%d) line %d file %s\n", GB_STR(A), GB_STR(type),            \
         (int64_t) vlen, (int64_t) vdim, Ap_option, is_csc, hopt, h,           \
@@ -1834,7 +1846,7 @@ void GB_free_memory
 #define GB_MATRIX_FREE(A)                                                     \
 {                                                                             \
     if (A != NULL && *(A) != NULL)                                            \
-        printf ("\nmatrix free:                  "                            \
+        GBPRINT("\nmatrix free:                  "                            \
         "matrix_free (%s) line %d file %s\n", GB_STR(A), __LINE__, __FILE__) ;\
     if (GB_free (A) == GrB_PANIC) GB_PANIC ;                                  \
 }
@@ -1842,7 +1854,7 @@ void GB_free_memory
 #define GB_VECTOR_FREE(v)                                                     \
 {                                                                             \
     if (v != NULL && *(v) != NULL)                                            \
-        printf ("\nvector free:                  "                            \
+        GBPRINT("\nvector free:                  "                            \
         "vector_free (%s) line %d file %s\n", GB_STR(v), __LINE__, __FILE__) ;\
     if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
 }
@@ -1850,20 +1862,20 @@ void GB_free_memory
 #define GB_SCALAR_FREE(v)                                                     \
 {                                                                             \
     if (v != NULL && *(v) != NULL)                                            \
-        printf ("\nscalar free:                  "                            \
+        GBPRINT("\nscalar free:                  "                            \
         "scalar_free (%s) line %d file %s\n", GB_STR(v), __LINE__, __FILE__) ;\
     if (GB_free ((GrB_Matrix *) v) == GrB_PANIC) GB_PANIC ;                   \
 }
 
 #define GB_CALLOC_MEMORY(p,n,s)                                               \
-    printf ("\nCalloc:                       "                                \
+    GBPRINT("\nCalloc:                       "                                \
     "%s = calloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
     p = GB_calloc_memory (n, s) ;
 
 #define GB_MALLOC_MEMORY(p,n,s)                                               \
-    printf ("\nMalloc:                       "                                \
+    GBPRINT("\nMalloc:                       "                                \
     "%s = malloc (%s = "GBd", %s = "GBd") line %d file %s\n",                 \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \
@@ -1871,7 +1883,7 @@ void GB_free_memory
 
 #define GB_REALLOC_MEMORY(p,nnew,nold,s,ok)                                    \
 {                                                                             \
-    printf ("\nRealloc: %14p       "                                          \
+    GBPRINT("\nRealloc: %14p       "                                          \
     "%s = realloc (%s = "GBd", %s = "GBd", %s = "GBd") line %d file %s\n",    \
     p, GB_STR(p), GB_STR(nnew), (int64_t) nnew, GB_STR(nold), (int64_t) nold, \
     GB_STR(s), (int64_t) s, __LINE__,__FILE__) ;                              \
@@ -1881,7 +1893,7 @@ void GB_free_memory
 #define GB_FREE_MEMORY(p,n,s)                                                 \
 {                                                                             \
     if (p)                                                                    \
-    printf ("\nFree:               "                                          \
+    GBPRINT("\nFree:               "                                          \
     "(%s, %s = "GBd", %s = "GBd") line %d file %s\n",                         \
     GB_STR(p), GB_STR(n), (int64_t) n, GB_STR(s), (int64_t) s,                \
     __LINE__,__FILE__) ;                                                      \

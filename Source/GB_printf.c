@@ -11,7 +11,7 @@
 // GB_printf_function has been set by the caller, then that function is used
 // when f is NULL.
 
-#include "GB_printf.h"
+#include "GB.h"
 
 int (* GB_printf_function ) (const char *format, ...) = NULL ;
 

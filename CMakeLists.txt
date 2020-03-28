@@ -434,17 +434,16 @@ SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
     SOVERSION ${GraphBLAS_VERSION_MAJOR}
     C_STANDARD_REQUIRED 11
     PUBLIC_HEADER "Demo/Include/demos.h" )
-
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
 target_link_libraries ( graphblasdemo ${M_LIB} graphblas )
 
-if ( BUILD_GRB_STATIC_LIBRARY )
-    add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
-    SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
-        C_STANDARD_REQUIRED 11 )
-    set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
-    target_link_libraries ( graphblasdemo_static  graphblas_static )
-endif ( )
+add_library ( graphblasdemo_static STATIC ${DEMO_SOURCES} )
+SET_TARGET_PROPERTIES ( graphblasdemo_static PROPERTIES
+    VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+    C_STANDARD_REQUIRED 11
+    PUBLIC_HEADER "Demo/Include/demos.h" )
+set_property ( TARGET graphblasdemo_static PROPERTY C_STANDARD 11 )
+target_link_libraries ( graphblasdemo_static  graphblas_static )
 
 #-------------------------------------------------------------------------------
 # Demo programs
@@ -492,7 +491,7 @@ if ( BUILD_GRB_STATIC_LIBRARY )
 else ( )
 
     # only install the dynamic library
-    install ( TARGETS graphblas graphblasdemo
+    install ( TARGETS graphblas graphblasdemo graphblasdemo_static
          LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
          PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
          ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR} )

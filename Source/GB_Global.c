@@ -15,7 +15,6 @@
 // matrix options, and other settings.
 
 #include "GB.h"
-#include "GB_printf.h"
 
 //------------------------------------------------------------------------------
 // Global storage: for all threads in a user application that uses GraphBLAS

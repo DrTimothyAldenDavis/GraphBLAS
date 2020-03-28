@@ -12,7 +12,7 @@
 // matrix A:", for example.  The internal name is the C typedef with which the
 // GraphBLAS GrB_Type was created.
 
-#include "GB_printf.h"
+#include "GB.h"
 
 GrB_Info GB_Type_check      // check a GraphBLAS Type
 (

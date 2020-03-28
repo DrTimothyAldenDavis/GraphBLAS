@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_printf.h"
+#include "GB.h"
 
 GrB_Info GB_entry_check     // print a single value
 (

@@ -12,7 +12,7 @@
 
 #include "GB_Pending.h"
 #include "GB_iterator.h"
-#include "GB_printf.h"
+#include "GB.h"
 
 GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
 (
@@ -32,7 +32,8 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
-    GBPR ("print level %d\n", pr) ;
+    GBPRINT ("print level %d\n", pr) ;      // TODO
+
     bool ignore_queue_and_nzombies = false ;
     if (pr < 0)
     { 

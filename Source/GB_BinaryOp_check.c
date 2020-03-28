@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "GB_printf.h"
+#include "GB.h"
 
 GrB_Info GB_BinaryOp_check  // check a GraphBLAS binary operator
 (

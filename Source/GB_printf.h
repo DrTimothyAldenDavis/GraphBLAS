@@ -14,8 +14,6 @@
 #ifndef GB_PRINTF_H
 #define GB_PRINTF_H
 
-#include "GB.h"
-
 GB_PUBLIC int (* GB_printf_function ) (const char *format, ...) ;
 
 // print to a file f, and check the result
