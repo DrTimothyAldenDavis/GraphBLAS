@@ -15,6 +15,11 @@ if (~isempty (name))
 end
 % TODO
 % gnz = nnz (G)
-% 'display:'
-gbdisp (G.opaque, nnz (G), 2) ;
+'display: get S'
+S = G.opaque
+'display: get nnz'
+gnz = nnz (G)
+% gbdisp (G.opaque, nnz (G), 2) ;
+'display: result'
+gbdisp (S, gnz, 2) ;
 
