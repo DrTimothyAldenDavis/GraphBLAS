@@ -20,15 +20,15 @@ void gb_usage       // check usage and make sure GrB.init has been called
     // make sure GrB.init has been called
     //--------------------------------------------------------------------------
 
-    GB_printf_function = mexPrintf ;
-    GBPRINT ("hi: error [%s]\n",  message) ;        // TODO
-
     if (!GB_Global_GrB_init_called_get ( ))
     {
 
         //----------------------------------------------------------------------
         // initialize GraphBLAS
         //----------------------------------------------------------------------
+
+        // must use mexPrintf to print to MATLAB Command Window
+        GB_printf_function = mexPrintf ;
 
         OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
             false)) ;

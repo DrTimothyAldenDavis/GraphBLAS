@@ -71,7 +71,9 @@ function Cout = mxm (varargin)
 
 [args, is_gb] = gb_get_args (varargin {:}) ;
 if (is_gb)
-    Cout = GrB (gbmxm (args {:})) ;
+    % TODO
+    Result = gbmxm (args {:})
+    Cout = GrB (Result)
 else
     Cout = gbmxm (args {:}) ;
 end
