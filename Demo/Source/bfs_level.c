@@ -29,8 +29,7 @@
 // on all matrices, and also methods that force completion on individual
 // matries (GrB_Matrix_nvals in particular).
 
-GB_PUBLIC
-int32_t level = 0 ;
+int32_t bfs_level_global = 0 ;
 
 void bfs_level (void *result, const void *element)
 {
@@ -39,6 +38,6 @@ void bfs_level (void *result, const void *element)
     // vector q via GrB_apply, which only applies the unary operator to entries
     // in the pattern.  Entries not in the pattern remain implicit (zero in
     // this case), and then are not added by the GrB_PLUS_INT32 accum function.
-    (* ((int32_t *) result)) = level ;
+    (* ((int32_t *) result)) = bfs_level_global ;
 }
 

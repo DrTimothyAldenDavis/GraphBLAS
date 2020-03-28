@@ -58,7 +58,8 @@ GrB_Info bfs6               // BFS of a graph (using apply)
     GrB_Monoid Lor = NULL ;                // Logical-or monoid
     GrB_Semiring Boolean = NULL ;          // Boolean semiring
     GrB_Descriptor desc = NULL ;           // Descriptor for vxm
-    GrB_UnaryOp apply_level = NULL ;       // unary op: z = f(x) = level
+    GrB_UnaryOp apply_level = NULL ;       // unary op:
+                                           // z = f(x) = bfs_level_global
 
     GrB_Matrix_nrows (&n, A) ;             // n = # of rows of A
     GrB_Vector_new (&v, GrB_INT32, n) ;    // Vector<int32_t> v(n) = 0
@@ -89,13 +90,14 @@ GrB_Info bfs6               // BFS of a graph (using apply)
     //--------------------------------------------------------------------------
 
     bool successor = true ; // true when some successor found
-    for (level = 1 ; successor && level <= n ; level++)
+    for (bfs_level_global = 1 ; successor && bfs_level_global <= n ; 
+         bfs_level_global++)
     {
 
-        // v[q] = level, using apply.  This function applies the unary operator
-        // to the entries in q, which are the unvisited successors, and then
-        // writes their levels to v, thus updating the levels of those nodes in
-        // v.  The patterns of v and q are disjoint.
+        // v[q] = bfs_level_global, using apply.  This function applies the
+        // unary operator to the entries in q, which are the unvisited
+        // successors, and then writes their levels to v, thus updating the
+        // levels of those nodes in v.  The patterns of v and q are disjoint.
         GrB_Vector_apply (v, NULL, GrB_PLUS_INT32, apply_level, q, NULL) ;
 
         // q<!v> = q ||.&& A ; finds all the unvisited
