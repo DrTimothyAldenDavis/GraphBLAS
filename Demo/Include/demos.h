@@ -110,10 +110,6 @@ GrB_Info mis_check              // compute a maximal independent set
 void mis_score  (void *result, const void *degree) ;
 void mis_score2 (void *result, const void *degree, const void *xrand) ;
 
-GB_PUBLIC int32_t bfs_level_global ;
-
-void bfs_level (void *result, const void *element) ;
-
 GrB_Info random_matrix      // create a random double-precision matrix
 (
     GrB_Matrix *A_output,   // handle of matrix to create

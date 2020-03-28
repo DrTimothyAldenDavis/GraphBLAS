@@ -46,6 +46,31 @@
 #include "demos.h"
 
 //------------------------------------------------------------------------------
+// bfs_level2: for unary operator
+//------------------------------------------------------------------------------
+
+// level = depth in BFS traversal, roots=1, unvisited=0.
+
+// Note the operator accesses a global variable outside the control of
+// GraphBLAS.  This is safe, but care must be taken not to change the global
+// variable "level" while pending operations have yet to be completed.
+// See the User Guide on GrB_wait, which forces completion of pending work
+// on all matrices, and also methods that force completion on individual
+// matries (GrB_Matrix_nvals in particular).
+
+int32_t bfs_level2_global = 0 ;
+
+void bfs_level2 (void *result, const void *element)
+{
+    // Note this function does not depend on its input.  It returns the value
+    // of the global variable level for all inputs.  It is applied to the
+    // vector q via GrB_apply, which only applies the unary operator to entries
+    // in the pattern.  Entries not in the pattern remain implicit (zero in
+    // this case), and then are not added by the GrB_PLUS_INT32 accum function.
+    (* ((int32_t *) result)) = bfs_level2_global ;
+}
+
+//------------------------------------------------------------------------------
 // bfs6: breadth first search using a Boolean semiring
 //------------------------------------------------------------------------------
 
@@ -73,7 +98,7 @@ GrB_Info bfs6_check         // BFS of a graph (using apply)
     GrB_Vector v = NULL ;                       // result vector
     GrB_Descriptor desc = NULL ;                // Descriptor for vxm
     GrB_UnaryOp apply_level = NULL ;            // unary op:
-                                                // z = f(x) = bfs_level_global
+                                                // z = f(x) = bfs_level2_global
 
     OK (GrB_Matrix_nrows (&n, A)) ;             // n = # of rows of A
     OK (GrB_Vector_new (&v, GrB_INT32, n)) ;    // Vector<int32_t> v(n) = 0
@@ -89,17 +114,17 @@ GrB_Info bfs6_check         // BFS of a graph (using apply)
     OK (GxB_Desc_set (desc, GrB_OUTP, GrB_REPLACE)) ;
 
     // create a unary operator
-    OK (GrB_UnaryOp_new (&apply_level, bfs_level, GrB_INT32, GrB_BOOL)) ;
+    OK (GrB_UnaryOp_new (&apply_level, bfs_level2, GrB_INT32, GrB_BOOL)) ;
 
     //--------------------------------------------------------------------------
     // BFS traversal and label the nodes
     //--------------------------------------------------------------------------
 
     bool successor = true ; // true when some successor found
-    for (bfs_level_global = 1 ; successor && bfs_level_global <= n ;
-         bfs_level_global++)
+    for (bfs_level2_global = 1 ; successor && bfs_level2_global <= n ;
+         bfs_level2_global++)
     {
-        // v[q] = bfs_level_global, using apply.  This function applies the
+        // v[q] = bfs_level2_global, using apply.  This function applies the
         // unary operator to the entries in q, which are the unvisited
         // successors, and then writes their levels to v, thus updating the
         // levels of those nodes in v.  The patterns of v and q are disjoint.
