@@ -32,6 +32,7 @@ GrB_Info GB_matvec_check    // check a GraphBLAS matrix or vector
     // decide what to print
     //--------------------------------------------------------------------------
 
+    GBPR ("print level %d\n", pr) ;
     bool ignore_queue_and_nzombies = false ;
     if (pr < 0)
     { 
