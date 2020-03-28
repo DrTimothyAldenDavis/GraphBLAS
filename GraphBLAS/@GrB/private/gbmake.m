@@ -196,8 +196,8 @@ cd ../..
 fprintf ('\n  addpath (''%s'') ;\n', pwd) ;
 cd ..
 if ispc
-    fprintf ('  addpath (''%s/build'') ;\n', pwd) ;
-else
     fprintf ('  addpath (''%s/build/Release'') ;\n', pwd) ;
+else
+    fprintf ('  addpath (''%s/build'') ;\n', pwd) ;
 end
 
