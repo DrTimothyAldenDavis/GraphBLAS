@@ -13,5 +13,9 @@ name = inputname (1) ;
 if (~isempty (name))
     fprintf ('\n%s =\n', name) ;
 end
-gbdisp (G.opaque, nnz (G), 2) ;
+% TODO
+G
+gnz = nnz (G)
+'display:'
+gbdisp (G.opaque, gnz, 2) ;
 
