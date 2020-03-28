@@ -41,27 +41,17 @@ GrB_Info GB_mxm                     // C<M> = A*B
     //--------------------------------------------------------------------------
 
     // C may be aliased with M, A, and/or B
-    GBBURBLE ("what goes here?\n") ;        // TODO
 
-    GBPRINT ("chek if accum is null\n") ;
     GB_RETURN_IF_FAULTY (accum) ;
-    GBPRINT ("chek if semiring is null\n") ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
 
-    GBPRINT ("chek C\n") ;
     ASSERT_MATRIX_OK (C, "C input for GB_mxm", GB3) ;
-    GBPRINT ("chek M\n") ;
     ASSERT_MATRIX_OK_OR_NULL (M, "M for GB_mxm", GB3) ;
-    GBPRINT ("chek accum\n") ;
     ASSERT_BINARYOP_OK_OR_NULL (accum, "accum for GB_mxm", GB3) ;
-    GBPRINT ("chek semiring\n") ;
     ASSERT_SEMIRING_OK (semiring, "semiring for GB_mxm", GB3) ;
-    GBPRINT ("chek A\n") ;
     ASSERT_MATRIX_OK (A, "A for GB_mxm", GB3) ;
-    GBPRINT ("chek B\n") ;
     ASSERT_MATRIX_OK (B, "B for GB_mxm", GB3) ;
-    GBPRINT ("here asserting\n") ;
-    ASSERT (0) ;        // TODO
+    GBPRINT ("here in mxm\n") ; // TODO
 
     // check domains and dimensions for C<M> = accum (C,T)
     GrB_Type T_type = semiring->add->op->ztype ;
@@ -222,6 +212,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     // return result
     //--------------------------------------------------------------------------
 
+    GBPRINT ("done in mxm\n") ; // TODO
     return (info) ;
 }
 
