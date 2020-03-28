@@ -20,7 +20,7 @@ GB_PUBLIC int (* GB_printf_function ) (const char *format, ...) ;
 #define GBPR(...)                                                           \
 {                                                                           \
     int printf_result = 0 ;                                                 \
-    if (f == NULL)                                                          \
+    if (f == NULL || f == stdout)                                           \
     {                                                                       \
         if (GB_printf_function != NULL)                                     \
         {                                                                   \
