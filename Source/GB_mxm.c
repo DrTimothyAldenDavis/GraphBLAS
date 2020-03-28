@@ -42,7 +42,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     //--------------------------------------------------------------------------
 
     // C may be aliased with M, A, and/or B
-    GBPR ("what gives?\n") ;
+    GBBURBLE ("what gives?\n") ;
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
