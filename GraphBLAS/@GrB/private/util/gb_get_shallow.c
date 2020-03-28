@@ -259,7 +259,7 @@ GrB_Matrix gb_get_shallow   // return a shallow copy of MATLAB sparse matrix
     //--------------------------------------------------------------------------
 
     printf ("got shallow\n") ;      // TODO
-    GxB_Matrix_fprint (A,3,NULL) ;  // TODO
+    GxB_Matrix_fprint (A,"A",3,NULL) ;  // TODO
     return (A) ;
 }
 
