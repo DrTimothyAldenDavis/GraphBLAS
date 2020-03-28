@@ -428,8 +428,13 @@ message ( STATUS "CMAKE C flags: " ${CMAKE_C_FLAGS} )
 
 file ( GLOB DEMO_SOURCES "Demo/Source/*.c" )
 add_library ( graphblasdemo SHARED ${DEMO_SOURCES} )
+
 SET_TARGET_PROPERTIES ( graphblasdemo PROPERTIES
-    C_STANDARD_REQUIRED 11 )
+    VERSION ${GraphBLAS_VERSION_MAJOR}.${GraphBLAS_VERSION_MINOR}.${GraphBLAS_VERSION_SUB}
+    SOVERSION ${GraphBLAS_VERSION_MAJOR}
+    C_STANDARD_REQUIRED 11
+    PUBLIC_HEADER "Demo/Include/demos.h" )
+
 set_property ( TARGET graphblasdemo PROPERTY C_STANDARD 11 )
 target_link_libraries ( graphblasdemo ${M_LIB} graphblas )
 
