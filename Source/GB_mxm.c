@@ -41,6 +41,7 @@ GrB_Info GB_mxm                     // C<M> = A*B
     //--------------------------------------------------------------------------
 
     // C may be aliased with M, A, and/or B
+    printf ("what gives?\n") ;
 
     GB_RETURN_IF_FAULTY (accum) ;
     GB_RETURN_IF_NULL_OR_FAULTY (semiring) ;
@@ -142,7 +143,6 @@ GrB_Info GB_mxm                     // C<M> = A*B
     ASSERT_MATRIX_OK_OR_NULL (MT, "MT from GB_AxB_meta", GB3) ;
     ASSERT (GB_ZOMBIES_OK (T)) ;
     ASSERT (!GB_PENDING (T)) ;
-    ASSERT (0) ;
 
     //--------------------------------------------------------------------------
     // C<M> = accum (C,T): accumulate the results into C via the mask
