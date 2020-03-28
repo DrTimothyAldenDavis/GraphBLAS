@@ -22,13 +22,20 @@ GB_PUBLIC int (* GB_printf_function ) (const char *format, ...) ;
 #define GBPR(...)                                                           \
 {                                                                           \
     int printf_result = 0 ;                                                 \
-    if (f == NULL && GB_printf_function != NULL)                            \
+    if (f == NULL)                                                          \
     {                                                                       \
-        printf_result = GB_printf_function (__VA_ARGS__) ;                  \
+        if (GB_printf_function != NULL)                                     \
+        {                                                                   \
+            printf_result = GB_printf_function (__VA_ARGS__) ;              \
+        }                                                                   \
+        else                                                                \
+        {                                                                   \
+            printf_result = printf (__VA_ARGS__) ;                          \
+        }                                                                   \
     }                                                                       \
-    else if (f != NULL)                                                     \
+    else                                                                    \
     {                                                                       \
-        printf_result =  fprintf (f, __VA_ARGS__)  ;                        \
+        printf_result = fprintf (f, __VA_ARGS__)  ;                         \
     }                                                                       \
     if (printf_result < 0)                                                  \
     {                                                                       \
