@@ -22,35 +22,36 @@ void mexFunction
     // check inputs
     //--------------------------------------------------------------------------
 
-    printf ("usage:\n") ;
+    mexPrintf ("here in gbdisp:\n") ;   // TODO
     gb_usage (nargin == 3 && nargout == 0, "usage: gbdisp (C,cnz,level)") ;
 
     //--------------------------------------------------------------------------
     // get cnz and level
     //--------------------------------------------------------------------------
 
-    printf ("get cnz:\n") ;
+    printf ("get cnz:\n") ; // TODO
     int64_t cnz = (int64_t) mxGetScalar (pargin [1]) ;
-    printf ("cnz: %ld\n", cnz) ;
+    printf ("cnz: %ld\n", cnz) ;    // TODO
     int level = (int) mxGetScalar (pargin [2]) ;
-    printf ("level: %d\n", level) ;
+    printf ("level: %d\n", level) ; // TODO
 
     #define LEN 256
     char s [LEN+1] ;
     if (cnz == 0)
     {
-        sprintf (s, "no nonzeros") ;
+        snprintf (s, LEN, "no nonzeros") ;
     }
     else if (cnz == 1)
     {
-        sprintf (s, "1 nonzero") ;
+        snprintf (s, LEN, "1 nonzero") ;
     }
     else
     {
-        sprintf (s, GBd " nonzeros", cnz) ;
+        snprintf (s, LEN, GBd " nonzeros", cnz) ;
     }
 
-    printf ("sprintf [%s]\n", s) ;
+    s [LEN] = '\0' ;
+    printf ("snprintf [%s]\n", s) ;
 
     //--------------------------------------------------------------------------
     // print the GraphBLAS matrix

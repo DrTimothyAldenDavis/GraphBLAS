@@ -22,4 +22,4 @@ gnz = nnz (G)
 % gbdisp (G.opaque, nnz (G), 2) ;
 'display: result'
 gbdisp (S, gnz, 2) ;
-
+'here'
