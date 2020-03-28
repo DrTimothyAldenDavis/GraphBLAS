@@ -312,11 +312,13 @@ bool GB_Global_is_csc_get (void)
 // abort_function
 //------------------------------------------------------------------------------
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_abort_function_set (void (* abort_function) (void))
 { 
     GB_Global.abort_function = abort_function ;
 }
 
+GB_PUBLIC   // accessed by the MATLAB interface only
 void GB_Global_abort_function (void)
 {
     GB_Global.abort_function ( ) ;
