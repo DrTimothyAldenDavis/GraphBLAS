@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #include "gb_matlab.h"
-#include "GB_printf.h"
 
 void gb_usage       // check usage and make sure GrB.init has been called
 (
@@ -21,14 +20,15 @@ void gb_usage       // check usage and make sure GrB.init has been called
     // make sure GrB.init has been called
     //--------------------------------------------------------------------------
 
+    GB_printf_function = mexPrintf ;
+    GBPRINT ("hi: error [%s]\n",  message) ;        // TODO
+
     if (!GB_Global_GrB_init_called_get ( ))
     {
 
         //----------------------------------------------------------------------
         // initialize GraphBLAS
         //----------------------------------------------------------------------
-
-        GB_printf_function = mexPrintf ;
 
         OK (GxB_init (GrB_NONBLOCKING, mxMalloc, mxCalloc, mxRealloc, mxFree,
             false)) ;
